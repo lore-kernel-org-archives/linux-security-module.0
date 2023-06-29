@@ -2,115 +2,288 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D098EB64DD
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jun 2023 10:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3691AEB64D9
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jun 2023 11:07:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231834AbjF2Kao (ORCPT
+        id S232228AbjF2LH1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Jun 2023 06:30:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53452 "EHLO
+        Thu, 29 Jun 2023 07:07:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231835AbjF2Kaa (ORCPT
+        with ESMTP id S231655AbjF2LHZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Jun 2023 06:30:30 -0400
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 433F82D5B;
-        Thu, 29 Jun 2023 03:30:12 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id A808FC020; Thu, 29 Jun 2023 12:30:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1688034610; bh=if9qbAJfyLZr3BzQNxYrgUhfEv4hP+9JnW2xBmEgwCY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KEfVaX0t2OTlde6Nd3qey+ECr1O+nYrxhyKKZOCmXh/2Kgcop7vRZZGfXcxSCkW9O
-         vWBrQHO6EdSwboCUulup2O1xup6vfcwAA2DqiKe4OyYvd6TS6wbKjx41Lx5ZQxmYFv
-         zxl6hIZ+F/OljOeiV/hZ0rKO9KXNX19gdAieVTBhnlRlqRIKPe4znCamk91RyWjpgd
-         Zo4wwqIiqmylUaGksQz3sONpgxlJcMR0v+5kLVORcCl+zKCict7j3FOqPvvQYM5ZGL
-         SeG9xnU8RQs8NhqFGuZ8Ohh+FQRrWzJa8NGmufRUwA7LHNGGXMMOSq8i7/cS3aUDfk
-         62Jh4ql10yc5A==
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id 3F9D1C009;
-        Thu, 29 Jun 2023 12:30:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1688034609; bh=if9qbAJfyLZr3BzQNxYrgUhfEv4hP+9JnW2xBmEgwCY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tCJfaWg5ag2BGOgbHK7s89C2ekhrviQD8tcS4Twse5JOBeKNyoTJCAq6SGCTf3SSf
-         X1jwKdSvMnpNmpynUzepZLjmFnIxPK19pPmpvR+qjvvhZ2fvVcq/pmCh2GawrhqyeQ
-         b3QDV4VSIrSfZZ9w4doi9uyaaNanBZZZr+x/38T/xBOZaW9oDALteGq0rBLMZse75m
-         9Y++q6QRmQUnN8ijUoIV+bhbSd2BmwuIs4tjSf6bVKI0ogoVMNhVoYuu2VuWHmpuba
-         xjGs0VygsedMgSD2vLPool/GcdCoTQXjq0M3iwsj7gCkkDAMpgfqC87vJrtjrgn7mn
-         s5NXJ8uUYen7A==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 9e8fd47c;
-        Thu, 29 Jun 2023 10:30:01 +0000 (UTC)
-Date:   Thu, 29 Jun 2023 19:29:46 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Jeff Xu <jeffxu@chromium.org>
-Cc:     skhan@linuxfoundation.org, keescook@chromium.org,
-        akpm@linux-foundation.org, dmitry.torokhov@gmail.com,
-        dverkamp@chromium.org, hughd@google.com, jeffxu@google.com,
-        jorgelo@chromium.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        jannh@google.com, linux-hardening@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v8 3/5] mm/memfd: add MFD_NOEXEC_SEAL and MFD_EXEC
-Message-ID: <ZJ1dGvWkJVAbBPn7@codewreck.org>
-References: <20221215001205.51969-1-jeffxu@google.com>
- <20221215001205.51969-4-jeffxu@google.com>
- <ZJwcsU0vI-nzgOB_@codewreck.org>
- <ZJyKeeqRJxzwlMhk@codewreck.org>
- <CABi2SkWnAgHK1i6iqSqPMYuNEhtHBkO8jUuCvmG3RmUB5TKHJw@mail.gmail.com>
+        Thu, 29 Jun 2023 07:07:25 -0400
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [IPv6:2001:1600:4:17::42aa])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CDD41FD7
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Jun 2023 04:07:22 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QsFyw29XNzMpntD;
+        Thu, 29 Jun 2023 11:07:20 +0000 (UTC)
+Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4QsFyv0dyfzMppqW;
+        Thu, 29 Jun 2023 13:07:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1688036840;
+        bh=5LBLzyTFEDKOfHzMY3qvsgKAlHJ02xP9+1UNrQQlmxQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=z7iVMzKRvDpVWN71xSjOKCg/UOuegO5Uy4IMXUXtfxHcbdpqfYgK2T5NDXPUEhNTp
+         61J0qK1O479C5J3PchwoiArJ9vWcG92sNdbmuCgdoJ7CIMvWyVCPa9Q6CT9AFME6FA
+         Kb2MggFdEwNUIajySWpAksB/XpSdJuOYQrDt42gQ=
+Message-ID: <b4440d19-93b9-e234-007b-4fc4f987550b@digikod.net>
+Date:   Thu, 29 Jun 2023 13:07:18 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CABi2SkWnAgHK1i6iqSqPMYuNEhtHBkO8jUuCvmG3RmUB5TKHJw@mail.gmail.com>
+User-Agent: 
+Subject: Re: [PATCH v9 00/12] Network support for Landlock - allowed list of
+ protocols
+Content-Language: en-US
+To:     Jeff Xu <jeffxu@chromium.org>
+Cc:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>,
+        "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
+        willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>
+References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
+ <Y/fl5iEbkL5Pj5cJ@galopp> <c20fc9eb-518e-84b4-0dd5-7b97c0825259@huawei.com>
+ <3e113e1c-4c7b-af91-14c2-11b6ffb4d3ef@digikod.net>
+ <b8a2045a-e7e8-d141-7c01-bf47874c7930@digikod.net>
+ <ZJvy2SViorgc+cZI@google.com>
+ <CABi2SkX-dzUO6NnbyqfrAg7Bbn+Ne=Xi1qC1XMrzHqVEVucQ0Q@mail.gmail.com>
+ <43e8acb2-d696-c001-b54b-d2b7cf244de7@digikod.net>
+ <CABi2SkV1Q-cvMScEtcsHbgNRuGc39eJo6KT=GwUxsWPpFGSR4A@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <CABi2SkV1Q-cvMScEtcsHbgNRuGc39eJo6KT=GwUxsWPpFGSR4A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Jeff Xu wrote on Wed, Jun 28, 2023 at 09:33:27PM -0700:
-> > > BTW I find the current behaviour rather hard to use: setting this to 2
-> > > should still set NOEXEC by default in my opinion, just refuse anything
-> > > that explicitly requested EXEC.
-> >
-> > And I just noticed it's not possible to lower the value despite having
-> > CAP_SYS_ADMIN: what the heck?! I have never seen such a sysctl and it
-> > just forced me to reboot because I willy-nilly tested in the init pid
-> > namespace, and quite a few applications that don't require exec broke
-> > exactly as I described below.
-> >
-> > If the user has CAP_SYS_ADMIN there are more container escape methods
-> > than I can count, this is basically free pass to root on main namespace
-> > anyway, you're not protecting anything. Please let people set the sysctl
-> > to what they want.
->
-> Yama has a similar setting,  for example, 3 (YAMA_SCOPE_NO_ATTACH)
-> will not allow downgrading at runtime.
+
+On 29/06/2023 05:18, Jeff Xu wrote:
+> resend.
 > 
-> Since this is a security feature, not allowing downgrading at run time
-> is part of the security consideration. I hope you understand.
+> On Wed, Jun 28, 2023 at 12:29 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>
+>>
+>> On 28/06/2023 19:03, Jeff Xu wrote:
+>>> Hello,
+>>>
+>>> Thanks for writing up the example for an incoming TCP connection ! It
+>>> helps with the context.
+>>>
+>>> Since I'm late to this thread, one thing I want to ask:  all the APIs
+>>> proposed so far are at the process level, we don't have any API that
+>>> applies restriction to socket fd itself, right ? this is what I
+>>> thought, but I would like to get confirmation.
+>>
+>> Restriction are applied to actions, not to already existing/opened FDs.
+>> We could add a way to restrict opened FDs, but I don't think this is the
+>> right approach because sandboxing is a deliberate action from a process,
+>> and it should already take care of its FDs.
+>>
+>>
+>>>
+>>> On Wed, Jun 28, 2023 at 2:09 AM Günther Noack <gnoack@google.com> wrote:
+>>>>
+>>>> Hello!
+>>>>
+>>>> On Mon, Jun 26, 2023 at 05:29:34PM +0200, Mickaël Salaün wrote:
+>>>>> Here is a design to be able to only allow a set of network protocols and
+>>>>> deny everything else. This would be complementary to Konstantin's patch
+>>>>> series which addresses fine-grained access control.
+>>>>>
+>>>>> First, I want to remind that Landlock follows an allowed list approach with
+>>>>> a set of (growing) supported actions (for compatibility reasons), which is
+>>>>> kind of an allow-list-on-a-deny-list. But with this proposal, we want to be
+>>>>> able to deny everything, which means: supported, not supported, known and
+>>>>> unknown protocols.
+>>>>>
+>>>>> We could add a new "handled_access_socket" field to the landlock_ruleset
+>>>>> struct, which could contain a LANDLOCK_ACCESS_SOCKET_CREATE flag.
+>>>>>
+>>>>> If this field is set, users could add a new type of rules:
+>>>>> struct landlock_socket_attr {
+>>>>>       __u64 allowed_access;
+>>>>>       int domain; // see socket(2)
+>>>>>       int type; // see socket(2)
+>>>>> }
+>>>>>
+>>>>> The allowed_access field would only contain LANDLOCK_ACCESS_SOCKET_CREATE at
+>>>>> first, but it could grow with other actions (which cannot be handled with
+>>>>> seccomp):
+>>>>> - use: walk through all opened FDs and mark them as allowed or denied
+>>>>> - receive: hook on received FDs
+>>>>> - send: hook on sent FDs
+>>>>>
+>>>>> We might also use the same approach for non-socket objects that can be
+>>>>> identified with some meaningful properties.
+>>>>>
+>>>>> What do you think?
+>>>>
+>>>> This sounds like a good plan to me - it would make it possible to restrict new
+>>>> socket creation using protocols that were not intended to be used, and I also
+>>>> think it would fit the Landlock model nicely.
+>>>>
+>>>> Small remark on the side: The security_socket_create() hook does not only get
+>>>> invoked as a result of socket(2), but also as a part of accept(2) - so this
+>>>> approach might already prevent new connections very effectively.
+>>>>
+>>> That is an interesting aspect that might be worth discussing more.
+>>> seccomp is per syscall, landlock doesn't necessarily follow the same,
+>>> another design is to add more logic in Landlock, e.g.
+>>> LANDLOCK_ACCESS_SOCKET_PROTOCOL which will apply to all of the socket
+>>> calls (socket/bind/listen/accept/connect). App dev might feel it is
+>>> easier to use.
+>>
+>> seccomp restricts the use of the syscall interface, whereas Landlock
+>> restricts the use of kernel objects (i.e. the semantic).
+>>
+>> We need to find a good tradeoff between a lot of access rights and a few
+>> grouping different actions. This should make sense from a developer
+>> point of view according to its knowledge and use of the kernel
+>> interfaces (potential wrapped with high level libraries), but also to
+>> the semantic of the sandbox and the security guarantees we want to provide.
+>>
+>> We should also keep in mind that high level Landlock libraries can take
+>> care of potential coarse-grained use of restrictions.
+>>
+>>
+>>>
+>>>> Spelling out some scenarios, so that we are sure that we are on the same page:
+>>>>
+>>>> A)
+>>>>
+>>>> A program that does not need networking could specify a ruleset where
+>>>> LANDLOCK_ACCESS_SOCKET_CREATE is handled, and simply not permit anything.
+>>>>
+>>>> B)
+>>>>
+>>>> A program that runs a TCP server could specify a ruleset where
+>>>> LANDLOCK_NET_BIND_TCP, LANDLOCK_NET_CONNECT_TCP and
+>>>> LANDLOCK_ACCESS_SOCKET_CREATE are handled, and where the following rules are added:
+>>>>
+>>>>     /* From Konstantin's patch set */
+>>>>     struct landlock_net_service_attr bind_attr = {
+>>>>       .allowed_access = LANDLOCK_NET_BIND_TCP,
+>>>>       .port = 8080,
+>>>>     };
+>>>>
+>>>>     /* From Mickaël's proposal */
+>>>>     struct landlock_socket_attr sock_inet_attr = {
+>>>>       .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+>>>>       .domain = AF_INET,
+>>>>       .type = SOCK_STREAM,
+>>>>     }
+>>>>
+>>>>     struct landlock_socket_attr sock_inet6_attr = {
+>>>>       .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+>>>>       .domain = AF_INET6,
+>>>>        .type = SOCK_STREAM,
+>>>>     }
+>>>>
+>>>> That should then be enough to bind and listen on ports, whereas outgoing
+>>>> connections with TCP and anything using other network protocols would not be
+>>>> permitted.
+>>>>
+>>> TCP server is an interesting case. From a security perspective, a
+>>> process cares if it is acting as a server or client in TCP, a server
+>>> might only want to accept an incoming TCP connection, never initiate
+>>> an outgoing TCP connection, and a client is the opposite.
+>>>
+>>> Processes can restrict outgoing/incoming TCP connection by seccomp for
+>>> accept(2) or connect(2),  though I feel Landlock can do this more
+>>> naturally for app dev, and at per-protocol level.  seccomp doesn't
+>>> provide per-protocol granularity.
+>>
+>> Right, seccomp cannot filter TCP ports.
+>>
+>>>
+>>> For bind(2), iirc, it can be used for a server to assign dst port of
+>>> incoming TCP connection, also by a client to assign a src port of an
+>>> outgoing TCP connection. LANDLOCK_NET_BIND_TCP will apply to both
+>>> cases, right ? this might not be a problem, just something to keep
+>>> note.
+>>
+>> Good point. I think it is in line with the rule definition: to allow to
+>> bind on a specific port. However, if clients want to set the source port
+>> to a (legitimate) value, then that would be an issue because we cannot
+>> allow a whole range of ports (e.g., >= 1024). I'm not sure if this
+>> practice would be deemed "legitimate" though. Do you know client
+>> applications using bind?
+>>
+>> Konstantin, we should have a test for this case anyway.
 
-I didn't remember yama had this stuck bit; that still strikes me as
-unusual, and if you require a custom LSM rule for memfd anyway I don't
-see why it couldn't enforce that the sysctl is unchanged, but sure.
+Thinking more about TCP clients binding sockets, a 
+LANDLOCK_ACCESS_NET_LISTEN_TCP would be more useful than 
+LANDLOCK_ACCESS_NET_BIND_TCP, but being able to limit the scope of 
+"bindable" ports is also valuable to forbid a malicious sandboxed 
+process to impersonate a legitimate server process. This also means that 
+it might be interesting to be able to handle port ranges.
 
-Please, though:
- - I have a hard time thinking of 1 as a security flag in general (even
-if I do agree a sloppy LSM rule could require it); I would only lock 2
- - please make it clear, I don't see any entry in the sysctl
-documentation[1] about memfd_noexec, there should be one and you can
-copy the wording from yama's doc[2]: "Once set, this sysctl value cannot
-be changed"
-[1] Documentation/admin-guide/sysctl/vm.rst
-[2] Documentation/admin-guide/LSM/Yama.rst
+We already have a LANDLOCK_ACCESS_NET_BIND_TCP implementation and 
+related tests, so I think we should proceed with that. The next 
+network-related patch series should implement this 
+LANDLOCK_ACCESS_NET_LISTEN_TCP access right though, which should not be 
+difficult thanks to the framework implemented with current patch series.
+
+Konstantin, would you like to develop the TCP listening access control 
+once this patch series land?
 
 
-Either way as it stands I still don't think one can expect most
-userspace applications to be converted until some libc wrapper takes
-care of the retry logic and a couple of years, so I'll go look for
-another way of filtering this (and eventually setting this to 1) as you
-suggested.
-I'll leave the follow-up up to you and won't bother you more.
+>>>> (Alternatively, it could bind() the socket early, *then enable Landlock* and
+>>>> leave out the rule for BIND_TCP, only permitting SOCKET_CREATE for IPv4 and
+>>>> IPv6, so that listen() and accept() work on the already-bound socket.)
+>>>>
+>>> For this approach, LANDLOCK_ACCESS_SOCKET_PROTOCOL is a better name,
+>>> so dev is fully aware it is not just applied to socket create.
+>>
+>> I don't get the semantic of LANDLOCK_ACCESS_SOCKET_PROTOCOL. What does
+>> PROTOCOL mean?
+>>
+> I meant checking family + type of socket, and apply to all of
+> socket(2),bind(2),accept(2),connect(2),listen(2), maybe
+> send(2)/recv(2) too.
 
-Thanks,
--- 
-Dominique Martinet | Asmadeus
+OK, that would be kind of similar to the LANDLOCK_ACCESS_SOCKET_USE 
+description. However, I think this kind of global approach has several 
+issues:
+- This covers a lot of different aspects and would increase the cost of 
+development/testing/review.
+- Whereas it wraps different actions, it will not let user space have a 
+fine-grained access control on these, which could be useful for some use 
+cases.
+- I don't see the point of restricting accept(2) if we can already 
+restrict bind(2) and listen(2). accept(2) could be useful to identify 
+the remote peer but I'm not convinced this would make sense, and if it 
+would, then this can be postponed until we have a way to identify peers.
+- For performance reasons, we should avoid restricting 
+send/recv/read/write but instead only restrict the control plane: object 
+creation and configuration.
+
+I'm not convinced that being able to control all kind of socket bind, 
+listen and connect actions might be worth implementing instead of a 
+fine-grained access control for the main protocols (TCP, UDP, unix and 
+vsock maybe), with the related tests and guarantees.
+
+However, this landlock_socket_attr struct could have an allowed_access 
+field that could contain LANDLOCK_ACCESS_NET_{CONNECT,LISTEN,BIND}_TCP 
+rights (which would just not be constrained by any port, except if a 
+landlock_net_port_attr rule matches). It would then make sense to rename 
+LANDLOCK_ACCESS_SOCKET_CREATE to LANDLOCK_ACCESS_NET_CREATE_SOCKET. This 
+right would not be accepted in a landlock_net_port_attr.allowed_access 
+though.
+
+> 
+> s/LANDLOCK_ACCESS_SOCKET_CREATE/LANDLOCK_ACCESS_SOCKET_TYPE.
+> 
+> This implies the kernel will check on socket fd's property (family +
+> type) at those calls, this applies to
+> a - the socket fd is created within the process, after landlock is applied.
+> b - created in process prior to landlock is applied.
+> c - created out of process then passed into this process,
+
+OK, these are the same rules as for LANDLOCK_ACCESS_NET_{CONNECT,BIND}_TCP.
