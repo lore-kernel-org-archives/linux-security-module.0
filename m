@@ -2,164 +2,267 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5011EB64D9
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jun 2023 17:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F578C0015E
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jun 2023 19:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231609AbjF2Rrv (ORCPT
+        id S231977AbjF2Tzr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Jun 2023 13:47:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35232 "EHLO
+        Thu, 29 Jun 2023 15:55:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229873AbjF2Rru (ORCPT
+        with ESMTP id S230415AbjF2Tzq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Jun 2023 13:47:50 -0400
-Received: from mail-oo1-f78.google.com (mail-oo1-f78.google.com [209.85.161.78])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EE3F1FCD
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Jun 2023 10:47:48 -0700 (PDT)
-Received: by mail-oo1-f78.google.com with SMTP id 006d021491bc7-56340665b09so1058350eaf.2
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Jun 2023 10:47:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688060867; x=1690652867;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fqeJGSO+6mKx9mSGLaZAKOae/381NKNuveT6K24vxfg=;
-        b=D6IBCHaWMV/6XPmd8ol7xbJwzB9ECkPyEy3Oyrmh/s3mZ9eTEGcbpIMLLthmtZ8JAG
-         nyHO9AV1aVUFzuiRuIOvcTBaddEsUEuVE6qFDXnNxi3Wu0BZZ+STmJQNaiTf8uZ2WkFN
-         xZYrUV/uZ1dSSNj1h095zRhe2ujkVZZPxk5RMtp053i+HoQ6A+qvSLmY+yvRthELjmVo
-         X3KbSJNMLqnDCzXvh22VQeodezrX/TDw2WR9ySVcZYjfyxSLe99TOmAhwA3BMLodmX98
-         XmIYgbfeVpi9eRn0apNwIDF+2Pu7m9rMOlUfx0/oOT132/Lyo4e1BwCG8MYBBwNy1wgs
-         SIMg==
-X-Gm-Message-State: AC+VfDxK1tw4Tex/MkBsOWnB2BaUTLW+SHmYfoOhenJgVRFs7wcR1vve
-        nJBO+R31cehXT6Q1RFiLxzXJWMRUkNNN0OgI3UXLxmcZVQ7n
-X-Google-Smtp-Source: APBJJlH61aLO6HzohyCF4GOPTTpma/uLhk+bk4SmPwgDhoT8lQgiSxVIcpdBvVJ+qlI3IE+Y9rRRuPd6Qk3KhIpghv3yts8NFmVA
+        Thu, 29 Jun 2023 15:55:46 -0400
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6983B2707
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Jun 2023 12:55:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1688068543; bh=fcOP/+ma99x59j5scMYhAoPff/GBv9YsUUKEfvXJwEo=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=F1/HHR+GpfQmLZ9gBka6bSoTd7UsW7RhUKPq290mXq6lDawDVjp4aWaxRaCHJZG2ryUWaz+HTKlxr4yZWp1RFYLfCMmIL8cAZe2O/p+HvAruTkGhPEJqcEvTSY0sohX1pMmuHslTRosjJU9QQ6MEnpOro6keD9ySAdDvSkWoZ679z40Wi2VuyBVhUTh2FAsNSFcXbV0GrWlgcUJpxakOzxl2RO2z883+6pOZHYi4W7/CzC4CM6JEy/j1voLKLfGG7CosTL9G6a5pP3C54O6KmCi5VsIiJvdReAVRUlaBd/40hLDuOJrATM+dZ0NPYY8EU0SRkdAw0HnUj+JmpvWNaw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1688068543; bh=DOevV0HOh8+tYFVX1K/DwJ4ASEDRbRlE9/1K671GNZT=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=kXJSkTJ6TIshico8caHktXCXvz/LGO6KNV/FRHo/bXnHZ4hORJiXj7ChaBSmhynuAutYKSm52xaK5/ge++LfIRXrj59ijoDjGzviC1MpmKp2EvC6yzr/hw+OAyHMr4/kx/97JmaEGi72Qhe4gI4+tJlgkqO7YMygi0n3phgPYk4ypVFm2rwTD9JdRxD1/UipA56ktRQkArTLAVBGKQrQq5+kv8yiBURzWSNU/KIFc1bKlolSB0gq8oMdtOXlGCHEbQl8dcD0piZb2CIC1wFIzNBpm76UiTldgZyPnhxjT0/Rrq/OA4Qf8to4tQrQT2+pphPy9d+aGy81hV2hpS+kuA==
+X-YMail-OSG: Js3YYuwVM1k20LYn8.sieiuitiBk4.WfBwhxIRnin3MbeMO8.obIC7XjeWvDYFH
+ p.eC_f_IYT3to7vRgriTqARIm4TT5z9H4yYFv3Xs5Zi_yhPTCRz_cnVd2gG2wstvzXcPEngJT4iT
+ ZunJ9GlLxDutSTPUqOYP78fKnhNxVWiwhoksadmf9ngiFIxfwJtz0XYbvAJcNYYL7yVdWk5wVAU0
+ qZqdlbJ.ZcwDDGiPA4W8klQIspKVZtcIhAdrsmQkScK2Gm39WeqbkyFnnVNMyjoMmibz_TJwOI1i
+ TwWOH6zPIziIJM4qD0OH_p1DtEk5oEegl0huvdSlMUaJyWdpum.pStj89NFD1X0AY8gFLE3GjwW2
+ pfzMAVXm30.UcXuDEFv0ma5Fj_QXgz5WvXasE.NPjrZjpFw48puFO0TIq6MARg.Lr.UysGSI2nxi
+ u4xL2ns4SMabXCym0aYar7CaJvK6zduGMRJXPKNQkXZNDgeF.I7Pp1hRORwd76jSElu.Px.Sqh1P
+ IsF4Zz42TjGn_ekfdyeMdzMdinqrQgA2bcBuqKyGx0.5mxkWVoUZ5lWDDKEFDPMyNGbxQy.Kspbk
+ jZTWO9bkNBj5c6aH9CthDJZXgBbz8Uv6wGL2or9xi9SDMlQIkVT664N1gUsRkqil4Ko8DfAR7syW
+ Xg9z2pJ_TwSl1.H_ah8zdDjDYSXfla4u2XKBhJyOMskCUrBEfk5XynbdJzrDiViH0wI2p5Tdt6KA
+ fyBOuRjWnLTDAFuLPNY8M2Jw_ru6mHbZawse9sDO6zAyA12x7AdDuYjJdDl6bCVX2lS.nNZZQ.HM
+ tv939aNucPFzm9mUO1PWvUYKGVYZ4NY9uyyCCgke5SPqoWYuZQ.2wC.2qrV4LQcgvJS477NAaJWq
+ mxgZmJxWTPztcWo5.pkEqpnHpkqEB4oAOzXti39oipp7_x3ppYnAHQPRkuV4CLIe0XrBABnRCtpF
+ bn8W45TJzGzCOWsqXdPpiZvHEX3WU0o9Msk5uXM829Nlxv3vlCJ9WgiXzbm016ZnbRrgRcZFXKHW
+ nHA8nZ4D72pHKsC4TXFnOjt6N80FEqzsxN54jKrjGxw8fR07qUadkzOhHqhtB9Tpe5rwxJW7UH27
+ dnzjWUqa_mTVf4KOEzD6.Merji3BveVDrICyPICANOQSIeRZ7yy2pdEPSFdBcsQAkDEiO2SHUQYX
+ jIuP5Gr4klWXiKwERUwmL2AKpBYTAMMIgO9uzrlpgSQApH.qBaRzkAllgm_hew2eReb26d4bu7_M
+ uHcQofP4wFRNTPg2q6Stlry_K8J38vsb8vAd6h_0cwMSIL5qQYoh0DNGRekO5VBWLN2zRhAEWewu
+ DsmdpcdhC6GKikeVW.PCvknuUHFBmEyoYggo2leOcj04XqRbYmeQ6Pb0ZMcAPHrqjZNEVGfPG8ii
+ SupIIAn0BgeXGhqCo6YyZS6HYvZdYYKSLBWh9ouKVrUgBqiEpV_WKOLZfm1qxYlAK1rOhKTQGaIP
+ 8BJVRiUy.jzftfchOcz9.vaahmxDa7eFV97gCUzrBl8nBePBmd8wz06vrLAvrq.M4np3db8HBVIN
+ 7iU0q7s8hbk3eLrZkuYsQDsnc8v1mAz5ARvw5r.bpuq_Ua549RERg3r1OukSDIUgLmQyab9OqIuk
+ U2BVHQWGOz3kZzSOeUn7iPNzWQNX_4sqy0cPK0SfA_mgvzJtHwnA.x.zPR5Q.RF4bx9j6ABt3wom
+ LtGTCZsuK6eDGjMf2_beV89aTv4m7Wvhg7xiwReRSmF6grL0OPAzZfev2V9RCW.xp.S93Uwa6lOi
+ dTqRVieUYVkcPVSl2nmEuSWafyDISY_x3K2bKkF6.6DvTxV_hkq3Ng9XF4rp2MJyUhULWpb.dLrX
+ I4v3usQEHgioX6pfqOH7scLUZ3xzoxeIWvV_XHhbbozpEfeUb3nLqgi7K8e3pC9t3kSbvKb3_tqG
+ u8kdCIFREVGH8K4c2qOfGgxH5CXHI2dLdvUoc3IE8Vgkd9j0q7ATk4tb.ZWPEvmvcVzdFDvWx8Jp
+ AqEF7Itqod40.ORRTWUeX5A7BDQipMVUmelXggFdAJyYrrAWLQvkn3JJfByvk984R8SBvNg5C_lX
+ w4t8ScCNBbuKC4hCHqOLkK.lwCP6sY9njAAZqdluQEO6CskpJKX1S.z_7OtVjSCVL5VW_pmZmUb0
+ w0pnnbsxW6MNWiwe9qfx5WaC0xZ7whyjrDcAsF6NyX6IgGS_eUGWbQpAiGmfKXJqbMc9qOiopJn9
+ Cft0q6bsvF_l_lK9k1XTdkMyv1WsMsl07vV.oumFlnXbkM2NaAfZcJebvjvAiOzuoBHcRh14XKT5
+ PYkKzzenzarzZ
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: e3fae37a-243b-4e6f-89a4-6bf2e21433cd
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Thu, 29 Jun 2023 19:55:43 +0000
+Received: by hermes--production-gq1-5748b5bccb-dgd7m (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8413d56f5114fad294c4c94233ef2643;
+          Thu, 29 Jun 2023 19:55:38 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+To:     casey@schaufler-ca.com, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org
+Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net
+Subject: [PATCH v12 00/11] LSM: Three basic syscalls
+Date:   Thu, 29 Jun 2023 12:55:24 -0700
+Message-Id: <20230629195535.2590-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:6b96:b0:1b0:9643:6f69 with SMTP id
- ms22-20020a0568706b9600b001b096436f69mr520078oab.4.1688060867287; Thu, 29 Jun
- 2023 10:47:47 -0700 (PDT)
-Date:   Thu, 29 Jun 2023 10:47:47 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005a9fab05ff484cc4@google.com>
-Subject: [syzbot] [lsm?] [reiserfs?] general protection fault in fsnotify_perm
-From:   syzbot <syzbot+1d7062c505b34792ef90@syzkaller.appspotmail.com>
-To:     bpf@vger.kernel.org, jmorris@namei.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, paul@paul-moore.com,
-        reiserfs-devel@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+References: <20230629195535.2590-1-casey.ref@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+Add three system calls for the Linux Security Module ABI.
 
-syzbot found the following issue on:
+lsm_get_self_attr() provides the security module specific attributes
+that have previously been visible in the /proc/self/attr directory.
+For each security module that uses the specified attribute on the
+current process the system call will return an LSM identifier and
+the value of the attribute. The LSM and attribute identifier values
+are defined in include/uapi/linux/lsm.h
 
-HEAD commit:    a92b7d26c743 Merge tag 'drm-fixes-2023-06-23' of git://ano..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16cd10e0a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=24ce1b2abaee24cc
-dashboard link: https://syzkaller.appspot.com/bug?extid=1d7062c505b34792ef90
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1066cc77280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=116850bf280000
+LSM identifiers are simple integers and reflect the order in which
+the LSM was added to the mainline kernel. This is a convention, not
+a promise of the API. LSM identifiers below the value of 100 are
+reserved for unspecified future uses. That could include information
+about the security infrastructure itself, or about how multiple LSMs
+might interact with each other.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f0158c6c02c9/disk-a92b7d26.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/91b4daaa4521/vmlinux-a92b7d26.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b5e6c2198af0/bzImage-a92b7d26.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/d48571c9b971/mount_0.gz
+A new LSM hook security_getselfattr() is introduced to get the
+required information from the security modules. This is similar
+to the existing security_getprocattr() hook, but specifies the
+format in which string data is returned and requires the module
+to put the information into a userspace destination.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1d7062c505b34792ef90@syzkaller.appspotmail.com
+lsm_set_self_attr() changes the specified LSM attribute. Only one
+attribute can be changed at a time, and then only if the specified
+security module allows the change.
 
-general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
-CPU: 0 PID: 4987 Comm: udevd Not tainted 6.4.0-rc7-syzkaller-00226-ga92b7d26c743 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
-RIP: 0010:fsnotify_parent include/linux/fsnotify.h:62 [inline]
-RIP: 0010:fsnotify_file include/linux/fsnotify.h:99 [inline]
-RIP: 0010:fsnotify_perm.part.0+0x12e/0x610 include/linux/fsnotify.h:124
-Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 75 04 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b 5d 68 48 8d 7b 28 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 5c 04 00 00 4c 8b 73 28 be 08 00 00 00 4d 8d a6
-RSP: 0018:ffffc9000347fa00 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000005 RSI: ffffffff83cbf5e3 RDI: 0000000000000028
-RBP: ffff888067875bc0 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
-R13: ffff88802d0722d0 R14: ffff88802d07233c R15: 0000000000010000
-FS:  00007f538cf63c80(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9b7c4d8718 CR3: 000000002eb3f000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- fsnotify_perm include/linux/fsnotify.h:108 [inline]
- security_file_open+0x86/0xb0 security/security.c:2801
- do_dentry_open+0x575/0x13f0 fs/open.c:907
- do_open fs/namei.c:3636 [inline]
- path_openat+0x1baa/0x2750 fs/namei.c:3791
- do_filp_open+0x1ba/0x410 fs/namei.c:3818
- do_sys_openat2+0x16d/0x4c0 fs/open.c:1356
- do_sys_open fs/open.c:1372 [inline]
- __do_sys_openat fs/open.c:1388 [inline]
- __se_sys_openat fs/open.c:1383 [inline]
- __x64_sys_openat+0x143/0x1f0 fs/open.c:1383
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f538cb169a4
-Code: 24 20 48 8d 44 24 30 48 89 44 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2c 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 60 48 8b 15 55 a4 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007fff8a905c40 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007f538cb169a4
-RDX: 0000000000080241 RSI: 00007fff8a906188 RDI: 00000000ffffff9c
-RBP: 00007fff8a906188 R08: 0000000000000004 R09: 0000000000000001
-R10: 00000000000001b6 R11: 0000000000000246 R12: 0000000000080241
-R13: 000056095d45972e R14: 0000000000000001 R15: 000056095e6332c0
- </TASK>
-Modules linked in:
-----------------
-Code disassembly (best guess):
-   0:	48 89 fa             	mov    %rdi,%rdx
-   3:	48 c1 ea 03          	shr    $0x3,%rdx
-   7:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
-   b:	0f 85 75 04 00 00    	jne    0x486
-  11:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  18:	fc ff df
-  1b:	48 8b 5d 68          	mov    0x68(%rbp),%rbx
-  1f:	48 8d 7b 28          	lea    0x28(%rbx),%rdi
-  23:	48 89 fa             	mov    %rdi,%rdx
-  26:	48 c1 ea 03          	shr    $0x3,%rdx
-* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
-  2e:	0f 85 5c 04 00 00    	jne    0x490
-  34:	4c 8b 73 28          	mov    0x28(%rbx),%r14
-  38:	be 08 00 00 00       	mov    $0x8,%esi
-  3d:	4d                   	rex.WRB
-  3e:	8d                   	.byte 0x8d
-  3f:	a6                   	cmpsb  %es:(%rdi),%ds:(%rsi)
+A new LSM hook security_setselfattr() is introduced to set the
+required information in the security modules. This is similar
+to the existing security_setprocattr() hook, but specifies the
+format in which string data is presented and requires the module
+to get the information from a userspace destination.
 
+lsm_list_modules() provides the LSM identifiers, in order, of the
+security modules that are active on the system. This has been
+available in the securityfs file /sys/kernel/security/lsm.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Patch 0001 changes the LSM registration from passing the name
+of the module to passing a lsm_id structure that contains the
+name of the module, an LSM identifier number and an attribute
+identifier.
+Patch 0002 adds the registered lsm_ids to a table.
+Patch 0003 changes security_[gs]etprocattr() to use LSM IDs instead
+of LSM names.
+Patch 0004 implements lsm_get_self_attr() and lsm_set_self_attr().
+New LSM hooks security_getselfattr() and security_setselfattr() are
+defined.
+Patch 0005 implements lsm_list_modules().
+Patch 0006 wires up the syscalls.
+Patch 0007 implements helper functions to make it easier for
+security modules to use lsm_ctx structures.
+Patch 0008 provides the Smack implementation for [gs]etselfattr().
+Patch 0009 provides the AppArmor implementation for [gs]etselfattr().
+Patch 0010 provides the SELinux implementation for [gs]etselfattr().
+Patch 0011 implements selftests for the three new syscalls.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+https://github.com/cschaufler/lsm-stacking.git#lsm-syscalls-6.4-v12
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+v12: Repair a registration time overflow check.
+v11: Remove redundent alignment code
+     Improve a few comments.
+     Use LSM_ATTR_UNDEF in place of 0 in a few places.
+     Correct a return of -EINVAL to -E2BIG.
+v10: Correct use of __user.
+     Improve a few comments.
+     Revert unnecessary changes in module initialization.
+v9: Support a flag LSM_FLAG_SINGLE in lsm_get_self_attr() that
+    instructs the call to provide only the attribute for the LSM
+    identified in the referenced lsm_ctx structure.
+    Fix a typing error.
+    Change some coding style.
+v8: Allow an LSM to provide more than one instance of an attribute,
+    even though none of the existing modules do so.
+    Pad the data returned by lsm_get_self_attr() to the size of
+    the struct lsm_ctx.
+    Change some displeasing varilable names.
+v7: Pass the attribute desired to lsm_[gs]et_self_attr in its own
+    parameter rather than encoding it in the flags.
+    Change the flags parameters to u32.
+    Don't shortcut out of calling LSM specific code in the
+    infrastructure, let the LSM report that doesn't support an
+    attribute instead. With that it is not necessary to maintain
+    a set of supported attributes in the lsm_id structure.
+    Fix a typing error.
+v6: Switch from reusing security_[gs]procattr() to using new
+    security_[gs]selfattr() hooks. Use explicit sized data types
+    in the lsm_ctx structure.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+v5: Correct syscall parameter data types.
 
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+v4: Restore "reserved" LSM ID values. Add explaination.
+    Squash patches that introduce fields in lsm_id.
+    Correct a wireup error.
 
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
+v3: Add lsm_set_self_attr().
+    Rename lsm_self_attr() to lsm_get_self_attr().
+    Provide the values only for a specifed attribute in
+    lsm_get_self_attr().
+    Add selftests for the three new syscalls.
+    Correct some parameter checking.
 
-If you want to undo deduplication, reply with:
-#syz undup
+v2: Use user-interface safe data types.
+    Remove "reserved" LSM ID values.
+    Improve kerneldoc comments
+    Include copyright dates
+    Use more descriptive name for LSM counter
+    Add documentation
+    Correct wireup errors
+
+Casey Schaufler (11):
+  LSM: Identify modules by more than name
+  LSM: Maintain a table of LSM attribute data
+  proc: Use lsmids instead of lsm names for attrs
+  LSM: syscalls for current process attributes
+  LSM: Create lsm_list_modules system call
+  LSM: wireup Linux Security Module syscalls
+  LSM: Helpers for attribute names and filling lsm_ctx
+  Smack: implement setselfattr and getselfattr hooks
+  AppArmor: Add selfattr hooks
+  SELinux: Add selfattr hooks
+  LSM: selftests for Linux Security Module syscalls
+
+ Documentation/userspace-api/index.rst         |   1 +
+ Documentation/userspace-api/lsm.rst           |  73 +++++
+ MAINTAINERS                                   |   1 +
+ arch/alpha/kernel/syscalls/syscall.tbl        |   3 +
+ arch/arm/tools/syscall.tbl                    |   3 +
+ arch/arm64/include/asm/unistd.h               |   2 +-
+ arch/arm64/include/asm/unistd32.h             |   6 +
+ arch/ia64/kernel/syscalls/syscall.tbl         |   3 +
+ arch/m68k/kernel/syscalls/syscall.tbl         |   3 +
+ arch/microblaze/kernel/syscalls/syscall.tbl   |   3 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl     |   3 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl     |   3 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl     |   3 +
+ arch/parisc/kernel/syscalls/syscall.tbl       |   3 +
+ arch/powerpc/kernel/syscalls/syscall.tbl      |   3 +
+ arch/s390/kernel/syscalls/syscall.tbl         |   3 +
+ arch/sh/kernel/syscalls/syscall.tbl           |   3 +
+ arch/sparc/kernel/syscalls/syscall.tbl        |   3 +
+ arch/x86/entry/syscalls/syscall_32.tbl        |   3 +
+ arch/x86/entry/syscalls/syscall_64.tbl        |   3 +
+ arch/xtensa/kernel/syscalls/syscall.tbl       |   3 +
+ fs/proc/base.c                                |  29 +-
+ fs/proc/internal.h                            |   2 +-
+ include/linux/lsm_hook_defs.h                 |   4 +
+ include/linux/lsm_hooks.h                     |  17 +-
+ include/linux/security.h                      |  46 ++-
+ include/linux/syscalls.h                      |   6 +
+ include/uapi/asm-generic/unistd.h             |  11 +-
+ include/uapi/linux/lsm.h                      |  90 ++++++
+ kernel/sys_ni.c                               |   5 +
+ security/Makefile                             |   1 +
+ security/apparmor/include/procattr.h          |   2 +-
+ security/apparmor/lsm.c                       | 110 ++++++-
+ security/apparmor/procattr.c                  |  10 +-
+ security/bpf/hooks.c                          |   9 +-
+ security/commoncap.c                          |   8 +-
+ security/landlock/cred.c                      |   2 +-
+ security/landlock/fs.c                        |   2 +-
+ security/landlock/ptrace.c                    |   2 +-
+ security/landlock/setup.c                     |   6 +
+ security/landlock/setup.h                     |   1 +
+ security/loadpin/loadpin.c                    |   9 +-
+ security/lockdown/lockdown.c                  |   8 +-
+ security/lsm_syscalls.c                       | 118 ++++++++
+ security/safesetid/lsm.c                      |   9 +-
+ security/security.c                           | 216 +++++++++++++-
+ security/selinux/hooks.c                      | 157 ++++++++--
+ security/smack/smack_lsm.c                    | 114 +++++++-
+ security/tomoyo/tomoyo.c                      |   9 +-
+ security/yama/yama_lsm.c                      |   8 +-
+ .../arch/mips/entry/syscalls/syscall_n64.tbl  |   3 +
+ .../arch/powerpc/entry/syscalls/syscall.tbl   |   3 +
+ .../perf/arch/s390/entry/syscalls/syscall.tbl |   3 +
+ .../arch/x86/entry/syscalls/syscall_64.tbl    |   3 +
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/lsm/Makefile          |  12 +
+ tools/testing/selftests/lsm/config            |   2 +
+ .../selftests/lsm/lsm_get_self_attr_test.c    | 270 ++++++++++++++++++
+ .../selftests/lsm/lsm_list_modules_test.c     | 153 ++++++++++
+ .../selftests/lsm/lsm_set_self_attr_test.c    |  70 +++++
+ 60 files changed, 1569 insertions(+), 93 deletions(-)
+ create mode 100644 Documentation/userspace-api/lsm.rst
+ create mode 100644 include/uapi/linux/lsm.h
+ create mode 100644 security/lsm_syscalls.c
+ create mode 100644 tools/testing/selftests/lsm/Makefile
+ create mode 100644 tools/testing/selftests/lsm/config
+ create mode 100644 tools/testing/selftests/lsm/lsm_get_self_attr_test.c
+ create mode 100644 tools/testing/selftests/lsm/lsm_list_modules_test.c
+ create mode 100644 tools/testing/selftests/lsm/lsm_set_self_attr_test.c
+
+-- 
+2.40.1
+
