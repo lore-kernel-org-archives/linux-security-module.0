@@ -2,42 +2,42 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B73BAEB64D9
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jun 2023 05:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A75EB64D9
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jun 2023 05:20:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231812AbjF2FTg convert rfc822-to-8bit (ORCPT
+        id S230449AbjF2FUK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Jun 2023 01:19:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57132 "EHLO
+        Thu, 29 Jun 2023 01:20:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231252AbjF2FTN (ORCPT
+        with ESMTP id S231509AbjF2FTN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Thu, 29 Jun 2023 01:19:13 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF71D273B
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Jun 2023 22:18:57 -0700 (PDT)
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35T0PQFx007812
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Jun 2023 22:18:57 -0700
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B16D294C
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Jun 2023 22:19:10 -0700 (PDT)
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35T0S7GM019120
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Jun 2023 22:19:10 -0700
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3rgycyhr7r-2
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3rgye41srp-5
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Jun 2023 22:18:57 -0700
-Received: from twshared25760.37.frc1.facebook.com (2620:10d:c085:108::8) by
- mail.thefacebook.com (2620:10d:c085:21d::5) with Microsoft SMTP Server
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Jun 2023 22:19:09 -0700
+Received: from twshared4466.29.prn2.facebook.com (2620:10d:c085:108::8) by
+ mail.thefacebook.com (2620:10d:c085:11d::4) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Wed, 28 Jun 2023 22:18:56 -0700
+ 15.1.2507.23; Wed, 28 Jun 2023 22:19:07 -0700
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-        id 1E61433AFB622; Wed, 28 Jun 2023 22:18:55 -0700 (PDT)
+        id 3561E33AFB73D; Wed, 28 Jun 2023 22:19:03 -0700 (PDT)
 From:   Andrii Nakryiko <andrii@kernel.org>
 To:     <bpf@vger.kernel.org>
 CC:     <linux-security-module@vger.kernel.org>, <keescook@chromium.org>,
         <brauner@kernel.org>, <lennart@poettering.net>,
         <cyphar@cyphar.com>, <luto@kernel.org>, <kernel-team@meta.com>,
         <sargun@sargun.me>
-Subject: [PATCH RESEND v3 bpf-next 11/14] bpf: take into account BPF token when fetching helper protos
-Date:   Wed, 28 Jun 2023 22:18:29 -0700
-Message-ID: <20230629051832.897119-12-andrii@kernel.org>
+Subject: [PATCH RESEND v3 bpf-next 14/14] selftests/bpf: add BPF token-enabled BPF_PROG_LOAD tests
+Date:   Wed, 28 Jun 2023 22:18:32 -0700
+Message-ID: <20230629051832.897119-15-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230629051832.897119-1-andrii@kernel.org>
 References: <20230629051832.897119-1-andrii@kernel.org>
@@ -45,336 +45,112 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Q8ale6bifuIhNRDF5lL3x1l_em4nN2DQ
-X-Proofpoint-GUID: Q8ale6bifuIhNRDF5lL3x1l_em4nN2DQ
+X-Proofpoint-GUID: 5-4h0uQkcqdAwtQsL5SMFMR6SWGtVrpK
+X-Proofpoint-ORIG-GUID: 5-4h0uQkcqdAwtQsL5SMFMR6SWGtVrpK
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-06-28_14,2023-06-27_01,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Instead of performing unconditional system-wide bpf_capable() and
-perfmon_capable() calls inside bpf_base_func_proto() function (and other
-similar ones) to determine eligibility of a given BPF helper for a given
-program, use previously recorded BPF token during BPF_PROG_LOAD command
-handling to inform the decision.
+Add a test validating that BPF token can be used to load privileged BPF
+program using privileged BPF helpers through delegated BPF token created
+by privileged process.
 
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- drivers/media/rc/bpf-lirc.c |  2 +-
- include/linux/bpf.h         |  5 +++--
- kernel/bpf/cgroup.c         |  6 +++---
- kernel/bpf/helpers.c        |  6 +++---
- kernel/bpf/syscall.c        |  5 +++--
- kernel/trace/bpf_trace.c    |  2 +-
- net/core/filter.c           | 32 ++++++++++++++++----------------
- net/ipv4/bpf_tcp_ca.c       |  2 +-
- net/netfilter/nf_bpf_link.c |  2 +-
- 9 files changed, 32 insertions(+), 30 deletions(-)
+ .../testing/selftests/bpf/prog_tests/token.c  | 66 +++++++++++++++++++
+ 1 file changed, 66 insertions(+)
 
-diff --git a/drivers/media/rc/bpf-lirc.c b/drivers/media/rc/bpf-lirc.c
-index fe17c7f98e81..6d07693c6b9f 100644
---- a/drivers/media/rc/bpf-lirc.c
-+++ b/drivers/media/rc/bpf-lirc.c
-@@ -110,7 +110,7 @@ lirc_mode2_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_get_prandom_u32:
- 		return &bpf_get_prandom_u32_proto;
- 	case BPF_FUNC_trace_printk:
--		if (perfmon_capable())
-+		if (bpf_token_capable(prog->aux->token, CAP_PERFMON))
- 			return bpf_get_trace_printk_proto();
- 		fallthrough;
- 	default:
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 64dcdc18f09a..0e8680e639cb 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -2358,7 +2358,8 @@ int btf_check_type_match(struct bpf_verifier_log *log, const struct bpf_prog *pr
- struct bpf_prog *bpf_prog_by_id(u32 id);
- struct bpf_link *bpf_link_by_id(u32 id);
+diff --git a/tools/testing/selftests/bpf/prog_tests/token.c b/tools/testing/selftests/bpf/prog_tests/token.c
+index 113cd4786a70..415d49eacd4f 100644
+--- a/tools/testing/selftests/bpf/prog_tests/token.c
++++ b/tools/testing/selftests/bpf/prog_tests/token.c
+@@ -4,6 +4,7 @@
+ #include <test_progs.h>
+ #include <bpf/btf.h>
+ #include "cap_helpers.h"
++#include <linux/filter.h>
  
--const struct bpf_func_proto *bpf_base_func_proto(enum bpf_func_id func_id);
-+const struct bpf_func_proto *bpf_base_func_proto(enum bpf_func_id func_id,
-+						 const struct bpf_prog *prog);
- void bpf_task_storage_free(struct task_struct *task);
- void bpf_cgrp_storage_free(struct cgroup *cgroup);
- bool bpf_prog_has_kfunc_call(const struct bpf_prog *prog);
-@@ -2615,7 +2616,7 @@ static inline int btf_struct_access(struct bpf_verifier_log *log,
- }
- 
- static inline const struct bpf_func_proto *
--bpf_base_func_proto(enum bpf_func_id func_id)
-+bpf_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ static int drop_priv_caps(__u64 *old_caps)
  {
- 	return NULL;
- }
-diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-index 5b2741aa0d9b..39d6cfb6f304 100644
---- a/kernel/bpf/cgroup.c
-+++ b/kernel/bpf/cgroup.c
-@@ -1615,7 +1615,7 @@ cgroup_dev_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_perf_event_output:
- 		return &bpf_event_output_data_proto;
- 	default:
--		return bpf_base_func_proto(func_id);
-+		return bpf_base_func_proto(func_id, prog);
- 	}
+@@ -200,6 +201,69 @@ static void subtest_btf_token(void)
+ 		ASSERT_OK(restore_priv_caps(old_caps), "restore_caps");
  }
  
-@@ -2173,7 +2173,7 @@ sysctl_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_perf_event_output:
- 		return &bpf_event_output_data_proto;
- 	default:
--		return bpf_base_func_proto(func_id);
-+		return bpf_base_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -2330,7 +2330,7 @@ cg_sockopt_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_perf_event_output:
- 		return &bpf_event_output_data_proto;
- 	default:
--		return bpf_base_func_proto(func_id);
-+		return bpf_base_func_proto(func_id, prog);
- 	}
- }
- 
-diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-index 9e80efa59a5d..6a740af48908 100644
---- a/kernel/bpf/helpers.c
-+++ b/kernel/bpf/helpers.c
-@@ -1663,7 +1663,7 @@ const struct bpf_func_proto bpf_probe_read_kernel_str_proto __weak;
- const struct bpf_func_proto bpf_task_pt_regs_proto __weak;
- 
- const struct bpf_func_proto *
--bpf_base_func_proto(enum bpf_func_id func_id)
-+bpf_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
++static void subtest_prog_token(void)
++{
++	LIBBPF_OPTS(bpf_token_create_opts, token_opts);
++	LIBBPF_OPTS(bpf_prog_load_opts, prog_opts);
++	int token_fd = 0, prog_fd = 0, err;
++	__u64 old_caps = 0;
++	struct bpf_insn insns[] = {
++		/* bpf_jiffies64() requires CAP_BPF */
++		BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0, BPF_FUNC_jiffies64),
++		/* bpf_get_current_task() requires CAP_PERFMON */
++		BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0, BPF_FUNC_get_current_task),
++		/* r0 = 0; exit; */
++		BPF_MOV64_IMM(BPF_REG_0, 0),
++		BPF_EXIT_INSN(),
++	};
++	size_t insn_cnt = ARRAY_SIZE(insns);
++
++	/* create BPF token allowing BPF_PROG_LOAD command */
++	token_opts.allowed_cmds = 1ULL << BPF_PROG_LOAD;
++	token_opts.allowed_prog_types = 1ULL << BPF_PROG_TYPE_XDP;
++	token_opts.allowed_attach_types = 1ULL << BPF_XDP;
++	err = bpf_token_create(-EBADF, TOKEN_PATH, &token_opts);
++	if (!ASSERT_OK(err, "token_create"))
++		return;
++
++	/* drop privileges to test token_fd passing */
++	if (!ASSERT_OK(drop_priv_caps(&old_caps), "drop_caps"))
++		goto cleanup;
++
++	token_fd = bpf_obj_get(TOKEN_PATH);
++	if (!ASSERT_GT(token_fd, 0, "token_get"))
++		goto cleanup;
++
++	/* validate we can successfully load BPF program with token; this
++	 * being XDP program (CAP_NET_ADMIN) using bpf_jiffies64() (CAP_BPF)
++	 * and bpf_get_current_task() (CAP_PERFMON) helpers validates we have
++	 * BPF token wired properly in a bunch of places in the kernel
++	 */
++	prog_opts.token_fd = token_fd;
++	prog_opts.expected_attach_type = BPF_XDP;
++	prog_fd = bpf_prog_load(BPF_PROG_TYPE_XDP, "token_prog", "GPL",
++				insns, insn_cnt, &prog_opts);
++	if (!ASSERT_GT(prog_fd, 0, "prog_fd"))
++		goto cleanup;
++	close(prog_fd);
++
++	/* now validate that we *cannot* load BPF program without token */
++	prog_opts.token_fd = 0;
++	prog_fd = bpf_prog_load(BPF_PROG_TYPE_XDP, "token_prog", "GPL",
++				insns, insn_cnt, &prog_opts);
++	if (!ASSERT_EQ(prog_fd, -EPERM, "prog_fd_eperm"))
++		goto cleanup;
++
++cleanup:
++	if (prog_fd > 0)
++		close(prog_fd);
++	if (token_fd)
++		close(token_fd);
++	unlink(TOKEN_PATH);
++	if (old_caps)
++		ASSERT_OK(restore_priv_caps(old_caps), "restore_caps");
++}
++
+ void test_token(void)
  {
- 	switch (func_id) {
- 	case BPF_FUNC_map_lookup_elem:
-@@ -1714,7 +1714,7 @@ bpf_base_func_proto(enum bpf_func_id func_id)
- 		break;
- 	}
- 
--	if (!bpf_capable())
-+	if (!bpf_token_capable(prog->aux->token, CAP_BPF))
- 		return NULL;
- 
- 	switch (func_id) {
-@@ -1772,7 +1772,7 @@ bpf_base_func_proto(enum bpf_func_id func_id)
- 		break;
- 	}
- 
--	if (!perfmon_capable())
-+	if (!bpf_token_capable(prog->aux->token, CAP_PERFMON))
- 		return NULL;
- 
- 	switch (func_id) {
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index b9e7cc72429e..ceb17f10efbe 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -5438,7 +5438,7 @@ static const struct bpf_func_proto bpf_sys_bpf_proto = {
- const struct bpf_func_proto * __weak
- tracing_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- {
--	return bpf_base_func_proto(func_id);
-+	return bpf_base_func_proto(func_id, prog);
+ 	if (test__start_subtest("token_create"))
+@@ -208,4 +272,6 @@ void test_token(void)
+ 		subtest_map_token();
+ 	if (test__start_subtest("btf_token"))
+ 		subtest_btf_token();
++	if (test__start_subtest("prog_token"))
++		subtest_prog_token();
  }
- 
- BPF_CALL_1(bpf_sys_close, u32, fd)
-@@ -5488,7 +5488,8 @@ syscall_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- {
- 	switch (func_id) {
- 	case BPF_FUNC_sys_bpf:
--		return !perfmon_capable() ? NULL : &bpf_sys_bpf_proto;
-+		return !bpf_token_capable(prog->aux->token, CAP_PERFMON)
-+		       ? NULL : &bpf_sys_bpf_proto;
- 	case BPF_FUNC_btf_find_by_name_kind:
- 		return &bpf_btf_find_by_name_kind_proto;
- 	case BPF_FUNC_sys_close:
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 03b7f6b8e4f0..877f2e01d212 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -1521,7 +1521,7 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_trace_vprintk:
- 		return bpf_get_trace_vprintk_proto();
- 	default:
--		return bpf_base_func_proto(func_id);
-+		return bpf_base_func_proto(func_id, prog);
- 	}
- }
- 
-diff --git a/net/core/filter.c b/net/core/filter.c
-index 06ba0e56e369..03c411dc1e80 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -83,7 +83,7 @@
- #include <net/netfilter/nf_conntrack_bpf.h>
- 
- static const struct bpf_func_proto *
--bpf_sk_base_func_proto(enum bpf_func_id func_id);
-+bpf_sk_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog);
- 
- int copy_bpf_fprog_from_user(struct sock_fprog *dst, sockptr_t src, int len)
- {
-@@ -7817,7 +7817,7 @@ sock_filter_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_ktime_get_coarse_ns:
- 		return &bpf_ktime_get_coarse_ns_proto;
- 	default:
--		return bpf_base_func_proto(func_id);
-+		return bpf_base_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -7900,7 +7900,7 @@ sock_addr_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 			return NULL;
- 		}
- 	default:
--		return bpf_sk_base_func_proto(func_id);
-+		return bpf_sk_base_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -7919,7 +7919,7 @@ sk_filter_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_perf_event_output:
- 		return &bpf_skb_event_output_proto;
- 	default:
--		return bpf_sk_base_func_proto(func_id);
-+		return bpf_sk_base_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -8106,7 +8106,7 @@ tc_cls_act_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- #endif
- #endif
- 	default:
--		return bpf_sk_base_func_proto(func_id);
-+		return bpf_sk_base_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -8165,7 +8165,7 @@ xdp_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- #endif
- #endif
- 	default:
--		return bpf_sk_base_func_proto(func_id);
-+		return bpf_sk_base_func_proto(func_id, prog);
- 	}
- 
- #if IS_MODULE(CONFIG_NF_CONNTRACK) && IS_ENABLED(CONFIG_DEBUG_INFO_BTF_MODULES)
-@@ -8226,7 +8226,7 @@ sock_ops_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_tcp_sock_proto;
- #endif /* CONFIG_INET */
- 	default:
--		return bpf_sk_base_func_proto(func_id);
-+		return bpf_sk_base_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -8268,7 +8268,7 @@ sk_msg_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_get_cgroup_classid_curr_proto;
- #endif
- 	default:
--		return bpf_sk_base_func_proto(func_id);
-+		return bpf_sk_base_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -8312,7 +8312,7 @@ sk_skb_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_skc_lookup_tcp_proto;
- #endif
- 	default:
--		return bpf_sk_base_func_proto(func_id);
-+		return bpf_sk_base_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -8323,7 +8323,7 @@ flow_dissector_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_skb_load_bytes:
- 		return &bpf_flow_dissector_load_bytes_proto;
- 	default:
--		return bpf_sk_base_func_proto(func_id);
-+		return bpf_sk_base_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -8350,7 +8350,7 @@ lwt_out_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_skb_under_cgroup:
- 		return &bpf_skb_under_cgroup_proto;
- 	default:
--		return bpf_sk_base_func_proto(func_id);
-+		return bpf_sk_base_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -11181,7 +11181,7 @@ sk_reuseport_func_proto(enum bpf_func_id func_id,
- 	case BPF_FUNC_ktime_get_coarse_ns:
- 		return &bpf_ktime_get_coarse_ns_proto;
- 	default:
--		return bpf_base_func_proto(func_id);
-+		return bpf_base_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -11363,7 +11363,7 @@ sk_lookup_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_sk_release:
- 		return &bpf_sk_release_proto;
- 	default:
--		return bpf_sk_base_func_proto(func_id);
-+		return bpf_sk_base_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -11697,7 +11697,7 @@ const struct bpf_func_proto bpf_sock_from_file_proto = {
- };
- 
- static const struct bpf_func_proto *
--bpf_sk_base_func_proto(enum bpf_func_id func_id)
-+bpf_sk_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- {
- 	const struct bpf_func_proto *func;
- 
-@@ -11726,10 +11726,10 @@ bpf_sk_base_func_proto(enum bpf_func_id func_id)
- 	case BPF_FUNC_ktime_get_coarse_ns:
- 		return &bpf_ktime_get_coarse_ns_proto;
- 	default:
--		return bpf_base_func_proto(func_id);
-+		return bpf_base_func_proto(func_id, prog);
- 	}
- 
--	if (!perfmon_capable())
-+	if (!bpf_token_capable(prog->aux->token, CAP_PERFMON))
- 		return NULL;
- 
- 	return func;
-diff --git a/net/ipv4/bpf_tcp_ca.c b/net/ipv4/bpf_tcp_ca.c
-index 4406d796cc2f..0a3a60e7c282 100644
---- a/net/ipv4/bpf_tcp_ca.c
-+++ b/net/ipv4/bpf_tcp_ca.c
-@@ -193,7 +193,7 @@ bpf_tcp_ca_get_func_proto(enum bpf_func_id func_id,
- 	case BPF_FUNC_ktime_get_coarse_ns:
- 		return &bpf_ktime_get_coarse_ns_proto;
- 	default:
--		return bpf_base_func_proto(func_id);
-+		return bpf_base_func_proto(func_id, prog);
- 	}
- }
- 
-diff --git a/net/netfilter/nf_bpf_link.c b/net/netfilter/nf_bpf_link.c
-index c36da56d756f..d7786ea9c01a 100644
---- a/net/netfilter/nf_bpf_link.c
-+++ b/net/netfilter/nf_bpf_link.c
-@@ -219,7 +219,7 @@ static bool nf_is_valid_access(int off, int size, enum bpf_access_type type,
- static const struct bpf_func_proto *
- bpf_nf_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- {
--	return bpf_base_func_proto(func_id);
-+	return bpf_base_func_proto(func_id, prog);
- }
- 
- const struct bpf_verifier_ops netfilter_verifier_ops = {
 -- 
 2.34.1
 
