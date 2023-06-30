@@ -2,161 +2,90 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F1AC001B3
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Jun 2023 02:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11BA1EB64DD
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Jun 2023 03:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229676AbjF3CPO (ORCPT
+        id S229449AbjF3DRb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Jun 2023 22:15:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54844 "EHLO
+        Thu, 29 Jun 2023 23:17:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232154AbjF3CPI (ORCPT
+        with ESMTP id S230119AbjF3DR2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Jun 2023 22:15:08 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5C7830EF
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Jun 2023 19:14:46 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id af79cd13be357-76714caf466so123779985a.1
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Jun 2023 19:14:46 -0700 (PDT)
+        Thu, 29 Jun 2023 23:17:28 -0400
+Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D7DF3595
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Jun 2023 20:17:26 -0700 (PDT)
+Received: by mail-ot1-x329.google.com with SMTP id 46e09a7af769-6b7541d885cso1185650a34.3
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Jun 2023 20:17:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1688091285; x=1690683285;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CYjOJQzczNCrKegpSzD/qpaJvwPv5v+9dxljoRuBmPU=;
-        b=XPnusK+xZumPpWK+TnAUlS47hwJecS+UZpSGGpkyFUq32PVtnnKC82N2AS0o564c5O
-         nCG0afUQzhNi/f32vRMZykfQK5ZDJFAAgPGwuAw/LgvF9RGhChAfFFpd2UGIO3J0Brcm
-         OzoQAihWKqpHn3BCuMB6LS1cYSDeTDNjDnRtKAB0SW3gg/svki+1zf0K1jedKFOwPyUx
-         UkQbZ5mL1eVUD7rTZbJPtNgot4q7aND0dI7qK1OGixnQam0BN5M0VB0SyKlJeWmb2pST
-         ZZamZP6AH+4dtMu2rIvCu8GUtFWVYcae2aJnB7UpPfC+yIUoy1PS2yFv0XQblexyNq7S
-         4KLw==
+        d=chromium.org; s=google; t=1688095046; x=1690687046;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/4tMW9nYu8CG1Kx5U0JNQJGDDgvExBfXDekuGxOI5L0=;
+        b=KPAc3EBdnLrZTuhZ0JBA91GkCQdZi1yBfADyAF7KOgyzmnpDl4S+IGni/BtmgUcrH3
+         sbgYHnHSeF3KErNlwH76FXcDGpT0YJHsPG42/z5A2rpu6t71HdZ1FdW+/DfA4ASgCAHE
+         ryqzVSoM0Cg4D98+NoLyA6oKWkl5NF8mEgGUI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688091285; x=1690683285;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CYjOJQzczNCrKegpSzD/qpaJvwPv5v+9dxljoRuBmPU=;
-        b=Zu7BTb5bzy3/Ee/k5nI/KL861yAAlMC5Nn1cfpc1dzuA1TbEDo51AI+zYX36gfonKL
-         l0qEyiHNdAtJ7LUj12na1/qTGkz+flu9UKwj88/U4hMOi/n4Opao8tuHxqMGMpMJZx/7
-         v3ZF8XIUpCsk290yDnYRk49I3w9Koci0CGeuwAxsop4Pc72onmmo94QTOaQBUjpaTrjt
-         nmXijlHc8wp2shEswjhD5L8jZKBgFVuP58DBBxzD8mRheQjCKvqh6uSy49eYeFupzU8y
-         oOV6jmZRswoUhf2NShQQnYfkBk3BoB48JzqPUyJVPAFBTN2x8vqgbXCcvav8zDhb1Y36
-         ZI5g==
-X-Gm-Message-State: ABy/qLaHTP6baxd2mNSM+k3wbNMyfWMVg1r+7pB67Rq4Cef+Jyh2Bvls
-        +udLj8iaTC4BAW4Xypya93oS
-X-Google-Smtp-Source: APBJJlEYmTkp0TWIhcE/1Q/1btQ6Nkp1941nU8UvOANXQNCODPFIXEE7Vp24aTqcnPqDySPvgwLkKw==
-X-Received: by 2002:a05:6214:cc7:b0:636:277f:4155 with SMTP id 7-20020a0562140cc700b00636277f4155mr2111822qvx.15.1688091285696;
-        Thu, 29 Jun 2023 19:14:45 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id ep8-20020a05621418e800b00630182f0191sm7551322qvb.1.2023.06.29.19.14.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jun 2023 19:14:45 -0700 (PDT)
-Date:   Thu, 29 Jun 2023 22:14:44 -0400
-Message-ID: <d1283a1078fd30a2e45915416ae968d2.paul@paul-moore.com>
-From:   Paul Moore <paul@paul-moore.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com,
+        d=1e100.net; s=20221208; t=1688095046; x=1690687046;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/4tMW9nYu8CG1Kx5U0JNQJGDDgvExBfXDekuGxOI5L0=;
+        b=jm0XnGqm+3wdPA6SaaFKKWK08+lUfFqhZx9re9vScttif++f9zIY7KC/77nY8FN1bX
+         coBaXNwSKk7e4mpbJIsDTbbM2s3qCyP2EwkTlszri9D2KXVbT14bi4G6pnvktYGzXmmR
+         6qpRnFCKBEVJuQiC7xDEJWq89v66rZmLnPFYxjDWH4r9obfEx2YaX27XplA677J3bbQm
+         W5ozx/HTkdZtBorjRDxqDLXiuqxJegbdur3M6ZXuU/Exh0N7srD5xEX1zzI7NQAVeA3s
+         8zYHYcciV6ax/0XlvEOtLatPt/xLdFMjYaM3xb47bTXUgklJq/Nxmwxj1QBRTYM3osUJ
+         J5qA==
+X-Gm-Message-State: ABy/qLZ7p7D3A4eToqJChHt42XRRGFjqtkA6vc51xgmAVCBj06/DXjKd
+        26o1q2Qgd52bOcP8RAd7Ah/dQQ==
+X-Google-Smtp-Source: APBJJlEJphhEXB8Hvzt4GfIdNcqhB5iF/w0ojswIeIzAdwLdkQe+337jwOl6sU6apnlxbfP2RALgMA==
+X-Received: by 2002:a05:6359:bb0:b0:134:cb1d:6737 with SMTP id gf48-20020a0563590bb000b00134cb1d6737mr1429484rwb.7.1688095045912;
+        Thu, 29 Jun 2023 20:17:25 -0700 (PDT)
+Received: from localhost (183.43.230.35.bc.googleusercontent.com. [35.230.43.183])
+        by smtp.gmail.com with UTF8SMTPSA id jh2-20020a170903328200b001b3fb1119fdsm3668851plb.297.2023.06.29.20.17.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Jun 2023 20:17:25 -0700 (PDT)
+From:   jeffxu@chromium.org
+To:     skhan@linuxfoundation.org, keescook@chromium.org
+Cc:     akpm@linux-foundation.org, dmitry.torokhov@gmail.com,
+        dverkamp@chromium.org, asmadeus@codewreck.org, hughd@google.com,
+        jeffxu@google.com, jorgelo@chromium.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-mm@kvack.org, jannh@google.com,
+        linux-hardening@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net
-Subject: Re: [PATCH v12 8/11] Smack: implement setselfattr and getselfattr  hooks
-References: <20230629195535.2590-9-casey@schaufler-ca.com>
-In-Reply-To: <20230629195535.2590-9-casey@schaufler-ca.com>
+Subject: [PATCH v1 0/2] mm/memfd: fix sysctl MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED
+Date:   Fri, 30 Jun 2023 03:17:18 +0000
+Message-ID: <20230630031721.623955-1-jeffxu@google.com>
+X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Jun 29, 2023 Casey Schaufler <casey@schaufler-ca.com> wrote:
-> 
-> Implement Smack support for security_[gs]etselfattr.
-> Refactor the setprocattr hook to avoid code duplication.
-> 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  security/smack/smack_lsm.c | 106 +++++++++++++++++++++++++++++++++++--
->  1 file changed, 101 insertions(+), 5 deletions(-)
-> 
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index cf847cfe5ed8..4a84639e9db9 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
+From: Jeff Xu <jeffxu@google.com>
 
-...
+When sysctl vm.memfd_noexec is 2 (MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED),
+memfd_create(.., MFD_EXEC) should fail.
 
-> @@ -3629,6 +3668,61 @@ static int smack_setprocattr(const char *name, void *value, size_t size)
->  	return size;
->  }
->  
-> +/**
-> + * smack_setselfattr - Set a Smack process attribute
-> + * @attr: which attribute to set
-> + * @ctx: buffer containing the data
-> + * @size: size of @ctx
-> + * @flags: unused
-> + *
-> + * Fill the passed user space @ctx with the details of the requested
-> + * attribute.
-> + *
-> + * Returns 0 on success, an error code otherwise.
-> + */
-> +static int smack_setselfattr(unsigned int attr, struct lsm_ctx __user *ctx,
-> +			     size_t size, u32 flags)
-> +{
-> +	struct lsm_ctx *lctx;
-> +	int rc;
-> +
-> +	lctx = kmalloc(size, GFP_KERNEL);
-> +	if (lctx == NULL)
-> +		return -ENOMEM;
-> +
-> +	if (copy_from_user(lctx, ctx, size))
-> +		rc = -EFAULT;
-> +	else if (lctx->ctx_len > size)
-> +		rc = -E2BIG;
-> +	else
-> +		rc = do_setattr(attr, lctx->ctx, lctx->ctx_len);
-> +
-> +	kfree(lctx);
-> +	if (rc > 0)
-> +		return 0;
-> +	return rc;
-> +}
-> +
-> +/**
-> + * smack_setprocattr - Smack process attribute setting
-> + * @name: the name of the attribute in /proc/.../attr
-> + * @value: the value to set
-> + * @size: the size of the value
-> + *
-> + * Sets the Smack value of the task. Only setting self
-> + * is permitted and only with privilege
-> + *
-> + * Returns the length of the smack label or an error code
-> + */
-> +static int smack_setprocattr(const char *name, void *value, size_t size)
-> +{
-> +	int attr = lsm_name_to_attr(name);
-> +
-> +	if (attr == LSM_ATTR_UNDEF)
+This complies with how MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED is
+defined - "memfd_create() without MFD_NOEXEC_SEAL will be rejected"
 
-That should be '(attr != LSM_ATTR_UNDEF)', right?
+Thanks to Dominique Martinet <asmadeus@codewreck.org> who reported the bug.
+see [1] for context.
 
-> +		return do_setattr(attr, value, size);
-> +	return -EINVAL;
-> +}
-> +
->  /**
->   * smack_unix_stream_connect - Smack access on UDS
->   * @sock: one sock
-> @@ -4939,6 +5033,8 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
->  
->  	LSM_HOOK_INIT(d_instantiate, smack_d_instantiate),
->  
-> +	LSM_HOOK_INIT(getselfattr, smack_getselfattr),
-> +	LSM_HOOK_INIT(setselfattr, smack_setselfattr),
->  	LSM_HOOK_INIT(getprocattr, smack_getprocattr),
->  	LSM_HOOK_INIT(setprocattr, smack_setprocattr),
->  
-> -- 
-> 2.40.1
+[1] https://lore.kernel.org/linux-mm/CABi2SkXUX_QqTQ10Yx9bBUGpN1wByOi_=gZU6WEy5a8MaQY3Jw@mail.gmail.com/T/
 
---
-paul-moore.com
+Jeff Xu (2):
+  mm/memfd: sysctl: fix MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED
+  selftests/memfd: sysctl: fix MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED
+
+ mm/memfd.c                                 | 48 +++++++++++-----------
+ tools/testing/selftests/memfd/memfd_test.c |  5 +++
+ 2 files changed, 30 insertions(+), 23 deletions(-)
+
+-- 
+2.41.0.255.g8b1d071c50-goog
+
