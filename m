@@ -2,249 +2,297 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A80C04FE0
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Jun 2023 22:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B82BEB64DA
+	for <linux-security-module@archiver.kernel.org>; Sat,  1 Jul 2023 02:06:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232711AbjF3WQY (ORCPT
+        id S229489AbjGACGZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Jun 2023 18:16:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49768 "EHLO
+        Fri, 30 Jun 2023 22:06:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232347AbjF3WQJ (ORCPT
+        with ESMTP id S229447AbjGACGY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Jun 2023 18:16:09 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B47B23C32;
-        Fri, 30 Jun 2023 15:16:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=mmrCw93FsSgGVqkQGx3tY+c3DxJ3ErMGqt6cuZmQDk4=; b=3Xi9NJjkd4QPELIEMLqHm1+oJy
-        QNIOVPA8HW3kXP6XuZluim3h/1Z/sfwrG9QOzNRHgYq+vOXcblPYVWq7qnircmbeiJPJDVgOjWyzo
-        LbnhyHqo5AegY+fER/tKQShp8dh+Z/+/bv4xI3KoQiSpmxUAYDgP6p5vAe2pi77qFUU0ycsQEmV7V
-        4gCVdOf3P+PueFWMrnvROKMoMz+u7SsILxSnayKbZrj37v0X+NhKaX7iej/SD3IFAsLN2XayGDdUC
-        G3y/vRbujnR04W/Op5jRENlRX4f86+/5+pwYqxdiQMmhYNN5AwTPrNqa/XDugttEtOweLL0X0YqO/
-        pQ84xrwQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qFML8-004eW8-2f;
-        Fri, 30 Jun 2023 22:11:42 +0000
-Date:   Fri, 30 Jun 2023 15:11:42 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Julia Lawall <julia.lawall@inria.fr>,
-        Takashi Iwai <tiwai@suse.de>
-Cc:     Jeff Layton <jlayton@kernel.org>, Jeremy Kerr <jk@ozlabs.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Carlos Llamas <cmllamas@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Brad Warrum <bwarrum@linux.ibm.com>,
-        Ritu Agarwal <rituagar@linux.ibm.com>,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Sterba <dsterba@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ian Kent <raven@themaw.net>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Salah Triki <salah.triki@gmail.com>,
-        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Joel Becker <jlbec@evilplan.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Tyler Hicks <code@tyhicks.com>,
-        Ard Biesheuvel <ardb@kernel.org>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <muchun.song@linux.dev>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Dave Kleikamp <shaggy@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Bob Copeland <me@bobcopeland.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        Anders Larsen <al@alarsen.net>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Evgeniy Dushistov <dushistov@mail.ru>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Juergen Gross <jgross@suse.com>,
-        Ruihan Li <lrh2000@pku.edu.cn>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Udipto Goswami <quic_ugoswami@quicinc.com>,
-        Linyu Yuan <quic_linyyuan@quicinc.com>,
-        John Keeping <john@keeping.me.uk>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        Dan Carpenter <error27@gmail.com>,
-        Yuta Hayama <hayama@lineo.co.jp>,
-        Jozef Martiniak <jomajm@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Sandeep Dhavale <dhavale@google.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        ZhangPeng <zhangpeng362@huawei.com>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Aditya Garg <gargaditya08@live.com>,
-        Erez Zadok <ezk@cs.stonybrook.edu>,
-        Yifei Liu <yifeliu@cs.stonybrook.edu>,
-        Yu Zhe <yuzhe@nfschina.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Oleg Kanatov <okanatov@gmail.com>,
-        "Dr. David Alan Gilbert" <linux@treblig.org>,
-        Jiangshan Yi <yijiangshan@kylinos.cn>,
-        xu xin <cgel.zte@gmail.com>, Stefan Roesch <shr@devkernel.io>,
-        Zhihao Cheng <chengzhihao1@huawei.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Seth Forshee <sforshee@digitalocean.com>,
-        Zeng Jingxiang <linuszeng@tencent.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Zhang Yi <yi.zhang@huawei.com>, Tom Rix <trix@redhat.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Chen Zhongjin <chenzhongjin@huawei.com>,
-        Zhengchao Shao <shaozhengchao@huawei.com>,
-        Rik van Riel <riel@surriel.com>,
-        Jingyu Wang <jingyuwang_vip@163.com>,
-        Hangyu Hua <hbh25y@gmail.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-usb@vger.kernel.org,
-        v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, autofs@vger.kernel.org,
-        linux-mm@kvack.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, codalist@coda.cs.cmu.edu,
-        ecryptfs@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-um@lists.infradead.org, linux-mtd@lists.infradead.org,
-        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com,
-        linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
-        linux-unionfs@vger.kernel.org, linux-hardening@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org,
-        linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Subject: Re: [PATCH 00/79] fs: new accessors for inode->i_ctime
-Message-ID: <ZJ9THiUlOUmm0xpD@bombadil.infradead.org>
-References: <20230621144507.55591-1-jlayton@kernel.org>
- <20230621152141.5961cf5f@gandalf.local.home>
+        Fri, 30 Jun 2023 22:06:24 -0400
+Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 727654212;
+        Fri, 30 Jun 2023 19:06:22 -0700 (PDT)
+Received: by mail-qv1-xf29.google.com with SMTP id 6a1803df08f44-635dc2f6ef9so17226546d6.3;
+        Fri, 30 Jun 2023 19:06:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688177181; x=1690769181;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w3smUnGEw7mT56KK3C7P8wgk7KPZaZlCNBDwAaXBuwc=;
+        b=d6kl8WUsrmoo4SnLz4pH8zGJhVmqwlzJ/48Z0MShfshO9IDRRrTK0IyQ0ZqbfltjrE
+         BGrPyj5lzlHvgJ0eICGR28y7DIGnMKBFjlY3ATxR/SbnR1FcLDs6c5cFT9LVGlsTH/ra
+         /wAyhY4dncgMpfzhv1Pcc/qP1UOyEeWwlBZsOrCvkd7a+EUMIghzHh/bjhzFKZZdfe8R
+         s87UEN9nV9SIVo1F3EMRLbTblyFIJg086niEosG0ClWEz7oHn4toFL3s1y22wIHplfxF
+         9lUZmjhlmKaHZn8INfyvc1fT+drpU3/gJDG/DLg3fZYoqiWHIF5p6+IBLksw1gVtuvEM
+         XQ/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688177181; x=1690769181;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w3smUnGEw7mT56KK3C7P8wgk7KPZaZlCNBDwAaXBuwc=;
+        b=GGZEIGyxKzIpvrVs+nMy7zZKbQxfqmF92WnA+2GKnV4gKFhLrpkku5ewLVTkxhZjFa
+         7OmkzuSKzwwn5CccYOmxsH1XnKI2ScKziyIVnwuBZeRzwReJM6rPHkiNp5Jvt0aoym8v
+         e71OgUaOG44eZP4CIksGfnYftCcq+NXWYZkcgIxaqZwnbbWOofSoR3O4SLMDiBom3DPn
+         +UIjulm+hUt3abu1ej3CiEfP+Drg6Lhwkpaz5HF3kDJapuqyTkaPhkpfugwIGNmJlew5
+         f7o2UbO3QpEs94atc0yU/3MDilgMM5kI0QrxSyIErXres1qt63Rc7gcox1jZggIumk4f
+         1txw==
+X-Gm-Message-State: ABy/qLbYArtMN3ZSuNw49DMnBX47bHPFBGFTnLTo70k1q5ZA+HMAtKVy
+        Sbt8PByCSBh+AW0B4aipI11E3LsqN+wLz6/j9Kc=
+X-Google-Smtp-Source: APBJJlEdnQWegqx0e/d3qoYxhCVwdiYFe19JkL6c7pSTObHst6GK9SlMKCOYPFVE1i/EwWPIXSnn3OUicpWaHCFNdI8=
+X-Received: by 2002:ad4:518f:0:b0:62d:df48:baf0 with SMTP id
+ b15-20020ad4518f000000b0062ddf48baf0mr3968797qvp.61.1688177181315; Fri, 30
+ Jun 2023 19:06:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230621152141.5961cf5f@gandalf.local.home>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+References: <20230629051832.897119-1-andrii@kernel.org>
+In-Reply-To: <20230629051832.897119-1-andrii@kernel.org>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Sat, 1 Jul 2023 10:05:44 +0800
+Message-ID: <CALOAHbBupxQ3RH+SbzUv=W2dRDS-mG1PuRpARrMnMv=o6Ro7Sw@mail.gmail.com>
+Subject: Re: [PATCH RESEND v3 bpf-next 00/14] BPF token
+To:     Andrii Nakryiko <andrii@kernel.org>
+Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        keescook@chromium.org, brauner@kernel.org, lennart@poettering.net,
+        cyphar@cyphar.com, luto@kernel.org, kernel-team@meta.com,
+        sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 21, 2023 at 03:21:41PM -0400, Steven Rostedt wrote:
-> On Wed, 21 Jun 2023 10:45:05 -0400
-> Jeff Layton <jlayton@kernel.org> wrote:
-> 
-> > Most of this conversion was done via coccinelle, with a few of the more
-> > non-standard accesses done by hand. There should be no behavioral
-> > changes with this set. That will come later, as we convert individual
-> > filesystems to use multigrain timestamps.
-> 
-> BTW, Linus has suggested to me that whenever a conccinelle script is used,
-> it should be included in the change log.
+On Thu, Jun 29, 2023 at 1:18=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org>=
+ wrote:
+>
+> This patch set introduces new BPF object, BPF token, which allows to dele=
+gate
+> a subset of BPF functionality from privileged system-wide daemon (e.g.,
+> systemd or any other container manager) to a *trusted* unprivileged
+> application. Trust is the key here. This functionality is not about allow=
+ing
+> unconditional unprivileged BPF usage. Establishing trust, though, is
+> completely up to the discretion of respective privileged application that
+> would create a BPF token, as different production setups can and do achie=
+ve it
+> through a combination of different means (signing, LSM, code reviews, etc=
+),
+> and it's undesirable and infeasible for kernel to enforce any particular =
+way
+> of validating trustworthiness of particular process.
+>
+> The main motivation for BPF token is a desire to enable containerized
+> BPF applications to be used together with user namespaces. This is curren=
+tly
+> impossible, as CAP_BPF, required for BPF subsystem usage, cannot be names=
+paced
+> or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to BP=
+F
+> helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safely=
+ read
+> arbitrary memory, and it's impossible to ensure that they only read memor=
+y of
+> processes belonging to any given namespace. This means that it's impossib=
+le to
+> have namespace-aware CAP_BPF capability, and as such another mechanism to
+> allow safe usage of BPF functionality is necessary. BPF token and delegat=
+ion
+> of it to a trusted unprivileged applications is such mechanism. Kernel ma=
+kes
+> no assumption about what "trusted" constitutes in any particular case, an=
+d
+> it's up to specific privileged applications and their surrounding
+> infrastructure to decide that. What kernel provides is a set of APIs to c=
+reate
+> and tune BPF token, and pass it around to privileged BPF commands that ar=
+e
+> creating new BPF objects like BPF programs, BPF maps, etc.
+>
+> Previous attempt at addressing this very same problem ([0]) attempted to
+> utilize authoritative LSM approach, but was conclusively rejected by upst=
+ream
+> LSM maintainers. BPF token concept is not changing anything about LSM
+> approach, but can be combined with LSM hooks for very fine-grained securi=
+ty
+> policy. Some ideas about making BPF token more convenient to use with LSM=
+ (in
+> particular custom BPF LSM programs) was briefly described in recent LSF/M=
+M/BPF
+> 2023 presentation ([1]). E.g., an ability to specify user-provided data
+> (context), which in combination with BPF LSM would allow implementing a v=
+ery
+> dynamic and fine-granular custom security policies on top of BPF token. I=
+n the
+> interest of minimizing API surface area discussions this is going to be
+> added in follow up patches, as it's not essential to the fundamental conc=
+ept
+> of delegatable BPF token.
+>
+> It should be noted that BPF token is conceptually quite similar to the id=
+ea of
+> /dev/bpf device file, proposed by Song a while ago ([2]). The biggest
+> difference is the idea of using virtual anon_inode file to hold BPF token=
+ and
+> allowing multiple independent instances of them, each with its own set of
+> restrictions. BPF pinning solves the problem of exposing such BPF token
+> through file system (BPF FS, in this case) for cases where transferring F=
+Ds
+> over Unix domain sockets is not convenient. And also, crucially, BPF toke=
+n
+> approach is not using any special stateful task-scoped flags. Instead, bp=
+f()
+> syscall accepts token_fd parameters explicitly for each relevant BPF comm=
+and.
+> This addresses main concerns brought up during the /dev/bpf discussion, a=
+nd
+> fits better with overall BPF subsystem design.
+>
+> This patch set adds a basic minimum of functionality to make BPF token us=
+eful
+> and to discuss API and functionality. Currently only low-level libbpf API=
+s
+> support passing BPF token around, allowing to test kernel functionality, =
+but
+> for the most part is not sufficient for real-world applications, which
+> typically use high-level libbpf APIs based on `struct bpf_object` type. T=
+his
+> was done with the intent to limit the size of patch set and concentrate o=
+n
+> mostly kernel-side changes. All the necessary plumbing for libbpf will be=
+ sent
+> as a separate follow up patch set kernel support makes it upstream.
+>
+> Another part that should happen once kernel-side BPF token is established=
+, is
+> a set of conventions between applications (e.g., systemd), tools (e.g.,
+> bpftool), and libraries (e.g., libbpf) about sharing BPF tokens through B=
+PF FS
+> at well-defined locations to allow applications take advantage of this in
+> automatic fashion without explicit code changes on BPF application's side=
+.
+> But I'd like to postpone this discussion to after BPF token concept lands=
+.
+>
+> Once important distinctions from v2 that should be noted is a chance in t=
+he
+> semantics of a newly added BPF_TOKEN_CREATE command. Previously,
+> BPF_TOKEN_CREATE would create BPF token kernel object and return its FD t=
+o
+> user-space, allowing to (optionally) pin it in BPF FS using BPF_OBJ_PIN
+> command. This v3 version changes this slightly: BPF_TOKEN_CREATE combines=
+ BPF
+> token object creation *and* pinning in BPF FS. Such change ensures that B=
+PF
+> token is always associated with a specific instance of BPF FS and cannot
+> "escape" it by application re-pinning it somewhere else using another
+> BPF_OBJ_PIN call. Now, BPF token can only be pinned once during its creat=
+ion,
+> better containing it inside intended container (under assumption BPF FS i=
+s set
+> up in such a way as to not be shared with other containers on the system)=
+.
+>
+>   [0] https://lore.kernel.org/bpf/20230412043300.360803-1-andrii@kernel.o=
+rg/
+>   [1] http://vger.kernel.org/bpfconf2023_material/Trusted_unprivileged_BP=
+F_LSFMM2023.pdf
+>   [2] https://lore.kernel.org/bpf/20190627201923.2589391-2-songliubraving=
+@fb.com/
+>
+> v3->v3-resend:
+>   - I started integrating token_fd into bpf_object_open_opts and higher-l=
+evel
+>     libbpf bpf_object APIs, but it started going a bit deeper into bpf_ob=
+ject
+>     implementation details and how libbpf performs feature detection and
+>     caching, so I decided to keep it separate from this patch set and not
+>     distract from the mostly kernel-side changes;
+> v2->v3:
+>   - make BPF_TOKEN_CREATE pin created BPF token in BPF FS, and disallow
+>     BPF_OBJ_PIN for BPF token;
+> v1->v2:
+>   - fix build failures on Kconfig with CONFIG_BPF_SYSCALL unset;
+>   - drop BPF_F_TOKEN_UNKNOWN_* flags and simplify UAPI (Stanislav).
+>
+> Andrii Nakryiko (14):
+>   bpf: introduce BPF token object
+>   libbpf: add bpf_token_create() API
+>   selftests/bpf: add BPF_TOKEN_CREATE test
+>   bpf: add BPF token support to BPF_MAP_CREATE command
+>   libbpf: add BPF token support to bpf_map_create() API
+>   selftests/bpf: add BPF token-enabled test for BPF_MAP_CREATE command
+>   bpf: add BPF token support to BPF_BTF_LOAD command
+>   libbpf: add BPF token support to bpf_btf_load() API
+>   selftests/bpf: add BPF token-enabled BPF_BTF_LOAD selftest
+>   bpf: add BPF token support to BPF_PROG_LOAD command
+>   bpf: take into account BPF token when fetching helper protos
+>   bpf: consistenly use BPF token throughout BPF verifier logic
+>   libbpf: add BPF token support to bpf_prog_load() API
+>   selftests/bpf: add BPF token-enabled BPF_PROG_LOAD tests
+>
+>  drivers/media/rc/bpf-lirc.c                   |   2 +-
+>  include/linux/bpf.h                           |  79 ++++-
+>  include/linux/filter.h                        |   2 +-
+>  include/uapi/linux/bpf.h                      |  53 ++++
+>  kernel/bpf/Makefile                           |   2 +-
+>  kernel/bpf/arraymap.c                         |   2 +-
+>  kernel/bpf/cgroup.c                           |   6 +-
+>  kernel/bpf/core.c                             |   3 +-
+>  kernel/bpf/helpers.c                          |   6 +-
+>  kernel/bpf/inode.c                            |  46 ++-
+>  kernel/bpf/syscall.c                          | 183 +++++++++---
+>  kernel/bpf/token.c                            | 201 +++++++++++++
+>  kernel/bpf/verifier.c                         |  13 +-
+>  kernel/trace/bpf_trace.c                      |   2 +-
+>  net/core/filter.c                             |  36 +--
+>  net/ipv4/bpf_tcp_ca.c                         |   2 +-
+>  net/netfilter/nf_bpf_link.c                   |   2 +-
+>  tools/include/uapi/linux/bpf.h                |  53 ++++
+>  tools/lib/bpf/bpf.c                           |  35 ++-
+>  tools/lib/bpf/bpf.h                           |  45 ++-
+>  tools/lib/bpf/libbpf.map                      |   1 +
+>  .../selftests/bpf/prog_tests/libbpf_probes.c  |   4 +
+>  .../selftests/bpf/prog_tests/libbpf_str.c     |   6 +
+>  .../testing/selftests/bpf/prog_tests/token.c  | 277 ++++++++++++++++++
+>  24 files changed, 957 insertions(+), 104 deletions(-)
+>  create mode 100644 kernel/bpf/token.c
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
+>
+> --
+> 2.34.1
+>
+>
 
-Sometimes people like the coccinelle included in the commit, sometimes
-people don't [0], it really ends up being up to a subjective maintainer
-preference. A compromise could be to use git notes as these are
-optional, however if we want to go down that path we should try to make
-a general consensus on it so we can send a consistent message.
 
-[0] https://lore.kernel.org/all/20230512073100.GC32559@twin.jikos.cz/
+Hi Andrii,
 
-  Luis
+Thanks for your proposal.
+That seems to be a useful functionality, and yet I have some questions.
+
+1. Why can't we add security_bpf_probe_read_{kernel,user}?
+    If possible, we can use these LSM hooks to refuse the process to
+read other tasks' information. E.g. if the other process is not within
+the same cgroup or the same namespace, we just refuse the reading. I
+think it is not hard to identify if the other process is within the
+same cgroup or the same namespace.
+
+2. Why can't we extend bpf_cookie?
+   We're now using bpf_cookie to identify each user or each
+application, and only the permitted cookies can create new probe
+links.  However we find the bpf_cookie is only supported by tracing,
+perf_event and kprobe_multi, so we're planning to extend it to other
+possible link types, then we can use LSM hooks to control all bpf
+links.  I think that the upstream kernel should also support
+bpf_cookie for all bpf links. If possible, we will post it to the
+upstream in the future.
+   After I have read your BPF token proposal, I just have some other
+ideas. Why can't we just extend bpf_cookie to all other BPF objects?
+For example, all progs and maps should also have the bpf_cookie.
+
+
+--=20
+Regards
+Yafang
