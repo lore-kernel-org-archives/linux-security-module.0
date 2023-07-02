@@ -2,83 +2,94 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C28EB64D9
-	for <linux-security-module@archiver.kernel.org>; Sun,  2 Jul 2023 08:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF94EB64D9
+	for <linux-security-module@archiver.kernel.org>; Sun,  2 Jul 2023 17:09:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229767AbjGBIp6 (ORCPT
+        id S229675AbjGBRJJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 2 Jul 2023 04:45:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37604 "EHLO
+        Sun, 2 Jul 2023 13:09:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbjGBIp6 (ORCPT
+        with ESMTP id S229569AbjGBRJI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 2 Jul 2023 04:45:58 -0400
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [IPv6:2001:1600:3:17::42a9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9469183
-        for <linux-security-module@vger.kernel.org>; Sun,  2 Jul 2023 01:45:55 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Qv2hK0xmyzMqB7Y;
-        Sun,  2 Jul 2023 08:45:53 +0000 (UTC)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Qv2hH73qwzMpqLW;
-        Sun,  2 Jul 2023 10:45:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1688287553;
-        bh=vIvy7ZzQotH8aB4hWVGY+ekZa/WmcUbiE7I18SPLKqg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=O6Xv7856KQQ0vird2NPa6riLkOe27PkIoI9pD2Yi7M9Md2ictlTp7CtDAM3kd3m4h
-         3ZMoWn5Dj9NBcqWTvFcn+kX6OyZ58FWSqc3qk7fwraTY0qiWbPxiMrqkRabejdLGeP
-         cN0iDE7SXRQctL6EdwvCtHAFFuRTKyYATeKC7o6c=
-Message-ID: <4a733dbd-f6e2-dc69-6c8d-47c362644462@digikod.net>
-Date:   Sun, 2 Jul 2023 10:45:51 +0200
+        Sun, 2 Jul 2023 13:09:08 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9AA218B;
+        Sun,  2 Jul 2023 10:09:07 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-666e64e97e2so1941452b3a.1;
+        Sun, 02 Jul 2023 10:09:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688317747; x=1690909747;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z+OWP9mTxDvq9/9bth4FmWGXzG9JshUYvadC+k3pbKI=;
+        b=ZVyrOGeve1JC9HcQiHoQdbvXMQQTytqcF/KiU8fKLltcPhsse4n5HTwiyMvQhljliR
+         s1IVCuu6koKhsEdyWBaUxXSCO8oTtb66/TwczesKLJuaSZJgN2lMsN88Q6Tc8H0fDUG6
+         /9v43LvZtrsA4/OI+zFrNUc/vgFvwHoIoj6Pe8uYLgZiCm154zi97U1diiXMv2DSQBKJ
+         vF8nlC95f4lTtbaaPoq6xUOz9dRuldyAm+FLxKKPhjcfW6XpJ5UhLkFnRrOBp7CMyQsR
+         f/oSivF6WYQBkX6Ohfa5icWdiAv09HTNuLhgxTlH3zR/dbm3LN2+2FU+yR0JAVB7DX23
+         NQjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688317747; x=1690909747;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z+OWP9mTxDvq9/9bth4FmWGXzG9JshUYvadC+k3pbKI=;
+        b=AnmfkGl/qVa3tpWW0PHYqyzydopeqaO2QHmp9kO3pI7hxMiDzfVNuf2w9jWBFxisLI
+         7sKEwCL82HJ8bfHhqs7C6u6LVeBlTXdDHPMSG4x6eNk8coJwMB9vol5mokcIkbUSl7Gi
+         2p0UYVPqjflw6qMWgwMT57fWwrGP946IW+vb206p+F/xkMP73Kxx6dQT/8fuuznpOnin
+         +w7pVK2dW1caoSUFyrx0Kiud2M9A/7bO64PDGsFENgnumkhl5NhjrzT1RQZQ04r8bpiK
+         t/HU1jvCXHmvvcVR/IATEkRLhg/YitMdF+hmnt99d6SOpHtPB/+Fry77FUuf3F1dXpkC
+         gJSw==
+X-Gm-Message-State: AC+VfDyk7nLSwL3u/40Kbek1TpHC6Ka8pAk2dWTeLD5G3n9UNsQS3p5j
+        +7Z+v4uhxBWq/NiX+3LXSMDPzlRzG9MMY5Md
+X-Google-Smtp-Source: ACHHUZ6zNpcL400rejZP8WVfHTOBPgX7UQQM75jRZ95xOEUskQQTr6+lWtrSDfrshGyjDYtB+4CTQw==
+X-Received: by 2002:a05:6a20:970a:b0:12c:518:b8de with SMTP id hr10-20020a056a20970a00b0012c0518b8demr6434565pzc.17.1688317747087;
+        Sun, 02 Jul 2023 10:09:07 -0700 (PDT)
+Received: from fedora.. ([123.139.60.254])
+        by smtp.gmail.com with ESMTPSA id z2-20020a656642000000b005302682a668sm11847188pgv.17.2023.07.02.10.09.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Jul 2023 10:09:06 -0700 (PDT)
+From:   Pairman Guo <pairmanxlr@gmail.com>
+To:     paul@paul-moore.com
+Cc:     jmorris@namei.org, serge@hallyn.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Pairman Guo <pairmanxlr@gmail.com>
+Subject: [PATCH] LSM: Fix typo in a comment
+Date:   Mon,  3 Jul 2023 01:08:57 +0800
+Message-ID: <20230702170857.15603-1-pairmanxlr@gmail.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v11 10/12] selftests/landlock: Add 11 new test suites
- dedicated to network
-Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
- <20230515161339.631577-11-konstantin.meskhidze@huawei.com>
- <20230701.acb4d98c59a0@gnoack.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20230701.acb4d98c59a0@gnoack.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi maintainers,
 
-On 01/07/2023 21:07, Günther Noack wrote:
-> Hi!
-> 
-> On Tue, May 16, 2023 at 12:13:37AM +0800, Konstantin Meskhidze wrote:
->> +TEST_F(inet, bind)
-> 
-> If you are using TEST_F() and you are enforcing a Landlock ruleset
-> within that test, doesn't that mean that the same Landlock ruleset is
-> now also enabled on other tests that get run after that test?
-> 
-> Most of the other Landlock selftests use TEST_F_FORK() for that
-> reason, so that the Landlock enforcement stays local to the specific
-> test, and does not accidentally influence the observed behaviour in
-> other tests.
+In the description of function definition security_file_lock(),
+the line "@cmd: fnctl command" has a typo where "fnctl" should be
+"fcntl". This patch fixes the typo.
 
-Initially Konstantin wrote tests with TEST_F_FORK() but I asked him to 
-only use TEST_F() because TEST_F_FORK() is only useful when a 
-FIXTURE_TEARDOWN() needs access rights that were dropped with a 
-TEST_F(), e.g. to unmount mount points set up with a FIXTURE_SETUP() 
-while Landlock restricted a test process.
+Please merge if it is the case. Thanks in advance.
 
-Indeed, TEST_F() already fork() to make sure there is no side effect 
-with tests.
+Signed-off-by: Pairman Guo <pairmanxlr@gmail.com>
+---
+ security/security.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> The same question applies to other test functions in this file as
-> well.
-> 
-> –Günther
+diff --git a/security/security.c b/security/security.c
+index b720424ca37d..adaa7043c172 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2717,7 +2717,7 @@ int security_file_lock(struct file *file, unsigned int cmd)
+ /**
+  * security_file_fcntl() - Check if fcntl() op is allowed
+  * @file: file
+- * @cmd: fnctl command
++ * @cmd: fcntl command
+  * @arg: command argument
+  *
+  * Check permission before allowing the file operation specified by @cmd from
+-- 
+2.41.0
+
