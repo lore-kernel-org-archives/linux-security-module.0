@@ -2,203 +2,106 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD70EC001DB
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jul 2023 14:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F6FEB64DD
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jul 2023 14:53:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231143AbjGCOpL (ORCPT
+        id S231240AbjGCOxR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jul 2023 10:45:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60132 "EHLO
+        Mon, 3 Jul 2023 10:53:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231423AbjGCOpI (ORCPT
+        with ESMTP id S231452AbjGCOxO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jul 2023 10:45:08 -0400
-Received: from sonic311-29.consmr.mail.ne1.yahoo.com (sonic311-29.consmr.mail.ne1.yahoo.com [66.163.188.210])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2A53B2
-        for <linux-security-module@vger.kernel.org>; Mon,  3 Jul 2023 07:44:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1688395446; bh=uCaRBl9/DYMlt/h9XiMx0g0xSxre1uIRlqlHZBMOfsg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=IZzgSdredGyVvsu4w+Q4Kvs6zfUWrQiHg1g0YxPZLCHoPNU4NEP+xERM8Q3vzgorvBsrV6mWjnsisSiFky+f0Ud7JgDvcVYx8qf+rVwLW98iN3UrM6qFzYasKtNa4lDjrm0xRoga5zjC/YRNEJTG5JNP2iccsOt2Rx1FOH5UKqjA3+gelQGShZXOcsDt/cwwWNPKPaqnyv0pxjxFEK0txL1lw8W7mHHMX7DKAHPAsMS/dsH8Efd8yAH1LmCD3Ml2qb9bKh44wAQ2ojYNS1QZmrYmNcneUHEgnxug8696qp7zfw1f7uApnD1+hF+ByXCv/HxXQ9KbHY1+x1uAlixenw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1688395446; bh=LWa5SAyohjajtL+b7RuCBL8UqII61h6t5uhGvVeZfu3=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=OUhP+mN06or9Xybztc8eWtxTPv4zm4L1m86NQb9UVD1Jcc6TqdLdHG/T1CioEA05JeKGp5zO+pXtTYa/piQ17itaVKjTmYl+v/fLjS5F/YLD48/RDbT0n9YB5G/Ha7uqWYGe1SAkknqSJ7PMpPB4tkQWi4NqBr2VXBRZh3yKl7yl4A1TYcScuEpqHzTIVCFXW793342GW9Y5Gl+HSRs2J5SmYCvul1za+H8nRqtBqYdJYKI4OzvvaWrP3vgTM5Mn9ITjt1AYDUCKrKlEtqMDUmGJmQn0JqyjNTEueUjEUHuwhP2Jjuxn4DMTbGVRS7GAJ1vqYXfQqo3Iu5HM3NZRDA==
-X-YMail-OSG: TEaXaS0VM1lDxHn5_Z3__e9QSBnKkLDrsYHp2NKNIzdkUb1CDre5smZnvUowRoR
- aJihC5J6QU22hOqS_ltmemBtsQQJ8XMW4iQwIRl90NKzrg2MYQkbwbwptIMw_CxPa64GHqTeBbXN
- pbheNCBiIN7CN9ZBkXDg09UlAYoB3goh.3918Xj9VGSOXtYUP7zyKExuI2BrcWO4ChXhJswjH5lG
- wPCpjIx02TL3S8wK5ge1oaUxFwOG4ZUu0PrkOCz8EfW6GmNWavCGCI2iUrFqoPlx3GwfaqEsYLWx
- Ald5sxCte4NyUXclujcPSr3R8b2hwkVrJiB.trLeypJr3N_BbB2nFdBG5YlHCiIxAM7DxyrawtFA
- dgDlFsbrCPZVmfKzuaDMMlApD55R4Z8nk34weHvUqW25m_XxpLYKwC9kTjDZYzr99xCEjSOlXhRs
- jdkm.P_XjwzcI1Ai3fbCeEL9e4NDHc1FYW3wNAXIKNSq_7I_NqCa3ZIqO7yypmlavVduVVbXsLMv
- Pk9mTWCN00Z63_EHSEY241ZaGtkSUJhg6M6s_54z0Hxexyc95VyH.p83gY2GyBlFVqaRd3nETHdM
- IwtJhM2p4beAzYRonqfbUz1IzmxaU7gQV5f5hJJZsBHR3uBIGPx4gqm2APRU4JW_xoAHrwWNyoyl
- 6MEXa348e9DXi3UZAmVCmU23uj6VhKJK6jehIOC.7oip3zPi4EYVQI0Ijr48ly5ZCAc2tejK6xLn
- gWUOQuHJRamUcxEtJLDEDGFEp9W3LtVoSuASa42304vtn.PWhey85mHHHb_u1k0dbyKKB1v1Myq5
- v7zunYwOrp7rPSuY7ZZ3qp.sCy19rXBIETPZ_2uqSutbmfPoqCVb5yVJlwQeRmLUpVJHQOdZxT5_
- hik1KQ6iAl1AO4PbPaPuykUXyBrLexuO8g_5Jxc3VUjb4RAKxhxnnCAHOe4KLbnpCgCtbuJaTMFt
- s5LGTLccFgzZZFbT6ByQ13q0Eeg.XAFT1Y5Zz4cOA.WA0PgGQrS_8LWFeXN9zxa0pYJqyiG19YIa
- JoBq2iRSvH2ZYoolT9d6dbQhxrBwTn5hXQR1yOt1RGdx_odWSrXobtCJBGrUPQBzIJMWR.MqQfUM
- jHqpIw3ZLzelIChl7vEF2RBTTBswtBQy5eDb4g4cNCqQRrrPRToIK7rLxPXa1De4effkQu0q6VUA
- FL2EGJGp3QdG8LROSvR6RS6i_uOmpk17B9WUjVg5fs74jMGxbDdcwjd7sZvM5cRsDqjBXZvE9lyp
- V2emJsOcelAJjSDVwQKPiDBrOTDupwTaZuscFe9FKlsUW2z7Rc8bB.85t932ov65R9rkAjSwEQkz
- el_3.SlJRrz3oY_4.VtkKXUIJy0IUvFLpxGfDMKWFt7PK0zMAq28.dEsUC7Qbx9Y55WNifNIiqKY
- TdMdnoiSsg.VzFJh6jBxFbG8UxTsemXKMpJ1StlyBv_Zme4IqUM3pGOFFBCxKuSVRZsLod3MllAv
- 6wFzfKjhfTV9_J0z5hqKyuQox8Fb8Zg7gR4QD3vUliKnH4NX1C.Sb9SIsppUiMhS1_MHUOUrHpIP
- mB5lJp1EgJ74N1CpCFJTZ5mhHXyY5ik2x2tCN32C1bk9QpS6TJJyqFAWz8Ww2iIphOoJoSVJcsFk
- CCofIgmfYKjcXWXJxPKqxpzCgZD3GzItfSAQoytyWKdBPgS6GOQ4BQy.zX5pq8kCtJ5ITDyRkryO
- ReYVh7XcrRacgjHDbl5Yqqk4CUFgWvC_APkb8OO7zoGRTIlXghE7MFwk2vOStUByanR6Z6vj7tlc
- rGn5Vu9p.dTGDtZziSgig0CZCHlHJbHH3zqg0xletU2PZtgNM7eOxgdejpid7y7jj.sAdCiuasCc
- NwGkL9_GoARthVUSEqyuuMe23re7lWp_lNnGnv.ASv9.9dk.0_A5GiPsMmOQlD1viN9SxQ5jSlyX
- OlH1bq1a5_79N178WU7KmpjpHeI0jqZ.4V6WGo3WmzbM2x40hoX4kUEYHuOUqq_fjlLVDSsp4M9r
- 6F.sa5Txjz9fZLXHnAHUwkZB_Eb.OB1264St5QVsB1O7csL0yAbUUDMFYnxE3gkv7kteBFc3ZYBy
- l9tZbs6CPmlKKLYpNhv1UvkGm3jaHGtCpVgizjLB15VMc1IFX6dbhT1Aj07zG3lQ4Wt4_FxCM62j
- IYKvY_2uu4nhaWUD5KQip._crMUpM93H_nOKMJ3JoefcUw9bfmcAHdzBdaPRcjj4qzCvHMwb7aKZ
- Du0mtLAahaJyqULl2F5vOcDHO.4nNEbhoty6fa0Zp4lC7tynDRdDysFI5hg--
+        Mon, 3 Jul 2023 10:53:14 -0400
+Received: from sonic313-14.consmr.mail.ne1.yahoo.com (sonic313-14.consmr.mail.ne1.yahoo.com [66.163.185.37])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E9CDE6F
+        for <linux-security-module@vger.kernel.org>; Mon,  3 Jul 2023 07:53:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1688395991; bh=gZJmRE6lmnVZB2NTyVJqz3e6K3JCO7UExrsJo560Xvg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=n5LEf+qkXl/Hs4C0gyXItBO5B0iXkZyRJ0y0xoGaCCat7yPd87zWzUMbPorks2wLZTHGfV/C5WuRqXqY+FwkJ9YmVZQ2DS+MHPI0l6pJorFI+dt0AJm01PnLvClM3dnzMWGJ+YXKT/obE6b4uLft+O135I2WVBSrAaVD7KyCYddOqidxV/7j/7U/PR1xGErph7sJf2k9ZAQy20U0GsrO7d1b9JkFZg2MMFGsS+/9M5gKXGzDSkcUYVUjhe9aAmNQdqWmj+RrXn8/Mon0Ueb6iQgMiDWZHOp7xVVaBxplLCzEQYUZ3HFCS+hfyA50/w3ey/x3IuA34IAoDAG+lAJHig==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1688395991; bh=Kaq7KRP4s+3nFHTLQCkqaNR3Ti6HXWpwdmWunyamg0r=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jS3Xuof9wZE1aawwlezL/Le+boB3oIyvE9YEac4psAamedfIbe+VGFu8kI5UIWz5CGyKfnDQ8goMj+nI69klb14+qgYScc22LZC1tuGTItdhsqvRV3DU9xYzZlLuI2ahx3jUBp2N0LX1iwcLc9cRnpMvYQJU6ArO4iQDxmyFH8a/4eNVCSmvojuu3lHacoKz644e2LK828QUcsg9UTPNpLlvepBUv2TnCJ3KBlAVUUHFlYtLLswgXVjafXiVBgEv3qYdjybMBpkbeGHjHPOMfWSP7fm7zHBloW/bY7PHSMAcEvuIrhgczeswqUfFnXB9Y1mEhcGy9jFpXLQ67QFQyg==
+X-YMail-OSG: JNciwDkVM1nJakS9t9qgv8b4d8Zqy6.nRka.Tcwg_TBSCn4u3cEO0ELUUFsiXRY
+ 7LbcxNoQSWNUrqhLYHz4__o6y6IAA9SOBOj2YrKKBzzzP1xgx4U89xiild5LxzUUU0LDjKRC_KUR
+ 5roiUqogl2m9l1erapwNpSNnm8VeAE06Lwz35FD_E6uNeLLwJxSHDCH5ZuprWL6amcAuUPA7OlPl
+ tHyl9xhpvi7uRXa_klV976e6iVzMLg8gL9Y9paDCSOqdB.n3sQuhkqFrSTEodi_aMN_igaIyWcl6
+ ux1nhvq9DQlevvAvYQTikjAmlugcgmvDWlW2kV0Z684m_GEey2gAzyGhwdn0Vatu1UPOWChSSzyp
+ 3VBHycO4FzBxyQqmOr.uMH0_8xp8eClH0YYGDm2oD8g2fDuuVbtVYQxW19QCM89JRimoakgX_9Yh
+ UlOSSu9wD.KqcL5OW9ctdaQFAvTG7RrGN8FAtw.fGWXAIA94CsfjA1Aig_ukHSw4EaR5GlTxqNrh
+ cMAYBzllRKrrfEr2OzBPcKQCytJTffd.8Uu751fhSax2JO8xiVsoElC3tXFvM5QfvIE3O_hPjmH.
+ 3DQlv.Y0Cpq.UTbyC6S54UL0gZsBuK5QD71VtMfdDQbLUTqJaHsq9gFpm67uaJfFtR0a36PQuX0Z
+ .jqTgIliaEMVy2ly.P37egorhPuQNfL3P4Zn6xpn58O0CMrFTnjp56DabEK293vtW4yUhsK9gpji
+ Szvm3ZYkUszW.78YvgSov2jwFnvKbXOBhAr_VhkOwj0jP1BALD9Q6GIT8uToZBfnOVJbw3Fi6sGb
+ 9QBi_SOOPBHaCM8e6hIBp9_7vqqvo5mLol2SWy6cbRnFShb3cuqgsGCt7pFgurPyR2uy5L8sTq.g
+ 6h70zd3teTNVss08CKBE8WX84uNdHLPrDbCR3lSBEfA77pKqAsgA73K7T3A2aA6.cIlCONeELZQJ
+ 9y6jgOhQhrfKt4qumnNk1ckE67u9BAnL4al39IKiR64Y3iJeTOHejEZKr3ksjJf_S7E26YtFvUf5
+ fBx6yMUvvBIbyIRxa9p8MVTFT69SmJkoMIB3D5bJqFv9dzF1sREC5TzQgiFCBy8OK4ARi9TL4q9q
+ xmnCd4ltC4.zv42JUJYigcWlphQGUxfqmWvfQacmEWcq5Ln_GRYPya34E3Rhh2AOvGf13DFC0Thx
+ LV14Ir4EBofLYl9.usWuJL1o1MPotOaCrmSyNidZ9zcH2HvtSsiNNLVwQvhAy1o6IbJPJSjrj6yt
+ i8r3aW_5QgFLI4ZB166zzR3otwuwtE8APNN4SBtVtZ.hhDe.vS7pMa9TeJBh7L3dyJ1alB8mNuSf
+ ukShRPLWJcuRkLPqk2KGPWOuT8unP4HbbjDSHHRzkApy1HFM_61mTWC31kG_53sZ2DkzabtCGXLY
+ lvcXHJeb7TG6oliPN7Y..lov9ADB_dGQ1W2DJfsbu7Rb3cGwgYSbl3FSKwUdX.mpWRQGPW8Umulh
+ NxCK6nG_hAo4lZkUxlZA82OYDi7u_DOP4uf2vwxpo_qwffSTeL.WKQyDaVRdFMRJcelLf9pJBghd
+ 8FokRM_9x5IVxJRaLh_MkYTXpR1enSaHEVrkxMGK6aBe9J2wodD6q5ETK3yTogePlZ8iOZEJcu9.
+ hRoZCtNcP0Oc_6UZK.OWcMsiW8T_bTROv5KFuaxcCIhzvp0i7DzNnVM8gw6P_pq9rA32XJdMgP0i
+ EkUeOnjkw3_U8Zmb0ket2fYsFnCinWRdng2KYAE64SB7E5519dlaWLu.DOrb2VM.r_42oPi5UhNU
+ 7fAzb1vEEECHmJUYhCA7Oq07S3UdDBn_RqBBugf.r1ZobkfaIS1dTdO5DEgbAXknLJyCn46BLDMR
+ iLd2uehjS1iH0pB1H2qDZALp6v5ikSgvXZZ6MfVtdNG1eiVgQTMnZrdtXYOOJGw4r4Wu7bzZm4xG
+ gGyQUkzmuacwBSysWzrRTQ2qE_pzYaNIA2kC7FFBIXIkC2D81bj8Au6tgzLMNjGuGqmPV.Q9E7lT
+ PkRvl.luXKBaSU0ia72bNQtpLmJn6IDmNCowWIXgrmYCeGd.9Hg086Tjy9YNnndCxdC.o3csWt89
+ ApT2A9fj3_ZepEKMMZlMyIvsKP1DKJsrGE7LxmJSbHAHv.HPLT25dEORnfn6VIeA_ZFVeQiRZMNF
+ 8EN2zbzyNQe80CxH5Bj.Nw1_eR9rukFeEWktT2UU6QMsflW92NAYO1nTaF1tddm3ITs_PYlFqPy9
+ iRRmc9v.L.XxklPoaOFwQYc2cq2GDXG3fKbzbAn2mrzAUO5jLIZxz9FPQDpDfXY4oXZ1yB2oLAK9
+ ifMo9
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 45de8f03-ac25-42d6-a747-385768fa1cb5
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Mon, 3 Jul 2023 14:44:06 +0000
-Received: by hermes--production-bf1-5d96b4b9f-lngg9 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 202ba4470cdcc78ac791696a012077e9;
-          Mon, 03 Jul 2023 14:44:01 +0000 (UTC)
-Message-ID: <2939cc00-2b8b-bf9a-45bc-b9a2d8d8def1@schaufler-ca.com>
-Date:   Mon, 3 Jul 2023 07:43:55 -0700
+X-Sonic-ID: 45e96ca1-22ad-46d8-86a2-169ee597fdbb
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Mon, 3 Jul 2023 14:53:11 +0000
+Received: by hermes--production-bf1-5d96b4b9f-2p2gp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ef4ab3618aa9d4848912c71509c51da4;
+          Mon, 03 Jul 2023 14:53:07 +0000 (UTC)
+Message-ID: <8ca4ccc3-0e54-ad50-7b9f-fd04708548f0@schaufler-ca.com>
+Date:   Mon, 3 Jul 2023 07:53:05 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [QUESTION] Full user space process isolation?
+Subject: Re: [LSM Stacking] new files fail to inherit SELinux security context
+ of the current directory
 Content-Language: en-US
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        "Dr. Greg" <greg@enjellic.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        David Howells <dhowells@redhat.com>,
-        LuisChamberlain <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Petr Tesarik <petrtesarik@huaweicloud.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-hardening@vger.kernel.org,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+To:     Leesoo Ahn <lsahn@wewakecorp.com>
+Cc:     john.johansen@canonical.com, linux-security-module@vger.kernel.org,
         Casey Schaufler <casey@schaufler-ca.com>
-References: <eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com>
- <20230629021000.GA368825@mail.hallyn.com>
- <14599d8216f1b7520ff5f6cfb27377fa79709f13.camel@huaweicloud.com>
- <20230702175542.GA25867@wind.enjellic.com>
- <0870d82571d1075433a2b81b2953cf8b4afcd415.camel@huaweicloud.com>
+References: <c0ee001b-caf4-22ec-d1c5-d3d8d790760c@wewakecorp.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <0870d82571d1075433a2b81b2953cf8b4afcd415.camel@huaweicloud.com>
+In-Reply-To: <c0ee001b-caf4-22ec-d1c5-d3d8d790760c@wewakecorp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.21612 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/3/2023 12:57 AM, Roberto Sassu wrote:
-> On Sun, 2023-07-02 at 12:55 -0500, Dr. Greg wrote:
->> On Thu, Jun 29, 2023 at 10:11:26AM +0200, Roberto Sassu wrote:
->>
->> Good morning, I hope the weekend is going well for everyone, greetings
->> to Roberto and everyone copied.
->>
->>> On Wed, 2023-06-28 at 21:10 -0500, Serge E. Hallyn wrote:
->>>> On Thu, Jun 22, 2023 at 04:42:37PM +0200, Roberto Sassu wrote:
->>>>> Hi everyone
->>>>>
->>>>> I briefly discussed this topic at LSS NA 2023, but I wanted to have an
->>>>> opinion from a broader audience.
->>>>>
->>>>> In short:
->>>>>
->>>>> I wanted to execute some kernel workloads in a fully isolated user
->>>>> space process, started from a binary statically linked with klibc,
->>>>> connected to the kernel only through a pipe.
->>>>>
->>>>> I also wanted that, for the root user, tampering with that process is
->>>>> as hard as if the same code runs in kernel space.
->>>>>
->>>>> I would use the fully isolated process to parse and convert unsupported
->>>>> data formats to a supported one, after the kernel verified the
->>>> Can you give some examples here of supported and unsupported data
->>>> formats?  ext2 is supported, but we sadly don't trust the sb parser
->>>> to read a an ext2fs coming from unknown source.  So I'm not quite
->>>> clear what problem you're trying to solve.
->>> + eBPF guys (as I'm talking about eBPF)
->> If the week goes well, we will be submitting the second version of our
->> TSEM LSM for review.  It incorporates a significant number of changes
->> and enhancements, based on both initial review comments, and
->> importantly, feedback from our collaborators in the critical
->> infrastructure community.
->>
->> Just as a levelset.  TSEM provides kernel infrastructure to implement
->> security controls based on either deterministic or machine learning
->> models.  Quixote is the userspace infrastructure that enables use of
->> the TSEM kernel infrastructure.
->>
->> Based on your description Roberto, TSEM may be of assistance in
->> addressesing your issues at two different levels.
->>
->> First with respect to protection of an isolated workload.
->>
->> TSEM is inherently workload based, given that it is based on an
->> architecture that implements security modeling namespaces that a
->> process heirarchy can be placed into.  This reduces model complexity
->> and provides the implementation of very specific and targeted security
->> controls based on the needs of a proposed workload.
->>
->> The security controls are prospective rather than retrospective,
->> ie. TSEM will pro-actively block any security behaviors that are not
->> in a security model that has been defined for the workload.
->>
->> For example, with respect to the concerns you had previously mentioned
->> about ptrace.  If the security model definition does not include a
->> security state coefficient for a ptrace_traceme security event, it
->> will be disallowed, regardless of what goes on with respect to kernel
->> development, modulo of course the ptrace_traceme LSM hook being
->> discontinued.
-> Hi Greg
+On 7/2/2023 7:06 PM, Leesoo Ahn wrote:
+> Test env
+> - Ubuntu 23.04 Ubuntu Kernel v6.2 w/ Stacking patch v38
+> - boot param: lsm=apparmor,selinux
+> - AppArmor (Host) + SELinux (Container Fedora 36)
 >
-> thanks for your insights.
+> Hello! I'm currently working on a project related to LSM Stacking, and
+> a few days ago, I encountered a significant issue of SELinux in the
+> container environment.
 >
-> The policy is quite simple:
+> When creating new files in the container using 'mkdir' and 'touch',
+> the new files fail to inherit the security context of the current
+> directory. This problem occurs by the following reason that
+> 'security_inode_init_security' hook is called, which sequentially
+> calls 'apparmor_inode_init_security' and 'selinux_inode_init_security'
+> in order. 'apparmor_inode_init_security' always returns -EOPNOTSUPP,
+> hence 'selinux_inode_init_security' is never called.
 >
->
->      r/w  ^                             kernel space
-> ----------|-----------------------------------------
->           v (pipe)                        user space
->  +-----------------+       +-----------------------+
->  | trustworthy UMD |---X---| rest of the processes |
->  +-----------------+       +-----------------------+
->
-> The question was more, is the LSM infrastructure complete enough that
-> the X can be really enforced?
+> Does 'return 0' in 'apparmor_inode_init_security' to call stacking
+> hooks sequentially have no side-effects? if so, the solution would be
+> easy though.
 
-I believe that it is. SELinux and Smack, users of the LSM infrastructure,
-enforce "X". They also require netlabel for IP communications, and Smack
-falls short on newer protocols, but that's not the fault of LSM.
+The correct fix is to security_inode_init_security(), not
+apparmor_inode_init_security(). The upstream Linus kernel
+does not have a hook in apparmor, so this problem wasn't
+detected there. I'll be sure to get this into v39. 
 
 >
-> Could there be other implicit information flows that the LSM
-> infrastructure is not able/does not yet mediate, that could break the
-> policy above?
-
-Sure. Every so often something pops into the kernel (e.g. io_uring)
-without proper LSM integration. We try to discourage that, and correct
-it when we find it.
-
->
-> I guess TSEM could be for more elaborated security models, but in this
-> case the policy is quite straithforward. Also, your TSEM would be as
-> limited as mine by the LSM hooks available.
->
-> Thanks
->
-> Roberto
->
+> Best regards,
+> Leesoo
