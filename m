@@ -2,312 +2,203 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CCCEB64DD
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jul 2023 12:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD70EC001DB
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jul 2023 14:45:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230350AbjGCMuk (ORCPT
+        id S231143AbjGCOpL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jul 2023 08:50:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58230 "EHLO
+        Mon, 3 Jul 2023 10:45:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbjGCMuj (ORCPT
+        with ESMTP id S231423AbjGCOpI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jul 2023 08:50:39 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D13CAB3;
-        Mon,  3 Jul 2023 05:50:37 -0700 (PDT)
-Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Qvm0q712xz6D9f2;
-        Mon,  3 Jul 2023 20:47:39 +0800 (CST)
-Received: from [10.123.123.126] (10.123.123.126) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Mon, 3 Jul 2023 13:50:33 +0100
-Message-ID: <7df6f52c-578b-d396-7c7e-8dd63946c44e@huawei.com>
-Date:   Mon, 3 Jul 2023 15:50:32 +0300
+        Mon, 3 Jul 2023 10:45:08 -0400
+Received: from sonic311-29.consmr.mail.ne1.yahoo.com (sonic311-29.consmr.mail.ne1.yahoo.com [66.163.188.210])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2A53B2
+        for <linux-security-module@vger.kernel.org>; Mon,  3 Jul 2023 07:44:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1688395446; bh=uCaRBl9/DYMlt/h9XiMx0g0xSxre1uIRlqlHZBMOfsg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=IZzgSdredGyVvsu4w+Q4Kvs6zfUWrQiHg1g0YxPZLCHoPNU4NEP+xERM8Q3vzgorvBsrV6mWjnsisSiFky+f0Ud7JgDvcVYx8qf+rVwLW98iN3UrM6qFzYasKtNa4lDjrm0xRoga5zjC/YRNEJTG5JNP2iccsOt2Rx1FOH5UKqjA3+gelQGShZXOcsDt/cwwWNPKPaqnyv0pxjxFEK0txL1lw8W7mHHMX7DKAHPAsMS/dsH8Efd8yAH1LmCD3Ml2qb9bKh44wAQ2ojYNS1QZmrYmNcneUHEgnxug8696qp7zfw1f7uApnD1+hF+ByXCv/HxXQ9KbHY1+x1uAlixenw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1688395446; bh=LWa5SAyohjajtL+b7RuCBL8UqII61h6t5uhGvVeZfu3=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=OUhP+mN06or9Xybztc8eWtxTPv4zm4L1m86NQb9UVD1Jcc6TqdLdHG/T1CioEA05JeKGp5zO+pXtTYa/piQ17itaVKjTmYl+v/fLjS5F/YLD48/RDbT0n9YB5G/Ha7uqWYGe1SAkknqSJ7PMpPB4tkQWi4NqBr2VXBRZh3yKl7yl4A1TYcScuEpqHzTIVCFXW793342GW9Y5Gl+HSRs2J5SmYCvul1za+H8nRqtBqYdJYKI4OzvvaWrP3vgTM5Mn9ITjt1AYDUCKrKlEtqMDUmGJmQn0JqyjNTEueUjEUHuwhP2Jjuxn4DMTbGVRS7GAJ1vqYXfQqo3Iu5HM3NZRDA==
+X-YMail-OSG: TEaXaS0VM1lDxHn5_Z3__e9QSBnKkLDrsYHp2NKNIzdkUb1CDre5smZnvUowRoR
+ aJihC5J6QU22hOqS_ltmemBtsQQJ8XMW4iQwIRl90NKzrg2MYQkbwbwptIMw_CxPa64GHqTeBbXN
+ pbheNCBiIN7CN9ZBkXDg09UlAYoB3goh.3918Xj9VGSOXtYUP7zyKExuI2BrcWO4ChXhJswjH5lG
+ wPCpjIx02TL3S8wK5ge1oaUxFwOG4ZUu0PrkOCz8EfW6GmNWavCGCI2iUrFqoPlx3GwfaqEsYLWx
+ Ald5sxCte4NyUXclujcPSr3R8b2hwkVrJiB.trLeypJr3N_BbB2nFdBG5YlHCiIxAM7DxyrawtFA
+ dgDlFsbrCPZVmfKzuaDMMlApD55R4Z8nk34weHvUqW25m_XxpLYKwC9kTjDZYzr99xCEjSOlXhRs
+ jdkm.P_XjwzcI1Ai3fbCeEL9e4NDHc1FYW3wNAXIKNSq_7I_NqCa3ZIqO7yypmlavVduVVbXsLMv
+ Pk9mTWCN00Z63_EHSEY241ZaGtkSUJhg6M6s_54z0Hxexyc95VyH.p83gY2GyBlFVqaRd3nETHdM
+ IwtJhM2p4beAzYRonqfbUz1IzmxaU7gQV5f5hJJZsBHR3uBIGPx4gqm2APRU4JW_xoAHrwWNyoyl
+ 6MEXa348e9DXi3UZAmVCmU23uj6VhKJK6jehIOC.7oip3zPi4EYVQI0Ijr48ly5ZCAc2tejK6xLn
+ gWUOQuHJRamUcxEtJLDEDGFEp9W3LtVoSuASa42304vtn.PWhey85mHHHb_u1k0dbyKKB1v1Myq5
+ v7zunYwOrp7rPSuY7ZZ3qp.sCy19rXBIETPZ_2uqSutbmfPoqCVb5yVJlwQeRmLUpVJHQOdZxT5_
+ hik1KQ6iAl1AO4PbPaPuykUXyBrLexuO8g_5Jxc3VUjb4RAKxhxnnCAHOe4KLbnpCgCtbuJaTMFt
+ s5LGTLccFgzZZFbT6ByQ13q0Eeg.XAFT1Y5Zz4cOA.WA0PgGQrS_8LWFeXN9zxa0pYJqyiG19YIa
+ JoBq2iRSvH2ZYoolT9d6dbQhxrBwTn5hXQR1yOt1RGdx_odWSrXobtCJBGrUPQBzIJMWR.MqQfUM
+ jHqpIw3ZLzelIChl7vEF2RBTTBswtBQy5eDb4g4cNCqQRrrPRToIK7rLxPXa1De4effkQu0q6VUA
+ FL2EGJGp3QdG8LROSvR6RS6i_uOmpk17B9WUjVg5fs74jMGxbDdcwjd7sZvM5cRsDqjBXZvE9lyp
+ V2emJsOcelAJjSDVwQKPiDBrOTDupwTaZuscFe9FKlsUW2z7Rc8bB.85t932ov65R9rkAjSwEQkz
+ el_3.SlJRrz3oY_4.VtkKXUIJy0IUvFLpxGfDMKWFt7PK0zMAq28.dEsUC7Qbx9Y55WNifNIiqKY
+ TdMdnoiSsg.VzFJh6jBxFbG8UxTsemXKMpJ1StlyBv_Zme4IqUM3pGOFFBCxKuSVRZsLod3MllAv
+ 6wFzfKjhfTV9_J0z5hqKyuQox8Fb8Zg7gR4QD3vUliKnH4NX1C.Sb9SIsppUiMhS1_MHUOUrHpIP
+ mB5lJp1EgJ74N1CpCFJTZ5mhHXyY5ik2x2tCN32C1bk9QpS6TJJyqFAWz8Ww2iIphOoJoSVJcsFk
+ CCofIgmfYKjcXWXJxPKqxpzCgZD3GzItfSAQoytyWKdBPgS6GOQ4BQy.zX5pq8kCtJ5ITDyRkryO
+ ReYVh7XcrRacgjHDbl5Yqqk4CUFgWvC_APkb8OO7zoGRTIlXghE7MFwk2vOStUByanR6Z6vj7tlc
+ rGn5Vu9p.dTGDtZziSgig0CZCHlHJbHH3zqg0xletU2PZtgNM7eOxgdejpid7y7jj.sAdCiuasCc
+ NwGkL9_GoARthVUSEqyuuMe23re7lWp_lNnGnv.ASv9.9dk.0_A5GiPsMmOQlD1viN9SxQ5jSlyX
+ OlH1bq1a5_79N178WU7KmpjpHeI0jqZ.4V6WGo3WmzbM2x40hoX4kUEYHuOUqq_fjlLVDSsp4M9r
+ 6F.sa5Txjz9fZLXHnAHUwkZB_Eb.OB1264St5QVsB1O7csL0yAbUUDMFYnxE3gkv7kteBFc3ZYBy
+ l9tZbs6CPmlKKLYpNhv1UvkGm3jaHGtCpVgizjLB15VMc1IFX6dbhT1Aj07zG3lQ4Wt4_FxCM62j
+ IYKvY_2uu4nhaWUD5KQip._crMUpM93H_nOKMJ3JoefcUw9bfmcAHdzBdaPRcjj4qzCvHMwb7aKZ
+ Du0mtLAahaJyqULl2F5vOcDHO.4nNEbhoty6fa0Zp4lC7tynDRdDysFI5hg--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 45de8f03-ac25-42d6-a747-385768fa1cb5
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Mon, 3 Jul 2023 14:44:06 +0000
+Received: by hermes--production-bf1-5d96b4b9f-lngg9 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 202ba4470cdcc78ac791696a012077e9;
+          Mon, 03 Jul 2023 14:44:01 +0000 (UTC)
+Message-ID: <2939cc00-2b8b-bf9a-45bc-b9a2d8d8def1@schaufler-ca.com>
+Date:   Mon, 3 Jul 2023 07:43:55 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v11 11/12] samples/landlock: Add network demo
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
-References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
- <20230515161339.631577-12-konstantin.meskhidze@huawei.com>
- <ZH9OFyWZ1njI7VG9@google.com>
- <d9f07165-f589-13d4-6484-1272704f1de0@huawei.com>
- <8c09fc5a-e3a5-4792-65a8-b84c6044128a@digikod.net>
- <c0713bf1-a65e-c4cd-08b9-c60bd79fc86f@huawei.com>
- <fb1d9351-355c-feb8-c2a2-419e24000049@digikod.net>
- <60e5f0ea-39fa-9f76-35bd-ec88fc489922@huawei.com>
- <1ee25561-96b8-67a6-77ca-475d12ea244d@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <1ee25561-96b8-67a6-77ca-475d12ea244d@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.123.123.126]
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [QUESTION] Full user space process isolation?
+Content-Language: en-US
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        "Dr. Greg" <greg@enjellic.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        David Howells <dhowells@redhat.com>,
+        LuisChamberlain <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Petr Tesarik <petrtesarik@huaweicloud.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-hardening@vger.kernel.org,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com>
+ <20230629021000.GA368825@mail.hallyn.com>
+ <14599d8216f1b7520ff5f6cfb27377fa79709f13.camel@huaweicloud.com>
+ <20230702175542.GA25867@wind.enjellic.com>
+ <0870d82571d1075433a2b81b2953cf8b4afcd415.camel@huaweicloud.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <0870d82571d1075433a2b81b2953cf8b4afcd415.camel@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21612 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 7/3/2023 12:57 AM, Roberto Sassu wrote:
+> On Sun, 2023-07-02 at 12:55 -0500, Dr. Greg wrote:
+>> On Thu, Jun 29, 2023 at 10:11:26AM +0200, Roberto Sassu wrote:
+>>
+>> Good morning, I hope the weekend is going well for everyone, greetings
+>> to Roberto and everyone copied.
+>>
+>>> On Wed, 2023-06-28 at 21:10 -0500, Serge E. Hallyn wrote:
+>>>> On Thu, Jun 22, 2023 at 04:42:37PM +0200, Roberto Sassu wrote:
+>>>>> Hi everyone
+>>>>>
+>>>>> I briefly discussed this topic at LSS NA 2023, but I wanted to have an
+>>>>> opinion from a broader audience.
+>>>>>
+>>>>> In short:
+>>>>>
+>>>>> I wanted to execute some kernel workloads in a fully isolated user
+>>>>> space process, started from a binary statically linked with klibc,
+>>>>> connected to the kernel only through a pipe.
+>>>>>
+>>>>> I also wanted that, for the root user, tampering with that process is
+>>>>> as hard as if the same code runs in kernel space.
+>>>>>
+>>>>> I would use the fully isolated process to parse and convert unsupported
+>>>>> data formats to a supported one, after the kernel verified the
+>>>> Can you give some examples here of supported and unsupported data
+>>>> formats?  ext2 is supported, but we sadly don't trust the sb parser
+>>>> to read a an ext2fs coming from unknown source.  So I'm not quite
+>>>> clear what problem you're trying to solve.
+>>> + eBPF guys (as I'm talking about eBPF)
+>> If the week goes well, we will be submitting the second version of our
+>> TSEM LSM for review.  It incorporates a significant number of changes
+>> and enhancements, based on both initial review comments, and
+>> importantly, feedback from our collaborators in the critical
+>> infrastructure community.
+>>
+>> Just as a levelset.  TSEM provides kernel infrastructure to implement
+>> security controls based on either deterministic or machine learning
+>> models.  Quixote is the userspace infrastructure that enables use of
+>> the TSEM kernel infrastructure.
+>>
+>> Based on your description Roberto, TSEM may be of assistance in
+>> addressesing your issues at two different levels.
+>>
+>> First with respect to protection of an isolated workload.
+>>
+>> TSEM is inherently workload based, given that it is based on an
+>> architecture that implements security modeling namespaces that a
+>> process heirarchy can be placed into.  This reduces model complexity
+>> and provides the implementation of very specific and targeted security
+>> controls based on the needs of a proposed workload.
+>>
+>> The security controls are prospective rather than retrospective,
+>> ie. TSEM will pro-actively block any security behaviors that are not
+>> in a security model that has been defined for the workload.
+>>
+>> For example, with respect to the concerns you had previously mentioned
+>> about ptrace.  If the security model definition does not include a
+>> security state coefficient for a ptrace_traceme security event, it
+>> will be disallowed, regardless of what goes on with respect to kernel
+>> development, modulo of course the ptrace_traceme LSM hook being
+>> discontinued.
+> Hi Greg
+>
+> thanks for your insights.
+>
+> The policy is quite simple:
+>
+>
+>      r/w  ^                             kernel space
+> ----------|-----------------------------------------
+>           v (pipe)                        user space
+>  +-----------------+       +-----------------------+
+>  | trustworthy UMD |---X---| rest of the processes |
+>  +-----------------+       +-----------------------+
+>
+> The question was more, is the LSM infrastructure complete enough that
+> the X can be really enforced?
 
+I believe that it is. SELinux and Smack, users of the LSM infrastructure,
+enforce "X". They also require netlabel for IP communications, and Smack
+falls short on newer protocols, but that's not the fault of LSM.
 
-6/22/2023 1:18 PM, Mickaël Salaün пишет:
-> 
-> On 22/06/2023 10:00, Konstantin Meskhidze (A) wrote:
->> 
->> 
->> 6/19/2023 9:19 PM, Mickaël Salaün пишет:
->>>
->>> On 19/06/2023 16:24, Konstantin Meskhidze (A) wrote:
->>>>
->>>>
->>>> 6/13/2023 11:38 PM, Mickaël Salaün пишет:
->>>>>
->>>>> On 13/06/2023 12:54, Konstantin Meskhidze (A) wrote:
->>>>>>
->>>>>>
->>>>>> 6/6/2023 6:17 PM, Günther Noack пишет:
->>>>>>> Hi Konstantin!
->>>>>>>
->>>>>>> Apologies if some of this was discussed before, in this case,
->>>>>>> Mickaël's review overrules my opinions from the sidelines ;)
->>>>>>>
->>>>>>> On Tue, May 16, 2023 at 12:13:38AM +0800, Konstantin Meskhidze wrote:
->>>>>>>> This commit adds network demo. It's possible to allow a sandboxer to
->>>>>>>> bind/connect to a list of particular ports restricting network
->>>>>>>> actions to the rest of ports.
->>>>>>>>
->>>>>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->>>>>>>
->>>>>>>
->>>>>>>> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
->>>>>>>> index e2056c8b902c..b0250edb6ccb 100644
->>>>>>>> --- a/samples/landlock/sandboxer.c
->>>>>>>> +++ b/samples/landlock/sandboxer.c
->>>>>>>
->>>>>>> ...
->>>>>>>
->>>>>>>> +static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
->>>>>>>> +				const __u64 allowed_access)
->>>>>>>> +{
->>>>>>>> +	int num_ports, i, ret = 1;
->>>>>>>
->>>>>>> I thought the convention was normally to set ret = 0 initially and to
->>>>>>> override it in case of error, rather than the other way around?
->>>>>
->>>>> Which convention? In this case, by default the return code is an error.
->>>>>
->>>>>
->>>>>>>
->>>>>>       Well, I just followed Mickaёl's way of logic here. >
->>>>>>
->>>>>>>> +	char *env_port_name;
->>>>>>>> +	struct landlock_net_service_attr net_service = {
->>>>>>>> +		.allowed_access = allowed_access,
->>>>>>>> +		.port = 0,
->>>>>>>> +	};
->>>>>>>> +
->>>>>>>> +	env_port_name = getenv(env_var);
->>>>>>>> +	if (!env_port_name)
->>>>>>>> +		return 0;
->>>>>>>> +	env_port_name = strdup(env_port_name);
->>>>>>>> +	unsetenv(env_var);
->>>>>>>> +	num_ports = parse_port_num(env_port_name);
->>>>>>>> +
->>>>>>>> +	if (num_ports == 1 && (strtok(env_port_name, ENV_PATH_TOKEN) == NULL)) {
->>>>>>>> +		ret = 0;
->>>>>>>> +		goto out_free_name;
->>>>>>>> +	}
->>>>>>>
->>>>>>> I don't understand why parse_port_num and strtok are necessary in this
->>>>>>> program. The man-page for strsep(3) describes it as a replacement to
->>>>>>> strtok(3) (in the HISTORY section), and it has a very short example
->>>>>>> for how it is used.
->>>>>>>
->>>>>>> Wouldn't it work like this as well?
->>>>>>>
->>>>>>> while ((strport = strsep(&env_port_name, ":"))) {
->>>>>>>       net_service.port = atoi(strport);
->>>>>>>       /* etc */
->>>>>>> }
->>>>>>
->>>>>>       Thanks for a tip. I think it's a better solution here. Now this
->>>>>> commit is in Mickaёl's -next branch. I could send a one-commit patch later.
->>>>>> Mickaёl, what do you think?
->>>>>
->>>>> I removed this series from -next because there is some issues (see the
->>>>> bot's emails), but anyway, this doesn't mean these patches don't need to
->>>>> be changed, they do. The goal of -next is to test more widely a patch
->>>>> series and get more feedbacks, especially from bots. When this series
->>>>> will be fully ready (and fuzzed with syzkaller), I'll push it to Linus
->>>>> Torvalds.
->>>>>
->>>>> I'll review the remaining tests and sample code this week, but you can
->>>>> still take into account the documentation review.
->>>>
->>>>     Hi, Mickaёl.
->>>>
->>>>     I have a few quetions?
->>>>      - Are you going to fix warnings for bots, meanwhile I run syzcaller?
->>>
->>> No, you need to fix that with the next series (except the Signed-off-by
->>> warnings).
->> 
->>    Hi, Mickaёl.
->>     As I understand its possible to check bots warnings just after you
->> push the next V12 series again into your -next branch???
-> 
-> Yes, we get bot warnings on the -next tree, but the command that
-> generate it should be reproducible.
+>
+> Could there be other implicit information flows that the LSM
+> infrastructure is not able/does not yet mediate, that could break the
+> policy above?
 
-   Stephen Rothwell sent a few warnings he got with powerpc 
-pseries_le_defconfig. Do I need to fix it in V12 patch? How can I handle 
-it cause no warnings in current .config?
-> 
-> 
->> 
->>>
->>> What is your status on syzkaller? Do you need some help? I can write the
->>> tests if it's too much.
->>>
->>     Sorry. To be honest I'm busy with another project. I dont know how
->> much time it will take for me to set up and run syzkaller. I need your
->> help here please, how you do this, some roadmap.
-> 
-> Ok, no worries, I have it set up so I'll take care of it and keep you in
-> the loop with your GitHub account.
-> 
-  Thank you!!
-> 
->>>
->>>>      - I will fix documentation and sandbox demo and sent patch v12?
->>>
->>> Yes please. Let me a few days to send more reviews.
->>>
->>     Ok. Sure.
->>>>
->>>>>
->>>>>
->>>>>>
->>>>>>>
->>>>>>>> +
->>>>>>>> +	for (i = 0; i < num_ports; i++) {
->>>>>>>> +		net_service.port = atoi(strsep(&env_port_name, ENV_PATH_TOKEN));
->>>>>>>
->>>>>>> Naming of ENV_PATH_TOKEN:
->>>>>>> This usage is not related to paths, maybe rename the variable?
->>>>>>> It's also technically not the token, but the delimiter.
->>>>>>>
->>>>>>      What do you think of ENV_PORT_TOKEN or ENV_PORT_DELIMITER???
->>>>>
->>>>> You can rename ENV_PATH_TOKEN to ENV_DELIMITER for the FS and network parts.
->>>>>
->>>>       Ok. Got it.
->>>>>
->>>>>>
->>>>>>>> +		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
->>>>>>>> +				      &net_service, 0)) {
->>>>>>>> +			fprintf(stderr,
->>>>>>>> +				"Failed to update the ruleset with port \"%lld\": %s\n",
->>>>>>>> +				net_service.port, strerror(errno));
->>>>>>>> +			goto out_free_name;
->>>>>>>> +		}
->>>>>>>> +	}
->>>>>>>> +	ret = 0;
->>>>>>>> +
->>>>>>>> +out_free_name:
->>>>>>>> +	free(env_port_name);
->>>>>>>> +	return ret;
->>>>>>>> +}
->>>>>>>
->>>>>>>
->>>>>>>>     		fprintf(stderr,
->>>>>>>>     			"Launch a command in a restricted environment.\n\n");
->>>>>>>> -		fprintf(stderr, "Environment variables containing paths, "
->>>>>>>> -				"each separated by a colon:\n");
->>>>>>>> +		fprintf(stderr,
->>>>>>>> +			"Environment variables containing paths and ports "
->>>>>>>> +			"each separated by a colon:\n");
->>>>>>>>     		fprintf(stderr,
->>>>>>>>     			"* %s: list of paths allowed to be used in a read-only way.\n",
->>>>>>>>     			ENV_FS_RO_NAME);
->>>>>>>>     		fprintf(stderr,
->>>>>>>> -			"* %s: list of paths allowed to be used in a read-write way.\n",
->>>>>>>> +			"* %s: list of paths allowed to be used in a read-write way.\n\n",
->>>>>>>>     			ENV_FS_RW_NAME);
->>>>>>>> +		fprintf(stderr,
->>>>>>>> +			"Environment variables containing ports are optional "
->>>>>>>> +			"and could be skipped.\n");
->>>>>>>
->>>>>>> As it is, I believe the program does something different when I'm
->>>>>>> setting these to the empty string (ENV_TCP_BIND_NAME=""), compared to
->>>>>>> when I'm unsetting them?
->>>>>>>
->>>>>>> I think the case where we want to forbid all handle-able networking is
->>>>>>> a legit and very common use case - it could be clearer in the
->>>>>>> documentation how this is done with the tool. (And maybe the interface
->>>>>>> could be something more explicit than setting the environment variable
->>>>>>> to empty?)
->>>>>
->>>>> I'd like to keep it simple, and it should be seen as an example code,
->>>>> not a full-feature sandboxer, but still a consistent and useful one.
->>>>> What would you suggest?
->>>>>
->>>>> This sandboxer tool relies on environment variables for its
->>>>> configuration. This is definitely not a good fit for all use cases, but
->>>>> I think it is simple and flexible enough. One use case might be to
->>>>> export a set of environment variables and simply call this tool. I'd
->>>>> prefer to not deal with argument parsing, but maybe that was too
->>>>> simplistic? We might want to revisit this approach but probably not with
->>>>> this series.
->>>>>
->>>>>
->>>>>>>
->>>>>>>
->>>>>>>> +	/* Removes bind access attribute if not supported by a user. */
->>>>>>>> +	env_port_name = getenv(ENV_TCP_BIND_NAME);
->>>>>>>> +	if (!env_port_name) {
->>>>>>>> +		ruleset_attr.handled_access_net &=
->>>>>>>> +			~LANDLOCK_ACCESS_NET_BIND_TCP;
->>>>>>>> +	}
->>>>>>>> +	/* Removes connect access attribute if not supported by a user. */
->>>>>>>> +	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
->>>>>>>> +	if (!env_port_name) {
->>>>>>>> +		ruleset_attr.handled_access_net &=
->>>>>>>> +			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
->>>>>>>> +	}
->>>>>>>
->>>>>>> This is the code where the program does not restrict network usage,
->>>>>>> if the corresponding environment variable is not set.
->>>>>>
->>>>>>       Yep. Right.
->>>>>>>
->>>>>>> It's slightly inconsistent with what this tool does for filesystem
->>>>>>> paths. - If you don't specify any file paths, it will still restrict
->>>>>>> file operations there, independent of whether that env variable was
->>>>>>> set or not.  (Apologies if it was discussed before.)
->>>>>>
->>>>>>      Mickaёl wanted to make network ports optional here.
->>>>>>      Please check:
->>>>>>     
->>>>>> https://lore.kernel.org/linux-security-module/179ac2ee-37ff-92da-c381-c2c716725045@digikod.net/
->>>>>
->>>>> Right, the rationale is for compatibility with the previous version of
->>>>> this tool. We should not break compatibility when possible. A comment
->>>>> should explain the rationale though.
->>>>>
->>>>>>
->>>>>> https://lore.kernel.org/linux-security-module/fe3bc928-14f8-5e2b-359e-9a87d6cf5b01@digikod.net/
->>>>>>>
->>>>>>> —Günther
->>>>>>>
->>>>> .
->>> .
-> .
+Sure. Every so often something pops into the kernel (e.g. io_uring)
+without proper LSM integration. We try to discourage that, and correct
+it when we find it.
+
+>
+> I guess TSEM could be for more elaborated security models, but in this
+> case the policy is quite straithforward. Also, your TSEM would be as
+> limited as mine by the LSM hooks available.
+>
+> Thanks
+>
+> Roberto
+>
