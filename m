@@ -2,106 +2,110 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F6FEB64DD
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jul 2023 14:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90707EB64DD
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jul 2023 15:07:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231240AbjGCOxR (ORCPT
+        id S231670AbjGCPHa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jul 2023 10:53:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38540 "EHLO
+        Mon, 3 Jul 2023 11:07:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231452AbjGCOxO (ORCPT
+        with ESMTP id S231667AbjGCPH2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jul 2023 10:53:14 -0400
-Received: from sonic313-14.consmr.mail.ne1.yahoo.com (sonic313-14.consmr.mail.ne1.yahoo.com [66.163.185.37])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E9CDE6F
-        for <linux-security-module@vger.kernel.org>; Mon,  3 Jul 2023 07:53:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1688395991; bh=gZJmRE6lmnVZB2NTyVJqz3e6K3JCO7UExrsJo560Xvg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=n5LEf+qkXl/Hs4C0gyXItBO5B0iXkZyRJ0y0xoGaCCat7yPd87zWzUMbPorks2wLZTHGfV/C5WuRqXqY+FwkJ9YmVZQ2DS+MHPI0l6pJorFI+dt0AJm01PnLvClM3dnzMWGJ+YXKT/obE6b4uLft+O135I2WVBSrAaVD7KyCYddOqidxV/7j/7U/PR1xGErph7sJf2k9ZAQy20U0GsrO7d1b9JkFZg2MMFGsS+/9M5gKXGzDSkcUYVUjhe9aAmNQdqWmj+RrXn8/Mon0Ueb6iQgMiDWZHOp7xVVaBxplLCzEQYUZ3HFCS+hfyA50/w3ey/x3IuA34IAoDAG+lAJHig==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1688395991; bh=Kaq7KRP4s+3nFHTLQCkqaNR3Ti6HXWpwdmWunyamg0r=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jS3Xuof9wZE1aawwlezL/Le+boB3oIyvE9YEac4psAamedfIbe+VGFu8kI5UIWz5CGyKfnDQ8goMj+nI69klb14+qgYScc22LZC1tuGTItdhsqvRV3DU9xYzZlLuI2ahx3jUBp2N0LX1iwcLc9cRnpMvYQJU6ArO4iQDxmyFH8a/4eNVCSmvojuu3lHacoKz644e2LK828QUcsg9UTPNpLlvepBUv2TnCJ3KBlAVUUHFlYtLLswgXVjafXiVBgEv3qYdjybMBpkbeGHjHPOMfWSP7fm7zHBloW/bY7PHSMAcEvuIrhgczeswqUfFnXB9Y1mEhcGy9jFpXLQ67QFQyg==
-X-YMail-OSG: JNciwDkVM1nJakS9t9qgv8b4d8Zqy6.nRka.Tcwg_TBSCn4u3cEO0ELUUFsiXRY
- 7LbcxNoQSWNUrqhLYHz4__o6y6IAA9SOBOj2YrKKBzzzP1xgx4U89xiild5LxzUUU0LDjKRC_KUR
- 5roiUqogl2m9l1erapwNpSNnm8VeAE06Lwz35FD_E6uNeLLwJxSHDCH5ZuprWL6amcAuUPA7OlPl
- tHyl9xhpvi7uRXa_klV976e6iVzMLg8gL9Y9paDCSOqdB.n3sQuhkqFrSTEodi_aMN_igaIyWcl6
- ux1nhvq9DQlevvAvYQTikjAmlugcgmvDWlW2kV0Z684m_GEey2gAzyGhwdn0Vatu1UPOWChSSzyp
- 3VBHycO4FzBxyQqmOr.uMH0_8xp8eClH0YYGDm2oD8g2fDuuVbtVYQxW19QCM89JRimoakgX_9Yh
- UlOSSu9wD.KqcL5OW9ctdaQFAvTG7RrGN8FAtw.fGWXAIA94CsfjA1Aig_ukHSw4EaR5GlTxqNrh
- cMAYBzllRKrrfEr2OzBPcKQCytJTffd.8Uu751fhSax2JO8xiVsoElC3tXFvM5QfvIE3O_hPjmH.
- 3DQlv.Y0Cpq.UTbyC6S54UL0gZsBuK5QD71VtMfdDQbLUTqJaHsq9gFpm67uaJfFtR0a36PQuX0Z
- .jqTgIliaEMVy2ly.P37egorhPuQNfL3P4Zn6xpn58O0CMrFTnjp56DabEK293vtW4yUhsK9gpji
- Szvm3ZYkUszW.78YvgSov2jwFnvKbXOBhAr_VhkOwj0jP1BALD9Q6GIT8uToZBfnOVJbw3Fi6sGb
- 9QBi_SOOPBHaCM8e6hIBp9_7vqqvo5mLol2SWy6cbRnFShb3cuqgsGCt7pFgurPyR2uy5L8sTq.g
- 6h70zd3teTNVss08CKBE8WX84uNdHLPrDbCR3lSBEfA77pKqAsgA73K7T3A2aA6.cIlCONeELZQJ
- 9y6jgOhQhrfKt4qumnNk1ckE67u9BAnL4al39IKiR64Y3iJeTOHejEZKr3ksjJf_S7E26YtFvUf5
- fBx6yMUvvBIbyIRxa9p8MVTFT69SmJkoMIB3D5bJqFv9dzF1sREC5TzQgiFCBy8OK4ARi9TL4q9q
- xmnCd4ltC4.zv42JUJYigcWlphQGUxfqmWvfQacmEWcq5Ln_GRYPya34E3Rhh2AOvGf13DFC0Thx
- LV14Ir4EBofLYl9.usWuJL1o1MPotOaCrmSyNidZ9zcH2HvtSsiNNLVwQvhAy1o6IbJPJSjrj6yt
- i8r3aW_5QgFLI4ZB166zzR3otwuwtE8APNN4SBtVtZ.hhDe.vS7pMa9TeJBh7L3dyJ1alB8mNuSf
- ukShRPLWJcuRkLPqk2KGPWOuT8unP4HbbjDSHHRzkApy1HFM_61mTWC31kG_53sZ2DkzabtCGXLY
- lvcXHJeb7TG6oliPN7Y..lov9ADB_dGQ1W2DJfsbu7Rb3cGwgYSbl3FSKwUdX.mpWRQGPW8Umulh
- NxCK6nG_hAo4lZkUxlZA82OYDi7u_DOP4uf2vwxpo_qwffSTeL.WKQyDaVRdFMRJcelLf9pJBghd
- 8FokRM_9x5IVxJRaLh_MkYTXpR1enSaHEVrkxMGK6aBe9J2wodD6q5ETK3yTogePlZ8iOZEJcu9.
- hRoZCtNcP0Oc_6UZK.OWcMsiW8T_bTROv5KFuaxcCIhzvp0i7DzNnVM8gw6P_pq9rA32XJdMgP0i
- EkUeOnjkw3_U8Zmb0ket2fYsFnCinWRdng2KYAE64SB7E5519dlaWLu.DOrb2VM.r_42oPi5UhNU
- 7fAzb1vEEECHmJUYhCA7Oq07S3UdDBn_RqBBugf.r1ZobkfaIS1dTdO5DEgbAXknLJyCn46BLDMR
- iLd2uehjS1iH0pB1H2qDZALp6v5ikSgvXZZ6MfVtdNG1eiVgQTMnZrdtXYOOJGw4r4Wu7bzZm4xG
- gGyQUkzmuacwBSysWzrRTQ2qE_pzYaNIA2kC7FFBIXIkC2D81bj8Au6tgzLMNjGuGqmPV.Q9E7lT
- PkRvl.luXKBaSU0ia72bNQtpLmJn6IDmNCowWIXgrmYCeGd.9Hg086Tjy9YNnndCxdC.o3csWt89
- ApT2A9fj3_ZepEKMMZlMyIvsKP1DKJsrGE7LxmJSbHAHv.HPLT25dEORnfn6VIeA_ZFVeQiRZMNF
- 8EN2zbzyNQe80CxH5Bj.Nw1_eR9rukFeEWktT2UU6QMsflW92NAYO1nTaF1tddm3ITs_PYlFqPy9
- iRRmc9v.L.XxklPoaOFwQYc2cq2GDXG3fKbzbAn2mrzAUO5jLIZxz9FPQDpDfXY4oXZ1yB2oLAK9
- ifMo9
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 45e96ca1-22ad-46d8-86a2-169ee597fdbb
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Mon, 3 Jul 2023 14:53:11 +0000
-Received: by hermes--production-bf1-5d96b4b9f-2p2gp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ef4ab3618aa9d4848912c71509c51da4;
-          Mon, 03 Jul 2023 14:53:07 +0000 (UTC)
-Message-ID: <8ca4ccc3-0e54-ad50-7b9f-fd04708548f0@schaufler-ca.com>
-Date:   Mon, 3 Jul 2023 07:53:05 -0700
+        Mon, 3 Jul 2023 11:07:28 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F3CFE5F
+        for <linux-security-module@vger.kernel.org>; Mon,  3 Jul 2023 08:07:21 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fbd200d354so115605e9.1
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Jul 2023 08:07:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1688396840; x=1690988840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6Yi73LNZtiJVtdv9XwcLHpbVmu5fGLj+HQkOyGONQFg=;
+        b=nNLdtYLhT36EufRkpLv7ca6KV7NAAZgN9RHacCq/L6iFOvy47lS0Jtv965Pogb/qL4
+         VxabMsMZuttYx2zc72BwOZdqEEv7R+4AL2E44+Ph/vn7lhek+4iddm/sETqfl2XYlQeR
+         J+vySOqsZ5LRqFBT9cPIm2Pmu1HBOM0zkCXgvhQuph8X20jRqvsu1VTDFceEQFbHYCYJ
+         5CgP4NseOo3j/3ZVP0wYcPlcBkFGO6BdRiJM/UwtfJ3fYbsyg78AplEsjvEKI3DMxH2+
+         KBtrbQ4sd3cjcYmN79W0y6fMq3+aT81/iMF5RTkM3cIBrj1/zdi+9VzkgjmDLIhcu5iL
+         fvMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688396840; x=1690988840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6Yi73LNZtiJVtdv9XwcLHpbVmu5fGLj+HQkOyGONQFg=;
+        b=ENoiv9oEIj+TXYv92+z+qp/MaslR1RpI4RwuwLXTtfGDQtOB2SlTdKHGZEkOtIa0UP
+         JlOIT9iNaOB8KkyY3UJd0IyvPxIG143OU63pHBMpIgvEZPbt/qz07hFaq64qeXdI73Iu
+         dpo61aWcYcZDoKu6Z+nqbAj/MG31O1jwEg/uOlM6DFbihWTVvSpi6l+nG4rzGTxMnMoB
+         2b7LYb5UI5eRKL0PEHX0grmQWL68B97TihVwtwryef8WsXjOO+evMoIrNFDznZKptgvm
+         8hF27OPiDjDUkJd23LlUot8PBxr2xN9Z2vtg2BWi7RgQLnXdNDweYuCUITU6xuXsI3sv
+         vFUg==
+X-Gm-Message-State: ABy/qLb3WepEwV1S3Fxox1C92S+c43R6xr/TtrvlLOvwe0S3ZJb+yfbG
+        YUK1rwshe/psWCCnuPM240fsM6o/Wi8cA0wynMcJvw==
+X-Google-Smtp-Source: APBJJlErLYbKhG362h11ORTRwVJGnuMRUrvtq/Y89AtBohzfF9IqoDlTx3PR/gLXPUH5GATUu8k8ZqKi1AZSHsYpChk=
+X-Received: by 2002:a05:600c:1e1d:b0:3f7:3654:8d3 with SMTP id
+ ay29-20020a05600c1e1d00b003f7365408d3mr190166wmb.2.1688396839544; Mon, 03 Jul
+ 2023 08:07:19 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [LSM Stacking] new files fail to inherit SELinux security context
- of the current directory
-Content-Language: en-US
-To:     Leesoo Ahn <lsahn@wewakecorp.com>
-Cc:     john.johansen@canonical.com, linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <c0ee001b-caf4-22ec-d1c5-d3d8d790760c@wewakecorp.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <c0ee001b-caf4-22ec-d1c5-d3d8d790760c@wewakecorp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21612 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com>
+In-Reply-To: <eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 3 Jul 2023 17:06:42 +0200
+Message-ID: <CAG48ez2oRPBdbfoNxGcV85CXFx1Su+dmhoWXE6rWsXui6_OTPg@mail.gmail.com>
+Subject: Re: [QUESTION] Full user space process isolation?
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        LuisChamberlain <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Petr Tesarik <petrtesarik@huaweicloud.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/2/2023 7:06 PM, Leesoo Ahn wrote:
-> Test env
-> - Ubuntu 23.04 Ubuntu Kernel v6.2 w/ Stacking patch v38
-> - boot param: lsm=apparmor,selinux
-> - AppArmor (Host) + SELinux (Container Fedora 36)
->
-> Hello! I'm currently working on a project related to LSM Stacking, and
-> a few days ago, I encountered a significant issue of SELinux in the
-> container environment.
->
-> When creating new files in the container using 'mkdir' and 'touch',
-> the new files fail to inherit the security context of the current
-> directory. This problem occurs by the following reason that
-> 'security_inode_init_security' hook is called, which sequentially
-> calls 'apparmor_inode_init_security' and 'selinux_inode_init_security'
-> in order. 'apparmor_inode_init_security' always returns -EOPNOTSUPP,
-> hence 'selinux_inode_init_security' is never called.
->
-> Does 'return 0' in 'apparmor_inode_init_security' to call stacking
-> hooks sequentially have no side-effects? if so, the solution would be
-> easy though.
+On Thu, Jun 22, 2023 at 4:45=E2=80=AFPM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> I wanted to execute some kernel workloads in a fully isolated user
+> space process, started from a binary statically linked with klibc,
+> connected to the kernel only through a pipe.
 
-The correct fix is to security_inode_init_security(), not
-apparmor_inode_init_security(). The upstream Linus kernel
-does not have a hook in apparmor, so this problem wasn't
-detected there. I'll be sure to get this into v39. 
+FWIW, the kernel has some infrastructure for this already, see
+CONFIG_USERMODE_DRIVER and kernel/usermode_driver.c, with a usage
+example in net/bpfilter/.
 
->
-> Best regards,
-> Leesoo
+> I also wanted that, for the root user, tampering with that process is
+> as hard as if the same code runs in kernel space.
+
+I believe that actually making it that hard would probably mean that
+you'd have to ensure that the process doesn't use swap (in other
+words, it would have to run with all memory locked), because root can
+choose where swapped pages are stored. Other than that, if you mark it
+as a kthread so that no ptrace access is allowed, you can probably get
+pretty close. But if you do anything like that, please leave some way
+(like a kernel build config option or such) to enable debugging for
+these processes.
+
+But I'm not convinced that it makes sense to try to draw a security
+boundary between fully-privileged root (with the ability to mount
+things and configure swap and so on) and the kernel - my understanding
+is that some kernel subsystems don't treat root-to-kernel privilege
+escalation issues as security bugs that have to be fixed.
