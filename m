@@ -2,229 +2,152 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A298C001DB
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jul 2023 17:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DADEEB64D9
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jul 2023 18:24:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229441AbjGDR2p (ORCPT
+        id S230452AbjGDSYp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Jul 2023 13:28:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40822 "EHLO
+        Tue, 4 Jul 2023 14:24:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231370AbjGDR2p (ORCPT
+        with ESMTP id S229645AbjGDSYo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Jul 2023 13:28:45 -0400
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 131B110D7;
-        Tue,  4 Jul 2023 10:28:42 -0700 (PDT)
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 364HQt86009384;
-        Tue, 4 Jul 2023 12:26:55 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 364HQrPS009383;
-        Tue, 4 Jul 2023 12:26:53 -0500
-Date:   Tue, 4 Jul 2023 12:26:53 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
+        Tue, 4 Jul 2023 14:24:44 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E9E110D9
+        for <linux-security-module@vger.kernel.org>; Tue,  4 Jul 2023 11:24:41 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2b69f71a7easo96485471fa.1
+        for <linux-security-module@vger.kernel.org>; Tue, 04 Jul 2023 11:24:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1688495079; x=1691087079;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UIoWXiCDvyrdD0PlGIH9uBYUwk4NwoKlrz1+aonWS9I=;
+        b=M4RIp3ELKW+0IZehEFRd5Ovtpu/99+dRrm8oNnzMCSRbRsSI9gPUGLI7BaNMspxMzs
+         +h0qLFR9xDoHW+eOHnA9CZdit4HtUmkbkj6lNCPFMp3owv9lBLxhIr7Y71Cj2WyDyylY
+         Xid3AjzKGJAk2YWejyYlXUwOm/JuIpKmaWnYY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688495079; x=1691087079;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UIoWXiCDvyrdD0PlGIH9uBYUwk4NwoKlrz1+aonWS9I=;
+        b=R0QLV2/OSwdGFydq60q2+73X79JJJHdD6BdoUPT0avSBaZhUJEeIUgTSsdAPJ0fvVJ
+         AR7laU2KzrksqlgG5bEfu8e8IRZPsK5ZAEjPOUHKpjRg1I17i0b8HK9RfnVOSP1mmsd9
+         hrcnbvoGR7a7JxCqSL4VdC1m8vB4wYYXIESgBfE42P8ACvKATopLoQimTK3itW3GHO5v
+         2gIzal37PsDi5n2Vkz/UPYQ6djrsHlH//+/nMAv47+UPaLfadNhQKHGDP+K2mvKj2Agf
+         yEkn4JRZTFsAvjKzBo6XcclAa9WzE82oDI7YwMmRNsn8y+zwbtrBenhf4G4N1Ab6Xgri
+         4hJQ==
+X-Gm-Message-State: ABy/qLYz2erETJS0sT4FiQuinimqwZgk7Nco8lIQXl7OJ0dPyQvznKlw
+        9L0sBhL9cCOZPxrj6z/LpvaQdZTixFwd/7dKUTJuMVOkbyrr6tEM
+X-Google-Smtp-Source: APBJJlEBEP9q2e5axD8moG+WHwoVD/qiBNosgrIAyujf4hPffDilLHJdG/46ad6TiK76WI5cxrcKfK0n/4N7wlZzoOg=
+X-Received: by 2002:a2e:9258:0:b0:2b6:c3b8:3a9f with SMTP id
+ v24-20020a2e9258000000b002b6c3b83a9fmr10538422ljg.29.1688495079486; Tue, 04
+ Jul 2023 11:24:39 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230503064344.45825-1-aleksandr.mikhalitsyn@canonical.com>
+ <CAHC9VhTx+6f8riuGOG40HZoaYx3F8Kf3Hm7Eb5k3-An91eMWgg@mail.gmail.com>
+ <CAEivzxcVQoA9rN06BtHJzyHCaN60RG1-cyGEEw-P+dp-tCB=QA@mail.gmail.com>
+ <CAHC9VhQnOszTFaFVBZACQCDxsuD6JrxDffmmJ-wBudK2MJ2pUA@mail.gmail.com>
+ <CAHC9VhSF+j=qFH4M9bt-Q8HUOwk7qLOEkCSve8onUMgADJ7+3A@mail.gmail.com>
+ <CAHC9VhSGhV6SoOeV2h4ehrkUCK9Sds1wx=CGdRSouvnLn0Z3Kg@mail.gmail.com> <CAEivzxcbqQj+_Ouo1_csbzc2NHewpQW7zb3mo1Dkr07obK6zKw@mail.gmail.com>
+In-Reply-To: <CAEivzxcbqQj+_Ouo1_csbzc2NHewpQW7zb3mo1Dkr07obK6zKw@mail.gmail.com>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Tue, 4 Jul 2023 11:24:27 -0700
+Message-ID: <CAJ-EccM+4z840NRhGG8eJTAZm4RspD=hhO=QKKXSZA2TXQPm3A@mail.gmail.com>
+Subject: Re: [PATCH v2] LSM: SafeSetID: fix UID printed instead of GID
+To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        penguin-kernel@i-love.sakura.ne.jp,
         James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        LuisChamberlain <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Petr Tesarik <petrtesarik@huaweicloud.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-hardening@vger.kernel.org,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: [QUESTION] Full user space process isolation?
-Message-ID: <20230704172653.GA8804@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com> <20230629021000.GA368825@mail.hallyn.com> <14599d8216f1b7520ff5f6cfb27377fa79709f13.camel@huaweicloud.com> <20230702175542.GA25867@wind.enjellic.com> <0870d82571d1075433a2b81b2953cf8b4afcd415.camel@huaweicloud.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0870d82571d1075433a2b81b2953cf8b4afcd415.camel@huaweicloud.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 04 Jul 2023 12:26:55 -0500 (CDT)
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 03, 2023 at 09:57:53AM +0200, Roberto Sassu wrote:
+On Wed, Jun 21, 2023 at 12:37=E2=80=AFAM Aleksandr Mikhalitsyn
+<aleksandr.mikhalitsyn@canonical.com> wrote:
+>
+> On Wed, Jun 21, 2023 at 2:30=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
+wrote:
+> >
+> > On Thu, Jun 8, 2023 at 2:34=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
+ wrote:
+> > > On Tue, Jun 6, 2023 at 5:13=E2=80=AFPM Paul Moore <paul@paul-moore.co=
+m> wrote:
+> > > > On Tue, Jun 6, 2023 at 2:50=E2=80=AFPM Aleksandr Mikhalitsyn
+> > > > <aleksandr.mikhalitsyn@canonical.com> wrote:
+> > > > > On Thu, May 18, 2023 at 8:59=E2=80=AFPM Paul Moore <paul@paul-moo=
+re.com> wrote:
+> > > > > > On Wed, May 3, 2023 at 2:44=E2=80=AFAM Alexander Mikhalitsyn
+> > > > > > <aleksandr.mikhalitsyn@canonical.com> wrote:
+> > > > > > >
+> > > > > > > pr_warn message clearly says that GID should be printed,
+> > > > > > > but we have UID there. Let's fix that.
+> > > > > > >
+> > > > > > > Found accidentaly during the work on isolated user namespaces=
+.
+> > > > > > >
+> > > > > > > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@c=
+anonical.com>
+> > > > > > > ---
+> > > > > > > v2: __kuid_val -> __kgid_val
+> > > > > > > ---
+> > > > > > >  security/safesetid/lsm.c | 2 +-
+> > > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > >
+> > > > > > I'm assuming you're going to pick this up Micah?
+> > > > > >
+> > > > > > Reviewed-by: Paul Moore <paul@paul-moore.com>
+> > > > >
+> > > > > Dear Paul!
+> > > > >
+> > > > > Thanks for your review!
+> > > > >
+> > > > > Gentle ping to Micah Morton :-)
+> > > >
+> > > > Micah?
+> > > >
+> > > > The right thing would be for Micah to merge this via the SafeSetID
+> > > > tree, however, considering that it's been over a month with no
+> > > > response, and this patch looks trivially correct, I can pick this u=
+p
+> > > > via the LSM tree if we don't see anything from Micah this week.
+> > >
+> > > Searching through all of the archives on lore I don't see any email
+> > > from Micah past August of 2022.  I'll still stick to the plan of
+> > > merging this via the LSM tree next week if we don't see any response
+> > > from Micah, but beyond this patch we may need to consider the
+> > > possibility that Micah has moved on from SafeSetID.
 
-> On Sun, 2023-07-02 at 12:55 -0500, Dr. Greg wrote:
-> > On Thu, Jun 29, 2023 at 10:11:26AM +0200, Roberto Sassu wrote:
-> > 
-> > Good morning, I hope the weekend is going well for everyone, greetings
-> > to Roberto and everyone copied.
-> > 
-> > > On Wed, 2023-06-28 at 21:10 -0500, Serge E. Hallyn wrote:
-> > > > On Thu, Jun 22, 2023 at 04:42:37PM +0200, Roberto Sassu wrote:
-> > > > > Hi everyone
-> > > > > 
-> > > > > I briefly discussed this topic at LSS NA 2023, but I wanted to have an
-> > > > > opinion from a broader audience.
-> > > > > 
-> > > > > In short:
-> > > > > 
-> > > > > I wanted to execute some kernel workloads in a fully isolated user
-> > > > > space process, started from a binary statically linked with klibc,
-> > > > > connected to the kernel only through a pipe.
-> > > > > 
-> > > > > I also wanted that, for the root user, tampering with that process is
-> > > > > as hard as if the same code runs in kernel space.
-> > > > > 
-> > > > > I would use the fully isolated process to parse and convert unsupported
-> > > > > data formats to a supported one, after the kernel verified the
-> > > > 
-> > > > Can you give some examples here of supported and unsupported data
-> > > > formats?  ext2 is supported, but we sadly don't trust the sb parser
-> > > > to read a an ext2fs coming from unknown source.  So I'm not quite
-> > > > clear what problem you're trying to solve.
-> > > 
-> > > + eBPF guys (as I'm talking about eBPF)
-> > 
-> > If the week goes well, we will be submitting the second version of our
-> > TSEM LSM for review.  It incorporates a significant number of changes
-> > and enhancements, based on both initial review comments, and
-> > importantly, feedback from our collaborators in the critical
-> > infrastructure community.
-> > 
-> > Just as a levelset.  TSEM provides kernel infrastructure to implement
-> > security controls based on either deterministic or machine learning
-> > models.  Quixote is the userspace infrastructure that enables use of
-> > the TSEM kernel infrastructure.
-> > 
-> > Based on your description Roberto, TSEM may be of assistance in
-> > addressesing your issues at two different levels.
-> > 
-> > First with respect to protection of an isolated workload.
-> > 
-> > TSEM is inherently workload based, given that it is based on an
-> > architecture that implements security modeling namespaces that a
-> > process heirarchy can be placed into.  This reduces model complexity
-> > and provides the implementation of very specific and targeted security
-> > controls based on the needs of a proposed workload.
-> > 
-> > The security controls are prospective rather than retrospective,
-> > ie. TSEM will pro-actively block any security behaviors that are not
-> > in a security model that has been defined for the workload.
-> > 
-> > For example, with respect to the concerns you had previously mentioned
-> > about ptrace.  If the security model definition does not include a
-> > security state coefficient for a ptrace_traceme security event, it
-> > will be disallowed, regardless of what goes on with respect to kernel
-> > development, modulo of course the ptrace_traceme LSM hook being
-> > discontinued.
+Sorry guys, this is my first time checking my @chromium.org email in a
+couple months. I have indeed moved on from being regularly plugged in
+to the goings on of the linux-security-module mailing list. @Paul
+Moore whatever you think is the best way forward here is good for me,
+I can't really make any promises that I'll be checking this mailing
+list on a regular basis.
 
-> Hi Greg
-
-Hi, I hope your day is going well.
-
-> thanks for your insights.
-
-Such as they were, the price was right... :-)
-
-> The policy is quite simple:
-> 
-> 
->      r/w  ^                             kernel space
-> ----------|-----------------------------------------
->           v (pipe)                        user space
->  +-----------------+       +-----------------------+
->  | trustworthy UMD |---X---| rest of the processes |
->  +-----------------+       +-----------------------+
-> 
-> The question was more, is the LSM infrastructure complete enough that
-> the X can be really enforced?
-> 
-> Could there be other implicit information flows that the LSM
-> infrastructure is not able/does not yet mediate, that could break the
-> policy above?
-
-When we initiated the Quixote project, to bring security modeling and
-machine learning based security policy to the kernel, the predicate
-assumed was that the LSM hooks represented the complete basis set of
-information that was required to define the security state of a
-system.
-
-If the current LSM hooks are insufficient in number or lack being
-fully descriptive in character, the LSM by definition, cannot fully
-protect a platform.
-
-I see that Casey replied downthread and indicated he thought the LSM
-hooks were sufficient to model the necessary security threats,
-obviously good news for both your work and ours.
-
-Just as a note of clarification.
-
-Casey indicated that the LSM supported labeled networking would be of
-assistance in your model, but my assumption from your diagram, is that
-the dashed line with the X in it, implies that there is to be NO
-information flow allowed between the sandboxed UMD process and the
-rest of the processes running on the system.
-
-This would be in contrast to the line representing some type of
-limited network or pipe connectivity, with appropriate security
-controls or labeling on the traffic, is this a correct assumption?
-
-It would seem like there would need to be two classes of security
-guarantees in place for your model.  First, the fact that the
-trustworthy UMD cannot be forced to commit some action that was not
-intended for it, and second, that the surrounding system can be
-trusted to not try and exert nefarious influence on the UMD.
-
-Wouldn't the second requirement necessitate that the UMD operate with
-some form of attestation as to the character of the surrounding
-system?
-
-Other than the fact that Intel chose to not make the technology
-sufficiently ubiquitous, it would seem that SGX would be tailor made
-for this.
-
-> I guess TSEM could be for more elaborated security models, but in
-> this case the policy is quite straithforward. Also, your TSEM would
-> be as limited as mine by the LSM hooks available.
-
-TSEM isn't about elaborate, it is about defining the notion of
-workload specific security models.  A TMA running a security model,
-that acts only on file digests accessed by files with uid=0, would
-roughly implement IMA, with appraisal essentially for 'free'.
-
-With respect to this discussion, one of the points that I was trying
-to make is that if you make the need to parse file digests from .rpms
-and .debs go away, the need for the highly protected UMD goes away as
-well.
-
-TSEM, with a signed security model processed by a trust orchestrator,
-implements that model, along with an invariant representation of the
-state of the system.
-
-In fact, we have micro-controller based TMA's that pull their security
-models over a CAT1.M network connection, completely external to the OS
-being modeled, which is probably as much isolation as is
-possible... :-)
-
-> Thanks
-> 
-> Roberto
-
-Have a good day.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
+> > >
+> > >  * https://lore.kernel.org/all/?q=3Df%3Amortonm%40chromium.org
+>
+> Hi Paul,
+>
+> >
+> > This fell through the cracks in my inbox last week, but I just went
+> > ahead and merged this into lsm/next.
+>
+> Thanks!
+>
+> Kind regards,
+> Alex
+>
+> >
+> > After the upcoming merge window closes we'll have to revisit
+> > SafeSetID's status as "supported", we might need to demote it to
+> > "maintained" or "odd fixes".
+> >
+> > --
+> > paul-moore.com
