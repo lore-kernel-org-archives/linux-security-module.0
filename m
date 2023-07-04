@@ -2,156 +2,141 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1B1EB64DA
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jul 2023 13:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE42C0015E
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jul 2023 15:19:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230161AbjGDNfC (ORCPT
+        id S231829AbjGDPTC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Jul 2023 09:35:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48216 "EHLO
+        Tue, 4 Jul 2023 11:19:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229955AbjGDNfB (ORCPT
+        with ESMTP id S231784AbjGDPTA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Jul 2023 09:35:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 853DCCA
-        for <linux-security-module@vger.kernel.org>; Tue,  4 Jul 2023 06:35:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D03D96124D
-        for <linux-security-module@vger.kernel.org>; Tue,  4 Jul 2023 13:34:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4987FC433C8;
-        Tue,  4 Jul 2023 13:34:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688477699;
-        bh=4fIdqmkmI54Oh77XXTPqwjpIa6KwTwouD5cjsGMfpSs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ebm3P5vgn5B1Vi6D9oR8jYsq2XX/gv0J0Y3+Zu2XYLY497zrV1k/nJZNw4+kMzged
-         jmGxsbteqrcho4XvQE+0tF7dNX1SFD5mmJp3u5YhHNqrZC2oHAcHg+Tb8TOvaHzgD0
-         +j5VlrhjqxA8AXcAc3SrQ0cqFBfbG4bJIp8vS56ojWGXSq05PkDmxApZ6JghR1mkPL
-         Y84RDozwpwsJNRTk4to0uz2U9qLmQUKcC/eCbIxqpTGI64kB75ZEvRlXVY3qbG6ZMw
-         hoTKgsCM73liJxSIV/YZElGpy9D6lPIeWWDsCPmBPP+IDo5mMKMJTunGIwTeqoshyp
-         +sTHrWM6CXGSw==
-Date:   Tue, 4 Jul 2023 15:34:54 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Andrii Nakryiko <andrii@kernel.org>
-Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        keescook@chromium.org, lennart@poettering.net, cyphar@cyphar.com,
-        luto@kernel.org, kernel-team@meta.com, sargun@sargun.me
-Subject: Re: [PATCH RESEND v3 bpf-next 01/14] bpf: introduce BPF token object
-Message-ID: <20230704-gourmet-radius-55a8d9c4c9e5@brauner>
-References: <20230629051832.897119-1-andrii@kernel.org>
- <20230629051832.897119-2-andrii@kernel.org>
- <20230704-hochverdient-lehne-eeb9eeef785e@brauner>
+        Tue, 4 Jul 2023 11:19:00 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD6010EC;
+        Tue,  4 Jul 2023 08:18:47 -0700 (PDT)
+Received: from frapeml500002.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4QwRFJ3CTLz67cSL;
+        Tue,  4 Jul 2023 23:15:48 +0800 (CST)
+Received: from [10.45.151.231] (10.45.151.231) by
+ frapeml500002.china.huawei.com (7.182.85.205) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Tue, 4 Jul 2023 17:18:44 +0200
+Message-ID: <17702e7f-479a-22b8-70d9-56e418c8120b@huawei.com>
+Date:   Tue, 4 Jul 2023 17:18:43 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230704-hochverdient-lehne-eeb9eeef785e@brauner>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [QUESTION] Full user space process isolation?
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        Jann Horn <jannh@google.com>
+CC:     Oleg Nesterov <oleg@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        LuisChamberlain <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tejun Heo <tj@kernel.org>, <linux-mm@kvack.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>
+References: <eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com>
+ <CAG48ez2oRPBdbfoNxGcV85CXFx1Su+dmhoWXE6rWsXui6_OTPg@mail.gmail.com>
+ <ab8e68962feba9f16ed0a715d46ed003da61cfe8.camel@huaweicloud.com>
+Content-Language: en-US
+From:   Petr Tesarik <petr.tesarik.ext@huawei.com>
+In-Reply-To: <ab8e68962feba9f16ed0a715d46ed003da61cfe8.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.45.151.231]
+X-ClientProxiedBy: frapeml100004.china.huawei.com (7.182.85.167) To
+ frapeml500002.china.huawei.com (7.182.85.205)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 04, 2023 at 02:43:59PM +0200, Christian Brauner wrote:
-> On Wed, Jun 28, 2023 at 10:18:19PM -0700, Andrii Nakryiko wrote:
-> > Add new kind of BPF kernel object, BPF token. BPF token is meant to to
-> > allow delegating privileged BPF functionality, like loading a BPF
-> > program or creating a BPF map, from privileged process to a *trusted*
-> > unprivileged process, all while have a good amount of control over which
-> > privileged operations could be performed using provided BPF token.
-> > 
-> > This patch adds new BPF_TOKEN_CREATE command to bpf() syscall, which
-> > allows to create a new BPF token object along with a set of allowed
-> > commands that such BPF token allows to unprivileged applications.
-> > Currently only BPF_TOKEN_CREATE command itself can be
-> > delegated, but other patches gradually add ability to delegate
-> > BPF_MAP_CREATE, BPF_BTF_LOAD, and BPF_PROG_LOAD commands.
-> > 
-> > The above means that new BPF tokens can be created using existing BPF
-> > token, if original privileged creator allowed BPF_TOKEN_CREATE command.
-> > New derived BPF token cannot be more powerful than the original BPF
-> > token.
-> > 
-> > Importantly, BPF token is automatically pinned at the specified location
-> > inside an instance of BPF FS and cannot be repinned using BPF_OBJ_PIN
-> > command, unlike BPF prog/map/btf/link. This provides more control over
-> > unintended sharing of BPF tokens through pinning it in another BPF FS
-> > instances.
-> > 
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > ---
+On 7/3/2023 5:28 PM, Roberto Sassu wrote:
+> On Mon, 2023-07-03 at 17:06 +0200, Jann Horn wrote:
+>> On Thu, Jun 22, 2023 at 4:45 PM Roberto Sassu
+>> <roberto.sassu@huaweicloud.com> wrote:
+>>> I wanted to execute some kernel workloads in a fully isolated user
+>>> space process, started from a binary statically linked with klibc,
+>>> connected to the kernel only through a pipe.
+>>
+>> FWIW, the kernel has some infrastructure for this already, see
+>> CONFIG_USERMODE_DRIVER and kernel/usermode_driver.c, with a usage
+>> example in net/bpfilter/.
 > 
-> The main issue I have with the token approach is that it is a completely
-> separate delegation vector on top of user namespaces. We mentioned this
-> duringthe conf and this was brought up on the thread here again as well.
-> Imho, that's a problem both security-wise and complexity-wise.
+> Thanks, I actually took that code to make a generic UMD management
+> library, that can be used by all use cases:
 > 
-> It's not great if each subsystem gets its own custom delegation
-> mechanism. This imposes such a taxing complexity on both kernel- and
-> userspace that it will quickly become a huge liability. So I would
-> really strongly encourage you to explore another direction.
+> https://lore.kernel.org/linux-kernel/20230317145240.363908-1-roberto.sassu@huaweicloud.com/
 > 
-> I do think the spirit of your proposal is workable and that it can
-> mostly be kept in tact.
+>>> I also wanted that, for the root user, tampering with that process is
+>>> as hard as if the same code runs in kernel space.
+>>
+>> I believe that actually making it that hard would probably mean that
+>> you'd have to ensure that the process doesn't use swap (in other
+>> words, it would have to run with all memory locked), because root can
+>> choose where swapped pages are stored. Other than that, if you mark it
+>> as a kthread so that no ptrace access is allowed, you can probably get
+>> pretty close. But if you do anything like that, please leave some way
+>> (like a kernel build config option or such) to enable debugging for
+>> these processes.
 > 
-> As mentioned before, bpffs has all the means to be taught delegation:
+> I didn't think about the swapping part... thanks!
 > 
->         // In container's user namespace
->         fd_fs = fsopen("bpffs");
+> Ok to enable debugging with a config option.
 > 
->         // Delegating task in host userns (systemd-bpfd whatever you want)
->         ret = fsconfig(fd_fs, FSCONFIG_SET_FLAG, "delegate", ...);
+>> But I'm not convinced that it makes sense to try to draw a security
+>> boundary between fully-privileged root (with the ability to mount
+>> things and configure swap and so on) and the kernel - my understanding
+>> is that some kernel subsystems don't treat root-to-kernel privilege
+>> escalation issues as security bugs that have to be fixed.
 > 
->         // In container's user namespace
->         fd_mnt = fsmount(fd_fs, 0);
+> Yes, that is unfortunately true, and in that case the trustworthy UMD
+> would not make things worse. On the other hand, on systems where that
+> separation is defined, the advantage would be to run more exploitable
+> code in user space, leaving the kernel safe.
 > 
->         ret = move_mount(fd_fs, "", -EBADF, "/my/fav/location", MOVE_MOUNT_F_EMPTY_PATH)
-> 
-> Roughly, this would mean:
-> 
-> (i) raise FS_USERNS_MOUNT on bpffs but guard it behind the "delegate"
->     mount option. IOW, it's only possibly to mount bpffs as an
->     unprivileged user if a delegating process like systemd-bpfd with
->     system-level privileges has marked it as delegatable.
-> (ii) add fine-grained delegation options that you want this
->      bpffs instance to allow via new mount options. Idk,
-> 
->      // allow usage of foo
->      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "foo");
-> 
->      // also allow usage of bar
->      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "bar");
-> 
->      // reset allowed options
->      fsconfig(fd_fs, FSCONFIG_SET_STRING, "");
-> 
->      // allow usage of schmoo
->      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "schmoo");
+> I'm thinking about all the cases where the code had to be included in
+> the kernel to run at the same privilege level, but would not use any of
+> the kernel facilities (e.g. parsers).
 
-This is really just one crummy way of doing this. It's ofc possible to
-make this a binary struct if you wanted to; of any form:
+Thanks for reminding me of kexec-tools. The complete image for booting a
+new kernel was originally prepared in user space. With kernel lockdown,
+all this code had to move into the kernel, adding a new syscall and lots
+of complexity to build purgatory code, etc. Yet, this new implementation
+in the kernel does not offer all features of kexec-tools, so both code
+bases continue to exist and are happily diverging...
 
-struct bpf_delegation_opts {
-	u64 a;
-	u64 b;
-	u64 c;
-	u32 d;
-	u32 e;
-};
+> If the boundary is extended to user space, some of these components
+> could be moved away from the kernel, and the functionality would be the
+> same without decreasing the security.
 
-and then
+All right, AFAICS your idea is limited to relatively simple cases for
+now. I mean, allowing kexec-tools to run in user space is not easily
+possible when UID 0 is not trusted, because kexec needs to open various
+files and make various other syscalls, which would require a complex LSM
+policy. It looks technically possible to write one, but then the big
+question is if it would be simpler to review and maintain than adding
+more kexec-tools features to the kernel.
 
-struct bpf_delegation_opts opts = {
-	.a = SOMETHING_SOMETHING,
-	.d = SOMETHING_SOMETHING_ELSE,
-};
+Anyway, I can sense a general desire to run less code in the most
+privileged system environment. Robert's proposal is one of few that go
+in this direction. What are the alternatives?
 
-fsconfig(fd_fs, FSCONFIG_SET_BINARY, "abilities", &opts, sizeof(opts));
+Petr T
 
-you'll get:
-
-param->size == sizeof(opts);
-param->blob = memdup_user_nul();
-
-and then you can version this by size like we do for extensible structs
-and change whatever you'd like to change in the future.
