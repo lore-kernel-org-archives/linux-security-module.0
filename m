@@ -2,136 +2,195 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA5DCEB64DA
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jul 2023 08:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C77EB64D9
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jul 2023 09:41:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231524AbjGDI5M (ORCPT
+        id S231752AbjGDJlQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Jul 2023 04:57:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60374 "EHLO
+        Tue, 4 Jul 2023 05:41:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231527AbjGDI5L (ORCPT
+        with ESMTP id S231863AbjGDJkp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Jul 2023 04:57:11 -0400
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2111.outbound.protection.outlook.com [40.107.215.111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F5AD136;
-        Tue,  4 Jul 2023 01:57:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eawNPMEKD9mlVDmgJ1yT4CO/h8PP6E04cgAV9/5QUNhNRSDv3w3GFDC/uUqBFJQPsheG7q7LWoP0BWiMo1FXf+ZbZSBP3PqdemsrufUtj9WQ9qoPT49Ci+53c4xsNZUay+vnQtmjHfl0hWypRV5XeQzQYEuiv6cGpKJcW+Q7HVe3X3wFLgQGEkmuou9CpEwp+J+AQdyY0bDnEDmxkOpNjq7QzGEvp2bGB3kTZ8ZfGj4wVfwaPwEqQY7IG2cidYC28VHQvxUXldut6pa8b4EMLeBc4ac6Ol1Nrg2jhcZ50sDe2wi0ahGMfj5ZAIuhNKtnMwSm3eCqUM4ftH0kI3g3OQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9HkL07nbHLh/ZLx5GiSjvSPMLEM3aqX9HEPbzlbr/Eo=;
- b=oNO9EMVf/rR93cLufklkWVb+5+nOXt3l3UdONHkn9r1jwLyTWaqXater1DSNOXXdqgR4EwCpePH2ObSXrMu27viIUHWPpeSQ9X7fZLpmPdD1cVvtM15H1l/G4zfCKXpTnzYEp/zrT8R8SChfcmDSy687MTOf5z24irh/15xo7ffKjGQILeQ+PepKGnkyJvPtyCgekC9svX2UL38YRyZc+yZAwgC9lHJiO+pvMERIDMdYvFDVtMuuQ+hJFvG4dQAgi1EdtSXsV/KOn4+e26runDR0gDy0er0P8nWdJj7rEjuNHBVgfGdR8Gf1JeZvGGJXvLKqqYnwT5KUrTv8557I2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9HkL07nbHLh/ZLx5GiSjvSPMLEM3aqX9HEPbzlbr/Eo=;
- b=lJDaj1aq7IvpATnWhhu7KuyfA81qEPPmcu7usCBfy/QISkcNsJgpHYdF+HMXY6YkD2jDpiMt9bWiW/MfxVOUfRR4HnmpgqZplmEPBdGFGND3l8ZBASxbUj4ZWRLLZ9CeWduEYi9UyAiWVBx2AeHuFs4Pzgvbv4eHfhTjUj9Wt+4Kqc9yVBVi0BgFohcqdSRzFmVuJ6hhqgwFTDd0MhgEJGeSHEIbLPE+Lhh2rgCLVuRbIrf7TQXyRKPFxE5cMv+URuZy7OAEIgFgAoih4+MgA7MtCFC8bKv6LQLeJeJTDUWxZ1GxM8DOHS/UWsD3NpazYLLk0V5M2gzTdQ9wgJXltw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SG2PR06MB5288.apcprd06.prod.outlook.com (2603:1096:4:1dc::9) by
- TY0PR06MB5659.apcprd06.prod.outlook.com (2603:1096:400:275::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6544.24; Tue, 4 Jul
- 2023 08:57:04 +0000
-Received: from SG2PR06MB5288.apcprd06.prod.outlook.com
- ([fe80::c2b:41ab:3b14:f920]) by SG2PR06MB5288.apcprd06.prod.outlook.com
- ([fe80::c2b:41ab:3b14:f920%6]) with mapi id 15.20.6544.024; Tue, 4 Jul 2023
- 08:57:04 +0000
-From:   Minjie Du <duminjie@vivo.com>
-To:     John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Nick Terrell <terrelln@fb.com>,
-        apparmor@lists.ubuntu.com (moderated list:APPARMOR SECURITY MODULE),
-        linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Cc:     opensource.kernel@vivo.com, Minjie Du <duminjie@vivo.com>
-Subject: [PATCH v1] security: remove duplicate logical judgments in return
-Date:   Tue,  4 Jul 2023 16:56:52 +0800
-Message-Id: <20230704085653.6443-1-duminjie@vivo.com>
-X-Mailer: git-send-email 2.39.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYAPR01CA0232.jpnprd01.prod.outlook.com
- (2603:1096:404:11e::28) To SG2PR06MB5288.apcprd06.prod.outlook.com
- (2603:1096:4:1dc::9)
+        Tue, 4 Jul 2023 05:40:45 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65D81210E
+        for <linux-security-module@vger.kernel.org>; Tue,  4 Jul 2023 02:38:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 67BB9611BE
+        for <linux-security-module@vger.kernel.org>; Tue,  4 Jul 2023 09:38:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70BD0C433C8;
+        Tue,  4 Jul 2023 09:38:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688463523;
+        bh=MjijfA5rbAdH4++U85ZPif8qBdhLaly4RtVren1Uees=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ryMmgVkA4jCx5pK/UQwRipK269ZgAuwp+k9/LZQ6rtFjpTX2jw/XEarKzXHYlLx9L
+         QZDkVj38z4yRPziIWWb3fzunMYOXpo3lEjsPJ8ec2PVImco115HTJtdHl5MjyDKQQN
+         6Tb4HLp21tQFC1zP/f5J5PICdrB5g+n+1BRES5gFXXGaGOV5Nv5/dfx3F6WhLMYal/
+         Oqd1G6CymfDIUQjLiVhjGUkWJJLak0VNvZy9BkLEVqIg9JFQMCr5H5FBpGTGPyuVfE
+         Xr/bOrjbStyQvmAno+E2f5tlKQSVzvFO/I5dDApkNb+mWSCnalz1b40zuDv6R648Au
+         5hrIClVaOcVLw==
+Date:   Tue, 4 Jul 2023 11:38:38 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        lennart@poettering.net, cyphar@cyphar.com, luto@kernel.org,
+        kernel-team@meta.com, sargun@sargun.me
+Subject: Re: [PATCH RESEND v3 bpf-next 00/14] BPF token
+Message-ID: <20230704-pumpwerk-festakt-a8313d3ae90e@brauner>
+References: <20230629051832.897119-1-andrii@kernel.org>
+ <87sfa9eu70.fsf@toke.dk>
+ <CAEf4Bzb0bVD_fuU4Oz1oXKdwLpG1t=7d5MV3OhniHUUiysWE8g@mail.gmail.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PR06MB5288:EE_|TY0PR06MB5659:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22f29be2-58d9-4417-89f4-08db7c6ca33e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: UENz/a+qqtGbTEc0Sb00NJbDl+/CEO8Wy4UIjgqvWmnfuU6oaUR7y61/u7r7rFkS+xQAJq4u2+WSg3J5FNmZvt4pTssjI2WBHKz6yb9uC4hfe/4B/TKzIIXllAfCg05CPNCGO1GBqexrx7LWAzwVF7wqL7w84tdGqCjC/HqxbKzVEz2yBvPKKwVi5ZIgAgglGjwArIdPKVehM2TaArtC75ngwY+TyW+UM5iFQBWcG8d+83GwH3E0somKkhNwdkWz8wJVNXbneSHPRhzVWhpopVZY5qUCN+F9c4FqKIv3JAjBVg+BHswPCQIekmzbMORsvkkc6lMAt/9PnF1L1G098Mbb59NhEJfXV6IQCxtfxiN+U1M+2lp+05gtSdmqKUPnd1eijknMgUkMEhvrLo353c21il1PBKe2Am2Ryv1iSiuy1eaFdDhts6UABDyUJGBpGUDXahMkGIQHXnGyMieBQf3MFkxVRIYWBkC0Igngn1USu4jRSfF68MAq/ooHltrUG4WpMasfaP45RBdjyFCPRK1zVI8qXZnFvdQMDGlZRv7+7RjsiAkOSKCG68eZgzGYGGjkiBZ0YJbPnm0RVa+ys8sHl0yDVO82RImx58As69XEA1W09CDGjVRXo0OGkuZ2
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SG2PR06MB5288.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(396003)(136003)(39860400002)(346002)(376002)(451199021)(4744005)(2906002)(41300700001)(8936002)(8676002)(15650500001)(36756003)(5660300002)(86362001)(186003)(2616005)(478600001)(107886003)(26005)(6506007)(6512007)(1076003)(6666004)(6486002)(52116002)(316002)(66556008)(4326008)(66946007)(38100700002)(38350700002)(66476007)(110136005)(83380400001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?lPw3P8W5b0cEfX5JGVOyhklwi2JZyWZf2y2vRQCPTOAlZJzkwCepPlN7bCz8?=
- =?us-ascii?Q?SfHM6TbHn/TVvencelG3+Dsk+LHr3UYa27ODaNIyODhZu26FYPZ8mm5KFHKZ?=
- =?us-ascii?Q?bVPDT0Y9+Wr5b8FwhRbMOdBB8VBquTopj6C6guPL5jwzyp5gtxvV6kSqM/RW?=
- =?us-ascii?Q?czEjed0AMFBVJuw416jSP5yjqKAE+uCOj8r0+xzNGGtzzmv8gKxJAFyp3KJt?=
- =?us-ascii?Q?c+L6CbEmaJ6ppGwq1xpgzvedUm0BtQbQEqtv+nCMaTmLWVuZrubZeKDZfWDm?=
- =?us-ascii?Q?MUktuPQ4qk8lbHHWs0zzrxebyJhNQgXJyhntxtyCNGjuTi9G4M5BdIsG8MCI?=
- =?us-ascii?Q?ghtsO2ThDEejiVnhnZyZF47C4bvEaHusCmg0TrxLFlwrzKZf5PwVpHSQ3nzM?=
- =?us-ascii?Q?iVFOO7hfyqxmwE4xyLGq0o3AG5Xv454CcXDJjouU6z36hYBlnleH+BTjveAc?=
- =?us-ascii?Q?y+DbbyeoapNwEYrx/rYmM7gzd/hheeKug6b+sGFFyGDIWi5irpeLZp6QT7Mr?=
- =?us-ascii?Q?+e4mFbqxNHEfzilu1Z0K5YGDXB5n6l5HvKDPuEY5l5GF6K2UPpiwh4S4JSEI?=
- =?us-ascii?Q?pQZ+OGmwP2xsDGIogsz6WeZvQxAbDaDwD+apsvhQuVN6NdWMEcidT9y4vNR6?=
- =?us-ascii?Q?hfFyxJ4PAn60b7yQHiytGqU5IjV9ZnOZ7yEyhI59dgfqkfZmg3RFKXWFQaEq?=
- =?us-ascii?Q?H6hXyHhvA2kC2RDRFwJVnk3zHzgHwpWOJ+XFE0U5SR9/syav3VmRp3zQe+5o?=
- =?us-ascii?Q?H0Ul+El92Ee2b64hOboS4e4SM1fWyYNZKpi4LkWeVpupGgt4Iup4h9wgKOsr?=
- =?us-ascii?Q?ZF0SiqVvUXfHBFDwVMqEOpr+iyBGgOjYOq/4UfWJZyOvnmGdm3vA50RPBgzX?=
- =?us-ascii?Q?/+3xe+w3AnREZooFyO6evcpZJM0Du56gyq1NZMF1R4fGLvmGnhfDW2LR/fiG?=
- =?us-ascii?Q?PxpZnnuX1h55qZnorhWARMP931YIJByrRmND2VrINTCIyVeHnnZOGcusXZrD?=
- =?us-ascii?Q?4fyxTfwxfcREBWZ1VuZSCNq9UX89hgLke1X+YhgyJ0vxRyNUMLDl/Xe51DDY?=
- =?us-ascii?Q?QHpDz/FaX8xNSyVrhQzyhZq3A7yqtI1bcFbyKeW00Ww+54WUpxFlm1QNC62B?=
- =?us-ascii?Q?VCwfRzYFEsSPMqAjj/NTILRMuAj0d+KDIlGQxCb6Gnp1DCF4891fKByx+vzv?=
- =?us-ascii?Q?+2l/TOF33vQFl3rk3bLCLWnNp4sPdy8VSxNUBSYMEgZ6sE1gGs1eMlqSmhD1?=
- =?us-ascii?Q?I4I1jVZeXUEsuVP+BScWs4M6HkFEteSJ1y5pbb9vH6dQpGm2NnpMZY5C/xz7?=
- =?us-ascii?Q?MWCh7+++9nudqwCIruulX0+EjiLmYUk8uW4kUJJvxW25JKKTeYq92zxL7lOA?=
- =?us-ascii?Q?vGC+XiH737EInscV+XLAA7x66EDGICZvVKvnQO6pMEpWnY+cVCpVBJlmoHkP?=
- =?us-ascii?Q?HVDPqjB2SowGis8tTL2aNHweVo18/09me8aeKKd7s5Q1DR6aWQAPTsrlgvZg?=
- =?us-ascii?Q?9Xp4+Oo8v4nLcyzpkd7OI30D+VS1yejKBFCqkGCZkC/XhZy0nWjo1/EbRzTd?=
- =?us-ascii?Q?kGzWJozP6KqYXxkc6fEOSQL0yKSqTDxe2s/+X2JN?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22f29be2-58d9-4417-89f4-08db7c6ca33e
-X-MS-Exchange-CrossTenant-AuthSource: SG2PR06MB5288.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2023 08:57:04.2521
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gy7Yzvx3acGXjV+7qcWAYyCof9JUM2x371XbejwM92+fR+u8BGpPP4rF7KZRUpfB4ZW7TwUNcb3SwGC4wW/cPg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5659
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4Bzb0bVD_fuU4Oz1oXKdwLpG1t=7d5MV3OhniHUUiysWE8g@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Fix: delate duplicate logical judgments:
-aa_unpack_u32(e, &perm->allow, NULL);
-Please check this. Thank you!
+On Fri, Jun 30, 2023 at 11:25:57AM -0700, Andrii Nakryiko wrote:
+> On Thu, Jun 29, 2023 at 4:15 PM Toke Høiland-Jørgensen <toke@redhat.com> wrote:
+> >
+> > Andrii Nakryiko <andrii@kernel.org> writes:
+> >
+> > > This patch set introduces new BPF object, BPF token, which allows to delegate
+> > > a subset of BPF functionality from privileged system-wide daemon (e.g.,
+> > > systemd or any other container manager) to a *trusted* unprivileged
+> > > application. Trust is the key here. This functionality is not about allowing
+> > > unconditional unprivileged BPF usage. Establishing trust, though, is
+> > > completely up to the discretion of respective privileged application that
+> > > would create a BPF token, as different production setups can and do achieve it
+> > > through a combination of different means (signing, LSM, code reviews, etc),
+> > > and it's undesirable and infeasible for kernel to enforce any particular way
+> > > of validating trustworthiness of particular process.
+> > >
+> > > The main motivation for BPF token is a desire to enable containerized
+> > > BPF applications to be used together with user namespaces. This is currently
+> > > impossible, as CAP_BPF, required for BPF subsystem usage, cannot be namespaced
+> > > or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to BPF
+> > > helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safely read
+> > > arbitrary memory, and it's impossible to ensure that they only read memory of
+> > > processes belonging to any given namespace. This means that it's impossible to
+> > > have namespace-aware CAP_BPF capability, and as such another mechanism to
+> > > allow safe usage of BPF functionality is necessary. BPF token and delegation
+> > > of it to a trusted unprivileged applications is such mechanism. Kernel makes
+> > > no assumption about what "trusted" constitutes in any particular case, and
+> > > it's up to specific privileged applications and their surrounding
+> > > infrastructure to decide that. What kernel provides is a set of APIs to create
+> > > and tune BPF token, and pass it around to privileged BPF commands that are
+> > > creating new BPF objects like BPF programs, BPF maps, etc.
+> >
+> > So a colleague pointed out today that the Seccomp Notify functionality
+> > would be a way to achieve your stated goal of allowing unprivileged
+> > containers to (selectively) perform bpf() syscall operations. Christian
+> > Brauner has a pretty nice writeup of the functionality here:
+> > https://people.kernel.org/brauner/the-seccomp-notifier-new-frontiers-in-unprivileged-container-development
+> >
+> > In fact he even mentions allowing unprivileged access to bpf() as a
+> > possible use case (in the second-to-last paragraph).
+> >
+> > AFAICT this would enable your use case without adding any new kernel
+> > functionality or changing the BPF-using applications, while allowing the
+> > privileged userspace daemon to make case-by-case decisions on each
+> > operation instead of granting blanket capabilities (which is my main
+> > objection to the token proposal, as we discussed on the last iteration
+> > of the series).
+> 
+> It's not "blanket" capabilities. You control types or maps and
+> programs that could be created. And again, CAP_SYS_ADMIN guarded.
+> Please, don't give CAP_SYS_ADMIN/root permissions to applications you
+> can't be sure won't do something stupid and blame kernel API for it.
+> 
+> After all, the root process can setuid() any file and make it run with
+> elevated permissions, right? Doesn't get more "blanket" than that.
+> 
+> >
+> > So I'm curious whether you considered this as an alternative to
+> > BPF_TOKEN? And if so, what your reason was for rejecting it?
+> >
+> 
+> Yes, I'm aware, Christian has a follow up short blog post specifically
+> for using this for proxying BPF from privileged process ([0]).
+> 
+> So, in short, I think it's not a good generic solution. It's very
+> fragile and high-maintenance. It's still proxying BPF UAPI (except
+> application does preserve illusion of using BPF syscall, yes, that
+> part is good) with all the implications: needing to replicate all of
+> UAPI (fetching all those FDs from another process, following all the
+> pointers from another process' memory, etc), and also writing back all
+> the correct things (into another process' memory): log content,
+> log_true_size (out param), any other output parameters. What do we do
+> when an application uses a newer version of bpf_attr that is supported
+> by proxy? And honestly, I'm like 99% sure there are lots of less
+> obvious issues one runs into when starting implementing something like
+> this.
+> 
+> This sounds like a hack and nightmare to implement and support.
+> Perhaps that indirectly is supported by the fact that even Christian
+> half-jokingly calls this a crazy approach. That code basically is
+> unchanged for the last three years, with only one fix from Christian
+> one year after initial introduction ([1]) to fix a quirky issue
+> related to the limitation of pidfd working only for thread group
+> leaders. It also still supports only BPF_PROG_TYPE_CGROUP_DEVICE
+> program loading, it doesn't support a bunch of newer BPF_PROG_LOAD
+> fields and functionality, etc, etc.
+> 
+> So as a technical curiosity it's pretty cool and perhaps is the right
+> tool for the job for very narrow specific use cases. But as a
+> realistic generic approach that could be used by industry at large for
+> safe BPF usage from namespaced containers -- not so much.
 
-Signed-off-by: Minjie Du <duminjie@vivo.com>
----
- security/apparmor/policy_unpack.c | 1 -
- 1 file changed, 1 deletion(-)
+Some background... When BPF & cgroup moved the devices cgroup from a
+file-based cgroup controller into a BPF program it was technically an
+immediate widespread regression.
 
-diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index 694fb7a09..2069adf0a 100644
---- a/security/apparmor/policy_unpack.c
-+++ b/security/apparmor/policy_unpack.c
-@@ -646,7 +646,6 @@ static bool unpack_perm(struct aa_ext *e, u32 version, struct aa_perms *perm)
- 		return false;
- 
- 	return	aa_unpack_u32(e, &perm->allow, NULL) &&
--		aa_unpack_u32(e, &perm->allow, NULL) &&
- 		aa_unpack_u32(e, &perm->deny, NULL) &&
- 		aa_unpack_u32(e, &perm->subtree, NULL) &&
- 		aa_unpack_u32(e, &perm->cond, NULL) &&
--- 
-2.39.0
+The cgroup v1 controller was file based and supported seemlessly
+switching between allow- and denylists. Whether that was ever sensible
+is a separate question.
 
+But what this meant was that any container runtime that used a simple
+file-based mechanism now had to generate a BPF device program that
+mirrored the cgroup v1 semantic such that the old syntax of the cgroup
+v1 device controller would be correctly translated into a BPF devices
+program.
+
+In addition, this broke some nesting scenarios. So intercepting bpf()
+via seccomp was specifically done to avoid devices cgroup regressions.
+It was never meant to be a generic solution.
+
+It also doesn't work for all cases as the seccomp notifier's supervision
+mechanism isn't really a clean solution.
+
+It's a pipe dream that you can transparently proxy system calls for
+another process via seccomp for sufficiently complex system calls. We
+did it for specific use-cases where we could sufficiently guarantee that
+they could be safe. But to make this work it would involve way more
+invasive changes:
+
+* nesting/stacking of seccomp notifiers
+* clean handling of pointer arguments in-kernel such that you can safely
+  continue system calls being sure that they haven't been modified. This
+  is currently only possible in scenarios where safety is guaranteed by
+  the kernel refusing nonsensical or unsafe arguments
+* correct privilege handling
+  The seccomp notifier emulates system calls in userspace and thus has
+  to mimick the privilege context of the task it is emulating the system
+  call for in such a way that (i) it allows it to succeed by avoiding the
+  privilege limitations of why the given system call was supposed to be
+  proxied in the first place, (ii) it doesn't allow to circumvent other,
+  generic restrictions that would otherwise cause the system call to
+  fail. It's like saying e.g., "execute with most of the proxied task's
+  creds but let it have a few more privileges". That's frail as Linux
+  creds aren't really composable. That's why we have override_creds()
+  not "add_creds()" and "subtract_creds()" which would probably be
+  nicer.
+
+Or it would have to be a generic first class kernel proxy which begs the
+question why not change the subsystems itself to do this cleanly.
