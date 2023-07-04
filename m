@@ -2,130 +2,156 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1BA5EB64D9
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jul 2023 12:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1B1EB64DA
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jul 2023 13:35:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230050AbjGDM50 (ORCPT
+        id S230161AbjGDNfC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Jul 2023 08:57:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56250 "EHLO
+        Tue, 4 Jul 2023 09:35:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231535AbjGDM5X (ORCPT
+        with ESMTP id S229955AbjGDNfB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Jul 2023 08:57:23 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD89710CE;
-        Tue,  4 Jul 2023 05:57:18 -0700 (PDT)
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 364Clq1L030500;
-        Tue, 4 Jul 2023 12:57:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=iTDv4VPTfZqUZ7AKCiQnqMYiZmFlxHkGxEf8+CPNWo8=;
- b=F2z63e/OYzNaCShNERNgVClfVfXi3YLv77s28P2rmWpDMlYrvMKUrWpvHmbMbuYA16Mv
- usDaskLOxXN2ssxtqJGUWHL+C83KmR3jbibqzp4PPB0FgQUbYPp4/ZInIJT7ybrSzu5O
- vGPrSTWJEA7hC4YjiCgiPA8wl9VIjd29ZHYYeWdXLePTSETfWsxrHQ1CvtBEmLR8Q7CL
- 62NI/8kVSECLXFWIeQUmGTIUqnIr9uYX2dAUXC/rSeNSfnp/87WKQmgmY9wA1fqUS0Rg
- stGyEZMiJr9jh3GdcAD48XIyUoIzjl/U1h7OjnBquq7UgTwNaJCAAJmZrxABNM5k6XXo 4g== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3rmkr887x6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Jul 2023 12:57:15 +0000
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 364CnP0p003018;
-        Tue, 4 Jul 2023 12:57:14 GMT
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3rmkr887wh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Jul 2023 12:57:14 +0000
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 364A6PWf008595;
-        Tue, 4 Jul 2023 12:57:14 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([9.208.129.114])
-        by ppma01dal.us.ibm.com (PPS) with ESMTPS id 3rjbs5ys1e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Jul 2023 12:57:13 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-        by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 364CvCMW25297190
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 4 Jul 2023 12:57:12 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EACE458055;
-        Tue,  4 Jul 2023 12:57:11 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 33E0F5805E;
-        Tue,  4 Jul 2023 12:57:11 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.36.177])
-        by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Tue,  4 Jul 2023 12:57:11 +0000 (GMT)
-Message-ID: <b61fedf214cbe72de063a3bf516dd72f80595219.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: require signed IMA policy when UEFI secure boot is
- enabled
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Tue, 04 Jul 2023 08:57:10 -0400
-In-Reply-To: <20230703115442.129725-1-coxu@redhat.com>
-References: <20230703115442.129725-1-coxu@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: TAr0e02RnOj9NLIdD-orsSF3sFfLLkK4
-X-Proofpoint-GUID: kHJ-0h6YRVkkA6xkvOne638UU5eyQSgX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-04_07,2023-07-04_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- suspectscore=0 impostorscore=0 spamscore=0 malwarescore=0 bulkscore=0
- adultscore=0 clxscore=1015 phishscore=0 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2305260000 definitions=main-2307040106
+        Tue, 4 Jul 2023 09:35:01 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 853DCCA
+        for <linux-security-module@vger.kernel.org>; Tue,  4 Jul 2023 06:35:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D03D96124D
+        for <linux-security-module@vger.kernel.org>; Tue,  4 Jul 2023 13:34:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4987FC433C8;
+        Tue,  4 Jul 2023 13:34:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688477699;
+        bh=4fIdqmkmI54Oh77XXTPqwjpIa6KwTwouD5cjsGMfpSs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ebm3P5vgn5B1Vi6D9oR8jYsq2XX/gv0J0Y3+Zu2XYLY497zrV1k/nJZNw4+kMzged
+         jmGxsbteqrcho4XvQE+0tF7dNX1SFD5mmJp3u5YhHNqrZC2oHAcHg+Tb8TOvaHzgD0
+         +j5VlrhjqxA8AXcAc3SrQ0cqFBfbG4bJIp8vS56ojWGXSq05PkDmxApZ6JghR1mkPL
+         Y84RDozwpwsJNRTk4to0uz2U9qLmQUKcC/eCbIxqpTGI64kB75ZEvRlXVY3qbG6ZMw
+         hoTKgsCM73liJxSIV/YZElGpy9D6lPIeWWDsCPmBPP+IDo5mMKMJTunGIwTeqoshyp
+         +sTHrWM6CXGSw==
+Date:   Tue, 4 Jul 2023 15:34:54 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Andrii Nakryiko <andrii@kernel.org>
+Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        keescook@chromium.org, lennart@poettering.net, cyphar@cyphar.com,
+        luto@kernel.org, kernel-team@meta.com, sargun@sargun.me
+Subject: Re: [PATCH RESEND v3 bpf-next 01/14] bpf: introduce BPF token object
+Message-ID: <20230704-gourmet-radius-55a8d9c4c9e5@brauner>
+References: <20230629051832.897119-1-andrii@kernel.org>
+ <20230629051832.897119-2-andrii@kernel.org>
+ <20230704-hochverdient-lehne-eeb9eeef785e@brauner>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230704-hochverdient-lehne-eeb9eeef785e@brauner>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2023-07-03 at 19:54 +0800, Coiby Xu wrote:
-> With the introduction of the .machine keyring for UEFI-based systems,
-> users are able to add custom CAs keys via MOK. This allow users to sign
-> their own IMA polices. For the sake of security, mandate signed IMA
-> policy when UEFI secure boot is enabled.
+On Tue, Jul 04, 2023 at 02:43:59PM +0200, Christian Brauner wrote:
+> On Wed, Jun 28, 2023 at 10:18:19PM -0700, Andrii Nakryiko wrote:
+> > Add new kind of BPF kernel object, BPF token. BPF token is meant to to
+> > allow delegating privileged BPF functionality, like loading a BPF
+> > program or creating a BPF map, from privileged process to a *trusted*
+> > unprivileged process, all while have a good amount of control over which
+> > privileged operations could be performed using provided BPF token.
+> > 
+> > This patch adds new BPF_TOKEN_CREATE command to bpf() syscall, which
+> > allows to create a new BPF token object along with a set of allowed
+> > commands that such BPF token allows to unprivileged applications.
+> > Currently only BPF_TOKEN_CREATE command itself can be
+> > delegated, but other patches gradually add ability to delegate
+> > BPF_MAP_CREATE, BPF_BTF_LOAD, and BPF_PROG_LOAD commands.
+> > 
+> > The above means that new BPF tokens can be created using existing BPF
+> > token, if original privileged creator allowed BPF_TOKEN_CREATE command.
+> > New derived BPF token cannot be more powerful than the original BPF
+> > token.
+> > 
+> > Importantly, BPF token is automatically pinned at the specified location
+> > inside an instance of BPF FS and cannot be repinned using BPF_OBJ_PIN
+> > command, unlike BPF prog/map/btf/link. This provides more control over
+> > unintended sharing of BPF tokens through pinning it in another BPF FS
+> > instances.
+> > 
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
 > 
-> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
-> ---
->  security/integrity/ima/ima_efi.c | 3 +++
->  1 file changed, 3 insertions(+)
+> The main issue I have with the token approach is that it is a completely
+> separate delegation vector on top of user namespaces. We mentioned this
+> duringthe conf and this was brought up on the thread here again as well.
+> Imho, that's a problem both security-wise and complexity-wise.
 > 
-> diff --git a/security/integrity/ima/ima_efi.c b/security/integrity/ima/ima_efi.c
-> index 9db66fe310d4..bb2881759505 100644
-> --- a/security/integrity/ima/ima_efi.c
-> +++ b/security/integrity/ima/ima_efi.c
-> @@ -58,6 +58,9 @@ static const char * const sb_arch_rules[] = {
->  #if !IS_ENABLED(CONFIG_MODULE_SIG)
->  	"appraise func=MODULE_CHECK appraise_type=imasig",
->  #endif
-> +#if IS_ENABLED(CONFIG_INTEGRITY_MACHINE_KEYRING) && IS_ENABLED(CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY)
-> +	"appraise func=POLICY_CHECK appraise_type=imasig",
-> +#endif /* CONFIG_INTEGRITY_MACHINE_KEYRING && IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY */
->  	"measure func=MODULE_CHECK",
->  	NULL
->  };
+> It's not great if each subsystem gets its own custom delegation
+> mechanism. This imposes such a taxing complexity on both kernel- and
+> userspace that it will quickly become a huge liability. So I would
+> really strongly encourage you to explore another direction.
+> 
+> I do think the spirit of your proposal is workable and that it can
+> mostly be kept in tact.
+> 
+> As mentioned before, bpffs has all the means to be taught delegation:
+> 
+>         // In container's user namespace
+>         fd_fs = fsopen("bpffs");
+> 
+>         // Delegating task in host userns (systemd-bpfd whatever you want)
+>         ret = fsconfig(fd_fs, FSCONFIG_SET_FLAG, "delegate", ...);
+> 
+>         // In container's user namespace
+>         fd_mnt = fsmount(fd_fs, 0);
+> 
+>         ret = move_mount(fd_fs, "", -EBADF, "/my/fav/location", MOVE_MOUNT_F_EMPTY_PATH)
+> 
+> Roughly, this would mean:
+> 
+> (i) raise FS_USERNS_MOUNT on bpffs but guard it behind the "delegate"
+>     mount option. IOW, it's only possibly to mount bpffs as an
+>     unprivileged user if a delegating process like systemd-bpfd with
+>     system-level privileges has marked it as delegatable.
+> (ii) add fine-grained delegation options that you want this
+>      bpffs instance to allow via new mount options. Idk,
+> 
+>      // allow usage of foo
+>      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "foo");
+> 
+>      // also allow usage of bar
+>      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "bar");
+> 
+>      // reset allowed options
+>      fsconfig(fd_fs, FSCONFIG_SET_STRING, "");
+> 
+>      // allow usage of schmoo
+>      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "schmoo");
 
-Thanks, Coiby.
+This is really just one crummy way of doing this. It's ofc possible to
+make this a binary struct if you wanted to; of any form:
 
-Using IS_ENABLED() is not wrong, but unnecessary.  IS_BUILTIN()
-suffices.
+struct bpf_delegation_opts {
+	u64 a;
+	u64 b;
+	u64 c;
+	u32 d;
+	u32 e;
+};
 
--- 
-thanks,
+and then
 
-Mimi
+struct bpf_delegation_opts opts = {
+	.a = SOMETHING_SOMETHING,
+	.d = SOMETHING_SOMETHING_ELSE,
+};
 
+fsconfig(fd_fs, FSCONFIG_SET_BINARY, "abilities", &opts, sizeof(opts));
+
+you'll get:
+
+param->size == sizeof(opts);
+param->blob = memdup_user_nul();
+
+and then you can version this by size like we do for extensible structs
+and change whatever you'd like to change in the future.
