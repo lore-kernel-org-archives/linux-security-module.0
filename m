@@ -2,105 +2,218 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC105EB64D9
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jul 2023 18:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5205AEB64D9
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jul 2023 20:49:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230379AbjGDSdE (ORCPT
+        id S230011AbjGDUtA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Jul 2023 14:33:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55562 "EHLO
+        Tue, 4 Jul 2023 16:49:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbjGDSdD (ORCPT
+        with ESMTP id S229469AbjGDUs7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Jul 2023 14:33:03 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7343210C1
-        for <linux-security-module@vger.kernel.org>; Tue,  4 Jul 2023 11:33:02 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-986d8332f50so698051966b.0
-        for <linux-security-module@vger.kernel.org>; Tue, 04 Jul 2023 11:33:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1688495581; x=1691087581;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vvbEOwmuACzLZlIyKGNPoeNAnhtuCQRGw6xxql/GyT0=;
-        b=WMQG2Wa09zAmTLEemKZZ2B+/k9d5ROg3/Ze4UWWfq+waBsApwfVupdf++PItf7jpLs
-         5RrLa+1aE8KwS71DF+Yt+brdKxfFXK4nrbYMJ1Zvzatl8R/P3h8GoppFih/euTafkpu6
-         Mlo4iYhoNeZn85G0TF5emJA12Pkhoqdkf+YR4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688495581; x=1691087581;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vvbEOwmuACzLZlIyKGNPoeNAnhtuCQRGw6xxql/GyT0=;
-        b=T5RIRtW6u6++HD9R1LVJ/byj/Nw6PLrT7oaf5cp6mBdwZuMTopUTtmFaJKhAO8HHbQ
-         AneSNh+J4O3m2NO3Ok8ffu3frtQ1Kc1uJ/sDGj0uA3txBdqhvj5rUglotvsWGGZVzzwD
-         eJ+CsDrVaXlkl25ggS8RI3UbO1nr4FC6Q+75vyfBpSlYNzH/Wk6c1Su7ed9goPJHRkeg
-         Xd6qIf6OZkLYUu0An7Uz1QWc/0Tkfve+AkWG6Ui3zqi7DcIpzfddRiEXl89ExOs9cGyr
-         mM+nnWOvquPgjx/ahcz4Q0iORUeBLHXfl7xMyf31rM2hMQZq0i7Mha7cLDP4T0Vb5sZR
-         BIVA==
-X-Gm-Message-State: ABy/qLaOfoEkT/woZJO4DN7ls+NZKVekrIEGeYLdlkTqG9Djyb4NMnL3
-        VNW0Lf+Tk5RJwniyEOn9UqW9ziL+wggeoGNO0cc7e6k1tkmliGxC
-X-Google-Smtp-Source: APBJJlGx3lTM+CL506twufVxJycIMNPdeD9H9aZW7tPIe9ZMr86LWa6c1iW/2P9GyZtQYsURT3bsRu6S37iStdQaXkk=
-X-Received: by 2002:a17:906:74e:b0:992:3aa8:b21 with SMTP id
- z14-20020a170906074e00b009923aa80b21mr10401620ejb.25.1688495580542; Tue, 04
- Jul 2023 11:33:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230630192526.271084-2-paul@paul-moore.com>
-In-Reply-To: <20230630192526.271084-2-paul@paul-moore.com>
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Tue, 4 Jul 2023 11:32:48 -0700
-Message-ID: <CAJ-EccNa+itDRRwZJo7ukNG4VVXdZUu7h+W=7r4qvV0zSF5-cg@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: update SafeSetID entry
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 4 Jul 2023 16:48:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2CBA99
+        for <linux-security-module@vger.kernel.org>; Tue,  4 Jul 2023 13:48:58 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2E49D61386
+        for <linux-security-module@vger.kernel.org>; Tue,  4 Jul 2023 20:48:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A9CEC433C8;
+        Tue,  4 Jul 2023 20:48:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688503737;
+        bh=za+CAfYB+aFtoqGr9CgvQWZEZ8vUe0tG0AU+RZx6wk0=;
+        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
+        b=gfbMHxA2JabY5+dspp4AszO+onHu4bQ3+Ex9KIS9MOFwuFoHFOJB8I3VSwfNsQR/u
+         VEM0XJeJ7/HpNSUq8B2e4gLeG9QZ5+dM0lWPwbYLlhc6FcMDX2wU+o5ZKDUcKK2Wp6
+         QvzYEH98vcHhsaHP8ZB4rkCaRysMuKYGltPJjRbZ/zGlNwaWgMb8ss92qYKsVXFrY9
+         kseJOlQHgjL3YQJ70StH5OLMcJNf2LwJJ53sVvZYxJLV1GEz6jQG1Kgu0QFmcHY2+S
+         A2dQ64Kx3evwhIpja+1req8xLOQPleWL4pKCBqbdSbtmTTYyXHZ7f/HGRnTIgCeuVt
+         ZMPwMvf42yWEQ==
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 1251F27C005B;
+        Tue,  4 Jul 2023 16:48:56 -0400 (EDT)
+Received: from imap48 ([10.202.2.98])
+  by compute3.internal (MEProxy); Tue, 04 Jul 2023 16:48:56 -0400
+X-ME-Sender: <xms:t4WkZIhuAjoFqZTAghHdN5-BgU3z4_mlAXZmUfekv_lekDnr2XSBvw>
+    <xme:t4WkZBBcrf9Nys-2MerBk53maTnqsuDqhlyoUd3jsKyLY5DwP6ifP7G1JU4l4_CI4
+    oQHRbPNmJiXykxUaw8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudeggdduhedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    nhguhicunfhuthhomhhirhhskhhifdcuoehluhhtoheskhgvrhhnvghlrdhorhhgqeenuc
+    ggtffrrghtthgvrhhnpeduveffvdegvdefhfegjeejlefgtdffueekudfgkeduvdetvddu
+    ieeluefgjeeggfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpegrnhguhidomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudduiedu
+    keehieefvddqvdeifeduieeitdekqdhluhhtoheppehkvghrnhgvlhdrohhrgheslhhinh
+    hugidrlhhuthhordhush
+X-ME-Proxy: <xmx:t4WkZAHrplOO6VuYClISj62XAN290MCMAYhEfHZGzAOugyGfc23ksg>
+    <xmx:t4WkZJRhBF02ICsYhaWkUvEV9f8Z8UHRMrzuLcRlS0fDyoaXL5m7GQ>
+    <xmx:t4WkZFxIPBP0K8LGM_rngs5lPuPp0tKPKAtZH8RVnEVRHPOYVRePUQ>
+    <xmx:uIWkZMmVWp8HXf6S3NTLSEIkI3D7q2yRcDVmZU6pUuKfg29A_axt3g>
+Feedback-ID: ieff94742:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 5995931A0063; Tue,  4 Jul 2023 16:48:55 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-527-gee7b8d90aa-fm-20230629.001-gee7b8d90
+Mime-Version: 1.0
+Message-Id: <640eeef7-48df-464e-a49f-d7ee31193e04@app.fastmail.com>
+In-Reply-To: <77fc8c9b-220f-da93-c6b8-a8f36eb1086f@iogearbox.net>
+References: <20230607235352.1723243-1-andrii@kernel.org>
+ <c1a8d5e8-023b-4ef9-86b3-bdd70efe1340@app.fastmail.com>
+ <CAEf4BzazbMqAh_Nj_geKNLshxT+4NXOCd-LkZ+sRKsbZAJ1tUw@mail.gmail.com>
+ <a73da819-b334-448c-8e5c-50d9f7c28b8f@app.fastmail.com>
+ <CAEf4Bzb__Cmf5us1Dy6zTkbn2O+3GdJQ=khOZ0Ui41tkoE7S0Q@mail.gmail.com>
+ <5eb4264e-d491-a7a2-93c7-928b06ce264d@redhat.com>
+ <bc4f99af-0c46-49b2-9f2d-9a01e6a03af3@app.fastmail.com>
+ <5a75d1f0-4ed9-399c-4851-2df0755de9b5@redhat.com>
+ <CAEf4Bza9GvJ0vw2-0M8GKSXmOQ8VQCmeqEiQpMuZBjwqpA03vw@mail.gmail.com>
+ <82b79e57-a0ad-4559-abc9-858e0f51fbba@app.fastmail.com>
+ <9b0e9227-4cf4-4acb-ba88-52f65b099709@app.fastmail.com>
+ <173f0af7-e6e1-f4b7-e0a6-a91b7a4da5d7@iogearbox.net>
+ <fe47aeb6-dae8-43a6-bcb0-ada2ebf62e08@app.fastmail.com>
+ <8340aaf2-8b4c-4f7d-8eed-f72f615f6fd0@app.fastmail.com>
+ <77fc8c9b-220f-da93-c6b8-a8f36eb1086f@iogearbox.net>
+Date:   Tue, 04 Jul 2023 13:48:35 -0700
+From:   "Andy Lutomirski" <luto@kernel.org>
+To:     "Daniel Borkmann" <daniel@iogearbox.net>,
+        "Andrii Nakryiko" <andrii.nakryiko@gmail.com>,
+        "Maryam Tahhan" <mtahhan@redhat.com>
+Cc:     "Andrii Nakryiko" <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        "Kees Cook" <keescook@chromium.org>,
+        "Christian Brauner" <brauner@kernel.org>, lennart@poettering.net,
+        cyphar@cyphar.com, kernel-team@meta.com
+Subject: Re: [PATCH v2 bpf-next 00/18] BPF token
+Content-Type: text/plain;charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 30, 2023 at 12:25=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
->
-> Micah Morton, the SafeSetID maintainer, last posted to any of the
-> public kernel mailing lists in early August 2022 and has not
-> commented on any SafeSetID patches posted since that time.  Attempts
-> to contact Micah directly over email have also failed.  Until Micah
-> reappears I'll plan to continue accepting SafeSetID patches via the
-> LSM tree, but I'm going to mark SafeSetID as "Odd Fixes" for now,
-> and add the LSM mailing list to the MAINTAINERS entry so that the
-> LSM list will be properly CC'd on any new SafeSetID patches.
 
-Hi Paul, I've moved on from working on ChromeOS and checking my
-@chromium.org email on a regular basis. I was trying to check in once
-per month or so but I guess its been a couple months since I've signed
-on -- sorry about that. This sounds good to me, I can't necessarily
-make any guarantees that I will be a responsive maintainer going
-forward (especially since I expect changes to the SafeSetID code to be
-very few and far between). I'm good with whatever you think is best
-here. Thanks!
+
+On Mon, Jun 26, 2023, at 8:23 AM, Daniel Borkmann wrote:
+> On 6/24/23 5:28 PM, Andy Lutomirski wrote:
+>> On Sat, Jun 24, 2023, at 6:59 AM, Andy Lutomirski wrote:
+>>> On Fri, Jun 23, 2023, at 4:23 PM, Daniel Borkmann wrote:
+>>>
+>>> If this series was about passing a =E2=80=9Cmay load kernel modules=E2=
+=80=9D token
+>>> around, I think it would get an extremely chilly reception, even tho=
+ugh
+>>> we have module signatures.  I don=E2=80=99t see anything about BPF t=
+hat makes
+>>> BPF tokens more reasonable unless a real security model is developed
+>>> first.
+>>=20
+>> To be clear, I'm not saying that there should not be a mechanism to u=
+se BPF from a user namespace.  I'm saying the mechanism should have expl=
+icit access control.  It wouldn't need to solve all problems right away,=
+ but it should allow incrementally more features to be enabled as the ac=
+cess control solution gets more powerful over time.
+>>=20
+>> BPF, unlike kernel modules, has a verifier.  While it would be a depa=
+rture from current practice, permission to use BPF could come with an ex=
+plicit list of allowed functions and allowed hooks.
+>>=20
+>> (The hooks wouldn't just be a list, presumably -- premission to insta=
+ll an XDP program would be scoped to networks over which one has CAP_NET=
+_ADMIN, presumably.  Other hooks would have their own scoping.  Attachin=
+g to a cgroup should (and maybe already does?) require some kind of perm=
+ission on the cgroup.  Etc.)
+>>=20
+>> If new, more restrictive functions are needed, they could be added.
+>
+> Wasn't this the idea of the BPF tokens proposal, meaning you could=20
+> create them with
+> restricted access as you mentioned - allowing an explicit subset of=20
+> program types to
+> be loaded, subset of helpers/kfuncs, map types, etc.. Given you pass i=
+n=20
+> this token
+> context upon program load-time (resp. map creation), the verifier is=20
+> then extended
+> for restricted access. For example, see the=20
+> bpf_token_allow_{cmd,map_type,prog_type}()
+> in this series. The user namespace relation was part of the use cases,=20
+> but not strictly
+> part of the mechanism itself in this series.
+
+Hmm. It's very coarse grained.
+
+Also, the bpf() attach API seems to be largely (completely?) missing wha=
+t I would expect to be basic access controls on the things being attache=
+d to.   For example, the whole cgroup_bpf_prog_attach() path seems to be=
+ entirely missing any checks as to whether its caller has any particular=
+ permission over the cgroup in question.  It doesn't even check whether =
+the cgroup is being accessed from the current userns (i.e. whether the f=
+d refers to a struct file with f_path.mnt belonging to the current usern=
+s).  So the API in this patchset has no way to restrict permission to at=
+tach to cgroups to only apply to cgroups belonging to the container.
 
 >
-> Cc: Micah Morton <mortonm@chromium.org>
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  MAINTAINERS | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> With regards to the scoping, are you saying that the current design=20
+> with the bitmasks
+> in the token create uapi is not flexible enough? If yes, what concrete=20
+> alternative do
+> you propose?
 >
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 35e19594640d..ad910c462cd0 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18599,7 +18599,8 @@ F:      include/media/drv-intf/saa7146*
+>> Alternatively, people could try a limited form of BPF proxying.  It w=
+ouldn't need to be a full proxy -- an outside daemon really could approv=
+e the attachment of a BPF program, and it could parse the program, exami=
+ne the list of function it uses and what the proposed attachment is to, =
+and make an educated decision.  This would need some API changes (maybe)=
+, but it seems eminently doable.
 >
->  SAFESETID SECURITY MODULE
->  M:     Micah Morton <mortonm@chromium.org>
-> -S:     Supported
-> +L:     linux-security-module@vger.kernel.org
-> +S:     Odd Fixes
->  F:     Documentation/admin-guide/LSM/SafeSetID.rst
->  F:     security/safesetid/
->
-> --
-> 2.41.0
->
+> Thinking about this from an k8s environment angle, I think this=20
+> wouldn't really be
+> practical for various reasons.. you now need to maintain two=20
+> implementations for your
+> container images which ships BPF one which loads programs as today, an=
+d=20
+> another one
+> which talks to this proxy if available,=20
+
+This seems fairly trivially solvable. Agree on an API, say using UNIX so=
+ckets to /var/run/bpfd/whatever.socket.  (Or maybe /var/lib?  I=E2=80=99=
+m not sure there=E2=80=99s universal agreement on where things like this=
+ to.) The exact same API works uncontained (bpfd running, probably socke=
+t-activated) from a binary in the system and as a bind-mount from outsid=
+e.
+
+I don=E2=80=99t know k8s well at all, but it looks like hostPath can do =
+exactly this.  Off the top of my head, I don=E2=80=99t know whether syst=
+emd=E2=80=99s .socket can be configured the right way so the same config=
+uration would work contained and uncontained.  One could certainly work =
+around *that* by having two different paths tried in succession, but tha=
+t seems a bit silly.
+
+This actually seems easier than supplying bpf tokens to a container.
+
+> then you also need to=20
+> standardize and support
+> the various loader libraries for this, you need to deal with yet one=20
+> more component
+> in your cluster which could fail (compared to talking to kernel=20
+> directly), and being
+> dependent on new proxy functionality becomes similar as with waiting=20
+> for new kernels
+> to hit mainstream, it could potentially take a very long time until=20
+> production upgrades.
+> What is being proposed here in this regard is less complex given no=20
+> extra proxy is
+> involved. I would certainly prefer a kernel-based solution.
+
+A userspace solution makes it easy to apply some kind of flexible approv=
+al and audit policy to the BPF program. I can imagine all kinds of ways =
+that a fleet operator might want to control what can run, and trying to =
+stick it in the kernel seems rather complex and awkward to customize.
+
+I suppose a bpf token could be set up to call out to its creator for per=
+mission to load a program, which would involve a different set of tradeo=
+ffs.
