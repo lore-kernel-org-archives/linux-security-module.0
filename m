@@ -2,102 +2,117 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B5AC001B0
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jul 2023 06:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CFBEB64DD
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jul 2023 07:20:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231687AbjGEGdi (ORCPT
+        id S231804AbjGEHUk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jul 2023 02:33:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44758 "EHLO
+        Wed, 5 Jul 2023 03:20:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231523AbjGEGdf (ORCPT
+        with ESMTP id S229697AbjGEHUj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jul 2023 02:33:35 -0400
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CCCD1706
-        for <linux-security-module@vger.kernel.org>; Tue,  4 Jul 2023 23:33:22 -0700 (PDT)
-Received: by mail-ot1-x32f.google.com with SMTP id 46e09a7af769-6b87d505e28so5288764a34.2
-        for <linux-security-module@vger.kernel.org>; Tue, 04 Jul 2023 23:33:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1688538801; x=1691130801;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OtlHSYlk61uE8OQ84nuywDVrRHfSI4oOT81ysMvjyFA=;
-        b=YwXhEKM0bu8FLh1wIz59SqsCgWkobp8aMDaj1CHNsuATyIC4RfmsCuv+E2a0nBcO3E
-         WDTMK08X82N1aLjr5w800Rmi5KkdfuSXoG5l/ZsyDV8RgeW0Y9gk8RsRABpvUrPPItNC
-         oAJPB8tv5xMpX8RQvRgMYbfppt/cgVN4dJ6u4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688538801; x=1691130801;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OtlHSYlk61uE8OQ84nuywDVrRHfSI4oOT81ysMvjyFA=;
-        b=GcUhWj2QCNou4UM2ypkeBelaHsRuCPVsnvAxhPls8biiBl0Pc/fHnQZt+SXvSE5GHD
-         I3+Stirpsr76Uw5vLgV31f1kK9XPN1oz/COFJ8qjKPmhwdiG/mrA8MiVIEWNbCPcVMFY
-         hHtN7knZOLfFvjhzA57IXCn9b3U8YxNk+qI0mRIj6PxQUyV+fahBXXVFJT2ngajJ/lb/
-         7VN+dKs7qb9YHv7vdqjg1Wxo5b4vjBBU5c4JyVeQTYWtlgRM5QL5r8LGGx/+RAhn7xwZ
-         /DessctlfsxVmBvNzFWF2IVTh2eJGp8spqaICAytCNKC8AUKPCRNazJDBO792kUhvcbh
-         BqAA==
-X-Gm-Message-State: ABy/qLaW7URtgGnlS9UuRBEm8hLi+EY7HUCbzme9i6gtsAMwoergVpAL
-        w2mqpPQNulieee0Z8zUq6+H0ew==
-X-Google-Smtp-Source: APBJJlGWMaUVY0TTBQBklTknGLh3stDvEgk0pSskAi32YTtDZEDoFGMo+Ddm6TezqBzUtzqDD1VujQ==
-X-Received: by 2002:a05:6870:ac9a:b0:1ad:4d4:34c5 with SMTP id ns26-20020a056870ac9a00b001ad04d434c5mr17360781oab.39.1688538801499;
-        Tue, 04 Jul 2023 23:33:21 -0700 (PDT)
-Received: from localhost (183.43.230.35.bc.googleusercontent.com. [35.230.43.183])
-        by smtp.gmail.com with UTF8SMTPSA id h18-20020a63f912000000b0051b36aee4f6sm17145711pgi.83.2023.07.04.23.33.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jul 2023 23:33:20 -0700 (PDT)
-From:   jeffxu@chromium.org
-To:     skhan@linuxfoundation.org, keescook@chromium.org
-Cc:     akpm@linux-foundation.org, dmitry.torokhov@gmail.com,
-        dverkamp@chromium.org, asmadeus@codewreck.org, hughd@google.com,
-        jeffxu@google.com, jorgelo@chromium.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-mm@kvack.org, jannh@google.com,
-        linux-hardening@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v2 2/2] selftests/memfd: sysctl: fix MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED
-Date:   Wed,  5 Jul 2023 06:33:15 +0000
-Message-ID: <20230705063315.3680666-3-jeffxu@google.com>
-X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
-In-Reply-To: <20230705063315.3680666-1-jeffxu@google.com>
-References: <20230705063315.3680666-1-jeffxu@google.com>
+        Wed, 5 Jul 2023 03:20:39 -0400
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE1A31A4;
+        Wed,  5 Jul 2023 00:20:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+        bh=0Vgvxl37f1OQyLQheOShmtshBXHyCZZUDnHks6HVtYA=; b=P5m2+D6uF1gZdqNrX1tlzKAThb
+        2gBVrJGIZ6HVovkJxciDKftbxKfZD41GSueMGuu/CpX8iG+B5o8U0sMrVNc9vSdArmsQWjaiI6xSd
+        onO+A4xEa+fCCfi59QRBhCK3nrzArI36ZvF729lnW5Nx8VTjg2y1gmfVGZPrF2lYfDH9bTnEWMEMS
+        B99Z62GQbf+RF8vrwQaDOhTatKIybgivdYx2RtqMtvm6Tkj1NqlntHYeN9sQkSq7TXPyFULIAFWvx
+        AvlWKNQj3UeW1gqQPW/RRWQ5G3a4nBT6Z1E0ofvHPx39T83wJ8N8ENu/dTrjjjMUgB4n0apJGGFvZ
+        mW8EP85w==;
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+        by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1qGwoP-0001Gc-JI; Wed, 05 Jul 2023 09:20:29 +0200
+Received: from [85.1.206.226] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1qGwoP-000A3L-4j; Wed, 05 Jul 2023 09:20:29 +0200
+Subject: Re: [PATCH RESEND v3 bpf-next 01/14] bpf: introduce BPF token object
+To:     =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgensen?= <toke@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>
+Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        keescook@chromium.org, lennart@poettering.net, cyphar@cyphar.com,
+        luto@kernel.org, kernel-team@meta.com, sargun@sargun.me
+References: <20230629051832.897119-1-andrii@kernel.org>
+ <20230629051832.897119-2-andrii@kernel.org>
+ <20230704-hochverdient-lehne-eeb9eeef785e@brauner> <87sfa3b6j5.fsf@toke.dk>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <3555c0bd-7aee-35b0-655d-710437b4876c@iogearbox.net>
+Date:   Wed, 5 Jul 2023 09:20:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <87sfa3b6j5.fsf@toke.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.8/26959/Tue Jul  4 09:29:23 2023)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Jeff Xu <jeffxu@google.com>
+On 7/5/23 1:28 AM, Toke Høiland-Jørgensen wrote:
+> Christian Brauner <brauner@kernel.org> writes:
+>> On Wed, Jun 28, 2023 at 10:18:19PM -0700, Andrii Nakryiko wrote:
+>>> Add new kind of BPF kernel object, BPF token. BPF token is meant to to
+>>> allow delegating privileged BPF functionality, like loading a BPF
+>>> program or creating a BPF map, from privileged process to a *trusted*
+>>> unprivileged process, all while have a good amount of control over which
+>>> privileged operations could be performed using provided BPF token.
+>>>
+>>> This patch adds new BPF_TOKEN_CREATE command to bpf() syscall, which
+>>> allows to create a new BPF token object along with a set of allowed
+>>> commands that such BPF token allows to unprivileged applications.
+>>> Currently only BPF_TOKEN_CREATE command itself can be
+>>> delegated, but other patches gradually add ability to delegate
+>>> BPF_MAP_CREATE, BPF_BTF_LOAD, and BPF_PROG_LOAD commands.
+>>>
+>>> The above means that new BPF tokens can be created using existing BPF
+>>> token, if original privileged creator allowed BPF_TOKEN_CREATE command.
+>>> New derived BPF token cannot be more powerful than the original BPF
+>>> token.
+>>>
+>>> Importantly, BPF token is automatically pinned at the specified location
+>>> inside an instance of BPF FS and cannot be repinned using BPF_OBJ_PIN
+>>> command, unlike BPF prog/map/btf/link. This provides more control over
+>>> unintended sharing of BPF tokens through pinning it in another BPF FS
+>>> instances.
+>>>
+>>> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+>>> ---
+>>
+>> The main issue I have with the token approach is that it is a completely
+>> separate delegation vector on top of user namespaces. We mentioned this
+>> duringthe conf and this was brought up on the thread here again as well.
+>> Imho, that's a problem both security-wise and complexity-wise.
+>>
+>> It's not great if each subsystem gets its own custom delegation
+>> mechanism. This imposes such a taxing complexity on both kernel- and
+>> userspace that it will quickly become a huge liability. So I would
+>> really strongly encourage you to explore another direction.
+> 
+> I share this concern as well, but I'm not quite sure I follow your
+> proposal here. IIUC, you're saying that instead of creating the token
+> using a BPF_TOKEN_CREATE command, the policy daemon should create a
+> bpffs instance and attach the token value directly to that, right? But
+> then what? Are you proposing that the calling process inside the
+> container open a filesystem reference (how? using fspick()?) and pass
+> that to the bpf syscall? Or is there some way to find the right
+> filesystem instance to extract this from at the time that the bpf()
+> syscall is issued inside the container?
 
-Add selftest for sysctl vm.memfd_noexec is 2
-(MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED)
-
-memfd_create(.., MFD_EXEC) should fail in this case.
-
-Reported-by: Dominique Martinet <asmadeus@codewreck.org>
-Closes: https://lore.kernel.org/linux-mm/CABi2SkXUX_QqTQ10Yx9bBUGpN1wByOi_=gZU6WEy5a8MaQY3Jw@mail.gmail.com/T/
-Signed-off-by: Jeff Xu <jeffxu@google.com>
----
- tools/testing/selftests/memfd/memfd_test.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
-index dba0e8ba002f..dbdd9ec5e397 100644
---- a/tools/testing/selftests/memfd/memfd_test.c
-+++ b/tools/testing/selftests/memfd/memfd_test.c
-@@ -1147,6 +1147,11 @@ static void test_sysctl_child(void)
- 	sysctl_assert_write("2");
- 	mfd_fail_new("kern_memfd_sysctl_2",
- 		MFD_CLOEXEC | MFD_ALLOW_SEALING);
-+	mfd_fail_new("kern_memfd_sysctl_2_MFD_EXEC",
-+		MFD_CLOEXEC | MFD_EXEC);
-+	fd = mfd_assert_new("", 0, MFD_NOEXEC_SEAL);
-+	close(fd);
-+
- 	sysctl_fail_write("0");
- 	sysctl_fail_write("1");
- }
--- 
-2.41.0.255.g8b1d071c50-goog
-
+Given there can be multiple bpffs instances, it would have to be similar
+as to what Andrii did in that you need to pass the fd to the bpf(2) for
+prog/map creation in order to retrieve the opts->abilities from the super
+block.
