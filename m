@@ -2,119 +2,163 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F71EB64DD
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jul 2023 19:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E64EB64DA
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jul 2023 20:26:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230135AbjGETsR (ORCPT
+        id S233619AbjGEU05 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jul 2023 15:48:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52046 "EHLO
+        Wed, 5 Jul 2023 16:26:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234366AbjGETsL (ORCPT
+        with ESMTP id S233724AbjGEU0w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jul 2023 15:48:11 -0400
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8846FC
-        for <linux-security-module@vger.kernel.org>; Wed,  5 Jul 2023 12:48:10 -0700 (PDT)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-57712d00cc1so89039007b3.3
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Jul 2023 12:48:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1688586490; x=1691178490;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fx1o8rNmUZVCGbhC3KbwWvErawPnLIOygo7Tbf5XlC8=;
-        b=HEJNhLyPtIcem/YfqIaTn7yvvENfMbznlNN/cHqcCiKhN5H3ShzSibe143AXamc08U
-         XoyDR/CSOi6OKhRE53uY4QOWlbxx8KJmS2+2rZbBjoNk1HWKTze9g6ecJHWFqjLKY6Ke
-         miRHaOLztGDtEvl1D/fUWbuBO614lZ8RCOqLQMJzLmwwgZGWbVUFVDyIPlyBiTN2KHy8
-         9PZjSCG4QQSsd7zgZUzZEfda4AEYQwM1OEYTdDVFUiirQuAiZjbQuN8vloF5QzJkcM2F
-         wf2inbWD7Ob7mnMVU4hWuP824WBy4L4fjBIHkS/dvU1/ytFvxq6A6QQqc5VmMfSGO/nt
-         Hnhw==
+        Wed, 5 Jul 2023 16:26:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C80B31992
+        for <linux-security-module@vger.kernel.org>; Wed,  5 Jul 2023 13:26:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1688588766;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=t45r9A2YvfoSJv2GZo8UC8AtO/lxGa/2A2TsFaxOzFQ=;
+        b=KvBPxlmM7mEvVLMsbCX/DAIj6BbKqGnVDhcdDKOY5frryJUrPW+4hqwqhS92uWh3DpKW3S
+        hGldEEDgW8vwHY/fdrTBK2RpXHf5ZW7b2YHBVzH/oPXUDerM/7l7oAs/nuzz1RM81YElis
+        CvSBJ/Ty6HOiEPf4gJ7AteLAfw5OeJc=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-253-a2yr8pOsPZmNZ6KXpB7V_g-1; Wed, 05 Jul 2023 16:26:04 -0400
+X-MC-Unique: a2yr8pOsPZmNZ6KXpB7V_g-1
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-67e3c6c4624so81930b3a.3
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Jul 2023 13:26:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688586490; x=1691178490;
+        d=1e100.net; s=20221208; t=1688588764; x=1691180764;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fx1o8rNmUZVCGbhC3KbwWvErawPnLIOygo7Tbf5XlC8=;
-        b=V+3ChJXeCDY1zvEG9G7b2/RmXPgGBFB7CHeiMDwgBUQo5Q8yuyMIvsDaLI51h75TnW
-         JX/4ogTBJ87YunW5sMA97hOwDe59NARJNZsk3v0OneMzfHReiD0oJ03NA4BshuUU0Ewa
-         OIGyBqrek2/spG9vDOVCQwJPAJpO+v6CQd+H8LkOrLsNDhOSWfarA6ph2kvTo8Z5h4BX
-         J+IEcBtQFGG7B4uSFjPgIB9YGvSnLLUi8MQYC8te0yovpImw8hpIB7qE3/P/YjGeNBP8
-         df5BoFaTJXbyxcR+XpE9V1URk/NCxSMLNxw5A47cLLLdnqqCQsDVUNz82rd83yGQhlhp
-         ZOlA==
-X-Gm-Message-State: ABy/qLZozJeaKfNkmmh3Xl12La9dqEbuR4NJ6WcdzSWfBUADnbwyDz8b
-        tkxoyNGawRwD4Dj6tOdRF2XhyX5++vHCGdqnnP1j
-X-Google-Smtp-Source: APBJJlGgw66itzSki5X5ujUDMGRFD3yhvyV6b4b881ShGsWRlly4Byua1mWj9qr8QY4Jv2924kYoreTFkj77/sYLEAM=
-X-Received: by 2002:a0d:d3c2:0:b0:561:206a:ee52 with SMTP id
- v185-20020a0dd3c2000000b00561206aee52mr19367646ywd.24.1688586489917; Wed, 05
- Jul 2023 12:48:09 -0700 (PDT)
+        bh=t45r9A2YvfoSJv2GZo8UC8AtO/lxGa/2A2TsFaxOzFQ=;
+        b=ghvtLyxfNqL2EBHkXxColYKlrJ2sk7yyOeCTP72jCAGpbZ4cynLVx5Txd78+T2gTiq
+         /yz7xkIULC9X2f1/AS3AHUYQRTn4YQIhqjy86m46JTOwyoQB9tLCxC+dQQ0Mrfql6VvK
+         nJmMvxUd8PIpaOaAqHGPcHlzGw9RVVia3nKKsoRlEgtYcsPqXeAv1j0eJ3qs5848ZcKi
+         gvwUAXm/3/+h+xOnFvuf2zJVTN0bpXmUn6ba7vtitYm/O7yarFqj/zAEKisXOmaCWMbZ
+         O5AKyDsveNIlpM/REJ1SYitycqf/1FW31RV1J/AA1UGmLFrZL+1Ec1glbqwmpZXkuukU
+         yyew==
+X-Gm-Message-State: AC+VfDwfjlhIHCQbEGE5/+0sMKd7rsq7LVMAjQ6gZgV5M4rYlUVuhUYG
+        SJ1Ky2KhoYIiP2KY4h/asTB+32yJi0DLvKfyTfg3c3QAM/h4Frimaa42wZMAm6J7jgzgI799qCo
+        MUktt7ySDGYozsw01HPXXZIdT0/RHE6Dp78I0uVsCBor1eRtCooig
+X-Received: by 2002:a05:6a21:6d88:b0:122:e4f:25c7 with SMTP id wl8-20020a056a216d8800b001220e4f25c7mr15659554pzb.31.1688588763755;
+        Wed, 05 Jul 2023 13:26:03 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6ds4xvbUG+ZYaDvJ2apGx91OQ4qB0akGNWWFL3LaWKhMz96IxFpmQ2sEuPoCI3p2ih7fuYhkf9fNjQ5oeaAq0=
+X-Received: by 2002:a05:6a21:6d88:b0:122:e4f:25c7 with SMTP id
+ wl8-20020a056a216d8800b001220e4f25c7mr15659535pzb.31.1688588763446; Wed, 05
+ Jul 2023 13:26:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230630192526.271084-2-paul@paul-moore.com> <CAJ-EccNa+itDRRwZJo7ukNG4VVXdZUu7h+W=7r4qvV0zSF5-cg@mail.gmail.com>
- <CAHC9VhQ21ef+oamr5m9RdzN_Do38Pfu6Up3M_2vwu564zq5G1w@mail.gmail.com> <20230705194511.GA487163@mail.hallyn.com>
-In-Reply-To: <20230705194511.GA487163@mail.hallyn.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 5 Jul 2023 15:47:59 -0400
-Message-ID: <CAHC9VhTsshjLFaQ7B0XCLDBrou=hHkk_hW4BBw7V_wRGGiyHrA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: update SafeSetID entry
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Micah Morton <mortonm@chromium.org>,
-        linux-security-module@vger.kernel.org
+References: <20230609125023.399942-1-jlayton@kernel.org> <20230609125023.399942-8-jlayton@kernel.org>
+ <CAHc6FU4wyfQT7T75j2Sd9WNp=ag7hpDZGYkR=m73h2nOaH+AqQ@mail.gmail.com> <a1f7a725186082d933aff702d1d50c6456da6f20.camel@kernel.org>
+In-Reply-To: <a1f7a725186082d933aff702d1d50c6456da6f20.camel@kernel.org>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Wed, 5 Jul 2023 22:25:51 +0200
+Message-ID: <CAHc6FU54Gh+5hovqXZZSADqym=VCMis-EH9sKhAjgjXD6MUtqw@mail.gmail.com>
+Subject: Re: [PATCH 7/9] gfs2: update ctime when quota is updated
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Brad Warrum <bwarrum@linux.ibm.com>,
+        Ritu Agarwal <rituagar@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ian Kent <raven@themaw.net>,
+        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Ruihan Li <lrh2000@pku.edu.cn>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        autofs@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 5, 2023 at 3:45=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com> w=
+On Mon, Jun 12, 2023 at 12:36=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
 rote:
-> On Wed, Jul 05, 2023 at 01:03:05PM -0400, Paul Moore wrote:
-> > On Tue, Jul 4, 2023 at 2:33=E2=80=AFPM Micah Morton <mortonm@chromium.o=
-rg> wrote:
-> > > On Fri, Jun 30, 2023 at 12:25=E2=80=AFPM Paul Moore <paul@paul-moore.=
-com> wrote:
-> > > >
-> > > > Micah Morton, the SafeSetID maintainer, last posted to any of the
-> > > > public kernel mailing lists in early August 2022 and has not
-> > > > commented on any SafeSetID patches posted since that time.  Attempt=
-s
-> > > > to contact Micah directly over email have also failed.  Until Micah
-> > > > reappears I'll plan to continue accepting SafeSetID patches via the
-> > > > LSM tree, but I'm going to mark SafeSetID as "Odd Fixes" for now,
-> > > > and add the LSM mailing list to the MAINTAINERS entry so that the
-> > > > LSM list will be properly CC'd on any new SafeSetID patches.
+> On Fri, 2023-06-09 at 18:44 +0200, Andreas Gruenbacher wrote:
+> > Jeff,
+> >
+> > On Fri, Jun 9, 2023 at 2:50=E2=80=AFPM Jeff Layton <jlayton@kernel.org>=
+ wrote:
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/gfs2/quota.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
 > > >
-> > > Hi Paul, I've moved on from working on ChromeOS and checking my
-> > > @chromium.org email on a regular basis. I was trying to check in once
-> > > per month or so but I guess its been a couple months since I've signe=
-d
-> > > on -- sorry about that. This sounds good to me, I can't necessarily
-> > > make any guarantees that I will be a responsive maintainer going
-> > > forward (especially since I expect changes to the SafeSetID code to b=
-e
-> > > very few and far between). I'm good with whatever you think is best
-> > > here. Thanks!
+> > > diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
+> > > index 1ed17226d9ed..6d283e071b90 100644
+> > > --- a/fs/gfs2/quota.c
+> > > +++ b/fs/gfs2/quota.c
+> > > @@ -869,7 +869,7 @@ static int gfs2_adjust_quota(struct gfs2_inode *i=
+p, loff_t loc,
+> > >                 size =3D loc + sizeof(struct gfs2_quota);
+> > >                 if (size > inode->i_size)
+> > >                         i_size_write(inode, size);
+> > > -               inode->i_mtime =3D inode->i_atime =3D current_time(in=
+ode);
+> > > +               inode->i_mtime =3D inode->i_atime =3D inode->i_ctime =
+=3D current_time(inode);
 > >
-> > Thanks for the update Micah.
+> > I don't think we need to worry about the ctime of the quota inode as
+> > that inode is internal to the filesystem only.
 > >
-> > Generally speaking, serving as a maintainer requires checking email on
-> > a regular basis.  There isn't a well defined requirement that I'm
-> > aware of, but once every couple months, or even once a month, is
-> > outside what many expect, myself included.  I know you have moved on
-> > from ChromeOS, but do you have a personal desire to continue
-> > maintaining SafeSetID?  Linux has a rich history of maintainers who
-> > maintain subsystems outside of a paying job, and I would be happy to
-> > support you in such a role, but in order to do so I think you would
-> > need to check your email at least once a week.  However, if you aren't
-> > able to commit to that at this point in time we probably should mark
-> > SafeSetID as being in the "Orphan" state, with patches accepted via
-> > the LSM tree until a suitable maintainer can be found.
 >
-> Note also that the email address in MAINTAINERS file can be updated :)
-> So if chromium.org email is the sticking point, it doesn't have to be.
+> Thanks Andreas.  I'll plan to drop this patch from the series for now.
+>
+> Does updating the mtime and atime here serve any purpose, or should
+> those also be removed? If you plan to keep the a/mtime updates then I'd
+> still suggest updating the ctime for consistency's sake. It shouldn't
+> cost anything extra to do so since you're dirtying the inode below
+> anyway.
 
-Very good point.  People are the important part, not necessarily what
-is listed in MAINTAINERS.  We can always find new ways to record
-things in MAINTAINERS, finding good maintainers is much more difficult
-;)
+Yes, good point actually, we should keep things consistent for simplicity.
 
---=20
-paul-moore.com
+Would you add this back in if you do another posting?
+
+Thanks,
+Andreas
+
+> Thanks!
+>
+> > >                 mark_inode_dirty(inode);
+> > >                 set_bit(QDF_REFRESH, &qd->qd_flags);
+> > >         }
+> > > --
+> > > 2.40.1
+> > >
+> >
+> > Thanks,
+> > Andreas
+> >
+>
+> --
+> Jeff Layton <jlayton@kernel.org>
+>
+
