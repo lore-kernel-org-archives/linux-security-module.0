@@ -2,163 +2,339 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E64EB64DA
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jul 2023 20:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 538FEEB64DD
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jul 2023 20:37:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233619AbjGEU05 (ORCPT
+        id S231985AbjGEUhs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jul 2023 16:26:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41172 "EHLO
+        Wed, 5 Jul 2023 16:37:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233724AbjGEU0w (ORCPT
+        with ESMTP id S230331AbjGEUhr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jul 2023 16:26:52 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C80B31992
-        for <linux-security-module@vger.kernel.org>; Wed,  5 Jul 2023 13:26:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688588766;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=t45r9A2YvfoSJv2GZo8UC8AtO/lxGa/2A2TsFaxOzFQ=;
-        b=KvBPxlmM7mEvVLMsbCX/DAIj6BbKqGnVDhcdDKOY5frryJUrPW+4hqwqhS92uWh3DpKW3S
-        hGldEEDgW8vwHY/fdrTBK2RpXHf5ZW7b2YHBVzH/oPXUDerM/7l7oAs/nuzz1RM81YElis
-        CvSBJ/Ty6HOiEPf4gJ7AteLAfw5OeJc=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-a2yr8pOsPZmNZ6KXpB7V_g-1; Wed, 05 Jul 2023 16:26:04 -0400
-X-MC-Unique: a2yr8pOsPZmNZ6KXpB7V_g-1
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-67e3c6c4624so81930b3a.3
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Jul 2023 13:26:04 -0700 (PDT)
+        Wed, 5 Jul 2023 16:37:47 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9617F19A3;
+        Wed,  5 Jul 2023 13:37:45 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fbc59de009so76133645e9.3;
+        Wed, 05 Jul 2023 13:37:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688589464; x=1691181464;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cj35583xnzvGWyL7CZfPsTBPJGJLBB11EAo3CBt2aL8=;
+        b=jjS/QqaIOe1xGLTCuaHTgbxwVAT65JqtlgnIbfK6PfzmMWJ9ieRuwWsJ4K78kRwigu
+         NpCN3csAUDk7B3eh7DFUvnPwPC3CFBnyMZiqYBuX/iKR1Do0xn/hZ0xGqbG7kvAmmDZH
+         1lElh1wvIqqTanASkiI4zNxt3Kd3QENfA2gAnmtctfc2yc25zTLTfZKYv49h7ORw/F+1
+         7KbJGr0wVVCEH4muDSdSI26VOCyBeKUlpua8qbyHNCnlRMUMolIH5YcELTaFgb9+1mVs
+         SNwYSItzEZCiG12V/EjQ9ZU+lQiB2xqn/1JkE42IfbJR8VkA7oxu00hL9/4R/hDrEVMQ
+         pu0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688588764; x=1691180764;
+        d=1e100.net; s=20221208; t=1688589464; x=1691181464;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=t45r9A2YvfoSJv2GZo8UC8AtO/lxGa/2A2TsFaxOzFQ=;
-        b=ghvtLyxfNqL2EBHkXxColYKlrJ2sk7yyOeCTP72jCAGpbZ4cynLVx5Txd78+T2gTiq
-         /yz7xkIULC9X2f1/AS3AHUYQRTn4YQIhqjy86m46JTOwyoQB9tLCxC+dQQ0Mrfql6VvK
-         nJmMvxUd8PIpaOaAqHGPcHlzGw9RVVia3nKKsoRlEgtYcsPqXeAv1j0eJ3qs5848ZcKi
-         gvwUAXm/3/+h+xOnFvuf2zJVTN0bpXmUn6ba7vtitYm/O7yarFqj/zAEKisXOmaCWMbZ
-         O5AKyDsveNIlpM/REJ1SYitycqf/1FW31RV1J/AA1UGmLFrZL+1Ec1glbqwmpZXkuukU
-         yyew==
-X-Gm-Message-State: AC+VfDwfjlhIHCQbEGE5/+0sMKd7rsq7LVMAjQ6gZgV5M4rYlUVuhUYG
-        SJ1Ky2KhoYIiP2KY4h/asTB+32yJi0DLvKfyTfg3c3QAM/h4Frimaa42wZMAm6J7jgzgI799qCo
-        MUktt7ySDGYozsw01HPXXZIdT0/RHE6Dp78I0uVsCBor1eRtCooig
-X-Received: by 2002:a05:6a21:6d88:b0:122:e4f:25c7 with SMTP id wl8-20020a056a216d8800b001220e4f25c7mr15659554pzb.31.1688588763755;
-        Wed, 05 Jul 2023 13:26:03 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6ds4xvbUG+ZYaDvJ2apGx91OQ4qB0akGNWWFL3LaWKhMz96IxFpmQ2sEuPoCI3p2ih7fuYhkf9fNjQ5oeaAq0=
-X-Received: by 2002:a05:6a21:6d88:b0:122:e4f:25c7 with SMTP id
- wl8-20020a056a216d8800b001220e4f25c7mr15659535pzb.31.1688588763446; Wed, 05
- Jul 2023 13:26:03 -0700 (PDT)
+        bh=Cj35583xnzvGWyL7CZfPsTBPJGJLBB11EAo3CBt2aL8=;
+        b=NAFHDipS7RudLmK3pcJCWtYFJuBK4oA3DJ6UR6FSl1oLl5/ym9az7bkAJeQLs8YOxp
+         cj/JzQO5tASYZ6CbCwiLYrn22l7ImNrq9dH/xRaUFNX4PRNvdMZBsc6pu6+XK4nnMrxA
+         0KlxYt9AtVPdZxnwh/x9OomVVdy6iF2c4xWBNN3bWWomwAo6b5HaTSXFAdPlTz3r3+R/
+         pDagGpk2/YsOOYRQP39fUburbvsWp/DqPC/nvvSPwlKDhbYBo+5HQoeIYHIL+XOTtRUi
+         A3f0vgjpiZPVRVSqlddO/2lz0YDmTBgLr+DA+L3wBUAvTmHdyS7qxXkqlSBpvIW2Bh+O
+         6FoQ==
+X-Gm-Message-State: AC+VfDwB88EO54IY03o9D+YTbO+R2KBeVT6LQKgsFIlAKQDAZ3C1vM3d
+        ZOmbFSwVjwmeRxX/SEM5cFGvivUdGsZ0YZ1LQ4k=
+X-Google-Smtp-Source: ACHHUZ6qEwE7QJuSLlhwRI2uvNpOjiLLUWDN0fIqLxlA+ZQ03ExHUjW1bfVQBLkzZ2Bc9PjUPZXSkJi7RiW3KPUPjFQ=
+X-Received: by 2002:a1c:cc16:0:b0:3fb:404c:15e2 with SMTP id
+ h22-20020a1ccc16000000b003fb404c15e2mr14449570wmb.41.1688589463674; Wed, 05
+ Jul 2023 13:37:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230609125023.399942-1-jlayton@kernel.org> <20230609125023.399942-8-jlayton@kernel.org>
- <CAHc6FU4wyfQT7T75j2Sd9WNp=ag7hpDZGYkR=m73h2nOaH+AqQ@mail.gmail.com> <a1f7a725186082d933aff702d1d50c6456da6f20.camel@kernel.org>
-In-Reply-To: <a1f7a725186082d933aff702d1d50c6456da6f20.camel@kernel.org>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Wed, 5 Jul 2023 22:25:51 +0200
-Message-ID: <CAHc6FU54Gh+5hovqXZZSADqym=VCMis-EH9sKhAjgjXD6MUtqw@mail.gmail.com>
-Subject: Re: [PATCH 7/9] gfs2: update ctime when quota is updated
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Brad Warrum <bwarrum@linux.ibm.com>,
-        Ritu Agarwal <rituagar@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ian Kent <raven@themaw.net>,
-        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-        Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Ruihan Li <lrh2000@pku.edu.cn>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        autofs@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+References: <20230629051832.897119-1-andrii@kernel.org> <CALOAHbBupxQ3RH+SbzUv=W2dRDS-mG1PuRpARrMnMv=o6Ro7Sw@mail.gmail.com>
+In-Reply-To: <CALOAHbBupxQ3RH+SbzUv=W2dRDS-mG1PuRpARrMnMv=o6Ro7Sw@mail.gmail.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Wed, 5 Jul 2023 13:37:31 -0700
+Message-ID: <CAEf4BzbS55xw2Scnid87O5TFQ7To56huPaKg_oH6gLSp+ggpdw@mail.gmail.com>
+Subject: Re: [PATCH RESEND v3 bpf-next 00/14] BPF token
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, cyphar@cyphar.com,
+        luto@kernel.org, kernel-team@meta.com, sargun@sargun.me
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 12, 2023 at 12:36=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
-rote:
-> On Fri, 2023-06-09 at 18:44 +0200, Andreas Gruenbacher wrote:
-> > Jeff,
+On Fri, Jun 30, 2023 at 7:06=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com> =
+wrote:
+>
+> On Thu, Jun 29, 2023 at 1:18=E2=80=AFPM Andrii Nakryiko <andrii@kernel.or=
+g> wrote:
 > >
-> > On Fri, Jun 9, 2023 at 2:50=E2=80=AFPM Jeff Layton <jlayton@kernel.org>=
- wrote:
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  fs/gfs2/quota.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
-> > > index 1ed17226d9ed..6d283e071b90 100644
-> > > --- a/fs/gfs2/quota.c
-> > > +++ b/fs/gfs2/quota.c
-> > > @@ -869,7 +869,7 @@ static int gfs2_adjust_quota(struct gfs2_inode *i=
-p, loff_t loc,
-> > >                 size =3D loc + sizeof(struct gfs2_quota);
-> > >                 if (size > inode->i_size)
-> > >                         i_size_write(inode, size);
-> > > -               inode->i_mtime =3D inode->i_atime =3D current_time(in=
-ode);
-> > > +               inode->i_mtime =3D inode->i_atime =3D inode->i_ctime =
-=3D current_time(inode);
+> > This patch set introduces new BPF object, BPF token, which allows to de=
+legate
+> > a subset of BPF functionality from privileged system-wide daemon (e.g.,
+> > systemd or any other container manager) to a *trusted* unprivileged
+> > application. Trust is the key here. This functionality is not about all=
+owing
+> > unconditional unprivileged BPF usage. Establishing trust, though, is
+> > completely up to the discretion of respective privileged application th=
+at
+> > would create a BPF token, as different production setups can and do ach=
+ieve it
+> > through a combination of different means (signing, LSM, code reviews, e=
+tc),
+> > and it's undesirable and infeasible for kernel to enforce any particula=
+r way
+> > of validating trustworthiness of particular process.
 > >
-> > I don't think we need to worry about the ctime of the quota inode as
-> > that inode is internal to the filesystem only.
+> > The main motivation for BPF token is a desire to enable containerized
+> > BPF applications to be used together with user namespaces. This is curr=
+ently
+> > impossible, as CAP_BPF, required for BPF subsystem usage, cannot be nam=
+espaced
+> > or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to =
+BPF
+> > helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safe=
+ly read
+> > arbitrary memory, and it's impossible to ensure that they only read mem=
+ory of
+> > processes belonging to any given namespace. This means that it's imposs=
+ible to
+> > have namespace-aware CAP_BPF capability, and as such another mechanism =
+to
+> > allow safe usage of BPF functionality is necessary. BPF token and deleg=
+ation
+> > of it to a trusted unprivileged applications is such mechanism. Kernel =
+makes
+> > no assumption about what "trusted" constitutes in any particular case, =
+and
+> > it's up to specific privileged applications and their surrounding
+> > infrastructure to decide that. What kernel provides is a set of APIs to=
+ create
+> > and tune BPF token, and pass it around to privileged BPF commands that =
+are
+> > creating new BPF objects like BPF programs, BPF maps, etc.
+> >
+> > Previous attempt at addressing this very same problem ([0]) attempted t=
+o
+> > utilize authoritative LSM approach, but was conclusively rejected by up=
+stream
+> > LSM maintainers. BPF token concept is not changing anything about LSM
+> > approach, but can be combined with LSM hooks for very fine-grained secu=
+rity
+> > policy. Some ideas about making BPF token more convenient to use with L=
+SM (in
+> > particular custom BPF LSM programs) was briefly described in recent LSF=
+/MM/BPF
+> > 2023 presentation ([1]). E.g., an ability to specify user-provided data
+> > (context), which in combination with BPF LSM would allow implementing a=
+ very
+> > dynamic and fine-granular custom security policies on top of BPF token.=
+ In the
+> > interest of minimizing API surface area discussions this is going to be
+> > added in follow up patches, as it's not essential to the fundamental co=
+ncept
+> > of delegatable BPF token.
+> >
+> > It should be noted that BPF token is conceptually quite similar to the =
+idea of
+> > /dev/bpf device file, proposed by Song a while ago ([2]). The biggest
+> > difference is the idea of using virtual anon_inode file to hold BPF tok=
+en and
+> > allowing multiple independent instances of them, each with its own set =
+of
+> > restrictions. BPF pinning solves the problem of exposing such BPF token
+> > through file system (BPF FS, in this case) for cases where transferring=
+ FDs
+> > over Unix domain sockets is not convenient. And also, crucially, BPF to=
+ken
+> > approach is not using any special stateful task-scoped flags. Instead, =
+bpf()
+> > syscall accepts token_fd parameters explicitly for each relevant BPF co=
+mmand.
+> > This addresses main concerns brought up during the /dev/bpf discussion,=
+ and
+> > fits better with overall BPF subsystem design.
+> >
+> > This patch set adds a basic minimum of functionality to make BPF token =
+useful
+> > and to discuss API and functionality. Currently only low-level libbpf A=
+PIs
+> > support passing BPF token around, allowing to test kernel functionality=
+, but
+> > for the most part is not sufficient for real-world applications, which
+> > typically use high-level libbpf APIs based on `struct bpf_object` type.=
+ This
+> > was done with the intent to limit the size of patch set and concentrate=
+ on
+> > mostly kernel-side changes. All the necessary plumbing for libbpf will =
+be sent
+> > as a separate follow up patch set kernel support makes it upstream.
+> >
+> > Another part that should happen once kernel-side BPF token is establish=
+ed, is
+> > a set of conventions between applications (e.g., systemd), tools (e.g.,
+> > bpftool), and libraries (e.g., libbpf) about sharing BPF tokens through=
+ BPF FS
+> > at well-defined locations to allow applications take advantage of this =
+in
+> > automatic fashion without explicit code changes on BPF application's si=
+de.
+> > But I'd like to postpone this discussion to after BPF token concept lan=
+ds.
+> >
+> > Once important distinctions from v2 that should be noted is a chance in=
+ the
+> > semantics of a newly added BPF_TOKEN_CREATE command. Previously,
+> > BPF_TOKEN_CREATE would create BPF token kernel object and return its FD=
+ to
+> > user-space, allowing to (optionally) pin it in BPF FS using BPF_OBJ_PIN
+> > command. This v3 version changes this slightly: BPF_TOKEN_CREATE combin=
+es BPF
+> > token object creation *and* pinning in BPF FS. Such change ensures that=
+ BPF
+> > token is always associated with a specific instance of BPF FS and canno=
+t
+> > "escape" it by application re-pinning it somewhere else using another
+> > BPF_OBJ_PIN call. Now, BPF token can only be pinned once during its cre=
+ation,
+> > better containing it inside intended container (under assumption BPF FS=
+ is set
+> > up in such a way as to not be shared with other containers on the syste=
+m).
+> >
+> >   [0] https://lore.kernel.org/bpf/20230412043300.360803-1-andrii@kernel=
+.org/
+> >   [1] http://vger.kernel.org/bpfconf2023_material/Trusted_unprivileged_=
+BPF_LSFMM2023.pdf
+> >   [2] https://lore.kernel.org/bpf/20190627201923.2589391-2-songliubravi=
+ng@fb.com/
+> >
+> > v3->v3-resend:
+> >   - I started integrating token_fd into bpf_object_open_opts and higher=
+-level
+> >     libbpf bpf_object APIs, but it started going a bit deeper into bpf_=
+object
+> >     implementation details and how libbpf performs feature detection an=
+d
+> >     caching, so I decided to keep it separate from this patch set and n=
+ot
+> >     distract from the mostly kernel-side changes;
+> > v2->v3:
+> >   - make BPF_TOKEN_CREATE pin created BPF token in BPF FS, and disallow
+> >     BPF_OBJ_PIN for BPF token;
+> > v1->v2:
+> >   - fix build failures on Kconfig with CONFIG_BPF_SYSCALL unset;
+> >   - drop BPF_F_TOKEN_UNKNOWN_* flags and simplify UAPI (Stanislav).
+> >
+> > Andrii Nakryiko (14):
+> >   bpf: introduce BPF token object
+> >   libbpf: add bpf_token_create() API
+> >   selftests/bpf: add BPF_TOKEN_CREATE test
+> >   bpf: add BPF token support to BPF_MAP_CREATE command
+> >   libbpf: add BPF token support to bpf_map_create() API
+> >   selftests/bpf: add BPF token-enabled test for BPF_MAP_CREATE command
+> >   bpf: add BPF token support to BPF_BTF_LOAD command
+> >   libbpf: add BPF token support to bpf_btf_load() API
+> >   selftests/bpf: add BPF token-enabled BPF_BTF_LOAD selftest
+> >   bpf: add BPF token support to BPF_PROG_LOAD command
+> >   bpf: take into account BPF token when fetching helper protos
+> >   bpf: consistenly use BPF token throughout BPF verifier logic
+> >   libbpf: add BPF token support to bpf_prog_load() API
+> >   selftests/bpf: add BPF token-enabled BPF_PROG_LOAD tests
+> >
+> >  drivers/media/rc/bpf-lirc.c                   |   2 +-
+> >  include/linux/bpf.h                           |  79 ++++-
+> >  include/linux/filter.h                        |   2 +-
+> >  include/uapi/linux/bpf.h                      |  53 ++++
+> >  kernel/bpf/Makefile                           |   2 +-
+> >  kernel/bpf/arraymap.c                         |   2 +-
+> >  kernel/bpf/cgroup.c                           |   6 +-
+> >  kernel/bpf/core.c                             |   3 +-
+> >  kernel/bpf/helpers.c                          |   6 +-
+> >  kernel/bpf/inode.c                            |  46 ++-
+> >  kernel/bpf/syscall.c                          | 183 +++++++++---
+> >  kernel/bpf/token.c                            | 201 +++++++++++++
+> >  kernel/bpf/verifier.c                         |  13 +-
+> >  kernel/trace/bpf_trace.c                      |   2 +-
+> >  net/core/filter.c                             |  36 +--
+> >  net/ipv4/bpf_tcp_ca.c                         |   2 +-
+> >  net/netfilter/nf_bpf_link.c                   |   2 +-
+> >  tools/include/uapi/linux/bpf.h                |  53 ++++
+> >  tools/lib/bpf/bpf.c                           |  35 ++-
+> >  tools/lib/bpf/bpf.h                           |  45 ++-
+> >  tools/lib/bpf/libbpf.map                      |   1 +
+> >  .../selftests/bpf/prog_tests/libbpf_probes.c  |   4 +
+> >  .../selftests/bpf/prog_tests/libbpf_str.c     |   6 +
+> >  .../testing/selftests/bpf/prog_tests/token.c  | 277 ++++++++++++++++++
+> >  24 files changed, 957 insertions(+), 104 deletions(-)
+> >  create mode 100644 kernel/bpf/token.c
+> >  create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
+> >
+> > --
+> > 2.34.1
+> >
 > >
 >
-> Thanks Andreas.  I'll plan to drop this patch from the series for now.
 >
-> Does updating the mtime and atime here serve any purpose, or should
-> those also be removed? If you plan to keep the a/mtime updates then I'd
-> still suggest updating the ctime for consistency's sake. It shouldn't
-> cost anything extra to do so since you're dirtying the inode below
-> anyway.
-
-Yes, good point actually, we should keep things consistent for simplicity.
-
-Would you add this back in if you do another posting?
-
-Thanks,
-Andreas
-
-> Thanks!
+> Hi Andrii,
 >
-> > >                 mark_inode_dirty(inode);
-> > >                 set_bit(QDF_REFRESH, &qd->qd_flags);
-> > >         }
-> > > --
-> > > 2.40.1
-> > >
-> >
-> > Thanks,
-> > Andreas
-> >
+> Thanks for your proposal.
+> That seems to be a useful functionality, and yet I have some questions.
+
+I've answered them below. But I don't think either of them have any
+relation to BPF token and the problem I'm trying to solve.
+
+>
+> 1. Why can't we add security_bpf_probe_read_{kernel,user}?
+>     If possible, we can use these LSM hooks to refuse the process to
+> read other tasks' information. E.g. if the other process is not within
+> the same cgroup or the same namespace, we just refuse the reading. I
+> think it is not hard to identify if the other process is within the
+> same cgroup or the same namespace.
+
+There are probably many reasons. First, performance-wide, LSM hook for
+each bpf_probe_read_{kernel,user}() call will be prohibitive. And just
+in general, one would need to be very careful with such LSM hooks,
+because bpf_probe_read_{kernel,user}() often happens from NMI context,
+and LSM policy would have to be written and validated very carefully
+with NMI context in mind.
+
+But, more conceptually, for probe_read you get a random address and
+you know the process context you are running in (but you might be
+actually running in softirq and NMI, and that process context is
+irrelevant). How can you efficiently (or at all) tell if that random
+address "belongs" to cgroup or namespace? Just at conceptual level?
+
+>
+> 2. Why can't we extend bpf_cookie?
+>    We're now using bpf_cookie to identify each user or each
+> application, and only the permitted cookies can create new probe
+> links.  However we find the bpf_cookie is only supported by tracing,
+> perf_event and kprobe_multi, so we're planning to extend it to other
+> possible link types, then we can use LSM hooks to control all bpf
+> links.  I think that the upstream kernel should also support
+> bpf_cookie for all bpf links. If possible, we will post it to the
+> upstream in the future.
+>    After I have read your BPF token proposal, I just have some other
+> ideas. Why can't we just extend bpf_cookie to all other BPF objects?
+> For example, all progs and maps should also have the bpf_cookie.
+>
+
+I'm not exactly clear how you use BPF cookie, but it wasn't intended
+to provide any sort of security or validation policy. It's purely a
+user-provided u64 to help distinguish different attach points when the
+same BPF program is attached in multiple places (e.g., kprobe tracing
+many different kernel functions and needing to distinguish between
+them at runtime).
+
+I do agree BPF cookie is super useful and we should keep extending
+other types of BPF programs with BPF cookie support, of course. It's
+just completely orthogonal to BPF token discussion.
+
+
 >
 > --
-> Jeff Layton <jlayton@kernel.org>
->
-
+> Regards
+> Yafang
