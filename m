@@ -2,183 +2,335 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D070C001DB
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jul 2023 21:32:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2508FEB64DA
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jul 2023 21:39:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232353AbjGEVcN (ORCPT
+        id S230094AbjGEVjB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jul 2023 17:32:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37452 "EHLO
+        Wed, 5 Jul 2023 17:39:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232257AbjGEVcL (ORCPT
+        with ESMTP id S229697AbjGEVjA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jul 2023 17:32:11 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83E461BF6;
-        Wed,  5 Jul 2023 14:30:59 -0700 (PDT)
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 365L4kSS006690;
-        Wed, 5 Jul 2023 21:30:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2023-03-30;
- bh=JLPKCFwkJLuXER0Gsrm2VneeBze553x1o+tN2wqgPpk=;
- b=r+Isf0A2lmvuYbb+DRV86E9BALU7b/ZzipcPaPsq8Y2fishnBMOzjxd0lYnMfd488L0u
- 8UoiyQNR9q1pj/aR/iD7YjQTRChlxVA2yQ6X0HZZcP2cJ7kaHLTzDVthjbB9CtSQrF6t
- kwEfBPMnZEdH/I2QLTDLZk2HSmaYkY+kRCjNASOY6amSdm1/HJwLDQWcZNmEQUgZh3cu
- RrfOXRE4LElEpJujC475kpr8WZi/h/69ONLBNPTABa5URnn0Y1PcdmtbpwQHfUL1GdFx
- vBPWVD5CZmajqtad2pqstF+PCL/k//Gwy3S/8DTabsnd/dIVqRS0jUTueFVtTT7pYA9W lw== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3rnf1385uw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Jul 2023 21:30:41 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 365KfZDd024636;
-        Wed, 5 Jul 2023 21:30:40 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2104.outbound.protection.outlook.com [104.47.70.104])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3rjak6mk5f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Jul 2023 21:30:40 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jBOsWER5hwppNBkxu5st3ijF5WOeHdZZyG+VwEVjtOpY1GmeTJVXxM4c6IlNhqhwUCTowRAt/3XPQ2Bn9C5C+rBvuVFskmyw6bmDBgpGGp4Himm7Vz/zFowlNNmdEg3swucOxqcavrz4SlaOSMFLCTTJagbYo40+xxL1Vq2soJnyYryusQBYj1ooM+C2KuoLisfPy0d1NlnTNBC6+jwEtGv3UzRaDO9nVva5EnLp1dFpFl6incZswYvt983x87XihCwdqH3GJ077BCEJ46yRcFAp1lw/BOrof+l51tFYMr9FjxLNeQav4s2pTqd3/WqHGWPXseLsQdx8LLUyJ6pV0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JLPKCFwkJLuXER0Gsrm2VneeBze553x1o+tN2wqgPpk=;
- b=F+GHJ8i2V9eHDXD61ExaQaW+oQMpOX3F5Sy/PXcOecBYSWNBmDjPvIkO0ZcOiLF9gcl5pB7mcuyg6eI4xzJVk0VQBKkoYSZQkYWI/L575b4gF6l5h+iyJoFWZP7KNOmxH06FdmVu1QokRjdmbvSBjtvOBN5juDyHC0MZJ/jrd2NGjLoh3kHaLUoe3jQz8bK9kx5NUI9px3VaKBtv00oCCWvBujsCb+YGig9mxct06LXMiMugPnuXOVDuQoRMHjtrDjEAjKXnoovAhrnoovKUrcyOdNajRqKir/Vmj7jgmluYMx3VOukwL4SQ9wl32XvAOuPd9DAN3lXfNkz0wWKzig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Wed, 5 Jul 2023 17:39:00 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13E7F1998;
+        Wed,  5 Jul 2023 14:38:58 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3fbc0981755so20745e9.1;
+        Wed, 05 Jul 2023 14:38:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JLPKCFwkJLuXER0Gsrm2VneeBze553x1o+tN2wqgPpk=;
- b=aJosbvoOYRQanoqThNhZ1u4sDV/dO4boAUKIDStdPPMpWXvTpIQAIrHDL+ItMt4H8pF+2npsfc36pfh7AErR1PDJ+mGc7OtTXVWmoX7i/E6M8jMCcJVhX7Ujd3+tZTxDEQ+K6tVzB0WPP6lO2KgYtAHJdXWCa0VjBORToHERED4=
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by CH3PR10MB6904.namprd10.prod.outlook.com (2603:10b6:610:145::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.17; Wed, 5 Jul
- 2023 21:30:36 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::6fe7:599d:4540:5ec1]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::6fe7:599d:4540:5ec1%4]) with mapi id 15.20.6565.016; Wed, 5 Jul 2023
- 21:30:36 +0000
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-CC:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [PATCH] integrity: Always reference the blacklist keyring with
- apprasial
-Thread-Topic: [PATCH] integrity: Always reference the blacklist keyring with
- apprasial
-Thread-Index: AQHZq3SR3Vrg3SdHi0+F3eOSTb15sa+pj8WAgAIpLAA=
-Date:   Wed, 5 Jul 2023 21:30:35 +0000
-Message-ID: <FFC9574D-4788-4583-A334-76BE9684A8D1@oracle.com>
-References: <20230630165712.909767-1-eric.snowberg@oracle.com>
- <559d380a557c2ee210c808481a1cb92e5afe6c61.camel@linux.ibm.com>
-In-Reply-To: <559d380a557c2ee210c808481a1cb92e5afe6c61.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3696.120.41.1.1)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH2PR10MB4150:EE_|CH3PR10MB6904:EE_
-x-ms-office365-filtering-correlation-id: 563388f0-d933-4279-9549-08db7d9f11fd
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: bclhmC2JtPHB5BCUGxRl6B3tX2+9axZwDurNhfHiOZ2TWqcxaadiFIm9jcWOB8S8hJfMdAISB8wb4ohs3coLyzsF9s2waD9Yz5ISNexvS8SyGkWTeje+b1CScZP7YH1EsPWdFGr6/yb/m/JCWYGCGRZ8ndLDfjzGvNVOv/XQNHkaRsOkurJ6Ze+uEy7kKtrThY4nSTum2jASdJ5mfgsyz/TzVK25/lQt6SynX01WBX8ltfUtDakzYmWr9wGfS/CotS7a38eanAqA0us4+rTNbAEO7Sv5jXJ3BHqK3dBeenu7g6AoMmnggKBUMtoq7olRxDeV6egPuvEXjJ+trUGRxqc5qkyGR6QPmOp7RNkqKT7tNkrewWyQpaKi0ui0YkGqPOkAl/9OWxXkUkQf7OyVt/dr429f84CbOs6CTv3hQpf7Y/bdNVuCjMvv+Mm+qc5n9UfECaXmIGbGEJpwNYMG0L9Pnb5asM2337kXoNWEztCOcfkfHL/Tw1HDLX9fYKOHNwOfIZzs1/p7BzJlflGMHUyukLMdzAE33I3KRuydLkNvY6/i6z/ZiYj3rrasrKrwrbxe6mNa4yclEoFgtXb+nVCpi5+QOKp5JiD7xrT/DUP6v4ecxxuFE5yAUiqIUiirg656qevh2ZaBYsJ+9frTSg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(346002)(136003)(396003)(39860400002)(376002)(366004)(451199021)(6486002)(478600001)(6512007)(54906003)(2616005)(86362001)(36756003)(38070700005)(83380400001)(2906002)(186003)(71200400001)(53546011)(26005)(7416002)(6506007)(122000001)(66946007)(316002)(76116006)(66446008)(558084003)(38100700002)(41300700001)(33656002)(5660300002)(64756008)(44832011)(66476007)(91956017)(66556008)(6916009)(8936002)(4326008)(8676002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?uei6w5OChszJGioVkEKOhkcxRdFVHZgZWitckWvSdUyHyLQpMA9IKR8QLcwI?=
- =?us-ascii?Q?oR6SG77ZpOuDTrIOGYu6Gltmowwkw6T+0F32eWrZgFNTMCPti5o9FFIYcdkx?=
- =?us-ascii?Q?D6qjCLRFM/JvuaBouUKqkX/2KG/S1xs4TrSF4SSy3zyIt/un/wPaRFnr6Z1x?=
- =?us-ascii?Q?nfq+PrzLIetNsRbNEb5gpFMBlXeTsLQctEQqoU2dBKyA7xK2HHQigIQNvNOg?=
- =?us-ascii?Q?KfLS/Fkdm0wd96d4HlITgWCEteUaHqYDwC9lDvkOlORZmmODM6gNRuqr4Evz?=
- =?us-ascii?Q?GMtY2k8cLGVVWZLqzLv8PKnnUFU7OjC/xiwuaeA5ih6+Ln7gj+aPwfMkw7Li?=
- =?us-ascii?Q?4+73K69a49TBZ6BVnEJ6Iu6NbbFfMgIA0kkHoU0KreQOviXczcyDInxREpiJ?=
- =?us-ascii?Q?W9JO6rSufHK3T3U//ce5jtx4W7Z2UJaFM3eF46GDcRiyg5/bsBPuyAP4nX0L?=
- =?us-ascii?Q?LG1K9SVpurM4jYYmg9rBJrVjk9Bs31yc4YpWxOoyy3ERr3+sBUjHQEwtkKtR?=
- =?us-ascii?Q?94wbna8SsBOoS+nOXOnT58xIuVXZS/sE/+hGZl7t8XiJ+uW5I0ZgYx834Rfr?=
- =?us-ascii?Q?NF4uMRh8QKMt4rw8a5PhxYDeLN/ZpxGQ0sr5aSP4o3C7Kco+vrH2+YCwLmeb?=
- =?us-ascii?Q?xf1lwE1AeFIrnJVGy4qh3Rzr+Y28IqaP4f9jZSFdsaNgT/3daQJaYKeiZHYA?=
- =?us-ascii?Q?kNADTUfu3e7mQwQabq40CQ3cT3WoRAJh8aa2L2gH8oq23lkNa3wVKisp2G7K?=
- =?us-ascii?Q?5vMcXejBb9+0z2kePs1zwAmbgH8fhcpIq7J7cPA6JZ/rsAn2n8/dH7mI/hzO?=
- =?us-ascii?Q?rqB08MiNTEHKjyj5+/gdJdbItBONuccKWYiDN+JYftRr4GeKAsW2kpIg7xvJ?=
- =?us-ascii?Q?+j/4C2eycRMJpjFHWNYBiYoRvUFFjz5Wa6mxrquBdgz5BVXJYRP74h7aedoP?=
- =?us-ascii?Q?KPUL8jRxstF4qyfhPHhT/AIeb/aPlnARYDEZrO0ViaUg6QlVRYBKZUi6Khv/?=
- =?us-ascii?Q?Kh7pVZu+4i54ApzSCowEGpA5maoweEchVKJfDli/WliWuBdfrZX0W7aS1NYh?=
- =?us-ascii?Q?bTPH1rnMd6oqDj9BJJVuUm0tS8tIJh21Lj1SKZsVbYqUPQwFf7fwwGwH3Qhn?=
- =?us-ascii?Q?rSGpRpuIHtv9QxDg7x1G1dmw382SxZJeQMp/6Usg0xFyHfe6gq2/ae77kcbv?=
- =?us-ascii?Q?+1ocJt9HGxxCCOuO6Iab1Rd9xHIOAkuCwSsP9vNByxTK6/d/Q2cxcq7RzXXw?=
- =?us-ascii?Q?rMcZuOrECm8JSns5MR9NKsHKldfuuVK+t3PCHGwnqBt329BTu6E0L/A7vg1c?=
- =?us-ascii?Q?E6plZBIRY87s48B/1ubJ31/rcN7tQLakuIp17Pzs7b0ScFEiPBIE9BKGsZZf?=
- =?us-ascii?Q?Xv7xERcffnsTjsMlSvb/MWmm6+O4rCIjLF0TyJMBzTSv6GesACAYB1bUn+V1?=
- =?us-ascii?Q?UP1KkIpZBzzAE/E1oj8yCuH1ZYVL7fb7wlzIt7/oDBJlmgpv1EYMd305ydJ2?=
- =?us-ascii?Q?JkZPW2RoA4Hn88T+mTk4Pdt9hvlKvUB+5cs8b0kjhhRLlJ8NOhN3SMw2+3l9?=
- =?us-ascii?Q?Q9EdvmqUVDn/nySziEk1wRTvHcp6YzswlpXhpakhSiXK6Ml175o3Ny/rzxdQ?=
- =?us-ascii?Q?OA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <00696147A41C5040B36486EF2988490F@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20221208; t=1688593136; x=1691185136;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M2I0VJr35Z/Q2tTn0hViB65Znz9W/ziy02XlIsMkjvc=;
+        b=dKieTbs8RvKcL8Sc7i8rk6auEIvOPxdNUZAR6TGW8ikDlAwS4EOoXXTQUJbobmPnh7
+         BixtizUzgBqTnbm7lJClw3A4jo5vlZyMJBCz+9KKupr06eusou38qyo8DwiLPiM9VJuM
+         A3yNeTDEkEOZC6aR9kmDyUIG92nZ7TcvJw0FQ1cAMriQUHfGkFPIIun3yNWbthItZsmc
+         NM9kVatyV6DbybBVBPkCeYCL6k30TBVGSKinBaai7MaJZwFheOhH1OGbSCPJ+wqghwBj
+         o/bZxBi+TM970TTFnAFTdEwfmcn4rFj4DJ1B8gX25UCH8ks1Jny7nDStN72Ic/L8UtKI
+         y1Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688593136; x=1691185136;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M2I0VJr35Z/Q2tTn0hViB65Znz9W/ziy02XlIsMkjvc=;
+        b=PX8aEJWARc6OcXna8YlpRjIdslzxWILKq9yyju9yvQ3H2mDKSC11dOXyEOgaq3ays4
+         jd7wyZqzvUe3BdW1jhl+rtiDx6GtIFUAiUCBXIaVSgd14YxpaHDr//ehiLUTDHO22tgf
+         FuS4GRrCgRYTJgN7fsyjpXydrecMTX+Y9GWHF8PKcBJpeB+yeNxbzBAwZI9FItD+RaMF
+         ZWE5cR35w3YexVvZnskw8/PfO5yw20uSHRqownR6sqRGyQ8WveFjjYCJK0apQUGtQY/7
+         ri4Yaez1KcY4hSnmtlrLmFlIS3hPZeyZPLh9uVRTrYA4fhHP6ZBtAwTc11CA16qdWxZt
+         ssWg==
+X-Gm-Message-State: AC+VfDxWLjkzlQbl1WswNiQaXyr5q6/LoAJ+Jk2Ug3I27JUU1Q3rDKaX
+        5Ag9wT9B0r/2OvwmpKre3bOuOPSRLge7Mo8lDrHp6oKWUyyusQ==
+X-Google-Smtp-Source: ACHHUZ6xYLwn/pNc9ujh4axXDY35Lw8onVjSi5U4YXZtK62qL69GnnzBcK9GOFvfPaq9WkgA4lJVVGMya/Z30STHhJY=
+X-Received: by 2002:a05:600c:ac6:b0:3fb:b3aa:1c88 with SMTP id
+ c6-20020a05600c0ac600b003fbb3aa1c88mr14494911wmr.26.1688593136118; Wed, 05
+ Jul 2023 14:38:56 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?xFeR7LfkudS/JYtoonIEh/Jei+mYvrAMbElBFkQ0Ujgt1206gdD1RuCboZQF?=
- =?us-ascii?Q?njTG6WDL3WfHLNfEd1MYJsit1Y+OyXjq9OhF85xQpBjrtSlEB2GtOtcl01Jp?=
- =?us-ascii?Q?x0nEGORJIxDKOQQaacaMDVgSnAb/r8S2G1k8Bx9E1SiZkk39xvrfWehUBOSs?=
- =?us-ascii?Q?5eUG3vICutr0K+XJp/Ij+G//jKvUdzPOYDIsootUaOveZrDx8E6KQE1Zpj8p?=
- =?us-ascii?Q?D0fuVV3uOUyAbUrLDwwKDrRK+9jfHW37pLnM4FYVSdmNb0zgfdkyObwpy/fq?=
- =?us-ascii?Q?jcC75vovwM5PkMQjogqDLrOa4ieJHvWFBecMtOD7iVGOiSpBsZ4O4Xp9dSPG?=
- =?us-ascii?Q?lU2NMqf8ng0nB7EUZ9b9+dED78EFPbele7QIRsrrA7BDRj9Gh04gyj4mvS/C?=
- =?us-ascii?Q?9OITXnP8fewI02DDVlEO2ehXX1jiIVh13Z1tmwq68yiE7tGy1TLouqeAkPnb?=
- =?us-ascii?Q?0UplKS7ixHep11nGhPm/rG77rGuzFU1f9X73FCcEy1sI+alWvmYS1PXbSUf3?=
- =?us-ascii?Q?l4Q4eVNBLyeFRm/fg/+U1gPdDmT7fOZBLSRE1eWT/ew6wwlmflDwMzLRpXVO?=
- =?us-ascii?Q?7pM6ty2kTOQzVUxln/8n5KlaLQ3SZpeaSVrn55/SdKnO+tK4WqQCwuP/YBi5?=
- =?us-ascii?Q?SCPKbF2MGf/dtB4oB7pRCn2YFQdE1o5o43uP4QNPWPe0YJJXo11U7RtkHmIh?=
- =?us-ascii?Q?N5X9OHkSWr7s7B5XjA0FWheXd0gqfUzo5eXmjVoMJlDFbMCy+PaOtmyo/6Sc?=
- =?us-ascii?Q?yZFsQLl7oQ9NCK113nxdRiG8esNJ4m1ZQqw+Di5jdp7F5UhIdb3vW5227icb?=
- =?us-ascii?Q?gdoGGctkcsjTDnmoxjtPG3WCq0BT8/s/30G8aNW6ew6MoHx4x6kHdRmLwv82?=
- =?us-ascii?Q?2eRxVDds6eD6/LRnDfa7HjLA7xjSUxfrqtaK190f2RZYtScx4gKs0g8Fo0S5?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 563388f0-d933-4279-9549-08db7d9f11fd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2023 21:30:35.7843
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2gvJJ8LP4mdtEVTYTIqG/ieOkZRw7QqH9dFat58NkFUzpcgDuwm7R+QRHpu8AN6l2YkRaIDKkA4rA3zShv/jS0plIzMg3p3bqrLAx/va/Qw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6904
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-05_11,2023-07-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=941 phishscore=0
- malwarescore=0 spamscore=0 bulkscore=0 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
- definitions=main-2307050195
-X-Proofpoint-GUID: SiE2QgXJubKxj0jQkg-XJs0r81vD0Ffw
-X-Proofpoint-ORIG-GUID: SiE2QgXJubKxj0jQkg-XJs0r81vD0Ffw
+References: <20230629051832.897119-1-andrii@kernel.org> <20230629051832.897119-2-andrii@kernel.org>
+ <20230704-hochverdient-lehne-eeb9eeef785e@brauner> <CAHC9VhTDocBCpNjdz1CoWM2DA76GYZmg31338DHePFGq_-ie-g@mail.gmail.com>
+ <20230705-zyklen-exorbitant-4d54d2f220ad@brauner>
+In-Reply-To: <20230705-zyklen-exorbitant-4d54d2f220ad@brauner>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Wed, 5 Jul 2023 14:38:43 -0700
+Message-ID: <CAEf4Bza5mUou8nw1zjqFaCPPvfUNq-jpNp+y4DhMhhcXc5HwGg@mail.gmail.com>
+Subject: Re: [PATCH RESEND v3 bpf-next 01/14] bpf: introduce BPF token object
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        lennart@poettering.net, cyphar@cyphar.com, luto@kernel.org,
+        kernel-team@meta.com, sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Jul 5, 2023 at 7:42=E2=80=AFAM Christian Brauner <brauner@kernel.or=
+g> wrote:
+>
+> On Wed, Jul 05, 2023 at 10:16:13AM -0400, Paul Moore wrote:
+> > On Tue, Jul 4, 2023 at 8:44=E2=80=AFAM Christian Brauner <brauner@kerne=
+l.org> wrote:
+> > > On Wed, Jun 28, 2023 at 10:18:19PM -0700, Andrii Nakryiko wrote:
+> > > > Add new kind of BPF kernel object, BPF token. BPF token is meant to=
+ to
+> > > > allow delegating privileged BPF functionality, like loading a BPF
+> > > > program or creating a BPF map, from privileged process to a *truste=
+d*
+> > > > unprivileged process, all while have a good amount of control over =
+which
+> > > > privileged operations could be performed using provided BPF token.
+> > > >
+> > > > This patch adds new BPF_TOKEN_CREATE command to bpf() syscall, whic=
+h
+> > > > allows to create a new BPF token object along with a set of allowed
+> > > > commands that such BPF token allows to unprivileged applications.
+> > > > Currently only BPF_TOKEN_CREATE command itself can be
+> > > > delegated, but other patches gradually add ability to delegate
+> > > > BPF_MAP_CREATE, BPF_BTF_LOAD, and BPF_PROG_LOAD commands.
+> > > >
+> > > > The above means that new BPF tokens can be created using existing B=
+PF
+> > > > token, if original privileged creator allowed BPF_TOKEN_CREATE comm=
+and.
+> > > > New derived BPF token cannot be more powerful than the original BPF
+> > > > token.
+> > > >
+> > > > Importantly, BPF token is automatically pinned at the specified loc=
+ation
+> > > > inside an instance of BPF FS and cannot be repinned using BPF_OBJ_P=
+IN
+> > > > command, unlike BPF prog/map/btf/link. This provides more control o=
+ver
+> > > > unintended sharing of BPF tokens through pinning it in another BPF =
+FS
+> > > > instances.
+> > > >
+> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > > ---
+> > >
+> > > The main issue I have with the token approach is that it is a complet=
+ely
+> > > separate delegation vector on top of user namespaces. We mentioned th=
+is
+> > > duringthe conf and this was brought up on the thread here again as we=
+ll.
+> > > Imho, that's a problem both security-wise and complexity-wise.
+> > >
+> > > It's not great if each subsystem gets its own custom delegation
+> > > mechanism. This imposes such a taxing complexity on both kernel- and
+> > > userspace that it will quickly become a huge liability. So I would
+> > > really strongly encourage you to explore another direction.
+
+Alright, thanks a lot for elaborating. I did want to keep everything
+contained to bpf() for various reasons, but it seems like I won't be
+able to get away with this. :)
+
+> > >
+> > > I do think the spirit of your proposal is workable and that it can
+> > > mostly be kept in tact.
+
+It's good to know that at least conceptually you support the idea of
+BPF delegation. I have a few more specific questions below and I'd
+appreciate your answers, as I have less familiarity with how exactly
+container managers do stuff at container bootstrapping stage.
+
+But first, let's try to get some tentative agreement on design before
+I go and implement the BPF-token-as-FS idea. I have basically just two
+gripes with exact details of what you are proposing, so let me explain
+which and why, and see if we can find some common ground.
+
+First, the idea of coupling and bundling this "delegation" option with
+BPF FS doesn't feel right. BPF FS is just a container of BPF objects,
+so adding to it a new property of allowing to use privileged BPF
+functionality seems a bit off.
+
+Why not just create a new separate FS, let's code-name it "BPF Token
+FS" for now (naming suggestions are welcome). Such BPF Token FS would
+be dedicated to specifying everything about what's allowable through
+BPF, just like my BPF token implementation. It can then be
+mounted/bind-mounted inside BPF FS (or really, anywhere, it's just a
+FS, right?). User application would open it (I'm guessing with
+open_tree(), right?) and pass it as token_fd to bpf() syscall.
+
+Having it as a separate single-purpose FS seems cleaner, because we
+have use cases where we'd have one BPF FS instance created for a
+container by our container manager, and then exposing a few separate
+tokens with different sets of allowed functionality. E.g., one for
+main intended workload, another for some BPF-based observability
+tools, maybe yet another for more heavy-weight tools like bpftrace for
+extra debugging. In the debugging case our container infrastructure
+will be "evacuating" any other workloads on the same host to avoid
+unnecessary consequences. The point is to not disturb
+workload-under-human-debugging as much as possible, so we'd like to
+keep userns intact, which is why mounting extra (more permissive) BPF
+token inside already running containers is an important consideration.
+
+With such goals, it seems nicer to have a single BPF FS, and few BPF
+token FSs mounted inside it. Yes, we could bundle token functionality
+with BPF FS, but separating those two seems cleaner to me. WDYT?
+
+Second, mount options usage. I'm hearing stories from our production
+folks how some new mount options (on some other FS, not BPF FS) were
+breaking tools unintentionally during kernel/tooling
+upgrades/downgrades, so it makes me a bit hesitant to have these
+complicated sets of mount options to specify parameters of
+BPF-token-as-FS. I've been thinking a bit, and I'm starting to lean
+towards the idea of allowing to set up (and modify as well) all these
+allowed maps/progs/attach types through special auto-created files
+within BPF token FS. Something like below:
+
+# pwd
+/sys/fs/bpf/workload-token
+# ls
+allowed_cmds allowed_map_types allowed_prog_types allowed_attach_types
+# echo "BPF_PROG_LOAD" > allowed_cmds
+# echo "BPF_PROG_TYPE_KPROBE" >> allowed_prog_types
+...
+# cat allowed_prog_types
+BPF_PROG_TYPE_KPROBE,BPF_PROG_TYPE_TRACEPOINT
 
 
-> On Jul 4, 2023, at 6:30 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
->=20
-> Please update the "case Opt_appraise_flag:" and remove "appraise_flag=3D"
-> in the powerpc arch specific policy rules.
+The above is fake (I haven't implemented anything yet), but hopefully
+works as a demonstration. We'll also need to make sure that inside
+non-init userns these files are read-only or allow to just further
+restrict the subset of allowed functionality, never extend it.
 
-I will make both changes in V2, thanks.
+Such an approach will actually make it simpler to test and experiment
+with this delegation locally, will make it trivial to observe what's
+allowed from simple shell scripts, etc, etc. With fsmount() and O_PATH
+it will be possible to set everything up from privileged processes
+before ever exposing a BPF Token FS instance through a file system, if
+there are any concerns about racing with user space.
 
+That's the high-level approach I'm thinking of right now. Would that
+work? How critical is it to reuse BPF FS itself and how important to
+you is to rely on mount options vs special files as described above?
+Hopefully not critical, and I can start working on it, and we'll get
+what you want with using FS as a vehicle for delegation, while
+allowing some of the intended use cases that we have in mind in a bit
+cleaner fashion?
+
+> > >
+> > > As mentioned before, bpffs has all the means to be taught delegation:
+> > >
+> > >         // In container's user namespace
+> > >         fd_fs =3D fsopen("bpffs");
+> > >
+> > >         // Delegating task in host userns (systemd-bpfd whatever you =
+want)
+> > >         ret =3D fsconfig(fd_fs, FSCONFIG_SET_FLAG, "delegate", ...);
+> > >
+> > >         // In container's user namespace
+> > >         fd_mnt =3D fsmount(fd_fs, 0);
+> > >
+> > >         ret =3D move_mount(fd_fs, "", -EBADF, "/my/fav/location", MOV=
+E_MOUNT_F_EMPTY_PATH)
+> > >
+> > > Roughly, this would mean:
+> > >
+> > > (i) raise FS_USERNS_MOUNT on bpffs but guard it behind the "delegate"
+> > >     mount option. IOW, it's only possibly to mount bpffs as an
+> > >     unprivileged user if a delegating process like systemd-bpfd with
+> > >     system-level privileges has marked it as delegatable.
+
+Regarding the FS_USERNS_MOUNT flag and fsopen() happening from inside
+the user namespace. Am I missing something subtle and important here,
+why does it have to happen inside the container's user namespace?
+Can't the container manager both fsopen() and fsconfig() everything in
+host userns, and only then fsmount+move_mount inside the container's
+userns? Just trying to understand if there is some important early
+association of userns happening at early steps here?
+
+Also, in your example above, move_mount() should take fd_mnt, not fd_fs, ri=
+ght?
+
+> > > (ii) add fine-grained delegation options that you want this
+> > >      bpffs instance to allow via new mount options. Idk,
+> > >
+> > >      // allow usage of foo
+> > >      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "foo");
+> > >
+> > >      // also allow usage of bar
+> > >      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "bar");
+> > >
+> > >      // reset allowed options
+> > >      fsconfig(fd_fs, FSCONFIG_SET_STRING, "");
+> > >
+> > >      // allow usage of schmoo
+> > >      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "schmoo");
+> > >
+> > > This all seems more intuitive and integrates with user and mount
+> > > namespaces of the container. This can also work for restricting
+> > > non-userns bpf instances fwiw. You can also share instances via
+> > > bind-mount and so on. The userns of the bpffs instance can also be us=
+ed
+> > > for permission checking provided a given functionality has been
+> > > delegated by e.g., systemd-bpfd or whatever.
+> >
+> > I have no arguments against any of the above, and would prefer to see
+> > something like this over a token-based mechanism.  However we do want
+> > to make sure we have the proper LSM control points for either approach
+> > so that admins who rely on LSM-based security policies can manage
+> > delegation via their policies.
+> >
+> > Using the fsconfig() approach described by Christian above, I believe
+> > we should have the necessary hooks already in
+> > security_fs_context_parse_param() and security_sb_mnt_opts() but I'm
+> > basing that on a quick look this morning, some additional checking
+> > would need to be done.
+>
+> I think what I outlined is even unnecessarily complicated. You don't
+> need that pointless "delegate" mount option at all actually. Permission
+> to delegate shouldn't be checked when the mount option is set. The
+> permissions should be checked when the superblock is created. That's the
+> right point in time. So sm like:
+>
+
+I think this gets even more straightforward with BPF Token FS being a
+separate one, right? Given BPF Token FS is all about delegation, it
+has to be a privileged operation to even create it.
+
+> diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+> index 4174f76133df..a2eb382f5457 100644
+> --- a/kernel/bpf/inode.c
+> +++ b/kernel/bpf/inode.c
+> @@ -746,6 +746,13 @@ static int bpf_fill_super(struct super_block *sb, st=
+ruct fs_context *fc)
+>         struct inode *inode;
+>         int ret;
+>
+> +       /*
+> +        * If you want to delegate this instance then you need to be
+> +        * privileged and know what you're doing. This isn't trust.
+> +        */
+> +       if ((fc->user_ns !=3D &init_user_ns) && !capable(CAP_SYS_ADMIN))
+> +               return -EPERM;
+> +
+>         ret =3D simple_fill_super(sb, BPF_FS_MAGIC, bpf_rfiles);
+>         if (ret)
+>                 return ret;
+> @@ -800,6 +807,7 @@ static struct file_system_type bpf_fs_type =3D {
+>         .init_fs_context =3D bpf_init_fs_context,
+>         .parameters     =3D bpf_fs_parameters,
+>         .kill_sb        =3D kill_litter_super,
+> +       .fs_flags       =3D FS_USERNS_MOUNT,
+
+Just an aside thought. It doesn't seem like there is any reason why
+BPF FS right now is not created with FS_USERNS_MOUNT, so (separately
+from all this discussion) I suspect we can just make it
+FS_USERNS_MOUNT right now (unless we combine it with BPF-token-FS,
+then yeah, we can't do that unconditionally anymore). Given BPF FS is
+just a container of pinned BPF objects, just mounting BPF FS doesn't
+seem to be dangerous in any way. But that's just an aside thought
+here.
+
+>  };
+>
+>  static int __init bpf_init(void)
+>
+> In fact this is conceptually generalizable but I'd need to think about
+> that.
