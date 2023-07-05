@@ -2,154 +2,96 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44118EB64D9
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jul 2023 23:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4388AC001DD
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jul 2023 06:33:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230472AbjGDXeY (ORCPT
+        id S231270AbjGEGdZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Jul 2023 19:34:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50574 "EHLO
+        Wed, 5 Jul 2023 02:33:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbjGDXeX (ORCPT
+        with ESMTP id S231424AbjGEGdY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Jul 2023 19:34:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FF5E10DD
-        for <linux-security-module@vger.kernel.org>; Tue,  4 Jul 2023 16:33:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688513613;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BUjWNMhuU7wC56K7OTDmC62p11rXMP5BQU2F88GfDUU=;
-        b=a6PS8HqRx3y+ZAfTr/1MVVCy5c+v8rqFd0t1o1Z6qk1REhtZTZJSOSfZ8Ok10hjae3fxxa
-        r6KfNe1lJnito8L45yHuNfeJuRDMpT6BGmchbRvHBAjCXWebDFeNHsqO7IIYjgjvjcUYhH
-        o5HTYrAbjutSMnIsSzXE+6+NW3oXe4U=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-169-S2kaHIFoObKOR_lXvvk4Tg-1; Tue, 04 Jul 2023 19:33:30 -0400
-X-MC-Unique: S2kaHIFoObKOR_lXvvk4Tg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-3f5fa06debcso41864975e9.0
-        for <linux-security-module@vger.kernel.org>; Tue, 04 Jul 2023 16:33:30 -0700 (PDT)
+        Wed, 5 Jul 2023 02:33:24 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA9DF1713
+        for <linux-security-module@vger.kernel.org>; Tue,  4 Jul 2023 23:33:19 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id 41be03b00d2f7-55b1238a013so4415509a12.3
+        for <linux-security-module@vger.kernel.org>; Tue, 04 Jul 2023 23:33:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1688538799; x=1691130799;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LDvL7ekfNs3bVJSGPqpDAjABE5c0UvJWFUFVDP7OcnI=;
+        b=HCLhgdyCq90YfTQMjaZdIjt+ewIGHr1WoJsIV+nau37DwSwAOxCl2fjO89N/8iyvzE
+         H7nphOWHQcnoXDeIAAzONINmvw/9M+OF7ptZ2nYwtk03J6Xr1VIAXJFgzI89yGveGEEn
+         GqQXrdDg26hwQ58jRQ8CVFGH4yq7UNJvF82E0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688513609; x=1691105609;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0kA4f+8B/kxLukv7a/BQg0loCO+oeIsR1MEG7lGSAPE=;
-        b=HWLosNEX6q/NLzTMiMg7utJ+SrKiIGhfAnD0DZ1xF/JLso9UcVujQX5M6QVZTEo3em
-         keEu8CdeHSc9iWL9dQWu4yXXSM9sjl1VRckfxj7xurSQJ2NHMRrdhlE8igBPxPfHp3mh
-         GYsyjQXXL9ohsjQPv1OdPIh7TF/Zp+Am5fyz6hW12/PQG1Rg/F9zqKmoyf0z3+4u2Zw0
-         cN9ivZdlVtCLW3en6m6WimqeGXa3oiU054uzvClFtWreTC1CoMRD2CKsTYc1hqCCq/Dl
-         bca2cQreic1K4kz9XyTxCBL7aOvviMrsC7keTf5QWTKeMHWA6qodvX5xExU92KpIZZeF
-         AhLw==
-X-Gm-Message-State: AC+VfDyYutqNR7Jh4pMF3EFtbCOy7jyewqyRaigurR4y4ttwyhLqoS9o
-        D+Ovij8Pz2xb6n87zXw609/bNshBP8nlotx9p4q/b57TYtmQmeEQGhU0UlNy8KHTN3ZXWMAsVR5
-        mPZvjF04vmeULyRwpXApR/diHF8AxvYNBQhkJ
-X-Received: by 2002:a7b:cb4d:0:b0:3f9:b17a:cb61 with SMTP id v13-20020a7bcb4d000000b003f9b17acb61mr14118012wmj.13.1688513609685;
-        Tue, 04 Jul 2023 16:33:29 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6oSNue88FePJzmOEk4Bqio+XxvPYnKACghZTixemR5QnwEnid0A1q6bnfFLewsGCaLxBQBcw==
-X-Received: by 2002:a7b:cb4d:0:b0:3f9:b17a:cb61 with SMTP id v13-20020a7bcb4d000000b003f9b17acb61mr14117999wmj.13.1688513609211;
-        Tue, 04 Jul 2023 16:33:29 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id l7-20020a7bc447000000b003fbca05faa9sm425231wmi.24.2023.07.04.16.33.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jul 2023 16:33:28 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id 3D45DBC1185; Wed,  5 Jul 2023 01:33:28 +0200 (CEST)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        lennart@poettering.net, cyphar@cyphar.com, luto@kernel.org,
-        kernel-team@meta.com, sargun@sargun.me
-Subject: Re: [PATCH RESEND v3 bpf-next 00/14] BPF token
-In-Reply-To: <20230704-vielversprechend-zollfrei-a2a148f2699b@brauner>
-References: <20230629051832.897119-1-andrii@kernel.org>
- <87sfa9eu70.fsf@toke.dk>
- <20230704-vielversprechend-zollfrei-a2a148f2699b@brauner>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date:   Wed, 05 Jul 2023 01:33:28 +0200
-Message-ID: <87pm57b6bb.fsf@toke.dk>
+        d=1e100.net; s=20221208; t=1688538799; x=1691130799;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LDvL7ekfNs3bVJSGPqpDAjABE5c0UvJWFUFVDP7OcnI=;
+        b=gji89/jnloVhyhzdQPXryZ1xKtnr1hkpHiJHMni/M59HUXtE2Yny7JKU8AdI2kyl+j
+         YhbE9TXGCTFA+vrIeC3mCfs8NC4qtvaGyLScpM1zAOlh9w5dk5xfxcfhx/+GusVbxk7h
+         TPfGOTBHLdOIkuk8zgaNjN3z56jpk9RyrwGRpnPYNqAa/D+/VAhhsKMta/+SCEbZ4k8D
+         owIWEyK7P3mQZtaciRy1pYTHsrhtvRN6XLgvYAxBNbKgpe80TYJqlI9t/X9XYzPIj0e9
+         qWZho2rM4ph4ZP0qEN4CqZUOU4e9hH13LrSl2LSlY3W9d+x/kQC0yXyGFgC0sH4+oel3
+         Ki/A==
+X-Gm-Message-State: ABy/qLY0qQoe4DqVWGWT7Fjtyw7cXcbfy1sXTbRBpAEJd2vKtUV4ETGO
+        DQBCYvJwpJKz6FS+v64EAsNYgA==
+X-Google-Smtp-Source: APBJJlFpuOviESDRC+8Eczf993gvvtLCwtBHrHyO+U2M+unQGYqacus88aSVN0CInn963UVCfuJ9qA==
+X-Received: by 2002:a05:6a20:8408:b0:12f:6500:8504 with SMTP id c8-20020a056a20840800b0012f65008504mr3750180pzd.46.1688538799000;
+        Tue, 04 Jul 2023 23:33:19 -0700 (PDT)
+Received: from localhost (183.43.230.35.bc.googleusercontent.com. [35.230.43.183])
+        by smtp.gmail.com with UTF8SMTPSA id u23-20020aa78497000000b0067aa2a70179sm13271590pfn.46.2023.07.04.23.33.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jul 2023 23:33:18 -0700 (PDT)
+From:   jeffxu@chromium.org
+To:     skhan@linuxfoundation.org, keescook@chromium.org
+Cc:     akpm@linux-foundation.org, dmitry.torokhov@gmail.com,
+        dverkamp@chromium.org, asmadeus@codewreck.org, hughd@google.com,
+        jeffxu@google.com, jorgelo@chromium.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-mm@kvack.org, jannh@google.com,
+        linux-hardening@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v2 0/2] mm/memfd: fix sysctl MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED
+Date:   Wed,  5 Jul 2023 06:33:13 +0000
+Message-ID: <20230705063315.3680666-1-jeffxu@google.com>
+X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Christian Brauner <brauner@kernel.org> writes:
+From: Jeff Xu <jeffxu@google.com>
 
-> On Fri, Jun 30, 2023 at 01:15:47AM +0200, Toke H=C3=B8iland-J=C3=B8rgense=
-n wrote:
->> Andrii Nakryiko <andrii@kernel.org> writes:
->>=20
->> > This patch set introduces new BPF object, BPF token, which allows to d=
-elegate
->> > a subset of BPF functionality from privileged system-wide daemon (e.g.=
-,
->> > systemd or any other container manager) to a *trusted* unprivileged
->> > application. Trust is the key here. This functionality is not about al=
-lowing
->> > unconditional unprivileged BPF usage. Establishing trust, though, is
->> > completely up to the discretion of respective privileged application t=
-hat
->> > would create a BPF token, as different production setups can and do ac=
-hieve it
->> > through a combination of different means (signing, LSM, code reviews, =
-etc),
->> > and it's undesirable and infeasible for kernel to enforce any particul=
-ar way
->> > of validating trustworthiness of particular process.
->> >
->> > The main motivation for BPF token is a desire to enable containerized
->> > BPF applications to be used together with user namespaces. This is cur=
-rently
->> > impossible, as CAP_BPF, required for BPF subsystem usage, cannot be na=
-mespaced
->> > or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to=
- BPF
->> > helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can saf=
-ely read
->> > arbitrary memory, and it's impossible to ensure that they only read me=
-mory of
->> > processes belonging to any given namespace. This means that it's impos=
-sible to
->> > have namespace-aware CAP_BPF capability, and as such another mechanism=
- to
->> > allow safe usage of BPF functionality is necessary. BPF token and dele=
-gation
->> > of it to a trusted unprivileged applications is such mechanism. Kernel=
- makes
->> > no assumption about what "trusted" constitutes in any particular case,=
- and
->> > it's up to specific privileged applications and their surrounding
->> > infrastructure to decide that. What kernel provides is a set of APIs t=
-o create
->> > and tune BPF token, and pass it around to privileged BPF commands that=
- are
->> > creating new BPF objects like BPF programs, BPF maps, etc.
->>=20
->> So a colleague pointed out today that the Seccomp Notify functionality
->> would be a way to achieve your stated goal of allowing unprivileged
->> containers to (selectively) perform bpf() syscall operations. Christian
->> Brauner has a pretty nice writeup of the functionality here:
->> https://people.kernel.org/brauner/the-seccomp-notifier-new-frontiers-in-=
-unprivileged-container-development
->
-> I'm amazed you read this. :)
+When sysctl vm.memfd_noexec is 2 (MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED),
+memfd_create(.., MFD_EXEC) should fail.
 
-I found it quite an enjoyable read, actually :)
+This complies with how MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED is
+defined - "memfd_create() without MFD_NOEXEC_SEAL will be rejected"
 
-> The seccomp notifier comes with a lot of caveats. I think it would be
-> impractical if not infeasible to handle bpf() delegation.
+Thanks to Dominique Martinet <asmadeus@codewreck.org> who reported the bug.
+see [1] for context.
 
-Right, thank you for chiming in and explaining the context. I replied
-elsewhere in the thread on the content, so let's not fork the discussion
-any more than we have to...
+[1] https://lore.kernel.org/linux-mm/CABi2SkXUX_QqTQ10Yx9bBUGpN1wByOi_=gZU6WEy5a8MaQY3Jw@mail.gmail.com/T/
 
--Toke
+History:
+V2: fix build error when CONFIG_SYSCTL is not defined. 
+
+V1: initial version
+https://lore.kernel.org/linux-mm/20230630031721.623955-3-jeffxu@google.com/T/
+
+Jeff Xu (2):
+  mm/memfd: sysctl: fix MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED
+  selftests/memfd: sysctl: fix MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED
+
+ mm/memfd.c                                 | 57 +++++++++++++---------
+ tools/testing/selftests/memfd/memfd_test.c |  5 ++
+ 2 files changed, 38 insertions(+), 24 deletions(-)
+
+-- 
+2.41.0.255.g8b1d071c50-goog
 
