@@ -2,178 +2,281 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD8DEB64DA
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jul 2023 12:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9106EB64DD
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jul 2023 12:58:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229901AbjGEMgN (ORCPT
+        id S231154AbjGEM6S (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jul 2023 08:36:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47286 "EHLO
+        Wed, 5 Jul 2023 08:58:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229697AbjGEMgL (ORCPT
+        with ESMTP id S229493AbjGEM6R (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jul 2023 08:36:11 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6727F1727
-        for <linux-security-module@vger.kernel.org>; Wed,  5 Jul 2023 05:34:57 -0700 (PDT)
+        Wed, 5 Jul 2023 08:58:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2EF91700
+        for <linux-security-module@vger.kernel.org>; Wed,  5 Jul 2023 05:57:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688560472;
+        s=mimecast20190719; t=1688561848;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=A+Cmt8pCXt5KWisoV9VDhh/EzbRZ0a2/We4bLtWGgTM=;
-        b=DKQAQummNDRU1Bw0Zk1h6gp0Y4a8nTZTjENPkEwA2A8tYNwGkVhzfheH3/etzSRLpOPVyN
-        qq1obnfh5oT/j4/1EtDjvrvngCG2HSaQly4zAhAudOTCEg+G4+oKDWQ3uHD6slPoI0N9p7
-        AdNyRyxySRdEk88/ZLDyBXj4lPptWds=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-145-VOqGFk0GOFmlFTvLMHVUEA-1; Wed, 05 Jul 2023 08:34:31 -0400
-X-MC-Unique: VOqGFk0GOFmlFTvLMHVUEA-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-313e65772d8so6730309f8f.0
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Jul 2023 05:34:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688560471; x=1691152471;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9n2Chuvyr5F1WS1DcynjB5EgkPOLdfP7pefN+jTsGUk=;
-        b=BqZSx/MHbl8TG59fxaK4XP6FKzLt4De6FbxA4Dt2wANO0OQ+I3fnURzsGlDCVx/Ce1
-         FPV2Gb52ei83sCFCIvMFOBL6h3mmlXfRVHWvEKT6ViAgwuTBQxCPg5T6KIo4QuhCyY3H
-         tH1ru1IkeftUkZI+s32YkUR55koMLTE6h+UBgfQ3m6MFQylI3caNT6hKsAF18R09gMly
-         Rdx95EWJ+EOwkPrAZ6HfZv/6s5C2hjcubb577i81EbG9Y5hS4uExh6IyF1+Ahi/S9cPj
-         S3N1qeD65d03+RoQKdtDMetNGUrxB+V89xtNPxDZUV46ni2A7AQInsAUEHIIbxsYCGH1
-         /nuQ==
-X-Gm-Message-State: ABy/qLaXPA+8Z3qsCoD75YN+pj+LWTde9GCXTWxu0Id5NTmQCp2YeJNo
-        8qAnwcHGpo/+whxvBVyU1H+D9+EehWAOKQ8pbf0BxhAJeEU9SFIVxczb8ajy4szXrUjRIRvNBZ1
-        JXhxheyAR37EbfwIZ01te1oEQJVUVmXkL62yN
-X-Received: by 2002:adf:e4c1:0:b0:314:37ac:c896 with SMTP id v1-20020adfe4c1000000b0031437acc896mr11965183wrm.44.1688560470639;
-        Wed, 05 Jul 2023 05:34:30 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlHVDjX0j2vlDhMrqZgyZuPY4mV1tg2k5iuAkbToYRMjihI+/Ew0efXto7iasHFqX3KI860e1Q==
-X-Received: by 2002:adf:e4c1:0:b0:314:37ac:c896 with SMTP id v1-20020adfe4c1000000b0031437acc896mr11965158wrm.44.1688560470123;
-        Wed, 05 Jul 2023 05:34:30 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id u4-20020a5d5144000000b0031444673643sm2704145wrt.57.2023.07.05.05.34.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jul 2023 05:34:29 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id EA5FEBC12F0; Wed,  5 Jul 2023 14:34:28 +0200 (CEST)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To:     Christian Brauner <brauner@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        bh=qbwWt2y2iUb68X78AVNYTAhDubm+qk1U586TaH/96Qk=;
+        b=Kv1oSaXth283f4AqMA2YMwZ9ka4Kd+Km+pcN5dTxV4XhZgbkL+38QRpC2xaXxH3jmR5HO+
+        D5SJfWPTDz1Q1omHcNwqo7kOFNjd9p5hAH1VCY1dzspk5YRofI0oQVtqQFwHVHJOI0lBxk
+        blsKpqTQhUwyzU//dtLw4EmPcczBleM=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-668-VNoQfzSjOl-SHS3eBPdONQ-1; Wed, 05 Jul 2023 08:57:25 -0400
+X-MC-Unique: VNoQfzSjOl-SHS3eBPdONQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2F86880123E;
+        Wed,  5 Jul 2023 12:57:25 +0000 (UTC)
+Received: from elisabeth (unknown [10.39.208.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BDF45C478DE;
+        Wed,  5 Jul 2023 12:57:22 +0000 (UTC)
+Date:   Wed, 5 Jul 2023 14:57:21 +0200
+From:   Stefano Brivio <sbrivio@redhat.com>
+To:     Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?= <toke@redhat.com>,
+        brauner@kernel.org
+Cc:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org, keescook@chromium.org,
         lennart@poettering.net, cyphar@cyphar.com, luto@kernel.org,
-        kernel-team@meta.com, sargun@sargun.me
-Subject: Re: [PATCH RESEND v3 bpf-next 01/14] bpf: introduce BPF token object
-In-Reply-To: <20230705-praxen-nahmen-644ea9e5c35c@brauner>
+        kernel-team@meta.com, sargun@sargun.me,
+        Alice Frosi <afrosi@redhat.com>
+Subject: Re: [PATCH RESEND v3 bpf-next 00/14] BPF token
+Message-ID: <20230705145721.67d471a2@elisabeth>
+In-Reply-To: <87v8ezb6x5.fsf@toke.dk>
 References: <20230629051832.897119-1-andrii@kernel.org>
- <20230629051832.897119-2-andrii@kernel.org>
- <20230704-hochverdient-lehne-eeb9eeef785e@brauner>
- <87sfa3b6j5.fsf@toke.dk>
- <3555c0bd-7aee-35b0-655d-710437b4876c@iogearbox.net>
- <20230705-praxen-nahmen-644ea9e5c35c@brauner>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date:   Wed, 05 Jul 2023 14:34:28 +0200
-Message-ID: <87h6qibkq3.fsf@toke.dk>
+        <87sfa9eu70.fsf@toke.dk>
+        <CAEf4Bzb0bVD_fuU4Oz1oXKdwLpG1t=7d5MV3OhniHUUiysWE8g@mail.gmail.com>
+        <87v8ezb6x5.fsf@toke.dk>
+Organization: Red Hat
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Christian Brauner <brauner@kernel.org> writes:
+On Wed, 05 Jul 2023 01:20:22 +0200
+Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com> wrote:
 
-> On Wed, Jul 05, 2023 at 09:20:28AM +0200, Daniel Borkmann wrote:
->> On 7/5/23 1:28 AM, Toke H=C3=B8iland-J=C3=B8rgensen wrote:
->> > Christian Brauner <brauner@kernel.org> writes:
->> > > On Wed, Jun 28, 2023 at 10:18:19PM -0700, Andrii Nakryiko wrote:
->> > > > Add new kind of BPF kernel object, BPF token. BPF token is meant t=
-o to
->> > > > allow delegating privileged BPF functionality, like loading a BPF
->> > > > program or creating a BPF map, from privileged process to a *trust=
-ed*
->> > > > unprivileged process, all while have a good amount of control over=
- which
->> > > > privileged operations could be performed using provided BPF token.
->> > > >=20
->> > > > This patch adds new BPF_TOKEN_CREATE command to bpf() syscall, whi=
-ch
->> > > > allows to create a new BPF token object along with a set of allowe=
-d
->> > > > commands that such BPF token allows to unprivileged applications.
->> > > > Currently only BPF_TOKEN_CREATE command itself can be
->> > > > delegated, but other patches gradually add ability to delegate
->> > > > BPF_MAP_CREATE, BPF_BTF_LOAD, and BPF_PROG_LOAD commands.
->> > > >=20
->> > > > The above means that new BPF tokens can be created using existing =
-BPF
->> > > > token, if original privileged creator allowed BPF_TOKEN_CREATE com=
-mand.
->> > > > New derived BPF token cannot be more powerful than the original BP=
-F
->> > > > token.
->> > > >=20
->> > > > Importantly, BPF token is automatically pinned at the specified lo=
-cation
->> > > > inside an instance of BPF FS and cannot be repinned using BPF_OBJ_=
-PIN
->> > > > command, unlike BPF prog/map/btf/link. This provides more control =
-over
->> > > > unintended sharing of BPF tokens through pinning it in another BPF=
- FS
->> > > > instances.
->> > > >=20
->> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
->> > > > ---
->> > >=20
->> > > The main issue I have with the token approach is that it is a comple=
-tely
->> > > separate delegation vector on top of user namespaces. We mentioned t=
-his
->> > > duringthe conf and this was brought up on the thread here again as w=
-ell.
->> > > Imho, that's a problem both security-wise and complexity-wise.
->> > >=20
->> > > It's not great if each subsystem gets its own custom delegation
->> > > mechanism. This imposes such a taxing complexity on both kernel- and
->> > > userspace that it will quickly become a huge liability. So I would
->> > > really strongly encourage you to explore another direction.
->> >=20
->> > I share this concern as well, but I'm not quite sure I follow your
->> > proposal here. IIUC, you're saying that instead of creating the token
->> > using a BPF_TOKEN_CREATE command, the policy daemon should create a
->> > bpffs instance and attach the token value directly to that, right? But
->> > then what? Are you proposing that the calling process inside the
->> > container open a filesystem reference (how? using fspick()?) and pass
->> > that to the bpf syscall? Or is there some way to find the right
->> > filesystem instance to extract this from at the time that the bpf()
->> > syscall is issued inside the container?
->>=20
->> Given there can be multiple bpffs instances, it would have to be similar
->> as to what Andrii did in that you need to pass the fd to the bpf(2) for
->> prog/map creation in order to retrieve the opts->abilities from the supe=
-r
->> block.
->
-> I think it's pretty flexible what one can do here. Off the top of my
-> head there could be a dedicated file like /sys/fs/bpf/delegate which
-> only exists if delegation has been enabled. Thought that might be just a
-> wasted inode. There could be a new ioctl() on bpffsd which has the same
-> effect.
->
-> Probably an ioctl() on the bpffs instance is easier to grok. You could
-> even take away rights granted by a bpffs instance from such an fd via
-> additional ioctl() on it.
+> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+>=20
+> > On Thu, Jun 29, 2023 at 4:15=E2=80=AFPM Toke H=C3=B8iland-J=C3=B8rgense=
+n <toke@redhat.com> wrote: =20
+> >>
+> >> Andrii Nakryiko <andrii@kernel.org> writes:
+> >> =20
+> >> > This patch set introduces new BPF object, BPF token, which allows to=
+ delegate
+> >> > a subset of BPF functionality from privileged system-wide daemon (e.=
+g.,
+> >> > systemd or any other container manager) to a *trusted* unprivileged
+> >> > application. Trust is the key here. This functionality is not about =
+allowing
+> >> > unconditional unprivileged BPF usage. Establishing trust, though, is
+> >> > completely up to the discretion of respective privileged application=
+ that
+> >> > would create a BPF token, as different production setups can and do =
+achieve it
+> >> > through a combination of different means (signing, LSM, code reviews=
+, etc),
+> >> > and it's undesirable and infeasible for kernel to enforce any partic=
+ular way
+> >> > of validating trustworthiness of particular process.
+> >> >
+> >> > The main motivation for BPF token is a desire to enable containerized
+> >> > BPF applications to be used together with user namespaces. This is c=
+urrently
+> >> > impossible, as CAP_BPF, required for BPF subsystem usage, cannot be =
+namespaced
+> >> > or sandboxed, as a general rule. E.g., tracing BPF programs, thanks =
+to BPF
+> >> > helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can s=
+afely read
+> >> > arbitrary memory, and it's impossible to ensure that they only read =
+memory of
+> >> > processes belonging to any given namespace. This means that it's imp=
+ossible to
+> >> > have namespace-aware CAP_BPF capability, and as such another mechani=
+sm to
+> >> > allow safe usage of BPF functionality is necessary. BPF token and de=
+legation
+> >> > of it to a trusted unprivileged applications is such mechanism. Kern=
+el makes
+> >> > no assumption about what "trusted" constitutes in any particular cas=
+e, and
+> >> > it's up to specific privileged applications and their surrounding
+> >> > infrastructure to decide that. What kernel provides is a set of APIs=
+ to create
+> >> > and tune BPF token, and pass it around to privileged BPF commands th=
+at are
+> >> > creating new BPF objects like BPF programs, BPF maps, etc. =20
+> >>
+> >> So a colleague pointed out today that the Seccomp Notify functionality
+> >> would be a way to achieve your stated goal of allowing unprivileged
+> >> containers to (selectively) perform bpf() syscall operations. Christian
+> >> Brauner has a pretty nice writeup of the functionality here:
+> >> https://people.kernel.org/brauner/the-seccomp-notifier-new-frontiers-i=
+n-unprivileged-container-development
+> >>
+> >> In fact he even mentions allowing unprivileged access to bpf() as a
+> >> possible use case (in the second-to-last paragraph).
+> >>
+> >> AFAICT this would enable your use case without adding any new kernel
+> >> functionality or changing the BPF-using applications, while allowing t=
+he
+> >> privileged userspace daemon to make case-by-case decisions on each
+> >> operation instead of granting blanket capabilities (which is my main
+> >> objection to the token proposal, as we discussed on the last iteration
+> >> of the series). =20
+> >
+> > It's not "blanket" capabilities. You control types or maps and
+> > programs that could be created. And again, CAP_SYS_ADMIN guarded.
+> > Please, don't give CAP_SYS_ADMIN/root permissions to applications you
+> > can't be sure won't do something stupid and blame kernel API for it. =20
+>=20
+> Right, I didn't mean "blanket" in the sense of "permission to do
+> anything on the system"; I do get that you can restrict which subset of
+> functionality you grant. However, *within* that subset, it's a blanket
+> permission grant. I.e., you can't issue a token that grants a *specific*
+> application permission to load a *specific* BPF program - you can only
+> grant a general "load any program" permission that can be used by anyone
+> who possesses the token.
+>=20
+> I guess we could in principle extend the token mechanism to allow this,
+> but the kernel doesn't seem like the right place to implement such a
+> fine-grained policy engine...
+>=20
+> > After all, the root process can setuid() any file and make it run with
+> > elevated permissions, right? Doesn't get more "blanket" than that. =20
+>=20
+> Which is exactly why setuid binaries are not generally how we implement
+> security delegation these days. So I don't think designing a new
+> mechanism this way is a good idea.
+>=20
+> >> So I'm curious whether you considered this as an alternative to
+> >> BPF_TOKEN? And if so, what your reason was for rejecting it?
+> >> =20
+> >
+> > Yes, I'm aware, Christian has a follow up short blog post specifically
+> > for using this for proxying BPF from privileged process ([0]).
+> >
+> > So, in short, I think it's not a good generic solution. It's very
+> > fragile and high-maintenance. It's still proxying BPF UAPI (except
+> > application does preserve illusion of using BPF syscall, yes, that
+> > part is good) with all the implications: needing to replicate all of
+> > UAPI (fetching all those FDs from another process, following all the
+> > pointers from another process' memory, etc), and also writing back all
+> > the correct things (into another process' memory): log content,
+> > log_true_size (out param), any other output parameters. =20
+>=20
+> Right, OK, that bit does sound pretty tedious (although I'll note that
+> there are people who are trying to make all this generally more
+> palatable[0]).
 
-Right, gotcha; I was missing whether there was an existing mechanism to
-obtain this; an ioctl makes sense. I can see the utility in attaching
-this to the file system instance instead of as a separate object that's
-pinned (but see my post in the other subthread about using the "ask
-userspace model instead").
+[0] https://seitan.rocks/ :)
 
--Toke
+Some clickbaiting for Christian: the presentation we gave a couple of
+weeks ago, also linked from the project website, actually credits you
+(slide 29/30, of course).
+
+The code is still very much draft quality (we mostly focused on
+demos/feasibility so far, cleaning it up now), and we didn't prove (at
+least not yet) that handling complicated stuff such as bpf(2) is
+actually convenient, but that's at least in scope as a stretch goal.
+I'm not claiming it's doable, but we'd give it a try.
+
+What we have at the moment is a meagre set of eight syscall models,
+some blatantly incomplete.
+
+A couple of comments to specific points Christian mentioned:
+
+On Tue, 4 Jul 2023 11:38:38 +0200
+Christian Brauner <brauner@kernel.org> wrote:
+
+> It's a pipe dream that you can transparently proxy system calls for
+> another process via seccomp for sufficiently complex system calls. We
+> did it for specific use-cases where we could sufficiently guarantee that
+> they could be safe.
+
+Right, so we're trying to pick it up from there. It's way too early to
+claim success, but I thought it would make sense to chime in anyway.
+
+> But to make this work it would involve way more invasive changes:
+>=20
+> * nesting/stacking of seccomp notifiers
+
+The need for stacked seccomp filters is obvious to me and that works more
+or less naturally. But why would you actually need to stack, or especially
+nest *notifiers* themselves?
+
+> * clean handling of pointer arguments in-kernel such that you can safely
+>   continue system calls being sure that they haven't been modified. This
+>   is currently only possible in scenarios where safety is guaranteed by
+>   the kernel refusing nonsensical or unsafe arguments
+
+We're considering a couple of options. One is to never use
+SECCOMP_USER_NOTIF_FLAG_CONTINUE for system calls accepting pointers, or
+only allowing that as an explicit "unsafe" option. For a "safe"
+implementation, the supervisor (seitan) would in any case replay the
+system call, matching the context (namespaces, credentials) of the target
+process.
+
+If PID or TID (per se, not in terms of associated context/capabilities) of
+the caller matter for a specific system call, though, we simply can't
+support that. But that shouldn't actually be relevant for bpf(2).
+
+Strictly speaking, I think it's actually possible to "fix" this in the
+kernel by means of checking or copying memory that's addressable by a
+thread, but that might prove too invasive or end up in insurmountable
+layering violations. This mechanism would involve "control" paths
+rather than data paths, though, so the performance impact is not really
+worrying.
+
+Another option, which we outlined at this very convenient link:
+  https://github.com/alicefr/community/blob/seitan/design-proposals/seitan/=
+security-aspects-seitan.md#if-i-use-the-json-model-as-a-security-filter-can=
+-another-thread-in-the-same-process-context-write-to-the-memory-area-pointe=
+d-to-by-system-call-arguments-while-the-calling-thread-is-blocked-and-defy-=
+the-purpose-of-the-filter
+
+would be to make the supervisor perform a deep copy (system calls are
+anyway modeled in the seitan-cooker component) and then use good old
+ptrace(2) as needed.
+
+> * correct privilege handling
+>   The seccomp notifier emulates system calls in userspace and thus has
+>   to mimick the privilege context of the task it is emulating the system
+>   call for in such a way that (i) it allows it to succeed by avoiding the
+>   privilege limitations of why the given system call was supposed to be
+>   proxied in the first place, (ii) it doesn't allow to circumvent other,
+>   generic restrictions that would otherwise cause the system call to
+>   fail. It's like saying e.g., "execute with most of the proxied task's
+>   creds but let it have a few more privileges". That's frail as Linux
+>   creds aren't really composable. That's why we have override_creds()
+>   not "add_creds()" and "subtract_creds()" which would probably be
+>   nicer.
+
+Right, at the moment we just run that as root, but we plan to take care
+of (ii) (albeit not solving it entirely, I guess), by at least applying a
+seccomp filter to the supervisor itself. As to the set of (composed?)
+capabilities, we don't have an answer yet.
+
+> Or it would have to be a generic first class kernel proxy which begs the
+> question why not change the subsystems itself to do this cleanly.
+
+Well, the fine-grained "policy" implementation we're trying to achieve
+looks to me like something that's a bit too complicated for the kernel,
+and really more appropriate for userspace.
+
+--=20
+Stefano
 
