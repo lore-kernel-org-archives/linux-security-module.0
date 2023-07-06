@@ -2,244 +2,252 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C200EB64DC
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jul 2023 15:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A174EB64DC
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jul 2023 16:09:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232895AbjGFPF1 convert rfc822-to-8bit (ORCPT
+        id S229519AbjGFQJt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Jul 2023 11:05:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51202 "EHLO
+        Thu, 6 Jul 2023 12:09:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231269AbjGFPF0 (ORCPT
+        with ESMTP id S229793AbjGFQJq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Jul 2023 11:05:26 -0400
-Received: from frasgout13.his.huawei.com (unknown [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D10D010F5;
-        Thu,  6 Jul 2023 08:05:24 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Qxfgh6qf8z9xFGj;
-        Thu,  6 Jul 2023 22:54:24 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwB37fj_16Zk1UMwBA--.58227S2;
-        Thu, 06 Jul 2023 16:04:49 +0100 (CET)
-Message-ID: <b497e9af87064089409f5013eef01b40e91618b6.camel@huaweicloud.com>
-Subject: Re: [QUESTION] Full user space process isolation?
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     "Dr. Greg" <greg@enjellic.com>,
-        Petr Tesarik <petr.tesarik.ext@huawei.com>
-Cc:     Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        LuisChamberlain <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-hardening@vger.kernel.org
-Date:   Thu, 06 Jul 2023 17:04:28 +0200
-In-Reply-To: <932ace044d3e0230cd21b8ded1d024889a94c405.camel@huaweicloud.com>
-References: <eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com>
-         <CAG48ez2oRPBdbfoNxGcV85CXFx1Su+dmhoWXE6rWsXui6_OTPg@mail.gmail.com>
-         <ab8e68962feba9f16ed0a715d46ed003da61cfe8.camel@huaweicloud.com>
-         <17702e7f-479a-22b8-70d9-56e418c8120b@huawei.com>
-         <20230706105304.GA26175@wind.enjellic.com>
-         <932ace044d3e0230cd21b8ded1d024889a94c405.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu1 
+        Thu, 6 Jul 2023 12:09:46 -0400
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E45B11BD3
+        for <linux-security-module@vger.kernel.org>; Thu,  6 Jul 2023 09:09:43 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QxhLZ1FhlzMq7xl;
+        Thu,  6 Jul 2023 16:09:42 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QxhLY2C42zMpqbm;
+        Thu,  6 Jul 2023 18:09:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1688659782;
+        bh=1Zjmn502HPA+0yvPQbN3DQQjsYS0yUUpJ6D6akr8vTE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=TqTrUFllyne62XCaJ9huvbxg57tqATZsADdh39mJkoTyvCqbdCDgMOdZuGEtkidoH
+         v8ucgPwko2t0iuipLitxAeC290bd2AO4oamru8X6yup5sqArRcKilbOpeN646gs7ET
+         JeLoVd3HcGbM48GNOd2Y5GNfeUqMumh/gIsfvR5o=
+Message-ID: <3cd233b9-3cee-ec37-d16a-8dbb13cfd41a@digikod.net>
+Date:   Thu, 6 Jul 2023 18:09:25 +0200
 MIME-Version: 1.0
-X-CM-TRANSID: LxC2BwB37fj_16Zk1UMwBA--.58227S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Ww13WFy8ZFWkuryDCFWrAFb_yoW3GFW3pF
-        W5Kay5KF1ktw1SyryIqw4fZa4Sy397J3W3WrnxGryfAwn09F1I9F12gr1a9F9FqrsYgw1Y
-        qr45try293WDZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I
-        0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-        AIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280
-        aVCY1x0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7IU1c4S7UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAKBF1jj4vaEQABs8
-X-CFilter-Loop: Reflected
+User-Agent: 
+Subject: Re: [PATCH v11.1] selftests/landlock: Add 11 new test suites
+ dedicated to network
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     artem.kuzin@huawei.com, gnoack3000@gmail.com,
+        willemdebruijn.kernel@gmail.com, yusongping@huawei.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org
+References: <20230515161339.631577-11-konstantin.meskhidze@huawei.com>
+ <20230706145543.1284007-1-mic@digikod.net>
+Content-Language: en-US
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20230706145543.1284007-1-mic@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2023-07-06 at 13:35 +0200, Roberto Sassu wrote:
-> On Thu, 2023-07-06 at 05:53 -0500, Dr. Greg wrote:
-> > On Tue, Jul 04, 2023 at 05:18:43PM +0200, Petr Tesarik wrote:
-> > 
-> > Good morning, I hope the week is going well for everyone.
-> > 
-> > > On 7/3/2023 5:28 PM, Roberto Sassu wrote:
-> > > > On Mon, 2023-07-03 at 17:06 +0200, Jann Horn wrote:
-> > > > > On Thu, Jun 22, 2023 at 4:45???PM Roberto Sassu
-> > > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > > I wanted to execute some kernel workloads in a fully isolated user
-> > > > > > space process, started from a binary statically linked with klibc,
-> > > > > > connected to the kernel only through a pipe.
-> > > > > 
-> > > > > FWIW, the kernel has some infrastructure for this already, see
-> > > > > CONFIG_USERMODE_DRIVER and kernel/usermode_driver.c, with a usage
-> > > > > example in net/bpfilter/.
-> > > > 
-> > > > Thanks, I actually took that code to make a generic UMD management
-> > > > library, that can be used by all use cases:
-> > > > 
-> > > > https://lore.kernel.org/linux-kernel/20230317145240.363908-1-roberto.sassu@huaweicloud.com/
-> > > > 
-> > > > > > I also wanted that, for the root user, tampering with that process is
-> > > > > > as hard as if the same code runs in kernel space.
-> > > > > 
-> > > > > I believe that actually making it that hard would probably mean that
-> > > > > you'd have to ensure that the process doesn't use swap (in other
-> > > > > words, it would have to run with all memory locked), because root can
-> > > > > choose where swapped pages are stored. Other than that, if you mark it
-> > > > > as a kthread so that no ptrace access is allowed, you can probably get
-> > > > > pretty close. But if you do anything like that, please leave some way
-> > > > > (like a kernel build config option or such) to enable debugging for
-> > > > > these processes.
-> > > > 
-> > > > I didn't think about the swapping part... thanks!
-> > > > 
-> > > > Ok to enable debugging with a config option.
-> > > > 
-> > > > > But I'm not convinced that it makes sense to try to draw a security
-> > > > > boundary between fully-privileged root (with the ability to mount
-> > > > > things and configure swap and so on) and the kernel - my understanding
-> > > > > is that some kernel subsystems don't treat root-to-kernel privilege
-> > > > > escalation issues as security bugs that have to be fixed.
-> > > > 
-> > > > Yes, that is unfortunately true, and in that case the trustworthy UMD
-> > > > would not make things worse. On the other hand, on systems where that
-> > > > separation is defined, the advantage would be to run more exploitable
-> > > > code in user space, leaving the kernel safe.
-> > > > 
-> > > > I'm thinking about all the cases where the code had to be included in
-> > > > the kernel to run at the same privilege level, but would not use any of
-> > > > the kernel facilities (e.g. parsers).
-> > > 
-> > > Thanks for reminding me of kexec-tools. The complete image for booting a
-> > > new kernel was originally prepared in user space. With kernel lockdown,
-> > > all this code had to move into the kernel, adding a new syscall and lots
-> > > of complexity to build purgatory code, etc. Yet, this new implementation
-> > > in the kernel does not offer all features of kexec-tools, so both code
-> > > bases continue to exist and are happily diverging...
-> > > 
-> > > > If the boundary is extended to user space, some of these components
-> > > > could be moved away from the kernel, and the functionality would be the
-> > > > same without decreasing the security.
-> > 
-> > > All right, AFAICS your idea is limited to relatively simple cases
-> > > for now. I mean, allowing kexec-tools to run in user space is not
-> > > easily possible when UID 0 is not trusted, because kexec needs to
-> > > open various files and make various other syscalls, which would
-> > > require a complex LSM policy. It looks technically possible to write
-> > > one, but then the big question is if it would be simpler to review
-> > > and maintain than adding more kexec-tools features to the kernel.
-> > 
-> > You either need to develop and maintain a complex system-wide LSM
-> > policy or you need a security model that is specifically tuned and
-> > then scoped to the needs of the workload running on behalf of the
-> > kernel as a UID=0 userspace process.
-> > 
-> > As I noted in my e-mail to Roberto, our TSEM LSM brings forward the
-> > ability to do both, as a useful side effect of the need to limit model
-> > complexity when the objective is to have a single functional
-> > description of the security state of a system.
-> > 
-> > > Anyway, I can sense a general desire to run less code in the most
-> > > privileged system environment. Robert's proposal is one of few that
-> > > go in this direction. What are the alternatives?
-> > 
-> > As I noted above, TSEM brings the ability to provide highly specific
-> > and narrowly scoped security policy to a process heirarchy
-> > ie. workload.
-> > 
-> > However, regardless of the technology applied, in order to pursue
-> > Roberto's UMD model of having a uid=0 process run tasks on behalf of
-> > the kernel, there would seem to be a need to define what the security
-> > objectives are.
-> > 
-> > From the outside looking in, there would seem to be a need to address
-> > two primary issues:
-> > 
-> > 1: Trust/constrain what the UMD process can do.
-> 
-> Very simple:
-> 
-> read from a kernel-opened fd, write to another kernel-opened fd, close
-> the fds and exit.
-> 
-> With the seccomp strict profile, a process cannot call any other system
-> call, and it gets killed if it does.
-> 
-> I tried to write a BPF filter, to see how far I can go, and that seems
-> sufficient to constrain what the UMD process can do.
-> 
-> Please note that the UMD process setup is done by the kernel, before
-> any user space code has the chance to run. The kernel is responsible to
-> properly establish the communication with the UMD process.
-> 
-> > 2: Constrain what the system at large can do to the UMD process.
-> 
-> If someone outside can influence the behavior of the UMD process,
-> meaning altering the result, that would be unacceptable.
-> 
-> I found that denying ptrace on the UMD process as target, more or less
-> covers everything, even trying to read or write /proc/<pid>/fd/<N>.
-> 
-> There might be something more subtle, like what Iann pointed out, avoid
-> swapping of the UMD process, as there is no integrity check when the
-> page comes back.
-> 
-> Other than that, I was limiting the kill, maybe we have to do something
-> similar with io_uring (but we would know if the UMD process uses it).
-> With that in place, the UMD process seems pretty much isolated.
-> 
-> I would definitely not complicate things more than that, seems that
-> this problem is already difficult enough to solve.
-> 
-> Since the goal is very specific, I think writing a very small LSM would
-> make sense. With SELinux or Smack, you could also do it, but you have
-> to care about loading a policy, enforcing, etc..
-> 
-> The main question is if the kernel is able to enforce isolation on the
-> UMD process as it would do for itself.
 
-For those who didn't receive the patch set I just sent, I worked around
-the first problem of supporting PGP for verifying the authenticity of
-RPM headers and use them with IMA Appraisal.
+On 06/07/2023 16:55, Mickaël Salaün wrote:
+> From: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> 
+> This patch is a revamp of the v11 tests [1] with new tests (see the
+> "Changes since v11" description).  I (Mickaël) only added the following
+> todo list and the "Changes since v11" sections in this commit message.
+> I think this patch is good but it would appreciate reviews.
+> You can find the diff of my changes here but it is not really readable:
+> https://git.kernel.org/mic/c/78edf722fba5 (landlock-net-v11 branch)
+> [1] https://lore.kernel.org/all/20230515161339.631577-11-konstantin.meskhidze@huawei.com/
+> TODO:
+> - Rename all "net_service" to "net_port".
+> - Fix the two kernel bugs found with the new tests.
+> - Update this commit message with a small description of all tests.
+> 
+> These test suites try to check edge cases for TCP sockets
+> bind() and connect() actions.
+> 
+> inet:
+> * bind: Tests with non-landlocked/landlocked ipv4 and ipv6 sockets.
+> * connect: Tests with non-landlocked/landlocked ipv4 and ipv6 sockets.
+> * bind_afunspec: Tests with non-landlocked/landlocked restrictions
+> for bind action with AF_UNSPEC socket family.
+> * connect_afunspec: Tests with non-landlocked/landlocked restrictions
+> for connect action with AF_UNSPEC socket family.
+> * ruleset_overlap: Tests with overlapping rules for one port.
+> * ruleset_expanding: Tests with expanding rulesets in which rules are
+> gradually added one by one, restricting sockets' connections.
+> * inval_port_format: Tests with wrong port format for ipv4/ipv6 sockets
+> and with port values more than U16_MAX.
+> 
+> port:
+> * inval: Tests with invalid user space supplied data:
+>      - out of range ruleset attribute;
+>      - unhandled allowed access;
+>      - zero port value;
+>      - zero access value;
+>      - legitimate access values;
+> * bind_connect_inval_addrlen: Tests with invalid address length.
+> * bind_connect_unix_*_socket: Tests to make sure unix sockets' actions
+> are not restricted by Landlock rules applied to TCP ones.
+> 
+> layout1:
+> * with_net: Tests with network bind() socket action within
+> filesystem directory access test.
+> 
+> Test coverage for security/landlock is 94.8% of 934 lines according
+> to gcc/gcov-11.
+> 
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> Co-developed-by: Mickaël Salaün <mic@digikod.net>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ---
+> 
+> Changes since v11 (from Mickaël Salaün):
+> - Add ipv4.from_unix_to_tcp test suite to check that socket family is
+>    the same between a socket and a sockaddr by trying to connect/bind on
+>    a unix socket (stream or dgram) using an inet family.  Landlock should
+>    not change the error code.  This found a bug (which needs to be fixed)
+>    with the TCP restriction.
+> - Revamp the inet.{bind,connect} tests into protocol.{bind,connect}:
+>    - Merge bind_connect_unix_dgram_socket, bind_connect_unix_dgram_socket
+>      and bind_connect_inval_addrlen into it: add a full test matrix of
+>      IPv4/TCP, IPv6/TCP, IPv4/UDP, IPv6/UDP, unix/stream, unix/dgram, all
+>      of them with or without sandboxing. This improve coverage and it
+>      enables to check that a TCP restriction work as expected but doesn't
+>      restrict other stream or datagram protocols. This also enables to
+>      check consistency of the network stack with or without Landlock.
+>      We now have 76 test suites for the network.
+>    - Add full send/recv checks.
+>    - Make a generic framework that will be ready for future
+>      protocol supports.
+> - Replace most ASSERT with EXPECT according to the criticity of an
+>    action: if we can get more meaningful information with following
+>    checks.  For instance, failure to create a kernel object (e.g.
+>    socket(), accept() or fork() call) is critical if it is used by
+>    following checks. For Landlock ruleset building, the following checks
+>    don't make sense if the sandbox is not complete.  However, it doesn't
+>    make sense to continue a FIXTURE_SETUP() if any check failed.
+> - Add a new unspec fixture to replace inet.bind_afunspec with
+>    unspec.bind and inet.connect_afunspec with unspec.connect, factoring
+>    and simplifying code.
+> - Replace inet.bind_afunspec with protocol.bind_unspec, and
+>    inet.connect_afunspec with protocol.connect_unspec.  Extend these
+>    tests with the matrix of all "protocol" variants.  Don't test connect
+>    with the same socket which is already binded/listening (I guess this
+>    was an copy-paste error).  The protocol.bind_unspec tests found a bug
+>    (which needs to be fixed).
+> - Add and use set_service() and setup_loopback() helpers to configure
+>    network services.  Add and use and test_bind_and_connect() to factor
+>    out a lot of checks.
+> - Add new types (protocol_variant, service_fixture) and update related
+>    helpers to get more generic test code.
+> - Replace static (port) arrays with service_fixture variables.
+> - Add new helpers: {bind,connect}_variant_addrlen() and get_addrlen() to
+>    cover all protocols with previous bind_connect_inval_addrlen tests.
+>    Make them return -errno in case of error.
+> - Switch from a unix socket path address to an abstract one. This
+>    enables to avoid file cleanup in test teardowns.
+> - Close all rulesets after enforcement.
+> - Remove the duplicate "empty access" test.
+> - Replace inet.ruleset_overlay with tcp_layers.ruleset_overlap and
+>    simplify test:
+>    - Always run sandbox tests because test were always run sandboxed and
+>      it doesn't give more guarantees to do it not sandboxed.
+>    - Rewrite test with variant->num_layers to make it simpler and
+>      configurable.
+>    - Add another test layer to tcp_layers used for ruleset_overlap and
+>      test without sandbox.
+>    - Leverage test_bind_and_connect() and avoid using SO_REUSEADDR
+>      because the socket was not listened to, and don't use the same
+>      socket/FD for server and client.
+>    - Replace inet.ruleset_expanding with tcp_layers.ruleset_expand.
+> - Drop capabilities in all FIXTURE_SETUP().
+> - Change test ports to cover more ranges.
+> - Add "mini" tests:
+>    - Replace the invalid ruleset attribute test from port.inval with
+>      mini.unknow_access_rights.
+>    - Simplify port.inval and move some code to other mini.* tests.
+>    - Add new mini.network_access_rights test.
+> - Rewrite inet.inval_port_format into mini.tcp_port_overflow:
+>    - Remove useless is_sandbox checks.
+>    - Extend tests with bind/connect checks.
+>    - Interleave valid requests with invalid ones.
+> - Add two_srv.port_endianness test, extracted and extended from
+>    inet.inval_port_format .
+> - Add Microsoft copyright.
+> - Rename some variables to make them easier to read.
+> - Constify variables.
+> - Add minimal logs to help debug test failures.
+> ---
+>   tools/testing/selftests/landlock/config     |    4 +
+>   tools/testing/selftests/landlock/fs_test.c  |   64 +
+>   tools/testing/selftests/landlock/net_test.c | 1439 +++++++++++++++++++
+>   3 files changed, 1507 insertions(+)
+>   create mode 100644 tools/testing/selftests/landlock/net_test.c
 
-I introduced in the kernel a new key format, TLV-based, and plan to let
-Linux distribution vendors convert PGP keys to this new format in their
-building infrastructure (trusted). The converted keys are embedded in
-the kernel image.
 
-Signatures can be converted in user space at run-time, since altering
-them would make signature verification fail.
+[...]
 
-You can find the patch set here:
+> +
+> +FIXTURE(inet)
+> +{
+> +	struct service_fixture srv0, srv1;
+> +};
+> +
+> +FIXTURE_VARIANT(inet)
+> +{
+> +	const bool is_sandboxed;
 
-https://lore.kernel.org/linux-integrity/20230706144225.1046544-1-roberto.sassu@huaweicloud.com/
+Well, this "is_sandboxed" variable can now be removed, and the variants 
+updated accordingly.
 
-Thanks
+> +	const struct protocol_variant prot;
+> +};
+> +
+> +/* clang-format off */
 
-Roberto
+Rename to ipv4 and same for the ipv6 variants.
 
+> +FIXTURE_VARIANT_ADD(inet, no_sandbox_with_ipv4) {
+> +	/* clang-format on */
+> +	.is_sandboxed = false,
+> +	.prot = {
+> +		.domain = AF_INET,
+> +		.type = SOCK_STREAM,
+> +	},
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(inet, sandbox_with_ipv4) {
+> +	/* clang-format on */
+> +	.is_sandboxed = true,
+> +	.prot = {
+> +		.domain = AF_INET,
+> +		.type = SOCK_STREAM,
+> +	},
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(inet, no_sandbox_with_ipv6) {
+> +	/* clang-format on */
+> +	.is_sandboxed = false,
+> +	.prot = {
+> +		.domain = AF_INET6,
+> +		.type = SOCK_STREAM,
+> +	},
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(inet, sandbox_with_ipv6) {
+> +	/* clang-format on */
+> +	.is_sandboxed = true,
+> +	.prot = {
+> +		.domain = AF_INET6,
+> +		.type = SOCK_STREAM,
+> +	},
+> +};
+> +
+>
