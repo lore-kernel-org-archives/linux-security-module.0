@@ -2,292 +2,370 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01071C04FE0
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jul 2023 00:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8368FEB64DA
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jul 2023 01:27:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232587AbjGFAFJ (ORCPT
+        id S232677AbjGFB1i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jul 2023 20:05:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53178 "EHLO
+        Wed, 5 Jul 2023 21:27:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229793AbjGFAFD (ORCPT
+        with ESMTP id S230305AbjGFB1h (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jul 2023 20:05:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EC06199E;
-        Wed,  5 Jul 2023 17:05:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C927961780;
-        Thu,  6 Jul 2023 00:05:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77F7BC433C8;
-        Thu,  6 Jul 2023 00:04:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688601900;
-        bh=GKAf3Connag2H1A96+MWJO2m2+AGoi4e2L0TCmV0twI=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=nET3i8K9cAN9JzAYu5D5DtIfnZyBNqxFT5kCHd94dYOZfZeH8zavR0WF9u4ITY0NE
-         D66ZLzqp4+stDYQ/wxgM6SsxM/mS2+y3IUBNv7xe18KIH1uVzQrdLce3r3dWIKwzol
-         tzsq2RPKrA+bg24p5zLD3xKS/7A/1zvUDDnXMEpHEaKwvlUXOn9bI/FS6RRj0UTu+c
-         vTGpq6dtXG1Xauh+ol1hFuB35FDh/rjrnsJWBkr2MVf6wx5gZoGZefJEl0qBVioA6j
-         WnKwlad8ofPwwEPXaYXs/neOdGw/YH9YOfEVdEl8lvP9rCQ6lvqx2NeiiLr9bjccc4
-         eOxUKsWaspoTQ==
-Message-ID: <7c783969641b67d6ffdfb10e509f382d083c5291.camel@kernel.org>
-Subject: Re: [PATCH v2 08/92] fs: new helper: simple_rename_timestamp
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Damien Le Moal <dlemoal@kernel.org>, jk@ozlabs.org, arnd@arndb.de,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-        maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
-        cmllamas@google.com, surenb@google.com,
-        dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca,
-        leon@kernel.org, bwarrum@linux.ibm.com, rituagar@linux.ibm.com,
-        ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
-        linux_oss@crudebyte.com, dsterba@suse.com, dhowells@redhat.com,
-        marc.dionne@auristor.com, viro@zeniv.linux.org.uk,
-        raven@themaw.net, luisbg@kernel.org, salah.triki@gmail.com,
-        aivazian.tigran@gmail.com, ebiederm@xmission.com,
-        keescook@chromium.org, clm@fb.com, josef@toxicpanda.com,
-        xiubli@redhat.com, idryomov@gmail.com, jaharkes@cs.cmu.edu,
-        coda@cs.cmu.edu, jlbec@evilplan.org, hch@lst.de, nico@fluxnic.net,
-        rafael@kernel.org, code@tyhicks.com, ardb@kernel.org,
-        xiang@kernel.org, chao@kernel.org, huyue2@coolpad.com,
-        jefflexu@linux.alibaba.com, linkinjeon@kernel.org,
-        sj1557.seo@samsung.com, jack@suse.com, tytso@mit.edu,
-        adilger.kernel@dilger.ca, jaegeuk@kernel.org,
-        hirofumi@mail.parknet.co.jp, miklos@szeredi.hu,
-        rpeterso@redhat.com, agruenba@redhat.com, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        mikulas@artax.karlin.mff.cuni.cz, mike.kravetz@oracle.com,
-        muchun.song@linux.dev, dwmw2@infradead.org, shaggy@kernel.org,
-        tj@kernel.org, trond.myklebust@hammerspace.com, anna@kernel.org,
-        chuck.lever@oracle.com, neilb@suse.de, kolga@netapp.com,
-        Dai.Ngo@oracle.com, tom@talpey.com, konishi.ryusuke@gmail.com,
-        anton@tuxera.com, almaz.alexandrovich@paragon-software.com,
-        mark@fasheh.com, joseph.qi@linux.alibaba.com, me@bobcopeland.com,
-        hubcap@omnibond.com, martin@omnibond.com, amir73il@gmail.com,
-        mcgrof@kernel.org, yzaikin@google.com, tony.luck@intel.com,
-        gpiccoli@igalia.com, al@alarsen.net, sfrench@samba.org,
-        pc@manguebit.com, lsahlber@redhat.com, sprasad@microsoft.com,
-        senozhatsky@chromium.org, phillip@squashfs.org.uk,
-        rostedt@goodmis.org, mhiramat@kernel.org, dushistov@mail.ru,
-        hdegoede@redhat.com, djwong@kernel.org, naohiro.aota@wdc.com,
-        jth@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        andrii@kernel.org, martin.lau@linux.dev, song@kernel.org,
-        yhs@fb.com, john.fastabend@gmail.com, kpsingh@kernel.org,
-        sdf@google.com, haoluo@google.com, jolsa@kernel.org,
-        hughd@google.com, akpm@linux-foundation.org, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        john.johansen@canonical.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        jgross@suse.com, stern@rowland.harvard.edu, lrh2000@pku.edu.cn,
-        sebastian.reichel@collabora.com, wsa+renesas@sang-engineering.com,
-        quic_ugoswami@quicinc.com, quic_linyyuan@quicinc.com,
-        john@keeping.me.uk, error27@gmail.com, quic_uaggarwa@quicinc.com,
-        hayama@lineo.co.jp, jomajm@gmail.com, axboe@kernel.dk,
-        dhavale@google.com, dchinner@redhat.com, hannes@cmpxchg.org,
-        zhangpeng362@huawei.com, slava@dubeyko.com, gargaditya08@live.com,
-        penguin-kernel@I-love.SAKURA.ne.jp, yifeliu@cs.stonybrook.edu,
-        madkar@cs.stonybrook.edu, ezk@cs.stonybrook.edu,
-        yuzhe@nfschina.com, willy@infradead.org, okanatov@gmail.com,
-        jeffxu@chromium.org, linux@treblig.org, mirimmad17@gmail.com,
-        yijiangshan@kylinos.cn, yang.yang29@zte.com.cn,
-        xu.xin16@zte.com.cn, chengzhihao1@huawei.com, shr@devkernel.io,
-        Liam.Howlett@Oracle.com, adobriyan@gmail.com,
-        chi.minghao@zte.com.cn, roberto.sassu@huawei.com,
-        linuszeng@tencent.com, bvanassche@acm.org, zohar@linux.ibm.com,
-        yi.zhang@huawei.com, trix@redhat.com, fmdefrancesco@gmail.com,
-        ebiggers@google.com, princekumarmaurya06@gmail.com,
-        chenzhongjin@huawei.com, riel@surriel.com,
-        shaozhengchao@huawei.com, jingyuwang_vip@163.com,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-usb@vger.kernel.org, v9fs@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        autofs@vger.kernel.org, linux-mm@kvack.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-um@lists.infradead.org,
-        linux-mtd@lists.infradead.org,
-        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-        linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
-        linux-unionfs@vger.kernel.org, linux-hardening@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org,
-        linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Date:   Wed, 05 Jul 2023 20:04:41 -0400
-In-Reply-To: <3b403ef1-22e6-0220-6c9c-435e3444b4d3@kernel.org>
-References: <20230705185812.579118-1-jlayton@kernel.org>
-         <20230705185812.579118-3-jlayton@kernel.org>
-         <3b403ef1-22e6-0220-6c9c-435e3444b4d3@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Wed, 5 Jul 2023 21:27:37 -0400
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A4EF102;
+        Wed,  5 Jul 2023 18:27:36 -0700 (PDT)
+Received: by mail-qk1-x735.google.com with SMTP id af79cd13be357-7659cb9c42aso21032985a.3;
+        Wed, 05 Jul 2023 18:27:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688606855; x=1691198855;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B/ZP0ASMTgSdMwJYgrc/im9+/MXgGeF1ayXDZ4skb0I=;
+        b=lTCv8JZV2VGUtsF94FaKcloPtlzyLc38gryc4FzmfMoFrC/QnnFyI37rHZI8v3m5mD
+         3GzMHBwRfqyi2ADh8wtG0BjXVyk0E3EgiPwt31uUrQ1Rab4X8A28dQnbxen01zjyoLJw
+         Nf/65uaVe2eU3PHR+mgcADWqVSlhKfyRIDMzfJaVGoY174Erv4gB6vhMEM9vNGsJMGGA
+         H/vunjtwagYMBhRBb8Xxe5Ko9nvXF9BBtDeFJiJgR0SWCdhjN1XYmnbV1VfrdpvgygwT
+         YyAh9FC1qT142O4z/jdV509Eud59NxjvoEHDCtLSSl8b4n57s4O3Tfd3V2uTzau3Swsv
+         Wvjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688606855; x=1691198855;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B/ZP0ASMTgSdMwJYgrc/im9+/MXgGeF1ayXDZ4skb0I=;
+        b=fPjId+vlMfCMCGYSA6sYh1TZ38EcB/oYHhaoEbIiseEMrBMeqz7QiKzuWBxRqWImrb
+         uLuoG7oNJBsS+E0j5Ute1SUZ+8tahBPD7Se6aNBhJk5Q2iv/WYJs9lenk6gxaNUsbkK4
+         qmZzGog5zev1UR5WdyS05f8D4tmGXJ50UHmjt4MyjLVS98O+OqTu77MZZg8VurTAQO4F
+         31q+xXnYOulnyQ4WjDL1wvIKED5wyKjNJKwI4pNjJ3QiL2n8F+/CgzleH4GV75/l3+PQ
+         Y9CvF4xHXXry2YT3CHHhNvrmTp9o4Pvqj5aD0knRHguvYnN60V2fxFYuur+b+VkraaUm
+         oldw==
+X-Gm-Message-State: ABy/qLacMIOg/v8dS1pX0f1PzYOIfJADzbA4CoPuAbaEwRmLSe86DwO8
+        eHOShyQuDhDourvSsDQaArUBLITX0fXw87YuNOs=
+X-Google-Smtp-Source: APBJJlHixUMh5PZk3ncbMKdrP10RRyrNduhPX5D84qrrw/YYszLiISkQNqOsTk4dRkSDldX4T10XNA1a3XCO5BpIJv0=
+X-Received: by 2002:a0c:9c0c:0:b0:61b:6a71:e741 with SMTP id
+ v12-20020a0c9c0c000000b0061b6a71e741mr317151qve.23.1688606854988; Wed, 05 Jul
+ 2023 18:27:34 -0700 (PDT)
 MIME-Version: 1.0
+References: <20230629051832.897119-1-andrii@kernel.org> <CALOAHbBupxQ3RH+SbzUv=W2dRDS-mG1PuRpARrMnMv=o6Ro7Sw@mail.gmail.com>
+ <CAEf4BzbS55xw2Scnid87O5TFQ7To56huPaKg_oH6gLSp+ggpdw@mail.gmail.com>
+In-Reply-To: <CAEf4BzbS55xw2Scnid87O5TFQ7To56huPaKg_oH6gLSp+ggpdw@mail.gmail.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Thu, 6 Jul 2023 09:26:58 +0800
+Message-ID: <CALOAHbBBeXSfvVcUYgvPE8j7NAtd6EZfFYkvQxr316ucx37QzA@mail.gmail.com>
+Subject: Re: [PATCH RESEND v3 bpf-next 00/14] BPF token
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, cyphar@cyphar.com,
+        luto@kernel.org, kernel-team@meta.com, sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2023-07-06 at 08:19 +0900, Damien Le Moal wrote:
-> On 7/6/23 03:58, Jeff Layton wrote:
-> > A rename potentially involves updating 4 different inode timestamps. Ad=
+On Thu, Jul 6, 2023 at 4:37=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Fri, Jun 30, 2023 at 7:06=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com=
+> wrote:
+> >
+> > On Thu, Jun 29, 2023 at 1:18=E2=80=AFPM Andrii Nakryiko <andrii@kernel.=
+org> wrote:
+> > >
+> > > This patch set introduces new BPF object, BPF token, which allows to =
+delegate
+> > > a subset of BPF functionality from privileged system-wide daemon (e.g=
+.,
+> > > systemd or any other container manager) to a *trusted* unprivileged
+> > > application. Trust is the key here. This functionality is not about a=
+llowing
+> > > unconditional unprivileged BPF usage. Establishing trust, though, is
+> > > completely up to the discretion of respective privileged application =
+that
+> > > would create a BPF token, as different production setups can and do a=
+chieve it
+> > > through a combination of different means (signing, LSM, code reviews,=
+ etc),
+> > > and it's undesirable and infeasible for kernel to enforce any particu=
+lar way
+> > > of validating trustworthiness of particular process.
+> > >
+> > > The main motivation for BPF token is a desire to enable containerized
+> > > BPF applications to be used together with user namespaces. This is cu=
+rrently
+> > > impossible, as CAP_BPF, required for BPF subsystem usage, cannot be n=
+amespaced
+> > > or sandboxed, as a general rule. E.g., tracing BPF programs, thanks t=
+o BPF
+> > > helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can sa=
+fely read
+> > > arbitrary memory, and it's impossible to ensure that they only read m=
+emory of
+> > > processes belonging to any given namespace. This means that it's impo=
+ssible to
+> > > have namespace-aware CAP_BPF capability, and as such another mechanis=
+m to
+> > > allow safe usage of BPF functionality is necessary. BPF token and del=
+egation
+> > > of it to a trusted unprivileged applications is such mechanism. Kerne=
+l makes
+> > > no assumption about what "trusted" constitutes in any particular case=
+, and
+> > > it's up to specific privileged applications and their surrounding
+> > > infrastructure to decide that. What kernel provides is a set of APIs =
+to create
+> > > and tune BPF token, and pass it around to privileged BPF commands tha=
+t are
+> > > creating new BPF objects like BPF programs, BPF maps, etc.
+> > >
+> > > Previous attempt at addressing this very same problem ([0]) attempted=
+ to
+> > > utilize authoritative LSM approach, but was conclusively rejected by =
+upstream
+> > > LSM maintainers. BPF token concept is not changing anything about LSM
+> > > approach, but can be combined with LSM hooks for very fine-grained se=
+curity
+> > > policy. Some ideas about making BPF token more convenient to use with=
+ LSM (in
+> > > particular custom BPF LSM programs) was briefly described in recent L=
+SF/MM/BPF
+> > > 2023 presentation ([1]). E.g., an ability to specify user-provided da=
+ta
+> > > (context), which in combination with BPF LSM would allow implementing=
+ a very
+> > > dynamic and fine-granular custom security policies on top of BPF toke=
+n. In the
+> > > interest of minimizing API surface area discussions this is going to =
+be
+> > > added in follow up patches, as it's not essential to the fundamental =
+concept
+> > > of delegatable BPF token.
+> > >
+> > > It should be noted that BPF token is conceptually quite similar to th=
+e idea of
+> > > /dev/bpf device file, proposed by Song a while ago ([2]). The biggest
+> > > difference is the idea of using virtual anon_inode file to hold BPF t=
+oken and
+> > > allowing multiple independent instances of them, each with its own se=
+t of
+> > > restrictions. BPF pinning solves the problem of exposing such BPF tok=
+en
+> > > through file system (BPF FS, in this case) for cases where transferri=
+ng FDs
+> > > over Unix domain sockets is not convenient. And also, crucially, BPF =
+token
+> > > approach is not using any special stateful task-scoped flags. Instead=
+, bpf()
+> > > syscall accepts token_fd parameters explicitly for each relevant BPF =
+command.
+> > > This addresses main concerns brought up during the /dev/bpf discussio=
+n, and
+> > > fits better with overall BPF subsystem design.
+> > >
+> > > This patch set adds a basic minimum of functionality to make BPF toke=
+n useful
+> > > and to discuss API and functionality. Currently only low-level libbpf=
+ APIs
+> > > support passing BPF token around, allowing to test kernel functionali=
+ty, but
+> > > for the most part is not sufficient for real-world applications, whic=
+h
+> > > typically use high-level libbpf APIs based on `struct bpf_object` typ=
+e. This
+> > > was done with the intent to limit the size of patch set and concentra=
+te on
+> > > mostly kernel-side changes. All the necessary plumbing for libbpf wil=
+l be sent
+> > > as a separate follow up patch set kernel support makes it upstream.
+> > >
+> > > Another part that should happen once kernel-side BPF token is establi=
+shed, is
+> > > a set of conventions between applications (e.g., systemd), tools (e.g=
+.,
+> > > bpftool), and libraries (e.g., libbpf) about sharing BPF tokens throu=
+gh BPF FS
+> > > at well-defined locations to allow applications take advantage of thi=
+s in
+> > > automatic fashion without explicit code changes on BPF application's =
+side.
+> > > But I'd like to postpone this discussion to after BPF token concept l=
+ands.
+> > >
+> > > Once important distinctions from v2 that should be noted is a chance =
+in the
+> > > semantics of a newly added BPF_TOKEN_CREATE command. Previously,
+> > > BPF_TOKEN_CREATE would create BPF token kernel object and return its =
+FD to
+> > > user-space, allowing to (optionally) pin it in BPF FS using BPF_OBJ_P=
+IN
+> > > command. This v3 version changes this slightly: BPF_TOKEN_CREATE comb=
+ines BPF
+> > > token object creation *and* pinning in BPF FS. Such change ensures th=
+at BPF
+> > > token is always associated with a specific instance of BPF FS and can=
+not
+> > > "escape" it by application re-pinning it somewhere else using another
+> > > BPF_OBJ_PIN call. Now, BPF token can only be pinned once during its c=
+reation,
+> > > better containing it inside intended container (under assumption BPF =
+FS is set
+> > > up in such a way as to not be shared with other containers on the sys=
+tem).
+> > >
+> > >   [0] https://lore.kernel.org/bpf/20230412043300.360803-1-andrii@kern=
+el.org/
+> > >   [1] http://vger.kernel.org/bpfconf2023_material/Trusted_unprivilege=
+d_BPF_LSFMM2023.pdf
+> > >   [2] https://lore.kernel.org/bpf/20190627201923.2589391-2-songliubra=
+ving@fb.com/
+> > >
+> > > v3->v3-resend:
+> > >   - I started integrating token_fd into bpf_object_open_opts and high=
+er-level
+> > >     libbpf bpf_object APIs, but it started going a bit deeper into bp=
+f_object
+> > >     implementation details and how libbpf performs feature detection =
+and
+> > >     caching, so I decided to keep it separate from this patch set and=
+ not
+> > >     distract from the mostly kernel-side changes;
+> > > v2->v3:
+> > >   - make BPF_TOKEN_CREATE pin created BPF token in BPF FS, and disall=
+ow
+> > >     BPF_OBJ_PIN for BPF token;
+> > > v1->v2:
+> > >   - fix build failures on Kconfig with CONFIG_BPF_SYSCALL unset;
+> > >   - drop BPF_F_TOKEN_UNKNOWN_* flags and simplify UAPI (Stanislav).
+> > >
+> > > Andrii Nakryiko (14):
+> > >   bpf: introduce BPF token object
+> > >   libbpf: add bpf_token_create() API
+> > >   selftests/bpf: add BPF_TOKEN_CREATE test
+> > >   bpf: add BPF token support to BPF_MAP_CREATE command
+> > >   libbpf: add BPF token support to bpf_map_create() API
+> > >   selftests/bpf: add BPF token-enabled test for BPF_MAP_CREATE comman=
 d
-> > a function that handles the details sanely, and convert the libfs.c
-> > callers to use it.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/libfs.c         | 36 +++++++++++++++++++++++++++---------
-> >  include/linux/fs.h |  2 ++
-> >  2 files changed, 29 insertions(+), 9 deletions(-)
-> >=20
-> > diff --git a/fs/libfs.c b/fs/libfs.c
-> > index a7e56baf8bbd..9ee79668c909 100644
-> > --- a/fs/libfs.c
-> > +++ b/fs/libfs.c
-> > @@ -692,6 +692,31 @@ int simple_rmdir(struct inode *dir, struct dentry =
-*dentry)
-> >  }
-> >  EXPORT_SYMBOL(simple_rmdir);
-> > =20
-> > +/**
-> > + * simple_rename_timestamp - update the various inode timestamps for r=
-ename
-> > + * @old_dir: old parent directory
-> > + * @old_dentry: dentry that is being renamed
-> > + * @new_dir: new parent directory
-> > + * @new_dentry: target for rename
-> > + *
-> > + * POSIX mandates that the old and new parent directories have their c=
-time and
-> > + * mtime updated, and that inodes of @old_dentry and @new_dentry (if a=
-ny), have
-> > + * their ctime updated.
-> > + */
-> > +void simple_rename_timestamp(struct inode *old_dir, struct dentry *old=
-_dentry,
-> > +			     struct inode *new_dir, struct dentry *new_dentry)
-> > +{
-> > +	struct inode *newino =3D d_inode(new_dentry);
-> > +
-> > +	old_dir->i_mtime =3D inode_set_ctime_current(old_dir);
-> > +	if (new_dir !=3D old_dir)
-> > +		new_dir->i_mtime =3D inode_set_ctime_current(new_dir);
-> > +	inode_set_ctime_current(d_inode(old_dentry));
-> > +	if (newino)
-> > +		inode_set_ctime_current(newino);
-> > +}
-> > +EXPORT_SYMBOL_GPL(simple_rename_timestamp);
-> > +
-> >  int simple_rename_exchange(struct inode *old_dir, struct dentry *old_d=
-entry,
-> >  			   struct inode *new_dir, struct dentry *new_dentry)
-> >  {
-> > @@ -707,11 +732,7 @@ int simple_rename_exchange(struct inode *old_dir, =
-struct dentry *old_dentry,
-> >  			inc_nlink(old_dir);
-> >  		}
-> >  	}
-> > -	old_dir->i_ctime =3D old_dir->i_mtime =3D
-> > -	new_dir->i_ctime =3D new_dir->i_mtime =3D
-> > -	d_inode(old_dentry)->i_ctime =3D
-> > -	d_inode(new_dentry)->i_ctime =3D current_time(old_dir);
-> > -
-> > +	simple_rename_timestamp(old_dir, old_dentry, new_dir, new_dentry);
->=20
-> This is somewhat changing the current behavior: before the patch, the mti=
-me and
-> ctime of old_dir, new_dir and the inodes associated with the dentries are=
- always
-> equal. But given that simple_rename_timestamp() calls inode_set_ctime_cur=
-rent()
-> 4 times, the times could potentially be different.
->=20
-> I am not sure if that is an issue, but it seems that calling
-> inode_set_ctime_current() once, recording the "now" time it sets and usin=
-g that
-> value to set all times may be more efficient and preserve the existing be=
-havior.
->=20
+> > >   bpf: add BPF token support to BPF_BTF_LOAD command
+> > >   libbpf: add BPF token support to bpf_btf_load() API
+> > >   selftests/bpf: add BPF token-enabled BPF_BTF_LOAD selftest
+> > >   bpf: add BPF token support to BPF_PROG_LOAD command
+> > >   bpf: take into account BPF token when fetching helper protos
+> > >   bpf: consistenly use BPF token throughout BPF verifier logic
+> > >   libbpf: add BPF token support to bpf_prog_load() API
+> > >   selftests/bpf: add BPF token-enabled BPF_PROG_LOAD tests
+> > >
+> > >  drivers/media/rc/bpf-lirc.c                   |   2 +-
+> > >  include/linux/bpf.h                           |  79 ++++-
+> > >  include/linux/filter.h                        |   2 +-
+> > >  include/uapi/linux/bpf.h                      |  53 ++++
+> > >  kernel/bpf/Makefile                           |   2 +-
+> > >  kernel/bpf/arraymap.c                         |   2 +-
+> > >  kernel/bpf/cgroup.c                           |   6 +-
+> > >  kernel/bpf/core.c                             |   3 +-
+> > >  kernel/bpf/helpers.c                          |   6 +-
+> > >  kernel/bpf/inode.c                            |  46 ++-
+> > >  kernel/bpf/syscall.c                          | 183 +++++++++---
+> > >  kernel/bpf/token.c                            | 201 +++++++++++++
+> > >  kernel/bpf/verifier.c                         |  13 +-
+> > >  kernel/trace/bpf_trace.c                      |   2 +-
+> > >  net/core/filter.c                             |  36 +--
+> > >  net/ipv4/bpf_tcp_ca.c                         |   2 +-
+> > >  net/netfilter/nf_bpf_link.c                   |   2 +-
+> > >  tools/include/uapi/linux/bpf.h                |  53 ++++
+> > >  tools/lib/bpf/bpf.c                           |  35 ++-
+> > >  tools/lib/bpf/bpf.h                           |  45 ++-
+> > >  tools/lib/bpf/libbpf.map                      |   1 +
+> > >  .../selftests/bpf/prog_tests/libbpf_probes.c  |   4 +
+> > >  .../selftests/bpf/prog_tests/libbpf_str.c     |   6 +
+> > >  .../testing/selftests/bpf/prog_tests/token.c  | 277 ++++++++++++++++=
+++
+> > >  24 files changed, 957 insertions(+), 104 deletions(-)
+> > >  create mode 100644 kernel/bpf/token.c
+> > >  create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
+> > >
+> > > --
+> > > 2.34.1
+> > >
+> > >
+> >
+> >
+> > Hi Andrii,
+> >
+> > Thanks for your proposal.
+> > That seems to be a useful functionality, and yet I have some questions.
+>
+> I've answered them below. But I don't think either of them have any
+> relation to BPF token and the problem I'm trying to solve.
+>
+> >
+> > 1. Why can't we add security_bpf_probe_read_{kernel,user}?
+> >     If possible, we can use these LSM hooks to refuse the process to
+> > read other tasks' information. E.g. if the other process is not within
+> > the same cgroup or the same namespace, we just refuse the reading. I
+> > think it is not hard to identify if the other process is within the
+> > same cgroup or the same namespace.
+>
+> There are probably many reasons. First, performance-wide, LSM hook for
+> each bpf_probe_read_{kernel,user}() call will be prohibitive. And just
+> in general, one would need to be very careful with such LSM hooks,
+> because bpf_probe_read_{kernel,user}() often happens from NMI context,
+> and LSM policy would have to be written and validated very carefully
+> with NMI context in mind.
+>
+> But, more conceptually, for probe_read you get a random address and
+> you know the process context you are running in (but you might be
+> actually running in softirq and NMI, and that process context is
+> irrelevant). How can you efficiently (or at all) tell if that random
+> address "belongs" to cgroup or namespace? Just at conceptual level?
+>
+> >
+> > 2. Why can't we extend bpf_cookie?
+> >    We're now using bpf_cookie to identify each user or each
+> > application, and only the permitted cookies can create new probe
+> > links.  However we find the bpf_cookie is only supported by tracing,
+> > perf_event and kprobe_multi, so we're planning to extend it to other
+> > possible link types, then we can use LSM hooks to control all bpf
+> > links.  I think that the upstream kernel should also support
+> > bpf_cookie for all bpf links. If possible, we will post it to the
+> > upstream in the future.
+> >    After I have read your BPF token proposal, I just have some other
+> > ideas. Why can't we just extend bpf_cookie to all other BPF objects?
+> > For example, all progs and maps should also have the bpf_cookie.
+> >
+>
+> I'm not exactly clear how you use BPF cookie, but it wasn't intended
+> to provide any sort of security or validation policy. It's purely a
+> user-provided u64 to help distinguish different attach points when the
+> same BPF program is attached in multiple places (e.g., kprobe tracing
+> many different kernel functions and needing to distinguish between
+> them at runtime).
 
-I don't believe it's an issue. I've seen nothing in the POSIX spec that
-mandates that timestamp updates to different inodes involved in an
-operation be set to the _same_ value. It just says they must be updated.
+In our container environment, we enable the CAP_BPF, CAP_PERMON and
+CAP_NET_ADMIN for the containers which want to run BPF programs
+inside. However we don't want them to run whatever BPF programs they
+want. We only allow them to run the BPF programs we have permitted for
+each of them.  So we are using LSM to audit the BPF behavior such as
+prog load, map creation and link attach.  We define different BPF
+policies for different containers. In order to identify different
+containers efficiently, we assign different bpf_cookies for different
+containers. bpf_cookie is a u64, that's enough for our use cases.
+We didn't use cgroup id to identify different containers because
+cgroup id is a local value in a server, while bpf_cookie is a global
+value, that would be easy for deployment.
+For your use cases, maybe we could enable CAP_BPF (+CAP_PERMON,
++CAP_NET_ADMIN) for all users, and then we assign different
+bpf_cookies for different users, so we can use LSM to allow the user
+who have the permitted cookies to run BPF program ?
 
-It's also hard to believe that any software would depend on this either,
-given that it's very inconsistent across filesystems today. AFAICT, this
-was mostly done in the past just as a matter of convenience.
-
-The other problem with doing it that way is that it assumes that
-current_time(inode) should always return the same value when given
-different inodes. Is it really correct to do this?
-
-	inode_set_ctime(dir, inode_set_ctime_current(inode));
-
-"dir" and "inode" are different inodes, after all, and you're setting
-dir's timestamp to "inode"'s value. It's not a big deal today since
-they're always on the same sb, but the ultimate goal of these changes is
-to implement multigrain timestamps. That will mean that fetching a fine-
-grained timestamp for an update when the existing mtime or ctime value
-has been queried via getattr.
-
-With that change, I think it's best that we treat updates to different
-inodes individually, as some of them may require updating with a fine-
-grained timestamp and some may not.
-
-> >  	return 0;
-> >  }
-> >  EXPORT_SYMBOL_GPL(simple_rename_exchange);
-> > @@ -720,7 +741,6 @@ int simple_rename(struct mnt_idmap *idmap, struct i=
-node *old_dir,
-> >  		  struct dentry *old_dentry, struct inode *new_dir,
-> >  		  struct dentry *new_dentry, unsigned int flags)
-> >  {
-> > -	struct inode *inode =3D d_inode(old_dentry);
-> >  	int they_are_dirs =3D d_is_dir(old_dentry);
-> > =20
-> >  	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE))
-> > @@ -743,9 +763,7 @@ int simple_rename(struct mnt_idmap *idmap, struct i=
-node *old_dir,
-> >  		inc_nlink(new_dir);
-> >  	}
-> > =20
-> > -	old_dir->i_ctime =3D old_dir->i_mtime =3D new_dir->i_ctime =3D
-> > -		new_dir->i_mtime =3D inode->i_ctime =3D current_time(old_dir);
-> > -
-> > +	simple_rename_timestamp(old_dir, old_dentry, new_dir, new_dentry);
-> >  	return 0;
-> >  }
-> >  EXPORT_SYMBOL(simple_rename);
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index bdfbd11a5811..14e38bd900f1 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -2979,6 +2979,8 @@ extern int simple_open(struct inode *inode, struc=
-t file *file);
-> >  extern int simple_link(struct dentry *, struct inode *, struct dentry =
-*);
-> >  extern int simple_unlink(struct inode *, struct dentry *);
-> >  extern int simple_rmdir(struct inode *, struct dentry *);
-> > +void simple_rename_timestamp(struct inode *old_dir, struct dentry *old=
-_dentry,
-> > +			     struct inode *new_dir, struct dentry *new_dentry);
-> >  extern int simple_rename_exchange(struct inode *old_dir, struct dentry=
- *old_dentry,
-> >  				  struct inode *new_dir, struct dentry *new_dentry);
-> >  extern int simple_rename(struct mnt_idmap *, struct inode *,
->=20
+>
+> I do agree BPF cookie is super useful and we should keep extending
+> other types of BPF programs with BPF cookie support, of course. It's
+> just completely orthogonal to BPF token discussion.
+>
 
 --=20
-Jeff Layton <jlayton@kernel.org>
+Regards
+Yafang
