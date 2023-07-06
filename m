@@ -2,101 +2,90 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD44FEB64DC
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jul 2023 13:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE62EB64D9
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jul 2023 13:43:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231417AbjGFNnY (ORCPT
+        id S232027AbjGFNnY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Thu, 6 Jul 2023 09:43:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55950 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230290AbjGFNnW (ORCPT
+        with ESMTP id S231912AbjGFNnW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Thu, 6 Jul 2023 09:43:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D968F1FC6;
-        Thu,  6 Jul 2023 06:43:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6EF1761956;
-        Thu,  6 Jul 2023 13:43:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C683DC433C7;
-        Thu,  6 Jul 2023 13:43:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688650992;
-        bh=FUjvj+1KggTKf3IJ7E9yOc6WsvJXizVjHxqnoZ8GHtU=;
-        h=From:Date:Subject:To:Cc:Reply-To:From;
-        b=HcLTEbcH6/iC3K0d3H89WJpztQgQD/sCOz5U04lYXNdkEa0OB03R7CCOSGHKKAdfK
-         9BK0o8aYaN1Pwp+gXqZBUnK1Tj3brEXIiKwj/qybu61bjoV56WCkcmmVHfC5flq1jy
-         ixNEmpPItlRnFiOv/mxS/sySQ74E5qW6ZFRDZVsTCsf2UntXYir9yxTo4zCBY/QMCx
-         tpyh7nvIX0GYRlZmF1LJZrvT8I4l3TcNLLHtr5fnfXuKMjSACKGvgCdGcI+tDni6c3
-         1dvNckWuZEDXHaTk0XicV5XqAZWzYHvcwRd9sepBXzgK0il9ixCkXMH0uV4AOMGfs1
-         HXNOZIXTD/gSA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.lore.kernel.org (Postfix) with ESMTP id A5B22EB64D9;
-        Thu,  6 Jul 2023 13:43:12 +0000 (UTC)
-From:   =?utf-8?q?T=C3=B3th_J=C3=A1nos?= via B4 Relay 
-        <devnull+gomba007.gmail.com@kernel.org>
-Date:   Thu, 06 Jul 2023 15:42:47 +0200
-Subject: [PATCH] security: smack: smackfs: fix typo (lables->labels)
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0797B1BDB
+        for <linux-security-module@vger.kernel.org>; Thu,  6 Jul 2023 06:43:13 -0700 (PDT)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-57a1f51d7a7so10276377b3.1
+        for <linux-security-module@vger.kernel.org>; Thu, 06 Jul 2023 06:43:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1688650992; x=1691242992;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jT8BY107F234pJUFYRDnxShe9JwENWMd0PVN0/HLaoA=;
+        b=WKXBYdJLM9rBsmygJxSANUdW8/Y/DLQu4jhfDBccMqplufuI4kb6jhM2Zg+04ixAmn
+         Udd9TNJ3Q38uJ1oRrPDx8SShx73ZP4KhfKVJpIEg7txoO+2fuvUr739jqP8fze1YmnT8
+         I5CPeJBcBXBPhB96ellqPiLdvgbXASHje7gi8bsdJ0gUYfGeUMBWs7EMhCeDytmED4lD
+         OoYhlRal6ieNbhebtpC3QIArA5RpjE1/8olxmKO61ihOiDoHGbwSy0N9qE5cUGUp3XG4
+         k02CBQ3RSH8r18O47EaM4IKL9grwmgQrQ8kckZc+OMG8TS55ObkN7MtKIBy3AZxf+P9i
+         CH/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688650992; x=1691242992;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jT8BY107F234pJUFYRDnxShe9JwENWMd0PVN0/HLaoA=;
+        b=Q5tUVCvrwGJr99JYHHnU5UEmAJ27F3qeub1tFlxTjuiu5Do66XIeAzkY3U9sIoI4JH
+         OOk4/9x+inmEa3TTPsYicllKTRg4lY8n0p62FNOEey4FiPL/xAjEWk82dy6LN5Ifibmc
+         CWqJFBXhuiAL3DyWHwplUwTuDlOIQmpS66QG8hBpolqt6aHxqCbJ7iIBAxLK1Fh4SMx/
+         D/IwOivKX1pUeunYm19ZEMkFIXjvMcgNXGTU0zjEb5J78YZ4+cTgSfIGmUltuTHaY/M6
+         fYnH/T+7kzIfMVq918mvNXTAhGOTXtPYBRC7XO/CIlnoYAv+KE6CcZzr2UH8JSAfmO/1
+         FZ5Q==
+X-Gm-Message-State: ABy/qLZwNyuj1Mz5hcC1Wh5PRtVzjN+WhkQqelCul5mP2LM6+fm3BAe1
+        gMRPOLe0NlrZMuMWjvmypcKFLAq9Zk8nOxB2l/Hc
+X-Google-Smtp-Source: APBJJlGH0atS+gjJyrkhl7Uc3dpEbmOj63q7B80Q3VKQ4Ga/362PigIeY2Hlt6E2++dGDdwQw8PSt8TQnE8JqpK9PK8=
+X-Received: by 2002:a0d:d206:0:b0:576:f0d6:3d68 with SMTP id
+ u6-20020a0dd206000000b00576f0d63d68mr3400501ywd.32.1688650992162; Thu, 06 Jul
+ 2023 06:43:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20230706-smackfs-lables-fix-v1-1-228c8da5a526@gmail.com>
-X-B4-Tracking: v=1; b=H4sIANbEpmQC/x2MSQqAMAwAvyI5G6g7+hXxUGOqwZUGRJD+3eJxB
- mZeUPbCCl3ygudbVM4jQpYmQIs9ZkaZIkNu8sI0pkbdLa1OcbPjxopOHrTU1hWVVDatgxhenqP
- +p/0QwgfggIfrZAAAAA==
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1688650991; l=959;
- i=gomba007@gmail.com; s=20230706; h=from:subject:message-id;
- bh=S9HyRNyzLwD2W29A0DsX2ZZZiM4IO3L3DpcXXpfmTVs=;
- b=+l3RH2YK8ag+dH4tuUELH+9cCBBPq/Q/0jA3y2RaAMzIg/aM05m2xuKO2LqP1+WPWo8bU9u9R
- eJrj3WH5m+wCBZgCrQW0f5XpFTJJfh+0d8KcynKf72E51KCl0BZbNoI
-X-Developer-Key: i=gomba007@gmail.com; a=ed25519;
- pk=iY9MjPCbud82ULS2PQJIq3QwjKyP/Sg730I6T2M8Y5U=
-X-Endpoint-Received: by B4 Relay for gomba007@gmail.com/20230706 with auth_id=60
-X-Original-From: =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
-Reply-To: <gomba007@gmail.com>
+References: <32e59b69-79a2-f440-bf94-fdb8f8f5fa64@wewakecorp.com>
+In-Reply-To: <32e59b69-79a2-f440-bf94-fdb8f8f5fa64@wewakecorp.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 6 Jul 2023 09:43:01 -0400
+Message-ID: <CAHC9VhRdCSJwB9hpyrCe+D00ddeRLisz=9GEWJz50ybr80tnsg@mail.gmail.com>
+Subject: Re: [LSM Stacking] SELinux policy inside container affects a process
+ on Host
+To:     Leesoo Ahn <lsahn@wewakecorp.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Tóth János <gomba007@gmail.com>
+On Thu, Jul 6, 2023 at 1:20=E2=80=AFAM Leesoo Ahn <lsahn@wewakecorp.com> wr=
+ote:
+>
+> Hello! Here is another weird behavior of lsm stacking..
+>
+> test env
+> - Ubuntu 23.04 Ubuntu Kernel v6.2 w/ Stacking patch v38
+> - boot param: lsm=3Dapparmor,selinux
+> - AppArmor (Host) + SELinux (LXD Container Fedora 36)
+>
+> In the test environment mentioned above and applying selinux policy
+> enforcing by running "setenforce 1" within the container, executing the
+> following command on the host will result in "Permission denied" output.
 
-Fix a spelling error in smakcfs.
+SELinux operates independently of containers, or kernel namespacing in
+general.  When you load a SELinux policy it applies to all processes
+on the system, regardless of where they are in relation to the process
+which loaded the policy into the kernel.
 
-Signed-off-by: Tóth János <gomba007@gmail.com>
----
- security/smack/smackfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This behavior is independent of the LSM stacking work, you should be
+able to see the same behavior even in cases where SELinux is the only
+loaded LSM on the system.
 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 5590eaad241b..2b79c30d4bb6 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -114,7 +114,7 @@ struct smack_known *smack_syslog_label;
-  * SMACK_PTRACE_DEFAULT    regular smack ptrace rules (/proc based)
-  * SMACK_PTRACE_EXACT      labels must match, but can be overriden with
-  *			   CAP_SYS_PTRACE
-- * SMACK_PTRACE_DRACONIAN  lables must match, CAP_SYS_PTRACE has no effect
-+ * SMACK_PTRACE_DRACONIAN  labels must match, CAP_SYS_PTRACE has no effect
-  */
- int smack_ptrace_rule = SMACK_PTRACE_DEFAULT;
- 
-
----
-base-commit: 6995e2de6891c724bfeb2db33d7b87775f913ad1
-change-id: 20230706-smackfs-lables-fix-ac965c4c479f
-
-Best regards,
--- 
-Tóth János <gomba007@gmail.com>
-
+--=20
+paul-moore.com
