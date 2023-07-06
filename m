@@ -2,233 +2,155 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB74C001DE
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jul 2023 21:03:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C6FC001E0
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Jul 2023 23:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232746AbjGFVDI (ORCPT
+        id S231366AbjGFX1y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Jul 2023 17:03:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45252 "EHLO
+        Thu, 6 Jul 2023 19:27:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229510AbjGFVC5 (ORCPT
+        with ESMTP id S229555AbjGFX1w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Jul 2023 17:02:57 -0400
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3A8619A7;
-        Thu,  6 Jul 2023 14:02:55 -0700 (PDT)
-Received: from localhost (2.general.sarnold.us.vpn [10.172.64.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id EC65D3F31B;
-        Thu,  6 Jul 2023 21:02:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1688677359;
-        bh=wL7I+1AkkXlsdAXc0IgIVs00VMlkDlPzLoO7HtCH8Yo=;
-        h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-         Content-Type:In-Reply-To;
-        b=UigHgg1tEN+F2JYmBK+lUOcRBpRtdrNgGbqup1NnaXOwyODWf/TTOdnjSM3EJKV2r
-         nSVjFudDceCGObMlTU+uma1muY2uaIkS7sazvVomlUh2z4Cx6T6ypWSOKoKTLr1e7n
-         Ld2z62ONf1z9dg8T10Z72Jl2h0B3vIxrVCycmYrM1jOwV4H0NyvFgu4GNfgDT4ln1d
-         cD6OBnHOJHdcMdNwqptcYXDLv4IErHsYENHamhLEH+hxLeB02yXRDCQTTC0JuBjK6l
-         ZNgX1V/W8Fy+2Orhx/aZTqqWjx/zv/bYCRboXEZa1I0V5mrDoaohFkaxDrb57pylVz
-         OTISOPjT4Hs9A==
-Date:   Thu, 6 Jul 2023 21:02:36 +0000
-From:   Seth Arnold <seth.arnold@canonical.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Damien Le Moal <dlemoal@kernel.org>, jk@ozlabs.org, arnd@arndb.de,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-        maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
-        cmllamas@google.com, surenb@google.com,
-        dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca,
-        leon@kernel.org, bwarrum@linux.ibm.com, rituagar@linux.ibm.com,
-        ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
-        linux_oss@crudebyte.com, dsterba@suse.com, dhowells@redhat.com,
-        marc.dionne@auristor.com, viro@zeniv.linux.org.uk,
-        raven@themaw.net, luisbg@kernel.org, salah.triki@gmail.com,
-        aivazian.tigran@gmail.com, ebiederm@xmission.com,
-        keescook@chromium.org, clm@fb.com, josef@toxicpanda.com,
-        xiubli@redhat.com, idryomov@gmail.com, jaharkes@cs.cmu.edu,
-        coda@cs.cmu.edu, jlbec@evilplan.org, hch@lst.de, nico@fluxnic.net,
-        rafael@kernel.org, code@tyhicks.com, ardb@kernel.org,
-        xiang@kernel.org, chao@kernel.org, huyue2@coolpad.com,
-        jefflexu@linux.alibaba.com, linkinjeon@kernel.org,
-        sj1557.seo@samsung.com, jack@suse.com, tytso@mit.edu,
-        adilger.kernel@dilger.ca, jaegeuk@kernel.org,
-        hirofumi@mail.parknet.co.jp, miklos@szeredi.hu,
-        rpeterso@redhat.com, agruenba@redhat.com, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        mikulas@artax.karlin.mff.cuni.cz, mike.kravetz@oracle.com,
-        muchun.song@linux.dev, dwmw2@infradead.org, shaggy@kernel.org,
-        tj@kernel.org, trond.myklebust@hammerspace.com, anna@kernel.org,
-        chuck.lever@oracle.com, neilb@suse.de, kolga@netapp.com,
-        Dai.Ngo@oracle.com, tom@talpey.com, konishi.ryusuke@gmail.com,
-        anton@tuxera.com, almaz.alexandrovich@paragon-software.com,
-        mark@fasheh.com, joseph.qi@linux.alibaba.com, me@bobcopeland.com,
-        hubcap@omnibond.com, martin@omnibond.com, amir73il@gmail.com,
-        mcgrof@kernel.org, yzaikin@google.com, tony.luck@intel.com,
-        gpiccoli@igalia.com, al@alarsen.net, sfrench@samba.org,
-        pc@manguebit.com, lsahlber@redhat.com, sprasad@microsoft.com,
-        senozhatsky@chromium.org, phillip@squashfs.org.uk,
-        rostedt@goodmis.org, mhiramat@kernel.org, dushistov@mail.ru,
-        hdegoede@redhat.com, djwong@kernel.org, naohiro.aota@wdc.com,
-        jth@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        andrii@kernel.org, martin.lau@linux.dev, song@kernel.org,
-        yhs@fb.com, john.fastabend@gmail.com, kpsingh@kernel.org,
-        sdf@google.com, haoluo@google.com, jolsa@kernel.org,
-        hughd@google.com, akpm@linux-foundation.org, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        john.johansen@canonical.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        jgross@suse.com, stern@rowland.harvard.edu, lrh2000@pku.edu.cn,
-        sebastian.reichel@collabora.com, wsa+renesas@sang-engineering.com,
-        quic_ugoswami@quicinc.com, quic_linyyuan@quicinc.com,
-        john@keeping.me.uk, error27@gmail.com, quic_uaggarwa@quicinc.com,
-        hayama@lineo.co.jp, jomajm@gmail.com, axboe@kernel.dk,
-        dhavale@google.com, dchinner@redhat.com, hannes@cmpxchg.org,
-        zhangpeng362@huawei.com, slava@dubeyko.com, gargaditya08@live.com,
-        penguin-kernel@I-love.SAKURA.ne.jp, yifeliu@cs.stonybrook.edu,
-        madkar@cs.stonybrook.edu, ezk@cs.stonybrook.edu,
-        yuzhe@nfschina.com, willy@infradead.org, okanatov@gmail.com,
-        jeffxu@chromium.org, linux@treblig.org, mirimmad17@gmail.com,
-        yijiangshan@kylinos.cn, yang.yang29@zte.com.cn,
-        xu.xin16@zte.com.cn, chengzhihao1@huawei.com, shr@devkernel.io,
-        Liam.Howlett@Oracle.com, adobriyan@gmail.com,
-        chi.minghao@zte.com.cn, roberto.sassu@huawei.com,
-        linuszeng@tencent.com, bvanassche@acm.org, zohar@linux.ibm.com,
-        yi.zhang@huawei.com, trix@redhat.com, fmdefrancesco@gmail.com,
-        ebiggers@google.com, princekumarmaurya06@gmail.com,
-        chenzhongjin@huawei.com, riel@surriel.com,
-        shaozhengchao@huawei.com, jingyuwang_vip@163.com,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-usb@vger.kernel.org, v9fs@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        autofs@vger.kernel.org, linux-mm@kvack.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-um@lists.infradead.org,
-        linux-mtd@lists.infradead.org,
-        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-        linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
-        linux-unionfs@vger.kernel.org, linux-hardening@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org,
-        linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Subject: Re: [apparmor] [PATCH v2 08/92] fs: new helper:
- simple_rename_timestamp
-Message-ID: <20230706210236.GB3244704@millbarge>
-References: <20230705185812.579118-1-jlayton@kernel.org>
- <20230705185812.579118-3-jlayton@kernel.org>
- <3b403ef1-22e6-0220-6c9c-435e3444b4d3@kernel.org>
- <7c783969641b67d6ffdfb10e509f382d083c5291.camel@kernel.org>
+        Thu, 6 Jul 2023 19:27:52 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B9D42139;
+        Thu,  6 Jul 2023 16:27:29 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id 98e67ed59e1d1-262e839647eso998832a91.2;
+        Thu, 06 Jul 2023 16:27:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688686035; x=1691278035;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bshFgcOle4AtCEA8BTrEZy72fJQG+YZaemfgC6JBXtM=;
+        b=IOWiwnyWZ8b/Gees9+bG/u0x39WWkdTCEFwE5s22SnFW0XqC5rvrUBYyTAMCmPKnJI
+         4qgrjSpARX+HgWz9r6G2mSEL12oNVjQzOzkJqh3SzPGRq+dOdz2w69HGJqAgtWs3B+FF
+         T6HW7smfo85Kiy1q9wyrh5thmF1HeIclKjwIH6EhYa02ctmARHBhKmOapagUI9oe+V7q
+         uoPvVu9uynFN4Sr5hgnBSuTuO3OcHkSwGSiZFHxXBsK82s4HjycRFyZstD5Yw4wGvRYw
+         1QoXQABJKLn0yVKHJ9xKaDeEnTkTKYmmzeS96+jpOAiqhUnv1SaL0yR9rZHub1JRR4EU
+         /sYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688686035; x=1691278035;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bshFgcOle4AtCEA8BTrEZy72fJQG+YZaemfgC6JBXtM=;
+        b=MHWeUiwqxpYZcakCqf3PvdRNUg2pOpaY9zc2APg1NoPf24mmi9AqGRy1VHiNAPmZtO
+         ePgx1UUD7oAudjizDx0voVDY/zA5uTlRknqncr8F0THC9W8BUz08hPhUzotm+3p6sfjA
+         6oCjD9cZJT+/xfKVWQdSG490UQwXs6JvpyxnScyhqJugb7MSCDs74A1iX+aYPEmPk7OJ
+         HapNR2d6mGYJ4t6CnXJalznW48KQxkgYHMMWcl7dMXhlb2DXdMHFiru4jVcITms6jJYN
+         Tp1ttSmGRh4sSD/EJjlgHVvOSyrXcdiFcJVqk6p6Ug6RfGVH2TS1QP13QvQsnXdEY7mb
+         Z1QQ==
+X-Gm-Message-State: ABy/qLZRDiZ/qHwVbRXiF0Xg8NMMjNqaRGNNxKG4NuPgm1vmYgLE57n5
+        tHllK1GWlUMhiYDsPgRJH2s=
+X-Google-Smtp-Source: APBJJlFvuQWESuYnnmEsR9Q/RlJxwVOHx3CZ7iqj95A72EuTZBpzNQR7aSAdAsIzLqTLdZ3dQSY+iQ==
+X-Received: by 2002:a17:90a:bb84:b0:25b:e07f:4c43 with SMTP id v4-20020a17090abb8400b0025be07f4c43mr3123081pjr.10.1688686035098;
+        Thu, 06 Jul 2023 16:27:15 -0700 (PDT)
+Received: from macbook-pro-8.dhcp.thefacebook.com ([2620:10d:c090:400::5:9b44])
+        by smtp.gmail.com with ESMTPSA id bk15-20020a17090b080f00b0025bf1ea918asm270552pjb.55.2023.07.06.16.27.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jul 2023 16:27:14 -0700 (PDT)
+Date:   Thu, 6 Jul 2023 16:27:09 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jarkko@kernel.org, song@kernel.org, jolsa@kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, yhs@fb.com, john.fastabend@gmail.com,
+        kpsingh@kernel.org, sdf@google.com, haoluo@google.com,
+        rostedt@goodmis.org, mhiramat@kernel.org, mykolal@fb.com,
+        shuah@kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, pbrobinson@gmail.com,
+        zbyszek@in.waw.pl, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org, wiktor@metacode.biz,
+        devel@lists.sequoia-pgp.org, gnupg-devel@gnupg.org,
+        ebiggers@kernel.org, Jason@zx2c4.com, mail@maciej.szmigiero.name,
+        antony@vennard.ch, konstantin@linuxfoundation.org,
+        James.Bottomley@hansenpartnership.com,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [RFC][PATCH 00/10] KEYS: Introduce user asymmetric keys and
+ signatures
+Message-ID: <20230706232709.t6imkh3q234b3dlm@macbook-pro-8.dhcp.thefacebook.com>
+References: <20230706144225.1046544-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="E39vaYmALEf/7YXx"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7c783969641b67d6ffdfb10e509f382d083c5291.camel@kernel.org>
+In-Reply-To: <20230706144225.1046544-1-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Jul 06, 2023 at 04:42:13PM +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Define a new TLV-based format for keys and signatures, aiming to store and
+> use in the kernel the crypto material from other unsupported formats
+> (e.g. PGP).
+> 
+> TLV fields have been defined to fill the corresponding kernel structures
+> public_key, public_key_signature and key_preparsed_payload.
+> 
+> Keys:
+>                 struct public_key {     struct key_preparsed_payload {
+> KEY_PUB       -->  void *key;
+>                    u32 keylen;         --> prep->payload.data[asym_crypto]
+> KEY_ALGO      -->  const char *pkey_algo;
+> KEY_KID0
+> KEY_KID1                               --> prep->payload.data[asym_key_ids]
+> KEY_KID2  
+> KEY_DESC                               --> prep->description
+> 
+> 
+> Signatures:
+>                 struct public_key_signature {
+> SIG_S         -->  u8 *s;
+>                    u32 s_size;
+> SIG_KEY_ALGO  -->  const char *pkey_algo;
+> SIG_HASH_ALGO -->  const char *hash_algo;
+>                    u32 digest_size;
+> SIG_ENC       -->  const char *encoding;   
+> SIG_KID0
+> SIG_KID1      -->  struct asymmetric_key_id *auth_ids[3];
+> SIG_KID2  
+> 
+> 
+> For keys, since the format conversion has to be done in user space, user
+> space is assumed to be trusted, in this proposal. Without this assumption,
+> a malicious conversion tool could make a user load to the kernel a
+> different key than the one expected.
+> 
+> That should not be a particular problem for keys that are embedded in the
+> kernel image and loaded at boot, since the conversion happens in a trusted
+> environment such as the building infrastructure of the Linux distribution
+> vendor.
+> 
+> In the other cases, such as enrolling a key through the Machine Owner Key
+> (MOK) mechanism, the user is responsible to ensure that the crypto material
+> carried in the original format remains the same after the conversion.
+> 
+> For signatures, assuming the strength of the crypto algorithms, altering
+> the crypto material is simply a Denial-of-Service (DoS), as data can be
+> validated only with the right signature.
+> 
+> 
+> This patch set also offers the following contributions:
+> 
+> - An API similar to the PKCS#7 one, to verify the authenticity of system
+>   data through user asymmetric keys and signatures
+> 
+> - A mechanism to store a keyring blob in the kernel image and to extract
+>   and load the keys at system boot
+>   
+> - eBPF binding, so that data authenticity verification with user asymmetric
+>   keys and signatures can be carried out also with eBPF programs
 
---E39vaYmALEf/7YXx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Nack to bpf bits.
+You've convinced us that bpf_verify_pkcs7_signature() is what you need.
+Yet, 9 month later there are no users of it and you came back with this new
+bpf_verify_uasym_signature() helper that practically not much different.
 
-On Wed, Jul 05, 2023 at 08:04:41PM -0400, Jeff Layton wrote:
->=20
-> I don't believe it's an issue. I've seen nothing in the POSIX spec that
-> mandates that timestamp updates to different inodes involved in an
-> operation be set to the _same_ value. It just says they must be updated.
->=20
-> It's also hard to believe that any software would depend on this either,
-> given that it's very inconsistent across filesystems today. AFAICT, this
-> was mostly done in the past just as a matter of convenience.
-
-I've seen this assumption in several programs:
-
-mutt buffy.c
-https://sources.debian.org/src/mutt/2.2.9-1/buffy.c/?hl=3D625#L625
-
-  if (mailbox->newly_created &&
-      (sb->st_ctime !=3D sb->st_mtime || sb->st_ctime !=3D sb->st_atime))
-    mailbox->newly_created =3D 0;
-
-
-neomutt mbox/mbox.c
-https://sources.debian.org/src/neomutt/20220429+dfsg1-4.1/mbox/mbox.c/?hl=
-=3D1820#L1820
-
-  if (m->newly_created && ((st.st_ctime !=3D st.st_mtime) || (st.st_ctime !=
-=3D st.st_atime)))
-    m->newly_created =3D false;
-
-
-screen logfile.c
-https://sources.debian.org/src/screen/4.9.0-4/logfile.c/?hl=3D130#L130
-
-  if ((!s->st_dev && !s->st_ino) ||             /* stat failed, that's new!=
- */
-      !s->st_nlink ||                           /* red alert: file unlinked=
- */
-      (s->st_size < o.st_size) ||               /*           file truncated=
- */
-      (s->st_mtime !=3D o.st_mtime) ||            /*            file modifi=
-ed */
-      ((s->st_ctime !=3D o.st_ctime) &&           /*     file changed (move=
-d) */
-       !(s->st_mtime =3D=3D s->st_ctime &&          /*  and it was not a ch=
-ange */
-         o.st_ctime < s->st_ctime)))            /* due to delayed nfs write=
- */
-  {
-
-nemo libnemo-private/nemo-vfs-file.c
-https://sources.debian.org/src/nemo/5.6.5-1/libnemo-private/nemo-vfs-file.c=
-/?hl=3D344#L344
-
-		/* mtime is when the contents changed; ctime is when the
-		 * contents or the permissions (inc. owner/group) changed.
-		 * So we can only know when the permissions changed if mtime
-		 * and ctime are different.
-		 */
-		if (file->details->mtime =3D=3D file->details->ctime) {
-			return FALSE;
-		}
-
-
-While looking for more examples, I found a perl test that seems to suggest
-that at least Solaris, AFS, AmigaOS, DragonFly BSD do as you suggest:
-https://sources.debian.org/src/perl/5.36.0-7/t/op/stat.t/?hl=3D158#L140
-
-
-Thanks
-
---E39vaYmALEf/7YXx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEQVAQ8bojyMcg37H18yFyWZ2NLpcFAmSnK+gACgkQ8yFyWZ2N
-Lpd3gQf6AtE8sBL09BSTvT1P5I8tCXnJ4U7VbzQxWTcKAQHRpyZn8IRSdWuxiPEU
-soaBmSx6jov+kkZYX5uP1LSM1INMYpJTJELGas9A7wenNppBGS07LjwAL40wouPm
-UfcVWQqOgM8eoseMKBKePv5TkTJFn/M3cPK9Wy31E+qF1IPMNtxz9JKz109YlDOO
-FxVTwBGGxxKvx3SsUl6hdaqBCK3omZlbWCzqSyqBzzvjgZ01VC5ktw5FuuTABbu8
-TScNnT5GtO5AE8RV0T3TKISm19xD69JHQt/etFeU2yKwiBsn89pY4Xut3CrxbSQm
-prQ7ssP3/fi41WxFFDQzO/oQok/b+A==
-=/KNl
------END PGP SIGNATURE-----
-
---E39vaYmALEf/7YXx--
+Instead of brand new "public key info" format sign your rpms via
+existing pkcs7 mechanism and verify with bpf_verify_pkcs7_signature().
