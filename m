@@ -2,144 +2,212 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86FF4EB64D9
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jul 2023 13:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76466EB64DA
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jul 2023 13:56:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229720AbjGGNFp (ORCPT
+        id S230140AbjGGN4W (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Jul 2023 09:05:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41970 "EHLO
+        Fri, 7 Jul 2023 09:56:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbjGGNFp (ORCPT
+        with ESMTP id S229743AbjGGN4V (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Jul 2023 09:05:45 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF14CE6E
-        for <linux-security-module@vger.kernel.org>; Fri,  7 Jul 2023 06:04:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688735098;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=spbb5kMkZNfk5QvmXSW5ZU2UZzQF7gxn+0EuFzvWeok=;
-        b=G3st5tnFDJnY2JmGwoyMJJyP8sXxS/VaAPSzKXZsTQbi9lBYGIhhCGslo63tkPpQxQOkPm
-        9lOaQ2YZy8x2d4xPOMF5+LQdQ19e4JZoUKk5tcqJjlfdTzd7WoSmZ/FnWKr9eJ8HkkjE2x
-        XCNzXJLz9sSGEk6YDmKySi52R9OSmAA=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-588-f1YAzrO5P4O4cW0AZLuniA-1; Fri, 07 Jul 2023 09:04:55 -0400
-X-MC-Unique: f1YAzrO5P4O4cW0AZLuniA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-3fbffd088a9so3004915e9.1
-        for <linux-security-module@vger.kernel.org>; Fri, 07 Jul 2023 06:04:54 -0700 (PDT)
+        Fri, 7 Jul 2023 09:56:21 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EBFF2108
+        for <linux-security-module@vger.kernel.org>; Fri,  7 Jul 2023 06:56:18 -0700 (PDT)
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 692063F11A
+        for <linux-security-module@vger.kernel.org>; Fri,  7 Jul 2023 13:56:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1688738176;
+        bh=eGrztv0H2SIumnmi5MBVnRyY+MzcG6veWeMIMd19pl8=;
+        h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+         Content-Type:MIME-Version;
+        b=MJ4uyKBuRLZaY3caVG1I29/4mb+14tlZAwqRSRWkq7bZ5QSmrJS370s6VgqHDqqEW
+         RFhnm78EqoLbb6u0LrfUZp8+gmgtXdJ+0n+CbzB483Qo4bpZY2ZM6VsiLn49LHxLFq
+         O+3KUwT4TgVeXcE3+1/r+jsNOvR6WJFGAH/lpmuoYl0EzlK5ElZze1qwe2S9Jp0kxy
+         uYhvCLnDPtodnxiD53Qcu2ULqljzWU07Apt3ei6oiYza5Oe9MGYPR5weqFRXcctQaf
+         tIXCWMMfUgLN1hQgHZKc379xpZ3NBjxuEm3QGYkT5fmVJda6lE04YBH2twKgmAopvh
+         0szLdPYKtD/+w==
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3a3b86821fcso1333034b6e.0
+        for <linux-security-module@vger.kernel.org>; Fri, 07 Jul 2023 06:56:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688735094; x=1691327094;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=spbb5kMkZNfk5QvmXSW5ZU2UZzQF7gxn+0EuFzvWeok=;
-        b=DNbhxCCX7aYRvhghQh91csG4PRyXiXq0dCvfJIaGYIXXj7rmSzBLEBa2v6rctJ1199
-         8vxd1Hzo5frhPlNguwP1zZdSfcc8/PLTC9wQbbwhVsUKsee9LI0X33qmhZK9JzdrGH08
-         gIA3QRL4zaw1CZ37u76HsBgYREy0mzA/+wu2hYMWmD5ASsY8AytwH9yF5F71yrNwWQN0
-         f0ANsf3J5i7S/PWk/trLxi5i7yH4eOyTkguYtmRJW9kkruPoXnRzODtcNSKzbMal7klr
-         y9Lpsj8X/vaP5qDobS+Md3TavW69NyrLcxDs3pBb+uAh/55FdR2XZJzqGQIfP9UfbOUV
-         6m6Q==
-X-Gm-Message-State: ABy/qLYIJG2WSXxWrDX22bWHucIYMgCRojgg2tknCyNQYlb9P0O4pyxx
-        0U0uEpc8to4Cahl05I4x+1Dm+k2ypcRXAvjF2//M5EPVEi2iH6eKEYffdf6jVZLWMUH7RHRNJ+0
-        T2KDn1qCQFHxDcEaLAMa1mY9gDwksknWmgyzM
-X-Received: by 2002:a1c:7207:0:b0:3f9:ba2:5d19 with SMTP id n7-20020a1c7207000000b003f90ba25d19mr2850689wmc.33.1688735093860;
-        Fri, 07 Jul 2023 06:04:53 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlF90VvveDFzTN1MQrOvnaykAYXVLdJCvIKpc9PxsXc0M8lpyZ+5l5tClUkOMEubknZgQtjM4A==
-X-Received: by 2002:a1c:7207:0:b0:3f9:ba2:5d19 with SMTP id n7-20020a1c7207000000b003f90ba25d19mr2850660wmc.33.1688735093412;
-        Fri, 07 Jul 2023 06:04:53 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id y15-20020a1c4b0f000000b003fbc9b9699dsm2381013wma.45.2023.07.07.06.04.52
+        d=1e100.net; s=20221208; t=1688738175; x=1691330175;
+        h=mime-version:user-agent:content-transfer-encoding:organization
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eGrztv0H2SIumnmi5MBVnRyY+MzcG6veWeMIMd19pl8=;
+        b=aQVmMWhXJSEbilzYZLaUSNDsdiRHdE8T+XNB2cWRp3hxK603GiEI6Pz3I+75A0Czcj
+         iOe77SkAPmc/m1q/9gR1Zx9+uG3jNLYD5oPCGiTgTNNOCN8CmpevAqsMSMdRPPD6ElA4
+         BRBP1rUXqQcy11ZSUx1n5B1NLyfsItsOdHYGrDa3nPaItVmF5dkDa8Ypmw30Jhq0V+XQ
+         WjmG54br8Xwu/Qlh+JOy1DteSyBvS9L97idX43gd5ysq1LBU/kLpYXXilDdbZGyRGbup
+         3ekovWuG5pJu6o+OqE1DastykLOPeJsDFLNEQxdekP5cuHjmNOSMj6CW42LqpSYXRv9X
+         ASiw==
+X-Gm-Message-State: ABy/qLbwMv+oxCMj8WvzTRN9iLOaJ8jpxKkS3icKa+5oNeyM6UIn6EKf
+        eDrVzpllHSBSn0/ZaLjLVHOcfbtO0ZLwDa5V6RZ6FVlQtSdaVE8t9FQWtS79RSGBovopq21WY3a
+        BI0L6so5k5q6NOOSyhSCVkbEFdF0KCbNfobT3UJSu7XfoZoRqBTmHjQ==
+X-Received: by 2002:a05:6808:1b0b:b0:3a3:9b4a:3959 with SMTP id bx11-20020a0568081b0b00b003a39b4a3959mr4714474oib.17.1688738175319;
+        Fri, 07 Jul 2023 06:56:15 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlFkRg4PmdXfyWwDFgnZKR4ori2M8+JnzSAyS9PAwf6mrTcxas32wyshPWn+TQw5OCNVWSDVSQ==
+X-Received: by 2002:a05:6808:1b0b:b0:3a3:9b4a:3959 with SMTP id bx11-20020a0568081b0b00b003a39b4a3959mr4714463oib.17.1688738175061;
+        Fri, 07 Jul 2023 06:56:15 -0700 (PDT)
+Received: from ?IPv6:2001:1284:f02e:6c12:3fa7:9073:5b23:9e41? ([2001:1284:f02e:6c12:3fa7:9073:5b23:9e41])
+        by smtp.gmail.com with ESMTPSA id e5-20020aca2305000000b003a1eae6ff73sm1629524oie.36.2023.07.07.06.56.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 06:04:52 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id 7F015C59720; Fri,  7 Jul 2023 15:04:51 +0200 (CEST)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        lennart@poettering.net, cyphar@cyphar.com, luto@kernel.org,
-        kernel-team@meta.com, sargun@sargun.me
-Subject: Re: [PATCH RESEND v3 bpf-next 01/14] bpf: introduce BPF token object
-In-Reply-To: <CAEf4Bzaox7Q+ZVfuVnuia-=zPeBMYBG3-HT=bajT0OTMp6SQzg@mail.gmail.com>
-References: <20230629051832.897119-1-andrii@kernel.org>
- <20230629051832.897119-2-andrii@kernel.org>
- <20230704-hochverdient-lehne-eeb9eeef785e@brauner>
- <CAHC9VhTDocBCpNjdz1CoWM2DA76GYZmg31338DHePFGq_-ie-g@mail.gmail.com>
- <20230705-zyklen-exorbitant-4d54d2f220ad@brauner>
- <CAEf4Bza5mUou8nw1zjqFaCPPvfUNq-jpNp+y4DhMhhcXc5HwGg@mail.gmail.com>
- <87a5w9s2at.fsf@toke.dk>
- <CAEf4Bzaox7Q+ZVfuVnuia-=zPeBMYBG3-HT=bajT0OTMp6SQzg@mail.gmail.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date:   Fri, 07 Jul 2023 15:04:51 +0200
-Message-ID: <87lefrhnyk.fsf@toke.dk>
-MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8
+        Fri, 07 Jul 2023 06:56:14 -0700 (PDT)
+Message-ID: <4c50904ae2cbd59186545a2676915654a84dbe50.camel@canonical.com>
+Subject: Re: [PATCH -next 05/11] apparmor: Fix kernel-doc warnings in
+ apparmor/label.c
+From:   Georgia Garcia <georgia.garcia@canonical.com>
+To:     Gaosheng Cui <cuigaosheng1@huawei.com>,
+        john.johansen@canonical.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
+Date:   Fri, 07 Jul 2023 10:56:10 -0300
+In-Reply-To: <20230625011349.1457810-6-cuigaosheng1@huawei.com>
+References: <20230625011349.1457810-1-cuigaosheng1@huawei.com>
+         <20230625011349.1457810-6-cuigaosheng1@huawei.com>
+Organization: Canonical
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu1 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+Hi, Gaosheng Cui
 
-> On Thu, Jul 6, 2023 at 4:32=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgensen <=
-toke@redhat.com> wrote:
->>
->> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
->>
->> > Having it as a separate single-purpose FS seems cleaner, because we
->> > have use cases where we'd have one BPF FS instance created for a
->> > container by our container manager, and then exposing a few separate
->> > tokens with different sets of allowed functionality. E.g., one for
->> > main intended workload, another for some BPF-based observability
->> > tools, maybe yet another for more heavy-weight tools like bpftrace for
->> > extra debugging. In the debugging case our container infrastructure
->> > will be "evacuating" any other workloads on the same host to avoid
->> > unnecessary consequences. The point is to not disturb
->> > workload-under-human-debugging as much as possible, so we'd like to
->> > keep userns intact, which is why mounting extra (more permissive) BPF
->> > token inside already running containers is an important consideration.
->>
->> This example (as well as Yafang's in the sibling subthread) makes it
->> even more apparent to me that it would be better with a model where the
->> userspace policy daemon can just make decisions on each call directly,
->> instead of mucking about with different tokens with different embedded
->> permissions. Why not go that route (see my other reply for details on
->> what I mean)?
->
-> I don't know how you arrived at this conclusion,
+On Sun, 2023-06-25 at 09:13 +0800, Gaosheng Cui wrote:
+> Fix kernel-doc warnings:
+>=20
+> security/apparmor/label.c:166: warning: Excess function parameter
+> 'n' description in 'vec_cmp'
+> security/apparmor/label.c:166: warning: Excess function parameter
+> 'vec' description in 'vec_cmp'
+> security/apparmor/label.c:166: warning: Function parameter or member
+> 'an' not described in 'vec_cmp'
+> security/apparmor/label.c:166: warning: Function parameter or member
+> 'bn' not described in 'vec_cmp'
+> security/apparmor/label.c:166: warning: Function parameter or member
+> 'b' not described in 'vec_cmp'
+> security/apparmor/label.c:2051: warning: Function parameter or member
+> 'label' not described in '__label_update'
+> security/apparmor/label.c:266: warning: Function parameter or member
+> 'flags' not described in 'aa_vec_unique'
+> security/apparmor/label.c:594: warning: Excess function parameter
+> 'l' description in '__label_remove'
+> security/apparmor/label.c:594: warning: Function parameter or member
+> 'label' not described in '__label_remove'
+> security/apparmor/label.c:929: warning: Function parameter or member
+> 'label' not described in 'aa_label_insert'
+> security/apparmor/label.c:929: warning: Function parameter or member
+> 'ls' not described in 'aa_label_insert'
+> security/apparmor/label.c:1221: warning: Excess function parameter
+> 'ls' description in 'aa_label_merge'
+> security/apparmor/label.c:1302: warning: Excess function parameter
+> 'start' description in 'label_compound_match'
+> security/apparmor/label.c:1302: warning: Function parameter or member
+> 'rules' not described in 'label_compound_match'
+> security/apparmor/label.c:1302: warning: Function parameter or member
+> 'state' not described in 'label_compound_match'
+> security/apparmor/label.c:2051: warning: Function parameter or member
+> 'label' not described in '__label_update'
+>=20
+> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+> ---
+>  security/apparmor/label.c | 20 +++++++++++---------
+>  1 file changed, 11 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+> index 8a2af96f4da5..ce9c39102a93 100644
+> --- a/security/apparmor/label.c
+> +++ b/security/apparmor/label.c
+> @@ -154,9 +154,10 @@ static int profile_cmp(struct aa_profile *a, struct =
+aa_profile *b)
+> =20
+>  /**
+>   * vec_cmp - label comparison for set ordering
+> - * @a: label to compare (NOT NULL)
+> - * @vec: vector of profiles to compare (NOT NULL)
+> - * @n: length of @vec
+> + * @a: aa_profile to compare (NOT NULL)
+> + * @an: length of @a
+> + * @b: aa_profile to compare (NOT NULL)
+> + * @bn: length of @b
+>   *
+>   * Returns: <0  if a < vec
+>   *          =3D=3D0 if a =3D=3D vec
 
-Because it makes it apparent that you're basically building a policy
-engine in the kernel with this...
+The "Returns:" part of the doc should also be changed to match the
+different parameter name.
 
-> but we've debated BPF proxying and separate service at length, there
-> is no point in going on another round here.
+> @@ -256,6 +257,7 @@ static inline int unique(struct aa_profile **vec, int=
+ n)
+>   * aa_vec_unique - canonical sort and unique a list of profiles
+>   * @n: number of refcounted profiles in the list (@n > 0)
+>   * @vec: list of profiles to sort and merge
+> + * @flags: null terminator flags of @vec
+>   *
+>   * Returns: the number of duplicates eliminated =3D=3D references put
+>   *
+> @@ -584,7 +586,7 @@ bool aa_label_is_unconfined_subset(struct aa_label *s=
+et, struct aa_label *sub)
+> =20
+>  /**
+>   * __label_remove - remove @label from the label set
+> - * @l: label to remove
+> + * @label: label to remove
+>   * @new: label to redirect to
+>   *
+>   * Requires: labels_set(@label)->lock write_lock
+> @@ -917,8 +919,8 @@ struct aa_label *aa_label_find(struct aa_label *label=
+)
+> =20
+>  /**
+>   * aa_label_insert - insert label @label into @ls or return existing lab=
+el
+> - * @ls - labelset to insert @label into
+> - * @label - label to insert
+> + * @ls: labelset to insert @label into
+> + * @label: label to insert
+>   *
+>   * Requires: caller to hold a valid ref on @label
+>   *
+> @@ -1204,7 +1206,6 @@ struct aa_label *aa_label_find_merge(struct aa_labe=
+l *a, struct aa_label *b)
+> =20
+>  /**
+>   * aa_label_merge - attempt to insert new merged label of @a and @b
+> - * @ls: set of labels to insert label into (NOT NULL)
+>   * @a: label to merge with @b  (NOT NULL)
+>   * @b: label to merge with @a  (NOT NULL)
+>   * @gfp: memory allocation type
+> @@ -1282,8 +1283,9 @@ static inline aa_state_t match_component(struct aa_=
+profile *profile,
+>  /**
+>   * label_compound_match - find perms for full compound label
+>   * @profile: profile to find perms for
+> + * @rules: ruleset to search
+>   * @label: label to check access permissions for
+> - * @start: state to start match in
+> + * @state: state to start match in
+>   * @subns: whether to do permission checks on components in a subns
+>   * @request: permissions to request
+>   * @perms: perms struct to set
+> @@ -2037,7 +2039,7 @@ static struct aa_label *labelset_next_stale(struct =
+aa_labelset *ls)
+> =20
+>  /**
+>   * __label_update - insert updated version of @label into labelset
+> - * @label - the label to update/replace
+> + * @label: the label to update/replace
+>   *
+>   * Returns: new label that is up to date
+>   *     else NULL on failure
 
-You had some objections to explicit proxying via RPC calls; I suggested
-a way of avoiding that by keeping the kernel in the loop, which you have
-not responded to. If you're just going to go ahead with your solution
-over any objections you could just have stated so from the beginning and
-saved us all a lot of time :/
-
-Can we at least put this thing behind a kconfig option, so we can turn
-it off in distro kernels?
-
-> Per-call decisions can be achieved nicely by employing BPF LSM in a
-> restrictive manner on top of BPF token (or no token, if you are ok
-> without user namespaces).
-
-Building a deficient security delegation mechanism and saying "you can
-patch things up using an LSM" is a terrible design, though. Also, this
-still means you have to implement all the policy checks in the kernel
-(just in BPF) which is awkward at best.
-
--Toke
-
+Thanks,
+Georgia
