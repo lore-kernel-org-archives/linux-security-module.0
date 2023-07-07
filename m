@@ -2,70 +2,82 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A28EB64D9
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jul 2023 08:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3650DEB64D9
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jul 2023 08:36:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232129AbjGGIHp (ORCPT
+        id S229802AbjGGIgp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Jul 2023 04:07:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47704 "EHLO
+        Fri, 7 Jul 2023 04:36:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231962AbjGGIHo (ORCPT
+        with ESMTP id S232533AbjGGIgi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Jul 2023 04:07:44 -0400
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D447D19BD;
-        Fri,  7 Jul 2023 01:07:42 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046060;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Vmnlo8x_1688717258;
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0Vmnlo8x_1688717258)
-          by smtp.aliyun-inc.com;
-          Fri, 07 Jul 2023 16:07:39 +0800
-From:   Yang Li <yang.lee@linux.alibaba.com>
-To:     john.johansen@canonical.com
-Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>
-Subject: [PATCH -next] apparmor: Fix some kernel-doc comments
-Date:   Fri,  7 Jul 2023 16:07:37 +0800
-Message-Id: <20230707080737.49899-1-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+        Fri, 7 Jul 2023 04:36:38 -0400
+X-Greylist: delayed 438 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 07 Jul 2023 01:36:36 PDT
+Received: from mfwd10.mailplug.co.kr (mfwd10.mailplug.co.kr [14.63.168.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 980B390
+        for <linux-security-module@vger.kernel.org>; Fri,  7 Jul 2023 01:36:36 -0700 (PDT)
+Received: (qmail 13419 invoked from network); 7 Jul 2023 17:29:12 +0900
+Received: from m41.mailplug.com (121.156.118.41)
+        by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
+        7 Jul 2023 17:28:39 +0900
+Received: (qmail 1938872 invoked from network); 7 Jul 2023 17:28:39 +0900
+Received: from unknown (HELO sslauth12) (lsahn@wewakecorp.com@211.253.39.85)
+        by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
+        7 Jul 2023 17:28:39 +0900
+Message-ID: <4ec9e7ae-e95e-a737-5131-0b57922e4fce@wewakecorp.com>
+Date:   Fri, 7 Jul 2023 17:28:36 +0900
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [LSM Stacking] SELinux policy inside container affects a process
+ on Host
+To:     Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-security-module@vger.kernel.org
+References: <32e59b69-79a2-f440-bf94-fdb8f8f5fa64@wewakecorp.com>
+ <CAHC9VhRdCSJwB9hpyrCe+D00ddeRLisz=9GEWJz50ybr80tnsg@mail.gmail.com>
+From:   Leesoo Ahn <lsahn@wewakecorp.com>
+In-Reply-To: <CAHC9VhRdCSJwB9hpyrCe+D00ddeRLisz=9GEWJz50ybr80tnsg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use colons to separate parameter names from their specific meanings.
-silencethe warnings:
+2023-07-06 오후 10:43에 Paul Moore 이(가) 쓴 글:
+> On Thu, Jul 6, 2023 at 1:20 AM Leesoo Ahn <lsahn@wewakecorp.com> wrote:
+>  >
+>  > Hello! Here is another weird behavior of lsm stacking..
+>  >
+>  > test env
+>  > - Ubuntu 23.04 Ubuntu Kernel v6.2 w/ Stacking patch v38
+>  > - boot param: lsm=apparmor,selinux
+>  > - AppArmor (Host) + SELinux (LXD Container Fedora 36)
+>  >
+>  > In the test environment mentioned above and applying selinux policy
+>  > enforcing by running "setenforce 1" within the container, executing the
+>  > following command on the host will result in "Permission denied" output.
+> 
+> SELinux operates independently of containers, or kernel namespacing in
+> general. When you load a SELinux policy it applies to all processes
+> on the system, regardless of where they are in relation to the process
+> which loaded the policy into the kernel.
+> 
+> This behavior is independent of the LSM stacking work, you should be
+> able to see the same behavior even in cases where SELinux is the only
+> loaded LSM on the system.
 
-security/apparmor/resource.c:111: warning: Function parameter or member 'label' not described in 'aa_task_setrlimit'
-security/apparmor/resource.c:111: warning: Function parameter or member 'task' not described in 'aa_task_setrlimit'
-security/apparmor/resource.c:111: warning: Function parameter or member 'resource' not described in 'aa_task_setrlimit'
-security/apparmor/resource.c:111: warning: Function parameter or member 'new_rlim' not described in 'aa_task_setrlimit'
+Thank you for the reply!
 
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
----
- security/apparmor/resource.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+So as far as I understand, the environment of LSM Stacking,
+AppArmor (Host) + SELinux (Container) couldn't provide features "using 
+SELinux policy inside the container shouldn't affect to the host side" 
+for now.
 
-diff --git a/security/apparmor/resource.c b/security/apparmor/resource.c
-index e85948164896..2bebc5d9e741 100644
---- a/security/apparmor/resource.c
-+++ b/security/apparmor/resource.c
-@@ -97,10 +97,10 @@ static int profile_setrlimit(struct aa_profile *profile, unsigned int resource,
- 
- /**
-  * aa_task_setrlimit - test permission to set an rlimit
-- * @label - label confining the task  (NOT NULL)
-- * @task - task the resource is being set on
-- * @resource - the resource being set
-- * @new_rlim - the new resource limit  (NOT NULL)
-+ * @label: label confining the task  (NOT NULL)
-+ * @task: task the resource is being set on
-+ * @resource: the resource being set
-+ * @new_rlim: the new resource limit  (NOT NULL)
-  *
-  * Control raising the processes hard limit.
-  *
--- 
-2.20.1.7.g153144c
+If so, I wonder if you and Casey plan to design future features like 
+that, because my co-workers and I are considering taking LSM stacking of 
+AppArmor + SELinux in products that both policies must be working 
+separately.
 
+best regards,
+Leesoo
