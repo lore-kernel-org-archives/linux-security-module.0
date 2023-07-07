@@ -2,121 +2,279 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB81EEB64D9
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jul 2023 22:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 061ADEB64D9
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jul 2023 23:59:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232815AbjGGWDF (ORCPT
+        id S229471AbjGGX66 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Jul 2023 18:03:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48702 "EHLO
+        Fri, 7 Jul 2023 19:58:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230503AbjGGWCx (ORCPT
+        with ESMTP id S229571AbjGGX66 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Jul 2023 18:02:53 -0400
-Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 505F2FF
-        for <linux-security-module@vger.kernel.org>; Fri,  7 Jul 2023 15:02:50 -0700 (PDT)
-Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-579ef51428eso30939597b3.2
-        for <linux-security-module@vger.kernel.org>; Fri, 07 Jul 2023 15:02:50 -0700 (PDT)
+        Fri, 7 Jul 2023 19:58:58 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5A31128;
+        Fri,  7 Jul 2023 16:58:54 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3fbc244d384so27225775e9.0;
+        Fri, 07 Jul 2023 16:58:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1688767369; x=1691359369;
+        d=gmail.com; s=20221208; t=1688774333; x=1691366333;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fozmS9ohykuMG0mt3q/2GCQDPQotf5ax46cgz0nSs8A=;
-        b=No04q+7lqQGEKheZMR2X3AggIo92qoc2sBapBqWn2dDcZM2kmHRgS3+1Gji89yaHuS
-         AkWeDyfNh8Fr20HRuXvxeYyCDbd5FS9JuwaKcrPqCo2DiE0nFx+7rXqpudXnW+PIC4Dg
-         E3s4FP+JSK04XWYBSovFqrTeTx2jcMwFMQMlzECh8OGFX8xfW7asJdPNVlJjQT13bHv9
-         GbQcWIx/Ue/53OCYJgFVuAGpJ2U7BvCNzqKoist2iFLE1H9qr7FaKgzXBJwFfl49tLtg
-         rfRe43Ft6ZUuXSvhHJ3O/rALIVqT+Lq0lGFvmXShnZR0HrOZt87g6YUPWWPr0sV8pysU
-         PImQ==
+        bh=lL1VuC57IJy1hxAXmMxzTHGKTa5t0RTLgsiQ2uX+fYM=;
+        b=D3vZff5oCKQWJ50L1qgKOY68cXS5Ad32xpk5pMZ4WU9n4JqCacx1m0TUmoy6Cw5g2a
+         JJtSImQT9JpzbjZscLZgdwgGWAZX4zNgeA7hRtMttIojY8We3KrNI2Ev4MniBOp0Ghsu
+         iaMSMlLZaatFXAEfosdIyCBxECz/Q2jWPSw731F8R4lnhrAUJmGEsFvWwYxt7cyra7Cc
+         TrvwgddPdF3lzB2IhW44N/xIhre8yqD0lVOocSVtTfNXVMcyZk9Y6cWg4r9r3HVAyYdb
+         n3r7rAwZe7Or3oRKL8HwMQuqQW3SdsJ6WFTlVVROekXTHZb4VwdV5uTkL1GRUyhXzn7V
+         jqOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688767369; x=1691359369;
+        d=1e100.net; s=20221208; t=1688774333; x=1691366333;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fozmS9ohykuMG0mt3q/2GCQDPQotf5ax46cgz0nSs8A=;
-        b=ADImnUp0gZT0R8oouL2C8DaoAdXQsKQmcf4W12hHyhkJ+fD6AwfpCZIjRxXXsHt6bZ
-         V+1t+F7tDYOmAh4+PiI+q0sa59dp0RxK3qOow5iKHQ43DalJ8DAQ1csJImV2TUs0ttBN
-         Rwpi8f+a9Qh98og6HnY2MA30pNjNspFYO+rfY98axYjUfIiinm/BC2BwYXYrdzSKlGMc
-         IEk76utwzhHu3LRry19oehbuBZjqPqS5tnX3AfhhYA3zdWe7OAlc5eXSIdhEOPlvNx9W
-         NwQknPTdr4Wgz2Euklc9vgHTmzmXTuT7S5TilgEgzW250/Wx4VR9VXtNPuy08heXeO1Z
-         +QXw==
-X-Gm-Message-State: ABy/qLY/yOBngSsTr+p+N0AsyVZmfJi08XVpkse/q3BrFBaVzbnmrUxU
-        LYTT2x3b6UB2B/Kbh/g3lDw0tUpqr5HV63Q17xyVQpElCpclojg=
-X-Google-Smtp-Source: APBJJlG3TvD8Pqt5wx4z2jkkp9copBuy+99im1kuC2agsSreMwXGOeqkJnR/wvB+pB04QB3xP+6aic94M15N7iIJlfg=
-X-Received: by 2002:a81:5b07:0:b0:561:206a:ee52 with SMTP id
- p7-20020a815b07000000b00561206aee52mr8570083ywb.24.1688767369454; Fri, 07 Jul
- 2023 15:02:49 -0700 (PDT)
+        bh=lL1VuC57IJy1hxAXmMxzTHGKTa5t0RTLgsiQ2uX+fYM=;
+        b=BMdsH+tKv1t86bpkeIl/axiS/QvZDeHVB1RwnqmZZr0KQE3RAD0v9GaLNYXKUB2Ezh
+         szFd86YEim0gxdz7zUD/xYVg1et8o6DGkDL8lRwYWax758B2dKPuykeyFEYZ+YCC0jje
+         vxjaoPTOar6Q33AhNMXvXBfrJK4ZOOCwwgS+3q4edBPu7X3wWieaEMAN3UJUpxSeilH0
+         vCCtxwMhRwN1x8sz8tKbKxxQ+5bzHI0GwpvpE1+6fTx6aMflHs731GnH+etUpVTccb6B
+         wNKS9mXJx8XFxB60VtXpTfMXpnl7VVx3PFX9O4GQ69fGG8AbJNQX5yICaiVYClHFG5Ws
+         Ufrw==
+X-Gm-Message-State: ABy/qLZhkVYwrJT5x5+C+rrwz1qB59L9mRlffAXMzzL+74z76cYPDDGz
+        w6OOgrRvkL/zEGb5S3V4zM6lXOq3jF/EuBcrYv4=
+X-Google-Smtp-Source: APBJJlFNcITenBcKPXBL/t2XzQpgvHa9Q0OZVm0Wbe2chWSkPTHIc5uCflVi0Ln8yvzAOZ0knHzblwijDSZy5ZSp19Q=
+X-Received: by 2002:a1c:4c08:0:b0:3fa:a6ce:54ad with SMTP id
+ z8-20020a1c4c08000000b003faa6ce54admr5087077wmf.6.1688774333040; Fri, 07 Jul
+ 2023 16:58:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
- <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com>
-In-Reply-To: <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 7 Jul 2023 18:02:38 -0400
-Message-ID: <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
-Subject: Re: ANN: new LSM guidelines
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module@vger.kernel.org
+References: <20230629051832.897119-1-andrii@kernel.org> <20230629051832.897119-2-andrii@kernel.org>
+ <20230704-hochverdient-lehne-eeb9eeef785e@brauner> <CAHC9VhTDocBCpNjdz1CoWM2DA76GYZmg31338DHePFGq_-ie-g@mail.gmail.com>
+ <20230705-zyklen-exorbitant-4d54d2f220ad@brauner> <CAEf4Bza5mUou8nw1zjqFaCPPvfUNq-jpNp+y4DhMhhcXc5HwGg@mail.gmail.com>
+ <87a5w9s2at.fsf@toke.dk> <CAEf4Bzaox7Q+ZVfuVnuia-=zPeBMYBG3-HT=bajT0OTMp6SQzg@mail.gmail.com>
+ <87lefrhnyk.fsf@toke.dk> <CAEf4BzZAeSKYOgHq5UTgPp+=z7bm6Fr5=OFC9Efr0aj4uVbaAQ@mail.gmail.com>
+ <87pm53fklx.fsf@toke.dk>
+In-Reply-To: <87pm53fklx.fsf@toke.dk>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Fri, 7 Jul 2023 16:58:40 -0700
+Message-ID: <CAEf4BzYd-vKGQ4GoCVGSPjroV4D1yHODTaRO-RwLZtUdYnkoZg@mail.gmail.com>
+Subject: Re: [PATCH RESEND v3 bpf-next 01/14] bpf: introduce BPF token object
+To:     =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        lennart@poettering.net, cyphar@cyphar.com, luto@kernel.org,
+        kernel-team@meta.com, sargun@sargun.me
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jul 6, 2023 at 8:32=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
-> On 7/6/2023 1:42 PM, Paul Moore wrote:
-> > Hello all,
-> >
-> > With some renewed interest in submitting new LSMs including in the
-> > upstream Linux Kernel I thought it might be a good idea to document
-> > some of our longstanding guidelines around submitting new LSMs.  I'm
-> > posting this mostly as a FYI for those who are working on new LSM
-> > submissions, but also to solicit feedback from everyone on the list
-> > regarding what we should ask of new LSMs.  If you think I'm missing
-> > something important, or believe I've added an unfair requirement,
-> > please let me know.
-> >
-> > I've added the guidelines to the README.md at the top of the LSM tree,
-> > but to make life easier for those reviewing the guidelines I'm
-> > copy-n-pasting them below:
-> >
-> > * New LSMs must include documentation providing a clear explanation of
-> > the LSM's requirements, goals, and expected uses. The documentation
-> > does not need to rise to the level of a formal security model, but it
-> > must be considered "reasonable" by the LSM community as a whole.
-> >
-> > * Any user visible interfaces provided by the LSM must be well
-> > documented. It is important to remember the user visible APIs are
-> > considered to be "forever APIs" by the Linux Kernel community; do not
-> > add an API that cannot be supported for the next 20+ years.
-> >
-> > * Any userspace tools or patches created in support of the LSM must be
-> > publicly available, with a public git repository preferable over a
-> > tarball snapshot.
-> >
-> > * The LSM implementation must follow general Linux Kernel coding
-> > practices, faithfully implement the security model and APIs described
-> > in the documentation, and be free of any known defects at the time of
-> > submission.
+On Fri, Jul 7, 2023 at 3:00=E2=80=AFPM Toke H=C3=B8iland-J=C3=B8rgensen <to=
+ke@redhat.com> wrote:
 >
-> Some commitment to maintaining the LSM for a reasonable time must be
-> provided. Although this should probably be implicit in the use cases
-> and goals, changes in product direction or employment status can leave
-> an LSM orphaned before its time.
+> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+>
+> > On Fri, Jul 7, 2023 at 6:04=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgensen=
+ <toke@redhat.com> wrote:
+> >>
+> >> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+> >>
+> >> > On Thu, Jul 6, 2023 at 4:32=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgen=
+sen <toke@redhat.com> wrote:
+> >> >>
+> >> >> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+> >> >>
+> >> >> > Having it as a separate single-purpose FS seems cleaner, because =
+we
+> >> >> > have use cases where we'd have one BPF FS instance created for a
+> >> >> > container by our container manager, and then exposing a few separ=
+ate
+> >> >> > tokens with different sets of allowed functionality. E.g., one fo=
+r
+> >> >> > main intended workload, another for some BPF-based observability
+> >> >> > tools, maybe yet another for more heavy-weight tools like bpftrac=
+e for
+> >> >> > extra debugging. In the debugging case our container infrastructu=
+re
+> >> >> > will be "evacuating" any other workloads on the same host to avoi=
+d
+> >> >> > unnecessary consequences. The point is to not disturb
+> >> >> > workload-under-human-debugging as much as possible, so we'd like =
+to
+> >> >> > keep userns intact, which is why mounting extra (more permissive)=
+ BPF
+> >> >> > token inside already running containers is an important considera=
+tion.
+> >> >>
+> >> >> This example (as well as Yafang's in the sibling subthread) makes i=
+t
+> >> >> even more apparent to me that it would be better with a model where=
+ the
+> >> >> userspace policy daemon can just make decisions on each call direct=
+ly,
+> >> >> instead of mucking about with different tokens with different embed=
+ded
+> >> >> permissions. Why not go that route (see my other reply for details =
+on
+> >> >> what I mean)?
+> >> >
+> >> > I don't know how you arrived at this conclusion,
+> >>
+> >> Because it makes it apparent that you're basically building a policy
+> >> engine in the kernel with this...
+> >
+> > I disagree that this is a policy engine in the kernel. It's a building
+> > block for delegation and enforcement. The policy itself is implemented
+> > in user-space by a privileged process that decides when to issue BPF
+> > tokens and of which configuration. And, optionally and if necessary,
+> > further restricting using BPF LSM in a more fine-grained and dynamic
+> > way.
+>
+> Right, and I'm saying that it's too coarse-grained to be a proper
 
-That's a good point, likely worth mentioning.  We're currently being
-bit by that with SafeSetID, so the implicit understanding may need to
-be made a bit more explicit.
+CAP_BPF, CAP_PERFMON, CAP_SYS_ADMIN, CAP_NET_ADMIN are also very
+coarse grained. And somehow we get by and make do with them outside of
+the user namespace use case.
 
-> New LSM hooks introduced need to be generically usable. Use of LSM
-> specific data should be avoided. The hook should include data at a
-> granularity that can accommodate the existing LSMs as well as the
-> new one. The data granularity must be appropriate for the sub-system
-> from which it is called.
+> building block in its own right. As evidenced by the need for adding an
+> LSM on top to do anything fine-grained; a task which is decidedly
 
-I hadn't thought of adding a section on adding new LSM hooks, but that
-seems like a good idea too.  Thanks.
+There is no *need* to add LSM. For tons of practical use cases you
+won't need it. Yes, people will make a decision whether they even have
+to bother with more fine grained controls. And if yes, LSM is there to
+provide it.
 
---=20
-paul-moore.com
+> non-trivial to get right, BTW. Which means that the path of least
+> resistance is going to be to just grant a token and not bother with the
+> LSM, thus ending up with this being a giant foot gun from a security
+> PoV.
+
+If there is no need for LSM, yes, and I think it's totally acceptable.
+It will be up to users to decide.
+
+>
+> >> > but we've debated BPF proxying and separate service at length, there
+> >> > is no point in going on another round here.
+> >>
+> >> You had some objections to explicit proxying via RPC calls; I suggeste=
+d
+> >> a way of avoiding that by keeping the kernel in the loop, which you ha=
+ve
+> >
+> > I thought we settled the seccomp notify proposal?
+>
+> Your objection to that was that it was too much of a hack to read all
+> the target process memory (etc) from the policy daemon, which I
+> acknowledged and suggested a way of keeping the kernel in the loop so it
+> can take responsibility for the gnarly bits while still allowing
+> userspace to actually make the decision:
+>
+
+Your proposal for some new mechanism for blocking bpf() syscall to let
+another user space process make decision and somehow provide all the
+necessary data to make this decision without that process needing to
+read original process' memory (so presumably kernel will make a copy
+of BPF program instructions, BTF contents, all the strings, etc, etc?)
+sounded more like a joke and just a contrarian way to provide *any*
+alternative, just to disagree with the much simpler and more
+straightforward proposal.
+
+I encourage you to spend some time prototyping this new mechanism,
+sending RFC and gathering community feedback before using this
+handwavy idea as an excuse to block BPF token-like mechanism. I'll be
+curious to read the discussion on how it's different from
+authoritative LSM, seccomp notify, etc, etc.
+
+> https://lore.kernel.org/r/87v8ezb6x5.fsf@toke.dk
+>
+> (Last two paragraphs). Maybe that message just got lost somewhere on its
+> way to your inbox?
+>
+> >> not responded to. If you're just going to go ahead with your solution
+> >> over any objections you could just have stated so from the beginning a=
+nd
+> >> saved us all a lot of time :/
+> >
+> > It would also be good to understand that yours is but one of the
+> > opinions. If you read the thread carefully you'll see that other
+> > people have differing opinions. And yours doesn't necessarily have to
+> > be the deciding one.
+> >
+> > I appreciate the feedback, but I don't appreciate the expectation that
+> > your feedback is binding in any way.
+>
+> I'm not expecting veto rights, I'm objecting to being ignored. The way
+
+You are not being ignored. We are just disagreeing. There is a
+difference. BPF proxying was discussed at length and people who manage
+large sets of BPF applications voiced their concerns. Security
+concerns you have for BPF token are just as applicable to CAP_BPF and
+other caps. BPF token actually allows to drop those very
+coarse-grained capabilities in a bunch of circumstances and overall
+improve the security. Also note, there were security folks in the
+discussion which seem to be fine with the BPF token approach, overall.
+
+You don't like my (and others') answers. That's fine, but please don't
+pretend like you are being ignored.
+
+> this development process is *supposed* to work (as far as I'm concerned)
+> is that someone proposes a patch series, the community provides
+> feedback, and discussion proceeds until there's at least rough consensus
+> that the solution we've arrived at is the right way forward.
+
+Rough consensus, not 100% consensus, though?.. There will always be
+someone who disagrees.
+
+>
+> If you're going to cut that process short and just pick and choose which
+
+Yep, clearly, going into the 3rd month of discussions (starting from
+LSF/MM, and I don't even include the authoritative LSM discussions
+before that) is cutting this process very short, of course.
+
+> comments are worth addressing and which are not, I can't stop you,
+> obviously; but at least do me the favour of being up front about it so I
+> can stop wasting my time trying to be constructive.
+
+I wouldn't say that a proposal like "some seccomp-notify-like
+mechanism to let another process decide if bpf() syscall should
+proceed" with not much effort put into thinking about how it should be
+done specifically and whether it's actually a better approach was very
+constructive. And it felt self-evident that it's not a good way,
+especially after Christian himself said that the seccomp-based
+approach is also not a good generic solution. Your proposal was just a
+weird bpf()-specific (and not very well specified) twist on the
+seccomp notify idea. But as I said above, give it a try, perhaps I'm
+mistaken and the BPF community would love the idea and implementation.
+
+>
+> Anyhow, I guess this point is moot for this discussion since I'm about
+> to leave for vacation for four weeks and won't be able to follow up on
+> this. Apologies for the bad timing :/ I'll ping some RH folks and try to
+> get them to keep an eye on this while I'm away...
+
+Enjoy your vacation!
+
+>
+> >> Can we at least put this thing behind a kconfig option, so we can turn
+> >> it off in distro kernels?
+> >
+> > Why can't distro disable this in some more dynamic way, though? With
+> > existing LSM mechanism, sysctl, whatever? I think it would be useful
+> > to let users have control over this and decide for themselves without
+> > having to rebuild a custom kernel.
+>
+> A sysctl similar to the existing one for unprivileged BPF would be fine
+> as well. If an LSM ends up being the only way to control it, though,
+> that will carry so much operational overhead for us to get to a working
+> state that it'll most likely be simpler to just patch it out of the
+> kernel.
+
+Sounds good, I will add sysctl for the next version.
+
+>
+> -Toke
+>
