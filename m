@@ -2,285 +2,187 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3725FC04FDF
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jul 2023 10:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6114DC001DC
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jul 2023 12:10:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232779AbjGGKvH (ORCPT
+        id S232066AbjGGMKC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Jul 2023 06:51:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51106 "EHLO
+        Fri, 7 Jul 2023 08:10:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229775AbjGGKvC (ORCPT
+        with ESMTP id S231802AbjGGMKB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Jul 2023 06:51:02 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F221172B;
-        Fri,  7 Jul 2023 03:51:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AF33561728;
-        Fri,  7 Jul 2023 10:51:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1904CC433C7;
-        Fri,  7 Jul 2023 10:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688727060;
-        bh=YY2+JZ9K159BEA5iSbeX62sRGYZcpbUaLjQvLugmLbE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=jXdQbiZ5Du/aIdze7VeTdm89AeKeYW1m4/7P1K420P54fp2uTq7aOaGBMwqlLnw11
-         5T+jXE1w9xr2TFIydSymIs59E5/D60tiQwOrG5t4hwTmZ4+DNTLa0LgW/JlS7C6Rg0
-         Mzl7zZGaHcBNbE8fs+RYzBh/pLfQTiwpAzbqUwnaVBq4Wks4CGEmJGniuijWbkznN9
-         yKSAP4Wd0VGwzQyH6kGj1b/zaEVMosXLl47jzHBi50p2AWNvdkuhe4kCPVw/2GfwLp
-         PcUD4QVeNETkqKyUuCjgzrA8gjstIliNy9GhxSwhdsoWExJoMegiOtBnIsuS31XbZX
-         flM91ZzrsjFeA==
-Message-ID: <ff1f471a9d33ae01ad570644273e4e579204a3b6.camel@kernel.org>
-Subject: Re: [apparmor] [PATCH v2 08/92] fs: new helper:
- simple_rename_timestamp
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Seth Arnold <seth.arnold@canonical.com>
-Cc:     Damien Le Moal <dlemoal@kernel.org>, jk@ozlabs.org, arnd@arndb.de,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-        maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
-        cmllamas@google.com, surenb@google.com,
-        dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca,
-        leon@kernel.org, bwarrum@linux.ibm.com, rituagar@linux.ibm.com,
-        ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
-        linux_oss@crudebyte.com, dsterba@suse.com, dhowells@redhat.com,
-        marc.dionne@auristor.com, viro@zeniv.linux.org.uk,
-        raven@themaw.net, luisbg@kernel.org, salah.triki@gmail.com,
-        aivazian.tigran@gmail.com, ebiederm@xmission.com,
-        keescook@chromium.org, clm@fb.com, josef@toxicpanda.com,
-        xiubli@redhat.com, idryomov@gmail.com, jaharkes@cs.cmu.edu,
-        coda@cs.cmu.edu, jlbec@evilplan.org, hch@lst.de, nico@fluxnic.net,
-        rafael@kernel.org, code@tyhicks.com, ardb@kernel.org,
-        xiang@kernel.org, chao@kernel.org, huyue2@coolpad.com,
-        jefflexu@linux.alibaba.com, linkinjeon@kernel.org,
-        sj1557.seo@samsung.com, jack@suse.com, tytso@mit.edu,
-        adilger.kernel@dilger.ca, jaegeuk@kernel.org,
-        hirofumi@mail.parknet.co.jp, miklos@szeredi.hu,
-        rpeterso@redhat.com, agruenba@redhat.com, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        mikulas@artax.karlin.mff.cuni.cz, mike.kravetz@oracle.com,
-        muchun.song@linux.dev, dwmw2@infradead.org, shaggy@kernel.org,
-        tj@kernel.org, trond.myklebust@hammerspace.com, anna@kernel.org,
-        chuck.lever@oracle.com, neilb@suse.de, kolga@netapp.com,
-        Dai.Ngo@oracle.com, tom@talpey.com, konishi.ryusuke@gmail.com,
-        anton@tuxera.com, almaz.alexandrovich@paragon-software.com,
-        mark@fasheh.com, joseph.qi@linux.alibaba.com, me@bobcopeland.com,
-        hubcap@omnibond.com, martin@omnibond.com, amir73il@gmail.com,
-        mcgrof@kernel.org, yzaikin@google.com, tony.luck@intel.com,
-        gpiccoli@igalia.com, al@alarsen.net, sfrench@samba.org,
-        pc@manguebit.com, lsahlber@redhat.com, sprasad@microsoft.com,
-        senozhatsky@chromium.org, phillip@squashfs.org.uk,
-        rostedt@goodmis.org, mhiramat@kernel.org, dushistov@mail.ru,
-        hdegoede@redhat.com, djwong@kernel.org, naohiro.aota@wdc.com,
-        jth@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        andrii@kernel.org, martin.lau@linux.dev, song@kernel.org,
-        yhs@fb.com, john.fastabend@gmail.com, kpsingh@kernel.org,
-        sdf@google.com, haoluo@google.com, jolsa@kernel.org,
-        hughd@google.com, akpm@linux-foundation.org, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        john.johansen@canonical.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        jgross@suse.com, stern@rowland.harvard.edu, lrh2000@pku.edu.cn,
-        sebastian.reichel@collabora.com, wsa+renesas@sang-engineering.com,
-        quic_ugoswami@quicinc.com, quic_linyyuan@quicinc.com,
-        john@keeping.me.uk, error27@gmail.com, quic_uaggarwa@quicinc.com,
-        hayama@lineo.co.jp, jomajm@gmail.com, axboe@kernel.dk,
-        dhavale@google.com, dchinner@redhat.com, hannes@cmpxchg.org,
-        zhangpeng362@huawei.com, slava@dubeyko.com, gargaditya08@live.com,
-        penguin-kernel@I-love.SAKURA.ne.jp, yifeliu@cs.stonybrook.edu,
-        madkar@cs.stonybrook.edu, ezk@cs.stonybrook.edu,
-        yuzhe@nfschina.com, willy@infradead.org, okanatov@gmail.com,
-        jeffxu@chromium.org, linux@treblig.org, mirimmad17@gmail.com,
-        yijiangshan@kylinos.cn, yang.yang29@zte.com.cn,
-        xu.xin16@zte.com.cn, chengzhihao1@huawei.com, shr@devkernel.io,
-        Liam.Howlett@Oracle.com, adobriyan@gmail.com,
-        chi.minghao@zte.com.cn, roberto.sassu@huawei.com,
-        linuszeng@tencent.com, bvanassche@acm.org, zohar@linux.ibm.com,
-        yi.zhang@huawei.com, trix@redhat.com, fmdefrancesco@gmail.com,
-        ebiggers@google.com, princekumarmaurya06@gmail.com,
-        chenzhongjin@huawei.com, riel@surriel.com,
-        shaozhengchao@huawei.com, jingyuwang_vip@163.com,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-usb@vger.kernel.org, v9fs@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        autofs@vger.kernel.org, linux-mm@kvack.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-um@lists.infradead.org,
-        linux-mtd@lists.infradead.org,
-        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-        linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
-        linux-unionfs@vger.kernel.org, linux-hardening@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org,
-        linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Date:   Fri, 07 Jul 2023 06:50:40 -0400
-In-Reply-To: <20230706210236.GB3244704@millbarge>
-References: <20230705185812.579118-1-jlayton@kernel.org>
-         <20230705185812.579118-3-jlayton@kernel.org>
-         <3b403ef1-22e6-0220-6c9c-435e3444b4d3@kernel.org>
-         <7c783969641b67d6ffdfb10e509f382d083c5291.camel@kernel.org>
-         <20230706210236.GB3244704@millbarge>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Fri, 7 Jul 2023 08:10:01 -0400
+Received: from mail-pg1-f206.google.com (mail-pg1-f206.google.com [209.85.215.206])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5A002110
+        for <linux-security-module@vger.kernel.org>; Fri,  7 Jul 2023 05:09:59 -0700 (PDT)
+Received: by mail-pg1-f206.google.com with SMTP id 41be03b00d2f7-553d42a7069so2644208a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 07 Jul 2023 05:09:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688731799; x=1691323799;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PI5ApXs2ZsjZ5d4mdhTHU0eytxqvGV+WP25cKrMce9g=;
+        b=EUHK1j2SFHcMNK2r4yoEqn/tmKJRTXXbie9u8mW9msv9lFCE/QRBlJ1bAweZCFcgBH
+         tasLQD/LpQdzSN1fjkOzcJBN6Cjg3wuXAqCBrSLrs3w7dGnszhkNqp1wX+GG/liZesj1
+         hx3dXTdWQtFPn2PtcQhjDBZj+Nx38hyYAxUe+AEEQDiwjFGwWZI/NdUlziMMJDBbYjU5
+         sZxvTcVaET7iUvPqQEce04h4Afk1ejGBfUQp5pRcbZt5JWAV5L1bo+SHb3QXiT2Sdjce
+         GS+wpEH6l8uQE42N2te2iFhiWt7h5JA+lryunsFiMYaQvn/ic4HmVdJgWVTJbI8oTcMX
+         TzVg==
+X-Gm-Message-State: ABy/qLaC7pa5Szbr/ukO+KN11EJky1b4sfEymz098twWV6qLX+efhEDs
+        dA2gdqOOb4Hf2gTbp8zAhbAe98lgIAz0TjkiZk1YPm2yXUlY
+X-Google-Smtp-Source: APBJJlEkPiPGEAwT1NW5Be+lY9WbmPdCS+Em6ZYAz1iNcqNoXt84xdvqCKDYoj+oEntwbFaTKXS9KvFls1sND9+Lo0JyWiicbB0C
 MIME-Version: 1.0
+X-Received: by 2002:a17:90b:a4a:b0:263:c6b4:5267 with SMTP id
+ gw10-20020a17090b0a4a00b00263c6b45267mr4122522pjb.7.1688731798795; Fri, 07
+ Jul 2023 05:09:58 -0700 (PDT)
+Date:   Fri, 07 Jul 2023 05:09:58 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fcfb4a05ffe48213@google.com>
+Subject: [syzbot] [tomoyo?] [hfs?] general protection fault in
+ tomoyo_check_acl (3)
+From:   syzbot <syzbot+28aaddd5a3221d7fd709@syzkaller.appspotmail.com>
+To:     jmorris@namei.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, paul@paul-moore.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
+        tomoyo-dev-en@lists.osdn.me
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2023-07-06 at 21:02 +0000, Seth Arnold wrote:
-> On Wed, Jul 05, 2023 at 08:04:41PM -0400, Jeff Layton wrote:
-> >=20
-> > I don't believe it's an issue. I've seen nothing in the POSIX spec that
-> > mandates that timestamp updates to different inodes involved in an
-> > operation be set to the _same_ value. It just says they must be updated=
-.
-> >=20
-> > It's also hard to believe that any software would depend on this either=
-,
-> > given that it's very inconsistent across filesystems today. AFAICT, thi=
-s
-> > was mostly done in the past just as a matter of convenience.
->=20
-> I've seen this assumption in several programs:
->=20
+Hello,
 
-Thanks for looking into this!
+syzbot found the following issue on:
 
-To be clear, POSIX doesn't require that _different_ inodes ever be set
-to the same timestamp value. IOW, it certainly doesn't require that the
-source and target directories on a rename() end up with the exact same
-timestamp value.
+HEAD commit:    a901a3568fd2 Merge tag 'iomap-6.5-merge-1' of git://git.ke..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15e4c8a4a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7406f415f386e786
+dashboard link: https://syzkaller.appspot.com/bug?extid=28aaddd5a3221d7fd709
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17b5bb80a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10193ee7280000
 
-Granted, POSIX is rather vague on timestamps in general, but most of the
-examples below involve comparing different timestamps on the _same_
-inode.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/119fd918f733/disk-a901a356.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/79f9ac119639/vmlinux-a901a356.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8bd8662e2869/bzImage-a901a356.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/8e36b52190bc/mount_0.gz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+28aaddd5a3221d7fd709@syzkaller.appspotmail.com
 
-> mutt buffy.c
-> https://sources.debian.org/src/mutt/2.2.9-1/buffy.c/?hl=3D625#L625
->=20
->   if (mailbox->newly_created &&
->       (sb->st_ctime !=3D sb->st_mtime || sb->st_ctime !=3D sb->st_atime))
->     mailbox->newly_created =3D 0;
->=20
-
-This should be fine with this patchset. Note that this is comparing
-a/c/mtime on the same inode, and our usual pattern on inode
-instantiation is:
-
-    inode->i_atime =3D inode->i_mtime =3D inode_set_ctime_current(inode);
-
-...which should result in all of inode's timestamps being synchronized.
-
->=20
-> neomutt mbox/mbox.c
-> https://sources.debian.org/src/neomutt/20220429+dfsg1-4.1/mbox/mbox.c/?hl=
-=3D1820#L1820
->=20
->   if (m->newly_created && ((st.st_ctime !=3D st.st_mtime) || (st.st_ctime=
- !=3D st.st_atime)))
->     m->newly_created =3D false;
->=20
-
-Ditto here.
-
->=20
-> screen logfile.c
-> https://sources.debian.org/src/screen/4.9.0-4/logfile.c/?hl=3D130#L130
->=20
->   if ((!s->st_dev && !s->st_ino) ||             /* stat failed, that's ne=
-w! */
->       !s->st_nlink ||                           /* red alert: file unlink=
-ed */
->       (s->st_size < o.st_size) ||               /*           file truncat=
-ed */
->       (s->st_mtime !=3D o.st_mtime) ||            /*            file modi=
-fied */
->       ((s->st_ctime !=3D o.st_ctime) &&           /*     file changed (mo=
-ved) */
->        !(s->st_mtime =3D=3D s->st_ctime &&          /*  and it was not a =
-change */
->          o.st_ctime < s->st_ctime)))            /* due to delayed nfs wri=
-te */
->   {
->=20
-
-This one is really weird. You have two different struct stat's, "o" and
-"s". I assume though that these should be stat values from the same
-inode, because otherwise this comparison would make no sense:
-
-      ((s->st_ctime !=3D o.st_ctime) &&           /*     file changed (move=
-d) */
-
-In general, we can never contrive to ensure that the ctime of two
-different inodes are the same, since that is always set by the kernel to
-the current time, and you'd have to ensure that they were created within
-the same jiffy (at least with today's code).
-
-> nemo libnemo-private/nemo-vfs-file.c
-> https://sources.debian.org/src/nemo/5.6.5-1/libnemo-private/nemo-vfs-file=
-.c/?hl=3D344#L344
->=20
-> 		/* mtime is when the contents changed; ctime is when the
-> 		 * contents or the permissions (inc. owner/group) changed.
-> 		 * So we can only know when the permissions changed if mtime
-> 		 * and ctime are different.
-> 		 */
-> 		if (file->details->mtime =3D=3D file->details->ctime) {
-> 			return FALSE;
-> 		}
->=20
-
-Ditto here with the first examples. This involves comparing timestamps
-on the same inode, which should be fine.
-
->=20
-> While looking for more examples, I found a perl test that seems to sugges=
-t
-> that at least Solaris, AFS, AmigaOS, DragonFly BSD do as you suggest:
-> https://sources.debian.org/src/perl/5.36.0-7/t/op/stat.t/?hl=3D158#L140
->=20
-
-(I kinda miss Perl. I wrote a bunch of stuff in it in the 90's and early
-naughties)
-
-I think this test is supposed to be testing whether the mtime changes on
-link() ?
-
------------------8<----------------
-    my($nlink, $mtime, $ctime) =3D (stat($tmpfile))[$NLINK, $MTIME, $CTIME]=
-;
-
-[...]
+loop0: detected capacity change from 0 to 64
+hfs: unable to locate alternate MDB
+hfs: continuing without an alternate MDB
+general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
+CPU: 0 PID: 5189 Comm: syz-executor307 Not tainted 6.4.0-syzkaller-10173-ga901a3568fd2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+RIP: 0010:tomoyo_check_acl+0xb0/0x440 security/tomoyo/domain.c:173
+Code: 00 0f 85 64 03 00 00 49 8b 5d 00 49 39 dd 0f 84 fa 01 00 00 e8 71 fc b1 fd 48 8d 7b 18 48 89 f8 48 89 fa 48 c1 e8 03 83 e2 07 <0f> b6 04 28 38 d0 7f 08 84 c0 0f 85 f2 02 00 00 44 0f b6 73 18 31
+RSP: 0018:ffffc90003caf790 EFLAGS: 00010246
+RAX: 0000000000000003 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff83d2d25f RDI: 0000000000000018
+RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: ffffc90003caf880
+R13: ffff888016f31410 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000555556ffa300(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc16e620c80 CR3: 0000000075643000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ tomoyo_path_permission security/tomoyo/file.c:586 [inline]
+ tomoyo_path_permission+0x1ff/0x3a0 security/tomoyo/file.c:573
+ tomoyo_check_open_permission+0x366/0x3a0 security/tomoyo/file.c:777
+ tomoyo_file_open security/tomoyo/tomoyo.c:332 [inline]
+ tomoyo_file_open+0xaa/0xd0 security/tomoyo/tomoyo.c:327
+ security_file_open+0x49/0xb0 security/security.c:2797
+ do_dentry_open+0x57a/0x17b0 fs/open.c:901
+ do_open fs/namei.c:3636 [inline]
+ path_openat+0x1b65/0x2710 fs/namei.c:3793
+ do_filp_open+0x1ba/0x410 fs/namei.c:3820
+ do_sys_openat2+0x160/0x1c0 fs/open.c:1407
+ do_sys_open fs/open.c:1422 [inline]
+ __do_sys_openat fs/open.c:1438 [inline]
+ __se_sys_openat fs/open.c:1433 [inline]
+ __x64_sys_openat+0x143/0x1f0 fs/open.c:1433
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fc16e647a19
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 11 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcc752e608 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 000000000000e483 RCX: 00007fc16e647a19
+RDX: 0000000000141842 RSI: 0000000020000380 RDI: 00000000ffffff9c
+RBP: 0000000000000000 R08: 0000000000000260 R09: 00007ffcc752e630
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffcc752e62c
+R13: 00007ffcc752e660 R14: 00007ffcc752e640 R15: 00000000000000be
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:tomoyo_check_acl+0xb0/0x440 security/tomoyo/domain.c:173
+Code: 00 0f 85 64 03 00 00 49 8b 5d 00 49 39 dd 0f 84 fa 01 00 00 e8 71 fc b1 fd 48 8d 7b 18 48 89 f8 48 89 fa 48 c1 e8 03 83 e2 07 <0f> b6 04 28 38 d0 7f 08 84 c0 0f 85 f2 02 00 00 44 0f b6 73 18 31
+RSP: 0018:ffffc90003caf790 EFLAGS: 00010246
+RAX: 0000000000000003 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff83d2d25f RDI: 0000000000000018
+RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: ffffc90003caf880
+R13: ffff888016f31410 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000555556ffa300(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055d594f5c028 CR3: 0000000075643000 CR4: 0000000000350ef0
+----------------
+Code disassembly (best guess):
+   0:	00 0f                	add    %cl,(%rdi)
+   2:	85 64 03 00          	test   %esp,0x0(%rbx,%rax,1)
+   6:	00 49 8b             	add    %cl,-0x75(%rcx)
+   9:	5d                   	pop    %rbp
+   a:	00 49 39             	add    %cl,0x39(%rcx)
+   d:	dd 0f                	fisttpll (%rdi)
+   f:	84 fa                	test   %bh,%dl
+  11:	01 00                	add    %eax,(%rax)
+  13:	00 e8                	add    %ch,%al
+  15:	71 fc                	jno    0x13
+  17:	b1 fd                	mov    $0xfd,%cl
+  19:	48 8d 7b 18          	lea    0x18(%rbx),%rdi
+  1d:	48 89 f8             	mov    %rdi,%rax
+  20:	48 89 fa             	mov    %rdi,%rdx
+  23:	48 c1 e8 03          	shr    $0x3,%rax
+  27:	83 e2 07             	and    $0x7,%edx
+* 2a:	0f b6 04 28          	movzbl (%rax,%rbp,1),%eax <-- trapping instruction
+  2e:	38 d0                	cmp    %dl,%al
+  30:	7f 08                	jg     0x3a
+  32:	84 c0                	test   %al,%al
+  34:	0f 85 f2 02 00 00    	jne    0x32c
+  3a:	44 0f b6 73 18       	movzbl 0x18(%rbx),%r14d
+  3f:	31                   	.byte 0x31
 
 
-        skip "Solaris tmpfs has different mtime/ctime link semantics", 2
-                                     if $Is_Solaris and $cwd =3D~ m#^/tmp# =
-and
-                                        $mtime && $mtime =3D=3D $ctime;
------------------8<----------------
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-...again, I think this would be ok too since it's just comparing the
-mtime and ctime of the same inode. Granted this is a Solaris-specific
-test, but Linux would be fine here too.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-So in conclusion, I don't think this patchset will cause problems with
-any of the above code.
---=20
-Jeff Layton <jlayton@kernel.org>
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
