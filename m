@@ -2,122 +2,169 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F95EB64D9
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jul 2023 17:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D711DEB64D9
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jul 2023 17:58:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229530AbjGGRwI (ORCPT
+        id S232614AbjGGR6W (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Jul 2023 13:52:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55802 "EHLO
+        Fri, 7 Jul 2023 13:58:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232676AbjGGRwH (ORCPT
+        with ESMTP id S232593AbjGGR6V (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Jul 2023 13:52:07 -0400
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1491610EC
-        for <linux-security-module@vger.kernel.org>; Fri,  7 Jul 2023 10:52:05 -0700 (PDT)
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 367HpCOZ006356;
-        Fri, 7 Jul 2023 12:51:12 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 367HpBX7006355;
-        Fri, 7 Jul 2023 12:51:11 -0500
-Date:   Fri, 7 Jul 2023 12:51:11 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Leesoo Ahn <lsahn@wewakecorp.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [LSM Stacking] SELinux policy inside container affects a process on Host
-Message-ID: <20230707175111.GA6201@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <32e59b69-79a2-f440-bf94-fdb8f8f5fa64@wewakecorp.com> <CAHC9VhRdCSJwB9hpyrCe+D00ddeRLisz=9GEWJz50ybr80tnsg@mail.gmail.com> <4ec9e7ae-e95e-a737-5131-0b57922e4fce@wewakecorp.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ec9e7ae-e95e-a737-5131-0b57922e4fce@wewakecorp.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 07 Jul 2023 12:51:12 -0500 (CDT)
+        Fri, 7 Jul 2023 13:58:21 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13ACE2108;
+        Fri,  7 Jul 2023 10:58:19 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3fbc5d5742bso24036655e9.2;
+        Fri, 07 Jul 2023 10:58:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688752697; x=1691344697;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hk068Nxcv+Fpb+4P5bvL3hcI9mjOk06ChPeSbklSE5o=;
+        b=izs4M121YqcnTik7wekJ7P14S1RdvCsHRkwmNPsZY9wNO7VJpp5hAGLOB/V/9aaDxt
+         n+g0wgkf/Ncyul1W6ji0pPYApoMiI+0e7yyYcweYytI4B1/lTwcL+kzXoULhqzkGq/hg
+         0IOh4svdbN5GTJfF7thaihAM4RqHzo3tMMzLBvC4yUOXO5ju7bwoSGQgiLD7A+9ch6dP
+         RWrOvpwertuRce1TcSf0VKOrF6/388xKlY+wN9VHLLko2RSuWi13r/aEPwxg3Cy/hKBm
+         +oUNwtK5+B7XzhjHCf0KpE3rhpXsauih6WwMamqw5Cx+DabqL1QNWXUuEdIg95IMfeiN
+         I8UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688752697; x=1691344697;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hk068Nxcv+Fpb+4P5bvL3hcI9mjOk06ChPeSbklSE5o=;
+        b=YK3U/PO4Lvla6OfyjbKZAXglUhjI2wSNNjoqtFNdU6DxlZLeFHdHBMpvu4/drcwRV5
+         welXdGIrOnN6Y3NzgxeJyfOeAaMYpjmFxVYNPDZU1Aecul+kh5fCqRc46TLlsYULUVXi
+         Mz4y5DZSLAOF2YN6A90unk0EhvcO+6/Ud+2l94/Z66gYCdAojP/fnkn79WRPEQbfEDI9
+         buMV+w0z8+6vBEans+LepwjVh3ZeElgdJudGb6UMGQ0j/9Q++5uzqGqBxB01gbCg26He
+         PNYJQMLFMVNqUaDuOL3ldv40k0K7plRhPvAP+xfg0qeiG/riaIYsHjCqrlFjx4OjD6b7
+         XUQw==
+X-Gm-Message-State: ABy/qLYKl9Dwo43KyxHnRP0Es4LB2FBkcPILRfEmPh7avjTxGwXHbMIA
+        FfliUki5KAFjn/pJcr59+FEH3gG63ukDb+mA12fAZeCDwzg=
+X-Google-Smtp-Source: APBJJlEcxLHkFQFfwJ93YiRQ8OAl/zmxbgDQ6Z/oJtQODdfCxiUngFKHrvpaQ489C0IIBDajGCI0BIi8/z5dLi5bCjw=
+X-Received: by 2002:a7b:c5d4:0:b0:3fa:9e61:19ed with SMTP id
+ n20-20020a7bc5d4000000b003fa9e6119edmr4231571wmk.23.1688752697298; Fri, 07
+ Jul 2023 10:58:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230629051832.897119-1-andrii@kernel.org> <20230629051832.897119-2-andrii@kernel.org>
+ <20230704-hochverdient-lehne-eeb9eeef785e@brauner> <CAHC9VhTDocBCpNjdz1CoWM2DA76GYZmg31338DHePFGq_-ie-g@mail.gmail.com>
+ <20230705-zyklen-exorbitant-4d54d2f220ad@brauner> <CAEf4Bza5mUou8nw1zjqFaCPPvfUNq-jpNp+y4DhMhhcXc5HwGg@mail.gmail.com>
+ <87a5w9s2at.fsf@toke.dk> <CAEf4Bzaox7Q+ZVfuVnuia-=zPeBMYBG3-HT=bajT0OTMp6SQzg@mail.gmail.com>
+ <87lefrhnyk.fsf@toke.dk>
+In-Reply-To: <87lefrhnyk.fsf@toke.dk>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Fri, 7 Jul 2023 10:58:04 -0700
+Message-ID: <CAEf4BzZAeSKYOgHq5UTgPp+=z7bm6Fr5=OFC9Efr0aj4uVbaAQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND v3 bpf-next 01/14] bpf: introduce BPF token object
+To:     =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        lennart@poettering.net, cyphar@cyphar.com, luto@kernel.org,
+        kernel-team@meta.com, sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 07, 2023 at 05:28:36PM +0900, Leesoo Ahn wrote:
-
-Hi Leesoo, I hope the week has gone well for you.
-
-> 2023-07-06 ?????? 10:43??? Paul Moore ???(???) ??? ???:
-> >On Thu, Jul 6, 2023 at 1:20???AM Leesoo Ahn <lsahn@wewakecorp.com> wrote:
-> > >
-> > > Hello! Here is another weird behavior of lsm stacking..
-> > >
-> > > test env
-> > > - Ubuntu 23.04 Ubuntu Kernel v6.2 w/ Stacking patch v38
-> > > - boot param: lsm=apparmor,selinux
-> > > - AppArmor (Host) + SELinux (LXD Container Fedora 36)
-> > >
-> > > In the test environment mentioned above and applying selinux policy
-> > > enforcing by running "setenforce 1" within the container, executing the
-> > > following command on the host will result in "Permission denied" output.
-
-> >SELinux operates independently of containers, or kernel namespacing in
-> >general. When you load a SELinux policy it applies to all processes
-> >on the system, regardless of where they are in relation to the process
-> >which loaded the policy into the kernel.
+On Fri, Jul 7, 2023 at 6:04=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgensen <to=
+ke@redhat.com> wrote:
+>
+> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+>
+> > On Thu, Jul 6, 2023 at 4:32=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgensen=
+ <toke@redhat.com> wrote:
+> >>
+> >> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+> >>
+> >> > Having it as a separate single-purpose FS seems cleaner, because we
+> >> > have use cases where we'd have one BPF FS instance created for a
+> >> > container by our container manager, and then exposing a few separate
+> >> > tokens with different sets of allowed functionality. E.g., one for
+> >> > main intended workload, another for some BPF-based observability
+> >> > tools, maybe yet another for more heavy-weight tools like bpftrace f=
+or
+> >> > extra debugging. In the debugging case our container infrastructure
+> >> > will be "evacuating" any other workloads on the same host to avoid
+> >> > unnecessary consequences. The point is to not disturb
+> >> > workload-under-human-debugging as much as possible, so we'd like to
+> >> > keep userns intact, which is why mounting extra (more permissive) BP=
+F
+> >> > token inside already running containers is an important consideratio=
+n.
+> >>
+> >> This example (as well as Yafang's in the sibling subthread) makes it
+> >> even more apparent to me that it would be better with a model where th=
+e
+> >> userspace policy daemon can just make decisions on each call directly,
+> >> instead of mucking about with different tokens with different embedded
+> >> permissions. Why not go that route (see my other reply for details on
+> >> what I mean)?
 > >
-> >This behavior is independent of the LSM stacking work, you should be
-> >able to see the same behavior even in cases where SELinux is the only
-> >loaded LSM on the system.
-
-> Thank you for the reply!
+> > I don't know how you arrived at this conclusion,
 >
-> So as far as I understand, the environment of LSM Stacking, AppArmor
-> (Host) + SELinux (Container) couldn't provide features "using
-> SELinux policy inside the container shouldn't affect to the host
-> side" for now.
+> Because it makes it apparent that you're basically building a policy
+> engine in the kernel with this...
+
+I disagree that this is a policy engine in the kernel. It's a building
+block for delegation and enforcement. The policy itself is implemented
+in user-space by a privileged process that decides when to issue BPF
+tokens and of which configuration. And, optionally and if necessary,
+further restricting using BPF LSM in a more fine-grained and dynamic
+way.
+
 >
-> If so, I wonder if you and Casey plan to design future features like
-> that, because my co-workers and I are considering taking LSM
-> stacking of AppArmor + SELinux in products that both policies must
-> be working separately.
+> > but we've debated BPF proxying and separate service at length, there
+> > is no point in going on another round here.
+>
+> You had some objections to explicit proxying via RPC calls; I suggested
+> a way of avoiding that by keeping the kernel in the loop, which you have
 
-I see that Paul Moore has also replied and indicated that 'stacking'
-doesn't imply either/or separation of security policy in a string of
-LSM's.  As he also noted, it does not apply isolation and application
-of security policy at the container or kernel resource namespace
-level.
+I thought we settled the seccomp notify proposal?
 
-Just as an FYI, we will be releasing version 2 of our Trusted Security
-Event Modeling (TSEM) LSM over the weekend for review and inclusion in
-the upstream kernel.
+> not responded to. If you're just going to go ahead with your solution
+> over any objections you could just have stated so from the beginning and
+> saved us all a lot of time :/
 
-TSEM 'stacks' with the other LSM's, but was architected from the
-ground up to support the notion of security namespaces that operate
-exclusively from one another, with the express goal of allowing
-multiple and distinct security policies to be applied independently at
-what would be considered the 'container' level.  Subordinate security
-modeling namespaces also act independently from the security
-model/policy that the 'root' modeling namespace is operating under.
+It would also be good to understand that yours is but one of the
+opinions. If you read the thread carefully you'll see that other
+people have differing opinions. And yours doesn't necessarily have to
+be the deciding one.
 
-TSEM is based on a mathematical modeling architecture that is
-different from either the label or pathname based LSM's which allowed
-us to sidestep some of the issues that are challenging with respect to
-implementing full namespace support for those LSM's.
+I appreciate the feedback, but I don't appreciate the expectation that
+your feedback is binding in any way.
 
-There is a sizable stack of documentation with TSEM that goes further
-into all of this.  We also release a rather significant body of
-userspace tooling that goes with the TSEM LSM to support running
-'security containers', for lack of a better term.
+>
+> Can we at least put this thing behind a kconfig option, so we can turn
+> it off in distro kernels?
 
-It obviously takes a while to develop a security eco-system but TSEM
-will hopefully offer security architects additional flexibility moving
-forward.
+Why can't distro disable this in some more dynamic way, though? With
+existing LSM mechanism, sysctl, whatever? I think it would be useful
+to let users have control over this and decide for themselves without
+having to rebuild a custom kernel.
 
-> best regards,
-> Leesoo
+>
+> > Per-call decisions can be achieved nicely by employing BPF LSM in a
+> > restrictive manner on top of BPF token (or no token, if you are ok
+> > without user namespaces).
+>
+> Building a deficient security delegation mechanism and saying "you can
+> patch things up using an LSM" is a terrible design, though. Also, this
 
-Have a good weekend.
+A bunch of people disagree with you.
 
-As always,
-Dr. Greg
+> still means you have to implement all the policy checks in the kernel
+> (just in BPF) which is awkward at best.
 
-The Quixote Project - Flailing at the Travails of Cybersecurity
+"Patch things up using an LSM", if necessary, in a restrictive manner
+is what LSM folks prefer. You are also assuming that it's always
+necessary, and I'm saying that in lots of practical contexts LSM won't
+be even necessary.
+
+>
+> -Toke
+>
