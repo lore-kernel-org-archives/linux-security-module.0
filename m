@@ -2,55 +2,55 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65604C04A94
-	for <linux-security-module@archiver.kernel.org>; Sat,  8 Jul 2023 05:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6D3EB64DD
+	for <linux-security-module@archiver.kernel.org>; Sat,  8 Jul 2023 05:38:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232978AbjGHFhe (ORCPT
+        id S233121AbjGHFh7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 8 Jul 2023 01:37:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43674 "EHLO
+        Sat, 8 Jul 2023 01:37:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232990AbjGHFhN (ORCPT
+        with ESMTP id S233008AbjGHFh3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 8 Jul 2023 01:37:13 -0400
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 519482684
-        for <linux-security-module@vger.kernel.org>; Fri,  7 Jul 2023 22:36:59 -0700 (PDT)
-Received: by mail-qv1-xf29.google.com with SMTP id 6a1803df08f44-635e0e6b829so18899186d6.0
-        for <linux-security-module@vger.kernel.org>; Fri, 07 Jul 2023 22:36:58 -0700 (PDT)
+        Sat, 8 Jul 2023 01:37:29 -0400
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE08F2691
+        for <linux-security-module@vger.kernel.org>; Fri,  7 Jul 2023 22:37:00 -0700 (PDT)
+Received: by mail-qt1-x82b.google.com with SMTP id d75a77b69052e-3ff24a193dbso20893531cf.3
+        for <linux-security-module@vger.kernel.org>; Fri, 07 Jul 2023 22:37:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1688794618; x=1691386618;
+        d=paul-moore.com; s=google; t=1688794619; x=1691386619;
         h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=v2wkHCwd4vm+IEtkc2nWyRw52RwR9sbRYqSY91RfFRQ=;
-        b=A7TKcyKu/VPh1w1ZbiKg9Zg8sW+vFmOPtftfVKls4QKi1M9IgsF8i1dgygecNhfMRT
-         bZZFCNiIqk77Dhtmm6iE2NgepkEBGBg8woAvioe8aSqCgRmg+4CALt4wUCcdM+OgLOTF
-         tach2LhZStFkxdBYb+Ax/Cx4yB7i7LbshVj0UppsZAor1ljGkqBGcXcVsaD/nQQbASyX
-         ttuPnodpcVGe9Bi/7EE50fSWAPJAnxSdR20LnmhWTIX1atn5eYqFd5X0F4udA5Ue37GS
-         A86+hBiG20f6mEIa37Le0ZYAqWEnzIN2ZqZpg6/30pWeIxxIZpF7ZpkS/VmjEAx8+qgK
-         nwQw==
+        bh=tGA1GMuiBFLQbBC9Kx/aFBaGS7w0xHkPHFkJJNA2iSI=;
+        b=H4OjjGgTuSgh0ERbXj1XvS/xTBxkB7UvM7Vfkrh52Yu8LpFcioo23H7LN2pCGL4LW1
+         c0C5P5QmvB1fXe5I8JHSW7o4g1Ajl1MF/4+jjGWAydjxfqGvPpeQnueqoJppxuYX4Tib
+         6hoyeiTFlWTndTuwvK6ZBpbmb3kDElpYHJNNeVJBjWMXxzLWOzeNN55RmVFRtgUieiJS
+         n9eYbXhSBN+H4R2tcet2YEN9vvVt5VousOwqJlNxxiBZVJ8WFLL0sPVVImmpWJYvuSnT
+         MhL7JtJsQDdw8I3gZFN5WtS2gjWSOchAsKTG4rNTzlHCYSShijuEZjZzESlquH/iq7kj
+         ueNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688794618; x=1691386618;
+        d=1e100.net; s=20221208; t=1688794619; x=1691386619;
         h=in-reply-to:references:subject:cc:to:from:message-id:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v2wkHCwd4vm+IEtkc2nWyRw52RwR9sbRYqSY91RfFRQ=;
-        b=fRBqIc6bCUKPMLqZ2WqnfSOO38pADoXnWVpsHta3+C6wC3ssHCZh5rcqBMooLXy7K0
-         WvTiwtMcHRm/0InBecmcZF4SCFvyuDSoZu2JNJSnb5Gfah4kSw4pTrOsSpNbrt5xEGGp
-         NRePV6Bq1Z6c75hKiOLfMgrIgYzXfAZDwLDv9J13vdTDxG1EYuo9GYuByqGh7i2rCvKG
-         KwEgzq5pKgJgjRjgLhv7Q7shh1ZsVbu8jQrBXx3hQ0iQOw1nlC7EuLYTnpFlVTE7WJbW
-         1O0TWFb5NdZMGbSfycB/Ax9olBBjbpdB/NGz/gEj2tw+CBsy/yQTbpOCJyWCn4gf8EXk
-         GzJg==
-X-Gm-Message-State: ABy/qLbQwvAcNKG5Of16lPvL9HdOp+Uv60lnHYVlLzFHx0QW7X56HpjL
-        KXer94p0GXA0zgKpbhMncfiL
-X-Google-Smtp-Source: APBJJlENhuCNF416DPzzrczcaxPIqtcSiA8/0DJvKcPv9Rl2z24HcHNBuekQRsoH+kaIbBJgTJf8+w==
-X-Received: by 2002:a0c:b24a:0:b0:635:abf1:e93e with SMTP id k10-20020a0cb24a000000b00635abf1e93emr5908682qve.29.1688794617762;
-        Fri, 07 Jul 2023 22:36:57 -0700 (PDT)
+        bh=tGA1GMuiBFLQbBC9Kx/aFBaGS7w0xHkPHFkJJNA2iSI=;
+        b=hJceH9A/Ikd9QeMTinpy3sL9Jki3IEs27GO1hZGnaJoPFeT+833Hx+bt1ImMoAx5q0
+         k7EIJI41By9TkMTzG7CdOu8WgvBRTau1PU5bErmrmlds9doP45GnvHEz6VZ0+jdcisBT
+         UWJz3LUrZKMadP+aRGLsMa+hDAX9iYV3AqBEk8YwXsSFKeUMN/p0rOSRgpo2z4Y02GGW
+         BFB+oRwgfre2WDl7mLswGfmBLDZwF/QoSkk84vb91NcogSqQ7HrIRognwNpyUQXu3usc
+         pJntXw4f+t7tjxVJ1BN6fnG0fm/S7PuGBP05m4g0YmbgHhHWoOpkmhKtzLSGgDZAogdm
+         Lb5w==
+X-Gm-Message-State: ABy/qLZCucZQr25Ddw5GnN36+DqrrdXkYELzQ8xvLZyWp6Qx3CAvEXvN
+        1vOfgGxLWmaE+jmoLrhogNzOObX9HQpcKqSQ4A==
+X-Google-Smtp-Source: APBJJlFF68xKBlrT8ZUzDF7hUpibBBTXCy89LqgKEgf14OWs8qrR4aAL2DMHEseMAEOpXtlRbrYnOQ==
+X-Received: by 2002:ac8:7dc6:0:b0:3ff:2088:79d8 with SMTP id c6-20020ac87dc6000000b003ff208879d8mr9453816qte.4.1688794619449;
+        Fri, 07 Jul 2023 22:36:59 -0700 (PDT)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id y12-20020a0c8ecc000000b006360778f314sm2940646qvb.105.2023.07.07.22.36.57
+        by smtp.gmail.com with ESMTPSA id a6-20020a0cca86000000b0062df126ca11sm2943696qvk.21.2023.07.07.22.36.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 22:36:57 -0700 (PDT)
-Date:   Sat, 08 Jul 2023 01:36:57 -0400
-Message-ID: <007992aec442cda5d5866e89b0ed5c69.paul@paul-moore.com>
+        Fri, 07 Jul 2023 22:36:59 -0700 (PDT)
+Date:   Sat, 08 Jul 2023 01:36:58 -0400
+Message-ID: <2edaa73fc9457f4a051115863d94b4ff.paul@paul-moore.com>
 From:   Paul Moore <paul@paul-moore.com>
 To:     Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net,
         zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
@@ -61,159 +61,86 @@ Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
         dm-devel@redhat.com, audit@vger.kernel.org,
         roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
         Fan Wu <wufan@linux.microsoft.com>
-Subject: Re: [PATCH RFC v10 4/17] ipe: add LSM hooks on execution and kernel  read
-References: <1687986571-16823-5-git-send-email-wufan@linux.microsoft.com>
-In-Reply-To: <1687986571-16823-5-git-send-email-wufan@linux.microsoft.com>
+Subject: Re: [PATCH RFC v10 6/17] security: add new securityfs delete function
+References: <1687986571-16823-7-git-send-email-wufan@linux.microsoft.com>
+In-Reply-To: <1687986571-16823-7-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On Jun 28, 2023 Fan Wu <wufan@linux.microsoft.com> wrote:
 > 
-> IPE's initial goal is to control both execution and the loading of
-> kernel modules based on the system's definition of trust. It
-> accomplishes this by plugging into the security hooks for
-> bprm_check_security, file_mprotect, mmap_file, kernel_load_data,
-> and kernel_read_data.
+> When deleting a directory in the security file system, the existing
+> securityfs_remove requires the directory to be empty, otherwise
+> it will do nothing. This leads to a potential risk that the security
+> file system might be in an unclean state when the intentded deletion
+> did not happen.
 > 
-> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+> This commit introduces a new function securityfs_recursive_remove
+> to recursively delete a directory without leaving an unclean state.
+> 
+> Co-developed-by: "Christian Brauner (Microsoft)" <brauner@kernel.org>
 > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 > ---
->  security/ipe/eval.c  |  14 ++++
->  security/ipe/eval.h  |   1 +
->  security/ipe/hooks.c | 182 +++++++++++++++++++++++++++++++++++++++++++
->  security/ipe/hooks.h |  25 ++++++
->  security/ipe/ipe.c   |   6 ++
->  5 files changed, 228 insertions(+)
->  create mode 100644 security/ipe/hooks.c
->  create mode 100644 security/ipe/hooks.h
-
-Adding the 'hooks.h' header allows for much of code added in the
-previous patches to finally compile and there are a number of errors,
-too many to include here.  Please fix those and ensure that each
-point in the patchset compiles cleanly.
-
-> diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
-> new file mode 100644
-> index 000000000000..d896a5a474bc
-> --- /dev/null
-> +++ b/security/ipe/hooks.c
-> @@ -0,0 +1,182 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) Microsoft Corporation. All rights reserved.
-> + */
-> +
-> +#include <linux/fs.h>
-> +#include <linux/types.h>
-> +#include <linux/binfmts.h>
-> +#include <linux/mman.h>
-> +
-> +#include "ipe.h"
-> +#include "hooks.h"
-> +#include "eval.h"
-> +
-> +/**
-> + * ipe_bprm_check_security - ipe security hook function for bprm check.
-> + * @bprm: Supplies a pointer to a linux_binprm structure to source the file
-> + *	  being evaluated.
-> + *
-> + * This LSM hook is called when a binary is loaded through the exec
-> + * family of system calls.
-> + * Return:
-> + * *0	- OK
-> + * *!0	- Error
-> + */
-> +int ipe_bprm_check_security(struct linux_binprm *bprm)
+>  include/linux/security.h |  1 +
+>  security/inode.c         | 25 +++++++++++++++++++++++++
+>  2 files changed, 26 insertions(+)
+> 
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index e2734e9e44d5..a88076ebc7b1 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -1971,6 +1971,7 @@ struct dentry *securityfs_create_symlink(const char *name,
+>  					 const char *target,
+>  					 const struct inode_operations *iops);
+>  extern void securityfs_remove(struct dentry *dentry);
+> +extern void securityfs_recursive_remove(struct dentry *dentry);
+>  
+>  #else /* CONFIG_SECURITYFS */
+>  
+> diff --git a/security/inode.c b/security/inode.c
+> index 6c326939750d..13358e8547e8 100644
+> --- a/security/inode.c
+> +++ b/security/inode.c
+> @@ -313,6 +313,31 @@ void securityfs_remove(struct dentry *dentry)
+>  }
+>  EXPORT_SYMBOL_GPL(securityfs_remove);
+>  
+> +static void remove_one(struct dentry *victim)
 > +{
-> +	struct ipe_eval_ctx ctx = { 0 };
-
-It's up to you, but when you have a fequently used initializer like
-this it is often wrapped in a macro:
-
-  #define IPE_EVAL_CTX_INIT ((struct ipe_eval_ctx){ 0 })
-
-... so that you can write the variable decalaration like this:
-
-  struct ipe_eval_ctx ctx = IPE_EVAL_CTX_INIT;
-
-It's not a requirement, it just tends to look a little cleaner and
-should you ever need to change the initializer it makes your life
-a lot easier.
-
-> +	build_eval_ctx(&ctx, bprm->file, __IPE_OP_EXEC);
-> +	return ipe_evaluate_event(&ctx);
+> +	simple_release_fs(&mount, &mount_count);
 > +}
 > +
 > +/**
-> + * ipe_mmap_file - ipe security hook function for mmap check.
-> + * @f: File being mmap'd. Can be NULL in the case of anonymous memory.
-> + * @reqprot: The requested protection on the mmap, passed from usermode.
-> + * @prot: The effective protection on the mmap, resolved from reqprot and
-> + *	  system configuration.
-> + * @flags: Unused.
+> + * securityfs_recursive_remove - recursively removes a file or directory from the securityfs filesystem
+
+I really want to see lines less than or equal to 80 characters; I
+would suggest this:
+
+"securityfs_recursive_remove - recursively removes a file or directory"
+
+> + * @dentry: a pointer to a the dentry of the file or directory to be removed.
 > + *
-> + * This hook is called when a file is loaded through the mmap
-> + * family of system calls.
-> + *
-> + * Return:
-> + * * 0	- OK
-> + * * !0	- Error
+> + * This function recursively removes a file or directory in securityfs that was
+> + * previously created with a call to another securityfs function (like
+> + * securityfs_create_file() or variants thereof.)
 > + */
-> +int ipe_mmap_file(struct file *f, unsigned long reqprot, unsigned long prot,
-> +		  unsigned long flags)
-
-Since @reqprot is always going to be unused in this function, you
-might want to mark it as such to help prevent compiler
-warnings/errors, for example:
-
- unsigned long reqprot __always_unused
-
+> +void securityfs_recursive_remove(struct dentry *dentry)
 > +{
-> +	struct ipe_eval_ctx ctx = { 0 };
+> +	if (IS_ERR_OR_NULL(dentry))
+> +		return;
 > +
-> +	if (prot & PROT_EXEC) {
-> +		build_eval_ctx(&ctx, f, __IPE_OP_EXEC);
-> +		return ipe_evaluate_event(&ctx);
-> +	}
-> +
-> +	return 0;
+> +	simple_pin_fs(&fs_type, &mount, &mount_count);
+> +	simple_recursive_removal(dentry, remove_one);
+> +	simple_release_fs(&mount, &mount_count);
 > +}
+> +EXPORT_SYMBOL_GPL(securityfs_recursive_remove);
 > +
-> +/**
-> + * ipe_file_mprotect - ipe security hook function for mprotect check.
-> + * @vma: Existing virtual memory area created by mmap or similar.
-> + * @reqprot: The requested protection on the mmap, passed from usermode.
-> + * @prot: The effective protection on the mmap, resolved from reqprot and
-> + *	  system configuration.
-> + *
-> + * This LSM hook is called when a mmap'd region of memory is changing
-> + * its protections via mprotect.
-> + *
-> + * Return:
-> + * * 0	- OK
-> + * * !0	- Error
-> + */
-> +int ipe_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
-
-See my comment above about @reqprot.
-
-> +		      unsigned long prot)
-> +{
-> +	struct ipe_eval_ctx ctx = { 0 };
-> +
-> +	/* Already Executable */
-> +	if (vma->vm_flags & VM_EXEC)
-> +		return 0;
-> +
-> +	if (prot & PROT_EXEC) {
-> +		build_eval_ctx(&ctx, vma->vm_file, __IPE_OP_EXEC);
-> +		return ipe_evaluate_event(&ctx);
-> +	}
-> +
-> +	return 0;
-> +}
+>  #ifdef CONFIG_SECURITY
+>  static struct dentry *lsm_dentry;
+>  static ssize_t lsm_read(struct file *filp, char __user *buf, size_t count,
+> -- 
+> 2.25.1
 
 --
 paul-moore.com
