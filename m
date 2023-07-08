@@ -2,204 +2,288 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4694CC001E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jul 2023 13:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1E6EB64DA
+	for <linux-security-module@archiver.kernel.org>; Sat,  8 Jul 2023 11:30:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232632AbjGJNdN (ORCPT
+        id S230138AbjGHLaf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Jul 2023 09:33:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43150 "EHLO
+        Sat, 8 Jul 2023 07:30:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232944AbjGJNdF (ORCPT
+        with ESMTP id S230040AbjGHLae (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Jul 2023 09:33:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B68019F;
-        Mon, 10 Jul 2023 06:32:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5933560FE9;
-        Mon, 10 Jul 2023 13:32:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7E3BC433C9;
-        Mon, 10 Jul 2023 13:32:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688995962;
-        bh=ypo6EEC/a10vTp0LME1omXwBE1UiKK/mReyAl6l5UHQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=J7Z7W1QfjLNRfgVQcSdKnYFRxtD+3fk+fVeHY9xuci1TKV61DCMVSYVvDG9kwuCBX
-         g+QpzC0XDkSjeL9nV9+lGdPbp68Q96EXBiPlDNXBynN9HrAz4Y+E89ZYAnFm4gMFob
-         SGwQAd+JWX6wsLqjr9V4UXCKsBkrO6/s1MT1FJcjDjR0RhV1HnH8M/padgIYfYI3iT
-         50AKfuQ1Ba3eH+A3TeCdkft2SWR53hIVATzxttJnSld1dtaOLY6XNcMPkiIrdtp3w+
-         UMgZy7XJf81pa8iQgs3v7vGfymFo80jGgmK2T6kIjmEHcqRaAvCUmLi8QnIHmVmDpT
-         pZFJemBst7t+w==
-Message-ID: <c4eaff9389fe63ec4e29404ec0d1181b74935426.camel@kernel.org>
-Subject: Re: [PATCH v2 00/89] fs: new accessors for inode->i_ctime
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     jk@ozlabs.org, arnd@arndb.de, mpe@ellerman.id.au,
-        npiggin@gmail.com, christophe.leroy@csgroup.eu, hca@linux.ibm.com,
-        gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-        maco@android.com, joel@joelfernandes.org, cmllamas@google.com,
-        surenb@google.com, dennis.dalessandro@cornelisnetworks.com,
-        jgg@ziepe.ca, leon@kernel.org, bwarrum@linux.ibm.com,
-        rituagar@linux.ibm.com, ericvh@kernel.org, lucho@ionkov.net,
-        asmadeus@codewreck.org, linux_oss@crudebyte.com, dsterba@suse.com,
-        dhowells@redhat.com, marc.dionne@auristor.com,
-        viro@zeniv.linux.org.uk, raven@themaw.net, luisbg@kernel.org,
-        salah.triki@gmail.com, aivazian.tigran@gmail.com,
-        ebiederm@xmission.com, keescook@chromium.org, clm@fb.com,
-        josef@toxicpanda.com, xiubli@redhat.com, idryomov@gmail.com,
-        jaharkes@cs.cmu.edu, coda@cs.cmu.edu, jlbec@evilplan.org,
-        hch@lst.de, nico@fluxnic.net, rafael@kernel.org, code@tyhicks.com,
-        ardb@kernel.org, xiang@kernel.org, chao@kernel.org,
-        huyue2@coolpad.com, jefflexu@linux.alibaba.com,
-        linkinjeon@kernel.org, sj1557.seo@samsung.com, jack@suse.com,
-        tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
-        hirofumi@mail.parknet.co.jp, miklos@szeredi.hu,
-        rpeterso@redhat.com, agruenba@redhat.com, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        mikulas@artax.karlin.mff.cuni.cz, mike.kravetz@oracle.com,
-        muchun.song@linux.dev, dwmw2@infradead.org, shaggy@kernel.org,
-        tj@kernel.org, trond.myklebust@hammerspace.com, anna@kernel.org,
-        chuck.lever@oracle.com, neilb@suse.de, kolga@netapp.com,
-        Dai.Ngo@oracle.com, tom@talpey.com, konishi.ryusuke@gmail.com,
-        anton@tuxera.com, almaz.alexandrovich@paragon-software.com,
-        mark@fasheh.com, joseph.qi@linux.alibaba.com, me@bobcopeland.com,
-        hubcap@omnibond.com, martin@omnibond.com, amir73il@gmail.com,
-        mcgrof@kernel.org, yzaikin@google.com, tony.luck@intel.com,
-        gpiccoli@igalia.com, al@alarsen.net, sfrench@samba.org,
-        pc@manguebit.com, lsahlber@redhat.com, sprasad@microsoft.com,
-        senozhatsky@chromium.org, phillip@squashfs.org.uk,
-        rostedt@goodmis.org, mhiramat@kernel.org, dushistov@mail.ru,
-        hdegoede@redhat.com, djwong@kernel.org, dlemoal@kernel.org,
-        naohiro.aota@wdc.com, jth@kernel.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
-        song@kernel.org, yhs@fb.com, john.fastabend@gmail.com,
-        kpsingh@kernel.org, sdf@google.com, haoluo@google.com,
-        jolsa@kernel.org, hughd@google.com, akpm@linux-foundation.org,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, john.johansen@canonical.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        jgross@suse.com, stern@rowland.harvard.edu, lrh2000@pku.edu.cn,
-        sebastian.reichel@collabora.com, wsa+renesas@sang-engineering.com,
-        quic_ugoswami@quicinc.com, quic_linyyuan@quicinc.com,
-        john@keeping.me.uk, error27@gmail.com, quic_uaggarwa@quicinc.com,
-        hayama@lineo.co.jp, jomajm@gmail.com, axboe@kernel.dk,
-        dhavale@google.com, dchinner@redhat.com, hannes@cmpxchg.org,
-        zhangpeng362@huawei.com, slava@dubeyko.com, gargaditya08@live.com,
-        penguin-kernel@I-love.SAKURA.ne.jp, yifeliu@cs.stonybrook.edu,
-        madkar@cs.stonybrook.edu, ezk@cs.stonybrook.edu,
-        yuzhe@nfschina.com, willy@infradead.org, okanatov@gmail.com,
-        jeffxu@chromium.org, linux@treblig.org, mirimmad17@gmail.com,
-        yijiangshan@kylinos.cn, yang.yang29@zte.com.cn,
-        xu.xin16@zte.com.cn, chengzhihao1@huawei.com, shr@devkernel.io,
-        Liam.Howlett@Oracle.com, adobriyan@gmail.com,
-        chi.minghao@zte.com.cn, roberto.sassu@huawei.com,
-        linuszeng@tencent.com, bvanassche@acm.org, zohar@linux.ibm.com,
-        yi.zhang@huawei.com, trix@redhat.com, fmdefrancesco@gmail.com,
-        ebiggers@google.com, princekumarmaurya06@gmail.com,
-        chenzhongjin@huawei.com, riel@surriel.com,
-        shaozhengchao@huawei.com, jingyuwang_vip@163.com,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-usb@vger.kernel.org, v9fs@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        autofs@vger.kernel.org, linux-mm@kvack.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-um@lists.infradead.org,
-        linux-mtd@lists.infradead.org,
-        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-        linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
-        linux-unionfs@vger.kernel.org, linux-hardening@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org,
-        linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Date:   Mon, 10 Jul 2023 09:32:23 -0400
-In-Reply-To: <20230710-zudem-entkam-bb508cbd8c78@brauner>
-References: <20230705185812.579118-1-jlayton@kernel.org>
-         <5e40891f6423feb5b68f025e31f26e9a50ae9390.camel@kernel.org>
-         <20230710-zudem-entkam-bb508cbd8c78@brauner>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Sat, 8 Jul 2023 07:30:34 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C294C1991;
+        Sat,  8 Jul 2023 04:30:32 -0700 (PDT)
+Received: from fsav112.sakura.ne.jp (fsav112.sakura.ne.jp [27.133.134.239])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 368BTx5B058388;
+        Sat, 8 Jul 2023 20:29:59 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav112.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav112.sakura.ne.jp);
+ Sat, 08 Jul 2023 20:29:59 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav112.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 368BTwkW058384
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 8 Jul 2023 20:29:59 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <8bacb159-6512-b2d0-d015-a9c4f141df8b@I-love.SAKURA.ne.jp>
+Date:   Sat, 8 Jul 2023 20:29:57 +0900
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [syzbot] [tomoyo?] [hfs?] general protection fault in
+ tomoyo_check_acl (3)
+Content-Language: en-US
+To:     syzbot <syzbot+28aaddd5a3221d7fd709@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com
+References: <000000000000fcfb4a05ffe48213@google.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <000000000000fcfb4a05ffe48213@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2023-07-10 at 14:35 +0200, Christian Brauner wrote:
-> On Fri, Jul 07, 2023 at 08:42:31AM -0400, Jeff Layton wrote:
-> > On Wed, 2023-07-05 at 14:58 -0400, Jeff Layton wrote:
-> > > v2:
-> > > - prepend patches to add missing ctime updates
-> > > - add simple_rename_timestamp helper function
-> > > - rename ctime accessor functions as inode_get_ctime/inode_set_ctime_=
-*
-> > > - drop individual inode_ctime_set_{sec,nsec} helpers
-> > >=20
-> >=20
-> > After review by Jan and others, and Jan's ext4 rework, the diff on top
-> > of the series I posted a couple of days ago is below. I don't really
-> > want to spam everyone with another ~100 patch v3 series, but I can if
-> > you think that's best.
-> >=20
-> > Christian, what would you like me to do here?
->=20
-> I picked up the series from the list and folded the fixups you posted
-> here into the respective fs conversion patches. I hope that helps you
-> avoid a resend. You should have received a separate "thank you" mail for
-> all of this.
->=20
-> To each patch that I folded one of the fixlets from below into I added a
-> git note that records a link to your mail here and the respective patch
-> hunk from this mail that I folded into the patch. git.kernel.org will
-> show notes by default. For example,
-> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=3Dv=
-fs.ctime&id=3D8b0e3c2e99004609a16ba145bcbdfdddb78e220e
-> should show you the note I added. You can also fetch them via
-> git fetch $remote refs/notes/*:refs/notes/*
-> (You probably know that ofc but jic.) if you're interested.
->=20
-> Based on v6.5-rc1 as of today.
->=20
+This is not a bug in TOMOYO, for booting with security=none results in crashing at other locations.
 
-Many thanks!!! I'll get to work rebasing the multigrain timestamp series
-on top of that.
+This might be a bug in HFS's error handling. But since there are several bugs
+which have been added as "mm" in the last few days, let's change this as "mm".
 
-> Btw, both b4 and patchwork somehow treat the series in weird was.
-> IOW, based on the message id of the cover letter I was able to pull most
-> messages except for:
->=20
-> [07/92] fs: add ctime accessors infrastructure
-> [08/92] fs: new helper: simple_rename_timestamp
-> [92/92] fs: rename i_ctime field to __i_ctime
->=20
-> which I pulled in separately. Not sure what the cause of=A0
->=20
-> this is.
+#syz set subsystems: mm
 
-Good to know.
+----------------------------------------
+[  234.106763][ T8646] loop0: detected capacity change from 0 to 64
+[  234.111147][ T8646] hfs: unable to locate alternate MDB
+[  234.113523][ T8646] hfs: continuing without an alternate MDB
+[  234.185677][ T8650] loop0: detected capacity change from 0 to 64
+[  234.192285][ T8650] hfs: unable to locate alternate MDB
+[  234.195221][ T8650] hfs: continuing without an alternate MDB
+[  234.206630][ T4935] BUG: kernel NULL pointer dereference, address: 0000000000000000
+[  234.210973][ T4935] #PF: supervisor instruction fetch in kernel mode
+[  234.213694][ T4935] #PF: error_code(0x0010) - not-present page
+[  234.216259][ T4935] PGD 0 P4D 0 
+[  234.219992][ T4935] Oops: 0010 [#1] PREEMPT SMP KASAN
+[  234.225781][ T4935] CPU: 1 PID: 4935 Comm: systemd-journal Not tainted 6.4.0-syzkaller-10173-ga901a3568fd2 #0
+[  234.234045][ T4935] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[  234.237508][ T4935] RIP: 0010:0x0
+[  234.240448][ T4935] Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+[  234.243743][ T4935] RSP: 0018:ffffc9000471fde0 EFLAGS: 00010246
+[  234.246828][ T4935] RAX: 1ffff92000459c06 RBX: ffff888021c07800 RCX: 0000000000000000
+[  234.249926][ T4935] RDX: ffff88802a853900 RSI: ffffc900022ce048 RDI: ffffc9000471fe30
+[  234.252897][ T4935] RBP: ffffc900022ce000 R08: 0000000000000004 R09: 000000007fff0000
+[  234.255863][ T4935] R10: 000000007fff0000 R11: 0000000000000000 R12: 000000007fff0000
+[  234.258860][ T4935] R13: dffffc0000000000 R14: 000000007fff0000 R15: ffffc9000471fe30
+[  234.261902][ T4935] FS:  00007f9c84a5b900(0000) GS:ffff88821bc00000(0000) knlGS:0000000000000000
+[  234.265635][ T4935] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  234.268956][ T4935] CR2: ffffffffffffffd6 CR3: 000000002a8f8000 CR4: 00000000000106e0
+[  234.272004][ T4935] Call Trace:
+[  234.274294][ T4935]  <TASK>
+[  234.276945][ T4935]  ? __die+0x1f/0x60
+[  234.280174][ T4935]  ? page_fault_oops+0x34f/0xa50
+[  234.282836][ T4935]  ? dump_pagetable+0x500/0x500
+[  234.285246][ T4935]  ? devkmsg_read+0x106/0x530
+[  234.287796][ T4935]  ? do_user_addr_fault+0x79b/0x1360
+[  234.290288][ T4935]  ? irqentry_enter+0x2c/0x50
+[  234.293222][ T4935]  ? rcu_is_watching+0x12/0xb0
+[  234.295599][ T4935]  ? exc_page_fault+0x98/0x170
+[  234.297975][ T4935]  ? asm_exc_page_fault+0x26/0x30
+[  234.300538][ T4935]  __seccomp_filter+0x23b/0x1080
+[  234.303088][ T4935]  ? seccomp_notify_ioctl+0xea0/0xea0
+[  234.305529][ T4935]  ? ksys_read+0x19a/0x250
+[  234.309842][ T4935]  __secure_computing+0x24a/0x3e0
+[  234.312177][ T4935]  syscall_trace_enter.constprop.0+0x90/0x1e0
+[  234.314842][ T4935]  do_syscall_64+0x1a/0xb0
+[  234.317109][ T4935]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+[  234.319502][ T4935] RIP: 0033:0x7f9c84d14764
+[  234.321705][ T4935] Code: 24 20 eb 8f 66 90 44 89 54 24 0c e8 26 c3 f7 ff 44 8b 54 24 0c 44 89 e2 48 89 ee 41 89 c0 bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 77 34 44 89 c7 89 44 24 0c e8 68 c3 f7 ff 8b 44
+[  234.327901][ T4935] RSP: 002b:00007ffc7cc7c060 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
+[  234.330801][ T4935] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f9c84d14764
+[  234.333655][ T4935] RDX: 0000000000080802 RSI: 000055e36b136590 RDI: 00000000ffffff9c
+[  234.336513][ T4935] RBP: 000055e36b136590 R08: 0000000000000000 R09: 6436356564616238
+[  234.339340][ T4935] R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000080802
+[  234.342184][ T4935] R13: 00000000ffffffff R14: 000055e36b117940 R15: 00000000fffffffa
+[  234.345046][ T4935]  </TASK>
+[  234.347155][ T4935] Modules linked in:
+[  234.349709][ T4935] CR2: 0000000000000000
+[  234.352014][ T4935] ---[ end trace 0000000000000000 ]---
+[  234.354409][ T4935] RIP: 0010:0x0
+[  234.356534][ T4935] Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+[  234.359337][ T4935] RSP: 0018:ffffc9000471fde0 EFLAGS: 00010246
+[  234.361877][ T4935] RAX: 1ffff92000459c06 RBX: ffff888021c07800 RCX: 0000000000000000
+[  234.364713][ T4935] RDX: ffff88802a853900 RSI: ffffc900022ce048 RDI: ffffc9000471fe30
+[  234.367539][ T4935] RBP: ffffc900022ce000 R08: 0000000000000004 R09: 000000007fff0000
+[  234.370393][ T4935] R10: 000000007fff0000 R11: 0000000000000000 R12: 000000007fff0000
+[  234.373153][ T4935] R13: dffffc0000000000 R14: 000000007fff0000 R15: ffffc9000471fe30
+[  234.375973][ T4935] FS:  00007f9c84a5b900(0000) GS:ffff88821bc00000(0000) knlGS:0000000000000000
+[  234.378954][ T4935] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  234.381510][ T4935] CR2: ffffffffffffffd6 CR3: 000000002a8f8000 CR4: 00000000000106e0
+[  234.384294][ T4935] Kernel panic - not syncing: Fatal exception
+[  234.409390][ T4935] Kernel Offset: disabled
+[  234.411337][ T4935] Rebooting in 10 seconds..
+----------------------------------------
 
-I ended up doing the send in two phases: one for the cover letter and
-infrastructure patches that went to everyone, and one for the per-
-subsystem patches that went do individual maintainers and lists.
+----------------------------------------
+[  125.755870][ T7323] loop0: detected capacity change from 0 to 64
+[  125.763129][ T7323] hfs: unable to locate alternate MDB
+[  125.765786][ T7323] hfs: continuing without an alternate MDB
+[  125.833083][ T7333] loop0: detected capacity change from 0 to 64
+[  125.835374][ T6048] I/O error, dev loop0, sector 0 op 0x0:(READ) flags 0x80700 phys_seg 1 prio class 2
+[  125.871486][ T7333] hfs: unable to locate alternate MDB
+[  125.873910][ T7333] hfs: continuing without an alternate MDB
+[  125.994779][ T6048] BUG: unable to handle page fault for address: 000000000000e643
+[  126.001710][ T6048] #PF: supervisor read access in kernel mode
+[  126.007733][ T6048] #PF: error_code(0x0000) - not-present page
+[  126.013851][ T6048] PGD 0 P4D 0 
+[  126.018475][ T6048] Oops: 0000 [#1] PREEMPT SMP KASAN
+[  126.024193][ T6048] CPU: 1 PID: 6048 Comm: systemd-udevd Not tainted 6.4.0-syzkaller-10173-ga901a3568fd2 #0
+[  126.032504][ T6048] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[  126.040438][ T6048] RIP: 0010:kmem_cache_alloc+0x100/0x380
+[  126.046359][ T6048] Code: 8b 78 08 48 83 78 10 00 4c 8b 00 0f 84 65 02 00 00 4d 85 c0 0f 84 5c 02 00 00 41 8b 44 24 28 48 8d 4f 08 48 89 fa 4d 8b 0c 24 <49> 8b 1c 00 4c 89 c0 65 49 0f c7 09 0f 1f 00 48 31 d7 4c 31 c0 48
+[  126.063278][ T6048] RSP: 0018:ffffc90006a9fb70 EFLAGS: 00010206
+[  126.069728][ T6048] RAX: 0000000000000010 RBX: 0000000000002120 RCX: 000000000003b3b9
+[  126.077511][ T6048] RDX: 000000000003b3b1 RSI: 0000000000000028 RDI: 000000000003b3b1
+[  126.085452][ T6048] RBP: ffffc90006a9fbb8 R08: 000000000000e633 R09: 00000000000412c0
+[  126.093072][ T6048] R10: ffff888136fd0000 R11: 0000000000096001 R12: ffff888012850640
+[  126.100428][ T6048] R13: 0000000000000000 R14: ffffffff841a9bd4 R15: 0000000000000000
+[  126.107889][ T6048] FS:  00007fabf50418c0(0000) GS:ffff88821bc00000(0000) knlGS:0000000000000000
+[  126.115942][ T6048] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  126.122614][ T6048] CR2: 000000000000e643 CR3: 0000000127adc000 CR4: 00000000000106e0
+[  126.130102][ T6048] Call Trace:
+[  126.134869][ T6048]  <TASK>
+[  126.139431][ T6048]  ? __die+0x1f/0x60
+[  126.141928][ T6048]  ? page_fault_oops+0x34f/0xa50
+[  126.144282][ T6048]  ? lock_downgrade+0x690/0x690
+[  126.146601][ T6048]  ? dump_pagetable+0x500/0x500
+[  126.148916][ T6048]  ? search_extable+0x83/0xb0
+[  126.152042][ T6048]  ? is_prefetch.constprop.0+0xb7/0x540
+[  126.157957][ T6048]  ? trim_init_extable+0x3d0/0x3d0
+[  126.163586][ T6048]  ? bpf_ksym_find+0x125/0x1b0
+[  126.168983][ T6048]  ? pgtable_bad+0x90/0x90
+[  126.174138][ T6048]  ? search_bpf_extables+0x1cc/0x320
+[  126.179798][ T6048]  ? kmem_cache_alloc+0x100/0x380
+[  126.185227][ T6048]  ? fixup_exception+0x119/0xce0
+[  126.190594][ T6048]  ? kernelmode_fixup_or_oops+0x23f/0x2b0
+[  126.194383][ T6048]  ? __bad_area_nosemaphore+0x3a4/0x6c0
+[  126.197145][ T6048]  ? lock_mm_and_find_vma+0xc1/0x770
+[  126.199781][ T6048]  ? do_user_addr_fault+0x71a/0x1360
+[  126.202447][ T6048]  ? irqentry_enter+0x2c/0x50
+[  126.204949][ T6048]  ? rcu_is_watching+0x12/0xb0
+[  126.207448][ T6048]  ? exc_page_fault+0x98/0x170
+[  126.209975][ T6048]  ? asm_exc_page_fault+0x26/0x30
+[  126.212509][ T6048]  ? fill_pool+0x264/0x5c0
+[  126.214898][ T6048]  ? kmem_cache_alloc+0x100/0x380
+[  126.217405][ T6048]  fill_pool+0x264/0x5c0
+[  126.219799][ T6048]  ? __list_del_entry_valid+0x1b0/0x1b0
+[  126.222373][ T6048]  ? rcu_is_watching+0x12/0xb0
+[  126.224759][ T6048]  ? trace_irq_enable.constprop.0+0xd0/0x100
+[  126.227405][ T6048]  debug_object_activate+0x12d/0x4f0
+[  126.229901][ T6048]  ? debug_object_activate+0xf7/0x4f0
+[  126.232428][ T6048]  ? debug_object_free+0x360/0x360
+[  126.234873][ T6048]  ? rcu_is_watching+0x12/0xb0
+[  126.238746][ T6048]  ? percpu_counter_add_batch+0x170/0x1e0
+[  126.241715][ T6048]  ? flush_delayed_fput+0x80/0x80
+[  126.244212][ T6048]  __call_rcu_common.constprop.0+0x2c/0x7e0
+[  126.247228][ T6048]  task_work_run+0x16f/0x270
+[  126.249497][ T6048]  ? task_work_cancel+0x30/0x30
+[  126.251839][ T6048]  exit_to_user_mode_prepare+0x210/0x240
+[  126.254215][ T6048]  syscall_exit_to_user_mode+0x1d/0x50
+[  126.256519][ T6048]  do_syscall_64+0x46/0xb0
+[  126.258584][ T6048]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+[  126.260923][ T6048] RIP: 0033:0x7fabf4f19a1b
+[  126.263012][ T6048] Code: c3 66 0f 1f 44 00 00 48 8b 15 11 f4 0f 00 f7 d8 64 89 02 b8 ff ff ff ff eb bc 0f 1f 44 00 00 f3 0f 1e fa b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 05 c3 0f 1f 40 00 48 8b 15 e1 f3 0f 00 f7 d8
+[  126.269249][ T6048] RSP: 002b:00007ffd1ca9f738 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
+[  126.272207][ T6048] RAX: 0000000000000000 RBX: 000055d3bfa52a20 RCX: 00007fabf4f19a1b
+[  126.274995][ T6048] RDX: 00007fabf5015a00 RSI: 00000000fbada418 RDI: 000000000000000f
+[  126.277924][ T6048] RBP: 0000000000000000 R08: 000000000000000f R09: 00000000ffffffff
+[  126.280700][ T6048] R10: 697265733d6b746e R11: 0000000000000202 R12: 00007fabf5016600
+[  126.283502][ T6048] R13: 0000000000000488 R14: 00007ffd1ca9f850 R15: 000055d3bf88e661
+[  126.286286][ T6048]  </TASK>
+[  126.288159][ T6048] Modules linked in:
+[  126.290139][ T6048] CR2: 000000000000e643
+[  126.295034][ T6048] ---[ end trace 0000000000000000 ]---
+[  126.312680][ T6048] RIP: 0010:kmem_cache_alloc+0x100/0x380
+[  126.319586][ T6048] Code: 8b 78 08 48 83 78 10 00 4c 8b 00 0f 84 65 02 00 00 4d 85 c0 0f 84 5c 02 00 00 41 8b 44 24 28 48 8d 4f 08 48 89 fa 4d 8b 0c 24 <49> 8b 1c 00 4c 89 c0 65 49 0f c7 09 0f 1f 00 48 31 d7 4c 31 c0 48
+[  126.327476][ T6048] RSP: 0018:ffffc90006a9fb70 EFLAGS: 00010206
+[  126.330071][ T6048] RAX: 0000000000000010 RBX: 0000000000002120 RCX: 000000000003b3b9
+[  126.333340][ T6048] RDX: 000000000003b3b1 RSI: 0000000000000028 RDI: 000000000003b3b1
+[  126.340879][ T6048] RBP: ffffc90006a9fbb8 R08: 000000000000e633 R09: 00000000000412c0
+[  126.345096][ T6048] R10: ffff888136fd0000 R11: 0000000000096001 R12: ffff888012850640
+[  126.356848][ T6048] R13: 0000000000000000 R14: ffffffff841a9bd4 R15: 0000000000000000
+[  126.360369][ T6048] FS:  00007fabf50418c0(0000) GS:ffff88821bc00000(0000) knlGS:0000000000000000
+[  126.365189][ T6048] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  126.368749][ T6048] CR2: 000000000000e643 CR3: 0000000127adc000 CR4: 00000000000106e0
+[  126.372736][ T6048] Kernel panic - not syncing: Fatal exception
+[  126.395942][ T6048] Kernel Offset: disabled
+[  126.397927][ T6048] Rebooting in 10 seconds..
+----------------------------------------
 
-I suspect that screwed up the message IDs somehow. Hopefully I won't
-need to do a posting like that again soon, but I'll pay closer attention
-to the message id handling next time.
+----------------------------------------
+[  100.152101][ T6110] loop0: detected capacity change from 0 to 64
+[  100.156271][ T6110] hfs: unable to locate alternate MDB
+[  100.158789][ T6110] hfs: continuing without an alternate MDB
+[  100.185413][ T6114] loop0: detected capacity change from 0 to 64
+[  100.190998][    C2] general protection fault, probably for non-canonical address 0xdffffc0000001cc6: 0000 [#1] PREEMPT SMP KASAN
+[  100.191250][ T6114] hfs: unable to locate alternate MDB
+[  100.193238][    C2] KASAN: probably user-memory-access in range [0x000000000000e630-0x000000000000e637]
+[  100.194949][ T6114] hfs: continuing without an alternate MDB
+[  100.195887][    C2] CPU: 2 PID: 28 Comm: ksoftirqd/2 Not tainted 6.4.0-syzkaller-10173-ga901a3568fd2 #0
+[  100.195898][    C2] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[  100.195902][    C2] RIP: 0010:percpu_ref_get_many+0x4c/0x160
+[  100.195925][    C2] Code: c7 c7 00 27 9a 8c e8 63 56 87 ff e8 9e 14 3f 08 5a 85 c0 0f 85 c2 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03 <80> 3c 02 00 0f 85 fc 00 00 00 48 8b 03 a8 03 74 79 48 8d 7b 08 48
+[  100.195933][    C2] RSP: 0018:ffffc90000a97c68 EFLAGS: 00010006
+[  100.195943][    C2] RAX: dffffc0000000000 RBX: 000000000000e633 RCX: 0000000000000000
+[  100.195948][    C2] RDX: 0000000000001cc6 RSI: 0000000000000101 RDI: ffffffff8c372a10
+[  100.226755][    C2] RBP: 0000000000000001 R08: 0000000000000000 R09: fffffbfff1d5366a
+[  100.229870][    C2] R10: ffffffff8ea9b357 R11: 0000000000096001 R12: 000000000000e633
+[  100.233023][    C2] R13: 0000000000000a08 R14: 0000000000000200 R15: ffff8880b9ab7fe0
+[  100.236115][    C2] FS:  0000000000000000(0000) GS:ffff8880b9a80000(0000) knlGS:0000000000000000
+[  100.239378][    C2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  100.242587][    C2] CR2: 00007f4e04607c00 CR3: 000000012e4b0000 CR4: 00000000000106e0
+[  100.246644][    C2] Call Trace:
+[  100.249782][    C2]  <TASK>
+[  100.252805][    C2]  ? die_addr+0x3c/0xa0
+[  100.256072][    C2]  ? exc_general_protection+0x129/0x230
+[  100.259643][    C2]  ? asm_exc_general_protection+0x26/0x30
+[  100.265209][    C2]  ? percpu_ref_get_many+0x4c/0x160
+[  100.270491][    C2]  ? mem_cgroup_move_task+0x170/0x170
+[  100.273179][    C2]  refill_obj_stock+0x1a7/0x700
+[  100.275719][    C2]  ? i_callback+0x43/0x70
+[  100.278172][    C2]  kmem_cache_free+0x3b7/0x490
+[  100.280699][    C2]  ? kmem_cache_free+0xf0/0x490
+[  100.283254][    C2]  ? ext4_quota_read+0x330/0x330
+[  100.285768][    C2]  i_callback+0x43/0x70
+[  100.288218][    C2]  rcu_core+0x802/0x1c10
+[  100.290606][    C2]  ? rcu_report_dead+0x610/0x610
+[  100.293114][    C2]  ? io_schedule_timeout+0x150/0x150
+[  100.295648][    C2]  __do_softirq+0x1d4/0x905
+[  100.298053][    C2]  ? trace_event_raw_event_irq_handler_entry+0x260/0x260
+[  100.300878][    C2]  run_ksoftirqd+0x31/0x60
+[  100.303313][    C2]  smpboot_thread_fn+0x659/0x9e0
+[  100.305793][    C2]  ? sort_range+0x30/0x30
+[  100.308182][    C2]  kthread+0x344/0x440
+[  100.310599][    C2]  ? kthread_complete_and_exit+0x40/0x40
+[  100.313341][    C2]  ret_from_fork+0x1f/0x30
+[  100.315866][    C2]  </TASK>
+[  100.318085][    C2] Modules linked in:
+[  100.320455][    C2] ---[ end trace 0000000000000000 ]---
+[  100.323091][    C2] RIP: 0010:percpu_ref_get_many+0x4c/0x160
+[  100.326060][    C2] Code: c7 c7 00 27 9a 8c e8 63 56 87 ff e8 9e 14 3f 08 5a 85 c0 0f 85 c2 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03 <80> 3c 02 00 0f 85 fc 00 00 00 48 8b 03 a8 03 74 79 48 8d 7b 08 48
+[  100.332943][    C2] RSP: 0018:ffffc90000a97c68 EFLAGS: 00010006
+[  100.336057][    C2] RAX: dffffc0000000000 RBX: 000000000000e633 RCX: 0000000000000000
+[  100.339290][    C2] RDX: 0000000000001cc6 RSI: 0000000000000101 RDI: ffffffff8c372a10
+[  100.342422][    C2] RBP: 0000000000000001 R08: 0000000000000000 R09: fffffbfff1d5366a
+[  100.345565][    C2] R10: ffffffff8ea9b357 R11: 0000000000096001 R12: 000000000000e633
+[  100.349021][    C2] R13: 0000000000000a08 R14: 0000000000000200 R15: ffff8880b9ab7fe0
+[  100.352138][    C2] FS:  0000000000000000(0000) GS:ffff8880b9a80000(0000) knlGS:0000000000000000
+[  100.355370][    C2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  100.358108][    C2] CR2: 00007f4e04607c00 CR3: 000000012e4b0000 CR4: 00000000000106e0
+[  100.361108][    C2] Kernel panic - not syncing: Fatal exception in interrupt
+[  100.386146][    C2] Kernel Offset: disabled
+[  100.388071][    C2] Rebooting in 10 seconds..
+----------------------------------------
 
-Thanks again!
---=20
-Jeff Layton <jlayton@kernel.org>
