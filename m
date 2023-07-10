@@ -2,33 +2,33 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54684EB64D9
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jul 2023 11:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C029FEB64DC
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jul 2023 11:06:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232055AbjGJLFn (ORCPT
+        id S232136AbjGJLGX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Jul 2023 07:05:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59438 "EHLO
+        Mon, 10 Jul 2023 07:06:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230425AbjGJLFV (ORCPT
+        with ESMTP id S230078AbjGJLGA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Jul 2023 07:05:21 -0400
+        Mon, 10 Jul 2023 07:06:00 -0400
 Received: from blizzard.enjellic.com (wind.enjellic.com [76.10.64.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 905F2184;
-        Mon, 10 Jul 2023 04:04:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 41EF110C8;
+        Mon, 10 Jul 2023 04:05:21 -0700 (PDT)
 Received: from blizzard.enjellic.com (localhost [127.0.0.1])
-        by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 36AANNQR019759;
-        Mon, 10 Jul 2023 05:23:23 -0500
+        by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 36AANLIN019749;
+        Mon, 10 Jul 2023 05:23:21 -0500
 Received: (from greg@localhost)
-        by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 36AANMT7019757;
-        Mon, 10 Jul 2023 05:23:22 -0500
+        by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 36AANLvI019747;
+        Mon, 10 Jul 2023 05:23:21 -0500
 X-Authentication-Warning: blizzard.enjellic.com: greg set sender to greg@enjellic.com using -f
 From:   "Dr. Greg" <greg@enjellic.com>
 To:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, corbet@lwn.net
-Subject: [PATCH 04/13] Add TSEM master header file.
-Date:   Mon, 10 Jul 2023 05:23:10 -0500
-Message-Id: <20230710102319.19716-5-greg@enjellic.com>
+Subject: [PATCH 02/13] Add TSEM specific documentation.
+Date:   Mon, 10 Jul 2023 05:23:08 -0500
+Message-Id: <20230710102319.19716-3-greg@enjellic.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230710102319.19716-1-greg@enjellic.com>
 References: <20230710102319.19716-1-greg@enjellic.com>
@@ -37,1546 +37,2430 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-TSEM is designed, from a functional perspective, to be contained
-entirely in its own directory.
+An entry was added to the ABI testing documentation to document
+the files in the TSEM management filesystem.
 
-The tsem.h header file defines the enumeration types, structure
-definitions and externally visiable functions that are referenced
-by all of the compilation units of the TSEM LSM implementation in
-that directory.
+The file documenting the kernel command-line parameters was
+updated to document the TSEM specific command-line parameters
 
-The structure and enumeration types are extensively documented
-and are the recommended starting point for understanding TSEM
-implementation and functionality.
+The primary TSEM documentation file was added to the LSM
+administration guide and the file was linked to the index of LSM
+documentation.
 
 Signed-off-by: Greg Wettstein <greg@enjellic.com>
 ---
- security/tsem/tsem.h | 1516 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 1516 insertions(+)
- create mode 100644 security/tsem/tsem.h
+ Documentation/ABI/testing/tsem                |  828 +++++++++
+ Documentation/admin-guide/LSM/index.rst       |    1 +
+ Documentation/admin-guide/LSM/tsem.rst        | 1526 +++++++++++++++++
+ .../admin-guide/kernel-parameters.txt         |   18 +
+ 4 files changed, 2373 insertions(+)
+ create mode 100644 Documentation/ABI/testing/tsem
+ create mode 100644 Documentation/admin-guide/LSM/tsem.rst
 
-diff --git a/security/tsem/tsem.h b/security/tsem/tsem.h
+diff --git a/Documentation/ABI/testing/tsem b/Documentation/ABI/testing/tsem
 new file mode 100644
-index 000000000000..03915f47529b
+index 000000000000..cfb013b5f1f4
 --- /dev/null
-+++ b/security/tsem/tsem.h
-@@ -0,0 +1,1516 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+/*
-+ * Copyright (C) 2023 Enjellic Systems Development, LLC
-+ * Author: Dr. Greg Wettstein <greg@enjellic.com>
-+ *
-+ * This is the single include file that documents all of the externally
-+ * visible types and functions that are used by TSEM.  This file is
-+ * currently organized into four major sections in the following order;
-+ *
-+ * includes used by all compilation units
-+ * CPP definitions
-+ * enumeration types
-+ * structure definitions
-+ * function declarations
-+ * inline encapsulation functions.
-+ *
-+ * Include files that are referenced by more than a single compilation
-+ * should be included in this file.  Includes that are needed to
-+ * satisfy compilation requirements for only a single file should be
-+ * included in the file needing that include.
-+ *
-+ * Understanding the overall implementation and architecture of TSEM
-+ * will be facilitated by reviewing the documentation in this file.
-+ */
-+
-+#include <uapi/linux/in.h>
-+#include <uapi/linux/in6.h>
-+#include <linux/wait.h>
-+#include <linux/kref.h>
-+#include <linux/lsm_hooks.h>
-+#include <linux/capability.h>
-+#include <crypto/hash.h>
-+#include <crypto/hash_info.h>
-+#include <net/af_unix.h>
-+
-+/* The capability needed to manage TSEM. */
-+#define TSEM_CONTROL_CAPABILITY CAP_ML
-+
-+/*
-+ * The number of 'slots' in the structure magazines that are used to
-+ * satisfy modeling of security events that are called in atomic context.
-+ */
-+#define TSEM_ROOT_MAGAZINE_SIZE	96
-+#define TSEM_MAGAZINE_SIZE_INTERNAL 16
-+#define TSEM_MAGAZINE_SIZE_EXTERNAL 96
-+
-+/**
-+ * enum tsem_event_type - Ordinal value for a security event.
-+ * @TSEM_BPRM_SET_CREDS: Ordinal value for bprm_creds_for_exec.
-+ * @TSEM_GENERIC_EVENT: Ordinal value for a generically modeled event.
-+ * @TSEM_TASK_KILL: Ordinal value for task kill.
-+ * @....: Remainder follows with a similar naming format that has
-+ *        TSEM_ prep ended to the raw LSM security hook name.
-+ * @TSEM_EVENT_CNT: The final ordinal value is used to define the
-+ *		    length of the following arrays that are indexed
-+ *		    by the ordinal value of the hook:
-+ *
-+ * This enumeration is used to designate an ordinal value for each
-+ * security event, ie. LSM hook, that TSEM is implementing modeling
-+ * for.  This value is used to identify the hook that is either having
-+ * its event description being exported to an external Trusted Modeling
-+ * Agent (TMA) or modeled by the internal TMA implementation.
-+ *
-+ * The primary use of this enumeration is to conditionalize code paths
-+ * based on the security hook being processed and to index the
-+ * tsem_names array and the array that defines the action that is to
-+ * be taken in response to an event that generates a permissions
-+ * violation.
-+ */
-+enum tsem_event_type {
-+	TSEM_BPRM_SET_CREDS = 1,
-+	TSEM_GENERIC_EVENT,
-+	TSEM_TASK_KILL,
-+	TSEM_TASK_SETPGID,
-+	TSEM_TASK_GETPGID,
-+	TSEM_TASK_GETSID,
-+	TSEM_TASK_SETNICE,
-+	TSEM_TASK_SETIOPRIO,
-+	TSEM_TASK_GETIOPRIO,
-+	TSEM_TASK_PRLIMIT,
-+	TSEM_TASK_SETRLIMIT,
-+	TSEM_TASK_SETSCHEDULER,
-+	TSEM_TASK_GETSCHEDULER,
-+	TSEM_TASK_PRCTL,
-+	TSEM_FILE_OPEN,
-+	TSEM_MMAP_FILE,
-+	TSEM_FILE_IOCTL,
-+	TSEM_FILE_LOCK,
-+	TSEM_FILE_FCNTL,
-+	TSEM_FILE_RECEIVE,
-+	TSEM_UNIX_STREAM_CONNECT,
-+	TSEM_UNIX_MAY_SEND,
-+	TSEM_SOCKET_CREATE,
-+	TSEM_SOCKET_CONNECT,
-+	TSEM_SOCKET_BIND,
-+	TSEM_SOCKET_ACCEPT,
-+	TSEM_SOCKET_LISTEN,
-+	TSEM_SOCKET_SOCKETPAIR,
-+	TSEM_SOCKET_SENDMSG,
-+	TSEM_SOCKET_RECVMSG,
-+	TSEM_SOCKET_GETSOCKNAME,
-+	TSEM_SOCKET_GETPEERNAME,
-+	TSEM_SOCKET_SETSOCKOPT,
-+	TSEM_SOCKET_SHUTDOWN,
-+	TSEM_PTRACE_TRACEME,
-+	TSEM_KERNEL_MODULE_REQUEST,
-+	TSEM_KERNEL_LOAD_DATA,
-+	TSEM_KERNEL_READ_FILE,
-+	TSEM_SB_MOUNT,
-+	TSEM_SB_UMOUNT,
-+	TSEM_SB_REMOUNT,
-+	TSEM_SB_PIVOTROOT,
-+	TSEM_SB_STATFS,
-+	TSEM_MOVE_MOUNT,
-+	TSEM_SHM_ASSOCIATE,
-+	TSEM_SHM_SHMCTL,
-+	TSEM_SHM_SHMAT,
-+	TSEM_SEM_ASSOCIATE,
-+	TSEM_SEM_SEMCTL,
-+	TSEM_SEM_SEMOP,
-+	TSEM_SYSLOG,
-+	TSEM_SETTIME,
-+	TSEM_QUOTACTL,
-+	TSEM_QUOTA_ON,
-+	TSEM_MSG_QUEUE_ASSOCIATE,
-+	TSEM_MSG_QUEUE_MSGCTL,
-+	TSEM_MSG_QUEUE_MSGSND,
-+	TSEM_MSG_QUEUE_MSGRCV,
-+	TSEM_IPC_PERMISSION,
-+	TSEM_KEY_ALLOC,
-+	TSEM_KEY_PERMISSION,
-+	TSEM_NETLINK_SEND,
-+	TSEM_INODE_CREATE,
-+	TSEM_INODE_LINK,
-+	TSEM_INODE_UNLINK,
-+	TSEM_INODE_SYMLINK,
-+	TSEM_INODE_MKDIR,
-+	TSEM_INODE_RMDIR,
-+	TSEM_INODE_MKNOD,
-+	TSEM_INODE_RENAME,
-+	TSEM_INODE_SETATTR,
-+	TSEM_INODE_GETATTR,
-+	TSEM_INODE_SETXATTR,
-+	TSEM_INODE_GETXATTR,
-+	TSEM_INODE_LISTXATTR,
-+	TSEM_INODE_REMOVEXATTR,
-+	TSEM_INODE_KILLPRIV,
-+	TSEM_TUN_DEV_CREATE,
-+	TSEM_TUN_DEV_ATTACH_QUEUE,
-+	TSEM_TUN_DEV_ATTACH,
-+	TSEM_TUN_DEV_OPEN,
-+	TSEM_BPF,
-+	TSEM_BPF_MAP,
-+	TSEM_BPF_PROG,
-+	TSEM_EVENT_CNT
-+};
-+
-+/**
-+ * enum tsem_action_type - Ordinal value for security responses.
-+ * @TSEM_ACTION_LOG: Ordinal value to indicate that a security event
-+ *		     that results in a model permissions violation
-+ *		     should be logged.
-+ * @TSEM_ACTION_EPERM: Ordinal value to indicate that a security event
-+ *		       generating a model permissions violation should
-+ *		       return -EPERM to the caller.
-+ *
-+ * This enumeration type is used to designate what type of action is
-+ * to be taken when the processing of a security event hook results in
-+ * a model violation.  The TSEM_ACTION_LOG and TSEM_ACTION_EPERM
-+ * translate into the classical concepts of logging or enforcing
-+ * actions used by other mandatory access control architectures.
-+ */
-+enum tsem_action_type {
-+	TSEM_ACTION_LOG = 0,
-+	TSEM_ACTION_EPERM,
-+	TSEM_ACTION_CNT
-+};
-+
-+/**
-+ * enum tsem_control_type - Ordinal values for TSEM control actions.
-+ * @TSEM_CONTROL_INTERNAL: This ordinal value is set when the first
-+ *			   word of an argument string written to the
-+ *			   control file is the word 'internal'.  This
-+ *			   designates that the security namespace will
-+ *			   be modeled by the internal TMA.
-+ * @TSEM_CONTROL_EXTERNAL: This ordinal value is set when the first
-+ *			   word of an argument string written to the
-+ *			   control file is the word 'external'.  This
-+ *			   designates that the security namespace will
-+ *			   be model by an external TMA.
-+ * @TSEM_CONTROL_ENFORCE: This ordinal value is set when the word
-+ *			  'enforce' is written to the control file.
-+ *			  This indicates that model is to be placed
-+ *			  in 'enforcing' mode and security events that
-+ *			  result in model violations will return EPERM.
-+ * @TSEM_CONTROL_SEAL: This ordinal value is set when the word 'seal'
-+ *		       is written to the control file.  This indicates
-+ *		       that the model for security domain will treat
-+ *		       all security events that do not conform to the
-+ *		       model as 'forensics' events.
-+ * @TSEM_CONTROL_TRUSTED: This ordinal value is used when the first
-+ *			  word of an argument string written to the
-+ *			  control file is the word 'trusted'.  This
-+ *			  is interpreted as a directive to set the
-+ *			  trust status of the task that executed the
-+ *			  security event to be trusted.
-+ * @TSEM_CONTROL_UNTRUSTED: This ordinal value is used when the first
-+ *			    word of an argument string written to the
-+ *			    control file is the word 'untrusted'.
-+ *			    This is interpreted as a directive to set
-+ *			    the trust status of the task that executed
-+ *			    the security event to be untrusted.
-+ * @TSEM_CONTROL_MAP_STATE: This ordinal value is used when the first
-+ *			    word of an argument string written to the
-+ *			    control file is the word 'state'.  The
-+ *			    argument to this directive will be an
-+ *			    ASCII hexadecimally encoded string of the
-+ *			    current model's digest size that will be
-+ *			    treated as a security state point for
-+ *			    inclusion in the security model for the
-+ *			    security domain/namespace.
-+ * @TSEM_CONTROL_MAP_PSEUDONYM: This ordinal value is used when the
-+ *				first word of an argument string
-+ *				written to the control file is the
-+ *				word 'pseudonym'.  The argument to
-+ *				this directive will be an ASCII
-+ *				hexadecimally encoded string of the
-+ *				current model's digest size that will
-+ *				be treated as a pseudonym directive
-+ *				for the security domain/namespace.
-+ * TSEM_CONTROL_MAP_BASE: This ordinal value is used when the first
-+ *			  word of an argument string written to the
-+ *			  control file is the word 'base'.  The
-+ *			  argument to this directive will be an ASCII
-+ *			  hexadecimally encoded string of the current
-+ *			  model's digest size that will be treated as
-+ *			  the base value for the computation of the
-+ *			  functional values (measurement and state) of
-+ *			  the security domain/namespace.
-+
-+ * This enumeration type is used to designate what type of control
-+ * action is to be implemented when arguments are written to the TSEM
-+ * control file (/sys/kernel/security/tsem/control).  The ordinal
-+ * values govern the processing of the command and the interpretation
-+ * of the rest of the command argument string.
-+ */
-+enum tsem_control_type {
-+	TSEM_CONTROL_INTERNAL = 0,
-+	TSEM_CONTROL_EXTERNAL,
-+	TSEM_CONTROL_ENFORCE,
-+	TSEM_CONTROL_SEAL,
-+	TSEM_CONTROL_TRUSTED,
-+	TSEM_CONTROL_UNTRUSTED,
-+	TSEM_CONTROL_MAP_STATE,
-+	TSEM_CONTROL_MAP_PSEUDONYM,
-+	TSEM_CONTROL_MAP_BASE
-+};
-+
-+/**
-+ * enum tsem_ns_reference - Ordinal value for DAC namespace reference.
-+ * @TSEM_NS_INITIAL: This ordinal value indicates that the uid/gid
-+ *		     values should be interpreted against the initial
-+ *		     user namespace.
-+ * @TSEM_NS_CURRENT: This ordinal value indicates that the uid/gid
-+ *		     values should be interpreted against the user
-+ *		     namespace that is in effect for the process being
-+ *		     modeled.
-+ *
-+ * This enumeration type is used to indicate what user namespace
-+ * should be referenced when the uid/gid values are interpreted for
-+ * the creation of either the COE or CELL identities.  The enumeration
-+ * ordinal passed to the tsem_ns_create() function, to configure the
-+ * security domain/namespace, is set by the nsref argument to either
-+ * the 'internal' or 'external' control commands.
-+ */
-+enum tsem_ns_reference {
-+	TSEM_NS_INITIAL = 1,
-+	TSEM_NS_CURRENT
-+};
-+
-+/**
-+ * enum tsem_task_trust - Ordinal value describing task trust status.
-+ * @TSEM_TASK_TRUSTED: This ordinal value indicates that the task has
-+ *		       not executed a security event that has resulted
-+ *		       in a security behavior not described by the
-+ *		       security model the task is being governed by.
-+ * @TSEM_TASK_UNTRUSTED: This ordinal value indicates that the task
-+ *		          has requested the execution of a security event
-+ *		          that resulted in a security behavior not
-+ *		          permitted by the security model the task is
-+ *		          being governed by.
-+ * @TSEM_TASK_TRUST_PENDING: This ordinal value indicates that the setting
-+ *			     of the task trust status is pending a response
-+ *		             from an external TMA.
-+ *
-+ * This enumeration type is used to specify the three different trust
-+ * states that a task can be in.  The trust status of a task is
-+ * regulated by the trust_status member of struct tsem_task.  A task
-+ * carrying the status of TSEM_TASK_TRUSTED means that it has
-+ * not requested the execution of any security events that are
-+ * inconsistent with the security model that the task is running in.
-+ *
-+ * If a task requests execution of a security event that is
-+ * inconsistent with the security model it is operating in, and the
-+ * domain is running in 'sealed' mode, the task trust status is set to
-+ * TSEM_TASK_UNTRUSTED.  This value is 'sticky' in that it will be
-+ * propagated to any child tasks that are spawned from an untrusted
-+ * task.
-+ *
-+ * In the case of an externally modeled security domain/namespace, the
-+ * task trust status cannot be determined until the modeling of the
-+ * security event has been completed.  The tsem_export_event()
-+ * function sets the trust status TSEM_TASK_TRUST_PENDING and then
-+ * places the task into an interruptible sleep state.
-+ *
-+ * Only two events will cause the task to be removed from sleep state.
-+ * Either the task is killed or a control message is written to the
-+ * TSEM control file that specifies the trust status of the task.  See
-+ * the description of the TSEM_CONTROL_TRUSTED and
-+ * TSEM_CONTROL_UNTRUSTED enumeration types.
-+ */
-+enum tsem_task_trust {
-+	TSEM_TASK_TRUSTED = 1,
-+	TSEM_TASK_UNTRUSTED = 2,
-+	TSEM_TASK_TRUST_PENDING = 4
-+};
-+
-+/**
-+ * enum tsem_inode_state - Ordinal value for inode reference state.
-+ * @TSEM_INODE_COLLECTING: This ordinal value indicates that the uid/gid
-+ *			   values should be interpreted against the initial
-+ *			   user namespace.
-+ * @TSEM_INODE_COLLECTED: This ordinal value indicates that the uid/gid
-+ *			  values should be interpreted against the user
-+ *			  namespace that is in effect for the process being
-+ *		          modeled.
-+ *
-+ * This enumeration type is used to specify the status of the inode
-+ * that is having a digest value computed on the file that it is
-+ * referencing.  The purpose of this enumeration is so that the
-+ * recursive call to the TSEM_FILE_OPEN hook, caused by the kernel
-+ * opening the file to compute the checksum, can be bypassed.
-+ *
-+ * The state value of the inode is carried in struct tsem_inode and is
-+ * set and interrogated by the add_file_digest() function.  If the
-+ * status of the inode is TSEM_INODE_COLLECTED and the iversion of the
-+ * inode is the same as the collection time, the cached value for
-+ * currently active model digest is returned.
-+
-+ * If the test for the relevancy of the cached digest value fails the
-+ * status of the inode is set to TSEM_INODE_COLLECTING.  The
-+ * tsem_file_open() function will check the inode status when it is
-+ * invoked by the integrity_kernel_read() function and if it is
-+ * set to 'collecting', a successful permissions check is returned so
-+ * that the kernel can open the file and compute its digest.
-+ */
-+enum tsem_inode_state {
-+	TSEM_INODE_COLLECTING = 1,
-+	TSEM_INODE_COLLECTED
-+};
-+
-+/**
-+ * struct tsem_task - TSEM task control structure.
-+ * @tma_for_ns: The context identity number of the namespace that
-+ *		the task has control over if any.
-+ * @trust_status: The enumeration type that specifies the trust state of
-+ *		  the process.
-+ * @task_id: The hash specific digest that identifies the process.
-+ * @task_key: A hash specific digest value that is used to
-+ *	      authenticate a task that is running as a trust
-+ *	      orchestrator to a task that is under the control of the
-+ *	      orchestrator.
-+ * @context: A pointer to the tsem_context structure that defines the
-+ *	     modeling context that the task is running under.
-+ *
-+ * This structure is one of the two primary control structures that
-+ * are implemented through the LSM blob functionality.  It is
-+ * automatically created when the task control structure is allocated
-+ * for a new task that is being created.  It's role is to control the
-+ * status of the task with respect to its security model.
-+ *
-+ * The trust_status member of structure determines whether or not the
-+ * task is in a condition to be trusted.  It represents whether or not
-+ * the task has requested execution of a security event that is
-+ * inconsistent with the model that the task is running under.
-+ * Reference the tsem_trust_status enumeration type for more
-+ * information on this member.  The trust status value is propagated
-+ * to any child tasks that are spawned from a task.
-+ *
-+ * The digest value that the task_id member contains is generated by
-+ * the tsem_tsem_bprm_creds_for_exec() function that computes the
-+ * task identity based on the COE identity and the CELL identity of
-+ * the executable that is being started.  This task_id value is used
-+ * in the computation of the security state point values in
-+ * combination with the COE and CELL identities for this event.  The
-+ * task_id digest creates security state points that are specific to
-+ * the executable file that was used to start the task.
-+ *
-+ * The task_key member holds the authentication key that will be used
-+ * to authenticate a process that is requesting the ability to set the
-+ * trust status of a process.  This value is generated for the task
-+ * structure of the trust orchestrator when a security modeling
-+ * namespace is created by the orchestrator.
-+ *
-+ * As an additional protection, the creation of a namespace causes the
-+ * context id of the created namespace to be placed in the task that
-+ * will serve as the trust orchestrator for the namespace.  This
-+ * context id must match the context id of a process that a trust
-+ * control request is being sent to.  Like the authentication key
-+ * this value is not propagated on task allocation so only the task
-+ * that has nominated the security modeling namespace will have
-+ * possession of the necessary credentials to control it.
-+ *
-+ * The context member of the structure contains a pointer to the
-+ * tsem_context structure allocated when a security modeling namespace
-+ * is created by the tsem_ns_create() function.  This structure will
-+ * contain all of the information needed to define how the task is to
-+ * have its security behavior modeled.
-+ */
-+struct tsem_task {
-+	u64 tma_for_ns;
-+	enum tsem_task_trust trust_status;
-+	u8 task_id[HASH_MAX_DIGESTSIZE];
-+	u8 task_key[HASH_MAX_DIGESTSIZE];
-+	struct tsem_context *context;
-+};
-+
-+/**
-+ * struct tsem_context - TSEM modeling context description.
-+ * @kref: Reference count for the context.
-+ * @work: Work structure for delayed release of the context.
-+ * @id: The index number of the context.
-+ * @sealed: Status variable indicating whether or not the
-+ *	    modeling context can be modified.
-+ * @use_current_ns: Status variable indicating which user namespace
-+ *		    should be used for resolution of uid/gid values.
-+ * @actions: An array of enum tsem_action_type variables indicating
-+ *	     the type of response that should be returned in
-+ *	     response to the modeling of a security event that
-+ *	     is inconsistent with the model being used for the
-+ *	     security context.
-+ * @digestname: A pointer to a null-terminated buffer containing the
-+ *		name of the digest function that is to be used for
-+ *		this security context.
-+ * @zero_digest: The digest value for a 'zero-length' digest value.
-+ * @tfm: A pointer to the digest transformation structure that is to
-+ *	 be used for this context.
-+ * @magazine_size: The number of struct tsem_event structures that
-+ *		   are held in reserve for security event hooks that
-+ *		   are called in atomic context.
-+ * @magazine_lock: The spinlock that protects access to the event
-+ *		   magazine for the security context.
-+ * @magazine_index: The bitmap that is used to track the magazine slots
-+ *		    that have been allocated.
-+ * @ws: An array of work structures that are used to refill the magazine
-+ *	slots.
-+ * @magazine: An array of pointers to struct tsem_event structures that
-+ *	      are pre-allocated for security hooks called in atomic
-+ *	      context.
-+ * @model: If the modeling context is implemented with a kernel based
-+ *	   trusted model agent this pointer will point to the struct
-+ *	   tsem_model structure that maintains the state of the
-+ *	   security model.
-+ * @external: If the modeling context is implemented with an external
-+ *	      modeling agent this pointer will point to the struct
-+ *	      tsem_external structure that implements the interface to
-+ *	      the external trusted modeling agent.
-+
-+ * This structure is used to represent the state of a TSEM security
-+ * modeling namespace.  A pointer to this structure is stored in the
-+ * struct tsem_task structure.
-+ *
-+ * This structure is allocated by the tsem_ns_create() function in
-+ * response to a TSEM control request.  This structure maintains all
-+ * of the information that describes the security modeling namespace
-+ * that is not specific to the type of namespace, ie. external or
-+ * internal that is being implemented.
-+
-+ * The id member is a 64-bit counter that cannot feasibly be
-+ * overflowed and that is incremented for each namespace creation that
-+ * is created.  The root modeling namespace has a value of zero so the
-+ * TSEM code uses a pattern of testing this value for non-zero status
-+ * as an indication of whether or not the task is running in a
-+ * subordinate modeling namespace.
-+
-+ * Each security modeling namespace can have an independent
-+ * cryptographic digest function that is used as the compression
-+ * function for generating the digest values that are used to model
-+ * the security events that occur in a namespace.  A single struct tfm
-+ * is allocated for this digest function at the time that the
-+ * tsem_context structure is created and is maintained in this
-+ * structure for subsequent use during event processing.
-+
-+ * Each cryptographic digest function has a 'zero message' value that
-+ * is the result of the initialization and closure of a hash function
-+ * that has no other input.  This zero digest value is computed at the
-+ * time of the creation of the array.  This digest value is returned
-+ * for files with zero sizes or that have pseudonyms declared for
-+ * them.
-+ *
-+ * The actions array contains a specification of how each security
-+ * event should be handled in the event that the model detects a
-+ * security event consistent with the model designated for the
-+ * namespace.  This array allows the specification of whether the
-+ * model should be enforcing or logging.  Currently the specification
-+ * is all or nothing for all of the events, with plans to make the
-+ * actions individually configurable.
-+
-+ * Each security event that is processed requires a struct tsem_event
-+ * structure that drives either the internal modeling of an event or
-+ * its export to an external modeling agent.  Some security event
-+ * hooks are called while a task is running in atomic context. Since
-+ * memory cannot be allocated while a process is in atomic context, a
-+ * magazine of these structures is maintained by this structure for
-+ * security events that run in atomic context.  The size of this
-+ * magazine is dynamic and is configurable for each security modeling
-+ * namespace that is created.
-+ *
-+ * When a tsem_event structure is allocated for an atomic event a
-+ * request for the refill of the slot that is vacated is dispatched to
-+ * an asynchronous workqueue.  The ws member of this structure points
-+ * to an array of work structures for this refill capability, one for
-+ * each slot in the magazine.
-+ *
-+ * All of this infrastructure is generic for each security modeling
-+ * namespace.  How the security modeling is done is governed by the
-+ * model and external members of this structure.  These members point
-+ * to data structures that either maintain the security model state
-+ * for an in kernel trusted modeling agent or handle the export of the
-+ * event to an external trusted modeling agent.
-+ *
-+ * Each task that is created in a non-root security modeling namespace
-+ * increments the reference count maintained in the kref member of
-+ * this structure in the tsem_task_alloc() function.  The
-+ * tsem_task_free() function decrements this reference count.  When
-+ * the reference count expires, ie. when the last task using the
-+ * modeling namespace exits, an asynchronous workqueue request is
-+ * dispatched to dispose of the context.  The work member of this
-+ * structure is used to reference that workqueue request.
-+ */
-+struct tsem_context {
-+	struct kref kref;
-+	struct work_struct work;
-+
-+	u64 id;
-+	bool sealed;
-+	bool use_current_ns;
-+
-+	enum tsem_action_type actions[TSEM_EVENT_CNT];
-+
-+	char *digestname;
-+	u8 zero_digest[HASH_MAX_DIGESTSIZE];
-+	struct crypto_shash *tfm;
-+
-+	unsigned int magazine_size;
-+	spinlock_t magazine_lock;
-+	unsigned long *magazine_index;
-+	struct tsem_work *ws;
-+	struct tsem_event **magazine;
-+
-+	struct tsem_model *model;
-+	struct tsem_external *external;
-+};
-+
-+/**
-+ * struct tsem_model - TSEM internal TMA description.
-+ * @have_aggregate: Flag variable to indicate whether or not the
-+ *		    hardware aggregate value has been injected into
-+ *		    the mode.
-+ * @base: The base value that is to be used in computing the
-+ *	  measurement and state values of the model.
-+ * @measurement: The time dependent linear extension state of the
-+ *		 model.
-+ * @state: The time independent linear extension state of the model.
-+ * @point_lock: The spinlock that protects access to the list of
-+ *		security state coefficients in the model.
-+ * @point_list: A pointer to the list of security state coefficients
-+ *		in the model.
-+ * @point_end_mutex: The mutex that is used to protect the end of the
-+ *		     list of security state coefficients for the
-+ *		     model.
-+ * @point_end: A pointer to the end of the list of security state
-+ *	       coefficients that will be traversed by a call to the
-+ *	       control plane.
-+ * @trajectory_lock: The spinlock used to protect the list of security
-+ *		     event descriptions in the model.
-+ * @trajectory_list: A pointer to the list of descriptions of the
-+ *		     security events that have been recorded in this
-+ *		     model.
-+ * @trajectory_end_mutex: The mutex that protects the end of the list
-+ *			  of security event descriptions.
-+ * @trajectory_end: A pointer to the end of the list of security event
-+ *		    descriptions that will be traversed by a call to
-+ *		    the control plane.
-+ * @forensics_lock: The spinlock used to protect the list of security
-+ *		    event descriptions that are considered invalid by
-+ *		    the model being enforced.
-+ * @forensics_list: A pointer to the list of descriptions of security
-+ *		    events that are considered invalid by the security
-+ *		    model being enforced.
-+ * @forensics_end_mutex: The mutex that protects the end of the list
-+ *			 of security event descriptions that are
-+ *			 considered invalid by the current model.
-+ * @forensics_end: A pointer to the end of the list of security event
-+ *		   descriptions, that are considered invalid, that are
-+ *		   to be traversed by a call to the control plane.
-+ * @pseudonym_mutex: The mutex lock that protects the list of file
-+ *		     digest pseudonyms for the current model.
-+ * @pseudonum_list: A pointer to the list of file digest pseudonyms
-+ *		    that have been declared for the current model.
-+ * @magazine_size: The number of struct tsem_event_point structures that
-+ *		   are held in reserve for security event hooks that
-+ *		   are called in atomic context.
-+ * @magazine_lock: The spinlock that protects access to the event
-+ *		   magazine for the security context.
-+ * @magazine_index: The bitmap that is used to track the magazine slots
-+ *		    that have been allocated.
-+ * @ws: An array of work structures that are used to refill the magazine
-+ *	slots.
-+ * @magazine: An array of pointers to struct tsem_event_point structures that
-+ *	      are pre-allocated for security hooks called in atomic
-+ *	      context.
-+ *
-+ * If a call to the tsem_ns_create() function specifies that a kernel
-+ * based trusted modeling agent is to be used to implement the
-+ * security namespace model, a pointer to this structure is placed in
-+ * the struct tsem_context structure.  This structure is used to
-+ * maintain the state of the kernel based model.
-+ *
-+ * There are two primary functional values that are maintained by the
-+ * model.  The measurement member of this structure represents the
-+ * time dependent linear extension sum of the security state
-+ * coefficients that have been assigned to security events that have
-+ * occurred in the context of the model.
-+ *
-+ * This classic integrity measurement is subject to scheduling
-+ * dependencies and may be invariant from run to run of the model.  It
-+ * is of primary use in verifying the order of security events that
-+ * have occurred in the model.
-+ *
-+ * The state member of this structure represents a time independent
-+ * linear extension sum of the security state coefficients that have
-+ * been generated in the model.  It represents the linear extension
-+ * sum of the security state coefficients that have been sorted in
-+ * natural (big-endian) form.
-+ *
-+ * Both of these measurements are dependent on the platform hardware
-+ * aggregate value and the base point that has been defined for the
-+ * define.
-+ *
-+ * A non-zero hardware aggregate value is only available if the
-+ * platform has a TPM.  The have_aggregate member of this structure is
-+ * a flag variable that indicates whether or not the aggregate value
-+ * has been injected into the model.
-+ *
-+ * The base member of this structure contains a model specific
-+ * coefficient that is used to perturb each security state coefficient
-+ * generated in the model.  This value is designed to serve as a
-+ * 'freshness' value for a verifying party to the model.
-+ *
-+ * There are three primary model lists maintain by this structure:
-+ *
-+ * * security state points
-+ * * security trajectory events
-+ * * security forensics events
-+ *
-+ * Similar members are maintained in this structure to support each of
-+ * these lists.
-+ *
-+ * All three lists are extension only and are protected by a spinlock
-+ * that can be held in atomic context.  This spinlock is only held for
-+ * the period of time required to extend the list.
-+ *
-+ * Calls by the control plane to interrogate the lists require the
-+ * traversal of the list that is ill-suited for a spinlock.  As a
-+ * result each list type has a mutex associated with it that protects
-+ * a pointer to the end of the list, an endpoint that is determined at
-+ * the start of a call to the control plane.
-+ *
-+ * The list spinlock is used at the start of the control plane call to
-+ * capture the end of the list that is then protected by the mutex.
-+ * In essence this is used to transition protection of the list from
-+ * the spinlock to the mutex.
-+ *
-+ * The kernel based modeling agent has support for maintaining a
-+ * constant digest value for files, that by function, do not have a
-+ * fixed digest value, such as log files.  The pseudonym_list member
-+ * of this structure points to the list of these designations.  The
-+ * pseudonym_mutex structure protects this list.
-+ *
-+ * Like the struct tsem_context structure the tsem_model structure
-+ * maintains a magazine of structures that are used to service
-+ * security events that are called in atomic context.  The magazine
-+ * maintained by this structure is a list of struct tsem_event_point
-+ * structures that are used to describe the security state
-+ * coefficients held by the model.
-+ *
-+ * The description of struct tsem_context details the implementation
-+ * of the magazine which is identical to the implementation for this
-+ * structure, with the exception of the type of structures that are
-+ * held in reserve.
-+ */
-+struct tsem_model {
-+	bool have_aggregate;
-+
-+	u8 base[HASH_MAX_DIGESTSIZE];
-+	u8 measurement[HASH_MAX_DIGESTSIZE];
-+	u8 state[HASH_MAX_DIGESTSIZE];
-+
-+	spinlock_t point_lock;
-+	struct list_head point_list;
-+	struct mutex point_end_mutex;
-+	unsigned int point_count;
-+	struct list_head *point_end;
-+
-+	spinlock_t trajectory_lock;
-+	struct list_head trajectory_list;
-+	struct mutex trajectory_end_mutex;
-+	struct list_head *trajectory_end;
-+
-+	spinlock_t forensics_lock;
-+	struct list_head forensics_list;
-+	struct mutex forensics_end_mutex;
-+	struct list_head *forensics_end;
-+
-+	struct mutex pseudonym_mutex;
-+	struct list_head pseudonym_list;
-+
-+	unsigned int magazine_size;
-+	spinlock_t magazine_lock;
-+	unsigned long *magazine_index;
-+	struct tsem_work *ws;
-+	struct tsem_event_point **magazine;
-+};
-+
-+/**
-+ * struct tsem_external - TSEM external TMA description.
-+ * @export_lock: The spinlock that protects access to the export_list
-+ *		 member of this structure.
-+ * @export_list: A pointer to the list of events waiting to be
-+ *		 exported to the trust orchestrator for the security
-+ *		 modeling namespace.  The structure type that is
-+ *		 linked by this list is the struct export_event
-+ *		 structure that is private to the export.c compilation
-+ *		 unit.
-+ * @dentry: A pointer to the dentry describing the pseudo-file in the
-+ *	    /sys/kernel/security/tsem/ExternalTMA directory that is
-+ *	    being used to export security event descriptions to the
-+ *	    external trust orchestrator for the security modeling
-+ *	    domain described by this structure.
-+ * @have_event: A flag variable to indicate that there is work queued
-+ *		on the export pseudo-file for the security modeling
-+ *		namespace.
-+ * @wq: The work queue used to implement polling for the security
-+ *	event export file for the security modeling namespace.
-+ * @magazine_size: The number of struct export_event structures that
-+ *		   are held in reserve for security event hooks that
-+ *		   are called in atomic context.
-+ * @magazine_lock: The spinlock that protects access to the event
-+ *		   magazine for the security modeling domain.
-+ * @magazine_index: The bitmap that is used to track the magazine slots
-+ *		    that have been allocated.
-+ * @ws: An array of work structures that are used to refill the magazine
-+ *	slots.
-+ * @magazine: An array of pointers to struct export_event structures that
-+ *	      are pre-allocated for security hooks called in atomic
-+ *	      context.
-+ *
-+ * If an externally modeled security modeling namespace is created
-+ * a structure of this type is allocated for the namespace and placed
-+ * in the struct tsem_context structure.
-+ *
-+ * The primary purpose of this structure is to manage event
-+ * descriptions that are being transmitted to the trust orchestrator
-+ * associated with the security modeling namespace.  The pseudo-file
-+ * will be as follows:
-+ *
-+ * /sys/kernel/security/tsem/ExternalTMA/N
-+ *
-+ * Where N is the context id number of the modeling namespace.
-+ *
-+ * The dentry member of this structure is used to represent the
-+ * pseudo-file that is created when the external modeled namespace is
-+ * created.
-+ *
-+ * This list of events waiting to be received by the trust
-+ * orchestrator is maintained in the export_list member of this
-+ * structure.  Additions or removals from the list hold the spinlock
-+ * described by the export_lock member of this structure.
-+ *
-+ * The wq member of this structure is used to implement a workqueue
-+ * to support polling for events on the export control file.  The
-+ * have_event flag is set to indicate to the polling call that
-+ * security events are available for export.
-+ *
-+ * When a security event description is exported the calling task is
-+ * scheduled away to allow the trust orchestrator to process the
-+ * event.  This obviously creates issues for security events that are
-+ * called in atomic context.
-+ *
-+ * Security events in atomic context are exported as an async_event
-+ * rather than a simple event.  The trust orchestrator has the option
-+ * of killing the workload that deviated from the security model or
-+ * signaling a violation of the model.
-+ *
-+ * To support the export of asynchronous events a magazine, similar to
-+ * the event and model structure magazines, is maintained by this
-+ * structure for the external modeling namespace.
-+ */
-+struct tsem_external {
-+	spinlock_t export_lock;
-+	struct list_head export_list;
-+	struct dentry *dentry;
-+	bool have_event;
-+	wait_queue_head_t wq;
-+
-+	unsigned int magazine_size;
-+	spinlock_t magazine_lock;
-+	unsigned long *magazine_index;
-+	struct tsem_work *ws;
-+	struct export_event **magazine;
-+};
-+
-+/**
-+ * struct tsem_work - TSEM magazine refill work structure.
-+ * @index: The index number of the slot in the structure magazine that
-+ *	   is being refilled.
-+ * @u: A union that holds pointers to the structure whose magazine is
-+ *     being refilled.
-+ * @work: The work structure that manages the workqueue being used to
-+ *	  refill the magazine entry.
-+ *
-+ * As has been previously documented for the struct tsem_context,
-+ * struct tsem_model and struct tsem_external structures, there is a
-+ * need to maintain a magazine of these structures in order to allow
-+ * the processing of security events that are called in atomic
-+ * context.  An array of this structure type is embedded in each of
-+ * these structures to manage the asynchronous refill of the slot in
-+ * the magazine that was used to handle an atomic security event.
-+ *
-+ * The index member of this structure points to the slot in the
-+ * magazine that this work item is referencing.
-+ *
-+ * The structure that the refill work is being done for is maintained
-+ * in the respective structure pointer in the u member of this
-+ * structure.
-+ *
-+ * The work member of this structure is used to reference the
-+ * asynchronous work request that is being submitted for the refill.
-+ */
-+struct tsem_work {
-+	unsigned int index;
-+	union {
-+		struct tsem_context *ctx;
-+		struct tsem_model *model;
-+		struct tsem_external *ext;
-+	} u;
-+	struct work_struct work;
-+};
-+
-+/**
-+ * struct tsem_COE - TSEM context of execution definition structure.
-+ * @uid: The numeric user identity that the COE is running with.
-+ * @euid: The effective user identity that the COE is running with.
-+ * @suid: The saved user identity possessed by the COE.
-+ * @gid: The group identity that the COE is running with.
-+ * @egid: The effective group identity that the COE possesses.
-+ * @sgid: The saved group identity of the COE.
-+ * @fsuid: The filesystem user identity that the COE is running with.
-+ * @fsgid: The filesystem group identity that the COE is running with.
-+ * @capeff: This union is used to implement access to the effective
-+ *	    capability set the COE is running with.  The mask value
-+ *	    is used to assign to the structure with the value member
-+ *	    used to extract the 64 bit value for export and
-+ *	    computation.
-+ *
-+ * A security state coefficient is computed from two primary entities:
-+ * the COE and the CELL identities.  This structure is used to carry
-+ * and encapsulate the characteristics of the context of execution
-+ * (COE) that will be used to generate the COE identity.
-+ *
-+ * The numeric values for discretionary access controls, ie. uid, gid,
-+ * are determined by which user namespace the security modeling
-+ * namespace is configured to reference.  The reference will be either
-+ * the initial user namespace or the user namespace that the context
-+ * of execution is running in.
-+ */
-+struct tsem_COE {
-+	uid_t uid;
-+	uid_t euid;
-+	uid_t suid;
-+
-+	gid_t gid;
-+	gid_t egid;
-+	gid_t sgid;
-+
-+	uid_t fsuid;
-+	gid_t fsgid;
-+
-+	union {
-+		kernel_cap_t mask;
-+		u64 value;
-+	} capeff;
-+};
-+
-+/**
-+ * struct tsem_COE - TSEM file description.
-+ * @uid: The numeric user identity of the file.
-+ * @gid: The numeric group identity of the file.
-+ * @mode: The discretionary access mode for the file.
-+ * @flags: The file control flags.
-+ * @name_length: The length of the pathname of the file.
-+ * @name: The digest value of the pathname of the file using the
-+ *	  hash function defined for the security modeling namespace.
-+ * @s_magic: The magic number of the filesystem that the file resides
-+ *	     in.
-+ * @s_id: The name of the block device supporting the filesystem.
-+ * @s_uuid: The uuid of the filesystem that the file resides in.
-+ * @digest: The digest value of the contents of the file using the
-+ *	    hash function defined for the security modeling namespace.
-+ *
-+ * This structure and the structures that follow up to the struct
-+ * tsem_event structure are used to identify the various entities that
-+ * are involved in the definition of the CELL identity for a security
-+ * event.
-+ *
-+ * The tsem_file structure is used to encapsulate the characteristics
-+ * of a file that is used as an entity in the CELL definition of an
-+ * event.
-+ *
-+ * Since a pathname can be up to PATH_MAX (4096 bytes) in length the
-+ * cryptographic digest value is used rather than the pathname of the
-+ * file itself.
-+ */
-+struct tsem_file {
-+	uid_t uid;
-+	gid_t gid;
-+	umode_t mode;
-+	u32 flags;
-+
-+	u32 name_length;
-+	u8 name[HASH_MAX_DIGESTSIZE];
-+
-+	u32 s_magic;
-+	u8 s_id[32];
-+	u8 s_uuid[16];
-+
-+	u8 digest[HASH_MAX_DIGESTSIZE];
-+};
-+
-+/**
-+ * struct tsem_COE - TSEM memory mapped file characteristics.
-+ * @file: The struct file definition for the file that is being
-+ *	  mapped.  This pointer will be null in the case of an
-+ *	  anonymous mapping.
-+ * @anonymous: A flag variable to indicate whether or not the mapping
-+ *	       is file backed or anonymous.
-+ * @reqprot: The memory protection flags that are requested by the
-+ *	     memory mapping system call.
-+ * @prot: The protections that will be applied to the mapping.
-+ * @flags: The control flags of the memory mapping call.
-+ *
-+ * This structure is used to encapsulate the arguments provided to the
-+ * tsem_mmap_file security event handler.
-+ */
-+struct tsem_mmap_file_args {
-+	struct file *file;
-+	u32 anonymous;
-+	u32 reqprot;
-+	u32 prot;
-+	u32 flags;
-+};
-+
-+/**
-+ * struct tsem_socket_create_args - TSEM socket creation arguments.
-+ * @family: The family name of the socket whose creation is being
-+ *	    requested.
-+ * @type: The type of the socket being created.
-+ * @protocol: The protocol family of the socket being created.
-+ * @kern: A flag variable to indicate whether or not the socket being
-+ *	  created is kernel or userspace based.
-+ *
-+ * This structure is used to encapsulate the arguments provided to the
-+ * tsem_socket_create security event handler.
-+ */
-+struct tsem_socket_create_args {
-+	int family;
-+	int type;
-+	int protocol;
-+	int kern;
-+};
-+
-+/**
-+ * struct tsem_socket_connection_args - TSEM socket connection arguments.
-+ * @tsip: A pointer to the struct tsem_inode structure that describes
-+ *	  the TSEM inode characteristics of the inode representing
-+ *	  the socket.
-+ * @addr: A pointer to the structure describing the socket address
-+ *	  that is being connected.
-+ * @addr_len: The length of the socket address description structure.
-+ * @family: The family number of the socket.
-+ *
-+ * @protocol: The protocol family of the socket being created.
-+ * @kern: A flag variable to indicate whether or not the socket being
-+ *	  created is kernel or userspace based.
-+ * @u: A union that is used to hold the family specific address
-+ *     characteristics of the socket connection.
-+ * @u.ipv4: If the connection is IPV4 based this structure will be
-+ *	    populated with the IPV4 address information.
-+ * @u.ipv6: If the connection is IPV6 based this structure will be
-+ *	    populated with the IPV6 address information.
-+ * @u.path: If the socket connection is an AF_UNIX based socket
-+ *	    address this buffer will contain the pathname of the
-+ *	    socket address.
-+ * @u.mapping: If the socket represents an address protocol other
-+ *	       than IPV4, IPV6 or UNIX domain this buffer will contain
-+ *	       the cryptographic value of the socket address
-+ *	       information using the hash function that has been
-+ *	       specified for the security modeling namespace.
-+ *
-+ * This structure is used to encapsulate the arguments provided to the
-+ * tsem_socket_create security event handler.
-+ */
-+struct tsem_socket_connect_args {
-+	struct tsem_inode *tsip;
-+	struct sockaddr *addr;
-+	int addr_len;
-+	u16 family;
-+	union {
-+		struct sockaddr_in ipv4;
-+		struct sockaddr_in6 ipv6;
-+		char path[UNIX_PATH_MAX + 1];
-+		u8 mapping[HASH_MAX_DIGESTSIZE];
-+	} u;
-+};
-+
-+/**
-+ * struct tsem_socket_accept_args - TSEM socket accept parameters.
-+ * @family: The socket family identifier for the connection being
-+ *	    accepted.
-+ * @type: The type of socket connection being accepted.
-+ * @port: The port number of the connection being accepted.
-+ * @ipv4: The IPV4 address of the connection being accepted if the
-+ *	  socket is representing an IPV4 connection
-+ * @ipv6: The IPV6 address of the connection being accepted if the
-+ *	  socket is representing an IPV6 connection.
-+ * @af_unix: The UNIX domain socket address if the socket is
-+ *	     representing a UNIX domain connection.
-+ * @path: The pathname of the UNIX domain socket.
-+ * @mapping: A cryptographic hash of description of the socket
-+ *	     connection being accepted if the socket is representing
-+ *	     a connection other than an IPV4, IPV6 or UNIX domain
-+ *	     socket.
-+ *
-+ * This structure is used to encapsulate the arguments provided to the
-+ * tsem_socket_accept security event handler.
-+ */
-+struct tsem_socket_accept_args {
-+	u16 family;
-+	u16 type;
-+	__be16 port;
-+	union {
-+		__be32 ipv4;
-+		struct in6_addr ipv6;
-+		struct unix_sock *af_unix;
-+		char path[UNIX_PATH_MAX + 1];
-+		u8 mapping[HASH_MAX_DIGESTSIZE];
-+	} u;
-+};
-+
-+/**
-+ * struct tsem_task_kill_args - TSEM task kill arguments.
-+ * @cross_model: A flag variable used to indicate whether or not the
-+ *		 signal is originating from a security modeling
-+ *		 namespace other than the namespace of the target process.
-+ * @signal: The number of the signal being sent.
-+ * @source: The task identifier of the process sending the signal
-+ * @target: The task identifier of the target process.
-+ *
-+ * This structure is used to encapsulate the arguments provided to the
-+ * tsem_task_kill security event handler.
-+ */
-+struct tsem_task_kill_args {
-+	u32 cross_model;
-+	u32 signal;
-+	u8 source[HASH_MAX_DIGESTSIZE];
-+	u8 target[HASH_MAX_DIGESTSIZE];
-+};
-+
-+/**
-+ * struct tsem_event - TSEM security event description.
-+ * @index: The index number of the slot in the structure magazine that
-+ *	   is being refilled.
-+ * @u: A union that holds pointers to the structure whose magazine is
-+ *     being refilled.
-+ * @work: The work structure that manages the workqueue being used to
-+ *	  refill the magazine entry.
-+ * @event: The enumeration type describing the security event that the
-+ *	   structure is defining.
-+ * @locked: A boolean flag used to indicate whether or not the
-+ *	    security event is running in atomic context.
-+ * @pid: The process id number, in the global pid namespace, of the
-+ *	 task that is requesting approval for a security event.
-+ * @pathname: If the event is referencing a file this pointer will
-+ *	      point to a null-terminated buffer containing the
-+ *	      pathname to the file in the mount namespace that the
-+ *	      process is running in.
-+ * @comm: A pointer to a null terminated buffer containing the name of
-+ *	  the process that is requesting the security event.
-+ * @digestsize: The size in bytes of the cryptographic hash function
-+ *		that is being used in the namespace in which the event
-+ *		is being recorded.
-+ * @task_id: The TSEM task identifier of the process that generated the
-+ *	     security event described by an instance of this
-+ *	     structure.
-+ * @mapping: The security state coefficient that the event described
-+ *	     by this structure generates.
-+ * @COE: The struct tsem_COE structure that describes the Context Of
-+ *	 Execution that generated the event described by this
-+ *	 structure.
-+ * @file: If the security event references a file this structure will
-+ *	  contain the struct tsem_file structure that describes the
-+ *	  characteristics of the file.
-+ * @CELL: The CELL union is used to hold the data structures that
-+ *	  characterize the CELL identity of the event.
-+ * @CELL.event_type: In the case of a generically modeled event this
-+ *		     member will contain the enumeration value
-+ *		     identifying the event.
-+ * @CELL.mmap_file: The structure describing the characteristics of
-+ *		    a mmap_file security event.
-+ * @CELL.socket_create: The structure describing the characteristics
-+ *			of a socket_create security event.
-+ * @CELL.socket_connect: The structure describing the characteristics
-+ *			 of a socket_connect security event.
-+ * @CELL.socket_accept: The structure describing the characteristics
-+ *			of a socket accept security event.
-+ * @CELL.task_kill: The structure describing the characteristics of a
-+ *		    task_kill security event.
-+ *
-+ * This structure is the primary data structure for describing
-+ * security events that are registered in a security modeling
-+ * namespace.  Each unique security coefficient in the namespace will
-+ * have one of these structures attached to it.
-+ *
-+ * This structure encapsulates the following three major sources of
-+ * information about the event:
-+ *
-+ * * A description of the process initiating the event.
-+ * * The characteristics that form the COE identity of the event.
-+ * * The characteristics that form the CELL identity of the event.
-+ *
-+ * Since one event description has to ultimately characterize any
-+ * security event that can occur the strategy is to use a union that
-+ * contains security event specific structures that describe the
-+ * characteristics of the event.
-+ *
-+ * The kref member of this structure is used to signal when the
-+ * structure is to be deleted.  For example, in the case of an
-+ * externally modeled event, when the export of the event description
-+ * is complete.  In the case of an internally modeled namespace the
-+ * structure will be released if it represents a security state
-+ * coefficient that is already present in the model.
-+ *
-+ * The work member of this structure is used to support asynchronous
-+ * updates to a TPM for the root modeling domain.  Asynchronous
-+ * updates are used to improve the performance of modeling and to
-+ * handle security events that are running in atomic context and
-+ * cannot be scheduled away while the TPM transaction completes.
-+ *
-+ * The tsem_event_allocate() function is called by a TSEM security
-+ * event handler to allocate and populate this structure.  The struct
-+ * tsem_event_parameters structure is used to encapsulate all of the
-+ * different structure types that are needed to characterize all of
-+ * the different security events that occur.
-+ *
-+ * The tsem_event_allocate() function is called by either the
-+ * tsem_map_event() or tsem_map_event_locked() functions.  After
-+ * allocating and populating an event description structure the
-+ * mapping functions generate a security state coefficient from the
-+ * information in this structure.
-+ *
-+ * The two separate function call points for mapping are to allow the
-+ * security event handlers to indicate the context in which the
-+ * security event is occurring, ie. sleeping or atomic context.  After
-+ * this point the context of the security event is represented by the
-+ * locked member of this structure.
-+ *
-+ * After the event is mapped this structure is either passed to the
-+ * internal trusted modeling agent or the contents of this structure
-+ * is exported to the trust orchestrator attached to the namespace for
-+ * modeling by an external trust modeling agent.
-+ */
-+struct tsem_event {
-+	struct kref kref;
-+	struct list_head list;
-+	struct work_struct work;
-+
-+	enum tsem_event_type event;
-+	bool locked;
-+	pid_t pid;
-+	char *pathname;
-+	char comm[TASK_COMM_LEN];
-+
-+	unsigned int digestsize;
-+	u8 task_id[HASH_MAX_DIGESTSIZE];
-+	u8 mapping[HASH_MAX_DIGESTSIZE];
-+
-+	struct tsem_COE COE;
-+	struct tsem_file file;
-+
-+	union {
-+		u32 event_type;
-+		struct tsem_mmap_file_args mmap_file;
-+		struct tsem_socket_create_args socket_create;
-+		struct tsem_socket_connect_args socket_connect;
-+		struct tsem_socket_accept_args socket_accept;
-+		struct tsem_task_kill_args task_kill;
-+	} CELL;
-+};
-+
-+/**
-+ * struct tsem_event_parameters - Security event argument descriptions
-+ * @u: A union that encapsulates all of the different structures that
-+ *     are used to characterize the argument so the TSEM security
-+ *     event handlers.
-+ * @u.event_type: This structure member holds the enum tsem_event_type
-+ *		  enumeration value of the event whose characteristics
-+ *		  are encapsulated in the function.
-+ * @u.file: If the security event references a VFS file this member
-+ *	    hold a pointer to the description of the file.
-+ _file event.
-+ * @u.socket_create: This member will point to a structure that
-+ *		     describes the characteristics of a socket_create
-+ *		     event.
-+ * @u.socket_connect: This member will point to a structure that
-+ *		      describes the characteristics of a socket_connect
-+ *		      event.
-+ * @u.socket_accept: This member will point to a structure that
-+ *		     describes the characteristics of a socket_accept
-+ *		     event.
-+ * @u.task_kill: This member will point to a structure that describes
-+ *		     the characteristics of a task_kill function.
-+ *
-+ * The purpose of this structure is to provide a common encapsulation
-+ * method for passing the CELL characteristics of a security event
-+ * into the tsem_event_init() function.  The characteristics passed in
-+ * this event will be used to create and populate the struct
-+ * tsem_event structure that will go on to be used to characterize
-+ * the event either an internal or external modeling agent.
-+ *
-+ * The strategy followed is to allocate one of these structures on the
-+ * stack for a security event call along with a call specific
-+ * characteristics description structure, both of which will no longer
-+ * be needed after completion of the call since the requisite
-+ * information has been transferred to a struct tsem_event structure.
-+ */
-+struct tsem_event_parameters {
-+	union {
-+		u32 event_type;
-+		struct file *file;
-+		struct tsem_mmap_file_args *mmap_file;
-+		struct tsem_socket_create_args *socket_create;
-+		struct tsem_socket_connect_args *socket_connect;
-+		struct tsem_socket_accept_args *socket_accept;
-+		struct tsem_task_kill_args *task_kill;
-+	} u;
-+};
-+
-+/**
-+ * struct tsem_event_point - TSEM security coefficient characteristics.
-+ * @list: The list structure used to link together all of the security
-+ *	  state coefficients for a modeling namespace.
-+ * @valid: A boolean value use to indicate whether or not the security
-+ *	   state point is a valid coefficient in the model.
-+ * @count: The number of times this coefficient has been expressed by
-+ *	   security model for the namespace.
-+ * @point: The security state coefficient for the point created by
-+ *	   the cryptographic hash function being used for the modeling
-+ *	   namespace.
-+ *
-+ * This structure is used by internal trusted modeling agents to
-+ * represent each unique state point in a security model.  Security
-+ * state coefficients are unique within a model so only one struct
-+ * tsem_event_point structure will be generated regardless of how many
-+ * times the security event that generates the point occurs.  The
-+ * count member of this structure represents the total number of
-+ * security events that have occurred that have generated the point.
-+ *
-+ * The valid member of this structure is used to flag whether this
-+ * is consistent with the model for the namespace or was generated by
-+ * a 'forensic', ie. out of model, event.
-+ *
-+ * Within each security namespace these structures are linked together
-+ * in a list that describes the functional value of the security model
-+ * assigned to the namespace.  Entries are only added to this list and
-+ * never removed.
-+ *
-+ * The desired state of a security model is created by using the TSEM
-+ * control plane to inject a list of acceptable security state
-+ * coefficients into the model.  Sealing a model causes any security
-+ * events that produce a coefficient different from those already in
-+ * the model to be rejected as an invalid security event and logged as
-+ * a forensic event for the model.
-+ */
-+struct tsem_event_point {
-+	struct list_head list;
-+	bool valid;
-+	u64 count;
-+	u8 point[HASH_MAX_DIGESTSIZE];
-+};
-+
-+/**
-+ * struct tsem_inode - TSEM inode status structure.
-+ * @mutex: The mutex that will protect the list of struct
-+ *	   tsem_inode_digest structures that have been created for the
-+ *	   inode containing a struct tsem_inode structure.
-+ * @list: The list structure that points to the list of struct
-+ *	  tsem_inode_structures.
-+ * @status: The digest collection state of the inode.  See the
-+ *	    discussion of enum tsem_inode_state for what information
-+ *	    is conveyed by the value of this structure member.
-+
-+ * This structure is the second of the two primary control structures
-+ * that are implemented through the LSM blob functionality.  It is
-+ * automatically created when the inode structure is created for
-+ * system resources that are referenced by a struct inode structure.
-+ *
-+ * This structure has two primary purposes.  The status member is used
-+ * to signal that the tsem_file_open() function should return that
-+ * permission to access the file is returned when the security hook is
-+ * invoked by the integrity_kernel_read() function.  See the
-+ * discussion on enum tsem_inode_state to more details.
-+ *
-+ * The second purpose of this structure is to maintain a list of
-+ * digest values that have been computed by the inode that this
-+ * structure references.  Maintenance of multiple digest values is
-+ * required since there is no concept of a fixed digest function for
-+ * TSEM as each modeling namespace can have its own digest function.
-+ *
-+ * Each digest value in use has a struct tsem_inode_digest structure
-+ * allocated for it.  The digest_list member of this structure points
-+ * to a list of these structures.
-+ *
-+ * The mutex implemented in this structure should be held by any
-+ * process that is accessing the list.
-+ */
-+struct tsem_inode {
-+	struct mutex mutex;
-+	struct list_head digest_list;
-+	enum tsem_inode_state status;
-+};
-+
-+/**
-+ * struct tsem_inode_digest - Digest specific file checksum.
-+ * @list:	The list structure used to link multiple digest values
-+ *		for an inode.
-+ * @version:	The version number of the inode that generated the digest
-+ *		value that is currently represented.
-+ * @name:	A pointer to a null-terminated character buffer containing
-+ *		the name of the hash function that generated the current
-+ *		digest value.
-+ * @value:	The digest value of the file.
-+ *
-+ * A linked list of these structures is maintained for each inode that
-+ * is modeled by TSEM and is used to support multiple hash specific
-+ * digest values for a file represented by the inode.  The tsem_inode
-+ * structure that represents the TSEM security status of the inode
-+ * contains the pointer to this list of structures.
-+ *
-+ * The version member of the structure contains the inode version number
-+ * that was in effect when the last digest value of this type was computed.
-+ * This version number value is used to detect changes and to trigger an
-+ * update of the digest value.
-+ *
-+ * The name member of structure contains the name of the hash function
-+ * that generated the checksum value.  This name is used to locate the
-+ * correct structure by comparing its value against the hash function
-+ * that is being used for the modeling domain that is accessing the
-+ * inode.
-+ */
-+struct tsem_inode_digest {
-+	struct list_head list;
-+	char *name;
-+	u64 version;
-+	u8 value[HASH_MAX_DIGESTSIZE];
-+};
-+
-+/*
-+ * The following three variables are the only globally visible
-+ * variables used in the TSEM implementation.
-+ *
-+ * The tsem_blob_sizes variable is used by the LSM infrastructure to
-+ * describe the amount of space that will be needed by the struct
-+ * tsem_task and struct tsem_inode structures.
-+ *
-+ * The tsem_names array is defined in the tsem.c file and contains an
-+ * array of pointers to the strings that define the names for each of
-+ * the TSEM security event handles.  The enum tsem_event_type
-+ * enumeration indexes this array.
-+ *
-+ * The tsem_root_actions array is also indexed by the enum
-+ * tsem_event_type enumeration and is used to determine the type of
-+ * response that a TSEM security event handler is to return to the
-+ * caller, ie. either logging or enforcing.  The contents of this
-+ * array is inherited by copying the array into the struct
-+ * tsem_context structure for modeling namespaces that are subordinate
-+ * to the root model.
-+ */
-+extern struct lsm_blob_sizes tsem_blob_sizes;
-+extern const char * const tsem_names[TSEM_EVENT_CNT];
-+extern enum tsem_action_type tsem_root_actions[TSEM_EVENT_CNT];
-+
-+/*
-+ * The following section of the file contains the definitions for the
-+ * externally visible functions in each of the TSEM compilation units.
-+ */
-+extern struct dentry *tsem_fs_create_external(const char *name);
-+extern void tsem_fs_show_trajectory(struct seq_file *c, struct tsem_event *ep);
-+extern void tsem_fs_show_field(struct seq_file *c, const char *field);
-+extern void tsem_fs_show_key(struct seq_file *c, char *term, char *key,
-+			     char *fmt, ...);
-+extern int tsem_fs_init(void);
-+
-+extern struct tsem_model *tsem_model_allocate(size_t size);
-+extern void tsem_model_free(struct tsem_context *ctx);
-+extern int tsem_model_event(struct tsem_event *ep);
-+extern int tsem_model_load_point(u8 *point);
-+extern int tsem_model_load_pseudonym(u8 *mapping);
-+extern int tsem_model_has_pseudonym(struct tsem_inode *tsip,
-+				    struct tsem_file *ep);
-+extern void tsem_model_load_base(u8 *mapping);
-+extern int tsem_model_add_aggregate(void);
-+extern void tsem_model_compute_state(void);
-+extern void tsem_model_magazine_free(struct tsem_model *model);
-+extern int tsem_model_cache_init(struct tsem_model *model, size_t size);
-+
-+extern void tsem_ns_put(struct tsem_context *ctx);
-+extern int tsem_ns_event_key(u8 *task_key, const char *keystr, u8 *key);
-+extern int tsem_ns_create(const enum tsem_control_type type,
-+			  const char *digest, const enum tsem_ns_reference ns,
-+			  const char *key, const unsigned int cache_size);
-+
-+extern int tsem_export_show(struct seq_file *m, void *v);
-+extern int tsem_export_event(struct tsem_event *ep);
-+extern int tsem_export_action(enum tsem_event_type event, bool locked);
-+extern int tsem_export_aggregate(void);
-+extern int tsem_export_magazine_allocate(struct tsem_external *ext,
-+					 size_t size);
-+extern void tsem_export_magazine_free(struct tsem_external *ext);
-+extern int tsem_export_cache_init(void);
-+
-+extern int tsem_map_task(struct file *file, u8 *mapping);
-+struct tsem_event *tsem_map_event(enum tsem_event_type event,
-+				  struct tsem_event_parameters *param);
-+struct tsem_event *tsem_map_event_locked(enum tsem_event_type event,
-+					 struct tsem_event_parameters *param);
-+
-+extern struct tsem_event *tsem_event_allocate(bool locked);
-+extern struct tsem_event *tsem_event_init(enum tsem_event_type event,
-+					  struct tsem_event_parameters *params,
-+					  bool locked);
-+extern void tsem_event_put(struct tsem_event *ep);
-+extern void tsem_event_get(struct tsem_event *ep);
-+extern int tsem_event_magazine_allocate(struct tsem_context *ctx, size_t size);
-+extern void tsem_event_magazine_free(struct tsem_context *ctx);
-+extern int tsem_event_cache_init(void);
-+
-+extern u8 *tsem_trust_aggregate(void);
-+extern int tsem_trust_add_event(struct tsem_event *ep);
-+
-+/*
-+ * The remaining inline function declarations follow the design
-+ * pattern of the other LSM's and implement functions that return
-+ * various TSEM characteristics of tasks, modeling contexts and
-+ * inodes.
-+ */
-+static inline struct tsem_task *tsem_task(struct task_struct *task)
-+{
-+	return task->security + tsem_blob_sizes.lbs_task;
-+}
-+
-+static inline bool tsem_task_trusted(struct task_struct *task)
-+{
-+	return tsem_task(task)->trust_status & TSEM_TASK_TRUSTED;
-+}
-+
-+static inline bool tsem_task_untrusted(struct task_struct *task)
-+{
-+	return tsem_task(task)->trust_status & ~TSEM_TASK_TRUSTED;
-+}
-+
-+static inline struct tsem_context *tsem_context(struct task_struct *task)
-+{
-+	return tsem_task(task)->context;
-+}
-+
-+static inline struct tsem_model *tsem_model(struct task_struct *task)
-+{
-+	return tsem_task(task)->context->model;
-+}
-+
-+static inline struct tsem_inode *tsem_inode(struct inode *inode)
-+{
-+	return inode->i_security + tsem_blob_sizes.lbs_inode;
-+}
-+
-+static inline struct crypto_shash *tsem_digest(void)
-+{
-+	return tsem_context(current)->tfm;
-+}
-+
-+static inline unsigned int tsem_digestsize(void)
-+{
-+	return crypto_shash_digestsize(tsem_digest());
-+}
++++ b/Documentation/ABI/testing/tsem
+@@ -0,0 +1,828 @@
++What:		/sys/kernel/security/tsem
++Date:		July 2023
++Contact:	Greg Wettstein <greg@enjellic.com>
++Description:
++		The /sys/kernel/security/tsem directory contains files
++		and directories that implement the control plane for
++		the Trusted Security Event Modeling (TSEM) LSM.
++
++		The files in this directory hierarchy, with the
++		exception of the aggregate file, when read, reflect
++		the values for the security modeling namespace that
++		the process reading the files is operating in.
++
++What:		/sys/kernel/security/tsem/id
++Date:		July 2023
++Contact:	Greg Wettstein <greg@enjellic.com>
++Description:
++		The id file contains the ASCII base 10 representation
++		of the model domain/namespace identifier that the
++		reading process is operating in.
++
++		The root security modeling namespace has a value of
++		zero, a non-zero value indicates a modeling namespace
++		subordinate to the root model.
++
++		Each externally modeled domain will have a file, with
++		this id number, created in the
++		/sys/kernel/security/tsem/ExternalTMA directory that
++		is documented below.
++
++What:		/sys/kernel/security/tsem/aggregate
++Date:		July 2023
++Contact:	Greg Wettstein <greg@enjellic.com>
++Description:
++		The aggregate file contains the ASCII base 16
++		representation of the 256 bit hardware platform
++		aggregate that TSEM is modeling under.  The platform
++		aggregate is the linear extension measurement of the
++		Trusted Platform Module PCR registers 0 through 8.
++
++		On a platform without a TPM this value will be all
++		null bytes.
++
++What:		/sys/kernel/security/tsem/control
++Date:		July 2023
++Contact:	Greg Wettstein <greg@enjellic.com>
++Description:
++		The control file is the only writable file in the
++		filesystem and is used by the trust orchestrator's to
++		configure and control the behavior of the TSEM
++		implementation.
++
++		The following keyword and arguments are recognized:
++
++		internal
++			The internal keyword causes an internally
++			modeled domain to be created for the calling
++			process.
++
++		external
++			The external keyword causes an externally
++			modeled domain to be created for the calling
++			process.
++
++			A modeling namespace created by these commands
++			accept the following set of key=value pairs
++			that configure the namespace:
++
++			nsref=initial|current
++				The nsref key specifies the namespace
++				that is to be referenced when
++				determining the UID/GID values that
++				define a COE or CELL identity.
++
++				The initial keyword specifies that the
++				initial user namespace be used.  The
++				current keyword specifies that the
++				user namespace of the process that is
++				invoking a security event handler
++				(hook) is used.
++
++			digest=digestname
++				The digest key is used to specify the
++				cryptographic hash function that is to
++				be used in the namespace for the
++				creation of COE and CELL identities.
++
++				The digestname is the name used by the
++				Linux kernel cryptographic API to
++				identify the hash function.  Examples
++				would include sha256, sha3-256, sm3
++				etc.  The source files for the
++				cryptographic hash function in the crypto
++				directory of the kernel source has the
++				names for hash functions implemented
++				in the kernel.
++
++				The sha256 hash function is the
++				default function for the root modeling
++				domain.  This can be modified by the
++				tsem_digest command-line parameter.
++
++				A hash function, used by the root
++				modeling domain, must be built into
++				the kernel.
++
++			cache=NN
++				The cache key specifies the size of
++				the caches to be used for holding
++				pointers to structures used for the
++				modeling or export of security events
++				that are called while the invoking
++				process is in atomic context.
++
++				The value NN is the ASCII base 10
++				representation of the number of
++				entries in the cache.
++
++				By default, the root modeling
++				namespace and an externally modeled
++				namespace will have 96 entries.  An
++				internally modeled namespace will have
++				16 entries.
++
++			key=HEXID
++				The key argument is used to specify
++				the authentication key that will be
++				used by a trust orchestrator to
++				authenticate trust control requests to
++				a process running in the security
++				modeling namespace.
++
++				The HEXID value is the ASCII base16
++				encoded key that is to be used.  The
++				length of this key, in binary, must be
++				equal to the size of the digest
++				produced by the cryptographic hash
++				function that is being used in the
++				modeling namespace.
++
++		enforce
++			The enforce keyword causes the modeling
++			domain/namespace of the process to enter
++			enforcing mode.  In this mode, a value of
++			-EPERM will be returned for a security event
++			coefficient that does not map into the current
++			set of allowed coefficients for the security
++			model being implemented in the namespace.
++
++		seal
++			The seal keyword causes the security model
++			being implemented for the namespace to be
++			placed in a sealed state.  In this state, the
++			current set of security coefficients is
++			considered to be the only set of valid
++			coefficients for the model.  Any subsequent
++			events that map to a coefficient not in the
++			current model will be considered a violation
++			of the model.
++
++		trusted pid=PID key=HEXID
++			The trusted keyword is used by a trust
++			orchestrator to indicate that the process
++			identified by the PID argument should be
++			allowed to run in trusted status after the
++			modeling of a security event.
++
++			The HEXID argument is the authentication key
++			that has been configured by a trust
++			orchestrator for the namespace at the time of
++			its creation.
++
++		untrusted pid=PID key=HEXID
++			The untrusted keyword is used by a trust
++			orchestrator to indicate that the process
++			identified by the PID argument should be
++			designated as an untrusted process.
++
++			The HEXID argument is the authentication key
++			that has been configured by a trust
++			orchestrator for the namespace at the time
++			its creation.
++
++		state value=HEXID
++			The state keyword is used to indicate that the
++			security state coefficient identified by the
++			ASCII base 16 encoded value specified by HEXID
++			should be loaded into the current security
++			model as a valid security event coefficient.
++
++		pseudonym valid=HEXID
++			The pseudonym keyword is used to indicate that
++			the pathname, identified by the ASCII base 16
++			encoded value HEXID, should be designated to
++			return a constant digest value for the
++			contents of the file named by the pseudonym.
++
++			The HEXID value is computed with the following
++			function:
++
++			HEXID = HF(PATHNAME_LENGTH || PATHNAME)
++
++			WHERE HF is the cryptographic hash function
++			that has been designated for use by the
++			security modeling namespace.
++
++		base value=HEXID
++			The base keyword is used to indicate that the
++			ASCII base 16 encoded value HEXID should be
++			registered as the value used to generate
++			security state coefficients for the model
++			implemented in the modeling namespace.
++
++			The binary length of the value specified by
++			HEXID must match the digest size of the
++			cryptographic hash function specified for use
++			in the security modeling namespace.
++
++			A model specific base value is designed to be
++			used as a 'freshness' nonce, similar to an
++			attestation nonce, to prove that a model state
++			value or measurement is current and not being
++			replayed.
++
++What:		/sys/kernel/security/tsem/InternalTMA
++Date:		July 2023
++Contact:	Greg Wettstein <greg@enjellic.com>
++Description:
++
++		This directory will contain directories that will be
++		used to hold files that surface model parameters for
++		Trusted Modeling Agents (TMA's) for internally modeled
++		security namespaces.
++
++		There is currently only one internal TMA that is
++		surfaced through the following directory:
++
++		/sys/kernel/security/tsem/InternalTMA/model0
++
++		The subsequent descriptions for the files implemented
++		in this directory will use ROOTDIR to represent the
++		above directory for space conservation purposes.
++
++What:		ROOTDIR/measurement
++Date:		July 2023
++Contact:	Greg Wettstein <greg@enjellic.com>
++Description:
++		The measurement file contains the ASCII base 16
++		representation of the time dependent linear extension
++		value of all the security state coefficients in the
++		model implemented by the namespace of the calling
++		process.
++
++What:		ROOTDIR/state
++Date:		July 2023
++Contact:	Greg Wettstein <greg@enjellic.com>
++Description:
++		The state file contains the ASCII base 16
++		representation of the functional value of a security
++		modeling namespace.
++
++		The state value is a time independent representation
++		of the measurement of a security model, and unlike the
++		measurement value, is a time independent
++		representation of the state.
++
++		This value is designed to be a single value that can
++		be attested to represent whether or not a workload has
++		deviated from a defined security behavior.
++
++What:		ROOTDIR/trajectory
++Date:		July 2023
++Contact:	Greg Wettstein <greg@enjellic.com>
++Description:
++		The trajectory file contains a description of the
++		security events that have occurred in a security
++		modeling namespace
++
++		Each entry in this file represents a single security
++		event and consists of a JSON encoded record with key
++		values that define the characteristics of the event.
++
++		Each line in a trajectory, or forensics, file will
++		always have the event and COE keys.  The event key
++		describes the characteristics of a security event
++		while the COE field describes the Context Of Execution
++		that is requesting execution of a security event.
++
++		The event key consists of the following
++		characteristic definitions:
++
++			process: COMM
++				Where COMM is the ASCII representation
++				of the name of the process executing
++				the event.
++
++			type: EVENT_TYPE
++				The value field for a type key is the
++				name of the security event that is
++				being modeled.  The list of EVENT_TYPE
++				names is defined in the following
++				source file:
++
++				security/tsem/tsem.c
++
++				If the security event is a generically
++				modeled event the EVENT_TYPE will be
++				generic_event.  In this case the CELL
++				characteristics for the event will be
++				described by a generic_event: key
++
++			task_id: HEXID
++				The value of the task_id key will the
++				ASCII base 16 representation of the
++				identity of the task that is executing
++				the security handler.  The length of
++				HEXID will match the size of the
++				digest value of the cryptographic hash
++				function selected for use by the
++				security modeling namespace.
++
++				The following documentation file:
++
++				Documentation/admin-guide/LSM/TSEM.rst
++
++				Describes how the TASK_ID value is
++				generated.
++
++		The COE key has the following characteristic keys.
++		Keys that involve discretionary access values
++		(uids/gids) will have their numeric value computed
++		based on the user namespace reference value that is
++		being implemented in the security modeling namespace.
++
++			uid: NN
++				The ASCII base 10 representation of
++				the numeric value of the discretionary
++				user id of the process that is
++				executing the security event.
++
++			euid: NN
++				The ASCII base 10 representation of
++				the numeric value of the effective
++				discretionary user id of the process
++				that is executing the security event.
++
++			euid: NN
++				The ASCII base 10 representation of
++				the numeric value of the effective
++				discretionary user id of the process
++				that is executing the security event.
++
++			suid: NN
++				The ASCII base 10 representation of
++				the numeric value of the saved user id
++				of the process that is executing the
++				security event.
++
++			gid: NN
++				The ASCII base 10 representation of
++				the numeric value of the discretionary
++				group id of the process that is
++				executing the security event.
++
++			egid: NN
++				The ASCII base 10 representation of
++				the numeric value of the discretionary
++				effective group id of the process that
++				is executing the security event.
++
++			egid: NN
++				The ASCII base 10 representation of
++				the numeric value of the discretionary
++				effective group id of the process that
++				is executing the security event.
++
++			sgid: NN
++				The base 10 ASCII representation of
++				the numeric value of the saved
++				discretionary group id of the process
++				that is executing the security event.
++
++			fsuid: NN
++				The base 10 ASCII representation of
++				the numeric value of the discretionary
++				filesystem user id of the process that
++				is executing the security event.
++
++			fsgid: NN
++				The ASCII base 10 representation of
++				the numeric value of the discretionary
++				filesystem group id of the process
++				that is executing the security event.
++
++			capeff: 0xNNN
++				The ASCII base 16 representation of
++				the numeric value of effective
++				capabilities of the process that is
++				executing the security event.
++
++		If the CELL value for a security event includes the
++		definition of a file a file: key value will be
++		included.  The following characteristics will be
++		encoded in this field:
++
++			flags: NN
++				The ASCII base 10 representation of
++				the flags value of the 'struct file'
++				structure that is the source of the
++				file description.
++
++			uid: NN
++				The ASCII base 10 representation of
++				the discretionary user id of the file.
++
++			gid: NN
++				The base 10 ASCII representation of
++				the discretionary group id of the
++				file.
++
++			mode: 0NNN
++				The ASCII base 8 representation of the
++				mode bits of the file.
++
++			name_length: NN
++				The ASCII base 10 representation of
++				the length of the pathname that will
++				be encoded in the name= characteristic.
++
++			name: NN
++				The ASCII hexadecimal representation
++				of the SHA256 checksum of the pathname
++				of the file that is pre-pended with
++				the little-endian binary value of the
++				length of the pathname.
++
++			s_magic: 0xNN
++				The ASCII base 16 representation of the
++				magic number of the filesystem that
++				contains the file.
++
++			s_id: NAME
++				The ASCII name of the block device for
++				the filesystem that contains the file.
++
++			s_UUID: HEX
++				The ASCII base 16 representation of
++				the hexadecimal value of the UUID of
++				the filesystem that contains the file.
++
++			digest: HEX
++				The ASCII base 16 representation of
++				the SHA256 digest of the file.
++
++		If the event type is the memory mapping of a file a
++		mmap_file key value will be included with
++		the following characteristics:
++
++			type: N
++				Where N is an ASCII 0 or 1 to indicate
++				whether or not the mapping is file
++				backed or anonymous.  A value of 1 is
++				used to indicate an anonymous mapping.
++
++			reqprot: NN
++				Where N is ASCII base 10
++				representation of the protections
++				requested for the mapping.
++
++			prot: NN
++				Where N is the ASCII base 10
++				representation of the protections that
++				will be applied to the mapping.
++
++			flags: NN
++				Where N is the ASCII base 10
++				representation of the flags that will
++				be used for the memory mapping operation.
++
++		If the event type is a socket creation event a
++		socket_create key value will be included with the
++		following characteristics:
++
++			family: N
++				Where N is the ASCII base 10
++				representation of the family type of
++				the socket.
++
++			type: N
++				Where N is the ASCII base 10
++				representation of the type of socket
++				being created.
++
++			protocol: N
++				Where N is the ASCII base 10
++				representation of the protocol family
++				for the socket.
++
++			kern: 0 | 1
++				Where 0 or 1 is used to indicate
++				whether or not the socket is kernel
++				based.  A value of 1 implies it is
++				kernel based.
++
++		If the event type is a socket_connect or a
++		socket_bind, a socket_connect: or a socket_bind: key
++		value will be included that will be characterized
++		based on an encoding of either an IPV4, IPV6, AF_UNIX
++		or a generic socket description.
++
++			family: N
++				Where N is the ASCII base 10
++				representation of the family type of
++				the socket.
++
++			port: N
++				Where N is the base ASCII base 10
++				representation of the port number that
++				is being used for either an IPV4 or
++				IPV6 socket connection or bind.
++
++			addr: N | PATH | HEXID
++				In the case of an IPV4 socket the
++				value for the addr key will be the
++				ASCII base 10 representation of the 32
++				bit IPV4 address being bound or
++				connected to.
++
++				In the case of an IPV6 connection the
++				value to the key will be the ASCII
++				base 16 representation of the 128 bit
++				address being bound connected.
++
++				In the case of an AF_UNIX connection
++				the value will be the pathname of the
++				socket in the mount namespace that the
++				process is running in.
++
++				In the case of any other type of
++				socket the addr value will be the
++				ASCII base 16 representation of the
++				cryptographic digest value of the
++				entire length of the address
++				description.  The length of the
++				representation will be the size of the
++				digest produced by the cryptographic
++				hash function that has been specified
++				for the modeling namespace.
++
++			flow: N
++				For an IPV6 socket the value of the
++				flow key will be the ASCII base 10
++				representation of the flow identifier
++				assigned to the socket.
++
++			scope: N
++				For an IPV6 socket the value of the
++				scope key will be the ASCII base 10
++				representation of the scope identifier
++				assigned to the socket.
++
++		If the event type is a socket_accept a socket_accept
++		key value will be included that characterizes either
++		an IPV4, IPV6 or a generic socket description with the
++		following event descriptions:
++
++			family: N
++				Where N is the ASCII base 10
++				representation of the family type of
++				the socket.
++
++			type: N
++				Where N is the ASCII base 10
++				representation of the type of the
++				socket being created.
++
++			port: N
++				Where N is the base ASCII base 10
++				representation of the port number that
++				is being used for either an IPV4 or
++				IPV6 socket connection or bind.
++
++			addr: N | PATH | HEXID
++				In the case of an IPV4 socket the
++				value for the addr key will be the
++				ASCII base 10 representation of the 32
++				bit IPV4 address being bound or
++				connected to.
++
++				In the case of an IPV6 connection the
++				value to the key will be the ASCII
++				base 16 representation of the 128 bit
++				address being bound connected.
++
++				In the case of an AF_UNIX connection
++				the value will be the pathname of the
++				socket in the mount namespace that the
++				process is running in.
++
++				In the case of any other type of
++				socket the addr value will be the
++				ASCII base 16 representation of the
++				cryptographic digest value of the
++				entire length of the address
++				description.  The length of the
++				representation will be the size of the
++				digest produced by the cryptographic
++				hash function that has been specified
++				for the modeling namespace.
++
++What:		ROOTDIR/trajectory_coefficients
++Date:		July 2023
++Contact:	Greg Wettstein <greg@enjellic.com>
++Description:
++		The trajectory_coefficients file will output the ASCII
++		base16 representation of each security state
++		coefficient that has been generated by the security
++		modeling namespace of the calling process.
++
++		The length of each point will be the ASCII
++		representation of the size of the cryptographic hash
++		function that has been specified for the model.
++
++What:		ROOTDIR/trajectory_counts
++Date:		July 2023
++Contact:	Greg Wettstein <greg@enjellic.com>
++Description:
++		The trajectory_coefficients file will output the ASCII
++		base10 representation of the number of times each
++		security state coefficient has been generated by the
++		security modeling namespace of the calling process.
++
++What:		ROOTDIR/forensics
++Date:		July 2023
++Contact:	Greg Wettstein <greg@enjellic.com>
++Description:
++		The forensics file contains the descriptions of
++		security events that are inconsistent with the
++		security model that the security namespace is
++		implementing.  Forensics events are generated after a
++		security model is 'sealed' and the events represent
++		security state coefficients that have not already been
++		generated by the model.
++
++		The format of lines in this file are identical to the
++		output generated by the ROOTDIR/trajectory file
++		that is documented above.
++
++What:		ROOTDIR/forensics_coefficients
++Date:		July 2023
++Contact:	Greg Wettstein <greg@enjellic.com>
++Description:
++		The forensics_coefficients file will output the ASCII
++		base16 representation of each security state
++		coefficient that have been generated by forensics
++		events in the security modeling namespace of the
++		calling process.
++
++		The length of each point will be the ASCII
++		representation of the size of the cryptographic hash
++		function that has been specified for the model.
++
++What:		ROOTDIR/forensics_counts
++Date:		July 2023
++Contact:	Greg Wettstein <greg@enjellic.com>
++Description:
++		The forensics_counts file will output the ASCII base10
++		representation of the number of times each security
++		state coefficient, generated by a forensics event, has
++		been generated by the security modeling namespace of
++		the calling process.
++
++What:		/sys/kernel/security/tsem/ExternalTMA
++Date:		July 2023
++Contact:	Greg Wettstein <greg@enjellic.com>
++Description:
++		The ExternalTMA directory is a container directory
++		that hold files that will be used to export the
++		security events, and their associated parameters, for
++		externally modeled security modeling namespaces.
++
++		The files created in this directory will be named by
++		the base 10 ASCII representation of the id value
++		assigned to the security modeling namespace.  See the
++		documentation for the /sys/kernel/security/tsem/id
++		file in this documentation for more details on this
++		value.
++
++		This file will is a read-only file that can be polled
++		by a userspace trust orchestrator implementation to
++		process security events that are to be modeled by an
++		external Trusted Modeling Agent.
++
++		Each exported event is a JSON encoded record
++		describing the event that is to be processed.
++
++		Each record will have an 'export' key that has a
++		structure associated with it that has a 'type' key in
++		it.  The 'type' key has a string value associated with
++		it that defines the type of event that is being
++		processed.
++
++		The following export 'type' strings are defined:
++
++		aggregate:
++			The aggregate key has an associated structure
++			value that defines a key named 'value' that
++			has a string value associated with it that
++			represents the hardware aggregate for the
++			platform.
++
++			The hardware aggregate string is expressed as
++			the ASCII base16 representation of the
++			platform hardware aggregate value.  The length
++			of the string will be the size of the digest
++			produced by the cryptographic hash function
++			that has been specified for the security
++			modeling namespace of the process generating
++			the event.
++
++		async_event:
++			If the type of the export is async_event there
++			will be a key named 'event' that has a structure
++			value associated with it.
++
++			The structure associated with the 'event' key
++			will be identical to the structure generated
++			for the 'event' key that is described below.
++
++		event:
++			If the type of the export is event there will
++			be a key named 'event' that has a structure
++			value associated with it that contains the
++			follow key: value pairs.
++
++			pid: NNN
++				Where the NNN is the ASCII base 10
++				value of the id of the process that is
++				executing the security event that will
++				be modeled.
++
++			process: COMM
++				Where COMM is the ASCII representation
++				of the name of the process executing
++				the event.
++
++			type: EVENT_TYPE
++				The value field for a type key is the
++				name of the security event that is
++				being modeled.  The list of EVENT_TYPE
++				names is defined in the following
++				source file:
++
++				security/tsem/tsem.c
++
++				If the security event is a generically
++				modeled event the EVENT_TYPE will be
++				generic_event.  In this case the CELL
++				characteristics for the event will be
++				described by a generic_event: key
++
++			task_id: HEXID
++				The value of the task_id key will the
++				ASCII base 16 representation of the
++				identity of the task that is executing
++				the security handler.  The length of
++				HEXID will match the size of the
++				digest value of the cryptographic hash
++				function selected for use by the
++				security modeling namespace.
++
++				The following documentation file:
++
++				Documentation/admin-guide/LSM/TSEM.rst
++
++				Describes how the TASK_ID value is
++				generated.
++
++			There will be a COE key that references a
++			value structure that has the same format as
++			the COE key that is emitted for a trajectory
++			or forensics event.
++
++			The record will have a key value that is
++			identical to the value associated with the
++			'type' key documented above.  The 'type' key
++			will have a structure value that contains a
++			definition of the event.  The definitions for
++			the event will be identical to the description
++			of the event that is emitted for a trajectory
++			or forensics event in the internal TMA
++			implementation.
++
++		log:
++			An export type of log is emitted when an
++			untrusted task attempts to execute a security
++			event.
++
++			There will be a 'log' key in the record that
++			references a structure containing the
++			following key values:
++
++			process: COMM
++				The process key has a string value
++				associated with it that will contain
++				the COMM name of the untrusted process
++				that invoked processing of the
++				security event.
++
++			event: NAME
++				The event key has a string value
++				associated with that will contain the
++				name of the security event hook that
++				was called by an untrusted process.
++
++				The names for the security events are
++				defined in the following source file:
++
++				security/tsem/tsem.c
++
++			action: TYPE
++				The action key has a string value that
++				describes the action take by the TSEM
++				security hook in response to being
++				called by an untrusted process.
++
++				This string value will be either LOG
++				or DENY.
+diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
+index a6ba95fbaa9f..cebd3b02598d 100644
+--- a/Documentation/admin-guide/LSM/index.rst
++++ b/Documentation/admin-guide/LSM/index.rst
+@@ -47,3 +47,4 @@ subdirectories.
+    tomoyo
+    Yama
+    SafeSetID
++   tsem
+diff --git a/Documentation/admin-guide/LSM/tsem.rst b/Documentation/admin-guide/LSM/tsem.rst
+new file mode 100644
+index 000000000000..3810dd3b6e6d
+--- /dev/null
++++ b/Documentation/admin-guide/LSM/tsem.rst
+@@ -0,0 +1,1526 @@
++====
++TSEM
++====
++
++	"This is the story of the wine of Brule, and it shows what
++	 men love is never money itself but their own way, and
++	 that human beings love sympathy and pageant above all
++	 things."
++				- Hilaire Belloc
++				  The Path to Rome
++
++TSEM is the Trusted Security Event Modeling system.  TSEM is the
++kernel infrastructure that provides a platform for implementing
++security policies based on either deterministic or machine learning
++models.  It also provides a framework for implementing Host Based
++Intrusion Detection (HIDS) and anomaly detection without the need to
++write kernel code or implement kernel loadable modules
++
++The design and implementation of TSEM is inspired by the notion that
++the security behavior of a platform, or a workload, like all other
++physical phenomenon, can be mathematically modeled.
++
++Security, is at once, both a technical and economic problem.  One of
++the objectives of TSEM is to address inherent and structural economic
++barriers to security, by introducing technology that reduces the skill
++and time needed to implement a level of security, equivalent to what
++can be achieved by mandatory access controls, through unit testing of
++an application stack.
++
++A second objective is to reduce the skill, complexity and
++infrastructure needed to create trusted and remotely attestable
++platforms and/or workloads.
++
++To achieve these objectives, TSEM implements the concept of a security
++modeling namespace that reduces the complexity of a security model and
++allows it to be scoped to the level of a single process hierarchy or a
++container.
++
++TSEM is the Linux kernel component of a security concept introduced by
++the Quixote Project, the notion of a Trust Orchestration System (TOS).
++The concept of a TOS is to have a system with a minimal Trusted
++Computing Base (TCB) that supervises and maintains subordinate
++security modeling namespaces in a known state of trust.
++
++TSEM is implemented as a Linux Security Module (LSM) and is designed
++to be self-contained with little or no dependency on kernel
++infrastructure, other than the LSM hooks themselves.  It can be
++stacked in any order with existing LSM's.  It is implemented as the
++first LSM in the call sequence since it provides infrastructure that
++can be used, for example, to validate extended attributes that may be
++used by subsequently invoked LSM's.
++
++TSEM implements its equivalent of mandatory access controls, without a
++requirement for extended attributes, filesystem labeling or the need
++to protect filesystem metadata against offline attack.  A mathematical
++defined security model, generated by unit testing of a workload, is the
++entity that carries the security guarantee for system or workload.
++
++TBDHTTRAD
++=========
++
++A quick summary for those interested in experimenting with trust
++orchestration and security modeling but are constrained by: 'Too Busy
++Don't Have Time To Read Any Documentation'.
++
++A kernel with TSEM support in its list of enabled LSM's must be
++available for use.  A TSEM enabled kernel will have the tsem keyword
++in the following file:
++
++/sys/kernel/security/lsm
++
++For experimentation, or integrating TSEM modeling into a Continuous
++Integration/Continous Development (CI/CD) workflow, modeling
++can be restricted to subordinate security namespaces by booting a kernel
++with the following kernel command-line option:
++
++tsem_mode=1
++
++This disables modeling of the root security namespace and only
++implements modeling for subordinate namespaces.
++
++The Quixote trust orchestration utilities either need to be built or
++the statically compiled sample utilities need to be installed.  Source
++for the userspace utilities and compiled sample programs are available
++at the following location:
++
++ftp://ftp.enjellic.com/pub/Quixote
++
++After installing the utilities, two shell sessions will be needed with
++root privileges in each shell.
++
++The following directories need to be in the PATH variable of each shell:
++
++/opt/Quixote/sbin
++/opt/Quixote/bin
++
++Execute the following command to start a process in an independent
++security namespace with the modeling being done in the kernel:
++
++quixote -P -c test -o test.model
++
++In the second shell session, run the following command to display the
++security execution trajectory of the model:
++
++quixote-console -p test -T
++
++In the shell session provided by the trust orchestrator, run the
++following command:
++
++grep SOME_STRING /etc/passwd
++
++Then exit the shell.
++
++The orchestrator will indicate that the security model definition has
++been written to the test.model file.
++
++Run the following command to execute a shell in an enforced security
++model obtained from the previous session:
++
++quixote -P -c test -m test.model -e
++
++In the shell that is provided, run the following command:
++
++cat /etc/passwd
++
++The command will fail.
++
++Running the following command in the second shell session will output
++forensics on the command that failed:
++
++quixote-console -p test -F
++
++Executing additional commands in the trust orchestrated shell will
++cause additional entries to be added to the forensics trajectory.
++
++The test can be repeated using the quixote-us trust orchestrator.
++This test will model the security namespace in a userspace process
++rather than in the kernel based trusted modeling agent.
++
++Mandatory Access Controls
++=========================
++
++	"If I have seen further it is by standing on the shoulders of
++	 Giants."
++				- Sir Isaac Newton
++
++It is assumed that astute readers will be familiar with classic
++subject/object based mandatory access controls; or at least astute
++enough to use a search engine to develop a modicum of secundem artem
++in the discipline.
++
++Very simplistically, subject/object based mandatory access controls
++can be thought of as being implemented with a two dimensional access
++vector matrix, with some type of a description of a process (subject)
++on one axis and a description of a data sync/source (object),
++typically an inode, on the second axis.  The descriptions are
++commonly referred to as subjects and objects.
++
++A security policy is developed that assigns a boolean value for each
++element of the matrix that specifies whether or not permission should
++be granted for the subject to access the object.
++
++These schemes are frequently referred to as 'mandatory access
++controls', since only the kernel has the ability to implement the
++labeling and decision processes.  In these systems, the root or
++administrative user has no ability to affect kernel decision making
++with respect to whether or not permission is granted or denied.
++
++These systems were derived from governmental and military information
++classification systems and are capable of delivering security
++guarantees appropriate to classified and high sensitivity assets.  The
++delivery of these security guarantees comes with it a reputation for
++complexity and fragility.
++
++Development of a system wide security policy is a complex process and
++administration of such systems is frequently done in an iterative
++fashion.  The system is monitored for permission denials with
++modifications to correct these false denials folded back into the
++policy.  In many cases, mandatory access control systems are run in
++warning rather than enforcing mode and used as an indicator for
++potential security violations.
++
++One of the additional challenges is that the integrity of labels is
++fundamental to the ability of these systems to deliver their security
++guarantees.  This requires that the labeling process be conducted
++under security controlled conditions, with the labels subsequently
++protected against offline modification by cryptographic integrity
++guarantees.
++
++Mandatory access controls had their origin in centralized multi-user
++platforms, and before the now widely accepted, strategy of using
++resource compartmentalization (namespaces) to isolate applications
++from each other and the system at large.  A legitimate technical
++argument can be made as to whether or not enforcement of a system wide
++security policy is suitable for these environments.
++
++At the other end of the spectrum, in embedded systems, structural
++economic barriers incent very little attention to security, where time
++to market is the primary goal.  These systems are pushed into the
++field, many time for multi-year operational lifetimes, with little
++prospect for upgrades or any notion of an iterative tuning process of
++a security policy.
++
++Security Event Modeling
++=======================
++
++	"We can no longer speak of the behavior of the particle
++	 independently of the process of observation. As a final
++	 consequence, the natural laws formulated mathematically in
++	 quantum theory no longer deal with the elementary particles
++	 themselves but with our knowledge of them. Nor is it any
++	 longer possible to ask whether or not these particles exist in
++	 space and time objectively ... When we speak of the picture of
++	 nature in the exact science of our age, we do not mean a
++	 picture of nature so much as a picture of our relationships
++	 with nature.  ...Science no longer confronts nature as an
++	 objective observer, but sees itself as an actor in this
++	 interplay between man and nature. The scientific method of
++	 analysing, explaining and classifying has become conscious of
++	 its limitations, which arise out of the fact that by its
++	 intervention science alters and refashions the object of
++	 investigation. In other words, method and object can no longer
++	 be separated."
++				- Werner Karl Heisenberg
++
++Security Event Modeling (SEM), is an alternative strategy to implement
++the security guarantees of mandatory access and integrity controls, in
++a manner that is consistent with emerging application development
++strategies such as namespaces and CI/CD workflows.
++
++As was noted at the start of this document, the premise for SEM is
++that the security behavior of a platform, or alternatively a workload,
++can be modeled like any other physical phenomenon in science and
++engineering.
++
++Inspiration for this came from the primary TSEM author/architect
++having trained as a quantum chemist, conducting very early research in
++the development of multi-scale modeling strategies for molecules of
++size to be of interest to pharmaceutical intents.
++
++SEM is premised on the theory that kernel security architects have
++instrumented the LSM security event hooks to be called from all
++locations, with appropriate descriptive parameters, that are relevant
++to the security posture of the kernel.  With respect to modeling, the
++security event hooks are conceptualized as representing the
++independent variables of a basis set that yields a functional
++definition for the security state of an execution trajectory.
++
++SEM can be framed in the context of classic subject/object mandatory
++access controls, by the notion that a unique identity can be generated
++for each element of an access vector matrix, rather than a boolean
++value.  In SEM, a security execution trajectory is defined by the set
++of security state coefficients that a process hierarchy (workload)
++generates.  This execution trajectory produces a vector of identities,
++whose sum in an appropriate form, yields a functional definition of
++the security state of the system.
++
++Two subordinate identities are combined to yield a security event
++state coefficient.  These subordinate identities are referred to as the
++Context Of Execution (COE) and the CELL, which are conceptually
++similar to the subject and object in mandatory access control.  The
++COE identity is derived from the parameters that describe the security
++relevant characteristics of a process, while the CELL value is derived
++from the parameters used by a security event hook to describe the
++characteristics of the event.
++
++A security policy is implemented by a modeling algorithm that
++translates COE and CELL event parameters into their respective
++identities.  The COE and CELL are combined to yield a security state
++coefficient that uniquely describes the security event in the security
++model.  Different security policies and criteria can be developed by
++modifying how the modeling algorithm utilizes the COE and CELL
++characteristics.
++
++Since the security policy is implemented with a modeling algorithm, a
++single platform can support multiple and arbitrary security policies.
++The equivalent of a resource namespace in SEM is referred to as a
++security modeling namespace.
++
++The formation of the security state coefficients from existing kernel
++parameters eliminates the need for the use of extended attributes to
++hold security label definitions.  In SEM, a cryptographically signed
++security model definition, designed to be interpreted by a modeling
++algorithm, becomes the bearer's token for the security of the modeled
++workload, rather than information encoded in filesystem security
++attributes.
++
++Trusted Security Event Modeling
++===============================
++
++	"Do you see over yonder, friend Sancho, thirty or forty
++	 hulking giants?  I intend to do battle with them and slay
++	 them."
++				- Don Quixote
++
++In TSEM, the modeling algorithm is implemented in an entity known as a
++Trusted Modeling Agent (TMA), in a 'trusted' environment where
++modeling is immune from modification or alteration by any activity on
++the platform or in a workload.  The notion of a TMA provides a
++framework for next generation security co-processors that extend
++functionality beyond what is defined by the concept of a Trusted
++Platform Module (TPM).
++
++In addition to providing an attestation of an execution trajectory, a
++TMA, in contrast to a TPM, has the ability to advise an operating
++system on whether or not an event being modeled is consistent with the
++security model that is being enforced.  In this manner, it introduces
++a prospective rather than a retrospective trust model.
++
++TSEM is designed to support Trust Orchestration Systems (TOS).  In a
++TOS, the trust orchestrators are supervisory programs that run
++workloads in independent modeling namespaces , enforcing a workload
++specific security model.  Each trust orchestrator is paired with a
++'trusted partner TMA', known as a Sancho, that implements the workload
++specific modeling algorithm.
++
++The root of trust for a workload modeling namespace is based on where
++the TMA instance is implemented.  As an example, the Quixote TOS
++implementation currently offers orchestrators for the following TMA
++execution localities:
++
++- Kernel.
++
++- Userspace process.
++
++- SGX enclave.
++
++- Xen stub domain.
++
++- Micro-controller.
++
++This partitioning of trust results in the concept of security modeling
++namespaces being referred to as internally or externally modeled.  A
++TMA implementation run in the kernel is referred to as an internally
++modeled namespace; TMA's run outside of the kernel are referred to as
++an externally modeled namespace.
++
++The TMA, regardless of locality, is responsible for processing the
++characteristics that describe a security event, computing the identity
++for the COE and CELL and then combining these two identities to create
++a security state coefficient.  With respect to modeling theory, the
++coefficient is a task specific value representing the event in a
++security model.
++
++TSEM is dispassionate with respect to the type of algorithm that is
++implemented.  The processing of the security event characteristics and
++their conversion to security coefficients, is driven by the security
++model/policy that will be implemented for the workload.  The
++architecture is designed to support security modeling algorithms that
++are either deterministic or embrace approximations, stochastic
++inference and machine learning algorithms in response to specific
++workload, platform or device requirements.
++
++A security model, to be enforced by a trust orchestrator, is
++implemented by providing the TMA with a set of security state
++coefficients that are to be observed.  A TMA processes the
++characteristics of a security event and converts the characteristics
++to a security state coefficient that is evaluated against the
++coefficients provided to the TMA as the reference security model for a
++workload.
++
++A security event that translates to one of the provided 'good'
++coefficients, will cause the TMA to indicate to the trust orchestrator
++that the process is to be allowed to run as a trusted process.  A
++security event that does not map to a known good coefficient, results
++in the trust orchestrator designating that the process be labeled as
++an untrusted process.
++
++Trust orchestrators and their associated TMA's, are designed to
++support signed security models.  This results in the elimination of
++the requirement to verify or appraise extended attributes and other
++measures currently required to protect labeled security systems
++against offline attacks.
++
++The use of a cryptographic hash function to generate the security
++coefficient results in the definition of very specific security
++behaviors, that are sensitive to any variation in their
++characteristics.  Any offline modifications to files will result in a
++coefficient that is inconsistent with a signed model provided to a
++TMA.
++
++In order to support the development of TSEM based security models, a
++TMA is designed to run in one of three separate modes, referred to as
++follows:
++
++- Free modeling.
++
++- Sealed.
++
++- Enforcing.
++
++In a free modeling configuration, the TMA adds the security state
++coefficient for the characteristics of a security event to the current
++set of known good states.  In addition, the description of the
++security event is retained as a member of the security execution
++trajectory for the model.  This mode is used, in combination with unit
++testing of a workload, to generate a security model for subsequent
++enforcement.
++
++Placing a TMA in 'sealed' mode implies that any subsequent security
++coefficients, that do not map into a known security state, are to be
++considered 'forensic' violations to the security state of the model.
++
++This mode is designed to provide the ability to either fine tune a
++model or provide early warning of a potential attempt to subvert the
++security status of a workload.  The characteristics of the violating
++event are registered in the forensics trajectory of the model for use
++in subsequent evaluation of the violating event and/or model
++refinement.
++
++Placing a TMA model in 'enforcing' status implies that the model is in
++a sealed state and any subsequent violations to the model will result
++in the violating process being placed in untrusted status and a
++permissions violation returned to the task invoking the security
++event.
++
++Process and Platform Trust Status
++=================================
++
++A fundamental concept in TSEM is the notion of providing a precise
++definition for what it means for a platform or workload to be trusted.
++A trusted platform or workload is one where there has not been an
++attempt by a process to execute a security relevant event that does
++not map into a known security state coefficient.
++
++The process trust status is a characteristic of the process that is
++passed to any subordinate processes that are descendants of that
++process.  Once a process is tagged as untrusted, that characteristic
++cannot be removed from the process.  In a 'fruit from the poisoned
++vine' paradigm, all subordinate processes created by an untrusted
++process are untrusted as well.
++
++On entry into each TSEM security event handler, the trust status of a
++process is checked before an attempt to model the event is made.  An
++attempt to execute a security event by an untrusted process will cause
++the event, and its characteristics, to be logged.  The return status
++of the hook will be determined by the enforcement state of the model.
++A permission denial is only returned if the TMA is running in
++enforcing mode.
++
++If the platform running the TSEM LSM has a TPM, the hardware aggregate
++value is computed at the time that TSEM is initialized.  This hardware
++aggregate value is the linear extension sum over Platform
++Configuration Registers (PCR's) 0 through 7.  This is the same
++aggregate value that is computed by the Integrity Measurement
++Architecture (IMA) and is the industry standard method of providing an
++evaluation measurement of the hardware platform state.
++
++Internally modeled namespaces have the hardware aggregate measurement
++included as the first event in the security model.  Externally modeled
++namespaces export the hardware aggregate value to the TMA for
++inclusion as the first event of the model maintained by the external
++TMA.
++
++The root security model extends each security state coefficient into a
++PCR.  The default PCR is 11 but is configurable through the kernel
++configuration process.  The use of a separate PCR from IMA allows
++hardware based TSEM measurements to coexist with IMA measurement
++values.  This hardware measurement value is designed to allow
++attestation to the hardware state that the root model is running in.
++
++TSEM is designed to support a philosophy where the root security
++namespace will be a minimum Trusted Computing Base implementation that
++will only be running trust orchestrators.  Subordinate modeling
++namespaces are non-hierarchical so as to decrease model complexity in
++the subordinate namespaces in order to support a single functional
++value describing the security status of a modeling namespace.
++
++The Linux TSEM Implementation
++=============================
++
++	"Sometimes the questions are complicated and the answers are
++	 simple."
++				- Dr. Seuss
++
++The Linux TSEM implementation is deliberately simplistic and consists
++of the following two generic components:
++
++- Modeling namespace and security event export functionality.
++
++- Internal trusted modeling agent.
++
++The modeling namespace and export functionality is designed to be
++generic infrastructure that allows security namespaces to be created that
++are either internally or externally modeled.  The TSEM implementation
++does not pose any constraints on what type of modeling can or should
++be implemented in these namespaces.
++
++On the theory that security event handlers represent all of the
++security relevant action points in the kernel, any security or
++integrity model can be implemented using the TSEM infrastructure.  For
++example, basic IMA functionality could be implemented by a TMA that
++maps the digests of files accessed, or mapped executable, by the root
++user as the security state coefficients.
++
++A primary intent of the Linux TSEM implementation is to provide a
++generic method for implementing security policy in userspace rather
++than the kernel.  This is consistent with what has been the historic
++understanding in Linux architecture, that policy decisions should be
++delegated, when possible, to userspace rather than to kernel based
++implementations.
++
++The model is extremely simplistic; a TMA interprets a security event
++and its characteristics and advises whether or not the kernel should
++designate the process as trusted or untrusted after event processing
++is complete.
++
++The following sections discuss various aspects of the infrastructure
++used to implement this architecture.
++
++Internal vs external modeling
++-----------------------------
++
++When a TSEM modeling namespace is created, a designation is made as to
++whether the namespace is to be internally or externally modeled.
++
++In an internally modeled namespace, the security event handlers pass the
++event type and its characteristics to the designated internal trusted
++modeling agent.  The agent provides the permission value for the
++security event handler to return as the result of the event and sets
++the trust status of the process executing the event.
++
++In an externally modeled namespace, the event type and parameters are
++exported to userspace for processing by a trust orchestrator with an
++associated TMA.  The trust orchestrator communicates the result of the
++modeling back to the kernel to support the setting of the process
++trust status.
++
++The exception to this model are for security event handlers that are
++called in atomic, ie. non-sleeping context.  The export of these
++security event descriptions are done asynchronously in order to avoid
++having the TSEM implementation attempt to sleep in atomic context
++while the userspace trust orchestrator is scheduled for execution.
++
++It is up to the trust orchestrator and its security policy to
++determine how it handles events that violate the security model being
++enforced.  The Quixote trust orchestrators shut down the entire
++workload running in the security namespace if an asynchronously
++modeled event violates the security model being enforced and the model
++is running in enforcing mode.
++
++Internally modeled domains are able to provide immediate interception
++and modification of the trust status of a process that is violating
++the security model.  This has implications for the root security
++namespace that is running on a system with a TPM, since the security
++event coefficients are logged to the Platform Configuration Register
++that is being used by TSEM.
++
++Issuing the TPM transaction would cause the process to attempt to
++sleep while it waits for the TPM transaction to complete.  In order to
++address this issue the TPM transactions are deferred to an ordered
++workqueue for execution.  The use of an ordered workqueue maintains
++the time dependency of the security coefficients being registered.
++
++In order to handle modeling of security events in atomic context the
++TSEM implementation maintains caches (magazines) of structures that
++are needed to implement the modeling and export of events.  The size
++of this cache can be configured independently for each individual
++security modeling namespace that is created.  The default
++implementation is for a cache size of 16 for internally modeled
++namespaces and 96 for externally modeled namespaces.
++
++By default the root security namespace uses a cache size of 96.  This
++value can be configured by the 'tsem_cache' kernel command-line
++parameter to an alternate value.
++
++Trust Orchestrator/Process authentication
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++The process identifier values (PID's) that are exported in the
++security event descriptions are the unique global PID values, not the
++value as seen through the lens of a PID namespace.
++
++PID values are, by default, not considered to be a stable identifier
++between the kernel and userspace.  In the case of TSEM external
++modeling, the threat model for a namespace is whether or not an
++adversarial process, running in either the root modeling namespace or
++another subordinate modeling namespace, can kill a process that is
++being orchestrated and substitute an alternate process with an
++identical PID value.
++
++The trust orchestrator would then be deluded into setting the trust
++status of the adversarial process rather than the one that had emitted
++the security event characteristics.  The threat interval is the
++latency time required for the processing of the security event
++description by the trust orchestrator and its associated TMA.
++
++Exploiting this theoretical race is extremely complex and requires an
++in depth understanding of the TSEM architecture.  Rather than discuss
++the conditions that must be met and their implications, this
++discussion will focus on the generic threat model and the mechanisms
++that TSEM implements in order to mitigate this threat.
++
++In short, a process in an adversarial security modeling namespace would
++want to execute security events that are barred from its security
++model with the hope of having them approved by an alternate namespace.
++
++In order to exploit the race, an adversarial process would have to
++force the termination of a process in the target namespace and then
++fork and exit a process a sufficient number of times in order to have
++a process under its control match the PID value of the process that
++was waiting for an orchestration response.
++
++Measured modeling latency times for a trust orchestrator running the
++deterministic Quixote TMA in userspace, on current generation 3.x
++x86_64 hardware, averages 170 micro-seconds.  In a worst case
++scenario from the perspective of an adversary, there would be a need
++to force the termination of the target process and then fork and
++execute a sufficient number of times to force the PID collision
++during this time interval.
++
++As a generic protection, TSEM in the tsem_task_kill() handler, blocks
++the notion of 'cross-model' signals, ie. a signal originating from an
++external modeling namespace.  This would require the adversary to
++reliably force a process termination through a mechanism other than
++signaling, for example, through the OOM killer whose signal
++transmission would not be blocked by this policy control.
++
++When a subordinate security modeling namespace is created, the id
++number of the namespace is registered in the tsem_task structure of
++the trust orchestrator that is creating the namespace.  The TSEM
++driver will refuse to honor control plane requests affecting the trust
++status of a process whose trust orchestrator security namespace id
++does not match the id of the process that it is being asked to act on.
++
++As an additional protection, TSEM uses an authentication strategy that
++allows a process running in a security modeling namespace to verify
++that a control request is coming from the trust orchestrator that
++initiated the namespace the process is running in.  As part of the
++setup of a security modeling namespace, a trust orchestrator is
++required to provide a hexadecimally encoded authentication key that
++matches the length of the cryptographic hash function being used to
++generate security state coefficient in the modeling namespace.  This
++authentication key must be provided by the trust orchestrator for
++every subsequent control plane request.
++
++The process that is being transferred to a subordinate security
++modeling namespace generates a second random key that is hashed with
++the authentication key provided by the trust orchestrator, using the
++hash function that has been defined for the security namespace.  The
++resultant digest value is compared to a list of authentication keys
++for all currently executing namespaces.  The selection of the second
++random key is repeated until a globally unique key is generated.
++
++This randomly generated authentication key is stored in the tsem_task
++structure of the process and propagated to any subsequent processes
++that are created in the namespace.  The hash product of this key and
++the orchestration authentication key, ie. the globally unique key, is
++placed in the tsem_task control structure of the orchestration
++process.
++
++When a control plane request is received, the authentication key
++provided by the trust orchestrator is used to re-generate an
++authentication key based on the randomly generated namespace key held
++by the process whose trust status is being updated and compared to the
++key in the tsem_task structure of the processing issuing the
++orchestration call.  The control plane will refuse to honor a control
++plane request if the call specific key does not match the key that was
++generated at the time the security namespace was created.
++
++Explicit vs generic modeling
++----------------------------
++
++In addition to the COE characteristics, TMA's have the ability to
++include the parameters that characterize the CELL of the security
++event into the generation of the security state coefficient for the
++event.  The inclusion of specific CELL characteristics is considered
++explicit modeling of the event.
++
++TMA's also have the ability to consider only the COE characteristics
++and the type of the event.  This is referred to as generic modeling of
++the event.
++
++In the current Linux TSEM implementation, the security event handlers
++differentiate, primarily due to current numerical resolution
++requirements of the models being implemented, some events to be
++generically modeled.  For these events, in addition to the COE
++characteristics and task identity, a default event specific CELL value
++is used in the computation of the security state coefficient.
++
++As was noted in the section on 'internal vs external modeling', the
++most common violation of trust is the initial execution of a binary or
++access to a file.  The inclusion of events, as generically modeled,
++allows the capture of security behaviors that are inconsistent with a
++proscribed security model, even if full characterization of the event
++is not implemented.
++
++As a further example.  If security workload unit testing has not
++included the ability of the workload to issue a request for creating
++and installing a BPF program, the mere request to do so is considered
++sufficient to place the workload in an untrusted state.
++
++In the following ABI document:
++
++Documentation/ABI/testing/tsemfs
++
++Documentation for the following control plane interface:
++
++/sys/kernel/security/tsem/InternalTMA/model0/trajectory
++
++Documents the security event parameters that are available for
++modeling by both internally and externally modeled namespaces.
++
++Event modeling
++--------------
++
++The generation of security state coefficients is a functional process
++that uses a cryptographic hash function for the creation of the
++various identity coefficient that make up the expression of the
++security state coefficient.
++
++TSEM can use any cryptographic hash function available to the Linux
++kernel for this purpose.  The hash function to be used for a security
++modeling namespace is specified as a parameter to the namespace
++creation process.
++
++By default, the root security namespace uses SHA256.  This value can
++be modified through the tsem_digest kernel command-line parameter.
++
++Since TSEM is active before the kernel has the ability to load
++modules, the root modeling domain must be a cryptographic hash
++function that is statically compiled into the kernel.  By default the
++TSEM configuration selects for the presence of the SHA256 hash
++function.
++
++TSEM security event modeling is based on the following functional
++definition for a security event coefficient:
++
++Coeff = HF(HF(EVENT_ID) || TASK_ID || HF(COE) || HF(CELL))
++
++	Where:
++		Coeff	 = A security state coefficient that is equal
++			   in length to the digest value of the
++			   cryptographic hash function in use for the
++			   modeling namespace.
++
++		||       = Concatenation operator.
++
++		HF	 = Security namespace specific hash function.
++
++		EVENT_ID = ASCII name of event.
++
++		TASK_ID  = The process specific identity of the
++			   executable code that is initiating modeling
++			   of the security event.
++
++		COE      = Characteristics of the context of execution
++			   of the event.
++
++		CELL	 = Characteristics of the event that is being
++			   modeled.
++
++Workload or platform specific security state coefficient definitions
++are generated by a TMA, using whatever COE or CELL characteristics
++that are considered relevant for the model being implemented, to
++determine whether or not an event should lead to the process being
++considered trusted or untrusted.
++
++The TASK_ID component of the function above is important with respect
++to the generation of the security state coefficients.  The notion of a
++task identity serves to link the concepts of system integrity and
++security access control
++
++The TASK_ID is defined by the following function:
++
++TASK_ID = HF(HF(EVENT) || NULL_ID || HF(COE) || HF(CELL))
++
++	Where:
++		TASK_ID	  = The executable identity of the process
++			    expressed as a digest value of length
++			    equal to the cryptographic hash function
++			    the modeling namespace is using.
++
++		||        = Concatenation operator.
++
++		EVENT	  = The string "bprm_set_creds".
++
++		NULL_ID	  = A buffer a set of null bytes equal to the
++			    digest size of the hash function being
++			    used for the namespace.
++
++		COE	  = Characteristics of the context of execution
++			    calling the bprm_creds_for_exec LSM hook.
++
++		CELL	  = The characteristics of the file provided
++			    by the linux_binprm structure passed to
++			    the security bprm_set_creds handler.
++
++An informed reader will quickly conclude, correctly, that the TASK_ID
++function generates an executable specific security coefficient for the
++bprm_creds_for_exec security hook.  The function is the same as the
++standard security state coefficient; with the exception that the task
++identity is replaced with a 'null id', consisting of the number of
++null bytes in the digest size of the namespace specific hash function.
++
++One of the CELL characteristics, used in the computation of the task
++identity, is the digest of the executable file.  Modifying an
++executable, or attempting to execute a binary not considered in the
++security model, will result in an alteration of the task identity that
++propagates to the generation of invalid state coefficients.
++
++The task identity is saved in the TSEM specific task structure and is
++used to compute the state coefficients for any security events that
++the task subsequently executes.  As noted in the previous paragraph,
++incorporating the TASK_ID into the computation of security state
++coefficients results in the security state coefficient values becoming
++specific to the corpus of executable code that initiated a process.
++This affords a very high degree of specificity with respect to the
++security models that can be implemented.
++
++As was demonstrated in the TBDHTTRAD section, TSEM will discriminate
++the following commands as different events/coefficients in a security
++model:
++
++cat /etc/shadow
++
++grep something /etc/shadow
++
++while read input
++do
++	echo $input;
++done < /etc/shadow
++
++An important, and perhaps subtle issue to note, is how these events
++result in the change of process trust status.  In the first two cases,
++if access to the /etc/shadow file is not permitted by the operative
++security model, the cat and grep process will become untrusted.
++
++In the third example, the shell process itself would become untrusted.
++This would cause any subsequent attempts to execute a binary to be
++considered untrusted events, even if access to the binary is a
++permitted coefficient in the model.
++
++Since the modeling operates at the level of a mandatory security
++control, these permission denials would occur even if the process is
++running with root privilege levels.  This is secondary to the notion
++that security and trust status are invested in the trust orchestrator
++and ultimately the TMA.
++
++From a hardware perspective, this is important with respect to the
++notion of a TMA being a model for a successor to the TPM.  From a
++system trust or integrity perspective, a TPM is designed to provide a
++retrospective assessment of the actions that have occurred on a
++platform.  A verifying party uses the TPM event log and a PCR based
++summary measurement, to verify what actions have occurred on the host,
++in order to allow a determination of whether or not the platform
++should be 'trusted'.
++
++In contrast, a TSEM/TMA based system enforces, on a real time basis,
++that a platform or workload remains in a trusted state.  Security
++relevant actions cannot be conducted unless the TMA authorizes the
++actions as being trusted.
++
++This is particularly important with respect to embedded systems.  A
++TPM based architecture would not prevent a system from having its
++trust status altered.  Maintaining the system in a trusted state would
++require attestation polling of the system, and presumably, executing
++actions if the platform has engaged in untrusted behavior.
++
++Conversely, a trust orchestrated software implementation enforces that
++a system or workload remain in a security/trust state that it's
++security model was unit tested to.
++
++Security model functional definitions
++-------------------------------------
++
++Previously, classic trusted system implementations supported the
++notion of the 'measurement' of the system.  The measurement is the
++value of a linear extension function of all the security relevant
++actions recorded by a trust measurement system such as IMA.
++
++In TPM based trust architectures, this measurement is maintained in a
++PCR.  A measurement value is submitted to the TPM that extends the
++current measurement using the following formula:
++
++MEASUREMENT = HASH(CURRENT || NEW)
++
++	Where:
++		MEASUREMENT = The new measurement value to be maintained
++			      in the register for the system.
++
++		||	    = Concatenation operator.
++
++		HASH	    = A cryptographic hash function supported
++			      by the TPM device.
++
++		CURRENT     = The current measurement value.
++
++		NEW	    = A new measurement value to be added to
++			      the current measurement.
++
++In TPM1 based systems, the HASH function was SHA1.  Due to well
++understood security concerns about the cryptographic vitality of this
++function, TPM2 based systems provide additional HASH functions with
++stronger integrity guarantees, most principally SHA related functions
++with longer digest values such as SHA256, SHA384 and SM3.
++
++The use of a cryptographic function produces a non-commutative sum
++that can be used to verify the integrity of a series of measurements.
++With respect to security modeling theory, this can be thought of as a
++'time-dependent' measurement of the system.  Stated more simply, the
++measurement value is sensitive to the order in which the measurements
++were made.
++
++In systems such as IMA, the measurement value reflects the sum of
++digest values of what are considered to be security critical entities,
++most principally, files that are accessed, based on various policies.
++
++In TSEM based TMA's, the measurement of a modeling namespace is the
++sum of the security state coefficients generated by the operative
++security model being enforced.  As previously noted, on systems with a
++TPM, the root modeling namespace measurement is maintained by default
++in PCR 11 or the PCR that was selected at kernel configuration time.
++
++The challenge associated with classic integrity measurements is the
++time dependent nature of using a non-commutative summing function.
++The almost universal embrace of SMP based hardware architectures, in
++addition to standard kernel task scheduling issues, makes the
++measurement values non-deterministic.  This requires a verifying party
++to evaluate an event log, verified by a measurement value, to
++determine whether or not the system is in a security appropriate
++state.
++
++TSEM addresses this issue by implementing a strategy designed to
++produce a single functional value that represents the security state
++of a model.  This allows a TMA to attest to the trust/security status
++of a platform or workload by signing this singular value and
++presenting it to a verifying party.
++
++In TSEM nomenclature, this singular value is referred to as the
++'state' of the model.  The attestation model is to use trust
++orchestrators to generate the state value of a workload by unit
++testing.  This state value can be packaged with a utility or container
++to represent a summary trust characteristic that can be attested by a
++TMA, eliminating the need for a verifying partner to review and verify
++an event log.
++
++TMA's implement this architecture by maintaining a single instance
++vector of the set of security state coefficients that have been
++generated.  A state measurement is generated by sorting the vector in
++big-endian hash format and then generating a standard measurement
++digest over this new vector.
++
++Any security event that generates an associated state coefficient that
++is not in the model will resulted in a perturbed state function value.
++That perturbed value would be interpreted by a verifying party as an
++indication of an untrusted system.
++
++Since the TMA maintains the security event descriptions in time
++ordered form, the option to provide a classic event log and
++measurement are preserved and available.  Extensive experience in the
++development of TSEM modeled systems has demonstrated the superiority
++of state value interpretation over classic measurement schemes.
++
++A TMA may choose to incorporate a 'base nonce' into a security model
++that it is implementing, this base nonce is designed to serve in a
++manner similar to an attestation nonce.  If used, the trust
++orchestrator is responsible for negotiating a random base nonce with a
++verifying party at the time of initialization of a modeling namespace
++and providing it to the TMA.
++
++The TMA uses the base nonce to extend each security event coefficient
++that is generated by the model.  This causes the state and measurement
++values of the model to become dependent on this base nonce, a process
++that can be used to defeat a replay attack against the security model.
++
++Control plane
++-------------
++
++Both primary functions of TSEM: security modeling namespace management
++and the internal TMA modeling implementation, are controlled by
++pseudo-files in the securityfs filesystem.  The following directory
++is the top level implementation directory for the TSEM control plane:
++
++/sys/kernel/security/tsem
++
++The following file documents, in detail, the interfaces provided by
++the filesystem:
++
++Documentation/ABI/testing/tsemfs
++
++This filesystem is primarily intended for use by trust orchestrators
++to create and manage security modeling namespaces.
++
++The files are process context sensitive.  Writing to the control file,
++or reading from the informational files, will act on or reference the
++security namespace that the accessing process is assigned to.
++
++The following files and directories are provided in the root directory
++of the TSEM control plane and implement global controls for the TSEM
++LSM:
++
++	id
++	control
++	aggregate
++
++The 'id' file is used to determine the modeling namespace that the
++process is running in.  The namespace id value of 0 is reserved for
++the root modeling namespace, a non-zero value indicates that the process
++is running in a subordinate modeling namespace.
++
++The TSEM implementation is controlled by the only writable file, which
++is the 'control' file.
++
++The following keywords are used by trust orchestrators to place the
++process writing to the file in an internally or externally modeled
++security namespace:
++
++	internal
++	external
++
++Each argument accepts key=value pairs that configure the namespace.
++The following key values are currently accepted:
++
++	nsref
++	digest
++	cache
++	key
++
++The 'nsref' keyword takes one of the following two values:
++
++	initial
++	current
++
++The initial argument indicates that the UID/GID values for the COE or
++the CELL characteristics are derived from the initial user namespace.
++This is the default characteristic if the nsref key is not specified.
++
++The current argument indicates that the UID/GID values are derived
++from the user namespace that the process is running in, when the
++request is made to model an event.
++
++The 'digest' keyword is used to specify the cryptographic hash
++function that is to be used to create the functional values for the
++security state coefficients for the namespace.  The value to this
++keyword is the name by which the hash function is defined by the
++cryptographic API in the kernel.
++
++Examples of suitable strings are as follows:
++
++	sha256
++	sha3-256
++	sm3
++
++Definitions for the names of the cryptographic hashes can be found in
++the source files for the various cryptographic hash functions in the
++'crypto' directory of the Linux source tree.
++
++The 'cache' keyword is used to specify the size of the caches used to
++hold pointers to data structures used for the modeling of security
++events or the export of the security event to external trust
++orchestrators.  These pre-allocated structures are used to service
++security event hooks that are called while the process is running in
++atomic context and thus cannot sleep or allocate memory.
++
++The argument to these keyword is a numeric value specifying the
++number of structures that are to be held in reserve for the namespace.
++
++By default the root modeling namespace and externally modeled
++namespaces have a default value of 96 entries.  An internally modeled
++namespace has a default value of 16 entries.
++
++The 'key' keyword is used to specify the authentication key that is to
++be used to support the authentication of trust control requests from a
++trust orchestrator to processes running in a security modeling
++namespace.  The argument to this keyword is the ASCII base16
++representation of the key that is to be used.  The length of the key
++must be equal to the size of the digest function defined for the
++namespace.
++
++The following keywords and arguments are used by trust orchestrators
++to set the trust status of a process after the processing of a
++security event by an external TMA:
++
++	trusted pid=PID key=HEXID
++	untrusted pid=PID key=HEXID
++
++	PID is the process identifier that is provided to the TMA in
++	the security event description.  HEXID is the base16 ASCII
++	representation of the authentication key that the security
++	modeling namespace was configured with when the namespace was
++	created.
++
++By default a modeling namespace runs in free modeling mode.  The modeling
++mode is changed by writing the following keywords to the control file:
++
++	seal
++	enforce
++
++The following keyword and argument are used to load a security model
++into an internal modeling namespace:
++
++	state value=HEXID
++
++	Where HEXID is the ASCII base 16 representation of a security
++	state coefficient that represents a valid security event in the
++	model.
++
++	After writing a series of state values the trust orchestrator
++	writes the 'seal' keyword to the control file to complete
++	creation of a security model.  Writing the 'enforce' keyword
++	to the control file will result in that model being enforced.
++
++	A security model for a namespace is loaded by writing the
++	valid security coefficients for a model file to the control
++	plane.  This will result in the 'trajectory' file having no
++	event descriptions for a sealed model, since the event
++	description vector is only populated when a new state
++	coefficient is added to the model.
++
++	Since the state state coefficients are generated with a
++	cryptographic hash function, the first pre-image resistance
++	characteristics of the function prevents a security model
++	description from disclosing information about the
++	characteristics of the workload.
++
++The following keyword and argument is used to set a base nonce for the
++internal TMA:
++
++	base value=HEXID
++
++	Where HEXID is the ASCII base 16 representation of a value
++	that each measurement is to be extended with before being
++	committed as a measurement value for the model.
++
++The following keyword and argument is used to create a file digest
++pseudonym for the internal TMA:
++
++	pseudonym value=HEXID
++
++	Where HEXID is the ASCII base 16 representation of a file
++	digest pseudonym that is to be maintained by the model.  See
++	the ABI documentation for how the argument to this verb is
++	generated.
++
++The 'aggregate' file is used by trust orchestrators for internally
++modeled namespaces to obtain the hardware measurement value for
++inclusion in a security model. A trust orchestrator for an externally
++modeled namespace can capture this value, since it is exported as the
++first event that occurs in a security modeling namespace.
++
++The following two directories are implemented in the top level TSEM
++control directory in order to support interfaces to internally and
++externally modeled namespaces:
++
++	ExternalTMA
++	InternalTMA
++
++The ExternalTMA directory holds a file, that is created when the
++request to create an externally model security namespace is made, and
++are named for the id number of the security modeling namespace.  The
++descriptions for security events that occur in the context of the
++namespace are exported in JSON format to the external trust
++orchestrator that is managing the namespace.
++
++The InternalTMA directory is a container directory that holds
++directories for the control of each internal TMA that is implemented
++in the kernel.
++
++There is currently only a single kernel based TMA that is managed
++through the following directory:
++
++/sys/kernel/security/tsem/InternalTMA/model0
++
++The following files are implemented for this model:
++
++	measurement
++	state
++
++	trajectory
++	trajectory_coefficients
++	trajectory_counts
++
++	forensics
++	forensics_coefficient
++	forensics_counts
++
++The 'measurement' file outputs the classic linear extension value of
++the security state coefficients that are generated in the context of
++the security modeling namespace.  This value is time dependent and can
++be used to verify the order of the security events that occurred in
++the model
++
++The 'state' file outputs a time independent functional value of
++security state of the modeling namespace.  This value and its
++generation and motivation are discussed in the 'Security model
++functional definitions' section of this document.
++
++The 'trajectory' file outputs the description of each security event
++recorded by the model in time dependent form.  The ABI documentation
++file contains a complete description of the output that is generated
++by this file and the 'forensics' file described below.
++
++The 'trajectory_coefficients' file outputs the set of security state
++coefficients in the model.  These coefficients are the values of the
++event descriptions that are output in the 'trajectory' file.
++
++The 'trajectory_counts" file outputs the number of times that each
++security state coefficient, output by the 'trajectory_coefficients'
++file, has been experienced in the security namespace.  This value can
++be used to verify that a security sensitive event has occurred or for
++statistical inference as to the anomaly status of the namespace.
++
++The 'forensics' file outputs the description of security events that
++have occurred when the namespace security model is running in a sealed
++state.  These events are useful for characterizing a security
++intrusion that has occurred or for refinement of a security model.
++
++The 'forensics_coefficients' file outputs the security state
++coefficients that are generated by the forensics events that have
++been captured by the model and available through the 'forensics' file.
++
++The 'forensics_counts" file outputs the number of times that each
++security state coefficient output by the 'forensics_coefficients' file
++has been experienced in the security namespace.  This value can can be
++used for statistical inference as to the anomaly status of the
++namespace.
++
++Trust orchestrators
++===================
++
++In security modeling, the need for a trust orchestrator is embodied in
++Heisenberg's reflections on quantum mechanical modeling.  A modeled
++system cannot model itself without affecting the functional value of
++the security model being implemented.  An external entity is needed to
++setup, configure and monitor the state of a modeled system, in a
++manner that does affect the state of the modeled system itself.
++
++After creating and configuring a security modeling namespace, the
++orchestrator is responsible for executing and monitoring a process
++that is run in the context of the namespace.  The trust orchestrator
++is also responsible for providing access to the status of the security
++model being implemented by the TMA.
++
++Trust orchestrators for externally modeled namespaces, have an
++associated TMA that is responsible for implementing the security model
++for a namespace.  The TMA represents the the root of trust for the
++modeled namespace.  The TMA advises the trust orchestrator as to what
++the trust status for a process should be set to, based on the modeling
++of the security event characteristics that are presented to it by the
++trust orchestrator.
++
++In a trust orchestration architecture, secondary to their integral
++role in maintaining the trust state of the system, the trust
++orchestrators are the highest value security asset running on the
++system.  In order to support this, the Linux TSEM implementation
++implements a new security capability, CAP_ML, only trust orchestrators
++are designed to run with this capability.
++
++The CAP_ML capability is defined as a capability that allows the
++ability of it's holder to use namespace creation and security modeling
++to define the trust status of a system.
++
++Trust orchestrators are designed to drop the CAP_ML capability before
++forking the process that will be responsible for launching a modeled
++workload.  This provides an architecture where the root of trust for
++the system can be predicated on a small body of well audited
++orchestration utilities, that can be linked to a hardware root of
++trust implemented by a TPM or a hardware based TMA.
++
++Quixote
++=======
++
++	"He is awkward, past his prime and engaged in a task beyond his
++	 capacities."
++				- Don Quixote's able mount Rocinante
++
++The Quixote Trust Orchestration System, released in concert with TSEM,
++is an implementation of a trust orchestration environment that
++embodies the characteristics described above.  It provides all off the
++basic functionality needed to build and run security architectures
++based on TSEM using either internal or external TMA implementations.
++
++It is anticipated that Quixote would not be the only such system to
++take advantage of TSEM.  Given the burgeoning capability set of
++systemd, it would be an architecturally valid concept to have systemd,
++or other system init equivalents, gain the ability to launch critical
++system services in security modeled environments.
++
++The source code for Quixote, and TSEM patches for some LTS kernels are
++available at the following URL:
++
++ftp://ftp.enjellic.com/pub/Quixote
++
++The build of Quixote is somewhat formidable, given that it spans the
++range from system programming though SGX programming and into embedded
++micro-controller systems.  In order to facilitate experimentation,
++binaries statically compiled against MUSL libc are provided that have
++virtually no system dependencies, other than a TSEM enabled kernel.
++
++Sample utilities
++----------------
++
++The Quixote TSEM implementation implements a separate trust
++orchestration utility for each TMA environment, nee Sancho partner,
++that is supported:
++
++quixote	     -> TMA run in the kernel for internally modeled namespaces.
++
++quixote-us   -> TMA run in a userspace process.
++
++quixote-xen  -> TMA run in a Xen based stub domain.
++
++quixote-sgx  -> TMA run in an SGX enclave.
++
++quixote-mcu* -> TMA run in a micro-controller implementation.
++
++* = See discussion below.
++
++Each utility runs in one of two modes: process or container
++
++In process mode, a shell process is run as the workload process in a
++modeling namespace.  This mode is selected with the -P command-line
++option.
++
++In container mode, the default, the OCI runc utility is run as the
++workload process, with a 'bundle' argument that specifies a directory
++that contains a JSON container definition for a directory hierarchy in
++the bundle directory.  The /var/lib/Quixote/Magazine directory
++contains the bundle directories.
++
++The -c command-line option selects container mode, the argument to the
++option specifies the bundle directory for the runc utility.
++
++In order to support the creation of security models, each utility
++supports the -o command-line option to specify that a security model
++description be output when the modeled workload terminates.  The model
++is written to the name of the file supplied via the command-line
++option.
++
++If the -t command-line option is also specified, the security
++execution trajectory, rather than a model consisting of security state
++coefficients, is written to the output file.  This trajectory
++represents the description of the security events that were modeled.
++This trajectory can be converted to security state coefficients with
++the generate-states utility that is also provided in the utilities
++package.
++
++The -m command-line option is used to specify a model that is to be
++loaded into the TMA and optionally enforced.  By default the security
++model output with the -o command-line option will place the TMA in a
++sealed modeling state.  Any security events that are non-compliant
++with the model will be registered as forensics events.
++
++Adding the -e command-line option, with the '-m FILENAME' option, will
++cause the loaded model to be enforced.  Any forensic events will cause
++a permission denial to be returned to the caller of a TSEM LSM hook
++implementation.
++
++The Quixote package also includes the quixote-console utility, for
++interrogating the model state of both external and internal TMA's.
++The following command-line options request output of the following
++characteristics of the model:
++
++-C -> The current execution trajectory coefficient counts.
++
++-E -> The log of denied events.
++
++-F -> The current forensics execution trajectory.
++
++-M -> A definition for the current security model.
++
++-P -> The current security state coefficients.
++
++-S -> The state value of the model.
++
++-T -> The current security execution trajectory.
++
++Executing the utility, without these arguments, will cause a
++command-line version of the utility to be presented that takes the
++following arguments:
++
++show trajectory
++
++show coefficients
++
++show counts
++
++show forensics
++
++show forensics_coefficients
++
++show forensics_counts
++
++show state
++
++show model
++
++quit
++
++It is important to note that any of the values output, represent the
++current state of the model and do not reflect a cumulative model of
++the workload.  Capturing a complete workload model requires the use of
++the -m command-line argument to the trust orchestrators to capture a
++model that is representative of the entire execution trajectory of the
++workload after it completes.
++
++As an example, the following security model definition represents the
++execution and termination of a shell session run on a system with a
++hardware TPM:
++
++aggregate de2b9c37eb1ceefa4bcbc6d8412920693d3272f30eb5ba98d51d2f898d620289
++state 97b29769580b412fbf55e326a98d6a1b97c6ebf446aaf78ea38c884e954ca5b2
++state 7c435854b4fa421175ec0a5d3ca7c156480913d85c03155ea3305afa56c9717d
++state 554d9f62693d522c9a43acf40780065f99cea3d67ca629ac4eaab4e22d4e63c2
++state 1b228046c4c2e7aa14db9a29fcff6f718f4f852afbfb76c8a45af7bf0485f9ce
++state 24fd04b10e2b5016e0061952f3bdea959e0fa80a55ff0f4e8e13f9f72ede7498
++state da6038511db71b08c49a838d178ed055e0b7bfc42548b4c2d71eca046e9a222e
++state 94b24ad4c8902f8ecb578a702408e8458e72c0774c402c3bd09ec5f390c4d0ae
++state 5ffa5a2a38f42d89ae74a6d58be8b687c1baed9746d9c6a7ae3c632a2e7c082f
++state a2e309d84bd4a52466c22779a622254c65ad1208583d70113751c4624baa7804
++state e93ceb0b1bf3cd58373a9e9ab4aca11a507782bbfde395ff68f8bfaf1678ed43
++state bf42388d63887368605fac9816134bc67314762c3a97b440cc48c5a30c07fdb9
++state eaa342599d682d63be4b64e159b98f21d85f0133ef5b28588e444ad12e446bf6
++state 2b9c86bc34202504c398c2f177d1dcf807b2f267c160bf8ebda863a9b427917f
++state 686fc3c958f2e4f2ce3b2c6a2cb3fff44ccc4db98869bd377b14e557a5191231
++state 613c39fd2a58413b32f448c13ea4d6bc38b77966dfc5560e39e4b37d2b2f5675
++state 70e276bfd7c20262cd9c9f5b09a922f11d16d1e3a602e8005d68e9ed6afc9b5d
++state 456aaedc5c1fc63f852ee97ae9561aba2a06c416154ecb9d7a1bf9d9a8c9c064
++state 97507c4c91af4a9b34b4d66118f6cc0ba1f8b55b8bb6e623dcafe27b100aea07
++state ea635c48031f81140b3561ed2291a3b1790a302e6adf5244320593b08a5af924
++state 2fd6a4d6ea1869a193926e998fbdf855916b510257d379762f48a1df63a810d4
++state 9c4cb7ef4848be1e29f9eb35fadaf5bfdc1fa3cbb22b6407cbd31b7088257026
++state 66640cbf9ae772515070f8613182b6852bf46220df0833fbe6b330a418fad95b
++state 6b0d1890cbd78c627e23d7a564e77a5ee88fb20e0662ce5e66f3727ebf75fa1d
++state bd28fa43b34850591fdf6fb2aa5542f33c21c20ee91b4bc2034e199b4e09edc1
++state 04425354419e53e6e73cde7d61856ff27763c2be01934e9990c1ae9f8d2a0b6e
++state 2650d86382f6404367b7fdeec07f873b67b9ce26caef09d035b4dff09fce04d5
++state df2f91f5fd84ca4621092420eaf1b0a3743b328a95e3f9e0b7b1281468462aa2
++state c730c66ecfabe99480e61a7f25962582ca7bb6f2b17983048e77adde1fe7f72b
++state 0fc937b71d0067fcc2c2f37c060763de250b3142e621174ffedc1b2520cdf6fd
++state 7f267400a3ccf462c77ae5129799558c2c62d8bc5b388882caec813ab4cf7b7f
++seal
++end
++
++As was previously discussed, the model should be cryptographically
++secure against the elucidation of the security events that resulted in
++the described security states.
++
++The Quixote userspace implementation also contains utilities for
++generating signed versions of these security models.
++
++* MCU TMA's
++-----------
++
++One of the objectives of TSEM/Quixote is to explore architectures for
++trusted systems that extend beyond what is provided by the TPM model
++for security co-processors.  The MCU based reference implementations
++allow experimentation with hardware based TMA's.
++
++The Quixote TSEM utilities include TMA implementations for the
++following following ARM32 based micro-controller platforms:
++
++STM32L496
++
++STM32L562
++
++NRF52840-DK
++
++NRF52840-DONGLE
++
++The STM32L496 platform, in addition to the base TMA implementation,
++includes support for a CAT1-M based cellular modem.  This demonstrates
++the ability of an external TMA to conduct remote, out-of-band,
++signaling of security violations for modeled platforms/workloads and
++the downloading of security models outside the context of the platform
++itself.
++
++The STM32L562 platform is a low power MCU designed for security
++focused IOT implementations.  It includes hardware hashing, hardware
++asymmetric encryption and Trust Zone support.
++
++Of primary interest may be the NRF52840-DONGLE implementation.  This
++is a 'USB fob' form factor board that GOOGLE uses as the basis for
++their OpenSK security key implementation.  This form factor allows the
++development and experimentation with easily deployable hardware based
++TMA implementations.
++
++The NRF52840-DONGLE architecture was chosen by the NLnet sponsored
++'FobNail' project, that is developing a hardware based attestation
++server:
++
++https://fobnail.3mdeb.com/
++
++The Fobnail projects discusses the notion of their architecture
++expanding to provide protection for a Linux system at large.
++Quixote/TSEM, running on the NRF52840-DONGLE micro-controller, is a
++demonstration of such an implementation.
++
++===============
++Closing Remarks
++===============
++
++	"Sometimes it is the people no one can imagine anything of who
++	 do the things no one can imagine.
++				- Alan Turing
++
++While this document is of some length and detail, it hopefully
++fulfills its obligation to provide sufficient prose for the
++justification of the security model that TSEM addresses, and in
++combination with trust orchestrators, implements.
++
++The MAINTAINERS file has contact information for feedback, patches
++and/or questions regarding TSEM and its reference TOS implementation.
++
++     The Quixote Team - Flailing at the Travails of Cybersecurity
++
++	With all due respect to Miguel de Cervantes Saavedra.
++
++   From the glacial moraine lake country of West-Central Minnesota.
++
++ LocalWords:  TSEM Brule Hilaire Belloc attestable namespace TOS TCB LSM LSM's
++ LocalWords:  filesystem metadata TBDHTTRAD tsem Continous workflow namespaces
++ LocalWords:  userspace quixote secundem artem inode boolean multi incent SEM
++ LocalWords:  analysing workflows COE TMA TPM orchestrators SGX Xen TMA's PCR's
++ LocalWords:  IMA PCR namesapces ie workqueue PID's PID OOM ABI SHA bprm creds
++ LocalWords:  linux binprm SMP endian tsemfs ExternalTMA HEXID pre Rocinante de
++ LocalWords:  systemd init LTS MUSL libc xen sgx mcu OCI runc JSON eb ceefa ba
++ LocalWords:  bcbc fbf ebf aaf ec afa acf cea eaab aa fcff afbfb af ce fd bdea
++ LocalWords:  ede da bfc eca ecb bd ae ffa baed ceb cd aca bbfde bfaf fac bc ef
++ LocalWords:  fdb eaa dcf ebda fc cb fff ccc dfc bfd afc aaedc ee aba bb dcafe
++ LocalWords:  aea adf fbdf df fadaf bfdc cbb cbd cbf fbe fb fdf edc cde fdeec
++ LocalWords:  caef dff fce eaf ecfabe adde fe fcc ffedc cdf ccf caec STM NRF DK
++ LocalWords:  IOT USB GOOGLE OpenSK deployable NLnet FobNail Fobnail Saavedra
++ LocalWords:  Cybersecurity hexadecimally BPF Coeff securityfs nsref UID GID sm
++ LocalWords:  API sha crypto InternalTMA HIDS pid FILENAME
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 9e5bab29685f..0e6640a78936 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6468,6 +6468,24 @@
+ 			with CPUID.16h support and partial CPUID.15h support.
+ 			Format: <unsigned int>
+ 
++	tsem_mode=	[TSEM] Set the mode that the Trusted Security Event
++			Modeling LSM is to run in.
++			Format: 1
++			1 -- Disable root domain modeling.
++
++	tsem_cache=	[TSEM] Define the size of the caches used to hold
++			pointers to structures that will be used to model
++			security events occurring in the root modeling
++			namespace that are called in atomic context.
++			Format: <integer>
++			Default: 96
++
++	tsem_digest=	[TSEM] Define the cryptographic hash function that
++			will be used to create security event coefficients
++			for in the root modeling namespace.
++			Format: {name of the cryptographic hash function}
++			Default: sha256
++
+ 	tsx=		[X86] Control Transactional Synchronization
+ 			Extensions (TSX) feature in Intel processors that
+ 			support TSX control.
 -- 
 2.39.1
 
