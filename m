@@ -2,80 +2,90 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0869C001DC
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jul 2023 19:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C57EB64DA
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jul 2023 20:01:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229712AbjGJTUi (ORCPT
+        id S230039AbjGJUBB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Jul 2023 15:20:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39040 "EHLO
+        Mon, 10 Jul 2023 16:01:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbjGJTUi (ORCPT
+        with ESMTP id S230107AbjGJUBA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Jul 2023 15:20:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2891595;
-        Mon, 10 Jul 2023 12:20:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B67496119A;
-        Mon, 10 Jul 2023 19:20:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2881C433C7;
-        Mon, 10 Jul 2023 19:20:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689016835;
-        bh=EcUHuJp/TGc/f/VFsCbSWVn6xHI6mjyOOrU3G4PfPY0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=aD5rQtuEleK3/eOrwnLq4nAqYlTqUNtyzdo2XUL9LLl3LS3d04CvlPlUDu8FvOtXo
-         hxTmxbWQ6Pq0VrcQpLM08ZxZGK8g9iwoif133jCfCoSZKfE03c+WCN52elrf6hpGlE
-         E7++XBt5nBZyKYoliDLlmvjzKd0juyQ/YpeWGoHoAI2CzDjYn3UF1hfJTwbG521CUg
-         G6GwMUhNtwo5f4DwOJqu4YxBF2EXBs+8ul/7uAC/bNIFye32FXPhd+qJegwTcmlruU
-         QqFRnhLjigU6dmcITtd0rQxzI6o4zhXm/neiXE3s/ObyEZQP1e4oRy1/ytyYS/qp6u
-         5O8NXNAoY8NCw==
-Message-ID: <63aff66215d816a899f0d567b64ae82f94ae77be.camel@kernel.org>
-Subject: Re: [PATCH] security: keys: Modify mismatched function name
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc:     jejb@linux.ibm.com, zohar@linux.ibm.com, dhowells@redhat.com,
-        jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-Date:   Mon, 10 Jul 2023 22:20:31 +0300
-In-Reply-To: <CAHC9VhSUz1zXBTFjaCDMzFCuAY6t3zG4WyXyKWBjNTwjLxZS+Q@mail.gmail.com>
-References: <20230614021825.64333-1-jiapeng.chong@linux.alibaba.com>
-         <CAHC9VhSUz1zXBTFjaCDMzFCuAY6t3zG4WyXyKWBjNTwjLxZS+Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1-0ubuntu1 
+        Mon, 10 Jul 2023 16:01:00 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 183C513E;
+        Mon, 10 Jul 2023 13:01:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
+        bh=NARVxAHU8hdSWaaKOBo8T6Vk6x7Y5zqJLlil7BmYBVI=; b=cqIo0WmUCiJcN5pvSBP2FkMxKH
+        k2ZnLOmwNaJJPJkw4PW+4V3p2f4rePzcvXzUNSG9s+9OInLdffZVlrx4tymeLgq9+VbRSOhSDl6XV
+        4gtgUmlPmRQG54ZE3p97WtRvFk/wCSzluiK4GvAwWodn6Amlah7IDZlamtPctaEDuMOEi3MDQ62hy
+        2YpdSsn6d3WpLq9OkhK4ACN/DAvHvtIMgQgXllsRX8VX658Y5w/AEMGXljrHpWRgFPQ5hYAm2uKID
+        lCk+W3XQOdHKr9dRwzvFmdojjV2R6D87JreCthNUssxalzqdYYxQv1yDjNSd2VvteMN1Zkqp43zkS
+        AdjdKvfQ==;
+Received: from [2601:1c2:980:9ec0::2764]
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qIx47-00CcDE-1R;
+        Mon, 10 Jul 2023 20:00:59 +0000
+Message-ID: <fa1d9a4c-16fe-955d-071b-d39f1a0d9b58@infradead.org>
+Date:   Mon, 10 Jul 2023 13:00:58 -0700
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 01/13] Update MAINTAINERS file.
+Content-Language: en-US
+To:     "Dr. Greg" <greg@enjellic.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net
+References: <20230710102319.19716-1-greg@enjellic.com>
+ <20230710102319.19716-2-greg@enjellic.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20230710102319.19716-2-greg@enjellic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2023-06-14 at 17:52 -0400, Paul Moore wrote:
-> On Tue, Jun 13, 2023 at 10:18=E2=80=AFPM Jiapeng Chong
-> <jiapeng.chong@linux.alibaba.com> wrote:
-> >=20
-> > No functional modification involved.
-> >=20
-> > security/keys/trusted-keys/trusted_tpm2.c:203: warning: expecting proto=
-type for tpm_buf_append_auth(). Prototype was for tpm2_buf_append_auth() in=
-stead.
-> >=20
-> > Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> > Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D5524
-> > Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> > ---
-> >  security/keys/trusted-keys/trusted_tpm2.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> Reviewed-by: Paul Moore <paul@paul-moore.com>
->=20
+Hi,
 
-Thanks, I'll pick this.
+On 7/10/23 03:23, Dr. Greg wrote:
+> Add an entry to the MAINTAINERS file to document the maintainer's
+> address and files relevant to the Trusted Security Event Modeling
+> system (TSEM).
+> 
+> Signed-off-by: Greg Wettstein <greg@enjellic.com>
+> ---
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 35e19594640d..4660c972d5e3 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19026,6 +19026,14 @@ F:	include/uapi/linux/selinux_netlink.h
+>  F:	scripts/selinux/
+>  F:	security/selinux/
+>  
+> +TSEM SECURITY MODULE
+> +M:	Greg Wettstein <greg@enjellic.com>
+> +S:	Maintained
+> +L:	linux-security-module@vger.kernel.org
+> +F:	Documentation/admin-guide/LSM/tsem.rst
+> +F:	Documentation/ABI/testing/tsemfs
+> +F:	security/tsem/
+> +
 
-BR, Jarkko
+Please insert entries in the MAINTAINERS file in alphabetical order
+(as stated in that file).
 
+Thanks.
+
+>  SENSABLE PHANTOM
+>  M:	Jiri Slaby <jirislaby@kernel.org>
+>  S:	Maintained
+
+-- 
+~Randy
