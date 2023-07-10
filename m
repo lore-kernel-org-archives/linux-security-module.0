@@ -2,90 +2,109 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C57EB64DA
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jul 2023 20:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0885EB64DA
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jul 2023 23:43:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230039AbjGJUBB (ORCPT
+        id S229787AbjGJXnQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Jul 2023 16:01:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55554 "EHLO
+        Mon, 10 Jul 2023 19:43:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230107AbjGJUBA (ORCPT
+        with ESMTP id S229528AbjGJXnP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Jul 2023 16:01:00 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 183C513E;
-        Mon, 10 Jul 2023 13:01:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-        bh=NARVxAHU8hdSWaaKOBo8T6Vk6x7Y5zqJLlil7BmYBVI=; b=cqIo0WmUCiJcN5pvSBP2FkMxKH
-        k2ZnLOmwNaJJPJkw4PW+4V3p2f4rePzcvXzUNSG9s+9OInLdffZVlrx4tymeLgq9+VbRSOhSDl6XV
-        4gtgUmlPmRQG54ZE3p97WtRvFk/wCSzluiK4GvAwWodn6Amlah7IDZlamtPctaEDuMOEi3MDQ62hy
-        2YpdSsn6d3WpLq9OkhK4ACN/DAvHvtIMgQgXllsRX8VX658Y5w/AEMGXljrHpWRgFPQ5hYAm2uKID
-        lCk+W3XQOdHKr9dRwzvFmdojjV2R6D87JreCthNUssxalzqdYYxQv1yDjNSd2VvteMN1Zkqp43zkS
-        AdjdKvfQ==;
-Received: from [2601:1c2:980:9ec0::2764]
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qIx47-00CcDE-1R;
-        Mon, 10 Jul 2023 20:00:59 +0000
-Message-ID: <fa1d9a4c-16fe-955d-071b-d39f1a0d9b58@infradead.org>
-Date:   Mon, 10 Jul 2023 13:00:58 -0700
+        Mon, 10 Jul 2023 19:43:15 -0400
+Received: from mail-ua1-x930.google.com (mail-ua1-x930.google.com [IPv6:2607:f8b0:4864:20::930])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72C5A19C;
+        Mon, 10 Jul 2023 16:43:14 -0700 (PDT)
+Received: by mail-ua1-x930.google.com with SMTP id a1e0cc1a2514c-79702eee5a8so1194747241.1;
+        Mon, 10 Jul 2023 16:43:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689032593; x=1691624593;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wUaJuZLn2HQHTJjVwoie7/nnRDaNlyZQ3eHS6hMyjpY=;
+        b=NOehtBZUrPXylJYfZWxW8nf74sjL6u0w8pZz7WFFmV0fBRd7gYUGnj5TEYaRokMuQa
+         4pBLn40oBxlCPy84h9F84Pjk3UUXeXk6WSoxO/3J2+r8s2w8ho0vmRGzqhujPNYYfZIe
+         o5uDSW9ct00r5j/14t3fquAH8Mc7JYnixjzxzoS4K3IgqFyQoBoFBbMXWZigBmMZULcG
+         5gR3XYaM2HBPpBwCYPK7f4jfrh0/NW/ZMPtkmmCOfDk2QDCrtFEQPyXPHYlfslTi6BRS
+         CthI3XncwEXJurXgAcn07gD0WFuTX9jGOYx0K5MDKtnmTMK17hKttJFLz3ediwmUCZkP
+         PZxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689032593; x=1691624593;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wUaJuZLn2HQHTJjVwoie7/nnRDaNlyZQ3eHS6hMyjpY=;
+        b=XRDpIEbCnYbVvUVNRc7zPUnp8VkqtVfSunLM7zGohBedhDEMm7oj510Mg3JKzGI4LL
+         o7WaXrQwsLcV00s5BifbAteIJBcS5Pvxp0sklA72N7VWQUSH/lj6MTWvRV18jKMM+6Lb
+         9EapuNYrnLTTAhla+dWzl/ok38vDmuXST9mE5lVdryMK4CHUMRuo6FkSjbkcnm0AKB7i
+         o+Py/y8j9HbIkzsGXbPdmCcth2iILTDcHP8ISlVE6b7TpkUcUzZdOjUcOsykzBETGJmP
+         Ga3xd/NdxgPqIBJszck+jCLSSrAAznKxZPNik5wXwIkoUNQEC6UEsrM967vOgfqjlX02
+         hr5w==
+X-Gm-Message-State: ABy/qLbRSTt5eYalQdnDrxKM3ofRnvqDMXqlakPLAvWTbVJJjxbOFwkl
+        HSiqS7LAySgDC4aWuAgNDq4eErK2cxksZVkBC9cDrv7Op9D/pVa9p5g=
+X-Google-Smtp-Source: APBJJlEEWdCGox1zITHfkC2lwxsdykiZoHmYyzEtl8SiYSsXs69oED61ARYe7S9dlDnx0zh2PzCWltUFBPUCxVx4lwE=
+X-Received: by 2002:a05:6102:282b:b0:444:c644:c231 with SMTP id
+ ba11-20020a056102282b00b00444c644c231mr7683110vsb.12.1689032593456; Mon, 10
+ Jul 2023 16:43:13 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 01/13] Update MAINTAINERS file.
-Content-Language: en-US
-To:     "Dr. Greg" <greg@enjellic.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net
-References: <20230710102319.19716-1-greg@enjellic.com>
- <20230710102319.19716-2-greg@enjellic.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20230710102319.19716-2-greg@enjellic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230629051832.897119-1-andrii@kernel.org> <20230629051832.897119-2-andrii@kernel.org>
+ <20230704-hochverdient-lehne-eeb9eeef785e@brauner> <CAHC9VhTDocBCpNjdz1CoWM2DA76GYZmg31338DHePFGq_-ie-g@mail.gmail.com>
+ <20230705-zyklen-exorbitant-4d54d2f220ad@brauner> <CAEf4Bza5mUou8nw1zjqFaCPPvfUNq-jpNp+y4DhMhhcXc5HwGg@mail.gmail.com>
+ <87a5w9s2at.fsf@toke.dk> <CAEf4Bzaox7Q+ZVfuVnuia-=zPeBMYBG3-HT=bajT0OTMp6SQzg@mail.gmail.com>
+ <87lefrhnyk.fsf@toke.dk> <CAEf4BzZAeSKYOgHq5UTgPp+=z7bm6Fr5=OFC9Efr0aj4uVbaAQ@mail.gmail.com>
+ <87pm53fklx.fsf@toke.dk> <CAEf4BzYd-vKGQ4GoCVGSPjroV4D1yHODTaRO-RwLZtUdYnkoZg@mail.gmail.com>
+In-Reply-To: <CAEf4BzYd-vKGQ4GoCVGSPjroV4D1yHODTaRO-RwLZtUdYnkoZg@mail.gmail.com>
+From:   Djalal Harouni <tixxdz@gmail.com>
+Date:   Tue, 11 Jul 2023 01:42:46 +0200
+Message-ID: <CAEiveUfw1QXdbC-iUBtKZrxfoDBJpNE43BEOTqTGToqu8UbW_Q@mail.gmail.com>
+Subject: Re: [PATCH RESEND v3 bpf-next 01/14] bpf: introduce BPF token object
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        lennart@poettering.net, cyphar@cyphar.com, luto@kernel.org,
+        kernel-team@meta.com, sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+On Sat, Jul 8, 2023 at 1:59=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+...
+> > >
+> > > Why can't distro disable this in some more dynamic way, though? With
+> > > existing LSM mechanism, sysctl, whatever? I think it would be useful
+> > > to let users have control over this and decide for themselves without
+> > > having to rebuild a custom kernel.
+> >
+> > A sysctl similar to the existing one for unprivileged BPF would be fine
+> > as well. If an LSM ends up being the only way to control it, though,
+> > that will carry so much operational overhead for us to get to a working
+> > state that it'll most likely be simpler to just patch it out of the
+> > kernel.
+>
+> Sounds good, I will add sysctl for the next version.
 
-On 7/10/23 03:23, Dr. Greg wrote:
-> Add an entry to the MAINTAINERS file to document the maintainer's
-> address and files relevant to the Trusted Security Event Modeling
-> system (TSEM).
-> 
-> Signed-off-by: Greg Wettstein <greg@enjellic.com>
-> ---
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 35e19594640d..4660c972d5e3 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19026,6 +19026,14 @@ F:	include/uapi/linux/selinux_netlink.h
->  F:	scripts/selinux/
->  F:	security/selinux/
->  
-> +TSEM SECURITY MODULE
-> +M:	Greg Wettstein <greg@enjellic.com>
-> +S:	Maintained
-> +L:	linux-security-module@vger.kernel.org
-> +F:	Documentation/admin-guide/LSM/tsem.rst
-> +F:	Documentation/ABI/testing/tsemfs
-> +F:	security/tsem/
-> +
+What would be the purpose of the sysctl? or a kconfig? AFAICT the
+operation is still privileged, and it's an opt-in? anyway...
 
-Please insert entries in the MAINTAINERS file in alphabetical order
-(as stated in that file).
+It is obvious that this should be part of the BPF core... The other
+user space proxy solution tries to solve another use case competing
+with LSMs. It won't be able to handle the full context (or today's
+nested workload) at bpf() call time... There are obvious reasons why
+LSMs do exist...
 
-Thanks.
+Thanks for agreeing that it should be attached to the user namespace
+at creation time as it is crucial to get it right... and Christian
+(thanks BTW ;-) ) maybe we make it walk user ns list up to parent and
+allow the token if it's coming from a parent namespace that is part of
+the same hierarchy, then theoretically the parent ns is more
+privileged...  will check again and reply to the corresponding email.
 
->  SENSABLE PHANTOM
->  M:	Jiri Slaby <jirislaby@kernel.org>
->  S:	Maintained
-
--- 
-~Randy
+Thanks!
