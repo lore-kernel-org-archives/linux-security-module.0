@@ -2,33 +2,33 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C3B1C001B0
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jul 2023 11:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 248BFEB64D9
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jul 2023 11:02:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231443AbjGJLCv (ORCPT
+        id S231551AbjGJLCw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Jul 2023 07:02:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56978 "EHLO
+        Mon, 10 Jul 2023 07:02:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231159AbjGJLCt (ORCPT
+        with ESMTP id S230047AbjGJLCv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Jul 2023 07:02:49 -0400
+        Mon, 10 Jul 2023 07:02:51 -0400
 Received: from blizzard.enjellic.com (wind.enjellic.com [76.10.64.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B42F5CE;
-        Mon, 10 Jul 2023 04:02:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 385F6CE;
+        Mon, 10 Jul 2023 04:02:50 -0700 (PDT)
 Received: from blizzard.enjellic.com (localhost [127.0.0.1])
-        by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 36AANMnu019754;
-        Mon, 10 Jul 2023 05:23:22 -0500
+        by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 36AANTIX019804;
+        Mon, 10 Jul 2023 05:23:29 -0500
 Received: (from greg@localhost)
-        by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 36AANMlf019752;
-        Mon, 10 Jul 2023 05:23:22 -0500
+        by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 36AANTS0019802;
+        Mon, 10 Jul 2023 05:23:29 -0500
 X-Authentication-Warning: blizzard.enjellic.com: greg set sender to greg@enjellic.com using -f
 From:   "Dr. Greg" <greg@enjellic.com>
 To:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, corbet@lwn.net
-Subject: [PATCH 03/13] Implement CAP_TRUST capability.
-Date:   Mon, 10 Jul 2023 05:23:09 -0500
-Message-Id: <20230710102319.19716-4-greg@enjellic.com>
+Subject: [PATCH 13/13] Activate the configuration and build of the TSEM LSM.
+Date:   Mon, 10 Jul 2023 05:23:19 -0500
+Message-Id: <20230710102319.19716-14-greg@enjellic.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230710102319.19716-1-greg@enjellic.com>
 References: <20230710102319.19716-1-greg@enjellic.com>
@@ -37,76 +37,110 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-TSEM was designed to support a Trust Orchestration System (TOS)
-security architecture.  A TOS based system uses the concept of a
-minimum Trusted Computing Base of utilities, referred to as trust
-orchestrators, that maintain workloads in a trusted execution
-state.  The trust orchestrators are thus, from a security
-perspective, the most security privileged processes running on
-the platform.
-
-The CAP_ML (machine modeling) capability is defined as a
-capability that allows a process to alter the modeling and hence
-the trust status of the platform.  In a fully orchestrated system
-only the trust orchestrator carry this capability bit and then
-drop the capability for the execution of the workload.  This is
-designed to prevent a security vulnerability in workloads to be
-leveraged to create an entity that could conduct adversarial
-modifications to the trust status of the platform.
-
-With the introduction of TSEM there are three generic mechanisms
-for implementing security contols, each with its own capability
-bit for management, ie:
-
-DAC - CAP_DAC_ADMIN
-
-MAC - CAP_MAC_ADMIN
-
-Security modeling - CAP_ML
-
-Having a separate capability bit for security modeling allows DAC
-and classic label or path based MAC systems to be implemented in
-the context of a security modeling namespace.  Looking forward it
-is not unreasonable to consider the implementation of a modeling
-policy that would verify the status of extended attributes being
-used for label based MAC controls.
+Complete the implementation by integrating the LSM into the
+configuration and kernel build infrastructure.
 
 Signed-off-by: Greg Wettstein <greg@enjellic.com>
 ---
- include/uapi/linux/capability.h     | 6 +++++-
- security/selinux/include/classmap.h | 2 +-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ security/Kconfig       | 11 ++++++-----
+ security/Makefile      |  1 +
+ security/tsem/Kconfig  | 36 ++++++++++++++++++++++++++++++++++++
+ security/tsem/Makefile |  2 ++
+ 4 files changed, 45 insertions(+), 5 deletions(-)
+ create mode 100644 security/tsem/Kconfig
+ create mode 100644 security/tsem/Makefile
 
-diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
-index 3d61a0ae055d..4a17c9774505 100644
---- a/include/uapi/linux/capability.h
-+++ b/include/uapi/linux/capability.h
-@@ -417,7 +417,11 @@ struct vfs_ns_cap_data {
+diff --git a/security/Kconfig b/security/Kconfig
+index 97abeb9b9a19..23c25a12c8df 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -202,6 +202,7 @@ source "security/yama/Kconfig"
+ source "security/safesetid/Kconfig"
+ source "security/lockdown/Kconfig"
+ source "security/landlock/Kconfig"
++source "security/tsem/Kconfig"
  
- #define CAP_CHECKPOINT_RESTORE	40
+ source "security/integrity/Kconfig"
  
--#define CAP_LAST_CAP         CAP_CHECKPOINT_RESTORE
-+/* Allow modifications to the trust status of the system */
+@@ -241,11 +242,11 @@ endchoice
+ 
+ config LSM
+ 	string "Ordered list of enabled LSMs"
+-	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
+-	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
+-	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
+-	default "landlock,lockdown,yama,loadpin,safesetid,bpf" if DEFAULT_SECURITY_DAC
+-	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf"
++	default "tsem,landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
++	default "tsem,landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
++	default "tsem,landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
++	default "tsem,landlock,lockdown,yama,loadpin,safesetid,bpf" if DEFAULT_SECURITY_DAC
++	default "tsem,landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf"
+ 	help
+ 	  A comma-separated list of LSMs, in initialization order.
+ 	  Any LSMs left off this list, except for those with order
+diff --git a/security/Makefile b/security/Makefile
+index 18121f8f85cd..11d93885c806 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -24,6 +24,7 @@ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+ obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
+ obj-$(CONFIG_BPF_LSM)			+= bpf/
+ obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
++obj-$(CONFIG_SECURITY_TSEM)		+= tsem/
+ 
+ # Object integrity file lists
+ obj-$(CONFIG_INTEGRITY)			+= integrity/
+diff --git a/security/tsem/Kconfig b/security/tsem/Kconfig
+new file mode 100644
+index 000000000000..2e9d54eb3acc
+--- /dev/null
++++ b/security/tsem/Kconfig
+@@ -0,0 +1,36 @@
++config SECURITY_TSEM
++	bool "Trusted Security Event Modeling"
++	depends on SECURITY
++	depends on NET && INET
++	select SECURITY_NETWORK
++	select SECURITYFS
++	select CRYPTO
++	select CRYPTO_SHA256
++	select CRYPTO_HASH_INFO
++	select TCG_TPM if HAS_IOMEM && !UML
++	select TCG_TIS if TCG_TPM && X86
++	select TCG_CRB if TCG_TPM && ACPI
++	default n
++	help
++	  This option selects support for Trusted Security Event
++	  Modeling (TSEM).  TSEM implements the ability to model
++	  the security state of either the system at large or in a
++	  restricted namespace on the basis of the LSM security
++	  events and attributes that occur in the scope of the model.
++	  The model may be implemented either in the kernel proper
++	  or exported to an external Trusted Modeling Agent (TMA).
++	  If you are unsure how to answer this question, answer N.
 +
-+#define CAP_ML	41
-+
-+#define CAP_LAST_CAP         CAP_ML
- 
- #define cap_valid(x) ((x) >= 0 && (x) <= CAP_LAST_CAP)
- 
-diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-index a3c380775d41..f367c269bbdb 100644
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -30,7 +30,7 @@
- 		"wake_alarm", "block_suspend", "audit_read", "perfmon", "bpf", \
- 		"checkpoint_restore"
- 
--#if CAP_LAST_CAP > CAP_CHECKPOINT_RESTORE
-+#if CAP_LAST_CAP > CAP_ML
- #error New capability defined, please update COMMON_CAP2_PERMS.
- #endif
- 
++config SECURITY_TSEM_ROOT_MODEL_PCR
++	int "TPM PCR index for root domain"
++	depends on SECURITY_TSEM
++	range 8 14
++	default 11
++	help
++	  This configuration variable determines the TPM Platform
++	  Configuration Register (PCR) that the coefficients of
++	  security events for the root modeling domain are extended
++	  into.  The default value is one register above the default
++	  value that IMA uses for its integrity measurements, in order
++	  to avoid a conflict between the two sub-systems.  If unsure,
++	  leave the value at its default value of 11.
+diff --git a/security/tsem/Makefile b/security/tsem/Makefile
+new file mode 100644
+index 000000000000..d43cf2ae2142
+--- /dev/null
++++ b/security/tsem/Makefile
+@@ -0,0 +1,2 @@
++obj-$(CONFIG_SECURITY_TSEM) := tsem.o model.o namespace.o map.o event.o fs.o \
++	export.o trust.o
 -- 
 2.39.1
 
