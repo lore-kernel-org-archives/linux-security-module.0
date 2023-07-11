@@ -2,388 +2,775 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E661BEB64DC
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jul 2023 13:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F21EB64DD
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jul 2023 15:35:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232338AbjGKNda (ORCPT
+        id S231433AbjGKPfp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Jul 2023 09:33:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50536 "EHLO
+        Tue, 11 Jul 2023 11:35:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229652AbjGKNda (ORCPT
+        with ESMTP id S231345AbjGKPfn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Jul 2023 09:33:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 100D010C7
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Jul 2023 06:33:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8E3D1614A3
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Jul 2023 13:33:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD0AFC433C9;
-        Tue, 11 Jul 2023 13:33:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689082407;
-        bh=P0yWrqCOxlDxxRbSmET0S6hQAi18qQXMaTIcstZnd5E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wyac34HMmk7JoFKDWLX8FWgcP21rRbu+vret4w+Eyh3Do5iQNgQjdYZxuFQ+9Bw3h
-         jby7+Djyk9EcJFQvdfNdnBdn+fZKFnRV4ZjCogOrzb6ANBGwa0CiqYE8v0teBztj23
-         mgWsWwcPggD4VwtUNLscyIsDLQSYujrHiQuyHs5r250Y0UWRKOYDcpJbj+rIWJHOU3
-         5PzbMnEt3fbfcvc6Bt37b7f+s31+1Oerqfa7XXa47AQ37uylsZHxfNs2b4SjC+7JEV
-         bWX+GrtXfCsZxn1Z41W7O+j9DFM36Znu4w23Hx21ukvcx0/lZ1O3gC1Q0v5KiBe138
-         JnUcu20S+eokQ==
-Date:   Tue, 11 Jul 2023 15:33:21 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        lennart@poettering.net, cyphar@cyphar.com, luto@kernel.org,
-        kernel-team@meta.com, sargun@sargun.me
-Subject: Re: [PATCH RESEND v3 bpf-next 01/14] bpf: introduce BPF token object
-Message-ID: <20230711-zwerchfell-gegen-3d43b114ad13@brauner>
-References: <20230629051832.897119-1-andrii@kernel.org>
- <20230629051832.897119-2-andrii@kernel.org>
- <20230704-hochverdient-lehne-eeb9eeef785e@brauner>
- <CAHC9VhTDocBCpNjdz1CoWM2DA76GYZmg31338DHePFGq_-ie-g@mail.gmail.com>
- <20230705-zyklen-exorbitant-4d54d2f220ad@brauner>
- <CAEf4Bza5mUou8nw1zjqFaCPPvfUNq-jpNp+y4DhMhhcXc5HwGg@mail.gmail.com>
+        Tue, 11 Jul 2023 11:35:43 -0400
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fa8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBF7010D4
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Jul 2023 08:35:39 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4R0lLy14MczMr7Nt;
+        Tue, 11 Jul 2023 15:35:38 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4R0lLv0sQDzMpssH;
+        Tue, 11 Jul 2023 17:35:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1689089738;
+        bh=pGZFOJzopopKNMlQ3zX6PSzWYniFuF9OzCRAQrh7p5g=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=jeqS0QBliFiXRCl+cT+/CNqdA5CKSrCgKVirqSJkf1dfZZVIkg61N+utr+Kpw+gnE
+         S0wdazxnUURf7iCd+6/ZM+a31PcMSZ3DJlC8FtmgxDRrqtizbguH+ajFE/rtQHhOaV
+         WPx68cQEvr17P4Hh2nDt91FkMpavU5BjpO7GpPeo=
+Message-ID: <d98589cf-1fe2-d3e8-7d89-6959613b4518@digikod.net>
+Date:   Tue, 11 Jul 2023 17:35:34 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: 
+Subject: Re: [PATCH v12 01/11] LSM: Identify modules by more than name
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org
+Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+References: <20230629195535.2590-1-casey@schaufler-ca.com>
+ <20230629195535.2590-2-casey@schaufler-ca.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20230629195535.2590-2-casey@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4Bza5mUou8nw1zjqFaCPPvfUNq-jpNp+y4DhMhhcXc5HwGg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 05, 2023 at 02:38:43PM -0700, Andrii Nakryiko wrote:
-> On Wed, Jul 5, 2023 at 7:42 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Wed, Jul 05, 2023 at 10:16:13AM -0400, Paul Moore wrote:
-> > > On Tue, Jul 4, 2023 at 8:44 AM Christian Brauner <brauner@kernel.org> wrote:
-> > > > On Wed, Jun 28, 2023 at 10:18:19PM -0700, Andrii Nakryiko wrote:
-> > > > > Add new kind of BPF kernel object, BPF token. BPF token is meant to to
-> > > > > allow delegating privileged BPF functionality, like loading a BPF
-> > > > > program or creating a BPF map, from privileged process to a *trusted*
-> > > > > unprivileged process, all while have a good amount of control over which
-> > > > > privileged operations could be performed using provided BPF token.
-> > > > >
-> > > > > This patch adds new BPF_TOKEN_CREATE command to bpf() syscall, which
-> > > > > allows to create a new BPF token object along with a set of allowed
-> > > > > commands that such BPF token allows to unprivileged applications.
-> > > > > Currently only BPF_TOKEN_CREATE command itself can be
-> > > > > delegated, but other patches gradually add ability to delegate
-> > > > > BPF_MAP_CREATE, BPF_BTF_LOAD, and BPF_PROG_LOAD commands.
-> > > > >
-> > > > > The above means that new BPF tokens can be created using existing BPF
-> > > > > token, if original privileged creator allowed BPF_TOKEN_CREATE command.
-> > > > > New derived BPF token cannot be more powerful than the original BPF
-> > > > > token.
-> > > > >
-> > > > > Importantly, BPF token is automatically pinned at the specified location
-> > > > > inside an instance of BPF FS and cannot be repinned using BPF_OBJ_PIN
-> > > > > command, unlike BPF prog/map/btf/link. This provides more control over
-> > > > > unintended sharing of BPF tokens through pinning it in another BPF FS
-> > > > > instances.
-> > > > >
-> > > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > > > ---
-> > > >
-> > > > The main issue I have with the token approach is that it is a completely
-> > > > separate delegation vector on top of user namespaces. We mentioned this
-> > > > duringthe conf and this was brought up on the thread here again as well.
-> > > > Imho, that's a problem both security-wise and complexity-wise.
-> > > >
-> > > > It's not great if each subsystem gets its own custom delegation
-> > > > mechanism. This imposes such a taxing complexity on both kernel- and
-> > > > userspace that it will quickly become a huge liability. So I would
-> > > > really strongly encourage you to explore another direction.
-> 
-> Alright, thanks a lot for elaborating. I did want to keep everything
-> contained to bpf() for various reasons, but it seems like I won't be
-> able to get away with this. :)
-> 
-> > > >
-> > > > I do think the spirit of your proposal is workable and that it can
-> > > > mostly be kept in tact.
-> 
-> It's good to know that at least conceptually you support the idea of
-> BPF delegation. I have a few more specific questions below and I'd
-> appreciate your answers, as I have less familiarity with how exactly
-> container managers do stuff at container bootstrapping stage.
-> 
-> But first, let's try to get some tentative agreement on design before
-> I go and implement the BPF-token-as-FS idea. I have basically just two
-> gripes with exact details of what you are proposing, so let me explain
-> which and why, and see if we can find some common ground.
 
-Just fyi, there'll likely be some delays in my replies bc first I need
-to think about it and second floods of mails. I'll be on vacation for
-starting end of this week.
-
+On 29/06/2023 21:55, Casey Schaufler wrote:
+> Create a struct lsm_id to contain identifying information
+> about Linux Security Modules (LSMs). At inception this contains
+> the name of the module, an identifier associated with the security
+> module and an integer member "attrs" which identifies the API
+> related data associated with each security module. The initial set
+> of features maps to information that has traditionaly been available
+> in /proc/self/attr. They are documented in a new userspace-api file.
+> Change the security_add_hooks() interface to use this structure.
+> Change the individual modules to maintain their own struct lsm_id
+> and pass it to security_add_hooks().
 > 
-> First, the idea of coupling and bundling this "delegation" option with
-> BPF FS doesn't feel right. BPF FS is just a container of BPF objects,
-> so adding to it a new property of allowing to use privileged BPF
-> functionality seems a bit off.
-
-Fwiw, I have a series that makes it possible to delegate a superblock of
-a filesystem to a user namespace using the new mount api introducing a
-vfs generic "delegate" mount option. So this won't be a special bpf
-thing. This is generally useful.
-
+> The values are for LSM identifiers are defined in a new UAPI
+> header file linux/lsm.h. Each existing LSM has been updated to
+> include it's LSMID in the lsm_id.
 > 
-> Why not just create a new separate FS, let's code-name it "BPF Token
-> FS" for now (naming suggestions are welcome). Such BPF Token FS would
-> be dedicated to specifying everything about what's allowable through
-> BPF, just like my BPF token implementation. It can then be
-> mounted/bind-mounted inside BPF FS (or really, anywhere, it's just a
-> FS, right?). User application would open it (I'm guessing with
-> open_tree(), right?) and pass it as token_fd to bpf() syscall.
+> The LSM ID values are sequential, with the oldest module
+> LSM_ID_CAPABILITY being the lowest value and the existing modules
+> numbered in the order they were included in the main line kernel.
+> This is an arbitrary convention for assigning the values, but
+> none better presents itself. The value 0 is defined as being invalid.
+> The values 1-99 are reserved for any special case uses which may
+> arise in the future. This may include attributes of the LSM
+> infrastructure itself, possibly related to namespacing or network
+> attribute management. A special range is identified for such attributes
+> to help reduce confusion for developers unfamiliar with LSMs.
 > 
-> Having it as a separate single-purpose FS seems cleaner, because we
-> have use cases where we'd have one BPF FS instance created for a
-> container by our container manager, and then exposing a few separate
-> tokens with different sets of allowed functionality. E.g., one for
-> main intended workload, another for some BPF-based observability
-> tools, maybe yet another for more heavy-weight tools like bpftrace for
-> extra debugging. In the debugging case our container infrastructure
-> will be "evacuating" any other workloads on the same host to avoid
-> unnecessary consequences. The point is to not disturb
-> workload-under-human-debugging as much as possible, so we'd like to
-> keep userns intact, which is why mounting extra (more permissive) BPF
-> token inside already running containers is an important consideration.
+> LSM attribute values are defined for the attributes presented by
+> modules that are available today. As with the LSM IDs, The value 0
+> is defined as being invalid. The values 1-99 are reserved for any
+> special case uses which may arise in the future.
 > 
-> With such goals, it seems nicer to have a single BPF FS, and few BPF
-> token FSs mounted inside it. Yes, we could bundle token functionality
-> with BPF FS, but separating those two seems cleaner to me. WDYT?
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: linux-security-module <linux-security-module@vger.kernel.org>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
-It seems that writing a pseudo filesystem for the kernel is some right
-of passage that every kernel developer wants to go through for some
-reason. It's not mandatory though, it's actually discouraged.
+With the constification:
 
-Joking aside.
-I think the danger lies in adding more and more moving parts and
-fragmenting this into so many moving pieces that it's hard to see the
-bigger picture and have a clear sense of the API.
+Reviewed-by: Mickaël Salaün <mic@digikod.net>
 
+> ---
+>   Documentation/userspace-api/index.rst |  1 +
+>   Documentation/userspace-api/lsm.rst   | 55 +++++++++++++++++++++++++++
+>   MAINTAINERS                           |  1 +
+>   include/linux/lsm_hooks.h             | 16 +++++++-
+>   include/uapi/linux/lsm.h              | 54 ++++++++++++++++++++++++++
+>   security/apparmor/lsm.c               |  8 +++-
+>   security/bpf/hooks.c                  |  9 ++++-
+>   security/commoncap.c                  |  8 +++-
+>   security/landlock/cred.c              |  2 +-
+>   security/landlock/fs.c                |  2 +-
+>   security/landlock/ptrace.c            |  2 +-
+>   security/landlock/setup.c             |  6 +++
+>   security/landlock/setup.h             |  1 +
+>   security/loadpin/loadpin.c            |  9 ++++-
+>   security/lockdown/lockdown.c          |  8 +++-
+>   security/safesetid/lsm.c              |  9 ++++-
+>   security/security.c                   | 12 +++---
+>   security/selinux/hooks.c              |  9 ++++-
+>   security/smack/smack_lsm.c            |  8 +++-
+>   security/tomoyo/tomoyo.c              |  9 ++++-
+>   security/yama/yama_lsm.c              |  8 +++-
+>   21 files changed, 216 insertions(+), 21 deletions(-)
+>   create mode 100644 Documentation/userspace-api/lsm.rst
+>   create mode 100644 include/uapi/linux/lsm.h
 > 
-> Second, mount options usage. I'm hearing stories from our production
-> folks how some new mount options (on some other FS, not BPF FS) were
-> breaking tools unintentionally during kernel/tooling
-> upgrades/downgrades, so it makes me a bit hesitant to have these
-> complicated sets of mount options to specify parameters of
-> BPF-token-as-FS. I've been thinking a bit, and I'm starting to lean
+> diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
+> index 72a65db0c498..b5fa29c077eb 100644
+> --- a/Documentation/userspace-api/index.rst
+> +++ b/Documentation/userspace-api/index.rst
+> @@ -32,6 +32,7 @@ place where this information is gathered.
+>      sysfs-platform_profile
+>      vduse
+>      futex2
+> +   lsm
+>   
+>   .. only::  subproject and html
+>   
+> diff --git a/Documentation/userspace-api/lsm.rst b/Documentation/userspace-api/lsm.rst
+> new file mode 100644
+> index 000000000000..6ddf5506110b
+> --- /dev/null
+> +++ b/Documentation/userspace-api/lsm.rst
+> @@ -0,0 +1,55 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +.. Copyright (C) 2022 Casey Schaufler <casey@schaufler-ca.com>
+> +.. Copyright (C) 2022 Intel Corporation
+> +
+> +=====================================
+> +Linux Security Modules
+> +=====================================
+> +
+> +:Author: Casey Schaufler
+> +:Date: November 2022
 
-I don't see this as a good argument for a new pseudo filesystem. It
-implies that any new filesystem would end up with the same problem. The
-answer here would be to report and fix such bugs.
+You might want to update this date.
 
-> towards the idea of allowing to set up (and modify as well) all these
-> allowed maps/progs/attach types through special auto-created files
-> within BPF token FS. Something like below:
-> 
-> # pwd
-> /sys/fs/bpf/workload-token
-> # ls
-> allowed_cmds allowed_map_types allowed_prog_types allowed_attach_types
-> # echo "BPF_PROG_LOAD" > allowed_cmds
-> # echo "BPF_PROG_TYPE_KPROBE" >> allowed_prog_types
-> ...
-> # cat allowed_prog_types
-> BPF_PROG_TYPE_KPROBE,BPF_PROG_TYPE_TRACEPOINT
-> 
-> 
-> The above is fake (I haven't implemented anything yet), but hopefully
-> works as a demonstration. We'll also need to make sure that inside
-> non-init userns these files are read-only or allow to just further
-> restrict the subset of allowed functionality, never extend it.
+> +
+> +Linux security modules (LSM) provide a mechanism to implement
+> +additional access controls to the Linux security policies.
+> +
+> +The various security modules may support any of these attributes:
+> +
+> +``LSM_ATTR_CURRENT`` is the current, active security context of the
+> +process.
+> +The proc filesystem provides this value in ``/proc/self/attr/current``.
+> +This is supported by the SELinux, Smack and AppArmor security modules.
+> +Smack also provides this value in ``/proc/self/attr/smack/current``.
+> +AppArmor also provides this value in ``/proc/self/attr/apparmor/current``.
+> +
+> +``LSM_ATTR_EXEC`` is the security context of the process at the time the
+> +current image was executed.
+> +The proc filesystem provides this value in ``/proc/self/attr/exec``.
+> +This is supported by the SELinux and AppArmor security modules.
+> +AppArmor also provides this value in ``/proc/self/attr/apparmor/exec``.
+> +
+> +``LSM_ATTR_FSCREATE`` is the security context of the process used when
+> +creating file system objects.
+> +The proc filesystem provides this value in ``/proc/self/attr/fscreate``.
+> +This is supported by the SELinux security module.
+> +
+> +``LSM_ATTR_KEYCREATE`` is the security context of the process used when
+> +creating key objects.
+> +The proc filesystem provides this value in ``/proc/self/attr/keycreate``.
+> +This is supported by the SELinux security module.
+> +
+> +``LSM_ATTR_PREV`` is the security context of the process at the time the
+> +current security context was set.
+> +The proc filesystem provides this value in ``/proc/self/attr/prev``.
+> +This is supported by the SELinux and AppArmor security modules.
+> +AppArmor also provides this value in ``/proc/self/attr/apparmor/prev``.
+> +
+> +``LSM_ATTR_SOCKCREATE`` is the security context of the process used when
+> +creating socket objects.
+> +The proc filesystem provides this value in ``/proc/self/attr/sockcreate``.
+> +This is supported by the SELinux security module.
+> +
+> +Additional documentation
+> +========================
+> +
+> +* Documentation/security/lsm.rst
+> +* Documentation/security/lsm-development.rst
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 35e19594640d..92911df464da 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19007,6 +19007,7 @@ S:	Supported
+>   W:	http://kernsec.org/
+>   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+>   F:	security/
+> +F:	include/uapi/linux/lsm.h
+>   X:	security/selinux/
+>   
+>   SELINUX SECURITY MODULE
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index ab2b2fafa4a4..fba8881d2bb5 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -41,6 +41,18 @@ struct security_hook_heads {
+>   	#undef LSM_HOOK
+>   } __randomize_layout;
+>   
+> +/**
+> + * struct lsm_id - Identify a Linux Security Module.
+> + * @lsm: name of the LSM, must be approved by the LSM maintainers
+> + * @id: LSM ID number from uapi/linux/lsm.h
+> + *
+> + * Contains the information that identifies the LSM.
+> + */
+> +struct lsm_id {
+> +	const char	*name;
+> +	u64		id;
+> +};
+> +
+>   /*
+>    * Security module hook list structure.
+>    * For use with generic list macros for common operations.
+> @@ -49,7 +61,7 @@ struct security_hook_list {
+>   	struct hlist_node		list;
+>   	struct hlist_head		*head;
+>   	union security_list_options	hook;
+> -	const char			*lsm;
+> +	struct lsm_id			*lsmid;
 
-This implementation would get you into the business of write-time
-permission checks. And this almost always means you should use an
-ioctl(), not a write() operation on these files.
+We should use `const struct lsm_id` here.
 
-> 
-> Such an approach will actually make it simpler to test and experiment
-> with this delegation locally, will make it trivial to observe what's
-> allowed from simple shell scripts, etc, etc. With fsmount() and O_PATH
-> it will be possible to set everything up from privileged processes
-> before ever exposing a BPF Token FS instance through a file system, if
-> there are any concerns about racing with user space.
-> 
-> That's the high-level approach I'm thinking of right now. Would that
-> work? How critical is it to reuse BPF FS itself and how important to
-> you is to rely on mount options vs special files as described above?
 
-In the end, it's your api and you need to live with it and support it.
-What is important is that we don't end up with security issues. The
-special files thing will work but be aware that write-time permission
-checking is nasty:
-* https://git.zx2c4.com/CVE-2012-0056/about/ (Thanks to Aleksa for the link.)
-* commit e57457641613 ("cgroup: Use open-time cgroup namespace for process migration perm checks")
-There's a lot more. It can be done but it needs stringent permission
-checking and an ioctl() is probably the way to go in this case.
+>   } __randomize_layout;
+>   
+>   /*
+> @@ -84,7 +96,7 @@ extern struct security_hook_heads security_hook_heads;
+>   extern char *lsm_names;
+>   
+>   extern void security_add_hooks(struct security_hook_list *hooks, int count,
+> -				const char *lsm);
+> +			       struct lsm_id *lsmid);
 
-Another thing, if you split configuration over multiple files you can
-end up introducing race windows. This is a common complaint with cgroups
-and sysfs whenever configuration of something is split over multiple
-files. It gets especially hairy if the options interact with each other
-somehow.
+const struct lsm_id *lsmid
 
-> Hopefully not critical, and I can start working on it, and we'll get
-> what you want with using FS as a vehicle for delegation, while
-> allowing some of the intended use cases that we have in mind in a bit
-> cleaner fashion?
-> 
-> > > >
-> > > > As mentioned before, bpffs has all the means to be taught delegation:
-> > > >
-> > > >         // In container's user namespace
-> > > >         fd_fs = fsopen("bpffs");
-> > > >
-> > > >         // Delegating task in host userns (systemd-bpfd whatever you want)
-> > > >         ret = fsconfig(fd_fs, FSCONFIG_SET_FLAG, "delegate", ...);
-> > > >
-> > > >         // In container's user namespace
-> > > >         fd_mnt = fsmount(fd_fs, 0);
-> > > >
-> > > >         ret = move_mount(fd_fs, "", -EBADF, "/my/fav/location", MOVE_MOUNT_F_EMPTY_PATH)
-> > > >
-> > > > Roughly, this would mean:
-> > > >
-> > > > (i) raise FS_USERNS_MOUNT on bpffs but guard it behind the "delegate"
-> > > >     mount option. IOW, it's only possibly to mount bpffs as an
-> > > >     unprivileged user if a delegating process like systemd-bpfd with
-> > > >     system-level privileges has marked it as delegatable.
-> 
-> Regarding the FS_USERNS_MOUNT flag and fsopen() happening from inside
-> the user namespace. Am I missing something subtle and important here,
-> why does it have to happen inside the container's user namespace?
-> Can't the container manager both fsopen() and fsconfig() everything in
-> host userns, and only then fsmount+move_mount inside the container's
-> userns? Just trying to understand if there is some important early
-> association of userns happening at early steps here?
+>   
+>   #define LSM_FLAG_LEGACY_MAJOR	BIT(0)
+>   #define LSM_FLAG_EXCLUSIVE	BIT(1)
+> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
+> new file mode 100644
+> index 000000000000..f27c9a9cc376
+> --- /dev/null
+> +++ b/include/uapi/linux/lsm.h
+> @@ -0,0 +1,54 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +/*
+> + * Linux Security Modules (LSM) - User space API
+> + *
+> + * Copyright (C) 2022 Casey Schaufler <casey@schaufler-ca.com>
+> + * Copyright (C) 2022 Intel Corporation
+> + */
+> +
+> +#ifndef _UAPI_LINUX_LSM_H
+> +#define _UAPI_LINUX_LSM_H
+> +
+> +/*
+> + * ID tokens to identify Linux Security Modules (LSMs)
+> + *
+> + * These token values are used to uniquely identify specific LSMs
+> + * in the kernel as well as in the kernel's LSM userspace API.
+> + *
+> + * A value of zero/0 is considered undefined and should not be used
+> + * outside the kernel. Values 1-99 are reserved for potential
+> + * future use.
+> + */
+> +#define LSM_ID_UNDEF		0
+> +#define LSM_ID_CAPABILITY	100
+> +#define LSM_ID_SELINUX		101
+> +#define LSM_ID_SMACK		102
+> +#define LSM_ID_TOMOYO		103
+> +#define LSM_ID_IMA		104
+> +#define LSM_ID_APPARMOR		105
+> +#define LSM_ID_YAMA		106
+> +#define LSM_ID_LOADPIN		107
+> +#define LSM_ID_SAFESETID	108
+> +#define LSM_ID_LOCKDOWN		109
+> +#define LSM_ID_BPF		110
+> +#define LSM_ID_LANDLOCK		111
+> +
+> +/*
+> + * LSM_ATTR_XXX definitions identify different LSM attributes
+> + * which are used in the kernel's LSM userspace API. Support
+> + * for these attributes vary across the different LSMs. None
+> + * are required.
+> + *
+> + * A value of zero/0 is considered undefined and should not be used
+> + * outside the kernel. Values 1-99 are reserved for potential
+> + * future use.
+> + */
+> +#define LSM_ATTR_UNDEF		0
+> +#define LSM_ATTR_CURRENT	100
+> +#define LSM_ATTR_EXEC		101
+> +#define LSM_ATTR_FSCREATE	102
+> +#define LSM_ATTR_KEYCREATE	103
+> +#define LSM_ATTR_PREV		104
+> +#define LSM_ATTR_SOCKCREATE	105
+> +
+> +#endif /* _UAPI_LINUX_LSM_H */
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index f431251ffb91..308cb3a281c3 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -24,6 +24,7 @@
+>   #include <linux/zstd.h>
+>   #include <net/sock.h>
+>   #include <uapi/linux/mount.h>
+> +#include <uapi/linux/lsm.h>
+>   
+>   #include "include/apparmor.h"
+>   #include "include/apparmorfs.h"
+> @@ -1215,6 +1216,11 @@ struct lsm_blob_sizes apparmor_blob_sizes __ro_after_init = {
+>   	.lbs_task = sizeof(struct aa_task_ctx),
+>   };
+>   
+> +static struct lsm_id apparmor_lsmid __ro_after_init = {
 
-The mount api _currently_ works very roughly like this: if a filesytem
-is FS_USERNS_MOUNT enabled fsopen() records the user namespace of the
-caller. The recorded userns will later become the owning userns of the
-filesystem's superblock (Without going into detail: owning userns of a
-superblock != owning userns of a mount. move_mount() on a detached mount
-is about the latter.).
+const struct lsm_id apparmor_lsmid = {
 
-I have a patchset that adds a generic "delegate" mount option which will
-allow a sufficiently privileged process to do the following:
 
-        fd_fs = fsopen("ext4");
-        
-        /*
-	 * Set owning namespace of the filesystem's superblock.
-         * Caller must be privileged over @fd_userns.
-         *
-	 * Note, must be first mount option to ensure that possible
-	 * follow-up ermission checks for other mount options are done
-	 * on the final owning namespace.
-         */
-        fsconfig(fd_fs, FSCONFIG_SET_FD, "delegate", NULL, fd_userns);
-        
-        /*
-         * * If fs is FS_USERNS_MOUNT then permission is checked in @fd_userns.
-         * * If fs is not FS_USERNS_MOUNT then permission is check in @init_user_ns.
-         *   (Privilege in @init_user_ns implies privilege over @fd_userns.)
-         */
-        fsconfig(fd_fs, FSCONFIG_CMD_CREATE, NULL, 0);
+> +	.name = "apparmor",
+> +	.id = LSM_ID_APPARMOR,
+> +};
+> +
+>   static struct security_hook_list apparmor_hooks[] __ro_after_init = {
+>   	LSM_HOOK_INIT(ptrace_access_check, apparmor_ptrace_access_check),
+>   	LSM_HOOK_INIT(ptrace_traceme, apparmor_ptrace_traceme),
+> @@ -1904,7 +1910,7 @@ static int __init apparmor_init(void)
+>   		goto buffers_out;
+>   	}
+>   	security_add_hooks(apparmor_hooks, ARRAY_SIZE(apparmor_hooks),
+> -				"apparmor");
+> +				&apparmor_lsmid);
+>   
+>   	/* Report that AppArmor successfully initialized */
+>   	apparmor_initialized = 1;
+> diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
+> index cfaf1d0e6a5f..7e7bdc1b7979 100644
+> --- a/security/bpf/hooks.c
+> +++ b/security/bpf/hooks.c
+> @@ -5,6 +5,7 @@
+>    */
+>   #include <linux/lsm_hooks.h>
+>   #include <linux/bpf_lsm.h>
+> +#include <uapi/linux/lsm.h>
+>   
+>   static struct security_hook_list bpf_lsm_hooks[] __ro_after_init = {
+>   	#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
+> @@ -15,9 +16,15 @@ static struct security_hook_list bpf_lsm_hooks[] __ro_after_init = {
+>   	LSM_HOOK_INIT(task_free, bpf_task_storage_free),
+>   };
+>   
+> +static struct lsm_id bpf_lsmid __ro_after_init = {
 
-After this, the sb is owned by @fd_userns. Currently my draft restricts
-this to such filesystems that raise FS_ALLOW_IDMAP because they almost
-can support delegation and don't need to be checked for any potential
-issues. But bpffs could easily support this (without caring about
-FS_ALLOW_IDMAP).
+const struct lsm_id bpf_lsmid = {
 
-> 
-> Also, in your example above, move_mount() should take fd_mnt, not fd_fs, right?
-> 
-> > > > (ii) add fine-grained delegation options that you want this
-> > > >      bpffs instance to allow via new mount options. Idk,
-> > > >
-> > > >      // allow usage of foo
-> > > >      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "foo");
-> > > >
-> > > >      // also allow usage of bar
-> > > >      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "bar");
-> > > >
-> > > >      // reset allowed options
-> > > >      fsconfig(fd_fs, FSCONFIG_SET_STRING, "");
-> > > >
-> > > >      // allow usage of schmoo
-> > > >      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "schmoo");
-> > > >
-> > > > This all seems more intuitive and integrates with user and mount
-> > > > namespaces of the container. This can also work for restricting
-> > > > non-userns bpf instances fwiw. You can also share instances via
-> > > > bind-mount and so on. The userns of the bpffs instance can also be used
-> > > > for permission checking provided a given functionality has been
-> > > > delegated by e.g., systemd-bpfd or whatever.
-> > >
-> > > I have no arguments against any of the above, and would prefer to see
-> > > something like this over a token-based mechanism.  However we do want
-> > > to make sure we have the proper LSM control points for either approach
-> > > so that admins who rely on LSM-based security policies can manage
-> > > delegation via their policies.
-> > >
-> > > Using the fsconfig() approach described by Christian above, I believe
-> > > we should have the necessary hooks already in
-> > > security_fs_context_parse_param() and security_sb_mnt_opts() but I'm
-> > > basing that on a quick look this morning, some additional checking
-> > > would need to be done.
-> >
-> > I think what I outlined is even unnecessarily complicated. You don't
-> > need that pointless "delegate" mount option at all actually. Permission
-> > to delegate shouldn't be checked when the mount option is set. The
-> > permissions should be checked when the superblock is created. That's the
-> > right point in time. So sm like:
-> >
-> 
-> I think this gets even more straightforward with BPF Token FS being a
-> separate one, right? Given BPF Token FS is all about delegation, it
-> has to be a privileged operation to even create it.
-> 
-> > diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-> > index 4174f76133df..a2eb382f5457 100644
-> > --- a/kernel/bpf/inode.c
-> > +++ b/kernel/bpf/inode.c
-> > @@ -746,6 +746,13 @@ static int bpf_fill_super(struct super_block *sb, struct fs_context *fc)
-> >         struct inode *inode;
-> >         int ret;
-> >
-> > +       /*
-> > +        * If you want to delegate this instance then you need to be
-> > +        * privileged and know what you're doing. This isn't trust.
-> > +        */
-> > +       if ((fc->user_ns != &init_user_ns) && !capable(CAP_SYS_ADMIN))
-> > +               return -EPERM;
-> > +
-> >         ret = simple_fill_super(sb, BPF_FS_MAGIC, bpf_rfiles);
-> >         if (ret)
-> >                 return ret;
-> > @@ -800,6 +807,7 @@ static struct file_system_type bpf_fs_type = {
-> >         .init_fs_context = bpf_init_fs_context,
-> >         .parameters     = bpf_fs_parameters,
-> >         .kill_sb        = kill_litter_super,
-> > +       .fs_flags       = FS_USERNS_MOUNT,
-> 
-> Just an aside thought. It doesn't seem like there is any reason why
-> BPF FS right now is not created with FS_USERNS_MOUNT, so (separately
-> from all this discussion) I suspect we can just make it
-> FS_USERNS_MOUNT right now (unless we combine it with BPF-token-FS,
-> then yeah, we can't do that unconditionally anymore). Given BPF FS is
-> just a container of pinned BPF objects, just mounting BPF FS doesn't
-> seem to be dangerous in any way. But that's just an aside thought
-> here.
+Ditto for all other struct lsm_id variables.
 
-My two cents: Don't ever expose anything under user namespaces unless it
-is guaranteed to be safe and has actual non-cosmetical use-cases.
 
-The eagerness with which features pop up in user namespaces is probably
-bankrolling half the infosec community.
+> +	.name = "bpf",
+> +	.id = LSM_ID_BPF,
+> +};
+> +
+>   static int __init bpf_lsm_init(void)
+>   {
+> -	security_add_hooks(bpf_lsm_hooks, ARRAY_SIZE(bpf_lsm_hooks), "bpf");
+> +	security_add_hooks(bpf_lsm_hooks, ARRAY_SIZE(bpf_lsm_hooks),
+> +			   &bpf_lsmid);
+>   	pr_info("LSM support for eBPF active\n");
+>   	return 0;
+>   }
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 0b3fc2f3afe7..44c2577105f7 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -25,6 +25,7 @@
+>   #include <linux/binfmts.h>
+>   #include <linux/personality.h>
+>   #include <linux/mnt_idmapping.h>
+> +#include <uapi/linux/lsm.h>
+>   
+>   /*
+>    * If a non-root user executes a setuid-root binary in
+> @@ -1440,6 +1441,11 @@ int cap_mmap_file(struct file *file, unsigned long reqprot,
+>   
+>   #ifdef CONFIG_SECURITY
+>   
+> +static struct lsm_id capability_lsmid __ro_after_init = {
+> +	.name = "capability",
+> +	.id = LSM_ID_CAPABILITY,
+> +};
+> +
+>   static struct security_hook_list capability_hooks[] __ro_after_init = {
+>   	LSM_HOOK_INIT(capable, cap_capable),
+>   	LSM_HOOK_INIT(settime, cap_settime),
+> @@ -1464,7 +1470,7 @@ static struct security_hook_list capability_hooks[] __ro_after_init = {
+>   static int __init capability_init(void)
+>   {
+>   	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
+> -				"capability");
+> +			   &capability_lsmid);
+>   	return 0;
+>   }
+>   
+> diff --git a/security/landlock/cred.c b/security/landlock/cred.c
+> index 13dff2a31545..786af18c4a1c 100644
+> --- a/security/landlock/cred.c
+> +++ b/security/landlock/cred.c
+> @@ -42,5 +42,5 @@ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+>   __init void landlock_add_cred_hooks(void)
+>   {
+>   	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
+> -			   LANDLOCK_NAME);
+> +			   &landlock_lsmid);
+>   }
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 1c0c198f6fdb..db5ebecfbf02 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -1307,5 +1307,5 @@ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+>   __init void landlock_add_fs_hooks(void)
+>   {
+>   	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
+> -			   LANDLOCK_NAME);
+> +			   &landlock_lsmid);
+>   }
+> diff --git a/security/landlock/ptrace.c b/security/landlock/ptrace.c
+> index 8a06d6c492bf..2bfc533d36e4 100644
+> --- a/security/landlock/ptrace.c
+> +++ b/security/landlock/ptrace.c
+> @@ -116,5 +116,5 @@ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+>   __init void landlock_add_ptrace_hooks(void)
+>   {
+>   	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
+> -			   LANDLOCK_NAME);
+> +			   &landlock_lsmid);
+>   }
+> diff --git a/security/landlock/setup.c b/security/landlock/setup.c
+> index 0f6113528fa4..f5ec82a1c381 100644
+> --- a/security/landlock/setup.c
+> +++ b/security/landlock/setup.c
+> @@ -8,6 +8,7 @@
+>   
+>   #include <linux/init.h>
+>   #include <linux/lsm_hooks.h>
+> +#include <uapi/linux/lsm.h>
+>   
+>   #include "common.h"
+>   #include "cred.h"
+> @@ -24,6 +25,11 @@ struct lsm_blob_sizes landlock_blob_sizes __ro_after_init = {
+>   	.lbs_superblock = sizeof(struct landlock_superblock_security),
+>   };
+>   
+> +struct lsm_id landlock_lsmid __ro_after_init = {
+> +	.name = LANDLOCK_NAME,
+> +	.id = LSM_ID_LANDLOCK,
+> +};
+> +
+>   static int __init landlock_init(void)
+>   {
+>   	landlock_add_cred_hooks();
+> diff --git a/security/landlock/setup.h b/security/landlock/setup.h
+> index 1daffab1ab4b..38bce5b172dc 100644
+> --- a/security/landlock/setup.h
+> +++ b/security/landlock/setup.h
+> @@ -14,5 +14,6 @@
+>   extern bool landlock_initialized;
+>   
+>   extern struct lsm_blob_sizes landlock_blob_sizes;
+> +extern struct lsm_id landlock_lsmid;
+>   
+>   #endif /* _SECURITY_LANDLOCK_SETUP_H */
+> diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+> index ebae964f7cc9..14202ee4a362 100644
+> --- a/security/loadpin/loadpin.c
+> +++ b/security/loadpin/loadpin.c
+> @@ -20,6 +20,7 @@
+>   #include <linux/string_helpers.h>
+>   #include <linux/dm-verity-loadpin.h>
+>   #include <uapi/linux/loadpin.h>
+> +#include <uapi/linux/lsm.h>
+>   
+>   #define VERITY_DIGEST_FILE_HEADER "# LOADPIN_TRUSTED_VERITY_ROOT_DIGESTS"
+>   
+> @@ -208,6 +209,11 @@ static int loadpin_load_data(enum kernel_load_data_id id, bool contents)
+>   	return loadpin_check(NULL, (enum kernel_read_file_id) id);
+>   }
+>   
+> +static struct lsm_id loadpin_lsmid __ro_after_init = {
+> +	.name = "loadpin",
+> +	.id = LSM_ID_LOADPIN,
+> +};
+> +
+>   static struct security_hook_list loadpin_hooks[] __ro_after_init = {
+>   	LSM_HOOK_INIT(sb_free_security, loadpin_sb_free_security),
+>   	LSM_HOOK_INIT(kernel_read_file, loadpin_read_file),
+> @@ -259,7 +265,8 @@ static int __init loadpin_init(void)
+>   	if (!register_sysctl("kernel/loadpin", loadpin_sysctl_table))
+>   		pr_notice("sysctl registration failed!\n");
+>   #endif
+> -	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
+> +	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks),
+> +			   &loadpin_lsmid);
+>   
+>   	return 0;
+>   }
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> index 68d19632aeb7..aa109b5811d9 100644
+> --- a/security/lockdown/lockdown.c
+> +++ b/security/lockdown/lockdown.c
+> @@ -13,6 +13,7 @@
+>   #include <linux/security.h>
+>   #include <linux/export.h>
+>   #include <linux/lsm_hooks.h>
+> +#include <uapi/linux/lsm.h>
+>   
+>   static enum lockdown_reason kernel_locked_down;
+>   
+> @@ -75,6 +76,11 @@ static struct security_hook_list lockdown_hooks[] __ro_after_init = {
+>   	LSM_HOOK_INIT(locked_down, lockdown_is_locked_down),
+>   };
+>   
+> +static struct lsm_id lockdown_lsmid __ro_after_init = {
+> +	.name = "lockdown",
+> +	.id = LSM_ID_LOCKDOWN,
+> +};
+> +
+>   static int __init lockdown_lsm_init(void)
+>   {
+>   #if defined(CONFIG_LOCK_DOWN_KERNEL_FORCE_INTEGRITY)
+> @@ -83,7 +89,7 @@ static int __init lockdown_lsm_init(void)
+>   	lock_kernel_down("Kernel configuration", LOCKDOWN_CONFIDENTIALITY_MAX);
+>   #endif
+>   	security_add_hooks(lockdown_hooks, ARRAY_SIZE(lockdown_hooks),
+> -			   "lockdown");
+> +			   &lockdown_lsmid);
+>   	return 0;
+>   }
+>   
+> diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
+> index e806739f7868..24bbab457623 100644
+> --- a/security/safesetid/lsm.c
+> +++ b/security/safesetid/lsm.c
+> @@ -19,6 +19,7 @@
+>   #include <linux/ptrace.h>
+>   #include <linux/sched/task_stack.h>
+>   #include <linux/security.h>
+> +#include <uapi/linux/lsm.h>
+>   #include "lsm.h"
+>   
+>   /* Flag indicating whether initialization completed */
+> @@ -261,6 +262,11 @@ static int safesetid_task_fix_setgroups(struct cred *new, const struct cred *old
+>   	return 0;
+>   }
+>   
+> +static struct lsm_id safesetid_lsmid __ro_after_init = {
+> +	.name = "safesetid",
+> +	.id = LSM_ID_SAFESETID,
+> +};
+> +
+>   static struct security_hook_list safesetid_security_hooks[] = {
+>   	LSM_HOOK_INIT(task_fix_setuid, safesetid_task_fix_setuid),
+>   	LSM_HOOK_INIT(task_fix_setgid, safesetid_task_fix_setgid),
+> @@ -271,7 +277,8 @@ static struct security_hook_list safesetid_security_hooks[] = {
+>   static int __init safesetid_security_init(void)
+>   {
+>   	security_add_hooks(safesetid_security_hooks,
+> -			   ARRAY_SIZE(safesetid_security_hooks), "safesetid");
+> +			   ARRAY_SIZE(safesetid_security_hooks),
+> +			   &safesetid_lsmid);
+>   
+>   	/* Report that SafeSetID successfully initialized */
+>   	safesetid_initialized = 1;
+> diff --git a/security/security.c b/security/security.c
+> index d5ff7ff45b77..e56714ef045a 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -512,17 +512,17 @@ static int lsm_append(const char *new, char **result)
+>    * security_add_hooks - Add a modules hooks to the hook lists.
+>    * @hooks: the hooks to add
+>    * @count: the number of hooks to add
+> - * @lsm: the name of the security module
+> + * @lsmid: the identification information for the security module
+>    *
+>    * Each LSM has to register its hooks with the infrastructure.
+>    */
+>   void __init security_add_hooks(struct security_hook_list *hooks, int count,
+> -			       const char *lsm)
+> +			       struct lsm_id *lsmid)
+>   {
+>   	int i;
+>   
+>   	for (i = 0; i < count; i++) {
+> -		hooks[i].lsm = lsm;
+> +		hooks[i].lsmid = lsmid;
+>   		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
+>   	}
+>   
+> @@ -531,7 +531,7 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+>   	 * and fix this up afterwards.
+>   	 */
+>   	if (slab_is_available()) {
+> -		if (lsm_append(lsm, &lsm_names) < 0)
+> +		if (lsm_append(lsmid->name, &lsm_names) < 0)
+>   			panic("%s - Cannot get early memory.\n", __func__);
+>   	}
+>   }
+> @@ -3778,7 +3778,7 @@ int security_getprocattr(struct task_struct *p, const char *lsm,
+>   	struct security_hook_list *hp;
+>   
+>   	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
+> -		if (lsm != NULL && strcmp(lsm, hp->lsm))
+> +		if (lsm != NULL && strcmp(lsm, hp->lsmid->name))
+>   			continue;
+>   		return hp->hook.getprocattr(p, name, value);
+>   	}
+> @@ -3803,7 +3803,7 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
+>   	struct security_hook_list *hp;
+>   
+>   	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
+> -		if (lsm != NULL && strcmp(lsm, hp->lsm))
+> +		if (lsm != NULL && strcmp(lsm, hp->lsmid->name))
+>   			continue;
+>   		return hp->hook.setprocattr(name, value, size);
+>   	}
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 79b4890e9936..49ec74bc006c 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -92,6 +92,7 @@
+>   #include <linux/fsnotify.h>
+>   #include <linux/fanotify.h>
+>   #include <linux/io_uring.h>
+> +#include <uapi/linux/lsm.h>
+>   
+>   #include "avc.h"
+>   #include "objsec.h"
+> @@ -6890,6 +6891,11 @@ static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
+>   }
+>   #endif /* CONFIG_IO_URING */
+>   
+> +static struct lsm_id selinux_lsmid __ro_after_init = {
+> +	.name = "selinux",
+> +	.id = LSM_ID_SELINUX,
+> +};
+> +
+>   /*
+>    * IMPORTANT NOTE: When adding new hooks, please be careful to keep this order:
+>    * 1. any hooks that don't belong to (2.) or (3.) below,
+> @@ -7210,7 +7216,8 @@ static __init int selinux_init(void)
+>   
+>   	hashtab_cache_init();
+>   
+> -	security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks), "selinux");
+> +	security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks),
+> +			   &selinux_lsmid);
+>   
+>   	if (avc_add_callback(selinux_netcache_avc_callback, AVC_CALLBACK_RESET))
+>   		panic("SELinux: Unable to register AVC netcache callback\n");
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 7a3e9ab137d8..cf847cfe5ed8 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -43,6 +43,7 @@
+>   #include <linux/fs_parser.h>
+>   #include <linux/watch_queue.h>
+>   #include <linux/io_uring.h>
+> +#include <uapi/linux/lsm.h>
+>   #include "smack.h"
+>   
+>   #define TRANS_TRUE	"TRUE"
+> @@ -4840,6 +4841,11 @@ struct lsm_blob_sizes smack_blob_sizes __ro_after_init = {
+>   	.lbs_superblock = sizeof(struct superblock_smack),
+>   };
+>   
+> +static struct lsm_id smack_lsmid __ro_after_init = {
+> +	.name = "smack",
+> +	.id = LSM_ID_SMACK,
+> +};
+> +
+>   static struct security_hook_list smack_hooks[] __ro_after_init = {
+>   	LSM_HOOK_INIT(ptrace_access_check, smack_ptrace_access_check),
+>   	LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
+> @@ -5046,7 +5052,7 @@ static __init int smack_init(void)
+>   	/*
+>   	 * Register with LSM
+>   	 */
+> -	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), "smack");
+> +	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), &smack_lsmid);
+>   	smack_enabled = 1;
+>   
+>   	pr_info("Smack:  Initializing.\n");
+> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+> index 25006fddc964..e2efc94ec481 100644
+> --- a/security/tomoyo/tomoyo.c
+> +++ b/security/tomoyo/tomoyo.c
+> @@ -6,6 +6,7 @@
+>    */
+>   
+>   #include <linux/lsm_hooks.h>
+> +#include <uapi/linux/lsm.h>
+>   #include "common.h"
+>   
+>   /**
+> @@ -542,6 +543,11 @@ static void tomoyo_task_free(struct task_struct *task)
+>   	}
+>   }
+>   
+> +static struct lsm_id tomoyo_lsmid __ro_after_init = {
+> +	.name = "tomoyo",
+> +	.id = LSM_ID_TOMOYO,
+> +};
+> +
+>   /*
+>    * tomoyo_security_ops is a "struct security_operations" which is used for
+>    * registering TOMOYO.
+> @@ -595,7 +601,8 @@ static int __init tomoyo_init(void)
+>   	struct tomoyo_task *s = tomoyo_task(current);
+>   
+>   	/* register ourselves with the security framework */
+> -	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
+> +	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks),
+> +			   &tomoyo_lsmid);
+>   	pr_info("TOMOYO Linux initialized\n");
+>   	s->domain_info = &tomoyo_kernel_domain;
+>   	atomic_inc(&tomoyo_kernel_domain.users);
+> diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+> index 2503cf153d4a..31b52685e041 100644
+> --- a/security/yama/yama_lsm.c
+> +++ b/security/yama/yama_lsm.c
+> @@ -18,6 +18,7 @@
+>   #include <linux/task_work.h>
+>   #include <linux/sched.h>
+>   #include <linux/spinlock.h>
+> +#include <uapi/linux/lsm.h>
+>   
+>   #define YAMA_SCOPE_DISABLED	0
+>   #define YAMA_SCOPE_RELATIONAL	1
+> @@ -421,6 +422,11 @@ static int yama_ptrace_traceme(struct task_struct *parent)
+>   	return rc;
+>   }
+>   
+> +static struct lsm_id yama_lsmid __ro_after_init = {
+> +	.name = "yama",
+> +	.id = LSM_ID_YAMA,
+> +};
+> +
+>   static struct security_hook_list yama_hooks[] __ro_after_init = {
+>   	LSM_HOOK_INIT(ptrace_access_check, yama_ptrace_access_check),
+>   	LSM_HOOK_INIT(ptrace_traceme, yama_ptrace_traceme),
+> @@ -471,7 +477,7 @@ static inline void yama_init_sysctl(void) { }
+>   static int __init yama_init(void)
+>   {
+>   	pr_info("Yama: becoming mindful.\n");
+> -	security_add_hooks(yama_hooks, ARRAY_SIZE(yama_hooks), "yama");
+> +	security_add_hooks(yama_hooks, ARRAY_SIZE(yama_hooks), &yama_lsmid);
+>   	yama_init_sysctl();
+>   	return 0;
+>   }
