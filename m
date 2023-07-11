@@ -2,161 +2,388 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E69EB64DC
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jul 2023 13:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E661BEB64DC
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jul 2023 13:33:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232755AbjGKNHF (ORCPT
+        id S232338AbjGKNda (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Jul 2023 09:07:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37274 "EHLO
+        Tue, 11 Jul 2023 09:33:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232752AbjGKNHE (ORCPT
+        with ESMTP id S229652AbjGKNda (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Jul 2023 09:07:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BADB1A8
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Jul 2023 06:06:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689080776;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=SM6Dln3l3j8xg3Tg92S1MqQlhpmKfV5kvtVaEQF2IiA=;
-        b=Et5CNRunjR79kJAGQkyfa4MoLapFYzawh5Cp64ofC+6CsMYnqF4PqGXPbxci6BA/tMpylP
-        +tQKFxYyP24JW8KXrcR3eKOyZr6OIl33wTpZXt6K8Ki6DMtF/24rqGJ5qRODEwLxCicn5x
-        T3mnHyisEofhqG8olLurpRtRGyq99KQ=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-650-s33yh3_INIWZx_HZw1Ueqw-1; Tue, 11 Jul 2023 09:06:15 -0400
-X-MC-Unique: s33yh3_INIWZx_HZw1Ueqw-1
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7679e5ebad2so839698585a.3
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Jul 2023 06:06:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689080775; x=1691672775;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SM6Dln3l3j8xg3Tg92S1MqQlhpmKfV5kvtVaEQF2IiA=;
-        b=aJQWmwrDpcCUV6SnRmUwIrjiHQn0AFprSmObPIx/XXARfxJtzcHVB4XLjmjd/NVeS/
-         D1i390d6cloF9GhZwaSzf4Wpc8Z4AMCpbno42scxKV2mgTranJNZq/oQul13vqHTujIL
-         WkClJ+qZDX126Scqo+CFrIYygRJuVj6+0kckKdyyKBNq3te4nsRdjRmZjlV0GTACQC5c
-         lvoOyLhlveNR1EgYsd9Bajuryp6dBLD2sj8EGxPfJteJ/65b72LCZ7EiYC3xz8aU0Lnv
-         BiV4jouZKC3px5j7zGqhoSSicRaG4RCm5iLZm/t/GZ5UBpad2q4Jw0ay5o5S1O962pHM
-         suKQ==
-X-Gm-Message-State: ABy/qLb3X/Z9Z08KRG4DdYsGTLv3riDZPXSNbdt39xKhbb4Zz5vm//2u
-        xpXI3c2NdW9P7XgcyaOOQWyiUYexjVyL1s7ZvoywSSEiatSA3cP7RrqL/M2/U79nEMxKnvyqh3y
-        QdFbzRmtEMSv+bwXf5b0BC3/3fsmJwWttE7Ey
-X-Received: by 2002:a05:620a:47a2:b0:766:ff8a:d029 with SMTP id dt34-20020a05620a47a200b00766ff8ad029mr15069490qkb.17.1689080774710;
-        Tue, 11 Jul 2023 06:06:14 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlFX2q0I7mymQvTaakJlHhcvVLWoSBzEETV7kqeC5kaFsoVo/fxRf+qhkEs29d/KEzH0o5oSNg==
-X-Received: by 2002:a05:620a:47a2:b0:766:ff8a:d029 with SMTP id dt34-20020a05620a47a200b00766ff8ad029mr15069463qkb.17.1689080774479;
-        Tue, 11 Jul 2023 06:06:14 -0700 (PDT)
-Received: from debian ([92.62.32.42])
-        by smtp.gmail.com with ESMTPSA id x12-20020a05620a14ac00b007659935ce64sm960465qkj.71.2023.07.11.06.06.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jul 2023 06:06:14 -0700 (PDT)
-Date:   Tue, 11 Jul 2023 15:06:08 +0200
-From:   Guillaume Nault <gnault@redhat.com>
-To:     David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Eric Dumazet <edumazet@google.com>
-Cc:     netdev@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: [PATCH net-next 1/4] security: Constify sk in the sk_getsecid hook.
-Message-ID: <980e4d705147a44b119fe30565c40e2424dce563.1689077819.git.gnault@redhat.com>
-References: <cover.1689077819.git.gnault@redhat.com>
+        Tue, 11 Jul 2023 09:33:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 100D010C7
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Jul 2023 06:33:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8E3D1614A3
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Jul 2023 13:33:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD0AFC433C9;
+        Tue, 11 Jul 2023 13:33:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689082407;
+        bh=P0yWrqCOxlDxxRbSmET0S6hQAi18qQXMaTIcstZnd5E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Wyac34HMmk7JoFKDWLX8FWgcP21rRbu+vret4w+Eyh3Do5iQNgQjdYZxuFQ+9Bw3h
+         jby7+Djyk9EcJFQvdfNdnBdn+fZKFnRV4ZjCogOrzb6ANBGwa0CiqYE8v0teBztj23
+         mgWsWwcPggD4VwtUNLscyIsDLQSYujrHiQuyHs5r250Y0UWRKOYDcpJbj+rIWJHOU3
+         5PzbMnEt3fbfcvc6Bt37b7f+s31+1Oerqfa7XXa47AQ37uylsZHxfNs2b4SjC+7JEV
+         bWX+GrtXfCsZxn1Z41W7O+j9DFM36Znu4w23Hx21ukvcx0/lZ1O3gC1Q0v5KiBe138
+         JnUcu20S+eokQ==
+Date:   Tue, 11 Jul 2023 15:33:21 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        lennart@poettering.net, cyphar@cyphar.com, luto@kernel.org,
+        kernel-team@meta.com, sargun@sargun.me
+Subject: Re: [PATCH RESEND v3 bpf-next 01/14] bpf: introduce BPF token object
+Message-ID: <20230711-zwerchfell-gegen-3d43b114ad13@brauner>
+References: <20230629051832.897119-1-andrii@kernel.org>
+ <20230629051832.897119-2-andrii@kernel.org>
+ <20230704-hochverdient-lehne-eeb9eeef785e@brauner>
+ <CAHC9VhTDocBCpNjdz1CoWM2DA76GYZmg31338DHePFGq_-ie-g@mail.gmail.com>
+ <20230705-zyklen-exorbitant-4d54d2f220ad@brauner>
+ <CAEf4Bza5mUou8nw1zjqFaCPPvfUNq-jpNp+y4DhMhhcXc5HwGg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <cover.1689077819.git.gnault@redhat.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4Bza5mUou8nw1zjqFaCPPvfUNq-jpNp+y4DhMhhcXc5HwGg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The sk_getsecid hook shouldn't need to modify its socket argument.
-Make it const so that callers of security_sk_classify_flow() can use a
-const struct sock *.
+On Wed, Jul 05, 2023 at 02:38:43PM -0700, Andrii Nakryiko wrote:
+> On Wed, Jul 5, 2023 at 7:42 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Wed, Jul 05, 2023 at 10:16:13AM -0400, Paul Moore wrote:
+> > > On Tue, Jul 4, 2023 at 8:44 AM Christian Brauner <brauner@kernel.org> wrote:
+> > > > On Wed, Jun 28, 2023 at 10:18:19PM -0700, Andrii Nakryiko wrote:
+> > > > > Add new kind of BPF kernel object, BPF token. BPF token is meant to to
+> > > > > allow delegating privileged BPF functionality, like loading a BPF
+> > > > > program or creating a BPF map, from privileged process to a *trusted*
+> > > > > unprivileged process, all while have a good amount of control over which
+> > > > > privileged operations could be performed using provided BPF token.
+> > > > >
+> > > > > This patch adds new BPF_TOKEN_CREATE command to bpf() syscall, which
+> > > > > allows to create a new BPF token object along with a set of allowed
+> > > > > commands that such BPF token allows to unprivileged applications.
+> > > > > Currently only BPF_TOKEN_CREATE command itself can be
+> > > > > delegated, but other patches gradually add ability to delegate
+> > > > > BPF_MAP_CREATE, BPF_BTF_LOAD, and BPF_PROG_LOAD commands.
+> > > > >
+> > > > > The above means that new BPF tokens can be created using existing BPF
+> > > > > token, if original privileged creator allowed BPF_TOKEN_CREATE command.
+> > > > > New derived BPF token cannot be more powerful than the original BPF
+> > > > > token.
+> > > > >
+> > > > > Importantly, BPF token is automatically pinned at the specified location
+> > > > > inside an instance of BPF FS and cannot be repinned using BPF_OBJ_PIN
+> > > > > command, unlike BPF prog/map/btf/link. This provides more control over
+> > > > > unintended sharing of BPF tokens through pinning it in another BPF FS
+> > > > > instances.
+> > > > >
+> > > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > > > ---
+> > > >
+> > > > The main issue I have with the token approach is that it is a completely
+> > > > separate delegation vector on top of user namespaces. We mentioned this
+> > > > duringthe conf and this was brought up on the thread here again as well.
+> > > > Imho, that's a problem both security-wise and complexity-wise.
+> > > >
+> > > > It's not great if each subsystem gets its own custom delegation
+> > > > mechanism. This imposes such a taxing complexity on both kernel- and
+> > > > userspace that it will quickly become a huge liability. So I would
+> > > > really strongly encourage you to explore another direction.
+> 
+> Alright, thanks a lot for elaborating. I did want to keep everything
+> contained to bpf() for various reasons, but it seems like I won't be
+> able to get away with this. :)
+> 
+> > > >
+> > > > I do think the spirit of your proposal is workable and that it can
+> > > > mostly be kept in tact.
+> 
+> It's good to know that at least conceptually you support the idea of
+> BPF delegation. I have a few more specific questions below and I'd
+> appreciate your answers, as I have less familiarity with how exactly
+> container managers do stuff at container bootstrapping stage.
+> 
+> But first, let's try to get some tentative agreement on design before
+> I go and implement the BPF-token-as-FS idea. I have basically just two
+> gripes with exact details of what you are proposing, so let me explain
+> which and why, and see if we can find some common ground.
 
-Signed-off-by: Guillaume Nault <gnault@redhat.com>
----
- include/linux/lsm_hook_defs.h | 2 +-
- include/linux/security.h      | 5 +++--
- security/security.c           | 2 +-
- security/selinux/hooks.c      | 4 ++--
- 4 files changed, 7 insertions(+), 6 deletions(-)
+Just fyi, there'll likely be some delays in my replies bc first I need
+to think about it and second floods of mails. I'll be on vacation for
+starting end of this week.
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 7308a1a7599b..4f2621e87634 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -316,7 +316,7 @@ LSM_HOOK(int, 0, sk_alloc_security, struct sock *sk, int family, gfp_t priority)
- LSM_HOOK(void, LSM_RET_VOID, sk_free_security, struct sock *sk)
- LSM_HOOK(void, LSM_RET_VOID, sk_clone_security, const struct sock *sk,
- 	 struct sock *newsk)
--LSM_HOOK(void, LSM_RET_VOID, sk_getsecid, struct sock *sk, u32 *secid)
-+LSM_HOOK(void, LSM_RET_VOID, sk_getsecid, const struct sock *sk, u32 *secid)
- LSM_HOOK(void, LSM_RET_VOID, sock_graft, struct sock *sk, struct socket *parent)
- LSM_HOOK(int, 0, inet_conn_request, const struct sock *sk, struct sk_buff *skb,
- 	 struct request_sock *req)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 32828502f09e..994cf099d9ac 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -1439,7 +1439,8 @@ int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb, u
- int security_sk_alloc(struct sock *sk, int family, gfp_t priority);
- void security_sk_free(struct sock *sk);
- void security_sk_clone(const struct sock *sk, struct sock *newsk);
--void security_sk_classify_flow(struct sock *sk, struct flowi_common *flic);
-+void security_sk_classify_flow(const struct sock *sk,
-+			       struct flowi_common *flic);
- void security_req_classify_flow(const struct request_sock *req,
- 				struct flowi_common *flic);
- void security_sock_graft(struct sock*sk, struct socket *parent);
-@@ -1597,7 +1598,7 @@ static inline void security_sk_clone(const struct sock *sk, struct sock *newsk)
- {
- }
- 
--static inline void security_sk_classify_flow(struct sock *sk,
-+static inline void security_sk_classify_flow(const struct sock *sk,
- 					     struct flowi_common *flic)
- {
- }
-diff --git a/security/security.c b/security/security.c
-index b720424ca37d..2dfc7b9f6ed9 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -4396,7 +4396,7 @@ void security_sk_clone(const struct sock *sk, struct sock *newsk)
- }
- EXPORT_SYMBOL(security_sk_clone);
- 
--void security_sk_classify_flow(struct sock *sk, struct flowi_common *flic)
-+void security_sk_classify_flow(const struct sock *sk, struct flowi_common *flic)
- {
- 	call_void_hook(sk_getsecid, sk, &flic->flowic_secid);
- }
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index d06e350fedee..2bdc48dd8670 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -5167,12 +5167,12 @@ static void selinux_sk_clone_security(const struct sock *sk, struct sock *newsk)
- 	selinux_netlbl_sk_security_reset(newsksec);
- }
- 
--static void selinux_sk_getsecid(struct sock *sk, u32 *secid)
-+static void selinux_sk_getsecid(const struct sock *sk, u32 *secid)
- {
- 	if (!sk)
- 		*secid = SECINITSID_ANY_SOCKET;
- 	else {
--		struct sk_security_struct *sksec = sk->sk_security;
-+		const struct sk_security_struct *sksec = sk->sk_security;
- 
- 		*secid = sksec->sid;
- 	}
--- 
-2.39.2
+> 
+> First, the idea of coupling and bundling this "delegation" option with
+> BPF FS doesn't feel right. BPF FS is just a container of BPF objects,
+> so adding to it a new property of allowing to use privileged BPF
+> functionality seems a bit off.
 
+Fwiw, I have a series that makes it possible to delegate a superblock of
+a filesystem to a user namespace using the new mount api introducing a
+vfs generic "delegate" mount option. So this won't be a special bpf
+thing. This is generally useful.
+
+> 
+> Why not just create a new separate FS, let's code-name it "BPF Token
+> FS" for now (naming suggestions are welcome). Such BPF Token FS would
+> be dedicated to specifying everything about what's allowable through
+> BPF, just like my BPF token implementation. It can then be
+> mounted/bind-mounted inside BPF FS (or really, anywhere, it's just a
+> FS, right?). User application would open it (I'm guessing with
+> open_tree(), right?) and pass it as token_fd to bpf() syscall.
+> 
+> Having it as a separate single-purpose FS seems cleaner, because we
+> have use cases where we'd have one BPF FS instance created for a
+> container by our container manager, and then exposing a few separate
+> tokens with different sets of allowed functionality. E.g., one for
+> main intended workload, another for some BPF-based observability
+> tools, maybe yet another for more heavy-weight tools like bpftrace for
+> extra debugging. In the debugging case our container infrastructure
+> will be "evacuating" any other workloads on the same host to avoid
+> unnecessary consequences. The point is to not disturb
+> workload-under-human-debugging as much as possible, so we'd like to
+> keep userns intact, which is why mounting extra (more permissive) BPF
+> token inside already running containers is an important consideration.
+> 
+> With such goals, it seems nicer to have a single BPF FS, and few BPF
+> token FSs mounted inside it. Yes, we could bundle token functionality
+> with BPF FS, but separating those two seems cleaner to me. WDYT?
+
+It seems that writing a pseudo filesystem for the kernel is some right
+of passage that every kernel developer wants to go through for some
+reason. It's not mandatory though, it's actually discouraged.
+
+Joking aside.
+I think the danger lies in adding more and more moving parts and
+fragmenting this into so many moving pieces that it's hard to see the
+bigger picture and have a clear sense of the API.
+
+> 
+> Second, mount options usage. I'm hearing stories from our production
+> folks how some new mount options (on some other FS, not BPF FS) were
+> breaking tools unintentionally during kernel/tooling
+> upgrades/downgrades, so it makes me a bit hesitant to have these
+> complicated sets of mount options to specify parameters of
+> BPF-token-as-FS. I've been thinking a bit, and I'm starting to lean
+
+I don't see this as a good argument for a new pseudo filesystem. It
+implies that any new filesystem would end up with the same problem. The
+answer here would be to report and fix such bugs.
+
+> towards the idea of allowing to set up (and modify as well) all these
+> allowed maps/progs/attach types through special auto-created files
+> within BPF token FS. Something like below:
+> 
+> # pwd
+> /sys/fs/bpf/workload-token
+> # ls
+> allowed_cmds allowed_map_types allowed_prog_types allowed_attach_types
+> # echo "BPF_PROG_LOAD" > allowed_cmds
+> # echo "BPF_PROG_TYPE_KPROBE" >> allowed_prog_types
+> ...
+> # cat allowed_prog_types
+> BPF_PROG_TYPE_KPROBE,BPF_PROG_TYPE_TRACEPOINT
+> 
+> 
+> The above is fake (I haven't implemented anything yet), but hopefully
+> works as a demonstration. We'll also need to make sure that inside
+> non-init userns these files are read-only or allow to just further
+> restrict the subset of allowed functionality, never extend it.
+
+This implementation would get you into the business of write-time
+permission checks. And this almost always means you should use an
+ioctl(), not a write() operation on these files.
+
+> 
+> Such an approach will actually make it simpler to test and experiment
+> with this delegation locally, will make it trivial to observe what's
+> allowed from simple shell scripts, etc, etc. With fsmount() and O_PATH
+> it will be possible to set everything up from privileged processes
+> before ever exposing a BPF Token FS instance through a file system, if
+> there are any concerns about racing with user space.
+> 
+> That's the high-level approach I'm thinking of right now. Would that
+> work? How critical is it to reuse BPF FS itself and how important to
+> you is to rely on mount options vs special files as described above?
+
+In the end, it's your api and you need to live with it and support it.
+What is important is that we don't end up with security issues. The
+special files thing will work but be aware that write-time permission
+checking is nasty:
+* https://git.zx2c4.com/CVE-2012-0056/about/ (Thanks to Aleksa for the link.)
+* commit e57457641613 ("cgroup: Use open-time cgroup namespace for process migration perm checks")
+There's a lot more. It can be done but it needs stringent permission
+checking and an ioctl() is probably the way to go in this case.
+
+Another thing, if you split configuration over multiple files you can
+end up introducing race windows. This is a common complaint with cgroups
+and sysfs whenever configuration of something is split over multiple
+files. It gets especially hairy if the options interact with each other
+somehow.
+
+> Hopefully not critical, and I can start working on it, and we'll get
+> what you want with using FS as a vehicle for delegation, while
+> allowing some of the intended use cases that we have in mind in a bit
+> cleaner fashion?
+> 
+> > > >
+> > > > As mentioned before, bpffs has all the means to be taught delegation:
+> > > >
+> > > >         // In container's user namespace
+> > > >         fd_fs = fsopen("bpffs");
+> > > >
+> > > >         // Delegating task in host userns (systemd-bpfd whatever you want)
+> > > >         ret = fsconfig(fd_fs, FSCONFIG_SET_FLAG, "delegate", ...);
+> > > >
+> > > >         // In container's user namespace
+> > > >         fd_mnt = fsmount(fd_fs, 0);
+> > > >
+> > > >         ret = move_mount(fd_fs, "", -EBADF, "/my/fav/location", MOVE_MOUNT_F_EMPTY_PATH)
+> > > >
+> > > > Roughly, this would mean:
+> > > >
+> > > > (i) raise FS_USERNS_MOUNT on bpffs but guard it behind the "delegate"
+> > > >     mount option. IOW, it's only possibly to mount bpffs as an
+> > > >     unprivileged user if a delegating process like systemd-bpfd with
+> > > >     system-level privileges has marked it as delegatable.
+> 
+> Regarding the FS_USERNS_MOUNT flag and fsopen() happening from inside
+> the user namespace. Am I missing something subtle and important here,
+> why does it have to happen inside the container's user namespace?
+> Can't the container manager both fsopen() and fsconfig() everything in
+> host userns, and only then fsmount+move_mount inside the container's
+> userns? Just trying to understand if there is some important early
+> association of userns happening at early steps here?
+
+The mount api _currently_ works very roughly like this: if a filesytem
+is FS_USERNS_MOUNT enabled fsopen() records the user namespace of the
+caller. The recorded userns will later become the owning userns of the
+filesystem's superblock (Without going into detail: owning userns of a
+superblock != owning userns of a mount. move_mount() on a detached mount
+is about the latter.).
+
+I have a patchset that adds a generic "delegate" mount option which will
+allow a sufficiently privileged process to do the following:
+
+        fd_fs = fsopen("ext4");
+        
+        /*
+	 * Set owning namespace of the filesystem's superblock.
+         * Caller must be privileged over @fd_userns.
+         *
+	 * Note, must be first mount option to ensure that possible
+	 * follow-up ermission checks for other mount options are done
+	 * on the final owning namespace.
+         */
+        fsconfig(fd_fs, FSCONFIG_SET_FD, "delegate", NULL, fd_userns);
+        
+        /*
+         * * If fs is FS_USERNS_MOUNT then permission is checked in @fd_userns.
+         * * If fs is not FS_USERNS_MOUNT then permission is check in @init_user_ns.
+         *   (Privilege in @init_user_ns implies privilege over @fd_userns.)
+         */
+        fsconfig(fd_fs, FSCONFIG_CMD_CREATE, NULL, 0);
+
+After this, the sb is owned by @fd_userns. Currently my draft restricts
+this to such filesystems that raise FS_ALLOW_IDMAP because they almost
+can support delegation and don't need to be checked for any potential
+issues. But bpffs could easily support this (without caring about
+FS_ALLOW_IDMAP).
+
+> 
+> Also, in your example above, move_mount() should take fd_mnt, not fd_fs, right?
+> 
+> > > > (ii) add fine-grained delegation options that you want this
+> > > >      bpffs instance to allow via new mount options. Idk,
+> > > >
+> > > >      // allow usage of foo
+> > > >      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "foo");
+> > > >
+> > > >      // also allow usage of bar
+> > > >      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "bar");
+> > > >
+> > > >      // reset allowed options
+> > > >      fsconfig(fd_fs, FSCONFIG_SET_STRING, "");
+> > > >
+> > > >      // allow usage of schmoo
+> > > >      fsconfig(fd_fs, FSCONFIG_SET_STRING, "abilities", "schmoo");
+> > > >
+> > > > This all seems more intuitive and integrates with user and mount
+> > > > namespaces of the container. This can also work for restricting
+> > > > non-userns bpf instances fwiw. You can also share instances via
+> > > > bind-mount and so on. The userns of the bpffs instance can also be used
+> > > > for permission checking provided a given functionality has been
+> > > > delegated by e.g., systemd-bpfd or whatever.
+> > >
+> > > I have no arguments against any of the above, and would prefer to see
+> > > something like this over a token-based mechanism.  However we do want
+> > > to make sure we have the proper LSM control points for either approach
+> > > so that admins who rely on LSM-based security policies can manage
+> > > delegation via their policies.
+> > >
+> > > Using the fsconfig() approach described by Christian above, I believe
+> > > we should have the necessary hooks already in
+> > > security_fs_context_parse_param() and security_sb_mnt_opts() but I'm
+> > > basing that on a quick look this morning, some additional checking
+> > > would need to be done.
+> >
+> > I think what I outlined is even unnecessarily complicated. You don't
+> > need that pointless "delegate" mount option at all actually. Permission
+> > to delegate shouldn't be checked when the mount option is set. The
+> > permissions should be checked when the superblock is created. That's the
+> > right point in time. So sm like:
+> >
+> 
+> I think this gets even more straightforward with BPF Token FS being a
+> separate one, right? Given BPF Token FS is all about delegation, it
+> has to be a privileged operation to even create it.
+> 
+> > diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+> > index 4174f76133df..a2eb382f5457 100644
+> > --- a/kernel/bpf/inode.c
+> > +++ b/kernel/bpf/inode.c
+> > @@ -746,6 +746,13 @@ static int bpf_fill_super(struct super_block *sb, struct fs_context *fc)
+> >         struct inode *inode;
+> >         int ret;
+> >
+> > +       /*
+> > +        * If you want to delegate this instance then you need to be
+> > +        * privileged and know what you're doing. This isn't trust.
+> > +        */
+> > +       if ((fc->user_ns != &init_user_ns) && !capable(CAP_SYS_ADMIN))
+> > +               return -EPERM;
+> > +
+> >         ret = simple_fill_super(sb, BPF_FS_MAGIC, bpf_rfiles);
+> >         if (ret)
+> >                 return ret;
+> > @@ -800,6 +807,7 @@ static struct file_system_type bpf_fs_type = {
+> >         .init_fs_context = bpf_init_fs_context,
+> >         .parameters     = bpf_fs_parameters,
+> >         .kill_sb        = kill_litter_super,
+> > +       .fs_flags       = FS_USERNS_MOUNT,
+> 
+> Just an aside thought. It doesn't seem like there is any reason why
+> BPF FS right now is not created with FS_USERNS_MOUNT, so (separately
+> from all this discussion) I suspect we can just make it
+> FS_USERNS_MOUNT right now (unless we combine it with BPF-token-FS,
+> then yeah, we can't do that unconditionally anymore). Given BPF FS is
+> just a container of pinned BPF objects, just mounting BPF FS doesn't
+> seem to be dangerous in any way. But that's just an aside thought
+> here.
+
+My two cents: Don't ever expose anything under user namespaces unless it
+is guaranteed to be safe and has actual non-cosmetical use-cases.
+
+The eagerness with which features pop up in user namespaces is probably
+bankrolling half the infosec community.
