@@ -2,91 +2,141 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C10EEB64DC
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jul 2023 04:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD61C001DE
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jul 2023 06:40:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231131AbjGKEij (ORCPT
+        id S230116AbjGKGks convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Jul 2023 00:38:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45842 "EHLO
+        Tue, 11 Jul 2023 02:40:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229573AbjGKEiL (ORCPT
+        with ESMTP id S229903AbjGKGkr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Jul 2023 00:38:11 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1251C19B2;
-        Mon, 10 Jul 2023 21:37:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-        bh=EdZ/uI9qEwSebLzEX2gijde/kmiXWuENRx/hQGoNyQs=; b=bZGfDyB6ARAb7eAafVcUwJEw/8
-        O0K10BGUXBHmkcX7IQElvT2MaalAh35WE0rV/K/Sj7ZWJcRJpDRta8k+OMEUvpE0tEaJpK0pwM7dZ
-        UdvV/AdAXVc0ozxsuVwf2FPnF9e5t1MBk9QPQKHC+d0LnPfSyoQqoSMepaku0PtCmVzv0d56J7jTE
-        szn1ytkfG+teoWv2RROvOH48Gc2wEWx6LzftYP2Y/9Hcr/5018zgFlPIK1bg0dCaLwQgs3TXeAT/S
-        8p/gzAZ9lmZJg2weW5nRQVbVTr2zozXiZy9h2nGGPXh8Q5lktsU2TgHC6wE8jwU6ICl2SweMAJMKW
-        gsn5OjVA==;
-Received: from [2601:1c2:980:9ec0::2764]
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qJ57f-00De3B-0l;
-        Tue, 11 Jul 2023 04:37:11 +0000
-Message-ID: <ab6ab3d2-d168-8c10-b7f5-94a669e212fc@infradead.org>
-Date:   Mon, 10 Jul 2023 21:37:10 -0700
+        Tue, 11 Jul 2023 02:40:47 -0400
+Received: from frasgout13.his.huawei.com (unknown [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA64793;
+        Mon, 10 Jul 2023 23:40:45 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4R0WF02hWlz9v7Yk;
+        Tue, 11 Jul 2023 14:29:40 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwB3IjlH+axkNk5bBA--.35225S2;
+        Tue, 11 Jul 2023 07:40:19 +0100 (CET)
+Message-ID: <badbc85145959e90cb9cbf9d21e0a43ea112776e.camel@huaweicloud.com>
+Subject: Re: [PATCH v12 1/4] security: Allow all LSMs to provide xattrs for
+ inode_init_security hook
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        bpf@vger.kernel.org, kpsingh@kernel.org, keescook@chromium.org,
+        nicolas.bouchinet@clip-os.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Tue, 11 Jul 2023 08:40:03 +0200
+In-Reply-To: <CAHC9VhSFy6wf+7DXrG=6CXZC4RrpTeP2sQezX0BPc95fxGAWxQ@mail.gmail.com>
+References: <20230610075738.3273764-2-roberto.sassu@huaweicloud.com>
+         <1c8c612d99e202a61e6a6ecf50d4cace.paul@paul-moore.com>
+         <a28c8fce-741b-e088-af5e-8a83daa7e25d@schaufler-ca.com>
+         <CAHC9VhSNqzVpHcDw59a2CznaME1078SJWuEcqJx=R5PQgSjTDg@mail.gmail.com>
+         <CAHC9VhSFy6wf+7DXrG=6CXZC4RrpTeP2sQezX0BPc95fxGAWxQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.4-0ubuntu1 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 02/13] Add TSEM specific documentation.
-Content-Language: en-US
-To:     "Dr. Greg" <greg@enjellic.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net
-References: <20230710102319.19716-1-greg@enjellic.com>
- <20230710102319.19716-3-greg@enjellic.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20230710102319.19716-3-greg@enjellic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: GxC2BwB3IjlH+axkNk5bBA--.35225S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxuF48uF48Aw1fuFW7GFy8Krg_yoWrGry7pF
+        Wft3Wjkrs5JF1fAr9ayw48W3Wak3yrGr4UWr9xtr1UZas09r1xJr1jkr4ruFyUZrWkGFn0
+        qF1UXr9xurn8A37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAPBF1jj4wlKwADs5
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi--
+On Mon, 2023-07-10 at 14:04 -0400, Paul Moore wrote:
+> On Fri, Jul 7, 2023 at 5:44 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Fri, Jul 7, 2023 at 12:54 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > On 7/6/2023 6:43 PM, Paul Moore wrote:
+> > > > On Jun 10, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+> > > > > Currently, the LSM infrastructure supports only one LSM providing an xattr
+> > > > > and EVM calculating the HMAC on that xattr, plus other inode metadata.
+> > > > > 
+> > > > > Allow all LSMs to provide one or multiple xattrs, by extending the security
+> > > > > blob reservation mechanism. Introduce the new lbs_xattr_count field of the
+> > > > > lsm_blob_sizes structure, so that each LSM can specify how many xattrs it
+> > > > > needs, and the LSM infrastructure knows how many xattr slots it should
+> > > > > allocate.
+> > > > > 
+> > > > > Modify the inode_init_security hook definition, by passing the full
+> > > > > xattr array allocated in security_inode_init_security(), and the current
+> > > > > number of xattr slots in that array filled by LSMs. The first parameter
+> > > > > would allow EVM to access and calculate the HMAC on xattrs supplied by
+> > > > > other LSMs, the second to not leave gaps in the xattr array, when an LSM
+> > > > > requested but did not provide xattrs (e.g. if it is not initialized).
+> > > > > 
+> > > > > Introduce lsm_get_xattr_slot(), which LSMs can call as many times as the
+> > > > > number specified in the lbs_xattr_count field of the lsm_blob_sizes
+> > > > > structure. During each call, lsm_get_xattr_slot() increments the number of
+> > > > > filled xattrs, so that at the next invocation it returns the next xattr
+> > > > > slot to fill.
+> > > > > 
+> > > > > Cleanup security_inode_init_security(). Unify the !initxattrs and
+> > > > > initxattrs case by simply not allocating the new_xattrs array in the
+> > > > > former. Update the documentation to reflect the changes, and fix the
+> > > > > description of the xattr name, as it is not allocated anymore.
+> > > > > 
+> > > > > Adapt both SELinux and Smack to use the new definition of the
+> > > > > inode_init_security hook, and to call lsm_get_xattr_slot() to obtain and
+> > > > > fill the reserved slots in the xattr array.
+> > > > > 
+> > > > > Move the xattr->name assignment after the xattr->value one, so that it is
+> > > > > done only in case of successful memory allocation.
+> > > > > 
+> > > > > Finally, change the default return value of the inode_init_security hook
+> > > > > from zero to -EOPNOTSUPP, so that BPF LSM correctly follows the hook
+> > > > > conventions.
+> > > > > 
+> > > > > Reported-by: Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
+> > > > > Link: https://lore.kernel.org/linux-integrity/Y1FTSIo+1x+4X0LS@archlinux/
+> > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > > ---
+> > > > >  include/linux/lsm_hook_defs.h |  6 +--
+> > > > >  include/linux/lsm_hooks.h     | 20 ++++++++++
+> > > > >  security/security.c           | 71 +++++++++++++++++++++++------------
+> > > > >  security/selinux/hooks.c      | 17 +++++----
+> > > > >  security/smack/smack_lsm.c    | 25 ++++++------
+> > > > >  5 files changed, 92 insertions(+), 47 deletions(-)
+> > > > Two *very* small suggestions below, but I can make those during the
+> > > > merge if you are okay with that Roberto?
+> > > > 
+> > > > I'm also going to assume that Casey is okay with the Smack portion of
+> > > > this patchset?  It looks fine to me, and considering his ACK on the
+> > > > other Smack patch in this patchset I'm assuming he is okay with this
+> > > > one as well ... ?
+> > > 
+> > > Yes, please feel free to add my Acked-by as needed.
+> > 
+> > Done.  Thanks Casey.
+> 
+> I'm merging the full patchset into lsm/next right now.  Thanks for all
+> your work on this Roberto, and a thank you for everyone else who
+> helped with reviews, testing, etc.
 
-On 7/10/23 03:23, Dr. Greg wrote:
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 9e5bab29685f..0e6640a78936 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6468,6 +6468,24 @@
->  			with CPUID.16h support and partial CPUID.15h support.
->  			Format: <unsigned int>
->  
+Thanks Paul, also for making the patch set better!
 
-These 3 entries should be in alphabetical order: tsem_cache, tsem_digest, tsem_mode.
+Roberto
 
-> +	tsem_mode=	[TSEM] Set the mode that the Trusted Security Event
-> +			Modeling LSM is to run in.
-> +			Format: 1
-> +			1 -- Disable root domain modeling.
-> +
-> +	tsem_cache=	[TSEM] Define the size of the caches used to hold
-> +			pointers to structures that will be used to model
-> +			security events occurring in the root modeling
-> +			namespace that are called in atomic context.
-> +			Format: <integer>
-> +			Default: 96
-
-What unit?  KB, MB, bytes, pages?
-
-> +
-> +	tsem_digest=	[TSEM] Define the cryptographic hash function that
-> +			will be used to create security event coefficients
-> +			for in the root modeling namespace.
-
-			for in
-?
-
-> +			Format: {name of the cryptographic hash function}
-> +			Default: sha256
-
--- 
-~Randy
