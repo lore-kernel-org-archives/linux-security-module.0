@@ -2,142 +2,180 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B13DEB64D9
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jul 2023 11:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD033EB64DD
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jul 2023 11:30:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231886AbjGLLI0 (ORCPT
+        id S229802AbjGLLaW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Jul 2023 07:08:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42590 "EHLO
+        Wed, 12 Jul 2023 07:30:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbjGLLIZ (ORCPT
+        with ESMTP id S229506AbjGLLaV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Jul 2023 07:08:25 -0400
-Received: from mail-ed1-x549.google.com (mail-ed1-x549.google.com [IPv6:2a00:1450:4864:20::549])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B2A10C7
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Jul 2023 04:08:24 -0700 (PDT)
-Received: by mail-ed1-x549.google.com with SMTP id 4fb4d7f45d1cf-51a5296eb8eso4396153a12.2
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Jul 2023 04:08:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689160102; x=1691752102;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XDNnBc3lLqO6r4zL4cQQ5OBw67Z3uK+KKd83ffOJd8U=;
-        b=2X53g87r+bb2zYaRabLBinWs6Z5l8niWuxxi4b6Vty9E2ROJzysdRrdFejMUliRAoR
-         C4UohT4iUdqCVzHW62rlvEaKmOAZe0tOC0u7bth3J+1bqI3dAjebb7FM1GRmGr7mZDZt
-         55JbL1QvfBv5QhIP3UoJ9NhLwraf8OiNAj0y97BnXJaNSZjp5PGXAHLyOyqT1vY1430C
-         Q5y8ycwDgXvAMp7+EBmfwk4wTEuNokZEplkP3pt2SU0b4pw9Z7kbtwnjsjzcIkVI4YTO
-         fbBMvkQgEMnaVI3ZwGb3UWS5dVHam6jeQVfqM6MxZft06ahsStgGetwNfzJ3FysWHyBX
-         IShg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689160102; x=1691752102;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XDNnBc3lLqO6r4zL4cQQ5OBw67Z3uK+KKd83ffOJd8U=;
-        b=UWGDpVpooqb015u5O8X4iM4bljyYCj7LmEHUwCFoBXXWgKmFW+UHpMqE4VMNjCKnRQ
-         gMWk81jmd9S+FAUu0nu3kzeqrhpOqUmjAsuwSLzrq2cDT2OnE/pIgZgio84zByFIp+As
-         9++O+gWz+/oSdP3HXqagiJ9baAj2rsg1KxMW4djZiLrU1NcHX/L8FbDQij/oeGAOp1kP
-         z/nYdvbd7JWcXd3R+ovJELLDcziMTDXPAK08Ty41DfB36uLg2MdtEj9Rn72VE7QPK8R9
-         65UzCzPOVIAnT06NY3ZvA0ggGE5q0EPbgtTz41fktpfCWVBqjFkemxfliK0LhHTAx36m
-         uGcg==
-X-Gm-Message-State: ABy/qLYQcSj5wb9+wVt/Emn4a9nNy0yS3cPkNnbyWxk8V/wvSj5gd9Ne
-        8xEvtQbeLddUQE28+dlsjKa/vf7zCUI=
-X-Google-Smtp-Source: APBJJlH4VbANyPQcU6n33csmCCzc137x8+X7gLF7T9qhmSfY5I6rWl7Bo2W/Qxfc9lU2urUdvxvlobCD02M=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:73e8:365a:7352:a14])
- (user=gnoack job=sendgmr) by 2002:a50:cd0f:0:b0:51b:e4c5:547c with SMTP id
- z15-20020a50cd0f000000b0051be4c5547cmr93487edi.4.1689160102428; Wed, 12 Jul
- 2023 04:08:22 -0700 (PDT)
-Date:   Wed, 12 Jul 2023 13:08:20 +0200
-In-Reply-To: <d4f1395c-d2d4-1860-3a02-2a0c023dd761@digikod.net>
-Message-Id: <ZK6JhyiC0Z0vwu0u@google.com>
-Mime-Version: 1.0
-References: <20230502171755.9788-1-gnoack3000@gmail.com> <1cb74c81-3c88-6569-5aff-154b8cf626fa@digikod.net>
- <20230510.c667268d844f@gnoack.org> <d4f1395c-d2d4-1860-3a02-2a0c023dd761@digikod.net>
-Subject: Re: [RFC 0/4] Landlock: ioctl support
-From:   "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
-To:     "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
-Cc:     "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack3000@gmail.com>,
-        Jeff Xu <jeffxu@google.com>,
+        Wed, 12 Jul 2023 07:30:21 -0400
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 966B0173A
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Jul 2023 04:30:18 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4R1FsN751RzMq1Kb;
+        Wed, 12 Jul 2023 11:30:16 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4R1FsM49x6zMprvw;
+        Wed, 12 Jul 2023 13:30:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1689161416;
+        bh=HZrYlrtt7f56eqLiIloFhRy/XIBcbyv2PMXek231cfg=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=nFa3yb+6PcIWf5ZCd99wHaSo0yXI6nmztOE/Qv1fIfVg/u9OhfUa7LGZOapIe9wP7
+         Wr40BOOIJEbvpvB8Rd0Sh+ZDBAf+7MgHyHj9FopEIOdEvtrkrWKsAPUwjnWCyp5+/J
+         MPtyIzH6h1SDHhgzD1MUdsKBnmIKcEZ8LuDLqLto=
+Message-ID: <9fc33a12-276d-8f68-eeb8-1258559b30d4@digikod.net>
+Date:   Wed, 12 Jul 2023 13:30:15 +0200
+MIME-Version: 1.0
+User-Agent: 
+Subject: Re: [PATCH v9 00/12] Network support for Landlock - allowed list of
+ protocols
+Content-Language: en-US
+To:     Jeff Xu <jeffxu@google.com>
+Cc:     Jeff Xu <jeffxu@chromium.org>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>,
+        "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
+        willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com,
         Jorge Lucangeli Obes <jorgelo@chromium.org>,
         Allen Webb <allenwebb@google.com>,
-        Jeff Xu <jeffxu@chromium.org>,
-        Dmitry Torokhov <dtor@google.com>,
-        linux-security-module@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Dmitry Torokhov <dtor@google.com>
+References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
+ <Y/fl5iEbkL5Pj5cJ@galopp> <c20fc9eb-518e-84b4-0dd5-7b97c0825259@huawei.com>
+ <3e113e1c-4c7b-af91-14c2-11b6ffb4d3ef@digikod.net>
+ <b8a2045a-e7e8-d141-7c01-bf47874c7930@digikod.net>
+ <ZJvy2SViorgc+cZI@google.com>
+ <CABi2SkX-dzUO6NnbyqfrAg7Bbn+Ne=Xi1qC1XMrzHqVEVucQ0Q@mail.gmail.com>
+ <43e8acb2-d696-c001-b54b-d2b7cf244de7@digikod.net>
+ <CABi2SkV1Q-cvMScEtcsHbgNRuGc39eJo6KT=GwUxsWPpFGSR4A@mail.gmail.com>
+ <b4440d19-93b9-e234-007b-4fc4f987550b@digikod.net>
+ <CABi2SkVbD8p0AHhvKLXPh-bQSNAk__8_ONxpE+8hisoZxF-h6g@mail.gmail.com>
+ <fb206d63-e51d-c701-8987-42078f8ccb5f@digikod.net>
+ <CALmYWFuJOae2mNp47NCzuz251Asm5Cm3hRZNtPOb7+1oty67Tg@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <CALmYWFuJOae2mNp47NCzuz251Asm5Cm3hRZNtPOb7+1oty67Tg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello!
 
-On Sat, Jun 17, 2023 at 11:47:55AM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> > > We should also think about batch operations on FD (see the
-> > > close_range syscall), for instance to deny all IOCTLs on inherited
-> > > or received FDs.
-> >=20
-> > Hm, you mean a landlock_fd_rights_limit_range() syscall to limit the
-> > rights for an entire range of FDs?
-> >=20
-> > I have to admit, I'm not familiar with the real-life use cases of
-> > close_range().  In most programs I work with, it's difficult to reason
-> > about their ordering once the program has really started to run. So I
-> > imagine that close_range() is mostly used to "sanitize" the open file
-> > descriptors at the start of main(), and you have a similar use case in
-> > mind for this one as well?
-> >=20
-> > If it's just about closing the range from 0 to 2, I'm not sure it's
-> > worth adding a custom syscall. :)
->=20
-> The advantage of this kind of range is to efficiently manage all potentia=
-l
-> FDs, and the main use case is to close (or change, see the flags) everyth=
-ing
-> *except" 0-2 (i.e. 3-~0), and then avoid a lot of (potentially useless)
-> syscalls.
->=20
-> The Landlock interface doesn't need to be a syscall. We could just add a =
-new
-> rule type which could take a FD range and restrict them when calling
-> landlock_restrict_self(). Something like this:
-> struct landlock_fd_attr {
->     __u64 allowed_access;
->     __u32 first;
->     __u32 last;
-> }
+On 05/07/2023 17:00, Jeff Xu wrote:
+> On Fri, Jun 30, 2023 at 11:23 AM Mickaël Salaün <mic@digikod.net> wrote:
+>>
+>>
+>> On 30/06/2023 06:18, Jeff Xu wrote:
+>>> On Thu, Jun 29, 2023 at 4:07 AM Mickaël Salaün <mic@digikod.net> wrote:
+>>>>
+>>>>
+>>>> On 29/06/2023 05:18, Jeff Xu wrote:
+>>>>> resend.
+>>>>>
+>>>>> On Wed, Jun 28, 2023 at 12:29 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 28/06/2023 19:03, Jeff Xu wrote:
 
-FYI, regarding the idea of dropping rights on already-opened files:
-I'm starting to have doubts about how feasible this is in practice.
+[...]
 
-The "obvious" approach is to just remove the access rights from the securit=
-y
-blob flags on the struct file.
+>> The sandboxing/Landlock threat model is to restrict a process when it is
+>> sandboxed, but this sandboxing is a request from the same process (or
+>> one of its parent) that happen when it is more trustworthy (or at least
+>> has more privileges) than after it sandbox itself.
+>>
+>> The process sandboxing itself can use several kernel features, and one
+>> of it is Landlock. In any case, it should take care of closing file
+>> descriptors that should not be passed to the sandboxed process.
+>>
+> Agree.
+> 
+>> The limits of sandboxing are the communication channels from and to
+>> outside the sandbox. The peers talking with sandboxed processes should
+>> then not be subject to confused deputy attacks, which means they must
+>> not enable to bypass the user-defined security policy (from which the
+>> Landlock policy is only a part). Receiving file descriptors should then
+>> not be more important than controlling the communication channels. If a
+>> not-sandboxed process is willing to give more right to a sandboxed
+>> process, by passing FDs or just receiving commands, then this
+>> not-sandboxed process need to be fixed.
+>>
+>> This is the rationale to not care about received nor sent file
+>> descriptors. The communication channels and the remote peers must be
+>> trusted to not give more privileges to the sandboxed processes.
+>>
+>> If a peer is malicious, it doesn't need to pass a file descriptor to the
+>> sandboxed process, it can just read (data) commands and apply them to
+>> its file descriptors.
+> 
+> I see the reasoning. i.e. sandboxing the process is not more
+> important than securing communication channels, or securing the peer.
+> 
+> So in a system that let a peer process to pass a socket into a
+> higher privileged process, when the communication channel or the peer
+> process is compromised,  e.g. swapping the fd/socket into a different
+> one that the attacker controls, confuse deputy attack can happen. The
+> recommendation here is to secure peer and communication.
+> I agree with this approach in general.  I need to think about how it
+> applies to specific cases.
+> 
+>> I think the ability to pass file descriptors
+>> should be seen as a way to improve performance by avoiding a user space
+>> process to act as a proxy receiving read/write commands and managing
+>> file descriptors itself. On the other hand, file descriptors could be
+>> used as real capabilities/tokens to manage access, but senders still
+>> need to be careful to only pass the required ones.
+>>
+>> All this to say that being able to restrict actions on file descriptors
+>> would be useful for senders/services to send a subset of the file
+>> descriptor capabilities (cf. Capsicum), but not the other way around.
+>>
+> In the Landlock kernel doc:
+> Similarly to file access modes (e.g. O_RDWR), Landlock access rights
+> attached to file descriptors are retained even if they are passed
+> between processes (e.g. through a Unix domain socket). Such access
+> rights will then be enforced even if the receiving process is not
+> sandboxed by Landlock. Indeed, this is required to keep a consistent
+> access control over the whole system, and this avoids unattended
+> bypasses through file descriptor passing (i.e. confused deputy
+> attack).
+> 
+> iiuc, the design for file and socket in landlock is different. For
+> socket, the access rules are applied only to the current process (more
+> like seccomp), while for file restriction, the rules can be passed
+> into another un-landlocked process.
 
-But these opened "struct file"s might be shared with other processes alread=
-y,
-and mutating them in place would have undesired side effects on other proce=
-sses.
+The O_RDWR restrictions are enforced by the basic kernel access control, 
+not Landlock. However, for file truncation, Landlock complements the 
+basic kernel access rights and behave the same.
 
-For example, if brltty uses ioctls on the terminal and then one of the prog=
-rams
-running in that terminal drops ioctl rights on that open file, it would aff=
-ect
-brltty as well, because both the Landlocked program and brltty use the same
-struct file.
+There is indeed slight differences between file system and socket 
+restrictions. For the file system, a file descriptor is a direct access 
+to a file/data. For the network, we cannot identify for which data/peer 
+a newly created socket will give access to, we need to wait for a 
+connect or bind request to identify the use case for this socket. We 
+could tie the access rights (related to ports) to an opened socket, but 
+this would not align with the way Landlock access control works for the 
+file system. Indeed, a directory file descriptor may enable to open 
+another file (i.e. a new data item), but this opening is restricted by 
+Landlock. A newly created socket gives access to the network (or a 
+subset of it), but binding or connecting to a peer (i.e. accessing new 
+data) is restricted by Landlock. Accesses tied to FDs are those that 
+enable to get access to the underlying data (e.g. read, write, 
+truncate). A newly created socket is harmless until it is connected to a 
+peer, similarly to a memfd file descriptor. A directory opened by a 
+sandboxed process can be passed to a process outside this sandbox and it 
+might be allowed to open a relative path/file, which might not be the 
+case for the sandboxed process.
 
-It could be technically stored next to the file descriptor list, where the
-close-on-exec flag is also stored, but that seems more cumbersome than I ha=
-d
-hoped.  I don't have a good approach for that idea yet, so I'll drop it for=
- now.
-
-Ideas are welcome. :)
-
-=E2=80=94G=C3=BCnther
-
---=20
-Sent using Mutt =F0=9F=90=95 Woof Woof
+I think it might be summarize by the difference between underlying FD 
+data in the case of a regular file (i.e. tied access rights), and 
+relative new data in the case of a directory or a socket (i.e. 
+sandboxing policy scope).
