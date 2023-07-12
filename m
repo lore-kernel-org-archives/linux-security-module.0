@@ -2,184 +2,281 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B34EB64D9
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jul 2023 03:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77600EB64D9
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jul 2023 07:02:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231576AbjGLDnh (ORCPT
+        id S231444AbjGLHCY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Jul 2023 23:43:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42428 "EHLO
+        Wed, 12 Jul 2023 03:02:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231753AbjGLDna (ORCPT
+        with ESMTP id S230133AbjGLHCY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Jul 2023 23:43:30 -0400
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 75246198B;
-        Tue, 11 Jul 2023 20:43:20 -0700 (PDT)
-Received: by linux.microsoft.com (Postfix, from userid 1052)
-        id D850A21C4255; Tue, 11 Jul 2023 20:43:19 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D850A21C4255
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1689133399;
-        bh=AQSDwVr//PWnanNDVqJOKnFjTzDXsVxMzaz8VzfLX9U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gd86CwrooCUzTzLtcrbfpPja1MDbDSHeRi2drRdRHQKEr7+MeHUdPmo1OYofl8LO5
-         /BxTBXcBx+61KNVGQwmn84+RCmceckkYRqDvUCBubBwyfYCe0o4LvKZoEff8AP92wV
-         PLwJXBucI4r1Hv+6Ky15fLjo3Ox/F0xK3pPqj7RM=
-Date:   Tue, 11 Jul 2023 20:43:19 -0700
-From:   Fan Wu <wufan@linux.microsoft.com>
-To:     Mike Snitzer <snitzer@kernel.org>
-Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
-        axboe@kernel.dk, agk@redhat.com, eparis@redhat.com,
-        paul@paul-moore.com, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, audit@vger.kernel.org,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [RFC PATCH v10 11/17] dm-verity: consume root hash digest and
- signature data via LSM hook
-Message-ID: <20230712034319.GA17642@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1687986571-16823-1-git-send-email-wufan@linux.microsoft.com>
- <1687986571-16823-12-git-send-email-wufan@linux.microsoft.com>
- <ZKgm+ffQbdDTxrg9@redhat.com>
+        Wed, 12 Jul 2023 03:02:24 -0400
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [IPv6:2001:1600:4:17::42aa])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 282C7136
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Jul 2023 00:02:21 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4R17wC505VzMqCst;
+        Wed, 12 Jul 2023 07:02:19 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4R17wB5TwJzMpssQ;
+        Wed, 12 Jul 2023 09:02:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1689145339;
+        bh=uBFEgv+D43qz/E8Ty4/xC3D5uopMDIzrTHD3MKLr97c=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=b0sMtGycYRG+VewQ/EZ+jNYhMeOm+g2HMo+5zUSQo2TBDRJTvuZ+ix4Piabsn2MlW
+         IJrD07BVLbGPN8S/6n2PLeFamLDlbJDrpsR2fsOuSNrSAl0g7j/t9MsmDbg5yW6Lw9
+         ky1piJDYjJMh+f4ob+6+V6bO58tq+MrTxkxfyiqg=
+Message-ID: <3db64cf8-6a45-a361-aa57-9bfbaf866ef8@digikod.net>
+Date:   Wed, 12 Jul 2023 09:02:17 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZKgm+ffQbdDTxrg9@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: 
+Subject: Re: [PATCH v11.1] selftests/landlock: Add 11 new test suites
+ dedicated to network
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     artem.kuzin@huawei.com, gnoack3000@gmail.com,
+        willemdebruijn.kernel@gmail.com, yusongping@huawei.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org
+References: <20230515161339.631577-11-konstantin.meskhidze@huawei.com>
+ <20230706145543.1284007-1-mic@digikod.net>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20230706145543.1284007-1-mic@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 07, 2023 at 10:53:45AM -0400, Mike Snitzer wrote:
-Thanks for the review!
 
-> On Wed, Jun 28 2023 at  5:09P -0400,
-> Fan Wu <wufan@linux.microsoft.com> wrote:
+On 06/07/2023 16:55, Mickaël Salaün wrote:
+> From: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 > 
-> > From: Deven Bowers <deven.desai@linux.microsoft.com>
-> > 
-> > dm-verity provides a strong guarantee of a block device's integrity. As
-> > a generic way to check the integrity of a block device, it provides
-> > those integrity guarantees to its higher layers, including the filesystem
-> > level.
-> > 
-> > An LSM that control access to a resource on the system based on the
-> > available integrity claims can use this transitive property of
-> > dm-verity, by querying the underlying block_device of a particular
-> > file.
-> > 
-> > The digest and signature information need to be stored in the block
-> > device to fulfill the next requirement of authorization via LSM policy.
-> > This will enable the LSM to perform revocation of devices that are still
-> > mounted, prohibiting execution of files that are no longer authorized
-> > by the LSM in question.
-> > 
-> > This patch added two security hook calls in dm-verity to save the
-> > dm-verity roothash and the roothash signature to LSM blobs.
-> > 
-> > Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-> > ---
-...
-> > diff --git a/drivers/md/dm-verity-verify-sig.c b/drivers/md/dm-verity-verify-sig.c
-> > index 4836508ea50c..33165dd7470f 100644
-> > --- a/drivers/md/dm-verity-verify-sig.c
-> > +++ b/drivers/md/dm-verity-verify-sig.c
-> > @@ -9,6 +9,9 @@
-> >  #include <linux/verification.h>
-> >  #include <keys/user-type.h>
-> >  #include <linux/module.h>
-> > +#include <linux/security.h>
-> > +#include <linux/dm-verity.h>
-> > +#include "dm-core.h"
-> 
-> Why are you including dm-core.h here?
-This is used to get the complete definition of struct mapped_device to extract
-the struct block_device from it.
+> This patch is a revamp of the v11 tests [1] with new tests (see the
+> "Changes since v11" description).  I (Mickaël) only added the following
+> todo list and the "Changes since v11" sections in this commit message.
+> I think this patch is good but it would appreciate reviews.
+> You can find the diff of my changes here but it is not really readable:
+> https://git.kernel.org/mic/c/78edf722fba5 (landlock-net-v11 branch)
+> [1] https://lore.kernel.org/all/20230515161339.631577-11-konstantin.meskhidze@huawei.com/
+> TODO:
+> - Rename all "net_service" to "net_port".
+> - Fix the two kernel bugs found with the new tests.
+> - Update this commit message with a small description of all tests.
 
-> 
-> >  #include "dm-verity.h"
-> >  #include "dm-verity-verify-sig.h"
-> >  
-> > @@ -97,14 +100,17 @@ int verity_verify_sig_parse_opt_args(struct dm_arg_set *as,
-> >   * verify_verify_roothash - Verify the root hash of the verity hash device
-> >   *			     using builtin trusted keys.
-> >   *
-> > + * @bdev: block_device representing the device-mapper created block device.
-> > + *	  Used by the security hook, to set information about the block_device.
-> >   * @root_hash: For verity, the roothash/data to be verified.
-> >   * @root_hash_len: Size of the roothash/data to be verified.
-> >   * @sig_data: The trusted signature that verifies the roothash/data.
-> >   * @sig_len: Size of the signature.
-> >   *
-> >   */
-> > -int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
-> > -			    const void *sig_data, size_t sig_len)
-> > +int verity_verify_root_hash(struct block_device *bdev, const void *root_hash,
-> > +			    size_t root_hash_len, const void *sig_data,
-> > +			    size_t sig_len)
-> >  {
-> >  	int ret;
-> >  
-> > @@ -126,8 +132,12 @@ int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
-> >  				NULL,
-> >  #endif
-> >  				VERIFYING_UNSPECIFIED_SIGNATURE, NULL, NULL);
-> > +	if (ret)
-> > +		return ret;
-> >  
-> > -	return ret;
-> > +	return security_bdev_setsecurity(bdev,
-> > +					 DM_VERITY_SIGNATURE_SEC_NAME,
-> > +					 sig_data, sig_len);
-> >  }
-> >  
-> >  void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts)
-> 
-> Both of your calls to security_bdev_setsecurity() to set your blobs in
-> the bdev are suspect because you're doing so from the verity_ctr().
-> The mapped_device has 2 dm_table slots (active and inactive).  The
-> verity_ctr() becomes part of the inactive slot, there is an extra step
-> to bind the inactive table to the active table.
-> 
-> This leads to you changing the blobs in the global bdev _before_ the
-> table is actually active.  It is possible that the inactive table will
-> simply be removed and the DM verity device put back in service;
-> leaving your blob(s) in the bdev inconsistent.
-> 
-> This issue has parallels to how we need to defer changing the global
-> queue_limits associated with a request_queue until _after_ all table
-> loading is settled and then the update is done just before resuming
-> the DM device (mapped_device) -- see dm_table_set_restrictions().
-> 
-> Unfortunately, this feels like it may require a new hook in the
-> target_type struct (e.g. ->finalize())
-> 
-> Mike
-Thanks for pointing out this issue. We were calling security_bdev_setsecurity()
-because the roothash signature data is only available in verity_ctr()
-and it is discarded after verity_ctr() finishes.
-After digging deeper into the table_load, I realized that we were indeed
-wrong here.
+[...]
 
-Based on my understanding of your suggestion, it seems that the correct
-approach would be to save the roothash signature into the struct dm_target
-and then invoke security_bdev_setsecurity() before activating
-the inactive table in the __bind function (where dm_table_set_restrictions is called).
+> +FIXTURE_SETUP(ipv4)
+> +{
+> +	const struct protocol_variant prot = {
+> +		.domain = AF_INET,
+> +		.type = variant->type,
+> +	};
+> +
+> +	disable_caps(_metadata);
+> +
+> +	set_service(&self->srv0, prot, 0);
+> +	set_service(&self->srv1, prot, 1);
+> +
+> +	setup_loopback(_metadata);
+> +};
+> +
+> +FIXTURE_TEARDOWN(ipv4)
+> +{
+> +}
+> +
+> +// Kernel FIXME: tcp_sandbox_with_tcp and tcp_sandbox_with_udp
+> +TEST_F(ipv4, from_unix_to_inet)
+> +{
+> +	int unix_stream_fd, unix_dgram_fd;
+> +
+> +	if (variant->sandbox == TCP_SANDBOX) {
+> +		const struct landlock_ruleset_attr ruleset_attr = {
+> +			.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+> +					      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> +		};
+> +		const struct landlock_net_service_attr tcp_bind_connect_p0 = {
+> +			.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+> +					  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> +			.port = self->srv0.port,
+> +		};
+> +		int ruleset_fd;
+> +
+> +		/* Denies connect and bind to check errno value. */
+> +		ruleset_fd = landlock_create_ruleset(&ruleset_attr,
+> +						     sizeof(ruleset_attr), 0);
+> +		ASSERT_LE(0, ruleset_fd);
+> +
+> +		/* Allows connect and bind for srv0.  */
+> +		ASSERT_EQ(0, landlock_add_rule(ruleset_fd,
+> +					       LANDLOCK_RULE_NET_SERVICE,
+> +					       &tcp_bind_connect_p0, 0));
+> +
+> +		enforce_ruleset(_metadata, ruleset_fd);
+> +		EXPECT_EQ(0, close(ruleset_fd));
+> +	}
+> +
+> +	unix_stream_fd = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
+> +	ASSERT_LE(0, unix_stream_fd);
+> +
+> +	unix_dgram_fd = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
+> +	ASSERT_LE(0, unix_dgram_fd);
+> +
+> +	/* Checks unix stream bind and connect for srv0. */
+> +	EXPECT_EQ(-EINVAL, bind_variant(unix_stream_fd, &self->srv0));
+> +	EXPECT_EQ(-EINVAL, connect_variant(unix_stream_fd, &self->srv0));
+> +
+> +	/* Checks unix stream bind and connect for srv1. */
+> +	EXPECT_EQ(-EINVAL, bind_variant(unix_stream_fd, &self->srv1))
+> +	{
+> +		TH_LOG("Wrong bind error: %s", strerror(errno));
+> +	}
+> +	EXPECT_EQ(-EINVAL, connect_variant(unix_stream_fd, &self->srv1));
+> +
+> +	/* Checks unix datagram bind and connect for srv0. */
+> +	EXPECT_EQ(-EINVAL, bind_variant(unix_dgram_fd, &self->srv0));
+> +	EXPECT_EQ(-EINVAL, connect_variant(unix_dgram_fd, &self->srv0));
+> +
+> +	/* Checks unix datagram bind and connect for srv0. */
+> +	EXPECT_EQ(-EINVAL, bind_variant(unix_dgram_fd, &self->srv1));
+> +	EXPECT_EQ(-EINVAL, connect_variant(unix_dgram_fd, &self->srv1));
+> +}
 
-To facilitate this process, it seems appropriate to introduce a new hook
-called finalize() within the struct target_type. This hook would enable
-targets to define tasks that need to be completed before activating
-a new table.
+We should also add a test to make sure errno is the same with and 
+without sandboxing when using port 0 for connect and consistent with 
+bind (using an available port). The test fixture and variants should be 
+quite similar to the "ipv4" ones, but we can also add AF_INET6 variants, 
+which will result in 8 "ip" variants:
 
-In our specific case, we would add a finalize hook to the dm-verity module,
-allowing us to call security_bdev_setsecurity() and associate the roothash
-information in the struct dm_target with the struct block_device of
-the struct mapped_device. Is this correct?
+TEST_F(ip, port_zero)
+{
+	if (variant->sandbox == TCP_SANDBOX) {
+		/* Denies any connect and bind. */
+	}
+	/* Checks errno for port 0. */
+}
 
-Thanks,
-- Fan
+[...]
 
+> +FIXTURE(inet)
+> +{
+> +	struct service_fixture srv0, srv1;
+> +};
+
+The "inet" variants are useless and should be removed. The "inet" 
+fixture can then be renamed to "ipv4_tcp".
+
+
+> +
+> +FIXTURE_VARIANT(inet)
+> +{
+> +	const bool is_sandboxed;
+> +	const struct protocol_variant prot;
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(inet, no_sandbox_with_ipv4) {
+> +	/* clang-format on */
+> +	.is_sandboxed = false,
+> +	.prot = {
+> +		.domain = AF_INET,
+> +		.type = SOCK_STREAM,
+> +	},
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(inet, sandbox_with_ipv4) {
+> +	/* clang-format on */
+> +	.is_sandboxed = true,
+> +	.prot = {
+> +		.domain = AF_INET,
+> +		.type = SOCK_STREAM,
+> +	},
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(inet, no_sandbox_with_ipv6) {
+> +	/* clang-format on */
+> +	.is_sandboxed = false,
+> +	.prot = {
+> +		.domain = AF_INET6,
+> +		.type = SOCK_STREAM,
+> +	},
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(inet, sandbox_with_ipv6) {
+> +	/* clang-format on */
+> +	.is_sandboxed = true,
+> +	.prot = {
+> +		.domain = AF_INET6,
+> +		.type = SOCK_STREAM,
+> +	},
+> +};
+> +
+> +FIXTURE_SETUP(inet)
+> +{
+> +	const struct protocol_variant ipv4_tcp = {
+> +		.domain = AF_INET,
+> +		.type = SOCK_STREAM,
+> +	};
+> +
+> +	disable_caps(_metadata);
+> +
+> +	ASSERT_EQ(0, set_service(&self->srv0, ipv4_tcp, 0));
+> +	ASSERT_EQ(0, set_service(&self->srv1, ipv4_tcp, 1));
+> +
+> +	setup_loopback(_metadata);
+> +};
+> +
+> +FIXTURE_TEARDOWN(inet)
+> +{
+> +}
+> +
+> +TEST_F(inet, port_endianness)
+> +{
+> +	const struct landlock_ruleset_attr ruleset_attr = {
+> +		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+> +				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> +	};
+> +	const struct landlock_net_service_attr bind_host_endian_p0 = {
+> +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
+> +		/* Host port format. */
+> +		.port = self->srv0.port,
+> +	};
+> +	const struct landlock_net_service_attr connect_big_endian_p0 = {
+> +		.allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> +		/* Big endian port format. */
+> +		.port = htons(self->srv0.port),
+> +	};
+> +	const struct landlock_net_service_attr bind_connect_host_endian_p1 = {
+> +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+> +				  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> +		/* Host port format. */
+> +		.port = self->srv1.port,
+> +	};
+> +	const unsigned int one = 1;
+> +	const char little_endian = *(const char *)&one;
+> +	int ruleset_fd;
+> +
+> +	ruleset_fd =
+> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+> +	ASSERT_LE(0, ruleset_fd);
+> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+> +				       &bind_host_endian_p0, 0));
+> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+> +				       &connect_big_endian_p0, 0));
+> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+> +				       &bind_connect_host_endian_p1, 0));
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +
+> +	/* No restriction for big endinan CPU. */
+> +	test_bind_and_connect(_metadata, &self->srv0, false, little_endian);
+> +
+> +	/* No restriction for any CPU. */
+> +	test_bind_and_connect(_metadata, &self->srv1, false, false);
+> +}
+> +
+> +TEST_HARNESS_MAIN
