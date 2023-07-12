@@ -2,91 +2,63 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE4CDC001B0
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jul 2023 16:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F3BC04FE0
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jul 2023 15:33:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229564AbjGQQF7 (ORCPT
+        id S233683AbjGLPdC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Jul 2023 12:05:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55930 "EHLO
+        Wed, 12 Jul 2023 11:33:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231630AbjGQQF6 (ORCPT
+        with ESMTP id S232884AbjGLPc6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Jul 2023 12:05:58 -0400
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C1B91AC
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Jul 2023 09:05:56 -0700 (PDT)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-1b0606bee45so3655802fac.3
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Jul 2023 09:05:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1689609955; x=1692201955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wnFL1AmrlheeY75vh6+ImZJxiaSYl7pddcdn0WO5Ko4=;
-        b=Og7E9Y0BGSs9U4HtJuBz92O5FCZFfUD7Bu5iNoKzoW4e25+9ledteWm+0hcBx8wi0N
-         MLTdgyZKDLKzLXSEkx/H2jPMhIdp6Ln8Z53FFcHUkwnWwJqEuFhGv/xAHFfPfGrrM/hX
-         e3oPeqqIYVt7wXwoRlTz6irQydaBMW31ZC8L7WxMoSTrza1lCy+sBL/JpKXhqW8dMmTZ
-         qENiyUXayZPzeKWhrL2Djot02nFtOL3W0fRMKZaSBPV0SGmU7F/UymPu4Pt/7jZxge4t
-         rAEJ/G0RSmLjWG60NDnjRuYVQWYC1TJu7xJIv9nA/vndEANaERhcf5R/paJuG7GZmrOV
-         qeig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689609955; x=1692201955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wnFL1AmrlheeY75vh6+ImZJxiaSYl7pddcdn0WO5Ko4=;
-        b=MKbyXXDVK8OvTzkcp9LeGt+64P5n+M1bKfNJY3TVPuCoUuxmsTBExEwJajCN360b0u
-         jP98zZrhql0TvzSRD32RXb5Woy5YQrSPSWLecwtwaWea/OYFW8DXDpUThtS1zcKv7mGU
-         bwwAkGbbRhEtVoABEIGQnPcXI6hLs7CsIOIy9CowZt7tA2Z3lZKKlmFQb15DYg884ASe
-         pOzjAeeupz9KRGFF5vSRPhJl1dKzwCU7jYPr/KfTyyobDqHS0bJgvBw4SYjVQHcAY8CA
-         txIORJ/hd7UrL8IrWztq5IVgfdlmrIYME2Bk3DRSb/AnJO5e1NT2wKTdRRKudjwVQy+c
-         XAcg==
-X-Gm-Message-State: ABy/qLYjRJ+WhB7+i/b+Iqh9mDjnCFYbCTLDsAga4Z92Lbu9DUN6U00B
-        hXVouNL880NXlN2qwlpHXAIxqclAMXtlZM9QIAp+
-X-Google-Smtp-Source: APBJJlEkQ8jfboNvol4sSiMDOSxb3dzPR8+YbJL6Osnf4gfzCjolPepfBVC3Z8iLIS3Ip+BO+PBLYW9yf+OYEA0pBoc=
-X-Received: by 2002:a05:6870:9726:b0:1b0:5bf7:3bb6 with SMTP id
- n38-20020a056870972600b001b05bf73bb6mr13595803oaq.28.1689609955350; Mon, 17
- Jul 2023 09:05:55 -0700 (PDT)
+        Wed, 12 Jul 2023 11:32:58 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70720C2;
+        Wed, 12 Jul 2023 08:32:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
+        bh=689SEK0ciFY8KgDlRHFBreHHAC2z+cvH0wQ011Q2aMI=; b=df/VKiT91ZqRa0x7ofoJaXGlph
+        PM7CRP4KkwoXZKNJlvYdkig+/LLrQ9LVGVf40H6Qaywx20JwTqHlizlUxF15FF/hdi7QMcfJ88rOM
+        Tk9o3z44pMTcermnTCrLWAF39fzqRsD0ms+1lMmZtzToJzTD0SUcPG6eXBFgIigvbDeEBrSIYXiW/
+        GnykGmmqxl8DWPpBQb6tfrtLGgdO7lnddHDuy7SXW0bC9E1PhpCLadB/V3QSWJPX+bNFvOifeRdsy
+        3Vg5gSGOgGr74Cyg+9z9dxsezgnvq5bViTggfgF6K6g7cj7jT1ssxpJXUEt4gBcr4IJbEN74vqTce
+        EZsIkLBg==;
+Received: from [2601:1c2:980:9ec0::2764]
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qJboy-000MRl-20;
+        Wed, 12 Jul 2023 15:32:04 +0000
+Message-ID: <03e153ce-328b-f279-2a40-4074bea2bc8f@infradead.org>
+Date:   Wed, 12 Jul 2023 08:31:55 -0700
 MIME-Version: 1.0
-References: <cover.1689077819.git.gnault@redhat.com> <980e4d705147a44b119fe30565c40e2424dce563.1689077819.git.gnault@redhat.com>
-In-Reply-To: <980e4d705147a44b119fe30565c40e2424dce563.1689077819.git.gnault@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 17 Jul 2023 12:05:44 -0400
-Message-ID: <CAHC9VhTrfw+5XJ+Fr0dQg0XayiD5x4-SREjpjOGmqroEbScVgw@mail.gmail.com>
-Subject: Re: [PATCH net-next 1/4] security: Constify sk in the sk_getsecid hook.
-To:     Guillaume Nault <gnault@redhat.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 01/79] fs: add ctime accessors infrastructure
+Content-Language: en-US
+To:     Jeff Layton <jlayton@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-um <linux-um@lists.infradead.org>
+References: <20230621144507.55591-1-jlayton@kernel.org>
+ <20230621144507.55591-2-jlayton@kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20230621144507.55591-2-jlayton@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 11, 2023 at 9:06=E2=80=AFAM Guillaume Nault <gnault@redhat.com>=
- wrote:
->
-> The sk_getsecid hook shouldn't need to modify its socket argument.
-> Make it const so that callers of security_sk_classify_flow() can use a
-> const struct sock *.
->
-> Signed-off-by: Guillaume Nault <gnault@redhat.com>
-> ---
->  include/linux/lsm_hook_defs.h | 2 +-
->  include/linux/security.h      | 5 +++--
->  security/security.c           | 2 +-
->  security/selinux/hooks.c      | 4 ++--
->  4 files changed, 7 insertions(+), 6 deletions(-)
+Hi Jeff,
 
-Thanks Guillaume, this looks good to me.  I had limited network access
-last week and was only monitoring my email for urgent issues, but from
-what I can tell it looks like this was picked up in the netdev tree so
-I'll leave it alone, but if anything changes let me know and I'll
-merge it via the LSM tree.
+On arch/um/, (subarch i386 or x86_64), hostfs build fails with:
 
---=20
-paul-moore.com
+../fs/hostfs/hostfs_kern.c:520:36: error: incompatible type for arg
+ument 2 of 'inode_set_ctime_to_ts'
+../include/linux/fs.h:1499:73: note: expected 'struct timespec64' b
+ut argument is of type 'const struct hostfs_timespec *'
+
+
+-- 
+~Randy
