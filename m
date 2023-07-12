@@ -2,288 +2,229 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 297DAEB64D9
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jul 2023 09:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE491EB64D9
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jul 2023 10:55:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231294AbjGLJ5W (ORCPT
+        id S231732AbjGLKz2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Jul 2023 05:57:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34240 "EHLO
+        Wed, 12 Jul 2023 06:55:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbjGLJ5V (ORCPT
+        with ESMTP id S231858AbjGLKz0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Jul 2023 05:57:21 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4768594;
-        Wed, 12 Jul 2023 02:57:20 -0700 (PDT)
-Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4R1Cjr4d5Bz6857p;
-        Wed, 12 Jul 2023 17:53:36 +0800 (CST)
-Received: from [10.123.123.126] (10.123.123.126) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Wed, 12 Jul 2023 10:57:17 +0100
-Message-ID: <0e549107-0435-717d-4b98-7f6578919c8b@huawei.com>
-Date:   Wed, 12 Jul 2023 12:57:16 +0300
+        Wed, 12 Jul 2023 06:55:26 -0400
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 473CE1718
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Jul 2023 03:55:23 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4R1F555dypzMq4rn;
+        Wed, 12 Jul 2023 10:55:21 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4R1F543rTKz7cc;
+        Wed, 12 Jul 2023 12:55:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1689159321;
+        bh=MXMR0QJpxC+UeXa9j+Xw92U/wAKYxcatbVIZYEVLQjA=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=h4RUn+LjafPynjaWUEyVdwyTch9Txy0l01cGTZNGfdmvGv2eKVJvJZRnKmMm8t9n1
+         XlefRRRzCCKbal1k6Wo0hkCLjt2V4zWEtzfVcrN77JD/eHEUzQtEMRJbxsBmNNuSOk
+         FF0cWdf3sz9aAsOTMKoTeVq3uc7kOtkFjaJDI550=
+Message-ID: <6dfc0198-9010-7c54-2699-d3b867249850@digikod.net>
+Date:   Wed, 12 Jul 2023 12:55:19 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v11.1] selftests/landlock: Add 11 new test suites
- dedicated to network
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <artem.kuzin@huawei.com>, <gnoack3000@gmail.com>,
-        <willemdebruijn.kernel@gmail.com>, <yusongping@huawei.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>
-References: <20230515161339.631577-11-konstantin.meskhidze@huawei.com>
- <20230706145543.1284007-1-mic@digikod.net>
- <3db64cf8-6a45-a361-aa57-9bfbaf866ef8@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <3db64cf8-6a45-a361-aa57-9bfbaf866ef8@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+User-Agent: 
+Subject: Re: [PATCH v2 0/6] Landlock: ioctl support
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>,
+        linux-security-module@vger.kernel.org
+Cc:     Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>
+References: <20230623144329.136541-1-gnoack@google.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20230623144329.136541-1-gnoack@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.123.123.126]
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
-X-CFilter-Loop: Reflected
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
+Hi,
 
-7/12/2023 10:02 AM, Mickaël Salaün пишет:
-> 
-> On 06/07/2023 16:55, Mickaël Salaün wrote:
->> From: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->> 
->> This patch is a revamp of the v11 tests [1] with new tests (see the
->> "Changes since v11" description).  I (Mickaël) only added the following
->> todo list and the "Changes since v11" sections in this commit message.
->> I think this patch is good but it would appreciate reviews.
->> You can find the diff of my changes here but it is not really readable:
->> https://git.kernel.org/mic/c/78edf722fba5 (landlock-net-v11 branch)
->> [1] https://lore.kernel.org/all/20230515161339.631577-11-konstantin.meskhidze@huawei.com/
->> TODO:
->> - Rename all "net_service" to "net_port".
->> - Fix the two kernel bugs found with the new tests.
->> - Update this commit message with a small description of all tests.
-> 
-> [...]
-> 
->> +FIXTURE_SETUP(ipv4)
->> +{
->> +	const struct protocol_variant prot = {
->> +		.domain = AF_INET,
->> +		.type = variant->type,
->> +	};
->> +
->> +	disable_caps(_metadata);
->> +
->> +	set_service(&self->srv0, prot, 0);
->> +	set_service(&self->srv1, prot, 1);
->> +
->> +	setup_loopback(_metadata);
->> +};
->> +
->> +FIXTURE_TEARDOWN(ipv4)
->> +{
->> +}
->> +
->> +// Kernel FIXME: tcp_sandbox_with_tcp and tcp_sandbox_with_udp
->> +TEST_F(ipv4, from_unix_to_inet)
->> +{
->> +	int unix_stream_fd, unix_dgram_fd;
->> +
->> +	if (variant->sandbox == TCP_SANDBOX) {
->> +		const struct landlock_ruleset_attr ruleset_attr = {
->> +			.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
->> +					      LANDLOCK_ACCESS_NET_CONNECT_TCP,
->> +		};
->> +		const struct landlock_net_service_attr tcp_bind_connect_p0 = {
->> +			.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
->> +					  LANDLOCK_ACCESS_NET_CONNECT_TCP,
->> +			.port = self->srv0.port,
->> +		};
->> +		int ruleset_fd;
->> +
->> +		/* Denies connect and bind to check errno value. */
->> +		ruleset_fd = landlock_create_ruleset(&ruleset_attr,
->> +						     sizeof(ruleset_attr), 0);
->> +		ASSERT_LE(0, ruleset_fd);
->> +
->> +		/* Allows connect and bind for srv0.  */
->> +		ASSERT_EQ(0, landlock_add_rule(ruleset_fd,
->> +					       LANDLOCK_RULE_NET_SERVICE,
->> +					       &tcp_bind_connect_p0, 0));
->> +
->> +		enforce_ruleset(_metadata, ruleset_fd);
->> +		EXPECT_EQ(0, close(ruleset_fd));
->> +	}
->> +
->> +	unix_stream_fd = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
->> +	ASSERT_LE(0, unix_stream_fd);
->> +
->> +	unix_dgram_fd = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
->> +	ASSERT_LE(0, unix_dgram_fd);
->> +
->> +	/* Checks unix stream bind and connect for srv0. */
->> +	EXPECT_EQ(-EINVAL, bind_variant(unix_stream_fd, &self->srv0));
->> +	EXPECT_EQ(-EINVAL, connect_variant(unix_stream_fd, &self->srv0));
->> +
->> +	/* Checks unix stream bind and connect for srv1. */
->> +	EXPECT_EQ(-EINVAL, bind_variant(unix_stream_fd, &self->srv1))
->> +	{
->> +		TH_LOG("Wrong bind error: %s", strerror(errno));
->> +	}
->> +	EXPECT_EQ(-EINVAL, connect_variant(unix_stream_fd, &self->srv1));
->> +
->> +	/* Checks unix datagram bind and connect for srv0. */
->> +	EXPECT_EQ(-EINVAL, bind_variant(unix_dgram_fd, &self->srv0));
->> +	EXPECT_EQ(-EINVAL, connect_variant(unix_dgram_fd, &self->srv0));
->> +
->> +	/* Checks unix datagram bind and connect for srv0. */
->> +	EXPECT_EQ(-EINVAL, bind_variant(unix_dgram_fd, &self->srv1));
->> +	EXPECT_EQ(-EINVAL, connect_variant(unix_dgram_fd, &self->srv1));
->> +}
-> 
-> We should also add a test to make sure errno is the same with and
-> without sandboxing when using port 0 for connect and consistent with
-> bind (using an available port). The test fixture and variants should be
-> quite similar to the "ipv4" ones, but we can also add AF_INET6 variants,
-> which will result in 8 "ip" variants:
-> 
-> TEST_F(ip, port_zero)
-> {
-> 	if (variant->sandbox == TCP_SANDBOX) {
-> 		/* Denies any connect and bind. */
-> 	}
-> 	/* Checks errno for port 0. */
-> }
+Thinking more about this, this first step is too restrictive, which
+might lead to dangerous situations.
 
-  Ok. Got it.
+My main concern is that this approach will deny innocuous or even "good"
+IOCTL. For instance, if FIOCLEX is denied, this could leak file
+descriptors and then introduce vulnerabilities.
+
+As we discussed before, we cannot categorize all IOCTLs, but I think we
+need to add exceptions for a subset of them, and maintain this list.
+SELinux has some special handling within selinux_file_ioctl(), and we
+should use that as a starting point. The do_vfs_ioctl() function is
+another important place to look at. The main thing to keep in mind is
+that Landlock's goal is to restrict access to data (e.g. FS, network,
+IPC, bypass through other processes), not to restrict innocuous (at
+least in theory) kernel features.
+
+I think, at least all IOCTLs targeting file descriptors themselves 
+should always be allowed, similar to fcntl(2)'s F_SETFD and F_SETFL 
+commands:
+- FIOCLEX
+- FIONCLEX
+- FIONBIO
+- FIOASYNC
+
+Some others may not be a good idea:
+- FIONREAD should be OK in theory but the VFS part only target regular
+files and there is no access check according to the read right, which is
+weird.
+- FICLONE, FICLONERANGE, FIDEDUPRANGE: read/write actions.
+
+We should add a built-time or run-time safeguard to be sure that future
+FD IOCTLs will be added to this list. I'm not sure how to efficiently
+implement such protection though.
+
+
+I'm also wondering if we should not split the IOCTL access right into
+three: mostly read, mostly write, and misc. _IOC_READ and _IOC_WRITE are
+definitely not perfect, but tied to specific drivers (i.e. not a file
+hierarchy but a block or character device) this might help until we get
+a more fine-grained IOCTL access control. We should check if it's worth
+it according to commonly used drivers. Looking at the TTY driver, most
+IOCTLs are without read or write markers. Using this split could induce
+a false sense of security, so it should be well motivated.
+
+
+
+On 23/06/2023 16:43, Günther Noack wrote:
+> Hello!
 > 
-> [...]
+> These patches add simple ioctl(2) support to Landlock.
 > 
->> +FIXTURE(inet)
->> +{
->> +	struct service_fixture srv0, srv1;
->> +};
+> Objective ~~~~~~~~~
 > 
-> The "inet" variants are useless and should be removed. The "inet"
-> fixture can then be renamed to "ipv4_tcp".
+> Make ioctl(2) requests restrictable with Landlock, in a way that is 
+> useful for real-world applications.
 > 
-   Right. Thanks.
+> Proposed approach ~~~~~~~~~~~~~~~~~
 > 
->> +
->> +FIXTURE_VARIANT(inet)
->> +{
->> +	const bool is_sandboxed;
->> +	const struct protocol_variant prot;
->> +};
->> +
->> +/* clang-format off */
->> +FIXTURE_VARIANT_ADD(inet, no_sandbox_with_ipv4) {
->> +	/* clang-format on */
->> +	.is_sandboxed = false,
->> +	.prot = {
->> +		.domain = AF_INET,
->> +		.type = SOCK_STREAM,
->> +	},
->> +};
->> +
->> +/* clang-format off */
->> +FIXTURE_VARIANT_ADD(inet, sandbox_with_ipv4) {
->> +	/* clang-format on */
->> +	.is_sandboxed = true,
->> +	.prot = {
->> +		.domain = AF_INET,
->> +		.type = SOCK_STREAM,
->> +	},
->> +};
->> +
->> +/* clang-format off */
->> +FIXTURE_VARIANT_ADD(inet, no_sandbox_with_ipv6) {
->> +	/* clang-format on */
->> +	.is_sandboxed = false,
->> +	.prot = {
->> +		.domain = AF_INET6,
->> +		.type = SOCK_STREAM,
->> +	},
->> +};
->> +
->> +/* clang-format off */
->> +FIXTURE_VARIANT_ADD(inet, sandbox_with_ipv6) {
->> +	/* clang-format on */
->> +	.is_sandboxed = true,
->> +	.prot = {
->> +		.domain = AF_INET6,
->> +		.type = SOCK_STREAM,
->> +	},
->> +};
->> +
->> +FIXTURE_SETUP(inet)
->> +{
->> +	const struct protocol_variant ipv4_tcp = {
->> +		.domain = AF_INET,
->> +		.type = SOCK_STREAM,
->> +	};
->> +
->> +	disable_caps(_metadata);
->> +
->> +	ASSERT_EQ(0, set_service(&self->srv0, ipv4_tcp, 0));
->> +	ASSERT_EQ(0, set_service(&self->srv1, ipv4_tcp, 1));
->> +
->> +	setup_loopback(_metadata);
->> +};
->> +
->> +FIXTURE_TEARDOWN(inet)
->> +{
->> +}
->> +
->> +TEST_F(inet, port_endianness)
->> +{
->> +	const struct landlock_ruleset_attr ruleset_attr = {
->> +		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
->> +				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
->> +	};
->> +	const struct landlock_net_service_attr bind_host_endian_p0 = {
->> +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
->> +		/* Host port format. */
->> +		.port = self->srv0.port,
->> +	};
->> +	const struct landlock_net_service_attr connect_big_endian_p0 = {
->> +		.allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
->> +		/* Big endian port format. */
->> +		.port = htons(self->srv0.port),
->> +	};
->> +	const struct landlock_net_service_attr bind_connect_host_endian_p1 = {
->> +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
->> +				  LANDLOCK_ACCESS_NET_CONNECT_TCP,
->> +		/* Host port format. */
->> +		.port = self->srv1.port,
->> +	};
->> +	const unsigned int one = 1;
->> +	const char little_endian = *(const char *)&one;
->> +	int ruleset_fd;
->> +
->> +	ruleset_fd =
->> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
->> +	ASSERT_LE(0, ruleset_fd);
->> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
->> +				       &bind_host_endian_p0, 0));
->> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
->> +				       &connect_big_endian_p0, 0));
->> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
->> +				       &bind_connect_host_endian_p1, 0));
->> +	enforce_ruleset(_metadata, ruleset_fd);
->> +
->> +	/* No restriction for big endinan CPU. */
->> +	test_bind_and_connect(_metadata, &self->srv0, false, little_endian);
->> +
->> +	/* No restriction for any CPU. */
->> +	test_bind_and_connect(_metadata, &self->srv1, false, false);
->> +}
->> +
->> +TEST_HARNESS_MAIN
-> .
+> Introduce the LANDLOCK_ACCESS_FS_IOCTL right, which restricts the
+> use of ioctl(2) on file descriptors.
+> 
+> We attach the LANDLOCK_ACCESS_FS_IOCTL right to opened file 
+> descriptors, as we already do for LANDLOCK_ACCESS_FS_TRUNCATE.
+> 
+> I believe that this approach works for the majority of use cases,
+> and offers a good trade-off between Landlock API and implementation 
+> complexity and flexibility when the feature is used.
+> 
+> Current limitations ~~~~~~~~~~~~~~~~~~~
+> 
+> With this patch set, ioctl(2) requests can *not* be filtered based
+> on file type, device number (dev_t) or on the ioctl(2) request
+> number.
+> 
+> On the initial RFC patch set [1], we have reached consensus to start 
+> with this simpler coarse-grained approach, and build additional ioctl
+> restriction capabilities on top in subsequent steps.
+> 
+> [1] 
+> https://lore.kernel.org/linux-security-module/d4f1395c-d2d4-1860-3a02-2a0c023dd761@digikod.net/
+>
+>
+>
+>
+>
+> 
+Notable implications of this approach
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> * Existing inherited file descriptors stay unaffected when a program
+>  enables Landlock.
+> 
+> This means in particular that in common scenarios, the terminal's 
+> ioctls (ioctl_tty(2)) continue to work.
+> 
+> * ioctl(2) continues to be available for file descriptors acquired 
+> through means other than open(2).  Example: Network sockets, 
+> memfd_create(2), file descriptors that are already open before the 
+> Landlock ruleset is enabled.
+> 
+> Examples ~~~~~~~~
+> 
+> Starting a sandboxed shell from $HOME with 
+> samples/landlock/sandboxer:
+> 
+> LL_FS_RO=/ LL_FS_RW=. ./sandboxer /bin/bash
+> 
+> The LANDLOCK_ACCESS_FS_IOCTL right is part of the "read-write"
+> rights here, so we expect that newly opened files outside of $HOME
+> don't work with ioctl(2).
+> 
+> * "stty" works: It probes terminal properties
+> 
+> * "stty </dev/tty" fails: /dev/tty can be reopened, but the ioctl is 
+> denied.
+> 
+> * "eject" fails: ioctls to use CD-ROM drive are denied.
+> 
+> * "ls /dev" works: It uses ioctl to get the terminal size for 
+> columnar layout
+> 
+> * The text editors "vim" and "mg" work.  (GNU Emacs fails because it 
+> attempts to reopen /dev/tty.)
+> 
+> Related Work ~~~~~~~~~~~~
+> 
+> OpenBSD's pledge(2) [2] restricts ioctl(2) independent of the file 
+> descriptor which is used.  The implementers maintain multiple 
+> allow-lists of predefined ioctl(2) operations required for different 
+> application domains such as "audio", "bpf", "tty" and "inet".
+> 
+> OpenBSD does not guarantee ABI backwards compatibility to the same 
+> extent as Linux does, so it's easier for them to update these lists 
+> in later versions.  It might not be a feasible approach for Linux 
+> though.
+> 
+> [2] https://man.openbsd.org/OpenBSD-7.3/pledge.2
+> 
+> Changes ~~~~~~~
+> 
+> V2: * rebased on mic-next * added documentation * exercise ioctl in 
+> the memfd test * test: Use layout0 for the test
+> 
+> ---
+> 
+> V1: 
+> https://lore.kernel.org/linux-security-module/20230502171755.9788-1-gnoack3000@gmail.com/
+>
+>
+>
+>
+>
+> 
+Günther Noack (6): landlock: Increment Landlock ABI version to 4
+> landlock: Add LANDLOCK_ACCESS_FS_IOCTL access right 
+> selftests/landlock: Test ioctl support selftests/landlock: Test ioctl
+> with memfds samples/landlock: Add support for 
+> LANDLOCK_ACCESS_FS_IOCTL landlock: Document ioctl support
+> 
+> Documentation/userspace-api/landlock.rst     | 52 ++++++++----- 
+> include/uapi/linux/landlock.h                | 19 +++-- 
+> samples/landlock/sandboxer.c                 | 12 ++- 
+> security/landlock/fs.c                       | 21 +++++- 
+> security/landlock/limits.h                   |  2 +- 
+> security/landlock/syscalls.c                 |  2 +- 
+> tools/testing/selftests/landlock/base_test.c |  2 +- 
+> tools/testing/selftests/landlock/fs_test.c   | 77 
+> ++++++++++++++++++-- 8 files changed, 149 insertions(+), 38 
+> deletions(-)
+> 
+> 
+> base-commit: 35ca4239929737bdc021ee923f97ebe7aff8fcc4
