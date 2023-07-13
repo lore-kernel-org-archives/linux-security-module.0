@@ -2,125 +2,305 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4702EB64DD
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jul 2023 09:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A5DBC001B0
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jul 2023 11:44:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232008AbjGMJce (ORCPT
+        id S233915AbjGMLow (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Jul 2023 05:32:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54728 "EHLO
+        Thu, 13 Jul 2023 07:44:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232442AbjGMJcc (ORCPT
+        with ESMTP id S234126AbjGMLos (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Jul 2023 05:32:32 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2093.outbound.protection.outlook.com [40.107.243.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07607210A;
-        Thu, 13 Jul 2023 02:32:31 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DHlhnMOB6zp8MlgiY6Wzz3Qd8bua0x3EjzIMYZ9ObatHOvurqcGoTbjD5MfvpwZnZptFquHYhLapL1/iuQ3bX+kwDNv4EtKQdfA+Rq+dd52vuvguHzTf8Z8LU9BKuQvQui6MPQ5YJBdtPz7ElVzlxMCahFsd1O+knI+Ygtr8ER9v6EtP5q8ij+iJwiliMX/Kkv8AVtPq6q3QxUHbGirk4gMYG81KSTVyTLlkKVgDnSZTx2iCEEec4wY+8bBQD+OcWSbEDP+otfYz0EiQd/KWMoC9tI/Pn15Eu/vvETPxbJaTT2D2+3LfX8i+5MypTBuqTUyErrI8YvXE12fF5nI1Xg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+bKboK0YWssvd/xaY3+LY4XVlwv1lTVHGOlEP4n2j88=;
- b=eKaqEPyXSNUE6+HraG+Fue2shV3pwJ7J6I5WuRDvXi2o6ekIB/EC+Gy0EcaYB0b7qcd0tnOpTuFKWV7xSXznwnnsffKX0Eh4/yLbdSUGC0qyGRdPGUe3nOdbJo/6ev4rYB2IpJY0BJZgJ+Wo1he1sztCXiPsPv/xRaYWbaLhB6D3CMHn4Vp6Xp3HxB4DCCL92tntMLpaZKVAeZ89DMVYP9y2/b+gIdpc5yndIMlbJ5+70G9wLCYd4NdBweh87juT66Z1DpP+0dPWHuzhFQj3QOL4lW/UfvEwMEyEisCS6kiY1fORp5beYKkOrFqrB3JaQrIzGf6vgghyzPTKKufxtw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
- dkim=pass header.d=corigine.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+bKboK0YWssvd/xaY3+LY4XVlwv1lTVHGOlEP4n2j88=;
- b=f1uP5j9i5YN8x1X63T4MEMKIohBLdDRDsrU2mR/tnghNTPOol4gSDUMZFRDq3L5LpwCoguIz0w/yJiQ0Gz8W7TFYjD9A/VT7BUKzzapopA0a24YBfWj4yaTzTkzne2ePlSuB8Z9t7rMBVM07bR0vJfVNUlj/aUT1mu7oaQ4EHFw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=corigine.com;
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
- by CO1PR13MB5016.namprd13.prod.outlook.com (2603:10b6:303:f9::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.22; Thu, 13 Jul
- 2023 09:32:26 +0000
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::d23a:8c12:d561:470]) by PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::d23a:8c12:d561:470%6]) with mapi id 15.20.6588.024; Thu, 13 Jul 2023
- 09:32:25 +0000
-Date:   Thu, 13 Jul 2023 10:32:19 +0100
-From:   Simon Horman <simon.horman@corigine.com>
-To:     Guillaume Nault <gnault@redhat.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH net-next 1/4] security: Constify sk in the sk_getsecid
- hook.
-Message-ID: <ZK/Eo3yOWaSHywXi@corigine.com>
-References: <cover.1689077819.git.gnault@redhat.com>
- <980e4d705147a44b119fe30565c40e2424dce563.1689077819.git.gnault@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <980e4d705147a44b119fe30565c40e2424dce563.1689077819.git.gnault@redhat.com>
-X-ClientProxiedBy: LO4P123CA0048.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:152::17) To PH0PR13MB4842.namprd13.prod.outlook.com
- (2603:10b6:510:78::6)
+        Thu, 13 Jul 2023 07:44:48 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A950273A;
+        Thu, 13 Jul 2023 04:44:40 -0700 (PDT)
+Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4R1t394Ntlz67mZc;
+        Thu, 13 Jul 2023 19:40:53 +0800 (CST)
+Received: from [10.123.123.126] (10.123.123.126) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Thu, 13 Jul 2023 12:44:36 +0100
+Message-ID: <a1e26075-5405-d2e3-1b86-d31afc2cfcf0@huawei.com>
+Date:   Thu, 13 Jul 2023 14:44:36 +0300
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|CO1PR13MB5016:EE_
-X-MS-Office365-Filtering-Correlation-Id: 63208abb-eb31-43b2-a190-08db83841189
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 4ol+eM1SbF1lAceQl5VB309TmdpPxf8cnAOJPfENTl9ljOwho7G3Idll5X/BRdRC6CSIGaR9VwBft3NkvPSMI54rCymVd4j5805HQYjAYtL5rX4ffvfFsomMwEA2mdVCwtW4cI/m9IU4LhT+dMrjq02vcAweziXeBp3N0oBj22g6BDXT9LaC/fXuKwPoqKQkTAehFBgzkLk2qQcxQOdfqDSr3X7/ByoaTjLrD1CtXXAZjWXtUtB16qYMNWGFAwFHWWJMSVh4/H6s3aIKDOK4/0R6Wy3jks0aB/SUH7HXaNqmmvdOjJGK75vuSXNZaDOEPUjn1BFxx8lqGnXIQc5esgZAGqTorJxHzH4IAh++UFeCGohO+ExJ+fpD+AJgSW+XHi9vVMi4q3fsYxmTbMupWFYFXLbWKq6D5X59eWSavsH3Qc/6whGtGIxH+Ju+AlW8cEqc8waNdUQ0nVokE5F2MTjOVN3SYTbnhlLIeUKaDQdpJ2klx9mogWAmAkzhbkNEhvdaRzcpwne123Pxc+Z0f2i9jMIrZ4fHXp+UmzdiZ6OLyPRqYN2j3mjI29g9n2LLYaZrwYje+IzBuM8U62f2H+7LtoyUBWaBgdjTYkJsZpY=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(366004)(39840400004)(376002)(346002)(451199021)(7416002)(44832011)(6916009)(66556008)(66946007)(66476007)(4326008)(316002)(41300700001)(4744005)(2906002)(478600001)(5660300002)(8676002)(8936002)(15650500001)(54906003)(6666004)(6486002)(6512007)(6506007)(26005)(186003)(36756003)(83380400001)(38100700002)(2616005)(86362001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?oZ8DLZvVqO3a3zS8nHT882iBxhDGKgpvsblddFuzM6lz0zodBoMamYPK0cXn?=
- =?us-ascii?Q?aMaWppEjOh8X+tQoaGyoOGfIsOpRoQElcNi9z34IlQIhR8jHrbTVNVDw5a66?=
- =?us-ascii?Q?KHd8OkD/Nqc1KeGD3GekMtcwXIYFAmLIGdOTQVYmOYeV4BsK9UtlCfxESTMf?=
- =?us-ascii?Q?H/GDUpAQD2FfA7n/DD24OolGxJ88dmqKRRLOTleI/BTxYFtLj3uAUdNjCMzx?=
- =?us-ascii?Q?KLhCwao0M/Qc5Qlv/TgEwYsIp12P3UaQN1l2+qV6PKnpJbHk2OaFLE8m9RKv?=
- =?us-ascii?Q?hIPWVNDIh5qjvkQHfdzNEQpfFmS8kcYOn/offggkd935Nl36TFaHeuIiz/Pv?=
- =?us-ascii?Q?HbtTh6JVwW5uxJx/2r4zbudy8yQrTcUK7wDJoodopzyDhMQKZ/6ur5WQ7fUu?=
- =?us-ascii?Q?JaQJLk1nWSS82S60WYXEe/a+NIX7dBlulSadEovX9wqm5//ehlnRKBCv4um3?=
- =?us-ascii?Q?PuYA7lN0aY/8cfqTDF68Bl0Pxa1SiEVdRXvdRTtUFaeInQmbh8u3uknDNhMo?=
- =?us-ascii?Q?eWhPQE9TM38N+FWEbb7pxRGHEoZHjvyc8kt3hly8GOMSEHtOYH8qaq2FV1+S?=
- =?us-ascii?Q?3PAmGCBSb+GetnqRe95eV/fWC6kK/t6BUAUAGqMUXaxfnKDwDKmQs4h8zksy?=
- =?us-ascii?Q?AodupIB0InoQ1ODlyfNWuk/MY/GulBhD9b0l+n2XzdovLZZIMbhXQp6ONTMV?=
- =?us-ascii?Q?zl6TwBVbevr/oTemoUVrvGnXvqi5LXjANDIZNqNP1ujhBTMC2YQgVyXRRbmr?=
- =?us-ascii?Q?4Any8HSDPimfLT2VIwH+h6zFMMarKGJZ1MbYtH8qszzYj5oqvmLgBnaVzWzi?=
- =?us-ascii?Q?9uuVsaFVzTIWsulYyB2uydYYpPgNFNg8jFxycA3Uj07s56JUC5gRxx/g5QcB?=
- =?us-ascii?Q?YGKme9jGCPzbGQWJJy2TjuW2aZ5TASOn2vHC/bBtMSky/dgzfU9obkwC/EhI?=
- =?us-ascii?Q?QYSzy4iPAQQ78Pvc5xSQq0H3EFUNDIC4JfcFzSV7iMK8u8ENo9dRaWaNIWQf?=
- =?us-ascii?Q?q1AkMMR51Fif9vIqPV8R2fnTpBip88Y9e9AF63Lb25N6J9p+uhSCRvwcGt57?=
- =?us-ascii?Q?cO2TkcB4wuL/UupGip/rXyMgcAocNT2zhaEzccLraokFohuxwi/0C0NUgVfS?=
- =?us-ascii?Q?Idv3chVaACTE8/bCf1B55BiPfTd+Dxdmr7CB38UHVdcIv3PVXqBufWMzoFD8?=
- =?us-ascii?Q?JZZ40KEqx8gaO90Ckj2Vgqb4yjD3IePEsWAHNH9eoAoHXfkj2+MHqeQgmyRt?=
- =?us-ascii?Q?GzksCFe8nmLJIgZvSP3ZqX6G1wxyqjFirV53S3lilW0mz2Fzov0WJ8y7dGfO?=
- =?us-ascii?Q?294tkMNFmVQJeoQDp9gxzS6GjwxHNlxqPivzo6UUCW6DeYMP6+ud6brfE00c?=
- =?us-ascii?Q?eL2un6DuzWP3afvKckQpU23yaGkz8azckVWNEvgbs/7w3SzyunpgEpUv7Isf?=
- =?us-ascii?Q?rC7ktU/J8xAp7oyOzakNERLXvBBl4Nymk521yT0sa9jmRX1sQytQWLf2wkxQ?=
- =?us-ascii?Q?k04FMUKgqm46DINVrrWMzK9WOeTZ59PC8jWTjzf5SpmE4bqEKAQxMj0lIcMb?=
- =?us-ascii?Q?Oqp1SCZ3OupSxLsHE4Ijggg8Q3bB7P6AnPaH5QazJguEtgWXADqNTq0ZB7Ib?=
- =?us-ascii?Q?Zw=3D=3D?=
-X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63208abb-eb31-43b2-a190-08db83841189
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2023 09:32:25.7451
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ym/oq8jnURE9HniJm+LSu8naKCKZoo2w7B4mfUpgYJa6gT+rpUNB6nHkqiaJTWDEcNGt1ilatYAytQiTQqe121XzFOhrLW/JY14CjhQ+Flg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR13MB5016
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v9 00/12] Network support for Landlock - allowed list of
+ protocols
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Jeff Xu <jeffxu@chromium.org>
+CC:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
+        <willemdebruijn.kernel@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>
+References: <20230116085818.165539-1-konstantin.meskhidze@huawei.com>
+ <Y/fl5iEbkL5Pj5cJ@galopp> <c20fc9eb-518e-84b4-0dd5-7b97c0825259@huawei.com>
+ <3e113e1c-4c7b-af91-14c2-11b6ffb4d3ef@digikod.net>
+ <b8a2045a-e7e8-d141-7c01-bf47874c7930@digikod.net>
+ <ZJvy2SViorgc+cZI@google.com>
+ <CABi2SkX-dzUO6NnbyqfrAg7Bbn+Ne=Xi1qC1XMrzHqVEVucQ0Q@mail.gmail.com>
+ <43e8acb2-d696-c001-b54b-d2b7cf244de7@digikod.net>
+ <CABi2SkV1Q-cvMScEtcsHbgNRuGc39eJo6KT=GwUxsWPpFGSR4A@mail.gmail.com>
+ <b4440d19-93b9-e234-007b-4fc4f987550b@digikod.net>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <b4440d19-93b9-e234-007b-4fc4f987550b@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.123.123.126]
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 11, 2023 at 03:06:08PM +0200, Guillaume Nault wrote:
-> The sk_getsecid hook shouldn't need to modify its socket argument.
-> Make it const so that callers of security_sk_classify_flow() can use a
-> const struct sock *.
+
+
+6/29/2023 2:07 PM, Mickaël Salaün пишет:
 > 
-> Signed-off-by: Guillaume Nault <gnault@redhat.com>
+> On 29/06/2023 05:18, Jeff Xu wrote:
+>> resend.
+>> 
+>> On Wed, Jun 28, 2023 at 12:29 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>>
+>>>
+>>> On 28/06/2023 19:03, Jeff Xu wrote:
+>>>> Hello,
+>>>>
+>>>> Thanks for writing up the example for an incoming TCP connection ! It
+>>>> helps with the context.
+>>>>
+>>>> Since I'm late to this thread, one thing I want to ask:  all the APIs
+>>>> proposed so far are at the process level, we don't have any API that
+>>>> applies restriction to socket fd itself, right ? this is what I
+>>>> thought, but I would like to get confirmation.
+>>>
+>>> Restriction are applied to actions, not to already existing/opened FDs.
+>>> We could add a way to restrict opened FDs, but I don't think this is the
+>>> right approach because sandboxing is a deliberate action from a process,
+>>> and it should already take care of its FDs.
+>>>
+>>>
+>>>>
+>>>> On Wed, Jun 28, 2023 at 2:09 AM Günther Noack <gnoack@google.com> wrote:
+>>>>>
+>>>>> Hello!
+>>>>>
+>>>>> On Mon, Jun 26, 2023 at 05:29:34PM +0200, Mickaël Salaün wrote:
+>>>>>> Here is a design to be able to only allow a set of network protocols and
+>>>>>> deny everything else. This would be complementary to Konstantin's patch
+>>>>>> series which addresses fine-grained access control.
+>>>>>>
+>>>>>> First, I want to remind that Landlock follows an allowed list approach with
+>>>>>> a set of (growing) supported actions (for compatibility reasons), which is
+>>>>>> kind of an allow-list-on-a-deny-list. But with this proposal, we want to be
+>>>>>> able to deny everything, which means: supported, not supported, known and
+>>>>>> unknown protocols.
+>>>>>>
+>>>>>> We could add a new "handled_access_socket" field to the landlock_ruleset
+>>>>>> struct, which could contain a LANDLOCK_ACCESS_SOCKET_CREATE flag.
+>>>>>>
+>>>>>> If this field is set, users could add a new type of rules:
+>>>>>> struct landlock_socket_attr {
+>>>>>>       __u64 allowed_access;
+>>>>>>       int domain; // see socket(2)
+>>>>>>       int type; // see socket(2)
+>>>>>> }
+>>>>>>
+>>>>>> The allowed_access field would only contain LANDLOCK_ACCESS_SOCKET_CREATE at
+>>>>>> first, but it could grow with other actions (which cannot be handled with
+>>>>>> seccomp):
+>>>>>> - use: walk through all opened FDs and mark them as allowed or denied
+>>>>>> - receive: hook on received FDs
+>>>>>> - send: hook on sent FDs
+>>>>>>
+>>>>>> We might also use the same approach for non-socket objects that can be
+>>>>>> identified with some meaningful properties.
+>>>>>>
+>>>>>> What do you think?
+>>>>>
+>>>>> This sounds like a good plan to me - it would make it possible to restrict new
+>>>>> socket creation using protocols that were not intended to be used, and I also
+>>>>> think it would fit the Landlock model nicely.
+>>>>>
+>>>>> Small remark on the side: The security_socket_create() hook does not only get
+>>>>> invoked as a result of socket(2), but also as a part of accept(2) - so this
+>>>>> approach might already prevent new connections very effectively.
+>>>>>
+>>>> That is an interesting aspect that might be worth discussing more.
+>>>> seccomp is per syscall, landlock doesn't necessarily follow the same,
+>>>> another design is to add more logic in Landlock, e.g.
+>>>> LANDLOCK_ACCESS_SOCKET_PROTOCOL which will apply to all of the socket
+>>>> calls (socket/bind/listen/accept/connect). App dev might feel it is
+>>>> easier to use.
+>>>
+>>> seccomp restricts the use of the syscall interface, whereas Landlock
+>>> restricts the use of kernel objects (i.e. the semantic).
+>>>
+>>> We need to find a good tradeoff between a lot of access rights and a few
+>>> grouping different actions. This should make sense from a developer
+>>> point of view according to its knowledge and use of the kernel
+>>> interfaces (potential wrapped with high level libraries), but also to
+>>> the semantic of the sandbox and the security guarantees we want to provide.
+>>>
+>>> We should also keep in mind that high level Landlock libraries can take
+>>> care of potential coarse-grained use of restrictions.
+>>>
+>>>
+>>>>
+>>>>> Spelling out some scenarios, so that we are sure that we are on the same page:
+>>>>>
+>>>>> A)
+>>>>>
+>>>>> A program that does not need networking could specify a ruleset where
+>>>>> LANDLOCK_ACCESS_SOCKET_CREATE is handled, and simply not permit anything.
+>>>>>
+>>>>> B)
+>>>>>
+>>>>> A program that runs a TCP server could specify a ruleset where
+>>>>> LANDLOCK_NET_BIND_TCP, LANDLOCK_NET_CONNECT_TCP and
+>>>>> LANDLOCK_ACCESS_SOCKET_CREATE are handled, and where the following rules are added:
+>>>>>
+>>>>>     /* From Konstantin's patch set */
+>>>>>     struct landlock_net_service_attr bind_attr = {
+>>>>>       .allowed_access = LANDLOCK_NET_BIND_TCP,
+>>>>>       .port = 8080,
+>>>>>     };
+>>>>>
+>>>>>     /* From Mickaël's proposal */
+>>>>>     struct landlock_socket_attr sock_inet_attr = {
+>>>>>       .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+>>>>>       .domain = AF_INET,
+>>>>>       .type = SOCK_STREAM,
+>>>>>     }
+>>>>>
+>>>>>     struct landlock_socket_attr sock_inet6_attr = {
+>>>>>       .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+>>>>>       .domain = AF_INET6,
+>>>>>        .type = SOCK_STREAM,
+>>>>>     }
+>>>>>
+>>>>> That should then be enough to bind and listen on ports, whereas outgoing
+>>>>> connections with TCP and anything using other network protocols would not be
+>>>>> permitted.
+>>>>>
+>>>> TCP server is an interesting case. From a security perspective, a
+>>>> process cares if it is acting as a server or client in TCP, a server
+>>>> might only want to accept an incoming TCP connection, never initiate
+>>>> an outgoing TCP connection, and a client is the opposite.
+>>>>
+>>>> Processes can restrict outgoing/incoming TCP connection by seccomp for
+>>>> accept(2) or connect(2),  though I feel Landlock can do this more
+>>>> naturally for app dev, and at per-protocol level.  seccomp doesn't
+>>>> provide per-protocol granularity.
+>>>
+>>> Right, seccomp cannot filter TCP ports.
+>>>
+>>>>
+>>>> For bind(2), iirc, it can be used for a server to assign dst port of
+>>>> incoming TCP connection, also by a client to assign a src port of an
+>>>> outgoing TCP connection. LANDLOCK_NET_BIND_TCP will apply to both
+>>>> cases, right ? this might not be a problem, just something to keep
+>>>> note.
+>>>
+>>> Good point. I think it is in line with the rule definition: to allow to
+>>> bind on a specific port. However, if clients want to set the source port
+>>> to a (legitimate) value, then that would be an issue because we cannot
+>>> allow a whole range of ports (e.g., >= 1024). I'm not sure if this
+>>> practice would be deemed "legitimate" though. Do you know client
+>>> applications using bind?
+>>>
+>>> Konstantin, we should have a test for this case anyway.
+> 
+> Thinking more about TCP clients binding sockets, a
+> LANDLOCK_ACCESS_NET_LISTEN_TCP would be more useful than
+> LANDLOCK_ACCESS_NET_BIND_TCP, but being able to limit the scope of
+> "bindable" ports is also valuable to forbid a malicious sandboxed
+> process to impersonate a legitimate server process. This also means that
+> it might be interesting to be able to handle port ranges.
+> 
+> We already have a LANDLOCK_ACCESS_NET_BIND_TCP implementation and
+> related tests, so I think we should proceed with that. The next
+> network-related patch series should implement this
+> LANDLOCK_ACCESS_NET_LISTEN_TCP access right though, which should not be
+> difficult thanks to the framework implemented with current patch series.
+> 
+> Konstantin, would you like to develop the TCP listening access control
+> once this patch series land?
 
-Reviewed-by: Simon Horman <simon.horman@corigine.com>
+  Hi all,
+  Sorry for the late reply. I think this access control would be useful.
+  I would like to add LANDLOCK_ACCESS_NET_LISTEN_TCP access right in 
+future patches.
 
+
+
+
+> 
+> 
+>>>>> (Alternatively, it could bind() the socket early, *then enable Landlock* and
+>>>>> leave out the rule for BIND_TCP, only permitting SOCKET_CREATE for IPv4 and
+>>>>> IPv6, so that listen() and accept() work on the already-bound socket.)
+>>>>>
+>>>> For this approach, LANDLOCK_ACCESS_SOCKET_PROTOCOL is a better name,
+>>>> so dev is fully aware it is not just applied to socket create.
+>>>
+>>> I don't get the semantic of LANDLOCK_ACCESS_SOCKET_PROTOCOL. What does
+>>> PROTOCOL mean?
+>>>
+>> I meant checking family + type of socket, and apply to all of
+>> socket(2),bind(2),accept(2),connect(2),listen(2), maybe
+>> send(2)/recv(2) too.
+> 
+> OK, that would be kind of similar to the LANDLOCK_ACCESS_SOCKET_USE
+> description. However, I think this kind of global approach has several
+> issues:
+> - This covers a lot of different aspects and would increase the cost of
+> development/testing/review.
+> - Whereas it wraps different actions, it will not let user space have a
+> fine-grained access control on these, which could be useful for some use
+> cases.
+> - I don't see the point of restricting accept(2) if we can already
+> restrict bind(2) and listen(2). accept(2) could be useful to identify
+> the remote peer but I'm not convinced this would make sense, and if it
+> would, then this can be postponed until we have a way to identify peers.
+> - For performance reasons, we should avoid restricting
+> send/recv/read/write but instead only restrict the control plane: object
+> creation and configuration.
+
+   I agree. I'm not sure about restricting the data plane here. We have 
+to restrict connection making, not data transfering when connection has 
+been established.
+> 
+> I'm not convinced that being able to control all kind of socket bind,
+> listen and connect actions might be worth implementing instead of a
+> fine-grained access control for the main protocols (TCP, UDP, unix and
+> vsock maybe), with the related tests and guarantees.
+> 
+> However, this landlock_socket_attr struct could have an allowed_access
+> field that could contain LANDLOCK_ACCESS_NET_{CONNECT,LISTEN,BIND}_TCP
+> rights (which would just not be constrained by any port, except if a
+> landlock_net_port_attr rule matches). It would then make sense to rename
+> LANDLOCK_ACCESS_SOCKET_CREATE to LANDLOCK_ACCESS_NET_CREATE_SOCKET. This
+> right would not be accepted in a landlock_net_port_attr.allowed_access
+> though.
+> 
+>> 
+>> s/LANDLOCK_ACCESS_SOCKET_CREATE/LANDLOCK_ACCESS_SOCKET_TYPE.
+>> 
+>> This implies the kernel will check on socket fd's property (family +
+>> type) at those calls, this applies to
+>> a - the socket fd is created within the process, after landlock is applied.
+>> b - created in process prior to landlock is applied.
+>> c - created out of process then passed into this process,
+> 
+> OK, these are the same rules as for LANDLOCK_ACCESS_NET_{CONNECT,BIND}_TCP.
+> .
