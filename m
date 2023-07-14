@@ -2,78 +2,75 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9680C001DD
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jul 2023 01:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DE7C001DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jul 2023 01:55:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232681AbjGNBa4 (ORCPT
+        id S232624AbjGNBz6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Jul 2023 21:30:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56420 "EHLO
+        Thu, 13 Jul 2023 21:55:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233149AbjGNBaw (ORCPT
+        with ESMTP id S234208AbjGNBz5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Jul 2023 21:30:52 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 670202D48
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Jul 2023 18:30:08 -0700 (PDT)
+        Thu, 13 Jul 2023 21:55:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 492F62D65
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Jul 2023 18:55:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689298207;
+        s=mimecast20190719; t=1689299709;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=hg3g8npLeTm73F7FXPVIMRbHW6X0157DFp2TVsm0Cjc=;
-        b=Pmg6iq2345a8lB7iqYYWnGKd+Rcr+eki+wJflIpnwWcAU4YKB+mn+Ecs/UuIKH/ZiXwX1J
-        /nUHy39YiaeBA7sX0xGp+GAEAlg/ew4rDFwVmTHAn+14cEl29AO2j8fBcj0gR7aHd89vnF
-        m/1moDAMjuDoOKrPCfQ4qzQvBW6L17M=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=t11z2xnva4fny6jsTsvYyK9TF2oEGJCt+IK9C2prKKY=;
+        b=Go1uVO8gkHKymxP3g5XA255cUFIwocl3GXviKSB0T1Lo8Kb+nqFiEw9KC4Wzbuq3pByfjN
+        Z6FeTtt9VcgSqYgmNuwcWWzLYDSyL6gbNARpRJv2lIOlhQPk/Nq7a/HVR98Lma5COU8MGO
+        nrrLf3d4VWzcrzuxHXzXUBXUMttGbeU=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-584-Lpta3X_zMeeEm_OhiHoYZw-1; Thu, 13 Jul 2023 21:30:06 -0400
-X-MC-Unique: Lpta3X_zMeeEm_OhiHoYZw-1
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-55c29c283f5so1068691a12.2
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Jul 2023 18:30:06 -0700 (PDT)
+ us-mta-641-k7LQuPIaMCuhsy5ukBDjZA-1; Thu, 13 Jul 2023 21:55:08 -0400
+X-MC-Unique: k7LQuPIaMCuhsy5ukBDjZA-1
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-55c29c283f5so1085122a12.2
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Jul 2023 18:55:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689298205; x=1691890205;
+        d=1e100.net; s=20221208; t=1689299707; x=1691891707;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hg3g8npLeTm73F7FXPVIMRbHW6X0157DFp2TVsm0Cjc=;
-        b=ideRtCgoLGgThTo5vAI2sdWKskyQm3QaQz7hI8QkaJ3OhlYNDAR4wN14YyvuFczUGf
-         CU8s7AaxdHxjl+6PetfiU1m1L8B/RZzZFN73WO1BX1ByG/IrcRKdrgLzH3YbU5uEfOXt
-         +TlcLQ/Thz0d2SO3ZNk+ZNzw7J+juS7vi40Vk3bjAad/2AgptnGCyDJxS5Kj9DDdHxmh
-         X5gfXVrZLjSH3QfcVGRX9CvfVAHPzX/GsigZm7GsuQB7xKBuBxZJqSLaxkyiSOGnGijh
-         nwtrwxUY9o3AAPsrMzGKGU583cCFlQXkgFJttiiSSxk4oKuGn2Dv99RJEO/4W6ot5Kei
-         KLOA==
-X-Gm-Message-State: ABy/qLaeARcA9X7xRHhk7EYMhdIO06kCpCMkotmN7KXA2Vr+8rXzUbJZ
-        UAcRKztwL5QV8KeuyzDFE3p+TeZzM5fzCyAA2hy+q3sx6BeHVXXtpkWhngSuFuMw2ldUUUEpO6i
-        xmMFX+bNk9NE9TapFA7UWE4Ig8/OjATs2jlkf
-X-Received: by 2002:a05:6a21:7803:b0:118:eeef:2a25 with SMTP id be3-20020a056a21780300b00118eeef2a25mr3486164pzc.34.1689298205011;
-        Thu, 13 Jul 2023 18:30:05 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlFq/XnCOuQNRwq2r6T10iPQLdLYwT59jK1mNIui4mQ7panH0+97fCKpRAKLGejuvfUfaDLYKg==
-X-Received: by 2002:a05:6a21:7803:b0:118:eeef:2a25 with SMTP id be3-20020a056a21780300b00118eeef2a25mr3486143pzc.34.1689298204665;
-        Thu, 13 Jul 2023 18:30:04 -0700 (PDT)
-Received: from localhost ([112.80.132.180])
-        by smtp.gmail.com with ESMTPSA id a12-20020aa7864c000000b00666e649ca46sm6009531pfo.101.2023.07.13.18.30.03
+        bh=t11z2xnva4fny6jsTsvYyK9TF2oEGJCt+IK9C2prKKY=;
+        b=apt8aoM3QToZ5DbvrPUYh0gCNka9l2MtrHG/PZT11UerPrn6VBhsVyIqaFieYQaTYF
+         sgLe0h3mAyc41p7S5fX2k1R9ahl6BJSDuO1xqv7tZJc9dY1OetHnWTmx02BxRpL6dQCU
+         X/M28cY6lBGq2T0U+OcymHAZm6uqjkAj+BjOcv65opMcqUylaDmpWjnRzsrpULMZ28mp
+         bvnJyRmesrhjkKnzIIK4PEm16P1rYw8p3ljcl6SxJhx252vWUZFx7B5ybg1Vz0LpgE76
+         Qdkj9i9nmMYRFeaBaf0Lb4twdLQRl8me8DCWqCpOm0PnoRzeKYaEoFuT5+BWviJr9Cea
+         aUnw==
+X-Gm-Message-State: ABy/qLYIK8/lrOVaDMNUBlxdg18qTDkLMYZMstBs+7PJACYrLN0EgjV7
+        Sq7dpfWSrhvCMHyE3W7ejIJWpFBr0pIPqKgMXw6gwPcwokPDVjlK4exaQ+7zBwyuha8celVSegU
+        tReOt5aEs1/2BD9AcyxhvEbj5HWAiKQYydmMM
+X-Received: by 2002:a05:6a20:3d84:b0:12e:68af:dcfc with SMTP id s4-20020a056a203d8400b0012e68afdcfcmr3869002pzi.18.1689299707146;
+        Thu, 13 Jul 2023 18:55:07 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlFQDiz8QNDl10fiRzDQ8whsY+IzQwOJ0SezSEKyqNHzS749qb8dB3md3RyPi95svCJAa6qRlg==
+X-Received: by 2002:a05:6a20:3d84:b0:12e:68af:dcfc with SMTP id s4-20020a056a203d8400b0012e68afdcfcmr3868989pzi.18.1689299706802;
+        Thu, 13 Jul 2023 18:55:06 -0700 (PDT)
+Received: from localhost ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id s10-20020a170902b18a00b001b9dfa8d884sm6537684plr.226.2023.07.13.18.55.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jul 2023 18:30:04 -0700 (PDT)
-Date:   Fri, 14 Jul 2023 09:29:04 +0800
+        Thu, 13 Jul 2023 18:55:06 -0700 (PDT)
+Date:   Fri, 14 Jul 2023 09:46:29 +0800
 From:   Coiby Xu <coxu@redhat.com>
 To:     Mimi Zohar <zohar@linux.ibm.com>
 Cc:     linux-integrity@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        "open list:KEXEC" <kexec@lists.infradead.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ima: require signed IMA policy when UEFI secure boot is
- enabled
-Message-ID: <kglacif5fwh3byrjkmlzygpnaecdb2zxh6hbglnvdbsfu7hbxm@gc3mjr37mnpb>
-References: <20230703115442.129725-1-coxu@redhat.com>
- <b61fedf214cbe72de063a3bf516dd72f80595219.camel@linux.ibm.com>
+Subject: Re: [PATCH] kexec_file: ima: allow loading a kernel with its IMA
+ signature verified
+Message-ID: <dsiyhyusai6yvet3dd44c6ptumw3fq4j3xfvi5qy6ebwkoyk43@g3anjnbhzvqk>
+References: <20230711031604.717124-1-coxu@redhat.com>
+ <eaa1f1901abbceb2edc0aadaa94d9d959413c984.camel@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <b61fedf214cbe72de063a3bf516dd72f80595219.camel@linux.ibm.com>
+In-Reply-To: <eaa1f1901abbceb2edc0aadaa94d9d959413c984.camel@linux.ibm.com>
 X-Mimecast-Spam-Score: 0
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset=us-ascii; format=flowed
@@ -81,54 +78,72 @@ Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 04, 2023 at 08:57:10AM -0400, Mimi Zohar wrote:
->On Mon, 2023-07-03 at 19:54 +0800, Coiby Xu wrote:
->> With the introduction of the .machine keyring for UEFI-based systems,
->> users are able to add custom CAs keys via MOK. This allow users to sign
->> their own IMA polices. For the sake of security, mandate signed IMA
->> policy when UEFI secure boot is enabled.
+On Wed, Jul 12, 2023 at 02:31:43PM -0400, Mimi Zohar wrote:
+>[Cc'ing the LSM mailing list.]
+>
+>On Tue, 2023-07-11 at 11:16 +0800, Coiby Xu wrote:
+>> When IMA has verified the signature of the kernel image, kexec'ing this
+>> kernel should be allowed.
 >>
->> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+>> Fixes: af16df54b89d ("ima: force signature verification when CONFIG_KEXEC_SIG is configured")
 >> Signed-off-by: Coiby Xu <coxu@redhat.com>
+>
+>The original commit  29d3c1c8dfe7 ("kexec: Allow kexec_file() with
+>appropriate IMA policy when locked down") was not in lieu of the PE-
+>COFF signature, but allowed using the IMA signature on other
+>architectures.
+>
+>Currently on systems with both PE-COFF and IMA signatures, both
+>signatures are verified, assuming the file is in the IMA policy.  If
+>either signature verification fails, the kexec fails.
+>
+>With this patch, only the IMA signature would be verified.
+
+Thanks for correcting me! I thought it's already a consensus that we could use
+either signature to verify a kernel image because that's what the code of
+commit 29d3c1c8dfe7 has done and the code comment seems to confirm it.  But if
+we just read the commit message, it indeed didn't give an answer on whether x86
+and ARM are only allowed to use PE-COFF signature.
+
+>
 >> ---
->>  security/integrity/ima/ima_efi.c | 3 +++
->>  1 file changed, 3 insertions(+)
+>>  kernel/kexec_file.c | 14 +++++++++-----
+>>  1 file changed, 9 insertions(+), 5 deletions(-)
 >>
->> diff --git a/security/integrity/ima/ima_efi.c b/security/integrity/ima/ima_efi.c
->> index 9db66fe310d4..bb2881759505 100644
->> --- a/security/integrity/ima/ima_efi.c
->> +++ b/security/integrity/ima/ima_efi.c
->> @@ -58,6 +58,9 @@ static const char * const sb_arch_rules[] = {
->>  #if !IS_ENABLED(CONFIG_MODULE_SIG)
->>  	"appraise func=MODULE_CHECK appraise_type=imasig",
->>  #endif
->> +#if IS_ENABLED(CONFIG_INTEGRITY_MACHINE_KEYRING) && IS_ENABLED(CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY)
->> +	"appraise func=POLICY_CHECK appraise_type=imasig",
->> +#endif /* CONFIG_INTEGRITY_MACHINE_KEYRING && IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY */
->>  	"measure func=MODULE_CHECK",
->>  	NULL
->>  };
+>> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+>> index 881ba0d1714c..96fce001fbc0 100644
+>> --- a/kernel/kexec_file.c
+>> +++ b/kernel/kexec_file.c
+>> @@ -162,6 +162,13 @@ kimage_validate_signature(struct kimage *image)
+>>  	ret = kexec_image_verify_sig(image, image->kernel_buf,
+>>  				     image->kernel_buf_len);
+>>  	if (ret) {
+>> +		/*
+>> +		 * If the kernel image already has its IMA signature verified, permit it.
+>> +		 */
+>> +		if (ima_appraise_signature(READING_KEXEC_IMAGE)) {
+>> +			pr_notice("The kernel image already has its IMA signature verified.\n");
+>> +			return 0;
+>> +		}
+>>
+>>  		if (sig_enforce) {
+>>  			pr_notice("Enforced kernel signature verification failed (%d).\n", ret);
+>> @@ -169,12 +176,9 @@ kimage_validate_signature(struct kimage *image)
+>>  		}
+>>
+>>  		/*
+>> -		 * If IMA is guaranteed to appraise a signature on the kexec
+>> -		 * image, permit it even if the kernel is otherwise locked
+>> -		 * down.
+>> +		 * When both IMA and KEXEC_SIG fail in lockdown mode, reject it.
+>>  		 */
+>> -		if (!ima_appraise_signature(READING_KEXEC_IMAGE) &&
+>> -		    security_locked_down(LOCKDOWN_KEXEC))
+>> +		if (security_locked_down(LOCKDOWN_KEXEC))
+>>  			return -EPERM;
+>>
+>>  		pr_debug("kernel signature verification failed (%d).\n", ret);
 >
->Thanks, Coiby.
-
-You are welcome!
-
->
->Using IS_ENABLED() is not wrong, but unnecessary.  IS_BUILTIN()
->suffices.
-
-Thanks for the reminding! When I was going to apply this suggestion, I
-noticed ima_efi.c uses IS_ENABLED for all configuration items i.e.
-CONFIG_MODULE_SIG and CONFIG_KEXEC_SIG which are all of bool type. Would
-you like me to switch all IS_ENABLEs to IS_BUILTIN or still use
-IS_ENABLED? While IS_BUILTIN is exclusively for bool type, it's not as
-intuitive as IS_ENABLED. So it's not easy for me to make a choice.
-
->
->-- 
->thanks,
->
->Mimi
 >
 
 -- 
