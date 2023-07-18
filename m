@@ -2,60 +2,61 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2D0EB64DD
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jul 2023 23:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E633C001DC
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jul 2023 23:53:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230152AbjGRXxD (ORCPT
+        id S231688AbjGRXxw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Jul 2023 19:53:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49438 "EHLO
+        Tue, 18 Jul 2023 19:53:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231250AbjGRXwr (ORCPT
+        with ESMTP id S231702AbjGRXwy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Jul 2023 19:52:47 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9DD03593
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Jul 2023 16:50:13 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-573d70da2afso55308997b3.2
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Jul 2023 16:50:13 -0700 (PDT)
+        Tue, 18 Jul 2023 19:52:54 -0400
+Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C137F3A9E
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Jul 2023 16:50:22 -0700 (PDT)
+Received: by mail-pl1-x64a.google.com with SMTP id d9443c01a7336-1b8a7735231so33091605ad.1
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Jul 2023 16:50:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689724161; x=1692316161;
+        d=google.com; s=20221208; t=1689724163; x=1692316163;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=v06h+ALMtOOYf7fX/Ew5y3Hfc7UGMHCjlt3bjyKHsv0=;
-        b=YRRA1+3rdyppDplfs3XH3aJvhxtsAMd7YC9o1tjP/IyjupywaQyvKq+rps81DQn6n1
-         IfT/9T8MBfb/05cpg+uFjPqU9WMKZxQ9fzOPBnRI+m2vIHPLSV2s/3KQGxo5DIXUHwOZ
-         GdmSnQGPnvE14OEYqjCx4Fm+ABerxK8mDpsKlW+8NItJ+M4Kcnqzj3n4Y+k+3R/C1UBu
-         wvL5E8Pm7bjCuwRxFwoKwRUML3nMWrNZ+3vwOtoXEZiYJEJR64OEqgs5nwKpwCN2Ct+r
-         TXr64pWKwZcTWMIuNy53NUZP6UdwEiJkjqYQFxPcJ5UQJleLQ7qGIFzyDTx8Cn3NQNJC
-         aywg==
+        bh=rKvKKloUVvRbyK7Yz9l+FaUDBRsuXKkZHJmkKN7bi2Y=;
+        b=EcELT5GqQbnbtfycTUnPewJaz2g/HV9AKkO3JNwzTK5uuMisxIn1WXx7YTmbjsQ+XX
+         SDXAGUMBTiOn2FUH3qvEgk9rfsh+jdvFnBl1T8a1rL9ik/6x/Jikv7649Is1PpM4BQ17
+         UtlDaSpo7OWPyOfIwkwyTxKFboN5htIa080od6JiwJUwpVFyOuq3uvwYJALuMoIA26MB
+         r8Co4xPfs/9EJrO92UTiJyXzb+Jvnd6fmIjfIYKkVG9a/mBtJLUwQ6N3rJdy7g4z22zt
+         Ygw1MQq7binRXHRVL1uS1Skbzt/nZzsALBROODqMohefttmXusLD/6T0/f1hYzjMb7FW
+         vGvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689724161; x=1692316161;
+        d=1e100.net; s=20221208; t=1689724163; x=1692316163;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=v06h+ALMtOOYf7fX/Ew5y3Hfc7UGMHCjlt3bjyKHsv0=;
-        b=aosMkzF7N/JIJoDdmO5qe+p4yTQ6TxODF08xtGxfZK6b/ykkv1HNlH0aJboZ3rinNL
-         Ja13nV/0Um4s8Sia9C9UsgPOiLvCIx/XJQK8BRE/kxsptn1pz47OKZaZiRovJkxMbwPC
-         pjwL5nqrI3ujedTQSoVoosFtk4vLD6lPInu4PrWhjmsBum7wp/44NiZ0ekeBCCyyMqug
-         mSPXUcbmA2zQ48B8d6mA+S9wTr2U8Tt7ZD15x8+rBaJzusDTWl7Ch+XHwRPsz77GYuje
-         W7r1TuH8+cUyM5KJH/NNON+xZO3pL0dPf4TK4w8rYfjxKqUj0lYwYWe62lVrRPg3Kcyi
-         604w==
-X-Gm-Message-State: ABy/qLZKSs/X8svRgFNtzX8rQbkmtEKhFWrJNd6Yaep/K+XL4SSvCJkU
-        jLuOmz7PeILYR302zFPtrURCA2qOikU=
-X-Google-Smtp-Source: APBJJlHpdLxbHGSEDlhfQMIka8AkYqbvfykkp39Gd8+LzOAP/g6chkA545wiuNlxw+N3wiN86qnMnz3hgbE=
+        bh=rKvKKloUVvRbyK7Yz9l+FaUDBRsuXKkZHJmkKN7bi2Y=;
+        b=Bfrr9eqbIo9HWYMGr9p2wbn1AFnlVINM4AfDuJJZG/T7Mkl0sdbXuV45tYF2PwiXp9
+         X2FiwQBes7/5XzA2sAT9/LOYKDSdUmyYn9v8R31gyoigUkKY6kkkCXQpMhgtcGQNh98q
+         /IqQkYLNJwsDkwfHPVTP5Hp2ovSCaCugsi8TX9kPOqJU4ohRlrhyZS+yzUIURwTJr+fS
+         lkpbC5v94z1CuVYsK1OZNl1uNGfH7sm434VUHxPTCedn9r/Ns7Hy+1pujtxSHGGd08AZ
+         UZeex242xTn4/KtW6kmCiCZmajGKgmrcIUi7W2KUJdElDQFXcSUmqUSRNi10ipHP3Kpt
+         T7Lw==
+X-Gm-Message-State: ABy/qLZDzevK20xn8SBwQv7BjuQU1eHzy6gbRKmFomANyI9SsN1f4qca
+        Htlk7TXc+rcmajF1dlVxBESGQV0vYxg=
+X-Google-Smtp-Source: APBJJlFbJO/Hk1I/Rl2qqMZ4yuUcIy3+1AWTLJTDX9bCulv0CF4luI/t69zZ9PixxI+uL49XmU3+g1rdNDk=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a81:b306:0:b0:56c:fce1:7d8d with SMTP id
- r6-20020a81b306000000b0056cfce17d8dmr185110ywh.6.1689724161668; Tue, 18 Jul
- 2023 16:49:21 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a17:902:ec8c:b0:1b8:95fc:d0f with SMTP id
+ x12-20020a170902ec8c00b001b895fc0d0fmr7824plg.7.1689724163589; Tue, 18 Jul
+ 2023 16:49:23 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date:   Tue, 18 Jul 2023 16:45:09 -0700
+Date:   Tue, 18 Jul 2023 16:45:10 -0700
 In-Reply-To: <20230718234512.1690985-1-seanjc@google.com>
 Mime-Version: 1.0
 References: <20230718234512.1690985-1-seanjc@google.com>
 X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
-Message-ID: <20230718234512.1690985-27-seanjc@google.com>
-Subject: [RFC PATCH v11 26/29] KVM: selftests: Add KVM_SET_USER_MEMORY_REGION2 helper
+Message-ID: <20230718234512.1690985-28-seanjc@google.com>
+Subject: [RFC PATCH v11 27/29] KVM: selftests: Expand set_memory_region_test
+ to validate guest_memfd()
 From:   Sean Christopherson <seanjc@google.com>
 To:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
@@ -98,74 +99,162 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Chao Peng <chao.p.peng@linux.intel.com>
 
-Provide a raw version as well as an assert-success version to reduce
-the amount of boilerplate code need for basic usage.
+Expand set_memory_region_test to exercise various positive and negative
+testcases for private memory.
+
+ - Non-guest_memfd() file descriptor for private memory
+ - guest_memfd() from different VM
+ - Overlapping bindings
+ - Unaligned bindings
 
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+Co-developed-by: Ackerley Tng <ackerleytng@google.com>
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+[sean: trim the testcases to remove duplicate coverage]
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- .../selftests/kvm/include/kvm_util_base.h     |  7 +++++
- tools/testing/selftests/kvm/lib/kvm_util.c    | 29 +++++++++++++++++++
- 2 files changed, 36 insertions(+)
+ .../selftests/kvm/include/kvm_util_base.h     | 10 ++
+ .../selftests/kvm/set_memory_region_test.c    | 99 +++++++++++++++++++
+ 2 files changed, 109 insertions(+)
 
 diff --git a/tools/testing/selftests/kvm/include/kvm_util_base.h b/tools/testing/selftests/kvm/include/kvm_util_base.h
-index 856440294013..334df27a6f43 100644
+index 334df27a6f43..39b38c75b99c 100644
 --- a/tools/testing/selftests/kvm/include/kvm_util_base.h
 +++ b/tools/testing/selftests/kvm/include/kvm_util_base.h
-@@ -492,6 +492,13 @@ void vm_set_user_memory_region(struct kvm_vm *vm, uint32_t slot, uint32_t flags,
- 			       uint64_t gpa, uint64_t size, void *hva);
- int __vm_set_user_memory_region(struct kvm_vm *vm, uint32_t slot, uint32_t flags,
- 				uint64_t gpa, uint64_t size, void *hva);
-+void vm_set_user_memory_region2(struct kvm_vm *vm, uint32_t slot,
-+				uint32_t flags, uint64_t gpa, uint64_t size,
-+				void *hva, uint32_t gmem_fd, uint64_t gmem_offset);
-+int __vm_set_user_memory_region2(struct kvm_vm *vm, uint32_t slot,
-+				 uint32_t flags, uint64_t gpa, uint64_t size,
-+				 void *hva, uint32_t gmem_fd, uint64_t gmem_offset);
-+
- void vm_userspace_mem_region_add(struct kvm_vm *vm,
- 	enum vm_mem_backing_src_type src_type,
- 	uint64_t guest_paddr, uint32_t slot, uint64_t npages,
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 64221c320389..f7b8b5eb3e8f 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -868,6 +868,35 @@ void vm_set_user_memory_region(struct kvm_vm *vm, uint32_t slot, uint32_t flags,
- 		    errno, strerror(errno));
+@@ -789,6 +789,16 @@ static inline struct kvm_vm *vm_create_barebones(void)
+ 	return ____vm_create(VM_SHAPE_DEFAULT);
  }
  
-+int __vm_set_user_memory_region2(struct kvm_vm *vm, uint32_t slot,
-+				 uint32_t flags, uint64_t gpa, uint64_t size,
-+				 void *hva, uint32_t gmem_fd, uint64_t gmem_offset)
++static inline struct kvm_vm *vm_create_barebones_protected_vm(void)
 +{
-+	struct kvm_userspace_memory_region2 region = {
-+		.slot = slot,
-+		.flags = flags,
-+		.guest_phys_addr = gpa,
-+		.memory_size = size,
-+		.userspace_addr = (uintptr_t)hva,
-+		.gmem_fd = gmem_fd,
-+		.gmem_offset = gmem_offset,
++	const struct vm_shape shape = {
++		.mode = VM_MODE_DEFAULT,
++		.type = KVM_X86_SW_PROTECTED_VM,
 +	};
 +
-+	return ioctl(vm->fd, KVM_SET_USER_MEMORY_REGION2, &region);
++	return ____vm_create(shape);
 +}
 +
-+void vm_set_user_memory_region2(struct kvm_vm *vm, uint32_t slot,
-+				uint32_t flags, uint64_t gpa, uint64_t size,
-+				void *hva, uint32_t gmem_fd, uint64_t gmem_offset)
+ static inline struct kvm_vm *vm_create(uint32_t nr_runnable_vcpus)
+ {
+ 	return __vm_create(VM_SHAPE_DEFAULT, nr_runnable_vcpus, 0);
+diff --git a/tools/testing/selftests/kvm/set_memory_region_test.c b/tools/testing/selftests/kvm/set_memory_region_test.c
+index a849ce23ca97..ca2ca6947376 100644
+--- a/tools/testing/selftests/kvm/set_memory_region_test.c
++++ b/tools/testing/selftests/kvm/set_memory_region_test.c
+@@ -382,6 +382,98 @@ static void test_add_max_memory_regions(void)
+ 	kvm_vm_free(vm);
+ }
+ 
++
++static void test_invalid_guest_memfd(struct kvm_vm *vm, int memfd,
++				     size_t offset, const char *msg)
 +{
-+	int ret = __vm_set_user_memory_region2(vm, slot, flags, gpa, size, hva,
-+					       gmem_fd, gmem_offset);
-+
-+	TEST_ASSERT(!ret, "KVM_SET_USER_MEMORY_REGION2 failed, errno = %d (%s)",
-+		    errno, strerror(errno));
++	int r = __vm_set_user_memory_region2(vm, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
++					     MEM_REGION_GPA, MEM_REGION_SIZE,
++					     0, memfd, offset);
++	TEST_ASSERT(r == -1 && errno == EINVAL, "%s", msg);
 +}
 +
++static void test_add_private_memory_region(void)
++{
++	struct kvm_vm *vm, *vm2;
++	int memfd, i;
 +
- /* FIXME: This thing needs to be ripped apart and rewritten. */
- void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
- 		uint64_t guest_paddr, uint32_t slot, uint64_t npages,
++	pr_info("Testing ADD of KVM_MEM_PRIVATE memory regions\n");
++
++	vm = vm_create_barebones_protected_vm();
++
++	test_invalid_guest_memfd(vm, vm->kvm_fd, 0, "KVM fd should fail");
++	test_invalid_guest_memfd(vm, vm->fd, 0, "VM's fd should fail");
++
++	memfd = kvm_memfd_alloc(MEM_REGION_SIZE, false);
++	test_invalid_guest_memfd(vm, vm->fd, 0, "Regular memfd() should fail");
++	close(memfd);
++
++	vm2 = vm_create_barebones_protected_vm();
++	memfd = vm_create_guest_memfd(vm2, MEM_REGION_SIZE, 0);
++	test_invalid_guest_memfd(vm, memfd, 0, "Other VM's guest_memfd() should fail");
++
++	vm_set_user_memory_region2(vm2, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
++				   MEM_REGION_GPA, MEM_REGION_SIZE, 0, memfd, 0);
++	close(memfd);
++	kvm_vm_free(vm2);
++
++	memfd = vm_create_guest_memfd(vm, MEM_REGION_SIZE, 0);
++	for (i = 1; i < PAGE_SIZE; i++)
++		test_invalid_guest_memfd(vm, memfd, i, "Unaligned offset should fail");
++
++	vm_set_user_memory_region2(vm, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
++				   MEM_REGION_GPA, MEM_REGION_SIZE, 0, memfd, 0);
++	close(memfd);
++
++	kvm_vm_free(vm);
++}
++
++static void test_add_overlapping_private_memory_regions(void)
++{
++	struct kvm_vm *vm;
++	int memfd;
++	int r;
++
++	pr_info("Testing ADD of overlapping KVM_MEM_PRIVATE memory regions\n");
++
++	vm = vm_create_barebones_protected_vm();
++
++	memfd = vm_create_guest_memfd(vm, MEM_REGION_SIZE * 4, 0);
++
++	vm_set_user_memory_region2(vm, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
++				   MEM_REGION_GPA, MEM_REGION_SIZE * 2, 0, memfd, 0);
++
++	vm_set_user_memory_region2(vm, MEM_REGION_SLOT + 1, KVM_MEM_PRIVATE,
++				   MEM_REGION_GPA * 2, MEM_REGION_SIZE * 2,
++				   0, memfd, MEM_REGION_SIZE * 2);
++
++	/*
++	 * Delete the first memslot, and then attempt to recreate it except
++	 * with a "bad" offset that results in overlap in the guest_memfd().
++	 */
++	vm_set_user_memory_region2(vm, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
++				   MEM_REGION_GPA, 0, NULL, -1, 0);
++
++	/* Overlap the front half of the other slot. */
++	r = __vm_set_user_memory_region2(vm, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
++					 MEM_REGION_GPA * 2 - MEM_REGION_SIZE,
++					 MEM_REGION_SIZE * 2,
++					 0, memfd, 0);
++	TEST_ASSERT(r == -1 && errno == EEXIST, "%s",
++		    "Overlapping guest_memfd() bindings should fail with EEXIST");
++
++	/* And now the back half of the other slot. */
++	r = __vm_set_user_memory_region2(vm, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
++					 MEM_REGION_GPA * 2 + MEM_REGION_SIZE,
++					 MEM_REGION_SIZE * 2,
++					 0, memfd, 0);
++	TEST_ASSERT(r == -1 && errno == EEXIST, "%s",
++		    "Overlapping guest_memfd() bindings should fail with EEXIST");
++
++	close(memfd);
++	kvm_vm_free(vm);
++}
++
+ int main(int argc, char *argv[])
+ {
+ #ifdef __x86_64__
+@@ -398,6 +490,13 @@ int main(int argc, char *argv[])
+ 
+ 	test_add_max_memory_regions();
+ 
++	if (kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(KVM_X86_SW_PROTECTED_VM)) {
++		test_add_private_memory_region();
++		test_add_overlapping_private_memory_regions();
++	} else {
++		pr_info("Skipping tests for KVM_MEM_PRIVATE memory regions\n");
++	}
++
+ #ifdef __x86_64__
+ 	if (argc > 1)
+ 		loops = atoi_positive("Number of iterations", argv[1]);
 -- 
 2.41.0.255.g8b1d071c50-goog
 
