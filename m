@@ -2,96 +2,233 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA4D8C001DE
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jul 2023 20:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89840EB64DD
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jul 2023 23:48:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229725AbjGRUQp (ORCPT
+        id S230017AbjGRXsf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Jul 2023 16:16:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40794 "EHLO
+        Tue, 18 Jul 2023 19:48:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbjGRUQp (ORCPT
+        with ESMTP id S229891AbjGRXse (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Jul 2023 16:16:45 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF0031992
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Jul 2023 13:16:43 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id ca18e2360f4ac-785ccd731a7so68815939f.0
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Jul 2023 13:16:43 -0700 (PDT)
+        Tue, 18 Jul 2023 19:48:34 -0400
+Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14B9CFC
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Jul 2023 16:48:32 -0700 (PDT)
+Received: by mail-pl1-x649.google.com with SMTP id d9443c01a7336-1b8a4571c1aso33123715ad.0
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Jul 2023 16:48:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689711403; x=1690316203;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oVimXmbmZTbISW+7n71WjspppK5V6kmtNbt/YEu7vIA=;
-        b=XQBKteELQXQuORaGgRT8MImSS86ueNUmG6KmdfwU/IYB/3xX2bftT3kU9krYco4iBf
-         2EY8gyAq93spVBZSeqNYbMhhVAusjsvMI1i+kW9/79nxRDHJWUZIUOeXBLQUo4ITiaKl
-         hN8dttzbEUwpb9easpzanAVhKCsCH1l3TletOmmAzhY0OFJkRLieHyvIBykbFUElb0ey
-         TEyR95wK6S7ITaK/cyhFaVEkXNH5ouo6FD5Ijo1bJ8LI7BXHVca0G0EVijlMgl2+bk7e
-         b6nyPVioInukFXEV/ytCqgQ5BKwCPXvEK6nzq5B/tYyL2ovFrPSa6xDzNIFvb7ztxnEk
-         pByg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689711403; x=1690316203;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=google.com; s=20221208; t=1689724111; x=1692316111;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oVimXmbmZTbISW+7n71WjspppK5V6kmtNbt/YEu7vIA=;
-        b=UF6E4Mj0ivnzX4rY5GTML1YPnCJKwFM61O2KlrxNxqSCm9ydCY7+9xGRbfjeEvoLw6
-         0mmuwsvSWAa+vUMqpZg66XrroyT8jKodaIcJxaFm0RKVFxxd5GJhlfD01mYcY4I0Hpbm
-         vi+j1DawH9pSTHmq6q6GyS3jWDNKNyOGNv8A2FFp3u5XnkkeecubxOSiepah+ngdbtR4
-         qYUn8+HAeLsyfggnyWf4I/i+bJ5EiU4S79T/rqhvwOV4lxYVykYRp7nEvRn76Px8QGZl
-         zQqifpD+43CXMJx50SLv6uu6sYMT9mVxW4k8Ka435Ti6Sod6VfsM4yuToD2iExYayzHx
-         cfEw==
-X-Gm-Message-State: ABy/qLY+0a7z9SwiMiFo2acgyFFz/cpH8VocHFunilqAFGlIgDyz5+uy
-        OaK2Nt7KwyutT11hOFCK3baNyA==
-X-Google-Smtp-Source: APBJJlG3LsH0V59+W63s/Sd5XTnlN8wuLVAG/nWDa1vOSLOvAlH/dGdy3BqBw/xqRu9m5tl1VqoSyg==
-X-Received: by 2002:a05:6602:3f04:b0:780:d65c:d78f with SMTP id em4-20020a0566023f0400b00780d65cd78fmr3674323iob.2.1689711403339;
-        Tue, 18 Jul 2023 13:16:43 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id x7-20020a5e8f47000000b00785cfdd968bsm845993iop.5.2023.07.18.13.16.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jul 2023 13:16:42 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20230718115607.65652-1-omosnace@redhat.com>
-References: <20230718115607.65652-1-omosnace@redhat.com>
-Subject: Re: [PATCH] io_uring: don't audit the capability check in
- io_uring_create()
-Message-Id: <168971140212.1482414.1220631096211660246.b4-ty@kernel.dk>
-Date:   Tue, 18 Jul 2023 14:16:42 -0600
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-099c9
+        bh=kNioK2g9uNSVoz4fz3Z0hsZYDZVWPADHE8SV+5umY4Y=;
+        b=osgDTqFdq8IUMbfc5np0SJw5OdVmryzKJlMbpWPj1r+bA24M0IJWiJbXigx+jJyQ5r
+         VlxW0vuMxM/BQlBSs2+AumxHcyWajcOP9JXOkoHqOoO5ZyUcko/ezFKjsqiJkNtv/xwh
+         Y36DMIRI0Q59f7++kPXdwd59QUGKV3Guy/2lgpB3TxpICSaTd3h59fkFiz7MblIecyH8
+         n7z4KTAocelQbqspLYM5QVY6G/2MvezetA6jqdURrMQiYzDhQ6XI2ghHbJziqFDRtHCX
+         N3lBCweEXoqVHi335cB6PiCMKD3JW4ZiPc0eG4mYnlS454U3dCWqPiIky3zkEczL9g5Z
+         g/Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689724111; x=1692316111;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kNioK2g9uNSVoz4fz3Z0hsZYDZVWPADHE8SV+5umY4Y=;
+        b=bBwzQsl9P65xeCHR7HLrMo+q2U6XTUY6F+cLFe3yWlJi4pfEWIALLLKJqkO7Cu+S8y
+         7NdYYQrfK9KkhfwIFuqrZ9+aE5DDIqC8fWK54pjyZp3npIShnCqn8EjGXvCGBnEw8yDl
+         uU4miK6PSKt74TmNRCer8wMmTu9HJ4DOoJUfAWoikTWqbDcm3giXIAOAonuynRJmhhNb
+         0x1AX9ywNjazXdF/tC+HyutScywBR7Futakgk7qsrQFVXsYTapwhjFNMwgrJIOrUc/7e
+         HD3Om/+nycZCYg7BVAlRYDPT53tineStbGlbbuMhGjPO+AbPrcZhPiz+yD7VW27l6Twe
+         jv2w==
+X-Gm-Message-State: ABy/qLb31SQLU6kmK3QnDYnbtDhMDKU0kZqVbbpGM1itd1KJLDKAHoz0
+        RyIo5nMV+j1hr+K5iCmHaTUpjNvfS74=
+X-Google-Smtp-Source: APBJJlGfvW12PoU1cgYxoig33TTppXu/jdZjVA/UYCNl9+6h2sdMFpEn0Y/2jF1wf15jCGzWeLtg2m+RbUw=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:ec8c:b0:1b8:95fc:d0f with SMTP id
+ x12-20020a170902ec8c00b001b895fc0d0fmr7816plg.7.1689724111171; Tue, 18 Jul
+ 2023 16:48:31 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date:   Tue, 18 Jul 2023 16:44:43 -0700
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
+Message-ID: <20230718234512.1690985-1-seanjc@google.com>
+Subject: [RFC PATCH v11 00/29]  KVM: guest_memfd() and per-page attributes
+From:   Sean Christopherson <seanjc@google.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Sean Christopherson <seanjc@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+This is the next iteration of implementing fd-based (instead of vma-based)
+memory for KVM guests.  If you want the full background of why we are doing
+this, please go read the v10 cover letter[1].
 
-On Tue, 18 Jul 2023 13:56:07 +0200, Ondrej Mosnacek wrote:
-> The check being unconditional may lead to unwanted denials reported by
-> LSMs when a process has the capability granted by DAC, but denied by an
-> LSM. In the case of SELinux such denials are a problem, since they can't
-> be effectively filtered out via the policy and when not silenced, they
-> produce noise that may hide a true problem or an attack.
-> 
-> Since not having the capability merely means that the created io_uring
-> context will be accounted against the current user's RLIMIT_MEMLOCK
-> limit, we can disable auditing of denials for this check by using
-> ns_capable_noaudit() instead of capable().
-> 
-> [...]
+The biggest change from v10 is to implement the backing storage in KVM
+itself, and expose it via a KVM ioctl() instead of a "generic" sycall.
+See link[2] for details on why we pivoted to a KVM-specific approach.
 
-Applied, thanks!
+Key word is "biggest".  Relative to v10, there are many big changes.
+Highlights below (I can't remember everything that got changed at
+this point).
 
-[1/1] io_uring: don't audit the capability check in io_uring_create()
-      commit: 6adc2272aaaf84f34b652cf77f770c6fcc4b8336
+Tagged RFC as there are a lot of empty changelogs, and a lot of missing
+documentation.  And ideally, we'll have even more tests before merging.
+There are also several gaps/opens (to be discussed in tomorrow's PUCK).
 
-Best regards,
+v11:
+ - Test private<=>shared conversions *without* doing fallocate()
+ - PUNCH_HOLE all memory between iterations of the conversion test so that
+   KVM doesn't retain pages in the guest_memfd
+ - Rename hugepage control to be a very generic ALLOW_HUGEPAGE, instead of
+   giving it a THP or PMD specific name.
+ - Fold in fixes from a lot of people (thank you!)
+ - Zap SPTEs *before* updating attributes to ensure no weirdness, e.g. if
+   KVM handles a page fault and looks at inconsistent attributes
+ - Refactor MMU interaction with attributes updates to reuse much of KVM's
+   framework for mmu_notifiers.
+
+[1] https://lore.kernel.org/all/20221202061347.1070246-1-chao.p.peng@linux.intel.com
+[2] https://lore.kernel.org/all/ZEM5Zq8oo+xnApW9@google.com
+
+Ackerley Tng (1):
+  KVM: selftests: Test KVM exit behavior for private memory/access
+
+Chao Peng (7):
+  KVM: Use gfn instead of hva for mmu_notifier_retry
+  KVM: Add KVM_EXIT_MEMORY_FAULT exit
+  KVM: Introduce per-page memory attributes
+  KVM: x86: Disallow hugepages when memory attributes are mixed
+  KVM: x86/mmu: Handle page fault for private memory
+  KVM: selftests: Add KVM_SET_USER_MEMORY_REGION2 helper
+  KVM: selftests: Expand set_memory_region_test to validate
+    guest_memfd()
+
+Sean Christopherson (18):
+  KVM: Wrap kvm_gfn_range.pte in a per-action union
+  KVM: Tweak kvm_hva_range and hva_handler_t to allow reusing for gfn
+    ranges
+  KVM: PPC: Drop dead code related to KVM_ARCH_WANT_MMU_NOTIFIER
+  KVM: Convert KVM_ARCH_WANT_MMU_NOTIFIER to
+    CONFIG_KVM_GENERIC_MMU_NOTIFIER
+  KVM: Introduce KVM_SET_USER_MEMORY_REGION2
+  mm: Add AS_UNMOVABLE to mark mapping as completely unmovable
+  security: Export security_inode_init_security_anon() for use by KVM
+  KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for guest-specific backing
+    memory
+  KVM: Add transparent hugepage support for dedicated guest memory
+  KVM: Drop superfluous __KVM_VCPU_MULTIPLE_ADDRESS_SPACE macro
+  KVM: Allow arch code to track number of memslot address spaces per VM
+  KVM: x86: Add support for "protected VMs" that can utilize private
+    memory
+  KVM: selftests: Drop unused kvm_userspace_memory_region_find() helper
+  KVM: selftests: Convert lib's mem regions to
+    KVM_SET_USER_MEMORY_REGION2
+  KVM: selftests: Add support for creating private memslots
+  KVM: selftests: Introduce VM "shape" to allow tests to specify the VM
+    type
+  KVM: selftests: Add GUEST_SYNC[1-6] macros for synchronizing more data
+  KVM: selftests: Add basic selftest for guest_memfd()
+
+Vishal Annapurve (3):
+  KVM: selftests: Add helpers to convert guest memory b/w private and
+    shared
+  KVM: selftests: Add helpers to do KVM_HC_MAP_GPA_RANGE hypercalls
+    (x86)
+  KVM: selftests: Add x86-only selftest for private memory conversions
+
+ Documentation/virt/kvm/api.rst                | 114 ++++
+ arch/arm64/include/asm/kvm_host.h             |   2 -
+ arch/arm64/kvm/Kconfig                        |   2 +-
+ arch/arm64/kvm/mmu.c                          |   2 +-
+ arch/mips/include/asm/kvm_host.h              |   2 -
+ arch/mips/kvm/Kconfig                         |   2 +-
+ arch/mips/kvm/mmu.c                           |   2 +-
+ arch/powerpc/include/asm/kvm_host.h           |   2 -
+ arch/powerpc/kvm/Kconfig                      |   8 +-
+ arch/powerpc/kvm/book3s_hv.c                  |   2 +-
+ arch/powerpc/kvm/powerpc.c                    |   5 +-
+ arch/riscv/include/asm/kvm_host.h             |   2 -
+ arch/riscv/kvm/Kconfig                        |   2 +-
+ arch/riscv/kvm/mmu.c                          |   2 +-
+ arch/x86/include/asm/kvm_host.h               |  17 +-
+ arch/x86/include/uapi/asm/kvm.h               |   3 +
+ arch/x86/kvm/Kconfig                          |  14 +-
+ arch/x86/kvm/debugfs.c                        |   2 +-
+ arch/x86/kvm/mmu/mmu.c                        | 287 +++++++-
+ arch/x86/kvm/mmu/mmu_internal.h               |   4 +
+ arch/x86/kvm/mmu/mmutrace.h                   |   1 +
+ arch/x86/kvm/mmu/tdp_mmu.c                    |   8 +-
+ arch/x86/kvm/vmx/vmx.c                        |  11 +-
+ arch/x86/kvm/x86.c                            |  24 +-
+ include/linux/kvm_host.h                      | 129 +++-
+ include/linux/pagemap.h                       |  11 +
+ include/uapi/linux/kvm.h                      |  50 ++
+ include/uapi/linux/magic.h                    |   1 +
+ mm/compaction.c                               |   4 +
+ mm/migrate.c                                  |   2 +
+ security/security.c                           |   1 +
+ tools/testing/selftests/kvm/Makefile          |   3 +
+ tools/testing/selftests/kvm/dirty_log_test.c  |   2 +-
+ .../testing/selftests/kvm/guest_memfd_test.c  | 114 ++++
+ .../selftests/kvm/include/kvm_util_base.h     | 141 +++-
+ .../testing/selftests/kvm/include/test_util.h |   5 +
+ .../selftests/kvm/include/ucall_common.h      |  12 +
+ .../selftests/kvm/include/x86_64/processor.h  |  15 +
+ .../selftests/kvm/kvm_page_table_test.c       |   2 +-
+ tools/testing/selftests/kvm/lib/kvm_util.c    | 230 ++++---
+ tools/testing/selftests/kvm/lib/memstress.c   |   3 +-
+ .../selftests/kvm/set_memory_region_test.c    |  99 +++
+ .../kvm/x86_64/private_mem_conversions_test.c | 408 +++++++++++
+ .../kvm/x86_64/private_mem_kvm_exits_test.c   | 115 ++++
+ .../kvm/x86_64/ucna_injection_test.c          |   2 +-
+ virt/kvm/Kconfig                              |  17 +
+ virt/kvm/Makefile.kvm                         |   1 +
+ virt/kvm/dirty_ring.c                         |   2 +-
+ virt/kvm/guest_mem.c                          | 635 ++++++++++++++++++
+ virt/kvm/kvm_main.c                           | 384 +++++++++--
+ virt/kvm/kvm_mm.h                             |  38 ++
+ 51 files changed, 2700 insertions(+), 246 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/guest_memfd_test.c
+ create mode 100644 tools/testing/selftests/kvm/x86_64/private_mem_conversions_test.c
+ create mode 100644 tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c
+ create mode 100644 virt/kvm/guest_mem.c
+
+
+base-commit: fdf0eaf11452d72945af31804e2a1048ee1b574c
 -- 
-Jens Axboe
-
-
+2.41.0.255.g8b1d071c50-goog
 
