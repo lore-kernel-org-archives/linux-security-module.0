@@ -2,61 +2,60 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FEFC001DE
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jul 2023 23:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB9DC04A94
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jul 2023 23:49:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230192AbjGRXs4 (ORCPT
+        id S230328AbjGRXtQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Jul 2023 19:48:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48330 "EHLO
+        Tue, 18 Jul 2023 19:49:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbjGRXsh (ORCPT
+        with ESMTP id S229868AbjGRXtK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Jul 2023 19:48:37 -0400
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5268FC
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Jul 2023 16:48:35 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5704991ea05so58313777b3.1
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Jul 2023 16:48:35 -0700 (PDT)
+        Tue, 18 Jul 2023 19:49:10 -0400
+Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C82AD13E
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Jul 2023 16:48:39 -0700 (PDT)
+Received: by mail-pl1-x649.google.com with SMTP id d9443c01a7336-1b896096287so48928355ad.0
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Jul 2023 16:48:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689724115; x=1692316115;
+        d=google.com; s=20221208; t=1689724119; x=1692316119;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Q2YqUewU0QJU59tCBKplqkoUGv4ucil0ZC6wcpHcqQ=;
-        b=tLDg009LSV9Tr1yXeY8d4SfO26PrwJIaLtLynftl5yKXvNFsST0X3aD0RRd4GHX/wv
-         vtU1d3HuUEp4/WvsYO14a7YtyRpqHdAIKX5GRwFujpPChgWaWrOtfOGhpxiDxfb2FIcp
-         Ae9zBTxW6KL3hmvrpUDBJiNqXIyNkauGtse5upwrlxh/E50i4d2vGBX75qEPajnBgZGc
-         62JFVrZFAM+EhDxD7kWVSnkyBrTTVuPq5qxvIJYKXmn+OcNdrNUgMZjrQKHRGqfkHsON
-         U3BqIvW3OKP/jQkfPxwptTqtHQZYGlpqMzy7K9mx0E1p+mdrooSa+nj413aqHz+roVeF
-         gxuw==
+        bh=WUfCrqcqzPgtS1UwKv933k1oCAb1hY7UF4nDFC6XfxY=;
+        b=kxtMkPfBzSrDgFwiM6lTbnnV1ORifom1wTCX0JDc2o8v5mvJbgd+eW3FzBholZ+QF/
+         ZB/tw1vxVtp6lnWfOuYWDBnkA/zcHKeYCxsNI4yLGBDWisxt2V2CGW6+/c9nKHHqWO0Z
+         pwjXyxzIVoB/8QMRAPYJ2ESVagoDqveLkahmzeblrfSHi+C7b/LSvjVeGXXFBmG27xpW
+         46+iHLUL/iDL1W1dNobEnmnSwB6oZXJ54GsRbQDHUEuzlNSG0pgY2rC5/BfRYynN9jnl
+         9GH+3FZfZFTDU0qQSnRrsV2OdAHlQuwXUaGl7W047p5QIleFQWR+9FWJ+QSsSRbSbDcH
+         Ypxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689724115; x=1692316115;
+        d=1e100.net; s=20221208; t=1689724119; x=1692316119;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/Q2YqUewU0QJU59tCBKplqkoUGv4ucil0ZC6wcpHcqQ=;
-        b=LsjDsGHr5NASC8F8X6aDqtFoLgfx7/XfICocc1yl4Uu1v6NrLR1YGMwM1+A9jBnEtC
-         1SkHsrzRTbfHuyj28BotGRycP8+SyoUs0VFqKbyLt3aPBjDiJP4GdlJzS73yEjyVd4tB
-         ZSz3H0x6jxp1zfb8bbVH6MKr47wNMOoHVaJx9SQmC8/6/2ohlln/3lxq58jV47ib5z3q
-         1/nlQfWmI/QXu8ROsqM15j/TE8/Npv8SjKsCJtqZMdk/Bzap0EUMYKex9DJxixkGUOw9
-         LdHqvJJnrI+GGoE70UMdbq9RVzoX+XHIjf1cJsAb8oKbSS0kVV/nAPuZFLp6YDpyANo8
-         gyAg==
-X-Gm-Message-State: ABy/qLbojua/PzMLTBYqWCbFT767DKXQ0S30a4emMlNJAyTSuJ6CLXqk
-        0r+0lx/7VHcl0CDLFwfADS2/okJg1wI=
-X-Google-Smtp-Source: APBJJlHjosfFmr47fAQ4FwoHYiy0rQprOrE8ng/AJ+BqBK9Dg+T53fJUISRxGIkaIZYnyupUcGSciTRGnxE=
+        bh=WUfCrqcqzPgtS1UwKv933k1oCAb1hY7UF4nDFC6XfxY=;
+        b=Q9rdagB0yBpfxiN2qpY+K0ICHw08FeHi0fpAhyb2TDewieM2XM17n0SdS90kYyUAF4
+         kHm7XaxpRz+Lvx46JX4Jqhx/IUvmaYbgD4uGr0JZBYfcs6wlmTFORXSSgojn1pqhb0Hc
+         vg4/uKSBNVZ08OV3SZ6TmrylXhuEw2/0orq033gaoV7vseY8JPuuQ1TtWoST5Xwadpt8
+         +D+aJwe9dZD1Pb5cBgPl1w+GxTCklSfWCPNSd9Oq4GjsWpmFQsGsmzr8cMsmkjgI54Sm
+         MGwjwtc4o5O1VEZlQNGR2jDAx11Yph0KZ0KUqnJG/g8RKeL0cNTxMM5l98+WKAPtdj9a
+         1inA==
+X-Gm-Message-State: ABy/qLY3ptMcUoEQTHwsrXSzt+NgpRNRv5Qa6UdkhCdJ1s/xb2dgWSbL
+        bSitpg6I0KeElL1WZrN3K5Bi6QQfN+Q=
+X-Google-Smtp-Source: APBJJlEMcu/rfMRBwbQ2zq+ymY4hD2c5F3AYtj0FSwyildZO2Oo0gOzBKGYbg9jbJCtpjTvhx4PmM9/8MPA=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a81:b61d:0:b0:57a:141f:b4f7 with SMTP id
- u29-20020a81b61d000000b0057a141fb4f7mr40058ywh.6.1689724115002; Tue, 18 Jul
- 2023 16:48:35 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a17:902:f546:b0:1b8:a552:c8c9 with SMTP id
+ h6-20020a170902f54600b001b8a552c8c9mr7279plf.13.1689724119324; Tue, 18 Jul
+ 2023 16:48:39 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date:   Tue, 18 Jul 2023 16:44:45 -0700
+Date:   Tue, 18 Jul 2023 16:44:47 -0700
 In-Reply-To: <20230718234512.1690985-1-seanjc@google.com>
 Mime-Version: 1.0
 References: <20230718234512.1690985-1-seanjc@google.com>
 X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
-Message-ID: <20230718234512.1690985-3-seanjc@google.com>
-Subject: [RFC PATCH v11 02/29] KVM: Tweak kvm_hva_range and hva_handler_t to
- allow reusing for gfn ranges
+Message-ID: <20230718234512.1690985-5-seanjc@google.com>
+Subject: [RFC PATCH v11 04/29] KVM: PPC: Drop dead code related to KVM_ARCH_WANT_MMU_NOTIFIER
 From:   Sean Christopherson <seanjc@google.com>
 To:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
@@ -99,110 +98,28 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- virt/kvm/kvm_main.c | 34 +++++++++++++++++++---------------
- 1 file changed, 19 insertions(+), 15 deletions(-)
+ arch/powerpc/kvm/powerpc.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index d58b7a506d27..50aea855eeae 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -516,21 +516,25 @@ static inline struct kvm *mmu_notifier_to_kvm(struct mmu_notifier *mn)
- 	return container_of(mn, struct kvm, mmu_notifier);
- }
- 
--typedef bool (*hva_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
-+typedef bool (*gfn_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
- 
- typedef void (*on_lock_fn_t)(struct kvm *kvm, unsigned long start,
- 			     unsigned long end);
- 
- typedef void (*on_unlock_fn_t)(struct kvm *kvm);
- 
--struct kvm_hva_range {
--	unsigned long start;
--	unsigned long end;
-+struct kvm_mmu_notifier_range {
-+	/*
-+	 * 64-bit addresses, as KVM notifiers can operate on host virtual
-+	 * addresses (unsigned long) and guest physical addresses (64-bit).
-+	 */
-+	u64 start;
-+	u64 end;
- 	union {
- 		pte_t pte;
- 		u64 raw;
- 	} arg;
--	hva_handler_t handler;
-+	gfn_handler_t handler;
- 	on_lock_fn_t on_lock;
- 	on_unlock_fn_t on_unlock;
- 	bool flush_on_ret;
-@@ -557,7 +561,7 @@ static void kvm_null_fn(void)
- 	     node = interval_tree_iter_next(node, start, last))	     \
- 
- static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
--						  const struct kvm_hva_range *range)
-+						  const struct kvm_mmu_notifier_range *range)
- {
- 	bool ret = false, locked = false;
- 	struct kvm_gfn_range gfn_range;
-@@ -588,9 +592,9 @@ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
- 			unsigned long hva_start, hva_end;
- 
- 			slot = container_of(node, struct kvm_memory_slot, hva_node[slots->node_idx]);
--			hva_start = max(range->start, slot->userspace_addr);
--			hva_end = min(range->end, slot->userspace_addr +
--						  (slot->npages << PAGE_SHIFT));
-+			hva_start = max_t(unsigned long, range->start, slot->userspace_addr);
-+			hva_end = min_t(unsigned long, range->end,
-+					slot->userspace_addr + (slot->npages << PAGE_SHIFT));
- 
- 			/*
- 			 * To optimize for the likely case where the address
-@@ -640,10 +644,10 @@ static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
- 						unsigned long start,
- 						unsigned long end,
- 						pte_t pte,
--						hva_handler_t handler)
-+						gfn_handler_t handler)
- {
- 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
--	const struct kvm_hva_range range = {
-+	const struct kvm_mmu_notifier_range range = {
- 		.start		= start,
- 		.end		= end,
- 		.arg.pte	= pte,
-@@ -660,10 +664,10 @@ static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
- static __always_inline int kvm_handle_hva_range_no_flush(struct mmu_notifier *mn,
- 							 unsigned long start,
- 							 unsigned long end,
--							 hva_handler_t handler)
-+							 gfn_handler_t handler)
- {
- 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
--	const struct kvm_hva_range range = {
-+	const struct kvm_mmu_notifier_range range = {
- 		.start		= start,
- 		.end		= end,
- 		.handler	= handler,
-@@ -750,7 +754,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 					const struct mmu_notifier_range *range)
- {
- 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
--	const struct kvm_hva_range hva_range = {
-+	const struct kvm_mmu_notifier_range hva_range = {
- 		.start		= range->start,
- 		.end		= range->end,
- 		.handler	= kvm_unmap_gfn_range,
-@@ -814,7 +818,7 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
- 					const struct mmu_notifier_range *range)
- {
- 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
--	const struct kvm_hva_range hva_range = {
-+	const struct kvm_mmu_notifier_range hva_range = {
- 		.start		= range->start,
- 		.end		= range->end,
- 		.handler	= (void *)kvm_null_fn,
+diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
+index 7197c8256668..5cf9e5e3112a 100644
+--- a/arch/powerpc/kvm/powerpc.c
++++ b/arch/powerpc/kvm/powerpc.c
+@@ -634,10 +634,11 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 	case KVM_CAP_SYNC_MMU:
+ #ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
+ 		r = hv_enabled;
+-#elif defined(KVM_ARCH_WANT_MMU_NOTIFIER)
+-		r = 1;
+ #else
+-		r = 0;
++#ifndef KVM_ARCH_WANT_MMU_NOTIFIER
++		BUILD_BUG();
++#endif
++		r = 1;
+ #endif
+ 		break;
+ #ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
 -- 
 2.41.0.255.g8b1d071c50-goog
 
