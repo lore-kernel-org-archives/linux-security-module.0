@@ -2,130 +2,127 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C54AEEB64DA
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jul 2023 14:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9603CEB64DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jul 2023 14:15:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231387AbjGSOAn (ORCPT
+        id S231477AbjGSOPQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Jul 2023 10:00:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41466 "EHLO
+        Wed, 19 Jul 2023 10:15:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231454AbjGSOAm (ORCPT
+        with ESMTP id S229447AbjGSOPO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Jul 2023 10:00:42 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD5F1731;
-        Wed, 19 Jul 2023 07:00:21 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51e5da802afso9790476a12.3;
-        Wed, 19 Jul 2023 07:00:21 -0700 (PDT)
+        Wed, 19 Jul 2023 10:15:14 -0400
+Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F63C1719
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Jul 2023 07:15:13 -0700 (PDT)
+Received: by mail-pg1-x54a.google.com with SMTP id 41be03b00d2f7-55ac8fcc887so3438574a12.0
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Jul 2023 07:15:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20221208; t=1689775220; x=1692367220;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WG1/1PGr6K8OyLB4Qk19/O0vzUanSieaRPj5jWDmRzU=;
-        b=aZ1XbjyGp3iMdlByDdtJzyG5jQRsZA/RCemLZnQ/TN9SRhiWl4HfqViQtyexKdizCP
-         9bm+3LVUzeoR4r262DZYJsWoOA1MUD4H7DCgtgRzk2i+wae+FMpj4KhzoaRTLZ26S2bv
-         AVMZ1IpSBrJQciLChqQUq2nw9IGBSzcQv0sRXC2ufjI2S5VOzSH/cTrf/XbY23181SvL
-         998TPqD79mOMS8Qkii2a1DTF152YgFxzRtNDw3AsDQj+v25H+vRd2Q+IB06VAi41NAly
-         Mca9DF1uhQwbsMFNJ1VS0+i+8hX+OoqyPIDya29NDvmjJZZR+0gFZEahe5JJgqmg9H1F
-         nYtw==
+        d=google.com; s=20221208; t=1689776112; x=1692368112;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZpT1srfgRytmcGt7uikxVNkA3BifxPUMvb756SCoWfo=;
+        b=j6O4A4Kn8RrMiTsmWugcLoaBmDhdEOi6nm13D61dQWbrv/4yDEEVo/KZUz/JqdfsPo
+         ZnKg9K95Lj7ZE2/dyLjlrZe55VZWZdtTVn9fgyfdtCrw5ElGnLLq/Qm5V23hi657OpUr
+         Ebqn7DpgmWmZ6MQquOf5BjnPEIp0JeTMJYNB26HnYKqlFJQ9PECoKhiIFC6MpAGppjwD
+         QEmzIJjuF0aS8nAXfMaVCs/HL9rulvVWCoWXejxaQyjwn7Vpfe71Kirx4tiYJoYvfJy1
+         s3tsizGDD9BtrGq0rYlfmNI7dH4xGaeqfoCnPAOEbyXtpSJtpl3/bu64M8d1b+aFanZ/
+         4psA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689775220; x=1692367220;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WG1/1PGr6K8OyLB4Qk19/O0vzUanSieaRPj5jWDmRzU=;
-        b=XAHmZipe0YvdbAYwhOpemO26eT9A8c4t17yzjD3pvGXIhAp29oK7buxsMC0w4R6v03
-         nmc4Muuphm9ZlBDEInJciW291cMFmNUjRChinHS9rVmDJpxnJ/u6hV6B72Moo0tyD0MT
-         B5SUJWi9Ll3nQ+JsAoxQSWfzTAvydqdQcxWII4n16kNlxI+0m9lRlYimxaboHqbnWVRy
-         dtZkMI1/CoWdI3SBP8gsDq2kH5u2tpJepz/IdhZMR8CKVunE2HMgGo7nZl+7wIOvlhkv
-         1hhQNbrhfImv4DKPD0CFnQ4KyLQMmF7cht/BVGGsuUiP0s209Bibm/a5SyVPbhDwJqxu
-         6Pmg==
-X-Gm-Message-State: ABy/qLa3oOhLYd7FlajECK1/mz1gpCHN54QYHZBKrsKlNuJFVPLVOa/2
-        Otz2lp+BtlRomvyN1uN2xSgUfkWgzadyAx5r9es=
-X-Google-Smtp-Source: APBJJlGTP/KjgS0L66VBgw3uA1Z/vrOSeOwRyd9kuIyK5+jShFWEfdBfCdq/sGQDhvmRHJCflTjHWA==
-X-Received: by 2002:aa7:c3d4:0:b0:521:775b:ec8b with SMTP id l20-20020aa7c3d4000000b00521775bec8bmr2401071edr.25.1689775219949;
-        Wed, 19 Jul 2023 07:00:19 -0700 (PDT)
-Received: from debian_development.DebianHome (dynamic-077-010-150-003.77.10.pool.telefonica.de. [77.10.150.3])
-        by smtp.gmail.com with ESMTPSA id g21-20020aa7c855000000b00521cc4d5a5bsm714521edt.58.2023.07.19.07.00.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jul 2023 07:00:19 -0700 (PDT)
-From:   =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
-Cc:     Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        d=1e100.net; s=20221208; t=1689776112; x=1692368112;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZpT1srfgRytmcGt7uikxVNkA3BifxPUMvb756SCoWfo=;
+        b=cVuQbXewtXiN2hzucylNXRxd999aGobcJ0uQCSwgruhVBGNKDlrHdr7dK/qAt0cAOM
+         extsLcHzIcwL/qQfeSS2I5J+V23xxotXRnDiqI6xtIEbKXti9Nxsvm31EGPIEDWukW4G
+         aPwgMYYTulsoRtDOF3u1D1H8tkZmajsHZIRRQrEE+LiEEEPwjQdodT/2olNQU5NBDbvO
+         10mShwL3Z0Lmqd6YCY42Xd9lBaCEF0iNn3lyMWYl7LXc1lT8Of7kk4Bzjmu0+KbVZjmb
+         /TO+WC1aJIMHcsJ27yyAR0IgIifSwUSie/S+hseXX3QM/7j1wXriWYJjGMJatk0RZGjn
+         whyQ==
+X-Gm-Message-State: ABy/qLYmmbVjKHi9xBfXlIJgeEEuqbx9X254lptEPBJQ5rwcetovw+Yr
+        5Re/KwBZuRLHtlTnjPy/+r79intvDPg=
+X-Google-Smtp-Source: APBJJlG/y4qA2BEDL4k7hIJJKli+sdbNpvQf/prgfQp/iya4mlyKn4vdU0WvDm35KgLLUXfLwfwgiDZvoZw=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:e812:b0:1ae:6895:cb96 with SMTP id
+ u18-20020a170902e81200b001ae6895cb96mr14210plg.5.1689776111918; Wed, 19 Jul
+ 2023 07:15:11 -0700 (PDT)
+Date:   Wed, 19 Jul 2023 07:15:09 -0700
+In-Reply-To: <20230719073115.vuedo2cf3mp27xm4@yy-desk-7060>
+Mime-Version: 1.0
+References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-6-seanjc@google.com>
+ <20230719073115.vuedo2cf3mp27xm4@yy-desk-7060>
+Message-ID: <ZLfv7aRq5W52ezek@google.com>
+Subject: Re: [RFC PATCH v11 05/29] KVM: Convert KVM_ARCH_WANT_MMU_NOTIFIER to CONFIG_KVM_GENERIC_MMU_NOTIFIER
+From:   Sean Christopherson <seanjc@google.com>
+To:     Yuan Yao <yuan.yao@linux.intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tomoyo: add format attributes to functions
-Date:   Wed, 19 Jul 2023 16:00:07 +0200
-Message-Id: <20230719140007.34570-1-cgzones@googlemail.com>
-X-Mailer: git-send-email 2.40.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Format attributes on functions taking format string can help compilers
-detect argument type or count mismatches.
+On Wed, Jul 19, 2023, Yuan Yao wrote:
+> On Tue, Jul 18, 2023 at 04:44:48PM -0700, Sean Christopherson wrote:
+> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > index 90a0be261a5c..d2d3e083ec7f 100644
+> > --- a/include/linux/kvm_host.h
+> > +++ b/include/linux/kvm_host.h
+> > @@ -255,7 +255,9 @@ bool kvm_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+> >  int kvm_async_pf_wakeup_all(struct kvm_vcpu *vcpu);
+> >  #endif
+> >
+> > -#ifdef KVM_ARCH_WANT_MMU_NOTIFIER
+> > +struct kvm_gfn_range;
+> 
+> Not sure why a declaration here, it's defined for ARCHs which defined
+> KVM_ARCH_WANT_MMU_NOTIFIER before.
 
-Please the compiler when building with W=1:
+The forward declaration exists to handle cases where CONFIG_KVM=n, specifically
+arch/powerpc/include/asm/kvm_ppc.h's declaration of hooks to forward calls to
+uarch modules:
 
-    security/tomoyo/audit.c: In function ‘tomoyo_init_log’:
-    security/tomoyo/audit.c:290:9: error: function ‘tomoyo_init_log’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
-      290 |         vsnprintf(buf + pos, len - pos, fmt, args);
-          |         ^~~~~~~~~
-    security/tomoyo/audit.c: In function ‘tomoyo_write_log2’:
-    security/tomoyo/audit.c:376:9: error: function ‘tomoyo_write_log2’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
-      376 |         buf = tomoyo_init_log(r, len, fmt, args);
-          |         ^~~
-    security/tomoyo/common.c: In function ‘tomoyo_addprintf’:
-    security/tomoyo/common.c:193:9: error: function ‘tomoyo_addprintf’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
-      193 |         vsnprintf(buffer + pos, len - pos - 1, fmt, args);
-          |         ^~~~~~~~~
+	bool (*unmap_gfn_range)(struct kvm *kvm, struct kvm_gfn_range *range);
+	bool (*age_gfn)(struct kvm *kvm, struct kvm_gfn_range *range);
+	bool (*test_age_gfn)(struct kvm *kvm, struct kvm_gfn_range *range);
+	bool (*set_spte_gfn)(struct kvm *kvm, struct kvm_gfn_range *range);
 
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
----
- security/tomoyo/common.c | 1 +
- security/tomoyo/common.h | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
+Prior to using a Kconfig, a forward declaration wasn't necessary because
+arch/powerpc/include/asm/kvm_host.h would #define KVM_ARCH_WANT_MMU_NOTIFIER even
+if CONFIG_KVM=n.
 
-diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
-index 969d4aa6fd55..57ee70ae50f2 100644
---- a/security/tomoyo/common.c
-+++ b/security/tomoyo/common.c
-@@ -184,6 +184,7 @@ static bool tomoyo_manage_by_non_root;
-  *
-  * Returns nothing.
-  */
-+__printf(3, 4)
- static void tomoyo_addprintf(char *buffer, int len, const char *fmt, ...)
- {
- 	va_list args;
-diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
-index a539b2cbb5c4..e669837ed0e3 100644
---- a/security/tomoyo/common.h
-+++ b/security/tomoyo/common.h
-@@ -954,7 +954,7 @@ bool tomoyo_str_starts(char **src, const char *find);
- char *tomoyo_encode(const char *str);
- char *tomoyo_encode2(const char *str, int str_len);
- char *tomoyo_init_log(struct tomoyo_request_info *r, int len, const char *fmt,
--		      va_list args);
-+		      va_list args) __printf(3, 0);
- char *tomoyo_read_token(struct tomoyo_acl_param *param);
- char *tomoyo_realpath_from_path(const struct path *path);
- char *tomoyo_realpath_nofollow(const char *pathname);
-@@ -1067,7 +1067,7 @@ void tomoyo_warn_oom(const char *function);
- void tomoyo_write_log(struct tomoyo_request_info *r, const char *fmt, ...)
- 	__printf(2, 3);
- void tomoyo_write_log2(struct tomoyo_request_info *r, int len, const char *fmt,
--		       va_list args);
-+		       va_list args) __printf(3, 0);
- 
- /********** External variable definitions. **********/
- 
--- 
-2.40.1
-
+Alternatively, kvm_ppc.h could declare the struct.  I went this route mainly to
+avoid the possibility of someone encountering the same problem on a different
+architecture.
