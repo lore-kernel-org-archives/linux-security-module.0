@@ -2,58 +2,58 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9603CEB64DA
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jul 2023 14:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDACC001B0
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jul 2023 14:17:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231477AbjGSOPQ (ORCPT
+        id S229478AbjGSOQ7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Jul 2023 10:15:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47364 "EHLO
+        Wed, 19 Jul 2023 10:16:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjGSOPO (ORCPT
+        with ESMTP id S229894AbjGSOQ6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Jul 2023 10:15:14 -0400
-Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F63C1719
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Jul 2023 07:15:13 -0700 (PDT)
-Received: by mail-pg1-x54a.google.com with SMTP id 41be03b00d2f7-55ac8fcc887so3438574a12.0
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Jul 2023 07:15:12 -0700 (PDT)
+        Wed, 19 Jul 2023 10:16:58 -0400
+Received: from mail-pj1-x1049.google.com (mail-pj1-x1049.google.com [IPv6:2607:f8b0:4864:20::1049])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B349619A
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Jul 2023 07:16:56 -0700 (PDT)
+Received: by mail-pj1-x1049.google.com with SMTP id 98e67ed59e1d1-26304c2e178so5343186a91.3
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Jul 2023 07:16:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689776112; x=1692368112;
+        d=google.com; s=20221208; t=1689776216; x=1692368216;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZpT1srfgRytmcGt7uikxVNkA3BifxPUMvb756SCoWfo=;
-        b=j6O4A4Kn8RrMiTsmWugcLoaBmDhdEOi6nm13D61dQWbrv/4yDEEVo/KZUz/JqdfsPo
-         ZnKg9K95Lj7ZE2/dyLjlrZe55VZWZdtTVn9fgyfdtCrw5ElGnLLq/Qm5V23hi657OpUr
-         Ebqn7DpgmWmZ6MQquOf5BjnPEIp0JeTMJYNB26HnYKqlFJQ9PECoKhiIFC6MpAGppjwD
-         QEmzIJjuF0aS8nAXfMaVCs/HL9rulvVWCoWXejxaQyjwn7Vpfe71Kirx4tiYJoYvfJy1
-         s3tsizGDD9BtrGq0rYlfmNI7dH4xGaeqfoCnPAOEbyXtpSJtpl3/bu64M8d1b+aFanZ/
-         4psA==
+        bh=Ply9vOQ7PKiPIjqcvpgXEIwEBxatqkRJB2ZRy5lS2Xc=;
+        b=QCgn5pm8yPPImP/ZfLF2Ea0jJXDpcGNQ/LF2jNeNTBG71TLZwae17UnwEuo78ONGHP
+         atCG9sArqHfv277Ky9HWUevcQtozR/I9rfoMFWMGzH2p/tn1UptotifJkTzwcjUzjGM4
+         2mRccC+Qe6eelyvVpzgsii1Dz38eewFROpWBRyPZo22w72yv1RXU/kRjiIgbgdf4vOiO
+         m+eFtOZOtzemALwYg0UpO5hPIX4qNwingmWVGWsEqCwrs8u/CIQrQXsRy9c4nWVOA7nY
+         TgAf9p3r7jbBOiu0L+1TlKBrMt3e7HNn72eYqwvkzNmnIVVzm8emG5isi9/yOnMB2w1e
+         eLcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689776112; x=1692368112;
+        d=1e100.net; s=20221208; t=1689776216; x=1692368216;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZpT1srfgRytmcGt7uikxVNkA3BifxPUMvb756SCoWfo=;
-        b=cVuQbXewtXiN2hzucylNXRxd999aGobcJ0uQCSwgruhVBGNKDlrHdr7dK/qAt0cAOM
-         extsLcHzIcwL/qQfeSS2I5J+V23xxotXRnDiqI6xtIEbKXti9Nxsvm31EGPIEDWukW4G
-         aPwgMYYTulsoRtDOF3u1D1H8tkZmajsHZIRRQrEE+LiEEEPwjQdodT/2olNQU5NBDbvO
-         10mShwL3Z0Lmqd6YCY42Xd9lBaCEF0iNn3lyMWYl7LXc1lT8Of7kk4Bzjmu0+KbVZjmb
-         /TO+WC1aJIMHcsJ27yyAR0IgIifSwUSie/S+hseXX3QM/7j1wXriWYJjGMJatk0RZGjn
-         whyQ==
-X-Gm-Message-State: ABy/qLYmmbVjKHi9xBfXlIJgeEEuqbx9X254lptEPBJQ5rwcetovw+Yr
-        5Re/KwBZuRLHtlTnjPy/+r79intvDPg=
-X-Google-Smtp-Source: APBJJlG/y4qA2BEDL4k7hIJJKli+sdbNpvQf/prgfQp/iya4mlyKn4vdU0WvDm35KgLLUXfLwfwgiDZvoZw=
+        bh=Ply9vOQ7PKiPIjqcvpgXEIwEBxatqkRJB2ZRy5lS2Xc=;
+        b=NKW2KS1YUX0abRsN2daIg0ybH11M130KhGoVHZEc+qMjSzwcuXYotQuo63IvcSiEvd
+         QkaTE/wefN4udPrZSZTXM5hMDGq3Rsqcpd5qOGPD2a7yaKbDxa5fV9tnSEmNiI8x8fkF
+         x2XzfVN4sOgmhNBPeR0OKR64jSVat/b7TFxB1jGL5C7zyT6nLkQ1TvJqa87gYLs80yfv
+         GEw/5x8i4jhv29NwYSMOjcnAjzi30FxVTjCzKQkLV+nlL45gCyOYy/aBl3ckrBwMntG6
+         QR99qOLY8GUHxWVyjBF7E/iDu1PRvYEe9NwE9zJPGJrX9AYCotchb3Y/SbVIFa/xUyYn
+         1FxQ==
+X-Gm-Message-State: ABy/qLYfo4oVikhSiF6oTr9SRrZFN0z71CTUIXmftnSsXdrShU+qjBTQ
+        g1zafT9wM6UZNccM5Jjzky+LUTl2Uso=
+X-Google-Smtp-Source: APBJJlHe5KmJdZof+vQtZ6M87xlqjK1Ejx8t4AB5DMX6de6h21FipxJ2lQkyFnlQoXRyf3eYpC2jq3S2bQ0=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:e812:b0:1ae:6895:cb96 with SMTP id
- u18-20020a170902e81200b001ae6895cb96mr14210plg.5.1689776111918; Wed, 19 Jul
- 2023 07:15:11 -0700 (PDT)
-Date:   Wed, 19 Jul 2023 07:15:09 -0700
-In-Reply-To: <20230719073115.vuedo2cf3mp27xm4@yy-desk-7060>
+ (user=seanjc job=sendgmr) by 2002:a17:90a:e542:b0:25b:f9e3:deab with SMTP id
+ ei2-20020a17090ae54200b0025bf9e3deabmr136275pjb.9.1689776216142; Wed, 19 Jul
+ 2023 07:16:56 -0700 (PDT)
+Date:   Wed, 19 Jul 2023 07:16:54 -0700
+In-Reply-To: <20230719075440.m3h653frqggaiusc@yy-desk-7060>
 Mime-Version: 1.0
-References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-6-seanjc@google.com>
- <20230719073115.vuedo2cf3mp27xm4@yy-desk-7060>
-Message-ID: <ZLfv7aRq5W52ezek@google.com>
-Subject: Re: [RFC PATCH v11 05/29] KVM: Convert KVM_ARCH_WANT_MMU_NOTIFIER to CONFIG_KVM_GENERIC_MMU_NOTIFIER
+References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-8-seanjc@google.com>
+ <20230719075440.m3h653frqggaiusc@yy-desk-7060>
+Message-ID: <ZLfwVki27oLBGO6D@google.com>
+Subject: Re: [RFC PATCH v11 07/29] KVM: Add KVM_EXIT_MEMORY_FAULT exit
 From:   Sean Christopherson <seanjc@google.com>
 To:     Yuan Yao <yuan.yao@linux.intel.com>
 Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
@@ -95,34 +95,30 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On Wed, Jul 19, 2023, Yuan Yao wrote:
-> On Tue, Jul 18, 2023 at 04:44:48PM -0700, Sean Christopherson wrote:
-> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> > index 90a0be261a5c..d2d3e083ec7f 100644
-> > --- a/include/linux/kvm_host.h
-> > +++ b/include/linux/kvm_host.h
-> > @@ -255,7 +255,9 @@ bool kvm_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
-> >  int kvm_async_pf_wakeup_all(struct kvm_vcpu *vcpu);
-> >  #endif
+> On Tue, Jul 18, 2023 at 04:44:50PM -0700, Sean Christopherson wrote:
+> > From: Chao Peng <chao.p.peng@linux.intel.com>
 > >
-> > -#ifdef KVM_ARCH_WANT_MMU_NOTIFIER
-> > +struct kvm_gfn_range;
+> > This new KVM exit allows userspace to handle memory-related errors. It
+> > indicates an error happens in KVM at guest memory range [gpa, gpa+size).
+> > The flags includes additional information for userspace to handle the
+> > error. Currently bit 0 is defined as 'private memory' where '1'
+> > indicates error happens due to private memory access and '0' indicates
+> > error happens due to shared memory access.
 > 
-> Not sure why a declaration here, it's defined for ARCHs which defined
-> KVM_ARCH_WANT_MMU_NOTIFIER before.
+> Now it's bit 3:
 
-The forward declaration exists to handle cases where CONFIG_KVM=n, specifically
-arch/powerpc/include/asm/kvm_ppc.h's declaration of hooks to forward calls to
-uarch modules:
+Yeah, I need to update (or write) a lot of changelogs.
 
-	bool (*unmap_gfn_range)(struct kvm *kvm, struct kvm_gfn_range *range);
-	bool (*age_gfn)(struct kvm *kvm, struct kvm_gfn_range *range);
-	bool (*test_age_gfn)(struct kvm *kvm, struct kvm_gfn_range *range);
-	bool (*set_spte_gfn)(struct kvm *kvm, struct kvm_gfn_range *range);
+> #define KVM_MEMORY_EXIT_FLAG_PRIVATE (1ULL << 3)
+> 
+> I remember some other attributes were introduced in v10 yet:
+> 
+> #define KVM_MEMORY_ATTRIBUTE_READ              (1ULL << 0)
+> #define KVM_MEMORY_ATTRIBUTE_WRITE             (1ULL << 1)
+> #define KVM_MEMORY_ATTRIBUTE_EXECUTE           (1ULL << 2)
+> #define KVM_MEMORY_ATTRIBUTE_PRIVATE           (1ULL << 3)
+> 
+> So KVM_MEMORY_EXIT_FLAG_PRIVATE changed to bit 3 due to above things,
+> or other reason ? (Sorry I didn't follow v10 too much before).
 
-Prior to using a Kconfig, a forward declaration wasn't necessary because
-arch/powerpc/include/asm/kvm_host.h would #define KVM_ARCH_WANT_MMU_NOTIFIER even
-if CONFIG_KVM=n.
-
-Alternatively, kvm_ppc.h could declare the struct.  I went this route mainly to
-avoid the possibility of someone encountering the same problem on a different
-architecture.
+Yep, I want to reserve space for the RWX bits.
