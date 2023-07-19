@@ -2,60 +2,60 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDACC001B0
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jul 2023 14:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25434C001B0
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jul 2023 15:39:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229478AbjGSOQ7 (ORCPT
+        id S231420AbjGSPjY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Jul 2023 10:16:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48038 "EHLO
+        Wed, 19 Jul 2023 11:39:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229894AbjGSOQ6 (ORCPT
+        with ESMTP id S231202AbjGSPjX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Jul 2023 10:16:58 -0400
-Received: from mail-pj1-x1049.google.com (mail-pj1-x1049.google.com [IPv6:2607:f8b0:4864:20::1049])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B349619A
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Jul 2023 07:16:56 -0700 (PDT)
-Received: by mail-pj1-x1049.google.com with SMTP id 98e67ed59e1d1-26304c2e178so5343186a91.3
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Jul 2023 07:16:56 -0700 (PDT)
+        Wed, 19 Jul 2023 11:39:23 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98F091BE4
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Jul 2023 08:39:11 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-ceabb7e8afdso1694943276.3
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Jul 2023 08:39:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689776216; x=1692368216;
+        d=google.com; s=20221208; t=1689781150; x=1692373150;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ply9vOQ7PKiPIjqcvpgXEIwEBxatqkRJB2ZRy5lS2Xc=;
-        b=QCgn5pm8yPPImP/ZfLF2Ea0jJXDpcGNQ/LF2jNeNTBG71TLZwae17UnwEuo78ONGHP
-         atCG9sArqHfv277Ky9HWUevcQtozR/I9rfoMFWMGzH2p/tn1UptotifJkTzwcjUzjGM4
-         2mRccC+Qe6eelyvVpzgsii1Dz38eewFROpWBRyPZo22w72yv1RXU/kRjiIgbgdf4vOiO
-         m+eFtOZOtzemALwYg0UpO5hPIX4qNwingmWVGWsEqCwrs8u/CIQrQXsRy9c4nWVOA7nY
-         TgAf9p3r7jbBOiu0L+1TlKBrMt3e7HNn72eYqwvkzNmnIVVzm8emG5isi9/yOnMB2w1e
-         eLcA==
+        bh=3uTGEOgXGgjS1mpy4uY8Zn88ggwsAyaWY3/MU5WFUXU=;
+        b=zuZWZV29hv7HoMETiCkSKGIHZcpHTMG8TKF9qduMPPS/E1c0SfFLVA6kGEOoP5U9qq
+         U77CuEsLMMxKIxLMFnjtp2hpB+IIMkYXVFGsPC5bapP3nIk/nGTrjqlCGcZf5+xPpr8T
+         q16/aDqhEkgnoKMdGaA5rz+Gt+5uK6D6P1fr5Zm7R4i7YF7l973NWOrr+c3kq7IzyS9M
+         gLZmugAwtecTQMKF7z0UBcPf86RbNReN6ZSKfaBS2Zp8N7kJnMwhsDMUzBHIndlxccW1
+         lnFRHUcOrryTZsXwruMmKL2jJUIvic1/Jzr/kaZBJYZOlvirf0tEwgFNXnc0yrJBGF6s
+         gFpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689776216; x=1692368216;
+        d=1e100.net; s=20221208; t=1689781150; x=1692373150;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ply9vOQ7PKiPIjqcvpgXEIwEBxatqkRJB2ZRy5lS2Xc=;
-        b=NKW2KS1YUX0abRsN2daIg0ybH11M130KhGoVHZEc+qMjSzwcuXYotQuo63IvcSiEvd
-         QkaTE/wefN4udPrZSZTXM5hMDGq3Rsqcpd5qOGPD2a7yaKbDxa5fV9tnSEmNiI8x8fkF
-         x2XzfVN4sOgmhNBPeR0OKR64jSVat/b7TFxB1jGL5C7zyT6nLkQ1TvJqa87gYLs80yfv
-         GEw/5x8i4jhv29NwYSMOjcnAjzi30FxVTjCzKQkLV+nlL45gCyOYy/aBl3ckrBwMntG6
-         QR99qOLY8GUHxWVyjBF7E/iDu1PRvYEe9NwE9zJPGJrX9AYCotchb3Y/SbVIFa/xUyYn
-         1FxQ==
-X-Gm-Message-State: ABy/qLYfo4oVikhSiF6oTr9SRrZFN0z71CTUIXmftnSsXdrShU+qjBTQ
-        g1zafT9wM6UZNccM5Jjzky+LUTl2Uso=
-X-Google-Smtp-Source: APBJJlHe5KmJdZof+vQtZ6M87xlqjK1Ejx8t4AB5DMX6de6h21FipxJ2lQkyFnlQoXRyf3eYpC2jq3S2bQ0=
+        bh=3uTGEOgXGgjS1mpy4uY8Zn88ggwsAyaWY3/MU5WFUXU=;
+        b=GfAJgpdE5pE+4/UooVVmwiX1tqo2LmoO4NHJzJQLqgn9ME/0kvITtFSNxt4broVYdn
+         aqf3h+zy/lFFFUzQJweQXkpbskNQ/2W3riJRB9LF5sOlOMccuDlo/MgyXDdfjlYrgEkP
+         X82yYv/pffsm8xHRvn4cyx04u6L6eVg4J3iGxm1YfOvSeLIt9nW8+FCCX7OboRL/cItp
+         m3dpjvSQTCtCAAC/cEY2vnv9F1kNWPjoQM+Ac5NMqvHpxupDlH7cmlf2ynroos7kKIQs
+         D7NeS9/a90uPlgPr8SWGfSD64dwBuYOyd4KF+yMhSZaJy1QbZYdEBTbsR5YEdRAzu0HA
+         c9Dg==
+X-Gm-Message-State: ABy/qLYgdpsy/UgxVI50JnA1D+ucQGBerZc/3k1n34QULqzCel+IoXcX
+        9mf4a0P4pHrvNB3MLynTQLOAyrElBws=
+X-Google-Smtp-Source: APBJJlHKX/op8BIXr6hrdN4x6RovTyUJBoPmA+F//tB9wdB4uZjaG/yxyF0KPogxnGD6eEZAy2DX7qXfLUE=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:e542:b0:25b:f9e3:deab with SMTP id
- ei2-20020a17090ae54200b0025bf9e3deabmr136275pjb.9.1689776216142; Wed, 19 Jul
- 2023 07:16:56 -0700 (PDT)
-Date:   Wed, 19 Jul 2023 07:16:54 -0700
-In-Reply-To: <20230719075440.m3h653frqggaiusc@yy-desk-7060>
+ (user=seanjc job=sendgmr) by 2002:a25:868b:0:b0:c4d:9831:9712 with SMTP id
+ z11-20020a25868b000000b00c4d98319712mr26898ybk.0.1689781150625; Wed, 19 Jul
+ 2023 08:39:10 -0700 (PDT)
+Date:   Wed, 19 Jul 2023 08:39:09 -0700
+In-Reply-To: <CU66VMG4IKSD.33KF2CEZJ2I1@suppilovahvero>
 Mime-Version: 1.0
-References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-8-seanjc@google.com>
- <20230719075440.m3h653frqggaiusc@yy-desk-7060>
-Message-ID: <ZLfwVki27oLBGO6D@google.com>
-Subject: Re: [RFC PATCH v11 07/29] KVM: Add KVM_EXIT_MEMORY_FAULT exit
+References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-2-seanjc@google.com>
+ <CU66VMG4IKSD.33KF2CEZJ2I1@suppilovahvero>
+Message-ID: <ZLgDnYJUX/QR9UJi@google.com>
+Subject: Re: [RFC PATCH v11 01/29] KVM: Wrap kvm_gfn_range.pte in a per-action union
 From:   Sean Christopherson <seanjc@google.com>
-To:     Yuan Yao <yuan.yao@linux.intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
 Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
         Huacai Chen <chenhuacai@kernel.org>,
@@ -77,7 +77,6 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         linux-kernel@vger.kernel.org,
         Chao Peng <chao.p.peng@linux.intel.com>,
         Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
         Yu Zhang <yu.c.zhang@linux.intel.com>,
         Vishal Annapurve <vannapurve@google.com>,
         Ackerley Tng <ackerleytng@google.com>,
@@ -94,31 +93,23 @@ Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 19, 2023, Yuan Yao wrote:
-> On Tue, Jul 18, 2023 at 04:44:50PM -0700, Sean Christopherson wrote:
-> > From: Chao Peng <chao.p.peng@linux.intel.com>
-> >
-> > This new KVM exit allows userspace to handle memory-related errors. It
-> > indicates an error happens in KVM at guest memory range [gpa, gpa+size).
-> > The flags includes additional information for userspace to handle the
-> > error. Currently bit 0 is defined as 'private memory' where '1'
-> > indicates error happens due to private memory access and '0' indicates
-> > error happens due to shared memory access.
+On Wed, Jul 19, 2023, Jarkko Sakkinen wrote:
+> On Wed Jul 19, 2023 at 2:44 AM EEST, Sean Christopherson wrote:
+> >  	/* Huge pages aren't expected to be modified without first being zapped. */
+> > -	WARN_ON(pte_huge(range->pte) || range->start + 1 != range->end);
+> > +	WARN_ON(pte_huge(range->arg.pte) || range->start + 1 != range->end);
 > 
-> Now it's bit 3:
+> Not familiar with this code. Just checking whether whether instead
+> pr_{warn,err}()
 
-Yeah, I need to update (or write) a lot of changelogs.
+The "full" WARN is desirable, this is effecitvely an assert on the contract between
+the primary MMU, generic KVM code, and x86's TDP MMU.  The .change_pte() mmu_notifier
+callback doesn't allow for hugepages, i.e. it's a (likely fatal) kernel bug if a
+hugepage is encountered at this point.  Ditto for the "start + 1 == end" check,
+if that fails then generic KVM likely has a fatal bug.
 
-> #define KVM_MEMORY_EXIT_FLAG_PRIVATE (1ULL << 3)
-> 
-> I remember some other attributes were introduced in v10 yet:
-> 
-> #define KVM_MEMORY_ATTRIBUTE_READ              (1ULL << 0)
-> #define KVM_MEMORY_ATTRIBUTE_WRITE             (1ULL << 1)
-> #define KVM_MEMORY_ATTRIBUTE_EXECUTE           (1ULL << 2)
-> #define KVM_MEMORY_ATTRIBUTE_PRIVATE           (1ULL << 3)
-> 
-> So KVM_MEMORY_EXIT_FLAG_PRIVATE changed to bit 3 due to above things,
-> or other reason ? (Sorry I didn't follow v10 too much before).
+> combined with return false would be a more graceful option?
 
-Yep, I want to reserve space for the RWX bits.
+The return value communicates whether or not a TLB flush is needed, not whether
+or not the operation was successful, i.e. there is no way to cancel the unexpected
+PTE change.
