@@ -2,152 +2,120 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A237EB64DA
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jul 2023 14:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B383CEB64DD
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jul 2023 14:46:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229795AbjGTONR (ORCPT
+        id S231165AbjGTOq3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Jul 2023 10:13:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46328 "EHLO
+        Thu, 20 Jul 2023 10:46:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbjGTONQ (ORCPT
+        with ESMTP id S229448AbjGTOq2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Jul 2023 10:13:16 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC3052115;
-        Thu, 20 Jul 2023 07:13:15 -0700 (PDT)
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36KE7pnL000536;
-        Thu, 20 Jul 2023 14:13:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=JHHpENURdf5rB7etiqoKe/V/ViYThscFn9W/0Kvtu+w=;
- b=h0leQb4uAKWvBTcKBAms8xFVhrv+9FV7SWULIAlP0jJeF1F8EC9A5DXohPlWAkGQptq2
- JZ/gNC7NvBbA9fjbQMwDDSlugJf9cq9UW4a6CQKDkJ5AXxqItUJcdVVUsiG9xuh/Ivju
- ViMqBqlbXPuC+CLr/1nBKyk0oze0rQUQ8Zg5CpuBtgVjYrHKJHSuaPWC8ZRrgPIDWiSu
- F0wbTBRG/iYletcdDpNxrH75cIGLX0aMBO0SvgE0MpOATxQjjuzqoviAY2ZXmzlDE7/l
- GLMEdhUXGjAdsx8oijxpLZyXVgruYsuD935oDfjfn/60pIej/4ZjRyynddE6N6rjdsqy pA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3rxwcgw4hu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Jul 2023 14:13:02 +0000
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 36KDqgD6030761;
-        Thu, 20 Jul 2023 14:12:54 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3rxwcgw496-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Jul 2023 14:12:53 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 36KDoCJT016862;
-        Thu, 20 Jul 2023 14:12:37 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-        by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3rv5sryvqx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Jul 2023 14:12:37 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-        by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 36KECaL124838768
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Jul 2023 14:12:37 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B89E45804B;
-        Thu, 20 Jul 2023 14:12:36 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D35AB58059;
-        Thu, 20 Jul 2023 14:12:35 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.191.187])
-        by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Thu, 20 Jul 2023 14:12:35 +0000 (GMT)
-Message-ID: <b6a0475c67e975cf564e4b78830ae0e598c584ac.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: require signed IMA policy when UEFI secure boot is
- enabled
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Coiby Xu <coxu@redhat.com>
-Cc:     linux-integrity@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Thu, 20 Jul 2023 10:46:28 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14D092127;
+        Thu, 20 Jul 2023 07:46:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689864388; x=1721400388;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=K1NwaJnTR9TKmGdPrMBjNm/Xn1+Yu2b1Z2uzK/Twzrs=;
+  b=Rcpot/vVybToIWtgA0TXdPpqxO21KgUHOmUM0CT/q5lVuKa7A67n0i0L
+   2OUnXSLjv60IFOVxPOu88R+0zb1KsWa4QAo8yKEaC8uXSmqqykfXzziI7
+   2FvowXTwm4vFr5TQuOdYQYF7Q1Y7nZSj7SYud7KaiCFIG0KQkdGqEuXGV
+   bEGjjrlzIj5yUh9jZHFjdwhe0ljLlw9eQRdQeboFcTvxsCFGDCniH/DTi
+   W2cIIzRD3anxJZPJp2w7M/cOFEr8Pjb2561MB0cSOzYn2lQLT9VTrA3/+
+   NQ6FfnE/DJHiQ0bcvuUg9yrEQCZUNVdnaA3/xnQ1Vm9Vw7W/t6KYVp7z+
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10777"; a="364218123"
+X-IronPort-AV: E=Sophos;i="6.01,219,1684825200"; 
+   d="scan'208";a="364218123"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2023 07:46:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10777"; a="971059338"
+X-IronPort-AV: E=Sophos;i="6.01,219,1684825200"; 
+   d="scan'208";a="971059338"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.93.6.77]) ([10.93.6.77])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2023 07:45:52 -0700
+Message-ID: <83eb5c50-7287-7845-ffc3-a7c58e638ea5@intel.com>
+Date:   Thu, 20 Jul 2023 22:45:48 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.13.0
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+Content-Language: en-US
+To:     Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Thu, 20 Jul 2023 10:12:35 -0400
-In-Reply-To: <kglacif5fwh3byrjkmlzygpnaecdb2zxh6hbglnvdbsfu7hbxm@gc3mjr37mnpb>
-References: <20230703115442.129725-1-coxu@redhat.com>
-         <b61fedf214cbe72de063a3bf516dd72f80595219.camel@linux.ibm.com>
-         <kglacif5fwh3byrjkmlzygpnaecdb2zxh6hbglnvdbsfu7hbxm@gc3mjr37mnpb>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-Mime-Version: 1.0
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20230718234512.1690985-1-seanjc@google.com>
+ <20230718234512.1690985-13-seanjc@google.com>
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20230718234512.1690985-13-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 6nk1TxvYqy4j526hl-FRjEE0_qfBbqzg
-X-Proofpoint-ORIG-GUID: wb_rzvVwE4dwTN7r0uqQdOR67Pxyhg2y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-20_07,2023-07-20_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- phishscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0 adultscore=0
- spamscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
- definitions=main-2307200118
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2023-07-14 at 09:29 +0800, Coiby Xu wrote:
-> On Tue, Jul 04, 2023 at 08:57:10AM -0400, Mimi Zohar wrote:
-> >On Mon, 2023-07-03 at 19:54 +0800, Coiby Xu wrote:
-> >> With the introduction of the .machine keyring for UEFI-based systems,
-> >> users are able to add custom CAs keys via MOK. This allow users to sign
-> >> their own IMA polices. For the sake of security, mandate signed IMA
-> >> policy when UEFI secure boot is enabled.
-> >>
-> >> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> >> Signed-off-by: Coiby Xu <coxu@redhat.com>
+On 7/19/2023 7:44 AM, Sean Christopherson wrote:
+> @@ -5134,6 +5167,16 @@ static long kvm_vm_ioctl(struct file *filp,
+>   	case KVM_GET_STATS_FD:
+>   		r = kvm_vm_ioctl_get_stats_fd(kvm);
+>   		break;
+> +	case KVM_CREATE_GUEST_MEMFD: {
+> +		struct kvm_create_guest_memfd guest_memfd;
+> +
+> +		r = -EFAULT;
+> +		if (copy_from_user(&guest_memfd, argp, sizeof(guest_memfd)))
+> +			goto out;
+> +
+> +		r = kvm_gmem_create(kvm, &guest_memfd);
+> +		break;
+> +	}
 
-With commit 099f26f22f58 ("integrity: machine keyring CA
-configuration") it is now possible to require signed IMA policies
-without having to recompile the kernel.  Please note this change might
-affect existing users/tests.
+Does it need a new CAP to indicate the support of guest_memfd?
 
-> >> ---
-> >>  security/integrity/ima/ima_efi.c | 3 +++
-> >>  1 file changed, 3 insertions(+)
-> >>
-> >> diff --git a/security/integrity/ima/ima_efi.c b/security/integrity/ima/ima_efi.c
-> >> index 9db66fe310d4..bb2881759505 100644
-> >> --- a/security/integrity/ima/ima_efi.c
-> >> +++ b/security/integrity/ima/ima_efi.c
-> >> @@ -58,6 +58,9 @@ static const char * const sb_arch_rules[] = {
-> >>  #if !IS_ENABLED(CONFIG_MODULE_SIG)
-> >>  	"appraise func=MODULE_CHECK appraise_type=imasig",
-> >>  #endif
-> >> +#if IS_ENABLED(CONFIG_INTEGRITY_MACHINE_KEYRING) && IS_ENABLED(CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY)
-> >> +	"appraise func=POLICY_CHECK appraise_type=imasig",
-> >> +#endif /* CONFIG_INTEGRITY_MACHINE_KEYRING && IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY */
-> >>  	"measure func=MODULE_CHECK",
-> >>  	NULL
-> >>  };
-> >
-> >Thanks, Coiby.
-> 
-> You are welcome!
-> 
-> >
-> >Using IS_ENABLED() is not wrong, but unnecessary.  IS_BUILTIN()
-> >suffices.
-> 
-> Thanks for the reminding! When I was going to apply this suggestion, I
-> noticed ima_efi.c uses IS_ENABLED for all configuration items i.e.
-> CONFIG_MODULE_SIG and CONFIG_KEXEC_SIG which are all of bool type. Would
-> you like me to switch all IS_ENABLEs to IS_BUILTIN or still use
-> IS_ENABLED? While IS_BUILTIN is exclusively for bool type, it's not as
-> intuitive as IS_ENABLED. So it's not easy for me to make a choice.
+This is patch series introduces 3 new CAPs and it seems any one of them 
+can serve as the indicator of guest_memfd.
 
-Sure, for consistency with the other rules IS_ENABLED is fine.
++#define KVM_CAP_USER_MEMORY2 230
++#define KVM_CAP_MEMORY_ATTRIBUTES 231
++#define KVM_CAP_VM_TYPES 232
 
-thanks,
-
-Mimi
-
+or we just go and try the ioctl, the return value will tell the result?
