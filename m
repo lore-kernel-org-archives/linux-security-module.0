@@ -2,98 +2,152 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 917ACEB64DC
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jul 2023 10:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A237EB64DA
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jul 2023 14:13:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbjGTKpg (ORCPT
+        id S229795AbjGTONR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Jul 2023 06:45:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46162 "EHLO
+        Thu, 20 Jul 2023 10:13:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbjGTKpf (ORCPT
+        with ESMTP id S229592AbjGTONQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Jul 2023 06:45:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4869510F1;
-        Thu, 20 Jul 2023 03:45:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CD718619F2;
-        Thu, 20 Jul 2023 10:45:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 27830C433C8;
-        Thu, 20 Jul 2023 10:45:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689849934;
-        bh=FUjvj+1KggTKf3IJ7E9yOc6WsvJXizVjHxqnoZ8GHtU=;
-        h=From:Date:Subject:To:Cc:Reply-To:From;
-        b=XLq7frlQ+DX2iZ0GWH2j/yLPkJfirUGRg9xQhj3tKq1QsU/nlLSHzwm/UqB7d7B7z
-         TxB7TBmCSiVXnFdNYDZt0pkx1bZ6AGG3Vw+Wc7dS6NB4NRDAnIoETNJIuLGhUVgfrZ
-         wB6SRhcCtFmcTwB8f/12BWW/nUvhzszmm6rdwsb9rBIAB+wilg9EBhbUgylZlYfNEj
-         8p9U+7X2S2P84OWpFc2uapIzQN8nc7mgdx4W8DdPywF6Bai7nLVF8Pf8DfceZkS7+v
-         GDA6UehCrOAO9YjdLA3x+G8wjwu2EETigVHtT2VY6QqhkMJ7KyePq9Sopd/Pwxb5qR
-         pveC4rS5+osbA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.lore.kernel.org (Postfix) with ESMTP id 08CE8EB64DA;
-        Thu, 20 Jul 2023 10:45:34 +0000 (UTC)
-From:   =?utf-8?q?T=C3=B3th_J=C3=A1nos?= via B4 Relay 
-        <devnull+gomba007.gmail.com@kernel.org>
-Date:   Thu, 20 Jul 2023 12:45:22 +0200
-Subject: [PATCH RESEND] security: smack: smackfs: fix typo (lables->labels)
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20230720-smackfs-lables-fix-v1-1-7994a1f7e45a@gmail.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Thu, 20 Jul 2023 10:13:16 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC3052115;
+        Thu, 20 Jul 2023 07:13:15 -0700 (PDT)
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36KE7pnL000536;
+        Thu, 20 Jul 2023 14:13:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=JHHpENURdf5rB7etiqoKe/V/ViYThscFn9W/0Kvtu+w=;
+ b=h0leQb4uAKWvBTcKBAms8xFVhrv+9FV7SWULIAlP0jJeF1F8EC9A5DXohPlWAkGQptq2
+ JZ/gNC7NvBbA9fjbQMwDDSlugJf9cq9UW4a6CQKDkJ5AXxqItUJcdVVUsiG9xuh/Ivju
+ ViMqBqlbXPuC+CLr/1nBKyk0oze0rQUQ8Zg5CpuBtgVjYrHKJHSuaPWC8ZRrgPIDWiSu
+ F0wbTBRG/iYletcdDpNxrH75cIGLX0aMBO0SvgE0MpOATxQjjuzqoviAY2ZXmzlDE7/l
+ GLMEdhUXGjAdsx8oijxpLZyXVgruYsuD935oDfjfn/60pIej/4ZjRyynddE6N6rjdsqy pA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3rxwcgw4hu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Jul 2023 14:13:02 +0000
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 36KDqgD6030761;
+        Thu, 20 Jul 2023 14:12:54 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3rxwcgw496-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Jul 2023 14:12:53 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 36KDoCJT016862;
+        Thu, 20 Jul 2023 14:12:37 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+        by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3rv5sryvqx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Jul 2023 14:12:37 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+        by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 36KECaL124838768
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Jul 2023 14:12:37 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B89E45804B;
+        Thu, 20 Jul 2023 14:12:36 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D35AB58059;
+        Thu, 20 Jul 2023 14:12:35 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.191.187])
+        by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Thu, 20 Jul 2023 14:12:35 +0000 (GMT)
+Message-ID: <b6a0475c67e975cf564e4b78830ae0e598c584ac.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: require signed IMA policy when UEFI secure boot is
+ enabled
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Coiby Xu <coxu@redhat.com>
+Cc:     linux-integrity@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1689849933; l=959;
- i=gomba007@gmail.com; s=20230706; h=from:subject:message-id;
- bh=S9HyRNyzLwD2W29A0DsX2ZZZiM4IO3L3DpcXXpfmTVs=;
- b=XYaR86b7SPYm2uXmkLcj3CqPenNe9TpKXk3lIAAOYRLSyyGrVDIADV94Uh2cqBkvExkRCO4nL
- bBni3x5S3snD52/vgxYtNhQYlTPd9BnVsZJk2MR1sMKOrTOGalzsdM2
-X-Developer-Key: i=gomba007@gmail.com; a=ed25519;
- pk=iY9MjPCbud82ULS2PQJIq3QwjKyP/Sg730I6T2M8Y5U=
-X-Endpoint-Received: by B4 Relay for gomba007@gmail.com/20230706 with auth_id=60
-X-Original-From: =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
-Reply-To: <gomba007@gmail.com>
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Date:   Thu, 20 Jul 2023 10:12:35 -0400
+In-Reply-To: <kglacif5fwh3byrjkmlzygpnaecdb2zxh6hbglnvdbsfu7hbxm@gc3mjr37mnpb>
+References: <20230703115442.129725-1-coxu@redhat.com>
+         <b61fedf214cbe72de063a3bf516dd72f80595219.camel@linux.ibm.com>
+         <kglacif5fwh3byrjkmlzygpnaecdb2zxh6hbglnvdbsfu7hbxm@gc3mjr37mnpb>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 6nk1TxvYqy4j526hl-FRjEE0_qfBbqzg
+X-Proofpoint-ORIG-GUID: wb_rzvVwE4dwTN7r0uqQdOR67Pxyhg2y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-20_07,2023-07-20_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ phishscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0 adultscore=0
+ spamscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2307200118
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Tóth János <gomba007@gmail.com>
+On Fri, 2023-07-14 at 09:29 +0800, Coiby Xu wrote:
+> On Tue, Jul 04, 2023 at 08:57:10AM -0400, Mimi Zohar wrote:
+> >On Mon, 2023-07-03 at 19:54 +0800, Coiby Xu wrote:
+> >> With the introduction of the .machine keyring for UEFI-based systems,
+> >> users are able to add custom CAs keys via MOK. This allow users to sign
+> >> their own IMA polices. For the sake of security, mandate signed IMA
+> >> policy when UEFI secure boot is enabled.
+> >>
+> >> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> >> Signed-off-by: Coiby Xu <coxu@redhat.com>
 
-Fix a spelling error in smakcfs.
+With commit 099f26f22f58 ("integrity: machine keyring CA
+configuration") it is now possible to require signed IMA policies
+without having to recompile the kernel.  Please note this change might
+affect existing users/tests.
 
-Signed-off-by: Tóth János <gomba007@gmail.com>
----
- security/smack/smackfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> >> ---
+> >>  security/integrity/ima/ima_efi.c | 3 +++
+> >>  1 file changed, 3 insertions(+)
+> >>
+> >> diff --git a/security/integrity/ima/ima_efi.c b/security/integrity/ima/ima_efi.c
+> >> index 9db66fe310d4..bb2881759505 100644
+> >> --- a/security/integrity/ima/ima_efi.c
+> >> +++ b/security/integrity/ima/ima_efi.c
+> >> @@ -58,6 +58,9 @@ static const char * const sb_arch_rules[] = {
+> >>  #if !IS_ENABLED(CONFIG_MODULE_SIG)
+> >>  	"appraise func=MODULE_CHECK appraise_type=imasig",
+> >>  #endif
+> >> +#if IS_ENABLED(CONFIG_INTEGRITY_MACHINE_KEYRING) && IS_ENABLED(CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY)
+> >> +	"appraise func=POLICY_CHECK appraise_type=imasig",
+> >> +#endif /* CONFIG_INTEGRITY_MACHINE_KEYRING && IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY */
+> >>  	"measure func=MODULE_CHECK",
+> >>  	NULL
+> >>  };
+> >
+> >Thanks, Coiby.
+> 
+> You are welcome!
+> 
+> >
+> >Using IS_ENABLED() is not wrong, but unnecessary.  IS_BUILTIN()
+> >suffices.
+> 
+> Thanks for the reminding! When I was going to apply this suggestion, I
+> noticed ima_efi.c uses IS_ENABLED for all configuration items i.e.
+> CONFIG_MODULE_SIG and CONFIG_KEXEC_SIG which are all of bool type. Would
+> you like me to switch all IS_ENABLEs to IS_BUILTIN or still use
+> IS_ENABLED? While IS_BUILTIN is exclusively for bool type, it's not as
+> intuitive as IS_ENABLED. So it's not easy for me to make a choice.
 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 5590eaad241b..2b79c30d4bb6 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -114,7 +114,7 @@ struct smack_known *smack_syslog_label;
-  * SMACK_PTRACE_DEFAULT    regular smack ptrace rules (/proc based)
-  * SMACK_PTRACE_EXACT      labels must match, but can be overriden with
-  *			   CAP_SYS_PTRACE
-- * SMACK_PTRACE_DRACONIAN  lables must match, CAP_SYS_PTRACE has no effect
-+ * SMACK_PTRACE_DRACONIAN  labels must match, CAP_SYS_PTRACE has no effect
-  */
- int smack_ptrace_rule = SMACK_PTRACE_DEFAULT;
- 
+Sure, for consistency with the other rules IS_ENABLED is fine.
 
----
-base-commit: 6995e2de6891c724bfeb2db33d7b87775f913ad1
-change-id: 20230706-smackfs-lables-fix-ac965c4c479f
+thanks,
 
-Best regards,
--- 
-Tóth János <gomba007@gmail.com>
+Mimi
 
