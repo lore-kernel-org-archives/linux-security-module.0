@@ -2,111 +2,127 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56BB3EB64DC
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jul 2023 14:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC126EB64DC
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jul 2023 15:15:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229448AbjGTO7y (ORCPT
+        id S232455AbjGTPPH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Jul 2023 10:59:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43662 "EHLO
+        Thu, 20 Jul 2023 11:15:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232376AbjGTO7x (ORCPT
+        with ESMTP id S232503AbjGTPPA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Jul 2023 10:59:53 -0400
-Received: from sonic303-27.consmr.mail.ne1.yahoo.com (sonic303-27.consmr.mail.ne1.yahoo.com [66.163.188.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B78B126BA
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Jul 2023 07:59:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1689865186; bh=TUc8NpO8iN72q9X9QslI5+6iDWFuyuxPTgt4Su2d5lo=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=l6eOGGUPkBiC9BlrCoyXTtT4GNIzTgu00u2kjHYZX2lZivkj7jVM7jnpZolwEIX4PY+Q7x2J92OOVNlMfn92qHO5C4J+CUCGA0rfmmZ01oTs4e4/1l2GrrfqVb169f3BS3SCLe50QIo9CiPBAZj2SP7BeWZoEWqObnEep+z7xcemYKDuXSsqruYTTMrvZm6VhhoCqepZ38YmX1EOQvGOFih/pXZZ8KNbjwrQ2g01kMme3YzZAYHUD777ZmrKbA0QMuD91uXzSnctxZe/dPS9fhmxkZV9/Vu6u/qC/0EDpS2f6S286AX2klT09tRlhH4XruhcIx8toAP+gkO5Fbof8A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1689865186; bh=TWcGvt0YRlAnV4MpP0a2S3Eu9bqu3CGRNpxaTL1xq0W=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=AMyYp9EbEADgau5/Yp2fGnr80rRddU9gS/aEvHjcT5zTzzS6Yb6Q7Son2ES8LQXK4e9gGowIehPSPD8sGGbpCRh0Ff8BiBH/Nq0p1at2/6JF9DHSSTD2MyTOFmmmXYIC75pY1sB9jV55Edh/SG/n4sBTpn6SWhqI4C5F+++4oC/mJb/Lqniq+DquTmsyZ0FHSvxt5IPcRvaNmL252D4RqTWhkCFfKyK5av9HyJunZOA8GzMJItqzr5WnbswX3wYF48EW1UcoE/JMiBUW6uEXDCnyPSkl76LDwF3EiYaZsvp1RdpfTnnjkE/d8lWh0Q4qp5kNU6wAg0oi0MQjF8lNNA==
-X-YMail-OSG: 7_Zt5moVM1nc2SJqP3KRf67gWPl3VDGMgHvDOK0PHZGsPd50vfObKK.y2fvHP4r
- VfbanAe4I4a4qS64ydD6LW6BnWRnRIvLkEUt7iOenTWKp_nR4liD0U7BvWMNx4Is5vBZpNyOLuDE
- .1bwIKhqHk1yaldWSarbH82jsxVLsWDmyJPSfi15wpcU0XsI2w96I0tiRdB4vv7YES_PgazYxcgy
- WsFVeJI6Wefe82w99.qZIVcPsy9rLtx9fnmUfGoen3Fzkyb241GNcMmdrPDBu0vFA32RzPHN9WMZ
- hY0VR4i5AyIulw5lvWBFF9EtOIagPPPvWUaELkPmKBVonzrwm7B26OsXrtywyO0IEiL38i.juNr8
- X3NRLvXT0znhos1lTNOjZ8Ubp2cJ8Ua4iyBVkHtLDifAxfOpRoJoBQD2k0nd_47MeYcZi1aS.Ubo
- Nz.c4KgMDZk.sH.8maDFOQZfPemDX0zFUsJ9A2L_pfUdfv7v5GflLbhvnNA025fZteuw0wPTMnBz
- wRV2SdJTeq3j0QVPt0F5_tY6o.7nyJKdZl7ndu0HxufWlU1LTVNfBGhnl.PYFIFonWoCrR7wK2T9
- Co90muLxIF_PEPG06XlZAeQ8EbtoYtI_nb2g62uNUWitisdKcHKhw95iyPTgtd_.fUM5_1nfBD6p
- oY56ok5gemzNma6FTDV6qpTJuCWdSIqTG56xii4yNDh2cjOOxHerM8DlQZcV15U3BzrWt_Q.g7w3
- KCJmQfPUWuezGfvypKRzROcWjJdC2te0zUSoxjTXcx.f.YPGeQjOcxagLFJ173HT4KBfGevQvXAm
- Jks8Y1W_vhdYzszORm6VWzPSnr28JQ0wkXDn5qppCiZyWb1FbpaOPBMbNaqaB2sNsliET9_Apf3Z
- e2dw_ooalrQFjsHf8dHNHz2vEigryX9.9vtqN9UcYxUc294hMwKf_qS2S8JC_FE7CYk.MWg_J7v_
- dPpC8ZmL_kUk2dZK7oVLGeQHeIRrkzkILbW3FitIMo7i10yDIn156iybLJ7XpW7mpNVlEJMvEETg
- J6OSBnkz4AtAd0pL4BJEloRDjwspjffSndlr9jZwr32NMBgOhqaLlcPUVsV982DxV9Q6bxv4ryOf
- 1A_Rw.trBpX_Zkt4JqKPmjiH3j1uW4N.W97RCV4337inM1Hdi8igeN1iOUaiEt_lGY6uO5AFdYGz
- slwjf4UkPln_E5Mh8qKCA7wCVmy3UxSl3VdWaF6m.PpnEvrQiyHWGbTVbUfMjjy2MWtqOhmQr6GE
- QZGt7zX1YCrArPPYrfrTAP_GWbN4txvsQLBUQh6mpnsQP6DwjpVv3dkPgEeskNTUG90LBOsEn6gg
- Xv3YqDK93iKvGBWNPBxGlCbQP1fqoJAPoz23.e2u4SE2qWk7XN7Or9yJ_Mr22U9Xq78.X0lPfWSw
- e59RQMkkeZ_cBpw5i.E8rRRzuirsbiG2i7EtOeuagGqsL4we9uX7ZRLLqs7CLHyJ6g1Vo_1liDBi
- ezDP4sc5XWcJVMoTKb4VuIt5_lrdoTK8xIPEK.LZc4yJ_PXRuBtOeBJhoqvGekxsKyrrYtTAMSa7
- fzOZXd1Joc09qZ8NQOnqtZ8uidogD3G8LFxfpYNwcfWbswBKpXDlF_kv0RuBE3zTiwmPYA94j3El
- UXa65CZPhBVXMgUS.tozvjoqL5k7Y0jsG1ffkIcmLELAlGYcbTY4kUk.b1tWlp_FCqy1sEpJiwIU
- o_ITgLUHpJzlST6YhpAw_jGTZZW6ldrdsQZgHPkzx0bcCLA1b8zrvbqqVC7Myw_rwfDq4l6PDrB8
- zHGiyirbBh2199sUMMroDPmikOKq5rOssf_oL.eIadGbsGmVz0lyBYZo.bWS5e8gmFS_TCGNfKQi
- DI4E6MhyU1gPOTrt.TPW6ohp7tXAu4Bt7ayX8IFYUF9KSSOpmtvmkEd3Xgh_gfLBHJjvc.F3p0GP
- s43N5d6P8Izj3jwkWl942dMVlqx5JpcjC_JcbR5W_sPTQfRYXwj.e1ZWXJYdbQ6MkDHvE5gKiKR7
- 4hsXTo4Qe4LykiItq1GpwuXFnePavpA0Z_5PtqXxreSh9o9TTuV6hxqIKeCtL5NURRm7i4tLETCt
- R71E5ZekebyV7qtwooO49CHA_FpkZS_MI3b2Kby0kEIXgtp9Oe.RLZjYf_cXVT_cr16M1XbamVWc
- BLiC_QvkKWte_rPEYQGVZxg0hPPe7B8Jqnxt0B8ynPJ2rR7jCpfHn.iGSb32GihBMUur9yCmuZEv
- Pu5y2a0dX8b9ExgtyWQ9VV53FkCYAPJrCy2fsEfMLfL7NzyCi9cdQ.7PrkbfCnSt0_DJRNR0Nly.
- WDnUA2A0L
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 26c82381-f707-475c-a65b-ca49a95c069e
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Thu, 20 Jul 2023 14:59:46 +0000
-Received: by hermes--production-bf1-69c9587855-mrdtq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID aa23250f1a7df050cf46978ec22c1b43;
-          Thu, 20 Jul 2023 14:59:41 +0000 (UTC)
-Message-ID: <d599f956-f6b8-fff6-7a70-7a2a77a68218@schaufler-ca.com>
-Date:   Thu, 20 Jul 2023 07:59:38 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH RESEND] security: smack: smackfs: fix typo
- (lables->labels)
-Content-Language: en-US
-To:     gomba007@gmail.com, Paul Moore <paul@paul-moore.com>,
+        Thu, 20 Jul 2023 11:15:00 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA83B2707
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Jul 2023 08:14:50 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-cab7304dcccso778181276.3
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Jul 2023 08:14:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1689866089; x=1690470889;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jyO/GZcznauRS+IxFjefkQ411ageTxV8Pq4vykaVGvo=;
+        b=zTnr2gXYIfqrhSL0WP50qLuqh3ZSH0gfVOnKmqwBvWYCge11/urc6Mcz48DQC5VeI6
+         s/bgjrFlzBMXd0PxaHBdxoR2ZqKrVqjnkCnhcQbbSnTvJYQ3aBe8wGkYdi1iCIBydfGh
+         kDBro1Ztm9Xs7cfFTvZ7Ey8Gxe05PCCIDn4nx9L+2nwHbFPbro9d3jap/zFGaLY9lF26
+         GO0Vu5OUt+nUmBQOwJoSD8n40MC7ZQXlXpaj59Y1nIZxZy5/TzmEdTKZZXkcpmTSKYdO
+         Y0fmzsgj8zCYsvUdMgpPWIv3Ur8RBp8NDUrrxEURomdLy8NcckIjCEtpSXTS4KS2mzFS
+         29+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689866089; x=1690470889;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jyO/GZcznauRS+IxFjefkQ411ageTxV8Pq4vykaVGvo=;
+        b=KWmKr9BObzuYNgycoaXMNPZVdFtqjalNjC+40IgkJ6ivZReXMllnxEoIjjVlZQBtpq
+         e6lNL6+X/BxMJkhfNxNTifVMpaQLmk8LW5gIOQRq+axv3JD/lHhrJ5A5c4NmcSEXagN1
+         dGQfrvWXzjko1jhJaG8TK7M1wvKZ0JlhnUQcRAIWk8dsaedJqskwTLxanAbU979VwSuZ
+         maEnMehj2TFGR6rxBIRef49Dbxrx4RIo26XDQycPAI0NkBEPxWJxjmMQuL7OpQQA8U2j
+         cbpwqqYpBvCSFkBZmCEOBgdeqTzCpwWle+gEc1Ic3iYTs0J0A5eZe7Z8uOSFG4OBrEJa
+         eY2w==
+X-Gm-Message-State: ABy/qLbXuKJNc9wyJCl/r0+WdIGF4A2mNDcExXO8EBKzN7n+XLqyDCmX
+        GSz2J4HSGO0xEuyJO1ayDTugu5vA07g=
+X-Google-Smtp-Source: APBJJlHgB47FmXfk0Rt+Hyu6ZgRaD/aSiXUWbAQerG5WzFKE3pY5cKaePpzhb9OPvUF/5F0XHeWF4GbW2oc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:a105:0:b0:c65:8983:ac2 with SMTP id
+ z5-20020a25a105000000b00c6589830ac2mr17912ybh.5.1689866089303; Thu, 20 Jul
+ 2023 08:14:49 -0700 (PDT)
+Date:   Thu, 20 Jul 2023 08:14:47 -0700
+In-Reply-To: <83eb5c50-7287-7845-ffc3-a7c58e638ea5@intel.com>
+Mime-Version: 1.0
+References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-13-seanjc@google.com>
+ <83eb5c50-7287-7845-ffc3-a7c58e638ea5@intel.com>
+Message-ID: <ZLlLx7wkE6iPTIcI@google.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From:   Sean Christopherson <seanjc@google.com>
+To:     Xiaoyao Li <xiaoyao.li@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-security-module@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20230720-smackfs-lables-fix-v1-1-7994a1f7e45a@gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20230720-smackfs-lables-fix-v1-1-7994a1f7e45a@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.21647 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/20/2023 3:45 AM, Tóth János via B4 Relay wrote:
-> From: Tóth János <gomba007@gmail.com>
->
-> Fix a spelling error in smakcfs.
->
-> Signed-off-by: Tóth János <gomba007@gmail.com>
+On Thu, Jul 20, 2023, Xiaoyao Li wrote:
+> On 7/19/2023 7:44 AM, Sean Christopherson wrote:
+> > @@ -5134,6 +5167,16 @@ static long kvm_vm_ioctl(struct file *filp,
+> >   	case KVM_GET_STATS_FD:
+> >   		r = kvm_vm_ioctl_get_stats_fd(kvm);
+> >   		break;
+> > +	case KVM_CREATE_GUEST_MEMFD: {
+> > +		struct kvm_create_guest_memfd guest_memfd;
+> > +
+> > +		r = -EFAULT;
+> > +		if (copy_from_user(&guest_memfd, argp, sizeof(guest_memfd)))
+> > +			goto out;
+> > +
+> > +		r = kvm_gmem_create(kvm, &guest_memfd);
+> > +		break;
+> > +	}
+> 
+> Does it need a new CAP to indicate the support of guest_memfd?
 
-I have the original queued for inclusion.
+Yeah, I meant to add that to the TODO list and forgot (obviously).
 
-> ---
->  security/smack/smackfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-> index 5590eaad241b..2b79c30d4bb6 100644
-> --- a/security/smack/smackfs.c
-> +++ b/security/smack/smackfs.c
-> @@ -114,7 +114,7 @@ struct smack_known *smack_syslog_label;
->   * SMACK_PTRACE_DEFAULT    regular smack ptrace rules (/proc based)
->   * SMACK_PTRACE_EXACT      labels must match, but can be overriden with
->   *			   CAP_SYS_PTRACE
-> - * SMACK_PTRACE_DRACONIAN  lables must match, CAP_SYS_PTRACE has no effect
-> + * SMACK_PTRACE_DRACONIAN  labels must match, CAP_SYS_PTRACE has no effect
->   */
->  int smack_ptrace_rule = SMACK_PTRACE_DEFAULT;
->  
->
-> ---
-> base-commit: 6995e2de6891c724bfeb2db33d7b87775f913ad1
-> change-id: 20230706-smackfs-lables-fix-ac965c4c479f
->
-> Best regards,
+> This is patch series introduces 3 new CAPs and it seems any one of them can
+> serve as the indicator of guest_memfd.
+> 
+> +#define KVM_CAP_USER_MEMORY2 230
+> +#define KVM_CAP_MEMORY_ATTRIBUTES 231
+> +#define KVM_CAP_VM_TYPES 232
+
+The number of new caps being added is the main why I didn't just add another one.
+On the other hand, we have room for a few billion caps, so one more isn't a big
+deal.  So yeah, KVM_CAP_GUEST_MEMFD is probably the way to go.
