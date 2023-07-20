@@ -2,127 +2,265 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC126EB64DC
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jul 2023 15:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A303EB64DC
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jul 2023 15:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232455AbjGTPPH (ORCPT
+        id S232591AbjGTPek (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Jul 2023 11:15:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52082 "EHLO
+        Thu, 20 Jul 2023 11:34:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232503AbjGTPPA (ORCPT
+        with ESMTP id S231748AbjGTPej (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Jul 2023 11:15:00 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA83B2707
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Jul 2023 08:14:50 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-cab7304dcccso778181276.3
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Jul 2023 08:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689866089; x=1690470889;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jyO/GZcznauRS+IxFjefkQ411ageTxV8Pq4vykaVGvo=;
-        b=zTnr2gXYIfqrhSL0WP50qLuqh3ZSH0gfVOnKmqwBvWYCge11/urc6Mcz48DQC5VeI6
-         s/bgjrFlzBMXd0PxaHBdxoR2ZqKrVqjnkCnhcQbbSnTvJYQ3aBe8wGkYdi1iCIBydfGh
-         kDBro1Ztm9Xs7cfFTvZ7Ey8Gxe05PCCIDn4nx9L+2nwHbFPbro9d3jap/zFGaLY9lF26
-         GO0Vu5OUt+nUmBQOwJoSD8n40MC7ZQXlXpaj59Y1nIZxZy5/TzmEdTKZZXkcpmTSKYdO
-         Y0fmzsgj8zCYsvUdMgpPWIv3Ur8RBp8NDUrrxEURomdLy8NcckIjCEtpSXTS4KS2mzFS
-         29+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689866089; x=1690470889;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jyO/GZcznauRS+IxFjefkQ411ageTxV8Pq4vykaVGvo=;
-        b=KWmKr9BObzuYNgycoaXMNPZVdFtqjalNjC+40IgkJ6ivZReXMllnxEoIjjVlZQBtpq
-         e6lNL6+X/BxMJkhfNxNTifVMpaQLmk8LW5gIOQRq+axv3JD/lHhrJ5A5c4NmcSEXagN1
-         dGQfrvWXzjko1jhJaG8TK7M1wvKZ0JlhnUQcRAIWk8dsaedJqskwTLxanAbU979VwSuZ
-         maEnMehj2TFGR6rxBIRef49Dbxrx4RIo26XDQycPAI0NkBEPxWJxjmMQuL7OpQQA8U2j
-         cbpwqqYpBvCSFkBZmCEOBgdeqTzCpwWle+gEc1Ic3iYTs0J0A5eZe7Z8uOSFG4OBrEJa
-         eY2w==
-X-Gm-Message-State: ABy/qLbXuKJNc9wyJCl/r0+WdIGF4A2mNDcExXO8EBKzN7n+XLqyDCmX
-        GSz2J4HSGO0xEuyJO1ayDTugu5vA07g=
-X-Google-Smtp-Source: APBJJlHgB47FmXfk0Rt+Hyu6ZgRaD/aSiXUWbAQerG5WzFKE3pY5cKaePpzhb9OPvUF/5F0XHeWF4GbW2oc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:a105:0:b0:c65:8983:ac2 with SMTP id
- z5-20020a25a105000000b00c6589830ac2mr17912ybh.5.1689866089303; Thu, 20 Jul
- 2023 08:14:49 -0700 (PDT)
-Date:   Thu, 20 Jul 2023 08:14:47 -0700
-In-Reply-To: <83eb5c50-7287-7845-ffc3-a7c58e638ea5@intel.com>
-Mime-Version: 1.0
-References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-13-seanjc@google.com>
- <83eb5c50-7287-7845-ffc3-a7c58e638ea5@intel.com>
-Message-ID: <ZLlLx7wkE6iPTIcI@google.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-From:   Sean Christopherson <seanjc@google.com>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 20 Jul 2023 11:34:39 -0400
+Received: from frasgout12.his.huawei.com (unknown [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C5C8189;
+        Thu, 20 Jul 2023 08:34:23 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4R6GcB0LRgz9xGWX;
+        Thu, 20 Jul 2023 23:21:14 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwBHquXFU7lkGHDRBA--.21759S2;
+        Thu, 20 Jul 2023 16:33:41 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jarkko@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, pbrobinson@gmail.com,
+        zbyszek@in.waw.pl, wiktor@metacode.biz,
+        devel@lists.sequoia-pgp.org, gnupg-devel@gnupg.org,
+        ebiggers@kernel.org, Jason@zx2c4.com, mail@maciej.szmigiero.name,
+        antony@vennard.ch, konstantin@linuxfoundation.org,
+        James.Bottomley@HansenPartnership.com,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [RFC][PATCH v3 0/9] KEYS: Introduce user asymmetric keys and signatures
+Date:   Thu, 20 Jul 2023 17:32:36 +0200
+Message-Id: <20230720153247.3755856-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: LxC2BwBHquXFU7lkGHDRBA--.21759S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3JFyDJF47ZFy5JF15KFy7Awb_yoW3Aw17pF
+        s5K3yftryktryIk395Jw1Igw1rZr1rAFW3Kw1fuw1rAasIqr18ArZ2kF4fur9IyFW0gF1F
+        qr4Yvw1jkw1UtaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28I
+        cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
+        IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI
+        42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42
+        IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E
+        87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1c4S7UUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAEBF1jj5C8mgACsE
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jul 20, 2023, Xiaoyao Li wrote:
-> On 7/19/2023 7:44 AM, Sean Christopherson wrote:
-> > @@ -5134,6 +5167,16 @@ static long kvm_vm_ioctl(struct file *filp,
-> >   	case KVM_GET_STATS_FD:
-> >   		r = kvm_vm_ioctl_get_stats_fd(kvm);
-> >   		break;
-> > +	case KVM_CREATE_GUEST_MEMFD: {
-> > +		struct kvm_create_guest_memfd guest_memfd;
-> > +
-> > +		r = -EFAULT;
-> > +		if (copy_from_user(&guest_memfd, argp, sizeof(guest_memfd)))
-> > +			goto out;
-> > +
-> > +		r = kvm_gmem_create(kvm, &guest_memfd);
-> > +		break;
-> > +	}
-> 
-> Does it need a new CAP to indicate the support of guest_memfd?
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Yeah, I meant to add that to the TODO list and forgot (obviously).
+Define a new TLV-based format for keys and signatures, aiming to store and
+use in the kernel the crypto material from other unsupported formats
+(e.g. PGP).
 
-> This is patch series introduces 3 new CAPs and it seems any one of them can
-> serve as the indicator of guest_memfd.
-> 
-> +#define KVM_CAP_USER_MEMORY2 230
-> +#define KVM_CAP_MEMORY_ATTRIBUTES 231
-> +#define KVM_CAP_VM_TYPES 232
+TLV fields have been defined to fill the corresponding kernel structures
+public_key, public_key_signature and key_preparsed_payload.
 
-The number of new caps being added is the main why I didn't just add another one.
-On the other hand, we have room for a few billion caps, so one more isn't a big
-deal.  So yeah, KVM_CAP_GUEST_MEMFD is probably the way to go.
+Keys:
+                struct public_key {     struct key_preparsed_payload {
+KEY_PUB       -->  void *key;
+                   u32 keylen;         --> prep->payload.data[asym_crypto]
+KEY_ALGO      -->  const char *pkey_algo;
+KEY_KID0
+KEY_KID1      ---------------------------> prep->payload.data[asym_key_ids]
+KEY_KID2  
+KEY_DESC      ---------------------------> prep->description
+
+
+Signatures:
+                struct public_key_signature {
+SIG_S         -->  u8 *s;
+                   u32 s_size;
+SIG_KEY_ALGO  -->  const char *pkey_algo;
+SIG_HASH_ALGO -->  const char *hash_algo;
+                   u32 digest_size;
+SIG_ENC       -->  const char *encoding;   
+SIG_KID0
+SIG_KID1      -->  struct asymmetric_key_id *auth_ids[3];
+SIG_KID2  
+
+
+For keys, since the format conversion has to be done in user space, user
+space is assumed to be trusted, in this proposal. Without this assumption,
+a malicious conversion tool could make a user load to the kernel a
+different key than the one expected.
+
+That should not be a particular problem for keys that are embedded in the
+kernel image and loaded at boot, since the conversion happens in a trusted
+environment such as the building infrastructure of the Linux distribution
+vendor.
+
+In the other cases, such as enrolling a key through the Machine Owner Key
+(MOK) mechanism, the user is responsible to ensure that the crypto material
+carried in the original format remains the same after the conversion.
+
+For signatures, assuming the strength of the crypto algorithms, altering
+the crypto material is simply a Denial-of-Service (DoS), as data can be
+validated only with the right signature.
+
+
+This patch set also offers the following contributions:
+
+- A library for parsing TLV-formatted data, usable also by other kernel
+  subsystems
+
+- An API similar to the PKCS#7 one, to verify the authenticity of system
+  data through user asymmetric keys and signatures
+
+- IMA support for user asymmetric keys and signatures embedded in a
+  module-style appended signature (through the new API)
+
+- A mechanism to store a keyring blob in the kernel image and to extract
+  and load the keys at system boot
+  
+- A new command for gnupg (in user space), to convert keys and signatures
+  from PGP to the new kernel format
+
+
+The primary use case for this patch set is to verify the authenticity of
+RPM package headers with the PGP keys of the Linux distribution. Once their
+authenticity is verified, file digests can be extracted from those RPM
+headers and used as reference values for IMA Appraisal.
+
+
+Compared to the previous patch set, the main difference is not relying on
+User Mode Drivers (UMDs) for the conversion from the original format to the
+kernel format, due to the concern that full isolation of the UMD process
+cannot be achieved against a fully privileged system user (root).
+
+The discussion is still ongoing here:
+
+https://lore.kernel.org/linux-integrity/eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com/
+
+This however does not prevent the goal mentioned above of verifying the
+authenticity of RPM headers to be achieved. The fact that Linux
+distribution vendors do the conversion in their infrastructure is a good
+enough guarantee.
+
+
+A very quick way to test the patch set is to execute:
+
+$ gpg --conv-kernel /etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-rawhide-primary | keyctl padd asymmetric "" @u
+
+$ keyctl show @u
+Keyring
+ 762357580 --alswrv      0 65534  keyring: _uid.0
+ 567216072 --als--v      0     0   \_ asymmetric: PGP: 18b8e74c
+
+
+Patch 1 introduces a common library for parsing TLV-formatted data. It is
+generic enough to support other use cases other than this one.
+
+Patches 2-3 preliminarly export some definitions to user space so that
+conversion tools can specify the right public key algorithms and signature
+encodings (digest algorithms are already exported).
+
+Patches 4-5 introduce the user asymmetric keys and signatures.
+
+Patches 6 introduces a system API for verifying the authenticity of system
+data through user asymmetric keys and signatures.
+
+Patch 7-8 introduce a mechanism to store a keyring blob with user
+asymmetric keys in the kernel image, and load them at system boot.
+
+Patch 9 adds support for verifying user asymmetric key signatures with IMA.
+
+Patches 1-2 [GNUPG] introduce the new gpg command --conv-kernel to convert
+PGP keys and signatures to the new kernel format.
+
+Changelog
+
+v2:
+- Make the TLV parser a generic library and use it for user asymmetric keys
+  and signatures
+- Modify types in TLV header and data to u64 (future-proof)
+- Move struct uasym_sig_message definition to uasym_sig_parser.c
+- Remove eBPF patches (nacked by Alexei)
+- Add IMA patch to support modsigs with a user asymmetric key signature
+
+v1:
+- Remove useless check in validate_key() (suggested by Yonghong)
+- Don't rely on User Mode Drivers for the conversion from the original
+  format to the kernel format
+- Use the more extensible TLV format, instead of a fixed structure
+
+Roberto Sassu (9):
+  lib: Add TLV parser
+  crypto: Export public key algorithm information
+  crypto: Export signature encoding information
+  KEYS: asymmetric: Introduce the user asymmetric key parser
+  KEYS: asymmetric: Introduce the user asymmetric key signature parser
+  verification: Add verify_uasym_signature() and
+    verify_uasym_sig_message()
+  KEYS: asymmetric: Preload user asymmetric keys from a keyring blob
+  KEYS: Introduce load_uasym_keyring()
+  ima: Support non-PKCS#7 modsig types
+
+ MAINTAINERS                                |   9 +
+ certs/Kconfig                              |  11 +
+ certs/Makefile                             |   7 +
+ certs/system_certificates.S                |  18 +
+ certs/system_keyring.c                     | 166 ++++++-
+ crypto/Kconfig                             |   6 +
+ crypto/Makefile                            |   2 +
+ crypto/asymmetric_keys/Kconfig             |  14 +
+ crypto/asymmetric_keys/Makefile            |   8 +
+ crypto/asymmetric_keys/asymmetric_type.c   |   3 +-
+ crypto/asymmetric_keys/uasym_key_parser.c  | 240 ++++++++++
+ crypto/asymmetric_keys/uasym_key_preload.c | 102 +++++
+ crypto/asymmetric_keys/uasym_parser.h      |  26 ++
+ crypto/asymmetric_keys/uasym_sig_parser.c  | 497 +++++++++++++++++++++
+ crypto/pub_key_info.c                      |  20 +
+ crypto/sig_enc_info.c                      |  16 +
+ include/crypto/pub_key_info.h              |  15 +
+ include/crypto/sig_enc_info.h              |  15 +
+ include/crypto/uasym_keys_sigs.h           |  81 ++++
+ include/keys/asymmetric-type.h             |   1 +
+ include/linux/tlv_parser.h                 |  28 ++
+ include/linux/verification.h               |  46 ++
+ include/uapi/linux/pub_key_info.h          |  22 +
+ include/uapi/linux/sig_enc_info.h          |  18 +
+ include/uapi/linux/tlv_parser.h            |  59 +++
+ include/uapi/linux/uasym_parser.h          |  59 +++
+ lib/Kconfig                                |   3 +
+ lib/Makefile                               |   3 +
+ lib/tlv_parser.c                           | 203 +++++++++
+ lib/tlv_parser.h                           |  17 +
+ security/integrity/ima/ima_modsig.c        |  79 +++-
+ 31 files changed, 1771 insertions(+), 23 deletions(-)
+ create mode 100644 crypto/asymmetric_keys/uasym_key_parser.c
+ create mode 100644 crypto/asymmetric_keys/uasym_key_preload.c
+ create mode 100644 crypto/asymmetric_keys/uasym_parser.h
+ create mode 100644 crypto/asymmetric_keys/uasym_sig_parser.c
+ create mode 100644 crypto/pub_key_info.c
+ create mode 100644 crypto/sig_enc_info.c
+ create mode 100644 include/crypto/pub_key_info.h
+ create mode 100644 include/crypto/sig_enc_info.h
+ create mode 100644 include/crypto/uasym_keys_sigs.h
+ create mode 100644 include/linux/tlv_parser.h
+ create mode 100644 include/uapi/linux/pub_key_info.h
+ create mode 100644 include/uapi/linux/sig_enc_info.h
+ create mode 100644 include/uapi/linux/tlv_parser.h
+ create mode 100644 include/uapi/linux/uasym_parser.h
+ create mode 100644 lib/tlv_parser.c
+ create mode 100644 lib/tlv_parser.h
+
+-- 
+2.34.1
+
