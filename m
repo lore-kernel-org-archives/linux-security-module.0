@@ -2,134 +2,287 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE8DFC001DE
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jul 2023 07:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D51DEB64DC
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jul 2023 09:04:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230056AbjGUHFE convert rfc822-to-8bit (ORCPT
+        id S229814AbjGUJE5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Jul 2023 03:05:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45678 "EHLO
+        Fri, 21 Jul 2023 05:04:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229846AbjGUHFD (ORCPT
+        with ESMTP id S229941AbjGUJEv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Jul 2023 03:05:03 -0400
-Received: from frasgout12.his.huawei.com (ecs-14-137-139-154.compute.hwclouds-dns.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9757A270B;
-        Fri, 21 Jul 2023 00:05:01 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4R6gFz4FnMz9xtVW;
-        Fri, 21 Jul 2023 14:51:51 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwAn3ELoLbpkla7NBA--.21454S2;
-        Fri, 21 Jul 2023 08:04:22 +0100 (CET)
-Message-ID: <21cd4127cee2d920ffab7576e9a6359ec0988b8d.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH v3 0/9] KEYS: Introduce user asymmetric keys and
- signatures
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>, dhowells@redhat.com,
-        dwmw2@infradead.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, pbrobinson@gmail.com,
-        zbyszek@in.waw.pl, wiktor@metacode.biz,
-        devel@lists.sequoia-pgp.org, gnupg-devel@gnupg.org,
-        ebiggers@kernel.org, Jason@zx2c4.com, mail@maciej.szmigiero.name,
-        antony@vennard.ch, konstantin@linuxfoundation.org,
-        James.Bottomley@HansenPartnership.com,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Fri, 21 Jul 2023 09:04:04 +0200
-In-Reply-To: <CU76KX3XPZN9.V9GU2ZZKVKO@suppilovahvero>
-References: <20230720153247.3755856-1-roberto.sassu@huaweicloud.com>
-         <CU76KX3XPZN9.V9GU2ZZKVKO@suppilovahvero>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu1 
+        Fri, 21 Jul 2023 05:04:51 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BAF92D7E
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 02:04:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1689930239;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=UkppB3amY8e+ZFUORFAPfGoR63QBz1mTawh0tzwUFzU=;
+        b=O8MyMoF45NBwXSE6kctyCSIKBfnc7IQ2a8lNaDwA2PtarXlJlzCNaY3/0w6c/ZMA7m1JX9
+        RbQHkfBKACUWu+gP+VX20Y6M1uqXSBAcVHCmVsBIalv5Bpe1/7PYz9T6HbqZaoT0J38Ltu
+        vAdbbwm7YdROkJy/+rpCsSixGQqzDHM=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-298-bnKejytaO6yMHaFMHrwM6w-1; Fri, 21 Jul 2023 05:03:56 -0400
+X-MC-Unique: bnKejytaO6yMHaFMHrwM6w-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-993c24f3246so206748466b.1
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 02:03:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689930235; x=1690535035;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UkppB3amY8e+ZFUORFAPfGoR63QBz1mTawh0tzwUFzU=;
+        b=jNi27Tkk/PmcWefMmvbzxlNcmcG1CPumor7S8dvB2H631HubsGwLpj7OIEvCEcKsMI
+         bwr/NamopJDkVeE+BJz9KZl71UaB/20Ry/9/nOlL2TubeyB15SyUoAnnecvgpsv0qk+C
+         piEx+CtgzMqorOsQcyS8py46D7hA+sbF3uSc7vz55ThOhGsc1b6xmH2/oEKrPQamhJIL
+         K805bi4yDUOfvxzaveffniqFh4SDC6EIkHbNp0g8IXwDp25pKpbv+jMozo99QhOp7h0O
+         MOPnGMbOnKzVHauBC+Yyk0NO/brURk7NWs4LWedGHTqzfwFdeLtgRDk7mSbfo+4cCIA8
+         DaBg==
+X-Gm-Message-State: ABy/qLZEfcua7aJlNixJ7w/C8Xh/gBp2+F77cT7CpXewakxs+iraa7sy
+        CExdQ40Sb4VtyjD0Bj1tabDrLLjH+UXGRx1mMEcZoh0VA2VDsE5jWE2PRm3/tlnj9neVcMUpzns
+        EPnjfbc8FDxkO6H0axYZp78/WcW5ak2yOIOcK
+X-Received: by 2002:a17:907:6d8c:b0:98d:abd4:4000 with SMTP id sb12-20020a1709076d8c00b0098dabd44000mr7889132ejc.35.1689930234801;
+        Fri, 21 Jul 2023 02:03:54 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlGH6YzYN7wVD16W6bBWRZvka9R57MaW1yVsDxFFu0qfog7UhF1jWQDyj4gC4NTPLd7VWeWUJA==
+X-Received: by 2002:a17:907:6d8c:b0:98d:abd4:4000 with SMTP id sb12-20020a1709076d8c00b0098dabd44000mr7889108ejc.35.1689930234273;
+        Fri, 21 Jul 2023 02:03:54 -0700 (PDT)
+Received: from ?IPV6:2001:b07:6468:f312:9af8:e5f5:7516:fa89? ([2001:b07:6468:f312:9af8:e5f5:7516:fa89])
+        by smtp.googlemail.com with ESMTPSA id rv7-20020a17090710c700b00993a9a951fasm1915159ejb.11.2023.07.21.02.03.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jul 2023 02:03:53 -0700 (PDT)
+Message-ID: <47c5f57c-a191-1983-b4ef-6e0c59c0c446@redhat.com>
+Date:   Fri, 21 Jul 2023 11:03:51 +0200
 MIME-Version: 1.0
-X-CM-TRANSID: GxC2BwAn3ELoLbpkla7NBA--.21454S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF47Zry8XF1DXF48KFWrGrg_yoW8uF13pa
-        yrKr93GFyktw1fAr9rJw4qy3y5Cwn3Jw45G3s8t3yFvw4YgFyIvryfK3WYgFZ0kws3Wryj
-        vrW3Wry7Xa98Z3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj5DBXwAAs-
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [RFC PATCH v11 06/29] KVM: Introduce KVM_SET_USER_MEMORY_REGION2
+To:     Sean Christopherson <seanjc@google.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20230718234512.1690985-1-seanjc@google.com>
+ <20230718234512.1690985-7-seanjc@google.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+In-Reply-To: <20230718234512.1690985-7-seanjc@google.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2023-07-20 at 20:38 +0300, Jarkko Sakkinen wrote:
-> On Thu Jul 20, 2023 at 6:32 PM EEST, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Define a new TLV-based format for keys and signatures, aiming to store and
+On 7/19/23 01:44, Sean Christopherson wrote:
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   arch/x86/kvm/x86.c       |  2 +-
+>   include/linux/kvm_host.h |  4 ++--
+>   include/uapi/linux/kvm.h | 13 +++++++++++++
+>   virt/kvm/kvm_main.c      | 38 ++++++++++++++++++++++++++++++--------
+>   4 files changed, 46 insertions(+), 11 deletions(-)
 > 
-> "type-length-value (TLV) based"
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index a6b9bea62fb8..92e77afd3ffd 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -12420,7 +12420,7 @@ void __user * __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa,
+>   	}
+>   
+>   	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
+> -		struct kvm_userspace_memory_region m;
+> +		struct kvm_userspace_memory_region2 m;
+>   
+>   		m.slot = id | (i << 16);
+>   		m.flags = 0;
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index d2d3e083ec7f..e9ca49d451f3 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -1130,9 +1130,9 @@ enum kvm_mr_change {
+>   };
+>   
+>   int kvm_set_memory_region(struct kvm *kvm,
+> -			  const struct kvm_userspace_memory_region *mem);
+> +			  const struct kvm_userspace_memory_region2 *mem);
+>   int __kvm_set_memory_region(struct kvm *kvm,
+> -			    const struct kvm_userspace_memory_region *mem);
+> +			    const struct kvm_userspace_memory_region2 *mem);
+>   void kvm_arch_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot);
+>   void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen);
+>   int kvm_arch_prepare_memory_region(struct kvm *kvm,
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index f089ab290978..4d4b3de8ac55 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -95,6 +95,16 @@ struct kvm_userspace_memory_region {
+>   	__u64 userspace_addr; /* start of the userspace allocated memory */
+>   };
+>   
+> +/* for KVM_SET_USER_MEMORY_REGION2 */
+> +struct kvm_userspace_memory_region2 {
+> +	__u32 slot;
+> +	__u32 flags;
+> +	__u64 guest_phys_addr;
+> +	__u64 memory_size;
+> +	__u64 userspace_addr;
+> +	__u64 pad[16];
+> +};
+> +
+>   /*
+>    * The bit 0 ~ bit 15 of kvm_userspace_memory_region::flags are visible for
+>    * userspace, other bits are reserved for kvm internal use which are defined
+> @@ -1192,6 +1202,7 @@ struct kvm_ppc_resize_hpt {
+>   #define KVM_CAP_COUNTER_OFFSET 227
+>   #define KVM_CAP_ARM_EAGER_SPLIT_CHUNK_SIZE 228
+>   #define KVM_CAP_ARM_SUPPORTED_BLOCK_SIZES 229
+> +#define KVM_CAP_USER_MEMORY2 230
+>   
+>   #ifdef KVM_CAP_IRQ_ROUTING
+>   
+> @@ -1466,6 +1477,8 @@ struct kvm_vfio_spapr_tce {
+>   					struct kvm_userspace_memory_region)
+>   #define KVM_SET_TSS_ADDR          _IO(KVMIO,   0x47)
+>   #define KVM_SET_IDENTITY_MAP_ADDR _IOW(KVMIO,  0x48, __u64)
+> +#define KVM_SET_USER_MEMORY_REGION2 _IOW(KVMIO, 0x49, \
+> +					 struct kvm_userspace_memory_region2)
+>   
+>   /* enable ucontrol for s390 */
+>   struct kvm_s390_ucas_mapping {
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 53346bc2902a..c14adf93daec 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -1549,7 +1549,7 @@ static void kvm_replace_memslot(struct kvm *kvm,
+>   	}
+>   }
+>   
+> -static int check_memory_region_flags(const struct kvm_userspace_memory_region *mem)
+> +static int check_memory_region_flags(const struct kvm_userspace_memory_region2 *mem)
+>   {
+>   	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
+>   
+> @@ -1951,7 +1951,7 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
+>    * Must be called holding kvm->slots_lock for write.
+>    */
+>   int __kvm_set_memory_region(struct kvm *kvm,
+> -			    const struct kvm_userspace_memory_region *mem)
+> +			    const struct kvm_userspace_memory_region2 *mem)
+>   {
+>   	struct kvm_memory_slot *old, *new;
+>   	struct kvm_memslots *slots;
+> @@ -2055,7 +2055,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>   EXPORT_SYMBOL_GPL(__kvm_set_memory_region);
+>   
+>   int kvm_set_memory_region(struct kvm *kvm,
+> -			  const struct kvm_userspace_memory_region *mem)
+> +			  const struct kvm_userspace_memory_region2 *mem)
+>   {
+>   	int r;
+>   
+> @@ -2067,7 +2067,7 @@ int kvm_set_memory_region(struct kvm *kvm,
+>   EXPORT_SYMBOL_GPL(kvm_set_memory_region);
+>   
+>   static int kvm_vm_ioctl_set_memory_region(struct kvm *kvm,
+> -					  struct kvm_userspace_memory_region *mem)
+> +					  struct kvm_userspace_memory_region2 *mem)
+>   {
+>   	if ((u16)mem->slot >= KVM_USER_MEM_SLOTS)
+>   		return -EINVAL;
+> @@ -4514,6 +4514,7 @@ static int kvm_vm_ioctl_check_extension_generic(struct kvm *kvm, long arg)
+>   {
+>   	switch (arg) {
+>   	case KVM_CAP_USER_MEMORY:
+> +	case KVM_CAP_USER_MEMORY2:
+>   	case KVM_CAP_DESTROY_MEMORY_REGION_WORKS:
+>   	case KVM_CAP_JOIN_MEMORY_REGIONS_WORKS:
+>   	case KVM_CAP_INTERNAL_ERROR_DATA:
+> @@ -4757,6 +4758,14 @@ static int kvm_vm_ioctl_get_stats_fd(struct kvm *kvm)
+>   	return fd;
+>   }
+>   
+> +#define SANITY_CHECK_MEM_REGION_FIELD(field)					\
+> +do {										\
+> +	BUILD_BUG_ON(offsetof(struct kvm_userspace_memory_region, field) !=		\
+> +		     offsetof(struct kvm_userspace_memory_region2, field));	\
+> +	BUILD_BUG_ON(sizeof_field(struct kvm_userspace_memory_region, field) !=		\
+> +		     sizeof_field(struct kvm_userspace_memory_region2, field));	\
+> +} while (0)
+> +
+>   static long kvm_vm_ioctl(struct file *filp,
+>   			   unsigned int ioctl, unsigned long arg)
+>   {
+> @@ -4779,15 +4788,28 @@ static long kvm_vm_ioctl(struct file *filp,
+>   		r = kvm_vm_ioctl_enable_cap_generic(kvm, &cap);
+>   		break;
+>   	}
+> +	case KVM_SET_USER_MEMORY_REGION2:
+>   	case KVM_SET_USER_MEMORY_REGION: {
+> -		struct kvm_userspace_memory_region kvm_userspace_mem;
+> +		struct kvm_userspace_memory_region2 mem;
+> +		unsigned long size;
+> +
+> +		if (ioctl == KVM_SET_USER_MEMORY_REGION)
+> +			size = sizeof(struct kvm_userspace_memory_region);
+> +		else
+> +			size = sizeof(struct kvm_userspace_memory_region2);
+> +
+> +		/* Ensure the common parts of the two structs are identical. */
+> +		SANITY_CHECK_MEM_REGION_FIELD(slot);
+> +		SANITY_CHECK_MEM_REGION_FIELD(flags);
+> +		SANITY_CHECK_MEM_REGION_FIELD(guest_phys_addr);
+> +		SANITY_CHECK_MEM_REGION_FIELD(memory_size);
+> +		SANITY_CHECK_MEM_REGION_FIELD(userspace_addr);
+>   
+>   		r = -EFAULT;
+> -		if (copy_from_user(&kvm_userspace_mem, argp,
+> -						sizeof(kvm_userspace_mem)))
+> +		if (copy_from_user(&mem, argp, size))
+>   			goto out;
+>   
+> -		r = kvm_vm_ioctl_set_memory_region(kvm, &kvm_userspace_mem);
+> +		r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
+>   		break;
+>   	}
+>   	case KVM_GET_DIRTY_LOG: {
 
-Ok.
-
-> > use in the kernel the crypto material from other unsupported formats
-> > (e.g. PGP).
-> 
-> Where's the motivation part and where is this defined?
-
-Ah, thanks for the reminder. Will add it in the next version.
-
-The motivations are:
-
-- Avoid adding complex parsers in the kernel that might introduce
-  vulnerabilities
-- Avoid adding support for key and signature formats that some consider
-  weak
-
-That was basically the summary of the review of my attempt to add
-support for PGP keys and signatures in the kernel.
-
-This patch set adds support for only one format, which other formats
-are converted from.
-
-This is useful for the mere extraction of crypto material, and use it
-with the kernel crypto API.
-
-If there is a trust relationships between the original keys, converting
-keys would lose the ability to verify that trust relationship.
-
-
-Example
-
-Suppose that there is a PGP key in the built-in keyring, and that
-signed another PGP key.
-
-If I want to add the second PGP key to the secondary keyring, I would
-have to verify the signature of that key with the first key.
-
-But the signature is on a PGP packet, so if the kernel verifies that
-signature it would have also to ensure that the public key extracted
-from the signed packet is the same as the converted key.
-
-Originally I thought that we could do the conversion in a fully
-isolated user space process (trustworthy User Mode Driver), so that
-there is the guarantee that the key has not been modified during the
-conversion. However, since it is difficult to achieve perfect
-isolation, that approach has been put on hold.
-
-So, at the moment, verifying trust with user asymmetric keys is not
-possible, but this is not a problem with my use case, as a Linux
-distributions can embed in the kernel all their (converted) public keys
-directly usable for signature verification.
-
-Thanks
-
-Roberto
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 
