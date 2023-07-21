@@ -2,126 +2,374 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8411C0015E
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jul 2023 16:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D7BC0015E
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jul 2023 16:53:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229539AbjGUQnP (ORCPT
+        id S230142AbjGUQxh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Jul 2023 12:43:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43264 "EHLO
+        Fri, 21 Jul 2023 12:53:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbjGUQmx (ORCPT
+        with ESMTP id S229492AbjGUQxg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Jul 2023 12:42:53 -0400
-Received: from sonic307-15.consmr.mail.ne1.yahoo.com (sonic307-15.consmr.mail.ne1.yahoo.com [66.163.190.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 036EB2D71
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 09:42:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1689957725; bh=V9dOu9Ky2pqvJawWDuTlA/cc/wSDtbwaMovWTd36Ir0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=qbbXeBScNl0vdISfM84hJyJsPPYE8fYFhtSJhaDXP40bv9fh+YA8besHHCyzu93K74QyMkkOnPtiAO6TejIlP+lWcaRZAnUy2NuoGQAn0z/42eFWmyFW2AvxYnyXCH/aYWqpI9vyJyu7j6+WuTWuwYFFddtFoEOesdrLYLzSwiw3W/oJyWocVXa7PkpaqscHObB8i3n4am/jNRl6wnnBGSNuXW+HQxB64EIcUwobuSwH+7xskqvCEE+wV9pN0Hj5JflDcaXFw0g+dEMPpmWU1DAVkCaAnP2ueyWQfmcG8K32b3Irr6yMWxUyyUguw6d94gCiG2ki76R+S5tC2jwE1w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1689957725; bh=ngZaYfRw/dPp4HTrDetNd/XSNKRoQBtZNF99DQwpAUZ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=AVAM9mK+sB3OPL9CBgsrthSAQupa/6u+MBHWDw8r8645MCAuDP3Ugl/nNrIIFXSGaE1Wd5aOfYV+5+HZhKVCFBt8K6YQ6R0288RJHbqncfq26hSshWVh0yLFlJGW/excmY772cixB1ga3Ma4OZ8jmhCEgNRk8jav6C5pqQ6yGte/nFRK0GUkOFckC5M0qYfEtyyr5e16OIFNwD+50qUJDQyXbelr6RXmcKEVQLYCfrRTv/VPNYZO0pbhIrYcNJggnNR4D8RieHwfGYUMsu0qLMN+qeUK+Ul5qJhSjLM5iNkzAXf0uPkk776dDG3d6rpI3tzBFrvOq29WWqJgl0537A==
-X-YMail-OSG: 2FHoy48VM1mlwbrEE8ShMTn9qIRrRRHE5aVtGc9B3MLESGI0uOE9p25.JLZwCV1
- Owc4Z45ZQwQR_p2cczv504zGiLBjX.TOecq1YUJuZDKrScE7zaPKT3Z74L710QcinQ2QaU9xZ..E
- zn09FEKfy_4FW2.2OssWBp42aU7QNxigO49fMQDKxArBsouBqk5.vObO93Ofm_qgh8Svw_DmHWZ9
- Xc3TT4xD3ztuuDVy8FuIsxOrOD7IQvcd40L0roUigQ72kf6B8Uv_DMuPzd9Ms29ifVU6KnEmOs8_
- V1IQWQyumUzN.uPzPqwW7l9dG2dQZNLSkgBdK5LDHk5h6Oiw1d3e8x3CHR3T9YQ1yz45tohCc56s
- qIIfD5J1blnfysQaV0hxp32WS2hhR1sNhJlPPUUtx31MHOUBnb9Zgd6pOBM_EuiPpYijvd1JWDE9
- XiDbtutJ7L7K2iND2B2_AX6Bj.V.bBGMs.nRRusG871KC1f60_gAfV2W1ltsLL7FBv7ug1kNcacn
- rcY53XdTz3jDP4QdlulTLaHEXe.lq_wHA4YhiUrUyx32V5G4e3QrWRMAuSrVb9CwmWfIKbP57dzu
- 0yuR4y7jFmyobWvLcvTU.8x3nUEGJzLZJkQwqdjuKbuxJlWC5w7ruMHQWY1Sys.pXvqinZ5WG3II
- UCp_bBZMmOXK8LM8zi7sfCrIKagQpYkotZ_9pUMOSpkuUc.euemdFsADMVMXR2meYs4b4SqvCybt
- XGFDnT80B.jebXOuZWgKnKtCEFNg2oL1eIa7if7dV_pBA.zFZ50UzOByC1bK4s_.iT7akGn7u7Uz
- bxganHcDHdQlwKaIsxbvQikA8jzUUJR8PluZLRUBNh.I1K9uda3i0kVQSC4tzXdA5CcJAiEVJ3fZ
- VKIXOKNXpeOTp3FmvzrxUFCoqEx8XJw2v_78OxMRg17a.AJ90UMKB6jOvuyc0SKKRge_Bcu0T88.
- drCZ9Abalkxt_csnYHmhX0uQTllpx6mikiJ2Ie64XF6rEnWJDxCITy9xn1xHE0eHG2b121SxC_pe
- CQg2yp6tN0Oz7Rn3afA3AviWTvyZY_Yo_Pu87JqEDFPcVhu8zjMowKv2hOtP1nErACfvRMmdgLp.
- JvFGjmwTyOBOfhI28NicPdaup7WvBwFiHBKfS6Bs5RzarwcphZjRHXqslsE89uzYl8FA16Ke5Gzc
- 3IgeW47anD4lYveeHmWI42jjE7CVzFDfyLI3w7qdEGRRm1.4VJFlSdhT9OV5wCtIIOA573dHCP80
- dqb8oyrXnGnfki04CghliU9qix_BYmb5Uj1OfCMg6SVjjD8s9biDme0O81oaGyhhMH4qOz4R2n1s
- Yo6GYGBrOkhjDAsuDDbO4cVh44JuU0xS2ZCSgrUZadJihUKCtr6zAdKYVogKB04qXygXUoi3wIlh
- hFt1LM1SfE5BY36N0y00IVf_Lzv0Sw2H7Zmh5AVAKPRHVNX0IwilbsTwFlWTgoOipplV7iHrA_.9
- 9o6Sywq0VSWNyoeJY9Ybe8pPYV5h14t3elcu0r7IlekzL7ehq6gFVIDrl21bfSgp9TFsoMpI4Czp
- 6vfOVOnNmLhzWStFCkZOGoinZYjsvx_1cAgdmhSax4osgbO3jJEU1oZ3qmSmArQ9dLrKt26BJoGX
- f8nleB0YZLijgaw7jYHATpeldB2IKGK3KA1jRmO1p9OYaJ3s8bBXD3lYI44RT_zcz.7urNNwYgOq
- Sw7gcXwyuqp3T1ZEG7DBEMDrJlv4o3.zVIMwGlib50N8wtdA9fUM2l5Y7p8CFRIefuUoy21PRTgq
- FtqhJEj6UpIZi1lalQOCOHwHBKfn8WTObBbdGvuSLLvTZeji8MZUbRYHsPSGwnHVAIJS2xaS57Gd
- JHMwQXfVcUDAC8S4J6ALAVQrHbzbVZRz0HaKl5bmEq25ZMC4r9aaCzVcsufERqLPMXjoCQf7hwVm
- qUYAy5DNBASIN31SFTP6qbfDzNwL..yh5GLJyaBzv7ccJC4yyt4cG_7lufhc9V3zUGIhLp9YAG2q
- JNAcebflXs23cu3gKNDmvrfVy99bmAWVxaBhh8RWGnaerRmMQtSMZbo_8OxA1mT6r_1YVsI9JixU
- w0EpT2gRSwyuieqNCPdQrNNmtf7mnNfWB2zY7op63d961uootplVnyk3vfSWJBrE1FTfOenSVVBM
- BjgO5gAdrv4GrP6CS6rYCI8jVCLYVlnv8Mm7GEAqJ68IRfT2MQaIDVOT2vRks7dxy3haCwXYWYqG
- xdDmquhE7He0U1STNJyEnbP.FnoPLzWNSXv43d8pai0JlF4RS8USu0IhGhdya4UBtxBLK2crRWR3
- rtW07Ppv4pg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 0d35e154-3db0-441c-8f0a-9a6e0ee19a4a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Jul 2023 16:42:05 +0000
-Received: by hermes--production-ne1-77c6dd44c7-b2ztb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9db050f78d2d5093cbc6bde4da7a5542;
-          Fri, 21 Jul 2023 16:31:32 +0000 (UTC)
-Message-ID: <4c4e6d51-1ee4-46bc-b355-c15151b3214f@schaufler-ca.com>
-Date:   Fri, 21 Jul 2023 09:31:30 -0700
+        Fri, 21 Jul 2023 12:53:36 -0400
+Received: from frasgout11.his.huawei.com (unknown [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 412901FD2;
+        Fri, 21 Jul 2023 09:53:34 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4R6vwh6X9Kz9xFPw;
+        Sat, 22 Jul 2023 00:22:44 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwC3hl1bs7pkcDDSBA--.22409S2;
+        Fri, 21 Jul 2023 17:33:39 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        jarkko@kernel.org, pbrobinson@gmail.com, zbyszek@in.waw.pl,
+        hch@lst.de, mjg59@srcf.ucam.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 00/12] integrity: Introduce a digest cache
+Date:   Fri, 21 Jul 2023 18:33:14 +0200
+Message-Id: <20230721163326.4106089-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [RFC PATCH] selinux: introduce and use ad_init_net*() helpers
-Content-Language: en-US
-To:     Paolo Abeni <pabeni@redhat.com>, selinux@vger.kernel.org
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <73a810980a8452f0cb98d25698c4ae83285b7393.1689604030.git.pabeni@redhat.com>
- <679840421f2e7794bb69962b97e0cee1a4e0f0f6.camel@redhat.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <679840421f2e7794bb69962b97e0cee1a4e0f0f6.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21647 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GxC2BwC3hl1bs7pkcDDSBA--.22409S2
+X-Coremail-Antispam: 1UD129KBjvAXoW3uF45Gr47XFyxKFWkXr45trb_yoW8Xr1fuo
+        Zaqa13Zw4DKry3CF4q9FnrZFsrWanYgw1xJrWvqrW5X3WfXFWUG3Z8Ca17XFy3Zr18Gry7
+        Cw10q3yUJr4ktr93n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+        AaLaJ3UjIYCTnIWjp_UUUYf7kC6x804xWl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK
+        8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
+        AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF
+        7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7
+        CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAq
+        x4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6x
+        CaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF
+        7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI
+        8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AK
+        xVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI
+        8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY
+        6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2Kf
+        nxnUUI43ZEXa7IU8imRUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj5DJPgAAsW
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/21/2023 8:34 AM, Paolo Abeni wrote:
-> Hi all,
->
-> On Mon, 2023-07-17 at 16:27 +0200, Paolo Abeni wrote:
->> The only
->> remaining perf-related pain-point I see is the indirect call at the
->> security_ level, and tackling it looks much more difficult... :(
-> I spent a little more time on this latest topic. AFAICS recently such
-> overhead has increased due to the bpf lsm introduction. My
-> understanding is that a major LSM and BPF LSM simultaneously enabled is
-> a common usage scenario. That means 2 indirect calls + 2 untrain trails
-> and 3 additional cache-lines used per hook.
->
-> Under the assumption than having multiple major lsms enabled
-> concurrently is less common, I hacked some (not exactly spectacularly
-> beautiful) code to avoid the above. Basically, after initialization,
-> for a limited number of hooks, it checks if only the default major lsm
-> and eventually the bpf lsm are registered and if so, converts such
-> hooks to static call[s], using static branches.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-K.P. Singh proposed similar changes recently, and Brendan Jackman
-had something in 2020. The performance benefit demonstrated has
-been encouraging. The approach has two serious problems. It doesn't
-lend itself very well to special cases, and the code is incredibly
-ugly.
+A bit of history first. The original name of this work was IMA Digest
+Lists, which was somehow considered too invasive. I then moved the code
+to a separate component named DIGLIM (DIGest Lists Integrity Module), with
+the purpose of removing the complexity away of IMA, and also add the
+possibility of using it with other kernel components (e.g. Integrity Policy
+Enforcement, or IPE).
 
->
-> The idea would be to keep the above infra usage restricted to the most
-> performance-relevant hooks (e.g. one-off initialization or
-> configuration  are not relevant from that perspective). For obvious
-> reasons I started from a few of network related hooks ;)
->
-> As said the code could be more nice: there is some quite heavy macro
-> usage and some duplication I was not able to avoid). On the flip side
-> it shows quite measurable benefit when enabled, 0 impact when disabled,
-> and it's available to all major LSM, except tomoyo (but even the latter
-> could be accommodated with some effort).
->
-> If there is some shared interest for the above I can share the current
-> status and try to cleanup the code.
->
-> Any feedback more then appreciated!
->
-> Cheers,
->
-> Paolo
->
+Since it was originally proposed, in 2017, this work grew up a lot thanks
+to the feedback of my colleagues and external reviewers. It became
+integrally part of the openEuler distribution since end of 2020. The
+upstreaming process has been difficult, also due to the fact too many
+features were included in the proposals.
+
+So, I decided to take a step back and find the minimum possible set of
+features that would make this work meaningful. The really minimum set that
+would make appraisal work is to parse the RPM header (after signature
+verification) containing the reference digests and compare the calculated
+file digest with them. That would be similar to reading the signature from
+the xattr and verifying the digest.
+
+But, maybe that was too minimal. It does not make sense to appraise and
+parse again the same RPM header for another packaged files. And should not
+be necessarily tied to appraisal, as it would be useful for measurement too
+(to make a PCR predictable). Please read the Benefits section here:
+
+https://lore.kernel.org/linux-integrity/20210914163401.864635-1-roberto.sassu@huawei.com/
+
+So, this is how the integrity digest cache is born.
+
+The main difference with the previous attempts is that there is not a
+centralized place to store file/metadata digests, but they are stored in
+the digest cache, attached to the file (the digest list) the digest cache
+was created from.
+
+The link with the files being measured/appraised is the new
+security.digest_list xattr containing the full path of the digest list
+they refer to. At the time there is a measurement/appraisal, the digest
+cache is built by reading (after appraisal) and parsing the digest list
+(a TLV format and the RPM package format are currently supported).
+Extracted digests are added to a per-package hash table, sized depending on
+the number of elements.
+
+Lookup should be much faster, as we are not anymore searching in a hash
+table with 80000 digests, but most of the time with 100 or less. Also,
+there is no need for locking after creation, the digest cache does not
+change depending on writes (it would not make sense, since digest lists are
+signed). Another very important feature is that the digest cache is
+reclaimable, i.e. it disappears if the inode is evicted from memory. In
+that case, the digest cache need to be initialized again. The digest cache
+does not disappear while IMA is using it, by acquiring and releasing a
+reference to the path structure of the digest list.
+
+What about the predictability of PCRs, that some folks are trying to
+address with the Unified Kernel Image? The concept of digest lists is
+quite simple: measure the digest list to represent the possible access of a
+group of files, instead of recording individual file accesses. If digest
+lists are measured in a deterministic way, the PCR remains predictable
+despite files are accessed in a different order. We currently don't support
+xattrs in the initial ram disk, but if we did and the initial ram disk uses
+the same measured files as the root filesystem, the PCR would still remain
+predictable.
+
+Another important point of the design was to avoid any possible
+interference with existing IMA measurement and appraisal behavior. This
+has been achieved in the following way.
+
+First, the digest cache needs to be explicitly enabled in the IMA policy
+through the new policy keyword 'digest_cache=content'. Second, new-style
+measurements cannot be done on the default IMA PCR, a policy writer must
+specify a different PCR or the policy will be rejected. Also, the use of
+the digest cache is incompatible with other appraisal methods, e.g. with
+xattrs or a modsig. The policy writer cannot specify any of the other
+methods if it includes the digest_cache directive. Finally, the digest
+cache does not bypass EVM too. Files matched with the digest caches can
+only be opened read-only, to prevent updating an unverified HMAC to a valid
+one.
+
+Another incorrect policy combination is forbidden. The use of the
+digest_cache directive alone does not enable the new behavior. The action
+for which the digest cache should be used should have also be done on the
+digest list itself. Otherwise, one cannot explain why there are no
+measurements (if the digest list was not measured for example). The same
+applies for appraisal.
+
+The last part I wanted to talk about is about the digest list parsers. This
+was a long debate. In the original proposal, Matthew Garrett and Christoph
+Hellwig said that adding parsers in the kernel is not scalable and not a
+good idea in general. While I do agree with them, I'm also thinking what
+benefits we get if we relax a bit this requirement. If we merge this patch
+set and the dependency (user asymmetric keys and signatures) today, we are
+immediately able to have a predictable PCR for measurement, and do
+appraisal at least of executable code without additional support from the
+Linux distributions. We would need a small rpm plugin to write/remove RPM
+headers and their signature to/from the disk as soon as packages are
+installed/removed.
+
+Over the years, I have tried many alternatives to the kernel-based parsers.
+In the very first version, we supported only one digest list format in the
+kernel, and injected the digest list to each package at build time. While
+it works, it is still one way to do that, others don't support it and it is
+building infrastructure-dependent.
+
+I have tried to do the conversion from the RPM format to the kernel format
+in user space, with the idea that the process doing it could be isolated
+against an untrusted root. I had a recent discussion with the security
+folks and they don't seem excited about it.
+
+I have fully implemented DIGLIM and PGP keys and signatures support in
+eBPF. The idea itself of being able to add kernel functionality in a safe
+way without touching the kernel is very nice, and I would have pursued it
+more. However, after I found LSM policy bypass and other bugs and after my
+patches were not accepted by the maintainers, I didn't really feel I could
+rely on this subsystem. So, back to the original approach for now,
+maintainers seem to be more incline to accept kernel code, if there is a
+need for strong isolation. In the future, we might work on better
+alternative.
+
+This patch set depends on:
+
+https://lore.kernel.org/linux-integrity/20230720153247.3755856-2-roberto.sassu@huaweicloud.com/
+
+which allows to appraise RPM package headers with the PGP keys of Linux
+distribution vendors.
+
+
+Patch 1 introduces a new hook to identify the loading of digest lists and
+consequently appraise them.
+
+Patches 2-4 implement the digest cache, and an iterator to prefetch the
+digest lists to measure them in a deterministic way.
+
+Patches 5-6 implement the currently supported digest list formats: tlv and
+rpm. The tlv format relies on the TLV parser defined in the patch set
+mentioned above.
+
+Patches 7-9 enable the usage of the digest cache in IMA for measurement and
+appraisal.
+
+Patches 10-12 add a tool to manage digest lists.
+
+If you are curious to try on an existing system, you first need to build
+gpg with the patches in the previous patch set, and convert the PGP keys of
+your Linux distribution to the new user asymmetric key format:
+
+$ gpg --conv-kernel <path of PGP key> >> certs/uasym_keys.bin
+
+This embeds the converted keys in the kernel image. Then, enable the
+following kernel options:
+
+CONFIG_INTEGRITY_DIGEST_CACHE=y
+CONFIG_UASYM_KEYS_SIGS=y
+CONFIG_UASYM_PRELOAD_PUBLIC_KEYS=y
+
+and rebuild the kernel with the patches applied. After boot, build and
+install the digest list tool in tools/digest-lists, and execute:
+
+$ manage_digest_lists -o gen -d /etc/digest_lists -i rpmdb -f rpm
+
+You also need the new gpg when you execute this tool, to convert the PGP
+signatures of the RPM headers to the user asymmetric key format.
+
+You may want to add the following additional files in a digest list by
+creating a file named 'list' with the content:
+
+/usr/bin/manage_digest_lists
+/usr/lib64/libgen-tlv-list.so
+/usr/lib64/libgen-rpm-list.so
+/usr/lib64/libparse-rpm-list.so
+/usr/lib64/libparse-tlv-list.so
+
+and, execute:
+
+$ manage_digest_lists -i list -L -d /etc/digest_lists -o gen -f tlv
+
+You need to sign the created file:
+
+scripts/sign-file sha256 certs/signing_key.pem certs/signing_key.pem /etc/digest_lists/tlv-list
+
+The final step is to add security.digest_list to each file with:
+
+$ manage_digest_lists -i /etc/digest_lists -o add-xattr
+
+After that, create the following policy in /etc/ima/ima-policy:
+
+dont_measure fsmagic=0x01021994
+dont_appraise fsmagic=0x01021994
+appraise func=BPRM_CHECK digest_cache=content
+appraise func=MMAP_CHECK digest_cache=content
+appraise func=DIGEST_LIST_CHECK appraise_type=imasig|modsig
+measure func=DIGEST_LIST_CHECK template=ima-modsig pcr=11
+measure func=BPRM_CHECK digest_cache=content pcr=11
+measure func=MMAP_CHECK digest_cache=content pcr=11
+
+I'm excluding tmpfs for now, we need to deal with memfd.
+
+Before loading the policy, you could enable the dynamic debug with:
+
+$ echo "file tlv* +p" > /sys/kernel/debug/dynamic_debug/control
+$ echo "file rpm* +p" > /sys/kernel/debug/dynamic_debug/control
+$ echo "file digest* +p" > /sys/kernel/debug/dynamic_debug/control
+
+Or add the same strings with the dyndbg= option in the kernel command line.
+
+Then, just cat the policy to IMA:
+
+$ cat /etc/ima/ima-policy > /sys/kernel/security/ima/policy
+
+If that worked, you can reboot the system. Systemd will take care of
+loading the IMA policy at boot. Everything works for me on Fedora 38.
+
+You can check the content of the measurement list:
+
+$ cat /sys/kernel/security/ima/ascii_runtime_measurements
+
+You will see only the measurement of the digest lists, not of the other
+files. If you try:
+
+$ cp -a /bin/cat .
+$ ./cat
+
+That will work. But if you do:
+
+$ echo 1 >> cat
+$ cat
+-bash: ./cat: Permission denied
+
+Execution will be denied, and you will see a new entry in the measurement
+list (honestly, it should not be there, as access to the file was denied):
+
+11 50b5a68bea0776a84eef6725f17ce474756e51c0 ima-ng sha256:15e1efee080fe54f5d7404af7e913de01671e745ce55215d89f3d6521d3884f0 /root/cat
+
+Finally, you could try to evict inodes from memory, to free the digest
+cache:
+
+$ echo 3 > /proc/sys/vm/drop_caches
+
+You will see in the kernel logs messages like:
+
+[  313.032536] DIGEST CACHE: Remove digest sha256:102900208eef27b766380135906d431dba87edaa7ec6aa72e6ebd3dd67f3a97b from digest list /etc/digest_lists/rpm-libseccomp-2.5.3-4.fc38.x86_64
+
+Roberto Sassu (12):
+  ima: Introduce hook DIGEST_LIST_CHECK
+  integrity: Introduce a digest cache
+  integrity/digest_cache: Add functions to populate and search
+  integrity/digest_cache: Iterate over digest lists in same dir
+  integrity/digest_cache: Parse tlv digest lists
+  integrity/digest_cache: Parse rpm digest lists
+  ima: Add digest_cache policy keyword
+  ima: Use digest cache for measurement
+  ima: Use digest cache for appraisal
+  tools: Add tool to manage digest lists
+  tools/digest-lists: Add tlv digest list generator and parser
+  tools/digest-lists: Add rpm digest list generator and parser
+
+ Documentation/ABI/testing/ima_policy          |   6 +-
+ MAINTAINERS                                   |   1 +
+ include/linux/kernel_read_file.h              |   1 +
+ include/uapi/linux/tlv_digest_list.h          |  59 +++
+ include/uapi/linux/xattr.h                    |   3 +
+ security/integrity/Kconfig                    |  12 +
+ security/integrity/Makefile                   |   4 +
+ security/integrity/digest_cache.c             | 430 ++++++++++++++++++
+ security/integrity/digest_cache.h             | 113 +++++
+ security/integrity/digest_cache_iter.c        | 163 +++++++
+ .../integrity/digest_list_parsers/parsers.h   |  15 +
+ security/integrity/digest_list_parsers/rpm.c  | 174 +++++++
+ security/integrity/digest_list_parsers/tlv.c  | 188 ++++++++
+ security/integrity/iint.c                     |   7 +
+ security/integrity/ima/ima.h                  |  17 +-
+ security/integrity/ima/ima_api.c              |  22 +-
+ security/integrity/ima/ima_appraise.c         |  16 +-
+ security/integrity/ima/ima_main.c             |  39 +-
+ security/integrity/ima/ima_policy.c           |  54 ++-
+ security/integrity/integrity.h                |   5 +
+ tools/Makefile                                |  16 +-
+ tools/digest-lists/.gitignore                 |   7 +
+ tools/digest-lists/Makefile                   |  72 +++
+ tools/digest-lists/common.c                   | 163 +++++++
+ tools/digest-lists/common.h                   |  90 ++++
+ tools/digest-lists/generators/generators.h    |  18 +
+ tools/digest-lists/generators/rpm.c           | 257 +++++++++++
+ tools/digest-lists/generators/tlv.c           | 168 +++++++
+ tools/digest-lists/manage_digest_lists.c      | 349 ++++++++++++++
+ tools/digest-lists/manage_digest_lists.txt    |  82 ++++
+ tools/digest-lists/parsers/parsers.h          |  16 +
+ tools/digest-lists/parsers/rpm.c              | 169 +++++++
+ tools/digest-lists/parsers/tlv.c              | 195 ++++++++
+ tools/digest-lists/parsers/tlv_parser.h       |  38 ++
+ 34 files changed, 2942 insertions(+), 27 deletions(-)
+ create mode 100644 include/uapi/linux/tlv_digest_list.h
+ create mode 100644 security/integrity/digest_cache.c
+ create mode 100644 security/integrity/digest_cache.h
+ create mode 100644 security/integrity/digest_cache_iter.c
+ create mode 100644 security/integrity/digest_list_parsers/parsers.h
+ create mode 100644 security/integrity/digest_list_parsers/rpm.c
+ create mode 100644 security/integrity/digest_list_parsers/tlv.c
+ create mode 100644 tools/digest-lists/.gitignore
+ create mode 100644 tools/digest-lists/Makefile
+ create mode 100644 tools/digest-lists/common.c
+ create mode 100644 tools/digest-lists/common.h
+ create mode 100644 tools/digest-lists/generators/generators.h
+ create mode 100644 tools/digest-lists/generators/rpm.c
+ create mode 100644 tools/digest-lists/generators/tlv.c
+ create mode 100644 tools/digest-lists/manage_digest_lists.c
+ create mode 100644 tools/digest-lists/manage_digest_lists.txt
+ create mode 100644 tools/digest-lists/parsers/parsers.h
+ create mode 100644 tools/digest-lists/parsers/rpm.c
+ create mode 100644 tools/digest-lists/parsers/tlv.c
+ create mode 100644 tools/digest-lists/parsers/tlv_parser.h
+
+-- 
+2.34.1
+
