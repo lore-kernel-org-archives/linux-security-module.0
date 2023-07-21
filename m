@@ -2,118 +2,294 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 096C8C001DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jul 2023 16:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83212EB64DC
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jul 2023 16:35:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231494AbjGUQMn (ORCPT
+        id S229690AbjGUQfx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Jul 2023 12:12:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39092 "EHLO
+        Fri, 21 Jul 2023 12:35:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231552AbjGUQM3 (ORCPT
+        with ESMTP id S231172AbjGUQfm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Jul 2023 12:12:29 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C5EF4211
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 09:12:03 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id 3f1490d57ef6-bff89873d34so1872617276.2
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 09:12:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1689955906; x=1690560706;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xxyXwUMYyMvFKFhBcqHjy6FPhm+754pa75RGLMebRPg=;
-        b=Wj+FUhDvmTTeRSt9GaR6tT+3MpYlB4CoZ9KWDMJGexsGe20N+xrnxTgIMSctx8ApfR
-         EWLBqTE2J3z2aNzKu9T21hFYuf4gqvmY+BWZZLAVsvQssNtzRZsRYJHCUn7lM9Zx5VZv
-         Y9LJbGNtTTxgUpi+Ooi51JzwchZVJAriStKfAFU79+X2s879ekFC4GPubWJ8G5H9iq4c
-         OGryoD/XHUmN09lH4+tPMlk+Sa2ictQRXSDhJBq6bOdA7PlcKCwTPrsO8oo3JEfgvaCL
-         WlSSokMxu+nyn8RY+R5zjvItZEjv4nxU0j99yqgGEAr1am/w5TPQTmTwDTWQWVVYXeY/
-         dA7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689955906; x=1690560706;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xxyXwUMYyMvFKFhBcqHjy6FPhm+754pa75RGLMebRPg=;
-        b=F6xA5Z1uC9Zt9BConp1qGISQ9qJgq7ZG8zZI8f3zZg/6s19vXLiiDJoWj579rqm9t1
-         KSZfELxYoHemvr6yXlnPS9jwYLNWDtlws0OIpgvEQXaH7NJHEfW4veyzrHrdOm6mVdG2
-         BcIJ1yKTFf0uW01zfAQxYnGq/9GB+lJAivfT3bETlZAVO0LxAfm2OfkHo0o9ZewyBCLu
-         Aj4hldL9jJ4jkvSIeaSg5VLfaLipKTDc/s3QGl3ZgCQ7Or4b6K9RgixXgBSLU1ncWB/m
-         ef2h84NDJF1TJcnRopTYXWqjOdAbg/QZO/i5O+1VgP4EfCs/XnT1FEzWV8kMwaRA9Mtu
-         AOYw==
-X-Gm-Message-State: ABy/qLbZVrbVOAO+7zpUkVTgsxDGYy5s2HGrCpaX4wwJpZqCgCjDz/rs
-        fQa390VCwZTwJ6uIpvfdflpbYrn2mAitstnszakN
-X-Google-Smtp-Source: APBJJlGoHBcPT9hiWIWL6i3mvF4rekhA0utDaCn/hE81JlepiVuxAGpbe69fcrxsAy+mQbEZo7YWwncQp01TNjEWgQQ=
-X-Received: by 2002:a25:9c82:0:b0:c01:308a:44f2 with SMTP id
- y2-20020a259c82000000b00c01308a44f2mr2067818ybo.57.1689955906621; Fri, 21 Jul
- 2023 09:11:46 -0700 (PDT)
+        Fri, 21 Jul 2023 12:35:42 -0400
+Received: from frasgout11.his.huawei.com (unknown [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 109893AB2;
+        Fri, 21 Jul 2023 09:35:20 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4R6vxG6K9Qz9xFQR;
+        Sat, 22 Jul 2023 00:23:14 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwC3hl1bs7pkcDDSBA--.22409S6;
+        Fri, 21 Jul 2023 17:34:09 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        jarkko@kernel.org, pbrobinson@gmail.com, zbyszek@in.waw.pl,
+        hch@lst.de, mjg59@srcf.ucam.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 04/12] integrity/digest_cache: Iterate over digest lists in same dir
+Date:   Fri, 21 Jul 2023 18:33:18 +0200
+Message-Id: <20230721163326.4106089-5-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230721163326.4106089-1-roberto.sassu@huaweicloud.com>
+References: <20230721163326.4106089-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
-References: <73a810980a8452f0cb98d25698c4ae83285b7393.1689604030.git.pabeni@redhat.com>
- <679840421f2e7794bb69962b97e0cee1a4e0f0f6.camel@redhat.com>
-In-Reply-To: <679840421f2e7794bb69962b97e0cee1a4e0f0f6.camel@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 21 Jul 2023 12:11:35 -0400
-Message-ID: <CAHC9VhTRkWL_R0xdnrYChwmbp3FvXKMjQYpdBn9OvCH23mW=bA@mail.gmail.com>
-Subject: Re: [RFC PATCH] selinux: introduce and use ad_init_net*() helpers
-To:     Paolo Abeni <pabeni@redhat.com>
-Cc:     selinux@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GxC2BwC3hl1bs7pkcDDSBA--.22409S6
+X-Coremail-Antispam: 1UD129KBjvJXoWxKF1UZFyUuF45JFW7XF15CFg_yoWxKF15pa
+        9Ik3W5Kr48Z34fCws7AF4akF4Fg39YgF47Gw45uw15Aw4DZr1qv3WxCryUZry5Jr4Uua47
+        tF4Ygr45Cr4DXaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUPlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
+        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
+        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
+        AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E
+        14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262
+        kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s02
+        6c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw
+        0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvE
+        c7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
+        AFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZF
+        pf9x07j7GYLUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAFBF1jj4zMlQAAsn
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 21, 2023 at 11:35=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wr=
-ote:
->
-> Hi all,
->
-> On Mon, 2023-07-17 at 16:27 +0200, Paolo Abeni wrote:
-> > The only
-> > remaining perf-related pain-point I see is the indirect call at the
-> > security_ level, and tackling it looks much more difficult... :(
->
-> I spent a little more time on this latest topic. AFAICS recently such
-> overhead has increased due to the bpf lsm introduction. My
-> understanding is that a major LSM and BPF LSM simultaneously enabled is
-> a common usage scenario. That means 2 indirect calls + 2 untrain trails
-> and 3 additional cache-lines used per hook.
->
-> Under the assumption than having multiple major lsms enabled
-> concurrently is less common, I hacked some (not exactly spectacularly
-> beautiful) code to avoid the above. Basically, after initialization,
-> for a limited number of hooks, it checks if only the default major lsm
-> and eventually the bpf lsm are registered and if so, converts such
-> hooks to static call[s], using static branches.
->
-> The idea would be to keep the above infra usage restricted to the most
-> performance-relevant hooks (e.g. one-off initialization or
-> configuration  are not relevant from that perspective). For obvious
-> reasons I started from a few of network related hooks ;)
->
-> As said the code could be more nice: there is some quite heavy macro
-> usage and some duplication I was not able to avoid). On the flip side
-> it shows quite measurable benefit when enabled, 0 impact when disabled,
-> and it's available to all major LSM, except tomoyo (but even the latter
-> could be accommodated with some effort).
->
-> If there is some shared interest for the above I can share the current
-> status and try to cleanup the code.
->
-> Any feedback more then appreciated!
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-KP, the BPF LSM maintainer, has posted patches to move the LSM hooks
-over to static calls, but to the best of my current understanding the
-patchset intermingles a bug fix with the performance improvements,
-which I want to avoid.
+One advantage of the digest cache is the ability of skipping measurements
+of cached digests. That would allow to accumulate integrity measurements
+on a PCR in a predictable way, since only the digest lists would be
+measured.
 
-There have been updated patchsets posted, but the original link
-(below) contains my comments:
-https://lore.kernel.org/linux-security-module/20230119231033.1307221-1-kpsi=
-ngh@kernel.org/
+However, since digest lists are accessed on demand, when a file belonging
+to that repo is measured/appraised, it could happen due to parallel
+execution that also digest lists are measured not in the same order.
 
---=20
-paul-moore.com
+Thus, eliminate this possibility by iterating over the directory containing
+the digest lists and by reading all of them, to trigger a measurement.
+
+Read digest lists are not parsed, to avoid too much memory pressure.
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/Makefile            |   3 +-
+ security/integrity/digest_cache.h      |   5 +
+ security/integrity/digest_cache_iter.c | 163 +++++++++++++++++++++++++
+ 3 files changed, 170 insertions(+), 1 deletion(-)
+ create mode 100644 security/integrity/digest_cache_iter.c
+
+diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+index 0c175a567ac..c856ed10fba 100644
+--- a/security/integrity/Makefile
++++ b/security/integrity/Makefile
+@@ -11,7 +11,8 @@ integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
+ integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
+ integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
+ integrity-$(CONFIG_INTEGRITY_MACHINE_KEYRING) += platform_certs/machine_keyring.o
+-integrity-$(CONFIG_INTEGRITY_DIGEST_CACHE) += digest_cache.o
++integrity-$(CONFIG_INTEGRITY_DIGEST_CACHE) += digest_cache.o \
++					      digest_cache_iter.o
+ integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
+ 				      platform_certs/load_uefi.o \
+ 				      platform_certs/keyring_handler.o
+diff --git a/security/integrity/digest_cache.h b/security/integrity/digest_cache.h
+index 5e3997b2723..d8fd5ce47a7 100644
+--- a/security/integrity/digest_cache.h
++++ b/security/integrity/digest_cache.h
+@@ -69,6 +69,7 @@ int digest_cache_init_htable(struct digest_cache *digest_cache,
+ int digest_cache_add(struct digest_cache *digest_cache, u8 *digest);
+ int digest_cache_lookup(struct digest_cache *digest_cache, u8 *digest,
+ 			enum hash_algo algo, const char *pathname);
++void digest_cache_iter_dir(struct dentry *repo_dentry);
+ #else
+ static inline void digest_cache_free(struct digest_cache *digest_cache)
+ {
+@@ -104,5 +105,9 @@ static inline int digest_cache_lookup(struct digest_cache *digest_cache,
+ 	return -ENOENT;
+ }
+ 
++static inline void digest_cache_iter_dir(struct dentry *repo_dentry)
++{
++}
++
+ #endif /* CONFIG_INTEGRITY_DIGEST_CACHE */
+ #endif /* _DIGEST_CACHE_H */
+diff --git a/security/integrity/digest_cache_iter.c b/security/integrity/digest_cache_iter.c
+new file mode 100644
+index 00000000000..f9c4675d383
+--- /dev/null
++++ b/security/integrity/digest_cache_iter.c
+@@ -0,0 +1,163 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2019  IBM Corporation
++ * Copyright (C) 2023 Huawei Technologies Duesseldorf GmbH
++ *
++ * Author: Roberto Sassu <roberto.sassu@huawei.com>
++ *
++ * Implement a digest list iterator.
++ */
++
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/init_task.h>
++#include <linux/fs.h>
++#include <linux/namei.h>
++#include <linux/xattr.h>
++#include <linux/kernel_read_file.h>
++#include <linux/module_signature.h>
++
++#include "integrity.h"
++
++#ifdef pr_fmt
++#undef pr_fmt
++#endif
++#define pr_fmt(fmt) "DIGEST CACHE ITER: "fmt
++
++static bool iterated;
++/* Ensure there is only one iteration over digest lists, make others wait. */
++DEFINE_MUTEX(iterate_mutex);
++
++struct dir_entry {
++	struct list_head list;
++	char name[];
++} __packed;
++
++struct readdir_callback {
++	struct dir_context ctx;
++	struct list_head *head;
++};
++
++/**
++ * digest_cache_iter_digest_list - Callback func to get digest lists in a dir
++ * @__ctx: iterate_dir() context
++ * @name: Name of file in the accessed dir
++ * @namelen: String length of @name
++ * @offset: Current position in the directory stream (see man readdir)
++ * @ino: Inode number
++ * @d_type: File type
++ *
++ * This function stores the names of the files in the containing directory in
++ * a linked list. Those files will be opened to trigger a measurement.
++ *
++ * Return: True to continue processing, false to stop.
++ */
++static bool digest_cache_iter_digest_list(struct dir_context *__ctx,
++					  const char *name, int namelen,
++					  loff_t offset, u64 ino,
++					  unsigned int d_type)
++{
++	struct readdir_callback *ctx = container_of(__ctx, typeof(*ctx), ctx);
++	struct dir_entry *new_entry;
++
++	if (!strcmp(name, ".") || !strcmp(name, ".."))
++		return true;
++
++	if (d_type != DT_REG)
++		return true;
++
++	new_entry = kmalloc(sizeof(*new_entry) + namelen + 1, GFP_KERNEL);
++	if (!new_entry)
++		return true;
++
++	memcpy(new_entry->name, name, namelen);
++	new_entry->name[namelen] = '\0';
++	list_add(&new_entry->list, ctx->head);
++	return true;
++}
++
++/**
++ * digest_cache_iter_dir - Iterate over all files in the same digest list dir
++ * @digest_list_dentry: Digest list dentry
++ *
++ * This function iterates over all files in the directory containing the digest
++ * list provided as argument. It helps to measure digest lists in a
++ * deterministic order and make a TPM PCR predictable.
++ */
++void digest_cache_iter_dir(struct dentry *digest_list_dentry)
++{
++	struct file *dir_file;
++	struct readdir_callback buf = {
++		.ctx.actor = digest_cache_iter_digest_list,
++	};
++	struct dir_entry *p, *q;
++	struct file *file;
++	char *path_str = NULL;
++	void *data;
++	LIST_HEAD(head);
++	char *ptr;
++	int ret;
++
++	if (iterated)
++		return;
++
++	mutex_lock(&iterate_mutex);
++	if (iterated)
++		goto out;
++
++	iterated = true;
++
++	ret = vfs_getxattr_alloc(&nop_mnt_idmap, digest_list_dentry,
++				 XATTR_NAME_DIGEST_LIST, &path_str, 0,
++				 GFP_NOFS);
++	if (ret <= 0) {
++		pr_debug("%s xattr not found in %s\n", XATTR_NAME_DIGEST_LIST,
++			 digest_list_dentry->d_name.name);
++		goto out;
++	}
++
++	pr_debug("Found %s xattr in %s, digest list: %s\n",
++		 XATTR_NAME_DIGEST_LIST, digest_list_dentry->d_name.name,
++		 path_str);
++
++	ptr = strrchr(path_str, '/');
++	if (!ptr)
++		goto out;
++
++	*ptr = '\0';
++	dir_file = filp_open(path_str, O_RDONLY, 0);
++	*ptr = '/';
++
++	if (IS_ERR(dir_file)) {
++		pr_debug("Cannot access parent directory of repo %s\n",
++			 path_str);
++		goto out;
++	}
++
++	buf.head = &head;
++	iterate_dir(dir_file, &buf.ctx);
++	list_for_each_entry_safe(p, q, &head, list) {
++		pr_debug("Prereading digest list %s in %s\n", p->name,
++			 path_str);
++
++		file = file_open_root(&dir_file->f_path, p->name, O_RDONLY, 0);
++		if (IS_ERR(file))
++			continue;
++
++		data = NULL;
++
++		ret = kernel_read_file(file, 0, &data, INT_MAX, NULL,
++				       READING_DIGEST_LIST);
++		if (ret >= 0)
++			vfree(data);
++
++		fput(file);
++		list_del(&p->list);
++		kfree(p);
++	}
++
++	fput(dir_file);
++out:
++	mutex_unlock(&iterate_mutex);
++	kfree(path_str);
++}
+-- 
+2.34.1
+
