@@ -2,68 +2,49 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D51DEB64DC
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jul 2023 09:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99CDAEB64DD
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jul 2023 10:47:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229814AbjGUJE5 (ORCPT
+        id S229500AbjGUKra (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Jul 2023 05:04:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59430 "EHLO
+        Fri, 21 Jul 2023 06:47:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229941AbjGUJEv (ORCPT
+        with ESMTP id S229493AbjGUKr3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Jul 2023 05:04:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BAF92D7E
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 02:04:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689930239;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=UkppB3amY8e+ZFUORFAPfGoR63QBz1mTawh0tzwUFzU=;
-        b=O8MyMoF45NBwXSE6kctyCSIKBfnc7IQ2a8lNaDwA2PtarXlJlzCNaY3/0w6c/ZMA7m1JX9
-        RbQHkfBKACUWu+gP+VX20Y6M1uqXSBAcVHCmVsBIalv5Bpe1/7PYz9T6HbqZaoT0J38Ltu
-        vAdbbwm7YdROkJy/+rpCsSixGQqzDHM=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-298-bnKejytaO6yMHaFMHrwM6w-1; Fri, 21 Jul 2023 05:03:56 -0400
-X-MC-Unique: bnKejytaO6yMHaFMHrwM6w-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-993c24f3246so206748466b.1
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 02:03:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689930235; x=1690535035;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UkppB3amY8e+ZFUORFAPfGoR63QBz1mTawh0tzwUFzU=;
-        b=jNi27Tkk/PmcWefMmvbzxlNcmcG1CPumor7S8dvB2H631HubsGwLpj7OIEvCEcKsMI
-         bwr/NamopJDkVeE+BJz9KZl71UaB/20Ry/9/nOlL2TubeyB15SyUoAnnecvgpsv0qk+C
-         piEx+CtgzMqorOsQcyS8py46D7hA+sbF3uSc7vz55ThOhGsc1b6xmH2/oEKrPQamhJIL
-         K805bi4yDUOfvxzaveffniqFh4SDC6EIkHbNp0g8IXwDp25pKpbv+jMozo99QhOp7h0O
-         MOPnGMbOnKzVHauBC+Yyk0NO/brURk7NWs4LWedGHTqzfwFdeLtgRDk7mSbfo+4cCIA8
-         DaBg==
-X-Gm-Message-State: ABy/qLZEfcua7aJlNixJ7w/C8Xh/gBp2+F77cT7CpXewakxs+iraa7sy
-        CExdQ40Sb4VtyjD0Bj1tabDrLLjH+UXGRx1mMEcZoh0VA2VDsE5jWE2PRm3/tlnj9neVcMUpzns
-        EPnjfbc8FDxkO6H0axYZp78/WcW5ak2yOIOcK
-X-Received: by 2002:a17:907:6d8c:b0:98d:abd4:4000 with SMTP id sb12-20020a1709076d8c00b0098dabd44000mr7889132ejc.35.1689930234801;
-        Fri, 21 Jul 2023 02:03:54 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlGH6YzYN7wVD16W6bBWRZvka9R57MaW1yVsDxFFu0qfog7UhF1jWQDyj4gC4NTPLd7VWeWUJA==
-X-Received: by 2002:a17:907:6d8c:b0:98d:abd4:4000 with SMTP id sb12-20020a1709076d8c00b0098dabd44000mr7889108ejc.35.1689930234273;
-        Fri, 21 Jul 2023 02:03:54 -0700 (PDT)
-Received: from ?IPV6:2001:b07:6468:f312:9af8:e5f5:7516:fa89? ([2001:b07:6468:f312:9af8:e5f5:7516:fa89])
-        by smtp.googlemail.com with ESMTPSA id rv7-20020a17090710c700b00993a9a951fasm1915159ejb.11.2023.07.21.02.03.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jul 2023 02:03:53 -0700 (PDT)
-Message-ID: <47c5f57c-a191-1983-b4ef-6e0c59c0c446@redhat.com>
-Date:   Fri, 21 Jul 2023 11:03:51 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [RFC PATCH v11 06/29] KVM: Introduce KVM_SET_USER_MEMORY_REGION2
-To:     Sean Christopherson <seanjc@google.com>,
+        Fri, 21 Jul 2023 06:47:29 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 965AB1701;
+        Fri, 21 Jul 2023 03:47:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689936448; x=1721472448;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lqUeKJjFv2Sxri0zg/OC/DAKL78i5iZqhBI02xpLRko=;
+  b=b1gQmxJK0t5qLXwInz2z1vsdJy6AAum1O7lL2lvyHs1DN9MMjcWJh3Ie
+   XiQIolmGnSCp8dS7AHZSNibxy1hVJ/i0RigeqX+3TY4Dchg79d7tNOVZt
+   1zI0mxUUEvbdid5OKYkKK/OjvF3ZXRsYUUBweuFEO96HogAYXug1jV1FM
+   yXeHCATd/WIUfaKFRwUCN6MxORHdPgsDhMt0bhcAg+lXz7IRDf3PKuGMb
+   /1av+6I8NpXxKDEkf4L4OUG5eZRRZANszRY6PuFLljdeBGha5N7Pqp/NZ
+   HY/81IGWCW7Y7bnlpdITKo1unVMFC5S6MTvObMTBR5MjdcpzxEDN4ncJ0
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10777"; a="365884912"
+X-IronPort-AV: E=Sophos;i="6.01,220,1684825200"; 
+   d="scan'208";a="365884912"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2023 03:47:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10777"; a="724827627"
+X-IronPort-AV: E=Sophos;i="6.01,220,1684825200"; 
+   d="scan'208";a="724827627"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orsmga002.jf.intel.com with ESMTP; 21 Jul 2023 03:47:13 -0700
+Date:   Fri, 21 Jul 2023 18:45:26 +0800
+From:   Xu Yilun <yilun.xu@intel.com>
+To:     Yan Zhao <yan.y.zhao@intel.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
         Huacai Chen <chenhuacai@kernel.org>,
@@ -76,12 +57,12 @@ To:     Sean Christopherson <seanjc@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Chao Peng <chao.p.peng@linux.intel.com>,
         Fuad Tabba <tabba@google.com>,
@@ -98,191 +79,51 @@ Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Liam Merwick <liam.merwick@oracle.com>,
         Isaku Yamahata <isaku.yamahata@gmail.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [RFC PATCH v11 01/29] KVM: Wrap kvm_gfn_range.pte in a
+ per-action union
+Message-ID: <ZLphxpSTL9Fpn1ye@yilunxu-OptiPlex-7050>
 References: <20230718234512.1690985-1-seanjc@google.com>
- <20230718234512.1690985-7-seanjc@google.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-In-Reply-To: <20230718234512.1690985-7-seanjc@google.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <20230718234512.1690985-2-seanjc@google.com>
+ <ZLolA2U83tP75Qdd@yzhao56-desk.sh.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZLolA2U83tP75Qdd@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/19/23 01:44, Sean Christopherson wrote:
-> Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/kvm/x86.c       |  2 +-
->   include/linux/kvm_host.h |  4 ++--
->   include/uapi/linux/kvm.h | 13 +++++++++++++
->   virt/kvm/kvm_main.c      | 38 ++++++++++++++++++++++++++++++--------
->   4 files changed, 46 insertions(+), 11 deletions(-)
+On 2023-07-21 at 14:26:11 +0800, Yan Zhao wrote:
+> On Tue, Jul 18, 2023 at 04:44:44PM -0700, Sean Christopherson wrote:
 > 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index a6b9bea62fb8..92e77afd3ffd 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -12420,7 +12420,7 @@ void __user * __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa,
->   	}
->   
->   	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
-> -		struct kvm_userspace_memory_region m;
-> +		struct kvm_userspace_memory_region2 m;
->   
->   		m.slot = id | (i << 16);
->   		m.flags = 0;
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index d2d3e083ec7f..e9ca49d451f3 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -1130,9 +1130,9 @@ enum kvm_mr_change {
->   };
->   
->   int kvm_set_memory_region(struct kvm *kvm,
-> -			  const struct kvm_userspace_memory_region *mem);
-> +			  const struct kvm_userspace_memory_region2 *mem);
->   int __kvm_set_memory_region(struct kvm *kvm,
-> -			    const struct kvm_userspace_memory_region *mem);
-> +			    const struct kvm_userspace_memory_region2 *mem);
->   void kvm_arch_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot);
->   void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen);
->   int kvm_arch_prepare_memory_region(struct kvm *kvm,
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index f089ab290978..4d4b3de8ac55 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -95,6 +95,16 @@ struct kvm_userspace_memory_region {
->   	__u64 userspace_addr; /* start of the userspace allocated memory */
->   };
->   
-> +/* for KVM_SET_USER_MEMORY_REGION2 */
-> +struct kvm_userspace_memory_region2 {
-> +	__u32 slot;
-> +	__u32 flags;
-> +	__u64 guest_phys_addr;
-> +	__u64 memory_size;
-> +	__u64 userspace_addr;
-> +	__u64 pad[16];
-> +};
-> +
->   /*
->    * The bit 0 ~ bit 15 of kvm_userspace_memory_region::flags are visible for
->    * userspace, other bits are reserved for kvm internal use which are defined
-> @@ -1192,6 +1202,7 @@ struct kvm_ppc_resize_hpt {
->   #define KVM_CAP_COUNTER_OFFSET 227
->   #define KVM_CAP_ARM_EAGER_SPLIT_CHUNK_SIZE 228
->   #define KVM_CAP_ARM_SUPPORTED_BLOCK_SIZES 229
-> +#define KVM_CAP_USER_MEMORY2 230
->   
->   #ifdef KVM_CAP_IRQ_ROUTING
->   
-> @@ -1466,6 +1477,8 @@ struct kvm_vfio_spapr_tce {
->   					struct kvm_userspace_memory_region)
->   #define KVM_SET_TSS_ADDR          _IO(KVMIO,   0x47)
->   #define KVM_SET_IDENTITY_MAP_ADDR _IOW(KVMIO,  0x48, __u64)
-> +#define KVM_SET_USER_MEMORY_REGION2 _IOW(KVMIO, 0x49, \
-> +					 struct kvm_userspace_memory_region2)
->   
->   /* enable ucontrol for s390 */
->   struct kvm_s390_ucas_mapping {
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 53346bc2902a..c14adf93daec 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -1549,7 +1549,7 @@ static void kvm_replace_memslot(struct kvm *kvm,
->   	}
->   }
->   
-> -static int check_memory_region_flags(const struct kvm_userspace_memory_region *mem)
-> +static int check_memory_region_flags(const struct kvm_userspace_memory_region2 *mem)
->   {
->   	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
->   
-> @@ -1951,7 +1951,7 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
->    * Must be called holding kvm->slots_lock for write.
->    */
->   int __kvm_set_memory_region(struct kvm *kvm,
-> -			    const struct kvm_userspace_memory_region *mem)
-> +			    const struct kvm_userspace_memory_region2 *mem)
->   {
->   	struct kvm_memory_slot *old, *new;
->   	struct kvm_memslots *slots;
-> @@ -2055,7 +2055,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
->   EXPORT_SYMBOL_GPL(__kvm_set_memory_region);
->   
->   int kvm_set_memory_region(struct kvm *kvm,
-> -			  const struct kvm_userspace_memory_region *mem)
-> +			  const struct kvm_userspace_memory_region2 *mem)
->   {
->   	int r;
->   
-> @@ -2067,7 +2067,7 @@ int kvm_set_memory_region(struct kvm *kvm,
->   EXPORT_SYMBOL_GPL(kvm_set_memory_region);
->   
->   static int kvm_vm_ioctl_set_memory_region(struct kvm *kvm,
-> -					  struct kvm_userspace_memory_region *mem)
-> +					  struct kvm_userspace_memory_region2 *mem)
->   {
->   	if ((u16)mem->slot >= KVM_USER_MEM_SLOTS)
->   		return -EINVAL;
-> @@ -4514,6 +4514,7 @@ static int kvm_vm_ioctl_check_extension_generic(struct kvm *kvm, long arg)
->   {
->   	switch (arg) {
->   	case KVM_CAP_USER_MEMORY:
-> +	case KVM_CAP_USER_MEMORY2:
->   	case KVM_CAP_DESTROY_MEMORY_REGION_WORKS:
->   	case KVM_CAP_JOIN_MEMORY_REGIONS_WORKS:
->   	case KVM_CAP_INTERNAL_ERROR_DATA:
-> @@ -4757,6 +4758,14 @@ static int kvm_vm_ioctl_get_stats_fd(struct kvm *kvm)
->   	return fd;
->   }
->   
-> +#define SANITY_CHECK_MEM_REGION_FIELD(field)					\
-> +do {										\
-> +	BUILD_BUG_ON(offsetof(struct kvm_userspace_memory_region, field) !=		\
-> +		     offsetof(struct kvm_userspace_memory_region2, field));	\
-> +	BUILD_BUG_ON(sizeof_field(struct kvm_userspace_memory_region, field) !=		\
-> +		     sizeof_field(struct kvm_userspace_memory_region2, field));	\
-> +} while (0)
-> +
->   static long kvm_vm_ioctl(struct file *filp,
->   			   unsigned int ioctl, unsigned long arg)
->   {
-> @@ -4779,15 +4788,28 @@ static long kvm_vm_ioctl(struct file *filp,
->   		r = kvm_vm_ioctl_enable_cap_generic(kvm, &cap);
->   		break;
->   	}
-> +	case KVM_SET_USER_MEMORY_REGION2:
->   	case KVM_SET_USER_MEMORY_REGION: {
-> -		struct kvm_userspace_memory_region kvm_userspace_mem;
-> +		struct kvm_userspace_memory_region2 mem;
-> +		unsigned long size;
-> +
-> +		if (ioctl == KVM_SET_USER_MEMORY_REGION)
-> +			size = sizeof(struct kvm_userspace_memory_region);
-> +		else
-> +			size = sizeof(struct kvm_userspace_memory_region2);
-> +
-> +		/* Ensure the common parts of the two structs are identical. */
-> +		SANITY_CHECK_MEM_REGION_FIELD(slot);
-> +		SANITY_CHECK_MEM_REGION_FIELD(flags);
-> +		SANITY_CHECK_MEM_REGION_FIELD(guest_phys_addr);
-> +		SANITY_CHECK_MEM_REGION_FIELD(memory_size);
-> +		SANITY_CHECK_MEM_REGION_FIELD(userspace_addr);
->   
->   		r = -EFAULT;
-> -		if (copy_from_user(&kvm_userspace_mem, argp,
-> -						sizeof(kvm_userspace_mem)))
-> +		if (copy_from_user(&mem, argp, size))
->   			goto out;
->   
-> -		r = kvm_vm_ioctl_set_memory_region(kvm, &kvm_userspace_mem);
-> +		r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
->   		break;
->   	}
->   	case KVM_GET_DIRTY_LOG: {
+> May I know why KVM now needs to register to callback .change_pte()?
 
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+I can see the original purpose is to "setting a pte in the shadow page
+table directly, instead of flushing the shadow page table entry and then
+getting vmexit to set it"[1].
 
+IIUC, KVM is expected to directly make the new pte present for new
+pages in this callback, like for COW.
+
+> As also commented in kvm_mmu_notifier_change_pte(), .change_pte() must be
+> surrounded by .invalidate_range_{start,end}().
+> 
+> While kvm_mmu_notifier_invalidate_range_start() has called kvm_unmap_gfn_range()
+> to zap all leaf SPTEs, and page fault path will not install new SPTEs
+> successfully before kvm_mmu_notifier_invalidate_range_end(),
+> kvm_set_spte_gfn() should not be able to find any shadow present leaf entries to
+> update PFN.
+
+I also failed to figure out how the kvm_set_spte_gfn() could pass
+several !is_shadow_present_pte(iter.old_spte) check then write the new
+pte.
+
+
+[1] https://lore.kernel.org/all/200909222039.n8MKd4TL002696@imap1.linux-foundation.org/
+
+Thanks,
+Yilun
+
+> 
+> Or could we just delete completely
+> "kvm_handle_hva_range(mn, address, address + 1, pte, kvm_set_spte_gfn);"
+> from kvm_mmu_notifier_change_pte() ?
