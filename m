@@ -2,336 +2,126 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F38C6C0015E
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jul 2023 16:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8411C0015E
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jul 2023 16:43:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232825AbjGUQh3 (ORCPT
+        id S229539AbjGUQnP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Jul 2023 12:37:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36766 "EHLO
+        Fri, 21 Jul 2023 12:43:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231338AbjGUQgm (ORCPT
+        with ESMTP id S229610AbjGUQmx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Jul 2023 12:36:42 -0400
-Received: from frasgout11.his.huawei.com (unknown [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E29E73AA5;
-        Fri, 21 Jul 2023 09:35:56 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4R6vxj2gZ1z9xFQS;
-        Sat, 22 Jul 2023 00:23:37 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwC3hl1bs7pkcDDSBA--.22409S9;
-        Fri, 21 Jul 2023 17:34:32 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        jarkko@kernel.org, pbrobinson@gmail.com, zbyszek@in.waw.pl,
-        hch@lst.de, mjg59@srcf.ucam.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH 07/12] ima: Add digest_cache policy keyword
-Date:   Fri, 21 Jul 2023 18:33:21 +0200
-Message-Id: <20230721163326.4106089-8-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230721163326.4106089-1-roberto.sassu@huaweicloud.com>
-References: <20230721163326.4106089-1-roberto.sassu@huaweicloud.com>
+        Fri, 21 Jul 2023 12:42:53 -0400
+Received: from sonic307-15.consmr.mail.ne1.yahoo.com (sonic307-15.consmr.mail.ne1.yahoo.com [66.163.190.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 036EB2D71
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 09:42:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1689957725; bh=V9dOu9Ky2pqvJawWDuTlA/cc/wSDtbwaMovWTd36Ir0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=qbbXeBScNl0vdISfM84hJyJsPPYE8fYFhtSJhaDXP40bv9fh+YA8besHHCyzu93K74QyMkkOnPtiAO6TejIlP+lWcaRZAnUy2NuoGQAn0z/42eFWmyFW2AvxYnyXCH/aYWqpI9vyJyu7j6+WuTWuwYFFddtFoEOesdrLYLzSwiw3W/oJyWocVXa7PkpaqscHObB8i3n4am/jNRl6wnnBGSNuXW+HQxB64EIcUwobuSwH+7xskqvCEE+wV9pN0Hj5JflDcaXFw0g+dEMPpmWU1DAVkCaAnP2ueyWQfmcG8K32b3Irr6yMWxUyyUguw6d94gCiG2ki76R+S5tC2jwE1w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1689957725; bh=ngZaYfRw/dPp4HTrDetNd/XSNKRoQBtZNF99DQwpAUZ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=AVAM9mK+sB3OPL9CBgsrthSAQupa/6u+MBHWDw8r8645MCAuDP3Ugl/nNrIIFXSGaE1Wd5aOfYV+5+HZhKVCFBt8K6YQ6R0288RJHbqncfq26hSshWVh0yLFlJGW/excmY772cixB1ga3Ma4OZ8jmhCEgNRk8jav6C5pqQ6yGte/nFRK0GUkOFckC5M0qYfEtyyr5e16OIFNwD+50qUJDQyXbelr6RXmcKEVQLYCfrRTv/VPNYZO0pbhIrYcNJggnNR4D8RieHwfGYUMsu0qLMN+qeUK+Ul5qJhSjLM5iNkzAXf0uPkk776dDG3d6rpI3tzBFrvOq29WWqJgl0537A==
+X-YMail-OSG: 2FHoy48VM1mlwbrEE8ShMTn9qIRrRRHE5aVtGc9B3MLESGI0uOE9p25.JLZwCV1
+ Owc4Z45ZQwQR_p2cczv504zGiLBjX.TOecq1YUJuZDKrScE7zaPKT3Z74L710QcinQ2QaU9xZ..E
+ zn09FEKfy_4FW2.2OssWBp42aU7QNxigO49fMQDKxArBsouBqk5.vObO93Ofm_qgh8Svw_DmHWZ9
+ Xc3TT4xD3ztuuDVy8FuIsxOrOD7IQvcd40L0roUigQ72kf6B8Uv_DMuPzd9Ms29ifVU6KnEmOs8_
+ V1IQWQyumUzN.uPzPqwW7l9dG2dQZNLSkgBdK5LDHk5h6Oiw1d3e8x3CHR3T9YQ1yz45tohCc56s
+ qIIfD5J1blnfysQaV0hxp32WS2hhR1sNhJlPPUUtx31MHOUBnb9Zgd6pOBM_EuiPpYijvd1JWDE9
+ XiDbtutJ7L7K2iND2B2_AX6Bj.V.bBGMs.nRRusG871KC1f60_gAfV2W1ltsLL7FBv7ug1kNcacn
+ rcY53XdTz3jDP4QdlulTLaHEXe.lq_wHA4YhiUrUyx32V5G4e3QrWRMAuSrVb9CwmWfIKbP57dzu
+ 0yuR4y7jFmyobWvLcvTU.8x3nUEGJzLZJkQwqdjuKbuxJlWC5w7ruMHQWY1Sys.pXvqinZ5WG3II
+ UCp_bBZMmOXK8LM8zi7sfCrIKagQpYkotZ_9pUMOSpkuUc.euemdFsADMVMXR2meYs4b4SqvCybt
+ XGFDnT80B.jebXOuZWgKnKtCEFNg2oL1eIa7if7dV_pBA.zFZ50UzOByC1bK4s_.iT7akGn7u7Uz
+ bxganHcDHdQlwKaIsxbvQikA8jzUUJR8PluZLRUBNh.I1K9uda3i0kVQSC4tzXdA5CcJAiEVJ3fZ
+ VKIXOKNXpeOTp3FmvzrxUFCoqEx8XJw2v_78OxMRg17a.AJ90UMKB6jOvuyc0SKKRge_Bcu0T88.
+ drCZ9Abalkxt_csnYHmhX0uQTllpx6mikiJ2Ie64XF6rEnWJDxCITy9xn1xHE0eHG2b121SxC_pe
+ CQg2yp6tN0Oz7Rn3afA3AviWTvyZY_Yo_Pu87JqEDFPcVhu8zjMowKv2hOtP1nErACfvRMmdgLp.
+ JvFGjmwTyOBOfhI28NicPdaup7WvBwFiHBKfS6Bs5RzarwcphZjRHXqslsE89uzYl8FA16Ke5Gzc
+ 3IgeW47anD4lYveeHmWI42jjE7CVzFDfyLI3w7qdEGRRm1.4VJFlSdhT9OV5wCtIIOA573dHCP80
+ dqb8oyrXnGnfki04CghliU9qix_BYmb5Uj1OfCMg6SVjjD8s9biDme0O81oaGyhhMH4qOz4R2n1s
+ Yo6GYGBrOkhjDAsuDDbO4cVh44JuU0xS2ZCSgrUZadJihUKCtr6zAdKYVogKB04qXygXUoi3wIlh
+ hFt1LM1SfE5BY36N0y00IVf_Lzv0Sw2H7Zmh5AVAKPRHVNX0IwilbsTwFlWTgoOipplV7iHrA_.9
+ 9o6Sywq0VSWNyoeJY9Ybe8pPYV5h14t3elcu0r7IlekzL7ehq6gFVIDrl21bfSgp9TFsoMpI4Czp
+ 6vfOVOnNmLhzWStFCkZOGoinZYjsvx_1cAgdmhSax4osgbO3jJEU1oZ3qmSmArQ9dLrKt26BJoGX
+ f8nleB0YZLijgaw7jYHATpeldB2IKGK3KA1jRmO1p9OYaJ3s8bBXD3lYI44RT_zcz.7urNNwYgOq
+ Sw7gcXwyuqp3T1ZEG7DBEMDrJlv4o3.zVIMwGlib50N8wtdA9fUM2l5Y7p8CFRIefuUoy21PRTgq
+ FtqhJEj6UpIZi1lalQOCOHwHBKfn8WTObBbdGvuSLLvTZeji8MZUbRYHsPSGwnHVAIJS2xaS57Gd
+ JHMwQXfVcUDAC8S4J6ALAVQrHbzbVZRz0HaKl5bmEq25ZMC4r9aaCzVcsufERqLPMXjoCQf7hwVm
+ qUYAy5DNBASIN31SFTP6qbfDzNwL..yh5GLJyaBzv7ccJC4yyt4cG_7lufhc9V3zUGIhLp9YAG2q
+ JNAcebflXs23cu3gKNDmvrfVy99bmAWVxaBhh8RWGnaerRmMQtSMZbo_8OxA1mT6r_1YVsI9JixU
+ w0EpT2gRSwyuieqNCPdQrNNmtf7mnNfWB2zY7op63d961uootplVnyk3vfSWJBrE1FTfOenSVVBM
+ BjgO5gAdrv4GrP6CS6rYCI8jVCLYVlnv8Mm7GEAqJ68IRfT2MQaIDVOT2vRks7dxy3haCwXYWYqG
+ xdDmquhE7He0U1STNJyEnbP.FnoPLzWNSXv43d8pai0JlF4RS8USu0IhGhdya4UBtxBLK2crRWR3
+ rtW07Ppv4pg--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 0d35e154-3db0-441c-8f0a-9a6e0ee19a4a
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Jul 2023 16:42:05 +0000
+Received: by hermes--production-ne1-77c6dd44c7-b2ztb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9db050f78d2d5093cbc6bde4da7a5542;
+          Fri, 21 Jul 2023 16:31:32 +0000 (UTC)
+Message-ID: <4c4e6d51-1ee4-46bc-b355-c15151b3214f@schaufler-ca.com>
+Date:   Fri, 21 Jul 2023 09:31:30 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwC3hl1bs7pkcDDSBA--.22409S9
-X-Coremail-Antispam: 1UD129KBjvJXoW3CrWruw17JF4DAFyxCw15Jwb_yoWkXFykpa
-        yvg3WUCr48XryS9r1xAa4q9r4FgrWIqa1UA395X342y3ZxXr10v3WfJr13CFy3ArW5Cr92
-        yF1Ygr4Dua1jvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUPlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-        AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E
-        14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
-        C2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
-        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262
-        kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s02
-        6c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw
-        0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvE
-        c7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-        AFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZF
-        pf9x07j7GYLUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj5DJQwAAsr
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [RFC PATCH] selinux: introduce and use ad_init_net*() helpers
+Content-Language: en-US
+To:     Paolo Abeni <pabeni@redhat.com>, selinux@vger.kernel.org
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        linux-security-module@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <73a810980a8452f0cb98d25698c4ae83285b7393.1689604030.git.pabeni@redhat.com>
+ <679840421f2e7794bb69962b97e0cee1a4e0f0f6.camel@redhat.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <679840421f2e7794bb69962b97e0cee1a4e0f0f6.camel@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21647 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On 7/21/2023 8:34 AM, Paolo Abeni wrote:
+> Hi all,
+>
+> On Mon, 2023-07-17 at 16:27 +0200, Paolo Abeni wrote:
+>> The only
+>> remaining perf-related pain-point I see is the indirect call at the
+>> security_ level, and tackling it looks much more difficult... :(
+> I spent a little more time on this latest topic. AFAICS recently such
+> overhead has increased due to the bpf lsm introduction. My
+> understanding is that a major LSM and BPF LSM simultaneously enabled is
+> a common usage scenario. That means 2 indirect calls + 2 untrain trails
+> and 3 additional cache-lines used per hook.
+>
+> Under the assumption than having multiple major lsms enabled
+> concurrently is less common, I hacked some (not exactly spectacularly
+> beautiful) code to avoid the above. Basically, after initialization,
+> for a limited number of hooks, it checks if only the default major lsm
+> and eventually the bpf lsm are registered and if so, converts such
+> hooks to static call[s], using static branches.
 
-Add the digest_cache policy keyword, to enable the use of the digest cache
-for specific IMA actions and purpose. At the moment, the digest cache can
-be used for measurement and appraisal of file content. They are reflected
-respectively with the new flags DIGEST_CACHE_MEASURE and
-DIGEST_CACHE_APPRAISE_CONTENT.
+K.P. Singh proposed similar changes recently, and Brendan Jackman
+had something in 2020. The performance benefit demonstrated has
+been encouraging. The approach has two serious problems. It doesn't
+lend itself very well to special cases, and the code is incredibly
+ugly.
 
-Depending on the IMA action of the parsed rule, the new flags are set in
-the digest_cache_mask variable and passed back to process_measurement(), so
-that the latter can determine whether or not it can use the digest cache.
-
-The digest cache cannot be used for measurement on the default PCR. It
-cannot also be used for appraisal together with the other appraisal methods
-(imasig, sigv3, modsig).
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- Documentation/ABI/testing/ima_policy  |  5 ++-
- security/integrity/ima/ima.h          |  6 ++--
- security/integrity/ima/ima_api.c      |  6 ++--
- security/integrity/ima/ima_appraise.c |  2 +-
- security/integrity/ima/ima_main.c     |  8 ++---
- security/integrity/ima/ima_policy.c   | 51 +++++++++++++++++++++++++--
- 6 files changed, 66 insertions(+), 12 deletions(-)
-
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index 14d92c687ef..7792e65b35c 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -29,7 +29,7 @@ Description:
- 				 [obj_user=] [obj_role=] [obj_type=]]
- 			option:	[digest_type=] [template=] [permit_directio]
- 				[appraise_type=] [appraise_flag=]
--				[appraise_algos=] [keyrings=]
-+				[appraise_algos=] [keyrings=] [digest_cache=]
- 		  base:
- 			func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
- 				[FIRMWARE_CHECK]
-@@ -77,6 +77,9 @@ Description:
- 			For example, "sha256,sha512" to only accept to appraise
- 			files where the security.ima xattr was hashed with one
- 			of these two algorithms.
-+			digest_cache:= [content]
-+			"content" means that the digest cache is used only
-+			for file content measurement and/or appraisal.
- 
- 		  default policy:
- 			# PROC_SUPER_MAGIC
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 859a94bcecb..bdf03525e15 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -260,7 +260,8 @@ int ima_get_action(struct mnt_idmap *idmap, struct inode *inode,
- 		   const struct cred *cred, u32 secid, int mask,
- 		   enum ima_hooks func, int *pcr,
- 		   struct ima_template_desc **template_desc,
--		   const char *func_data, unsigned int *allowed_algos);
-+		   const char *func_data, unsigned int *allowed_algos,
-+		   u8 *digest_cache_mask);
- int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func);
- int ima_collect_measurement(struct integrity_iint_cache *iint,
- 			    struct file *file, void *buf, loff_t size,
-@@ -291,7 +292,8 @@ int ima_match_policy(struct mnt_idmap *idmap, struct inode *inode,
- 		     const struct cred *cred, u32 secid, enum ima_hooks func,
- 		     int mask, int flags, int *pcr,
- 		     struct ima_template_desc **template_desc,
--		     const char *func_data, unsigned int *allowed_algos);
-+		     const char *func_data, unsigned int *allowed_algos,
-+		     u8 *digest_cache_mask);
- void ima_init_policy(void);
- void ima_update_policy(void);
- void ima_update_policy_flags(void);
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index 452e80b541e..bc25675264c 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -173,6 +173,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  * @template_desc: pointer filled in if matched measure policy sets template=
-  * @func_data: func specific data, may be NULL
-  * @allowed_algos: allowlist of hash algorithms for the IMA xattr
-+ * @digest_cache_mask: For which actions and purpose the digest cache is usable
-  *
-  * The policy is defined in terms of keypairs:
-  *		subj=, obj=, type=, func=, mask=, fsmagic=
-@@ -190,7 +191,8 @@ int ima_get_action(struct mnt_idmap *idmap, struct inode *inode,
- 		   const struct cred *cred, u32 secid, int mask,
- 		   enum ima_hooks func, int *pcr,
- 		   struct ima_template_desc **template_desc,
--		   const char *func_data, unsigned int *allowed_algos)
-+		   const char *func_data, unsigned int *allowed_algos,
-+		   u8 *digest_cache_mask)
- {
- 	int flags = IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE | IMA_HASH;
- 
-@@ -198,7 +200,7 @@ int ima_get_action(struct mnt_idmap *idmap, struct inode *inode,
- 
- 	return ima_match_policy(idmap, inode, cred, secid, func, mask,
- 				flags, pcr, template_desc, func_data,
--				allowed_algos);
-+				allowed_algos, digest_cache_mask);
- }
- 
- static bool ima_get_verity_digest(struct integrity_iint_cache *iint,
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 491c1aca0b1..10dbafdae3d 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -81,7 +81,7 @@ int ima_must_appraise(struct mnt_idmap *idmap, struct inode *inode,
- 	security_current_getsecid_subj(&secid);
- 	return ima_match_policy(idmap, inode, current_cred(), secid,
- 				func, mask, IMA_APPRAISE | IMA_HASH, NULL,
--				NULL, NULL, NULL);
-+				NULL, NULL, NULL, NULL);
- }
- 
- static int ima_fix_xattr(struct dentry *dentry,
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 81abdc8b233..4fdfc399fa6 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -231,7 +231,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	 */
- 	action = ima_get_action(file_mnt_idmap(file), inode, cred, secid,
- 				mask, func, &pcr, &template_desc, NULL,
--				&allowed_algos);
-+				&allowed_algos, NULL);
- 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK ||
- 			    func == MMAP_CHECK_REQPROT) &&
- 			   (ima_policy_flag & IMA_MEASURE));
-@@ -473,11 +473,11 @@ int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
- 	inode = file_inode(vma->vm_file);
- 	action = ima_get_action(file_mnt_idmap(vma->vm_file), inode,
- 				current_cred(), secid, MAY_EXEC, MMAP_CHECK,
--				&pcr, &template, NULL, NULL);
-+				&pcr, &template, NULL, NULL, NULL);
- 	action |= ima_get_action(file_mnt_idmap(vma->vm_file), inode,
- 				 current_cred(), secid, MAY_EXEC,
- 				 MMAP_CHECK_REQPROT, &pcr, &template, NULL,
--				 NULL);
-+				 NULL, NULL);
- 
- 	/* Is the mmap'ed file in policy? */
- 	if (!(action & (IMA_MEASURE | IMA_APPRAISE_SUBMASK)))
-@@ -958,7 +958,7 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
- 		security_current_getsecid_subj(&secid);
- 		action = ima_get_action(idmap, inode, current_cred(),
- 					secid, 0, func, &pcr, &template,
--					func_data, NULL);
-+					func_data, NULL, NULL);
- 		if (!(action & IMA_MEASURE) && !digest)
- 			return -ENOENT;
- 	}
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index b32c83d8a72..701c4f21158 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -122,6 +122,7 @@ struct ima_rule_entry {
- 	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
- 	struct ima_rule_opt_list *label; /* Measure data grouped under this label */
- 	struct ima_template_desc *template;
-+	u8 digest_cache_mask;	/* For which actions and purpose the digest cache is usable */
- };
- 
- /*
-@@ -726,6 +727,7 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
-  * @template_desc: the template that should be used for this rule
-  * @func_data: func specific data, may be NULL
-  * @allowed_algos: allowlist of hash algorithms for the IMA xattr
-+ * @digest_cache_mask: For which actions and purpose the digest cache is usable
-  *
-  * Measure decision based on func/mask/fsmagic and LSM(subj/obj/type)
-  * conditions.
-@@ -738,7 +740,8 @@ int ima_match_policy(struct mnt_idmap *idmap, struct inode *inode,
- 		     const struct cred *cred, u32 secid, enum ima_hooks func,
- 		     int mask, int flags, int *pcr,
- 		     struct ima_template_desc **template_desc,
--		     const char *func_data, unsigned int *allowed_algos)
-+		     const char *func_data, unsigned int *allowed_algos,
-+		     u8 *digest_cache_mask)
- {
- 	struct ima_rule_entry *entry;
- 	int action = 0, actmask = flags | (flags << 1);
-@@ -783,6 +786,9 @@ int ima_match_policy(struct mnt_idmap *idmap, struct inode *inode,
- 		if (template_desc && entry->template)
- 			*template_desc = entry->template;
- 
-+		if (digest_cache_mask)
-+			*digest_cache_mask |= entry->digest_cache_mask;
-+
- 		if (!actmask)
- 			break;
- 	}
-@@ -1073,7 +1079,7 @@ enum policy_opt {
- 	Opt_digest_type,
- 	Opt_appraise_type, Opt_appraise_flag, Opt_appraise_algos,
- 	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
--	Opt_label, Opt_err
-+	Opt_label, Opt_digest_cache, Opt_err
- };
- 
- static const match_table_t policy_tokens = {
-@@ -1122,6 +1128,7 @@ static const match_table_t policy_tokens = {
- 	{Opt_template, "template=%s"},
- 	{Opt_keyrings, "keyrings=%s"},
- 	{Opt_label, "label=%s"},
-+	{Opt_digest_cache, "digest_cache=%s"},
- 	{Opt_err, NULL}
- };
- 
-@@ -1886,6 +1893,26 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 						 &(template_desc->num_fields));
- 			entry->template = template_desc;
- 			break;
-+		case Opt_digest_cache:
-+			ima_log_string(ab, "template", args[0].from);
-+
-+			result = -EINVAL;
-+
-+			if (!strcmp(args[0].from, "content")) {
-+				switch (entry->action) {
-+				case MEASURE:
-+					entry->digest_cache_mask |= DIGEST_CACHE_MEASURE;
-+					result = 0;
-+					break;
-+				case APPRAISE:
-+					entry->digest_cache_mask |= DIGEST_CACHE_APPRAISE_CONTENT;
-+					result = 0;
-+					break;
-+				default:
-+					break;
-+				}
-+			}
-+			break;
- 		case Opt_err:
- 			ima_log_string(ab, "UNKNOWN", p);
- 			result = -EINVAL;
-@@ -1912,6 +1939,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				     "verity rules should include d-ngv2");
- 	}
- 
-+	/* New-style measurements with digest cache cannot be on default PCR. */
-+	if (entry->action == MEASURE &&
-+	    (entry->digest_cache_mask & DIGEST_CACHE_MEASURE)) {
-+		if (!(entry->flags & IMA_PCR) ||
-+		    entry->pcr == CONFIG_IMA_MEASURE_PCR_IDX)
-+			result = -EINVAL;
-+	}
-+
-+	/* Digest cache should not conflict with other appraisal methods. */
-+	if (entry->action == APPRAISE &&
-+	    (entry->digest_cache_mask & DIGEST_CACHE_APPRAISE_CONTENT)) {
-+		if ((entry->flags & IMA_DIGSIG_REQUIRED) ||
-+		    (entry->flags & IMA_VERITY_REQUIRED) ||
-+		    (entry->flags & IMA_MODSIG_ALLOWED))
-+			result = -EINVAL;
-+	}
-+
- 	audit_log_format(ab, "res=%d", !result);
- 	audit_log_end(ab);
- 	return result;
-@@ -2278,6 +2322,9 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, "appraise_flag=check_blacklist ");
- 	if (entry->flags & IMA_PERMIT_DIRECTIO)
- 		seq_puts(m, "permit_directio ");
-+	if ((entry->digest_cache_mask & DIGEST_CACHE_MEASURE) ||
-+	    (entry->digest_cache_mask & DIGEST_CACHE_APPRAISE_CONTENT))
-+		seq_puts(m, "digest_cache=content ");
- 	rcu_read_unlock();
- 	seq_puts(m, "\n");
- 	return 0;
--- 
-2.34.1
-
+>
+> The idea would be to keep the above infra usage restricted to the most
+> performance-relevant hooks (e.g. one-off initialization or
+> configuration  are not relevant from that perspective). For obvious
+> reasons I started from a few of network related hooks ;)
+>
+> As said the code could be more nice: there is some quite heavy macro
+> usage and some duplication I was not able to avoid). On the flip side
+> it shows quite measurable benefit when enabled, 0 impact when disabled,
+> and it's available to all major LSM, except tomoyo (but even the latter
+> could be accommodated with some effort).
+>
+> If there is some shared interest for the above I can share the current
+> status and try to cleanup the code.
+>
+> Any feedback more then appreciated!
+>
+> Cheers,
+>
+> Paolo
+>
