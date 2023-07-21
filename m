@@ -2,102 +2,132 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 480D6EB64DD
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jul 2023 21:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD808EB64DD
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jul 2023 21:40:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230373AbjGUVfa (ORCPT
+        id S230333AbjGUVki (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Jul 2023 17:35:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48884 "EHLO
+        Fri, 21 Jul 2023 17:40:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230230AbjGUVf1 (ORCPT
+        with ESMTP id S230327AbjGUVkh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Jul 2023 17:35:27 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56CD43A82
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 14:35:12 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-57a6df91b1eso26843257b3.1
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 14:35:12 -0700 (PDT)
+        Fri, 21 Jul 2023 17:40:37 -0400
+Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76D003A86
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 14:40:35 -0700 (PDT)
+Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-57d24970042so28630177b3.2
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 14:40:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1689975311; x=1690580111;
+        d=paul-moore.com; s=google; t=1689975634; x=1690580434;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OhZGqswAQb0pQ9L1ZWkYOLc6gCR3h3SYPJFiQTJWHqg=;
-        b=ahUw99YNs3DdsZp/HQpT2n5t5/cxcNh1L5W8NnCXbqPTy2xPT3dR6Vi4QaRY/jOTSZ
-         Vl9G9oYNlH5mxVqT0p9vEHCcQT1fk1bICeogaEhJO2qTSzLNDLdcB5I+cUOe6Zuofo1n
-         KCbNOc2DfVybSlAkPdxgR3jYGsq6Q4p5k3rbgbAjpA/ElI/2+fY/j1IQndtNJ0cr/W1+
-         e5CXLTU8QE+LNhAWCz6YTVzo4XclevuPJ99MDx8EeyI3wUxuc0z5/5CAN7+iPfFlUe7N
-         NbEGLgom61o8bKU1r9Y2lP4WTmg8aPCOga4cSbZUr6EV1WUoYBjjSgWkn53aiadKk0RE
-         On5g==
+        bh=1l7ane1OFS+DsoXNZ3U+AZ4KjgV57iMuNiejIQehSc4=;
+        b=FSYL0es3zGYgPSbiIbE7QW63J5pU/Pp1sjBqc2fV7aNAMjPq8/ibss0ZDcKuCz0WIG
+         W/pDwheI4n0hlntSOBzbMjuRyUCHn6J1UpZM0i7jacmbpZVhwD+bwXYSZzGaFwphlXxq
+         mHOmwpGrQGKTdhU5PkDumCCubMwIFJBn7X46RallzhPKlwFEfXGUV4lHshAGTEFnJPAZ
+         7DpFyuDA12HPI8B8H1kFrbriPMQOIB6Fx6+2ImvM21lGje2l0zK5WEF6BdLcO2mfIzUl
+         lwkWo19C1XELSkBimTW40s1NN/p5NVBEuw68hDplm+NuuKpleUFzO7ma6Wphsn1x+N4c
+         jxPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689975311; x=1690580111;
+        d=1e100.net; s=20221208; t=1689975634; x=1690580434;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OhZGqswAQb0pQ9L1ZWkYOLc6gCR3h3SYPJFiQTJWHqg=;
-        b=T1ymFvN7K6Q/xWWxX0hVnbQRTbDdhayRZth6Y/iD+A0/g60kB2VakdPsKHPIBGr/GC
-         DY/NSoRXO/4Pa1e0FdAw8QCJ3GfA0Wk6Bfthn/EV5dmQ7DbCo16KAOEy+SwudIt+299N
-         07nSZ/MoG8GEEh4Yc0jRX/wxEKlf+s8leOCfJrh9Dq4dvc/8/g1oLeCBGq89pmgQWX3y
-         C3lE21lCte1lzx72n/HuftxxcNYBNNbzJPCcugUDfYbZ7tFbYURzT/PWHZKhTKRl4925
-         98d646nzmTx6eiOb7+b8kS9Kh4sXEmBYoqhx4t+MlzEPJChN9D5gUaX39HsSPFRXzgrz
-         OcFA==
-X-Gm-Message-State: ABy/qLbmiApV2be6O4Ywz9Utxq85xJO2jnNlvVpRGAiZZOZdmjxWtEsX
-        FfZRimU66gCYHQKvhyGG4FE05ZXxUy3TRgxYgoFt
-X-Google-Smtp-Source: APBJJlHnM5RlVKK+vFrce2eT2zjq6UoxVzjNaj+DfBYDzPtGCIhOqyzJLgQZRXltGkz1TH4ZBfanOvNXOWqyBk+uWA8=
-X-Received: by 2002:a81:670b:0:b0:577:3666:bb4e with SMTP id
- b11-20020a81670b000000b005773666bb4emr1296458ywc.36.1689975311278; Fri, 21
- Jul 2023 14:35:11 -0700 (PDT)
+        bh=1l7ane1OFS+DsoXNZ3U+AZ4KjgV57iMuNiejIQehSc4=;
+        b=G1DEoYOPOljRg/HcBHaSqpZJ1UmhQmZl+ksd8+7G0nKcAhqUyMWtRiurHYfK72Uo0q
+         R1sX9JrnbYvzzyMylqtiIwpvq05qsA8X4CjLGoJjpb/SvahiE4uFRogPDBaHuznEj0of
+         K8/KrGmgjikSWDTPtJlzB7GMUM1y1q10DTvVisBsOlYWV9Hqfd3hCnaxZFD+Pe/d188Y
+         FTItwVx7/P0TfbUdwcQyyOoYWXrSF+YGP/6720hDFt4G+F7AfImOSTFdvdY+g9uQ5Sbn
+         c5A51BmYrDPeMcOUzNVDHP542f67mAEMuGd5lTap3bSdEjp7qTUTe3msCA73aQjP6IJh
+         we5g==
+X-Gm-Message-State: ABy/qLYv9C/zjvTZpJyslcGtKOED/7aa/dkltDy+vsABoAtW3v26ArI7
+        QtoMN3SGOWy88abYr880GgK8JezvO3NaFJMMNSsh
+X-Google-Smtp-Source: APBJJlE7LB25GxeesqatrOlBcbG6723uMfnR2JDVAgGbF3gS9RIs3WyGqLCBTpgzBVkejDj4mmTAPOgV3lme6IdNwMQ=
+X-Received: by 2002:a0d:ddd4:0:b0:577:2cac:cd49 with SMTP id
+ g203-20020a0dddd4000000b005772caccd49mr1343753ywe.1.1689975634601; Fri, 21
+ Jul 2023 14:40:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230721122840.31740-1-yuehaibing@huawei.com>
-In-Reply-To: <20230721122840.31740-1-yuehaibing@huawei.com>
+References: <20230629195535.2590-1-casey@schaufler-ca.com> <20230629195535.2590-3-casey@schaufler-ca.com>
+ <9b09c571-9288-73e1-18c5-9023b909a5d9@digikod.net> <b711f8b4-f624-bb2b-1caf-90c674245135@schaufler-ca.com>
+In-Reply-To: <b711f8b4-f624-bb2b-1caf-90c674245135@schaufler-ca.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 21 Jul 2023 17:35:00 -0400
-Message-ID: <CAHC9VhSm_WX9zJceFOz2fqTuqYJ+DrCen-__knstN4+7Ob4AAQ@mail.gmail.com>
-Subject: Re: [PATCH -next] cred: Remove unsued extern declaration change_create_files_as()
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Anna.Schumaker@netapp.com, dhowells@redhat.com,
-        ebiederm@xmission.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
+Date:   Fri, 21 Jul 2023 17:40:23 -0400
+Message-ID: <CAHC9VhRY1_tdLVnFGK4ZxRDEs+JKJWD3VR+iHrcrm9Psmbowtg@mail.gmail.com>
+Subject: Re: [PATCH v12 02/11] LSM: Maintain a table of LSM attribute data
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 21, 2023 at 8:28=E2=80=AFAM YueHaibing <yuehaibing@huawei.com> =
-wrote:
+On Fri, Jul 14, 2023 at 3:42=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+> On 7/11/2023 8:35 AM, Micka=C3=ABl Sala=C3=BCn wrote:
+> > On 29/06/2023 21:55, Casey Schaufler wrote:
+> >> As LSMs are registered add their lsm_id pointers to a table.
+> >> This will be used later for attribute reporting.
+> >>
+> >> Determine the number of possible security modules based on
+> >> their respective CONFIG options. This allows the number to be
+> >> known at build time. This allows data structures and tables
+> >> to use the constant.
+> >>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> Reviewed-by: Kees Cook <keescook@chromium.org>
+> >> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> >> ---
+> >>   include/linux/security.h |  2 ++
+> >>   security/security.c      | 37 +++++++++++++++++++++++++++++++++++++
+> >>   2 files changed, 39 insertions(+)
+
+...
+
+> >> diff --git a/security/security.c b/security/security.c
+> >> index e56714ef045a..5a699e47478b 100644
+> >> --- a/security/security.c
+> >> +++ b/security/security.c
+> >> @@ -521,6 +546,18 @@ void __init security_add_hooks(struct
+> >> security_hook_list *hooks, int count,
+> >>   {
+> >>       int i;
+> >>   +    /*
+> >> +     * A security module may call security_add_hooks() more
+> >> +     * than once during initialization, and LSM initialization
+> >> +     * is serialized. Landlock is one such case.
+> >> +     * Look at the previous entry, if there is one, for duplication.
+> >> +     */
+> >> +    if (lsm_active_cnt =3D=3D 0 || lsm_idlist[lsm_active_cnt - 1] !=
+=3D
+> >> lsmid) {
+> >
+> > Isn't it possible to have interleaved security_add_hooks() calls?
 >
-> Since commit 3a3b7ce93369 ("CRED: Allow kernel services to override LSM s=
-ettings for task actions")
-> this is never used, so can be removed.
+> The initialization is serial and interleaving isn't possible.
 >
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  include/linux/cred.h | 1 -
->  1 file changed, 1 deletion(-)
+> >> +        if (lsm_active_cnt >=3D LSM_CONFIG_COUNT)
+> >> +            panic("%s Too many LSMs registered.\n", __func__);
+> >
+> > I'm not sure we should panic, but from a security point of view it is
+> > critical enough=E2=80=A6
+>
+> It's possible this should be a BUG() instance, but the panic() more
+> closely resembles what's nearby in the code.
 
-It's unclear to me who might merge this patch, but since the original
-offending commit came via the LSM tree I figure the fix might as well
-come via the LSM tree too.  I just merged this into the lsm/next
-branch, but if someone else really wants this to go up via their tree
-that's fine with me.
+I think the panic() call is okay.  If something is so horribly broken
+that we hit this case we have little option but to panic the system as
+booting with the LSM controls busted in such a way is very not good.
 
-Thanks for the patch YueHaibing.
-
-> diff --git a/include/linux/cred.h b/include/linux/cred.h
-> index 9ed9232af934..f923528d5cc4 100644
-> --- a/include/linux/cred.h
-> +++ b/include/linux/cred.h
-> @@ -164,7 +164,6 @@ extern void abort_creds(struct cred *);
->  extern const struct cred *override_creds(const struct cred *);
->  extern void revert_creds(const struct cred *);
->  extern struct cred *prepare_kernel_cred(struct task_struct *);
-> -extern int change_create_files_as(struct cred *, struct inode *);
->  extern int set_security_override(struct cred *, u32);
->  extern int set_security_override_from_ctx(struct cred *, const char *);
->  extern int set_create_files_as(struct cred *, struct inode *);
-> --
-> 2.34.1
+There are probably those that would object to the above statement, but
+those people aren't likely to be building a kernel with any LSMs in
+the first place.
 
 --=20
 paul-moore.com
