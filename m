@@ -2,64 +2,62 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC06C001DE
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jul 2023 17:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F8BDC0015E
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jul 2023 17:50:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229815AbjGURnJ (ORCPT
+        id S229820AbjGURuO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Jul 2023 13:43:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47712 "EHLO
+        Fri, 21 Jul 2023 13:50:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230148AbjGURnF (ORCPT
+        with ESMTP id S229782AbjGURuN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Jul 2023 13:43:05 -0400
+        Fri, 21 Jul 2023 13:50:13 -0400
 Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4E143588
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 10:43:00 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-c8f360a07a2so2020448276.2
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 10:43:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95A2935A7
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 10:50:08 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-c8f360a07a2so2029813276.2
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Jul 2023 10:50:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689961380; x=1690566180;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7DBmD+NWofmGocm5Vnh+WkykM6ONviwwjpnheMJOIK8=;
-        b=Kleh8QpsTsNUhesVcFKaorRemH2b7oCPrjs/EZvvDbSIhnU646cwazqZifDUNyxi+Q
-         5JqV9CUAW8QaG2YIfQCin1qnHve1MgXICSxbyDPLV8MjQRP2Kpasi9pL5sbB8O7UYjBa
-         jgRp3U3UDnkkD6e19TR7wMGjHPVEilwKuPvhlll1BPS6C8DVpWehyFU2WczctGneBM1v
-         8h/JnmhFLy8tlfXVq6NzVrFmSK26MkEiOaRidvtVK6eqi9qhd/VP0gDfCAxADqhE52gi
-         5Uc2vJ9HkSFyp91F1M5r9W96Us+3KtG0sWvhTTO0jFsQ1GbEx81tOU6Kjmmi3SIi/0Fk
-         yy7w==
+        d=google.com; s=20221208; t=1689961807; x=1690566607;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cGq520d0DqyrCnCF7s5Hdb0rD6NYwtkYzvVScy9HYVY=;
+        b=lZQ3ytVABaMbgeRDyRyj2Y4aroG9rwZE4tos1KIi9+yVur8kHjUJfNDjBsWbA5klWv
+         TLcM88saeccS8fNt+F3rMDPeeLUphdScBaSRyrIwijc1R9havyOwlUNE/IQcuJNK+B8L
+         fg4nRh9mVWUewpR8WoS4y2UShReGqGQI/p2sPXI0/xi9S/4bLyRSoR+wjHm8ngFldPX/
+         svRbdc4YBfOK5kZ24vC9n3F8L7Li2/2X6A5zsHfs5DeCFBQGgpDd6R/Lv+3ONLhdKh+D
+         zucg4UeBA4sEAN2XLHlR2RolIKqE8NS9aws4SoQANyJbQckavpkDoby1VzLjItanYN4z
+         z0Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689961380; x=1690566180;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7DBmD+NWofmGocm5Vnh+WkykM6ONviwwjpnheMJOIK8=;
-        b=gFFI2jGQ7l6B6xN1KQa+YMvvN402XDz0n1DqNWxqZ2kYT1bwPHBj/rNeFjuLPU/sDR
-         XPGKuBRUw8KP0+2E18Q2ByIfJPPjtOk7oXxMQVcee2RrhuLEIBBumSVW0IpEPLmynkXX
-         NTGXbxpIAEXGyRhzQcF1z10/3bJbly3wcgAFRJal0jkZz0yPYx5Pv+DJ6D9xElablMn/
-         QzuSbdrx88j7YPhyxzwRidfZlFEDfk0oAwlMSBIa7rXHBtGtl4JzLGgQRn7Dy+52gbKg
-         WtXF/IxFWwipLgHkY5iqLDwncYzPCAqYUFrJZh0ThrpHPBru1hq65L3jj6DGFYVD94Xc
-         yrog==
-X-Gm-Message-State: ABy/qLb+QGr7W+bhxwKfWMA7wmmwfL+qiRfaE/ZQT7wzekyRS6OCsXfq
-        ATfElZFftScEgAdXOSaFWsSKeZevsjU=
-X-Google-Smtp-Source: APBJJlE/aF1pYHHKoAMy1+E4aY5+aL4FeQDb+p2ML0zhZVvr/Ah+OV80Lx1tRjSoeSb0qOhWhlHbRbztBVY=
+        d=1e100.net; s=20221208; t=1689961808; x=1690566608;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cGq520d0DqyrCnCF7s5Hdb0rD6NYwtkYzvVScy9HYVY=;
+        b=TGQw4MD0ZjUoPnbHIIEbaOK7kJWVgtEkjSdZmmvsPUqhEnfNDC+rL0pqZgA/7OwJJA
+         2zQMjjmJaC7hIyGT/1XEubicTBRkm+uYpD2vqd5zvB1Y4bJS+VihIDu/fqVagdZAaqtt
+         AuSZ577HqzG+0ALxtiCfyj+gnro7DXWlLb7/+tN7NtLRPwGEj7MuENxXraf/4tfORsgj
+         TlTBHFMQHZw48jvUsF7TmUwSPrJ6LoKKByb4DKIFPP1YRGP41w9g+GUJselFSvQ5u3Q1
+         Dt8oJbd126Bz0yPvanJjFjHztxvE8rXlK3DbSA2YA22UK9iKZ9VN3e0GdS9jWUHUAgzd
+         cdew==
+X-Gm-Message-State: ABy/qLbe8m+XdZo1lFBolNGSEjbqFhFfSamEzlFf5JcYNfQ3BxKZD7Bc
+        LoXibLuo7bgyXz5nlcpJsREXlJMrUHg=
+X-Google-Smtp-Source: APBJJlGQVjm5RzrpH36bdluvnqR1OmovIF/Mv2HtKZQ0PUD+Zj6xyTxIa85gQ91Vm5Bag6YHDA7hXUEb4so=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
  (user=seanjc job=sendgmr) by 2002:a05:6902:10cd:b0:c1c:df23:44ee with SMTP id
- w13-20020a05690210cd00b00c1cdf2344eemr19665ybu.0.1689961379855; Fri, 21 Jul
- 2023 10:42:59 -0700 (PDT)
-Date:   Fri, 21 Jul 2023 10:42:58 -0700
-In-Reply-To: <29baac45-7736-a28c-3b2d-2a6e45171b8b@intel.com>
+ w13-20020a05690210cd00b00c1cdf2344eemr19769ybu.0.1689961807734; Fri, 21 Jul
+ 2023 10:50:07 -0700 (PDT)
+Date:   Fri, 21 Jul 2023 10:50:06 -0700
+In-Reply-To: <8ad7a846-64e9-a3f1-4bf1-731a994d62cb@redhat.com>
 Mime-Version: 1.0
 References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-13-seanjc@google.com>
- <fdc155f5-041b-a1b1-15aa-8f970180a13a@intel.com> <29baac45-7736-a28c-3b2d-2a6e45171b8b@intel.com>
-Message-ID: <ZLrDopLH+3vN8rE6@google.com>
+ <8ad7a846-64e9-a3f1-4bf1-731a994d62cb@redhat.com>
+Message-ID: <ZLrFTq2f1NXtlJWd@google.com>
 Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
  guest-specific backing memory
 From:   Sean Christopherson <seanjc@google.com>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
         Huacai Chen <chenhuacai@kernel.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
@@ -93,42 +91,30 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Liam Merwick <liam.merwick@oracle.com>,
         Isaku Yamahata <isaku.yamahata@gmail.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 21, 2023, Xiaoyao Li wrote:
-> On 7/21/2023 11:05 PM, Xiaoyao Li wrote:
-> > On 7/19/2023 7:44 AM, Sean Christopherson wrote:
-> > > @@ -6255,12 +6298,17 @@ int kvm_init(unsigned vcpu_size, unsigned
-> > > vcpu_align, struct module *module)
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (r)
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto err_async=
-_pf;
-> > > +=C2=A0=C2=A0=C2=A0 r =3D kvm_gmem_init();
-> > > +=C2=A0=C2=A0=C2=A0 if (r)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto err_gmem;
-> > > +
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kvm_chardev_ops.owner =3D module;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kvm_preempt_ops.sched_in =3D kvm_sched=
-_in;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kvm_preempt_ops.sched_out =3D kvm_sche=
-d_out;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kvm_init_debug();
-> > > +=C2=A0=C2=A0=C2=A0 kvm_gmem_init();
-> >=20
-> > why kvm_gmem_init() needs to be called again? by mistake?
->=20
-> I'm sure it's a mistake.
+On Fri, Jul 21, 2023, Paolo Bonzini wrote:
+> On 7/19/23 01:44, Sean Christopherson wrote:
+> > +	inode = alloc_anon_inode(mnt->mnt_sb);
+> > +	if (IS_ERR(inode))
+> > +		return PTR_ERR(inode);
+> > +
+> > +	err = security_inode_init_security_anon(inode, &qname, NULL);
+> > +	if (err)
+> > +		goto err_inode;
+> > +
+> 
+> I don't understand the need to have a separate filesystem.  If it is to
+> fully setup the inode before it's given a struct file, why not just export
+> anon_inode_make_secure_inode instead of security_inode_init_security_anon?
 
-Yeah, definitely a bug.
+Ugh, this is why comments are important, I can't remember either.
 
-> I'm testing the gmem QEMU with this series. SW_PROTECTED_VM gets stuck in=
- a
-> loop in early OVMF code due to two shared page of OVMF get zapped and
-> re-mapped infinitely. Removing the second call of kvm_gmem_init() can sol=
-ve
-> the issue, though I'm not sure about the reason.
+I suspect I implemented a dedicated filesystem to kinda sorta show that we could
+allow userspace to provide the mount point with e.g. NUMA hints[*].  But my
+preference would be to not support a userspace provided mount and instead implement
+fbind() to let userspace control NUMA and whatnot.
 
-Not worth investigating unless you want to satiate your curiosity :-)
+[*] https://lore.kernel.org/all/ef48935e5e6f947f6f0c6d748232b14ef5d5ad70.1681176340.git.ackerleytng@google.com
