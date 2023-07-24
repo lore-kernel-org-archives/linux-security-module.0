@@ -2,128 +2,116 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C6CC41513
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 01:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A704C001B0
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 02:36:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232576AbjGXBq6 (ORCPT
+        id S229668AbjGXCg2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 23 Jul 2023 21:46:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47446 "EHLO
+        Sun, 23 Jul 2023 22:36:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232520AbjGXBqE (ORCPT
+        with ESMTP id S229617AbjGXCg1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 23 Jul 2023 21:46:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FBC6421B;
-        Sun, 23 Jul 2023 18:39:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CB3CE6101A;
-        Mon, 24 Jul 2023 01:34:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55ACBC433D9;
-        Mon, 24 Jul 2023 01:34:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690162465;
-        bh=fDu+OA0ecfybC9TkDKxJE57Fpj+CEaLgTsQsGmFD0Xg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sb9b7fvo9+//I1tZNlQBfSkj77Yat6S76iod98tSVUrSQX4vh8GfxMnD1jLcvwO0w
-         28shWw2uaqvZRYO9JNGtePX0IhnJXb4duv+M9Khvvkc8xJZqzGrYeqHNIvs3+cB9Uu
-         TTzjrX4dXBH9HQkJ8s2haDQnU4vErlzn4dxXs3VsCQceT0YxmEAVTpLz5dVALNHiJ8
-         fRhyP254PzV8d+xGOS3gQamRqoiwdgU1RzC+SspQUj3zz+3lTCq7JITHql2/WiUzzW
-         hl4wVnix2xmSziSNK4M5RDNUwAvc7XvZQXZkhEvi/xi0yQLtBtal6MaJlPRn2PuRo2
-         CgxAc8Xu4H7jw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rae Moar <rmoar@google.com>, kernel test robot <lkp@intel.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Sasha Levin <sashal@kernel.org>, james.l.morris@oracle.com,
-        serge@hallyn.com, linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 16/16] apparmor: fix use of strcpy in policy_unpack_test
-Date:   Sun, 23 Jul 2023 21:34:00 -0400
-Message-Id: <20230724013401.2333159-16-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230724013401.2333159-1-sashal@kernel.org>
-References: <20230724013401.2333159-1-sashal@kernel.org>
+        Sun, 23 Jul 2023 22:36:27 -0400
+X-Greylist: delayed 399 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 23 Jul 2023 19:36:24 PDT
+Received: from mfwd27.mailplug.co.kr (mfwd27.mailplug.co.kr [14.63.193.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D74983
+        for <linux-security-module@vger.kernel.org>; Sun, 23 Jul 2023 19:36:24 -0700 (PDT)
+Received: (qmail 16688 invoked from network); 24 Jul 2023 11:29:41 +0900
+Received: from m41.mailplug.com (121.156.118.41)
+        by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
+        24 Jul 2023 11:29:28 +0900
+Received: (qmail 90660 invoked from network); 24 Jul 2023 11:29:27 +0900
+Received: from unknown (HELO sslauth36) (lsahn@wewakecorp.com@211.252.87.51)
+        by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
+        24 Jul 2023 11:29:27 +0900
+Message-ID: <a05afacc-4c93-89ec-b7ab-0d26cc874eff@wewakecorp.com>
+Date:   Mon, 24 Jul 2023 11:29:25 +0900
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.186
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [LSM Stacking] SELinux policy inside container affects aprocesson
+ Host
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-security-module@vger.kernel.org
+References: <32e59b69-79a2-f440-bf94-fdb8f8f5fa64@wewakecorp.com>
+ <CAHC9VhRdCSJwB9hpyrCe+D00ddeRLisz=9GEWJz50ybr80tnsg@mail.gmail.com>
+ <4ec9e7ae-e95e-a737-5131-0b57922e4fce@wewakecorp.com>
+ <CAHC9VhQBbbSu6YBbnXOPMjpBxQxc1nmgA+icfN4x6s6FeQSeiw@mail.gmail.com>
+ <6bd218f2-af8a-52c7-cc27-6fd6c27d4446@wewakecorp.com>
+ <f21a05f9-249d-e362-6ae4-32499d190a21@schaufler-ca.com>
+From:   Leesoo Ahn <lsahn@wewakecorp.com>
+In-Reply-To: <f21a05f9-249d-e362-6ae4-32499d190a21@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Rae Moar <rmoar@google.com>
+2023-07-18 오전 12:51에 Casey Schaufler 이(가) 쓴 글:
+> On 7/17/2023 8:24 AM, Leesoo Ahn wrote:
+>  > 23. 7. 7. 23:20에 Paul Moore 이(가) 쓴 글:
+>  >> On Fri, Jul 7, 2023 at 4:29 AM Leesoo Ahn <lsahn@wewakecorp.com> wrote:
+>  >>  > 2023-07-06 오후 10:43에 Paul Moore 이(가) 쓴 글:
+[...]>  >> If you are interested in stacking SELinux and AppArmor, I 
+believe the
+>  >> only practical solution is to run SELinux on the host system (initial
+>  >> namespace) and run AppArmor in the containers. Even in a world where
+>  >> SELinux is fully namespaced, it would likely still be necessary to run
+>  >> some type of SELinux policy on the host (initial namespace) in order
+>  >> to support SELinux policies in the containers.
+>  >
+>  > Thank you for the reply. It really helped me to know the current
+>  > status of them and what to do now.
+>  >
+>  > Just a little information for who is interested in the stacking that
+>  > we decided to branch the LSM hooks by which lsm the current process is
+>  > in instead of entirely calling them in order.
+> 
+> Could you describe your approach more fully?
 
-[ Upstream commit b54aebd4411134b525a82d663a26b2f135ecb7e8 ]
+As far as I know, the current stacking feature is implemented calling 
+the entire hooks in order of 'lsm=' boot parameter. But our desire must 
+be calling a proper hook at a time by a task's current LSM, for instance 
+Apparmor 'or' SELinux instead of 'and'.
 
-Replace the use of strcpy() in build_aa_ext_struct() in
-policy_unpack_test.c with strscpy().
+And so we have been considering adding two new hooks which work as the 
+same as the origin hooks but additionally branch to a proper hook 
+function with the information of current LSM by calling lsm_task_ilsm().
 
-strscpy() is the safer method to use to ensure the buffer does not
-overflow. This was found by kernel test robot:
-https://lore.kernel.org/all/202301040348.NbfVsXO0-lkp@intel.com/.
+The following changes are a part of our approach,
 
-Reported-by: kernel test robot <lkp@intel.com>
+------ code part ------
+#define call_int_hook_by_ilsm(FUNC, ILSM, IRC, ...) ({                 \
+        int RC = IRC;                                           \
+        do {                                                    \
+                struct security_hook_list *P;                   \
+                int id; \
+                                                                \
+                id = (ILSM == LSMBLOB_INVALID) \
+                        ? lsm_slotlist[0]->id \
+                        : lsm_slotlist[ILSM]->id; \
+                hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+                        if (P->lsmid->slot != LSMBLOB_NOT_NEEDED && id 
+!= P->lsmid->id) \
+                                continue; \
+                        RC = P->hook.FUNC(__VA_ARGS__);         \
+                        if (RC != 0)                            \
+                                break;                          \
+                }                                               \
+        } while (0);                                            \
+        RC;                                                     \
+})
 
-Signed-off-by: Rae Moar <rmoar@google.com>
-Signed-off-by: John Johansen <john.johansen@canonical.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/apparmor/policy_unpack_test.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+[...]
 
-diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
-index 533137f45361c..3c84981aa1f48 100644
---- a/security/apparmor/policy_unpack_test.c
-+++ b/security/apparmor/policy_unpack_test.c
-@@ -66,31 +66,30 @@ struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
- 
- 	*buf = AA_NAME;
- 	*(buf + 1) = strlen(TEST_STRING_NAME) + 1;
--	strcpy(buf + 3, TEST_STRING_NAME);
-+	strscpy(buf + 3, TEST_STRING_NAME, e->end - (void *)(buf + 3));
- 
- 	buf = e->start + TEST_STRING_BUF_OFFSET;
- 	*buf = AA_STRING;
- 	*(buf + 1) = strlen(TEST_STRING_DATA) + 1;
--	strcpy(buf + 3, TEST_STRING_DATA);
--
-+	strscpy(buf + 3, TEST_STRING_DATA, e->end - (void *)(buf + 3));
- 	buf = e->start + TEST_NAMED_U32_BUF_OFFSET;
- 	*buf = AA_NAME;
- 	*(buf + 1) = strlen(TEST_U32_NAME) + 1;
--	strcpy(buf + 3, TEST_U32_NAME);
-+	strscpy(buf + 3, TEST_U32_NAME, e->end - (void *)(buf + 3));
- 	*(buf + 3 + strlen(TEST_U32_NAME) + 1) = AA_U32;
- 	*((u32 *)(buf + 3 + strlen(TEST_U32_NAME) + 2)) = TEST_U32_DATA;
- 
- 	buf = e->start + TEST_NAMED_U64_BUF_OFFSET;
- 	*buf = AA_NAME;
- 	*(buf + 1) = strlen(TEST_U64_NAME) + 1;
--	strcpy(buf + 3, TEST_U64_NAME);
-+	strscpy(buf + 3, TEST_U64_NAME, e->end - (void *)(buf + 3));
- 	*(buf + 3 + strlen(TEST_U64_NAME) + 1) = AA_U64;
- 	*((u64 *)(buf + 3 + strlen(TEST_U64_NAME) + 2)) = TEST_U64_DATA;
- 
- 	buf = e->start + TEST_NAMED_BLOB_BUF_OFFSET;
- 	*buf = AA_NAME;
- 	*(buf + 1) = strlen(TEST_BLOB_NAME) + 1;
--	strcpy(buf + 3, TEST_BLOB_NAME);
-+	strscpy(buf + 3, TEST_BLOB_NAME, e->end - (void *)(buf + 3));
- 	*(buf + 3 + strlen(TEST_BLOB_NAME) + 1) = AA_BLOB;
- 	*(buf + 3 + strlen(TEST_BLOB_NAME) + 2) = TEST_BLOB_DATA_SIZE;
- 	memcpy(buf + 3 + strlen(TEST_BLOB_NAME) + 6,
-@@ -99,7 +98,7 @@ struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
- 	buf = e->start + TEST_NAMED_ARRAY_BUF_OFFSET;
- 	*buf = AA_NAME;
- 	*(buf + 1) = strlen(TEST_ARRAY_NAME) + 1;
--	strcpy(buf + 3, TEST_ARRAY_NAME);
-+	strscpy(buf + 3, TEST_ARRAY_NAME, e->end - (void *)(buf + 3));
- 	*(buf + 3 + strlen(TEST_ARRAY_NAME) + 1) = AA_ARRAY;
- 	*((u16 *)(buf + 3 + strlen(TEST_ARRAY_NAME) + 2)) = TEST_ARRAY_SIZE;
- 
--- 
-2.39.2
+int ilsm = lsm_task_ilsm(current);
+ret = call_int_hook_by_ilsm(mmap_addr, ilsm, 0, addr);
+------------
 
+We are still worrying about the part of calling lsm_task_ilsm() with 
+'current', it seems dangerous in some unknown cases.
+
+What do you think about this approach, Casey?
+
+Best regards,
+Leesoo
