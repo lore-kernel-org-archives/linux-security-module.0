@@ -2,54 +2,54 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C356CC001DC
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 01:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C6CC41513
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 01:46:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232122AbjGXBoR (ORCPT
+        id S232576AbjGXBq6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 23 Jul 2023 21:44:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48280 "EHLO
+        Sun, 23 Jul 2023 21:46:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232745AbjGXBnp (ORCPT
+        with ESMTP id S232520AbjGXBqE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 23 Jul 2023 21:43:45 -0400
+        Sun, 23 Jul 2023 21:46:04 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B98F11705;
-        Sun, 23 Jul 2023 18:38:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FBC6421B;
+        Sun, 23 Jul 2023 18:39:19 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BC05261003;
-        Mon, 24 Jul 2023 01:34:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43BDDC433C9;
-        Mon, 24 Jul 2023 01:33:59 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CB3CE6101A;
+        Mon, 24 Jul 2023 01:34:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55ACBC433D9;
+        Mon, 24 Jul 2023 01:34:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690162440;
+        s=k20201202; t=1690162465;
         bh=fDu+OA0ecfybC9TkDKxJE57Fpj+CEaLgTsQsGmFD0Xg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YZ0mbkwKTZrMB/+54Ak5lNGl51fH38l9rpKlvEljwcuocNnZz5tt0xOWHSpEdxHUG
-         HMuFO2Bla2BQOfPKmluDZh/Il/MVK1MkaTtAfCueGgb7bU7IDAsDFVGIYSIMtnLs8J
-         +2/3wS+gq+5RBOf4+zO7M0I39bvudCRpIF+U3n4+KlOmn7fRdOnON0oLpp0LGpE+iZ
-         pHTFdP9kj8OW1zwhdos2Okilpqu75IhvANgtuH0FBjmdaJj2ipzhDOH2sn4uEz17UX
-         mmVr2CgdXoqCIMEV4LB2KIQBvExAbfezKByKXMcr3SrtO86v8I5Af3rPKBYSJsK41P
-         gB8dRDMJAMREA==
+        b=sb9b7fvo9+//I1tZNlQBfSkj77Yat6S76iod98tSVUrSQX4vh8GfxMnD1jLcvwO0w
+         28shWw2uaqvZRYO9JNGtePX0IhnJXb4duv+M9Khvvkc8xJZqzGrYeqHNIvs3+cB9Uu
+         TTzjrX4dXBH9HQkJ8s2haDQnU4vErlzn4dxXs3VsCQceT0YxmEAVTpLz5dVALNHiJ8
+         fRhyP254PzV8d+xGOS3gQamRqoiwdgU1RzC+SspQUj3zz+3lTCq7JITHql2/WiUzzW
+         hl4wVnix2xmSziSNK4M5RDNUwAvc7XvZQXZkhEvi/xi0yQLtBtal6MaJlPRn2PuRo2
+         CgxAc8Xu4H7jw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Rae Moar <rmoar@google.com>, kernel test robot <lkp@intel.com>,
         John Johansen <john.johansen@canonical.com>,
         Sasha Levin <sashal@kernel.org>, james.l.morris@oracle.com,
         serge@hallyn.com, linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 24/24] apparmor: fix use of strcpy in policy_unpack_test
-Date:   Sun, 23 Jul 2023 21:33:25 -0400
-Message-Id: <20230724013325.2332084-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 16/16] apparmor: fix use of strcpy in policy_unpack_test
+Date:   Sun, 23 Jul 2023 21:34:00 -0400
+Message-Id: <20230724013401.2333159-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230724013325.2332084-1-sashal@kernel.org>
-References: <20230724013325.2332084-1-sashal@kernel.org>
+In-Reply-To: <20230724013401.2333159-1-sashal@kernel.org>
+References: <20230724013401.2333159-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.121
+X-stable-base: Linux 5.10.186
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
