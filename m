@@ -2,136 +2,98 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE75AC001B0
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 15:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59452C0015E
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 16:29:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231374AbjGXPT0 (ORCPT
+        id S230133AbjGXQ3l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Jul 2023 11:19:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42638 "EHLO
+        Mon, 24 Jul 2023 12:29:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230161AbjGXPTL (ORCPT
+        with ESMTP id S231203AbjGXQ3e (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Jul 2023 11:19:11 -0400
-Received: from frasgout11.his.huawei.com (unknown [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1793A19B7;
-        Mon, 24 Jul 2023 08:19:04 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4R8k6l34txz9yGhK;
-        Mon, 24 Jul 2023 23:07:43 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwCHTlU3lr5kJcTzBA--.28220S7;
-        Mon, 24 Jul 2023 16:18:51 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     casey@schaufler-ca.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2 5/5] ramfs: Initialize security of in-memory inodes
-Date:   Mon, 24 Jul 2023 17:13:41 +0200
-Message-Id: <20230724151341.538889-6-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230724151341.538889-1-roberto.sassu@huaweicloud.com>
-References: <20230724151341.538889-1-roberto.sassu@huaweicloud.com>
+        Mon, 24 Jul 2023 12:29:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 548221B8
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Jul 2023 09:28:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1690216123;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VPc6LfzoRjjMU729bz7XR4bzpQ4gehtU1LQqpTZbFIM=;
+        b=KKD/TdWGgDJi/Z8Zwdi/GTiff240lW4boJ+i4Ve6t/589QxBfHbD0c5nU0CrAdL0hWvkf9
+        bGbBIMBjuFRG4BpNRNSzslCe9ylWhgZBD+jdzIQly2fsIM1qfuFrMkIxNBsB2FHGsq3yN9
+        Jo5gBzW5NDK2ZCDjw5sxMg3s5ut7swI=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-655-7XmJda7-O-SjkVE16w__Wg-1; Mon, 24 Jul 2023 12:28:39 -0400
+X-MC-Unique: 7XmJda7-O-SjkVE16w__Wg-1
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-405512b12f5so6797791cf.0
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Jul 2023 09:28:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690216118; x=1690820918;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VPc6LfzoRjjMU729bz7XR4bzpQ4gehtU1LQqpTZbFIM=;
+        b=jjrABw012/V8h9P2HMPRWaqHipLTCmr3GTy05nWnzWzMcsPO62keDE+qZMeTIbGEuM
+         SmpjLlgeoT7DYLogqBWOpdFp4+fq10pf4KTHKY7X05qajAaznqYzdo+iJRzzczqyGqJU
+         jLfTWmouuxtAwCmDXoKXjd2+1WldLtgfonEI745hV42YSuxK64kGdb2Q/0VAyeZY8nqC
+         xQ5yNykmKT7AvtWplWrg/DaG6pmLnBNkWPHRvwfYSD4BFwMkJgaSHYD/dAD9lFqxLneF
+         bcZJ+t4Z7D98j10mkjFCvMr71WQD3RiHTJjYM/ud/i4cVdgHtLzg7tVN6WLqvHDUF1Gu
+         0T2Q==
+X-Gm-Message-State: ABy/qLZJ54xYh3LF6zZjKeUNtd1DQgjKM6YOZBZq35FDpHOlgkLEiQhn
+        xUp3/ViaHmY3Wps2edytbmPODcPhhj3DrQffLgBWEQz4KVrmYI57b+FOtACPDWw4Xhl1azr4tyl
+        6VMgTvPCcqCJnw+5ZM33xQrT3IS/eWPtlZzNz
+X-Received: by 2002:a05:622a:1b9f:b0:400:a9a4:8517 with SMTP id bp31-20020a05622a1b9f00b00400a9a48517mr12402957qtb.4.1690216118770;
+        Mon, 24 Jul 2023 09:28:38 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlEYe2r1e44ymBAW9LBiJ+Iz0wbFf4q2jQ3Fp4Qsce6fbppjpC0MEicv/dPVwjkV1zWzRFj2Rg==
+X-Received: by 2002:a05:622a:1b9f:b0:400:a9a4:8517 with SMTP id bp31-20020a05622a1b9f00b00400a9a48517mr12402937qtb.4.1690216118483;
+        Mon, 24 Jul 2023 09:28:38 -0700 (PDT)
+Received: from gerbillo.redhat.com (146-241-226-170.dyn.eolo.it. [146.241.226.170])
+        by smtp.gmail.com with ESMTPSA id e6-20020ac84b46000000b004052f71f79bsm3409071qts.74.2023.07.24.09.28.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jul 2023 09:28:38 -0700 (PDT)
+Message-ID: <7b11a20a9ea302d1e719ce7e65b668ce2a3c8c63.camel@redhat.com>
+Subject: Re: [RFC PATCH] selinux: introduce and use ad_init_net*() helpers
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     selinux@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        linux-security-module@vger.kernel.org
+Date:   Mon, 24 Jul 2023 18:28:35 +0200
+In-Reply-To: <CAHC9VhTRkWL_R0xdnrYChwmbp3FvXKMjQYpdBn9OvCH23mW=bA@mail.gmail.com>
+References: <73a810980a8452f0cb98d25698c4ae83285b7393.1689604030.git.pabeni@redhat.com>
+         <679840421f2e7794bb69962b97e0cee1a4e0f0f6.camel@redhat.com>
+         <CAHC9VhTRkWL_R0xdnrYChwmbp3FvXKMjQYpdBn9OvCH23mW=bA@mail.gmail.com>
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwCHTlU3lr5kJcTzBA--.28220S7
-X-Coremail-Antispam: 1UD129KBjvJXoW7WrWUKFWkXw13Jry5AF13Jwb_yoW8uw15pF
-        42qasxGwn5WFZ7Wr1ftF4Uuw1ftayfKr4DJws7Zw17A3Z7Jw1Utr4Syr13CFyfGrW8Gw1S
-        qF45ur45C3W7A3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvKb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-        AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AK
-        xVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
-        WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
-        bVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-        WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-        67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42
-        IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-        0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-        VjvjDU0xZFpf9x07UZo7tUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAIBF1jj5DcNgAAsG
-X-CFilter-Loop: Reflected
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+Hi,
 
-Add a call security_inode_init_security() after ramfs_get_inode(), to let
-LSMs initialize the inode security field. Skip ramfs_fill_super(), as the
-initialization is done through the sb_set_mnt_opts hook.
+On Fri, 2023-07-21 at 12:11 -0400, Paul Moore wrote:
+> There have been updated patchsets posted, but the original link
+> (below) contains my comments:
+> https://lore.kernel.org/linux-security-module/20230119231033.1307221-1-kp=
+singh@kernel.org/
 
-Calling security_inode_init_security() call inside ramfs_get_inode() is
-not possible since, for CONFIG_SHMEM=n, tmpfs also calls the former after
-the latter.
+Thanks for the reference. Interestingly there are both similarities and
+differences between my approach and the above. I'll try to study the
+above a little bit more and then possibly I'll share what I have, just
+for reference.
 
-Pass NULL as initxattrs() callback to security_inode_init_security(), since
-the purpose of the call is only to initialize the in-memory inodes.
+Cheers,
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- fs/ramfs/inode.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
-index fef477c7810..ac90ebd9dbd 100644
---- a/fs/ramfs/inode.c
-+++ b/fs/ramfs/inode.c
-@@ -102,6 +102,14 @@ ramfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	int error = -ENOSPC;
- 
- 	if (inode) {
-+		error = security_inode_init_security(inode, dir,
-+						     &dentry->d_name, NULL,
-+						     NULL);
-+		if (error) {
-+			iput(inode);
-+			return error;
-+		}
-+
- 		d_instantiate(dentry, inode);
- 		dget(dentry);	/* Extra count - pin the dentry in core */
- 		error = 0;
-@@ -134,6 +142,15 @@ static int ramfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	inode = ramfs_get_inode(dir->i_sb, dir, S_IFLNK|S_IRWXUGO, 0);
- 	if (inode) {
- 		int l = strlen(symname)+1;
-+
-+		error = security_inode_init_security(inode, dir,
-+						     &dentry->d_name, NULL,
-+						     NULL);
-+		if (error) {
-+			iput(inode);
-+			return error;
-+		}
-+
- 		error = page_symlink(inode, symname, l);
- 		if (!error) {
- 			d_instantiate(dentry, inode);
-@@ -149,10 +166,20 @@ static int ramfs_tmpfile(struct mnt_idmap *idmap,
- 			 struct inode *dir, struct file *file, umode_t mode)
- {
- 	struct inode *inode;
-+	int error;
- 
- 	inode = ramfs_get_inode(dir->i_sb, dir, mode, 0);
- 	if (!inode)
- 		return -ENOSPC;
-+
-+	error = security_inode_init_security(inode, dir,
-+					     &file_dentry(file)->d_name, NULL,
-+					     NULL);
-+	if (error) {
-+		iput(inode);
-+		return error;
-+	}
-+
- 	d_tmpfile(file, inode);
- 	return finish_open_simple(file, 0);
- }
--- 
-2.34.1
+Paolo
 
