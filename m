@@ -2,98 +2,185 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59452C0015E
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 16:29:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8867AC001B0
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 17:00:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230133AbjGXQ3l (ORCPT
+        id S231440AbjGXRAm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Jul 2023 12:29:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55260 "EHLO
+        Mon, 24 Jul 2023 13:00:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231203AbjGXQ3e (ORCPT
+        with ESMTP id S230106AbjGXRAj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Jul 2023 12:29:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 548221B8
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Jul 2023 09:28:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690216123;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VPc6LfzoRjjMU729bz7XR4bzpQ4gehtU1LQqpTZbFIM=;
-        b=KKD/TdWGgDJi/Z8Zwdi/GTiff240lW4boJ+i4Ve6t/589QxBfHbD0c5nU0CrAdL0hWvkf9
-        bGbBIMBjuFRG4BpNRNSzslCe9ylWhgZBD+jdzIQly2fsIM1qfuFrMkIxNBsB2FHGsq3yN9
-        Jo5gBzW5NDK2ZCDjw5sxMg3s5ut7swI=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-655-7XmJda7-O-SjkVE16w__Wg-1; Mon, 24 Jul 2023 12:28:39 -0400
-X-MC-Unique: 7XmJda7-O-SjkVE16w__Wg-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-405512b12f5so6797791cf.0
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Jul 2023 09:28:39 -0700 (PDT)
+        Mon, 24 Jul 2023 13:00:39 -0400
+Received: from mail-pj1-x104a.google.com (mail-pj1-x104a.google.com [IPv6:2607:f8b0:4864:20::104a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0993B1704
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Jul 2023 10:00:37 -0700 (PDT)
+Received: by mail-pj1-x104a.google.com with SMTP id 98e67ed59e1d1-2683548c37cso3873a91.2
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Jul 2023 10:00:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690218036; x=1690822836;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RiFFb9olEr1IXMurVCQB0i8J9xB8UVFiN6yE37xYj5w=;
+        b=iUh3Wr2Es7ZayOSlRIyCXv0ISRPLliUqI/wxpz9npizX1RGnl3Zt97AZrYUR8pVjnH
+         OwuM0g2/mnG2Ws1vH1RTNrF8tqURzEVkr4hahdERkph4Nww3rEaO/unCqdjsW1luIjbU
+         y9Vd6q8CcxdQP+GEmRHglSZNO6vM+UxAwTBpxBMCbqTq0hlf3MD2sKnPBjpHoFEjKPFr
+         Tmb3ea8A/X/JO92m7TD8v5eZc4l7fpKAQniXW7MS+8KISe8P4Nbdl//npN/iD7LNKC4a
+         rVBOiRv2FN5pQA6p+V2In5eaYYH21fAVeDedlt36+Mezc1EEot9BPPcgeqHdCs8LHv6O
+         cdZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690216118; x=1690820918;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VPc6LfzoRjjMU729bz7XR4bzpQ4gehtU1LQqpTZbFIM=;
-        b=jjrABw012/V8h9P2HMPRWaqHipLTCmr3GTy05nWnzWzMcsPO62keDE+qZMeTIbGEuM
-         SmpjLlgeoT7DYLogqBWOpdFp4+fq10pf4KTHKY7X05qajAaznqYzdo+iJRzzczqyGqJU
-         jLfTWmouuxtAwCmDXoKXjd2+1WldLtgfonEI745hV42YSuxK64kGdb2Q/0VAyeZY8nqC
-         xQ5yNykmKT7AvtWplWrg/DaG6pmLnBNkWPHRvwfYSD4BFwMkJgaSHYD/dAD9lFqxLneF
-         bcZJ+t4Z7D98j10mkjFCvMr71WQD3RiHTJjYM/ud/i4cVdgHtLzg7tVN6WLqvHDUF1Gu
-         0T2Q==
-X-Gm-Message-State: ABy/qLZJ54xYh3LF6zZjKeUNtd1DQgjKM6YOZBZq35FDpHOlgkLEiQhn
-        xUp3/ViaHmY3Wps2edytbmPODcPhhj3DrQffLgBWEQz4KVrmYI57b+FOtACPDWw4Xhl1azr4tyl
-        6VMgTvPCcqCJnw+5ZM33xQrT3IS/eWPtlZzNz
-X-Received: by 2002:a05:622a:1b9f:b0:400:a9a4:8517 with SMTP id bp31-20020a05622a1b9f00b00400a9a48517mr12402957qtb.4.1690216118770;
-        Mon, 24 Jul 2023 09:28:38 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlEYe2r1e44ymBAW9LBiJ+Iz0wbFf4q2jQ3Fp4Qsce6fbppjpC0MEicv/dPVwjkV1zWzRFj2Rg==
-X-Received: by 2002:a05:622a:1b9f:b0:400:a9a4:8517 with SMTP id bp31-20020a05622a1b9f00b00400a9a48517mr12402937qtb.4.1690216118483;
-        Mon, 24 Jul 2023 09:28:38 -0700 (PDT)
-Received: from gerbillo.redhat.com (146-241-226-170.dyn.eolo.it. [146.241.226.170])
-        by smtp.gmail.com with ESMTPSA id e6-20020ac84b46000000b004052f71f79bsm3409071qts.74.2023.07.24.09.28.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jul 2023 09:28:38 -0700 (PDT)
-Message-ID: <7b11a20a9ea302d1e719ce7e65b668ce2a3c8c63.camel@redhat.com>
-Subject: Re: [RFC PATCH] selinux: introduce and use ad_init_net*() helpers
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     selinux@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        linux-security-module@vger.kernel.org
-Date:   Mon, 24 Jul 2023 18:28:35 +0200
-In-Reply-To: <CAHC9VhTRkWL_R0xdnrYChwmbp3FvXKMjQYpdBn9OvCH23mW=bA@mail.gmail.com>
-References: <73a810980a8452f0cb98d25698c4ae83285b7393.1689604030.git.pabeni@redhat.com>
-         <679840421f2e7794bb69962b97e0cee1a4e0f0f6.camel@redhat.com>
-         <CAHC9VhTRkWL_R0xdnrYChwmbp3FvXKMjQYpdBn9OvCH23mW=bA@mail.gmail.com>
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37)
-MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        d=1e100.net; s=20221208; t=1690218036; x=1690822836;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RiFFb9olEr1IXMurVCQB0i8J9xB8UVFiN6yE37xYj5w=;
+        b=RZ9Aft9m+qdNni4WzwmkuEXa9pNJwJq9g7ox7VVcZocomHcPAf6LqgsxKNwRb2/Ta+
+         oYZtLFO3API2WyTbsI8geiK3L9KEW6sqVZctfpY4xxQkRUUUbQOL24mxo9EtN2seak4P
+         zuRdcv5nOj3FrvRxGCkp1cDG9Gk+o0UvShaU+dwXRqXE1BddoTETMPR6+0B1a8Eyglma
+         IdgaAuCzB5UkzRGNS2pNiJN3idcINBg651mYvjadOFLnTSGrYVZJcFNwqQz5INLoG8Ed
+         IkgDyp7mFDT5W2T1IUaDvbC1odVh6je/IcJRS0eEocxDUfLGvidBBv6jhUYfSiHDLrNp
+         YnOQ==
+X-Gm-Message-State: ABy/qLbRNV82tqKK+bb1cnMQiB/gfSnc7M+ay6xnwLJLTaYWT6LJN4aQ
+        bhCQtEal04kmMZWBJvNtSTh7PaJgsn4=
+X-Google-Smtp-Source: APBJJlGFNY8Nsd+UpmzZCGDOgI47OKk03bkzsFP32ko2G/RNTdNXayC/49Rk0sPPfbjIVmYJcM3mAoRuscc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:903:2308:b0:1b8:80c9:a98e with SMTP id
+ d8-20020a170903230800b001b880c9a98emr42778plh.13.1690218036394; Mon, 24 Jul
+ 2023 10:00:36 -0700 (PDT)
+Date:   Mon, 24 Jul 2023 10:00:34 -0700
+In-Reply-To: <110f1aa0-7fcd-1287-701a-89c2203f0ac2@amd.com>
+Mime-Version: 1.0
+References: <20230718234512.1690985-1-seanjc@google.com> <110f1aa0-7fcd-1287-701a-89c2203f0ac2@amd.com>
+Message-ID: <ZL6uMk/8UeuGj8CP@google.com>
+Subject: Re: [RFC PATCH v11 00/29] KVM: guest_memfd() and per-page attributes
+From:   Sean Christopherson <seanjc@google.com>
+To:     "Nikunj A. Dadhania" <nikunj@amd.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+On Mon, Jul 24, 2023, Nikunj A. Dadhania wrote:
+> On 7/19/2023 5:14 AM, Sean Christopherson wrote:
+> > This is the next iteration of implementing fd-based (instead of vma-based)
+> > memory for KVM guests.  If you want the full background of why we are doing
+> > this, please go read the v10 cover letter[1].
+> > 
+> > The biggest change from v10 is to implement the backing storage in KVM
+> > itself, and expose it via a KVM ioctl() instead of a "generic" sycall.
+> > See link[2] for details on why we pivoted to a KVM-specific approach.
+> > 
+> > Key word is "biggest".  Relative to v10, there are many big changes.
+> > Highlights below (I can't remember everything that got changed at
+> > this point).
+> > 
+> > Tagged RFC as there are a lot of empty changelogs, and a lot of missing
+> > documentation.  And ideally, we'll have even more tests before merging.
+> > There are also several gaps/opens (to be discussed in tomorrow's PUCK).
+> 
+> As per our discussion on the PUCK call, here are the memory/NUMA accounting 
+> related observations that I had while working on SNP guest secure page migration:
+> 
+> * gmem allocations are currently treated as file page allocations
+>   accounted to the kernel and not to the QEMU process.
 
-On Fri, 2023-07-21 at 12:11 -0400, Paul Moore wrote:
-> There have been updated patchsets posted, but the original link
-> (below) contains my comments:
-> https://lore.kernel.org/linux-security-module/20230119231033.1307221-1-kp=
-singh@kernel.org/
+We need to level set on terminology: these are all *stats*, not accounting.  That
+distinction matters because we have wiggle room on stats, e.g. we can probably get
+away with just about any definition of how guest_memfd memory impacts stats, so
+long as the information that is surfaced to userspace is useful and expected.
 
-Thanks for the reference. Interestingly there are both similarities and
-differences between my approach and the above. I'll try to study the
-above a little bit more and then possibly I'll share what I have, just
-for reference.
+But we absolutely need to get accounting correct, specifically the allocations
+need to be correctly accounted in memcg.  And unless I'm missing something,
+nothing in here shows anything related to memcg.
 
-Cheers,
+>   Starting an SNP guest with 40G memory with memory interleave between
+>   Node2 and Node3
+> 
+>   $ numactl -i 2,3 ./bootg_snp.sh
+> 
+>     PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+>  242179 root      20   0   40.4g  99580  51676 S  78.0   0.0   0:56.58 qemu-system-x86
+> 
+>   -> Incorrect process resident memory and shared memory is reported
 
-Paolo
+I don't know that I would call these "incorrect".  Shared memory definitely is
+correct, because by definition guest_memfd isn't shared.  RSS is less clear cut;
+gmem memory is resident in RAM, but if we show gmem in RSS then we'll end up with
+scenarios where RSS > VIRT, which will be quite confusing for unaware users (I'm
+assuming the 40g of VIRT here comes from QEMU mapping the shared half of gmem
+memslots).
 
+>   Accounting of the memory happens in the host page fault handler path,
+>   but for private guest pages we will never hit that.
+> 
+> * NUMA allocation does use the process mempolicy for appropriate node 
+>   allocation (Node2 and Node3), but they again do not get attributed to 
+>   the QEMU process
+> 
+>   Every 1.0s: sudo numastat  -m -p qemu-system-x86 | egrep -i "qemu|PID|Node|Filepage"   gomati: Mon Jul 24 11:51:34 2023
+> 
+>   Per-node process memory usage (in MBs)
+>   PID                               Node 0          Node 1          Node 2          Node 3           Total
+>   242179 (qemu-system-x86)           21.14            1.61           39.44           39.38          101.57
+>   Per-node system memory usage (in MBs):
+>                             Node 0          Node 1          Node 2          Node 3           Total
+>   FilePages                2475.63         2395.83        23999.46        23373.22        52244.14
+> 
+> 
+> * Most of the memory accounting relies on the VMAs and as private-fd of 
+>   gmem doesn't have a VMA(and that was the design goal), user-space fails 
+>   to attribute the memory appropriately to the process.
+>
+>   /proc/<qemu pid>/numa_maps
+>   7f528be00000 interleave:2-3 file=/memfd:memory-backend-memfd-shared\040(deleted) anon=1070 dirty=1070 mapped=1987 mapmax=256 active=1956 N2=582 N3=1405 kernelpagesize_kB=4
+>   7f5c90200000 interleave:2-3 file=/memfd:rom-backend-memfd-shared\040(deleted)
+>   7f5c90400000 interleave:2-3 file=/memfd:rom-backend-memfd-shared\040(deleted) dirty=32 active=0 N2=32 kernelpagesize_kB=4
+>   7f5c90800000 interleave:2-3 file=/memfd:rom-backend-memfd-shared\040(deleted) dirty=892 active=0 N2=512 N3=380 kernelpagesize_kB=4
+> 
+>   /proc/<qemu pid>/smaps
+>   7f528be00000-7f5c8be00000 rw-p 00000000 00:01 26629                      /memfd:memory-backend-memfd-shared (deleted)
+>   7f5c90200000-7f5c90220000 rw-s 00000000 00:01 44033                      /memfd:rom-backend-memfd-shared (deleted)
+>   7f5c90400000-7f5c90420000 rw-s 00000000 00:01 44032                      /memfd:rom-backend-memfd-shared (deleted)
+>   7f5c90800000-7f5c90b7c000 rw-s 00000000 00:01 1025                       /memfd:rom-backend-memfd-shared (deleted)
+
+This is all expected, and IMO correct.  There are no userspace mappings, and so
+not accounting anything is working as intended.
+
+> * QEMU based NUMA bindings will not work. Memory backend uses mbind() 
+>   to set the policy for a particular virtual memory range but gmem 
+>   private-FD does not have a virtual memory range visible in the host.
+
+Yes, adding a generic fbind() is the way to solve silve.
