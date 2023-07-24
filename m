@@ -2,54 +2,54 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF302C00528
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 01:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C356CC001DC
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 01:44:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232036AbjGXBoP (ORCPT
+        id S232122AbjGXBoR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 23 Jul 2023 21:44:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42014 "EHLO
+        Sun, 23 Jul 2023 21:44:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232209AbjGXBmh (ORCPT
+        with ESMTP id S232745AbjGXBnp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 23 Jul 2023 21:42:37 -0400
+        Sun, 23 Jul 2023 21:43:45 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEF631BD3;
-        Sun, 23 Jul 2023 18:37:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B98F11705;
+        Sun, 23 Jul 2023 18:38:36 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CAB2460FFF;
-        Mon, 24 Jul 2023 01:33:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5146AC433C8;
-        Mon, 24 Jul 2023 01:33:22 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BC05261003;
+        Mon, 24 Jul 2023 01:34:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43BDDC433C9;
+        Mon, 24 Jul 2023 01:33:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690162403;
-        bh=nGSDXvVX4lelz1Sbv2iNOqwTq9fHFua6ngurqZWqlFE=;
+        s=k20201202; t=1690162440;
+        bh=fDu+OA0ecfybC9TkDKxJE57Fpj+CEaLgTsQsGmFD0Xg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cbeGeoRIFuad4yIDVE0rwv9xVCM2nmEAVVRZziWyOo4yy7NPFD/vPnbV29Abga4hv
-         AtT0Gfq2iXO9Fgadhpi4Di5tCaqV9TlcbeAk6PtzgAoH+48cMdbVBArte0vNECoD0K
-         m3WyI7xeIeBk/Sg4RAiYqrAnl3K/iE1wH6d36ZatInAtgd8k+s/cP5A4aqLV2I4BBO
-         hj3IgT24dpCizNtjK3mifgxfbc40rHPnQ6bNWyBYQp/L9lEo/+hOcWgGqKlS75mSWu
-         PTG7mkyZOII5cAuJnYGzvU4KAqYUHX3C617ancq6Bj444Zgo46ljKxEfagyiOEXAk7
-         LqbYUhiSw3DTw==
+        b=YZ0mbkwKTZrMB/+54Ak5lNGl51fH38l9rpKlvEljwcuocNnZz5tt0xOWHSpEdxHUG
+         HMuFO2Bla2BQOfPKmluDZh/Il/MVK1MkaTtAfCueGgb7bU7IDAsDFVGIYSIMtnLs8J
+         +2/3wS+gq+5RBOf4+zO7M0I39bvudCRpIF+U3n4+KlOmn7fRdOnON0oLpp0LGpE+iZ
+         pHTFdP9kj8OW1zwhdos2Okilpqu75IhvANgtuH0FBjmdaJj2ipzhDOH2sn4uEz17UX
+         mmVr2CgdXoqCIMEV4LB2KIQBvExAbfezKByKXMcr3SrtO86v8I5Af3rPKBYSJsK41P
+         gB8dRDMJAMREA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Rae Moar <rmoar@google.com>, kernel test robot <lkp@intel.com>,
         John Johansen <john.johansen@canonical.com>,
         Sasha Levin <sashal@kernel.org>, james.l.morris@oracle.com,
         serge@hallyn.com, linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 33/34] apparmor: fix use of strcpy in policy_unpack_test
-Date:   Sun, 23 Jul 2023 21:32:36 -0400
-Message-Id: <20230724013238.2329166-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 24/24] apparmor: fix use of strcpy in policy_unpack_test
+Date:   Sun, 23 Jul 2023 21:33:25 -0400
+Message-Id: <20230724013325.2332084-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230724013238.2329166-1-sashal@kernel.org>
-References: <20230724013238.2329166-1-sashal@kernel.org>
+In-Reply-To: <20230724013325.2332084-1-sashal@kernel.org>
+References: <20230724013325.2332084-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.40
+X-stable-base: Linux 5.15.121
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
@@ -75,10 +75,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
-index 0a969b2e03dba..64ddea559f9ac 100644
+index 533137f45361c..3c84981aa1f48 100644
 --- a/security/apparmor/policy_unpack_test.c
 +++ b/security/apparmor/policy_unpack_test.c
-@@ -66,31 +66,30 @@ static struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
+@@ -66,31 +66,30 @@ struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
  
  	*buf = AA_NAME;
  	*(buf + 1) = strlen(TEST_STRING_NAME) + 1;
@@ -115,7 +115,7 @@ index 0a969b2e03dba..64ddea559f9ac 100644
  	*(buf + 3 + strlen(TEST_BLOB_NAME) + 1) = AA_BLOB;
  	*(buf + 3 + strlen(TEST_BLOB_NAME) + 2) = TEST_BLOB_DATA_SIZE;
  	memcpy(buf + 3 + strlen(TEST_BLOB_NAME) + 6,
-@@ -99,7 +98,7 @@ static struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
+@@ -99,7 +98,7 @@ struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
  	buf = e->start + TEST_NAMED_ARRAY_BUF_OFFSET;
  	*buf = AA_NAME;
  	*(buf + 1) = strlen(TEST_ARRAY_NAME) + 1;
