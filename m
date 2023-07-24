@@ -2,91 +2,126 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F3AC0015E
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 14:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94647C001DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 15:18:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229772AbjGXOxD (ORCPT
+        id S229468AbjGXPSo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Jul 2023 10:53:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34434 "EHLO
+        Mon, 24 Jul 2023 11:18:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231674AbjGXOwq (ORCPT
+        with ESMTP id S230309AbjGXPSn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Jul 2023 10:52:46 -0400
-Received: from frasgout13.his.huawei.com (unknown [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 251F710DC;
-        Mon, 24 Jul 2023 07:52:44 -0700 (PDT)
+        Mon, 24 Jul 2023 11:18:43 -0400
+Received: from frasgout11.his.huawei.com (unknown [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE1BD1B3;
+        Mon, 24 Jul 2023 08:18:41 -0700 (PDT)
 Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4R8jXN1mnyz9y0Yq;
-        Mon, 24 Jul 2023 22:41:24 +0800 (CST)
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4R8k6H75YYz9yGhL;
+        Mon, 24 Jul 2023 23:07:19 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwDnbwspkL5kT9D+BA--.29494S2;
-        Mon, 24 Jul 2023 15:52:30 +0100 (CET)
+        by APP2 (Coremail) with SMTP id GxC2BwCHTlU3lr5kJcTzBA--.28220S2;
+        Mon, 24 Jul 2023 16:18:26 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     casey@schaufler-ca.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH] security: Fix ret values doc for security_inode_init_security()
-Date:   Mon, 24 Jul 2023 16:52:04 +0200
-Message-Id: <20230724145204.534703-1-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v2 0/5] Smack transmute fixes
+Date:   Mon, 24 Jul 2023 17:13:36 +0200
+Message-Id: <20230724151341.538889-1-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwDnbwspkL5kT9D+BA--.29494S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zr1xKr17tFWUZr47ZrWxCrg_yoW8XF4kpa
-        1UKF1UWr15tFy7WFn5AF47u3WSkay5Gr4DGrsxZr17A3WDZrn5tr4Fyr15ury3XrWUAw10
-        qw42kr43Jr1DA37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+X-CM-TRANSID: GxC2BwCHTlU3lr5kJcTzBA--.28220S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF1fZw4DZr45KFyxCrWktFb_yoW5WrW7pr
+        saqa43Kwn5tF97Crnagw4UuF4fKayrGrWUJwsxAr1kAF1DZF10qryIva15Ca48JrZxAr9a
+        qa17ZrnxWrs8X37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUgEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
         6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
         vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
         AFwI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-        1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8imRUUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAIBF1jj5Db5QACsQ
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Y
+        z7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
+        AF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
+        IxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WF
+        yUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
+        CTnIWIevJa73UjIFyTuYvjxUrR6zUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAIBF1jj4zfVAADs7
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Commit 6bcdfd2cac55 ("security: Allow all LSMs to provide xattrs for
-inode_init_security hook") unified the !initxattrs and initxattrs cases. By
-doing that, security_inode_init_security() cannot return -EOPNOTSUPP
-anymore, as it is always replaced with zero at the end of the function.
+The first two patches are obvious fixes, the first restricts setting the
+SMACK64TRANSMUTE xattr only for directories, and the second makes it
+possible to set SMACK64TRANSMUTE if the filesystem does not support xattrs
+(e.g. ramfs).
 
-Also, mentioning -ENOMEM as the only possible error is not correct. For
-example, evm_inode_init_security() could return -ENOKEY.
+The remaining fixes are optional, and only required if we want filesystems
+without xattr support behave like those with xattr support. Since we have
+the inode_setsecurity and inode_getsecurity hooks to make the first group
+work, it seems useful to fix inode creation too (SELinux should be fine).
 
-Fix these issues in the documentation of security_inode_init_security().
+The third patch is merely a code move out of the 'if (xattr)' condition.
+The fourth updates the security field of the in-memory inode directly in
+smack_inode_init_security() and marks the inode as instantiated, and the
+fifth adds a security_inode_init_security() call in ramfs to initialize the
+security field of the in-memory inodes (needed to test transmuting
+directories).
 
-Fixes: 6bcdfd2cac55 ("security: Allow all LSMs to provide xattrs for inode_init_security hook")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/security.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Both the Smack (on xfs) and IMA test suite succeed with all patches
+applied.
 
-diff --git a/security/security.c b/security/security.c
-index cfdd0cbbcb9..5aa9cb91f0f 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1604,8 +1604,8 @@ EXPORT_SYMBOL(security_dentry_create_files_as);
-  * a security attribute on this particular inode, then it should return
-  * -EOPNOTSUPP to skip this processing.
-  *
-- * Return: Returns 0 on success, -EOPNOTSUPP if no security attribute is
-- * needed, or -ENOMEM on memory allocation failure.
-+ * Return: Returns 0 on success or on -EOPNOTSUPP error, a negative value other
-+ *         than -EOPNOTSUPP otherwise.
-  */
- int security_inode_init_security(struct inode *inode, struct inode *dir,
- 				 const struct qstr *qstr,
+By executing the tests in a ramfs, the results are:
+
+Without the patches:
+86 Passed, 9 Failed, 90% Success rate
+
+With the patches:
+93 Passed, 2 Failed, 97% Success rate
+
+The remaining two failures are:
+2151  ioctl(4, BTRFS_IOC_CLONE or FICLONE, 3) = -1 EOPNOTSUPP (Operation not supported)
+2152  lsetxattr("./targets/proc-attr-Snap", "security.SMACK64EXEC", "Pop", 3, 0) = -1 EOPNOTSUPP (Operation not supported)
+
+The first one is likely due ramfs lack of support for ioctl() while the
+second could be fixed by handling SMACK64EXEC in smack_inode_setsecurity().
+
+The patch set applies on top of:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git/commit/?h=next&id=ca22eca6e2ad7eaed1c791628ef7cb4c739e3da6
+
+
+The ramfs patch potentially could be useful to correctly initialize the
+label of new inodes in the initramfs, assuming that it will be fully
+labeled with support for xattrs in the cpio image:
+
+https://lore.kernel.org/linux-integrity/20190523121803.21638-1-roberto.sassu@huawei.com/
+
+Ramfs inode labels will be set from xattrs with the inode_setsecurity hook.
+
+Changelog
+
+v1:
+- Rebase on top of latest lsm/next
+- Remove -EOPNOTSUPP check in patch 5 (cannot happen)
+
+Roberto Sassu (5):
+  smack: Set SMACK64TRANSMUTE only for dirs in smack_inode_setxattr()
+  smack: Handle SMACK64TRANSMUTE in smack_inode_setsecurity()
+  smack: Always determine inode labels in smack_inode_init_security()
+  smack: Initialize the in-memory inode in smack_inode_init_security()
+  ramfs: Initialize security of in-memory inodes
+
+ fs/ramfs/inode.c           | 27 +++++++++++
+ security/smack/smack_lsm.c | 97 ++++++++++++++++++++++----------------
+ 2 files changed, 83 insertions(+), 41 deletions(-)
+
 -- 
 2.34.1
 
