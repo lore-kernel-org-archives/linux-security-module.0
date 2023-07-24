@@ -2,69 +2,128 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 588F9C001DF
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Jul 2023 03:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7AD1C001E0
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 01:40:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229908AbjGVDJ1 (ORCPT
+        id S230325AbjGXBkE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Jul 2023 23:09:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38136 "EHLO
+        Sun, 23 Jul 2023 21:40:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbjGVDJ0 (ORCPT
+        with ESMTP id S231270AbjGXBjh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Jul 2023 23:09:26 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 181FF3A9C;
-        Fri, 21 Jul 2023 20:09:23 -0700 (PDT)
-Received: from canpemm500007.china.huawei.com (unknown [172.30.72.57])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4R7BFt3Stkz18LhY;
-        Sat, 22 Jul 2023 11:08:34 +0800 (CST)
-Received: from localhost (10.174.179.215) by canpemm500007.china.huawei.com
- (7.192.104.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Sat, 22 Jul
- 2023 11:09:21 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <dhowells@redhat.com>, <jarkko@kernel.org>, <paul@paul-moore.com>,
-        <jmorris@namei.org>, <serge@hallyn.com>
-CC:     <keyrings@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] keys: Remove unused extern declaration iterate_over_keyring()
-Date:   Sat, 22 Jul 2023 11:08:32 +0800
-Message-ID: <20230722030832.33680-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Sun, 23 Jul 2023 21:39:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59E4A4C38;
+        Sun, 23 Jul 2023 18:35:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BA90D60FC8;
+        Mon, 24 Jul 2023 01:32:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 321F4C433C8;
+        Mon, 24 Jul 2023 01:32:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690162354;
+        bh=egpwnuphOHPc9Nz1Cjwt2C61f+zKGqZBmWnWK2ql/X4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PhMSFDXCpuEzmMiuiHJAUqfMda0AfMvTNGrsybZ68Qd6Tk98dNwEjdiCVJWEc0PCr
+         2R2zPnw9yFYHW4/my5eQDgWBKQR1HtoiYt06U9vqphnjsQ2XlDXnDzCrIb/mXjO+dD
+         sdjVSOZ5U1xujOa1mlcAnCLkDicCry/BkoQ4O+UQcLar43AOtRdiHpfS0f0QYat+L4
+         D1UQctvwlt1OFW4kSgoL5d7X3wpAYkijtFQvli545ckhpQXeAhoch3FypFccaK3zxq
+         nHzqE4huFJV3A5riFp5Btx2w+IPPMZh4lf4jshplcAyOhEdTzYiWe5PalJiGuQDd5I
+         v9NEhy1OXadyA==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Rae Moar <rmoar@google.com>, kernel test robot <lkp@intel.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Sasha Levin <sashal@kernel.org>, james.l.morris@oracle.com,
+        serge@hallyn.com, linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.4 39/40] apparmor: fix use of strcpy in policy_unpack_test
+Date:   Sun, 23 Jul 2023 21:31:39 -0400
+Message-Id: <20230724013140.2327815-39-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230724013140.2327815-1-sashal@kernel.org>
+References: <20230724013140.2327815-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.174.179.215]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- canpemm500007.china.huawei.com (7.192.104.62)
-X-CFilter-Loop: Reflected
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.4.5
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Since commit b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-this is never used, so can be removed.
+From: Rae Moar <rmoar@google.com>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+[ Upstream commit b54aebd4411134b525a82d663a26b2f135ecb7e8 ]
+
+Replace the use of strcpy() in build_aa_ext_struct() in
+policy_unpack_test.c with strscpy().
+
+strscpy() is the safer method to use to ensure the buffer does not
+overflow. This was found by kernel test robot:
+https://lore.kernel.org/all/202301040348.NbfVsXO0-lkp@intel.com/.
+
+Reported-by: kernel test robot <lkp@intel.com>
+
+Signed-off-by: Rae Moar <rmoar@google.com>
+Signed-off-by: John Johansen <john.johansen@canonical.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/keys/internal.h | 4 ----
- 1 file changed, 4 deletions(-)
+ security/apparmor/policy_unpack_test.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 3c1e7122076b..95a82eec1816 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -112,10 +112,6 @@ extern key_ref_t find_key_to_update(key_ref_t keyring_ref,
- extern struct key *keyring_search_instkey(struct key *keyring,
- 					  key_serial_t target_id);
+diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+index e1bfdab524b79..5c9bde25e56df 100644
+--- a/security/apparmor/policy_unpack_test.c
++++ b/security/apparmor/policy_unpack_test.c
+@@ -69,31 +69,30 @@ static struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
  
--extern int iterate_over_keyring(const struct key *keyring,
--				int (*func)(const struct key *key, void *data),
--				void *data);
+ 	*buf = AA_NAME;
+ 	*(buf + 1) = strlen(TEST_STRING_NAME) + 1;
+-	strcpy(buf + 3, TEST_STRING_NAME);
++	strscpy(buf + 3, TEST_STRING_NAME, e->end - (void *)(buf + 3));
+ 
+ 	buf = e->start + TEST_STRING_BUF_OFFSET;
+ 	*buf = AA_STRING;
+ 	*(buf + 1) = strlen(TEST_STRING_DATA) + 1;
+-	strcpy(buf + 3, TEST_STRING_DATA);
 -
- struct keyring_search_context {
- 	struct keyring_index_key index_key;
- 	const struct cred	*cred;
++	strscpy(buf + 3, TEST_STRING_DATA, e->end - (void *)(buf + 3));
+ 	buf = e->start + TEST_NAMED_U32_BUF_OFFSET;
+ 	*buf = AA_NAME;
+ 	*(buf + 1) = strlen(TEST_U32_NAME) + 1;
+-	strcpy(buf + 3, TEST_U32_NAME);
++	strscpy(buf + 3, TEST_U32_NAME, e->end - (void *)(buf + 3));
+ 	*(buf + 3 + strlen(TEST_U32_NAME) + 1) = AA_U32;
+ 	*((u32 *)(buf + 3 + strlen(TEST_U32_NAME) + 2)) = TEST_U32_DATA;
+ 
+ 	buf = e->start + TEST_NAMED_U64_BUF_OFFSET;
+ 	*buf = AA_NAME;
+ 	*(buf + 1) = strlen(TEST_U64_NAME) + 1;
+-	strcpy(buf + 3, TEST_U64_NAME);
++	strscpy(buf + 3, TEST_U64_NAME, e->end - (void *)(buf + 3));
+ 	*(buf + 3 + strlen(TEST_U64_NAME) + 1) = AA_U64;
+ 	*((u64 *)(buf + 3 + strlen(TEST_U64_NAME) + 2)) = TEST_U64_DATA;
+ 
+ 	buf = e->start + TEST_NAMED_BLOB_BUF_OFFSET;
+ 	*buf = AA_NAME;
+ 	*(buf + 1) = strlen(TEST_BLOB_NAME) + 1;
+-	strcpy(buf + 3, TEST_BLOB_NAME);
++	strscpy(buf + 3, TEST_BLOB_NAME, e->end - (void *)(buf + 3));
+ 	*(buf + 3 + strlen(TEST_BLOB_NAME) + 1) = AA_BLOB;
+ 	*(buf + 3 + strlen(TEST_BLOB_NAME) + 2) = TEST_BLOB_DATA_SIZE;
+ 	memcpy(buf + 3 + strlen(TEST_BLOB_NAME) + 6,
+@@ -102,7 +101,7 @@ static struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
+ 	buf = e->start + TEST_NAMED_ARRAY_BUF_OFFSET;
+ 	*buf = AA_NAME;
+ 	*(buf + 1) = strlen(TEST_ARRAY_NAME) + 1;
+-	strcpy(buf + 3, TEST_ARRAY_NAME);
++	strscpy(buf + 3, TEST_ARRAY_NAME, e->end - (void *)(buf + 3));
+ 	*(buf + 3 + strlen(TEST_ARRAY_NAME) + 1) = AA_ARRAY;
+ 	*((u16 *)(buf + 3 + strlen(TEST_ARRAY_NAME) + 2)) = TEST_ARRAY_SIZE;
+ 
 -- 
-2.34.1
+2.39.2
 
