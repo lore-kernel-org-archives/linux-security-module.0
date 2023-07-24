@@ -2,115 +2,110 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2E8C001B0
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 08:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E58C001DE
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jul 2023 08:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231128AbjGXIYD (ORCPT
+        id S231678AbjGXIvI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Jul 2023 04:24:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52310 "EHLO
+        Mon, 24 Jul 2023 04:51:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231400AbjGXIYA (ORCPT
+        with ESMTP id S231905AbjGXIvF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Jul 2023 04:24:00 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6074B134
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Jul 2023 01:23:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690186990;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ye5hZVkJgwhIyK0/JiD2r7SsrzVvzq+O4olxaiN3AL0=;
-        b=F+2s+me9rO5vudcwYoy6MgRc9ZtfscGQ0X9js9zbsvDLfpe2R+cxfhFpe1nScJWItRgufG
-        9NghFo95CDEACYXl5cX/Rgy5HAnJTnp1AsJ0LZEEA3YBiMQsB8aXdta9gR3E5rTdw9fgLr
-        Nj90PJNIsbkAElvHOmvlGtaJShxZ7zY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-110-P7kk_43WOo2WA6SRQLK3gg-1; Mon, 24 Jul 2023 04:23:07 -0400
-X-MC-Unique: P7kk_43WOo2WA6SRQLK3gg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 24 Jul 2023 04:51:05 -0400
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9328131;
+        Mon, 24 Jul 2023 01:51:01 -0700 (PDT)
+Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 79FF481D9EC;
-        Mon, 24 Jul 2023 08:23:06 +0000 (UTC)
-Received: from localhost (ovpn-12-31.pek2.redhat.com [10.72.12.31])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D31661121315;
-        Mon, 24 Jul 2023 08:23:04 +0000 (UTC)
-Date:   Mon, 24 Jul 2023 16:23:00 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     "Wenyu Liu(D)" <liuwenyu7@huawei.com>
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 9081461E5FE01;
+        Mon, 24 Jul 2023 10:49:55 +0200 (CEST)
+Message-ID: <e8be33b7-efc2-52b3-35fe-17aca9c8767b@molgen.mpg.de>
+Date:   Mon, 24 Jul 2023 10:49:54 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] kexec_lock:Fix comment for kexec_lock
+Content-Language: en-US
+To:     Wenyu Liu <liuwenyu7@huawei.com>
+References: <26ff12fe-347b-d908-0327-73cf3c83b00b@huawei.com>
 Cc:     kexec@lists.infradead.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, ebiederm@xmission.com,
         zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
         paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Subject: Re: [PATCH] kexec_lock:Fix comment for kexec_lock
-Message-ID: <ZL405LGPVa6lOl5s@MiWiFi-R3L-srv>
-References: <26ff12fe-347b-d908-0327-73cf3c83b00b@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
 In-Reply-To: <26ff12fe-347b-d908-0327-73cf3c83b00b@huawei.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 07/24/23 at 11:45am, Wenyu Liu(D) wrote:
+Dear Wenyu,
+
+
+Thank you for your patch. Some minor comments, you can ignore.
+
+Am 24.07.23 um 05:45 schrieb Wenyu Liu(D):
+
+The (D) looks strange. At least a space should be added before the (.
+
 > kexec_mutex is replaced by an atomic variable in
 > 56314b90fd43bd2444 (panic, kexec: make __crash_kexec() NMI safe).
-
-You could use a distros kernel or customized kernel and made change
-based on that. The commit id isn't correct. I pasted the right one
-at below.
-
-commit 05c6257433b ("panic, kexec: make __crash_kexec() NMI safe")
-
-Other than this, this looks good. You can post a new one with my ack.
-
-Acked-by: Baoquan He <bhe@redhat.com>
-
 > 
 > Fix some comment that still using kexec_mutex.
+
+comment*s*
+
 > 
 > Signed-off-by: Wenyu Liu  <liuwenyu7@huawei.com>
+
+Due to the (D) this doesn’t exactly match with the Author field. You 
+also have two spaces before < instead of one.
+
+Also for the commit message summary you could be more specific:
+
+ > kexec_lock: Replace kexec_mutex() by kexec_lock() in two comments
+
+At least, please add a space after the colon (:).
+
 > ---
->  kernel/kexec_file.c                | 2 +-
->  security/integrity/ima/ima_kexec.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>   kernel/kexec_file.c                | 2 +-
+>   security/integrity/ima/ima_kexec.c | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
 > 
 > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
 > index 881ba0d1714c..b5bbb2fe0668 100644
 > --- a/kernel/kexec_file.c
 > +++ b/kernel/kexec_file.c
 > @@ -624,7 +624,7 @@ int kexec_locate_mem_hole(struct kexec_buf *kbuf)
->   * kexec_add_buffer - place a buffer in a kexec segment
->   * @kbuf:  Buffer contents and memory parameters.
->   *
+>    * kexec_add_buffer - place a buffer in a kexec segment
+>    * @kbuf:  Buffer contents and memory parameters.
+>    *
 > - * This function assumes that kexec_mutex is held.
 > + * This function assumes that kexec_lock is held.
->   * On successful return, @kbuf->mem will have the physical address of
->   * the buffer in memory.
->   *
+>    * On successful return, @kbuf->mem will have the physical address of
+>    * the buffer in memory.
+>    *
 > diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
 > index 419dc405c831..ad133fe120db 100644
 > --- a/security/integrity/ima/ima_kexec.c
 > +++ b/security/integrity/ima/ima_kexec.c
 > @@ -77,7 +77,7 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
->   * Called during kexec_file_load so that IMA can add a segment to the kexec
->   * image for the measurement list for the next kernel.
->   *
+>    * Called during kexec_file_load so that IMA can add a segment to the kexec
+>    * image for the measurement list for the next kernel.
+>    *
 > - * This function assumes that kexec_mutex is held.
 > + * This function assumes that kexec_lock is held.
->   */
->  void ima_add_kexec_buffer(struct kimage *image)
->  {
+>    */
+>   void ima_add_kexec_buffer(struct kimage *image)
+>   {
 > --
 > 2.33.0
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
-> 
 
+
+Kind regards,
+
+Paul
