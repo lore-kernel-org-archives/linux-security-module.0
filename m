@@ -2,112 +2,115 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE89C001DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jul 2023 07:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF267C001E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jul 2023 10:24:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230216AbjGYHC7 convert rfc822-to-8bit (ORCPT
+        id S233381AbjGYKYQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Jul 2023 03:02:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34218 "EHLO
+        Tue, 25 Jul 2023 06:24:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjGYHC6 (ORCPT
+        with ESMTP id S230462AbjGYKYP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Jul 2023 03:02:58 -0400
-Received: from frasgout13.his.huawei.com (unknown [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA4AB172A;
-        Tue, 25 Jul 2023 00:02:52 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4R973l1hRpz9xyNj;
-        Tue, 25 Jul 2023 14:51:31 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwC3gFeIc79kHEj7BA--.30946S2;
-        Tue, 25 Jul 2023 08:02:38 +0100 (CET)
-Message-ID: <a582bac4f709fe28dc17d9023ac78b53a2a1ac64.camel@huaweicloud.com>
-Subject: Re: [PATCH] security: Fix ret values doc for
- security_inode_init_security()
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     jmorris@namei.org, serge@hallyn.com,
+        Tue, 25 Jul 2023 06:24:15 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE76610CB;
+        Tue, 25 Jul 2023 03:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1690280654; x=1721816654;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=z2JgSRr57QfGjyG/fWEsaikXL6iwmaxUOjUdDAVtI0A=;
+  b=RAb1leraqX5Fyk6HEvP9T703FMF8+1ubL2WTdk/W6M/nh63j8c+gyD+8
+   ldRTrTyztR8vGBwEyJBHK/SKadmUhsiA5MNJhy320hC3kWAsd4iVQvyqE
+   vocuEeelD/8dgxtS4meTWHDD6+8OFU71+q7VGTjK8GzSrh+pQMKBqj4lO
+   PtGq4nWE63jDDBOpj7/++pecb/44c/1zSJ8GzeI8AHU5vUWLycMbWy9kB
+   SQjl51FS33cwUBefU91alkr6ZhH8JkeI4sXAoyFDQGLHNnLY5QW7FBGOv
+   3DHGaDlfGuMlMytnRXm+SJkBfa1KcZtuTESmJfCmD1JZXK6uEH9O8Wasw
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10781"; a="347956818"
+X-IronPort-AV: E=Sophos;i="6.01,230,1684825200"; 
+   d="scan'208";a="347956818"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2023 03:24:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10781"; a="1056753039"
+X-IronPort-AV: E=Sophos;i="6.01,230,1684825200"; 
+   d="scan'208";a="1056753039"
+Received: from mlytkin-mobl2.ger.corp.intel.com (HELO box.shutemov.name) ([10.252.57.129])
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2023 03:24:05 -0700
+Received: by box.shutemov.name (Postfix, from userid 1000)
+        id 171E4103A12; Tue, 25 Jul 2023 13:24:03 +0300 (+03)
+Date:   Tue, 25 Jul 2023 13:24:03 +0300
+From:   "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Sean Christopherson <seanjc@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Tue, 25 Jul 2023 09:02:28 +0200
-In-Reply-To: <CAHC9VhQcVSX+kZ3PMJGJ3i-qxv9g3iP_Y4At5VCV8qSoJYj8Cg@mail.gmail.com>
-References: <20230724145204.534703-1-roberto.sassu@huaweicloud.com>
-         <CAHC9VhQcVSX+kZ3PMJGJ3i-qxv9g3iP_Y4At5VCV8qSoJYj8Cg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu1 
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>
+Subject: Re: [RFC PATCH v11 10/29] mm: Add AS_UNMOVABLE to mark mapping as
+ completely unmovable
+Message-ID: <20230725102403.xywjqlhyqkrzjok6@box.shutemov.name>
+References: <20230718234512.1690985-1-seanjc@google.com>
+ <20230718234512.1690985-11-seanjc@google.com>
 MIME-Version: 1.0
-X-CM-TRANSID: GxC2BwC3gFeIc79kHEj7BA--.30946S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw1rtw1UGr1UWrWUAFyxXwb_yoW8tr1Dpa
-        yDK3Wj9r1YqFW7GFyFyF4xW3W29ayfGr4DGrs0vr17Z3WDuwn3Kr1FkF15ury7Cr4DAw10
-        qw47uF43Cw1DA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgmb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-        AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
-        IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
-        KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAJBF1jj5DhPQAAsx
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230718234512.1690985-11-seanjc@google.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2023-07-24 at 17:54 -0400, Paul Moore wrote:
-> On Mon, Jul 24, 2023 at 10:52 AM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > 
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Commit 6bcdfd2cac55 ("security: Allow all LSMs to provide xattrs for
-> > inode_init_security hook") unified the !initxattrs and initxattrs cases. By
-> > doing that, security_inode_init_security() cannot return -EOPNOTSUPP
-> > anymore, as it is always replaced with zero at the end of the function.
-> > 
-> > Also, mentioning -ENOMEM as the only possible error is not correct. For
-> > example, evm_inode_init_security() could return -ENOKEY.
-> > 
-> > Fix these issues in the documentation of security_inode_init_security().
-> > 
-> > Fixes: 6bcdfd2cac55 ("security: Allow all LSMs to provide xattrs for inode_init_security hook")
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  security/security.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/security/security.c b/security/security.c
-> > index cfdd0cbbcb9..5aa9cb91f0f 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -1604,8 +1604,8 @@ EXPORT_SYMBOL(security_dentry_create_files_as);
-> >   * a security attribute on this particular inode, then it should return
-> >   * -EOPNOTSUPP to skip this processing.
-> >   *
-> > - * Return: Returns 0 on success, -EOPNOTSUPP if no security attribute is
-> > - * needed, or -ENOMEM on memory allocation failure.
-> > + * Return: Returns 0 on success or on -EOPNOTSUPP error, a negative value other
-> > + *         than -EOPNOTSUPP otherwise.
-> 
-> How about "Returns 0 if the LSM successfully initialized all of the
-> inode security attributes that are required, negative values
-> otherwise."?  The caller doesn't need to worry about the individual
-> LSMs returning -EOPNOTSUPP in the case of no security attributes, and
-> if they really care, they are likely reading the description above (or
-> the code) which explains it in much better detail.
+On Tue, Jul 18, 2023 at 04:44:53PM -0700, Sean Christopherson wrote:
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index dbc9f86b1934..a3d2b132df52 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -1047,6 +1047,10 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+>  		if (!mapping && (folio_ref_count(folio) - 1) > folio_mapcount(folio))
+>  			goto isolate_fail_put;
+>  
+> +		/* The mapping truly isn't movable. */
+> +		if (mapping && mapping_unmovable(mapping))
+> +			goto isolate_fail_put;
+> +
 
-Maybe this could be better:
+I doubt that it is safe to dereference mapping here. I believe the folio
+can be truncated from under us and the mapping freed with the inode.
 
-Return 0 if security attributes initialization is successful or not
-necessary, a negative value otherwise.
+The folio has to be locked to dereference mapping safely (given that the
+mapping is still tied to the folio).
 
-Thanks
+Vlastimil, any comments?
 
-Roberto
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
