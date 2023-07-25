@@ -2,133 +2,134 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EC6EB64DD
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jul 2023 18:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 528D8C001DE
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jul 2023 20:44:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229700AbjGYSil (ORCPT
+        id S230063AbjGYUo3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Jul 2023 14:38:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43854 "EHLO
+        Tue, 25 Jul 2023 16:44:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230026AbjGYSij (ORCPT
+        with ESMTP id S229911AbjGYUo2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Jul 2023 14:38:39 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFF99A3
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jul 2023 11:38:37 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-5774335bb2aso67406407b3.0
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jul 2023 11:38:37 -0700 (PDT)
+        Tue, 25 Jul 2023 16:44:28 -0400
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C69C326B6
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Jul 2023 13:44:00 -0700 (PDT)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-579de633419so68807767b3.3
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Jul 2023 13:44:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1690310317; x=1690915117;
+        d=paul-moore.com; s=google; t=1690317840; x=1690922640;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4tqWftng5Zihz34ZZJ2o62k4+GEKzXsMpDrA8+pTXHY=;
-        b=A9ANBtZSH81qqxfhpPDIXRFIREEBBiwkBHMuK5V8lgo/r4pEZgyEZfcLkRk/rrGcJW
-         gwNJFD3pSxdmYokhWQ8UO+Bu85pdUoHNxRGOmFiKtH8F2DHxjE3ztUOSaLhyJ4oGeHtA
-         YQ4Ip3RJ9nM4B5nj2tIeykr5a1ympJMFifAmNjLkjb+CAP3qYY4uX5rv59Psf7GLGQMN
-         rIMQ9H5RwOpFCaII+qaEJ0l0CkAVU8yXxymW0+PCmHQCJCt1xu/WR0/+7KhriimBsvXS
-         8tt12M6m5UmdqIxK/atehqP1nY+0xeDiaurbNy0qrfkS0gGLL6Imf2EKeCt9iwZ/LTK5
-         lntg==
+        bh=nWFtInZ1K1dOfuS7k8qAbtMBBIEMrxLy4VGVUtC5gnI=;
+        b=C8boa0Mv2x13zaBKrUj+xzuVti30LteOQD/85/WnBKhzbeDHEzvYvZ3kQdHoCjYdG0
+         ftqVyfqFa6NOhebzP3zMyFH7Nlp1JPPPKMGc1aE91kApgf84Ufspb27OrNQYnal4fJdI
+         RuMjkIlaBANH5JbWHDMSmJYGIzqqyjVZTAseBtkUxPVzAHisNHbe6FS0O0hpPY2Mahdy
+         fdrDOGG8cimzMGhjO/sM3c08lCiYTBbFA4aZL9R/TiSrtJIosdGWlE6hbhCkOQUU/TaG
+         FqmFBGWx8K2cus33+JbUinADhEt8mhX8e9cNl+6Pf8/2HVcctD7B/+1vZNujcT3jVfWL
+         BwBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690310317; x=1690915117;
+        d=1e100.net; s=20221208; t=1690317840; x=1690922640;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4tqWftng5Zihz34ZZJ2o62k4+GEKzXsMpDrA8+pTXHY=;
-        b=FuKMlFG0+af+lkXEOJ/RoS+zfN6350DpNwLiUdq90lRoAIG5IILvnWDVn4mAz1k87a
-         A1e61ws4fCzUurpcxn2xcY/pVPhkgoKySDJnkjA29PvAhIgAc6sVkoj8IxIWb1JjLP2j
-         rPSUarEFFp4cj8zw6r+KsVnQerfjamG3r2ufYUKiAEoJk9yHI1Bu54+8v4wizDVY5uPW
-         16jWn5l+g2EO01d+m8rVvUY0WgfhRzFSZinveGR9kw67plkDbgm8MsttZDN1bCqMKyTm
-         0nxOtUKZ49jCrY9Nrt7foVGseO5tOaCSoPUu1DK052JZsjDNJktoP1Lq46wks2JHJIPs
-         XdVw==
-X-Gm-Message-State: ABy/qLbZz7ovnwTXBHEKnGBVG5QdGHAGFcv7+W4l2eN5p2q/P6s1GozL
-        WUXf9r9xo+sFVqBzHLfm6kYRvSNulxMj9242QS19
-X-Google-Smtp-Source: APBJJlGPf/LGegU/3z6LP2Dg6XXokJhv16FjW6ZYYINqiXtlipJBZfpbQn+eBMzUEdOjtUmr9u+tMfovTlu0nIjDYl0=
-X-Received: by 2002:a0d:ce86:0:b0:577:31c6:b35b with SMTP id
- q128-20020a0dce86000000b0057731c6b35bmr74129ywd.32.1690310316938; Tue, 25 Jul
- 2023 11:38:36 -0700 (PDT)
+        bh=nWFtInZ1K1dOfuS7k8qAbtMBBIEMrxLy4VGVUtC5gnI=;
+        b=Em6gLK9URbz8BPKWki4K5VvxFA8WJpI1OKzCuhNn7OpYK2kFvfiZk4ayXs6JOQ35mc
+         KEo2vGi+kXqoYTjrRhW57OUGyeFfMwJLKAqsxtRpE0453Ex0EbV7khhK1DAAg2VzwNbs
+         b+E8ab89L1XZIthvVYxEGEmCPFq8WTD6xBeunKzP9RwriAZAum8gIK9DC+u99C4ziAJU
+         KdDAPDonQrdp2THengZep92Vpr/eAvlpreZM/NRKpnjzxNRSC49CmCDDx3GfbZ8btBFS
+         RCwjZtPzJlqfetU4WFtMfPEua6zD2y2kZD+VD0c5Zohx/32Y+tECgvBsCHpeVIWIDemG
+         Ultg==
+X-Gm-Message-State: ABy/qLbNM8DPWW5tDhwQtrrzckYEuKyNP1SDZo9B8cA5HszvbbOdW4Iv
+        eq6+KigAkg6fyt3MEMDbKCr/REn1U+DHvr6e9NqW
+X-Google-Smtp-Source: APBJJlFkTo4MqIRboyJijfvAESH41Sn7XZLb7Wq1Qb4xbUmcbmJhG5qWNqiv1iYXWOFUlllWKuTA5JqszvfgcdQJA1g=
+X-Received: by 2002:a25:2f16:0:b0:c83:27d4:c0d6 with SMTP id
+ v22-20020a252f16000000b00c8327d4c0d6mr98124ybv.37.1690317839194; Tue, 25 Jul
+ 2023 13:43:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230724145204.534703-1-roberto.sassu@huaweicloud.com>
- <CAHC9VhQcVSX+kZ3PMJGJ3i-qxv9g3iP_Y4At5VCV8qSoJYj8Cg@mail.gmail.com> <a582bac4f709fe28dc17d9023ac78b53a2a1ac64.camel@huaweicloud.com>
-In-Reply-To: <a582bac4f709fe28dc17d9023ac78b53a2a1ac64.camel@huaweicloud.com>
+References: <1687986571-16823-1-git-send-email-wufan@linux.microsoft.com>
+ <1687986571-16823-12-git-send-email-wufan@linux.microsoft.com>
+ <ZKgm+ffQbdDTxrg9@redhat.com> <20230712034319.GA17642@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+In-Reply-To: <20230712034319.GA17642@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 25 Jul 2023 14:38:26 -0400
-Message-ID: <CAHC9VhSbya3Q-VM8v43qkQDWCuYWFqQ801j9_HfdwWJ9RLzkjw@mail.gmail.com>
-Subject: Re: [PATCH] security: Fix ret values doc for security_inode_init_security()
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     jmorris@namei.org, serge@hallyn.com,
+Date:   Tue, 25 Jul 2023 16:43:48 -0400
+Message-ID: <CAHC9VhQFxqcfgR0acgdiXKP9LT1KLgGjZd-QHs6O1dEex31HEQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v10 11/17] dm-verity: consume root hash digest and
+ signature data via LSM hook
+To:     Fan Wu <wufan@linux.microsoft.com>
+Cc:     Mike Snitzer <snitzer@kernel.org>, corbet@lwn.net,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk,
+        agk@redhat.com, eparis@redhat.com, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, audit@vger.kernel.org,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        Deven Bowers <deven.desai@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 25, 2023 at 3:02=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Mon, 2023-07-24 at 17:54 -0400, Paul Moore wrote:
-> > On Mon, Jul 24, 2023 at 10:52=E2=80=AFAM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > >
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > >
-> > > Commit 6bcdfd2cac55 ("security: Allow all LSMs to provide xattrs for
-> > > inode_init_security hook") unified the !initxattrs and initxattrs cas=
-es. By
-> > > doing that, security_inode_init_security() cannot return -EOPNOTSUPP
-> > > anymore, as it is always replaced with zero at the end of the functio=
-n.
-> > >
-> > > Also, mentioning -ENOMEM as the only possible error is not correct. F=
-or
-> > > example, evm_inode_init_security() could return -ENOKEY.
-> > >
-> > > Fix these issues in the documentation of security_inode_init_security=
-().
-> > >
-> > > Fixes: 6bcdfd2cac55 ("security: Allow all LSMs to provide xattrs for =
-inode_init_security hook")
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > ---
-> > >  security/security.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/security/security.c b/security/security.c
-> > > index cfdd0cbbcb9..5aa9cb91f0f 100644
-> > > --- a/security/security.c
-> > > +++ b/security/security.c
-> > > @@ -1604,8 +1604,8 @@ EXPORT_SYMBOL(security_dentry_create_files_as);
-> > >   * a security attribute on this particular inode, then it should ret=
-urn
-> > >   * -EOPNOTSUPP to skip this processing.
-> > >   *
-> > > - * Return: Returns 0 on success, -EOPNOTSUPP if no security attribut=
-e is
-> > > - * needed, or -ENOMEM on memory allocation failure.
-> > > + * Return: Returns 0 on success or on -EOPNOTSUPP error, a negative =
-value other
-> > > + *         than -EOPNOTSUPP otherwise.
-> >
-> > How about "Returns 0 if the LSM successfully initialized all of the
-> > inode security attributes that are required, negative values
-> > otherwise."?  The caller doesn't need to worry about the individual
-> > LSMs returning -EOPNOTSUPP in the case of no security attributes, and
-> > if they really care, they are likely reading the description above (or
-> > the code) which explains it in much better detail.
->
-> Maybe this could be better:
->
-> Return 0 if security attributes initialization is successful or not
-> necessary, a negative value otherwise.
+On Tue, Jul 11, 2023 at 11:43=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com>=
+ wrote:
+> On Fri, Jul 07, 2023 at 10:53:45AM -0400, Mike Snitzer wrote:
 
-Well, I'm trying to avoid differentiating between the non-zero, but
-successful attribute initialization and the zero attribute case; from
-a caller's perspective it doesn't matter (and why we don't
-differentiate between the two with different error codes).  If the
-distinction between the two states is important from a caller's
-perspective, there should be different return codes.
+...
+
+> > Both of your calls to security_bdev_setsecurity() to set your blobs in
+> > the bdev are suspect because you're doing so from the verity_ctr().
+> > The mapped_device has 2 dm_table slots (active and inactive).  The
+> > verity_ctr() becomes part of the inactive slot, there is an extra step
+> > to bind the inactive table to the active table.
+> >
+> > This leads to you changing the blobs in the global bdev _before_ the
+> > table is actually active.  It is possible that the inactive table will
+> > simply be removed and the DM verity device put back in service;
+> > leaving your blob(s) in the bdev inconsistent.
+> >
+> > This issue has parallels to how we need to defer changing the global
+> > queue_limits associated with a request_queue until _after_ all table
+> > loading is settled and then the update is done just before resuming
+> > the DM device (mapped_device) -- see dm_table_set_restrictions().
+> >
+> > Unfortunately, this feels like it may require a new hook in the
+> > target_type struct (e.g. ->finalize())
+>
+> Thanks for pointing out this issue. We were calling security_bdev_setsecu=
+rity()
+> because the roothash signature data is only available in verity_ctr()
+> and it is discarded after verity_ctr() finishes.
+> After digging deeper into the table_load, I realized that we were indeed
+> wrong here.
+>
+> Based on my understanding of your suggestion, it seems that the correct
+> approach would be to save the roothash signature into the struct dm_targe=
+t
+
+Would you be doing this with a LSM hook, or would this live in the
+device mapper layer?
+
+> and then invoke security_bdev_setsecurity() before activating
+> the inactive table in the __bind function (where dm_table_set_restriction=
+s is called).
+>
+> To facilitate this process, it seems appropriate to introduce a new hook
+> called finalize() within the struct target_type. This hook would enable
+> targets to define tasks that need to be completed before activating
+> a new table.
+>
+> In our specific case, we would add a finalize hook to the dm-verity modul=
+e,
+> allowing us to call security_bdev_setsecurity() and associate the roothas=
+h
+> information in the struct dm_target with the struct block_device of
+> the struct mapped_device. Is this correct?
+
+Where would the finalize() hook be called?
 
 --=20
 paul-moore.com
