@@ -2,123 +2,128 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83425C04A6A
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jul 2023 11:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0BCC001E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jul 2023 12:52:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234195AbjGYLKZ (ORCPT
+        id S232221AbjGYMw1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Jul 2023 07:10:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45220 "EHLO
+        Tue, 25 Jul 2023 08:52:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234079AbjGYLKG (ORCPT
+        with ESMTP id S231936AbjGYMw0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Jul 2023 07:10:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09E0C30F8
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jul 2023 04:08:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690283288;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EIk2rY8kbIKJb0IQXAUy6YHfdWW3cnFIe2mfNcTspbo=;
-        b=XmGrg45GoBLwLHRn8ciWtS/vheV/iLrDIVZ6lcGDNlI6xOtnDAug/0qMZYtIAU+gf4rtgR
-        ypUmF55KXOj84sju0LToqpBnRaED8QnRxx3JnJgYL5dmCg3qxykV0iv2qWcaHeCn7FBAF/
-        DOTp9CFgWIH+daX480IRwmA7YkLxZiY=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-240-ZNl5X6BpNHugJkwvXPOH2Q-1; Tue, 25 Jul 2023 07:08:05 -0400
-X-MC-Unique: ZNl5X6BpNHugJkwvXPOH2Q-1
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-26814a0122dso1485171a91.1
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jul 2023 04:08:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690283285; x=1690888085;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EIk2rY8kbIKJb0IQXAUy6YHfdWW3cnFIe2mfNcTspbo=;
-        b=IxQey/oRV2IOmCNDPdjxlZxQVtPsHPKKkdbBpyFL+1E76HqcATXQCG4Pz4pJ+O3RET
-         5QJy1KlVaKir3W9wEXPEQ0HfVIN4/WXO/LXxHf/cykpd8CYq2nRbN+4Eaa+0u/NnjbOy
-         auuj9SE7ucsXjfs5sx9xkybscCWcmPCprs7Kr29Gecqph4X70VIAV93LOlots+0DRGxJ
-         RxvX3A2bnQ4+pSBIAX/bQUaBBoSomdHy19LX2ODpbBzWzI4C6EyNLpjmLPOxgjj8t2jV
-         BI8w+Uvijvt/VRrR+mp8svYnFurOCS6IZQC+QbEmiCnikMvUPfBcej46POe+d11tStKQ
-         SafA==
-X-Gm-Message-State: ABy/qLbcfkn62ZjqWHr4VDT8CH0Txtbh7ui1zVs+FCLV0k9/eThCe0G3
-        X6gLRlWis4awgdaYELg9+k7g8RBcm/5IGRZkt32X9K6rBWH6eWSK7WWs4bPrfAKKqk8oHKBPvx/
-        Fxz1cQ36x870DyeeR6Wj9AnSV12MTkBSUyqvVctwQgjRiiqd/8GIV
-X-Received: by 2002:a17:90b:30cb:b0:268:abf:6431 with SMTP id hi11-20020a17090b30cb00b002680abf6431mr2408048pjb.24.1690283284969;
-        Tue, 25 Jul 2023 04:08:04 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlEUO5iRoKmcTndiV1yc+RB63ntBijY7f5j5g118bUiJEFickPVx8jsUlZUrzSyxeXZ1uOPR28AIDchVPKuta5A=
-X-Received: by 2002:a17:90b:30cb:b0:268:abf:6431 with SMTP id
- hi11-20020a17090b30cb00b002680abf6431mr2408031pjb.24.1690283284663; Tue, 25
- Jul 2023 04:08:04 -0700 (PDT)
+        Tue, 25 Jul 2023 08:52:26 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04449DB;
+        Tue, 25 Jul 2023 05:52:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=cip1L4+WNN72lEdlEtgKKz6+Th/GNW6kyU+RnxFbZZ8=; b=UgAJBFRLO20d1Q4UeecSqlBQIs
+        PFHuz0NUmB/1Y+2cEVFvwqnHb1BSxWW4RhQ2P8kvsu3ACbwOqr57viJKTa7uG+qe1fdufl5rqF2qr
+        jHy5L3HlBpbKr1Vl5EefvCAyn8+oe9n/K+eN0UUCvHZ3OgwtPhyspcNh4yAoE49KOIUkQVp2v0HR9
+        +xKnn/gm3dSYH0IDK2KkKvdpo4YPQW6CLliHGifFEImfRxrevzUzbI0xJBT7SCfU6e7LIrXsQ1mlT
+        uc0IdyK39Z/Ut2VF+t8tpW9pm9g50y0Q3SwS/URKZyTPqyVYvUikuYgn7PDUb1oSxM38pOnLhiEyt
+        M5/wJdyg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qOHW7-005Tcv-AA; Tue, 25 Jul 2023 12:51:55 +0000
+Date:   Tue, 25 Jul 2023 13:51:55 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>
+Subject: Re: [RFC PATCH v11 10/29] mm: Add AS_UNMOVABLE to mark mapping as
+ completely unmovable
+Message-ID: <ZL/Fa4W2Ne9EVxoh@casper.infradead.org>
+References: <20230718234512.1690985-1-seanjc@google.com>
+ <20230718234512.1690985-11-seanjc@google.com>
+ <20230725102403.xywjqlhyqkrzjok6@box.shutemov.name>
 MIME-Version: 1.0
-References: <20230718115607.65652-1-omosnace@redhat.com> <x49lefd4aad.fsf@segfault.boston.devel.redhat.com>
-In-Reply-To: <x49lefd4aad.fsf@segfault.boston.devel.redhat.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Tue, 25 Jul 2023 13:07:53 +0200
-Message-ID: <CAFqZXNt5UXWagXu5QR5k5wOAeQJVKWrET4prEzb+5aftFEtyZw@mail.gmail.com>
-Subject: Re: [PATCH] io_uring: don't audit the capability check in io_uring_create()
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230725102403.xywjqlhyqkrzjok6@box.shutemov.name>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 18, 2023 at 3:24=E2=80=AFPM Jeff Moyer <jmoyer@redhat.com> wrot=
-e:
->
-> Hi, Ondrej,
->
-> Ondrej Mosnacek <omosnace@redhat.com> writes:
->
-> > The check being unconditional may lead to unwanted denials reported by
-> > LSMs when a process has the capability granted by DAC, but denied by an
-> > LSM. In the case of SELinux such denials are a problem, since they can'=
-t
-> > be effectively filtered out via the policy and when not silenced, they
-> > produce noise that may hide a true problem or an attack.
-> >
-> > Since not having the capability merely means that the created io_uring
-> > context will be accounted against the current user's RLIMIT_MEMLOCK
-> > limit, we can disable auditing of denials for this check by using
-> > ns_capable_noaudit() instead of capable().
->
-> Could you add a comment, or add some documentation to
-> ns_capable_noaudit() about when it should be used?  It wasn't apparent
-> to me, at least, before this explanation.
+On Tue, Jul 25, 2023 at 01:24:03PM +0300, Kirill A . Shutemov wrote:
+> On Tue, Jul 18, 2023 at 04:44:53PM -0700, Sean Christopherson wrote:
+> > diff --git a/mm/compaction.c b/mm/compaction.c
+> > index dbc9f86b1934..a3d2b132df52 100644
+> > --- a/mm/compaction.c
+> > +++ b/mm/compaction.c
+> > @@ -1047,6 +1047,10 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+> >  		if (!mapping && (folio_ref_count(folio) - 1) > folio_mapcount(folio))
+> >  			goto isolate_fail_put;
+> >  
+> > +		/* The mapping truly isn't movable. */
+> > +		if (mapping && mapping_unmovable(mapping))
+> > +			goto isolate_fail_put;
+> > +
+> 
+> I doubt that it is safe to dereference mapping here. I believe the folio
+> can be truncated from under us and the mapping freed with the inode.
+> 
+> The folio has to be locked to dereference mapping safely (given that the
+> mapping is still tied to the folio).
 
-This has been requested before, so I finally forced myself to look
-into it and only now I realized that there is a subtle difference
-between the has_capability and capable helpers. As the docstrings say,
-the former doesn't set the PF_SUPERPRIV on the task when the check
-succeeds, while the latter does. The problem is that I don't know what
-the exact implications are and thus I'm not able to document which
-helper should be used in what situation... It is possible some of the
-existing call sites use the wrong helper in the noaudit case (possibly
-including ones that I added/suggested).
+There's even a comment to that effect later on in the function:
 
-The comment at its declaration says "Used super-user privileges" and
-it seems to be used only to propagate into the ASU flag in task
-accounting information. But in the case of capability checks that do
-not fail the syscall it is not easy to tell if "super-user privileges"
-were "used" or not (or, rather, whether the task should be accounted
-as such or not after a successful check).
+                        /*
+                         * Only pages without mappings or that have a
+                         * ->migrate_folio callback are possible to migrate
+                         * without blocking. However, we can be racing with
+                         * truncation so it's necessary to lock the page
+                         * to stabilise the mapping as truncation holds
+                         * the page lock until after the page is removed
+                         * from the page cache.
+                         */
 
-If anyone is reading this and has a better understanding of the
-PF_SUPERPRIV flag semantics, I'd be thankful for a clarification so
-that we can sort out this mess :)
+(that could be reworded to make it clear how dangerous dereferencing
+->mapping is without the lock ... and it does need to be changed to say
+"folio lock" instead of "page lock", so ...)
 
---
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+How does this look?
+
+                        /*
+                         * Only folios without mappings or that have
+                         * a ->migrate_folio callback are possible to
+                         * migrate without blocking. However, we can
+                         * be racing with truncation, which can free
+                         * the mapping.  Truncation holds the folio lock
+                         * until after the folio is removed from the page
+                         * cache so holding it ourselves is sufficient.
+                         */
 
