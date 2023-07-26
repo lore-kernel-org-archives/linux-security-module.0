@@ -2,91 +2,117 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E973C00528
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jul 2023 07:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B31C001B0
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jul 2023 11:08:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232297AbjGZHo3 (ORCPT
+        id S229758AbjGZLIF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jul 2023 03:44:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37432 "EHLO
+        Wed, 26 Jul 2023 07:08:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230140AbjGZHnx (ORCPT
+        with ESMTP id S233392AbjGZLH6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jul 2023 03:43:53 -0400
-Received: from frasgout11.his.huawei.com (unknown [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 580D244B6;
-        Wed, 26 Jul 2023 00:39:32 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4R9lqX53bRz9v7VL;
-        Wed, 26 Jul 2023 15:28:08 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwA3CmGhzcBkURUHBQ--.31802S2;
-        Wed, 26 Jul 2023 08:39:19 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2] security: Fix ret values doc for security_inode_init_security()
-Date:   Wed, 26 Jul 2023 09:39:05 +0200
-Message-Id: <20230726073905.1175826-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+        Wed, 26 Jul 2023 07:07:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80FB7132
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Jul 2023 04:07:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1690369631;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2RhAASZDa4qR7wxJ12uUhhLwWeU47PEkDN4ojyr2iK0=;
+        b=F6+ynRoso5YDQS0o3hbqxegp6UQXHEL9qYAvSQyVJFtgGJD7ZIeVrZoAfge91yXUOrESgq
+        YtiA+pZBdYiO6KQQJxugbz5Usv8hKfSdLmTG4B4zLVRbyu+D+BfVKqSGfqzIixm60enxTf
+        KAm3M0Tyk4kMopRbNQ0W65pmanETyq0=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-7-QdBqVFEmM6ydN-ZNoDNAeQ-1; Wed, 26 Jul 2023 07:07:10 -0400
+X-MC-Unique: QdBqVFEmM6ydN-ZNoDNAeQ-1
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-40631b647cfso9790311cf.1
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Jul 2023 04:07:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690369630; x=1690974430;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2RhAASZDa4qR7wxJ12uUhhLwWeU47PEkDN4ojyr2iK0=;
+        b=jGNR5+Fy9T3qmPi4euO/nhfyvD0Sqv+q2sLTrXqvcaTmVakfigcOL77cS3FfcnZC2x
+         pEV5cHUpJAu1FeiCKaQVeylGoZEuUZapd0ebDDahdMmvpQvTZ9snharPPXDVfUW1VZH3
+         Dsd0IoXVDqdl2qx0USzHzgBnQSAyYIz2KfkPGS0cbhkjc4SSn1giZ5053/l9U8eRqwrO
+         swvx688dBpDTJxM4uG2Tw0r9ykeDKkJbpnfhMmkHs0ozo+5HtwZgbq7/4ZJUfE+lGqCm
+         Z8VTVULFr9qSJzk6y9aIClkUzJPgC57VNjTwbiE1pQq7/Ch3OhHQOAg6INy4Sb4sjh3s
+         S14w==
+X-Gm-Message-State: ABy/qLanD1MDlhR2JpMrBvvGW4h0+PTBErI6Cae78gzJg2+2sRaKKAkl
+        UGcVPRhuD/EjltpJgW8XiumfEUVmGusqPdd45C3as7TRqmwOHAIn5l2pQNJYGJnUDUyR8SbpiL/
+        xJWDa4iykI1WJsqsaUxXuMGQZsKCNxIVAxkDl
+X-Received: by 2002:a05:620a:4007:b0:763:a1d3:196d with SMTP id h7-20020a05620a400700b00763a1d3196dmr2275645qko.0.1690369629874;
+        Wed, 26 Jul 2023 04:07:09 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlG7QqDnzpUB/dwYHGsT9KH02d9NGuFZpNXp+ZhNitR8Wn10FxTtx+Vjhi+ZWJYa1GU4+YNjiw==
+X-Received: by 2002:a05:620a:4007:b0:763:a1d3:196d with SMTP id h7-20020a05620a400700b00763a1d3196dmr2275618qko.0.1690369629594;
+        Wed, 26 Jul 2023 04:07:09 -0700 (PDT)
+Received: from gerbillo.redhat.com (146-241-225-81.dyn.eolo.it. [146.241.225.81])
+        by smtp.gmail.com with ESMTPSA id dc8-20020a05620a520800b00767c76b2c38sm4268489qkb.83.2023.07.26.04.07.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jul 2023 04:07:09 -0700 (PDT)
+Message-ID: <a9b4571021004affc10cb5e01a985636bd3e71f1.camel@redhat.com>
+Subject: Re: [PATCH bpf-next 0/4] Reduce overhead of LSMs with static calls
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>, KP Singh <kpsingh@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, jackmanb@google.com,
+        renauld@google.com, casey@schaufler-ca.com, song@kernel.org,
+        revest@chromium.org
+Date:   Wed, 26 Jul 2023 13:07:05 +0200
+In-Reply-To: <CAHC9VhSqGtZFXn-HW5pfUub4TmU7cqFWWKekL1M+Ko+f5qgi1Q@mail.gmail.com>
+References: <20230119231033.1307221-1-kpsingh@kernel.org>
+         <CAHC9VhRpsXME9Wht_RuSACuU97k359dihye4hW15nWwSQpxtng@mail.gmail.com>
+         <63e525a8.170a0220.e8217.2fdb@mx.google.com>
+         <CAHC9VhTCiCNjfQBZOq2DM7QteeiE1eRBxW77eVguj4=y7kS+eQ@mail.gmail.com>
+         <CACYkzJ4w3BKNaogHdgW8AKmS2O+wJuVZSpCVVTCKj5j5PPK-Vg@mail.gmail.com>
+         <CAHC9VhSqGtZFXn-HW5pfUub4TmU7cqFWWKekL1M+Ko+f5qgi1Q@mail.gmail.com>
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwA3CmGhzcBkURUHBQ--.31802S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zr1xKr17tFWUZr47ZrWxCrg_yoW8Xw1fpw
-        4UKFyjgr15tFy7Wrn5AF47u3WSkay5Gr4UGrs8Zr17A3WDurn3tr4FyF15ury3XrWUAw10
-        qw42kF43Jr1DAw7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Y
-        z7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
-        AF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
-        IxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WF
-        yUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
-        CTnIWIevJa73UjIFyTuYvjxUOyCJDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAKBF1jj5DyKwAAs3
-X-CFilter-Loop: Reflected
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+Hi all,
 
-Commit 6bcdfd2cac55 ("security: Allow all LSMs to provide xattrs for
-inode_init_security hook") unified the !initxattrs and initxattrs cases. By
-doing that, security_inode_init_security() cannot return -EOPNOTSUPP
-anymore, as it is always replaced with zero at the end of the function.
+On Tue, 2023-06-20 at 19:40 -0400, Paul Moore wrote:
+> On Tue, Jun 13, 2023 at 6:03=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
+te:
+> > I tried proposing an idea in
+> > https://patchwork.kernel.org/project/netdevbpf/patch/20220609234601.202=
+6362-1-kpsingh@kernel.org/
+> >  as an LSM_HOOK_NO_EFFECT but that did not seemed to have stuck.
+>=20
+> It looks like this was posted about a month before I became
+> responsible for the LSM layer as a whole, and likely was lost (at
+> least on the LSM side of things) as a result.
+>=20
+> I would much rather see a standalone fix to address the unintended LSM
+> interactions, then the static call performance improvements in a
+> separate patchset.
 
-Also, mentioning -ENOMEM as the only possible error is not correct. For
-example, evm_inode_init_security() could return -ENOKEY.
+Please allow me to revive this old thread. I learned about this effort
+only recently and I'm interested into it.
 
-Fix these issues in the documentation of security_inode_init_security().
+Looking at patch 4/4 from this series, it *think* it's doable to
+extract it from the series and make it work standalone. If so, would
+that approach be ok from a LSM point of view?
 
-Fixes: 6bcdfd2cac55 ("security: Allow all LSMs to provide xattrs for inode_init_security hook")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/security.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+One thing that I personally don't understand in said patch is how the
+'__ro_after_init' annotation for the bpf_lsm_hooks fits the run-time
+'default_state' changes?!?
 
-diff --git a/security/security.c b/security/security.c
-index cfdd0cbbcb9..f86567083e6 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1604,8 +1604,8 @@ EXPORT_SYMBOL(security_dentry_create_files_as);
-  * a security attribute on this particular inode, then it should return
-  * -EOPNOTSUPP to skip this processing.
-  *
-- * Return: Returns 0 on success, -EOPNOTSUPP if no security attribute is
-- * needed, or -ENOMEM on memory allocation failure.
-+ * Return: Returns 0 if the LSM successfully initialized all of the inode
-+ *         security attributes that are required, negative values otherwise.
-  */
- int security_inode_init_security(struct inode *inode, struct inode *dir,
- 				 const struct qstr *qstr,
--- 
-2.34.1
+Cheers,
+
+Paolo
 
