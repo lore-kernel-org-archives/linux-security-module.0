@@ -2,162 +2,151 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD63C001DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jul 2023 16:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A133FC001DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jul 2023 17:20:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233149AbjGZQAI (ORCPT
+        id S232448AbjGZRUI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jul 2023 12:00:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58140 "EHLO
+        Wed, 26 Jul 2023 13:20:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234826AbjGZP76 (ORCPT
+        with ESMTP id S232358AbjGZRUC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jul 2023 11:59:58 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E805E19A4
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Jul 2023 08:59:55 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-c8f360a07a2so6265450276.2
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Jul 2023 08:59:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1690387195; x=1690991995;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=x1RCz9AGh0t/+COzjYLcha5fkSMq/GNrC4CuEfgGTfc=;
-        b=ypSxifbz+3xr2TyQi3H8IoM4jyz7RGQWDnGcHi1NC0Po8RTEHh8icWGPEeM5z47awl
-         loHCPZy4rtZMbUI9RqdI0QLfF+ad98/C7r2wxAa7ZpGCgkUVuuHTSwwJ1OUjNqHnXY8X
-         84BBat8mly4SBV0f6KqsOvHk8cSJA6wdZ1HsQOFr2IirR9RtsavVXkabaGLdXW2RSaSS
-         UJmT6LqQAsULk7Nz99DvDaEAqSJ5Xa6WPtogY6EBxsD6vOblRb8mRKx+BIAVyZOlnkaE
-         pEMJT5wcLP195pWDDcCypB4wv+dW/iWZkWl4YuLww/x6MLh6go/yMgsbLUu6B2dDA/yw
-         w4bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690387195; x=1690991995;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x1RCz9AGh0t/+COzjYLcha5fkSMq/GNrC4CuEfgGTfc=;
-        b=UUE1tHp7UXxYM+XJffbasroH+qd4sYsAY5pgQlElXcga3XwhGMnx/AgHQkCxVIIJ/I
-         +ApFB7pxscDIbGRXV3NGgmuqtNT1ZgAPH1nS5eDeQw/IMMuN2Ojek8OBBfsnWQwVxn8F
-         wO7FFfNL1nmgnTfGTTDV8uKtqb6krSIX+gJWofOG+5IQpqMWG7ARlFyhioHu5oVGlvwG
-         sT6AWYKs24sUIZHe7/1Rcsu2bBA7WZH+WVmdjhxad5Y+YPUbqtstuFfeYpq9DN2bT/7u
-         HLMM/MuMFcuK2FSDNUivpa6owmgpMG3Gapkd6aF3OdZUhZZhZS2nSYo6+WUiynsX5hqo
-         +J/Q==
-X-Gm-Message-State: ABy/qLaf4UTwqjIll5z0+GvvprZa1ZisHC7rFNLjikGgsja40RXJfErS
-        HAjXZw28XjyxvUC0b6rTEDu3w+6DSVg=
-X-Google-Smtp-Source: APBJJlE6mP/UcpH4lPNK9j4UUpMqMy7oSio4zbtJsZXhMStHU1Br/fIarHdKjyAaokfpTf45S20N2ryKLpo=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:99c8:0:b0:d1c:e102:95a5 with SMTP id
- q8-20020a2599c8000000b00d1ce10295a5mr15014ybo.7.1690387195164; Wed, 26 Jul
- 2023 08:59:55 -0700 (PDT)
-Date:   Wed, 26 Jul 2023 08:59:53 -0700
-In-Reply-To: <ZL4BiQWihfrD0TOJ@yilunxu-OptiPlex-7050>
-Mime-Version: 1.0
-References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-9-seanjc@google.com>
- <ZL4BiQWihfrD0TOJ@yilunxu-OptiPlex-7050>
-Message-ID: <ZMFC+V6Llv1JWLEt@google.com>
-Subject: Re: [RFC PATCH v11 08/29] KVM: Introduce per-page memory attributes
-From:   Sean Christopherson <seanjc@google.com>
-To:     Xu Yilun <yilun.xu@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Wed, 26 Jul 2023 13:20:02 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66CE82706;
+        Wed, 26 Jul 2023 10:19:55 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36QGlQu6027300;
+        Wed, 26 Jul 2023 17:18:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : from : subject : to : cc : references : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=ip3sa1zKMQ2zxWsxMFPxdq3PaMdI/MwxyZTVXbJTpvs=;
+ b=i2RDq/0ouE1p0Qk33YvTF/NHZO7HzDwmf4G6/X9boSMShdSMP7py+5eEipe35xBxMlaG
+ MdcVym7bNRuamvdEEm03a7KedxDMBhu4/3t7mYSxCf6H2g1c16fbfn2afIlrjMD4BlqY
+ xP9K0s7wqqxnYtklUY6zEPCt5WBxv5DWfKOuX9t4Dy/V4/ierZhWKSvTlbyhoxwnwNPq
+ ndGmjKB2WdSLWa4i2eYGe9wKyhXrHRAbT8uzTpMFrHrRJNkGvm+Rc9VeKdzXH4EWUj1x
+ /2Hf+Oh7Ysdzl9v2/c/1CZ2hi3Pwn8Avzu+8uGCTp8vnPqbIEM/iSFctK4eEqwNDg/D8 rw== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s34x6gffc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 26 Jul 2023 17:18:39 +0000
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36QHIcJQ030805
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 26 Jul 2023 17:18:38 GMT
+Received: from [10.71.109.50] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 26 Jul
+ 2023 10:18:37 -0700
+Message-ID: <8f7ea958-7caa-a185-10d2-900024aeddf0@quicinc.com>
+Date:   Wed, 26 Jul 2023 10:18:37 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+From:   Elliot Berman <quic_eberman@quicinc.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+To:     Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
         Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        "Michael Ellerman" <mpe@ellerman.id.au>,
         Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Paul Walmsley" <paul.walmsley@sifive.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
         "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>
+CC:     <kvm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.linux.dev>, <linux-mips@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <kvm-riscv@lists.infradead.org>,
+        <linux-riscv@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
         Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
+        "Fuad Tabba" <tabba@google.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Yu Zhang <yu.c.zhang@linux.intel.com>,
         Vishal Annapurve <vannapurve@google.com>,
         Ackerley Tng <ackerleytng@google.com>,
         Maciej Szmigiero <mail@maciej.szmigiero.name>,
         Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
+        "David Hildenbrand" <david@redhat.com>,
         Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
+        "Michael Roth" <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>,
         Liam Merwick <liam.merwick@oracle.com>,
         Isaku Yamahata <isaku.yamahata@gmail.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+References: <20230718234512.1690985-1-seanjc@google.com>
+ <20230718234512.1690985-13-seanjc@google.com>
+Content-Language: en-US
+In-Reply-To: <20230718234512.1690985-13-seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: hvBAyKu5NMlIhf3rhtakVUP0GpxUNjz7
+X-Proofpoint-ORIG-GUID: hvBAyKu5NMlIhf3rhtakVUP0GpxUNjz7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-26_08,2023-07-26_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ lowpriorityscore=0 malwarescore=0 adultscore=0 impostorscore=0 mlxscore=0
+ bulkscore=0 spamscore=0 clxscore=1011 phishscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307260154
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 24, 2023, Xu Yilun wrote:
-> On 2023-07-18 at 16:44:51 -0700, Sean Christopherson wrote:
-> > @@ -1346,6 +1350,9 @@ static void kvm_destroy_vm(struct kvm *kvm)
-> >  		kvm_free_memslots(kvm, &kvm->__memslots[i][0]);
-> >  		kvm_free_memslots(kvm, &kvm->__memslots[i][1]);
-> >  	}
-> > +#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
-> > +	xa_destroy(&kvm->mem_attr_array);
-> > +#endif
-> 
-> Is it better to make the destruction in reverse order from the creation?
 
-Yeah.  It _shoudn't_ matter, but there's no reason not keep things tidy and
-consistent.
 
-> To put xa_destroy(&kvm->mem_attr_array) after cleanup_srcu_struct(&kvm->srcu),
-> or put xa_init(&kvm->mem_attr_array) after init_srcu_struct(&kvm->irq_srcu).
+On 7/18/2023 4:44 PM, Sean Christopherson wrote:
+> TODO
+  <snip>
+> diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+> index 6325d1d0e90f..15041aa7d9ae 100644
+> --- a/include/uapi/linux/magic.h
+> +++ b/include/uapi/linux/magic.h
+> @@ -101,5 +101,6 @@
+>   #define DMA_BUF_MAGIC		0x444d4142	/* "DMAB" */
+>   #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
+>   #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
+> +#define GUEST_MEMORY_MAGIC	0x474d454d	/* "GMEM" */
 
-The former, because init_srcu_struct() can fail (allocates memory), whereas
-xa_init() is a "pure" initialization routine.
 
-> >  	cleanup_srcu_struct(&kvm->irq_srcu);
-> >  	cleanup_srcu_struct(&kvm->srcu);
-> >  	kvm_arch_free_vm(kvm);
-> > @@ -2346,6 +2353,145 @@ static int kvm_vm_ioctl_clear_dirty_log(struct kvm *kvm,
-> >  }
-> >  #endif /* CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT */
-> 
-> [...]
-> 
-> > +static int kvm_vm_ioctl_set_mem_attributes(struct kvm *kvm,
-> > +					   struct kvm_memory_attributes *attrs)
-> > +{
-> > +	gfn_t start, end;
-> > +
-> > +	/* flags is currently not used. */
-> > +	if (attrs->flags)
-> > +		return -EINVAL;
-> > +	if (attrs->attributes & ~kvm_supported_mem_attributes(kvm))
-> > +		return -EINVAL;
-> > +	if (attrs->size == 0 || attrs->address + attrs->size < attrs->address)
-> > +		return -EINVAL;
-> > +	if (!PAGE_ALIGNED(attrs->address) || !PAGE_ALIGNED(attrs->size))
-> > +		return -EINVAL;
-> > +
-> > +	start = attrs->address >> PAGE_SHIFT;
-> > +	end = (attrs->address + attrs->size - 1 + PAGE_SIZE) >> PAGE_SHIFT;
-> 
-> As the attrs->address/size are both garanteed to be non-zero, non-wrap
-> and page aligned in prevous check. Is it OK to simplify the calculation,
-> like:
-> 
->   end = (attrs->address + attrs->size) >> PAGE_SHIFT;
+Should this be:
 
-Yes, that should work.
+#define GUEST_MEMORY_KVM_MAGIC
 
-Chao, am I missing something?  Or did we just end up with unnecessarly convoluted
-code as things evolved?
+or KVM_GUEST_MEMORY_KVM_MAGIC?
 
-> > +
-> > +	if (WARN_ON_ONCE(start == end))
-> > +		return -EINVAL;
-> 
-> Also, is this check possible to be hit? Maybe remove it?
+BALLOON_KVM_MAGIC is KVM-specific few lines above.
 
-It should be impossible to, hence the WARN.  I added the check for two reasons:
-(1) to help document that end is exclusive, and (2) to guard against future bugs.
+---
+
+Originally, I was planning to use the generic guest memfd infrastructure 
+to support Gunyah hypervisor, however I see that's probably not going to 
+be possible now that the guest memfd implementation is KVM-specific. I 
+think this is good for both KVM and Gunyah as there will be some Gunyah 
+specifics and some KVM specifics in each of implementation, as you 
+mentioned in the previous series.
+
+I'll go through series over next week or so and I'll try to find how 
+much similar Gunyah guest mem fd implementation would be and we can see 
+if it's better to pull whatever that ends up being into a common 
+implementation? We could also agree to have completely divergent fd 
+implementations like we do for the UAPI. Thoughts?
+
+Thanks,
+Elliot
+
+  <snip>
