@@ -2,60 +2,60 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B53B5C001B0
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jul 2023 14:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD63C001DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jul 2023 16:00:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234513AbjGZOZK (ORCPT
+        id S233149AbjGZQAI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jul 2023 10:25:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50236 "EHLO
+        Wed, 26 Jul 2023 12:00:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234364AbjGZOZE (ORCPT
+        with ESMTP id S234826AbjGZP76 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jul 2023 10:25:04 -0400
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E842A1A8
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Jul 2023 07:25:01 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5840ea40c59so32226007b3.2
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Jul 2023 07:25:01 -0700 (PDT)
+        Wed, 26 Jul 2023 11:59:58 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E805E19A4
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Jul 2023 08:59:55 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-c8f360a07a2so6265450276.2
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Jul 2023 08:59:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1690381501; x=1690986301;
+        d=google.com; s=20221208; t=1690387195; x=1690991995;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mt8/YY3u8LjsBjr8d6/ke2ZW25YHueLUKLJjDJYMc8s=;
-        b=KwMaCkiB4xAqGBUh9OF2kV0ZTXZJ9t/BQNvELYTboh2nFXRCb/O6mzI5Rf4+JkOSUf
-         GbfKDvzjuzeoTYk+8UzFDnEFGCf4Xp/4j132VlBFiOap0dqwF0d+IWavL7GkLuWIPxaf
-         FtFh1NcigPTHGOQymzspNYZcGJWMeYjGrAKFBYQg3vkICZKAIWBqnifvNeqq77Udkh7Z
-         xGehHXpHV6lJVR2/PB6tUzMEDhiwA5lq38Ga3ndr8/43j3+UY7kRIeUxbAwefFFreB6b
-         OU07H0FnfDMXq+of8q/ygEkV9SZmVl7edMM6TzYoGxGd/1xqW6Xr5wUrtaTzZVCwe9dk
-         Dlpw==
+        bh=x1RCz9AGh0t/+COzjYLcha5fkSMq/GNrC4CuEfgGTfc=;
+        b=ypSxifbz+3xr2TyQi3H8IoM4jyz7RGQWDnGcHi1NC0Po8RTEHh8icWGPEeM5z47awl
+         loHCPZy4rtZMbUI9RqdI0QLfF+ad98/C7r2wxAa7ZpGCgkUVuuHTSwwJ1OUjNqHnXY8X
+         84BBat8mly4SBV0f6KqsOvHk8cSJA6wdZ1HsQOFr2IirR9RtsavVXkabaGLdXW2RSaSS
+         UJmT6LqQAsULk7Nz99DvDaEAqSJ5Xa6WPtogY6EBxsD6vOblRb8mRKx+BIAVyZOlnkaE
+         pEMJT5wcLP195pWDDcCypB4wv+dW/iWZkWl4YuLww/x6MLh6go/yMgsbLUu6B2dDA/yw
+         w4bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690381501; x=1690986301;
+        d=1e100.net; s=20221208; t=1690387195; x=1690991995;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mt8/YY3u8LjsBjr8d6/ke2ZW25YHueLUKLJjDJYMc8s=;
-        b=iWn+4xq+444JZ3P4+HsG1PmedZ9s/Lk1QskN6tXE1w6EIhUdFu/3D1Y1WZZyDyQI/p
-         tt9gfITZcatXPvGbxZrzn43fNYKW7nocxk6rIL7jOBD1ue3LpqpqZVIgyjYkhCANislH
-         mJbweTjdmy7z7t/OpGsS0MRnwJGLCPWt/91mMxunGYZkUgT//s7ko5J3GXD3vHbabVn0
-         FftUeJZARisuJ3wvy1pU5HmxOKRoUuOkqSmJyMH7eIvgqbjvbcyr/UoCst5DO/n6/udw
-         9NYMhKDL61b5NrPUxPikRvCdBY+HvyZBXWI3Ue5DQ4jS3LYHB9BW83XRXuq2Cr1WJVwT
-         z+nQ==
-X-Gm-Message-State: ABy/qLbcM40y/3DEhTEc4ScQ77HRBvr414FzoXsY7iSLg/TyvwA6+11E
-        1RfedR1KVe5c0mRyJVeDgRUxnjRLli0=
-X-Google-Smtp-Source: APBJJlHpunM1lrfEfJpa6UtG2AaqQE17ubaKuYzputooU8ueGDVFO/y80053uMgFIUrJA+dTGv8yhoGEgv0=
+        bh=x1RCz9AGh0t/+COzjYLcha5fkSMq/GNrC4CuEfgGTfc=;
+        b=UUE1tHp7UXxYM+XJffbasroH+qd4sYsAY5pgQlElXcga3XwhGMnx/AgHQkCxVIIJ/I
+         +ApFB7pxscDIbGRXV3NGgmuqtNT1ZgAPH1nS5eDeQw/IMMuN2Ojek8OBBfsnWQwVxn8F
+         wO7FFfNL1nmgnTfGTTDV8uKtqb6krSIX+gJWofOG+5IQpqMWG7ARlFyhioHu5oVGlvwG
+         sT6AWYKs24sUIZHe7/1Rcsu2bBA7WZH+WVmdjhxad5Y+YPUbqtstuFfeYpq9DN2bT/7u
+         HLMM/MuMFcuK2FSDNUivpa6owmgpMG3Gapkd6aF3OdZUhZZhZS2nSYo6+WUiynsX5hqo
+         +J/Q==
+X-Gm-Message-State: ABy/qLaf4UTwqjIll5z0+GvvprZa1ZisHC7rFNLjikGgsja40RXJfErS
+        HAjXZw28XjyxvUC0b6rTEDu3w+6DSVg=
+X-Google-Smtp-Source: APBJJlE6mP/UcpH4lPNK9j4UUpMqMy7oSio4zbtJsZXhMStHU1Br/fIarHdKjyAaokfpTf45S20N2ryKLpo=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a81:ac60:0:b0:576:de5f:95e1 with SMTP id
- z32-20020a81ac60000000b00576de5f95e1mr20181ywj.1.1690381501073; Wed, 26 Jul
- 2023 07:25:01 -0700 (PDT)
-Date:   Wed, 26 Jul 2023 07:24:59 -0700
-In-Reply-To: <2f98a32c-bd3d-4890-b757-4d2f67a3b1a7@amd.com>
+ (user=seanjc job=sendgmr) by 2002:a25:99c8:0:b0:d1c:e102:95a5 with SMTP id
+ q8-20020a2599c8000000b00d1ce10295a5mr15014ybo.7.1690387195164; Wed, 26 Jul
+ 2023 08:59:55 -0700 (PDT)
+Date:   Wed, 26 Jul 2023 08:59:53 -0700
+In-Reply-To: <ZL4BiQWihfrD0TOJ@yilunxu-OptiPlex-7050>
 Mime-Version: 1.0
-References: <20230718234512.1690985-1-seanjc@google.com> <110f1aa0-7fcd-1287-701a-89c2203f0ac2@amd.com>
- <ZL6uMk/8UeuGj8CP@google.com> <2f98a32c-bd3d-4890-b757-4d2f67a3b1a7@amd.com>
-Message-ID: <ZMEsuyqHhp1DAVdR@google.com>
-Subject: Re: [RFC PATCH v11 00/29] KVM: guest_memfd() and per-page attributes
+References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-9-seanjc@google.com>
+ <ZL4BiQWihfrD0TOJ@yilunxu-OptiPlex-7050>
+Message-ID: <ZMFC+V6Llv1JWLEt@google.com>
+Subject: Re: [RFC PATCH v11 08/29] KVM: Introduce per-page memory attributes
 From:   Sean Christopherson <seanjc@google.com>
-To:     "Nikunj A. Dadhania" <nikunj@amd.com>
+To:     Xu Yilun <yilun.xu@intel.com>
 Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
         Huacai Chen <chenhuacai@kernel.org>,
@@ -94,49 +94,70 @@ Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 26, 2023, Nikunj A. Dadhania wrote:
-> Hi Sean,
+On Mon, Jul 24, 2023, Xu Yilun wrote:
+> On 2023-07-18 at 16:44:51 -0700, Sean Christopherson wrote:
+> > @@ -1346,6 +1350,9 @@ static void kvm_destroy_vm(struct kvm *kvm)
+> >  		kvm_free_memslots(kvm, &kvm->__memslots[i][0]);
+> >  		kvm_free_memslots(kvm, &kvm->__memslots[i][1]);
+> >  	}
+> > +#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
+> > +	xa_destroy(&kvm->mem_attr_array);
+> > +#endif
 > 
-> On 7/24/2023 10:30 PM, Sean Christopherson wrote:
-> >>   Starting an SNP guest with 40G memory with memory interleave between
-> >>   Node2 and Node3
-> >>
-> >>   $ numactl -i 2,3 ./bootg_snp.sh
-> >>
-> >>     PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-> >>  242179 root      20   0   40.4g  99580  51676 S  78.0   0.0   0:56.58 qemu-system-x86
-> >>
-> >>   -> Incorrect process resident memory and shared memory is reported
-> > 
-> > I don't know that I would call these "incorrect".  Shared memory definitely is
-> > correct, because by definition guest_memfd isn't shared.  RSS is less clear cut;
-> > gmem memory is resident in RAM, but if we show gmem in RSS then we'll end up with
-> > scenarios where RSS > VIRT, which will be quite confusing for unaware users (I'm
-> > assuming the 40g of VIRT here comes from QEMU mapping the shared half of gmem
-> > memslots).
+> Is it better to make the destruction in reverse order from the creation?
+
+Yeah.  It _shoudn't_ matter, but there's no reason not keep things tidy and
+consistent.
+
+> To put xa_destroy(&kvm->mem_attr_array) after cleanup_srcu_struct(&kvm->srcu),
+> or put xa_init(&kvm->mem_attr_array) after init_srcu_struct(&kvm->irq_srcu).
+
+The former, because init_srcu_struct() can fail (allocates memory), whereas
+xa_init() is a "pure" initialization routine.
+
+> >  	cleanup_srcu_struct(&kvm->irq_srcu);
+> >  	cleanup_srcu_struct(&kvm->srcu);
+> >  	kvm_arch_free_vm(kvm);
+> > @@ -2346,6 +2353,145 @@ static int kvm_vm_ioctl_clear_dirty_log(struct kvm *kvm,
+> >  }
+> >  #endif /* CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT */
 > 
-> I am not sure why will RSS exceed the VIRT, it should be at max 40G (assuming all the
-> memory is private)
+> [...]
+> 
+> > +static int kvm_vm_ioctl_set_mem_attributes(struct kvm *kvm,
+> > +					   struct kvm_memory_attributes *attrs)
+> > +{
+> > +	gfn_t start, end;
+> > +
+> > +	/* flags is currently not used. */
+> > +	if (attrs->flags)
+> > +		return -EINVAL;
+> > +	if (attrs->attributes & ~kvm_supported_mem_attributes(kvm))
+> > +		return -EINVAL;
+> > +	if (attrs->size == 0 || attrs->address + attrs->size < attrs->address)
+> > +		return -EINVAL;
+> > +	if (!PAGE_ALIGNED(attrs->address) || !PAGE_ALIGNED(attrs->size))
+> > +		return -EINVAL;
+> > +
+> > +	start = attrs->address >> PAGE_SHIFT;
+> > +	end = (attrs->address + attrs->size - 1 + PAGE_SIZE) >> PAGE_SHIFT;
+> 
+> As the attrs->address/size are both garanteed to be non-zero, non-wrap
+> and page aligned in prevous check. Is it OK to simplify the calculation,
+> like:
+> 
+>   end = (attrs->address + attrs->size) >> PAGE_SHIFT;
 
-And also assuming that (a) userspace mmap()'d the shared side of things 1:1 with
-private memory and (b) that the shared mappings have not been populated.   Those
-assumptions will mostly probably hold true for QEMU, but kernel correctness
-shouldn't depend on assumptions about one specific userspace application.
+Yes, that should work.
 
-> >>   /proc/<qemu pid>/smaps
-> >>   7f528be00000-7f5c8be00000 rw-p 00000000 00:01 26629                      /memfd:memory-backend-memfd-shared (deleted)
-> >>   7f5c90200000-7f5c90220000 rw-s 00000000 00:01 44033                      /memfd:rom-backend-memfd-shared (deleted)
-> >>   7f5c90400000-7f5c90420000 rw-s 00000000 00:01 44032                      /memfd:rom-backend-memfd-shared (deleted)
-> >>   7f5c90800000-7f5c90b7c000 rw-s 00000000 00:01 1025                       /memfd:rom-backend-memfd-shared (deleted)
-> > 
-> > This is all expected, and IMO correct.  There are no userspace mappings, and so
-> > not accounting anything is working as intended.
-> Doesn't sound that correct, if 10 SNP guests are running each using 10GB, how
-> would we know who is using 100GB of memory?
+Chao, am I missing something?  Or did we just end up with unnecessarly convoluted
+code as things evolved?
 
-It's correct with respect to what the interfaces show, which is how much memory
-is *mapped* into userspace.
+> > +
+> > +	if (WARN_ON_ONCE(start == end))
+> > +		return -EINVAL;
+> 
+> Also, is this check possible to be hit? Maybe remove it?
 
-As I said (or at least tried to say) in my first reply, I am not against exposing
-memory usage to userspace via stats, only that it's not obvious to me that the
-existing VMA-based stats are the most appropriate way to surface this information.
+It should be impossible to, hence the WARN.  I added the check for two reasons:
+(1) to help document that end is exclusive, and (2) to guard against future bugs.
