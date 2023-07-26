@@ -2,121 +2,126 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 890ADEB64DD
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jul 2023 02:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C57FC0015E
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jul 2023 07:33:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230249AbjGZCJD (ORCPT
+        id S230119AbjGZHdU convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Jul 2023 22:09:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51314 "EHLO
+        Wed, 26 Jul 2023 03:33:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230116AbjGZCJB (ORCPT
+        with ESMTP id S229968AbjGZHc3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Jul 2023 22:09:01 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 111F8212A
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jul 2023 19:08:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690337292;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=95LJOf0z/Eno4OCFcFMWl++emGtMZCHYgwGRjUbJaTM=;
-        b=iRJGJLGQXNZX0OsPglxB2JZ7FDlyYxjCFXT+I8brKarrgmqngF6qGriQ4vH1MHj/u77sRY
-        OMZqxj5i60dFmgR/6uin7wPB6Qy5klGKBvKVGgYK3l75KYMziUbsMkWsZSp2FG2/2Zvw+g
-        UQK3JVwkqUhfVuB5JLwtxhcvSB60nIQ=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-453-3xkmOnXpPweG5CYq7POv_g-1; Tue, 25 Jul 2023 22:08:11 -0400
-X-MC-Unique: 3xkmOnXpPweG5CYq7POv_g-1
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1bb8f751372so30350525ad.0
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jul 2023 19:08:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690337290; x=1690942090;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=95LJOf0z/Eno4OCFcFMWl++emGtMZCHYgwGRjUbJaTM=;
-        b=W6ZGRgWaRpihlitrL67KQ8HFWPjOxiGsEneMDAMdEvfK7k+jPBhNwl9UzGNzeV22dF
-         AAzOSzEaxSekC0ZBa1GPgXfmlvxJL4NT1V55s17gBDRWBb6D/3E9t6wyBvW7qvgBMdpE
-         05BWBcrkNmkx/kj+GAPxnpAxV4XYV5f3Pn8TKRbqRWc9UCVwzImjMCFxFMlU16sky8Qo
-         MsAxIT9hglsboczaubktgn71eMzbQGB/I8jFM5URqGntxzT1lRKzVM/fCcbhFy3RTa7l
-         b7KqKQq3TtVCT+WX3CF8clD9gU8PKDbEOq6Rnbwl0GH4GmaTWbsy3SXgEc9Z2l0ZPJSf
-         7B4A==
-X-Gm-Message-State: ABy/qLa2mtVCV75jhfUacvrEKOChK+5141BAEptgpYRgcFhV0MQz7X8w
-        lMmRPBRKUzToOOArCy45If6uo7lpjKdcxnYMDdM9YNVIHUL5wndvNyGlXToYb2OjjeiyB7p2YVt
-        nQ8GYkLvWiJVWEhx3E0ZuCC2UXzotJZONOcZ9
-X-Received: by 2002:a17:902:ce81:b0:1b8:adc:7c3d with SMTP id f1-20020a170902ce8100b001b80adc7c3dmr1085529plg.40.1690337289915;
-        Tue, 25 Jul 2023 19:08:09 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlFME03RuiNFMjrYDkMFSyzXe5DoUsVifAoxnjrckHRpcYIqgyVS/r0ZzVYgv+QZMxRzMOzqxA==
-X-Received: by 2002:a17:902:ce81:b0:1b8:adc:7c3d with SMTP id f1-20020a170902ce8100b001b80adc7c3dmr1085513plg.40.1690337289554;
-        Tue, 25 Jul 2023 19:08:09 -0700 (PDT)
-Received: from localhost ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id q8-20020a170902788800b001b9fef7f454sm11760512pll.73.2023.07.25.19.08.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 19:08:09 -0700 (PDT)
-From:   Coiby Xu <coxu@redhat.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] ima: require signed IMA policy when UEFI secure boot is enabled
-Date:   Wed, 26 Jul 2023 10:08:05 +0800
-Message-ID: <20230726020806.926734-1-coxu@redhat.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230703115442.129725-1-coxu@redhat.com>
-References: <20230703115442.129725-1-coxu@redhat.com>
+        Wed, 26 Jul 2023 03:32:29 -0400
+Received: from frasgout11.his.huawei.com (unknown [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2049C49DE;
+        Wed, 26 Jul 2023 00:30:05 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4R9lcd45scz9v7Vl;
+        Wed, 26 Jul 2023 15:18:41 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwBn7glpy8BkKDwSBQ--.33041S2;
+        Wed, 26 Jul 2023 08:29:52 +0100 (CET)
+Message-ID: <3dc4fd2a452d1c0e33d27731de626d2791577274.camel@huaweicloud.com>
+Subject: Re: [PATCH] security: Fix ret values doc for
+ security_inode_init_security()
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     jmorris@namei.org, serge@hallyn.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 26 Jul 2023 09:29:42 +0200
+In-Reply-To: <CAHC9VhSbya3Q-VM8v43qkQDWCuYWFqQ801j9_HfdwWJ9RLzkjw@mail.gmail.com>
+References: <20230724145204.534703-1-roberto.sassu@huaweicloud.com>
+         <CAHC9VhQcVSX+kZ3PMJGJ3i-qxv9g3iP_Y4At5VCV8qSoJYj8Cg@mail.gmail.com>
+         <a582bac4f709fe28dc17d9023ac78b53a2a1ac64.camel@huaweicloud.com>
+         <CAHC9VhSbya3Q-VM8v43qkQDWCuYWFqQ801j9_HfdwWJ9RLzkjw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.4-0ubuntu1 
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="US-ASCII"; x-default=true
+X-CM-TRANSID: LxC2BwBn7glpy8BkKDwSBQ--.33041S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF18KryxJryrtw13uryxGrg_yoW5Ww13pF
+        WUK3Wj9rn8tFW7G3sayF17W3WSk3yfGr4DWrs0vr17Za1q9wn3Kr1FkF45ury7Gr48Aw10
+        vw429F43Cr1DArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUgmb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+        AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
+        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
+        IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
+        KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAKBF1jj4z07gABsq
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-With commit 099f26f22f58 ("integrity: machine keyring CA
-configuration"), users are able to add custom IMA CA keys via
-MOK.  This allows users to sign their own IMA polices without
-recompiling the kernel. For the sake of security, mandate signed IMA
-policy when UEFI secure boot is enabled.
+On Tue, 2023-07-25 at 14:38 -0400, Paul Moore wrote:
+> On Tue, Jul 25, 2023 at 3:02 AM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > On Mon, 2023-07-24 at 17:54 -0400, Paul Moore wrote:
+> > > On Mon, Jul 24, 2023 at 10:52 AM Roberto Sassu
+> > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > 
+> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > 
+> > > > Commit 6bcdfd2cac55 ("security: Allow all LSMs to provide xattrs for
+> > > > inode_init_security hook") unified the !initxattrs and initxattrs cases. By
+> > > > doing that, security_inode_init_security() cannot return -EOPNOTSUPP
+> > > > anymore, as it is always replaced with zero at the end of the function.
+> > > > 
+> > > > Also, mentioning -ENOMEM as the only possible error is not correct. For
+> > > > example, evm_inode_init_security() could return -ENOKEY.
+> > > > 
+> > > > Fix these issues in the documentation of security_inode_init_security().
+> > > > 
+> > > > Fixes: 6bcdfd2cac55 ("security: Allow all LSMs to provide xattrs for inode_init_security hook")
+> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > ---
+> > > >  security/security.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/security/security.c b/security/security.c
+> > > > index cfdd0cbbcb9..5aa9cb91f0f 100644
+> > > > --- a/security/security.c
+> > > > +++ b/security/security.c
+> > > > @@ -1604,8 +1604,8 @@ EXPORT_SYMBOL(security_dentry_create_files_as);
+> > > >   * a security attribute on this particular inode, then it should return
+> > > >   * -EOPNOTSUPP to skip this processing.
+> > > >   *
+> > > > - * Return: Returns 0 on success, -EOPNOTSUPP if no security attribute is
+> > > > - * needed, or -ENOMEM on memory allocation failure.
+> > > > + * Return: Returns 0 on success or on -EOPNOTSUPP error, a negative value other
+> > > > + *         than -EOPNOTSUPP otherwise.
+> > > 
+> > > How about "Returns 0 if the LSM successfully initialized all of the
+> > > inode security attributes that are required, negative values
+> > > otherwise."?  The caller doesn't need to worry about the individual
+> > > LSMs returning -EOPNOTSUPP in the case of no security attributes, and
+> > > if they really care, they are likely reading the description above (or
+> > > the code) which explains it in much better detail.
+> > 
+> > Maybe this could be better:
+> > 
+> > Return 0 if security attributes initialization is successful or not
+> > necessary, a negative value otherwise.
+> 
+> Well, I'm trying to avoid differentiating between the non-zero, but
+> successful attribute initialization and the zero attribute case; from
+> a caller's perspective it doesn't matter (and why we don't
+> differentiate between the two with different error codes).  If the
+> distinction between the two states is important from a caller's
+> perspective, there should be different return codes.
 
-Note this change may affect existing users/tests i.e users won't be able
-to load an unsigned IMA policy when the IMA architecture specific policy
-is configured and UEFI secure boot is enabled.
+Ok, fine for me. I take your suggestion.
 
-Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Coiby Xu <coxu@redhat.com>
----
-v2
- - improve commit message [Mimi]
-  - explicitly mention the dependent commit
-  - add a note that the change will affect user space
- - remove "/* CONFIG_INTEGRITY_MACHINE_KEYRING .. */" to improve code
-   readability
----
- security/integrity/ima/ima_efi.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks
 
-diff --git a/security/integrity/ima/ima_efi.c b/security/integrity/ima/ima_efi.c
-index 9db66fe310d4..138029bfcce1 100644
---- a/security/integrity/ima/ima_efi.c
-+++ b/security/integrity/ima/ima_efi.c
-@@ -57,6 +57,9 @@ static const char * const sb_arch_rules[] = {
- 	"measure func=KEXEC_KERNEL_CHECK",
- #if !IS_ENABLED(CONFIG_MODULE_SIG)
- 	"appraise func=MODULE_CHECK appraise_type=imasig",
-+#endif
-+#if IS_ENABLED(CONFIG_INTEGRITY_MACHINE_KEYRING) && IS_ENABLED(CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY)
-+	"appraise func=POLICY_CHECK appraise_type=imasig",
- #endif
- 	"measure func=MODULE_CHECK",
- 	NULL
--- 
-2.41.0
+Roberto
 
