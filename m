@@ -2,62 +2,61 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E919C001E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jul 2023 19:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BDA2C001DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jul 2023 20:22:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232005AbjGZT2R (ORCPT
+        id S229762AbjGZUW2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jul 2023 15:28:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33178 "EHLO
+        Wed, 26 Jul 2023 16:22:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229868AbjGZT2P (ORCPT
+        with ESMTP id S230460AbjGZUW1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jul 2023 15:28:15 -0400
-Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99D182D44
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Jul 2023 12:28:13 -0700 (PDT)
-Received: by mail-pl1-x649.google.com with SMTP id d9443c01a7336-1bba7a32a40so1027005ad.0
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Jul 2023 12:28:13 -0700 (PDT)
+        Wed, 26 Jul 2023 16:22:27 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D618319B5
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Jul 2023 13:22:24 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-d063bd0bae8so158601276.0
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Jul 2023 13:22:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1690399693; x=1691004493;
+        d=google.com; s=20221208; t=1690402944; x=1691007744;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JT2UHI+2Np7L7QsdeetNAkLhraffv5kgEdfCjKl11Yk=;
-        b=VVF1b7RUawi3/QYYQt22u1jH5OUH1Tf8XnLnE4b/agwXthOwpe69728aWprc+cBAPp
-         m1NzpejyJPFn+J7cEl/k4Xfw7NV/DNs921DAj4mD25qN63m2UV8rxLRjeMa24TJWqXH7
-         YevHJEPTBXycw8cNMxRiQayY5davffRodPeaquNPMlG3yhTbW+l2TZNv0KoNxIAjUf1u
-         vx7QnvYOOpb+Nn9iea9EFg+zAfgVPq5/2O4eLtzlraYz5aepPr1S1PEGRUkv/ClpXjx1
-         oD0KN8QbT88DXT6sIsMyGXbNhhlwFsmmZRUM0BDYakuaZeCUCb/tpsShC/zQA5q7Janp
-         MXpA==
+        bh=wk8YN2z9DygnTN7wIkQ/drKhQeRLfAOWaFSkpwIJ9VA=;
+        b=eM8gatpIFAPsVcHsvCyPq5hyC8MsN3TVlS3mNniSEUN+A8XGjxiS8F6dC4aFmL513/
+         OKqKBd4JNqQZqMKS0xCiGe+t5AXNUTDm2VuHrYqk4zFosWdPFjPIB6URfw5vd93IMKdx
+         lKXXLluLhbwl+YjfsuqRPKzKU2+mG/aerZ1RHkgGlaQ2XngSQ4QWGzUzw8Bk02VhX6BY
+         iemdbo75Y0mm9KaGC6Z479jAT6buL5FMFb75fU2ROzDvErIFsnjLxci0m6st5PC1U67q
+         6FdRgc7HGPP7DF/FaK/f0cWfoJ+ZjAfbcmtP5i/qUasNowuJ11SfJCK8qdGxq6HB8Y5C
+         RWCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690399693; x=1691004493;
+        d=1e100.net; s=20221208; t=1690402944; x=1691007744;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JT2UHI+2Np7L7QsdeetNAkLhraffv5kgEdfCjKl11Yk=;
-        b=AC2RHPpgPPoDMqq5fMR1gnFv6nrkZ18nFWQGrLOGKPTntah/XcFTFd10YBema+SYwY
-         eBsoQhGdaWgc7MzSM4Q7wJPIBURSP68zQ3doGML5yHx4DytcGOrwQNC6/VvHmGUpdgIV
-         isd5yftcVlYj5v5ED3iJSq0HqNfj6Oui1b1lj1EYxctwOLYsblBCF5bLLroWVYUuq7Bb
-         kPc5Vn8kSF+X4ZuekIu47eX4qIw5f8itGxY7P7wpRCR7odhKNtCQPE0MSPTseYquhGzZ
-         csKZVqvYJ/ZlzpBYJJRYZh1G7aORw0xEfPQPMIEapm6JvSBiph/8GzOLCTsbuk7gJTo7
-         nZag==
-X-Gm-Message-State: ABy/qLbfUxHJG7wMZgGRYOvzyehwQbLeDhieUs1/pnSXU+Z9PiqyQlF5
-        hro5c8hDQY5LtsrzLMtbBMHgr9ParHk=
-X-Google-Smtp-Source: APBJJlGcmwLcdH6TXOymYc9nTB5UyZup+2YRvQp3iON5gHoKZStwU7nqu5mwxNJ6DvyQEbhf1ifDNjwDMJ4=
+        bh=wk8YN2z9DygnTN7wIkQ/drKhQeRLfAOWaFSkpwIJ9VA=;
+        b=hHSTCF0rLEWrtHTeeLBHTKG9QOGxoFMXLbf5FmzxcfOBSAdR1p3zJ2dQiewmi8eVWv
+         SRmzUJ1DnvCRNZlmyjRnMWWs2cVS7fTPBZ5HDGFyww8Xd+cipZ/LHletCwt0Y8mW0bth
+         t7HpSWCORdIFfp1cBTKvdqr47wmi+FQ5mfNSo2sgYdQClitqnTd82G//t/BO+l0Men2F
+         /WBx1KLXoOCtJ3zi5bDcWPjOpgfB8KPAL+9ufOwBe3k5FrQGoJTPRF90s0VkKl5nKVpu
+         afuk1DFhU9Z9tL6g90p4zxKOjQjTEtmu44LpxZmzk8fgAHp799XYJYDYy3h7tH6YFf9c
+         DfYQ==
+X-Gm-Message-State: ABy/qLacRmIQ6ozqD+oitGcznP6G4zotoG5KmTPX9D4rtiqoBvsPOn1C
+        /WP1mNf5d+/Aq92QqkK1u5bQuoG2zaM=
+X-Google-Smtp-Source: APBJJlHa4e7bNU/FXY+wuV4M+6WYSA4uQsVmjVu+paqFG49PZpexPl+XQpMgzwVCSNNiruIZErv3dNdZQXc=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:ce8b:b0:1b8:2055:fc1f with SMTP id
- f11-20020a170902ce8b00b001b82055fc1fmr13036plg.2.1690399693010; Wed, 26 Jul
- 2023 12:28:13 -0700 (PDT)
-Date:   Wed, 26 Jul 2023 12:28:11 -0700
-In-Reply-To: <8f7ea958-7caa-a185-10d2-900024aeddf0@quicinc.com>
+ (user=seanjc job=sendgmr) by 2002:a25:cf48:0:b0:d06:1a77:7d2 with SMTP id
+ f69-20020a25cf48000000b00d061a7707d2mr18632ybg.13.1690402944082; Wed, 26 Jul
+ 2023 13:22:24 -0700 (PDT)
+Date:   Wed, 26 Jul 2023 13:22:22 -0700
+In-Reply-To: <711f74d6-fe15-6bd4-a9b9-c4f178d95bf3@redhat.com>
 Mime-Version: 1.0
-References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-13-seanjc@google.com>
- <8f7ea958-7caa-a185-10d2-900024aeddf0@quicinc.com>
-Message-ID: <ZMFzyy5mZVxLn4uo@google.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
+References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-2-seanjc@google.com>
+ <711f74d6-fe15-6bd4-a9b9-c4f178d95bf3@redhat.com>
+Message-ID: <ZMGAfvzEkVphWPdZ@google.com>
+Subject: Re: [RFC PATCH v11 01/29] KVM: Wrap kvm_gfn_range.pte in a per-action union
 From:   Sean Christopherson <seanjc@google.com>
-To:     Elliot Berman <quic_eberman@quicinc.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
         Huacai Chen <chenhuacai@kernel.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
@@ -95,64 +94,72 @@ Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 26, 2023, Elliot Berman wrote:
+On Wed, Jul 19, 2023, Paolo Bonzini wrote:
+> On 7/19/23 01:44, Sean Christopherson wrote:
+> > +	BUILD_BUG_ON(sizeof(gfn_range.arg) != sizeof(gfn_range.arg.raw));
+> > +	BUILD_BUG_ON(sizeof(range->arg) != sizeof(range->arg.raw));
 > 
-> 
-> On 7/18/2023 4:44 PM, Sean Christopherson wrote:
-> > TODO
->  <snip>
-> > diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-> > index 6325d1d0e90f..15041aa7d9ae 100644
-> > --- a/include/uapi/linux/magic.h
-> > +++ b/include/uapi/linux/magic.h
-> > @@ -101,5 +101,6 @@
-> >   #define DMA_BUF_MAGIC		0x444d4142	/* "DMAB" */
-> >   #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
-> >   #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
-> > +#define GUEST_MEMORY_MAGIC	0x474d454d	/* "GMEM" */
-> 
-> 
-> Should this be:
-> 
-> #define GUEST_MEMORY_KVM_MAGIC
-> 
-> or KVM_GUEST_MEMORY_KVM_MAGIC?
-> 
-> BALLOON_KVM_MAGIC is KVM-specific few lines above.
+> I think these should be static assertions near the definition of the
+> structs.  However another possibility is to remove 'raw' and just assign the
+> whole union.
 
-Ah, good point.  My preference would be either KVM_GUEST_MEMORY_MAGIC or
-KVM_GUEST_MEMFD_MAGIC.  Though hopefully we don't actually need a dedicated
-filesystem, I _think_ it's unnecessary if we don't try to support userspace
-mounts.
+Duh, and use a named union.  I think when I first proposed this I forgot that
+a single value would be passed between kvm_hva_range *and* kvm_gfn_range, and so
+created an anonymous union without thinking about the impliciations.
 
-> ---
-> 
-> Originally, I was planning to use the generic guest memfd infrastructure to
-> support Gunyah hypervisor, however I see that's probably not going to be
-> possible now that the guest memfd implementation is KVM-specific. I think
-> this is good for both KVM and Gunyah as there will be some Gunyah specifics
-> and some KVM specifics in each of implementation, as you mentioned in the
-> previous series.
+A named union is _much_ cleaner.  I'll post a complete version of the below
+snippet as a standalone non-RFC patch.
 
-Yeah, that's where my headspace is at too.  Sharing the actual uAPI, and even
-internal APIs to some extent, doesn't save all that much, e.g. wiring up an ioctl()
-is the easy part.  Whereas I strongly suspect each hypervisor use case will want
-different semantics for the uAPI.
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 9d3ac7720da9..9125d0ab642d 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -256,11 +256,15 @@ int kvm_async_pf_wakeup_all(struct kvm_vcpu *vcpu);
+ #endif
+ 
+ #ifdef KVM_ARCH_WANT_MMU_NOTIFIER
++union kvm_mmu_notifier_arg {
++       pte_t pte;
++};
++
+ struct kvm_gfn_range {
+        struct kvm_memory_slot *slot;
+        gfn_t start;
+        gfn_t end;
+-       pte_t pte;
++       union kvm_mmu_notifier_arg arg;
+        bool may_block;
+ };
+ bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range);
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index dfbaafbe3a00..f84ef9399aee 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -526,7 +526,7 @@ typedef void (*on_unlock_fn_t)(struct kvm *kvm);
+ struct kvm_hva_range {
+        unsigned long start;
+        unsigned long end;
+-       pte_t pte;
++       union kvm_mmu_notifier_arg arg;
+        hva_handler_t handler;
+        on_lock_fn_t on_lock;
+        on_unlock_fn_t on_unlock;
+@@ -547,6 +547,8 @@ static void kvm_null_fn(void)
+ }
+ #define IS_KVM_NULL_FN(fn) ((fn) == (void *)kvm_null_fn)
+ 
++static const union kvm_mmu_notifier_arg KVM_NO_ARG;
++
+ /* Iterate over each memslot intersecting [start, last] (inclusive) range */
+ #define kvm_for_each_memslot_in_hva_range(node, slots, start, last)         \
+        for (node = interval_tree_iter_first(&slots->hva_tree, start, last); \
+@@ -591,7 +593,7 @@ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
+                         * bother making these conditional (to avoid writes on
+                         * the second or later invocation of the handler).
+                         */
+-                       gfn_range.pte = range->pte;
++                       gfn_range.arg = range->arg;
+                        gfn_range.may_block = range->may_block;
+ 
+                        /*
 
-> I'll go through series over next week or so and I'll try to find how much
-> similar Gunyah guest mem fd implementation would be and we can see if it's
-> better to pull whatever that ends up being into a common implementation?
-
-That would be awesome!  
-
-> We could also agree to have completely divergent fd implementations like we
-> do for the UAPI. Thoughts?
-
-I'd like to avoid _completely_ divergent implementations, e.g. the majority of
-kvm_gmem_allocate() and __kvm_gmem_create() isn't KVM specific.  I think there
-would be value in sharing the core allocation logic, even if the other details
-are different.  Especially if we fully commit to not supporting migration or
-swap, and decide to use xarray directly to manage folios instead of bouncing
-through the filemap APIs.
-
-Thanks!
