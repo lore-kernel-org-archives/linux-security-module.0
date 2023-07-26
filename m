@@ -2,126 +2,91 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C57FC0015E
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jul 2023 07:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E973C00528
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jul 2023 07:44:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230119AbjGZHdU convert rfc822-to-8bit (ORCPT
+        id S232297AbjGZHo3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jul 2023 03:33:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57572 "EHLO
+        Wed, 26 Jul 2023 03:44:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229968AbjGZHc3 (ORCPT
+        with ESMTP id S230140AbjGZHnx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jul 2023 03:32:29 -0400
+        Wed, 26 Jul 2023 03:43:53 -0400
 Received: from frasgout11.his.huawei.com (unknown [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2049C49DE;
-        Wed, 26 Jul 2023 00:30:05 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4R9lcd45scz9v7Vl;
-        Wed, 26 Jul 2023 15:18:41 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwBn7glpy8BkKDwSBQ--.33041S2;
-        Wed, 26 Jul 2023 08:29:52 +0100 (CET)
-Message-ID: <3dc4fd2a452d1c0e33d27731de626d2791577274.camel@huaweicloud.com>
-Subject: Re: [PATCH] security: Fix ret values doc for
- security_inode_init_security()
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 580D244B6;
+        Wed, 26 Jul 2023 00:39:32 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4R9lqX53bRz9v7VL;
+        Wed, 26 Jul 2023 15:28:08 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwA3CmGhzcBkURUHBQ--.31802S2;
+        Wed, 26 Jul 2023 08:39:19 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org,
+To:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Wed, 26 Jul 2023 09:29:42 +0200
-In-Reply-To: <CAHC9VhSbya3Q-VM8v43qkQDWCuYWFqQ801j9_HfdwWJ9RLzkjw@mail.gmail.com>
-References: <20230724145204.534703-1-roberto.sassu@huaweicloud.com>
-         <CAHC9VhQcVSX+kZ3PMJGJ3i-qxv9g3iP_Y4At5VCV8qSoJYj8Cg@mail.gmail.com>
-         <a582bac4f709fe28dc17d9023ac78b53a2a1ac64.camel@huaweicloud.com>
-         <CAHC9VhSbya3Q-VM8v43qkQDWCuYWFqQ801j9_HfdwWJ9RLzkjw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu1 
+Subject: [PATCH v2] security: Fix ret values doc for security_inode_init_security()
+Date:   Wed, 26 Jul 2023 09:39:05 +0200
+Message-Id: <20230726073905.1175826-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-CM-TRANSID: LxC2BwBn7glpy8BkKDwSBQ--.33041S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF18KryxJryrtw13uryxGrg_yoW5Ww13pF
-        WUK3Wj9rn8tFW7G3sayF17W3WSk3yfGr4DWrs0vr17Za1q9wn3Kr1FkF45ury7Gr48Aw10
-        vw429F43Cr1DArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgmb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GxC2BwA3CmGhzcBkURUHBQ--.31802S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zr1xKr17tFWUZr47ZrWxCrg_yoW8Xw1fpw
+        4UKFyjgr15tFy7Wrn5AF47u3WSkay5Gr4UGrs8Zr17A3WDurn3tr4FyF15ury3XrWUAw10
+        qw42kF43Jr1DAw7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUgEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
         6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
         vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
         AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-        AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
-        IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
-        KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAKBF1jj4z07gABsq
+        x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Y
+        z7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
+        AF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
+        IxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WF
+        yUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
+        CTnIWIevJa73UjIFyTuYvjxUOyCJDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAKBF1jj5DyKwAAs3
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2023-07-25 at 14:38 -0400, Paul Moore wrote:
-> On Tue, Jul 25, 2023 at 3:02 AM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > On Mon, 2023-07-24 at 17:54 -0400, Paul Moore wrote:
-> > > On Mon, Jul 24, 2023 at 10:52 AM Roberto Sassu
-> > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > 
-> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > 
-> > > > Commit 6bcdfd2cac55 ("security: Allow all LSMs to provide xattrs for
-> > > > inode_init_security hook") unified the !initxattrs and initxattrs cases. By
-> > > > doing that, security_inode_init_security() cannot return -EOPNOTSUPP
-> > > > anymore, as it is always replaced with zero at the end of the function.
-> > > > 
-> > > > Also, mentioning -ENOMEM as the only possible error is not correct. For
-> > > > example, evm_inode_init_security() could return -ENOKEY.
-> > > > 
-> > > > Fix these issues in the documentation of security_inode_init_security().
-> > > > 
-> > > > Fixes: 6bcdfd2cac55 ("security: Allow all LSMs to provide xattrs for inode_init_security hook")
-> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > ---
-> > > >  security/security.c | 4 ++--
-> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/security/security.c b/security/security.c
-> > > > index cfdd0cbbcb9..5aa9cb91f0f 100644
-> > > > --- a/security/security.c
-> > > > +++ b/security/security.c
-> > > > @@ -1604,8 +1604,8 @@ EXPORT_SYMBOL(security_dentry_create_files_as);
-> > > >   * a security attribute on this particular inode, then it should return
-> > > >   * -EOPNOTSUPP to skip this processing.
-> > > >   *
-> > > > - * Return: Returns 0 on success, -EOPNOTSUPP if no security attribute is
-> > > > - * needed, or -ENOMEM on memory allocation failure.
-> > > > + * Return: Returns 0 on success or on -EOPNOTSUPP error, a negative value other
-> > > > + *         than -EOPNOTSUPP otherwise.
-> > > 
-> > > How about "Returns 0 if the LSM successfully initialized all of the
-> > > inode security attributes that are required, negative values
-> > > otherwise."?  The caller doesn't need to worry about the individual
-> > > LSMs returning -EOPNOTSUPP in the case of no security attributes, and
-> > > if they really care, they are likely reading the description above (or
-> > > the code) which explains it in much better detail.
-> > 
-> > Maybe this could be better:
-> > 
-> > Return 0 if security attributes initialization is successful or not
-> > necessary, a negative value otherwise.
-> 
-> Well, I'm trying to avoid differentiating between the non-zero, but
-> successful attribute initialization and the zero attribute case; from
-> a caller's perspective it doesn't matter (and why we don't
-> differentiate between the two with different error codes).  If the
-> distinction between the two states is important from a caller's
-> perspective, there should be different return codes.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Ok, fine for me. I take your suggestion.
+Commit 6bcdfd2cac55 ("security: Allow all LSMs to provide xattrs for
+inode_init_security hook") unified the !initxattrs and initxattrs cases. By
+doing that, security_inode_init_security() cannot return -EOPNOTSUPP
+anymore, as it is always replaced with zero at the end of the function.
 
-Thanks
+Also, mentioning -ENOMEM as the only possible error is not correct. For
+example, evm_inode_init_security() could return -ENOKEY.
 
-Roberto
+Fix these issues in the documentation of security_inode_init_security().
+
+Fixes: 6bcdfd2cac55 ("security: Allow all LSMs to provide xattrs for inode_init_security hook")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/security.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/security.c b/security/security.c
+index cfdd0cbbcb9..f86567083e6 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1604,8 +1604,8 @@ EXPORT_SYMBOL(security_dentry_create_files_as);
+  * a security attribute on this particular inode, then it should return
+  * -EOPNOTSUPP to skip this processing.
+  *
+- * Return: Returns 0 on success, -EOPNOTSUPP if no security attribute is
+- * needed, or -ENOMEM on memory allocation failure.
++ * Return: Returns 0 if the LSM successfully initialized all of the inode
++ *         security attributes that are required, negative values otherwise.
+  */
+ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 				 const struct qstr *qstr,
+-- 
+2.34.1
 
