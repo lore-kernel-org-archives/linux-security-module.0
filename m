@@ -2,60 +2,61 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 053B6C001E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jul 2023 10:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA57C41513
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jul 2023 17:13:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233355AbjG0Kkf (ORCPT
+        id S232725AbjG0RNb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jul 2023 06:40:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35784 "EHLO
+        Thu, 27 Jul 2023 13:13:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233545AbjG0KkT (ORCPT
+        with ESMTP id S232450AbjG0RNT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jul 2023 06:40:19 -0400
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A87BE2701
-        for <linux-security-module@vger.kernel.org>; Thu, 27 Jul 2023 03:40:15 -0700 (PDT)
-Received: by mail-qv1-xf29.google.com with SMTP id 6a1803df08f44-63c70dc7ed2so5869126d6.0
-        for <linux-security-module@vger.kernel.org>; Thu, 27 Jul 2023 03:40:15 -0700 (PDT)
+        Thu, 27 Jul 2023 13:13:19 -0400
+Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97BBB30F7
+        for <linux-security-module@vger.kernel.org>; Thu, 27 Jul 2023 10:13:10 -0700 (PDT)
+Received: by mail-pl1-x64a.google.com with SMTP id d9443c01a7336-1bbb34b091dso8228785ad.0
+        for <linux-security-module@vger.kernel.org>; Thu, 27 Jul 2023 10:13:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1690454415; x=1691059215;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sndfUp5VQwyYdDkfd9c4UQTPXsXPqaVmv/x1Ijy8DrI=;
-        b=BRo0MX+z2r1SS6yWvALim/6/nbcuIraz/dvlfYWOZ9asJfVrKNdNm2FzRqaxLf+dSr
-         gd8iH6tStNBkd23/w31KCfLL9pbPEeNVyPTR03aUqTDZY6wZTMoqJSnBUDPOFUCLZI8l
-         DGkcMHGLOMeyEEgRm2q9vaf0Y5Q5Azvv1tkZ/xFOCXwAaoOvebuUDqbcoCdnlpWZyTyX
-         q38zkUOHeP0Tt+nEWAcZ8JszB60VlCahpErQX1nO7BawFSz3QtUcVh1o5Am/iWB313H6
-         H0uJV9FuYrV0GCIZde+45ERDs3S4qD78OMMR7S/b1svm4zQQyj/BCkUn3DI2PJoOlxx+
-         Zjrg==
+        d=google.com; s=20221208; t=1690477989; x=1691082789;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=F7oDMpfc0bW6NSyfuHNNNYlN2HFPFEuCSHvjU51+NBs=;
+        b=uR617wLpg6qNB677nCTpj/mRcHCn7jeMQ6T975dwFWafb05LBOA5GXBHggNBovfIzX
+         O/7M392ccdTOGZqesE1qC7szLmXDUVbpTkdUSAnDKesUZGTHf6YrHw7iRdcLemcslWSD
+         KrRYixDmKkhke5BhBNDcGGoexHbctICnVSugeNNjkFTNcd3g+7vTx3m4xPX98nUwGt3/
+         mWhf+uFvINzhg7lFN3O3GR8jmx04AReHHh1Ek1sP09ZwG+oxGwlWe7n39MiREf5a36wi
+         QECqs1dJt2n4+euTMFmAQH0Oiz0RKLy4HgS6MVL8RVa78gxf6JRosPxL/mvaakJouVeF
+         ho3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690454415; x=1691059215;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sndfUp5VQwyYdDkfd9c4UQTPXsXPqaVmv/x1Ijy8DrI=;
-        b=QnmltMMXYi3Iv7zwQ8TVedJtn85vPDgkI217Oil1oAFnijROjPHlAXeIE7We4/ZO9t
-         mUnM9ZLZnHUXMPiIixoMVjrLRarsbnLDFp+RqTMB7BVQg9cmC1WN1kCwu1GLrGqlmUhq
-         y1+8l2idY1qhV/3tidhAssTPm4HQ6c0EM3bHdYTyF/2S9lhm/Nxl13ICnbGfrf4G/BmN
-         cOYUTF1nA4M45yateVUGDjXLd9bTz74nMQcucygV3bX4cXxM8xYY4l8VZdX5jcZWAuLI
-         daJEfmURYzaFwciz7rXR3DKxwKbYbAotFDEggf4bYEiWT7o37wlh5oIb9lEG1mcpn11k
-         o7IA==
-X-Gm-Message-State: ABy/qLYsRiZtnJwvPFx3vo6JSXXJGMikGH7oQOQ7/13YXfr346oNbrwt
-        0YEOtkDIACZj7w9n5hRBWY48LRBhuzYJ+tZqFxDqZw==
-X-Google-Smtp-Source: APBJJlE+0dXFxcWiQX8kiDXJfKau+LxjypHc8uOGBYfuDsHhoPcJDBpq4NHTu2yqyvhkPVt07nS69cNqQCueoayyUeg=
-X-Received: by 2002:a05:6214:12b:b0:63d:218:c83f with SMTP id
- w11-20020a056214012b00b0063d0218c83fmr4306083qvs.36.1690454414736; Thu, 27
- Jul 2023 03:40:14 -0700 (PDT)
-MIME-Version: 1.0
+        d=1e100.net; s=20221208; t=1690477989; x=1691082789;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F7oDMpfc0bW6NSyfuHNNNYlN2HFPFEuCSHvjU51+NBs=;
+        b=ThsjxnhHO9KUs7SZ9RYNN4hHeIfo5NMAU+fP1swIt34Cd+nFgVwXfAp4uHIHxk7eu7
+         /2avB/yRvmGY9c09OV9VxfSxbylq/DwOikatQmu6/iyg2n+SKhH0EZj4BibbYlXtVm9c
+         YUG2mdsQ3j2BMKiS8vHfrQfjM6nvTk04UzSxMceWB/AUG0wbaV0YytOYlxSaMM9KiT17
+         l45Mb4sWmHcXn6FiqPPRkowRHtEfNH/yGZ00Ovetq+ODeCYdfCzMYJ5WB+GloxnkEuYP
+         ofLVAKD/gTh8M7scNbRgq1BUxQOMDPZhYE9dp8FzMIPIPFhtKaxvQWTu98JvQ4NHtI77
+         P9bA==
+X-Gm-Message-State: ABy/qLZ3Zly9Z2L5kWquHjABDiSvwJoipX0MFeCYFJiSGVDohhgeX2ds
+        CUQc312Kv5wZ5x1/ObN53B1SXbkU1aU=
+X-Google-Smtp-Source: APBJJlEiCX9DyxliShqr2xPxTiyej7fUi+PkS+4LO77eNeghg1Fiv4b0fvD5YH2w9mP2/cy4q9w9vNXHRRI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:903:22c6:b0:1b5:2b14:5f2c with SMTP id
+ y6-20020a17090322c600b001b52b145f2cmr24803plg.4.1690477989357; Thu, 27 Jul
+ 2023 10:13:09 -0700 (PDT)
+Date:   Thu, 27 Jul 2023 10:13:07 -0700
+In-Reply-To: <CA+EHjTzP2fypgkJbRpSPrKaWytW7v8ANEifofMnQCkdvYaX6Eg@mail.gmail.com>
+Mime-Version: 1.0
 References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-13-seanjc@google.com>
-In-Reply-To: <20230718234512.1690985-13-seanjc@google.com>
-From:   Fuad Tabba <tabba@google.com>
-Date:   Thu, 27 Jul 2023 11:39:38 +0100
-Message-ID: <CA+EHjTzP2fypgkJbRpSPrKaWytW7v8ANEifofMnQCkdvYaX6Eg@mail.gmail.com>
+ <CA+EHjTzP2fypgkJbRpSPrKaWytW7v8ANEifofMnQCkdvYaX6Eg@mail.gmail.com>
+Message-ID: <ZMKlo+Fe8n/eLQ82@google.com>
 Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
  guest-specific backing memory
-To:     Sean Christopherson <seanjc@google.com>
+From:   Sean Christopherson <seanjc@google.com>
+To:     Fuad Tabba <tabba@google.com>
 Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
         Huacai Chen <chenhuacai@kernel.org>,
@@ -89,33 +90,82 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Liam Merwick <liam.merwick@oracle.com>,
         Isaku Yamahata <isaku.yamahata@gmail.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Sean,
+On Thu, Jul 27, 2023, Fuad Tabba wrote:
+> Hi Sean,
+> 
+> <snip>
+> ...
+> 
+> > @@ -5134,6 +5167,16 @@ static long kvm_vm_ioctl(struct file *filp,
+> >         case KVM_GET_STATS_FD:
+> >                 r = kvm_vm_ioctl_get_stats_fd(kvm);
+> >                 break;
+> > +       case KVM_CREATE_GUEST_MEMFD: {
+> > +               struct kvm_create_guest_memfd guest_memfd;
+> > +
+> > +               r = -EFAULT;
+> > +               if (copy_from_user(&guest_memfd, argp, sizeof(guest_memfd)))
+> > +                       goto out;
+> > +
+> > +               r = kvm_gmem_create(kvm, &guest_memfd);
+> > +               break;
+> > +       }
+> 
+> I'm thinking line of sight here, by having this as a vm ioctl (rather
+> than a system iocl), would it complicate making it possible in the
+> future to share/donate memory between VMs?
 
-<snip>
-...
+Maybe, but I hope not?
 
-> @@ -5134,6 +5167,16 @@ static long kvm_vm_ioctl(struct file *filp,
->         case KVM_GET_STATS_FD:
->                 r = kvm_vm_ioctl_get_stats_fd(kvm);
->                 break;
-> +       case KVM_CREATE_GUEST_MEMFD: {
-> +               struct kvm_create_guest_memfd guest_memfd;
-> +
-> +               r = -EFAULT;
-> +               if (copy_from_user(&guest_memfd, argp, sizeof(guest_memfd)))
-> +                       goto out;
-> +
-> +               r = kvm_gmem_create(kvm, &guest_memfd);
-> +               break;
-> +       }
+There would still be a primary owner of the memory, i.e. the memory would still
+need to be allocated in the context of a specific VM.  And the primary owner should
+be able to restrict privileges, e.g. allow a different VM to read but not write
+memory.
 
-I'm thinking line of sight here, by having this as a vm ioctl (rather
-than a system iocl), would it complicate making it possible in the
-future to share/donate memory between VMs?
+My current thinking is to (a) tie the lifetime of the backing pages to the inode,
+i.e. allow allocations to outlive the original VM, and (b) create a new file each
+time memory is shared/donated with a different VM (or other entity in the kernel).
 
-Cheers,
-/fuad
+That should make it fairly straightforward to provide different permissions, e.g.
+track them per-file, and I think should also avoid the need to change the memslot
+binding logic since each VM would have it's own view/bindings.
+
+Copy+pasting a relevant snippet from a lengthier response in a different thread[*]:
+
+  Conceptually, I think KVM should to bind to the file.  The inode is effectively
+  the raw underlying physical storage, while the file is the VM's view of that
+  storage. 
+  
+  Practically, I think that gives us a clean, intuitive way to handle intra-host
+  migration.  Rather than transfer ownership of the file, instantiate a new file
+  for the target VM, using the gmem inode from the source VM, i.e. create a hard
+  link.  That'd probably require new uAPI, but I don't think that will be hugely
+  problematic.  KVM would need to ensure the new VM's guest_memfd can't be mapped
+  until KVM_CAP_VM_MOVE_ENC_CONTEXT_FROM (which would also need to verify the
+  memslots/bindings are identical), but that should be easy enough to enforce.
+  
+  That way, a VM, its memslots, and its SPTEs are tied to the file, while allowing
+  the memory and the *contents* of memory to outlive the VM, i.e. be effectively
+  transfered to the new target VM.  And we'll maintain the invariant that each
+  guest_memfd is bound 1:1 with a single VM.
+  
+  As above, that should also help us draw the line between mapping memory into a
+  VM (file), and freeing/reclaiming the memory (inode).
+  
+  There will be extra complexity/overhead as we'll have to play nice with the
+  possibility of multiple files per inode, e.g. to zap mappings across all files
+  when punching a hole, but the extra complexity is quite small, e.g. we can use
+  address_space.private_list to keep track of the guest_memfd instances associated
+  with the inode.
+  
+  Setting aside TDX and SNP for the moment, as it's not clear how they'll support
+  memory that is "private" but shared between multiple VMs, I think per-VM files
+  would work well for sharing gmem between two VMs.  E.g. would allow a give page
+  to be bound to a different gfn for each VM, would allow having different permissions
+  for each file (e.g. to allow fallocate() only from the original owner).
+
+[*] https://lore.kernel.org/all/ZLGiEfJZTyl7M8mS@google.com
