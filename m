@@ -2,128 +2,200 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC6BC001DC
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jul 2023 17:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D02BFC41513
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jul 2023 18:01:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231817AbjG0RhM (ORCPT
+        id S229480AbjG0SBw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jul 2023 13:37:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35882 "EHLO
+        Thu, 27 Jul 2023 14:01:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229719AbjG0RhL (ORCPT
+        with ESMTP id S229600AbjG0SBv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jul 2023 13:37:11 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBB41B5;
-        Thu, 27 Jul 2023 10:37:10 -0700 (PDT)
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36RHKu8l006291;
-        Thu, 27 Jul 2023 17:36:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=/fUHauk0oWCtsaoIjKHWvmxdaWr3Sa/QvzSOgw/2Mr0=;
- b=YZA6bS93j9vDoHPPGkY0VWg7QD0LvkdJVmhbNGNsFvgY8xlJ09cGIWoDEtVpp4heNHck
- EBoH9M/juy0PFuPDhthWjceGkeyMUQnnsy4odL7GSbouA2FhEDIdhE93WsizQWa7xHJU
- PN1e42+6XDtetoHBE4Dg8TAGNaMP+fCIOcCIMJni7lhQH9FfQWZWkaA5lHZr82u+XSft
- UmhG0WkVQs/tq2LmTHuFCBqu7QXqpxsFqQiFWpLQgjDTRhCOV/d54CZqXljlHZWVmkUt
- Fmo4uozgwQRbjJ/LWRmoNpGcJRGkJjklPGg0kKFPaHOwKqRm1gQO5aDKVPhTlQhgYx8L lg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3s3vwd8e0m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jul 2023 17:36:47 +0000
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 36RHL4DN006829;
-        Thu, 27 Jul 2023 17:36:47 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3s3vwd8dyn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jul 2023 17:36:47 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 36RGp950026217;
-        Thu, 27 Jul 2023 17:36:45 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-        by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3s0sesfv5q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jul 2023 17:36:45 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-        by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 36RHajKd35979560
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jul 2023 17:36:45 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3116B5805F;
-        Thu, 27 Jul 2023 17:36:45 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 177465805C;
-        Thu, 27 Jul 2023 17:36:44 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.140.89])
-        by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Thu, 27 Jul 2023 17:36:43 +0000 (GMT)
-Message-ID: <860501de903bba660adcdad3e3ccf750dc29b432.camel@linux.ibm.com>
-Subject: Re: [PATCH v4] integrity: Always reference the blacklist keyring
- with appraisal
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, roberto.sassu@huawei.com,
-        kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Thu, 27 Jul 2023 13:36:43 -0400
-In-Reply-To: <20230726211725.393056-1-eric.snowberg@oracle.com>
-References: <20230726211725.393056-1-eric.snowberg@oracle.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+        Thu, 27 Jul 2023 14:01:51 -0400
+Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD3ED2D64
+        for <linux-security-module@vger.kernel.org>; Thu, 27 Jul 2023 11:01:49 -0700 (PDT)
+Received: by mail-pg1-x549.google.com with SMTP id 41be03b00d2f7-563fc38db94so703673a12.0
+        for <linux-security-module@vger.kernel.org>; Thu, 27 Jul 2023 11:01:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690480909; x=1691085709;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zQhQ+VSPJiT/sF1vRnyh4Q/edWHny2NYyXr78uE6E6M=;
+        b=MXN0RwiQuEoK59/406fj3hfB9GFLmNe746Z+h8t73hbQCE1d1qq/izbPkNLsJ6Px2M
+         Vban7KRfw/LuyxsjsqlFIKu5xuwLJxZQjqwf6YOq26lb6AyvDNcUvqSG8vj6as2sTY+T
+         qfo4dzt8M6QFxjvNpOCieikt35YsPF8NOsjN+Zeb0qqtrOHb1CID/EzxYvoLeNCRuhQk
+         X6Zj6RiQh0RnXAkaWNvbvk6ESEeLk0T4UqTFWfarPMmqOQ4NKQ8QkhuhmZeO8Rwy6d3v
+         qTa/LwBgOg5pPo63GPS7Rkndq7A3Pz0klfwoCUoBCvtZ6xPRb4mWucJ//Dab3DxcBzBf
+         tMqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690480909; x=1691085709;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zQhQ+VSPJiT/sF1vRnyh4Q/edWHny2NYyXr78uE6E6M=;
+        b=SfmuXcSnzOUOV7JRr08PYXXHWqprdIPFdCr3MbuVVMGRyWeXpSVqTMkfFH8DwjEjlX
+         3A/j9br0gVeFhuASbKhF9Pf9vv+f/MVRv5CLzZ+mB1kYRyXcaKj3/nc2uGGQnoEJI8ET
+         jpSghJjdSpvjp/zeSIfRo9Z0Baxn+GPxwRfaUPbF4OFnGtbSdzlVRst58Ub+MU9AEmRZ
+         ZHVpaBa5lZHWt0HbsUM3xzQgulTf5AG+frls1c4GyuVRxao9RwrrZBr+/QsHHvodLxpF
+         7DLL1m8fJnQTnQPqVqP+X6tlqcTQE77RFfIYzxNqss030PgtjRlEuLs5K39ZQ9+yETuM
+         ly7w==
+X-Gm-Message-State: ABy/qLbQ5escT8HADVYmGTwb4TtfejXvKgjeuqsKtxtecXWv+w+9yc3Z
+        E0AuU6ikl1id4GUQZXEXDxqEY5A=
+X-Google-Smtp-Source: APBJJlGroNGzDDua9ZSJVxJ3gwxUQcJeCDe6elRlqKhr2EYpQR+GDuPvk08ZnrYhFF5YheOlKnAjVj8=
+X-Received: from sdf.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5935])
+ (user=sdf job=sendgmr) by 2002:a63:790a:0:b0:55a:b9bb:7ca with SMTP id
+ u10-20020a63790a000000b0055ab9bb07camr29145pgc.10.1690480909118; Thu, 27 Jul
+ 2023 11:01:49 -0700 (PDT)
+Date:   Thu, 27 Jul 2023 11:01:47 -0700
+In-Reply-To: <b41babb1-f0f2-dc2f-c2e3-1870107fbd9f@tessares.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 7RhVSh3MrpZtub_IJJP3Rd74u1rCFMHB
-X-Proofpoint-GUID: rBDy_T_PLQIu3N96Y_IGm_1xz3tDi3Ww
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-27_07,2023-07-26_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- mlxlogscore=999 priorityscore=1501 impostorscore=0 mlxscore=0 bulkscore=0
- spamscore=0 malwarescore=0 lowpriorityscore=0 phishscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
- definitions=main-2307270159
+References: <3076188eb88cca9151a2d12b50ba1e870b11ce09.1689693294.git.geliang.tang@suse.com>
+ <CAHC9VhS_LKdkEmm5_J5y34RpaRcTbg8==fpz8pMThDCjF6nYtQ@mail.gmail.com> <b41babb1-f0f2-dc2f-c2e3-1870107fbd9f@tessares.net>
+Message-ID: <ZMKxC+CFj4GbCklg@google.com>
+Subject: Re: [RFC bpf-next v5] bpf: Force to MPTCP
+From:   Stanislav Fomichev <sdf@google.com>
+To:     Matthieu Baerts <matthieu.baerts@tessares.net>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Geliang Tang <geliang.tang@suse.com>,
+        Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, mptcp@lists.linux.dev,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2023-07-26 at 17:17 -0400, Eric Snowberg wrote:
-> Commit 273df864cf746 ("ima: Check against blacklisted hashes for files with
-> modsig") introduced an appraise_flag option for referencing the blacklist
-> keyring.  Any matching binary found on this keyring fails signature
-> validation. This flag only works with module appended signatures.
-> 
-> An important part of a PKI infrastructure is to have the ability to do
-> revocation at a later time should a vulnerability be found.  Expand the
-> revocation flag usage to all appraisal functions. The flag is now
-> enabled by default. Setting the flag with an IMA policy has been
-> deprecated. Without a revocation capability like this in place, only
-> authenticity can be maintained. With this change, integrity can now be
-> achieved with digital signature based IMA appraisal.
-> 
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> ---
-> v4 changes:
->   Fixed typo
->   Also did some performance testing with this patch. With the associative array
->   implementation used within the keyring code, there doesn't seem to be much of a
->   difference between doing  an appraisal with an empty blacklist keyring and one
->   containing 1500 entries.  At this time it is unknown how many entries a user
->   would place in this keyring, but this seemed like a bigger number than most use
->   cases.  With the 1500 entries, there were only 7 lookups to get through the
->   entire list for a file not contained within it.  For something that was
->   on the list, there was an average of 4 lookups and a single string compare.
->   Based on this testing, IMHO, there could be a lot more entries added to the
->   blacklist keyring without any real performance issues.
+On 07/27, Matthieu Baerts wrote:
+> Hi Paul, Stanislav,
+>=20
+> On 18/07/2023 18:14, Paul Moore wrote:
+> > On Tue, Jul 18, 2023 at 11:21=E2=80=AFAM Geliang Tang <geliang.tang@sus=
+e.com> wrote:
+> >>
+> >> As is described in the "How to use MPTCP?" section in MPTCP wiki [1]:
+> >>
+> >> "Your app can create sockets with IPPROTO_MPTCP as the proto:
+> >> ( socket(AF_INET, SOCK_STREAM, IPPROTO_MPTCP); ). Legacy apps can be
+> >> forced to create and use MPTCP sockets instead of TCP ones via the
+> >> mptcpize command bundled with the mptcpd daemon."
+> >>
+> >> But the mptcpize (LD_PRELOAD technique) command has some limitations
+> >> [2]:
+> >>
+> >>  - it doesn't work if the application is not using libc (e.g. GoLang
+> >> apps)
+> >>  - in some envs, it might not be easy to set env vars / change the way
+> >> apps are launched, e.g. on Android
+> >>  - mptcpize needs to be launched with all apps that want MPTCP: we cou=
+ld
+> >> have more control from BPF to enable MPTCP only for some apps or all t=
+he
+> >> ones of a netns or a cgroup, etc.
+> >>  - it is not in BPF, we cannot talk about it at netdev conf.
+> >>
+> >> So this patchset attempts to use BPF to implement functions similer to
+> >> mptcpize.
+> >>
+> >> The main idea is add a hook in sys_socket() to change the protocol id
+> >> from IPPROTO_TCP (or 0) to IPPROTO_MPTCP.
+> >>
+> >> [1]
+> >> https://github.com/multipath-tcp/mptcp_net-next/wiki
+> >> [2]
+> >> https://github.com/multipath-tcp/mptcp_net-next/issues/79
+> >>
+> >> v5:
+> >>  - add bpf_mptcpify helper.
+> >>
+> >> v4:
+> >>  - use lsm_cgroup/socket_create
+> >>
+> >> v3:
+> >>  - patch 8: char cmd[128]; -> char cmd[256];
+> >>
+> >> v2:
+> >>  - Fix build selftests errors reported by CI
+> >>
+> >> Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/79
+> >> Signed-off-by: Geliang Tang <geliang.tang@suse.com>
+> >> ---
+> >>  include/linux/bpf.h                           |   1 +
+> >>  include/linux/lsm_hook_defs.h                 |   2 +-
+> >>  include/linux/security.h                      |   6 +-
+> >>  include/uapi/linux/bpf.h                      |   7 +
+> >>  kernel/bpf/bpf_lsm.c                          |   2 +
+> >>  net/mptcp/bpf.c                               |  20 +++
+> >>  net/socket.c                                  |   4 +-
+> >>  security/apparmor/lsm.c                       |   8 +-
+> >>  security/security.c                           |   2 +-
+> >>  security/selinux/hooks.c                      |   6 +-
+> >>  tools/include/uapi/linux/bpf.h                |   7 +
+> >>  .../testing/selftests/bpf/prog_tests/mptcp.c  | 128 ++++++++++++++++-=
+-
+> >>  tools/testing/selftests/bpf/progs/mptcpify.c  |  17 +++
+> >>  13 files changed, 187 insertions(+), 23 deletions(-)
+> >>  create mode 100644 tools/testing/selftests/bpf/progs/mptcpify.c
+> >=20
+> > ...
+> >=20
+> >> diff --git a/security/security.c b/security/security.c
+> >> index b720424ca37d..bbebcddce420 100644
+> >> --- a/security/security.c
+> >> +++ b/security/security.c
+> >> @@ -4078,7 +4078,7 @@ EXPORT_SYMBOL(security_unix_may_send);
+> >>   *
+> >>   * Return: Returns 0 if permission is granted.
+> >>   */
+> >> -int security_socket_create(int family, int type, int protocol, int ke=
+rn)
+> >> +int security_socket_create(int *family, int *type, int *protocol, int=
+ kern)
+> >>  {
+> >>         return call_int_hook(socket_create, 0, family, type, protocol,=
+ kern);
+> >>  }
+> >=20
+> > Using the LSM to change the protocol family is not something we want
+> > to allow.  I'm sorry, but you will need to take a different approach.
+>=20
+> @Paul: Thank you for your feedback. It makes sense and I understand.
+>=20
+> @Stanislav: Despite the fact the implementation was smaller and reusing
+> more code, it looks like we cannot go in the direction you suggested. Do
+> you think what Geliang suggested before in his v3 [1] can be accepted?
+>=20
+> (Note that the v3 is the same as the v1, only some fixes in the selftests=
+.)
 
-Thank you for the blacklist performance testing.   The patch is now
-queued in next-integrity-testing.
+We have too many hooks in networking, so something that doesn't add
+a new one is preferable :-( Moreover, we already have a 'socket init'
+hook, but it runs a bit late.
 
---
-thanks,
+Is existing cgroup/sock completely unworkable? Is it possible to
+expose some new bpf_upgrade_socket_to(IPPROTO_MPTCP) kfunc which would
+call some new net_proto_family->upgrade_to(IPPROTO_MPTCP) to do the surgery=
+?
+Or is it too hacky?
 
-Mimib
+Another option Alexei suggested is to add some fentry-like thing:
 
+noinline int update_socket_protocol(int protocol)
+{
+	return protocol;
+}
+/* TODO: ^^^ add the above to mod_ret set */
+
+int __sys_socket(int family, int type, int protocol)
+{
+	...
+
+	protocol =3D update_socket_protocol(protocol);
+
+	...
+}
+
+But it's also too problem specific it seems? And it's not cgroup-aware.
