@@ -2,170 +2,95 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA57C41513
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jul 2023 17:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF7AC001DC
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jul 2023 17:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232725AbjG0RNb (ORCPT
+        id S229642AbjG0Rek (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jul 2023 13:13:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45742 "EHLO
+        Thu, 27 Jul 2023 13:34:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232450AbjG0RNT (ORCPT
+        with ESMTP id S229915AbjG0Rej (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jul 2023 13:13:19 -0400
-Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97BBB30F7
-        for <linux-security-module@vger.kernel.org>; Thu, 27 Jul 2023 10:13:10 -0700 (PDT)
-Received: by mail-pl1-x64a.google.com with SMTP id d9443c01a7336-1bbb34b091dso8228785ad.0
-        for <linux-security-module@vger.kernel.org>; Thu, 27 Jul 2023 10:13:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1690477989; x=1691082789;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=F7oDMpfc0bW6NSyfuHNNNYlN2HFPFEuCSHvjU51+NBs=;
-        b=uR617wLpg6qNB677nCTpj/mRcHCn7jeMQ6T975dwFWafb05LBOA5GXBHggNBovfIzX
-         O/7M392ccdTOGZqesE1qC7szLmXDUVbpTkdUSAnDKesUZGTHf6YrHw7iRdcLemcslWSD
-         KrRYixDmKkhke5BhBNDcGGoexHbctICnVSugeNNjkFTNcd3g+7vTx3m4xPX98nUwGt3/
-         mWhf+uFvINzhg7lFN3O3GR8jmx04AReHHh1Ek1sP09ZwG+oxGwlWe7n39MiREf5a36wi
-         QECqs1dJt2n4+euTMFmAQH0Oiz0RKLy4HgS6MVL8RVa78gxf6JRosPxL/mvaakJouVeF
-         ho3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690477989; x=1691082789;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F7oDMpfc0bW6NSyfuHNNNYlN2HFPFEuCSHvjU51+NBs=;
-        b=ThsjxnhHO9KUs7SZ9RYNN4hHeIfo5NMAU+fP1swIt34Cd+nFgVwXfAp4uHIHxk7eu7
-         /2avB/yRvmGY9c09OV9VxfSxbylq/DwOikatQmu6/iyg2n+SKhH0EZj4BibbYlXtVm9c
-         YUG2mdsQ3j2BMKiS8vHfrQfjM6nvTk04UzSxMceWB/AUG0wbaV0YytOYlxSaMM9KiT17
-         l45Mb4sWmHcXn6FiqPPRkowRHtEfNH/yGZ00Ovetq+ODeCYdfCzMYJ5WB+GloxnkEuYP
-         ofLVAKD/gTh8M7scNbRgq1BUxQOMDPZhYE9dp8FzMIPIPFhtKaxvQWTu98JvQ4NHtI77
-         P9bA==
-X-Gm-Message-State: ABy/qLZ3Zly9Z2L5kWquHjABDiSvwJoipX0MFeCYFJiSGVDohhgeX2ds
-        CUQc312Kv5wZ5x1/ObN53B1SXbkU1aU=
-X-Google-Smtp-Source: APBJJlEiCX9DyxliShqr2xPxTiyej7fUi+PkS+4LO77eNeghg1Fiv4b0fvD5YH2w9mP2/cy4q9w9vNXHRRI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:903:22c6:b0:1b5:2b14:5f2c with SMTP id
- y6-20020a17090322c600b001b52b145f2cmr24803plg.4.1690477989357; Thu, 27 Jul
- 2023 10:13:09 -0700 (PDT)
-Date:   Thu, 27 Jul 2023 10:13:07 -0700
-In-Reply-To: <CA+EHjTzP2fypgkJbRpSPrKaWytW7v8ANEifofMnQCkdvYaX6Eg@mail.gmail.com>
+        Thu, 27 Jul 2023 13:34:39 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D223730E1;
+        Thu, 27 Jul 2023 10:34:35 -0700 (PDT)
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36RH3Q53010927;
+        Thu, 27 Jul 2023 17:34:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=b1yT2kjr3CfqZGpukbGWQyFlNKOuqm/gluqOWykxj+w=;
+ b=ksllpvp++DLS65B56txnLjeBd9PdwDnrTvvChEyrILWhf2+wOXijEWO0pkxrMFyRdGLG
+ 5ubNfK/XrQVo0/HgkBhQo9iKq33yvzf//zvCb/HHZjJzCmZ4hC3yW9gQCSWJQGYHWusD
+ RN3GwSwIBCXQ6rF0HqaJ2QCGIF6MYWicY9IRyuw3rHqrXBKl1yh+5jXToisecGQdWRMv
+ JJhMaKQH+cvY69gPXGmG5VJ5M+w6QRKGPfxt+hqF/K18TRXIvPcj47bS6qlO03PoH+bv
+ W5Sb+tcopDtS2vyK7H1PMtX9dfFIeYhi1hxs7r3AgQW+PRiKtEHzuyu7bpX7sPag0y9B Fw== 
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3s3v12tjgw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jul 2023 17:34:34 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 36RGW9es002132;
+        Thu, 27 Jul 2023 17:34:33 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+        by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3s0unjy2a2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jul 2023 17:34:33 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+        by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 36RHYXUa60555574
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jul 2023 17:34:33 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1D26258055;
+        Thu, 27 Jul 2023 17:34:33 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B5B4F58043;
+        Thu, 27 Jul 2023 17:34:32 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.140.89])
+        by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Jul 2023 17:34:32 +0000 (GMT)
+Message-ID: <dc76cbf58bad422bf18de0d954c52b3a022e4199.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Remove deprecated IMA_TRUSTED_KEYRING Kconfig
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.ibm.com>,
+        "linux-integrity @ vger . kernel . org" 
+        <linux-integrity@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Date:   Thu, 27 Jul 2023 13:34:32 -0400
+In-Reply-To: <20230711164447.714035-1-nayna@linux.ibm.com>
+References: <20230711164447.714035-1-nayna@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
 Mime-Version: 1.0
-References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-13-seanjc@google.com>
- <CA+EHjTzP2fypgkJbRpSPrKaWytW7v8ANEifofMnQCkdvYaX6Eg@mail.gmail.com>
-Message-ID: <ZMKlo+Fe8n/eLQ82@google.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-From:   Sean Christopherson <seanjc@google.com>
-To:     Fuad Tabba <tabba@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: HPvSWOS_u0VhrEDVULeL2y3x0_OZxJo-
+X-Proofpoint-GUID: HPvSWOS_u0VhrEDVULeL2y3x0_OZxJo-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-27_07,2023-07-26_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 phishscore=0 clxscore=1015
+ suspectscore=0 impostorscore=0 mlxlogscore=664 spamscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307270159
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jul 27, 2023, Fuad Tabba wrote:
-> Hi Sean,
+On Tue, 2023-07-11 at 12:44 -0400, Nayna Jain wrote:
+> Time to remove "IMA_TRUSTED_KEYRING".
 > 
-> <snip>
-> ...
-> 
-> > @@ -5134,6 +5167,16 @@ static long kvm_vm_ioctl(struct file *filp,
-> >         case KVM_GET_STATS_FD:
-> >                 r = kvm_vm_ioctl_get_stats_fd(kvm);
-> >                 break;
-> > +       case KVM_CREATE_GUEST_MEMFD: {
-> > +               struct kvm_create_guest_memfd guest_memfd;
-> > +
-> > +               r = -EFAULT;
-> > +               if (copy_from_user(&guest_memfd, argp, sizeof(guest_memfd)))
-> > +                       goto out;
-> > +
-> > +               r = kvm_gmem_create(kvm, &guest_memfd);
-> > +               break;
-> > +       }
-> 
-> I'm thinking line of sight here, by having this as a vm ioctl (rather
-> than a system iocl), would it complicate making it possible in the
-> future to share/donate memory between VMs?
+> Fixes: f4dc37785e9b ("integrity: define '.evm' as a builtin 'trusted' keyring") # v4.5+
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
 
-Maybe, but I hope not?
+Thanks, Nayna.   The patch is now queued in next-integrity-testing.
 
-There would still be a primary owner of the memory, i.e. the memory would still
-need to be allocated in the context of a specific VM.  And the primary owner should
-be able to restrict privileges, e.g. allow a different VM to read but not write
-memory.
+-- 
+thanks,
 
-My current thinking is to (a) tie the lifetime of the backing pages to the inode,
-i.e. allow allocations to outlive the original VM, and (b) create a new file each
-time memory is shared/donated with a different VM (or other entity in the kernel).
+Mimi
 
-That should make it fairly straightforward to provide different permissions, e.g.
-track them per-file, and I think should also avoid the need to change the memslot
-binding logic since each VM would have it's own view/bindings.
-
-Copy+pasting a relevant snippet from a lengthier response in a different thread[*]:
-
-  Conceptually, I think KVM should to bind to the file.  The inode is effectively
-  the raw underlying physical storage, while the file is the VM's view of that
-  storage. 
-  
-  Practically, I think that gives us a clean, intuitive way to handle intra-host
-  migration.  Rather than transfer ownership of the file, instantiate a new file
-  for the target VM, using the gmem inode from the source VM, i.e. create a hard
-  link.  That'd probably require new uAPI, but I don't think that will be hugely
-  problematic.  KVM would need to ensure the new VM's guest_memfd can't be mapped
-  until KVM_CAP_VM_MOVE_ENC_CONTEXT_FROM (which would also need to verify the
-  memslots/bindings are identical), but that should be easy enough to enforce.
-  
-  That way, a VM, its memslots, and its SPTEs are tied to the file, while allowing
-  the memory and the *contents* of memory to outlive the VM, i.e. be effectively
-  transfered to the new target VM.  And we'll maintain the invariant that each
-  guest_memfd is bound 1:1 with a single VM.
-  
-  As above, that should also help us draw the line between mapping memory into a
-  VM (file), and freeing/reclaiming the memory (inode).
-  
-  There will be extra complexity/overhead as we'll have to play nice with the
-  possibility of multiple files per inode, e.g. to zap mappings across all files
-  when punching a hole, but the extra complexity is quite small, e.g. we can use
-  address_space.private_list to keep track of the guest_memfd instances associated
-  with the inode.
-  
-  Setting aside TDX and SNP for the moment, as it's not clear how they'll support
-  memory that is "private" but shared between multiple VMs, I think per-VM files
-  would work well for sharing gmem between two VMs.  E.g. would allow a give page
-  to be bound to a different gfn for each VM, would allow having different permissions
-  for each file (e.g. to allow fallocate() only from the original owner).
-
-[*] https://lore.kernel.org/all/ZLGiEfJZTyl7M8mS@google.com
