@@ -2,56 +2,102 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9D7C001DE
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jul 2023 02:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEF4C001DE
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jul 2023 03:27:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229703AbjG0CsS convert rfc822-to-8bit (ORCPT
+        id S231342AbjG0D1f (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jul 2023 22:48:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51696 "EHLO
+        Wed, 26 Jul 2023 23:27:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230164AbjG0CsR (ORCPT
+        with ESMTP id S231334AbjG0D1c (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jul 2023 22:48:17 -0400
-X-Greylist: delayed 486 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 26 Jul 2023 19:48:16 PDT
-Received: from postman.megadata.net.id (postman.megadata.net.id [103.105.52.228])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 836B41BC6
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Jul 2023 19:48:16 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by postman.megadata.net.id (Postfix) with ESMTP id C9DE9405A9C4E
-        for <linux-security-module@vger.kernel.org>; Thu, 27 Jul 2023 09:39:43 +0700 (WIB)
-Received: from postman.megadata.net.id ([127.0.0.1])
-        by localhost (postman.megadata.net.id [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id l5FMHLNe8w2h
-        for <linux-security-module@vger.kernel.org>;
-        Thu, 27 Jul 2023 09:39:43 +0700 (WIB)
-Received: from localhost (localhost [127.0.0.1])
-        by postman.megadata.net.id (Postfix) with ESMTP id A43D7405A9C4D
-        for <linux-security-module@vger.kernel.org>; Thu, 27 Jul 2023 09:39:43 +0700 (WIB)
-X-Virus-Scanned: amavisd-new at megadata.net.id
-Received: from postman.megadata.net.id ([127.0.0.1])
-        by localhost (postman.megadata.net.id [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id dWgxErrHPeIP
-        for <linux-security-module@vger.kernel.org>;
-        Thu, 27 Jul 2023 09:39:43 +0700 (WIB)
-Received: from [93.95.27.74] (gateway [10.0.1.7])
-        by postman.megadata.net.id (Postfix) with ESMTPSA id E74BB405A9C4E
-        for <linux-security-module@vger.kernel.org>; Thu, 27 Jul 2023 09:39:42 +0700 (WIB)
-Reply-To: Maurice.Ozark@hotmail.com
-From:   Maurice <mrharukikei@gmail.com>
-To:     linux-security-module@vger.kernel.org
-Subject: Attention !!
-Date:   26 Jul 2023 19:40:05 -0700
-Message-ID: <20230726131907.7BE5A404C06EF140@gmail.com>
+        Wed, 26 Jul 2023 23:27:32 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA4F5270D;
+        Wed, 26 Jul 2023 20:27:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1690428447; x=1721964447;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zZw7shzyeqWcwUz/3pXk4wTr0ManqzTTZSighI1zgHU=;
+  b=aTYPRcRqpH42utWO6lEysW9MF2mhE0PVstZMMcn0HUI2O9AC7eTyZ8rK
+   Ky59kZRXpvy+eOy5JtvaZgAgmhJ9R0dGcj+0HxoKa8mrP+SXFTBLu/j9q
+   uGdbEUb/jQuSTobf0x6nXGl+sPotAWatAWqSqf3nZhs+MKgT/I00/vmbu
+   WbVgxD3rGhr0AkrMf0qYdwPJbJKqtucPAMGxBKXvJP6uczAD951hSf7YC
+   xVOsSUfcn8YD0jH3BUL+j2niY8c3AVoxlhR8bjL/vDPNpRy2whaq5vlv4
+   XA0GpLdRuJQaRluDS0vDpc0FB1YKFabqtcPSlCwlr+1zmfMY3086Eaa1B
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10783"; a="347799001"
+X-IronPort-AV: E=Sophos;i="6.01,233,1684825200"; 
+   d="scan'208";a="347799001"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2023 20:26:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.01,202,1684825200"; 
+   d="scan'208";a="870179046"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmsmga001.fm.intel.com with ESMTP; 26 Jul 2023 20:26:15 -0700
+Date:   Thu, 27 Jul 2023 11:24:22 +0800
+From:   Xu Yilun <yilun.xu@intel.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [RFC PATCH v11 08/29] KVM: Introduce per-page memory attributes
+Message-ID: <ZMHjZvcmzxMhTyM3@yilunxu-OptiPlex-7050>
+References: <20230718234512.1690985-1-seanjc@google.com>
+ <20230718234512.1690985-9-seanjc@google.com>
+ <ZL4BiQWihfrD0TOJ@yilunxu-OptiPlex-7050>
+ <ZMFC+V6Llv1JWLEt@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZMFC+V6Llv1JWLEt@google.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Attention,
-I am Maurice Ozark. I have emailed you earlier on, but without 
-any response I will wait to hear from you.
+On 2023-07-26 at 08:59:53 -0700, Sean Christopherson wrote:
+> On Mon, Jul 24, 2023, Xu Yilun wrote:
+> > On 2023-07-18 at 16:44:51 -0700, Sean Christopherson wrote:
+> > > +	if (WARN_ON_ONCE(start == end))
+> > > +		return -EINVAL;
+> > 
+> > Also, is this check possible to be hit? Maybe remove it?
+> 
+> It should be impossible to, hence the WARN.  I added the check for two reasons:
+> (1) to help document that end is exclusive, and (2) to guard against future bugs.
 
-Thank you.
+Understood. I'm good to it.
