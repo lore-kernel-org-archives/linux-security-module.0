@@ -2,129 +2,244 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A98C0015E
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jul 2023 16:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E92C41513
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jul 2023 16:54:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229823AbjG1QOU (ORCPT
+        id S231616AbjG1QyE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Jul 2023 12:14:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56778 "EHLO
+        Fri, 28 Jul 2023 12:54:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjG1QOS (ORCPT
+        with ESMTP id S235783AbjG1QxB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Jul 2023 12:14:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB1C82D42
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Jul 2023 09:13:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690560814;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1Dyh7+qatvQDKM5qDRHq8YkO5TCQeLww3uN1vYmzEUU=;
-        b=JDkY0x11DPue2B7zgbfvSTctHF2nLb0vlVBbmrzahlW4PPQyOD18U+2YNhtq6XCY3cpDox
-        +6hckE6pu3MDwQicFHao3ndEeD7uJvlr/XM9YToF9mW4G0CdE5PP80OYUj2nm15r/mXEvd
-        VcZYhlvCMURE3r44tYduQe4spk5w0Z4=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-621-iN-zgzZzPk623aO4vgYudw-1; Fri, 28 Jul 2023 12:13:30 -0400
-X-MC-Unique: iN-zgzZzPk623aO4vgYudw-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-99bd6ea0d9eso131539966b.3
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Jul 2023 09:13:30 -0700 (PDT)
+        Fri, 28 Jul 2023 12:53:01 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40C7F1BC3
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Jul 2023 09:51:37 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d20d99c03fbso2056042276.3
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Jul 2023 09:51:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690563084; x=1691167884;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hSztq2dvrAtj1uS3ESiNs+Jg1HePYMDsZwSdft0wsVY=;
+        b=uC9D4FcQ4hwzphsSwJRgDNbPH7AACt801Mlm2IGAsaCpAbFm8nZ/5u79Nw0s7R6uTN
+         S0AqDXgmdZcN9sqoD6w3I4W2sdk/FkYcC/gwy7cQgo0LGGfDS5+9+Sm0owWE9jYCC8TN
+         TmtJK10RK9ulRo6V6oV6oDwYY1nnMo3vfgBGy0Ozsi9gIkswPMzDAjG+jewR7raXO+P3
+         95CCiOUHijIqyJXPUFIHEmwBnCL9VRYUEvCY5LGHTJHB32w4QIzGmnk+/XdJM1+8eN8Y
+         +AgjzUEjfZ/EFu/piAU2X3fpKgrpzv3rT9tuambFkZRwDttE7wnctxSipbS5Ay9LyUoi
+         1piw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690560809; x=1691165609;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Dyh7+qatvQDKM5qDRHq8YkO5TCQeLww3uN1vYmzEUU=;
-        b=OQETGKp6bpmWpyhIS4o4YY10IYdz/rbsX0C3AOEbi5fX0qDBLxIKRTepEChAQMn123
-         Cnf+xQvPCNKO2vRH26ntNC8yooq2DGv+LaVODCVMkm/RiAE/En12lRFzJ3Ip/FxX0bj3
-         +yaEGgEd4ibhxBvnygJuS4qzDDLPLHppYbeIyofzibLWxBfvPHhEQhFAFLAS7Eh/kjU1
-         7z0ZOm7dPbAiF3KcFb767R0JBoEOLIrDbL6e2zO//tEUEdRiFoJ3Bi9UhnvqjZt4z6KZ
-         BU9BKzEsjpAP8H8btSeIAtecNZJydEzD5pxPBpXnIdHxZRz07smRLM1hogKPdstyv5wI
-         rHYA==
-X-Gm-Message-State: ABy/qLaFR2PIuMDG9K0SEvZBCxZBpyM+GylqaAmE/f8W/sKBsaYG5VOw
-        OQttyutuY6vdS97sZp1YGUtIAwCsDZX4V+pYfPehrNgaVeI88U9RvRf9Fh/nBzlW5YYT4RHU3MX
-        owrYRRdYWtyHyHDGGaZ7kaatD0Qjb/ttt1Ran
-X-Received: by 2002:a17:906:5354:b0:99b:efd3:3dcc with SMTP id j20-20020a170906535400b0099befd33dccmr1357342ejo.62.1690560809626;
-        Fri, 28 Jul 2023 09:13:29 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlHd2sX/AyGtIAscRR2p4pTksaGOsuCTBRQ37WpaEGChaEB1fcJtjozFJjrwhV4jFSHGD+pttg==
-X-Received: by 2002:a17:906:5354:b0:99b:efd3:3dcc with SMTP id j20-20020a170906535400b0099befd33dccmr1357325ejo.62.1690560809219;
-        Fri, 28 Jul 2023 09:13:29 -0700 (PDT)
-Received: from ?IPV6:2001:b07:6468:f312:9af8:e5f5:7516:fa89? ([2001:b07:6468:f312:9af8:e5f5:7516:fa89])
-        by smtp.googlemail.com with ESMTPSA id gy26-20020a170906f25a00b00993470682e5sm2197928ejb.32.2023.07.28.09.13.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jul 2023 09:13:28 -0700 (PDT)
-Message-ID: <6da710cf-2bc0-bb6e-26f1-fba14ca767db@redhat.com>
-Date:   Fri, 28 Jul 2023 18:13:26 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [RFC PATCH v11 10/29] mm: Add AS_UNMOVABLE to mark mapping as
- completely unmovable
-To:     Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>
-References: <20230718234512.1690985-1-seanjc@google.com>
- <20230718234512.1690985-11-seanjc@google.com>
- <20230725102403.xywjqlhyqkrzjok6@box.shutemov.name>
- <ZL/Fa4W2Ne9EVxoh@casper.infradead.org>
- <692b09f7-70d9-1119-7fe2-3e7396ec259d@suse.cz>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-In-Reply-To: <692b09f7-70d9-1119-7fe2-3e7396ec259d@suse.cz>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        d=1e100.net; s=20221208; t=1690563084; x=1691167884;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hSztq2dvrAtj1uS3ESiNs+Jg1HePYMDsZwSdft0wsVY=;
+        b=gDDNkKn6scGQncQR0fNsoXqqdiVUCfKI7lHpTPMVUnx9UzJvbBhfMYRsl2ZxxH0jv3
+         L6rh1lTT5BM0P4DDqOeGJ254smz8tODzTbeh9qA+vZtZdtXiXUikuW5RZbwoVr8e5NWH
+         H4nGfC/pGZQOwitSgdxXoNAwt5OMrtQXambhSejsdUcdOiNa45cLENFajldOaw1OinPm
+         nYgh3lAlL6Fmtp0wLdj4U9pi25aHn97Oh5QLh7RKzNgovHeQmBbfYGjP8csQsID2otE2
+         D51L/gQNa/1Yt4WoO03N2SChq7VmOWSLpwH/kjDphv2pGlj2qZx042rnT1iTc168oVaT
+         XQpA==
+X-Gm-Message-State: ABy/qLaz9SpnP7Qr/ckgqwdHbHOVDayDS1sNcJGVwF53sJnMmszAfkWH
+        LTtekOMbIkT6dZZtk6Qt6eglrsw=
+X-Google-Smtp-Source: APBJJlEi55DECGldnh4oz+7pIZRoVzrzq1k+o9LpkI1MyKXobMp3xALP+1XPqinyyja4f6VBX3Vg0pc=
+X-Received: from sdf.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5935])
+ (user=sdf job=sendgmr) by 2002:a25:f89:0:b0:d0b:c67:de3b with SMTP id
+ 131-20020a250f89000000b00d0b0c67de3bmr13938ybp.13.1690563084070; Fri, 28 Jul
+ 2023 09:51:24 -0700 (PDT)
+Date:   Fri, 28 Jul 2023 09:51:22 -0700
+In-Reply-To: <1023fdeb-a45a-2e9e-cd2e-7e44e655e8fc@tessares.net>
+Mime-Version: 1.0
+References: <3076188eb88cca9151a2d12b50ba1e870b11ce09.1689693294.git.geliang.tang@suse.com>
+ <CAHC9VhS_LKdkEmm5_J5y34RpaRcTbg8==fpz8pMThDCjF6nYtQ@mail.gmail.com>
+ <b41babb1-f0f2-dc2f-c2e3-1870107fbd9f@tessares.net> <ZMKxC+CFj4GbCklg@google.com>
+ <1023fdeb-a45a-2e9e-cd2e-7e44e655e8fc@tessares.net>
+Message-ID: <ZMPyCt2uozns776Q@google.com>
+Subject: Re: [RFC bpf-next v5] bpf: Force to MPTCP
+From:   Stanislav Fomichev <sdf@google.com>
+To:     Matthieu Baerts <matthieu.baerts@tessares.net>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Geliang Tang <geliang.tang@suse.com>,
+        Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, mptcp@lists.linux.dev,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/28/23 18:02, Vlastimil Babka wrote:
->> There's even a comment to that effect later on in the function:
-> Hmm, well spotted. But it wouldn't be so great if we now had to lock every
-> inspected page (and not just dirty pages), just to check the AS_ bit.
-> 
-> But I wonder if this is leftover from previous versions. Are the guest pages
-> even PageLRU currently? (and should they be, given how they can't be swapped
-> out or anything?) If not, isolate_migratepages_block will skip them anyway.
+On 07/28, Matthieu Baerts wrote:
+> Hi Stanislav,
+>=20
+> On 27/07/2023 20:01, Stanislav Fomichev wrote:
+> > On 07/27, Matthieu Baerts wrote:
+> >> Hi Paul, Stanislav,
+> >>
+> >> On 18/07/2023 18:14, Paul Moore wrote:
+> >>> On Tue, Jul 18, 2023 at 11:21=E2=80=AFAM Geliang Tang <geliang.tang@s=
+use.com> wrote:
+> >>>>
+> >>>> As is described in the "How to use MPTCP?" section in MPTCP wiki [1]=
+:
+> >>>>
+> >>>> "Your app can create sockets with IPPROTO_MPTCP as the proto:
+> >>>> ( socket(AF_INET, SOCK_STREAM, IPPROTO_MPTCP); ). Legacy apps can be
+> >>>> forced to create and use MPTCP sockets instead of TCP ones via the
+> >>>> mptcpize command bundled with the mptcpd daemon."
+> >>>>
+> >>>> But the mptcpize (LD_PRELOAD technique) command has some limitations
+> >>>> [2]:
+> >>>>
+> >>>>  - it doesn't work if the application is not using libc (e.g. GoLang
+> >>>> apps)
+> >>>>  - in some envs, it might not be easy to set env vars / change the w=
+ay
+> >>>> apps are launched, e.g. on Android
+> >>>>  - mptcpize needs to be launched with all apps that want MPTCP: we c=
+ould
+> >>>> have more control from BPF to enable MPTCP only for some apps or all=
+ the
+> >>>> ones of a netns or a cgroup, etc.
+> >>>>  - it is not in BPF, we cannot talk about it at netdev conf.
+> >>>>
+> >>>> So this patchset attempts to use BPF to implement functions similer =
+to
+> >>>> mptcpize.
+> >>>>
+> >>>> The main idea is add a hook in sys_socket() to change the protocol i=
+d
+> >>>> from IPPROTO_TCP (or 0) to IPPROTO_MPTCP.
+> >>>>
+> >>>> [1]
+> >>>> https://github.com/multipath-tcp/mptcp_net-next/wiki
+> >>>> [2]
+> >>>> https://github.com/multipath-tcp/mptcp_net-next/issues/79
+> >>>>
+> >>>> v5:
+> >>>>  - add bpf_mptcpify helper.
+> >>>>
+> >>>> v4:
+> >>>>  - use lsm_cgroup/socket_create
+> >>>>
+> >>>> v3:
+> >>>>  - patch 8: char cmd[128]; -> char cmd[256];
+> >>>>
+> >>>> v2:
+> >>>>  - Fix build selftests errors reported by CI
+> >>>>
+> >>>> Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/79
+> >>>> Signed-off-by: Geliang Tang <geliang.tang@suse.com>
+> >>>> ---
+> >>>>  include/linux/bpf.h                           |   1 +
+> >>>>  include/linux/lsm_hook_defs.h                 |   2 +-
+> >>>>  include/linux/security.h                      |   6 +-
+> >>>>  include/uapi/linux/bpf.h                      |   7 +
+> >>>>  kernel/bpf/bpf_lsm.c                          |   2 +
+> >>>>  net/mptcp/bpf.c                               |  20 +++
+> >>>>  net/socket.c                                  |   4 +-
+> >>>>  security/apparmor/lsm.c                       |   8 +-
+> >>>>  security/security.c                           |   2 +-
+> >>>>  security/selinux/hooks.c                      |   6 +-
+> >>>>  tools/include/uapi/linux/bpf.h                |   7 +
+> >>>>  .../testing/selftests/bpf/prog_tests/mptcp.c  | 128 +++++++++++++++=
++--
+> >>>>  tools/testing/selftests/bpf/progs/mptcpify.c  |  17 +++
+> >>>>  13 files changed, 187 insertions(+), 23 deletions(-)
+> >>>>  create mode 100644 tools/testing/selftests/bpf/progs/mptcpify.c
+> >>>
+> >>> ...
+> >>>
+> >>>> diff --git a/security/security.c b/security/security.c
+> >>>> index b720424ca37d..bbebcddce420 100644
+> >>>> --- a/security/security.c
+> >>>> +++ b/security/security.c
+> >>>> @@ -4078,7 +4078,7 @@ EXPORT_SYMBOL(security_unix_may_send);
+> >>>>   *
+> >>>>   * Return: Returns 0 if permission is granted.
+> >>>>   */
+> >>>> -int security_socket_create(int family, int type, int protocol, int =
+kern)
+> >>>> +int security_socket_create(int *family, int *type, int *protocol, i=
+nt kern)
+> >>>>  {
+> >>>>         return call_int_hook(socket_create, 0, family, type, protoco=
+l, kern);
+> >>>>  }
+> >>>
+> >>> Using the LSM to change the protocol family is not something we want
+> >>> to allow.  I'm sorry, but you will need to take a different approach.
+> >>
+> >> @Paul: Thank you for your feedback. It makes sense and I understand.
+> >>
+> >> @Stanislav: Despite the fact the implementation was smaller and reusin=
+g
+> >> more code, it looks like we cannot go in the direction you suggested. =
+Do
+> >> you think what Geliang suggested before in his v3 [1] can be accepted?
+> >>
+> >> (Note that the v3 is the same as the v1, only some fixes in the selfte=
+sts.)
+> >=20
+> > We have too many hooks in networking, so something that doesn't add
+> > a new one is preferable :-(
+>=20
+> Thank you for your reply and the explanation, I understand.
+>=20
+> > Moreover, we already have a 'socket init' hook, but it runs a bit late.
+>=20
+> Indeed. And we cannot move it before the creation of the socket.
+>=20
+> > Is existing cgroup/sock completely unworkable? Is it possible to
+> > expose some new bpf_upgrade_socket_to(IPPROTO_MPTCP) kfunc which would
+> > call some new net_proto_family->upgrade_to(IPPROTO_MPTCP) to do the sur=
+gery?
+> > Or is it too hacky?
+>=20
+> I cannot judge if it is too hacky or not but if you think it would be
+> OK, please tell us :)
 
-No, they're not (migration or even swap-out is not excluded for the 
-future, but for now it's left for future work.
+Maybe try and see how it goes? Doing the surgery to convert from tcp
+to mptcp is probably hard, but it seems that we should be able to
+do something like:
 
-Paolo
+int upgrade_to(sock, sk) {
+	if (sk is not a tcp one) return -EINVAL;
 
+	sk_common_release(sk);
+	return inet6_create(net, sock, IPPROTO_MPTCP, false);
+}
+
+?
+
+The only thing I'm not sure about is whether you can call inet6_create
+on a socket that has seen sk_common_release'd...
+=20
+> > Another option Alexei suggested is to add some fentry-like thing:
+> >=20
+> > noinline int update_socket_protocol(int protocol)
+> > {
+> > 	return protocol;
+> > }
+> > /* TODO: ^^^ add the above to mod_ret set */
+> >=20
+> > int __sys_socket(int family, int type, int protocol)
+> > {
+> > 	...
+> >=20
+> > 	protocol =3D update_socket_protocol(protocol);
+> >=20
+> > 	...
+> > }
+> >=20
+> > But it's also too problem specific it seems? And it's not cgroup-aware.
+>=20
+> It looks like it is what Geliang did in his v6. If it is the only
+> acceptable solution, I guess we can do without cgroup support. We can
+> continue the discussions in his v6 if that's easier.
+
+Ack, that works too, let's see how other people feel about it. I'm
+assuming in the bpf program we can always do bpf_get_current_cgroup_id()
+to filter by cgroup.
