@@ -2,437 +2,123 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D21A4C41513
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jul 2023 08:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36BBFC00528
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jul 2023 09:28:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234680AbjG1ICS (ORCPT
+        id S235509AbjG1J23 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Jul 2023 04:02:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42722 "EHLO
+        Fri, 28 Jul 2023 05:28:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234679AbjG1IBl (ORCPT
+        with ESMTP id S235511AbjG1J2F (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Jul 2023 04:01:41 -0400
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2043.outbound.protection.outlook.com [40.107.247.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AEB84C03;
-        Fri, 28 Jul 2023 01:00:15 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TPvt6/JbEwIb/W4dbHDDEh9UavPeOyttvFsodJeg6gziefMUN8pkHKIXj2NHrjcqiIEzXUYv9E/LYLfnyw0cEpb8nPE+lJs3ZeQerzQirhMt0NHQBEjtHJjgQtgs797qjcw2ZST3qHsp63FlUMrc1W4mIGQ8xZBujvNLmYTJBMkU7ZA8By/CMDjdodY8d4Xneistq0krLUNDXpjjApz25cUqYxtckBvJXMSIuoz8LSX28BSz66gk1iOZUYmGTz2yhub1+klg49dzMZusATYvNYb+VUuXDy01MHhCltvytytCOTPrw6YjaBBQE0K8lBISNVmnygYrTnBqh90DUXLtjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fPlQ/LKXroahdW3LoSJhHPP55jIN9tHgH9sTEqJ/pqc=;
- b=b20X5r3CH/Wu25bBP7xQqOT3RnaS4aBtRdF8Xji4DeDuwYS7MIvb52yaBp3/zKGF1noXW8gbeiBZUvnzOplcxfmDVICphSbBv/9LsC+5XiFgMWrkFou7jRvluf4M6F8ah3OaYX9m+dIxCpFfpG2Wzdbf2Au3ufjQ9Ij6zT6xOuz0GA4GgfUbq8GovdrigzL/qmhcau8O8N56vzbh5iCTqB6xAsyHf1DjNqPD3D8mYKr+yBbaeixEFv7ILpUnBN1YJ4F3OmE8KgNgRxDJSgi349iNoAmJLIBM5yQ+DnF/vwGQlDj6xf7ELs29erUpwNlq2OVLFaos3N1StbYIG4FDHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
- dkim=pass header.d=suse.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fPlQ/LKXroahdW3LoSJhHPP55jIN9tHgH9sTEqJ/pqc=;
- b=jIPwSUagTcqazoSzLvEPUzsP9T/xPSXb7/gLy3OQ9sri9//UOc07fKRHeuEVqeDPZq7pMslIWF2RlYGCIszdTA3QGsU5gY3avJJsinj0YL4Gco9iB3nC+lDvYqkabK5iHKAwVkLQnCGETmpsg3Dt+iO1yHO6XF+hSmRVZLpPaDyBcYqdINcGPIjOvqedCZD5Ol7i6t1PvmrSfID1yJ/oG9TRKJ8ybgk1ZM1t38lTPps5JWb688WqynQD99J7pYEtDVk04Od821K6dVMEXw7+jCXy0iTewXue4lCstk1BibvKAL1tW4MUYQtChPhtqrqzgsATx4cd01OQ+E0DzrxvhQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=suse.com;
-Received: from HE1PR0402MB3497.eurprd04.prod.outlook.com (2603:10a6:7:83::14)
- by AS4PR04MB9436.eurprd04.prod.outlook.com (2603:10a6:20b:4ec::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.29; Fri, 28 Jul
- 2023 07:59:50 +0000
-Received: from HE1PR0402MB3497.eurprd04.prod.outlook.com
- ([fe80::bf65:a49a:8861:4f92]) by HE1PR0402MB3497.eurprd04.prod.outlook.com
- ([fe80::bf65:a49a:8861:4f92%2]) with mapi id 15.20.6631.026; Fri, 28 Jul 2023
- 07:59:50 +0000
-From:   Geliang Tang <geliang.tang@suse.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>,
-        Mat Martineau <martineau@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
+        Fri, 28 Jul 2023 05:28:05 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38A8255B6
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Jul 2023 02:25:28 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-99b9161b94aso272275066b.1
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Jul 2023 02:25:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690536326; x=1691141126;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MyDeksRVqGtJNd0fe/itajI8E9fXoiZCjVyZ7emrXms=;
+        b=yZlBBa+QgG6A3izqrAvYrZmjNARnJqe9UVJDDaWeo1ngnmOt9VRY93kWsBg3OxlgJ6
+         BNgAnv6T/0ObsR7NeaCjk+WNJnmyD7Q59yeCq15kUZEqjsFvHdvXA60zH7S6F25/qIjt
+         fm8Sg5o5MpunPrL/BqoXYGZy7msDjit8jc0wg2EmQ6Q8Th8F7S82AjrHRl+/FMq8bTJh
+         sEoAOBkEqP29Krhf8xqYypp/joUWh9VUOF8DEcZIisv2V3iWTfC6qxmMhKHNjRW9HI9T
+         TolK5KmZ7NzIlhfQCguxbwjQDJpXunGMqxws18N6XaE4FtdLuzrmk4BalRM99UvIXMiI
+         LjuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690536326; x=1691141126;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MyDeksRVqGtJNd0fe/itajI8E9fXoiZCjVyZ7emrXms=;
+        b=UykR9TrX8jU2AD3fG7t3aVZm+JROJiXWXfWuU+3aUQFITbo1Ed0SzxQ6YhJJqt6Drs
+         klcZG9DCrDWWzZRu5ZTJj3nk/WOsu03PFpDmenxG1lZgI7TY7cZNp/X4MuIf+WZCjKvY
+         aDvvYdv5zYyitRSc5f+jQUrMvooN5HCDgLy93m5Ir7vS2GiwK/coDh3dyUOFYGMEqskI
+         7axdeL9vPXACD0DIVZV23PQq9FibG5U36Dq9Mjy8wyWd4b3L9bKpSmZaiTlzolGLCz7A
+         ug9zGAedgzcK2H5/0Ct/kR4TL72wYyMuKVfTvPKI8BXVcFUVdROJn1E50jy9xnqFQnqg
+         qx4g==
+X-Gm-Message-State: ABy/qLaF0ZdbV7fbetz3ioplYoQKSPBjZR0M27Eca3yfWn8fU9l9Bed7
+        mFrWnppCmK3kfzC9J01gDd8PFA==
+X-Google-Smtp-Source: APBJJlG4DNtaaix3llwTkCcLiQNG9ALlnJv6ynH+2HDeVn6HzB3Xx8i5ieUEd323eDEBkV9C48RmSw==
+X-Received: by 2002:a17:906:8454:b0:994:1fee:3065 with SMTP id e20-20020a170906845400b009941fee3065mr1975862ejy.15.1690536326590;
+        Fri, 28 Jul 2023 02:25:26 -0700 (PDT)
+Received: from google.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
+        by smtp.gmail.com with ESMTPSA id n12-20020a170906688c00b00992c92af6f4sm1857653ejr.144.2023.07.28.02.25.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jul 2023 02:25:26 -0700 (PDT)
+Date:   Fri, 28 Jul 2023 09:25:22 +0000
+From:   Quentin Perret <qperret@google.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
-Cc:     Geliang Tang <geliang.tang@suse.com>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, mptcp@lists.linux.dev,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [RFC bpf-next v6] bpf: Force to MPTCP
-Date:   Fri, 28 Jul 2023 15:59:49 +0800
-Message-Id: <c0647d0d3c7158b96dec4604ba317df311c5012d.1690531142.git.geliang.tang@suse.com>
-X-Mailer: git-send-email 2.35.3
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY2PR04CA0016.apcprd04.prod.outlook.com
- (2603:1096:404:f6::28) To HE1PR0402MB3497.eurprd04.prod.outlook.com
- (2603:10a6:7:83::14)
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [RFC PATCH v11 06/29] KVM: Introduce KVM_SET_USER_MEMORY_REGION2
+Message-ID: <ZMOJgnyzzUNIx+Tn@google.com>
+References: <20230718234512.1690985-1-seanjc@google.com>
+ <20230718234512.1690985-7-seanjc@google.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HE1PR0402MB3497:EE_|AS4PR04MB9436:EE_
-X-MS-Office365-Filtering-Correlation-Id: a76732a2-e31e-412e-0612-08db8f409e0e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: xv64iWeOtRig2HoYFaX5DBda6vQT9kI9GFxTDqEZJukELg6RYMZiJWhw6fkfK5Ucq0QdlyQC0o/MaCRBlbNjTxu408/FnHwmGhkht0BNBDLCsXKiR0XQkglF7cUBF6iqevKpbroin3FMrI7/yL3Jl5InDDzSsyMhEXZSoO/dVDhTuYS3501zehPQ+ah2u/bpXmi9dC0CjyHrMIo2PRCaCOeqxP1Wson37n/TlqIgYM5Zw2ylySV6Yk4PZVJob/bqmUUvZW37clkt0MGwA4I9S6+DLuxw7X3Hk2wUvPQQYrTB70SXcPhHXnboUN0B02d4il14d1T3u6jXF7xUs1F1gJOcPzO5RuuebtknLZ8XZeAt9j8uihA9QVjiVBf6bBNicy6HiuY7K/0fLPXRNvYSZiD77g6bO3gzzsHmwHKBF8TJiabxEqn2kBFb+6FnmFEgnDqO241JrSFUBP/L/nWg/Bwzefwd+fpbWPVq+aZDRfmex5io8tJ2b7/1eUoiBqx7HRwNJcFXL9oNf/O/axJMR/s2x3RGMcPScTsPP3X0eRjgdnoBMc1bThG3ev2KYmxxVYooInS/Bju/SmrFuhH3wZSfphD/xeSBh+ZbIitPZ7a4cqLKbvZW1FSpKFzBELkh
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HE1PR0402MB3497.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(376002)(346002)(39860400002)(136003)(366004)(396003)(451199021)(2906002)(41300700001)(316002)(7416002)(5660300002)(7406005)(8676002)(8936002)(36756003)(86362001)(44832011)(6512007)(966005)(26005)(6506007)(478600001)(921005)(6486002)(83380400001)(186003)(4326008)(2616005)(38100700002)(110136005)(66476007)(66556008)(66946007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?BbeeHKt0f0iEX6B+MgkYIk5kGhnargmq4tuHs/FO4CpxjuPidb/v9eiMM+5/?=
- =?us-ascii?Q?SKt4PCv+zRqH16r5W1spIqzEb4SeFkanhLC9US3UIWYjSW3q9M3jhnGPfXcB?=
- =?us-ascii?Q?OnUkXhyKzF5uvXd0ze1WLOcAQNhSqVczgyrkxzB7KR96v1g1pquUbGUVJemv?=
- =?us-ascii?Q?In1NiHhHuFZpMRLH8VfwF4qK5Q/0+enfTrf82qugi0yqQoQlUOK97rzS0pwJ?=
- =?us-ascii?Q?b3Q/rTh4HeP3hqAs4sPAF5Smz6XEk/I8Lfvx59RWkMdqq7yirIGnftBnWH/p?=
- =?us-ascii?Q?7lz03a1Gno5yrAUbG+TXdPnTsjesD2fzVPDm4HuDaEcfrYuqMnzyz7LpRzYE?=
- =?us-ascii?Q?q89sHCYnioyz9KG+wqODYNDhPsb0HssIGLuDFId97M+cKAgo9MDkwJQorVR0?=
- =?us-ascii?Q?J8ZLb2FyVx9uK/1pmUppMJLAQ+W3YshML/TTz/oL2OjbayEkdc+zpNeKichh?=
- =?us-ascii?Q?uQz1eNGiZSFbrp0kePpoLqZUuD2vc4D1SdpnlzVRBotxYQch4/wvQBm/PYax?=
- =?us-ascii?Q?w/P8rC0TV+SVSkf6OKipoG9yRbLEs0yrprX9C2m4SlK61OXp2YGYJMOVQwRg?=
- =?us-ascii?Q?4/93mn4RdxBbqOUl+6wLhSRZgdA+f9CuMp9uUU8gXuGFuQXv7QSj4dbXhz7c?=
- =?us-ascii?Q?xDhaz03V/w8dJ6NxWW3Hp+/Ufkd6Ie9DVfs3SLqvWbLoFmHoPpabvO/pNulV?=
- =?us-ascii?Q?SRFQMtkKxWquLfqTKKau75nsyjlJcSdrDH18iqBe7pOlCyQctstX5/iJBpUW?=
- =?us-ascii?Q?gK/ZNrOxE6NOT01qFoVcBFz0zfDq6eHmRgqXpd4sFQieGHGsy3prC426aOca?=
- =?us-ascii?Q?6pl9fqoLIiQx98RClV4aPvh86u7ouEY9/TCqoSDwPLEot+WxikndgdZUizNR?=
- =?us-ascii?Q?pmydkV2b2mSOc64pECOevju1DGlRqCS1q/Ew8ezL+5jZFekmoZLoSWXJarJu?=
- =?us-ascii?Q?4OLv59z7jSa9BcWtRj+nuWLoCdW14WBtMz1JvJaRt994bV+/L9yaDs/ZMwDC?=
- =?us-ascii?Q?h8LtgRASSCSFR1iC+kROq+AUGVtMGnuqW2YiEUlD9gkNFCrB7CRbipmj+Wpn?=
- =?us-ascii?Q?h3ZrBpgV7nc8LkLSEVp/cjng9snIA/W/kvqbFX/Qn7WytKCpnDNOtVB+SQYi?=
- =?us-ascii?Q?iSgs7KMDxul15iBPDl6ZzVgG6wr+q0SPh6sSRn6NHcFIZ9M9A2GMi1cdgyhb?=
- =?us-ascii?Q?c6dtc/kLiMzDTdiSBsxDem4MMlHPf6leY1QhjPnBGv/RBUAuqIf5K46kM/cn?=
- =?us-ascii?Q?bB3l2uzzDABY/a3oUfti6mDT+5zhEfDSr6uiOA0LKwviDXXFEaS1pBpsIwjK?=
- =?us-ascii?Q?s1fBv9dOCKp91UCJUr/r90CQ22DZ+pasX9R+6NqLFyO0A6pvqbi3vybaQKfL?=
- =?us-ascii?Q?NMznKv434eLxin2wdh9dqzsnVvUFxfcZhNjNgRXgBlJi4VFGUi/2oiz/N0P2?=
- =?us-ascii?Q?jPE+jXZa/g6FhUCuzCoRuCjxOGijdlrpEH3UDs6/t6v2kB/Dj1ASnZMVQds9?=
- =?us-ascii?Q?/gvxODHBKPYk2p/X3RgJVeYuLCotLXOpAebB4//AtJbiwVHKTDzFoH01YfmZ?=
- =?us-ascii?Q?HJMSpoEOMtG1piHfAdy/p8e5jOaeJ8i5oKvnhwzx?=
-X-OriginatorOrg: suse.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a76732a2-e31e-412e-0612-08db8f409e0e
-X-MS-Exchange-CrossTenant-AuthSource: HE1PR0402MB3497.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2023 07:59:50.0130
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7zt2EVkgp7KaJYsGP51d3ny9mKdSIDj57/a4j42J6vZKb3yB2oPl+bf89HjLq2iytijhLOqxCa5qvAjGxuj9tA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9436
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230718234512.1690985-7-seanjc@google.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-As is described in the "How to use MPTCP?" section in MPTCP wiki [1]:
+On Tuesday 18 Jul 2023 at 16:44:49 (-0700), Sean Christopherson wrote:
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -95,6 +95,16 @@ struct kvm_userspace_memory_region {
+>  	__u64 userspace_addr; /* start of the userspace allocated memory */
+>  };
+>  
+> +/* for KVM_SET_USER_MEMORY_REGION2 */
+> +struct kvm_userspace_memory_region2 {
+> +	__u32 slot;
+> +	__u32 flags;
+> +	__u64 guest_phys_addr;
+> +	__u64 memory_size;
+> +	__u64 userspace_addr;
+> +	__u64 pad[16];
 
-"Your app can create sockets with IPPROTO_MPTCP as the proto:
-( socket(AF_INET, SOCK_STREAM, IPPROTO_MPTCP); ). Legacy apps can be
-forced to create and use MPTCP sockets instead of TCP ones via the
-mptcpize command bundled with the mptcpd daemon."
+Should we replace that pad[16] with:
 
-But the mptcpize (LD_PRELOAD technique) command has some limitations
-[2]:
+	__u64 size;
 
- - it doesn't work if the application is not using libc (e.g. GoLang
-apps)
- - in some envs, it might not be easy to set env vars / change the way
-apps are launched, e.g. on Android
- - mptcpize needs to be launched with all apps that want MPTCP: we could
-have more control from BPF to enable MPTCP only for some apps or all the
-ones of a netns or a cgroup, etc.
- - it is not in BPF, we cannot talk about it at netdev conf.
-
-So this patchset attempts to use BPF to implement functions similer to
-mptcpize.
-
-The main idea is add a hook in sys_socket() to change the protocol id
-from IPPROTO_TCP (or 0) to IPPROTO_MPTCP.
-
-[1]
-https://github.com/multipath-tcp/mptcp_net-next/wiki
-[2]
-https://github.com/multipath-tcp/mptcp_net-next/issues/79
-
-v6:
- - add update_socket_protocol.
-
-v5:
- - add bpf_mptcpify helper.
-
-v4:
- - use lsm_cgroup/socket_create
-
-v3:
- - patch 8: char cmd[128]; -> char cmd[256];
-
-v2:
- - Fix build selftests errors reported by CI
-
-Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/79
-Signed-off-by: Geliang Tang <geliang.tang@suse.com>
----
- net/mptcp/bpf.c                               |  17 +++
- net/socket.c                                  |   6 +
- .../testing/selftests/bpf/prog_tests/mptcp.c  | 126 ++++++++++++++++--
- tools/testing/selftests/bpf/progs/mptcpify.c  |  26 ++++
- 4 files changed, 166 insertions(+), 9 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/progs/mptcpify.c
-
-diff --git a/net/mptcp/bpf.c b/net/mptcp/bpf.c
-index 5a0a84ad94af..c43aee31014d 100644
---- a/net/mptcp/bpf.c
-+++ b/net/mptcp/bpf.c
-@@ -12,6 +12,23 @@
- #include <linux/bpf.h>
- #include "protocol.h"
- 
-+#ifdef CONFIG_BPF_JIT
-+BTF_SET8_START(bpf_mptcp_fmodret_ids)
-+BTF_ID_FLAGS(func, update_socket_protocol)
-+BTF_SET8_END(bpf_mptcp_fmodret_ids)
-+
-+static const struct btf_kfunc_id_set bpf_mptcp_fmodret_set = {
-+	.owner = THIS_MODULE,
-+	.set   = &bpf_mptcp_fmodret_ids,
-+};
-+
-+static int __init bpf_mptcp_kfunc_init(void)
-+{
-+	return register_btf_fmodret_id_set(&bpf_mptcp_fmodret_set);
-+}
-+late_initcall(bpf_mptcp_kfunc_init);
-+#endif /* CONFIG_BPF_JIT */
-+
- struct mptcp_sock *bpf_mptcp_sock_from_subflow(struct sock *sk)
- {
- 	if (sk && sk_fullsock(sk) && sk->sk_protocol == IPPROTO_TCP && sk_is_mptcp(sk))
-diff --git a/net/socket.c b/net/socket.c
-index 2b0e54b2405c..4c7b2ff711f0 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -1644,11 +1644,17 @@ struct file *__sys_socket_file(int family, int type, int protocol)
- 	return sock_alloc_file(sock, flags, NULL);
- }
- 
-+noinline int update_socket_protocol(int family, int type, int protocol)
-+{
-+	return protocol;
-+}
-+
- int __sys_socket(int family, int type, int protocol)
- {
- 	struct socket *sock;
- 	int flags;
- 
-+	protocol = update_socket_protocol(family, type, protocol);
- 	sock = __sys_socket_create(family, type, protocol);
- 	if (IS_ERR(sock))
- 		return PTR_ERR(sock);
-diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-index cd0c42fff7c0..ffa98d5c46af 100644
---- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
-+++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-@@ -6,8 +6,9 @@
- #include "cgroup_helpers.h"
- #include "network_helpers.h"
- #include "mptcp_sock.skel.h"
-+#include "mptcpify.skel.h"
- 
--#define NS_TEST "mptcp_ns"
-+char NS_TEST[32];
- 
- #ifndef TCP_CA_NAME_MAX
- #define TCP_CA_NAME_MAX	16
-@@ -22,6 +23,26 @@ struct mptcp_storage {
- 	char ca_name[TCP_CA_NAME_MAX];
- };
- 
-+static struct nstoken *create_netns(void)
-+{
-+	srand(time(NULL));
-+	snprintf(NS_TEST, sizeof(NS_TEST), "mptcp_ns_%d", rand());
-+	SYS(fail, "ip netns add %s", NS_TEST);
-+	SYS(fail, "ip -net %s link set dev lo up", NS_TEST);
-+
-+	return open_netns(NS_TEST);
-+fail:
-+	return NULL;
-+}
-+
-+static void cleanup_netns(struct nstoken *nstoken)
-+{
-+	if (nstoken)
-+		close_netns(nstoken);
-+
-+	SYS_NOFAIL("ip netns del %s &> /dev/null", NS_TEST);
-+}
-+
- static int verify_tsk(int map_fd, int client_fd)
- {
- 	int err, cfd = client_fd;
-@@ -147,11 +168,8 @@ static void test_base(void)
- 	if (!ASSERT_GE(cgroup_fd, 0, "test__join_cgroup"))
- 		return;
- 
--	SYS(fail, "ip netns add %s", NS_TEST);
--	SYS(fail, "ip -net %s link set dev lo up", NS_TEST);
--
--	nstoken = open_netns(NS_TEST);
--	if (!ASSERT_OK_PTR(nstoken, "open_netns"))
-+	nstoken = create_netns();
-+	if (!ASSERT_OK_PTR(nstoken, "create_netns"))
- 		goto fail;
- 
- 	/* without MPTCP */
-@@ -174,11 +192,99 @@ static void test_base(void)
- 	close(server_fd);
- 
- fail:
--	if (nstoken)
--		close_netns(nstoken);
-+	cleanup_netns(nstoken);
- 
--	SYS_NOFAIL("ip netns del " NS_TEST " &> /dev/null");
-+	close(cgroup_fd);
-+}
-+
-+static void send_byte(int fd)
-+{
-+	char b = 0x55;
-+
-+	ASSERT_EQ(write(fd, &b, sizeof(b)), 1, "send single byte");
-+}
-+
-+static int verify_mptcpify(void)
-+{
-+	char cmd[256];
-+	int err = 0;
-+
-+	snprintf(cmd, sizeof(cmd),
-+		 "ip netns exec %s ss -tOni | grep -q '%s'",
-+		 NS_TEST, "tcp-ulp-mptcp");
-+	if (!ASSERT_OK(system(cmd), "No tcp-ulp-mptcp found!"))
-+		err++;
-+
-+	snprintf(cmd, sizeof(cmd),
-+		 "ip netns exec %s nstat -asz %s | awk '%s' | grep -q '%s'",
-+		 NS_TEST, "MPTcpExtMPCapableSYNACKRX",
-+		 "NR==1 {next} {print $2}", "1");
-+	if (!ASSERT_OK(system(cmd), "No MPTcpExtMPCapableSYNACKRX found!"))
-+		err++;
-+
-+	return err;
-+}
-+
-+static int run_mptcpify(int cgroup_fd)
-+{
-+	int server_fd, client_fd, prog_fd, err = 0;
-+	struct mptcpify *mptcpify_skel;
-+
-+	mptcpify_skel = mptcpify__open_and_load();
-+	if (!ASSERT_OK_PTR(mptcpify_skel, "skel_open_load"))
-+		return -EIO;
- 
-+	err = mptcpify__attach(mptcpify_skel);
-+	if (!ASSERT_OK(err, "skel_attach"))
-+		goto out;
-+
-+	prog_fd = bpf_program__fd(mptcpify_skel->progs.mptcpify);
-+	if (!ASSERT_GE(prog_fd, 0, "bpf_program__fd")) {
-+		err = -EIO;
-+		goto out;
-+	}
-+
-+	/* without MPTCP */
-+	server_fd = start_server(AF_INET, SOCK_STREAM, NULL, 0, 0);
-+	if (!ASSERT_GE(server_fd, 0, "start_server")) {
-+		err = -EIO;
-+		goto out;
-+	}
-+
-+	client_fd = connect_to_fd(server_fd, 0);
-+	if (!ASSERT_GE(client_fd, 0, "connect to fd")) {
-+		err = -EIO;
-+		goto close_server;
-+	}
-+
-+	send_byte(client_fd);
-+	err += verify_mptcpify();
-+
-+	close(client_fd);
-+close_server:
-+	close(server_fd);
-+out:
-+	mptcpify__destroy(mptcpify_skel);
-+	return err;
-+}
-+
-+static void test_mptcpify(void)
-+{
-+	struct nstoken *nstoken = NULL;
-+	int cgroup_fd;
-+
-+	cgroup_fd = test__join_cgroup("/mptcpify");
-+	if (!ASSERT_GE(cgroup_fd, 0, "test__join_cgroup"))
-+		return;
-+
-+	nstoken = create_netns();
-+	if (!ASSERT_OK_PTR(nstoken, "create_netns"))
-+		goto fail;
-+
-+	ASSERT_OK(run_mptcpify(cgroup_fd), "run_mptcpify");
-+
-+fail:
-+	cleanup_netns(nstoken);
- 	close(cgroup_fd);
- }
- 
-@@ -186,4 +292,6 @@ void test_mptcp(void)
- {
- 	if (test__start_subtest("base"))
- 		test_base();
-+	if (test__start_subtest("mptcpify"))
-+		test_mptcpify();
- }
-diff --git a/tools/testing/selftests/bpf/progs/mptcpify.c b/tools/testing/selftests/bpf/progs/mptcpify.c
-new file mode 100644
-index 000000000000..c5e5b27ac3df
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/mptcpify.c
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2023, SUSE. */
-+
-+#include <linux/bpf.h>
-+#include <bpf/bpf_helpers.h>
-+#include "bpf_tcp_helpers.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+#define	AF_INET		2
-+#define	AF_INET6	10
-+#define	SOCK_STREAM	1
-+#define	IPPROTO_TCP	6
-+#define	IPPROTO_MPTCP	262
-+
-+SEC("fmod_ret/update_socket_protocol")
-+int BPF_PROG(mptcpify, int family, int type, int protocol)
-+{
-+	if ((family == AF_INET || family == AF_INET6) &&
-+	    type == SOCK_STREAM &&
-+	    (!protocol || protocol == IPPROTO_TCP)) {
-+		return IPPROTO_MPTCP;
-+	}
-+
-+	return protocol;
-+}
--- 
-2.35.3
-
+where 'size' is the size of the structure as seen by userspace? This is
+used in other UAPIs (see struct sched_attr for example) and is a bit
+more robust for future extensions (e.g. an 'old' kernel can correctly
+reject a newer version of the struct with additional fields it doesn't
+know about if that makes sense, etc).
