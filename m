@@ -2,123 +2,80 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FC5C04A94
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jul 2023 18:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD90EC001E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jul 2023 01:55:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbjG0SNZ (ORCPT
+        id S229719AbjG1Bzf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jul 2023 14:13:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50840 "EHLO
+        Thu, 27 Jul 2023 21:55:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbjG0SNY (ORCPT
+        with ESMTP id S231859AbjG1Bze (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jul 2023 14:13:24 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B7732D64;
-        Thu, 27 Jul 2023 11:13:23 -0700 (PDT)
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36RIDFNB019310;
-        Thu, 27 Jul 2023 18:13:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=C9gHyrC5PbyD7aJFihXi8PurtAWMW8YRynLzo8zgwWo=;
- b=oG67nY4rwjKGQbd0bo8jy3gFTAebwa5KhBecrwB30LNsPckQIlYKKJlt1n0Y05QiJqBb
- 3R14JWDq1n01BgWFN0mqAvcTEGSPB9JhLGHagSVoV1EBfMKHRqeDwpJq6kmd3e+OXOkv
- 8WXQWtQQFXhj7zAQQ07bqA0Qf9zJH+MJ8pKpVdavLJtXo4ieDMHIvd2hrBCk0lUgoHsJ
- zx+sLQpeIEklaGSzmyxG4Trcaf2s9aR6OtHJojHKS2mPJabp1BxebqVidohJG6tgJSfj
- pt/SA2nltvuw1UGpBi6RUubCpRcCn6rT5pIUnfe5UlJKjFfGrv9bKfqh4yvlUzPBmD8+ eA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3s3w7b0bg9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jul 2023 18:13:15 +0000
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 36RHpp0I003532;
-        Thu, 27 Jul 2023 17:56:31 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3s3w7b0bft-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jul 2023 17:56:31 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 36RGp95a026217;
-        Thu, 27 Jul 2023 17:38:10 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-        by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3s0sesfveb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jul 2023 17:38:10 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-        by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 36RHc9on20644444
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jul 2023 17:38:09 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8849A5805E;
-        Thu, 27 Jul 2023 17:38:09 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B271C5805C;
-        Thu, 27 Jul 2023 17:38:08 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.140.89])
-        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Thu, 27 Jul 2023 17:38:08 +0000 (GMT)
-Message-ID: <5cbba927f2462f48012f683c923d53b3aa291c46.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] ima: require signed IMA policy when UEFI secure boot
- is enabled
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Thu, 27 Jul 2023 13:38:08 -0400
-In-Reply-To: <20230726020806.926734-1-coxu@redhat.com>
-References: <20230703115442.129725-1-coxu@redhat.com>
-         <20230726020806.926734-1-coxu@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Q7UW1XjHHlPAnY4K10s75-3b3U559Dwt
-X-Proofpoint-GUID: fxSGUznar_nmjUvM4e5f8NHPEk7KfPYo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-27_08,2023-07-26_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxlogscore=999
- suspectscore=0 priorityscore=1501 bulkscore=0 malwarescore=0 spamscore=0
- lowpriorityscore=0 impostorscore=0 phishscore=0 adultscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
- definitions=main-2307270163
+        Thu, 27 Jul 2023 21:55:34 -0400
+Received: from mfwd27.mailplug.co.kr (mfwd27.mailplug.co.kr [14.63.193.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67EB1173F
+        for <linux-security-module@vger.kernel.org>; Thu, 27 Jul 2023 18:55:27 -0700 (PDT)
+Received: (qmail 4969 invoked from network); 28 Jul 2023 10:55:23 +0900
+Received: from m41.mailplug.com (121.156.118.41)
+        by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
+        28 Jul 2023 10:54:23 +0900
+Received: (qmail 1706683 invoked from network); 28 Jul 2023 10:54:23 +0900
+Received: from unknown (HELO sslauth27) (lsahn@wewakecorp.com@211.252.85.38)
+        by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
+        28 Jul 2023 10:54:23 +0900
+Message-ID: <02da6484-658c-bfe8-0ae0-08ffe9b93c47@wewakecorp.com>
+Date:   Fri, 28 Jul 2023 10:54:23 +0900
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [LSM Stacking] SELinux policy inside container affects a
+ processon Host
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org
+References: <32e59b69-79a2-f440-bf94-fdb8f8f5fa64@wewakecorp.com>
+ <CAHC9VhRdCSJwB9hpyrCe+D00ddeRLisz=9GEWJz50ybr80tnsg@mail.gmail.com>
+ <4ec9e7ae-e95e-a737-5131-0b57922e4fce@wewakecorp.com>
+ <CAHC9VhQBbbSu6YBbnXOPMjpBxQxc1nmgA+icfN4x6s6FeQSeiw@mail.gmail.com>
+From:   Leesoo Ahn <lsahn@wewakecorp.com>
+In-Reply-To: <CAHC9VhQBbbSu6YBbnXOPMjpBxQxc1nmgA+icfN4x6s6FeQSeiw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2023-07-26 at 10:08 +0800, Coiby Xu wrote:
-> With commit 099f26f22f58 ("integrity: machine keyring CA
-> configuration"), users are able to add custom IMA CA keys via
-> MOK.  This allows users to sign their own IMA polices without
-> recompiling the kernel. For the sake of security, mandate signed IMA
-> policy when UEFI secure boot is enabled.
+I hope you have a great day today
+
+2023-07-07 오후 11:20에 Paul Moore 이(가) 쓴 글:
+> On Fri, Jul 7, 2023 at 4:29 AM Leesoo Ahn <lsahn@wewakecorp.com> wrote:
+
+[...]
+
 > 
-> Note this change may affect existing users/tests i.e users won't be able
-> to load an unsigned IMA policy when the IMA architecture specific policy
-> is configured and UEFI secure boot is enabled.
+> What you are looking for is a combination of LSM stacking and
+> individual LSM namespacing. Sadly, I think the communications around
+> LSM stacking have not been very clear on this and I worry that many
+> people are going to be disappointed with LSM stacking for this very
+> reason.
 > 
-> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
-> ---
-> v2
->  - improve commit message [Mimi]
->   - explicitly mention the dependent commit
->   - add a note that the change will affect user space
->  - remove "/* CONFIG_INTEGRITY_MACHINE_KEYRING .. */" to improve code
->    readability
+> While stacking of LSMs is largely done at the LSM layer, namespacing
+> LSMs such that they can be customized for individual containers
+> requires work to be done at the per-LSM level as each LSM is
+> different. AppArmor already has a namespacing concept, but SELinux
+> does not. Due to differences in the approach taken by the two LSMs,
+> namespacing is much more of a challenge for SELinux, largely due to
+> issues around filesystem labeling. We have not given up on the idea,
+> but we have yet to arrive at a viable solution for namespacing
+> SELinux.
+> 
+> If you are interested in stacking SELinux and AppArmor, I believe the
+> only practical solution is to run SELinux on the host system (initial
+> namespace) and run AppArmor in the containers. 
 
-Thank you for updating the commit message.  The patch is now queued in
-next-integrity-testing.
+Paul, I don't get that SELinux on the host system and run AppArmor in 
+the containers is the only practical solution. Could you please explain 
+that in more details?
 
--- 
-thanks,
-
-Mimi
-
+Best regards,
+Leesoo
