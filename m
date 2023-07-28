@@ -2,219 +2,164 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF84C001DE
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jul 2023 15:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B9CC001DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Jul 2023 16:02:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236229AbjG1PPJ (ORCPT
+        id S234505AbjG1QCw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Jul 2023 11:15:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47672 "EHLO
+        Fri, 28 Jul 2023 12:02:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234149AbjG1PPI (ORCPT
+        with ESMTP id S232874AbjG1QCu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Jul 2023 11:15:08 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FAA110CB
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Jul 2023 08:15:06 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-51e2a6a3768so2893041a12.0
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Jul 2023 08:15:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tessares.net; s=google; t=1690557305; x=1691162105;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dUsoDe1aciZkS3SYBk+FJnom/bcWm6HUHz7xtg9wGVE=;
-        b=xlBQr91VrE+fcTMQtJeL8UehPRNRDcOoL3Jb7oeY/mrCveqo1mf708pc0eDYwfspAJ
-         A+kaOd3By9dV4yBq+KBkmUafQK3E1WIz9fm1vsVKJtrzZ69uoTGDsVyPg7Xo8lpzBMV7
-         F6TD0DCllb2LydrhPW33jZF0TgI2xFAg27NxhuBNndHVKqMobgm/+RCpx6Ngqg8YxKB7
-         b83oDwxzwWX8OZXxHIXZG598ch1mn5d3uloQxGo1tY0/gZEnwuPNS6xRJH8gYeGIarEo
-         Gc73xHWp4OAegZDVNbxQI5pzehlWrR/ANJAK/2Ze7/lopQhmjJV/Vq/9Qqv6X8RhKmbK
-         ZQvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690557305; x=1691162105;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dUsoDe1aciZkS3SYBk+FJnom/bcWm6HUHz7xtg9wGVE=;
-        b=IRs15G5QnPVlsEFxfxBLHnsid1gQtKTDd9ecYp1b7o3BUEj3bnFTE9A+MnDvI8+ekE
-         Ui14ERL7xeg+6A9i9sm38vMXCiThqtdRorc6woG8kFQ3zCy4Jky0kgG/mJBCu5PX1eNs
-         Fi0lv6KT0GB7Js8lXRYQPDllhR7B75oHk1uxJGHb1a6vOHb0jqOgsEx6jUcVFc4DbA+v
-         UU6phruEVTFisCy+fuMKB5M0cs99JzqM/1gmeKg2HmN45jRv63pq0tLb9mXd0EhgNtxD
-         wTsZ+1WknE/QOSdqUjMLavf+712MXIftBZU/b38VnEmsA4uPoi5Ttr5AAjav0eYHWk4q
-         FK1w==
-X-Gm-Message-State: ABy/qLbDSG13EC8vrPKe3FNQ+rExfj5Fiq9t9Gfk2xhztCIFntm86N9H
-        GTN0gt91raW/oEtfgI7s1AVo2w==
-X-Google-Smtp-Source: APBJJlGrx217B3+2JoDDsOR5Pe+xG2RV8Yfclk4WQBqChj/RTKdH94R2bDDyfq5dnAZDNu9v1WPHIA==
-X-Received: by 2002:aa7:c68f:0:b0:51e:24e1:c0e9 with SMTP id n15-20020aa7c68f000000b0051e24e1c0e9mr2023024edq.10.1690557304905;
-        Fri, 28 Jul 2023 08:15:04 -0700 (PDT)
-Received: from [10.44.2.5] ([81.246.10.41])
-        by smtp.gmail.com with ESMTPSA id ba4-20020a0564021ac400b00522572f323dsm1880856edb.16.2023.07.28.08.15.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jul 2023 08:15:04 -0700 (PDT)
-Message-ID: <1023fdeb-a45a-2e9e-cd2e-7e44e655e8fc@tessares.net>
-Date:   Fri, 28 Jul 2023 17:15:03 +0200
+        Fri, 28 Jul 2023 12:02:50 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B772F3;
+        Fri, 28 Jul 2023 09:02:49 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 9DB191F854;
+        Fri, 28 Jul 2023 16:02:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1690560167; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CvY0+v4nvg0O0BVEhEc8BmZfYzpPNCFFCMaJmCODeHg=;
+        b=LuP/9ao2mrKjhPvKezWW1/W17SEYJs2q92vl0M2JCYXcddXuljTTEbIYow9womJUw6LJrg
+        qzowp5BeJWVnf+lzn5JU5UBXET439G9aZl2Cej4L8DEUkkS2Xabj9scGTntFuX4nFsk5BK
+        jGFVo1NW+KmbJNwVJQIyJlgnQrU5Tm8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1690560167;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CvY0+v4nvg0O0BVEhEc8BmZfYzpPNCFFCMaJmCODeHg=;
+        b=PJkmStLEQ4tX3u5n/JqYexTLZ62i3tFelBIXmZgBwUht8ehxcz9TNcF+IDGXx4zqKelWMj
+        1J0IPH/P9l/ZmiCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0504113276;
+        Fri, 28 Jul 2023 16:02:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id vp1JAKfmw2ReUwAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Fri, 28 Jul 2023 16:02:47 +0000
+Message-ID: <692b09f7-70d9-1119-7fe2-3e7396ec259d@suse.cz>
+Date:   Fri, 28 Jul 2023 18:02:46 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [RFC bpf-next v5] bpf: Force to MPTCP
-Content-Language: en-GB
-To:     Stanislav Fomichev <sdf@google.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Geliang Tang <geliang.tang@suse.com>,
-        Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, mptcp@lists.linux.dev,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <3076188eb88cca9151a2d12b50ba1e870b11ce09.1689693294.git.geliang.tang@suse.com>
- <CAHC9VhS_LKdkEmm5_J5y34RpaRcTbg8==fpz8pMThDCjF6nYtQ@mail.gmail.com>
- <b41babb1-f0f2-dc2f-c2e3-1870107fbd9f@tessares.net>
- <ZMKxC+CFj4GbCklg@google.com>
-From:   Matthieu Baerts <matthieu.baerts@tessares.net>
-In-Reply-To: <ZMKxC+CFj4GbCklg@google.com>
+Subject: Re: [RFC PATCH v11 10/29] mm: Add AS_UNMOVABLE to mark mapping as
+ completely unmovable
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>
+References: <20230718234512.1690985-1-seanjc@google.com>
+ <20230718234512.1690985-11-seanjc@google.com>
+ <20230725102403.xywjqlhyqkrzjok6@box.shutemov.name>
+ <ZL/Fa4W2Ne9EVxoh@casper.infradead.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <ZL/Fa4W2Ne9EVxoh@casper.infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Stanislav,
-
-On 27/07/2023 20:01, Stanislav Fomichev wrote:
-> On 07/27, Matthieu Baerts wrote:
->> Hi Paul, Stanislav,
->>
->> On 18/07/2023 18:14, Paul Moore wrote:
->>> On Tue, Jul 18, 2023 at 11:21 AM Geliang Tang <geliang.tang@suse.com> wrote:
->>>>
->>>> As is described in the "How to use MPTCP?" section in MPTCP wiki [1]:
->>>>
->>>> "Your app can create sockets with IPPROTO_MPTCP as the proto:
->>>> ( socket(AF_INET, SOCK_STREAM, IPPROTO_MPTCP); ). Legacy apps can be
->>>> forced to create and use MPTCP sockets instead of TCP ones via the
->>>> mptcpize command bundled with the mptcpd daemon."
->>>>
->>>> But the mptcpize (LD_PRELOAD technique) command has some limitations
->>>> [2]:
->>>>
->>>>  - it doesn't work if the application is not using libc (e.g. GoLang
->>>> apps)
->>>>  - in some envs, it might not be easy to set env vars / change the way
->>>> apps are launched, e.g. on Android
->>>>  - mptcpize needs to be launched with all apps that want MPTCP: we could
->>>> have more control from BPF to enable MPTCP only for some apps or all the
->>>> ones of a netns or a cgroup, etc.
->>>>  - it is not in BPF, we cannot talk about it at netdev conf.
->>>>
->>>> So this patchset attempts to use BPF to implement functions similer to
->>>> mptcpize.
->>>>
->>>> The main idea is add a hook in sys_socket() to change the protocol id
->>>> from IPPROTO_TCP (or 0) to IPPROTO_MPTCP.
->>>>
->>>> [1]
->>>> https://github.com/multipath-tcp/mptcp_net-next/wiki
->>>> [2]
->>>> https://github.com/multipath-tcp/mptcp_net-next/issues/79
->>>>
->>>> v5:
->>>>  - add bpf_mptcpify helper.
->>>>
->>>> v4:
->>>>  - use lsm_cgroup/socket_create
->>>>
->>>> v3:
->>>>  - patch 8: char cmd[128]; -> char cmd[256];
->>>>
->>>> v2:
->>>>  - Fix build selftests errors reported by CI
->>>>
->>>> Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/79
->>>> Signed-off-by: Geliang Tang <geliang.tang@suse.com>
->>>> ---
->>>>  include/linux/bpf.h                           |   1 +
->>>>  include/linux/lsm_hook_defs.h                 |   2 +-
->>>>  include/linux/security.h                      |   6 +-
->>>>  include/uapi/linux/bpf.h                      |   7 +
->>>>  kernel/bpf/bpf_lsm.c                          |   2 +
->>>>  net/mptcp/bpf.c                               |  20 +++
->>>>  net/socket.c                                  |   4 +-
->>>>  security/apparmor/lsm.c                       |   8 +-
->>>>  security/security.c                           |   2 +-
->>>>  security/selinux/hooks.c                      |   6 +-
->>>>  tools/include/uapi/linux/bpf.h                |   7 +
->>>>  .../testing/selftests/bpf/prog_tests/mptcp.c  | 128 ++++++++++++++++--
->>>>  tools/testing/selftests/bpf/progs/mptcpify.c  |  17 +++
->>>>  13 files changed, 187 insertions(+), 23 deletions(-)
->>>>  create mode 100644 tools/testing/selftests/bpf/progs/mptcpify.c
->>>
->>> ...
->>>
->>>> diff --git a/security/security.c b/security/security.c
->>>> index b720424ca37d..bbebcddce420 100644
->>>> --- a/security/security.c
->>>> +++ b/security/security.c
->>>> @@ -4078,7 +4078,7 @@ EXPORT_SYMBOL(security_unix_may_send);
->>>>   *
->>>>   * Return: Returns 0 if permission is granted.
->>>>   */
->>>> -int security_socket_create(int family, int type, int protocol, int kern)
->>>> +int security_socket_create(int *family, int *type, int *protocol, int kern)
->>>>  {
->>>>         return call_int_hook(socket_create, 0, family, type, protocol, kern);
->>>>  }
->>>
->>> Using the LSM to change the protocol family is not something we want
->>> to allow.  I'm sorry, but you will need to take a different approach.
->>
->> @Paul: Thank you for your feedback. It makes sense and I understand.
->>
->> @Stanislav: Despite the fact the implementation was smaller and reusing
->> more code, it looks like we cannot go in the direction you suggested. Do
->> you think what Geliang suggested before in his v3 [1] can be accepted?
->>
->> (Note that the v3 is the same as the v1, only some fixes in the selftests.)
+On 7/25/23 14:51, Matthew Wilcox wrote:
+> On Tue, Jul 25, 2023 at 01:24:03PM +0300, Kirill A . Shutemov wrote:
+>> On Tue, Jul 18, 2023 at 04:44:53PM -0700, Sean Christopherson wrote:
+>> > diff --git a/mm/compaction.c b/mm/compaction.c
+>> > index dbc9f86b1934..a3d2b132df52 100644
+>> > --- a/mm/compaction.c
+>> > +++ b/mm/compaction.c
+>> > @@ -1047,6 +1047,10 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+>> >  		if (!mapping && (folio_ref_count(folio) - 1) > folio_mapcount(folio))
+>> >  			goto isolate_fail_put;
+>> >  
+>> > +		/* The mapping truly isn't movable. */
+>> > +		if (mapping && mapping_unmovable(mapping))
+>> > +			goto isolate_fail_put;
+>> > +
+>> 
+>> I doubt that it is safe to dereference mapping here. I believe the folio
+>> can be truncated from under us and the mapping freed with the inode.
+>> 
+>> The folio has to be locked to dereference mapping safely (given that the
+>> mapping is still tied to the folio).
 > 
-> We have too many hooks in networking, so something that doesn't add
-> a new one is preferable :-(
+> There's even a comment to that effect later on in the function:
 
-Thank you for your reply and the explanation, I understand.
+Hmm, well spotted. But it wouldn't be so great if we now had to lock every
+inspected page (and not just dirty pages), just to check the AS_ bit.
 
-> Moreover, we already have a 'socket init' hook, but it runs a bit late.
+But I wonder if this is leftover from previous versions. Are the guest pages
+even PageLRU currently? (and should they be, given how they can't be swapped
+out or anything?) If not, isolate_migratepages_block will skip them anyway.
 
-Indeed. And we cannot move it before the creation of the socket.
-
-> Is existing cgroup/sock completely unworkable? Is it possible to
-> expose some new bpf_upgrade_socket_to(IPPROTO_MPTCP) kfunc which would
-> call some new net_proto_family->upgrade_to(IPPROTO_MPTCP) to do the surgery?
-> Or is it too hacky?
-
-I cannot judge if it is too hacky or not but if you think it would be
-OK, please tell us :)
-
-> Another option Alexei suggested is to add some fentry-like thing:
 > 
-> noinline int update_socket_protocol(int protocol)
-> {
-> 	return protocol;
-> }
-> /* TODO: ^^^ add the above to mod_ret set */
+>                         /*
+>                          * Only pages without mappings or that have a
+>                          * ->migrate_folio callback are possible to migrate
+>                          * without blocking. However, we can be racing with
+>                          * truncation so it's necessary to lock the page
+>                          * to stabilise the mapping as truncation holds
+>                          * the page lock until after the page is removed
+>                          * from the page cache.
+>                          */
 > 
-> int __sys_socket(int family, int type, int protocol)
-> {
-> 	...
-> 
-> 	protocol = update_socket_protocol(protocol);
-> 
-> 	...
-> }
-> 
-> But it's also too problem specific it seems? And it's not cgroup-aware.
+> (that could be reworded to make it clear how dangerous dereferencing
+> ->mapping is without the lock ... and it does need to be changed to say
+> "folio lock" instead of "page lock", so ...)
 
-It looks like it is what Geliang did in his v6. If it is the only
-acceptable solution, I guess we can do without cgroup support. We can
-continue the discussions in his v6 if that's easier.
+> How does this look?
+> 
+>                         /*
+>                          * Only folios without mappings or that have
+>                          * a ->migrate_folio callback are possible to
+>                          * migrate without blocking. However, we can
+>                          * be racing with truncation, which can free
+>                          * the mapping.  Truncation holds the folio lock
+>                          * until after the folio is removed from the page
+>                          * cache so holding it ourselves is sufficient.
+>                          */
+> 
 
-Cheers,
-Matt
--- 
-Tessares | Belgium | Hybrid Access Solutions
-www.tessares.net
