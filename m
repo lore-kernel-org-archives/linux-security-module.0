@@ -2,263 +2,124 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8501C04A6A
-	for <linux-security-module@archiver.kernel.org>; Sat, 29 Jul 2023 09:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9A0C001E0
+	for <linux-security-module@archiver.kernel.org>; Sun, 30 Jul 2023 22:34:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231989AbjG2J6R (ORCPT
+        id S229520AbjG3Wef (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 29 Jul 2023 05:58:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54378 "EHLO
+        Sun, 30 Jul 2023 18:34:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231967AbjG2J6R (ORCPT
+        with ESMTP id S229495AbjG3Wee (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 29 Jul 2023 05:58:17 -0400
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on20611.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e1b::611])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9355129;
-        Sat, 29 Jul 2023 02:58:15 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TK5E/NnDzEHI986XwzHzSvvNa3/ZCxnRnDK+24CfFvulKSpjG1Nnss+5Nn7GqgeVKtY+/y621I+Dde5wZnOVBrLhM/Dux12WMmk8Sqpiht1m+W9KdKVjPSXx84lVqTjikbekJ8xWIO74N6mdVGXQD35mxFeyd/gDlFdped9Gjp5YALbS4EARRS9yXx1PWy7G/9w8+UE1VzIuQcot8NfgAdsghiRT+vluQMSIb8NtEUh5JiCR3NKOPX454VYXMwJTRsyvDpbwfhAh7xAx37onYgx9QkcyW/T5ID+XXJbELVHy86FPhJ+I7hrEeYo7h+5RlqeoEkUgejhLHMlpt0v+iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fNR1Z0O8+imQ4xIF3S+4EWt9/8j7kXiMDTOLw5RsoM0=;
- b=kUkDSxU4jGQen6v9eiMJdJFj4exKUeVfKEbPWXUkREtOM82gTWzvClDMq806S5K9reu94NeKsV6HJKUiSD3MM6yb6GrZT8LICjpG8G33HbOwCplrukaodjBRe6ZPo7PonkNnhC4vSAkVRPX64PHlyC3IOpclVSiUyvEY8yFjwf3MUliJG4DFNBxbKKTg15eXunCS7OyiFunQY6VkqHla1MaoM4YPIuQFi94pOPQgj7BmqPUaWFkKsn5DWDB2LZDyiauRv8SEaagQwYzBEqySwrdk6/jai/r5pOqcVeDhX6c5KfhiCj5bTiVTGe3zkz8Zm7+/j5gNFX616iJwD534dg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
- dkim=pass header.d=suse.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fNR1Z0O8+imQ4xIF3S+4EWt9/8j7kXiMDTOLw5RsoM0=;
- b=M+T/9HmucdQBGrBB7SzhoQTk3BVluLQhR9Z7Kx1ew8laMW87dlNBAfWpP55VS/r+sTvgBwjTXV8Scw3Mde6AylmknFNDHZwBCzVZVFH7Q6dibOPjaW+oYsuPFi0gR8gukEsEqQqHHnetG2BP9b3qeogT7DQ99fyTwB3UiuWaVz3VjBTHfNadiQpjgtlBP7YJDgVkRbgQUkW7+5Wnraofe4opETcwn5gxwaqm838GVukp33UfpnGxFdTHA17G3wUtKZLP2HZZMcSU/au1kp1V6QjAsRJ8yhR6mVrxNhLSF7bikoDZXYanpfUmwwcgApItNJmFl7jKiLb8LpqDV0UZZg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=suse.com;
-Received: from HE1PR0402MB3497.eurprd04.prod.outlook.com (2603:10a6:7:83::14)
- by AS8PR04MB8417.eurprd04.prod.outlook.com (2603:10a6:20b:3f9::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.39; Sat, 29 Jul
- 2023 09:58:11 +0000
-Received: from HE1PR0402MB3497.eurprd04.prod.outlook.com
- ([fe80::bf65:a49a:8861:4f92]) by HE1PR0402MB3497.eurprd04.prod.outlook.com
- ([fe80::bf65:a49a:8861:4f92%2]) with mapi id 15.20.6631.026; Sat, 29 Jul 2023
- 09:58:10 +0000
-From:   Geliang Tang <geliang.tang@suse.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>,
-        Mat Martineau <martineau@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
-Cc:     Geliang Tang <geliang.tang@suse.com>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, mptcp@lists.linux.dev,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [RFC bpf-next v7 6/6] selftests/bpf: Add mptcpify selftest
-Date:   Sat, 29 Jul 2023 17:57:27 +0800
-Message-Id: <27a7ada7aa480301102cbe1f7ea1303bae52d705.1690624340.git.geliang.tang@suse.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <cover.1690624340.git.geliang.tang@suse.com>
-References: <cover.1690624340.git.geliang.tang@suse.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0120.apcprd02.prod.outlook.com
- (2603:1096:4:92::36) To HE1PR0402MB3497.eurprd04.prod.outlook.com
- (2603:10a6:7:83::14)
+        Sun, 30 Jul 2023 18:34:34 -0400
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 638B3A8
+        for <linux-security-module@vger.kernel.org>; Sun, 30 Jul 2023 15:34:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1690756472; bh=aKix5vI82drtxsFJdrJm0j7tUyn/l8L90W2u/GMMIY8=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ZxQ8zgchK2eVTF870eZXOfgQ1CIfB+WBlA1AytsoMRcYlE9kVDNeaDa70Mn2YTWU05pSDE8tzK/7jxyo9rDa7bNmGmn2olWxCC/skH5higudmeBsbs1GOIsJO8TfxIg5JFDX0AFjZuk/KQVvqRJtAfEiaODKiOEHcIS5tzECBZrpAuE4D3rWXwAdMULvu9PCJVD39t0dDc9R9QLFSjIEg7MbCsOjU2YI2LBVKlYqvzZPMuQV8p1Z01k5RsOYJ3b+RmhzXmoyG1iwwj5Oeav8Q3AXgK4ERBzQDeqLV8KDXNzg/qS1xKbj2io9ZuuV/gGvD0eHNcrBoT5UyW2SBdFinQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1690756472; bh=LE4U9gxfE64/qhnYX5v/EEqd+oDxql5K6YFnogBbDsk=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=a9cE3zt1BOR924ad8EsbxLkMeRe90+iqwaJldoY8e3Xze05WlDVb1s6DMB8L+7o5tWyp1Y9KgutAdXq+CWIdiLeQ8+5v88f+W6nFqtsgXUZI+JjofTK1HZ809daFQuW5y93y+Ea9krH47a6ssiO/Nz/jfDnapU6gX7H38+JMqWrApb7xIfEoBH9Tmr7adi1q4Ed+PKczVOkP2Qdcs4j5ds6DfdQrmQXFFe/DId0n2Jw5YxzivtKPH4lzin8exAzbvDpTI7nLTSkIZZz0f7vipwkNbYXoB2wA5bV5FW3dxSHxTfsS06e9rcuazS4OYdPYzhocUFqYdC6uVqY1yDAn0A==
+X-YMail-OSG: _ArBdX4VM1nGidBTqFVjB1RbqRDoUeZGvKd7C2DYH_tAMVmkGyAD_gzehRfyof3
+ 2PmStS5mzzYlFwyHlpetITLkljKGNskDAiT52lSkx8ceLqBvWGFFpk4EOZEdO_CHuvY6OD4VZB2J
+ 9qYvzclwvflHJhAI3jcMprLd0Xcqi04QJauNgc_dpXCdEHzHrwCjIZE2DGFp1uZK0YCxp0ele2MO
+ cJx6YEURirQvNLG2ZbhjUYYVxpKkwPgSsaTB5gHbr3z_Qvqj64FBGAoQjeC6zBYXpmx.FYomox7I
+ To6Hvovx.ZkH5fsbEbVQP0N3iZrtiemZ5KMKDB7SkZg6AyzavTlFuXN3L3M3BbF.r2GiMyUpxFJO
+ ywsSxLdR.gYri4L7jBz.7uSge8dHmc0c5lu1kbVy2Jof6c.qC8Cl.Wfwnif_cOwfk9QcYFs2oPFL
+ 6qHkE3j1CJuetJ6me.APowlnnFL3FUyZmSNi_V05FpL3P9bRTa9.7KqpL8lqvKRrHSP3s0c70hDi
+ wewyMTX947KPL6QIoOaEwe7lN3DGZlXfOjdRzz1gW.ZMKhnOQ7fv6Lbqr99T7imrn3r3j9R920Iy
+ 8OKvA_AOV_.yy8sziTvKY5kVpPETFRSljsIhADCgG66PFqTHEiJOhd5_ZCljRv8TQzYaiphA4LdX
+ K.3xgBYlS2f7S0yK6bzzImnEoRPP_KFLJvnoSGNY3bwYgtKRyoG4twR5YBZPUPCvZc6HrEtuBnyi
+ lhR5Z2k1dmfYcgJ3lw3livol7DlphnGad7ikXfQfBkE8XMIskahBYIdlT1rWQMsPsp_r..R6kcaI
+ Mqi1jJhWz08kOx0Xy9UOAHG8vdLktyGQxIeoco9bP9xVJBdVokvI6JsGxPBgJFaSs04lPBLjDYEB
+ znr5T_zWKl9rh_MOHjviq_JKVVk50xYwtCZ7.ijmdL6nn385oW6rQ4v.713hBo11o.juWKhB_.CU
+ Yn5jqCH2v8eNrFve9J7B6L6.3cf4YQgMpCLSsFCI1mRQFtSDxrEXUtWMIxKs8z7X4Qz13SZVWATF
+ nMzALdh9moaEaKmXmS0jCoXZi82y25cytRoR9viWsKC4kvpPVD02s5maug5CPQp2Ua1B2FpFVn6U
+ hL5vgdAI0RZg3NjTtsfQmgF3NF0GZUtrQiElaparn3u4XeuMWQ1Y.Atwgx0Z8YOA5_p9NePw415V
+ NgjYSq8xzh69oqqY90ZP7Z9eSQCnzNg5j8Vsa_PCKLEZsnhE9qJ3aCYCFJE6oLZ45cb9IN3bidI5
+ IP9CwK3QYnnQahHA4rBQrSw9.B3kl.2ZzKI2H2TyYo9k64yg5zTG5.E..ZLqqAj0doaGkvvd28eG
+ Ib88FNaiJmS8W0qRi9wWY3Gpd7Ir4HytisRLsnYQwrO9csGnTG25gtXRQEGFwIZ_ylkCpfHy9fO2
+ DqfqfhokLTk42bX69HncljcV2NSjeCwYteNmLjlxCoPsQurDy1DHoXnaLu8EVJM.009BLjpAZg9a
+ 1GKzfZpVFAXElnpbXPW9p7jMhxsC9jL35n5HJ63z_N4aB_MmUyxvxHnalDeFg_NnT5dymVLGNK_W
+ QyFe45PohCY9eLYTgH5Lfl8Cgf1Nz4eSuTchCTiDh01t.8ZJKkfyg40lAq3nHiSrH6BcU1yS7.9f
+ d3LgzLQI9nuDBOzm_Z9gToVTokzf.8yAG3CHAKs4p14RzR_L_FIz77c.LnYdctWbcq.d6T1DNl0Y
+ XjImwU8pb2_UefI86w_lwsNcFUyNYQzRh6JbFO1tvzlixZvRqr1F1MQhj8BGMdNc53j1_yfD5ejD
+ Sjfx1emjqScUwO4mqI8doNaRKeikX4uEAijVGM2D8PL4UJabpRONE7jb.kdJuczT1kpEeA3UVYyZ
+ YmGq_a8i09S0AIA2h.SIP.gb7_Qz75f1xBAGHpMyJzlc3S6fRjWT7ExOuI2LI_DzCORSjQQqT591
+ 6r1y7tb_h6YmNzGWEEKT48Fl5mJUkWDlGC.GK2Yyy7JHtTR0XkzwRrco0eM8SqmyE6DKPxCsTlCY
+ O5ni5oBxGdFqdTVy9Y._AnzUi1uwpUfK.yfDoxXUbTEUdW_TT02l8siKjkXMXZX2YKqaLm4THbGN
+ BlR0SMyURg8.G3TnC27OeSMg6K8kEjP9AZv9W2lzYl2ZKWbedSUEUvXYYQBceGsUO4zqT6n5K3XR
+ APuBYlq7BR8d_ZP_890WoHE8DLPjKDms2I3crLPw_t.zkUYUR.32NpRmVO2BWOSls7am0lpjnwDR
+ pCyO_kZLg7.4rTPEpqBetlv9OPxEZuRL.2MzJQ9GiECFXnb4O9iJaie6zeLssTN2MD5.6BENdiXz
+ o7a1mHA--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: c3a89b9d-88a5-4ca0-bc48-b72059988390
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Sun, 30 Jul 2023 22:34:32 +0000
+Received: by hermes--production-gq1-7d844d8954-4zvpd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ac6118e96f5bc100bda3c1c8526cbebe;
+          Sun, 30 Jul 2023 22:34:26 +0000 (UTC)
+Message-ID: <2882094d-3551-09c3-a192-ce9b3f80758e@schaufler-ca.com>
+Date:   Sun, 30 Jul 2023 15:34:25 -0700
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HE1PR0402MB3497:EE_|AS8PR04MB8417:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4582274-8b00-4965-3283-08db901a50fe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: YzKuQJspS18Gf5DkJegF9TSMZIM9c3BwqXZyss4vzJoWrDdv2jrKSUhWdhJ7C2np4fTSsr2TJrvvVeFU6uK+KYYIJjZYCPI6/6BCUAHWwXSkZGLRoi09PPQiyKvmJNJyZn61+dAOdjWX+Brp8OlUySUEvUjFV6VuJpGueLF63s1fMSPxe+ModmM4NH/bGNsy9VflVs7ezhwgsKi8uSnMzI6zzU/iDsaTVO4A2Sy73m101T15nvTWu5Zu24CrYiPJV9uc4RqoE62V4Bnj7/MJeTfyGdMf7mhyeA3+QPqHFZuRFw4wcttnCoW+He3beTfsphZYDG2UTi3TAWLI4vymvqomB0z59P7dE9ZzXIcyJQ1cwJtY3T4fcYwiaVgo2LwWRe+05sYwrvTfFtkNYd5gaeY7oqOHa/EaqfsVk+4MmM07UrGiq7Z4OYDXEEr1qYczGPTka8ULR+rV/BHLeWojhF38iLrkSmnkegTnWEr1akvKoLDn38EFLK1MFAnQ5LochhyE/JTMWdpL31X0wz9y1H3alU9i2z1RzuwVHvNC5M23BJHZf2Vc0cbhf73VSk9eKSQ4DHCQFO5qXZlrTYUezDsSc5kCkLFyQfOMbDpmf1o=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HE1PR0402MB3497.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(39860400002)(376002)(346002)(396003)(136003)(451199021)(6512007)(6486002)(36756003)(2616005)(6506007)(26005)(83380400001)(186003)(44832011)(66946007)(66556008)(7406005)(7416002)(921005)(110136005)(41300700001)(86362001)(66476007)(316002)(4326008)(5660300002)(8936002)(8676002)(38100700002)(2906002)(6666004)(478600001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?fj6n3OSbb4PgC5kxdtyTQI9MN05ivysGKoVqH5mE5yQ7OeDdDoDqdHhxGYoK?=
- =?us-ascii?Q?R3JAnM2hlRVhyMn4HotFx6JRGvGeXcAAsuWE03aM2CDe9T1g+svqPNq1b4MA?=
- =?us-ascii?Q?rq6EWBY2QdC2R7DcIQYLlvPvs6LOsiDk8kepu3r9o7DklzyKbXxfIYQ3FIua?=
- =?us-ascii?Q?5ubUc2LVIc6lOi9CtwbXKXnLL3ZaEmtGySnDqsRWi17kFfcHYFXt/qPK6DM8?=
- =?us-ascii?Q?j8dkNUtVwuqjeLryKEbL10zKcNivotfRHXiR2hmBvBzBjK/zW1J1MDm3Z/Ng?=
- =?us-ascii?Q?PIJoyrGK8tyC4Xggl+H8rvj7q/+dNs2RiQql2WQFk9I6YrqU8RXkQqUuKa6h?=
- =?us-ascii?Q?DX7TbHinUM8YwtTmledhkKU0SvklXlEix8N4RNOW0AbofC+8QoedorJbtLqI?=
- =?us-ascii?Q?VKHIpZYqJ1SnVpJpMGkF6RszW13zs3PGTbhRm5UnVozIY4yjlD9Y75qTQ1vU?=
- =?us-ascii?Q?RMynDi7re3cl3lZCNNBj6ewK3LbF/RfO/o8ARHNtyNbwTi5kZy9QASOZIUA8?=
- =?us-ascii?Q?JkPWQUDoH4DZns3orAo7EU0NuNCjkZOeVuUjbFjtYALs46lBexmtXExSby9e?=
- =?us-ascii?Q?eFjybR6nCuj5HmPGP8j/xIfE6k3gPz5Wr1fbtPyBZvnsXKZeQp8BYEp366Ck?=
- =?us-ascii?Q?3bfOiQ0BDVLVruGy/nnJeBn9LWzA+Qxr81BpR5Q6L5qzUBBMPyDfdsJLXghZ?=
- =?us-ascii?Q?RwehTfoDF2bfb2d2nmHmkyVr3UZ2WN5lEB2g3gKMfvVjsbasu6Qm454oSHOX?=
- =?us-ascii?Q?dAHi1RLIbfEigQqqGf7hVzCGuK1mdE/KRUgds9Nsbl1Z8sFH3TtPBw7I8qSn?=
- =?us-ascii?Q?MgyaO3G0RLWD64quzNVyvr3FbtKVA4fTBWck1hz7TSu9BXa0hK7VumuBvmAy?=
- =?us-ascii?Q?sJItwL03iYMl7FF5vwmwpn0nZPFYktbg0jxKB7wCG0y43E5OfB4I9FS5lV5m?=
- =?us-ascii?Q?y6OwHDppya236KL8GyrB6LeaIMuEQnesegFl2xderWVegGNRPvPUsM7rriJL?=
- =?us-ascii?Q?WiHfVtmISggq+FWnHfKI8SPsmTueQiQcCkFv/us5sQrXjVzAd2vJEFPZoQj/?=
- =?us-ascii?Q?UY+hxNa/L7h7oZToJv/D/JA2hNizyFf73Hb+rR055aDYXCRwyOrtpYna/du4?=
- =?us-ascii?Q?CI1/VADPKXoqubIhmCYC1YYPcUAG+CHlPfYbZKeQijDDs3jqC+zN6cZliOv1?=
- =?us-ascii?Q?IJ98LqPtQC5jb3EOaGqIH7q0ArWxaJizM7wHwizcSSPAAkU7lqxtgeqFJH9c?=
- =?us-ascii?Q?sKr+1pnwv8Iuk1B8sq+mmFa1RiX59YuM2YlpaC5UusNUI5pA0sg+IiGQo+Kq?=
- =?us-ascii?Q?1gVbRgjr2y83PbaxOqAaX+N3XJZyCHT0Boh10bh/PP/ITEOAs0F3aXH24498?=
- =?us-ascii?Q?XodQW+X0ujdGhwfc2OgHtINDyD8FQwn7ntjJkANoZHLOiwW1/O4RjqWqvdMT?=
- =?us-ascii?Q?wWciqV/NZDLFM+xQ2WYRytG5GraiWBo/9fdBGMQ/cNt9JUHlEmrZI8uu/ZDk?=
- =?us-ascii?Q?MyslDylzbtAO4wuOfjfu4LPuUJ//DPiuGNf6oAV51VwtI7W3VuFb1Ev0iKuZ?=
- =?us-ascii?Q?Dj8RVK6CkzwbVQLT7KprnG0ouDdC6jU/NhO9Eqez?=
-X-OriginatorOrg: suse.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4582274-8b00-4965-3283-08db901a50fe
-X-MS-Exchange-CrossTenant-AuthSource: HE1PR0402MB3497.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2023 09:58:10.7748
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WDH64IBJT6Uqxut3kJxsdPzMXlYjjPe6hgCr1ngR6s5ItwZyy8BL+i6l61mHX1oxxfAFUne9PIbcypRx1xYNEA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8417
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v12 04/11] LSM: syscalls for current process attributes
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Cc:     linux-security-module@vger.kernel.org, jmorris@namei.org,
+        serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20230629195535.2590-1-casey@schaufler-ca.com>
+ <20230629195535.2590-5-casey@schaufler-ca.com>
+ <dde1ce1f-280d-f4b2-4bb0-bc9d8a6894a3@digikod.net>
+ <CAHC9VhRvNLYE6aQJ9-LReLGQ5304j7wC4MLN1B7X8LV=2zgyXQ@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhRvNLYE6aQJ9-LReLGQ5304j7wC4MLN1B7X8LV=2zgyXQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.21647 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch extends the MPTCP test base, add a selftest test_mptcpify()
-for the mptcpify case.
+On 7/21/2023 3:28 PM, Paul Moore wrote:
+> On Tue, Jul 11, 2023 at 11:36 AM Mickaël Salaün <mic@digikod.net> wrote:
+>> On 29/06/2023 21:55, Casey Schaufler wrote:
+>>
+>  ...
+>>> +/**
+>>> + * security_setselfattr - Set an LSM attribute on the current process.
+>>> + * @attr: which attribute to set
+>>> + * @ctx: the user-space source for the information
+>>> + * @size: the size of the data
+>>> + * @flags: reserved for future use, must be 0
+>>> + *
+>>> + * Set an LSM attribute for the current process. The LSM, attribute
+>>> + * and new value are included in @ctx.
+>>> + *
+>>> + * Returns 0 on success, -EINVAL if the input is inconsistent, -EFAULT
+>>> + * if the user buffer is inaccessible or an LSM specific failure.
+>>> + */
+>>> +int security_setselfattr(unsigned int attr, struct lsm_ctx __user *ctx,
+>>> +                      size_t size, u32 flags)
+>>> +{
+>>> +     struct security_hook_list *hp;
+>>> +     struct lsm_ctx lctx;
+>>> +
+>>> +     if (flags)
+>>> +             return -EINVAL;
+>>> +     if (size < sizeof(*ctx))
+>>> +             return -EINVAL;
+>>> +     if (copy_from_user(&lctx, ctx, sizeof(*ctx)))
+>> I'd suggest to handle all the user space copy here and pass a kernel
+>> pointer to each LSM hook calls (and handle kmalloc and kfree here, if
+>> needed).
+> Agreed.  I thought I mentioned something like that at one point, maybe
+> not.  In general we should do whatever user/kernel copying and sanity
+> checking in the LSM layer that we can; there will be somethings we
+> can't check, but those that we can, we should.
 
-Open and load the mptcpify test prog to mptcpify the TCP sockets
-dynamically, then use start_server() and connect_to_fd() to create a
-TCP socket, but actually what's created is an MPTCP socket, which can
-be verified through the outputs of 'ss' and 'nstat' commands.
-
-Signed-off-by: Geliang Tang <geliang.tang@suse.com>
----
- .../testing/selftests/bpf/prog_tests/mptcp.c  | 94 +++++++++++++++++++
- 1 file changed, 94 insertions(+)
-
-diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-index 4407bd5c9e9a..caab3aa6a162 100644
---- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
-+++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-@@ -6,6 +6,7 @@
- #include "cgroup_helpers.h"
- #include "network_helpers.h"
- #include "mptcp_sock.skel.h"
-+#include "mptcpify.skel.h"
- 
- char NS_TEST[32];
- 
-@@ -195,8 +196,101 @@ static void test_base(void)
- 	close(cgroup_fd);
- }
- 
-+static void send_byte(int fd)
-+{
-+	char b = 0x55;
-+
-+	ASSERT_EQ(write(fd, &b, sizeof(b)), 1, "send single byte");
-+}
-+
-+static int verify_mptcpify(void)
-+{
-+	char cmd[256];
-+	int err = 0;
-+
-+	snprintf(cmd, sizeof(cmd),
-+		 "ip netns exec %s ss -tOni | grep -q '%s'",
-+		 NS_TEST, "tcp-ulp-mptcp");
-+	if (!ASSERT_OK(system(cmd), "No tcp-ulp-mptcp found!"))
-+		err++;
-+
-+	snprintf(cmd, sizeof(cmd),
-+		 "ip netns exec %s nstat -asz %s | awk '%s' | grep -q '%s'",
-+		 NS_TEST, "MPTcpExtMPCapableSYNACKRX",
-+		 "NR==1 {next} {print $2}", "1");
-+	if (!ASSERT_OK(system(cmd), "No MPTcpExtMPCapableSYNACKRX found!"))
-+		err++;
-+
-+	return err;
-+}
-+
-+static int run_mptcpify(int cgroup_fd)
-+{
-+	int server_fd, client_fd, prog_fd, err = 0;
-+	struct mptcpify *mptcpify_skel;
-+
-+	mptcpify_skel = mptcpify__open_and_load();
-+	if (!ASSERT_OK_PTR(mptcpify_skel, "skel_open_load"))
-+		return -EIO;
-+
-+	err = mptcpify__attach(mptcpify_skel);
-+	if (!ASSERT_OK(err, "skel_attach"))
-+		goto out;
-+
-+	prog_fd = bpf_program__fd(mptcpify_skel->progs.mptcpify);
-+	if (!ASSERT_GE(prog_fd, 0, "bpf_program__fd")) {
-+		err = -EIO;
-+		goto out;
-+	}
-+
-+	/* without MPTCP */
-+	server_fd = start_server(AF_INET, SOCK_STREAM, NULL, 0, 0);
-+	if (!ASSERT_GE(server_fd, 0, "start_server")) {
-+		err = -EIO;
-+		goto out;
-+	}
-+
-+	client_fd = connect_to_fd(server_fd, 0);
-+	if (!ASSERT_GE(client_fd, 0, "connect to fd")) {
-+		err = -EIO;
-+		goto close_server;
-+	}
-+
-+	send_byte(client_fd);
-+	err += verify_mptcpify();
-+
-+	close(client_fd);
-+close_server:
-+	close(server_fd);
-+out:
-+	mptcpify__destroy(mptcpify_skel);
-+	return err;
-+}
-+
-+static void test_mptcpify(void)
-+{
-+	struct nstoken *nstoken = NULL;
-+	int cgroup_fd;
-+
-+	cgroup_fd = test__join_cgroup("/mptcpify");
-+	if (!ASSERT_GE(cgroup_fd, 0, "test__join_cgroup"))
-+		return;
-+
-+	nstoken = create_netns();
-+	if (!ASSERT_OK_PTR(nstoken, "create_netns"))
-+		goto fail;
-+
-+	ASSERT_OK(run_mptcpify(cgroup_fd), "run_mptcpify");
-+
-+fail:
-+	cleanup_netns(nstoken);
-+	close(cgroup_fd);
-+}
-+
- void test_mptcp(void)
- {
- 	if (test__start_subtest("base"))
- 		test_base();
-+	if (test__start_subtest("mptcpify"))
-+		test_mptcpify();
- }
--- 
-2.35.3
+That is in direct conflict with the "thin LSM" concept. My recollection,
+and it could be wrong, was that you wanted the user space copy in the
+LSM specific code. Maybe I'm wrong. I will move it into the infrastructure.
+It will make the code simpler.
 
