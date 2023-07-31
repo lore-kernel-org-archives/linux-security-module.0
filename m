@@ -2,158 +2,91 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E62CC001DE
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jul 2023 14:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D67C001DC
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jul 2023 14:57:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231887AbjGaOiE (ORCPT
+        id S229941AbjGaO5W (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 31 Jul 2023 10:38:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46304 "EHLO
+        Mon, 31 Jul 2023 10:57:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232525AbjGaOhv (ORCPT
+        with ESMTP id S229912AbjGaO5V (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 31 Jul 2023 10:37:51 -0400
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFCEC98
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Jul 2023 07:37:49 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RF1701BX8zMpnpP;
-        Mon, 31 Jul 2023 14:37:48 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RF16z0yMvzMppKq;
-        Mon, 31 Jul 2023 16:37:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1690814268;
-        bh=FbRoEBv4cNjlnd0vcW71aYM/IRrHo21jzhNdZDTwq44=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CI1ICo9+HLi8IwHyaakN7dRo7jCy4c8k/q5rNIwffnSaoAXy2SAXvnnS2+1SjcMH4
-         zQ5+mvMj9525CZTVCpdZWpTxAgv+rpfeUS0ojwF0GQgEfiTksXFa1IMDbxOrTnUhpI
-         oTxnsQk3SHXxB5tDW2DW5uGk0lOcfk/oOFURevGc=
-Date:   Mon, 31 Jul 2023 16:37:53 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     limin <limin100@huawei.com>, Jeff Xu <jeffxu@google.com>
-Cc:     hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
-        shakeelb@google.com, songmuchun@bytedance.com, tj@kernel.org,
-        lizefan.x@bytedance.com, shuah@kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH -next] selftests/landlock: Fix selftest ptrace_test run
- fail
-Message-ID: <20230731.ahcei5eP4aef@digikod.net>
-References: <20221128020409.1545717-1-limin100@huawei.com>
- <1232e4f3-e4b8-ff23-61e8-5465c8406f6e@digikod.net>
- <7379a5fd-5593-c6ce-40fd-c543dcf70d2b@huawei.com>
- <e62a539b-614c-c008-873a-f9c57c7ecb33@digikod.net>
- <2bc18685-f975-497f-9c20-da99dbc296c0@huawei.com>
- <ed1f6874-0f24-8145-63d4-efe28545381b@digikod.net>
+        Mon, 31 Jul 2023 10:57:21 -0400
+Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0939C6
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Jul 2023 07:57:19 -0700 (PDT)
+Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-5838881e30bso51281277b3.2
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Jul 2023 07:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1690815439; x=1691420239;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=quZ65fsDTDMU4Sigezf7NU4XwLJapG5s9gUccJ8izRc=;
+        b=Nz8KH5RDWuQ8LPZOzvITcDlyhkUuiXGvxkzpyNTPxcIZ1tlAKwvUyel2KCgDqBtaPc
+         gjayjdKt8Z96NXhePI4Yw5JHs3KnBe5FzdLIOHaJN7zzsW9pVCBwZoDR+cZpJcBIZK28
+         Vu2YzYTC/zQnoZdqXMUYbeI0nYoRSpxE8gJTNePhFkkSsGTNPj4wjSt5maevPjkDoWr8
+         V0sYcAvtZr2SWDh472yROd+JjpSYSdDpAfTLfekqVVfBmyom5IWsLmgT5/tJupPQXZNA
+         lDHqCKO19BNj89vP8N6qSlHlPwm3lmjZZHizQV1vdUKR1hCN8f7JqPyxpuy4Gty9OvrL
+         jnZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690815439; x=1691420239;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=quZ65fsDTDMU4Sigezf7NU4XwLJapG5s9gUccJ8izRc=;
+        b=el/qFWtQMpgMRIYLY+nsdm1RN3nhTEA9JwX8L8ItopLMPMIqQ/B9cwtZj3HxWW6dw8
+         iCn8dJQul2NOkPWbbb/LjIOwhNxXObOiQLaAKlxesqRiXZNbMRO4zWmP8ejrcqnNnYnj
+         6F2VXGwJzHW5JjHY22GadpvjNFLOgwSS1jE+R0g8Zdn/kxUTJSn3UcGHSea+Sm8IT4xx
+         U7vls2HZDhEb1yOR70ZOFM4yXGfa5zL/5gCoTu7UDrxCLoKcrDfTDcOv4plmBu7YWlWf
+         edeWKMigTQ+z6bp/w+vydoRevwSUoaoHStjaNEmGN/kX2T5wuO3Hppa0v40Bsw25Vok5
+         6Yqg==
+X-Gm-Message-State: ABy/qLbOej5zlLKZMsKPO0ib2ZmcF9fWvNW16wQYjlruCXOLHr+G20Hk
+        j1jBl6STnCxmCIJkICv88c0AMnu5kOHB/RBNoDpaA6XKeA/eNiQbnA==
+X-Google-Smtp-Source: APBJJlFsGJ9uYaEDCke8dccR7KzZ/mY5m2FR7xM4YxZGK16777syGzWaO5hoI8nvpQHapjL+AxNPLMj1X9BNEbjClJM=
+X-Received: by 2002:a0d:cf46:0:b0:577:1533:ea95 with SMTP id
+ r67-20020a0dcf46000000b005771533ea95mr10763794ywd.28.1690815439180; Mon, 31
+ Jul 2023 07:57:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ed1f6874-0f24-8145-63d4-efe28545381b@digikod.net>
-X-Infomaniak-Routing: alpha
+References: <20230731103822.GA4093@wind.enjellic.com>
+In-Reply-To: <20230731103822.GA4093@wind.enjellic.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 31 Jul 2023 10:57:08 -0400
+Message-ID: <CAHC9VhT_6yv=hgCLUMYf154=-ARY5+V+FMi_0O+_t2rsb341Eg@mail.gmail.com>
+Subject: Re: TSEM feedback.
+To:     "Dr. Greg" <greg@enjellic.com>
+Cc:     linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi limin,
+On Mon, Jul 31, 2023 at 6:39=E2=80=AFAM Dr. Greg <greg@enjellic.com> wrote:
+>
+> Good morning Paul, I hope this note finds your week starting well.
+>
+> We submitted the patches for the V2 release of TSEM three weeks ago.
+>
+> We received some feedback from Randy Dunlap on some documentations
+> issues that we went on to address.
+>
+> Haven't heard any reflections from you.  Was just wondering if you
+> were swamped or had possibly missed the submission?  We didn't include
+> you as a copy on the notion that you didn't need two sets of patches
+> landing in your inbox.
 
-Just to let you know that Jeff's patch was merged and is available since
-Linux 6.3:
-https://lore.kernel.org/all/20230114020306.1407195-1-jeffxu@google.com/
+If your mail hits the mail archive on lore.kernel.org, it is almost a
+full guarantee that it has hit my inbox and/or the patchwork instance
+I use to ensure nothing is missed.
 
-Regards,
- Mickaël
+As one would expect, it takes a good deal of time to review a patch
+submission as large as TSEM, and the rather ornate language used in
+the documentation only slows the process.  Rest assured it is firmly
+on my todo list, but please understand it will take some time to
+properly review.  In the meantime I would encourage others to
+review/play/etc. with TSEM; nothing builds maintainer comfort quite
+like seeing reviews from other trusted members of the community.
 
-On Wed, Nov 30, 2022 at 08:32:41PM +0100, Mickaël Salaün wrote:
-> I checked and the Landlock ptrace test failed because Yama is enabled, which
-> is expected. You can check that with /proc/sys/kernel/yama/ptrace_scope
-> 
-> Jeff Xu sent a patch to fix this case but it is not ready yet:
-> https://lore.kernel.org/r/20220628222941.2642917-1-jeffxu@google.com
-> 
-> Could you please send a new patch Jeff, and add Limin in Cc?
-> 
-> 
-> On 29/11/2022 12:26, limin wrote:
-> > cat /proc/cmdline
-> > BOOT_IMAGE=/vmlinuz-6.1.0-next-20221116
-> > root=UUID=a65b3a79-dc02-4728-8a0c-5cf24f4ae08b ro
-> > systemd.unified_cgroup_hierarchy=1 cgroup_no_v1=all
-> > 
-> > 
-> > config
-> > 
-> > #
-> > # Automatically generated file; DO NOT EDIT.
-> > # Linux/x86 6.1.0-rc6 Kernel Configuration
-> > #
-> 
-> [...]
-> 
-> > CONFIG_SECURITY_YAMA=y
-> 
-> [...]
-> 
-> > CONFIG_LSM="landlock,lockdown,yama,integrity,apparmor"
-> [...]
-> > 
-> > On 2022/11/29 19:03, Mickaël Salaün wrote:
-> > > I tested with next-20221116 and all tests are OK. Could you share your
-> > > kernel configuration with a link? What is the content of /proc/cmdline?
-> > > 
-> > > On 29/11/2022 02:42, limin wrote:
-> > > > I run test on Linux ubuntu2204 6.1.0-next-20221116
-> > > > 
-> > > > I did't use yama.
-> > > > 
-> > > > you can reproduce by this step:
-> > > > 
-> > > > cd kernel_src
-> > > > 
-> > > > cd tools/testing/selftests/landlock/
-> > > > make
-> > > > ./ptrace_test
-> > > > 
-> > > > 
-> > > > 
-> > > > 
-> > > > On 2022/11/29 3:44, Mickaël Salaün wrote:
-> > > > > This patch changes the test semantic and then cannot work on my test
-> > > > > environment. On which kernel did you run test? Do you use Yama or
-> > > > > something similar?
-> > > > > 
-> > > > > On 28/11/2022 03:04, limin wrote:
-> > > > > > Tests PTRACE_ATTACH and PTRACE_MODE_READ on the parent,
-> > > > > > trace parent return -1 when child== 0
-> > > > > > How to reproduce warning:
-> > > > > > $ make -C tools/testing/selftests TARGETS=landlock run_tests
-> > > > > > 
-> > > > > > Signed-off-by: limin <limin100@huawei.com>
-> > > > > > ---
-> > > > > >     tools/testing/selftests/landlock/ptrace_test.c | 5 ++---
-> > > > > >     1 file changed, 2 insertions(+), 3 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/tools/testing/selftests/landlock/ptrace_test.c
-> > > > > > b/tools/testing/selftests/landlock/ptrace_test.c
-> > > > > > index c28ef98ff3ac..88c4dc63eea0 100644
-> > > > > > --- a/tools/testing/selftests/landlock/ptrace_test.c
-> > > > > > +++ b/tools/testing/selftests/landlock/ptrace_test.c
-> > > > > > @@ -267,12 +267,11 @@ TEST_F(hierarchy, trace)
-> > > > > >             /* Tests PTRACE_ATTACH and PTRACE_MODE_READ on the
-> > > > > > parent. */
-> > > > > >             err_proc_read = test_ptrace_read(parent);
-> > > > > >             ret = ptrace(PTRACE_ATTACH, parent, NULL, 0);
-> > > > > > +        EXPECT_EQ(-1, ret);
-> > > > > > +        EXPECT_EQ(EPERM, errno);
-> > > > > >             if (variant->domain_child) {
-> > > > > > -            EXPECT_EQ(-1, ret);
-> > > > > > -            EXPECT_EQ(EPERM, errno);
-> > > > > >                 EXPECT_EQ(EACCES, err_proc_read);
-> > > > > >             } else {
-> > > > > > -            EXPECT_EQ(0, ret);
-> > > > > >                 EXPECT_EQ(0, err_proc_read);
-> > > > > >             }
-> > > > > >             if (ret == 0) {
+--=20
+paul-moore.com
