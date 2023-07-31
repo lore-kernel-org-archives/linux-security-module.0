@@ -2,91 +2,124 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E723C001DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jul 2023 11:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28D50C001DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jul 2023 11:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbjGaLQu (ORCPT
+        id S231407AbjGaLVJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 31 Jul 2023 07:16:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60058 "EHLO
+        Mon, 31 Jul 2023 07:21:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230439AbjGaLQt (ORCPT
+        with ESMTP id S231773AbjGaLVD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 31 Jul 2023 07:16:49 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F65BE76
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Jul 2023 04:16:47 -0700 (PDT)
-Received: from dggpeml500025.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4RDwds5NZczrS32;
-        Mon, 31 Jul 2023 19:15:45 +0800 (CST)
-Received: from ubuntu1804.huawei.com (10.67.174.202) by
- dggpeml500025.china.huawei.com (7.185.36.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Mon, 31 Jul 2023 19:16:45 +0800
-From:   Zhu Wang <wangzhu9@huawei.com>
-To:     <john.johansen@canonical.com>, <paul@paul-moore.com>,
-        <jmorris@namei.org>, <serge@hallyn.com>,
-        <apparmor@lists.ubuntu.com>,
-        <linux-security-module@vger.kernel.org>
-CC:     <wangzhu9@huawei.com>
-Subject: [PATCH -next] apparmor: remove kernel-doc warnings
-Date:   Mon, 31 Jul 2023 19:16:14 +0800
-Message-ID: <20230731111614.212113-1-wangzhu9@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 31 Jul 2023 07:21:03 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5119E10C0;
+        Mon, 31 Jul 2023 04:20:59 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1bc02bd4eafso12782515ad.1;
+        Mon, 31 Jul 2023 04:20:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690802459; x=1691407259;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GbS8Qlfzn1Dgn19TT0BgR1SE8o6tzPgDzghenWvydYU=;
+        b=sRCcK4ssYdzJDLDSbo0yHQAjwvp0lQNsICeu+cMBU7PpbD1tn7ltLqdRMuaXo69ayJ
+         hKcB5meML4awt66h7oX0OgMARkqHoPr76z5ch4UtcllKCW1Zgy+NXGdgTSfZowFLCfFI
+         ZSIKC9ktL/ddceCz6m25B3eZpOR7HhyEBnt1tZmAfKOAk3xHvA8GvPBK+sjwwPs6kvJX
+         OCBoPKG608FjwEDZn59JhhR8/oyG1praX41izhWO2bzLUIMZIYb37vaihS2VqE392TiT
+         gIs9HQvUrqUZaKk1W0GYZ3Gr38VZbYvblaDljdOpyIdBU01Uc8bQjwKmj2Pe2segDZ7a
+         bGvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690802459; x=1691407259;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GbS8Qlfzn1Dgn19TT0BgR1SE8o6tzPgDzghenWvydYU=;
+        b=hB/bPrememDDZgFkUQiJvdrvm+KAcKvXFKbJ8RamjicLfcEZVjnio/XTP0DGi+JsFd
+         3wk978d7ja4Ovk5ahFmFjDfop/fG7iDoDvFouNrbyjj2PfQxsm0fQAsg4qCOobsPnjJM
+         VTRJuu+6QrahIthiojM6RumjWuZ95FGcPSiOGI71BBqy30Jod3aGfb7LXmHsGW3z+PhB
+         X8xjNpzJBdlXs4vpHBV+bBCFgEeHJeyKNWgKt7PYsjF7JAcrb30+mSIQgu/svHTB7NPP
+         VS+UoxVmcYlC6zXc3cVkV2LVx66peIsNevyyiurUbeRE3nUNQDrKyRsqVtp0Un2IQH1W
+         pteQ==
+X-Gm-Message-State: ABy/qLZUvthxFh53K5UWBXVIRdyoaGQDu6jFeyX7o4ZJFPkAFWXn6yzk
+        ikQfAHV3h9phandXA7Fo1Jqi+kBCqJ7c6A==
+X-Google-Smtp-Source: APBJJlHv2G80hlFmeMpv+4Stl2gbXUp1TxFjAU/Su1Dbul/HlEpmoIKIGA+9ssxjhFXnsCAIJQx4lA==
+X-Received: by 2002:a17:902:c407:b0:1bb:dbec:40ba with SMTP id k7-20020a170902c40700b001bbdbec40bamr12244217plk.16.1690802458589;
+        Mon, 31 Jul 2023 04:20:58 -0700 (PDT)
+Received: from debian.me ([103.131.18.64])
+        by smtp.gmail.com with ESMTPSA id e6-20020a170902cf4600b001b8c6890623sm8382932plg.7.2023.07.31.04.20.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Jul 2023 04:20:58 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+        id 2B5F380001D5; Mon, 31 Jul 2023 18:20:53 +0700 (WIB)
+Date:   Mon, 31 Jul 2023 18:20:53 +0700
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     "Dr. Greg" <greg@enjellic.com>, paul@paul-moore.com
+Cc:     linux-security-module@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: TSEM feedback.
+Message-ID: <ZMeZFRz/lH8Uz2mX@debian.me>
+References: <20230731103822.GA4093@wind.enjellic.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.174.202]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpeml500025.china.huawei.com (7.185.36.35)
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="8e9Ag2A/xFjBJvzI"
+Content-Disposition: inline
+In-Reply-To: <20230731103822.GA4093@wind.enjellic.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Remove kernel-doc warnings:
 
-security/apparmor/lib.c:33: warning: Function parameter or member 't' not
-described in 'aa_free_str_table'
-security/apparmor/lib.c:33: warning: Excess function parameter 'str'
-description in 'aa_free_str_table'
-security/apparmor/lib.c:94: warning: Function parameter or member 'n' not
-described in 'skipn_spaces'
-security/apparmor/lib.c:390: warning: Excess function parameter 'deny'
-description in 'aa_check_perms'
+--8e9Ag2A/xFjBJvzI
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Zhu Wang <wangzhu9@huawei.com>
----
- security/apparmor/lib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Mon, Jul 31, 2023 at 05:38:22AM -0500, Dr. Greg wrote:
+> Good morning Paul, I hope this note finds your week starting well.
+>=20
+> We submitted the patches for the V2 release of TSEM three weeks ago.
+>=20
+> We received some feedback from Randy Dunlap on some documentations
+> issues that we went on to address.
+>=20
+> Haven't heard any reflections from you.  Was just wondering if you
+> were swamped or had possibly missed the submission?  We didn't include
+> you as a copy on the notion that you didn't need two sets of patches
+> landing in your inbox.
+>=20
+> You can find the series with the following lore link:
+>=20
+> https://lore.kernel.org/linux-security-module/20230710102319.19716-1-greg=
+@enjellic.com/T/#t
+>=20
+> Will look forward to any reflections you might have.
 
-diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-index a630c951bb3b..01943ec184da 100644
---- a/security/apparmor/lib.c
-+++ b/security/apparmor/lib.c
-@@ -27,7 +27,7 @@ struct aa_perms allperms = { .allow = ALL_PERMS_MASK,
- 
- /**
-  * aa_free_str_table - free entries str table
-- * @str: the string table to free  (MAYBE NULL)
-+ * @t: the string table to free  (MAYBE NULL)
-  */
- void aa_free_str_table(struct aa_str_table *t)
- {
-@@ -85,6 +85,7 @@ char *aa_split_fqname(char *fqname, char **ns_name)
- /**
-  * skipn_spaces - Removes leading whitespace from @str.
-  * @str: The string to be stripped.
-+ * @n: Number of spaces to be removed.
-  *
-  * Returns a pointer to the first non-whitespace character in @str.
-  * if all whitespace will return NULL
-@@ -371,7 +372,6 @@ int aa_profile_label_perm(struct aa_profile *profile, struct aa_profile *target,
-  * @profile: profile being checked
-  * @perms: perms computed for the request
-  * @request: requested perms
-- * @deny: Returns: explicit deny set
-  * @sa: initialized audit structure (MAY BE NULL if not auditing)
-  * @cb: callback fn for type specific fields (MAY BE NULL)
-  *
--- 
-2.17.1
+OK, please reroll with all reviews addressed.
 
+As for the documentation, it seems that you missed Cc'ing
+linux-doc@vger.kernel.org list, hence I didn't see your series. In any case,
+run ``scripts/get_maintainer.pl`` to find maintainers, potential reviewers,
+and lists that should have received your patch (series).
+
+Last but not least, it'd been great if you can also link to public Git
+repo containing your series (you already have the repo locally when
+developing the series, right?), so I can simply ``git pull`` when about
+to review yours.
+
+See you in v2!
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--8e9Ag2A/xFjBJvzI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZMeZDwAKCRD2uYlJVVFO
+o5G2AP44MMyRCB5jI3G18XNUpGnaFZJZ+ZByyOHDT8GlgPHXiQD+LC+N301nHZ9d
+ssPqQozSwvnWKLLtcfOQ0u00wFgV8w4=
+=I09p
+-----END PGP SIGNATURE-----
+
+--8e9Ag2A/xFjBJvzI--
