@@ -2,176 +2,98 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68FE0C04E69
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jul 2023 16:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38998C001DE
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jul 2023 16:56:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232987AbjGaQYO (ORCPT
+        id S229503AbjGaQ4d (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 31 Jul 2023 12:24:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56612 "EHLO
+        Mon, 31 Jul 2023 12:56:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231845AbjGaQYN (ORCPT
+        with ESMTP id S230189AbjGaQ4c (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 31 Jul 2023 12:24:13 -0400
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDB0410CA
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Jul 2023 09:24:10 -0700 (PDT)
-Received: by mail-qv1-xf2d.google.com with SMTP id 6a1803df08f44-63c70dc7ed2so34669586d6.0
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Jul 2023 09:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1690820650; x=1691425450;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3bBibAebd9TH21iCDO05hSEk2osKPAFkgUcjQOZN6IE=;
-        b=Nxq6zpIl4t0T0IKgYCttihPgWkXDGg2v82UeoDRuJEPiuoZCcaCHDZLE9kkIxiKoGj
-         jk+IsC1Guj9oI8nO++cnUqPSWZhSmAdBVc5lsM1hT0kSe4RC/KjMhhSc6wlqkqU2YaQ2
-         MlzhwgMrC6YuHdeNmM0ceLnhR0bBMJIyRtICLHnduD/dx0KJOUH8SaivN46+P6VL/13o
-         HD2+rdmaVCfzWB1fiLuejcoL89Z+FWgZTnHkXXYaDxZvnDyh2EIFMo2Vuj5jGb8JG448
-         0UmR6aeSUdj4a9FGESdjj1akt6y1FHupeca6JLTCIL1tXPbyPZc4VruR8nQPmlFHhYMX
-         m2iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690820650; x=1691425450;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3bBibAebd9TH21iCDO05hSEk2osKPAFkgUcjQOZN6IE=;
-        b=egKVyNMtzzyfJx3k8F8kKLfphNGBoBVbIe0lZJOqe0eH8UE9OPDEZWUS1Y0+gA/nXj
-         ijG9b1+Tx7XwxgkMHPwfdCGQTZzUErio45ioxctY2n7VYyXhF3Y3ul4QZnjPrOtviBOp
-         0rAYOXiSBmY1rfL3d1nebIG2LRAOOLumLpaI4QUoG7twmWF8qbnya6vCbGQs4aCw/cU1
-         RhoIJHyx/oJqXWunNmK+EBfq5+SNrWJkXVJqd+t32DQu4ZN142zHuGL9XeSB+P5Iur/g
-         PeYrkD41rc9Pejs0cK9khCvKoWq9JfZ5iOBUxoJ9cefvb50jy57rdkgYImiIUmRra6cN
-         D4Qw==
-X-Gm-Message-State: ABy/qLZutNQvcXbaVUDpUHuY0K/6XOraDFUGzTOruFwKYQyrSTCe13Sm
-        AYu09p57lXdu6NCEyeu69PHSONvYX1Wm6kWClNG/Yw==
-X-Google-Smtp-Source: APBJJlHREYUxXxwX9gGy7EcKK3cJKFiEBqZ2OxDI6ULebXBrqt9zCYKQ0hqOpLlGDOWyAd0KbYFFLQMR5e4GSI0P8JE=
-X-Received: by 2002:a0c:ef0a:0:b0:63d:281d:d9cd with SMTP id
- t10-20020a0cef0a000000b0063d281dd9cdmr11195773qvr.57.1690820649949; Mon, 31
- Jul 2023 09:24:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-13-seanjc@google.com>
- <DS0PR11MB637386533A4A10667BA6DF03DC03A@DS0PR11MB6373.namprd11.prod.outlook.com>
- <ZL/yb4wL4Nhf9snZ@google.com>
-In-Reply-To: <ZL/yb4wL4Nhf9snZ@google.com>
-From:   Fuad Tabba <tabba@google.com>
-Date:   Mon, 31 Jul 2023 17:23:33 +0100
-Message-ID: <CA+EHjTwGoMgoTEktL9zq2190TMY=vU29xv+oQ7X2Eeu8c8AmjQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Wei W Wang <wei.w.wang@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
+        Mon, 31 Jul 2023 12:56:32 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A27391722;
+        Mon, 31 Jul 2023 09:56:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1690822591; x=1722358591;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U7roQ+XUWlcaav2uFYpJOY2fwBdNYfkUnYbQlW3JYsQ=;
+  b=nHgM+gjCTDnDrNVY/ToZPx1YbypoRAnl1HmS+nVGAytNemgFVHrp9Ljt
+   q/Fzpk/RI4EAoGyhBBGhK2z5FVVaCENJoUzvSQedgqUVKiDpiM4VKnKEd
+   FI93+PvLNFjb4C013RHpJlu7KR5+qLI5lCO+cCQbk9CD6DOQI29otroyl
+   Jn8pHi2oic8xRFpbPPCFiW8e0eDmoZSLEaFBYCBAXQyrZCCi/Goi6pYIM
+   1aD9TPqklwSv8REB7AKnaoRDFut33KzNy/xiwU0rkK7Fl6Nvff9PSpksg
+   9Ohdr7aOVe/Itie275038CLOMBf732tUBGgz6t/e51oso33JC7krPKz7d
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10788"; a="348671180"
+X-IronPort-AV: E=Sophos;i="6.01,245,1684825200"; 
+   d="scan'208";a="348671180"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2023 09:56:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10788"; a="852115896"
+X-IronPort-AV: E=Sophos;i="6.01,245,1684825200"; 
+   d="scan'208";a="852115896"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.255.229.233])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2023 09:56:04 -0700
+Date:   Mon, 31 Jul 2023 09:56:04 -0700
+From:   Alison Schofield <alison.schofield@intel.com>
+To:     Khadija Kamran <kamrankhadijadj@gmail.com>
+Cc:     ztarkhani@microsoft.com, Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lsm: add comment block for security_sk_classify_flow LSM
+ hook
+Message-ID: <ZMfnpPe3WCHgSDFQ@aschofie-mobl2>
+References: <ZMfG/w5FWqCGE4pn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZMfG/w5FWqCGE4pn@gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Sean,
+On Mon, Jul 31, 2023 at 07:36:47PM +0500, Khadija Kamran wrote:
+> security_sk_classify_flow LSM hook has no comment block. Add a comment
+> block with a brief description of LSM hook and its function parameters.
 
-On Tue, Jul 25, 2023 at 5:04=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> On Tue, Jul 25, 2023, Wei W Wang wrote:
-> > On Wednesday, July 19, 2023 7:45 AM, Sean Christopherson wrote:
-> > > +int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
-> > > +                gfn_t gfn, kvm_pfn_t *pfn, int *max_order) {
-> > > +   pgoff_t index =3D gfn - slot->base_gfn + slot->gmem.pgoff;
-> > > +   struct kvm_gmem *gmem;
-> > > +   struct folio *folio;
-> > > +   struct page *page;
-> > > +   struct file *file;
-> > > +
-> > > +   file =3D kvm_gmem_get_file(slot);
-> > > +   if (!file)
-> > > +           return -EFAULT;
-> > > +
-> > > +   gmem =3D file->private_data;
-> > > +
-> > > +   if (WARN_ON_ONCE(xa_load(&gmem->bindings, index) !=3D slot)) {
-> > > +           fput(file);
-> > > +           return -EIO;
-> > > +   }
-> > > +
-> > > +   folio =3D kvm_gmem_get_folio(file_inode(file), index);
-> > > +   if (!folio) {
-> > > +           fput(file);
-> > > +           return -ENOMEM;
-> > > +   }
-> > > +
-> > > +   page =3D folio_file_page(folio, index);
-> > > +
-> > > +   *pfn =3D page_to_pfn(page);
-> > > +   *max_order =3D compound_order(compound_head(page));
-> >
-> > Maybe better to check if caller provided a buffer to get the max_order:
-> > if (max_order)
-> >       *max_order =3D compound_order(compound_head(page));
-> >
-> > This is what the previous version did (restrictedmem_get_page),
-> > so that callers who only want to get a pfn don't need to define
-> > an unused "order" param.
->
-> My preference would be to require @max_order.  I can kinda sorta see why =
-a generic
-> implementation (restrictedmem) would make the param optional, but with gm=
-em being
-> KVM-internal I think it makes sense to require the param.  Even if pKVM d=
-oesn't
-> _currently_ need/want the order of the backing allocation, presumably tha=
-t's because
-> hugepage support is still on the TODO list, not because pKVM fundamentall=
-y doesn't
-> need to know the order of the backing allocation.
+When referring to functions, in the one line commit message, or here
+in the commit log, it is customary to add the parenthesis to be clear
+it is a function name.
 
-You're right that with huge pages pKVM will eventually need to know
-the order of the backing allocation, but there is at least one use
-case where it doesn't, which I ran into in the previous ports as well
-as this one. In pKVM (and in possibly other implementations), the host
-needs to access (shared) guest memory that isn't mapped. For that,
-I've used kvm_*_get_pfn(), only requiring the pfn, so get the page via
-pfn_to_page().
+ie. security_sk_classify_flow()
 
-Although it's not that big, my preference would be for max_order to be opti=
-onal.
+> 
+> Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
+> ---
+>  security/security.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/security/security.c b/security/security.c
+> index d5ff7ff45b77..ffc5519e49cd 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -4396,6 +4396,13 @@ void security_sk_clone(const struct sock *sk, struct sock *newsk)
+>  }
+>  EXPORT_SYMBOL(security_sk_clone);
+>  
+> +/**
+> + * security_sk_classify_flow() - Set a flow's secid based on socket
+> + * @sk:  original socket
+           ^errant space
 
-Thanks!
-/fuad
+> + * @flic: target flow
+> + *
+> + * Set the target flow's secid to socket's secid.
+> + */
+>  void security_sk_classify_flow(struct sock *sk, struct flowi_common *flic)
+>  {
+>  	call_void_hook(sk_getsecid, sk, &flic->flowic_secid);
+> -- 
+> 2.34.1
+> 
