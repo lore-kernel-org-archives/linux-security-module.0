@@ -2,69 +2,66 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4312C001E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jul 2023 15:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68FE0C04E69
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jul 2023 16:24:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233084AbjGaP7M (ORCPT
+        id S232987AbjGaQYO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 31 Jul 2023 11:59:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34472 "EHLO
+        Mon, 31 Jul 2023 12:24:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233062AbjGaP7E (ORCPT
+        with ESMTP id S231845AbjGaQYN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 31 Jul 2023 11:59:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96BE9172D
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Jul 2023 08:58:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690819094;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4fe6hbS0UUlu2v7dj0yh2sFuv9miEav3h35iCM+LzrA=;
-        b=aUQq25fVqVWRGJcq14zax3WJWOdERpcRUDxaubSMjuwjb4gcPLAOGJbyxtCDwkniCKlJ3A
-        34Ri8Ndk4IgrJ6ACHR9Izl47SEjcAo7ESiNsQo6KC2L9xOGNOPqpvy7Vg35yslyEbhA5Ms
-        /snhZhML6Csfbsbcb9TXSuqmd5USAgY=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-635-SaqUMEOcMNWeUdgSKty1aw-1; Mon, 31 Jul 2023 11:58:12 -0400
-X-MC-Unique: SaqUMEOcMNWeUdgSKty1aw-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-99c0bd2ca23so110735466b.2
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Jul 2023 08:58:12 -0700 (PDT)
+        Mon, 31 Jul 2023 12:24:13 -0400
+Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDB0410CA
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Jul 2023 09:24:10 -0700 (PDT)
+Received: by mail-qv1-xf2d.google.com with SMTP id 6a1803df08f44-63c70dc7ed2so34669586d6.0
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Jul 2023 09:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690820650; x=1691425450;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3bBibAebd9TH21iCDO05hSEk2osKPAFkgUcjQOZN6IE=;
+        b=Nxq6zpIl4t0T0IKgYCttihPgWkXDGg2v82UeoDRuJEPiuoZCcaCHDZLE9kkIxiKoGj
+         jk+IsC1Guj9oI8nO++cnUqPSWZhSmAdBVc5lsM1hT0kSe4RC/KjMhhSc6wlqkqU2YaQ2
+         MlzhwgMrC6YuHdeNmM0ceLnhR0bBMJIyRtICLHnduD/dx0KJOUH8SaivN46+P6VL/13o
+         HD2+rdmaVCfzWB1fiLuejcoL89Z+FWgZTnHkXXYaDxZvnDyh2EIFMo2Vuj5jGb8JG448
+         0UmR6aeSUdj4a9FGESdjj1akt6y1FHupeca6JLTCIL1tXPbyPZc4VruR8nQPmlFHhYMX
+         m2iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690819091; x=1691423891;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4fe6hbS0UUlu2v7dj0yh2sFuv9miEav3h35iCM+LzrA=;
-        b=TsDOv817xlNlnuVYNB0ZTQnp57Qa7FaLZTkSKKp7sHosfZ3FxdEB9chZvRvijUhLWw
-         L0L0RIqkX5P+rObpwrzVBT7aMUWOHyQYqPn5lEK2Ir21+LGJGFumBhSFngdg1gTRu+PP
-         fNyOnIALSkiDds/afqn4FNDywqpjhJpJgUOMGih25dGPxMnrPm8OC93TIgTqlpyRpXpQ
-         tozqWz+b7FR+GpCh6RZGA+pHeQ/ixI0fQvI3Hgl5ys+HK6hzcOO7Xis2IzfXvuZIkbS/
-         sP25/UYsF2jzbRwi9tutpPzZujTdQWVRkdh6PDBFeVvutRwhvN58R3WWmTy8bQby1QK9
-         KdrA==
-X-Gm-Message-State: ABy/qLbPR3HvcUW1AiSFkW1ThPXfKdoqfq0yvWqSsM1n4P4ZdF0Ynofa
-        Bv1F5oz9DZ96x8JYi+Kl4lKoY6eCLor8DY+mX3K5N1Zg0u2i9R7UuCUvbQArSvaU/g1vSt0C1zc
-        3os00WO9ZTx7Mkb0GvZUAhyK0wSg6ZrtDpsSb
-X-Received: by 2002:a17:906:11:b0:993:f744:d235 with SMTP id 17-20020a170906001100b00993f744d235mr164030eja.6.1690819091660;
-        Mon, 31 Jul 2023 08:58:11 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlE4qcb0DCH0D/UYAr1wihMNcJs7WXVHvdtoT78VyrDkWJveoJUy2CwgTeDnMx93k7Ts+Uy66g==
-X-Received: by 2002:a17:906:11:b0:993:f744:d235 with SMTP id 17-20020a170906001100b00993f744d235mr163994eja.6.1690819091362;
-        Mon, 31 Jul 2023 08:58:11 -0700 (PDT)
-Received: from ?IPV6:2001:b07:6468:f312:9af8:e5f5:7516:fa89? ([2001:b07:6468:f312:9af8:e5f5:7516:fa89])
-        by smtp.googlemail.com with ESMTPSA id f21-20020a170906139500b00992dcae806bsm6371003ejc.5.2023.07.31.08.58.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Jul 2023 08:58:10 -0700 (PDT)
-Message-ID: <eb356cf1-c661-930b-2175-427a59267d1f@redhat.com>
-Date:   Mon, 31 Jul 2023 17:58:08 +0200
+        d=1e100.net; s=20221208; t=1690820650; x=1691425450;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3bBibAebd9TH21iCDO05hSEk2osKPAFkgUcjQOZN6IE=;
+        b=egKVyNMtzzyfJx3k8F8kKLfphNGBoBVbIe0lZJOqe0eH8UE9OPDEZWUS1Y0+gA/nXj
+         ijG9b1+Tx7XwxgkMHPwfdCGQTZzUErio45ioxctY2n7VYyXhF3Y3ul4QZnjPrOtviBOp
+         0rAYOXiSBmY1rfL3d1nebIG2LRAOOLumLpaI4QUoG7twmWF8qbnya6vCbGQs4aCw/cU1
+         RhoIJHyx/oJqXWunNmK+EBfq5+SNrWJkXVJqd+t32DQu4ZN142zHuGL9XeSB+P5Iur/g
+         PeYrkD41rc9Pejs0cK9khCvKoWq9JfZ5iOBUxoJ9cefvb50jy57rdkgYImiIUmRra6cN
+         D4Qw==
+X-Gm-Message-State: ABy/qLZutNQvcXbaVUDpUHuY0K/6XOraDFUGzTOruFwKYQyrSTCe13Sm
+        AYu09p57lXdu6NCEyeu69PHSONvYX1Wm6kWClNG/Yw==
+X-Google-Smtp-Source: APBJJlHREYUxXxwX9gGy7EcKK3cJKFiEBqZ2OxDI6ULebXBrqt9zCYKQ0hqOpLlGDOWyAd0KbYFFLQMR5e4GSI0P8JE=
+X-Received: by 2002:a0c:ef0a:0:b0:63d:281d:d9cd with SMTP id
+ t10-20020a0cef0a000000b0063d281dd9cdmr11195773qvr.57.1690820649949; Mon, 31
+ Jul 2023 09:24:09 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-To:     Sean Christopherson <seanjc@google.com>,
-        Quentin Perret <qperret@google.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
+References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-13-seanjc@google.com>
+ <DS0PR11MB637386533A4A10667BA6DF03DC03A@DS0PR11MB6373.namprd11.prod.outlook.com>
+ <ZL/yb4wL4Nhf9snZ@google.com>
+In-Reply-To: <ZL/yb4wL4Nhf9snZ@google.com>
+From:   Fuad Tabba <tabba@google.com>
+Date:   Mon, 31 Jul 2023 17:23:33 +0100
+Message-ID: <CA+EHjTwGoMgoTEktL9zq2190TMY=vU29xv+oQ7X2Eeu8c8AmjQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Wei W Wang <wei.w.wang@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
         Huacai Chen <chenhuacai@kernel.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
@@ -76,15 +73,21 @@ Cc:     Marc Zyngier <maz@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Yu Zhang <yu.c.zhang@linux.intel.com>,
         Vishal Annapurve <vannapurve@google.com>,
@@ -92,51 +95,83 @@ Cc:     Marc Zyngier <maz@kernel.org>,
         Maciej Szmigiero <mail@maciej.szmigiero.name>,
         Vlastimil Babka <vbabka@suse.cz>,
         David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
         Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
         Liam Merwick <liam.merwick@oracle.com>,
         Isaku Yamahata <isaku.yamahata@gmail.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20230718234512.1690985-1-seanjc@google.com>
- <20230718234512.1690985-7-seanjc@google.com> <ZMOJgnyzzUNIx+Tn@google.com>
- <ZMRXVZYaJ9wojGtS@google.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v11 06/29] KVM: Introduce KVM_SET_USER_MEMORY_REGION2
-In-Reply-To: <ZMRXVZYaJ9wojGtS@google.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/29/23 02:03, Sean Christopherson wrote:
-> KVM would need to do multiple uaccess reads, but that's not a big
-> deal.  Am I missing something, or did past us just get too clever and
-> miss the obvious solution?
+Hi Sean,
 
-You would have to introduce struct kvm_userspace_memory_region2 anyway, 
-though not a new ioctl, for two reasons:
+On Tue, Jul 25, 2023 at 5:04=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Tue, Jul 25, 2023, Wei W Wang wrote:
+> > On Wednesday, July 19, 2023 7:45 AM, Sean Christopherson wrote:
+> > > +int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
+> > > +                gfn_t gfn, kvm_pfn_t *pfn, int *max_order) {
+> > > +   pgoff_t index =3D gfn - slot->base_gfn + slot->gmem.pgoff;
+> > > +   struct kvm_gmem *gmem;
+> > > +   struct folio *folio;
+> > > +   struct page *page;
+> > > +   struct file *file;
+> > > +
+> > > +   file =3D kvm_gmem_get_file(slot);
+> > > +   if (!file)
+> > > +           return -EFAULT;
+> > > +
+> > > +   gmem =3D file->private_data;
+> > > +
+> > > +   if (WARN_ON_ONCE(xa_load(&gmem->bindings, index) !=3D slot)) {
+> > > +           fput(file);
+> > > +           return -EIO;
+> > > +   }
+> > > +
+> > > +   folio =3D kvm_gmem_get_folio(file_inode(file), index);
+> > > +   if (!folio) {
+> > > +           fput(file);
+> > > +           return -ENOMEM;
+> > > +   }
+> > > +
+> > > +   page =3D folio_file_page(folio, index);
+> > > +
+> > > +   *pfn =3D page_to_pfn(page);
+> > > +   *max_order =3D compound_order(compound_head(page));
+> >
+> > Maybe better to check if caller provided a buffer to get the max_order:
+> > if (max_order)
+> >       *max_order =3D compound_order(compound_head(page));
+> >
+> > This is what the previous version did (restrictedmem_get_page),
+> > so that callers who only want to get a pfn don't need to define
+> > an unused "order" param.
+>
+> My preference would be to require @max_order.  I can kinda sorta see why =
+a generic
+> implementation (restrictedmem) would make the param optional, but with gm=
+em being
+> KVM-internal I think it makes sense to require the param.  Even if pKVM d=
+oesn't
+> _currently_ need/want the order of the backing allocation, presumably tha=
+t's because
+> hugepage support is still on the TODO list, not because pKVM fundamentall=
+y doesn't
+> need to know the order of the backing allocation.
 
-1) the current size of the struct is part of the userspace API via the 
-KVM_SET_USER_MEMORY_REGION #define, so introducing a new struct is the 
-easiest way to preserve this
+You're right that with huge pages pKVM will eventually need to know
+the order of the backing allocation, but there is at least one use
+case where it doesn't, which I ran into in the previous ports as well
+as this one. In pKVM (and in possibly other implementations), the host
+needs to access (shared) guest memory that isn't mapped. For that,
+I've used kvm_*_get_pfn(), only requiring the pfn, so get the page via
+pfn_to_page().
 
-2) the struct can (at least theoretically) enter the ABI of a shared 
-library, and such mismatches are really hard to detect and resolve.  So 
-it's better to add the padding to a new struct, and keep struct 
-kvm_userspace_memory_region backwards-compatible.
+Although it's not that big, my preference would be for max_order to be opti=
+onal.
 
-
-As to whether we should introduce a new ioctl: doing so makes 
-KVM_SET_USER_MEMORY_REGION's detection of bad flags a bit more robust; 
-it's not like we cannot introduce new flags at all, of course, but 
-having out-of-bounds reads as a side effect of new flags is a bit nasty. 
-  Protecting programs from their own bugs gets into diminishing returns 
-very quickly, but introducing a new ioctl can make exploits a bit harder 
-when struct kvm_userspace_memory_region is on the stack and adjacent to 
-an attacker-controlled location.
-
-Paolo
-
+Thanks!
+/fuad
