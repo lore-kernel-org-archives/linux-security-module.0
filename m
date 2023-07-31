@@ -2,97 +2,214 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9ACBC04FDF
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jul 2023 07:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC968C001DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jul 2023 08:34:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230376AbjGaHK2 (ORCPT
+        id S232027AbjGaIeL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 31 Jul 2023 03:10:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49778 "EHLO
+        Mon, 31 Jul 2023 04:34:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230358AbjGaHJ7 (ORCPT
+        with ESMTP id S232003AbjGaIdn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 31 Jul 2023 03:09:59 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C124335A6;
-        Mon, 31 Jul 2023 00:08:27 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fbea14706eso38350835e9.2;
-        Mon, 31 Jul 2023 00:08:27 -0700 (PDT)
+        Mon, 31 Jul 2023 04:33:43 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 313131716
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Jul 2023 01:31:25 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5844a99c268so50005747b3.2
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Jul 2023 01:31:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690787281; x=1691392081;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20221208; t=1690792266; x=1691397066;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EfPe6oOYMMedBDB4xd574gcfMtPjOKfspfZcrHbarSk=;
-        b=Cdnwf6zqQRk63GK1qy1/wvGs1oNzayMz08OpJcs+yhi/U80Uhm8GHkWzp6bAe+dVxm
-         BHEofR6deiExpvMh5+0wRclXXQDNNxFVJBcesCSzW+MIMCif7sl+EYgDdS6lZQtOOuiK
-         ivlpcMTAT4h8xbhQZklWioPSWOtYGtdWhkLN6az7Sj6g/chFLvB1EhJBaj9a5oaF0skY
-         QQRwc50G/SFSCn3GyKscTq7Gtq4LFpxHLkcn2fIHJ94ryxtEH6MmIgpjXkdiKqf1+hKb
-         zI6Pm8XuJni1d1drKG2ytivtMcDy4qz77eO+NRcv+uIn3YNzJlze1zw3+XISIl3mounl
-         jJXw==
+        bh=wIyrJ6YTSIxuAhVNdXFr6FJPfNNKzUzYSSPmHeUyBEk=;
+        b=enkMKgU1Ayx4i1zq0/7Jurq7ZnNXCX1BoIPAmM0BWTh6mP7/Z1J+YHhjU0MTdpLUM4
+         aqzhqtT7GLoCcLSJV6zyI8YEnfSw3dZXTqK4MmW9JYWZXeyGj/QmZvjOZFCEMcO+WpOK
+         DHaUs9pqHIbf/BgnNSMXPv5Vgdn90ALfiIjheXTiBbnqyew0L/DZtEDgd6QJnA4SHw/J
+         1inOv2WWjxaCwow1osC8V2CWs7Xs4u3VYMUxTB1Z1z2SWA5sAhuzovoy9Ot4/o45U+TM
+         R9xz+ABSS2V4FTJvIIy/qalnlcwiXognJOsYNtM7csQs2nGrxnKx6X4xpsoiN05diNFj
+         2D/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690787281; x=1691392081;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EfPe6oOYMMedBDB4xd574gcfMtPjOKfspfZcrHbarSk=;
-        b=FkXVMP3lg7wOvzCozbOQrB8O0I1ylZhmUIRh3UL4fHvoUZpQCqLu0mePC6aCE+oufS
-         PQBSyXGV913cwrtYOZRgv3ZOahseA9fyvM3zncH+ITQwqsR+BLUyeFXgpoDHQ5fBSsSy
-         +PY4XX5Yn9f5rxu0CMLQ89e9wj4wecK3x3iGAhnxPHcs7KpRW4IM//y7mEGt/YJHqCwO
-         zl9P5LD4YNPNboGJItrdNH7/flSPrYtNa+OgiwxhDOvHiJpYHg44TX7SYAOJSIg+Dk2K
-         JnUmGBZkWy8R48k05lVYZ6XE1GjOLxZt0pE1MkzRDAp0LHufm2YO7ijLKVCQTwu513Yz
-         TF7A==
-X-Gm-Message-State: ABy/qLbwiy9SG3IocM+Ra097ylllCYft1VGhcvURA8r5KYewh6Q/DkzK
-        jKc8kAqckkD9hznpXSkATnDTH4GzFRR9nhuG
-X-Google-Smtp-Source: APBJJlGupX3Wu9zlyxclnQH5I+YVUadh5sPcJ5XhfbMabFHBpNn8tRTHMj3IClfdyefQ0bOp5LzxNA==
-X-Received: by 2002:a05:600c:b54:b0:3fa:9348:51a8 with SMTP id k20-20020a05600c0b5400b003fa934851a8mr4368451wmr.23.1690787280696;
-        Mon, 31 Jul 2023 00:08:00 -0700 (PDT)
-Received: from khadija-virtual-machine.localdomain ([39.41.65.235])
-        by smtp.gmail.com with ESMTPSA id l10-20020a05600c1d0a00b003fd2d3462fcsm15114098wms.1.2023.07.31.00.07.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jul 2023 00:08:00 -0700 (PDT)
-From:   Khadija Kamran <kamrankhadijadj@gmail.com>
-To:     paul@paul-moore.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
-        john.johansen@canonical.com, alison.schofield@intel.com,
-        ztarkhani@microsoft.com
-Cc:     Khadija Kamran <kamrankhadijadj@gmail.com>
-Subject: [PATCH 2/2] lsm: split cap_capget() declaration to multiple lines
-Date:   Mon, 31 Jul 2023 12:07:32 +0500
-Message-Id: <e5d8757c7f9108aaf4bc2fd904b75244d2393174.1690786467.git.kamrankhadijadj@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1690786466.git.kamrankhadijadj@gmail.com>
-References: <cover.1690786466.git.kamrankhadijadj@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        d=1e100.net; s=20221208; t=1690792266; x=1691397066;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wIyrJ6YTSIxuAhVNdXFr6FJPfNNKzUzYSSPmHeUyBEk=;
+        b=a2PxbMQAbYCQwmJbS39PQ+FozqPrxJ3QRvNe8snyeux+8O2IdtN+BGgyVaXbL3iDtp
+         5nD8GttQjr3k8w1prpH15hCsh0K1HLMuLKQg+rSch4sn93D16oUBAnDeQMvKePHKmGWI
+         Z8SD7LqpYoSJpi8jynW9js2fz1hmk5hHgbrpZeLv4QoT/rXFXILgYEwt9b/TT9X9zHMX
+         opOAAnIgxMByTr0oNphT/oaUp4PyVZTIWiYaW6/PkZHHtpMR1cBN51PKuzaUY+yfCITy
+         xZGB+Rebez3iv1LiOMd7zj5lPyxYOMWZLqXJV5n2RxDqn31eCRgVbWXroORO00ZJNKsP
+         C1aA==
+X-Gm-Message-State: ABy/qLZ24fMZ1rpWY+2uH4q2iFSk34/yDEWixizaU6ro449AXuGigug0
+        MnLBa26lpZ/HqNdFGiee6djOcCI597g=
+X-Google-Smtp-Source: APBJJlFCg+R7DYMvt31p3Yv9GzoKPkkzY61U+VGeK0geW2WgDvq6Rro0YL8uWxxHgGmNGb8hPXDfMwAtpac=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:2445:b5a:365:8863])
+ (user=gnoack job=sendgmr) by 2002:a05:6902:100f:b0:cf9:3564:33cc with SMTP id
+ w15-20020a056902100f00b00cf9356433ccmr60052ybt.13.1690792266208; Mon, 31 Jul
+ 2023 01:31:06 -0700 (PDT)
+Date:   Mon, 31 Jul 2023 10:31:03 +0200
+In-Reply-To: <ac314809-0afc-7a1c-d758-da28b0199e7e@digikod.net>
+Message-Id: <ZMdxRz64zGBM5dY/@google.com>
+Mime-Version: 1.0
+References: <20230623144329.136541-1-gnoack@google.com> <6dfc0198-9010-7c54-2699-d3b867249850@digikod.net>
+ <ZK6/CF0RS5KPOVff@google.com> <f3d46406-4cae-cd5d-fb35-cfcbd64c0690@digikod.net>
+ <20230713.470acd0e890b@gnoack.org> <e7e24682-5da7-3b09-323e-a4f784f10158@digikod.net>
+ <ZMI5ooJq6i/OJyxs@google.com> <ac314809-0afc-7a1c-d758-da28b0199e7e@digikod.net>
+Subject: Re: [PATCH v2 0/6] Landlock: ioctl support
+From:   "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
+To:     "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
+Cc:     "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack3000@gmail.com>,
+        linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Matt Bobrowski <repnop@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-cap_capget(...) LSM hook declaration exceeds the 80 characters per line
-limit. Split the function declaration to multple lines to decrease the
-line length.
+Hello!
 
-Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
----
- include/linux/security.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Fri, Jul 28, 2023 at 03:52:03PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> On 27/07/2023 11:32, G=C3=BCnther Noack wrote:
+> > I'm puzzled how you come to the conclusion that devices don't do such
+> > checks - did you read some ioctl command implementations, or is it a
+> > more underlying principle that I was not aware of so far?
+>=20
+> I took a look at fscrypt IOCTLs for instance, and other FS IOCTLs seems t=
+o
+> correctly check for FD's read/write mode according to the IOCTL behavior.
+> From what I've seen, IOCTLs implemented by device drivers don't care abou=
+t
+> file mode.
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 8b7d0b2ec1a4..fef65d0e522d 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -145,7 +145,8 @@ extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
- extern int cap_settime(const struct timespec64 *ts, const struct timezone *tz);
- extern int cap_ptrace_access_check(struct task_struct *child, unsigned int mode);
- extern int cap_ptrace_traceme(struct task_struct *parent);
--extern int cap_capget(const struct task_struct *target, kernel_cap_t *effective, kernel_cap_t *inheritable, kernel_cap_t *permitted);
-+extern int cap_capget(const struct task_struct *target, kernel_cap_t *effective,
-+					  kernel_cap_t *inheritable, kernel_cap_t *permitted);
- extern int cap_capset(struct cred *new, const struct cred *old,
- 		      const kernel_cap_t *effective,
- 		      const kernel_cap_t *inheritable,
--- 
-2.34.1
+OK - That's surprising.
 
+
+> > In any case - I believe the only reason why we are discussing this is
+> > to justify the DEV/NODEV split, and that one in itself is not
+> > controversial to me, even when I admittedly don't fully follow your
+> > reasoning.
+>=20
+> The main reason is than I don't want applications/users to not be allowed=
+ to
+> use "legitimate" IOCTL, for instance to correctly encrypt their own files=
+.
+> If we only have one IOCTL right, we cannot easily differentiate between t=
+he
+> targeted file types. However, this split might be too costly, cf. my comm=
+ent
+> in the below summary.
+
+I believe that for "leaf processes" like most command line utilities, the
+fscrypt use case is not a problem -- these IOCTLs are only needed for setti=
+ng up
+fscrypt directories and unlocking them.  Processes which merely access the =
+files
+in the unlocked directories can just transparently access them without usin=
+g
+ioctls.
+
+The close-on-exec ioctls might be more relevant for leaf processes, but the=
+se
+ones are uncontroversial to permit.
+
+For "parent processes" like shells, where the exact operations done underne=
+ath
+are not fully known in advance, it is more difficult to define an appropria=
+te
+policy using only the step (1) patch set, but I think it's a reasonable
+trade-off for now.
+
+When a policy distinguishes between /dev and other directories based on pat=
+h,
+that's already a good approximation for the ..._DEV and ..._NODEV access ri=
+ghts
+which you proposed previously.  In addition to the nodev mount flag, mknod(=
+2)
+requires CAP_MKNOD, so it should not be possible for an attacker to place t=
+hese
+where they want (at least not through the Landlocked process, as we have th=
+e
+NO_NEW_PRIVS flag).
+
+Step (2) discussions though :)
+
+
+> > Understood - so IIUC the scenario is that a process is not permitted
+> > to read file attributes, but it'll be able to infer the device ID by
+> > defining a dev_t-based Landlock rule and then observing whether ioctl
+> > still works.
+>=20
+> Right. I think it should be possible to still check if this kind of file
+> attribute would be allowed to be read by the process, when performing the
+> IOCTL on it. We need to think about the implications, and if it's worth i=
+t.
+>=20
+> It would be interesting to see if there are similar cover channels with
+> other Linux interfaces.
+
+OK, noted it down for step (2).
+
+
+> > Summarizing this, I believe that the parts that we need for step (1)
+> > are the following ones:
+> >=20
+> > (1) Identify and blanket-permit a small list of ioctl cmds which work
+> >      on all file descriptors (FIOCLEX, FIONCLEX, FIONBIO, FIOASYNC, and
+> >      others?)
+> >=20
+> >      Compare
+> >      https://lore.kernel.org/linux-security-module/6dfc0198-9010-7c54-2=
+699-d3b867249850@digikod.net/
+> >=20
+> > (2) Split into LANDLOCK_ACCESS_FS_IOCTL into a ..._DEV and a ..._NODEV =
+part.
+>=20
+> I'm a bit annoyed that this access rights mix action and object property =
+and
+> I'm worried that this might be a pain for future FS-related rule types (e=
+.g.
+> reusing all/most ACCESS_FS rights).
+>=20
+> At first glance, a cleaner way would be to add a file_type field to
+> landlock_path_beneath_attr (i.e. a subset of the landlock_inode_attr) but
+> that would make struct landlock_rule and landlock_layer too complex, so n=
+ot
+> a good approach.
+>=20
+> Unless someone has a better idea, let's stick to your first proposal and
+> only implement LANDLOCK_ACCESS_FS_IOCTL (with the FIOCLEX-like exceptions=
+).
+> We should clearly explain that IOCTLs should be allowed for non-device fi=
+le
+> hierarchies: containing regular/data file (e.g. /home with the fscrypt us=
+e
+> case), pipe, socket=E2=80=A6
+>=20
+> I'm still trying to convince myself which approach is the best, but for n=
+ow
+> the simplest one wins.
+
+OK, sounds good.  I'll go for the LANDLOCK_ACCESS_FS_IOCTL approach then.
+
+
+> > (3) Point out in documentation that this IOCTL restriction scheme only
+> >      applies to newly opened FDs and in particular point out the common
+> >      use case where that is a TTY, and what to do in this case.
+> >=20
+> > If you agree, I'd go ahead and implement that as step (1) and we can
+> > discuss the more advanced ideas in the context of a follow-up.
+
+=E2=80=94G=C3=BCnther
+
+--=20
+Sent using Mutt =F0=9F=90=95 Woof Woof
