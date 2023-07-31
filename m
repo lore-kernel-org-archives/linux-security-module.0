@@ -2,103 +2,63 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53130C04FDF
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Aug 2023 00:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D18C04FDF
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Aug 2023 09:27:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230459AbjHAAnu (ORCPT
+        id S232946AbjHAJ1Z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 31 Jul 2023 20:43:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46530 "EHLO
+        Tue, 1 Aug 2023 05:27:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229646AbjHAAnt (ORCPT
+        with ESMTP id S232893AbjHAJ1A (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 31 Jul 2023 20:43:49 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C4261BC8;
-        Mon, 31 Jul 2023 17:43:29 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-686e0213c0bso3505184b3a.1;
-        Mon, 31 Jul 2023 17:43:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690850609; x=1691455409;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bhtZuHVuD/5ejYMblEMyj6RnAY5Q/SWusGE7WOY4wLk=;
-        b=RVDofTb81vwCNbApr9KlLqeCll9uBMlfud/WfmddUfEN0IK3PpETDcLv6Q8CrKqyGc
-         vrGsvn3wQYftFQ8P0nKXwzd4g/jbOqkt02t1/eY0RzKfpUTztKsHrxEJfGaUvEBoHnza
-         8oTL79e6ngOzRjUfNCcKD6awElo7WX7j9wnSP+2/XEusL/SbKzOD9YZ6R9Pc63GOWq3W
-         9s8APfiP/DHZEct6jOAEcxB3S5B93mptSEUqVTSi7uPzc6ZDsZP3Fv9AJK/bqsY+UKeS
-         xTw0ePYHH/dpFa9JmYBlfnqooLGD7NQpLva3ftfWSoB7LC/7+CUIcaXZ95Up8LkDp0I9
-         esNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690850609; x=1691455409;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bhtZuHVuD/5ejYMblEMyj6RnAY5Q/SWusGE7WOY4wLk=;
-        b=gPMQnYJTM6uqDJNvFBYf387bSHGMd6uwWa4wdh9a/82k9FmTCtrXuDyQQrE8vqRfzm
-         d7+6odnztP2Dq3OWv7cGk/pI6nUzSwQxwSbSvO+o19y/9ppdYrCcZUT1tEqRzh9cxpcx
-         tNs6k/V2Lb0RgxCfM5LEsAB9dkoEx25Cib+XlKXFzsVajFdkqctPFSdpOw/GGysoWMms
-         cw4ResOJGfU9skNuOmTBV+DnnrFIuE0+SU+3Ths8kVYQDyA2TFN268b/snQuT8esgmOU
-         Ul+GQAJdFn3dl0TaUoo5a0wb9FbPkIPTEOd7jdEvh+gCqI5jAYvMgzqxo4NMuCpPi8ph
-         M4eQ==
-X-Gm-Message-State: ABy/qLbK77jsnYNytJe/qzLunvKPzqdKZJdXs3b4D6ESfgzpKYsrl23h
-        54eKsAQPe9NKjdtI/nvEY9U=
-X-Google-Smtp-Source: APBJJlEDasJjNH4eP//Am3nFp4ZsQ53OoZYJ+ckrfSoVwD3WviUA3efisvHN+OOYWAmDO2aQriVD0g==
-X-Received: by 2002:a05:6a20:4a06:b0:10f:f672:6e88 with SMTP id fr6-20020a056a204a0600b0010ff6726e88mr9441980pzb.4.1690850608691;
-        Mon, 31 Jul 2023 17:43:28 -0700 (PDT)
-Received: from MacBook-Pro-8.local ([2620:10d:c090:400::5:6cea])
-        by smtp.gmail.com with ESMTPSA id y15-20020a637d0f000000b00563b36264besm8688220pgc.85.2023.07.31.17.43.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jul 2023 17:43:28 -0700 (PDT)
-Date:   Mon, 31 Jul 2023 17:43:23 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Geliang Tang <geliang.tang@suse.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>,
-        Mat Martineau <martineau@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-        bpf@vger.kernel.org, netdev@vger.kernel.org, mptcp@lists.linux.dev,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [RFC bpf-next v7 0/6] bpf: Force to MPTCP
-Message-ID: <20230801004323.l2npfegkq3srzff3@MacBook-Pro-8.local>
-References: <cover.1690624340.git.geliang.tang@suse.com>
+        Tue, 1 Aug 2023 05:27:00 -0400
+X-Greylist: delayed 86699 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 01 Aug 2023 02:25:59 PDT
+Received: from mail.cothiafon.pl (mail.cothiafon.pl [217.61.106.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CD02C6
+        for <linux-security-module@vger.kernel.org>; Tue,  1 Aug 2023 02:25:59 -0700 (PDT)
+Received: by mail.cothiafon.pl (Postfix, from userid 1002)
+        id DC540837C3; Mon, 31 Jul 2023 10:36:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cothiafon.pl; s=mail;
+        t=1690792611; bh=dwoca0X6C9VXklO/zRgFQCPapTk5LFz4tKaENdvy6Po=;
+        h=Date:From:To:Subject:From;
+        b=DQVDX+LLsUftHS6erDv9Uhce9keGIginMMd1xXUyp+X/7lyI90yYIt/hoZJwr91yi
+         HmJ66wF5zhaqs1hdeagA7yL/FAqQWAu6gUh/1mkaPDQA+uivzaa2VpHzA7GBNXhfId
+         l/4u+vlHBl1MLqEeIf6Sz+0SMv0XzsscLhZ2lLCO8lH2FVMoWvjasVK9t/WMOfD7hI
+         W5IgsPa8flO/sStoAcQahYcHGtfEmjM2zzdbbhV80B6LtQSAGql3DvyHGJkvnz7lwd
+         bkXS88fJmzmkWqR1nk+bP08QcHnj1dFcWYe1am7GDwTTJdBrO0h06zurKSyNmr568o
+         xmEZURsHD5hBg==
+Received: by mail.cothiafon.pl for <linux-security-module@vger.kernel.org>; Mon, 31 Jul 2023 08:35:48 GMT
+Message-ID: <20230731095940-0.1.28.onhq.0.ab1fl6rcq7@cothiafon.pl>
+Date:   Mon, 31 Jul 2023 08:35:48 GMT
+From:   =?UTF-8?Q? "Rados=C5=82aw_Grabowski" ?= 
+        <radoslaw.grabowski@cothiafon.pl>
+To:     <linux-security-module@vger.kernel.org>
+Subject: W sprawie samochodu
+X-Mailer: mail.cothiafon.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1690624340.git.geliang.tang@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jul 29, 2023 at 05:57:21PM +0800, Geliang Tang wrote:
-> 
-> The main idea is to add a hook in sys_socket() to change the protocol id
-> from IPPROTO_TCP (or 0) to IPPROTO_MPTCP.
+Dzie=C5=84 dobry,
 
-I still think it's a hack, but its blast radius is nicely contained.
-And since I cannot propose any better I'm ok with it.
+chcieliby=C5=9Bmy zapewni=C4=87 Pa=C5=84stwu kompleksowe rozwi=C4=85zania=
+, je=C5=9Bli chodzi o system monitoringu GPS.
 
-Patches 1-2 can be squashed into one.
-Just like patches 3-6 as a single patch for selftests.
+Precyzyjne monitorowanie pojazd=C3=B3w na mapach cyfrowych, =C5=9Bledzeni=
+e ich parametr=C3=B3w eksploatacyjnych w czasie rzeczywistym oraz kontrol=
+a paliwa to kluczowe funkcjonalno=C5=9Bci naszego systemu.=20
 
-But before proceeding I'd like an explicit ack from netdev maintainers.
+Organizowanie pracy pracownik=C3=B3w jest dzi=C4=99ki temu prostsze i bar=
+dziej efektywne, a oszcz=C4=99dno=C5=9Bci i optymalizacja w zakresie pono=
+szonych koszt=C3=B3w, maj=C4=85 dla ka=C5=BCdego przedsi=C4=99biorcy ogro=
+mne znaczenie.
+
+Dopasujemy nasz=C4=85 ofert=C4=99 do Pa=C5=84stwa oczekiwa=C5=84 i potrze=
+b organizacji. Czy mogliby=C5=9Bmy porozmawia=C4=87 o naszej propozycji?
+
+
+Pozdrawiam
+Rados=C5=82aw Grabowski
