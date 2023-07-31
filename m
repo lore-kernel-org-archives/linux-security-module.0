@@ -2,126 +2,91 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD8CC001E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jul 2023 10:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E723C001DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jul 2023 11:16:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229842AbjGaKq2 (ORCPT
+        id S229821AbjGaLQu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 31 Jul 2023 06:46:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37640 "EHLO
+        Mon, 31 Jul 2023 07:16:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229510AbjGaKq1 (ORCPT
+        with ESMTP id S230439AbjGaLQt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 31 Jul 2023 06:46:27 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FFB51A7;
-        Mon, 31 Jul 2023 03:46:25 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id CF64C1F385;
-        Mon, 31 Jul 2023 10:46:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1690800383; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=A4Z9iV8WUq8OgKp1VPZMtqr/fdl1VBql1c/Mb0w5bXo=;
-        b=Exj3kmfQTKCKpyIZnjdm9Mvz5gBVaux+NQ6wJw5l7I7rO3L4maLcSiuzI2p7Q49IBMjetL
-        xe/MgKMLgGJtpRwvOslM6mLQQujpQPOcqs/XyjVIehZ+ZSbLNMDJPVw0mXY1GidYtYVxz8
-        C1A0i0a9YpceiH1Z58NOjfTiBXIuwvs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1690800383;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=A4Z9iV8WUq8OgKp1VPZMtqr/fdl1VBql1c/Mb0w5bXo=;
-        b=h0sQyUjlm33c+qAKcpveXNGpf70sdzLYqGQ7a1iNdlCd37LicU72PtLA0VpXiauhLfiXN0
-        dPr7yXhCsG53prDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 220C7133F7;
-        Mon, 31 Jul 2023 10:46:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id z0FUB/+Qx2RKZAAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Mon, 31 Jul 2023 10:46:23 +0000
-Message-ID: <703da7eb-d08a-3eca-1b98-b5895e41d53b@suse.cz>
-Date:   Mon, 31 Jul 2023 12:46:22 +0200
+        Mon, 31 Jul 2023 07:16:49 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F65BE76
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Jul 2023 04:16:47 -0700 (PDT)
+Received: from dggpeml500025.china.huawei.com (unknown [172.30.72.55])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4RDwds5NZczrS32;
+        Mon, 31 Jul 2023 19:15:45 +0800 (CST)
+Received: from ubuntu1804.huawei.com (10.67.174.202) by
+ dggpeml500025.china.huawei.com (7.185.36.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Mon, 31 Jul 2023 19:16:45 +0800
+From:   Zhu Wang <wangzhu9@huawei.com>
+To:     <john.johansen@canonical.com>, <paul@paul-moore.com>,
+        <jmorris@namei.org>, <serge@hallyn.com>,
+        <apparmor@lists.ubuntu.com>,
+        <linux-security-module@vger.kernel.org>
+CC:     <wangzhu9@huawei.com>
+Subject: [PATCH -next] apparmor: remove kernel-doc warnings
+Date:   Mon, 31 Jul 2023 19:16:14 +0800
+Message-ID: <20230731111614.212113-1-wangzhu9@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [RFC PATCH v11 11/29] security: Export
- security_inode_init_security_anon() for use by KVM
-To:     Sean Christopherson <seanjc@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20230718234512.1690985-1-seanjc@google.com>
- <20230718234512.1690985-12-seanjc@google.com>
-Content-Language: en-US
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20230718234512.1690985-12-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.174.202]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500025.china.huawei.com (7.185.36.35)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/19/23 01:44, Sean Christopherson wrote:
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+Remove kernel-doc warnings:
 
-Process wise this will probably be frowned upon when done separately, so I'd
-fold it in the patch using the export, seems to be the next one.
+security/apparmor/lib.c:33: warning: Function parameter or member 't' not
+described in 'aa_free_str_table'
+security/apparmor/lib.c:33: warning: Excess function parameter 'str'
+description in 'aa_free_str_table'
+security/apparmor/lib.c:94: warning: Function parameter or member 'n' not
+described in 'skipn_spaces'
+security/apparmor/lib.c:390: warning: Excess function parameter 'deny'
+description in 'aa_check_perms'
 
-> ---
->  security/security.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/security/security.c b/security/security.c
-> index b720424ca37d..7fc78f0f3622 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1654,6 +1654,7 @@ int security_inode_init_security_anon(struct inode *inode,
->  	return call_int_hook(inode_init_security_anon, 0, inode, name,
->  			     context_inode);
->  }
-> +EXPORT_SYMBOL_GPL(security_inode_init_security_anon);
->  
->  #ifdef CONFIG_SECURITY_PATH
->  /**
+Signed-off-by: Zhu Wang <wangzhu9@huawei.com>
+---
+ security/apparmor/lib.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
+index a630c951bb3b..01943ec184da 100644
+--- a/security/apparmor/lib.c
++++ b/security/apparmor/lib.c
+@@ -27,7 +27,7 @@ struct aa_perms allperms = { .allow = ALL_PERMS_MASK,
+ 
+ /**
+  * aa_free_str_table - free entries str table
+- * @str: the string table to free  (MAYBE NULL)
++ * @t: the string table to free  (MAYBE NULL)
+  */
+ void aa_free_str_table(struct aa_str_table *t)
+ {
+@@ -85,6 +85,7 @@ char *aa_split_fqname(char *fqname, char **ns_name)
+ /**
+  * skipn_spaces - Removes leading whitespace from @str.
+  * @str: The string to be stripped.
++ * @n: Number of spaces to be removed.
+  *
+  * Returns a pointer to the first non-whitespace character in @str.
+  * if all whitespace will return NULL
+@@ -371,7 +372,6 @@ int aa_profile_label_perm(struct aa_profile *profile, struct aa_profile *target,
+  * @profile: profile being checked
+  * @perms: perms computed for the request
+  * @request: requested perms
+- * @deny: Returns: explicit deny set
+  * @sa: initialized audit structure (MAY BE NULL if not auditing)
+  * @cb: callback fn for type specific fields (MAY BE NULL)
+  *
+-- 
+2.17.1
 
