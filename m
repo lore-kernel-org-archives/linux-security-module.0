@@ -2,83 +2,124 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C97D0C04A94
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Aug 2023 16:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FA9C00528
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Aug 2023 18:50:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231893AbjHAQm4 (ORCPT
+        id S229611AbjHASuK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Aug 2023 12:42:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35460 "EHLO
+        Tue, 1 Aug 2023 14:50:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231938AbjHAQmz (ORCPT
+        with ESMTP id S230246AbjHASuE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Aug 2023 12:42:55 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 056E22113
-        for <linux-security-module@vger.kernel.org>; Tue,  1 Aug 2023 09:42:48 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-5861116fd74so25504517b3.0
-        for <linux-security-module@vger.kernel.org>; Tue, 01 Aug 2023 09:42:47 -0700 (PDT)
+        Tue, 1 Aug 2023 14:50:04 -0400
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE6A91BC7
+        for <linux-security-module@vger.kernel.org>; Tue,  1 Aug 2023 11:50:03 -0700 (PDT)
+Received: by mail-ot1-x332.google.com with SMTP id 46e09a7af769-6bb29b9044dso5472998a34.1
+        for <linux-security-module@vger.kernel.org>; Tue, 01 Aug 2023 11:50:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1690908167; x=1691512967;
+        d=paul-moore.com; s=google; t=1690915803; x=1691520603;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wjJYAPQwhBH1tNOvk5+y2uVRsR1UJGpdCrK2Bal18A0=;
-        b=fo9mfeegk2LZX5Y9ejYMeXp/LJ8/FRNtPKHEZgMtxPeVzBgwXm8WzfWk88smxlKVYi
-         Hd42QGXOSea0phSxPKSSLyqx7B4JovEA//JrDPfPXsGIMo50We4ORJz8VmGxy8MLp+ec
-         zT6HHGsQ4wkdsBzj3/bmD260rYeJ86Y9kroB25RdLxWCX+LgbJUTSVily+9aa5O3lnzl
-         uuwenZqAod31RmF7zJp0d7ZmOC47nHPJcLCyF8zK6EnKn0AcrOhnMDNc0TTxoqUaM8PN
-         TQO0QsJrmq+wshK8SzU+VjPK5F6VC7S1FHx+dRADt56zmbeJufekWYhTtK61Qi5q0yCi
-         YLwA==
+        bh=bP0kHzppqou9eIdchBF+b4nGFMSY2OtM68YQuJgktb4=;
+        b=UkcZ3fw6vcBcqYCXkx6be+E+/BJWEfLFjx3k/hL9Ord8otck6p4zMOxaWGpAfoEHsx
+         x4ENVBqy3o69ZBBm6QWiWn98EQYLOHvEed/U+t2Q4HoplAsyLBzHRARYP81DWlYr2e/9
+         eEdrGkRRpEfKqC8IZVz5v28IAyEtGw8YWxU/L0nIMa+qKtHHtSxeAAtvKro5gqRJB0CW
+         NXsWm151NggKxU2Q5P8WttYgCqW6zWcgdWzNN4TYEqVNeNKY/sJZh/6qntnkN4ZdvB+g
+         48SPZ4btXb1qrnwp+uuT5o6wvC/kxBkHiDfvmY1S1vYkY3H7xzW+s1t52uryff8Dexj4
+         5tMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690908167; x=1691512967;
+        d=1e100.net; s=20221208; t=1690915803; x=1691520603;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wjJYAPQwhBH1tNOvk5+y2uVRsR1UJGpdCrK2Bal18A0=;
-        b=i1TEWQ9OlWMVepXRNBpj74L+K9sZ42SPuSh9fwfoNfejqNoh9sxck5erDVTdU/ysJ7
-         gIYgHmYQCDAGx68k2DZIrvwttKQpDHdvw4EjcWsHb5g2bjn+gD8FcEAqP+DZf1me6cVu
-         k1oR3BQPb4UeW8ypTn8VnxdaB+fsXpXVl/ik+hlKZkXX8sGdPbnVm2kUpaUa4P3aVH3x
-         03ZyZEKu9pHkk9VHFwk2hORipIuDdoWf2UUl4Uh2m0fNdojeZvZkKQfGQ+Gw7AacsqcO
-         ebAG/cTBgkZ2wvaJJEEWd1WTuXnYRHduJ0qGY2rzpI3/TcgSCp+EHlz7DVzDkbb6E0kd
-         wzLA==
-X-Gm-Message-State: ABy/qLYAoK10uNWt73C4BIKelFDqtXLe/X3M3bbTYZ3olKL5qTJb+2tS
-        krYNZWDBNWMKvLtzqH4UperhPj/A576hVambX58p
-X-Google-Smtp-Source: APBJJlGBqmDaOnxMqThBvheaXOpM8pw+v+T95Y+Q4Tx2EZUrSCxjIN7ezDKQKzRWz7GBOqeid5FjuLfmkwi/J6uWolQ=
-X-Received: by 2002:a0d:ea01:0:b0:57a:8de6:86b1 with SMTP id
- t1-20020a0dea01000000b0057a8de686b1mr11087937ywe.31.1690908167207; Tue, 01
- Aug 2023 09:42:47 -0700 (PDT)
+        bh=bP0kHzppqou9eIdchBF+b4nGFMSY2OtM68YQuJgktb4=;
+        b=a5y0DjHsYZGmkiormvWAod7AhdoOW+3B4OriPgnP8waW6kgviep+fGQzq2p4mjjupd
+         8T65zlZmQgPbinR4QZU6ym3KPkr6ny8Xk5YzhQeGQIQAUmKSPf8AALEBKDF9ueIhGfsm
+         JxEPk+eUtOuiPRBPE+gVNtyQ2jkHtxpcMhKGL8cvcNbtdaRBB8dknz7I6xgiunjHGAp6
+         adzfLJExjyVMmv0P9omvNWhL5eA1vNbGVITlbw7X92NozJ23uSd9TuvDx1N+OdjiV9C+
+         bmkucEyHC4MpgenxueMnwU1KOG89p8S1SK2XiyapnaB5Cc9Q5gTEPoBU1WEed+eXz4hQ
+         36Mg==
+X-Gm-Message-State: ABy/qLZ+VNpUSbKxd3ZqVfAxu5mbfSShBZZvTsWYcBkMwy+V+oj4EGR8
+        OqQJV6H9iXYWR+GbCCu33e20GOjpSoYYjxAxEF2mTNE5lDU+SjwA4fEY
+X-Google-Smtp-Source: APBJJlGOBu3jixmhs26jljFyQRGnSmedsBon71LgcOZ24/phGZSHD3EF1RUyoVnbrpvm4ob2RGQcXkB5DRqe8A+AEBI=
+X-Received: by 2002:a05:6830:4b9:b0:6b7:1f33:5ec4 with SMTP id
+ l25-20020a05683004b900b006b71f335ec4mr15092931otd.12.1690915803119; Tue, 01
+ Aug 2023 11:50:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230801143453.24452-1-yuehaibing@huawei.com>
-In-Reply-To: <20230801143453.24452-1-yuehaibing@huawei.com>
+References: <20230731103822.GA4093@wind.enjellic.com> <CAHC9VhT_6yv=hgCLUMYf154=-ARY5+V+FMi_0O+_t2rsb341Eg@mail.gmail.com>
+ <20230801105421.GA23193@wind.enjellic.com> <20230801125529.GA915814@mail.hallyn.com>
+In-Reply-To: <20230801125529.GA915814@mail.hallyn.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 1 Aug 2023 12:42:36 -0400
-Message-ID: <CAHC9VhSqvzogdH2=PuGnD5W4FAquWEL5Se2qVvzyAMP6CQ1G0g@mail.gmail.com>
-Subject: Re: [PATCH net-next] netlabel: Remove unused declaration netlbl_cipsov4_doi_free()
-To:     Yue Haibing <yuehaibing@huawei.com>
-Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
+Date:   Tue, 1 Aug 2023 14:49:52 -0400
+Message-ID: <CAHC9VhQYGmJtvkS_tBuRkUqBMorpkO4TByRicNPwpGr2j9N=ag@mail.gmail.com>
+Subject: Re: TSEM feedback.
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     "Dr. Greg" <greg@enjellic.com>,
         linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 1, 2023 at 10:35=E2=80=AFAM Yue Haibing <yuehaibing@huawei.com>=
- wrote:
+On Tue, Aug 1, 2023 at 8:55=E2=80=AFAM Serge E. Hallyn <serge@hallyn.com> w=
+rote:
+> On Tue, Aug 01, 2023 at 05:54:21AM -0500, Dr. Greg wrote:
+> > On Mon, Jul 31, 2023 at 10:57:08AM -0400, Paul Moore wrote:
+> >
+> > Good morning, I hope the day is starting well.
+> >
+> > > On Mon, Jul 31, 2023 at 6:39???AM Dr. Greg <greg@enjellic.com> wrote:
+> > > >
+> > > > Good morning Paul, I hope this note finds your week starting well.
+> > > >
+> > > > We submitted the patches for the V2 release of TSEM three weeks ago=
+.
+> > > >
+> > > > We received some feedback from Randy Dunlap on some documentations
+> > > > issues that we went on to address.
+> > > >
+> > > > Haven't heard any reflections from you.  Was just wondering if you
+> > > > were swamped or had possibly missed the submission?  We didn't incl=
+ude
+> > > > you as a copy on the notion that you didn't need two sets of patche=
+s
+> > > > landing in your inbox.
+> >
+> > > If your mail hits the mail archive on lore.kernel.org, it is almost
+> > > a full guarantee that it has hit my inbox and/or the patchwork
+> > > instance I use to ensure nothing is missed.
+> >
+> > So noted.
+> >
+> > > As one would expect, it takes a good deal of time to review a patch
+> > > submission as large as TSEM, and the rather ornate language used in
+> > > the documentation only slows the process.
+> >
+> > For whatever it is worth, as a group, we invested a considerable
+> > amount of time, over a period of now 8+ years, in refining the
+> > terminology and nomenclature embodied in that document.
+> >
+> > I guess the only defense at hand is a variant on the alleged response
+> > by Austrian Emperor Joseph II to Mozart's "Die Entfuhrung aus dem
+> > Serail":
+> >
+> > "It contains as many words, with appropriate ornateness, as was deemed
+> > necessary."
 >
-> Since commit b1edeb102397 ("netlabel: Replace protocol/NetLabel linking w=
-ith refrerence counts")
-> this declaration is unused and can be removed.
->
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> ---
->  net/netlabel/netlabel_cipso_v4.h | 3 ---
->  1 file changed, 3 deletions(-)
+> I cannot let such a golden opportunity pass to use
+>   https://www.youtube.com/watch?v=3DgA-sEfXOaEQ
 
-Thanks for catching this.
+ ;)
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+While I don't doubt that some would view the choices made in
+describing TSEM as necessary, it is important to remember that those
+judgements, as well as my own, are subjective.  I appreciate the time
+and effort that has gone into the TSEM documentation (and welcome the
+care behind it!), but I very much agree with the sentiments in the
+video snippet Serge linked.
 
 --=20
 paul-moore.com
