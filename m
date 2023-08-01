@@ -2,78 +2,65 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 672AEC001DF
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Aug 2023 12:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B40C001E0
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Aug 2023 14:35:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231537AbjHAMze (ORCPT
+        id S234743AbjHAOfP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Aug 2023 08:55:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52648 "EHLO
+        Tue, 1 Aug 2023 10:35:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230026AbjHAMzd (ORCPT
+        with ESMTP id S234800AbjHAOfI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Aug 2023 08:55:33 -0400
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57BFDE6
-        for <linux-security-module@vger.kernel.org>; Tue,  1 Aug 2023 05:55:31 -0700 (PDT)
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 8E83B7EF; Tue,  1 Aug 2023 07:55:29 -0500 (CDT)
-Date:   Tue, 1 Aug 2023 07:55:29 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: TSEM feedback.
-Message-ID: <20230801125529.GA915814@mail.hallyn.com>
-References: <20230731103822.GA4093@wind.enjellic.com>
- <CAHC9VhT_6yv=hgCLUMYf154=-ARY5+V+FMi_0O+_t2rsb341Eg@mail.gmail.com>
- <20230801105421.GA23193@wind.enjellic.com>
+        Tue, 1 Aug 2023 10:35:08 -0400
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACC041FCB;
+        Tue,  1 Aug 2023 07:35:03 -0700 (PDT)
+Received: from canpemm500007.china.huawei.com (unknown [172.30.72.57])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4RFd073ts2z1GDG0;
+        Tue,  1 Aug 2023 22:33:59 +0800 (CST)
+Received: from localhost (10.174.179.215) by canpemm500007.china.huawei.com
+ (7.192.104.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 1 Aug
+ 2023 22:35:00 +0800
+From:   Yue Haibing <yuehaibing@huawei.com>
+To:     <paul@paul-moore.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <yuehaibing@huawei.com>
+CC:     <netdev@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+Subject: [PATCH net-next] netlabel: Remove unused declaration netlbl_cipsov4_doi_free()
+Date:   Tue, 1 Aug 2023 22:34:53 +0800
+Message-ID: <20230801143453.24452-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230801105421.GA23193@wind.enjellic.com>
+Content-Type: text/plain
+X-Originating-IP: [10.174.179.215]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ canpemm500007.china.huawei.com (7.192.104.62)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 01, 2023 at 05:54:21AM -0500, Dr. Greg wrote:
-> On Mon, Jul 31, 2023 at 10:57:08AM -0400, Paul Moore wrote:
-> 
-> Good morning, I hope the day is starting well.
-> 
-> > On Mon, Jul 31, 2023 at 6:39???AM Dr. Greg <greg@enjellic.com> wrote:
-> > >
-> > > Good morning Paul, I hope this note finds your week starting well.
-> > >
-> > > We submitted the patches for the V2 release of TSEM three weeks ago.
-> > >
-> > > We received some feedback from Randy Dunlap on some documentations
-> > > issues that we went on to address.
-> > >
-> > > Haven't heard any reflections from you.  Was just wondering if you
-> > > were swamped or had possibly missed the submission?  We didn't include
-> > > you as a copy on the notion that you didn't need two sets of patches
-> > > landing in your inbox.
-> 
-> > If your mail hits the mail archive on lore.kernel.org, it is almost
-> > a full guarantee that it has hit my inbox and/or the patchwork
-> > instance I use to ensure nothing is missed.
-> 
-> So noted.
-> 
-> > As one would expect, it takes a good deal of time to review a patch
-> > submission as large as TSEM, and the rather ornate language used in
-> > the documentation only slows the process.
-> 
-> For whatever it is worth, as a group, we invested a considerable
-> amount of time, over a period of now 8+ years, in refining the
-> terminology and nomenclature embodied in that document.
-> 
-> I guess the only defense at hand is a variant on the alleged response
-> by Austrian Emperor Joseph II to Mozart's "Die Entfuhrung aus dem
-> Serail":
-> 
-> "It contains as many words, with appropriate ornateness, as was deemed
-> necessary."
+Since commit b1edeb102397 ("netlabel: Replace protocol/NetLabel linking with refrerence counts")
+this declaration is unused and can be removed.
 
-I cannot let such a golden opportunity pass to use
-  https://www.youtube.com/watch?v=gA-sEfXOaEQ
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ net/netlabel/netlabel_cipso_v4.h | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/net/netlabel/netlabel_cipso_v4.h b/net/netlabel/netlabel_cipso_v4.h
+index 85d7ecb05728..9518ab56ec98 100644
+--- a/net/netlabel/netlabel_cipso_v4.h
++++ b/net/netlabel/netlabel_cipso_v4.h
+@@ -149,7 +149,4 @@ enum {
+ /* NetLabel protocol functions */
+ int netlbl_cipsov4_genl_init(void);
+ 
+-/* Free the memory associated with a CIPSOv4 DOI definition */
+-void netlbl_cipsov4_doi_free(struct rcu_head *entry);
+-
+ #endif
+-- 
+2.34.1
+
