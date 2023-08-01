@@ -2,195 +2,91 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61FE9C0015E
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Aug 2023 19:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37285C00528
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Aug 2023 21:22:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232460AbjHAT34 (ORCPT
+        id S230481AbjHAVWD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Aug 2023 15:29:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56390 "EHLO
+        Tue, 1 Aug 2023 17:22:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbjHAT3z (ORCPT
+        with ESMTP id S229928AbjHAVWC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Aug 2023 15:29:55 -0400
-Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC3EB19B7
-        for <linux-security-module@vger.kernel.org>; Tue,  1 Aug 2023 12:29:52 -0700 (PDT)
-Received: by mail-ot1-x32d.google.com with SMTP id 46e09a7af769-6bcaa6d5e2cso1667846a34.3
-        for <linux-security-module@vger.kernel.org>; Tue, 01 Aug 2023 12:29:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1690918192; x=1691522992;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9VoATP9NhH/kSJB8+YTj7ST63aExW0zMTg/FlvDeldU=;
-        b=SdoGE7ZGizDXbJRqNSzPFByd7neKDRG8vgDHG8wWrDk7Z7/KTjH2TS4QYzOvia6RNR
-         jSo187iZ1Y0P8fLXtxglQLJKCFUv7Kxsuv/9iavDmMLeprd+m+/YvCjNymHL8zq+iQ0j
-         DnKq58d2TsOX4iAzqQBRe8Hp1rZN6nyb9fpsoraZUicbFh9DHb/uzlKqyndedlb/nJRy
-         Bo0lKCsI77WBEpBlgXAEOJOmejm2HoJwSS2B7jJejSgrYS+hiVbwBYzWxiMGmUorhK4r
-         TSgxWS9DbAIJ9OnnXTRHeSKzq+qvZhxOUrB+K+5yVY2hS2EksqdgvxGeHATBviCI8YKY
-         xNlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690918192; x=1691522992;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9VoATP9NhH/kSJB8+YTj7ST63aExW0zMTg/FlvDeldU=;
-        b=ScYMP+mvYVkbPdgFzQnesKmbGDlldI9xxPC8WpftYnT/zt/EtRrB1UhE6OsBFP9+OX
-         87qatxbrpN0Hoot1gHw6pEVF0B2aN7FQ/1L0SMvvUw8mpsMfp0IzPp5YwFjgMZ5XFBoK
-         4QKdm1hPt/rkunOKdJNh2P3dK8V0Jcit+Ez3Wd99sk8nHhtmVn0v5zqO3/8/cc2yqe/1
-         4ziteRiMGHQa6OGfVwZtCVPyfwVKezdPDk8g2taUOpKLwW5KClMGK9bjBz2yTJkT3/CI
-         cWTO33pdURVkVIkjSd2uzGa9bhUPh7jnV2AHyziHWZi5rUNgp8xH4NJoh961VJYyfE0N
-         6+LQ==
-X-Gm-Message-State: ABy/qLagY5MqPUffFChS8WEOZ1NCvihNlG76rtFG4uMfVjsfMyynq8Zi
-        HalXGvobLr1nTbDDRfMt2dYvPNPcLpK9Y/FZCnv9
-X-Google-Smtp-Source: APBJJlFeosTdRRNCzhw56R7pSQbCNwevBbiNXiMElbuinfE7oB7aWtWCFN6s8eGVLK4C+bFbpQT0m3cUoqudXbEH1L0=
-X-Received: by 2002:a05:6830:10e:b0:6b9:1af3:3307 with SMTP id
- i14-20020a056830010e00b006b91af33307mr13348963otp.17.1690918192119; Tue, 01
- Aug 2023 12:29:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <1687986571-16823-8-git-send-email-wufan@linux.microsoft.com>
- <fcc5de3f153eb60b5acf799c159e6ec8.paul@paul-moore.com> <20230715032644.GF15267@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-In-Reply-To: <20230715032644.GF15267@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 1 Aug 2023 15:29:40 -0400
-Message-ID: <CAHC9VhQryLtJZ1W1ogyVuojnq0-ZAU-hfZLwpzUb=bobko9LsA@mail.gmail.com>
-Subject: Re: [PATCH RFC v10 7/17] ipe: add userspace interface
-To:     Fan Wu <wufan@linux.microsoft.com>
-Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
-        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-        eparis@redhat.com, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, audit@vger.kernel.org,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        Deven Bowers <deven.desai@linux.microsoft.com>
+        Tue, 1 Aug 2023 17:22:02 -0400
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BD55C3;
+        Tue,  1 Aug 2023 14:22:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1690924919;
+        bh=w46ldPzBqQOY7Xq8/bGltCOTcrgrcgMnCH9vMYcu8B4=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=PHjVNE77XUFzDR7e7N6e8/9XX2+1/0EWb1HxD+SUkd7iLLf4zcVLR2KEpl9Fdda4d
+         227a067AawQ5WhGiidtCiKiXq/tCeZiBW/qWCtnVFOFOejRzJKbwlUzUu3kOO5Hla8
+         Sptcu8xVSxG9M/HH29H1QBz94rEVPCZBy5Y8HqQE=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 18C031285E73;
+        Tue,  1 Aug 2023 17:21:59 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id tPG9IWaaoNFL; Tue,  1 Aug 2023 17:21:59 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1690924918;
+        bh=w46ldPzBqQOY7Xq8/bGltCOTcrgrcgMnCH9vMYcu8B4=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=P4e8OZ/iq/7XbOKyN0isx3wCiAFQfBH+xusN3H+CvbOuphM7D8sG/w70uuEFcx9jD
+         quvk7jH/Bf4lEPYmMJNuzD6mV5KgiyRTUv1DRaoiaeE0LouugNPGeOTg9DmWL2BIQu
+         dbuBbmhdJ6wn9dbvY4wO4sDasWKK678PA+TY34Mw=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 699C81285E58;
+        Tue,  1 Aug 2023 17:21:57 -0400 (EDT)
+Message-ID: <b748230c8ee291288afcf48898507556c3aa7c71.camel@HansenPartnership.com>
+Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Sush Shringarputale <sushring@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+        kgold@linux.ibm.com, bhe@redhat.com, vgoyal@redhat.com,
+        dyoung@redhat.com, kexec@lists.infradead.org, jmorris@namei.org,
+        Paul Moore <paul@paul-moore.com>, serge@hallyn.com
+Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        linux-security-module@vger.kernel.org
+Date:   Tue, 01 Aug 2023 17:21:55 -0400
+In-Reply-To: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
+References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.42.4 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 14, 2023 at 11:26=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com>=
- wrote:
-> On Sat, Jul 08, 2023 at 12:23:04AM -0400, Paul Moore wrote:
-> > On Jun 28, 2023 Fan Wu <wufan@linux.microsoft.com> wrote:
-> > >
-> > > As is typical with LSMs, IPE uses securityfs as its interface with
-> > > userspace. for a complete list of the interfaces and the respective
-> > > inputs/outputs, please see the documentation under
-> > > admin-guide/LSM/ipe.rst
-> > >
-> > > Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> > > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-> > > ---
-> > >  security/ipe/Makefile    |   2 +
-> > >  security/ipe/fs.c        | 101 ++++++++
-> > >  security/ipe/fs.h        |  16 ++
-> > >  security/ipe/ipe.c       |   3 +
-> > >  security/ipe/ipe.h       |   2 +
-> > >  security/ipe/policy.c    | 111 +++++++++
-> > >  security/ipe/policy.h    |   9 +
-> > >  security/ipe/policy_fs.c | 481 +++++++++++++++++++++++++++++++++++++=
-++
-> > >  8 files changed, 725 insertions(+)
-> > >  create mode 100644 security/ipe/fs.c
-> > >  create mode 100644 security/ipe/fs.h
-> > >  create mode 100644 security/ipe/policy_fs.c
+On Tue, 2023-08-01 at 12:12 -0700, Sush Shringarputale wrote:
+[...]
+> Truncating IMA log to reclaim memory is not feasible, since it makes
+> the log go out of sync with the TPM PCR quote making remote
+> attestation fail.
 
-...
+This assumption isn't entirely true.  It's perfectly possible to shard
+an IMA log using two TPM2_Quote's for the beginning and end PCR values
+to validate the shard.  The IMA log could be truncated in the same way
+(replace the removed part of the log with a TPM2_Quote and AK, so the
+log still validates from the beginning quote to the end).
 
-> > > @@ -39,6 +67,65 @@ static int set_pkcs7_data(void *ctx, const void *d=
-ata, size_t len,
-> > >     return 0;
-> > >  }
-> > >
-> > > +/**
-> > > + * ipe_update_policy - parse a new policy and replace @old with it.
-> >
-> > What does "@old" refer to?  I'm guessing you want to drop the "@".
-> >
-> Yes it shouldn't be here, sorry confusion.
->
-> > > + * @root: Supplies a pointer to the securityfs inode saved the polic=
-y.
-> > > + * @text: Supplies a pointer to the plain text policy.
-> > > + * @textlen: Supplies the length of @text.
-> > > + * @pkcs7: Supplies a pointer to a buffer containing a pkcs7 message=
-.
-> > > + * @pkcs7len: Supplies the length of @pkcs7len.
-> > > + *
-> > > + * @text/@textlen is mutually exclusive with @pkcs7/@pkcs7len - see
-> > > + * ipe_new_policy.
-> > > + *
-> > > + * Return:
-> > > + * * !IS_ERR       - The old policy
-> >
-> > "The old policy" is what?
-> >
-> Let me try to pharse it in another way, how about the existing policy
-> saved in the inode before update?
+If you use a TPM2_Quote mechanism to save the log, all you need to do
+is have the kernel generate the quote with an internal AK.  You can
+keep a record of the quote and the AK at the beginning of the truncated
+kernel log.  If the truncated entries are saved in a file shard it
+should have a beginning and end quote and a record of the AK used. 
+Since verifiers like Keylime are already using this beginning and end
+quote for sharded logs, it's the most natural format to feed to
+something externally for verification and it means you don't have to
+invent a new format to do the same thing.
 
-That sounds better, thanks.
+Regards,
 
-> > > diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
-> > > new file mode 100644
-> > > index 000000000000..52a120118cda
-> > > --- /dev/null
-> > > +++ b/security/ipe/policy_fs.c
-> > > @@ -0,0 +1,481 @@
-> >
-> > ...
-> >
-> > > +/**
-> > > + * getactive - Read handler for "ipe/policies/$name/active".
-> > > + * @f: Supplies a file structure representing the securityfs node.
-> > > + * @data: Suppleis a buffer passed to the write syscall.
-> > > + * @len: Supplies the length of @data.
-> > > + * @offset: unused.
-> > > + *
-> > > + * @data will be populated with the 1 or 0 depending on if the
-> > > + * corresponding policy is active.
-> > > + *
-> > > + * Return:
-> > > + * * >0    - Success, Length of buffer written
-> > > + * * <0    - Error
-> > > + */
-> > > +static ssize_t getactive(struct file *f, char __user *data,
-> > > +                    size_t len, loff_t *offset)
-> > > +{
-> > > +   int rc =3D 0;
-> > > +   const char *str;
-> > > +   struct inode *root =3D NULL;
-> > > +   const struct ipe_policy *p =3D NULL;
-> > > +
-> > > +   root =3D d_inode(f->f_path.dentry->d_parent);
-> > > +
-> > > +   inode_lock_shared(root);
-> > > +   p =3D (struct ipe_policy *)root->i_private;
-> > > +   if (!p) {
-> > > +           inode_unlock_shared(root);
-> > > +           return -ENOENT;
-> > > +   }
-> > > +   inode_unlock_shared(root);
-> > > +
-> > > +   str =3D (p =3D=3D rcu_access_pointer(ipe_active_policy)) ? "1" : =
-"0";
-> >
-> > The line above should be wrapped with a RCU lock.
->
-> This call only checks the value inside the pointer but doesn't dereferenc=
-e it.
-> Also from https://lwn.net/Articles/652156/ I found it says "The call to
-> rcu_access_pointer() need not be protected. In contrast, rcu_dereference(=
-) must
-> either be within an RCU read-side critical section", so I didn't add the =
-lock
-> here, is this article outdated?
+James
 
-No, I believe you are correct.  There is always something new to learn
-with RCU, thanks ;)
-
---=20
-paul-moore.com
