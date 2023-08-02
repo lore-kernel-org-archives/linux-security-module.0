@@ -2,163 +2,159 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53707EB64DD
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Aug 2023 22:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C79EB64DD
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Aug 2023 02:19:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231883AbjHAWr2 (ORCPT
+        id S231681AbjHBCTH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Aug 2023 18:47:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49780 "EHLO
+        Tue, 1 Aug 2023 22:19:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230001AbjHAWr2 (ORCPT
+        with ESMTP id S231656AbjHBCTG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Aug 2023 18:47:28 -0400
-Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6723012B
-        for <linux-security-module@vger.kernel.org>; Tue,  1 Aug 2023 15:47:24 -0700 (PDT)
-Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5860c7fc2fcso33724867b3.2
-        for <linux-security-module@vger.kernel.org>; Tue, 01 Aug 2023 15:47:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1690930043; x=1691534843;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O8P1BwyY2zwR75zxz+eMtYpfV1gNVhdf2A33NSmc0/I=;
-        b=S+H3ceKCvvMc7DgjWmF+lK/EZHr2ih1WjJVdVWqACxXs7DwDxcCzUv45qBhKJ2rDJ7
-         OJAxvqmr1bIBh0tA/OhRI7ej4C3mEaQO3L3wA+vaC/pZSfGWuuJyfI2KAI8t++GS/ISK
-         aH+EWH22/Gsjz34/TQqXseMyKc8U5MNm/f0JolbpV/BTxQWQJhhXeordr+V5jfoiyOzb
-         87kRS09LDgHESALTARGTgoe66AqItW5ehiZG85RHQZsZ3l9O8XReaT2QIEQUwyHcPXWl
-         4ZoKJFySttuGkQK9vwEHyNCIXKxc+XPwvspMCtwhLyYiQXUPJGRAfGifR0iFmp/fDMGa
-         reow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690930043; x=1691534843;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O8P1BwyY2zwR75zxz+eMtYpfV1gNVhdf2A33NSmc0/I=;
-        b=iJJ89obllV1sXDfxXB4bYrYpmQf2GPZ7Pnnx74SyEF0rgpY8PIu0/tA3axqUCJFDhr
-         yltXfW6RQVsUp9XuDGgELhrO11nuNYTk+5wyvTe24X2V/+6tbh8vAsfW+Qg+r05ozK5q
-         T4n3MAeUA6dn6iEuofHfnM1N9nAR79ISe48LzNz0KdvtWNwVB9fihQpIr4nZgZONK6Rp
-         608Y2iNZtQS4UIzU7ueawXSBAP0Ta/2fZhhCd8aZcVgZtF1kAAJYQ7e7hVXmyWzbW/5N
-         DMbPLIFmA6Co+YDLF/fZX/JaCbZpdko3Ht9h/wW47UPct0ege1e4CeZvGA6O/EqgYtHZ
-         0IPQ==
-X-Gm-Message-State: AOJu0YyYCHb0b5lBnZjtyY14PK42Vdd/CMXh0e2qIUH7IPlKXHShSKNE
-        Im/Ecdcgb/zzWpIaq0ArR6LdyqS0L9HKBiNXeqWIqX4W1TofnryKC2uIKF0=
-X-Google-Smtp-Source: AGHT+IF/kBs+E4T2i36OZRHruHdSHPHAj8NMCmU6xkWgnJEgouPEqu9A41+DtE9erfWjPkvyHCgZlm9+BIQv5EMHqq0=
-X-Received: by 2002:a0d:d914:0:b0:586:6a71:b018 with SMTP id
- b20-20020a0dd914000000b005866a71b018mr1157503ywe.20.1690930043626; Tue, 01
- Aug 2023 15:47:23 -0700 (PDT)
+        Tue, 1 Aug 2023 22:19:06 -0400
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2047.outbound.protection.outlook.com [40.107.22.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5C2B2689;
+        Tue,  1 Aug 2023 19:19:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Jj9R6ldbdSqNnEdzvjVW/pPQbkDj9Uo6wr5yxUFeuXNlC0edc9hSv/8/fPplPBnkQlMuLS547nMn3Mf7lRaVoRkeyE+hsxq6mbRRGaflpPtodIfy4fRrKdtLMt/pAZtMZCwF+erQXQu2OI3bLwtU2MhXY9GlAletI3wwSYNGYpRJeh8hYoyI5sQ2FhIXI5l2hlWfk8TdxuFvCTbCbQT3UYZUaxwoVyvfk74iykuP/tF0XsrQ3ioKTOxoqrTQt+O0E3yvDGm4GnzaHwRCkaEqBMPHQexPpAc4oW/nXJb+GOdr/MC5StGbNGquaUUGpClo2hvAkV1tr96CeQn2BRWt7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5DGcjeUrNorHbWvij4vJzLryXSw/kY5C4fREMw64RXE=;
+ b=MFYMlpR5poEvMYAHFQjDv6DSD2QZ5aYz+I7i1PbbFDkdxavuW8DKZSfDmjlJUTnyv4QLaewB6QXXdmPOsjEDIjT4gHzbxkMplEEeev6Vwvm7MiyawpqCHbFoMJM+8i98YsxaGc6dIfu/2cvwo+eQUjociYVzYRi1m2dK0da+VD7u17SRy8VAhouTXjSilN+z8noerhhANX5CKxCwN6paKfOCqRDfwvkOm657/zDHvyK6tEkIIjQH/kFzbobMNPmOud6VMXFLtbP4aNFRt/RExypnvg3Tb5QmCiU2rCByS0CvRNDRUcWjYOnUFLy1VfXvCnUH769ky1f9NH/95jKwjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5DGcjeUrNorHbWvij4vJzLryXSw/kY5C4fREMw64RXE=;
+ b=4Qpdz3dcsvAjmd7ZKXvvvITTcQYPSP9fyWkRtUDRSe0q4qniXoaAy43JgSvf0OQzF4PcKU+oG/WGPlyvBvUDbrr9QE6TNg0HMV/loz/r+e+sTjUTxmiWbsHyk6qwpz6ogqNOJOqcfg9K8xVDLlUqB82MtorwcIOWKjwlC1b9f1xBxDpyuJLSgNBsrTTb4eKBSQneN/M1U0xkZPkr1LJNRI6+Ivjzezia8b1ZlnLzjFwayEQJrAeDaRxFb29c+JdeU40p081ZEai02OZ/ajKdDgpMplKql8MAbx7wJ4gNb+xMmTr4xbBdm8GD6HQvgAnK2+AIrZ9n2/mlkuzLNPnEig==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=suse.com;
+Received: from HE1PR0402MB3497.eurprd04.prod.outlook.com (2603:10a6:7:83::14)
+ by AM7PR04MB7079.eurprd04.prod.outlook.com (2603:10a6:20b:11d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.45; Wed, 2 Aug
+ 2023 02:18:58 +0000
+Received: from HE1PR0402MB3497.eurprd04.prod.outlook.com
+ ([fe80::bf65:a49a:8861:4f92]) by HE1PR0402MB3497.eurprd04.prod.outlook.com
+ ([fe80::bf65:a49a:8861:4f92%2]) with mapi id 15.20.6631.043; Wed, 2 Aug 2023
+ 02:18:58 +0000
+Date:   Wed, 2 Aug 2023 10:19:03 +0800
+From:   Geliang Tang <geliang.tang@suse.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Mat Martineau <martineau@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+        bpf@vger.kernel.org, netdev@vger.kernel.org, mptcp@lists.linux.dev,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [RFC bpf-next v7 0/6] bpf: Force to MPTCP
+Message-ID: <20230802021903.GA3070@bogon>
+References: <cover.1690624340.git.geliang.tang@suse.com>
+ <20230801004323.l2npfegkq3srzff3@MacBook-Pro-8.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230801004323.l2npfegkq3srzff3@MacBook-Pro-8.local>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SI2PR02CA0009.apcprd02.prod.outlook.com
+ (2603:1096:4:194::11) To HE1PR0402MB3497.eurprd04.prod.outlook.com
+ (2603:10a6:7:83::14)
 MIME-Version: 1.0
-References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
- <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com> <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
-In-Reply-To: <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 1 Aug 2023 18:47:12 -0400
-Message-ID: <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
-Subject: Re: ANN: new LSM guidelines
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HE1PR0402MB3497:EE_|AM7PR04MB7079:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4ab749c5-b54c-4ce4-aef0-08db92fed3d5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: UJ38BUa0eohITOjkByT1TeBw7uB6yxJ0hbXIbcke9eIpgTdSKKH7m+Wnf6k9HYvU9E6gI6FCzme28m2/g9LkFwJHL9DSzNWel3LhyslPP0GxNinNlT3GdThudwPLfEY9hSM8L5KNdY3z/rBw0/2F8vornAeMuua1NVo286RhegNvqWxmC1qo2jTd0aLhVv1qLqSwMokk4Dh+MQLyVJa65kipjSfJVg34ywtfeNOIrT5hj8miYcSyRjOpKg1SiodVS3hzGmQ75ieZH/ylpyI6GRo/4qiKRY4LsoM9Kmevw0wb1C933ZQ+nymdSiCh9odwIWVlXiJsJrDreukTpOLuZZ4BqyNUeVw80PEt9hIFWkf/WH+v35rvPd2UIZfklYZwc9m+MZyYV7CQFxqwL9k+lwpam4A7dONxYsZh2J6ZxYl3vu6Bvm+bvWDhIGVLLRKy+bwPE2g8kQ69bu3/U1KWqktwJS+x8v6B6jqLFqKUV1iFEbW/05OdBVt9+/dk9ZPbrx8PrYYLAurY5WjPfDw3kQ+eZJW1qoKn9mDvJM+Flz83rYxJ7DOut/M3YRk9RtmHmxrhdUYoppxznmwCbZlNZ0211O4tExxhJ3o1gTmMsDE=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HE1PR0402MB3497.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(7916004)(39860400002)(376002)(366004)(136003)(396003)(346002)(451199021)(186003)(966005)(6512007)(9686003)(316002)(86362001)(478600001)(54906003)(38100700002)(66946007)(66556008)(66476007)(6666004)(33656002)(6486002)(33716001)(6916009)(4326008)(6506007)(41300700001)(26005)(8676002)(5660300002)(8936002)(1076003)(4744005)(2906002)(7416002)(7406005)(44832011)(13296009);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?b2ibr3Ye3EjlCaHa7OICxYKDCaiYX+oY35VLw8rFldkmwIxRdMgVkz2ykkQz?=
+ =?us-ascii?Q?uKSxgFp5k4ZpD0ZPFWNrXQTUdV4weWzRe5NnRsV+wFcobBbFlmTRkmPkq17V?=
+ =?us-ascii?Q?nJxX2t7kNGeO4WzuxAlPE0Y5GZ00zw0wCibVMdLozvfbrhbGD6V4ONi+uQ+r?=
+ =?us-ascii?Q?0AoUxan8JYp/big3TmXobNHltmEwzO7Rq7i9OlouY5j22NNL7WpzQcANEq/a?=
+ =?us-ascii?Q?QLYZnhVg9j0YqRmLiz0lsKLl/HeJ9+v25fpWC5rP3YKyCmoaM48V7x+Bj7+P?=
+ =?us-ascii?Q?xuhq2wS372xWlniJslA7kbU/72igxYRu45XZX+4W9d6G/t5u00Os6yTZSVCV?=
+ =?us-ascii?Q?X3kgF1LaNLNXiGI7URhSNmYYfWFVZI64ghYOwoK+cPx7DXGYDdqJ+BkPen4p?=
+ =?us-ascii?Q?XpM046FNZOooivFtQIq6fH1Ws81jMB0kDq3BNoPg//R4tqwgWZBVs6QOHU84?=
+ =?us-ascii?Q?FQ+/wDpyiajtlFccXi+Uc34SPm67HrPeA/NoB5CypZILFsVhx9DbryKp2Yyy?=
+ =?us-ascii?Q?3+I5C+PKHHwJYqrfyniLmVHfBJ+6WwV9x8WKO/u8YXGi2o4Gf8qALqW3U/nr?=
+ =?us-ascii?Q?4ul74fvfz719/EvJXH8VdLHOHq+XAl6B4EEGuACg1h4jC56bgLkMzLOJQHkG?=
+ =?us-ascii?Q?QiHlQinPtGGttN2W4L1vVPf8mCwn9U2WAIWmxC2gNis3kCOfx/lcJvr5DTwB?=
+ =?us-ascii?Q?SxEmOlzp7CFkZFqEekFWRnwDPQBPx0ew1Awl/S88nmHe/+cIUtw/znk5zhyf?=
+ =?us-ascii?Q?UMj9kP7lNiKSAT2758bRI4ehwAyj/zfu6y5+fmzlTHHkG/ctW7Qvik1d7Iat?=
+ =?us-ascii?Q?lcd1o87Vja5Thz3TLF5E38+5d6n3XpHJYJfAjm0MVGTgMF32L/phMh3JEra9?=
+ =?us-ascii?Q?FYDcF5vtcdXxk/IGvd1c5Oym3ek6eTtoATPK6rY1mGWFgP4zqPGNgJx77rSw?=
+ =?us-ascii?Q?r/BIpK4NlO/qb7KfXGlqpEjuw7lYlo+Nmn8EVdeisEafyDlo4EEaPq/Arwgr?=
+ =?us-ascii?Q?neNMUB7+KUVj6MwvgDaqhJyyDwb91wi443aXxVTP4yreodkz8eAZmVxUbmsX?=
+ =?us-ascii?Q?/f/ZX+zGbq3mKRAPM7FEi1CqW6Gp2ZfO08pFvRZ1BRPIuGCHAAf8BUTs7105?=
+ =?us-ascii?Q?3LAao/1yWPZ4Z17sH8Awspu7+CSGAjZl8NVz72/7HSYfYNcm1X4DVJb0hlva?=
+ =?us-ascii?Q?mS0srpYKvdxnB+XNQRC26VugDUTXHxiRMTO7IPQZXYTzFd92mR43S92aHvhU?=
+ =?us-ascii?Q?NVLAhbolq+zAtFr8HPcsv8tpk4ViQodRGRlU1AoZRWyrbQy6CXwPlWIA7A4g?=
+ =?us-ascii?Q?06KsmBP3DMX0oBu0kD85pvaeUTE+T+/fPgZWntWkhBcuosZ1faIoQvlvp92I?=
+ =?us-ascii?Q?jf3ZqON5TBZRQHgpKLyMTxu78BQxdlT1J3mY0xvuW4EqLS33PWIu+oOf7reA?=
+ =?us-ascii?Q?jKCYbk66fiM/UrA+KDX4ioquXZJ+cuarQlk07ej+D5YmbWNZC0s5WLVcHNM/?=
+ =?us-ascii?Q?LLAnMCO/PkEfEnSo9QDtXlzoS5lN0txvoTjZPBB+uPmKr5av0apzW1rGByr5?=
+ =?us-ascii?Q?oUKlxD9o+Xx7cV47doaQE2HWcF20LVgox7sJrNtx?=
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ab749c5-b54c-4ce4-aef0-08db92fed3d5
+X-MS-Exchange-CrossTenant-AuthSource: HE1PR0402MB3497.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2023 02:18:57.9338
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BQf/7G8I6zxrraDcWkf8TuPRzEFMQyOABmgzJevB3yqSqaOHHUTEIBMIkDtdfDnjqV8HiiVg/p27gBHpkujgqQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB7079
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 7, 2023 at 6:02=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
-> On Thu, Jul 6, 2023 at 8:32=E2=80=AFPM Casey Schaufler <casey@schaufler-c=
-a.com> wrote:
-> > On 7/6/2023 1:42 PM, Paul Moore wrote:
-> > > Hello all,
-> > >
-> > > With some renewed interest in submitting new LSMs including in the
-> > > upstream Linux Kernel I thought it might be a good idea to document
-> > > some of our longstanding guidelines around submitting new LSMs.  I'm
-> > > posting this mostly as a FYI for those who are working on new LSM
-> > > submissions, but also to solicit feedback from everyone on the list
-> > > regarding what we should ask of new LSMs.  If you think I'm missing
-> > > something important, or believe I've added an unfair requirement,
-> > > please let me know.
-> > >
-> > > I've added the guidelines to the README.md at the top of the LSM tree=
-,
-> > > but to make life easier for those reviewing the guidelines I'm
-> > > copy-n-pasting them below ...
+On Mon, Jul 31, 2023 at 05:43:23PM -0700, Alexei Starovoitov wrote:
+> On Sat, Jul 29, 2023 at 05:57:21PM +0800, Geliang Tang wrote:
+> > 
+> > The main idea is to add a hook in sys_socket() to change the protocol id
+> > from IPPROTO_TCP (or 0) to IPPROTO_MPTCP.
+> 
+> I still think it's a hack, but its blast radius is nicely contained.
+> And since I cannot propose any better I'm ok with it.
+> 
+> Patches 1-2 can be squashed into one.
+> Just like patches 3-6 as a single patch for selftests.
 
-I've updated the README.md doc based on the feedback, and copied the
-two new sections below for easier review.  If anyone has any
-additional feedback or concerns, please let me know.
+Thanks Alexei. I'll squash patch 1 and patch 2 into one, and squash patch 3
+and patch 6 into one for selftests. But I prefer to keep patch 4 and patch 5
+as is, since they were implemented in different times for different purposes.
+They were merged into MPTCP repo on May 17 for "run MPTCP sched tests in a
+dedicated ns" [1].
 
-## New LSM Hook Guidelines
+[1]
+https://patchwork.kernel.org/project/mptcp/cover/cover.1684362296.git.geliang.tang@suse.com/
 
-While LSM hooks are generally considered outside of the Linux Kernel's stab=
-le
-API promise, due to the nature of the LSM hooks we try to minimize changes =
-to
-the hooks.  With that in mind, we have the following requirements for new L=
-SM
-hooks:
+-Geliang
 
-* Hooks should be designed to be LSM agnostic.  While it is possible that o=
-nly
-one LSM might implement the hook at the time of submission, the hook's beha=
-vior
-should be generic enough that other LSMs could provide a meaningful
-implementation.
-
-* The hook must be documented with a function header block that conforms to
-the kernel documentation style.  At a minimum the documentation should expl=
-ain
-the parameters, return values, a brief overall description, any special
-considerations for the callers, and any special considerations for the LSM
-implementations.
-
-* There must be at least one LSM implementation of the hook included in the
-submission to act as a reference for additional LSM implementations.  The
-reference implementation must be for one of the upstream, in-kernel LSMs; w=
-hile
-the BPF LSM is an upstream LSM, it's nature precludes it from being eligibl=
-e as
-one of the in-kernel LSMs.
-
-## New LSM Guidelines
-
-Historically we have had few requirements around new LSM additions, with
-Arjan van de Ven being the first to describe a basic protocol for accepting=
- new
-LSMs into the Linux Kernel.  In an attempt to document Arjan's basic ideas =
-and
-update them for modern Linux Kernel development, here are a list of
-requirements for new LSM submissions:
-
-* The new LSM's author(s) must commit to maintain and support the new LSM f=
-or
-an extended period of time.  While the authors may be currently employed to
-develop and support the LSM, there is an expectation upstream that support =
-will
-continue beyond the author's employment with the original company, or the
-company's backing of the LSM.
-
-* New LSMs must include documentation providing a clear explanation of the
-LSM's requirements, goals, and expected uses.  The documentation does not n=
-eed
-to rise to the level of a formal security model, but it must be considered
-"reasonable" by the LSM community as a whole.
-
-* Any user visible interfaces provided by the LSM must be well documented. =
- It
-is important to remember the user visible APIs are considered to be "foreve=
-r
-APIs" by the Linux Kernel community; do not add an API that cannot be suppo=
-rted
-for the next 20+ years.
-
-* The LSM implementation must follow general Linux Kernel coding practices,
-faithfully implement the security model and APIs described in the
-documentation, and be free of any known defects at the time of submission.
-
-* Any userspace tools or patches created in support of the LSM must be publ=
-icly
-available, with a public git repository preferable over a tarball snapshot.
-
---=20
-paul-moore.com
+> 
+> But before proceeding I'd like an explicit ack from netdev maintainers.
