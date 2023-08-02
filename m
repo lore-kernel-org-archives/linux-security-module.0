@@ -2,543 +2,262 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5ED0C41513
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Aug 2023 20:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC79C04A94
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Aug 2023 21:56:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231442AbjHBUbZ (ORCPT
+        id S231196AbjHBV46 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Aug 2023 16:31:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37136 "EHLO
+        Wed, 2 Aug 2023 17:56:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230432AbjHBUbY (ORCPT
+        with ESMTP id S229624AbjHBV45 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Aug 2023 16:31:24 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C68B526BB;
-        Wed,  2 Aug 2023 13:31:22 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1bbdc05a93bso2300605ad.0;
-        Wed, 02 Aug 2023 13:31:22 -0700 (PDT)
+        Wed, 2 Aug 2023 17:56:57 -0400
+Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF9971FEF
+        for <linux-security-module@vger.kernel.org>; Wed,  2 Aug 2023 14:56:53 -0700 (PDT)
+Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-577ddda6ab1so5176927b3.0
+        for <linux-security-module@vger.kernel.org>; Wed, 02 Aug 2023 14:56:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691008282; x=1691613082;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cVig7nVxAJnz5d000l87J4rtopwFhxXB+8Ok4r23Ka4=;
-        b=s0Oex2eG7H06LbU+BJqKNRoDqdq6SwVlGg4mAPjExi760G3nVDGKHuQFwhOJMnirV1
-         OKLik+MpcS8+IwYl3s3OejRgjqA6HtoV3QPNm1DEUoL3SzgMjQ00TPFsndCxIr3QW0RC
-         WMDpGULuovGmqc69bhPGdXoIqbkhph2K3YUyE2dv1mhYnFSkQTtUqrpUma604U38aYr8
-         9D7AXW+fVMz7xVm7jYpK10dbpi3cq8a3mFqPaCSb6NPtySxN/EUHo7wfBVJFWm+nWHlq
-         kM91bY5x3tn/x/mUvpEp/WaK2AzxKcjD7XsK+rbwt0j14lHtrq8Pfrb4rvf3q+69F+Ed
-         fwOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691008282; x=1691613082;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1691013413; x=1691618213;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cVig7nVxAJnz5d000l87J4rtopwFhxXB+8Ok4r23Ka4=;
-        b=FLvmqhaPl6UVJI59WdwvkKtgYIdj/2p4M0okgyztZeV4THHFuLX32nuLVR0pux/3hB
-         IsgKudrNzD25HhHnXUNCzfxxLrcM4mpXIvQPQlM4AxYDy9Ln1Hv4c2YhHVaOCQCwb0M6
-         ILJYE6dAI8+idI2TH08M5kOYDdgxf4y8hbpcsl/s16+zsWwbflK3wrgvuiG1S/yI90wu
-         4L8lMAv8BS1+aU5P536qw/n2eO2RzIC38deAbvG5/9/gaQ4iYdI87cknXiefXBAZOtqZ
-         JSKzMIBVdivB80OwpqFkR4vDgUoHeP9E3g6I41t+170Ic+gLNXSUo1xge0YueUnEm8Y9
-         8Brg==
-X-Gm-Message-State: ABy/qLbkFHUP8PqpHmcEvi2VUxf77eRFyZLK7rAws1CHQP7WvVmefwtn
-        /Heideq69zKQEue8d8m4pwE=
-X-Google-Smtp-Source: APBJJlH5VQArJpLE0EyDQ3184KjZD6X3n94sC4DtbCtW1G2/IJAuWETgKgCABnbhQeEGgLwzvu5Ecw==
-X-Received: by 2002:a17:903:485:b0:1b6:649b:92cc with SMTP id jj5-20020a170903048500b001b6649b92ccmr12847995plb.69.1691008281960;
-        Wed, 02 Aug 2023 13:31:21 -0700 (PDT)
-Received: from localhost ([192.55.55.51])
-        by smtp.gmail.com with ESMTPSA id iy7-20020a170903130700b001b898595be7sm12815534plb.291.2023.08.02.13.31.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Aug 2023 13:31:21 -0700 (PDT)
-Date:   Wed, 2 Aug 2023 13:31:19 -0700
-From:   Isaku Yamahata <isaku.yamahata@gmail.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [RFC PATCH v11 08/29] KVM: Introduce per-page memory attributes
-Message-ID: <20230802203119.GB2021422@ls.amr.corp.intel.com>
-References: <20230718234512.1690985-1-seanjc@google.com>
- <20230718234512.1690985-9-seanjc@google.com>
+        bh=NQ3cFlYzfPzpxitdt4L3MAqh/x5FFR/f0DZqj5hM4es=;
+        b=ODLkKv/GswP2NFsV5MnCLs7k2LYM9lkfDPL0Gz7TcaY5o7+4Wap3e2cO8TBzjkdrnk
+         BL+tCe0hS6/YbtWQXv8CJKCIi2qD0XFUNP//NgT4V02+n8cejxJaDRX/mvECLES5+drx
+         XoxGbdPNc196xpxxbn1i7nb/+7Zgkyaw4AzomQxrgYi50DDYlvIzTOYy5sSAsjJri2+S
+         9ASDRFdXDjCormPujqkiYuw0cGYp1Oqls9TnlNWYBesbQvVaoIBNPHlMx2Z7DswiEa2e
+         KDRohIOt6iYDr2pxbVpKjS0gqbCs/s6BAq4rA8N3jmPHgFLZcR6qU8O+PJzlwQAZZfWY
+         9FVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691013413; x=1691618213;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NQ3cFlYzfPzpxitdt4L3MAqh/x5FFR/f0DZqj5hM4es=;
+        b=lZlhLiIffGYSgE+AK3vFyA2XoQgZCRTGHJ+iHaEp/tn7dhjJuTZbrVcqyHgDbOXS3L
+         y48YEl0pMr5BUN6iF1OSjqw3naOaysqnYYTZjEqKHROE98e0u0xM2iz5WinDbrdhoQHJ
+         wdu31q+KKvbZfE3K9HqD8rhg4ckpaLbRPQAgzOMKDq0acBzlaay5ogAbPlNjHNCTmGrv
+         OCCjm1iJ2v5E5EwCsbLFcfqKKHb7+1gP3BkwnVCLedBN4Yb20SpQus/v0FBMdLEuMpNz
+         5zRKgoF5H9cXTBgvArRe2BQoOSC01raFLkuUPOgNNEIGkH2UzinaCsgYvUUtf3D5SB+s
+         UloQ==
+X-Gm-Message-State: ABy/qLZJNat7jfNHym1UVbcEZRA2vWCCY0OYR+dk+KlWnN5FZqzSIFVg
+        B6LkOvRdplFlv6q4iIP887clQZ+JLbIY2A3oa5GH
+X-Google-Smtp-Source: APBJJlGjnIPVEtgnUppVrCSOTp2uyr8LFXE0TFH2PbGM6TnvZnlS+p+cgZEePPwSp6Fy/78eULawbLo2wVq6b2L1MnQ=
+X-Received: by 2002:a0d:e205:0:b0:586:5e77:a3c with SMTP id
+ l5-20020a0de205000000b005865e770a3cmr6788213ywe.15.1691013413005; Wed, 02 Aug
+ 2023 14:56:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230718234512.1690985-9-seanjc@google.com>
+References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
+ <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com> <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
+ <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com> <20230802.doki9xoTh0ai@digikod.net>
+In-Reply-To: <20230802.doki9xoTh0ai@digikod.net>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 2 Aug 2023 17:56:42 -0400
+Message-ID: <CAHC9VhSb+=JF7GJ-98DX_3NO2eSLeurXO+w4xcgHuXFh6HqWVw@mail.gmail.com>
+Subject: Re: ANN: new LSM guidelines
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 18, 2023 at 04:44:51PM -0700,
-Sean Christopherson <seanjc@google.com> wrote:
+On Wed, Aug 2, 2023 at 2:38=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
+>
+> I like this guideline. I guess this is your goal and I think it should
+> be part of Documentation/security/lsm.rst (and move the introduction
+> part of lsm-development.rst into lsm.rst) and get a few SoB.
 
-> From: Chao Peng <chao.p.peng@linux.intel.com>
-> 
-> In confidential computing usages, whether a page is private or shared is
-> necessary information for KVM to perform operations like page fault
-> handling, page zapping etc. There are other potential use cases for
-> per-page memory attributes, e.g. to make memory read-only (or no-exec,
-> or exec-only, etc.) without having to modify memslots.
-> 
-> Introduce two ioctls (advertised by KVM_CAP_MEMORY_ATTRIBUTES) to allow
-> userspace to operate on the per-page memory attributes.
->   - KVM_SET_MEMORY_ATTRIBUTES to set the per-page memory attributes to
->     a guest memory range.
->   - KVM_GET_SUPPORTED_MEMORY_ATTRIBUTES to return the KVM supported
->     memory attributes.
-> 
-> Use an xarray to store the per-page attributes internally, with a naive,
-> not fully optimized implementation, i.e. prioritize correctness over
-> performance for the initial implementation.
-> 
-> Because setting memory attributes is roughly analogous to mprotect() on
-> memory that is mapped into the guest, zap existing mappings prior to
-> updating the memory attributes.  Opportunistically provide an arch hook
-> for the post-set path (needed to complete invalidation anyways) in
-> anticipation of x86 needing the hook to update metadata related to
-> determining whether or not a given gfn can be backed with various sizes
-> of hugepages.
-> 
-> It's possible that future usages may not require an invalidation, e.g.
-> if KVM ends up supporting RWX protections and userspace grants _more_
-> protections, but again opt for simplicity and punt optimizations to
-> if/when they are needed.
-> 
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Link: https://lore.kernel.org/all/Y2WB48kD0J4VGynX@google.com
-> Cc: Fuad Tabba <tabba@google.com>
-> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> Co-developed-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  Documentation/virt/kvm/api.rst |  60 ++++++++++++
->  include/linux/kvm_host.h       |  14 +++
->  include/uapi/linux/kvm.h       |  14 +++
->  virt/kvm/Kconfig               |   4 +
->  virt/kvm/kvm_main.c            | 170 +++++++++++++++++++++++++++++++++
->  5 files changed, 262 insertions(+)
-> 
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index 34d4ce66e0c8..0ca8561775ac 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -6068,6 +6068,56 @@ writes to the CNTVCT_EL0 and CNTPCT_EL0 registers using the SET_ONE_REG
->  interface. No error will be returned, but the resulting offset will not be
->  applied.
->  
-> +4.139 KVM_GET_SUPPORTED_MEMORY_ATTRIBUTES
-> +-----------------------------------------
-> +
-> +:Capability: KVM_CAP_MEMORY_ATTRIBUTES
-> +:Architectures: x86
-> +:Type: vm ioctl
-> +:Parameters: u64 memory attributes bitmask(out)
-> +:Returns: 0 on success, <0 on error
-> +
-> +Returns supported memory attributes bitmask. Supported memory attributes will
-> +have the corresponding bits set in u64 memory attributes bitmask.
-> +
-> +The following memory attributes are defined::
-> +
-> +  #define KVM_MEMORY_ATTRIBUTE_PRIVATE           (1ULL << 3)
-> +
-> +4.140 KVM_SET_MEMORY_ATTRIBUTES
-> +-----------------------------------------
-> +
-> +:Capability: KVM_CAP_MEMORY_ATTRIBUTES
-> +:Architectures: x86
-> +:Type: vm ioctl
-> +:Parameters: struct kvm_memory_attributes(in/out)
-> +:Returns: 0 on success, <0 on error
-> +
-> +Sets memory attributes for pages in a guest memory range. Parameters are
-> +specified via the following structure::
-> +
-> +  struct kvm_memory_attributes {
-> +	__u64 address;
-> +	__u64 size;
-> +	__u64 attributes;
-> +	__u64 flags;
-> +  };
-> +
-> +The user sets the per-page memory attributes to a guest memory range indicated
-> +by address/size, and in return KVM adjusts address and size to reflect the
-> +actual pages of the memory range have been successfully set to the attributes.
-> +If the call returns 0, "address" is updated to the last successful address + 1
-> +and "size" is updated to the remaining address size that has not been set
-> +successfully. The user should check the return value as well as the size to
-> +decide if the operation succeeded for the whole range or not. The user may want
-> +to retry the operation with the returned address/size if the previous range was
-> +partially successful.
-> +
-> +Both address and size should be page aligned and the supported attributes can be
-> +retrieved with KVM_GET_SUPPORTED_MEMORY_ATTRIBUTES.
-> +
-> +The "flags" field may be used for future extensions and should be set to 0s.
-> +
->  5. The kvm_run structure
->  ========================
->  
-> @@ -8494,6 +8544,16 @@ block sizes is exposed in KVM_CAP_ARM_SUPPORTED_BLOCK_SIZES as a
->  64-bit bitmap (each bit describing a block size). The default value is
->  0, to disable the eager page splitting.
->  
-> +8.41 KVM_CAP_MEMORY_ATTRIBUTES
-> +------------------------------
-> +
-> +:Capability: KVM_CAP_MEMORY_ATTRIBUTES
-> +:Architectures: x86
-> +:Type: vm
-> +
-> +This capability indicates KVM supports per-page memory attributes and ioctls
-> +KVM_GET_SUPPORTED_MEMORY_ATTRIBUTES/KVM_SET_MEMORY_ATTRIBUTES are available.
-> +
->  9. Known KVM API problems
->  =========================
->  
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index e9ca49d451f3..97db63da6227 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -264,6 +264,7 @@ struct kvm_gfn_range {
->  	gfn_t end;
->  	union {
->  		pte_t pte;
-> +		unsigned long attributes;
->  		u64 raw;
->  	} arg;
->  	bool may_block;
-> @@ -809,6 +810,9 @@ struct kvm {
->  
->  #ifdef CONFIG_HAVE_KVM_PM_NOTIFIER
->  	struct notifier_block pm_notifier;
-> +#endif
-> +#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
-> +	struct xarray mem_attr_array;
->  #endif
->  	char stats_id[KVM_STATS_NAME_SIZE];
->  };
-> @@ -2301,4 +2305,14 @@ static inline void kvm_account_pgtable_pages(void *virt, int nr)
->  /* Max number of entries allowed for each kvm dirty ring */
->  #define  KVM_DIRTY_RING_MAX_ENTRIES  65536
->  
-> +#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
-> +static inline unsigned long kvm_get_memory_attributes(struct kvm *kvm, gfn_t gfn)
-> +{
-> +	return xa_to_value(xa_load(&kvm->mem_attr_array, gfn));
-> +}
-> +
-> +bool kvm_arch_post_set_memory_attributes(struct kvm *kvm,
-> +					 struct kvm_gfn_range *range);
-> +#endif /* CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES */
-> +
->  #endif
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 6c6ed214b6ac..f065c57db327 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -1211,6 +1211,7 @@ struct kvm_ppc_resize_hpt {
->  #define KVM_CAP_ARM_EAGER_SPLIT_CHUNK_SIZE 228
->  #define KVM_CAP_ARM_SUPPORTED_BLOCK_SIZES 229
->  #define KVM_CAP_USER_MEMORY2 230
-> +#define KVM_CAP_MEMORY_ATTRIBUTES 231
->  
->  #ifdef KVM_CAP_IRQ_ROUTING
->  
-> @@ -2270,4 +2271,17 @@ struct kvm_s390_zpci_op {
->  /* flags for kvm_s390_zpci_op->u.reg_aen.flags */
->  #define KVM_S390_ZPCIOP_REGAEN_HOST    (1 << 0)
->  
-> +/* Available with KVM_CAP_MEMORY_ATTRIBUTES */
-> +#define KVM_GET_SUPPORTED_MEMORY_ATTRIBUTES    _IOR(KVMIO,  0xd2, __u64)
-> +#define KVM_SET_MEMORY_ATTRIBUTES              _IOW(KVMIO,  0xd3, struct kvm_memory_attributes)
-> +
-> +struct kvm_memory_attributes {
-> +	__u64 address;
-> +	__u64 size;
-> +	__u64 attributes;
-> +	__u64 flags;
-> +};
-> +
-> +#define KVM_MEMORY_ATTRIBUTE_PRIVATE           (1ULL << 3)
-> +
->  #endif /* __LINUX_KVM_H */
-> diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
-> index 2fa11bd26cfc..8375bc49f97d 100644
-> --- a/virt/kvm/Kconfig
-> +++ b/virt/kvm/Kconfig
-> @@ -99,3 +99,7 @@ config KVM_GENERIC_HARDWARE_ENABLING
->  config KVM_GENERIC_MMU_NOTIFIER
->         select MMU_NOTIFIER
->         bool
-> +
-> +config KVM_GENERIC_MEMORY_ATTRIBUTES
-> +       select KVM_GENERIC_MMU_NOTIFIER
-> +       bool
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index c14adf93daec..1a31bfa025b0 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -530,6 +530,7 @@ struct kvm_mmu_notifier_range {
->  	u64 end;
->  	union {
->  		pte_t pte;
-> +		unsigned long attributes;
->  		u64 raw;
->  	} arg;
->  	gfn_handler_t handler;
-> @@ -1175,6 +1176,9 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
->  	spin_lock_init(&kvm->mn_invalidate_lock);
->  	rcuwait_init(&kvm->mn_memslots_update_rcuwait);
->  	xa_init(&kvm->vcpu_array);
-> +#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
-> +	xa_init(&kvm->mem_attr_array);
-> +#endif
->  
->  	INIT_LIST_HEAD(&kvm->gpc_list);
->  	spin_lock_init(&kvm->gpc_lock);
-> @@ -1346,6 +1350,9 @@ static void kvm_destroy_vm(struct kvm *kvm)
->  		kvm_free_memslots(kvm, &kvm->__memslots[i][0]);
->  		kvm_free_memslots(kvm, &kvm->__memslots[i][1]);
->  	}
-> +#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
-> +	xa_destroy(&kvm->mem_attr_array);
-> +#endif
->  	cleanup_srcu_struct(&kvm->irq_srcu);
->  	cleanup_srcu_struct(&kvm->srcu);
->  	kvm_arch_free_vm(kvm);
-> @@ -2346,6 +2353,145 @@ static int kvm_vm_ioctl_clear_dirty_log(struct kvm *kvm,
->  }
->  #endif /* CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT */
->  
-> +#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
-> +static u64 kvm_supported_mem_attributes(struct kvm *kvm)
-> +{
-> +	return 0;
-> +}
-> +
-> +static __always_inline void kvm_handle_gfn_range(struct kvm *kvm,
-> +						 struct kvm_mmu_notifier_range *range)
-> +{
-> +	struct kvm_gfn_range gfn_range;
-> +	struct kvm_memory_slot *slot;
-> +	struct kvm_memslots *slots;
-> +	struct kvm_memslot_iter iter;
-> +	bool locked = false;
-> +	bool ret = false;
-> +	int i;
-> +
-> +	gfn_range.arg.raw = range->arg.raw;
-> +	gfn_range.may_block = range->may_block;
-> +
-> +	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
-> +		slots = __kvm_memslots(kvm, i);
-> +
-> +		kvm_for_each_memslot_in_gfn_range(&iter, slots, range->start, range->end) {
-> +			slot = iter.slot;
-> +			gfn_range.slot = slot;
-> +
-> +			gfn_range.start = max(range->start, slot->base_gfn);
-> +			gfn_range.end = min(range->end, slot->base_gfn + slot->npages);
-> +			if (gfn_range.start >= gfn_range.end)
-> +				continue;
-> +
-> +			if (!locked) {
-> +				locked = true;
-> +				KVM_MMU_LOCK(kvm);
-> +				if (!IS_KVM_NULL_FN(range->on_lock))
-> +					range->on_lock(kvm);
-> +			}
-> +
-> +			ret |= range->handler(kvm, &gfn_range);
-> +		}
-> +	}
-> +
-> +	if (range->flush_on_ret && ret)
-> +		kvm_flush_remote_tlbs(kvm);
-> +
-> +	if (locked) {
-> +		KVM_MMU_UNLOCK(kvm);
-> +		if (!IS_KVM_NULL_FN(range->on_unlock))
-> +			range->on_unlock(kvm);
-> +	}
-> +}
-> +
-> +static int kvm_vm_set_mem_attributes(struct kvm *kvm, unsigned long attributes,
-> +				     gfn_t start, gfn_t end)
-> +{
-> +	struct kvm_mmu_notifier_range unmap_range = {
-> +		.start = start,
-> +		.end = end,
-> +		.handler = kvm_mmu_unmap_gfn_range,
-> +		.on_lock = kvm_mmu_invalidate_begin,
-> +		.on_unlock = (void *)kvm_null_fn,
-> +		.flush_on_ret = true,
-> +		.may_block = true,
-> +	};
-> +	struct kvm_mmu_notifier_range post_set_range = {
-> +		.start = start,
-> +		.end = end,
-> +		.arg.attributes = attributes,
-> +		.handler = kvm_arch_post_set_memory_attributes,
-> +		.on_lock = (void *)kvm_null_fn,
-> +		.on_unlock = kvm_mmu_invalidate_end,
+Thanks for the review and comments.  Responses below, but I'll post an
+updated guidance doc in just a bit incorporating your feedback as well
+as those of a few others who sent me comments off-list.
 
+As far as moving this guidance into Documentation/security, yes, that
+is the ultimate goal.  In fact I have a todo item to go through all of
+Documentation/security and give it a good cleaning/review/edit,
+although please don't expect that anytime soon :/
 
-on_unlock is called after unlocking mmu_lock. So kvm::mmu_invalidate_in_progress
-is touched out side of it.  Here is a quick fix.
+> On Tue, Aug 01, 2023 at 06:47:12PM -0400, Paul Moore wrote:
+> > On Fri, Jul 7, 2023 at 6:02=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
+ wrote:
+> > > On Thu, Jul 6, 2023 at 8:32=E2=80=AFPM Casey Schaufler <casey@schaufl=
+er-ca.com> wrote:
+> > > > On 7/6/2023 1:42 PM, Paul Moore wrote:
+> > > > > Hello all,
+> > > > >
+> > > > > With some renewed interest in submitting new LSMs including in th=
+e
+> > > > > upstream Linux Kernel I thought it might be a good idea to docume=
+nt
+> > > > > some of our longstanding guidelines around submitting new LSMs.  =
+I'm
+> > > > > posting this mostly as a FYI for those who are working on new LSM
+> > > > > submissions, but also to solicit feedback from everyone on the li=
+st
+> > > > > regarding what we should ask of new LSMs.  If you think I'm missi=
+ng
+> > > > > something important, or believe I've added an unfair requirement,
+> > > > > please let me know.
+> > > > >
+> > > > > I've added the guidelines to the README.md at the top of the LSM =
+tree,
+> > > > > but to make life easier for those reviewing the guidelines I'm
+> > > > > copy-n-pasting them below ...
+> >
+> > I've updated the README.md doc based on the feedback, and copied the
+> > two new sections below for easier review.  If anyone has any
+> > additional feedback or concerns, please let me know.
+> >
+> > ## New LSM Hook Guidelines
+> >
+> > While LSM hooks are generally considered outside of the Linux Kernel's =
+stable
+>
+> Why "generally"?
 
- WARNING: CPU: 108 PID: 62218 at arch/x86/kvm/../../../virt/kvm/kvm_main.c:757 kvm_mmu_unmap_gfn_range+0x32/0x70 [kvm]
-  ...
- RIP: 0010:kvm_mmu_unmap_gfn_range+0x32/0x70 [kvm]
-  ...
- Call Trace:
-  <TASK>
-  kvm_gmem_invalidate_begin+0xd0/0x130 [kvm]
-  kvm_gmem_fallocate+0x134/0x290 [kvm]
-  vfs_fallocate+0x151/0x380
-  __x64_sys_fallocate+0x3c/0x70
-  do_syscall_64+0x40/0x90
-  entry_SYSCALL_64_after_hwframe+0x6e/0xd8
+Good point, I'll remove that.
 
+> > API promise, due to the nature of the LSM hooks we try to minimize chan=
+ges to
+> > the hooks.  With that in mind, we have the following requirements for n=
+ew LSM
+> > hooks:
+> >
+> > * Hooks should be designed to be LSM agnostic.  While it is possible th=
+at only
+> > one LSM might implement the hook at the time of submission, the hook's =
+behavior
+> > should be generic enough that other LSMs could provide a meaningful
+> > implementation.
+>
+> We should also avoid falling in the other extreme which is to add
+> different argument just-in-case. For instance, there is no need to add a
+> "flags" argument to a kernel API if there is no flag for now, especially
+> if there are only a few users of this hook.
+>
+> I would say that we want generic-as-possible hooks (e.g. well
+> positioned) but not with useless arguments.
 
-From c06084048271278d3508f534479b356f49f619ce Mon Sep 17 00:00:00 2001
-Message-Id: <c06084048271278d3508f534479b356f49f619ce.1690873712.git.isaku.yamahata@intel.com>
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-Date: Mon, 31 Jul 2023 22:58:15 -0700
-Subject: [PATCH] KVM: guest_memfd(): protect kvm_mmu_invalidate_end()
+Agreed, although I think that's hard to properly describe that in a
+sentence or two.  It's going to be impossible to capture every
+requirement in this doc (I added a new paragraph explaining this in
+the latest revision), so I think we can just leave this as-is for now.
 
-kvm_mmu_invalidate_end() updates struct kvm::mmu_invalidate_in_progress
-and it's protected by kvm::mmu_lock.  call kvm_mmu_invalidate_end() before
-unlocking it. Not after the unlock.
+If it does become a problem we can work a bit harder on describing
+what makes a "good" LSM hook.
 
-Fixes: edd048ffeaf6 ("KVM: Introduce per-page memory attributes")
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
----
- virt/kvm/kvm_main.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+> > * There must be at least one LSM implementation of the hook included in=
+ the
+> > submission to act as a reference for additional LSM implementations.  T=
+he
+> > reference implementation must be for one of the upstream, in-kernel LSM=
+s; while
+> > the BPF LSM is an upstream LSM, it's nature precludes it from being eli=
+gible as
+> > one of the in-kernel LSMs.
+>
+> To avoid misunderstanding, I think it would be better and more generic
+> to focus on the out-of-tree nature of hook implementations.  We might
+> also want to give some pointers for the reason(s) why out-of-tree LSMs
+> use cases are not supported.
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 9b4759b6dd87..6947f776851b 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -548,6 +548,7 @@ struct kvm_mmu_notifier_range {
- 	} arg;
- 	gfn_handler_t handler;
- 	on_lock_fn_t on_lock;
-+	on_unlock_fn_t before_unlock;
- 	on_unlock_fn_t on_unlock;
- 	bool flush_on_ret;
- 	bool may_block;
-@@ -644,6 +645,8 @@ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
- 		kvm_flush_remote_tlbs(kvm);
- 
- 	if (locked) {
-+		if (!IS_KVM_NULL_FN(range->before_unlock))
-+			range->before_unlock(kvm);
- 		KVM_MMU_UNLOCK(kvm);
- 		if (!IS_KVM_NULL_FN(range->on_unlock))
- 			range->on_unlock(kvm);
-@@ -668,6 +671,7 @@ static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
- 		.arg.pte	= pte,
- 		.handler	= handler,
- 		.on_lock	= (void *)kvm_null_fn,
-+		.before_unlock	= (void *)kvm_null_fn,
- 		.on_unlock	= (void *)kvm_null_fn,
- 		.flush_on_ret	= true,
- 		.may_block	= false,
-@@ -687,6 +691,7 @@ static __always_inline int kvm_handle_hva_range_no_flush(struct mmu_notifier *mn
- 		.end		= end,
- 		.handler	= handler,
- 		.on_lock	= (void *)kvm_null_fn,
-+		.before_unlock	= (void *)kvm_null_fn,
- 		.on_unlock	= (void *)kvm_null_fn,
- 		.flush_on_ret	= false,
- 		.may_block	= false,
-@@ -791,6 +796,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 		.end		= range->end,
- 		.handler	= kvm_mmu_unmap_gfn_range,
- 		.on_lock	= kvm_mmu_invalidate_begin,
-+		.before_unlock	= (void *)kvm_null_fn,
- 		.on_unlock	= kvm_arch_guest_memory_reclaimed,
- 		.flush_on_ret	= true,
- 		.may_block	= mmu_notifier_range_blockable(range),
-@@ -830,6 +836,8 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 
- void kvm_mmu_invalidate_end(struct kvm *kvm)
- {
-+	lockdep_assert_held_write(&kvm->mmu_lock);
-+
- 	/*
- 	 * This sequence increase will notify the kvm page fault that
- 	 * the page that is going to be mapped in the spte could have
-@@ -861,6 +869,7 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
- 		.end		= range->end,
- 		.handler	= (void *)kvm_null_fn,
- 		.on_lock	= kvm_mmu_invalidate_end,
-+		.before_unlock	= (void *)kvm_null_fn,
- 		.on_unlock	= (void *)kvm_null_fn,
- 		.flush_on_ret	= false,
- 		.may_block	= mmu_notifier_range_blockable(range),
-@@ -2466,6 +2475,8 @@ static __always_inline void kvm_handle_gfn_range(struct kvm *kvm,
- 		kvm_flush_remote_tlbs(kvm);
- 
- 	if (locked) {
-+		if (!IS_KVM_NULL_FN(range->before_unlock))
-+			range->before_unlock(kvm);
- 		KVM_MMU_UNLOCK(kvm);
- 		if (!IS_KVM_NULL_FN(range->on_unlock))
- 			range->on_unlock(kvm);
-@@ -2480,6 +2491,7 @@ static int kvm_vm_set_mem_attributes(struct kvm *kvm, unsigned long attributes,
- 		.end = end,
- 		.handler = kvm_mmu_unmap_gfn_range,
- 		.on_lock = kvm_mmu_invalidate_begin,
-+		.before_unlock	= (void *)kvm_null_fn,
- 		.on_unlock = (void *)kvm_null_fn,
- 		.flush_on_ret = true,
- 		.may_block = true,
-@@ -2490,7 +2502,8 @@ static int kvm_vm_set_mem_attributes(struct kvm *kvm, unsigned long attributes,
- 		.arg.attributes = attributes,
- 		.handler = kvm_arch_post_set_memory_attributes,
- 		.on_lock = (void *)kvm_null_fn,
--		.on_unlock = kvm_mmu_invalidate_end,
-+		.before_unlock = kvm_mmu_invalidate_end,
-+		.on_unlock = (void *)kvm_null_fn,
- 		.may_block = true,
- 	};
- 	unsigned long i;
--- 
-2.25.1
+I'm open to new language here if you have some particular wording in mind?
 
+> > ## New LSM Guidelines
+> >
+> > Historically we have had few requirements around new LSM additions, wit=
+h
+> > Arjan van de Ven being the first to describe a basic protocol for accep=
+ting new
+> > LSMs into the Linux Kernel.  In an attempt to document Arjan's basic id=
+eas and
+> > update them for modern Linux Kernel development, here are a list of
+> > requirements for new LSM submissions:
+>
+> If we go for a kernel documentation patch, it might be better to put
+> most of this historic paragraph into the patch description.
 
--- 
-Isaku Yamahata <isaku.yamahata@gmail.com>
+Agree.
+
+I was looking for the original comments from Arjan but couldn't find
+them in an archive anywhere, if anyone has a pointer it would be great
+to share that.
+
+> > * The new LSM's author(s) must commit to maintain and support the new L=
+SM for
+> > an extended period of time.  While the authors may be currently employe=
+d to
+> > develop and support the LSM, there is an expectation upstream that supp=
+ort will
+> > continue beyond the author's employment with the original company, or t=
+he
+> > company's backing of the LSM.
+> >
+> > * New LSMs must include documentation providing a clear explanation of =
+the
+> > LSM's requirements, goals, and expected uses.  The documentation does n=
+ot need
+> > to rise to the level of a formal security model, but it must be conside=
+red
+> > "reasonable" by the LSM community as a whole.
+>
+> I guess defining the threat model would be a good first step (and we
+> should probably add this kind of description for current LSMs as well).
+
+I believe that should be captured in the "requirements, goals, and
+expected uses" portion of the requirement above, but if you believe it
+should be more explicit let me know.
+
+> > * Any user visible interfaces provided by the LSM must be well document=
+ed.  It
+> > is important to remember the user visible APIs are considered to be "fo=
+rever
+> > APIs" by the Linux Kernel community; do not add an API that cannot be s=
+upported
+> > for the next 20+ years.
+>
+> I would also add tests! For new kernel developments, especially those
+> focused on security, the interfaces should be well tested, part of
+> kselftests, and run at least for each kernel release (if possible with
+> the KernelCI infrastructure).  A good test coverage should be a minimal
+> requirement, even if this is not enough.  Additionally, syzkaller should
+> be able to efficiently fuzz these interfaces, which may require some
+> tuning.
+
+I added a test suite requirement to the latest revision.  I didn't
+explicitly require kselftests, as not all current LSMs with tests make
+use of kselftest, but I do think requiring some type of test suite is
+important.
+
+> Extending the kernel documentation should not stop developers to write
+> man pages as well. ;)
+
+Of course not!  While I'm a big believer in manpages, I don't believe
+that we need to make that an explicit requirement.  However, I would
+expect that the documentation we do require would make it easier to
+produce useful manpages.
+
+> It might also be useful to add some standalone tools in samples/
+
+Or in a separate standalone public repo if the tools are significantly
+large (see the requirement below).
+
+> > * The LSM implementation must follow general Linux Kernel coding practi=
+ces,
+> > faithfully implement the security model and APIs described in the
+> > documentation, and be free of any known defects at the time of submissi=
+on.
+> >
+> > * Any userspace tools or patches created in support of the LSM must be =
+publicly
+> > available, with a public git repository preferable over a tarball snaps=
+hot.
+
+--=20
+paul-moore.com
