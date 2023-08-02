@@ -2,399 +2,275 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ABDEC04E69
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Aug 2023 16:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D09C04A94
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Aug 2023 17:44:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232478AbjHBQuf (ORCPT
+        id S233167AbjHBRo5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Aug 2023 12:50:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49476 "EHLO
+        Wed, 2 Aug 2023 13:44:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233179AbjHBQuS (ORCPT
+        with ESMTP id S232717AbjHBRor (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Aug 2023 12:50:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B9A30D1;
-        Wed,  2 Aug 2023 09:49:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 25BC461924;
-        Wed,  2 Aug 2023 16:49:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECAF6C433CB;
-        Wed,  2 Aug 2023 16:49:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690994998;
-        bh=8TDdoriMirQkbs+sSC9VzHqIztUiVMg3Kktox9rBgT4=;
-        h=From:Date:Subject:To:Cc:From;
-        b=a8+x7CVF3sWu9j5R5rqbCqUieawg4Qr4tmpg6Q88oHYPwnXWoMuqL65kBBVhq3BEY
-         c8EH5ml8CrtJJF25vdbwiKbaXyXxCaL2F4UsIE3GPnqKYcnjil6Ees2usVVsKwKp08
-         YOFBAJ7CudvmPWoEpmZ+OZxwagen4+ghQfpcQKnpDIOu9lO3VBsGCXXsgG8RzcHRxN
-         b1yDjbQFpl6AGx8rVf3Gw4dDLjxh/a9Qjvp86NXy+xxaEL0SzX/aepWHS/SxZBO0mo
-         6mQNoXCsdWBZe2Uuk3WR+KWSTJpb+pmS2NMb7WUORvgXUeb1BIQgmGWoY7qiLARe+V
-         q3eb5zdz97+9Q==
-From:   Jeff Layton <jlayton@kernel.org>
-Date:   Wed, 02 Aug 2023 12:49:33 -0400
-Subject: [PATCH v6] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
+        Wed, 2 Aug 2023 13:44:47 -0400
+Received: from sonic302-28.consmr.mail.ne1.yahoo.com (sonic302-28.consmr.mail.ne1.yahoo.com [66.163.186.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C16D1723
+        for <linux-security-module@vger.kernel.org>; Wed,  2 Aug 2023 10:44:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1690998283; bh=JnC0YDmsZILK8u0bSDOh1vFQYrIRYvha//idROOyrvs=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=Wi7yZPDisMUWZb7zLF4JWjI7qVkNhAcHUcfXXiXQegVyUPoF/sMKLMXVUtuipcOJidkRJDIE9cu1ZGaaU1a4tUZasjJJJZbd5LBwL9NfyMNYieu4UNe4ngb3EO2Wz+ofHjK8hrIYTdz5pg3SvxdFQH45ZGM9rOYmCEkhP5qn5e0YMYX0Nfme1bADt+GFXV5jVAiZzkzd0ZraBSxPViXX1lPeJfGvxzlyJeArZyR0MLVL4VCS0lNif1exnUo02pym0xJN3TeUzi8a3NMwbTz59Ushzc3srhgeNoGqYJuJivM0lnIG1/b+250XKYfjgJgNX6pOUP7N4OhhAuqRLpE3Zw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1690998283; bh=uzPZPpTCDqh6FxOw0WPxI3P+SqNHe44xdHqs0W3kjXJ=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=l5hUKPCyxMcmTHUdBj2vkY4zP3NwrIZ4xavOpIq+K5/TzvpCtozJ/ZTOH5soBB8ZhHJ+kagPfKahFwPqD4aTkaMkEzr/z6ZQLj1A4bJ6upEIBBikgU7Z3w5Va4JOGBhCIY6tUds7yFn4ODWlcJMg2Vwhaorljm2d+GyIdMWSx9KurOU1A/3R4XnRC0yGfr42zznd17mvr/QvmnwKxESq2p2ZqhTq6A0DltYwgcfA9kPFVQY0vz/EkbwOk23hM/pfvroRN7lPFHWi2uW8Wz89fMuXJBkDB0v1NhbfgG1z7bgnKbjsE0ev1GVeDN4V3B7lseZUS2BFuFqTL1yn3RE0jg==
+X-YMail-OSG: 23cJLWwVM1lIKccHiQICkU2TmzF2efTLg4AD.mOVnoaR2nDOTpQ4lCIFsxSkmKy
+ lt1542Kq4B8IkeENYNF2PwbTtnU2eS62YEYHhSDtY1KcyC1NSStBTDQvR7POar.KUotQ5mS9I5cp
+ jD0RGd.Otoi4zXvdWFZQYLLJtGzaIR9YaqiAqKmtwpB6WdIB1tpzowBkyy2YDxAX2y8dQh9YJlz2
+ 4Ym6RPE1f80Y85su1_kXg7LesftURl4tfgzzx1.rQAlhLyPMpYy_zKrt_8d0jMzWMsE5cNwv79Df
+ xq2xZ6Pg2oQDzhRpR1miYyZZM6Kfv9rt.8pZIE1594mfJt7Pd9xt7fkeVCbA6qbpt4YMzn9wHlrX
+ EgYvKdIPkynQRC96nyBzgY28LK5Kt0qyWahkeyBFE_U6QZNP8wjBOfraKGomjYXtcVlyr3oC.ALn
+ TIkbP1YYOnRYKqBGUu4jY6M_XiD.vH.5Ga9KTV6nU_OAkCjZlW_sPrbWZjxWaxe78Kb.pgrjXd9D
+ d.pHfMXBYtX6Qgn7IUmx8vIF6e..znhe96gdZm_YI61bnPdiYj6OINUfACQguOanLPvLiCUmBPu8
+ QUeIvvkEgwF1T2MTulbIEmpFL590x3W1vlUvRKx.Ur8gaEuTgtFCX5V.LFKQQk.SbmOURczeHoln
+ ukmVeVl5h6dyZDS3AbTcA5c3aXzFGnOj7T0ZNHMnE813q3TWvRCEkr60y1.FbJqj0e.KcAXaMM4n
+ eTlztaRwm.DbCd_AJR2nZ2hS89hOlbtQgyuVa9tUKdiHjbb6D.8Z1GqViI9HNHaw3HBTEL4ghTcc
+ NsUCk7fPTUBgrucjDGedXsumIU47BMxjxpCMq.W1t2AaW7IIqFn0UVa7aD.5ySqpPhZMJYe8HHCS
+ 5w8VpC.B0hXtu6MI1gejCU2PrHWWMrLQkesoOG08wMD6xMLZ32t9.fTB_lp0oRmUrChPCgDXs8X.
+ z26PfQDqGufMSkynEW8YRSjl.WE9om5HBiPU1ltX_CyVHm3gnzqW144qEQMi6zG.xx6yOOnJhVXO
+ oekG3NM1SLzaVc_pSlqkVNccGubVoPkLf4_OLzJSQqmbjIJqxSejGsIxW4GDWqaBOSTZ7V8wijp7
+ 4aiW0S1N5faK740UfAkun_nG52zmIkDgY7fNJZp4XoL0SVfvB8RzMi1ZacrlQDB4sAFtGzpEJrZN
+ cdnICEdmk7FP390PsaUZrb.by9yhaahri94qlfcbkyOkgmuhI9K2qZ2NAEgXnKRbu7D6hwN1Hh8g
+ lyYThQzOwgiK7eyOQAT88o7CgIz2e5x7JBSS1IvY3zFySm6UcT2IVNb_WQoF99JPpA8O_SXwcp95
+ BYX7H.tG8CDoU7aNUo9nxJYXnaJhMvKczxrX0ACMqEhiqX_Wd2AjUJQSugurOF3rvdy55BTeKFBl
+ expUp0wPvkQ2D3X6T2t6tprPi_.DlCoG8fF2azZz9mXTZrfDIreEde6pTBkUhgZqUPPEmDh5e13j
+ ttl7nwApNTxC7HI2SNDKttsh9GWQxG8LZFbnWIulBwefXq8tT0qocJ4BIKDsHSJwFrkluIqrpwL8
+ .szL0119jMHlBJ_toSSsqxW3Z4Zhq0O8ya5RwgqYYKwlfrBQXgE1VHH3q0eIln1b3Ov9AcgQ64P1
+ EffTiF6LWagglj93aMz72_5zGRUWpZNHlx.ouAM5LWgfjIEsPRUHPO6BPQCesbOOgJwfz2FxU30_
+ n_uxa2CqjtcZTnSaFJkVFcVXbNqwymBJDs3ZrmteFqmLYwC.MHPmKbvTu_bH82rEg56c3UF7BPEd
+ Ty8EfCNVxPR1.7CNnYtSq0oQDNn.yCTl02Te6Cm1DPvaHS_PLML4Uc_Ie.LDb4xmJ4QNbR7KrvAb
+ Smvuijq7yDNbZ6xkM0462mW_PvHPvNIvkdJJ.Sya6b3fR9u.Oze5CjugBJmowxJGZCaTatP8VZQZ
+ z1JqvPF_XPIKezsCaLcM.smy2f79ddAIQ3.fymQHEMGQZscs7zLMQObBTCCxYbo0YMQnhnha3l8x
+ PNxjKGyzgrt7NtjastyUFFzM20FkerCcOkacdRRrIr0_TPc72p4z.hmjc_wRKmqTJXAiAqrB0B9m
+ HiL2jhwyuFK4FIRLoSR3pOrVZODYpJvu7c0HzqfZA8fRhjckJPIDSQDueTNft_QgCYd.c56m1Mmt
+ 4cA.z.RVfhWgJteogHnhYCy_8RzVWa5fw_zxAl0JAiRIapmfdHEl8acnX36vbXxNjDXHhTXihLjG
+ .T_n7ZqwV8wUo3j5CNiGke4OYutWheCvvwbn0JPXlpUY3zbt5LjP_yNccFGocAnCou_VCMXHeqoF
+ CVVe3g0VkZUl6
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 154e54af-22ce-4e6d-9a7e-1c2c4679b520
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Wed, 2 Aug 2023 17:44:43 +0000
+Received: by hermes--production-gq1-7d844d8954-psjqr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 839fbc661e28c041ce8f4c5628604c14;
+          Wed, 02 Aug 2023 17:44:39 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+To:     casey@schaufler-ca.com, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org
+Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net
+Subject: [PATCH v13 00/11] LSM: Three basic syscalls
+Date:   Wed,  2 Aug 2023 10:44:23 -0700
+Message-ID: <20230802174435.11928-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230802-master-v6-1-45d48299168b@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAByJymQC/x3Myw6DIBCF4VcxrAsZphWwq75H0wXREUmjmIHeY
- nz3Epdf8p+ziUwcKYtrswmmd8wxLRXm1Ih+8ksgGYdqgYBncIBy9rkQywqEDsgNphM1XpnG+D2
- O7o/qkdMsy8Tkj7k2xoF1rbGtU9hZNIBKX7RtO40IWhsEixa1yiXEcvt4LlMKauXU/9KiEgf1e
- op9/wNokNpKsQAAAA==
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11586; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=Y0txRBdmjz7yDLEswKP6N7utPuZsTScZ5wjuMSPYqJE=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBkyok049T0DHZRmmBtubznEDMlxtFtyYhKnXWM9
- SX+Mgwl1fOJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZMqJNAAKCRAADmhBGVaC
- Fcg2D/sH10RoA8oISlBvguOODhPLSAU16RhE21Czp7Q5jHf20erUf0bw3RdmtRTWLZEnTqVPfK5
- E74ZLh4xxWK3MKYZeLMtNKrnfHOe8AgW6W+qEmfOsKqNVxiGOzyNUou/Vffj2Y1wGv3gmiNcpUP
- LyLfvvc2ui7Ei8boCll5Kkf4KXUQXyAJ7ZWILH31yjwjd/tFeWT75r9qIgLIno+J2qHJ+6PG1gy
- qZCAplcBjsa5NmIA/b4HarUkhqa/9iI715LMqc65cV8oPBlKL/tCnwCrh9tHslygo51DvIsxOkW
- kVXiGIsQ4iAAAQfRx5YjK6OSgFiZpzH0THY+vIWKQjqCwmFcB7wtcXDNJT963NHSDom9TyLp09b
- pF96v7g5d/iNUw9fojnciqj6mJ9O2P1yH+HhmNsh0o16+NwJrzPFEEOG2lm//hjmijo5xnJqLju
- OhZrSfvcp4uZlKoYfkOMN4QHp11gXy1XhcW1Ff4A4xAegznId7U8FTP3T/PG9byBWOredAKWgK8
- 0FVxT7IOBvwKscF1d8N433wZ5mTDZJRGkPWrQn0ebPZ2V89ciMT4Ndb1oiaGy8JCMBSq1bq/8yI
- GpnNmcIGiXoBi2MH6FifkWtVS5cC+XAmCsY5EOur+HTqK0XPLVogwdEGq16e7VBHDX/4dFR8eue
- W1pItWTmqrkR8JQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Transfer-Encoding: 8bit
+References: <20230802174435.11928-1-casey.ref@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: David Howells <dhowells@redhat.com>
+Add three system calls for the Linux Security Module ABI.
 
-When NFS superblocks are created by automounting, their LSM parameters
-aren't set in the fs_context struct prior to sget_fc() being called,
-leading to failure to match existing superblocks.
+lsm_get_self_attr() provides the security module specific attributes
+that have previously been visible in the /proc/self/attr directory.
+For each security module that uses the specified attribute on the
+current process the system call will return an LSM identifier and
+the value of the attribute. The LSM and attribute identifier values
+are defined in include/uapi/linux/lsm.h
 
-Fix this by adding a new LSM hook to load fc->security for submount
-creation when alloc_fs_context() is creating the fs_context for it.
+LSM identifiers are simple integers and reflect the order in which
+the LSM was added to the mainline kernel. This is a convention, not
+a promise of the API. LSM identifiers below the value of 100 are
+reserved for unspecified future uses. That could include information
+about the security infrastructure itself, or about how multiple LSMs
+might interact with each other.
 
-However, this uncovers a further bug: nfs_get_root() initialises the
-superblock security manually by calling security_sb_set_mnt_opts() or
-security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
-security_sb_set_mnt_opts(), which can lead to SELinux, at least,
-complaining.
+A new LSM hook security_getselfattr() is introduced to get the
+required information from the security modules. This is similar
+to the existing security_getprocattr() hook, but specifies the
+format in which string data is returned and requires the module
+to put the information into a userspace destination.
 
-Fix that by adding a flag to the fs_context that suppresses the
-security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by NFS
-when it sets the LSM context on the new superblock.
+lsm_set_self_attr() changes the specified LSM attribute. Only one
+attribute can be changed at a time, and then only if the specified
+security module allows the change.
 
-The first bug leads to messages like the following appearing in dmesg:
+A new LSM hook security_setselfattr() is introduced to set the
+required information in the security modules. This is similar
+to the existing security_setprocattr() hook, but specifies the
+format in which string data is presented and requires the module
+to get the information from a userspace destination.
 
-	NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
+lsm_list_modules() provides the LSM identifiers, in order, of the
+security modules that are active on the system. This has been
+available in the securityfs file /sys/kernel/security/lsm.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
-Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
-Tested-by: Jeff Layton <jlayton@kernel.org>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-Acked-by: "Christian Brauner (Microsoft)" <brauner@kernel.org>
-Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk/ # v2
-Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk/ # v3
-Link: https://lore.kernel.org/r/166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk/ # v4
-Link: https://lore.kernel.org/r/217595.1662033775@warthog.procyon.org.uk/ # v5
----
-This patch was originally sent by David several months ago, but it
-never got merged. I'm resending to resurrect the discussion. Can we
-get this fixed?
+Patch 0001 changes the LSM registration from passing the name
+of the module to passing a lsm_id structure that contains the
+name of the module, an LSM identifier number and an attribute
+identifier.
+Patch 0002 adds the registered lsm_ids to a table.
+Patch 0003 changes security_[gs]etprocattr() to use LSM IDs instead
+of LSM names.
+Patch 0004 implements lsm_get_self_attr() and lsm_set_self_attr().
+New LSM hooks security_getselfattr() and security_setselfattr() are
+defined.
+Patch 0005 implements lsm_list_modules().
+Patch 0006 wires up the syscalls.
+Patch 0007 implements helper functions to make it easier for
+security modules to use lsm_ctx structures.
+Patch 0008 provides the Smack implementation for [gs]etselfattr().
+Patch 0009 provides the AppArmor implementation for [gs]etselfattr().
+Patch 0010 provides the SELinux implementation for [gs]etselfattr().
+Patch 0011 implements selftests for the three new syscalls.
 
-ver #6)
- - Rebase onto v6.5.0-rc4
+https://github.com/cschaufler/lsm-stacking.git#lsm-syscalls-6.4-v12
 
-ver #5)
- - Removed unused variable.
- - Only allocate smack_mnt_opts if we're dealing with a submount.
+v13: Change the setselfattr code to do a single user copy.
+     Make the self tests more robust.
+     Improve use of const.
+     Change syscall numbers to reflect upstream additions.
+v12: Repair a registration time overflow check.
+v11: Remove redundent alignment code
+     Improve a few comments.
+     Use LSM_ATTR_UNDEF in place of 0 in a few places.
+     Correct a return of -EINVAL to -E2BIG.
+v10: Correct use of __user.
+     Improve a few comments.
+     Revert unnecessary changes in module initialization.
+v9: Support a flag LSM_FLAG_SINGLE in lsm_get_self_attr() that
+    instructs the call to provide only the attribute for the LSM
+    identified in the referenced lsm_ctx structure.
+    Fix a typing error.
+    Change some coding style.
+v8: Allow an LSM to provide more than one instance of an attribute,
+    even though none of the existing modules do so.
+    Pad the data returned by lsm_get_self_attr() to the size of
+    the struct lsm_ctx.
+    Change some displeasing varilable names.
+v7: Pass the attribute desired to lsm_[gs]et_self_attr in its own
+    parameter rather than encoding it in the flags.
+    Change the flags parameters to u32.
+    Don't shortcut out of calling LSM specific code in the
+    infrastructure, let the LSM report that doesn't support an
+    attribute instead. With that it is not necessary to maintain
+    a set of supported attributes in the lsm_id structure.
+    Fix a typing error.
+v6: Switch from reusing security_[gs]procattr() to using new
+    security_[gs]selfattr() hooks. Use explicit sized data types
+    in the lsm_ctx structure.
 
-ver #4)
- - When doing a FOR_SUBMOUNT mount, don't set the root label in SELinux or
-   Smack.
+v5: Correct syscall parameter data types.
 
-ver #3)
- - Made LSM parameter extraction dependent on fc->purpose ==
-   FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
+v4: Restore "reserved" LSM ID values. Add explaination.
+    Squash patches that introduce fields in lsm_id.
+    Correct a wireup error.
 
-ver #2)
- - Added Smack support
- - Made LSM parameter extraction dependent on reference != NULL.
----
- fs/fs_context.c               |  4 ++++
- fs/nfs/getroot.c              |  1 +
- fs/super.c                    | 10 ++++----
- include/linux/fs_context.h    |  1 +
- include/linux/lsm_hook_defs.h |  1 +
- include/linux/security.h      |  6 +++++
- security/security.c           | 14 +++++++++++
- security/selinux/hooks.c      | 25 ++++++++++++++++++++
- security/smack/smack_lsm.c    | 54 +++++++++++++++++++++++++++++++++++++++++++
- 9 files changed, 112 insertions(+), 4 deletions(-)
+v3: Add lsm_set_self_attr().
+    Rename lsm_self_attr() to lsm_get_self_attr().
+    Provide the values only for a specifed attribute in
+    lsm_get_self_attr().
+    Add selftests for the three new syscalls.
+    Correct some parameter checking.
 
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 851214d1d013..a523aea956c4 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -282,6 +282,10 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
- 		break;
- 	}
- 
-+	ret = security_fs_context_init(fc, reference);
-+	if (ret < 0)
-+		goto err_fc;
-+
- 	/* TODO: Make all filesystems support this unconditionally */
- 	init_fs_context = fc->fs_type->init_fs_context;
- 	if (!init_fs_context)
-diff --git a/fs/nfs/getroot.c b/fs/nfs/getroot.c
-index 11ff2b2e060f..651bffb0067e 100644
---- a/fs/nfs/getroot.c
-+++ b/fs/nfs/getroot.c
-@@ -144,6 +144,7 @@ int nfs_get_root(struct super_block *s, struct fs_context *fc)
- 	}
- 	if (error)
- 		goto error_splat_root;
-+	fc->lsm_set = true;
- 	if (server->caps & NFS_CAP_SECURITY_LABEL &&
- 		!(kflags_out & SECURITY_LSM_NATIVE_LABELS))
- 		server->caps &= ~NFS_CAP_SECURITY_LABEL;
-diff --git a/fs/super.c b/fs/super.c
-index e781226e2880..13adf43e2e5d 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1541,10 +1541,12 @@ int vfs_get_tree(struct fs_context *fc)
- 	smp_wmb();
- 	sb->s_flags |= SB_BORN;
- 
--	error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
--	if (unlikely(error)) {
--		fc_drop_locked(fc);
--		return error;
-+	if (!(fc->lsm_set)) {
-+		error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
-+		if (unlikely(error)) {
-+			fc_drop_locked(fc);
-+			return error;
-+		}
- 	}
- 
- 	/*
-diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index ff6341e09925..26a9fcdb10cc 100644
---- a/include/linux/fs_context.h
-+++ b/include/linux/fs_context.h
-@@ -109,6 +109,7 @@ struct fs_context {
- 	bool			need_free:1;	/* Need to call ops->free() */
- 	bool			global:1;	/* Goes into &init_user_ns */
- 	bool			oldapi:1;	/* Coming from mount(2) */
-+	bool			lsm_set:1;	/* security_sb_set/clone_mnt_opts() already done */
- };
- 
- struct fs_context_operations {
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 7308a1a7599b..7ce3550154b1 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -54,6 +54,7 @@ LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, struct file *f
- LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
- LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, struct linux_binprm *bprm)
- LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, struct linux_binprm *bprm)
-+LSM_HOOK(int, 0, fs_context_init, struct fs_context *fc, struct dentry *reference)
- LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
- 	 struct fs_context *src_sc)
- LSM_HOOK(int, -ENOPARAM, fs_context_parse_param, struct fs_context *fc,
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 32828502f09e..61fda06fac9d 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -293,6 +293,7 @@ int security_bprm_creds_from_file(struct linux_binprm *bprm, struct file *file);
- int security_bprm_check(struct linux_binprm *bprm);
- void security_bprm_committing_creds(struct linux_binprm *bprm);
- void security_bprm_committed_creds(struct linux_binprm *bprm);
-+int security_fs_context_init(struct fs_context *fc, struct dentry *reference);
- int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc);
- int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
- int security_sb_alloc(struct super_block *sb);
-@@ -629,6 +630,11 @@ static inline void security_bprm_committed_creds(struct linux_binprm *bprm)
- {
- }
- 
-+static inline int security_fs_context_init(struct fs_context *fc,
-+					   struct dentry *reference)
-+{
-+	return 0;
-+}
- static inline int security_fs_context_dup(struct fs_context *fc,
- 					  struct fs_context *src_fc)
- {
-diff --git a/security/security.c b/security/security.c
-index b720424ca37d..8a6dc6f7cda0 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1138,6 +1138,20 @@ void security_bprm_committed_creds(struct linux_binprm *bprm)
- 	call_void_hook(bprm_committed_creds, bprm);
- }
- 
-+/**
-+ * security_fs_context_init() - Initialise fc->security
-+ * @fc: new filesystem context
-+ * @dentry: dentry reference for submount/remount
-+ *
-+ * Fill out the ->security field for a new fs_context.
-+ *
-+ * Return: Returns 0 on success or negative error code on failure.
-+ */
-+int security_fs_context_init(struct fs_context *fc, struct dentry *reference)
-+{
-+	return call_int_hook(fs_context_init, 0, fc, reference);
-+}
-+
- /**
-  * security_fs_context_dup() - Duplicate a fs_context LSM blob
-  * @fc: destination filesystem context
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index d06e350fedee..29cce0fadbeb 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2745,6 +2745,30 @@ static int selinux_umount(struct vfsmount *mnt, int flags)
- 				   FILESYSTEM__UNMOUNT, NULL);
- }
- 
-+static int selinux_fs_context_init(struct fs_context *fc,
-+				   struct dentry *reference)
-+{
-+	const struct superblock_security_struct *sbsec;
-+	struct selinux_mnt_opts *opts;
-+
-+	if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT) {
-+		opts = kzalloc(sizeof(*opts), GFP_KERNEL);
-+		if (!opts)
-+			return -ENOMEM;
-+
-+		sbsec = selinux_superblock(reference->d_sb);
-+		if (sbsec->flags & FSCONTEXT_MNT)
-+			opts->fscontext_sid	= sbsec->sid;
-+		if (sbsec->flags & CONTEXT_MNT)
-+			opts->context_sid	= sbsec->mntpoint_sid;
-+		if (sbsec->flags & DEFCONTEXT_MNT)
-+			opts->defcontext_sid	= sbsec->def_sid;
-+		fc->security = opts;
-+	}
-+
-+	return 0;
-+}
-+
- static int selinux_fs_context_dup(struct fs_context *fc,
- 				  struct fs_context *src_fc)
- {
-@@ -7182,6 +7206,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- 	/*
- 	 * PUT "CLONING" (ACCESSING + ALLOCATING) HOOKS HERE
- 	 */
-+	LSM_HOOK_INIT(fs_context_init, selinux_fs_context_init),
- 	LSM_HOOK_INIT(fs_context_dup, selinux_fs_context_dup),
- 	LSM_HOOK_INIT(fs_context_parse_param, selinux_fs_context_parse_param),
- 	LSM_HOOK_INIT(sb_eat_lsm_opts, selinux_sb_eat_lsm_opts),
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 6e270cf3fd30..938c8259c5e7 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -614,6 +614,59 @@ static int smack_add_opt(int token, const char *s, void **mnt_opts)
- 	return -EINVAL;
- }
- 
-+/**
-+ * smack_fs_context_init - Initialise security data for a filesystem context
-+ * @fc: The filesystem context.
-+ * @reference: Reference dentry (automount/reconfigure) or NULL
-+ *
-+ * Returns 0 on success or -ENOMEM on error.
-+ */
-+static int smack_fs_context_init(struct fs_context *fc,
-+				 struct dentry *reference)
-+{
-+	struct superblock_smack *sbsp;
-+	struct smack_mnt_opts *ctx;
-+	struct inode_smack *isp;
-+
-+	if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT) {
-+		ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-+		if (!ctx)
-+			return -ENOMEM;
-+		fc->security = ctx;
-+
-+		sbsp = smack_superblock(reference->d_sb);
-+		isp = smack_inode(reference->d_sb->s_root->d_inode);
-+
-+		if (sbsp->smk_default) {
-+			ctx->fsdefault = kstrdup(sbsp->smk_default->smk_known, GFP_KERNEL);
-+			if (!ctx->fsdefault)
-+				return -ENOMEM;
-+		}
-+
-+		if (sbsp->smk_floor) {
-+			ctx->fsfloor = kstrdup(sbsp->smk_floor->smk_known, GFP_KERNEL);
-+			if (!ctx->fsfloor)
-+				return -ENOMEM;
-+		}
-+
-+		if (sbsp->smk_hat) {
-+			ctx->fshat = kstrdup(sbsp->smk_hat->smk_known, GFP_KERNEL);
-+			if (!ctx->fshat)
-+				return -ENOMEM;
-+		}
-+
-+		if (isp->smk_flags & SMK_INODE_TRANSMUTE) {
-+			if (sbsp->smk_root) {
-+				ctx->fstransmute = kstrdup(sbsp->smk_root->smk_known, GFP_KERNEL);
-+				if (!ctx->fstransmute)
-+					return -ENOMEM;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * smack_fs_context_dup - Duplicate the security data on fs_context duplication
-  * @fc: The new filesystem context.
-@@ -4876,6 +4929,7 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
- 	LSM_HOOK_INIT(syslog, smack_syslog),
- 
-+	LSM_HOOK_INIT(fs_context_init, smack_fs_context_init),
- 	LSM_HOOK_INIT(fs_context_dup, smack_fs_context_dup),
- 	LSM_HOOK_INIT(fs_context_parse_param, smack_fs_context_parse_param),
- 
+v2: Use user-interface safe data types.
+    Remove "reserved" LSM ID values.
+    Improve kerneldoc comments
+    Include copyright dates
+    Use more descriptive name for LSM counter
+    Add documentation
+    Correct wireup errors
 
----
-base-commit: 5d0c230f1de8c7515b6567d9afba1f196fb4e2f4
-change-id: 20230802-master-3082090e8d69
+Casey Schaufler (11):
+  LSM: Identify modules by more than name
+  LSM: Maintain a table of LSM attribute data
+  proc: Use lsmids instead of lsm names for attrs
+  LSM: syscalls for current process attributes
+  LSM: Create lsm_list_modules system call
+  LSM: wireup Linux Security Module syscalls
+  LSM: Helpers for attribute names and filling lsm_ctx
+  Smack: implement setselfattr and getselfattr hooks
+  AppArmor: Add selfattr hooks
+  SELinux: Add selfattr hooks
+  LSM: selftests for Linux Security Module syscalls
 
-Best regards,
+ Documentation/userspace-api/index.rst         |   1 +
+ Documentation/userspace-api/lsm.rst           |  73 ++++++
+ MAINTAINERS                                   |   2 +
+ arch/alpha/kernel/syscalls/syscall.tbl        |   3 +
+ arch/arm/tools/syscall.tbl                    |   3 +
+ arch/arm64/include/asm/unistd.h               |   2 +-
+ arch/arm64/include/asm/unistd32.h             |   6 +
+ arch/ia64/kernel/syscalls/syscall.tbl         |   3 +
+ arch/m68k/kernel/syscalls/syscall.tbl         |   3 +
+ arch/microblaze/kernel/syscalls/syscall.tbl   |   3 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl     |   3 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl     |   3 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl     |   3 +
+ arch/parisc/kernel/syscalls/syscall.tbl       |   3 +
+ arch/powerpc/kernel/syscalls/syscall.tbl      |   3 +
+ arch/s390/kernel/syscalls/syscall.tbl         |   3 +
+ arch/sh/kernel/syscalls/syscall.tbl           |   3 +
+ arch/sparc/kernel/syscalls/syscall.tbl        |   3 +
+ arch/x86/entry/syscalls/syscall_32.tbl        |   3 +
+ arch/x86/entry/syscalls/syscall_64.tbl        |   3 +
+ arch/xtensa/kernel/syscalls/syscall.tbl       |   3 +
+ fs/proc/base.c                                |  29 ++-
+ fs/proc/internal.h                            |   2 +-
+ include/linux/lsm_hook_defs.h                 |   4 +
+ include/linux/lsm_hooks.h                     |  17 +-
+ include/linux/security.h                      |  46 +++-
+ include/linux/syscalls.h                      |   6 +
+ include/uapi/asm-generic/unistd.h             |   9 +-
+ include/uapi/linux/lsm.h                      |  90 +++++++
+ kernel/sys_ni.c                               |   3 +
+ security/Makefile                             |   1 +
+ security/apparmor/include/procattr.h          |   2 +-
+ security/apparmor/lsm.c                       |  99 +++++++-
+ security/apparmor/procattr.c                  |  10 +-
+ security/bpf/hooks.c                          |   9 +-
+ security/commoncap.c                          |   8 +-
+ security/landlock/cred.c                      |   2 +-
+ security/landlock/fs.c                        |   2 +-
+ security/landlock/ptrace.c                    |   2 +-
+ security/landlock/setup.c                     |   6 +
+ security/landlock/setup.h                     |   1 +
+ security/loadpin/loadpin.c                    |   9 +-
+ security/lockdown/lockdown.c                  |   8 +-
+ security/lsm_syscalls.c                       | 118 +++++++++
+ security/safesetid/lsm.c                      |   9 +-
+ security/security.c                           | 226 ++++++++++++++++-
+ security/selinux/hooks.c                      | 145 +++++++++--
+ security/smack/smack_lsm.c                    | 102 +++++++-
+ security/tomoyo/tomoyo.c                      |   9 +-
+ security/yama/yama_lsm.c                      |   8 +-
+ .../arch/mips/entry/syscalls/syscall_n64.tbl  |   3 +
+ .../arch/powerpc/entry/syscalls/syscall.tbl   |   3 +
+ .../perf/arch/s390/entry/syscalls/syscall.tbl |   3 +
+ .../arch/x86/entry/syscalls/syscall_64.tbl    |   3 +
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/lsm/Makefile          |  19 ++
+ tools/testing/selftests/lsm/common.c          |  81 ++++++
+ tools/testing/selftests/lsm/common.h          |  33 +++
+ tools/testing/selftests/lsm/config            |   3 +
+ .../selftests/lsm/lsm_get_self_attr_test.c    | 240 ++++++++++++++++++
+ .../selftests/lsm/lsm_list_modules_test.c     | 140 ++++++++++
+ .../selftests/lsm/lsm_set_self_attr_test.c    |  74 ++++++
+ 62 files changed, 1624 insertions(+), 93 deletions(-)
+ create mode 100644 Documentation/userspace-api/lsm.rst
+ create mode 100644 include/uapi/linux/lsm.h
+ create mode 100644 security/lsm_syscalls.c
+ create mode 100644 tools/testing/selftests/lsm/Makefile
+ create mode 100644 tools/testing/selftests/lsm/common.c
+ create mode 100644 tools/testing/selftests/lsm/common.h
+ create mode 100644 tools/testing/selftests/lsm/config
+ create mode 100644 tools/testing/selftests/lsm/lsm_get_self_attr_test.c
+ create mode 100644 tools/testing/selftests/lsm/lsm_list_modules_test.c
+ create mode 100644 tools/testing/selftests/lsm/lsm_set_self_attr_test.c
+
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.41.0
 
