@@ -2,202 +2,176 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81201C001DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Aug 2023 18:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 745BFC001E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Aug 2023 18:38:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232442AbjHBSQH (ORCPT
+        id S229818AbjHBSiU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Aug 2023 14:16:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60474 "EHLO
+        Wed, 2 Aug 2023 14:38:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231732AbjHBSQF (ORCPT
+        with ESMTP id S229632AbjHBSiT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Aug 2023 14:16:05 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54B561724
-        for <linux-security-module@vger.kernel.org>; Wed,  2 Aug 2023 11:16:02 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id af79cd13be357-76754b9eac0so5995685a.0
-        for <linux-security-module@vger.kernel.org>; Wed, 02 Aug 2023 11:16:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1691000161; x=1691604961;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Jttay3Y7tZ44PZ3pDqY6yaCEufBzLxT6C+Rmg0Bmtnw=;
-        b=d0PA4A+jJfozBkqa8UDo7N4WMrxQqmldV/JhxJQwAwTQxncKxV7wRNigctbcr86AYI
-         clESekvuuB+Wrv1ZtpfR4IysIKu6fag+QBQshGld66Kt0Q5XuzBVE3sezvwdHHM5GBRA
-         /QbFR57HWoXChW9HY4Unpbabt/NXEcF8Mp8W4kKnIVcnINk3NpDlTQ2PvG6h59YoeeXG
-         0UBUUmhk4nFes79N033bvPCT31OiqdAXrld91YhXQF+3Z9q1JUL6gOI1m0L868Lko8rS
-         dBxtDaX/QpbTdFRjMbLdH9vVb6j6uBlTpEPyJ6bFjo/PFc4fUwtLddOSw2bqQJ2b0DU5
-         m/4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691000161; x=1691604961;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jttay3Y7tZ44PZ3pDqY6yaCEufBzLxT6C+Rmg0Bmtnw=;
-        b=KG6w2XBWwT0OxRwaqfgPczcDip4dKh6f7SD72Si0+OAj7z/WH/rQy7TP17sKKDJzcM
-         G8IvhrV+r/kX2pFkDhUwF5JcuzLgbwjTjTp+5n1gyQmkg0tDGBFMW7Tkxa6L5kR5FAku
-         yteH8lwHFWCVBb4wrbYuEYNPbyBdTVT0GRVy4aPci+XJcPC5Ndso6kLeyDKAdCSp0Kkn
-         tHGUcua7/RANuZ6EJUo7vLJqih5Z2Fn4P5Ie5ER7gLGYFaPAppA9b0g5x9zkHhcIH8TG
-         2Obbgq06rENUo6h1l7w2irNcZgeyKUI3JBc2kwgM21a8tRTDBMpPNERVWfpDl2QUgEjO
-         8gfA==
-X-Gm-Message-State: ABy/qLaSiHmCONHDZRwhvDr9UOkVs4qvsZELpV0ej1GBf+6u0BHBzUwu
-        xfWd/BRP0gRhxSyR95edSeiR
-X-Google-Smtp-Source: APBJJlGGqbRJcuJCCqcoiQEPQ2nJxHgmcoYfak2Lu/M5Lqa7mfvnk8ungVqsLJDbg3pq5fFNVCUEEg==
-X-Received: by 2002:a05:620a:2204:b0:76c:d007:b544 with SMTP id m4-20020a05620a220400b0076cd007b544mr2485423qkh.26.1691000161351;
-        Wed, 02 Aug 2023 11:16:01 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id u19-20020a05620a121300b007659935ce64sm5224030qkj.71.2023.08.02.11.16.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Aug 2023 11:16:00 -0700 (PDT)
-Date:   Wed, 02 Aug 2023 14:16:00 -0400
-Message-ID: <bac543537058619345b363bbfc745927.paul@paul-moore.com>
-From:   Paul Moore <paul@paul-moore.com>
-To:     Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v6] vfs, security: Fix automount superblock LSM init  problem, preventing NFS sb sharing
-References: <20230802-master-v6-1-45d48299168b@kernel.org>
-In-Reply-To: <20230802-master-v6-1-45d48299168b@kernel.org>
+        Wed, 2 Aug 2023 14:38:19 -0400
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [IPv6:2001:1600:3:17::1909])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C690219A4
+        for <linux-security-module@vger.kernel.org>; Wed,  2 Aug 2023 11:38:15 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RGLMT35tzzMqLQW;
+        Wed,  2 Aug 2023 18:38:13 +0000 (UTC)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RGLMS5jV7zMpnPs;
+        Wed,  2 Aug 2023 20:38:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1691001493;
+        bh=7h66j7qSs0ZWmThLYGpifx/WCHcMwwS74hKGCwBdwLw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nBHCJvSKJSBU3nc7LyYQTVvS+w0Ak8t3rx+wnFM512HXiTwkkaKZMhyECFuFZoNI0
+         58hch7zLplqiHimVr+KA97Tx0C55hxE0mci6iUeCeIExR5Jg0LzLGZsipWC+IXctKU
+         /8UM72PSLSHoqEstNmg3XdRPhbZZ2MPzz5LDV9Lc=
+Date:   Wed, 2 Aug 2023 20:38:21 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        linux-doc@vger.kernel.org
+Subject: Re: ANN: new LSM guidelines
+Message-ID: <20230802.doki9xoTh0ai@digikod.net>
+References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
+ <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com>
+ <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
+ <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Aug  2, 2023 Jeff Layton <jlayton@kernel.org> wrote:
+I like this guideline. I guess this is your goal and I think it should
+be part of Documentation/security/lsm.rst (and move the introduction
+part of lsm-development.rst into lsm.rst) and get a few SoB.
+
+On Tue, Aug 01, 2023 at 06:47:12PM -0400, Paul Moore wrote:
+> On Fri, Jul 7, 2023 at 6:02 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Thu, Jul 6, 2023 at 8:32 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > On 7/6/2023 1:42 PM, Paul Moore wrote:
+> > > > Hello all,
+> > > >
+> > > > With some renewed interest in submitting new LSMs including in the
+> > > > upstream Linux Kernel I thought it might be a good idea to document
+> > > > some of our longstanding guidelines around submitting new LSMs.  I'm
+> > > > posting this mostly as a FYI for those who are working on new LSM
+> > > > submissions, but also to solicit feedback from everyone on the list
+> > > > regarding what we should ask of new LSMs.  If you think I'm missing
+> > > > something important, or believe I've added an unfair requirement,
+> > > > please let me know.
+> > > >
+> > > > I've added the guidelines to the README.md at the top of the LSM tree,
+> > > > but to make life easier for those reviewing the guidelines I'm
+> > > > copy-n-pasting them below ...
 > 
-> When NFS superblocks are created by automounting, their LSM parameters
-> aren't set in the fs_context struct prior to sget_fc() being called,
-> leading to failure to match existing superblocks.
+> I've updated the README.md doc based on the feedback, and copied the
+> two new sections below for easier review.  If anyone has any
+> additional feedback or concerns, please let me know.
 > 
-> Fix this by adding a new LSM hook to load fc->security for submount
-> creation when alloc_fs_context() is creating the fs_context for it.
+> ## New LSM Hook Guidelines
 > 
-> However, this uncovers a further bug: nfs_get_root() initialises the
-> superblock security manually by calling security_sb_set_mnt_opts() or
-> security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
-> security_sb_set_mnt_opts(), which can lead to SELinux, at least,
-> complaining.
+> While LSM hooks are generally considered outside of the Linux Kernel's stable
+
+Why "generally"?
+
+> API promise, due to the nature of the LSM hooks we try to minimize changes to
+> the hooks.  With that in mind, we have the following requirements for new LSM
+> hooks:
 > 
-> Fix that by adding a flag to the fs_context that suppresses the
-> security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by NFS
-> when it sets the LSM context on the new superblock.
->
-> The first bug leads to messages like the following appearing in dmesg:
+> * Hooks should be designed to be LSM agnostic.  While it is possible that only
+> one LSM might implement the hook at the time of submission, the hook's behavior
+> should be generic enough that other LSMs could provide a meaningful
+> implementation.
+
+We should also avoid falling in the other extreme which is to add
+different argument just-in-case. For instance, there is no need to add a
+"flags" argument to a kernel API if there is no flag for now, especially
+if there are only a few users of this hook.
+
+I would say that we want generic-as-possible hooks (e.g. well
+positioned) but not with useless arguments.
+
 > 
-> 	NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
+> * The hook must be documented with a function header block that conforms to
+> the kernel documentation style.  At a minimum the documentation should explain
+> the parameters, return values, a brief overall description, any special
+> considerations for the callers, and any special considerations for the LSM
+> implementations.
 > 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
-> Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
-> Tested-by: Jeff Layton <jlayton@kernel.org>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> Acked-by: "Christian Brauner (Microsoft)" <brauner@kernel.org>
-> Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk/ # v1
-> Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk/ # v2
-> Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk/ # v3
-> Link: https://lore.kernel.org/r/166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk/ # v4
-> Link: https://lore.kernel.org/r/217595.1662033775@warthog.procyon.org.uk/ # v5
-> ---
-> This patch was originally sent by David several months ago, but it
-> never got merged. I'm resending to resurrect the discussion. Can we
-> get this fixed?
+> * There must be at least one LSM implementation of the hook included in the
+> submission to act as a reference for additional LSM implementations.  The
+> reference implementation must be for one of the upstream, in-kernel LSMs; while
+> the BPF LSM is an upstream LSM, it's nature precludes it from being eligible as
+> one of the in-kernel LSMs.
 
-Sorry, I sorta lost track of this after the ROOTCONTEXT_MNT discussion
-back in v3.  Looking at it a bit closer now I have one nitpicky
-request and one larger concern (see below).
+To avoid misunderstanding, I think it would be better and more generic
+to focus on the out-of-tree nature of hook implementations.  We might
+also want to give some pointers for the reason(s) why out-of-tree LSMs
+use cases are not supported.
 
-> diff --git a/fs/super.c b/fs/super.c
-> index e781226e2880..13adf43e2e5d 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1541,10 +1541,12 @@ int vfs_get_tree(struct fs_context *fc)
->  	smp_wmb();
->  	sb->s_flags |= SB_BORN;
->  
-> -	error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
-> -	if (unlikely(error)) {
-> -		fc_drop_locked(fc);
-> -		return error;
-> +	if (!(fc->lsm_set)) {
-> +		error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
-> +		if (unlikely(error)) {
-> +			fc_drop_locked(fc);
-> +			return error;
-> +		}
->  	}
+> 
+> ## New LSM Guidelines
+> 
+> Historically we have had few requirements around new LSM additions, with
+> Arjan van de Ven being the first to describe a basic protocol for accepting new
+> LSMs into the Linux Kernel.  In an attempt to document Arjan's basic ideas and
+> update them for modern Linux Kernel development, here are a list of
+> requirements for new LSM submissions:
 
-I generally dislike core kernel code which makes LSM calls conditional
-on some kernel state maintained outside the LSM.  Sometimes it has to
-be done as there is no other good options, but I would like us to try
-and avoid it if possible.  The commit description mentioned that this
-was put here to avoid a SELinux complaint, can you provide an example
-of the complain?  Does it complain about a double/invalid mount, e.g.
-"SELinux: mount invalid.  Same superblock, different security ..."?
+If we go for a kernel documentation patch, it might be better to put
+most of this historic paragraph into the patch description.
 
-I'd like to understand why the sb_set_mnt_opts() call fails when it
-comes after the fs_context_init() call.  I'm particulary curious to
-know if the failure is due to conflicting SELinux state in the
-fs_context, or if it is simply an issue of sb_set_mnt_opts() not
-properly handling existing values.  Perhaps I'm being overly naive,
-but I'm hopeful that we can address both of these within the SELinux
-code itself.
+> 
+> * The new LSM's author(s) must commit to maintain and support the new LSM for
+> an extended period of time.  While the authors may be currently employed to
+> develop and support the LSM, there is an expectation upstream that support will
+> continue beyond the author's employment with the original company, or the
+> company's backing of the LSM.
+> 
+> * New LSMs must include documentation providing a clear explanation of the
+> LSM's requirements, goals, and expected uses.  The documentation does not need
+> to rise to the level of a formal security model, but it must be considered
+> "reasonable" by the LSM community as a whole.
 
-In a worst case situation, we could always implement a flag *inside*
-the SELinux code, similar to what has been done with 'lsm_set' here.
+I guess defining the threat model would be a good first step (and we
+should probably add this kind of description for current LSMs as well).
 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index d06e350fedee..29cce0fadbeb 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2745,6 +2745,30 @@ static int selinux_umount(struct vfsmount *mnt, int flags)
->  				   FILESYSTEM__UNMOUNT, NULL);
->  }
->  
-> +static int selinux_fs_context_init(struct fs_context *fc,
-> +				   struct dentry *reference)
-> +{
-> +	const struct superblock_security_struct *sbsec;
-> +	struct selinux_mnt_opts *opts;
-> +
-> +	if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT) {
-> +		opts = kzalloc(sizeof(*opts), GFP_KERNEL);
-> +		if (!opts)
-> +			return -ENOMEM;
-> +
-> +		sbsec = selinux_superblock(reference->d_sb);
-> +		if (sbsec->flags & FSCONTEXT_MNT)
-> +			opts->fscontext_sid	= sbsec->sid;
-> +		if (sbsec->flags & CONTEXT_MNT)
-> +			opts->context_sid	= sbsec->mntpoint_sid;
-> +		if (sbsec->flags & DEFCONTEXT_MNT)
-> +			opts->defcontext_sid	= sbsec->def_sid;
+> 
+> * Any user visible interfaces provided by the LSM must be well documented.  It
+> is important to remember the user visible APIs are considered to be "forever
+> APIs" by the Linux Kernel community; do not add an API that cannot be supported
+> for the next 20+ years.
 
-I acknowledge this is very nitpicky, but we're starting to make a
-greater effort towards using consistent style within the SELinux
-code.  With that in mind, please remove the alignment whitespace in
-the assignments above.  Thank you.
+I would also add tests! For new kernel developments, especially those
+focused on security, the interfaces should be well tested, part of
+kselftests, and run at least for each kernel release (if possible with
+the KernelCI infrastructure).  A good test coverage should be a minimal
+requirement, even if this is not enough.  Additionally, syzkaller should
+be able to efficiently fuzz these interfaces, which may require some
+tuning.
 
-> +		fc->security = opts;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int selinux_fs_context_dup(struct fs_context *fc,
->  				  struct fs_context *src_fc)
->  {
+Extending the kernel documentation should not stop developers to write
+man pages as well. ;)
 
---
-paul-moore.com
+It might also be useful to add some standalone tools in samples/
+
+> 
+> * The LSM implementation must follow general Linux Kernel coding practices,
+> faithfully implement the security model and APIs described in the
+> documentation, and be free of any known defects at the time of submission.
+> 
+> * Any userspace tools or patches created in support of the LSM must be publicly
+> available, with a public git repository preferable over a tarball snapshot.
+
+> 
+> -- 
+> paul-moore.com
