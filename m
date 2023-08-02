@@ -2,176 +2,244 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 745BFC001E0
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Aug 2023 18:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A42C04E69
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Aug 2023 19:34:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229818AbjHBSiU (ORCPT
+        id S232148AbjHBTed (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Aug 2023 14:38:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41700 "EHLO
+        Wed, 2 Aug 2023 15:34:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbjHBSiT (ORCPT
+        with ESMTP id S230026AbjHBTec (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Aug 2023 14:38:19 -0400
-Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [IPv6:2001:1600:3:17::1909])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C690219A4
-        for <linux-security-module@vger.kernel.org>; Wed,  2 Aug 2023 11:38:15 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RGLMT35tzzMqLQW;
-        Wed,  2 Aug 2023 18:38:13 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RGLMS5jV7zMpnPs;
-        Wed,  2 Aug 2023 20:38:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1691001493;
-        bh=7h66j7qSs0ZWmThLYGpifx/WCHcMwwS74hKGCwBdwLw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nBHCJvSKJSBU3nc7LyYQTVvS+w0Ak8t3rx+wnFM512HXiTwkkaKZMhyECFuFZoNI0
-         58hch7zLplqiHimVr+KA97Tx0C55hxE0mci6iUeCeIExR5Jg0LzLGZsipWC+IXctKU
-         /8UM72PSLSHoqEstNmg3XdRPhbZZ2MPzz5LDV9Lc=
-Date:   Wed, 2 Aug 2023 20:38:21 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        Alejandro Colomar <alx.manpages@gmail.com>,
-        linux-doc@vger.kernel.org
-Subject: Re: ANN: new LSM guidelines
-Message-ID: <20230802.doki9xoTh0ai@digikod.net>
-References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
- <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com>
- <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
- <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
+        Wed, 2 Aug 2023 15:34:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED2E51722;
+        Wed,  2 Aug 2023 12:34:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8332961AE1;
+        Wed,  2 Aug 2023 19:34:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60FACC433C8;
+        Wed,  2 Aug 2023 19:34:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691004869;
+        bh=R2XNFOMlpoKl3UKqeQ3+36FDclL2w1qNFFl0yjA37tY=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=C8tuKoLO6v8SLMytvrLPwndxfP+0EOH/QEtMW3GJkCjQAxRpGQsFVQHB/HAsaisCU
+         256mv/t4snxdZ3//Xy7Ac/F+bQsl+5dzotXS05l+rbc3Jot7bm2Vcyj2ibLwRrCRhN
+         BKfgG40x2qSYlWKCEP2xv4bzz7NimUZ9QWoXMkJIy0zk/fMiBLWdt/nTR2kAESkfaa
+         1vV8/tm8koNlddsl/BvuGlW/oZfBRhKqONBIIdELktYvy3kXp6ut4Q+xbup7+eJCYh
+         cN8VLCF5Oy7OxQzNJzOIN7BDjfDvUejh5Cw9qsBQnNn92ChU56i5uEWvNOaeeikxlJ
+         Ooqfax0lPIFQA==
+Message-ID: <ca156cecbc070c3b7c68626572274806079a6e04.camel@kernel.org>
+Subject: Re: [PATCH v6] vfs, security: Fix automount superblock LSM init 
+ problem, preventing NFS sb sharing
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Paul Moore <paul@paul-moore.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Date:   Wed, 02 Aug 2023 15:34:27 -0400
+In-Reply-To: <bac543537058619345b363bbfc745927.paul@paul-moore.com>
+References: <20230802-master-v6-1-45d48299168b@kernel.org>
+         <bac543537058619345b363bbfc745927.paul@paul-moore.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
-X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I like this guideline. I guess this is your goal and I think it should
-be part of Documentation/security/lsm.rst (and move the introduction
-part of lsm-development.rst into lsm.rst) and get a few SoB.
+On Wed, 2023-08-02 at 14:16 -0400, Paul Moore wrote:
+> On Aug  2, 2023 Jeff Layton <jlayton@kernel.org> wrote:
+> >=20
+> > When NFS superblocks are created by automounting, their LSM parameters
+> > aren't set in the fs_context struct prior to sget_fc() being called,
+> > leading to failure to match existing superblocks.
+> >=20
+> > Fix this by adding a new LSM hook to load fc->security for submount
+> > creation when alloc_fs_context() is creating the fs_context for it.
+> >=20
+> > However, this uncovers a further bug: nfs_get_root() initialises the
+> > superblock security manually by calling security_sb_set_mnt_opts() or
+> > security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
+> > security_sb_set_mnt_opts(), which can lead to SELinux, at least,
+> > complaining.
+> >=20
+> > Fix that by adding a flag to the fs_context that suppresses the
+> > security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by =
+NFS
+> > when it sets the LSM context on the new superblock.
+> >=20
+> > The first bug leads to messages like the following appearing in dmesg:
+> >=20
+> > 	NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,10000=
+0,100000,2ee,3a98,1d4c,3a98,1)
+> >=20
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount(=
+) to it.")
+> > Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
+> > Tested-by: Jeff Layton <jlayton@kernel.org>
+> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> > Acked-by: "Christian Brauner (Microsoft)" <brauner@kernel.org>
+> > Link: https://lore.kernel.org/r/165962680944.3334508.661002390034914203=
+4.stgit@warthog.procyon.org.uk/ # v1
+> > Link: https://lore.kernel.org/r/165962729225.3357250.143507288464715271=
+37.stgit@warthog.procyon.org.uk/ # v2
+> > Link: https://lore.kernel.org/r/165970659095.2812394.686889417110231879=
+6.stgit@warthog.procyon.org.uk/ # v3
+> > Link: https://lore.kernel.org/r/166133579016.3678898.628319501948056727=
+5.stgit@warthog.procyon.org.uk/ # v4
+> > Link: https://lore.kernel.org/r/217595.1662033775@warthog.procyon.org.u=
+k/ # v5
+> > ---
+> > This patch was originally sent by David several months ago, but it
+> > never got merged. I'm resending to resurrect the discussion. Can we
+> > get this fixed?
+>=20
+> Sorry, I sorta lost track of this after the ROOTCONTEXT_MNT discussion
+> back in v3.  Looking at it a bit closer now I have one nitpicky
+> request and one larger concern (see below).
+>=20
+> > diff --git a/fs/super.c b/fs/super.c
+> > index e781226e2880..13adf43e2e5d 100644
+> > --- a/fs/super.c
+> > +++ b/fs/super.c
+> > @@ -1541,10 +1541,12 @@ int vfs_get_tree(struct fs_context *fc)
+> >  	smp_wmb();
+> >  	sb->s_flags |=3D SB_BORN;
+> > =20
+> > -	error =3D security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
+> > -	if (unlikely(error)) {
+> > -		fc_drop_locked(fc);
+> > -		return error;
+> > +	if (!(fc->lsm_set)) {
+> > +		error =3D security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
+> > +		if (unlikely(error)) {
+> > +			fc_drop_locked(fc);
+> > +			return error;
+> > +		}
+> >  	}
+>=20
+> I generally dislike core kernel code which makes LSM calls conditional
+> on some kernel state maintained outside the LSM.  Sometimes it has to
+> be done as there is no other good options, but I would like us to try
+> and avoid it if possible.  The commit description mentioned that this
+> was put here to avoid a SELinux complaint, can you provide an example
+> of the complain?  Does it complain about a double/invalid mount, e.g.
+> "SELinux: mount invalid.  Same superblock, different security ..."?
+>=20
 
-On Tue, Aug 01, 2023 at 06:47:12PM -0400, Paul Moore wrote:
-> On Fri, Jul 7, 2023 at 6:02 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Thu, Jul 6, 2023 at 8:32 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > On 7/6/2023 1:42 PM, Paul Moore wrote:
-> > > > Hello all,
-> > > >
-> > > > With some renewed interest in submitting new LSMs including in the
-> > > > upstream Linux Kernel I thought it might be a good idea to document
-> > > > some of our longstanding guidelines around submitting new LSMs.  I'm
-> > > > posting this mostly as a FYI for those who are working on new LSM
-> > > > submissions, but also to solicit feedback from everyone on the list
-> > > > regarding what we should ask of new LSMs.  If you think I'm missing
-> > > > something important, or believe I've added an unfair requirement,
-> > > > please let me know.
-> > > >
-> > > > I've added the guidelines to the README.md at the top of the LSM tree,
-> > > > but to make life easier for those reviewing the guidelines I'm
-> > > > copy-n-pasting them below ...
-> 
-> I've updated the README.md doc based on the feedback, and copied the
-> two new sections below for easier review.  If anyone has any
-> additional feedback or concerns, please let me know.
-> 
-> ## New LSM Hook Guidelines
-> 
-> While LSM hooks are generally considered outside of the Linux Kernel's stable
+The problem I had was not so much SELinux warnings, but rather that in a
+situation where I would expect to share superblocks between two
+filesystems, it didn't.
 
-Why "generally"?
+Basically if you do something like this:
 
-> API promise, due to the nature of the LSM hooks we try to minimize changes to
-> the hooks.  With that in mind, we have the following requirements for new LSM
-> hooks:
-> 
-> * Hooks should be designed to be LSM agnostic.  While it is possible that only
-> one LSM might implement the hook at the time of submission, the hook's behavior
-> should be generic enough that other LSMs could provide a meaningful
-> implementation.
+# mount nfsserver:/export/foo /mnt/foo -o context=3Dsystem_u:object_r:root_=
+t:s0
+# mount nfsserver:/export/bar /mnt/bar -o context=3Dsystem_u:object_r:root_=
+t:s0
 
-We should also avoid falling in the other extreme which is to add
-different argument just-in-case. For instance, there is no need to add a
-"flags" argument to a kernel API if there is no flag for now, especially
-if there are only a few users of this hook.
+...when "foo" and "bar" are directories on the same filesystem on the
+server, you should get two vfsmounts that share a superblock. That's
+what you get if selinux is disabled, but not when it's enabled (even
+when it's in permissive mode).
 
-I would say that we want generic-as-possible hooks (e.g. well
-positioned) but not with useless arguments.
+The problems that David hit with the automounter have a similar root
+cause though, I believe.
 
-> 
-> * The hook must be documented with a function header block that conforms to
-> the kernel documentation style.  At a minimum the documentation should explain
-> the parameters, return values, a brief overall description, any special
-> considerations for the callers, and any special considerations for the LSM
-> implementations.
-> 
-> * There must be at least one LSM implementation of the hook included in the
-> submission to act as a reference for additional LSM implementations.  The
-> reference implementation must be for one of the upstream, in-kernel LSMs; while
-> the BPF LSM is an upstream LSM, it's nature precludes it from being eligible as
-> one of the in-kernel LSMs.
+> I'd like to understand why the sb_set_mnt_opts() call fails when it
+> comes after the fs_context_init() call.  I'm particulary curious to
+> know if the failure is due to conflicting SELinux state in the
+> fs_context, or if it is simply an issue of sb_set_mnt_opts() not
+> properly handling existing values.  Perhaps I'm being overly naive,
+> but I'm hopeful that we can address both of these within the SELinux
+> code itself.
+>=20
 
-To avoid misunderstanding, I think it would be better and more generic
-to focus on the out-of-tree nature of hook implementations.  We might
-also want to give some pointers for the reason(s) why out-of-tree LSMs
-use cases are not supported.
+The problem I hit was that nfs_compare_super is called with a fs_context
+that has a NULL ->security pointer. That caused it to call
+selinux_sb_mnt_opts_compat with mnt_opts set to NULL, and at that point
+it returns 1 and decides not to share sb's.
 
-> 
-> ## New LSM Guidelines
-> 
-> Historically we have had few requirements around new LSM additions, with
-> Arjan van de Ven being the first to describe a basic protocol for accepting new
-> LSMs into the Linux Kernel.  In an attempt to document Arjan's basic ideas and
-> update them for modern Linux Kernel development, here are a list of
-> requirements for new LSM submissions:
+Filling out fc->security with this new operation seems to fix that, but
+if you see a better way to do this, then I'm certainly open to the idea.
 
-If we go for a kernel documentation patch, it might be better to put
-most of this historic paragraph into the patch description.
+> In a worst case situation, we could always implement a flag *inside*
+> the SELinux code, similar to what has been done with 'lsm_set' here.
+>=20
 
-> 
-> * The new LSM's author(s) must commit to maintain and support the new LSM for
-> an extended period of time.  While the authors may be currently employed to
-> develop and support the LSM, there is an expectation upstream that support will
-> continue beyond the author's employment with the original company, or the
-> company's backing of the LSM.
-> 
-> * New LSMs must include documentation providing a clear explanation of the
-> LSM's requirements, goals, and expected uses.  The documentation does not need
-> to rise to the level of a formal security model, but it must be considered
-> "reasonable" by the LSM community as a whole.
+I'm fine with a different solution, if you see a better one. You'll have
+to handhold me through this one though. LSM stuff is not really my
+forte'. Let me know what you'd like to see here.
 
-I guess defining the threat model would be a good first step (and we
-should probably add this kind of description for current LSMs as well).
 
-> 
-> * Any user visible interfaces provided by the LSM must be well documented.  It
-> is important to remember the user visible APIs are considered to be "forever
-> APIs" by the Linux Kernel community; do not add an API that cannot be supported
-> for the next 20+ years.
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index d06e350fedee..29cce0fadbeb 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -2745,6 +2745,30 @@ static int selinux_umount(struct vfsmount *mnt, =
+int flags)
+> >  				   FILESYSTEM__UNMOUNT, NULL);
+> >  }
+> > =20
+> > +static int selinux_fs_context_init(struct fs_context *fc,
+> > +				   struct dentry *reference)
+> > +{
+> > +	const struct superblock_security_struct *sbsec;
+> > +	struct selinux_mnt_opts *opts;
+> > +
+> > +	if (fc->purpose =3D=3D FS_CONTEXT_FOR_SUBMOUNT) {
+> > +		opts =3D kzalloc(sizeof(*opts), GFP_KERNEL);
+> > +		if (!opts)
+> > +			return -ENOMEM;
+> > +
+> > +		sbsec =3D selinux_superblock(reference->d_sb);
+> > +		if (sbsec->flags & FSCONTEXT_MNT)
+> > +			opts->fscontext_sid	=3D sbsec->sid;
+> > +		if (sbsec->flags & CONTEXT_MNT)
+> > +			opts->context_sid	=3D sbsec->mntpoint_sid;
+> > +		if (sbsec->flags & DEFCONTEXT_MNT)
+> > +			opts->defcontext_sid	=3D sbsec->def_sid;
+>=20
+> I acknowledge this is very nitpicky, but we're starting to make a
+> greater effort towards using consistent style within the SELinux
+> code.  With that in mind, please remove the alignment whitespace in
+> the assignments above.  Thank you.
+>=20
 
-I would also add tests! For new kernel developments, especially those
-focused on security, the interfaces should be well tested, part of
-kselftests, and run at least for each kernel release (if possible with
-the KernelCI infrastructure).  A good test coverage should be a minimal
-requirement, even if this is not enough.  Additionally, syzkaller should
-be able to efficiently fuzz these interfaces, which may require some
-tuning.
+Will do. Thanks for having a look!
 
-Extending the kernel documentation should not stop developers to write
-man pages as well. ;)
-
-It might also be useful to add some standalone tools in samples/
-
-> 
-> * The LSM implementation must follow general Linux Kernel coding practices,
-> faithfully implement the security model and APIs described in the
-> documentation, and be free of any known defects at the time of submission.
-> 
-> * Any userspace tools or patches created in support of the LSM must be publicly
-> available, with a public git repository preferable over a tarball snapshot.
-
-> 
-> -- 
+> > +		fc->security =3D opts;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int selinux_fs_context_dup(struct fs_context *fc,
+> >  				  struct fs_context *src_fc)
+> >  {
+>=20
+> --
 > paul-moore.com
+
+--=20
+Jeff Layton <jlayton@kernel.org>
