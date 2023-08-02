@@ -2,169 +2,111 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F6FC04A94
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Aug 2023 22:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD15C001DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Aug 2023 22:58:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229626AbjHBWgQ (ORCPT
+        id S230457AbjHBW6m (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Aug 2023 18:36:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42136 "EHLO
+        Wed, 2 Aug 2023 18:58:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229527AbjHBWgP (ORCPT
+        with ESMTP id S230025AbjHBW6l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Aug 2023 18:36:15 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B70DB18B;
-        Wed,  2 Aug 2023 15:36:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=B8NL8ZPj4lVJOEIOnl2j4qecqLNEz+fPjufrYvydDJQ=; b=AO2kXk7HBxbAUBw1gm9E0J8qK3
-        x1/pF6CRfMdjbGYO/2gr0X+gLG72kkPmvpu3KUtrQaN5MRCMIsfTds3PMSgxMdz16fzWj4hp4dE2P
-        1XjfEHuo2YQTOyhuYWyUXzz85jj575hnqWn5tTPwmhJTrCUwt3KkgfprbAWNCTVUt+Ilp+AkfU3P3
-        hgF83CaFSb97Y1bnGDjqLZv1YNEU4Xkn4qjW7aaqahafmLS8VRAp0U+yr3bmndDUAeVDisILGvhUm
-        rRkaRggujiViHaReIVwai7afXDXx82CToqAYTR0YP8ZUcl7D8f/oIMFZXqVxVENO/xc8hviDLTfvz
-        e0I/83hg==;
-Received: from [2601:1c2:980:9ec0::2764]
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qRKRs-0062ly-22;
-        Wed, 02 Aug 2023 22:36:08 +0000
-Message-ID: <c1f1b7b7-fb2f-cd03-d962-70979082c1b4@infradead.org>
-Date:   Wed, 2 Aug 2023 15:36:07 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: ANN: new LSM guidelines
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        Alejandro Colomar <alx.manpages@gmail.com>,
-        linux-doc@vger.kernel.org
-References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
- <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com>
- <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
- <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
- <20230802.doki9xoTh0ai@digikod.net>
- <CAHC9VhSb+=JF7GJ-98DX_3NO2eSLeurXO+w4xcgHuXFh6HqWVw@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <CAHC9VhSb+=JF7GJ-98DX_3NO2eSLeurXO+w4xcgHuXFh6HqWVw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 2 Aug 2023 18:58:41 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DCCF10FB;
+        Wed,  2 Aug 2023 15:58:40 -0700 (PDT)
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 372MuNmU024419;
+        Wed, 2 Aug 2023 22:58:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=QK66vtPkzYFSebZgaYZ9q+LMUPFJ6hFoVvtGd6vohRI=;
+ b=HaGWfHIqpTCmin3p/QGMBXGgdtpLFkgmtJfmAmTBqoy25i+u21qZw53NVEuxYXwaXjE5
+ ozabJF5NqaKvFaZMJPUfb94qoj7w/Op1SVLwwN0HMIb6oODVFW6Uhn3aSZLHS+fU3U6h
+ T6gM7tF3d239ADdL2mLGD5z+yGZ4+TsOGTwCLgLGXjYA9ND6jF6ndOa1+cBYjNHD+yAR
+ EHVJ07NxVlz8oGdTd8cqRJOvh290pSj/Bad5wyxrtLUJ/3qIHN69iT5I2/wo0fCXkIeY
+ 91NdGrRXh+MC4HUZw1xMuvDroYjiaJlB7e4iGJ8HeqAZxXHOWVuR9fZnrAJpv6HuktVq PA== 
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3s80ck00qy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Aug 2023 22:58:30 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 372MBB94014550;
+        Wed, 2 Aug 2023 22:58:29 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+        by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3s5ft1qvnu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Aug 2023 22:58:29 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+        by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 372MwSSf65208740
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 2 Aug 2023 22:58:28 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6A8625805B;
+        Wed,  2 Aug 2023 22:58:28 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9E0B258058;
+        Wed,  2 Aug 2023 22:58:27 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.115.23])
+        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Wed,  2 Aug 2023 22:58:27 +0000 (GMT)
+Message-ID: <a312804f17f273ee0b31d28fc2bb95ef99cbb150.camel@linux.ibm.com>
+Subject: Re: [PATCH 0/6] Enable loading local and third party keys on
+ PowerVM guest
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 02 Aug 2023 18:58:27 -0400
+In-Reply-To: <20230714153435.28155-1-nayna@linux.ibm.com>
+References: <20230714153435.28155-1-nayna@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Ony8YeYLq8qDwIe589R8_zLRl0FmxnVd
+X-Proofpoint-ORIG-GUID: Ony8YeYLq8qDwIe589R8_zLRl0FmxnVd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-02_18,2023-08-01_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ suspectscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0
+ mlxlogscore=901 clxscore=1011 impostorscore=0 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2308020199
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+On Fri, 2023-07-14 at 11:34 -0400, Nayna Jain wrote:
+> On a secure boot enabled PowerVM guest, local and third party code signing
+> keys are needed to verify signed applications, configuration files, and
+> kernel modules.
+> 
+> Loading these keys onto either the .secondary_trusted_keys or .ima
+> keyrings requires the certificates be signed by keys on the
+> .builtin_trusted_keys, .machine or .secondary_trusted_keys keyrings.
+> 
+> Keys on the .builtin_trusted_keys keyring are trusted because of the chain
+> of trust from secure boot up to and including the linux kernel.  Keys on
+> the .machine keyring that derive their trust from an entity such as a
+> security officer, administrator, system owner, or machine owner are said
+> to have "imputed trust." The type of certificates and the mechanism for
+> loading them onto the .machine keyring is platform dependent.
+> 
+> Userspace may load certificates onto the .secondary_trusted_keys or .ima
+> keyrings. However, keys may also need to be loaded by the kernel if they
+> are needed for verification in early boot time. On PowerVM guest, third
+> party code signing keys are loaded from the moduledb variable in the
+> Platform KeyStore(PKS) onto the .secondary_trusted_keys.
 
-On 8/2/23 14:56, Paul Moore wrote:
-> On Wed, Aug 2, 2023 at 2:38 PM Mickaël Salaün <mic@digikod.net> wrote:
->>
->> I like this guideline. I guess this is your goal and I think it should
->> be part of Documentation/security/lsm.rst (and move the introduction
->> part of lsm-development.rst into lsm.rst) and get a few SoB.
-> 
-> Thanks for the review and comments.  Responses below, but I'll post an
-> updated guidance doc in just a bit incorporating your feedback as well
-> as those of a few others who sent me comments off-list.
-> 
-> As far as moving this guidance into Documentation/security, yes, that
-> is the ultimate goal.  In fact I have a todo item to go through all of
-> Documentation/security and give it a good cleaning/review/edit,
-> although please don't expect that anytime soon :/
-> 
->> On Tue, Aug 01, 2023 at 06:47:12PM -0400, Paul Moore wrote:
->>> On Fri, Jul 7, 2023 at 6:02 PM Paul Moore <paul@paul-moore.com> wrote:
->>>> On Thu, Jul 6, 2023 at 8:32 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>>> On 7/6/2023 1:42 PM, Paul Moore wrote:
->>>>>> Hello all,
->>>>>>
->>>>>> With some renewed interest in submitting new LSMs including in the
->>>>>> upstream Linux Kernel I thought it might be a good idea to document
->>>>>> some of our longstanding guidelines around submitting new LSMs.  I'm
->>>>>> posting this mostly as a FYI for those who are working on new LSM
->>>>>> submissions, but also to solicit feedback from everyone on the list
->>>>>> regarding what we should ask of new LSMs.  If you think I'm missing
->>>>>> something important, or believe I've added an unfair requirement,
->>>>>> please let me know.
->>>>>>
->>>>>> I've added the guidelines to the README.md at the top of the LSM tree,
->>>>>> but to make life easier for those reviewing the guidelines I'm
->>>>>> copy-n-pasting them below ...
->>>
->>> I've updated the README.md doc based on the feedback, and copied the
->>> two new sections below for easier review.  If anyone has any
->>> additional feedback or concerns, please let me know.
->>>
->>> ## New LSM Hook Guidelines
->>>
->>> While LSM hooks are generally considered outside of the Linux Kernel's stable
->>
->> Why "generally"?
-> 
-> Good point, I'll remove that.
-> 
->>> API promise, due to the nature of the LSM hooks we try to minimize changes to
->>> the hooks.  With that in mind, we have the following requirements for new LSM
->>> hooks:
->>>
->>> * Hooks should be designed to be LSM agnostic.  While it is possible that only
->>> one LSM might implement the hook at the time of submission, the hook's behavior
->>> should be generic enough that other LSMs could provide a meaningful
->>> implementation.
->>
->> We should also avoid falling in the other extreme which is to add
->> different argument just-in-case. For instance, there is no need to add a
->> "flags" argument to a kernel API if there is no flag for now, especially
->> if there are only a few users of this hook.
->>
->> I would say that we want generic-as-possible hooks (e.g. well
->> positioned) but not with useless arguments.
-> 
-> Agreed, although I think that's hard to properly describe that in a
-> sentence or two.  It's going to be impossible to capture every
-> requirement in this doc (I added a new paragraph explaining this in
-> the latest revision), so I think we can just leave this as-is for now.
-> 
-> If it does become a problem we can work a bit harder on describing
-> what makes a "good" LSM hook.
-> 
->>> * There must be at least one LSM implementation of the hook included in the
->>> submission to act as a reference for additional LSM implementations.  The
->>> reference implementation must be for one of the upstream, in-kernel LSMs; while
->>> the BPF LSM is an upstream LSM, it's nature precludes it from being eligible as
->>> one of the in-kernel LSMs.
->>
->> To avoid misunderstanding, I think it would be better and more generic
->> to focus on the out-of-tree nature of hook implementations.  We might
->> also want to give some pointers for the reason(s) why out-of-tree LSMs
->> use cases are not supported.
-> 
-> I'm open to new language here if you have some particular wording in mind?
-> 
->>> ## New LSM Guidelines
->>>
->>> Historically we have had few requirements around new LSM additions, with
->>> Arjan van de Ven being the first to describe a basic protocol for accepting new
->>> LSMs into the Linux Kernel.  In an attempt to document Arjan's basic ideas and
->>> update them for modern Linux Kernel development, here are a list of
->>> requirements for new LSM submissions:
->>
->> If we go for a kernel documentation patch, it might be better to put
->> most of this historic paragraph into the patch description.
-> 
-> Agree.
-> 
-> I was looking for the original comments from Arjan but couldn't find
-> them in an archive anywhere, if anyone has a pointer it would be great
-> to share that.
+Thanks, Nayna.   I've reviewed and done some initially testing up to
+5/6.
 
-Are you referring to either of these?
+Mimi
 
-https://lore.kernel.org/all/20071026141358.38342c0f@laptopd505.fenrus.org/
-
-https://lore.kernel.org/lkml/20071024191933.53094b81@laptopd505.fenrus.org/
-
--- 
-~Randy
