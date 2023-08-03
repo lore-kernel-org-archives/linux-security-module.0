@@ -2,113 +2,91 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C00C41513
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 23:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 140BEC001DB
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 23:20:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231133AbjHCXUb (ORCPT
+        id S231288AbjHCXUy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Aug 2023 19:20:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51382 "EHLO
+        Thu, 3 Aug 2023 19:20:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229978AbjHCXU3 (ORCPT
+        with ESMTP id S230471AbjHCXUx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Aug 2023 19:20:29 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95604A2
-        for <linux-security-module@vger.kernel.org>; Thu,  3 Aug 2023 16:20:28 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-d299ed34bacso3810751276.1
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Aug 2023 16:20:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1691104828; x=1691709628;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9MXeaLjfcWtzHxNdYmCOMyJP3zSmOKDao0jQ+QjgI/I=;
-        b=V3EVTxtA5ED7sOkPK0jQ3poEb+JOcy9zDlw9VNp5kgG1quKmr1FEp+PpRFhnnodiYT
-         AynTIHgSu90a1r2GIXqd9+O+scLQx71THTiHWJf05YWlO5IUdAVU56wJpz4bhXBM1XO5
-         ond3AGqBZsQzIBOKDSLaKts71NuUZPAqp3URluGxd8Zh/sl7LacCfHujcnE7O8w5Z6Pk
-         O7VNOiY1eouL2UBcFzuYCIJU1o4tOT5ek2mJ8povllL9fOGQCq5+qvE+nf0aER/yX2FM
-         N/kzPA4KiqhPVrBi35/ynNvcZWBhtih7rkhNsuH59Ibhho7+wNqpUd16SGbdcZi1oQGS
-         C2jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691104828; x=1691709628;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9MXeaLjfcWtzHxNdYmCOMyJP3zSmOKDao0jQ+QjgI/I=;
-        b=U3Fb1URVRL3+ACpscvZys+GT5eGw0BMKbLAWTBrsgWV3tb3D9plJZcb5D39ga+/oTD
-         AlrVxmtP57Ik6m32jVge0gTfriWQDHlNxhOhw2na9yPpPleQkyyqRt+hJtRpKX7RqJfJ
-         RgM7dUkva1x3nfuqwnJx/zLurwqEzGPqqJ+lX+irGumBRgZdjGPXhFNQ5EoSFoDsrH8i
-         bkwgnkIu3yCKlMUd3hQ1rYZhxsXeoWnzQPj3K8zWCwoFLnXos6UwQXs1dZlyJvbdmEVQ
-         hORhJdOYawqNPMmzaBy/t3VV2lWEnTOLdJ9IA9ChWhK5DZU/buoOrGCE6mhnGV+jXNHT
-         qK+w==
-X-Gm-Message-State: AOJu0YynJXFu0DxkCkIqfHLbfTUm2wMLXOsmg2wi3lWlupFllGOtrotu
-        YUplFnfUy8Cb269LydYvF2X3c0Z1tAq6fl1hvjry
-X-Google-Smtp-Source: AGHT+IGP6dy+Ma9towFfeW4EYpOXpR399CS3Lux2gOMhtGk1oQrNm0ERb+nZF8/LAWRnUxAeXy0cxrfXLYsO+s9GLNU=
-X-Received: by 2002:a0d:e24d:0:b0:577:186c:2a3c with SMTP id
- l74-20020a0de24d000000b00577186c2a3cmr188706ywe.19.1691104827768; Thu, 03 Aug
- 2023 16:20:27 -0700 (PDT)
+        Thu, 3 Aug 2023 19:20:53 -0400
+Received: from out-123.mta0.migadu.com (out-123.mta0.migadu.com [IPv6:2001:41d0:1004:224b::7b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCEDE19B
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Aug 2023 16:20:51 -0700 (PDT)
+Message-ID: <b201f66c-9588-a234-f5c9-892ec421c93d@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1691104848; h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=5F7GF8sJENfzg5tPE4ksqW1Gvi/kE7aeGP7cD2s9CwQ=;
+        b=aX3o94De9+NKcU1rdxpRzj1Osng+xGpXSc163vnpFQdXs2TR+qLUiZLYYvrFdiTmTQ1AiF
+        IQizslfbptnH6HhnTs/PEvB2WPcnc8KqA8LRzwZSJACyRNPs5p911rUnjRU7OrFlnoziBa
+        BLHnXlSGfolTq1qT+ASfB7R8rerws0g=
+Date:   Thu, 3 Aug 2023 16:20:37 -0700
 MIME-Version: 1.0
-References: <20230621074623.498647-1-cuigaosheng1@huawei.com>
- <CAHC9VhQzZYg1HH_Q6OYytkp-uYOmCAnpzHb9tiRA-YC0VNha9A@mail.gmail.com>
- <CAHC9VhQaWM=eC98ezfKmOA6sd9wzxQ0PFp5EysUKLZFEt=yB=A@mail.gmail.com>
- <CAHC9VhTibk2tFPt7ZjFL9ps9NO6_sCQwXtbF1pQCXO+jGhshpg@mail.gmail.com> <31a5aed2f075b69705142ff6f558e8cd8ccb9cd8.camel@linux.ibm.com>
-In-Reply-To: <31a5aed2f075b69705142ff6f558e8cd8ccb9cd8.camel@linux.ibm.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 3 Aug 2023 19:20:16 -0400
-Message-ID: <CAHC9VhRQBOfdcYO5QLRgVGdbqLFrogXeVD3FT2cETmLhP5uz3A@mail.gmail.com>
-Subject: Re: [PATCH -next] trusted-keys: Fix kernel-doc warnings in trusted-keys
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Gaosheng Cui <cuigaosheng1@huawei.com>, jarkko@kernel.org,
-        dhowells@redhat.com, jejb@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Reply-To: yonghong.song@linux.dev
+Subject: Re: [PATCH bpf-next v9 2/4] selftests/bpf: Use random netns name for
+ mptcp
+Content-Language: en-US
+To:     Geliang Tang <geliang.tang@suse.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Mat Martineau <martineau@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Simon Horman <horms@kernel.org>
+Cc:     bpf@vger.kernel.org, netdev@vger.kernel.org, mptcp@lists.linux.dev,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <cover.1691069778.git.geliang.tang@suse.com>
+ <54307a065383fd3171a6306ddf30395b686aaccc.1691069778.git.geliang.tang@suse.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <54307a065383fd3171a6306ddf30395b686aaccc.1691069778.git.geliang.tang@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 3, 2023 at 6:21=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wro=
-te:
->
-> On Thu, 2023-08-03 at 18:00 -0400, Paul Moore wrote:
-> > On Tue, Jul 25, 2023 at 4:49=E2=80=AFPM Paul Moore <paul@paul-moore.com=
-> wrote:
-> > > On Wed, Jun 21, 2023 at 9:33=E2=80=AFAM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> > > > On Wed, Jun 21, 2023 at 3:46=E2=80=AFAM Gaosheng Cui <cuigaosheng1@=
-huawei.com> wrote:
-> > > > >
-> > > > > Fix kernel-doc warnings in trusted-keys:
-> > > > >
-> > > > > security/keys/trusted-keys/trusted_tpm2.c:203: warning: expecting
-> > > > > prototype for tpm_buf_append_auth(). Prototype was for
-> > > > > tpm2_buf_append_auth() instead.
-> > > > >
-> > > > > Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
-> > > > > ---
-> > > > >  security/keys/trusted-keys/trusted_tpm2.c | 2 +-
-> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > Reviewed-by: Paul Moore <paul@paul-moore.com>
-> > >
-> > > Jarkko, David, can one of you pick this up into your tree?
-> >
-> > Guys, this patch is both trivial and obviously correct, please pick it
-> > up so it can go up during the next merge window.
->
-> Paul, either Jarkko or I can queue a trusted-keys patch.  As this isn't
-> on the top of Jarkko's radar, I'll queue it.
 
-Ah ha!  I was working under the assumption that everything under
-security/keys/ was David and Jarko's responsibility, but now that I'm
-looking at MAINTAINERS I see that isn't the case.  In fact it looks
-like there are five (!) different "subsystems" under security/keys/
-... I don't currently know enough about the different divisions there,
-but it seems like we might want to see if we can do some consolidation
-...
 
-Anyway, thanks for picking this up Mimi.
+On 8/3/23 6:41 AM, Geliang Tang wrote:
+> Use rand() to generate a random netns name instead of using the fixed
+> name "mptcp_ns" for every test.
+> 
+> By doing that, we can re-launch the test even if there was an issue
+> removing the previous netns or if by accident, a netns with this generic
+> name already existed on the system.
+> 
+> Note that using a different name each will also help adding more
+> subtests in future commits.
+> 
+> Signed-off-by: Geliang Tang <geliang.tang@suse.com>
+> Reviewed-by: Matthieu Baerts <matthieu.baerts@tessares.net>
 
---=20
-paul-moore.com
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
