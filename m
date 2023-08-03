@@ -2,126 +2,144 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19167C41513
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 21:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B283C41513
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 21:36:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231874AbjHCVdy (ORCPT
+        id S230280AbjHCVgh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Aug 2023 17:33:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43356 "EHLO
+        Thu, 3 Aug 2023 17:36:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbjHCVdx (ORCPT
+        with ESMTP id S229779AbjHCVgg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Aug 2023 17:33:53 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CB4230F8
-        for <linux-security-module@vger.kernel.org>; Thu,  3 Aug 2023 14:33:52 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d052f58b7deso1495538276.2
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Aug 2023 14:33:52 -0700 (PDT)
+        Thu, 3 Aug 2023 17:36:36 -0400
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C52C30F6
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Aug 2023 14:36:35 -0700 (PDT)
+Received: by mail-oi1-x231.google.com with SMTP id 5614622812f47-3a7781225b4so152764b6e.3
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Aug 2023 14:36:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691098431; x=1691703231;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9a1CX278YGq0zGZWP+f0LaA5pxcSpZKfqzUpq5J0Xvg=;
-        b=IR5xzMKe8szTmxl4p2ho1ObEqwy8naF4E4qnmDtBq7lAxEtsU16tQj/R4R5qESegez
-         PkrsM289xscbVMOJUdfqB4yLgjio6Z6UyTQ5akbsqRMVo/0CI6G846MYZvRY5SnSnkmz
-         tLPxmo4niw2nNfzxnBiONXV83evUYWw26lriJf75L9atmgvwAuNI5FQTSgUw4k4iWQrK
-         UI9t5ZYCmE3/x2kIcQyQMLaEOC8LoQHmUO9+YULFdo01f+mC99FiBoEx3M4fWkTeeb98
-         lRZqa6RGf+ZJ9wu3iOqQHRY2Gzg59Ca7BS8kxvbQPHU1PAbEiHR33FOvMQ5ucfGAtJAx
-         QPfA==
+        d=paul-moore.com; s=google; t=1691098594; x=1691703394;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H65YV0mXsBrDwaLhfjAIVPFHC4txE29o4v52O46fpYE=;
+        b=JGQXuiFPLwMGt3r+9wI79MIcQcAuVaR0Zi+sM8EXzPXO8IxBuAk3wnY+KTKw4erASI
+         yyxN2se2O1ojtjXoroa8ZSwQEpYjJ233bwqQY793JIE9iJ7vVKPUHEa0NsCuOGxeKk4J
+         H9gV3fxFwP/2tpBdF6pzzEml+oSLLWgW5Bkpr3nSilADN4ckupwPZQIxmy7iXY7lo+vv
+         qRB/ZHjCKAjevOT6nsE8jaZwYChEI/uSQ2pLO0iSQnkKsKIxJplbU68k8UxHb0clYA4X
+         4NnCjhCWZ9sdo/s2aECVGanJ9EULZGXPJRNBVUehSnH3fvrgB5LSj0RREdFKCpxFxeIJ
+         9gbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691098431; x=1691703231;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9a1CX278YGq0zGZWP+f0LaA5pxcSpZKfqzUpq5J0Xvg=;
-        b=O2X51LvxJy4ON5OaHhk35gfXYSsNmrFiVw0TT5ET6HWSVgeFAWIgFeQDcbn/deZ41K
-         ctTmxhqd+7WlITcUuXMiCIblEPzhwLNdjyc03j6GJjttuvCU6pguEhL6AxO+N9e9ayME
-         0HFMg8myaO9D+oY6Yy3hujTfbewslr4JdIYzuXUE2/1/cw/2/Y8/ha3flU0wv3psRvqf
-         Wv9BM613s/FGvv04gRWH+wKlu4PgkuDvIYuiD4/8r09xft9zcmK/yPGxWb/jfNo+2Vh5
-         p8EmN89KNVC5TqkCTaD75RkXGZdEVBYv65TUu24VFQIM1U/gsCgFSnyCNYaTv1Hh9K8h
-         LGwA==
-X-Gm-Message-State: ABy/qLZpd5CTkbGl5nml/FiQVQqZBUZHebyKC/CauZ6jQ0RYXhWJ6EIq
-        Pw04D2jv/9CG1I35fxS2+O6iJxfEwJlUZEtaCw==
-X-Google-Smtp-Source: APBJJlEW3o5TROn1f+epZr1wpavKrHKIJTzw/zt8fdpICa5F0hhCkgMlH8XVXr9P//1ALSRc4iTaSp9JZuKiANeApg==
-X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
- (user=justinstitt job=sendgmr) by 2002:a25:d24d:0:b0:d08:ea77:52d4 with SMTP
- id j74-20020a25d24d000000b00d08ea7752d4mr138360ybg.12.1691098431718; Thu, 03
- Aug 2023 14:33:51 -0700 (PDT)
-Date:   Thu, 03 Aug 2023 21:33:44 +0000
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIADcdzGQC/x3MQQqAIBBA0avIrBNMsaKrRAvJsWaRhlok0d2Tl
- m/x/wMJI2GCkT0Q8aJEwVe0DYNlM35FTrYapJBKDELxhMsZKReewx5K4L3Vg9PKKm06qNUR0dH 9H6f5fT/e0nA8YQAAAA==
-X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1691098430; l=1987;
- i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
- bh=2evVcZK0WP6ax5yAm7AbIZ6ZeQaKrhdt6vD9tIcclH0=; b=ypFgRW0czPyi/GHwpauG42Y9gan08GzQKInJtaElHrzDHwEl74ITApi9Gu8Ptkoi/fv6MXJxT
- Z/witMGLrcwALUkSIWGhNs1KlNn/ZXVqD3fHBSWZbY0yYDhlgIV5Rxe
-X-Mailer: b4 0.12.3
-Message-ID: <20230803-security-tomoyo-v1-1-c53a17908d2f@google.com>
-Subject: [PATCH] tomoyo: refactor deprecated strncpy
-From:   Justin Stitt <justinstitt@google.com>
-To:     Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        linux-hardening@vger.kernel.org,
-        Justin Stitt <justinstitt@google.com>
-Content-Type: text/plain; charset="utf-8"
+        d=1e100.net; s=20221208; t=1691098594; x=1691703394;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H65YV0mXsBrDwaLhfjAIVPFHC4txE29o4v52O46fpYE=;
+        b=lTP9cby65IBWyIB64b/ELXZKETcgZkKvUtqUtCjVAfi5AR4XLJ/W4pMva3inwWpQA/
+         HxWh1cxtVrl6Kwa6LPkEPAVO6yYC74iqGGe8Jb0kbfrHF0JE1gHyUxsye0bXEpn4A9SA
+         rk8SVxiFcfsLrR7kGnnNGZdWB48h23AMAPWQzE3Cv3MoEciuJTqCApWRsmOl+oVH2BO8
+         LlaWIuv8SbRTIwYKUxJOhVRzliXywdqgpuc9F0k4He37K/0NlYBmXN6icB5Oo6BzJ0Dx
+         AtYQmHG1scxmqihTF8k/0IPFqO3LPv/CIdKVgE8UTpluY2UIux6dvgYLjYsb2b5cqce5
+         oVkA==
+X-Gm-Message-State: ABy/qLa/RKDHK1njYEuVHhw9sDc3V/aQe5RL5OosxzUfEmG125Fd8UBz
+        /bavjTn90naniAybIABI7MLuuGDsoXT4+RRdDQGH
+X-Google-Smtp-Source: APBJJlHI6Vnodk0t5RxWsdDsJDmgJUvqD5T9v4GV8qFm0Kj2mSxwy1/T2ArUNHswC47JY+o8XXXDzooAAfddc2j8zLM=
+X-Received: by 2002:aca:2117:0:b0:3a7:146d:85b5 with SMTP id
+ 23-20020aca2117000000b003a7146d85b5mr16968781oiz.52.1691098594544; Thu, 03
+ Aug 2023 14:36:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
+ <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com> <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
+ <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
+ <20230802.doki9xoTh0ai@digikod.net> <CAHC9VhSb+=JF7GJ-98DX_3NO2eSLeurXO+w4xcgHuXFh6HqWVw@mail.gmail.com>
+ <20230803.Ahk8eith7xei@digikod.net>
+In-Reply-To: <20230803.Ahk8eith7xei@digikod.net>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 3 Aug 2023 17:36:23 -0400
+Message-ID: <CAHC9VhQ3ViRdnbVgP7FXFaGi1hSLYX2RJcFNrvJp-Y1Mt1fc8Q@mail.gmail.com>
+Subject: Re: ANN: new LSM guidelines
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-`strncpy` is deprecated for use on NUL-terminated destination strings [1].
+On Thu, Aug 3, 2023 at 5:44=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
+> On Wed, Aug 02, 2023 at 05:56:42PM -0400, Paul Moore wrote:
+> > On Wed, Aug 2, 2023 at 2:38=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@di=
+gikod.net> wrote:
+>
+> [...]
+>
+> > > > * There must be at least one LSM implementation of the hook include=
+d in the
+> > > > submission to act as a reference for additional LSM implementations=
+.  The
+> > > > reference implementation must be for one of the upstream, in-kernel=
+ LSMs; while
+> > > > the BPF LSM is an upstream LSM, it's nature precludes it from being=
+ eligible as
+> > > > one of the in-kernel LSMs.
+> > >
+> > > To avoid misunderstanding, I think it would be better and more generi=
+c
+> > > to focus on the out-of-tree nature of hook implementations.  We might
+> > > also want to give some pointers for the reason(s) why out-of-tree LSM=
+s
+> > > use cases are not supported.
+> >
+> > I'm open to new language here if you have some particular wording in mi=
+nd?
+>
+> What about this?
+>
+> * Every hook must demonstrate its usefulness and be actually used by
+>   in-kernel code.  This is required to understand the purpose of the LSM
+>   hooks, their expected semantic, and to be able to guarantee security
+>   properties throughout kernel code changes (e.g., thanks to regression
+>   testing).  This means that out-of-tree kernel code and pass-through
+>   implementations (e.g., BPF LSM) are not eligible for such reference
+>   implementations.
 
-A suitable replacement is `strscpy` [2] due to the fact that it
-guarantees NUL-termination on its destination buffer argument which is
-_not_ the case for `strncpy`!
+Nice.  I made some slight changes while adding it to the doc, take a
+look and let me know what you think.
 
-It should be noted that the destination buffer is zero-initialized and
-had a max length of `sizeof(dest) - 1`. There is likely _not_ a bug
-present in the current implementation. However, by switching to
-`strscpy` we get the benefit of no longer needing the `- 1`'s from the
-string copy invocations on top of `strscpy` being a safer interface all
-together.
+> > > > * The new LSM's author(s) must commit to maintain and support the n=
+ew LSM for
+> > > > an extended period of time.  While the authors may be currently emp=
+loyed to
+> > > > develop and support the LSM, there is an expectation upstream that =
+support will
+> > > > continue beyond the author's employment with the original company, =
+or the
+> > > > company's backing of the LSM.
+> > > >
+> > > > * New LSMs must include documentation providing a clear explanation=
+ of the
+> > > > LSM's requirements, goals, and expected uses.  The documentation do=
+es not need
+> > > > to rise to the level of a formal security model, but it must be con=
+sidered
+> > > > "reasonable" by the LSM community as a whole.
+> > >
+> > > I guess defining the threat model would be a good first step (and we
+> > > should probably add this kind of description for current LSMs as well=
+).
+> >
+> > I believe that should be captured in the "requirements, goals, and
+> > expected uses" portion of the requirement above, but if you believe it
+> > should be more explicit let me know.
+>
+> I think explicitly using "threat model" in this paragraph would be a
+> good idea.
 
-[1]: www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings
-[2]: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.en.html
+Okay, I reworked that requirement slightly, please give it a look
 
-Link: https://github.com/KSPP/linux/issues/90
-Cc: linux-hardening@vger.kernel.org
-Signed-off-by: Justin Stitt <justinstitt@google.com>
----
- security/tomoyo/domain.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
-index ac20c0bdff9d..90b53500a236 100644
---- a/security/tomoyo/domain.c
-+++ b/security/tomoyo/domain.c
-@@ -784,13 +784,12 @@ int tomoyo_find_next_domain(struct linux_binprm *bprm)
- 		if (!strcmp(domainname, "parent")) {
- 			char *cp;
- 
--			strncpy(ee->tmp, old_domain->domainname->name,
--				TOMOYO_EXEC_TMPSIZE - 1);
-+			strscpy(ee->tmp, old_domain->domainname->name, TOMOYO_EXEC_TMPSIZE);
- 			cp = strrchr(ee->tmp, ' ');
- 			if (cp)
- 				*cp = '\0';
- 		} else if (*domainname == '<')
--			strncpy(ee->tmp, domainname, TOMOYO_EXEC_TMPSIZE - 1);
-+			strscpy(ee->tmp, domainname, TOMOYO_EXEC_TMPSIZE);
- 		else
- 			snprintf(ee->tmp, TOMOYO_EXEC_TMPSIZE - 1, "%s %s",
- 				 old_domain->domainname->name, domainname);
-
----
-base-commit: 5d0c230f1de8c7515b6567d9afba1f196fb4e2f4
-change-id: 20230803-security-tomoyo-7d58f53d35a6
-
-Best regards,
---
-Justin Stitt <justinstitt@google.com>
-
+--=20
+paul-moore.com
