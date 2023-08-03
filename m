@@ -2,92 +2,165 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9E9C001DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Aug 2023 22:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60B92C41513
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 02:46:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232221AbjHBW7m (ORCPT
+        id S230248AbjHCCqq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Aug 2023 18:59:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49700 "EHLO
+        Wed, 2 Aug 2023 22:46:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232481AbjHBW7b (ORCPT
+        with ESMTP id S233283AbjHCCqp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Aug 2023 18:59:31 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D58930F3;
-        Wed,  2 Aug 2023 15:59:26 -0700 (PDT)
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 372MgVIl014857;
-        Wed, 2 Aug 2023 22:59:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=GpAGXLlF4MFiIeIlOeRB3FOTgQoo/nj/0JBNKef5ICc=;
- b=ARK92OU5wOn/CBW5EfcY7SV2jBk8DWb16hu+hOLdO7FpaRG6DBacp0T4Pgf18trYSshu
- tycnQe4vf75vpUgLquNIrwYxyQ4yI0c4VJFAopBDEkg5wQ17JPKNfVB3JyYnWZRGuy6b
- mBcBi8ov/Z/IbFgc9+VKeD8mhMW+Fv+F9G1+Gu6hpCX1hws+LMIwkFMnxHu4b/2mzEIV
- RLrOg9bsUKd6pfV90L7zhpvURgVAPx5oYjDk6Mle2NntudD0vNk9oAt8ZNV78L69mRHH
- wLNlj/ML76Xp5dmomLcftFcHTUoIjHIT6/hpi1D62YyjCxUrsNWKbH/OIhPhJCSR/6p4 hw== 
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3s7yysgbf9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Aug 2023 22:59:19 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 372MAkVN014533;
-        Wed, 2 Aug 2023 22:59:18 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-        by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3s5ft1qvta-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Aug 2023 22:59:18 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-        by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 372MxHci66060792
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 2 Aug 2023 22:59:17 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C3AA458054;
-        Wed,  2 Aug 2023 22:59:17 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A331558050;
-        Wed,  2 Aug 2023 22:59:16 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.115.23])
-        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Wed,  2 Aug 2023 22:59:16 +0000 (GMT)
-Message-ID: <b3a604758ef1bc18efb6a7750b4362a23cb9adf2.camel@linux.ibm.com>
-Subject: Re: [PATCH 5/6] integrity: PowerVM machine keyring enablement.
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 02 Aug 2023 18:59:11 -0400
-In-Reply-To: <20230714153435.28155-6-nayna@linux.ibm.com>
-References: <20230714153435.28155-1-nayna@linux.ibm.com>
-         <20230714153435.28155-6-nayna@linux.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: jwv7mcVB6RPCzbrgVEN_2_WremGD4Tt-
-X-Proofpoint-GUID: jwv7mcVB6RPCzbrgVEN_2_WremGD4Tt-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-02_18,2023-08-01_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- spamscore=0 priorityscore=1501 mlxlogscore=691 malwarescore=0
- suspectscore=0 clxscore=1015 phishscore=0 bulkscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308020199
+        Wed, 2 Aug 2023 22:46:45 -0400
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60C5EE0
+        for <linux-security-module@vger.kernel.org>; Wed,  2 Aug 2023 19:46:42 -0700 (PDT)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-5841be7d15eso3992087b3.2
+        for <linux-security-module@vger.kernel.org>; Wed, 02 Aug 2023 19:46:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1691030801; x=1691635601;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C7rPDjP3w7SFi7WVbOLZnOQv42SK/YK3pgxUtFOJqn8=;
+        b=NhqdR98K7bSRKTQ7CDjVRuusX4/Mn2110sFpO+gM2ndRgcP5OGA/FvizImRpEFEI4Z
+         PzGJ2fbtz7V+aSAsGKRRX4zdMzG2Ac0+NO8G5LU04GpWmY1oYpNibBULXCfo1KfjeD/Y
+         VkGVoJ4W5p9nydWS1OU+rOHdFLg07+H2eJVFgHRBmy669hWJ8MfQyLHxBzHgyNt/2Jk+
+         CcwoWKuzcB5rmpv9andPMrMoVDPaHBL3zU3r1fFGqN7x74QhHlDsK1NwpW9SEdncDCRd
+         FkoTtcniWlVsCYHVycdjAtMDuJQ9Pfykj7simTA9WCo2OIiEEMeuJSS5RVZpb31IsaiE
+         GjcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691030801; x=1691635601;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C7rPDjP3w7SFi7WVbOLZnOQv42SK/YK3pgxUtFOJqn8=;
+        b=lPvXsooA9rPG/sF2Wg3hOii+nOteHJ6T+zwWAyUMu5q5fn+kxWLTJw0KXjGW/aE8n7
+         HNhhL1n1hHeY797XINsci4/iCFlCUW6EjhT8z1cJRGwFKs5u9y+4eDusm4aBiFtCJWxo
+         q28yXCijilqSKlqZeI1Y5/l3nyDimPFLxINwRRvAGeX7bLvQ3H/+EEcQjC8uMrk/vt+W
+         5GJB338us+tkcx5O0OnRmGz0Fo2+Zoi6irhMutTbyH3kwR+J0RHVVpQtMX8RmH5lrqz3
+         5+usg5RSkXtBS9634Abp69zjUoSyOajHyvZ69axG5lv8VNnXq6QGKDERJiRYfKCUxjf6
+         kRNw==
+X-Gm-Message-State: ABy/qLb3TNj56MQWnvA54lbeXqhN8sE0KWKfcPTNWmXs1pS4FCCSstXf
+        XWfGa3sUz8Pk3GS7yn7aywBTd33gz3dRk8aV9vU5
+X-Google-Smtp-Source: APBJJlFqHlrp0u9AowD2PWwPoxkgbyl77rYK4KODV0+X/B9t9X/ggsV9oR4Jf3avj9eFA1ansLbJ8J91robM9izXfWw=
+X-Received: by 2002:a81:7b05:0:b0:56c:e1e0:8da1 with SMTP id
+ w5-20020a817b05000000b0056ce1e08da1mr23328025ywc.19.1691030801385; Wed, 02
+ Aug 2023 19:46:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230802-master-v6-1-45d48299168b@kernel.org> <bac543537058619345b363bbfc745927.paul@paul-moore.com>
+ <ca156cecbc070c3b7c68626572274806079a6e04.camel@kernel.org>
+In-Reply-To: <ca156cecbc070c3b7c68626572274806079a6e04.camel@kernel.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 2 Aug 2023 22:46:30 -0400
+Message-ID: <CAHC9VhTQDVyZewU0Oiy4AfJt_UtB7O2_-PcUmXkZtuwKDQBfXg@mail.gmail.com>
+Subject: Re: [PATCH v6] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2023-07-14 at 11:34 -0400, Nayna Jain wrote:
-> Update Kconfig to enable machine keyring and limit to CA certificates
-> on PowerVM.
-> 
-> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+On Wed, Aug 2, 2023 at 3:34=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
+te:
+> On Wed, 2023-08-02 at 14:16 -0400, Paul Moore wrote:
+> > On Aug  2, 2023 Jeff Layton <jlayton@kernel.org> wrote:
 
-Reviewed-and-tested-by: Mimi Zohar <zohar@linux.ibm.com>
+...
 
+> > I generally dislike core kernel code which makes LSM calls conditional
+> > on some kernel state maintained outside the LSM.  Sometimes it has to
+> > be done as there is no other good options, but I would like us to try
+> > and avoid it if possible.  The commit description mentioned that this
+> > was put here to avoid a SELinux complaint, can you provide an example
+> > of the complain?  Does it complain about a double/invalid mount, e.g.
+> > "SELinux: mount invalid.  Same superblock, different security ..."?
+>
+> The problem I had was not so much SELinux warnings, but rather that in a
+> situation where I would expect to share superblocks between two
+> filesystems, it didn't.
+>
+> Basically if you do something like this:
+>
+> # mount nfsserver:/export/foo /mnt/foo -o context=3Dsystem_u:object_r:roo=
+t_t:s0
+> # mount nfsserver:/export/bar /mnt/bar -o context=3Dsystem_u:object_r:roo=
+t_t:s0
+>
+> ...when "foo" and "bar" are directories on the same filesystem on the
+> server, you should get two vfsmounts that share a superblock. That's
+> what you get if selinux is disabled, but not when it's enabled (even
+> when it's in permissive mode).
+
+Thanks, that helps.  I'm guessing the difference in behavior is due to
+the old->has_sec_mnt_opts check in nfs_compare_super().
+
+> > I'd like to understand why the sb_set_mnt_opts() call fails when it
+> > comes after the fs_context_init() call.  I'm particulary curious to
+> > know if the failure is due to conflicting SELinux state in the
+> > fs_context, or if it is simply an issue of sb_set_mnt_opts() not
+> > properly handling existing values.  Perhaps I'm being overly naive,
+> > but I'm hopeful that we can address both of these within the SELinux
+> > code itself.
+>
+> The problem I hit was that nfs_compare_super is called with a fs_context
+> that has a NULL ->security pointer. That caused it to call
+> selinux_sb_mnt_opts_compat with mnt_opts set to NULL, and at that point
+> it returns 1 and decides not to share sb's.
+>
+> Filling out fc->security with this new operation seems to fix that, but
+> if you see a better way to do this, then I'm certainly open to the idea.
+
+Just as you mention that you are not a LSM expert, I am not a VFS
+expert, so I think we'll have to help each other a bit ;)
+
+I think I'm beginning to understand alloc_fs_context() a bit more,
+including the fs_context_for_XXX() wrappers.  One thing I have
+realized is that I believe we need to update the
+selinux_fs_context_init() and smack_fs_context_init() functions to
+properly handle a NULL @reference dentry; I think returning without
+error in both cases is the correct answer.  In the non-NULL @reference
+case, I believe your patch is correct, we do want to inherit the
+options from @reference.  My only concern now is the
+fs_context::lsm_set flag.
+
+You didn't mention exactly why the security_sb_set_mnt_opts() was
+failing, and requires the fs_context::lsm_set check, but my guess is
+that something is tripping over the fact that the superblock is
+already properly setup.  I'm working under the assumption that this
+problem - attempting to reconfigure a properly configured superblock -
+should only be happening in the submount/non-NULL-reference case.  If
+it is happening elsewhere I think I'm going to need some help
+understanding that ...
+
+However, assuming I'm mostly correct in the above paragraph, would it
+be possible to take a reference to the @reference dentry's superblock
+in security_fs_context_init(), that we could later compare to the
+superblock passed into security_sb_set_mnt_opts()?  If we know that
+the fs_context was initialized with the same superblock we are now
+being asked to set mount options on, we should be able to return from
+the LSM hook without doing anything.
+
+Right?
+
+Or am I missing something really silly? :)
+
+--=20
+paul-moore.com
