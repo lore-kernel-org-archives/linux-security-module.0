@@ -2,64 +2,63 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82802C0015E
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 07:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6929C04A94
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 08:11:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232783AbjHCHuL (ORCPT
+        id S234382AbjHCILS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Aug 2023 03:50:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56946 "EHLO
+        Thu, 3 Aug 2023 04:11:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232950AbjHCHth (ORCPT
+        with ESMTP id S234212AbjHCIK4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Aug 2023 03:49:37 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CF424696
-        for <linux-security-module@vger.kernel.org>; Thu,  3 Aug 2023 00:41:22 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-99c1f6f3884so89926366b.0
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Aug 2023 00:41:22 -0700 (PDT)
+        Thu, 3 Aug 2023 04:10:56 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68852E73
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Aug 2023 01:02:50 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-522462d8416so765197a12.1
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Aug 2023 01:02:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tessares.net; s=google; t=1691048428; x=1691653228;
+        d=tessares.net; s=google; t=1691049769; x=1691654569;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PhuM9CzT4ZlJPwZeDMHcBHTztrtNOrwoYZyKAu87MfI=;
-        b=Gt1VLqufUFWf2WQcUsB4KBU9RnxDcT/soWdf6VOAc47BXdjAlC9AlcRmwowlIbpM3p
-         037jIM17/kqAIs1JoEOf/YkKdTel71aaObfnQDbZrE3PCUEvwVRSKV287VlezAmAy+/Z
-         Yn5kMW++Mh07/pygTlv6R1Nu0zsO8gLKX7vbBg0e5P0dEKXZma2g7S4+1Df+20b+6eoJ
-         iix4B+rK/KxsAnjbmrw+XOXVXoxWqWAGg1n1GkggCS9tn32edH/o2DeHhgipMkliWURI
-         NiP9H1rOUBybJ68omHCsLqpIYCaIdHW5Xeay+BcN1Q9HzV50EI7fIs2KUjH4sfzmYziV
-         iz3A==
+        bh=oyeiaJJUGAnaCqsFNjqE65OIC0yesXPouF4fyxelTrg=;
+        b=NxwhbTnp9xOzxdetcqaAdaX/wdTxeGr952XttQKrMwniWc9O/qxD6tD0WWkHgod3lk
+         nvA10uVuunkzixZB2du8FmhhcMLcsdQRvGrj5NsNgDGnXBBsCrT3+D1p6vA/7pwtX7zg
+         8MGLOEEe0fMrvbNqIdVvPJ/xDO8J+XtYGiGkR50nRoB2GoOFN/r1e/C4uZ5YJgfMBYYq
+         T+uzVaKKTJT/vQsLiiPT5u9hIrrC3ybM/+0eLEnXCJZ5dMkd68K8kLkUh4A9hjTyLJ+0
+         2TRqAV9ZfCDYTMqDnMYa2oh4U9CKft+Qa65Eu7FyU0BXmvH/e8fvcMOPJhhjwvN7QsN/
+         FIew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691048428; x=1691653228;
+        d=1e100.net; s=20221208; t=1691049769; x=1691654569;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PhuM9CzT4ZlJPwZeDMHcBHTztrtNOrwoYZyKAu87MfI=;
-        b=A/V1m/3c5Lx17KaAAtIX+0coW6pGyHsILiZcgevdRuOVgxDSiCnpVx9pUsPcob507v
-         AC4i2fdc9PTkIVLAhZlNKorc01OQ7rTn6udc7S7qS7oLybyD6vHJKfygZDb2xn7E0ck2
-         wbhUo/FoozkR7B3r1OuVMc8dClkwi7efHgWsu+qNZqfJGZI53VWWoggVhBLiNlW4HplI
-         EHMpj4NIvUrjRcjDoC1zLBDMh2SGcCgsBSglwgFPO5qkhk7noVX3P+9AOOvL5SUmWSsM
-         XHdQXKxWGLgv5h/6/XOvcmmbX0rc/iaqg0Xrg3QAKgH6NAFWrQ1ym4/BoArV8GZfckM7
-         GauQ==
-X-Gm-Message-State: ABy/qLbxe0Q0UDO/n03moai5R1jEhHHZ9+3yePriRN0vnZifWLdz+Tez
-        VXvMpuG4IHKBQg3wUJL55wR9dg==
-X-Google-Smtp-Source: APBJJlFea5mmJfT7Y+q6H05ClFZP3wGJMPemJQNCbFeWGngzqx6vQ8kD0S3ZQXgODLvNRJGdbLty9g==
-X-Received: by 2002:a17:906:73d3:b0:997:ea67:cb2f with SMTP id n19-20020a17090673d300b00997ea67cb2fmr6287103ejl.48.1691048428402;
-        Thu, 03 Aug 2023 00:40:28 -0700 (PDT)
+        bh=oyeiaJJUGAnaCqsFNjqE65OIC0yesXPouF4fyxelTrg=;
+        b=PPyI6c4IyG5I+u8NfOwdPLmJdi8rwd72QezAb0PK+vt/0qNbGSr3eij+Nu7h/Ir/YD
+         gtlnJy5p0VPP1Z1Yth3L2Jns3apVzp8matOVfipcrmMGl6BtC8mESnnQmRfV95CNPESB
+         hPRkjK2nV1bgRjTD4rdkdGvAd2mMj8LRnTT1D03/6O/yAhvnEj27S50u8vDg8sQ4gKdM
+         cg/rUs2Fi4iyD6NfunonubT02q6QVc/TSaaAG4LvuVveIKBnu7zjW1H2uQ4RrHdaLLnk
+         IrXzWmYgGT8521OS/dn/MOjdqO4zOt/mM5zu3xjQDtNsllh19iUMA0kptL1R4FBEocFK
+         DA4w==
+X-Gm-Message-State: ABy/qLaI+9BS4GFyEScncjL3sTtVtLy9iTwb15c8sQvgZBDL7n8z68N1
+        o6iNnykachl1z45F9JAWwklemw==
+X-Google-Smtp-Source: APBJJlG/zXuNQVHI6sqTDl/HdxE/zJkMFbko/Sk+XHrssrUl1Ye5fGLe5SAEJjzorQTBzeZUfc7j+g==
+X-Received: by 2002:aa7:d3d8:0:b0:522:28fa:3009 with SMTP id o24-20020aa7d3d8000000b0052228fa3009mr6862340edr.13.1691049768861;
+        Thu, 03 Aug 2023 01:02:48 -0700 (PDT)
 Received: from ?IPV6:2a02:578:8593:1200:ace8:eb44:12a0:888? ([2a02:578:8593:1200:ace8:eb44:12a0:888])
-        by smtp.gmail.com with ESMTPSA id sd26-20020a170906ce3a00b0099bc08862b6sm10256386ejb.171.2023.08.03.00.40.24
+        by smtp.gmail.com with ESMTPSA id ay9-20020a056402202900b005223d76a3e3sm9669924edb.85.2023.08.03.01.02.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Aug 2023 00:40:27 -0700 (PDT)
-Message-ID: <3b1eb406-ff56-414d-b143-79b7a3144420@tessares.net>
-Date:   Thu, 3 Aug 2023 09:40:18 +0200
+        Thu, 03 Aug 2023 01:02:48 -0700 (PDT)
+Message-ID: <94791e4f-98d4-454b-ae1d-3f61ac2b46d1@tessares.net>
+Date:   Thu, 3 Aug 2023 10:02:32 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC bpf-next v7 0/6] bpf: Force to MPTCP
+Subject: Re: [PATCH bpf-next v8 1/4] bpf: Add update_socket_protocol hook
 Content-Language: en-GB
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Geliang Tang <geliang.tang@suse.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
+To:     Geliang Tang <geliang.tang@suse.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Andrii Nakryiko <andrii@kernel.org>,
         Martin KaFai Lau <martin.lau@linux.dev>,
@@ -81,19 +80,12 @@ Cc:     Alexei Starovoitov <ast@kernel.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Stephen Smalley <stephen.smalley.work@gmail.com>,
         Eric Paris <eparis@parisplace.org>,
-        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        MPTCP Upstream <mptcp@lists.linux.dev>,
-        apparmor@lists.ubuntu.com,
-        LSM List <linux-security-module@vger.kernel.org>,
-        selinux@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-References: <cover.1690624340.git.geliang.tang@suse.com>
- <20230801004323.l2npfegkq3srzff3@MacBook-Pro-8.local>
- <20230802021903.GA3070@bogon>
- <CAADnVQJRmXy_iFBsWLTTKBnmwPjSJP+7RLfJwB9GUb=GEFoMwg@mail.gmail.com>
+        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
+Cc:     bpf@vger.kernel.org, netdev@vger.kernel.org, mptcp@lists.linux.dev,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <cover.1691047403.git.geliang.tang@suse.com>
+ <120b307aacd1791fac016d33e112069ffb7db21a.1691047403.git.geliang.tang@suse.com>
 From:   Matthieu Baerts <matthieu.baerts@tessares.net>
 Autocrypt: addr=matthieu.baerts@tessares.net; keydata=
  xsFNBFXj+ekBEADxVr99p2guPcqHFeI/JcFxls6KibzyZD5TQTyfuYlzEp7C7A9swoK5iCvf
@@ -138,43 +130,34 @@ Autocrypt: addr=matthieu.baerts@tessares.net; keydata=
  xV1U0s853l+uo6+anPRWEUCU1ONTVXLQKe7FfcAznUnx2l03IbRLysAOHoLwAoIM59Sy2mrb
  z/qhNpC/tBl2B7Qljp2CXMYqcKL/Oyanb7XDnn1+vPj4gLuP+KC8kZfgoMMpSzSaWV3wna7a
  wFe/sIbF3NCgdrOXNVsV7t924dsAGZjP1x59Ck7vAMT9
-In-Reply-To: <CAADnVQJRmXy_iFBsWLTTKBnmwPjSJP+7RLfJwB9GUb=GEFoMwg@mail.gmail.com>
+In-Reply-To: <120b307aacd1791fac016d33e112069ffb7db21a.1691047403.git.geliang.tang@suse.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Alexei,
+Hi Geliang,
 
-On 02/08/2023 04:23, Alexei Starovoitov wrote:
-> On Tue, Aug 1, 2023 at 7:19 PM Geliang Tang <geliang.tang@suse.com> wrote:
->>
->> On Mon, Jul 31, 2023 at 05:43:23PM -0700, Alexei Starovoitov wrote:
->>> On Sat, Jul 29, 2023 at 05:57:21PM +0800, Geliang Tang wrote:
->>>>
->>>> The main idea is to add a hook in sys_socket() to change the protocol id
->>>> from IPPROTO_TCP (or 0) to IPPROTO_MPTCP.
->>>
->>> I still think it's a hack, but its blast radius is nicely contained.
->>> And since I cannot propose any better I'm ok with it.
->>>
->>> Patches 1-2 can be squashed into one.
->>> Just like patches 3-6 as a single patch for selftests.
->>
->> Thanks Alexei. I'll squash patch 1 and patch 2 into one, and squash patch 3
->> and patch 6 into one for selftests. But I prefer to keep patch 4 and patch 5
->> as is, since they were implemented in different times for different purposes.
->> They were merged into MPTCP repo on May 17 for "run MPTCP sched tests in a
->> dedicated ns" [1].
+On 03/08/2023 09:30, Geliang Tang wrote:
+> Add a hook named update_socket_protocol in __sys_socket(), for bpf
+> progs to attach to and update socket protocol. One user case is to
+> force legacy TCP apps to create and use MPTCP sockets instead of
+> TCP ones.
 > 
-> since they were sent to a different tree than don't send them here.
-> git will not like that during the merge window.
+> Define a mod_ret set named bpf_mptcp_fmodret_ids, add the hook
+> update_socket_protocol into this set, and register it in
+> bpf_mptcp_kfunc_init().
 
-Thank you for the suggestion but that's OK to have these patches applied
-in BPF tree because on MPTCP side, they have been applied in a "devel"
-branch which is rebased on top of -net and net-next everyday. In other
-words, we don't use it in pull requests and it is fine to apply these
-patches in bpf-next or elsewhere.
+Thank you for having looked at that!
+
+Because it is related to MPTCP:
+
+Acked-by: Matthieu Baerts <matthieu.baerts@tessares.net>
+
+I don't know if your scripts to apply patches support the "Closes" tag
+but just in case:
+
+Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/79
 
 Cheers,
 Matt
