@@ -2,192 +2,159 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E690C41513
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 16:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40837C001DB
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 17:14:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235307AbjHCQ1c (ORCPT
+        id S234638AbjHCROP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Aug 2023 12:27:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60016 "EHLO
+        Thu, 3 Aug 2023 13:14:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231460AbjHCQ1b (ORCPT
+        with ESMTP id S234347AbjHCROL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Aug 2023 12:27:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CD5F30D3;
-        Thu,  3 Aug 2023 09:27:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        Thu, 3 Aug 2023 13:14:11 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 576813C22
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Aug 2023 10:13:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1691082807;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0Sd8udM4quE+FkVJlTeE6p9Jeb2cJdOzPnhjvTuy2rU=;
+        b=fDcJQCQL3vAJLtUKOGzZufYEyIwkxeIcgG5D943sB0gTMKxSRvmXuOy2HyiQV3HfVgXtrM
+        +4+8sJUmZzYb78rwJtNEbEHcKQXm38GOntfCm00Ti6Z+uQ6fx0vxRr5iJbPT9B8RjNfJcX
+        rZMdUbeDKb4F4kcUADV0eKim8v/Fs7E=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-113-kSsMx2D8OSKt3S0LVMVD6g-1; Thu, 03 Aug 2023 13:13:24 -0400
+X-MC-Unique: kSsMx2D8OSKt3S0LVMVD6g-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CFC7861E31;
-        Thu,  3 Aug 2023 16:27:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95019C433C7;
-        Thu,  3 Aug 2023 16:27:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691080049;
-        bh=R9CF2H7mbl0cgRXO+z4tXwwMfit3swiAWcNJEtpzi1Y=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=cItRdHU8ppyTRYkjux/OaZteYYB46EBf6G8e/iMfeXgRUR8ZGlWDDbC9jCWrex8dX
-         q88xudYsQ4coAFRhO/Uiq2Ste3axYkcId1WfMhh85ioLEjq87RsPVLZA7ILU7ZNhqo
-         Q6Bnh2fcTMyiCEKX2IIx57hQKViodinp4xPXgG3N2VTtsTuN+/8NMPeMMk46zyu39k
-         ezVItsWlD5GsUOD0jo7fUYoAlA4HQLTE5IDnmAIZhCLk9ZO6zcgWXlshnO3FupfZM4
-         6cpWec+RvB0hGaMmVB7kUVVEH1ikferq79RA2TN0sxqoUy0yYw/op2RMMdNpTgVKlG
-         Ot0/BUJr2U50Q==
-Message-ID: <ec1fd18f271593d5c6b6813cfaeb688994f20bf4.camel@kernel.org>
-Subject: Re: [PATCH v6] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        James Morris <jmorris@namei.org>,
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2A2858564EF;
+        Thu,  3 Aug 2023 17:13:24 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.45.224.242])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EADE2200A7CA;
+        Thu,  3 Aug 2023 17:13:22 +0000 (UTC)
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     linux-security-module@vger.kernel.org
+Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Date:   Thu, 03 Aug 2023 12:27:26 -0400
-In-Reply-To: <CAHC9VhTQDVyZewU0Oiy4AfJt_UtB7O2_-PcUmXkZtuwKDQBfXg@mail.gmail.com>
-References: <20230802-master-v6-1-45d48299168b@kernel.org>
-         <bac543537058619345b363bbfc745927.paul@paul-moore.com>
-         <ca156cecbc070c3b7c68626572274806079a6e04.camel@kernel.org>
-         <CAHC9VhTQDVyZewU0Oiy4AfJt_UtB7O2_-PcUmXkZtuwKDQBfXg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        KP Singh <kpsingh@kernel.org>
+Subject: [PATCH RFC 3/3] security: more call_int_hook_ignore_default use-cases
+Date:   Thu,  3 Aug 2023 19:12:42 +0200
+Message-ID: <d1fd42e8faeaefb2a834dde521eb3ed0528ddf2b.1691082677.git.pabeni@redhat.com>
+In-Reply-To: <cover.1691082677.git.pabeni@redhat.com>
+References: <cover.1691082677.git.pabeni@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"; x-default=true
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2023-08-02 at 22:46 -0400, Paul Moore wrote:
-> On Wed, Aug 2, 2023 at 3:34=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
-rote:
-> > On Wed, 2023-08-02 at 14:16 -0400, Paul Moore wrote:
-> > > On Aug  2, 2023 Jeff Layton <jlayton@kernel.org> wrote:
->=20
-> ...
->=20
-> > > I generally dislike core kernel code which makes LSM calls conditiona=
-l
-> > > on some kernel state maintained outside the LSM.  Sometimes it has to
-> > > be done as there is no other good options, but I would like us to try
-> > > and avoid it if possible.  The commit description mentioned that this
-> > > was put here to avoid a SELinux complaint, can you provide an example
-> > > of the complain?  Does it complain about a double/invalid mount, e.g.
-> > > "SELinux: mount invalid.  Same superblock, different security ..."?
-> >=20
-> > The problem I had was not so much SELinux warnings, but rather that in =
-a
-> > situation where I would expect to share superblocks between two
-> > filesystems, it didn't.
-> >=20
-> > Basically if you do something like this:
-> >=20
-> > # mount nfsserver:/export/foo /mnt/foo -o context=3Dsystem_u:object_r:r=
-oot_t:s0
-> > # mount nfsserver:/export/bar /mnt/bar -o context=3Dsystem_u:object_r:r=
-oot_t:s0
-> >=20
-> > ...when "foo" and "bar" are directories on the same filesystem on the
-> > server, you should get two vfsmounts that share a superblock. That's
-> > what you get if selinux is disabled, but not when it's enabled (even
-> > when it's in permissive mode).
->=20
-> Thanks, that helps.  I'm guessing the difference in behavior is due to
-> the old->has_sec_mnt_opts check in nfs_compare_super().
->=20
+The vm_enough_memory and xfrm_state_pol_flow_match behavior is somewhat
+similar, as both possibly need to reconciliate multiple LSM return value
+to a take a single decision. Currently xfrm_state_pol_flow_match has a
+simple implementation leveraging the fact that only a LSM is supposed to
+implement such hook.
 
-Yep. That gets set, but fc->security is still NULL.
+This patch extend xfrm_state_pol_flow_match() to possibly cope with
+multiple hooks alike what vm_enough_memory is currently doing, switch
+both hooks to use the call_int_hook_ignore_default helper and change
+the default hook return value to 1.
 
-> > > I'd like to understand why the sb_set_mnt_opts() call fails when it
-> > > comes after the fs_context_init() call.  I'm particulary curious to
-> > > know if the failure is due to conflicting SELinux state in the
-> > > fs_context, or if it is simply an issue of sb_set_mnt_opts() not
-> > > properly handling existing values.  Perhaps I'm being overly naive,
-> > > but I'm hopeful that we can address both of these within the SELinux
-> > > code itself.
-> >=20
-> > The problem I hit was that nfs_compare_super is called with a fs_contex=
-t
-> > that has a NULL ->security pointer. That caused it to call
-> > selinux_sb_mnt_opts_compat with mnt_opts set to NULL, and at that point
-> > it returns 1 and decides not to share sb's.
-> >=20
-> > Filling out fc->security with this new operation seems to fix that, but
-> > if you see a better way to do this, then I'm certainly open to the idea=
-.
->=20
-> Just as you mention that you are not a LSM expert, I am not a VFS
-> expert, so I think we'll have to help each other a bit ;)
->=20
-> I think I'm beginning to understand alloc_fs_context() a bit more,
-> including the fs_context_for_XXX() wrappers.  One thing I have
-> realized is that I believe we need to update the
-> selinux_fs_context_init() and smack_fs_context_init() functions to
-> properly handle a NULL @reference dentry; I think returning without
-> error in both cases is the correct answer.  In the non-NULL @reference
-> case, I believe your patch is correct, we do want to inherit the
-> options from @reference.
->=20
+Overall the above should not lead to any functional change.
 
+After this change, LSM returning the LSM_RET_DEFAULT value will become
+a no-op for the mentioned hooks.
 
-ACK. That seems reasonable. I'll work that in.
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+---
+ include/linux/lsm_hook_defs.h |  2 +-
+ security/security.c           | 34 ++++++++--------------------------
+ 2 files changed, 9 insertions(+), 27 deletions(-)
 
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 49f1f9bed958..e41ae0f90825 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -48,7 +48,7 @@ LSM_HOOK(int, 0, quota_on, struct dentry *dentry)
+ LSM_HOOK(int, 0, syslog, int type)
+ LSM_HOOK(int, 0, settime, const struct timespec64 *ts,
+ 	 const struct timezone *tz)
+-LSM_HOOK(int, 0, vm_enough_memory, struct mm_struct *mm, long pages)
++LSM_HOOK(int, 1, vm_enough_memory, struct mm_struct *mm, long pages)
+ LSM_HOOK(int, 0, bprm_creds_for_exec, struct linux_binprm *bprm)
+ LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, struct file *file)
+ LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
+diff --git a/security/security.c b/security/security.c
+index 0528cbef0624..b7b2d359c230 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1036,9 +1036,7 @@ int security_settime64(const struct timespec64 *ts, const struct timezone *tz)
+  */
+ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
+ {
+-	struct security_hook_list *hp;
+-	int cap_sys_admin = 1;
+-	int rc;
++	int cap_sys_admin;
+ 
+ 	/*
+ 	 * The module will respond with a positive value if
+@@ -1047,13 +1045,8 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
+ 	 * agree that it should be set it will. If any module
+ 	 * thinks it should not be set it won't.
+ 	 */
+-	hlist_for_each_entry(hp, &security_hook_heads.vm_enough_memory, list) {
+-		rc = hp->hook.vm_enough_memory(mm, pages);
+-		if (rc <= 0) {
+-			cap_sys_admin = 0;
+-			break;
+-		}
+-	}
++	cap_sys_admin = call_int_hook_ignore_default(vm_enough_memory, 1, mm,
++						     pages);
+ 	return __vm_enough_memory(mm, pages, cap_sys_admin);
+ }
+ 
+@@ -4922,24 +4915,13 @@ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
+ 				       struct xfrm_policy *xp,
+ 				       const struct flowi_common *flic)
+ {
+-	struct security_hook_list *hp;
+-	int rc = LSM_RET_DEFAULT(xfrm_state_pol_flow_match);
+-
+ 	/*
+-	 * Since this function is expected to return 0 or 1, the judgment
+-	 * becomes difficult if multiple LSMs supply this call. Fortunately,
+-	 * we can use the first LSM's judgment because currently only SELinux
+-	 * supplies this call.
+-	 *
+-	 * For speed optimization, we explicitly break the loop rather than
+-	 * using the macro
++	 * The module will respond with a 1 value if
++	 * it thinks there is a match. If all of the modules
++	 * agree we consider the match succesfull.
+ 	 */
+-	hlist_for_each_entry(hp, &security_hook_heads.xfrm_state_pol_flow_match,
+-			     list) {
+-		rc = hp->hook.xfrm_state_pol_flow_match(x, xp, flic);
+-		break;
+-	}
+-	return rc;
++	return call_int_hook_ignore_default(xfrm_state_pol_flow_match,
++					    1, x, xp, flic);
+ }
+ 
+ /**
+-- 
+2.41.0
 
->   My only concern now is the
-> fs_context::lsm_set flag.
->=20
-
-Yeah, that bit is ugly. David studied this problem a lot more than I
-have, but basically, we only want to set the context info once, and
-we're not always going to have a nice string to parse to set up the
-options. This obviously works, but I'm fine with a more elegant method
-if you can spot one.
-
-
-> You didn't mention exactly why the security_sb_set_mnt_opts() was
-> failing, and requires the fs_context::lsm_set check, but my guess is
-> that something is tripping over the fact that the superblock is
-> already properly setup.  I'm working under the assumption that this
-> problem - attempting to reconfigure a properly configured superblock -
-> should only be happening in the submount/non-NULL-reference case.  If
-> it is happening elsewhere I think I'm going to need some help
-> understanding that ...
->=20
-
-Correct. When you pass in the mount options, fc->security seems to be
-properly set. NFS mounting is complex though, so the final superblock
-you care about may end up being a descendant of the one that was
-originally configured.
-
-This patch is intended to ensure we carry over security info in these
-cases. We already try to inherit other parameters from parent mounts, so
-this is just another set that we need to make sure we inherit.
-
-> However, assuming I'm mostly correct in the above paragraph, would it
-> be possible to take a reference to the @reference dentry's superblock
-> in security_fs_context_init(), that we could later compare to the
-> superblock passed into security_sb_set_mnt_opts()?  If we know that
-> the fs_context was initialized with the same superblock we are now
-> being asked to set mount options on, we should be able to return from
-> the LSM hook without doing anything.
->=20
-
-I'm not sure that I follow your logic here:
-
-You want to take a sb reference and carry that in the fs_context? What
-will you do with it in security_sb_set_mnt_opts?
-
-FWIW, It's generally easier to deal with inode or dentry references than
-refs to the superblock too, so if we want to carry a reference to an
-object around, we'd probably rather handle one of those.
---=20
-Jeff Layton <jlayton@kernel.org>
