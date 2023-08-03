@@ -2,299 +2,205 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 501B0C04A6A
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 13:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C67F6C04E69
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 13:44:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236059AbjHCN3a (ORCPT
+        id S236324AbjHCNoo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Aug 2023 09:29:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47486 "EHLO
+        Thu, 3 Aug 2023 09:44:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236170AbjHCN3P (ORCPT
+        with ESMTP id S236344AbjHCNoI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Aug 2023 09:29:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0FA03C21;
-        Thu,  3 Aug 2023 06:28:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B917B61DA1;
-        Thu,  3 Aug 2023 13:28:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 717C9C433C7;
-        Thu,  3 Aug 2023 13:28:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691069285;
-        bh=h6hdfySgHxDqBVi3enZ1Bajg6bKORcm3++m69sKmuEE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IG4Gkucwm1mbLGKKV/B9RwfdNSOWljd5UbxhLOj6wF5WBY2BmAg3HZUVqbJk/TmkT
-         dlH2ZND/d8QkcFDZSkkQq7yC/boFCLguAAKcgWNO6VnJD6KtcdzdCNVRdaP4oO5ag6
-         yGCPfdmIsSfjA7Btzu8IXlHhvUuBXszz6yapaI+z2A9+fzElYvtF5LhheHO+fLz00+
-         Uu1wtXLg794Tii74Yd6gczLt2jKR0b/7f7D/j2ElkUm372ZJyfQq+vdpUa8GtgbjiF
-         NMgUS7R1zC6jkb4ntcvoiMn3OT0PuasIQMR0Brnb+2IdC3etFewGnbMAOeyuHY27+4
-         YAyUxuosntjNg==
-Date:   Thu, 3 Aug 2023 15:27:58 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
+        Thu, 3 Aug 2023 09:44:08 -0400
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2054.outbound.protection.outlook.com [40.107.22.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01206422F;
+        Thu,  3 Aug 2023 06:41:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iNsTlo6+2odnfjFMtTgmBsTOqQdwM1N6d4HvKfPFkovGljKxMruL+FXlHW7Ho4UuaA2e1k5ZQsB74n+o1VJ+LlFkSwjArx4VWvqg5GREiLaIdw5u5p4sZ0WGdLeTt7ypeJJSKRN1BayFMvclkAfNpyjQqCMbzARpU0J7fPCkfd1FwqbJEuy1aucqfqG1jNfXA6DsVBq1MQhl+FWNUKCrxhi+7XnFegOHB+529eaUJGvOs2u1eAcfDwc7elnIPXyqt+nITCQK96mwMh2ipqGAObVjBnspy6YlvmnnJ04BPzCQUOXJ8SFBKruA1y7vaolVyq26uqTVzGrVaeC29uDmyA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bHt9lnuTPzBs9yuIh7r3tTyg5wegWX1/XWlBHuDdcDg=;
+ b=YBUdhgqcaYfGEFnc2BWQqtOsgt2gexhXUdCmBY+INL2xlEZSCOfz0a2hGO81+hnP3NdqAxSJ7K6TPatfVK6m0t2dad//ADO9Qw47o4d4IGIbELhW9vjfl2tKPyG9Qg3pwCUjfcAUztKvrQ8vod0chcistvgrDx8pKMhhpueF1Ms5mgZ1DeOYD3ZGay+iEHFl5DjPj8ROuYYttAqIv8oEmofneRu6mk05M6GdOT4+kxo9zNqTm1wbonHagTZrhUKD1o9VvbcpnhigT806dRo7Es8E3AkrNoNJ0Fy/t7UbFA1TlcMR7rY0WoCF4vtv9o+Ubuugp6GyZpBkhaoiUxC8lg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bHt9lnuTPzBs9yuIh7r3tTyg5wegWX1/XWlBHuDdcDg=;
+ b=BQkluhnJYopdp+SUfjIXdCISdLaow8Be9+5uIGkTUYrmiNSjvspXbwEPl8DWYfnPHVwRlmGgVE84WVzMHU7LyAnlJyBFjtH0yqngmHeApK0OuhlOfsP88ZdfioP0IGE3dFlE97ykZVKYCRSMcfPI2PM92ZgdsPBqNDKQjM8nmUY18pIHmhtVKmNBS6XL0SlfWqWT1KEH5NAQ8uWC2pMYD/vxQJkiAVn6AASE3JGk/FPSaUGSZBV5uN3EjSJR6ouOC93XjHdbxcVNlNwXzx4bXzACAu7YJHMipgH/bbC2OkjsGtGAqF9P56Ma/9ALVo+EIAtevjkyogSwTQB9QQiwmQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=suse.com;
+Received: from VI1PR0402MB3503.eurprd04.prod.outlook.com (2603:10a6:803:d::26)
+ by AS8PR04MB8580.eurprd04.prod.outlook.com (2603:10a6:20b:427::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.47; Thu, 3 Aug
+ 2023 13:41:40 +0000
+Received: from VI1PR0402MB3503.eurprd04.prod.outlook.com
+ ([fe80::6480:1775:c36d:b797]) by VI1PR0402MB3503.eurprd04.prod.outlook.com
+ ([fe80::6480:1775:c36d:b797%5]) with mapi id 15.20.6631.046; Thu, 3 Aug 2023
+ 13:41:39 +0000
+From:   Geliang Tang <geliang.tang@suse.com>
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Mat Martineau <martineau@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Stephen Smalley <stephen.smalley.work@gmail.com>,
         Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Subject: Re: [PATCH v6] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
-Message-ID: <20230803-verlassen-lernprogramm-b9e61719ce55@brauner>
-References: <20230802-master-v6-1-45d48299168b@kernel.org>
- <bac543537058619345b363bbfc745927.paul@paul-moore.com>
- <ca156cecbc070c3b7c68626572274806079a6e04.camel@kernel.org>
+        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Simon Horman <horms@kernel.org>
+Cc:     Geliang Tang <geliang.tang@suse.com>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, mptcp@lists.linux.dev,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: [PATCH bpf-next v9 0/4] bpf: Force to MPTCP
+Date:   Thu,  3 Aug 2023 21:41:42 +0800
+Message-Id: <cover.1691069778.git.geliang.tang@suse.com>
+X-Mailer: git-send-email 2.35.3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR03CA0091.apcprd03.prod.outlook.com
+ (2603:1096:4:7c::19) To VI1PR0402MB3503.eurprd04.prod.outlook.com
+ (2603:10a6:803:d::26)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ca156cecbc070c3b7c68626572274806079a6e04.camel@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VI1PR0402MB3503:EE_|AS8PR04MB8580:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe3413f7-4429-4c43-6f89-08db94275d65
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Uxj+1/GalyM4ukBpPQoYUUhYkmVqMMp9m0w/6FZF51m/lvbR227KBziLQo+0gJPkOsTtFU3hr3zW2HdsdH5hKJJY5wLYn4zDggEm621f599voo+LJvwXHbxNYPy0gq7JWoGqEw7kY4/pUBxU6SWyIy4SdALI6yWsVCDDWVasZ0f32xPvBA24mhk4rxyAGhqoldAIrpW1mNXJHI1MtU4ahXGVkz5SPAzSMwfLodJ+HTHynqFWJQXPr3q5wCCAXzVwchMqGLpoKyIGOfubu1kmtsHCCJyQpU5Mr9ncV6zmwBAsoMH+Fgke53yDTaBA+sN5F3wx2v9tdfNu7QbXDX/0Ggo7QIbmOe85R1Q8GTTbc5CX3pdLPuTFJfCi/vO+GrfCfgQjhTTHSKN5yB0LEMmx54OPIA+6DCGGyTAUD4hdRZrhwPC7gQWZC5SuE1ysDckNvUoIPNHbXXdAA18jBT0qHDl20on85HqaDVwL337r/ND/vsP7nbxO6UOfwthvy0w6k8Igmh15WR4pNBEDmOzH1Gfhoe8RmBaqs4mR0fS/t+5dvAMEhVQdRtbvpPEu3CO3rAnd6WKI4arM0d7AJvLdBQgIobmFqBYxtOPVZt3pe6oBbWPrgCYfvS7FbS31gG+Cht4Dk9UrzxUB7nxXKOIKWIFKi7flUjvcSIlRyV49vbQ=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0402MB3503.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(39860400002)(136003)(346002)(396003)(366004)(376002)(451199021)(2616005)(83380400001)(6506007)(26005)(186003)(41300700001)(2906002)(66946007)(4326008)(66476007)(66556008)(5660300002)(316002)(44832011)(7416002)(8676002)(8936002)(6666004)(6486002)(966005)(6512007)(7406005)(478600001)(110136005)(38100700002)(921005)(86362001)(36756003)(13296009);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?dHFyxfzvp+DC0zDR94XgfHlqrpYkv7w6U/7WwpeA+s/Axj0iGtVE2rXx8ylr?=
+ =?us-ascii?Q?HcTlSHqdpoObA0/97oTrQ15q2SEQVP34mkmPQC6+HD+VWkLDSMpdnUrmgJIm?=
+ =?us-ascii?Q?KKijDXJZc7NXWzoT5KMjhAXqZFR+tZI3pViqOC8FIWvsBG4PzYaDr5DyWkx9?=
+ =?us-ascii?Q?UVS5nevmZztilK7UVp4rwwNRDyv1pO8MSK3nE4dYQ5gyO/B7j7Je2vO198y3?=
+ =?us-ascii?Q?LnmqXQTkqfhwdnuo2jBHOsHR8F2a8s3fP8RlwhT1Cow+M2ee7xak86T2nwH4?=
+ =?us-ascii?Q?8f9aw62ki/7HWFt5uJeaKSuAL4uyLAuENS4Hy10r6vXx/IqVLowrYOhPJ2Ap?=
+ =?us-ascii?Q?HHQndFxoAQcpXbEC6RokZTDbk7x2sHjZk6O7VnzbQ3j4iIKegurKyY7IAHIp?=
+ =?us-ascii?Q?ai+UBInrGPZoNm5lTsPSIYuyg422i9onOixv+OvAvwl4pVcq/4nx4yXfSAPG?=
+ =?us-ascii?Q?47Tazoa8c278mwNTUu1t5y/nz25E1hPfePXTBmLd9RuayEjfYiexaqKjmdQh?=
+ =?us-ascii?Q?ZxI8FA7xhDaC+A+ccj5w8b2iT4ukYEOBAu1IGodT7N/46SPz5YUHV3AJmp4E?=
+ =?us-ascii?Q?92XIFjjPwhLKIccs+HrL3ReiRtme2zEzuHu79CjJbQdrK2j6PO4wO6DayEf0?=
+ =?us-ascii?Q?T0hAqP9bxsFyGuqoNzRn6wKu5lLcEHwnf2I+1KgKXrofdScC1LezI/DxkcER?=
+ =?us-ascii?Q?kIswXtH+nvnE8tl12hPU9TNNfmBmwHBDy3Fb2oYZp3bxF06AEUezinThwEK5?=
+ =?us-ascii?Q?G1+0SXMH3bcwW60sqZn08hr4td+0J1UcwBqNUtMn4+0APqWOh/nECHoPJr7u?=
+ =?us-ascii?Q?RDHYRI+KElfoKq7sPVHVLI42GvEtQjADzDmn3olCCMTV1uWHf/KXAC/awchO?=
+ =?us-ascii?Q?pwB8lUdDxjg/+IoCsLjvHuD//+Paq3JAf/8QX1/SpDQne9Bv1V4ut2f/A/tx?=
+ =?us-ascii?Q?XHW1ig+iIaPxReTmeQBSWEs2p74MA1WxFxZeaxPy6QjB5XX3vSedtwo1lbl4?=
+ =?us-ascii?Q?4PHYp/PwYFUCtNlmcssnv50fJc7sIQERj4vWs5/QRKMYfQxX0sNcRyc4Gekd?=
+ =?us-ascii?Q?oFmASG214uKe4glOJ//QaYXSPfW7zABuxL4sagIZ1pHHIgz2p5KPQis/4XqI?=
+ =?us-ascii?Q?5al/Mm7ZjToQFuPwfrX+icASNBjxE3EcMHW7vIhGOGtyWaPdJI64Rh0gcZWs?=
+ =?us-ascii?Q?4uErvVOyZFBZ15fR+6woX+dcNxnBXoE0OIG5r+HvS1o3lnjWv7Fd8lmjoVvt?=
+ =?us-ascii?Q?8Yc3f+N3VMcbJ5KpqxC8bPvuVidLmSBmPZfFCTYMHXTNuz4Jw7nG4uOr1oQP?=
+ =?us-ascii?Q?sCbHnGKFrbSP90U5eBKcFzu9etOPjrzoT5+6EaSET41McLtTwBwh8u80/VnD?=
+ =?us-ascii?Q?rKD0oaZFCSgNu2weuHQVgOrreV98JJeHtwzFZ0qyvEKO/svmRu+pQMhpUnkJ?=
+ =?us-ascii?Q?eD7pTO40e5k3JbEx3AKDs+TSX5sB5MnxKufwKAZoLcyFsAvjFLm9fRzhOU03?=
+ =?us-ascii?Q?7f/8GBvUzV4pB93DuFf+wNg4yGV0oDdDwv/ngfTEw3b68gBeFXq82uHyJoWr?=
+ =?us-ascii?Q?Vgq/jBrSHX8n9aoZjadgA2OK81kwDdPERrhxKVAn?=
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe3413f7-4429-4c43-6f89-08db94275d65
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR0402MB3503.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2023 13:41:39.8089
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: szj7qYwakcUGahkGyrRMptT84ULiBT5/dtT8lgIHuzQ7d/XEM9zqQ7Pfr1C3qFYzHr8vZ+g62OIOj2I4NCtFXA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8580
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 02, 2023 at 03:34:27PM -0400, Jeff Layton wrote:
-> On Wed, 2023-08-02 at 14:16 -0400, Paul Moore wrote:
-> > On Aug  2, 2023 Jeff Layton <jlayton@kernel.org> wrote:
-> > > 
-> > > When NFS superblocks are created by automounting, their LSM parameters
-> > > aren't set in the fs_context struct prior to sget_fc() being called,
-> > > leading to failure to match existing superblocks.
-> > > 
-> > > Fix this by adding a new LSM hook to load fc->security for submount
-> > > creation when alloc_fs_context() is creating the fs_context for it.
-> > > 
-> > > However, this uncovers a further bug: nfs_get_root() initialises the
-> > > superblock security manually by calling security_sb_set_mnt_opts() or
-> > > security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
-> > > security_sb_set_mnt_opts(), which can lead to SELinux, at least,
-> > > complaining.
-> > > 
-> > > Fix that by adding a flag to the fs_context that suppresses the
-> > > security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by NFS
-> > > when it sets the LSM context on the new superblock.
-> > > 
-> > > The first bug leads to messages like the following appearing in dmesg:
-> > > 
-> > > 	NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
-> > > 
-> > > Signed-off-by: David Howells <dhowells@redhat.com>
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
-> > > Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
-> > > Tested-by: Jeff Layton <jlayton@kernel.org>
-> > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > Acked-by: "Christian Brauner (Microsoft)" <brauner@kernel.org>
-> > > Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk/ # v1
-> > > Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk/ # v2
-> > > Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk/ # v3
-> > > Link: https://lore.kernel.org/r/166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk/ # v4
-> > > Link: https://lore.kernel.org/r/217595.1662033775@warthog.procyon.org.uk/ # v5
-> > > ---
-> > > This patch was originally sent by David several months ago, but it
-> > > never got merged. I'm resending to resurrect the discussion. Can we
-> > > get this fixed?
-> > 
-> > Sorry, I sorta lost track of this after the ROOTCONTEXT_MNT discussion
-> > back in v3.  Looking at it a bit closer now I have one nitpicky
-> > request and one larger concern (see below).
-> > 
-> > > diff --git a/fs/super.c b/fs/super.c
-> > > index e781226e2880..13adf43e2e5d 100644
-> > > --- a/fs/super.c
-> > > +++ b/fs/super.c
-> > > @@ -1541,10 +1541,12 @@ int vfs_get_tree(struct fs_context *fc)
-> > >  	smp_wmb();
-> > >  	sb->s_flags |= SB_BORN;
-> > >  
-> > > -	error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
-> > > -	if (unlikely(error)) {
-> > > -		fc_drop_locked(fc);
-> > > -		return error;
-> > > +	if (!(fc->lsm_set)) {
-> > > +		error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
-> > > +		if (unlikely(error)) {
-> > > +			fc_drop_locked(fc);
-> > > +			return error;
-> > > +		}
-> > >  	}
-> > 
-> > I generally dislike core kernel code which makes LSM calls conditional
-> > on some kernel state maintained outside the LSM.  Sometimes it has to
-> > be done as there is no other good options, but I would like us to try
-> > and avoid it if possible.  The commit description mentioned that this
-> > was put here to avoid a SELinux complaint, can you provide an example
-> > of the complain?  Does it complain about a double/invalid mount, e.g.
-> > "SELinux: mount invalid.  Same superblock, different security ..."?
-> > 
-> 
-> The problem I had was not so much SELinux warnings, but rather that in a
-> situation where I would expect to share superblocks between two
-> filesystems, it didn't.
-> 
-> Basically if you do something like this:
-> 
-> # mount nfsserver:/export/foo /mnt/foo -o context=system_u:object_r:root_t:s0
-> # mount nfsserver:/export/bar /mnt/bar -o context=system_u:object_r:root_t:s0
-> 
-> ...when "foo" and "bar" are directories on the same filesystem on the
-> server, you should get two vfsmounts that share a superblock. That's
-> what you get if selinux is disabled, but not when it's enabled (even
-> when it's in permissive mode).
-> 
-> The problems that David hit with the automounter have a similar root
-> cause though, I believe.
-> 
-> > I'd like to understand why the sb_set_mnt_opts() call fails when it
-> > comes after the fs_context_init() call.  I'm particulary curious to
-> > know if the failure is due to conflicting SELinux state in the
-> > fs_context, or if it is simply an issue of sb_set_mnt_opts() not
-> > properly handling existing values.  Perhaps I'm being overly naive,
-> > but I'm hopeful that we can address both of these within the SELinux
-> > code itself.
-> > 
-> 
-> The problem I hit was that nfs_compare_super is called with a fs_context
-> that has a NULL ->security pointer. That caused it to call
-> selinux_sb_mnt_opts_compat with mnt_opts set to NULL, and at that point
-> it returns 1 and decides not to share sb's.
+As is described in the "How to use MPTCP?" section in MPTCP wiki [1]:
 
-I tried to follow this because I'm really still quite puzzled by this
-whole thing. Two consecutive mounts that should share the superblock
-don't share the superblock. But behavior differs between nfs3 and nfs4
-due to how automounting works.
+"Your app should create sockets with IPPROTO_MPTCP as the proto:
+( socket(AF_INET, SOCK_STREAM, IPPROTO_MPTCP); ). Legacy apps can be
+forced to create and use MPTCP sockets instead of TCP ones via the
+mptcpize command bundled with the mptcpd daemon."
 
-Afaict, the callchain you're looking at in this scenario is:
+But the mptcpize (LD_PRELOAD technique) command has some limitations
+[2]:
 
-(1) nfs3
+ - it doesn't work if the application is not using libc (e.g. GoLang
+apps)
+ - in some envs, it might not be easy to set env vars / change the way
+apps are launched, e.g. on Android
+ - mptcpize needs to be launched with all apps that want MPTCP: we could
+have more control from BPF to enable MPTCP only for some apps or all the
+ones of a netns or a cgroup, etc.
+ - it is not in BPF, we cannot talk about it at netdev conf.
 
-(1.1) mount 127.0.0.1:/export/foo /mnt/foo -o context=system_u:object_r:root_t:s0,nfsvers=3
-      vfs_get_tree(fc_foo)
-      -> fs_contex_operations->get_tree::nfs_get_tree(fc_foo)
-            -> ctx->nfs_mod->rpc_ops->try_get_tree::nfs_try_get_tree(fc_foo)
-               -> nfs_get_tree_common(fc_foo)
-                  -> sb_foo = sget_fc(fc_foo, nfs_compare_super, ...)
+So this patchset attempts to use BPF to implement functions similer to
+mptcpize.
 
-(1.2) mount 127.0.0.1:/export/bar /mnt/bar -o context=system_u:object_r:root_t:s0,nfsvers=3
-      vfs_get_tree(fc_bar)
-      -> fs_contex_operations->get_tree::nfs_get_tree(fc_bar)
-            -> ctx->nfs_mod->rpc_ops->try_get_tree::nfs_try_get_tree(fc_bar)
-               -> nfs_get_tree_common(fc_bar)
-                  -> sb_foo = sget_fc(fc_bar, nfs_compare_super, ...)
-                     -> nfs_compare_super(sb_foo, fc_bar)
-                        -> selinux_sb_mnt_opts_compat(sb_foo, fc_bar->security)
+The main idea is to add a hook in sys_socket() to change the protocol id
+from IPPROTO_TCP (or 0) to IPPROTO_MPTCP.
 
-And fc_bar->security is non-NULL and compatible with sb_foo's current
-security settings. Fine.
+[1]
+https://github.com/multipath-tcp/mptcp_net-next/wiki
+[2]
+https://github.com/multipath-tcp/mptcp_net-next/issues/79
 
-(2) nfs4
+v9:
+ - update comment for 'update_socket_protocol'.
 
-But for nfs4 we're looking at a vastly more complicated callchain at
-least looking at this from a local nfs:
+v8:
+ - drop the additional checks on the 'protocol' value after the
+'update_socket_protocol()' call.
 
-(2.1) mount 127.0.0.1:/export/foo /mnt/foo -o context=system_u:object_r:root_t:s0
-      vfs_get_tree(fc_foo)
-      -> fs_contex_operations->get_tree::nfs_get_tree(fc_foo)
-         -> if (!ctx->internal) branch is taken
-            -> ctx->nfs_mod->rpc_ops->try_get_tree::nfs4_try_get_tree(fc_foo)
-               -> do_nfs4_mount(fc_foo)
-                  -> fc_dup_foo = vfs_dup_fs_context(fc_foo)
-                    -> security_fs_context_dup(fc_dup_foo, fc_foo)
-                       {
-                                fc_dup_foo->security = kmemdup(fc_foo->security)
-                       }
-                       new_fs_context->internal = true
-                  -> foo_mnt = fc_mount(fc_dup_foo)
-                    -> vfs_get_tree(fc_dup_foo)
-                       -> if (!ctx->internal) branch is _not_ taken
-                          -> nfs_get_tree_common(fc_dup_foo)
-                                 sb_foo = sget_fc(fc, nfs_compare_super, ...)
-                  -> mount_subtree()
-                     -> vfs_path_lookup(..., "/export/foo", LOOKUP_AUTOMOUNT)
-                        -> nfs_d_automount("export")
-                           -> fc_sub_foo = fs_context_for_submount()
-                              {
-                                      fc_sub_bar->security = NULL
-                              {
-                           -> nfs4_submount(fc_sub_foo)
-                              -> nfs4_do_submount(fc_sub_foo)
-                                 -> vfs_get_tree(fc_sub_foo)
-                                    -> nfs_get_tree_common(fc_sub_foo)
-                                       -> sb_foo_2 = sget_fc(fc_sub_foo, nfs_compare_super, ...)
-                        -> nfs_d_automount("foo")
-                           -> fc_sub_foo = fs_context_for_submount()
-                              {
-                                      fc_sub_bar->security = NULL
-                              {
-                           -> nfs4_submount(fc_sub_foo)
-                              -> nfs4_do_submount(fc_sub_foo)
-                                 -> vfs_get_tree(fc_sub_foo)
-                                    -> nfs_get_tree_common(fc_sub_foo)
-             |--------------------------> sb_foo_3 = sget_fc(fc_sub_foo, nfs_compare_super, ...)
-             |
-As far as I can see you're already allocating 3 separate superblocks of
-which two are discarded and only one survives. Afaict, the one that
-survives is _| the last one. Under the assumption that I'm correct,
-where does the third superblock get it's selinux context from given that
-fc->security isn't even set during submount?
+v7:
+ - add __weak and __diag_* for update_socket_protocol.
 
-And where is the context=%s output generated for mountinfo?
+v6:
+ - add update_socket_protocol.
 
-Is this a correct callchain?
+v5:
+ - add bpf_mptcpify helper.
 
-> 
-> Filling out fc->security with this new operation seems to fix that, but
-> if you see a better way to do this, then I'm certainly open to the idea.
-> 
-> > In a worst case situation, we could always implement a flag *inside*
-> > the SELinux code, similar to what has been done with 'lsm_set' here.
-> > 
-> 
-> I'm fine with a different solution, if you see a better one. You'll have
+v4:
+ - use lsm_cgroup/socket_create
 
-Independent of the modification in fs_context_for_submount() you might want to
-think about something like:
+v3:
+ - patch 8: char cmd[128]; -> char cmd[256];
 
-static const struct fs_context_operations nfs4_fs_context_ops = {
-      .free           = nfs4_free,
-      .parse_param    = nfs4_parse_param,
-      .get_tree       = nfs4_get_tree,
-};
+v2:
+ - Fix build selftests errors reported by CI
 
-static const struct fs_context_operations nfs4_fs_submount_ops = {
-      .free           = nfs4_free_submount,
-      .parse_param    = nfs4_parse_param_submount,
-      .get_tree       = nfs4_get_tree_submount,
-};
+Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/79
 
-static int nfs4_init_fs_context_submount(struct fs_context *fc)
-{
-        return 0;
-}
+Geliang Tang (4):
+  bpf: Add update_socket_protocol hook
+  selftests/bpf: Use random netns name for mptcp
+  selftests/bpf: Add two mptcp netns helpers
+  selftests/bpf: Add mptcpify test
 
-static int nfs4_fs_context_get_tree(struct fs_context *fc)
-{
-        if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT)
-                fc->ops = &nfs4_fs_submount_ops;
-        else
-                fc->ops = &nfs4_fs_context_ops;
-        .
-        .
-        .
-}
+ net/mptcp/bpf.c                               |  17 +++
+ net/socket.c                                  |  24 ++++
+ .../testing/selftests/bpf/prog_tests/mptcp.c  | 125 ++++++++++++++++--
+ tools/testing/selftests/bpf/progs/mptcpify.c  |  25 ++++
+ 4 files changed, 182 insertions(+), 9 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/mptcpify.c
 
-which will make the callchain probably a lot to follow instead of wafting
-through the same nested functions over and over. But just a thought.
+-- 
+2.35.3
+
