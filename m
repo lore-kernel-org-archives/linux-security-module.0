@@ -2,123 +2,126 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A748C001DB
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 21:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19167C41513
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 21:33:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230163AbjHCVYd (ORCPT
+        id S231874AbjHCVdy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Aug 2023 17:24:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41392 "EHLO
+        Thu, 3 Aug 2023 17:33:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbjHCVYc (ORCPT
+        with ESMTP id S229534AbjHCVdx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Aug 2023 17:24:32 -0400
-Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C46BDE43
-        for <linux-security-module@vger.kernel.org>; Thu,  3 Aug 2023 14:24:26 -0700 (PDT)
-Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-583f036d50bso16847177b3.3
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Aug 2023 14:24:26 -0700 (PDT)
+        Thu, 3 Aug 2023 17:33:53 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CB4230F8
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Aug 2023 14:33:52 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d052f58b7deso1495538276.2
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Aug 2023 14:33:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1691097866; x=1691702666;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5wp27Mgdl86M2hQPS3AR1RgGO+ir4xBbXiB3cLnZ3v4=;
-        b=Y4NTNv/j4pFhu4LdF/P4/bLQgJyo3Ikmp298U7LAN470CNaM+s9LhvpeTY4ddbGEYF
-         uXE+oM0pYdsYxXm38i4OKB04q3lqeUI6RyUXec1hPGkZbF8C5eU1Z9VdvWDwz+eAIa6w
-         EtWul6dEz74yZNPrXyUPOz4yDjEkk3x+IoLAC2KyeHqW0Kfn6KF2HmRwQj5AG0h7Rxzg
-         q/Pjh9PiV/V3pdu4lY00cBIYuJg7uQI7l3KvgHN9ztJLgxUo4ui10wWpxrt4Wn5aBfYm
-         w8QOAGl5GkhT/1o/meozXjKm7IaFxytDDxleTRq9Dnb1Zb3EBV9DWQUVX+i6DC0w+LVr
-         lliw==
+        d=google.com; s=20221208; t=1691098431; x=1691703231;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9a1CX278YGq0zGZWP+f0LaA5pxcSpZKfqzUpq5J0Xvg=;
+        b=IR5xzMKe8szTmxl4p2ho1ObEqwy8naF4E4qnmDtBq7lAxEtsU16tQj/R4R5qESegez
+         PkrsM289xscbVMOJUdfqB4yLgjio6Z6UyTQ5akbsqRMVo/0CI6G846MYZvRY5SnSnkmz
+         tLPxmo4niw2nNfzxnBiONXV83evUYWw26lriJf75L9atmgvwAuNI5FQTSgUw4k4iWQrK
+         UI9t5ZYCmE3/x2kIcQyQMLaEOC8LoQHmUO9+YULFdo01f+mC99FiBoEx3M4fWkTeeb98
+         lRZqa6RGf+ZJ9wu3iOqQHRY2Gzg59Ca7BS8kxvbQPHU1PAbEiHR33FOvMQ5ucfGAtJAx
+         QPfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691097866; x=1691702666;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5wp27Mgdl86M2hQPS3AR1RgGO+ir4xBbXiB3cLnZ3v4=;
-        b=DxgyypXYldzJo0acYH4644WVcWUoXAp2/dNw7Zci0yEvIKLrmiin2KEMyZI98/CM1A
-         45JVd8zblUSCLpZi35nNT6+uGNnBwofmB5QwnlODjvJTPI3s0SknlS/c46q/qRQsp8+Z
-         URz4MNAAe93g4aPP8B2b5hzgtmF+4iP29Hy5XiG1P6J3jKTNsZAwaGCWQiRR5+BdG5iO
-         3/DrZijyla6B1q36cO4p0b7EXeyICvrqm9FR+plDPEM5WoC2unlsCadPW0JMnv+QCQEH
-         NrtHuKgcVrJUgZ5ppBRAxuQvn8QibxLTYMkEX+C/6rTEyHG/UnWmeAG4jfrcfnO9ylfP
-         fQUA==
-X-Gm-Message-State: ABy/qLYt8A/RptS+LD/6QhjqV+J2o/wAvEy5f806dfuZAij/2R0/tqY0
-        maj0RcUj6lKwsD2ZzQq/rD+9XYLllrSHhX70oNyo
-X-Google-Smtp-Source: APBJJlFP455KbxY7hVVHbw/hRB40QSXKOD+AJ4rL7SG2R6ZlBgPJnroH8LC4xETTk9L2PmHowK3vTUEFlakKyHJkl9g=
-X-Received: by 2002:a81:9151:0:b0:577:4387:197c with SMTP id
- i78-20020a819151000000b005774387197cmr21199072ywg.16.1691097866016; Thu, 03
- Aug 2023 14:24:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
- <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com> <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
- <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
- <CAHC9VhQhf+ik5S_aJOVn59pax1Aa0vO5gJ4YoxrtGRKtoWh7sA@mail.gmail.com> <20230803.alohoMev7thu@digikod.net>
-In-Reply-To: <20230803.alohoMev7thu@digikod.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 3 Aug 2023 17:24:15 -0400
-Message-ID: <CAHC9VhQU-9gpTNMW-=R9x6_a5PKRkT=Qm3QQ1EDSmScrQv655w@mail.gmail.com>
-Subject: Re: ANN: new LSM guidelines
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        d=1e100.net; s=20221208; t=1691098431; x=1691703231;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9a1CX278YGq0zGZWP+f0LaA5pxcSpZKfqzUpq5J0Xvg=;
+        b=O2X51LvxJy4ON5OaHhk35gfXYSsNmrFiVw0TT5ET6HWSVgeFAWIgFeQDcbn/deZ41K
+         ctTmxhqd+7WlITcUuXMiCIblEPzhwLNdjyc03j6GJjttuvCU6pguEhL6AxO+N9e9ayME
+         0HFMg8myaO9D+oY6Yy3hujTfbewslr4JdIYzuXUE2/1/cw/2/Y8/ha3flU0wv3psRvqf
+         Wv9BM613s/FGvv04gRWH+wKlu4PgkuDvIYuiD4/8r09xft9zcmK/yPGxWb/jfNo+2Vh5
+         p8EmN89KNVC5TqkCTaD75RkXGZdEVBYv65TUu24VFQIM1U/gsCgFSnyCNYaTv1Hh9K8h
+         LGwA==
+X-Gm-Message-State: ABy/qLZpd5CTkbGl5nml/FiQVQqZBUZHebyKC/CauZ6jQ0RYXhWJ6EIq
+        Pw04D2jv/9CG1I35fxS2+O6iJxfEwJlUZEtaCw==
+X-Google-Smtp-Source: APBJJlEW3o5TROn1f+epZr1wpavKrHKIJTzw/zt8fdpICa5F0hhCkgMlH8XVXr9P//1ALSRc4iTaSp9JZuKiANeApg==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a25:d24d:0:b0:d08:ea77:52d4 with SMTP
+ id j74-20020a25d24d000000b00d08ea7752d4mr138360ybg.12.1691098431718; Thu, 03
+ Aug 2023 14:33:51 -0700 (PDT)
+Date:   Thu, 03 Aug 2023 21:33:44 +0000
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIADcdzGQC/x3MQQqAIBBA0avIrBNMsaKrRAvJsWaRhlok0d2Tl
+ m/x/wMJI2GCkT0Q8aJEwVe0DYNlM35FTrYapJBKDELxhMsZKReewx5K4L3Vg9PKKm06qNUR0dH 9H6f5fT/e0nA8YQAAAA==
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1691098430; l=1987;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=2evVcZK0WP6ax5yAm7AbIZ6ZeQaKrhdt6vD9tIcclH0=; b=ypFgRW0czPyi/GHwpauG42Y9gan08GzQKInJtaElHrzDHwEl74ITApi9Gu8Ptkoi/fv6MXJxT
+ Z/witMGLrcwALUkSIWGhNs1KlNn/ZXVqD3fHBSWZbY0yYDhlgIV5Rxe
+X-Mailer: b4 0.12.3
+Message-ID: <20230803-security-tomoyo-v1-1-c53a17908d2f@google.com>
+Subject: [PATCH] tomoyo: refactor deprecated strncpy
+From:   Justin Stitt <justinstitt@google.com>
+To:     Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        linux-hardening@vger.kernel.org,
+        Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 3, 2023 at 5:44=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
->
-> On Wed, Aug 02, 2023 at 06:00:22PM -0400, Paul Moore wrote:
-> > On Tue, Aug 1, 2023 at 6:47=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> > >
-> > > I've updated the README.md doc based on the feedback, and copied the
-> > > two new sections below for easier review.  If anyone has any
-> > > additional feedback or concerns, please let me know.
-> >
-> > Another update based on feedback received (thanks everyone!).  Just as
-> > before, I welcome any comments or feedback you are able to share.
-> >
-> > ## New LSM Hook Guidelines
-> >
-> > While LSM hooks are considered outside of the Linux Kernel's stable API
->
-> s/Kernel/kernel/g
+`strncpy` is deprecated for use on NUL-terminated destination strings [1].
 
-Done for the entire doc.
+A suitable replacement is `strscpy` [2] due to the fact that it
+guarantees NUL-termination on its destination buffer argument which is
+_not_ the case for `strncpy`!
 
-> > * New LSMs must be accompanied by a test suite to verify basic function=
-ality
-> > and help identify regressions.  Test coverage does not need to reach a =
-specific
-> > percentage, but core functionality and any user interfaces should be we=
-ll
-> > covered by the test suite.  Integration with existing automated Linux K=
-ernel
-> > testing services is encouraged.
->
-> I'd suggest to require tests to be publicly available and easy (or not
-> too difficult) to run for the sake of sanity of other kernel developers
-> that might need to quickly fix (critical) bugs even without the help of
-> the maintainer (who might be unavailable for various reasons).
+It should be noted that the destination buffer is zero-initialized and
+had a max length of `sizeof(dest) - 1`. There is likely _not_ a bug
+present in the current implementation. However, by switching to
+`strscpy` we get the benefit of no longer needing the `- 1`'s from the
+string copy invocations on top of `strscpy` being a safer interface all
+together.
 
-Good point.  We mention a public repository for associated userspace
-tools/patches, we should do the same for the tests.  While I also
-agree that the tests should be easy to setup and run, I'm not sure I
-want to put that as a requirement simply because it is so hard to
-properly quantify.
+[1]: www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings
+[2]: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.en.html
 
-> I guess
-> you could argue that decent kernel code needs a reasonable bus factor
-> protection, but making tests available and easy to use is a quality
-> guarantee.
+Link: https://github.com/KSPP/linux/issues/90
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Justin Stitt <justinstitt@google.com>
+---
+ security/tomoyo/domain.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-At one point I debated adding a requirement about having a "community"
-behind new LSM submissions, but I worry that would introduce a
-chicken/egg problem.  In theory, if a LSM is properly documented, has
-meaningful tests, and is reasonably coded, any interested party could
-pick it up if the original author/maintainer ceased maintaining the
-code.
+diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
+index ac20c0bdff9d..90b53500a236 100644
+--- a/security/tomoyo/domain.c
++++ b/security/tomoyo/domain.c
+@@ -784,13 +784,12 @@ int tomoyo_find_next_domain(struct linux_binprm *bprm)
+ 		if (!strcmp(domainname, "parent")) {
+ 			char *cp;
+ 
+-			strncpy(ee->tmp, old_domain->domainname->name,
+-				TOMOYO_EXEC_TMPSIZE - 1);
++			strscpy(ee->tmp, old_domain->domainname->name, TOMOYO_EXEC_TMPSIZE);
+ 			cp = strrchr(ee->tmp, ' ');
+ 			if (cp)
+ 				*cp = '\0';
+ 		} else if (*domainname == '<')
+-			strncpy(ee->tmp, domainname, TOMOYO_EXEC_TMPSIZE - 1);
++			strscpy(ee->tmp, domainname, TOMOYO_EXEC_TMPSIZE);
+ 		else
+ 			snprintf(ee->tmp, TOMOYO_EXEC_TMPSIZE - 1, "%s %s",
+ 				 old_domain->domainname->name, domainname);
 
---=20
-paul-moore.com
+---
+base-commit: 5d0c230f1de8c7515b6567d9afba1f196fb4e2f4
+change-id: 20230803-security-tomoyo-7d58f53d35a6
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
+
