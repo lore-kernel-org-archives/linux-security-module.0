@@ -2,277 +2,249 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A49EC04A94
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 11:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73FDFEB64DD
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 12:35:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235605AbjHCLF2 (ORCPT
+        id S234425AbjHCMfq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Aug 2023 07:05:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46016 "EHLO
+        Thu, 3 Aug 2023 08:35:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235323AbjHCLFI (ORCPT
+        with ESMTP id S235295AbjHCMfp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Aug 2023 07:05:08 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5324F3C3E;
-        Thu,  3 Aug 2023 04:03:33 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id C5EC421980;
-        Thu,  3 Aug 2023 11:03:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1691060607; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ELFTahEoHWF3OWY1nmXyZ3K1aLk6cFNvnoHkAihu/Mw=;
-        b=Zk1HY4iMRP9uheCuU2Gwd5DiqLAsx6L/pbJrWVbGs2G5tg+EI9ElS+gE66dB2FTHm11UF8
-        qWgiTyTJQ7yRAiBtoBdi2fqPMtREOO8my04MU6Xu8b+lwvm6aj++D29U6Bm4b38Thm1sQ5
-        PdGs2uwSRTJt8ojn16bv8gGCtOwUUxA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1691060607;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ELFTahEoHWF3OWY1nmXyZ3K1aLk6cFNvnoHkAihu/Mw=;
-        b=ZJe2RSlXii++jrPpaFNL6iXhx+JwVqn0T8np7kqzxyJSLwbPFRd7+wdefPUF3yIddEHPpo
-        hddKSxL+A16bWFAg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 34D39134B0;
-        Thu,  3 Aug 2023 11:03:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id VY8NDH+Jy2RAJQAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Thu, 03 Aug 2023 11:03:27 +0000
-Message-ID: <d6ee67a2-b5b9-7287-bc62-b250c1872ed5@suse.cz>
-Date:   Thu, 3 Aug 2023 13:03:26 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [RFC PATCH v11 00/29] KVM: guest_memfd() and per-page attributes
-Content-Language: en-US
-To:     nikunj@amd.com, Sean Christopherson <seanjc@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Thu, 3 Aug 2023 08:35:45 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FF673C1F
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Aug 2023 05:35:28 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4fe55d70973so561445e87.0
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Aug 2023 05:35:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691066126; x=1691670926;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z5pIJWbGUU+IcBqHu09pjkPy7MNVWuLFQRm8HIlUks0=;
+        b=gwESsG+WDXDy3C2tsUjbJ1FYYB3SyMjvoJaMALp3YjaZH6mzwR+5HwCxUT9kjr3Lfx
+         wazMwpG0cKmlZFEVO33Jg8t0oopFbPtYXdFCpB7UhfMlBgFPRcZUsWg8CwwxG64fpj68
+         kGFRPkxwA9WnvdysCECHGIkYBnn3GHZ/PdJk5FHitlyrVhTPiifKJNmNLrS6crB9DRS6
+         dugRnqjNCyuMPEzDB6M9535X5HDTQSXkygZ6kpqPGOcwdovmtwMG9JIGZHgSCXjEL/Op
+         V8WpqwIHiSMoxMleRDICKC0NUK45JUO0e7Tp64nXwtQ+CLg3kAQjN0yMOYJ0iRwHzX2/
+         VIlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691066126; x=1691670926;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z5pIJWbGUU+IcBqHu09pjkPy7MNVWuLFQRm8HIlUks0=;
+        b=j17ouXYKG7UwI8d70EiFZvKHUb7uMZv70+9Nb3mhqTVvCMHRZTioj4RnQx+R+sgrHK
+         qwl2jHMws90U9vRr5F/lvPIgJxzj7Am3QPlo9BmDiJmnFzX3RqagjQZ8j7F3secnLjD+
+         mDT3iIDdgFySo+LC6uATsruh7IjvSv0XpRQTmkdg+k/RZISA5zLkY5swSjXW67GZi5ca
+         t+X6vFE8HdAykwt662YfltyBGVJMiuTIIadLH0FQkHTNroP08YuzJFJ39irwbrsfynU9
+         lBvO/KEp7iCRwcECWr79k+fxAdRj2pIUOo71LnW7Evl14QciuB4IdOCb/zOEoiFifyQq
+         ELJQ==
+X-Gm-Message-State: ABy/qLbaCbYW1PV3Ec00IhyApDUJyhTxN2JXkX3Io+xRnNEbBoBLgJnH
+        N8V9DK+IAU3TZ+nPFtKOuFgTQ07hOLr2QgFfMK8=
+X-Google-Smtp-Source: APBJJlHLHB55LHuoOqYiuGk548/vVQ+RlwPr0wSIpPDIRqwm7EI73ZDM2CoYFB8/oR+IUUpGxDAyJg==
+X-Received: by 2002:a19:654e:0:b0:4f8:6831:fd70 with SMTP id c14-20020a19654e000000b004f86831fd70mr2961739lfj.3.1691066125932;
+        Thu, 03 Aug 2023 05:35:25 -0700 (PDT)
+Received: from rayden.urgonet (h-46-59-78-111.A175.priv.bahnhof.se. [46.59.78.111])
+        by smtp.gmail.com with ESMTPSA id q18-20020ac25fd2000000b004fdc0023a47sm3304592lfg.238.2023.08.03.05.35.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Aug 2023 05:35:25 -0700 (PDT)
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+To:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
+        linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org
+Cc:     Sumit Garg <sumit.garg@linaro.org>,
+        James Bottomley <jejb@linux.ibm.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20230718234512.1690985-1-seanjc@google.com>
- <110f1aa0-7fcd-1287-701a-89c2203f0ac2@amd.com> <ZL6uMk/8UeuGj8CP@google.com>
- <2f98a32c-bd3d-4890-b757-4d2f67a3b1a7@amd.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <2f98a32c-bd3d-4890-b757-4d2f67a3b1a7@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>
+Subject: [PATCH] KEYS: trusted: tee: use tee_shm_register_alloc_buf()
+Date:   Thu,  3 Aug 2023 14:35:15 +0200
+Message-Id: <20230803123515.4018838-1-jens.wiklander@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/26/23 13:20, Nikunj A. Dadhania wrote:
-> Hi Sean,
-> 
-> On 7/24/2023 10:30 PM, Sean Christopherson wrote:
->> On Mon, Jul 24, 2023, Nikunj A. Dadhania wrote:
->>> On 7/19/2023 5:14 AM, Sean Christopherson wrote:
->>>> This is the next iteration of implementing fd-based (instead of vma-based)
->>>> memory for KVM guests.  If you want the full background of why we are doing
->>>> this, please go read the v10 cover letter[1].
->>>>
->>>> The biggest change from v10 is to implement the backing storage in KVM
->>>> itself, and expose it via a KVM ioctl() instead of a "generic" sycall.
->>>> See link[2] for details on why we pivoted to a KVM-specific approach.
->>>>
->>>> Key word is "biggest".  Relative to v10, there are many big changes.
->>>> Highlights below (I can't remember everything that got changed at
->>>> this point).
->>>>
->>>> Tagged RFC as there are a lot of empty changelogs, and a lot of missing
->>>> documentation.  And ideally, we'll have even more tests before merging.
->>>> There are also several gaps/opens (to be discussed in tomorrow's PUCK).
->>>
->>> As per our discussion on the PUCK call, here are the memory/NUMA accounting 
->>> related observations that I had while working on SNP guest secure page migration:
->>>
->>> * gmem allocations are currently treated as file page allocations
->>>   accounted to the kernel and not to the QEMU process.
->> 
->> We need to level set on terminology: these are all *stats*, not accounting.  That
->> distinction matters because we have wiggle room on stats, e.g. we can probably get
->> away with just about any definition of how guest_memfd memory impacts stats, so
->> long as the information that is surfaced to userspace is useful and expected.
->> 
->> But we absolutely need to get accounting correct, specifically the allocations
->> need to be correctly accounted in memcg.  And unless I'm missing something,
->> nothing in here shows anything related to memcg.
-> 
-> I tried out memcg after creating a separate cgroup for the qemu process. Guest 
-> memory is accounted in memcg.
-> 
->   $ egrep -w "file|file_thp|unevictable" memory.stat
->   file 42978775040
->   file_thp 42949672960
->   unevictable 42953588736 
-> 
-> NUMA allocations are coming from right nodes as set by the numactl.
-> 
->   $ egrep -w "file|file_thp|unevictable" memory.numa_stat
->   file N0=0 N1=20480 N2=21489377280 N3=21489377280
->   file_thp N0=0 N1=0 N2=21472739328 N3=21476933632
->   unevictable N0=0 N1=0 N2=21474697216 N3=21478891520
-> 
->> 
->>>   Starting an SNP guest with 40G memory with memory interleave between
->>>   Node2 and Node3
->>>
->>>   $ numactl -i 2,3 ./bootg_snp.sh
->>>
->>>     PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
->>>  242179 root      20   0   40.4g  99580  51676 S  78.0   0.0   0:56.58 qemu-system-x86
->>>
->>>   -> Incorrect process resident memory and shared memory is reported
->> 
->> I don't know that I would call these "incorrect".  Shared memory definitely is
->> correct, because by definition guest_memfd isn't shared.  RSS is less clear cut;
->> gmem memory is resident in RAM, but if we show gmem in RSS then we'll end up with
->> scenarios where RSS > VIRT, which will be quite confusing for unaware users (I'm
->> assuming the 40g of VIRT here comes from QEMU mapping the shared half of gmem
->> memslots).
-> 
-> I am not sure why will RSS exceed the VIRT, it should be at max 40G (assuming all the
-> memory is private)
-> 
-> As per my experiments with a hack below. MM_FILEPAGES does get accounted to RSS/SHR in top
-> 
->     PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
->    4339 root      20   0   40.4g  40.1g  40.1g S  76.7  16.0   0:13.83 qemu-system-x86
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index f456f3b5049c..5b1f48a2e714 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -166,6 +166,7 @@ void mm_trace_rss_stat(struct mm_struct *mm, int member)
->  {
->         trace_rss_stat(mm, member);
->  }
-> +EXPORT_SYMBOL(mm_trace_rss_stat);
-> 
->  /*
->   * Note: this doesn't free the actual pages themselves. That
-> diff --git a/virt/kvm/guest_mem.c b/virt/kvm/guest_mem.c
-> index a7e926af4255..e4f268bf9ce2 100644
-> --- a/virt/kvm/guest_mem.c
-> +++ b/virt/kvm/guest_mem.c
-> @@ -91,6 +91,10 @@ static struct folio *kvm_gmem_get_folio(struct file *file, pgoff_t index)
->                         clear_highpage(folio_page(folio, i));
->         }
-> 
-> +       /* Account only once for the first time */
-> +       if (!folio_test_dirty(folio))
-> +               add_mm_counter(current->mm, MM_FILEPAGES, folio_nr_pages(folio));
+Prior to this patch was trusted_tee_seal() and trusted_tee_get_random()
+relying on tee_shm_register_kernel_buf() to share memory with the TEE.
+Depending on the memory allocation pattern the pages holding the
+registered buffers overlap with other buffers also shared with the TEE.
 
-I think this alone would cause "Bad rss-counter" messages when the process
-exits, because there's no corresponding decrement when page tables are torn
-down. We would probably have to instantiate the page tables (i.e. with
-PROT_NONE so userspace can't really do accesses through them) for this to
-work properly.
+The OP-TEE driver using the old SMC based ABI permits overlapping shared
+buffers, but with the new FF-A based ABI each physical page may only
+be registered once.
 
-So then it wouldn't technically be "unmapped private memory" anymore, but
-effectively still would be. Maybe there would be more benefits, like the
-mbind() working. But where would the PROT_NONE page tables be instantiated
-if there's no page fault? During the ioctl? And is perhaps too much (CPU)
-work for little benefit? Maybe, but we could say it makes things simpler and
-can be optimized later?
+Fix this problem by allocating a temporary page aligned shared memory
+buffer to be used as a bounce buffer for the needed data buffers.
 
-Anyway IMHO it would be really great if the memory usage was attributable
-the usual way without new IOCTLs or something. Each time some memory appears
-"unaccounted" somewhere, it causes confusion.
+Since TEE trusted keys doesn't depend on registered shared memory
+support any longer remove that explicit dependency when opening a
+context to the TEE.
 
-> +
->         folio_mark_accessed(folio);
->         folio_mark_dirty(folio);
->         folio_mark_uptodate(folio);
-> 
-> We can update the rss_stat appropriately to get correct reporting in userspace.
-> 
->>>   Accounting of the memory happens in the host page fault handler path,
->>>   but for private guest pages we will never hit that.
->>>
->>> * NUMA allocation does use the process mempolicy for appropriate node 
->>>   allocation (Node2 and Node3), but they again do not get attributed to 
->>>   the QEMU process
->>>
->>>   Every 1.0s: sudo numastat  -m -p qemu-system-x86 | egrep -i "qemu|PID|Node|Filepage"   gomati: Mon Jul 24 11:51:34 2023
->>>
->>>   Per-node process memory usage (in MBs)
->>>   PID                               Node 0          Node 1          Node 2          Node 3           Total
->>>   242179 (qemu-system-x86)           21.14            1.61           39.44           39.38          101.57
->>>
->>>   Per-node system memory usage (in MBs):
->>>                             Node 0          Node 1          Node 2          Node 3           Total
->>>   FilePages                2475.63         2395.83        23999.46        23373.22        52244.14
->>>
->>>
->>> * Most of the memory accounting relies on the VMAs and as private-fd of 
->>>   gmem doesn't have a VMA(and that was the design goal), user-space fails 
->>>   to attribute the memory appropriately to the process.
->>>
->>>   /proc/<qemu pid>/numa_maps
->>>   7f528be00000 interleave:2-3 file=/memfd:memory-backend-memfd-shared\040(deleted) anon=1070 dirty=1070 mapped=1987 mapmax=256 active=1956 N2=582 N3=1405 kernelpagesize_kB=4
->>>   7f5c90200000 interleave:2-3 file=/memfd:rom-backend-memfd-shared\040(deleted)
->>>   7f5c90400000 interleave:2-3 file=/memfd:rom-backend-memfd-shared\040(deleted) dirty=32 active=0 N2=32 kernelpagesize_kB=4
->>>   7f5c90800000 interleave:2-3 file=/memfd:rom-backend-memfd-shared\040(deleted) dirty=892 active=0 N2=512 N3=380 kernelpagesize_kB=4
->>>
->>>   /proc/<qemu pid>/smaps
->>>   7f528be00000-7f5c8be00000 rw-p 00000000 00:01 26629                      /memfd:memory-backend-memfd-shared (deleted)
->>>   7f5c90200000-7f5c90220000 rw-s 00000000 00:01 44033                      /memfd:rom-backend-memfd-shared (deleted)
->>>   7f5c90400000-7f5c90420000 rw-s 00000000 00:01 44032                      /memfd:rom-backend-memfd-shared (deleted)
->>>   7f5c90800000-7f5c90b7c000 rw-s 00000000 00:01 1025                       /memfd:rom-backend-memfd-shared (deleted)
->> 
->> This is all expected, and IMO correct.  There are no userspace mappings, and so
->> not accounting anything is working as intended.
-> Doesn't sound that correct, if 10 SNP guests are running each using 10GB, how would we know who is using 100GB of memory?
-> 
->> 
->>> * QEMU based NUMA bindings will not work. Memory backend uses mbind() 
->>>   to set the policy for a particular virtual memory range but gmem 
->>>   private-FD does not have a virtual memory range visible in the host.
->> 
->> Yes, adding a generic fbind() is the way to solve silve.
-> 
-> Regards,
-> Nikunj
-> 
+Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+---
+ security/keys/trusted-keys/trusted_tee.c | 68 +++++++++++++-----------
+ 1 file changed, 36 insertions(+), 32 deletions(-)
+
+diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
+index ac3e270ade69..3085343c489a 100644
+--- a/security/keys/trusted-keys/trusted_tee.c
++++ b/security/keys/trusted-keys/trusted_tee.c
+@@ -8,6 +8,7 @@
+ 
+ #include <linux/err.h>
+ #include <linux/key-type.h>
++#include <linux/minmax.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/string.h>
+@@ -65,38 +66,37 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
+ 	int ret;
+ 	struct tee_ioctl_invoke_arg inv_arg;
+ 	struct tee_param param[4];
+-	struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
++	struct tee_shm *shm;
++	uint8_t *buf;
+ 
+ 	memset(&inv_arg, 0, sizeof(inv_arg));
+ 	memset(&param, 0, sizeof(param));
+ 
+-	reg_shm_in = tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
+-						 p->key_len);
+-	if (IS_ERR(reg_shm_in)) {
+-		dev_err(pvt_data.dev, "key shm register failed\n");
+-		return PTR_ERR(reg_shm_in);
++	shm = tee_shm_alloc_kernel_buf(pvt_data.ctx,
++				       p->key_len + sizeof(p->blob));
++	if (IS_ERR(shm)) {
++		dev_err(pvt_data.dev, "key shm alloc failed\n");
++		return PTR_ERR(shm);
+ 	}
+-
+-	reg_shm_out = tee_shm_register_kernel_buf(pvt_data.ctx, p->blob,
+-						  sizeof(p->blob));
+-	if (IS_ERR(reg_shm_out)) {
+-		dev_err(pvt_data.dev, "blob shm register failed\n");
+-		ret = PTR_ERR(reg_shm_out);
++	buf = tee_shm_get_va(shm, 0);
++	if (IS_ERR(buf)) {
++		ret = PTR_ERR(buf);
+ 		goto out;
+ 	}
++	memcpy(buf, p->key, p->key_len);
+ 
+ 	inv_arg.func = TA_CMD_SEAL;
+ 	inv_arg.session = pvt_data.session_id;
+ 	inv_arg.num_params = 4;
+ 
+ 	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
+-	param[0].u.memref.shm = reg_shm_in;
++	param[0].u.memref.shm = shm;
+ 	param[0].u.memref.size = p->key_len;
+ 	param[0].u.memref.shm_offs = 0;
+ 	param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
+-	param[1].u.memref.shm = reg_shm_out;
++	param[1].u.memref.shm = shm;
+ 	param[1].u.memref.size = sizeof(p->blob);
+-	param[1].u.memref.shm_offs = 0;
++	param[1].u.memref.shm_offs = p->key_len;
+ 
+ 	ret = tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
+ 	if ((ret < 0) || (inv_arg.ret != 0)) {
+@@ -104,14 +104,13 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
+ 			inv_arg.ret);
+ 		ret = -EFAULT;
+ 	} else {
++		memcpy(p->blob, buf + p->key_len,
++		       min(param[1].u.memref.size, sizeof(p->blob)));
+ 		p->blob_len = param[1].u.memref.size;
+ 	}
+ 
+ out:
+-	if (reg_shm_out)
+-		tee_shm_free(reg_shm_out);
+-	if (reg_shm_in)
+-		tee_shm_free(reg_shm_in);
++	tee_shm_free(shm);
+ 
+ 	return ret;
+ }
+@@ -166,11 +165,9 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
+ 		p->key_len = param[1].u.memref.size;
+ 	}
+ 
++	tee_shm_free(reg_shm_out);
+ out:
+-	if (reg_shm_out)
+-		tee_shm_free(reg_shm_out);
+-	if (reg_shm_in)
+-		tee_shm_free(reg_shm_in);
++	tee_shm_free(reg_shm_in);
+ 
+ 	return ret;
+ }
+@@ -183,15 +180,21 @@ static int trusted_tee_get_random(unsigned char *key, size_t key_len)
+ 	int ret;
+ 	struct tee_ioctl_invoke_arg inv_arg;
+ 	struct tee_param param[4];
+-	struct tee_shm *reg_shm = NULL;
++	struct tee_shm *shm;
++	void *buf;
+ 
+ 	memset(&inv_arg, 0, sizeof(inv_arg));
+ 	memset(&param, 0, sizeof(param));
+ 
+-	reg_shm = tee_shm_register_kernel_buf(pvt_data.ctx, key, key_len);
+-	if (IS_ERR(reg_shm)) {
+-		dev_err(pvt_data.dev, "key shm register failed\n");
+-		return PTR_ERR(reg_shm);
++	shm = tee_shm_alloc_kernel_buf(pvt_data.ctx, key_len);
++	if (IS_ERR(shm)) {
++		dev_err(pvt_data.dev, "key shm alloc failed\n");
++		return PTR_ERR(shm);
++	}
++	buf = tee_shm_get_va(shm, 0);
++	if (IS_ERR(buf)) {
++		ret = PTR_ERR(buf);
++		goto out;
+ 	}
+ 
+ 	inv_arg.func = TA_CMD_GET_RANDOM;
+@@ -199,7 +202,7 @@ static int trusted_tee_get_random(unsigned char *key, size_t key_len)
+ 	inv_arg.num_params = 4;
+ 
+ 	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
+-	param[0].u.memref.shm = reg_shm;
++	param[0].u.memref.shm = shm;
+ 	param[0].u.memref.size = key_len;
+ 	param[0].u.memref.shm_offs = 0;
+ 
+@@ -209,18 +212,19 @@ static int trusted_tee_get_random(unsigned char *key, size_t key_len)
+ 			inv_arg.ret);
+ 		ret = -EFAULT;
+ 	} else {
++		memcpy(key, buf, min(param[0].u.memref.size, key_len));
+ 		ret = param[0].u.memref.size;
+ 	}
+ 
+-	tee_shm_free(reg_shm);
++out:
++	tee_shm_free(shm);
+ 
+ 	return ret;
+ }
+ 
+ static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
+ {
+-	if (ver->impl_id == TEE_IMPL_ID_OPTEE &&
+-	    ver->gen_caps & TEE_GEN_CAP_REG_MEM)
++	if (ver->impl_id == TEE_IMPL_ID_OPTEE)
+ 		return 1;
+ 	else
+ 		return 0;
+-- 
+2.34.1
 
