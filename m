@@ -2,302 +2,120 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6E4C001DF
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 13:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB281C04A94
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 14:12:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236500AbjHCNpE (ORCPT
+        id S236091AbjHCOMz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Aug 2023 09:45:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33854 "EHLO
+        Thu, 3 Aug 2023 10:12:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236505AbjHCNog (ORCPT
+        with ESMTP id S235240AbjHCOMd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Aug 2023 09:44:36 -0400
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2049.outbound.protection.outlook.com [40.107.22.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C81BDE69;
-        Thu,  3 Aug 2023 06:42:13 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c1R9x/GY4VImCVetYDf3lmu1EGmWQe3rkXm5FD+BGaLyG5yGCD23HsSLj9BBpZsm5oUDAT/WZCotArLa07YJfk8mA97tOrRzyLFrRE0knHTLQCfjL5ujbKvm4MjsTMQB9aYMpRz8IpXHrub1USXE+tBk3RI6+dDpkShMgWftrP/IdPgunXDuePWu/EjESvQfGbTsMvAmUvvvbo4D6ZOTlcUp+yGKqmj9xxETATFQIoiooVIhBMIucZ/5Uatj/se/9UztjIA/ruOtR8x0QEFkzkriIHzvqD8ZblRSQstgyfIBp8W4J1jSkqT4Dazu96l1UUsNKPhaL51L/HRhIolaMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=M1VBt/JAhAhmI+Q6YmiMxzFmwi+dFZb4ProetOfhOEI=;
- b=J3OWQE6h8YLe2htfX/1jlvCfAyv4D57813jY7y3/hbFR/olzT8sqM0bG39TCTsTogqxLIVju++Fyx6bE8WI8SO4ftGu1jYTnhjiG5jaDJIObnyg70BqPaYIR5j7VaQoRbhMAioiYtnKCoH1hxO56g4r/nRABfu1jTkWkKU4EaYufAeEdzaUee/vwQv8C5Amnp7vLhd/Hxp1qEK+54W0SVOoHR3ZqtO0EGJd6aXADJjklZdY9h7mMKTAgTxtU8gE+VQ40mGxk308VawNtDs9+eVSwzxVPcUlES+BYIjMjAO48xjDyxUkASuDsE8HeWyTS1naQIurrxYTskhJJTrxtoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
- dkim=pass header.d=suse.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M1VBt/JAhAhmI+Q6YmiMxzFmwi+dFZb4ProetOfhOEI=;
- b=0I6MdQ5+KrPPAX4kMZp9UjTyDNLwOfAe1ZjQmt5+ROrttRu/EMRpVp/dt7fmkaVPtwE+ij7Wc/AEzoIpaRuCmaZKWJgF0XkE/Ll4Wl7XYvYph6Xqb2rYGN6EenFIRXDX01vjiqAeAdq1ShDk7k5MZFvgKv8BFWpB0vOw1mQ+qFRRDbxJduPLXanU+v2FtzrzvKOIJsxnwEzRxWt9h61Hrq2lhE+Cv8+FcqiwozGzqM8vRg+FlTL/SS/za57BzG3/DcaVlwx11MYQ1VPPYUfGTJIXM3BQLFL71R8GpLBKuhRaUZe3UqBtNpARWsHyY2JxX/Rvda0XKNxC4i0OgLL8eQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=suse.com;
-Received: from VI1PR0402MB3503.eurprd04.prod.outlook.com (2603:10a6:803:d::26)
- by DUZPR04MB9725.eurprd04.prod.outlook.com (2603:10a6:10:4e0::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6652.20; Thu, 3 Aug
- 2023 13:42:11 +0000
-Received: from VI1PR0402MB3503.eurprd04.prod.outlook.com
- ([fe80::6480:1775:c36d:b797]) by VI1PR0402MB3503.eurprd04.prod.outlook.com
- ([fe80::6480:1775:c36d:b797%5]) with mapi id 15.20.6631.046; Thu, 3 Aug 2023
- 13:42:11 +0000
-From:   Geliang Tang <geliang.tang@suse.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>,
-        Mat Martineau <martineau@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-        Simon Horman <horms@kernel.org>
-Cc:     Geliang Tang <geliang.tang@suse.com>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, mptcp@lists.linux.dev,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH bpf-next v9 4/4] selftests/bpf: Add mptcpify test
-Date:   Thu,  3 Aug 2023 21:41:46 +0800
-Message-Id: <92ee6be5a465601ff3a2df29b6a517086e87ca3c.1691069778.git.geliang.tang@suse.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <cover.1691069778.git.geliang.tang@suse.com>
-References: <cover.1691069778.git.geliang.tang@suse.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0025.apcprd02.prod.outlook.com
- (2603:1096:4:195::21) To VI1PR0402MB3503.eurprd04.prod.outlook.com
- (2603:10a6:803:d::26)
+        Thu, 3 Aug 2023 10:12:33 -0400
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9611E3C01
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Aug 2023 07:11:55 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RGrPj3w4wzMpvQs;
+        Thu,  3 Aug 2023 14:11:53 +0000 (UTC)
+Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RGrPj12PRzMppDL;
+        Thu,  3 Aug 2023 16:11:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1691071913;
+        bh=0Lr/X9xvu90gp+BVwk3QWde3xY2K+G94l41qvIHjpR0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=U9hX0+XBnMFlwqnHzE6bK6QhYlZoIGDAScNSJ5LR+fuz5PNwrRo8/wl+TlRXzKt7T
+         rQ1H5R3l0FGgslfPQFvNyT+8XBTD1QY3Vz1w2iO4tvK+C3/NCDJV5zSY3KyxNEz19I
+         mEwJAujcIbDw3QqSLKltWiJFhErY6ksW6ZwBKqvA=
+Date:   Thu, 3 Aug 2023 16:12:02 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+Subject: Re: [PATCH v11 08/12] landlock: Add network rules and TCP hooks
+ support
+Message-ID: <20230803.EiD9Ea1Iel0f@digikod.net>
+References: <20230515161339.631577-1-konstantin.meskhidze@huawei.com>
+ <20230515161339.631577-9-konstantin.meskhidze@huawei.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VI1PR0402MB3503:EE_|DUZPR04MB9725:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2aba6b0e-e3d6-4cea-c9c3-08db94277070
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: jbM3AFGtLekJ0htcodtwRDk3ZCytajzQsAP0GS2YLI+pmFc4kEXyI1uiHUcbUYBnPFIyk4EYqx/XqQhvAWp/HPDR14Q/YzxEO29GVU+VXNv+EJCkLzJi6SDyvefBMKb4FaqSOnTFtgXUqqeutf0MEG9yFvXl/jALMPLN7Cp+QZBl7nL0Ent5UezGD8gTjnRoy4sRigG0PT7MMiSTeFnUEAxmBSt/baGlIcQddoXxaYqH009IDttMWHK2b84qs3w0iZ/WSt2dTAJSKUy6QLGUOecy6+fa8DWjYBFA383CAD9treZMdbqDHy+hVVYIU/aJZZCh8zKZq+jznlvXka6Mz0dvGhWG9q3RezzZ/oA3n5uw+VP0zhF61dvKPf6TP35Vq/wJgmzYY2dQiLntsy5FZbdPCziOiYkQ5hsJB0UsSX02FPCwAJX3R2dvh25+xOpccK2b9g2eOfwN30Tg9qVGwD/DA8wcgF0QP5jAP2pL2c5hO3mk9IB4x+MgxrRvSmYzubAbdCUqpIoWcVtkAmX3MjSfy0+oOVG7GuyC5XoTVYnXxpUfNJiun9nuHTxCauUktXfVUAJe4BlQVrYFWh57Q9N5zcItT08ZId6Q/QvV5/2jQFTYEFM68ELS3Q7/ehev
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0402MB3503.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(136003)(396003)(39860400002)(346002)(376002)(366004)(451199021)(83380400001)(2906002)(44832011)(2616005)(86362001)(36756003)(38100700002)(921005)(41300700001)(6666004)(6486002)(110136005)(6512007)(66476007)(316002)(4326008)(66946007)(66556008)(26005)(6506007)(5660300002)(478600001)(7416002)(186003)(8676002)(8936002)(7406005)(13296009);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?3//oaDnJB4diOXcxtTTwf9G/K3YcmnxsTGsXLTBmFO5htHKPJP73CTziTp9A?=
- =?us-ascii?Q?azp0PnorWn0Vw70xaCHt1UlyVvDABLpREyRku3HIbXSBGBGFObVaQYxm9BPC?=
- =?us-ascii?Q?Q+f07jiIWDWz/+6I+fiSqitcnYlzXFfGi3l1uUhH1CfBacIYdD5p9lKXY9/I?=
- =?us-ascii?Q?m1YHiwqDhZQsAy9qHCrNYGcvuiI+fiTVSkiKM7cLYUx7y6y4FpJhGwNSxqPp?=
- =?us-ascii?Q?aUiV8uKNiu7tts0ygKNuGVpg/R1LMlcKc54ZUik21T/Ik+0rwuGepsxWEB6M?=
- =?us-ascii?Q?6Q5H5QYLdmt3GGd/FAC3Mho3iPbdpP1cfofexCv1RchUn1PLvfbf441peqTk?=
- =?us-ascii?Q?unEOtxJMg1CzNX3jdeSNmRkjvQPfrpmx+QT4qsVg77zRLpuhAi/AiilOSxMz?=
- =?us-ascii?Q?P+y7pM4wq6jlOJTaRD8t6K3/kahtD2Qm69MjRNuo3Rnz2FNfKYPwnIntNNcw?=
- =?us-ascii?Q?J64YaIS6XT7dfCqUq9i0YzfuIB7rVsT0LXkLxS/ej9pVIBWqaHr8BpOdhlrL?=
- =?us-ascii?Q?RGylGeJDn2KzSvS6OoBnpwTAkahLi/g4hmOmxh+ck+W5gP9y8/tKnPqKlZyC?=
- =?us-ascii?Q?BAggtU0v5MsMu2QhJd31oWDmwM2xBVHpZF1LYF2Ib1Ux7fjGHVM7xcAhRLj9?=
- =?us-ascii?Q?qMLwfWSEkYP4wbsy533q3pgkQXSMvzOaZ2RVeWPBlqPiPyo8G6NxJBrZtJTk?=
- =?us-ascii?Q?S6pZYslanyCUISsMhZDFjcOuPKdNk+y6mXuQ96UO+kPTUOcelii4KHpOSw/c?=
- =?us-ascii?Q?gv99GPp4Sz7fBG6kwPuhmRDFVIVIzOLZdQ9MJHVG5Bw8GPguWo17O531tHKa?=
- =?us-ascii?Q?BMk5wI2Q6rvZrRnqEDiXXjSmx6AtgISvpdx/P+L6zUnNr4fG+8X/TGWT74/G?=
- =?us-ascii?Q?RNtcqTk2750Aua+zy6wReV1xP0UsQ9TojOOAyxYVjZiK/qLRuR1NAL8xIWAH?=
- =?us-ascii?Q?EoxCD1E42wTQsOerfFR7dDwJ3U7gRRepLxPE77jznTUF6L8DDPYSlAGKM727?=
- =?us-ascii?Q?KR+VWg/fLvmM0zBdpalWCawcqs4sXys9ZnDKzzzqmPN+iueI9YR4Gn+DLWs2?=
- =?us-ascii?Q?R2VX19B1RBx0qR1JoVtULsT2xSrYEXTuhD+wI38D45RkMKtD6dcMEmrUuCHU?=
- =?us-ascii?Q?/MCoFTTp82cqsr38bnspLosaZpMZPK43QPI9ChoAJbPnOOFdCNO0S+BULKbP?=
- =?us-ascii?Q?poM/OvtV41uhOfT5Tb+aSueMTli5qF8DFHntLJ6EgvPJTMdFMkxPpTAKNxPy?=
- =?us-ascii?Q?vN2jWeOG/Z9srGqZiUZMtfFPOkCv6irC8Jg4H1pfwxvvvjXQKmPh6KBSW0+D?=
- =?us-ascii?Q?tFUb03kjI5wBc9mE4ZYlFYcH6obfmYf9GfRNKBTjMpm3K5sCbBPJn2AhgY0X?=
- =?us-ascii?Q?1Ryk1YzU8wrVnLmK4msQy2c2YBBlqAp5fbPSJuo5NMpe6gaFgZM/VXSmvBtl?=
- =?us-ascii?Q?KpPrwN805Gdhl52rYl2oqOzMvPeiMLiWkpzbZeeAxKj8Gg4WfmYAd8ujft/S?=
- =?us-ascii?Q?uA5Ko4dAMkFlgjcAkC9SPx/Q2j2RW7251tbfOL0YW0yf5/9kiUYm3KawXTFx?=
- =?us-ascii?Q?uxPtI/FmQDmnO5QCKP+kZNJ6wtVhYJ/fHu0N6Quk?=
-X-OriginatorOrg: suse.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2aba6b0e-e3d6-4cea-c9c3-08db94277070
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR0402MB3503.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2023 13:42:11.6981
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: n0Qg+wTLKzG90CW2so01IrLl5nXdfIFazhfODvIUCxGYMqadPuqnDmMVgVoRhfipKnG7EhVM5rQVUwPdMxpRkw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR04MB9725
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230515161339.631577-9-konstantin.meskhidze@huawei.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Implement a new test program mptcpify: if the family is AF_INET or
-AF_INET6, the type is SOCK_STREAM, and the protocol ID is 0 or
-IPPROTO_TCP, set it to IPPROTO_MPTCP. It will be hooked in
-update_socket_protocol().
+On Tue, May 16, 2023 at 12:13:35AM +0800, Konstantin Meskhidze wrote:
+> This commit adds network rules support in the ruleset management
+> helpers and the landlock_create_ruleset syscall.
+> Refactor user space API to support network actions. Add new network
+> access flags, network rule and network attributes. Increment Landlock
+> ABI version. Expand access_masks_t to u32 to be sure network access
+> rights can be stored. Implement socket_bind() and socket_connect()
+> LSM hooks, which enables to restrict TCP socket binding and connection
+> to specific ports.
+> 
+> Co-developed-by: Mickaël Salaün <mic@digikod.net>
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> ---
 
-Extend the MPTCP test base, add a selftest test_mptcpify() for the
-mptcpify case. Open and load the mptcpify test prog to mptcpify the
-TCP sockets dynamically, then use start_server() and connect_to_fd()
-to create a TCP socket, but actually what's created is an MPTCP
-socket, which can be verified through the outputs of 'ss' and 'nstat'
-commands.
+[...]
 
-Reviewed-by: Matthieu Baerts <matthieu.baerts@tessares.net>
-Signed-off-by: Geliang Tang <geliang.tang@suse.com>
----
- .../testing/selftests/bpf/prog_tests/mptcp.c  | 94 +++++++++++++++++++
- tools/testing/selftests/bpf/progs/mptcpify.c  | 25 +++++
- 2 files changed, 119 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/progs/mptcpify.c
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index 8a54e87dbb17..5cb0a1bc6ec0 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-index 4407bd5c9e9a..caab3aa6a162 100644
---- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
-+++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-@@ -6,6 +6,7 @@
- #include "cgroup_helpers.h"
- #include "network_helpers.h"
- #include "mptcp_sock.skel.h"
-+#include "mptcpify.skel.h"
- 
- char NS_TEST[32];
- 
-@@ -195,8 +196,101 @@ static void test_base(void)
- 	close(cgroup_fd);
- }
- 
-+static void send_byte(int fd)
-+{
-+	char b = 0x55;
-+
-+	ASSERT_EQ(write(fd, &b, sizeof(b)), 1, "send single byte");
-+}
-+
-+static int verify_mptcpify(void)
-+{
-+	char cmd[256];
-+	int err = 0;
-+
-+	snprintf(cmd, sizeof(cmd),
-+		 "ip netns exec %s ss -tOni | grep -q '%s'",
-+		 NS_TEST, "tcp-ulp-mptcp");
-+	if (!ASSERT_OK(system(cmd), "No tcp-ulp-mptcp found!"))
-+		err++;
-+
-+	snprintf(cmd, sizeof(cmd),
-+		 "ip netns exec %s nstat -asz %s | awk '%s' | grep -q '%s'",
-+		 NS_TEST, "MPTcpExtMPCapableSYNACKRX",
-+		 "NR==1 {next} {print $2}", "1");
-+	if (!ASSERT_OK(system(cmd), "No MPTcpExtMPCapableSYNACKRX found!"))
-+		err++;
-+
-+	return err;
-+}
-+
-+static int run_mptcpify(int cgroup_fd)
-+{
-+	int server_fd, client_fd, prog_fd, err = 0;
-+	struct mptcpify *mptcpify_skel;
-+
-+	mptcpify_skel = mptcpify__open_and_load();
-+	if (!ASSERT_OK_PTR(mptcpify_skel, "skel_open_load"))
-+		return -EIO;
-+
-+	err = mptcpify__attach(mptcpify_skel);
-+	if (!ASSERT_OK(err, "skel_attach"))
-+		goto out;
-+
-+	prog_fd = bpf_program__fd(mptcpify_skel->progs.mptcpify);
-+	if (!ASSERT_GE(prog_fd, 0, "bpf_program__fd")) {
-+		err = -EIO;
-+		goto out;
-+	}
-+
-+	/* without MPTCP */
-+	server_fd = start_server(AF_INET, SOCK_STREAM, NULL, 0, 0);
-+	if (!ASSERT_GE(server_fd, 0, "start_server")) {
-+		err = -EIO;
-+		goto out;
-+	}
-+
-+	client_fd = connect_to_fd(server_fd, 0);
-+	if (!ASSERT_GE(client_fd, 0, "connect to fd")) {
-+		err = -EIO;
-+		goto close_server;
-+	}
-+
-+	send_byte(client_fd);
-+	err += verify_mptcpify();
-+
-+	close(client_fd);
-+close_server:
-+	close(server_fd);
-+out:
-+	mptcpify__destroy(mptcpify_skel);
-+	return err;
-+}
-+
-+static void test_mptcpify(void)
-+{
-+	struct nstoken *nstoken = NULL;
-+	int cgroup_fd;
-+
-+	cgroup_fd = test__join_cgroup("/mptcpify");
-+	if (!ASSERT_GE(cgroup_fd, 0, "test__join_cgroup"))
-+		return;
-+
-+	nstoken = create_netns();
-+	if (!ASSERT_OK_PTR(nstoken, "create_netns"))
-+		goto fail;
-+
-+	ASSERT_OK(run_mptcpify(cgroup_fd), "run_mptcpify");
-+
-+fail:
-+	cleanup_netns(nstoken);
-+	close(cgroup_fd);
-+}
-+
- void test_mptcp(void)
- {
- 	if (test__start_subtest("base"))
- 		test_base();
-+	if (test__start_subtest("mptcpify"))
-+		test_mptcpify();
- }
-diff --git a/tools/testing/selftests/bpf/progs/mptcpify.c b/tools/testing/selftests/bpf/progs/mptcpify.c
-new file mode 100644
-index 000000000000..9cf1febe982d
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/mptcpify.c
-@@ -0,0 +1,25 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2023, SUSE. */
-+
-+#include <linux/bpf.h>
-+#include <bpf/bpf_tracing.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+#define	AF_INET		2
-+#define	AF_INET6	10
-+#define	SOCK_STREAM	1
-+#define	IPPROTO_TCP	6
-+#define	IPPROTO_MPTCP	262
-+
-+SEC("fmod_ret/update_socket_protocol")
-+int BPF_PROG(mptcpify, int family, int type, int protocol)
-+{
-+	if ((family == AF_INET || family == AF_INET6) &&
-+	    type == SOCK_STREAM &&
-+	    (!protocol || protocol == IPPROTO_TCP)) {
-+		return IPPROTO_MPTCP;
-+	}
-+
-+	return protocol;
-+}
--- 
-2.35.3
+[...]
 
+> +static int add_rule_net_service(struct landlock_ruleset *ruleset,
+> +				const void __user *const rule_attr)
+> +{
+> +#if IS_ENABLED(CONFIG_INET)
+
+We should define two add_rule_net_service() functions according to
+IS_ENABLED(CONFIG_INET) instead of changing the body of the only
+function.  The second function would only return -EAFNOSUPPORT.  This
+cosmetic change would make the code cleaner.
+
+
+> +	struct landlock_net_service_attr net_service_attr;
+> +	int res;
+> +	access_mask_t mask;
+> +
+> +	/* Copies raw user space buffer, only one type for now. */
+> +	res = copy_from_user(&net_service_attr, rule_attr,
+> +			     sizeof(net_service_attr));
+> +	if (res)
+> +		return -EFAULT;
+> +
+> +	/*
+> +	 * Informs about useless rule: empty allowed_access (i.e. deny rules)
+> +	 * are ignored by network actions.
+> +	 */
+> +	if (!net_service_attr.allowed_access)
+> +		return -ENOMSG;
+> +
+> +	/*
+> +	 * Checks that allowed_access matches the @ruleset constraints
+> +	 * (ruleset->access_masks[0] is automatically upgraded to 64-bits).
+> +	 */
+> +	mask = landlock_get_net_access_mask(ruleset, 0);
+> +	if ((net_service_attr.allowed_access | mask) != mask)
+> +		return -EINVAL;
+> +
+> +	/* Denies inserting a rule with port 0 or higher than 65535. */
+> +	if ((net_service_attr.port == 0) || (net_service_attr.port > U16_MAX))
+> +		return -EINVAL;
+> +
+> +	/* Imports the new rule. */
+> +	return landlock_append_net_rule(ruleset, net_service_attr.port,
+> +					net_service_attr.allowed_access);
+> +#else /* IS_ENABLED(CONFIG_INET) */
+> +	return -EAFNOSUPPORT;
+> +#endif /* IS_ENABLED(CONFIG_INET) */
+> +}
