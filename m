@@ -2,249 +2,119 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73FDFEB64DD
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 12:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B56C04A6A
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 12:53:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234425AbjHCMfq (ORCPT
+        id S234309AbjHCMxu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Aug 2023 08:35:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39892 "EHLO
+        Thu, 3 Aug 2023 08:53:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235295AbjHCMfp (ORCPT
+        with ESMTP id S234146AbjHCMxt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Aug 2023 08:35:45 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FF673C1F
-        for <linux-security-module@vger.kernel.org>; Thu,  3 Aug 2023 05:35:28 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4fe55d70973so561445e87.0
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Aug 2023 05:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691066126; x=1691670926;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=z5pIJWbGUU+IcBqHu09pjkPy7MNVWuLFQRm8HIlUks0=;
-        b=gwESsG+WDXDy3C2tsUjbJ1FYYB3SyMjvoJaMALp3YjaZH6mzwR+5HwCxUT9kjr3Lfx
-         wazMwpG0cKmlZFEVO33Jg8t0oopFbPtYXdFCpB7UhfMlBgFPRcZUsWg8CwwxG64fpj68
-         kGFRPkxwA9WnvdysCECHGIkYBnn3GHZ/PdJk5FHitlyrVhTPiifKJNmNLrS6crB9DRS6
-         dugRnqjNCyuMPEzDB6M9535X5HDTQSXkygZ6kpqPGOcwdovmtwMG9JIGZHgSCXjEL/Op
-         V8WpqwIHiSMoxMleRDICKC0NUK45JUO0e7Tp64nXwtQ+CLg3kAQjN0yMOYJ0iRwHzX2/
-         VIlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691066126; x=1691670926;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z5pIJWbGUU+IcBqHu09pjkPy7MNVWuLFQRm8HIlUks0=;
-        b=j17ouXYKG7UwI8d70EiFZvKHUb7uMZv70+9Nb3mhqTVvCMHRZTioj4RnQx+R+sgrHK
-         qwl2jHMws90U9vRr5F/lvPIgJxzj7Am3QPlo9BmDiJmnFzX3RqagjQZ8j7F3secnLjD+
-         mDT3iIDdgFySo+LC6uATsruh7IjvSv0XpRQTmkdg+k/RZISA5zLkY5swSjXW67GZi5ca
-         t+X6vFE8HdAykwt662YfltyBGVJMiuTIIadLH0FQkHTNroP08YuzJFJ39irwbrsfynU9
-         lBvO/KEp7iCRwcECWr79k+fxAdRj2pIUOo71LnW7Evl14QciuB4IdOCb/zOEoiFifyQq
-         ELJQ==
-X-Gm-Message-State: ABy/qLbaCbYW1PV3Ec00IhyApDUJyhTxN2JXkX3Io+xRnNEbBoBLgJnH
-        N8V9DK+IAU3TZ+nPFtKOuFgTQ07hOLr2QgFfMK8=
-X-Google-Smtp-Source: APBJJlHLHB55LHuoOqYiuGk548/vVQ+RlwPr0wSIpPDIRqwm7EI73ZDM2CoYFB8/oR+IUUpGxDAyJg==
-X-Received: by 2002:a19:654e:0:b0:4f8:6831:fd70 with SMTP id c14-20020a19654e000000b004f86831fd70mr2961739lfj.3.1691066125932;
-        Thu, 03 Aug 2023 05:35:25 -0700 (PDT)
-Received: from rayden.urgonet (h-46-59-78-111.A175.priv.bahnhof.se. [46.59.78.111])
-        by smtp.gmail.com with ESMTPSA id q18-20020ac25fd2000000b004fdc0023a47sm3304592lfg.238.2023.08.03.05.35.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Aug 2023 05:35:25 -0700 (PDT)
-From:   Jens Wiklander <jens.wiklander@linaro.org>
-To:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org
-Cc:     Sumit Garg <sumit.garg@linaro.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>
-Subject: [PATCH] KEYS: trusted: tee: use tee_shm_register_alloc_buf()
-Date:   Thu,  3 Aug 2023 14:35:15 +0200
-Message-Id: <20230803123515.4018838-1-jens.wiklander@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Thu, 3 Aug 2023 08:53:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13AD535A8;
+        Thu,  3 Aug 2023 05:53:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9AA8161D91;
+        Thu,  3 Aug 2023 12:53:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4BBEC433C8;
+        Thu,  3 Aug 2023 12:53:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691067227;
+        bh=r4FB9C3DbyML50THOYSEoMjiyY77SgxV2l1qtwpxE3Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nN0wvvfqkt0Oh2vmUhgUKxgefq2fjGdBl3Xc1C0D1Hv1tbt26iNf+M/ps2GN9QKkh
+         Zzp8aOGK4IJdtlp78ZHErfGc3btpdICVz9a69a8tzFGauOoN8QRlkjiHUSFeerQaeC
+         MdNTQg6Pa+W0RXdTbE4nmWBys5er8hvo3aWE9i+uJVTn1EuIMDRakpkWVWdIvGwVBR
+         u39lif0pHj6/7hYmNeWAWnbvQigCf8NtUwdzAMM1pCGbXbsHLQuRd/S3zTD7E8ZVlf
+         34m/8LH+0HMVIBO9P+jMC2OqUTOdeAPbVnnepr2zeM4fkSbPChud+iiZ1nHCngAz2C
+         OoZ/H55FwCmhw==
+Date:   Thu, 3 Aug 2023 14:53:38 +0200
+From:   Simon Horman <horms@kernel.org>
+To:     Geliang Tang <geliang.tang@suse.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Mat Martineau <martineau@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+        bpf@vger.kernel.org, netdev@vger.kernel.org, mptcp@lists.linux.dev,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH bpf-next v8 1/4] bpf: Add update_socket_protocol hook
+Message-ID: <ZMujUofDnb8wMb36@kernel.org>
+References: <cover.1691047403.git.geliang.tang@suse.com>
+ <120b307aacd1791fac016d33e112069ffb7db21a.1691047403.git.geliang.tang@suse.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <120b307aacd1791fac016d33e112069ffb7db21a.1691047403.git.geliang.tang@suse.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Prior to this patch was trusted_tee_seal() and trusted_tee_get_random()
-relying on tee_shm_register_kernel_buf() to share memory with the TEE.
-Depending on the memory allocation pattern the pages holding the
-registered buffers overlap with other buffers also shared with the TEE.
+On Thu, Aug 03, 2023 at 03:30:39PM +0800, Geliang Tang wrote:
+> Add a hook named update_socket_protocol in __sys_socket(), for bpf
+> progs to attach to and update socket protocol. One user case is to
+> force legacy TCP apps to create and use MPTCP sockets instead of
+> TCP ones.
+> 
+> Define a mod_ret set named bpf_mptcp_fmodret_ids, add the hook
+> update_socket_protocol into this set, and register it in
+> bpf_mptcp_kfunc_init().
+> 
+> Signed-off-by: Geliang Tang <geliang.tang@suse.com>
 
-The OP-TEE driver using the old SMC based ABI permits overlapping shared
-buffers, but with the new FF-A based ABI each physical page may only
-be registered once.
+...
 
-Fix this problem by allocating a temporary page aligned shared memory
-buffer to be used as a bounce buffer for the needed data buffers.
+> diff --git a/net/socket.c b/net/socket.c
+> index 2b0e54b2405c..586a437d7a5e 100644
+> --- a/net/socket.c
+> +++ b/net/socket.c
+> @@ -1644,11 +1644,36 @@ struct file *__sys_socket_file(int family, int type, int protocol)
+>  	return sock_alloc_file(sock, flags, NULL);
+>  }
+>  
+> +/**
 
-Since TEE trusted keys doesn't depend on registered shared memory
-support any longer remove that explicit dependency when opening a
-context to the TEE.
+Hi Geliang Tang,
 
-Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
----
- security/keys/trusted-keys/trusted_tee.c | 68 +++++++++++++-----------
- 1 file changed, 36 insertions(+), 32 deletions(-)
+nit: The format of the text below is not in kernel doc format,
+     so it is probably better if the comment begins with '/*'
+     rather than '/**'.
 
-diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
-index ac3e270ade69..3085343c489a 100644
---- a/security/keys/trusted-keys/trusted_tee.c
-+++ b/security/keys/trusted-keys/trusted_tee.c
-@@ -8,6 +8,7 @@
- 
- #include <linux/err.h>
- #include <linux/key-type.h>
-+#include <linux/minmax.h>
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/string.h>
-@@ -65,38 +66,37 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
- 	int ret;
- 	struct tee_ioctl_invoke_arg inv_arg;
- 	struct tee_param param[4];
--	struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
-+	struct tee_shm *shm;
-+	uint8_t *buf;
- 
- 	memset(&inv_arg, 0, sizeof(inv_arg));
- 	memset(&param, 0, sizeof(param));
- 
--	reg_shm_in = tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
--						 p->key_len);
--	if (IS_ERR(reg_shm_in)) {
--		dev_err(pvt_data.dev, "key shm register failed\n");
--		return PTR_ERR(reg_shm_in);
-+	shm = tee_shm_alloc_kernel_buf(pvt_data.ctx,
-+				       p->key_len + sizeof(p->blob));
-+	if (IS_ERR(shm)) {
-+		dev_err(pvt_data.dev, "key shm alloc failed\n");
-+		return PTR_ERR(shm);
- 	}
--
--	reg_shm_out = tee_shm_register_kernel_buf(pvt_data.ctx, p->blob,
--						  sizeof(p->blob));
--	if (IS_ERR(reg_shm_out)) {
--		dev_err(pvt_data.dev, "blob shm register failed\n");
--		ret = PTR_ERR(reg_shm_out);
-+	buf = tee_shm_get_va(shm, 0);
-+	if (IS_ERR(buf)) {
-+		ret = PTR_ERR(buf);
- 		goto out;
- 	}
-+	memcpy(buf, p->key, p->key_len);
- 
- 	inv_arg.func = TA_CMD_SEAL;
- 	inv_arg.session = pvt_data.session_id;
- 	inv_arg.num_params = 4;
- 
- 	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
--	param[0].u.memref.shm = reg_shm_in;
-+	param[0].u.memref.shm = shm;
- 	param[0].u.memref.size = p->key_len;
- 	param[0].u.memref.shm_offs = 0;
- 	param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
--	param[1].u.memref.shm = reg_shm_out;
-+	param[1].u.memref.shm = shm;
- 	param[1].u.memref.size = sizeof(p->blob);
--	param[1].u.memref.shm_offs = 0;
-+	param[1].u.memref.shm_offs = p->key_len;
- 
- 	ret = tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
- 	if ((ret < 0) || (inv_arg.ret != 0)) {
-@@ -104,14 +104,13 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
- 			inv_arg.ret);
- 		ret = -EFAULT;
- 	} else {
-+		memcpy(p->blob, buf + p->key_len,
-+		       min(param[1].u.memref.size, sizeof(p->blob)));
- 		p->blob_len = param[1].u.memref.size;
- 	}
- 
- out:
--	if (reg_shm_out)
--		tee_shm_free(reg_shm_out);
--	if (reg_shm_in)
--		tee_shm_free(reg_shm_in);
-+	tee_shm_free(shm);
- 
- 	return ret;
- }
-@@ -166,11 +165,9 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
- 		p->key_len = param[1].u.memref.size;
- 	}
- 
-+	tee_shm_free(reg_shm_out);
- out:
--	if (reg_shm_out)
--		tee_shm_free(reg_shm_out);
--	if (reg_shm_in)
--		tee_shm_free(reg_shm_in);
-+	tee_shm_free(reg_shm_in);
- 
- 	return ret;
- }
-@@ -183,15 +180,21 @@ static int trusted_tee_get_random(unsigned char *key, size_t key_len)
- 	int ret;
- 	struct tee_ioctl_invoke_arg inv_arg;
- 	struct tee_param param[4];
--	struct tee_shm *reg_shm = NULL;
-+	struct tee_shm *shm;
-+	void *buf;
- 
- 	memset(&inv_arg, 0, sizeof(inv_arg));
- 	memset(&param, 0, sizeof(param));
- 
--	reg_shm = tee_shm_register_kernel_buf(pvt_data.ctx, key, key_len);
--	if (IS_ERR(reg_shm)) {
--		dev_err(pvt_data.dev, "key shm register failed\n");
--		return PTR_ERR(reg_shm);
-+	shm = tee_shm_alloc_kernel_buf(pvt_data.ctx, key_len);
-+	if (IS_ERR(shm)) {
-+		dev_err(pvt_data.dev, "key shm alloc failed\n");
-+		return PTR_ERR(shm);
-+	}
-+	buf = tee_shm_get_va(shm, 0);
-+	if (IS_ERR(buf)) {
-+		ret = PTR_ERR(buf);
-+		goto out;
- 	}
- 
- 	inv_arg.func = TA_CMD_GET_RANDOM;
-@@ -199,7 +202,7 @@ static int trusted_tee_get_random(unsigned char *key, size_t key_len)
- 	inv_arg.num_params = 4;
- 
- 	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
--	param[0].u.memref.shm = reg_shm;
-+	param[0].u.memref.shm = shm;
- 	param[0].u.memref.size = key_len;
- 	param[0].u.memref.shm_offs = 0;
- 
-@@ -209,18 +212,19 @@ static int trusted_tee_get_random(unsigned char *key, size_t key_len)
- 			inv_arg.ret);
- 		ret = -EFAULT;
- 	} else {
-+		memcpy(key, buf, min(param[0].u.memref.size, key_len));
- 		ret = param[0].u.memref.size;
- 	}
- 
--	tee_shm_free(reg_shm);
-+out:
-+	tee_shm_free(shm);
- 
- 	return ret;
- }
- 
- static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
- {
--	if (ver->impl_id == TEE_IMPL_ID_OPTEE &&
--	    ver->gen_caps & TEE_GEN_CAP_REG_MEM)
-+	if (ver->impl_id == TEE_IMPL_ID_OPTEE)
- 		return 1;
- 	else
- 		return 0;
--- 
-2.34.1
+> + *	A hook for bpf progs to attach to and update socket protocol.
+> + *
+> + *	A static noinline declaration here could cause the compiler to
+> + *	optimize away the function. A global noinline declaration will
+> + *	keep the definition, but may optimize away the callsite.
+> + *	Therefore, __weak is needed to ensure that the call is still
+> + *	emitted, by telling the compiler that we don't know what the
+> + *	function might eventually be.
+> + *
+> + *	__diag_* below are needed to dismiss the missing prototype warning.
+> + */
 
+...
