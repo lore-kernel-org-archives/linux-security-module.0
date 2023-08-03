@@ -2,130 +2,192 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE7AC001DB
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 16:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E690C41513
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Aug 2023 16:27:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235355AbjHCQV1 convert rfc822-to-8bit (ORCPT
+        id S235307AbjHCQ1c (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Aug 2023 12:21:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57750 "EHLO
+        Thu, 3 Aug 2023 12:27:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235173AbjHCQV0 (ORCPT
+        with ESMTP id S231460AbjHCQ1b (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Aug 2023 12:21:26 -0400
-Received: from frasgout12.his.huawei.com (ecs-14-137-139-154.compute.hwclouds-dns.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15BE4E45;
-        Thu,  3 Aug 2023 09:21:25 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4RGtzX3LLsz9v7cL;
-        Fri,  4 Aug 2023 00:07:52 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwAn27rj08tk6HI7AA--.882S2;
-        Thu, 03 Aug 2023 17:21:01 +0100 (CET)
-Message-ID: <5a938ee2f56f9ccf7df82f233fcf9c7ff310b4cb.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH 00/12] integrity: Introduce a digest cache
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        jarkko@kernel.org, pbrobinson@gmail.com, zbyszek@in.waw.pl,
-        hch@lst.de, mjg59@srcf.ucam.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Panu Matilainen <pmatilai@redhat.com>
-Date:   Thu, 03 Aug 2023 18:20:47 +0200
-In-Reply-To: <20230721163326.4106089-1-roberto.sassu@huaweicloud.com>
-References: <20230721163326.4106089-1-roberto.sassu@huaweicloud.com>
+        Thu, 3 Aug 2023 12:27:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CD5F30D3;
+        Thu,  3 Aug 2023 09:27:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CFC7861E31;
+        Thu,  3 Aug 2023 16:27:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95019C433C7;
+        Thu,  3 Aug 2023 16:27:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691080049;
+        bh=R9CF2H7mbl0cgRXO+z4tXwwMfit3swiAWcNJEtpzi1Y=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=cItRdHU8ppyTRYkjux/OaZteYYB46EBf6G8e/iMfeXgRUR8ZGlWDDbC9jCWrex8dX
+         q88xudYsQ4coAFRhO/Uiq2Ste3axYkcId1WfMhh85ioLEjq87RsPVLZA7ILU7ZNhqo
+         Q6Bnh2fcTMyiCEKX2IIx57hQKViodinp4xPXgG3N2VTtsTuN+/8NMPeMMk46zyu39k
+         ezVItsWlD5GsUOD0jo7fUYoAlA4HQLTE5IDnmAIZhCLk9ZO6zcgWXlshnO3FupfZM4
+         6cpWec+RvB0hGaMmVB7kUVVEH1ikferq79RA2TN0sxqoUy0yYw/op2RMMdNpTgVKlG
+         Ot0/BUJr2U50Q==
+Message-ID: <ec1fd18f271593d5c6b6813cfaeb688994f20bf4.camel@kernel.org>
+Subject: Re: [PATCH v6] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Date:   Thu, 03 Aug 2023 12:27:26 -0400
+In-Reply-To: <CAHC9VhTQDVyZewU0Oiy4AfJt_UtB7O2_-PcUmXkZtuwKDQBfXg@mail.gmail.com>
+References: <20230802-master-v6-1-45d48299168b@kernel.org>
+         <bac543537058619345b363bbfc745927.paul@paul-moore.com>
+         <ca156cecbc070c3b7c68626572274806079a6e04.camel@kernel.org>
+         <CAHC9VhTQDVyZewU0Oiy4AfJt_UtB7O2_-PcUmXkZtuwKDQBfXg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu2 
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-X-CM-TRANSID: LxC2BwAn27rj08tk6HI7AA--.882S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF4xAr1xZry8tryfJF43ZFb_yoW5WrWkp3
-        43Gr17JF1DJr18Jr17Jw47JryUGwsrJrWUJryrJry8Ar45Ar1kJr18tr1Fq34UCryDJF1U
-        Xr1UXw1UJr1UAaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBF1jj5I3JQAHsh
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2023-07-21 at 18:33 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+On Wed, 2023-08-02 at 22:46 -0400, Paul Moore wrote:
+> On Wed, Aug 2, 2023 at 3:34=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
+rote:
+> > On Wed, 2023-08-02 at 14:16 -0400, Paul Moore wrote:
+> > > On Aug  2, 2023 Jeff Layton <jlayton@kernel.org> wrote:
+>=20
+> ...
+>=20
+> > > I generally dislike core kernel code which makes LSM calls conditiona=
+l
+> > > on some kernel state maintained outside the LSM.  Sometimes it has to
+> > > be done as there is no other good options, but I would like us to try
+> > > and avoid it if possible.  The commit description mentioned that this
+> > > was put here to avoid a SELinux complaint, can you provide an example
+> > > of the complain?  Does it complain about a double/invalid mount, e.g.
+> > > "SELinux: mount invalid.  Same superblock, different security ..."?
+> >=20
+> > The problem I had was not so much SELinux warnings, but rather that in =
+a
+> > situation where I would expect to share superblocks between two
+> > filesystems, it didn't.
+> >=20
+> > Basically if you do something like this:
+> >=20
+> > # mount nfsserver:/export/foo /mnt/foo -o context=3Dsystem_u:object_r:r=
+oot_t:s0
+> > # mount nfsserver:/export/bar /mnt/bar -o context=3Dsystem_u:object_r:r=
+oot_t:s0
+> >=20
+> > ...when "foo" and "bar" are directories on the same filesystem on the
+> > server, you should get two vfsmounts that share a superblock. That's
+> > what you get if selinux is disabled, but not when it's enabled (even
+> > when it's in permissive mode).
+>=20
+> Thanks, that helps.  I'm guessing the difference in behavior is due to
+> the old->has_sec_mnt_opts check in nfs_compare_super().
+>=20
 
-[...]
+Yep. That gets set, but fc->security is still NULL.
 
-> The last part I wanted to talk about is about the digest list parsers. This
-> was a long debate. In the original proposal, Matthew Garrett and Christoph
-> Hellwig said that adding parsers in the kernel is not scalable and not a
-> good idea in general. While I do agree with them, I'm also thinking what
-> benefits we get if we relax a bit this requirement. If we merge this patch
+> > > I'd like to understand why the sb_set_mnt_opts() call fails when it
+> > > comes after the fs_context_init() call.  I'm particulary curious to
+> > > know if the failure is due to conflicting SELinux state in the
+> > > fs_context, or if it is simply an issue of sb_set_mnt_opts() not
+> > > properly handling existing values.  Perhaps I'm being overly naive,
+> > > but I'm hopeful that we can address both of these within the SELinux
+> > > code itself.
+> >=20
+> > The problem I hit was that nfs_compare_super is called with a fs_contex=
+t
+> > that has a NULL ->security pointer. That caused it to call
+> > selinux_sb_mnt_opts_compat with mnt_opts set to NULL, and at that point
+> > it returns 1 and decides not to share sb's.
+> >=20
+> > Filling out fc->security with this new operation seems to fix that, but
+> > if you see a better way to do this, then I'm certainly open to the idea=
+.
+>=20
+> Just as you mention that you are not a LSM expert, I am not a VFS
+> expert, so I think we'll have to help each other a bit ;)
+>=20
+> I think I'm beginning to understand alloc_fs_context() a bit more,
+> including the fs_context_for_XXX() wrappers.  One thing I have
+> realized is that I believe we need to update the
+> selinux_fs_context_init() and smack_fs_context_init() functions to
+> properly handle a NULL @reference dentry; I think returning without
+> error in both cases is the correct answer.  In the non-NULL @reference
+> case, I believe your patch is correct, we do want to inherit the
+> options from @reference.
+>=20
 
-I tried to mitigate the risk of adding unsafe code to the kernel by
-verifying the parsers with a formal verification tool, Frama-C.
 
-The verified code can be accessed here, and contains all the necessary
-dependencies (so that the kernel is not involved):
+ACK. That seems reasonable. I'll work that in.
 
-https://github.com/robertosassu/rpm-formal
 
-I added some assertions, to ensure that for any given input, the parser
-does not try to reference memory outside the assigned memory area.
+>   My only concern now is the
+> fs_context::lsm_set flag.
+>=20
 
-I also tried to enforce finite termination by making the number of
-loops dependent on the passed data length.
+Yeah, that bit is ugly. David studied this problem a lot more than I
+have, but basically, we only want to set the context info once, and
+we're not always going to have a nice string to parse to set up the
+options. This obviously works, but I'm fine with a more elegant method
+if you can spot one.
 
-The output I get is the following:
 
-[eva:summary] ====== ANALYSIS SUMMARY ======
-  ----------------------------------------------------------------------------
-  13 functions analyzed (out of 13): 100% coverage.
-  In these functions, 232 statements reached (out of 251): 92% coverage.
-  ----------------------------------------------------------------------------
-  Some errors and warnings have been raised during the analysis:
-    by the Eva analyzer:      0 errors    2 warnings
-    by the Frama-C kernel:    0 errors    0 warnings
-  ----------------------------------------------------------------------------
-  0 alarms generated by the analysis.
-  ----------------------------------------------------------------------------
-  Evaluation of the logical properties reached by the analysis:
-    Assertions        5 valid     0 unknown     0 invalid      5 total
-    Preconditions    25 valid     0 unknown     0 invalid     25 total
-  100% of the logical properties reached have been proven.
-  ----------------------------------------------------------------------------
+> You didn't mention exactly why the security_sb_set_mnt_opts() was
+> failing, and requires the fs_context::lsm_set check, but my guess is
+> that something is tripping over the fact that the superblock is
+> already properly setup.  I'm working under the assumption that this
+> problem - attempting to reconfigure a properly configured superblock -
+> should only be happening in the submount/non-NULL-reference case.  If
+> it is happening elsewhere I think I'm going to need some help
+> understanding that ...
+>=20
 
-The warnings are:
+Correct. When you pass in the mount options, fc->security seems to be
+properly set. NFS mounting is complex though, so the final superblock
+you care about may end up being a descendant of the one that was
+originally configured.
 
-[eva] validate_tlv.c:353: Warning: 
-  this partitioning parameter cannot be evaluated safely on all states
+This patch is intended to ensure we carry over security info in these
+cases. We already try to inherit other parameters from parent mounts, so
+this is just another set that we need to make sure we inherit.
 
-[eva] validate_tlv.c:381: Warning: 
-  this partitioning parameter cannot be evaluated safely on all states
+> However, assuming I'm mostly correct in the above paragraph, would it
+> be possible to take a reference to the @reference dentry's superblock
+> in security_fs_context_init(), that we could later compare to the
+> superblock passed into security_sb_set_mnt_opts()?  If we know that
+> the fs_context was initialized with the same superblock we are now
+> being asked to set mount options on, we should be able to return from
+> the LSM hook without doing anything.
+>=20
 
-Not sure how I can make them go away. Anyway, the assertions are
-successful.
+I'm not sure that I follow your logic here:
 
-I verified the parsers with both deterministic (random but valid) and
-non-deterministic (random and possibly invalid) data. For deterministic
-data, I also verified that bytes at a specific location have the
-expected value.
+You want to take a sb reference and carry that in the fs_context? What
+will you do with it in security_sb_set_mnt_opts?
 
-Due to the increasing complexity, the analysis was not done on
-arbitrary lengths and value ranges (it would probably require a
-different type of analysis).
-
-Thanks
-
-Roberto
-
+FWIW, It's generally easier to deal with inode or dentry references than
+refs to the superblock too, so if we want to carry a reference to an
+object around, we'd probably rather handle one of those.
+--=20
+Jeff Layton <jlayton@kernel.org>
