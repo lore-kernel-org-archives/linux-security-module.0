@@ -2,140 +2,134 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B40C04A94
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Aug 2023 11:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D6CEC001DB
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Aug 2023 12:58:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229530AbjHDL5p (ORCPT
+        id S229713AbjHDM6m (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Aug 2023 07:57:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52310 "EHLO
+        Fri, 4 Aug 2023 08:58:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjHDL5p (ORCPT
+        with ESMTP id S229585AbjHDM6l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Aug 2023 07:57:45 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 104FFB1;
-        Fri,  4 Aug 2023 04:57:43 -0700 (PDT)
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 374BkQ2G024137;
-        Fri, 4 Aug 2023 11:57:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=byQd/e8jN/kbPxwrbt6oRtBnv6y+f/qK8WxI9qlnir8=;
- b=ChhJtqI6ThDJSvDMc3XC1jYS39HjNXgCIb6qJpYDmRNxv1uop/mFS2pcoUH5jzZloDc9
- g6CJcu53s0Jvo8uN1WUgf5pVGpOekcAZIeeLX+Ej7pPHNRrLq9b0nb1yseUbRW7R3jbE
- WBE8+5VT075gaGgNK5RX0uY2u5KeS1evdCz7qJVyf+lmByo9BU0K2QMJvTmFv3EeJQb0
- 0az4kJWi6bUUsL8qOlnwIcQe5ZqgpURm8sNAWnCmX0YBndxTlmmDiWTPVnQn+NCOG6ls
- /KXP81kV/ugRbFQBxzO9mbvhh8hLSFbi5EJap8nG60XGaCaXxGxCkaEq6qZ7156u7fBG 4A== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3s90h6ge6d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 04 Aug 2023 11:57:15 +0000
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 374BkrKv025374;
-        Fri, 4 Aug 2023 11:57:15 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3s90h6ge65-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 04 Aug 2023 11:57:15 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 374BsG0t027822;
-        Fri, 4 Aug 2023 11:57:14 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-        by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3s8kp2w9bt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 04 Aug 2023 11:57:14 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-        by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 374BvDUY19202554
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 4 Aug 2023 11:57:13 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7D5F25804B;
-        Fri,  4 Aug 2023 11:57:13 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B31F58065;
-        Fri,  4 Aug 2023 11:57:12 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.12.187])
-        by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Fri,  4 Aug 2023 11:57:12 +0000 (GMT)
-Message-ID: <84ddd923b49acb18946c1ecf5d773bcdadbea5c8.camel@linux.ibm.com>
-Subject: Re: [PATCH -next] trusted-keys: Fix kernel-doc warnings in
- trusted-keys
-From:   Mimi Zohar <zohar@linux.ibm.com>
+        Fri, 4 Aug 2023 08:58:41 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3B2D13D;
+        Fri,  4 Aug 2023 05:58:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8012061FDF;
+        Fri,  4 Aug 2023 12:58:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46253C433C8;
+        Fri,  4 Aug 2023 12:58:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691153919;
+        bh=FJU2BYATQry473jCPeCpOu9lfHYELvBFzEIys+3I708=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=BfL3xD/hQTN+OEA2XaALBGIMQtjxr+xppY+5gosC0+dxWrRWMlW5n24DKRg07PExg
+         O6bbMq6tyjok2CmXagNkNZ+GXjejQs5quJRlZqV3naksus+477wBZdHrhariqq8pIV
+         Np6P4PQWGln7ckslB83NjJzc2do8oRsS7eJY4oERn113V3It4mSCZA2Js+0V/4/PiC
+         rB2QHlRKX7aa+BYkxTyWNLnbcIS4vM43y5S15nciEKsVNF5OKFph1ev/AP/UPjBcnw
+         1eVKSu/i6WGr9V6sHBBbrvjPBrSkw9+/cJKDzEpPW5GRN6Yhc/Hg30vroTT6t7/lbU
+         Z6Fu5yaS+DTBg==
+Message-ID: <d6b4f6b84f8470264702771f00531c47225f0e6b.camel@kernel.org>
+Subject: Re: [PATCH v6] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+From:   Jeff Layton <jlayton@kernel.org>
 To:     Paul Moore <paul@paul-moore.com>,
-        "Steven Rostedt (Google)" <rostedt@goodmis.org>
-Cc:     Gaosheng Cui <cuigaosheng1@huawei.com>, jarkko@kernel.org,
-        dhowells@redhat.com, jejb@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Date:   Fri, 04 Aug 2023 07:57:10 -0400
-In-Reply-To: <CAHC9VhRQBOfdcYO5QLRgVGdbqLFrogXeVD3FT2cETmLhP5uz3A@mail.gmail.com>
-References: <20230621074623.498647-1-cuigaosheng1@huawei.com>
-         <CAHC9VhQzZYg1HH_Q6OYytkp-uYOmCAnpzHb9tiRA-YC0VNha9A@mail.gmail.com>
-         <CAHC9VhQaWM=eC98ezfKmOA6sd9wzxQ0PFp5EysUKLZFEt=yB=A@mail.gmail.com>
-         <CAHC9VhTibk2tFPt7ZjFL9ps9NO6_sCQwXtbF1pQCXO+jGhshpg@mail.gmail.com>
-         <31a5aed2f075b69705142ff6f558e8cd8ccb9cd8.camel@linux.ibm.com>
-         <CAHC9VhRQBOfdcYO5QLRgVGdbqLFrogXeVD3FT2cETmLhP5uz3A@mail.gmail.com>
+        David Howells <dhowells@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Date:   Fri, 04 Aug 2023 08:58:37 -0400
+In-Reply-To: <CAHC9VhSNXbJzfKLF+DjfK+_2eJYYc_AC3u3aUc_NUs_o5M5AaA@mail.gmail.com>
+References: <20230802-master-v6-1-45d48299168b@kernel.org>
+         <bac543537058619345b363bbfc745927.paul@paul-moore.com>
+         <ca156cecbc070c3b7c68626572274806079a6e04.camel@kernel.org>
+         <CAHC9VhTQDVyZewU0Oiy4AfJt_UtB7O2_-PcUmXkZtuwKDQBfXg@mail.gmail.com>
+         <ec1fd18f271593d5c6b6813cfaeb688994f20bf4.camel@kernel.org>
+         <CAHC9VhSNXbJzfKLF+DjfK+_2eJYYc_AC3u3aUc_NUs_o5M5AaA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: H-MXVBczj5cDs_ruQzBUyyH3tMpI9D-K
-X-Proofpoint-ORIG-GUID: KwepT0wnPBLx0hIIEDHT-Im1f8L_68ok
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-04_10,2023-08-03_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0
- bulkscore=0 phishscore=0 malwarescore=0 clxscore=1011 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308040102
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2023-08-03 at 19:20 -0400, Paul Moore wrote:
-> On Thu, Aug 3, 2023 at 6:21 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> > On Thu, 2023-08-03 at 18:00 -0400, Paul Moore wrote:
-> > > On Tue, Jul 25, 2023 at 4:49 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > > On Wed, Jun 21, 2023 at 9:33 AM Paul Moore <paul@paul-moore.com> wrote:
-> > > > > On Wed, Jun 21, 2023 at 3:46 AM Gaosheng Cui <cuigaosheng1@huawei.com> wrote:
-> > > > > >
-> > > > > > Fix kernel-doc warnings in trusted-keys:
-> > > > > >
-> > > > > > security/keys/trusted-keys/trusted_tpm2.c:203: warning: expecting
-> > > > > > prototype for tpm_buf_append_auth(). Prototype was for
-> > > > > > tpm2_buf_append_auth() instead.
-> > > > > >
-> > > > > > Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
-> > > > > > ---
-> > > > > >  security/keys/trusted-keys/trusted_tpm2.c | 2 +-
-> > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > >
-> > > > > Reviewed-by: Paul Moore <paul@paul-moore.com>
-> > > >
-> > > > Jarkko, David, can one of you pick this up into your tree?
-> > >
-> > > Guys, this patch is both trivial and obviously correct, please pick it
-> > > up so it can go up during the next merge window.
-> >
-> > Paul, either Jarkko or I can queue a trusted-keys patch.  As this isn't
-> > on the top of Jarkko's radar, I'll queue it.
-> 
-> Ah ha!  I was working under the assumption that everything under
-> security/keys/ was David and Jarko's responsibility, but now that I'm
-> looking at MAINTAINERS I see that isn't the case.  In fact it looks
-> like there are five (!) different "subsystems" under security/keys/
-> ... I don't currently know enough about the different divisions there,
-> but it seems like we might want to see if we can do some consolidation
+On Thu, 2023-08-03 at 22:48 -0400, Paul Moore wrote:
+> On Thu, Aug 3, 2023 at 12:27=E2=80=AFPM Jeff Layton <jlayton@kernel.org> =
+wrote:
+> > On Wed, 2023-08-02 at 22:46 -0400, Paul Moore wrote:
+> > > On Wed, Aug 2, 2023 at 3:34=E2=80=AFPM Jeff Layton <jlayton@kernel.or=
+g> wrote:
+> > > > On Wed, 2023-08-02 at 14:16 -0400, Paul Moore wrote:
+> > > > > On Aug  2, 2023 Jeff Layton <jlayton@kernel.org> wrote:
+>=20
 > ...
-> 
-> Anyway, thanks for picking this up Mimi.
+>=20
+> > > My only concern now is the fs_context::lsm_set flag.
+> >=20
+> > Yeah, that bit is ugly. David studied this problem a lot more than I
+> > have, but basically, we only want to set the context info once, and
+> > we're not always going to have a nice string to parse to set up the
+> > options. This obviously works, but I'm fine with a more elegant method
+> > if you can spot one.
+>=20
+> Like I said before, sometimes making a LSM hook conditional on some
+> flag is the only practical solution, but I always worry that there is
+> a chance that a future patch might end up toggling that flag by
+> accident and we lose an important call into the LSM.  Even if all we
+> end up doing is moving the flag down into the LSMs I would be happier;
+> there is still a risk, but at least if something breaks it is our (the
+> LSM folks) own damn fault ;)
+>=20
+> > > You didn't mention exactly why the security_sb_set_mnt_opts() was
+> > > failing, and requires the fs_context::lsm_set check, but my guess is
+> > > that something is tripping over the fact that the superblock is
+> > > already properly setup.  I'm working under the assumption that this
+> > > problem - attempting to reconfigure a properly configured superblock =
+-
+> > > should only be happening in the submount/non-NULL-reference case.  If
+> > > it is happening elsewhere I think I'm going to need some help
+> > > understanding that ...
+> >=20
+> > Correct. When you pass in the mount options, fc->security seems to be
+> > properly set. NFS mounting is complex though, so the final superblock
+> > you care about may end up being a descendant of the one that was
+> > originally configured.
+>=20
+> Ooof, okay, there goes that idea.
+>=20
+> At this point I guess it comes back to that question of why is calling
+> into security_sb_set_mnt_opts() a second (or third, etc.) time failing
+> for you?  Is there some conflict with the superblock
+> config/labeling/etc.?  Is there a permissions problem?  Better
+> understanding why that is failing might help us come up with a better
+> solution.
+>=20
 
-Thanks, Steven.  "6c95d71bad61 tracing: Fix kernel-doc warnings in
-trace_seq.c " is in Linus' tree.
+I removed the lsm_set parameter from this patch, and my testcase still
+works fine.=C2=A0I can post a v7 if we want to go forward with that. I'm
+guessing the complaint he saw was the "out_double_mount" pr_warn.
 
-Mimi
+It looks like as long as the context options match, there shouldn't be
+an issue, and I don't see how you'd get mismatched ones if you're
+inheriting them.
 
+David, do you remember what prompted you to add the lsm_set parameter?
+--=20
+Jeff Layton <jlayton@kernel.org>
