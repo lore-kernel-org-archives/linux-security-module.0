@@ -2,212 +2,318 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C4EC04A94
-	for <linux-security-module@archiver.kernel.org>; Sat,  5 Aug 2023 12:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F18DCC41513
+	for <linux-security-module@archiver.kernel.org>; Sun,  6 Aug 2023 13:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229684AbjHEM7f (ORCPT
+        id S229470AbjHFNFK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 5 Aug 2023 08:59:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37388 "EHLO
+        Sun, 6 Aug 2023 09:05:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjHEM7e (ORCPT
+        with ESMTP id S229436AbjHFNFJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 5 Aug 2023 08:59:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BDBBE6A;
-        Sat,  5 Aug 2023 05:59:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EBC3B60C41;
-        Sat,  5 Aug 2023 12:59:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAC3EC433C7;
-        Sat,  5 Aug 2023 12:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691240372;
-        bh=/uyVXIXSkxxkbvnjnV1ipyoPYAaQmx9nXa+isaJvtkA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JOxUgYa4UCG00HCmF2CRjqiir/dctQ7X56+DxhWmMujqHSkXTHSpFLtBCeZfXOoRz
-         ivl7/KEWM9cdHcsA8iV9WHQl7f+onl8orHCCVonLbXxwUMvumSIExBe2lrPQVeWVcp
-         TYD7ZP9XotjsvaIjWYaISGaCn5aUcsesvkaX2yk6PZmdUJ4iT7mF/1EgMoKDCLhISu
-         6pRjzs95HBQA1akzXqDCX6eBr4aRbN1UE8IIDHNGd0f6aqASyyaP8IgGPyZKLYZyvX
-         cmgJko6J0KEq25MJfPQOUnsMTKsI1nzsPMVJ+MPx3AeG3SkRNYzrF9/ZFwXgo9lb/N
-         7FMZhNmLTSPHg==
-Date:   Sat, 5 Aug 2023 14:59:25 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Subject: Re: [PATCH v7] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
-Message-ID: <20230805-geworben-fahrzeit-d17f3883f0b1@brauner>
-References: <20230804-master-v7-1-5d4e48407298@kernel.org>
- <20230805-anrechnen-medien-c639c85ebd42@brauner>
+        Sun, 6 Aug 2023 09:05:09 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C4AD19A6;
+        Sun,  6 Aug 2023 06:05:06 -0700 (PDT)
+Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 376D4v3i062567;
+        Sun, 6 Aug 2023 22:04:57 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
+ Sun, 06 Aug 2023 22:04:57 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 376D4v8N062563
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Sun, 6 Aug 2023 22:04:57 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <41d03271-ff8a-9888-11de-a7f53da47328@I-love.SAKURA.ne.jp>
+Date:   Sun, 6 Aug 2023 22:04:55 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230805-anrechnen-medien-c639c85ebd42@brauner>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Content-Language: en-US
+To:     linux-security-module <linux-security-module@vger.kernel.org>,
+        audit@vger.kernel.org, linux-audit@redhat.com
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH v2] TaskTracker : Simplified thread information tracker.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Aug 05, 2023 at 02:44:04PM +0200, Christian Brauner wrote:
-> On Fri, Aug 04, 2023 at 12:09:34PM -0400, Jeff Layton wrote:
-> > From: David Howells <dhowells@redhat.com>
-> > 
-> > When NFS superblocks are created by automounting, their LSM parameters
-> > aren't set in the fs_context struct prior to sget_fc() being called,
-> > leading to failure to match existing superblocks.
-> > 
-> > This bug leads to messages like the following appearing in dmesg when
-> > fscache is enabled:
-> > 
-> >     NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
-> > 
-> > Fix this by adding a new LSM hook to load fc->security for submount
-> > creation when alloc_fs_context() is creating the fs_context for it.
-> > 
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
-> > Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
-> > Tested-by: Jeff Layton <jlayton@kernel.org>
-> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> > Acked-by: "Christian Brauner (Microsoft)" <brauner@kernel.org>
-> > Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk/ # v1
-> > Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk/ # v2
-> > Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk/ # v3
-> > Link: https://lore.kernel.org/r/166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk/ # v4
-> > Link: https://lore.kernel.org/r/217595.1662033775@warthog.procyon.org.uk/ # v5
-> > ---
-> > ver #7)
-> >  - Drop lsm_set boolean
-> >  - Link to v6: https://lore.kernel.org/r/20230802-master-v6-1-45d48299168b@kernel.org
-> > 
-> > ver #6)
-> >  - Rebase onto v6.5.0-rc4
-> > 
-> > ver #5)
-> >  - Removed unused variable.
-> >  - Only allocate smack_mnt_opts if we're dealing with a submount.
-> > 
-> > ver #4)
-> >  - When doing a FOR_SUBMOUNT mount, don't set the root label in SELinux or
-> >    Smack.
-> > 
-> > ver #3)
-> >  - Made LSM parameter extraction dependent on fc->purpose ==
-> >    FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
-> > 
-> > ver #2)
-> >  - Added Smack support
-> >  - Made LSM parameter extraction dependent on reference != NULL.
-> > ---
-> >  fs/fs_context.c               |  4 ++++
-> >  include/linux/lsm_hook_defs.h |  1 +
-> >  include/linux/security.h      |  6 +++++
-> >  security/security.c           | 14 +++++++++++
-> >  security/selinux/hooks.c      | 25 ++++++++++++++++++++
-> >  security/smack/smack_lsm.c    | 54 +++++++++++++++++++++++++++++++++++++++++++
-> >  6 files changed, 104 insertions(+)
-> > 
-> > diff --git a/fs/fs_context.c b/fs/fs_context.c
-> > index 851214d1d013..a523aea956c4 100644
-> > --- a/fs/fs_context.c
-> > +++ b/fs/fs_context.c
-> > @@ -282,6 +282,10 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
-> >  		break;
-> >  	}
-> >  
-> > +	ret = security_fs_context_init(fc, reference);
-> > +	if (ret < 0)
-> > +		goto err_fc;
-> > +
-> >  	/* TODO: Make all filesystems support this unconditionally */
-> >  	init_fs_context = fc->fs_type->init_fs_context;
-> >  	if (!init_fs_context)
-> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> > index 7308a1a7599b..7ce3550154b1 100644
-> > --- a/include/linux/lsm_hook_defs.h
-> > +++ b/include/linux/lsm_hook_defs.h
-> > @@ -54,6 +54,7 @@ LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, struct file *f
-> >  LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
-> >  LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, struct linux_binprm *bprm)
-> >  LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, struct linux_binprm *bprm)
-> > +LSM_HOOK(int, 0, fs_context_init, struct fs_context *fc, struct dentry *reference)
-> >  LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
-> >  	 struct fs_context *src_sc)
-> >  LSM_HOOK(int, -ENOPARAM, fs_context_parse_param, struct fs_context *fc,
-> > diff --git a/include/linux/security.h b/include/linux/security.h
-> > index 32828502f09e..61fda06fac9d 100644
-> > --- a/include/linux/security.h
-> > +++ b/include/linux/security.h
-> > @@ -293,6 +293,7 @@ int security_bprm_creds_from_file(struct linux_binprm *bprm, struct file *file);
-> >  int security_bprm_check(struct linux_binprm *bprm);
-> >  void security_bprm_committing_creds(struct linux_binprm *bprm);
-> >  void security_bprm_committed_creds(struct linux_binprm *bprm);
-> > +int security_fs_context_init(struct fs_context *fc, struct dentry *reference);
-> >  int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc);
-> >  int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
-> >  int security_sb_alloc(struct super_block *sb);
-> > @@ -629,6 +630,11 @@ static inline void security_bprm_committed_creds(struct linux_binprm *bprm)
-> >  {
-> >  }
-> >  
-> > +static inline int security_fs_context_init(struct fs_context *fc,
-> > +					   struct dentry *reference)
-> 
-> I think that's the wrong way of doing this hook. The security hook
-> really doesn't belong into alloc_fs_context().
-> 
-> I think what we want is a dedicated helper similar to vfs_dup_context():
-> 
-> // Only pass the superblock. There's no need for the dentry. I would
-> // avoid even passing fs_context but if that's preferred then sure.
-> security_fs_context_submount(struct fs_context *fc, const struct super_block *sb)
-> 
-> vfs_submount_fs_context(struct file_system_type *fs_type, struct dentry *reference)
-> {
->         fc = fs_context_for_submount(fs_type, reference);
-> 
->         security_fs_context_for_submount(fc, reference->d_sb);
-> }
-> 
-> This automatically ensures it's only called for submounts, the LSM
-> doesn't need to care about fc->purpose and this isn't called
-> in a pure allocation function for all allocation calls.
-> 
-> The we should switch all callers over to that new helper and unexport
-> that fs_context_for_submount() thing completely. Yes, that's more work
-> but that's the correct thing to do. And we need to audit fuse, cifs,
-> afs, and nfs anyway that they work fine with the new security hook.*
-> 
-> 
-> [1]: If really needed, then any additional fs specific work that needs
->      to be done during submount allocation should probably probably be
+When an unexpected system event occurs, the administrator may want to
+identify which application triggered the event. For example, unexpected
+process termination is still a real concern enough to write articles
+like https://access.redhat.com/solutions/165993 . TaskTracker is a
+trivial LSM module which emits TOMOYO-like information into the audit
+logs for better understanding of unexpected system events.
 
-s/allocation/creation/
+I suggested TaskTracker about 10 years ago [1]. Compared to that time,
+security_task_alloc()/security_task_free() hooks have been revived, but
+the multiple concurrent LSM patches have not completed yet.
 
->      done in a new callback.
-> 
->      struct fs_context_operations {
->             void (*free)(struct fs_context *fc);
->             int (*dup)(struct fs_context *fc, struct fs_context *src_fc);
->     +       int (*submount)(struct fs_context *fc, const struct super_block *sb);
+When I proposed TaskTracker as an LSM module [2], there was a comment that
+this module should not reuse the subj= field and instead add new fields to
+audit logs. But that thread died for unknown reason, and there is an effort
+for making it possible to enable SELinux and Smack at the same time.
+Thus, retrying as an LSM module based on an assumption that the multiple
+concurrent LSM patches will address how to share the subj= field. I think
+that passing whole history in one string is easier for those who want to
+avoid bloating audit log files to control history size and fields to
+include. Also, I think that userspace tools won't try to tokenize
+this history in order to perform more than fgrep matching.
 
-in vfs_submount_fs_context() mirroring the ->dup() call in
-vfs_dup_context().
+But now that LSM people are about to require an LSM ID for registering an
+LSM module, I can't wait till it becomes possible to enable SELinux and
+Smack at the same time. I have to send TaskTracker upstream in order to
+assign an LSM ID for TaskTracker.
+
+Link: https://marc.info/?l=linux-security-module&m=138547679621695 [1]
+Link: https://lkml.kernel.org/r/201405232144.JFB30480.OVMOOSFtQJHLFF@I-love.SAKURA.ne.jp [2]
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ security/Kconfig                   |   1 +
+ security/Makefile                  |   1 +
+ security/tasktracker/Kconfig       |  24 +++++
+ security/tasktracker/Makefile      |   2 +
+ security/tasktracker/tasktracker.c | 160 +++++++++++++++++++++++++++++
+ 5 files changed, 188 insertions(+)
+ create mode 100644 security/tasktracker/Kconfig
+ create mode 100644 security/tasktracker/Makefile
+ create mode 100644 security/tasktracker/tasktracker.c
+
+diff --git a/security/Kconfig b/security/Kconfig
+index 52c9af08ad35..aea0ac2b24a1 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -194,6 +194,7 @@ source "security/yama/Kconfig"
+ source "security/safesetid/Kconfig"
+ source "security/lockdown/Kconfig"
+ source "security/landlock/Kconfig"
++source "security/tasktracker/Kconfig"
+ 
+ source "security/integrity/Kconfig"
+ 
+diff --git a/security/Makefile b/security/Makefile
+index 18121f8f85cd..86ae43be3207 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -24,6 +24,7 @@ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+ obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
+ obj-$(CONFIG_BPF_LSM)			+= bpf/
+ obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
++obj-$(CONFIG_SECURITY_TASKTRACKER)	+= tasktracker/
+ 
+ # Object integrity file lists
+ obj-$(CONFIG_INTEGRITY)			+= integrity/
+diff --git a/security/tasktracker/Kconfig b/security/tasktracker/Kconfig
+new file mode 100644
+index 000000000000..6b294bf18878
+--- /dev/null
++++ b/security/tasktracker/Kconfig
+@@ -0,0 +1,24 @@
++# SPDX-License-Identifier: GPL-2.0-only
++config SECURITY_TASKTRACKER
++	bool "TaskTracker Support"
++	depends on SECURITY && AUDIT
++	default n
++	help
++	  This selects TaskTracker, a module which provides a thread's
++	  history for better understanding of audit logs.
++
++          If you enable this module, you will find history of current
++          thread in the subj= field of audit logs in the form of
++          name=$commname;pid=$pid;start=$YYYYMMDDhhmmss delimited by =>
++          like an example shown below.
++
++          [root@localhost ~]# auditctl -a exit,always -F arch=b64 -S kill
++          [root@localhost ~]# bash
++          [root@localhost ~]# kill -9 $$
++          Killed
++          [root@localhost ~]# ausearch -sc kill
++          ----
++          time->Sun Aug  6 15:36:17 2023
++          type=PROCTITLE msg=audit(1691303777.054:117): proctitle="(null)"
++          type=OBJ_PID msg=audit(1691303777.054:117): opid=3787 oauid=0 ouid=0 oses=1 ocomm="bash"
++          type=SYSCALL msg=audit(1691303777.054:117): arch=c000003e syscall=62 success=yes exit=0 a0=ecb a1=9 a2=0 a3=7ffc779be760 items=0 ppid=3766 pid=3787 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=1 comm="bash" exe="/usr/bin/bash" subj="name=swapper/0;pid=0;start=20230806153345=>name=init;pid=1;start=20230806153400=>name=systemd;pid=1;start=20230806153457=>name=sshd;pid=3661;start=20230806063525=>name=sshd;pid=3764;start=20230806063543=>name=bash;pid=3766;start=20230806063549=>name=bash;pid=3787;start=20230806063612" key=(null)
+diff --git a/security/tasktracker/Makefile b/security/tasktracker/Makefile
+new file mode 100644
+index 000000000000..1c11673c7684
+--- /dev/null
++++ b/security/tasktracker/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++obj-y = tasktracker.o
+diff --git a/security/tasktracker/tasktracker.c b/security/tasktracker/tasktracker.c
+new file mode 100644
+index 000000000000..bd76d7e2b42b
+--- /dev/null
++++ b/security/tasktracker/tasktracker.c
+@@ -0,0 +1,160 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * tt.c - Simplified thread information tracker.
++ */
++
++#include <linux/lsm_hooks.h>
++#include <linux/ctype.h>
++
++#define HISTORY_BUFFER_SIZE 1024
++
++struct lsm_blob_sizes tt_blob_sizes __ro_after_init = {
++	.lbs_task = HISTORY_BUFFER_SIZE,
++};
++
++/**
++ * tt_task - Get history of specified thread.
++ *
++ * @task - Pointer to "struct task_struct".
++ *
++ * Returns history of specified thread.
++ */
++static char *tt_task(struct task_struct *task)
++{
++	return task->security + tt_blob_sizes.lbs_task;
++}
++
++/**
++ * tt_update_history - Update history of current thread.
++ *
++ * Returns nothing.
++ */
++static void tt_update_history(void)
++{
++	int i;
++	int required;
++	struct tm tm;
++	char buf[256];
++	char *cp = buf;
++	char *history = tt_task(current);
++
++	cp += snprintf(buf, sizeof(buf) - 1, "name=");
++	for (i = 0; i < TASK_COMM_LEN; i++) {
++		const unsigned char c = current->comm[i];
++
++		if (!c)
++			break;
++		if (isalnum(c) || c == '.' || c == '_' || c == '-' || c == '/') {
++			*cp++ = c;
++			continue;
++		}
++		*cp++ = '\\';
++		*cp++ = (c >> 6) + '0';
++		*cp++ = ((c >> 3) & 7) + '0';
++		*cp++ = (c & 7) + '0';
++	}
++	/* Append PID. */
++	cp += snprintf(cp, buf - cp + sizeof(buf) - 1, ";pid=%u",
++		       current->pid);
++	/* Append timestamp. */
++	time64_to_tm(ktime_get_real_seconds(), 0, &tm);
++	cp += snprintf(cp, buf - cp + sizeof(buf) - 1,
++		       ";start=%04u%02u%02u%02u%02u%02u", (int) tm.tm_year + 1900,
++		       tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min,
++		       tm.tm_sec);
++	/* Terminate the buffer. */
++	if (cp >= buf + sizeof(buf))
++		cp = buf + sizeof(buf) - 1;
++	*cp = '\0';
++	required = cp - buf;
++	/* Truncate history if history is too long to append. */
++	cp = history;
++	while (i = strlen(cp), i + required >= HISTORY_BUFFER_SIZE - 10) {
++		char *cp2 = memchr(cp + 3, '>', i - 3);
++
++		if (WARN_ON_ONCE(!cp2))
++			return;
++		cp2--;
++		memmove(cp + 1, cp2, strlen(cp2) + 1);
++	}
++	/* Create or append history. */
++	if (!i)
++		sprintf(cp, "\"%s\"", buf);
++	else
++		sprintf(cp + i - 1, "=>%s\"", buf);
++}
++
++static void tt_current_getsecid_subj(u32 *secid)
++{
++	*secid = 1;
++}
++
++/**
++ * tt_secid_to_secctx - Allocate memory used for auditing.
++ *
++ * @secid:   Bool flag to allocate.
++ * @secdata: Pointer to allocate memory.
++ * @seclen:  Unused.
++ *
++ * Returns 0 on success, -EINVAL otherwise.
++ */
++static int tt_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
++{
++	char *history = tt_task(current);
++
++	/*
++	 * This module avoids returning -ENOMEM in order to avoid audit_panic(),
++	 * by returning only current thread's history. Since current thread's
++	 * history is updated and read by only current thread, we don't need to
++	 * copy the history for reading.
++	 */
++	if (secid != 1)
++		return -EINVAL;
++	if (secdata)
++		*secdata = history;
++	*seclen = strlen(history);
++	return 0;
++}
++
++static int tt_task_alloc(struct task_struct *task, unsigned long clone_flags)
++{
++	/* Copy from current thread's history upon clone(). */
++	strscpy(tt_task(task), tt_task(current), HISTORY_BUFFER_SIZE);
++	return 0;
++}
++
++static void tt_bprm_committing_creds(struct linux_binprm *bprm)
++{
++	/* Update current thread's history upon successful execve(). */
++	tt_update_history();
++}
++
++static struct security_hook_list tt_hooks[] __ro_after_init = {
++	LSM_HOOK_INIT(current_getsecid_subj, tt_current_getsecid_subj),
++	LSM_HOOK_INIT(secid_to_secctx, tt_secid_to_secctx),
++	LSM_HOOK_INIT(task_alloc, tt_task_alloc),
++	LSM_HOOK_INIT(bprm_committing_creds, tt_bprm_committing_creds),
++};
++
++/**
++ * tt_init - Register TaskTracker as a LSM module.
++ *
++ * Returns 0.
++ */
++static int __init tt_init(void)
++{
++	char *history = tt_task(current);
++
++	memset(history, 0, HISTORY_BUFFER_SIZE);
++	tt_update_history();
++	security_add_hooks(tt_hooks, ARRAY_SIZE(tt_hooks), "tt");
++	pr_info("TaskTracker initialized\n");
++	return 0;
++}
++
++DEFINE_LSM(tt) = {
++	.name = "tt",
++	.flags = LSM_FLAG_EXCLUSIVE, /* Due to use of "u32 *secid' argument. */
++	.blobs = &tt_blob_sizes,
++	.init = tt_init,
++};
+-- 
+2.18.4
+
