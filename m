@@ -2,285 +2,256 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF03EC001DE
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 23:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 212F1C001DE
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 23:14:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229588AbjHGXJH (ORCPT
+        id S229587AbjHGXO5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Aug 2023 19:09:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46220 "EHLO
+        Mon, 7 Aug 2023 19:14:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231754AbjHGXI1 (ORCPT
+        with ESMTP id S229760AbjHGXO4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Aug 2023 19:08:27 -0400
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE42819A9
-        for <linux-security-module@vger.kernel.org>; Mon,  7 Aug 2023 16:07:09 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5734d919156so43922677b3.3
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Aug 2023 16:07:09 -0700 (PDT)
+        Mon, 7 Aug 2023 19:14:56 -0400
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89A1E11A
+        for <linux-security-module@vger.kernel.org>; Mon,  7 Aug 2023 16:14:45 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-586bacac98aso22874647b3.2
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Aug 2023 16:14:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691449607; x=1692054407;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h7A5aUX2ecj7Bbl/7ce/OdAJyafyQZh2jovAmUQfIOU=;
-        b=BwuvQdbCy2eUR+bp2NSDknEVbKVENYiDa6uZlyXUwJVmlF4iKp7HjX09JvbwikelLF
-         rKNAwCIOjLOCd9hfp54t7rYGOQkDWMmLVeB7tC4wNPL/xp+tqM5HxKngfQKLrmiljVMH
-         iSIS4pBQ45QD1qQyRXNJtH27IiaYgguvgYTqI/+bBLhU+TqFpp7Sutp2QK2jo2kiAyxG
-         IG//K3Uxz4ck43yxOcKsJnHFISIoIpmEz14csW59Ae6FEeel85qKxKoUZusz6vFuY6is
-         pXI++E1KnyDArrSs+pWezCptJywjGpfbd67K7HxwhlAzqazZgZUp2EXPv3WY6f0/mDR8
-         iGnw==
+        d=paul-moore.com; s=google; t=1691449785; x=1692054585;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fzp+pWkWPNK9//byCg1TUGOI9l5DmbcmCeyfwExDPLU=;
+        b=CGx1t8rf9WuhqD86aU+0PIZbrvpp6TfIeIkwZs5yNftqSXQZG1YgZxi6snwnk6uuC8
+         2jrbjQQuiY1gh+bBF6Fe61F8hre7tMSHG7sztJl6qwvswDlqNEJXQeNg0iEZ4cMy+VbW
+         2qexbbIVvDouSnX0HUrdx+ArjXRIw1vgQZC6l4gRtfqCX6gFKEl3iT3LTXsQCasbLVGp
+         IIGJu97J0EeJUMQMaG3xS5N/3OPtRceL6d0/+4DIqI4HOwPsDm+bXySUoM+a97p4dHzm
+         Hd22p2mw6iIPHuhz7V4oomVPPSKl8wDfsrvhThSq6KpolV2hwGC0DJxgenngmQ9VXztp
+         yZeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691449607; x=1692054407;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=h7A5aUX2ecj7Bbl/7ce/OdAJyafyQZh2jovAmUQfIOU=;
-        b=UeYWPPvJBGgWBTG5FEnpAeUVj7VbyHtrcylm4RGvyWjYo10fh5cEMoYAW0zIMJrbi1
-         L7RSqB77D+1f7xlhdLNSXVdSoX8ESAZBId/fWJjsFNZELFdjKURnYt45nHKTEtbK0XAG
-         1db/NQt07Od8Xqj7dqT3cgm3KDQ7X7weGNx4wjTLE9I8xj0k7Q6y2LhV1tP+qHyL20eq
-         U0Ai1a+WKsPdkErboybaCZgqDDkwDBapvxtbzaJsCEKJA2JDUsAEBkgRKuze5IL1GvZp
-         9B8VEqkA/Ro0/6PbssJ2KM/4yU25Fv4RgdAd7JBLagc1y9h4/FR+jhbF20Wk019wz3rK
-         Xi4Q==
-X-Gm-Message-State: AOJu0YzeNhYQ7tP9UnF5mbhplZfkR3ZwIsfJhers0kgOBk6QW8CL2rPm
-        ktLxkkBUkqfxZEzU3ljQeywukebNDqbR78lzZw==
-X-Google-Smtp-Source: AGHT+IGQixIKGybe4T+GVPibQ4+cbo9epXOA0dv0EjBAf7syaC6i5AoszZ6gyEUK9SdsuOsgoX+oe0ThmUR8eGJG6g==
-X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
- (user=ackerleytng job=sendgmr) by 2002:a25:dbcf:0:b0:d01:60ec:d0e with SMTP
- id g198-20020a25dbcf000000b00d0160ec0d0emr68969ybf.9.1691449607047; Mon, 07
- Aug 2023 16:06:47 -0700 (PDT)
-Date:   Mon, 07 Aug 2023 23:06:45 +0000
-In-Reply-To: <20230718234512.1690985-13-seanjc@google.com> (message from Sean
- Christopherson on Tue, 18 Jul 2023 16:44:55 -0700)
-Mime-Version: 1.0
-Message-ID: <diqzv8dq3116.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-From:   Ackerley Tng <ackerleytng@google.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     pbonzini@redhat.com, maz@kernel.org, oliver.upton@linux.dev,
-        chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, seanjc@google.com, willy@infradead.org,
-        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
-        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
-        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
-        david@redhat.com, qperret@google.com, michael.roth@amd.com,
-        wei.w.wang@intel.com, liam.merwick@oracle.com,
-        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
-Content-Type: text/plain; charset="utf-8"
+        d=1e100.net; s=20221208; t=1691449785; x=1692054585;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fzp+pWkWPNK9//byCg1TUGOI9l5DmbcmCeyfwExDPLU=;
+        b=HckRA4at9B32qQq5/Rjj6SwWh0TgGW6EFYCykAcKb4ZxYgHSOY3srj+0MeZlvMFTgu
+         ao7AhHIbCnXijSe/4Byr9VjFbvxgE159n5dJtlu8cbsQIvoBW+t7QE79QLN+vR7HJdEL
+         vPaRTCwkzsW3bHs6bPuH3+DtD27QijCHP1dD9BFU3jSZB4xanAGA7n/6tSNkpgk+QL4J
+         aXrh59D4qB2DVfTPEANl+ofCG45wu01syX9JQWYTRI9O8J/A5hQ0s74esIwrRxIb0oFb
+         hHNaED3fpmBeN/nI7GVZTGq1+df0dGv93TfEYdTfsDGdHdOSO0kOpLvqcezIr6K424Y2
+         7K8g==
+X-Gm-Message-State: AOJu0YzVJlltVIDgxa3RnrQq2/w9EZcB4k9zUMPDJyo1WgbxGbX3O3W1
+        /5SiDbTsJmSBtDb+sWBOZ2O5cSlEMUNsDxCmJpha
+X-Google-Smtp-Source: AGHT+IH2mExZ9xa9pJyxwWXq20aTdJVPcWQju/ZYA7cZkJHumKub1Y+Y5TPz9EF3i5nowqgwKxkb+4qoVPvM2uULsd8=
+X-Received: by 2002:a0d:cb01:0:b0:569:479f:6d7f with SMTP id
+ n1-20020a0dcb01000000b00569479f6d7fmr8169671ywd.43.1691449784772; Mon, 07 Aug
+ 2023 16:09:44 -0700 (PDT)
+MIME-Version: 1.0
+References: <ZNCWUQXKrZnCeB/5@gmail.com>
+In-Reply-To: <ZNCWUQXKrZnCeB/5@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 7 Aug 2023 19:09:33 -0400
+Message-ID: <CAHC9VhT+DPRrSnmh_2PCAf05jPCE-EPaMU_TLB=jJ+mJ+NALsw@mail.gmail.com>
+Subject: Re: [PATCH v2] lsm: constify the 'target' parameter in security_capget()
+To:     Khadija Kamran <kamrankhadijadj@gmail.com>
+Cc:     Alison Schofield <alison.schofield@intel.com>,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com,
+        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
+        john.johansen@canonical.com, ztarkhani@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Sean Christopherson <seanjc@google.com> writes:
+On Mon, Aug 7, 2023 at 2:59=E2=80=AFAM Khadija Kamran <kamrankhadijadj@gmai=
+l.com> wrote:
+>
+> Three LSMs register the implementations for the "capget" hook: AppArmor,
+> SELinux, and the normal capability code. Looking at the function
+> implementations we may observe that the first parameter "target" is not
+> changing.
+>
+> Mark the first argument "target" of LSM hook security_capget() as
+> "const" since it will not be changing in the LSM hook.
+>
+> cap_capget() LSM hook declaration exceeds the 80 characters per line
+> limit. Split the function declaration to multple lines to decrease the
 
->   <snip>
+"multiple" :)
 
-> +static int kvm_gmem_release(struct inode *inode, struct file *file)
-> +{
-> +	struct kvm_gmem *gmem =3D file->private_data;
-> +	struct kvm_memory_slot *slot;
-> +	struct kvm *kvm =3D gmem->kvm;
-> +	unsigned long index;
-> +
-> +	filemap_invalidate_lock(inode->i_mapping);
-> +
-> +	/*
-> +	 * Prevent concurrent attempts to *unbind* a memslot.  This is the last
-> +	 * reference to the file and thus no new bindings can be created, but
-> +	 * dereferencing the slot for existing bindings needs to be protected
-> +	 * against memslot updates, specifically so that unbind doesn't race
-> +	 * and free the memslot (kvm_gmem_get_file() will return NULL).
-> +	 */
-> +	mutex_lock(&kvm->slots_lock);
-> +
-> +	xa_for_each(&gmem->bindings, index, slot)
-> +		rcu_assign_pointer(slot->gmem.file, NULL);
-> +
-> +	synchronize_rcu();
-> +
-> +	/*
-> +	 * All in-flight operations are gone and new bindings can be created.
-> +	 * Zap all SPTEs pointed at by this file.  Do not free the backing
-> +	 * memory, as its lifetime is associated with the inode, not the file.
-> +	 */
-> +	kvm_gmem_invalidate_begin(gmem, 0, -1ul);
-> +	kvm_gmem_invalidate_end(gmem, 0, -1ul);
-> +
-> +	mutex_unlock(&kvm->slots_lock);
-> +
-> +	list_del(&gmem->entry);
-> +
-> +	filemap_invalidate_unlock(inode->i_mapping);
-> +
-> +	xa_destroy(&gmem->bindings);
-> +	kfree(gmem);
-> +
-> +	kvm_put_kvm(kvm);
-> +
-> +	return 0;
-> +}
-> +
+Don't worry, I'll fix that in the merge.
 
-> <snip>
+There is one more nitpick below, but I think this looks good.  I'll
+give this a few days to see if John can ACK the AppArmor bits, but if
+we don't hear from him by mid-week I'll plan to merge this.
 
-> +
-> +int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
-> +		  unsigned int fd, loff_t offset)
-> +{
-> +	loff_t size =3D slot->npages << PAGE_SHIFT;
-> +	unsigned long start, end, flags;
-> +	struct kvm_gmem *gmem;
-> +	struct inode *inode;
-> +	struct file *file;
-> +
-> +	BUILD_BUG_ON(sizeof(gfn_t) !=3D sizeof(slot->gmem.pgoff));
-> +
-> +	file =3D fget(fd);
-> +	if (!file)
-> +		return -EINVAL;
-> +
-> +	if (file->f_op !=3D &kvm_gmem_fops)
-> +		goto err;
-> +
-> +	gmem =3D file->private_data;
-> +	if (gmem->kvm !=3D kvm)
-> +		goto err;
-> +
-> +	inode =3D file_inode(file);
-> +	flags =3D (unsigned long)inode->i_private;
-> +
-> +	/*
-> +	 * For simplicity, require the offset into the file and the size of the
-> +	 * memslot to be aligned to the largest possible page size used to back
-> +	 * the file (same as the size of the file itself).
-> +	 */
-> +	if (!kvm_gmem_is_valid_size(offset, flags) ||
-> +	    !kvm_gmem_is_valid_size(size, flags))
-> +		goto err;
-> +
-> +	if (offset + size > i_size_read(inode))
-> +		goto err;
-> +
-> +	filemap_invalidate_lock(inode->i_mapping);
-> +
-> +	start =3D offset >> PAGE_SHIFT;
-> +	end =3D start + slot->npages;
-> +
-> +	if (!xa_empty(&gmem->bindings) &&
-> +	    xa_find(&gmem->bindings, &start, end - 1, XA_PRESENT)) {
-> +		filemap_invalidate_unlock(inode->i_mapping);
-> +		goto err;
-> +	}
-> +
-> +	/*
-> +	 * No synchronize_rcu() needed, any in-flight readers are guaranteed to
-> +	 * be see either a NULL file or this new file, no need for them to go
-> +	 * away.
-> +	 */
-> +	rcu_assign_pointer(slot->gmem.file, file);
-> +	slot->gmem.pgoff =3D start;
-> +
-> +	xa_store_range(&gmem->bindings, start, end - 1, slot, GFP_KERNEL);
-> +	filemap_invalidate_unlock(inode->i_mapping);
-> +
-> +	/*
-> +	 * Drop the reference to the file, even on success.  The file pins KVM,
-> +	 * not the other way 'round.  Active bindings are invalidated if the
-> +	 * file is closed before memslots are destroyed.
-> +	 */
-> +	fput(file);
-> +	return 0;
-> +
-> +err:
-> +	fput(file);
-> +	return -EINVAL;
-> +}
-> +
+Thanks!
 
-I=E2=80=99d like to propose an alternative to the refcounting approach betw=
-een
-the gmem file and associated kvm, where we think of KVM=E2=80=99s memslots =
-as
-users of the gmem file.
+> line length.
+>
+> Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
+> ---
+> Changes in v2:
+>  - Squash the patches 1/2 and 2/2 into a single patch
+>  - Simplify the commit message
+>
+>  include/linux/lsm_hook_defs.h | 2 +-
+>  include/linux/security.h      | 7 ++++---
+>  kernel/capability.c           | 2 +-
+>  security/apparmor/lsm.c       | 2 +-
+>  security/commoncap.c          | 2 +-
+>  security/security.c           | 2 +-
+>  security/selinux/hooks.c      | 2 +-
+>  7 files changed, 10 insertions(+), 9 deletions(-)
+>
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
+h
+> index 6bb55e61e8e8..fd3844e11077 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -36,7 +36,7 @@ LSM_HOOK(int, 0, binder_transfer_file, const struct cre=
+d *from,
+>  LSM_HOOK(int, 0, ptrace_access_check, struct task_struct *child,
+>          unsigned int mode)
+>  LSM_HOOK(int, 0, ptrace_traceme, struct task_struct *parent)
+> -LSM_HOOK(int, 0, capget, struct task_struct *target, kernel_cap_t *effec=
+tive,
+> +LSM_HOOK(int, 0, capget, const struct task_struct *target, kernel_cap_t =
+*effective,
+>          kernel_cap_t *inheritable, kernel_cap_t *permitted)
+>  LSM_HOOK(int, 0, capset, struct cred *new, const struct cred *old,
+>          const kernel_cap_t *effective, const kernel_cap_t *inheritable,
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index e2734e9e44d5..fef65d0e522d 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -145,7 +145,8 @@ extern int cap_capable(const struct cred *cred, struc=
+t user_namespace *ns,
+>  extern int cap_settime(const struct timespec64 *ts, const struct timezon=
+e *tz);
+>  extern int cap_ptrace_access_check(struct task_struct *child, unsigned i=
+nt mode);
+>  extern int cap_ptrace_traceme(struct task_struct *parent);
+> -extern int cap_capget(struct task_struct *target, kernel_cap_t *effectiv=
+e, kernel_cap_t *inheritable, kernel_cap_t *permitted);
+> +extern int cap_capget(const struct task_struct *target, kernel_cap_t *ef=
+fective,
+> +                                         kernel_cap_t *inheritable, kern=
+el_cap_t *permitted);
 
-Instead of having the gmem file pin the VM (i.e. take a refcount on
-kvm), we could let memslot take a refcount on the gmem file when the
-memslots are configured.
+Don't resubmit the patch just for this, I'll fix it during the merge,
+but generally nice to make sure the wrapped lines are aligned with the
+previous line; look at the security_cap_get() declaration (below) in
+this patch to see an example.
 
-Here=E2=80=99s a POC patch that flips the refcounting (and modified selftes=
-ts in
-the next commit):
-https://github.com/googleprodkernel/linux-cc/commit/7f487b029b89b9f3e9b094a=
-721bc0772f3c8c797
+>  extern int cap_capset(struct cred *new, const struct cred *old,
+>                       const kernel_cap_t *effective,
+>                       const kernel_cap_t *inheritable,
+> @@ -271,7 +272,7 @@ int security_binder_transfer_file(const struct cred *=
+from,
+>                                   const struct cred *to, struct file *fil=
+e);
+>  int security_ptrace_access_check(struct task_struct *child, unsigned int=
+ mode);
+>  int security_ptrace_traceme(struct task_struct *parent);
+> -int security_capget(struct task_struct *target,
+> +int security_capget(const struct task_struct *target,
+>                     kernel_cap_t *effective,
+>                     kernel_cap_t *inheritable,
+>                     kernel_cap_t *permitted);
+> @@ -553,7 +554,7 @@ static inline int security_ptrace_traceme(struct task=
+_struct *parent)
+>         return cap_ptrace_traceme(parent);
+>  }
+>
+> -static inline int security_capget(struct task_struct *target,
+> +static inline int security_capget(const struct task_struct *target,
+>                                    kernel_cap_t *effective,
+>                                    kernel_cap_t *inheritable,
+>                                    kernel_cap_t *permitted)
+> diff --git a/kernel/capability.c b/kernel/capability.c
+> index 3e058f41df32..67bdee3414dd 100644
+> --- a/kernel/capability.c
+> +++ b/kernel/capability.c
+> @@ -112,7 +112,7 @@ static inline int cap_get_target_pid(pid_t pid, kerne=
+l_cap_t *pEp,
+>         int ret;
+>
+>         if (pid && (pid !=3D task_pid_vnr(current))) {
+> -               struct task_struct *target;
+> +               const struct task_struct *target;
+>
+>                 rcu_read_lock();
+>
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index f431251ffb91..12dd96c3b2f0 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -144,7 +144,7 @@ static int apparmor_ptrace_traceme(struct task_struct=
+ *parent)
+>  }
+>
+>  /* Derived from security/commoncap.c:cap_capget */
+> -static int apparmor_capget(struct task_struct *target, kernel_cap_t *eff=
+ective,
+> +static int apparmor_capget(const struct task_struct *target, kernel_cap_=
+t *effective,
+>                            kernel_cap_t *inheritable, kernel_cap_t *permi=
+tted)
+>  {
+>         struct aa_label *label;
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 0b3fc2f3afe7..5fd64d3e5bfd 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -197,7 +197,7 @@ int cap_ptrace_traceme(struct task_struct *parent)
+>   * This function retrieves the capabilities of the nominated task and re=
+turns
+>   * them to the caller.
+>   */
+> -int cap_capget(struct task_struct *target, kernel_cap_t *effective,
+> +int cap_capget(const struct task_struct *target, kernel_cap_t *effective=
+,
+>                kernel_cap_t *inheritable, kernel_cap_t *permitted)
+>  {
+>         const struct cred *cred;
+> diff --git a/security/security.c b/security/security.c
+> index d5ff7ff45b77..fb2d93b481f1 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -893,7 +893,7 @@ int security_ptrace_traceme(struct task_struct *paren=
+t)
+>   *
+>   * Return: Returns 0 if the capability sets were successfully obtained.
+>   */
+> -int security_capget(struct task_struct *target,
+> +int security_capget(const struct task_struct *target,
+>                     kernel_cap_t *effective,
+>                     kernel_cap_t *inheritable,
+>                     kernel_cap_t *permitted)
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 79b4890e9936..ff42d49f1b41 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2056,7 +2056,7 @@ static int selinux_ptrace_traceme(struct task_struc=
+t *parent)
+>                             SECCLASS_PROCESS, PROCESS__PTRACE, NULL);
+>  }
+>
+> -static int selinux_capget(struct task_struct *target, kernel_cap_t *effe=
+ctive,
+> +static int selinux_capget(const struct task_struct *target, kernel_cap_t=
+ *effective,
+>                           kernel_cap_t *inheritable, kernel_cap_t *permit=
+ted)
+>  {
+>         return avc_has_perm(current_sid(), task_sid_obj(target),
+> --
+> 2.34.1
 
-One side effect of having the gmem file pin the VM is that now the gmem
-file becomes sort of a false handle on the VM:
-
-+ Closing the file destroys the file pointers in the VM and invalidates
-  the pointers
-+ Keeping the file open keeps the VM around in the kernel even though
-  the VM fd may already be closed.
-
-I feel that memslots form a natural way of managing usage of the gmem
-file. When a memslot is created, it is using the file; hence we take a
-refcount on the gmem file, and as memslots are removed, we drop
-refcounts on the gmem file.
-
-The KVM pointer is shared among all the bindings in gmem=E2=80=99s xarray, =
-and we can enforce that a gmem file is used only with one VM:
-
-+ When binding a memslot to the file, if a kvm pointer exists, it must
-  be the same kvm as the one in this binding
-+ When the binding to the last memslot is removed from a file, NULL the
-  kvm pointer.
-
-When the VM is freed, KVM will iterate over all the memslots, removing
-them one at a time and eventually NULLing the kvm pointer.
-
-I believe the =E2=80=9CKVM=E2=80=99s memslots using the file=E2=80=9D appro=
-ach is also simpler
-because all accesses to the bindings xarray and kvm pointer can be
-serialized using filemap_invalidate_lock(), and we are already using
-this lock regardless of refcounting approach. This serialization means
-we don=E2=80=99t need to use RCU on file/kvm pointers since accesses are al=
-ready
-serialized.
-
-There=E2=80=99s also no need to specially clean up the associated KVM when =
-the
-file reference close, because by the time the .release() handler is
-called, any file references held by memslots would have been dropped,
-and so the bindings would have been removed, and the kvm pointer would
-have been NULLed out.
-
-The corollary to this approach is that at creation time, the file won=E2=80=
-=99t
-be associated with any kvm, and we can use a system ioctl instead of a
-VM-specific ioctl as Fuad brought up [1] (Association with kvm before
-the file is used with memslots is possible would mean more tracking so
-that kvm can close associated files when it is closed.)
-
-One reason for binding gmem files to a specific VM on creation is to
-allow (in future) a primary VM to control permissions on the memory for
-other files [2]. This permission control can still be enforced with the
-=E2=80=9CKVM=E2=80=99s memslots using the file=E2=80=9D approach. The enfor=
-cement rules will
-just be delayed till the first binding between a VM and a gmem file.
-
-Could binding gmem files not on creation, but at memslot configuration
-time be sufficient and simpler?
-
-[1] https://lore.kernel.org/lkml/CA+EHjTzP2fypgkJbRpSPrKaWytW7v8ANEifofMnQC=
-kdvYaX6Eg@mail.gmail.com/
-[2] https://lore.kernel.org/lkml/ZMKlo+Fe8n%2FeLQ82@google.com/
-
-> <snip>
+--=20
+paul-moore.com
