@@ -2,128 +2,167 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC8CC001DB
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 21:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB32C001DB
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 22:49:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229541AbjHGVxJ (ORCPT
+        id S229978AbjHGWt5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Aug 2023 17:53:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38570 "EHLO
+        Mon, 7 Aug 2023 18:49:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229986AbjHGVxA (ORCPT
+        with ESMTP id S229544AbjHGWt4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Aug 2023 17:53:00 -0400
-Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CF40A8
-        for <linux-security-module@vger.kernel.org>; Mon,  7 Aug 2023 14:52:57 -0700 (PDT)
-Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-586bacac98aso22373177b3.2
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Aug 2023 14:52:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1691445176; x=1692049976;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bbatSTZTdcPYFZTHHpbiz4qGgfpEge2NxxVq5Y4//Ig=;
-        b=LMFJxq1SS7gRwFlxGMP7DEFL4KwptA93nVOvbt0wX9ESWRb2QbGRJRXjdaPEXCiaj7
-         14mTCm9oT+I1kh1pg3z2ozc0XnnRDHQu1BIj+vF1QLWKCWlKIVH3mKiRVwgM9BVWZx7v
-         AceJ+P4F7j2KBz+F5styq+9gnjx+9XzSA88gLz66zalx4zbowGNSKI0TNxHRNYQzn+Q6
-         q/CoDcJ/cFKUkZ39o/eh59+1YHo4EGMmmXe7t/0v8W5kE+5kNmT737pDA8kSWAXjOWUi
-         V0xdfQery3gjptl8JL21Sh6DIpVysowedAnLTHgnZAvo1ur07pAF9x502AJ706E101lO
-         eISA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691445176; x=1692049976;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bbatSTZTdcPYFZTHHpbiz4qGgfpEge2NxxVq5Y4//Ig=;
-        b=GoIOkvyhHELfWeleVL6zkmeJ5/+rKADt6Fm+Slm4rynI/cevr10v9rbtMhlcoIaQNS
-         jrlYr67z0I7eSntbqXmGmXIorQxjr7osB9Q7eMQuSc6QZcYm0k1QhVwQmFUfTeVEMKAp
-         n+QxLgu6E3mIM0SrrTIRCOxMIsizdBZ/ZqVSxtnUK1EXkRkIYpUyCDKwxTpr24Ve9R5F
-         ABHn8FKjmk3D1ML9Yq6LBzEhbdaVuIf66d3zQTXiW/n5tI6IpmCjAKEhA6fyQtWPsalf
-         /ErrdFTb1Gf+DLurcnW9EVmY2ZebRQPU5a02qX66NY8+XUex1c0WGqqwMFn+839ndmyh
-         yVzA==
-X-Gm-Message-State: AOJu0Yw6n82xRxJLAGxlQVwY451qvYvFSWs2nteW1yHbtJ8lbgY8Zg+p
-        XGpDZW0NBlssSBYbhAScEFHVGyR9A22vDuG/vDnsfefEsgp/xZVR3w==
-X-Google-Smtp-Source: AGHT+IEFOEMqjYNPhcq6oNY3YAPo+S6FqjZbDGAfQ4Z14G3ytMhFxUgzx8uU4FotXMzSKpZM8Fx5kb739I2OJfu6onk=
-X-Received: by 2002:a0d:e24a:0:b0:577:31c6:b35b with SMTP id
- l71-20020a0de24a000000b0057731c6b35bmr8595851ywe.32.1691445176477; Mon, 07
- Aug 2023 14:52:56 -0700 (PDT)
+        Mon, 7 Aug 2023 18:49:56 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDEC4F3;
+        Mon,  7 Aug 2023 15:49:54 -0700 (PDT)
+Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 377MnPRF012611;
+        Mon, 7 Aug 2023 22:49:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=+6CooSgnHbnLKTlBr/6t5AuLifIIHcmW0yn6xvZilv0=;
+ b=pp1i/Kd9Tn5glsCsXwcVXmzJA4jj9Q8xn/75Pm4aIzf/mpXKaDh6aUGXSb2FehF/s9I+
+ ffFw+T/eUhVlsbTylg6o6A6UsfhxqoI2toZyHiR2R4lD/XaTHKfRlS86k8lT+6Sld4La
+ m/up6pIbYa9bqkECc4W0cQU6UWBP2g+DU2wKaBmLb/odwLYutCJ+kM/RRtBNuaNkGpwj
+ VVnpOYQ/9q1kYs20MHjGqc5PgUl+o2wFd0R2fUxcUCIk58XkgaQ5XTZhFpACSTaadaOC
+ NrZMkpj1omBw92I6m4uONDj7YqTbtIMOMDXq1arifOpVTruUKSts22J3iOWbMh291p+d Hg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sb9r80046-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 07 Aug 2023 22:49:29 +0000
+Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 377MnSqU012759;
+        Mon, 7 Aug 2023 22:49:28 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sb9r8003w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 07 Aug 2023 22:49:28 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 377Mcm9V006656;
+        Mon, 7 Aug 2023 22:49:27 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+        by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3sa0rssm4x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 07 Aug 2023 22:49:27 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+        by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 377MnQUS19989024
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 7 Aug 2023 22:49:26 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C4D7758055;
+        Mon,  7 Aug 2023 22:49:26 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D523658043;
+        Mon,  7 Aug 2023 22:49:25 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Mon,  7 Aug 2023 22:49:25 +0000 (GMT)
+Message-ID: <5d21276a-daac-fc9b-add9-62e7c04bbdcd@linux.ibm.com>
+Date:   Mon, 7 Aug 2023 18:49:25 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
+Content-Language: en-US
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Sush Shringarputale <sushring@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+        kgold@linux.ibm.com, bhe@redhat.com, vgoyal@redhat.com,
+        dyoung@redhat.com, kexec@lists.infradead.org, jmorris@namei.org,
+        Paul Moore <paul@paul-moore.com>, serge@hallyn.com
+Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        linux-security-module@vger.kernel.org
+References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
+ <b748230c8ee291288afcf48898507556c3aa7c71.camel@HansenPartnership.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <b748230c8ee291288afcf48898507556c3aa7c71.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: mTcLWF4zRxTB3SOazcI_e657VvnRXgi0
+X-Proofpoint-ORIG-GUID: xgMo4RPBwwSYeXY43PFBWfG-OK1BDWgv
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
- <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com> <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
- <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
- <CAHC9VhQhf+ik5S_aJOVn59pax1Aa0vO5gJ4YoxrtGRKtoWh7sA@mail.gmail.com>
- <CAHC9VhSw6B5D9ru8trwcejAt_MQKN4g6R0zeTqO_BKRL06km7Q@mail.gmail.com> <20230804.at4Dei5LoiCa@digikod.net>
-In-Reply-To: <20230804.at4Dei5LoiCa@digikod.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 7 Aug 2023 17:52:45 -0400
-Message-ID: <CAHC9VhSe=V-5QkR8UkXkqNt2Sf5fdx82mwXviy7hjpZ=PAJsQw@mail.gmail.com>
-Subject: Re: ANN: new LSM guidelines
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-07_25,2023-08-03_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 bulkscore=0 clxscore=1011 mlxscore=0 phishscore=0
+ mlxlogscore=999 lowpriorityscore=0 malwarescore=0 impostorscore=0
+ spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2308070203
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 4, 2023 at 3:58=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
->
-> On Thu, Aug 03, 2023 at 05:38:23PM -0400, Paul Moore wrote:
-> > On Wed, Aug 2, 2023 at 6:00=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> > > On Tue, Aug 1, 2023 at 6:47=E2=80=AFPM Paul Moore <paul@paul-moore.co=
-m> wrote:
-> > > > I've updated the README.md doc based on the feedback, and copied th=
-e
-> > > > two new sections below for easier review.  If anyone has any
-> > > > additional feedback or concerns, please let me know.
-> > >
-> > > Another update based on feedback received (thanks everyone!).  Just a=
-s
-> > > before, I welcome any comments or feedback you are able to share.
-> >
-> > MOAR UPDATES!
->
-> With some optional nitpicking, looks good to me!
 
-Great, thanks for your help with the reviews, suggestions, etc.  I
-think the guidelines are much better now than when we started.
 
-> > ## New LSM Guidelines
+On 8/1/23 17:21, James Bottomley wrote:
+> On Tue, 2023-08-01 at 12:12 -0700, Sush Shringarputale wrote:
+> [...]
+>> Truncating IMA log to reclaim memory is not feasible, since it makes
+>> the log go out of sync with the TPM PCR quote making remote
+>> attestation fail.
+> 
+> This assumption isn't entirely true.  It's perfectly possible to shard
+> an IMA log using two TPM2_Quote's for the beginning and end PCR values
+> to validate the shard.  The IMA log could be truncated in the same way
+> (replace the removed part of the log with a TPM2_Quote and AK, so the
+> log still validates from the beginning quote to the end).
+> 
+> If you use a TPM2_Quote mechanism to save the log, all you need to do
+> is have the kernel generate the quote with an internal AK.  You can
+> keep a record of the quote and the AK at the beginning of the truncated
+> kernel log.  If the truncated entries are saved in a file shard it
 
-...
+The truncation seems dangerous to me. Maybe not all the scenarios with an attestation
+client (client = reading logs and quoting) are possible then anymore, such as starting
+an attestation client only after truncation but a verifier must have witnessed the
+system's PCRs and log state before the truncation occurred.
 
-> > * New LSMs must be accompanied by a publicly available test suite to ve=
-rify
-> > basic functionality and help identify regressions.  Test coverage does =
-not need
-> > to reach a specific percentage, but core functionality and any user int=
-erfaces
->
-> I'm not sure it is worth specifying the "not need" part, for tests and
-> documentation paragraphs.
+I think an ima-buf (or similar) log entry in IMA log would have to appear at the beginning of the
+truncated log stating the value of all PCRs that IMA touched (typically only PCR 10
+but it can be others). The needs to be done since the quote itself doesn't
+provide the state of the individual PCRs. This would at least allow an attestation
+client to re-read the log from the beginning (when it is re-start or started for the
+first time after the truncation). However, this alone (without the
+internal AK quoting the old state) could lead to abuse where I could create totally
+fake IMA logs stating the state of the PCRs at the beginning (so the verifier
+syncs its internal PCR state to this state). Further, even with the AK-quote that
+you propose I may be able to create fake logs and trick a verifier into
+trusting the machine IFF it doesn't know what kernel this system was booted with
+that I may have hacked to provide a fake AK-quote that just happens to match the
+PCR state presented at the beginning of the log.
 
-My goal with that was to try and not scare people away with a
-tremendous documentation and/or testing burden to start.  I'd like to
-keep it in the doc, but I understand your point.
+=> Can a truncated log be made safe for attestation when the attestation starts
+only after the truncation occurred?
 
-> > It is important to note that these requirements are not complete, due t=
-o the
-> > ever changing nature of the Linux kernel and the unique nature of each =
-LSM.
-> > Ultimately, new LSMs are added to the kernel at the discretion of the
-> > maintainers and reviewers.
->
-> This paragraph sounds a lot like the last paragraph of the LSM hook
-> section, but I don't have a better suggestion.
+=> Even if attestation was occurring 'what' state does an attestation server
+need to carry around for an attested-to system so that the truncation is 'safe'
+and I cannot create fake AK-quotes and fake IMA logs with initial PCR states?
+Can I ever restart the client and have it read the truncated log from the
+beginning and what type of verification needs to happen on the server then?
+It seems like the server would have to remember the state of the IMA PCRs upon
+last truncation to detect a possible attack. This would make staring to monitor
+a system after truncation impossible -- would be good to know these details.
 
-That's because it is pretty much the same paragraph :)
 
-I agree, it would be nice if there were a little more different, but
-given that the purpose is the same for each paragraph I'm not sure
-spending a lot of time to make them read significantly different is
-going to accomplish a lot.
 
---=20
-paul-moore.com
+
+> should have a beginning and end quote and a record of the AK used.
+> Since verifiers like Keylime are already using this beginning and end
+> quote for sharded logs, it's the most natural format to feed to
+> something externally for verification and it means you don't have to
+> invent a new format to do the same thing.
+> 
+> Regards,
+> 
+> James
+> 
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
