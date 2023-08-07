@@ -2,168 +2,200 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2C9C41513
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 23:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D74C001B0
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 23:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230128AbjHGXZI (ORCPT
+        id S230482AbjHGX6J (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Aug 2023 19:25:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58356 "EHLO
+        Mon, 7 Aug 2023 19:58:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229895AbjHGXZG (ORCPT
+        with ESMTP id S230439AbjHGX6I (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Aug 2023 19:25:06 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22CCE1705
-        for <linux-security-module@vger.kernel.org>; Mon,  7 Aug 2023 16:25:05 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-d437624b9c1so3991623276.0
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Aug 2023 16:25:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691450704; x=1692055504;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iwb23aAhSO8tTiEFGOvNlQCsoOox6vBjb8gCypJE4mI=;
-        b=R4PwviCR8DjVobdiirsmlaUW+2G2OreWXDR1oudY0WdYIlf/tRBxovHV7VVaY5H2D7
-         s6z9nsA/hZZOzOlAXwj0GlLszUfPpUcqxoVPBkJopNIVm5p7oN0Kjjk8CNCU0uvTetel
-         32HvbTwQx+uTw/DQ0hiV2GccLkJL/LCqkzOCOWamh7kng72/soRCwM6up6P8iJdnPSBO
-         x/GLCUjk6m180XrAeVCUYgLoKf2lX03dUyg16yLerbR/XPy1Dd0ljJbOlBwH8tdW8OEH
-         2D0Guisqm80uErrMhMIOa5wS5t40qQeuRJl0ljw9a+5siKs8Y3hopoVBYIWmqvB1hWx2
-         ivOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691450704; x=1692055504;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iwb23aAhSO8tTiEFGOvNlQCsoOox6vBjb8gCypJE4mI=;
-        b=Lq86XrA3DT0IyTWinXRzUOxahH90/n9ZavQ7vF+hThipayBui7kOvLvhmHgNMLP7BK
-         jPNGtfhsPmXts+EOFYHzRDBM81XLugcsU83/bF4wVy7VnxuBFAh0aDlV6m+r6WzLe0o0
-         IRUppfbvp2bfAa5X6jYQnQzBM2i5m8Iy0JzNyTKNA57iKt4z6US1vnBaXDPSbkVIZbZC
-         mzFJAW1BV9QQEengnZtLR0Aoje37wvUQjF8YtI9lQadmoAJoxl0hzHnoQvSt1cE/V9R3
-         G0LQgfSPGmCIdl9nufHu2juog2QtzVn+2mQ/6TkMsS1S2+suOWlnJVEFVinJKp0rcWiX
-         cnVw==
-X-Gm-Message-State: AOJu0YwFAhrj0yWpHbANPr3oDdqjrbWG7AY++o8F7zvXOQAwccznMQRn
-        sxMTqBQU9J7PMQ49YpPcwrKnCHKq1zwTFSEptw==
-X-Google-Smtp-Source: AGHT+IFETd5g4M85TFzvRFwf955/8WReyRF2E8l7BIM0KMZjnxLWho58vfoUb+v3YvXkNVl+0ZtvnZ9xmC/A9UkLTg==
-X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
- (user=ackerleytng job=sendgmr) by 2002:a25:445:0:b0:d4c:2a34:aeab with SMTP
- id 66-20020a250445000000b00d4c2a34aeabmr47419ybe.11.1691450704306; Mon, 07
- Aug 2023 16:25:04 -0700 (PDT)
-Date:   Mon, 07 Aug 2023 23:25:02 +0000
-In-Reply-To: <20230718234512.1690985-29-seanjc@google.com> (message from Sean
- Christopherson on Tue, 18 Jul 2023 16:45:11 -0700)
-Mime-Version: 1.0
-Message-ID: <diqzleem306p.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH v11 28/29] KVM: selftests: Add basic selftest for guest_memfd()
-From:   Ackerley Tng <ackerleytng@google.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     pbonzini@redhat.com, maz@kernel.org, oliver.upton@linux.dev,
-        chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, seanjc@google.com, willy@infradead.org,
-        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
-        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
-        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
-        david@redhat.com, qperret@google.com, michael.roth@amd.com,
-        wei.w.wang@intel.com, liam.merwick@oracle.com,
-        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 7 Aug 2023 19:58:08 -0400
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77FCA99;
+        Mon,  7 Aug 2023 16:58:06 -0700 (PDT)
+Received: from [192.168.192.83] (unknown [50.47.134.245])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id B3F773F2F7;
+        Mon,  7 Aug 2023 23:58:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1691452685;
+        bh=ap01lbIjogyXwuc8ov5idm6Zxort8lSG9iIobzYlHJA=;
+        h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+         In-Reply-To:Content-Type;
+        b=Tsd9+HrVyz6johHTkV1KJIJ9uWTfZoJLtE87GrpnQ40N/ppZ0u9uoOB1LR7ZBuleB
+         H8bL+U0J+OyrFEqSsZ9Bzperq/bhCjGwlrzDmXjrw45NQy9LmSE0vh5IYPTUC9UiEY
+         7D6PCmAYfCnApFEgT9LCexVYhAbPcsFTbjMklwyFFDy2mALlFTrpIqoWs5iiIFV/hh
+         3Z3GcJ/TPjFZWbaDrojdozM5WuQOouO6cm/QAhaFfHrjKwicZZuaqu+sdRmWeYvisJ
+         I1Y6IlqNkcYVDnAg8yFX9Sqc2byAAzJfKUxoXFJhvrSwW3k9dQPL0y2zIV28bHnrdK
+         ti1L/b+OhzyEA==
+Message-ID: <e195ae10-725d-d06c-a452-72744aa8ba89@canonical.com>
+Date:   Mon, 7 Aug 2023 16:58:00 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2] lsm: constify the 'target' parameter in
+ security_capget()
+Content-Language: en-US
+To:     Khadija Kamran <kamrankhadijadj@gmail.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        paul@paul-moore.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
+        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
+        ztarkhani@microsoft.com
+References: <ZNCWUQXKrZnCeB/5@gmail.com>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <ZNCWUQXKrZnCeB/5@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Sean Christopherson <seanjc@google.com> writes:
+On 8/6/23 23:59, Khadija Kamran wrote:
+> Three LSMs register the implementations for the "capget" hook: AppArmor,
+> SELinux, and the normal capability code. Looking at the function
+> implementations we may observe that the first parameter "target" is not
+> changing.
+> 
+> Mark the first argument "target" of LSM hook security_capget() as
+> "const" since it will not be changing in the LSM hook.
+> 
+> cap_capget() LSM hook declaration exceeds the 80 characters per line
+> limit. Split the function declaration to multple lines to decrease the
+> line length.
+> 
+> Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
 
-> Add a selftest to verify the basic functionality of guest_memfd():
->
-> <snip>
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-Here's one more test:
-
-From 72dc6836f01bdd613d64d4c6a4f2af8f2b777ba2 Mon Sep 17 00:00:00 2001
-From: Ackerley Tng <ackerleytng@google.com>
-Date: Tue, 1 Aug 2023 18:02:50 +0000
-Subject: [PATCH] KVM: selftests: Add tests - invalid inputs for
- KVM_CREATE_GUEST_MEMFD
-
-Test that invalid inputs for KVM_CREATE_GUEST_MEMFD, such as
-non-page-aligned page size and invalid flags, are rejected by the
-KVM_CREATE_GUEST_MEMFD with EINVAL
-
-Signed-off-by: Ackerley Tng <ackerleytng@google.com>
----
- tools/testing/selftests/kvm/guest_memfd_test.c  | 17 +++++++++++++++++
- .../selftests/kvm/include/kvm_util_base.h       | 11 +++++++++--
- 2 files changed, 26 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-index eb93c608a7e0..ad20f11b2d2c 100644
---- a/tools/testing/selftests/kvm/guest_memfd_test.c
-+++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-@@ -90,6 +90,21 @@ static void test_fallocate(int fd, size_t page_size, size_t total_size)
- 	TEST_ASSERT(!ret, "fallocate to restore punched hole should succeed");
- }
- 
-+static void test_create_guest_memfd_invalid(struct kvm_vm *vm, size_t page_size)
-+{
-+	int fd;
-+
-+	/* Non-page-aligned page_size */
-+	fd = __vm_create_guest_memfd(vm, 1, 0);
-+	ASSERT_EQ(fd, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+
-+	/* Invalid flags */
-+	fd = __vm_create_guest_memfd(vm, page_size, 99);
-+	ASSERT_EQ(fd, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+}
-+
- 
- int main(int argc, char *argv[])
- {
-@@ -103,6 +118,8 @@ int main(int argc, char *argv[])
- 
- 	vm = vm_create_barebones();
- 
-+	test_create_guest_memfd_invalid(vm, page_size);
-+
- 	fd = vm_create_guest_memfd(vm, total_size, 0);
- 
- 	test_file_read_write(fd);
-diff --git a/tools/testing/selftests/kvm/include/kvm_util_base.h b/tools/testing/selftests/kvm/include/kvm_util_base.h
-index 39b38c75b99c..8bdfadd72349 100644
---- a/tools/testing/selftests/kvm/include/kvm_util_base.h
-+++ b/tools/testing/selftests/kvm/include/kvm_util_base.h
-@@ -474,7 +474,8 @@ static inline uint64_t vm_get_stat(struct kvm_vm *vm, const char *stat_name)
- }
- 
- void vm_create_irqchip(struct kvm_vm *vm);
--static inline int vm_create_guest_memfd(struct kvm_vm *vm, uint64_t size,
-+
-+static inline int __vm_create_guest_memfd(struct kvm_vm *vm, uint64_t size,
- 					uint64_t flags)
- {
- 	struct kvm_create_guest_memfd gmem = {
-@@ -482,7 +483,13 @@ static inline int vm_create_guest_memfd(struct kvm_vm *vm, uint64_t size,
- 		.flags = flags,
- 	};
- 
--	int fd = __vm_ioctl(vm, KVM_CREATE_GUEST_MEMFD, &gmem);
-+	return __vm_ioctl(vm, KVM_CREATE_GUEST_MEMFD, &gmem);
-+}
-+
-+static inline int vm_create_guest_memfd(struct kvm_vm *vm, uint64_t size,
-+					uint64_t flags)
-+{
-+	int fd = __vm_create_guest_memfd(vm, size, flags);
- 
- 	TEST_ASSERT(fd >= 0, KVM_IOCTL_ERROR(KVM_CREATE_GUEST_MEMFD, fd));
- 	return fd;
--- 
-2.41.0.640.ga95def55d0-goog
+> ---
+> Changes in v2:
+>   - Squash the patches 1/2 and 2/2 into a single patch
+>   - Simplify the commit message
+> 
+>   include/linux/lsm_hook_defs.h | 2 +-
+>   include/linux/security.h      | 7 ++++---
+>   kernel/capability.c           | 2 +-
+>   security/apparmor/lsm.c       | 2 +-
+>   security/commoncap.c          | 2 +-
+>   security/security.c           | 2 +-
+>   security/selinux/hooks.c      | 2 +-
+>   7 files changed, 10 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 6bb55e61e8e8..fd3844e11077 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -36,7 +36,7 @@ LSM_HOOK(int, 0, binder_transfer_file, const struct cred *from,
+>   LSM_HOOK(int, 0, ptrace_access_check, struct task_struct *child,
+>   	 unsigned int mode)
+>   LSM_HOOK(int, 0, ptrace_traceme, struct task_struct *parent)
+> -LSM_HOOK(int, 0, capget, struct task_struct *target, kernel_cap_t *effective,
+> +LSM_HOOK(int, 0, capget, const struct task_struct *target, kernel_cap_t *effective,
+>   	 kernel_cap_t *inheritable, kernel_cap_t *permitted)
+>   LSM_HOOK(int, 0, capset, struct cred *new, const struct cred *old,
+>   	 const kernel_cap_t *effective, const kernel_cap_t *inheritable,
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index e2734e9e44d5..fef65d0e522d 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -145,7 +145,8 @@ extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
+>   extern int cap_settime(const struct timespec64 *ts, const struct timezone *tz);
+>   extern int cap_ptrace_access_check(struct task_struct *child, unsigned int mode);
+>   extern int cap_ptrace_traceme(struct task_struct *parent);
+> -extern int cap_capget(struct task_struct *target, kernel_cap_t *effective, kernel_cap_t *inheritable, kernel_cap_t *permitted);
+> +extern int cap_capget(const struct task_struct *target, kernel_cap_t *effective,
+> +					  kernel_cap_t *inheritable, kernel_cap_t *permitted);
+>   extern int cap_capset(struct cred *new, const struct cred *old,
+>   		      const kernel_cap_t *effective,
+>   		      const kernel_cap_t *inheritable,
+> @@ -271,7 +272,7 @@ int security_binder_transfer_file(const struct cred *from,
+>   				  const struct cred *to, struct file *file);
+>   int security_ptrace_access_check(struct task_struct *child, unsigned int mode);
+>   int security_ptrace_traceme(struct task_struct *parent);
+> -int security_capget(struct task_struct *target,
+> +int security_capget(const struct task_struct *target,
+>   		    kernel_cap_t *effective,
+>   		    kernel_cap_t *inheritable,
+>   		    kernel_cap_t *permitted);
+> @@ -553,7 +554,7 @@ static inline int security_ptrace_traceme(struct task_struct *parent)
+>   	return cap_ptrace_traceme(parent);
+>   }
+>   
+> -static inline int security_capget(struct task_struct *target,
+> +static inline int security_capget(const struct task_struct *target,
+>   				   kernel_cap_t *effective,
+>   				   kernel_cap_t *inheritable,
+>   				   kernel_cap_t *permitted)
+> diff --git a/kernel/capability.c b/kernel/capability.c
+> index 3e058f41df32..67bdee3414dd 100644
+> --- a/kernel/capability.c
+> +++ b/kernel/capability.c
+> @@ -112,7 +112,7 @@ static inline int cap_get_target_pid(pid_t pid, kernel_cap_t *pEp,
+>   	int ret;
+>   
+>   	if (pid && (pid != task_pid_vnr(current))) {
+> -		struct task_struct *target;
+> +		const struct task_struct *target;
+>   
+>   		rcu_read_lock();
+>   
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index f431251ffb91..12dd96c3b2f0 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -144,7 +144,7 @@ static int apparmor_ptrace_traceme(struct task_struct *parent)
+>   }
+>   
+>   /* Derived from security/commoncap.c:cap_capget */
+> -static int apparmor_capget(struct task_struct *target, kernel_cap_t *effective,
+> +static int apparmor_capget(const struct task_struct *target, kernel_cap_t *effective,
+>   			   kernel_cap_t *inheritable, kernel_cap_t *permitted)
+>   {
+>   	struct aa_label *label;
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 0b3fc2f3afe7..5fd64d3e5bfd 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -197,7 +197,7 @@ int cap_ptrace_traceme(struct task_struct *parent)
+>    * This function retrieves the capabilities of the nominated task and returns
+>    * them to the caller.
+>    */
+> -int cap_capget(struct task_struct *target, kernel_cap_t *effective,
+> +int cap_capget(const struct task_struct *target, kernel_cap_t *effective,
+>   	       kernel_cap_t *inheritable, kernel_cap_t *permitted)
+>   {
+>   	const struct cred *cred;
+> diff --git a/security/security.c b/security/security.c
+> index d5ff7ff45b77..fb2d93b481f1 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -893,7 +893,7 @@ int security_ptrace_traceme(struct task_struct *parent)
+>    *
+>    * Return: Returns 0 if the capability sets were successfully obtained.
+>    */
+> -int security_capget(struct task_struct *target,
+> +int security_capget(const struct task_struct *target,
+>   		    kernel_cap_t *effective,
+>   		    kernel_cap_t *inheritable,
+>   		    kernel_cap_t *permitted)
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 79b4890e9936..ff42d49f1b41 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2056,7 +2056,7 @@ static int selinux_ptrace_traceme(struct task_struct *parent)
+>   			    SECCLASS_PROCESS, PROCESS__PTRACE, NULL);
+>   }
+>   
+> -static int selinux_capget(struct task_struct *target, kernel_cap_t *effective,
+> +static int selinux_capget(const struct task_struct *target, kernel_cap_t *effective,
+>   			  kernel_cap_t *inheritable, kernel_cap_t *permitted)
+>   {
+>   	return avc_has_perm(current_sid(), task_sid_obj(target),
 
