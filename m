@@ -2,89 +2,176 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AF6EB64DD
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 09:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFF2EB64DD
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 09:41:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231583AbjHGJej (ORCPT
+        id S231264AbjHGJlm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Aug 2023 05:34:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58398 "EHLO
+        Mon, 7 Aug 2023 05:41:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjHGJei (ORCPT
+        with ESMTP id S229620AbjHGJll (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Aug 2023 05:34:38 -0400
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A1D610C0;
-        Mon,  7 Aug 2023 02:34:37 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.143])
-        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4RKB3p0Gtqz4f3q30;
-        Mon,  7 Aug 2023 17:34:30 +0800 (CST)
-Received: from ubuntu20.huawei.com (unknown [10.67.174.33])
-        by APP2 (Coremail) with SMTP id Syh0CgCnyGyfutBkuLyOAA--.13731S2;
-        Mon, 07 Aug 2023 17:34:30 +0800 (CST)
-From:   "GONG, Ruiqi" <gongruiqi@huaweicloud.com>
-To:     John Johansen <john.johansen@canonical.com>,
+        Mon, 7 Aug 2023 05:41:41 -0400
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A3010FC
+        for <linux-security-module@vger.kernel.org>; Mon,  7 Aug 2023 02:41:39 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RKBCz6j93zMqPd2;
+        Mon,  7 Aug 2023 09:41:35 +0000 (UTC)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RKBCz3J1ZzMppKd;
+        Mon,  7 Aug 2023 11:41:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1691401295;
+        bh=xGwI/a1X+n13R/RgE2Lzi1WsON3csuBmAR0tfi327V0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dEfAaXPR9BRV1Y6DQCxneLb/jfoP+pkdKi3jUDiV1l41Y+IQ/Xk1yFFj6jXSkYK5O
+         WBEzgrI4+rl70bBonV4UdrEPv9PxbLEzdWmdSw4zffDHP7+zDjpvdqwWDI1ZxX8Y98
+         UkRE/+MTBo8TOM8EiZyWpp/m2/KeBPGzaPq8Mxy8=
+Date:   Mon, 7 Aug 2023 11:41:48 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>,
+        linux-security-module@vger.kernel.org,
         Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Xiu Jianfeng <xiujianfeng@huawei.com>,
-        Wang Weiyang <wangweiyang2@huawei.com>,
-        gongruiqi@huaweicloud.com
-Subject: [PATCH] apparmor: remove unused PROF_* macros
-Date:   Mon,  7 Aug 2023 17:39:04 +0800
-Message-Id: <20230807093904.565766-1-gongruiqi@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Subject: Re: [RFC 3/4] selftests/landlock: Test ioctl support
+Message-ID: <20230807.thiepaW9ooWu@digikod.net>
+References: <20230502171755.9788-1-gnoack3000@gmail.com>
+ <20230502171755.9788-4-gnoack3000@gmail.com>
+ <be5ac5ab-2b00-b896-27fc-14c30f938622@digikod.net>
+ <ZNCfxozBIkDIj9R3@google.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Syh0CgCnyGyfutBkuLyOAA--.13731S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7XF4UuF17GFy3Cw4UJF13urg_yoWfZrb_C3
-        Wj9w1xurs3ZF1fXa40va48uF97u3y8JFZ09a4Fqr9rAryDKw4rWa4jyryxWrW3uws7GrWU
-        CFyfKrW5AF1xWjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbxxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-        6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-        n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-        0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-        IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-        AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_
-        Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUF9
-        a9DUUUU
-X-CM-SenderInfo: pjrqw2pxltxq5kxd4v5lfo033gof0z/
-X-CFilter-Loop: Reflected
+In-Reply-To: <ZNCfxozBIkDIj9R3@google.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: "GONG, Ruiqi" <gongruiqi1@huawei.com>
+On Mon, Aug 07, 2023 at 09:39:50AM +0200, Günther Noack wrote:
+> Hello!
+> 
+> Thanks for the review!
+> 
+> On Mon, Jun 19, 2023 at 04:42:17PM +0200, Mickaël Salaün wrote:
+> > On 02/05/2023 19:17, Günther Noack wrote:
+> > > Exercise the use of Landlock's ioctl restriction: If ioctl is
+> > > restricted, the use of ioctl fails with a freshly opened /dev/tty
+> > > file.
+> > > 
+> > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> > > ---
+> > >   tools/testing/selftests/landlock/fs_test.c | 62 ++++++++++++++++++++++
+> > >   1 file changed, 62 insertions(+)
+> > > 
+> > > diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> > > index fdd7d439ce4..1f827604374 100644
+> > > --- a/tools/testing/selftests/landlock/fs_test.c
+> > > +++ b/tools/testing/selftests/landlock/fs_test.c
+> > > @@ -3655,6 +3655,68 @@ TEST(memfd_ftruncate)
+> > >   	ASSERT_EQ(0, close(fd));
+> > >   }
+> > > +/*
+> > > + * Invokes ioctl(2) and returns its errno or 0.
+> > > + * The provided fd needs to be a tty for this to work.
+> > > + */
+> > > +static int test_tty_ioctl(int fd)
+> > > +{
+> > > +	struct winsize ws;
+> > > +
+> > > +	if (ioctl(fd, TIOCGWINSZ, &ws) < 0)
+> > > +		return errno;
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +/*
+> > > + * Attempt ioctl on /dev/tty0 and /dev/tty1,
+> > > + * with file descriptors opened before and after landlocking.
+> > > + */
+> > > +TEST_F_FORK(layout1, ioctl)
+> > > +{
+> > > +	const struct rule rules[] = {
+> > > +		{
+> > > +			.path = "/dev/tty1",
+> > > +			.access = LANDLOCK_ACCESS_FS_IOCTL,
+> > > +		},
+> > > +		/* Implicitly: No ioctl access on /dev/tty0. */
+> > 
+> > We should create a new PTS mount point, create a new session, and use that
+> > for tests to limit the dependency on the test environment and not mess with
+> > it.
+> 
+> I have pondered this, and I feel that this is unnecessarily complicating the
+> test.  The mechanism that I intend to test here is just the general filtering of
+> IOCTL commands, but not TTYs specifically.  TTYs are a common use case for
+> IOCTLs, but they are not the only one.
+> 
+> If you are not strongly opposed to it, I would rather look for a different IOCTL
+> command that works on a different file, where we don't need any special set up?
+> That would simplify the test and exercise the same functionality in the end.
+> Does that sounds reasonable?
 
-The last usage of PROF_{ADD,REPLACE} were removed by commit 18e99f191a8e
-("apparmor: provide finer control over policy management"). So remove
-these two unused macros.
+Yes, simpler is better.
 
-Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
----
- security/apparmor/include/policy.h | 3 ---
- 1 file changed, 3 deletions(-)
+> 
+> 
+> > > +		{},
+> > > +	};
+> > > +	const __u64 handled = LANDLOCK_ACCESS_FS_IOCTL;
+> > > +	int ruleset_fd;
+> > > +	int old_tty0_fd, tty0_fd, tty1_fd;
+> > > +
+> > > +	old_tty0_fd = open("/dev/tty0", O_RDWR);
+> > > +	ASSERT_LE(0, old_tty0_fd);
+> > > +
+> > > +	/* Checks that ioctl works before landlocking. */
+> > > +	EXPECT_EQ(0, test_tty_ioctl(old_tty0_fd));
+> > > +
+> > > +	/* Enable Landlock. */
+> > 
+> > Enable*s*
+> 
+> Done.
+> 
+> 
+> > > +	ruleset_fd = create_ruleset(_metadata, handled, rules);
+> > > +	ASSERT_LE(0, ruleset_fd);
+> > > +	enforce_ruleset(_metadata, ruleset_fd);
+> > > +	ASSERT_EQ(0, close(ruleset_fd));
+> > > +
+> > > +	/* Checks that ioctl with existing FD works after landlocking. */
+> > > +	EXPECT_EQ(0, test_tty_ioctl(old_tty0_fd));
+> > > +
+> > > +	/* Checks that same ioctl fails when file is opened after landlocking. */
+> > > +	tty0_fd = open("/dev/tty0", O_RDWR);
+> > > +	ASSERT_LE(0, tty0_fd);
+> > > +	EXPECT_EQ(EACCES, test_tty_ioctl(tty0_fd));
+> > > +
+> > > +	/* Checks that same ioctl fails when file is opened after landlocking. */
+> > > +	tty1_fd = open("/dev/tty1", O_RDWR);
+> > > +	ASSERT_LE(0, tty1_fd);
+> > > +	EXPECT_EQ(0, test_tty_ioctl(tty1_fd));
+> > 
+> > /dev, or rather the test PTS mount point, and its parent, should also be
+> > tested. We can use three layers in the same test for that.
+> 
+> We've already tested the inheritance of access rights across different
+> directories and mount points in other tests.  I feel that exercising it in all
+> combinations of access rights and inheritance mechanisms makes the tests harder
+> to understand and maintain, and does not give us much additional confidence on
+> top of what we already have.  What balance do you want to find there?
 
-diff --git a/security/apparmor/include/policy.h b/security/apparmor/include/policy.h
-index 545f791cabda..ed9a8669af80 100644
---- a/security/apparmor/include/policy.h
-+++ b/security/apparmor/include/policy.h
-@@ -254,9 +254,6 @@ ssize_t aa_remove_profiles(struct aa_ns *view, struct aa_label *label,
- 			   char *name, size_t size);
- void __aa_profile_list_release(struct list_head *head);
- 
--#define PROF_ADD 1
--#define PROF_REPLACE 0
--
- #define profile_unconfined(X) ((X)->mode == APPARMOR_UNCONFINED)
- 
- /**
--- 
-2.25.1
+Indeed. It should be notted that this new IOCTL access right will be the
+first one to directly apply to both files and directories.  It should
+then have the same scope as LANDLOCK_ACCESS_FS_READ i.e., apply to the
+target directory itself and files/directories beneath it.
 
+We then need to test a directory's IOCTL, for instance using FIOQSIZE.
+
+What about this two rules and related access checks, combined with
+already-opened FD?
+- dir_s1d1: always denied (negative test)
+- file1_s1d1: allowed with a rule (checks ACCESS_FILE)
+- dir_s2d1: allowed with a rule (checks directory right)
