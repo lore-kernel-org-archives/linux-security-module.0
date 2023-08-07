@@ -2,167 +2,285 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB32C001DB
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 22:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF03EC001DE
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 23:09:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229978AbjHGWt5 (ORCPT
+        id S229588AbjHGXJH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Aug 2023 18:49:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36844 "EHLO
+        Mon, 7 Aug 2023 19:09:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbjHGWt4 (ORCPT
+        with ESMTP id S231754AbjHGXI1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Aug 2023 18:49:56 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDEC4F3;
-        Mon,  7 Aug 2023 15:49:54 -0700 (PDT)
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 377MnPRF012611;
-        Mon, 7 Aug 2023 22:49:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=+6CooSgnHbnLKTlBr/6t5AuLifIIHcmW0yn6xvZilv0=;
- b=pp1i/Kd9Tn5glsCsXwcVXmzJA4jj9Q8xn/75Pm4aIzf/mpXKaDh6aUGXSb2FehF/s9I+
- ffFw+T/eUhVlsbTylg6o6A6UsfhxqoI2toZyHiR2R4lD/XaTHKfRlS86k8lT+6Sld4La
- m/up6pIbYa9bqkECc4W0cQU6UWBP2g+DU2wKaBmLb/odwLYutCJ+kM/RRtBNuaNkGpwj
- VVnpOYQ/9q1kYs20MHjGqc5PgUl+o2wFd0R2fUxcUCIk58XkgaQ5XTZhFpACSTaadaOC
- NrZMkpj1omBw92I6m4uONDj7YqTbtIMOMDXq1arifOpVTruUKSts22J3iOWbMh291p+d Hg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sb9r80046-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Aug 2023 22:49:29 +0000
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 377MnSqU012759;
-        Mon, 7 Aug 2023 22:49:28 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sb9r8003w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Aug 2023 22:49:28 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 377Mcm9V006656;
-        Mon, 7 Aug 2023 22:49:27 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-        by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3sa0rssm4x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Aug 2023 22:49:27 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-        by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 377MnQUS19989024
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 7 Aug 2023 22:49:26 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C4D7758055;
-        Mon,  7 Aug 2023 22:49:26 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D523658043;
-        Mon,  7 Aug 2023 22:49:25 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Mon,  7 Aug 2023 22:49:25 +0000 (GMT)
-Message-ID: <5d21276a-daac-fc9b-add9-62e7c04bbdcd@linux.ibm.com>
-Date:   Mon, 7 Aug 2023 18:49:25 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
-Content-Language: en-US
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Sush Shringarputale <sushring@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
-        kgold@linux.ibm.com, bhe@redhat.com, vgoyal@redhat.com,
-        dyoung@redhat.com, kexec@lists.infradead.org, jmorris@namei.org,
-        Paul Moore <paul@paul-moore.com>, serge@hallyn.com
-Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        linux-security-module@vger.kernel.org
-References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
- <b748230c8ee291288afcf48898507556c3aa7c71.camel@HansenPartnership.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <b748230c8ee291288afcf48898507556c3aa7c71.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: mTcLWF4zRxTB3SOazcI_e657VvnRXgi0
-X-Proofpoint-ORIG-GUID: xgMo4RPBwwSYeXY43PFBWfG-OK1BDWgv
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-07_25,2023-08-03_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 bulkscore=0 clxscore=1011 mlxscore=0 phishscore=0
- mlxlogscore=999 lowpriorityscore=0 malwarescore=0 impostorscore=0
- spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308070203
+        Mon, 7 Aug 2023 19:08:27 -0400
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE42819A9
+        for <linux-security-module@vger.kernel.org>; Mon,  7 Aug 2023 16:07:09 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5734d919156so43922677b3.3
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Aug 2023 16:07:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1691449607; x=1692054407;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h7A5aUX2ecj7Bbl/7ce/OdAJyafyQZh2jovAmUQfIOU=;
+        b=BwuvQdbCy2eUR+bp2NSDknEVbKVENYiDa6uZlyXUwJVmlF4iKp7HjX09JvbwikelLF
+         rKNAwCIOjLOCd9hfp54t7rYGOQkDWMmLVeB7tC4wNPL/xp+tqM5HxKngfQKLrmiljVMH
+         iSIS4pBQ45QD1qQyRXNJtH27IiaYgguvgYTqI/+bBLhU+TqFpp7Sutp2QK2jo2kiAyxG
+         IG//K3Uxz4ck43yxOcKsJnHFISIoIpmEz14csW59Ae6FEeel85qKxKoUZusz6vFuY6is
+         pXI++E1KnyDArrSs+pWezCptJywjGpfbd67K7HxwhlAzqazZgZUp2EXPv3WY6f0/mDR8
+         iGnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691449607; x=1692054407;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=h7A5aUX2ecj7Bbl/7ce/OdAJyafyQZh2jovAmUQfIOU=;
+        b=UeYWPPvJBGgWBTG5FEnpAeUVj7VbyHtrcylm4RGvyWjYo10fh5cEMoYAW0zIMJrbi1
+         L7RSqB77D+1f7xlhdLNSXVdSoX8ESAZBId/fWJjsFNZELFdjKURnYt45nHKTEtbK0XAG
+         1db/NQt07Od8Xqj7dqT3cgm3KDQ7X7weGNx4wjTLE9I8xj0k7Q6y2LhV1tP+qHyL20eq
+         U0Ai1a+WKsPdkErboybaCZgqDDkwDBapvxtbzaJsCEKJA2JDUsAEBkgRKuze5IL1GvZp
+         9B8VEqkA/Ro0/6PbssJ2KM/4yU25Fv4RgdAd7JBLagc1y9h4/FR+jhbF20Wk019wz3rK
+         Xi4Q==
+X-Gm-Message-State: AOJu0YzeNhYQ7tP9UnF5mbhplZfkR3ZwIsfJhers0kgOBk6QW8CL2rPm
+        ktLxkkBUkqfxZEzU3ljQeywukebNDqbR78lzZw==
+X-Google-Smtp-Source: AGHT+IGQixIKGybe4T+GVPibQ4+cbo9epXOA0dv0EjBAf7syaC6i5AoszZ6gyEUK9SdsuOsgoX+oe0ThmUR8eGJG6g==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
+ (user=ackerleytng job=sendgmr) by 2002:a25:dbcf:0:b0:d01:60ec:d0e with SMTP
+ id g198-20020a25dbcf000000b00d0160ec0d0emr68969ybf.9.1691449607047; Mon, 07
+ Aug 2023 16:06:47 -0700 (PDT)
+Date:   Mon, 07 Aug 2023 23:06:45 +0000
+In-Reply-To: <20230718234512.1690985-13-seanjc@google.com> (message from Sean
+ Christopherson on Tue, 18 Jul 2023 16:44:55 -0700)
+Mime-Version: 1.0
+Message-ID: <diqzv8dq3116.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From:   Ackerley Tng <ackerleytng@google.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     pbonzini@redhat.com, maz@kernel.org, oliver.upton@linux.dev,
+        chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, seanjc@google.com, willy@infradead.org,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
+        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
+        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
+        david@redhat.com, qperret@google.com, michael.roth@amd.com,
+        wei.w.wang@intel.com, liam.merwick@oracle.com,
+        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Sean Christopherson <seanjc@google.com> writes:
 
+>   <snip>
 
-On 8/1/23 17:21, James Bottomley wrote:
-> On Tue, 2023-08-01 at 12:12 -0700, Sush Shringarputale wrote:
-> [...]
->> Truncating IMA log to reclaim memory is not feasible, since it makes
->> the log go out of sync with the TPM PCR quote making remote
->> attestation fail.
-> 
-> This assumption isn't entirely true.  It's perfectly possible to shard
-> an IMA log using two TPM2_Quote's for the beginning and end PCR values
-> to validate the shard.  The IMA log could be truncated in the same way
-> (replace the removed part of the log with a TPM2_Quote and AK, so the
-> log still validates from the beginning quote to the end).
-> 
-> If you use a TPM2_Quote mechanism to save the log, all you need to do
-> is have the kernel generate the quote with an internal AK.  You can
-> keep a record of the quote and the AK at the beginning of the truncated
-> kernel log.  If the truncated entries are saved in a file shard it
+> +static int kvm_gmem_release(struct inode *inode, struct file *file)
+> +{
+> +	struct kvm_gmem *gmem =3D file->private_data;
+> +	struct kvm_memory_slot *slot;
+> +	struct kvm *kvm =3D gmem->kvm;
+> +	unsigned long index;
+> +
+> +	filemap_invalidate_lock(inode->i_mapping);
+> +
+> +	/*
+> +	 * Prevent concurrent attempts to *unbind* a memslot.  This is the last
+> +	 * reference to the file and thus no new bindings can be created, but
+> +	 * dereferencing the slot for existing bindings needs to be protected
+> +	 * against memslot updates, specifically so that unbind doesn't race
+> +	 * and free the memslot (kvm_gmem_get_file() will return NULL).
+> +	 */
+> +	mutex_lock(&kvm->slots_lock);
+> +
+> +	xa_for_each(&gmem->bindings, index, slot)
+> +		rcu_assign_pointer(slot->gmem.file, NULL);
+> +
+> +	synchronize_rcu();
+> +
+> +	/*
+> +	 * All in-flight operations are gone and new bindings can be created.
+> +	 * Zap all SPTEs pointed at by this file.  Do not free the backing
+> +	 * memory, as its lifetime is associated with the inode, not the file.
+> +	 */
+> +	kvm_gmem_invalidate_begin(gmem, 0, -1ul);
+> +	kvm_gmem_invalidate_end(gmem, 0, -1ul);
+> +
+> +	mutex_unlock(&kvm->slots_lock);
+> +
+> +	list_del(&gmem->entry);
+> +
+> +	filemap_invalidate_unlock(inode->i_mapping);
+> +
+> +	xa_destroy(&gmem->bindings);
+> +	kfree(gmem);
+> +
+> +	kvm_put_kvm(kvm);
+> +
+> +	return 0;
+> +}
+> +
 
-The truncation seems dangerous to me. Maybe not all the scenarios with an attestation
-client (client = reading logs and quoting) are possible then anymore, such as starting
-an attestation client only after truncation but a verifier must have witnessed the
-system's PCRs and log state before the truncation occurred.
+> <snip>
 
-I think an ima-buf (or similar) log entry in IMA log would have to appear at the beginning of the
-truncated log stating the value of all PCRs that IMA touched (typically only PCR 10
-but it can be others). The needs to be done since the quote itself doesn't
-provide the state of the individual PCRs. This would at least allow an attestation
-client to re-read the log from the beginning (when it is re-start or started for the
-first time after the truncation). However, this alone (without the
-internal AK quoting the old state) could lead to abuse where I could create totally
-fake IMA logs stating the state of the PCRs at the beginning (so the verifier
-syncs its internal PCR state to this state). Further, even with the AK-quote that
-you propose I may be able to create fake logs and trick a verifier into
-trusting the machine IFF it doesn't know what kernel this system was booted with
-that I may have hacked to provide a fake AK-quote that just happens to match the
-PCR state presented at the beginning of the log.
+> +
+> +int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
+> +		  unsigned int fd, loff_t offset)
+> +{
+> +	loff_t size =3D slot->npages << PAGE_SHIFT;
+> +	unsigned long start, end, flags;
+> +	struct kvm_gmem *gmem;
+> +	struct inode *inode;
+> +	struct file *file;
+> +
+> +	BUILD_BUG_ON(sizeof(gfn_t) !=3D sizeof(slot->gmem.pgoff));
+> +
+> +	file =3D fget(fd);
+> +	if (!file)
+> +		return -EINVAL;
+> +
+> +	if (file->f_op !=3D &kvm_gmem_fops)
+> +		goto err;
+> +
+> +	gmem =3D file->private_data;
+> +	if (gmem->kvm !=3D kvm)
+> +		goto err;
+> +
+> +	inode =3D file_inode(file);
+> +	flags =3D (unsigned long)inode->i_private;
+> +
+> +	/*
+> +	 * For simplicity, require the offset into the file and the size of the
+> +	 * memslot to be aligned to the largest possible page size used to back
+> +	 * the file (same as the size of the file itself).
+> +	 */
+> +	if (!kvm_gmem_is_valid_size(offset, flags) ||
+> +	    !kvm_gmem_is_valid_size(size, flags))
+> +		goto err;
+> +
+> +	if (offset + size > i_size_read(inode))
+> +		goto err;
+> +
+> +	filemap_invalidate_lock(inode->i_mapping);
+> +
+> +	start =3D offset >> PAGE_SHIFT;
+> +	end =3D start + slot->npages;
+> +
+> +	if (!xa_empty(&gmem->bindings) &&
+> +	    xa_find(&gmem->bindings, &start, end - 1, XA_PRESENT)) {
+> +		filemap_invalidate_unlock(inode->i_mapping);
+> +		goto err;
+> +	}
+> +
+> +	/*
+> +	 * No synchronize_rcu() needed, any in-flight readers are guaranteed to
+> +	 * be see either a NULL file or this new file, no need for them to go
+> +	 * away.
+> +	 */
+> +	rcu_assign_pointer(slot->gmem.file, file);
+> +	slot->gmem.pgoff =3D start;
+> +
+> +	xa_store_range(&gmem->bindings, start, end - 1, slot, GFP_KERNEL);
+> +	filemap_invalidate_unlock(inode->i_mapping);
+> +
+> +	/*
+> +	 * Drop the reference to the file, even on success.  The file pins KVM,
+> +	 * not the other way 'round.  Active bindings are invalidated if the
+> +	 * file is closed before memslots are destroyed.
+> +	 */
+> +	fput(file);
+> +	return 0;
+> +
+> +err:
+> +	fput(file);
+> +	return -EINVAL;
+> +}
+> +
 
-=> Can a truncated log be made safe for attestation when the attestation starts
-only after the truncation occurred?
+I=E2=80=99d like to propose an alternative to the refcounting approach betw=
+een
+the gmem file and associated kvm, where we think of KVM=E2=80=99s memslots =
+as
+users of the gmem file.
 
-=> Even if attestation was occurring 'what' state does an attestation server
-need to carry around for an attested-to system so that the truncation is 'safe'
-and I cannot create fake AK-quotes and fake IMA logs with initial PCR states?
-Can I ever restart the client and have it read the truncated log from the
-beginning and what type of verification needs to happen on the server then?
-It seems like the server would have to remember the state of the IMA PCRs upon
-last truncation to detect a possible attack. This would make staring to monitor
-a system after truncation impossible -- would be good to know these details.
+Instead of having the gmem file pin the VM (i.e. take a refcount on
+kvm), we could let memslot take a refcount on the gmem file when the
+memslots are configured.
 
+Here=E2=80=99s a POC patch that flips the refcounting (and modified selftes=
+ts in
+the next commit):
+https://github.com/googleprodkernel/linux-cc/commit/7f487b029b89b9f3e9b094a=
+721bc0772f3c8c797
 
+One side effect of having the gmem file pin the VM is that now the gmem
+file becomes sort of a false handle on the VM:
 
++ Closing the file destroys the file pointers in the VM and invalidates
+  the pointers
++ Keeping the file open keeps the VM around in the kernel even though
+  the VM fd may already be closed.
 
-> should have a beginning and end quote and a record of the AK used.
-> Since verifiers like Keylime are already using this beginning and end
-> quote for sharded logs, it's the most natural format to feed to
-> something externally for verification and it means you don't have to
-> invent a new format to do the same thing.
-> 
-> Regards,
-> 
-> James
-> 
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
+I feel that memslots form a natural way of managing usage of the gmem
+file. When a memslot is created, it is using the file; hence we take a
+refcount on the gmem file, and as memslots are removed, we drop
+refcounts on the gmem file.
+
+The KVM pointer is shared among all the bindings in gmem=E2=80=99s xarray, =
+and we can enforce that a gmem file is used only with one VM:
+
++ When binding a memslot to the file, if a kvm pointer exists, it must
+  be the same kvm as the one in this binding
++ When the binding to the last memslot is removed from a file, NULL the
+  kvm pointer.
+
+When the VM is freed, KVM will iterate over all the memslots, removing
+them one at a time and eventually NULLing the kvm pointer.
+
+I believe the =E2=80=9CKVM=E2=80=99s memslots using the file=E2=80=9D appro=
+ach is also simpler
+because all accesses to the bindings xarray and kvm pointer can be
+serialized using filemap_invalidate_lock(), and we are already using
+this lock regardless of refcounting approach. This serialization means
+we don=E2=80=99t need to use RCU on file/kvm pointers since accesses are al=
+ready
+serialized.
+
+There=E2=80=99s also no need to specially clean up the associated KVM when =
+the
+file reference close, because by the time the .release() handler is
+called, any file references held by memslots would have been dropped,
+and so the bindings would have been removed, and the kvm pointer would
+have been NULLed out.
+
+The corollary to this approach is that at creation time, the file won=E2=80=
+=99t
+be associated with any kvm, and we can use a system ioctl instead of a
+VM-specific ioctl as Fuad brought up [1] (Association with kvm before
+the file is used with memslots is possible would mean more tracking so
+that kvm can close associated files when it is closed.)
+
+One reason for binding gmem files to a specific VM on creation is to
+allow (in future) a primary VM to control permissions on the memory for
+other files [2]. This permission control can still be enforced with the
+=E2=80=9CKVM=E2=80=99s memslots using the file=E2=80=9D approach. The enfor=
+cement rules will
+just be delayed till the first binding between a VM and a gmem file.
+
+Could binding gmem files not on creation, but at memslot configuration
+time be sufficient and simpler?
+
+[1] https://lore.kernel.org/lkml/CA+EHjTzP2fypgkJbRpSPrKaWytW7v8ANEifofMnQC=
+kdvYaX6Eg@mail.gmail.com/
+[2] https://lore.kernel.org/lkml/ZMKlo+Fe8n%2FeLQ82@google.com/
+
+> <snip>
