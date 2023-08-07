@@ -2,176 +2,243 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFF2EB64DD
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 09:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA768C001DB
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 12:57:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231264AbjHGJlm (ORCPT
+        id S233562AbjHGM5J (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Aug 2023 05:41:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33134 "EHLO
+        Mon, 7 Aug 2023 08:57:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229620AbjHGJll (ORCPT
+        with ESMTP id S232548AbjHGM5J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Aug 2023 05:41:41 -0400
-Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A3010FC
-        for <linux-security-module@vger.kernel.org>; Mon,  7 Aug 2023 02:41:39 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RKBCz6j93zMqPd2;
-        Mon,  7 Aug 2023 09:41:35 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RKBCz3J1ZzMppKd;
-        Mon,  7 Aug 2023 11:41:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1691401295;
-        bh=xGwI/a1X+n13R/RgE2Lzi1WsON3csuBmAR0tfi327V0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dEfAaXPR9BRV1Y6DQCxneLb/jfoP+pkdKi3jUDiV1l41Y+IQ/Xk1yFFj6jXSkYK5O
-         WBEzgrI4+rl70bBonV4UdrEPv9PxbLEzdWmdSw4zffDHP7+zDjpvdqwWDI1ZxX8Y98
-         UkRE/+MTBo8TOM8EiZyWpp/m2/KeBPGzaPq8Mxy8=
-Date:   Mon, 7 Aug 2023 11:41:48 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>,
-        linux-security-module@vger.kernel.org,
+        Mon, 7 Aug 2023 08:57:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B1DE10FD;
+        Mon,  7 Aug 2023 05:57:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 93BF5619EC;
+        Mon,  7 Aug 2023 12:57:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69D66C433C9;
+        Mon,  7 Aug 2023 12:57:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691413026;
+        bh=mt1uuFOc8AlyTQ1K8cBuzB7Csp9E0a8Jlb1PTdNlCp0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=jAy5x1jASO3bVRPC78HEg0wHowcZoXtyllawrTdBEwQgceCCOovenUYMXV4Ph/dRD
+         RBukby2R3Ud+sLX3uZv7UGsK1zfOSPF9+Bu/RBqOnc3jYbCDWk/BoGxPgA/2r3r6zw
+         zgFILbbA7pRWxUNxWgrHvykIc4rpB74nklYVAefu15qE1grPgMC9I1dNFH1O3azBJL
+         B0EMkt/MfnUWT/Vnd7j37m2uoiMZBR13TPOCn7veRdC7bU/OWsOPxK9GlD6nWfkcGl
+         b2HU9SxG+xncyjJxEhNeQi+7jFjsg2u7frLL+YMTW2c3t6s5fPgfdKU6A2xhd8GrGi
+         M4dW1B0/4b1ig==
+Message-ID: <650f7b6ea6b55de4c9cbc791af0da4f800907c21.camel@kernel.org>
+Subject: Re: [PATCH v7] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
         Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [RFC 3/4] selftests/landlock: Test ioctl support
-Message-ID: <20230807.thiepaW9ooWu@digikod.net>
-References: <20230502171755.9788-1-gnoack3000@gmail.com>
- <20230502171755.9788-4-gnoack3000@gmail.com>
- <be5ac5ab-2b00-b896-27fc-14c30f938622@digikod.net>
- <ZNCfxozBIkDIj9R3@google.com>
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Date:   Mon, 07 Aug 2023 08:57:03 -0400
+In-Reply-To: <20230805-anrechnen-medien-c639c85ebd42@brauner>
+References: <20230804-master-v7-1-5d4e48407298@kernel.org>
+         <20230805-anrechnen-medien-c639c85ebd42@brauner>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZNCfxozBIkDIj9R3@google.com>
-X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 07, 2023 at 09:39:50AM +0200, Günther Noack wrote:
-> Hello!
-> 
-> Thanks for the review!
-> 
-> On Mon, Jun 19, 2023 at 04:42:17PM +0200, Mickaël Salaün wrote:
-> > On 02/05/2023 19:17, Günther Noack wrote:
-> > > Exercise the use of Landlock's ioctl restriction: If ioctl is
-> > > restricted, the use of ioctl fails with a freshly opened /dev/tty
-> > > file.
-> > > 
-> > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > > ---
-> > >   tools/testing/selftests/landlock/fs_test.c | 62 ++++++++++++++++++++++
-> > >   1 file changed, 62 insertions(+)
-> > > 
-> > > diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> > > index fdd7d439ce4..1f827604374 100644
-> > > --- a/tools/testing/selftests/landlock/fs_test.c
-> > > +++ b/tools/testing/selftests/landlock/fs_test.c
-> > > @@ -3655,6 +3655,68 @@ TEST(memfd_ftruncate)
-> > >   	ASSERT_EQ(0, close(fd));
-> > >   }
-> > > +/*
-> > > + * Invokes ioctl(2) and returns its errno or 0.
-> > > + * The provided fd needs to be a tty for this to work.
-> > > + */
-> > > +static int test_tty_ioctl(int fd)
-> > > +{
-> > > +	struct winsize ws;
-> > > +
-> > > +	if (ioctl(fd, TIOCGWINSZ, &ws) < 0)
-> > > +		return errno;
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +/*
-> > > + * Attempt ioctl on /dev/tty0 and /dev/tty1,
-> > > + * with file descriptors opened before and after landlocking.
-> > > + */
-> > > +TEST_F_FORK(layout1, ioctl)
-> > > +{
-> > > +	const struct rule rules[] = {
-> > > +		{
-> > > +			.path = "/dev/tty1",
-> > > +			.access = LANDLOCK_ACCESS_FS_IOCTL,
-> > > +		},
-> > > +		/* Implicitly: No ioctl access on /dev/tty0. */
-> > 
-> > We should create a new PTS mount point, create a new session, and use that
-> > for tests to limit the dependency on the test environment and not mess with
-> > it.
-> 
-> I have pondered this, and I feel that this is unnecessarily complicating the
-> test.  The mechanism that I intend to test here is just the general filtering of
-> IOCTL commands, but not TTYs specifically.  TTYs are a common use case for
-> IOCTLs, but they are not the only one.
-> 
-> If you are not strongly opposed to it, I would rather look for a different IOCTL
-> command that works on a different file, where we don't need any special set up?
-> That would simplify the test and exercise the same functionality in the end.
-> Does that sounds reasonable?
+On Sat, 2023-08-05 at 14:43 +0200, Christian Brauner wrote:
+> On Fri, Aug 04, 2023 at 12:09:34PM -0400, Jeff Layton wrote:
+> > From: David Howells <dhowells@redhat.com>
+> >=20
+> > When NFS superblocks are created by automounting, their LSM parameters
+> > aren't set in the fs_context struct prior to sget_fc() being called,
+> > leading to failure to match existing superblocks.
+> >=20
+> > This bug leads to messages like the following appearing in dmesg when
+> > fscache is enabled:
+> >=20
+> >     NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,10=
+0000,100000,2ee,3a98,1d4c,3a98,1)
+> >=20
+> > Fix this by adding a new LSM hook to load fc->security for submount
+> > creation when alloc_fs_context() is creating the fs_context for it.
+> >=20
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount(=
+) to it.")
+> > Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
+> > Tested-by: Jeff Layton <jlayton@kernel.org>
+> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> > Acked-by: "Christian Brauner (Microsoft)" <brauner@kernel.org>
+> > Link: https://lore.kernel.org/r/165962680944.3334508.661002390034914203=
+4.stgit@warthog.procyon.org.uk/ # v1
+> > Link: https://lore.kernel.org/r/165962729225.3357250.143507288464715271=
+37.stgit@warthog.procyon.org.uk/ # v2
+> > Link: https://lore.kernel.org/r/165970659095.2812394.686889417110231879=
+6.stgit@warthog.procyon.org.uk/ # v3
+> > Link: https://lore.kernel.org/r/166133579016.3678898.628319501948056727=
+5.stgit@warthog.procyon.org.uk/ # v4
+> > Link: https://lore.kernel.org/r/217595.1662033775@warthog.procyon.org.u=
+k/ # v5
+> > ---
+> > ver #7)
+> >  - Drop lsm_set boolean
+> >  - Link to v6: https://lore.kernel.org/r/20230802-master-v6-1-45d482991=
+68b@kernel.org
+> >=20
+> > ver #6)
+> >  - Rebase onto v6.5.0-rc4
+> >=20
+> > ver #5)
+> >  - Removed unused variable.
+> >  - Only allocate smack_mnt_opts if we're dealing with a submount.
+> >=20
+> > ver #4)
+> >  - When doing a FOR_SUBMOUNT mount, don't set the root label in SELinux=
+ or
+> >    Smack.
+> >=20
+> > ver #3)
+> >  - Made LSM parameter extraction dependent on fc->purpose =3D=3D
+> >    FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
+> >=20
+> > ver #2)
+> >  - Added Smack support
+> >  - Made LSM parameter extraction dependent on reference !=3D NULL.
+> > ---
+> >  fs/fs_context.c               |  4 ++++
+> >  include/linux/lsm_hook_defs.h |  1 +
+> >  include/linux/security.h      |  6 +++++
+> >  security/security.c           | 14 +++++++++++
+> >  security/selinux/hooks.c      | 25 ++++++++++++++++++++
+> >  security/smack/smack_lsm.c    | 54 +++++++++++++++++++++++++++++++++++=
+++++++++
+> >  6 files changed, 104 insertions(+)
+> >=20
+> > diff --git a/fs/fs_context.c b/fs/fs_context.c
+> > index 851214d1d013..a523aea956c4 100644
+> > --- a/fs/fs_context.c
+> > +++ b/fs/fs_context.c
+> > @@ -282,6 +282,10 @@ static struct fs_context *alloc_fs_context(struct =
+file_system_type *fs_type,
+> >  		break;
+> >  	}
+> > =20
+> > +	ret =3D security_fs_context_init(fc, reference);
+> > +	if (ret < 0)
+> > +		goto err_fc;
+> > +
+> >  	/* TODO: Make all filesystems support this unconditionally */
+> >  	init_fs_context =3D fc->fs_type->init_fs_context;
+> >  	if (!init_fs_context)
+> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_def=
+s.h
+> > index 7308a1a7599b..7ce3550154b1 100644
+> > --- a/include/linux/lsm_hook_defs.h
+> > +++ b/include/linux/lsm_hook_defs.h
+> > @@ -54,6 +54,7 @@ LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_b=
+inprm *bprm, struct file *f
+> >  LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
+> >  LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, struct linux_binpr=
+m *bprm)
+> >  LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, struct linux_binprm=
+ *bprm)
+> > +LSM_HOOK(int, 0, fs_context_init, struct fs_context *fc, struct dentry=
+ *reference)
+> >  LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
+> >  	 struct fs_context *src_sc)
+> >  LSM_HOOK(int, -ENOPARAM, fs_context_parse_param, struct fs_context *fc=
+,
+> > diff --git a/include/linux/security.h b/include/linux/security.h
+> > index 32828502f09e..61fda06fac9d 100644
+> > --- a/include/linux/security.h
+> > +++ b/include/linux/security.h
+> > @@ -293,6 +293,7 @@ int security_bprm_creds_from_file(struct linux_binp=
+rm *bprm, struct file *file);
+> >  int security_bprm_check(struct linux_binprm *bprm);
+> >  void security_bprm_committing_creds(struct linux_binprm *bprm);
+> >  void security_bprm_committed_creds(struct linux_binprm *bprm);
+> > +int security_fs_context_init(struct fs_context *fc, struct dentry *ref=
+erence);
+> >  int security_fs_context_dup(struct fs_context *fc, struct fs_context *=
+src_fc);
+> >  int security_fs_context_parse_param(struct fs_context *fc, struct fs_p=
+arameter *param);
+> >  int security_sb_alloc(struct super_block *sb);
+> > @@ -629,6 +630,11 @@ static inline void security_bprm_committed_creds(s=
+truct linux_binprm *bprm)
+> >  {
+> >  }
+> > =20
+> > +static inline int security_fs_context_init(struct fs_context *fc,
+> > +					   struct dentry *reference)
+>=20
+> I think that's the wrong way of doing this hook. The security hook
+> really doesn't belong into alloc_fs_context().
+>=20
+> I think what we want is a dedicated helper similar to vfs_dup_context():
+>=20
+> // Only pass the superblock. There's no need for the dentry. I would
+> // avoid even passing fs_context but if that's preferred then sure.
+> security_fs_context_submount(struct fs_context *fc, const struct super_bl=
+ock *sb)
+>=20
+> vfs_submount_fs_context(struct file_system_type *fs_type, struct dentry *=
+reference)
+> {
+>         fc =3D fs_context_for_submount(fs_type, reference);
+>=20
+>         security_fs_context_for_submount(fc, reference->d_sb);
+> }
+>=20
+> This automatically ensures it's only called for submounts, the LSM
+> doesn't need to care about fc->purpose and this isn't called
+> in a pure allocation function for all allocation calls.
+>=20
+> The we should switch all callers over to that new helper and unexport
+> that fs_context_for_submount() thing completely. Yes, that's more work
+> but that's the correct thing to do. And we need to audit fuse, cifs,
+> afs, and nfs anyway that they work fine with the new security hook.*
+>=20
 
-Yes, simpler is better.
+It's the same prototype. We could just move the hook call to the end of
+fs_context_for_submount, and that would be less churn for its callers.
+Or were you wanting to do that to make this a more gradual changeover
+for some reason?
 
-> 
-> 
-> > > +		{},
-> > > +	};
-> > > +	const __u64 handled = LANDLOCK_ACCESS_FS_IOCTL;
-> > > +	int ruleset_fd;
-> > > +	int old_tty0_fd, tty0_fd, tty1_fd;
-> > > +
-> > > +	old_tty0_fd = open("/dev/tty0", O_RDWR);
-> > > +	ASSERT_LE(0, old_tty0_fd);
-> > > +
-> > > +	/* Checks that ioctl works before landlocking. */
-> > > +	EXPECT_EQ(0, test_tty_ioctl(old_tty0_fd));
-> > > +
-> > > +	/* Enable Landlock. */
-> > 
-> > Enable*s*
-> 
-> Done.
-> 
-> 
-> > > +	ruleset_fd = create_ruleset(_metadata, handled, rules);
-> > > +	ASSERT_LE(0, ruleset_fd);
-> > > +	enforce_ruleset(_metadata, ruleset_fd);
-> > > +	ASSERT_EQ(0, close(ruleset_fd));
-> > > +
-> > > +	/* Checks that ioctl with existing FD works after landlocking. */
-> > > +	EXPECT_EQ(0, test_tty_ioctl(old_tty0_fd));
-> > > +
-> > > +	/* Checks that same ioctl fails when file is opened after landlocking. */
-> > > +	tty0_fd = open("/dev/tty0", O_RDWR);
-> > > +	ASSERT_LE(0, tty0_fd);
-> > > +	EXPECT_EQ(EACCES, test_tty_ioctl(tty0_fd));
-> > > +
-> > > +	/* Checks that same ioctl fails when file is opened after landlocking. */
-> > > +	tty1_fd = open("/dev/tty1", O_RDWR);
-> > > +	ASSERT_LE(0, tty1_fd);
-> > > +	EXPECT_EQ(0, test_tty_ioctl(tty1_fd));
-> > 
-> > /dev, or rather the test PTS mount point, and its parent, should also be
-> > tested. We can use three layers in the same test for that.
-> 
-> We've already tested the inheritance of access rights across different
-> directories and mount points in other tests.  I feel that exercising it in all
-> combinations of access rights and inheritance mechanisms makes the tests harder
-> to understand and maintain, and does not give us much additional confidence on
-> top of what we already have.  What balance do you want to find there?
+I will rework the security hook to take a sb pointer instead though.
 
-Indeed. It should be notted that this new IOCTL access right will be the
-first one to directly apply to both files and directories.  It should
-then have the same scope as LANDLOCK_ACCESS_FS_READ i.e., apply to the
-target directory itself and files/directories beneath it.
+>=20
+> [1]: If really needed, then any additional fs specific work that needs
+>      to be done during submount allocation should probably probably be
+>      done in a new callback.
+>=20
+>      struct fs_context_operations {
+>             void (*free)(struct fs_context *fc);
+>             int (*dup)(struct fs_context *fc, struct fs_context *src_fc);
+>     +       int (*submount)(struct fs_context *fc, const struct super_blo=
+ck *sb);
 
-We then need to test a directory's IOCTL, for instance using FIOQSIZE.
-
-What about this two rules and related access checks, combined with
-already-opened FD?
-- dir_s1d1: always denied (negative test)
-- file1_s1d1: allowed with a rule (checks ACCESS_FILE)
-- dir_s2d1: allowed with a rule (checks directory right)
+--=20
+Jeff Layton <jlayton@kernel.org>
