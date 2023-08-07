@@ -2,206 +2,100 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3817C001B0
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 06:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11654C41513
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 07:14:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229720AbjHGG7g (ORCPT
+        id S230357AbjHGHOs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Aug 2023 02:59:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55028 "EHLO
+        Mon, 7 Aug 2023 03:14:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbjHGG7g (ORCPT
+        with ESMTP id S229537AbjHGHOr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Aug 2023 02:59:36 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB3071BB;
-        Sun,  6 Aug 2023 23:59:34 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fe2048c910so34773985e9.1;
-        Sun, 06 Aug 2023 23:59:34 -0700 (PDT)
+        Mon, 7 Aug 2023 03:14:47 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 275E5E78;
+        Mon,  7 Aug 2023 00:14:46 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fe4b45a336so19402095e9.1;
+        Mon, 07 Aug 2023 00:14:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691391573; x=1691996373;
+        d=gmail.com; s=20221208; t=1691392484; x=1691997284;
         h=content-disposition:mime-version:message-id:subject:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=yoEjkyoJWoU8MTKFrPpvoEvG+DJ9Uo0OBGnuZDHzeuY=;
-        b=aBHdNavavWvZNE5TYPD1x/w6Y7U0r4NdjdRVcoKX2DCGZ+pKFMVv2LEcR/J/Hj7+2T
-         LTk3k4CHSpSh3AI9vA9n5pf4OqCtfyfjzJUSuSn3/2r/2Q/mWoX8MZKdKrrqHZbjtxlE
-         vBPUC/c1Ry/iMVSSqRYfFWQT/+OS4oaxD5/FPk5r/AlkpZA2n1e9W0qNVLenJ+bdG7+S
-         aUSFTYxPFgl6GOxKlniNKAnYqqACwZtJFLgX8nUfKBrPhlDnEscvbrcVGn2IPhzC4Gpf
-         /uux5h4WM51ZCQk3w6maeHNZyqWU3vCeBlfb8m85eBAh34f4c2i013tsK9nWlpa32Bcf
-         mnJw==
+        bh=h/q7KrvUsuo+6OfYFpsl2TwzIR1F7EEM+glRfJ969Fs=;
+        b=ooI8pLA5WbikDzEsTrpi5Adh45gbEe1YJFPIFnc1c8h4DVHLb1qGl/f/2UITnC0dAU
+         cMz4bz10wnA5fLHVYBoPTH2iY+AzRllM8KHMB4NzKgegRnhO88hEc4qF7B8OckcVq61/
+         W7N9fyRbFYwgrS7003b9wTRCUwGa+bVyONUNxUVj7hNgkkSj8QzOLkA8tyW1f3fY1L/c
+         SEa/yx8A8uQwydLTLJbEo3z/M1lubuGcdVv0w6tHvLXN8JhTijFUeFxSTzDdcGJiv9Z8
+         O7ueVQq57zS3z0vV6zD9NYV38Bz3z4Y8PjBcYrz3cxhshc8bGePvp1WH/hDAy7HwmTbK
+         ONtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691391573; x=1691996373;
+        d=1e100.net; s=20221208; t=1691392484; x=1691997284;
         h=content-disposition:mime-version:message-id:subject:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yoEjkyoJWoU8MTKFrPpvoEvG+DJ9Uo0OBGnuZDHzeuY=;
-        b=jchkr7yZTclX37K8urYIEOeKfjtdDWSyCRB+O5ambmBAwUmB2Y2Krlr++B66QYyveQ
-         mpjkWBYQULLRcTnN3DSK9Ca/Mb9tc1C1w8sXtEVh5UGY/FZjFS70xmG1ot/C2XhIcaNk
-         JtR+3zTxe4tRUguty0yJR/VlwEVVVFjJ6NghGDaDHKXpseMq2IQlI5igdEQzafAgZjqP
-         MjUoAZE3JtXLeKx6jtaeqNoXSaj9eS13xRuLZOx1jUE08/UdSebw6/3RG3tz0ffwZJfy
-         5SbgWET13jXuk000AQsQxarO0YiZEWif3hSg61+XFfJt/HohNu/sd6/b0Y79OYJwhzwh
-         abvg==
-X-Gm-Message-State: AOJu0YzKqImfKuFFqYf6flFmKeChoBTRAvh48yX5N2neO6v9Kd/pSFt1
-        gtO9JjGbCy8WYkolGDJcVRw=
-X-Google-Smtp-Source: AGHT+IFNpTAp1sf/QAMLhuwEX/5EuBOM3S+430+mCRJJeI/cGJ4W192pU/l3+DGp1K6bF8bs2omGlg==
-X-Received: by 2002:a7b:ce09:0:b0:3fe:2219:9052 with SMTP id m9-20020a7bce09000000b003fe22199052mr5327478wmc.18.1691391572688;
-        Sun, 06 Aug 2023 23:59:32 -0700 (PDT)
+        bh=h/q7KrvUsuo+6OfYFpsl2TwzIR1F7EEM+glRfJ969Fs=;
+        b=D6HqWPu1+KzkG0kTTLtAyHe/+GR9EHUndZIsBudCiC3w5qQylgSW6h/wOf4/1nJ1a8
+         pX7RhGx1x94kgBWQBHqaj9CNmZIReR23JeAxy2VYnSYNAaWGTcS3yNRpVYugXpVdVBwL
+         EOvXabJDFieUz0wPpHEf21HIcNDenqvs4LJNXBndghhIiwPe7AwV5lejku7wJMyzJl6k
+         3i8An9yLHKVDv67IsxyfuLwtGLV7IevJk+OLJbiHUkD/4IqeE5fdeimWKefwpqRU9Rkk
+         mZiviAjqPCPYsY77309P3+Q2kmfFpJwZOKXwTT9w92V1zIvgrJv5dtWHyf3EfE8M1GRM
+         K7DA==
+X-Gm-Message-State: AOJu0Yz15LVkPZUULZ8AjNAGgLFi3fknnG4ZrxpoMdEM1iRTZ+nbSjiB
+        j+95L6IqD5xyjae4sij4qekkKoernVkG+w==
+X-Google-Smtp-Source: AGHT+IGFQpVxRgW0c9Dee3AMkALeVXE44WfOlwAa9nbqNsWfDhwzFaUjYrgaiCLLh0CfNuUdjQAgGQ==
+X-Received: by 2002:a5d:400f:0:b0:317:7255:6ca1 with SMTP id n15-20020a5d400f000000b0031772556ca1mr4688746wrp.31.1691392484112;
+        Mon, 07 Aug 2023 00:14:44 -0700 (PDT)
 Received: from khadija-virtual-machine ([124.29.208.67])
-        by smtp.gmail.com with ESMTPSA id q7-20020a1cf307000000b003fa98908014sm14086700wmq.8.2023.08.06.23.59.31
+        by smtp.gmail.com with ESMTPSA id q14-20020adfcd8e000000b00314329f7d8asm9544888wrj.29.2023.08.07.00.14.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Aug 2023 23:59:32 -0700 (PDT)
-Date:   Mon, 7 Aug 2023 11:59:29 +0500
+        Mon, 07 Aug 2023 00:14:43 -0700 (PDT)
+Date:   Mon, 7 Aug 2023 12:14:40 +0500
 From:   Khadija Kamran <kamrankhadijadj@gmail.com>
-To:     Alison Schofield <alison.schofield@intel.com>, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
-        john.johansen@canonical.com, ztarkhani@microsoft.com
-Subject: [PATCH v2] lsm: constify the 'target' parameter in security_capget()
-Message-ID: <ZNCWUQXKrZnCeB/5@gmail.com>
+To:     Alison Schofield <alison.schofield@intel.com>,
+        ztarkhani@microsoft.com, Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] lsm: add comment block for security_sk_classify_flow()
+ LSM hook
+Message-ID: <ZNCZ4KL7TRDE9vIC@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Three LSMs register the implementations for the "capget" hook: AppArmor,
-SELinux, and the normal capability code. Looking at the function
-implementations we may observe that the first parameter "target" is not
-changing.
-
-Mark the first argument "target" of LSM hook security_capget() as
-"const" since it will not be changing in the LSM hook.
-
-cap_capget() LSM hook declaration exceeds the 80 characters per line
-limit. Split the function declaration to multple lines to decrease the
-line length.
+security_sk_classify_flow() LSM hook has no comment block. Add a comment
+block with a brief description of LSM hook and its function parameters.
 
 Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
 ---
-Changes in v2:
- - Squash the patches 1/2 and 2/2 into a single patch
- - Simplify the commit message
+Changed in v2:
+ - Add parenthesis with security_sk_calssify_flow to refer to it as a
+   function in commit message and commit log. 
+ - Remove an extra space in the comment block.
 
- include/linux/lsm_hook_defs.h | 2 +-
- include/linux/security.h      | 7 ++++---
- kernel/capability.c           | 2 +-
- security/apparmor/lsm.c       | 2 +-
- security/commoncap.c          | 2 +-
- security/security.c           | 2 +-
- security/selinux/hooks.c      | 2 +-
- 7 files changed, 10 insertions(+), 9 deletions(-)
+security/security.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 6bb55e61e8e8..fd3844e11077 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -36,7 +36,7 @@ LSM_HOOK(int, 0, binder_transfer_file, const struct cred *from,
- LSM_HOOK(int, 0, ptrace_access_check, struct task_struct *child,
- 	 unsigned int mode)
- LSM_HOOK(int, 0, ptrace_traceme, struct task_struct *parent)
--LSM_HOOK(int, 0, capget, struct task_struct *target, kernel_cap_t *effective,
-+LSM_HOOK(int, 0, capget, const struct task_struct *target, kernel_cap_t *effective,
- 	 kernel_cap_t *inheritable, kernel_cap_t *permitted)
- LSM_HOOK(int, 0, capset, struct cred *new, const struct cred *old,
- 	 const kernel_cap_t *effective, const kernel_cap_t *inheritable,
-diff --git a/include/linux/security.h b/include/linux/security.h
-index e2734e9e44d5..fef65d0e522d 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -145,7 +145,8 @@ extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
- extern int cap_settime(const struct timespec64 *ts, const struct timezone *tz);
- extern int cap_ptrace_access_check(struct task_struct *child, unsigned int mode);
- extern int cap_ptrace_traceme(struct task_struct *parent);
--extern int cap_capget(struct task_struct *target, kernel_cap_t *effective, kernel_cap_t *inheritable, kernel_cap_t *permitted);
-+extern int cap_capget(const struct task_struct *target, kernel_cap_t *effective,
-+					  kernel_cap_t *inheritable, kernel_cap_t *permitted);
- extern int cap_capset(struct cred *new, const struct cred *old,
- 		      const kernel_cap_t *effective,
- 		      const kernel_cap_t *inheritable,
-@@ -271,7 +272,7 @@ int security_binder_transfer_file(const struct cred *from,
- 				  const struct cred *to, struct file *file);
- int security_ptrace_access_check(struct task_struct *child, unsigned int mode);
- int security_ptrace_traceme(struct task_struct *parent);
--int security_capget(struct task_struct *target,
-+int security_capget(const struct task_struct *target,
- 		    kernel_cap_t *effective,
- 		    kernel_cap_t *inheritable,
- 		    kernel_cap_t *permitted);
-@@ -553,7 +554,7 @@ static inline int security_ptrace_traceme(struct task_struct *parent)
- 	return cap_ptrace_traceme(parent);
- }
- 
--static inline int security_capget(struct task_struct *target,
-+static inline int security_capget(const struct task_struct *target,
- 				   kernel_cap_t *effective,
- 				   kernel_cap_t *inheritable,
- 				   kernel_cap_t *permitted)
-diff --git a/kernel/capability.c b/kernel/capability.c
-index 3e058f41df32..67bdee3414dd 100644
---- a/kernel/capability.c
-+++ b/kernel/capability.c
-@@ -112,7 +112,7 @@ static inline int cap_get_target_pid(pid_t pid, kernel_cap_t *pEp,
- 	int ret;
- 
- 	if (pid && (pid != task_pid_vnr(current))) {
--		struct task_struct *target;
-+		const struct task_struct *target;
- 
- 		rcu_read_lock();
- 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index f431251ffb91..12dd96c3b2f0 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -144,7 +144,7 @@ static int apparmor_ptrace_traceme(struct task_struct *parent)
- }
- 
- /* Derived from security/commoncap.c:cap_capget */
--static int apparmor_capget(struct task_struct *target, kernel_cap_t *effective,
-+static int apparmor_capget(const struct task_struct *target, kernel_cap_t *effective,
- 			   kernel_cap_t *inheritable, kernel_cap_t *permitted)
- {
- 	struct aa_label *label;
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 0b3fc2f3afe7..5fd64d3e5bfd 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -197,7 +197,7 @@ int cap_ptrace_traceme(struct task_struct *parent)
-  * This function retrieves the capabilities of the nominated task and returns
-  * them to the caller.
-  */
--int cap_capget(struct task_struct *target, kernel_cap_t *effective,
-+int cap_capget(const struct task_struct *target, kernel_cap_t *effective,
- 	       kernel_cap_t *inheritable, kernel_cap_t *permitted)
- {
- 	const struct cred *cred;
 diff --git a/security/security.c b/security/security.c
-index d5ff7ff45b77..fb2d93b481f1 100644
+index d5ff7ff45b77..b76fb27a1dc6 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -893,7 +893,7 @@ int security_ptrace_traceme(struct task_struct *parent)
-  *
-  * Return: Returns 0 if the capability sets were successfully obtained.
-  */
--int security_capget(struct task_struct *target,
-+int security_capget(const struct task_struct *target,
- 		    kernel_cap_t *effective,
- 		    kernel_cap_t *inheritable,
- 		    kernel_cap_t *permitted)
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 79b4890e9936..ff42d49f1b41 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2056,7 +2056,7 @@ static int selinux_ptrace_traceme(struct task_struct *parent)
- 			    SECCLASS_PROCESS, PROCESS__PTRACE, NULL);
+@@ -4396,6 +4396,13 @@ void security_sk_clone(const struct sock *sk, struct sock *newsk)
  }
+ EXPORT_SYMBOL(security_sk_clone);
  
--static int selinux_capget(struct task_struct *target, kernel_cap_t *effective,
-+static int selinux_capget(const struct task_struct *target, kernel_cap_t *effective,
- 			  kernel_cap_t *inheritable, kernel_cap_t *permitted)
++/**
++ * security_sk_classify_flow() - Set a flow's secid based on socket
++ * @sk: original socket
++ * @flic: target flow
++ *
++ * Set the target flow's secid to socket's secid.
++ */
+ void security_sk_classify_flow(struct sock *sk, struct flowi_common *flic)
  {
- 	return avc_has_perm(current_sid(), task_sid_obj(target),
+ 	call_void_hook(sk_getsecid, sk, &flic->flowic_secid);
 -- 
 2.34.1
 
