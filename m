@@ -2,115 +2,155 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F95C001DE
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 23:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 407A2C001DF
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 23:18:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbjHGXPM (ORCPT
+        id S230489AbjHGXSJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Aug 2023 19:15:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53368 "EHLO
+        Mon, 7 Aug 2023 19:18:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbjHGXPK (ORCPT
+        with ESMTP id S230028AbjHGXRy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Aug 2023 19:15:10 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADB9411A
-        for <linux-security-module@vger.kernel.org>; Mon,  7 Aug 2023 16:14:56 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-58451ecf223so54782537b3.1
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Aug 2023 16:14:56 -0700 (PDT)
+        Mon, 7 Aug 2023 19:17:54 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFECD1703
+        for <linux-security-module@vger.kernel.org>; Mon,  7 Aug 2023 16:17:51 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-d4b1c8f2d91so2863677276.0
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Aug 2023 16:17:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1691450096; x=1692054896;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gC650LVe61HwPim1FSUuzXp4C/B2DwrSSnI6+3CNzQ8=;
-        b=ct+ge2PGifRP3AlMIL/2uh0Qxnp5/FFhMPFh1pADmZFwbBUUztR9EjiH+7kkziM74s
-         qZAjmrkpD1CdVps/VpDrKBYmtg03d/GoP3/+FfqBBBzrSn30IWE0+ixoqmDOrAH+O2qx
-         ZK8X6B1b0Yy/2dyuIRVptN2hY9zk0fC2xMCvLJg0HIlu3iG5ejaOh48zKA9JDbI0t6QD
-         rpxIeR/fckdT+rJDS3i78lzOjpgMigIQPcLmeo18ttjBsgQLeSzWhLJ1ZxGhfMnHptbj
-         4O0xCy8K4HT5PqD1tsQ+/WUR0cRwPsdhCIiCp/x0sf3IcIR6lFhOzr5cfWtSNH10j0NE
-         s9sA==
+        d=google.com; s=20221208; t=1691450271; x=1692055071;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=O6ADKvrj6NKuTG8K0De5TN5TBG7YUj/XYIH2D8dp568=;
+        b=rHwQlDZDzym7DX7JPTeHFjVedtFRUtAMiKX2VU1EjC3DDPS+GKehZ420ny5GaoR1ql
+         DJZSgsfTVJl3vHuTgVdsaoMbYWxHvGzjOU0b7lDeewUWBnmHCx4rEyCV+u7mMO4LYlh5
+         X/eCH8/74nhTzgvQgUg3W7ew8mnRsIapj5OejxlfXYe7B7oIEIOpl62BZW0oI322fnfO
+         0Voq/X8G0TvKlJzbTSRNfra4zE+z5UETF5mjVUp3srNKrf5MdQ1+J9GDHb9R/7Klrk79
+         sQ7ciz1qdHaVGW7a/1FblT/tag2WVBkp7Xupx92Rz9XtAvp0t79KGYAXs3GugjDd4DWz
+         Be4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691450096; x=1692054896;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gC650LVe61HwPim1FSUuzXp4C/B2DwrSSnI6+3CNzQ8=;
-        b=CyrzeyMbau2Ol2IxajEU7pnxxizj4MW4jmo6yufsGlBynK9QkQJz0KltRK+syMQzh/
-         yfbwZ02EMY59J5jxpoa8rWcI0snjtlFnOvlz90qAGYtnLw643G8wzhGa7l98nkfQoQLh
-         pa4z9jI+HDkQythjHCfH+BPqvLJmu9Qst3bkAwJvQg/k1BLKPkZ5z3eyWlYWYdGjlvXU
-         frEUubp6n2IXUeW4+1OAuGsJtGcu+YGPDMVfASQRePYvEuK/qvTrcjKwmDdCMsgQ8NJW
-         WyX+gaeXscnfj4WbhVe37pGyBxQFqoAZ1vo1/A3uztyGj3VyQ0xBtd+QHE/kffpWQjcm
-         /BIQ==
-X-Gm-Message-State: AOJu0YzI2PAhP0TsFbxkY5doId/u5bC2eVEXo16Qi7v1ZL9YlYeBslLl
-        nGgxIvvlHLmho2z/SJUwThKXAwkIzZHXb8S031jPw8Q5iJosykqjLE+C
-X-Google-Smtp-Source: AGHT+IG+zDyHe2W8hJPVzd30Y0QsMafbml2uX7nh9Nm5i+kMzX1fDTv2ox8qZUEuhWfN8JG6FwS88UOzudjmO8t4qPQ=
-X-Received: by 2002:a81:6e86:0:b0:584:5e7e:40c1 with SMTP id
- j128-20020a816e86000000b005845e7e40c1mr10333423ywc.28.1691450095895; Mon, 07
- Aug 2023 16:14:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <ZNCZ4KL7TRDE9vIC@gmail.com>
-In-Reply-To: <ZNCZ4KL7TRDE9vIC@gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 7 Aug 2023 19:14:45 -0400
-Message-ID: <CAHC9VhSULN1B_EjVPA5st+NhDjiUbymOwt81C4gZ9Tn4_wWpuw@mail.gmail.com>
-Subject: Re: [PATCH v2] lsm: add comment block for security_sk_classify_flow()
- LSM hook
-To:     Khadija Kamran <kamrankhadijadj@gmail.com>
-Cc:     Alison Schofield <alison.schofield@intel.com>,
-        ztarkhani@microsoft.com, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+        d=1e100.net; s=20221208; t=1691450271; x=1692055071;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O6ADKvrj6NKuTG8K0De5TN5TBG7YUj/XYIH2D8dp568=;
+        b=Y5B7hoXLBKaGiNtruRwDwHwPuUSQCwJjeHoZvxWDaKIyMoFtSdFTSYXL73s5lOaTY9
+         nuJhFqqHoUrtfeSC9jBN9Ymk6jDlUS2ZtyeIWxrPRjlFIXqhMHv2UnS/H2F+EckG4Xvg
+         oaVwGVUZFgiWpQM7hXr9kCfJ6qf7Cg7vJM0OyrcBGor5pIH2jwdy85m8wDUv7bvBmCqG
+         4R7CNh0MU9NEfzMRv2AwfXdc6acplz1GiVL6FblOD7Jhz9/nI9Mu59o4LXajjy6vqN2q
+         y19kZkIGXrXj+oOgRPTtLUDlNOwXlaPTWlEibP72GFNp3LzEJrwv4Puqwq8wnpiy9PHT
+         K0wQ==
+X-Gm-Message-State: AOJu0YzFQsZg4xZq8uoPKnhLz9Z8wlvSmbw7xvuMa/dbPo23YAuXzylD
+        LMdosUbTXoisP3zrOmfb+4Ha0s6Rx2WdUNBwsg==
+X-Google-Smtp-Source: AGHT+IGSgl+5gSINX//lCEXF+ifa5KuvDte/Vqkh35HGceplFQQ8fBj/FZjwVUabZs4KoYQYU07HEfGWMf/BZUZt+g==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
+ (user=ackerleytng job=sendgmr) by 2002:a25:ce50:0:b0:d4f:d7a5:ba3b with SMTP
+ id x77-20020a25ce50000000b00d4fd7a5ba3bmr34924ybe.8.1691450270921; Mon, 07
+ Aug 2023 16:17:50 -0700 (PDT)
+Date:   Mon, 07 Aug 2023 23:17:49 +0000
+In-Reply-To: <20230718234512.1690985-28-seanjc@google.com> (message from Sean
+ Christopherson on Tue, 18 Jul 2023 16:45:10 -0700)
+Mime-Version: 1.0
+Message-ID: <diqzr0oe30iq.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v11 27/29] KVM: selftests: Expand set_memory_region_test
+ to validate guest_memfd()
+From:   Ackerley Tng <ackerleytng@google.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     pbonzini@redhat.com, maz@kernel.org, oliver.upton@linux.dev,
+        chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, seanjc@google.com, willy@infradead.org,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
+        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
+        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
+        david@redhat.com, qperret@google.com, michael.roth@amd.com,
+        wei.w.wang@intel.com, liam.merwick@oracle.com,
+        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 7, 2023 at 3:14=E2=80=AFAM Khadija Kamran <kamrankhadijadj@gmai=
-l.com> wrote:
+Sean Christopherson <seanjc@google.com> writes:
+
+> From: Chao Peng <chao.p.peng@linux.intel.com>
 >
-> security_sk_classify_flow() LSM hook has no comment block. Add a comment
-> block with a brief description of LSM hook and its function parameters.
+> Expand set_memory_region_test to exercise various positive and negative
+> testcases for private memory.
 >
-> Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
+>  - Non-guest_memfd() file descriptor for private memory
+>  - guest_memfd() from different VM
+>  - Overlapping bindings
+>  - Unaligned bindings
+>
+> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> Co-developed-by: Ackerley Tng <ackerleytng@google.com>
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> [sean: trim the testcases to remove duplicate coverage]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
-> Changed in v2:
->  - Add parenthesis with security_sk_calssify_flow to refer to it as a
->    function in commit message and commit log.
->  - Remove an extra space in the comment block.
+>  .../selftests/kvm/include/kvm_util_base.h     | 10 ++
+>  .../selftests/kvm/set_memory_region_test.c    | 99 +++++++++++++++++++
+>  2 files changed, 109 insertions(+)
 >
-> security/security.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-
-Hi Khadija,
-
-Thanks, but I already merged your original patch :)
-
-https://lore.kernel.org/linux-security-module/abe91475c7f9e3483405c6096006b=
-2a9.paul@paul-moore.com/
-
-> diff --git a/security/security.c b/security/security.c
-> index d5ff7ff45b77..b76fb27a1dc6 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -4396,6 +4396,13 @@ void security_sk_clone(const struct sock *sk, stru=
-ct sock *newsk)
+> diff --git a/tools/testing/selftests/kvm/include/kvm_util_base.h b/tools/testing/selftests/kvm/include/kvm_util_base.h
+> index 334df27a6f43..39b38c75b99c 100644
+> --- a/tools/testing/selftests/kvm/include/kvm_util_base.h
+> +++ b/tools/testing/selftests/kvm/include/kvm_util_base.h
+> @@ -789,6 +789,16 @@ static inline struct kvm_vm *vm_create_barebones(void)
+>  	return ____vm_create(VM_SHAPE_DEFAULT);
 >  }
->  EXPORT_SYMBOL(security_sk_clone);
->
-> +/**
-> + * security_sk_classify_flow() - Set a flow's secid based on socket
-> + * @sk: original socket
-> + * @flic: target flow
-> + *
-> + * Set the target flow's secid to socket's secid.
-> + */
->  void security_sk_classify_flow(struct sock *sk, struct flowi_common *fli=
-c)
->  {
->         call_void_hook(sk_getsecid, sk, &flic->flowic_secid);
-> --
-> 2.34.1
+>  
 
---=20
-paul-moore.com
+> <snip>
+
+> +
+> +static void test_add_private_memory_region(void)
+> +{
+> +	struct kvm_vm *vm, *vm2;
+> +	int memfd, i;
+> +
+> +	pr_info("Testing ADD of KVM_MEM_PRIVATE memory regions\n");
+> +
+> +	vm = vm_create_barebones_protected_vm();
+> +
+> +	test_invalid_guest_memfd(vm, vm->kvm_fd, 0, "KVM fd should fail");
+> +	test_invalid_guest_memfd(vm, vm->fd, 0, "VM's fd should fail");
+> +
+> +	memfd = kvm_memfd_alloc(MEM_REGION_SIZE, false);
+> +	test_invalid_guest_memfd(vm, vm->fd, 0, "Regular memfd() should fail");
+
+This should be
+
+test_invalid_guest_memfd(vm, memfd, 0, "Regular memfd() should fail");
+
+> +	close(memfd);
+> +
+> +	vm2 = vm_create_barebones_protected_vm();
+> +	memfd = vm_create_guest_memfd(vm2, MEM_REGION_SIZE, 0);
+> +	test_invalid_guest_memfd(vm, memfd, 0, "Other VM's guest_memfd() should fail");
+> +
+> +	vm_set_user_memory_region2(vm2, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
+> +				   MEM_REGION_GPA, MEM_REGION_SIZE, 0, memfd, 0);
+> +	close(memfd);
+> +	kvm_vm_free(vm2);
+> +
+> +	memfd = vm_create_guest_memfd(vm, MEM_REGION_SIZE, 0);
+> +	for (i = 1; i < PAGE_SIZE; i++)
+> +		test_invalid_guest_memfd(vm, memfd, i, "Unaligned offset should fail");
+> +
+> +	vm_set_user_memory_region2(vm, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
+> +				   MEM_REGION_GPA, MEM_REGION_SIZE, 0, memfd, 0);
+> +	close(memfd);
+> +
+> +	kvm_vm_free(vm);
+> +}
+> +
+
+> <snip>
