@@ -2,269 +2,89 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E9FC41513
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 07:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AF6EB64DD
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Aug 2023 09:34:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231133AbjHGH6j (ORCPT
+        id S231583AbjHGJej (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Aug 2023 03:58:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49816 "EHLO
+        Mon, 7 Aug 2023 05:34:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230421AbjHGH6g (ORCPT
+        with ESMTP id S229436AbjHGJei (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Aug 2023 03:58:36 -0400
-Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7C88DD
-        for <linux-security-module@vger.kernel.org>; Mon,  7 Aug 2023 00:58:33 -0700 (PDT)
-Received: by mail-vs1-xe29.google.com with SMTP id ada2fe7eead31-447c22f326aso1422582137.2
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Aug 2023 00:58:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691395113; x=1691999913;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=n5fi0fpOM2gRSvqlWV4tqwQpsx/3dXpvqD75todpGs4=;
-        b=iRMq+dkfiTEjSPlta/9NwsHLANWWywsEHXVZa4bRc445DB1RlC6n8yFCgKpSROWS4v
-         JDQoQLMALmAJWX4xZno8mV11Q5e1fzedbup7O1UqozdkbYZQhfhf5XOhUBZONIB82Fr2
-         YnInRFcVNLJ1G/smIdxkmeT883lQ1BtrW1XjXJKCAntl9fbSvhJWGur/KZlCCHWB5msT
-         mFU4dX8hBFvtFzlfLeGJRZnpFIwb7kcqPgcrRCQXOvntgArdJDF1CM9TgF69MpqjL14l
-         w83KAlxEH8LcakZoYo/d5Mkwsre0r5gJSThEUaFvxT6dIhu80KOxCaGz29dJrrFHkAPo
-         qMDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691395113; x=1691999913;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n5fi0fpOM2gRSvqlWV4tqwQpsx/3dXpvqD75todpGs4=;
-        b=WATEmpWNagsgVVt0d03wBWKL/14lNJOicwx3Cm2rc/L468FSFJn3JyawzCbBSd7AwA
-         xz4iItyRKtNssbVRczxkRlBz5Afe/P73C7CkzzvyuhFhUYEUe+298q7yC3kd/0xQuSIn
-         FEKmlZ4JRihiQbdHyaMssdZjoQBciTODSF4G66Y+6Bxdkaw1R13wmOv+Aiqbail+bW7/
-         sZ5l4yl4GpbXpOz+mAY4yDvJ8g2GL7IG7w98/vCymTgE/YJcF6Rh8NvsGg9Lg3iDWFTU
-         GXspWs6QZ9WxU2VVG+3EYARxRJcivF/4V64UHgdxQA1djn9xctfRTwMxEcSMOOMkYa1M
-         YfqQ==
-X-Gm-Message-State: AOJu0YyR4Hggz8u4PcAvX78vNrIhbPXfzEne8GpdjJZZ7Qa8CBMzctnO
-        Rzt8TCoCmHNzKNsT9kdEfd1rXEA+UmNrgYsMT3t0L0yOkT2blS5mLDQ=
-X-Google-Smtp-Source: AGHT+IGr47ODoEmeGuqdWN/2xIoV0xZ8k7qdvGJVlzty7GhhOUd2fRZIOQd1pqldKNgi6Xc87KwtrNpskOMiliDJ/Dw=
-X-Received: by 2002:a67:f546:0:b0:443:6f2d:d44a with SMTP id
- z6-20020a67f546000000b004436f2dd44amr3810233vsn.2.1691395112931; Mon, 07 Aug
- 2023 00:58:32 -0700 (PDT)
+        Mon, 7 Aug 2023 05:34:38 -0400
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A1D610C0;
+        Mon,  7 Aug 2023 02:34:37 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.143])
+        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4RKB3p0Gtqz4f3q30;
+        Mon,  7 Aug 2023 17:34:30 +0800 (CST)
+Received: from ubuntu20.huawei.com (unknown [10.67.174.33])
+        by APP2 (Coremail) with SMTP id Syh0CgCnyGyfutBkuLyOAA--.13731S2;
+        Mon, 07 Aug 2023 17:34:30 +0800 (CST)
+From:   "GONG, Ruiqi" <gongruiqi@huaweicloud.com>
+To:     John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Xiu Jianfeng <xiujianfeng@huawei.com>,
+        Wang Weiyang <wangweiyang2@huawei.com>,
+        gongruiqi@huaweicloud.com
+Subject: [PATCH] apparmor: remove unused PROF_* macros
+Date:   Mon,  7 Aug 2023 17:39:04 +0800
+Message-Id: <20230807093904.565766-1-gongruiqi@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20230803123515.4018838-1-jens.wiklander@linaro.org>
-In-Reply-To: <20230803123515.4018838-1-jens.wiklander@linaro.org>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Mon, 7 Aug 2023 13:28:21 +0530
-Message-ID: <CAFA6WYMzBJTNUxh6b-y=a_NND8FX65YjEP4i-HPS4tQ-Qfm+0w@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: trusted: tee: use tee_shm_register_alloc_buf()
-To:     Jens Wiklander <jens.wiklander@linaro.org>
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org,
-        James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: Syh0CgCnyGyfutBkuLyOAA--.13731S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7XF4UuF17GFy3Cw4UJF13urg_yoWfZrb_C3
+        Wj9w1xurs3ZF1fXa40va48uF97u3y8JFZ09a4Fqr9rAryDKw4rWa4jyryxWrW3uws7GrWU
+        CFyfKrW5AF1xWjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbxxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+        6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+        n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+        0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+        IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+        AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_
+        Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUF9
+        a9DUUUU
+X-CM-SenderInfo: pjrqw2pxltxq5kxd4v5lfo033gof0z/
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Jens,
+From: "GONG, Ruiqi" <gongruiqi1@huawei.com>
 
-On Thu, 3 Aug 2023 at 18:05, Jens Wiklander <jens.wiklander@linaro.org> wrote:
->
-> Prior to this patch was trusted_tee_seal() and trusted_tee_get_random()
-> relying on tee_shm_register_kernel_buf() to share memory with the TEE.
-> Depending on the memory allocation pattern the pages holding the
-> registered buffers overlap with other buffers also shared with the TEE.
->
+The last usage of PROF_{ADD,REPLACE} were removed by commit 18e99f191a8e
+("apparmor: provide finer control over policy management"). So remove
+these two unused macros.
 
-The overlap here is due to the fact that we are registering two array
-members of the same struct. This overlap can be removed by registering
-the overall structure at once. But that sounds unnecessary data
-structure type sharing with trusted keys TA.
+Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
+---
+ security/apparmor/include/policy.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-> The OP-TEE driver using the old SMC based ABI permits overlapping shared
-> buffers, but with the new FF-A based ABI each physical page may only
-> be registered once.
+diff --git a/security/apparmor/include/policy.h b/security/apparmor/include/policy.h
+index 545f791cabda..ed9a8669af80 100644
+--- a/security/apparmor/include/policy.h
++++ b/security/apparmor/include/policy.h
+@@ -254,9 +254,6 @@ ssize_t aa_remove_profiles(struct aa_ns *view, struct aa_label *label,
+ 			   char *name, size_t size);
+ void __aa_profile_list_release(struct list_head *head);
+ 
+-#define PROF_ADD 1
+-#define PROF_REPLACE 0
+-
+ #define profile_unconfined(X) ((X)->mode == APPARMOR_UNCONFINED)
+ 
+ /**
+-- 
+2.25.1
 
-Would it be possible for OP-TEE FF-A ABI to check if a page is already
-registered? If it is then just return success with appropriate page
-offset. As otherwise this sounds like an unnecessary restriction for
-users. I don't think the problem is only particular to the trusted
-keys driver but can be reproduced for user-space clients as well.
-
->
-> Fix this problem by allocating a temporary page aligned shared memory
-> buffer to be used as a bounce buffer for the needed data buffers.
->
-> Since TEE trusted keys doesn't depend on registered shared memory
-> support any longer remove that explicit dependency when opening a
-> context to the TEE.
->
-> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> ---
->  security/keys/trusted-keys/trusted_tee.c | 68 +++++++++++++-----------
->  1 file changed, 36 insertions(+), 32 deletions(-)
->
-> diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
-> index ac3e270ade69..3085343c489a 100644
-> --- a/security/keys/trusted-keys/trusted_tee.c
-> +++ b/security/keys/trusted-keys/trusted_tee.c
-> @@ -8,6 +8,7 @@
->
->  #include <linux/err.h>
->  #include <linux/key-type.h>
-> +#include <linux/minmax.h>
->  #include <linux/module.h>
->  #include <linux/slab.h>
->  #include <linux/string.h>
-> @@ -65,38 +66,37 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
->         int ret;
->         struct tee_ioctl_invoke_arg inv_arg;
->         struct tee_param param[4];
-> -       struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
-> +       struct tee_shm *shm;
-> +       uint8_t *buf;
->
->         memset(&inv_arg, 0, sizeof(inv_arg));
->         memset(&param, 0, sizeof(param));
->
-> -       reg_shm_in = tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
-> -                                                p->key_len);
-> -       if (IS_ERR(reg_shm_in)) {
-> -               dev_err(pvt_data.dev, "key shm register failed\n");
-> -               return PTR_ERR(reg_shm_in);
-> +       shm = tee_shm_alloc_kernel_buf(pvt_data.ctx,
-> +                                      p->key_len + sizeof(p->blob));
-> +       if (IS_ERR(shm)) {
-> +               dev_err(pvt_data.dev, "key shm alloc failed\n");
-> +               return PTR_ERR(shm);
->         }
-> -
-> -       reg_shm_out = tee_shm_register_kernel_buf(pvt_data.ctx, p->blob,
-> -                                                 sizeof(p->blob));
-> -       if (IS_ERR(reg_shm_out)) {
-> -               dev_err(pvt_data.dev, "blob shm register failed\n");
-> -               ret = PTR_ERR(reg_shm_out);
-> +       buf = tee_shm_get_va(shm, 0);
-> +       if (IS_ERR(buf)) {
-> +               ret = PTR_ERR(buf);
->                 goto out;
->         }
-> +       memcpy(buf, p->key, p->key_len);
-
-These memcpy()'s here and below are undue overheads if we change to
-tee_shm_alloc_kernel_buf().
-
--Sumit
-
->
->         inv_arg.func = TA_CMD_SEAL;
->         inv_arg.session = pvt_data.session_id;
->         inv_arg.num_params = 4;
->
->         param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
-> -       param[0].u.memref.shm = reg_shm_in;
-> +       param[0].u.memref.shm = shm;
->         param[0].u.memref.size = p->key_len;
->         param[0].u.memref.shm_offs = 0;
->         param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
-> -       param[1].u.memref.shm = reg_shm_out;
-> +       param[1].u.memref.shm = shm;
->         param[1].u.memref.size = sizeof(p->blob);
-> -       param[1].u.memref.shm_offs = 0;
-> +       param[1].u.memref.shm_offs = p->key_len;
->
->         ret = tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
->         if ((ret < 0) || (inv_arg.ret != 0)) {
-> @@ -104,14 +104,13 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
->                         inv_arg.ret);
->                 ret = -EFAULT;
->         } else {
-> +               memcpy(p->blob, buf + p->key_len,
-> +                      min(param[1].u.memref.size, sizeof(p->blob)));
->                 p->blob_len = param[1].u.memref.size;
->         }
->
->  out:
-> -       if (reg_shm_out)
-> -               tee_shm_free(reg_shm_out);
-> -       if (reg_shm_in)
-> -               tee_shm_free(reg_shm_in);
-> +       tee_shm_free(shm);
->
->         return ret;
->  }
-> @@ -166,11 +165,9 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
->                 p->key_len = param[1].u.memref.size;
->         }
->
-> +       tee_shm_free(reg_shm_out);
->  out:
-> -       if (reg_shm_out)
-> -               tee_shm_free(reg_shm_out);
-> -       if (reg_shm_in)
-> -               tee_shm_free(reg_shm_in);
-> +       tee_shm_free(reg_shm_in);
->
->         return ret;
->  }
-> @@ -183,15 +180,21 @@ static int trusted_tee_get_random(unsigned char *key, size_t key_len)
->         int ret;
->         struct tee_ioctl_invoke_arg inv_arg;
->         struct tee_param param[4];
-> -       struct tee_shm *reg_shm = NULL;
-> +       struct tee_shm *shm;
-> +       void *buf;
->
->         memset(&inv_arg, 0, sizeof(inv_arg));
->         memset(&param, 0, sizeof(param));
->
-> -       reg_shm = tee_shm_register_kernel_buf(pvt_data.ctx, key, key_len);
-> -       if (IS_ERR(reg_shm)) {
-> -               dev_err(pvt_data.dev, "key shm register failed\n");
-> -               return PTR_ERR(reg_shm);
-> +       shm = tee_shm_alloc_kernel_buf(pvt_data.ctx, key_len);
-> +       if (IS_ERR(shm)) {
-> +               dev_err(pvt_data.dev, "key shm alloc failed\n");
-> +               return PTR_ERR(shm);
-> +       }
-> +       buf = tee_shm_get_va(shm, 0);
-> +       if (IS_ERR(buf)) {
-> +               ret = PTR_ERR(buf);
-> +               goto out;
->         }
->
->         inv_arg.func = TA_CMD_GET_RANDOM;
-> @@ -199,7 +202,7 @@ static int trusted_tee_get_random(unsigned char *key, size_t key_len)
->         inv_arg.num_params = 4;
->
->         param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
-> -       param[0].u.memref.shm = reg_shm;
-> +       param[0].u.memref.shm = shm;
->         param[0].u.memref.size = key_len;
->         param[0].u.memref.shm_offs = 0;
->
-> @@ -209,18 +212,19 @@ static int trusted_tee_get_random(unsigned char *key, size_t key_len)
->                         inv_arg.ret);
->                 ret = -EFAULT;
->         } else {
-> +               memcpy(key, buf, min(param[0].u.memref.size, key_len));
->                 ret = param[0].u.memref.size;
->         }
->
-> -       tee_shm_free(reg_shm);
-> +out:
-> +       tee_shm_free(shm);
->
->         return ret;
->  }
->
->  static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
->  {
-> -       if (ver->impl_id == TEE_IMPL_ID_OPTEE &&
-> -           ver->gen_caps & TEE_GEN_CAP_REG_MEM)
-> +       if (ver->impl_id == TEE_IMPL_ID_OPTEE)
->                 return 1;
->         else
->                 return 0;
-> --
-> 2.34.1
->
