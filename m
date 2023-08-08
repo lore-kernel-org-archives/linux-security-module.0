@@ -2,217 +2,218 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D754C001E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 21:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D63C001B0
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 21:41:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235579AbjHHVSW (ORCPT
+        id S230049AbjHHVle (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Aug 2023 17:18:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37290 "EHLO
+        Tue, 8 Aug 2023 17:41:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236515AbjHHVSM (ORCPT
+        with ESMTP id S229663AbjHHVle (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Aug 2023 17:18:12 -0400
-Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7207211E
-        for <linux-security-module@vger.kernel.org>; Tue,  8 Aug 2023 14:13:28 -0700 (PDT)
-Received: by mail-pg1-x54a.google.com with SMTP id 41be03b00d2f7-564a569e992so5897876a12.0
-        for <linux-security-module@vger.kernel.org>; Tue, 08 Aug 2023 14:13:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691529208; x=1692134008;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2U8op5NWCZxGer1aWuXuZ1d6J73Ge5+Hk7EgkvJJLAs=;
-        b=EiApR7LgfgrJOIT4RH8vwTp7YvtN3WX8F65amcCZ5tUQpyv/ZsbnzElbxtLH3YiRAr
-         Xco5OB//pxBTUJ1Hz9I9wbK8VFMOtBI25Tou7znxlR4xLwF5hwG16hAzm3VNuOm7qNVv
-         RXaphvZexnvsjJwdUedz4miwZlrHjyPKGJ4tg41nXpc1Cr1tDeUR45j+cXRmHY2zeNeJ
-         aD2FSNHH9s2X0AH/332mpiw5dSfBYPcqgRab/m5d5fFkQb+ZWPzwvwukMvExFid52TaS
-         W3qOIOCRBt/UK+p15DAoWro/GC9Q6ni0EalNj49A0OSEsHwDkeyMMKxa0prAwizF/XXF
-         JV1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691529208; x=1692134008;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2U8op5NWCZxGer1aWuXuZ1d6J73Ge5+Hk7EgkvJJLAs=;
-        b=H790vHmkysQVFdND3UnnPi3aJjCW8wPclDUDZzlNNxX96oP2tMnbC4tPTG+8Q9672u
-         KbtO9Zo+cV5vCUG8jRjSXst4i9e9FoirIcvLPIzt1LcEWYoUTYXiggieJjZMHv2kCqNF
-         S0hgdZZs6fjs5LqtftmWxxo84FlYfJt/iGpEW4iknzQWfnh/bG0W/RPakAX5I8Y4+mro
-         Z8YKrboO7UYNPAtqIVW+YnHjzvZo9n2s5hXKNpUXa5cZpQhEx73+TT/nJ3qpnEjtf4ch
-         PREck8+zCnQcHMkzMb9XdX87PtYbv3gpzPALGoq2aKQsENlfQpx639WdhYm6uJ1xBdUY
-         AHvg==
-X-Gm-Message-State: AOJu0Yztf8nR3v8MQ5VdtKbxlNuHQaU4g4624GsZ3dbqtULh9ClcS3c6
-        5OA0u+pwEeFOpxAfbCgsFIRAUN5VWis=
-X-Google-Smtp-Source: AGHT+IF3VhVvM3seA6Kd3G1yrwf0aF3MmO0cqr5SVZX1MHXlsabrjEav/SHlO1qK0PHGPVCVUrfGthX1EsA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:b242:0:b0:563:e937:5e87 with SMTP id
- t2-20020a63b242000000b00563e9375e87mr12735pgo.5.1691529208021; Tue, 08 Aug
- 2023 14:13:28 -0700 (PDT)
-Date:   Tue, 8 Aug 2023 14:13:26 -0700
-In-Reply-To: <diqzv8dq3116.fsf@ackerleytng-ctop.c.googlers.com>
-Mime-Version: 1.0
-References: <20230718234512.1690985-13-seanjc@google.com> <diqzv8dq3116.fsf@ackerleytng-ctop.c.googlers.com>
-Message-ID: <ZNKv9ul2I7A4V7IF@google.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-From:   Sean Christopherson <seanjc@google.com>
-To:     Ackerley Tng <ackerleytng@google.com>
-Cc:     pbonzini@redhat.com, maz@kernel.org, oliver.upton@linux.dev,
-        chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, willy@infradead.org,
-        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
-        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
-        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
-        david@redhat.com, qperret@google.com, michael.roth@amd.com,
-        wei.w.wang@intel.com, liam.merwick@oracle.com,
-        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 8 Aug 2023 17:41:34 -0400
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1E6F10C;
+        Tue,  8 Aug 2023 14:41:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1691530892;
+        bh=i7hpyEZEZWlj2Ajx+MRSG8JElxaDe4Jh8vwUZ2MfVZ0=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=SEXS9n/2I4Tq6aZIxULzbS1JaJkekArdJRcRy5jh6mLcGadvf64e2TTY13OkPul+L
+         hr+OtBlf6ENxwni+EDCEXE7azzEgLfviTTz4S7YkjDkKesRr7KpKiDs1KRpf9DLmdh
+         GRPr4TkPPPT0nzIQ16gr8lLhHSCrhoFlruyfgvds=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 65ED712811F6;
+        Tue,  8 Aug 2023 17:41:32 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id SUFS-be2u0MT; Tue,  8 Aug 2023 17:41:32 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1691530892;
+        bh=i7hpyEZEZWlj2Ajx+MRSG8JElxaDe4Jh8vwUZ2MfVZ0=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=SEXS9n/2I4Tq6aZIxULzbS1JaJkekArdJRcRy5jh6mLcGadvf64e2TTY13OkPul+L
+         hr+OtBlf6ENxwni+EDCEXE7azzEgLfviTTz4S7YkjDkKesRr7KpKiDs1KRpf9DLmdh
+         GRPr4TkPPPT0nzIQ16gr8lLhHSCrhoFlruyfgvds=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 9D1051280F38;
+        Tue,  8 Aug 2023 17:41:30 -0400 (EDT)
+Message-ID: <a522b17a536ea87a6a4c2faf95583ae3b7b74a26.camel@HansenPartnership.com>
+Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        Sush Shringarputale <sushring@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+        kgold@linux.ibm.com, bhe@redhat.com, vgoyal@redhat.com,
+        dyoung@redhat.com, kexec@lists.infradead.org, jmorris@namei.org,
+        Paul Moore <paul@paul-moore.com>, serge@hallyn.com
+Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        linux-security-module@vger.kernel.org
+Date:   Tue, 08 Aug 2023 17:41:28 -0400
+In-Reply-To: <04fb2fe5-9ebe-b35f-bdde-6ef22786438f@linux.ibm.com>
+References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
+         <b748230c8ee291288afcf48898507556c3aa7c71.camel@HansenPartnership.com>
+         <5d21276a-daac-fc9b-add9-62e7c04bbdcd@linux.ibm.com>
+         <8ad131f35c33cf10788344be6c981473971f9c1c.camel@HansenPartnership.com>
+         <abe53dde-9a83-81fd-422d-babf4587c545@linux.ibm.com>
+         <350ecdcbf7796f488807fcd7983414a02dd71be4.camel@HansenPartnership.com>
+         <04fb2fe5-9ebe-b35f-bdde-6ef22786438f@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 07, 2023, Ackerley Tng wrote:
-> I=E2=80=99d like to propose an alternative to the refcounting approach be=
-tween
-> the gmem file and associated kvm, where we think of KVM=E2=80=99s memslot=
-s as
-> users of the gmem file.
->=20
-> Instead of having the gmem file pin the VM (i.e. take a refcount on
-> kvm), we could let memslot take a refcount on the gmem file when the
-> memslots are configured.
->=20
-> Here=E2=80=99s a POC patch that flips the refcounting (and modified selft=
-ests in
-> the next commit):
-> https://github.com/googleprodkernel/linux-cc/commit/7f487b029b89b9f3e9b09=
-4a721bc0772f3c8c797
->=20
-> One side effect of having the gmem file pin the VM is that now the gmem
-> file becomes sort of a false handle on the VM:
->=20
-> + Closing the file destroys the file pointers in the VM and invalidates
->   the pointers
+On Tue, 2023-08-08 at 16:09 -0400, Stefan Berger wrote:
+> 
+> 
+> On 8/8/23 14:26, James Bottomley wrote:
+> > On Tue, 2023-08-08 at 09:31 -0400, Stefan Berger wrote:
+> > > 
+> > > 
+> > > On 8/8/23 08:35, James Bottomley wrote:
+> > > > On Mon, 2023-08-07 at 18:49 -0400, Stefan Berger wrote:
+> > > > > 
+> > > > > 
+> > > > > On 8/1/23 17:21, James Bottomley wrote:
+> > > > > > On Tue, 2023-08-01 at 12:12 -0700, Sush Shringarputale
+> > > > > > wrote:
+> > > > > > [...]
+> > > > > > > Truncating IMA log to reclaim memory is not feasible,
+> > > > > > > since
+> > > > > > > it makes the log go out of sync with the TPM PCR quote
+> > > > > > > making
+> > > > > > > remote attestation fail.
+> > > > > > 
+> > > > > > This assumption isn't entirely true.  It's perfectly
+> > > > > > possible
+> > > > > > to shard an IMA log using two TPM2_Quote's for the
+> > > > > > beginning
+> > > > > > and end PCR values to validate the shard.  The IMA log
+> > > > > > could be
+> > > > > > truncated in the same way (replace the removed part of the
+> > > > > > log
+> > > > > > with a TPM2_Quote and AK, so the log still validates from
+> > > > > > the
+> > > > > > beginning quote to the end).
+> > > > > > 
+> > > > > > If you use a TPM2_Quote mechanism to save the log, all you
+> > > > > > need
+> > > > > > to do is have the kernel generate the quote with an
+> > > > > > internal
+> > > > > > AK.  You can keep a record of the quote and the AK at the
+> > > > > > beginning of the truncated kernel log.  If the truncated
+> > > > > > entries are saved in a file shard it
+> > > > > 
+> > > > > The truncation seems dangerous to me. Maybe not all the
+> > > > > scenarios
+> > > > > with an attestation client (client = reading logs and
+> > > > > quoting)
+> > > > > are possible then anymore, such as starting an attestation
+> > > > > client
+> > > > > only after truncation but a verifier must have witnessed the
+> > > > > system's PCRs and log state before the truncation occurred.
+> > > > 
+> > > > That's not exactly correct.  Nothing needs to have "witnessed"
+> > > > the
+> > > > starting PCR value because the quote vouches for it (and can
+> > > > vouch
+> > > > for it after the fact).  The only thing you need to verify the
+> > > > quote is the attestation key and the only thing you need to do
+> > > > to
+> > > > trust the attestation key is ensure it was TPM created.  All of
+> > > > that can be verified after the fact as well.  The only thing
+> > > > that
+> > > > can be done to disrupt this is to destroy the TPM (or re-own
+> > > > it).>
+> > > > Remember the assumption is you *also* have the removed log
+> > > > shard to
+> > > > present.  From that the PCR state of the starting quote can be
+> > > 
+> > > Yes, the whole sequence of old logs needs to be available.
+> > 
+> > Yes and no.  If the person relying on the logs is happy they've
+> > extracted all the evidentiary value from the log itself then they
+> > can
+> > reduce the preceding log shard to simply the PCR values that match
+> > the
+> > quote and discard the rest.
+> > 
+> > >   IF that's the case and the logs can be stitched together
+> > > seamlessly, who then looks at the kernel AK quote and under what
+> > > circumstances?
+> > 
+> > For incremental attestation.  Each log shard can be verified using
+> > the base PCR values corresponding to the bottom quote then replayed
+> > and the
+> 
+> 
+> Somehow you have to tell a verifier to take a snapshot of the current
+> state of the PCRs when it replays the logs to be able to truncate the
+> log.
 
-Yeah, this is less than ideal.  But, it's also how things operate today.  K=
-VM
-doesn't hold references to VMAs or files, e.g. if userspace munmap()s memor=
-y,
-any and all SPTEs pointing at the memory are zapped.  The only difference w=
-ith
-gmem is that KVM needs to explicitly invalidate file pointers, instead of t=
-hat
-happening behind the scenes (no more VMAs to find).  Again, I agree the res=
-ulting
-code is more complex than I would prefer, but from a userspace perspective =
-I
-don't see this as problematic.
+No, the verifier is server side.  It would be the agent or the kernel,
+client side, which gets the quote and shards the log.  That way the
+operation can be done in such a way as to make sure the quote and the
+shard point match.  I'd imagine the verifier can provide some sort of
+guide as to how big it wants the shards to be and the client complies.
 
-> + Keeping the file open keeps the VM around in the kernel even though
->   the VM fd may already be closed.
+> Whether the state of the PCRs is in the log itself or it's just some
+> sort of entry in the log indicating a truncation probably doesn't
+> matter for as long as the verifying side keeps state of the PCRs at
+> point of truncatiokn.
 
-That is perfectly ok.  There is plenty of prior art, as well as plenty of w=
-ays
-for userspace to shoot itself in the foot.  E.g. open a stats fd for a vCPU=
- and
-the VM and all its vCPUs will be kept alive.  And conceptually it's sound,
-anything created in the scope of a VM _should_ pin the VM.
+The idea would be the log shard would be self attesting, that's why
+quote at beginning and end (and probably PCR state at beginning), so no
+verifier required until someone wants to check the log.
 
-> I feel that memslots form a natural way of managing usage of the gmem
-> file. When a memslot is created, it is using the file; hence we take a
-> refcount on the gmem file, and as memslots are removed, we drop
-> refcounts on the gmem file.
+> Also, the verifying side needs to take notice of the trustworthiness
+> of the system at the time the log was truncated in case the
+> attestation client is restarted and starts out sending the log with
+> the first entry.
 
-Yes and no.  It's definitely more natural *if* the goal is to allow guest_m=
-emfd
-memory to exist without being attached to a VM.  But I'm not at all convinc=
-ed
-that we want to allow that, or that it has desirable properties.  With TDX =
-and
-SNP in particuarly, I'm pretty sure that allowing memory to outlive the VM =
-is
-very underisable (more below).
+That's usually what a runtime verification system is actually
+verifying, yes.
 
-> The KVM pointer is shared among all the bindings in gmem=E2=80=99s xarray=
-, and we can
-> enforce that a gmem file is used only with one VM:
->=20
-> + When binding a memslot to the file, if a kvm pointer exists, it must
->   be the same kvm as the one in this binding
-> + When the binding to the last memslot is removed from a file, NULL the
->   kvm pointer.
+>  The PCR state shown at the beginning of the truncated log (when
+> restarting the attestation client) must then match when the 'notice'
+> was taken and that determines its trustworthiness at this point in
+> the log.
+> 
+> That there's a kernel AK signature
 
-Nullifying the KVM pointer isn't sufficient, because without additional act=
-ions
-userspace could extract data from a VM by deleting its memslots and then bi=
-nding
-the guest_memfd to an attacker controlled VM.  Or more likely with TDX and =
-SNP,
-induce badness by coercing KVM into mapping memory into a guest with the wr=
-ong
-ASID/HKID.
+A quote is a signature over PCR state signed by an AK, yes.
 
-I can think of three ways to handle that:
+>  at this point doesn't seem necessary since one presumably can verify
+> the log and PCR states at the end with the 'regular' quote.
 
-  (a) prevent a different VM from *ever* binding to the gmem instance
-  (b) free/zero physical pages when unbinding
-  (c) free/zero when binding to a different VM
+I don't understand this.  A regular quote is a signature over PCR state
+by an AK.  The point about saving the AK in the log for the original is
+that if the *kernel* truncates the log and saves it to a file, it needs
+to generate both the AK and the quote for the top of the file shard. 
+That means the AK/EK binding is unverified, but can be verified by
+loading the AK and running the usual tests, which can only be done if
+you have the loadable AK, which is why you need it as part of the log
+saving proposal.
 
-Option (a) is easy, but that pretty much defeats the purpose of decopuling
-guest_memfd from a VM.
+> Nobody should ever trust a system by starting to look at the
+> beginning of a truncated log. You have to have evaluated all the
+> entries in the log before and determined whether the system was
+> trustworthy. I don't think the kernel AK quote buys much - at least
+> not from what I can see.
 
-Option (b) isn't hard to implement, but it screws up the lifecycle of the m=
-emory,
-e.g. would require memory when a memslot is deleted.  That isn't necessaril=
-y a
-deal-breaker, but it runs counter to how KVM memlots currently operate.  Me=
-mslots
-are basically just weird page tables, e.g. deleting a memslot doesn't have =
-any
-impact on the underlying data in memory.  TDX throws a wrench in this as re=
-moving
-a page from the Secure EPT is effectively destructive to the data (can't be=
- mapped
-back in to the VM without zeroing the data), but IMO that's an oddity with =
-TDX and
-not necessarily something we want to carry over to other VM types.
+You have a log shard with PCR state at the beginning and calculated at
+the end, both of which you can verify.  How you establish trust in the
+starting PCR values of the shard is a policy decision, but the policy
+doesn't have to be you see every shard up to boot.  You could take the
+word of the system owner on a handoff of responsibility for instance.
 
-There would also be performance implications (probably a non-issue in pract=
-ice),
-and weirdness if/when we get to sharing, linking and/or mmap()ing gmem.  E.=
-g. what
-should happen if the last memslot (binding) is deleted, but there outstandi=
-ng userspace
-mappings?
+James
 
-Option (c) is better from a lifecycle perspective, but it adds its own flav=
-or of
-complexity, e.g. the performant way to reclaim TDX memory requires the TDMR
-(effectively the VM pointer), and so a deferred relcaim doesn't really work=
- for
-TDX.  And I'm pretty sure it *can't* work for SNP, because RMP entries must=
- not
-outlive the VM; KVM can't reuse an ASID if there are pages assigned to that=
- ASID
-in the RMP, i.e. until all memory belonging to the VM has been fully freed.
-
-> Could binding gmem files not on creation, but at memslot configuration
-> time be sufficient and simpler?
-
-After working through the flows, I think binding on-demand would simplify t=
-he
-refcounting (stating the obvious), but complicate the lifecycle of the memo=
-ry as
-well as the contract between KVM and userspace, and would break the separat=
-ion of
-concerns between the inode (physical memory / data) and file (VM's view / m=
-appings).
