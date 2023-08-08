@@ -2,137 +2,83 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F8EC001B0
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 17:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4BDC001DE
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 17:26:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234276AbjHHRQc (ORCPT
+        id S233929AbjHHR0v (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Aug 2023 13:16:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36420 "EHLO
+        Tue, 8 Aug 2023 13:26:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234128AbjHHRP4 (ORCPT
+        with ESMTP id S229763AbjHHR0W (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Aug 2023 13:15:56 -0400
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 64F706F4BC
-        for <linux-security-module@vger.kernel.org>; Tue,  8 Aug 2023 09:06:28 -0700 (PDT)
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 3786eFmR031546;
-        Tue, 8 Aug 2023 01:40:15 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 3786eEVp031545;
-        Tue, 8 Aug 2023 01:40:14 -0500
-Date:   Tue, 8 Aug 2023 01:40:14 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Leesoo Ahn <lsahn@wewakecorp.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        "Dr. Greg" <greg@enjellic.com>
-Subject: Re: [LSM Stacking] SELinux policy inside container affects a processon Host
-Message-ID: <20230808064014.GA31533@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <32e59b69-79a2-f440-bf94-fdb8f8f5fa64@wewakecorp.com> <CAHC9VhRdCSJwB9hpyrCe+D00ddeRLisz=9GEWJz50ybr80tnsg@mail.gmail.com> <4ec9e7ae-e95e-a737-5131-0b57922e4fce@wewakecorp.com> <CAHC9VhQBbbSu6YBbnXOPMjpBxQxc1nmgA+icfN4x6s6FeQSeiw@mail.gmail.com> <02da6484-658c-bfe8-0ae0-08ffe9b93c47@wewakecorp.com> <20230806171622.GA17655@wind.enjellic.com> <CAHC9VhRDcJTMpzeWsNHbhkJEk0Vsj+zH_utTgmfzK6Teqzn81Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhRDcJTMpzeWsNHbhkJEk0Vsj+zH_utTgmfzK6Teqzn81Q@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 08 Aug 2023 01:40:15 -0500 (CDT)
+        Tue, 8 Aug 2023 13:26:22 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC1D785287;
+        Tue,  8 Aug 2023 09:11:18 -0700 (PDT)
+Received: from fsav113.sakura.ne.jp (fsav113.sakura.ne.jp [27.133.134.240])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 378APexv059107;
+        Tue, 8 Aug 2023 19:25:40 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav113.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav113.sakura.ne.jp);
+ Tue, 08 Aug 2023 19:25:40 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav113.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 378APdoI059104
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 8 Aug 2023 19:25:40 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <025aa551-7ed7-d413-26e3-222ac12e9345@I-love.SAKURA.ne.jp>
+Date:   Tue, 8 Aug 2023 19:25:39 +0900
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v2] TaskTracker : Simplified thread information tracker.
+Content-Language: en-US
+To:     Steve Grubb <sgrubb@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        audit@vger.kernel.org, linux-audit@redhat.com
+References: <41d03271-ff8a-9888-11de-a7f53da47328@I-love.SAKURA.ne.jp>
+ <2029076.tdWV9SEqCh@x2>
+ <ab7b4099-d238-e791-6dc2-25be5952798c@I-love.SAKURA.ne.jp>
+ <2294714.ElGaqSPkdT@x2>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <2294714.ElGaqSPkdT@x2>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Aug 06, 2023 at 03:25:32PM -0400, Paul Moore wrote:
-
-Good morning, I hope the week has started well for everyone.
-
-> On Sun, Aug 6, 2023 at 1:16???PM Dr. Greg <greg@enjellic.com> wrote:
-> > On Fri, Jul 28, 2023 at 10:54:23AM +0900, Leesoo Ahn wrote:
-> > > 2023-07-07 ?????? 11:20??? Paul Moore ???(???) ??? ???:
-> > > >On Fri, Jul 7, 2023 at 4:29???AM Leesoo Ahn <lsahn@wewakecorp.com> wrote:
-> > >
-> > > [...]
-> > >
-> > > >
-> > > >What you are looking for is a combination of LSM stacking and
-> > > >individual LSM namespacing. Sadly, I think the communications around
-> > > >LSM stacking have not been very clear on this and I worry that many
-> > > >people are going to be disappointed with LSM stacking for this very
-> > > >reason.
-> > > >
-> > > >While stacking of LSMs is largely done at the LSM layer, namespacing
-> > > >LSMs such that they can be customized for individual containers
-> > > >requires work to be done at the per-LSM level as each LSM is
-> > > >different. AppArmor already has a namespacing concept, but SELinux
-> > > >does not. Due to differences in the approach taken by the two LSMs,
-> > > >namespacing is much more of a challenge for SELinux, largely due to
-> > > >issues around filesystem labeling. We have not given up on the idea,
-> > > >but we have yet to arrive at a viable solution for namespacing
-> > > >SELinux.
-> > > >
-> > > >If you are interested in stacking SELinux and AppArmor, I believe the
-> > > >only practical solution is to run SELinux on the host system (initial
-> > > >namespace) and run AppArmor in the containers.
-> >
-> > > Paul, I don't get that SELinux on the host system and run AppArmor
-> > > in the containers is the only practical solution. Could you please
-> > > explain that in more details?
-> >
-> > It appears that Paul is extremely busy, so I thought the 'Quixote
-> > Group' would try and offer some reflections that may help with your
-> > efforts.
-
-> My apologies, yes I am rather busy at the moment, but I also stopped
-> following this thread a while ago as it didn't seem to be going
-> anywhere meaningful.  I happen to read this last email while I'm
-> waiting in an airport, so let me try and provide a quick explanation
-> about why running SELinux only in a container is a bad idea.
+On 2023/08/08 3:54, Steve Grubb wrote:
+>>> What I would suggest is to make a separate record: AUDIT_PROC_TREE that
+>>> describes process tree from the one killed up to the last known parent.
+>>> This way you can define your own format and SYSCALL can stay as everyone
+>>> expects it to look. In the EXECVE audit record, there is a precedent of
+>>> using agv[0]=xx argv[1]=xx argv[2]=yy  and so on. If you want to make
+>>> these generally parsable without special knowledge of the record format,
+>>> I'd suggest something like it.
+>>
+>> Yes,
+>> https://lkml.kernel.org/r/201501202220.DJJ34834.OLJOHFMQOFtSVF@I-love.SAKU
+>> RA.ne.jp used AUDIT_PROCHISTORY instead of LSM hooks, but that thread died
+>> there.
 > 
-> As you probably know, the Linux kernel has no concept of a container,
-> it only supports subsystem specific namespaces, e.g. mount namespace,
-> network namespace, etc.  SELinux does not provide a subsystem
-> namespace, and it does not generally concern itself with other
-> subsystem names.  From a SELinux perspective there is no difference
-> between a process running in the host namespace or a
-> container/namespace; both are treated the same with access control
-> decisions made based on the processes' SELinux domain, the type of the
-> target resource, and the access requested.
-> 
-> If one were to load a SELinux policy inside a container, even if it
-> were allowed, the system would likely behave in unexpected ways as the
-> container-loaded policy will take effect across the entire system, not
-> just inside the container.
+> I do not read that mail list. AUDIT_PROC_HIST or AUDIT_PROC_CHAIN or some 
+> thing like that would be the better way to go. If someone wanted to see if 
+> they have process history for a segfault, how would they do it with the 
+> proposed record?
 
-All reasonable and consistent, with what we had previously written
-with respect to there being no notion of LSM namespacing.
+Avoid bloating of audit log files could be done when saving into audit log
+files, but avoiding overhead of tracking/recording this history information
+would need to be done using kernel command line options.
 
-To further assist Leesoo and others who may be following this, you had
-suggested the following earlier in this thread:
+Is there a kernel command line option that can configure whether to include
+(and what to be included into) this history information or not?
 
-Paul> If you are interested in stacking SELinux and AppArmor, I
-Paul> believe the only practical solution is to run SELinux on the
-Paul> host system (initial namespace) and run AppArmor in the
-Paul> containers.
+If an LSM is used, a kernel command line option like lsm=tt can be used for
+telling the kernel to include this history information and kernel command
+line options like tt.size=512 tt.fields=name,stamp for telling the kernel
+max history length and fields to include.
 
-Which would seem to apply that in a 'stacked' LSM configuration of
-SELinux and AppArmor, there would be a possibility of using the two
-LSM's without them 'colliding', the equivalent of what could be
-considered a 'nested' LSM implementation.
-
-Casey had also suggested in this thread that this would be possible at
-the risk of a system that would be difficult to reason about.
-
-Were our previous comments correct, that the path forward would be to
-have SELinux configured in a manner where it would not act on any of
-the subject/object interactions that occur in the container
-environment that is using AppArmor?
-
-If so, would the path forward be to implement an SELinux policy that
-would place the process initiating the namespace, and its descendants,
-in an unconfined domain with respect to the assets in the scope of the
-container?
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
