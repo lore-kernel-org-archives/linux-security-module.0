@@ -2,114 +2,131 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C99AC001DB
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 16:23:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07126C001DB
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 17:01:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229535AbjHHQWh (ORCPT
+        id S233962AbjHHRBk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Aug 2023 12:22:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43766 "EHLO
+        Tue, 8 Aug 2023 13:01:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230527AbjHHQVD (ORCPT
+        with ESMTP id S233736AbjHHRBB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Aug 2023 12:21:03 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 495D993E0
-        for <linux-security-module@vger.kernel.org>; Tue,  8 Aug 2023 08:49:06 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id af79cd13be357-7659cb9c42aso423151685a.3
-        for <linux-security-module@vger.kernel.org>; Tue, 08 Aug 2023 08:49:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1691509745; x=1692114545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Em0u3rAwfsJ9DADQmbz8jINXwrAXQCvwsoKWZ+kvbag=;
-        b=XhmtZmN+4X3aHwdqW3pPQRMyQQlli/XhwSdU/PJi+DXyt+yEZuKyAuD8yRPFxZXfel
-         3Xy21G0U+rkD+acyyq4aUFern1imNDo6Ew3vPYOhXwFv8fGOgGIA3Cq2jGs4GKlDXOUw
-         9JG6WlfRgnU4V8AiIR6KKUpjRqR4ARkvHhL3J3EIgHuNFU1Xsi4w6icTCi4fLbAxJXiM
-         Yri4tHKoYDO5v1g3xvvyrCfLrCoWSLYJnyGG/2aOogMmK72TA5S3MHntHKdH3sP2yPBF
-         JPbAJTMPgHq689qygQbHobGvQsuRUxIoSoFT0K4P+GhYnMckfJ5/TRlWYTy9INNXUQoR
-         lHQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691509745; x=1692114545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Em0u3rAwfsJ9DADQmbz8jINXwrAXQCvwsoKWZ+kvbag=;
-        b=Mt/t7nHsN9Kh6IK+2yf9PSdFLSHpAb/VaWMuxh1nq+3rv7QFVwyxJGpvns4hZ4x1G8
-         ekYZpabRHd505cdad60W492GDV14hKkKSpr7xWlj064KymG5qOgd4p6TJHfbsTM+mzLR
-         kfP/LKWFNI+Je6xzS1H99RJLaJUlytwIeVHhhjF+0mjXDfG7J47e5p96K6eJdYzV8ZRs
-         ghSd/myFf87uEQK01NgpcvmyVuz73DpbdIY4VKmtfRSG/a3GY9mgSHwNyk50eGEm8Fiz
-         4idR+1Nq5EbEeWbweiLACimJ7eaf2TplbPltjvFUS9V1ubVN/0gPOiG2NK9ho8KV0sYM
-         3LeQ==
-X-Gm-Message-State: AOJu0YwGEoI73DN5SemDHbwzOcRqGvtSQSIn6zwCOPqv0SAfeuRaSnO/
-        goXPty1PFMoVoFVifvHqY3WDSfVU05gYPDz3O+x23g+vdw8fe07jjA==
-X-Google-Smtp-Source: AGHT+IGLc34aLVA9ZLIe34W64Ir8n1SwTlr71PLKuPbf1vupgTPfoQCmYXbLiBv77geHjnpKt9FR9UZG6Qiq89sY/1I=
-X-Received: by 2002:a81:7741:0:b0:583:7b49:15dd with SMTP id
- s62-20020a817741000000b005837b4915ddmr13398514ywc.48.1691505497509; Tue, 08
- Aug 2023 07:38:17 -0700 (PDT)
+        Tue, 8 Aug 2023 13:01:01 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A90B8682;
+        Tue,  8 Aug 2023 09:00:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 575C462544;
+        Tue,  8 Aug 2023 13:32:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31B3AC433C8;
+        Tue,  8 Aug 2023 13:32:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691501527;
+        bh=xTIkYrBHz5+6SzO4pB3IGPq/HC4uBhzgU7+be7OH9VU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dZpEWm+PTm9uFdGmOoy5ygSH3XOPg6Y5ZyF0Ulu0M0HE1hTyuXrVvdG9f3BOamM/W
+         3m8sLzVajCx1eYX5lZ3b30+sYKYXM3u0ewDW4+nd1xPBNtK65Jo8h2yyJ+inwyMHGs
+         w2WK+YR84CUHGvViczIvWnkEgwBIt6jA9UIpd40G6jrmvqJVOK9KewB009NnSwZCHe
+         FuqGamjpS7LjpwZz+GvSUYyUZWQ2PfS5KwB+UQ3reJTzCdmZf4c/JSvS6NM2uliol5
+         LUwdEFraQwdTOXt7nGBplT/LAucUY6qUfKgCd/hdf4oAwdV56AZjsHCGIqFzd81wlg
+         GdbWrpF/FvN3g==
+Date:   Tue, 8 Aug 2023 15:31:56 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: Re: [PATCH v9] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+Message-ID: <20230808-erdaushub-sanieren-2bd8d7e0a286@brauner>
+References: <20230808-master-v9-1-e0ecde888221@kernel.org>
 MIME-Version: 1.0
-References: <41d03271-ff8a-9888-11de-a7f53da47328@I-love.SAKURA.ne.jp>
- <CAHC9VhSsDTyfae6f0XvYYcCRH590L1ZEqbHSM4UgUCHRGm7X_g@mail.gmail.com>
- <2155117.irdbgypaU6@x2> <CAHC9VhRG2aX-_ye7ZRWpZkR7rq8Op7RUVS3cMtxhF8t1bdw5oQ@mail.gmail.com>
- <6f3a90b9-b210-512a-f74a-6003aebf5c30@I-love.SAKURA.ne.jp>
-In-Reply-To: <6f3a90b9-b210-512a-f74a-6003aebf5c30@I-love.SAKURA.ne.jp>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 8 Aug 2023 10:38:06 -0400
-Message-ID: <CAHC9VhQPROcbN5MfS5pnNDe-YDgLTAY7W9eQkNAJU3kBH43ZEA@mail.gmail.com>
-Subject: Re: [PATCH v2] TaskTracker : Simplified thread information tracker.
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
-        audit@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230808-master-v9-1-e0ecde888221@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 8, 2023 at 6:07=E2=80=AFAM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2023/08/08 5:13, Paul Moore wrote:
-> > On Mon, Aug 7, 2023 at 3:03=E2=80=AFPM Steve Grubb <sgrubb@redhat.com> =
-wrote:
-> >> On Monday, August 7, 2023 2:53:40 PM EDT Paul Moore wrote:
-> >>> On Sun, Aug 6, 2023 at 9:05=E2=80=AFAM Tetsuo Handa
-> >>>
-> >>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> >>>> When an unexpected system event occurs, the administrator may want t=
-o
-> >>>> identify which application triggered the event. For example, unexpec=
-ted
-> >>>> process termination is still a real concern enough to write articles
-> >>>> like https://access.redhat.com/solutions/165993 . TaskTracker is a
-> >>>> trivial LSM module which emits TOMOYO-like information into the audi=
-t
-> >>>> logs for better understanding of unexpected system events.
-> >>>
-> >>> Help me understand why all of this information isn't already availabl=
-e
-> >>> via some combination of Audit and TOMOYO, or simply audit itself?
-> >>
-> >> Usually when you want this kind of information, you are investigating =
-an
-> >> incident. You wouldn't place a syscall audit for every execve and then
-> >> reconstruct the call chain from that. In the case of long running daem=
-ons,
-> >> the information could have been rotated away. But typically you want t=
-o see
-> >> what the entry point is. A sudden shell from bind would be suspicious =
-while a
-> >> shell from sshd is not.
-> >
-> > Once again, why not use the existing audit and/or TOMOYO capabilities.
-> >
->
-> Can't, for Fedora/RHEL does not enable TOMOYO.
-> I need a way that can be used by RHEL users running with selinux=3D0.
+On Tue, Aug 08, 2023 at 07:34:20AM -0400, Jeff Layton wrote:
+> From: David Howells <dhowells@redhat.com>
+> 
+> When NFS superblocks are created by automounting, their LSM parameters
+> aren't set in the fs_context struct prior to sget_fc() being called,
+> leading to failure to match existing superblocks.
+> 
+> This bug leads to messages like the following appearing in dmesg when
+> fscache is enabled:
+> 
+>     NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
+> 
+> Fix this by adding a new LSM hook to load fc->security for submount
+> creation.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
+> Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
+> Tested-by: Jeff Layton <jlayton@kernel.org>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> Acked-by: "Christian Brauner (Microsoft)" <brauner@kernel.org>
+> Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk/ # v1
+> Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk/ # v2
+> Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk/ # v3
+> Link: https://lore.kernel.org/r/166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk/ # v4
+> Link: https://lore.kernel.org/r/217595.1662033775@warthog.procyon.org.uk/ # v5
+> ---
+> ver #2)
+> - Added Smack support
+> - Made LSM parameter extraction dependent on reference != NULL.
+> 
+> ver #3)
+> - Made LSM parameter extraction dependent on fc->purpose ==
+>    FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
+> 
+> ver #4)
+> - When doing a FOR_SUBMOUNT mount, don't set the root label in SELinux or Smack.
+> 
+> ver #5)
+> - Removed unused variable.
+> - Only allocate smack_mnt_opts if we're dealing with a submount.
+> 
+> ver #6)
+> - Rebase onto v6.5.0-rc4
+> - Link to v6: https://lore.kernel.org/r/20230802-master-v6-1-45d48299168b@kernel.org
+> 
+> ver #7)
+> - Drop lsm_set boolean
+> - Link to v7: https://lore.kernel.org/r/20230804-master-v7-1-5d4e48407298@kernel.org
+> 
+> ver #8)
+> - Remove spurious semicolon in smack_fs_context_init
+> - Make fs_context_init take a superblock as reference instead of dentry
+> - WARN_ON_ONCE's when fc->purpose != FS_CONTEXT_FOR_SUBMOUNT
+> - Call the security hook from fs_context_for_submount instead of alloc_fs_context
+> - Link to v8: https://lore.kernel.org/r/20230807-master-v8-1-54e249595f10@kernel.org
+> 
+> ver #9)
+> - rename *_fs_context_init to *_fs_context_submount
+> - remove checks for FS_CONTEXT_FOR_SUBMOUNT and NULL reference pointers
+> - fix prototype on smack_fs_context_submount
 
-What makes you think your distribution of choice would enable this new
-LSM?  I'm sorry, but this sounds like more of an issue with the
-choices made by a distro rather than something missing upstream.
-
---=20
-paul-moore.com
+Thanks, this looks good from my perspective. If it looks fine to LSM
+folks as well I can put it with the rest of the super work for this
+cycle or it can go through the LSM tree.
