@@ -2,341 +2,198 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 406CCC04A6A
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 20:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 892FEC001B0
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 20:40:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230237AbjHHUR4 (ORCPT
+        id S231443AbjHHUku (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Aug 2023 16:17:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46608 "EHLO
+        Tue, 8 Aug 2023 16:40:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230320AbjHHURm (ORCPT
+        with ESMTP id S233615AbjHHUki (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Aug 2023 16:17:42 -0400
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 229D719405;
-        Tue,  8 Aug 2023 11:48:31 -0700 (PDT)
-Received: from jerom (unknown [128.107.241.188])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: serge)
-        by mail.hallyn.com (Postfix) with ESMTPSA id 0EB6C883;
-        Tue,  8 Aug 2023 13:48:27 -0500 (CDT)
-Date:   Tue, 8 Aug 2023 13:48:25 -0500
-From:   Serge Hallyn <serge@hallyn.com>
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net
-Subject: Re: [PATCH 02/13] Add TSEM specific documentation.
-Message-ID: <ZNKN+ZK6Lfbjb4GZ@jerom>
-References: <20230710102319.19716-1-greg@enjellic.com>
- <20230710102319.19716-3-greg@enjellic.com>
+        Tue, 8 Aug 2023 16:40:38 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73CB81CEBC;
+        Tue,  8 Aug 2023 13:10:21 -0700 (PDT)
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 378K8dC7001628;
+        Tue, 8 Aug 2023 20:09:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=UTbFCsGJMcwIn5bFHcp4kGcFhSNH5fmtibVxRAf1030=;
+ b=bM3t79mEgpBFmad+AHd22ZInfKHy47dph2WBo8f68D5JcCBLCVHPsiQANL+mpFzM41yL
+ /yb0b/IoK0AZ6oVwuiztlyVzMHCBymhrH0il0V/CQOG4eungnMFmRefTkb3LRCdwQhB7
+ 5Ol/NoMLtNwRES7q0j4R1HUo0yGAM9HIenbd24fJoT/Tr2PLOU4W/x10on5QslbmpLVE
+ WgyMqbYzdNBssPe7315ru/4i7L++loqRucV3sHgRk+dTV5ct4vuE5DzaUPGG23YjV6DX
+ xvisWzGTe7dR7btuM2HzK3ao2gQkftpyDUBJ0XJ7bfc+t0MMo6Qx3TSkW1blyUkQhYWW dQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sbv8srg5e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Aug 2023 20:09:56 +0000
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 378K8r4t002293;
+        Tue, 8 Aug 2023 20:09:56 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sbv8srfvk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Aug 2023 20:09:56 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 378IEI1i001888;
+        Tue, 8 Aug 2023 20:09:48 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+        by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3sa3f1s846-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Aug 2023 20:09:48 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+        by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 378K9lcZ27001576
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 8 Aug 2023 20:09:47 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 46FA958066;
+        Tue,  8 Aug 2023 20:09:47 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BB2A25805D;
+        Tue,  8 Aug 2023 20:09:45 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Tue,  8 Aug 2023 20:09:45 +0000 (GMT)
+Message-ID: <04fb2fe5-9ebe-b35f-bdde-6ef22786438f@linux.ibm.com>
+Date:   Tue, 8 Aug 2023 16:09:45 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
+Content-Language: en-US
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Sush Shringarputale <sushring@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+        kgold@linux.ibm.com, bhe@redhat.com, vgoyal@redhat.com,
+        dyoung@redhat.com, kexec@lists.infradead.org, jmorris@namei.org,
+        Paul Moore <paul@paul-moore.com>, serge@hallyn.com
+Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        linux-security-module@vger.kernel.org
+References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
+ <b748230c8ee291288afcf48898507556c3aa7c71.camel@HansenPartnership.com>
+ <5d21276a-daac-fc9b-add9-62e7c04bbdcd@linux.ibm.com>
+ <8ad131f35c33cf10788344be6c981473971f9c1c.camel@HansenPartnership.com>
+ <abe53dde-9a83-81fd-422d-babf4587c545@linux.ibm.com>
+ <350ecdcbf7796f488807fcd7983414a02dd71be4.camel@HansenPartnership.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <350ecdcbf7796f488807fcd7983414a02dd71be4.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: T9udji-d3sRLml-8nc4OKKaRcnP0bfXH
+X-Proofpoint-ORIG-GUID: UizCQRrMEbz1qE8ogLzySaNARXm9SgsR
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230710102319.19716-3-greg@enjellic.com>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-08_18,2023-08-08_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ mlxscore=0 lowpriorityscore=0 mlxlogscore=829 suspectscore=0 adultscore=0
+ clxscore=1015 bulkscore=0 priorityscore=1501 spamscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2308080178
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 10, 2023 at 05:23:08AM -0500, Dr. Greg wrote:
-> An entry was added to the ABI testing documentation to document
 
-"Add an entry..." is the usual way to document this in commit msg.
 
-> the files in the TSEM management filesystem.
+On 8/8/23 14:26, James Bottomley wrote:
+> On Tue, 2023-08-08 at 09:31 -0400, Stefan Berger wrote:
+>>
+>>
+>> On 8/8/23 08:35, James Bottomley wrote:
+>>> On Mon, 2023-08-07 at 18:49 -0400, Stefan Berger wrote:
+>>>>
+>>>>
+>>>> On 8/1/23 17:21, James Bottomley wrote:
+>>>>> On Tue, 2023-08-01 at 12:12 -0700, Sush Shringarputale wrote:
+>>>>> [...]
+>>>>>> Truncating IMA log to reclaim memory is not feasible, since
+>>>>>> it makes the log go out of sync with the TPM PCR quote making
+>>>>>> remote attestation fail.
+>>>>>
+>>>>> This assumption isn't entirely true.  It's perfectly possible
+>>>>> to shard an IMA log using two TPM2_Quote's for the beginning
+>>>>> and end PCR values to validate the shard.  The IMA log could be
+>>>>> truncated in the same way (replace the removed part of the log
+>>>>> with a TPM2_Quote and AK, so the log still validates from the
+>>>>> beginning quote to the end).
+>>>>>
+>>>>> If you use a TPM2_Quote mechanism to save the log, all you need
+>>>>> to do is have the kernel generate the quote with an internal
+>>>>> AK.  You can keep a record of the quote and the AK at the
+>>>>> beginning of the truncated kernel log.  If the truncated
+>>>>> entries are saved in a file shard it
+>>>>
+>>>> The truncation seems dangerous to me. Maybe not all the scenarios
+>>>> with an attestation client (client = reading logs and quoting)
+>>>> are possible then anymore, such as starting an attestation client
+>>>> only after truncation but a verifier must have witnessed the
+>>>> system's PCRs and log state before the truncation occurred.
+>>>
+>>> That's not exactly correct.  Nothing needs to have "witnessed" the
+>>> starting PCR value because the quote vouches for it (and can vouch
+>>> for it after the fact).  The only thing you need to verify the
+>>> quote is the attestation key and the only thing you need to do to
+>>> trust the attestation key is ensure it was TPM created.  All of
+>>> that can be verified after the fact as well.  The only thing that
+>>> can be done to disrupt this is to destroy the TPM (or re-own it).>
+>>> Remember the assumption is you *also* have the removed log shard to
+>>> present.  From that the PCR state of the starting quote can be
+>>
+>> Yes, the whole sequence of old logs needs to be available.
 > 
-> The file documenting the kernel command-line parameters was
-> updated to document the TSEM specific command-line parameters
-
-A commit's actions are more normally in present tens
-("The file documenting the kernel command-line parameters is")
-
-> The primary TSEM documentation file was added to the LSM
-> administration guide and the file was linked to the index of LSM
-> documentation.
+> Yes and no.  If the person relying on the logs is happy they've
+> extracted all the evidentiary value from the log itself then they can
+> reduce the preceding log shard to simply the PCR values that match the
+> quote and discard the rest.
 > 
-> Signed-off-by: Greg Wettstein <greg@enjellic.com>
-> ---
->  Documentation/ABI/testing/tsem                |  828 +++++++++
->  Documentation/admin-guide/LSM/index.rst       |    1 +
->  Documentation/admin-guide/LSM/tsem.rst        | 1526 +++++++++++++++++
->  .../admin-guide/kernel-parameters.txt         |   18 +
->  4 files changed, 2373 insertions(+)
->  create mode 100644 Documentation/ABI/testing/tsem
->  create mode 100644 Documentation/admin-guide/LSM/tsem.rst
+>>   IF that's the case and the logs can be stitched together seamlessly,
+>> who then looks at the kernel AK quote and under what circumstances?
 > 
-> diff --git a/Documentation/ABI/testing/tsem b/Documentation/ABI/testing/tsem
-> new file mode 100644
-> index 000000000000..cfb013b5f1f4
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/tsem
-> @@ -0,0 +1,828 @@
-> +What:		/sys/kernel/security/tsem
-> +Date:		July 2023
-> +Contact:	Greg Wettstein <greg@enjellic.com>
-> +Description:
-> +		The /sys/kernel/security/tsem directory contains files
-> +		and directories that implement the control plane for
-> +		the Trusted Security Event Modeling (TSEM) LSM.
-> +
-> +		The files in this directory hierarchy, with the
-> +		exception of the aggregate file, when read, reflect
-> +		the values for the security modeling namespace that
-> +		the process reading the files is operating in.
-> +
-> +What:		/sys/kernel/security/tsem/id
-> +Date:		July 2023
-> +Contact:	Greg Wettstein <greg@enjellic.com>
-> +Description:
-> +		The id file contains the ASCII base 10 representation
+> For incremental attestation.  Each log shard can be verified using the
+> base PCR values corresponding to the bottom quote then replayed and the
 
-Why not use base 16 here?  Mixing bases amongst the files could get
-confusing.
 
-> +		of the model domain/namespace identifier that the
-> +		reading process is operating in.
-> +
-> +		The root security modeling namespace has a value of
-> +		zero, a non-zero value indicates a modeling namespace
-> +		subordinate to the root model.
-> +
-> +		Each externally modeled domain will have a file, with
-> +		this id number, created in the
-> +		/sys/kernel/security/tsem/ExternalTMA directory that
-> +		is documented below.
-> +
-> +What:		/sys/kernel/security/tsem/aggregate
-> +Date:		July 2023
-> +Contact:	Greg Wettstein <greg@enjellic.com>
-> +Description:
-> +		The aggregate file contains the ASCII base 16
-> +		representation of the 256 bit hardware platform
-> +		aggregate that TSEM is modeling under.  The platform
-> +		aggregate is the linear extension measurement of the
-> +		Trusted Platform Module PCR registers 0 through 8.
-> +
-> +		On a platform without a TPM this value will be all
-> +		null bytes.
-> +
-> +What:		/sys/kernel/security/tsem/control
-> +Date:		July 2023
-> +Contact:	Greg Wettstein <greg@enjellic.com>
-> +Description:
-> +		The control file is the only writable file in the
-> +		filesystem and is used by the trust orchestrator's to
-> +		configure and control the behavior of the TSEM
-> +		implementation.
-> +
-> +		The following keyword and arguments are recognized:
-> +
-> +		internal
-> +			The internal keyword causes an internally
-> +			modeled domain to be created for the calling
-> +			process.
-> +
-> +		external
-> +			The external keyword causes an externally
-> +			modeled domain to be created for the calling
-> +			process.
-> +
-> +			A modeling namespace created by these commands
-> +			accept the following set of key=value pairs
-> +			that configure the namespace:
-> +
-> +			nsref=initial|current
-> +				The nsref key specifies the namespace
-> +				that is to be referenced when
-> +				determining the UID/GID values that
-> +				define a COE or CELL identity.
-> +
-> +				The initial keyword specifies that the
-> +				initial user namespace be used.  The
-> +				current keyword specifies that the
-> +				user namespace of the process that is
-> +				invoking a security event handler
-> +				(hook) is used.
+Somehow you have to tell a verifier to take a snapshot of the current state
+of the PCRs when it replays the logs to be able to truncate the log. Whether
+the state of the PCRs is in the log itself or it's just some sort of entry in
+the log indicating a truncation probably doesn't matter for as long as the
+verifying side keeps state of the PCRs at point of truncatiokn.
 
-Hm, does this allow a process in a container to escape the container's
-policy, by creating a new domain inheriting from the initial userns?
+Also, the verifying side needs to take notice of the trustworthiness of the
+system at the time the log was truncated in case the attestation client is
+restarted and starts out sending the log with the first entry. The PCR state
+shown at the beginning of the truncated log (when restarting the attestation
+client) must then match when the 'notice' was taken and that determines its
+trustworthiness at this point in the log.
 
-> +TSEM implements its equivalent of mandatory access controls, without a
-> +requirement for extended attributes, filesystem labeling or the need
-> +to protect filesystem metadata against offline attack.  A mathematical
+That there's a kernel AK signature at this point doesn't seem necessary since one
+presumably can verify the log and PCR states at the end with the 'regular' quote.
+Nobody should ever trust a system by starting to look at the beginning of a
+truncated log. You have to have evaluated all the entries in the log before and
+determined whether the system was trustworthy. I don't think the kernel AK
+quote buys much - at least not from what I can see.
 
-If the security policy is that no data from /dev/tty, because it is
-untrusted, may flow into high integrity files, then how do you track
-the files which are high integrity, without labeling high integrity
-files?  You're intending for the agent to track the files using
-inode number and fsid?
 
-> +The root security model extends each security state coefficient into a
-> +PCR.  The default PCR is 11 but is configurable through the kernel
-
-Note pcr 11 will conflict with systemd's usage
-
-https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/
-
-> +It is up to the trust orchestrator and its security policy to
-> +determine how it handles events that violate the security model being
-> +enforced.  The Quixote trust orchestrators shut down the entire
-> +workload running in the security namespace if an asynchronously
-> +modeled event violates the security model being enforced and the model
-> +is running in enforcing mode.
-
-So instead of returning EPERM, you'll let the process speculatively
-continue until quixote has a chance to catch up and return a "no not
-allowed" message, after which the whole workload will be killed?
-
-> +From a hardware perspective, this is important with respect to the
-> +notion of a TMA being a model for a successor to the TPM.  From a
-> +system trust or integrity perspective, a TPM is designed to provide a
-> +retrospective assessment of the actions that have occurred on a
-> +platform.  A verifying party uses the TPM event log and a PCR based
-> +summary measurement, to verify what actions have occurred on the host,
-> +in order to allow a determination of whether or not the platform
-> +should be 'trusted'.
-
-FWIW TPM EA policies also refuse access to secrets based on those and
-other data.  It's not purely for retrospective assessment.  But indeed
-TPM does not authorize actions as trusted.  Not because it fails to do
-so but because it's not part of its design.
-
-> +
-> +In contrast, a TSEM/TMA based system enforces, on a real time basis,
-> +that a platform or workload remains in a trusted state.  Security
-> +relevant actions cannot be conducted unless the TMA authorizes the
-> +actions as being trusted.
-> +
-> +This is particularly important with respect to embedded systems.  A
-> +TPM based architecture would not prevent a system from having its
-> +trust status altered.  Maintaining the system in a trusted state would
-> +require attestation polling of the system, and presumably, executing
-> +actions if the platform has engaged in untrusted behavior.
-> +
-> +Conversely, a trust orchestrated software implementation enforces that
-> +a system or workload remain in a security/trust state that it's
-> +security model was unit tested to.
-
-To be convinced that there is *any* use case for this in the real world,
-you'd need to show me how any useful rule, like your above /etc/shadow
-set, could actually indicate a less trustworthy state in a robust way,
-without turning into an easy accidental-self-DOS.
-
-I'm afraid the answer is going to be "AI"...
-
-> +Security model functional definitions
-> +-------------------------------------
-> +
-> +Previously, classic trusted system implementations supported the
-> +notion of the 'measurement' of the system.  The measurement is the
-> +value of a linear extension function of all the security relevant
-> +actions recorded by a trust measurement system such as IMA.
-> +
-> +In TPM based trust architectures, this measurement is maintained in a
-> +PCR.  A measurement value is submitted to the TPM that extends the
-> +current measurement using the following formula:
-> +
-> +MEASUREMENT = HASH(CURRENT || NEW)
-> +
-> +	Where:
-> +		MEASUREMENT = The new measurement value to be maintained
-> +			      in the register for the system.
-> +
-> +		||	    = Concatenation operator.
-> +
-> +		HASH	    = A cryptographic hash function supported
-> +			      by the TPM device.
-> +
-> +		CURRENT     = The current measurement value.
-> +
-> +		NEW	    = A new measurement value to be added to
-> +			      the current measurement.
-> +
-> +In TPM1 based systems, the HASH function was SHA1.  Due to well
-> +understood security concerns about the cryptographic vitality of this
-> +function, TPM2 based systems provide additional HASH functions with
-> +stronger integrity guarantees, most principally SHA related functions
-> +with longer digest values such as SHA256, SHA384 and SM3.
-
-This previous paragraph simply is not needed in this document.
-
-> +The use of a cryptographic function produces a non-commutative sum
-> +that can be used to verify the integrity of a series of measurements.
-> +With respect to security modeling theory, this can be thought of as a
-> +'time-dependent' measurement of the system.  Stated more simply, the
-> +measurement value is sensitive to the order in which the measurements
-> +were made.
-> +
-> +In systems such as IMA, the measurement value reflects the sum of
-> +digest values of what are considered to be security critical entities,
-> +most principally, files that are accessed, based on various policies.
-> +
-> +In TSEM based TMA's, the measurement of a modeling namespace is the
-> +sum of the security state coefficients generated by the operative
-> +security model being enforced.  As previously noted, on systems with a
-> +TPM, the root modeling namespace measurement is maintained by default
-> +in PCR 11 or the PCR that was selected at kernel configuration time.
-> +
-> +The challenge associated with classic integrity measurements is the
-> +time dependent nature of using a non-commutative summing function.
-> +The almost universal embrace of SMP based hardware architectures, in
-> +addition to standard kernel task scheduling issues, makes the
-> +measurement values non-deterministic.  This requires a verifying party
-> +to evaluate an event log, verified by a measurement value, to
-> +determine whether or not the system is in a security appropriate
-> +state.
-> +
-> +TSEM addresses this issue by implementing a strategy designed to
-> +produce a single functional value that represents the security state
-
-You've spent a lot of space discussing the "time based" (I think
-"order dependent" might be better) nature of IMA and TPM measurements.
-But after reading this section twice, I'm still not seeing what TMA
-does to work around it.
-
-If a process normally reads files F1, F2, .. F10, then writes F11,
-but next time it reads F1, F3, F2, F4, .. F10, how will these two
-different vectors be used in TMA?
-
-> +of a model.  This allows a TMA to attest to the trust/security status
-> +of a platform or workload by signing this singular value and
-> +presenting it to a verifying party.
-> +
-> +In TSEM nomenclature, this singular value is referred to as the
-> +'state' of the model.  The attestation model is to use trust
-> +orchestrators to generate the state value of a workload by unit
-> +testing.  This state value can be packaged with a utility or container
-> +to represent a summary trust characteristic that can be attested by a
-> +TMA, eliminating the need for a verifying partner to review and verify
-> +an event log.
-> +
-> +TMA's implement this architecture by maintaining a single instance
-> +vector of the set of security state coefficients that have been
-> +generated.  A state measurement is generated by sorting the vector in
-> +big-endian hash format and then generating a standard measurement
-> +digest over this new vector.
-
-Are you saying the TMA will keep every meaningful measurement for the
-duration of the workload, so that it can always sort them?
-
-> +Any security event that generates an associated state coefficient that
-> +is not in the model will resulted in a perturbed state function value.
-> +That perturbed value would be interpreted by a verifying party as an
-> +indication of an untrusted system.
-> +
-> +Since the TMA maintains the security event descriptions in time
-> +ordered form, the option to provide a classic event log and
-> +measurement are preserved and available.  Extensive experience in the
-> +development of TSEM modeled systems has demonstrated the superiority
-> +of state value interpretation over classic measurement schemes.
-
-I think you're saying that keeping the tens of thousands security
-relevant events instead of keeping a hash of those events gives you
-more information... which is true.  It also gives you more information.
-In a presumably limited space and over a presumably limited link.  No
-performance impact?
-
-I'd really like to see what a conscise but useful policy looks like.
-
--serge
+> top quote verified.  This means that logs that aren't needed anymore
+> can be discarded, which, I recall, was the base reason for this
+> proposal: reducing IMA memory consumption.  Although all you need to do
+> is extract the shards from kernel memory to file space and free the
+> kernel memory.  Since that scheme can keep all logs intact, there's no
+> reason to further reduce them unless the filesystem is running out of
+> space.
+> 
+> James
+> 
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
