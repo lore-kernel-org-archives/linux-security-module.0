@@ -2,118 +2,94 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70365C04A94
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 21:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43485C001DB
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 21:08:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234817AbjHHVIE (ORCPT
+        id S235266AbjHHVId (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Aug 2023 17:08:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60488 "EHLO
+        Tue, 8 Aug 2023 17:08:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234996AbjHHVIC (ORCPT
+        with ESMTP id S234975AbjHHVIX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Aug 2023 17:08:02 -0400
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 066251FC8C;
-        Tue,  8 Aug 2023 13:39:02 -0700 (PDT)
-Received: from [192.168.192.83] (unknown [50.47.134.245])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id EC3D33F7B7;
-        Tue,  8 Aug 2023 20:38:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1691527141;
-        bh=g4haua1IOmEAZIW6GpRHq65jQw5+tkVRcSl6jTiUYWE=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=Sk7TlFRtjCEL1EgTvHO0+JFUkHXioqPLs/P3V+X2gPA1XLr2blkUd7RNW/wsKMF9r
-         ivUJPqPQovu/t2MFHdzmiCvkD5+izdmPtAcX8TdFMDPZaaCaP6kiQPKZEfFe+UnKFW
-         EEgpjQh6reR1/FlPpDCJ3VANSE964P2NGSVkJ5uyrzgUIJNnqufxBIBK7g5pDxNof7
-         QWn+OTZetD6pkjCReQNVz/kBadC7e/7kjm0DQqlP38aKgm1JRjxIublUxEDBBWjRM8
-         hB8n1unTxD69uHUYplqPiS4y3mPy+LIl/Lj7T0AFjj4B/GdbNNFbtxIrkr8RdtrOyR
-         6a062F51ddwUw==
-Message-ID: <33790c5c-c23a-7207-c3a7-454af1452ad5@canonical.com>
-Date:   Tue, 8 Aug 2023 13:38:58 -0700
+        Tue, 8 Aug 2023 17:08:23 -0400
+Received: from mail-oo1-xc2b.google.com (mail-oo1-xc2b.google.com [IPv6:2607:f8b0:4864:20::c2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DAFC47D7
+        for <linux-security-module@vger.kernel.org>; Tue,  8 Aug 2023 13:57:15 -0700 (PDT)
+Received: by mail-oo1-xc2b.google.com with SMTP id 006d021491bc7-56ca1eebcd7so3903458eaf.0
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Aug 2023 13:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1691528234; x=1692133034;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TS5jj+LJIlaFmebXscgv7ALonGJ5hEAqrVobn+h6tkY=;
+        b=Y9hnaF54b9OdWRu8Mgo3/Um7XsJJt1IeTsHVaRqVcf1uJTYzuVx8plDvnbGPQQj30O
+         nuYIxW1noSDzKhQn1bQvSQjWSQiphGrfkmDI07IJvzTyThMAKGpcSqKUnJEXOZIy4UfX
+         kXhFh2CXld2Se0q0gmX+7ubme4nz6vRkqdHfLaSNTcgpkdiCs2y3lAwXmLZFgAKvIYhL
+         tdmIKD6prK1gA2c3AyFva39ZjOX8CAU9OsRde34oHqg4rDAv7Z8snLfK96+XkNaGF3Gy
+         KXOAdkwWxfBvmL9pFbiIERAOmX3yVhxYD3nsKV0Ml3S+yxxPlRvZ2OxG5MQgQmsS/j3a
+         ewuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691528234; x=1692133034;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TS5jj+LJIlaFmebXscgv7ALonGJ5hEAqrVobn+h6tkY=;
+        b=j+CUJVNGJjST7WG3ovGRjjMvV3f/1emH1XXfhHPwtuP2LscHDUNutXiUTqvRX/UVqV
+         bMXG2dexkpymWs5h6BD7w5TuxMO6UXrNm6ovViSVVwshQlx1X1WP4LgkH4UGvu59b3TD
+         7ztVc7PGD7pxgc5+239r5kdZr858UHnMom43swS7/jvoy+ac2ccK2GlSfWnwZsHYiedx
+         /CnQNtHYGDm1mYcEAr3lnpdXVk1BxAqU+9susg+yvWkbKpvFRV7BMqTi8TSLBUSPTubd
+         N8O1ta3hFDuxE0kdWIY8H2uxZAQ7Kp43hawHtEN48DmBWT4YldjPCWGrdJVXmQ5T9KGr
+         Y4cg==
+X-Gm-Message-State: AOJu0YzPp2NdXGhw9Q7UCCoNqL9Q7xZAgsq+YCorkhtzSxrj3KAOw2Ap
+        W5W6bO47RN+QcqV72Sq8OrwbM8l967IltypRQ+Kb
+X-Google-Smtp-Source: AGHT+IF6at6g2JHJkuRBhYYtMLf3GXfKz3mwW2gLejTNbDRqI3v7TYVl5ylxtV0uehKkfpThdRY8EvckgK0r71MA1+k=
+X-Received: by 2002:a05:6358:8820:b0:139:a866:4155 with SMTP id
+ hv32-20020a056358882000b00139a8664155mr503973rwb.5.1691528234358; Tue, 08 Aug
+ 2023 13:57:14 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH -next] apparmor: cleanup unused functions in file.h
-Content-Language: en-US
-To:     Xiu Jianfeng <xiujianfeng@huawei.com>, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, mike.salvatore@canonical.com
-Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230725141259.233391-1-xiujianfeng@huawei.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20230725141259.233391-1-xiujianfeng@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <ZNCWUQXKrZnCeB/5@gmail.com> <CAHC9VhT+DPRrSnmh_2PCAf05jPCE-EPaMU_TLB=jJ+mJ+NALsw@mail.gmail.com>
+ <ZNHTuHFDVdCNPXj+@gmail.com>
+In-Reply-To: <ZNHTuHFDVdCNPXj+@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 8 Aug 2023 16:57:03 -0400
+Message-ID: <CAHC9VhTUZe0khZCy7oow4RZYgk-9wh18_78gQY1+ikSqECNq6A@mail.gmail.com>
+Subject: Re: [PATCH v2] lsm: constify the 'target' parameter in security_capget()
+To:     Khadija Kamran <kamrankhadijadj@gmail.com>
+Cc:     Alison Schofield <alison.schofield@intel.com>,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com,
+        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
+        john.johansen@canonical.com, ztarkhani@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/25/23 07:12, Xiu Jianfeng wrote:
-> After changes in commit 33bf60cabcc7 ("LSM: Infrastructure management of
-> the file security"), aa_alloc_file_ctx() and aa_free_file_ctx() are no
-> longer used, so remove them, and also remove aa_get_file_label() because
-> it seems that it's never been used before.
-> 
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-Acked-by: John Johansen <john.johansen@canonical.com>
+On Tue, Aug 8, 2023 at 1:33=E2=80=AFAM Khadija Kamran <kamrankhadijadj@gmai=
+l.com> wrote:
+>
+> On Mon, Aug 07, 2023 at 07:09:33PM -0400, Paul Moore wrote:
+> > On Mon, Aug 7, 2023 at 2:59=E2=80=AFAM Khadija Kamran <kamrankhadijadj@=
+gmail.com> wrote:
+> > >
+> > >
+> > >
+> > > cap_capget() LSM hook declaration exceeds the 80 characters per line
+> > > limit. Split the function declaration to multple lines to decrease th=
+e
+> >
+> > "multiple" :)
+> >
+> > Don't worry, I'll fix that in the merge.
+> >
+>
+> Hey Paul,
+> Thank you. :)
 
-this has been pulled into apparmor-next
+... and now it's merged :)
 
-> ---
->   security/apparmor/include/file.h | 37 --------------------------------
->   1 file changed, 37 deletions(-)
-> 
-> diff --git a/security/apparmor/include/file.h b/security/apparmor/include/file.h
-> index 5be620af33ba..23cb6f9dbe6e 100644
-> --- a/security/apparmor/include/file.h
-> +++ b/security/apparmor/include/file.h
-> @@ -45,43 +45,6 @@ struct aa_file_ctx {
->   	u32 allow;
->   };
->   
-> -/**
-> - * aa_alloc_file_ctx - allocate file_ctx
-> - * @label: initial label of task creating the file
-> - * @gfp: gfp flags for allocation
-> - *
-> - * Returns: file_ctx or NULL on failure
-> - */
-> -static inline struct aa_file_ctx *aa_alloc_file_ctx(struct aa_label *label,
-> -						    gfp_t gfp)
-> -{
-> -	struct aa_file_ctx *ctx;
-> -
-> -	ctx = kzalloc(sizeof(struct aa_file_ctx), gfp);
-> -	if (ctx) {
-> -		spin_lock_init(&ctx->lock);
-> -		rcu_assign_pointer(ctx->label, aa_get_label(label));
-> -	}
-> -	return ctx;
-> -}
-> -
-> -/**
-> - * aa_free_file_ctx - free a file_ctx
-> - * @ctx: file_ctx to free  (MAYBE_NULL)
-> - */
-> -static inline void aa_free_file_ctx(struct aa_file_ctx *ctx)
-> -{
-> -	if (ctx) {
-> -		aa_put_label(rcu_access_pointer(ctx->label));
-> -		kfree_sensitive(ctx);
-> -	}
-> -}
-> -
-> -static inline struct aa_label *aa_get_file_label(struct aa_file_ctx *ctx)
-> -{
-> -	return aa_get_label_rcu(&ctx->label);
-> -}
-> -
->   /*
->    * The xindex is broken into 3 parts
->    * - index - an index into either the exec name table or the variable table
-
+--=20
+paul-moore.com
