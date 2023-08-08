@@ -2,176 +2,371 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8998CC001B0
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 17:46:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB9EC04FDF
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 17:47:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233959AbjHHRqi (ORCPT
+        id S229848AbjHHRrM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Aug 2023 13:46:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36470 "EHLO
+        Tue, 8 Aug 2023 13:47:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234787AbjHHRpj (ORCPT
+        with ESMTP id S234894AbjHHRpu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Aug 2023 13:45:39 -0400
-Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 949009009
-        for <linux-security-module@vger.kernel.org>; Tue,  8 Aug 2023 09:20:44 -0700 (PDT)
-Received: by mail-ot1-x336.google.com with SMTP id 46e09a7af769-6bc9c01e154so12200a34.0
-        for <linux-security-module@vger.kernel.org>; Tue, 08 Aug 2023 09:20:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1691511611; x=1692116411;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JtPBjD5nO4Kh7oz9+OPpfIl2AMkC3z5v5j8dstfO/Ys=;
-        b=ICyi5gqQ+n4U5vz+WigjnO7KgXZRFJ99oFlrZEzUqvja5GyH7goSLi4NsW4tiNgctW
-         1bX5hHWgc5BXxZHcvMKB/LdCxXWUNFLyICWwmrm5SZyvKGpeXAnhyqvBaglbq+RDk97q
-         4qiPt72a4v4TvPBm1LHesLAhfSo766d7Us9VoDGlshRfz6qz9RvPjWesVu1qdQPKcXmG
-         zkAfmkwy9pCitjxIa+b3We2Eer5WkcklAYKp/afIvyj/1PTjbAPBn3/UBe9tmKP6SPxP
-         sK3am//SYoUq2aA4OWFN6gKfbD0J4Z3x42bP/trjOaNwb59q3vuf352USbJJu/R1Mitj
-         2AeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691511611; x=1692116411;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JtPBjD5nO4Kh7oz9+OPpfIl2AMkC3z5v5j8dstfO/Ys=;
-        b=P8fhNiX0vadTi8pvzAX4MDg92+/LfsD6cku1OJEnKRYJv5iY1Wpc+8/3Y0LMkrDdFw
-         fK4Un7D/xtp//p8wmQgyw1bgc+qysaKICOOfh1bmv1jr25Dp9C51tQSERSE/+TL1wBvi
-         p8b+Rw+UB6CbgwFsVfsMWYnEPiY7ZFVEKZMcWSfM4NjhMey3Y49KhcMMujdc0XHnCdru
-         rmFsS6bcS0SU+ZxZcAWhal8bI1aQSlO5HRyK6o6NT6Gjxsfiehntlv2xQgchBJ7wEsj5
-         DKjscn0ozWOKExPnYCAjwh8fPMSxvPzqEx3n/vCM4mGf6N5nYUqLrCPZq5jcTisJ+SNb
-         FZyQ==
-X-Gm-Message-State: AOJu0Yxrvomi/MqNXNQIXn1S0imtgUNO62wTpYJu92frGusCwCrnRCpV
-        OQV7f84/LzsLSFR2QgxK+kehJuQiUiUYpg9wsoEDsnnFVbtmOYTudg==
-X-Google-Smtp-Source: AGHT+IF/JRz4aZIQWa2WepnDOzwFFd1ZxEtS4bEAC0j0D3rdTiHKJrP+/acga61+52VOdNPg2Otbk0y2AdC2UR4pjsU=
-X-Received: by 2002:a81:8381:0:b0:586:a680:250 with SMTP id
- t123-20020a818381000000b00586a6800250mr15902ywf.5.1691505182583; Tue, 08 Aug
- 2023 07:33:02 -0700 (PDT)
+        Tue, 8 Aug 2023 13:45:50 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 332EC25EC5;
+        Tue,  8 Aug 2023 09:20:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C26AF624E4;
+        Tue,  8 Aug 2023 11:34:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE6DC433C7;
+        Tue,  8 Aug 2023 11:34:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691494466;
+        bh=jT5jlcg2gdDwL4+StPeX7zJK5A+Ru5LuAg/g9n75i/U=;
+        h=From:Date:Subject:To:Cc:From;
+        b=GCIxZSgjsOIaicABBTDeZGuDdV5hQUKX9WKXki8rIZ2oOo1WCeeH4bn0bPjurTu/Z
+         lWJHsWGHCPYTXPBcWhM409AG7ECGlko/ZCtGEhXngpuHAhezkbWBWQNpJPRHx/qoh9
+         kDDaw9aEn/t1lRhS13+u2Eq56Yt4FEE88ghA/ScjJ2OY2hUppYMPcvMrvguFcBMFWH
+         ZdIiJgpBgjl92H0dPeOQBEi2l4qoA0EOoC/kkeez1MS0wYWdr+9+0UKs31km08ixN2
+         BE25hX3+uHywV1HHJZ1aEPnJnJBTVbXpnrU1hzpGHejc9BflzsqdUDYPejmD55IGUj
+         GlGKZTn/skjLA==
+From:   Jeff Layton <jlayton@kernel.org>
+Date:   Tue, 08 Aug 2023 07:34:20 -0400
+Subject: [PATCH v9] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
 MIME-Version: 1.0
-References: <32e59b69-79a2-f440-bf94-fdb8f8f5fa64@wewakecorp.com>
- <CAHC9VhRdCSJwB9hpyrCe+D00ddeRLisz=9GEWJz50ybr80tnsg@mail.gmail.com>
- <4ec9e7ae-e95e-a737-5131-0b57922e4fce@wewakecorp.com> <CAHC9VhQBbbSu6YBbnXOPMjpBxQxc1nmgA+icfN4x6s6FeQSeiw@mail.gmail.com>
- <02da6484-658c-bfe8-0ae0-08ffe9b93c47@wewakecorp.com> <20230806171622.GA17655@wind.enjellic.com>
- <CAHC9VhRDcJTMpzeWsNHbhkJEk0Vsj+zH_utTgmfzK6Teqzn81Q@mail.gmail.com> <20230808064014.GA31533@wind.enjellic.com>
-In-Reply-To: <20230808064014.GA31533@wind.enjellic.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 8 Aug 2023 10:32:51 -0400
-Message-ID: <CAHC9VhRy0=N+kJ8QETgQv8nkyA6_B+7t9QFiQCxC8MFU7A_E=Q@mail.gmail.com>
-Subject: Re: [LSM Stacking] SELinux policy inside container affects a
- processon Host
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     Leesoo Ahn <lsahn@wewakecorp.com>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230808-master-v9-1-e0ecde888221@kernel.org>
+X-B4-Tracking: v=1; b=H4sIADso0mQC/2XOTU7DMBAF4KtUXmPLHvwzZtV7IBahmSZWaVyNT
+ aCqcnecLKqiLp8035t3E4U4URFvu5tgmlNJeWohvuzEYeymgWTqWxag4VWjBnnuSiWWLYCOmrD
+ 3UbTjC9Mx/W5F7x8tHzmfZR2Zuo0b71EHdD44VBADeA3KWBNcNADaGA86QACjSh1S3f90XMc8q
+ AvnwzVPKvOgvk/rozGVmvm6DZ79+u5p2+ylkdb1FiFG4/FzfyKe6GttEeu4OTw6e3ehucbIom1
+ rIj45fHTh7nB1lsBGF93R6H9uWZY/EOnj7GYBAAA=
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        David Howells <dhowells@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10673; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=3wamLJ1ZUQ6bMvCdgxc+3ktMYaNUWu2MFno2+xMRdvo=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk0ihAaM4Cy7BUOnhJtMipuA2vB7LDwWtdMTodb
+ 37CD1VGBc+JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZNIoQAAKCRAADmhBGVaC
+ FQ1YEADA9hlu16r8PP9DIZ3lEGF9ETvCSNiHCkPXJxZcUCSa//dXqUHxieB1GeICxj0UVq4N1x5
+ BmcuJQHQfFwqNVEiYT8ynuaHIQp7ufEemlGjr4xRtFg0lLZ295tdj5kcwCGJFTk8mDlcb7Q4M0Y
+ paw1ULQnvdBaYMd8JzrN1VzCZnMvmLcNTZbcxe/h9pMw9xEzu1Sgq9tceObZgQixaM7vS0bgqXl
+ O/YhHoBYH/yvntZkC95/eoj5+IvNIsaivn27qvZljRNdsLdUXbgQ2RhkPCgVuWujnNrZoxNUpS2
+ cIDGUv63TP54mnYVBzOu8UsiZcSfhyvgFJWFYwAtdrTGfC2SgUYieH5guFaIoTkj6Omany7Zt6/
+ X7RjLdPNnNHrBpFi8xdxnkebDaJ86XUmtp7MIQm+qrJ0r/QBmIqIaOBqQvM/JDsWLdzjhh9QkA2
+ wmPrs3WXqoxFbl6W1e4+/J6VRKhDm5Mxulm2oUFk1WbvCxTKEqPxv7RxH5V9sx1/pPpb0Vqo1Ne
+ SMHBAQB8xUhbSE6Z3NiP3Q0q/XZbRl52FZFj4l3WacQRqO3uB1ebs4Ecvdj5u0Qzv9s6mxBiuoy
+ niBGWiDzKcggYZnC06vTMIolRAG4a/Pn91Iygc3DVxxhyfavn+rVDCzLv/vptDPZIpzUIZVTd1e
+ hk/lWvPq02KuXhA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 8, 2023 at 2:41=E2=80=AFAM Dr. Greg <greg@enjellic.com> wrote:
-> On Sun, Aug 06, 2023 at 03:25:32PM -0400, Paul Moore wrote:
-> > On Sun, Aug 6, 2023 at 1:16???PM Dr. Greg <greg@enjellic.com> wrote:
-> > > On Fri, Jul 28, 2023 at 10:54:23AM +0900, Leesoo Ahn wrote:
-> > > > 2023-07-07 ?????? 11:20??? Paul Moore ???(???) ??? ???:
-> > > > >On Fri, Jul 7, 2023 at 4:29???AM Leesoo Ahn <lsahn@wewakecorp.com>=
- wrote:
-> > > >
-> > > > [...]
-> > > >
-> > > > >
-> > > > >What you are looking for is a combination of LSM stacking and
-> > > > >individual LSM namespacing. Sadly, I think the communications arou=
-nd
-> > > > >LSM stacking have not been very clear on this and I worry that man=
-y
-> > > > >people are going to be disappointed with LSM stacking for this ver=
-y
-> > > > >reason.
-> > > > >
-> > > > >While stacking of LSMs is largely done at the LSM layer, namespaci=
-ng
-> > > > >LSMs such that they can be customized for individual containers
-> > > > >requires work to be done at the per-LSM level as each LSM is
-> > > > >different. AppArmor already has a namespacing concept, but SELinux
-> > > > >does not. Due to differences in the approach taken by the two LSMs=
-,
-> > > > >namespacing is much more of a challenge for SELinux, largely due t=
-o
-> > > > >issues around filesystem labeling. We have not given up on the ide=
-a,
-> > > > >but we have yet to arrive at a viable solution for namespacing
-> > > > >SELinux.
-> > > > >
-> > > > >If you are interested in stacking SELinux and AppArmor, I believe =
-the
-> > > > >only practical solution is to run SELinux on the host system (init=
-ial
-> > > > >namespace) and run AppArmor in the containers.
-> > >
-> > > > Paul, I don't get that SELinux on the host system and run AppArmor
-> > > > in the containers is the only practical solution. Could you please
-> > > > explain that in more details?
-> > >
-> > > It appears that Paul is extremely busy, so I thought the 'Quixote
-> > > Group' would try and offer some reflections that may help with your
-> > > efforts.
->
-> > My apologies, yes I am rather busy at the moment, but I also stopped
-> > following this thread a while ago as it didn't seem to be going
-> > anywhere meaningful.  I happen to read this last email while I'm
-> > waiting in an airport, so let me try and provide a quick explanation
-> > about why running SELinux only in a container is a bad idea.
-> >
-> > As you probably know, the Linux kernel has no concept of a container,
-> > it only supports subsystem specific namespaces, e.g. mount namespace,
-> > network namespace, etc.  SELinux does not provide a subsystem
-> > namespace, and it does not generally concern itself with other
-> > subsystem names.  From a SELinux perspective there is no difference
-> > between a process running in the host namespace or a
-> > container/namespace; both are treated the same with access control
-> > decisions made based on the processes' SELinux domain, the type of the
-> > target resource, and the access requested.
-> >
-> > If one were to load a SELinux policy inside a container, even if it
-> > were allowed, the system would likely behave in unexpected ways as the
-> > container-loaded policy will take effect across the entire system, not
-> > just inside the container.
->
-> All reasonable and consistent, with what we had previously written
-> with respect to there being no notion of LSM namespacing.
->
-> To further assist Leesoo and others who may be following this, you had
-> suggested the following earlier in this thread:
->
-> Paul> If you are interested in stacking SELinux and AppArmor, I
-> Paul> believe the only practical solution is to run SELinux on the
-> Paul> host system (initial namespace) and run AppArmor in the
-> Paul> containers.
->
-> Which would seem to apply that in a 'stacked' LSM configuration of
-> SELinux and AppArmor, there would be a possibility of using the two
-> LSM's without them 'colliding', the equivalent of what could be
-> considered a 'nested' LSM implementation.
+From: David Howells <dhowells@redhat.com>
 
-SELinux applies access control across the entire system, regardless of
-what namespaces may be configured on the system.  Loading a SELinux
-policy in the host/initial-namespace during early boot helps ensure
-proper labeling of system entities and a better user experience;
-loading a SELinux policy in a container/namespace can lead to
-surprising and unpredictable results across the whole of the system.
-AppArmor is different in that it has support for
-containers/namespaces.  Running SELinux on the host and AppArmor in a
-container isn't so much about preventing collisions, they are still
-simultaneously running and applying their security policies, it is
-more about ensuring the LSMs, the admins, and the users all see
-compatible views of the system.
+When NFS superblocks are created by automounting, their LSM parameters
+aren't set in the fs_context struct prior to sget_fc() being called,
+leading to failure to match existing superblocks.
 
-Please do not confuse any of the above as a 'nested' or namespaced LSM
-layer; the current in-progress LSM stacking is simply that: the
-ability to stack some combination of LSMs in a few prescribed
-configurations.  Talking about 'nesting' or 'namespacing' at the LSM
-layer is confusing at best, and misleading at the worst.
+This bug leads to messages like the following appearing in dmesg when
+fscache is enabled:
 
---=20
-paul-moore.com
+    NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
+
+Fix this by adding a new LSM hook to load fc->security for submount
+creation.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
+Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
+Tested-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+Acked-by: "Christian Brauner (Microsoft)" <brauner@kernel.org>
+Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk/ # v3
+Link: https://lore.kernel.org/r/166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk/ # v4
+Link: https://lore.kernel.org/r/217595.1662033775@warthog.procyon.org.uk/ # v5
+---
+ver #2)
+- Added Smack support
+- Made LSM parameter extraction dependent on reference != NULL.
+
+ver #3)
+- Made LSM parameter extraction dependent on fc->purpose ==
+   FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
+
+ver #4)
+- When doing a FOR_SUBMOUNT mount, don't set the root label in SELinux or Smack.
+
+ver #5)
+- Removed unused variable.
+- Only allocate smack_mnt_opts if we're dealing with a submount.
+
+ver #6)
+- Rebase onto v6.5.0-rc4
+- Link to v6: https://lore.kernel.org/r/20230802-master-v6-1-45d48299168b@kernel.org
+
+ver #7)
+- Drop lsm_set boolean
+- Link to v7: https://lore.kernel.org/r/20230804-master-v7-1-5d4e48407298@kernel.org
+
+ver #8)
+- Remove spurious semicolon in smack_fs_context_init
+- Make fs_context_init take a superblock as reference instead of dentry
+- WARN_ON_ONCE's when fc->purpose != FS_CONTEXT_FOR_SUBMOUNT
+- Call the security hook from fs_context_for_submount instead of alloc_fs_context
+- Link to v8: https://lore.kernel.org/r/20230807-master-v8-1-54e249595f10@kernel.org
+
+ver #9)
+- rename *_fs_context_init to *_fs_context_submount
+- remove checks for FS_CONTEXT_FOR_SUBMOUNT and NULL reference pointers
+- fix prototype on smack_fs_context_submount
+---
+ fs/fs_context.c               | 23 ++++++++++++++++++-
+ include/linux/lsm_hook_defs.h |  1 +
+ include/linux/security.h      |  6 +++++
+ security/security.c           | 14 ++++++++++++
+ security/selinux/hooks.c      | 22 +++++++++++++++++++
+ security/smack/smack_lsm.c    | 51 +++++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 116 insertions(+), 1 deletion(-)
+
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 851214d1d013..375023e40161 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -315,10 +315,31 @@ struct fs_context *fs_context_for_reconfigure(struct dentry *dentry,
+ }
+ EXPORT_SYMBOL(fs_context_for_reconfigure);
+ 
++/**
++ * fs_context_for_submount: allocate a new fs_context for a submount
++ * @type: file_system_type of the new context
++ * @reference: reference dentry from which to copy relevant info
++ *
++ * Allocate a new fs_context suitable for a submount. This also ensures that
++ * the fc->security object is inherited from @reference (if needed).
++ */
+ struct fs_context *fs_context_for_submount(struct file_system_type *type,
+ 					   struct dentry *reference)
+ {
+-	return alloc_fs_context(type, reference, 0, 0, FS_CONTEXT_FOR_SUBMOUNT);
++	struct fs_context *fc;
++	int ret;
++
++	fc = alloc_fs_context(type, reference, 0, 0, FS_CONTEXT_FOR_SUBMOUNT);
++	if (IS_ERR(fc))
++		return fc;
++
++	ret = security_fs_context_submount(fc, reference->d_sb);
++	if (ret) {
++		put_fs_context(fc);
++		return ERR_PTR(ret);
++	}
++
++	return fc;
+ }
+ EXPORT_SYMBOL(fs_context_for_submount);
+ 
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 7308a1a7599b..af796986baee 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -54,6 +54,7 @@ LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, struct file *f
+ LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
+ LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, struct linux_binprm *bprm)
+ LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, struct linux_binprm *bprm)
++LSM_HOOK(int, 0, fs_context_submount, struct fs_context *fc, struct super_block *reference)
+ LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
+ 	 struct fs_context *src_sc)
+ LSM_HOOK(int, -ENOPARAM, fs_context_parse_param, struct fs_context *fc,
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 32828502f09e..bac98ea18f78 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -293,6 +293,7 @@ int security_bprm_creds_from_file(struct linux_binprm *bprm, struct file *file);
+ int security_bprm_check(struct linux_binprm *bprm);
+ void security_bprm_committing_creds(struct linux_binprm *bprm);
+ void security_bprm_committed_creds(struct linux_binprm *bprm);
++int security_fs_context_submount(struct fs_context *fc, struct super_block *reference);
+ int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc);
+ int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
+ int security_sb_alloc(struct super_block *sb);
+@@ -629,6 +630,11 @@ static inline void security_bprm_committed_creds(struct linux_binprm *bprm)
+ {
+ }
+ 
++static inline int security_fs_context_submount(struct fs_context *fc,
++					   struct super_block *reference)
++{
++	return 0;
++}
+ static inline int security_fs_context_dup(struct fs_context *fc,
+ 					  struct fs_context *src_fc)
+ {
+diff --git a/security/security.c b/security/security.c
+index b720424ca37d..549104a447e3 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1138,6 +1138,20 @@ void security_bprm_committed_creds(struct linux_binprm *bprm)
+ 	call_void_hook(bprm_committed_creds, bprm);
+ }
+ 
++/**
++ * security_fs_context_submount() - Initialise fc->security
++ * @fc: new filesystem context
++ * @reference: dentry reference for submount/remount
++ *
++ * Fill out the ->security field for a new fs_context.
++ *
++ * Return: Returns 0 on success or negative error code on failure.
++ */
++int security_fs_context_submount(struct fs_context *fc, struct super_block *reference)
++{
++	return call_int_hook(fs_context_submount, 0, fc, reference);
++}
++
+ /**
+  * security_fs_context_dup() - Duplicate a fs_context LSM blob
+  * @fc: destination filesystem context
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index d06e350fedee..afd663744041 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2745,6 +2745,27 @@ static int selinux_umount(struct vfsmount *mnt, int flags)
+ 				   FILESYSTEM__UNMOUNT, NULL);
+ }
+ 
++static int selinux_fs_context_submount(struct fs_context *fc,
++				   struct super_block *reference)
++{
++	const struct superblock_security_struct *sbsec;
++	struct selinux_mnt_opts *opts;
++
++	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
++	if (!opts)
++		return -ENOMEM;
++
++	sbsec = selinux_superblock(reference);
++	if (sbsec->flags & FSCONTEXT_MNT)
++		opts->fscontext_sid = sbsec->sid;
++	if (sbsec->flags & CONTEXT_MNT)
++		opts->context_sid = sbsec->mntpoint_sid;
++	if (sbsec->flags & DEFCONTEXT_MNT)
++		opts->defcontext_sid = sbsec->def_sid;
++	fc->security = opts;
++	return 0;
++}
++
+ static int selinux_fs_context_dup(struct fs_context *fc,
+ 				  struct fs_context *src_fc)
+ {
+@@ -7182,6 +7203,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+ 	/*
+ 	 * PUT "CLONING" (ACCESSING + ALLOCATING) HOOKS HERE
+ 	 */
++	LSM_HOOK_INIT(fs_context_submount, selinux_fs_context_submount),
+ 	LSM_HOOK_INIT(fs_context_dup, selinux_fs_context_dup),
+ 	LSM_HOOK_INIT(fs_context_parse_param, selinux_fs_context_parse_param),
+ 	LSM_HOOK_INIT(sb_eat_lsm_opts, selinux_sb_eat_lsm_opts),
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 6e270cf3fd30..a8201cf22f20 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -614,6 +614,56 @@ static int smack_add_opt(int token, const char *s, void **mnt_opts)
+ 	return -EINVAL;
+ }
+ 
++/**
++ * smack_fs_context_submount - Initialise security data for a filesystem context
++ * @fc: The filesystem context.
++ * @reference: reference superblock
++ *
++ * Returns 0 on success or -ENOMEM on error.
++ */
++static int smack_fs_context_submount(struct fs_context *fc,
++				 struct super_block *reference)
++{
++	struct superblock_smack *sbsp;
++	struct smack_mnt_opts *ctx;
++	struct inode_smack *isp;
++
++	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++	fc->security = ctx;
++
++	sbsp = smack_superblock(reference);
++	isp = smack_inode(reference->s_root->d_inode);
++
++	if (sbsp->smk_default) {
++		ctx->fsdefault = kstrdup(sbsp->smk_default->smk_known, GFP_KERNEL);
++		if (!ctx->fsdefault)
++			return -ENOMEM;
++	}
++
++	if (sbsp->smk_floor) {
++		ctx->fsfloor = kstrdup(sbsp->smk_floor->smk_known, GFP_KERNEL);
++		if (!ctx->fsfloor)
++			return -ENOMEM;
++	}
++
++	if (sbsp->smk_hat) {
++		ctx->fshat = kstrdup(sbsp->smk_hat->smk_known, GFP_KERNEL);
++		if (!ctx->fshat)
++			return -ENOMEM;
++	}
++
++	if (isp->smk_flags & SMK_INODE_TRANSMUTE) {
++		if (sbsp->smk_root) {
++			ctx->fstransmute = kstrdup(sbsp->smk_root->smk_known, GFP_KERNEL);
++			if (!ctx->fstransmute)
++				return -ENOMEM;
++		}
++	}
++	return 0;
++}
++
+ /**
+  * smack_fs_context_dup - Duplicate the security data on fs_context duplication
+  * @fc: The new filesystem context.
+@@ -4876,6 +4926,7 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
+ 	LSM_HOOK_INIT(syslog, smack_syslog),
+ 
++	LSM_HOOK_INIT(fs_context_submount, smack_fs_context_submount),
+ 	LSM_HOOK_INIT(fs_context_dup, smack_fs_context_dup),
+ 	LSM_HOOK_INIT(fs_context_parse_param, smack_fs_context_parse_param),
+ 
+
+---
+base-commit: 52a93d39b17dc7eb98b6aa3edb93943248e03b2f
+change-id: 20230802-master-3082090e8d69
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
