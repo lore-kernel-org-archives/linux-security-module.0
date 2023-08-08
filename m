@@ -2,310 +2,176 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14546C04A6A
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 17:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8998CC001B0
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 17:46:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234761AbjHHRpd (ORCPT
+        id S233959AbjHHRqi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Aug 2023 13:45:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45918 "EHLO
+        Tue, 8 Aug 2023 13:46:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234763AbjHHRpE (ORCPT
+        with ESMTP id S234787AbjHHRpj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Aug 2023 13:45:04 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FAC725B19
-        for <linux-security-module@vger.kernel.org>; Tue,  8 Aug 2023 09:20:25 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-686be28e1a8so4145608b3a.0
-        for <linux-security-module@vger.kernel.org>; Tue, 08 Aug 2023 09:20:25 -0700 (PDT)
+        Tue, 8 Aug 2023 13:45:39 -0400
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 949009009
+        for <linux-security-module@vger.kernel.org>; Tue,  8 Aug 2023 09:20:44 -0700 (PDT)
+Received: by mail-ot1-x336.google.com with SMTP id 46e09a7af769-6bc9c01e154so12200a34.0
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Aug 2023 09:20:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691511585; x=1692116385;
+        d=paul-moore.com; s=google; t=1691511611; x=1692116411;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=o4QCyZoKdu40FBvi48BdsqXq5s8H3SxUopDt1IBpNKc=;
-        b=ABT+TVd0loZx+1r/3nYJVNhMGZ+ewQppDsGinGyEEWIO9mhoV42jUvhKJurFHf78KL
-         KyiturtxfTNaD4Z3fgULaO4KZSH2JY3Kaq3kiMIkOfTcAVwL4dgG+DZ9TcyVmGEEZ0vR
-         o7X8VoqnZmyhuX4MlICI6tNEZLSpIq4Au37oXrM3zUa6rO7wgAMwypaBwdj1q8nrZt5Z
-         Ng6P+p3S3eW0cYwkv0sxMVIoNTSQs8Ixwo2MHbJs0e6rG3lbmAfNT/DrHD5IJBVFw0hv
-         XhUyflCzQpQOOP2kbrCOZFKi0EWYPw4MfsPxLD8e766Z/aS3HnhNgozKLfyFYnWQvJl3
-         2aWg==
+        bh=JtPBjD5nO4Kh7oz9+OPpfIl2AMkC3z5v5j8dstfO/Ys=;
+        b=ICyi5gqQ+n4U5vz+WigjnO7KgXZRFJ99oFlrZEzUqvja5GyH7goSLi4NsW4tiNgctW
+         1bX5hHWgc5BXxZHcvMKB/LdCxXWUNFLyICWwmrm5SZyvKGpeXAnhyqvBaglbq+RDk97q
+         4qiPt72a4v4TvPBm1LHesLAhfSo766d7Us9VoDGlshRfz6qz9RvPjWesVu1qdQPKcXmG
+         zkAfmkwy9pCitjxIa+b3We2Eer5WkcklAYKp/afIvyj/1PTjbAPBn3/UBe9tmKP6SPxP
+         sK3am//SYoUq2aA4OWFN6gKfbD0J4Z3x42bP/trjOaNwb59q3vuf352USbJJu/R1Mitj
+         2AeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691511585; x=1692116385;
+        d=1e100.net; s=20221208; t=1691511611; x=1692116411;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=o4QCyZoKdu40FBvi48BdsqXq5s8H3SxUopDt1IBpNKc=;
-        b=TvupycZtlRzfvQjQ5I8fBXXBoALPgY9SiGj4WTR8N8idcRwbPLYWfO6+wY1hkSa1O2
-         +7BR3fvrWHB69P+44lpTMSUTO4Xaw/JJr6rKkqD9ZbXGaFXVm52bX13S0Z+6xub7STYW
-         f8IrwTZXrMlT/4xSHAs/OsKObtgVDjySfDeUWQcoWWKlVWRLeyv8NBBzDBxxm1q3sTjn
-         iX+BnO8wfix5nX7VepQtiynJdE5sIGA1lYXnZUd/EgYyJphmj9xECiEAf8bPgXmpg8fA
-         oK2YsfpLcHVDDDTC5BINJ93r0qKzCTbJKglKrvbHJqbPhcjRorkIFSub1ofeR7j/SeBH
-         HI6g==
-X-Gm-Message-State: AOJu0Yxz96BHF5vpCChwrj7MEW7FGhsahUjPOdl/BNcSm6DkcLSU2Rf+
-        1LVe4BtuTv1Z8w7QXno/SWrbzPlN0X1pEwkQxJ5Mh34NK5Y7bH572Wk=
-X-Google-Smtp-Source: AGHT+IGNtfLXTIuMMWsLFIjckcjz0+W3BmhlMZ76WJBndpCHZ6yz0xZe8vd3WQsh7yBXJ2vHpUOh/8Bab44/TT3nh6Y=
-X-Received: by 2002:a05:620a:24c2:b0:75e:bf7e:e17e with SMTP id
- m2-20020a05620a24c200b0075ebf7ee17emr15490100qkn.6.1691485652273; Tue, 08 Aug
- 2023 02:07:32 -0700 (PDT)
+        bh=JtPBjD5nO4Kh7oz9+OPpfIl2AMkC3z5v5j8dstfO/Ys=;
+        b=P8fhNiX0vadTi8pvzAX4MDg92+/LfsD6cku1OJEnKRYJv5iY1Wpc+8/3Y0LMkrDdFw
+         fK4Un7D/xtp//p8wmQgyw1bgc+qysaKICOOfh1bmv1jr25Dp9C51tQSERSE/+TL1wBvi
+         p8b+Rw+UB6CbgwFsVfsMWYnEPiY7ZFVEKZMcWSfM4NjhMey3Y49KhcMMujdc0XHnCdru
+         rmFsS6bcS0SU+ZxZcAWhal8bI1aQSlO5HRyK6o6NT6Gjxsfiehntlv2xQgchBJ7wEsj5
+         DKjscn0ozWOKExPnYCAjwh8fPMSxvPzqEx3n/vCM4mGf6N5nYUqLrCPZq5jcTisJ+SNb
+         FZyQ==
+X-Gm-Message-State: AOJu0Yxrvomi/MqNXNQIXn1S0imtgUNO62wTpYJu92frGusCwCrnRCpV
+        OQV7f84/LzsLSFR2QgxK+kehJuQiUiUYpg9wsoEDsnnFVbtmOYTudg==
+X-Google-Smtp-Source: AGHT+IF/JRz4aZIQWa2WepnDOzwFFd1ZxEtS4bEAC0j0D3rdTiHKJrP+/acga61+52VOdNPg2Otbk0y2AdC2UR4pjsU=
+X-Received: by 2002:a81:8381:0:b0:586:a680:250 with SMTP id
+ t123-20020a818381000000b00586a6800250mr15902ywf.5.1691505182583; Tue, 08 Aug
+ 2023 07:33:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230803123515.4018838-1-jens.wiklander@linaro.org> <CAFA6WYMzBJTNUxh6b-y=a_NND8FX65YjEP4i-HPS4tQ-Qfm+0w@mail.gmail.com>
-In-Reply-To: <CAFA6WYMzBJTNUxh6b-y=a_NND8FX65YjEP4i-HPS4tQ-Qfm+0w@mail.gmail.com>
-From:   Jens Wiklander <jens.wiklander@linaro.org>
-Date:   Tue, 8 Aug 2023 11:07:21 +0200
-Message-ID: <CAHUa44ET3Oqc4Yq8E4ouAjn5dF9ygxoXyWh0sjFF_vPoooxrnA@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: trusted: tee: use tee_shm_register_alloc_buf()
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org,
-        James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>
+References: <32e59b69-79a2-f440-bf94-fdb8f8f5fa64@wewakecorp.com>
+ <CAHC9VhRdCSJwB9hpyrCe+D00ddeRLisz=9GEWJz50ybr80tnsg@mail.gmail.com>
+ <4ec9e7ae-e95e-a737-5131-0b57922e4fce@wewakecorp.com> <CAHC9VhQBbbSu6YBbnXOPMjpBxQxc1nmgA+icfN4x6s6FeQSeiw@mail.gmail.com>
+ <02da6484-658c-bfe8-0ae0-08ffe9b93c47@wewakecorp.com> <20230806171622.GA17655@wind.enjellic.com>
+ <CAHC9VhRDcJTMpzeWsNHbhkJEk0Vsj+zH_utTgmfzK6Teqzn81Q@mail.gmail.com> <20230808064014.GA31533@wind.enjellic.com>
+In-Reply-To: <20230808064014.GA31533@wind.enjellic.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 8 Aug 2023 10:32:51 -0400
+Message-ID: <CAHC9VhRy0=N+kJ8QETgQv8nkyA6_B+7t9QFiQCxC8MFU7A_E=Q@mail.gmail.com>
+Subject: Re: [LSM Stacking] SELinux policy inside container affects a
+ processon Host
+To:     "Dr. Greg" <greg@enjellic.com>
+Cc:     Leesoo Ahn <lsahn@wewakecorp.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Sumit,
-
-On Mon, Aug 7, 2023 at 9:58=E2=80=AFAM Sumit Garg <sumit.garg@linaro.org> w=
-rote:
->
-> Hi Jens,
->
-> On Thu, 3 Aug 2023 at 18:05, Jens Wiklander <jens.wiklander@linaro.org> w=
-rote:
-> >
-> > Prior to this patch was trusted_tee_seal() and trusted_tee_get_random()
-> > relying on tee_shm_register_kernel_buf() to share memory with the TEE.
-> > Depending on the memory allocation pattern the pages holding the
-> > registered buffers overlap with other buffers also shared with the TEE.
-> >
->
-> The overlap here is due to the fact that we are registering two array
-> members of the same struct. This overlap can be removed by registering
-> the overall structure at once. But that sounds unnecessary data
-> structure type sharing with trusted keys TA.
->
-> > The OP-TEE driver using the old SMC based ABI permits overlapping share=
-d
-> > buffers, but with the new FF-A based ABI each physical page may only
-> > be registered once.
->
-> Would it be possible for OP-TEE FF-A ABI to check if a page is already
-> registered?
-
-No, there's no such ABI in the FF-A specification.
-
-> If it is then just return success with appropriate page
-> offset.
-
-It's more complicated than that. What if only there's a partial registratio=
-n?
-
-> As otherwise this sounds like an unnecessary restriction for
-> users. I don't think the problem is only particular to the trusted
-> keys driver but can be reproduced for user-space clients as well.
-
-Indeed, we're dealing with it by using a temporary buffer in the client lib=
-.
-
->
-> >
-> > Fix this problem by allocating a temporary page aligned shared memory
-> > buffer to be used as a bounce buffer for the needed data buffers.
-> >
-> > Since TEE trusted keys doesn't depend on registered shared memory
-> > support any longer remove that explicit dependency when opening a
-> > context to the TEE.
-> >
-> > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> > ---
-> >  security/keys/trusted-keys/trusted_tee.c | 68 +++++++++++++-----------
-> >  1 file changed, 36 insertions(+), 32 deletions(-)
-> >
-> > diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/t=
-rusted-keys/trusted_tee.c
-> > index ac3e270ade69..3085343c489a 100644
-> > --- a/security/keys/trusted-keys/trusted_tee.c
-> > +++ b/security/keys/trusted-keys/trusted_tee.c
-> > @@ -8,6 +8,7 @@
-> >
-> >  #include <linux/err.h>
-> >  #include <linux/key-type.h>
-> > +#include <linux/minmax.h>
-> >  #include <linux/module.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/string.h>
-> > @@ -65,38 +66,37 @@ static int trusted_tee_seal(struct trusted_key_payl=
-oad *p, char *datablob)
-> >         int ret;
-> >         struct tee_ioctl_invoke_arg inv_arg;
-> >         struct tee_param param[4];
-> > -       struct tee_shm *reg_shm_in =3D NULL, *reg_shm_out =3D NULL;
-> > +       struct tee_shm *shm;
-> > +       uint8_t *buf;
-> >
-> >         memset(&inv_arg, 0, sizeof(inv_arg));
-> >         memset(&param, 0, sizeof(param));
-> >
-> > -       reg_shm_in =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->key=
+On Tue, Aug 8, 2023 at 2:41=E2=80=AFAM Dr. Greg <greg@enjellic.com> wrote:
+> On Sun, Aug 06, 2023 at 03:25:32PM -0400, Paul Moore wrote:
+> > On Sun, Aug 6, 2023 at 1:16???PM Dr. Greg <greg@enjellic.com> wrote:
+> > > On Fri, Jul 28, 2023 at 10:54:23AM +0900, Leesoo Ahn wrote:
+> > > > 2023-07-07 ?????? 11:20??? Paul Moore ???(???) ??? ???:
+> > > > >On Fri, Jul 7, 2023 at 4:29???AM Leesoo Ahn <lsahn@wewakecorp.com>=
+ wrote:
+> > > >
+> > > > [...]
+> > > >
+> > > > >
+> > > > >What you are looking for is a combination of LSM stacking and
+> > > > >individual LSM namespacing. Sadly, I think the communications arou=
+nd
+> > > > >LSM stacking have not been very clear on this and I worry that man=
+y
+> > > > >people are going to be disappointed with LSM stacking for this ver=
+y
+> > > > >reason.
+> > > > >
+> > > > >While stacking of LSMs is largely done at the LSM layer, namespaci=
+ng
+> > > > >LSMs such that they can be customized for individual containers
+> > > > >requires work to be done at the per-LSM level as each LSM is
+> > > > >different. AppArmor already has a namespacing concept, but SELinux
+> > > > >does not. Due to differences in the approach taken by the two LSMs=
 ,
-> > -                                                p->key_len);
-> > -       if (IS_ERR(reg_shm_in)) {
-> > -               dev_err(pvt_data.dev, "key shm register failed\n");
-> > -               return PTR_ERR(reg_shm_in);
-> > +       shm =3D tee_shm_alloc_kernel_buf(pvt_data.ctx,
-> > +                                      p->key_len + sizeof(p->blob));
-> > +       if (IS_ERR(shm)) {
-> > +               dev_err(pvt_data.dev, "key shm alloc failed\n");
-> > +               return PTR_ERR(shm);
-> >         }
-> > -
-> > -       reg_shm_out =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->bl=
-ob,
-> > -                                                 sizeof(p->blob));
-> > -       if (IS_ERR(reg_shm_out)) {
-> > -               dev_err(pvt_data.dev, "blob shm register failed\n");
-> > -               ret =3D PTR_ERR(reg_shm_out);
-> > +       buf =3D tee_shm_get_va(shm, 0);
-> > +       if (IS_ERR(buf)) {
-> > +               ret =3D PTR_ERR(buf);
-> >                 goto out;
-> >         }
-> > +       memcpy(buf, p->key, p->key_len);
+> > > > >namespacing is much more of a challenge for SELinux, largely due t=
+o
+> > > > >issues around filesystem labeling. We have not given up on the ide=
+a,
+> > > > >but we have yet to arrive at a viable solution for namespacing
+> > > > >SELinux.
+> > > > >
+> > > > >If you are interested in stacking SELinux and AppArmor, I believe =
+the
+> > > > >only practical solution is to run SELinux on the host system (init=
+ial
+> > > > >namespace) and run AppArmor in the containers.
+> > >
+> > > > Paul, I don't get that SELinux on the host system and run AppArmor
+> > > > in the containers is the only practical solution. Could you please
+> > > > explain that in more details?
+> > >
+> > > It appears that Paul is extremely busy, so I thought the 'Quixote
+> > > Group' would try and offer some reflections that may help with your
+> > > efforts.
 >
-> These memcpy()'s here and below are undue overheads if we change to
-> tee_shm_alloc_kernel_buf().
-
-There's a bit of overhead when entering and exiting the secure world
-too, just to save and restore registers. Anyway, trusted_tee_seal()
-doesn't together with FF-A without this patch.
-
-Thanks,
-Jens
-
+> > My apologies, yes I am rather busy at the moment, but I also stopped
+> > following this thread a while ago as it didn't seem to be going
+> > anywhere meaningful.  I happen to read this last email while I'm
+> > waiting in an airport, so let me try and provide a quick explanation
+> > about why running SELinux only in a container is a bad idea.
+> >
+> > As you probably know, the Linux kernel has no concept of a container,
+> > it only supports subsystem specific namespaces, e.g. mount namespace,
+> > network namespace, etc.  SELinux does not provide a subsystem
+> > namespace, and it does not generally concern itself with other
+> > subsystem names.  From a SELinux perspective there is no difference
+> > between a process running in the host namespace or a
+> > container/namespace; both are treated the same with access control
+> > decisions made based on the processes' SELinux domain, the type of the
+> > target resource, and the access requested.
+> >
+> > If one were to load a SELinux policy inside a container, even if it
+> > were allowed, the system would likely behave in unexpected ways as the
+> > container-loaded policy will take effect across the entire system, not
+> > just inside the container.
 >
-> -Sumit
+> All reasonable and consistent, with what we had previously written
+> with respect to there being no notion of LSM namespacing.
 >
-> >
-> >         inv_arg.func =3D TA_CMD_SEAL;
-> >         inv_arg.session =3D pvt_data.session_id;
-> >         inv_arg.num_params =3D 4;
-> >
-> >         param[0].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
-> > -       param[0].u.memref.shm =3D reg_shm_in;
-> > +       param[0].u.memref.shm =3D shm;
-> >         param[0].u.memref.size =3D p->key_len;
-> >         param[0].u.memref.shm_offs =3D 0;
-> >         param[1].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
-> > -       param[1].u.memref.shm =3D reg_shm_out;
-> > +       param[1].u.memref.shm =3D shm;
-> >         param[1].u.memref.size =3D sizeof(p->blob);
-> > -       param[1].u.memref.shm_offs =3D 0;
-> > +       param[1].u.memref.shm_offs =3D p->key_len;
-> >
-> >         ret =3D tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
-> >         if ((ret < 0) || (inv_arg.ret !=3D 0)) {
-> > @@ -104,14 +104,13 @@ static int trusted_tee_seal(struct trusted_key_pa=
-yload *p, char *datablob)
-> >                         inv_arg.ret);
-> >                 ret =3D -EFAULT;
-> >         } else {
-> > +               memcpy(p->blob, buf + p->key_len,
-> > +                      min(param[1].u.memref.size, sizeof(p->blob)));
-> >                 p->blob_len =3D param[1].u.memref.size;
-> >         }
-> >
-> >  out:
-> > -       if (reg_shm_out)
-> > -               tee_shm_free(reg_shm_out);
-> > -       if (reg_shm_in)
-> > -               tee_shm_free(reg_shm_in);
-> > +       tee_shm_free(shm);
-> >
-> >         return ret;
-> >  }
-> > @@ -166,11 +165,9 @@ static int trusted_tee_unseal(struct trusted_key_p=
-ayload *p, char *datablob)
-> >                 p->key_len =3D param[1].u.memref.size;
-> >         }
-> >
-> > +       tee_shm_free(reg_shm_out);
-> >  out:
-> > -       if (reg_shm_out)
-> > -               tee_shm_free(reg_shm_out);
-> > -       if (reg_shm_in)
-> > -               tee_shm_free(reg_shm_in);
-> > +       tee_shm_free(reg_shm_in);
-> >
-> >         return ret;
-> >  }
-> > @@ -183,15 +180,21 @@ static int trusted_tee_get_random(unsigned char *=
-key, size_t key_len)
-> >         int ret;
-> >         struct tee_ioctl_invoke_arg inv_arg;
-> >         struct tee_param param[4];
-> > -       struct tee_shm *reg_shm =3D NULL;
-> > +       struct tee_shm *shm;
-> > +       void *buf;
-> >
-> >         memset(&inv_arg, 0, sizeof(inv_arg));
-> >         memset(&param, 0, sizeof(param));
-> >
-> > -       reg_shm =3D tee_shm_register_kernel_buf(pvt_data.ctx, key, key_=
-len);
-> > -       if (IS_ERR(reg_shm)) {
-> > -               dev_err(pvt_data.dev, "key shm register failed\n");
-> > -               return PTR_ERR(reg_shm);
-> > +       shm =3D tee_shm_alloc_kernel_buf(pvt_data.ctx, key_len);
-> > +       if (IS_ERR(shm)) {
-> > +               dev_err(pvt_data.dev, "key shm alloc failed\n");
-> > +               return PTR_ERR(shm);
-> > +       }
-> > +       buf =3D tee_shm_get_va(shm, 0);
-> > +       if (IS_ERR(buf)) {
-> > +               ret =3D PTR_ERR(buf);
-> > +               goto out;
-> >         }
-> >
-> >         inv_arg.func =3D TA_CMD_GET_RANDOM;
-> > @@ -199,7 +202,7 @@ static int trusted_tee_get_random(unsigned char *ke=
-y, size_t key_len)
-> >         inv_arg.num_params =3D 4;
-> >
-> >         param[0].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
-> > -       param[0].u.memref.shm =3D reg_shm;
-> > +       param[0].u.memref.shm =3D shm;
-> >         param[0].u.memref.size =3D key_len;
-> >         param[0].u.memref.shm_offs =3D 0;
-> >
-> > @@ -209,18 +212,19 @@ static int trusted_tee_get_random(unsigned char *=
-key, size_t key_len)
-> >                         inv_arg.ret);
-> >                 ret =3D -EFAULT;
-> >         } else {
-> > +               memcpy(key, buf, min(param[0].u.memref.size, key_len));
-> >                 ret =3D param[0].u.memref.size;
-> >         }
-> >
-> > -       tee_shm_free(reg_shm);
-> > +out:
-> > +       tee_shm_free(shm);
-> >
-> >         return ret;
-> >  }
-> >
-> >  static int optee_ctx_match(struct tee_ioctl_version_data *ver, const v=
-oid *data)
-> >  {
-> > -       if (ver->impl_id =3D=3D TEE_IMPL_ID_OPTEE &&
-> > -           ver->gen_caps & TEE_GEN_CAP_REG_MEM)
-> > +       if (ver->impl_id =3D=3D TEE_IMPL_ID_OPTEE)
-> >                 return 1;
-> >         else
-> >                 return 0;
-> > --
-> > 2.34.1
-> >
+> To further assist Leesoo and others who may be following this, you had
+> suggested the following earlier in this thread:
+>
+> Paul> If you are interested in stacking SELinux and AppArmor, I
+> Paul> believe the only practical solution is to run SELinux on the
+> Paul> host system (initial namespace) and run AppArmor in the
+> Paul> containers.
+>
+> Which would seem to apply that in a 'stacked' LSM configuration of
+> SELinux and AppArmor, there would be a possibility of using the two
+> LSM's without them 'colliding', the equivalent of what could be
+> considered a 'nested' LSM implementation.
+
+SELinux applies access control across the entire system, regardless of
+what namespaces may be configured on the system.  Loading a SELinux
+policy in the host/initial-namespace during early boot helps ensure
+proper labeling of system entities and a better user experience;
+loading a SELinux policy in a container/namespace can lead to
+surprising and unpredictable results across the whole of the system.
+AppArmor is different in that it has support for
+containers/namespaces.  Running SELinux on the host and AppArmor in a
+container isn't so much about preventing collisions, they are still
+simultaneously running and applying their security policies, it is
+more about ensuring the LSMs, the admins, and the users all see
+compatible views of the system.
+
+Please do not confuse any of the above as a 'nested' or namespaced LSM
+layer; the current in-progress LSM stacking is simply that: the
+ability to stack some combination of LSMs in a few prescribed
+configurations.  Talking about 'nesting' or 'namespacing' at the LSM
+layer is confusing at best, and misleading at the worst.
+
+--=20
+paul-moore.com
