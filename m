@@ -2,240 +2,118 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA91C04FDF
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 20:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70365C04A94
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Aug 2023 21:08:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235584AbjHHUyt (ORCPT
+        id S234817AbjHHVIE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Aug 2023 16:54:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45458 "EHLO
+        Tue, 8 Aug 2023 17:08:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232785AbjHHUyi (ORCPT
+        with ESMTP id S234996AbjHHVIC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Aug 2023 16:54:38 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B64814B93E;
-        Tue,  8 Aug 2023 10:03:33 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-99c10ba30afso9192966b.1;
-        Tue, 08 Aug 2023 10:03:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691514211; x=1692119011;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0MpGXuBiuN9koLckS5szeKEmUEXvO5QPu+ncywhWoiA=;
-        b=MbZg1LIzREBaDWbU1mkzHxft9FqCY1XRSJBdpu66MvBlTlLLz14ZYoVB76Vrwoq0Dj
-         b1u8+EbYRY/cxI/ywahbYJ74OuipJg+lWku4hFJ10YFkgxgagbUTvLQSG2j6AF+MZ5un
-         boRBiJ0zu89/Ws3n1IhFQMrP1WpaCbL0aRGWipkRZw7CXzOTtLdwZQf50APWtdcyTD23
-         o8aIDj8VlOjNVAqa39EHzYIvkjBpa5UPauIbAPpklyGc1ZPyE6P/OohhKUKOhKZjnwqC
-         lQkL336MXHsh8aQ+EIhtOlJHqE9qyOU/NK/8+j5wJ1rAy2sh/R/j2FqIpGM/Qjt4NnZi
-         jsdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691514211; x=1692119011;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0MpGXuBiuN9koLckS5szeKEmUEXvO5QPu+ncywhWoiA=;
-        b=FM7TLgCxRQsIKGv4jRf0bR26gZ41VvlJAGQmxIUtoMTE/WR+F5JV2kk/UjvbqpLZK0
-         pZJeqQ2nVeQ6VBFhnYkWGNzTgdLFvweOiiVjIEB1K2vgQbwAoGDv2u6LZ8YjqdaliOt1
-         bkcWKUbdZbrjZTVxTrrCh4VMCedoqHIizGS/8c63lDALvEb0ES7Q+uwy1LQOlLq9jpNG
-         jBJziDWRcOtU26IWwYqjjLh8unT0IgUKoIWRU/C13ps1yboSwQH6TcbYqG881hfmOiiT
-         M+WGxytJvsTo3QI3Z0qWbHB5Hvc6TI4GxBMC3Rjxxi7Kk2Fm7zsQ8PtvSMPklVSv2efc
-         +eoQ==
-X-Gm-Message-State: AOJu0YxxGtNqHZM9yh3DiillvWZ/QLSJnZgbtCKxPCVYayXP8P5CNdOs
-        A3jubCqmrp+oaptFF85ibeo3DrXjvZIPl40Z
-X-Google-Smtp-Source: AGHT+IH3o9fSz3J+trqyHYXdiDpwfrwl61+YP2/JN6E3g3m41PBKKYJRMnJQG8WwN5bwpD/yKjjAfg==
-X-Received: by 2002:a5d:5083:0:b0:317:dcdd:3fa1 with SMTP id a3-20020a5d5083000000b00317dcdd3fa1mr5827685wrt.34.1691472828609;
-        Mon, 07 Aug 2023 22:33:48 -0700 (PDT)
-Received: from khadija-virtual-machine ([124.29.208.67])
-        by smtp.gmail.com with ESMTPSA id 23-20020a05600c229700b003fbdd5d0758sm12633902wmf.22.2023.08.07.22.33.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Aug 2023 22:33:47 -0700 (PDT)
-Date:   Tue, 8 Aug 2023 10:33:44 +0500
-From:   Khadija Kamran <kamrankhadijadj@gmail.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Alison Schofield <alison.schofield@intel.com>,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
-        john.johansen@canonical.com, ztarkhani@microsoft.com
-Subject: Re: [PATCH v2] lsm: constify the 'target' parameter in
- security_capget()
-Message-ID: <ZNHTuHFDVdCNPXj+@gmail.com>
-References: <ZNCWUQXKrZnCeB/5@gmail.com>
- <CAHC9VhT+DPRrSnmh_2PCAf05jPCE-EPaMU_TLB=jJ+mJ+NALsw@mail.gmail.com>
+        Tue, 8 Aug 2023 17:08:02 -0400
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 066251FC8C;
+        Tue,  8 Aug 2023 13:39:02 -0700 (PDT)
+Received: from [192.168.192.83] (unknown [50.47.134.245])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id EC3D33F7B7;
+        Tue,  8 Aug 2023 20:38:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1691527141;
+        bh=g4haua1IOmEAZIW6GpRHq65jQw5+tkVRcSl6jTiUYWE=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=Sk7TlFRtjCEL1EgTvHO0+JFUkHXioqPLs/P3V+X2gPA1XLr2blkUd7RNW/wsKMF9r
+         ivUJPqPQovu/t2MFHdzmiCvkD5+izdmPtAcX8TdFMDPZaaCaP6kiQPKZEfFe+UnKFW
+         EEgpjQh6reR1/FlPpDCJ3VANSE964P2NGSVkJ5uyrzgUIJNnqufxBIBK7g5pDxNof7
+         QWn+OTZetD6pkjCReQNVz/kBadC7e/7kjm0DQqlP38aKgm1JRjxIublUxEDBBWjRM8
+         hB8n1unTxD69uHUYplqPiS4y3mPy+LIl/Lj7T0AFjj4B/GdbNNFbtxIrkr8RdtrOyR
+         6a062F51ddwUw==
+Message-ID: <33790c5c-c23a-7207-c3a7-454af1452ad5@canonical.com>
+Date:   Tue, 8 Aug 2023 13:38:58 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhT+DPRrSnmh_2PCAf05jPCE-EPaMU_TLB=jJ+mJ+NALsw@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH -next] apparmor: cleanup unused functions in file.h
+Content-Language: en-US
+To:     Xiu Jianfeng <xiujianfeng@huawei.com>, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, mike.salvatore@canonical.com
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230725141259.233391-1-xiujianfeng@huawei.com>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <20230725141259.233391-1-xiujianfeng@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 07, 2023 at 07:09:33PM -0400, Paul Moore wrote:
-> On Mon, Aug 7, 2023 at 2:59 AM Khadija Kamran <kamrankhadijadj@gmail.com> wrote:
-> >
-> >
-> >
-> > cap_capget() LSM hook declaration exceeds the 80 characters per line
-> > limit. Split the function declaration to multple lines to decrease the
+On 7/25/23 07:12, Xiu Jianfeng wrote:
+> After changes in commit 33bf60cabcc7 ("LSM: Infrastructure management of
+> the file security"), aa_alloc_file_ctx() and aa_free_file_ctx() are no
+> longer used, so remove them, and also remove aa_get_file_label() because
+> it seems that it's never been used before.
 > 
-> "multiple" :)
-> 
-> Don't worry, I'll fix that in the merge.
->
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-Hey Paul,
-Thank you. :)
+this has been pulled into apparmor-next
 
-> There is one more nitpick below, but I think this looks good.  I'll
-> give this a few days to see if John can ACK the AppArmor bits, but if
-> we don't hear from him by mid-week I'll plan to merge this.
+> ---
+>   security/apparmor/include/file.h | 37 --------------------------------
+>   1 file changed, 37 deletions(-)
 > 
-> Thanks!
-> 
-> > line length.
-> >
-> > Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
-> > ---
-> > Changes in v2:
-> >  - Squash the patches 1/2 and 2/2 into a single patch
-> >  - Simplify the commit message
-> >
-> >  include/linux/lsm_hook_defs.h | 2 +-
-> >  include/linux/security.h      | 7 ++++---
-> >  kernel/capability.c           | 2 +-
-> >  security/apparmor/lsm.c       | 2 +-
-> >  security/commoncap.c          | 2 +-
-> >  security/security.c           | 2 +-
-> >  security/selinux/hooks.c      | 2 +-
-> >  7 files changed, 10 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> > index 6bb55e61e8e8..fd3844e11077 100644
-> > --- a/include/linux/lsm_hook_defs.h
-> > +++ b/include/linux/lsm_hook_defs.h
-> > @@ -36,7 +36,7 @@ LSM_HOOK(int, 0, binder_transfer_file, const struct cred *from,
-> >  LSM_HOOK(int, 0, ptrace_access_check, struct task_struct *child,
-> >          unsigned int mode)
-> >  LSM_HOOK(int, 0, ptrace_traceme, struct task_struct *parent)
-> > -LSM_HOOK(int, 0, capget, struct task_struct *target, kernel_cap_t *effective,
-> > +LSM_HOOK(int, 0, capget, const struct task_struct *target, kernel_cap_t *effective,
-> >          kernel_cap_t *inheritable, kernel_cap_t *permitted)
-> >  LSM_HOOK(int, 0, capset, struct cred *new, const struct cred *old,
-> >          const kernel_cap_t *effective, const kernel_cap_t *inheritable,
-> > diff --git a/include/linux/security.h b/include/linux/security.h
-> > index e2734e9e44d5..fef65d0e522d 100644
-> > --- a/include/linux/security.h
-> > +++ b/include/linux/security.h
-> > @@ -145,7 +145,8 @@ extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
-> >  extern int cap_settime(const struct timespec64 *ts, const struct timezone *tz);
-> >  extern int cap_ptrace_access_check(struct task_struct *child, unsigned int mode);
-> >  extern int cap_ptrace_traceme(struct task_struct *parent);
-> > -extern int cap_capget(struct task_struct *target, kernel_cap_t *effective, kernel_cap_t *inheritable, kernel_cap_t *permitted);
-> > +extern int cap_capget(const struct task_struct *target, kernel_cap_t *effective,
-> > +                                         kernel_cap_t *inheritable, kernel_cap_t *permitted);
-> 
-> Don't resubmit the patch just for this, I'll fix it during the merge,
-> but generally nice to make sure the wrapped lines are aligned with the
-> previous line; look at the security_cap_get() declaration (below) in
-> this patch to see an example.
+> diff --git a/security/apparmor/include/file.h b/security/apparmor/include/file.h
+> index 5be620af33ba..23cb6f9dbe6e 100644
+> --- a/security/apparmor/include/file.h
+> +++ b/security/apparmor/include/file.h
+> @@ -45,43 +45,6 @@ struct aa_file_ctx {
+>   	u32 allow;
+>   };
+>   
+> -/**
+> - * aa_alloc_file_ctx - allocate file_ctx
+> - * @label: initial label of task creating the file
+> - * @gfp: gfp flags for allocation
+> - *
+> - * Returns: file_ctx or NULL on failure
+> - */
+> -static inline struct aa_file_ctx *aa_alloc_file_ctx(struct aa_label *label,
+> -						    gfp_t gfp)
+> -{
+> -	struct aa_file_ctx *ctx;
+> -
+> -	ctx = kzalloc(sizeof(struct aa_file_ctx), gfp);
+> -	if (ctx) {
+> -		spin_lock_init(&ctx->lock);
+> -		rcu_assign_pointer(ctx->label, aa_get_label(label));
+> -	}
+> -	return ctx;
+> -}
+> -
+> -/**
+> - * aa_free_file_ctx - free a file_ctx
+> - * @ctx: file_ctx to free  (MAYBE_NULL)
+> - */
+> -static inline void aa_free_file_ctx(struct aa_file_ctx *ctx)
+> -{
+> -	if (ctx) {
+> -		aa_put_label(rcu_access_pointer(ctx->label));
+> -		kfree_sensitive(ctx);
+> -	}
+> -}
+> -
+> -static inline struct aa_label *aa_get_file_label(struct aa_file_ctx *ctx)
+> -{
+> -	return aa_get_label_rcu(&ctx->label);
+> -}
+> -
+>   /*
+>    * The xindex is broken into 3 parts
+>    * - index - an index into either the exec name table or the variable table
 
-Okay noted. 
-
-Regards,
-Khadija
-
-> 
-> >  extern int cap_capset(struct cred *new, const struct cred *old,
-> >                       const kernel_cap_t *effective,
-> >                       const kernel_cap_t *inheritable,
-> > @@ -271,7 +272,7 @@ int security_binder_transfer_file(const struct cred *from,
-> >                                   const struct cred *to, struct file *file);
-> >  int security_ptrace_access_check(struct task_struct *child, unsigned int mode);
-> >  int security_ptrace_traceme(struct task_struct *parent);
-> > -int security_capget(struct task_struct *target,
-> > +int security_capget(const struct task_struct *target,
-> >                     kernel_cap_t *effective,
-> >                     kernel_cap_t *inheritable,
-> >                     kernel_cap_t *permitted);
-> > @@ -553,7 +554,7 @@ static inline int security_ptrace_traceme(struct task_struct *parent)
-> >         return cap_ptrace_traceme(parent);
-> >  }
-> >
-> > -static inline int security_capget(struct task_struct *target,
-> > +static inline int security_capget(const struct task_struct *target,
-> >                                    kernel_cap_t *effective,
-> >                                    kernel_cap_t *inheritable,
-> >                                    kernel_cap_t *permitted)
-> > diff --git a/kernel/capability.c b/kernel/capability.c
-> > index 3e058f41df32..67bdee3414dd 100644
-> > --- a/kernel/capability.c
-> > +++ b/kernel/capability.c
-> > @@ -112,7 +112,7 @@ static inline int cap_get_target_pid(pid_t pid, kernel_cap_t *pEp,
-> >         int ret;
-> >
-> >         if (pid && (pid != task_pid_vnr(current))) {
-> > -               struct task_struct *target;
-> > +               const struct task_struct *target;
-> >
-> >                 rcu_read_lock();
-> >
-> > diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> > index f431251ffb91..12dd96c3b2f0 100644
-> > --- a/security/apparmor/lsm.c
-> > +++ b/security/apparmor/lsm.c
-> > @@ -144,7 +144,7 @@ static int apparmor_ptrace_traceme(struct task_struct *parent)
-> >  }
-> >
-> >  /* Derived from security/commoncap.c:cap_capget */
-> > -static int apparmor_capget(struct task_struct *target, kernel_cap_t *effective,
-> > +static int apparmor_capget(const struct task_struct *target, kernel_cap_t *effective,
-> >                            kernel_cap_t *inheritable, kernel_cap_t *permitted)
-> >  {
-> >         struct aa_label *label;
-> > diff --git a/security/commoncap.c b/security/commoncap.c
-> > index 0b3fc2f3afe7..5fd64d3e5bfd 100644
-> > --- a/security/commoncap.c
-> > +++ b/security/commoncap.c
-> > @@ -197,7 +197,7 @@ int cap_ptrace_traceme(struct task_struct *parent)
-> >   * This function retrieves the capabilities of the nominated task and returns
-> >   * them to the caller.
-> >   */
-> > -int cap_capget(struct task_struct *target, kernel_cap_t *effective,
-> > +int cap_capget(const struct task_struct *target, kernel_cap_t *effective,
-> >                kernel_cap_t *inheritable, kernel_cap_t *permitted)
-> >  {
-> >         const struct cred *cred;
-> > diff --git a/security/security.c b/security/security.c
-> > index d5ff7ff45b77..fb2d93b481f1 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -893,7 +893,7 @@ int security_ptrace_traceme(struct task_struct *parent)
-> >   *
-> >   * Return: Returns 0 if the capability sets were successfully obtained.
-> >   */
-> > -int security_capget(struct task_struct *target,
-> > +int security_capget(const struct task_struct *target,
-> >                     kernel_cap_t *effective,
-> >                     kernel_cap_t *inheritable,
-> >                     kernel_cap_t *permitted)
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 79b4890e9936..ff42d49f1b41 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -2056,7 +2056,7 @@ static int selinux_ptrace_traceme(struct task_struct *parent)
-> >                             SECCLASS_PROCESS, PROCESS__PTRACE, NULL);
-> >  }
-> >
-> > -static int selinux_capget(struct task_struct *target, kernel_cap_t *effective,
-> > +static int selinux_capget(const struct task_struct *target, kernel_cap_t *effective,
-> >                           kernel_cap_t *inheritable, kernel_cap_t *permitted)
-> >  {
-> >         return avc_has_perm(current_sid(), task_sid_obj(target),
-> > --
-> > 2.34.1
-> 
-> -- 
-> paul-moore.com
