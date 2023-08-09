@@ -2,140 +2,268 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86914C04FE0
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Aug 2023 17:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA62AC04A94
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Aug 2023 17:28:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232599AbjHIREp (ORCPT
+        id S231733AbjHIR2c (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Aug 2023 13:04:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46234 "EHLO
+        Wed, 9 Aug 2023 13:28:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232461AbjHIREo (ORCPT
+        with ESMTP id S231324AbjHIR2b (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Aug 2023 13:04:44 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4CE0E2107;
-        Wed,  9 Aug 2023 10:04:44 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F5F6139F;
-        Wed,  9 Aug 2023 10:05:26 -0700 (PDT)
-Received: from donnerap.arm.com (donnerap.manchester.arm.com [10.32.100.58])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 310843F59C;
-        Wed,  9 Aug 2023 10:04:43 -0700 (PDT)
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] selftests: landlock: skip all tests without landlock syscall
-Date:   Wed,  9 Aug 2023 18:04:35 +0100
-Message-Id: <20230809170435.1312162-3-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230809170435.1312162-1-andre.przywara@arm.com>
-References: <20230809170435.1312162-1-andre.przywara@arm.com>
+        Wed, 9 Aug 2023 13:28:31 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD00B3
+        for <linux-security-module@vger.kernel.org>; Wed,  9 Aug 2023 10:28:29 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4fe7e67cc77so2554976e87.2
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Aug 2023 10:28:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=semihalf.com; s=google; t=1691602108; x=1692206908;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yw22Rug4OEXyPMn54DIvL6wFU6vMQ8oGwoG/iSU6CIc=;
+        b=KIbY2LyyTl/AnYXTkkb6pgPDIwlxFzi/gU1TOXHFBIULY9+bxRCqT0/5PbrBQZr65u
+         8ThZm7mo/+9F5dlunFcUes8zmBpOi4GsUlCOLcfKT8uAkLUulHD92tPA2i1ve2IBJIUZ
+         D/NL9+3lSH9g3jwpXQ9hc2hG37wgUM9SNAYuMLmU0pp4prRKrCiKVdtYeHuVIdo7p8zk
+         WTL1Capi6iCC69SDt+EVndrPPpbesmWQcHbMOSX/evqo9RJAWI0TlSiSjqmCkpWYvNrY
+         IdkFfg2hyXY2jFG1qswWzSBv/aaeQaDhiVhK8ptuomf4MZWDnBdlCZCxWHh8NqcU7jEq
+         5mJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691602108; x=1692206908;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yw22Rug4OEXyPMn54DIvL6wFU6vMQ8oGwoG/iSU6CIc=;
+        b=JlT6+WsL8H4e/doGdmxmNXRSXlEusS6bncfg92WcAxDJokXE8B2hit/O/gMgQiWxOG
+         2U1nHCxLyukp/5s4ONb5rl9fpQcJJalsfu4npyNgGnfo4i1K2Uf1im9XmnUiSq3ml4wL
+         wHGElRnuZATc8Aiio/cc6akUjC+SGrLkWMzDBh+Zsk3No9AsLgbEaFZwmi4/ZdzUThfv
+         7A7QOrrXXkFEOT/lfF2+bGBc6MmQ5HgWmHN72u5ZbPq0coN2yp+O/SDsPqQcLr7Q0CxT
+         3vL1YiFlKC8VZOl5YifH0SuYnvPtiZgFBJPZEWCa5ZNuOBeV3lmavRofREe+R6ZDWrAh
+         VKgQ==
+X-Gm-Message-State: AOJu0YzCd7vFIBuDAdySKFUBmNS9hRLrUOVchgD9YOc8lWMVBWWC+Jb0
+        BTvZdbKf2El4HY3feMM1riUIJw==
+X-Google-Smtp-Source: AGHT+IFGU6DlsIDGan/Ed64LTo5h4x9cjw5aWImDy8ojY1Rnld19e+Tgnw2G60Ovk+FaCUg8I76/yg==
+X-Received: by 2002:a19:8c54:0:b0:4fe:676:8c0b with SMTP id i20-20020a198c54000000b004fe06768c0bmr2411269lfj.11.1691602107522;
+        Wed, 09 Aug 2023 10:28:27 -0700 (PDT)
+Received: from [10.43.1.246] ([83.142.187.84])
+        by smtp.gmail.com with ESMTPSA id p3-20020a19f003000000b004fcddf3671dsm2388034lfc.177.2023.08.09.10.28.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Aug 2023 10:28:26 -0700 (PDT)
+Message-ID: <dc055b47-b868-7f5d-98bf-51e27df6b2d8@semihalf.com>
+Date:   Wed, 9 Aug 2023 19:28:25 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v1 0/2] Add LSM access controls for io_uring_setup
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Jeffrey Vander Stoep <jeffv@google.com>,
+        Gil Cukierman <cukie@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Joel Granados <j.granados@samsung.com>,
+        Jeff Xu <jeffxu@google.com>,
+        Takaya Saeki <takayas@chromium.org>,
+        Tomasz Nowicki <tn@semihalf.com>,
+        Matteo Rizzo <matteorizzo@google.com>,
+        Andres Freund <andres@anarazel.de>
+References: <20221107205754.2635439-1-cukie@google.com>
+ <CAHC9VhTLBWkw2XzqdFx1LFVKDtaAL2pEfsmm+LEmS0OWM1mZgA@mail.gmail.com>
+ <CABXk95ChjusTneWJgj5a58CZceZv0Ay-P-FwBcH2o4rO0g2Ggw@mail.gmail.com>
+ <CAHC9VhRTWGuiMpJJiFrUpgsm7nQaNA-n1CYRMPS-24OLvzdA2A@mail.gmail.com>
+ <54c8fd9c-0edd-7fea-fd7a-5618859b0827@semihalf.com>
+ <CAHC9VhS9BXTUjcFy-URYhG=XSxBC+HsePbu01_xBGzM8sebCYQ@mail.gmail.com>
+ <d2eaa3f8-cca6-2f51-ce98-30242c528b6f@semihalf.com>
+ <CAHC9VhQDAM8X-MV9ONckc2NBWDZrsMteanDo9_NS4SirdQAx=w@mail.gmail.com>
+From:   Dmytro Maluka <dmy@semihalf.com>
+In-Reply-To: <CAHC9VhQDAM8X-MV9ONckc2NBWDZrsMteanDo9_NS4SirdQAx=w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-"landlock" is a relatively new syscall, and most defconfigs do not enable
-it (yet). On systems without this syscall available, the selftests fail
-at the moment, instead of being skipped.
+On 8/9/23 16:49, Paul Moore wrote:
+> On Wed, Aug 9, 2023 at 7:22 AM Dmytro Maluka <dmy@semihalf.com> wrote:
+>> On 8/9/23 02:31, Paul Moore wrote:
+>>> On Tue, Aug 8, 2023 at 4:40 PM Dmytro Maluka <dmy@semihalf.com> wrote:
+>>>> On 11/10/22 22:04, Paul Moore wrote:
+>>>>> On Thu, Nov 10, 2022 at 12:54 PM Jeffrey Vander Stoep <jeffv@google.com> wrote:
+>>>>>> On Mon, Nov 7, 2022 at 10:17 PM Paul Moore <paul@paul-moore.com> wrote:
+>>>>>>>
+>>>>>>> On Mon, Nov 7, 2022 at 3:58 PM Gil Cukierman <cukie@google.com> wrote:
+>>>>>>>>
+>>>>>>>> This patchset provides the changes required for controlling access to
+>>>>>>>> the io_uring_setup system call by LSMs. It does this by adding a new
+>>>>>>>> hook to io_uring. It also provides the SELinux implementation for a new
+>>>>>>>> permission, io_uring { setup }, using the new hook.
+>>>>>>>>
+>>>>>>>> This is important because existing io_uring hooks only support limiting
+>>>>>>>> the sharing of credentials and access to the sensitive uring_cmd file
+>>>>>>>> op. Users of LSMs may also want the ability to tightly control which
+>>>>>>>> callers can retrieve an io_uring capable fd from the kernel, which is
+>>>>>>>> needed for all subsequent io_uring operations.
+>>>>>>>
+>>>>>>> It isn't immediately obvious to me why simply obtaining a io_uring fd
+>>>>>>> from io_uring_setup() would present a problem, as the security
+>>>>>>> relevant operations that are possible with that io_uring fd *should*
+>>>>>>> still be controlled by other LSM hooks.  Can you help me understand
+>>>>>>> what security issue you are trying to resolve with this control?
+>>>>>>
+>>>>>> I think there are a few reasons why we want this particular hook.
+>>>>>>
+>>>>>> 1.  It aligns well with how other resources are managed by selinux
+>>>>>> where access to the resource is the first control point (e.g. "create"
+>>>>>> for files, sockets, or bpf_maps, "prog_load" for bpf programs, and
+>>>>>> "open" for perf_event) and then additional functionality or
+>>>>>> capabilities require additional permissions.
+>>>>>
+>>>>> [NOTE: there were two reply sections in your email, and while similar,
+>>>>> they were not identical; I've trimmed the other for the sake of
+>>>>> clarity]
+>>>>>
+>>>>> The resources you mention are all objects which contain some type of
+>>>>> information (either user data, configuration, or program
+>>>>> instructions), with the resulting fd being a handle to those objects.
+>>>>> In the case of io_uring the fd is a handle to the io_uring
+>>>>> interface/rings, which by itself does not contain any information
+>>>>> which is not already controlled by other permissions.
+>>>>>
+>>>>> I/O operations which transfer data between the io_uring buffers and
+>>>>> other system objects, e.g. IORING_OP_READV, are still subject to the
+>>>>> same file access controls as those done by the application using
+>>>>> syscalls.  Even the IORING_OP_OPENAT command goes through the standard
+>>>>> VFS code path which means it will trigger the same access control
+>>>>> checks as an open*() done by the application normally.
+>>>>>
+>>>>> The 'interesting' scenarios are those where the io_uring operation
+>>>>> servicing credentials, aka personalities, differ from the task
+>>>>> controlling the io_uring.  However in those cases we have the new
+>>>>> io_uring controls to gate these delegated operations.  Passing an
+>>>>> io_uring fd is subject to the fd/use permission like any other fd.
+>>>>>
+>>>>> Although perhaps the most relevant to your request is the fact that
+>>>>> the io_uring inode is created using the new(ish) secure anon inode
+>>>>> interface which ensures that the creating task has permission to
+>>>>> create an io_uring.  This io_uring inode label also comes into play
+>>>>> when a task attempts to mmap() the io_uring rings, a critical part of
+>>>>> the io_uring API.
+>>>>>
+>>>>> If I'm missing something you believe to be important, please share the details.
+>>>>>
+>>>>>> 2. It aligns well with how resources are managed on Android. We often
+>>>>>> do not grant direct access to resources (like memory buffers).
+>>>>>
+>>>>> Accessing the io_uring buffers requires a task to mmap() the io_uring
+>>>>> fd which is controlled by the normal SELinux mmap() access controls.
+>>>>>
+>>>>>> 3. Attack surface management. One of the primary uses of selinux on
+>>>>>> Android is to assess and limit attack surface (e.g.
+>>>>>> https://twitter.com/jeffvanderstoep/status/1422771606309335043) . As
+>>>>>> io_uring vulnerabilities have made their way through our vulnerability
+>>>>>> management system, it's become apparent that it's complicated to
+>>>>>> assess the impact. Is a use-after-free reachable? Creating
+>>>>>> proof-of-concept exploits takes a lot of time, and often functionality
+>>>>>> can be reached by multiple paths. How many of the known io_uring
+>>>>>> vulnerabilities would be gated by the existing checks? How many future
+>>>>>> ones will be gated by the existing checks? I don't know the answer to
+>>>>>> either of these questions and it's not obvious. This hook makes that
+>>>>>> initial assessment simple and effective.
+>>>>>
+>>>>> It should be possible to deny access to io_uring via the anonymous
+>>>>> inode labels, the mmap() controls, and the fd/use permission.  If you
+>>>>> find a way to do meaningful work with an io_uring fd that can't be
+>>>>> controlled via an existing permission check please let me know.
+>>>>
+>>>> Thank you a lot for this explanation. However, IMHO we should not
+>>>> confuse 2 somewhat different problems here:
+>>>>
+>>>> - protecting io_uring related resources (file descriptors, memory
+>>>>   buffers) against unauthorized access
+>>>>
+>>>> - protecting the entire system against potential vulnerabilities in
+>>>>   io_uring
+>>>>
+>>>> And while I agree that the existing permission checks should be already
+>>>> sufficient for the former, I'm not quite sure they are sufficient for
+>>>> the latter.
+>>>
+>>> ...
+>>>
+>>>> I already have a PoC patch [3] adding such LSM hook. But before I try to
+>>>> submit it for upstream, I'd like to know your opinion on the whole idea.
+>>>
+>>> First please explain how the existing LSM/SELinux control points are
+>>> not sufficient for restricting io_uring operations.  I'm looking for a
+>>> real program flow that is able to "do meaningful work with an io_uring
+>>> fd that can't be controlled via an existing permission check".
+>>
+>> As I said at the beginning of my reply, I agree with you that the
+>> existing LSM controls are sufficient for restricting io_uring I/O
+>> operations. That is not my concern here. The concern is: how to (and
+>> do we need to) restrict triggering execution of *any* io_uring code in
+>> kernel, *in addition to* restricting the actual io_uring operations.
+> 
+> If your concern is preventing *any* io_uring code from being executed,
+> I would suggest simply not enabling io_uring at build time.  If you
+> need to selectively enable io_uring for some subset of processes, you
+> will need to make use of one of the options you discussed previously,
+> e.g. a LSM, seccomp, etc.
+> 
+> From a LSM perspective, I don't believe we want to be in the business
+> of blocking entire kernel subsystems from execution, rather we want to
+> provide control points so that admins and users can have better, or
+> more granular control over the security relevant operations that take
+> place within the different kernel subsystems.
+> 
+>> In other words, "a real program doing a meaningful work with io_uring"
+>> in this case would mean "an exploit for a real vulnerability in io_uring
+>> code (in the current or any older kernel) which does not require an
+>> access to io_uring operations to be exploited". I don't claim that such
+>> vulnerabilities exist or are likely to be introduced in future kernels.
+>> But I'm neither an io_uring expert nor, more importantly, a security
+>> expert, so I cannot tell with confidence that they are not and we have
+>> nothing to worry about here. So I'm interested in your and others'
+>> opinion on that.
+> 
+> Once again, if you have serious concerns about the security or safety
+> of an individual kernel subsystem, your best option is to simply build
+> a kernel without that subsystem enabled.
 
-Check the availability of the landlock system call before executing each
-test, and skip the rest of the tests if we get an ENOSYS back.
+Thanks for the answer. Yeah, disabling a problematic kernel subsystem at
+build time is surely the safest option (and that is what we are already
+doing in ChromeOS for io_uring, for that matter), and if we still want
+to enable it for a limited subset of processes, it seems the cleanest
+option is to use seccomp, rather than to add new ad-hoc LSM hooks for
+blocking a specific subsystem.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- tools/testing/selftests/landlock/base_test.c | 27 ++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+One of the angles I'm coming from is actually the following:
 
-diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
-index 1e3b6de57e80e..c539cec775fba 100644
---- a/tools/testing/selftests/landlock/base_test.c
-+++ b/tools/testing/selftests/landlock/base_test.c
-@@ -21,12 +21,20 @@
- #define O_PATH 010000000
- #endif
- 
-+static bool has_syscall(void)
-+{
-+	return landlock_create_ruleset(NULL, 0, 0) == -1 && errno != ENOSYS;
-+}
-+
- TEST(inconsistent_attr)
- {
- 	const long page_size = sysconf(_SC_PAGESIZE);
- 	char *const buf = malloc(page_size + 1);
- 	struct landlock_ruleset_attr *const ruleset_attr = (void *)buf;
- 
-+	if (!has_syscall())
-+		SKIP(return, "landlock syscall not available");
-+
- 	ASSERT_NE(NULL, buf);
- 
- 	/* Checks copy_from_user(). */
-@@ -75,6 +83,10 @@ TEST(abi_version)
- 	const struct landlock_ruleset_attr ruleset_attr = {
- 		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
- 	};
-+
-+	if (!has_syscall())
-+		SKIP(return, "landlock syscall not available");
-+
- 	ASSERT_NE(0, landlock_create_ruleset(NULL, 0,
- 					     LANDLOCK_CREATE_RULESET_VERSION));
- 
-@@ -107,6 +119,9 @@ TEST(create_ruleset_checks_ordering)
- 		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
- 	};
- 
-+	if (!has_syscall())
-+		SKIP(return, "landlock syscall not available");
-+
- 	/* Checks priority for invalid flags. */
- 	ASSERT_EQ(-1, landlock_create_ruleset(NULL, 0, invalid_flag));
- 	ASSERT_EQ(EINVAL, errno);
-@@ -153,6 +168,9 @@ TEST(add_rule_checks_ordering)
- 	const int ruleset_fd =
- 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
- 
-+	if (!has_syscall())
-+		SKIP(return, "landlock syscall not available");
-+
- 	ASSERT_LE(0, ruleset_fd);
- 
- 	/* Checks invalid flags. */
-@@ -200,6 +218,9 @@ TEST(restrict_self_checks_ordering)
- 	const int ruleset_fd =
- 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
- 
-+	if (!has_syscall())
-+		SKIP(return, "landlock syscall not available");
-+
- 	ASSERT_LE(0, ruleset_fd);
- 	path_beneath_attr.parent_fd =
- 		open("/tmp", O_PATH | O_NOFOLLOW | O_DIRECTORY | O_CLOEXEC);
-@@ -240,6 +261,9 @@ TEST(ruleset_fd_io)
- 	int ruleset_fd;
- 	char buf;
- 
-+	if (!has_syscall())
-+		SKIP(return, "landlock syscall not available");
-+
- 	drop_caps(_metadata);
- 	ruleset_fd =
- 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-@@ -267,6 +291,9 @@ TEST(ruleset_fd_transfer)
- 	pid_t child;
- 	int status;
- 
-+	if (!has_syscall())
-+		SKIP(return, "landlock syscall not available");
-+
- 	drop_caps(_metadata);
- 
- 	/* Creates a test ruleset with a simple rule. */
--- 
-2.25.1
+- Android currently enables io_uring but limits its use to a few
+  processes. But the way Android does that is by relying on the existing
+  SELinux access controls for io_uring resources [1][2], rather than by
+  preventing execution of any io_uring code via seccomp or other means.
 
+  I guess the reason why Android doesn't use seccomp for that is the
+  downsides of seccomp which I mentioned previously: in short, seccomp
+  is well-suited for selectively denying syscalls for specific
+  processes, but not so well-suited for selectively allowing them.
+
+  So one of the questions I'm wondering about is: if Android implemented
+  preventing execution of any io_uring code by non-trusted processes
+  (via seccomp or any other way), how much would it help to reduce the
+  risk of attacks, compared to its current SELinux based solution?
+
+- ChromeOS currently completely disables io_uring in kernel, but we do
+  want to allow it for a limited set of processes similarly to Android,
+  and we are exploring ways to do it securely. Thus the above
+  considerations for Android apply to ChromeOS as well.
+
+[1] https://android-review.git.corp.google.com/c/platform/system/sepolicy/+/2302679
+[2] https://android-review.git.corp.google.com/c/platform/system/sepolicy/+/2302679/6/public/te_macros
