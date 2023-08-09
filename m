@@ -2,95 +2,114 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF448C04A6A
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Aug 2023 04:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3857CC001B0
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Aug 2023 06:03:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229533AbjHIEWQ (ORCPT
+        id S230357AbjHIGDu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Aug 2023 00:22:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55100 "EHLO
+        Wed, 9 Aug 2023 02:03:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbjHIEWP (ORCPT
+        with ESMTP id S230379AbjHIGDt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Aug 2023 00:22:15 -0400
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0199D19A1
-        for <linux-security-module@vger.kernel.org>; Tue,  8 Aug 2023 21:22:13 -0700 (PDT)
-Received: from [192.168.192.83] (unknown [50.47.134.245])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 8070542834;
-        Wed,  9 Aug 2023 04:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1691554932;
-        bh=DGpYgUa8dbFlzxVHEOICpko7jFA3qUT0Je0Vs6Bqyco=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=S9ADsMFrJYBMs+3E5mv3ZDYI41Lr5/EBWutCaDEDoF189psJMqEzAS/w+Iikb2slH
-         ubhPVSKgQNEzycA7bGTuYYgEDZBZ25mUr4TMWbbnAigtjpdTjcsmCXvBV//PsUv/zp
-         fdPjeNcr70sT9k4rmlR/sllfV3hp36OHyz+nAexo1h7384i5rvCNk2AAKtLw+Ebagv
-         wIeI15hy2Ykr8Tg/DEN1iTarYA1Gjg57O8hykMFk0o7WBTygkXUXSD2+/BCI1IFf9Z
-         4C82kdQgFhoLi9ejtQCXRnCH+Np+bnixIHiiTAbn5IIbAN+Op1IBGtOdvL9FthnxaE
-         a5AjGExfXclCg==
-Message-ID: <ea365010-1cb9-1bdb-3014-7e67a59daff2@canonical.com>
-Date:   Tue, 8 Aug 2023 21:22:07 -0700
+        Wed, 9 Aug 2023 02:03:49 -0400
+Received: from out-113.mta1.migadu.com (out-113.mta1.migadu.com [95.215.58.113])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5602A0
+        for <linux-security-module@vger.kernel.org>; Tue,  8 Aug 2023 23:03:48 -0700 (PDT)
+Message-ID: <9a84e026-402d-b6d9-b6d1-57d91455da47@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1691561020;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vZ6V615A2KqrskAOUp1MTFIPzrZmCi/maZKOac3W810=;
+        b=HLvjH2ogbvNYgLBEabSq0L0ndbjsUYoxG9XBVixYUkq93imGD6SmYSCQGkkV3UE5OhTso+
+        EuynVJbQyP4jlk0+SYzMeAGPHKZZGPYdtE87MUq04XqOcWW6VK/1DeTlun8ADzQ1RMsYo7
+        mF0JvS5dGjKv44EceTfYn+WeOH08Kg0=
+Date:   Tue, 8 Aug 2023 23:03:30 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH -next] apparmor: remove unneeded #ifdef in
- decompress_zstd()
+Subject: Re: [PATCH bpf-next v11 2/5] selftests/bpf: Use random netns name for
+ mptcp
 Content-Language: en-US
-To:     Xiu Jianfeng <xiujianfeng@huaweicloud.com>, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, terrelln@fb.com
-Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        xiujianfeng@huawei.com
-References: <20230809100244.342530-1-xiujianfeng@huaweicloud.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20230809100244.342530-1-xiujianfeng@huaweicloud.com>
+To:     Geliang Tang <geliang.tang@suse.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Mat Martineau <martineau@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Simon Horman <horms@kernel.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, mptcp@lists.linux.dev,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <cover.1691125344.git.geliang.tang@suse.com>
+ <15d7646940fcbb8477b1be1aa11a5d5485d10b48.1691125344.git.geliang.tang@suse.com>
+ <8b706f66-2afa-b3d0-a13a-11f1ffb452fe@linux.dev>
+ <20230807064044.GA11180@localhost.localdomain>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20230807064044.GA11180@localhost.localdomain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/9/23 03:02, Xiu Jianfeng wrote:
-> From: Xiu Jianfeng <xiujianfeng@huawei.com>
+On 8/6/23 11:40 PM, Geliang Tang wrote:
+> On Fri, Aug 04, 2023 at 05:23:32PM -0700, Martin KaFai Lau wrote:
+>> On 8/3/23 10:07 PM, Geliang Tang wrote:
+>>> Use rand() to generate a random netns name instead of using the fixed
+>>> name "mptcp_ns" for every test.
+>>>
+>>> By doing that, we can re-launch the test even if there was an issue
+>>> removing the previous netns or if by accident, a netns with this generic
+>>> name already existed on the system.
+>>>
+>>> Note that using a different name each will also help adding more
+>>> subtests in future commits.
 > 
-> The whole function is guarded by CONFIG_SECURITY_APPARMOR_EXPORT_BINARY,
-> so the #ifdef here is redundant, remove it.
+> Hi Martin,
 > 
-
-indeed
-
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-I have pulled this into apparmor-next
-
-
-> ---
->   security/apparmor/apparmorfs.c | 2 --
->   1 file changed, 2 deletions(-)
+> I tried to run mptcp tests simultaneously, and got "Cannot create
+> namespace file "/var/run/netns/mptcp_ns": File exists" errors sometimes.
+> So I add this patch to fix it.
 > 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index c198a8a2047b..7ee8f4bb7733 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -1314,7 +1314,6 @@ SEQ_RAWDATA_FOPS(compressed_size);
->   
->   static int decompress_zstd(char *src, size_t slen, char *dst, size_t dlen)
->   {
-> -#ifdef CONFIG_SECURITY_APPARMOR_EXPORT_BINARY
->   	if (slen < dlen) {
->   		const size_t wksp_len = zstd_dctx_workspace_bound();
->   		zstd_dctx *ctx;
-> @@ -1341,7 +1340,6 @@ static int decompress_zstd(char *src, size_t slen, char *dst, size_t dlen)
->   		kvfree(wksp);
->   		return ret;
->   	}
-> -#endif
->   
->   	if (dlen < slen)
->   		return -EINVAL;
+> It's easy to reproduce, just run this commands in multiple terminals:
+>   > for i in `seq 1 100`; do sudo ./test_progs -t mptcp; done
+
+Not only the "-t mptcp" test. Other tests in test_progs also don't support 
+running parallel in multiple terminals. Does it really help to test the bpf part 
+of the prog_tests/mptcp.c test by running like this? If it wants to exercise the 
+other mptcp networking specific code like this, a separate mptcp test is needed 
+outside of test_progs and it won't be run in the bpf CI.
+
+If you agree, can you please avoid introducing unnecessary randomness to the 
+test_progs where bpf CI and most users don't run in this way?
+
+Also, please don't resend the patches too fast until the discussion is 
+concluded. Please give reasonable time for others to reply.
+
+I have a high level question. In LPC 2022 
+(https://lpc.events/event/16/contributions/1354/), I recall there was idea in 
+using bpf to make other mptcp decision/policy. Any thought and progress on this? 
+This set which only uses bpf to change the protocol feels like an incomplete 
+solution.
 
