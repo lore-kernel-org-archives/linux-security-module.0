@@ -2,219 +2,229 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11862EB64DD
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Aug 2023 08:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 553E5C04A94
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Aug 2023 11:22:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231269AbjHIITp (ORCPT
+        id S233589AbjHILWQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Aug 2023 04:19:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47506 "EHLO
+        Wed, 9 Aug 2023 07:22:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231382AbjHIITm (ORCPT
+        with ESMTP id S233558AbjHILWP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Aug 2023 04:19:42 -0400
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2065.outbound.protection.outlook.com [40.107.6.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BE131FCD;
-        Wed,  9 Aug 2023 01:19:32 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RvlDpwGa6d1Ykg9DiSPPVpn3j7gwEkS3kPlmvGBHWCSuyFkUY8ecNcNzMw3L1MS69516N3mPAr+Kii7NltpheHnufeyeuokN6wbs/x3ugtSFpUe/lH2VMIncn7BWRL/iJW7rn0d/n0yo2FqeK8Ah9MVy5rDqWaHys6A3FpN6GWb3SXM+RLP1RxUtUWasaQ6aISIU+gDNaOAgYrPdCXJkJ+wmLzy+LRMLIOE6zcqoMogMAirxig+b0qOUPewAnMvk6Sz3cxuSP1DnV/uac29R5O9iIQVGlC4FGuDIJSvn1O2/x8oxnIhc8uUTIvoexx9PmEBk05RnDWGTRPT7VOEHdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6Lo/RD4XswqmNePe8PqD+/jsdunDBnXj7mvA38u9Mts=;
- b=X1sJiAMb2CgCygp+JwqMYkMqWrNFbpCe4B3vPE7/5UY9ZzDELVNjYTXqx72Dq1myUYbAEkuAXz3UQ5PgNenvkW/w7vhqHd4tDjKfXrmGv2zPO2RBMqmd2fN5bYfwxWYlRLQSN0Ik92ColbwHJnmldw8zzQDi1bpl/kg18iVnWM1OuqcBfjNnjKUxXWM4oERUMP8/XRWo/QzST4QipD8TBT1zfPc/B50tVO/HJ6mwxbCgS1MxeqxQoe3766Nlp+fEXbDXWm0uTZlI6GUedPBv83WNb87vuWMmvtu2TCiBVDLIN3hZr2OeSrl5J+5av3hKlwSQazMFdz9h1ghzXv0tqw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
- dkim=pass header.d=suse.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6Lo/RD4XswqmNePe8PqD+/jsdunDBnXj7mvA38u9Mts=;
- b=siZLzsUiL9RO/lu1dxrjUPgOQPDND5kYW+Nxkc7OgSP7FfEKaWfN20ZlweZzFxjV44DSJjTT32+7TsRX8mVkiRC5UrsgSxZg/dYLf9MpmQyAHtFH9WB7+wvac2Uv3PC0PerofEvxrxtgJWpVIYBK7yzNu8b0ZHSgGbI1U0jvl/JSHvmWET0zUjKRVSUDuKYpD9jUwW5eDfPHTmJKzB6sXYyX04U2GGmMqE0iHcwaVHjA25l5ftYo2RiGBEdNI3zkkLxOq0p9MIOrDmI61QPciugVWFuLAaZ2XOw4KvgJcbBUPOK89H+NvE8NMCCi4467GUzOKocdrzADri/AyiJhVg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=suse.com;
-Received: from HE1PR0402MB3497.eurprd04.prod.outlook.com (2603:10a6:7:83::14)
- by AS8PR04MB9205.eurprd04.prod.outlook.com (2603:10a6:20b:44c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6652.28; Wed, 9 Aug
- 2023 08:19:29 +0000
-Received: from HE1PR0402MB3497.eurprd04.prod.outlook.com
- ([fe80::2867:7a72:20ac:5f71]) by HE1PR0402MB3497.eurprd04.prod.outlook.com
- ([fe80::2867:7a72:20ac:5f71%3]) with mapi id 15.20.6652.028; Wed, 9 Aug 2023
- 08:19:28 +0000
-Date:   Wed, 9 Aug 2023 16:19:44 +0800
-From:   Geliang Tang <geliang.tang@suse.com>
-To:     Martin KaFai Lau <martin.lau@linux.dev>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>,
-        Mat Martineau <martineau@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
+        Wed, 9 Aug 2023 07:22:15 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BB162680
+        for <linux-security-module@vger.kernel.org>; Wed,  9 Aug 2023 04:22:03 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4fe463420fbso10432046e87.3
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Aug 2023 04:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=semihalf.com; s=google; t=1691580121; x=1692184921;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NKzdgfdfuVj+XSmSmvvfmRlSIXkPZbyE/cWIrs+YHVY=;
+        b=lj48dMBPNJn5+m0MgFE4sM3lRHJ2qKVJR68lH0fu/wIRES7I39BUbDlu/MMDi2ftFZ
+         cPaxwkxfTOXIhQ0fP7ygUs7hFlNf1uYuW1mMNUt+jyvyMBP7vIDt9uvUNF06N4Eky3TC
+         ++zqXJzj97LLKz1D4HmkgfmtdcaZg1My/eDEfI6dvtSDrua0YPD6fvhuJWOOCrxqmvAs
+         T2oWuxtRksHxlSJNofjX0gtbB+Hn4fVDt/ZlWxPwTmAer5MC/GFjiHekYy5BDAERuw/V
+         Gnj88Ujm5d8hGd3XBLctC2nG0EQO4XyALXGhTsuXngfIs1QhhNSLIdSTkmowCxhdLuBI
+         QnRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691580121; x=1692184921;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NKzdgfdfuVj+XSmSmvvfmRlSIXkPZbyE/cWIrs+YHVY=;
+        b=Db6MBiMjpEz5hGitfFFJEIrmdQqG1YQk0huDNQFJdgRSGUjo+0MYakoaKeGyd8JFDy
+         AHLNhlRcWEjdjdB0Gx8HTpTwjrEtxRSY/U6/tJvrajoX+/xBNJuTUbYZ8UpBxSJeKlaB
+         ZGFvw2UhZ37B+uyt9OAasvF8dqavN/AxWv7o1iGQsy/zfzK/tJsgnajvN81oHOIYZamL
+         x65S7HL7dv4grogxdfbz49IjhkpJksXcGx9M/iJtjSdyN9uzclgU/jgBiM6RSBfu9TRL
+         HImNc2n1RxpmveqK1OtQnSlgi8kIzSG5swnL51ahMCdKMj4dojJtKtzO4aEHkwfHbDur
+         hrXg==
+X-Gm-Message-State: AOJu0YxEmVYp3VG/t3cdro6nDMwxxwu+gpaIK7siHUz6wgvb/SgdRk5a
+        x1KGccNANjWdaKibKzx2pHQ5gQ==
+X-Google-Smtp-Source: AGHT+IHzlXbuU4mO9eU5VjDUQacowYKrGPFGV8XFQSH91qSAL4Ahwvmm/1iYmr8hrrrhQBY2qkIkKg==
+X-Received: by 2002:a19:ee17:0:b0:4fb:8771:e898 with SMTP id g23-20020a19ee17000000b004fb8771e898mr1556701lfb.15.1691580120986;
+        Wed, 09 Aug 2023 04:22:00 -0700 (PDT)
+Received: from [10.43.1.246] ([83.142.187.84])
+        by smtp.gmail.com with ESMTPSA id 4-20020ac24824000000b004f8675548ebsm2266606lft.20.2023.08.09.04.21.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Aug 2023 04:22:00 -0700 (PDT)
+Message-ID: <d2eaa3f8-cca6-2f51-ce98-30242c528b6f@semihalf.com>
+Date:   Wed, 9 Aug 2023 13:21:58 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v1 0/2] Add LSM access controls for io_uring_setup
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Jeffrey Vander Stoep <jeffv@google.com>,
+        Gil Cukierman <cukie@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-        Simon Horman <horms@kernel.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, mptcp@lists.linux.dev,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH bpf-next v11 2/5] selftests/bpf: Use random netns name
- for mptcp
-Message-ID: <20230809081944.GA29707@bogon>
-References: <cover.1691125344.git.geliang.tang@suse.com>
- <15d7646940fcbb8477b1be1aa11a5d5485d10b48.1691125344.git.geliang.tang@suse.com>
- <8b706f66-2afa-b3d0-a13a-11f1ffb452fe@linux.dev>
- <20230807064044.GA11180@localhost.localdomain>
- <9a84e026-402d-b6d9-b6d1-57d91455da47@linux.dev>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9a84e026-402d-b6d9-b6d1-57d91455da47@linux.dev>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SG2P153CA0026.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::13)
- To HE1PR0402MB3497.eurprd04.prod.outlook.com (2603:10a6:7:83::14)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HE1PR0402MB3497:EE_|AS8PR04MB9205:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad76a832-76d1-4352-07d4-08db98b1596d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: THg4+BUNHYdhCgco002LMrCm53/y5SQPIzh/klQBgFvad+6eZZSNTCxHerZd9WAiLU/+YgW/pQ7gVm+UKKzZkPZqGQHoWWDHUbk7A67KHFd8+womQ//JiEoBa1qIMamPTBNLaYTH7+lF/DauwCjwDyLpBGIA4oQ1PttJLPhTiJ4XL++6+adHVwNuN6GyL31YDMESvu4YB+X/AHPUYMWqGz6tiL5J6WrmRlyNkG76fXdl9gilh0MGZR80WGsUNLYdryWN0U4Te9NrNl10QyF0N/VWLvhYLDLm6zBwdvq1tT4/O4onUPq8q5N+XrOJ+nSpPeFsa38x2n1WDVPOiMH7Zgp8v4qd18Ne8qUJv+iA7hBYgRJrJvVtg/fkf36iDXDV19X1J+g1utFa33OeKjYlA1k8TWH290ltt/3sWouqAFjuTk6HzTee0mlHRNqx+q4HEIWM6lDbb4VxYoOw/vvZ42NqPxnhdGT12lp0HZuIUYz8W01u/H2J8YFNtZp9ZvuY9TwXs98W6IyayMz/I58jnWeVDXotjO4cglfu0wTJdM9ycLghl5Cgqzq3rVH2j/46IAoCeBiZWQsy5KIzaaAMYfNwlRyplyiyPGTSuf3/4Tvl822KHYHLeHwlJ3Hj3XPl
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HE1PR0402MB3497.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(7916004)(39860400002)(396003)(136003)(366004)(346002)(376002)(186006)(451199021)(1800799006)(6666004)(6486002)(478600001)(83380400001)(1076003)(6506007)(53546011)(9686003)(6512007)(26005)(966005)(6916009)(66556008)(66946007)(4326008)(66476007)(38100700002)(54906003)(5660300002)(8676002)(8936002)(33716001)(41300700001)(66899021)(7416002)(44832011)(7406005)(316002)(2906002)(86362001)(33656002)(13296009)(17423001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?fOQL3NVqGvZb07AesveQgYNzyQMq4wY0q2mkLC1KQUQZc7zvw955v7xGxvsF?=
- =?us-ascii?Q?H4jICbY170cqsaWZk+Uc83toMcDUf5CXUuib+70N4hftFbkTPYD6+u8IaXp+?=
- =?us-ascii?Q?MpaEpaosDe1eds4zUeEHzRQTTO8F38KLiCa7yEsq2JxjSutci7aYWEHlV+as?=
- =?us-ascii?Q?UcUUQfHgv+MXpFMu3MgCXKTE21PEcah4Bl2ajjECOlIay3zuOy1Uy5iQgpzm?=
- =?us-ascii?Q?BFqRw1s24JsZT7DxzCCFeayH9gmRh6aW6bOprxfj+SeIa2ybovjIlj2M8T2Z?=
- =?us-ascii?Q?zSlCO0GVF8MKdiH8C7dQ8NtsaMK9yM2aXv+79y33Ko1rKeTJMJkzvtcKZVRv?=
- =?us-ascii?Q?Wx0G0iv+1SptNggRfGwIhL+RAGJpb1rtzVUJAXPcjaoydXXS3DXT/336f0AL?=
- =?us-ascii?Q?ijcPinhctgc4ZKHaIypUzp6eWLcBW7UYOG/RmDksTlvJ5hobbPl4EnBgKU3Q?=
- =?us-ascii?Q?P4UtC2Eo00bB9Emcqg10QhA9k6qF+rDwUCAJP259DZfyQlZiTtAIejrW2qNb?=
- =?us-ascii?Q?szjYjN63MjBA8ogoI7cwQOjFBebEuUQTrS3Wvp1nVa1NYRMqPplAUek0ExOf?=
- =?us-ascii?Q?lA579CWDJMQO1oz5t4Mqnk7EWd8lEclfqsBMTWMAhFCbfSxTowEqmNLctPxm?=
- =?us-ascii?Q?ZSJFzDJUl96lTkX+8Gm2Q7m4xurRbeVUTTP6lFqvcsWweyFMv3QecR3oNdO2?=
- =?us-ascii?Q?bJT+BjL8QdFlYlcdF1z9K85yNE713amEmr+RDKrR2+zVc5rv3pi9neo81qoB?=
- =?us-ascii?Q?GKzctQZLTdDEqPYcSZDSvwblbQQ8+U4u/wOf67f5Hsztn22QhS1t3Bwi4MHJ?=
- =?us-ascii?Q?fkAW5TRBjScTLNolBXN+6nH7KAoVItRTrjK+5bZas6eg7NpJj1XbcfOiSDcb?=
- =?us-ascii?Q?pwZ1NHAEuEFVB7J8zlYKxP2Mp3EvmE/9P/2sXDxuvQdXn3w4tzFVPujQuoI6?=
- =?us-ascii?Q?0Jq5pXxxvibLPu8zrgJirluiGLCWp3zi7rViuYtnqUUB3p7idaEUXOIG9IhH?=
- =?us-ascii?Q?6jgQAXeg9uDrYo0DtBWa2gPiIUef1D6oYVxFaUiUStS0DnKJq+ctEFy2q/dy?=
- =?us-ascii?Q?uIsHbyr6ScE4gjzbHlnd97iGzjUAmIJH/s8UtXAAv4Hp6GVWAAWBiRj791he?=
- =?us-ascii?Q?XxqeZjdmN944BGYK/tgDESPKLabEqrfB0X6I79RkZbDXR1E/vcedxL+C7qYZ?=
- =?us-ascii?Q?Y0QuC0k5trcV96NLw2HugwHKIlVJHLMDxTj5fp5HUT8imyL9dbpN7GIJ3ku9?=
- =?us-ascii?Q?LWmsVP1stBpM82bXnNwF4fK8MsuYzKpgUkdZPm0uC7uL7JpmUpEluSeSmMcg?=
- =?us-ascii?Q?t3HMQiK14OspgSrGacAehZOqpjJm9b8Arhr2va+3eAmgoeynGlowLFDwAJkG?=
- =?us-ascii?Q?DkUUIfGPbILvpFyOE56pTI94Bn4GhHAWdgxqJKyYx8m2x+bHZSkNk6JR55Oh?=
- =?us-ascii?Q?F/tZSsnEX4r9vOiOHAfUODUgaNDCdw/hxdNiDl49XqMuDCxRtWl7vinMX6E5?=
- =?us-ascii?Q?38MAg8HIogKs5o3bAKU1O4nZYDOjeIvb3oaMkUzDmveWuEPUMqSO7WHPTDqo?=
- =?us-ascii?Q?Zor0kl07p4p9tiW2RT9KJOH2APIspxJsVN48OY3P?=
-X-OriginatorOrg: suse.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad76a832-76d1-4352-07d4-08db98b1596d
-X-MS-Exchange-CrossTenant-AuthSource: HE1PR0402MB3497.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2023 08:19:28.3355
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +uBv9Zptjh6Qykqn1V4dcUMfJGp7LaMLJOf8v0omwYHRm8zp/ud7WE2uE8tkVmVEHdJoltYpyki7o88x/pxB5A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9205
+        Eric Paris <eparis@parisplace.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Joel Granados <j.granados@samsung.com>,
+        Jeff Xu <jeffxu@google.com>,
+        Takaya Saeki <takayas@chromium.org>,
+        Tomasz Nowicki <tn@semihalf.com>,
+        Matteo Rizzo <matteorizzo@google.com>,
+        Andres Freund <andres@anarazel.de>
+References: <20221107205754.2635439-1-cukie@google.com>
+ <CAHC9VhTLBWkw2XzqdFx1LFVKDtaAL2pEfsmm+LEmS0OWM1mZgA@mail.gmail.com>
+ <CABXk95ChjusTneWJgj5a58CZceZv0Ay-P-FwBcH2o4rO0g2Ggw@mail.gmail.com>
+ <CAHC9VhRTWGuiMpJJiFrUpgsm7nQaNA-n1CYRMPS-24OLvzdA2A@mail.gmail.com>
+ <54c8fd9c-0edd-7fea-fd7a-5618859b0827@semihalf.com>
+ <CAHC9VhS9BXTUjcFy-URYhG=XSxBC+HsePbu01_xBGzM8sebCYQ@mail.gmail.com>
+From:   Dmytro Maluka <dmy@semihalf.com>
+In-Reply-To: <CAHC9VhS9BXTUjcFy-URYhG=XSxBC+HsePbu01_xBGzM8sebCYQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 08, 2023 at 11:03:30PM -0700, Martin KaFai Lau wrote:
-> On 8/6/23 11:40 PM, Geliang Tang wrote:
-> > On Fri, Aug 04, 2023 at 05:23:32PM -0700, Martin KaFai Lau wrote:
-> > > On 8/3/23 10:07 PM, Geliang Tang wrote:
-> > > > Use rand() to generate a random netns name instead of using the fixed
-> > > > name "mptcp_ns" for every test.
-> > > > 
-> > > > By doing that, we can re-launch the test even if there was an issue
-> > > > removing the previous netns or if by accident, a netns with this generic
-> > > > name already existed on the system.
-> > > > 
-> > > > Note that using a different name each will also help adding more
-> > > > subtests in future commits.
-> > 
-> > Hi Martin,
-> > 
-> > I tried to run mptcp tests simultaneously, and got "Cannot create
-> > namespace file "/var/run/netns/mptcp_ns": File exists" errors sometimes.
-> > So I add this patch to fix it.
-> > 
-> > It's easy to reproduce, just run this commands in multiple terminals:
-> >   > for i in `seq 1 100`; do sudo ./test_progs -t mptcp; done
+On 8/9/23 02:31, Paul Moore wrote:
+> On Tue, Aug 8, 2023 at 4:40 PM Dmytro Maluka <dmy@semihalf.com> wrote:
+>> On 11/10/22 22:04, Paul Moore wrote:
+>>> On Thu, Nov 10, 2022 at 12:54 PM Jeffrey Vander Stoep <jeffv@google.com> wrote:
+>>>> On Mon, Nov 7, 2022 at 10:17 PM Paul Moore <paul@paul-moore.com> wrote:
+>>>>>
+>>>>> On Mon, Nov 7, 2022 at 3:58 PM Gil Cukierman <cukie@google.com> wrote:
+>>>>>>
+>>>>>> This patchset provides the changes required for controlling access to
+>>>>>> the io_uring_setup system call by LSMs. It does this by adding a new
+>>>>>> hook to io_uring. It also provides the SELinux implementation for a new
+>>>>>> permission, io_uring { setup }, using the new hook.
+>>>>>>
+>>>>>> This is important because existing io_uring hooks only support limiting
+>>>>>> the sharing of credentials and access to the sensitive uring_cmd file
+>>>>>> op. Users of LSMs may also want the ability to tightly control which
+>>>>>> callers can retrieve an io_uring capable fd from the kernel, which is
+>>>>>> needed for all subsequent io_uring operations.
+>>>>>
+>>>>> It isn't immediately obvious to me why simply obtaining a io_uring fd
+>>>>> from io_uring_setup() would present a problem, as the security
+>>>>> relevant operations that are possible with that io_uring fd *should*
+>>>>> still be controlled by other LSM hooks.  Can you help me understand
+>>>>> what security issue you are trying to resolve with this control?
+>>>>
+>>>> I think there are a few reasons why we want this particular hook.
+>>>>
+>>>> 1.  It aligns well with how other resources are managed by selinux
+>>>> where access to the resource is the first control point (e.g. "create"
+>>>> for files, sockets, or bpf_maps, "prog_load" for bpf programs, and
+>>>> "open" for perf_event) and then additional functionality or
+>>>> capabilities require additional permissions.
+>>>
+>>> [NOTE: there were two reply sections in your email, and while similar,
+>>> they were not identical; I've trimmed the other for the sake of
+>>> clarity]
+>>>
+>>> The resources you mention are all objects which contain some type of
+>>> information (either user data, configuration, or program
+>>> instructions), with the resulting fd being a handle to those objects.
+>>> In the case of io_uring the fd is a handle to the io_uring
+>>> interface/rings, which by itself does not contain any information
+>>> which is not already controlled by other permissions.
+>>>
+>>> I/O operations which transfer data between the io_uring buffers and
+>>> other system objects, e.g. IORING_OP_READV, are still subject to the
+>>> same file access controls as those done by the application using
+>>> syscalls.  Even the IORING_OP_OPENAT command goes through the standard
+>>> VFS code path which means it will trigger the same access control
+>>> checks as an open*() done by the application normally.
+>>>
+>>> The 'interesting' scenarios are those where the io_uring operation
+>>> servicing credentials, aka personalities, differ from the task
+>>> controlling the io_uring.  However in those cases we have the new
+>>> io_uring controls to gate these delegated operations.  Passing an
+>>> io_uring fd is subject to the fd/use permission like any other fd.
+>>>
+>>> Although perhaps the most relevant to your request is the fact that
+>>> the io_uring inode is created using the new(ish) secure anon inode
+>>> interface which ensures that the creating task has permission to
+>>> create an io_uring.  This io_uring inode label also comes into play
+>>> when a task attempts to mmap() the io_uring rings, a critical part of
+>>> the io_uring API.
+>>>
+>>> If I'm missing something you believe to be important, please share the details.
+>>>
+>>>> 2. It aligns well with how resources are managed on Android. We often
+>>>> do not grant direct access to resources (like memory buffers).
+>>>
+>>> Accessing the io_uring buffers requires a task to mmap() the io_uring
+>>> fd which is controlled by the normal SELinux mmap() access controls.
+>>>
+>>>> 3. Attack surface management. One of the primary uses of selinux on
+>>>> Android is to assess and limit attack surface (e.g.
+>>>> https://twitter.com/jeffvanderstoep/status/1422771606309335043) . As
+>>>> io_uring vulnerabilities have made their way through our vulnerability
+>>>> management system, it's become apparent that it's complicated to
+>>>> assess the impact. Is a use-after-free reachable? Creating
+>>>> proof-of-concept exploits takes a lot of time, and often functionality
+>>>> can be reached by multiple paths. How many of the known io_uring
+>>>> vulnerabilities would be gated by the existing checks? How many future
+>>>> ones will be gated by the existing checks? I don't know the answer to
+>>>> either of these questions and it's not obvious. This hook makes that
+>>>> initial assessment simple and effective.
+>>>
+>>> It should be possible to deny access to io_uring via the anonymous
+>>> inode labels, the mmap() controls, and the fd/use permission.  If you
+>>> find a way to do meaningful work with an io_uring fd that can't be
+>>> controlled via an existing permission check please let me know.
+>>
+>> Thank you a lot for this explanation. However, IMHO we should not
+>> confuse 2 somewhat different problems here:
+>>
+>> - protecting io_uring related resources (file descriptors, memory
+>>   buffers) against unauthorized access
+>>
+>> - protecting the entire system against potential vulnerabilities in
+>>   io_uring
+>>
+>> And while I agree that the existing permission checks should be already
+>> sufficient for the former, I'm not quite sure they are sufficient for
+>> the latter.
 > 
-> Not only the "-t mptcp" test. Other tests in test_progs also don't support
-> running parallel in multiple terminals. Does it really help to test the bpf
-> part of the prog_tests/mptcp.c test by running like this? If it wants to
-> exercise the other mptcp networking specific code like this, a separate
-> mptcp test is needed outside of test_progs and it won't be run in the bpf
-> CI.
+> ...
 > 
-> If you agree, can you please avoid introducing unnecessary randomness to the
-> test_progs where bpf CI and most users don't run in this way?
-
-Thanks Martin. Sure, I agree. Let's drop this patch.
-
+>> I already have a PoC patch [3] adding such LSM hook. But before I try to
+>> submit it for upstream, I'd like to know your opinion on the whole idea.
 > 
-> Also, please don't resend the patches too fast until the discussion is
-> concluded. Please give reasonable time for others to reply.
+> First please explain how the existing LSM/SELinux control points are
+> not sufficient for restricting io_uring operations.  I'm looking for a
+> real program flow that is able to "do meaningful work with an io_uring
+> fd that can't be controlled via an existing permission check".
 
-Sure. Please give me a clear reminder next time that it's time to resend
-a new version of the patches.
+As I said at the beginning of my reply, I agree with you that the
+existing LSM controls are sufficient for restricting io_uring I/O
+operations. That is not my concern here. The concern is: how to (and
+do we need to) restrict triggering execution of *any* io_uring code in
+kernel, *in addition to* restricting the actual io_uring operations.
 
-> 
-> I have a high level question. In LPC 2022
-> (https://lpc.events/event/16/contributions/1354/), I recall there was idea
-> in using bpf to make other mptcp decision/policy. Any thought and progress
-> on this? This set which only uses bpf to change the protocol feels like an
-> incomplete solution.
+In other words, "a real program doing a meaningful work with io_uring"
+in this case would mean "an exploit for a real vulnerability in io_uring
+code (in the current or any older kernel) which does not require an
+access to io_uring operations to be exploited". I don't claim that such
+vulnerabilities exist or are likely to be introduced in future kernels.
+But I'm neither an io_uring expert nor, more importantly, a security
+expert, so I cannot tell with confidence that they are not and we have
+nothing to worry about here. So I'm interested in your and others'
+opinion on that.
 
-We are implementing MPTCP packet scheduler using BPF. Patches aren't
-sent to BPF mail list yet, only temporarily on our mptcp repo[1].
+As an example, IIUC the inode_init_security_anon LSM hook already allows
+us to prevent a process from obtaining a valid io_uring fd via
+io_uring_setup(). But what if the process passes an invalid (unrelated)
+fd to io_uring_register() or io_uring_enter()?
 
-Here are the patches:
-
- selftests/bpf: Add bpf_burst test
- selftests/bpf: Add bpf_burst scheduler
- bpf: Export more bpf_burst related functions
- selftests/bpf: Add bpf_red test
- selftests/bpf: Add bpf_red scheduler
- selftests/bpf: Add bpf_rr test
- selftests/bpf: Add bpf_rr scheduler
- selftests/bpf: Add bpf_bkup test
- selftests/bpf: Add bpf_bkup scheduler
- selftests/bpf: Add bpf_first test
- selftests/bpf: Add bpf_first scheduler
- selftests/bpf: Add bpf scheduler test
- selftests/bpf: add two mptcp netns helpers
- selftests/bpf: use random netns name for mptcp
- selftests/bpf: Add mptcp sched structs
- bpf: Add bpf_mptcp_sched_kfunc_set
- bpf: Add bpf_mptcp_sched_ops
-
-If you could take a look at these patches in advance, I would greatly
-appreciate it. Any feedback is welcome.
-
-[1]
-https://github.com/multipath-tcp/mptcp_net-next.git
-
--Geliang
-
-> 
+It looks like all that happens is: it will quickly fail the
+io_is_uring_fops() check and return an error to userspace. So I suppose
+we may reasonably assume that this particular simple code path will
+remain bug-free and thus we don't need to worry about potential
+vulnerabilities in this case. Even if so, can we assume that any other
+code paths in io_uring that are reachable without passing the existing
+permission checks are similarly trivial?
