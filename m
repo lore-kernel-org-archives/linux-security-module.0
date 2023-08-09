@@ -2,88 +2,95 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B7AC001DB
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Aug 2023 02:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF448C04A6A
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Aug 2023 04:22:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229537AbjHICCx (ORCPT
+        id S229533AbjHIEWQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Aug 2023 22:02:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44160 "EHLO
+        Wed, 9 Aug 2023 00:22:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbjHICCx (ORCPT
+        with ESMTP id S229460AbjHIEWP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Aug 2023 22:02:53 -0400
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4667F1BCE
-        for <linux-security-module@vger.kernel.org>; Tue,  8 Aug 2023 19:02:52 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.143])
-        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4RLCxg5jfvz4f3pFh
-        for <linux-security-module@vger.kernel.org>; Wed,  9 Aug 2023 10:02:47 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.67.174.26])
-        by APP4 (Coremail) with SMTP id gCh0CgD3hqnH89Jk6rUUAQ--.53787S4;
-        Wed, 09 Aug 2023 10:02:48 +0800 (CST)
-From:   Xiu Jianfeng <xiujianfeng@huaweicloud.com>
-To:     john.johansen@canonical.com, paul@paul-moore.com,
+        Wed, 9 Aug 2023 00:22:15 -0400
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0199D19A1
+        for <linux-security-module@vger.kernel.org>; Tue,  8 Aug 2023 21:22:13 -0700 (PDT)
+Received: from [192.168.192.83] (unknown [50.47.134.245])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 8070542834;
+        Wed,  9 Aug 2023 04:22:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1691554932;
+        bh=DGpYgUa8dbFlzxVHEOICpko7jFA3qUT0Je0Vs6Bqyco=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=S9ADsMFrJYBMs+3E5mv3ZDYI41Lr5/EBWutCaDEDoF189psJMqEzAS/w+Iikb2slH
+         ubhPVSKgQNEzycA7bGTuYYgEDZBZ25mUr4TMWbbnAigtjpdTjcsmCXvBV//PsUv/zp
+         fdPjeNcr70sT9k4rmlR/sllfV3hp36OHyz+nAexo1h7384i5rvCNk2AAKtLw+Ebagv
+         wIeI15hy2Ykr8Tg/DEN1iTarYA1Gjg57O8hykMFk0o7WBTygkXUXSD2+/BCI1IFf9Z
+         4C82kdQgFhoLi9ejtQCXRnCH+Np+bnixIHiiTAbn5IIbAN+Op1IBGtOdvL9FthnxaE
+         a5AjGExfXclCg==
+Message-ID: <ea365010-1cb9-1bdb-3014-7e67a59daff2@canonical.com>
+Date:   Tue, 8 Aug 2023 21:22:07 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH -next] apparmor: remove unneeded #ifdef in
+ decompress_zstd()
+Content-Language: en-US
+To:     Xiu Jianfeng <xiujianfeng@huaweicloud.com>, paul@paul-moore.com,
         jmorris@namei.org, serge@hallyn.com, terrelln@fb.com
 Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
         xiujianfeng@huawei.com
-Subject: [PATCH -next] apparmor: remove unneeded #ifdef in decompress_zstd()
-Date:   Wed,  9 Aug 2023 10:02:44 +0000
-Message-Id: <20230809100244.342530-1-xiujianfeng@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: gCh0CgD3hqnH89Jk6rUUAQ--.53787S4
-X-Coremail-Antispam: 1UD129KBjvdXoWruFW8Xr4xuF13GF4fCw1DAwb_yoWDXrg_G3
-        4vkay8Ar42vF43tw1Fyay8XFyv9r18JFZI9a4vyr9xZ34UGrs5JF9rZws3XrWrXw47K395
-        Gan8AFWaqFnrGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb7AYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JFv_Gryl8c
-        AvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq
-        3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gc
-        CE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxI
-        r21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87
-        Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IY
-        c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
-        026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF
-        0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0x
-        vE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
-        jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU0VnQUUUUUU==
-X-CM-SenderInfo: x0lxyxpdqiv03j6k3tpzhluzxrxghudrp/
-X-CFilter-Loop: Reflected
+References: <20230809100244.342530-1-xiujianfeng@huaweicloud.com>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <20230809100244.342530-1-xiujianfeng@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
+On 8/9/23 03:02, Xiu Jianfeng wrote:
+> From: Xiu Jianfeng <xiujianfeng@huawei.com>
+> 
+> The whole function is guarded by CONFIG_SECURITY_APPARMOR_EXPORT_BINARY,
+> so the #ifdef here is redundant, remove it.
+> 
 
-The whole function is guarded by CONFIG_SECURITY_APPARMOR_EXPORT_BINARY,
-so the #ifdef here is redundant, remove it.
+indeed
 
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
----
- security/apparmor/apparmorfs.c | 2 --
- 1 file changed, 2 deletions(-)
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index c198a8a2047b..7ee8f4bb7733 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -1314,7 +1314,6 @@ SEQ_RAWDATA_FOPS(compressed_size);
- 
- static int decompress_zstd(char *src, size_t slen, char *dst, size_t dlen)
- {
--#ifdef CONFIG_SECURITY_APPARMOR_EXPORT_BINARY
- 	if (slen < dlen) {
- 		const size_t wksp_len = zstd_dctx_workspace_bound();
- 		zstd_dctx *ctx;
-@@ -1341,7 +1340,6 @@ static int decompress_zstd(char *src, size_t slen, char *dst, size_t dlen)
- 		kvfree(wksp);
- 		return ret;
- 	}
--#endif
- 
- 	if (dlen < slen)
- 		return -EINVAL;
--- 
-2.34.1
+I have pulled this into apparmor-next
+
+
+> ---
+>   security/apparmor/apparmorfs.c | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+> index c198a8a2047b..7ee8f4bb7733 100644
+> --- a/security/apparmor/apparmorfs.c
+> +++ b/security/apparmor/apparmorfs.c
+> @@ -1314,7 +1314,6 @@ SEQ_RAWDATA_FOPS(compressed_size);
+>   
+>   static int decompress_zstd(char *src, size_t slen, char *dst, size_t dlen)
+>   {
+> -#ifdef CONFIG_SECURITY_APPARMOR_EXPORT_BINARY
+>   	if (slen < dlen) {
+>   		const size_t wksp_len = zstd_dctx_workspace_bound();
+>   		zstd_dctx *ctx;
+> @@ -1341,7 +1340,6 @@ static int decompress_zstd(char *src, size_t slen, char *dst, size_t dlen)
+>   		kvfree(wksp);
+>   		return ret;
+>   	}
+> -#endif
+>   
+>   	if (dlen < slen)
+>   		return -EINVAL;
 
