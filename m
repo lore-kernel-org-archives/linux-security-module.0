@@ -2,93 +2,108 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC64EC001DE
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Aug 2023 22:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3046C04FDF
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Aug 2023 23:57:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230075AbjHJWdJ (ORCPT
+        id S232338AbjHJX55 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Aug 2023 18:33:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53678 "EHLO
+        Thu, 10 Aug 2023 19:57:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229669AbjHJWdJ (ORCPT
+        with ESMTP id S231584AbjHJX5z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Aug 2023 18:33:09 -0400
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 532B6272E
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Aug 2023 15:33:05 -0700 (PDT)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-57026f4bccaso15921317b3.2
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Aug 2023 15:33:05 -0700 (PDT)
+        Thu, 10 Aug 2023 19:57:55 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96CC92D4B
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Aug 2023 16:57:49 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-99d6d5054bcso205561866b.1
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Aug 2023 16:57:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1691706784; x=1692311584;
+        d=google.com; s=20221208; t=1691711868; x=1692316668;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bCpHARoH+9MHiPabbHy1UHAbff3CHBc6LeMgany2RCA=;
-        b=B/MgXjEljKoYzlEzoog+PMECU/8JWfc2RKcCNTZEbmFE/7C3HfVE4Fsa9P1Ve9lf7V
-         HyWkP4PcsJo3AGiZANbYnYXi9G3qxK90UhMiln5V0KdU+DcH0umMwJTWmfitjHoxc7lo
-         puUcKHDZdiE57vjaDnMWY8vkCIVB4iF5XpqCphZ1yMjyJHaCYUOvO1HuYJ16SwN7SsBo
-         9fF+wkY5L0WL9aaCP0JgcB6kzg0EElsddGWayLv6qt9+Bzhohw75H14tt8dFZeOnG+WP
-         XsbGDQaNidjAxPJvKfdaNqOByPtj5RiBcrqvFYJN3xeD0FCaESCiM4yKB7Tz2MxzH5sr
-         HqCw==
+        bh=hhMgA7qBPuApMhQ4h1vJKFRA4DNp+2B2aFxUktI7jpQ=;
+        b=fSbsTlZ9eRUEq1oc0qlT9VA71infat9B81M3qAFGPQLw+6DiL/k6IQBVuLqYpfm6zc
+         JPbbQuf/OXWE0DDR3Vty3P+Ga7xRDAZJPbwv8Rh6DllYU5zj15degN0az+fa1E+ZZKui
+         Zid/yQ06BXhwoDugW7aU7NJA5d/c3xUSIByYDVFEbgx0r3ZtD20CbtxCBNcFSIJefMq1
+         tRA4cZrI4/sEiaraxlYyAq+sL65bMfdUmaPLsXuLObrwqiszX5v1AaY8IXbz4ltMaoUI
+         FDZXJTolroDTYu55EKXzdNQ57eJWghsSQRQDYygik7m8uY2F9+yL1a51YFkAYkFi+S2u
+         5sVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691706784; x=1692311584;
+        d=1e100.net; s=20221208; t=1691711868; x=1692316668;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bCpHARoH+9MHiPabbHy1UHAbff3CHBc6LeMgany2RCA=;
-        b=hBB7v2rH4+t2a38lhIJ+35EZho6NHWNiNMnCmHgBHOH+OyUneWQe8RAQ+3KY1JDOn0
-         w4oMsNBys97PyGbEkXP72J+fC3ylxba88r14QR0ZHTlp9jpiL1Fua42A6NJdYzP3c6ym
-         TV3fBi9ixgc+pvtKaC+iNHNH+Qfgsed/XgZjBq1ZvlTpeP/e8lvQu1DpEQ7R4vKNVw7u
-         VX570GRRBnronNZEeMCNn/1SmI5DU7nHqBZCzmDsZ9YtKG5tYNYKxbGbvDSmDg0yKYuX
-         NWp6umIBGgobDxTtoUyXnL+LpB9lWnrwr9wJv+aOmyDqThdB+orA5zgQYljfeG0QDOsi
-         yHsg==
-X-Gm-Message-State: AOJu0YxxAj0/uauKdI0G1nyR1JaGS/OhHEIcRP19/3HcwcCSMilEi+en
-        cfJOBW1zwhbNckuQLBGoGG4D5wWWnvFbxjv5P2gW
-X-Google-Smtp-Source: AGHT+IF9xibU2Vw+cBFrvuHPVQZGps49801VJCLaBifmhPQ3xoeuTJZU5AbBdLG+uxksOghp6j8sj8kaVo2hF87YiBQ=
-X-Received: by 2002:a0d:d64a:0:b0:583:fad9:e241 with SMTP id
- y71-20020a0dd64a000000b00583fad9e241mr266554ywd.18.1691706784525; Thu, 10 Aug
- 2023 15:33:04 -0700 (PDT)
+        bh=hhMgA7qBPuApMhQ4h1vJKFRA4DNp+2B2aFxUktI7jpQ=;
+        b=YQi9om/IZzS0mqKhNRzrksOk3k2yE7O0dUOKpolEPHuueQQakRN3kBKuFcqIdOL3mD
+         jWXsBdu0Qu8khI8ndj19Hvi/lt/44fu8Wcx8p4carltzw7xh8Xs+lKPJZSr5mTFKrAMV
+         IE+LuP5RPPEvb9r3RNTAqZyxj4HCtG+wk9sJiRd9Zwl9mFswOm0ncGFdZe6yGZXfPFNF
+         43/HzzQIJmSuKBvdHq/TzHPE2YBjPEFjkR/efZ4w08XSE0ASgjXn/BDm7BXmLLwrJtHm
+         yTxHiUVQSY8tJAQ+bMmIhQt3Amk2BsI0odLxPa58BtIv3ND6PXf2jAemHhtdBUHb6lYX
+         CpkQ==
+X-Gm-Message-State: AOJu0YzzQqABe6PYIxcc4fcwyLYWuf9C6W2BIfcYlobi1MlVssWYV8sJ
+        8xyKghHcogTPFdOvJ7ksOooOoe78ZOb9vcCoEWQNiQ==
+X-Google-Smtp-Source: AGHT+IExGyX6IQpw7nkPj/Oj8ZdeERAHUNFikZIEbAqLbQU3zHzZ+Xb2mqkLRl/UdYIm3ylJUJ+cypBkqHv5r6CLu/8=
+X-Received: by 2002:a17:906:1d1:b0:99c:55c5:1c6e with SMTP id
+ 17-20020a17090601d100b0099c55c51c6emr519636ejj.8.1691711867870; Thu, 10 Aug
+ 2023 16:57:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230802174435.11928-1-casey.ref@schaufler-ca.com> <20230802174435.11928-1-casey@schaufler-ca.com>
-In-Reply-To: <20230802174435.11928-1-casey@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 10 Aug 2023 18:32:53 -0400
-Message-ID: <CAHC9VhQ4ttkSLTBCrXNZSBR1FP9UZ_gUHmo0BS37LCdyBmUeyA@mail.gmail.com>
-Subject: Re: [PATCH v13 00/11] LSM: Three basic syscalls
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module@vger.kernel.org, jmorris@namei.org,
-        serge@hallyn.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net
+References: <20230718234512.1690985-13-seanjc@google.com> <diqzv8dq3116.fsf@ackerleytng-ctop.c.googlers.com>
+ <ZNKv9ul2I7A4V7IF@google.com>
+In-Reply-To: <ZNKv9ul2I7A4V7IF@google.com>
+From:   Vishal Annapurve <vannapurve@google.com>
+Date:   Thu, 10 Aug 2023 16:57:36 -0700
+Message-ID: <CAGtprH9YE50RtqhW-U+wK0Vv6aKfqqtOPn8q4s8or=UZwPXZoA@mail.gmail.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Ackerley Tng <ackerleytng@google.com>, pbonzini@redhat.com,
+        maz@kernel.org, oliver.upton@linux.dev, chenhuacai@kernel.org,
+        mpe@ellerman.id.au, anup@brainfault.org, paul.walmsley@sifive.com,
+        palmer@dabbelt.com, aou@eecs.berkeley.edu, willy@infradead.org,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
+        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
+        mail@maciej.szmigiero.name, vbabka@suse.cz, david@redhat.com,
+        qperret@google.com, michael.roth@amd.com, wei.w.wang@intel.com,
+        liam.merwick@oracle.com, isaku.yamahata@gmail.com,
+        kirill.shutemov@linux.intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 2, 2023 at 1:44=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
+On Tue, Aug 8, 2023 at 2:13=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
+> ...
+
+> > + When binding a memslot to the file, if a kvm pointer exists, it must
+> >   be the same kvm as the one in this binding
+> > + When the binding to the last memslot is removed from a file, NULL the
+> >   kvm pointer.
 >
-> Add three system calls for the Linux Security Module ABI ...
+> Nullifying the KVM pointer isn't sufficient, because without additional a=
+ctions
+> userspace could extract data from a VM by deleting its memslots and then =
+binding
+> the guest_memfd to an attacker controlled VM.  Or more likely with TDX an=
+d SNP,
+> induce badness by coercing KVM into mapping memory into a guest with the =
+wrong
+> ASID/HKID.
+>
 
-I had a small comment on the SELinux patch, but that's oh so very
-minor and not worth respinning in my opinion; I can fix that up with a
-follow-up patch once the patchset is merged.
+TDX/SNP have mechanisms i.e. PAMT/RMP tables to ensure that the same
+memory is not assigned to two different VMs. Deleting memslots should
+also clear out the contents of the memory as the EPT tables will be
+zapped in the process and the host will reclaim the memory.
 
-I was also happy to see that John had a chance to look everything
-over, especially the AppArmor bits, that's good.
-
-Micka=C3=ABl had a lot of good comments on the selftest patch, and of all
-the LSMs I believe he has done the most work with the kernel's
-selftest functionality so it would be nice to have him look over the
-latest revision in this patchset.  I know he is busy at the moment,
-but I'm hopeful he will have an opportunity to look at it in the
-second half of next week.
-
-Assuming the selftests look good to Micka=C3=ABl, and no one else
-identifies any problems, I think we're on track to merge this into
-lsm/next after the upcoming merge window closes :)  Thanks a lot
-Casey, I appreciate all the work you've put into this patchset.
-
---=20
-paul-moore.com
+Regards,
+Vishal
