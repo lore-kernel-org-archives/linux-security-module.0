@@ -2,154 +2,146 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B05C001E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Aug 2023 11:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E291C001B0
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Aug 2023 12:11:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230391AbjHJLne (ORCPT
+        id S229890AbjHJMLN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Aug 2023 07:43:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58670 "EHLO
+        Thu, 10 Aug 2023 08:11:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232642AbjHJLne (ORCPT
+        with ESMTP id S230457AbjHJMLM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Aug 2023 07:43:34 -0400
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2478091;
-        Thu, 10 Aug 2023 04:43:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1691667810;
-        bh=nEaH47B5XUG+dGWKW2MTI/k+KrlwMmhRhGED9/yMPoY=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=tsmOTLMDWCdMKJ6jnBtKg+1cNJKoROy+6PYx53l52uIx7ypH4yWcot/RNrW2/22/W
-         kWXyo3ntZaMSXaxJ1bBnFtZ6SAHkn8vOvzOpvNZE/LRN4liZO9aOPisqC2NwQ0Kgjd
-         E8SnD0iMAk4D9AbCTVq2G4CqWAIMYcCb3QYw6zxc=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 31B151281B19;
-        Thu, 10 Aug 2023 07:43:30 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id xfvz0UbcUk3I; Thu, 10 Aug 2023 07:43:30 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1691667809;
-        bh=nEaH47B5XUG+dGWKW2MTI/k+KrlwMmhRhGED9/yMPoY=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=kNVgQPrNN45DM9R91wZjrcClQB6Oo5nadexXVgwIsJy5hlIE8iRPQ6Ja2UEWah7II
-         SD8OX0pbv8rvPPHrRK4RokmMRsYsh5UINXvpBXKOfHAUXJlqnD+EsXyb88x8bsNp3A
-         Rk2aYnkruY7BKGXKaXeDau1dE/n9X4tJp0GdJLiI=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 605111281A2E;
-        Thu, 10 Aug 2023 07:43:28 -0400 (EDT)
-Message-ID: <8ccaec30bf85cfbf4415bbafa22646a62e753840.camel@HansenPartnership.com>
-Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Sush Shringarputale <sushring@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
-        kgold@linux.ibm.com, bhe@redhat.com, vgoyal@redhat.com,
-        dyoung@redhat.com, kexec@lists.infradead.org, jmorris@namei.org,
-        Paul Moore <paul@paul-moore.com>, serge@hallyn.com
-Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
-        linux-security-module@vger.kernel.org
-Date:   Thu, 10 Aug 2023 07:43:25 -0400
-In-Reply-To: <5cb03349-7a32-8f74-f2a1-ff3c6247c1ef@linux.microsoft.com>
-References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
-         <b748230c8ee291288afcf48898507556c3aa7c71.camel@HansenPartnership.com>
-         <5d21276a-daac-fc9b-add9-62e7c04bbdcd@linux.ibm.com>
-         <8ad131f35c33cf10788344be6c981473971f9c1c.camel@HansenPartnership.com>
-         <abe53dde-9a83-81fd-422d-babf4587c545@linux.ibm.com>
-         <350ecdcbf7796f488807fcd7983414a02dd71be4.camel@HansenPartnership.com>
-         <04fb2fe5-9ebe-b35f-bdde-6ef22786438f@linux.ibm.com>
-         <a522b17a536ea87a6a4c2faf95583ae3b7b74a26.camel@HansenPartnership.com>
-         <5cb03349-7a32-8f74-f2a1-ff3c6247c1ef@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+        Thu, 10 Aug 2023 08:11:12 -0400
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D706E1718
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Aug 2023 05:11:08 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.143])
+        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4RM5P16x4Jz4f4PN0
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Aug 2023 20:11:01 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.67.174.26])
+        by APP4 (Coremail) with SMTP id gCh0CgA3x6nV09RkLBWGAQ--.14819S4;
+        Thu, 10 Aug 2023 20:11:03 +0800 (CST)
+From:   Xiu Jianfeng <xiujianfeng@huaweicloud.com>
+To:     john.johansen@canonical.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
+Subject: [PATCH -next] apparmor: remove unused functions in policy_ns.c/.h
+Date:   Thu, 10 Aug 2023 20:10:56 +0000
+Message-Id: <20230810201056.429575-1-xiujianfeng@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: gCh0CgA3x6nV09RkLBWGAQ--.14819S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxur47AFW5GF48XF47Zw1kXwb_yoW5CF15pa
+        nayasxJF4xKF1Fvw1DXr17C34a9r4rKr1ay398W3WSyFsIgw1kCFWFkr10934Fyry8Aryx
+        XFsF9Fs5A3ZrXrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
+        8lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_
+        Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gc
+        CE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxI
+        r21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87
+        Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IY
+        c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
+        026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF
+        0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0x
+        vE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
+        jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU0VnQUUUUUU==
+X-CM-SenderInfo: x0lxyxpdqiv03j6k3tpzhluzxrxghudrp/
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2023-08-09 at 21:43 -0700, Tushar Sugandhi wrote:
-> On 8/8/23 14:41, James Bottomley wrote:
-> > On Tue, 2023-08-08 at 16:09 -0400, Stefan Berger wrote:
-[...]
-> > >   at this point doesn't seem necessary since one presumably can
-> > > verify the log and PCR states at the end with the 'regular'
-> > > quote.
-> >  
-> > I don't understand this.  A regular quote is a signature over PCR
-> > state by an AK.  The point about saving the AK in the log for the
-> > original is that if the *kernel* truncates the log and saves it to
-> > a file, it needs to generate both the AK and the quote for the top
-> > of the file shard. That means the AK/EK binding is unverified, but
-> > can be verified by loading the AK and running the usual tests,
-> > which can only be done if you have the loadable AK, which is why
-> > you need it as part of the log saving proposal.
->  
-> I had this question about the usability of AK/EK in this
-> context. Although AK/EK + PCR quote is needed to verify the snapshot
-> shards / IMA logs are not tampered with, I am still not sure why
-> AK/EK needs to be part of the shard/IMA log. The client sending AK/EK
-> to attestation service separately would still serve the purpose,
-> right?
+From: Xiu Jianfeng <xiujianfeng@huawei.com>
 
-Well, the EK doesn't need to be part of the log: it's just a permanent
-part of the TPM identity.  To verify the log, you need access to the
-TPM that was used to create it, so that's the point at which you get
-the EK.
+These functions are not used now, remove them.
 
-An AK is simply a TPM generated signing key (meaning the private part
-of the key is secured by the TPM and known to no-one else).  In the
-literature a TPM generated signing key doesn't become an Attestation
-Key until it's been verified using an EK property (either a certify for
-a signing EK or a make/activate credential round trip for the more
-usual encryption EK.
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+---
+ security/apparmor/include/policy_ns.h | 14 ----------
+ security/apparmor/policy_ns.c         | 37 ---------------------------
+ 2 files changed, 51 deletions(-)
 
-So the proposal is for each quote that's used to verify a log shard is
-that the TPM simply generate a random signing key and use that to sign
-the quote.  You need to save the TPM form of the generated key so it
-can be loaded later and the reason for that is you can do the EK
-verification at any time after the quote was given by loading the saved
-key and running the verification protocol.  In the normal attestation
-you do the EK verification of the AK *before* the quote, but there's no
-property of the quote that depends on this precedence provided you do
-the quote with a TPM generated signing key.
-
-The underlying point is that the usual way an EK verifies an AK
-requires a remote observer, which the kernel won't have, so the kernel
-must do all its stuff locally (generate key, get quote) and then at
-some point later the system can become remote connected and prove to
-whatever external entity that the log shard is valid.  So we have to
-have all the components necessary for that proof: the log shard, the
-quote and the TPM form of the AK.
-
-> For instance, PCR quotes will be signed by AK. So as long as the
-> verifier trusts the AK/EK,
-
-Right, but if you're sharding a log, the kernel doesn't know if a
-verifier has been in contact yet.  The point of the protocol above is
-to make that not matter.  The verifier can contact the system after the
-log has been saved and the verification will still work.
-
->  it can verify the quotes are not tampered with.
-> Replaying IMA log/snapshot can produce the PCR quotes which can be
-> matched with signed PCR quotes. If they match, then the verifier can
-> conclude that the IMA log is not tampered with. So AK doesn't need to
-> be part of the log/snapshot.
-
-Only if the system is currently in contact with the verifier and the
-verifier has created the AK.  That may not have happened.
-
-> BTW, in this proposal, kernel is truncating the log and passing the
-> truncated buffer to UM.  UM client need to save it to the disk
-> location of it's choice.
-
-Yes, but I was assuming tampering with or discarding the log file would
-be treated in exactly the same way as an in-kernel IMA log tamper.
-
-James
+diff --git a/security/apparmor/include/policy_ns.h b/security/apparmor/include/policy_ns.h
+index 33d665516fc1..d646070fd966 100644
+--- a/security/apparmor/include/policy_ns.h
++++ b/security/apparmor/include/policy_ns.h
+@@ -86,10 +86,7 @@ const char *aa_ns_name(struct aa_ns *parent, struct aa_ns *child, bool subns);
+ void aa_free_ns(struct aa_ns *ns);
+ int aa_alloc_root_ns(void);
+ void aa_free_root_ns(void);
+-void aa_free_ns_kref(struct kref *kref);
+ 
+-struct aa_ns *aa_find_ns(struct aa_ns *root, const char *name);
+-struct aa_ns *aa_findn_ns(struct aa_ns *root, const char *name, size_t n);
+ struct aa_ns *__aa_lookupn_ns(struct aa_ns *view, const char *hname, size_t n);
+ struct aa_ns *aa_lookupn_ns(struct aa_ns *view, const char *name, size_t n);
+ struct aa_ns *__aa_find_or_create_ns(struct aa_ns *parent, const char *name,
+@@ -151,15 +148,4 @@ static inline struct aa_ns *__aa_find_ns(struct list_head *head,
+ 	return __aa_findn_ns(head, name, strlen(name));
+ }
+ 
+-static inline struct aa_ns *__aa_lookup_ns(struct aa_ns *base,
+-					   const char *hname)
+-{
+-	return __aa_lookupn_ns(base, hname, strlen(hname));
+-}
+-
+-static inline struct aa_ns *aa_lookup_ns(struct aa_ns *view, const char *name)
+-{
+-	return aa_lookupn_ns(view, name, strlen(name));
+-}
+-
+ #endif /* AA_NAMESPACE_H */
+diff --git a/security/apparmor/policy_ns.c b/security/apparmor/policy_ns.c
+index fd5b7afbcb48..1f02cfe1d974 100644
+--- a/security/apparmor/policy_ns.c
++++ b/security/apparmor/policy_ns.c
+@@ -159,43 +159,6 @@ void aa_free_ns(struct aa_ns *ns)
+ 	kfree_sensitive(ns);
+ }
+ 
+-/**
+- * aa_findn_ns  -  look up a profile namespace on the namespace list
+- * @root: namespace to search in  (NOT NULL)
+- * @name: name of namespace to find  (NOT NULL)
+- * @n: length of @name
+- *
+- * Returns: a refcounted namespace on the list, or NULL if no namespace
+- *          called @name exists.
+- *
+- * refcount released by caller
+- */
+-struct aa_ns *aa_findn_ns(struct aa_ns *root, const char *name, size_t n)
+-{
+-	struct aa_ns *ns = NULL;
+-
+-	rcu_read_lock();
+-	ns = aa_get_ns(__aa_findn_ns(&root->sub_ns, name, n));
+-	rcu_read_unlock();
+-
+-	return ns;
+-}
+-
+-/**
+- * aa_find_ns  -  look up a profile namespace on the namespace list
+- * @root: namespace to search in  (NOT NULL)
+- * @name: name of namespace to find  (NOT NULL)
+- *
+- * Returns: a refcounted namespace on the list, or NULL if no namespace
+- *          called @name exists.
+- *
+- * refcount released by caller
+- */
+-struct aa_ns *aa_find_ns(struct aa_ns *root, const char *name)
+-{
+-	return aa_findn_ns(root, name, strlen(name));
+-}
+-
+ /**
+  * __aa_lookupn_ns - lookup the namespace matching @hname
+  * @view: namespace to search in  (NOT NULL)
+-- 
+2.34.1
 
