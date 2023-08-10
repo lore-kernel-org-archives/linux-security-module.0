@@ -2,151 +2,125 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07751C001DE
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Aug 2023 21:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E2AC04A6A
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Aug 2023 22:24:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231229AbjHJVyM (ORCPT
+        id S231684AbjHJWYa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Aug 2023 17:54:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43088 "EHLO
+        Thu, 10 Aug 2023 18:24:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229707AbjHJVyL (ORCPT
+        with ESMTP id S231251AbjHJWY3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Aug 2023 17:54:11 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 159FAED;
-        Thu, 10 Aug 2023 14:54:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A8B1863AB5;
-        Thu, 10 Aug 2023 21:54:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E3BC433C8;
-        Thu, 10 Aug 2023 21:54:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691704450;
-        bh=zHlbC4DhGyvqqyiP84nv86Xr6u7c4WwQ5xngbfFhFuk=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=kmF1F8xDR5Lmybalh/o8eQmpCMGiYsVpMq6CJcn6OamF7Spr1QQHH8WlyEzGrMlfv
-         kW0MjOhksTi1L4FoVEo1p2qPGJrEdfFUyshVyUfOEY0CCjEtCCi56sLJwLS0MOAgfH
-         eSMQbcFzNXIvFYm7M9n80PUs1Nf38rLfvvw2R/ivjrtuFDTkM4SSeyfrbqN9cRVO19
-         Pzg5ekjcVkNZHdIDO6o/R3EjkFOjX7Wq7Ymo3b87C6wIS3TNdfNWbmYAViw/ZF6qF5
-         ZZHnKFD14FrPOLFgWwFDEu9XWJAujA/9LHHe1vLX4kB9Rc+Ai9BjgQKa31mCXNOmiu
-         8apXYvpiXlzCg==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Fri, 11 Aug 2023 00:54:05 +0300
-Subject: Re: [PATCH v2 6/6] integrity: PowerVM support for loading third
- party code signing keys
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Nayna Jain" <nayna@linux.ibm.com>,
-        <linux-integrity@vger.kernel.org>
-Cc:     "Mimi Zohar" <zohar@linux.ibm.com>,
-        "Eric Snowberg" <eric.snowberg@oracle.com>,
-        "Paul Moore" <paul@paul-moore.com>,
-        "linuxppc-dev" <linuxppc-dev@lists.ozlabs.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Message-Id: <CUP754GCFF2H.15G672KXVX5AJ@suppilovahvero>
-X-Mailer: aerc 0.14.0
-References: <20230809195315.1085656-1-nayna@linux.ibm.com>
- <20230809195315.1085656-7-nayna@linux.ibm.com>
-In-Reply-To: <20230809195315.1085656-7-nayna@linux.ibm.com>
+        Thu, 10 Aug 2023 18:24:29 -0400
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA2A62722
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Aug 2023 15:24:28 -0700 (PDT)
+Received: by mail-qt1-x833.google.com with SMTP id d75a77b69052e-40fda01c8beso6993831cf.0
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Aug 2023 15:24:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1691706268; x=1692311068;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FLWNnusBQnURb+xt4DXlBk9kVPWvxt5Ijw2JQ29Fx8Y=;
+        b=PBDelp9ylnd1p2zMIhh8FOdARsKvJDy8PLP1C3HivQIoVhjSR67cE5WxfIaI6Q/ZFz
+         DEkN1mgdlvZTuViYovzDLhJyNP63ciyHtcSsOFP35Y2r3nfvchju03Lm1py3hn0YK13B
+         Tf033gd+fiSAz+zAyU1P7vdthhxKsqo7+UHR0SG9nY0b9bFpiMDg3P/p/pfY1q/HRl9H
+         oDuuwG/e0xmgnELlV/MVDjuss+NpV2Zg7lyplBP0JrPT788bpif3a08YQaePW5Mobn6z
+         orNqyhVtqc51s8BUq2eKc9Qx52+JGXPrxI41MnZZN+lH4fgMXwoDJX0bBz3M4TNMuZfa
+         rrpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691706268; x=1692311068;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FLWNnusBQnURb+xt4DXlBk9kVPWvxt5Ijw2JQ29Fx8Y=;
+        b=jvaeisWF8gYA8sEYQNCERT5y0avoGt2E03qLUbbGLp0G+1TU4KPpTkdKFVkVWZWsZU
+         vFpcKLI/W3CCQDqwJBh+bZGxh69muwX5W1EZ8ODorkON+STdTtbrwIXZANaJgZth3TiZ
+         tmrFG+Hji4nqwp5Y6untKecoaFUo9CmjeUZJRekcRS5B3TbH+7Qd07+tEr7NvvBXDghb
+         QuqpPcGQHD3XL/rjD/7wAv+nC+X2g1fU2nGnKQNaisSv8mBKTgaTPT07cDBWwRvFPbEj
+         kvLuomCaDFE/MffsImSI80WtbFt6DlBIZM/ZO+69m4ZQDtz3Rsayj/UIyZvpPbpKn5rS
+         VFRA==
+X-Gm-Message-State: AOJu0YxnevWk7pADbzoQjfcHC7iELBf43bVqKOXHh2KbJtvTdvKxz1qh
+        lvHsMKIgEQnlOnYm9ORil2KevhnsxIXwZvHLuN2+
+X-Google-Smtp-Source: AGHT+IEqhheF+cXXqXhsi4mrHMlBChr9PecL3CPsD6reX5pruGhIm1HrgtXPC/T91Y/HTSCU4vriDQ==
+X-Received: by 2002:a05:622a:4ca:b0:40e:f7cb:8c44 with SMTP id q10-20020a05622a04ca00b0040ef7cb8c44mr4507471qtx.23.1691706267776;
+        Thu, 10 Aug 2023 15:24:27 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id q9-20020ac84509000000b00401217aa51dsm778611qtn.76.2023.08.10.15.24.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Aug 2023 15:24:27 -0700 (PDT)
+Date:   Thu, 10 Aug 2023 18:24:26 -0400
+Message-ID: <1088bd209427626090f6a062a2ad1486.paul@paul-moore.com>
+From:   Paul Moore <paul@paul-moore.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com,
+        linux-security-module@vger.kernel.org
+Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net, selinux@vger.kernel.org
+Subject: Re: [PATCH v13 10/11] SELinux: Add selfattr hooks
+References: <20230802174435.11928-11-casey@schaufler-ca.com>
+In-Reply-To: <20230802174435.11928-11-casey@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed Aug 9, 2023 at 10:53 PM EEST, Nayna Jain wrote:
-> On secure boot enabled PowerVM LPAR, third party code signing keys are
-> needed during early boot to verify signed third party modules. These
-> third party keys are stored in moduledb object in the Platform
-> KeyStore(PKS).
-          ^ space
-
->
-> Load third party code signing keys onto .secondary_trusted_keys keyring.
->
-> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+On Aug  2, 2023 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> 
+> Add hooks for setselfattr and getselfattr. These hooks are not very
+> different from their setprocattr and getprocattr equivalents, and
+> much of the code is shared.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: selinux@vger.kernel.org
+> Cc: Paul Moore <paul@paul-moore.com>
 > ---
->  certs/system_keyring.c                        | 23 +++++++++++++++++++
->  include/keys/system_keyring.h                 |  7 ++++++
->  security/integrity/integrity.h                |  1 +
->  .../platform_certs/keyring_handler.c          |  8 +++++++
->  .../platform_certs/keyring_handler.h          |  5 ++++
->  .../integrity/platform_certs/load_powerpc.c   | 18 ++++++++++++++-
->  6 files changed, 61 insertions(+), 1 deletion(-)
->
-> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> index b348e0898d34..3435d4936fb2 100644
-> --- a/certs/system_keyring.c
-> +++ b/certs/system_keyring.c
-> @@ -396,3 +396,26 @@ void __init set_platform_trusted_keys(struct key *ke=
-yring)
->  	platform_trusted_keys =3D keyring;
+>  security/selinux/hooks.c | 136 +++++++++++++++++++++++++++++++--------
+>  1 file changed, 109 insertions(+), 27 deletions(-)
+> 
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index c900813fc8f7..f66a28f672b2 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+
+...
+
+> @@ -6449,6 +6466,69 @@ static int selinux_setprocattr(const char *name, void *value, size_t size)
+>  	return error;
 >  }
->  #endif
-> +
-
-spurious newline character
-
-> +void __init add_to_secondary_keyring(const char *source, const void *dat=
-a,
-> +				     size_t len)
-
-Documentation is lacking, and should be in a single line, as it totals
-less than 100 characters.
-
+>  
+> +static int selinux_getselfattr(unsigned int attr, struct lsm_ctx __user *ctx,
+> +			       size_t *size, u32 flags)
 > +{
-> +	key_ref_t key;
-> +	key_perm_t perm; the following structure
-> +	int rc =3D 0;
-
-	int rc;
-
+> +	char *value;
+> +	size_t total_len;
+> +	int len;
+> +	int rc;
 > +
-> +	perm =3D (KEY_POS_ALL & ~KEY_POS_SETATTR) | KEY_USR_VIEW;
+> +	len = selinux_lsm_getattr(attr, current, &value);
+> +	if (len < 0)
+> +		return len;
 > +
-> +	key =3D key_create_or_update(make_key_ref(secondary_trusted_keys, 1),
-> +				   "asymmetric",
-> +				   NULL, data, len, perm,
-> +				   KEY_ALLOC_NOT_IN_QUOTA);
-> +	if (IS_ERR(key)) {
-> +		rc =3D PTR_ERR(key);
+> +	total_len = ALIGN(struct_size(ctx, ctx, len), 8);
+> +
+> +	if (total_len > *size)
+> +		rc = -E2BIG;
+> +	else if (ctx)
+> +		rc = lsm_fill_user_ctx(ctx, value, len, LSM_ID_SELINUX, 0);
+> +	else
+> +		rc = 1;
 
-This helper variable is not very useful.
+I'd probably either set rc to zero when at declaration time and drop
+this final else, or explicitly set rc to one here to better fit what
+lsm_fill_user_ctx() does on success.  However, the end result is the
+same so we can just fix that with a follow-up patch once this is
+merged into the lsm/next branch.
 
-> +		pr_err("Problem loading X.509 certificate %d\n", rc);
+> +	kfree(value);
+> +	*size = total_len;
+> +	if (rc < 0)
+> +		return rc;
+> +	return 1;
+> +}
 
-Why pr_err()? What kind of object is "a problem"?
-
-Also X.509 certificates are everywhere. If these are printed to the
-klog, how can e.g. an admin deduce the problem over here?
-
-Even without having these log messages at all I could trace the called
-function and be informed that some X.509 cert has an issues. Actually
-then I could even deduce the location, thanks to call backtrace.
-
-These have a potential to lead into wrong conclusions.
-
-> +	} else {
-> +		pr_notice("Loaded X.509 cert '%s'\n",
-> +			  key_ref_to_ptr(key)->description);
-
-single line
-
-> +		key_ref_put(key);
-> +	}
-
-I'd suggest instead the following structure:
-
-	if (IS_ERR(key)) {
-		pr_err("Problem loading X.509 certificate %d\n", PTR_ERR(key));
-		return;
-	}
-
-	pr_notice("Loaded X.509 cert '%s'\n", key_ref_to_ptr(key)->description);
-	key_ref_put(key);
-}
-
-BR, Jarkko
+--
+paul-moore.com
