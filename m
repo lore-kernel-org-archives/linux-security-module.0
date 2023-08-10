@@ -2,122 +2,107 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD42AC0015E
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Aug 2023 20:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F5FC001E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Aug 2023 01:03:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229970AbjHIUvb (ORCPT
+        id S230080AbjHJBDX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Aug 2023 16:51:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47976 "EHLO
+        Wed, 9 Aug 2023 21:03:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229601AbjHIUvb (ORCPT
+        with ESMTP id S229658AbjHJBDX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Aug 2023 16:51:31 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D4B9100;
-        Wed,  9 Aug 2023 13:51:30 -0700 (PDT)
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 379JgFhW017381;
-        Wed, 9 Aug 2023 19:53:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=91q+7mvybHfGvVUVLV6PtAy6zTGV6l+q7I4P7aDY71Q=;
- b=PbYrdhX+oeKuWXucaeo0nNpOfzEg2lbVdhXIievhSanAu6wnOCwRFmXYHWNW4gvd+WKm
- nBwsfjydVdjgfcehkj5RHLkj3gP1UsTk3L1H7no8COn0wlRKlwxXVbnRQYIgeZfKsykv
- wzGBHRRcB7gWtLYWuOkeyT+U5weg4AmWs3jXl3/TxmG5/REAlAjjWswKHlHQVnDC9nGP
- J/JViY2afKjs1Fphw4oYw6rw6aleKT/bkAW//z4O63bsXCdhxNEowYY+q1y0Bbp/Cwf7
- 7MpPsI1lL0or59I/JAiZvuwWxaj9HHZsQvjBzJLNwJvhcsrbOmGtiAPUhxiKdHmhCxRc ZA== 
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sch088e2g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Aug 2023 19:53:41 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 379ICZNw015366;
-        Wed, 9 Aug 2023 19:53:40 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-        by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3sb3f34ubr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Aug 2023 19:53:40 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-        by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 379JrbmG19989240
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 9 Aug 2023 19:53:37 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 655E020043;
-        Wed,  9 Aug 2023 19:53:37 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 27EF620040;
-        Wed,  9 Aug 2023 19:53:35 +0000 (GMT)
-Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com (unknown [9.61.3.84])
-        by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Wed,  9 Aug 2023 19:53:34 +0000 (GMT)
-From:   Nayna Jain <nayna@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v2 3/6] integrity: remove global variable from machine_keyring.c
-Date:   Wed,  9 Aug 2023 15:53:12 -0400
-Message-Id: <20230809195315.1085656-4-nayna@linux.ibm.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20230809195315.1085656-1-nayna@linux.ibm.com>
-References: <20230809195315.1085656-1-nayna@linux.ibm.com>
+        Wed, 9 Aug 2023 21:03:23 -0400
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8D7F2DA;
+        Wed,  9 Aug 2023 18:03:22 -0700 (PDT)
+Received: from [192.168.87.33] (c-98-237-170-177.hsd1.wa.comcast.net [98.237.170.177])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 8092920FC4EA;
+        Wed,  9 Aug 2023 18:03:21 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8092920FC4EA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1691629402;
+        bh=2x2EFhFJgTyCZhIinQsqkFaSlOaRo4/tPw/QPajL/BU=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=gx57cqg3A3QgQ3AYuhFcN7vGxDUiNdFywJNq4cRkOq5swDeWUQ/O4apEcC4wp0cQ3
+         O71O/OyDQwo1KSdLtUVRF8li9nCAxD7oDTgSZyT2FTZAZlJnNW8pkueOnu3tZn/E91
+         YYmU/YPLTBZsi7varAA7bynpVAUndeutc12+fVrM=
+Message-ID: <e9b67fd8-3a8f-7024-5940-a093a704358e@linux.microsoft.com>
+Date:   Wed, 9 Aug 2023 18:03:20 -0700
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
+Content-Language: en-US
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Sush Shringarputale <sushring@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+        kgold@linux.ibm.com, bhe@redhat.com, vgoyal@redhat.com,
+        dyoung@redhat.com, kexec@lists.infradead.org, jmorris@namei.org,
+        Paul Moore <paul@paul-moore.com>, serge@hallyn.com
+Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
+        linux-security-module@vger.kernel.org
+References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
+ <b748230c8ee291288afcf48898507556c3aa7c71.camel@HansenPartnership.com>
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+In-Reply-To: <b748230c8ee291288afcf48898507556c3aa7c71.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Mts2WIO9sEIZC7kyJDvGmzpoe7_EWIN4
-X-Proofpoint-GUID: Mts2WIO9sEIZC7kyJDvGmzpoe7_EWIN4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-09_17,2023-08-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- spamscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0 adultscore=0
- impostorscore=0 mlxlogscore=999 priorityscore=1501 phishscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308090171
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-trust_mok variable is accessed within a single function locally.
+Thanks a lot James for looking at this proposal,
+and sharing your thoughts. Really appreciate it.
 
-Change trust_mok from global to local static variable.
+On 8/1/23 14:21, James Bottomley wrote:
+> On Tue, 2023-08-01 at 12:12 -0700, Sush Shringarputale wrote:
+> [...]
+>> Truncating IMA log to reclaim memory is not feasible, since it makes
+>> the log go out of sync with the TPM PCR quote making remote
+>> attestation fail.
+> This assumption isn't entirely true.  It's perfectly possible to shard
+> an IMA log using two TPM2_Quote's for the beginning and end PCR values
+> to validate the shard.  The IMA log could be truncated in the same way
+> (replace the removed part of the log with a TPM2_Quote and AK, so the
+> log still validates from the beginning quote to the end).
+Here we meant just truncating IMA log is not a complete
+solution in itself. As you said, we have to take additional steps
+like logging TPM2_Quotes etc. Logging AK is an interesting proposal
+which we didn’t consider earlier. I am not sure if embedding AK to IMA
+log/snapshot is needed. If the client sends them separately with "signed
+PCR quotes" + "IMA log" + snapshots, it should still serve the purpose,
+right?
 
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-Reviewed-and-tested-by: Mimi Zohar <zohar@linux.ibm.com>
----
- security/integrity/platform_certs/machine_keyring.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> If you use a TPM2_Quote mechanism to save the log, all you need to do
+> is have the kernel generate the quote with an internal AK.  You can
+> keep a record of the quote and the AK at the beginning of the truncated
+> kernel log.  If the truncated entries are saved in a file shard it
+> should have a beginning and end quote and a record of the AK used.
+A new IMA log snapshot file (or shard as you call it) will have
+the TPM2_Quote record (plus some additional metadata) at the beginning.
+I don't believe it needs to be logged at the end of the snapshot (since 
+it can
+be computed by replaying the remaining entries in the snapshot).
 
-diff --git a/security/integrity/platform_certs/machine_keyring.c b/security/integrity/platform_certs/machine_keyring.c
-index 389a6e7c9245..9482e16cb2ca 100644
---- a/security/integrity/platform_certs/machine_keyring.c
-+++ b/security/integrity/platform_certs/machine_keyring.c
-@@ -8,8 +8,6 @@
- #include <linux/efi.h>
- #include "../integrity.h"
- 
--static bool trust_mok;
--
- static __init int machine_keyring_init(void)
- {
- 	int rc;
-@@ -65,9 +63,11 @@ static __init bool uefi_check_trust_mok_keys(void)
- bool __init trust_moklist(void)
- {
- 	static bool initialized;
-+	static bool trust_mok;
- 
- 	if (!initialized) {
- 		initialized = true;
-+		trust_mok = false;
- 
- 		if (uefi_check_trust_mok_keys())
- 			trust_mok = true;
--- 
-2.31.1
+See the snapshot_aggregate field in section B.5 in the original RFC mail 
+[1].
+> Since verifiers like Keylime are already using this beginning and end
+> quote for sharded logs, it's the most natural format to feed to
+> something externally for verification and it means you don't have to
+> invent a new format to do the same thing.
+Could you please point to the Keylime source and/or documentation
+which explains the use of beginning and end quotes? We would like to
+understand how the verifiers are addressing this problem currently.
+
+
+[1] 
+https://lore.kernel.org/all/c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com/#t
+
+~Tushar
+>
+> Regards,
+>
+> James
 
