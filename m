@@ -2,97 +2,154 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8337C04A94
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Aug 2023 10:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B05C001E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Aug 2023 11:43:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235317AbjHJKEH (ORCPT
+        id S230391AbjHJLne (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Aug 2023 06:04:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47142 "EHLO
+        Thu, 10 Aug 2023 07:43:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235195AbjHJKDo (ORCPT
+        with ESMTP id S232642AbjHJLne (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Aug 2023 06:03:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B63A93ABF;
-        Thu, 10 Aug 2023 03:01:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Thu, 10 Aug 2023 07:43:34 -0400
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2478091;
+        Thu, 10 Aug 2023 04:43:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1691667810;
+        bh=nEaH47B5XUG+dGWKW2MTI/k+KrlwMmhRhGED9/yMPoY=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=tsmOTLMDWCdMKJ6jnBtKg+1cNJKoROy+6PYx53l52uIx7ypH4yWcot/RNrW2/22/W
+         kWXyo3ntZaMSXaxJ1bBnFtZ6SAHkn8vOvzOpvNZE/LRN4liZO9aOPisqC2NwQ0Kgjd
+         E8SnD0iMAk4D9AbCTVq2G4CqWAIMYcCb3QYw6zxc=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 31B151281B19;
+        Thu, 10 Aug 2023 07:43:30 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id xfvz0UbcUk3I; Thu, 10 Aug 2023 07:43:30 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1691667809;
+        bh=nEaH47B5XUG+dGWKW2MTI/k+KrlwMmhRhGED9/yMPoY=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=kNVgQPrNN45DM9R91wZjrcClQB6Oo5nadexXVgwIsJy5hlIE8iRPQ6Ja2UEWah7II
+         SD8OX0pbv8rvPPHrRK4RokmMRsYsh5UINXvpBXKOfHAUXJlqnD+EsXyb88x8bsNp3A
+         Rk2aYnkruY7BKGXKaXeDau1dE/n9X4tJp0GdJLiI=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5608B6570C;
-        Thu, 10 Aug 2023 10:01:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14833C433C7;
-        Thu, 10 Aug 2023 10:01:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691661703;
-        bh=7ugjWJhVsy+T1T5nRjQNqcfhGEJuIF4KKFMz/3r4FkI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MT5PkUJBlaKBchM5vURYE9/YCNX/fU6qtulF8QygyYrLJfspVjsVkV6e5lvibTMgx
-         9J7pG5gQZcab+isZSkfbQhuK1e15vqx/IpeZpSQYYYkb/0jx6EtYCxOA619AOd6P1a
-         aUij20wCV4kmq08+eFMQxVGp1eGIAmw6u6y/gchASNm/Gwt6ZyvSXY3tSAxK36Pn3O
-         nkY0HdFfTTXrTdwBMrK1iPe6V0i3ohJ1seNTVbDEBvCnppa/R9PjA2JozL8MO7OAzO
-         0TnF9LNiemrXuxTMb4qVY4SaTd60u+HnBpdQOFPMXH9uO1mca6pZgq4TkU/HKstKkS
-         aj7ZtcUTSUU1Q==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>, Paul Moore <paul@paul-moore.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>
-Subject: Re: [PATCH v9] vfs, security: Fix automount superblock LSM init problem, preventing NFS sb sharing
-Date:   Thu, 10 Aug 2023 12:01:34 +0200
-Message-Id: <20230810-wagten-otter-2cbcbcf048cd@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230808-master-v9-1-e0ecde888221@kernel.org>
-References: <20230808-master-v9-1-e0ecde888221@kernel.org>
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 605111281A2E;
+        Thu, 10 Aug 2023 07:43:28 -0400 (EDT)
+Message-ID: <8ccaec30bf85cfbf4415bbafa22646a62e753840.camel@HansenPartnership.com>
+Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Sush Shringarputale <sushring@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+        kgold@linux.ibm.com, bhe@redhat.com, vgoyal@redhat.com,
+        dyoung@redhat.com, kexec@lists.infradead.org, jmorris@namei.org,
+        Paul Moore <paul@paul-moore.com>, serge@hallyn.com
+Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
+        linux-security-module@vger.kernel.org
+Date:   Thu, 10 Aug 2023 07:43:25 -0400
+In-Reply-To: <5cb03349-7a32-8f74-f2a1-ff3c6247c1ef@linux.microsoft.com>
+References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
+         <b748230c8ee291288afcf48898507556c3aa7c71.camel@HansenPartnership.com>
+         <5d21276a-daac-fc9b-add9-62e7c04bbdcd@linux.ibm.com>
+         <8ad131f35c33cf10788344be6c981473971f9c1c.camel@HansenPartnership.com>
+         <abe53dde-9a83-81fd-422d-babf4587c545@linux.ibm.com>
+         <350ecdcbf7796f488807fcd7983414a02dd71be4.camel@HansenPartnership.com>
+         <04fb2fe5-9ebe-b35f-bdde-6ef22786438f@linux.ibm.com>
+         <a522b17a536ea87a6a4c2faf95583ae3b7b74a26.camel@HansenPartnership.com>
+         <5cb03349-7a32-8f74-f2a1-ff3c6247c1ef@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1286; i=brauner@kernel.org; h=from:subject:message-id; bh=7ugjWJhVsy+T1T5nRjQNqcfhGEJuIF4KKFMz/3r4FkI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRc2Vo578LFWEe+wOnaTz9yLfnaLrX1iNqH8++/344+eyvm b4j35o5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJ3LNkZPgQuujHFakSh5mPkjfG9j 1WFoqblxt66sgFGT4BMRcjJXGG/xG+CcoiCWpWxfsfLq1vVI1+M7vohPcGly2flkzTXOd1kgcA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 08 Aug 2023 07:34:20 -0400, Jeff Layton wrote:
-> When NFS superblocks are created by automounting, their LSM parameters
-> aren't set in the fs_context struct prior to sget_fc() being called,
-> leading to failure to match existing superblocks.
-> 
-> This bug leads to messages like the following appearing in dmesg when
-> fscache is enabled:
-> 
-> [...]
+On Wed, 2023-08-09 at 21:43 -0700, Tushar Sugandhi wrote:
+> On 8/8/23 14:41, James Bottomley wrote:
+> > On Tue, 2023-08-08 at 16:09 -0400, Stefan Berger wrote:
+[...]
+> > >   at this point doesn't seem necessary since one presumably can
+> > > verify the log and PCR states at the end with the 'regular'
+> > > quote.
+> >  
+> > I don't understand this.  A regular quote is a signature over PCR
+> > state by an AK.  The point about saving the AK in the log for the
+> > original is that if the *kernel* truncates the log and saves it to
+> > a file, it needs to generate both the AK and the quote for the top
+> > of the file shard. That means the AK/EK binding is unverified, but
+> > can be verified by loading the AK and running the usual tests,
+> > which can only be done if you have the loadable AK, which is why
+> > you need it as part of the log saving proposal.
+>  
+> I had this question about the usability of AK/EK in this
+> context. Although AK/EK + PCR quote is needed to verify the snapshot
+> shards / IMA logs are not tampered with, I am still not sure why
+> AK/EK needs to be part of the shard/IMA log. The client sending AK/EK
+> to attestation service separately would still serve the purpose,
+> right?
 
-I'm stuffing this on vfs.misc because this should be in -next for some
-time. If there's objections let me know.
+Well, the EK doesn't need to be part of the log: it's just a permanent
+part of the TPM identity.  To verify the log, you need access to the
+TPM that was used to create it, so that's the point at which you get
+the EK.
 
----
+An AK is simply a TPM generated signing key (meaning the private part
+of the key is secured by the TPM and known to no-one else).  In the
+literature a TPM generated signing key doesn't become an Attestation
+Key until it's been verified using an EK property (either a certify for
+a signing EK or a make/activate credential round trip for the more
+usual encryption EK.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+So the proposal is for each quote that's used to verify a log shard is
+that the TPM simply generate a random signing key and use that to sign
+the quote.  You need to save the TPM form of the generated key so it
+can be loaded later and the reason for that is you can do the EK
+verification at any time after the quote was given by loading the saved
+key and running the verification protocol.  In the normal attestation
+you do the EK verification of the AK *before* the quote, but there's no
+property of the quote that depends on this precedence provided you do
+the quote with a TPM generated signing key.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+The underlying point is that the usual way an EK verifies an AK
+requires a remote observer, which the kernel won't have, so the kernel
+must do all its stuff locally (generate key, get quote) and then at
+some point later the system can become remote connected and prove to
+whatever external entity that the log shard is valid.  So we have to
+have all the components necessary for that proof: the log shard, the
+quote and the TPM form of the AK.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+> For instance, PCR quotes will be signed by AK. So as long as the
+> verifier trusts the AK/EK,
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Right, but if you're sharding a log, the kernel doesn't know if a
+verifier has been in contact yet.  The point of the protocol above is
+to make that not matter.  The verifier can contact the system after the
+log has been saved and the verification will still work.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+>  it can verify the quotes are not tampered with.
+> Replaying IMA log/snapshot can produce the PCR quotes which can be
+> matched with signed PCR quotes. If they match, then the verifier can
+> conclude that the IMA log is not tampered with. So AK doesn't need to
+> be part of the log/snapshot.
 
-[1/1] vfs, security: Fix automount superblock LSM init problem, preventing NFS sb sharing
-      https://git.kernel.org/vfs/vfs/c/4b4fb74b1aa1
+Only if the system is currently in contact with the verifier and the
+verifier has created the AK.  That may not have happened.
+
+> BTW, in this proposal, kernel is truncating the log and passing the
+> truncated buffer to UM.  UM client need to save it to the disk
+> location of it's choice.
+
+Yes, but I was assuming tampering with or discarding the log file would
+be treated in exactly the same way as an in-kernel IMA log tamper.
+
+James
+
