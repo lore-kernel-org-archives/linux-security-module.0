@@ -2,341 +2,258 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C53FDC04A6A
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Aug 2023 10:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB14C41513
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Aug 2023 13:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233840AbjHKK6Y (ORCPT
+        id S235143AbjHKNOi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Aug 2023 06:58:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55090 "EHLO
+        Fri, 11 Aug 2023 09:14:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233915AbjHKK6X (ORCPT
+        with ESMTP id S235180AbjHKNOh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Aug 2023 06:58:23 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A49A210DE;
-        Fri, 11 Aug 2023 03:58:21 -0700 (PDT)
-Received: from fsav119.sakura.ne.jp (fsav119.sakura.ne.jp [27.133.134.246])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 37BAwAqK032650;
-        Fri, 11 Aug 2023 19:58:10 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav119.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp);
- Fri, 11 Aug 2023 19:58:10 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 37BAw94W032647
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 11 Aug 2023 19:58:10 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <36b65eb1-ccbf-8b81-468f-b8d88c4be5a3@I-love.SAKURA.ne.jp>
-Date:   Fri, 11 Aug 2023 19:58:06 +0900
+        Fri, 11 Aug 2023 09:14:37 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DEC430E3;
+        Fri, 11 Aug 2023 06:14:37 -0700 (PDT)
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37BDDB3F023688;
+        Fri, 11 Aug 2023 13:14:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=UTiKQPxHP9+XInf9M6OcL0KU+QcNX4/A6BYAnvAqRVY=;
+ b=k8LiqP+is9xI9s8s1+DDDkSu1lIJyK+oFJGmlYvsa8JQ9cjHY+/TlxpJFwFdARYbjHRU
+ GJjiz8a6FG/lIKdDM+ssihGt+h4hCmFsW1ymKjlxAGRrCbdtu7/V7mP5EVl0qhVdxFKD
+ hZA21cakpykPRfj6bkR6NFtiPDa4UYVdL/cte6sX1Ylo3wajTUViaXN2Qd6PrMV+BRb9
+ 6PKpWcWrePULRrw2EsFnPgCQFq49BfSDGEp83lMVKcSXAPZ08FlJ2x6nZEsi4rXhi7Ep
+ RcDKwG8wNp7x85fCloRFGGUlzZulqQe87DDRgfKG0+yvdoZjIoCwXJvJPC33iqKwV6Lc uQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sdnh18kc8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Aug 2023 13:14:21 +0000
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 37BD2ZaS028781;
+        Fri, 11 Aug 2023 13:14:20 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sdnh18kc1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Aug 2023 13:14:20 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37BCFBCS006638;
+        Fri, 11 Aug 2023 13:14:19 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+        by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3sa0rtubdy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Aug 2023 13:14:19 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+        by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37BDEIaW2359886
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 11 Aug 2023 13:14:19 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D4E605805B;
+        Fri, 11 Aug 2023 13:14:18 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C682F5806E;
+        Fri, 11 Aug 2023 13:14:16 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.113.246])
+        by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Fri, 11 Aug 2023 13:14:16 +0000 (GMT)
+Message-ID: <277db5491460d5fd607785f2bcc733de39022a35.camel@linux.ibm.com>
+Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Sush Shringarputale <sushring@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org, peterhuewe@gmx.de,
+        jarkko@kernel.org, jgg@ziepe.ca, kgold@linux.ibm.com,
+        bhe@redhat.com, vgoyal@redhat.com, dyoung@redhat.com,
+        kexec@lists.infradead.org, jmorris@namei.org,
+        Paul Moore <paul@paul-moore.com>, serge@hallyn.com
+Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        linux-security-module@vger.kernel.org
+Date:   Fri, 11 Aug 2023 09:14:16 -0400
+In-Reply-To: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
+References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 5wfxI5iACBOcd6QVHIzpBngjg7NYlKbN
+X-Proofpoint-GUID: 54esZe1azSU04H6l--Yq-t-MdNBGd7Xf
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Content-Language: en-US
-To:     linux-audit@redhat.com, audit@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Steve Grubb <sgrubb@redhat.com>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH] audit: add task history record
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-11_04,2023-08-10_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ clxscore=1015 impostorscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ priorityscore=1501 mlxlogscore=999 lowpriorityscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2308110119
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When an unexpected system event occurs, the administrator may want to
-identify which application triggered the event. For example, unexpected
-process termination is still a real concern enough to write articles
-like https://access.redhat.com/solutions/165993 .
+Hi Sush, Tushar,
 
-This patch adds a record which emits TOMOYO-like task history information
-into the audit logs for better understanding of unexpected system events.
+On Tue, 2023-08-01 at 12:12 -0700, Sush Shringarputale wrote:
+> ================================================
+> | A. Problem Statement                         |
+> ================================================
+> Depending on the IMA policy, the IMA log can consume a lot of Kernel 
+> memory on
+> the device.  For instance, the events for the following IMA policy 
+> entries may
+> need to be measured in certain scenarios, but they can also lead to a 
+> verbose
+> IMA log when the device is running for a long period of time.
+> ┌───────────────────────────────────────┐
+> │# PROC_SUPER_MAGIC                     │
+> │measure fsmagic=0x9fa0                 │
+> │# SYSFS_MAGIC                          │
+> │measure fsmagic=0x62656572             │
+> │# DEBUGFS_MAGIC                        │
+> │measure fsmagic=0x64626720             │
+> │# TMPFS_MAGIC                          │
+> │measure fsmagic=0x01021994             │
+> │# RAMFS_MAGIC                          │
+> │measure fsmagic=0x858458f6             │
+> │# SECURITYFS_MAGIC                     │
+> │measure fsmagic=0x73636673             │
+> │# OVERLAYFS_MAGIC                      │
+> │measure fsmagic=0x794c7630             │
+> │# log, audit or tmp files              │
+> │measure obj_type=var_log_t             │
+> │measure obj_type=auditd_log_t          │
+> │measure obj_type=tmp_t                 │
+> └───────────────────────────────────────┘
+> 
+> Secondly, certain devices are configured to take Kernel updates using Kexec
+> soft-boot.  The IMA log from the previous Kernel gets carried over and the
+> Kernel memory consumption problem worsens when such devices undergo multiple
+> Kexec soft-boots over a long period of time.
+> 
+> The above two scenarios can cause IMA log to grow and consume Kernel memory.
+> 
+> In addition, a large IMA log can add pressure on the network bandwidth when
+> the attestation client sends it to remote-attestation-service.
+> 
+> Truncating IMA log to reclaim memory is not feasible, since it makes the 
+> log go
+> out of sync with the TPM PCR quote making remote attestation fail.
+> 
+> A sophisticated solution is required which will help relieve the memory
+> pressure on the device and continue supporting remote attestation without
+> disruptions.
 
-  type=UNKNOWN[1340] msg=audit(1691750738.271:108): history="name=swapper/0;pid=1;start=20230811194329=>name=init;pid=1;start=20230811194343=>name=systemd;pid=1;start=20230811194439=>name=sshd;pid=3660;start=20230811104504=>name=sshd;pid=3767;start=20230811104535"
+If the problem is kernel memory, then using a single tmpfs file has
+already been proposed [1].  As entries are added to the measurement
+list, they are copied to the tmpfs file and removed from kernel memory.
+Userspace would still access the measurement list via the existing
+securityfs file.
 
-To be able to avoid bloating audit log files due to this information, this
-patch uses audit_history= kernel command line parameter that controls max
-length of history in bytes (default is 1024, and setting to 0 disables
-recording and emitting).
+The IMA measurement list is a sequential file, allowing it to be read
+from an offset.  How much or how little of the measuremnt list is read
+by the attestation client and sent to the attestation server is up to
+the attestation client/server.
 
-Unlike execve()'s argv record, records in this history information is
-emitted as one string in order to reduce bloat of the audit log files.
-This information can be split into an array using => as the tokenizer.
-But don't expect that you can compare array elements throughout the whole
-audit logs by splitting into an array, for old records get removed from
-history when history became too long to append the newest record. This
-history information is meant to be interpreted by humans rather than be
-analyzed by programs.
+If the problem is not kernel memory, but memory pressure in general,
+then instead of a tmpfs file, the measurement list could similarly be
+copied to a single persistent file [1].
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- fs/exec.c                  |   1 +
- include/linux/audit.h      |   5 ++
- include/linux/sched.h      |   1 +
- include/uapi/linux/audit.h |   1 +
- init/init_task.c           |   7 +++
- kernel/audit.c             |   1 +
- kernel/auditsc.c           | 108 +++++++++++++++++++++++++++++++++++++
- 7 files changed, 124 insertions(+)
+> 
+> -------------------------------------------------------------------------------
+> ================================================
+> | B. Proposed Solution                         |
+> ================================================
+> In this document, we propose an enhancement to the IMA subsystem to improve
+> the long-running performance by snapshotting the IMA log, while still
+> providing mechanisms to verify its integrity using the PCR quotes.
+> 
+> The remainder of the document describes details of the proposed solution 
+> in the
+> following sub-sections.
+>   - High-level Work-flow
+>   - Snapshot Triggering Mechanism
+>   - Design Choices for Storing Snapshots
+>   - Attestation-Client and Remote-Attestation-Service Side Changes
+>   - Example Walk-through
+>   - Open Questions
+> -------------------------------------------------------------------------------
+> ================================================
+> | B.1 High-level Work-flow                     |
+> ================================================
+> Pre-requisites:
+> - IMA Integrity guarantees are maintained.
+> 
+> The proposed high level work-flow of IMA log snapshotting is as follows:
+> - A user-mode process will trigger the snapshot by opening a file in SysFS
+>    say /sys/kernel/security/ima/snapshot (referred to as 
+> sysk_ima_snapshot_file
+>    here onwards).
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 1a827d55ba94..5c8776f692c5 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1381,6 +1381,7 @@ int begin_new_exec(struct linux_binprm * bprm)
- 	commit_creds(bprm->cred);
- 	bprm->cred = NULL;
- 
-+	audit_update_history();
- 	/*
- 	 * Disable monitoring for regular users
- 	 * when executing setuid binaries. Must
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 6a3a9e122bb5..6291d0f76541 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -397,6 +397,8 @@ static inline void audit_ptrace(struct task_struct *t)
- 		__audit_ptrace(t);
- }
- 
-+extern void audit_update_history(void);
-+
- 				/* Private API (for audit.c only) */
- extern void __audit_ipc_obj(struct kern_ipc_perm *ipcp);
- extern void __audit_ipc_set_perm(unsigned long qbytes, uid_t uid, gid_t gid, umode_t mode);
-@@ -701,6 +703,9 @@ static inline void audit_ntp_log(const struct audit_ntp_data *ad)
- static inline void audit_ptrace(struct task_struct *t)
- { }
- 
-+static inline void audit_update_history(void)
-+{ }
-+
- static inline void audit_log_nfcfg(const char *name, u8 af,
- 				   unsigned int nentries,
- 				   enum audit_nfcfgop op, gfp_t gfp)
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 609bde814cb0..f32076b6b733 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1112,6 +1112,7 @@ struct task_struct {
- #ifdef CONFIG_AUDIT
- #ifdef CONFIG_AUDITSYSCALL
- 	struct audit_context		*audit_context;
-+	char				*comm_history;
- #endif
- 	kuid_t				loginuid;
- 	unsigned int			sessionid;
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index d676ed2b246e..186c0b5ca1b6 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -122,6 +122,7 @@
- #define AUDIT_OPENAT2		1337	/* Record showing openat2 how args */
- #define AUDIT_DM_CTRL		1338	/* Device Mapper target control */
- #define AUDIT_DM_EVENT		1339	/* Device Mapper events */
-+#define AUDIT_PROCHISTORY	1340	/* Commname history emit event */
- 
- #define AUDIT_AVC		1400	/* SE Linux avc denial or grant */
- #define AUDIT_SELINUX_ERR	1401	/* Internal SE Linux Errors */
-diff --git a/init/init_task.c b/init/init_task.c
-index ff6c4b9bfe6b..e3d481d1b010 100644
---- a/init/init_task.c
-+++ b/init/init_task.c
-@@ -57,6 +57,10 @@ unsigned long init_shadow_call_stack[SCS_SIZE / sizeof(long)]
- };
- #endif
- 
-+#ifdef CONFIG_AUDITSYSCALL
-+extern char init_task_audit_history[];
-+#endif
-+
- /*
-  * Set up the first task table, touch at your own risk!. Base=0,
-  * limit=0x1fffff (=2MB)
-@@ -137,6 +141,9 @@ struct task_struct init_task
- #ifdef CONFIG_AUDIT
- 	.loginuid	= INVALID_UID,
- 	.sessionid	= AUDIT_SID_UNSET,
-+#ifdef CONFIG_AUDITSYSCALL
-+	.comm_history   = init_task_audit_history,
-+#endif
- #endif
- #ifdef CONFIG_PERF_EVENTS
- 	.perf_event_mutex = __MUTEX_INITIALIZER(init_task.perf_event_mutex),
-diff --git a/kernel/audit.c b/kernel/audit.c
-index 9bc0b0301198..034952abd83d 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -1674,6 +1674,7 @@ static int __init audit_init(void)
- {
- 	int i;
- 
-+	audit_update_history();
- 	if (audit_initialized == AUDIT_DISABLED)
- 		return 0;
- 
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index addeed3df15d..6f1b124da2fe 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -80,6 +80,9 @@
- /* max length to print of cmdline/proctitle value during audit */
- #define MAX_PROCTITLE_AUDIT_LEN 128
- 
-+/* max length for thread's comm name history */
-+static unsigned int audit_history_size __ro_after_init = 1024;
-+
- /* number of audit rules */
- int audit_n_rules;
- 
-@@ -1055,6 +1058,12 @@ int audit_alloc(struct task_struct *tsk)
- 	enum audit_state     state;
- 	char *key = NULL;
- 
-+	if (audit_history_size) {
-+		tsk->comm_history = kmemdup(current->comm_history, audit_history_size, GFP_KERNEL);
-+		if (!tsk->comm_history)
-+			return -ENOMEM;
-+	}
-+
- 	if (likely(!audit_ever_enabled))
- 		return 0;
- 
-@@ -1065,6 +1074,10 @@ int audit_alloc(struct task_struct *tsk)
- 	}
- 
- 	if (!(context = audit_alloc_context(state))) {
-+		if (audit_history_size) {
-+			kfree(tsk->comm_history);
-+			tsk->comm_history = NULL;
-+		}
- 		kfree(key);
- 		audit_log_lost("out of memory in audit_alloc");
- 		return -ENOMEM;
-@@ -1671,6 +1684,18 @@ static void audit_log_uring(struct audit_context *ctx)
- 	audit_log_end(ab);
- }
- 
-+static void audit_log_history(struct audit_context *context)
-+{
-+	struct audit_buffer *ab;
-+
-+	ab = audit_log_start(context, GFP_KERNEL, AUDIT_PROCHISTORY);
-+	if (!ab)
-+		return; /* audit_panic or being filtered */
-+	audit_log_format(ab, "history=");
-+	audit_log_untrustedstring(ab, current->comm_history);
-+	audit_log_end(ab);
-+}
-+
- static void audit_log_exit(void)
- {
- 	int i, call_panic = 0;
-@@ -1805,6 +1830,8 @@ static void audit_log_exit(void)
- 
- 	if (context->context == AUDIT_CTX_SYSCALL)
- 		audit_log_proctitle();
-+	if (audit_history_size)
-+		audit_log_history(context);
- 
- 	/* Send end of event record to help user space know we are finished */
- 	ab = audit_log_start(context, GFP_KERNEL, AUDIT_EOE);
-@@ -1824,6 +1851,10 @@ void __audit_free(struct task_struct *tsk)
- {
- 	struct audit_context *context = tsk->audit_context;
- 
-+	if (audit_history_size) {
-+		kfree(tsk->comm_history);
-+		tsk->comm_history = NULL;
-+	}
- 	if (!context)
- 		return;
- 
-@@ -3034,3 +3065,80 @@ struct list_head *audit_killed_trees(void)
- 		return NULL;
- 	return &ctx->killed_trees;
- }
-+
-+char init_task_audit_history[4096];
-+
-+static int __init audit_history_setup(char *str)
-+{
-+	unsigned int size;
-+
-+	if (kstrtouint(str, 10, &size))
-+		return -EINVAL;
-+	if (size > sizeof(init_task_audit_history))
-+		size = sizeof(init_task_audit_history);
-+	audit_history_size = size;
-+	return 0;
-+}
-+early_param("audit_history", audit_history_setup);
-+
-+void audit_update_history(void)
-+{
-+	int i;
-+	int required;
-+	struct tm tm;
-+	char buf[256];
-+	char *cp = buf;
-+
-+	if (!audit_history_size)
-+		return;
-+
-+	cp += snprintf(buf, sizeof(buf) - 1, "name=");
-+	for (i = 0; i < TASK_COMM_LEN; i++) {
-+		const unsigned char c = current->comm[i];
-+
-+		if (!c)
-+			break;
-+		if (isalnum(c) || c == '.' || c == '_' || c == '-' || c == '/') {
-+			*cp++ = c;
-+			continue;
-+		}
-+		*cp++ = '\\';
-+		*cp++ = (c >> 6) + '0';
-+		*cp++ = ((c >> 3) & 7) + '0';
-+		*cp++ = (c & 7) + '0';
-+	}
-+	/* Append PID. */
-+	cp += snprintf(cp, buf - cp + sizeof(buf) - 1, ";pid=%u",
-+		       current->pid);
-+	/* Append timestamp. */
-+	time64_to_tm(ktime_get_real_seconds(), 0, &tm);
-+	cp += snprintf(cp, buf - cp + sizeof(buf) - 1,
-+		       ";start=%04u%02u%02u%02u%02u%02u", (int) tm.tm_year + 1900,
-+		       tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min,
-+		       tm.tm_sec);
-+	/* Terminate the buffer. */
-+	if (cp >= buf + sizeof(buf))
-+		cp = buf + sizeof(buf) - 1;
-+	*cp = '\0';
-+	required = cp - buf + 1;
-+	/* Make some room by truncating old history. */
-+	cp = current->comm_history;
-+	i = strlen(cp);
-+	while (i + required >= audit_history_size - 3) {
-+		char *cp2 = memchr(cp, '>', i);
-+
-+		/* Reset history if audit_history_size is too small to truncate. */
-+		if (!cp2++) {
-+			*cp = '\0';
-+			return;
-+		}
-+		i -= cp2 - cp;
-+		memmove(cp, cp2, i + 1);
-+	}
-+	/* Emit the buffer. */
-+	if (i) {
-+		cp[i++] = '=';
-+		cp[i++] = '>';
-+	}
-+	memcpy(cp + i, buf, required);
-+}
+Please fix the mailer so that it doesn't wrap sentences.   Adding blank
+lines between bullets would improve readability.
+
+> - The Kernel will get the current TPM PCR values and PCR update counter [2]
+>    and store them as template data in a new IMA event "snapshot_aggregate".
+>    This event will be measured by IMA using critical data measurement
+>    functionality [1].  Recording regular IMA events will be paused while
+>    "snapshot_aggregate" is being computed using the existing IMA mutex lock.
+
+> - Once the "snapshot_aggregate" is computed and measured in IMA log, the 
+> prior
+>    IMA events will be made available in the sysk_ima_snapshot_file.
+
+> - The UM process will copy those IMA events from sysk_ima_snapshot_file to a
+>    snapshot file on disk chosen by UM (referred to as UM_snapshot_file here
+>    onwards).  The location, file-system type, access permissions etc. of the
+>    UM_snapshot_file would be controlled by UM process itself.
+
+> - Once UM is done copying the IMA events from sysk_ima_snapshot_file to
+>    UM_snapshot_file, it will indicate to the Kernel that the snapshot can be
+>    finalized by triggering a write with any data to the 
+> sysk_ima_snapshot_file.
+
+>    UM process cannot prevent the IMA log purge operation after this point.
+> - The Kernel will truncate the current IMA log and and clear HTable up 
+> to the
+>    "snapshot_aggregate" marker.
+
+> - The Kernel will measure the PCR update counter as part of measuring
+>    snapshot_aggregate, so that it can be used by the remote attestation 
+> service
+>    for detecting missing events.
+
+> - UM can prevent the IMA log purge by closing the sysk_ima_snapshot_file
+>    without performing a write operation on it.  In this case, while the
+>    "snapshot_aggregate" marker may still be in the log, the event can be 
+> ignored
+>    since the previous entries in the IMA log will not be purged.
+> 
+> Note:
+> - This work-flow should work when interleaved with Kexec 'load' and 
+> 'execute'
+>    events and should not cause IMA log + snapshot to go out of sync with PCR
+>    quotes. The implementation details are omitted from this document for
+>    brevity.
+
+This design seems overly complex and requires synchronization between
+the "snapshot" record and exporting the records from the measurement
+list.  None of this would be necessary if the measurements were copied
+from kernel memory to a backing file (e.g. tmpfs), as described in [1].
+
+What is the real problem - kernel memory pressure, memory pressure in
+general, or disk space?  Is the intention to remove or offload the
+exported measurements?
+
+Concerns:
+- Pausing extending the measurement list.
+
+[1] 
+https://lore.kernel.org/linux-integrity/CAOQ4uxj4Pv2Wr1wgvBCDR-tnA5dsZT3rvdDzKgAH1aEV_-r9Qg@mail.gmail.com/#t
+
 -- 
-2.18.4
+thanks,
+
+Mimi
 
