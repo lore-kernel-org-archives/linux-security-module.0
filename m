@@ -2,108 +2,158 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3046C04FDF
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Aug 2023 23:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09DEFEB64DD
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Aug 2023 05:53:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232338AbjHJX55 (ORCPT
+        id S233175AbjHKFx4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Aug 2023 19:57:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41484 "EHLO
+        Fri, 11 Aug 2023 01:53:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231584AbjHJX5z (ORCPT
+        with ESMTP id S229514AbjHKFxx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Aug 2023 19:57:55 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96CC92D4B
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Aug 2023 16:57:49 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-99d6d5054bcso205561866b.1
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Aug 2023 16:57:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691711868; x=1692316668;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hhMgA7qBPuApMhQ4h1vJKFRA4DNp+2B2aFxUktI7jpQ=;
-        b=fSbsTlZ9eRUEq1oc0qlT9VA71infat9B81M3qAFGPQLw+6DiL/k6IQBVuLqYpfm6zc
-         JPbbQuf/OXWE0DDR3Vty3P+Ga7xRDAZJPbwv8Rh6DllYU5zj15degN0az+fa1E+ZZKui
-         Zid/yQ06BXhwoDugW7aU7NJA5d/c3xUSIByYDVFEbgx0r3ZtD20CbtxCBNcFSIJefMq1
-         tRA4cZrI4/sEiaraxlYyAq+sL65bMfdUmaPLsXuLObrwqiszX5v1AaY8IXbz4ltMaoUI
-         FDZXJTolroDTYu55EKXzdNQ57eJWghsSQRQDYygik7m8uY2F9+yL1a51YFkAYkFi+S2u
-         5sVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691711868; x=1692316668;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hhMgA7qBPuApMhQ4h1vJKFRA4DNp+2B2aFxUktI7jpQ=;
-        b=YQi9om/IZzS0mqKhNRzrksOk3k2yE7O0dUOKpolEPHuueQQakRN3kBKuFcqIdOL3mD
-         jWXsBdu0Qu8khI8ndj19Hvi/lt/44fu8Wcx8p4carltzw7xh8Xs+lKPJZSr5mTFKrAMV
-         IE+LuP5RPPEvb9r3RNTAqZyxj4HCtG+wk9sJiRd9Zwl9mFswOm0ncGFdZe6yGZXfPFNF
-         43/HzzQIJmSuKBvdHq/TzHPE2YBjPEFjkR/efZ4w08XSE0ASgjXn/BDm7BXmLLwrJtHm
-         yTxHiUVQSY8tJAQ+bMmIhQt3Amk2BsI0odLxPa58BtIv3ND6PXf2jAemHhtdBUHb6lYX
-         CpkQ==
-X-Gm-Message-State: AOJu0YzzQqABe6PYIxcc4fcwyLYWuf9C6W2BIfcYlobi1MlVssWYV8sJ
-        8xyKghHcogTPFdOvJ7ksOooOoe78ZOb9vcCoEWQNiQ==
-X-Google-Smtp-Source: AGHT+IExGyX6IQpw7nkPj/Oj8ZdeERAHUNFikZIEbAqLbQU3zHzZ+Xb2mqkLRl/UdYIm3ylJUJ+cypBkqHv5r6CLu/8=
-X-Received: by 2002:a17:906:1d1:b0:99c:55c5:1c6e with SMTP id
- 17-20020a17090601d100b0099c55c51c6emr519636ejj.8.1691711867870; Thu, 10 Aug
- 2023 16:57:47 -0700 (PDT)
+        Fri, 11 Aug 2023 01:53:53 -0400
+Received: from out-96.mta1.migadu.com (out-96.mta1.migadu.com [95.215.58.96])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0B92706
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Aug 2023 22:53:51 -0700 (PDT)
+Message-ID: <ffd1bb86-ed32-3301-346a-e369219841de@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1691733229;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=a0vN514ycLDgfH8MPcX9gq+8dxj3gNQV5oVnf0li0cE=;
+        b=JGmgvn6cT7iTucUb6YruBhmAOZ9kEYGTR86F5nxUdlIxB1sAjLg16WTdyyeLeQTmzqgKdH
+        jGa16MemhcwHh+bjncETZ1dIBXUzxGMceG+QpeyqE8KeRwXCnrlguN+d04BUCLqtJo7fjP
+        XWZKQ8rVNuEVS9ZwUFm0eyigLr88Kog=
+Date:   Thu, 10 Aug 2023 22:53:38 -0700
 MIME-Version: 1.0
-References: <20230718234512.1690985-13-seanjc@google.com> <diqzv8dq3116.fsf@ackerleytng-ctop.c.googlers.com>
- <ZNKv9ul2I7A4V7IF@google.com>
-In-Reply-To: <ZNKv9ul2I7A4V7IF@google.com>
-From:   Vishal Annapurve <vannapurve@google.com>
-Date:   Thu, 10 Aug 2023 16:57:36 -0700
-Message-ID: <CAGtprH9YE50RtqhW-U+wK0Vv6aKfqqtOPn8q4s8or=UZwPXZoA@mail.gmail.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Ackerley Tng <ackerleytng@google.com>, pbonzini@redhat.com,
-        maz@kernel.org, oliver.upton@linux.dev, chenhuacai@kernel.org,
-        mpe@ellerman.id.au, anup@brainfault.org, paul.walmsley@sifive.com,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, willy@infradead.org,
-        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
-        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
-        mail@maciej.szmigiero.name, vbabka@suse.cz, david@redhat.com,
-        qperret@google.com, michael.roth@amd.com, wei.w.wang@intel.com,
-        liam.merwick@oracle.com, isaku.yamahata@gmail.com,
-        kirill.shutemov@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH bpf-next v11 2/5] selftests/bpf: Use random netns name for
+ mptcp
+Content-Language: en-US
+To:     Geliang Tang <geliang.tang@suse.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Mat Martineau <martineau@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Simon Horman <horms@kernel.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, mptcp@lists.linux.dev,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <cover.1691125344.git.geliang.tang@suse.com>
+ <15d7646940fcbb8477b1be1aa11a5d5485d10b48.1691125344.git.geliang.tang@suse.com>
+ <8b706f66-2afa-b3d0-a13a-11f1ffb452fe@linux.dev>
+ <20230807064044.GA11180@localhost.localdomain>
+ <9a84e026-402d-b6d9-b6d1-57d91455da47@linux.dev>
+ <20230809081944.GA29707@bogon>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20230809081944.GA29707@bogon>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 8, 2023 at 2:13=E2=80=AFPM Sean Christopherson <seanjc@google.c=
-om> wrote:
-> ...
+On 8/9/23 1:19 AM, Geliang Tang wrote:
+> On Tue, Aug 08, 2023 at 11:03:30PM -0700, Martin KaFai Lau wrote:
+>> On 8/6/23 11:40 PM, Geliang Tang wrote:
+>>> On Fri, Aug 04, 2023 at 05:23:32PM -0700, Martin KaFai Lau wrote:
+>>>> On 8/3/23 10:07 PM, Geliang Tang wrote:
+>>>>> Use rand() to generate a random netns name instead of using the fixed
+>>>>> name "mptcp_ns" for every test.
+>>>>>
+>>>>> By doing that, we can re-launch the test even if there was an issue
+>>>>> removing the previous netns or if by accident, a netns with this generic
+>>>>> name already existed on the system.
+>>>>>
+>>>>> Note that using a different name each will also help adding more
+>>>>> subtests in future commits.
+>>>
+>>> Hi Martin,
+>>>
+>>> I tried to run mptcp tests simultaneously, and got "Cannot create
+>>> namespace file "/var/run/netns/mptcp_ns": File exists" errors sometimes.
+>>> So I add this patch to fix it.
+>>>
+>>> It's easy to reproduce, just run this commands in multiple terminals:
+>>>    > for i in `seq 1 100`; do sudo ./test_progs -t mptcp; done
+>>
+>> Not only the "-t mptcp" test. Other tests in test_progs also don't support
+>> running parallel in multiple terminals. Does it really help to test the bpf
+>> part of the prog_tests/mptcp.c test by running like this? If it wants to
+>> exercise the other mptcp networking specific code like this, a separate
+>> mptcp test is needed outside of test_progs and it won't be run in the bpf
+>> CI.
+>>
+>> If you agree, can you please avoid introducing unnecessary randomness to the
+>> test_progs where bpf CI and most users don't run in this way?
+> 
+> Thanks Martin. Sure, I agree. Let's drop this patch.
 
-> > + When binding a memslot to the file, if a kvm pointer exists, it must
-> >   be the same kvm as the one in this binding
-> > + When the binding to the last memslot is removed from a file, NULL the
-> >   kvm pointer.
->
-> Nullifying the KVM pointer isn't sufficient, because without additional a=
-ctions
-> userspace could extract data from a VM by deleting its memslots and then =
-binding
-> the guest_memfd to an attacker controlled VM.  Or more likely with TDX an=
-d SNP,
-> induce badness by coercing KVM into mapping memory into a guest with the =
-wrong
-> ASID/HKID.
->
+Thanks you.
 
-TDX/SNP have mechanisms i.e. PAMT/RMP tables to ensure that the same
-memory is not assigned to two different VMs. Deleting memslots should
-also clear out the contents of the memory as the EPT tables will be
-zapped in the process and the host will reclaim the memory.
+>> I have a high level question. In LPC 2022
+>> (https://lpc.events/event/16/contributions/1354/), I recall there was idea
+>> in using bpf to make other mptcp decision/policy. Any thought and progress
+>> on this? This set which only uses bpf to change the protocol feels like an
+>> incomplete solution.
+> 
+> We are implementing MPTCP packet scheduler using BPF. Patches aren't
+> sent to BPF mail list yet, only temporarily on our mptcp repo[1].
+> 
+> Here are the patches:
+> 
+>   selftests/bpf: Add bpf_burst test
+>   selftests/bpf: Add bpf_burst scheduler
+>   bpf: Export more bpf_burst related functions
+>   selftests/bpf: Add bpf_red test
+>   selftests/bpf: Add bpf_red scheduler
+>   selftests/bpf: Add bpf_rr test
+>   selftests/bpf: Add bpf_rr scheduler
+>   selftests/bpf: Add bpf_bkup test
+>   selftests/bpf: Add bpf_bkup scheduler
+>   selftests/bpf: Add bpf_first test
+>   selftests/bpf: Add bpf_first scheduler
+>   selftests/bpf: Add bpf scheduler test
+>   selftests/bpf: add two mptcp netns helpers
+>   selftests/bpf: use random netns name for mptcp
+>   selftests/bpf: Add mptcp sched structs
+>   bpf: Add bpf_mptcp_sched_kfunc_set
+>   bpf: Add bpf_mptcp_sched_ops
+> 
+> If you could take a look at these patches in advance, I would greatly
+> appreciate it. Any feedback is welcome.
+> 
+> [1]
+> https://github.com/multipath-tcp/mptcp_net-next.git
 
-Regards,
-Vishal
+Thanks for sharing. I did not go into the details. iiuc, the scheduler is 
+specific to a namespace. Do you see if it is useful to have more finer control 
+like depending on what IP address it is connected to? BPF policy is usually 
+found more useful to have finer policy control than global or per-netns.
+
+The same question goes for the fmod_ret here in this patch. The progs/mptcpify.c 
+selftest is as good as upgrading all TCP connections. Is it your only use case 
+and no need for finer selection?
+
