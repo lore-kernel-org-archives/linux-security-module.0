@@ -2,166 +2,378 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B06B0C001DE
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Aug 2023 17:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C321C41513
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Aug 2023 17:51:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236573AbjHKRoR (ORCPT
+        id S234340AbjHKRvj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Aug 2023 13:44:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39990 "EHLO
+        Fri, 11 Aug 2023 13:51:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236900AbjHKRoP (ORCPT
+        with ESMTP id S232295AbjHKRvi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Aug 2023 13:44:15 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4677F10D
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Aug 2023 10:44:14 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-d672f55d48dso744348276.2
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Aug 2023 10:44:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691775853; x=1692380653;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y5tf/etP9591sBoXXP0u0lhmE2sGhQYCIj4rXej+PgY=;
-        b=z4avZMYBxF/USDP2G14KA+P8N8yreov1u2JOHwfc1TVZdl6Iz+YTKH19wDx7mUMq9M
-         o4u6qon1QiMk8DVxh93qeN2Mz6fZGsUFtzOg33bB4Mo7KFsOypRjJRdzz9Y8WFCiY85q
-         br+fPgBO/on1YU5soxnymBtm9OPZyICHaFKZfYSg9Ropko2mo0wKLVwIok1lVrWFw51i
-         jjhtl/HK+nEz+jNhJe7imTF+VBA6+NGFZjFm7+hHqXCkfP3+rYY1oaYSypJ0v6009kFT
-         lq7bEwknPOhWjDhET6YMFrJ/3n1YTZ5hf1bP/IHZB/5/XDyHPzuDGnqfF1kEhe1cc6AD
-         1nfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691775853; x=1692380653;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=y5tf/etP9591sBoXXP0u0lhmE2sGhQYCIj4rXej+PgY=;
-        b=dZwiuLBYJz/+JuM8rfZjuC9YfoBpv/6bKwYNGE4XQYtW13/QWLTKKOfxOxvNqqvwAq
-         9/Bj3bihNfabgx7MltOjjjpiT3Jf3lTV9Q3vS6KK1jlJSCMP8AH2ly4L8O1yoeLzpy0E
-         3ayrWj4+aV7My+wt6jJhYMSYm0+nl2HOoGgWNRPmU2xgeDGLrb92VY73ZNU5gmSGz1//
-         ned2v5RtyNdTH3k23791j2/rFRBc4NpU6+kZXNPfnsmKyhDw+VT7WYENpkF782J7epjU
-         WtP9SYxcq3eHZkZ06RrvuOXaQqWRZlBQYtK7jDbLUTnfCMVX/DvKBXdSeaA95Mg89u3h
-         ARlw==
-X-Gm-Message-State: AOJu0YxeqtrcU3Xv0vvXTFzFEI7DCIFCFlBh1IW+5BNC5g7SKEM/ITEG
-        /hGtON5zEtAS/u4r7RlyU+vf0GQ/5nY=
-X-Google-Smtp-Source: AGHT+IFlh+eXwF8rMcD2luIRCX1nl8Idt0F+6stO6hsWWfidj415wHUgqoJc8kVAwNGB8y2mQW1tGjk2lPA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:7443:0:b0:d20:7752:e384 with SMTP id
- p64-20020a257443000000b00d207752e384mr41859ybc.3.1691775853469; Fri, 11 Aug
- 2023 10:44:13 -0700 (PDT)
-Date:   Fri, 11 Aug 2023 10:44:11 -0700
-In-Reply-To: <CAGtprH9YE50RtqhW-U+wK0Vv6aKfqqtOPn8q4s8or=UZwPXZoA@mail.gmail.com>
-Mime-Version: 1.0
-References: <20230718234512.1690985-13-seanjc@google.com> <diqzv8dq3116.fsf@ackerleytng-ctop.c.googlers.com>
- <ZNKv9ul2I7A4V7IF@google.com> <CAGtprH9YE50RtqhW-U+wK0Vv6aKfqqtOPn8q4s8or=UZwPXZoA@mail.gmail.com>
-Message-ID: <ZNZza/emWldkJC6X@google.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-From:   Sean Christopherson <seanjc@google.com>
-To:     Vishal Annapurve <vannapurve@google.com>
-Cc:     Ackerley Tng <ackerleytng@google.com>, pbonzini@redhat.com,
-        maz@kernel.org, oliver.upton@linux.dev, chenhuacai@kernel.org,
-        mpe@ellerman.id.au, anup@brainfault.org, paul.walmsley@sifive.com,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, willy@infradead.org,
-        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
-        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
-        mail@maciej.szmigiero.name, vbabka@suse.cz, david@redhat.com,
-        qperret@google.com, michael.roth@amd.com, wei.w.wang@intel.com,
-        liam.merwick@oracle.com, isaku.yamahata@gmail.com,
-        kirill.shutemov@linux.intel.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 11 Aug 2023 13:51:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6452195
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Aug 2023 10:50:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1691776251;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8h1u45HEd5qO/IrjZXEvRoSExBtAVdevyEKaxVXliYw=;
+        b=E6h9mId2eks+FZNkSk1s4Zc2vs5NL9cJc42AvZA/fUcSs/BaObnsmBA6DRAJiWKO7zWq6h
+        cfE+hza62WD1c5KU7SbLd6Nhz1B9mGUmVAtfY1X3Tsxm0wuLeAVz2tBZ7tOc8g8SNZVpYK
+        IAoCkjt4SW7lyyzMw3HzwB9lShHhQuE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-489-_Ycq5S0tOEuwBEwJlrjD_Q-1; Fri, 11 Aug 2023 13:50:48 -0400
+X-MC-Unique: _Ycq5S0tOEuwBEwJlrjD_Q-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0F388856F67;
+        Fri, 11 Aug 2023 17:50:48 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.22.48.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0B48440C2063;
+        Fri, 11 Aug 2023 17:50:46 +0000 (UTC)
+Date:   Fri, 11 Aug 2023 13:50:43 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     linux-audit@redhat.com, audit@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Steve Grubb <sgrubb@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] audit: add task history record
+Message-ID: <ZNZ082CR0oLfuiqo@madcap2.tricolour.ca>
+References: <36b65eb1-ccbf-8b81-468f-b8d88c4be5a3@I-love.SAKURA.ne.jp>
+MIME-Version: 1.0
+In-Reply-To: <36b65eb1-ccbf-8b81-468f-b8d88c4be5a3@I-love.SAKURA.ne.jp>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 10, 2023, Vishal Annapurve wrote:
-> On Tue, Aug 8, 2023 at 2:13=E2=80=AFPM Sean Christopherson <seanjc@google=
-.com> wrote:
-> > ...
->=20
-> > > + When binding a memslot to the file, if a kvm pointer exists, it mus=
-t
-> > >   be the same kvm as the one in this binding
-> > > + When the binding to the last memslot is removed from a file, NULL t=
-he
-> > >   kvm pointer.
-> >
-> > Nullifying the KVM pointer isn't sufficient, because without additional=
- actions
-> > userspace could extract data from a VM by deleting its memslots and the=
-n binding
-> > the guest_memfd to an attacker controlled VM.  Or more likely with TDX =
-and SNP,
-> > induce badness by coercing KVM into mapping memory into a guest with th=
-e wrong
-> > ASID/HKID.
-> >
->=20
-> TDX/SNP have mechanisms i.e. PAMT/RMP tables to ensure that the same
-> memory is not assigned to two different VMs.
+On 2023-08-11 19:58, Tetsuo Handa wrote:
+> When an unexpected system event occurs, the administrator may want to
+> identify which application triggered the event. For example, unexpected
+> process termination is still a real concern enough to write articles
+> like https://access.redhat.com/solutions/165993 .
+> 
+> This patch adds a record which emits TOMOYO-like task history information
+> into the audit logs for better understanding of unexpected system events.
+> 
+>   type=UNKNOWN[1340] msg=audit(1691750738.271:108): history="name=swapper/0;pid=1;start=20230811194329=>name=init;pid=1;start=20230811194343=>name=systemd;pid=1;start=20230811194439=>name=sshd;pid=3660;start=20230811104504=>name=sshd;pid=3767;start=20230811104535"
+> 
+> To be able to avoid bloating audit log files due to this information, this
+> patch uses audit_history= kernel command line parameter that controls max
+> length of history in bytes (default is 1024, and setting to 0 disables
+> recording and emitting).
 
-One of the main reasons we pivoted away from using a flag in "struct page" =
-to
-indicate that a page was private was so that KVM could enforce 1:1 VM:page =
-ownership
-*without* relying on hardware.
+The record length limit is just below 8k.  Is it reasonable to set the
+default at 4k and cap it around 7.5k to be safe?
 
-And FWIW, the PAMT provides no protection in this specific case because KVM=
- does
-TDH.MEM.PAGE.REMOVE when zapping S-EPT entries, and that marks the page cle=
-ar in
-the PAMT.  The danger there is that physical memory is still encrypted with=
- the
-guest's HKID, and so mapping the memory into a different VM, which might no=
-t be
-a TDX guest!, could lead to corruption and/or poison #MCs.
+Is proctitle also useful here?  It contains the full command line, but
+is influencible by userspace.
 
-The HKID issues wouldn't be a problem if v15 is merged as-is, because zappi=
-ng
-S-EPT entries also fully purges and reclaims the page, but as we discussed =
-in
-one of the many threads, reclaiming physical memory should be tied to the i=
-node,
-i.e. to memory truly being freed, and not to S-EPTs being zapped.  And ther=
-e is
-a very good reason for wanting to do that, as it allows KVM to do the expen=
-sive
-cache flush + clear outside of mmu_lock.
+> Unlike execve()'s argv record, records in this history information is
+> emitted as one string in order to reduce bloat of the audit log files.
+> This information can be split into an array using => as the tokenizer.
+> But don't expect that you can compare array elements throughout the whole
+> audit logs by splitting into an array, for old records get removed from
+> history when history became too long to append the newest record. This
+> history information is meant to be interpreted by humans rather than be
+> analyzed by programs.
 
-> Deleting memslots should also clear out the contents of the memory as the=
- EPT
-> tables will be zapped in the process
+You say this isn't intended to be analysed by programs, but we all know
+it will inevitably be attempted...  Would any of the descendants of
+audit_log_untrustedstring() be of use, in particular
+audit_string_contains_control()
 
-No, deleting a memslot should not clear memory.  As I said in my previous r=
-esponse,
-the fact that zapping S-EPT entries is destructive is a limitiation of TDX,=
- not a
-feature we want to apply to other VM types.  And that's not even a fundamen=
-tal
-property of TDX, e.g. TDX could remove the limitation, at the cost of consu=
-ming
-quite a bit more memory, by tracking the exact owner by HKID in the PAMT an=
-d
-decoupling S-EPT entries from page ownership.
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> ---
+>  fs/exec.c                  |   1 +
+>  include/linux/audit.h      |   5 ++
+>  include/linux/sched.h      |   1 +
+>  include/uapi/linux/audit.h |   1 +
+>  init/init_task.c           |   7 +++
+>  kernel/audit.c             |   1 +
+>  kernel/auditsc.c           | 108 +++++++++++++++++++++++++++++++++++++
+>  7 files changed, 124 insertions(+)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 1a827d55ba94..5c8776f692c5 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1381,6 +1381,7 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  	commit_creds(bprm->cred);
+>  	bprm->cred = NULL;
+>  
+> +	audit_update_history();
+>  	/*
+>  	 * Disable monitoring for regular users
+>  	 * when executing setuid binaries. Must
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index 6a3a9e122bb5..6291d0f76541 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -397,6 +397,8 @@ static inline void audit_ptrace(struct task_struct *t)
+>  		__audit_ptrace(t);
+>  }
+>  
+> +extern void audit_update_history(void);
+> +
+>  				/* Private API (for audit.c only) */
+>  extern void __audit_ipc_obj(struct kern_ipc_perm *ipcp);
+>  extern void __audit_ipc_set_perm(unsigned long qbytes, uid_t uid, gid_t gid, umode_t mode);
+> @@ -701,6 +703,9 @@ static inline void audit_ntp_log(const struct audit_ntp_data *ad)
+>  static inline void audit_ptrace(struct task_struct *t)
+>  { }
+>  
+> +static inline void audit_update_history(void)
+> +{ }
+> +
+>  static inline void audit_log_nfcfg(const char *name, u8 af,
+>  				   unsigned int nentries,
+>  				   enum audit_nfcfgop op, gfp_t gfp)
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 609bde814cb0..f32076b6b733 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1112,6 +1112,7 @@ struct task_struct {
+>  #ifdef CONFIG_AUDIT
+>  #ifdef CONFIG_AUDITSYSCALL
+>  	struct audit_context		*audit_context;
+> +	char				*comm_history;
+>  #endif
+>  	kuid_t				loginuid;
+>  	unsigned int			sessionid;
+> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> index d676ed2b246e..186c0b5ca1b6 100644
+> --- a/include/uapi/linux/audit.h
+> +++ b/include/uapi/linux/audit.h
+> @@ -122,6 +122,7 @@
+>  #define AUDIT_OPENAT2		1337	/* Record showing openat2 how args */
+>  #define AUDIT_DM_CTRL		1338	/* Device Mapper target control */
+>  #define AUDIT_DM_EVENT		1339	/* Device Mapper events */
+> +#define AUDIT_PROCHISTORY	1340	/* Commname history emit event */
+>  
+>  #define AUDIT_AVC		1400	/* SE Linux avc denial or grant */
+>  #define AUDIT_SELINUX_ERR	1401	/* Internal SE Linux Errors */
+> diff --git a/init/init_task.c b/init/init_task.c
+> index ff6c4b9bfe6b..e3d481d1b010 100644
+> --- a/init/init_task.c
+> +++ b/init/init_task.c
+> @@ -57,6 +57,10 @@ unsigned long init_shadow_call_stack[SCS_SIZE / sizeof(long)]
+>  };
+>  #endif
+>  
+> +#ifdef CONFIG_AUDITSYSCALL
+> +extern char init_task_audit_history[];
+> +#endif
+> +
+>  /*
+>   * Set up the first task table, touch at your own risk!. Base=0,
+>   * limit=0x1fffff (=2MB)
+> @@ -137,6 +141,9 @@ struct task_struct init_task
+>  #ifdef CONFIG_AUDIT
+>  	.loginuid	= INVALID_UID,
+>  	.sessionid	= AUDIT_SID_UNSET,
+> +#ifdef CONFIG_AUDITSYSCALL
+> +	.comm_history   = init_task_audit_history,
+> +#endif
+>  #endif
+>  #ifdef CONFIG_PERF_EVENTS
+>  	.perf_event_mutex = __MUTEX_INITIALIZER(init_task.perf_event_mutex),
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index 9bc0b0301198..034952abd83d 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -1674,6 +1674,7 @@ static int __init audit_init(void)
+>  {
+>  	int i;
+>  
+> +	audit_update_history();
+>  	if (audit_initialized == AUDIT_DISABLED)
+>  		return 0;
+>  
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index addeed3df15d..6f1b124da2fe 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -80,6 +80,9 @@
+>  /* max length to print of cmdline/proctitle value during audit */
+>  #define MAX_PROCTITLE_AUDIT_LEN 128
+>  
+> +/* max length for thread's comm name history */
+> +static unsigned int audit_history_size __ro_after_init = 1024;
+> +
+>  /* number of audit rules */
+>  int audit_n_rules;
+>  
+> @@ -1055,6 +1058,12 @@ int audit_alloc(struct task_struct *tsk)
+>  	enum audit_state     state;
+>  	char *key = NULL;
+>  
+> +	if (audit_history_size) {
+> +		tsk->comm_history = kmemdup(current->comm_history, audit_history_size, GFP_KERNEL);
+> +		if (!tsk->comm_history)
+> +			return -ENOMEM;
+> +	}
+> +
+>  	if (likely(!audit_ever_enabled))
+>  		return 0;
+>  
+> @@ -1065,6 +1074,10 @@ int audit_alloc(struct task_struct *tsk)
+>  	}
+>  
+>  	if (!(context = audit_alloc_context(state))) {
+> +		if (audit_history_size) {
+> +			kfree(tsk->comm_history);
+> +			tsk->comm_history = NULL;
+> +		}
+>  		kfree(key);
+>  		audit_log_lost("out of memory in audit_alloc");
+>  		return -ENOMEM;
+> @@ -1671,6 +1684,18 @@ static void audit_log_uring(struct audit_context *ctx)
+>  	audit_log_end(ab);
+>  }
+>  
+> +static void audit_log_history(struct audit_context *context)
+> +{
+> +	struct audit_buffer *ab;
+> +
+> +	ab = audit_log_start(context, GFP_KERNEL, AUDIT_PROCHISTORY);
+> +	if (!ab)
+> +		return; /* audit_panic or being filtered */
+> +	audit_log_format(ab, "history=");
+> +	audit_log_untrustedstring(ab, current->comm_history);
+> +	audit_log_end(ab);
+> +}
+> +
+>  static void audit_log_exit(void)
+>  {
+>  	int i, call_panic = 0;
+> @@ -1805,6 +1830,8 @@ static void audit_log_exit(void)
+>  
+>  	if (context->context == AUDIT_CTX_SYSCALL)
+>  		audit_log_proctitle();
+> +	if (audit_history_size)
+> +		audit_log_history(context);
+>  
+>  	/* Send end of event record to help user space know we are finished */
+>  	ab = audit_log_start(context, GFP_KERNEL, AUDIT_EOE);
+> @@ -1824,6 +1851,10 @@ void __audit_free(struct task_struct *tsk)
+>  {
+>  	struct audit_context *context = tsk->audit_context;
+>  
+> +	if (audit_history_size) {
+> +		kfree(tsk->comm_history);
+> +		tsk->comm_history = NULL;
+> +	}
+>  	if (!context)
+>  		return;
+>  
+> @@ -3034,3 +3065,80 @@ struct list_head *audit_killed_trees(void)
+>  		return NULL;
+>  	return &ctx->killed_trees;
+>  }
+> +
+> +char init_task_audit_history[4096];
+> +
+> +static int __init audit_history_setup(char *str)
+> +{
+> +	unsigned int size;
+> +
+> +	if (kstrtouint(str, 10, &size))
+> +		return -EINVAL;
+> +	if (size > sizeof(init_task_audit_history))
+> +		size = sizeof(init_task_audit_history);
+> +	audit_history_size = size;
+> +	return 0;
+> +}
+> +early_param("audit_history", audit_history_setup);
+> +
+> +void audit_update_history(void)
+> +{
+> +	int i;
+> +	int required;
+> +	struct tm tm;
+> +	char buf[256];
+> +	char *cp = buf;
+> +
+> +	if (!audit_history_size)
+> +		return;
+> +
+> +	cp += snprintf(buf, sizeof(buf) - 1, "name=");
+> +	for (i = 0; i < TASK_COMM_LEN; i++) {
+> +		const unsigned char c = current->comm[i];
+> +
+> +		if (!c)
+> +			break;
+> +		if (isalnum(c) || c == '.' || c == '_' || c == '-' || c == '/') {
+> +			*cp++ = c;
+> +			continue;
+> +		}
+> +		*cp++ = '\\';
+> +		*cp++ = (c >> 6) + '0';
+> +		*cp++ = ((c >> 3) & 7) + '0';
+> +		*cp++ = (c & 7) + '0';
+> +	}
+> +	/* Append PID. */
+> +	cp += snprintf(cp, buf - cp + sizeof(buf) - 1, ";pid=%u",
+> +		       current->pid);
+> +	/* Append timestamp. */
+> +	time64_to_tm(ktime_get_real_seconds(), 0, &tm);
+> +	cp += snprintf(cp, buf - cp + sizeof(buf) - 1,
+> +		       ";start=%04u%02u%02u%02u%02u%02u", (int) tm.tm_year + 1900,
+> +		       tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min,
+> +		       tm.tm_sec);
+> +	/* Terminate the buffer. */
+> +	if (cp >= buf + sizeof(buf))
+> +		cp = buf + sizeof(buf) - 1;
+> +	*cp = '\0';
+> +	required = cp - buf + 1;
+> +	/* Make some room by truncating old history. */
+> +	cp = current->comm_history;
+> +	i = strlen(cp);
+> +	while (i + required >= audit_history_size - 3) {
+> +		char *cp2 = memchr(cp, '>', i);
+> +
+> +		/* Reset history if audit_history_size is too small to truncate. */
+> +		if (!cp2++) {
+> +			*cp = '\0';
+> +			return;
+> +		}
+> +		i -= cp2 - cp;
+> +		memmove(cp, cp2, i + 1);
+> +	}
+> +	/* Emit the buffer. */
+> +	if (i) {
+> +		cp[i++] = '=';
+> +		cp[i++] = '>';
+> +	}
+> +	memcpy(cp + i, buf, required);
+> +}
+> -- 
+> 2.18.4
+> 
+> --
+> Linux-audit mailing list
+> Linux-audit@redhat.com
+> https://listman.redhat.com/mailman/listinfo/linux-audit
+> 
 
-Or in theory, KVM could workaround the limitation by only doing TDH.MEM.RAN=
-GE.BLOCK
-when zapping S-EPTs.  Hmm, that might actually be worth looking at.
+- RGB
 
-> and the host will reclaim the memory.
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+Upstream IRC: SunRaycer
+Voice: +1.613.860 2354 SMS: +1.613.518.6570
 
-There are no guarantees that the host will reclaim the memory.  E.g. QEMU w=
-ill
-delete and re-create memslots for "regular" VMs when emulating option ROMs.=
-  Even
-if that use case is nonsensical for confidential VMs (and it probably is no=
-nsensical),
-I don't want to define KVM's ABI based on what we *think* userspace will do=
-.
