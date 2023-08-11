@@ -2,121 +2,193 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60200C001DB
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Aug 2023 14:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A06EB64DD
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Aug 2023 15:20:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230092AbjHKOTX (ORCPT
+        id S236563AbjHKPUn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Aug 2023 10:19:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53678 "EHLO
+        Fri, 11 Aug 2023 11:20:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232651AbjHKOTV (ORCPT
+        with ESMTP id S236506AbjHKPUV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Aug 2023 10:19:21 -0400
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 592102709
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Aug 2023 07:19:20 -0700 (PDT)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-583f65806f8so21812837b3.0
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Aug 2023 07:19:20 -0700 (PDT)
+        Fri, 11 Aug 2023 11:20:21 -0400
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9290F30CB
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Aug 2023 08:19:58 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-56942442eb0so25276227b3.1
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Aug 2023 08:19:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1691763559; x=1692368359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yZudPvE77obhdTH9BwvUPtFGRDBscAM9ndagajqjxgA=;
-        b=fOJN7/01bKuxSiPWfoaDMd1rHwiRAo0+t60pWZ00VIRK5P/s0UEBMLu0XrnF9XsLNV
-         +onChgYJMLEIznghAYMqxv6BBQbzL3K4Dl/8BSeCWxmJPDrVH41nEszOeVOR7j0M1MD5
-         wbxa/yU9BVYYZb3mpKOVWFX9fVibxwzRxagGwfCf0G/yDF9ez2Vg0DnBthuH4WEfb8Q2
-         yeTz6xCPKqpO6fbB7cvF2cDw3rJUNxAf+CkMDBsXEwlLYgA1Eqv/a+swWYKEO5rBFYY1
-         68hrQiMt/IQ+wRkMAP91apnd+8qIvri+8zvp7jaet6Xg0mjEIulThjZjEb7ymSaAtFLX
-         +SFQ==
+        d=google.com; s=20221208; t=1691767198; x=1692371998;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1vaThr58cHhzt3vCJBdqBIs2Yl/3Z2jvMp4OgQvCHVc=;
+        b=5xqJ+9vOp2nrO/mxnyBJ/b/1HWLsgBT1IHmI50RXMG+v00b5fp1vs2Rwd8BJ+9On+a
+         Q4jl5SsKlofCJHbO3RpNFGWeldC2dgdOf7WiBs7B3msfJcvntjhupdIzPNHiuqPJVz+z
+         R/HdlzmM4cQEmJpgDlmTthNmGG/KyvuF0gdplPRvM4udG74+d0udlvizD0YfOPv0Opv2
+         3tPbceoZMBOxCBuYZR9Iewa4BKkdIHfl4kSzyUUw34WMnBaidreMjrhu73PoE0V1Y3HY
+         Lo9Pzzu3F/0G/X2jav91I9Oukq8tP4eQTMYHi0nGsMKpFT4HL5VWbyKeiy/SS6PBE/G+
+         bSHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691763559; x=1692368359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yZudPvE77obhdTH9BwvUPtFGRDBscAM9ndagajqjxgA=;
-        b=MRBdaU8Yzgn/b4ZgOfEV55n4ao1rYkTXAKbI70hEdiSueY+3KQRiQRjMPbi1RRS2Hl
-         +EGPu1Ya/QshoJBbSyNsmwp2LcXtk5D02fMjXVsnuTXDtSN/GMAL/VQKhko+jClzYogC
-         7FaBc06zlAXy4MxEvMphu4ya5xncHyGgKXlek0rNePvAI5Pefkz/eeQ0QcnwzU/iCm3s
-         LrMlTlwTeJE9wOWyS2hHoUl7D9ERcxfB1beimCkXfZ0qZeswRO9SfHC2wI4cpilCfNF6
-         Xh9MP1TEyWfQ51GWgXZDZwZqPHUNH0tX+50COJkmcpr42JrwGXFy28zKDU4GFVOH7+9y
-         ym1Q==
-X-Gm-Message-State: AOJu0YwyZLP3Qo3OAeX3XY4yeN8IW0OfBc/zltfnDyKVO/jo28B81Hgi
-        2uKq/LP2GrhY1uoDxIJ6ncvI5eMltV/VU/M2MFi/
-X-Google-Smtp-Source: AGHT+IGDUbfXK+AIRXUY0biV6PHrbsLLAXTemWgR+C8O2IbwMktrRjWoRwhHhix/sOWiIoiNeNiblxKOu29ljZis3Jc=
-X-Received: by 2002:a0d:f806:0:b0:584:1a4d:bbfa with SMTP id
- i6-20020a0df806000000b005841a4dbbfamr2228192ywf.29.1691763559514; Fri, 11 Aug
- 2023 07:19:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230808-master-v9-1-e0ecde888221@kernel.org> <20230808-erdaushub-sanieren-2bd8d7e0a286@brauner>
- <7d596fc2c526a5d6e4a84240dede590e868f3345.camel@kernel.org>
-In-Reply-To: <7d596fc2c526a5d6e4a84240dede590e868f3345.camel@kernel.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 11 Aug 2023 10:19:08 -0400
-Message-ID: <CAHC9VhTAF43=-j4A-Ky1WxJVBOAWzU+y2sb4YmeSQjFOa4Sy-A@mail.gmail.com>
-Subject: Re: [PATCH v9] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
-To:     Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
+        d=1e100.net; s=20221208; t=1691767198; x=1692371998;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1vaThr58cHhzt3vCJBdqBIs2Yl/3Z2jvMp4OgQvCHVc=;
+        b=HFc003H7qikpwTR9r/oLZP85LefbTXgFfP2k6xOtMhCYxu6IgeHWfIpbJnQf5tQLJ9
+         WauoAaCx+Tdeqcyp+ET2DjCUV8V+jt4XaRysZG+YXL7bqRcoVooURE3lkphartCTCZG6
+         0/zZ3mfuZlWsY0AryZWwOCJ58PUVJvsEKz85GbuvJpF2NPktthibwRWFLT+p6V+E6GcQ
+         yMiQ2IE6mjD2OxuFx9W0xee6H0GEoWSYPGKfqKL4OglQyx/IvOndNYnNUDhH6pXudV81
+         18uEG25gaZoGOGdW8yXH6GjWIaESIi26Atmg244hUQaxp8MDD7snH1AiKTKMJuwPMtjv
+         3h/Q==
+X-Gm-Message-State: AOJu0Yz9XosOX/PtPxENHS7JLVzwmPT8r6YZOSo7D/N8/+hqJzbVuqQk
+        q6CZIW+/uapDWFgIpVqqkR0LNgmQDQ==
+X-Google-Smtp-Source: AGHT+IHOFdGW52whxAtpTQwrYswR+9FGN+f7HEI1ais6Hmme/G/bIwskagiWtjT5lu9yqzqehThNh6eXAg==
+X-Received: from elver.muc.corp.google.com ([2a00:79e0:9c:201:8dc0:5176:6fda:46a0])
+ (user=elver job=sendgmr) by 2002:a81:451d:0:b0:589:9d51:c8c0 with SMTP id
+ s29-20020a81451d000000b005899d51c8c0mr41482ywa.2.1691767197794; Fri, 11 Aug
+ 2023 08:19:57 -0700 (PDT)
+Date:   Fri, 11 Aug 2023 17:18:38 +0200
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.41.0.694.ge786442a9b-goog
+Message-ID: <20230811151847.1594958-1-elver@google.com>
+Subject: [PATCH v4 1/4] compiler_types: Introduce the Clang __preserve_most
+ function attribute
+From:   Marco Elver <elver@google.com>
+To:     elver@google.com, Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, llvm@lists.linux.dev,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        kasan-dev@googlegroups.com, linux-toolchains@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 10, 2023 at 9:57=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
-ote:
-> On Tue, 2023-08-08 at 15:31 +0200, Christian Brauner wrote:
-> > On Tue, Aug 08, 2023 at 07:34:20AM -0400, Jeff Layton wrote:
-> > > From: David Howells <dhowells@redhat.com>
-> > >
-> > > When NFS superblocks are created by automounting, their LSM parameter=
-s
-> > > aren't set in the fs_context struct prior to sget_fc() being called,
-> > > leading to failure to match existing superblocks.
-> > >
-> > > This bug leads to messages like the following appearing in dmesg when
-> > > fscache is enabled:
-> > >
-> > >     NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,=
-100000,100000,2ee,3a98,1d4c,3a98,1)
-> > >
-> > > Fix this by adding a new LSM hook to load fc->security for submount
-> > > creation.
-> > >
-> > > Signed-off-by: David Howells <dhowells@redhat.com>
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_moun=
-t() to it.")
-> > > Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inod=
-e)
-> > > Tested-by: Jeff Layton <jlayton@kernel.org>
-> > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
->
-> I've made a significant number of changes since Casey acked this. It
-> might be a good idea to drop his Acked-by (unless he wants to chime in
-> and ask us to keep it).
+[1]: "On X86-64 and AArch64 targets, this attribute changes the calling
+convention of a function. The preserve_most calling convention attempts
+to make the code in the caller as unintrusive as possible. This
+convention behaves identically to the C calling convention on how
+arguments and return values are passed, but it uses a different set of
+caller/callee-saved registers. This alleviates the burden of saving and
+recovering a large register set before and after the call in the caller.
+If the arguments are passed in callee-saved registers, then they will be
+preserved by the callee across the call. This doesn't apply for values
+returned in callee-saved registers.
 
-My apologies in that it took me some time to be able to come back to
-this, but v9 looks fine to me, and I have no problems with Christian
-sending this up via the VFS tree.
+ * On X86-64 the callee preserves all general purpose registers, except
+   for R11. R11 can be used as a scratch register. Floating-point
+   registers (XMMs/YMMs) are not preserved and need to be saved by the
+   caller.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+ * On AArch64 the callee preserve all general purpose registers, except
+   x0-X8 and X16-X18."
 
---=20
-paul-moore.com
+[1] https://clang.llvm.org/docs/AttributeReference.html#preserve-most
+
+Introduce the attribute to compiler_types.h as __preserve_most.
+
+Use of this attribute results in better code generation for calls to
+very rarely called functions, such as error-reporting functions, or
+rarely executed slow paths.
+
+Beware that the attribute conflicts with instrumentation calls inserted
+on function entry which do not use __preserve_most themselves. Notably,
+function tracing which assumes the normal C calling convention for the
+given architecture.  Where the attribute is supported, __preserve_most
+will imply notrace. It is recommended to restrict use of the attribute
+to functions that should or already disable tracing.
+
+Note: The additional preprocessor check against architecture should not
+be necessary if __has_attribute() only returns true where supported;
+also see https://github.com/ClangBuiltLinux/linux/issues/1908. But until
+__has_attribute() does the right thing, we also guard by known-supported
+architectures to avoid build warnings on other architectures.
+
+The attribute may be supported by a future GCC version (see
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110899).
+
+Signed-off-by: Marco Elver <elver@google.com>
+Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+---
+v4:
+* Guard attribute based on known-supported architectures to avoid
+  compiler warnings about the attribute being ignored.
+
+v3:
+* Quote more from LLVM documentation about which registers are
+  callee/caller with preserve_most.
+* Code comment to restrict use where tracing is meant to be disabled.
+
+v2:
+* Imply notrace, to avoid any conflicts with tracing which is inserted
+  on function entry. See added comments.
+---
+ include/linux/compiler_types.h | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 547ea1ff806e..c523c6683789 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -106,6 +106,34 @@ static inline void __chk_io_ptr(const volatile void __iomem *ptr) { }
+ #define __cold
+ #endif
+ 
++/*
++ * On x86-64 and arm64 targets, __preserve_most changes the calling convention
++ * of a function to make the code in the caller as unintrusive as possible. This
++ * convention behaves identically to the C calling convention on how arguments
++ * and return values are passed, but uses a different set of caller- and callee-
++ * saved registers.
++ *
++ * The purpose is to alleviates the burden of saving and recovering a large
++ * register set before and after the call in the caller.  This is beneficial for
++ * rarely taken slow paths, such as error-reporting functions that may be called
++ * from hot paths.
++ *
++ * Note: This may conflict with instrumentation inserted on function entry which
++ * does not use __preserve_most or equivalent convention (if in assembly). Since
++ * function tracing assumes the normal C calling convention, where the attribute
++ * is supported, __preserve_most implies notrace.  It is recommended to restrict
++ * use of the attribute to functions that should or already disable tracing.
++ *
++ * Optional: not supported by gcc.
++ *
++ * clang: https://clang.llvm.org/docs/AttributeReference.html#preserve-most
++ */
++#if __has_attribute(__preserve_most__) && (defined(CONFIG_X86_64) || defined(CONFIG_ARM64))
++# define __preserve_most notrace __attribute__((__preserve_most__))
++#else
++# define __preserve_most
++#endif
++
+ /* Builtins */
+ 
+ /*
+-- 
+2.41.0.694.ge786442a9b-goog
+
