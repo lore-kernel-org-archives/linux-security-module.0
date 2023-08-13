@@ -2,56 +2,56 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B47C04A94
-	for <linux-security-module@archiver.kernel.org>; Sun, 13 Aug 2023 02:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9AC0C04A94
+	for <linux-security-module@archiver.kernel.org>; Sun, 13 Aug 2023 02:16:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230231AbjHMCQE (ORCPT
+        id S230203AbjHMCQN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 12 Aug 2023 22:16:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60920 "EHLO
+        Sat, 12 Aug 2023 22:16:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230203AbjHMCQA (ORCPT
+        with ESMTP id S230233AbjHMCQE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 12 Aug 2023 22:16:00 -0400
+        Sat, 12 Aug 2023 22:16:04 -0400
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E54AD7;
-        Sat, 12 Aug 2023 19:16:03 -0700 (PDT)
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37D1vaP5031051;
-        Sun, 13 Aug 2023 02:15:54 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 050AD1717;
+        Sat, 12 Aug 2023 19:16:06 -0700 (PDT)
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37D27I5t015966;
+        Sun, 13 Aug 2023 02:15:57 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=M/sQfVzrC8d2QZrImPRGkYy/MfrT1TGVavwMdGxuas8=;
- b=Nnxewv6U97hNjNYX0MRQiDDB3SbFX7x+Nny4wJAbb1nd4Kczn60JywIRdJTdlcUqhayS
- Y9GywYiSxjfzjgWHnAVN5jGv5cLKlmcsBAH7n3pL9yMn2T1ote2S8JJD5Yniueg4Nh6I
- kraFbxn39SYUemlW3uRxS5/GO2LAFNsK/yR4A91MCCSWP50OTtGmbJw3UN3s83pljhyG
- h6xFRb+R/PdePtbC/f6FrIFL0F8SuKCLn0aZssiz+hSOK8hobQAdqhmLzkeCkv4VEi/t
- R6GWS8CbXHmk+l9XEnfcu3k8tPmukPkqMC9jVfpyYHuPCNxY7x5yeUoxRydyPTcN6lKq 6Q== 
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3senyjgaq1-1
+ bh=sVOFvv/GjMTXAoEgnozP0KUynypHEZH44thYGVoiQ1o=;
+ b=GxRWzQAprtJVVWUaNrtgVLyxiwIWNGGuKo/iFh5aKLNu/GDj2v6PilnIaZRclgTNwe5X
+ pWghuw9OVNm6sLktiEc7dtTPXAe0CCgDwZzn9/lLJxfPhM5x8tAfF/f+tmBsR6+V4nN6
+ nU5c9Ub7sEFyQpMNSr9Q1KHooBlM42uFMR7cjjTDMZ7On9ZE+MaeqLBz22IFOrjFXSEi
+ GNa7EgGd0lDROYUbAwiRBHyLebbDRBWHRpTedluzSEH2rNX+6O3LFSV5IisTrHqj4eXM
+ Auq6SYKQooqHD11WoKcWUJ8w+f+ckwSBhMo2cVwMwe5xooDC19N6f/0lNDR4x4b4J/92 dA== 
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3senx9r8p8-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 13 Aug 2023 02:15:53 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37D11mDl023275;
-        Sun, 13 Aug 2023 02:15:53 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-        by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3se2wpffdu-1
+        Sun, 13 Aug 2023 02:15:56 +0000
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+        by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37D1JLjc002460;
+        Sun, 13 Aug 2023 02:15:55 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+        by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3sendmgakw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 13 Aug 2023 02:15:52 +0000
+        Sun, 13 Aug 2023 02:15:55 +0000
 Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-        by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37D2Fl1U11272716
+        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37D2FqMU11928234
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 13 Aug 2023 02:15:47 GMT
+        Sun, 13 Aug 2023 02:15:52 GMT
 Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6EE7420040;
-        Sun, 13 Aug 2023 02:15:47 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 471E020043;
+        Sun, 13 Aug 2023 02:15:52 +0000 (GMT)
 Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 45B4F20043;
-        Sun, 13 Aug 2023 02:15:45 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 4A59C20040;
+        Sun, 13 Aug 2023 02:15:50 +0000 (GMT)
 Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com (unknown [9.61.3.84])
         by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Sun, 13 Aug 2023 02:15:44 +0000 (GMT)
+        Sun, 13 Aug 2023 02:15:50 +0000 (GMT)
 From:   Nayna Jain <nayna@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     Mimi Zohar <zohar@linux.ibm.com>,
@@ -61,64 +61,53 @@ Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         linux-security-module@vger.kernel.org,
         linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
         linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v3 3/6] integrity: remove global variable from machine_keyring.c
-Date:   Sat, 12 Aug 2023 22:15:28 -0400
-Message-Id: <20230813021531.1382815-4-nayna@linux.ibm.com>
+Subject: [PATCH v3 5/6] integrity: PowerVM machine keyring enablement
+Date:   Sat, 12 Aug 2023 22:15:30 -0400
+Message-Id: <20230813021531.1382815-6-nayna@linux.ibm.com>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <20230813021531.1382815-1-nayna@linux.ibm.com>
 References: <20230813021531.1382815-1-nayna@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: O_m3GKHuCti4qe_9VJP7CuUqJmeWkA1c
-X-Proofpoint-GUID: O_m3GKHuCti4qe_9VJP7CuUqJmeWkA1c
+X-Proofpoint-GUID: iaMhPZClZo6216D_oXkiI1V0x-6VXzQU
+X-Proofpoint-ORIG-GUID: iaMhPZClZo6216D_oXkiI1V0x-6VXzQU
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-08-12_27,2023-08-10_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0
- mlxscore=0 bulkscore=0 adultscore=0 impostorscore=0 clxscore=1015
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
+ adultscore=0 mlxlogscore=799 clxscore=1015 malwarescore=0 mlxscore=0
+ priorityscore=1501 impostorscore=0 lowpriorityscore=0 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2306200000 definitions=main-2308130016
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-trust_mok variable is accessed within a single function locally.
-
-Change trust_mok from global to local static variable.
+Update Kconfig to enable machine keyring and limit to CA certificates
+on PowerVM. Only key signing CA keys are allowed.
 
 Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
 Reviewed-and-tested-by: Mimi Zohar <zohar@linux.ibm.com>
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- security/integrity/platform_certs/machine_keyring.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ security/integrity/Kconfig | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/security/integrity/platform_certs/machine_keyring.c b/security/integrity/platform_certs/machine_keyring.c
-index 389a6e7c9245..9482e16cb2ca 100644
---- a/security/integrity/platform_certs/machine_keyring.c
-+++ b/security/integrity/platform_certs/machine_keyring.c
-@@ -8,8 +8,6 @@
- #include <linux/efi.h>
- #include "../integrity.h"
- 
--static bool trust_mok;
--
- static __init int machine_keyring_init(void)
- {
- 	int rc;
-@@ -65,9 +63,11 @@ static __init bool uefi_check_trust_mok_keys(void)
- bool __init trust_moklist(void)
- {
- 	static bool initialized;
-+	static bool trust_mok;
- 
- 	if (!initialized) {
- 		initialized = true;
-+		trust_mok = false;
- 
- 		if (uefi_check_trust_mok_keys())
- 			trust_mok = true;
+diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
+index ec6e0d789da1..232191ee09e3 100644
+--- a/security/integrity/Kconfig
++++ b/security/integrity/Kconfig
+@@ -67,7 +67,9 @@ config INTEGRITY_MACHINE_KEYRING
+ 	depends on SECONDARY_TRUSTED_KEYRING
+ 	depends on INTEGRITY_ASYMMETRIC_KEYS
+ 	depends on SYSTEM_BLACKLIST_KEYRING
+-	depends on LOAD_UEFI_KEYS
++	depends on LOAD_UEFI_KEYS || LOAD_PPC_KEYS
++	select INTEGRITY_CA_MACHINE_KEYRING if LOAD_PPC_KEYS
++	select INTEGRITY_CA_MACHINE_KEYRING_MAX if LOAD_PPC_KEYS
+ 	help
+ 	 If set, provide a keyring to which Machine Owner Keys (MOK) may
+ 	 be added. This keyring shall contain just MOK keys.  Unlike keys
 -- 
 2.31.1
 
