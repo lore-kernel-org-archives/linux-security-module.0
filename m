@@ -2,115 +2,289 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3754C04A6A
-	for <linux-security-module@archiver.kernel.org>; Sun, 13 Aug 2023 16:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDC8C001DB
+	for <linux-security-module@archiver.kernel.org>; Sun, 13 Aug 2023 20:10:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234103AbjHMQX4 (ORCPT
+        id S231130AbjHMUKE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 13 Aug 2023 12:23:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48930 "EHLO
+        Sun, 13 Aug 2023 16:10:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233648AbjHMQXd (ORCPT
+        with ESMTP id S229519AbjHMUKD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 13 Aug 2023 12:23:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C706C1FD9;
-        Sun, 13 Aug 2023 09:14:21 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 25A4663C0A;
-        Sun, 13 Aug 2023 16:13:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFA34C433C9;
-        Sun, 13 Aug 2023 16:13:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691943191;
-        bh=CR2SSSmj6nOlFJfAO7XRG8O83A8MQtaAU8AR9iFYMUc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q/QjKi18FBsI74q2XpJMhmwVU2eXBnn+0yyFD2eFu4H08+1GvcBhewHb5wZFiJXrl
-         3KuipkzX0F2XCY1704kpd8ZMA0Dp/wOA8X4QNXtPfTruLukQN+ovBnRftPIDtQ+Awh
-         kJ9x7+0lgfbXYTV2t51HgOBfElMmrrHO67+KXdV9M5Be2KqGmlkALzm9SP8SQP2H1T
-         0kZEWwHPB6/zezg+LVEN5i61P46iM0dZTRCMG2un7jmD4lXD0LJvkPaIXM+fbYXr9R
-         RG8mCTOHEdN9TIQCSYZpkj/2h6aLm2N8VJmZmTuScaNOiq4VE9n/NAgJEIgxqxZ0Fj
-         KhpZoLBhAqkog==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, dhowells@redhat.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 14/14] security: keys: perform capable check only on privileged operations
-Date:   Sun, 13 Aug 2023 12:12:02 -0400
-Message-Id: <20230813161202.1086004-14-sashal@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230813161202.1086004-1-sashal@kernel.org>
-References: <20230813161202.1086004-1-sashal@kernel.org>
+        Sun, 13 Aug 2023 16:10:03 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5769F10F9;
+        Sun, 13 Aug 2023 13:10:03 -0700 (PDT)
+Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4RP7nn4hqMz67PjK;
+        Mon, 14 Aug 2023 04:06:05 +0800 (CST)
+Received: from [10.123.123.126] (10.123.123.126) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.31; Sun, 13 Aug 2023 21:10:00 +0100
+Message-ID: <30e2bacd-2e48-9056-5950-1974b9373ee3@huawei.com>
+Date:   Sun, 13 Aug 2023 23:09:59 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.253
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v11.1] selftests/landlock: Add 11 new test suites
+ dedicated to network
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <artem.kuzin@huawei.com>, <gnoack3000@gmail.com>,
+        <willemdebruijn.kernel@gmail.com>, <yusongping@huawei.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>
+References: <20230515161339.631577-11-konstantin.meskhidze@huawei.com>
+ <20230706145543.1284007-1-mic@digikod.net>
+ <3db64cf8-6a45-a361-aa57-9bfbaf866ef8@digikod.net>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <3db64cf8-6a45-a361-aa57-9bfbaf866ef8@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.123.123.126]
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Christian Göttsche <cgzones@googlemail.com>
 
-[ Upstream commit 2d7f105edbb3b2be5ffa4d833abbf9b6965e9ce7 ]
 
-If the current task fails the check for the queried capability via
-`capable(CAP_SYS_ADMIN)` LSMs like SELinux generate a denial message.
-Issuing such denial messages unnecessarily can lead to a policy author
-granting more privileges to a subject than needed to silence them.
+7/12/2023 10:02 AM, Mickaël Salaün пишет:
+> 
+> On 06/07/2023 16:55, Mickaël Salaün wrote:
+>> From: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>> 
+>> This patch is a revamp of the v11 tests [1] with new tests (see the
+>> "Changes since v11" description).  I (Mickaël) only added the following
+>> todo list and the "Changes since v11" sections in this commit message.
+>> I think this patch is good but it would appreciate reviews.
+>> You can find the diff of my changes here but it is not really readable:
+>> https://git.kernel.org/mic/c/78edf722fba5 (landlock-net-v11 branch)
+>> [1] https://lore.kernel.org/all/20230515161339.631577-11-konstantin.meskhidze@huawei.com/
+>> TODO:
+>> - Rename all "net_service" to "net_port".
+>> - Fix the two kernel bugs found with the new tests.
+>> - Update this commit message with a small description of all tests.
+> 
+> [...]
+> 
+>> +FIXTURE_SETUP(ipv4)
+>> +{
+>> +	const struct protocol_variant prot = {
+>> +		.domain = AF_INET,
+>> +		.type = variant->type,
+>> +	};
+>> +
+>> +	disable_caps(_metadata);
+>> +
+>> +	set_service(&self->srv0, prot, 0);
+>> +	set_service(&self->srv1, prot, 1);
+>> +
+>> +	setup_loopback(_metadata);
+>> +};
+>> +
+>> +FIXTURE_TEARDOWN(ipv4)
+>> +{
+>> +}
+>> +
+>> +// Kernel FIXME: tcp_sandbox_with_tcp and tcp_sandbox_with_udp
+>> +TEST_F(ipv4, from_unix_to_inet)
+>> +{
+>> +	int unix_stream_fd, unix_dgram_fd;
+>> +
+>> +	if (variant->sandbox == TCP_SANDBOX) {
+>> +		const struct landlock_ruleset_attr ruleset_attr = {
+>> +			.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> +					      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +		};
+>> +		const struct landlock_net_service_attr tcp_bind_connect_p0 = {
+>> +			.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> +					  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +			.port = self->srv0.port,
+>> +		};
+>> +		int ruleset_fd;
+>> +
+>> +		/* Denies connect and bind to check errno value. */
+>> +		ruleset_fd = landlock_create_ruleset(&ruleset_attr,
+>> +						     sizeof(ruleset_attr), 0);
+>> +		ASSERT_LE(0, ruleset_fd);
+>> +
+>> +		/* Allows connect and bind for srv0.  */
+>> +		ASSERT_EQ(0, landlock_add_rule(ruleset_fd,
+>> +					       LANDLOCK_RULE_NET_SERVICE,
+>> +					       &tcp_bind_connect_p0, 0));
+>> +
+>> +		enforce_ruleset(_metadata, ruleset_fd);
+>> +		EXPECT_EQ(0, close(ruleset_fd));
+>> +	}
+>> +
+>> +	unix_stream_fd = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
+>> +	ASSERT_LE(0, unix_stream_fd);
+>> +
+>> +	unix_dgram_fd = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
+>> +	ASSERT_LE(0, unix_dgram_fd);
+>> +
+>> +	/* Checks unix stream bind and connect for srv0. */
+>> +	EXPECT_EQ(-EINVAL, bind_variant(unix_stream_fd, &self->srv0));
+>> +	EXPECT_EQ(-EINVAL, connect_variant(unix_stream_fd, &self->srv0));
+>> +
+>> +	/* Checks unix stream bind and connect for srv1. */
+>> +	EXPECT_EQ(-EINVAL, bind_variant(unix_stream_fd, &self->srv1))
+>> +	{
+>> +		TH_LOG("Wrong bind error: %s", strerror(errno));
+>> +	}
+>> +	EXPECT_EQ(-EINVAL, connect_variant(unix_stream_fd, &self->srv1));
+>> +
+>> +	/* Checks unix datagram bind and connect for srv0. */
+>> +	EXPECT_EQ(-EINVAL, bind_variant(unix_dgram_fd, &self->srv0));
+>> +	EXPECT_EQ(-EINVAL, connect_variant(unix_dgram_fd, &self->srv0));
+>> +
+>> +	/* Checks unix datagram bind and connect for srv0. */
+>> +	EXPECT_EQ(-EINVAL, bind_variant(unix_dgram_fd, &self->srv1));
+>> +	EXPECT_EQ(-EINVAL, connect_variant(unix_dgram_fd, &self->srv1));
+>> +}
+> 
+> We should also add a test to make sure errno is the same with and
+> without sandboxing when using port 0 for connect and consistent with
+> bind (using an available port). The test fixture and variants should be
+> quite similar to the "ipv4" ones, but we can also add AF_INET6 variants,
+> which will result in 8 "ip" variants:
+> 
+> TEST_F(ip, port_zero)
+> {
+> 	if (variant->sandbox == TCP_SANDBOX) {
+> 		/* Denies any connect and bind. */
+> 	}
+> 	/* Checks errno for port 0. */
+> }
+> 
+> [...]
+> 
+>> +FIXTURE(inet)
+>> +{
+>> +	struct service_fixture srv0, srv1;
+>> +};
+> 
+> The "inet" variants are useless and should be removed. The "inet"
+> fixture can then be renamed to "ipv4_tcp".
+> 
+   Maybe its better to name it "tcp". So we dont need to copy 
+TEST_F(tcp, port_endianness) for ipv6 and ipv4.
+What do you think?
 
-Reorder CAP_SYS_ADMIN checks after the check whether the operation is
-actually privileged.
-
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/keys/keyctl.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index edde63a63007f..f42968f349584 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -977,14 +977,19 @@ long keyctl_chown_key(key_serial_t id, uid_t user, gid_t group)
- 	ret = -EACCES;
- 	down_write(&key->sem);
- 
--	if (!capable(CAP_SYS_ADMIN)) {
-+	{
-+		bool is_privileged_op = false;
-+
- 		/* only the sysadmin can chown a key to some other UID */
- 		if (user != (uid_t) -1 && !uid_eq(key->uid, uid))
--			goto error_put;
-+			is_privileged_op = true;
- 
- 		/* only the sysadmin can set the key's GID to a group other
- 		 * than one of those that the current process subscribes to */
- 		if (group != (gid_t) -1 && !gid_eq(gid, key->gid) && !in_group_p(gid))
-+			is_privileged_op = true;
-+
-+		if (is_privileged_op && !capable(CAP_SYS_ADMIN))
- 			goto error_put;
- 	}
- 
-@@ -1084,7 +1089,7 @@ long keyctl_setperm_key(key_serial_t id, key_perm_t perm)
- 	down_write(&key->sem);
- 
- 	/* if we're not the sysadmin, we can only change a key that we own */
--	if (capable(CAP_SYS_ADMIN) || uid_eq(key->uid, current_fsuid())) {
-+	if (uid_eq(key->uid, current_fsuid()) || capable(CAP_SYS_ADMIN)) {
- 		key->perm = perm;
- 		ret = 0;
- 	}
--- 
-2.40.1
-
+> 
+>> +
+>> +FIXTURE_VARIANT(inet)
+>> +{
+>> +	const bool is_sandboxed;
+>> +	const struct protocol_variant prot;
+>> +};
+>> +
+>> +/* clang-format off */
+>> +FIXTURE_VARIANT_ADD(inet, no_sandbox_with_ipv4) {
+>> +	/* clang-format on */
+>> +	.is_sandboxed = false,
+>> +	.prot = {
+>> +		.domain = AF_INET,
+>> +		.type = SOCK_STREAM,
+>> +	},
+>> +};
+>> +
+>> +/* clang-format off */
+>> +FIXTURE_VARIANT_ADD(inet, sandbox_with_ipv4) {
+>> +	/* clang-format on */
+>> +	.is_sandboxed = true,
+>> +	.prot = {
+>> +		.domain = AF_INET,
+>> +		.type = SOCK_STREAM,
+>> +	},
+>> +};
+>> +
+>> +/* clang-format off */
+>> +FIXTURE_VARIANT_ADD(inet, no_sandbox_with_ipv6) {
+>> +	/* clang-format on */
+>> +	.is_sandboxed = false,
+>> +	.prot = {
+>> +		.domain = AF_INET6,
+>> +		.type = SOCK_STREAM,
+>> +	},
+>> +};
+>> +
+>> +/* clang-format off */
+>> +FIXTURE_VARIANT_ADD(inet, sandbox_with_ipv6) {
+>> +	/* clang-format on */
+>> +	.is_sandboxed = true,
+>> +	.prot = {
+>> +		.domain = AF_INET6,
+>> +		.type = SOCK_STREAM,
+>> +	},
+>> +};
+>> +
+>> +FIXTURE_SETUP(inet)
+>> +{
+>> +	const struct protocol_variant ipv4_tcp = {
+>> +		.domain = AF_INET,
+>> +		.type = SOCK_STREAM,
+>> +	};
+>> +
+>> +	disable_caps(_metadata);
+>> +
+>> +	ASSERT_EQ(0, set_service(&self->srv0, ipv4_tcp, 0));
+>> +	ASSERT_EQ(0, set_service(&self->srv1, ipv4_tcp, 1));
+>> +
+>> +	setup_loopback(_metadata);
+>> +};
+>> +
+>> +FIXTURE_TEARDOWN(inet)
+>> +{
+>> +}
+>> +
+>> +TEST_F(inet, port_endianness)
+>> +{
+>> +	const struct landlock_ruleset_attr ruleset_attr = {
+>> +		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> +				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +	};
+>> +	const struct landlock_net_service_attr bind_host_endian_p0 = {
+>> +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
+>> +		/* Host port format. */
+>> +		.port = self->srv0.port,
+>> +	};
+>> +	const struct landlock_net_service_attr connect_big_endian_p0 = {
+>> +		.allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +		/* Big endian port format. */
+>> +		.port = htons(self->srv0.port),
+>> +	};
+>> +	const struct landlock_net_service_attr bind_connect_host_endian_p1 = {
+>> +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> +				  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +		/* Host port format. */
+>> +		.port = self->srv1.port,
+>> +	};
+>> +	const unsigned int one = 1;
+>> +	const char little_endian = *(const char *)&one;
+>> +	int ruleset_fd;
+>> +
+>> +	ruleset_fd =
+>> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+>> +	ASSERT_LE(0, ruleset_fd);
+>> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>> +				       &bind_host_endian_p0, 0));
+>> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>> +				       &connect_big_endian_p0, 0));
+>> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>> +				       &bind_connect_host_endian_p1, 0));
+>> +	enforce_ruleset(_metadata, ruleset_fd);
+>> +
+>> +	/* No restriction for big endinan CPU. */
+>> +	test_bind_and_connect(_metadata, &self->srv0, false, little_endian);
+>> +
+>> +	/* No restriction for any CPU. */
+>> +	test_bind_and_connect(_metadata, &self->srv1, false, false);
+>> +}
+>> +
+>> +TEST_HARNESS_MAIN
+> .
