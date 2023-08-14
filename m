@@ -2,108 +2,216 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F22EB64DD
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Aug 2023 17:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C484DC04FDF
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Aug 2023 21:43:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229686AbjHNRn2 (ORCPT
+        id S232222AbjHNVnA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Aug 2023 13:43:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55946 "EHLO
+        Mon, 14 Aug 2023 17:43:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230104AbjHNRnN (ORCPT
+        with ESMTP id S232988AbjHNVmt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Aug 2023 13:43:13 -0400
-Received: from mail-ej1-x64a.google.com (mail-ej1-x64a.google.com [IPv6:2a00:1450:4864:20::64a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9449510DE
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Aug 2023 10:43:12 -0700 (PDT)
-Received: by mail-ej1-x64a.google.com with SMTP id a640c23a62f3a-993d7ca4607so282618066b.1
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Aug 2023 10:43:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1692034991; x=1692639791;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u5yoISyQ64yysqfY92+HZOjBkKIpcZsGK9+9LkEvhrw=;
-        b=pDDxmnJuJphVE/sJZALK5OGNZ3ZNSMbmOe7luKDdwlPs3yHOnrCeUAjq2sJzM0Tcgo
-         c/9tuMb55fNoz4BCziiFo9IwZiRHNksxib2OEEgL2BjNH5MF5mzJpbgygd/ErtejAuka
-         VOFQtMep0JuXh1qt2BLamq7kDia6o9xZq+eopkvAg7GiTGVADklvj/zjOxJyVp/wUA1w
-         s4n2mVadNgv8Xdak8z3Zsbg/OHZS72X+ud3siE7OnkN8pjZG6npKgt0v3O2yu4OTqRcH
-         JgQ57PTEtn463julHPI1+Z7qOirhveKVrNXv3HngbVyYiY2j/rWWBGG+Fz5dr6DbXgxn
-         3Jiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692034991; x=1692639791;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=u5yoISyQ64yysqfY92+HZOjBkKIpcZsGK9+9LkEvhrw=;
-        b=a2TNlinwRSpOsZP8ojiWk8/JgfbD9pGmo7wywdWsZZJVR+MDXjcIZAe/nrw2/euj0l
-         H3c5mlJgh1aR/osGDL2Bxuxjrx7S7bUlY5ND3rsT65ZjAUr+LhOdU8WqyNYTkyF6XkBj
-         xlLBXygV7ueOqKTMl712CpQzHUP2itANwLxEZBHej3WLpB3L3/doaSvVKbbwK1rRswyr
-         VmrQ73lITBSydD6a+ajF30iHLKr20AIL8zvy0bakTqr1Kk+AjbmKh+Moi875SnCy14Mz
-         YS5DnBecrH9uDb5Z20FMV0/QoprlUR186TFSNF0y3QVvCnGpE9zI2yWSyuN6N24SKsrc
-         HNoQ==
-X-Gm-Message-State: AOJu0YyRF5Ta+STklQmQZnR1/bDqDeqgKZ1MuV7LDy1OmEiqLUYK/hUS
-        raRXUVv3dVd1tZcWLJ42zDb4Dsb8cF/cREErP1oFXVnZfntBRASDPXSmPrD/TOlXjwxA2oPNjNw
-        N0VwnJ05qy+BkSK85srkJX40f8e0HefY33WWMAApv8kF2Xgd2VmbMH82H4vQBUkZDl0wsgMtUQC
-        sOYtA/kQ==
-X-Google-Smtp-Source: AGHT+IHOPYwxghdHox4XDWyIW4BUui9QEosU4h7y5pPSzt1awMxCLmFAyPMyZpEs53hZS6we0ZdK3v3+vVQ=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:9ca9:bbb1:765a:e929])
- (user=gnoack job=sendgmr) by 2002:a17:907:8715:b0:990:fb:b91a with SMTP id
- qn21-20020a170907871500b0099000fbb91amr44134ejc.8.1692034991003; Mon, 14 Aug
- 2023 10:43:11 -0700 (PDT)
-Date:   Mon, 14 Aug 2023 19:43:08 +0200
-In-Reply-To: <20230814172816.3907299-2-gnoack@google.com>
-Message-Id: <ZNpnrCjYqFoGkwyf@google.com>
-Mime-Version: 1.0
-References: <20230814172816.3907299-1-gnoack@google.com> <20230814172816.3907299-2-gnoack@google.com>
-Subject: Re: [PATCH v3 1/5] landlock: Add ioctl access right
-From:   "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
-To:     linux-security-module@vger.kernel.org,
-        "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
-Cc:     Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Matt Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 14 Aug 2023 17:42:49 -0400
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 79722127;
+        Mon, 14 Aug 2023 14:42:47 -0700 (PDT)
+Received: from [10.137.114.52] (unknown [131.107.159.180])
+        by linux.microsoft.com (Postfix) with ESMTPSA id B551D2109420;
+        Mon, 14 Aug 2023 14:42:46 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B551D2109420
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1692049366;
+        bh=VrEk2AwesVAfdmRxYbk7yzrle2lO+wL2DH0neWh4nIQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=S9GJfn2Od14pgUphZugp6ChcUbBhcvXvRJJmXAiyk9k0z3kSl+E7o5AKgw4z88jwL
+         GHNffr/RbYjde/7Z9L/cbq9qtsFY8czbDmddnuFb0bFiUsO9uo3CQTJitVPIBdmlGu
+         e3BMNSfcYTNf9J+kZYDV2PXmY+kiBu7LT/aaNkpM=
+Message-ID: <bf794136-703a-0d33-e245-7e723007b5c0@linux.microsoft.com>
+Date:   Mon, 14 Aug 2023 14:42:46 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+        kgold@linux.ibm.com, bhe@redhat.com, vgoyal@redhat.com,
+        dyoung@redhat.com, kexec@lists.infradead.org, jmorris@namei.org,
+        Paul Moore <paul@paul-moore.com>, serge@hallyn.com
+Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        linux-security-module@vger.kernel.org
+References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
+ <277db5491460d5fd607785f2bcc733de39022a35.camel@linux.ibm.com>
+Content-Language: en-US
+From:   Sush Shringarputale <sushring@linux.microsoft.com>
+In-Reply-To: <277db5491460d5fd607785f2bcc733de39022a35.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi!
+Hello Mimi,
 
-On Mon, Aug 14, 2023 at 07:28:12PM +0200, G=C3=BCnther Noack wrote:
-> @@ -1207,7 +1209,8 @@ static int hook_file_open(struct file *const file)
->  {
->  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {};
->  	access_mask_t open_access_request, full_access_request, allowed_access;
-> -	const access_mask_t optional_access =3D LANDLOCK_ACCESS_FS_TRUNCATE;
-> +	const access_mask_t optional_access =3D LANDLOCK_ACCESS_FS_TRUNCATE |
-> +					      LANDLOCK_ACCESS_FS_IOCTL;
->  	const struct landlock_ruleset *const dom =3D
->  		landlock_get_current_domain();
-> =20
-> @@ -1280,6 +1283,36 @@ static int hook_file_truncate(struct file *const f=
-ile)
->  	return -EACCES;
->  }
+Thanks for your feedback on this.
 
-About the error code:
 
-The ioctl(2) man page documents ENOTTY as "The specified request does not a=
-pply
-to this kind of object".  It does not document EACCES.  EACCES would be sli=
-ghtly
-more appropriate semantically, but existing programs might be more well-equ=
-ipped
-to handle ENOTTY.
-
-Do you think we should return ENOTTY here?
-
-=E2=80=94G=C3=BCnther
-
---=20
-Sent using Mutt =F0=9F=90=95 Woof Woof
+On 8/11/2023 6:14 AM, Mimi Zohar wrote:
+> Hi Sush, Tushar,
+>
+> On Tue, 2023-08-01 at 12:12 -0700, Sush Shringarputale wrote:
+>> ================================================
+>> | A. Problem Statement                         |
+>> ================================================
+>> Depending on the IMA policy, the IMA log can consume a lot of Kernel
+>> memory on
+>> the device.  For instance, the events for the following IMA policy
+>> entries may
+>> need to be measured in certain scenarios, but they can also lead to a
+>> verbose
+>> IMA log when the device is running for a long period of time.
+>> ┌───────────────────────────────────────┐
+>> │# PROC_SUPER_MAGIC                     │
+>> │measure fsmagic=0x9fa0                 │
+>> │# SYSFS_MAGIC                          │
+>> │measure fsmagic=0x62656572             │
+>> │# DEBUGFS_MAGIC                        │
+>> │measure fsmagic=0x64626720             │
+>> │# TMPFS_MAGIC                          │
+>> │measure fsmagic=0x01021994             │
+>> │# RAMFS_MAGIC                          │
+>> │measure fsmagic=0x858458f6             │
+>> │# SECURITYFS_MAGIC                     │
+>> │measure fsmagic=0x73636673             │
+>> │# OVERLAYFS_MAGIC                      │
+>> │measure fsmagic=0x794c7630             │
+>> │# log, audit or tmp files              │
+>> │measure obj_type=var_log_t             │
+>> │measure obj_type=auditd_log_t          │
+>> │measure obj_type=tmp_t                 │
+>> └───────────────────────────────────────┘
+>>
+>> Secondly, certain devices are configured to take Kernel updates using Kexec
+>> soft-boot.  The IMA log from the previous Kernel gets carried over and the
+>> Kernel memory consumption problem worsens when such devices undergo multiple
+>> Kexec soft-boots over a long period of time.
+>>
+>> The above two scenarios can cause IMA log to grow and consume Kernel memory.
+>>
+>> In addition, a large IMA log can add pressure on the network bandwidth when
+>> the attestation client sends it to remote-attestation-service.
+>>
+>> Truncating IMA log to reclaim memory is not feasible, since it makes the
+>> log go
+>> out of sync with the TPM PCR quote making remote attestation fail.
+>>
+>> A sophisticated solution is required which will help relieve the memory
+>> pressure on the device and continue supporting remote attestation without
+>> disruptions.
+> If the problem is kernel memory, then using a single tmpfs file has
+> already been proposed [1].  As entries are added to the measurement
+> list, they are copied to the tmpfs file and removed from kernel memory.
+> Userspace would still access the measurement list via the existing
+> securityfs file.
+>
+> The IMA measurement list is a sequential file, allowing it to be read
+> from an offset.  How much or how little of the measuremnt list is read
+> by the attestation client and sent to the attestation server is up to
+> the attestation client/server.
+>
+> If the problem is not kernel memory, but memory pressure in general,
+> then instead of a tmpfs file, the measurement list could similarly be
+> copied to a single persistent file [1].
+The suggested approach in this RFC discussion using a vfs_tmpfile was
+only discussed but no prototype was created back then.  We are
+discussing the approach internally now and will respond with more
+details about it.
+>> -------------------------------------------------------------------------------
+>> ================================================
+>> | B. Proposed Solution                         |
+>> ================================================
+>> In this document, we propose an enhancement to the IMA subsystem to improve
+>> the long-running performance by snapshotting the IMA log, while still
+>> providing mechanisms to verify its integrity using the PCR quotes.
+>>
+>> The remainder of the document describes details of the proposed solution
+>> in the
+>> following sub-sections.
+>>    - High-level Work-flow
+>>    - Snapshot Triggering Mechanism
+>>    - Design Choices for Storing Snapshots
+>>    - Attestation-Client and Remote-Attestation-Service Side Changes
+>>    - Example Walk-through
+>>    - Open Questions
+>> -------------------------------------------------------------------------------
+>> ================================================
+>> | B.1 High-level Work-flow                     |
+>> ================================================
+>> Pre-requisites:
+>> - IMA Integrity guarantees are maintained.
+>>
+>> The proposed high level work-flow of IMA log snapshotting is as follows:
+>> - A user-mode process will trigger the snapshot by opening a file in SysFS
+>>     say /sys/kernel/security/ima/snapshot (referred to as
+>> sysk_ima_snapshot_file
+>>     here onwards).
+> Please fix the mailer so that it doesn't wrap sentences.   Adding blank
+> lines between bullets would improve readability.
+Noted, will do.
+>> - The Kernel will get the current TPM PCR values and PCR update counter [2]
+>>     and store them as template data in a new IMA event "snapshot_aggregate".
+>>     This event will be measured by IMA using critical data measurement
+>>     functionality [1].  Recording regular IMA events will be paused while
+>>     "snapshot_aggregate" is being computed using the existing IMA mutex lock.
+>> - Once the "snapshot_aggregate" is computed and measured in IMA log, the
+>> prior
+>>     IMA events will be made available in the sysk_ima_snapshot_file.
+>> - The UM process will copy those IMA events from sysk_ima_snapshot_file to a
+>>     snapshot file on disk chosen by UM (referred to as UM_snapshot_file here
+>>     onwards).  The location, file-system type, access permissions etc. of the
+>>     UM_snapshot_file would be controlled by UM process itself.
+>> - Once UM is done copying the IMA events from sysk_ima_snapshot_file to
+>>     UM_snapshot_file, it will indicate to the Kernel that the snapshot can be
+>>     finalized by triggering a write with any data to the
+>> sysk_ima_snapshot_file.
+>>     UM process cannot prevent the IMA log purge operation after this point.
+>> - The Kernel will truncate the current IMA log and and clear HTable up
+>> to the
+>>     "snapshot_aggregate" marker.
+>> - The Kernel will measure the PCR update counter as part of measuring
+>>     snapshot_aggregate, so that it can be used by the remote attestation
+>> service
+>>     for detecting missing events.
+>> - UM can prevent the IMA log purge by closing the sysk_ima_snapshot_file
+>>     without performing a write operation on it.  In this case, while the
+>>     "snapshot_aggregate" marker may still be in the log, the event can be
+>> ignored
+>>     since the previous entries in the IMA log will not be purged.
+>>
+>> Note:
+>> - This work-flow should work when interleaved with Kexec 'load' and
+>> 'execute'
+>>     events and should not cause IMA log + snapshot to go out of sync with PCR
+>>     quotes. The implementation details are omitted from this document for
+>>     brevity.
+> This design seems overly complex and requires synchronization between
+> the "snapshot" record and exporting the records from the measurement
+> list.  None of this would be necessary if the measurements were copied
+> from kernel memory to a backing file (e.g. tmpfs), as described in [1].
+>
+> What is the real problem - kernel memory pressure, memory pressure in
+> general, or disk space?  Is the intention to remove or offload the
+> exported measurements?
+The main concern is the memory pressure on both the kernel and the 
+attestation client
+when it sends the request.  The concern you bring up is valid and we are 
+working on
+creating a prototype.  There is no intention to remove the exported 
+measurements.
+- Sush
+> Concerns:
+> - Pausing extending the measurement list.
+>
+> [1]
+> https://lore.kernel.org/linux-integrity/CAOQ4uxj4Pv2Wr1wgvBCDR-tnA5dsZT3rvdDzKgAH1aEV_-r9Qg@mail.gmail.com/#t
+>
