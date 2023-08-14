@@ -2,260 +2,164 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97824C04E69
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Aug 2023 17:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3E5EB64DD
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Aug 2023 17:38:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230202AbjHNR33 (ORCPT
+        id S229744AbjHNRiE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Aug 2023 13:29:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58404 "EHLO
+        Mon, 14 Aug 2023 13:38:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230398AbjHNR26 (ORCPT
+        with ESMTP id S231158AbjHNRhd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Aug 2023 13:28:58 -0400
-Received: from mail-ed1-x54a.google.com (mail-ed1-x54a.google.com [IPv6:2a00:1450:4864:20::54a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16D8D10D5
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Aug 2023 10:28:56 -0700 (PDT)
-Received: by mail-ed1-x54a.google.com with SMTP id 4fb4d7f45d1cf-51a5296eb8eso3037158a12.2
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Aug 2023 10:28:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1692034134; x=1692638934;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=smHHZUXo6xifLxvzSdFKZuUE8vzgs5PoROM2xnAb1UU=;
-        b=MmICPA+CBs0ocp8vk0U5aDzxtXLls/Da9mjxg3tWq5UHM37KvQHj9TtYVrpEQ5dkfr
-         BTJZesfkpmlWL5xX9gL9fD52AaWffPyLQ7ea0v9+TPgzmOJT4TsnZc/IzKirh6oEH50s
-         K1OJpxQ3AbBfQzCHIBP98X6s8qCWxL+5Q+yXWMHMd9GRObLn3lZKWat9BAK21yWwgeyF
-         JmcKT7XQn618XBmzaVjVoWBUjASU1q4DpOMHd8FPnMALqMDMjqRsPvaVQW8rnrmEyUNa
-         c1qY+zbAeal3t5q13QJfbz1rYML33vj1OU6Cp6HMNbP7kr0DBwk0cMQhzCa69naHldxa
-         lubw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692034134; x=1692638934;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=smHHZUXo6xifLxvzSdFKZuUE8vzgs5PoROM2xnAb1UU=;
-        b=ZzoFydNt6U3LazNmgO4qg7gFgPg1YtbY7zz3NXmkJiDH4XZ1FQ+mqROGOcKuL+eGAD
-         bUcf4pmRvSWz/XX/NLMwgKMBY9HqSjf+63HjONaSHLJRY3WiQRflouxrLT9NwVPxz1nK
-         pmyELJ2fRqWYsVlfkZfcRrb0mZ5t94KgSKRUUpLqexkjQGqO6Pw4Qp+C3J/cu1ejGE1z
-         qZV8cSVdYzsSKM50uOgCRW4WxG8Q3nrC+kUvapZP/lIN/mWY+ZAZQj1uvDuu85zyfuSv
-         X8LFBms9mdkV7E4ZrLBXniQOnMirfN+Qa2E87wYOP5Erj5zIjEH7kMGCfIEEaqQsHY26
-         FMGg==
-X-Gm-Message-State: AOJu0YwkjyADUhix9jnCfxbrJU2HZhowDNgMp5D/QZXPxOiReSkv+0pS
-        XltqhN8dI7KUc4MbKinOuNtPbly7qzTNHN1WSvNIfTz8KFkPrZNlS+RGkgdE7yqWwvHuIWgiYW3
-        bB1dDdn0+ffHdtzPA6l0kCg70slTzrtOk+MAIX9/2UWO3unQnPwm7jCTVW2au7NnMdvoZkkXBIc
-        oarBrM7Q==
-X-Google-Smtp-Source: AGHT+IHmqMu/X9mmCiJCAAI9Pit6YQDW4JrH5hSYyJasXbkHuB54lsl2W5ZNCk/WmrELpo/GXDLWDp8pH9c=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:9ca9:bbb1:765a:e929])
- (user=gnoack job=sendgmr) by 2002:a50:9e48:0:b0:525:4afe:dd7f with SMTP id
- z66-20020a509e48000000b005254afedd7fmr41439ede.6.1692034134651; Mon, 14 Aug
- 2023 10:28:54 -0700 (PDT)
-Date:   Mon, 14 Aug 2023 19:28:16 +0200
-In-Reply-To: <20230814172816.3907299-1-gnoack@google.com>
-Message-Id: <20230814172816.3907299-6-gnoack@google.com>
+        Mon, 14 Aug 2023 13:37:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F1F6170B;
+        Mon, 14 Aug 2023 10:37:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A61BF64141;
+        Mon, 14 Aug 2023 17:37:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75A4EC433C8;
+        Mon, 14 Aug 2023 17:37:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692034645;
+        bh=LHvuxUi4RS4zNS43gxo6HisRbG6Z81b+jiNk7yx4v18=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lRsS6jInqQYknu3yxKOTH7xPoDGz80KcRLcnoP5+qinRRAotvoNURx0u3kcTg+RtN
+         x2n9cbhBWo68IGoBQh/w98jCLPnScCjtVoCzcUDh/nms9JoWwXt8d1eH5Cx6xIJf9e
+         +SxV1DvElnB6K9xnRcUkMoYZ5WFz4PtVwVQhEGbiEc0W6jSRrRnUvb7UZsyJ/+3VZQ
+         GwFu57ibzvQvQMGd6E4CP9wX+Q+DPndgWNoHArRRQp5kasV+RSQVgS/LvRK4kQtUll
+         0tSDqS684FY2F22aw4OnvxylLBJAgp8+57WYn/ohFh2krUVWSRNj4tzCKpXbNL3PHq
+         lnPox45IE+Xow==
 Mime-Version: 1.0
-References: <20230814172816.3907299-1-gnoack@google.com>
-X-Mailer: git-send-email 2.41.0.694.ge786442a9b-goog
-Subject: [PATCH v3 5/5] landlock: Document ioctl support
-From:   "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-To:     linux-security-module@vger.kernel.org,
-        "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
-Cc:     Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Matt Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org,
-        "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Mon, 14 Aug 2023 20:37:21 +0300
+Message-Id: <CUSG7ZDGZ5N4.37KMXB8BFPWKI@suppilovahvero>
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Nayna Jain" <nayna@linux.ibm.com>,
+        <linux-integrity@vger.kernel.org>
+Cc:     "Mimi Zohar" <zohar@linux.ibm.com>,
+        "Eric Snowberg" <eric.snowberg@oracle.com>,
+        "Paul Moore" <paul@paul-moore.com>,
+        <linux-security-module@vger.kernel.org>,
+        "linuxppc-dev" <linuxppc-dev@lists.ozlabs.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/6] integrity: PowerVM support for loading CA keys
+ on machine keyring
+X-Mailer: aerc 0.14.0
+References: <20230813021531.1382815-1-nayna@linux.ibm.com>
+ <20230813021531.1382815-2-nayna@linux.ibm.com>
+In-Reply-To: <20230813021531.1382815-2-nayna@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In the paragraph above the fallback logic, use the shorter phrasing
-from the landlock(7) man page.
+On Sun Aug 13, 2023 at 5:15 AM EEST, Nayna Jain wrote:
+> Keys that derive their trust from an entity such as a security officer,
+> administrator, system owner, or machine owner are said to have "imputed
+> trust". CA keys with imputed trust can be loaded onto the machine keyring=
+.
+> The mechanism for loading these keys onto the machine keyring is platform
+> dependent.
+>
+> Load keys stored in the variable trustedcadb onto the .machine keyring
+> on PowerVM platform.
+>
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+> Reviewed-and-tested-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  .../integrity/platform_certs/keyring_handler.c  |  8 ++++++++
+>  .../integrity/platform_certs/keyring_handler.h  |  5 +++++
+>  .../integrity/platform_certs/load_powerpc.c     | 17 +++++++++++++++++
+>  3 files changed, 30 insertions(+)
+>
+> diff --git a/security/integrity/platform_certs/keyring_handler.c b/securi=
+ty/integrity/platform_certs/keyring_handler.c
+> index 8a1124e4d769..1649d047e3b8 100644
+> --- a/security/integrity/platform_certs/keyring_handler.c
+> +++ b/security/integrity/platform_certs/keyring_handler.c
+> @@ -69,6 +69,14 @@ __init efi_element_handler_t get_handler_for_mok(const=
+ efi_guid_t *sig_type)
+>  	return NULL;
+>  }
+> =20
+> +__init efi_element_handler_t get_handler_for_ca_keys(const efi_guid_t *s=
+ig_type)
+> +{
+> +	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) =3D=3D 0)
+> +		return add_to_machine_keyring;
+> +
+> +	return NULL;
+> +}
+> +
+>  /*
+>   * Return the appropriate handler for particular signature list types fo=
+und in
+>   * the UEFI dbx and MokListXRT tables.
+> diff --git a/security/integrity/platform_certs/keyring_handler.h b/securi=
+ty/integrity/platform_certs/keyring_handler.h
+> index 212d894a8c0c..6f15bb4cc8dc 100644
+> --- a/security/integrity/platform_certs/keyring_handler.h
+> +++ b/security/integrity/platform_certs/keyring_handler.h
+> @@ -29,6 +29,11 @@ efi_element_handler_t get_handler_for_db(const efi_gui=
+d_t *sig_type);
+>   */
+>  efi_element_handler_t get_handler_for_mok(const efi_guid_t *sig_type);
+> =20
+> +/*
+> + * Return the handler for particular signature list types for CA keys.
+> + */
+> +efi_element_handler_t get_handler_for_ca_keys(const efi_guid_t *sig_type=
+);
+> +
+>  /*
+>   * Return the handler for particular signature list types found in the d=
+bx.
+>   */
+> diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/=
+integrity/platform_certs/load_powerpc.c
+> index 170789dc63d2..6263ce3b3f1e 100644
+> --- a/security/integrity/platform_certs/load_powerpc.c
+> +++ b/security/integrity/platform_certs/load_powerpc.c
+> @@ -59,6 +59,7 @@ static __init void *get_cert_list(u8 *key, unsigned lon=
+g keylen, u64 *size)
+>  static int __init load_powerpc_certs(void)
+>  {
+>  	void *db =3D NULL, *dbx =3D NULL, *data =3D NULL;
+> +	void *trustedca =3D NULL;
 
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
----
- Documentation/userspace-api/landlock.rst | 74 ++++++++++++++++++------
- 1 file changed, 57 insertions(+), 17 deletions(-)
+Could this be just "void *trustedca;" ?
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/users=
-pace-api/landlock.rst
-index d8cd8cd9ce25..e0e35e474307 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -61,18 +61,17 @@ the need to be explicit about the denied-by-default acc=
-ess rights.
-             LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-             LANDLOCK_ACCESS_FS_MAKE_SYM |
-             LANDLOCK_ACCESS_FS_REFER |
--            LANDLOCK_ACCESS_FS_TRUNCATE,
-+            LANDLOCK_ACCESS_FS_TRUNCATE |
-+            LANDLOCK_ACCESS_FS_IOCTL,
-     };
-=20
- Because we may not know on which kernel version an application will be
- executed, it is safer to follow a best-effort security approach.  Indeed, =
-we
- should try to protect users as much as possible whatever the kernel they a=
-re
--using.  To avoid binary enforcement (i.e. either all security features or
--none), we can leverage a dedicated Landlock command to get the current ver=
-sion
--of the Landlock ABI and adapt the handled accesses.  Let's check if we sho=
-uld
--remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
--access rights, which are only supported starting with the second and third
--version of the ABI.
-+using.
-+
-+To be compatible with older Linux versions, we detect the available Landlo=
-ck ABI
-+version, and only use the available subset of access rights:
-=20
- .. code-block:: c
-=20
-@@ -92,6 +91,9 @@ version of the ABI.
-     case 2:
-         /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
-         ruleset_attr.handled_access_fs &=3D ~LANDLOCK_ACCESS_FS_TRUNCATE;
-+    case 3:
-+        /* Removes LANDLOCK_ACCESS_FS_IOCTL for ABI < 4 */
-+        ruleset_attr.handled_access_fs &=3D ~LANDLOCK_ACCESS_FS_IOCTL;
-     }
-=20
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -190,6 +192,7 @@ access rights per directory enables to change the locat=
-ion of such directory
- without relying on the destination directory access rights (except those t=
-hat
- are required for this operation, see ``LANDLOCK_ACCESS_FS_REFER``
- documentation).
-+
- Having self-sufficient hierarchies also helps to tighten the required acce=
-ss
- rights to the minimal set of data.  This also helps avoid sinkhole directo=
-ries,
- i.e.  directories where data can be linked to but not linked from.  Howeve=
-r,
-@@ -283,18 +286,24 @@ It should also be noted that truncating files does no=
-t require the
- system call, this can also be done through :manpage:`open(2)` with the fla=
-gs
- ``O_RDONLY | O_TRUNC``.
-=20
--When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE=
-``
--right is associated with the newly created file descriptor and will be use=
-d for
--subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavio=
-r is
--similar to opening a file for reading or writing, where permissions are ch=
-ecked
--during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)=
-` and
-+The truncate right is associated with the opened file (see below).
-+
-+Rights associated with file descriptors
-+---------------------------------------
-+
-+When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE=
-`` and
-+``LANDLOCK_ACCESS_FS_IOCTL`` rights is associated with the newly created f=
-ile
-+descriptor and will be used for subsequent truncation and ioctl attempts u=
-sing
-+:manpage:`ftruncate(2)` and :manpage:`ioctl(2)`.  The behavior is similar =
-to
-+opening a file for reading or writing, where permissions are checked durin=
-g
-+:manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
- :manpage:`write(2)` calls.
-=20
--As a consequence, it is possible to have multiple open file descriptors fo=
-r the
--same file, where one grants the right to truncate the file and the other d=
-oes
--not.  It is also possible to pass such file descriptors between processes,
--keeping their Landlock properties, even when these processes do not have a=
-n
--enforced Landlock ruleset.
-+As a consequence, it is possible to have multiple open file descriptors
-+referring to the same file, where one grants the truncate or ioctl right a=
-nd the
-+other does not.  It is also possible to pass such file descriptors between
-+processes, keeping their Landlock properties, even when these processes do=
- not
-+have an enforced Landlock ruleset.
-=20
- Compatibility
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-@@ -422,6 +431,27 @@ Memory usage
- Kernel memory allocated to create rulesets is accounted and can be restric=
-ted
- by the Documentation/admin-guide/cgroup-v1/memory.rst.
-=20
-+IOCTL support
-+-------------
-+
-+The ``LANDLOCK_ACCESS_FS_IOCTL`` access right restricts the use of
-+:manpage:`ioctl(2)`, but it only applies to newly opened files.  This mean=
-s
-+specifically that pre-existing file descriptors like STDIN, STDOUT and STD=
-ERR
-+are unaffected.
-+
-+Users should be aware that TTY devices have traditionally permitted to con=
-trol
-+other processes on the same TTY through the ``TIOCSTI`` and ``TIOCLINUX`` =
-IOCTL
-+commands.  It is therefore recommended to close inherited TTY file descrip=
-tors.
-+The :manpage:`isatty(3)` function checks whether a given file descriptor i=
-s a
-+TTY.
-+
-+Landlock's IOCTL support is coarse-grained at the moment, but may become m=
-ore
-+fine-grained in the future.  Until then, users are advised to establish th=
-e
-+guarantees that they need through the file hierarchy, by only permitting t=
-he
-+``LANDLOCK_ACCESS_FS_IOCTL`` right on files where it is really harmless.  =
-In
-+cases where you can control the mounts, the ``nodev`` mount option can hel=
-p to
-+rule out that device files can be accessed.
-+
- Previous limitations
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
-@@ -451,6 +481,16 @@ always allowed when using a kernel that only supports =
-the first or second ABI.
- Starting with the Landlock ABI version 3, it is now possible to securely c=
-ontrol
- truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access right.
-=20
-+Ioctl (ABI < 4)
-+---------------
-+
-+IOCTL operations could not be denied before the fourth Landlock ABI, so
-+:manpage:`ioctl(2)` is always allowed when using a kernel that only suppor=
-ts an
-+earlier ABI.
-+
-+Starting with the Landlock ABI version 4, it is possible to restrict the u=
-se of
-+:manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL`` access righ=
-t.
-+
- .. _kernel_support:
-=20
- Kernel support
---=20
-2.41.0.694.ge786442a9b-goog
+>  	u64 dsize =3D 0;
+>  	u64 offset =3D 0;
+>  	int rc =3D 0;
+> @@ -120,6 +121,22 @@ static int __init load_powerpc_certs(void)
+>  		kfree(data);
+>  	}
+> =20
+> +	data =3D get_cert_list("trustedcadb", 12,  &dsize);
+> +	if (!data) {
+> +		pr_info("Couldn't get trustedcadb list from firmware\n");
+> +	} else if (IS_ERR(data)) {
+> +		rc =3D PTR_ERR(data);
+> +		pr_err("Error reading trustedcadb from firmware: %d\n", rc);
+> +	} else {
+> +		extract_esl(trustedca, data, dsize, offset);
+> +
+> +		rc =3D parse_efi_signature_list("powerpc:trustedca", trustedca, dsize,
+> +					      get_handler_for_ca_keys);
+> +		if (rc)
+> +			pr_err("Couldn't parse trustedcadb signatures: %d\n", rc);
+> +		kfree(data);
+> +	}
+> +
+>  	return rc;
+>  }
+>  late_initcall(load_powerpc_certs);
+> --=20
+> 2.31.1
 
+BR, Jarkko
