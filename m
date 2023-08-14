@@ -2,277 +2,267 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 489D3C41513
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Aug 2023 17:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EFE6C001DB
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Aug 2023 17:29:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229691AbjHNRNx (ORCPT
+        id S230293AbjHNR2y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Aug 2023 13:13:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33338 "EHLO
+        Mon, 14 Aug 2023 13:28:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbjHNRNW (ORCPT
+        with ESMTP id S230338AbjHNR2n (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Aug 2023 13:13:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FE0DE73;
-        Mon, 14 Aug 2023 10:13:21 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9ED33625DB;
-        Mon, 14 Aug 2023 17:13:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F495C433C8;
-        Mon, 14 Aug 2023 17:13:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692033200;
-        bh=6sB0MXEZJTc5MyRjUr5ZjTDTIyVe78Iq4SedpR4xA6c=;
-        h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-        b=iHXE+B79VQw2Xu+svDx/uv1d0+6A1cL00Fi9RE726fiaEboN83Aw7MqXC2ysghAWk
-         oRa6XKlaO+gITatZWz2ntX83ohQBteACnJ+ELPHxsiBLjuVltdnKIkooJZcf6mrn+P
-         WuH354SsNnfg9xd9du8JSKV3Wnsdxv4lTB8LjdWfRjNhaV/T8mfovSA78MVxfbZqe7
-         Wcm1d71t0hXuyBqtEAo1mB4eOTW6/ju8MFVRw7J32va0aW1hin/ZctA+qJSAvTP05y
-         BrZnKgeN7IKpNPT9nZ2N9GahgUFIAGX8BerHZjMogu2+R0TLY/GPwzEGEjJ9Yi+a/0
-         Fgpl9ez1OvULA==
+        Mon, 14 Aug 2023 13:28:43 -0400
+Received: from mail-ej1-x649.google.com (mail-ej1-x649.google.com [IPv6:2a00:1450:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B37010DB
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Aug 2023 10:28:42 -0700 (PDT)
+Received: by mail-ej1-x649.google.com with SMTP id a640c23a62f3a-99bdee94b84so583063266b.0
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Aug 2023 10:28:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1692034121; x=1692638921;
+        h=content-transfer-encoding:cc:to:from:subject:mime-version
+         :message-id:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o5l+QsaLOamdQtdZNWRx5dwfJH2NfNhSil0AGBzNqbQ=;
+        b=Q5WZe9RVvCiT4ur4DrkEfujuE56JtVViIekN0mOsu+Xg4vrE+EsW4M4FEB13hAxGi4
+         wPbIhxZZGq+ImC/5DYbwZBWUuAFIPIOLfnDfJcWSI/nY97gg8XYcGunqPk4wU6eL5myj
+         NjbwoHIyv1vuuFdzUTxnJ1zUhuc2oNK5/1AAQCYQj2lg1owuBknSYOgTekLgP9TgfjPW
+         puj/0YINzRz/SAQPB8IlLASAo4qNfin9/gHEWrYujLXfHe3xM/H2LKoNA95A+TueqIyy
+         2dXUh9PyLjWBbJ7x7rE+I00Iu3Ix01Hux3BA5N3tQmNaLw5aQuge0zDnNmsHrnfIxLPJ
+         o4NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692034121; x=1692638921;
+        h=content-transfer-encoding:cc:to:from:subject:mime-version
+         :message-id:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o5l+QsaLOamdQtdZNWRx5dwfJH2NfNhSil0AGBzNqbQ=;
+        b=bqKOQNiXt1GIucMHYlR2wWtzuydIqN2rcTJkIVgf+HS3SvNRvytSSmY2HPIGKCN188
+         FC4GIfMTTdChVj6gLVeltYUVjQ1Ee5xWVUXdZgS5yaGvdUHPJ08e7NWkDRHMFCYUfD/m
+         QviJd5jqhPGBHGEyLwKBO0Teb5QwjJGMrC+eV3rtb+Nf3O0sk0yJS8EWWncPJ1N1sHXT
+         zz6JLWx5NsSrKFoTdwx+v6S/isJcU0UA26AFFfKkpkNAQ94Up4At4FkoWdLohjswjm9m
+         fGy5miLvrHBY/4z/btQA03XIp0gfdG8IbGm95IEsM8yTUbPbgtZIA+vqHUjtpBJQvFvN
+         w98w==
+X-Gm-Message-State: AOJu0YwVx4o/5w3J6id1glLAEbrIoSOWgouN+xB8CMIeaTXv8B0JnB/C
+        Sa1/gYQJJA2U2u+Ea7SwyT8eh62sohOA/3UDdSWkBqLRPj7uhfbP88e27nMp4e5gJGSwiCVYJ9g
+        /+ck/PXb1oDnE6OHsJRcJhWLDVQtt8VbqnLb4mMIOS5ZS2j33PhjdL59md4E4cgGEOE4mHBmrDz
+        k5vGFKjQ==
+X-Google-Smtp-Source: AGHT+IGWg3IpP0RSlqkJ0MiWjSt+va5EmEZVpaXHnaXupCXQthaUimwM/v7HUlxPMi+qQaA5BEXFBO62RzM=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:9ca9:bbb1:765a:e929])
+ (user=gnoack job=sendgmr) by 2002:a17:907:1622:b0:99b:cb25:3980 with SMTP id
+ hb34-20020a170907162200b0099bcb253980mr105897ejc.2.1692034120668; Mon, 14 Aug
+ 2023 10:28:40 -0700 (PDT)
+Date:   Mon, 14 Aug 2023 19:28:11 +0200
+Message-Id: <20230814172816.3907299-1-gnoack@google.com>
 Mime-Version: 1.0
+X-Mailer: git-send-email 2.41.0.694.ge786442a9b-goog
+Subject: [PATCH v3 0/5] Landlock: IOCTL support
+From:   "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+To:     linux-security-module@vger.kernel.org,
+        "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
+Cc:     Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Matt Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org,
+        "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Mon, 14 Aug 2023 20:13:14 +0300
-Message-Id: <CUSFPINBGDSS.DQ0I19Z9FNR4@suppilovahvero>
-To:     "Roberto Sassu" <roberto.sassu@huaweicloud.com>, <corbet@lwn.net>,
-        <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
-        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
-Cc:     <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>, <bpf@vger.kernel.org>,
-        <pbrobinson@gmail.com>, <zbyszek@in.waw.pl>, <hch@lst.de>,
-        <mjg59@srcf.ucam.org>, <pmatilai@redhat.com>, <jannh@google.com>,
-        "Roberto Sassu" <roberto.sassu@huawei.com>
-Subject: Re: [RFC][PATCH v2 03/13] integrity/digest_cache: Add functions to
- populate and search
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.14.0
-References: <20230812104616.2190095-1-roberto.sassu@huaweicloud.com>
- <20230812104616.2190095-4-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20230812104616.2190095-4-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat Aug 12, 2023 at 1:46 PM EEST, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->
-> Add digest_cache_init_htable(), to size a hash table depending on the
-> number of digests to be added to the cache.
->
-> Add digest_cache_add() and digest_cache_lookup() to respectively add and
-> lookup a digest in the digest cache.
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/integrity/digest_cache.c | 131 ++++++++++++++++++++++++++++++
->  security/integrity/digest_cache.h |  24 ++++++
->  2 files changed, 155 insertions(+)
->
-> diff --git a/security/integrity/digest_cache.c b/security/integrity/diges=
-t_cache.c
-> index 4201c68171a..d14d84b804b 100644
-> --- a/security/integrity/digest_cache.c
-> +++ b/security/integrity/digest_cache.c
-> @@ -315,3 +315,134 @@ struct digest_cache *digest_cache_get(struct dentry=
- *dentry,
-> =20
->  	return iint->dig_user;
->  }
-> +
-> +/**
-> + * digest_cache_init_htable - Allocate and initialize the hash table
-> + * @digest_cache: Digest cache
-> + * @num_digests: Number of digests to add to the digest cache
-> + *
-> + * This function allocates and initializes the hash table. Its size is
-> + * determined by the number of digests to add to the digest cache, known
-> + * at this point by the parser calling this function.
-> + *
-> + * Return: Zero on success, a negative value otherwise.
-> + */
-> +int digest_cache_init_htable(struct digest_cache *digest_cache,
-> +			     u64 num_digests)
-> +{
-> +	int i;
-> +
-> +	if (!digest_cache)
-> +		return 0;
-> +
-> +	digest_cache->num_slots =3D num_digests / DIGEST_CACHE_HTABLE_DEPTH;
-> +	if (!digest_cache->num_slots)
-> +		digest_cache->num_slots =3D 1;
-> +
-> +	digest_cache->slots =3D kmalloc_array(num_digests,
-> +					    sizeof(*digest_cache->slots),
-> +					    GFP_KERNEL);
-> +	if (!digest_cache->slots)
-> +		return -ENOMEM;
-> +
-> +	for (i =3D 0; i < digest_cache->num_slots; i++)
-> +		INIT_HLIST_HEAD(&digest_cache->slots[i]);
-> +
-> +	pr_debug("Initialized %d hash table slots for digest list %s\n",
-> +		 digest_cache->num_slots, digest_cache->path_str);
-> +	return 0;
-> +}
-> +
-> +/**
-> + * digest_cache_add - Add a new digest to the digest cache
-> + * @digest_cache: Digest cache
-> + * @digest: Digest to add
-> + *
-> + * This function, invoked by a digest list parser, adds a digest extract=
-ed
-> + * from a digest list to the digest cache.
-> + *
-> + * Return: Zero on success, a negative value on error.
+Hello!
 
-Nit: previous had a different phrasing "a negative value otherwise".
+These patches add simple ioctl(2) support to Landlock.
 
-I would suggest "a POSIX error code otherwise" for both.
+Objective
+~~~~~~~~~
 
-> + */
-> +int digest_cache_add(struct digest_cache *digest_cache, u8 *digest)
-> +{
-> +	struct digest_cache_entry *entry;
-> +	unsigned int key;
-> +	int digest_len;
-> +
-> +	if (!digest_cache)
-> +		return 0;
-> +
-> +	digest_len =3D hash_digest_size[digest_cache->algo];
-> +
-> +	entry =3D kmalloc(sizeof(*entry) + digest_len, GFP_KERNEL);
-> +	if (!entry)
-> +		return -ENOMEM;
-> +
-> +	memcpy(entry->digest, digest, digest_len);
-> +
-> +	key =3D digest_cache_hash_key(digest, digest_cache->num_slots);
-> +	hlist_add_head(&entry->hnext, &digest_cache->slots[key]);
-> +	pr_debug("Add digest %s:%*phN from digest list %s\n",
-> +		 hash_algo_name[digest_cache->algo], digest_len, digest,
-> +		 digest_cache->path_str);
-> +	return 0;
-> +}
-> +
-> +/**
-> + * digest_cache_lookup - Searches a digest in the digest cache
-> + * @digest_cache: Digest cache
-> + * @digest: Digest to search
-> + * @algo: Algorithm of the digest to search
-> + * @pathname: Path of the file whose digest is looked up
-> + *
-> + * This function, invoked by IMA or EVM, searches the calculated digest =
-of
-> + * a file or file metadata in the digest cache acquired with
-> + * digest_cache_get().
-> + *
-> + * Return: Zero if the digest is found, a negative value if not.
-> + */
-> +int digest_cache_lookup(struct digest_cache *digest_cache, u8 *digest,
-> +			enum hash_algo algo, const char *pathname)
-> +{
-> +	struct digest_cache_entry *entry;
-> +	unsigned int key;
-> +	int digest_len;
-> +	int search_depth =3D 0;
-> +
-> +	if (!digest_cache)
-> +		return -ENOENT;
-> +
-> +	if (digest_cache->algo =3D=3D HASH_ALGO__LAST) {
-> +		pr_debug("Algorithm not set for digest list %s\n",
-> +			 digest_cache->path_str);
-> +		return -ENOENT;
-> +	}
-> +
-> +	digest_len =3D hash_digest_size[digest_cache->algo];
-> +
-> +	if (algo !=3D digest_cache->algo) {
-> +		pr_debug("Algo mismatch for file %s, digest %s:%*phN in digest list %s=
- (%s)\n",
-> +			 pathname, hash_algo_name[algo], digest_len, digest,
-> +			 digest_cache->path_str,
-> +			 hash_algo_name[digest_cache->algo]);
-> +		return -ENOENT;
-> +	}
-> +
-> +	key =3D digest_cache_hash_key(digest, digest_cache->num_slots);
-> +
-> +	hlist_for_each_entry_rcu(entry, &digest_cache->slots[key], hnext) {
-> +		if (!memcmp(entry->digest, digest, digest_len)) {
-> +			pr_debug("Cache hit at depth %d for file %s, digest %s:%*phN in diges=
-t list %s\n",
-> +				 search_depth, pathname, hash_algo_name[algo],
-> +				 digest_len, digest, digest_cache->path_str);
-> +			return 0;
-> +		}
-> +
-> +		search_depth++;
-> +	}
-> +
-> +	pr_debug("Cache miss for file %s, digest %s:%*phN in digest list %s\n",
-> +		 pathname, hash_algo_name[algo], digest_len, digest,
-> +		 digest_cache->path_str);
-> +	return -ENOENT;
-> +}
-> diff --git a/security/integrity/digest_cache.h b/security/integrity/diges=
-t_cache.h
-> index ff88e8593c6..01cd70f9850 100644
-> --- a/security/integrity/digest_cache.h
-> +++ b/security/integrity/digest_cache.h
-> @@ -66,6 +66,11 @@ static inline unsigned int digest_cache_hash_key(u8 *d=
-igest,
->  void digest_cache_free(struct digest_cache *digest_cache);
->  struct digest_cache *digest_cache_get(struct dentry *dentry,
->  				      struct integrity_iint_cache *iint);
-> +int digest_cache_init_htable(struct digest_cache *digest_cache,
-> +			     u64 num_digests);
-> +int digest_cache_add(struct digest_cache *digest_cache, u8 *digest);
-> +int digest_cache_lookup(struct digest_cache *digest_cache, u8 *digest,
-> +			enum hash_algo algo, const char *pathname);
->  #else
->  static inline void digest_cache_free(struct digest_cache *digest_cache)
->  {
-> @@ -77,5 +82,24 @@ digest_cache_get(struct dentry *dentry, struct integri=
-ty_iint_cache *iint)
->  	return NULL;
->  }
-> =20
-> +static inline int digest_cache_init_htable(struct digest_cache *digest_c=
-ache,
-> +					   u64 num_digests)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static inline int digest_cache_add(struct digest_cache *digest_cache,
-> +				   u8 *digest)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static inline int digest_cache_lookup(struct digest_cache *digest_cache,
-> +				      u8 *digest, enum hash_algo algo,
-> +				      const char *pathname)
-> +{
-> +	return -ENOENT;
-> +}
-> +
->  #endif /* CONFIG_INTEGRITY_DIGEST_CACHE */
->  #endif /* _DIGEST_CACHE_H */
-> --=20
-> 2.34.1
+Make ioctl(2) requests restrictable with Landlock,
+in a way that is useful for real-world applications.
 
-Why all this complexity instead of using xarray?
+Proposed approach
+~~~~~~~~~~~~~~~~~
 
-https://docs.kernel.org/core-api/xarray.html
+Introduce the LANDLOCK_ACCESS_FS_IOCTL right, which restricts the use
+of ioctl(2) on file descriptors.
 
-BR, Jarkko
+We attach the LANDLOCK_ACCESS_FS_IOCTL right to opened file
+descriptors, as we already do for LANDLOCK_ACCESS_FS_TRUNCATE.
+
+We make an exception for the common and known-harmless IOCTL commands FIOCL=
+EX,
+FIONCLEX, FIONBIO, FIOASYNC and FIONREAD.  These IOCTL commands are always
+permitted.  The functionality of the first four is already available throug=
+h
+fcntl(2), and FIONREAD only returns the number of ready-to-read bytes.
+
+I believe that this approach works for the majority of use cases, and
+offers a good trade-off between Landlock API and implementation
+complexity and flexibility when the feature is used.
+
+Current limitations
+~~~~~~~~~~~~~~~~~~~
+
+With this patch set, ioctl(2) requests can *not* be filtered based on
+file type, device number (dev_t) or on the ioctl(2) request number.
+
+On the initial RFC patch set [1], we have reached consensus to start
+with this simpler coarse-grained approach, and build additional IOCTL
+restriction capabilities on top in subsequent steps.
+
+[1] https://lore.kernel.org/linux-security-module/d4f1395c-d2d4-1860-3a02-2=
+a0c023dd761@digikod.net/
+
+Notable implications of this approach
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Existing inherited file descriptors stay unaffected
+  when a program enables Landlock.
+
+  This means in particular that in common scenarios,
+  the terminal's IOCTLs (ioctl_tty(2)) continue to work.
+
+* ioctl(2) continues to be available for file descriptors acquired
+  through means other than open(2).  Example: Network sockets,
+  memfd_create(2), file descriptors that are already open before the
+  Landlock ruleset is enabled.
+
+Examples
+~~~~~~~~
+
+Starting a sandboxed shell from $HOME with samples/landlock/sandboxer:
+
+  LL_FS_RO=3D/ LL_FS_RW=3D. ./sandboxer /bin/bash
+
+The LANDLOCK_ACCESS_FS_IOCTL right is part of the "read-write" rights
+here, so we expect that newly opened files outside of $HOME don't work
+with ioctl(2).
+
+  * "stty" works: It probes terminal properties
+
+  * "stty </dev/tty" fails: /dev/tty can be reopened, but the IOCTL is
+    denied.
+
+  * "eject" fails: ioctls to use CD-ROM drive are denied.
+
+  * "ls /dev" works: It uses ioctl to get the terminal size for
+    columnar layout
+
+  * The text editors "vim" and "mg" work.  (GNU Emacs fails because it
+    attempts to reopen /dev/tty.)
+
+How we arrived at the list of always-permitted IOCTL commands
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To decide which IOCTL commands should be blanket-permitted I went through t=
+he
+list of IOCTL commands mentioned in fs/ioctl.c and looked at them individua=
+lly
+to understand what they are about.  The following list is my conclusion fro=
+m
+that.
+
+We should always allow the following IOCTL commands:
+
+ * FIOCLEX, FIONCLEX - these work on the file descriptor and manipulate the
+   close-on-exec flag
+ * FIONBIO, FIOASYNC - these work on the struct file and enable nonblocking=
+-IO
+   and async flags
+ * FIONREAD - get the number of bytes available for reading (the implementa=
+tion
+   is defined per file type)
+
+The first four are also available through fcntl with the F_SETFD and F_SETF=
+L
+commands.
+
+The following commands mentioned in fs/ioctl.c should be guarded by the
+LANDLOCK_ACCESS_FS_IOCTL access right, the same as the other ioctl commands=
+,
+because they are nontrivial:
+
+ * FIFREEZE, FITHAW - work on superblock(!) to freeze/thaw the file
+   system. Requires CAP_SYS_ADMIN.
+ * FICLONE, FICLONERANGE, FIDEDUPRANGE - making files share physical storag=
+e
+   between multiple files.  These only work on some file systems, by design=
+.
+ * Commands that read file system internals:
+   * FS_IOC_FIEMAP - get information about file extent mapping
+     (c.f. https://www.kernel.org/doc/Documentation/filesystems/fiemap.txt)
+   * FIBMAP - get a file's file system block number
+   * FIGETBSZ - get file system blocksize
+ * Accessing file attributes:
+   * FS_IOC_GETFLAGS, FS_IOC_SETFLAGS - manipulate inode flags (ioctl_iflag=
+s(2))
+   * FS_IOC_FSGETXATTR, FS_IOC_FSSETXATTR - more attributes
+ * FS_IOC_RESVSP, FS_IOC_RESVSP64, FS_IOC_UNRESVSP, FS_IOC_UNRESVSP64,
+   FS_IOC_ZERO_RANGE: Backwards compatibility with legacy XFS preallocation
+   syscalls which predate fallocate(2).
+
+Related Work
+~~~~~~~~~~~~
+
+OpenBSD's pledge(2) [2] restricts ioctl(2) independent of the file
+descriptor which is used.  The implementers maintain multiple
+allow-lists of predefined ioctl(2) operations required for different
+application domains such as "audio", "bpf", "tty" and "inet".
+
+OpenBSD does not guarantee ABI backwards compatibility to the same
+extent as Linux does, so it's easier for them to update these lists in
+later versions.  It might not be a feasible approach for Linux though.
+
+[2] https://man.openbsd.org/OpenBSD-7.3/pledge.2
+
+Changes
+~~~~~~~
+
+V3:
+ * always permit the IOCTL commands FIOCLEX, FIONCLEX, FIONBIO, FIOASYNC an=
+d
+   FIONREAD, independent of LANDLOCK_ACCESS_FS_IOCTL
+ * increment ABI version in the same commit where the feature is introduced
+ * testing changes
+   * use FIOQSIZE instead of TTY IOCTL commands
+     (FIOQSIZE works with regular files, directories and memfds)
+   * run the memfd test with both Landlock enabled and disabled
+   * add a test for the always-permitted IOCTL commands
+
+V2:
+ * rebased on mic-next
+ * added documentation
+ * exercise ioctl(2) in the memfd test
+ * test: Use layout0 for the test
+
+---
+
+V1: https://lore.kernel.org/linux-security-module/20230502171755.9788-1-gno=
+ack3000@gmail.com/
+V2: https://lore.kernel.org/linux-security-module/20230623144329.136541-1-g=
+noack@google.com/
+
+G=C3=BCnther Noack (5):
+  landlock: Add ioctl access right
+  selftests/landlock: Test ioctl support
+  selftests/landlock: Test ioctl with memfds
+  samples/landlock: Add support for LANDLOCK_ACCESS_FS_IOCTL
+  landlock: Document ioctl support
+
+ Documentation/userspace-api/landlock.rst     |  74 ++++++++---
+ include/uapi/linux/landlock.h                |  31 +++--
+ samples/landlock/sandboxer.c                 |  12 +-
+ security/landlock/fs.c                       |  38 +++++-
+ security/landlock/limits.h                   |   2 +-
+ security/landlock/syscalls.c                 |   2 +-
+ tools/testing/selftests/landlock/base_test.c |   2 +-
+ tools/testing/selftests/landlock/fs_test.c   | 133 +++++++++++++++++--
+ 8 files changed, 249 insertions(+), 45 deletions(-)
+
+
+base-commit: 35ca4239929737bdc021ee923f97ebe7aff8fcc4
+--=20
+2.41.0.694.ge786442a9b-goog
+
