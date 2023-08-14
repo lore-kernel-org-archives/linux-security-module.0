@@ -2,124 +2,145 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B4BC001B0
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Aug 2023 22:03:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 891E8C001B0
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Aug 2023 23:22:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232977AbjHNWCw (ORCPT
+        id S232813AbjHNXWN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Aug 2023 18:02:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45774 "EHLO
+        Mon, 14 Aug 2023 19:22:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233169AbjHNWCu (ORCPT
+        with ESMTP id S233464AbjHNXVr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Aug 2023 18:02:50 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D7A810F0;
-        Mon, 14 Aug 2023 15:02:49 -0700 (PDT)
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37EM2SHx018871;
-        Mon, 14 Aug 2023 22:02:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=FpIoN8YUDy/37QmvnUB3eIyTNRsXSQVZQhIRZ1O8vdM=;
- b=iE7qvxlPBDojCpIChCLGoN11AwoFOto1+T55iVSOR1IgdqVfDdtl5yXkC/uW+kiUy5ti
- bXGJqHhZ1AIvDSWo5lY55DvzooMwwgxdjvD1r5YPEuS75kX18n0/i9r/4nlYsh/RJV/m
- pJmw+5k5LK+I0BvCwbEfuQE+HkJXhlZbXblsnVa8YvMT2b4ik9tA+veCLIJzZtCcL7eY
- sWOCab1aCdJZbKqiTzMAHOGrBwZrsd0C5StybGwLd5+zcpD+LQTU7mX1DQ2/gcKGWvc5
- H6B4nHlFD8Exn0w8QMeo7TKg6gol4HHzhJMykbvHJUqxkcR3jBXgrXxeEGPRitXupsgM Og== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sfvq4801f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Aug 2023 22:02:27 +0000
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 37EM2Qt8018846;
-        Mon, 14 Aug 2023 22:02:27 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sfvq48016-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Aug 2023 22:02:26 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37EKULJt001107;
-        Mon, 14 Aug 2023 22:02:26 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-        by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3semsy0af6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Aug 2023 22:02:26 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-        by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37EM2PMk66847068
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Aug 2023 22:02:25 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0A81F58059;
-        Mon, 14 Aug 2023 22:02:25 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8535F5804B;
-        Mon, 14 Aug 2023 22:02:23 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.145.19])
-        by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Mon, 14 Aug 2023 22:02:23 +0000 (GMT)
-Message-ID: <0e1511e8819b24ab8a34a7b15821f06eff688f29.camel@linux.ibm.com>
-Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Sush Shringarputale <sushring@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de,
-        jarkko@kernel.org, jgg@ziepe.ca, kgold@linux.ibm.com,
-        bhe@redhat.com, vgoyal@redhat.com, dyoung@redhat.com,
-        kexec@lists.infradead.org, jmorris@namei.org,
-        Paul Moore <paul@paul-moore.com>, serge@hallyn.com
-Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        linux-security-module@vger.kernel.org
-Date:   Mon, 14 Aug 2023 18:02:23 -0400
-In-Reply-To: <bf794136-703a-0d33-e245-7e723007b5c0@linux.microsoft.com>
-References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
-         <277db5491460d5fd607785f2bcc733de39022a35.camel@linux.ibm.com>
-         <bf794136-703a-0d33-e245-7e723007b5c0@linux.microsoft.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 6baQrZRHoxmXqAZcmAVpDSkAA5M3VbwR
-X-Proofpoint-GUID: Sj7FcZiqreEfeid5Qv3WlRMcISm3L49a
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-14_18,2023-08-10_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- spamscore=0 lowpriorityscore=0 mlxlogscore=885 adultscore=0 clxscore=1015
- mlxscore=0 impostorscore=0 priorityscore=1501 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308140199
+        Mon, 14 Aug 2023 19:21:47 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AB15171A
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Aug 2023 16:21:45 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1bc63ef9959so41929685ad.2
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Aug 2023 16:21:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1692055304; x=1692660104;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zDgteNssk7bldWg1S9G58zrFCCsMMUu+wXIpurB+HOk=;
+        b=f0Ak5IcltrDFdkQCDY8pIN2Q+ApDStplykSnlDyPTlJ5hOzrqc9PWJCJjuzY2a8RJ+
+         g8xVrAL3nMB+kfcdXe60p9qKEe3GlaSBVzwWcARsfm76j54TnQAq99JEPb1dmu6zAVNx
+         W/EJPZgrIcJBBWdgJxFVqDLwjpYw5EdzIukns=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692055304; x=1692660104;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zDgteNssk7bldWg1S9G58zrFCCsMMUu+wXIpurB+HOk=;
+        b=TEsgvwqR5jXduXdXGqBr4vFXjMY4quNUTeF2TtRrcvjfpYu4pVPgbcsf7j4UW+HZ7s
+         8zIFjjATkrTqQw/q1hUe+aka5eofvcw+U7dRl3pEr8B8FVshdY8hVFEnv+it5ZWX+Mq6
+         g0Z3tnYAXWlc9Sf8hfpQyB6KUGVJUXy3iBZaqQhfV/JX58vP/9BzQvm5T0pKkcaICmQa
+         QUFXP7GKBot9n8yoyyG/dSYiLV9G96RdWNPl0pa2kRx1wIVt6tgVaGKDQljukVXVP/ZF
+         EOfmVyo8Apb8WjRHybNMi/yc2jKu4ji0of38MhAcH7zuBh9mF7QvE+VaPkpOv0NKSlmk
+         B0bg==
+X-Gm-Message-State: AOJu0YzVDbEk7LuZcEbKiNicaqKXU++OBN7TFR9K3d6A0Kc25BR9hGZH
+        EFUC1q/QIHMKu4TVLGKQLLjcKw==
+X-Google-Smtp-Source: AGHT+IHSGL8C59m4WskNFhunf6W+tABRL2W8v1BYu6fmf1+j7vX3+mrOp1twYX7SxuE7dHDeO2B60Q==
+X-Received: by 2002:a17:902:e802:b0:1bc:422a:b9fd with SMTP id u2-20020a170902e80200b001bc422ab9fdmr13245083plg.13.1692055304507;
+        Mon, 14 Aug 2023 16:21:44 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id c13-20020a170902d48d00b001bdcd4b1616sm5310621plg.260.2023.08.14.16.21.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Aug 2023 16:21:43 -0700 (PDT)
+Date:   Mon, 14 Aug 2023 16:21:43 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Marco Elver <elver@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, llvm@lists.linux.dev,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        kasan-dev@googlegroups.com, linux-toolchains@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] compiler_types: Introduce the Clang
+ __preserve_most function attribute
+Message-ID: <202308141620.E16B93279@keescook>
+References: <20230811151847.1594958-1-elver@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230811151847.1594958-1-elver@google.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2023-08-14 at 14:42 -0700, Sush Shringarputale wrote:
-> > This design seems overly complex and requires synchronization between
-> > the "snapshot" record and exporting the records from the measurement
-> > list.  None of this would be necessary if the measurements were copied
-> > from kernel memory to a backing file (e.g. tmpfs), as described in [1].
-> >
-> > What is the real problem - kernel memory pressure, memory pressure in
-> > general, or disk space?  Is the intention to remove or offload the
-> > exported measurements?
+On Fri, Aug 11, 2023 at 05:18:38PM +0200, Marco Elver wrote:
+> [1]: "On X86-64 and AArch64 targets, this attribute changes the calling
+> convention of a function. The preserve_most calling convention attempts
+> to make the code in the caller as unintrusive as possible. This
+> convention behaves identically to the C calling convention on how
+> arguments and return values are passed, but it uses a different set of
+> caller/callee-saved registers. This alleviates the burden of saving and
+> recovering a large register set before and after the call in the caller.
+> If the arguments are passed in callee-saved registers, then they will be
+> preserved by the callee across the call. This doesn't apply for values
+> returned in callee-saved registers.
+> 
+>  * On X86-64 the callee preserves all general purpose registers, except
+>    for R11. R11 can be used as a scratch register. Floating-point
+>    registers (XMMs/YMMs) are not preserved and need to be saved by the
+>    caller.
+> 
+>  * On AArch64 the callee preserve all general purpose registers, except
+>    x0-X8 and X16-X18."
+> 
+> [1] https://clang.llvm.org/docs/AttributeReference.html#preserve-most
+> 
+> Introduce the attribute to compiler_types.h as __preserve_most.
+> 
+> Use of this attribute results in better code generation for calls to
+> very rarely called functions, such as error-reporting functions, or
+> rarely executed slow paths.
+> 
+> Beware that the attribute conflicts with instrumentation calls inserted
+> on function entry which do not use __preserve_most themselves. Notably,
+> function tracing which assumes the normal C calling convention for the
+> given architecture.  Where the attribute is supported, __preserve_most
+> will imply notrace. It is recommended to restrict use of the attribute
+> to functions that should or already disable tracing.
+> 
+> Note: The additional preprocessor check against architecture should not
+> be necessary if __has_attribute() only returns true where supported;
+> also see https://github.com/ClangBuiltLinux/linux/issues/1908. But until
+> __has_attribute() does the right thing, we also guard by known-supported
+> architectures to avoid build warnings on other architectures.
+> 
+> The attribute may be supported by a future GCC version (see
+> https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110899).
+> 
+> Signed-off-by: Marco Elver <elver@google.com>
+> Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-> The main concern is the memory pressure on both the kernel and the 
-> attestation client
-> when it sends the request.  The concern you bring up is valid and we are 
-> working on
-> creating a prototype.  There is no intention to remove the exported 
-> measurements.
+Should this go via -mm, the hardening tree, or something else? I'm happy
+to carry it if no one else wants it?
 
-Glad to hear that you're not intending to remove the exported
-measurements.
-
-Defining and including a new record in the measurement list measurement
-is fine, if it helps with attestation and doesn't require pausing the
-measurements.
+-Kees
 
 -- 
-thanks,
-
-Mimi
-
+Kees Cook
