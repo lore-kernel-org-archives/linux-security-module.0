@@ -2,145 +2,105 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 891E8C001B0
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Aug 2023 23:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D312C41513
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Aug 2023 06:24:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232813AbjHNXWN (ORCPT
+        id S234112AbjHOGYR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Aug 2023 19:22:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39132 "EHLO
+        Tue, 15 Aug 2023 02:24:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233464AbjHNXVr (ORCPT
+        with ESMTP id S235024AbjHOGYK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Aug 2023 19:21:47 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AB15171A
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Aug 2023 16:21:45 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1bc63ef9959so41929685ad.2
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Aug 2023 16:21:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1692055304; x=1692660104;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zDgteNssk7bldWg1S9G58zrFCCsMMUu+wXIpurB+HOk=;
-        b=f0Ak5IcltrDFdkQCDY8pIN2Q+ApDStplykSnlDyPTlJ5hOzrqc9PWJCJjuzY2a8RJ+
-         g8xVrAL3nMB+kfcdXe60p9qKEe3GlaSBVzwWcARsfm76j54TnQAq99JEPb1dmu6zAVNx
-         W/EJPZgrIcJBBWdgJxFVqDLwjpYw5EdzIukns=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692055304; x=1692660104;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zDgteNssk7bldWg1S9G58zrFCCsMMUu+wXIpurB+HOk=;
-        b=TEsgvwqR5jXduXdXGqBr4vFXjMY4quNUTeF2TtRrcvjfpYu4pVPgbcsf7j4UW+HZ7s
-         8zIFjjATkrTqQw/q1hUe+aka5eofvcw+U7dRl3pEr8B8FVshdY8hVFEnv+it5ZWX+Mq6
-         g0Z3tnYAXWlc9Sf8hfpQyB6KUGVJUXy3iBZaqQhfV/JX58vP/9BzQvm5T0pKkcaICmQa
-         QUFXP7GKBot9n8yoyyG/dSYiLV9G96RdWNPl0pa2kRx1wIVt6tgVaGKDQljukVXVP/ZF
-         EOfmVyo8Apb8WjRHybNMi/yc2jKu4ji0of38MhAcH7zuBh9mF7QvE+VaPkpOv0NKSlmk
-         B0bg==
-X-Gm-Message-State: AOJu0YzVDbEk7LuZcEbKiNicaqKXU++OBN7TFR9K3d6A0Kc25BR9hGZH
-        EFUC1q/QIHMKu4TVLGKQLLjcKw==
-X-Google-Smtp-Source: AGHT+IHSGL8C59m4WskNFhunf6W+tABRL2W8v1BYu6fmf1+j7vX3+mrOp1twYX7SxuE7dHDeO2B60Q==
-X-Received: by 2002:a17:902:e802:b0:1bc:422a:b9fd with SMTP id u2-20020a170902e80200b001bc422ab9fdmr13245083plg.13.1692055304507;
-        Mon, 14 Aug 2023 16:21:44 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id c13-20020a170902d48d00b001bdcd4b1616sm5310621plg.260.2023.08.14.16.21.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Aug 2023 16:21:43 -0700 (PDT)
-Date:   Mon, 14 Aug 2023 16:21:43 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Marco Elver <elver@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tue, 15 Aug 2023 02:24:10 -0400
+Received: from out-123.mta1.migadu.com (out-123.mta1.migadu.com [95.215.58.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1002410D1
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Aug 2023 23:24:06 -0700 (PDT)
+Message-ID: <00809f4a-e7ca-bf53-7824-e22791ee6738@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1692080644;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RXs3mjgqnXvJbDWmMqsJFyBV4L79LKcBz77qKeWFKs0=;
+        b=n5Z7aeODmFnpxRq1tq/1towSY5Vnmq8J3If4HVdOILRY9tGldVJelfEK7OflTEghT2ylaT
+        FwevqkJ08/wDoAnDCisAFJIVXCpY4HjTBwvs77ikhfhubWGREzp6Yk3cZTkumhx89307Ls
+        TZY9i5fhGm35TwOvttEx3Cm5S6DlzyQ=
+Date:   Mon, 14 Aug 2023 23:23:49 -0700
+MIME-Version: 1.0
+Subject: Re: [PATCH mptcp-next v13 4/4] selftests/bpf: Add mptcpify test
+Content-Language: en-US
+To:     Geliang Tang <geliang.tang@suse.com>
+Cc:     bpf@vger.kernel.org, netdev@vger.kernel.org, mptcp@lists.linux.dev,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Yonghong Song <yonghong.song@linux.dev>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Mat Martineau <martineau@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, llvm@lists.linux.dev,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev@googlegroups.com, linux-toolchains@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] compiler_types: Introduce the Clang
- __preserve_most function attribute
-Message-ID: <202308141620.E16B93279@keescook>
-References: <20230811151847.1594958-1-elver@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230811151847.1594958-1-elver@google.com>
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Simon Horman <horms@kernel.org>
+References: <cover.1691808484.git.geliang.tang@suse.com>
+ <15a618b03f65177166adf2850d4159cd4b77dfb1.1691808484.git.geliang.tang@suse.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <15a618b03f65177166adf2850d4159cd4b77dfb1.1691808484.git.geliang.tang@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 11, 2023 at 05:18:38PM +0200, Marco Elver wrote:
-> [1]: "On X86-64 and AArch64 targets, this attribute changes the calling
-> convention of a function. The preserve_most calling convention attempts
-> to make the code in the caller as unintrusive as possible. This
-> convention behaves identically to the C calling convention on how
-> arguments and return values are passed, but it uses a different set of
-> caller/callee-saved registers. This alleviates the burden of saving and
-> recovering a large register set before and after the call in the caller.
-> If the arguments are passed in callee-saved registers, then they will be
-> preserved by the callee across the call. This doesn't apply for values
-> returned in callee-saved registers.
-> 
->  * On X86-64 the callee preserves all general purpose registers, except
->    for R11. R11 can be used as a scratch register. Floating-point
->    registers (XMMs/YMMs) are not preserved and need to be saved by the
->    caller.
-> 
->  * On AArch64 the callee preserve all general purpose registers, except
->    x0-X8 and X16-X18."
-> 
-> [1] https://clang.llvm.org/docs/AttributeReference.html#preserve-most
-> 
-> Introduce the attribute to compiler_types.h as __preserve_most.
-> 
-> Use of this attribute results in better code generation for calls to
-> very rarely called functions, such as error-reporting functions, or
-> rarely executed slow paths.
-> 
-> Beware that the attribute conflicts with instrumentation calls inserted
-> on function entry which do not use __preserve_most themselves. Notably,
-> function tracing which assumes the normal C calling convention for the
-> given architecture.  Where the attribute is supported, __preserve_most
-> will imply notrace. It is recommended to restrict use of the attribute
-> to functions that should or already disable tracing.
-> 
-> Note: The additional preprocessor check against architecture should not
-> be necessary if __has_attribute() only returns true where supported;
-> also see https://github.com/ClangBuiltLinux/linux/issues/1908. But until
-> __has_attribute() does the right thing, we also guard by known-supported
-> architectures to avoid build warnings on other architectures.
-> 
-> The attribute may be supported by a future GCC version (see
-> https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110899).
-> 
-> Signed-off-by: Marco Elver <elver@google.com>
-> Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
+On 8/11/23 7:54 PM, Geliang Tang wrote:
+> +static int verify_mptcpify(int server_fd)
+> +{
+> +	socklen_t optlen;
+> +	char cmd[256];
+> +	int protocol;
+> +	int err = 0;
+> +
+> +	optlen = sizeof(protocol);
+> +	if (!ASSERT_OK(getsockopt(server_fd, SOL_SOCKET, SO_PROTOCOL, &protocol, &optlen),
+> +		       "getsockopt(SOL_PROTOCOL)"))
+> +		return -1;
+> +
+> +	if (!ASSERT_EQ(protocol, IPPROTO_MPTCP, "protocol isn't MPTCP"))
+> +		err++;
+> +
+> +	/* Output of nstat:
+> +	 *
+> +	 * #kernel
+> +	 * MPTcpExtMPCapableSYNACKRX       1                  0.0
+> +	 */
+> +	snprintf(cmd, sizeof(cmd),
+> +		 "ip netns exec %s nstat -asz %s | awk '%s' | grep -q '%s'",
+> +		 NS_TEST, "MPTcpExtMPCapableSYNACKRX",
+> +		 "NR==1 {next} {print $2}", "1");
 
-Should this go via -mm, the hardening tree, or something else? I'm happy
-to carry it if no one else wants it?
+Is the mp-capable something that the regular mptcp user want to learn from a fd 
+also? Does it have a simpler way like to learn this, eg. getsockopt(fd, 
+SOL_MPTCP, MPTCP_xxx), instead of parsing text output?
 
--Kees
+> +	if (!ASSERT_OK(system(cmd), "No MPTcpExtMPCapableSYNACKRX found!"))
 
--- 
-Kees Cook
+
