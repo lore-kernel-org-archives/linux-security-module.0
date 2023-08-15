@@ -2,297 +2,151 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 152B0C04A6A
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Aug 2023 17:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA36C0015E
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Aug 2023 18:23:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238650AbjHORPu (ORCPT
+        id S232875AbjHOSW7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Aug 2023 13:15:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53958 "EHLO
+        Tue, 15 Aug 2023 14:22:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235429AbjHORPW (ORCPT
+        with ESMTP id S239052AbjHOSWj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Aug 2023 13:15:22 -0400
-Received: from sonic313-15.consmr.mail.ne1.yahoo.com (sonic313-15.consmr.mail.ne1.yahoo.com [66.163.185.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F69D19B5
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Aug 2023 10:15:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1692119719; bh=BPaGmpDTCMPb4Lvs/vaf+VcM/6CX3YE+Dt+y1F5XlrE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=uOcULKb3MvVxn1CqbvJlutVzek2dAWZhViTfAYlJYqw+dvKBlzy1h/mH3Au1Q8JkJ4b/tAZlYJYP4SmbBiJbrTfSCoTIQGAf7n85Nsl0zB2qRBCg6ukX+OWpN1JyrplQ7QvFseF528Lc0I4RwSaIgONgaeTOWmvMF/hjlBNbhxIb7XlTGnTmOhJ4xih8nBa9xo5Cy7Dn1UVZJOt4fhrZkkuRd/agp2HwjiI4yI4t870bW4NN97G0xeXaNpDgzfAKwfXt3llrCsKXDvrEn0yDmKIxNiEN8I1kxz3+IFXFoVTn+q3QDqfNW4myojEfLOnTgC1QYabY0MHUH4iD9/L0cQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1692119719; bh=cQax5ibei7TzbCpwrTjyZfxqsQ1/ouo1gSVL9s94JrD=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=rUgrLb9kX/CTc2sNWCynK5TVfosZPTwqtoEMmzLonbvKNnboejopWxbxhkze5O+gKLlIAiIRlk6XgnJMD5hmMQAHNVvKPbd/8g1I8PVhHQmvE0uTZb2Dx7YOSLn4+82FAsrhiUzOQdtqhggCw0wc34TAdvz862aI1h0D9SB68CzgUS4CX/HT70y7yeoWDnE1r19F3DKj2dxH8FVPtvexFQJE2XBWnuaEtZRiEh/1/MVIjAsD2zwwDrvx7rdy3xw2TNHRs+RGVovW2zhBFNXI7mUzcnnn5f08h8AsF1muZHZW/HaFkfNRZcNZLPGfet+lhGVfv4+CUZRlmbdrUNHJCQ==
-X-YMail-OSG: 8LS1I7IVM1luXAHtx__GZ_0Q3g.xJp_Hg2ZMvaqkvbGmTAnq2RY0pvRlUIhtvPF
- prEzwpdHTUIwtxKRQjfTgl52GtTS.uut6uV2X7iAaBWE.aJSQcE86L8U9ELef_.EyyO0bR40VjzG
- l1f5royGcgeg7RNjRFQ4r9aYKo3KTWBwG5S3EVxsfG9G1sMK2A.Rx92griNnEwpOLZ_KV9sl6qhq
- 4InkB6yAEiuIYLmQ5s9uZOc4au93QL9qgeZDM1D.XNP2TbNA31EGN81Dhx.o2Q1tupCjBhoDgZD1
- FoWQIoZPcBhYm7G_sRBxVfOL9EKL3rPfM4TwluBHwLi5kud1luGtKITmi5zBvlI_StTFfgruAh3D
- hST9Pb7q0KjDE5EuJOS5pDBgU0lWT9LqcQQgbCR6az2PgRUlt3KqcHyf9xqCpvNsR6r0enisIeSw
- arT8GHJv6oG1asoaEB4H1fWhTZ5oFlb8Z3eGP.E_ukJ2HBnuygYjCynts2U4Pp28bS_hHKDOIkCS
- 2h_NV72TBCrquJqtYREuJbRcKEtC0iIdNHE_LyvdU7lRrxtOyuXWWlK8D0UwhHwhguZVQ9kZc.he
- 5ETKii.llAkYFnL4mfPdJCmUTJdpsv_ePQQBPkUr7u.WaR8ZNc467KI.sJH4v5pdK8ng.G5YAPSY
- bS45obUV7BB4oVN_btipGmoMaGyBe4aXyaptDQgaoeYAIM2oh2N_a8t5.19i8qqoyAGJfeiesepw
- MBVs2vi6b.SsDoKjy2QCl2t7tcDL7zIUJcp1jymc3YKWewd6K9k3JWnuVyGzDFmKmwZJLnMzE0vA
- D7SNklo0jrgE.NO7HwdL_9jLNn0BEyUdJpRr.Y.WMm9yWveaMs9V89HtOAMkzZuXpa9pLzZpuVkA
- chj5m45GNeN6Cvq2M4hR3bJlRq4fvS3dK8tJoXNoRvEki6KExJGqYAn597x4Mk5kbK_fB5D1y_kM
- sPr6Y157JLXSZiUGkbvhKJAo8xyIsF5Mv0r75bic1pLT8UtCdsX1J4.KMRIGbmSZBADu7Fjnm6N.
- H_U4T5lV1fBv4uwqxAbjp_lQjwMaM2.S6z49q_DBJgEpKmG21cy2thsokRfNyKRhONxl21aFJOSo
- kIfu5eARbqaUEHDucUwwlSuMVkKC6pdqrbY0VYA2OkO61fCk0Y1a9RumhnbX_l.R8HTBfM__MuEj
- CxRRvTxHbVAIKlMLDO8vB9Reg669I72B0VSizy82WtDT8D4KKkXGIacE4e3BPZl1_7fOAvacPgao
- omd3MX18yU637wbCQR6Q3fFV5ounu.AKSHfZVRtCHuMdsV5UyoUR8nYw.IKi58feExsqykreKAK4
- LhRyUFtllDwgoyV6LVFtcHcI5uodME10BTicVZsDFqbNq2SnwZPc2IpSJuRhhmBZcGC7ZS_YKh6d
- a4dMNozB1c351kqcP9GSHEkkxBVxnIlh_MzInAYR5ct4m2NFzkzdMUYcKSHQj8YwFmgkulAmnVmq
- qPMBUOSOG8FzOSmlBMpwUZjshFujkGZN765CDK8m_tLAR8p_pKOZJldhOBCN_lF13_LIDyhHjdw3
- zwAaC6F91EJgTOSBgJdkNJ.T5AN9fJc5_eTC8gb93z3q.ylwmBTm2oA8IEixxphpHJEJ5_PCtbEp
- Y22lCEdNpKYit86.mV.Kun62NkqMLuWXtJFpwEfxulrfttZa6hFv2fa.9C0jJrFAMBBLu0WQHdU3
- HT0Nv_vDEafnbVmPKLua0DM9SJCL8BHZRSA.j5S0TO1zGLDOeMbEyGONwp3JMDTKJbXlxZmetF7r
- F0VPlALKm.FEDsTIOHi0utKzXwCqFczJdjvOz6wiV23ztdPrDpCjTRVA0ocMVvAwKACuEatM18HI
- P0gHKxB.nvOZXIcp3ITvvSzJfz6Rnl_weAIjoyAk4kkvrND_iLMItvwepuZ4qvzfyyzLXMEYUx_9
- CsHw_PsMRVHeD95ky2jwpFUKR5dZlJqC1M79ZhZQ9D7mc_x7HarXs356oQrqnUK5jatk4T1k0PMn
- q9hdn.qZCIAKpvPO.gV4qGz.yjAJjSekze_hbwNYKiuZMzc3tEWuDzcGYSllYn.X5K1cBMksR_No
- 7H6ZySW2PLBgHEVpZAXoZRqG3R1f7avgV9c8heSCGj_yyv9SAjLc9QJ8mzR.AkD.A3tgIDCpWRQE
- vWgRkrp7Q4G90WoQE_dfzRRYHL0B40inWQwmWSKOkiu.ZFn46D8I5nibFDH3PI_OaLymVb5bs6E1
- 734qk4UNbSnZusm88okWN._uFAeoC4Ftm9isEuj3zIOfqYe725d27EhY9cDmMBujgXL2FF_UK
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: f868ec95-1348-40e1-b2ea-dd30d63b5a36
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Tue, 15 Aug 2023 17:15:19 +0000
-Received: by hermes--production-bf1-865889d799-x5klk (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4b4d581fd4f018528726dfdcaed7ce40;
-          Tue, 15 Aug 2023 17:15:17 +0000 (UTC)
-Message-ID: <04063c9b-3832-3934-7e4e-3bd969f19a1e@schaufler-ca.com>
-Date:   Tue, 15 Aug 2023 10:15:14 -0700
+        Tue, 15 Aug 2023 14:22:39 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C973A1BC1
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Aug 2023 11:22:37 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fe2fb9b4d7so51807315e9.1
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Aug 2023 11:22:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1692123756; x=1692728556;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rRFUf4dNqMSfHq2+lBU85kOOjIYPLnDmd2dSara3YQ0=;
+        b=B5+dfis4GodiyMswujpdft5yTaiXEq+hCwoLLuJZRiCvztSGpvOULmk8iJEZg0adZH
+         BY8An2LpsxdQEREmqow3gZhdUpFsyxA5U4miqfRxIUa2E7orC7Q7Ko0rzGuYQoBGy3qE
+         uJuL2aJukQjiTszT6TACOaiShD5ikUEvhecLDrbpWvp0vfZwKh8yvRzW81AuKihenO+k
+         gAvQFt9BBsbYBPBrxoO18Y0Bx8A9NLjX4Dppy7CnQFNiNPm0XWjqjxeGhTirjoSgNZrN
+         VA5L9DiSGMhLlpHCXIi62EV9vWnA4wHPi/7SHM9HSJEE9w35I7MEUBr2S7/c/OBIEDC9
+         TeBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692123756; x=1692728556;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rRFUf4dNqMSfHq2+lBU85kOOjIYPLnDmd2dSara3YQ0=;
+        b=LxLtluHAako5jxf6Ojw0Qj3vj03ZdBrEXOjozRvshWwErVE5lclI65czkm/LJF0m43
+         nT9XYo87xZ4k9EB9A+SVVyXfX21siuhbyFo3H0pKVAqHPVAQS6+xWv2FaVIcV7ET6soC
+         8miAHvGNVTbCS35FTIElOXb55MnUMcSSQIzx+sPjD6lyo3HxngrK67TpWC/URoSONwOI
+         i74fLp04yOuUZxmcC/FzZ1h8ttlEd5muGkB79QX9bLAk8Q+cmuAQNGjpeqzFuSacV9zX
+         X5nFG6XFpCo5EMNMIjJSJlfH0P92cWwlOXkf2OfcZfT6WI1G7zwRfKVGtOnAepcOa188
+         M4Qg==
+X-Gm-Message-State: AOJu0YwmebPq79k7Ild6aG8flnoLP8j16lNBJH3fwFEg32HtZJR+8jNN
+        rcpjfFQ7eCrtQqFLh8K6QostkW31EXlfQSkSf3mfxQ==
+X-Google-Smtp-Source: AGHT+IGIPWace5mdmcxiYsdjUOHTOAtdVTz9UvfQVQP31URfweI7ITp2r94AA2XEk86pkT7L3VWHyy8DVHcpStWzCas=
+X-Received: by 2002:a7b:cd99:0:b0:3fe:14af:ea21 with SMTP id
+ y25-20020a7bcd99000000b003fe14afea21mr10108651wmj.21.1692123756120; Tue, 15
+ Aug 2023 11:22:36 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH 03/13] Implement CAP_TRUST capability.
-Content-Language: en-US
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20230710102319.19716-1-greg@enjellic.com>
- <20230710102319.19716-4-greg@enjellic.com>
- <c5b07b78-f37e-6e95-9c2e-044afe1dd894@schaufler-ca.com>
- <20230815101947.GA31391@wind.enjellic.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20230815101947.GA31391@wind.enjellic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21695 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20230811151847.1594958-1-elver@google.com> <202308141620.E16B93279@keescook>
+In-Reply-To: <202308141620.E16B93279@keescook>
+From:   Marco Elver <elver@google.com>
+Date:   Tue, 15 Aug 2023 20:21:59 +0200
+Message-ID: <CANpmjNNDcVK9gmnBfxbthD3KEzsdc=PJb97AXcPEaweLNM5mPw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] compiler_types: Introduce the Clang
+ __preserve_most function attribute
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, llvm@lists.linux.dev,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        kasan-dev@googlegroups.com, linux-toolchains@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/15/2023 3:19 AM, Dr. Greg wrote:
-> On Mon, Aug 07, 2023 at 01:21:35PM -0700, Casey Schaufler wrote:
+On Tue, 15 Aug 2023 at 01:21, Kees Cook <keescook@chromium.org> wrote:
 >
-> Good morning, I hope this note finds the day starting well for
-> everyone.
+> On Fri, Aug 11, 2023 at 05:18:38PM +0200, Marco Elver wrote:
+> > [1]: "On X86-64 and AArch64 targets, this attribute changes the calling
+> > convention of a function. The preserve_most calling convention attempts
+> > to make the code in the caller as unintrusive as possible. This
+> > convention behaves identically to the C calling convention on how
+> > arguments and return values are passed, but it uses a different set of
+> > caller/callee-saved registers. This alleviates the burden of saving and
+> > recovering a large register set before and after the call in the caller.
+> > If the arguments are passed in callee-saved registers, then they will be
+> > preserved by the callee across the call. This doesn't apply for values
+> > returned in callee-saved registers.
+> >
+> >  * On X86-64 the callee preserves all general purpose registers, except
+> >    for R11. R11 can be used as a scratch register. Floating-point
+> >    registers (XMMs/YMMs) are not preserved and need to be saved by the
+> >    caller.
+> >
+> >  * On AArch64 the callee preserve all general purpose registers, except
+> >    x0-X8 and X16-X18."
+> >
+> > [1] https://clang.llvm.org/docs/AttributeReference.html#preserve-most
+> >
+> > Introduce the attribute to compiler_types.h as __preserve_most.
+> >
+> > Use of this attribute results in better code generation for calls to
+> > very rarely called functions, such as error-reporting functions, or
+> > rarely executed slow paths.
+> >
+> > Beware that the attribute conflicts with instrumentation calls inserted
+> > on function entry which do not use __preserve_most themselves. Notably,
+> > function tracing which assumes the normal C calling convention for the
+> > given architecture.  Where the attribute is supported, __preserve_most
+> > will imply notrace. It is recommended to restrict use of the attribute
+> > to functions that should or already disable tracing.
+> >
+> > Note: The additional preprocessor check against architecture should not
+> > be necessary if __has_attribute() only returns true where supported;
+> > also see https://github.com/ClangBuiltLinux/linux/issues/1908. But until
+> > __has_attribute() does the right thing, we also guard by known-supported
+> > architectures to avoid build warnings on other architectures.
+> >
+> > The attribute may be supported by a future GCC version (see
+> > https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110899).
+> >
+> > Signed-off-by: Marco Elver <elver@google.com>
+> > Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
+> > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> > Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > Acked-by: Mark Rutland <mark.rutland@arm.com>
 >
->> On 7/10/2023 3:23 AM, Dr. Greg wrote:
->>> TSEM was designed to support a Trust Orchestration System (TOS)
->>> security architecture.  A TOS based system uses the concept of a
->>> minimum Trusted Computing Base of utilities, referred to as trust
->>> orchestrators, that maintain workloads in a trusted execution
->>> state.  The trust orchestrators are thus, from a security
->>> perspective, the most security privileged processes running on
->>> the platform.
->>>
->>> The CAP_ML (machine modeling) capability is defined as a
->>> capability that allows a process to alter the modeling and hence
->>> the trust status of the platform.  In a fully orchestrated system
->>> only the trust orchestrator carry this capability bit and then
->>> drop the capability for the execution of the workload.  This is
->>> designed to prevent a security vulnerability in workloads to be
->>> leveraged to create an entity that could conduct adversarial
->>> modifications to the trust status of the platform.
->>>
->>> With the introduction of TSEM there are three generic mechanisms
->>> for implementing security contols, each with its own capability
->>> bit for management, ie:
->>>
->>> DAC - CAP_DAC_ADMIN
->> There is no CAP_DAC_ADMIN. There are several capabilities related to
->> changing the DAC state of the system.
-> Our apologies, I believe we were thinking of CAP_DAC_OVERRIDE.
+> Should this go via -mm, the hardening tree, or something else? I'm happy
+> to carry it if no one else wants it?
 
-CAP_DAC_OVERRIDE allows you to circumvent the normal DAC checks.
-It is not an administrative capability.
+v3 of this series is already in mm-unstable, and has had some -next
+exposure (which was helpful in uncovering some additional issues).
+Therefore, I think it's appropriate that it continues in mm and Andrew
+picks up the latest v4 here.
 
->
->>> MAC - CAP_MAC_ADMIN
->> Since your system implements a mandatory access control policy
->> you should be using CAP_MAC_ADMIN.
-> See below.
->
->>> Security modeling - CAP_ML
->> First, the name you've chosen makes no sense at all. It isn't
->> descriptive and fails even as an abbreviation. Second, you aren't
->> doing anything that wouldn't be covered under CAP_MAC_ADMIN.
-> Apologies for the name, we choose it ad-hoc as an acronym for 'Machine
-> Learning' which is what TSEM uses, in potentially multiple forms, to
-> implement its security controls.  I wouldn't anticipate it to be
-> forthcoming from your corner, but feel free to suggest an alternative.
+Your official Ack would nevertheless be much appreciated!
 
-The name should be descriptive and unambiguous. CAP_SYS_ADMIN, for all
-it's faults, tells you exactly what it's for, privileged administration
-operations that are outside the scope of the system security mechanisms.
-Your proposed capability should be named so as it make it obvious where
-else in the system it could/should be used.
-
-> You note above that CAP_MAC_ADMIN should be used because TSEM ends up
-> implementing access control decsions that are mandatory in nature
-
-That is correct.
-
-> As our documentation notes, with the introduction of TSEM there are
-> three mechanisms that are now available to implement security
-> controls: DAC, static MAC and dynamic controls based on
-> modeling/machine learning.
-
-The static vs. dynamic distinction is fallacious. You can change Smack
-rule sets at any time. You could easily create a modeling/machine learning
-daemon that reads the syslog, audit files and various other system interfaces
-and uses the data to reset the Smack rules to suit its idea of security.
-That daemon would require CAP_MAC_ADMIN and sufficient privilege to read
-the data it is interested in.
-
-Having provided an example of a dynamic, modeling/machine learning system
-for which CAP_MAC_ADMIN is appropriate, I remain of the opinion that your
-proposed CAP_ML is unnecessary.
-
-> Our premise for proposing a separate capability is that different
-> methods of achieving security controls should use different
-> capabilities, so that the capability controls remain orthogonal and
-> independent of one another.
-
-There are lots of people who agree with you. Unfortunately, the capability
-mechanism does not scale well to large numbers of capabilities. It was
-not designed (P1003.1e/2c) with fine grained privilege in mind. The use
-of capabilities has been slow enough on the uptake as it is. Adding all
-the capabilities that have been requested over the years would only make
-it harder.
-
-> Additionally.
->
-> The mandatory controls implemented by TSEM are subtly different in
-> intent from those implemented by the incumbent LSM's, since TSEM's
-> controls can be generated and implemented by software developers or
-> users.  You had noted in other replies that classic mandatory controls
-> should only be implemented by system administrators or security
-> architects.
-
-Look at seccomp and landlock before you claim TSEM is unique in this way.
-
-> Finally.
->
-> TSEM brings with it the ability to allow the creation of security
-> control namespaces that do not conflict with other security
-> namespaces,
-
-I read this several times, and can't tease out what it means. :(
-
->  with the exception that the non-namespaced controls will
-> also exert their authority if they are 'stacked' with TSEM.  If we
-> read user interest and expectations correctly, which I believe we do,
-> there will only be an increasing demand for this type of security
-> functionality.
->
-> Given that, it will be problematic, moving forward, if the capability
-> to create isolated security namespaces is not orthogonal with the
-> ability to modify how a policy can be configured or managed within an
-> isolated security namespace.
-
-I don't see how "creating an isolated security namespace" isn't
-a "configuraton" or "management" operation. You are going to have
-some other mechanism to prevent processes in an isolated security
-namespace from creating new isolated security namespaces if you
-don't want them to, aren't you?
-
-> Given this latter issue, CAP_ML probably needs a different name,
-> once again, suggestions are welcome.
->
->>> Having a separate capability bit for security modeling allows DAC
->>> and classic label or path based MAC systems to be implemented in
->>> the context of a security modeling namespace.  Looking forward it
->>> is not unreasonable to consider the implementation of a modeling
->>> policy that would verify the status of extended attributes being
->>> used for label based MAC controls.
->> It seems reasonable that being trusted with the privilege to change
->> the modeling policy would imply sufficient trust to change other
->> security states where allowed. As the Smack maintainer, and having
->> introduced CAP_MAC_ADMIN, I say that there's insufficient grounds to
->> introduce a new, single purpose capability.
-> First, no one, least of all our group, doubts your contributions to
-> the art.
->
-> We are also very confident, in the level of skills and experience in
-> the fields of modeling and security operations, of the team that is
-> bringing forward TSEM.
->
-> Based on these experiences, as we noted above, we believe it will be
-> unwise to not make the ability to control the creation, isolation and
-> protection of a security namespace from the ability to modify the
-> configuration of a security policy within a namespace.
-
-Sorry, again, I read this several times and can't quite parse it.
-
-> Secondly.
->
-> With respect to the capability being 'single purpose'.  We haven't
-> seen a clear pathway or discussion regarding namespaces for other
-> security architectures, given the known structural issues involved
-> with classic labeling or pathname based implementations.  Paul
-> suggests that there is ongoing thinking on how to address this issue
-> and you've noted that the stacking work needs to go in before further
-> functionality can be considered.
-
-AppArmor has a working implementation. Both SELinux and Smack have had
-patches reviewed in the past. SELinux work continues, but it has been a
-while since there have been postings. You're correct that no clear path
-has been proposed for dealing with namespaces generically.
-
-> The new capability bit will be available when those initiatives move
-> forward.  Kernel doctrine has been that at least a single use of
-> functionality must be present for a feature to be added, TSEM provides
-> that initial use.
-
-Requests for single-use capabilities come in all the time. The
-capability system isn't set up to allow for them.
-
-> Finally.
->
-> In his 'ANN' document, regarding LSM submission requirements, Paul
-> Moore noted that he did not want to require the need to demonstrate a
-> 'community of support' around an LSM in order to avoid a 'chicken and
-> egg' problem.  He further noted that LSM authors need to be able to
-> guarantee that API's will be durable for 20+ years.
->
-> Within the security industry there is already a 'chicken and egg'
-> problem.  A new security architecture or scheme will not evolve
-> without the system, at a minimum, being in the Linux kernel.  New
-> security architectures do not organically appear and evolve, we can
-> state this fact with significant authority.
->
-> Without generic availability and use of a technology, it is difficult
-> to reason how correct 20+ year guesses on needed functionality can be
-> made.  So there needs to be a 'guess' on how to implement technology,
-> in the most generic form that does not lock the implementation into a
-> corner.
->
-> We've tried to make these 'guesses' with TSEM, based on, now 15+ years
-> of experience, with multiple implementations of security modeling and
-> namespacing.  Our advocacy for the new capability bit, whatever it is
-> named, is based on that body of experience.
->
-> We have proposed what we believe is the correct implementation and
-> API.  If the only way forward is an alternate implementation, we have
-> conducted our due diligence, which history will document if that
-> alternate implementation proves to be insufficient and constraining.
-
-Yes, I hear you. Your arguments are fine, they just don't justify
-a new, single use capability.
-
-> Best wishes for a productive remainder of the week.
-
-To you as well.
-
->
-> As always,
-> Dr. Greg
->
-> The Quixote Project - Flailing at the Travails of Cybersecurity
+Thanks,
+-- Marco
