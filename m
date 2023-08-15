@@ -2,209 +2,123 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A05C0015E
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Aug 2023 10:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF05C001B0
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Aug 2023 11:28:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236397AbjHOKUl (ORCPT
+        id S235841AbjHOL2Z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Aug 2023 06:20:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36220 "EHLO
+        Tue, 15 Aug 2023 07:28:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236484AbjHOKUb (ORCPT
+        with ESMTP id S236009AbjHOL2D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Aug 2023 06:20:31 -0400
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C4573115;
-        Tue, 15 Aug 2023 03:20:27 -0700 (PDT)
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 37FAJnlt031412;
-        Tue, 15 Aug 2023 05:19:49 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 37FAJlZF031411;
-        Tue, 15 Aug 2023 05:19:47 -0500
-Date:   Tue, 15 Aug 2023 05:19:47 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net
-Subject: Re: [PATCH 03/13] Implement CAP_TRUST capability.
-Message-ID: <20230815101947.GA31391@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20230710102319.19716-1-greg@enjellic.com> <20230710102319.19716-4-greg@enjellic.com> <c5b07b78-f37e-6e95-9c2e-044afe1dd894@schaufler-ca.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5b07b78-f37e-6e95-9c2e-044afe1dd894@schaufler-ca.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 15 Aug 2023 05:19:49 -0500 (CDT)
+        Tue, 15 Aug 2023 07:28:03 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A365F7;
+        Tue, 15 Aug 2023 04:28:01 -0700 (PDT)
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37FBQJZJ000900;
+        Tue, 15 Aug 2023 11:27:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=M/sQfVzrC8d2QZrImPRGkYy/MfrT1TGVavwMdGxuas8=;
+ b=mcHO+csMXBqj76q1Nh81mO4MHrwZuWlc2QTED1wqHfXTMprQJfuy6TuQ55OIFYxcVXEg
+ fHNoPPYP1itbVdXL4xFz5nHPGOqKdsZwm+ZVsemoGK9umss6Bl0myVOde0p6lBX7nYfr
+ Pby+kK1Kt+/2ie91sIWcp97GtPxebMmHOuLN0afwwPZZf/jJy7KaL7qM6sSAHkn22t6Y
+ MSQfgfAUesfKaHXKPUT53SDeBz5g6UBYJg4vVpoZuvHYIc0FAhTNFerRif67SFWpvFoW
+ u6UMF/rTXTdGJUSfvo5InRhLRh0ZHK3cG8i/6GCLDIfpA9dt6PkWxKa11dYzozCjxr/I jw== 
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sg82ggjcp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Aug 2023 11:27:46 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37F9KYGO003439;
+        Tue, 15 Aug 2023 11:27:45 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+        by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3semdscvju-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Aug 2023 11:27:45 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+        by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37FBRgIs37290540
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Aug 2023 11:27:42 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8B81320043;
+        Tue, 15 Aug 2023 11:27:42 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5795620040;
+        Tue, 15 Aug 2023 11:27:40 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com (unknown [9.61.3.84])
+        by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Tue, 15 Aug 2023 11:27:40 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-security-module@vger.kernel.org, inux-kernel@vger.kernel.org,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v4 3/6] integrity: remove global variable from machine_keyring.c
+Date:   Tue, 15 Aug 2023 07:27:19 -0400
+Message-Id: <20230815112722.1591829-4-nayna@linux.ibm.com>
+X-Mailer: git-send-email 2.39.3
+In-Reply-To: <20230815112722.1591829-1-nayna@linux.ibm.com>
+References: <20230815112722.1591829-1-nayna@linux.ibm.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: BRy0kpX9ZzFlKVXxqr6gzNJWumoE-Oa7
+X-Proofpoint-ORIG-GUID: BRy0kpX9ZzFlKVXxqr6gzNJWumoE-Oa7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-15_10,2023-08-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
+ mlxscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0 phishscore=0
+ priorityscore=1501 bulkscore=0 suspectscore=0 clxscore=1015
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2308150099
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 07, 2023 at 01:21:35PM -0700, Casey Schaufler wrote:
+trust_mok variable is accessed within a single function locally.
 
-Good morning, I hope this note finds the day starting well for
-everyone.
+Change trust_mok from global to local static variable.
 
-> On 7/10/2023 3:23 AM, Dr. Greg wrote:
-> > TSEM was designed to support a Trust Orchestration System (TOS)
-> > security architecture.  A TOS based system uses the concept of a
-> > minimum Trusted Computing Base of utilities, referred to as trust
-> > orchestrators, that maintain workloads in a trusted execution
-> > state.  The trust orchestrators are thus, from a security
-> > perspective, the most security privileged processes running on
-> > the platform.
-> >
-> > The CAP_ML (machine modeling) capability is defined as a
-> > capability that allows a process to alter the modeling and hence
-> > the trust status of the platform.  In a fully orchestrated system
-> > only the trust orchestrator carry this capability bit and then
-> > drop the capability for the execution of the workload.  This is
-> > designed to prevent a security vulnerability in workloads to be
-> > leveraged to create an entity that could conduct adversarial
-> > modifications to the trust status of the platform.
-> >
-> > With the introduction of TSEM there are three generic mechanisms
-> > for implementing security contols, each with its own capability
-> > bit for management, ie:
-> >
-> > DAC - CAP_DAC_ADMIN
+Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+Reviewed-and-tested-by: Mimi Zohar <zohar@linux.ibm.com>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ security/integrity/platform_certs/machine_keyring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> There is no CAP_DAC_ADMIN. There are several capabilities related to
-> changing the DAC state of the system.
+diff --git a/security/integrity/platform_certs/machine_keyring.c b/security/integrity/platform_certs/machine_keyring.c
+index 389a6e7c9245..9482e16cb2ca 100644
+--- a/security/integrity/platform_certs/machine_keyring.c
++++ b/security/integrity/platform_certs/machine_keyring.c
+@@ -8,8 +8,6 @@
+ #include <linux/efi.h>
+ #include "../integrity.h"
+ 
+-static bool trust_mok;
+-
+ static __init int machine_keyring_init(void)
+ {
+ 	int rc;
+@@ -65,9 +63,11 @@ static __init bool uefi_check_trust_mok_keys(void)
+ bool __init trust_moklist(void)
+ {
+ 	static bool initialized;
++	static bool trust_mok;
+ 
+ 	if (!initialized) {
+ 		initialized = true;
++		trust_mok = false;
+ 
+ 		if (uefi_check_trust_mok_keys())
+ 			trust_mok = true;
+-- 
+2.31.1
 
-Our apologies, I believe we were thinking of CAP_DAC_OVERRIDE.
-
-> > MAC - CAP_MAC_ADMIN
-
-> Since your system implements a mandatory access control policy
-> you should be using CAP_MAC_ADMIN.
-
-See below.
-
-> > Security modeling - CAP_ML
-
-> First, the name you've chosen makes no sense at all. It isn't
-> descriptive and fails even as an abbreviation. Second, you aren't
-> doing anything that wouldn't be covered under CAP_MAC_ADMIN.
-
-Apologies for the name, we choose it ad-hoc as an acronym for 'Machine
-Learning' which is what TSEM uses, in potentially multiple forms, to
-implement its security controls.  I wouldn't anticipate it to be
-forthcoming from your corner, but feel free to suggest an alternative.
-
-You note above that CAP_MAC_ADMIN should be used because TSEM ends up
-implementing access control decsions that are mandatory in nature
-
-As our documentation notes, with the introduction of TSEM there are
-three mechanisms that are now available to implement security
-controls: DAC, static MAC and dynamic controls based on
-modeling/machine learning.
-
-Our premise for proposing a separate capability is that different
-methods of achieving security controls should use different
-capabilities, so that the capability controls remain orthogonal and
-independent of one another.
-
-Additionally.
-
-The mandatory controls implemented by TSEM are subtly different in
-intent from those implemented by the incumbent LSM's, since TSEM's
-controls can be generated and implemented by software developers or
-users.  You had noted in other replies that classic mandatory controls
-should only be implemented by system administrators or security
-architects.
-
-Finally.
-
-TSEM brings with it the ability to allow the creation of security
-control namespaces that do not conflict with other security
-namespaces, with the exception that the non-namespaced controls will
-also exert their authority if they are 'stacked' with TSEM.  If we
-read user interest and expectations correctly, which I believe we do,
-there will only be an increasing demand for this type of security
-functionality.
-
-Given that, it will be problematic, moving forward, if the capability
-to create isolated security namespaces is not orthogonal with the
-ability to modify how a policy can be configured or managed within an
-isolated security namespace.
-
-Given this latter issue, CAP_ML probably needs a different name,
-once again, suggestions are welcome.
-
-> > Having a separate capability bit for security modeling allows DAC
-> > and classic label or path based MAC systems to be implemented in
-> > the context of a security modeling namespace.  Looking forward it
-> > is not unreasonable to consider the implementation of a modeling
-> > policy that would verify the status of extended attributes being
-> > used for label based MAC controls.
-
-> It seems reasonable that being trusted with the privilege to change
-> the modeling policy would imply sufficient trust to change other
-> security states where allowed. As the Smack maintainer, and having
-> introduced CAP_MAC_ADMIN, I say that there's insufficient grounds to
-> introduce a new, single purpose capability.
-
-First, no one, least of all our group, doubts your contributions to
-the art.
-
-We are also very confident, in the level of skills and experience in
-the fields of modeling and security operations, of the team that is
-bringing forward TSEM.
-
-Based on these experiences, as we noted above, we believe it will be
-unwise to not make the ability to control the creation, isolation and
-protection of a security namespace from the ability to modify the
-configuration of a security policy within a namespace.
-
-Secondly.
-
-With respect to the capability being 'single purpose'.  We haven't
-seen a clear pathway or discussion regarding namespaces for other
-security architectures, given the known structural issues involved
-with classic labeling or pathname based implementations.  Paul
-suggests that there is ongoing thinking on how to address this issue
-and you've noted that the stacking work needs to go in before further
-functionality can be considered.
-
-The new capability bit will be available when those initiatives move
-forward.  Kernel doctrine has been that at least a single use of
-functionality must be present for a feature to be added, TSEM provides
-that initial use.
-
-Finally.
-
-In his 'ANN' document, regarding LSM submission requirements, Paul
-Moore noted that he did not want to require the need to demonstrate a
-'community of support' around an LSM in order to avoid a 'chicken and
-egg' problem.  He further noted that LSM authors need to be able to
-guarantee that API's will be durable for 20+ years.
-
-Within the security industry there is already a 'chicken and egg'
-problem.  A new security architecture or scheme will not evolve
-without the system, at a minimum, being in the Linux kernel.  New
-security architectures do not organically appear and evolve, we can
-state this fact with significant authority.
-
-Without generic availability and use of a technology, it is difficult
-to reason how correct 20+ year guesses on needed functionality can be
-made.  So there needs to be a 'guess' on how to implement technology,
-in the most generic form that does not lock the implementation into a
-corner.
-
-We've tried to make these 'guesses' with TSEM, based on, now 15+ years
-of experience, with multiple implementations of security modeling and
-namespacing.  Our advocacy for the new capability bit, whatever it is
-named, is based on that body of experience.
-
-We have proposed what we believe is the correct implementation and
-API.  If the only way forward is an alternate implementation, we have
-conducted our due diligence, which history will document if that
-alternate implementation proves to be insufficient and constraining.
-
-Best wishes for a productive remainder of the week.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
