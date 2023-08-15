@@ -2,208 +2,297 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13868C001E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Aug 2023 18:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30497C04A6A
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Aug 2023 18:44:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239160AbjHOSif (ORCPT
+        id S239221AbjHOSn4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Aug 2023 14:38:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53442 "EHLO
+        Tue, 15 Aug 2023 14:43:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239231AbjHOSiP (ORCPT
+        with ESMTP id S239231AbjHOSnn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Aug 2023 14:38:15 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5E361FCE;
-        Tue, 15 Aug 2023 11:38:10 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4fe1b00fce2so8547068e87.3;
-        Tue, 15 Aug 2023 11:38:10 -0700 (PDT)
+        Tue, 15 Aug 2023 14:43:43 -0400
+Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF2E4171B
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Aug 2023 11:43:41 -0700 (PDT)
+Received: by mail-pl1-x649.google.com with SMTP id d9443c01a7336-1bbcbba5af8so92263015ad.0
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Aug 2023 11:43:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692124689; x=1692729489;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4YJdY3GQFeB1iPWfE21MENyRveBHqJ2bQXsYhMqaqNs=;
-        b=jqZ1Qnztra5zzKL7pKzwp1m8JUM+DWATFg0LqTqR1HpEWzC+rydke/J7ygTMcLm3z0
-         kwiqfa8LdKZ55Qm5sE4TrSe8dYwRCJ3IeA9AH/e6Oa+dnuQlRshOrxgOctUtLDvVIbHZ
-         FsoQDAkjF0S0UIoGyYxBAw+yLZXGtJx0B9YGudtZSooZdrHee4jh/llvrK9dbHDbwAz2
-         L+IU8EDH1+T2VEtyzBfgRHHgdsEWK8m3T8N9YIYeHh21KVClPqU969gnyO5ajSQJjjU3
-         lf+G0fBu1h/5H9MfAB5mI/3UsY9Ku5q88+0079KX4uU17zzVfFxog8IbuL/NUSxXFKMK
-         oL4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692124689; x=1692729489;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=google.com; s=20221208; t=1692125021; x=1692729821;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4YJdY3GQFeB1iPWfE21MENyRveBHqJ2bQXsYhMqaqNs=;
-        b=iQlnGGmf2zVEG1bzUUxeO8m//4QoLQk84oFNgW6CkzgCqf/t97ViWjRVEnmfZpsgSl
-         BBUw3Nzc77a/2ntRYT2PIg5M7D4gVNl1Cz3cnsPMmSpUapVGION8zjth9ZUlb/69MAzB
-         bpE3Slku9mfToGjEsKC6k+Td5fNkzlfDA5eifI9i0ohG3zVUKp4B9F8XtwjxWizlesWx
-         tnFGf0xJ3+hTBaJh0JyDKtp/KPrOeyM2CoDDT3APLHo2ahzPkPBlUSK5NlH+2uSD393v
-         Fnihtn+ub6vJgMK59d+nc+gLrCNzqY0KwLXlzkss13PU8lTTSPsxOSuVF4ogUEOOhBTj
-         OWmw==
-X-Gm-Message-State: AOJu0Yxt648/2n3syz+E6X2+sHLMIdGcEy/ka+RjbqJjdXREI6oybq9h
-        qkJUUCpLX8J4888SSTYNFX2T85rMrCxs2w==
-X-Google-Smtp-Source: AGHT+IGAxUqmjRBq+AaVWc8MKqYHI/ETVfCUYtRL3ZbwRWUoVCmGJDJfM8mg79Tg5k0ErvM63f0aFg==
-X-Received: by 2002:a05:6512:10d4:b0:4fe:25bc:71f5 with SMTP id k20-20020a05651210d400b004fe25bc71f5mr10112355lfg.11.1692124688731;
-        Tue, 15 Aug 2023 11:38:08 -0700 (PDT)
-Received: from f.. (cst-prg-75-195.cust.vodafone.cz. [46.135.75.195])
-        by smtp.gmail.com with ESMTPSA id b24-20020aa7dc18000000b005233647bc4csm7197869edu.59.2023.08.15.11.38.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Aug 2023 11:38:08 -0700 (PDT)
-From:   Mateusz Guzik <mjguzik@gmail.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>
-Subject: [RESEND PATCH] cred: add get_cred_many and put_cred_many
-Date:   Tue, 15 Aug 2023 20:37:59 +0200
-Message-Id: <20230815183759.1821357-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        bh=JSvYsD6+1EOsLwMbZUcg1SbKGoI2rKHIFLeuHZgRRx8=;
+        b=3GbaBNZWweXPbCUfjNMBCMIO1/9pik3Ou7FeHEWzr8nKjSkzvqGcURow0A8T+s1N/W
+         RVe6VK7Cczc0hkFYSPIsM+jZix/6+Avk/pXQMvDNFYcZzDKKROk6r/GnFpEmHHYj2KFW
+         h93ooZKanquSe6AJs+58Zz6N7PTRsHyBuSQ388gemOe4SoUihxzHiPkARWazsr3ZZAz0
+         OcYltDEsS3pdqe1uhroxEJVJrBI209UjBYz0S7Ir9y59ufYp5G/tA7HIMpi+zHCVIaVP
+         g8K5m646ssrl0DCyD/aPBQgyLNjNw/h6F2pb8fxpumb9nBAkrhKWZXYmHJ6A2HGZPyrg
+         dUMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692125021; x=1692729821;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JSvYsD6+1EOsLwMbZUcg1SbKGoI2rKHIFLeuHZgRRx8=;
+        b=Llv9IP+PdW3F5uXm1Cv9g1et57M8XTo0KVHMa36Br1rbYDGP+/OwZPnXF+0GJQi1Yq
+         ho2HoLgryNxpJO5q5UgEtyrYrZ7nMMTDucz48Hbw/B9GCCz253ri64jAC4lCbGVY4AwL
+         Z3fOzR7MLRjgvxB5VbiNFYuJ3ukQepOy8l5K4Uc11DXxgcRoN1PJ/7tPklVEZPJ3nzmJ
+         oeDDYxrNb9CN/ywyUUbHBWGIDq7I9KfOqniVY69lfH2tyxBghnxmuVIyR6OLM00af9MT
+         /0LCyciBPhF4W9rHFwXtEu4XhiEkw5BhrHmKmi7PlFaH/xni6NPHKCAvaGHKoPw+txi/
+         N+eA==
+X-Gm-Message-State: AOJu0YwwXBN7M9uPCrD+4FvY9nEUeWH7BU7KXl1dd2qsIddhqSO6JYAZ
+        CUUvnQXR4cA7Wq45B9VYLtQWMovOJh7IwzD95g==
+X-Google-Smtp-Source: AGHT+IFNCwiTqbLEpaHtcY7JBuMDew3z5ESL3Ou2Kgu6Eu67p23Z+gfY19LxZRmFi4kbANuVSsG1veuDWoQmibZMwA==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
+ (user=ackerleytng job=sendgmr) by 2002:a17:903:645:b0:1b7:d4d2:c385 with SMTP
+ id kh5-20020a170903064500b001b7d4d2c385mr4788682plb.1.1692125021245; Tue, 15
+ Aug 2023 11:43:41 -0700 (PDT)
+Date:   Tue, 15 Aug 2023 18:43:39 +0000
+In-Reply-To: <ZNKv9ul2I7A4V7IF@google.com> (message from Sean Christopherson
+ on Tue, 8 Aug 2023 14:13:26 -0700)
+Mime-Version: 1.0
+Message-ID: <diqzh6p02lk4.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From:   Ackerley Tng <ackerleytng@google.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     pbonzini@redhat.com, maz@kernel.org, oliver.upton@linux.dev,
+        chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, willy@infradead.org,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
+        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
+        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
+        david@redhat.com, qperret@google.com, michael.roth@amd.com,
+        wei.w.wang@intel.com, liam.merwick@oracle.com,
+        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Shaves back-to-back atomics in a few places.
+Sean Christopherson <seanjc@google.com> writes:
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- include/linux/cred.h | 27 +++++++++++++++++++++------
- kernel/cred.c        | 29 +++++++++++++++++------------
- 2 files changed, 38 insertions(+), 18 deletions(-)
+> On Mon, Aug 07, 2023, Ackerley Tng wrote:
+>> I=E2=80=99d like to propose an alternative to the refcounting approach b=
+etween
+>> the gmem file and associated kvm, where we think of KVM=E2=80=99s memslo=
+ts as
+>> users of the gmem file.
+>>
+>> Instead of having the gmem file pin the VM (i.e. take a refcount on
+>> kvm), we could let memslot take a refcount on the gmem file when the
+>> memslots are configured.
+>>
+>> Here=E2=80=99s a POC patch that flips the refcounting (and modified self=
+tests in
+>> the next commit):
+>> https://github.com/googleprodkernel/linux-cc/commit/7f487b029b89b9f3e9b0=
+94a721bc0772f3c8c797
+>>
+>> One side effect of having the gmem file pin the VM is that now the gmem
+>> file becomes sort of a false handle on the VM:
+>>
+>> + Closing the file destroys the file pointers in the VM and invalidates
+>>   the pointers
+>
+> Yeah, this is less than ideal.  But, it's also how things operate today. =
+ KVM
+> doesn't hold references to VMAs or files, e.g. if userspace munmap()s mem=
+ory,
+> any and all SPTEs pointing at the memory are zapped.  The only difference=
+ with
+> gmem is that KVM needs to explicitly invalidate file pointers, instead of=
+ that
+> happening behind the scenes (no more VMAs to find).  Again, I agree the r=
+esulting
+> code is more complex than I would prefer, but from a userspace perspectiv=
+e I
+> don't see this as problematic.
+>
+>> + Keeping the file open keeps the VM around in the kernel even though
+>>   the VM fd may already be closed.
+>
+> That is perfectly ok.  There is plenty of prior art, as well as plenty of=
+ ways
+> for userspace to shoot itself in the foot.  E.g. open a stats fd for a vC=
+PU and
+> the VM and all its vCPUs will be kept alive.  And conceptually it's sound=
+,
+> anything created in the scope of a VM _should_ pin the VM.
+>
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 9ed9232af934..b2b570ba204a 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -226,12 +226,17 @@ static inline bool cap_ambient_invariant_ok(const struct cred *cred)
-  * Get a reference on the specified set of new credentials.  The caller must
-  * release the reference.
-  */
--static inline struct cred *get_new_cred(struct cred *cred)
-+static inline struct cred *get_new_cred_many(struct cred *cred, int nr)
- {
--	atomic_inc(&cred->usage);
-+	atomic_add(nr, &cred->usage);
- 	return cred;
- }
- 
-+static inline struct cred *get_new_cred(struct cred *cred)
-+{
-+	return get_new_cred_many(cred, 1);
-+}
-+
- /**
-  * get_cred - Get a reference on a set of credentials
-  * @cred: The credentials to reference
-@@ -245,14 +250,19 @@ static inline struct cred *get_new_cred(struct cred *cred)
-  * accidental alteration of a set of credentials that should be considered
-  * immutable.
-  */
--static inline const struct cred *get_cred(const struct cred *cred)
-+static inline const struct cred *get_cred_many(const struct cred *cred, int nr)
- {
- 	struct cred *nonconst_cred = (struct cred *) cred;
- 	if (!cred)
- 		return cred;
- 	validate_creds(cred);
- 	nonconst_cred->non_rcu = 0;
--	return get_new_cred(nonconst_cred);
-+	return get_new_cred_many(nonconst_cred, nr);
-+}
-+
-+static inline const struct cred *get_cred(const struct cred *cred)
-+{
-+	return get_cred_many(cred, 1);
- }
- 
- static inline const struct cred *get_cred_rcu(const struct cred *cred)
-@@ -278,17 +288,22 @@ static inline const struct cred *get_cred_rcu(const struct cred *cred)
-  * on task_struct are attached by const pointers to prevent accidental
-  * alteration of otherwise immutable credential sets.
-  */
--static inline void put_cred(const struct cred *_cred)
-+static inline void put_cred_many(const struct cred *_cred, int nr)
- {
- 	struct cred *cred = (struct cred *) _cred;
- 
- 	if (cred) {
- 		validate_creds(cred);
--		if (atomic_dec_and_test(&(cred)->usage))
-+		if (atomic_sub_and_test(nr, &cred->usage))
- 			__put_cred(cred);
- 	}
- }
- 
-+static inline void put_cred(const struct cred *cred)
-+{
-+	put_cred_many(cred, 1);
-+}
-+
- /**
-  * current_cred - Access the current task's subjective credentials
-  *
-diff --git a/kernel/cred.c b/kernel/cred.c
-index 811ad654abd1..8a506bc7c1b8 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -159,23 +159,30 @@ EXPORT_SYMBOL(__put_cred);
-  */
- void exit_creds(struct task_struct *tsk)
- {
--	struct cred *cred;
-+	struct cred *real_cred, *cred;
- 
- 	kdebug("exit_creds(%u,%p,%p,{%d,%d})", tsk->pid, tsk->real_cred, tsk->cred,
- 	       atomic_read(&tsk->cred->usage),
- 	       read_cred_subscribers(tsk->cred));
- 
--	cred = (struct cred *) tsk->real_cred;
-+	real_cred = (struct cred *) tsk->real_cred;
- 	tsk->real_cred = NULL;
--	validate_creds(cred);
--	alter_cred_subscribers(cred, -1);
--	put_cred(cred);
- 
- 	cred = (struct cred *) tsk->cred;
- 	tsk->cred = NULL;
--	validate_creds(cred);
--	alter_cred_subscribers(cred, -1);
--	put_cred(cred);
-+
-+	if (real_cred == cred) {
-+		validate_creds(cred);
-+		alter_cred_subscribers(cred, -2);
-+		put_cred_many(cred, 2);
-+	} else {
-+		validate_creds(real_cred);
-+		validate_creds(cred);
-+		alter_cred_subscribers(real_cred, -1);
-+		put_cred(real_cred);
-+		alter_cred_subscribers(cred, -1);
-+		put_cred(cred);
-+	}
- 
- #ifdef CONFIG_KEYS_REQUEST_CACHE
- 	key_put(tsk->cached_requested_key);
-@@ -352,8 +359,7 @@ int copy_creds(struct task_struct *p, unsigned long clone_flags)
- #endif
- 		clone_flags & CLONE_THREAD
- 	    ) {
--		p->real_cred = get_cred(p->cred);
--		get_cred(p->cred);
-+		p->real_cred = get_cred_many(p->cred, 2);
- 		alter_cred_subscribers(p->cred, 2);
- 		kdebug("share_creds(%p{%d,%d})",
- 		       p->cred, atomic_read(&p->cred->usage),
-@@ -517,8 +523,7 @@ int commit_creds(struct cred *new)
- 		proc_id_connector(task, PROC_EVENT_GID);
- 
- 	/* release the old obj and subj refs both */
--	put_cred(old);
--	put_cred(old);
-+	put_cred_many(old, 2);
- 	return 0;
- }
- EXPORT_SYMBOL(commit_creds);
--- 
-2.39.2
+Thanks for explaining!
 
+>> I feel that memslots form a natural way of managing usage of the gmem
+>> file. When a memslot is created, it is using the file; hence we take a
+>> refcount on the gmem file, and as memslots are removed, we drop
+>> refcounts on the gmem file.
+>
+> Yes and no.  It's definitely more natural *if* the goal is to allow guest=
+_memfd
+> memory to exist without being attached to a VM.  But I'm not at all convi=
+nced
+> that we want to allow that, or that it has desirable properties.  With TD=
+X and
+> SNP in particuarly, I'm pretty sure that allowing memory to outlive the V=
+M is
+> very underisable (more below).
+>
+
+This is a little confusing, with the file/inode split in gmem where the
+physical memory/data is attached to the inode and the file represents
+the VM's view of that memory, won't the memory outlive the VM?
+
+This [1] POC was built based on that premise, that the gmem inode can be
+linked to another file and handed off to another VM, to facilitate
+intra-host migration, where the point is to save the work of rebuilding
+the VM's memory in the destination VM.
+
+With this, the bindings don't outlive the VM, but the data/memory
+does. I think this split design you proposed is really nice.
+
+>> The KVM pointer is shared among all the bindings in gmem=E2=80=99s xarra=
+y, and we can
+>> enforce that a gmem file is used only with one VM:
+>>
+>> + When binding a memslot to the file, if a kvm pointer exists, it must
+>>   be the same kvm as the one in this binding
+>> + When the binding to the last memslot is removed from a file, NULL the
+>>   kvm pointer.
+>
+> Nullifying the KVM pointer isn't sufficient, because without additional a=
+ctions
+> userspace could extract data from a VM by deleting its memslots and then =
+binding
+> the guest_memfd to an attacker controlled VM.  Or more likely with TDX an=
+d SNP,
+> induce badness by coercing KVM into mapping memory into a guest with the =
+wrong
+> ASID/HKID.
+>
+> I can think of three ways to handle that:
+>
+>   (a) prevent a different VM from *ever* binding to the gmem instance
+>   (b) free/zero physical pages when unbinding
+>   (c) free/zero when binding to a different VM
+>
+> Option (a) is easy, but that pretty much defeats the purpose of decopulin=
+g
+> guest_memfd from a VM.
+>
+> Option (b) isn't hard to implement, but it screws up the lifecycle of the=
+ memory,
+> e.g. would require memory when a memslot is deleted.  That isn't necessar=
+ily a
+> deal-breaker, but it runs counter to how KVM memlots currently operate.  =
+Memslots
+> are basically just weird page tables, e.g. deleting a memslot doesn't hav=
+e any
+> impact on the underlying data in memory.  TDX throws a wrench in this as =
+removing
+> a page from the Secure EPT is effectively destructive to the data (can't =
+be mapped
+> back in to the VM without zeroing the data), but IMO that's an oddity wit=
+h TDX and
+> not necessarily something we want to carry over to other VM types.
+>
+> There would also be performance implications (probably a non-issue in pra=
+ctice),
+> and weirdness if/when we get to sharing, linking and/or mmap()ing gmem.  =
+E.g. what
+> should happen if the last memslot (binding) is deleted, but there outstan=
+ding userspace
+> mappings?
+>
+> Option (c) is better from a lifecycle perspective, but it adds its own fl=
+avor of
+> complexity, e.g. the performant way to reclaim TDX memory requires the TD=
+MR
+> (effectively the VM pointer), and so a deferred relcaim doesn't really wo=
+rk for
+> TDX.  And I'm pretty sure it *can't* work for SNP, because RMP entries mu=
+st not
+> outlive the VM; KVM can't reuse an ASID if there are pages assigned to th=
+at ASID
+> in the RMP, i.e. until all memory belonging to the VM has been fully free=
+d.
+>
+
+If we are on the same page that the memory should outlive the VM but not
+the bindings, then associating the gmem inode to a new VM should be a
+feature and not a bug.
+
+What do we want to defend against here?
+
+(a) Malicious host VMM
+
+For a malicious host VMM to read guest memory (with TDX and SNP), it can
+create a new VM with the same HKID/ASID as the victim VM, rebind the
+gmem inode to a VM crafted with an image that dumps the memory.
+
+I believe it is not possible for userspace to arbitrarily select a
+matching HKID unless userspace uses the intra-host migration ioctls, but if=
+ the
+migration ioctl is used, then EPTs are migrated and the memory dumper VM
+can't successfully run a different image from the victim VM. If the
+dumper VM needs to run the same image as the victim VM, then it would be
+a successful migration rather than an attack. (Perhaps we need to clean
+up some #MCs here but that can be a separate patch)
+
+(b) Malicious host kernel
+
+A malicious host kernel can allow a malicious host VMM to re-use a HKID
+for the dumper VM, but this isn't something a better gmem design can
+defend against.
+
+(c) Attacks using gmem for software-protected VMs
+
+Attacks using gmem for software-protected VMs are possible since there
+is no real encryption with HKID/ASID (yet?). The selftest for [1]
+actually uses this lack of encryption to test that the destination VM
+can read the source VM's memory after the migration. In the POC [1], as
+long as both destination VM knows where in the inode's memory to read,
+it can read what it wants to. This is a problem for software-protected
+VMs, but I feel that it is also a separate issue from gmem's design.
+
+>> Could binding gmem files not on creation, but at memslot configuration
+>> time be sufficient and simpler?
+>
+> After working through the flows, I think binding on-demand would simplify=
+ the
+> refcounting (stating the obvious), but complicate the lifecycle of the me=
+mory as
+> well as the contract between KVM and userspace,
+
+If we are on the same page that the memory should outlive the VM but not
+the bindings, does it still complicate the lifecycle of the memory and
+the userspace/KVM contract? Could it just be a different contract?
+
+> and would break the separation of
+> concerns between the inode (physical memory / data) and file (VM's view /=
+ mappings).
+
+Binding on-demand is orthogonal to the separation of concerns between
+inode and file, because it can be built regardless of whether we do the
+gmem file/inode split.
+
++ This flip-the-refcounting POC is built with the file/inode split and
++ In [2] (the delayed binding approach to solve intra-host migration), I
+  also tried flipping the refcounting, and that without the gmem
+  file/inode split. (Refcounting in [2] is buggy because the file can't
+  take a refcount on KVM, but it would work without taking that refcount)
+
+[1] https://lore.kernel.org/lkml/cover.1691446946.git.ackerleytng@google.co=
+m/T/
+[2] https://github.com/googleprodkernel/linux-cc/commit/dd5ac5e53f14a1ef991=
+5c9c1e4cc1006a40b49df
