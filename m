@@ -2,120 +2,143 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10165C001B0
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Aug 2023 18:46:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 782FAC04A6A
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Aug 2023 18:59:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235480AbjHOSqE (ORCPT
+        id S239549AbjHOS6b (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Aug 2023 14:46:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53716 "EHLO
+        Tue, 15 Aug 2023 14:58:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239378AbjHOSpd (ORCPT
+        with ESMTP id S239643AbjHOS6H (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Aug 2023 14:45:33 -0400
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0B1835AC
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Aug 2023 11:44:57 -0700 (PDT)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-589e0eef06dso26062387b3.2
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Aug 2023 11:44:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1692125094; x=1692729894;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vZps84ysRP0NeVlJT28XZWO+nki5NsVjjdBZ2Y0DhN0=;
-        b=JY8njen4h1XecFvkkWfBdWvexIzjMjfJBUd0Zsm3/1rmCvMVr0VlWBR09W0sZS/621
-         D2DqREf+g/I7hWRrGBE99r7qwAm43Zti/84EqT6lkHbRZNJDREKWO8Xwao0bwRfzDpo/
-         mUc5WH72/XGjrOinL86MH2fiSF47A0Q2YqInm/Vts647Kc5iqGvXkl4lbxnLlCIMxHKC
-         ghmATK/7J+M2FgAEqRZxRNpX3f+eWz+PulVpM3eIUma5PsxeyzaxZBXJ/fDCE2e0gWWq
-         DvJkEMwbPalbZS4QMkhjQvgiNmXd8tM6Rbnjhj/0sO6jc577WzN7ziWQghnwszAGTvA+
-         QbtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692125094; x=1692729894;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vZps84ysRP0NeVlJT28XZWO+nki5NsVjjdBZ2Y0DhN0=;
-        b=TPxRGhBZRFpz5t2NdASp150OYXCCgitWxrZdF1V3nus+ODYTf/OhVZRYeXgLsQjHaY
-         ken/xRpTai2ei7DLMsiHlj2MESDA9yefot+tq5wQbt41e4u+Kx1ZuFFvrHrOv6Uxtt6u
-         sQOtXkGdEPX2DY3YcwbGk1P5GKeTxmvGILAjlgXFbSHjaDFupFt9GrdgelOFmHS+Md9p
-         jrdTrXH60+cQPAJHL8uqt8SKImYhkjVY9Ce5mn6KGDJlFQtpz8dUgHtvCTI9KfBR0p7r
-         Q0a8OplH8ifFOoHKTvyPoZjeKeG9yqTnVpaIi1o56hnB357sc6rlmaEWmdqumtZl65Mh
-         aqrg==
-X-Gm-Message-State: AOJu0Yw1Q2mxgUxL9HvgFr34J03xP5eHhk1tvpMx84E4V1EDYu9tEAX5
-        bjuRuhyOITw1UCaMsGrmB6/itHQX3qqHXnbnfggY
-X-Google-Smtp-Source: AGHT+IHx8o0tREZgd80T1D1EvXrYw6lYsELJicHooOd7UFD+IsRuzuHRtwAOfNqacGvlfkvvf80IxXfCwrgpjqTabic=
-X-Received: by 2002:a0d:ca8d:0:b0:589:eeb6:b503 with SMTP id
- m135-20020a0dca8d000000b00589eeb6b503mr5786073ywd.35.1692125094192; Tue, 15
- Aug 2023 11:44:54 -0700 (PDT)
+        Tue, 15 Aug 2023 14:58:07 -0400
+Received: from out-22.mta0.migadu.com (out-22.mta0.migadu.com [91.218.175.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 227D7D1
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Aug 2023 11:58:01 -0700 (PDT)
+Message-ID: <afdc1b5f-650e-99a6-7fe8-ccd6463066f9@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1692125880;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=I5DcgThCjjtE1+nYureWow+fA/SCBcwrGd6zc9WACKM=;
+        b=rSvIj7fRML9vmcrA9nhPpNeVu4VEXDPVQZGAKxuORdlmijW7hssGuyZy9lT+z9uiFzAG5p
+        89liqVk4ra5EJjydxE7yrMUDLiQ1MOXke6kbk+6Ajwkeg7Bejl7HC+Akd7JykIlbGd/GM7
+        5tWVZG8W0DWS9XWMzfXR98ebD5W3PWE=
+Date:   Tue, 15 Aug 2023 11:57:52 -0700
 MIME-Version: 1.0
-References: <36b65eb1-ccbf-8b81-468f-b8d88c4be5a3@I-love.SAKURA.ne.jp>
-In-Reply-To: <36b65eb1-ccbf-8b81-468f-b8d88c4be5a3@I-love.SAKURA.ne.jp>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 15 Aug 2023 14:44:43 -0400
-Message-ID: <CAHC9VhTLQjjQ0QMfBDHYCz9LOAuO=rJWSDEUqPsFE+dowFbN=Q@mail.gmail.com>
-Subject: Re: [PATCH] audit: add task history record
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-audit@redhat.com, audit@vger.kernel.org,
-        Steve Grubb <sgrubb@redhat.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH mptcp-next v13 4/4] selftests/bpf: Add mptcpify test
+To:     Geliang Tang <geliang.tang@suse.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Mat Martineau <martineau@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Simon Horman <horms@kernel.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, mptcp@lists.linux.dev,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+References: <cover.1691808484.git.geliang.tang@suse.com>
+ <15a618b03f65177166adf2850d4159cd4b77dfb1.1691808484.git.geliang.tang@suse.com>
+ <00809f4a-e7ca-bf53-7824-e22791ee6738@linux.dev>
+ <20230815100816.GA24858@bogon>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20230815100816.GA24858@bogon>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 11, 2023 at 6:58=E2=80=AFAM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> When an unexpected system event occurs, the administrator may want to
-> identify which application triggered the event. For example, unexpected
-> process termination is still a real concern enough to write articles
-> like https://access.redhat.com/solutions/165993 .
->
-> This patch adds a record which emits TOMOYO-like task history information
-> into the audit logs for better understanding of unexpected system events.
->
->   type=3DUNKNOWN[1340] msg=3Daudit(1691750738.271:108): history=3D"name=
-=3Dswapper/0;pid=3D1;start=3D20230811194329=3D>name=3Dinit;pid=3D1;start=3D=
-20230811194343=3D>name=3Dsystemd;pid=3D1;start=3D20230811194439=3D>name=3Ds=
-shd;pid=3D3660;start=3D20230811104504=3D>name=3Dsshd;pid=3D3767;start=3D202=
-30811104535"
+On 8/15/23 3:08 AM, Geliang Tang wrote:
+> On Mon, Aug 14, 2023 at 11:23:49PM -0700, Martin KaFai Lau wrote:
+>> On 8/11/23 7:54 PM, Geliang Tang wrote:
+>>> +static int verify_mptcpify(int server_fd)
+>>> +{
+>>> +	socklen_t optlen;
+>>> +	char cmd[256];
+>>> +	int protocol;
+>>> +	int err = 0;
+>>> +
+>>> +	optlen = sizeof(protocol);
+>>> +	if (!ASSERT_OK(getsockopt(server_fd, SOL_SOCKET, SO_PROTOCOL, &protocol, &optlen),
+>>> +		       "getsockopt(SOL_PROTOCOL)"))
+>>> +		return -1;
+>>> +
+>>> +	if (!ASSERT_EQ(protocol, IPPROTO_MPTCP, "protocol isn't MPTCP"))
+>>> +		err++;
+>>> +
+>>> +	/* Output of nstat:
+>>> +	 *
+>>> +	 * #kernel
+>>> +	 * MPTcpExtMPCapableSYNACKRX       1                  0.0
+>>> +	 */
+>>> +	snprintf(cmd, sizeof(cmd),
+>>> +		 "ip netns exec %s nstat -asz %s | awk '%s' | grep -q '%s'",
+>>> +		 NS_TEST, "MPTcpExtMPCapableSYNACKRX",
+>>> +		 "NR==1 {next} {print $2}", "1");
+>>
+>> Is the mp-capable something that the regular mptcp user want to learn from a
+>> fd also? Does it have a simpler way like to learn this, eg. getsockopt(fd,
+>> SOL_MPTCP, MPTCP_xxx), instead of parsing text output?
+> 
+> Thanks Martin. Yes, you're right. A better one is using getsockopt
+> (MPTCP_INFO) to get the mptcpi_flags, then test the FALLBACK bit to make
+> sure this MPTCP connection didn't fallback. This is, in other word, this
+> MPTCP connection has been established correctly. Something like this:
+> 
+> +       optlen = sizeof(info);
+> +       if (!ASSERT_OK(getsockopt(fd, SOL_MPTCP, MPTCP_INFO, &info, &optlen),
+> +                      "getsockopt(MPTCP_INFO)"))
+> +               return -1;
+> +
+> +       if (!ASSERT_FALSE(info.mptcpi_flags & MPTCP_INFO_FLAG_FALLBACK,
+> +                         "MPTCP fallback"))
+> +               err++;
+> 
+> It's necessary to add this further check after the MPTCP protocol check
+> using getsockopt(SOL_PROTOCOL). Since in some cases, the MPTCP protocol
+> check is not enough. Say, if we change TCP protocol into MPTCP using
+> "cgroup/sock_create", the hook of BPF_CGROUP_RUN_PROG_INET_SOCK in
+> inet_create(), this place is too late to change the protocol. Although
+> sk->sk_protocol is set to MPTCP correctly, and the MPTCP protocol check
+> using getsockopt(SOL_PROTOCOL) will pass. This MPTCP connection will
+> fallback to TCP connection. So this further check is needed.
 
-While I respect your persistence, we've talked about this quite a bit
-already in other threads.  What you are trying to do is already
-possible with audit and/or TOMOYO enabled and configured so I see no
-reason why we want to merge this.  I understand your frustration that
-TOMOYO is not enabled by your prefered distribution, but adding
-additional (and arguably redundant code) code to the upstream kernel
-is not a solution I am willing to support and maintain long term.
+If I read it correctly, it sounds like the "ip netns... nstat.... awk...grep..." 
+can be replaced with the getsockopt(MPTCP_INFO)?  If that is the case, could you 
+respin one more time to do getsockopt(MPTCP_INFO) instead? I would like the test 
+to avoid parsing text output and have less dependency on external binary/library 
+if possible (On top of 'ip', the above uses nstat, awk, grep...). This will make 
+the bpf CI and other developers' environment tricky to maintain. eg. fwiw, 
+although unrelated to the commands used above, my dev environment suddenly like 
+to give this text output when I run "e"grep: "egrep: warning: egrep is 
+obsolescent; using grep -E"
 
-> To be able to avoid bloating audit log files due to this information, thi=
-s
-> patch uses audit_history=3D kernel command line parameter that controls m=
-ax
-> length of history in bytes (default is 1024, and setting to 0 disables
-> recording and emitting).
->
-> Unlike execve()'s argv record, records in this history information is
-> emitted as one string in order to reduce bloat of the audit log files.
-> This information can be split into an array using =3D> as the tokenizer.
-> But don't expect that you can compare array elements throughout the whole
-> audit logs by splitting into an array, for old records get removed from
-> history when history became too long to append the newest record. This
-> history information is meant to be interpreted by humans rather than be
-> analyzed by programs.
->
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> ---
->  fs/exec.c                  |   1 +
->  include/linux/audit.h      |   5 ++
->  include/linux/sched.h      |   1 +
->  include/uapi/linux/audit.h |   1 +
->  init/init_task.c           |   7 +++
->  kernel/audit.c             |   1 +
->  kernel/auditsc.c           | 108 +++++++++++++++++++++++++++++++++++++
->  7 files changed, 124 insertions(+)
+>>
+>>> +	if (!ASSERT_OK(system(cmd), "No MPTcpExtMPCapableSYNACKRX found!"))
+>>
+>>
 
---=20
-paul-moore.com
