@@ -2,89 +2,97 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56954C0015E
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Aug 2023 20:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8260C04FE0
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Aug 2023 20:32:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240146AbjHOUFA (ORCPT
+        id S237915AbjHOUby (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Aug 2023 16:05:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40852 "EHLO
+        Tue, 15 Aug 2023 16:31:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240140AbjHOUEg (ORCPT
+        with ESMTP id S237837AbjHOUbV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Aug 2023 16:04:36 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA9119A7
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Aug 2023 13:04:35 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id af79cd13be357-7658430eb5dso512770085a.2
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Aug 2023 13:04:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1692129874; x=1692734674;
-        h=in-reply-to:references:subject:to:from:message-id:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BxBcBZ5izURGaV85QiqkgIIt0uW9MKUgeI/7gZxjeAM=;
-        b=Hs1LdeO1bMOezQQmtOJh4tQ8RppcJpDww1RyECA+NBNbh+o67S+EX0IhWuS6XFliIu
-         ox+a7W+tiPavrDH0nDeSdzK76OZpoDVgGRBLPJlqL6Az4NNnijixjG5QWQmeg2vCic/1
-         uU96PJV67hQT6O4vuQjJ4Y1GoLBaK9CfVI4UXx2140pVO8nkpoRd36r8q2icXyXObkdr
-         Jljk+lfVg/mmxu1XwvccHXcWcY0ZOfQgJTHvBzGZRap7YW3CQ0WwrdMuVTfMFY6Q1cCd
-         OPSn2MiTOWFtJK6eGbXQFQ22+ZyemAPucn01UIRjcX8QxIXUo8eWrineAmhLa4kRseEL
-         2OMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692129874; x=1692734674;
-        h=in-reply-to:references:subject:to:from:message-id:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BxBcBZ5izURGaV85QiqkgIIt0uW9MKUgeI/7gZxjeAM=;
-        b=Tf2+NMgfX+3acqcr8VkQhtK58WiyJwAb3eWcqzOxGoE6vt09oq5lF0ddlUyE9/rAbb
-         NXrWy9rAwLx1M/EkI3TqAPY5lcMG0U3LXOeTUQJBdHTafH5Xx+fX3QBIGeQN9c2lVf4E
-         WfHB3P0RaMbm5yi3sgs4wdsD9fG1ErDoj0P5RwBPhi07iil2JZLMpH6mOivXBlBh4eiD
-         wAS04xtODO2pEYuWadAQGllKsNR0mykuO1hYFBymmTorc57OIA/RkDL9D1XuajFQSNuz
-         ETUMOFFgH7LWBuDL6uDImmlqtggIOMxwyCVQ1q7+IA+b4kjoSMS3ke/udwWf46Ns2yz4
-         vqQQ==
-X-Gm-Message-State: AOJu0YypWf+EWRRHq3mcEoVLVkoThV80GqKPMuyVVZdBa+Yit+82tkN8
-        FmeO9jgH6KoG6ClrNhwn376L
-X-Google-Smtp-Source: AGHT+IGXKkLXbf2kSy5nxFQoOTgiIrJcf4VQzgmwi7i6SkA7G7K2scNqrhMtLFn0vi6s58wg05XIxg==
-X-Received: by 2002:a05:620a:240a:b0:765:a77c:7219 with SMTP id d10-20020a05620a240a00b00765a77c7219mr19235159qkn.0.1692129874156;
-        Tue, 15 Aug 2023 13:04:34 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id g13-20020ac8468d000000b004033c3948f9sm4016624qto.42.2023.08.15.13.04.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Aug 2023 13:04:33 -0700 (PDT)
-Date:   Tue, 15 Aug 2023 16:04:33 -0400
-Message-ID: <80c3c2b488a603da62a0fd15201dec0b.paul@paul-moore.com>
-From:   Paul Moore <paul@paul-moore.com>
-To:     Khadija Kamran <kamrankhadijadj@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        ztarkhani@microsoft.com,
-        Alison Schofield <alison.schofield@intel.com>
-Subject: Re: [PATCH] lsm: constify the 'file' parameter in  security_binder_transfer_file()
-References: <ZNelvBCFG7wZt24g@gmail.com>
-In-Reply-To: <ZNelvBCFG7wZt24g@gmail.com>
+        Tue, 15 Aug 2023 16:31:21 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 941331BF0;
+        Tue, 15 Aug 2023 13:31:14 -0700 (PDT)
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37FKRhBl019876;
+        Tue, 15 Aug 2023 20:31:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=l8eaVAtIzk7e62x4m+EROozGwJIj8lDVod4vW7iHGWc=;
+ b=XaImgLvSSYxs8xR1h9Gr82KL3Dhfi++JbAjOeHez2Fr0w7y2/LcX9RIb/ug3zo+78ZKZ
+ 1VA6Lfyk4sm8Y539PMhmf/lrOUemduQliH3YROCHHzTbd1102sLLTjY+HJLwVXHsN8OT
+ G/etvqzSZ9iGKh+9dlGsod0Qki2D5fgJLCA4pycQX/MfmI6o3QgdWR7i+aIiuBF8XcHn
+ 2mKPbSNfxfMaMF2q4PyIZmbJSDRmbbG8AeapwYxlAsagstIc4vbGzMK3dfVSdbdulGGe
+ WmexPeZQUkG4CxAZr3O/GTpppHdJyzSCFwOdy+Rm/YaNplyDLzG0qvL/e5mMfnMw5GXH Vw== 
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sggdqg1s9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Aug 2023 20:31:01 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37FJ6EgX013413;
+        Tue, 15 Aug 2023 20:31:00 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+        by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3sepmjq472-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Aug 2023 20:31:00 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+        by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37FKV0De64684426
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Aug 2023 20:31:00 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ED1E058062;
+        Tue, 15 Aug 2023 20:30:59 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1FFEF5805C;
+        Tue, 15 Aug 2023 20:30:59 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.88.161])
+        by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Tue, 15 Aug 2023 20:30:59 +0000 (GMT)
+Message-ID: <5f0bfbfac70978726fbc88891ad0410514b76397.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 6/6] integrity: PowerVM support for loading third
+ party code signing keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-security-module@vger.kernel.org, inux-kernel@vger.kernel.org
+Date:   Tue, 15 Aug 2023 16:30:58 -0400
+In-Reply-To: <20230815112722.1591829-7-nayna@linux.ibm.com>
+References: <20230815112722.1591829-1-nayna@linux.ibm.com>
+         <20230815112722.1591829-7-nayna@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: noj0xbLhBk11GmQZtRJ1jF19W9c4HqwC
+X-Proofpoint-GUID: noj0xbLhBk11GmQZtRJ1jF19W9c4HqwC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-15_19,2023-08-15_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0 clxscore=1011
+ mlxscore=0 suspectscore=0 adultscore=0 impostorscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2308150181
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Aug 12, 2023 Khadija Kamran <kamrankhadijadj@gmail.com> wrote:
+On Tue, 2023-08-15 at 07:27 -0400, Nayna Jain wrote:
+> On secure boot enabled PowerVM LPAR, third party code signing keys are
+> needed during early boot to verify signed third party modules. These
+> third party keys are stored in moduledb object in the Platform
+> KeyStore (PKS).
 > 
-> SELinux registers the implementation for the "binder_transfer_file"
-> hook. Looking at the function implementation we observe that the
-> parameter "file" is not changing.
+> Load third party code signing keys onto .secondary_trusted_keys keyring.
 > 
-> Mark the "file" parameter of LSM hook security_binder_transfer_file() as
-> "const" since it will not be changing in the LSM hook.
-> 
-> Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
-> ---
->  include/linux/lsm_hook_defs.h | 2 +-
->  include/linux/security.h      | 4 ++--
->  security/security.c           | 2 +-
->  security/selinux/hooks.c      | 8 ++++----
->  4 files changed, 8 insertions(+), 8 deletions(-)
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
 
-Looks good to me, merged into lsm/next, thanks!
+Reviewed-and-tested-by: Mimi Zohar <zohar@linux.ibm.com>
 
---
-paul-moore.com
