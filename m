@@ -2,123 +2,138 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54817C04A6A
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Aug 2023 14:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDE1C18E72
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Aug 2023 19:00:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238581AbjHPOoF (ORCPT
+        id S1345593AbjHPS7a (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Aug 2023 10:44:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58926 "EHLO
+        Wed, 16 Aug 2023 14:59:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343862AbjHPOn6 (ORCPT
+        with ESMTP id S1345674AbjHPS70 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Aug 2023 10:43:58 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B9F62D5F;
-        Wed, 16 Aug 2023 07:43:46 -0700 (PDT)
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37GEYkD8009111;
-        Wed, 16 Aug 2023 14:43:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=eV6cfVJfXrjPrtlfw4ceYY4u5opv4sA1bvwtpNO8nAM=;
- b=sZO5Jsb9zlBtlDSl2L2yBRm1BOrpPG/NymbzPlN8RMqp/mBCKwl4aZ1ewMCiIFw/xwQE
- 4oN65CV/dFvQ9zLp2tYvfNfH22QxugQrp2cbMJBa144uN3FtmntPgDlz2wKoxWlLAEs6
- ZGIqMS7WLBRjad4PVlGGYCT20kfjn8ZTTkk3g6iSscGw9LBaCSR/UfQ+fHMVlrunBLhM
- JVxAUhqLfIRG4hfdASznO9a8isKvFV7ra9102FZHnbKIz3V2TaJlxnCNWp/RfBncrQbi
- 4acbpHa3nCfwn1PwF7yOS+2G35/5QCEeaKJH9TiziEj8FceN/Uj55ODkaaeYcCTU83SM 8g== 
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sh0bh0quc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Aug 2023 14:43:34 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37GE1Oxh018848;
-        Wed, 16 Aug 2023 14:42:07 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-        by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3seq41ms9b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Aug 2023 14:42:07 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-        by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37GEg4k953543262
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Aug 2023 14:42:04 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8A76E2004B;
-        Wed, 16 Aug 2023 14:42:04 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C2E8020040;
-        Wed, 16 Aug 2023 14:42:02 +0000 (GMT)
-Received: from [9.43.32.205] (unknown [9.43.32.205])
-        by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-        Wed, 16 Aug 2023 14:42:02 +0000 (GMT)
-Message-ID: <dc9a4271-8f26-5c2d-27e9-8a6e16abdf37@linux.ibm.com>
-Date:   Wed, 16 Aug 2023 20:12:01 +0530
+        Wed, 16 Aug 2023 14:59:26 -0400
+Received: from out-39.mta1.migadu.com (out-39.mta1.migadu.com [95.215.58.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4E6F2128
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Aug 2023 11:59:24 -0700 (PDT)
+Message-ID: <3590084f-bc61-b2c7-ed1b-dd4caa85fdcd@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1692212362;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PCFj1wUEPbKCUAicOTDsxyUO5WEYUOvgrXDS/ukJ/vw=;
+        b=pVduOOAy3dw3c4iuelYrt3xow2jG7+SQcWBUGfqv58WAu6NkLuNcB3VtXyyrEGaRv549MB
+        ppQQsVgUAivt2n09prjT8L27YETLhN/YnQrzxWne4u//uOPeyx4qZiZqV/FNKIyzfzL9jj
+        lkpc3ZHx2YYM6kTZCPi0DdwbLph1aLY=
+Date:   Wed, 16 Aug 2023 11:59:12 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.14.0
-Subject: Re: [PATCH v4 5/6] integrity: PowerVM machine keyring enablement
+Subject: Re: [PATCH bpf-next v14 4/4] selftests/bpf: Add mptcpify test
 Content-Language: en-US
-To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
+To:     Geliang Tang <geliang.tang@suse.com>
+Cc:     bpf@vger.kernel.org, netdev@vger.kernel.org, mptcp@lists.linux.dev,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Yonghong Song <yonghong.song@linux.dev>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Mat Martineau <martineau@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
         Paul Moore <paul@paul-moore.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-security-module@vger.kernel.org, inux-kernel@vger.kernel.org
-References: <20230815112722.1591829-1-nayna@linux.ibm.com>
- <20230815112722.1591829-6-nayna@linux.ibm.com>
-From:   R Nageswara Sastry <rnsastry@linux.ibm.com>
-In-Reply-To: <20230815112722.1591829-6-nayna@linux.ibm.com>
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Simon Horman <horms@kernel.org>
+References: <cover.1692147782.git.geliang.tang@suse.com>
+ <364e72f307e7bb38382ec7442c182d76298a9c41.1692147782.git.geliang.tang@suse.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <364e72f307e7bb38382ec7442c182d76298a9c41.1692147782.git.geliang.tang@suse.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: R2ruOT0bP3U2etym7pfgUh_qJh_ynTK9
-X-Proofpoint-ORIG-GUID: R2ruOT0bP3U2etym7pfgUh_qJh_ynTK9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-16_14,2023-08-15_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- spamscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 impostorscore=0
- lowpriorityscore=0 suspectscore=0 clxscore=1015 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308160125
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 15/08/23 4:57 pm, Nayna Jain wrote:
-> Update Kconfig to enable machine keyring and limit to CA certificates
-> on PowerVM. Only key signing CA keys are allowed.
+On 8/15/23 6:11 PM, Geliang Tang wrote:
+> Implement a new test program mptcpify: if the family is AF_INET or
+> AF_INET6, the type is SOCK_STREAM, and the protocol ID is 0 or
+> IPPROTO_TCP, set it to IPPROTO_MPTCP. It will be hooked in
+> update_socket_protocol().
 > 
-> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-> Reviewed-and-tested-by: Mimi Zohar <zohar@linux.ibm.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-Tested with trustedcadb, moduledb scenarios
-Tested-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
-
+> Extend the MPTCP test base, add a selftest test_mptcpify() for the
+> mptcpify case. Open and load the mptcpify test prog to mptcpify the
+> TCP sockets dynamically, then use start_server() and connect_to_fd()
+> to create a TCP socket, but actually what's created is an MPTCP
+> socket, which can be verified through 'getsockopt(SOL_PROTOCOL)'
+> and 'getsockopt(MPTCP_INFO)'.
+> 
+> Acked-by: Yonghong Song <yonghong.song@linux.dev>
+> Reviewed-by: Matthieu Baerts <matthieu.baerts@tessares.net>
+> Signed-off-by: Geliang Tang <geliang.tang@suse.com>
 > ---
->   security/integrity/Kconfig | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
+>   .../testing/selftests/bpf/prog_tests/mptcp.c  | 116 ++++++++++++++++++
+>   tools/testing/selftests/bpf/progs/mptcpify.c  |  20 +++
+>   2 files changed, 136 insertions(+)
+>   create mode 100644 tools/testing/selftests/bpf/progs/mptcpify.c
 > 
-> diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
-> index ec6e0d789da1..232191ee09e3 100644
-> --- a/security/integrity/Kconfig
-> +++ b/security/integrity/Kconfig
-> @@ -67,7 +67,9 @@ config INTEGRITY_MACHINE_KEYRING
->   	depends on SECONDARY_TRUSTED_KEYRING
->   	depends on INTEGRITY_ASYMMETRIC_KEYS
->   	depends on SYSTEM_BLACKLIST_KEYRING
-> -	depends on LOAD_UEFI_KEYS
-> +	depends on LOAD_UEFI_KEYS || LOAD_PPC_KEYS
-> +	select INTEGRITY_CA_MACHINE_KEYRING if LOAD_PPC_KEYS
-> +	select INTEGRITY_CA_MACHINE_KEYRING_MAX if LOAD_PPC_KEYS
->   	help
->   	 If set, provide a keyring to which Machine Owner Keys (MOK) may
->   	 be added. This keyring shall contain just MOK keys.  Unlike keys
+> diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/testing/selftests/bpf/prog_tests/mptcp.c
+> index 3d3999067e27..68ebf9735e16 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
+> @@ -2,13 +2,30 @@
+>   /* Copyright (c) 2020, Tessares SA. */
+>   /* Copyright (c) 2022, SUSE. */
+>   
+> +#include <linux/mptcp.h>
+bpf CI failed 
+(https://github.com/kernel-patches/bpf/actions/runs/5882006207/job/15951617063):
 
--- 
-Thanks and Regards
-R.Nageswara Sastry
+   /tmp/work/bpf/bpf/tools/testing/selftests/bpf/prog_tests/mptcp.c:5:10: fatal 
+error: 'linux/mptcp.h' file not found
+   #include <linux/mptcp.h>
+
+I fixed that by copying the 'struct mptcp_info' but renamed to 'struct 
+__mptcp_info' just in case any fallout in the future.
+
+My environment also does not have SOL_MPTCP, so I do an ifndef for it also.
+
+> +#include <netinet/in.h>
+>   #include <test_progs.h>
+>   #include "cgroup_helpers.h"
+>   #include "network_helpers.h"
+>   #include "mptcp_sock.skel.h"
+> +#include "mptcpify.skel.h"
+>   
+>   #define NS_TEST "mptcp_ns"
+>   
+> +#ifndef IPPROTO_MPTCP
+> +#define IPPROTO_MPTCP 262
+> +#endif
+> +
+> +#ifndef MPTCP_INFO
+> +#define MPTCP_INFO		1
+> +#endif
+> +#ifndef MPTCP_INFO_FLAG_FALLBACK
+> +#define MPTCP_INFO_FLAG_FALLBACK		_BITUL(0)
+
+I have to add '#include <linux/const.h>' for the _BITUL() here also....
+
+The set is applied. Please follow up if I make mistake on those fixes.
+
