@@ -2,153 +2,187 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B41FC001B0
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Aug 2023 13:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29869C04FDF
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Aug 2023 14:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245705AbjHPNyn (ORCPT
+        id S238235AbjHPOl0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Aug 2023 09:54:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40980 "EHLO
+        Wed, 16 Aug 2023 10:41:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235546AbjHPNyL (ORCPT
+        with ESMTP id S1343808AbjHPOlR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Aug 2023 09:54:11 -0400
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1098826B1
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Aug 2023 06:54:10 -0700 (PDT)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-58cbdf3eecaso6301527b3.0
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Aug 2023 06:54:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1692194049; x=1692798849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8P8KQwRllSmi1NLwh9WWVFV2msAXlqeZx1gKCUEZWtc=;
-        b=JNrdbub9jg3Rd1vE3Bi1EL+JyaxsfJTWgtAMd6rGkYTORXWJFutZk4/9puhZDee38s
-         n17s1s6D2goi/JaT+FfDJko/LB6+OGmaGs3/tkJzaQajFx0qTcoMcY09nJQUL8vpmF70
-         EuWgt1a98NXZBSQbsOSmPZC6dHo2gBvuD6b7tMH/qrE+kvumyoqgGotBLVzTl79DTf8R
-         qGu5DOa02at1cXJUELd3D5qrv8AlJ/+e/9WnwyAw9CaBzeSb2pe/p6MoU/mvzDH2G3cB
-         wbZ5CWEtzCfQsIJBfgl1IV+y9PyRQo5hfvX0NtVMEsR+auaafKKPo7TJooYpFjL6myUg
-         0asA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692194049; x=1692798849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8P8KQwRllSmi1NLwh9WWVFV2msAXlqeZx1gKCUEZWtc=;
-        b=d0gUnkIurbKWHF2oaToNFs4Ks/dyx1VgHUgU1jhDM9TE0I1xJR54c1xNnGLp+NbbiV
-         EcNz56R/dd7ufEO9v+R/LdHgJ3RKTV0oh8fDu9307WC+tXVuqRg9RgOsdnxMPfK8zhb4
-         WPWzxd3onwvLxV775oQ+Sv7dnboLPLXuwUgXXUGd2yyyKFB5HJylWRoZnvTqIziKGmnQ
-         S031MAjXIzsM/028TL+6EvoxtSacuYnqCh8i90uHEqzAapIopPy1M8QtvavUFiWijgac
-         vT0iAGhMMyKOxQa7b9tzoRMiVAiuSy/RnthASppsNzbdwZKuL/ysYLE2NrZwAmx+c8Fw
-         Rxcw==
-X-Gm-Message-State: AOJu0Yy+xHAUPBWQMXwdIV2mx3kvnI7AsY0FThaHuvXmgJrDFzrMi2XT
-        AVglQtl/A//vOupq2FlwA2o0gnFknDuMapG/KYr/
-X-Google-Smtp-Source: AGHT+IHB1ZhaV7FF5rurwVNAWtXSYkk01yX3izFX2omlCKCDMCSWprsPXt5C353QVqz40iBGAzxYwAswjfz2m7BehsA=
-X-Received: by 2002:a81:4e0c:0:b0:58c:4fbb:1bb7 with SMTP id
- c12-20020a814e0c000000b0058c4fbb1bb7mr1465119ywb.5.1692194049253; Wed, 16 Aug
- 2023 06:54:09 -0700 (PDT)
+        Wed, 16 Aug 2023 10:41:17 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07BA8273C;
+        Wed, 16 Aug 2023 07:41:08 -0700 (PDT)
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37GEdQj7020221;
+        Wed, 16 Aug 2023 14:40:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=1waCB4ES7jBPwgYqnxuZZXisMpuTJTeVygV2vRMlpYw=;
+ b=U6jdEwZ3KUeNoBe2dRxB66dqdyMjL8waDm0XTzGJOUOPwLBu8I41OQXNYRsKm1QVT2Dg
+ MMzBGcoPTix1pNJHpyvgIjulq9IYOZ/D7XMjuPWCwO7c1OVnd9D5NXjVoLylp/sX9Gv2
+ /9cUJU6Z4RE/DWts0pewvDoqgfb10DJ8av98xZtk504PKdm4xMObAtqRGekCqKUUuLZp
+ jJ263gdDJqbbXnTsmChM3/hDLQEjc7lI3NtqlJYLYISxXRD+eusWEvZvexpY2TbxbVWh
+ hgi3Mogt5YRJAjgWxtBSTV+MNf9x4SiDFEhWvkRQga1nrW6X3NHu9fHCOyvyVWJ6I+bz 2g== 
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sgy4utbwg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Aug 2023 14:40:57 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+        by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37GDjqai001107;
+        Wed, 16 Aug 2023 14:40:53 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+        by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3semsydpq3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Aug 2023 14:40:53 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37GEen3g22872680
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Aug 2023 14:40:49 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 22F012004D;
+        Wed, 16 Aug 2023 14:40:49 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6333D2004B;
+        Wed, 16 Aug 2023 14:40:47 +0000 (GMT)
+Received: from [9.43.32.205] (unknown [9.43.32.205])
+        by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Wed, 16 Aug 2023 14:40:47 +0000 (GMT)
+Message-ID: <cecf4c1d-e7be-ae64-d184-8d6f72948dff@linux.ibm.com>
+Date:   Wed, 16 Aug 2023 20:10:45 +0530
 MIME-Version: 1.0
-References: <36b65eb1-ccbf-8b81-468f-b8d88c4be5a3@I-love.SAKURA.ne.jp>
- <CAHC9VhTLQjjQ0QMfBDHYCz9LOAuO=rJWSDEUqPsFE+dowFbN=Q@mail.gmail.com> <b06dbdd8-d2f6-b190-5635-948c0a966103@I-love.SAKURA.ne.jp>
-In-Reply-To: <b06dbdd8-d2f6-b190-5635-948c0a966103@I-love.SAKURA.ne.jp>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 16 Aug 2023 09:53:58 -0400
-Message-ID: <CAHC9VhSz=3utr_CigGvkMEb6_avJUQq1Ak2smB7neSd76mzjFw@mail.gmail.com>
-Subject: Re: [PATCH] audit: add task history record
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-audit@redhat.com, audit@vger.kernel.org,
-        Steve Grubb <sgrubb@redhat.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.14.0
+Subject: Re: [PATCH v4 1/6] integrity: PowerVM support for loading CA keys on
+ machine keyring
+Content-Language: en-US
+To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-security-module@vger.kernel.org, inux-kernel@vger.kernel.org
+References: <20230815112722.1591829-1-nayna@linux.ibm.com>
+ <20230815112722.1591829-2-nayna@linux.ibm.com>
+From:   R Nageswara Sastry <rnsastry@linux.ibm.com>
+In-Reply-To: <20230815112722.1591829-2-nayna@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ywiIaqZSgUFwhM0b1c81sEw2HWQCZweR
+X-Proofpoint-ORIG-GUID: ywiIaqZSgUFwhM0b1c81sEw2HWQCZweR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-16_14,2023-08-15_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 mlxlogscore=999
+ mlxscore=0 impostorscore=0 spamscore=0 malwarescore=0 clxscore=1011
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2308160125
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 16, 2023 at 6:10=E2=80=AFAM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2023/08/16 3:44, Paul Moore wrote:
-> > On Fri, Aug 11, 2023 at 6:58=E2=80=AFAM Tetsuo Handa
-> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> >>
-> >> When an unexpected system event occurs, the administrator may want to
-> >> identify which application triggered the event. For example, unexpecte=
-d
-> >> process termination is still a real concern enough to write articles
-> >> like https://access.redhat.com/solutions/165993 .
-> >>
-> >> This patch adds a record which emits TOMOYO-like task history informat=
-ion
-> >> into the audit logs for better understanding of unexpected system even=
-ts.
-> >>
-> >>   type=3DUNKNOWN[1340] msg=3Daudit(1691750738.271:108): history=3D"nam=
-e=3Dswapper/0;pid=3D1;start=3D20230811194329=3D>name=3Dinit;pid=3D1;start=
-=3D20230811194343=3D>name=3Dsystemd;pid=3D1;start=3D20230811194439=3D>name=
-=3Dsshd;pid=3D3660;start=3D20230811104504=3D>name=3Dsshd;pid=3D3767;start=
-=3D20230811104535"
-> >
-> > While I respect your persistence, we've talked about this quite a bit
-> > already in other threads.  What you are trying to do is already
-> > possible with audit
->
-> How?
 
-If you configure audit to record exec() and friends you should have a
-proper history of the processes started on the system.
 
-> >                     and/or TOMOYO enabled and configured
->
-> Wrong. Since not all LSM hooks allow sleeping, TOMOYO is unable to
-> check sending signals. Also, TOMOYO is not using audit interface.
+On 15/08/23 4:57 pm, Nayna Jain wrote:
+> Keys that derive their trust from an entity such as a security officer,
+> administrator, system owner, or machine owner are said to have "imputed
+> trust". CA keys with imputed trust can be loaded onto the machine keyring.
+> The mechanism for loading these keys onto the machine keyring is platform
+> dependent.
+> 
+> Load keys stored in the variable trustedcadb onto the .machine keyring
+> on PowerVM platform.
+> 
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+> Reviewed-and-tested-by: Mimi Zohar <zohar@linux.ibm.com>
 
-I said "audit and/or TOMOYO"; I believe the "and/or" is important.  If
-I recall correctly, and perhaps I misunderstood you, you conceded that
-a combination of audit *and/or* TOMOYO would solve this issue.
+Tested with trustedcadb, moduledb scenarios
+Tested-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
 
-> >                                                          so I see no
-> > reason why we want to merge this.
->
-> This code makes it possible to record sending signals with TOMOYO-like co=
-ntext,
-> and we can avoid assigning LSM ID for this code if we can merge this code=
- as
-> a part of audit.
 
-If you want TOMOYO-like information, run TOMOYO.  If your preferred
-distribution doesn't support TOMOYO, you need to either ask them to
-support it, find a new distribution that does, or build your own
-kernel.
+> ---
+>   .../integrity/platform_certs/keyring_handler.c  |  8 ++++++++
+>   .../integrity/platform_certs/keyring_handler.h  |  5 +++++
+>   .../integrity/platform_certs/load_powerpc.c     | 17 +++++++++++++++++
+>   3 files changed, 30 insertions(+)
+> 
+> diff --git a/security/integrity/platform_certs/keyring_handler.c b/security/integrity/platform_certs/keyring_handler.c
+> index 8a1124e4d769..1649d047e3b8 100644
+> --- a/security/integrity/platform_certs/keyring_handler.c
+> +++ b/security/integrity/platform_certs/keyring_handler.c
+> @@ -69,6 +69,14 @@ __init efi_element_handler_t get_handler_for_mok(const efi_guid_t *sig_type)
+>   	return NULL;
+>   }
+>   
+> +__init efi_element_handler_t get_handler_for_ca_keys(const efi_guid_t *sig_type)
+> +{
+> +	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) == 0)
+> +		return add_to_machine_keyring;
+> +
+> +	return NULL;
+> +}
+> +
+>   /*
+>    * Return the appropriate handler for particular signature list types found in
+>    * the UEFI dbx and MokListXRT tables.
+> diff --git a/security/integrity/platform_certs/keyring_handler.h b/security/integrity/platform_certs/keyring_handler.h
+> index 212d894a8c0c..6f15bb4cc8dc 100644
+> --- a/security/integrity/platform_certs/keyring_handler.h
+> +++ b/security/integrity/platform_certs/keyring_handler.h
+> @@ -29,6 +29,11 @@ efi_element_handler_t get_handler_for_db(const efi_guid_t *sig_type);
+>    */
+>   efi_element_handler_t get_handler_for_mok(const efi_guid_t *sig_type);
+>   
+> +/*
+> + * Return the handler for particular signature list types for CA keys.
+> + */
+> +efi_element_handler_t get_handler_for_ca_keys(const efi_guid_t *sig_type);
+> +
+>   /*
+>    * Return the handler for particular signature list types found in the dbx.
+>    */
+> diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
+> index 170789dc63d2..339053d9726d 100644
+> --- a/security/integrity/platform_certs/load_powerpc.c
+> +++ b/security/integrity/platform_certs/load_powerpc.c
+> @@ -59,6 +59,7 @@ static __init void *get_cert_list(u8 *key, unsigned long keylen, u64 *size)
+>   static int __init load_powerpc_certs(void)
+>   {
+>   	void *db = NULL, *dbx = NULL, *data = NULL;
+> +	void *trustedca;
+>   	u64 dsize = 0;
+>   	u64 offset = 0;
+>   	int rc = 0;
+> @@ -120,6 +121,22 @@ static int __init load_powerpc_certs(void)
+>   		kfree(data);
+>   	}
+>   
+> +	data = get_cert_list("trustedcadb", 12,  &dsize);
+> +	if (!data) {
+> +		pr_info("Couldn't get trustedcadb list from firmware\n");
+> +	} else if (IS_ERR(data)) {
+> +		rc = PTR_ERR(data);
+> +		pr_err("Error reading trustedcadb from firmware: %d\n", rc);
+> +	} else {
+> +		extract_esl(trustedca, data, dsize, offset);
+> +
+> +		rc = parse_efi_signature_list("powerpc:trustedca", trustedca, dsize,
+> +					      get_handler_for_ca_keys);
+> +		if (rc)
+> +			pr_err("Couldn't parse trustedcadb signatures: %d\n", rc);
+> +		kfree(data);
+> +	}
+> +
+>   	return rc;
+>   }
+>   late_initcall(load_powerpc_certs);
 
-> >                                    I understand your frustration that
-> > TOMOYO is not enabled by your prefered distribution, but adding
-> > additional (and arguably redundant code) code to the upstream kernel
-> > is not a solution I am willing to support and maintain long term.
->
-> Never a redundant code. Absolutely no reason we don't want to merge.
-
-At this point in time, I obviously disagree.
-
-> The only choice is which approach (a standalone LSM module or a part of a=
-udit)
-> to go. Casey suggests this code as a part of audit. You must persuade Cas=
-ey
-> if you don't want this code as a part of audit.
-
-To be very clear, it isn't my duty to persuade Casey about anything
-(although if you've followed the LSM stacking saga you know I've
-definitely tried on occasion! <g>).  My role here is to maintain the
-audit subsystem and LSM layer (along with others which aren't relevant
-here) to the best of my ability.  A big part of that is ensuring we
-make "smart decisions" with respect to what code we merge as things
-like new LSMs and new audit records are things that we have to support
-*forever*.  Because of this rather extreme support burden I need to
-make sure that we aren't making our jobs (current developers, current
-maintainers, and those that will follow us) more difficult than
-absolutely necessary.  From my current perspective, the benefits of
-this patch, both in terms of unique functionality and durability of
-the design/code, are not enough to outweigh the support burden.
-
---=20
-paul-moore.com
+-- 
+Thanks and Regards
+R.Nageswara Sastry
