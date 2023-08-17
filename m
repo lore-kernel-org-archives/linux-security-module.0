@@ -2,255 +2,229 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C00BC25B7D
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Aug 2023 21:11:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9160C41513
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Aug 2023 12:55:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346305AbjHPVLK (ORCPT
+        id S1350996AbjHQMyx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Aug 2023 17:11:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34078 "EHLO
+        Thu, 17 Aug 2023 08:54:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346446AbjHPVLG (ORCPT
+        with ESMTP id S1350984AbjHQMyY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Aug 2023 17:11:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1B5F1B2;
-        Wed, 16 Aug 2023 14:11:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3581B63A7D;
-        Wed, 16 Aug 2023 21:11:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A09C433C8;
-        Wed, 16 Aug 2023 21:11:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692220263;
-        bh=mBsAzyfxfhI/6EYaCFRgUdv5YuaozjadXjfhd+MaaSI=;
-        h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-        b=Ovzvuj+D9ctGsAP6bh1Ya8cTeakvufD8PfcHUdiQM9DjwZ1dbouG7/GXgkH1z7aUi
-         GBZhF16GS1/vuSA3oY5oud2t8U0XeD1VxEDKjYa/Rdd6hJS+OG4x5F9G9g41IiqheO
-         hJmipQ7acAY74tbN0GcrAkdfQCVmEulOFFHxSSABEkkP9IF2fFHlkEX6tWwQvBrWea
-         zyFjUbJX68JCB0Pv1pQhWCRVVPO+UDUfCfq3Xm5bq/+bsg4AwDlW+oFBzrDql1cvH2
-         Y4e2WhqloA7EVZqdYBMNeIEx3KfhmsyG86Sodh15QHeTqAGt3tau0rXtq6vYo5tg5P
-         JAqxOUVnRSnzw==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Thu, 17 Aug 2023 00:11:00 +0300
-Message-Id: <CUUA0NGX7OT4.2TRQP2BRSVXRZ@suppilovahvero>
-To:     "Mimi Zohar" <zohar@linux.ibm.com>,
-        "Nayna Jain" <nayna@linux.ibm.com>,
-        <linux-integrity@vger.kernel.org>
-Cc:     "Eric Snowberg" <eric.snowberg@oracle.com>,
-        "Paul Moore" <paul@paul-moore.com>,
-        "linuxppc-dev" <linuxppc-dev@lists.ozlabs.org>,
-        <linux-security-module@vger.kernel.org>,
-        <inux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 6/6] integrity: PowerVM support for loading third
- party code signing keys
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.14.0
-References: <20230815112722.1591829-1-nayna@linux.ibm.com>
- <20230815112722.1591829-7-nayna@linux.ibm.com>
- <CUU9A4V7EREZ.2CPPYURBAGN95@suppilovahvero>
- <cedb2c8f7c9d3f22f5e3d570c039bfcf59cc5a6e.camel@linux.ibm.com>
-In-Reply-To: <cedb2c8f7c9d3f22f5e3d570c039bfcf59cc5a6e.camel@linux.ibm.com>
+        Thu, 17 Aug 2023 08:54:24 -0400
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8453D2D78
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Aug 2023 05:54:21 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RRQ1k5lxvzMq6cb;
+        Thu, 17 Aug 2023 12:54:18 +0000 (UTC)
+Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RRQ1k2CJ9zMpnPp;
+        Thu, 17 Aug 2023 14:54:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1692276858;
+        bh=gWg5Au5qNjkmKNc2JaoMVUE3kXc5yOumLKtoxOkV/Lo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xDMPiSE08gXVzmly5tGHSAcSTSAARAkOws6zkOlnV+Q71UNWdXj57nBM8klo9U92D
+         uP2wC5/DHtzHnBiaVUtBuSTvAvQWbIR7XhBx7tdIM6cRsQAU30eroqJNIFBl7c2YvR
+         k+rmIViKhELKhuI2uEg4Q924hsyr8/E7ciTfHaXo=
+Date:   Thu, 17 Aug 2023 14:54:10 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+Cc:     artem.kuzin@huawei.com, gnoack3000@gmail.com,
+        willemdebruijn.kernel@gmail.com, yusongping@huawei.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org
+Subject: Re: [PATCH v11.1] selftests/landlock: Add 11 new test suites
+ dedicated to network
+Message-ID: <20230817.theivaoThia9@digikod.net>
+References: <20230515161339.631577-11-konstantin.meskhidze@huawei.com>
+ <20230706145543.1284007-1-mic@digikod.net>
+ <d261a7ae-fd9c-902a-10f7-61d08cab0435@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d261a7ae-fd9c-902a-10f7-61d08cab0435@huawei.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu Aug 17, 2023 at 12:06 AM EEST, Mimi Zohar wrote:
-> On Wed, 2023-08-16 at 23:36 +0300, Jarkko Sakkinen wrote:
-> > On Tue Aug 15, 2023 at 2:27 PM EEST, Nayna Jain wrote:
-> > > On secure boot enabled PowerVM LPAR, third party code signing keys ar=
-e
-> > > needed during early boot to verify signed third party modules. These
-> > > third party keys are stored in moduledb object in the Platform
-> > > KeyStore (PKS).
-> > >
-> > > Load third party code signing keys onto .secondary_trusted_keys keyri=
-ng.
-> > >
-> > > Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-> > > ---
-> > >  certs/system_keyring.c                        | 30 +++++++++++++++++=
-++
-> > >  include/keys/system_keyring.h                 |  4 +++
-> > >  .../platform_certs/keyring_handler.c          |  8 +++++
-> > >  .../platform_certs/keyring_handler.h          |  5 ++++
-> > >  .../integrity/platform_certs/load_powerpc.c   | 17 +++++++++++
-> > >  5 files changed, 64 insertions(+)
-> > >
-> > > diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> > > index b348e0898d34..33841c91f12c 100644
-> > > --- a/certs/system_keyring.c
-> > > +++ b/certs/system_keyring.c
-> > > @@ -152,6 +152,36 @@ static __init struct key_restriction *get_builti=
-n_and_secondary_restriction(void
-> > > =20
-> > >  	return restriction;
-> > >  }
-> > > +
-> > > +/**
-> > > + * add_to_secondary_keyring - Add to secondary keyring.
-> > > + * @source: Source of key
-> > > + * @data: The blob holding the key
-> > > + * @len: The length of the data blob
-> > > + *
-> > > + * Add a key to the secondary keyring. The key must be vouched for b=
-y a key in the builtin,
-> > > + * machine or secondary keyring itself.
-> > > + */
-> > > +void __init add_to_secondary_keyring(const char *source, const void =
-*data, size_t len)
-> > > +{
-> > > +	key_ref_t key;
-> > > +	key_perm_t perm;
-> > > +
-> > > +	perm =3D (KEY_POS_ALL & ~KEY_POS_SETATTR) | KEY_USR_VIEW;
-> > > +
-> > > +	key =3D key_create_or_update(make_key_ref(secondary_trusted_keys, 1=
-),
-> > > +				   "asymmetric",
-> > > +				   NULL, data, len, perm,
-> > > +				   KEY_ALLOC_NOT_IN_QUOTA);
-> > > +	if (IS_ERR(key)) {
-> > > +		pr_err("Problem loading X.509 certificate from %s to secondary key=
-ring %ld\n",
-> > > +		       source, PTR_ERR(key));
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	pr_notice("Loaded X.509 cert '%s'\n", key_ref_to_ptr(key)->descript=
-ion);
-> > > +	key_ref_put(key);
-> > > +}
-> > >  #endif
-> > >  #ifdef CONFIG_INTEGRITY_MACHINE_KEYRING
-> > >  void __init set_machine_trusted_keys(struct key *keyring)
-> > > diff --git a/include/keys/system_keyring.h b/include/keys/system_keyr=
-ing.h
-> > > index 7e2583208820..8365adf842ef 100644
-> > > --- a/include/keys/system_keyring.h
-> > > +++ b/include/keys/system_keyring.h
-> > > @@ -50,9 +50,13 @@ int restrict_link_by_digsig_builtin_and_secondary(=
-struct key *keyring,
-> > >  						  const struct key_type *type,
-> > >  						  const union key_payload *payload,
-> > >  						  struct key *restriction_key);
-> > > +void __init add_to_secondary_keyring(const char *source, const void =
-*data, size_t len);
-> > >  #else
-> > >  #define restrict_link_by_builtin_and_secondary_trusted restrict_link=
-_by_builtin_trusted
-> > >  #define restrict_link_by_digsig_builtin_and_secondary restrict_link_=
-by_digsig_builtin
-> > > +static inline void __init add_to_secondary_keyring(const char *sourc=
-e, const void *data, size_t len)
-> > > +{
-> > > +}
-> > >  #endif
-> > > =20
-> > >  #ifdef CONFIG_INTEGRITY_MACHINE_KEYRING
-> > > diff --git a/security/integrity/platform_certs/keyring_handler.c b/se=
-curity/integrity/platform_certs/keyring_handler.c
-> > > index 586027b9a3f5..13ea17207902 100644
-> > > --- a/security/integrity/platform_certs/keyring_handler.c
-> > > +++ b/security/integrity/platform_certs/keyring_handler.c
-> > > @@ -78,6 +78,14 @@ __init efi_element_handler_t get_handler_for_ca_ke=
-ys(const efi_guid_t *sig_type)
-> > >  	return NULL;
-> > >  }
-> > > =20
-> > > +__init efi_element_handler_t get_handler_for_code_signing_keys(const=
- efi_guid_t *sig_type)
-> > > +{
-> > > +	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) =3D=3D 0)
-> > > +		return add_to_secondary_keyring;
-> > > +
-> > > +	return NULL;
-> > > +}
-> > > +
-> > >  /*
-> > >   * Return the appropriate handler for particular signature list type=
-s found in
-> > >   * the UEFI dbx and MokListXRT tables.
-> > > diff --git a/security/integrity/platform_certs/keyring_handler.h b/se=
-curity/integrity/platform_certs/keyring_handler.h
-> > > index 6f15bb4cc8dc..f92895cc50f6 100644
-> > > --- a/security/integrity/platform_certs/keyring_handler.h
-> > > +++ b/security/integrity/platform_certs/keyring_handler.h
-> > > @@ -34,6 +34,11 @@ efi_element_handler_t get_handler_for_mok(const ef=
-i_guid_t *sig_type);
-> > >   */
-> > >  efi_element_handler_t get_handler_for_ca_keys(const efi_guid_t *sig_=
-type);
-> > > =20
-> > > +/*
-> > > + * Return the handler for particular signature list types for code s=
-igning keys.
-> > > + */
-> > > +efi_element_handler_t get_handler_for_code_signing_keys(const efi_gu=
-id_t *sig_type);
-> > > +
-> > >  /*
-> > >   * Return the handler for particular signature list types found in t=
-he dbx.
-> > >   */
-> > > diff --git a/security/integrity/platform_certs/load_powerpc.c b/secur=
-ity/integrity/platform_certs/load_powerpc.c
-> > > index 339053d9726d..c85febca3343 100644
-> > > --- a/security/integrity/platform_certs/load_powerpc.c
-> > > +++ b/security/integrity/platform_certs/load_powerpc.c
-> > > @@ -60,6 +60,7 @@ static int __init load_powerpc_certs(void)
-> > >  {
-> > >  	void *db =3D NULL, *dbx =3D NULL, *data =3D NULL;
-> > >  	void *trustedca;
-> > > +	void *moduledb;
-> > >  	u64 dsize =3D 0;
-> > >  	u64 offset =3D 0;
-> > >  	int rc =3D 0;
-> > > @@ -137,6 +138,22 @@ static int __init load_powerpc_certs(void)
-> > >  		kfree(data);
-> > >  	}
-> > > =20
-> > > +	data =3D get_cert_list("moduledb", 9,  &dsize);
-> > > +	if (!data) {
-> > > +		pr_info("Couldn't get moduledb list from firmware\n");
-> > > +	} else if (IS_ERR(data)) {
-> > > +		rc =3D PTR_ERR(data);
-> > > +		pr_err("Error reading moduledb from firmware: %d\n", rc);
-> > > +	} else {
-> > > +		extract_esl(moduledb, data, dsize, offset);
-> > > +
-> > > +		rc =3D parse_efi_signature_list("powerpc:moduledb", moduledb, dsiz=
-e,
-> > > +					      get_handler_for_code_signing_keys);
-> > > +		if (rc)
-> > > +			pr_err("Couldn't parse moduledb signatures: %d\n", rc);
-> > > +		kfree(data);
-> > > +	}
-> > > +
-> > >  	return rc;
-> > >  }
-> > >  late_initcall(load_powerpc_certs);
-> > > --=20
-> > > 2.31.1
-> >=20
-> > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> >=20
-> > I can pick this. My last PR did not went too great partly because of
-> > mess with tpm_tis but now things are calmer.
->
-> Glad things have settled down.  Whatever you prefer is fine.   This
-> patch set needs to make it into linux-next as soon as possible.  Please
-> don't forget to add Nageswara's "Tested-by" and fix mine on 4/6.
->
-> --=20
-> thanks,
->
-> Mimi
+On Sat, Aug 12, 2023 at 12:03:02AM +0300, Konstantin Meskhidze (A) wrote:
+> 
+> 
+> 7/6/2023 5:55 PM, Mickaël Salaün пишет:
+> > From: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> > 
+> > This patch is a revamp of the v11 tests [1] with new tests (see the
+> > "Changes since v11" description).  I (Mickaël) only added the following
+> > todo list and the "Changes since v11" sections in this commit message.
+> > I think this patch is good but it would appreciate reviews.
+> > You can find the diff of my changes here but it is not really readable:
+> > https://git.kernel.org/mic/c/78edf722fba5 (landlock-net-v11 branch)
+> > [1] https://lore.kernel.org/all/20230515161339.631577-11-konstantin.meskhidze@huawei.com/
+> > TODO:
+> > - Rename all "net_service" to "net_port".
+> > - Fix the two kernel bugs found with the new tests.
+> > - Update this commit message with a small description of all tests.
+> > 
+> > These test suites try to check edge cases for TCP sockets
+> > bind() and connect() actions.
+> > 
+> > inet:
+> > * bind: Tests with non-landlocked/landlocked ipv4 and ipv6 sockets.
+> > * connect: Tests with non-landlocked/landlocked ipv4 and ipv6 sockets.
+> > * bind_afunspec: Tests with non-landlocked/landlocked restrictions
+> > for bind action with AF_UNSPEC socket family.
+> > * connect_afunspec: Tests with non-landlocked/landlocked restrictions
+> > for connect action with AF_UNSPEC socket family.
+> > * ruleset_overlap: Tests with overlapping rules for one port.
+> > * ruleset_expanding: Tests with expanding rulesets in which rules are
+> > gradually added one by one, restricting sockets' connections.
+> > * inval_port_format: Tests with wrong port format for ipv4/ipv6 sockets
+> > and with port values more than U16_MAX.
+> > 
+> > port:
+> > * inval: Tests with invalid user space supplied data:
+> >      - out of range ruleset attribute;
+> >      - unhandled allowed access;
+> >      - zero port value;
+> >      - zero access value;
+> >      - legitimate access values;
+> > * bind_connect_inval_addrlen: Tests with invalid address length.
+> > * bind_connect_unix_*_socket: Tests to make sure unix sockets' actions
+> > are not restricted by Landlock rules applied to TCP ones.
+> > 
+> > layout1:
+> > * with_net: Tests with network bind() socket action within
+> > filesystem directory access test.
+> > 
+> > Test coverage for security/landlock is 94.8% of 934 lines according
+> > to gcc/gcov-11.
+> > 
+> > Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> > Co-developed-by: Mickaël Salaün <mic@digikod.net>
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
 
-I'll apply the full (v4) patch set tomorrow after I wake up.
+[...]
 
-BR, Jarkko
+> > +// Kernel FIXME: tcp_sandbox_with_tcp and tcp_sandbox_with_udp
+> 
+>      I debugged the code in qemu and came to a conclusion that we don't
+> check if socket's family equals to address's one in check_socket_access(...)
+> function in net.c
+> So I added the next lines (marked with !!!):
+> 
+> 	static int check_socket_access(struct socket *const sock,
+> 			       struct sockaddr *const address,
+> 			       const int addrlen,
+> 			       const access_mask_t access_request)
+> {
+> 	__be16 port;
+> 	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_NET] = {};
+> 	const struct landlock_rule *rule;
+> 	access_mask_t handled_access;
+> 	struct landlock_id id = {
+> 		.type = LANDLOCK_KEY_NET_PORT,
+> 	};
+> 	const struct landlock_ruleset *const domain = 	
+>         get_current_net_domain();
+> 
+> 	if (!domain)
+> 		return 0;
+> 	if (WARN_ON_ONCE(domain->num_layers < 1))
+> 		return -EACCES;
+> 
+> 	/* FIXES network tests */ !!!
+> 	if (sock->sk->__sk_common.skc_family != address->sa_family) !!!
+> 		return 0; !!!
+> 	/* Checks if it's a TCP socket. */
+> 	if (sock->type != SOCK_STREAM)
+> 		return 0;
+> 	......
+> 
+> So now all network tests pass.
+> What do you think?
+
+Good catch, we should indeed check this inconsistency, but this fix also
+adds two issues:
+- sa_family is read before checking if it is out of bound (see
+  offsetofend() check bellow). A simple fix is to move down the new
+  check.
+- access request with AF_UNSPEC on a bind operation doesn't go through
+  the specific AF_UNSPEC handling branch.  There are two things to fix
+  here: handle AF_UNSPEC specifically in this new af_family check, and
+  add a new test to make sure bind with AF_UNSPEC and INADDR_ANY is
+  properly restricted.
+
+I'll reply to this message with a patch extending your fix.
+
+
+> 
+> > +TEST_F(ipv4, from_unix_to_inet)
+> > +{
+> > +	int unix_stream_fd, unix_dgram_fd;
+> > +
+> > +	if (variant->sandbox == TCP_SANDBOX) {
+> > +		const struct landlock_ruleset_attr ruleset_attr = {
+> > +			.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+> > +					      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> > +		};
+> > +		const struct landlock_net_service_attr tcp_bind_connect_p0 = {
+> > +			.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+> > +					  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> > +			.port = self->srv0.port,
+> > +		};
+> > +		int ruleset_fd;
+> > +
+> > +		/* Denies connect and bind to check errno value. */
+> > +		ruleset_fd = landlock_create_ruleset(&ruleset_attr,
+> > +						     sizeof(ruleset_attr), 0);
+> > +		ASSERT_LE(0, ruleset_fd);
+> > +
+> > +		/* Allows connect and bind for srv0.  */
+> > +		ASSERT_EQ(0, landlock_add_rule(ruleset_fd,
+> > +					       LANDLOCK_RULE_NET_SERVICE,
+> > +					       &tcp_bind_connect_p0, 0));
+> > +
+> > +		enforce_ruleset(_metadata, ruleset_fd);
+> > +		EXPECT_EQ(0, close(ruleset_fd));
+> > +	}
+> > +
+> > +	unix_stream_fd = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
+> > +	ASSERT_LE(0, unix_stream_fd);
+> > +
+> > +	unix_dgram_fd = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
+> 
+>         Minor mistyping SOCK_STREAM -> SOCK_DGRAM.
+
+Good catch!
+
+> 
+> > +	ASSERT_LE(0, unix_dgram_fd);
+> > +
+> > +	/* Checks unix stream bind and connect for srv0. */
+> > +	EXPECT_EQ(-EINVAL, bind_variant(unix_stream_fd, &self->srv0));
+> > +	EXPECT_EQ(-EINVAL, connect_variant(unix_stream_fd, &self->srv0));
+> > +
+> > +	/* Checks unix stream bind and connect for srv1. */
+> > +	EXPECT_EQ(-EINVAL, bind_variant(unix_stream_fd, &self->srv1))
+> > +	{
+> > +		TH_LOG("Wrong bind error: %s", strerror(errno));
+> > +	}
+> > +	EXPECT_EQ(-EINVAL, connect_variant(unix_stream_fd, &self->srv1));
+> > +
+> > +	/* Checks unix datagram bind and connect for srv0. */
+> > +	EXPECT_EQ(-EINVAL, bind_variant(unix_dgram_fd, &self->srv0));
+> > +	EXPECT_EQ(-EINVAL, connect_variant(unix_dgram_fd, &self->srv0));
+> > +
+> > +	/* Checks unix datagram bind and connect for srv0. */
+> 
+>         Should be "Checks... for srv1."
+
+indeed
+
+> 
+> > +	EXPECT_EQ(-EINVAL, bind_variant(unix_dgram_fd, &self->srv1));
+> > +	EXPECT_EQ(-EINVAL, connect_variant(unix_dgram_fd, &self->srv1));
+> > +}
