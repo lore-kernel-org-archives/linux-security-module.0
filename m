@@ -2,202 +2,186 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF86C77B7A
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Aug 2023 15:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E43C73C66
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Aug 2023 15:27:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378058AbjHRPPQ (ORCPT
+        id S1356915AbjHRP0i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Aug 2023 11:15:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34356 "EHLO
+        Fri, 18 Aug 2023 11:26:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378146AbjHRPPH (ORCPT
+        with ESMTP id S1378255AbjHRP0Z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Aug 2023 11:15:07 -0400
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32C654490;
-        Fri, 18 Aug 2023 08:14:38 -0700 (PDT)
-Received: from jerom (unknown [128.107.241.169])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: serge)
-        by mail.hallyn.com (Postfix) with ESMTPSA id 7061E746;
-        Fri, 18 Aug 2023 10:14:15 -0500 (CDT)
-Date:   Fri, 18 Aug 2023 10:14:12 -0500
-From:   Serge Hallyn <serge@hallyn.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net
-Subject: Re: [PATCH v13 08/11] Smack: implement setselfattr and getselfattr
- hooks
-Message-ID: <ZN+KxAMILtSvlKdK@jerom>
-References: <20230802174435.11928-1-casey@schaufler-ca.com>
- <20230802174435.11928-9-casey@schaufler-ca.com>
+        Fri, 18 Aug 2023 11:26:25 -0400
+Received: from out-27.mta1.migadu.com (out-27.mta1.migadu.com [95.215.58.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4791C4200
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Aug 2023 08:26:22 -0700 (PDT)
+Message-ID: <a1a18bec-e694-9a51-9d88-753baf0e6d2b@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1692372380; h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rpOkpEVZn5CL5W7EAycreIplkq31utU1vc2qT8RLF0I=;
+        b=eBSx5X1E+DVJxnvdttP+6LGiobNZ2bXieBHa4SYqjjpROll57ltjQHcGaqQuIsY2HRil/w
+        H4f++ByqLdjgVDSFB1I2rb2uicMilticELsV3OLADKQ70uGWAuPiZHzEWRH4CGdc4JfiOB
+        7MMqkNOEj6wpi9+abF+K/C+jZFB5YIg=
+Date:   Fri, 18 Aug 2023 08:26:06 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230802174435.11928-9-casey@schaufler-ca.com>
+Reply-To: yonghong.song@linux.dev
+Subject: Re: [PATCH bpf-next v14 1/4] bpf: Add update_socket_protocol hook
+Content-Language: en-US
+To:     Geliang Tang <geliang.tang@suse.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Mat Martineau <martineau@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Simon Horman <horms@kernel.org>
+Cc:     bpf@vger.kernel.org, netdev@vger.kernel.org, mptcp@lists.linux.dev,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+References: <cover.1692147782.git.geliang.tang@suse.com>
+ <ac84be00f97072a46f8a72b4e2be46cbb7fa5053.1692147782.git.geliang.tang@suse.com>
+ <20230818082417.GA20274@bogon>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20230818082417.GA20274@bogon>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 02, 2023 at 10:44:31AM -0700, Casey Schaufler wrote:
-> Implement Smack support for security_[gs]etselfattr.
-> Refactor the setprocattr hook to avoid code duplication.
-> 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  security/smack/smack_lsm.c | 94 ++++++++++++++++++++++++++++++++++++--
->  1 file changed, 89 insertions(+), 5 deletions(-)
-> 
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index f3e4b26c8a87..71c773fff971 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -3565,6 +3565,45 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
->  	return;
->  }
->  
-> +/**
-> + * smack_getselfattr - Smack current process attribute
-> + * @attr: which attribute to fetch
-> + * @ctx: buffer to receive the result
-> + * @size: available size in, actual size out
-> + * @flags: unused
-> + *
-> + * Fill the passed user space @ctx with the details of the requested
-> + * attribute.
-> + *
-> + * Returns 1, the number of attributes, on success, an error code otherwise.
 
-This comment is confusing.  is it saying that 1 is always the number
-of attributes?  Because the "if (rc >= 0) return 1;" ensure that
-it only ever returns 1 or < 0.
 
-> + */
-> +static int smack_getselfattr(unsigned int attr, struct lsm_ctx __user *ctx,
-> +			     size_t *size, u32 flags)
-> +{
-> +	struct smack_known *skp = smk_of_current();
-> +	int total;
-> +	int slen;
-> +	int rc;
-> +
-> +	if (attr != LSM_ATTR_CURRENT)
-> +		return -EOPNOTSUPP;
-> +
-> +	slen = strlen(skp->smk_known) + 1;
-> +	total = ALIGN(slen + sizeof(*ctx), 8);
-> +	if (total > *size)
-> +		rc = -E2BIG;
-> +	else if (ctx)
-> +		rc = lsm_fill_user_ctx(ctx, skp->smk_known, slen, LSM_ID_SMACK,
-> +				       0);
-> +	else
-> +		rc = 1;
-> +
-> +	*size = total;
-> +	if (rc >= 0)
-> +		return 1;
-> +	return rc;
-> +}
-> +
->  /**
->   * smack_getprocattr - Smack process attribute access
->   * @p: the object task
-> @@ -3594,8 +3633,8 @@ static int smack_getprocattr(struct task_struct *p, const char *name, char **val
->  }
->  
->  /**
-> - * smack_setprocattr - Smack process attribute setting
-> - * @name: the name of the attribute in /proc/.../attr
-> + * do_setattr - Smack process attribute setting
-> + * @attr: the ID of the attribute
->   * @value: the value to set
->   * @size: the size of the value
->   *
-> @@ -3604,7 +3643,7 @@ static int smack_getprocattr(struct task_struct *p, const char *name, char **val
->   *
->   * Returns the length of the smack label or an error code
->   */
-> -static int smack_setprocattr(const char *name, void *value, size_t size)
-> +static int do_setattr(u64 attr, void *value, size_t size)
->  {
->  	struct task_smack *tsp = smack_cred(current_cred());
->  	struct cred *new;
-> @@ -3618,8 +3657,8 @@ static int smack_setprocattr(const char *name, void *value, size_t size)
->  	if (value == NULL || size == 0 || size >= SMK_LONGLABEL)
->  		return -EINVAL;
->  
-> -	if (strcmp(name, "current") != 0)
-> -		return -EINVAL;
-> +	if (attr != LSM_ATTR_CURRENT)
-> +		return -EOPNOTSUPP;
->  
->  	skp = smk_import_entry(value, size);
->  	if (IS_ERR(skp))
-> @@ -3658,6 +3697,49 @@ static int smack_setprocattr(const char *name, void *value, size_t size)
->  	return size;
->  }
->  
-> +/**
-> + * smack_setselfattr - Set a Smack process attribute
-> + * @attr: which attribute to set
-> + * @ctx: buffer containing the data
-> + * @size: size of @ctx
-> + * @flags: unused
-> + *
-> + * Fill the passed user space @ctx with the details of the requested
-> + * attribute.
-> + *
-> + * Returns 0 on success, an error code otherwise.
-> + */
-> +static int smack_setselfattr(unsigned int attr, struct lsm_ctx *ctx,
-> +			     size_t size, u32 flags)
-> +{
-> +	int rc;
-> +
-> +	rc = do_setattr(attr, ctx->ctx, ctx->ctx_len);
-> +	if (rc > 0)
-> +		return 0;
-> +	return rc;
-> +}
-> +
-> +/**
-> + * smack_setprocattr - Smack process attribute setting
-> + * @name: the name of the attribute in /proc/.../attr
-> + * @value: the value to set
-> + * @size: the size of the value
-> + *
-> + * Sets the Smack value of the task. Only setting self
-> + * is permitted and only with privilege
-> + *
-> + * Returns the length of the smack label or an error code
-> + */
-> +static int smack_setprocattr(const char *name, void *value, size_t size)
-> +{
-> +	int attr = lsm_name_to_attr(name);
-> +
-> +	if (attr != LSM_ATTR_UNDEF)
-> +		return do_setattr(attr, value, size);
-> +	return -EINVAL;
-> +}
-> +
->  /**
->   * smack_unix_stream_connect - Smack access on UDS
->   * @sock: one sock
-> @@ -4970,6 +5052,8 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
->  
->  	LSM_HOOK_INIT(d_instantiate, smack_d_instantiate),
->  
-> +	LSM_HOOK_INIT(getselfattr, smack_getselfattr),
-> +	LSM_HOOK_INIT(setselfattr, smack_setselfattr),
->  	LSM_HOOK_INIT(getprocattr, smack_getprocattr),
->  	LSM_HOOK_INIT(setprocattr, smack_setprocattr),
->  
-> -- 
-> 2.41.0
+On 8/18/23 1:24 AM, Geliang Tang wrote:
+> On Wed, Aug 16, 2023 at 09:11:56AM +0800, Geliang Tang wrote:
+>> Add a hook named update_socket_protocol in __sys_socket(), for bpf
+>> progs to attach to and update socket protocol. One user case is to
+>> force legacy TCP apps to create and use MPTCP sockets instead of
+>> TCP ones.
+>>
+>> Define a fmod_ret set named bpf_mptcp_fmodret_ids, add the hook
+>> update_socket_protocol into this set, and register it in
+>> bpf_mptcp_kfunc_init().
+>>
+>> Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/79
+>> Acked-by: Matthieu Baerts <matthieu.baerts@tessares.net>
+>> Acked-by: Yonghong Song <yonghong.song@linux.dev>
+>> Signed-off-by: Geliang Tang <geliang.tang@suse.com>
+>> ---
+>>   net/mptcp/bpf.c | 15 +++++++++++++++
+>>   net/socket.c    | 26 +++++++++++++++++++++++++-
+>>   2 files changed, 40 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/net/mptcp/bpf.c b/net/mptcp/bpf.c
+>> index 5a0a84ad94af..8a16672b94e2 100644
+>> --- a/net/mptcp/bpf.c
+>> +++ b/net/mptcp/bpf.c
+>> @@ -19,3 +19,18 @@ struct mptcp_sock *bpf_mptcp_sock_from_subflow(struct sock *sk)
+>>   
+>>   	return NULL;
+>>   }
+>> +
+>> +BTF_SET8_START(bpf_mptcp_fmodret_ids)
+>> +BTF_ID_FLAGS(func, update_socket_protocol)
+>> +BTF_SET8_END(bpf_mptcp_fmodret_ids)
+>> +
+>> +static const struct btf_kfunc_id_set bpf_mptcp_fmodret_set = {
+>> +	.owner = THIS_MODULE,
+>> +	.set   = &bpf_mptcp_fmodret_ids,
+>> +};
+>> +
+>> +static int __init bpf_mptcp_kfunc_init(void)
+>> +{
+>> +	return register_btf_fmodret_id_set(&bpf_mptcp_fmodret_set);
+>> +}
+>> +late_initcall(bpf_mptcp_kfunc_init);
+>> diff --git a/net/socket.c b/net/socket.c
+>> index 5d4e37595e9a..fdb5233bf560 100644
+>> --- a/net/socket.c
+>> +++ b/net/socket.c
+>> @@ -1657,12 +1657,36 @@ struct file *__sys_socket_file(int family, int type, int protocol)
+>>   	return sock_alloc_file(sock, flags, NULL);
+>>   }
+>>   
+>> +/*	A hook for bpf progs to attach to and update socket protocol.
+>> + *
+>> + *	A static noinline declaration here could cause the compiler to
+>> + *	optimize away the function. A global noinline declaration will
+>> + *	keep the definition, but may optimize away the callsite.
+>> + *	Therefore, __weak is needed to ensure that the call is still
+>> + *	emitted, by telling the compiler that we don't know what the
+>> + *	function might eventually be.
+>> + *
+>> + *	__diag_* below are needed to dismiss the missing prototype warning.
+>> + */
+>> +
+>> +__diag_push();
+>> +__diag_ignore_all("-Wmissing-prototypes",
+>> +		  "A fmod_ret entry point for BPF programs");
 > 
+> Hi Martin & Yonghong,
+> 
+> I got a sparse warning for this new added 'update_socket_protocol':
+> 
+>   > touch net/socket.c && make C=1 net/socket.o
+> 
+>   net/socket.c:1676:21: warning: symbol 'update_socket_protocol' was not declared. Should it be static?
+
+This is a sparse warning. Let us ignore it for now. We already have
+__diag_ignore for missing prototypes in the above, but sparse won't 
+recognize them. Also, 'static' is conflict with '__weak' attribute,
+and we cannot remove '__weak' attribute.
+
+> 
+> What should I do to fix it, or should I just leave it here? Please give
+> me some suggestions.
+> 
+> Thanks,
+> -Geliang
+> 
+>> +
+>> +__weak noinline int update_socket_protocol(int family, int type, int protocol)
+>> +{
+>> +	return protocol;
+>> +}
+>> +
+>> +__diag_pop();
+>> +
+>>   int __sys_socket(int family, int type, int protocol)
+>>   {
+>>   	struct socket *sock;
+>>   	int flags;
+>>   
+>> -	sock = __sys_socket_create(family, type, protocol);
+>> +	sock = __sys_socket_create(family, type,
+>> +				   update_socket_protocol(family, type, protocol));
+>>   	if (IS_ERR(sock))
+>>   		return PTR_ERR(sock);
+>>   
+>> -- 
+>> 2.35.3
+>>
 > 
