@@ -2,91 +2,91 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E082C678DC
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Aug 2023 09:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 248D6C05052
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Aug 2023 10:32:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352991AbjHRJqj (ORCPT
+        id S1358407AbjHRKcF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Aug 2023 05:46:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33792 "EHLO
+        Fri, 18 Aug 2023 06:32:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359368AbjHRJqW (ORCPT
+        with ESMTP id S1359745AbjHRKa5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Aug 2023 05:46:22 -0400
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [IPv6:2001:1600:3:17::190b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FDDD2708
-        for <linux-security-module@vger.kernel.org>; Fri, 18 Aug 2023 02:46:18 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RRxpJ6GBQzMq6Lp;
-        Fri, 18 Aug 2023 09:46:16 +0000 (UTC)
-Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RRxpH1Xz5zMpnPk;
-        Fri, 18 Aug 2023 11:46:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1692351976;
-        bh=VX0u3iEdidR+CiLRoGDyOiMFbwAq0F/xGLYbnfjrIes=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OLQpvPkA9tTwXJWH9zWADo/gTYLHQ6/Cb1aCxfxYLw7I+U9flEtIBz2pxwsfSj28C
-         QtIflE5IN6exXf4PE86EaQs8vjD7O6g2T1/Hpl7g/3lZrUGVXOvM6mnput/hedK7O4
-         KmQArjOVk4dr66kc5ucqj+cmTrqFsa1th2Yxsaec=
-Date:   Fri, 18 Aug 2023 11:46:10 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] landlock: Annotate struct landlock_rule with __counted_by
-Message-ID: <20230818.Iuwi4Okaey0A@digikod.net>
-References: <20230817210257.never.920-kees@kernel.org>
+        Fri, 18 Aug 2023 06:30:57 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EDF54495;
+        Fri, 18 Aug 2023 03:30:08 -0700 (PDT)
+Received: from fsav415.sakura.ne.jp (fsav415.sakura.ne.jp [133.242.250.114])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 37IATtGB020408;
+        Fri, 18 Aug 2023 19:29:55 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav415.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp);
+ Fri, 18 Aug 2023 19:29:55 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 37IATsT5020404
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 18 Aug 2023 19:29:55 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <6957af54-16a2-4c28-56ff-dafe95f4e276@I-love.SAKURA.ne.jp>
+Date:   Fri, 18 Aug 2023 19:29:52 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH] audit: add task history record
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-audit@redhat.com, audit@vger.kernel.org,
+        Steve Grubb <sgrubb@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <36b65eb1-ccbf-8b81-468f-b8d88c4be5a3@I-love.SAKURA.ne.jp>
+ <CAHC9VhTLQjjQ0QMfBDHYCz9LOAuO=rJWSDEUqPsFE+dowFbN=Q@mail.gmail.com>
+ <b06dbdd8-d2f6-b190-5635-948c0a966103@I-love.SAKURA.ne.jp>
+ <CAHC9VhSz=3utr_CigGvkMEb6_avJUQq1Ak2smB7neSd76mzjFw@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhSz=3utr_CigGvkMEb6_avJUQq1Ak2smB7neSd76mzjFw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230817210257.never.920-kees@kernel.org>
-X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thanks! Applied to my next tree. Feel free to carry it yourself if you
-prefer.
+On 2023/08/16 22:53, Paul Moore wrote:
+> On Wed, Aug 16, 2023 at 6:10â€¯AM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>> On 2023/08/16 3:44, Paul Moore wrote:
+>>> On Fri, Aug 11, 2023 at 6:58â€¯AM Tetsuo Handa
+>>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>>>
+>>>> When an unexpected system event occurs, the administrator may want to
+>>>> identify which application triggered the event. For example, unexpected
+>>>> process termination is still a real concern enough to write articles
+>>>> like https://access.redhat.com/solutions/165993 .
+>>>>
+>>>> This patch adds a record which emits TOMOYO-like task history information
+>>>> into the audit logs for better understanding of unexpected system events.
+>>>>
+>>>>   type=UNKNOWN[1340] msg=audit(1691750738.271:108): history="name=swapper/0;pid=1;start=20230811194329=>name=init;pid=1;start=20230811194343=>name=systemd;pid=1;start=20230811194439=>name=sshd;pid=3660;start=20230811104504=>name=sshd;pid=3767;start=20230811104535"
+>>>
+>>> While I respect your persistence, we've talked about this quite a bit
+>>> already in other threads.  What you are trying to do is already
+>>> possible with audit
+>>
+>> How?
+> 
+> If you configure audit to record exec() and friends you should have a
+> proper history of the processes started on the system.
 
-On Thu, Aug 17, 2023 at 02:03:01PM -0700, Kees Cook wrote:
-> Prepare for the coming implementation by GCC and Clang of the __counted_by
-> attribute. Flexible array members annotated with __counted_by can have
-> their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
-> (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
-> functions).
-> 
-> As found with Coccinelle[1], add __counted_by for struct landlock_rule.
-> 
-> [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
-> 
-> Cc: "Mickaël Salaün" <mic@digikod.net>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: linux-security-module@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  security/landlock/ruleset.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index d43231b783e4..55b1df8f66a8 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -67,7 +67,7 @@ struct landlock_rule {
->  	 * @layers: Stack of layers, from the latest to the newest, implemented
->  	 * as a flexible array member (FAM).
->  	 */
-> -	struct landlock_layer layers[];
-> +	struct landlock_layer layers[] __counted_by(num_layers);
->  };
->  
->  /**
-> -- 
-> 2.34.1
-> 
+That is a "No LSM modules other than SELinux is needed because SELinux can do
+everything" assertion. People propose different approaches/implementations because
+they can't afford utilizing/configuring existing approaches/implementations.
+
+Your assertion is a fatal problem for merging "Re: [PATCH v13 00/11] LSM: Three basic syscalls"
+at https://lkml.kernel.org/r/CAHC9VhQ4ttkSLTBCrXNZSBR1FP9UZ_gUHmo0BS37LCdyBmUeyA@mail.gmail.com .
+
+Please please allow LSM modules like https://lkml.kernel.org/r/41d03271-ff8a-9888-11de-a7f53da47328@I-love.SAKURA.ne.jp
+to obtain a stable LSM ID if you don't want to support something that possibly have an alternative.
+
