@@ -2,33 +2,33 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1662C7EE2A
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Aug 2023 16:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7B8C7EE2E
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Aug 2023 17:06:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378634AbjHRQ3F (ORCPT
+        id S1349199AbjHRRGY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Aug 2023 12:29:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53084 "EHLO
+        Fri, 18 Aug 2023 13:06:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378666AbjHRQ2y (ORCPT
+        with ESMTP id S1378883AbjHRRGS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Aug 2023 12:28:54 -0400
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B04793C0A
-        for <linux-security-module@vger.kernel.org>; Fri, 18 Aug 2023 09:28:49 -0700 (PDT)
+        Fri, 18 Aug 2023 13:06:18 -0400
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fac])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D80CD12A
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Aug 2023 10:06:15 -0700 (PDT)
 Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RS6kl5nZ9zMq1MM;
-        Fri, 18 Aug 2023 16:28:47 +0000 (UTC)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RS6kk58mWz11p;
-        Fri, 18 Aug 2023 18:28:46 +0200 (CEST)
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RS7Yx4rgczMq9pT;
+        Fri, 18 Aug 2023 17:06:13 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RS7Yx0LF4z3Z;
+        Fri, 18 Aug 2023 19:06:13 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1692376127;
-        bh=9DMDGEfPisEXlp15346TGMIklbX6npniTNA6DNlXEWE=;
+        s=20191114; t=1692378373;
+        bh=veU8UuiuieXnf8zq3eXOrpW58qUrKtaTK5+uzBP4/fI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V9V33hCBG0M2Jj7Ulkn/VMlFW1Rcpd3u6BZihpa/yoiuSi6A03pFN+NKY0imIEARU
-         ndGiAQv/LUxeDPJH2p5uu2mhPIfire+fJGTwaEuOYfmum1FWRt7kdhmrAx8a4v2lbL
-         FW4rLpbjFgG5R0jjjAAbFS1NSGR0vm0piSgGtBQE=
-Date:   Fri, 18 Aug 2023 18:28:41 +0200
+        b=gxjIm/gD9EErV441TETRIbFK5UsOIDRdJqs/2yK6k99qX6+zLYC/tNWVkivoxcKTw
+         SPtYuQ8RXJFo4uF5r5UFwPmfHuQRFkxFyJ7m/x9wcipKvfp2k4ecKkUiLJyg78ZVwo
+         Y1/CicdRhnZmjLkAfLwihZIOQmsnOm1aY7T96kGI=
+Date:   Fri, 18 Aug 2023 19:06:07 +0200
 From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
 Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
@@ -39,176 +39,175 @@ Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
         Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
         Matt Bobrowski <repnop@google.com>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] landlock: Document ioctl support
-Message-ID: <20230818.ShaiGhu3wae9@digikod.net>
+Subject: Re: [PATCH v3 2/5] selftests/landlock: Test ioctl support
+Message-ID: <20230818.HopaLahS0qua@digikod.net>
 References: <20230814172816.3907299-1-gnoack@google.com>
- <20230814172816.3907299-6-gnoack@google.com>
+ <20230814172816.3907299-3-gnoack@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230814172816.3907299-6-gnoack@google.com>
+In-Reply-To: <20230814172816.3907299-3-gnoack@google.com>
 X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This looks good!
-
-On Mon, Aug 14, 2023 at 07:28:16PM +0200, Günther Noack wrote:
-> In the paragraph above the fallback logic, use the shorter phrasing
-> from the landlock(7) man page.
+On Mon, Aug 14, 2023 at 07:28:13PM +0200, Günther Noack wrote:
+> Exercises Landlock's IOCTL feature: If the LANDLOCK_ACCESS_FS_IOCTL
+> right is restricted, the use of IOCTL fails with a freshly opened
+> file.
+> 
+> Irrespective of the LANDLOCK_ACCESS_FS_IOCTL right, IOCTL continues to
+> work with a selected set of known harmless IOCTL commands.
 > 
 > Signed-off-by: Günther Noack <gnoack@google.com>
 > ---
->  Documentation/userspace-api/landlock.rst | 74 ++++++++++++++++++------
->  1 file changed, 57 insertions(+), 17 deletions(-)
+>  tools/testing/selftests/landlock/fs_test.c | 96 +++++++++++++++++++++-
+>  1 file changed, 93 insertions(+), 3 deletions(-)
 > 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index d8cd8cd9ce25..e0e35e474307 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -61,18 +61,17 @@ the need to be explicit about the denied-by-default access rights.
->              LANDLOCK_ACCESS_FS_MAKE_BLOCK |
->              LANDLOCK_ACCESS_FS_MAKE_SYM |
->              LANDLOCK_ACCESS_FS_REFER |
-> -            LANDLOCK_ACCESS_FS_TRUNCATE,
-> +            LANDLOCK_ACCESS_FS_TRUNCATE |
-> +            LANDLOCK_ACCESS_FS_IOCTL,
->      };
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index 09dd1eaac8a9..456bd681091d 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -3329,7 +3329,7 @@ TEST_F_FORK(layout1, truncate_unhandled)
+>  			      LANDLOCK_ACCESS_FS_WRITE_FILE;
+>  	int ruleset_fd;
 >  
->  Because we may not know on which kernel version an application will be
->  executed, it is safer to follow a best-effort security approach.  Indeed, we
->  should try to protect users as much as possible whatever the kernel they are
-> -using.  To avoid binary enforcement (i.e. either all security features or
-> -none), we can leverage a dedicated Landlock command to get the current version
-> -of the Landlock ABI and adapt the handled accesses.  Let's check if we should
-> -remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
-> -access rights, which are only supported starting with the second and third
-> -version of the ABI.
-> +using.
-> +
-> +To be compatible with older Linux versions, we detect the available Landlock ABI
-> +version, and only use the available subset of access rights:
+> -	/* Enable Landlock. */
+> +	/* Enables Landlock. */
+>  	ruleset_fd = create_ruleset(_metadata, handled, rules);
 >  
->  .. code-block:: c
+>  	ASSERT_LE(0, ruleset_fd);
+> @@ -3412,7 +3412,7 @@ TEST_F_FORK(layout1, truncate)
+>  			      LANDLOCK_ACCESS_FS_TRUNCATE;
+>  	int ruleset_fd;
 >  
-> @@ -92,6 +91,9 @@ version of the ABI.
->      case 2:
->          /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
->          ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
-> +    case 3:
-> +        /* Removes LANDLOCK_ACCESS_FS_IOCTL for ABI < 4 */
-> +        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL;
->      }
+> -	/* Enable Landlock. */
+> +	/* Enables Landlock. */
+>  	ruleset_fd = create_ruleset(_metadata, handled, rules);
 >  
->  This enables to create an inclusive ruleset that will contain our rules.
-> @@ -190,6 +192,7 @@ access rights per directory enables to change the location of such directory
->  without relying on the destination directory access rights (except those that
->  are required for this operation, see ``LANDLOCK_ACCESS_FS_REFER``
->  documentation).
-> +
->  Having self-sufficient hierarchies also helps to tighten the required access
->  rights to the minimal set of data.  This also helps avoid sinkhole directories,
->  i.e.  directories where data can be linked to but not linked from.  However,
-> @@ -283,18 +286,24 @@ It should also be noted that truncating files does not require the
->  system call, this can also be done through :manpage:`open(2)` with the flags
->  ``O_RDONLY | O_TRUNC``.
+>  	ASSERT_LE(0, ruleset_fd);
+> @@ -3639,7 +3639,7 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
+>  	};
+>  	int fd, ruleset_fd;
 >  
-> -When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE``
-> -right is associated with the newly created file descriptor and will be used for
-> -subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavior is
-> -similar to opening a file for reading or writing, where permissions are checked
-> -during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
-> +The truncate right is associated with the opened file (see below).
-> +
-> +Rights associated with file descriptors
-> +---------------------------------------
-> +
-> +When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE`` and
-> +``LANDLOCK_ACCESS_FS_IOCTL`` rights is associated with the newly created file
-> +descriptor and will be used for subsequent truncation and ioctl attempts using
-> +:manpage:`ftruncate(2)` and :manpage:`ioctl(2)`.  The behavior is similar to
-> +opening a file for reading or writing, where permissions are checked during
-> +:manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
->  :manpage:`write(2)` calls.
->  
-> -As a consequence, it is possible to have multiple open file descriptors for the
-> -same file, where one grants the right to truncate the file and the other does
-> -not.  It is also possible to pass such file descriptors between processes,
-> -keeping their Landlock properties, even when these processes do not have an
-> -enforced Landlock ruleset.
-> +As a consequence, it is possible to have multiple open file descriptors
-> +referring to the same file, where one grants the truncate or ioctl right and the
-> +other does not.  It is also possible to pass such file descriptors between
-> +processes, keeping their Landlock properties, even when these processes do not
-> +have an enforced Landlock ruleset.
->  
->  Compatibility
->  =============
-> @@ -422,6 +431,27 @@ Memory usage
->  Kernel memory allocated to create rulesets is accounted and can be restricted
->  by the Documentation/admin-guide/cgroup-v1/memory.rst.
->  
-> +IOCTL support
-> +-------------
-> +
-> +The ``LANDLOCK_ACCESS_FS_IOCTL`` access right restricts the use of
-> +:manpage:`ioctl(2)`, but it only applies to newly opened files.  This means
-> +specifically that pre-existing file descriptors like STDIN, STDOUT and STDERR
+> -	/* Enable Landlock. */
+> +	/* Enables Landlock. */
+>  	ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
+>  	ASSERT_LE(0, ruleset_fd);
+>  	enforce_ruleset(_metadata, ruleset_fd);
+> @@ -3732,6 +3732,96 @@ TEST(memfd_ftruncate)
+>  	ASSERT_EQ(0, close(fd));
+>  }
 
-According to man pages (and unlike IOCTL commands) we should not
-capitalize stdin, stdout and stderr.
+We should also check with O_PATH to make sure the correct error is
+returned (and not EACCES).
 
-> +are unaffected.
-> +
-> +Users should be aware that TTY devices have traditionally permitted to control
-> +other processes on the same TTY through the ``TIOCSTI`` and ``TIOCLINUX`` IOCTL
-> +commands.  It is therefore recommended to close inherited TTY file descriptors.
-
-Good to see such warnings in the documentation.
-
-We could also propose a simple solution to still uses stdin, stdout and
-stderr without complex TTY proxying: re-opening the TTY, or replacing
-related FD thanks to /proc/self/fd/*
-
-For instance, with shell scripts it would look like this:
-exec </proc/self/fd/0
-exec >/proc/self/fd/1
-exec 2>/proc/self/fd/2
-
-Because of TIOCGWINSZ and TCGETS, an interactive shell may not work as
-expected though.
-
-> +The :manpage:`isatty(3)` function checks whether a given file descriptor is a
-> +TTY.
-> +
-> +Landlock's IOCTL support is coarse-grained at the moment, but may become more
-> +fine-grained in the future.  Until then, users are advised to establish the
-> +guarantees that they need through the file hierarchy, by only permitting the
-> +``LANDLOCK_ACCESS_FS_IOCTL`` right on files where it is really harmless.  In
-> +cases where you can control the mounts, the ``nodev`` mount option can help to
-> +rule out that device files can be accessed.
-> +
->  Previous limitations
->  ====================
 >  
-> @@ -451,6 +481,16 @@ always allowed when using a kernel that only supports the first or second ABI.
->  Starting with the Landlock ABI version 3, it is now possible to securely control
->  truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access right.
->  
-> +Ioctl (ABI < 4)
-> +---------------
+> +/* Invokes the FIOQSIZE ioctl(2) and returns its errno or 0. */
+> +static int test_fioqsize_ioctl(int fd)
+> +{
+> +	loff_t size;
 > +
-> +IOCTL operations could not be denied before the fourth Landlock ABI, so
-> +:manpage:`ioctl(2)` is always allowed when using a kernel that only supports an
-> +earlier ABI.
+> +	if (ioctl(fd, FIOQSIZE, &size) < 0)
+> +		return errno;
+> +	return 0;
+> +}
 > +
-> +Starting with the Landlock ABI version 4, it is possible to restrict the use of
-> +:manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL`` access right.
+> +/*
+> + * Attempt ioctls on regular files, with file descriptors opened before and
+> + * after landlocking.
+> + */
+> +TEST_F_FORK(layout1, ioctl)
+> +{
+> +	const struct rule rules[] = {
+> +		{
+> +			.path = file1_s1d1,
+> +			.access = LANDLOCK_ACCESS_FS_IOCTL,
+> +		},
+> +		{
+> +			.path = dir_s2d1,
+> +			.access = LANDLOCK_ACCESS_FS_IOCTL,
+> +		},
+> +		{},
+> +	};
+> +	const __u64 handled = LANDLOCK_ACCESS_FS_IOCTL;
+> +	int ruleset_fd;
+> +	int dir_s1d1_fd, file1_s1d1_fd, dir_s2d1_fd;
 > +
->  .. _kernel_support:
->  
->  Kernel support
+> +	/* Enables Landlock. */
+> +	ruleset_fd = create_ruleset(_metadata, handled, rules);
+> +	ASSERT_LE(0, ruleset_fd);
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	ASSERT_EQ(0, close(ruleset_fd));
+> +
+> +	dir_s1d1_fd = open(dir_s1d1, O_RDONLY);
+
+You can use O_CLOEXEC everywhere.
+
+> +	ASSERT_LE(0, dir_s1d1_fd);
+> +	file1_s1d1_fd = open(file1_s1d1, O_RDONLY);
+> +	ASSERT_LE(0, file1_s1d1_fd);
+> +	dir_s2d1_fd = open(dir_s2d1, O_RDONLY);
+> +	ASSERT_LE(0, dir_s2d1_fd);
+> +
+> +	/*
+> +	 * Checks that FIOQSIZE works on files where LANDLOCK_ACCESS_FS_IOCTL is
+> +	 * permitted.
+> +	 */
+> +	EXPECT_EQ(EACCES, test_fioqsize_ioctl(dir_s1d1_fd));
+> +	EXPECT_EQ(0, test_fioqsize_ioctl(file1_s1d1_fd));
+> +	EXPECT_EQ(0, test_fioqsize_ioctl(dir_s2d1_fd));
+> +
+> +	/* Closes all file descriptors. */
+> +	ASSERT_EQ(0, close(dir_s1d1_fd));
+> +	ASSERT_EQ(0, close(file1_s1d1_fd));
+> +	ASSERT_EQ(0, close(dir_s2d1_fd));
+> +}
+> +
+> +TEST_F_FORK(layout1, ioctl_always_allowed)
+> +{
+> +	struct landlock_ruleset_attr attr = {
+
+const struct landlock_ruleset_attr attr = {
+
+> +		.handled_access_fs = LANDLOCK_ACCESS_FS_IOCTL,
+> +	};
+> +	int ruleset_fd, fd;
+> +	int flag = 0;
+> +	int n;
+
+const int flag = 0;
+int ruleset_fd, test_fd, n;
+
+
+> +
+> +	/* Enables Landlock. */
+> +	ruleset_fd = landlock_create_ruleset(&attr, sizeof(attr), 0);
+> +	ASSERT_LE(0, ruleset_fd);
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	ASSERT_EQ(0, close(ruleset_fd));
+> +
+> +	fd = open(file1_s1d1, O_RDONLY);
+> +	ASSERT_LE(0, fd);
+> +
+> +	/* Checks that the restrictable FIOQSIZE is restricted. */
+> +	EXPECT_EQ(EACCES, test_fioqsize_ioctl(fd));
+> +
+> +	/* Checks that unrestrictable commands are unrestricted. */
+> +	EXPECT_EQ(0, ioctl(fd, FIOCLEX));
+> +	EXPECT_EQ(0, ioctl(fd, FIONCLEX));
+> +	EXPECT_EQ(0, ioctl(fd, FIONBIO, &flag));
+> +	EXPECT_EQ(0, ioctl(fd, FIOASYNC, &flag));
+> +	EXPECT_EQ(0, ioctl(fd, FIONREAD, &n));
+> +	EXPECT_EQ(0, n);
+> +
+> +	ASSERT_EQ(0, close(fd));
+> +}
+> +
+>  /* clang-format off */
+>  FIXTURE(layout1_bind) {};
+>  /* clang-format on */
 > -- 
 > 2.41.0.694.ge786442a9b-goog
 > 
