@@ -2,126 +2,273 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D50C71145
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Aug 2023 12:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D60C71147
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Aug 2023 13:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376919AbjHRMrp (ORCPT
+        id S1377037AbjHRN1U (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Aug 2023 08:47:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38478 "EHLO
+        Fri, 18 Aug 2023 09:27:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377050AbjHRMrC (ORCPT
+        with ESMTP id S1377123AbjHRN1D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Aug 2023 08:47:02 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D305423B;
-        Fri, 18 Aug 2023 05:46:42 -0700 (PDT)
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37ICdLxv013227;
-        Fri, 18 Aug 2023 12:46:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=XRwtB3eOF7H/ZVixiy/pWVAo66LCiR44s1VydLXQPvc=;
- b=UZVodGMJ2yXs9eRpXjvbXDtTlPYAWWCh/1yf8wgTwyzAfZV+xjiNv2kCvI5BskSXi9nS
- QhpB02JlpU86i4eLWC9GaHPNlrfUMDR1YYoVU7Vp+BrmUeigq9gRJOV5OkHGhOwW5FHa
- mya1LNP89eWDl2c2eioA3AVKq7o2YiscqfryTTAYuPNpv/WzFLWO/b0qVNz85mWEKjku
- Ads4iUtTovIZ61qUu3Em1JD/x0Hs0X5HMpHp121zIcf3xMeW0pPhOWocF39ablEoub2p
- t2QRDkhtXAs99GdKcMPxeNPnorfpJ+dOj0zNYGY8MMIYGt6bGS398ZcjM4ud4MzujIcH Wg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sj8m4ra7k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Aug 2023 12:46:14 +0000
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 37ICdRMC014130;
-        Fri, 18 Aug 2023 12:46:14 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sj8m4ra79-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Aug 2023 12:46:13 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37ICFxOO013413;
-        Fri, 18 Aug 2023 12:46:12 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-        by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3sepmkej57-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Aug 2023 12:46:12 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-        by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37ICkBf528902136
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Aug 2023 12:46:12 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CB2A45805A;
-        Fri, 18 Aug 2023 12:46:11 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1A63D5805E;
-        Fri, 18 Aug 2023 12:46:11 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.81.121])
-        by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 18 Aug 2023 12:46:10 +0000 (GMT)
-Message-ID: <56197f75291ae44fabd1a692f01f09863fbff7e3.camel@linux.ibm.com>
-Subject: Re: [PATCH] integrity: Annotate struct ima_rule_opt_list with
- __counted_by
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Fri, 18 Aug 2023 09:27:03 -0400
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AD57E48
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Aug 2023 06:27:00 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RS2hx3tK2zMq9P5;
+        Fri, 18 Aug 2023 13:26:57 +0000 (UTC)
+Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RS2hw6nSqzMppDK;
+        Fri, 18 Aug 2023 15:26:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1692365217;
+        bh=WcsmgrJK2gM6tzUctn3fx5jwZTxSee3ewBV0B2CUGJ4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=koHxOVF13JHmBUEI2EtIA5Wx/WZLL0H3JuWWuzQgQr1ZG7rLlawcu20guDgw42PCi
+         PkkcNSEgF1kqBsJ04w9avBdMYxKgduhBr9l2QAn7Vh37pAXCx+KbozJph+8RWRW+bA
+         jBaU7N5qfOd/XRZDyjTKVaO7z5wItP5XqXcKVJ1A=
+Date:   Fri, 18 Aug 2023 15:26:52 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
         Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-Date:   Fri, 18 Aug 2023 08:46:10 -0400
-In-Reply-To: <20230817210327.never.598-kees@kernel.org>
-References: <20230817210327.never.598-kees@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: NAmYlWVzRQ0YohiSinTeU8-Dr5Z-mXL6
-X-Proofpoint-GUID: Hc3SwzQ8TQeVTaLkoy2HdKp6dCaMk4S4
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Matt Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support
+Message-ID: <20230818.ha8zoocahZah@digikod.net>
+References: <20230814172816.3907299-1-gnoack@google.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-18_15,2023-08-18_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- spamscore=0 lowpriorityscore=0 suspectscore=0 impostorscore=0
- mlxlogscore=999 malwarescore=0 priorityscore=1501 mlxscore=0 adultscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308180115
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230814172816.3907299-1-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2023-08-17 at 14:03 -0700, Kees Cook wrote:
-> Prepare for the coming implementation by GCC and Clang of the __counted_by
-> attribute. Flexible array members annotated with __counted_by can have
-> their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
-> (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
-> functions).
+On Mon, Aug 14, 2023 at 07:28:11PM +0200, Günther Noack wrote:
+> Hello!
 > 
-> As found with Coccinelle[1], add __counted_by for struct ima_rule_opt_list.
-> Additionally, since the element count member must be set before accessing
-> the annotated flexible array member, move its initialization earlier.
+> These patches add simple ioctl(2) support to Landlock.
 > 
-> [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
+> Objective
+> ~~~~~~~~~
 > 
-> Cc: Mimi Zohar <zohar@linux.ibm.com>
-> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: linux-integrity@vger.kernel.org
-> Cc: linux-security-module@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Make ioctl(2) requests restrictable with Landlock,
+> in a way that is useful for real-world applications.
+> 
+> Proposed approach
+> ~~~~~~~~~~~~~~~~~
+> 
+> Introduce the LANDLOCK_ACCESS_FS_IOCTL right, which restricts the use
+> of ioctl(2) on file descriptors.
+> 
+> We attach the LANDLOCK_ACCESS_FS_IOCTL right to opened file
+> descriptors, as we already do for LANDLOCK_ACCESS_FS_TRUNCATE.
+> 
+> We make an exception for the common and known-harmless IOCTL commands FIOCLEX,
+> FIONCLEX, FIONBIO, FIOASYNC and FIONREAD.  These IOCTL commands are always
+> permitted.  The functionality of the first four is already available through
+> fcntl(2), and FIONREAD only returns the number of ready-to-read bytes.
+> 
+> I believe that this approach works for the majority of use cases, and
+> offers a good trade-off between Landlock API and implementation
+> complexity and flexibility when the feature is used.
+> 
+> Current limitations
+> ~~~~~~~~~~~~~~~~~~~
+> 
+> With this patch set, ioctl(2) requests can *not* be filtered based on
+> file type, device number (dev_t) or on the ioctl(2) request number.
+> 
+> On the initial RFC patch set [1], we have reached consensus to start
+> with this simpler coarse-grained approach, and build additional IOCTL
+> restriction capabilities on top in subsequent steps.
+> 
+> [1] https://lore.kernel.org/linux-security-module/d4f1395c-d2d4-1860-3a02-2a0c023dd761@digikod.net/
+> 
+> Notable implications of this approach
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> * Existing inherited file descriptors stay unaffected
+>   when a program enables Landlock.
+> 
+>   This means in particular that in common scenarios,
+>   the terminal's IOCTLs (ioctl_tty(2)) continue to work.
+> 
+> * ioctl(2) continues to be available for file descriptors acquired
+>   through means other than open(2).  Example: Network sockets,
+>   memfd_create(2), file descriptors that are already open before the
+>   Landlock ruleset is enabled.
+> 
+> Examples
+> ~~~~~~~~
+> 
+> Starting a sandboxed shell from $HOME with samples/landlock/sandboxer:
+> 
+>   LL_FS_RO=/ LL_FS_RW=. ./sandboxer /bin/bash
+> 
+> The LANDLOCK_ACCESS_FS_IOCTL right is part of the "read-write" rights
+> here, so we expect that newly opened files outside of $HOME don't work
+> with ioctl(2).
+> 
+>   * "stty" works: It probes terminal properties
+> 
+>   * "stty </dev/tty" fails: /dev/tty can be reopened, but the IOCTL is
+>     denied.
+> 
+>   * "eject" fails: ioctls to use CD-ROM drive are denied.
+> 
+>   * "ls /dev" works: It uses ioctl to get the terminal size for
+>     columnar layout
+> 
+>   * The text editors "vim" and "mg" work.  (GNU Emacs fails because it
+>     attempts to reopen /dev/tty.)
+> 
+> How we arrived at the list of always-permitted IOCTL commands
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> To decide which IOCTL commands should be blanket-permitted I went through the
+> list of IOCTL commands mentioned in fs/ioctl.c and looked at them individually
+> to understand what they are about.  The following list is my conclusion from
+> that.
+> 
+> We should always allow the following IOCTL commands:
+> 
+>  * FIOCLEX, FIONCLEX - these work on the file descriptor and manipulate the
+>    close-on-exec flag
 
-Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+I agree that FIOCLEX and FIONCLEX should always be allowed.
 
--- 
-thanks,
+>  * FIONBIO, FIOASYNC - these work on the struct file and enable nonblocking-IO
+>    and async flags
 
-Mimi
+About FIONBIO and FIOASYNC, I think it's OK because it is already
+allowed thanks to fcntl. We could combine these commands with
+LANDLOCK_ACCESS_FS_{READ,WRITE}_FILE but it may not be related to only
+regular files.
 
+I found that there is an inconsistency between the fcntl's SETFL and the
+FIONBIO/FIOASYNC IOCTLs. The first one call filp->f_op->check_flags()
+while the second one doesn't. This should enable to bypass such
+check_flags() checks. This is unrelated to Landlock or this patch series
+though, and it should be OK because only NFS seems to implement
+check_flags() and only O_DIRECT|O_APPEND are checked.
+
+Cc Christian
+
+>  * FIONREAD - get the number of bytes available for reading (the implementation
+>    is defined per file type)
+
+About FIONREAD, I'm convinced we should only allow this command
+according to LANDLOCK_ACCESS_FS_READ. As for the VFS implementation,
+it should also depend on the file being a regular file (otherwise any
+driver could implement another semantic).
+
+To make it forward compatible (with the same semantic), I think we
+should handle specific IOCTLs this way: if the complementary access
+right (e.g. LANDLOCK_ACCESS_FS_READ_FILE) is not handled by the ruleset
+(which is not the same as allowed by a rule), then the related IOCTLs
+(e.g. FIONREAD) are denied, otherwise the related IOCTLs are only
+allowed if the complementary access is explicitly allowed for this FD.
+This way of delegating enables to extend the access control to IOCTL
+commands while preserving the access (rights) semantic.
+
+This will enable for instance to restrict FS_IOC_GETFLAGS according to a
+potential future LANDLOCK_ACCESS_FS_READ_METADATA, while keeping the
+same IOCTL restriction semantic.
+
+We could also follow this same semantic for synthetic access rights
+grouping IOCTLs commands.
+
+
+> 
+> The first four are also available through fcntl with the F_SETFD and F_SETFL
+> commands.
+> 
+> The following commands mentioned in fs/ioctl.c should be guarded by the
+> LANDLOCK_ACCESS_FS_IOCTL access right, the same as the other ioctl commands,
+> because they are nontrivial:
+> 
+>  * FIFREEZE, FITHAW - work on superblock(!) to freeze/thaw the file
+>    system. Requires CAP_SYS_ADMIN.
+>  * FICLONE, FICLONERANGE, FIDEDUPRANGE - making files share physical storage
+>    between multiple files.  These only work on some file systems, by design.
+>  * Commands that read file system internals:
+>    * FS_IOC_FIEMAP - get information about file extent mapping
+>      (c.f. https://www.kernel.org/doc/Documentation/filesystems/fiemap.txt)
+>    * FIBMAP - get a file's file system block number
+>    * FIGETBSZ - get file system blocksize
+>  * Accessing file attributes:
+>    * FS_IOC_GETFLAGS, FS_IOC_SETFLAGS - manipulate inode flags (ioctl_iflags(2))
+>    * FS_IOC_FSGETXATTR, FS_IOC_FSSETXATTR - more attributes
+>  * FS_IOC_RESVSP, FS_IOC_RESVSP64, FS_IOC_UNRESVSP, FS_IOC_UNRESVSP64,
+>    FS_IOC_ZERO_RANGE: Backwards compatibility with legacy XFS preallocation
+>    syscalls which predate fallocate(2).
+> 
+> Related Work
+> ~~~~~~~~~~~~
+> 
+> OpenBSD's pledge(2) [2] restricts ioctl(2) independent of the file
+> descriptor which is used.  The implementers maintain multiple
+> allow-lists of predefined ioctl(2) operations required for different
+> application domains such as "audio", "bpf", "tty" and "inet".
+> 
+> OpenBSD does not guarantee ABI backwards compatibility to the same
+> extent as Linux does, so it's easier for them to update these lists in
+> later versions.  It might not be a feasible approach for Linux though.
+> 
+> [2] https://man.openbsd.org/OpenBSD-7.3/pledge.2
+> 
+> Changes
+> ~~~~~~~
+> 
+> V3:
+>  * always permit the IOCTL commands FIOCLEX, FIONCLEX, FIONBIO, FIOASYNC and
+>    FIONREAD, independent of LANDLOCK_ACCESS_FS_IOCTL
+>  * increment ABI version in the same commit where the feature is introduced
+>  * testing changes
+>    * use FIOQSIZE instead of TTY IOCTL commands
+>      (FIOQSIZE works with regular files, directories and memfds)
+>    * run the memfd test with both Landlock enabled and disabled
+>    * add a test for the always-permitted IOCTL commands
+> 
+> V2:
+>  * rebased on mic-next
+>  * added documentation
+>  * exercise ioctl(2) in the memfd test
+>  * test: Use layout0 for the test
+> 
+> ---
+> 
+> V1: https://lore.kernel.org/linux-security-module/20230502171755.9788-1-gnoack3000@gmail.com/
+> V2: https://lore.kernel.org/linux-security-module/20230623144329.136541-1-gnoack@google.com/
+> 
+> Günther Noack (5):
+>   landlock: Add ioctl access right
+>   selftests/landlock: Test ioctl support
+>   selftests/landlock: Test ioctl with memfds
+>   samples/landlock: Add support for LANDLOCK_ACCESS_FS_IOCTL
+>   landlock: Document ioctl support
+> 
+>  Documentation/userspace-api/landlock.rst     |  74 ++++++++---
+>  include/uapi/linux/landlock.h                |  31 +++--
+>  samples/landlock/sandboxer.c                 |  12 +-
+>  security/landlock/fs.c                       |  38 +++++-
+>  security/landlock/limits.h                   |   2 +-
+>  security/landlock/syscalls.c                 |   2 +-
+>  tools/testing/selftests/landlock/base_test.c |   2 +-
+>  tools/testing/selftests/landlock/fs_test.c   | 133 +++++++++++++++++--
+>  8 files changed, 249 insertions(+), 45 deletions(-)
+> 
+> 
+> base-commit: 35ca4239929737bdc021ee923f97ebe7aff8fcc4
+> -- 
+> 2.41.0.694.ge786442a9b-goog
+> 
