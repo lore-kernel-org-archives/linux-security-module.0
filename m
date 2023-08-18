@@ -2,95 +2,227 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83DDEC71148
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Aug 2023 13:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1091DC7113C
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Aug 2023 14:06:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350580AbjHRNjy (ORCPT
+        id S1376461AbjHROGA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Aug 2023 09:39:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33324 "EHLO
+        Fri, 18 Aug 2023 10:06:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377211AbjHRNj2 (ORCPT
+        with ESMTP id S1377716AbjHROF2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Aug 2023 09:39:28 -0400
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B28430F5
-        for <linux-security-module@vger.kernel.org>; Fri, 18 Aug 2023 06:39:26 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RS2zJ5fxXzMq65p;
-        Fri, 18 Aug 2023 13:39:24 +0000 (UTC)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RS2zJ1F9Vz3W;
-        Fri, 18 Aug 2023 15:39:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1692365964;
-        bh=UWIxdFLVfrHT7rkE+syTuIU+IUhfKVPgorQTBQrhIlM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S3fSl59xevy+7I4RkWjXq7KYI+4RATl/xWaB8PHzYgzsa0n49BngWU0UdU2aVY6tg
-         VTt1Ne5gyQridX8p5evxsy/ReKN1mXrMt5zT93jBb1/zyomzuYN4m1hkt3gJ5PzIfR
-         EEyBHVb+AnR/ORZ7hC65ho7Q1nsH8FvSxNbKsBg8=
-Date:   Fri, 18 Aug 2023 15:39:19 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Matt Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support
-Message-ID: <20230818.iechoCh0eew0@digikod.net>
-References: <20230814172816.3907299-1-gnoack@google.com>
+        Fri, 18 Aug 2023 10:05:28 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 352253C31;
+        Fri, 18 Aug 2023 07:05:24 -0700 (PDT)
+Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4RS3SS4P1Yz6J6Y4;
+        Fri, 18 Aug 2023 22:01:12 +0800 (CST)
+Received: from [10.123.123.126] (10.123.123.126) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.31; Fri, 18 Aug 2023 15:05:21 +0100
+Message-ID: <a31a0cc8-cf2f-5fe3-3efc-f817b8a5c6db@huawei.com>
+Date:   Fri, 18 Aug 2023 17:05:20 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v11.1] selftests/landlock: Add 11 new test suites
+ dedicated to network
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <artem.kuzin@huawei.com>, <gnoack3000@gmail.com>,
+        <willemdebruijn.kernel@gmail.com>, <yusongping@huawei.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>
+References: <20230515161339.631577-11-konstantin.meskhidze@huawei.com>
+ <20230706145543.1284007-1-mic@digikod.net>
+ <3db64cf8-6a45-a361-aa57-9bfbaf866ef8@digikod.net>
+ <30e2bacd-2e48-9056-5950-1974b9373ee3@huawei.com>
+ <20230817.EiHicha5shei@digikod.net>
+ <b0bfa45a-c2bd-545e-ec51-02eeeab0677d@huawei.com>
+ <20230817.geraipi9teiB@digikod.net>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <20230817.geraipi9teiB@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230814172816.3907299-1-gnoack@google.com>
-X-Infomaniak-Routing: alpha
+X-Originating-IP: [10.123.123.126]
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 14, 2023 at 07:28:11PM +0200, G�nther Noack wrote:
-> Hello!
-> 
-> These patches add simple ioctl(2) support to Landlock.
-> 
 
-[...]
 
-> How we arrived at the list of always-permitted IOCTL commands
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+8/17/2023 6:34 PM, Mickaël Salaün пишет:
+> On Thu, Aug 17, 2023 at 05:04:00PM +0300, Konstantin Meskhidze (A) wrote:
+>> 
+>> 
+>> 8/17/2023 4:19 PM, Mickaël Salaün пишет:
+>> > On Sun, Aug 13, 2023 at 11:09:59PM +0300, Konstantin Meskhidze (A) wrote:
+>> > > 
+>> > > 
+>> > > 7/12/2023 10:02 AM, Mickaël Salaün пишет:
+>> > > > > On 06/07/2023 16:55, Mickaël Salaün wrote:
+>> > > > > From: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>> > > > > > > This patch is a revamp of the v11 tests [1] with new tests
+>> > > (see the
+>> > > > > "Changes since v11" description).  I (Mickaël) only added the following
+>> > > > > todo list and the "Changes since v11" sections in this commit message.
+>> > > > > I think this patch is good but it would appreciate reviews.
+>> > > > > You can find the diff of my changes here but it is not really readable:
+>> > > > > https://git.kernel.org/mic/c/78edf722fba5 (landlock-net-v11 branch)
+>> > > > > [1] https://lore.kernel.org/all/20230515161339.631577-11-konstantin.meskhidze@huawei.com/
+>> > > > > TODO:
+>> > > > > - Rename all "net_service" to "net_port".
+>> > > > > - Fix the two kernel bugs found with the new tests.
+>> > > > > - Update this commit message with a small description of all tests.
+>> > > > > [...]
+>> > 
+>> > > > > +FIXTURE(inet)
+>> > > > > +{
+>> > > > > +	struct service_fixture srv0, srv1;
+>> > > > > +};
+>> > > > > The "inet" variants are useless and should be removed. The
+>> > > "inet"
+>> > > > fixture can then be renamed to "ipv4_tcp".
+>> > > >   Maybe its better to name it "tcp". So we dont need to copy
+>> > > TEST_F(tcp,
+>> > > port_endianness) for ipv6 and ipv4.
+>> > > What do you think?
+>> > 
+>> > I don't see any need to test with IPv4 and IPv6, hence the "inet" name
+>> > (and without variants). You can rename it to "inet_tcp" to highlight the
+>> > specificities of this fixture.
+>> > 
+>> 
+>>  I think there was some misunderstanding from my side. So I will rename
+>> inet to inet_tcp and keep all fixture variants:
+>> 	- no_sandbox_with_ipv4.
+>> 	- sandbox_with_ipv4.
+>> 	- no_sandbox_with_ipv6.
+>> 	- sandbox_with_ipv6.
+>> Correct?
 > 
-> To decide which IOCTL commands should be blanket-permitted I went through the
-> list of IOCTL commands mentioned in fs/ioctl.c and looked at them individually
-> to understand what they are about.  The following list is my conclusion from
-> that.
+> No, you just need to remove the FIXTURE_VARIANT and the four
+> FIXTURE_VARIANT_ADD blocks bellow.  And according to another reply,
+> "ipv4_tcp" seems more appropriate.
 > 
-> We should always allow the following IOCTL commands:
+   Ok. Got it. Thank you.
 > 
->  * FIOCLEX, FIONCLEX - these work on the file descriptor and manipulate the
->    close-on-exec flag
->  * FIONBIO, FIOASYNC - these work on the struct file and enable nonblocking-IO
->    and async flags
->  * FIONREAD - get the number of bytes available for reading (the implementation
->    is defined per file type)
-
-I think we should treat FIOQSIZE like FIONREAD, i.e. check for
-LANDLOCK_ACCESS_FS_READ_FILE as explain in my previous message.
-Tests should then rely on something else.
-
-[...]
-
-> Changes
-> ~~~~~~~
-> 
-> V3:
->  * always permit the IOCTL commands FIOCLEX, FIONCLEX, FIONBIO, FIOASYNC and
->    FIONREAD, independent of LANDLOCK_ACCESS_FS_IOCTL
->  * increment ABI version in the same commit where the feature is introduced
->  * testing changes
->    * use FIOQSIZE instead of TTY IOCTL commands
->      (FIOQSIZE works with regular files, directories and memfds)
->    * run the memfd test with both Landlock enabled and disabled
->    * add a test for the always-permitted IOCTL commands
+>> > > > > > +
+>> > > > > +FIXTURE_VARIANT(inet)
+>> > > > > +{
+>> > > > > +	const bool is_sandboxed;
+>> > > > > +	const struct protocol_variant prot;
+>> > > > > +};
+>> > > > > +
+>> > > > > +/* clang-format off */
+>> > > > > +FIXTURE_VARIANT_ADD(inet, no_sandbox_with_ipv4) {
+>> > > > > +	/* clang-format on */
+>> > > > > +	.is_sandboxed = false,
+>> > > > > +	.prot = {
+>> > > > > +		.domain = AF_INET,
+>> > > > > +		.type = SOCK_STREAM,
+>> > > > > +	},
+>> > > > > +};
+>> > > > > +
+>> > > > > +/* clang-format off */
+>> > > > > +FIXTURE_VARIANT_ADD(inet, sandbox_with_ipv4) {
+>> > > > > +	/* clang-format on */
+>> > > > > +	.is_sandboxed = true,
+>> > > > > +	.prot = {
+>> > > > > +		.domain = AF_INET,
+>> > > > > +		.type = SOCK_STREAM,
+>> > > > > +	},
+>> > > > > +};
+>> > > > > +
+>> > > > > +/* clang-format off */
+>> > > > > +FIXTURE_VARIANT_ADD(inet, no_sandbox_with_ipv6) {
+>> > > > > +	/* clang-format on */
+>> > > > > +	.is_sandboxed = false,
+>> > > > > +	.prot = {
+>> > > > > +		.domain = AF_INET6,
+>> > > > > +		.type = SOCK_STREAM,
+>> > > > > +	},
+>> > > > > +};
+>> > > > > +
+>> > > > > +/* clang-format off */
+>> > > > > +FIXTURE_VARIANT_ADD(inet, sandbox_with_ipv6) {
+>> > > > > +	/* clang-format on */
+>> > > > > +	.is_sandboxed = true,
+>> > > > > +	.prot = {
+>> > > > > +		.domain = AF_INET6,
+>> > > > > +		.type = SOCK_STREAM,
+>> > > > > +	},
+>> > > > > +};
+>> > > > > +
+>> > > > > +FIXTURE_SETUP(inet)
+>> > > > > +{
+>> > > > > +	const struct protocol_variant ipv4_tcp = {
+>> > > > > +		.domain = AF_INET,
+>> > > > > +		.type = SOCK_STREAM,
+>> > > > > +	};
+>> > > > > +
+>> > > > > +	disable_caps(_metadata);
+>> > > > > +
+>> > > > > +	ASSERT_EQ(0, set_service(&self->srv0, ipv4_tcp, 0));
+>> > > > > +	ASSERT_EQ(0, set_service(&self->srv1, ipv4_tcp, 1));
+>> > > > > +
+>> > > > > +	setup_loopback(_metadata);
+>> > > > > +};
+>> > > > > +
+>> > > > > +FIXTURE_TEARDOWN(inet)
+>> > > > > +{
+>> > > > > +}
+>> > > > > +
+>> > > > > +TEST_F(inet, port_endianness)
+>> > > > > +{
+>> > > > > +	const struct landlock_ruleset_attr ruleset_attr = {
+>> > > > > +		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> > > > > +				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> > > > > +	};
+>> > > > > +	const struct landlock_net_service_attr bind_host_endian_p0 = {
+>> > > > > +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
+>> > > > > +		/* Host port format. */
+>> > > > > +		.port = self->srv0.port,
+>> > > > > +	};
+>> > > > > +	const struct landlock_net_service_attr connect_big_endian_p0 = {
+>> > > > > +		.allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> > > > > +		/* Big endian port format. */
+>> > > > > +		.port = htons(self->srv0.port),
+>> > > > > +	};
+>> > > > > +	const struct landlock_net_service_attr bind_connect_host_endian_p1 = {
+>> > > > > +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> > > > > +				  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> > > > > +		/* Host port format. */
+>> > > > > +		.port = self->srv1.port,
+>> > > > > +	};
+>> > > > > +	const unsigned int one = 1;
+>> > > > > +	const char little_endian = *(const char *)&one;
+>> > > > > +	int ruleset_fd;
+>> > > > > +
+>> > > > > +	ruleset_fd =
+>> > > > > +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+>> > > > > +	ASSERT_LE(0, ruleset_fd);
+>> > > > > +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>> > > > > +				       &bind_host_endian_p0, 0));
+>> > > > > +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>> > > > > +				       &connect_big_endian_p0, 0));
+>> > > > > +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+>> > > > > +				       &bind_connect_host_endian_p1, 0));
+>> > > > > +	enforce_ruleset(_metadata, ruleset_fd);
+>> > > > > +
+>> > > > > +	/* No restriction for big endinan CPU. */
+>> > > > > +	test_bind_and_connect(_metadata, &self->srv0, false, little_endian);
+>> > > > > +
+>> > > > > +	/* No restriction for any CPU. */
+>> > > > > +	test_bind_and_connect(_metadata, &self->srv1, false, false);
+>> > > > > +}
+>> > > > > +
+>> > > > > +TEST_HARNESS_MAIN
+>> > > > .
+>> > .
+> .
