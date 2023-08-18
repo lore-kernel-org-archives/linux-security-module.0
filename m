@@ -2,753 +2,213 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7158C77B7C
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Aug 2023 15:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1662C7EE2A
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Aug 2023 16:29:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345236AbjHRPxn (ORCPT
+        id S1378634AbjHRQ3F (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Aug 2023 11:53:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60624 "EHLO
+        Fri, 18 Aug 2023 12:29:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378338AbjHRPxT (ORCPT
+        with ESMTP id S1378666AbjHRQ2y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Aug 2023 11:53:19 -0400
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 533342D56;
-        Fri, 18 Aug 2023 08:53:12 -0700 (PDT)
-Received: from jerom (unknown [128.107.241.169])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: serge)
-        by mail.hallyn.com (Postfix) with ESMTPSA id 368EE746;
-        Fri, 18 Aug 2023 10:53:06 -0500 (CDT)
-Date:   Fri, 18 Aug 2023 10:53:04 -0500
-From:   Serge Hallyn <serge@hallyn.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net
-Subject: Re: [PATCH v13 11/11] LSM: selftests for Linux Security Module
- syscalls
-Message-ID: <ZN+T4NA/l1ykwxpr@jerom>
-References: <20230802174435.11928-1-casey@schaufler-ca.com>
- <20230802174435.11928-12-casey@schaufler-ca.com>
+        Fri, 18 Aug 2023 12:28:54 -0400
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B04793C0A
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Aug 2023 09:28:49 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RS6kl5nZ9zMq1MM;
+        Fri, 18 Aug 2023 16:28:47 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RS6kk58mWz11p;
+        Fri, 18 Aug 2023 18:28:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1692376127;
+        bh=9DMDGEfPisEXlp15346TGMIklbX6npniTNA6DNlXEWE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V9V33hCBG0M2Jj7Ulkn/VMlFW1Rcpd3u6BZihpa/yoiuSi6A03pFN+NKY0imIEARU
+         ndGiAQv/LUxeDPJH2p5uu2mhPIfire+fJGTwaEuOYfmum1FWRt7kdhmrAx8a4v2lbL
+         FW4rLpbjFgG5R0jjjAAbFS1NSGR0vm0piSgGtBQE=
+Date:   Fri, 18 Aug 2023 18:28:41 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Matt Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] landlock: Document ioctl support
+Message-ID: <20230818.ShaiGhu3wae9@digikod.net>
+References: <20230814172816.3907299-1-gnoack@google.com>
+ <20230814172816.3907299-6-gnoack@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230802174435.11928-12-casey@schaufler-ca.com>
+In-Reply-To: <20230814172816.3907299-6-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 02, 2023 at 10:44:34AM -0700, Casey Schaufler wrote:
-> Add selftests for the three system calls supporting the LSM
-> infrastructure. This set of tests is limited by the differences
-> in access policy enforced by the existing security modules.
+This looks good!
+
+On Mon, Aug 14, 2023 at 07:28:16PM +0200, Günther Noack wrote:
+> In the paragraph above the fallback logic, use the shorter phrasing
+> from the landlock(7) man page.
 > 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-
-I know these are just testcases, but a few things stood out below.
-
-The actual set of tests looks good, though.  Thanks.
-
+> Signed-off-by: Günther Noack <gnoack@google.com>
 > ---
->  MAINTAINERS                                   |   1 +
->  tools/testing/selftests/Makefile              |   1 +
->  tools/testing/selftests/lsm/Makefile          |  19 ++
->  tools/testing/selftests/lsm/common.c          |  81 ++++++
->  tools/testing/selftests/lsm/common.h          |  33 +++
->  tools/testing/selftests/lsm/config            |   3 +
->  .../selftests/lsm/lsm_get_self_attr_test.c    | 240 ++++++++++++++++++
->  .../selftests/lsm/lsm_list_modules_test.c     | 140 ++++++++++
->  .../selftests/lsm/lsm_set_self_attr_test.c    |  74 ++++++
->  9 files changed, 592 insertions(+)
->  create mode 100644 tools/testing/selftests/lsm/Makefile
->  create mode 100644 tools/testing/selftests/lsm/common.c
->  create mode 100644 tools/testing/selftests/lsm/common.h
->  create mode 100644 tools/testing/selftests/lsm/config
->  create mode 100644 tools/testing/selftests/lsm/lsm_get_self_attr_test.c
->  create mode 100644 tools/testing/selftests/lsm/lsm_list_modules_test.c
->  create mode 100644 tools/testing/selftests/lsm/lsm_set_self_attr_test.c
+>  Documentation/userspace-api/landlock.rst | 74 ++++++++++++++++++------
+>  1 file changed, 57 insertions(+), 17 deletions(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index aca4db11dd02..c96f1c388d22 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19158,6 +19158,7 @@ W:	http://kernsec.org/
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
->  F:	include/uapi/linux/lsm.h
->  F:	security/
-> +F:	tools/testing/selftests/lsm/
->  X:	security/selinux/
+> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> index d8cd8cd9ce25..e0e35e474307 100644
+> --- a/Documentation/userspace-api/landlock.rst
+> +++ b/Documentation/userspace-api/landlock.rst
+> @@ -61,18 +61,17 @@ the need to be explicit about the denied-by-default access rights.
+>              LANDLOCK_ACCESS_FS_MAKE_BLOCK |
+>              LANDLOCK_ACCESS_FS_MAKE_SYM |
+>              LANDLOCK_ACCESS_FS_REFER |
+> -            LANDLOCK_ACCESS_FS_TRUNCATE,
+> +            LANDLOCK_ACCESS_FS_TRUNCATE |
+> +            LANDLOCK_ACCESS_FS_IOCTL,
+>      };
 >  
->  SELINUX SECURITY MODULE
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index 666b56f22a41..bde7c217b23f 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -39,6 +39,7 @@ TARGETS += landlock
->  TARGETS += lib
->  TARGETS += livepatch
->  TARGETS += lkdtm
-> +TARGETS += lsm
->  TARGETS += membarrier
->  TARGETS += memfd
->  TARGETS += memory-hotplug
-> diff --git a/tools/testing/selftests/lsm/Makefile b/tools/testing/selftests/lsm/Makefile
-> new file mode 100644
-> index 000000000000..bae6c1e3bba4
-> --- /dev/null
-> +++ b/tools/testing/selftests/lsm/Makefile
-> @@ -0,0 +1,19 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# First run: make -C ../../../.. headers_install
+>  Because we may not know on which kernel version an application will be
+>  executed, it is safer to follow a best-effort security approach.  Indeed, we
+>  should try to protect users as much as possible whatever the kernel they are
+> -using.  To avoid binary enforcement (i.e. either all security features or
+> -none), we can leverage a dedicated Landlock command to get the current version
+> -of the Landlock ABI and adapt the handled accesses.  Let's check if we should
+> -remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
+> -access rights, which are only supported starting with the second and third
+> -version of the ABI.
+> +using.
 > +
-> +CFLAGS += -Wall -O2 $(KHDR_INCLUDES)
-> +LOCAL_HDRS += common.h
+> +To be compatible with older Linux versions, we detect the available Landlock ABI
+> +version, and only use the available subset of access rights:
+>  
+>  .. code-block:: c
+>  
+> @@ -92,6 +91,9 @@ version of the ABI.
+>      case 2:
+>          /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
+>          ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
+> +    case 3:
+> +        /* Removes LANDLOCK_ACCESS_FS_IOCTL for ABI < 4 */
+> +        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL;
+>      }
+>  
+>  This enables to create an inclusive ruleset that will contain our rules.
+> @@ -190,6 +192,7 @@ access rights per directory enables to change the location of such directory
+>  without relying on the destination directory access rights (except those that
+>  are required for this operation, see ``LANDLOCK_ACCESS_FS_REFER``
+>  documentation).
 > +
-> +TEST_GEN_PROGS := lsm_get_self_attr_test lsm_list_modules_test \
-> +		  lsm_set_self_attr_test
+>  Having self-sufficient hierarchies also helps to tighten the required access
+>  rights to the minimal set of data.  This also helps avoid sinkhole directories,
+>  i.e.  directories where data can be linked to but not linked from.  However,
+> @@ -283,18 +286,24 @@ It should also be noted that truncating files does not require the
+>  system call, this can also be done through :manpage:`open(2)` with the flags
+>  ``O_RDONLY | O_TRUNC``.
+>  
+> -When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE``
+> -right is associated with the newly created file descriptor and will be used for
+> -subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavior is
+> -similar to opening a file for reading or writing, where permissions are checked
+> -during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
+> +The truncate right is associated with the opened file (see below).
 > +
-> +include ../lib.mk
+> +Rights associated with file descriptors
+> +---------------------------------------
 > +
-> +$(TEST_GEN_PROGS):
+> +When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE`` and
+> +``LANDLOCK_ACCESS_FS_IOCTL`` rights is associated with the newly created file
+> +descriptor and will be used for subsequent truncation and ioctl attempts using
+> +:manpage:`ftruncate(2)` and :manpage:`ioctl(2)`.  The behavior is similar to
+> +opening a file for reading or writing, where permissions are checked during
+> +:manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
+>  :manpage:`write(2)` calls.
+>  
+> -As a consequence, it is possible to have multiple open file descriptors for the
+> -same file, where one grants the right to truncate the file and the other does
+> -not.  It is also possible to pass such file descriptors between processes,
+> -keeping their Landlock properties, even when these processes do not have an
+> -enforced Landlock ruleset.
+> +As a consequence, it is possible to have multiple open file descriptors
+> +referring to the same file, where one grants the truncate or ioctl right and the
+> +other does not.  It is also possible to pass such file descriptors between
+> +processes, keeping their Landlock properties, even when these processes do not
+> +have an enforced Landlock ruleset.
+>  
+>  Compatibility
+>  =============
+> @@ -422,6 +431,27 @@ Memory usage
+>  Kernel memory allocated to create rulesets is accounted and can be restricted
+>  by the Documentation/admin-guide/cgroup-v1/memory.rst.
+>  
+> +IOCTL support
+> +-------------
 > +
-> +$(OUTPUT)/lsm_get_self_attr_test: lsm_get_self_attr_test.c common.c
-> +$(OUTPUT)/lsm_set_self_attr_test: lsm_set_self_attr_test.c common.c
-> +$(OUTPUT)/lsm_list_modules_test: lsm_list_modules_test.c common.c
-> +
-> +EXTRA_CLEAN = $(OUTPUT)/common.o
-> diff --git a/tools/testing/selftests/lsm/common.c b/tools/testing/selftests/lsm/common.c
-> new file mode 100644
-> index 000000000000..db9af9375238
-> --- /dev/null
-> +++ b/tools/testing/selftests/lsm/common.c
-> @@ -0,0 +1,81 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Linux Security Module infrastructure tests
-> + *
-> + * Copyright © 2023 Casey Schaufler <casey@schaufler-ca.com>
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <linux/lsm.h>
-> +#include <fcntl.h>
-> +#include <string.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <unistd.h>
-> +#include <sys/types.h>
-> +#include "common.h"
-> +
-> +#define PROCATTR	"/proc/self/attr/"
-> +
-> +int read_proc_attr(const char *attr, char *value, size_t size)
-> +{
-> +	int fd;
-> +	int len;
-> +	char *path;
-> +
-> +	len = strlen(PROCATTR) + strlen(attr) + 1;
-> +	path = calloc(len, 1);
-> +	if (path == NULL)
-> +		return -1;
-> +	sprintf(path, "%s%s", PROCATTR, attr);
-> +
-> +	fd = open(path, O_RDONLY);
-> +	free(path);
-> +
-> +	if (fd < 0)
+> +The ``LANDLOCK_ACCESS_FS_IOCTL`` access right restricts the use of
+> +:manpage:`ioctl(2)`, but it only applies to newly opened files.  This means
+> +specifically that pre-existing file descriptors like STDIN, STDOUT and STDERR
 
-not closing fd here
+According to man pages (and unlike IOCTL commands) we should not
+capitalize stdin, stdout and stderr.
 
-> +		return -1;
-> +	len = read(fd, value, size);
-> +	if (len <= 0)
-> +		return -1;
-> +	close(fd);
+> +are unaffected.
 > +
+> +Users should be aware that TTY devices have traditionally permitted to control
+> +other processes on the same TTY through the ``TIOCSTI`` and ``TIOCLINUX`` IOCTL
+> +commands.  It is therefore recommended to close inherited TTY file descriptors.
 
-It would feel cozier if you would ensure a trailing \0 in
-value before doing strchr.
+Good to see such warnings in the documentation.
 
-> +	path = strchr(value, '\n');
-> +	if (path)
-> +		*path = '\0';
-> +
-> +	return 0;
-> +}
-> +
-> +int read_sysfs_lsms(char *lsms, size_t size)
-> +{
-> +	FILE *fp;
-> +
-> +	fp = fopen("/sys/kernel/security/lsm", "r");
-> +	if (fp == NULL)
-> +		return -1;
-> +	if (fread(lsms, 1, size, fp) <= 0)
+We could also propose a simple solution to still uses stdin, stdout and
+stderr without complex TTY proxying: re-opening the TTY, or replacing
+related FD thanks to /proc/self/fd/*
 
-not closing fp
+For instance, with shell scripts it would look like this:
+exec </proc/self/fd/0
+exec >/proc/self/fd/1
+exec 2>/proc/self/fd/2
 
-> +		return -1;
-> +	fclose(fp);
-> +	return 0;
-> +}
-> +
-> +int attr_lsm_count(void)
-> +{
-> +	char *names = calloc(sysconf(_SC_PAGESIZE), 1);
-> +	int count = 0;
-> +
-> +	if (!names)
-> +		return 0;
-> +
-> +	if (read_sysfs_lsms(names, sysconf(_SC_PAGESIZE)))
-> +		return 0;
-> +
+Because of TIOCGWINSZ and TCGETS, an interactive shell may not work as
+expected though.
 
-Again strstr without ensuring \0.  /sys/kernel/security/lsm
-is unlikely to be longer than _SC_PAGESIZE, but I *could*
-mess with you with a bind mount...
-
-> +	if (strstr(names, "selinux"))
-> +		count++;
-> +	if (strstr(names, "smack"))
-> +		count++;
-> +	if (strstr(names, "apparmor"))
-> +		count++;
+> +The :manpage:`isatty(3)` function checks whether a given file descriptor is a
+> +TTY.
 > +
-> +	return count;
-> +}
-> diff --git a/tools/testing/selftests/lsm/common.h b/tools/testing/selftests/lsm/common.h
-> new file mode 100644
-> index 000000000000..cd0214a3eeb2
-> --- /dev/null
-> +++ b/tools/testing/selftests/lsm/common.h
-> @@ -0,0 +1,33 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Linux Security Module infrastructure tests
-> + *
-> + * Copyright © 2023 Casey Schaufler <casey@schaufler-ca.com>
-> + */
+> +Landlock's IOCTL support is coarse-grained at the moment, but may become more
+> +fine-grained in the future.  Until then, users are advised to establish the
+> +guarantees that they need through the file hierarchy, by only permitting the
+> +``LANDLOCK_ACCESS_FS_IOCTL`` right on files where it is really harmless.  In
+> +cases where you can control the mounts, the ``nodev`` mount option can help to
+> +rule out that device files can be accessed.
 > +
-> +#ifndef lsm_get_self_attr
-> +static inline int lsm_get_self_attr(unsigned int attr, struct lsm_ctx *ctx,
-> +				    size_t *size, __u32 flags)
-> +{
-> +	return syscall(__NR_lsm_get_self_attr, attr, ctx, size, flags);
-> +}
-> +#endif
+>  Previous limitations
+>  ====================
+>  
+> @@ -451,6 +481,16 @@ always allowed when using a kernel that only supports the first or second ABI.
+>  Starting with the Landlock ABI version 3, it is now possible to securely control
+>  truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access right.
+>  
+> +Ioctl (ABI < 4)
+> +---------------
 > +
-> +#ifndef lsm_set_self_attr
-> +static inline int lsm_set_self_attr(unsigned int attr, struct lsm_ctx *ctx,
-> +				    size_t size, __u32 flags)
-> +{
-> +	return syscall(__NR_lsm_set_self_attr, attr, ctx, size, flags);
-> +}
-> +#endif
+> +IOCTL operations could not be denied before the fourth Landlock ABI, so
+> +:manpage:`ioctl(2)` is always allowed when using a kernel that only supports an
+> +earlier ABI.
 > +
-> +#ifndef lsm_list_modules
-> +static inline int lsm_list_modules(__u64 *ids, size_t *size, __u32 flags)
-> +{
-> +	return syscall(__NR_lsm_list_modules, ids, size, flags);
-> +}
-> +#endif
+> +Starting with the Landlock ABI version 4, it is possible to restrict the use of
+> +:manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL`` access right.
 > +
-> +extern int read_proc_attr(const char *attr, char *value, size_t size);
-> +extern int read_sysfs_lsms(char *lsms, size_t size);
-> +int attr_lsm_count(void);
-> diff --git a/tools/testing/selftests/lsm/config b/tools/testing/selftests/lsm/config
-> new file mode 100644
-> index 000000000000..1c0c4c020f9c
-> --- /dev/null
-> +++ b/tools/testing/selftests/lsm/config
-> @@ -0,0 +1,3 @@
-> +CONFIG_SYSFS=y
-> +CONFIG_SECURITY=y
-> +CONFIG_SECURITYFS=y
-> diff --git a/tools/testing/selftests/lsm/lsm_get_self_attr_test.c b/tools/testing/selftests/lsm/lsm_get_self_attr_test.c
-> new file mode 100644
-> index 000000000000..74c65aae1fcc
-> --- /dev/null
-> +++ b/tools/testing/selftests/lsm/lsm_get_self_attr_test.c
-> @@ -0,0 +1,240 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Linux Security Module infrastructure tests
-> + * Tests for the lsm_get_self_attr system call
-> + *
-> + * Copyright © 2022 Casey Schaufler <casey@schaufler-ca.com>
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <linux/lsm.h>
-> +#include <fcntl.h>
-> +#include <string.h>
-> +#include <stdio.h>
-> +#include <unistd.h>
-> +#include <sys/types.h>
-> +#include "../kselftest_harness.h"
-> +#include "common.h"
-> +
-> +static struct lsm_ctx *next_ctx(struct lsm_ctx *ctxp)
-> +{
-> +	void *vp;
-> +
-> +	vp = (void *)ctxp + sizeof(*ctxp) + ctxp->ctx_len;
-> +	return (struct lsm_ctx *)vp;
-> +}
-> +
-> +TEST(size_null_lsm_get_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	struct lsm_ctx *ctx = calloc(page_size, 1);
-> +
-> +	ASSERT_NE(NULL, ctx);
-> +	errno = 0;
-> +	ASSERT_EQ(-1, lsm_get_self_attr(LSM_ATTR_CURRENT, ctx, NULL, 0));
-> +	ASSERT_EQ(EINVAL, errno);
-> +
-> +	free(ctx);
-> +}
-> +
-> +TEST(ctx_null_lsm_get_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	size_t size = page_size;
-> +	int rc;
-> +
-> +	rc = lsm_get_self_attr(LSM_ATTR_CURRENT, NULL, &size, 0);
-> +
-> +	if (attr_lsm_count()) {
-> +		ASSERT_NE(-1, rc);
-> +		ASSERT_NE(1, size);
-> +	} else {
-> +		ASSERT_EQ(-1, rc);
-> +	}
-> +}
-> +
-> +TEST(size_too_small_lsm_get_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	struct lsm_ctx *ctx = calloc(page_size, 1);
-> +	size_t size = 1;
-> +
-> +	ASSERT_NE(NULL, ctx);
-> +	errno = 0;
-> +	ASSERT_EQ(-1, lsm_get_self_attr(LSM_ATTR_CURRENT, ctx, &size, 0));
-> +	if (attr_lsm_count()) {
-> +		ASSERT_EQ(E2BIG, errno);
-> +	} else {
-> +		ASSERT_EQ(EOPNOTSUPP, errno);
-> +	}
-> +	ASSERT_NE(1, size);
-> +
-> +	free(ctx);
-> +}
-> +
-> +TEST(flags_zero_lsm_get_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	struct lsm_ctx *ctx = calloc(page_size, 1);
-> +	size_t size = page_size;
-> +
-> +	ASSERT_NE(NULL, ctx);
-> +	errno = 0;
-> +	ASSERT_EQ(-1, lsm_get_self_attr(LSM_ATTR_CURRENT, ctx, &size, 1));
-> +	ASSERT_EQ(EINVAL, errno);
-> +	ASSERT_EQ(page_size, size);
-> +
-> +	free(ctx);
-> +}
-> +
-> +TEST(flags_overset_lsm_get_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	struct lsm_ctx *ctx = calloc(page_size, 1);
-> +	size_t size = page_size;
-> +
-> +	ASSERT_NE(NULL, ctx);
-> +	errno = 0;
-> +	ASSERT_EQ(-1, lsm_get_self_attr(LSM_ATTR_CURRENT | LSM_ATTR_PREV, ctx,
-> +					&size, 0));
-> +	ASSERT_EQ(EOPNOTSUPP, errno);
-> +
-> +	free(ctx);
-> +}
-> +
-> +TEST(basic_lsm_get_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	size_t size = page_size;
-> +	struct lsm_ctx *ctx = calloc(page_size, 1);
-> +	struct lsm_ctx *tctx = NULL;
-> +	__u64 *syscall_lsms = calloc(page_size, 1);
-> +	char *attr = calloc(page_size, 1);
-
-You never verify attr is not NULL
-
-> +	int cnt_current = 0;
-> +	int cnt_exec = 0;
-> +	int cnt_fscreate = 0;
-> +	int cnt_keycreate = 0;
-> +	int cnt_prev = 0;
-> +	int cnt_sockcreate = 0;
-> +	int lsmcount;
-> +	int count;
-> +	int i;
-> +
-> +	ASSERT_NE(NULL, ctx);
-> +	ASSERT_NE(NULL, syscall_lsms);
-> +
-> +	lsmcount = syscall(__NR_lsm_list_modules, syscall_lsms, &size, 0);
-> +	ASSERT_LE(1, lsmcount);
-> +
-> +	for (i = 0; i < lsmcount; i++) {
-> +		switch (syscall_lsms[i]) {
-> +		case LSM_ID_SELINUX:
-> +			cnt_current++;
-> +			cnt_exec++;
-> +			cnt_fscreate++;
-> +			cnt_keycreate++;
-> +			cnt_prev++;
-> +			cnt_sockcreate++;
-> +			break;
-> +		case LSM_ID_SMACK:
-> +			cnt_current++;
-> +			break;
-> +		case LSM_ID_APPARMOR:
-> +			cnt_current++;
-> +			cnt_exec++;
-> +			cnt_prev++;
-> +			break;
-> +		default:
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (cnt_current) {
-> +		size = page_size;
-> +		count = lsm_get_self_attr(LSM_ATTR_CURRENT, ctx, &size, 0);
-> +		ASSERT_EQ(cnt_current, count);
-> +		tctx = ctx;
-> +		ASSERT_EQ(0, read_proc_attr("current", attr, page_size));
-> +		ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-> +		for (i = 1; i < count; i++) {
-> +			tctx = next_ctx(tctx);
-> +			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +	}
-> +	if (cnt_exec) {
-> +		size = page_size;
-> +		count = lsm_get_self_attr(LSM_ATTR_EXEC, ctx, &size, 0);
-> +		ASSERT_GE(cnt_exec, count);
-> +		if (count > 0) {
-> +			tctx = ctx;
-> +			if (read_proc_attr("exec", attr, page_size) == 0)
-> +				ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +		for (i = 1; i < count; i++) {
-> +			tctx = next_ctx(tctx);
-> +			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +	}
-> +	if (cnt_fscreate) {
-> +		size = page_size;
-> +		count = lsm_get_self_attr(LSM_ATTR_FSCREATE, ctx, &size, 0);
-> +		ASSERT_GE(cnt_fscreate, count);
-> +		if (count > 0) {
-> +			tctx = ctx;
-> +			if (read_proc_attr("fscreate", attr, page_size) == 0)
-> +				ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +		for (i = 1; i < count; i++) {
-> +			tctx = next_ctx(tctx);
-> +			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +	}
-> +	if (cnt_keycreate) {
-> +		size = page_size;
-> +		count = lsm_get_self_attr(LSM_ATTR_KEYCREATE, ctx, &size, 0);
-> +		ASSERT_GE(cnt_keycreate, count);
-> +		if (count > 0) {
-> +			tctx = ctx;
-> +			if (read_proc_attr("keycreate", attr, page_size) == 0)
-> +				ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +		for (i = 1; i < count; i++) {
-> +			tctx = next_ctx(tctx);
-> +			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +	}
-> +	if (cnt_prev) {
-> +		size = page_size;
-> +		count = lsm_get_self_attr(LSM_ATTR_PREV, ctx, &size, 0);
-> +		ASSERT_GE(cnt_prev, count);
-> +		if (count > 0) {
-> +			tctx = ctx;
-> +			ASSERT_EQ(0, read_proc_attr("prev", attr, page_size));
-> +			ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-> +			for (i = 1; i < count; i++) {
-> +				tctx = next_ctx(tctx);
-> +				ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-> +			}
-> +		}
-> +	}
-> +	if (cnt_sockcreate) {
-> +		size = page_size;
-> +		count = lsm_get_self_attr(LSM_ATTR_SOCKCREATE, ctx, &size, 0);
-> +		ASSERT_GE(cnt_sockcreate, count);
-> +		if (count > 0) {
-> +			tctx = ctx;
-> +			if (read_proc_attr("sockcreate", attr, page_size) == 0)
-> +				ASSERT_EQ(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +		for (i = 1; i < count; i++) {
-> +			tctx = next_ctx(tctx);
-> +			ASSERT_NE(0, strcmp((char *)tctx->ctx, attr));
-> +		}
-> +	}
-> +
-> +	free(ctx);
-> +	free(attr);
-> +	free(syscall_lsms);
-> +}
-> +
-> +TEST_HARNESS_MAIN
-> diff --git a/tools/testing/selftests/lsm/lsm_list_modules_test.c b/tools/testing/selftests/lsm/lsm_list_modules_test.c
-> new file mode 100644
-> index 000000000000..445c02f09c74
-> --- /dev/null
-> +++ b/tools/testing/selftests/lsm/lsm_list_modules_test.c
-> @@ -0,0 +1,140 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Linux Security Module infrastructure tests
-> + * Tests for the lsm_list_modules system call
-> + *
-> + * Copyright © 2022 Casey Schaufler <casey@schaufler-ca.com>
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <linux/lsm.h>
-> +#include <string.h>
-> +#include <stdio.h>
-> +#include <unistd.h>
-> +#include <sys/types.h>
-> +#include "../kselftest_harness.h"
-> +#include "common.h"
-> +
-> +TEST(size_null_lsm_list_modules)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	__u64 *syscall_lsms = calloc(page_size, 1);
-> +
-> +	ASSERT_NE(NULL, syscall_lsms);
-> +	errno = 0;
-> +	ASSERT_EQ(-1, lsm_list_modules(syscall_lsms, NULL, 0));
-> +	ASSERT_EQ(EFAULT, errno);
-> +
-> +	free(syscall_lsms);
-> +}
-> +
-> +TEST(ids_null_lsm_list_modules)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	size_t size = page_size;
-> +
-> +	errno = 0;
-> +	ASSERT_EQ(-1, lsm_list_modules(NULL, &size, 0));
-> +	ASSERT_EQ(EFAULT, errno);
-> +	ASSERT_NE(1, size);
-> +}
-> +
-> +TEST(size_too_small_lsm_list_modules)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	__u64 *syscall_lsms = calloc(page_size, 1);
-> +	size_t size = 1;
-> +
-> +	ASSERT_NE(NULL, syscall_lsms);
-> +	errno = 0;
-> +	ASSERT_EQ(-1, lsm_list_modules(syscall_lsms, &size, 0));
-> +	ASSERT_EQ(E2BIG, errno);
-> +	ASSERT_NE(1, size);
-> +
-> +	free(syscall_lsms);
-> +}
-> +
-> +TEST(flags_set_lsm_list_modules)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	__u64 *syscall_lsms = calloc(page_size, 1);
-> +	size_t size = page_size;
-> +
-> +	ASSERT_NE(NULL, syscall_lsms);
-> +	errno = 0;
-> +	ASSERT_EQ(-1, lsm_list_modules(syscall_lsms, &size, 7));
-> +	ASSERT_EQ(EINVAL, errno);
-> +	ASSERT_EQ(page_size, size);
-> +
-> +	free(syscall_lsms);
-> +}
-> +
-> +TEST(correct_lsm_list_modules)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	size_t size = page_size;
-> +	__u64 *syscall_lsms = calloc(page_size, 1);
-> +	char *sysfs_lsms = calloc(page_size, 1);
-> +	char *name;
-> +	char *cp;
-> +	int count;
-> +	int i;
-> +
-> +	ASSERT_NE(NULL, sysfs_lsms);
-> +	ASSERT_NE(NULL, syscall_lsms);
-> +	ASSERT_EQ(0, read_sysfs_lsms(sysfs_lsms, page_size));
-> +
-> +	count = lsm_list_modules(syscall_lsms, &size, 0);
-> +	ASSERT_LE(1, count);
-> +	cp = sysfs_lsms;
-> +	for (i = 0; i < count; i++) {
-> +		switch (syscall_lsms[i]) {
-> +		case LSM_ID_CAPABILITY:
-> +			name = "capability";
-> +			break;
-> +		case LSM_ID_SELINUX:
-> +			name = "selinux";
-> +			break;
-> +		case LSM_ID_SMACK:
-> +			name = "smack";
-> +			break;
-> +		case LSM_ID_TOMOYO:
-> +			name = "tomoyo";
-> +			break;
-> +		case LSM_ID_IMA:
-> +			name = "ima";
-> +			break;
-> +		case LSM_ID_APPARMOR:
-> +			name = "apparmor";
-> +			break;
-> +		case LSM_ID_YAMA:
-> +			name = "yama";
-> +			break;
-> +		case LSM_ID_LOADPIN:
-> +			name = "loadpin";
-> +			break;
-> +		case LSM_ID_SAFESETID:
-> +			name = "safesetid";
-> +			break;
-> +		case LSM_ID_LOCKDOWN:
-> +			name = "lockdown";
-> +			break;
-> +		case LSM_ID_BPF:
-> +			name = "bpf";
-> +			break;
-> +		case LSM_ID_LANDLOCK:
-> +			name = "landlock";
-> +			break;
-> +		default:
-> +			name = "INVALID";
-> +			break;
-> +		}
-> +		ASSERT_EQ(0, strncmp(cp, name, strlen(name)));
-> +		cp += strlen(name) + 1;
-> +	}
-> +
-> +	free(sysfs_lsms);
-> +	free(syscall_lsms);
-> +}
-> +
-> +TEST_HARNESS_MAIN
-> diff --git a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
-> new file mode 100644
-> index 000000000000..d0f5b776c548
-> --- /dev/null
-> +++ b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
-> @@ -0,0 +1,74 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Linux Security Module infrastructure tests
-> + * Tests for the lsm_set_self_attr system call
-> + *
-> + * Copyright © 2022 Casey Schaufler <casey@schaufler-ca.com>
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <linux/lsm.h>
-> +#include <string.h>
-> +#include <stdio.h>
-> +#include <unistd.h>
-> +#include <sys/types.h>
-> +#include "../kselftest_harness.h"
-> +#include "common.h"
-> +
-> +TEST(ctx_null_lsm_set_self_attr)
-> +{
-> +	ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT, NULL,
-> +					sizeof(struct lsm_ctx), 0));
-> +}
-> +
-> +TEST(size_too_small_lsm_set_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	struct lsm_ctx *ctx = calloc(page_size, 1);
-> +	size_t size = page_size;
-> +
-> +	ASSERT_NE(NULL, ctx);
-> +	if (attr_lsm_count()) {
-> +		ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, ctx, &size,
-> +			  0));
-> +	}
-> +	ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT, ctx, 1, 0));
-> +
-> +	free(ctx);
-> +}
-> +
-> +TEST(flags_zero_lsm_set_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	struct lsm_ctx *ctx = calloc(page_size, 1);
-> +	size_t size = page_size;
-> +
-> +	ASSERT_NE(NULL, ctx);
-> +	if (attr_lsm_count()) {
-> +		ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, ctx, &size,
-> +			  0));
-> +	}
-> +	ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT, ctx, size, 1));
-> +
-> +	free(ctx);
-> +}
-> +
-> +TEST(flags_overset_lsm_set_self_attr)
-> +{
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	char *ctx = calloc(page_size, 1);
-> +	size_t size = page_size;
-> +	struct lsm_ctx *tctx = (struct lsm_ctx *)ctx;
-> +
-> +	ASSERT_NE(NULL, ctx);
-> +	if (attr_lsm_count()) {
-> +		ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, tctx, &size,
-> +			  0));
-> +	}
-> +	ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT | LSM_ATTR_PREV, tctx,
-> +					size, 0));
-> +
-> +	free(ctx);
-> +}
-> +
-> +TEST_HARNESS_MAIN
+>  .. _kernel_support:
+>  
+>  Kernel support
 > -- 
-> 2.41.0
-> 
+> 2.41.0.694.ge786442a9b-goog
 > 
