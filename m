@@ -2,97 +2,162 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ECDBEE49A0
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Aug 2023 21:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2541AEE49A0
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Aug 2023 22:05:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229582AbjHUVVA (ORCPT
+        id S230330AbjHUWFU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Aug 2023 17:21:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44880 "EHLO
+        Mon, 21 Aug 2023 18:05:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229541AbjHUVU7 (ORCPT
+        with ESMTP id S229462AbjHUWFU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Aug 2023 17:20:59 -0400
-Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76280D9
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Aug 2023 14:20:58 -0700 (PDT)
-Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-1c4c7a83bcdso2330264fac.0
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Aug 2023 14:20:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1692652857; x=1693257657;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kXQLL/tQqoFblrCpS21gCxhSOHNRrMyl0EvcluCINWs=;
-        b=adBtwsEygc8n+sFCZPCfYzUiaCLpHcu5M+MSJEvXt7Z3kfAE4oK8VkP5IPaquOv/EU
-         FkiDiOF6JunX4jNCYVfGXHzGYRt66mhgG64QNZRrcyQL4crVZ32IaEVhxM0QqULG0jpp
-         BPOpjrnoCUBOm+ZHWY6NyEnFWRKNIJhxqkn6NpeQ4oBWbpi+bseC6zhW7LyjIF0+87E2
-         Ujvf3ucibhfd+nMd8HZRu5QiIjJ6IsEcnl5HiSXOYZfUj3KoUVs4NLE1voALRSFe+sTb
-         pdxKSJQzkdwfz8DZivoEcy3FpIMil1z8isVWeeMg5TTKAKIo1BJNvF6AeMSj+eOgfaVO
-         wQYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692652857; x=1693257657;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kXQLL/tQqoFblrCpS21gCxhSOHNRrMyl0EvcluCINWs=;
-        b=Z1ESufbt8kBb+SNeLLq7firPMQkoZ8Gmk/b+IcRjGFgM82LBZCcMyi77Ox+J5ssRK9
-         U9re1T+7y8RuwoMgCOY9qi3RBk09EvYq5NmD42fCUdFEmqhnYDqdCx8Bdld4nVbM1xXR
-         qHGIpf9Pfr0XsNhJMnokl9iXB8Lqh7lvxXgnPeZN3F7IK25nGfQ9frmz2944yelgN9SW
-         Fny8fn1cJQDReS4XJp9DbK4dV0eNORT/Xo128CY88aYVWSNCEqHaqmoaROecx7HVLTiD
-         Znhp3uu7NIsmkbo+6Ad5vib5ESopAb8LSwKfhp2o89ZEkjB6+sLVuobKP/NYhzxXn016
-         LbnQ==
-X-Gm-Message-State: AOJu0YxJIEmXoEC/2QR20kpyTWC68WDhn6QVPivF7DcTrpevTmMV89Hn
-        M+fz7KNWOV4e0QMZLyaNKIy9bBYQa45eY8kRFmqmguvUgYwzW+FY6w2Z
-X-Google-Smtp-Source: AGHT+IF0JsWcEVdMlYbfQjVn6UDxH5Q06yGBJF74FyYf/4BoJA/N0KJG4X0r8FBPfUJOAbsOtcnK4WJaCK02MNj8hIM=
-X-Received: by 2002:a05:6870:702a:b0:1bb:3f64:bb89 with SMTP id
- u42-20020a056870702a00b001bb3f64bb89mr9540871oae.24.1692652857675; Mon, 21
- Aug 2023 14:20:57 -0700 (PDT)
+        Mon, 21 Aug 2023 18:05:20 -0400
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7897210E;
+        Mon, 21 Aug 2023 15:05:18 -0700 (PDT)
+Received: from [10.137.114.52] (unknown [131.107.159.180])
+        by linux.microsoft.com (Postfix) with ESMTPSA id B1F992126CAD;
+        Mon, 21 Aug 2023 15:05:17 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B1F992126CAD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1692655517;
+        bh=27Gt5g39km05HA5Jc2OsnUkxm3ZtTJbBzolAHyq7W6E=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=WtMc/7fA+E88b/6c1PGfS2o3acsD8mvwk8oqoYIai5KwzJabvkzPWm8wbgfpKa4tp
+         C2AAAViBNa+wg/cYNefMtzr2qSwwvLL9108tzOLmj8DwzAvEKcKIbOfMAURlJCP+++
+         yojGMn7V7ij3AOoQEmMDyT9CDu3/SR9QYZzJPAQw=
+Message-ID: <8bc0f024-fc12-cb32-7af0-e500948cc6db@linux.microsoft.com>
+Date:   Mon, 21 Aug 2023 15:05:17 -0700
 MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 21 Aug 2023 17:20:47 -0400
-Message-ID: <CAHC9VhTEeicj__ys3duEhmv4WuLgZupWanr_bXwObRCz_jxatw@mail.gmail.com>
-Subject: [GIT PULL] SELinux fixes for v6.5 (#1)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
+Content-Language: en-US
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+        kgold@linux.ibm.com, bhe@redhat.com, vgoyal@redhat.com,
+        dyoung@redhat.com, kexec@lists.infradead.org, jmorris@namei.org,
+        Paul Moore <paul@paul-moore.com>, serge@hallyn.com
+Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        linux-security-module@vger.kernel.org
+References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
+ <277db5491460d5fd607785f2bcc733de39022a35.camel@linux.ibm.com>
+ <bf794136-703a-0d33-e245-7e723007b5c0@linux.microsoft.com>
+ <0e1511e8819b24ab8a34a7b15821f06eff688f29.camel@linux.ibm.com>
+From:   Sush Shringarputale <sushring@linux.microsoft.com>
+In-Reply-To: <0e1511e8819b24ab8a34a7b15821f06eff688f29.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
 
-A small SELinux patch to fix a potential problem when cleaning up on a
-failed SELinux policy load (list next pointer not being properly
-initialized to NULL early enough).  Please merge for the v6.5 release.
+
+On 8/14/2023 3:02 PM, Mimi Zohar wrote:
+> On Mon, 2023-08-14 at 14:42 -0700, Sush Shringarputale wrote:
+>>> This design seems overly complex and requires synchronization between
+>>> the "snapshot" record and exporting the records from the measurement
+>>> list.  None of this would be necessary if the measurements were copied
+>>> from kernel memory to a backing file (e.g. tmpfs), as described in [1].
+Even if the Kernel maintains the link between a tmpfs exported and an
+in-memory IMA log - it still has to copy the tmpfs portion to the
+Kernel memory during kexec soft boot.  tmpfs is cleared during kexec,
+so this copying of tmpfs back to kernel memory is necessary to preserve
+the integrity of the log during kexec.  But the copying would add back
+the memory pressure on the node during kexec (which may result in
+out-of-memory), defeating the purpose of the overall effort/feature.
+Copying to a regular *persistent* protected file seems a cleaner
+approach, compared to tmpfs.  We prototyped this solution, however it
+does not seem to be a common pattern within the Kernel to write state
+directly to files on disk file systems.  We considered two potential
+options:
+
+Option (A): (RECOMMENDED)
+             Let Kernel write the file using KM file APIs
+--------------------------------------------
+     Use Kernel mode file APIs such as _file_open_root_, _vfs_llseek_,
+     and _vfs_write_ to use a persistent file on disk.  There is not
+     sufficient precedent for this pattern in the Kernel currently, so
+     we need guidance from area experts on the best mechanism to
+     implement this.
+
+     As for the location of the file, we suggest setting this in
+     KConfig. The file will be created by the Kernel, so it should be
+     protected from UM access.  Additionally, on a full boot, the
+     file should be cleared by the Kernel.
+
+   POTENTIAL ISSUES AND MITIGATIONS
+     - handling IO errors from KM
+
+       A potential mitigation for this is to retry the failed write.
+       This assumes that the vfs_write Kernel method can handle any
+       failures gracefully without causing crashes.
+
+
+     - using file system paths to resolve the file from KM
+
+       Using the file_open_root seems to provide sufficient resiliency
+       against this.  The file can be located at a well known location
+       to minimize potential concerns.  However, any guidance in
+       minimizing squatting risks would be greatly appreciated.
+
+     - the file could be tampered by UM
+
+       There needs to be a lock/kernel-only-permission on the file
+       so that a UM process cannot tamper with the file.  A description
+       on how this file would be protected was provided at [2].
+
+
+Option (B): (NOT RECOMMENDED)
+             Hand over the file writing to UM
+--------------------------------------------
+     Alternately, UM could write the file contents and decide the
+     location of the file on disk.  If we want to preserve the Kernel
+     behavior of rendering the IMA log as a single monolithic log on
+     client (as ascii/binary_runtime_measurements file), the
+     Kernel will have to read from a file written by UM and combine it
+     with the remaining in-kernel-memory IMA log events.
+
+     This approach of a Kernel reading from a UM written file as an
+     IMA log violates the call stack, and thus it is not recommended.
+
+If UM is to handle writing the IMA log to disk, the Kernel cannot read
+those snapshotted events again.  Integrity of the IMA log can still be
+maintained - a solution implementing this was in the original proposal
+we submitted [1].
+
+We appreciate the community's feedback on helping mold this feature to a
+suitable implementation.
 
 Thanks,
--Paul
---
-The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5=
-:
+Sush and Tushar.
 
- Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
 
-are available in the Git repository at:
+References:
+[1]
+https://lore.kernel.org/linux-integrity/c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com/ 
 
- https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20230821
 
-for you to fetch changes up to 70d91dc9b2ac91327d0eefd86163abc3548effa6:
+[2]
+https://lore.kernel.org/linux-integrity/CAOQ4uxiBAGKco1BKgyLOMY54r_Ck2jnvz8RCFODD-V87CGqLEw@mail.gmail.com/ 
 
- selinux: set next pointer before attaching to list
-   (2023-08-18 16:13:03 -0400)
+>>>
+>>> What is the real problem - kernel memory pressure, memory pressure in
+>>> general, or disk space?  Is the intention to remove or offload the
+>>> exported measurements?
+>> The main concern is the memory pressure on both the kernel and the
+>> attestation client
+>> when it sends the request.  The concern you bring up is valid and we are
+>> working on
+>> creating a prototype.  There is no intention to remove the exported
+>> measurements.
+> Glad to hear that you're not intending to remove the exported
+> measurements.
+>
+> Defining and including a new record in the measurement list measurement
+> is fine, if it helps with attestation and doesn't require pausing the
+> measurements.
+>
 
-----------------------------------------------------------------
-selinux/stable-6.5 PR 20230821
-
-----------------------------------------------------------------
-Christian G=C3=B6ttsche (1):
-     selinux: set next pointer before attaching to list
-
-security/selinux/ss/policydb.c | 2 +-
-1 file changed, 1 insertion(+), 1 deletion(-)
-
---=20
-paul-moore.com
