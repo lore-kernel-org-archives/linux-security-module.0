@@ -2,362 +2,387 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 911CFEE49A5
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Aug 2023 17:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E93EE49A8
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Aug 2023 17:30:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232290AbjHUR3Y (ORCPT
+        id S235332AbjHURaN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Aug 2023 13:29:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43044 "EHLO
+        Mon, 21 Aug 2023 13:30:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232139AbjHUR3Y (ORCPT
+        with ESMTP id S234987AbjHURaM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Aug 2023 13:29:24 -0400
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A200F7;
-        Mon, 21 Aug 2023 10:29:21 -0700 (PDT)
-Received: from jerom (unknown [128.107.241.188])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: serge)
-        by mail.hallyn.com (Postfix) with ESMTPSA id 49CC7993;
-        Mon, 21 Aug 2023 12:29:16 -0500 (CDT)
-Date:   Mon, 21 Aug 2023 12:29:13 -0500
-From:   Serge Hallyn <serge@hallyn.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-audit@redhat.com, audit@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [PATCH] audit: add task history record
-Message-ID: <ZOOe6Tegj0QKpc2w@jerom>
-References: <36b65eb1-ccbf-8b81-468f-b8d88c4be5a3@I-love.SAKURA.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <36b65eb1-ccbf-8b81-468f-b8d88c4be5a3@I-love.SAKURA.ne.jp>
+        Mon, 21 Aug 2023 13:30:12 -0400
+Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92D99107
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Aug 2023 10:30:09 -0700 (PDT)
+Received: by mail-pl1-x649.google.com with SMTP id d9443c01a7336-1bf60f85d78so31945945ad.3
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Aug 2023 10:30:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1692639009; x=1693243809;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PxPb6xmjGnrDhupKfwNZ6FElkwCeLY+o5DimQNV4hqs=;
+        b=EeilR+Ekgkx+cSM5iMGGI6Y6JUlPzIKJDzTMUqkf7lLLOnc6FpewNmU25aBx4uml07
+         kpJ/Y2FJC3CTbM1zhPEns2ri5EF0FucsNsARO2qiyP1aSTS0C5sBildhbwq/ouHiNd0i
+         qimLz+UE3zMmYJlBAqicri/5Fr6eTbJDWgtrq6dGUFxvLf98ghheK+KjfPI1ki9rbrDx
+         OwUj//jjlLo2noDnvWoDubwgN3vUsxvZ3ojvOIltLuZiZqNVPxwjvpAuB6SyalToGMao
+         EwF+zqvM7lCbm29FshYcImlpUndLxfSZBxyjQ8MgJRIV/NshYNyfOiLuklOGwcxVfF2o
+         7bcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692639009; x=1693243809;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PxPb6xmjGnrDhupKfwNZ6FElkwCeLY+o5DimQNV4hqs=;
+        b=YHieti285cTTQAVR25hDfzaiQFIVfdj0pepzCfZTFfOJrTQp1lpatDFFYUWzZd8HqB
+         ErW3UrElTjpW0MyZop00EFbNh1nakhKQE4KDBk2e8f9dw38pvrLRnlzG0fIXyIMAq9WD
+         0I5pLMKXE5Biw1+voaEtpTHMpQjHnQVppWln0J/RB3EZ3KUXl2PBid01uPw4kkTvdvX2
+         SK7lsQKPK6LJtuqrQ3WVZYUPR9R/ERVOVLMcrv8lvmm9SYNS6bGVEBe+XsX/swuuj/K9
+         wd0L2oO4Hk/Hj3dJIcxmXK6JLfVsmT9xZDihvoswQdI5DmlhHlgZeslUeufSY4/HTvsP
+         323Q==
+X-Gm-Message-State: AOJu0YzmOT2ReSlKfrr4lijgIyMylPjGNGrRxel+PKXeCA2pgQQ19gyM
+        30dV3VCorhsbF568+BvysR/SueaeyNczeNCHPA==
+X-Google-Smtp-Source: AGHT+IGoB8kJFRFmo//ezk9L60YAhs5f0Yw/TjMFB9a7nGOG7yPY7ezvdJVQyEjAsqVqDpDGeq6SzFD6orSBmlYJBQ==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
+ (user=ackerleytng job=sendgmr) by 2002:a17:903:22cd:b0:1b8:9533:65b0 with
+ SMTP id y13-20020a17090322cd00b001b8953365b0mr3304261plg.5.1692639009082;
+ Mon, 21 Aug 2023 10:30:09 -0700 (PDT)
+Date:   Mon, 21 Aug 2023 17:30:07 +0000
+In-Reply-To: <ZNvaJ3igvcvTZ/8k@google.com> (message from Sean Christopherson
+ on Tue, 15 Aug 2023 13:03:51 -0700)
+Mime-Version: 1.0
+Message-ID: <diqzzg2ktiao.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From:   Ackerley Tng <ackerleytng@google.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     pbonzini@redhat.com, maz@kernel.org, oliver.upton@linux.dev,
+        chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, willy@infradead.org,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
+        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
+        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
+        david@redhat.com, qperret@google.com, michael.roth@amd.com,
+        wei.w.wang@intel.com, liam.merwick@oracle.com,
+        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 11, 2023 at 07:58:06PM +0900, Tetsuo Handa wrote:
-> When an unexpected system event occurs, the administrator may want to
+Sean Christopherson <seanjc@google.com> writes:
 
-I think I would at times find this useful, however the audit maintainer
-has said no to this patch, and the reasoning is sound (there are other
-ways to do or approximate this, and maintainer support burden is
-increased - which is why that decision is purely his).  So I'm giving
-some technical feedback here, because the code is still out here :), but
-I am not arguing with Paul's nack.
-
-> identify which application triggered the event. For example, unexpected
-> process termination is still a real concern enough to write articles
-> like https://access.redhat.com/solutions/165993 .
-> 
-> This patch adds a record which emits TOMOYO-like task history information
-
-I don't think you should mention TOMOYO here.  Unless I'm expected
-to go read the TOMOYO docs before reviewing this patch.
-
-> into the audit logs for better understanding of unexpected system events.
-> 
->   type=UNKNOWN[1340] msg=audit(1691750738.271:108): history="name=swapper/0;pid=1;start=20230811194329=>name=init;pid=1;start=20230811194343=>name=systemd;pid=1;start=20230811194439=>name=sshd;pid=3660;start=20230811104504=>name=sshd;pid=3767;start=20230811104535"
-> 
-> To be able to avoid bloating audit log files due to this information, this
-> patch uses audit_history= kernel command line parameter that controls max
-> length of history in bytes (default is 1024, and setting to 0 disables
-> recording and emitting).
-> 
-> Unlike execve()'s argv record, records in this history information is
-> emitted as one string in order to reduce bloat of the audit log files.
-> This information can be split into an array using => as the tokenizer.
-> But don't expect that you can compare array elements throughout the whole
-> audit logs by splitting into an array, for old records get removed from
-> history when history became too long to append the newest record. This
-> history information is meant to be interpreted by humans rather than be
-> analyzed by programs.
+> On Tue, Aug 15, 2023, Ackerley Tng wrote:
+>> Sean Christopherson <seanjc@google.com> writes:
+>>
+>> >> I feel that memslots form a natural way of managing usage of the gmem
+>> >> file. When a memslot is created, it is using the file; hence we take =
+a
+>> >> refcount on the gmem file, and as memslots are removed, we drop
+>> >> refcounts on the gmem file.
+>> >
+>> > Yes and no.  It's definitely more natural *if* the goal is to allow gu=
+est_memfd
+>> > memory to exist without being attached to a VM.  But I'm not at all co=
+nvinced
+>> > that we want to allow that, or that it has desirable properties.  With=
+ TDX and
+>> > SNP in particuarly, I'm pretty sure that allowing memory to outlive th=
+e VM is
+>> > very underisable (more below).
+>> >
+>>
+>> This is a little confusing, with the file/inode split in gmem where the
+>> physical memory/data is attached to the inode and the file represents
+>> the VM's view of that memory, won't the memory outlive the VM?
 >
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> ---
->  fs/exec.c                  |   1 +
->  include/linux/audit.h      |   5 ++
->  include/linux/sched.h      |   1 +
->  include/uapi/linux/audit.h |   1 +
->  init/init_task.c           |   7 +++
->  kernel/audit.c             |   1 +
->  kernel/auditsc.c           | 108 +++++++++++++++++++++++++++++++++++++
->  7 files changed, 124 insertions(+)
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 1a827d55ba94..5c8776f692c5 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1381,6 +1381,7 @@ int begin_new_exec(struct linux_binprm * bprm)
->  	commit_creds(bprm->cred);
->  	bprm->cred = NULL;
->  
-> +	audit_update_history();
->  	/*
->  	 * Disable monitoring for regular users
->  	 * when executing setuid binaries. Must
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 6a3a9e122bb5..6291d0f76541 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -397,6 +397,8 @@ static inline void audit_ptrace(struct task_struct *t)
->  		__audit_ptrace(t);
->  }
->  
-> +extern void audit_update_history(void);
-> +
->  				/* Private API (for audit.c only) */
->  extern void __audit_ipc_obj(struct kern_ipc_perm *ipcp);
->  extern void __audit_ipc_set_perm(unsigned long qbytes, uid_t uid, gid_t gid, umode_t mode);
-> @@ -701,6 +703,9 @@ static inline void audit_ntp_log(const struct audit_ntp_data *ad)
->  static inline void audit_ptrace(struct task_struct *t)
->  { }
->  
-> +static inline void audit_update_history(void)
-> +{ }
-> +
->  static inline void audit_log_nfcfg(const char *name, u8 af,
->  				   unsigned int nentries,
->  				   enum audit_nfcfgop op, gfp_t gfp)
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 609bde814cb0..f32076b6b733 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1112,6 +1112,7 @@ struct task_struct {
->  #ifdef CONFIG_AUDIT
->  #ifdef CONFIG_AUDITSYSCALL
->  	struct audit_context		*audit_context;
-> +	char				*comm_history;
->  #endif
->  	kuid_t				loginuid;
->  	unsigned int			sessionid;
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index d676ed2b246e..186c0b5ca1b6 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -122,6 +122,7 @@
->  #define AUDIT_OPENAT2		1337	/* Record showing openat2 how args */
->  #define AUDIT_DM_CTRL		1338	/* Device Mapper target control */
->  #define AUDIT_DM_EVENT		1339	/* Device Mapper events */
-> +#define AUDIT_PROCHISTORY	1340	/* Commname history emit event */
->  
->  #define AUDIT_AVC		1400	/* SE Linux avc denial or grant */
->  #define AUDIT_SELINUX_ERR	1401	/* Internal SE Linux Errors */
-> diff --git a/init/init_task.c b/init/init_task.c
-> index ff6c4b9bfe6b..e3d481d1b010 100644
-> --- a/init/init_task.c
-> +++ b/init/init_task.c
-> @@ -57,6 +57,10 @@ unsigned long init_shadow_call_stack[SCS_SIZE / sizeof(long)]
->  };
->  #endif
->  
-> +#ifdef CONFIG_AUDITSYSCALL
-> +extern char init_task_audit_history[];
-> +#endif
-> +
->  /*
->   * Set up the first task table, touch at your own risk!. Base=0,
->   * limit=0x1fffff (=2MB)
-> @@ -137,6 +141,9 @@ struct task_struct init_task
->  #ifdef CONFIG_AUDIT
->  	.loginuid	= INVALID_UID,
->  	.sessionid	= AUDIT_SID_UNSET,
-> +#ifdef CONFIG_AUDITSYSCALL
-> +	.comm_history   = init_task_audit_history,
-> +#endif
->  #endif
->  #ifdef CONFIG_PERF_EVENTS
->  	.perf_event_mutex = __MUTEX_INITIALIZER(init_task.perf_event_mutex),
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 9bc0b0301198..034952abd83d 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -1674,6 +1674,7 @@ static int __init audit_init(void)
->  {
->  	int i;
->  
-> +	audit_update_history();
->  	if (audit_initialized == AUDIT_DISABLED)
->  		return 0;
->  
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index addeed3df15d..6f1b124da2fe 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -80,6 +80,9 @@
->  /* max length to print of cmdline/proctitle value during audit */
->  #define MAX_PROCTITLE_AUDIT_LEN 128
->  
-> +/* max length for thread's comm name history */
-> +static unsigned int audit_history_size __ro_after_init = 1024;
-> +
->  /* number of audit rules */
->  int audit_n_rules;
->  
-> @@ -1055,6 +1058,12 @@ int audit_alloc(struct task_struct *tsk)
->  	enum audit_state     state;
->  	char *key = NULL;
->  
-> +	if (audit_history_size) {
-> +		tsk->comm_history = kmemdup(current->comm_history, audit_history_size, GFP_KERNEL);
-> +		if (!tsk->comm_history)
-> +			return -ENOMEM;
-> +	}
-> +
->  	if (likely(!audit_ever_enabled))
->  		return 0;
->  
-> @@ -1065,6 +1074,10 @@ int audit_alloc(struct task_struct *tsk)
->  	}
->  
->  	if (!(context = audit_alloc_context(state))) {
-> +		if (audit_history_size) {
-> +			kfree(tsk->comm_history);
-> +			tsk->comm_history = NULL;
-> +		}
->  		kfree(key);
->  		audit_log_lost("out of memory in audit_alloc");
->  		return -ENOMEM;
-> @@ -1671,6 +1684,18 @@ static void audit_log_uring(struct audit_context *ctx)
->  	audit_log_end(ab);
->  }
->  
-> +static void audit_log_history(struct audit_context *context)
-> +{
-> +	struct audit_buffer *ab;
-> +
-> +	ab = audit_log_start(context, GFP_KERNEL, AUDIT_PROCHISTORY);
-> +	if (!ab)
-> +		return; /* audit_panic or being filtered */
-> +	audit_log_format(ab, "history=");
-> +	audit_log_untrustedstring(ab, current->comm_history);
-> +	audit_log_end(ab);
-> +}
-> +
->  static void audit_log_exit(void)
->  {
->  	int i, call_panic = 0;
-> @@ -1805,6 +1830,8 @@ static void audit_log_exit(void)
->  
->  	if (context->context == AUDIT_CTX_SYSCALL)
->  		audit_log_proctitle();
-> +	if (audit_history_size)
-> +		audit_log_history(context);
->  
->  	/* Send end of event record to help user space know we are finished */
->  	ab = audit_log_start(context, GFP_KERNEL, AUDIT_EOE);
-> @@ -1824,6 +1851,10 @@ void __audit_free(struct task_struct *tsk)
->  {
->  	struct audit_context *context = tsk->audit_context;
->  
-> +	if (audit_history_size) {
-> +		kfree(tsk->comm_history);
-> +		tsk->comm_history = NULL;
-> +	}
->  	if (!context)
->  		return;
->  
-> @@ -3034,3 +3065,80 @@ struct list_head *audit_killed_trees(void)
->  		return NULL;
->  	return &ctx->killed_trees;
->  }
-> +
-> +char init_task_audit_history[4096];
-> +
-> +static int __init audit_history_setup(char *str)
-> +{
-> +	unsigned int size;
-> +
-> +	if (kstrtouint(str, 10, &size))
-> +		return -EINVAL;
-> +	if (size > sizeof(init_task_audit_history))
-> +		size = sizeof(init_task_audit_history);
-> +	audit_history_size = size;
-> +	return 0;
-> +}
-> +early_param("audit_history", audit_history_setup);
-> +
-> +void audit_update_history(void)
-> +{
-> +	int i;
-> +	int required;
-> +	struct tm tm;
-> +	char buf[256];
-> +	char *cp = buf;
-> +
-> +	if (!audit_history_size)
-> +		return;
-> +
-> +	cp += snprintf(buf, sizeof(buf) - 1, "name=");
+> Doh, I overloaded the term "VM".  By "VM" I meant the virtual machine as =
+a "thing"
+> the rest of the world sees and interacts with, not the original "struct k=
+vm" object.
+>
+> Because yes, you're absolutely correct that the memory will outlive "stru=
+ct kvm",
+> but it won't outlive the virtual machine, and specifically won't outlive =
+the
+> ASID (SNP) / HKID (TDX) to which it's bound.
+>
 
-(i don't think -1 is really needed here, snprintf(x, 3, "abcd") will
-put 0 into x[2].)
+Yup we agree on this now :) The memory should not outlive the the ASID
+(SNP) / HKID (TDX) to which it's bound.
 
-> +	for (i = 0; i < TASK_COMM_LEN; i++) {
+>> This [1] POC was built based on that premise, that the gmem inode can be
+>> linked to another file and handed off to another VM, to facilitate
+>> intra-host migration, where the point is to save the work of rebuilding
+>> the VM's memory in the destination VM.
+>>
+>> With this, the bindings don't outlive the VM, but the data/memory
+>> does. I think this split design you proposed is really nice.
+>>
+>> >> The KVM pointer is shared among all the bindings in gmem=E2=80=99s xa=
+rray, and we can
+>> >> enforce that a gmem file is used only with one VM:
+>> >>
+>> >> + When binding a memslot to the file, if a kvm pointer exists, it mus=
+t
+>> >>   be the same kvm as the one in this binding
+>> >> + When the binding to the last memslot is removed from a file, NULL t=
+he
+>> >>   kvm pointer.
+>> >
+>> > Nullifying the KVM pointer isn't sufficient, because without additiona=
+l actions
+>> > userspace could extract data from a VM by deleting its memslots and th=
+en binding
+>> > the guest_memfd to an attacker controlled VM.  Or more likely with TDX=
+ and SNP,
+>> > induce badness by coercing KVM into mapping memory into a guest with t=
+he wrong
+>> > ASID/HKID.
+>> >
+>> > I can think of three ways to handle that:
+>> >
+>> >   (a) prevent a different VM from *ever* binding to the gmem instance
+>> >   (b) free/zero physical pages when unbinding
+>> >   (c) free/zero when binding to a different VM
+>> >
+>> > Option (a) is easy, but that pretty much defeats the purpose of decopu=
+ling
+>> > guest_memfd from a VM.
+>> >
+>> > Option (b) isn't hard to implement, but it screws up the lifecycle of =
+the memory,
+>> > e.g. would require memory when a memslot is deleted.  That isn't neces=
+sarily a
+>> > deal-breaker, but it runs counter to how KVM memlots currently operate=
+.  Memslots
+>> > are basically just weird page tables, e.g. deleting a memslot doesn't =
+have any
+>> > impact on the underlying data in memory.  TDX throws a wrench in this =
+as removing
+>> > a page from the Secure EPT is effectively destructive to the data (can=
+'t be mapped
+>> > back in to the VM without zeroing the data), but IMO that's an oddity =
+with TDX and
+>> > not necessarily something we want to carry over to other VM types.
+>> >
+>> > There would also be performance implications (probably a non-issue in =
+practice),
+>> > and weirdness if/when we get to sharing, linking and/or mmap()ing gmem=
+.  E.g. what
+>> > should happen if the last memslot (binding) is deleted, but there outs=
+tanding userspace
+>> > mappings?
+>> >
+>> > Option (c) is better from a lifecycle perspective, but it adds its own=
+ flavor of
+>> > complexity, e.g. the performant way to reclaim TDX memory requires the=
+ TDMR
+>> > (effectively the VM pointer), and so a deferred relcaim doesn't really=
+ work for
+>> > TDX.  And I'm pretty sure it *can't* work for SNP, because RMP entries=
+ must not
+>> > outlive the VM; KVM can't reuse an ASID if there are pages assigned to=
+ that ASID
+>> > in the RMP, i.e. until all memory belonging to the VM has been fully f=
+reed.
+>> >
+>>
+>> If we are on the same page that the memory should outlive the VM but not
+>> the bindings, then associating the gmem inode to a new VM should be a
+>> feature and not a bug.
+>>
+>> What do we want to defend against here?
+>>
+>> (a) Malicious host VMM
+>>
+>> For a malicious host VMM to read guest memory (with TDX and SNP), it can
+>> create a new VM with the same HKID/ASID as the victim VM, rebind the
+>> gmem inode to a VM crafted with an image that dumps the memory.
+>>
+>> I believe it is not possible for userspace to arbitrarily select a
+>> matching HKID unless userspace uses the intra-host migration ioctls, but=
+ if the
+>> migration ioctl is used, then EPTs are migrated and the memory dumper VM
+>> can't successfully run a different image from the victim VM. If the
+>> dumper VM needs to run the same image as the victim VM, then it would be
+>> a successful migration rather than an attack. (Perhaps we need to clean
+>> up some #MCs here but that can be a separate patch).
+>
+> From a guest security perspective, throw TDX and SNP out the window.  As =
+far as
+> the design of guest_memfd is concerned, I truly do not care what security=
+ properties
+> they provide, I only care about whether or not KVM's support for TDX and =
+SNP is
+> clean, robust, and functionally correct.
+>
+> Note, I'm not saying I don't care about TDX/SNP.  What I'm saying is that=
+ I don't
+> want to design something that is beneficial only to what is currently a v=
+ery
+> niche class of VMs that require specific flavors of hardware.
+>
+>> (b) Malicious host kernel
+>>
+>> A malicious host kernel can allow a malicious host VMM to re-use a HKID
+>> for the dumper VM, but this isn't something a better gmem design can
+>> defend against.
+>
+> Yep, completely out-of-scope.
+>
+>> (c) Attacks using gmem for software-protected VMs
+>>
+>> Attacks using gmem for software-protected VMs are possible since there
+>> is no real encryption with HKID/ASID (yet?). The selftest for [1]
+>> actually uses this lack of encryption to test that the destination VM
+>> can read the source VM's memory after the migration. In the POC [1], as
+>> long as both destination VM knows where in the inode's memory to read,
+>> it can read what it wants to.
+>
+> Encryption is not required to protect guest memory from less privileged s=
+oftware.
+> The selftests don't rely on lack of encryption, they rely on KVM incorpor=
+ating
+> host userspace into the TCB.
+>
+> Just because this RFC doesn't remove the VMM from the TCB for SW-protecte=
+d VMS,
+> doesn't mean we _can't_ remove the VMM from the TCB.  pKVM has already sh=
+own that
+> such an implementation is possible.  We didn't tackle pKVM-like support i=
+n the
+> initial implementation because it's non-trivial, doesn't yet have a concr=
+ete use
+> case to fund/drive development, and would have significantly delayed supp=
+ort for
+> the use cases people do actually care about.
+>
+> There are certainly benefits from memory being encrypted, but it's neithe=
+r a
+> requirement nor a panacea, as proven by the never ending stream of specul=
+ative
+> execution attacks.
+>
+>> This is a problem for software-protected VMs, but I feel that it is also=
+ a
+>> separate issue from gmem's design.
+>
+> No, I don't want guest_memfd to be just be a vehicle for SNP/TDX VMs.  Ha=
+ving line
+> of sight to removing host userspace from the TCB is absolutely a must hav=
+e for me,
+> and having line of sight to improving KVM's security posture for "regular=
+" VMs is
+> even more of a must have.  If guest_memfd doesn't provide us a very direc=
+t path to
+> (eventually) achieving those goals, then IMO it's a failure.
+>
+> Which leads me to:
+>
+> (d) Buggy components
+>
+> Today, for all intents and purposes, guest memory *must* be mapped writab=
+le in
+> the VMM, which means it is all too easy for a benign-but-buggy host compo=
+nent to
+> corrupt guest memory.  There are ways to mitigate potential problems, e.g=
+. by
+> developing userspace to adhere to the principle of least privilege inasmu=
+ch as
+> possible, but such mitigations would be far less robust than what can be =
+achieved
+> via guest_memfd, and practically speaking I don't see us (Google, but als=
+o KVM in
+> general) making progress on deprivileging userspace without forcing the i=
+ssue.
+>
 
-Note that while I think it very unlikely that TASK_COMM_LEN would
-be increased to > 250, this *is* kind of a timebomb.  Better to
-either calculate the size of buf as a fn of TASK_COMM_LEN, or check
-for (cp-buf) not getting too large here.
+Thanks for adding this point! I should clarify that when I asked about
+what we want to defend against, I meant that in response to the point
+that nulling the KVM pointer is insufficient. IIUC (d) explains what the
+whole of gmem is meant to defend against.
 
-> +		const unsigned char c = current->comm[i];
-> +
-> +		if (!c)
-> +			break;
-> +		if (isalnum(c) || c == '.' || c == '_' || c == '-' || c == '/') {
-> +			*cp++ = c;
-> +			continue;
-> +		}
-> +		*cp++ = '\\';
-> +		*cp++ = (c >> 6) + '0';
-> +		*cp++ = ((c >> 3) & 7) + '0';
-> +		*cp++ = (c & 7) + '0';
-> +	}
-> +	/* Append PID. */
-> +	cp += snprintf(cp, buf - cp + sizeof(buf) - 1, ";pid=%u",
-> +		       current->pid);
-> +	/* Append timestamp. */
-> +	time64_to_tm(ktime_get_real_seconds(), 0, &tm);
-> +	cp += snprintf(cp, buf - cp + sizeof(buf) - 1,
-> +		       ";start=%04u%02u%02u%02u%02u%02u", (int) tm.tm_year + 1900,
-> +		       tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min,
-> +		       tm.tm_sec);
-> +	/* Terminate the buffer. */
-> +	if (cp >= buf + sizeof(buf))
-> +		cp = buf + sizeof(buf) - 1;
-> +	*cp = '\0';
-> +	required = cp - buf + 1;
-> +	/* Make some room by truncating old history. */
-> +	cp = current->comm_history;
-> +	i = strlen(cp);
-> +	while (i + required >= audit_history_size - 3) {
-> +		char *cp2 = memchr(cp, '>', i);
-> +
-> +		/* Reset history if audit_history_size is too small to truncate. */
-> +		if (!cp2++) {
-> +			*cp = '\0';
-> +			return;
-> +		}
-> +		i -= cp2 - cp;
-> +		memmove(cp, cp2, i + 1);
+I agree with you that nulling the KVM pointer is insufficient to keep
+host userspace out of the TCB. Among the three options (a) preventing a
+different VM (HKID/ASID) from binding to the gmem instance, or zeroing
+the memory either (b) on unbinding, or (c) on binding to another VM
+(HKID/ASID),
 
-Would it be better to first calculate the optimal cp2 to use,
-then do the memmove, to avoid repeated calls to memmove?
+(a) sounds like adding a check issued to TDX/SNP upon binding and this
+    check would just return OK for software-protected VMs (line of sight
+    to removing host userspace from TCB).
 
-> +	}
-> +	/* Emit the buffer. */
-> +	if (i) {
-> +		cp[i++] = '=';
-> +		cp[i++] = '>';
-> +	}
-> +	memcpy(cp + i, buf, required);
-> +}
-> -- 
-> 2.18.4
-> 
-> 
+Or, we could go further for software-protected VMs and add tracking in
+the inode to prevent the same inode from being bound to different
+"HKID/ASID"s, perhaps like this:
+
++ On first binding, store the KVM pointer in the inode - not file (but
+  not hold a refcount)
++ On rebinding, check that the KVM matches the pointer in the inode
++ On intra-host migration, update the KVM pointer in the inode to allow
+  binding to the new struct kvm
+
+I think you meant associating the file with a struct kvm at creation
+time as an implementation for (a), but technically since the inode is
+the representation of memory, tracking of struct kvm should be with the
+inode instead of the file.
+
+(b) You're right that this messes up the lifecycle of the memory and
+    wouldn't work with intra-host migration.
+
+(c) sounds like doing the clearing on a check similar to that of (a)
+
+If we track struct kvm with the inode, then I think (a), (b) and (c) can
+be independent of the refcounting method. What do you think?
+
+>> >> Could binding gmem files not on creation, but at memslot configuratio=
+n
+>> >> time be sufficient and simpler?
+>> >
+>> > After working through the flows, I think binding on-demand would simpl=
+ify the
+>> > refcounting (stating the obvious), but complicate the lifecycle of the=
+ memory as
+>> > well as the contract between KVM and userspace,
+>>
+>> If we are on the same page that the memory should outlive the VM but not
+>> the bindings, does it still complicate the lifecycle of the memory and
+>> the userspace/KVM contract? Could it just be a different contract?
+>
+> Not entirely sure I understand what you're asking.  Does this question go=
+ away
+> with my clarification about struct kvm vs. virtual machine?
+>
+
+Yes, this question goes away. Thanks!
+
+>> > and would break the separation of
+>> > concerns between the inode (physical memory / data) and file (VM's vie=
+w / mappings).
+>>
+>> Binding on-demand is orthogonal to the separation of concerns between
+>> inode and file, because it can be built regardless of whether we do the
+>> gmem file/inode split.
+>>
+>> + This flip-the-refcounting POC is built with the file/inode split and
+>> + In [2] (the delayed binding approach to solve intra-host migration), I
+>>   also tried flipping the refcounting, and that without the gmem
+>>   file/inode split. (Refcounting in [2] is buggy because the file can't
+>>   take a refcount on KVM, but it would work without taking that refcount=
+)
+>>
+>> [1] https://lore.kernel.org/lkml/cover.1691446946.git.ackerleytng@google=
+.com/T/
+>> [2] https://github.com/googleprodkernel/linux-cc/commit/dd5ac5e53f14a1ef=
+9915c9c1e4cc1006a40b49df
