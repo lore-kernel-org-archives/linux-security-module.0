@@ -2,63 +2,63 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF73EE4996
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Aug 2023 09:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3DBEE49A6
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Aug 2023 10:51:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234406AbjHUJfZ (ORCPT
+        id S232023AbjHUKv3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Aug 2023 05:35:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35950 "EHLO
+        Mon, 21 Aug 2023 06:51:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234401AbjHUJfY (ORCPT
+        with ESMTP id S229737AbjHUKv2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Aug 2023 05:35:24 -0400
-Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E0EEA1
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Aug 2023 02:35:21 -0700 (PDT)
-Received: by mail-ua1-x933.google.com with SMTP id a1e0cc1a2514c-79dea64c428so771429241.3
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Aug 2023 02:35:21 -0700 (PDT)
+        Mon, 21 Aug 2023 06:51:28 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AE27DF
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Aug 2023 03:51:26 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id 6a1803df08f44-64a8826dde2so18820586d6.1
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Aug 2023 03:51:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692610520; x=1693215320;
+        d=linaro.org; s=google; t=1692615085; x=1693219885;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8+YSSgE6ImDsA91XbotUDfbON3t0BPS/XCjpKcgWSDU=;
-        b=zwHbc3aBiggXk6rSX3/U9LqgGXSlvEYqTthqwxqg0zSAnui64OVS7yAiueQ+HjoRP2
-         JeRze5v/acypzKTsx6aGQ93e01ba7jak10lQJeJUhAhkhZkLbjSpQSWbmU6+GtzgtErX
-         W8qv4aE+GW1lhN9bLFgwxlSJMosH9BESGBUxmMqc0c9qwSqNahXNAueGX1s3Rv4KgPJB
-         sTYRn+kc9WSnd9fz5vK0fWzBYp0bW9aPGd039FEdfeaJL03rpqJFoAWnVstMB+a8QBL3
-         UGbUSw0M0J14/e64F/QNxzKwrI6VWy5Q6JzsNr4/EHikW4wDp/ntYQRob3gAkBZ2tD47
-         EEyA==
+        bh=K0qpldW14baJKOHvriBxg9Tl7RToaqCrxwrKv8FkDUI=;
+        b=QcbvXiBHr+zMoeZmk3HHoVfAzQJM1s2JIEdxPtOILjuW/0tHm8UD3xHBFaRLQ+BoD7
+         c5McBcQDFCsbnNsPWcU0T7BiVo8o3OzXH2Zs7c7c0Uh2lGqFsoKK6Pew06y+SFXiWnIh
+         SHeGoNTb490wBuQuwIpDYwk4pX50q3Z6/GhzKJFEEYLoIYsMHe0nzFdFUGZTkoP4gwEM
+         ag1eHxNZIDBTQyYFr8LWDUosE3wVaWA5FEqXmRSEukVyRGxtt7Ex1txTOUSlU6MQY2Cn
+         TGS/GKF52xR3qS7wpn6Mc3v2s7m3SLcyee3oCMgrN5CsoivfqrhSaWOnvBgSCN6CNDSS
+         Vubg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692610520; x=1693215320;
+        d=1e100.net; s=20221208; t=1692615085; x=1693219885;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8+YSSgE6ImDsA91XbotUDfbON3t0BPS/XCjpKcgWSDU=;
-        b=ieTSX8Ob84EE8N3B8b3xQ1w8wVloPLd2Y8d1OFTPXiRgggE55s5mwFKWFm8vwyzpah
-         8DfBZ2R57rAV+oK7kab50WKwbvg6TA9cRcA2PB2ct358Q0JvbwIRL1Z3U0Of8tY/gqND
-         wNMmr6X2KRh8a7tj5c1djUdkie7fkftv/SZgLjnx5uz2uJPuY+F2UE4yeqmAJPIr8m97
-         Ni6LDLPPxBIIIS+v/5FahV9d1goE1BUi599wTMgPCwNAmHGvsNIWwUq/HSq4nCaIcQQ8
-         X8QTXuK2C0P4bgJr6ldS038hAYBEQIR9n7MHq+GzGBrBa4BVV9uc8zH2fwJOs+CDzTIW
-         qynQ==
-X-Gm-Message-State: AOJu0Yx4Yy2tFzgYpCj29nYpzAibcguskUikhSVx/YedhbvSeSipXKAb
-        1k/BNGhBQ4rGmcJ9yrqqlyGLa8EpXY3MbbvQulqDLg==
-X-Google-Smtp-Source: AGHT+IEvSV1aXm3AS0VLQbgh5fJN6CFdSFsPuwmGAt3ZEa05TltLOrkCzR1NISRrBlnkSz2YaI4rs0fZOnYD3Uq0j+k=
-X-Received: by 2002:a67:d00c:0:b0:445:780:c345 with SMTP id
- r12-20020a67d00c000000b004450780c345mr3958739vsi.20.1692610520127; Mon, 21
- Aug 2023 02:35:20 -0700 (PDT)
+        bh=K0qpldW14baJKOHvriBxg9Tl7RToaqCrxwrKv8FkDUI=;
+        b=SkDWyAQHJ7Hzuh9RCPd3pdOk7usWqDq3DjUpKgtl+wlJkf50k+v3XO7YrSw9YJYBsn
+         yWYI7u9OzYHfjf95ORwYC/Ms5jYf0fO/gX8W7ifHpfyL268nkQ/ozHnihYhOPKUEguH7
+         elNIMXJdJXT3Cr8jmAy3gvqFdpMp9+alP3x2urfvTBXi5HeB0X7Fkt2yvgV2BCDWwWdh
+         U/FaVeDvdXLWR37up3zQ/jCWjXRycBcWV58cjmXGpXNb6h4GPseOmDJdxsUFTULs/0Xq
+         Ge3yxXtgrUtdte+GzygBFv1ciF8uHfJmsJcuHXri2d7/zgN2PsdpnFG2YZSEjjS/17In
+         DtVg==
+X-Gm-Message-State: AOJu0Yx1u5rIaYQK5b0QjEwX4TWpnLxTD/4LyOviJzt5AqeaK+Nwi3yB
+        6ECWkUk/v6PF7slNtldSF2CMoEoUdCqaDQYgA9Ol/w==
+X-Google-Smtp-Source: AGHT+IGEmqCeBlgbGhjFPHw3SOC5pll9KdAXlWGUXEzHCa24ONCyNBw+TsCQaWQ8h3BtvkuuhFpBhu6jmd/qQroSnyQ=
+X-Received: by 2002:a0c:e354:0:b0:625:bb19:278c with SMTP id
+ a20-20020a0ce354000000b00625bb19278cmr6995364qvm.2.1692615085387; Mon, 21 Aug
+ 2023 03:51:25 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230803123515.4018838-1-jens.wiklander@linaro.org>
  <CAFA6WYMzBJTNUxh6b-y=a_NND8FX65YjEP4i-HPS4tQ-Qfm+0w@mail.gmail.com>
  <CAHUa44ET3Oqc4Yq8E4ouAjn5dF9ygxoXyWh0sjFF_vPoooxrnA@mail.gmail.com>
  <CAHUa44HpkxDPgdh1B_bFOVPSOETk3F_ZicdnhmuVOux+5fd7sA@mail.gmail.com> <CAFA6WYMdROqkNbfbOkm22AYR1vnNa83dttf-4rF6pp1dZDym3Q@mail.gmail.com>
 In-Reply-To: <CAFA6WYMdROqkNbfbOkm22AYR1vnNa83dttf-4rF6pp1dZDym3Q@mail.gmail.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Mon, 21 Aug 2023 15:05:02 +0530
-Message-ID: <CAFA6WYOhSAY68S=pqW5=YU=gCo7LHYELt1A7mAx-0revWH5XpA@mail.gmail.com>
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+Date:   Mon, 21 Aug 2023 12:51:14 +0200
+Message-ID: <CAHUa44HtKXVFi88u-rCBKg5i64nGvfq7Cmg10w-cgEcP_fjoJw@mail.gmail.com>
 Subject: Re: [PATCH] KEYS: trusted: tee: use tee_shm_register_alloc_buf()
-To:     Jens Wiklander <jens.wiklander@linaro.org>
+To:     Sumit Garg <sumit.garg@linaro.org>
 Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org,
@@ -70,7 +70,8 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 21 Aug 2023 at 14:01, Sumit Garg <sumit.garg@linaro.org> wrote:
+On Mon, Aug 21, 2023 at 10:31=E2=80=AFAM Sumit Garg <sumit.garg@linaro.org>=
+ wrote:
 >
 > On Mon, 21 Aug 2023 at 13:15, Jens Wiklander <jens.wiklander@linaro.org> =
 wrote:
@@ -286,23 +287,27 @@ path.
 > > buffers.
 >
 > With that too, it is very much possible for kernel clients to share
-> the same page for two sub page buffers, correct? IMO, it should be
+> the same page for two sub page buffers, correct?
+
+No, tee_shm_alloc_kernel_buf() uses page sized aligment for buffers so
+that can't happen.
+
+> IMO, it should be
 > handled as part of tee_shm_register_kernel_buf() as you did for
 > user-space clients as a short term workaround until we find a real
 > fix.
+
+I'm not so keen on that. The rework of tee_shm_register_kernel_buf()
+to tee_shm_register_kernel_pages() you suggest should take care of the
+kernel clients. Some kernel clients will be better off with a
+temporary buffer like here, while others may use the new
+tee_shm_register_kernel_pages() function.
+
+Cheers,
+Jens
+
 >
-
-Actually thinking about it more, let's rework
-tee_shm_register_kernel_buf() to be tee_shm_register_kernel_pages() to
-get aligned as we agreed here [1]. This would then shift the
-responsibility to check for duplicate pages to kernel clients rather
-than the TEE driver (don't need to bother about sub page buffers).
-
-[1] https://lists.trustedfirmware.org/archives/list/op-tee@lists.trustedfir=
-mware.org/thread/Y224PTCQZPKLH2INVWWPRUZM4MDUPYL7/
-
--Sumit
-
+> -Sumit
 >
 > >
 > > Thanks,
