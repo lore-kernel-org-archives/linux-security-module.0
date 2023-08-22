@@ -2,70 +2,91 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D388EE49AE
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Aug 2023 18:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E96C1EE49AF
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Aug 2023 19:28:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229579AbjHVSBv (ORCPT
+        id S229604AbjHVT22 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Aug 2023 14:01:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40064 "EHLO
+        Tue, 22 Aug 2023 15:28:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbjHVSBu (ORCPT
+        with ESMTP id S229515AbjHVT21 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Aug 2023 14:01:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64B53CC;
-        Tue, 22 Aug 2023 11:01:49 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Tue, 22 Aug 2023 15:28:27 -0400
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7978DB;
+        Tue, 22 Aug 2023 12:28:25 -0700 (PDT)
+Received: from [10.8.192.2] (unknown [50.47.144.217])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C8112618CB;
-        Tue, 22 Aug 2023 18:01:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3B000C433C8;
-        Tue, 22 Aug 2023 18:01:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692727308;
-        bh=0LnknR8qBqZGndnVZ1B1VYT8J1I3MAz228Nm/9/lMFY=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=IK3QnoUHHj3Y9szgAvpML4Z/4gEx/qiVmR7xRiRzay2e/T3FVmJXd32hg9Us9j8kT
-         3/WjNYP4fRWIRltHWadIaPhPG3xo9VDncFizrPwM4qK1xSFWG1yeLd4yUvINqJ9FPP
-         WZAeHkhbcUM9J51d0nXEa4UcwMH2oT3V4a3uwnfPfV+oWLTUMnPSeoaE6SOoahrCCa
-         RBLUA8YMPDLF3oWmfSFfRoaSE152u4024/6tcXsy9zK5kq876ZbKTogHGvqbf2Gpvn
-         5OWX5i9Ju9GtTzLSc4KM8V+KcY7Dw+QRYeVdyeQp9j4BFjByPuROnz/ul7UjUtXX/g
-         CVzD7CUS5BF0A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 26CDDC3274B;
-        Tue, 22 Aug 2023 18:01:48 +0000 (UTC)
-Subject: Re: [GIT PULL] SELinux fixes for v6.5 (#1)
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAHC9VhTEeicj__ys3duEhmv4WuLgZupWanr_bXwObRCz_jxatw@mail.gmail.com>
-References: <CAHC9VhTEeicj__ys3duEhmv4WuLgZupWanr_bXwObRCz_jxatw@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAHC9VhTEeicj__ys3duEhmv4WuLgZupWanr_bXwObRCz_jxatw@mail.gmail.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20230821
-X-PR-Tracked-Commit-Id: 70d91dc9b2ac91327d0eefd86163abc3548effa6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e4311f7c0508d6d0d1176a0d7b7ef3ab4a24be1e
-Message-Id: <169272730814.11168.9334889730666192075.pr-tracker-bot@kernel.org>
-Date:   Tue, 22 Aug 2023 18:01:48 +0000
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 9872C400FF;
+        Tue, 22 Aug 2023 19:28:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1692732504;
+        bh=kvqkivsKxAV86aMsAMF0SdVAoMxhg68oNywBNC10nCg=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=V3zuTMkMKuQATLOZBfUfkd9PpKwi9joQGoiCHXp9V8yEvI/d4XDDHT+4hTXdWRN11
+         daN2taPyLKBKdIe/za00YrnEdqif3AxtjX6axGLQC+D+f7cbq8RD0uH2A28kxUerXA
+         etNP+AjYdw5mJ8Zk8lu2845Jwp6hcRU+FVSpNt9fTwZagKwNBU/aoDZZyPykVz6XeA
+         gJm7irWvNEOH00NzvbTXBJya1oQI3o4MU29orhVjfWQLMyjLAU0+eVHg9fMC5oGwyE
+         2gVOT5Z73M8FXUs4qcoInJwZeh5kQuXZhp1h5IhlqSWVkykrX0DZzgPFoNrbZLhx3E
+         +XYevpmTJc9rw==
+Message-ID: <6d9e4dd9-4197-bbd1-eaf5-d79db0605ea3@canonical.com>
+Date:   Tue, 22 Aug 2023 12:28:18 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] apparmor: remove unused PROF_* macros
+Content-Language: en-US
+To:     "GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Xiu Jianfeng <xiujianfeng@huawei.com>,
+        Wang Weiyang <wangweiyang2@huawei.com>
+References: <20230807093904.565766-1-gongruiqi@huaweicloud.com>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <20230807093904.565766-1-gongruiqi@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Mon, 21 Aug 2023 17:20:47 -0400:
+On 8/7/23 02:39, GONG, Ruiqi wrote:
+> From: "GONG, Ruiqi" <gongruiqi1@huawei.com>
+> 
+> The last usage of PROF_{ADD,REPLACE} were removed by commit 18e99f191a8e
+> ("apparmor: provide finer control over policy management"). So remove
+> these two unused macros.
+> 
+> Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20230821
+sorry, I seem to have dropped my reply to this, I have
+pulled this into apparmor-next
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e4311f7c0508d6d0d1176a0d7b7ef3ab4a24be1e
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-Thank you!
+> ---
+>   security/apparmor/include/policy.h | 3 ---
+>   1 file changed, 3 deletions(-)
+> 
+> diff --git a/security/apparmor/include/policy.h b/security/apparmor/include/policy.h
+> index 545f791cabda..ed9a8669af80 100644
+> --- a/security/apparmor/include/policy.h
+> +++ b/security/apparmor/include/policy.h
+> @@ -254,9 +254,6 @@ ssize_t aa_remove_profiles(struct aa_ns *view, struct aa_label *label,
+>   			   char *name, size_t size);
+>   void __aa_profile_list_release(struct list_head *head);
+>   
+> -#define PROF_ADD 1
+> -#define PROF_REPLACE 0
+> -
+>   #define profile_unconfined(X) ((X)->mode == APPARMOR_UNCONFINED)
+>   
+>   /**
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
