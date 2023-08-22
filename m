@@ -2,212 +2,213 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD7BEE49A3
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Aug 2023 13:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2B2EE4996
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Aug 2023 14:39:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236171AbjHVNww (ORCPT
+        id S236869AbjHVOjf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Aug 2023 09:52:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56920 "EHLO
+        Tue, 22 Aug 2023 10:39:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235894AbjHVNww (ORCPT
+        with ESMTP id S236038AbjHVOjf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Aug 2023 09:52:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2A751B9;
-        Tue, 22 Aug 2023 06:52:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5FD1F656E1;
-        Tue, 22 Aug 2023 13:52:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B56FC433C8;
-        Tue, 22 Aug 2023 13:52:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692712360;
-        bh=YzLaCmClh/kthvSkr231iUB47ivUYlUZTI93ZVPO1Aw=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=Xv86NiVJL0UIRMRHHqzYGKVamDEosHJ15fZyFUcNxwo2+/HJjJLW6Cekg6rylMsZE
-         BOHh7HSkiZ+CiLgnvAtLFP3r7NCvuHVQWiHpkUs/F4h9OessD8sJvMyM+gPHWH/q3F
-         KBictTPTNbxBt+dSaF+icZkrwmLe+z+PrB6rO4V03xUGCURi7Tf6W4Gl/uh5YRnX/G
-         B/vNgtshsaKxZLPRBqjT2HrENPHJJk/9AGE5W/QFPao6qaWfl9cys0WotLsDnPqEad
-         ZzLp8dlPAzAQ9bND8/DSR45U9wKL2ZWkVQOneqPI1zN+6InjpXsTKwC77ViAZ6wWS8
-         Js89xzfiAsl5A==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 22 Aug 2023 16:52:36 +0300
-Message-Id: <CUZ4G9FRXIW1.23TJD5ASQBUNE@suppilovahvero>
-Cc:     <jejb@linux.ibm.com>, <zohar@linux.ibm.com>,
-        <jens.wiklander@linaro.org>, <sudeep.holla@arm.com>,
-        <achin.gupta@arm.com>, <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] KEYS: trusted: tee: Refactor register SHM usage
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Sumit Garg" <sumit.garg@linaro.org>,
-        <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>
-X-Mailer: aerc 0.14.0
-References: <20230822112933.1550062-1-sumit.garg@linaro.org>
-In-Reply-To: <20230822112933.1550062-1-sumit.garg@linaro.org>
+        Tue, 22 Aug 2023 10:39:35 -0400
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEBBE10B
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Aug 2023 07:39:31 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RVX6n5BlnzMq6hf;
+        Tue, 22 Aug 2023 14:39:29 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RVX6m3TsZzMpp9s;
+        Tue, 22 Aug 2023 16:39:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1692715169;
+        bh=WhKqI2kevlKwnL5CJURW6uf2fK2kg2ZhcCAl/i9YR4g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=smWH8KPMfbDOycf2gMO0WxHUv3sIeJv5uV7ag24TsMekyl0xMSh8ZhUTuetwjar2A
+         pR45D5vGJNRH4cjHkKRNOMI1UPsjXLFNyZDGwFod9OOwTXiUI1X0Fyd7e4qw2+8gPq
+         zbSzhnE4zDTy9SnQQ2hYfqf7loqIa+0eEd6SkLgc=
+Date:   Tue, 22 Aug 2023 16:39:27 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Matt Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Hanno =?utf-8?B?QsO2Y2s=?= <hanno@hboeck.de>,
+        kernel-hardening@lists.openwall.com,
+        Kees Cook <keescook@chromium.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Samuel Thibault <samuel@ens-lyon.org>,
+        David Laight <David.Laight@aculab.com>,
+        Simon Brand <simon.brand@postadigitale.de>,
+        Dave Mielke <Dave@mielke.cc>
+Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support - TTY restrictions RFC
+Message-ID: <20230822.ua3aib8Zaile@digikod.net>
+References: <20230814172816.3907299-1-gnoack@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230814172816.3907299-1-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue Aug 22, 2023 at 2:29 PM EEST, Sumit Garg wrote:
-> The OP-TEE driver using the old SMC based ABI permits overlapping shared
-> buffers, but with the new FF-A based ABI each physical page may only
-> be registered once.
->
-> As the key and blob buffer are allocated adjancently, there is no need
-> for redundant register shared memory invocation. Also, it is incompatibil=
-e
-> with FF-A based ABI limitation. So refactor register shared memory
-> implementation to use only single invocation to register both key and blo=
-b
-> buffers.
->
-> Fixes: 4615e5a34b95 ("optee: add FF-A support")
-> Reported-by: Jens Wiklander <jens.wiklander@linaro.org>
-> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+Here is a proposal to restrict TTY with Landlock, complementary to this
+patch series (which should land before any other IOCTL-related
+features).
 
-Does this retain backwards compatibility?
+CCing folks part of TIOCSTI discussions, as a complementary approach to
+https://lore.kernel.org/all/ZN+X6o3cDWcLoviq@google.com/
 
-> ---
->  security/keys/trusted-keys/trusted_tee.c | 64 ++++++++----------------
->  1 file changed, 20 insertions(+), 44 deletions(-)
->
-> diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/tru=
-sted-keys/trusted_tee.c
-> index ac3e270ade69..aa3d477de6db 100644
-> --- a/security/keys/trusted-keys/trusted_tee.c
-> +++ b/security/keys/trusted-keys/trusted_tee.c
-> @@ -65,24 +65,16 @@ static int trusted_tee_seal(struct trusted_key_payloa=
-d *p, char *datablob)
->  	int ret;
->  	struct tee_ioctl_invoke_arg inv_arg;
->  	struct tee_param param[4];
-> -	struct tee_shm *reg_shm_in =3D NULL, *reg_shm_out =3D NULL;
-> +	struct tee_shm *reg_shm =3D NULL;
-> =20
->  	memset(&inv_arg, 0, sizeof(inv_arg));
->  	memset(&param, 0, sizeof(param));
-> =20
-> -	reg_shm_in =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
-> -						 p->key_len);
-> -	if (IS_ERR(reg_shm_in)) {
-> -		dev_err(pvt_data.dev, "key shm register failed\n");
-> -		return PTR_ERR(reg_shm_in);
-> -	}
-> -
-> -	reg_shm_out =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->blob,
-> -						  sizeof(p->blob));
-> -	if (IS_ERR(reg_shm_out)) {
-> -		dev_err(pvt_data.dev, "blob shm register failed\n");
-> -		ret =3D PTR_ERR(reg_shm_out);
-> -		goto out;
-> +	reg_shm =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
-> +					      sizeof(p->key) + sizeof(p->blob));
-> +	if (IS_ERR(reg_shm)) {
-> +		dev_err(pvt_data.dev, "shm register failed\n");
-> +		return PTR_ERR(reg_shm);
->  	}
-> =20
->  	inv_arg.func =3D TA_CMD_SEAL;
-> @@ -90,13 +82,13 @@ static int trusted_tee_seal(struct trusted_key_payloa=
-d *p, char *datablob)
->  	inv_arg.num_params =3D 4;
-> =20
->  	param[0].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
-> -	param[0].u.memref.shm =3D reg_shm_in;
-> +	param[0].u.memref.shm =3D reg_shm;
->  	param[0].u.memref.size =3D p->key_len;
->  	param[0].u.memref.shm_offs =3D 0;
->  	param[1].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
-> -	param[1].u.memref.shm =3D reg_shm_out;
-> +	param[1].u.memref.shm =3D reg_shm;
->  	param[1].u.memref.size =3D sizeof(p->blob);
-> -	param[1].u.memref.shm_offs =3D 0;
-> +	param[1].u.memref.shm_offs =3D sizeof(p->key);
-> =20
->  	ret =3D tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
->  	if ((ret < 0) || (inv_arg.ret !=3D 0)) {
-> @@ -107,11 +99,7 @@ static int trusted_tee_seal(struct trusted_key_payloa=
-d *p, char *datablob)
->  		p->blob_len =3D param[1].u.memref.size;
->  	}
-> =20
-> -out:
-> -	if (reg_shm_out)
-> -		tee_shm_free(reg_shm_out);
-> -	if (reg_shm_in)
-> -		tee_shm_free(reg_shm_in);
-> +	tee_shm_free(reg_shm);
-> =20
->  	return ret;
->  }
-> @@ -124,24 +112,16 @@ static int trusted_tee_unseal(struct trusted_key_pa=
-yload *p, char *datablob)
->  	int ret;
->  	struct tee_ioctl_invoke_arg inv_arg;
->  	struct tee_param param[4];
-> -	struct tee_shm *reg_shm_in =3D NULL, *reg_shm_out =3D NULL;
-> +	struct tee_shm *reg_shm =3D NULL;
-> =20
->  	memset(&inv_arg, 0, sizeof(inv_arg));
->  	memset(&param, 0, sizeof(param));
-> =20
-> -	reg_shm_in =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->blob,
-> -						 p->blob_len);
-> -	if (IS_ERR(reg_shm_in)) {
-> -		dev_err(pvt_data.dev, "blob shm register failed\n");
-> -		return PTR_ERR(reg_shm_in);
-> -	}
-> -
-> -	reg_shm_out =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
-> -						  sizeof(p->key));
-> -	if (IS_ERR(reg_shm_out)) {
-> -		dev_err(pvt_data.dev, "key shm register failed\n");
-> -		ret =3D PTR_ERR(reg_shm_out);
-> -		goto out;
-> +	reg_shm =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
-> +					      sizeof(p->key) + sizeof(p->blob));
-> +	if (IS_ERR(reg_shm)) {
-> +		dev_err(pvt_data.dev, "shm register failed\n");
-> +		return PTR_ERR(reg_shm);
->  	}
-> =20
->  	inv_arg.func =3D TA_CMD_UNSEAL;
-> @@ -149,11 +129,11 @@ static int trusted_tee_unseal(struct trusted_key_pa=
-yload *p, char *datablob)
->  	inv_arg.num_params =3D 4;
-> =20
->  	param[0].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
-> -	param[0].u.memref.shm =3D reg_shm_in;
-> +	param[0].u.memref.shm =3D reg_shm;
->  	param[0].u.memref.size =3D p->blob_len;
-> -	param[0].u.memref.shm_offs =3D 0;
-> +	param[0].u.memref.shm_offs =3D sizeof(p->key);
->  	param[1].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
-> -	param[1].u.memref.shm =3D reg_shm_out;
-> +	param[1].u.memref.shm =3D reg_shm;
->  	param[1].u.memref.size =3D sizeof(p->key);
->  	param[1].u.memref.shm_offs =3D 0;
-> =20
-> @@ -166,11 +146,7 @@ static int trusted_tee_unseal(struct trusted_key_pay=
-load *p, char *datablob)
->  		p->key_len =3D param[1].u.memref.size;
->  	}
-> =20
-> -out:
-> -	if (reg_shm_out)
-> -		tee_shm_free(reg_shm_out);
-> -	if (reg_shm_in)
-> -		tee_shm_free(reg_shm_in);
-> +	tee_shm_free(reg_shm);
-> =20
->  	return ret;
->  }
-> --=20
-> 2.34.1
+On Mon, Aug 14, 2023 at 07:28:11PM +0200, Günther Noack wrote:
+> Hello!
+> 
+> These patches add simple ioctl(2) support to Landlock.
+> 
+> Objective
+> ~~~~~~~~~
+> 
+> Make ioctl(2) requests restrictable with Landlock,
+> in a way that is useful for real-world applications.
+> 
+> Proposed approach
+> ~~~~~~~~~~~~~~~~~
+> 
+> Introduce the LANDLOCK_ACCESS_FS_IOCTL right, which restricts the use
+> of ioctl(2) on file descriptors.
+> 
+> We attach the LANDLOCK_ACCESS_FS_IOCTL right to opened file
+> descriptors, as we already do for LANDLOCK_ACCESS_FS_TRUNCATE.
+> 
+> We make an exception for the common and known-harmless IOCTL commands FIOCLEX,
+> FIONCLEX, FIONBIO, FIOASYNC and FIONREAD.  These IOCTL commands are always
+> permitted.  The functionality of the first four is already available through
+> fcntl(2), and FIONREAD only returns the number of ready-to-read bytes.
+> 
+> I believe that this approach works for the majority of use cases, and
+> offers a good trade-off between Landlock API and implementation
+> complexity and flexibility when the feature is used.
+> 
+> Current limitations
+> ~~~~~~~~~~~~~~~~~~~
+> 
+> With this patch set, ioctl(2) requests can *not* be filtered based on
+> file type, device number (dev_t) or on the ioctl(2) request number.
+> 
+> On the initial RFC patch set [1], we have reached consensus to start
+> with this simpler coarse-grained approach, and build additional IOCTL
+> restriction capabilities on top in subsequent steps.
+> 
+> [1] https://lore.kernel.org/linux-security-module/d4f1395c-d2d4-1860-3a02-2a0c023dd761@digikod.net/
+> 
+> Notable implications of this approach
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> * Existing inherited file descriptors stay unaffected
+>   when a program enables Landlock.
+> 
+>   This means in particular that in common scenarios,
+>   the terminal's IOCTLs (ioctl_tty(2)) continue to work.
+> 
+> * ioctl(2) continues to be available for file descriptors acquired
+>   through means other than open(2).  Example: Network sockets,
+>   memfd_create(2), file descriptors that are already open before the
+>   Landlock ruleset is enabled.
 
-BR, Jarkko
+Digging through all potential malicious use of TTYs and because TTYs are
+part of process management (e.g. signaling) and mediated by the kernel,
+I changed my mind and I think we should investigate on protecting shared
+TTY thanks to Landlock, but not without context and not only against
+TIOCSTI and TIOCLINUX IOCTLs.
+
+TIOCSTI is abused since a few decades [1] [2], and as Günther said, it
+is still the case [3] as with TIOCLINUX [4] [5]. Since Linux 6.2,
+CONFIG_LEGACY_TIOCSTI (and the corresponding sysctl knob) can be set to
+deny all use of TIOCSTI. This kernel configuration is a good step
+forward but it may not be enabled everywhere because it is a
+system-wide restriction. Moreover, it is not a sandboxing feature which
+means developers cannot safely protect users from their applications
+without impacting the whole system. Making Landlock able to protect
+against this kind of attack and other TTY-based ones (e.g. snoop
+keystrokes [6]) is definitely something worth it.
+
+The behavior change should only affect a TTY which is shared (same
+session or not) with a set of processes containing at least one
+sandboxed process.
+
+The simplest and more generic solution I came up with is to tie the TTY
+(e.g. PTY slave) with the Landlock domain (if any) of the
+*first process* to be a session leader with this TTY. For all sandboxed
+processes, if the TTY's domain is more privileged than the process's
+domain, then any TIOCSTI should be denied.
+
+For the snooping protection, I think we could enforce that only the
+(current) session leader can read the TTY. Same goes for writing to the
+TTY (but this should already be covered).
+
+Basically, all IOCTLs that enable, one way or another, to fool a user
+should be restricted as TIOCSTI. This includes copy/paste requests
+(TIOCLINUX subcommands), but also potentially font change (e.g.
+PIO_FONT), keyboard mapping change, all CAP_SYS_TTY_CONFIG-checked
+IOCTLs, and probably more. The goal is not to protect against
+potentially annoying features such as keyboard light changes though, but
+really to protect integrity and confidentiality of data going through
+the TTY.
+
+The goal is to enforce Landlock security boundaries across TTY's
+clients. In a nutshell, if a process is sandboxed, only allow read,
+write and most IOCTL requests if the TTY's domain would be ptracable
+(see security/landlock/ptrace.c), otherwise deny such action. I think
+this algorithm would fit well:
+* if the current process is not sandboxed, then allow
+* else if the TTY's domain is the same or a child of the current
+  process's domain, then allow (including the TIOCSTI IOCTL)
+* else if the current process is the session leader of this TTY, then
+  allow read/write/non-TIOCSTI-IOCTLs
+* else deny
+
+The challenge would be to make these checks efficient, especially for
+the read and write syscalls.
+
+When setting the session leader, we could update the TTY's domain with
+the highest-privileged one, or the NULL domain (i.e. the
+root/unsandboxed). However, this would mean that previous TIOCSTI
+requests could have been allowed and could now impact the current
+(higher privileged) session leader. I think this cannot be properly
+mitigated solely at the access control level. I'd prefer to properly
+document this limitation for which I don't see any valid use case.
+We should test if this theory works in practice with real-world
+applications though. The question is: are they any programs that pass a
+TTY FD to a (potentially malicious but sandboxed) process, and *then*
+switch for the first time to a session leader with this TTY?
+
+We might also not want to return EPERM for all kind of requests but EIO
+instead.
+
+Because of compatibility reasons, and different use cases, these
+restrictions should only be enforced between Landlock domains that
+opt-in for this feature thanks to a new ruleset's flag, something like
+LANDLOCK_RULESET_SCOPE_TTY. So all mentions of Landlock domains should
+in fact only refer to TTY-restricted-domains. As for the upcoming
+Landlock network restrictions, these TTY restrictions should be
+independent from any FS-related actions (e.g. mount).
+
+BTW, the TIOCSTI would be useful to test (cf. kselftest) this kind of
+restrictions.
+
+What do you think?
+
+[1] https://isopenbsdsecu.re/mitigations/tiocsti/
+[2] https://jdebp.uk/FGA/TIOCSTI-is-a-kernel-problem.html
+[3] https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=TIOCSTI
+[4] https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=TIOCLINUX
+[5] https://lore.kernel.org/all/ZN+X6o3cDWcLoviq@google.com/
+[6] https://gist.github.com/thejh/e163071dfe4c96a9f9b589b7a2c24fc6
