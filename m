@@ -2,269 +2,131 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D933DEE49A3
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Aug 2023 13:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C54EE4993
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Aug 2023 14:19:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229617AbjHWNEp (ORCPT
+        id S235899AbjHWOTK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Aug 2023 09:04:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35092 "EHLO
+        Wed, 23 Aug 2023 10:19:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234784AbjHWNEo (ORCPT
+        with ESMTP id S231387AbjHWOTJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Aug 2023 09:04:44 -0400
-Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 904D5CE6
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Aug 2023 06:04:40 -0700 (PDT)
-Received: by mail-vs1-xe29.google.com with SMTP id ada2fe7eead31-44d3fceb567so2288422137.0
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Aug 2023 06:04:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692795879; x=1693400679;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HTbgml3tMCkFOWXWxWk7/YobPm452iPb0dGmYvcga88=;
-        b=h+ejQm9ddYknfehNE76UpVyqLKo6BtDzkW5mc6pD+BfMUWcu4xZBtY0pD0y/b8fIu6
-         ox+SIK7hVtacQ//ybAnzZC6s4EU2xcPyh1C5F6KUFUody948VKo2oVfFFLnnoBhAba/9
-         uY/NMSWOM2Rmed3/Bqq8Mo8s5ukiwA6jKjLQqbuzy3CzhsHVQCY7z/XMMmxr8QSL39Al
-         o2ok2tMRyq8UxEhKLqP35fFpa2sX8cfKbZhq5UUZY6joMjbXIwVczvQWwPtBxliZCsJm
-         lUxjF4bbWYMbipBQUixh/O8gA6u48mVTqKmbHeXvsau9RxmHfFnCYxfAbGcnlkU7kmn/
-         +ZEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692795879; x=1693400679;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HTbgml3tMCkFOWXWxWk7/YobPm452iPb0dGmYvcga88=;
-        b=RCYdwBgkxNpU2ITfR2mvrNjRx5owvN8VasUT6pEDQR5IfAow93PjLUrxRZJCNUU2pe
-         GDaRstuIXBaoN6GAhA03DQVe2pQ7t+IC0j5MfzS0Mnxel3wUrgq1DDBimrtu46ZdoLf+
-         ZCAqZQ3Yjy9JPfV+PpYYAveuxvZ0lG4LLJ8sq+jeVvTWz5exd3jf10HmCKUoGfLFirvk
-         9hzeYLmtUkY1l8vxU4AnP32LrrR8+AWQgI8Zf+YJ+/OHYoRM8Yj3ovw/YOocQ7+iAL5/
-         78+UUqI1cdTx9smQgHBbKIqDr23uFjItEazdGZDa0Jp+PVsT97JXclAFJk4Rn52PumoH
-         BvhQ==
-X-Gm-Message-State: AOJu0YzB7hGjXbANrrYMue0MGq9XSMrWu/hpGvhXRsfUclJvZmNkhvME
-        ujb+sadcNg+teBZdP3CQ/g7iizSkwxDJBnHDVv9T0kDQrfrbeqqH
-X-Google-Smtp-Source: AGHT+IHmtqeAuNNyQBwwt1j3onh8n3qBSuUgfAzZERQ7V73Kqsf2NZlSw2R7OSHjNVuyEVV4FZS/I8IH+2sZn6MnXTM=
-X-Received: by 2002:a05:6102:124c:b0:44d:506c:b9c6 with SMTP id
- p12-20020a056102124c00b0044d506cb9c6mr3427028vsg.2.1692795879621; Wed, 23 Aug
- 2023 06:04:39 -0700 (PDT)
+        Wed, 23 Aug 2023 10:19:09 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B69C9E63;
+        Wed, 23 Aug 2023 07:19:06 -0700 (PDT)
+Received: from fsav120.sakura.ne.jp (fsav120.sakura.ne.jp [27.133.134.247])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 37NEIqtU083525;
+        Wed, 23 Aug 2023 23:18:52 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav120.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav120.sakura.ne.jp);
+ Wed, 23 Aug 2023 23:18:52 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav120.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 37NEIjCs083510
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 23 Aug 2023 23:18:52 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <68a0ef90-b452-2096-3729-b5c208878ff9@I-love.SAKURA.ne.jp>
+Date:   Wed, 23 Aug 2023 23:18:43 +0900
 MIME-Version: 1.0
-References: <20230822112933.1550062-1-sumit.garg@linaro.org>
- <20230822125555.GA82256@rayden> <CAFA6WYPy=yxGg1HbT+ipWJFpxiJeUGK6BSgMhtRPd=zmKef-cw@mail.gmail.com>
- <CAHUa44G9jCeHcRq=AZeieaTPWN_tpOVKeJNY=777QAh-bw1QNg@mail.gmail.com>
-In-Reply-To: <CAHUa44G9jCeHcRq=AZeieaTPWN_tpOVKeJNY=777QAh-bw1QNg@mail.gmail.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Wed, 23 Aug 2023 18:34:28 +0530
-Message-ID: <CAFA6WYPY70iYCmQhzCkATGinqK_C1i4SEZzTdv4yDwntpGNzew@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: trusted: tee: Refactor register SHM usage
-To:     Jens Wiklander <jens.wiklander@linaro.org>
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        jarkko@kernel.org, jejb@linux.ibm.com, zohar@linux.ibm.com,
-        sudeep.holla@arm.com, achin.gupta@arm.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH] audit: add task history record
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-audit@redhat.com, audit@vger.kernel.org,
+        Steve Grubb <sgrubb@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <36b65eb1-ccbf-8b81-468f-b8d88c4be5a3@I-love.SAKURA.ne.jp>
+ <CAHC9VhTLQjjQ0QMfBDHYCz9LOAuO=rJWSDEUqPsFE+dowFbN=Q@mail.gmail.com>
+ <b06dbdd8-d2f6-b190-5635-948c0a966103@I-love.SAKURA.ne.jp>
+ <CAHC9VhSz=3utr_CigGvkMEb6_avJUQq1Ak2smB7neSd76mzjFw@mail.gmail.com>
+ <6957af54-16a2-4c28-56ff-dafe95f4e276@I-love.SAKURA.ne.jp>
+ <CAHC9VhTj-PQ0qPTiphPLXyJx3bWeqgVS_GPCWNgjqFqBgH6Njg@mail.gmail.com>
+ <b0b60fdc-4484-2265-7fdf-8367bf218d18@I-love.SAKURA.ne.jp>
+ <CAHC9VhRaUxN=oEyKCOrfrGzJeXDGxv2EKbZH3qwAB6AhKcSfog@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhRaUxN=oEyKCOrfrGzJeXDGxv2EKbZH3qwAB6AhKcSfog@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 23 Aug 2023 at 13:32, Jens Wiklander <jens.wiklander@linaro.org> wr=
-ote:
->
-> On Wed, Aug 23, 2023 at 8:55=E2=80=AFAM Sumit Garg <sumit.garg@linaro.org=
-> wrote:
-> >
-> > On Tue, 22 Aug 2023 at 18:25, Jens Wiklander <jens.wiklander@linaro.org=
-> wrote:
-> > >
-> > > On Tue, Aug 22, 2023 at 04:59:33PM +0530, Sumit Garg wrote:
-> > > > The OP-TEE driver using the old SMC based ABI permits overlapping s=
-hared
-> > > > buffers, but with the new FF-A based ABI each physical page may onl=
-y
-> > > > be registered once.
-> > > >
-> > > > As the key and blob buffer are allocated adjancently, there is no n=
-eed
-> > > > for redundant register shared memory invocation. Also, it is incomp=
-atibile
-> > > > with FF-A based ABI limitation. So refactor register shared memory
-> > > > implementation to use only single invocation to register both key a=
-nd blob
-> > > > buffers.
-> > > >
-> > > > Fixes: 4615e5a34b95 ("optee: add FF-A support")
-> > > > Reported-by: Jens Wiklander <jens.wiklander@linaro.org>
-> > > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-> > > > ---
-> > > >  security/keys/trusted-keys/trusted_tee.c | 64 ++++++++------------=
-----
-> > > >  1 file changed, 20 insertions(+), 44 deletions(-)
-> > > >
-> > > > diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/ke=
-ys/trusted-keys/trusted_tee.c
-> > > > index ac3e270ade69..aa3d477de6db 100644
-> > > > --- a/security/keys/trusted-keys/trusted_tee.c
-> > > > +++ b/security/keys/trusted-keys/trusted_tee.c
-> > > > @@ -65,24 +65,16 @@ static int trusted_tee_seal(struct trusted_key_=
-payload *p, char *datablob)
-> > > >       int ret;
-> > > >       struct tee_ioctl_invoke_arg inv_arg;
-> > > >       struct tee_param param[4];
-> > > > -     struct tee_shm *reg_shm_in =3D NULL, *reg_shm_out =3D NULL;
-> > > > +     struct tee_shm *reg_shm =3D NULL;
-> > > >
-> > > >       memset(&inv_arg, 0, sizeof(inv_arg));
-> > > >       memset(&param, 0, sizeof(param));
-> > > >
-> > > > -     reg_shm_in =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->k=
-ey,
-> > > > -                                              p->key_len);
-> > > > -     if (IS_ERR(reg_shm_in)) {
-> > > > -             dev_err(pvt_data.dev, "key shm register failed\n");
-> > > > -             return PTR_ERR(reg_shm_in);
-> > > > -     }
-> > > > -
-> > > > -     reg_shm_out =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->=
-blob,
-> > > > -                                               sizeof(p->blob));
-> > > > -     if (IS_ERR(reg_shm_out)) {
-> > > > -             dev_err(pvt_data.dev, "blob shm register failed\n");
-> > > > -             ret =3D PTR_ERR(reg_shm_out);
-> > > > -             goto out;
-> > > > +     reg_shm =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
-> > > > +                                           sizeof(p->key) + sizeof=
-(p->blob));
-> > >
-> > > This is somewhat fragile. What if struct trusted_key_payload has a sm=
-all
-> > > unexpected change in layout?
-> >
-> > key and blob buffers are just two adjacent fixed sized byte arrays. So
-> > I am not worried here as long as they stay adjacent (which has been
-> > the case since trusted keys were introduced in the kernel).
->
-> Yeah, that was my point, but fine if you don't believe it's an issue.
->
+On 2023/08/22 1:35, Paul Moore wrote:
+>>   "auditctl -D" must not clear rules for tracing fork()/execve()/exit()
+>>   system calls. This is impossible because this change will break userspace
+>>   programs expecting that "auditctl -D" clears all rules.
+> 
+> It's a good thing that 'audtictl -d ...' exists so that one can
+> selectively delete audit rules from the kernel.  If someone wants to
+> preserve specific audit rules, that is the way to do it; 'auditctl -D'
+> is a very coarse tool and not something that is likely very useful for
+> users with strict auditing requirements.
 
-Does it resolve the issue with FFA ABI for you? It would be good to
-have your Tested-by tag.
+In most systems, "auditctl -D" is the first command done via /etc/audit/audit.rules file.
+You are asking all administrators who want to emulate this patch's functionality using
+auditd to customize that line. We can't afford asking such administrators to become
+specialist of strict auditing configurations, as well as we can't afford asking
+every administrator to become specialist of strict SELinux policy configurations.
 
--Sumit
+Like Steve Grubb mentions, technically possible and practically affordable are
+different. The audit subsystem could handle the load, but the system administrator 
+can't handle the load. That's why I said
 
-> Thanks,
-> Jens
->
-> >
-> > -Sumit
-> >
-> > >
-> > > Thanks,
-> > > Jens
-> > >
-> > > > +     if (IS_ERR(reg_shm)) {
-> > > > +             dev_err(pvt_data.dev, "shm register failed\n");
-> > > > +             return PTR_ERR(reg_shm);
-> > > >       }
-> > > >
-> > > >       inv_arg.func =3D TA_CMD_SEAL;
-> > > > @@ -90,13 +82,13 @@ static int trusted_tee_seal(struct trusted_key_=
-payload *p, char *datablob)
-> > > >       inv_arg.num_params =3D 4;
-> > > >
-> > > >       param[0].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
-> > > > -     param[0].u.memref.shm =3D reg_shm_in;
-> > > > +     param[0].u.memref.shm =3D reg_shm;
-> > > >       param[0].u.memref.size =3D p->key_len;
-> > > >       param[0].u.memref.shm_offs =3D 0;
-> > > >       param[1].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
-> > > > -     param[1].u.memref.shm =3D reg_shm_out;
-> > > > +     param[1].u.memref.shm =3D reg_shm;
-> > > >       param[1].u.memref.size =3D sizeof(p->blob);
-> > > > -     param[1].u.memref.shm_offs =3D 0;
-> > > > +     param[1].u.memref.shm_offs =3D sizeof(p->key);
-> > > >
-> > > >       ret =3D tee_client_invoke_func(pvt_data.ctx, &inv_arg, param)=
-;
-> > > >       if ((ret < 0) || (inv_arg.ret !=3D 0)) {
-> > > > @@ -107,11 +99,7 @@ static int trusted_tee_seal(struct trusted_key_=
-payload *p, char *datablob)
-> > > >               p->blob_len =3D param[1].u.memref.size;
-> > > >       }
-> > > >
-> > > > -out:
-> > > > -     if (reg_shm_out)
-> > > > -             tee_shm_free(reg_shm_out);
-> > > > -     if (reg_shm_in)
-> > > > -             tee_shm_free(reg_shm_in);
-> > > > +     tee_shm_free(reg_shm);
-> > > >
-> > > >       return ret;
-> > > >  }
-> > > > @@ -124,24 +112,16 @@ static int trusted_tee_unseal(struct trusted_=
-key_payload *p, char *datablob)
-> > > >       int ret;
-> > > >       struct tee_ioctl_invoke_arg inv_arg;
-> > > >       struct tee_param param[4];
-> > > > -     struct tee_shm *reg_shm_in =3D NULL, *reg_shm_out =3D NULL;
-> > > > +     struct tee_shm *reg_shm =3D NULL;
-> > > >
-> > > >       memset(&inv_arg, 0, sizeof(inv_arg));
-> > > >       memset(&param, 0, sizeof(param));
-> > > >
-> > > > -     reg_shm_in =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->b=
-lob,
-> > > > -                                              p->blob_len);
-> > > > -     if (IS_ERR(reg_shm_in)) {
-> > > > -             dev_err(pvt_data.dev, "blob shm register failed\n");
-> > > > -             return PTR_ERR(reg_shm_in);
-> > > > -     }
-> > > > -
-> > > > -     reg_shm_out =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->=
-key,
-> > > > -                                               sizeof(p->key));
-> > > > -     if (IS_ERR(reg_shm_out)) {
-> > > > -             dev_err(pvt_data.dev, "key shm register failed\n");
-> > > > -             ret =3D PTR_ERR(reg_shm_out);
-> > > > -             goto out;
-> > > > +     reg_shm =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
-> > > > +                                           sizeof(p->key) + sizeof=
-(p->blob));
-> > > > +     if (IS_ERR(reg_shm)) {
-> > > > +             dev_err(pvt_data.dev, "shm register failed\n");
-> > > > +             return PTR_ERR(reg_shm);
-> > > >       }
-> > > >
-> > > >       inv_arg.func =3D TA_CMD_UNSEAL;
-> > > > @@ -149,11 +129,11 @@ static int trusted_tee_unseal(struct trusted_=
-key_payload *p, char *datablob)
-> > > >       inv_arg.num_params =3D 4;
-> > > >
-> > > >       param[0].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
-> > > > -     param[0].u.memref.shm =3D reg_shm_in;
-> > > > +     param[0].u.memref.shm =3D reg_shm;
-> > > >       param[0].u.memref.size =3D p->blob_len;
-> > > > -     param[0].u.memref.shm_offs =3D 0;
-> > > > +     param[0].u.memref.shm_offs =3D sizeof(p->key);
-> > > >       param[1].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
-> > > > -     param[1].u.memref.shm =3D reg_shm_out;
-> > > > +     param[1].u.memref.shm =3D reg_shm;
-> > > >       param[1].u.memref.size =3D sizeof(p->key);
-> > > >       param[1].u.memref.shm_offs =3D 0;
-> > > >
-> > > > @@ -166,11 +146,7 @@ static int trusted_tee_unseal(struct trusted_k=
-ey_payload *p, char *datablob)
-> > > >               p->key_len =3D param[1].u.memref.size;
-> > > >       }
-> > > >
-> > > > -out:
-> > > > -     if (reg_shm_out)
-> > > > -             tee_shm_free(reg_shm_out);
-> > > > -     if (reg_shm_in)
-> > > > -             tee_shm_free(reg_shm_in);
-> > > > +     tee_shm_free(reg_shm);
-> > > >
-> > > >       return ret;
-> > > >  }
-> > > > --
-> > > > 2.34.1
-> > > >
+  That is a "No LSM modules other than SELinux is needed because SELinux can do
+  everything" assertion.
+
+and your response
+
+  Except we are not talking SELinux or LSMs here, we are talking about
+  audit and the audit subsystem is very different from the LSM layer.
+  The LSM layer is designed to be pluggable with support for multiple
+  individual LSMs, whereas the audit subsystem is designed to support a
+  single audit implementation.
+
+is totally missing the point.
+
+For example, doing
+
+  auditctl -a exit,always -F arch=b64 -S exit,exit_group
+
+(in order to allow userspace daemon which tries to emulate this patch's
+functionality) will let auditd to generate process termination logs via exit()
+system call. This command alone can generate too much stress on a busy system
+(performance DoS and storage DoS). And moreover, this command will not let
+auditd to generate process termination logs via kill() system call.
+
+  kill -9 $$
+
+Auditing kill system call may generate more stress than auditing exit system call.
+Too much noisy logs for catching the exact one event we want to know.
+
+Also, despite too much logs, system calls are not the only source of sending
+signals. There are signals delivered without security checks via LSM modules.
+
+
+
+The requirements for emulating functionality provided by this patch will be
+
+  (1) Catch _all_ process creations (both via fork()/clone() system calls and
+      kthread_create() from the kernel), and duplicate the history upon process
+      creation.
+
+  (2) Catch _all_ execve(), and update the history upon successful execve().
+
+  (3) Catch _all_ process terminations (both exit()/exit_group()/kill() system
+      calls and internal reasons such as OOM killer), and erase the history upon
+      process termination.
+
+  (4) Do the above things without asking administrators to become a specialist of
+      system management and without asking administrators to drastically change
+      system configurations and without consuming too much CPU and storage.
+
+. Simply we can't emulate functionality provided by this patch using audit rules.
+
