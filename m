@@ -2,221 +2,180 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FC9EE49A0
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Aug 2023 06:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E51EE49AB
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Aug 2023 07:17:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233060AbjHWG50 (ORCPT
+        id S233222AbjHWHRh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Aug 2023 02:57:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34050 "EHLO
+        Wed, 23 Aug 2023 03:17:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232983AbjHWG50 (ORCPT
+        with ESMTP id S233215AbjHWHRg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Aug 2023 02:57:26 -0400
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7804AE5E
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Aug 2023 23:57:22 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id ada2fe7eead31-44bfe8bcf78so1433699137.2
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Aug 2023 23:57:22 -0700 (PDT)
+        Wed, 23 Aug 2023 03:17:36 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 321CFD1;
+        Wed, 23 Aug 2023 00:17:34 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fe5c0e587eso49725735e9.0;
+        Wed, 23 Aug 2023 00:17:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692773841; x=1693378641;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iVRAOJ2V1xFLlhLJ5dZhwuizlLc11hemaOhn9axZBD0=;
-        b=N9E01nYu4DMUBxNw5K8MjXxy6A97r9ty3PhOwRfstuf1nTsAiVFZKGfc6KGe8A5afF
-         1ptWhZyrbWjavtu8/IOQCMITzX4Irbz8woEu2IQRkWe68H9UoP1dMyCgsfoHVsQNwNfT
-         fCvzOwT7RGgNIaYoPnq/eC605QyVdplAYxxdYGip+FbXef1Ds5ztdyB9pM073frW0CAg
-         YBljBPEf+kOm2bzeoN9OsqYyHiXon7wtJjOmjy2TbK3nPjmogJfgZKROpq3O8ExY+thP
-         hy8FYBqyojh1LWsvgGgVFln1xowb+q4GGu8+C7BY7y/Kb0E6GiqQN2gENzcXKcuOIHbU
-         rMwQ==
+        d=gmail.com; s=20221208; t=1692775052; x=1693379852;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ewZ2mWN9LxAUhMlOUISD3iVaY7UEtPxBol9YtDw3XhE=;
+        b=Q88dSrytaqwxWzfjzA1ZJ6+bTOxAUAH8+ppmZ17nWFFL8PtUNquF+Fg2uv4ROtfAYq
+         cpix5tdcx6rNcAXwR5FbRMZw6JF8vu4drNZ5QeA4DYacKuHJxAvApWWXqYwxHUr7LhJG
+         oX30XnHBB04qwFuA0Lr0Obm8fr5Iu+GGqdgVSKL9zZ4ZlRkZyzbGM1Rl8zrOU3qaQLX9
+         yZ0lz6Dh22yrhMWJJjBGiULKXRes7gcaXS15zqc/bUl9xhyhw9CCqDPOSi140KpDFB5C
+         YcpPRMljMsgZFAzU/mbmKEFKt0xZIo9MW8+hvWSME+Eqb88AIh3KUKwP80yalm0XiSOE
+         g/fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692773841; x=1693378641;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iVRAOJ2V1xFLlhLJ5dZhwuizlLc11hemaOhn9axZBD0=;
-        b=Y/9HOCPsr7hQ9VaDKyUMvUOVjKJTrFlTknuA7/bsY075pSL50dR0J9M2Hpm8taoCZ9
-         7y2/UiF0r+GdJWh5pzi6rTRROVxRkzLXZJY9S0fklEXRvYwDNe6T+MQG63jPQ5zWJ5Us
-         2romimBWZieBq1Fi1P0J16yIh1EDoT/7vUWDMkKh3/RqqQjD7nKDtjPO3QMmx6TjErU2
-         TyEhL24cP6Cie17ZZus8skd0KFGRWlft4snA4Qr6/3A129NJGvibDjywOAXbNxlb/u+7
-         EcNgHuHsjK+fCLipYcpF6/9qdbpLYniX3Zjsp8Cvh9VwkTJepk9tbG1ct4ndiOrn1f37
-         eMrQ==
-X-Gm-Message-State: AOJu0YzCr4OMFL4TBsuLS6XaAfVbs2fiRLLZKfUkxk1KVsM+phbRfMuv
-        927l9ICt6RuXrXw8BM32gJ0hlL3mlpLxxz9NhDzv7A==
-X-Google-Smtp-Source: AGHT+IGQvVZm8BkFEz+9tquBvWRQY0FaLDoMTO+xUVZEH/h9M0dLo23sZ7XdNYwYn1UP6B0iwAoN0O0ZglVbPVw5ShA=
-X-Received: by 2002:a05:6102:448:b0:44d:590d:28a9 with SMTP id
- e8-20020a056102044800b0044d590d28a9mr4022555vsq.3.1692773841485; Tue, 22 Aug
- 2023 23:57:21 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1692775052; x=1693379852;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ewZ2mWN9LxAUhMlOUISD3iVaY7UEtPxBol9YtDw3XhE=;
+        b=beedB2a6nv8Pq6cbgY8YO1qbj1p+UgqHAXqc58s5lf4x9TMlQtYepI2CEM8xd9LDfR
+         TNP5+05n4zNDENjtb46eDyNUm7kHOWiHZDrrvFux6mU7K5qpBwGkoE7IdaytwCAxiDKW
+         +ta+9aKOI/WSL8Y1c+R+EVSsKoNsQM+dRcS4GmK0s/VwYLIZRTS0v6+ESJahm/sMosf0
+         Nxhl50wO1WDBRaRbkzFOl7hbv/MJRb8It5EQuca5xDiIPXO7Oq2ghXroLxqoJNX/ULUe
+         HVFzR4SEpcv5DnCEObg9OmfjepJMbd3YQJdzxPy3l/deO/fz4LWA2PLZHvrB7NKd4SAA
+         /nIg==
+X-Gm-Message-State: AOJu0YxGsITmBzp3nUeqHDXytW+LnLGXdbGZqXLEVwrAVgSIVJAQiEME
+        SHRxHGnsosAhJsZrAGaeAtQ=
+X-Google-Smtp-Source: AGHT+IH5+pR9lSjailTZrJCPgAIZSypSKxZvFMA06mqn57NIoNdanFbIFPE8bJKrwRE5Slcf3bZhLQ==
+X-Received: by 2002:a7b:c38b:0:b0:3fd:30cb:18bd with SMTP id s11-20020a7bc38b000000b003fd30cb18bdmr9394660wmj.15.1692775052435;
+        Wed, 23 Aug 2023 00:17:32 -0700 (PDT)
+Received: from khadija-virtual-machine ([124.29.208.67])
+        by smtp.gmail.com with ESMTPSA id o3-20020a5d4743000000b0031912c0ffebsm17996205wrs.23.2023.08.23.00.17.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Aug 2023 00:17:31 -0700 (PDT)
+Date:   Wed, 23 Aug 2023 12:17:29 +0500
+From:   Khadija Kamran <kamrankhadijadj@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, ztarkhani@microsoft.com,
+        alison.schofield@intel.com
+Subject: [PATCH] lsm: constify 'file' parameter in
+ security_bprm_creds_from_file()
+Message-ID: <ZOWyiUTHCmKvsoX8@gmail.com>
 MIME-Version: 1.0
-References: <20230822112933.1550062-1-sumit.garg@linaro.org> <CUZ4G9FRXIW1.23TJD5ASQBUNE@suppilovahvero>
-In-Reply-To: <CUZ4G9FRXIW1.23TJD5ASQBUNE@suppilovahvero>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Wed, 23 Aug 2023 12:27:10 +0530
-Message-ID: <CAFA6WYOetWZhuobQE3h1oyu=wKUOjyrVu53vyA399P0DV5MGjg@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: trusted: tee: Refactor register SHM usage
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        jejb@linux.ibm.com, zohar@linux.ibm.com, jens.wiklander@linaro.org,
-        sudeep.holla@arm.com, achin.gupta@arm.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 22 Aug 2023 at 19:22, Jarkko Sakkinen <jarkko@kernel.org> wrote:
->
-> On Tue Aug 22, 2023 at 2:29 PM EEST, Sumit Garg wrote:
-> > The OP-TEE driver using the old SMC based ABI permits overlapping shared
-> > buffers, but with the new FF-A based ABI each physical page may only
-> > be registered once.
-> >
-> > As the key and blob buffer are allocated adjancently, there is no need
-> > for redundant register shared memory invocation. Also, it is incompatibile
-> > with FF-A based ABI limitation. So refactor register shared memory
-> > implementation to use only single invocation to register both key and blob
-> > buffers.
-> >
-> > Fixes: 4615e5a34b95 ("optee: add FF-A support")
-> > Reported-by: Jens Wiklander <jens.wiklander@linaro.org>
-> > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
->
-> Does this retain backwards compatibility?
->
+The 'bprm_creds_from_file' hook has implementation registered in
+commoncap. Looking at the function implementation we observe that the
+'file' parameter is not changing.
 
-Yeah it does retain backwards compatibility since there aren't any
-changes needed on OP-TEE Trusted Keys TA end.
+Mark the 'file' parameter of LSM hook security_bprm_creds_from_file() as
+'const' since it will not be changing in the LSM hook.
 
--Sumit
+Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
+---
+ include/linux/fs.h            | 2 +-
+ include/linux/lsm_hook_defs.h | 2 +-
+ include/linux/security.h      | 6 +++---
+ security/commoncap.c          | 4 ++--
+ security/security.c           | 2 +-
+ 5 files changed, 8 insertions(+), 8 deletions(-)
 
-> > ---
-> >  security/keys/trusted-keys/trusted_tee.c | 64 ++++++++----------------
-> >  1 file changed, 20 insertions(+), 44 deletions(-)
-> >
-> > diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
-> > index ac3e270ade69..aa3d477de6db 100644
-> > --- a/security/keys/trusted-keys/trusted_tee.c
-> > +++ b/security/keys/trusted-keys/trusted_tee.c
-> > @@ -65,24 +65,16 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
-> >       int ret;
-> >       struct tee_ioctl_invoke_arg inv_arg;
-> >       struct tee_param param[4];
-> > -     struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
-> > +     struct tee_shm *reg_shm = NULL;
-> >
-> >       memset(&inv_arg, 0, sizeof(inv_arg));
-> >       memset(&param, 0, sizeof(param));
-> >
-> > -     reg_shm_in = tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
-> > -                                              p->key_len);
-> > -     if (IS_ERR(reg_shm_in)) {
-> > -             dev_err(pvt_data.dev, "key shm register failed\n");
-> > -             return PTR_ERR(reg_shm_in);
-> > -     }
-> > -
-> > -     reg_shm_out = tee_shm_register_kernel_buf(pvt_data.ctx, p->blob,
-> > -                                               sizeof(p->blob));
-> > -     if (IS_ERR(reg_shm_out)) {
-> > -             dev_err(pvt_data.dev, "blob shm register failed\n");
-> > -             ret = PTR_ERR(reg_shm_out);
-> > -             goto out;
-> > +     reg_shm = tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
-> > +                                           sizeof(p->key) + sizeof(p->blob));
-> > +     if (IS_ERR(reg_shm)) {
-> > +             dev_err(pvt_data.dev, "shm register failed\n");
-> > +             return PTR_ERR(reg_shm);
-> >       }
-> >
-> >       inv_arg.func = TA_CMD_SEAL;
-> > @@ -90,13 +82,13 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
-> >       inv_arg.num_params = 4;
-> >
-> >       param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
-> > -     param[0].u.memref.shm = reg_shm_in;
-> > +     param[0].u.memref.shm = reg_shm;
-> >       param[0].u.memref.size = p->key_len;
-> >       param[0].u.memref.shm_offs = 0;
-> >       param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
-> > -     param[1].u.memref.shm = reg_shm_out;
-> > +     param[1].u.memref.shm = reg_shm;
-> >       param[1].u.memref.size = sizeof(p->blob);
-> > -     param[1].u.memref.shm_offs = 0;
-> > +     param[1].u.memref.shm_offs = sizeof(p->key);
-> >
-> >       ret = tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
-> >       if ((ret < 0) || (inv_arg.ret != 0)) {
-> > @@ -107,11 +99,7 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
-> >               p->blob_len = param[1].u.memref.size;
-> >       }
-> >
-> > -out:
-> > -     if (reg_shm_out)
-> > -             tee_shm_free(reg_shm_out);
-> > -     if (reg_shm_in)
-> > -             tee_shm_free(reg_shm_in);
-> > +     tee_shm_free(reg_shm);
-> >
-> >       return ret;
-> >  }
-> > @@ -124,24 +112,16 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
-> >       int ret;
-> >       struct tee_ioctl_invoke_arg inv_arg;
-> >       struct tee_param param[4];
-> > -     struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
-> > +     struct tee_shm *reg_shm = NULL;
-> >
-> >       memset(&inv_arg, 0, sizeof(inv_arg));
-> >       memset(&param, 0, sizeof(param));
-> >
-> > -     reg_shm_in = tee_shm_register_kernel_buf(pvt_data.ctx, p->blob,
-> > -                                              p->blob_len);
-> > -     if (IS_ERR(reg_shm_in)) {
-> > -             dev_err(pvt_data.dev, "blob shm register failed\n");
-> > -             return PTR_ERR(reg_shm_in);
-> > -     }
-> > -
-> > -     reg_shm_out = tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
-> > -                                               sizeof(p->key));
-> > -     if (IS_ERR(reg_shm_out)) {
-> > -             dev_err(pvt_data.dev, "key shm register failed\n");
-> > -             ret = PTR_ERR(reg_shm_out);
-> > -             goto out;
-> > +     reg_shm = tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
-> > +                                           sizeof(p->key) + sizeof(p->blob));
-> > +     if (IS_ERR(reg_shm)) {
-> > +             dev_err(pvt_data.dev, "shm register failed\n");
-> > +             return PTR_ERR(reg_shm);
-> >       }
-> >
-> >       inv_arg.func = TA_CMD_UNSEAL;
-> > @@ -149,11 +129,11 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
-> >       inv_arg.num_params = 4;
-> >
-> >       param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
-> > -     param[0].u.memref.shm = reg_shm_in;
-> > +     param[0].u.memref.shm = reg_shm;
-> >       param[0].u.memref.size = p->blob_len;
-> > -     param[0].u.memref.shm_offs = 0;
-> > +     param[0].u.memref.shm_offs = sizeof(p->key);
-> >       param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
-> > -     param[1].u.memref.shm = reg_shm_out;
-> > +     param[1].u.memref.shm = reg_shm;
-> >       param[1].u.memref.size = sizeof(p->key);
-> >       param[1].u.memref.shm_offs = 0;
-> >
-> > @@ -166,11 +146,7 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
-> >               p->key_len = param[1].u.memref.size;
-> >       }
-> >
-> > -out:
-> > -     if (reg_shm_out)
-> > -             tee_shm_free(reg_shm_out);
-> > -     if (reg_shm_in)
-> > -             tee_shm_free(reg_shm_in);
-> > +     tee_shm_free(reg_shm);
-> >
-> >       return ret;
-> >  }
-> > --
-> > 2.34.1
->
-> BR, Jarkko
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 133f0640fb24..15d58978efea 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2314,7 +2314,7 @@ struct filename {
+ };
+ static_assert(offsetof(struct filename, iname) % sizeof(long) == 0);
+ 
+-static inline struct mnt_idmap *file_mnt_idmap(struct file *file)
++static inline struct mnt_idmap *file_mnt_idmap(const struct file *file)
+ {
+ 	return mnt_idmap(file->f_path.mnt);
+ }
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 6bb55e61e8e8..1a05d95148e9 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -50,7 +50,7 @@ LSM_HOOK(int, 0, settime, const struct timespec64 *ts,
+ 	 const struct timezone *tz)
+ LSM_HOOK(int, 0, vm_enough_memory, struct mm_struct *mm, long pages)
+ LSM_HOOK(int, 0, bprm_creds_for_exec, struct linux_binprm *bprm)
+-LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, struct file *file)
++LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, const struct file *file)
+ LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
+ LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, struct linux_binprm *bprm)
+ LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, struct linux_binprm *bprm)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index e2734e9e44d5..fbd498046e39 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -150,7 +150,7 @@ extern int cap_capset(struct cred *new, const struct cred *old,
+ 		      const kernel_cap_t *effective,
+ 		      const kernel_cap_t *inheritable,
+ 		      const kernel_cap_t *permitted);
+-extern int cap_bprm_creds_from_file(struct linux_binprm *bprm, struct file *file);
++extern int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file);
+ int cap_inode_setxattr(struct dentry *dentry, const char *name,
+ 		       const void *value, size_t size, int flags);
+ int cap_inode_removexattr(struct mnt_idmap *idmap,
+@@ -289,7 +289,7 @@ int security_syslog(int type);
+ int security_settime64(const struct timespec64 *ts, const struct timezone *tz);
+ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages);
+ int security_bprm_creds_for_exec(struct linux_binprm *bprm);
+-int security_bprm_creds_from_file(struct linux_binprm *bprm, struct file *file);
++int security_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file);
+ int security_bprm_check(struct linux_binprm *bprm);
+ void security_bprm_committing_creds(struct linux_binprm *bprm);
+ void security_bprm_committed_creds(struct linux_binprm *bprm);
+@@ -611,7 +611,7 @@ static inline int security_bprm_creds_for_exec(struct linux_binprm *bprm)
+ }
+ 
+ static inline int security_bprm_creds_from_file(struct linux_binprm *bprm,
+-						struct file *file)
++						const struct file *file)
+ {
+ 	return cap_bprm_creds_from_file(bprm, file);
+ }
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 0b3fc2f3afe7..02a778257e2c 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -720,7 +720,7 @@ int get_vfs_caps_from_disk(struct mnt_idmap *idmap,
+  * its xattrs and, if present, apply them to the proposed credentials being
+  * constructed by execve().
+  */
+-static int get_file_caps(struct linux_binprm *bprm, struct file *file,
++static int get_file_caps(struct linux_binprm *bprm, const struct file *file,
+ 			 bool *effective, bool *has_fcap)
+ {
+ 	int rc = 0;
+@@ -882,7 +882,7 @@ static inline bool nonroot_raised_pE(struct cred *new, const struct cred *old,
+  *
+  * Return: 0 if successful, -ve on error.
+  */
+-int cap_bprm_creds_from_file(struct linux_binprm *bprm, struct file *file)
++int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
+ {
+ 	/* Process setpcap binaries and capabilities for uid 0 */
+ 	const struct cred *old = current_cred();
+diff --git a/security/security.c b/security/security.c
+index d5ff7ff45b77..bf7de5211542 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1078,7 +1078,7 @@ int security_bprm_creds_for_exec(struct linux_binprm *bprm)
+  *
+  * Return: Returns 0 if the hook is successful and permission is granted.
+  */
+-int security_bprm_creds_from_file(struct linux_binprm *bprm, struct file *file)
++int security_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
+ {
+ 	return call_int_hook(bprm_creds_from_file, 0, bprm, file);
+ }
+-- 
+2.34.1
+
