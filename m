@@ -2,163 +2,257 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6C5EE49B0
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Aug 2023 07:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A89EE49AF
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Aug 2023 08:02:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233561AbjHWHsE (ORCPT
+        id S233352AbjHWICS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Aug 2023 03:48:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56814 "EHLO
+        Wed, 23 Aug 2023 04:02:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231131AbjHWHsD (ORCPT
+        with ESMTP id S233286AbjHWICN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Aug 2023 03:48:03 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66DF2CD0;
-        Wed, 23 Aug 2023 00:48:01 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-3197b461bb5so4676204f8f.3;
-        Wed, 23 Aug 2023 00:48:01 -0700 (PDT)
+        Wed, 23 Aug 2023 04:02:13 -0400
+Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 265B3E51
+        for <linux-security-module@vger.kernel.org>; Wed, 23 Aug 2023 01:02:09 -0700 (PDT)
+Received: by mail-qv1-xf33.google.com with SMTP id 6a1803df08f44-64aaf3c16c2so31521396d6.3
+        for <linux-security-module@vger.kernel.org>; Wed, 23 Aug 2023 01:02:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692776880; x=1693381680;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lQVQ0Pzioqm+apDWx/BTd1Aa/XSfhKkkMImFNI9FDqQ=;
-        b=EM2RUV7wkp/EtyyJgQamyAD/tYmVInKboRM85l9Dw7YgiOCwJVUgPPcX1c4TF1Mhh/
-         7Ymw9kw5yHKE3kfrtoNkVw+DG2eUabFNuPSyjvPCt+Z0yomnb66FZRqE0skqVmvwHT64
-         H9cL4vUgb5S4B2Zv8F1Tq6qzwhuW+WaJlP/PtiOzIw3BSq+QlWQlM8AJbdPWwI1o92cK
-         P/Bp0fNR3i5D8d0sQrf9PZrZw6nfFO+sz8Kn+E6jusrLywbwiGhaOC7Soqg6e3DHCZHT
-         LqWwW73Fj6U+bS3SlFH0IGzrHwsCTBbORqEyMvLiDMpdc8Zi/JNUSYeS9ZEhH46L3hsp
-         jeSQ==
+        d=linaro.org; s=google; t=1692777728; x=1693382528;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6BSjtokwFpqc/G+xGehpwaT4EtO60DWjc8ZrclKikoE=;
+        b=NUv0XojToaQWV2XEJ0LjEaacdyesICYdKEdEtsWLVR+gLnOK6GvLf9w9JxEI+NHpdX
+         rZdNIUEDcW2bSKm3pWjw8CGZcxG64UPzGCHsUOxNUCofQHdspxVGdkjyLHEvw9Hw0hwC
+         Hcw3hZ+24CtPsXqxEI6L8j7lSHggn6dtC/Zaf4Yg46OYOYD8s9ovcvizJKZ0TugHqOa0
+         iBUzb6U6/4Zl9XxzB6/iIfxif5I9V1Kgofp1aU2ZGAw1SATOLa+gxihRyiweB7AJR2Y9
+         y5lUYJPtjsd8mnfqbf6czlhVih7QoVzDlC5bmVoV5lZWvGyt3HeBs7Z3VipaUQtNAa4X
+         K7WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692776880; x=1693381680;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lQVQ0Pzioqm+apDWx/BTd1Aa/XSfhKkkMImFNI9FDqQ=;
-        b=TRTjnd0G/f29L1AvyGGj87gfqHykV+ghE+V7lA49nytEfZ+dR56HUmubVrMvMVtck/
-         Pp2B2u5rsPg80D6afWDbfsx1h1anOKLGIBIFJPnDoMw6m2dV6LtNBUI3fkBYMFAYsM6C
-         qr23h/PXn6gXO9/InDPusJAb1beavSG0mOcuz8Hm6ThlimLp4PJp5PzTjDSG0jDKvLPa
-         ZLpPSaGd+X5mW5rDroejfABnbv/XdkTClkroy6U7dnsG5x//a9RczyTqEnCADWyhJcV1
-         WWZbBBLJD3E3mILLa5eiSolDUFLt0sNueAVEdmrgQhiiB5zw1QjfVYviJW+ErLzlVgbE
-         OIAg==
-X-Gm-Message-State: AOJu0Yz+LODuz5tNuKpb15sv7rEiiZg2HnCB5mtxzXzfm0Wb3GJrNEAm
-        nzDD766OKb4bs7ocNMhgTks=
-X-Google-Smtp-Source: AGHT+IEf4xWTSXShqxhkKEl5qYuFQQi7jDNX0+9IdYNSkviUh0bMlQx3RJrlZM9p8DKhBA6bue7nRA==
-X-Received: by 2002:a5d:65c5:0:b0:317:70cb:4f58 with SMTP id e5-20020a5d65c5000000b0031770cb4f58mr9450919wrw.63.1692776879662;
-        Wed, 23 Aug 2023 00:47:59 -0700 (PDT)
-Received: from khadija-virtual-machine ([124.29.208.67])
-        by smtp.gmail.com with ESMTPSA id c12-20020a5d4ccc000000b003143c6e09ccsm18051505wrt.16.2023.08.23.00.47.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Aug 2023 00:47:59 -0700 (PDT)
-Date:   Wed, 23 Aug 2023 12:47:56 +0500
-From:   Khadija Kamran <kamrankhadijadj@gmail.com>
-To:     John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        ztarkhani@microsoft.com, alison.schofield@intel.com
-Subject: [PATCH] lsm: constify 'bprm' parameter in
- security_bprm_committing_creds()
-Message-ID: <ZOW5rC1MngXvPQLz@gmail.com>
+        d=1e100.net; s=20221208; t=1692777728; x=1693382528;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6BSjtokwFpqc/G+xGehpwaT4EtO60DWjc8ZrclKikoE=;
+        b=l1xaBF8MSpptHTsOptKA8GXp4sGCNOfNvevPUIxmu3Z4hWOD8Lv7ABAJxmCcnE5HHQ
+         BOV7ene6eSMe7ojXcU6D/VMaSrqiUUon4ovBY/Vf0W4f//vYku16IRE6S2qdVGyJUmmM
+         KXtKcxclF6aXfoSaddVK/T6pLEIsoOwSBxaiA1E3HucA4Cx8svuTe/rSiqu4npb6InAy
+         1pb7tFV8LR6Rm1YGiwKQLuodB/2VCQtS7wAm8XQAd2P1qNX69T3gvGas0ZPjjhD0JJHA
+         o+3tkOyO/PpNWokuAIcQHBXOt3d3ldRgFcf8r9wTUiKKpkRdAqCrPSmetbeW6ozp9uw8
+         Wm8w==
+X-Gm-Message-State: AOJu0YxLQeHEIuQDkCW3tbkDL6nRzkTRCRrwi3NcPvHEX5n8uEOdiW9u
+        WlYFzZJ8eY9obWxNBYSVgNZPzfeRbeyG78j1pVxBVw==
+X-Google-Smtp-Source: AGHT+IHCXW+5AvKIH5eH5zGGQo7Y2etowbNPiVhAZnAi25/ajgJmtsE/jx/8U3q4/SWOYOX/1wCO3kPrZQDPY2IF2Us=
+X-Received: by 2002:a0c:f910:0:b0:647:248b:3614 with SMTP id
+ v16-20020a0cf910000000b00647248b3614mr11654949qvn.4.1692777727944; Wed, 23
+ Aug 2023 01:02:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20230822112933.1550062-1-sumit.garg@linaro.org>
+ <20230822125555.GA82256@rayden> <CAFA6WYPy=yxGg1HbT+ipWJFpxiJeUGK6BSgMhtRPd=zmKef-cw@mail.gmail.com>
+In-Reply-To: <CAFA6WYPy=yxGg1HbT+ipWJFpxiJeUGK6BSgMhtRPd=zmKef-cw@mail.gmail.com>
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+Date:   Wed, 23 Aug 2023 10:01:56 +0200
+Message-ID: <CAHUa44G9jCeHcRq=AZeieaTPWN_tpOVKeJNY=777QAh-bw1QNg@mail.gmail.com>
+Subject: Re: [PATCH] KEYS: trusted: tee: Refactor register SHM usage
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        jarkko@kernel.org, jejb@linux.ibm.com, zohar@linux.ibm.com,
+        sudeep.holla@arm.com, achin.gupta@arm.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The 'bprm_committing_creds' hook has implementations registered in
-SELinux and Apparmor. Looking at the function implementations we observe
-that the 'bprm' parameter is not changing.
+On Wed, Aug 23, 2023 at 8:55=E2=80=AFAM Sumit Garg <sumit.garg@linaro.org> =
+wrote:
+>
+> On Tue, 22 Aug 2023 at 18:25, Jens Wiklander <jens.wiklander@linaro.org> =
+wrote:
+> >
+> > On Tue, Aug 22, 2023 at 04:59:33PM +0530, Sumit Garg wrote:
+> > > The OP-TEE driver using the old SMC based ABI permits overlapping sha=
+red
+> > > buffers, but with the new FF-A based ABI each physical page may only
+> > > be registered once.
+> > >
+> > > As the key and blob buffer are allocated adjancently, there is no nee=
+d
+> > > for redundant register shared memory invocation. Also, it is incompat=
+ibile
+> > > with FF-A based ABI limitation. So refactor register shared memory
+> > > implementation to use only single invocation to register both key and=
+ blob
+> > > buffers.
+> > >
+> > > Fixes: 4615e5a34b95 ("optee: add FF-A support")
+> > > Reported-by: Jens Wiklander <jens.wiklander@linaro.org>
+> > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> > > ---
+> > >  security/keys/trusted-keys/trusted_tee.c | 64 ++++++++--------------=
+--
+> > >  1 file changed, 20 insertions(+), 44 deletions(-)
+> > >
+> > > diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys=
+/trusted-keys/trusted_tee.c
+> > > index ac3e270ade69..aa3d477de6db 100644
+> > > --- a/security/keys/trusted-keys/trusted_tee.c
+> > > +++ b/security/keys/trusted-keys/trusted_tee.c
+> > > @@ -65,24 +65,16 @@ static int trusted_tee_seal(struct trusted_key_pa=
+yload *p, char *datablob)
+> > >       int ret;
+> > >       struct tee_ioctl_invoke_arg inv_arg;
+> > >       struct tee_param param[4];
+> > > -     struct tee_shm *reg_shm_in =3D NULL, *reg_shm_out =3D NULL;
+> > > +     struct tee_shm *reg_shm =3D NULL;
+> > >
+> > >       memset(&inv_arg, 0, sizeof(inv_arg));
+> > >       memset(&param, 0, sizeof(param));
+> > >
+> > > -     reg_shm_in =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->key=
+,
+> > > -                                              p->key_len);
+> > > -     if (IS_ERR(reg_shm_in)) {
+> > > -             dev_err(pvt_data.dev, "key shm register failed\n");
+> > > -             return PTR_ERR(reg_shm_in);
+> > > -     }
+> > > -
+> > > -     reg_shm_out =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->bl=
+ob,
+> > > -                                               sizeof(p->blob));
+> > > -     if (IS_ERR(reg_shm_out)) {
+> > > -             dev_err(pvt_data.dev, "blob shm register failed\n");
+> > > -             ret =3D PTR_ERR(reg_shm_out);
+> > > -             goto out;
+> > > +     reg_shm =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
+> > > +                                           sizeof(p->key) + sizeof(p=
+->blob));
+> >
+> > This is somewhat fragile. What if struct trusted_key_payload has a smal=
+l
+> > unexpected change in layout?
+>
+> key and blob buffers are just two adjacent fixed sized byte arrays. So
+> I am not worried here as long as they stay adjacent (which has been
+> the case since trusted keys were introduced in the kernel).
 
-Mark the 'bprm' parameter of LSM hook security_bprm_committing_creds()
-as 'const' since it will not be changing in the LSM hook.
+Yeah, that was my point, but fine if you don't believe it's an issue.
 
-Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
----
- include/linux/lsm_hook_defs.h | 2 +-
- include/linux/security.h      | 4 ++--
- security/apparmor/lsm.c       | 2 +-
- security/security.c           | 2 +-
- security/selinux/hooks.c      | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
+Thanks,
+Jens
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 1a05d95148e9..df8f98a2c7bd 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -52,7 +52,7 @@ LSM_HOOK(int, 0, vm_enough_memory, struct mm_struct *mm, long pages)
- LSM_HOOK(int, 0, bprm_creds_for_exec, struct linux_binprm *bprm)
- LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, const struct file *file)
- LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
--LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, struct linux_binprm *bprm)
-+LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, const struct linux_binprm *bprm)
- LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, struct linux_binprm *bprm)
- LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
- 	 struct fs_context *src_sc)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index fbd498046e39..8e5d412b2437 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -291,7 +291,7 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages);
- int security_bprm_creds_for_exec(struct linux_binprm *bprm);
- int security_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file);
- int security_bprm_check(struct linux_binprm *bprm);
--void security_bprm_committing_creds(struct linux_binprm *bprm);
-+void security_bprm_committing_creds(const struct linux_binprm *bprm);
- void security_bprm_committed_creds(struct linux_binprm *bprm);
- int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc);
- int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
-@@ -621,7 +621,7 @@ static inline int security_bprm_check(struct linux_binprm *bprm)
- 	return 0;
- }
- 
--static inline void security_bprm_committing_creds(struct linux_binprm *bprm)
-+static inline void security_bprm_committing_creds(const struct linux_binprm *bprm)
- {
- }
- 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index f431251ffb91..251b62dd96da 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -734,7 +734,7 @@ static int apparmor_setprocattr(const char *name, void *value,
-  * apparmor_bprm_committing_creds - do task cleanup on committing new creds
-  * @bprm: binprm for the exec  (NOT NULL)
-  */
--static void apparmor_bprm_committing_creds(struct linux_binprm *bprm)
-+static void apparmor_bprm_committing_creds(const struct linux_binprm *bprm)
- {
- 	struct aa_label *label = aa_current_raw_label();
- 	struct aa_label *new_label = cred_label(bprm->cred);
-diff --git a/security/security.c b/security/security.c
-index bf7de5211542..6e181ed22cb4 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1117,7 +1117,7 @@ int security_bprm_check(struct linux_binprm *bprm)
-  * open file descriptors to which access will no longer be granted when the
-  * attributes are changed.  This is called immediately before commit_creds().
-  */
--void security_bprm_committing_creds(struct linux_binprm *bprm)
-+void security_bprm_committing_creds(const struct linux_binprm *bprm)
- {
- 	call_void_hook(bprm_committing_creds, bprm);
- }
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 79b4890e9936..66f9ea14ed8f 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2404,7 +2404,7 @@ static inline void flush_unauthorized_files(const struct cred *cred,
- /*
-  * Prepare a process for imminent new credential changes due to exec
-  */
--static void selinux_bprm_committing_creds(struct linux_binprm *bprm)
-+static void selinux_bprm_committing_creds(const struct linux_binprm *bprm)
- {
- 	struct task_security_struct *new_tsec;
- 	struct rlimit *rlim, *initrlim;
--- 
-2.34.1
-
+>
+> -Sumit
+>
+> >
+> > Thanks,
+> > Jens
+> >
+> > > +     if (IS_ERR(reg_shm)) {
+> > > +             dev_err(pvt_data.dev, "shm register failed\n");
+> > > +             return PTR_ERR(reg_shm);
+> > >       }
+> > >
+> > >       inv_arg.func =3D TA_CMD_SEAL;
+> > > @@ -90,13 +82,13 @@ static int trusted_tee_seal(struct trusted_key_pa=
+yload *p, char *datablob)
+> > >       inv_arg.num_params =3D 4;
+> > >
+> > >       param[0].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
+> > > -     param[0].u.memref.shm =3D reg_shm_in;
+> > > +     param[0].u.memref.shm =3D reg_shm;
+> > >       param[0].u.memref.size =3D p->key_len;
+> > >       param[0].u.memref.shm_offs =3D 0;
+> > >       param[1].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
+> > > -     param[1].u.memref.shm =3D reg_shm_out;
+> > > +     param[1].u.memref.shm =3D reg_shm;
+> > >       param[1].u.memref.size =3D sizeof(p->blob);
+> > > -     param[1].u.memref.shm_offs =3D 0;
+> > > +     param[1].u.memref.shm_offs =3D sizeof(p->key);
+> > >
+> > >       ret =3D tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
+> > >       if ((ret < 0) || (inv_arg.ret !=3D 0)) {
+> > > @@ -107,11 +99,7 @@ static int trusted_tee_seal(struct trusted_key_pa=
+yload *p, char *datablob)
+> > >               p->blob_len =3D param[1].u.memref.size;
+> > >       }
+> > >
+> > > -out:
+> > > -     if (reg_shm_out)
+> > > -             tee_shm_free(reg_shm_out);
+> > > -     if (reg_shm_in)
+> > > -             tee_shm_free(reg_shm_in);
+> > > +     tee_shm_free(reg_shm);
+> > >
+> > >       return ret;
+> > >  }
+> > > @@ -124,24 +112,16 @@ static int trusted_tee_unseal(struct trusted_ke=
+y_payload *p, char *datablob)
+> > >       int ret;
+> > >       struct tee_ioctl_invoke_arg inv_arg;
+> > >       struct tee_param param[4];
+> > > -     struct tee_shm *reg_shm_in =3D NULL, *reg_shm_out =3D NULL;
+> > > +     struct tee_shm *reg_shm =3D NULL;
+> > >
+> > >       memset(&inv_arg, 0, sizeof(inv_arg));
+> > >       memset(&param, 0, sizeof(param));
+> > >
+> > > -     reg_shm_in =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->blo=
+b,
+> > > -                                              p->blob_len);
+> > > -     if (IS_ERR(reg_shm_in)) {
+> > > -             dev_err(pvt_data.dev, "blob shm register failed\n");
+> > > -             return PTR_ERR(reg_shm_in);
+> > > -     }
+> > > -
+> > > -     reg_shm_out =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->ke=
+y,
+> > > -                                               sizeof(p->key));
+> > > -     if (IS_ERR(reg_shm_out)) {
+> > > -             dev_err(pvt_data.dev, "key shm register failed\n");
+> > > -             ret =3D PTR_ERR(reg_shm_out);
+> > > -             goto out;
+> > > +     reg_shm =3D tee_shm_register_kernel_buf(pvt_data.ctx, p->key,
+> > > +                                           sizeof(p->key) + sizeof(p=
+->blob));
+> > > +     if (IS_ERR(reg_shm)) {
+> > > +             dev_err(pvt_data.dev, "shm register failed\n");
+> > > +             return PTR_ERR(reg_shm);
+> > >       }
+> > >
+> > >       inv_arg.func =3D TA_CMD_UNSEAL;
+> > > @@ -149,11 +129,11 @@ static int trusted_tee_unseal(struct trusted_ke=
+y_payload *p, char *datablob)
+> > >       inv_arg.num_params =3D 4;
+> > >
+> > >       param[0].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
+> > > -     param[0].u.memref.shm =3D reg_shm_in;
+> > > +     param[0].u.memref.shm =3D reg_shm;
+> > >       param[0].u.memref.size =3D p->blob_len;
+> > > -     param[0].u.memref.shm_offs =3D 0;
+> > > +     param[0].u.memref.shm_offs =3D sizeof(p->key);
+> > >       param[1].attr =3D TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
+> > > -     param[1].u.memref.shm =3D reg_shm_out;
+> > > +     param[1].u.memref.shm =3D reg_shm;
+> > >       param[1].u.memref.size =3D sizeof(p->key);
+> > >       param[1].u.memref.shm_offs =3D 0;
+> > >
+> > > @@ -166,11 +146,7 @@ static int trusted_tee_unseal(struct trusted_key=
+_payload *p, char *datablob)
+> > >               p->key_len =3D param[1].u.memref.size;
+> > >       }
+> > >
+> > > -out:
+> > > -     if (reg_shm_out)
+> > > -             tee_shm_free(reg_shm_out);
+> > > -     if (reg_shm_in)
+> > > -             tee_shm_free(reg_shm_in);
+> > > +     tee_shm_free(reg_shm);
+> > >
+> > >       return ret;
+> > >  }
+> > > --
+> > > 2.34.1
+> > >
