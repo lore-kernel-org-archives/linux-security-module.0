@@ -2,174 +2,63 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B279EE49B2
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Aug 2023 11:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B89EE49B2
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Aug 2023 12:08:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234416AbjHWLWm (ORCPT
+        id S234613AbjHWMIP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Aug 2023 07:22:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46496 "EHLO
+        Wed, 23 Aug 2023 08:08:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234412AbjHWLWl (ORCPT
+        with ESMTP id S234618AbjHWMIO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Aug 2023 07:22:41 -0400
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 16408E54;
-        Wed, 23 Aug 2023 04:22:38 -0700 (PDT)
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 37NBL82T009557;
-        Wed, 23 Aug 2023 06:21:08 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 37NBL7nF009556;
-        Wed, 23 Aug 2023 06:21:07 -0500
-Date:   Wed, 23 Aug 2023 06:21:07 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Jeremi Piotrowski <jpiotrowski@linux.microsoft.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        linux-coco@lists.linux.dev, Brijesh Singh <brijesh.singh@amd.com>,
-        Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Peter Gonda <pgonda@google.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dionna Amalie Glaze <dionnaglaze@google.com>,
-        Samuel Ortiz <sameo@rivosinc.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] tsm: Attestation Report ABI
-Message-ID: <20230823112107.GA9494@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <169199898909.1782217.10899362240465838600.stgit@dwillia2-xfh.jf.intel.com> <57f3a05e-8fcd-4656-beea-56bb8365ae64@linux.microsoft.com>
-Mime-Version: 1.0
+        Wed, 23 Aug 2023 08:08:14 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B649171A;
+        Wed, 23 Aug 2023 05:07:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Ysaf8/wElHvFH5MgVZnFnGtYChLdMb1DwC+nYrsJpbg=; b=gaIJgvP/yCQGTdYQZzy6fhCJK2
+        MeBwI4GHNIHtWrK2t4mZcMxICZHFs+dwhMye+S0PrUeB6fmVAN7lV+YmK6f3zoKBVi/shqwFXbpY0
+        FONGKBVfQrdtG8JGpqBhBW1/9z6av0A5S73ch2VkqXt6IiQpDXc3W9mo5IG8FMusYRSdzwcp6pK9f
+        /xxc3EE3PPX2zS0/Li0tGnH9+hgOfXNqMFYikBSf4jL+Bs/ugXladR29PyFb6ExFL8p/hmzH8iinG
+        3izepVNtBs7NTYdh8ajJOfAuBBf1rBnqrAPZyTebI4KQgSbFPc3e4fULbmV25cFDYD7sYNdKwZQgD
+        5b2EBAJQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qYmdQ-004iOg-J5; Wed, 23 Aug 2023 12:06:52 +0000
+Date:   Wed, 23 Aug 2023 13:06:52 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Khadija Kamran <kamrankhadijadj@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Serge Hallyn <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        ztarkhani@microsoft.com, alison.schofield@intel.com
+Subject: Re: [PATCH] lsm: constify the 'mm' parameter in
+ security_vm_enough_memory_mm()
+Message-ID: <ZOX2XDdrfk8rO9+t@casper.infradead.org>
+References: <ZOWtBTKkfcc8sKkY@gmail.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <57f3a05e-8fcd-4656-beea-56bb8365ae64@linux.microsoft.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 23 Aug 2023 06:21:08 -0500 (CDT)
+In-Reply-To: <ZOWtBTKkfcc8sKkY@gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 14, 2023 at 11:04:52AM +0200, Jeremi Piotrowski wrote:
+On Wed, Aug 23, 2023 at 11:53:57AM +0500, Khadija Kamran wrote:
+> +++ b/include/linux/mm.h
+> @@ -3064,7 +3064,7 @@ void anon_vma_interval_tree_verify(struct anon_vma_chain *node);
+>  	     avc; avc = anon_vma_interval_tree_iter_next(avc, start, last))
+>  
+>  /* mmap.c */
+> -extern int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admin);
+> +extern int __vm_enough_memory(const struct mm_struct *mm, long pages, int cap_sys_admin);
 
-Good morning, I hope the week is going well for everyone.
+Could you remove the 'extern' when you touch a function prototype?
 
-> On 8/14/2023 9:43 AM, Dan Williams wrote:
-> > Changes since v1:
-> > - Switch from Keyring to sysfs (James)
-> > 
-> > An attestation report is signed evidence of how a Trusted Virtual
-> > Machine (TVM) was launched and its current state. A verifying party uses
-> > the report to make judgements of the confidentiality and integrity of
-> > that execution environment. Upon successful attestation the verifying
-> > party may, for example, proceed to deploy secrets to the TVM to carry
-> > out a workload. Multiple confidential computing platforms share this
-> > similar flow.
-> > 
-> > The approach of adding adding new char devs and new ioctls, for what
-> > amounts to the same logical functionality with minor formatting
-> > differences across vendors [1], is untenable. Common concepts and the
-> > community benefit from common infrastructure.
-> > 
-> > Use sysfs for this facility for maintainability compared to ioctl(). The
-> > expectation is that this interface is a boot time, configure once, get
-> > report, and done flow. I.e. not something that receives ongoing
-> > transactions at runtime. However, runtime retrieval is not precluded and
-> > a mechanism to detect potential configuration conflicts from
-> > multiple-threads using this interface is included.
-> > 
-
-> I wanted to speak up to say that this does not align with the needs
-> we have in the Confidential Containers project. We want to be able
-> to perform attestation not just once during boot but during the
-> lifecycle of the confidential VM. We may need to fetch a fresh
-> attestation report from a trusted agent but also from arbitrary
-> applications running in containers.
->
-> The trusted agent might need attestation when launching a new
-> container from an encrypted container image or when a new secret is
-> being added to the VM - both of these events may happen at any time
-> (also when containerized applications are already executing).
->
-> Container applications have their own uses for attestation, such as
-> when they need to fetch keys required to decrypt payloads. We also
-> have things like performing attestation when establishing a TLS or
-> ssh connection to provide an attested e2e encrypted communication
-> channel.
->
-> I don't think sysfs is suitable for such concurrent
-> transactions. Also if you think about exposing the sysfs interface
-> to an application in a container, this requires bind mounting rw
-> part of the sysfs tree into the mount namespace - not ideal.
-
-We don't have a dog in this fight regarding TDX [1], but we do have a
-significant body of experience with the concepts and challenges
-involved.
-
-The issue at hand is that trust is a resource that needs to be
-orchestrated, just like any other resource.  A concept, based on our
-experiences, that seems to be significantly outside of mainstream
-thought.
-
-The notion of the need to orchestrate trust seems to be particularly
-important with a concept such as Confidential Containers.
-
-FWIW, we have pushed forward a second round of patches for the kernel
-infrastructure that make the concepts of trust orchestration and
-containerization tenable:
-
-https://lore.kernel.org/linux-security-module/20230710102319.19716-1-greg@enjellic.com/T/#t
-
-In addition, FWIW, we have actually built systems that implement these
-principals, obviously not on TDX hardware, see [1], but we do have a
-significant body of experience with using SGX as a trust root.  We
-have even provided a substantial set of initial userspace tooling that
-implement these concepts to support the proposed patches.
-
-I only say all of this to convey the notion that we have actually done
-work on all of these concepts and are not just waving our hands
-around.
-
-The notion of surfacing this information through /sysfs becomes less
-problematic if one approaches the issue through the lens of having
-trust orchestrators that are responsible for managing the security or
-trust status of the execution platform at large and any subordinate
-workloads.
-
-This concept is true, even if the platform/VM is only hosting a single
-workload.  Which may be a necessity for some security contracts, where
-there is literally no trust in the fact that side-channel disclosure
-threats can be properly mitigated, ie. there cannot be workloads with
-possible adversarial intents.
-
-From the outside looking in, unless there are some fundamental
-conversations regarding how trusted systems and workloads can be
-developed with the architectures being proposed, it is completely
-unclear how durable API's, on the order of 20+ years are ever going to
-be attained.
-
-No criticism, just observation.
-
-> Jeremi
-
-Best wishes for continued progress on all of this, it is important
-stuff, both in the cloud and on the edge.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-
-[1]: TDX enabled hardware is difficult, if not impossible to obtain.
-If there is any doubt, simply search for TDX hardware availability and
-cringe at the conversations on the Intel forums about people trying to
-get experience with the technology.
-
-This is the same problem that plagued TXT and SGX and results in
-enabling infrastructure development being done in an echo chamber.  A
-concept that may have proven successful when all of this work was
-expected to be implementated and enabled by OEM providers but seems
-problematic in an ostensibly 'community' driven project such as Linux.
