@@ -2,171 +2,99 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D287CC6FA8F
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Aug 2023 13:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA17C3DA6F
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Aug 2023 13:22:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232847AbjHXNEC (ORCPT
+        id S239431AbjHXNVs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Aug 2023 09:04:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60492 "EHLO
+        Thu, 24 Aug 2023 09:21:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240929AbjHXND4 (ORCPT
+        with ESMTP id S241073AbjHXNVi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Aug 2023 09:03:56 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFD4F1BD0;
-        Thu, 24 Aug 2023 06:03:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692882226; x=1724418226;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jHMVu6k8S9w3sW744CRbIo5kUtynAHJhFX02muevFVU=;
-  b=fco9wB7K6KX7e5oMDUTOxgW7gnAF8AUAWtPUM4SE2YK7K5D6X5TxqfqB
-   d/n2js38ImjtOEeMrhtSAjCwBvm0Cn/yIS6DT79WQuHuPrNGFg1UxnYrK
-   UwjXYkr82oRvg/9XJeDP5kLg6pGLkHyG8No/m2DQEutG0akectYzqqDpf
-   oao0WKY4qhHJdaneclqTQLAF6r7RMDzFBHNeOSxqzJ6Pu+BlepYchFARN
-   Ub5tTRJXW7rfsLinOsKOTPX6E8z3eVI1jzkgX4usq4pnPeaKvt01v+r7f
-   QCem6UyDWPAGMXnw+N0nqYNxOKKD9mFy7ZMF6z3Zdo2diEGT8FJdtVyU7
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10812"; a="359414863"
-X-IronPort-AV: E=Sophos;i="6.02,195,1688454000"; 
-   d="scan'208";a="359414863"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2023 06:03:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10812"; a="807121086"
-X-IronPort-AV: E=Sophos;i="6.02,195,1688454000"; 
-   d="scan'208";a="807121086"
-Received: from lkp-server02.sh.intel.com (HELO daf8bb0a381d) ([10.239.97.151])
-  by fmsmga004.fm.intel.com with ESMTP; 24 Aug 2023 06:03:41 -0700
-Received: from kbuild by daf8bb0a381d with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qZ9zt-0002gS-0G;
-        Thu, 24 Aug 2023 13:03:38 +0000
-Date:   Thu, 24 Aug 2023 21:03:34 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Khadija Kamran <kamrankhadijadj@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        ztarkhani@microsoft.com, alison.schofield@intel.com
-Cc:     oe-kbuild-all@lists.linux.dev,
-        Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH] lsm: constify the 'mm' parameter in
- security_vm_enough_memory_mm()
-Message-ID: <202308242024.q4KF0YIN-lkp@intel.com>
-References: <ZOWtBTKkfcc8sKkY@gmail.com>
+        Thu, 24 Aug 2023 09:21:38 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CAB3198D;
+        Thu, 24 Aug 2023 06:21:36 -0700 (PDT)
+Received: from fsav113.sakura.ne.jp (fsav113.sakura.ne.jp [27.133.134.240])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 37ODLMiX042500;
+        Thu, 24 Aug 2023 22:21:22 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav113.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav113.sakura.ne.jp);
+ Thu, 24 Aug 2023 22:21:22 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav113.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 37ODLLoD042496
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 24 Aug 2023 22:21:22 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <d2557f88-0cda-b0bf-5c76-7c18912798c9@I-love.SAKURA.ne.jp>
+Date:   Thu, 24 Aug 2023 22:21:21 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZOWtBTKkfcc8sKkY@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH] audit: add task history record
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-audit@redhat.com, audit@vger.kernel.org,
+        Steve Grubb <sgrubb@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <36b65eb1-ccbf-8b81-468f-b8d88c4be5a3@I-love.SAKURA.ne.jp>
+ <CAHC9VhTLQjjQ0QMfBDHYCz9LOAuO=rJWSDEUqPsFE+dowFbN=Q@mail.gmail.com>
+ <b06dbdd8-d2f6-b190-5635-948c0a966103@I-love.SAKURA.ne.jp>
+ <CAHC9VhSz=3utr_CigGvkMEb6_avJUQq1Ak2smB7neSd76mzjFw@mail.gmail.com>
+ <6957af54-16a2-4c28-56ff-dafe95f4e276@I-love.SAKURA.ne.jp>
+ <CAHC9VhTj-PQ0qPTiphPLXyJx3bWeqgVS_GPCWNgjqFqBgH6Njg@mail.gmail.com>
+ <b0b60fdc-4484-2265-7fdf-8367bf218d18@I-love.SAKURA.ne.jp>
+ <CAHC9VhRaUxN=oEyKCOrfrGzJeXDGxv2EKbZH3qwAB6AhKcSfog@mail.gmail.com>
+ <68a0ef90-b452-2096-3729-b5c208878ff9@I-love.SAKURA.ne.jp>
+ <CAHC9VhTPgnzdn1tmEmufcbseN_Q1CyzxTEzfvZW7OCBTeAadmA@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhTPgnzdn1tmEmufcbseN_Q1CyzxTEzfvZW7OCBTeAadmA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Khadija,
+On 2023/08/23 23:48, Paul Moore wrote:
+> We've already discussed this both from a kernel load perspective (it
+> should be able to handle the load, if not that is a separate problem
+> to address) as well as the human perspective (if you want auditing,
+> you need to be able to handle auditing).
 
-kernel test robot noticed the following build errors:
+No. You haven't shown us audit rules that can satisfy requirements shown below.
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on pcmoore-selinux/next pcmoore-audit/next linus/master v6.5-rc7 next-20230824]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+  (1) Catch _all_ process creations (both via fork()/clone() system calls and
+      kthread_create() from the kernel), and duplicate the history upon process
+      creation.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Khadija-Kamran/lsm-constify-the-mm-parameter-in-security_vm_enough_memory_mm/20230823-145455
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/ZOWtBTKkfcc8sKkY%40gmail.com
-patch subject: [PATCH] lsm: constify the 'mm' parameter in security_vm_enough_memory_mm()
-config: arc-randconfig-001-20230824 (https://download.01.org/0day-ci/archive/20230824/202308242024.q4KF0YIN-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20230824/202308242024.q4KF0YIN-lkp@intel.com/reproduce)
+  (2) Catch _all_ execve(), and update the history upon successful execve().
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202308242024.q4KF0YIN-lkp@intel.com/
+  (3) Catch _all_ process terminations (both exit()/exit_group()/kill() system
+      calls and internal reasons such as OOM killer), and erase the history upon
+      process termination.
 
-All errors (new ones prefixed by >>):
+  (4) Do the above things without asking administrators to become a specialist of
+      system management and without asking administrators to drastically change
+      system configurations and without consuming too much CPU and storage.
 
->> mm/util.c:928:5: error: conflicting types for '__vm_enough_memory'; have 'int(struct mm_struct *, long int,  int)'
-     928 | int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admin)
-         |     ^~~~~~~~~~~~~~~~~~
-   In file included from mm/util.c:2:
-   include/linux/mm.h:3199:12: note: previous declaration of '__vm_enough_memory' with type 'int(const struct mm_struct *, long int,  int)'
-    3199 | extern int __vm_enough_memory(const struct mm_struct *mm, long pages, int cap_sys_admin);
-         |            ^~~~~~~~~~~~~~~~~~
+We know we can't satisfy requirements shown above using audit rules. That's why
+this patch maintains process history information without using audit rules.
 
+> 
+> Tetsuo, as should be apparent at this point, I'm finding your
+> arguments unconvincing at best, and confusing at worst.  If you or
+> someone else wants to take a different approach towards arguing for
+> this patch I'll entertain the discussion further, but please do not
+> reply back with the same approach; it simply isn't constructive at
+> this point.
 
-vim +928 mm/util.c
+Although it will be nice if we can fetch this process history information
+directly from "current", I can live with fetching this process history
+information from "current->security" (that is, moving what you call "the
+support burden" from audit subsystem to LSM module authors).
 
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  911  
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  912  /*
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  913   * Check that a process has enough memory to allocate a new virtual
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  914   * mapping. 0 means there is enough memory for the allocation to
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  915   * succeed and -ENOMEM implies there is not.
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  916   *
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  917   * We currently support three overcommit policies, which are set via the
-ee65728e103bb7 Mike Rapoport   2022-06-27  918   * vm.overcommit_memory sysctl.  See Documentation/mm/overcommit-accounting.rst
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  919   *
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  920   * Strict overcommit modes added 2002 Feb 26 by Alan Cox.
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  921   * Additional code 2002 Jul 20 by Robert Love.
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  922   *
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  923   * cap_sys_admin is 1 if the process has admin privileges, 0 otherwise.
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  924   *
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  925   * Note this is a helper function intended to be used by LSMs which
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  926   * wish to use this logic.
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  927   */
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17 @928  int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admin)
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  929  {
-8c7829b04c523c Johannes Weiner 2019-05-13  930  	long allowed;
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  931  
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  932  	vm_acct_memory(pages);
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  933  
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  934  	/*
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  935  	 * Sometimes we want to use more memory than we have
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  936  	 */
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  937  	if (sysctl_overcommit_memory == OVERCOMMIT_ALWAYS)
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  938  		return 0;
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  939  
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  940  	if (sysctl_overcommit_memory == OVERCOMMIT_GUESS) {
-8c7829b04c523c Johannes Weiner 2019-05-13  941  		if (pages > totalram_pages() + total_swap_pages)
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  942  			goto error;
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  943  		return 0;
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  944  	}
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  945  
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  946  	allowed = vm_commit_limit();
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  947  	/*
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  948  	 * Reserve some for root
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  949  	 */
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  950  	if (!cap_sys_admin)
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  951  		allowed -= sysctl_admin_reserve_kbytes >> (PAGE_SHIFT - 10);
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  952  
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  953  	/*
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  954  	 * Don't let a single process grow so big a user can't recover
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  955  	 */
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  956  	if (mm) {
-8c7829b04c523c Johannes Weiner 2019-05-13  957  		long reserve = sysctl_user_reserve_kbytes >> (PAGE_SHIFT - 10);
-8c7829b04c523c Johannes Weiner 2019-05-13  958  
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  959  		allowed -= min_t(long, mm->total_vm / 32, reserve);
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  960  	}
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  961  
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  962  	if (percpu_counter_read_positive(&vm_committed_as) < allowed)
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  963  		return 0;
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  964  error:
-6bdfc60cf0f977 Jakub Wilk      2023-02-10  965  	pr_warn_ratelimited("%s: pid: %d, comm: %s, not enough memory for the allocation\n",
-44b414c8715c5d Kefeng Wang     2022-07-26  966  			    __func__, current->pid, current->comm);
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  967  	vm_unacct_memory(pages);
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  968  
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  969  	return -ENOMEM;
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  970  }
-39a1aa8e194ab6 Andrey Ryabinin 2016-03-17  971  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
