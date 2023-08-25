@@ -2,171 +2,173 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D024C3DA66
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Aug 2023 17:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA71C3DA6F
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Aug 2023 18:15:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344180AbjHYRHj (ORCPT
+        id S229650AbjHYSPG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Aug 2023 13:07:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39178 "EHLO
+        Fri, 25 Aug 2023 14:15:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344183AbjHYRHJ (ORCPT
+        with ESMTP id S233313AbjHYSOt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Aug 2023 13:07:09 -0400
-Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B00B11FF5
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Aug 2023 10:07:06 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RXRFh6x6TzMpnn4;
-        Fri, 25 Aug 2023 17:07:04 +0000 (UTC)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RXRFh2KmpzMpp9v;
-        Fri, 25 Aug 2023 19:07:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1692983224;
-        bh=zCI9rThMupAPOQMoDWypft1uJQGAltZHayzbrpdhdnw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QUS/ad0ysS+hFWj2TRsdapIrWLBCuenE76xQOYM4DVXQ+v3y/QUSOf3UgJTFfrkkN
-         j5BDxpJzvXgK6UQg4VgC98YId7cr4GwRCbfNA5hG5PWXiEQMrQO8y6bBBjfIpesp/P
-         WRQKjvJhR87qg+Fo8FZ4gccHSCoTJeQ5CpzD72Co=
-Date:   Fri, 25 Aug 2023 19:07:01 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Matt Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] selftests/landlock: Test ioctl support
-Message-ID: <20230825.ohtoh6aivahX@digikod.net>
-References: <20230814172816.3907299-1-gnoack@google.com>
- <20230814172816.3907299-3-gnoack@google.com>
- <20230818.HopaLahS0qua@digikod.net>
- <ZOjN7dub5QGJOzSX@google.com>
+        Fri, 25 Aug 2023 14:14:49 -0400
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07BA12701
+        for <linux-security-module@vger.kernel.org>; Fri, 25 Aug 2023 11:14:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1692987262; bh=zgxFzEwt+VhUWEvsZyRymTsuacibGHktWPWMIzPmD8Q=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ct4Ms1G7NQpWzmktqt0vmDCcCTfQxbdQL23KzI869JXON+2EouOQA3UPa2WjBKuqFl+rxDAVQQeDpEnuI44X6EPqLHKN4J8bP0xDQC7wQxBE+GOASsBcxTORNyQv0nn2rLlWBFJhu7gD09JHB2MU6A1d8c4HEIwbOtB2MbA7zlNGPaBm8N2xWt3cls6Mm6DuP6x4FKraL+nlKxuAKWtgHbsa7zNHrwaX2okdzB9KLkw3NaJ5QFv5iqsfE3WCdivPy+V6TzfsqukB/6sy1o7iBMi4X4EHiX1itiEnUZxec6qgr6YiyCgkaFaDRUoJ/QDEAYE+N1QIsGgalkM8U16Dkg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1692987262; bh=OyUoETvIwfPWH4eFUZLbxkw1RslQPD2X9ACvXGBKGmr=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=cCbr3UrBCFMDDmVKWlKQ5GLox0TKIwNv301hDqmUFyWJVtufndjYpNQZ+Nq9nZHRIcZ2pF4njYnT+P+Yhg6wH0llaAa9CCAbs9bT+HY+XfE11TnNk5k6fWjVe1Ci+Dz90QP2Fk3IzMt+ihzJZNYhPPJLZJkjPsdAttKsYbzO5k+7bTEXDuVVq4zUowdOyV2Jya41Rmk3phiVdKLPIdshWf35IYTn/VHvOMJDIpvr2cADpDXXUIxON0QNJ/F52QMMGeGRK8DO+6uCaL3I11KvqtGWtAwyzlQxtqssqYQlV6bYWwrYrCXdGZzQvq7Z14KgHAum1WTv8GROIgR8NXNp3g==
+X-YMail-OSG: 7SvZxUIVM1kPVaPNjSLTjPiA5bhFuIaJ7Pt8DRy5aC5PqZnGn7o6q74kawRDSxd
+ YegdddUzaHCvy3._TMn.1yaOP0tiS7LrO8VATylBfuViXsuNLNHgc6fGWO.gEP_cFX2j8q3kR9Mg
+ AoIOSsLbLlhKQ7VRW5KShiNO3Va0TAPn2Oa6MF.4FjGjcVWX3ovIlzGAZfptMlelhEaLT.6uMs70
+ GKGoINiINa0TXRJq3ttKZGifwWg2Ux4eKoW5og9LeoMy3XuGR4FrqR5NRgPAxbK2LOuu_Q2uXeTA
+ q_ri4JlCs17UQ8X62MABrKAZkQF6CMTYAeGMcDUnzb.4H6FG0vLXVBb8_15QBzefT0vVuE7STPTN
+ NKaM2R8UNYKRE4m4GZSJKMzjfmzmO8AsTdjZrF4DtUjVN.O4QHNLjm0i0dqLnSBc3UmubaybaTcp
+ 9oga3rS6PGh2fn0jifwY.shCPYv.tDnVYmZrwOgK1pDYOXYsZEFR6P8gkGHHl1EsvCGdzb2m4BWn
+ YWleyj2Hvzz8BfOZPLr0SV4PaXRUvGRU2ujaVtiBGBGALvctH916jkJI0KjsfZUT5_JYnwqJpeVw
+ W.YzvVsWGLdMDUpREDwao6e8VM4hkbTw2gRCXuCWw9dfBXE6sUPNenyhFBRR2EGobTJPPcRkBq9D
+ Ejlxz2YiCn.JOpyyF2iUWzk9BY0wdIYmdy9SBwXeZUfCVPYc7AInhxgfcYKtjP54qWLKR8H0rf0T
+ Ylr5jlHB9O.9MZLfx929h7RzXNh7EwqWaYqm_XnrfmNvwvwBGF9GhhNufBEJEQgf3AvhtnGoJhGY
+ YZc_fDHqrpC4Jg0_KvMUH4hJPVCAMvQFPw5rVU723iXj6BGDwMPB94si1hnf9nqynoXNwD3WYRZl
+ 2u9nxqNQJYmFIPM3owi2lYCAPzfyjGMR4rcJPtgGy36uLrNzHVVCbcVnFfFIVvgkCBSXLaXlRfJm
+ 3CKnmcHtZrZlJzsvVBIAk3eAM91XuV3bOlUiss3yzqB5vqlHMpA5yHQt9N2wYPX6P0m2SvpyI3n9
+ djxoLX5BlQBqnqE3IyeqKl8.uyglqdXKkjKrDRds19sMlVRsVNXjM5E0QaUK1PYsoQzgZ.jghpTg
+ 9oX29yJQOy2DrvzSW4zut6k7mxyUgJ0UPhlxoAXRwKKJi3O04aOROX6IPnXDzWnAWXBAwIuyzaOJ
+ eM20t40.gO_Kqe7sUITs0BXnEHQ7Bx2_C7j_D0suPe37o3pQl1UFXlBRCT5RIzIGO4cnKHFt2UO4
+ LUGUD.iPfb8xNMmD_vlw.cA.ODqUO34kmo2GgVzd03D2WgttuauoosMHCW.uJCkRH25JgTvC4sKZ
+ ycNUSxRFtmfR9XrANJ.Cos9pIPmfQOaXo8Cky7s8yfSl5NeeRHJo1yBc_DtWYHqlwanhsnDz5fZc
+ OYAlq2BmtA1cmyhZJ.C8fp5gCj93sIk_UIjBMPFU3V.i5J7jHDa6JlpOTiZot4CvkJusk9aVjRdQ
+ 4eIwaakJyvmfYhlDY7POJbdjCyedlnq3akNI78fhVZkKOegF6K5Qn8_wZopGLP0D4oO1nF8SIGYY
+ R.TirwwylFRH.mJXsjCtnLFkdxtTiZBq5El0mVGrvCLk5hGI7RZU_Gqya635zC6EZfVCdnUgk9Wg
+ RVeQa9Rxmji0PjpcsGCM8Oy9HHB_1MeVdiuOZxMddM_0T4nZesJoOJYtGH9NYDOXPWLPxxjaHssN
+ C79A8lnqpAM5VezTofZKRX.NScLlXAtBrOvtzCFWLOXgUSYDvDtuD0l.Ywvunag8xqTdzyRH7KR7
+ oZQWiadMfPis1tUhH5_hB70MmPIFCC7Qb4b.sxsA4V.xA1vjoMAsv_siWxFNGvvrhq0sIiknw2fR
+ nj6zSCH4fJ9Q3Slrh9YjWCZWqqu4cMAPG1Szei5.jU3ppnfVeB6k2SQDOetYS_Cv0OZ_Ee1vo61f
+ lD_mBIBrgPcohVpCs3ItxcCepDeUPBBrgAC1xLvCqWiOiU9WO_0XbQhqQgsZIGTTm2.4roHS6E1L
+ ZhrvJ1YDtpXj8x7byei6RsHkFj84O8L0kuSmqBYofA7P5BY0ya3QZwpSZh8gAa4xrgncRixGyKMQ
+ jIHGJU8VwLFLMcOlnGKDou8WBgM.G5JJiruF2.xkKXIfG16nJIPTWTmk3glzlbzM8jfLutVX6hFY
+ p9bSPC4Ce89mTp5I_osbTpAqW3huwm6bwvBE8EAi3.raSFVws9eQkO_ZkR.yPORhbRFZaFukUVft
+ mXFNlPJvPJHB4KDWRJ5hzsG3ymhaUpw8yUb4wTLIOjDma3hNlMKfYkvrxwpSqIfWjo8kz7g1irg-
+ -
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: f61f1efb-b783-42b2-82f1-ba85b049db2f
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Fri, 25 Aug 2023 18:14:22 +0000
+Received: by hermes--production-bf1-865889d799-r6v2w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d891f7071272a2e3a919fa0de812b59a;
+          Fri, 25 Aug 2023 18:14:19 +0000 (UTC)
+Message-ID: <9537cf00-575c-b57e-29ca-0b49be6617b9@schaufler-ca.com>
+Date:   Fri, 25 Aug 2023 11:14:15 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v13 11/11] LSM: selftests for Linux Security Module
+ syscalls
+Content-Language: en-US
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20230802174435.11928-1-casey@schaufler-ca.com>
+ <20230802174435.11928-12-casey@schaufler-ca.com>
+ <20230825.OokahF6aezae@digikod.net>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20230825.OokahF6aezae@digikod.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZOjN7dub5QGJOzSX@google.com>
-X-Infomaniak-Routing: alpha
+X-Mailer: WebService/1.1.21763 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 25, 2023 at 05:51:09PM +0200, Günther Noack wrote:
-> Hello!
-> 
-> On Fri, Aug 18, 2023 at 07:06:07PM +0200, Mickaël Salaün wrote:
-> > On Mon, Aug 14, 2023 at 07:28:13PM +0200, Günther Noack wrote:
-> > > @@ -3639,7 +3639,7 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
-> > >  	};
-> > >  	int fd, ruleset_fd;
-> > >  
-> > > -	/* Enable Landlock. */
-> > > +	/* Enables Landlock. */
-> > >  	ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
-> > >  	ASSERT_LE(0, ruleset_fd);
-> > >  	enforce_ruleset(_metadata, ruleset_fd);
-> > > @@ -3732,6 +3732,96 @@ TEST(memfd_ftruncate)
-> > >  	ASSERT_EQ(0, close(fd));
-> > >  }
-> > 
-> > We should also check with O_PATH to make sure the correct error is
-> > returned (and not EACCES).
-> 
-> Is this remark referring to the code before it or after it?
-> 
-> My interpretation is that you are asking to test that test_fioqsize_ioctl() will
-> return errnos correctly?  Do I understand that correctly?  (I think that would
-> be a little bit overdone, IMHO - it's just a test utility of ~10 lines after
-> all, which is below the threshold where it can be verified by staring at it for
-> a bit. :))
+On 8/25/2023 8:01 AM, Mickaël Salaün wrote:
+> These tests look good!
+>
+> I suggested other tests to add in my previous emails.
 
-I was refering to the previous memfd_ftruncate test, which is changed
-with a next patch. We should check the access rights tied (and checkd)
-to FD (i.e. truncate and ioctl) opened with O_PATH.
+Some of the tests you've suggested will be very difficult to implement
+in the face of varying LSM configurations. I need to defer them until a
+later date.
 
-> 
-> > > +/* Invokes the FIOQSIZE ioctl(2) and returns its errno or 0. */
-> > > +static int test_fioqsize_ioctl(int fd)
-> > > +{
-> > > +	loff_t size;
-> > > +
-> > > +	if (ioctl(fd, FIOQSIZE, &size) < 0)
-> > > +		return errno;
-> > > +	return 0;
-> > > +}
-> 
-> 
-> 
-> > > +	dir_s1d1_fd = open(dir_s1d1, O_RDONLY);
-> > 
-> > You can use O_CLOEXEC everywhere.
-> 
-> Done.
-> 
-> 
-> > > +	ASSERT_LE(0, dir_s1d1_fd);
-> > > +	file1_s1d1_fd = open(file1_s1d1, O_RDONLY);
-> > > +	ASSERT_LE(0, file1_s1d1_fd);
-> > > +	dir_s2d1_fd = open(dir_s2d1, O_RDONLY);
-> > > +	ASSERT_LE(0, dir_s2d1_fd);
-> > > +
-> > > +	/*
-> > > +	 * Checks that FIOQSIZE works on files where LANDLOCK_ACCESS_FS_IOCTL is
-> > > +	 * permitted.
-> > > +	 */
-> > > +	EXPECT_EQ(EACCES, test_fioqsize_ioctl(dir_s1d1_fd));
-> > > +	EXPECT_EQ(0, test_fioqsize_ioctl(file1_s1d1_fd));
-> > > +	EXPECT_EQ(0, test_fioqsize_ioctl(dir_s2d1_fd));
-> > > +
-> > > +	/* Closes all file descriptors. */
-> > > +	ASSERT_EQ(0, close(dir_s1d1_fd));
-> > > +	ASSERT_EQ(0, close(file1_s1d1_fd));
-> > > +	ASSERT_EQ(0, close(dir_s2d1_fd));
-> > > +}
-> > > +
-> > > +TEST_F_FORK(layout1, ioctl_always_allowed)
-> > > +{
-> > > +	struct landlock_ruleset_attr attr = {
-> > 
-> > const struct landlock_ruleset_attr attr = {
-> 
-> Done.
-> 
-> I am personally unsure whether "const" is worth it for local variables, but I am
-> happy to abide by whatever the dominant style is.  (The kernel style guide
-> doesn't seem to mention it though.)
+> I'd suggest to re-run clang-format -i on them though.
 
-I prefer to constify as much as possible to be notified when a write
-will be needed for a patch. From a security point of view, it's always
-good to have as much as possible read-only data, at least in theory (it
-might not always be enforced in memory). It's also useful as
-documentation.
+I assume you're recommending a set of options to clang-format
+beyond just "-i". The result of clang-format -i by itself is
+horrific. 
 
-> 
-> BTW, it's somewhat inconsistent within this file already -- we should maybe
-> clean this up.
-
-I probably missed some, more constification would be good, but not with
-this patch series.
-
-> 
-> 
-> > > +		.handled_access_fs = LANDLOCK_ACCESS_FS_IOCTL,
-> > > +	};
-> > > +	int ruleset_fd, fd;
-> > > +	int flag = 0;
-> > > +	int n;
-> > 
-> > const int flag = 0;
-> > int ruleset_fd, test_fd, n;
-> 
-> Done.
-> 
-> Thanks for the review!
-> —Günther
-> 
-> -- 
-> Sent using Mutt 🐕 Woof Woof
+>
+> On Wed, Aug 02, 2023 at 10:44:34AM -0700, Casey Schaufler wrote:
+>> Add selftests for the three system calls supporting the LSM
+>> infrastructure. This set of tests is limited by the differences
+>> in access policy enforced by the existing security modules.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  MAINTAINERS                                   |   1 +
+>>  tools/testing/selftests/Makefile              |   1 +
+>>  tools/testing/selftests/lsm/Makefile          |  19 ++
+>>  tools/testing/selftests/lsm/common.c          |  81 ++++++
+>>  tools/testing/selftests/lsm/common.h          |  33 +++
+>>  tools/testing/selftests/lsm/config            |   3 +
+>>  .../selftests/lsm/lsm_get_self_attr_test.c    | 240 ++++++++++++++++++
+>>  .../selftests/lsm/lsm_list_modules_test.c     | 140 ++++++++++
+>>  .../selftests/lsm/lsm_set_self_attr_test.c    |  74 ++++++
+>>  9 files changed, 592 insertions(+)
+>>  create mode 100644 tools/testing/selftests/lsm/Makefile
+>>  create mode 100644 tools/testing/selftests/lsm/common.c
+>>  create mode 100644 tools/testing/selftests/lsm/common.h
+>>  create mode 100644 tools/testing/selftests/lsm/config
+>>  create mode 100644 tools/testing/selftests/lsm/lsm_get_self_attr_test.c
+>>  create mode 100644 tools/testing/selftests/lsm/lsm_list_modules_test.c
+>>  create mode 100644 tools/testing/selftests/lsm/lsm_set_self_attr_test.c
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index aca4db11dd02..c96f1c388d22 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -19158,6 +19158,7 @@ W:	http://kernsec.org/
+>>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+>>  F:	include/uapi/linux/lsm.h
+>>  F:	security/
+>> +F:	tools/testing/selftests/lsm/
+>>  X:	security/selinux/
+>>  
+>>  SELINUX SECURITY MODULE
+>> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+>> index 666b56f22a41..bde7c217b23f 100644
+>> --- a/tools/testing/selftests/Makefile
+>> +++ b/tools/testing/selftests/Makefile
+>> @@ -39,6 +39,7 @@ TARGETS += landlock
+>>  TARGETS += lib
+>>  TARGETS += livepatch
+>>  TARGETS += lkdtm
+>> +TARGETS += lsm
+>>  TARGETS += membarrier
+>>  TARGETS += memfd
+>>  TARGETS += memory-hotplug
+>> diff --git a/tools/testing/selftests/lsm/Makefile b/tools/testing/selftests/lsm/Makefile
+>> new file mode 100644
+>> index 000000000000..bae6c1e3bba4
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/lsm/Makefile
+>> @@ -0,0 +1,19 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +#
+>> +# First run: make -C ../../../.. headers_install
+>> +
+>> +CFLAGS += -Wall -O2 $(KHDR_INCLUDES)
+>> +LOCAL_HDRS += common.h
+>> +
+>> +TEST_GEN_PROGS := lsm_get_self_attr_test lsm_list_modules_test \
+>> +		  lsm_set_self_attr_test
+>> +
+>> +include ../lib.mk
+>> +
+>> +$(TEST_GEN_PROGS):
+> This target can be removed.
+>
+>> +
+>> +$(OUTPUT)/lsm_get_self_attr_test: lsm_get_self_attr_test.c common.c
+>> +$(OUTPUT)/lsm_set_self_attr_test: lsm_set_self_attr_test.c common.c
+>> +$(OUTPUT)/lsm_list_modules_test: lsm_list_modules_test.c common.c
+>> +
+>> +EXTRA_CLEAN = $(OUTPUT)/common.o
