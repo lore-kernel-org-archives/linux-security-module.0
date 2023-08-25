@@ -2,33 +2,33 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 620B3C3DA66
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Aug 2023 16:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D024C3DA66
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Aug 2023 17:08:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234339AbjHYQu5 (ORCPT
+        id S1344180AbjHYRHj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Aug 2023 12:50:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39506 "EHLO
+        Fri, 25 Aug 2023 13:07:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344079AbjHYQuh (ORCPT
+        with ESMTP id S1344183AbjHYRHJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Aug 2023 12:50:37 -0400
-Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABE9FE67
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Aug 2023 09:50:34 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RXQtc2LsKzMqK2c;
-        Fri, 25 Aug 2023 16:50:32 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RXQtb2yBNzMppKV;
-        Fri, 25 Aug 2023 18:50:31 +0200 (CEST)
+        Fri, 25 Aug 2023 13:07:09 -0400
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B00B11FF5
+        for <linux-security-module@vger.kernel.org>; Fri, 25 Aug 2023 10:07:06 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RXRFh6x6TzMpnn4;
+        Fri, 25 Aug 2023 17:07:04 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RXRFh2KmpzMpp9v;
+        Fri, 25 Aug 2023 19:07:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1692982232;
-        bh=ty3KgYsAGxESWC3Qi9bFtJm/mBxgxRw/J28jeMzy6uc=;
+        s=20191114; t=1692983224;
+        bh=zCI9rThMupAPOQMoDWypft1uJQGAltZHayzbrpdhdnw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zvNu/m1PWu9GvmDN9h0erpJ4q2g+KerXW5JgFmR1jT2el7bOkIOwHIYHKiJ1c1RHP
-         TpTYfZ13eblr2dSaWLteBN/MxGOQ6pX1DatMg66daTtKxYgvUfnrdPaiyL0nUOeHdN
-         m4iofPeCdYzi9PIMkPri18FF9q+5RKA7kS+LNzYc=
-Date:   Fri, 25 Aug 2023 18:50:28 +0200
+        b=QUS/ad0ysS+hFWj2TRsdapIrWLBCuenE76xQOYM4DVXQ+v3y/QUSOf3UgJTFfrkkN
+         j5BDxpJzvXgK6UQg4VgC98YId7cr4GwRCbfNA5hG5PWXiEQMrQO8y6bBBjfIpesp/P
+         WRQKjvJhR87qg+Fo8FZ4gccHSCoTJeQ5CpzD72Co=
+Date:   Fri, 25 Aug 2023 19:07:01 +0200
 From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
 Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
@@ -39,140 +39,133 @@ Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
         Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
         Matt Bobrowski <repnop@google.com>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support
-Message-ID: <20230825.Zoo4ohn1aivo@digikod.net>
+Subject: Re: [PATCH v3 2/5] selftests/landlock: Test ioctl support
+Message-ID: <20230825.ohtoh6aivahX@digikod.net>
 References: <20230814172816.3907299-1-gnoack@google.com>
- <20230818.iechoCh0eew0@digikod.net>
- <ZOjCz5j4+tgptF53@google.com>
+ <20230814172816.3907299-3-gnoack@google.com>
+ <20230818.HopaLahS0qua@digikod.net>
+ <ZOjN7dub5QGJOzSX@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZOjCz5j4+tgptF53@google.com>
+In-Reply-To: <ZOjN7dub5QGJOzSX@google.com>
 X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 25, 2023 at 05:03:43PM +0200, Günther Noack wrote:
-> Hi!
+On Fri, Aug 25, 2023 at 05:51:09PM +0200, Günther Noack wrote:
+> Hello!
 > 
-> On Fri, Aug 18, 2023 at 03:39:19PM +0200, Mickaël Salaün wrote:
-> > On Mon, Aug 14, 2023 at 07:28:11PM +0200, Günther Noack wrote:
-> > > These patches add simple ioctl(2) support to Landlock.
+> On Fri, Aug 18, 2023 at 07:06:07PM +0200, Mickaël Salaün wrote:
+> > On Mon, Aug 14, 2023 at 07:28:13PM +0200, Günther Noack wrote:
+> > > @@ -3639,7 +3639,7 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
+> > >  	};
+> > >  	int fd, ruleset_fd;
+> > >  
+> > > -	/* Enable Landlock. */
+> > > +	/* Enables Landlock. */
+> > >  	ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
+> > >  	ASSERT_LE(0, ruleset_fd);
+> > >  	enforce_ruleset(_metadata, ruleset_fd);
+> > > @@ -3732,6 +3732,96 @@ TEST(memfd_ftruncate)
+> > >  	ASSERT_EQ(0, close(fd));
+> > >  }
 > > 
-> > [...]
+> > We should also check with O_PATH to make sure the correct error is
+> > returned (and not EACCES).
+> 
+> Is this remark referring to the code before it or after it?
+> 
+> My interpretation is that you are asking to test that test_fioqsize_ioctl() will
+> return errnos correctly?  Do I understand that correctly?  (I think that would
+> be a little bit overdone, IMHO - it's just a test utility of ~10 lines after
+> all, which is below the threshold where it can be verified by staring at it for
+> a bit. :))
+
+I was refering to the previous memfd_ftruncate test, which is changed
+with a next patch. We should check the access rights tied (and checkd)
+to FD (i.e. truncate and ioctl) opened with O_PATH.
+
+> 
+> > > +/* Invokes the FIOQSIZE ioctl(2) and returns its errno or 0. */
+> > > +static int test_fioqsize_ioctl(int fd)
+> > > +{
+> > > +	loff_t size;
+> > > +
+> > > +	if (ioctl(fd, FIOQSIZE, &size) < 0)
+> > > +		return errno;
+> > > +	return 0;
+> > > +}
+> 
+> 
+> 
+> > > +	dir_s1d1_fd = open(dir_s1d1, O_RDONLY);
 > > 
-> > > How we arrived at the list of always-permitted IOCTL commands
-> > > ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > 
-> > > To decide which IOCTL commands should be blanket-permitted I went through the
-> > > list of IOCTL commands mentioned in fs/ioctl.c and looked at them individually
-> > > to understand what they are about.  The following list is my conclusion from
-> > > that.
-> > > 
-> > > We should always allow the following IOCTL commands:
-> > > 
-> > >  * FIOCLEX, FIONCLEX - these work on the file descriptor and manipulate the
-> > >    close-on-exec flag
-> > >  * FIONBIO, FIOASYNC - these work on the struct file and enable nonblocking-IO
-> > >    and async flags
-> > >  * FIONREAD - get the number of bytes available for reading (the implementation
-> > >    is defined per file type)
+> > You can use O_CLOEXEC everywhere.
+> 
+> Done.
+> 
+> 
+> > > +	ASSERT_LE(0, dir_s1d1_fd);
+> > > +	file1_s1d1_fd = open(file1_s1d1, O_RDONLY);
+> > > +	ASSERT_LE(0, file1_s1d1_fd);
+> > > +	dir_s2d1_fd = open(dir_s2d1, O_RDONLY);
+> > > +	ASSERT_LE(0, dir_s2d1_fd);
+> > > +
+> > > +	/*
+> > > +	 * Checks that FIOQSIZE works on files where LANDLOCK_ACCESS_FS_IOCTL is
+> > > +	 * permitted.
+> > > +	 */
+> > > +	EXPECT_EQ(EACCES, test_fioqsize_ioctl(dir_s1d1_fd));
+> > > +	EXPECT_EQ(0, test_fioqsize_ioctl(file1_s1d1_fd));
+> > > +	EXPECT_EQ(0, test_fioqsize_ioctl(dir_s2d1_fd));
+> > > +
+> > > +	/* Closes all file descriptors. */
+> > > +	ASSERT_EQ(0, close(dir_s1d1_fd));
+> > > +	ASSERT_EQ(0, close(file1_s1d1_fd));
+> > > +	ASSERT_EQ(0, close(dir_s2d1_fd));
+> > > +}
+> > > +
+> > > +TEST_F_FORK(layout1, ioctl_always_allowed)
+> > > +{
+> > > +	struct landlock_ruleset_attr attr = {
 > > 
-> > I think we should treat FIOQSIZE like FIONREAD, i.e. check for
-> > LANDLOCK_ACCESS_FS_READ_FILE as explain in my previous message.
-> > Tests should then rely on something else.
+> > const struct landlock_ruleset_attr attr = {
 > 
-> OK, I rewrote the tests to use FS_IOC_GETFLAGS.
+> Done.
 > 
-> Some thoughts on these two IOCTLs:
-> 
-> FIONREAD gives the number of bytes that are ready to read.  This IOCTL seems
-> only useful when the file is open for reading.  However, do you think that we
-> should correlate this with (a) LANDLOCK_ACCESS_FS_READ_FILE, or with (b)
-> f->f_mode & FMODE_READ?  (The difference is that in case (a), FIONREAD will work
-> if you open a file O_WRONLY and you also have the LANDLOCK_ACCESS_FS_READ_FILE
-> right for that file.  In case (b), it would only work if you also opened the
-> file for reading.)
+> I am personally unsure whether "const" is worth it for local variables, but I am
+> happy to abide by whatever the dominant style is.  (The kernel style guide
+> doesn't seem to mention it though.)
 
-I think we should allow FIONREAD if LANDLOCK_ACCESS_FS_IOCTL is handled
-and if LANDLOCK_ACCESS_FS_READ_FILE is explicitly allowed for this FD.
-
-f->f_mode & FMODE_READ would make sense but it should have been handled
-by the kernel; Landlock should not try to fix this inconsistency.
-
-These are good test cases though.
-
-It should be noted that SELinux considers FIONREAD as tied to metadata
-reading (FILE__GETATTR). It think it makes more sense to tie it to the
-read right (LANDLOCK_ACCESS_FS_READ_FILE) because it might be
-(legitimately) required to properly read a file and FIONREAD is tied to
-the content of a file, not file attributes.
+I prefer to constify as much as possible to be notified when a write
+will be needed for a patch. From a security point of view, it's always
+good to have as much as possible read-only data, at least in theory (it
+might not always be enforced in memory). It's also useful as
+documentation.
 
 > 
-> FIOQSIZE seems like it would be useful for both reading *and* writing? -- The
-> reading case is obvious, but for writers it's also useful if you want to seek
-> around in the file, and make sure that the position that you seek to already
-> exists.  (I'm not sure whether that use case is relevant in practical
-> applications though.) -- Why would FIOQSIZE only be useful for readers?
+> BTW, it's somewhat inconsistent within this file already -- we should maybe
+> clean this up.
 
-Good point! The use case you define for writing is interesting. However,
-would it make sense to seek at a specific offset without being able to
-know/read the content? I guest not in theory, but in practice we might
-want to avoid application to require LANDLOCK_ACCESS_FS_READ_FILE is
-they only require to write (at a specific offset), or to deal with write
-errors. Anyway, I guess that this information can be inferred by trying
-to seek at a specific offset.  The only limitation that this approach
-would bring is that it seems that we can seek into an FD even without
-read nor write right, and there is no specific (LSM) access control for
-this operation (and nobody seems to care about being able to read the
-size of a symlink once opened). If this is correct, I think we should
-indeed always allow FIOQSIZE. Being able to open a file requires
-LANDLOCK_ACCESS_FS_READ or WRITE anyway.  It would be interesting to
-check and test with O_PATH though.
+I probably missed some, more constification would be good, but not with
+this patch series.
 
 > 
-> (In fact, it seems to me almost like FIOQSIZE might rather be missing a security
-> hook check for one of the "getting file attribute" hooks?)
 > 
-> So basically, the implementation that I currently ended up with is:
+> > > +		.handled_access_fs = LANDLOCK_ACCESS_FS_IOCTL,
+> > > +	};
+> > > +	int ruleset_fd, fd;
+> > > +	int flag = 0;
+> > > +	int n;
+> > 
+> > const int flag = 0;
+> > int ruleset_fd, test_fd, n;
 > 
-
-Before checking these commands, we first need to check that the original
-domain handle LANDLOCK_ACCESS_FS_IOCTL. We should try to pack this new
-bit and replace the file's allowed_access field (see
-landlock_add_fs_access_mask() and similar helpers in the network patch
-series that does a similar thing but for ruleset's handle access
-rights), but here is the idea:
-
-if (!landlock_file_handles_ioctl(file))
-	return 0;
-
-> switch (cmd) {
-	/*
-	 * Allows file descriptor and file description operations (see
-	 * fcntl commands).
-	 */
->   case FIOCLEX:
->   case FIONCLEX:
->   case FIONBIO:
->   case FIOASYNC:
-
->   case FIOQSIZE:
->     return 0;
->   case FIONREAD:
->     if (file->f_mode & FMODE_READ)
-
-We should check LANDLOCK_ACCESS_FS_READ instead, which is a superset of
-FMODE_READ.
-
->       return 0;
-> }
+> Done.
 > 
-> (with some comments in the source code, of course...)
-> 
-> Does that look reasonable to you?
-> 
+> Thanks for the review!
 > —Günther
 > 
 > -- 
