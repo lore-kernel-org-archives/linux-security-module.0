@@ -2,59 +2,60 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFE7C3DA66
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Aug 2023 15:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5D3C3DA6F
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Aug 2023 15:51:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343684AbjHYPDy (ORCPT
+        id S243453AbjHYPvT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Aug 2023 11:03:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50042 "EHLO
+        Fri, 25 Aug 2023 11:51:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343886AbjHYPDt (ORCPT
+        with ESMTP id S236630AbjHYPvP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Aug 2023 11:03:49 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2FCE2127
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Aug 2023 08:03:46 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-d7a8e377772so249904276.1
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Aug 2023 08:03:46 -0700 (PDT)
+        Fri, 25 Aug 2023 11:51:15 -0400
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B84E2134
+        for <linux-security-module@vger.kernel.org>; Fri, 25 Aug 2023 08:51:13 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-59294c55909so14870847b3.0
+        for <linux-security-module@vger.kernel.org>; Fri, 25 Aug 2023 08:51:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1692975826; x=1693580626;
+        d=google.com; s=20221208; t=1692978672; x=1693583472;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zkkmx6QZNTM7+yep5mezfNyD82wEsqTkXpsJxKaHy34=;
-        b=YoL7C/UcRJIHcdxTmmcXcShHy11ZCuNj0QVQQ/77rIdkQaQspozAG+h6kRhX6FtzEm
-         hWj+2zq8xE9J4UPbNHsHlEQMHYPw67q7pcZvl+i09ozowdnd/R3bKwqfd/4zKmotQ0BH
-         QOatF5KbIdQxoNAXVtZZSyr/kNNPfoQoLOkLf4Ux1GZUCCoizcTN1i8Vov7YZs9/68k7
-         kNQFQ9SQWIvs5H6HSYaCzwMAk7Ke/ARH1wiX+YV3LAh9biKoOyKLaYRoOm5oEPdo3fF+
-         6AmjDk7MiNzZaIHJFtG25L4dUXyayTSXdw39iu3JAwwHrvX6qjZUhcCJe7FZeKFOGo8K
-         9XzA==
+        bh=IzPqSgYN1ipk63Sp/vabDCOnAXcV4ryfpRQU/BRuK1g=;
+        b=goc9Lw4cPrLtJDFHcQ5rTDQnrzSd/BBg6No83MW0vwqjfd0+dmjXvED2IaSEOxOYEA
+         4+FFxOV+zeakWXctti2m3apQNtkz2EBnl7vuUxjYOe9Rv8SdBhjBXzFXQE3s+T1KXWRO
+         9LygS2XLTkYFCSsvzETdYs/r8Onujb+OqpIF8FY5TPbOEPl7Mc46OAgiIc8nObbEvZlK
+         24vzDDRw6yHi0qttn8W9D5P+MBMSoua7+Xd6tBpEBx+UBOcuXUYg7dQj26h2Zh1vk6nZ
+         ab2ZYS7XsiTX2Wv9GRoFhLWA3+YktPVN2ggqgzOn2HmUnxKEdTrnalUPW3UbSN144u09
+         ZGLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692975826; x=1693580626;
+        d=1e100.net; s=20221208; t=1692978672; x=1693583472;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=zkkmx6QZNTM7+yep5mezfNyD82wEsqTkXpsJxKaHy34=;
-        b=YVhUQ9RlbaXslo0aiEXG/IbDYkIBRXpthscd7A8q1QQQZx3ew9arjTT/6qaRF1qnSy
-         /QzCfGzxlCx3og+HOTwdijIOsrZWM1IheRG1+5G6C9HJdzWJDugYGEkyvi/bIOqC6+9L
-         MTO/hfCHJhCEfKae44dLoTCpPyUXM9WvbXf+vv7BaGM4c5x+SHQuOjF4wEc9pv5NI6Za
-         NvNywyimVklfJ5mjzyz/M3J2djSqnrnmLTI/GnNPNCW7UW88Gof22EueJYd5xfA6qRf7
-         8O8f5vQxO/JwT7tKoO1qr3QG829rGtauApICyk4zmcrRV8JdckpvrDhKehMB003kdLiK
-         EQxA==
-X-Gm-Message-State: AOJu0YzHYgN/JtISrzThs3MA6PTKjgWEp2RGjT/XTZZlUmusNePJ82wk
-        mMqBcbgsPLc+DP7R6TWkQ00gDtbZ6ic=
-X-Google-Smtp-Source: AGHT+IFoHERlYEjZQSoDcfNlp5mpVohN6wh6g4DZHpjh/MeqnVhzZKKN9cCIGv6dCp5Uc5Q1cXvCM/8uBA4=
+        bh=IzPqSgYN1ipk63Sp/vabDCOnAXcV4ryfpRQU/BRuK1g=;
+        b=MxMZJfBxCKrTypHen1OMf3L1Wq3k9gNQLvRNNv10rdpLgt1RkihZ+PXz/LEn3d2XZd
+         8vhcul377zJyOVw5/JSYOQiAEr4J8dAzVVQIYRsFbAX6QJHiur0NR/fQMFBMAh/wH3dN
+         r5s/Bd1F/03RiqjvkvnbXu2iWiqZC2ZSz6KAXkgSFkaSe9wavveCvocFxwzMoCth0yZ0
+         /vBoA8yJ+MjamaeLyquE26pnRk7Ev6f4FY+RwAJd2mdrFJyQhMz6hN9TYUxrtehyDFjz
+         lMQphrWLWJMxzLzRX+LkM4E6rEOICAHk+ExkPTbDVfLpTGjdJdZZQlrGLHrDRcyKsIOm
+         8uNw==
+X-Gm-Message-State: AOJu0YzIbqpUTJiLplMHB+fNiRb3IQZNNpckcvTle6y6PjS1QADAUDop
+        x5qGG8OURKaCaijKiYIA5OD/d/Vb3QY=
+X-Google-Smtp-Source: AGHT+IENvzcpzaxNbRrU1ap0D58TZRJcqjQ5Bz7o1fY5c2+S1+Ss0zh2Gj5UUTDQLlKL10LRiAp58Rp0Is4=
 X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:33b0:9e28:e79a:8e70])
- (user=gnoack job=sendgmr) by 2002:a25:ac82:0:b0:d77:e43d:6e80 with SMTP id
- x2-20020a25ac82000000b00d77e43d6e80mr279381ybi.6.1692975826056; Fri, 25 Aug
- 2023 08:03:46 -0700 (PDT)
-Date:   Fri, 25 Aug 2023 17:03:43 +0200
-In-Reply-To: <20230818.iechoCh0eew0@digikod.net>
-Message-Id: <ZOjCz5j4+tgptF53@google.com>
+ (user=gnoack job=sendgmr) by 2002:a81:af0e:0:b0:58c:6ddd:d27c with SMTP id
+ n14-20020a81af0e000000b0058c6dddd27cmr464037ywh.6.1692978672572; Fri, 25 Aug
+ 2023 08:51:12 -0700 (PDT)
+Date:   Fri, 25 Aug 2023 17:51:09 +0200
+In-Reply-To: <20230818.HopaLahS0qua@digikod.net>
+Message-Id: <ZOjN7dub5QGJOzSX@google.com>
 Mime-Version: 1.0
-References: <20230814172816.3907299-1-gnoack@google.com> <20230818.iechoCh0eew0@digikod.net>
-Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support
+References: <20230814172816.3907299-1-gnoack@google.com> <20230814172816.3907299-3-gnoack@google.com>
+ <20230818.HopaLahS0qua@digikod.net>
+Subject: Re: [PATCH v3 2/5] selftests/landlock: Test ioctl support
 From:   "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
 To:     "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
 Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
@@ -70,89 +71,107 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi!
+Hello!
 
-On Fri, Aug 18, 2023 at 03:39:19PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Mon, Aug 14, 2023 at 07:28:11PM +0200, G=C3=BCnther Noack wrote:
-> > These patches add simple ioctl(2) support to Landlock.
+On Fri, Aug 18, 2023 at 07:06:07PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Mon, Aug 14, 2023 at 07:28:13PM +0200, G=C3=BCnther Noack wrote:
+> > @@ -3639,7 +3639,7 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
+> >  	};
+> >  	int fd, ruleset_fd;
+> > =20
+> > -	/* Enable Landlock. */
+> > +	/* Enables Landlock. */
+> >  	ruleset_fd =3D create_ruleset(_metadata, variant->handled, rules);
+> >  	ASSERT_LE(0, ruleset_fd);
+> >  	enforce_ruleset(_metadata, ruleset_fd);
+> > @@ -3732,6 +3732,96 @@ TEST(memfd_ftruncate)
+> >  	ASSERT_EQ(0, close(fd));
+> >  }
 >=20
-> [...]
+> We should also check with O_PATH to make sure the correct error is
+> returned (and not EACCES).
+
+Is this remark referring to the code before it or after it?
+
+My interpretation is that you are asking to test that test_fioqsize_ioctl()=
+ will
+return errnos correctly?  Do I understand that correctly?  (I think that wo=
+uld
+be a little bit overdone, IMHO - it's just a test utility of ~10 lines afte=
+r
+all, which is below the threshold where it can be verified by staring at it=
+ for
+a bit. :))
+
+> > +/* Invokes the FIOQSIZE ioctl(2) and returns its errno or 0. */
+> > +static int test_fioqsize_ioctl(int fd)
+> > +{
+> > +	loff_t size;
+> > +
+> > +	if (ioctl(fd, FIOQSIZE, &size) < 0)
+> > +		return errno;
+> > +	return 0;
+> > +}
+
+
+
+> > +	dir_s1d1_fd =3D open(dir_s1d1, O_RDONLY);
 >=20
-> > How we arrived at the list of always-permitted IOCTL commands
-> > ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >=20
-> > To decide which IOCTL commands should be blanket-permitted I went throu=
-gh the
-> > list of IOCTL commands mentioned in fs/ioctl.c and looked at them indiv=
-idually
-> > to understand what they are about.  The following list is my conclusion=
- from
-> > that.
-> >=20
-> > We should always allow the following IOCTL commands:
-> >=20
-> >  * FIOCLEX, FIONCLEX - these work on the file descriptor and manipulate=
- the
-> >    close-on-exec flag
-> >  * FIONBIO, FIOASYNC - these work on the struct file and enable nonbloc=
-king-IO
-> >    and async flags
-> >  * FIONREAD - get the number of bytes available for reading (the implem=
-entation
-> >    is defined per file type)
+> You can use O_CLOEXEC everywhere.
+
+Done.
+
+
+> > +	ASSERT_LE(0, dir_s1d1_fd);
+> > +	file1_s1d1_fd =3D open(file1_s1d1, O_RDONLY);
+> > +	ASSERT_LE(0, file1_s1d1_fd);
+> > +	dir_s2d1_fd =3D open(dir_s2d1, O_RDONLY);
+> > +	ASSERT_LE(0, dir_s2d1_fd);
+> > +
+> > +	/*
+> > +	 * Checks that FIOQSIZE works on files where LANDLOCK_ACCESS_FS_IOCTL=
+ is
+> > +	 * permitted.
+> > +	 */
+> > +	EXPECT_EQ(EACCES, test_fioqsize_ioctl(dir_s1d1_fd));
+> > +	EXPECT_EQ(0, test_fioqsize_ioctl(file1_s1d1_fd));
+> > +	EXPECT_EQ(0, test_fioqsize_ioctl(dir_s2d1_fd));
+> > +
+> > +	/* Closes all file descriptors. */
+> > +	ASSERT_EQ(0, close(dir_s1d1_fd));
+> > +	ASSERT_EQ(0, close(file1_s1d1_fd));
+> > +	ASSERT_EQ(0, close(dir_s2d1_fd));
+> > +}
+> > +
+> > +TEST_F_FORK(layout1, ioctl_always_allowed)
+> > +{
+> > +	struct landlock_ruleset_attr attr =3D {
 >=20
-> I think we should treat FIOQSIZE like FIONREAD, i.e. check for
-> LANDLOCK_ACCESS_FS_READ_FILE as explain in my previous message.
-> Tests should then rely on something else.
+> const struct landlock_ruleset_attr attr =3D {
 
-OK, I rewrote the tests to use FS_IOC_GETFLAGS.
+Done.
 
-Some thoughts on these two IOCTLs:
+I am personally unsure whether "const" is worth it for local variables, but=
+ I am
+happy to abide by whatever the dominant style is.  (The kernel style guide
+doesn't seem to mention it though.)
 
-FIONREAD gives the number of bytes that are ready to read.  This IOCTL seem=
-s
-only useful when the file is open for reading.  However, do you think that =
-we
-should correlate this with (a) LANDLOCK_ACCESS_FS_READ_FILE, or with (b)
-f->f_mode & FMODE_READ?  (The difference is that in case (a), FIONREAD will=
- work
-if you open a file O_WRONLY and you also have the LANDLOCK_ACCESS_FS_READ_F=
-ILE
-right for that file.  In case (b), it would only work if you also opened th=
-e
-file for reading.)
+BTW, it's somewhat inconsistent within this file already -- we should maybe
+clean this up.
 
-FIOQSIZE seems like it would be useful for both reading *and* writing? -- T=
-he
-reading case is obvious, but for writers it's also useful if you want to se=
-ek
-around in the file, and make sure that the position that you seek to alread=
-y
-exists.  (I'm not sure whether that use case is relevant in practical
-applications though.) -- Why would FIOQSIZE only be useful for readers?
 
-(In fact, it seems to me almost like FIOQSIZE might rather be missing a sec=
-urity
-hook check for one of the "getting file attribute" hooks?)
+> > +		.handled_access_fs =3D LANDLOCK_ACCESS_FS_IOCTL,
+> > +	};
+> > +	int ruleset_fd, fd;
+> > +	int flag =3D 0;
+> > +	int n;
+>=20
+> const int flag =3D 0;
+> int ruleset_fd, test_fd, n;
 
-So basically, the implementation that I currently ended up with is:
+Done.
 
-switch (cmd) {
-  case FIOCLEX:
-  case FIONCLEX:
-  case FIONBIO:
-  case FIOASYNC:
-  case FIOQSIZE:
-    return 0;
-  case FIONREAD:
-    if (file->f_mode & FMODE_READ)
-      return 0;
-}
-
-(with some comments in the source code, of course...)
-
-Does that look reasonable to you?
-
+Thanks for the review!
 =E2=80=94G=C3=BCnther
 
 --=20
