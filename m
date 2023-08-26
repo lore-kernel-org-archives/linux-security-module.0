@@ -2,126 +2,195 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E45DCC83F01
-	for <linux-security-module@archiver.kernel.org>; Sat, 26 Aug 2023 14:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A909C83F15
+	for <linux-security-module@archiver.kernel.org>; Sat, 26 Aug 2023 18:27:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230426AbjHZOrz (ORCPT
+        id S229665AbjHZS0o (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 26 Aug 2023 10:47:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33164 "EHLO
+        Sat, 26 Aug 2023 14:26:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231862AbjHZOrv (ORCPT
+        with ESMTP id S229615AbjHZS0l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 26 Aug 2023 10:47:51 -0400
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B74682117
-        for <linux-security-module@vger.kernel.org>; Sat, 26 Aug 2023 07:47:48 -0700 (PDT)
-Received: by mail-qv1-xf2b.google.com with SMTP id 6a1803df08f44-64b3ae681d1so9581996d6.0
-        for <linux-security-module@vger.kernel.org>; Sat, 26 Aug 2023 07:47:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1693061268; x=1693666068;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nViQWLFd9G19TwFRhrWwk6czyiLSpZ+QmjfzziUuEJM=;
-        b=IZ4kCHdnNlpzxveE/XoSIDUjPL9+GjpH4qFOCqerqxTgquSkhesowbiOgxyGx2e3Rw
-         ejX8Rjnoza5jU+l+u4eN+V48j4rDFGWNdoWIzw0lroTKFoBwHeMGhbAdgRi7AQN7ENv4
-         03xPtG1Ah3GZWVsb9qgVvWkMLyd1O20CMK5h+kaJs3x9/yQt1+830JtEeL6RfbPk1HPJ
-         4eKUEaV2CyH3d+vGt+LyVtPCPiAzOYbSqGaqNbBC1PD8mCkhL4yAq2M6kSbooY2Q/zD0
-         Md2OJenVi/kDdVh+I0oP5HKLg3SMIDUZQFxb8Z/mtOoDHYdJvYEnhWPZoVdi8w+9TBvG
-         zxfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693061268; x=1693666068;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nViQWLFd9G19TwFRhrWwk6czyiLSpZ+QmjfzziUuEJM=;
-        b=J96/CYhliJ08V+vVMl0Aki7rIkQ4aQ5fJbVBewYapWhIQmxyN7MnDvomiQqAp7Tdt4
-         /cngKGInBg5sN041kSpgRRBC+TyQ9bqW9ugpHlE5fL+l4j/PJ8uyLlehHLIL9XTsshIb
-         sZpPYno4CYoFBF2/hGXiI+emYP5jMySt6tbz5QAGM2VQQwm9FC9U+KyQ7sm21RSThb9i
-         E+EL/79S46l/u4VItivKWF1qyY1ldk64L6Neo94u5YNAExScVrwE7APVL8U861W64zcG
-         C2Tla/vBLbhixyv46EVErcv4WsPdIJBPexU5fL8QtlHlJLsx7jLT+Ski0ZrOHGmKXhel
-         58lw==
-X-Gm-Message-State: AOJu0Yz3oLA+Mab/E/ndQzHFWxlRLSZIEuDWOZJDLd4gjcmDFAlitxC0
-        KlrDBUNU/XYQajeFJhSl5V8Z
-X-Google-Smtp-Source: AGHT+IFILZuWdsRqZ8xcfYMqguqfPfxA3pbiq8v+sCn7BGUVwUxFuGx8LTC0kimYIhVaOTkyNrPg2g==
-X-Received: by 2002:a0c:f8d1:0:b0:647:1993:92da with SMTP id h17-20020a0cf8d1000000b00647199392damr20279071qvo.48.1693061267840;
-        Sat, 26 Aug 2023 07:47:47 -0700 (PDT)
-Received: from [192.168.7.16] ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id pj47-20020a05620a1daf00b0076cddd12aa4sm1192611qkn.77.2023.08.26.07.47.46
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 26 Aug 2023 07:47:47 -0700 (PDT)
-From:   Paul Moore <paul@paul-moore.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-CC:     <linux-audit@redhat.com>, <audit@vger.kernel.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        "linux-security-module" <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 26 Aug 2023 10:47:45 -0400
-Message-ID: <18a3250b668.28a4.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <6e4603ea-3ce8-5b9e-0ddf-9ec893ddd32e@I-love.SAKURA.ne.jp>
-References: <36b65eb1-ccbf-8b81-468f-b8d88c4be5a3@I-love.SAKURA.ne.jp>
- <CAHC9VhSz=3utr_CigGvkMEb6_avJUQq1Ak2smB7neSd76mzjFw@mail.gmail.com>
- <6957af54-16a2-4c28-56ff-dafe95f4e276@I-love.SAKURA.ne.jp>
- <CAHC9VhTj-PQ0qPTiphPLXyJx3bWeqgVS_GPCWNgjqFqBgH6Njg@mail.gmail.com>
- <b0b60fdc-4484-2265-7fdf-8367bf218d18@I-love.SAKURA.ne.jp>
- <CAHC9VhRaUxN=oEyKCOrfrGzJeXDGxv2EKbZH3qwAB6AhKcSfog@mail.gmail.com>
- <68a0ef90-b452-2096-3729-b5c208878ff9@I-love.SAKURA.ne.jp>
- <CAHC9VhTPgnzdn1tmEmufcbseN_Q1CyzxTEzfvZW7OCBTeAadmA@mail.gmail.com>
- <d2557f88-0cda-b0bf-5c76-7c18912798c9@I-love.SAKURA.ne.jp>
- <CAHC9VhTZE2BinivPRLJ9S_21YcmXA6tMdDtAm5w3nk0dbZ0j1w@mail.gmail.com>
- <e9c593d9-6369-2987-ce20-5832dbebd027@I-love.SAKURA.ne.jp>
- <e56ed3a6-9d82-a181-bbc7-e322ea47cb98@I-love.SAKURA.ne.jp>
- <CAHC9VhRTVsoMWhP1+j7RcUqy2EiV=Z7W_00h55PE-WezzLg=Ew@mail.gmail.com>
- <693f623f-76dd-a709-4916-6d78fe29c9b4@I-love.SAKURA.ne.jp>
- <18a2ac400f8.28a4.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <6e4603ea-3ce8-5b9e-0ddf-9ec893ddd32e@I-love.SAKURA.ne.jp>
-User-Agent: AquaMail/1.46.0 (build: 104600328)
-Subject: Re: [PATCH] audit: add task history record
+        Sat, 26 Aug 2023 14:26:41 -0400
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [IPv6:2001:1600:3:17::190b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDAFE1711
+        for <linux-security-module@vger.kernel.org>; Sat, 26 Aug 2023 11:26:36 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RY4yy4c7SzMq14d;
+        Sat, 26 Aug 2023 18:26:34 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RY4yx3skpz3Z;
+        Sat, 26 Aug 2023 20:26:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1693074394;
+        bh=k9KY2c6i9BmJ9SsZ4rqBiGKgtAJnA3Vgh+QwJPQFQ/M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=msGL4U/LMRUNV5W5PrQcgD48twy701jVMenMizSjGEQgXoUaS1LpjSTSjz9y4iVH8
+         9f8h8p1t1pLbIRrgmMR8Z6u36CtsPrzJTageHPEq+bcL1nHcg8MKBQPcS6Vm9DYOkO
+         FJDFBTuCwqyvNL8huAFfwE5D/BUclViNxCSgEmSY=
+Date:   Sat, 26 Aug 2023 20:26:30 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Matt Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support
+Message-ID: <20230826.ohtooph0Ahmu@digikod.net>
+References: <20230814172816.3907299-1-gnoack@google.com>
+ <20230818.iechoCh0eew0@digikod.net>
+ <ZOjCz5j4+tgptF53@google.com>
+ <20230825.Zoo4ohn1aivo@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230825.Zoo4ohn1aivo@digikod.net>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On August 26, 2023 2:38:55 AM Tetsuo Handa 
-<penguin-kernel@I-love.SAKURA.ne.jp> wrote:
-> On 2023/08/25 12:36, Paul Moore wrote:
->>> It is unfortunate that you continue ignoring the
->>>
->>> How can auditd generate logs that are not triggered via syscalls?
->>>
->>> line. I know how to configure syscall rules using "-S" option. But I do
->>> not know how to configure non syscall rules (such as process creation via
->>> kthread_create(), process termination due to tty hangup or OOM killer).
->>
->> At this point you've exhausted my goodwill so I would suggest simply reading
->> the audit code, manages, and experimenting with a running system to understand
->> how things work, especially for non-syscall records.
->
-> Are we on the same page that non-syscall records include process creation via
-> kthread_create() and process termination via send_sig() ?
+On Fri, Aug 25, 2023 at 06:50:29PM +0200, Mickaël Salaün wrote:
+> On Fri, Aug 25, 2023 at 05:03:43PM +0200, Günther Noack wrote:
+> > Hi!
+> > 
+> > On Fri, Aug 18, 2023 at 03:39:19PM +0200, Mickaël Salaün wrote:
+> > > On Mon, Aug 14, 2023 at 07:28:11PM +0200, Günther Noack wrote:
+> > > > These patches add simple ioctl(2) support to Landlock.
+> > > 
+> > > [...]
+> > > 
+> > > > How we arrived at the list of always-permitted IOCTL commands
+> > > > ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > > 
+> > > > To decide which IOCTL commands should be blanket-permitted I went through the
+> > > > list of IOCTL commands mentioned in fs/ioctl.c and looked at them individually
+> > > > to understand what they are about.  The following list is my conclusion from
+> > > > that.
+> > > > 
+> > > > We should always allow the following IOCTL commands:
+> > > > 
+> > > >  * FIOCLEX, FIONCLEX - these work on the file descriptor and manipulate the
+> > > >    close-on-exec flag
+> > > >  * FIONBIO, FIOASYNC - these work on the struct file and enable nonblocking-IO
+> > > >    and async flags
+> > > >  * FIONREAD - get the number of bytes available for reading (the implementation
+> > > >    is defined per file type)
+> > > 
+> > > I think we should treat FIOQSIZE like FIONREAD, i.e. check for
+> > > LANDLOCK_ACCESS_FS_READ_FILE as explain in my previous message.
+> > > Tests should then rely on something else.
+> > 
+> > OK, I rewrote the tests to use FS_IOC_GETFLAGS.
+> > 
+> > Some thoughts on these two IOCTLs:
+> > 
+> > FIONREAD gives the number of bytes that are ready to read.  This IOCTL seems
+> > only useful when the file is open for reading.  However, do you think that we
+> > should correlate this with (a) LANDLOCK_ACCESS_FS_READ_FILE, or with (b)
+> > f->f_mode & FMODE_READ?  (The difference is that in case (a), FIONREAD will work
+> > if you open a file O_WRONLY and you also have the LANDLOCK_ACCESS_FS_READ_FILE
+> > right for that file.  In case (b), it would only work if you also opened the
+> > file for reading.)
+> 
+> I think we should allow FIONREAD if LANDLOCK_ACCESS_FS_IOCTL is handled
+> and if LANDLOCK_ACCESS_FS_READ_FILE is explicitly allowed for this FD.
+> 
+> f->f_mode & FMODE_READ would make sense but it should have been handled
+> by the kernel; Landlock should not try to fix this inconsistency.
+> 
+> These are good test cases though.
+> 
+> It should be noted that SELinux considers FIONREAD as tied to metadata
+> reading (FILE__GETATTR). It think it makes more sense to tie it to the
+> read right (LANDLOCK_ACCESS_FS_READ_FILE) because it might be
+> (legitimately) required to properly read a file and FIONREAD is tied to
+> the content of a file, not file attributes.
+> 
+> > 
+> > FIOQSIZE seems like it would be useful for both reading *and* writing? -- The
+> > reading case is obvious, but for writers it's also useful if you want to seek
+> > around in the file, and make sure that the position that you seek to already
+> > exists.  (I'm not sure whether that use case is relevant in practical
+> > applications though.) -- Why would FIOQSIZE only be useful for readers?
+> 
+> Good point! The use case you define for writing is interesting. However,
+> would it make sense to seek at a specific offset without being able to
+> know/read the content? I guest not in theory, but in practice we might
+> want to avoid application to require LANDLOCK_ACCESS_FS_READ_FILE is
+> they only require to write (at a specific offset), or to deal with write
+> errors. Anyway, I guess that this information can be inferred by trying
+> to seek at a specific offset.  The only limitation that this approach
+> would bring is that it seems that we can seek into an FD even without
+> read nor write right, and there is no specific (LSM) access control for
+> this operation (and nobody seems to care about being able to read the
+> size of a symlink once opened). If this is correct, I think we should
+> indeed always allow FIOQSIZE. Being able to open a file requires
+> LANDLOCK_ACCESS_FS_READ or WRITE anyway.  It would be interesting to
+> check and test with O_PATH though.
 
-I'm not confident that we are in agreement on many of the issues in this 
-thread, some of that is likely due to disagreements in what functionality 
-is worthwhile, but I believe some of that is due to misunderstandings.  I'm 
-not going to merge the patch you posted at the start of this thread, but as 
-I've mentioned *several* times now, if you find a kernel code path that is 
-missing an audit logging call submit a patch with an explanation of why the 
-audit call is needed and we can discuss it.
+FIOQSIZE should in fact only be allowed if LANDLOCK_ACCESS_FS_READ_FILE or
+LANDLOCK_ACCESS_FS_WRITE_FILE or LANDLOCK_ACCESS_FS_READ_DIR are handled
+and explicitly allowed for the FD. I guess FIOQSIZE is allowed without read
+nor write mode (i.e. O_PATH), so it could be an issue for landlocked
+applications but they can explicitly allow IOCTL for this case. When
+we'll have a LANDLOCK_ACCESS_FS_READ_METADATA (or something similar), we
+should also tie FIOQSIZE to this access right, and we'll be able to
+fully handle all the use cases without fully allowing all other IOCTLs.
 
-My initial thinking is that we do not need, or want, an audit call in 
-kthread_create(). I'm less sure about send_sig(), and as my network access 
-is limited at the moment I don't have the ability to look into it further 
-right now. If you feel we do need an additional audit call, create a patch, 
-test it, write a good commit description explaining why it is necessary and 
-we can review it.
+> 
+> > 
+> > (In fact, it seems to me almost like FIOQSIZE might rather be missing a security
+> > hook check for one of the "getting file attribute" hooks?)
+> > 
+> > So basically, the implementation that I currently ended up with is:
+> > 
+> 
+> Before checking these commands, we first need to check that the original
+> domain handle LANDLOCK_ACCESS_FS_IOCTL. We should try to pack this new
+> bit and replace the file's allowed_access field (see
+> landlock_add_fs_access_mask() and similar helpers in the network patch
+> series that does a similar thing but for ruleset's handle access
+> rights), but here is the idea:
+> 
+> if (!landlock_file_handles_ioctl(file))
+> 	return 0;
+> 
+> > switch (cmd) {
+> 	/*
+> 	 * Allows file descriptor and file description operations (see
+> 	 * fcntl commands).
+> 	 */
+> >   case FIOCLEX:
+> >   case FIONCLEX:
+> >   case FIONBIO:
+> >   case FIOASYNC:
+> 
+> >   case FIOQSIZE:
 
---
-paul-moore.com
->
+We need to handle FIOQSIZE as done by do_vfs_ioctl: add the same i_mode
+checks. A kselftest test should check that ENOTTY is returned according
+to the file type and the access rights.
 
-
-
-
+> >     return 0;
+> >   case FIONREAD:
+> >     if (file->f_mode & FMODE_READ)
+> 
+> We should check LANDLOCK_ACCESS_FS_READ instead, which is a superset of
+> FMODE_READ.
+> 
+> >       return 0;
+> > }
+> > 
+> > (with some comments in the source code, of course...)
+> > 
+> > Does that look reasonable to you?
+> > 
+> > —Günther
+> > 
+> > -- 
+> > Sent using Mutt 🐕 Woof Woof
