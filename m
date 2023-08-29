@@ -2,38 +2,38 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D032C83F20
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Aug 2023 13:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8AAC83F23
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Aug 2023 13:34:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236126AbjH2Nds (ORCPT
+        id S236148AbjH2Ndu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Aug 2023 09:33:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59878 "EHLO
+        Tue, 29 Aug 2023 09:33:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236245AbjH2Ndi (ORCPT
+        with ESMTP id S236230AbjH2Ndg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Aug 2023 09:33:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBDF7CCF;
-        Tue, 29 Aug 2023 06:33:31 -0700 (PDT)
+        Tue, 29 Aug 2023 09:33:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C08F3198;
+        Tue, 29 Aug 2023 06:33:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 571C865779;
-        Tue, 29 Aug 2023 13:33:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2886C433CA;
-        Tue, 29 Aug 2023 13:33:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 14CC665720;
+        Tue, 29 Aug 2023 13:32:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27AB5C433C9;
+        Tue, 29 Aug 2023 13:32:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693315999;
+        s=k20201202; t=1693315972;
         bh=vR/IVedl6nbesLcloP03fEyvZTJexI3NRxCdexCIzM8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ffPHEBaWoX7RqwV16pSf7OzW72FU63EGqQRCkQoiOhENHmeHhoedMRiNDcVgDH7mM
-         pq0K653OeVNZ2qPq7eohJNl/KorBaWsnXoXMp8xKDcDGe1P0KSjI+j4/PsiJMTpjXa
-         X6wiqiI4e3Lrq+inQ9xnGd6QydTHFvKMY2PZzyU2JfwmpqosfwA/RWiSXvx8+Ot27k
-         ZwRThvm10Q8DpYV25MQOrIzZ04jDqtnsjuk/ztUiHyJhSEOj11aFEj0VAjNq3fwaaM
-         HNimSUlPyxZJ8BSl5XHOb652REq1yy466yZ4rQLyQC5a7adO9UrD9pQEuJImMu3ZrQ
-         Bio+PXJz68UcA==
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dQmdhrET5+4GH7SQ9S+UoAxJY6CnviOGkI2nAROUMkKtTXmTXxRFGX/sywrUlx0Nf
+         SM692LnB1orhFPdH84roEn/Y4V0byHb07q/v97Zwyz/nhWjBqo2jmF5FvRuUDAQowJ
+         IovK2taDEsw678pK2pn8T5hYYqTgzLNGD8mmxCISDJNZipqXgsAHJb/mlMqmG82yfB
+         EMYvjsxVuUXIlnTQLt/TRiiIn7x0uJYUG84KGUyMQDcO6XqO1YgGQvM2e5WMYTXDuI
+         VtBGYHUKnDD+vp4ewQpQtokW+8jjWMOmox8xP+UK8NFNmAYTJW5qt5/SnWYBc1NTuu
+         5ehbT1P9FSWDQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dmitry Mastykin <dmastykin@astralinux.ru>,
@@ -42,14 +42,16 @@ Cc:     Dmitry Mastykin <dmastykin@astralinux.ru>,
         Sasha Levin <sashal@kernel.org>, edumazet@google.com,
         kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 1/9] netlabel: fix shift wrapping bug in netlbl_catmap_setlong()
-Date:   Tue, 29 Aug 2023 09:33:08 -0400
-Message-Id: <20230829133316.520410-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 03/15] netlabel: fix shift wrapping bug in netlbl_catmap_setlong()
+Date:   Tue, 29 Aug 2023 09:32:33 -0400
+Message-Id: <20230829133245.520176-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230829133245.520176-1-sashal@kernel.org>
+References: <20230829133245.520176-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.128
+X-stable-base: Linux 6.1.49
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
