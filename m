@@ -2,169 +2,253 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D23E8C83F12
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Aug 2023 21:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE00FC83F12
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Aug 2023 23:07:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236354AbjH2Vyr (ORCPT
+        id S239724AbjH2XGr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Aug 2023 17:54:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43360 "EHLO
+        Tue, 29 Aug 2023 19:06:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238391AbjH2Vyk (ORCPT
+        with ESMTP id S241140AbjH2XGV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Aug 2023 17:54:40 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8000AFD;
-        Tue, 29 Aug 2023 14:54:36 -0700 (PDT)
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37TLmDSY009559;
-        Tue, 29 Aug 2023 21:54:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=ndDTU/5RCr22rffQCpMiCsavmU21p02+wG+PB8lMcHM=;
- b=jhz03888D+s9ksdTmRoF0CX0y2hZzCrX9QZK9r/K9yaTEPv9eVA8PxX8dycQhrL+DWty
- xERTBbTvC+vtj/TbbPKKWrqckgVnsNZ/PlynaLyOZRfUuQGM50cfIvGd27q7xm9vRply
- 2gWHgqjo/qGJtM6hBOKq8vH4h1wrzG32jObqULUoN8qQ8zRP24dDX5DwhU3eISrkKD9e
- tB9fphfZW8cye8yZtyOFVR8lkWUsUIT124oMhKqwN7VmYdO8lNeqp2dbxWlSKbK6MxUI
- 1/d+zTHEHPNhk8YmLwihj4ECsDM/8nfwydVmtjIfHjUP91CwvJ17CRunLmlDfCC+V0HF 7Q== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ssrwpr2da-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Aug 2023 21:54:14 +0000
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 37TLni8f012352;
-        Tue, 29 Aug 2023 21:54:13 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ssrwpr2cy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Aug 2023 21:54:13 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37TJqelC009855;
-        Tue, 29 Aug 2023 21:54:12 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-        by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3sqw7kenqu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Aug 2023 21:54:12 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-        by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37TLsC5o2294328
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Aug 2023 21:54:12 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 54B575805B;
-        Tue, 29 Aug 2023 21:54:12 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CE2C35804B;
-        Tue, 29 Aug 2023 21:54:10 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.191.86])
-        by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 29 Aug 2023 21:54:10 +0000 (GMT)
-Message-ID: <077249ac2bf2cb6d34347514e921720bb0f30b66.camel@linux.ibm.com>
-Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Sush Shringarputale <sushring@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de,
-        jarkko@kernel.org, jgg@ziepe.ca, kgold@linux.ibm.com,
-        bhe@redhat.com, vgoyal@redhat.com, dyoung@redhat.com,
-        kexec@lists.infradead.org, jmorris@namei.org, serge@hallyn.com,
-        code@tyhicks.com, nramas@linux.microsoft.com,
-        Tushar Sugandhi <tusharsu@linux.mic>,
-        linux-security-module@vger.kernel.org,
-        AmirGoldstein <amir73il@gmail.com>
-Date:   Tue, 29 Aug 2023 17:54:10 -0400
-In-Reply-To: <CAHC9VhTjej-GFjvEQhnL-HWnnkvJKA_DuOA_Md1KkV24Tx5haA@mail.gmail.com>
-References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
-         <277db5491460d5fd607785f2bcc733de39022a35.camel@linux.ibm.com>
-         <bf794136-703a-0d33-e245-7e723007b5c0@linux.microsoft.com>
-         <0e1511e8819b24ab8a34a7b15821f06eff688f29.camel@linux.ibm.com>
-         <8bc0f024-fc12-cb32-7af0-e500948cc6db@linux.microsoft.com>
-         <7e32afa2596b9d8cfdc275614575b2023cd1d673.camel@linux.ibm.com>
-         <CAHC9VhSVO9t=9e9JmniXKoqqvMv42E4dVeYtQTWZ4Eih3Sfr0Q@mail.gmail.com>
-         <ed16f899485cbd559f9e6d7fbe17fa0d92335c20.camel@linux.ibm.com>
-         <CAHC9VhTjej-GFjvEQhnL-HWnnkvJKA_DuOA_Md1KkV24Tx5haA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Wad0xOiSp48H75RMrqNeHmUHzwc37LSx
-X-Proofpoint-ORIG-GUID: 3cETr-hq0YXM9dn1uxRLsLKTlBJGSQVP
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Tue, 29 Aug 2023 19:06:21 -0400
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB84CC9
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Aug 2023 16:06:17 -0700 (PDT)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-59231a1ca9eso55855787b3.1
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Aug 2023 16:06:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1693350377; x=1693955177; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UFD5y5ZaGgxav6UbCX4MXqCveP9sEY6NsuAuKaHls68=;
+        b=PVMfNvI2RCnYasTZRymrHmk6fHdlQGBMQbnUwQ8loR+bzSRag+pTVypG/0DC//2Pky
+         OMnM3N3U8E35z3n+obun7245pIFx2GCFi9fxqP/pVfALkxxIPpCwGxuGRhd0xjwyA57y
+         PMlD3E2uooCkcV+orLutmod8owJiWjVkwPfL4Kd8b1WC6N9rSzNjbmWbn+A/9ufwu6Nq
+         qANPfMYvKFD2VLsWv7/2FVlYfErLSSkzPJ8jCHbplYQgIn+WG45L343ao+/XWh8NDx+d
+         Mjbk0X5WihUFnviRnSxS0Z97grwGbQt9bPtsV8EF3IsrarX+ua5ll2WUN8Zr9CLIA8I/
+         +7Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693350377; x=1693955177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UFD5y5ZaGgxav6UbCX4MXqCveP9sEY6NsuAuKaHls68=;
+        b=dDywd37wWH9hkKygY3yQoPcxiYs4lzKZ0lfboT2f4IUSGhoC20abmt3GFMVCt+EGSk
+         EEwidgrKH/y+UMaeWDXBLiu23yaH42nkKsi9l+/5LeEPxTlw73r/lWfH4ZLlEGUTkIDr
+         vqkjc6PpHb/+hrr/HrLWTbWaBKk1oqv6qyP9S8Aq6Wyl061BVpcS5SRVRhiLhoQZNM9j
+         JQZUEPq1UvP0P0rL0QnpRUyUwmvCEky278Wwo28Bu+IlCNUBGRME36j5Qz2LDVP+VsK0
+         7nAQYp7KPn5J4lE1uVxz+QQ20zgLXExnMHjVKiuCxGOW8+HXcfKpcitpkMI2x3m3jo06
+         raew==
+X-Gm-Message-State: AOJu0YwfALT2gHb/mNuP94jXOPOhLpjg/ZLSb3C34zBtElbIqfbkVjXm
+        Yp455h5kEQmPtYALy3LV/DpuuKm72qcVOyGj6xNJ
+X-Google-Smtp-Source: AGHT+IFb7o58mzh1bIubSbzlFDtubAWO3PrRzGPzyZv/DtUZEZsBuzZKTiYriMvdyOejlSL+vTFhlWNR4zqESbdJbww=
+X-Received: by 2002:a0d:e844:0:b0:57a:6e41:948e with SMTP id
+ r65-20020a0de844000000b0057a6e41948emr469728ywe.11.1693350376775; Tue, 29 Aug
+ 2023 16:06:16 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-29_15,2023-08-29_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- malwarescore=0 spamscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
- clxscore=1015 adultscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
- definitions=main-2308290186
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 29 Aug 2023 19:06:06 -0400
+Message-ID: <CAHC9VhSnxiL9wsc6FGDme+yDFfTGC0nMKTGObC_WJ3+TZqdR5Q@mail.gmail.com>
+Subject: [GIT PULL] SELinux patches for v6.6
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2023-08-29 at 17:30 -0400, Paul Moore wrote:
-> On Tue, Aug 29, 2023 at 5:05 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > On Tue, 2023-08-29 at 15:34 -0400, Paul Moore wrote:
-> > > On Mon, Aug 21, 2023 at 7:08 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > > > On Mon, 2023-08-21 at 15:05 -0700, Sush Shringarputale wrote:
-> > > > > On 8/14/2023 3:02 PM, Mimi Zohar wrote:
-> > > > > > On Mon, 2023-08-14 at 14:42 -0700, Sush Shringarputale wrote:
-> > > > > >>> This design seems overly complex and requires synchronization between
-> > > > > >>> the "snapshot" record and exporting the records from the measurement
-> > > > > >>> list.  None of this would be necessary if the measurements were copied
-> > > > > >>> from kernel memory to a backing file (e.g. tmpfs), as described in [1].
-> > > > > Even if the Kernel maintains the link between a tmpfs exported and an
-> > > > > in-memory IMA log - it still has to copy the tmpfs portion to the
-> > > > > Kernel memory during kexec soft boot.  tmpfs is cleared during kexec,
-> > > > > so this copying of tmpfs back to kernel memory is necessary to preserve
-> > > > > the integrity of the log during kexec.  But the copying would add back
-> > > > > the memory pressure on the node during kexec (which may result in
-> > > > > out-of-memory), defeating the purpose of the overall effort/feature.
-> > > > > Copying to a regular *persistent* protected file seems a cleaner
-> > > > > approach, compared to tmpfs.
-> > > >
-> > > > From a kernel perspective, it doesn't make a difference if userspace
-> > > > provides a tmpfs or persistent file.  As per the discussion
-> > > > https://lore.kernel.org/linux-integrity/CAOQ4uxj4Pv2Wr1wgvBCDR-tnA5dsZT3rvdDzKgAH1aEV_-r9Qg@mail.gmail.com/#t
-> > > > , userspace provides the kernel with the file descriptor of the opened
-> > > > file.
-> > > >
-> > > > > We prototyped this solution, however it
-> > > > > does not seem to be a common pattern within the Kernel to write state
-> > > > > directly to files on disk file systems.  We considered two potential
-> > > > > options:
-> > > >
-> > > > If no file descriptor is provided, then the measurements aren't copied
-> > > > and removed from the securityfs file.  If there are write errors, the
-> > > > measurements aren't removed from the securityfs file until the write
-> > > > errors are resolved.
-> > >
-> > > It sounds like this approach would require the file/filesystem to be
-> > > continuously available for the life of the system once the log was
-> > > snapshotted/overflowed to persistent storage, yes?  Assuming that is
-> > > the case, what happens if the file/filesystem becomes inaccessible at
-> > > some point and an attestation client attempts to read the entire log?
-> >
-> > The main purpose of the change is to addres kernel memory pressure.
-> > Two designs are being discussed: Sush's "snapshotting" design and
-> > Amir's original suggestion of continously exporting the measurement
-> > records to a tmpfs or regular file.  Both designs require verifying the
-> > initial attestation quote by walking the entire measurement list,
-> > calculating the expected TPM PCR value(s).  That doesn't change.
-> 
-> Sure, but my question is about what happens if portions of the
-> measurement list disappear due to file/filesystem problems?  How is
-> that handled?
+Hi Linus,
 
-With the "snapshotting" solution there could be multiple files, so
-portions could be missing.  The other solution, the preferred solution,
-would be one file.
+Thirty three SELinux patches for the Linux v6.6 merge window, which is
+a pretty number for us, but there isn't really anything scary in here;
+in fact we actually manage to remove 10 lines of code with this pull
+request :)
 
-Any suggestions?
+- Promote the SELinux DEBUG_HASHES macro to CONFIG_SECURITY_SELINUX_DEBUG
 
--- 
-thanks,
+The DEBUG_HASHES macro was a buried SELinux specific preprocessor
+debug macro that was a problem waiting to happen.  Promoting the debug
+macro to a proper Kconfig setting should help both improve the
+visibility of the feature as well enable improved test coverage.
+We've moved some additional debug functions under the
+CONFIG_SECURITY_SELINUX_DEBUG flag and we may see more work in the
+future.
 
-Mimi
+- Emit a pr_notice() message if virtual memory is executable by default
 
+As this impacts the SELinux access control policy enforcement, if the
+system's configuration is such that virtual memory is executable by
+default we print a single line notice to the console.
 
+- Drop avtab_search() in favor of avtab_search_node()
+
+Both functions are nearly identical so we removed avtab_search() and
+converted the callers to avtab_search_node().
+
+- Add some SELinux network auditing helpers
+
+The helpers not only reduce a small amount of code duplication, but
+they provide an opportunity to improve UDP flood performance slightly
+by delaying initialization of the audit data in some cases.
+
+- Convert GFP_ATOMIC allocators to GFP_KERNEL when reading SELinux policy
+
+There were two SELinux policy load helper functions that were
+allocating memory using GFP_ATOMIC, they have been converted to
+GFP_KERNEL.
+
+- Quiet a KMSAN warning in selinux_inet_conn_request()
+A one-line error path (re)set patch that resolves a KMSAN warning.  It
+is important to note that this doesn't represent a real bug in the
+current code, but it quiets KMSAN and arguably hardens the code
+against future changes.
+
+- Cleanup the policy capability accessor functions
+
+This is a follow-up to the patch which reverted SELinux to using a
+global selinux_state pointer.  This patch cleans up some artifacts of
+that change and turns each accessor into a one-line READ_ONCE() call
+into the policy capabilities array.
+
+- A number of patches from Christian G=C3=B6ttsche
+
+Christian submitted almost two-thirds of the patches in this pull
+request as he worked to harden the SELinux code against type
+differences, variable overflows, etc.
+
+- Support for separating early userspace from the kernel in policy,
+with a later revert
+
+We did have a patch that added a new userspace initial SID which would
+allow SELinux to distinguish between early user processes created
+before the initial policy load and the kernel itself.  Unfortunately
+additional post-merge testing revealed a problematic interaction with
+an old SELinux userspace on an old version of Ubuntu so we've reverted
+the patch until we can resolve the compatibility issue.
+
+- Remove some outdated comments dealing with LSM hook registration
+
+When we removed the runtime disable functionality we forgot to remove
+some old comments discussing the importance of LSM hook registration
+ordering.
+
+- Minor administrative changes
+
+Stephen Smalley updated his email address and "debranded" SELinux from
+"NSA SELinux" to simply "SELinux".  We've come a long way from the
+original NSA submission and I would consider SELinux a true community
+project at this point so removing the NSA branding just makes sense.
+
+Please merge,
+-Paul
+
+--
+The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5=
+:
+
+ Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
+
+are available in the Git repository at:
+
+ https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20230829
+
+for you to fetch changes up to 1df83cbf23a27174aee6ea5e52462f03f7e48a10:
+
+ selinux: prevent KMSAN warning in selinux_inet_conn_request()
+   (2023-08-15 18:23:22 -0400)
+
+----------------------------------------------------------------
+selinux/stable-6.6 PR 20230829
+
+----------------------------------------------------------------
+Andrew Kanner (1):
+     selinux: prevent KMSAN warning in selinux_inet_conn_request()
+
+Christian G=C3=B6ttsche (24):
+     selinux: check for multiplication overflow in put_entry()
+     selinux: avoid avtab overflows
+     selinux: consistently use u32 as sequence number type in the
+              status code
+     selinux: avoid implicit conversions in the netif code
+     selinux: avoid implicit conversions in the AVC code
+     selinux: avoid implicit conversions in the LSM hooks
+     selinux: use consistent type for AV rule specifier
+     selinux: fix implicit conversions in the symtab
+     selinux: avoid implicit conversions regarding enforcing status
+     selinux: drop avtab_search()
+     selinux: add missing newlines in pr_err() statements
+     selinux: introduce SECURITY_SELINUX_DEBUG configuration
+     selinux: log about VM being executable by default
+     selinux: move debug functions into debug configuration
+     selinux: use identical iterator type in hashtab_duplicate()
+     selinux: avoid implicit conversions in mls code
+     selinux: avoid implicit conversions in services code
+     selinux: use GFP_KERNEL while reading binary policy
+     selinux: avoid implicit conversions in avtab code
+     selinux: update type for number of class permissions in
+              services code
+     selinux: make left shifts well defined
+     selinux: avoid implicit conversions in selinuxfs code
+     selinux: avoid implicit conversions in policydb code
+     selinux: use unsigned iterator in nlmsgtab code
+
+Ondrej Mosnacek (1):
+     selinux: introduce an initial SID for early boot processes
+
+Paolo Abeni (1):
+     selinux: introduce and use lsm_ad_net_init*() helpers
+
+Paul Moore (3):
+     selinux: cleanup the policycap accessor functions
+     selinux: fix a 0/NULL mistmatch in ad_net_init_from_iif()
+     selinux: revert SECINITSID_INIT support
+
+Stephen Smalley (2):
+     selinux: de-brand SELinux
+     selinux: update my email address
+
+Xiu Jianfeng (1):
+     selinux: update comment on selinux_hooks[]
+
+security/selinux/Kconfig                   |  25 ++++--
+security/selinux/avc.c                     |  17 ++--
+security/selinux/hooks.c                   | 122 ++++++++++++-------------
+security/selinux/include/avc.h             |   2 +-
+security/selinux/include/avc_ss.h          |   2 +-
+security/selinux/include/objsec.h          |   4 +-
+security/selinux/include/policycap_names.h |   2 +-
+security/selinux/include/security.h        |  45 ++++-------
+security/selinux/netif.c                   |   4 +-
+security/selinux/netlabel.c                |   1 +
+security/selinux/nlmsgtab.c                |   3 +-
+security/selinux/selinuxfs.c               |  28 ++++---
+security/selinux/ss/avtab.c                |  66 +++++-----------
+security/selinux/ss/avtab.h                |  12 ++-
+security/selinux/ss/conditional.c          |   4 +-
+security/selinux/ss/constraint.h           |   2 +-
+security/selinux/ss/context.h              |   2 +-
+security/selinux/ss/ebitmap.c              |   2 +-
+security/selinux/ss/ebitmap.h              |   2 +-
+security/selinux/ss/hashtab.c              |   8 +-
+security/selinux/ss/hashtab.h              |   8 +-
+security/selinux/ss/mls.c                  |  12 +--
+security/selinux/ss/mls.h                  |   2 +-
+security/selinux/ss/mls_types.h            |   2 +-
+security/selinux/ss/policydb.c             |  98 ++++++++++++-----------
+security/selinux/ss/policydb.h             |   9 ++-
+security/selinux/ss/services.c             |  54 ++++++-------
+security/selinux/ss/services.h             |   4 +-
+security/selinux/ss/sidtab.c               |   2 +-
+security/selinux/ss/sidtab.h               |   2 +-
+security/selinux/ss/symtab.c               |   4 +-
+security/selinux/ss/symtab.h               |   4 +-
+security/selinux/status.c                  |   6 +-
+security/selinux/xfrm.c                    |   2 +-
+34 files changed, 276 insertions(+), 286 deletions(-)
+
+--=20
+paul-moore.com
