@@ -2,244 +2,147 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D503C83F11
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Aug 2023 22:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9AD7C83F1A
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Aug 2023 02:55:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234152AbjH1W4a (ORCPT
+        id S232176AbjH2Cy5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Aug 2023 18:56:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33862 "EHLO
+        Mon, 28 Aug 2023 22:54:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234291AbjH1W4T (ORCPT
+        with ESMTP id S233355AbjH2Cyy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Aug 2023 18:56:19 -0400
-Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9839E189
-        for <linux-security-module@vger.kernel.org>; Mon, 28 Aug 2023 15:56:14 -0700 (PDT)
-Received: by mail-pg1-x549.google.com with SMTP id 41be03b00d2f7-56f8c8fd8e7so2480959a12.1
-        for <linux-security-module@vger.kernel.org>; Mon, 28 Aug 2023 15:56:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1693263374; x=1693868174;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=45FPDFU2bi5QNrTegRTZSI4D/kTsLJ5aPvVquLb6Kb4=;
-        b=pLOLnQlAccDWO/O5kVLkKwA9wRVSEEkjq7uLC+mlmD7Vfw3vEYXCkgTxxXccxGMWgZ
-         wRGNqorlmNPayZTm3R+GqSyo7GngRdVoeiMDanQ2qTLDbFHAwVr7soK6dbWp8LVur1IJ
-         7Dj7NDy10jedqv9lpI8G9Si/rF4w8XfNDjmoH8zHrZK+nE/CztRtHvsfpP2cZBuR/WSb
-         r1GFzm2yEAVnnjHec8JxS7mw13lbH162cn2tJ8OGbc1nr9IEbWJ5p7u+QgsCm1qR34DM
-         OtkAkqUjCP9VneeTOmcCYfI7wZJzfHg/Vici91Fsjq4cCd2IzQiQr/mxwrVo3egZBd6/
-         M4pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693263374; x=1693868174;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=45FPDFU2bi5QNrTegRTZSI4D/kTsLJ5aPvVquLb6Kb4=;
-        b=BJ/YFwjNm8majGYR+qzhTijCl4B67NUXKuSaJdfgnUD1aYP0RN/Dgdo7d9QJ+Jjq+p
-         k3OV+X6538NgwUvJ5B01U2fHpBLXE2mPkV90VXmBrPDKQirX9dXkYg9esLHENERxRpLN
-         SDtHqKcINOHBgcgPXAKp60fV2ImF7OzS2TNYG76Zf3SAYBrKP93nNfbF0dp08RZwq7Of
-         ARcUZ/lcW2RfVHDNtmCCwUn/oSd/p/+Tk3LEgamN2FzDBEFQ31A/oKWF2+I0jp3eTjqZ
-         LHyIfZ57yoW0Ij2T8ZiQ4kP+Opd73HAuJtPcwpi0o0EBdEaTA66ZkS7qjtbCOUpLHOEP
-         8r+w==
-X-Gm-Message-State: AOJu0Yxj6AY3ZirdjZ874eQ+iwAIsL89mv9OZlK5iyxR+XlmDBoaRh1c
-        eWVq46e7WA52jiyPeFSSKzkyjDVF+Mk86L7BWA==
-X-Google-Smtp-Source: AGHT+IHiRfp4dtsSrmAF/uBzjUu2XQ3xTysjq4Ohm5oUAXB2N+6Zi644lMyKLSW9uEB1MtUrJ1+LGs2ibik7KIYLPQ==
-X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
- (user=ackerleytng job=sendgmr) by 2002:a63:8f09:0:b0:566:2d6:f71b with SMTP
- id n9-20020a638f09000000b0056602d6f71bmr5097167pgd.12.1693263374002; Mon, 28
- Aug 2023 15:56:14 -0700 (PDT)
-Date:   Mon, 28 Aug 2023 22:56:12 +0000
-In-Reply-To: <ZOO782YGRY0YMuPu@google.com> (message from Sean Christopherson
- on Mon, 21 Aug 2023 12:33:07 -0700)
-Mime-Version: 1.0
-Message-ID: <diqzttsiu67n.fsf@ackerleytng-ctop.c.googlers.com>
+        Mon, 28 Aug 2023 22:54:54 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2B3FB9;
+        Mon, 28 Aug 2023 19:54:50 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37T2NYix025517;
+        Tue, 29 Aug 2023 02:53:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=cKhR/hXI9TfQVMxJKBEpbKXuPkzD/6c5MCP4RSxTLCw=;
+ b=aJjaitgE+MNEcv6pStestGm3ovNl2PCHIDgAS0ezUu1PJhWjiVAJkaWbVdyPPMxXqeuv
+ J8TGIrU+0GAuxQX7eIIapM8gHoJ/i/+3Lg86ilvRhCdks0OYIgvIXDu+m1F9qvPig1n9
+ qmaPZSttzxHapTHsQhqj+8ez1Mh6AU41gyUZuYSjEw/M6ix2alFl2clZcq2fzw9TRV8m
+ T3VdqIsiJZXsGkuNzRqG8q7Wyez0X9VKsY1Jq2v4Bt+32v5og2RtpbTDAMPn6awuDbIF
+ bXfmOhB1JZWgA6QKAkE/ndq/tn0aSh7gBLV6EKEnJxvPb+roMqUGXj3Ar6OaLs3F+VbY DQ== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ss7mer1wr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 29 Aug 2023 02:53:30 +0000
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37T2rTft030498
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 29 Aug 2023 02:53:29 GMT
+Received: from [10.110.29.109] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Mon, 28 Aug
+ 2023 19:53:26 -0700
+Message-ID: <253965df-6d80-bbfd-ab01-f9e69b274bf3@quicinc.com>
+Date:   Mon, 28 Aug 2023 19:53:26 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
 Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
  guest-specific backing memory
-From:   Ackerley Tng <ackerleytng@google.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     pbonzini@redhat.com, maz@kernel.org, oliver.upton@linux.dev,
-        chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, willy@infradead.org,
-        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
-        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
-        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
-        david@redhat.com, qperret@google.com, michael.roth@amd.com,
-        wei.w.wang@intel.com, liam.merwick@oracle.com,
-        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
+To:     Ackerley Tng <ackerleytng@google.com>,
+        Sean Christopherson <seanjc@google.com>
+CC:     <pbonzini@redhat.com>, <maz@kernel.org>, <oliver.upton@linux.dev>,
+        <chenhuacai@kernel.org>, <mpe@ellerman.id.au>,
+        <anup@brainfault.org>, <paul.walmsley@sifive.com>,
+        <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+        <willy@infradead.org>, <akpm@linux-foundation.org>,
+        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
+        <kvm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.linux.dev>, <linux-mips@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <kvm-riscv@lists.infradead.org>,
+        <linux-riscv@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <chao.p.peng@linux.intel.com>,
+        <tabba@google.com>, <jarkko@kernel.org>,
+        <yu.c.zhang@linux.intel.com>, <vannapurve@google.com>,
+        <mail@maciej.szmigiero.name>, <vbabka@suse.cz>, <david@redhat.com>,
+        <qperret@google.com>, <michael.roth@amd.com>,
+        <wei.w.wang@intel.com>, <liam.merwick@oracle.com>,
+        <isaku.yamahata@gmail.com>, <kirill.shutemov@linux.intel.com>
+References: <diqzttsiu67n.fsf@ackerleytng-ctop.c.googlers.com>
+From:   Elliot Berman <quic_eberman@quicinc.com>
+In-Reply-To: <diqzttsiu67n.fsf@ackerleytng-ctop.c.googlers.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: j_S7WCFYaAduXo62GgrPKoDWB6xd2scP
+X-Proofpoint-GUID: j_S7WCFYaAduXo62GgrPKoDWB6xd2scP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-28_20,2023-08-28_04,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ bulkscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ mlxlogscore=999 phishscore=0 priorityscore=1501 clxscore=1011 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
+ definitions=main-2308290024
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Sean Christopherson <seanjc@google.com> writes:
-
-> On Mon, Aug 21, 2023, Ackerley Tng wrote:
->> Sean Christopherson <seanjc@google.com> writes:
->>
->> > On Tue, Aug 15, 2023, Ackerley Tng wrote:
->> >> Sean Christopherson <seanjc@google.com> writes:
->> >> > Nullifying the KVM pointer isn't sufficient, because without additional actions
->> >> > userspace could extract data from a VM by deleting its memslots and then binding
->> >> > the guest_memfd to an attacker controlled VM.  Or more likely with TDX and SNP,
->> >> > induce badness by coercing KVM into mapping memory into a guest with the wrong
->> >> > ASID/HKID.
->> >> >
->> >> > I can think of three ways to handle that:
->> >> >
->> >> >   (a) prevent a different VM from *ever* binding to the gmem instance
->> >> >   (b) free/zero physical pages when unbinding
->> >> >   (c) free/zero when binding to a different VM
->> >> >
->> >> > Option (a) is easy, but that pretty much defeats the purpose of decopuling
->> >> > guest_memfd from a VM.
->> >> >
->> >> > Option (b) isn't hard to implement, but it screws up the lifecycle of the memory,
->> >> > e.g. would require memory when a memslot is deleted.  That isn't necessarily a
->> >> > deal-breaker, but it runs counter to how KVM memlots currently operate.  Memslots
->> >> > are basically just weird page tables, e.g. deleting a memslot doesn't have any
->> >> > impact on the underlying data in memory.  TDX throws a wrench in this as removing
->> >> > a page from the Secure EPT is effectively destructive to the data (can't be mapped
->> >> > back in to the VM without zeroing the data), but IMO that's an oddity with TDX and
->> >> > not necessarily something we want to carry over to other VM types.
->> >> >
->> >> > There would also be performance implications (probably a non-issue in practice),
->> >> > and weirdness if/when we get to sharing, linking and/or mmap()ing gmem.  E.g. what
->> >> > should happen if the last memslot (binding) is deleted, but there outstanding userspace
->> >> > mappings?
->> >> >
->> >> > Option (c) is better from a lifecycle perspective, but it adds its own flavor of
->> >> > complexity, e.g. the performant way to reclaim TDX memory requires the TDMR
->> >> > (effectively the VM pointer), and so a deferred relcaim doesn't really work for
->> >> > TDX.  And I'm pretty sure it *can't* work for SNP, because RMP entries must not
->> >> > outlive the VM; KVM can't reuse an ASID if there are pages assigned to that ASID
->> >> > in the RMP, i.e. until all memory belonging to the VM has been fully freed.
->
-> ...
->
->> I agree with you that nulling the KVM pointer is insufficient to keep
->> host userspace out of the TCB. Among the three options (a) preventing a
->> different VM (HKID/ASID) from binding to the gmem instance, or zeroing
->> the memory either (b) on unbinding, or (c) on binding to another VM
->> (HKID/ASID),
->>
->> (a) sounds like adding a check issued to TDX/SNP upon binding and this
->>     check would just return OK for software-protected VMs (line of sight
->>     to removing host userspace from TCB).
->>
->> Or, we could go further for software-protected VMs and add tracking in
->> the inode to prevent the same inode from being bound to different
->> "HKID/ASID"s, perhaps like this:
->>
->> + On first binding, store the KVM pointer in the inode - not file (but
->>   not hold a refcount)
->> + On rebinding, check that the KVM matches the pointer in the inode
->> + On intra-host migration, update the KVM pointer in the inode to allow
->>   binding to the new struct kvm
->>
->> I think you meant associating the file with a struct kvm at creation
->> time as an implementation for (a), but technically since the inode is
->> the representation of memory, tracking of struct kvm should be with the
->> inode instead of the file.
->>
->> (b) You're right that this messes up the lifecycle of the memory and
->>     wouldn't work with intra-host migration.
->>
->> (c) sounds like doing the clearing on a check similar to that of (a)
->
-> Sort of, though it's much nastier, because it requires the "old" KVM instance to
-> be alive enough to support various operations.  I.e. we'd have to make stronger
-> guarantees about exactly when the handoff/transition could happen.
->
-
-Good point!
-
->> If we track struct kvm with the inode, then I think (a), (b) and (c) can
->> be independent of the refcounting method. What do you think?
->
-> No go.  Because again, the inode (physical memory) is coupled to the virtual machine
-> as a thing, not to a "struct kvm".  Or more concretely, the inode is coupled to an
-> ASID or an HKID, and there can be multiple "struct kvm" objects associated with a
-> single ASID.  And at some point in the future, I suspect we'll have multiple KVM
-> objects per HKID too.
->
-> The current SEV use case is for the migration helper, where two KVM objects share
-> a single ASID (the "real" VM and the helper).  I suspect TDX will end up with
-> similar behavior where helper "VMs" can use the HKID of the "real" VM.  For KVM,
-> that means multiple struct kvm objects being associated with a single HKID.
->
-> To prevent use-after-free, KVM "just" needs to ensure the helper instances can't
-> outlive the real instance, i.e. can't use the HKID/ASID after the owning virtual
-> machine has been destroyed.
->
-> To put it differently, "struct kvm" is a KVM software construct that _usually_,
-> but not always, is associated 1:1 with a virtual machine.
->
-> And FWIW, stashing the pointer without holding a reference would not be a complete
-> solution, because it couldn't guard against KVM reusing a pointer.  E.g. if a
-> struct kvm was unbound and then freed, KVM could reuse the same memory for a new
-> struct kvm, with a different ASID/HKID, and get a false negative on the rebinding
-> check.
-
-I agree that inode (physical memory) is coupled to the virtual machine
-as a more generic concept.
-
-I was hoping that in the absence of CC hardware providing a HKID/ASID,
-the struct kvm pointer could act as a representation of the "virtual
-machine". You're definitely right that KVM could reuse a pointer and so
-that idea doesn't stand.
-
-I thought about generating UUIDs to represent "virtual machines" in the
-absence of CC hardware, and this UUID could be transferred during
-intra-host migration, but this still doesn't take host userspace out of
-the TCB. A malicious host VMM could just use the migration ioctl to copy
-the UUID to a malicious dumper VM, which would then pass checks with a
-gmem file linked to the malicious dumper VM. This is fine for HKID/ASIDs
-because the memory is encrypted; with UUIDs there's no memory
-encryption.
-
-Circling back to the original topic, was associating the file with
-struct kvm at gmem file creation time meant to constrain the use of the
-gmem file to one struct kvm, or one virtual machine, or something else?
-
-Follow up questions:
-
-1. Since the physical memory's representation is the inode and should be
-   coupled to the virtual machine (as a concept, not struct kvm), should
-   the binding/coupling be with the file, or the inode?
-
-2. Should struct kvm still be bound to the file/inode at gmem file
-   creation time, since
-
-   + struct kvm isn't a good representation of a "virtual machine"
-   + we currently don't have anything that really represents a "virtual
-     machine" without hardware support
 
 
-I'd also like to bring up another userspace use case that Google has:
-re-use of gmem files for rebooting guests when the KVM instance is
-destroyed and rebuilt.
+On 8/28/2023 3:56 PM, Ackerley Tng wrote:
+ > 1. Since the physical memory's representation is the inode and should be
+ >     coupled to the virtual machine (as a concept, not struct kvm), should
+ >     the binding/coupling be with the file, or the inode?
+ >
 
-When rebooting a VM there are some steps relating to gmem that are
-performance-sensitive:
+I've been working on Gunyah's implementation in parallel (not yet posted 
+anywhere). Thus far, I've coupled the virtual machine struct to the 
+struct file so that I can increment the file refcount when mapping the 
+gmem to the virtual machine.
 
-a.      Zeroing pages from the old VM when we close a gmem file/inode
-b. Deallocating pages from the old VM when we close a gmem file/inode
-c.   Allocating pages for the new VM from the new gmem file/inode
-d.      Zeroing pages on page allocation
+ > 2. Should struct kvm still be bound to the file/inode at gmem file
+ >     creation time, since
+ >
+ >     + struct kvm isn't a good representation of a "virtual machine"
+ >     + we currently don't have anything that really represents a "virtual
+ >       machine" without hardware support
+ >
+ >
+ > I'd also like to bring up another userspace use case that Google has:
+ > re-use of gmem files for rebooting guests when the KVM instance is
+ > destroyed and rebuilt.
+ >
+ > When rebooting a VM there are some steps relating to gmem that are
+ > performance-sensitive:
+ >
+ > a.      Zeroing pages from the old VM when we close a gmem file/inode
+ > b. Deallocating pages from the old VM when we close a gmem file/inode
+ > c.   Allocating pages for the new VM from the new gmem file/inode
+ > d.      Zeroing pages on page allocation
+ >
+ > We want to reuse the gmem file to save re-allocating pages (b. and c.),
+ > and one of the two page zeroing allocations (a. or d.).
+ >
+ > Binding the gmem file to a struct kvm on creation time means the gmem
+ > file can't be reused with another VM on reboot. Also, host userspace is
+ > forced to close the gmem file to allow the old VM to be freed.
+ >
+ > For other places where files pin KVM, like the stats fd pinning vCPUs, I
+ > guess that matters less since there isn't much of a penalty to close and
+ > re-open the stats fd.
 
-We want to reuse the gmem file to save re-allocating pages (b. and c.),
-and one of the two page zeroing allocations (a. or d.).
+I had a 3rd question that's related to how to wire the gmem up to a 
+virtual machine:
 
-Binding the gmem file to a struct kvm on creation time means the gmem
-file can't be reused with another VM on reboot. Also, host userspace is
-forced to close the gmem file to allow the old VM to be freed.
+I learned of a usecase to implement copy-on-write for gmem. The premise 
+would be to have a "golden copy" of the memory that multiple virtual 
+machines can map in as RO. If a virtual machine tries to write to those 
+pages, they get copied to a virtual machine-specific page that isn't 
+shared with other VMs. How do we track those pages?
 
-For other places where files pin KVM, like the stats fd pinning vCPUs, I
-guess that matters less since there isn't much of a penalty to close and
-re-open the stats fd.
+Thanks,
+Elliot
