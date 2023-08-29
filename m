@@ -2,59 +2,88 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EABC1C83F17
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Aug 2023 07:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E88C83F1D
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Aug 2023 13:34:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230409AbjH2H6B (ORCPT
+        id S236141AbjH2Nds (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Aug 2023 03:58:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56036 "EHLO
+        Tue, 29 Aug 2023 09:33:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbjH2H5Q (ORCPT
+        with ESMTP id S236270AbjH2Ndm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Aug 2023 03:57:16 -0400
-X-Greylist: delayed 906 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 29 Aug 2023 00:57:11 PDT
-Received: from mail.profitpathwaygo.com (mail.profitpathwaygo.com [141.94.21.238])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AED7C2
-        for <linux-security-module@vger.kernel.org>; Tue, 29 Aug 2023 00:57:10 -0700 (PDT)
-Received: by mail.profitpathwaygo.com (Postfix, from userid 1002)
-        id 8826D4AC30; Tue, 29 Aug 2023 07:31:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=profitpathwaygo.com;
-        s=mail; t=1693294308;
-        bh=qp3Ofokho6Ql+WtI8ZPVilyHYhskXL7fod7u9CWs8W4=;
-        h=Date:From:To:Subject:From;
-        b=RNygdSWP9TT1S8YCAfx4WB6DS8v39XnDZs4B08AHIEqJT822NHwQGzylM1GoEDTnc
-         TDakSKQIvM0w47v6MJUFkzH5kLuqE3D/pS8jY0EICTlruNEQvtmugr0ZQbEYUmW9/F
-         D8IK9UGeUO2wTzCiYhGYS4SV/0wCdkHs7RxoBFu5d1zJPSJ65gF77XkEbAldD8zSCc
-         WpyuSb4tJ5cybKCpf9sahCXJJnxws3vMGmTi4SD61T+gxu9qSSk2pcl2+7tnsAyOfX
-         Bu0Dbc1k4j/JV6vyUqAWsWL0R4q83qRGxCUlFQNPeMWUwYqZQkop7XJTpdI+OBj5oH
-         bDeNfJ4aTep/w==
-Received: by mail.profitpathwaygo.com for <linux-security-module@vger.kernel.org>; Tue, 29 Aug 2023 07:31:02 GMT
-Message-ID: <20230829064500-0.1.1f.e17z.0.oq53ejdq14@profitpathwaygo.com>
-Date:   Tue, 29 Aug 2023 07:31:02 GMT
-From:   "Adam Charachuta" <adam.charachuta@profitpathwaygo.com>
-To:     <linux-security-module@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania_?=
-X-Mailer: mail.profitpathwaygo.com
+        Tue, 29 Aug 2023 09:33:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89A97F7;
+        Tue, 29 Aug 2023 06:33:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 27A1461161;
+        Tue, 29 Aug 2023 13:33:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70A54C433C9;
+        Tue, 29 Aug 2023 13:33:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693316019;
+        bh=+lDlZIwh9YO+GWW5KUibHH5CjJc9m+CI/kUqVP0XdAM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fnjlvntQNAyKCxisJZLZPnat7PoUWpFzyetmOXJ3hO3KkbYqpGyCCyHBYWc/sAcle
+         0X0sb6gpz+px1+wAz0ooc4nqexAQ2/3Q88tDk9gEgKcwiojIu6oSk7Xo9rVWjTHumC
+         unH0/3Z6aH72A+GHajqiKSmcduvgg86/7inlSZ/b1lTdFjHEyuhYb/FP71hON5JA/E
+         Eqn+BkaOduQhKeeKYVpt17wTZVjWuxkokO3NFQVzJOIa/6EXFDeOxyMGHsa2AtfeRa
+         SiEila65LT36fUevnfPgw3YtKvjuSBrLFCf/b6sHqeR9jppBUrsZwtC6Kiz8G+W/ug
+         J4RRy7unv0lCQ==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dmitry Mastykin <dmastykin@astralinux.ru>,
+        Paul Moore <paul@paul-moore.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 1/7] netlabel: fix shift wrapping bug in netlbl_catmap_setlong()
+Date:   Tue, 29 Aug 2023 09:33:30 -0400
+Message-Id: <20230829133336.520573-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.10.192
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dzie=C5=84 dobry,
+From: Dmitry Mastykin <dmastykin@astralinux.ru>
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+[ Upstream commit b403643d154d15176b060b82f7fc605210033edd ]
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+There is a shift wrapping bug in this code on 32-bit architectures.
+NETLBL_CATMAP_MAPTYPE is u64, bitmap is unsigned long.
+Every second 32-bit word of catmap becomes corrupted.
 
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
+Signed-off-by: Dmitry Mastykin <dmastykin@astralinux.ru>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/netlabel/netlabel_kapi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+index 91b35b7c80d82..96059c99b915e 100644
+--- a/net/netlabel/netlabel_kapi.c
++++ b/net/netlabel/netlabel_kapi.c
+@@ -857,7 +857,8 @@ int netlbl_catmap_setlong(struct netlbl_lsm_catmap **catmap,
+ 
+ 	offset -= iter->startbit;
+ 	idx = offset / NETLBL_CATMAP_MAPSIZE;
+-	iter->bitmap[idx] |= bitmap << (offset % NETLBL_CATMAP_MAPSIZE);
++	iter->bitmap[idx] |= (NETLBL_CATMAP_MAPTYPE)bitmap
++			     << (offset % NETLBL_CATMAP_MAPSIZE);
+ 
+ 	return 0;
+ }
+-- 
+2.40.1
 
-Pozdrawiam serdecznie
-Adam Charachuta
