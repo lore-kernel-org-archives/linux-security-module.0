@@ -2,115 +2,97 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F38C83F1C
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A145C83F17
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237309AbjH3Sqh (ORCPT
+        id S240740AbjH3Sqk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:46:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60916 "EHLO
+        Wed, 30 Aug 2023 14:46:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344171AbjH3SM4 (ORCPT
+        with ESMTP id S1343609AbjH3QO2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Aug 2023 14:12:56 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 463B4132;
-        Wed, 30 Aug 2023 11:12:54 -0700 (PDT)
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37UI750B030917;
-        Wed, 30 Aug 2023 18:12:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=s+MNKJLQTeg78SAaJFKITDLpr8wU3HO5AJ+NuOq6bfc=;
- b=gjhCqsr4HwNBsBSilamLXlAqQieiJ2223b7kO2SSa1sJ3IwisewynMfOdnbtcWvmdDra
- ms06fLQG6cD4camOzIo213FhskAFfbpQqb+HqElV+IS6jsqxTzy1fZUG6fCIPtipnAna
- E26gSSHIcowkVB9YY7N24AbfdIHSSXiN3GO2EDvieKsKSapeNd0+LmUWrhyw5HghsArL
- 2zPKU58J1jKfQBid31EKu8IdZAoH1JTnuai/tOr5dJvR35+pUDrqnixCRcfQqdEq4Oac
- X/DFukDjPXo1+zUgYELF7E5Vgpk1UiOxFRIFzxtpN/ILNxGXoSPqT8QsR6s+EBQ8XTlf 4Q== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3st71e6a9r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Aug 2023 18:12:29 +0000
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 37UI7Bhj031418;
-        Wed, 30 Aug 2023 18:12:29 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3st71e6a9c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Aug 2023 18:12:29 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37UGDvLs009941;
-        Wed, 30 Aug 2023 18:12:28 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-        by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3sqw7knrkn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Aug 2023 18:12:28 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-        by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37UICRXX32244444
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Aug 2023 18:12:28 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D496458055;
-        Wed, 30 Aug 2023 18:12:27 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BF16358059;
-        Wed, 30 Aug 2023 18:12:26 +0000 (GMT)
-Received: from [9.67.11.225] (unknown [9.67.11.225])
-        by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 30 Aug 2023 18:12:26 +0000 (GMT)
-Message-ID: <598fdd62-f4c3-a6dc-ae22-8f5a9e18f570@linux.ibm.com>
-Date:   Wed, 30 Aug 2023 14:12:27 -0400
+        Wed, 30 Aug 2023 12:14:28 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D26251A3
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 09:14:23 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-99c3c8adb27so728230166b.1
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 09:14:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1693412062; x=1694016862; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=J+IbjS4hQ1xrZMoTCi3gEShIbmawdzOCZjpHyuEsjwE=;
+        b=Gnl7aNzYPtrmKPd2soG+AnuedyHsV2D6aANBFj+BUNr8B2CVnLSa/KzP4KnFrXWXbf
+         Z+EvRqCVV8h5nV0fAfnHXwovd3gIxFK5nzgV8k4/DTh+HBtLMR7xYpbO1MsjfoqYT4EX
+         ooJGRfidtAMiAXmB9L5UaRJBhTFbI7ttviMCA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693412062; x=1694016862;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J+IbjS4hQ1xrZMoTCi3gEShIbmawdzOCZjpHyuEsjwE=;
+        b=aax2KiUYw1Cc+Hjrs5rFubAGopxhI6t5q/AXYaEC9WfVSNz7BLQeaqLsLPGD5WlhyQ
+         aeuENvzHPhAx0X+Hwj9gcthHjNxgBVBjdoLAsZgVmcO+l8sjX+7ayN+NueECnLHxWKbp
+         r6TPVp7BXTdXb2fb0zEjKdV6p1xFa455D8+Qmo0Bj0fEAgF/eYUD9epfRi2q5PEL/AQg
+         T5UwquZ41gosQ+Qf/uGvBNL05gaAGbJHl50gXIAWhgqFXGLF9ljoVBl48nIi3hV373YP
+         N26QkehazHojfuD5qMMEZcD3ezV1zcu7461r+lxB4NCYSvcY5JbRPtekMm+7wGGfzrO+
+         6WLg==
+X-Gm-Message-State: AOJu0YwatrXW/6eHA0f6152x44GVcB6oYbUWOB7lFeXlZAXaSRA6dVeI
+        gAJ5q0fE710hLgTPQEjHmvyvuzPAipbVZKhu96kQmZr1
+X-Google-Smtp-Source: AGHT+IFAxqHiNTODZT7nWjgq4UF+3/RzJbMMCzXx6gC6zmuQnyxmnNXrw9vcluVCBE9BzWqFAEDg/A==
+X-Received: by 2002:a17:906:2d9:b0:9a1:d79a:4193 with SMTP id 25-20020a17090602d900b009a1d79a4193mr2086317ejk.23.1693412061941;
+        Wed, 30 Aug 2023 09:14:21 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id w26-20020a1709064a1a00b009786c8249d6sm7457464eju.175.2023.08.30.09.14.21
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Aug 2023 09:14:21 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-52a49a42353so7889449a12.2
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 09:14:21 -0700 (PDT)
+X-Received: by 2002:a17:906:518e:b0:99e:1201:48bc with SMTP id
+ y14-20020a170906518e00b0099e120148bcmr2002148ejk.64.1693412060814; Wed, 30
+ Aug 2023 09:14:20 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [RFC] IMA Log Snapshotting Design Proposal - aggregate
-Content-Language: en-US
-To:     Sush Shringarputale <sushring@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com, kexec@lists.infradead.org,
-        jmorris@namei.org, Paul Moore <paul@paul-moore.com>,
-        serge@hallyn.com
-Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        linux-security-module@vger.kernel.org
-References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
-From:   Ken Goldman <kgold@linux.ibm.com>
-In-Reply-To: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: BIukSM_f8IdJDmNpvoSVCXl9MVpSVhR1
-X-Proofpoint-GUID: m5aNa6GyTf1iNm99yZoM_InKKuTN_F8f
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-30_15,2023-08-29_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- impostorscore=0 suspectscore=0 mlxlogscore=909 malwarescore=0 spamscore=0
- phishscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
- definitions=main-2308300165
+References: <CAHC9VhQQqQCdcSdb7G8v1ZHU8zn0XJZ6hS0rbGufAuZyPSCDCA@mail.gmail.com>
+In-Reply-To: <CAHC9VhQQqQCdcSdb7G8v1ZHU8zn0XJZ6hS0rbGufAuZyPSCDCA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 30 Aug 2023 09:14:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgvT9yJT+QwWHArnO7c64_g3kXzMi5xr7j-a55kZAdGhg@mail.gmail.com>
+Message-ID: <CAHk-=wgvT9yJT+QwWHArnO7c64_g3kXzMi5xr7j-a55kZAdGhg@mail.gmail.com>
+Subject: Re: [GIT PULL] LSM patches for v6.6
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/1/2023 3:12 PM, Sush Shringarputale wrote:
-> - A user-mode process will trigger the snapshot by opening a file in SysFS
->    say /sys/kernel/security/ima/snapshot (referred to as 
-> sysk_ima_snapshot_file
->    here onwards).
-> - The Kernel will get the current TPM PCR values and PCR update counter [2]
->    and store them as template data in a new IMA event "snapshot_aggregate".
+On Tue, 29 Aug 2023 at 16:37, Paul Moore <paul@paul-moore.com> wrote:
+>
+> Ten LSM patches for the Linux v6.6 merge window, and while most of
+> them are fairly minor, there is at least one merge conflict involving
+> security_sk_classify_flow() in security/security.c; it looks like a
+> netdev constification patch collided with a LSM documentation patch,
+> thankfully the solution is relatively simple but if for some odd
+> reason you need a respin let me know.
 
-If this is relying on a user-mode process, is there a concern that the 
-process doesn't run. Might it be safer to have the kernel trigger the
-snapshot.
+Oh, no, trivial things like these are truly not a problem at all.
 
-PCR reads are not atomic, with each other and with event log appends. 
-Is this an issue?
+The only time I may ask people to help with the resolution (or, more
+commonly, ask them to just double-check what I did) is when there is
+an actual and subtle code conflict where the code in question has been
+re-organized a lot, and both sides did something fairly involved, and
+the end result isn't really obvious.
 
-The PCR update counter can change between PCR reads.  What is its purpose?
+For something like this, I do ask for it to be noted in the pull
+request - exactly like  you did - but even that is mainly so that
 
-What is the purpose of the snapshot aggregate?  Since the entire event 
-log has to be retained and sent to the verifier, is the aggregate redundant?
+ (a) I don't get surprised when I do the pull and see that I need to
+resolve something, and
 
+ (b) to give me the warm and fuzzies that the maintainers in question
+have actually noticed and followed up on the reports from linux-next.
+
+So absolutely no need for any re-spin, and you did the right thing. Thanks,
+
+                      Linus
