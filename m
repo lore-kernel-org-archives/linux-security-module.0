@@ -2,82 +2,93 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4741EC83F01
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C119C83F1A
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241020AbjH3Sqq (ORCPT
+        id S241115AbjH3Squ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:46:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56298 "EHLO
+        Wed, 30 Aug 2023 14:46:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245732AbjH3QF2 (ORCPT
+        with ESMTP id S1343812AbjH3RFJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Aug 2023 12:05:28 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC33F19A
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 09:05:24 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-5922b96c5fcso65438867b3.0
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 09:05:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1693411524; x=1694016324; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6wWR6vPSewXdystMdP/BcryutnZfkXis7EkLLpd/jjA=;
-        b=NwNavoqzJ5tpUrXjnFg7a3TCF4E3SA9elR+qNrZAESoUsfJCPgJhzrzOoMgligrHwB
-         xzxcBVgBJk7cLVmjncAd/tnnL9DtjiOhkl20TJ6kYxDoDvYmVuKOv8YXLne1f2oHEBRr
-         fucWKR2NB93ZCuuL8yx0qBxBOiaqy3o7VIRCQK8aALyxKIbVs3aV6/6gOOhB0A8G2CfQ
-         NAyiBYsmOHGt5009CAvnI6lF/vWxL1iZyA11/I7ykAoS7/yuB4DiPzmlCJ4Sm1+b2g0A
-         vrq8vly6AAs1PEOWVLLEAr4ms78A8pn0TSAMEyrkV9eq2vQf2DZEGBhyy/yEsUj6/w67
-         pT+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693411524; x=1694016324;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6wWR6vPSewXdystMdP/BcryutnZfkXis7EkLLpd/jjA=;
-        b=RxjzMM0YRnqDK7skHCb1DSi7w5dRgn7zdoEvHSh1wfpUquQ1NecKr5/MRbKwJxCq+P
-         LOIvnH+5oYpdcN8NZEd/9ORIZ7AiAYz5AE0zRD+Hs0jmBTsUCtZSW2wXJtrKPv36AskD
-         qIp3CVkIEjWFAuRgbYwSgrp5lZigJhctLzSHEIJroJOwRdzLwwGwcm/sbhmHwyrk6CYO
-         cv2qIvQ9UlGYqc3L4Ght/tHtGr93HXbkNoixRiJyxVYIZ27sf/v73v2a4L7Uh+YYM9UY
-         mOHXAMXmzGHOUNxvKMMYa2pOta7dFbbdWXNe9hGh/8jZoILG5E5/8JLutjkA+/3Spts5
-         /PJw==
-X-Gm-Message-State: AOJu0YzpSUf/q0jLriqBRac34aYeTp56uIWrXSxF+yUPbVTHANz55HP/
-        9pS37787cooL4t2pMmOkRndb9HIJieKS6UEM7WEhpmoybn4oBhpvCw==
-X-Google-Smtp-Source: AGHT+IG6O2vD9Ui9R6aID4YcLbGDbyy3BOVdDWgdUShKy6tkG2weeuIdcj1Dzsn85ebN3Q5Fbo4k8brbkjhEGBtNmqQ=
-X-Received: by 2002:a0d:e483:0:b0:595:2de4:c991 with SMTP id
- n125-20020a0de483000000b005952de4c991mr2549978ywe.29.1693411523984; Wed, 30
- Aug 2023 09:05:23 -0700 (PDT)
+        Wed, 30 Aug 2023 13:05:09 -0400
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D94391A1
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 10:05:05 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RbVz407CRzMqBgm;
+        Wed, 30 Aug 2023 17:05:04 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RbVz343D9zMpp9q;
+        Wed, 30 Aug 2023 19:05:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1693415103;
+        bh=wQ8zlZUErtY4oxJgQA7X3pCQwgl+/9+Lou2t/f0PtGw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AyXUHpHh8v3MXsVgrb3g2LZ+YZX6JcfC6wbVq5fbt0122k2w7Ftmd6O2EWCmd17DS
+         lZvDM9s0Ju+rihmQbsxuhVpKc1S/t5nrJRN3E6gCOkI2D+TZY1i8623/zvWpllINuo
+         LUzX6s+8d7+vcGDOmyBY1Gdg8geGYrdl1YyYavKQ=
+Date:   Wed, 30 Aug 2023 19:04:59 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     Ding Xiang <dingxiang@cmss.chinamobile.com>
+Cc:     shuah@kernel.org, linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] selftests/landlock: Fix a resource leak
+Message-ID: <20230830.paiqu8Caew1X@digikod.net>
+References: <20230830101148.3738-1-dingxiang@cmss.chinamobile.com>
 MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 30 Aug 2023 12:05:13 -0400
-Message-ID: <CAHC9VhQr2cpes2W0oWa8OENPFAgFKyGZQu3_m7-hjEdib_3s3Q@mail.gmail.com>
-Subject: LSM hook ordering in shmem_mknod() and shmem_tmpfile()?
-To:     linux-mm@kvack.org, linux-security-module@vger.kernel.org
-Cc:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230830101148.3738-1-dingxiang@cmss.chinamobile.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello all,
+Applied to my next tree. Thanks!
 
-While looking at some recent changes in mm/shmem.c I noticed that the
-ordering between simple_acl_create() and
-security_inode_init_security() is different between shmem_mknod() and
-shmem_tmpfile().  In shmem_mknod() the ACL call comes before the LSM
-hook, and in shmem_tmpfile() the LSM call comes before the ACL call.
-
-Perhaps this is correct, but it seemed a little odd to me so I wanted
-to check with all of you to make sure there is a good reason for the
-difference between the two functions.  Looking back to when
-shmem_tmpfile() was created ~2013 I don't see any explicit mention as
-to why the ordering is different so I'm looking for a bit of a sanity
-check to see if I'm missing something obvious.
-
-My initial thinking this morning is that the
-security_inode_init_security() call should come before
-simple_acl_create() in both cases, but I'm open to different opinions
-on this.
-
--- 
-paul-moore.com
+On Wed, Aug 30, 2023 at 06:11:48PM +0800, Ding Xiang wrote:
+> The opened file should be closed before return,
+> otherwise resource leak will occur
+> 
+> Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+> ---
+>  tools/testing/selftests/landlock/fs_test.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index 83d565569512..251594306d40 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -113,7 +113,7 @@ static bool supports_filesystem(const char *const filesystem)
+>  {
+>  	char str[32];
+>  	int len;
+> -	bool res;
+> +	bool res = true;
+>  	FILE *const inf = fopen("/proc/filesystems", "r");
+>  
+>  	/*
+> @@ -125,14 +125,16 @@ static bool supports_filesystem(const char *const filesystem)
+>  
+>  	/* filesystem can be null for bind mounts. */
+>  	if (!filesystem)
+> -		return true;
+> +		goto out;
+>  
+>  	len = snprintf(str, sizeof(str), "nodev\t%s\n", filesystem);
+>  	if (len >= sizeof(str))
+>  		/* Ignores too-long filesystem names. */
+> -		return true;
+> +		goto out;
+>  
+>  	res = fgrep(inf, str);
+> +
+> +out:
+>  	fclose(inf);
+>  	return res;
+>  }
+> -- 
+> 2.38.1
+> 
+> 
+> 
