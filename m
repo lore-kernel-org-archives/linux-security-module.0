@@ -2,80 +2,179 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22783C83F19
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Aug 2023 06:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDACC83F1D
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237734AbjH3GMh (ORCPT
+        id S243181AbjH3Sqa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Aug 2023 02:12:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36220 "EHLO
+        Wed, 30 Aug 2023 14:46:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240021AbjH3GMS (ORCPT
+        with ESMTP id S1343762AbjH3Qo5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Aug 2023 02:12:18 -0400
-X-Greylist: delayed 187 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 29 Aug 2023 23:12:12 PDT
-Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E1EBBCCB;
-        Tue, 29 Aug 2023 23:12:12 -0700 (PDT)
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from spf.mail.chinamobile.com (unknown[10.188.0.87])
-        by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee664eedcfb838-f1cb1;
-        Wed, 30 Aug 2023 14:08:59 +0800 (CST)
-X-RM-TRANSID: 2ee664eedcfb838-f1cb1
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost.localdomain.localdomain (unknown[10.54.5.255])
-        by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea64eedcfad0a-0607d;
-        Wed, 30 Aug 2023 14:08:59 +0800 (CST)
-X-RM-TRANSID: 2eea64eedcfad0a-0607d
-From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
-To:     shuah@kernel.org, mic@digikod.net
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/landlock: Fix a resource leak
-Date:   Wed, 30 Aug 2023 14:08:58 +0800
-Message-Id: <20230830060858.2841-1-dingxiang@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.38.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 30 Aug 2023 12:44:57 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E832C1A4
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 09:44:53 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-58fc7afa4beso81751577b3.2
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 09:44:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1693413893; x=1694018693; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Q7U5WETyc0Qx792+SyKBjLV43d3DHT0ObMpMrFVoeXw=;
+        b=Vrqu6jdVSxGa28aE1migk5YVHh9PHn+K3BQigSsynTqZy+1FdBGBQl1nQH4In9WVRs
+         KF+yQOaHMyhG/7vylvJ5xFxpXhxbdaWq++yLYUP/fN2VQ82tBRyWoQyVgRPj/MMHCpZe
+         jO+0V9PUab495XMFnTawLOr1RRUfzotX6k9V6ER1+dm9TYtelUtxG92oglhZ+G48OHTA
+         bw77cd5ga08rV8S2iervR+8tUMuXpINKvMhop7uskl+N/C/qylZpwCA4vMTQyd1AjsSG
+         0geLp1xw/hWTZsN/r98ZAoO7y0K3ubKpSdpRpvOm2LmVQAtpWFwGs0HAi3r6ak9bzn/q
+         y+rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693413893; x=1694018693;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q7U5WETyc0Qx792+SyKBjLV43d3DHT0ObMpMrFVoeXw=;
+        b=fwXe5VaqsWvstp8elbBWfHiaLeR95k3bpUO/ZYxaDUN032r/Fw04eIL+2hm+WNjSHh
+         20t9Q3dRtBqA06hkl5Gut8KU/OLYC6d6Sr+Hd40IZ2ki4KLpBEE3mKFrXfgDjWe7n3Fp
+         RGCGG/OxICWAh/xjrQoJd1E1FeBbV88gTTD2S08e1mmbD83ia7hDoqOBOU9DEVj+st3h
+         vsTmbwF65l//cFq+qG3NQRt0eESIt9k0sdyUBs+bnvZ/kQBwEZFlCwjW4Gj8k46OkwOF
+         IdcdA7saiKJHt+Teh+9Qv6kI9OcXSC9LzOxp60uHbWzKAzeVKOGpUtSiRHI4rLZ4vYrn
+         wOqw==
+X-Gm-Message-State: AOJu0YzW/j2D3Zsd8Bi6bFEu8qWaU/S+VTfr7aj/IIM2ccVwyzQNQ21T
+        ZGkAcVQDsjkzo2eEyEcK46sWcgsNgNww/FNNbw==
+X-Google-Smtp-Source: AGHT+IHtp9pD/5ci3MqPyr+0sXpcwrOb70482adH4y9FFBhT1onMN4Y2Yo7VfYMaFeFIQUgnoauWykiqo7sAzbNhxQ==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
+ (user=ackerleytng job=sendgmr) by 2002:a81:eb0b:0:b0:57a:793:7fb0 with SMTP
+ id n11-20020a81eb0b000000b0057a07937fb0mr78438ywm.3.1693413893177; Wed, 30
+ Aug 2023 09:44:53 -0700 (PDT)
+Date:   Wed, 30 Aug 2023 16:44:51 +0000
+In-Reply-To: <30ffe039-c9e2-b996-500d-5e11bf6ea789@linux.intel.com> (message
+ from Binbin Wu on Wed, 30 Aug 2023 23:12:19 +0800)
+Mime-Version: 1.0
+Message-ID: <diqz5y4wfpj0.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From:   Ackerley Tng <ackerleytng@google.com>
+To:     Binbin Wu <binbin.wu@linux.intel.com>
+Cc:     seanjc@google.com, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com, maz@kernel.org,
+        oliver.upton@linux.dev, chenhuacai@kernel.org, mpe@ellerman.id.au,
+        anup@brainfault.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, willy@infradead.org,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, chao.p.peng@linux.intel.com, tabba@google.com,
+        jarkko@kernel.org, yu.c.zhang@linux.intel.com,
+        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
+        david@redhat.com, qperret@google.com, michael.roth@amd.com,
+        wei.w.wang@intel.com, liam.merwick@oracle.com,
+        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The opened file should be closed before return,
-otherwise resource leak will occur
+Binbin Wu <binbin.wu@linux.intel.com> writes:
 
-Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
----
- tools/testing/selftests/landlock/fs_test.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+>> <snip>
+>>
+>> +static long kvm_gmem_allocate(struct inode *inode, loff_t offset, loff_t len)
+>> +{
+>> +	struct address_space *mapping = inode->i_mapping;
+>> +	pgoff_t start, index, end;
+>> +	int r;
+>> +
+>> +	/* Dedicated guest is immutable by default. */
+>> +	if (offset + len > i_size_read(inode))
+>> +		return -EINVAL;
+>> +
+>> +	filemap_invalidate_lock_shared(mapping);
+>> +
+>> +	start = offset >> PAGE_SHIFT;
+>> +	end = (offset + len) >> PAGE_SHIFT;
+>> +
+>> +	r = 0;
+>> +	for (index = start; index < end; ) {
+>> +		struct folio *folio;
+>> +
+>> +		if (signal_pending(current)) {
+>> +			r = -EINTR;
+>> +			break;
+>> +		}
+>> +
+>> +		folio = kvm_gmem_get_folio(inode, index);
+>> +		if (!folio) {
+>> +			r = -ENOMEM;
+>> +			break;
+>> +		}
+>> +
+>> +		index = folio_next_index(folio);
+>> +
+>> +		folio_unlock(folio);
+>> +		folio_put(folio);
+> May be a dumb question, why we get the folio and then put it immediately?
+> Will it make the folio be released back to the page allocator?
+>
 
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 83d565569512..687a66ea9799 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -124,13 +124,17 @@ static bool supports_filesystem(const char *const filesystem)
- 		return true;
- 
- 	/* filesystem can be null for bind mounts. */
--	if (!filesystem)
-+	if (!filesystem) {
-+		fclose(inf);
- 		return true;
-+	}
- 
- 	len = snprintf(str, sizeof(str), "nodev\t%s\n", filesystem);
--	if (len >= sizeof(str))
-+	if (len >= sizeof(str)) {
-+		fclose(inf);
- 		/* Ignores too-long filesystem names. */
- 		return true;
-+	}
- 
- 	res = fgrep(inf, str);
- 	fclose(inf);
--- 
-2.38.1
+I was wondering this too, but it is correct.
 
+In filemap_grab_folio(), the refcount is incremented in three places:
 
++ When the folio is created in filemap_alloc_folio(), it is given a
+  refcount of 1 in
 
+    filemap_alloc_folio() -> folio_alloc() -> __folio_alloc_node() ->
+    __folio_alloc() -> __alloc_pages() -> get_page_from_freelist() ->
+    prep_new_page() -> post_alloc_hook() -> set_page_refcounted()
+
++ Then, in filemap_add_folio(), the refcount is incremented twice:
+
+    + The first is from the filemap (1 refcount per page if this is a
+      hugepage):
+
+        filemap_add_folio() -> __filemap_add_folio() -> folio_ref_add()
+
+    + The second is a refcount from the lru list
+
+        filemap_add_folio() -> folio_add_lru() -> folio_get() ->
+        folio_ref_inc()
+
+In the other path, if the folio exists in the page cache (filemap), the
+refcount is also incremented through
+
+    filemap_grab_folio() -> __filemap_get_folio() -> filemap_get_entry()
+    -> folio_try_get_rcu()
+
+I believe all the branches in kvm_gmem_get_folio() are taking a refcount
+on the folio while the kernel does some work on the folio like clearing
+the folio in clear_highpage() or getting the next index, and then when
+done, the kernel does folio_put().
+
+This pattern is also used in shmem and hugetlb. :)
+
+I'm not sure whose refcount the folio_put() in kvm_gmem_allocate() is
+dropping though:
+
++ The refcount for the filemap depends on whether this is a hugepage or
+  not, but folio_put() strictly drops a refcount of 1.
++ The refcount for the lru list is just 1, but doesn't the page still
+  remain in the lru list?
+
+>> +
+>> +		/* 64-bit only, wrapping the index should be impossible. */
+>> +		if (WARN_ON_ONCE(!index))
+>> +			break;
+>> +
+>> +		cond_resched();
+>> +	}
+>> +
+>> +	filemap_invalidate_unlock_shared(mapping);
+>> +
+>> +	return r;
+>> +}
+>> +
+>>
+>> <snip>
