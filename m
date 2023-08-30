@@ -2,128 +2,87 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7E5C6FA8F
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 933F7C6FA8F
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241838AbjH3Sq4 convert rfc822-to-8bit (ORCPT
+        id S240511AbjH3Sq6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:46:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32776 "EHLO
+        Wed, 30 Aug 2023 14:46:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242764AbjH3JcT (ORCPT
+        with ESMTP id S243156AbjH3KMJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Aug 2023 05:32:19 -0400
-Received: from frasgout12.his.huawei.com (unknown [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73DF31A1;
-        Wed, 30 Aug 2023 02:32:16 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4RbJc43j53z9xFb1;
-        Wed, 30 Aug 2023 17:17:56 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwBH+rl6DO9kg7vMAQ--.28846S2;
-        Wed, 30 Aug 2023 10:31:51 +0100 (CET)
-Message-ID: <9d482f25475a9d9bc0c93a8cbaf8bd4bb67d2cd6.camel@huaweicloud.com>
-Subject: Re: [PATCH 15/28] security: Introduce inode_post_removexattr hook
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     brauner@kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk,
-        chuck.lever@oracle.com, jlayton@kernel.org,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Wed, 30 Aug 2023 11:31:35 +0200
-In-Reply-To: <f5a61c0f09c1b8d8aaeb99ad7ba4aab15818c5ed.camel@linux.ibm.com>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
-         <20230303181842.1087717-16-roberto.sassu@huaweicloud.com>
-         <f5a61c0f09c1b8d8aaeb99ad7ba4aab15818c5ed.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Wed, 30 Aug 2023 06:12:09 -0400
+Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 430AA1B0;
+        Wed, 30 Aug 2023 03:12:02 -0700 (PDT)
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from spf.mail.chinamobile.com (unknown[10.188.0.87])
+        by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee864ef15e544e-f48f4;
+        Wed, 30 Aug 2023 18:11:49 +0800 (CST)
+X-RM-TRANSID: 2ee864ef15e544e-f48f4
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost.localdomain.localdomain (unknown[10.54.5.255])
+        by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee764ef15e4dc8-0b662;
+        Wed, 30 Aug 2023 18:11:49 +0800 (CST)
+X-RM-TRANSID: 2ee764ef15e4dc8-0b662
+From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
+To:     shuah@kernel.org, mic@digikod.net
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1] selftests/landlock: Fix a resource leak
+Date:   Wed, 30 Aug 2023 18:11:48 +0800
+Message-Id: <20230830101148.3738-1-dingxiang@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-X-CM-TRANSID: LxC2BwBH+rl6DO9kg7vMAQ--.28846S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1DuFW3ur4ftrWxGr1xXwb_yoW8uFy8pF
-        s8t3ZxCF4rXr17Kr93ta1Du39agw4rGrWUJ3y2gw1jvFn7twn2qFWUKr15CFyrurW0gFyq
-        qF9Igr95Cr15ZaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj5NN2wAAs0
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2023-03-08 at 10:43 -0500, Mimi Zohar wrote:
-> Hi Roberto,
-> 
-> On Fri, 2023-03-03 at 19:18 +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> > the inode_post_removexattr hook.
-> > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  fs/xattr.c                    |  1 +
-> >  include/linux/lsm_hook_defs.h |  2 ++
-> >  include/linux/security.h      |  5 +++++
-> >  security/security.c           | 14 ++++++++++++++
-> >  4 files changed, 22 insertions(+)
-> > 
-> > diff --git a/fs/xattr.c b/fs/xattr.c
-> > index 14a7eb3c8fa..10c959d9fc6 100644
-> > --- a/fs/xattr.c
-> > +++ b/fs/xattr.c
-> > @@ -534,6 +534,7 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
-> >  
-> >  	if (!error) {
-> >  		fsnotify_xattr(dentry);
-> > +		security_inode_post_removexattr(dentry, name);
-> >  		evm_inode_post_removexattr(dentry, name);
-> >  	}
-> 
-> Nothing wrong with this, but other places in this function test "if
-> (error) goto ...".   Perhaps it is time to clean this up.
-> 
-> >  
-> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> > index eedefbcdde3..2ae5224d967 100644
-> > --- a/include/linux/lsm_hook_defs.h
-> > +++ b/include/linux/lsm_hook_defs.h
-> > @@ -147,6 +147,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
-> >  LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
-> >  LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
-> >  	 struct dentry *dentry, const char *name)
-> > +LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
-> > +	 const char *name)
-> 
-> @Christian should the security_inode_removexattr() and
-> security_inode_post_removexattr() arguments be the same?
+The opened file should be closed before return,
+otherwise resource leak will occur
 
-Probably this got lost.
+Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+---
+ tools/testing/selftests/landlock/fs_test.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Christian, should security_inode_post_removexattr() have the idmap
-parameter as well?
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index 83d565569512..251594306d40 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -113,7 +113,7 @@ static bool supports_filesystem(const char *const filesystem)
+ {
+ 	char str[32];
+ 	int len;
+-	bool res;
++	bool res = true;
+ 	FILE *const inf = fopen("/proc/filesystems", "r");
+ 
+ 	/*
+@@ -125,14 +125,16 @@ static bool supports_filesystem(const char *const filesystem)
+ 
+ 	/* filesystem can be null for bind mounts. */
+ 	if (!filesystem)
+-		return true;
++		goto out;
+ 
+ 	len = snprintf(str, sizeof(str), "nodev\t%s\n", filesystem);
+ 	if (len >= sizeof(str))
+ 		/* Ignores too-long filesystem names. */
+-		return true;
++		goto out;
+ 
+ 	res = fgrep(inf, str);
++
++out:
+ 	fclose(inf);
+ 	return res;
+ }
+-- 
+2.38.1
 
-Thanks
 
-Roberto
-
-> >  LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
-> >  	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
-> >  LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
-> 
 
