@@ -2,97 +2,82 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A145C83F17
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4741EC83F01
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240740AbjH3Sqk (ORCPT
+        id S241020AbjH3Sqq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:46:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48012 "EHLO
+        Wed, 30 Aug 2023 14:46:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343609AbjH3QO2 (ORCPT
+        with ESMTP id S245732AbjH3QF2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Aug 2023 12:14:28 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D26251A3
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 09:14:23 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-99c3c8adb27so728230166b.1
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 09:14:23 -0700 (PDT)
+        Wed, 30 Aug 2023 12:05:28 -0400
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC33F19A
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 09:05:24 -0700 (PDT)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-5922b96c5fcso65438867b3.0
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 09:05:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1693412062; x=1694016862; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=J+IbjS4hQ1xrZMoTCi3gEShIbmawdzOCZjpHyuEsjwE=;
-        b=Gnl7aNzYPtrmKPd2soG+AnuedyHsV2D6aANBFj+BUNr8B2CVnLSa/KzP4KnFrXWXbf
-         Z+EvRqCVV8h5nV0fAfnHXwovd3gIxFK5nzgV8k4/DTh+HBtLMR7xYpbO1MsjfoqYT4EX
-         ooJGRfidtAMiAXmB9L5UaRJBhTFbI7ttviMCA=
+        d=paul-moore.com; s=google; t=1693411524; x=1694016324; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6wWR6vPSewXdystMdP/BcryutnZfkXis7EkLLpd/jjA=;
+        b=NwNavoqzJ5tpUrXjnFg7a3TCF4E3SA9elR+qNrZAESoUsfJCPgJhzrzOoMgligrHwB
+         xzxcBVgBJk7cLVmjncAd/tnnL9DtjiOhkl20TJ6kYxDoDvYmVuKOv8YXLne1f2oHEBRr
+         fucWKR2NB93ZCuuL8yx0qBxBOiaqy3o7VIRCQK8aALyxKIbVs3aV6/6gOOhB0A8G2CfQ
+         NAyiBYsmOHGt5009CAvnI6lF/vWxL1iZyA11/I7ykAoS7/yuB4DiPzmlCJ4Sm1+b2g0A
+         vrq8vly6AAs1PEOWVLLEAr4ms78A8pn0TSAMEyrkV9eq2vQf2DZEGBhyy/yEsUj6/w67
+         pT+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693412062; x=1694016862;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J+IbjS4hQ1xrZMoTCi3gEShIbmawdzOCZjpHyuEsjwE=;
-        b=aax2KiUYw1Cc+Hjrs5rFubAGopxhI6t5q/AXYaEC9WfVSNz7BLQeaqLsLPGD5WlhyQ
-         aeuENvzHPhAx0X+Hwj9gcthHjNxgBVBjdoLAsZgVmcO+l8sjX+7ayN+NueECnLHxWKbp
-         r6TPVp7BXTdXb2fb0zEjKdV6p1xFa455D8+Qmo0Bj0fEAgF/eYUD9epfRi2q5PEL/AQg
-         T5UwquZ41gosQ+Qf/uGvBNL05gaAGbJHl50gXIAWhgqFXGLF9ljoVBl48nIi3hV373YP
-         N26QkehazHojfuD5qMMEZcD3ezV1zcu7461r+lxB4NCYSvcY5JbRPtekMm+7wGGfzrO+
-         6WLg==
-X-Gm-Message-State: AOJu0YwatrXW/6eHA0f6152x44GVcB6oYbUWOB7lFeXlZAXaSRA6dVeI
-        gAJ5q0fE710hLgTPQEjHmvyvuzPAipbVZKhu96kQmZr1
-X-Google-Smtp-Source: AGHT+IFAxqHiNTODZT7nWjgq4UF+3/RzJbMMCzXx6gC6zmuQnyxmnNXrw9vcluVCBE9BzWqFAEDg/A==
-X-Received: by 2002:a17:906:2d9:b0:9a1:d79a:4193 with SMTP id 25-20020a17090602d900b009a1d79a4193mr2086317ejk.23.1693412061941;
-        Wed, 30 Aug 2023 09:14:21 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id w26-20020a1709064a1a00b009786c8249d6sm7457464eju.175.2023.08.30.09.14.21
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Aug 2023 09:14:21 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-52a49a42353so7889449a12.2
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 09:14:21 -0700 (PDT)
-X-Received: by 2002:a17:906:518e:b0:99e:1201:48bc with SMTP id
- y14-20020a170906518e00b0099e120148bcmr2002148ejk.64.1693412060814; Wed, 30
- Aug 2023 09:14:20 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1693411524; x=1694016324;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6wWR6vPSewXdystMdP/BcryutnZfkXis7EkLLpd/jjA=;
+        b=RxjzMM0YRnqDK7skHCb1DSi7w5dRgn7zdoEvHSh1wfpUquQ1NecKr5/MRbKwJxCq+P
+         LOIvnH+5oYpdcN8NZEd/9ORIZ7AiAYz5AE0zRD+Hs0jmBTsUCtZSW2wXJtrKPv36AskD
+         qIp3CVkIEjWFAuRgbYwSgrp5lZigJhctLzSHEIJroJOwRdzLwwGwcm/sbhmHwyrk6CYO
+         cv2qIvQ9UlGYqc3L4Ght/tHtGr93HXbkNoixRiJyxVYIZ27sf/v73v2a4L7Uh+YYM9UY
+         mOHXAMXmzGHOUNxvKMMYa2pOta7dFbbdWXNe9hGh/8jZoILG5E5/8JLutjkA+/3Spts5
+         /PJw==
+X-Gm-Message-State: AOJu0YzpSUf/q0jLriqBRac34aYeTp56uIWrXSxF+yUPbVTHANz55HP/
+        9pS37787cooL4t2pMmOkRndb9HIJieKS6UEM7WEhpmoybn4oBhpvCw==
+X-Google-Smtp-Source: AGHT+IG6O2vD9Ui9R6aID4YcLbGDbyy3BOVdDWgdUShKy6tkG2weeuIdcj1Dzsn85ebN3Q5Fbo4k8brbkjhEGBtNmqQ=
+X-Received: by 2002:a0d:e483:0:b0:595:2de4:c991 with SMTP id
+ n125-20020a0de483000000b005952de4c991mr2549978ywe.29.1693411523984; Wed, 30
+ Aug 2023 09:05:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHC9VhQQqQCdcSdb7G8v1ZHU8zn0XJZ6hS0rbGufAuZyPSCDCA@mail.gmail.com>
-In-Reply-To: <CAHC9VhQQqQCdcSdb7G8v1ZHU8zn0XJZ6hS0rbGufAuZyPSCDCA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 30 Aug 2023 09:14:03 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgvT9yJT+QwWHArnO7c64_g3kXzMi5xr7j-a55kZAdGhg@mail.gmail.com>
-Message-ID: <CAHk-=wgvT9yJT+QwWHArnO7c64_g3kXzMi5xr7j-a55kZAdGhg@mail.gmail.com>
-Subject: Re: [GIT PULL] LSM patches for v6.6
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 30 Aug 2023 12:05:13 -0400
+Message-ID: <CAHC9VhQr2cpes2W0oWa8OENPFAgFKyGZQu3_m7-hjEdib_3s3Q@mail.gmail.com>
+Subject: LSM hook ordering in shmem_mknod() and shmem_tmpfile()?
+To:     linux-mm@kvack.org, linux-security-module@vger.kernel.org
+Cc:     Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 29 Aug 2023 at 16:37, Paul Moore <paul@paul-moore.com> wrote:
->
-> Ten LSM patches for the Linux v6.6 merge window, and while most of
-> them are fairly minor, there is at least one merge conflict involving
-> security_sk_classify_flow() in security/security.c; it looks like a
-> netdev constification patch collided with a LSM documentation patch,
-> thankfully the solution is relatively simple but if for some odd
-> reason you need a respin let me know.
+Hello all,
 
-Oh, no, trivial things like these are truly not a problem at all.
+While looking at some recent changes in mm/shmem.c I noticed that the
+ordering between simple_acl_create() and
+security_inode_init_security() is different between shmem_mknod() and
+shmem_tmpfile().  In shmem_mknod() the ACL call comes before the LSM
+hook, and in shmem_tmpfile() the LSM call comes before the ACL call.
 
-The only time I may ask people to help with the resolution (or, more
-commonly, ask them to just double-check what I did) is when there is
-an actual and subtle code conflict where the code in question has been
-re-organized a lot, and both sides did something fairly involved, and
-the end result isn't really obvious.
+Perhaps this is correct, but it seemed a little odd to me so I wanted
+to check with all of you to make sure there is a good reason for the
+difference between the two functions.  Looking back to when
+shmem_tmpfile() was created ~2013 I don't see any explicit mention as
+to why the ordering is different so I'm looking for a bit of a sanity
+check to see if I'm missing something obvious.
 
-For something like this, I do ask for it to be noted in the pull
-request - exactly like  you did - but even that is mainly so that
+My initial thinking this morning is that the
+security_inode_init_security() call should come before
+simple_acl_create() in both cases, but I'm open to different opinions
+on this.
 
- (a) I don't get surprised when I do the pull and see that I need to
-resolve something, and
-
- (b) to give me the warm and fuzzies that the maintainers in question
-have actually noticed and followed up on the reports from linux-next.
-
-So absolutely no need for any re-spin, and you did the right thing. Thanks,
-
-                      Linus
+-- 
+paul-moore.com
