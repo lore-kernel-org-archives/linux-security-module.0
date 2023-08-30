@@ -2,116 +2,110 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C15C83F14
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Aug 2023 21:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D78EC83F14
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Aug 2023 21:11:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240717AbjH3VCo (ORCPT
+        id S231635AbjH3VLv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Aug 2023 17:02:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51200 "EHLO
+        Wed, 30 Aug 2023 17:11:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240763AbjH3VCn (ORCPT
+        with ESMTP id S240686AbjH3VLu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Aug 2023 17:02:43 -0400
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EB87E47
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 14:02:07 -0700 (PDT)
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-56a55c0f8b1so191921a12.0
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Aug 2023 14:02:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1693429195; x=1694033995; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ssuGzZWwIiUWbDzTGLwSAE+t2YPIoJ48hSVHvjVyTrQ=;
-        b=OJOLrxg2sJMMfeZj0gi7wb/gh8RcvZrEgXr9WWeBjQ7zSiKnAkWVg/lw2JhYUUZZ3M
-         f1SZ4CnhIQD/ljKU97Fpj0569yVN8nnoFfdh/XLjROzRi1f/iSUJdXc8Lo3cy3Q1BgiD
-         C7vJ5dtLWaQOAPs66H98fBwBmhWugltz8eWMRhHCCj+4roHMIr3oUHDKE486FLce5IsC
-         psNui3lI7DE12tosc7OZFaaBaoSavXRpF8OKxSleZXAZ4e8OAiV9Cf0AkpzUAc7mWvx+
-         bYb7MaQUnXkvh+r8LMlCcV6JQEiypCWpkFFv7078OWog6nAKNpebs+qsNC+0MHRbHTxf
-         5e4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693429195; x=1694033995;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ssuGzZWwIiUWbDzTGLwSAE+t2YPIoJ48hSVHvjVyTrQ=;
-        b=l1hrrNmPfIOrlKHDSY5w7II+dRTREGFPkeJ0eWfTAEzGucokeGeVqz+xz2JZMZ/+25
-         uFGN7J6ftj2h6hWIXfVxMU+y8t9Ge+a0jBzL7RtkCXYjQY10MVF5Fv10lIETw3gvb2Fe
-         vYuaUK2zUGAaJ5OdTLV4X9AkDAY5y9xJaoSrRbscqGsiJSQ2o7CfJChLaqRb1nUPZh6L
-         cfS20R5YXA743/WnVBPBGz8LKwp4J/RTsnVyv6v/mtP2+XG0PxHmeXpsIZVrCHPAiUMY
-         22xjDHbbHod8E4vQgj+mC24Lr0yOSrCJKOSqiI/cFA4LsbbMJ5BDrNiS54cHjWEfTf3g
-         AS6w==
-X-Gm-Message-State: AOJu0YzASZ+B8CIj9JPi8XIbodfiZWA5ijRFQgVEe7tApGAKqphcKb5G
-        YEb64mugZF2us/qGu2euTPThL+37zezTizRSN0xb2jP/8LPBi0Jz9g==
-X-Google-Smtp-Source: AGHT+IHDRYogg+GkQ5vRG7NJp8ux1iBN2Yw6FJC8DSmoHEs6dPTAHHn7AHBZfxkPF4xTpQ/AfDZfr3Fo/8jD1GOCr/k=
-X-Received: by 2002:a0d:f747:0:b0:595:80e4:907d with SMTP id
- h68-20020a0df747000000b0059580e4907dmr3028540ywf.32.1693428471675; Wed, 30
- Aug 2023 13:47:51 -0700 (PDT)
+        Wed, 30 Aug 2023 17:11:50 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09270E57;
+        Wed, 30 Aug 2023 14:11:15 -0700 (PDT)
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37UJ7RJQ025365;
+        Wed, 30 Aug 2023 19:12:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=nsWoYyWcb5D+Vc8qBgf5Yn3B+5VG4LYGM1UuJXlgJrE=;
+ b=MzGxKElHrjv36Kuqq8oENZk+2iWe/ZDZiJ/h6CDdCzqEawzE1slJjKiyFLIVLn6fvb4w
+ y7UbM5s835OnQR9HSBv9Tpt3rLdU4lYGbFdbIpfl5FBAIY3CtDEDyZWWl9KchPUj/X9r
+ /UfCSGVn9O4yXd+KCimXmGpWty2OOqY54rqofARiU/BqtMOF9OMaExvIjKEMWTzX3LDr
+ 5BE3U/z93gqTOTDgMTu4QZShLilayW2NMrhOM6RxWWzl9yJqA+B1wx+uDaJfg0J8VZRz
+ HCyPshNUcafAlfBT9xlzZx/oxE7XxgYVc9AKdZ9WrpXsY4JSUQzC07y1y+RcjxM/gxN4 Sw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3stakf9maj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Aug 2023 19:12:43 +0000
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 37UJ8SWQ032384;
+        Wed, 30 Aug 2023 19:12:42 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3stakf9mab-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Aug 2023 19:12:42 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37UH8WTd019171;
+        Wed, 30 Aug 2023 19:12:41 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+        by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3sqxe1wsyx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Aug 2023 19:12:41 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+        by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37UJCecF5571312
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Aug 2023 19:12:41 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B9C7F58054;
+        Wed, 30 Aug 2023 19:12:40 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3C40758045;
+        Wed, 30 Aug 2023 19:12:39 +0000 (GMT)
+Received: from [9.67.11.225] (unknown [9.67.11.225])
+        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 30 Aug 2023 19:12:39 +0000 (GMT)
+Message-ID: <1ef45099-da24-b73f-b33f-6a299c0b1696@linux.ibm.com>
+Date:   Wed, 30 Aug 2023 15:12:39 -0400
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [RFC] IMA Log Snapshotting Design Proposal - unseal
+Content-Language: en-US
+To:     Sush Shringarputale <sushring@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, bhe@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com, kexec@lists.infradead.org,
+        jmorris@namei.org, Paul Moore <paul@paul-moore.com>,
+        serge@hallyn.com
+Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        linux-security-module@vger.kernel.org
 References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
- <277db5491460d5fd607785f2bcc733de39022a35.camel@linux.ibm.com>
- <bf794136-703a-0d33-e245-7e723007b5c0@linux.microsoft.com>
- <0e1511e8819b24ab8a34a7b15821f06eff688f29.camel@linux.ibm.com>
- <8bc0f024-fc12-cb32-7af0-e500948cc6db@linux.microsoft.com>
- <7e32afa2596b9d8cfdc275614575b2023cd1d673.camel@linux.ibm.com>
- <CAHC9VhSVO9t=9e9JmniXKoqqvMv42E4dVeYtQTWZ4Eih3Sfr0Q@mail.gmail.com>
- <ed16f899485cbd559f9e6d7fbe17fa0d92335c20.camel@linux.ibm.com>
- <CAHC9VhTjej-GFjvEQhnL-HWnnkvJKA_DuOA_Md1KkV24Tx5haA@mail.gmail.com>
- <077249ac2bf2cb6d34347514e921720bb0f30b66.camel@linux.ibm.com>
- <CAHC9VhTvK=sJUgCUS0H9BWWXPnj3e0XkfE-4vB3-oxyt2_Wj9w@mail.gmail.com> <930e517c724fac27f7a1a4165af51dbc37cce4a0.camel@linux.ibm.com>
-In-Reply-To: <930e517c724fac27f7a1a4165af51dbc37cce4a0.camel@linux.ibm.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 30 Aug 2023 16:47:40 -0400
-Message-ID: <CAHC9VhStr3BAzb3tyHzHVPXzzuxyXjPQ4vmi+SrJqbTWio04+Q@mail.gmail.com>
-Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Sush Shringarputale <sushring@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de,
-        jarkko@kernel.org, jgg@ziepe.ca, kgold@linux.ibm.com,
-        bhe@redhat.com, vgoyal@redhat.com, dyoung@redhat.com,
-        kexec@lists.infradead.org, jmorris@namei.org, serge@hallyn.com,
-        code@tyhicks.com, nramas@linux.microsoft.com,
-        Tushar Sugandhi <tusharsu@linux.mic>,
-        linux-security-module@vger.kernel.org,
-        AmirGoldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From:   Ken Goldman <kgold@linux.ibm.com>
+In-Reply-To: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 1AJMc18zBnZZ7vPrb1MSLrtmROyoaSmV
+X-Proofpoint-GUID: vSpjfjen1JRsAVCDdiH0La52j66-fZAA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-30_15,2023-08-29_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 phishscore=0 bulkscore=0 spamscore=0 mlxscore=0
+ adultscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
+ mlxlogscore=670 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2308100000 definitions=main-2308300172
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 30, 2023 at 4:25=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
-ote:
-> Your initial question was "what happens if the file/filesystem becomes
-> inaccessible at some point and an attestation client attempts to read
-> the entire log?".  For what reason would it be inaccessible?  For the
-> original single tmpfs file, what would make it inaccessible?
+On 8/1/2023 3:12 PM, Sush Shringarputale wrote:
 
-In your reply that I had responded to you had mentioned that the
-kernel was simply being passed a fd and taking ownership of it, the fd
-could either be a tmpfs backed file or some form of persistent storage
-as both were discussed in this thread.  I imagine a tmpfs filesystem
-could still be forcibly unmounted, resulting in problems, but I can't
-say that for certain.  However, there are definitely cases where a fd
-backed against an arbitrary filesystem could run into problems:
-storage device issues for local filesystems, networking issues for
-network filesystems, and good old fashioned user/admin intervention in
-both cases.
+> For remote attestation to work, the service will need to know how to
+>  validate the snapshot_aggregate entry in the IMA log.  It will have
+> to read the PCR values present in the template data of
+> snapshot_aggregate event in the latest IMA log, and ensure that the
+> PCR quotes align with the contents of the past UM_snapshot_file(s).
+> This will re-establish the chain of trust needed for the device to
+> pass remote attestation.  This will also maintain the ability of the
+> remote-attestation-service to seal the secrets, if the client-server
+>  use TPM unseal mechanism to attest the state of the device.
 
-> In the
-> "snapshotting" design this problem becomes a userspace issue.
+I think that seal/unseal to IMA PCRs is futile.  Since boot is
+multi-threaded, the IMA PCR is unpredictable even when valid.
 
-Yes, exactly.  Userspace is almost always going to have an easier time
-recovering from these types of errors ... or at least I believe so,
-perhaps you have a clever solution for how the kernel can handle the
-file/filesystem disappearing from under the fd?
-
-> The first sentence of the cover letter is "Depending on the IMA policy,
-> the IMA log can consume a lot of Kernel memory on the device." ...
-
-As I'm still looking for an answer to my question, let's stay focused
-on that before we start worrying too much about the phrasing of the
-design proposal that was submitted.
-
---=20
-paul-moore.com
