@@ -2,124 +2,184 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81955C83F2F
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Aug 2023 17:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 496AEEE49B0
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Aug 2023 22:29:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244279AbjHaR5I (ORCPT
+        id S1347679AbjHaW3G (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 31 Aug 2023 13:57:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40210 "EHLO
+        Thu, 31 Aug 2023 18:29:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232283AbjHaR5H (ORCPT
+        with ESMTP id S234835AbjHaW3G (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 Aug 2023 13:57:07 -0400
-Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B53E12D
-        for <linux-security-module@vger.kernel.org>; Thu, 31 Aug 2023 10:57:04 -0700 (PDT)
-Received: by mail-oi1-x230.google.com with SMTP id 5614622812f47-3a88ef9444bso666657b6e.1
-        for <linux-security-module@vger.kernel.org>; Thu, 31 Aug 2023 10:57:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1693504623; x=1694109423; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Vw7y/sATNYmg+CnDBRVlhC4jceuaKp59KaohI9L20c=;
-        b=C1kSYkie1WNwOs1kmU9bE+B3xZn4knPE9B7NbZnggBemg19WttP+NaKxYhkw/mNwUY
-         PgcSSoaALtxIFpA8BpteUWVGQ+rsQ4FNB1r8JSRPI0P2NUGlBWCEXxXleJdAWWo+Zw1C
-         hJD2vH03E+U1coICmCTdyEZLZ4q+6pe9AKXmXYmN0TSRe/7Fmy9FFyMlveMZx+i0rOHw
-         e/z8E0PduEdaMdQkZMs5zS5zgspvTphusJyJ/qAlb2NJZTmahs7uGPJsviDpKtMZ/BoV
-         /t1F+gJn8JrjAuAQMqup4QjUTvVpzULcL7EULDspbCLvztd6l/GBESXSP+5lKheS/FhD
-         r5dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693504623; x=1694109423;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9Vw7y/sATNYmg+CnDBRVlhC4jceuaKp59KaohI9L20c=;
-        b=bBu7z8vkCg+cSn0ROuLtrmhn+GASgNCk1060zBN1f2cefbz9QvMXchuolUlSXA//zi
-         wJoT65zJuGzPrl+UzuD676Fizmb1n7Jgzv7etK9tG2S7P6wOuvv1hF4tzOIwiGvGv5m+
-         S1vTOv3LnGGrbWomRsEA7LDVKb/itMu1owa2NP4Aun/pD9lHXoDpVcaQp8jUenUSCcw/
-         nKF813pgq279DZUyc2NLQOSqdUn1QCsmOFi3DqqJ34bEy+vLXSDsj/bVpvBn+WOPLd+z
-         dKrd0pRnAtZXhBLp4kHxWv4m/0u85hPVDtBr3JX7fpFNw5CeVTtNYT4rvnhVIM60Uugr
-         YIuw==
-X-Gm-Message-State: AOJu0YwEc2YvrCAaxU1aOOZsBJD290rtM56RsMXccyt2P6CvUmuGrAiY
-        gHPFiXaD+4hq6maIcAMP31Lawtob+gz16Da/uCxV
-X-Google-Smtp-Source: AGHT+IGr70igKt/tEaJygcDeix/HwaHPsscAUhwqEcG8R2uSt7r9yy6+xjVuFSLpUh3ychzJ8C8yTqcJfidLivEII/4=
-X-Received: by 2002:a05:6808:9bb:b0:3a7:2621:2daf with SMTP id
- e27-20020a05680809bb00b003a726212dafmr216996oig.42.1693504623564; Thu, 31 Aug
- 2023 10:57:03 -0700 (PDT)
+        Thu, 31 Aug 2023 18:29:06 -0400
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47F99E6F
+        for <linux-security-module@vger.kernel.org>; Thu, 31 Aug 2023 15:29:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693520942; bh=v6K6x6pP5pq2t8foyzYb/b3yS47OHliT7nnAWOYQZK4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=H/6BZuBa6IS1rMFu3lNxuwtn4aOnx9SCHth4DH0AW1bBljHZJtl6GxvSd+qwfiROjMlsUrbP+JGoZfHnYL6j/iAynL7lziAYJMGjo3KnbYceZneM8ymMcrl8ES/31CsbMzP5xVNXmroOO1TfxgaGZshvAdjQZdv/JAwpHef+5DctpgYUYam2HzjTFtRO3zfxukQawRk8iVK5o0v0QkoLVxqQE9CCxDRqgvXXi/XpVHNXEmAl0ESb8clYGLxgcUD5Is1wkbjVqfZAxShuyjLhScEdboDQov6JzOk4n76XHpqyb2veRWVsNI8fYG2CT4fFTpPsGaYsXW7je4EQhr8v6A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693520942; bh=LmnGU5ZBvK7PZ/p4LDcGtHBehYaGrUjrIRcDXkuk5Y0=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=iQxJWO6kmPZKd31AMamlpPD16Ep8ypo/r+EEe0/5ZkpbZRDSTvar9g6PNFbNkH2XbCNG4jqqjZfBmO9y39rjxixhjX6ZCtufBuQvOxZNhO2BLo+yhbLfrk+KgftlO8KjJVQzdKzO3WRfY2dfTqAEoE3DN514mIW818tPvEcWMd/5bgjNHJ1l0ABiFQv7CHNCOoUP4dzdLdY6X181+dJA2utMpmy3+R5wUUgeg6wKgfw/lNwOPZzq6sGFupNnIxNM3PfQ1OM4bQf/JuoFoSNzAjpJ1x4OtykGxa1Xm3axGoG7w7OGWN31cM8STXdPp7WIseZfzYD8YKx3fm9zK2puog==
+X-YMail-OSG: N73QA7gVM1kWM3D46sz.ItHF7ABxFA.xnYwxa7Nv_Ht2B6LeMAAtJU936IhSeR6
+ A_tOmplW2DGHS2y.JBe1s4fLk_.._XGaTuoI.mpTnQiI6BgdnSihypxgA617bLjgTFCDzUcn.HMm
+ ca8hMizqgrqqU4xJ9YaI2_Q7k2jTCv1CWSBYJZQeXwEpUlUX52igaFm0tnhvkiux8v6xRpr8sQIP
+ GqQohBp0gQiQ6GfL8rKbND4E8x5YDQb8htn68FxWhhw1jzRksXwNAM335pEyU7HS3nUrABhH5GCD
+ tYAOLC7FsYy_hdTHx0kpFfqd3tVv33PAY6JtQck.SWhftgFttzvmVpxinJ3qH_s1LQsZcMMq5LDi
+ 0FwVRQ5GvJLpVd6NXSrohHOObgnudKS7.ZZffquOH3NKtIE8JjPVDVkHi8mKqEicgNWZ2eVKIDCm
+ _iNjj68MZPrySVQqsH1r7tKwevO4jvfLb0QPm4FKDOaZa3qUE_d6vmBFxMhko2jSzNp61noY7oAr
+ E.k30Q8.mX4swJv7ysYJla9QOFbHtUQBBcyW59Jda25kQuT4EMlJHJBWOJOzXiHaHbab0AM7Duqr
+ gOm0leLAmv.o6Rg1.CIY0WGpHq2ze9KD3Y2_vClQAWXQIyMGQELk_OH2lvvKj7TuLpBeveBRvIPe
+ bMhaOdWuIToTUhFFtKLcTddO1UUwZfqGGbk_XIJb9xnv_u2hlVQr7XnxF5XKya0n_LqwfKuxuASo
+ Mbkeij9xxaLOYsXNtb3WbG2LI0zvZUU56X2HO2qQlPQtaIlB6ShOUutKP1ck0W_DMQGSmgThQ1bk
+ 2x.Ga0RyyGk0.Sg0qHK.5lMxQ16cYWifbJwDrE7cX_lcoKn7_Ckou_WIJlC6LodtaMqqEx5hozBc
+ DHFFecu2AgKiskIwqjmgeSWNdZpBP6y.USl6O6_8hQ2Y_B1KcVFRKy.wORp6tgiDxEarU2s6wRKd
+ PgonU4JLtc7WZ8vW0G3sb9Fga04a7xLhID1.Qf0n2sQWZe.FQ4HyDnyj88J2s.iN5Rt.FDt_YIp9
+ TlojaG2zMF8EOH_yZVnCIUDyH0BH_SEokxWw6.RB8NAm72trj_dprYFPCVYMQOviTjDtSULLKbuW
+ p5FqQo7gmStkrKty4P60J6EXrHlqO7sj4a.WXOE9EHHEakOCHWm8HEi4Uzo6r8eGXQ03yZP7etzW
+ 3jeTrLRTARylIkG1CbVRryHcxvSNnMiUhw6wk8NCdKXc0AxN3zh2QBuV_1psA25EL85O4cYRVFNG
+ R2HaF1y9xrEIL_TiPU5rf9xkcw.qZKhvjOxi_bvQ06E_LhCoRhrtgtGoX1p.3xFSWiNhj9yFeWmm
+ UzkQnLf5QhvKL9tj4hibNsWF_ehSXSzGZjyWqTeu8uM1irwW8lEDjadunWLR9nIcpfmQdOT9VBXI
+ 1JupBmYiFgVj1s0NDnwUtlz_G3MapE5U6._zoIMpOkGxmju3QGX0xCN9jLKRqoY9DBsnka3K4ml2
+ vBsbuRdQePlSK6_Y2lKAa1GSHBWeWZc_ygbFlq0ngXbW8HgHrm11PqNptub4Mp4MG68e2GcJ5Aml
+ Y1R8SCUG707U9thtOSkMkkhjKuEJIyoGYXDZYPlXzax_EAda84Om8IO_6VuLC6KNDN4xXDzQve27
+ HZOtjFheehhbUCsGTl4gRuM7k_qJiJKoI6r6tG3iH1T.q4ng13k7B9yFi_pD.zqzCeldN487J00Q
+ th9tSPCLgDuhW_JqT.eLvTqLq7G3JMKwtNRarwxTIveZvUR69tlObCaXh0RLRzHPA8OyxRkizesT
+ Ulfnk_5mmuQSJ7t3gFv8A.y7MJ68Zc72P_mSXGGQkbPY5sH7ziza5vh9F_Au3tH.q_1g_59zdDgT
+ 5aDSrvJoOaoT9EhHfK28eGBpJA4n5j1lkSKEefXWuCvdtrbMp7WSSvbK7oSq9AtR8pEf3P0WdQVZ
+ GI4LmjcF0f1z4BdMT8V13l20sw47mhKdyjYSdoZ0dH0DqQ0yfijjN8V_nqBBNvw.ADK2YLh26AYr
+ KR92JjMdCeXSYHdC9BnvUEQ16CI1_km1PP1qtqdbyVrUOXRMYWWnxWKurA6m7Bx6a0kKItyR62hT
+ swdDYatH_ZUO1hdmQp6Qqyj5Ce0Pzg.iMFwTINLfHclj_Gqf9rvRzts.mF.NjN.BrgOCFuLLg9mX
+ Zy2GQ2AJF1zA9c2U7eTb.TOYd5EJwl4zPBhwSdia8ieDPmoR3qQyVTkBdGW1DQQE5jlL_8FY8UmE
+ LI6Y1TL6N9IvQFCAvGDqyaVShtFZsb5rSe9y9DmZ21MbT3VHm.U2C8.u8HV0V2vFY
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: c31f14af-8255-4d6a-9539-64505abd1b35
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Thu, 31 Aug 2023 22:29:02 +0000
+Received: by hermes--production-bf1-865889d799-cgv22 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7bed110bc26c66b842d85614bd6f1485;
+          Thu, 31 Aug 2023 22:29:00 +0000 (UTC)
+Message-ID: <473b1279-5b29-9bf7-3609-6da2bd44c84b@schaufler-ca.com>
+Date:   Thu, 31 Aug 2023 15:28:55 -0700
 MIME-Version: 1.0
-References: <CAHC9VhTjej-GFjvEQhnL-HWnnkvJKA_DuOA_Md1KkV24Tx5haA@mail.gmail.com>
- <077249ac2bf2cb6d34347514e921720bb0f30b66.camel@linux.ibm.com>
- <CAHC9VhTvK=sJUgCUS0H9BWWXPnj3e0XkfE-4vB3-oxyt2_Wj9w@mail.gmail.com>
- <930e517c724fac27f7a1a4165af51dbc37cce4a0.camel@linux.ibm.com>
- <CAHC9VhStr3BAzb3tyHzHVPXzzuxyXjPQ4vmi+SrJqbTWio04+Q@mail.gmail.com>
- <2d800c3c0b6b4908843b490c36ef9df0cb4da134.camel@linux.ibm.com>
- <CAHC9VhSRepx+Q5pwhD3+AYPLXJAeL84FykLDnABfAwCUWXaWJA@mail.gmail.com>
- <CAHC9VhR1s+p-q35xqHL5Jj2WuzE=bhMrK6PBBThaUBiMRxwvuQ@mail.gmail.com>
- <0835ea7fd96df23419431301dfbc0d190e6c36f4.camel@linux.ibm.com>
- <CAHC9VhTbmmVrZCHCeZe-=s9fCGmEEDdb4p-skKJ=0wmX_K3arQ@mail.gmail.com> <20230831164627.GA4371@wind.enjellic.com>
-In-Reply-To: <20230831164627.GA4371@wind.enjellic.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 31 Aug 2023 13:56:52 -0400
-Message-ID: <CAHC9VhQx6LxSGEj_quZtVnf6VXfiBwazqpEqHdJT9Ro7BWTYHg@mail.gmail.com>
-Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Sush Shringarputale <sushring@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de,
-        jarkko@kernel.org, jgg@ziepe.ca, kgold@linux.ibm.com,
-        bhe@redhat.com, vgoyal@redhat.com, dyoung@redhat.com,
-        kexec@lists.infradead.org, jmorris@namei.org, serge@hallyn.com,
-        code@tyhicks.com, nramas@linux.microsoft.com,
-        linux-security-module@vger.kernel.org,
-        AmirGoldstein <amir73il@gmail.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v2 12/25] security: Introduce inode_post_setattr hook
+Content-Language: en-US
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
+        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20230831104136.903180-1-roberto.sassu@huaweicloud.com>
+ <20230831104136.903180-13-roberto.sassu@huaweicloud.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20230831104136.903180-13-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21763 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 31, 2023 at 12:47=E2=80=AFPM Dr. Greg <greg@enjellic.com> wrote=
-:
-> On Wed, Aug 30, 2023 at 07:22:27PM -0400, Paul Moore wrote:
-> > On Wed, Aug 30, 2023 at 7:07???PM Mimi Zohar <zohar@linux.ibm.com> wrot=
-e:
-> > > On Wed, 2023-08-30 at 18:23 -0400, Paul Moore wrote:
-> > > > On Wed, Aug 30, 2023 at 6:21???PM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > > > > On Wed, Aug 30, 2023 at 5:50???PM Mimi Zohar <zohar@linux.ibm.com=
-> wrote:
-> > > > > > On Wed, 2023-08-30 at 16:47 -0400, Paul Moore wrote:
-> > > > > > > On Wed, Aug 30, 2023 at 4:25???PM Mimi Zohar <zohar@linux.ibm=
-.com> wrote:
-
-...
-
-> > Assuming Sush and Tushar rework the document to clarify the
-> > motivation/purpose for the work, as you suggested earlier, I'm
-> > assuming we can revisit this problem and solutions?
+On 8/31/2023 3:41 AM, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 >
-> IMA will obviously go, with our blessings, in its own direction.
+> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+> the inode_post_setattr hook.
+
+Would you please include some explanation of how an LSM would use this hook?
+You might start with a description of how it is used in IMA/EVM, and why that
+could be generally useful.
+
 >
-> I would only call out, as I indicated in my reply to Ken Goldman, that
-> our 20+ year old integrity and attestation architectures and models
-> are now arguably challenged, given emerging technologies and their
-> requirements for integrity and confidentiality.
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  fs/attr.c                     |  1 +
+>  include/linux/lsm_hook_defs.h |  2 ++
+>  include/linux/security.h      |  7 +++++++
+>  security/security.c           | 16 ++++++++++++++++
+>  4 files changed, 26 insertions(+)
 >
-> This thread highlights a lot of the issues that caused us to bring
-> TSEM to the table ...
-
-It would be helpful if you could refrain from hijacking barely
-tangentially related threads as a marketing pitch for TSEM.
-
-Everyone is welcome, and encouraged (!), to join the upstream
-discussion threads, especially when one has something relevant to
-contribute which hasn't been previously discussed.  However, when
-every other contribution an individual makes follows the pattern of
-"we could solve all of this if we only had feature 'X' which I
-helpfully posted here <lore link>" then those contributions grow very
-tiring and I tend to start ignoring that individual.
-
---=20
-paul-moore.com
+> diff --git a/fs/attr.c b/fs/attr.c
+> index 431f667726c7..3c309eb456c6 100644
+> --- a/fs/attr.c
+> +++ b/fs/attr.c
+> @@ -486,6 +486,7 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
+>  
+>  	if (!error) {
+>  		fsnotify_change(dentry, ia_valid);
+> +		security_inode_post_setattr(idmap, dentry, ia_valid);
+>  		ima_inode_post_setattr(idmap, dentry, ia_valid);
+>  		evm_inode_post_setattr(idmap, dentry, ia_valid);
+>  	}
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index fdf075a6b1bb..995d30336cfa 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -136,6 +136,8 @@ LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode *inode,
+>  LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
+>  LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *dentry,
+>  	 struct iattr *attr)
+> +LSM_HOOK(void, LSM_RET_VOID, inode_post_setattr, struct mnt_idmap *idmap,
+> +	 struct dentry *dentry, int ia_valid)
+>  LSM_HOOK(int, 0, inode_getattr, const struct path *path)
+>  LSM_HOOK(int, 0, inode_setxattr, struct mnt_idmap *idmap,
+>  	 struct dentry *dentry, const char *name, const void *value,
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index dcb3604ffab8..820899db5276 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -355,6 +355,8 @@ int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
+>  int security_inode_permission(struct inode *inode, int mask);
+>  int security_inode_setattr(struct mnt_idmap *idmap,
+>  			   struct dentry *dentry, struct iattr *attr);
+> +void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+> +				 int ia_valid);
+>  int security_inode_getattr(const struct path *path);
+>  int security_inode_setxattr(struct mnt_idmap *idmap,
+>  			    struct dentry *dentry, const char *name,
+> @@ -856,6 +858,11 @@ static inline int security_inode_setattr(struct mnt_idmap *idmap,
+>  	return 0;
+>  }
+>  
+> +static inline void
+> +security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+> +			    int ia_valid)
+> +{ }
+> +
+>  static inline int security_inode_getattr(const struct path *path)
+>  {
+>  	return 0;
+> diff --git a/security/security.c b/security/security.c
+> index 2b24d01cf181..764a6f28b3b9 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2124,6 +2124,22 @@ int security_inode_setattr(struct mnt_idmap *idmap,
+>  }
+>  EXPORT_SYMBOL_GPL(security_inode_setattr);
+>  
+> +/**
+> + * security_inode_post_setattr() - Update the inode after a setattr operation
+> + * @idmap: idmap of the mount
+> + * @dentry: file
+> + * @ia_valid: file attributes set
+> + *
+> + * Update inode security field after successful setting file attributes.
+> + */
+> +void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+> +				 int ia_valid)
+> +{
+> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+> +		return;
+> +	call_void_hook(inode_post_setattr, idmap, dentry, ia_valid);
+> +}
+> +
+>  /**
+>   * security_inode_getattr() - Check if getting file attributes is allowed
+>   * @path: file
