@@ -2,101 +2,178 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A66F3CA0FED
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Sep 2023 16:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FC3CA0FF6
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Sep 2023 20:25:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344717AbjIAQqh (ORCPT
+        id S1350719AbjIAUZB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Sep 2023 12:46:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45062 "EHLO
+        Fri, 1 Sep 2023 16:25:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348292AbjIAQqg (ORCPT
+        with ESMTP id S244443AbjIAUZB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Sep 2023 12:46:36 -0400
-Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46C8210EC
-        for <linux-security-module@vger.kernel.org>; Fri,  1 Sep 2023 09:46:33 -0700 (PDT)
-Received: by mail-pl1-x64a.google.com with SMTP id d9443c01a7336-1bf703dd21fso25176885ad.3
-        for <linux-security-module@vger.kernel.org>; Fri, 01 Sep 2023 09:46:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1693586793; x=1694191593; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xCon5474F9WwphxhfgFhUzbwn0ALvK9xFv6P5Xz3AWM=;
-        b=hqU4wmxbesZHmpksagWiQXpeohEWVSELxtPPYGBcPYGHLzd4PgAZfKgihohM8nieNL
-         x3j7YDZ7OFe1og77j691yrddLu54oFaBwlTOnLguDHh5p7+BR6+/NS0Pvahur84Awr49
-         bkuD34JPS3lDemn9o374Aub5/hANryTKiGgwBpMkhQipD2xt1GjE8Tr7x8dvTJm1yuUP
-         N4OflW4yEADxpThIY2D6fG6q7dWUsDZ8Me2Lye9Qu/RXCmRg6gJabmzXwP2Q72T9eIcR
-         awghr/9a/lXoGNWrdpu9mabpbW5iiXix8awk61LcoVpzwdYHAKz7wJ9oNjs2LMhAzZ1M
-         yjWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693586793; x=1694191593;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xCon5474F9WwphxhfgFhUzbwn0ALvK9xFv6P5Xz3AWM=;
-        b=VdmC5WLpq+DrWAM/ccMcDzlLHac3WtPtgrsAFklQYsk+rzR95yLoA+0zTnenHFkW+E
-         yfvUgM4JimnF9uEU0tm+WAfm5a+f5JxkjMGU2ycUHqSHMqtqXdRLI6IfGEqtlOMy3q1H
-         ropeTYYrUh5xxztmBgw7w4/iXyKFOiZgd4w0cIsprpfzu4pl45COFoi0lYKRd7VPIZCc
-         w7WODcmi5QrHiEKs0r9oGVVKaB6t0hI9RtSeI//DNam24bSUjZQHb9GiWdcbcMbVukC9
-         iogkX3mZr3f2l3K1mHaB11OJsqRgeCB+a7KMo+ZYlr1iAAiOybg9e+Kn+11ZuHAawkFE
-         V3dw==
-X-Gm-Message-State: AOJu0YzPkj/BGRgM/uXnwLOzrr+H6gg8XsLwpOlbtErNEEGHuVuCyoBL
-        F6nGwqx+8TFW0Av1q48Mm7fUlahOiuJkTbQJ0g==
-X-Google-Smtp-Source: AGHT+IE7IWuztjp33Ush39YmsLck94qkQHf2UcyeDE5trFHuf5V0W6HBwaqY0C7q2Vl17GPr3mAIvAb6tklgxvjU0g==
-X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
- (user=ackerleytng job=sendgmr) by 2002:a17:902:e887:b0:1bc:e6a:205e with SMTP
- id w7-20020a170902e88700b001bc0e6a205emr1066486plg.5.1693586792693; Fri, 01
- Sep 2023 09:46:32 -0700 (PDT)
-Date:   Fri, 01 Sep 2023 16:46:31 +0000
-In-Reply-To: <f7aaf097-6f83-0ee9-e16d-713d392b2299@linux.intel.com> (message
- from Binbin Wu on Fri, 1 Sep 2023 11:45:43 +0800)
-Mime-Version: 1.0
-Message-ID: <diqz34zxg7tk.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-From:   Ackerley Tng <ackerleytng@google.com>
-To:     Binbin Wu <binbin.wu@linux.intel.com>
-Cc:     kvm@vger.kernel.org, david@redhat.com, yu.c.zhang@linux.intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        chao.p.peng@linux.intel.com, linux-riscv@lists.infradead.org,
-        isaku.yamahata@gmail.com, maz@kernel.org, paul@paul-moore.com,
-        anup@brainfault.org, chenhuacai@kernel.org, jmorris@namei.org,
-        willy@infradead.org, wei.w.wang@intel.com, tabba@google.com,
-        jarkko@kernel.org, serge@hallyn.com, mail@maciej.szmigiero.name,
-        aou@eecs.berkeley.edu, vbabka@suse.cz, michael.roth@amd.com,
-        paul.walmsley@sifive.com, kvmarm@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org, qperret@google.com,
-        seanjc@google.com, liam.merwick@oracle.com,
-        linux-mips@vger.kernel.org, oliver.upton@linux.dev,
-        linux-security-module@vger.kernel.org, palmer@dabbelt.com,
-        kvm-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        pbonzini@redhat.com, akpm@linux-foundation.org,
-        vannapurve@google.com, linuxppc-dev@lists.ozlabs.org,
-        kirill.shutemov@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 1 Sep 2023 16:25:01 -0400
+Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3EAEE7F
+        for <linux-security-module@vger.kernel.org>; Fri,  1 Sep 2023 13:24:56 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RcqJk4phnzMqJ78;
+        Fri,  1 Sep 2023 20:24:54 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RcqJj6f1pzMpnPd;
+        Fri,  1 Sep 2023 22:24:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1693599894;
+        bh=EgaudXTLVB2Z3ZuXye/H8fFu5K/48RR41qfT8koWAoA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IbPX/HCJQAuKsDQgr2BmAGc3Pjryrjdw7irGRXwkVjJ9Av8Y78+BcA/RgJgPq1M0a
+         +jual7Izi5b8VKage26qXj/Ulr3C4gzpMcFjL72HXNIXpvslc17cYnsVhGDatj/UPU
+         zHizYs+Gj9JuURNoSuKj9MWJjd4aihiG/Lk9I6hw=
+Date:   Fri, 1 Sep 2023 22:24:43 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Matt Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>
+Subject: Re: [PATCH v3 2/5] selftests/landlock: Test ioctl support
+Message-ID: <20230901.OhT2suinooGh@digikod.net>
+References: <20230814172816.3907299-1-gnoack@google.com>
+ <20230814172816.3907299-3-gnoack@google.com>
+ <20230818.HopaLahS0qua@digikod.net>
+ <ZOjN7dub5QGJOzSX@google.com>
+ <20230825.ohtoh6aivahX@digikod.net>
+ <20230901133559.gazeeteejw2ebpxm@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230901133559.gazeeteejw2ebpxm@google.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Binbin Wu <binbin.wu@linux.intel.com> writes:
+On Fri, Sep 01, 2023 at 03:35:59PM +0200, Günther Noack wrote:
+> Hello!
+> 
+> On Fri, Aug 25, 2023 at 07:07:01PM +0200, Mickaël Salaün wrote:
+> > On Fri, Aug 25, 2023 at 05:51:09PM +0200, Günther Noack wrote:
+> > > Hello!
+> > > 
+> > > On Fri, Aug 18, 2023 at 07:06:07PM +0200, Mickaël Salaün wrote:
+> > > > On Mon, Aug 14, 2023 at 07:28:13PM +0200, Günther Noack wrote:
+> > > > > @@ -3639,7 +3639,7 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
+> > > > >  	};
+> > > > >  	int fd, ruleset_fd;
+> > > > >  
+> > > > > -	/* Enable Landlock. */
+> > > > > +	/* Enables Landlock. */
+> > > > >  	ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
+> > > > >  	ASSERT_LE(0, ruleset_fd);
+> > > > >  	enforce_ruleset(_metadata, ruleset_fd);
+> > > > > @@ -3732,6 +3732,96 @@ TEST(memfd_ftruncate)
+> > > > >  	ASSERT_EQ(0, close(fd));
+> > > > >  }
+> > > > 
+> > > > We should also check with O_PATH to make sure the correct error is
+> > > > returned (and not EACCES).
+> > > 
+> > > Is this remark referring to the code before it or after it?
+> > > 
+> > > My interpretation is that you are asking to test that test_fioqsize_ioctl() will
+> > > return errnos correctly?  Do I understand that correctly?  (I think that would
+> > > be a little bit overdone, IMHO - it's just a test utility of ~10 lines after
+> > > all, which is below the threshold where it can be verified by staring at it for
+> > > a bit. :))
+> > 
+> > I was refering to the previous memfd_ftruncate test, which is changed
+> > with a next patch. We should check the access rights tied (and checkd)
+> > to FD (i.e. truncate and ioctl) opened with O_PATH.
+> 
+> OK, I added a test that checks ioctl(2) and ftruncate(2) on files that
+> were opened with O_PATH, both before and after enabling Landlock.
+> ftruncate() and ioctl() always give an EBADF error, both before and
+> after enabling Landlock (as described in open(2) in the section about
+> O_PATH).
 
-> <snip>
->
->>
->> I'm not sure whose refcount the folio_put() in kvm_gmem_allocate() is
->> dropping though:
->>
->> + The refcount for the filemap depends on whether this is a hugepage or
->>    not, but folio_put() strictly drops a refcount of 1.
->> + The refcount for the lru list is just 1, but doesn't the page still
->>    remain in the lru list?
->
-> I guess the refcount drop here is the one get on the fresh allocation.
-> Now the filemap has grabbed the folio, so the lifecycle of the folio now 
-> is decided by the filemap/inode?
->
+Good!
 
-This makes sense! So folio_put() here is saying, I'm not using this
-folio anymore, but the filemap and the lru list are stil using the
-folio.
+> 
+> A bit outside of the IOCTL path set scope:
+> 
+> I was surprised that it is even possible to successfully open a file
+> with O_PATH, even after Landlock is enabled and restricts all it can
+> in that file hierarchy.  This lets you detect that a file exists, even
+> when that file is in a directory whose contents you are otherwise not
+> permitted to list due to Landlock.
 
-> <snip>
+This is indeed intended and tested with the effective_access test.
+O_PATH is handled the same way as chdir (and similar path-based
+syscalls) and always allowed. However, I just realized that the O_PATH
+case is not explicitly mentioned in the documentation.
+
+> 
+> The logic for that is in the get_required_file_open_access() function.
+> Should we add a "LANDLOCK_ACCESS_FS_PATH_FILE" right, which would work
+> similar to LANDLOCK_ACCESS_FS_READ_FILE and
+> LANDLOCK_ACCESS_FS_WRITE_FILE, so that this can be restricted?
+
+Having a file descriptor opened with O_PATH should not give any specific
+access (hence the need to test with IOCTLs). O_PATH is designed to get an
+explicit reference to the filesystem (without the issues of paths) and
+use the related FD with *at() syscalls, including landlock_add_rule()
+with a path_beneath rule.  FDs opened with O_PATH should not be an issue
+by themselves for a sandbox, but the real issue is to discover paths,
+i.e. the directory's execute access right.  This is why I think it would
+make more sense to have something like a LANDLOCK_ACCESS_FS_WALK right
+instead. This would enable to definitely deny any access to a file
+hierarchy.
+
+For chdir-like syscalls, we could rely on path_permission(), but for a
+more holistic approach we need to properly handle the execute permission
+on directories. See Christian's comment on chdir/path_permission and the
+limit of what an LSM can infer from paths:
+https://lore.kernel.org/r/20230530-mietfrei-zynisch-8b63a8566f66@brauner
+
+We could rely on the last walked (leaf) dentry to allow or deny such
+walk, but that would still enable malicious processes to infer path
+because of intermediate walk that may return ENOENT. We could also
+return ENOENT instead of EACCES, but this would not handle the case of
+other access controls returning EACCES.
+
+With this in mind, I think the better solution is to properly check each
+intermediate directory during a path walk. This is not
+currently possible with path-based LSM hooks but I think that we could
+add a new LSM hook in filename_lookup(), close to the audit_inode()
+call, to get the necessary information about the currently walked
+directory.
+
+Simply using this new hook with Landlock would add a significant
+performance impact because of the way Landlock identifies paths (i.e.
+walk back). An interesting approach to efficiently check Landlock access
+right would be to store the collected access rights of a path in a
+cache, and use it when checking a "child" of this path. According to
+task_struct, there is only one path walk at a time per thread, which
+would enable us to have only one cached path per task and
+opportunistically use it in Landlock's is_access_to_paths_allowed() as a
+backstop to end the walk. With this trick, I think in most cases no walk
+back would be required, which would be great for performance. The main
+challenge would be to efficiently handle the ".." directories.
+See an initial approach of caching for Landlock:
+https://lore.kernel.org/r/20210630224856.1313928-1-mic@digikod.net
+
+Being able to control path walks would be a way to use (most?)
+inode-based LSM hooks for Landlock, especially the
+security_inode_permission(). Indeed. we could then tie an inode to a
+path (resolution) thanks to the cache (and potentially other caches
+according to the number of checked inodes).  This would be great for new
+access rights such as LANDLOCK_ACCESS_FS_{READ,WRITE}_METADATA.
+
+Xiu, that would be a good opportunity to continue your work, and
+probably without waiting for IMA to be converted to a proper LSM. What
+do you think?
