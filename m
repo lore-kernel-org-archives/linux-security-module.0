@@ -2,141 +2,186 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A58B6CA0FE1
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Sep 2023 02:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2003CA0FE8
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Sep 2023 03:45:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348203AbjIACyf (ORCPT
+        id S1348232AbjIADqA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 31 Aug 2023 22:54:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43824 "EHLO
+        Thu, 31 Aug 2023 23:46:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230052AbjIACyf (ORCPT
+        with ESMTP id S229573AbjIADp6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 Aug 2023 22:54:35 -0400
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21FB3E77;
-        Thu, 31 Aug 2023 19:54:31 -0700 (PDT)
-Received: from [192.168.192.83] (unknown [50.39.103.33])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 147D43F6D7;
-        Fri,  1 Sep 2023 02:54:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1693536870;
-        bh=lSaPvx3sAhBw4cusmWt0k53d12ZwR75nMlpV88WohRk=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=NLu/chbrt43HF2oHZQxop45yHofW7KeCzkkKAZcSKafkaXRsEqcpIlJsbtIQbxXxN
-         w0gX+I9htsKSnFF9PFCZgfm2fBBLOsyM7il6/cvUTMIuEOqWaJSIMBPfwcGQyVhGK+
-         ABo8+fARxOeltm6wT9CICwiUlb5lCakPcFtpE9uw0wl0zAfLW1g5ATEBmKg8J6NFcM
-         rsHcGDJB5lVBkXog7TibMNcE4/Koqz6db6dKkW6V2S6yx5h0hWdA5oXI9rtnjpgKgF
-         6/A6693OnzPf2sjvZ4ajTVC2Tv+WlcU6+KzbmgCm7aM9FK8euZv+4scqO1zKU0UO/+
-         0Qn/wZ/eo/7bw==
-Message-ID: <7fe7fcb4-888b-086a-1a29-ee796859168c@canonical.com>
-Date:   Thu, 31 Aug 2023 19:54:26 -0700
+        Thu, 31 Aug 2023 23:45:58 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7FE8CF;
+        Thu, 31 Aug 2023 20:45:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1693539955; x=1725075955;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=dQBtg8NKz/pLl187/eYnyafMQC+Yh2bQyqEr25y1Bps=;
+  b=YohkZfL/VAzFFK4DnQgPAOhLhLKGcEGkSsltUkZoqX6ps4L1oo/n/OlH
+   MfU1vWVDkc0DzwD3vOh3SlOYlvK/2rP0qrvyilkweAPDQoy+b+0mv6FgB
+   UVIZsqaYLSL1NdxJKKacODvufJN3BAQWTSKAmNJApvdsD4wgqwa+GRQ1n
+   Rg0iCPE6y/XwoO6pykO0wSVTZ8tmHr+LM0f4Iz8sJ4PiGOe22oqAFaYZR
+   QkQhUiDLoKkz+5m2TWByGmqko6ngu+2JYHyosMjHmRvgxuElgoo7bDGoU
+   7srBZZJchfebDtsUE0PMpRYTUonR/OBSN65g3XjwOV8ZjqFb7QW/I9rrf
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="356441896"
+X-IronPort-AV: E=Sophos;i="6.02,218,1688454000"; 
+   d="scan'208";a="356441896"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2023 20:45:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="742962743"
+X-IronPort-AV: E=Sophos;i="6.02,218,1688454000"; 
+   d="scan'208";a="742962743"
+Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.93.2.44]) ([10.93.2.44])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2023 20:45:45 -0700
+Message-ID: <f7aaf097-6f83-0ee9-e16d-713d392b2299@linux.intel.com>
+Date:   Fri, 1 Sep 2023 11:45:43 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH -next] RFC: apparmor: Optimize retrieving current task
- secid
-Content-Language: en-US
-To:     Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        apparmor@lists.ubuntu.com
-Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230831232224.460363-1-vinicius.gomes@intel.com>
- <0def2030-78f7-2213-dab6-408622cc25b2@canonical.com>
- <87zg26mx0u.fsf@intel.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <87zg26mx0u.fsf@intel.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+To:     Ackerley Tng <ackerleytng@google.com>
+Cc:     seanjc@google.com, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com, maz@kernel.org,
+        oliver.upton@linux.dev, chenhuacai@kernel.org, mpe@ellerman.id.au,
+        anup@brainfault.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, willy@infradead.org,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, chao.p.peng@linux.intel.com, tabba@google.com,
+        jarkko@kernel.org, yu.c.zhang@linux.intel.com,
+        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
+        david@redhat.com, qperret@google.com, michael.roth@amd.com,
+        wei.w.wang@intel.com, liam.merwick@oracle.com,
+        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
+References: <diqz5y4wfpj0.fsf@ackerleytng-ctop.c.googlers.com>
+From:   Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <diqz5y4wfpj0.fsf@ackerleytng-ctop.c.googlers.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/31/23 19:45, Vinicius Costa Gomes wrote:
-> John Johansen <john.johansen@canonical.com> writes:
-> 
->> On 8/31/23 16:22, Vinicius Costa Gomes wrote:
->>> When running will-it-scale[1] open2_process testcase, in a system with a
->>> large number of cores, a bottleneck in retrieving the current task
->>> secid was detected:
->>>
->>> 27.73% ima_file_check;do_open (inlined);path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_x64 (inlined);do_syscall_64;entry_SYSCALL_64_after_hwframe (inlined);__libc_open64 (inlined)
->>>       27.72%     0.01%  [kernel.vmlinux]      [k] security_current_getsecid_subj             -      -
->>> 27.71% security_current_getsecid_subj;ima_file_check;do_open (inlined);path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_x64 (inlined);do_syscall_64;entry_SYSCALL_64_after_hwframe (inlined);__libc_open64 (inlined)
->>>       27.71%    27.68%  [kernel.vmlinux]      [k] apparmor_current_getsecid_subj             -      -
->>> 19.94% __refcount_add (inlined);__refcount_inc (inlined);refcount_inc (inlined);kref_get (inlined);aa_get_label (inlined);aa_get_label (inlined);aa_get_current_label (inlined);apparmor_current_getsecid_subj;security_current_getsecid_subj;ima_file_check;do_open (inlined);path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_x64 (inlined);do_syscall_64;entry_SYSCALL_64_after_hwframe (inlined);__libc_open64 (inlined)
->>> 7.72% __refcount_sub_and_test (inlined);__refcount_dec_and_test (inlined);refcount_dec_and_test (inlined);kref_put (inlined);aa_put_label (inlined);aa_put_label (inlined);apparmor_current_getsecid_subj;security_current_getsecid_subj;ima_file_check;do_open (inlined);path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_x64 (inlined);do_syscall_64;entry_SYSCALL_64_after_hwframe (inlined);__libc_open64 (inlined)
->>>
->>> A large amount of time was spent in the refcount.
->>>
->>> The most common case is that the current task label is available, and
->>> no need to take references for that one. That is exactly what the
->>> critical section helpers do, make use of them.
->>>
->>> New perf output:
->>>
->>> 39.12% vfs_open;path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_64;entry_SYSCALL_64_after_hwframe;__libc_open64 (inlined)
->>>       39.07%     0.13%  [kernel.vmlinux]          [k] do_dentry_open                                                               -      -
->>> 39.05% do_dentry_open;vfs_open;path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_64;entry_SYSCALL_64_after_hwframe;__libc_open64 (inlined)
->>>       38.71%     0.01%  [kernel.vmlinux]          [k] security_file_open                                                           -      -
->>> 38.70% security_file_open;do_dentry_open;vfs_open;path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_64;entry_SYSCALL_64_after_hwframe;__libc_open64 (inlined)
->>>       38.65%    38.60%  [kernel.vmlinux]          [k] apparmor_file_open                                                           -      -
->>> 38.65% apparmor_file_open;security_file_open;do_dentry_open;vfs_open;path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_64;entry_SYSCALL_64_after_hwframe;__libc_open64 (inlined)
->>>
->>> The result is a throughput improvement of around 20% across the board
->>> on the open2 testcase. On more realistic workloads the impact should
->>> be much less.
->>> hrmmm, interesting. its a nice improvement
->>
->>> [1] https://github.com/antonblanchard/will-it-scale
->>>
->>> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
->>
->> Acked-by: John Johansen <john.johansen@canonical.com>
->>
->> do you want me to pull this into apparmor-next or do you have another
->> tree in mind
->>
-> 
-> -next is fine.
-> 
->>> ---
->>> Sending as RFC because I am not sure there's anything I am missing. My
->>> read of the code tells me it should be fine.
->>
->> it is
->>
-> 
-> Great. Do you want me to send a non-RFC version?
+
+
+On 8/31/2023 12:44 AM, Ackerley Tng wrote:
+> Binbin Wu <binbin.wu@linux.intel.com> writes:
 >
-you can if you want but there is no need, I can do that small edit
-  
+>>> <snip>
 >>>
->>>    security/apparmor/lsm.c | 4 ++--
->>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->>> index 108eccc5ada5..98e65c44ddd5 100644
->>> --- a/security/apparmor/lsm.c
->>> +++ b/security/apparmor/lsm.c
->>> @@ -766,9 +766,9 @@ static void apparmor_bprm_committed_creds(struct linux_binprm *bprm)
->>>    
->>>    static void apparmor_current_getsecid_subj(u32 *secid)
->>>    {
->>> -	struct aa_label *label = aa_get_current_label();
->>> +	struct aa_label *label = __begin_current_label_crit_section();
->>>    	*secid = label->secid;
->>> -	aa_put_label(label);
->>> +	__end_current_label_crit_section(label);
->>>    }
->>>    
->>>    static void apparmor_task_getsecid_obj(struct task_struct *p, u32 *secid)
+>>> +static long kvm_gmem_allocate(struct inode *inode, loff_t offset, loff_t len)
+>>> +{
+>>> +	struct address_space *mapping = inode->i_mapping;
+>>> +	pgoff_t start, index, end;
+>>> +	int r;
+>>> +
+>>> +	/* Dedicated guest is immutable by default. */
+>>> +	if (offset + len > i_size_read(inode))
+>>> +		return -EINVAL;
+>>> +
+>>> +	filemap_invalidate_lock_shared(mapping);
+>>> +
+>>> +	start = offset >> PAGE_SHIFT;
+>>> +	end = (offset + len) >> PAGE_SHIFT;
+>>> +
+>>> +	r = 0;
+>>> +	for (index = start; index < end; ) {
+>>> +		struct folio *folio;
+>>> +
+>>> +		if (signal_pending(current)) {
+>>> +			r = -EINTR;
+>>> +			break;
+>>> +		}
+>>> +
+>>> +		folio = kvm_gmem_get_folio(inode, index);
+>>> +		if (!folio) {
+>>> +			r = -ENOMEM;
+>>> +			break;
+>>> +		}
+>>> +
+>>> +		index = folio_next_index(folio);
+>>> +
+>>> +		folio_unlock(folio);
+>>> +		folio_put(folio);
+>> May be a dumb question, why we get the folio and then put it immediately?
+>> Will it make the folio be released back to the page allocator?
 >>
-> 
-> Cheers,
+> I was wondering this too, but it is correct.
+>
+> In filemap_grab_folio(), the refcount is incremented in three places:
+>
+> + When the folio is created in filemap_alloc_folio(), it is given a
+>    refcount of 1 in
+>
+>      filemap_alloc_folio() -> folio_alloc() -> __folio_alloc_node() ->
+>      __folio_alloc() -> __alloc_pages() -> get_page_from_freelist() ->
+>      prep_new_page() -> post_alloc_hook() -> set_page_refcounted()
+>
+> + Then, in filemap_add_folio(), the refcount is incremented twice:
+>
+>      + The first is from the filemap (1 refcount per page if this is a
+>        hugepage):
+>
+>          filemap_add_folio() -> __filemap_add_folio() -> folio_ref_add()
+>
+>      + The second is a refcount from the lru list
+>
+>          filemap_add_folio() -> folio_add_lru() -> folio_get() ->
+>          folio_ref_inc()
+>
+> In the other path, if the folio exists in the page cache (filemap), the
+> refcount is also incremented through
+>
+>      filemap_grab_folio() -> __filemap_get_folio() -> filemap_get_entry()
+>      -> folio_try_get_rcu()
+>
+> I believe all the branches in kvm_gmem_get_folio() are taking a refcount
+> on the folio while the kernel does some work on the folio like clearing
+> the folio in clear_highpage() or getting the next index, and then when
+> done, the kernel does folio_put().
+>
+> This pattern is also used in shmem and hugetlb. :)
+
+Thanks for your explanation. It helps a lot.
+
+>
+> I'm not sure whose refcount the folio_put() in kvm_gmem_allocate() is
+> dropping though:
+>
+> + The refcount for the filemap depends on whether this is a hugepage or
+>    not, but folio_put() strictly drops a refcount of 1.
+> + The refcount for the lru list is just 1, but doesn't the page still
+>    remain in the lru list?
+
+I guess the refcount drop here is the one get on the fresh allocation.
+Now the filemap has grabbed the folio, so the lifecycle of the folio now 
+is decided by the filemap/inode?
+
+>
+>>> +
+>>> +		/* 64-bit only, wrapping the index should be impossible. */
+>>> +		if (WARN_ON_ONCE(!index))
+>>> +			break;
+>>> +
+>>> +		cond_resched();
+>>> +	}
+>>> +
+>>> +	filemap_invalidate_unlock_shared(mapping);
+>>> +
+>>> +	return r;
+>>> +}
+>>> +
+>>>
+>>> <snip>
 
