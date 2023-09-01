@@ -2,153 +2,187 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 689C3CA0FE1
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Sep 2023 03:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0658FCA0FEA
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Sep 2023 08:20:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348102AbjIADuv (ORCPT
+        id S242016AbjIAIUg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 31 Aug 2023 23:50:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46156 "EHLO
+        Fri, 1 Sep 2023 04:20:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229573AbjIADuu (ORCPT
+        with ESMTP id S241886AbjIAIUf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 Aug 2023 23:50:50 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F04418C;
-        Thu, 31 Aug 2023 20:50:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693540248; x=1725076248;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=iaakvufsPSI4fOyOCZcSGBpreY75QiHRPYKuy7gdF98=;
-  b=XcfUZVxODnk4qachp+3JRvVZf4ZP+RdcnyQR5aNfh7wTNyNYgQ63TXJl
-   +/y9otEn3eLXbDUNbEkSBaHMSAjnEFT8WfKLGhPpfPSL/wq0FAA7iId1K
-   k24RbFwjFYgzDGhkkOznlanf2H+bfYD2doNOUudZY1Q3AxsRHKe8BrJJy
-   sUknvbvdgJ+B+//0lLdoBqfo19fp9AVSKe8qeNrdIDajWoxD7sHnShLXR
-   BsFH4eb6L+SMceJxMITOgOnzdrxUrE2lmGPUAFL7T4R2Wv36S8aLszbY+
-   ikx6EyGfloz8NpWJsMlFxQk6eJfZgEqfYJU114ENeqlzbxHvYfPIpiIGM
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="376062513"
-X-IronPort-AV: E=Sophos;i="6.02,218,1688454000"; 
-   d="scan'208";a="376062513"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2023 20:50:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="829974687"
-X-IronPort-AV: E=Sophos;i="6.02,218,1688454000"; 
-   d="scan'208";a="829974687"
-Received: from vraghuna-mobl.amr.corp.intel.com (HELO vcostago-mobl3) ([10.213.167.133])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2023 20:50:46 -0700
-From:   Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To:     John Johansen <john.johansen@canonical.com>,
-        apparmor@lists.ubuntu.com
-Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] RFC: apparmor: Optimize retrieving current task
- secid
-In-Reply-To: <7fe7fcb4-888b-086a-1a29-ee796859168c@canonical.com>
-References: <20230831232224.460363-1-vinicius.gomes@intel.com>
- <0def2030-78f7-2213-dab6-408622cc25b2@canonical.com>
- <87zg26mx0u.fsf@intel.com>
- <7fe7fcb4-888b-086a-1a29-ee796859168c@canonical.com>
-Date:   Thu, 31 Aug 2023 20:50:46 -0700
-Message-ID: <87ttsemu09.fsf@intel.com>
+        Fri, 1 Sep 2023 04:20:35 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B3610DE;
+        Fri,  1 Sep 2023 01:20:32 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id B16B32185C;
+        Fri,  1 Sep 2023 08:20:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1693556430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=0WI96qvBSKjcD8skIYDzJyfhIXrX2VNlBg1bDAXSO7w=;
+        b=r4AvfguvEQvHBhS4L8lDsEaveieeJTkNCYi5f+9IRURkHs9QHXGXU55bgZKYP/UIN96eLm
+        Su7gVEZFmwF5EXNaNlCErp7Hgj8GQqdQewKT6RBq+dcvYVgxoLUZe9WovHMiX8iQwt+NsA
+        NGR32KTwfyM1j9J07mti1C+WlqZc3DM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1693556430;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=0WI96qvBSKjcD8skIYDzJyfhIXrX2VNlBg1bDAXSO7w=;
+        b=LDBeIJn7DjHmpeWPe/JUiDen1A1u3hmJEXiXvjRyh5pbOBnd20g14NvrGZHMhmcFppSIaI
+        jb3axaR9hQtT2aCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 27C7D1358B;
+        Fri,  1 Sep 2023 08:20:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id M/8FCc6e8WSYGwAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Fri, 01 Sep 2023 08:20:30 +0000
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     seanjc@google.com
+Cc:     ackerleytng@google.com, akpm@linux-foundation.org,
+        anup@brainfault.org, aou@eecs.berkeley.edu,
+        chao.p.peng@linux.intel.com, chenhuacai@kernel.org,
+        david@redhat.com, isaku.yamahata@gmail.com, jarkko@kernel.org,
+        jmorris@namei.org, kirill.shutemov@linux.intel.com,
+        kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+        kvmarm@lists.linux.dev, liam.merwick@oracle.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-mm@kvack.org,
+        linux-riscv@lists.infradead.org,
+        linux-security-module@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, mail@maciej.szmigiero.name,
+        maz@kernel.org, michael.roth@amd.com, mpe@ellerman.id.au,
+        oliver.upton@linux.dev, palmer@dabbelt.com,
+        paul.walmsley@sifive.com, paul@paul-moore.com, pbonzini@redhat.com,
+        qperret@google.com, serge@hallyn.com, tabba@google.com,
+        vannapurve@google.com, vbabka@suse.cz, wei.w.wang@intel.com,
+        willy@infradead.org, yu.c.zhang@linux.intel.com
+Subject: [PATCH gmem FIXUP] mm, compaction: make testing mapping_unmovable() safe
+Date:   Fri,  1 Sep 2023 10:20:26 +0200
+Message-ID: <20230901082025.20548-2-vbabka@suse.cz>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-John Johansen <john.johansen@canonical.com> writes:
+As Kirill pointed out, mapping can be removed under us due to
+truncation. Test it under folio lock as already done for the async
+compaction / dirty folio case. To prevent locking every folio with
+mapping to do the test, do it only for unevictable folios, as we can
+expect the unmovable mapping folios are also unevictable - it is the
+case for guest memfd folios.
 
-> On 8/31/23 19:45, Vinicius Costa Gomes wrote:
->> John Johansen <john.johansen@canonical.com> writes:
->> 
->>> On 8/31/23 16:22, Vinicius Costa Gomes wrote:
->>>> When running will-it-scale[1] open2_process testcase, in a system with a
->>>> large number of cores, a bottleneck in retrieving the current task
->>>> secid was detected:
->>>>
->>>> 27.73% ima_file_check;do_open (inlined);path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_x64 (inlined);do_syscall_64;entry_SYSCALL_64_after_hwframe (inlined);__libc_open64 (inlined)
->>>>       27.72%     0.01%  [kernel.vmlinux]      [k] security_current_getsecid_subj             -      -
->>>> 27.71% security_current_getsecid_subj;ima_file_check;do_open (inlined);path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_x64 (inlined);do_syscall_64;entry_SYSCALL_64_after_hwframe (inlined);__libc_open64 (inlined)
->>>>       27.71%    27.68%  [kernel.vmlinux]      [k] apparmor_current_getsecid_subj             -      -
->>>> 19.94% __refcount_add (inlined);__refcount_inc (inlined);refcount_inc (inlined);kref_get (inlined);aa_get_label (inlined);aa_get_label (inlined);aa_get_current_label (inlined);apparmor_current_getsecid_subj;security_current_getsecid_subj;ima_file_check;do_open (inlined);path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_x64 (inlined);do_syscall_64;entry_SYSCALL_64_after_hwframe (inlined);__libc_open64 (inlined)
->>>> 7.72% __refcount_sub_and_test (inlined);__refcount_dec_and_test (inlined);refcount_dec_and_test (inlined);kref_put (inlined);aa_put_label (inlined);aa_put_label (inlined);apparmor_current_getsecid_subj;security_current_getsecid_subj;ima_file_check;do_open (inlined);path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_x64 (inlined);do_syscall_64;entry_SYSCALL_64_after_hwframe (inlined);__libc_open64 (inlined)
->>>>
->>>> A large amount of time was spent in the refcount.
->>>>
->>>> The most common case is that the current task label is available, and
->>>> no need to take references for that one. That is exactly what the
->>>> critical section helpers do, make use of them.
->>>>
->>>> New perf output:
->>>>
->>>> 39.12% vfs_open;path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_64;entry_SYSCALL_64_after_hwframe;__libc_open64 (inlined)
->>>>       39.07%     0.13%  [kernel.vmlinux]          [k] do_dentry_open                                                               -      -
->>>> 39.05% do_dentry_open;vfs_open;path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_64;entry_SYSCALL_64_after_hwframe;__libc_open64 (inlined)
->>>>       38.71%     0.01%  [kernel.vmlinux]          [k] security_file_open                                                           -      -
->>>> 38.70% security_file_open;do_dentry_open;vfs_open;path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_64;entry_SYSCALL_64_after_hwframe;__libc_open64 (inlined)
->>>>       38.65%    38.60%  [kernel.vmlinux]          [k] apparmor_file_open                                                           -      -
->>>> 38.65% apparmor_file_open;security_file_open;do_dentry_open;vfs_open;path_openat;do_filp_open;do_sys_openat2;__x64_sys_openat;do_syscall_64;entry_SYSCALL_64_after_hwframe;__libc_open64 (inlined)
->>>>
->>>> The result is a throughput improvement of around 20% across the board
->>>> on the open2 testcase. On more realistic workloads the impact should
->>>> be much less.
->>>> hrmmm, interesting. its a nice improvement
->>>
->>>> [1] https://github.com/antonblanchard/will-it-scale
->>>>
->>>> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
->>>
->>> Acked-by: John Johansen <john.johansen@canonical.com>
->>>
->>> do you want me to pull this into apparmor-next or do you have another
->>> tree in mind
->>>
->> 
->> -next is fine.
->> 
->>>> ---
->>>> Sending as RFC because I am not sure there's anything I am missing. My
->>>> read of the code tells me it should be fine.
->>>
->>> it is
->>>
->> 
->> Great. Do you want me to send a non-RFC version?
->>
-> you can if you want but there is no need, I can do that small edit
->
+Also incorporate comment update suggested by Matthew.
 
-I'll leave that to you, then. Thank you.
+Fixes: 3424873596ce ("mm: Add AS_UNMOVABLE to mark mapping as completely unmovable")
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+Feel free to squash into 3424873596ce.
 
->>>>
->>>>    security/apparmor/lsm.c | 4 ++--
->>>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->>>> index 108eccc5ada5..98e65c44ddd5 100644
->>>> --- a/security/apparmor/lsm.c
->>>> +++ b/security/apparmor/lsm.c
->>>> @@ -766,9 +766,9 @@ static void apparmor_bprm_committed_creds(struct linux_binprm *bprm)
->>>>    
->>>>    static void apparmor_current_getsecid_subj(u32 *secid)
->>>>    {
->>>> -	struct aa_label *label = aa_get_current_label();
->>>> +	struct aa_label *label = __begin_current_label_crit_section();
->>>>    	*secid = label->secid;
->>>> -	aa_put_label(label);
->>>> +	__end_current_label_crit_section(label);
->>>>    }
->>>>    
->>>>    static void apparmor_task_getsecid_obj(struct task_struct *p, u32 *secid)
->>>
->> 
->> Cheers,
->
+ mm/compaction.c | 49 ++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 32 insertions(+), 17 deletions(-)
 
-Cheers,
+diff --git a/mm/compaction.c b/mm/compaction.c
+index a3d2b132df52..e0e439b105b5 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -862,6 +862,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+ 
+ 	/* Time to isolate some pages for migration */
+ 	for (; low_pfn < end_pfn; low_pfn++) {
++		bool is_dirty, is_unevictable;
+ 
+ 		if (skip_on_failure && low_pfn >= next_skip_pfn) {
+ 			/*
+@@ -1047,10 +1048,6 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+ 		if (!mapping && (folio_ref_count(folio) - 1) > folio_mapcount(folio))
+ 			goto isolate_fail_put;
+ 
+-		/* The mapping truly isn't movable. */
+-		if (mapping && mapping_unmovable(mapping))
+-			goto isolate_fail_put;
+-
+ 		/*
+ 		 * Only allow to migrate anonymous pages in GFP_NOFS context
+ 		 * because those do not depend on fs locks.
+@@ -1062,8 +1059,10 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+ 		if (!folio_test_lru(folio))
+ 			goto isolate_fail_put;
+ 
++		is_unevictable = folio_test_unevictable(folio);
++
+ 		/* Compaction might skip unevictable pages but CMA takes them */
+-		if (!(mode & ISOLATE_UNEVICTABLE) && folio_test_unevictable(folio))
++		if (!(mode & ISOLATE_UNEVICTABLE) && is_unevictable)
+ 			goto isolate_fail_put;
+ 
+ 		/*
+@@ -1075,26 +1074,42 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+ 		if ((mode & ISOLATE_ASYNC_MIGRATE) && folio_test_writeback(folio))
+ 			goto isolate_fail_put;
+ 
+-		if ((mode & ISOLATE_ASYNC_MIGRATE) && folio_test_dirty(folio)) {
+-			bool migrate_dirty;
++		is_dirty = folio_test_dirty(folio);
++
++		if (((mode & ISOLATE_ASYNC_MIGRATE) && is_dirty)
++		    || (mapping && is_unevictable)) {
++			bool migrate_dirty = true;
++			bool is_unmovable;
+ 
+ 			/*
+-			 * Only pages without mappings or that have a
+-			 * ->migrate_folio callback are possible to migrate
+-			 * without blocking. However, we can be racing with
+-			 * truncation so it's necessary to lock the page
+-			 * to stabilise the mapping as truncation holds
+-			 * the page lock until after the page is removed
+-			 * from the page cache.
++			 * Only folios without mappings or that have
++			 * a ->migrate_folio callback are possible to migrate
++			 * without blocking.
++			 *
++			 * Folios from unmovable mappings are not migratable.
++			 *
++			 * However, we can be racing with truncation, which can
++			 * free the mapping that we need to check. Truncation
++			 * holds the folio lock until after the folio is removed
++			 * from the page so holding it ourselves is sufficient.
++			 *
++			 * To avoid this folio locking to inspect every folio
++			 * with mapping for being unmovable, we assume every
++			 * such folio is also unevictable, which is a cheaper
++			 * test. If our assumption goes wrong, it's not a bug,
++			 * just potentially wasted cycles.
+ 			 */
+ 			if (!folio_trylock(folio))
+ 				goto isolate_fail_put;
+ 
+ 			mapping = folio_mapping(folio);
+-			migrate_dirty = !mapping ||
+-					mapping->a_ops->migrate_folio;
++			if ((mode & ISOLATE_ASYNC_MIGRATE) && is_dirty) {
++				migrate_dirty = !mapping ||
++						mapping->a_ops->migrate_folio;
++			}
++			is_unmovable = mapping && mapping_unmovable(mapping);
+ 			folio_unlock(folio);
+-			if (!migrate_dirty)
++			if (!migrate_dirty || is_unmovable)
+ 				goto isolate_fail_put;
+ 		}
+ 
 -- 
-Vinicius
+2.41.0
+
