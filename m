@@ -2,162 +2,226 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1679BCA0FF6
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Sep 2023 22:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 888FFCA0FEC
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Sep 2023 22:53:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231544AbjIAWGu (ORCPT
+        id S1348929AbjIAWxD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Sep 2023 18:06:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33314 "EHLO
+        Fri, 1 Sep 2023 18:53:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230140AbjIAWGt (ORCPT
+        with ESMTP id S237598AbjIAWxD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Sep 2023 18:06:49 -0400
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 94A19469D;
-        Fri,  1 Sep 2023 15:06:46 -0700 (PDT)
-Received: from [192.168.86.41] (unknown [50.46.242.41])
-        by linux.microsoft.com (Postfix) with ESMTPSA id D3815212A784;
-        Fri,  1 Sep 2023 15:06:45 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D3815212A784
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1693606006;
-        bh=MAPRirw43SQMAfz9BXvFsZVrtiSMUrdiYLmeabyub5w=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=bDc71/vAEO8noPu3QZzGncOeJGhePJcsYowD2WoxUuQ3PhfdPsMNiq3K3D1zPV17/
-         iAAp0/G2gkvF6AoRvzYK20DojoEfmfkdu1VC6cILfwGa1CqvszKVyb271J28IYvAJv
-         maR9SveydEYU9f2y8hl1lF6xQg7bbbtoC2s8S0LI=
-Message-ID: <c83e13f8-4b7d-9489-37cc-53936b24343c@linux.microsoft.com>
-Date:   Fri, 1 Sep 2023 15:06:45 -0700
+        Fri, 1 Sep 2023 18:53:03 -0400
+Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78485138;
+        Fri,  1 Sep 2023 15:52:59 -0700 (PDT)
+Received: by mail-ot1-x329.google.com with SMTP id 46e09a7af769-6beff322a97so1987578a34.3;
+        Fri, 01 Sep 2023 15:52:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1693608778; x=1694213578; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=w5+sW4mqGW8LxuwW7ALWEfQkhUWpZcqcc3uSM7JKnmU=;
+        b=hcDJnOeUyTMaEbNAjzf7Ke+aCOxykR+eR44E6CKXaOshZvZ3YtDOy8IPSb7NO6NcFt
+         z/ewvpctnsOsArEFJxShtI2vzE2HX53cCqDKonMrNobMRMzFrYMTpOweUkfUyS3iF11S
+         ZjPP/lLl0Dg43zDmVHYOZgx0fGL+hY/ZKAHmq5BN7dI9Bvn0x+Y2I72I5Au86gCcs568
+         xk1WLVD/gPZ/aAClGIzohwGAbOsU7Ya0HsKNbpb+72MYVV+V9JIF0RIDQdtlPwK4higq
+         /XOHz20DQUfi1725mpZMqVT1tZYei/X+QVyFuInzFvVc9rBSNCx+W/hd4yeJtheT16/m
+         xyeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693608778; x=1694213578;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w5+sW4mqGW8LxuwW7ALWEfQkhUWpZcqcc3uSM7JKnmU=;
+        b=XxzQzkjkUV1z6bmUfDZt5N8y/UHz1GXiR0SGDK8gJJejUsZenx5E33Z6UDqYuGXSG7
+         Fa78JXq3JGI1MCdJ3jk7gBo4HWrUpMsoZwvrOw2ZqTpdI1gv98xdZOitvqaX3RL8fQdA
+         2fdNy/2cocjUX84kAKB7kJ+01yaVL55MfYp9EhN9wBl5maHMBofFc9WIkiJce/gB2x7X
+         +UYTBoICFGAbKMpK+3GL3In+VyA/X2M7zh2Tu4Vb76c7h3iG3/+XvrnLGqvOKTRstn1Q
+         XhkCEuMCDYTe3DGqMyLc4W2I0LlGtOcA7DfLyQ+SRAaiOf23mixDtkpNOOcWXNdpUeIo
+         x5Gg==
+X-Gm-Message-State: AOJu0YyNrtMx3cD9usluJrUYOtySnSgpiyrWhJrnf1mUDuJ1gjdcNabX
+        O+qh6LTFsmQt3BUB2pahjo/Maz8bvyUG/09z9b7+vT54Mdk=
+X-Google-Smtp-Source: AGHT+IFBIIy7lYXGAeciBBAefu2viHmqKMYhtBngNepWE6COHhxykxZY/5i5hOrrjp5zDVPpXiNdxO46qfzaDZ87W0Y=
+X-Received: by 2002:a05:6870:a924:b0:1bf:74cc:c815 with SMTP id
+ eq36-20020a056870a92400b001bf74ccc815mr4059571oab.19.1693608778493; Fri, 01
+ Sep 2023 15:52:58 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [RFC] IMA Log Snapshotting Design Proposal - aggregate
-Content-Language: en-US
-To:     Ken Goldman <kgold@linux.ibm.com>,
-        Sush Shringarputale <sushring@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com, kexec@lists.infradead.org,
-        jmorris@namei.org, Paul Moore <paul@paul-moore.com>,
-        serge@hallyn.com
-Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
-        linux-security-module@vger.kernel.org
-References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
- <598fdd62-f4c3-a6dc-ae22-8f5a9e18f570@linux.ibm.com>
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-In-Reply-To: <598fdd62-f4c3-a6dc-ae22-8f5a9e18f570@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a8a:60c:0:b0:4f0:1250:dd51 with HTTP; Fri, 1 Sep 2023
+ 15:52:57 -0700 (PDT)
+In-Reply-To: <20230815183759.1821357-1-mjguzik@gmail.com>
+References: <20230815183759.1821357-1-mjguzik@gmail.com>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Sat, 2 Sep 2023 00:52:57 +0200
+Message-ID: <CAGudoHEgwMwbRr-CpgYFAkEKdcsoV320cicn-wPYr-_wiT0mXQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH] cred: add get_cred_many and put_cred_many
+To:     linux-security-module@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+can I get some flames on this?
+
+It there are no responses I'm dropping the patch, it is not worth
+significant hassle.
+
+On 8/15/23, Mateusz Guzik <mjguzik@gmail.com> wrote:
+> Shaves back-to-back atomics in a few places.
+>
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+>  include/linux/cred.h | 27 +++++++++++++++++++++------
+>  kernel/cred.c        | 29 +++++++++++++++++------------
+>  2 files changed, 38 insertions(+), 18 deletions(-)
+>
+> diff --git a/include/linux/cred.h b/include/linux/cred.h
+> index 9ed9232af934..b2b570ba204a 100644
+> --- a/include/linux/cred.h
+> +++ b/include/linux/cred.h
+> @@ -226,12 +226,17 @@ static inline bool cap_ambient_invariant_ok(const
+> struct cred *cred)
+>   * Get a reference on the specified set of new credentials.  The caller
+> must
+>   * release the reference.
+>   */
+> -static inline struct cred *get_new_cred(struct cred *cred)
+> +static inline struct cred *get_new_cred_many(struct cred *cred, int nr)
+>  {
+> -	atomic_inc(&cred->usage);
+> +	atomic_add(nr, &cred->usage);
+>  	return cred;
+>  }
+>
+> +static inline struct cred *get_new_cred(struct cred *cred)
+> +{
+> +	return get_new_cred_many(cred, 1);
+> +}
+> +
+>  /**
+>   * get_cred - Get a reference on a set of credentials
+>   * @cred: The credentials to reference
+> @@ -245,14 +250,19 @@ static inline struct cred *get_new_cred(struct cred
+> *cred)
+>   * accidental alteration of a set of credentials that should be considered
+>   * immutable.
+>   */
+> -static inline const struct cred *get_cred(const struct cred *cred)
+> +static inline const struct cred *get_cred_many(const struct cred *cred, int
+> nr)
+>  {
+>  	struct cred *nonconst_cred = (struct cred *) cred;
+>  	if (!cred)
+>  		return cred;
+>  	validate_creds(cred);
+>  	nonconst_cred->non_rcu = 0;
+> -	return get_new_cred(nonconst_cred);
+> +	return get_new_cred_many(nonconst_cred, nr);
+> +}
+> +
+> +static inline const struct cred *get_cred(const struct cred *cred)
+> +{
+> +	return get_cred_many(cred, 1);
+>  }
+>
+>  static inline const struct cred *get_cred_rcu(const struct cred *cred)
+> @@ -278,17 +288,22 @@ static inline const struct cred *get_cred_rcu(const
+> struct cred *cred)
+>   * on task_struct are attached by const pointers to prevent accidental
+>   * alteration of otherwise immutable credential sets.
+>   */
+> -static inline void put_cred(const struct cred *_cred)
+> +static inline void put_cred_many(const struct cred *_cred, int nr)
+>  {
+>  	struct cred *cred = (struct cred *) _cred;
+>
+>  	if (cred) {
+>  		validate_creds(cred);
+> -		if (atomic_dec_and_test(&(cred)->usage))
+> +		if (atomic_sub_and_test(nr, &cred->usage))
+>  			__put_cred(cred);
+>  	}
+>  }
+>
+> +static inline void put_cred(const struct cred *cred)
+> +{
+> +	put_cred_many(cred, 1);
+> +}
+> +
+>  /**
+>   * current_cred - Access the current task's subjective credentials
+>   *
+> diff --git a/kernel/cred.c b/kernel/cred.c
+> index 811ad654abd1..8a506bc7c1b8 100644
+> --- a/kernel/cred.c
+> +++ b/kernel/cred.c
+> @@ -159,23 +159,30 @@ EXPORT_SYMBOL(__put_cred);
+>   */
+>  void exit_creds(struct task_struct *tsk)
+>  {
+> -	struct cred *cred;
+> +	struct cred *real_cred, *cred;
+>
+>  	kdebug("exit_creds(%u,%p,%p,{%d,%d})", tsk->pid, tsk->real_cred,
+> tsk->cred,
+>  	       atomic_read(&tsk->cred->usage),
+>  	       read_cred_subscribers(tsk->cred));
+>
+> -	cred = (struct cred *) tsk->real_cred;
+> +	real_cred = (struct cred *) tsk->real_cred;
+>  	tsk->real_cred = NULL;
+> -	validate_creds(cred);
+> -	alter_cred_subscribers(cred, -1);
+> -	put_cred(cred);
+>
+>  	cred = (struct cred *) tsk->cred;
+>  	tsk->cred = NULL;
+> -	validate_creds(cred);
+> -	alter_cred_subscribers(cred, -1);
+> -	put_cred(cred);
+> +
+> +	if (real_cred == cred) {
+> +		validate_creds(cred);
+> +		alter_cred_subscribers(cred, -2);
+> +		put_cred_many(cred, 2);
+> +	} else {
+> +		validate_creds(real_cred);
+> +		validate_creds(cred);
+> +		alter_cred_subscribers(real_cred, -1);
+> +		put_cred(real_cred);
+> +		alter_cred_subscribers(cred, -1);
+> +		put_cred(cred);
+> +	}
+>
+>  #ifdef CONFIG_KEYS_REQUEST_CACHE
+>  	key_put(tsk->cached_requested_key);
+> @@ -352,8 +359,7 @@ int copy_creds(struct task_struct *p, unsigned long
+> clone_flags)
+>  #endif
+>  		clone_flags & CLONE_THREAD
+>  	    ) {
+> -		p->real_cred = get_cred(p->cred);
+> -		get_cred(p->cred);
+> +		p->real_cred = get_cred_many(p->cred, 2);
+>  		alter_cred_subscribers(p->cred, 2);
+>  		kdebug("share_creds(%p{%d,%d})",
+>  		       p->cred, atomic_read(&p->cred->usage),
+> @@ -517,8 +523,7 @@ int commit_creds(struct cred *new)
+>  		proc_id_connector(task, PROC_EVENT_GID);
+>
+>  	/* release the old obj and subj refs both */
+> -	put_cred(old);
+> -	put_cred(old);
+> +	put_cred_many(old, 2);
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(commit_creds);
+> --
+> 2.39.2
+>
+>
 
 
-On 8/30/23 11:12, Ken Goldman wrote:
-> On 8/1/2023 3:12 PM, Sush Shringarputale wrote:
->> - A user-mode process will trigger the snapshot by opening a file in 
->> SysFS
->>    say /sys/kernel/security/ima/snapshot (referred to as 
->> sysk_ima_snapshot_file
->>    here onwards).
->> - The Kernel will get the current TPM PCR values and PCR update 
->> counter [2]
->>    and store them as template data in a new IMA event 
->> "snapshot_aggregate".
-> 
-> If this is relying on a user-mode process, is there a concern that the 
-> process doesn't run. Might it be safer to have the kernel trigger the
-> snapshot.
-> 
-The UM process here would be typically an attestation client
-which passes on the IMA log to the remote service for attestation.
-If the process doesn't run, the client will operate the same way as it
-does currently.
-
-Kernel triggering snapshot would come with its own issues of Kernel
-storing the snapshot on some persistent file-system. They are being
-discussed on the main thread [1].
-
-> PCR reads are not atomic, with each other and with event log appends. Is 
-> this an issue?
-> 
-In this design, reading the PCR plus adding the snapshot_aggregate
-has to be an atomic operation.  Other IMA events shouldn't interfere
-with this operation. Just like IMA ensures adding an entry to the log
-plus PCR extension happens in an atomic way by holding the
-ima_extend_list_mutex [2], we intend to use a similar mechanism to
-ensure reading the PCR plus adding the snapshot_aggregate remains an
-atomic operation.  And since taking a snapshot would be a rare event
-compared to adding a generic event to IMA log - overall we expect a low
-overhead in case of snapshotting.
-
-However, please note that the event addition to IMA logs will *not*
-be paused while the log is written out to disk by the UM process.
-
-> The PCR update counter can change between PCR reads.  What is its purpose?
-> 
-Earlier we believed the PCR update counter will help with keeping track
-of events in the IMA log snapshot. But I soon realized (and it was
-also pointed out by Stefan Berger on the PCR update counter patch-series 
-[3]) that the update counter gets incremented on updates to any PCR
-(including the PCRs not touched by IMA).
-
-I agree that update counter may not be a reliable marker for this
-particular feature.
-
-We have put that series [3] on hold for other higher priority work items
-in the IMA/kexec space.
-
-> What is the purpose of the snapshot aggregate?  Since the entire event 
-> log has to be retained and sent to the verifier, is the aggregate 
-> redundant?
-
-The goals of snapshot_aggregate marker are:
-     1. To allow the IMA log to be divided into multiple chunks and
-        provide attestation service the ability to verify and use the
-        latest chunk (i.e. snapshot ) for attestation.
-
-     2. To indicate to the attestation service that the client device has
-        IMA log snapshotting feature enabled, and at least one snapshot
-        is taken.  So that the service can ask for previous snapshots
-        as needed.
-
-     3. In the event of multiple snapshots, the snapshot_aggregate
-        marker has sufficient information to verify the integrity
-        of latest subset of isolated snapshots (with the help of PCR
-        quote of course)
-
-     4. snapshot_aggregate helps both kernel and UM define clear
-        boundaries between multiple snapshots.
-        (each new snapshot starts with either the first boot_aggregate
-         or a snapshot_aggregate event)
-
-The overall goals of IMA log snapshotting feature are:
-     a. to relieve memory pressure on the client device.
-
-     b. to make attestation service side processing more efficient
-        They don't have to deal with the entire log since boot,
-        as you mentioned on
-
-     c. Reduce network bandwidth usage by sending less data
-        for each attestation request.
-
-We missed stating them explicitly in the original RFC proposal we
-sent. We will add them in the next version of the proposal.
-
-References:
-
-[1] Re: [RFC] IMA Log Snapshotting Design Proposal - Paul Moore 
-(kernel.org)
-https://lore.kernel.org/linux-integrity/CAHC9VhQbnyd2nvmL-t=3kXppsm985ps+NPJ5QDvM1WSS-Hd_Ew@mail.gmail.com/
-
-
-[2] ima_extend_list_mutex
-https://elixir.bootlin.com/linux/latest/source/security/integrity/ima/ima_queue.c#L159
-
-[3] Re: [PATCH 0/6] Measuring TPM update counter in IMA - Stefan Berger 
-(kernel.org)
-https://lore.kernel.org/linux-integrity/a4a5e40b-abc1-27fa-3984-cee18fb4522c@linux.ibm.com/
-
-Thanks,
+-- 
+Mateusz Guzik <mjguzik gmail.com>
