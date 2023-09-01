@@ -2,178 +2,93 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FC3CA0FF6
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Sep 2023 20:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92337CA0FE8
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Sep 2023 21:47:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350719AbjIAUZB (ORCPT
+        id S1344693AbjIAVq1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Sep 2023 16:25:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36028 "EHLO
+        Fri, 1 Sep 2023 17:46:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244443AbjIAUZB (ORCPT
+        with ESMTP id S1350835AbjIAVmy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Sep 2023 16:25:01 -0400
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3EAEE7F
-        for <linux-security-module@vger.kernel.org>; Fri,  1 Sep 2023 13:24:56 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RcqJk4phnzMqJ78;
-        Fri,  1 Sep 2023 20:24:54 +0000 (UTC)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RcqJj6f1pzMpnPd;
-        Fri,  1 Sep 2023 22:24:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1693599894;
-        bh=EgaudXTLVB2Z3ZuXye/H8fFu5K/48RR41qfT8koWAoA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IbPX/HCJQAuKsDQgr2BmAGc3Pjryrjdw7irGRXwkVjJ9Av8Y78+BcA/RgJgPq1M0a
-         +jual7Izi5b8VKage26qXj/Ulr3C4gzpMcFjL72HXNIXpvslc17cYnsVhGDatj/UPU
-         zHizYs+Gj9JuURNoSuKj9MWJjd4aihiG/Lk9I6hw=
-Date:   Fri, 1 Sep 2023 22:24:43 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Matt Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>
-Subject: Re: [PATCH v3 2/5] selftests/landlock: Test ioctl support
-Message-ID: <20230901.OhT2suinooGh@digikod.net>
-References: <20230814172816.3907299-1-gnoack@google.com>
- <20230814172816.3907299-3-gnoack@google.com>
- <20230818.HopaLahS0qua@digikod.net>
- <ZOjN7dub5QGJOzSX@google.com>
- <20230825.ohtoh6aivahX@digikod.net>
- <20230901133559.gazeeteejw2ebpxm@google.com>
+        Fri, 1 Sep 2023 17:42:54 -0400
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5E1641BEC;
+        Fri,  1 Sep 2023 14:20:27 -0700 (PDT)
+Received: from [192.168.86.41] (unknown [50.46.242.41])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 9E54B212A780;
+        Fri,  1 Sep 2023 14:20:26 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9E54B212A780
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1693603226;
+        bh=it67IfdVDRVdX2moDR85C5xi3JsHlNUpiQ1PvFyXwyc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=si6z6nr5hRK+iur7H3WtbmbfLXMYnnXtzVppQ+Hf3C0IlThevpaWcfHSHL/Tlsy6p
+         krlwvMSqsjlLhT9tTCyxtvuNg8VJSPPU/XSRpRbbLkES+L8ZCWuftDMWWN+Vhwfo8F
+         hhLQib+/gMVIhWXU8jArwJoYbG45uy7qrDsORhIc=
+Message-ID: <5ce32966-c8c5-adc4-8b9e-f8300b266a61@linux.microsoft.com>
+Date:   Fri, 1 Sep 2023 14:20:26 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [RFC] IMA Log Snapshotting Design Proposal - network bandwidth
+Content-Language: en-US
+To:     Ken Goldman <kgold@linux.ibm.com>,
+        Sush Shringarputale <sushring@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, bhe@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com, kexec@lists.infradead.org,
+        jmorris@namei.org, Paul Moore <paul@paul-moore.com>,
+        serge@hallyn.com
+Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
+        linux-security-module@vger.kernel.org
+References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
+ <5c323243-e22e-dd61-f808-2875654936a6@linux.ibm.com>
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+In-Reply-To: <5c323243-e22e-dd61-f808-2875654936a6@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230901133559.gazeeteejw2ebpxm@google.com>
-X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 01, 2023 at 03:35:59PM +0200, Günther Noack wrote:
-> Hello!
-> 
-> On Fri, Aug 25, 2023 at 07:07:01PM +0200, Mickaël Salaün wrote:
-> > On Fri, Aug 25, 2023 at 05:51:09PM +0200, Günther Noack wrote:
-> > > Hello!
-> > > 
-> > > On Fri, Aug 18, 2023 at 07:06:07PM +0200, Mickaël Salaün wrote:
-> > > > On Mon, Aug 14, 2023 at 07:28:13PM +0200, Günther Noack wrote:
-> > > > > @@ -3639,7 +3639,7 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
-> > > > >  	};
-> > > > >  	int fd, ruleset_fd;
-> > > > >  
-> > > > > -	/* Enable Landlock. */
-> > > > > +	/* Enables Landlock. */
-> > > > >  	ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
-> > > > >  	ASSERT_LE(0, ruleset_fd);
-> > > > >  	enforce_ruleset(_metadata, ruleset_fd);
-> > > > > @@ -3732,6 +3732,96 @@ TEST(memfd_ftruncate)
-> > > > >  	ASSERT_EQ(0, close(fd));
-> > > > >  }
-> > > > 
-> > > > We should also check with O_PATH to make sure the correct error is
-> > > > returned (and not EACCES).
-> > > 
-> > > Is this remark referring to the code before it or after it?
-> > > 
-> > > My interpretation is that you are asking to test that test_fioqsize_ioctl() will
-> > > return errnos correctly?  Do I understand that correctly?  (I think that would
-> > > be a little bit overdone, IMHO - it's just a test utility of ~10 lines after
-> > > all, which is below the threshold where it can be verified by staring at it for
-> > > a bit. :))
-> > 
-> > I was refering to the previous memfd_ftruncate test, which is changed
-> > with a next patch. We should check the access rights tied (and checkd)
-> > to FD (i.e. truncate and ioctl) opened with O_PATH.
-> 
-> OK, I added a test that checks ioctl(2) and ftruncate(2) on files that
-> were opened with O_PATH, both before and after enabling Landlock.
-> ftruncate() and ioctl() always give an EBADF error, both before and
-> after enabling Landlock (as described in open(2) in the section about
-> O_PATH).
+Thanks a lot Ken for looking at the proposal, and sharing your thoughts.
 
-Good!
+On 8/30/23 11:06, Ken Goldman wrote:
+> 
+> 
+> On 8/1/2023 3:12 PM, Sush Shringarputale wrote:
+>> In addition, a large IMA log can add pressure on the network bandwidth 
+>> when
+>> the attestation client sends it to remote-attestation-service.
+> 
+> I would not worry too much about network bandwidth.
+Our bandwidth concerns are about scaled out system.
+
+When IMA log size increases in the range of megabytes, and when the
+number of client devices increases, it makes an impact on the overall
+network bandwidth.
 
 > 
-> A bit outside of the IOCTL path set scope:
+> 1. Every solution eventually realizes that sending the entire log each 
+> time hurts performance.Â  The verifier will ask the attestor, "give me 
+> everything since record n", and the number of new entries approaches zero.
 > 
-> I was surprised that it is even possible to successfully open a file
-> with O_PATH, even after Landlock is enabled and restricts all it can
-> in that file hierarchy.  This lets you detect that a file exists, even
-> when that file is in a directory whose contents you are otherwise not
-> permitted to list due to Landlock.
+Completely agreed. IMA log snapshotting (this proposed feature) is a
+solution in that direction.
 
-This is indeed intended and tested with the effective_access test.
-O_PATH is handled the same way as chdir (and similar path-based
-syscalls) and always allowed. However, I just realized that the O_PATH
-case is not explicitly mentioned in the documentation.
-
+> 2. My benchmarks show that
 > 
-> The logic for that is in the get_required_file_open_access() function.
-> Should we add a "LANDLOCK_ACCESS_FS_PATH_FILE" right, which would work
-> similar to LANDLOCK_ACCESS_FS_READ_FILE and
-> LANDLOCK_ACCESS_FS_WRITE_FILE, so that this can be restricted?
+> On the client, the TPM quote time swamps everything else.
+> On the server, verifying the IMA entry signatures swamps everything else.
+> 
+> The network transfer time is negligible.
+Agreed, it is true in the context of an individual client device.
 
-Having a file descriptor opened with O_PATH should not give any specific
-access (hence the need to test with IOCTLs). O_PATH is designed to get an
-explicit reference to the filesystem (without the issues of paths) and
-use the related FD with *at() syscalls, including landlock_add_rule()
-with a path_beneath rule.  FDs opened with O_PATH should not be an issue
-by themselves for a sandbox, but the real issue is to discover paths,
-i.e. the directory's execute access right.  This is why I think it would
-make more sense to have something like a LANDLOCK_ACCESS_FS_WALK right
-instead. This would enable to definitely deny any access to a file
-hierarchy.
+Our network bandwidth concerns are for the overall traffic on the scaled
+out system. It impacts the network bandwidth when the IMA log is large
+(MBs).  And the issue is compounded when there are large number of
+client devices.
 
-For chdir-like syscalls, we could rely on path_permission(), but for a
-more holistic approach we need to properly handle the execute permission
-on directories. See Christian's comment on chdir/path_permission and the
-limit of what an LSM can infer from paths:
-https://lore.kernel.org/r/20230530-mietfrei-zynisch-8b63a8566f66@brauner
-
-We could rely on the last walked (leaf) dentry to allow or deny such
-walk, but that would still enable malicious processes to infer path
-because of intermediate walk that may return ENOENT. We could also
-return ENOENT instead of EACCES, but this would not handle the case of
-other access controls returning EACCES.
-
-With this in mind, I think the better solution is to properly check each
-intermediate directory during a path walk. This is not
-currently possible with path-based LSM hooks but I think that we could
-add a new LSM hook in filename_lookup(), close to the audit_inode()
-call, to get the necessary information about the currently walked
-directory.
-
-Simply using this new hook with Landlock would add a significant
-performance impact because of the way Landlock identifies paths (i.e.
-walk back). An interesting approach to efficiently check Landlock access
-right would be to store the collected access rights of a path in a
-cache, and use it when checking a "child" of this path. According to
-task_struct, there is only one path walk at a time per thread, which
-would enable us to have only one cached path per task and
-opportunistically use it in Landlock's is_access_to_paths_allowed() as a
-backstop to end the walk. With this trick, I think in most cases no walk
-back would be required, which would be great for performance. The main
-challenge would be to efficiently handle the ".." directories.
-See an initial approach of caching for Landlock:
-https://lore.kernel.org/r/20210630224856.1313928-1-mic@digikod.net
-
-Being able to control path walks would be a way to use (most?)
-inode-based LSM hooks for Landlock, especially the
-security_inode_permission(). Indeed. we could then tie an inode to a
-path (resolution) thanks to the cache (and potentially other caches
-according to the number of checked inodes).  This would be great for new
-access rights such as LANDLOCK_ACCESS_FS_{READ,WRITE}_METADATA.
-
-Xiu, that would be a good opportunity to continue your work, and
-probably without waiting for IMA to be converted to a proper LSM. What
-do you think?
+Thanks,
+Tushar
