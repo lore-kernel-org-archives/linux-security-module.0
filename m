@@ -2,163 +2,245 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3ECCA0FF6
-	for <linux-security-module@archiver.kernel.org>; Sat,  2 Sep 2023 00:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3624C83F2D
+	for <linux-security-module@archiver.kernel.org>; Sat,  2 Sep 2023 11:54:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351447AbjIBAtA (ORCPT
+        id S1352080AbjIBLyP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Sep 2023 20:49:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42030 "EHLO
+        Sat, 2 Sep 2023 07:54:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240699AbjIBAtA (ORCPT
+        with ESMTP id S242626AbjIBLyO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Sep 2023 20:49:00 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ED1EE7E
-        for <linux-security-module@vger.kernel.org>; Fri,  1 Sep 2023 17:48:57 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-68bee12e842so2158794b3a.3
-        for <linux-security-module@vger.kernel.org>; Fri, 01 Sep 2023 17:48:57 -0700 (PDT)
+        Sat, 2 Sep 2023 07:54:14 -0400
+Received: from mail-ej1-x64a.google.com (mail-ej1-x64a.google.com [IPv6:2a00:1450:4864:20::64a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D9B1709
+        for <linux-security-module@vger.kernel.org>; Sat,  2 Sep 2023 04:54:09 -0700 (PDT)
+Received: by mail-ej1-x64a.google.com with SMTP id a640c23a62f3a-94a35b0d4ceso187104066b.3
+        for <linux-security-module@vger.kernel.org>; Sat, 02 Sep 2023 04:54:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693615736; x=1694220536; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ylIMM6O8H66mX5wEUzm+jJ9Dx/8lS9WU/xj1ockT74I=;
-        b=FRyQraa/n3/pc6/pD9s70+nS3mdzfKnMpEUmT19KKJwbm9Xc5QwkIFfW5I6sldl9aT
-         aU4KtJRvOS/Nnt7K/K4TGT/ZS3XIUUyndHrqTE4vjX6LmIuq9d7Mn61XuCTUB3i58qTK
-         QUbb4/WstZduVc5qSOgIa7enLyzAwvXWNSCmlLcTYwi1IT35+UYTdeHQjCu5FC9+mNPY
-         Yq7X6nHmUXiK2OvWVkIqgbiVD5IVfZb8b1FVroPEkdEvcpVFzyDVr7qFCD4/IWdP87aC
-         HgqUm7MBdsB82ilhEMRgZEPeQFXiRpzFrmKTsW+HWgouz4hGeFDwPhgpce7wLZmpWd/F
-         K+6Q==
+        d=google.com; s=20221208; t=1693655648; x=1694260448; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9xTi8JzWSoRZ9awQ9tP2xRmkPxZTOmK3Z+NAkxP1LPY=;
+        b=VSRPMj1Zgn4p8HqWEqnf3gw6fTqxwyqpO5XQwpFDSVVRCkk372h0Dma/egkxi355qI
+         UBnycBMm7cQ9LhfadWDziN0LF7CH7cV+mhGY0fK0QLgAx/1FlKicQRgPY5T8muvqoiUC
+         N83SyRLJktu6TwfOVN08/r4exDXRKfzRZiDqPBMoJj1e1oh4fAYSskoJGYZqZOtukCkp
+         uEWlC/kH6wRwPYGaa/1hJ3GeIuZHmEFRIgXE3EwBpuXq3KNiSg7LYnqE+ScFn4ri9qfZ
+         xyIIdEV9pF0xPAnxmsRt4pozHMtTHD9mR5zbImDdhIteGGsBju9E6pSnGvB4Z1gxSFP7
+         zLaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693615736; x=1694220536;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ylIMM6O8H66mX5wEUzm+jJ9Dx/8lS9WU/xj1ockT74I=;
-        b=VFA0WBRKlYHSo6NbnRg4llyuGFQ+iWO4gEqMcd+2D6jScNfa3sKe+RN6XkPyipvMhz
-         rJh3AQ5aHGsg5O7MSxSxOY31YxnGsYuC0m0qRA8tMOrizvmUdEjCbFouS+Pg6lONV4Pl
-         5axSI+DOUW6w6D7sFpEXUPEP6kqvqfEPflaTxqG9tOrnurRLhwiZ14xQgWjjLxO+sv28
-         qgYOG5o9hEgchrVH9JvFFPrlY2UKVbZBteX55w9P6BnTyCmqV4fKOztGu+7XLPqO1iM3
-         mFrbvS/Wn/pSStt8j36eSYRIvIvXD61hNYyBIq5eLtaYP2C5uxQMEGrzknfj0xf8dLfQ
-         BbSA==
-X-Gm-Message-State: AOJu0YwE9tYo19hoPMhe0D81aGD7Jvr0ZDs8es/vP5XgvctygWAj5s+1
-        sfyJ37hn46zfMD1SoYos7WKlKteWYISi8A==
-X-Google-Smtp-Source: AGHT+IGwfgkjwdVjFrI6ycJe+rkV6NFEqoOfjMR1W/MtOaDc4kPKbK7aa4oxTVDwBayQRTvJVDRWLQ==
-X-Received: by 2002:a05:6a20:7f9a:b0:141:d54e:a907 with SMTP id d26-20020a056a207f9a00b00141d54ea907mr5911133pzj.19.1693615736314;
-        Fri, 01 Sep 2023 17:48:56 -0700 (PDT)
-Received: from nova-ws.. ([103.167.140.11])
-        by smtp.gmail.com with ESMTPSA id c1-20020a170902c1c100b001b83dc8649dsm3543356plc.250.2023.09.01.17.48.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Sep 2023 17:48:56 -0700 (PDT)
-From:   Xiao Liang <shaw.leon@gmail.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Matthew Garrett <mjg59@google.com>
-Subject: [PATCH] apparmor: Fix null pointer deref when receiving skb during sock creation
-Date:   Sat,  2 Sep 2023 08:48:38 +0800
-Message-ID: <20230902004841.614102-1-shaw.leon@gmail.com>
-X-Mailer: git-send-email 2.42.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        d=1e100.net; s=20221208; t=1693655648; x=1694260448;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9xTi8JzWSoRZ9awQ9tP2xRmkPxZTOmK3Z+NAkxP1LPY=;
+        b=NRIhhhnvlXuiHTh6BFX1Gr5x4BM04HOpFv+8rwKydLW9NfHG/xb00/KiIEaD9bJhd1
+         TChFZIWwaAyfRBDOh3bEhFW6V5Hd/bc/9wjUur90tg6iczhTiclWJVPJks3xdJ/dpGLG
+         Tbo1ntIokaj9PBPSJcbyPMZdM3x6uBZ+qsxQHXhDRTBscr2Bk5C2n70M6LLnm2uv82vz
+         yelPm/b4f1L+IGeBrwssI/YYylc0Y1aUgM9NT8sNKzPoa7PpUZ5lCpw+oN2k881zN7bf
+         PB7Oa54vyDCHCpMtXPJna/GWt917GehrqyMQJ55V84z6wH5vN3r7mWaAdF/XJvOccSS6
+         CXFA==
+X-Gm-Message-State: AOJu0Yxk4XaXWIW+ZHQmG6cVhEwlHIQZzgwn2ud+eB2dfQ04fgwyY9Ez
+        QsEQqOajmZko0a07ZWrH+ej1sKEuFgI=
+X-Google-Smtp-Source: AGHT+IHcgc+x0g52MeRFpfHWF/N5g/r8clf+a8kl2FfPB9ny2mr/mLxZTKdlcPNEkRw56N3vjIPGpx7npL8=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:989:1456:793b:32f4])
+ (user=gnoack job=sendgmr) by 2002:a17:907:6217:b0:9a1:eb41:eb4f with SMTP id
+ ms23-20020a170907621700b009a1eb41eb4fmr46738ejc.7.1693655648117; Sat, 02 Sep
+ 2023 04:54:08 -0700 (PDT)
+Date:   Sat, 2 Sep 2023 13:53:57 +0200
+In-Reply-To: <20230826.ohtooph0Ahmu@digikod.net>
+Message-Id: <ZPMiVaL3kVaTnivh@google.com>
+Mime-Version: 1.0
+References: <20230814172816.3907299-1-gnoack@google.com> <20230818.iechoCh0eew0@digikod.net>
+ <ZOjCz5j4+tgptF53@google.com> <20230825.Zoo4ohn1aivo@digikod.net> <20230826.ohtooph0Ahmu@digikod.net>
+Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support
+From:   "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
+To:     "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
+Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Matt Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The panic below is observed when receiving ICMP packets with secmark set
-while an ICMP raw socket is being created. SK_CTX(sk)->label is updated
-in apparmor_socket_post_create(), but the packet is delivered to the
-socket before that, causing the null pointer dereference.
-Drop the packet if label context is not set.
+Hello!
 
-    BUG: kernel NULL pointer dereference, address: 000000000000004c
-    #PF: supervisor read access in kernel mode
-    #PF: error_code(0x0000) - not-present page
-    PGD 0 P4D 0
-    Oops: 0000 [#1] PREEMPT SMP NOPTI
-    CPU: 0 PID: 407 Comm: a.out Not tainted 6.4.12-arch1-1 #1 3e6fa2753a2d75925c34ecb78e22e85a65d083df
-    Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/28/2020
-    RIP: 0010:aa_label_next_confined+0xb/0x40
-    Code: 00 00 48 89 ef e8 d5 25 0c 00 e9 66 ff ff ff 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 0f 1f 44 00 00 89 f0 <8b> 77 4c 39 c6 7e 1f 48 63 d0 48 8d 14 d7 eb 0b 83 c0 01 48 83 c2
-    RSP: 0018:ffffa92940003b08 EFLAGS: 00010246
-    RAX: 0000000000000000 RBX: 0000000000000000 RCX: 000000000000000e
-    RDX: ffffa92940003be8 RSI: 0000000000000000 RDI: 0000000000000000
-    RBP: ffff8b57471e7800 R08: ffff8b574c642400 R09: 0000000000000002
-    R10: ffffffffbd820eeb R11: ffffffffbeb7ff00 R12: ffff8b574c642400
-    R13: 0000000000000001 R14: 0000000000000001 R15: 0000000000000000
-    FS:  00007fb092ea7640(0000) GS:ffff8b577bc00000(0000) knlGS:0000000000000000
-    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-    CR2: 000000000000004c CR3: 00000001020f2005 CR4: 00000000007706f0
-    PKRU: 55555554
-    Call Trace:
-     <IRQ>
-     ? __die+0x23/0x70
-     ? page_fault_oops+0x171/0x4e0
-     ? exc_page_fault+0x7f/0x180
-     ? asm_exc_page_fault+0x26/0x30
-     ? aa_label_next_confined+0xb/0x40
-     apparmor_secmark_check+0xec/0x330
-     security_sock_rcv_skb+0x35/0x50
-     sk_filter_trim_cap+0x47/0x250
-     sock_queue_rcv_skb_reason+0x20/0x60
-     raw_rcv+0x13c/0x210
-     raw_local_deliver+0x1f3/0x250
-     ip_protocol_deliver_rcu+0x4f/0x2f0
-     ip_local_deliver_finish+0x76/0xa0
-     __netif_receive_skb_one_core+0x89/0xa0
-     netif_receive_skb+0x119/0x170
-     ? __netdev_alloc_skb+0x3d/0x140
-     vmxnet3_rq_rx_complete+0xb23/0x1010 [vmxnet3 56a84f9c97178c57a43a24ec073b45a9d6f01f3a]
-     vmxnet3_poll_rx_only+0x36/0xb0 [vmxnet3 56a84f9c97178c57a43a24ec073b45a9d6f01f3a]
-     __napi_poll+0x28/0x1b0
-     net_rx_action+0x2a4/0x380
-     __do_softirq+0xd1/0x2c8
-     __irq_exit_rcu+0xbb/0xf0
-     common_interrupt+0x86/0xa0
-     </IRQ>
-     <TASK>
-     asm_common_interrupt+0x26/0x40
-    RIP: 0010:apparmor_socket_post_create+0xb/0x200
-    Code: 08 48 85 ff 75 a1 eb b1 0f 1f 80 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 41 54 <55> 48 89 fd 53 45 85 c0 0f 84 b2 00 00 00 48 8b 1d 80 56 3f 02 48
-    RSP: 0018:ffffa92940ce7e50 EFLAGS: 00000286
-    RAX: ffffffffbc756440 RBX: 0000000000000000 RCX: 0000000000000001
-    RDX: 0000000000000003 RSI: 0000000000000002 RDI: ffff8b574eaab740
-    RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-    R10: ffff8b57444cec70 R11: 0000000000000000 R12: 0000000000000003
-    R13: 0000000000000002 R14: ffff8b574eaab740 R15: ffffffffbd8e4748
-     ? __pfx_apparmor_socket_post_create+0x10/0x10
-     security_socket_post_create+0x4b/0x80
-     __sock_create+0x176/0x1f0
-     __sys_socket+0x89/0x100
-     __x64_sys_socket+0x17/0x20
-     do_syscall_64+0x5d/0x90
-     ? do_syscall_64+0x6c/0x90
-     ? do_syscall_64+0x6c/0x90
-     ? do_syscall_64+0x6c/0x90
-     entry_SYSCALL_64_after_hwframe+0x72/0xdc
+Thanks for the detailed review again!  The FIONREAD implementation that you
+suggested works.  With FIOQSIZE I ran into some surprises - I believe the c=
+heck
+is a noop - more details below.
 
-Fixes: ab9f2115081a ("apparmor: Allow filtering based on secmark policy")
-Signed-off-by: Xiao Liang <shaw.leon@gmail.com>
----
- security/apparmor/lsm.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Sat, Aug 26, 2023 at 08:26:30PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Fri, Aug 25, 2023 at 06:50:29PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> > On Fri, Aug 25, 2023 at 05:03:43PM +0200, G=C3=BCnther Noack wrote:
+> > > FIONREAD gives the number of bytes that are ready to read.  This IOCT=
+L seems
+> > > only useful when the file is open for reading.  However, do you think=
+ that we
+> > > should correlate this with (a) LANDLOCK_ACCESS_FS_READ_FILE, or with =
+(b)
+> > > f->f_mode & FMODE_READ?  (The difference is that in case (a), FIONREA=
+D will work
+> > > if you open a file O_WRONLY and you also have the LANDLOCK_ACCESS_FS_=
+READ_FILE
+> > > right for that file.  In case (b), it would only work if you also ope=
+ned the
+> > > file for reading.)
+> >=20
+> > I think we should allow FIONREAD if LANDLOCK_ACCESS_FS_IOCTL is handled
+> > and if LANDLOCK_ACCESS_FS_READ_FILE is explicitly allowed for this FD.
 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 108eccc5ada5..0dbff677ac2e 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1097,6 +1097,13 @@ static int apparmor_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
- 	if (!skb->secmark)
- 		return 0;
- 
-+	/*
-+	 * If reach here before socket_post_create hook is called, in which
-+	 * case label is null, drop the packet.
-+	 */
-+	if (!ctx->label)
-+		return -EACCES;
-+
- 	return apparmor_secmark_check(ctx->label, OP_RECVMSG, AA_MAY_RECEIVE,
- 				      skb->secmark, sk);
- }
--- 
-2.42.0
+Just paraphrasing for later reference, because I almost misunderstood it:
 
+FIONREAD should work even when LANDLOCK_ACCESS_FS_IOCTL is *handled*,
+which is lingo for "listed in the ruleset_attr.handled_access_fs".
+When it is listed there, that means that the Landlock policy does not
+grant the LANDLOCK_ACCESS_FS_IOCTL right.
+
+So we treat FIONREAD as blanket-permitted independent of the
+LANDLOCK_ACCESS_FS_IOCTL right, under the condition that we have
+LANDLOCK_ACCESS_FS_READ_FILE for the file. -- Sounds good to me, will do.
+
+
+> > > FIOQSIZE seems like it would be useful for both reading *and* writing=
+? -- The
+> > > reading case is obvious, but for writers it's also useful if you want=
+ to seek
+> > > around in the file, and make sure that the position that you seek to =
+already
+> > > exists.  (I'm not sure whether that use case is relevant in practical
+> > > applications though.) -- Why would FIOQSIZE only be useful for reader=
+s?
+> >=20
+> > Good point! The use case you define for writing is interesting. However=
+,
+> > would it make sense to seek at a specific offset without being able to
+> > know/read the content? I guest not in theory, but in practice we might
+> > want to avoid application to require LANDLOCK_ACCESS_FS_READ_FILE is
+> > they only require to write (at a specific offset), or to deal with writ=
+e
+> > errors. Anyway, I guess that this information can be inferred by trying
+> > to seek at a specific offset.  The only limitation that this approach
+> > would bring is that it seems that we can seek into an FD even without
+> > read nor write right, and there is no specific (LSM) access control for
+> > this operation (and nobody seems to care about being able to read the
+> > size of a symlink once opened). If this is correct, I think we should
+> > indeed always allow FIOQSIZE. Being able to open a file requires
+> > LANDLOCK_ACCESS_FS_READ or WRITE anyway.  It would be interesting to
+> > check and test with O_PATH though.
+>=20
+> FIOQSIZE should in fact only be allowed if LANDLOCK_ACCESS_FS_READ_FILE o=
+r
+> LANDLOCK_ACCESS_FS_WRITE_FILE or LANDLOCK_ACCESS_FS_READ_DIR are handled
+> and explicitly allowed for the FD. I guess FIOQSIZE is allowed without re=
+ad
+> nor write mode (i.e. O_PATH), so it could be an issue for landlocked
+> applications but they can explicitly allow IOCTL for this case. When
+> we'll have a LANDLOCK_ACCESS_FS_READ_METADATA (or something similar), we
+> should also tie FIOQSIZE to this access right, and we'll be able to
+> fully handle all the use cases without fully allowing all other IOCTLs.
+
+I implemented this check for the Landlock access rights in the ioctl hook, =
+but
+when testing it I realized that I could not ever get it to fail in practice=
+:
+
+ioctl(2) generally returns EBADF when the file was opened with O_PATH.  Ear=
+ly in
+the ioctl(2) syscall implementation, it returns EBADF when the struct fd do=
+es
+not have the ->file attribute set.  (This is even true for the commands to
+manipulate the Close-on-exec flag, which don't strictly need that. But they
+might work through fcntl.)
+
+In my understanding from the open(2) man page, the only ways to open files =
+are
+with one of O_RDONLY, O_RDWR, O_WRONLY or O_PATH:
+
+- O_RDONLY: we had LANDLOCK_ACCESS_FS_READ_FILE at the time of open(2).
+- O_WRONLY: we had LANDLOCK_ACCESS_FS_WRITE_FILE at the time of open(2).
+- O_RDWR: we had both of these two rights at the time of open(2).
+- O_PATH: any ioctl(2) attempt returns EBADF early on
+
+So at the time that the ioctl security hook gets called, we already know th=
+at
+the user must have had one of the LANDLOCK_ACCESS_FS_READ_FILE or
+LANDLOCK_ACCESS_FS_WRITE_FILE rights -- checking for it again is not strict=
+ly
+necessary?
+
+Am I missing something here?  (In particular, am I overlooking additional w=
+ays
+to call open(2) where the read and write rights are not necessary, other th=
+an
+O_PATH?)
+
+I'd propose this path forward: Let's keep the check for the rights as you
+suggested, but I would just keep it as an additional safety net there, for
+Landlock's internal consistency, and in case that future Linux versions
+introduce new ways to open files.  I believe that at the moment, that check=
+ is
+equivalent to always permitting the FIOQSIZE command in that hook (with the=
+ same
+logic as for FIOCLEX, FIONCLEX etc).
+
+
+> > > (In fact, it seems to me almost like FIOQSIZE might rather be missing=
+ a security
+> > > hook check for one of the "getting file attribute" hooks?)
+> > >=20
+> > > So basically, the implementation that I currently ended up with is:
+> > >=20
+> >=20
+> > Before checking these commands, we first need to check that the origina=
+l
+> > domain handle LANDLOCK_ACCESS_FS_IOCTL. We should try to pack this new
+> > bit and replace the file's allowed_access field (see
+> > landlock_add_fs_access_mask() and similar helpers in the network patch
+> > series that does a similar thing but for ruleset's handle access
+> > rights), but here is the idea:
+> >=20
+> > if (!landlock_file_handles_ioctl(file))
+> > 	return 0;
+> >=20
+> > > switch (cmd) {
+> > 	/*
+> > 	 * Allows file descriptor and file description operations (see
+> > 	 * fcntl commands).
+> > 	 */
+> > >   case FIOCLEX:
+> > >   case FIONCLEX:
+> > >   case FIONBIO:
+> > >   case FIOASYNC:
+> >=20
+> > >   case FIOQSIZE:
+>=20
+> We need to handle FIOQSIZE as done by do_vfs_ioctl: add the same i_mode
+> checks. A kselftest test should check that ENOTTY is returned according
+> to the file type and the access rights.
+
+It's not clear to me why we would need to add the same i_mode checks for
+S_ISDIR() || S_ISREG() || S_ISLNK() there?  If these checks in do_vfs_ioctl=
+()
+fail, it returns -ENOTTY.  Is that not an appropriate error already?
+
+
+> > >     return 0;
+> > >   case FIONREAD:
+> > >     if (file->f_mode & FMODE_READ)
+> >=20
+> > We should check LANDLOCK_ACCESS_FS_READ instead, which is a superset of
+> > FMODE_READ.
+
+Done.
+
+
+=E2=80=94G=C3=BCnther
