@@ -2,207 +2,149 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C0FFCA1006
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Sep 2023 19:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B52CA100D
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Sep 2023 20:47:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241717AbjIETrL (ORCPT
+        id S243643AbjIEUr2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Sep 2023 15:47:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43940 "EHLO
+        Tue, 5 Sep 2023 16:47:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232993AbjIETrI (ORCPT
+        with ESMTP id S235485AbjIEUr1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Sep 2023 15:47:08 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C076283;
-        Tue,  5 Sep 2023 12:47:00 -0700 (PDT)
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 385IcTX4025333;
-        Tue, 5 Sep 2023 19:01:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=RbGG0JMEkT1YvxWzhDbzrzewytMoYeXhTP6+OTsHwnk=;
- b=jt5bnX516m4U+z7VNYDdHh6fBuV1NUVKjW8rVnmH68RqoyEdP0k2+G/71u13EEIrbhqV
- fo6FqXBQPQ5MYG6bQ6LfG22YTIE25yMRp2iRzh0mTT8isHjJArB3wraKvbU8lSthBKNT
- 9WaW/VIhsjF5kz+ArnODtlQ79a72thmOUtDkNG2H3tlE/dhOgQ1OypYCMEwHd+J8WanN
- I0iAtC8kQkLkV8waeKQrwwYrkLLcJs4YDifHGnwmQCdCQioQ1WCPYvGTkKQ15LrKRmNz
- 9x8ETpeEkXOLFAGOV9nSsnbwcnMyziDgoZFITVAMjeH21Dd9oea9Fzq/okjuMY+bkz95 Gw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sx9ef1r0p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 05 Sep 2023 19:01:54 +0000
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 385IcmdD027855;
-        Tue, 5 Sep 2023 19:01:53 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sx9ef1qy4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 05 Sep 2023 19:01:53 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 385IAvRq011169;
-        Tue, 5 Sep 2023 19:01:52 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-        by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3svj31mksx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 05 Sep 2023 19:01:52 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-        by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 385J1pLp63242618
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 5 Sep 2023 19:01:51 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EAE535806C;
-        Tue,  5 Sep 2023 19:01:50 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5D4D258061;
-        Tue,  5 Sep 2023 19:01:48 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTPS;
-        Tue,  5 Sep 2023 19:01:48 +0000 (GMT)
-Message-ID: <f202cf50-1284-9df6-6930-10dfa7a8c3b4@linux.ibm.com>
-Date:   Tue, 5 Sep 2023 15:01:47 -0400
+        Tue, 5 Sep 2023 16:47:27 -0400
+X-Greylist: delayed 551 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Sep 2023 13:47:24 PDT
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746C0132;
+        Tue,  5 Sep 2023 13:47:24 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4AFBC433C8;
+        Tue,  5 Sep 2023 20:38:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693946293;
+        bh=ZdKKXxNVL93aojzTyABniVfuVm9QwnA2/7jIrE8SvO8=;
+        h=From:Date:Subject:To:Cc:From;
+        b=ktbG4NFZfPjXeyrBiFLg2RqCZhqdh6Qq0gXqdIgK+QGq+z0TxWDI5dkc7CZ0dOcu8
+         dKZSfWD0ZpAkKvn8qwRjR+mrrEwWmPCnyejA71JGhpM++Ni1EFWeOV2bUHA3cqc0Yd
+         rsi/6jzRiyOnLv12AmEIGBHq/feyyuJEWQeMnjIcTppHYw9RtuQfy7GkWgK9+nwFIR
+         nzW5B4J5hRAJZVHcZmnFVXV5BHXMyCxhS/v/qR6r5apJMn0ylxM+C+Y4/SqxjKp6it
+         hBOGtcU00V6dhocWdCy5p68tQjwVFZZXUwCk1fPtx6OOtudbvGrcVhvIDB2aTxjSYZ
+         V3CLFI8n6rWUA==
+From:   Nathan Chancellor <nathan@kernel.org>
+Date:   Tue, 05 Sep 2023 13:36:11 -0700
+Subject: [PATCH 5.15] of: kexec: Mark ima_{free,stable}_kexec_buffer() as
+ __init
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 19/25] security: Introduce inode_post_remove_acl hook
-Content-Language: en-US
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
- <20230904133415.1799503-20-roberto.sassu@huaweicloud.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20230904133415.1799503-20-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: pDxbPR99nTpnXAXTx-OssX3jXWVMDnzs
-X-Proofpoint-GUID: 9r68kwj-_BlQBEtF9MZvSedkoZHJ36X1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-05_11,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- clxscore=1015 impostorscore=0 suspectscore=0 phishscore=0 spamscore=0
- mlxlogscore=999 priorityscore=1501 lowpriorityscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309050161
+Message-Id: <20230905-5-15-of-kexec-modpost-warning-v1-1-4138b2e96b4e@kernel.org>
+X-B4-Tracking: v=1; b=H4sIADqR92QC/x3MwQ5EMBAA0F+RORtpMbLrV8ShmDLZbCutIBH/r
+ nF8l3dB5CAcoc0uCLxLFO8SdJ7BuBg3M8qUDKUqK/VVhISa0Fv88ckj/v20+rjhYYITN2NjmqH
+ +2ErxYCEda2Ar5/t3QIUm6O/7AVpLx191AAAA
+To:     gregkh@linuxfoundation.org, sashal@kernel.org
+Cc:     stable@vger.kernel.org, robh+dt@kernel.org, frowand.list@gmail.com,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        devicetree@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.13-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3423; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=ZdKKXxNVL93aojzTyABniVfuVm9QwnA2/7jIrE8SvO8=;
+ b=owGbwMvMwCEmm602sfCA1DTG02pJDCnfJ265Msdk7j5jmS83suPC+sTj71kINK3/+Hoh043Cm
+ d5WLvO0OkpZGMQ4GGTFFFmqH6seNzScc5bxxqlJMHNYmUCGMHBxCsBEfs1h+B9dO/mC1xd9vc4J
+ 6yOSONlUvweZsRTU9omniz59Z5BjsJyR4c63ZYqR3wyckgod1mR/6Fxl8EtNjWPi0SfbbjsfPWT
+ CyQgA
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+This commit has no direct upstream equivalent.
 
-On 9/4/23 09:34, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->
-> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> the inode_post_remove_acl hook.
->
-> It is useful for EVM to recalculate the HMAC on the remaining POSIX ACLs
-> and other file metadata, after it verified the HMAC of current file
-> metadata with the inode_remove_acl hook.
->
-> LSMs should use the new hook instead of inode_remove_acl, when they need to
-> know that the operation was done successfully (not known in
-> inode_remove_acl). The new hook cannot return an error and cannot cause the
-> operation to be reverted.
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->   fs/posix_acl.c                |  1 +
->   include/linux/lsm_hook_defs.h |  2 ++
->   include/linux/security.h      |  8 ++++++++
->   security/security.c           | 17 +++++++++++++++++
->   4 files changed, 28 insertions(+)
->
-> diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-> index 3b7dbea5c3ff..2a2a2750b3e9 100644
-> --- a/fs/posix_acl.c
-> +++ b/fs/posix_acl.c
-> @@ -1246,6 +1246,7 @@ int vfs_remove_acl(struct mnt_idmap *idmap, struct dentry *dentry,
->   		error = -EIO;
->   	if (!error) {
->   		fsnotify_xattr(dentry);
-> +		security_inode_post_remove_acl(idmap, dentry, acl_name);
->   		evm_inode_post_remove_acl(idmap, dentry, acl_name);
->   	}
->   
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index bba1fbd97207..eedc26790a07 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -163,6 +163,8 @@ LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
->   	 struct dentry *dentry, const char *acl_name)
->   LSM_HOOK(int, 0, inode_remove_acl, struct mnt_idmap *idmap,
->   	 struct dentry *dentry, const char *acl_name)
-> +LSM_HOOK(void, LSM_RET_VOID, inode_post_remove_acl, struct mnt_idmap *idmap,
-> +	 struct dentry *dentry, const char *acl_name)
->   LSM_HOOK(int, 0, inode_need_killpriv, struct dentry *dentry)
->   LSM_HOOK(int, 0, inode_killpriv, struct mnt_idmap *idmap,
->   	 struct dentry *dentry)
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 556d019ebe5c..e543ae80309b 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -373,6 +373,9 @@ int security_inode_get_acl(struct mnt_idmap *idmap,
->   			   struct dentry *dentry, const char *acl_name);
->   int security_inode_remove_acl(struct mnt_idmap *idmap,
->   			      struct dentry *dentry, const char *acl_name);
-> +void security_inode_post_remove_acl(struct mnt_idmap *idmap,
-> +				    struct dentry *dentry,
-> +				    const char *acl_name);
->   void security_inode_post_setxattr(struct dentry *dentry, const char *name,
->   				  const void *value, size_t size, int flags);
->   int security_inode_getxattr(struct dentry *dentry, const char *name);
-> @@ -915,6 +918,11 @@ static inline int security_inode_remove_acl(struct mnt_idmap *idmap,
->   	return 0;
->   }
->   
-> +static inline void security_inode_post_remove_acl(struct mnt_idmap *idmap,
-> +						  struct dentry *dentry,
-> +						  const char *acl_name)
-> +{ }
-> +
->   static inline void security_inode_post_setxattr(struct dentry *dentry,
->   		const char *name, const void *value, size_t size, int flags)
->   { }
-> diff --git a/security/security.c b/security/security.c
-> index aabace9e24d9..554f4925323d 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2323,6 +2323,23 @@ int security_inode_remove_acl(struct mnt_idmap *idmap,
->   	return evm_inode_remove_acl(idmap, dentry, acl_name);
->   }
->   
-> +/**
-> + * security_inode_post_remove_acl() - Update inode sec after remove_acl op
-> + * @idmap: idmap of the mount
-> + * @dentry: file
-> + * @acl_name: acl name
-> + *
-> + * Update inode security field after successful remove_acl operation on @dentry
-> + * in @idmap. The posix acls are identified by @acl_name.
-> + */
-> +void security_inode_post_remove_acl(struct mnt_idmap *idmap,
-> +				    struct dentry *dentry, const char *acl_name)
-> +{
-> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> +		return;
-> +	call_void_hook(inode_post_remove_acl, idmap, dentry, acl_name);
-> +}
-> +
->   /**
->    * security_inode_post_setxattr() - Update the inode after a setxattr operation
->    * @dentry: file
+After commit d48016d74836 ("mm,ima,kexec,of: use memblock_free_late from
+ima_free_kexec_buffer") in 5.15, there is a modpost warning for certain
+configurations:
 
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+  WARNING: modpost: vmlinux.o(.text+0xb14064): Section mismatch in reference from the function ima_free_kexec_buffer() to the function .init.text:__memblock_free_late()
+  The function ima_free_kexec_buffer() references
+  the function __init __memblock_free_late().
+  This is often because ima_free_kexec_buffer lacks a __init
+  annotation or the annotation of __memblock_free_late is wrong.
 
+In mainline, there is no issue because ima_free_kexec_buffer() is marked
+as __init, which was done as part of commit b69a2afd5afc ("x86/kexec:
+Carry forward IMA measurement log on kexec") in 6.0, which is not
+suitable for stable.
+
+Mark ima_free_kexec_buffer() and its single caller
+ima_load_kexec_buffer() as __init in 5.15, as ima_load_kexec_buffer() is
+only called from ima_init(), which is __init, clearing up the warning.
+
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ drivers/of/kexec.c                 | 2 +-
+ include/linux/of.h                 | 2 +-
+ security/integrity/ima/ima.h       | 2 +-
+ security/integrity/ima/ima_kexec.c | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
+index 3a07cc58e7d7..d10fd54415c2 100644
+--- a/drivers/of/kexec.c
++++ b/drivers/of/kexec.c
+@@ -165,7 +165,7 @@ int ima_get_kexec_buffer(void **addr, size_t *size)
+ /**
+  * ima_free_kexec_buffer - free memory used by the IMA buffer
+  */
+-int ima_free_kexec_buffer(void)
++int __init ima_free_kexec_buffer(void)
+ {
+ 	int ret;
+ 	unsigned long addr;
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 140671cb746a..6f15e8b0f9d1 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -574,7 +574,7 @@ void *of_kexec_alloc_and_setup_fdt(const struct kimage *image,
+ 				   unsigned long initrd_len,
+ 				   const char *cmdline, size_t extra_fdt_size);
+ int ima_get_kexec_buffer(void **addr, size_t *size);
+-int ima_free_kexec_buffer(void);
++int __init ima_free_kexec_buffer(void);
+ #else /* CONFIG_OF */
+ 
+ static inline void of_core_init(void)
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index be965a8715e4..0afe413dda68 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -122,7 +122,7 @@ struct ima_kexec_hdr {
+ extern const int read_idmap[];
+ 
+ #ifdef CONFIG_HAVE_IMA_KEXEC
+-void ima_load_kexec_buffer(void);
++void __init ima_load_kexec_buffer(void);
+ #else
+ static inline void ima_load_kexec_buffer(void) {}
+ #endif /* CONFIG_HAVE_IMA_KEXEC */
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index f799cc278a9a..f3b10851bbbf 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -137,7 +137,7 @@ void ima_add_kexec_buffer(struct kimage *image)
+ /*
+  * Restore the measurement list from the previous kernel.
+  */
+-void ima_load_kexec_buffer(void)
++void __init ima_load_kexec_buffer(void)
+ {
+ 	void *kexec_buffer = NULL;
+ 	size_t kexec_buffer_size = 0;
+
+---
+base-commit: 8f790700c974345ab78054e109beddd84539f319
+change-id: 20230905-5-15-of-kexec-modpost-warning-6a6b48f30ebf
+
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
 
