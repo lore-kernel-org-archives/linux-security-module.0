@@ -2,200 +2,133 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9D9EE14D3
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Sep 2023 20:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A63B4EE14C3
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Sep 2023 22:11:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244158AbjIFUtj (ORCPT
+        id S235173AbjIFWLS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Sep 2023 16:49:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49954 "EHLO
+        Wed, 6 Sep 2023 18:11:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229998AbjIFUti (ORCPT
+        with ESMTP id S233043AbjIFWLR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Sep 2023 16:49:38 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 858FDE9;
-        Wed,  6 Sep 2023 13:49:34 -0700 (PDT)
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 386KbjGN031693;
-        Wed, 6 Sep 2023 20:49:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=ZOmile8toGMLhacgR3CMqYQ63APzpk7xXZn55kY+VmU=;
- b=aAT5S9AWxYpzJxQclgD9aEQeReFbbyTNQBBTEPrqIkEJoZDcRcvs3aiHIxNc4rQQdTKU
- qhAid/Scsh1A64Rd6LO42utPBfndaRarjn/XHOuv9HgLIhsHr83JrUgUTJPoqgS4u69x
- +OBEqf0Gz3iVFtoHl/X8Xtg7wPYL8dpyKrzhDYBQJwzO2jn0y5wiLMHKNfuXGx1AWxCx
- v/fYj8djBu9dYeDNzMizzMeqVf1ynIO6QsMEeAPnyfyIPSMNXCrAOBl2gv172nOkpdUZ
- b0JApWkqDVIvoB1aT6r5zPDzEpLK49ZLyCDX4TU85b+uq735G6pP9WTI9iCZbSvRC0wm jA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sxythskhn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 Sep 2023 20:49:22 +0000
-Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 386KbsmU032268;
-        Wed, 6 Sep 2023 20:49:21 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sxythskhf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 Sep 2023 20:49:21 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 386Js3FJ012232;
-        Wed, 6 Sep 2023 20:49:20 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-        by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3svhkk65fn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 Sep 2023 20:49:20 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-        by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 386KnJHq6423266
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 6 Sep 2023 20:49:20 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BA4C95805A;
-        Wed,  6 Sep 2023 20:49:19 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1A46458054;
-        Wed,  6 Sep 2023 20:49:18 +0000 (GMT)
-Received: from [9.67.51.26] (unknown [9.67.51.26])
-        by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Wed,  6 Sep 2023 20:49:17 +0000 (GMT)
-Message-ID: <0cfdad7c-8cb9-20d3-7986-c1d3d58a33db@linux.ibm.com>
-Date:   Wed, 6 Sep 2023 16:49:16 -0400
+        Wed, 6 Sep 2023 18:11:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7EBF19AD
+        for <linux-security-module@vger.kernel.org>; Wed,  6 Sep 2023 15:10:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1694038227;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2sW5n0U9nqfDRjI4qbYKErrgizSRaxysFjpyGkvRHBg=;
+        b=Pg99Aw0dhrjssfj+plRZ73iAzmz80+t6FzoooYMo5YOjDFkLKZv62XF4FxljMbibakqOrb
+        gWlugmjp43pbB5CdnXYoQls8seJQWvdY++J14P9i7h5PP0X9VcuRGlwMkKJAy4kV+FVodZ
+        XQCAdiOokbHqs1rtsWQOjmjv9FyPDWo=
+Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com
+ [209.85.222.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-444-gey4yykqM2aLkoW9kBnkqA-1; Wed, 06 Sep 2023 18:10:25 -0400
+X-MC-Unique: gey4yykqM2aLkoW9kBnkqA-1
+Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-7a4f58bd3d4so96119241.2
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Sep 2023 15:10:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694038225; x=1694643025;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2sW5n0U9nqfDRjI4qbYKErrgizSRaxysFjpyGkvRHBg=;
+        b=Q64d+jwiC8gqtRvL03qAKXM+CED9fnKtjQ3vZtqT+mxEr/GV5KymA4QgIZ9cNSGt0I
+         3auYZSW7G2+iDUUkQ0Pg0fRLhTxCLNBvUXWSwGZ0Ak/k+2ln2aNGLOQtMY3HhPQSSyZD
+         uvBlHqSYbGbD74o54/hfPAF1GDAnBtIrmJHF24b3pO7Vw6MGIvbfkgjCKrEy/Cb5k25g
+         ijGrfVbYvybp+fYPSNv0A1SAL5nceKR5BlsjBzV56lcW75d0gTnsyao6n9VRIyNTNXTG
+         JelQ3cZRKF1Y97Nh2/c13X0r1b5xsZjNTdhj/HosGNDHG0AyvD8HIxCnXVR7PBzrXzW0
+         LR/Q==
+X-Gm-Message-State: AOJu0YwLOA8GP5DCqMRih9X3/xWgv6U49jRZ+zUJLIga0PlFRf6yGaQY
+        q/RkcD8SPLRTdH+p9wYrp1pIXtIpFXL1YGtetoqH5OFO2ANctjGG5Fv6T4P2Re+KgKssA2Jc9YX
+        vfIV/CTn6YLFXVhKksq9tS0ick/+2rRzYicru3yrKUzQB2dJa6G1r
+X-Received: by 2002:a67:ee4d:0:b0:444:17aa:df60 with SMTP id g13-20020a67ee4d000000b0044417aadf60mr4110679vsp.13.1694038225084;
+        Wed, 06 Sep 2023 15:10:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHp5n1WB8R1og/NcZaTM8SckALAeHpMUrTVBDu8TXyXcr3qI/pIRPsrfv30I89brgsoG52emGtevyCvY1jn784=
+X-Received: by 2002:a67:ee4d:0:b0:444:17aa:df60 with SMTP id
+ g13-20020a67ee4d000000b0044417aadf60mr4110646vsp.13.1694038224758; Wed, 06
+ Sep 2023 15:10:24 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [RFC] IMA Log Snapshotting Design Proposal - aggregate
-Content-Language: en-US
-To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        Sush Shringarputale <sushring@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com, kexec@lists.infradead.org,
-        jmorris@namei.org, Paul Moore <paul@paul-moore.com>,
-        serge@hallyn.com
-Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
-        linux-security-module@vger.kernel.org
-References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
- <598fdd62-f4c3-a6dc-ae22-8f5a9e18f570@linux.ibm.com>
- <c83e13f8-4b7d-9489-37cc-53936b24343c@linux.microsoft.com>
-From:   Ken Goldman <kgold@linux.ibm.com>
-In-Reply-To: <c83e13f8-4b7d-9489-37cc-53936b24343c@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: FvWLUtNRAggZfi_6YArb6fXHdR8SS_Bd
-X-Proofpoint-GUID: dk9mW0RJKiCg6IYjDWDUvK0TvKgywoAm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-06_06,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
- phishscore=0 adultscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0
- impostorscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309060178
+References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-14-seanjc@google.com>
+ <84a908ae-04c7-51c7-c9a8-119e1933a189@redhat.com> <ZLq8ylTsFQ1s4BAZ@google.com>
+In-Reply-To: <ZLq8ylTsFQ1s4BAZ@google.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Date:   Thu, 7 Sep 2023 00:10:13 +0200
+Message-ID: <CABgObfYLuRx5oAfOKM1fNuyRw5BNhe127sbRYhmpoT9MsjMYQQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v11 13/29] KVM: Add transparent hugepage support for
+ dedicated guest memory
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/1/2023 6:06 PM, Tushar Sugandhi wrote:
-> 
-> 
-> On 8/30/23 11:12, Ken Goldman wrote:
->> On 8/1/2023 3:12 PM, Sush Shringarputale wrote:
->>> - A user-mode process will trigger the snapshot by opening a file in 
->>> SysFS
->>>    say /sys/kernel/security/ima/snapshot (referred to as 
->>> sysk_ima_snapshot_file
->>>    here onwards).
->>> - The Kernel will get the current TPM PCR values and PCR update 
->>> counter [2]
->>>    and store them as template data in a new IMA event 
->>> "snapshot_aggregate".
->>
->> If this is relying on a user-mode process, is there a concern that the 
->> process doesn't run. Might it be safer to have the kernel trigger the
->> snapshot.
->>
-> The UM process here would be typically an attestation client
-> which passes on the IMA log to the remote service for attestation.
-> If the process doesn't run, the client will operate the same way as it
-> does currently.
+On Fri, Jul 21, 2023 at 7:13=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+> On Fri, Jul 21, 2023, Paolo Bonzini wrote:
+> > On 7/19/23 01:44, Sean Christopherson wrote:
+> > > @@ -413,6 +454,9 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_c=
+reate_guest_memfd *args)
+> > >     u64 flags =3D args->flags;
+> > >     u64 valid_flags =3D 0;
+> > > +   if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+> > > +           valid_flags |=3D KVM_GUEST_MEMFD_ALLOW_HUGEPAGE;
+> > > +
+> >
+> > I think it should be always allowed.  The outcome would just be "never =
+have
+> > a hugepage" if thp is not enabled in the kernel.
+>
+> I don't have a strong preference.  My thinking was that userspace would p=
+robably
+> rather have an explicit error, as opposed to silently running with a misc=
+onfigured
+> setup.
 
-I see.
+Considering that is how madvise(MADV_HUGEPAGE) behaves, your patch is
+good. I disagree but consistency is better.
 
-1. Ensure that the attestation client stores the snapshot in a 
-well-known and widely readable location.  There can be more than one 
-attestation client, and all need access to the snapshot.
-
-There is a privacy concern around making the snapshot world-read.
-
-2. Is there a concern that, if the client doesn't run, it doesn't solve 
-the kernel memory issue?  Is this relying on a UM process to solve a 
-kernel issue?
-> 
->> PCR reads are not atomic, with each other and with event log appends. 
->> Is this an issue?
->>
-> In this design, reading the PCR plus adding the snapshot_aggregate
-> has to be an atomic operation.  Other IMA events shouldn't interfere
-> with this operation. Just like IMA ensures adding an entry to the log
-> plus PCR extension happens in an atomic way by holding the
-> ima_extend_list_mutex [2], we intend to use a similar mechanism to
-> ensure reading the PCR plus adding the snapshot_aggregate remains an
-> atomic operation.  And since taking a snapshot would be a rare event
-> compared to adding a generic event to IMA log - overall we expect a low
-> overhead in case of snapshotting.
-
-How would that work?  The PCR read is UM, but IMA events are kernel. The 
-UM operation cannot block the kernel or there can be a deadlock, right?
-
-(UM) PCR reads can take multiple TPM commands, and they should not block 
-an (kernel) extend.
-
->> What is the purpose of the snapshot aggregate?  Since the entire event 
->> log has to be retained and sent to the verifier, is the aggregate 
->> redundant?
-> 
-> The goals of snapshot_aggregate marker are:
->      1. To allow the IMA log to be divided into multiple chunks and
->         provide attestation service the ability to verify and use the
->         latest chunk (i.e. snapshot ) for attestation.
-
-I believe that the verifier needs the entire log the first time, whether 
-there is a snapshot or not.  Shouldn't the snapshot process be opaque to 
-the verifier?
-
-> 
->      2. To indicate to the attestation service that the client device has
->         IMA log snapshotting feature enabled, and at least one snapshot
->         is taken.  So that the service can ask for previous snapshots
->         as needed.
-
-Why does the verifier need this?  The first time, it asks for events 
-starting at #0.  Next time, it asks for what's new.  It's independent of 
-__where__ the log comes from.
-
-> 
->      3. In the event of multiple snapshots, the snapshot_aggregate
->         marker has sufficient information to verify the integrity
->         of latest subset of isolated snapshots (with the help of PCR
->         quote of course)
-
-A new verifier needs the entire log, no matter how many snapshots have 
-been taken.
-
-> 
->      4. snapshot_aggregate helps both kernel and UM define clear
->         boundaries between multiple snapshots.
->         (each new snapshot starts with either the first boot_aggregate
->          or a snapshot_aggregate event)
-> 
-> The overall goals of IMA log snapshotting feature are:
->      a. to relieve memory pressure on the client device.
-> 
->      b. to make attestation service side processing more efficient
->         They don't have to deal with the entire log since boot,
->         as you mentioned on
-
-I don't think snapshotting affects the verifier at all. The attestor is 
-a bit more complicated, but not significantly.
+Paolo
 
