@@ -2,133 +2,228 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A63B4EE14C3
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Sep 2023 22:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E405EE14A9
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Sep 2023 23:23:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235173AbjIFWLS (ORCPT
+        id S244606AbjIFXXE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Sep 2023 18:11:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37628 "EHLO
+        Wed, 6 Sep 2023 19:23:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233043AbjIFWLR (ORCPT
+        with ESMTP id S238179AbjIFXXE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Sep 2023 18:11:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7EBF19AD
-        for <linux-security-module@vger.kernel.org>; Wed,  6 Sep 2023 15:10:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694038227;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2sW5n0U9nqfDRjI4qbYKErrgizSRaxysFjpyGkvRHBg=;
-        b=Pg99Aw0dhrjssfj+plRZ73iAzmz80+t6FzoooYMo5YOjDFkLKZv62XF4FxljMbibakqOrb
-        gWlugmjp43pbB5CdnXYoQls8seJQWvdY++J14P9i7h5PP0X9VcuRGlwMkKJAy4kV+FVodZ
-        XQCAdiOokbHqs1rtsWQOjmjv9FyPDWo=
-Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com
- [209.85.222.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-444-gey4yykqM2aLkoW9kBnkqA-1; Wed, 06 Sep 2023 18:10:25 -0400
-X-MC-Unique: gey4yykqM2aLkoW9kBnkqA-1
-Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-7a4f58bd3d4so96119241.2
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Sep 2023 15:10:25 -0700 (PDT)
+        Wed, 6 Sep 2023 19:23:04 -0400
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA4BCE7
+        for <linux-security-module@vger.kernel.org>; Wed,  6 Sep 2023 16:22:59 -0700 (PDT)
+Received: by mail-qk1-x731.google.com with SMTP id af79cd13be357-76ef935abaeso22342785a.2
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Sep 2023 16:22:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1694042578; x=1694647378; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JyLgnDBJYphoRi84J21IgPf+ilIRiEV9Th+QE8elsEM=;
+        b=RG08oSrAdvxTDuTUM8LrKflm2r0GL0d2AVCulMmDAA5AOm0+0C9WsUEd2djvNHALLA
+         mShwQHyI20wyjJKicyZmXQdHyHVj2N37gr1fqewXu8wnYiy8jLJM0RELiikeXCf6ThJp
+         vx6qWjNu0OmhXiXHoSR+8zw4xukH/PjcVvpIkqWEPbBxjl0B+RMD8SBZ2c2lJwvk+Ug+
+         RvR8PqIzrD7kVeOdmTrO69wEdrNNI/Rz1LZQQfW5zn9WiX4LF1ET16lQ877AN//mnbTP
+         uHEQq4q8RA330+CRSPcPqq7Ossyppegfa/LK5jLP7ujs+jC6EBIPa3bazHjLTEkBJX6R
+         Y54g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694038225; x=1694643025;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2sW5n0U9nqfDRjI4qbYKErrgizSRaxysFjpyGkvRHBg=;
-        b=Q64d+jwiC8gqtRvL03qAKXM+CED9fnKtjQ3vZtqT+mxEr/GV5KymA4QgIZ9cNSGt0I
-         3auYZSW7G2+iDUUkQ0Pg0fRLhTxCLNBvUXWSwGZ0Ak/k+2ln2aNGLOQtMY3HhPQSSyZD
-         uvBlHqSYbGbD74o54/hfPAF1GDAnBtIrmJHF24b3pO7Vw6MGIvbfkgjCKrEy/Cb5k25g
-         ijGrfVbYvybp+fYPSNv0A1SAL5nceKR5BlsjBzV56lcW75d0gTnsyao6n9VRIyNTNXTG
-         JelQ3cZRKF1Y97Nh2/c13X0r1b5xsZjNTdhj/HosGNDHG0AyvD8HIxCnXVR7PBzrXzW0
-         LR/Q==
-X-Gm-Message-State: AOJu0YwLOA8GP5DCqMRih9X3/xWgv6U49jRZ+zUJLIga0PlFRf6yGaQY
-        q/RkcD8SPLRTdH+p9wYrp1pIXtIpFXL1YGtetoqH5OFO2ANctjGG5Fv6T4P2Re+KgKssA2Jc9YX
-        vfIV/CTn6YLFXVhKksq9tS0ick/+2rRzYicru3yrKUzQB2dJa6G1r
-X-Received: by 2002:a67:ee4d:0:b0:444:17aa:df60 with SMTP id g13-20020a67ee4d000000b0044417aadf60mr4110679vsp.13.1694038225084;
-        Wed, 06 Sep 2023 15:10:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHp5n1WB8R1og/NcZaTM8SckALAeHpMUrTVBDu8TXyXcr3qI/pIRPsrfv30I89brgsoG52emGtevyCvY1jn784=
-X-Received: by 2002:a67:ee4d:0:b0:444:17aa:df60 with SMTP id
- g13-20020a67ee4d000000b0044417aadf60mr4110646vsp.13.1694038224758; Wed, 06
- Sep 2023 15:10:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-14-seanjc@google.com>
- <84a908ae-04c7-51c7-c9a8-119e1933a189@redhat.com> <ZLq8ylTsFQ1s4BAZ@google.com>
-In-Reply-To: <ZLq8ylTsFQ1s4BAZ@google.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Date:   Thu, 7 Sep 2023 00:10:13 +0200
-Message-ID: <CABgObfYLuRx5oAfOKM1fNuyRw5BNhe127sbRYhmpoT9MsjMYQQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v11 13/29] KVM: Add transparent hugepage support for
- dedicated guest memory
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        d=1e100.net; s=20221208; t=1694042578; x=1694647378;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JyLgnDBJYphoRi84J21IgPf+ilIRiEV9Th+QE8elsEM=;
+        b=YoUMv3f/zmKg7BHWVcUVcmdealuAFXHbWOEUq6fDHmrK8BLwBH3wg7pK9Wne4c/4rY
+         eSmi1LfgLeyCSul2exOVJ8/Z+lLRa/2eOy8VC2JlaFLBbwoUe9hj5yLKUELmpo8VzQI/
+         xy7utFG8CiCUFa5lkqZTo4T3D7qZ1FZ8A2KecWMe+ggjAFfL+EM0FW/vJZS0c52Luh0z
+         KRvoxIce5hMf+v6E/BwutrC+HR1SF34AdKQY8W7JaIOZg52oFbH+pfAoEymW5eTSOcPu
+         2eRjEFUZdYznMqMTjMLbTNejsU11OErr/7JRyO2MWwL5B77q696+PIHN2tcdDELzJOPf
+         I4Rw==
+X-Gm-Message-State: AOJu0Yw2XgENGHF3tcCr+o87MY0WyRK+bRPi0WvcLJfjUOYGopsgYmEm
+        unzYP+cx9O+YOa+0txbJ6Imb
+X-Google-Smtp-Source: AGHT+IHwauC9HkTF09HzRHGuvsDsEZfkrM0pvP2ZLytbwm89qxZikr07GAa6o4YJPUMtn8f88hrvYw==
+X-Received: by 2002:a05:620a:3944:b0:765:7a1e:a456 with SMTP id qs4-20020a05620a394400b007657a1ea456mr19635332qkn.54.1694042578351;
+        Wed, 06 Sep 2023 16:22:58 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id c18-20020a05620a11b200b0076f206cf16fsm5305460qkk.89.2023.09.06.16.22.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Sep 2023 16:22:57 -0700 (PDT)
+Date:   Wed, 06 Sep 2023 19:22:57 -0400
+Message-ID: <6bdfc1b73926b16fc4eea848f25275ed.paul@paul-moore.com>
+From:   Paul Moore <paul@paul-moore.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com,
+        linux-security-module@vger.kernel.org
+Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net
+Subject: Re: [PATCH v14 4/11] LSM: syscalls for current process attributes
+References: <20230828195802.135055-5-casey@schaufler-ca.com>
+In-Reply-To: <20230828195802.135055-5-casey@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 21, 2023 at 7:13=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
-> On Fri, Jul 21, 2023, Paolo Bonzini wrote:
-> > On 7/19/23 01:44, Sean Christopherson wrote:
-> > > @@ -413,6 +454,9 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_c=
-reate_guest_memfd *args)
-> > >     u64 flags =3D args->flags;
-> > >     u64 valid_flags =3D 0;
-> > > +   if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-> > > +           valid_flags |=3D KVM_GUEST_MEMFD_ALLOW_HUGEPAGE;
-> > > +
-> >
-> > I think it should be always allowed.  The outcome would just be "never =
-have
-> > a hugepage" if thp is not enabled in the kernel.
->
-> I don't have a strong preference.  My thinking was that userspace would p=
-robably
-> rather have an explicit error, as opposed to silently running with a misc=
-onfigured
-> setup.
+On Aug 28, 2023 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> 
+> Create a system call lsm_get_self_attr() to provide the security
+> module maintained attributes of the current process.
+> Create a system call lsm_set_self_attr() to set a security
+> module maintained attribute of the current process.
+> Historically these attributes have been exposed to user space via
+> entries in procfs under /proc/self/attr.
+> 
+> The attribute value is provided in a lsm_ctx structure. The structure
+> identifies the size of the attribute, and the attribute value. The format
+> of the attribute value is defined by the security module. A flags field
+> is included for LSM specific information. It is currently unused and must
+> be 0. The total size of the data, including the lsm_ctx structure and any
+> padding, is maintained as well.
+> 
+> struct lsm_ctx {
+>         __u64 id;
+>         __u64 flags;
+>         __u64 len;
+>         __u64 ctx_len;
+>         __u8 ctx[];
+> };
+> 
+> Two new LSM hooks are used to interface with the LSMs.
+> security_getselfattr() collects the lsm_ctx values from the
+> LSMs that support the hook, accounting for space requirements.
+> security_setselfattr() identifies which LSM the attribute is
+> intended for and passes it along.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> Reviewed-by: John Johansen <john.johansen@canonical.com>
+> ---
+>  Documentation/userspace-api/lsm.rst |  70 +++++++++++++
+>  include/linux/lsm_hook_defs.h       |   4 +
+>  include/linux/lsm_hooks.h           |   1 +
+>  include/linux/security.h            |  19 ++++
+>  include/linux/syscalls.h            |   5 +
+>  include/uapi/linux/lsm.h            |  36 +++++++
+>  kernel/sys_ni.c                     |   2 +
+>  security/Makefile                   |   1 +
+>  security/lsm_syscalls.c             |  57 +++++++++++
+>  security/security.c                 | 146 ++++++++++++++++++++++++++++
+>  10 files changed, 341 insertions(+)
+>  create mode 100644 Documentation/userspace-api/lsm.rst
+>  create mode 100644 security/lsm_syscalls.c
 
-Considering that is how madvise(MADV_HUGEPAGE) behaves, your patch is
-good. I disagree but consistency is better.
+...
 
-Paolo
+> diff --git a/security/security.c b/security/security.c
+> index 82253294069c..aa4ade1f71b9 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -3798,6 +3798,152 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
+>  }
+>  EXPORT_SYMBOL(security_d_instantiate);
+>  
+> +/**
+> + * security_getselfattr - Read an LSM attribute of the current process.
+> + * @attr: which attribute to return
+> + * @uctx: the user-space destination for the information, or NULL
+> + * @size: pointer to the size of space available to receive the data
+> + * @flags: special handling options. LSM_FLAG_SINGLE indicates that only
+> + * attributes associated with the LSM identified in the passed @ctx be
+> + * reported.
+> + *
+> + * A NULL value for @uctx can be used to get both the number of attributes
+> + * and the size of the data.
+> + *
+> + * Returns the number of attributes found on success, negative value
+> + * on error. @size is reset to the total size of the data.
+> + * If @size is insufficient to contain the data -E2BIG is returned.
+> + */
+> +int security_getselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
+> +			 size_t __user *size, u32 flags)
+> +{
+> +	struct security_hook_list *hp;
+> +	struct lsm_ctx lctx = { .id = LSM_ID_UNDEF, };
+> +	u8 __user *base = (u8 __user *)uctx;
+> +	size_t total = 0;
+> +	size_t entrysize;
+> +	size_t left;
+> +	bool toobig = false;
+> +	bool single = false;
+> +	int count = 0;
+> +	int rc;
+> +
+> +	if (attr == LSM_ATTR_UNDEF)
+> +		return -EINVAL;
+> +	if (size == NULL)
+> +		return -EINVAL;
+> +	if (get_user(left, size))
+> +		return -EFAULT;
+> +
+> +	if (flags) {
+> +		/*
+> +		 * Only flag supported is LSM_FLAG_SINGLE
+> +		 */
+> +		if (flags & LSM_FLAG_SINGLE)
+> +			return -EINVAL;
 
+Should this be something like the following?
+
+  if (flags & ~LSM_FLAG_SINGLE)
+    return -EINVAL;
+
+> +		if (uctx &&
+> +		    copy_struct_from_user(&lctx, sizeof(lctx), uctx, left))
+> +			return -EFAULT;
+> +		/*
+> +		 * If the LSM ID isn't specified it is an error.
+> +		 */
+> +		if (lctx.id == LSM_ID_UNDEF)
+> +			return -EINVAL;
+> +		single = true;
+> +	}
+> +
+> +	/*
+> +	 * In the usual case gather all the data from the LSMs.
+> +	 * In the single case only get the data from the LSM specified.
+> +	 */
+> +	hlist_for_each_entry(hp, &security_hook_heads.getselfattr, list) {
+> +		if (single) {
+> +			if (count > 0)
+> +				break;
+> +			if (lctx.id != hp->lsmid->id)
+> +				continue;
+> +		}
+> +		entrysize = left;
+> +		if (base)
+> +			uctx = (struct lsm_ctx __user *)(base + total);
+> +		rc = hp->hook.getselfattr(attr, uctx, &entrysize, flags);
+> +		if (rc == -EOPNOTSUPP) {
+> +			rc = 0;
+> +			continue;
+> +		}
+> +		if (rc == -E2BIG) {
+> +			toobig = true;
+> +			left = 0;
+> +			total += entrysize;
+> +			continue;
+> +		}
+> +		if (rc < 0)
+> +			return rc;
+> +
+> +		left -= entrysize;
+> +		total += entrysize;
+> +		count += rc;
+> +	}
+> +	if (put_user(total, size))
+> +		return -EFAULT;
+> +	if (toobig)
+> +		return -E2BIG;
+> +	if (count == 0)
+> +		return LSM_RET_DEFAULT(getselfattr);
+> +	return count;
+> +}
+
+
+--
+paul-moore.com
