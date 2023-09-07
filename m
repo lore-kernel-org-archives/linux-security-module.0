@@ -2,195 +2,85 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD5FEC873E
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Sep 2023 16:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC86EC8743
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Sep 2023 16:25:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235423AbjIGQLY (ORCPT
+        id S238545AbjIGQZc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Sep 2023 12:11:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35228 "EHLO
+        Thu, 7 Sep 2023 12:25:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234866AbjIGQLC (ORCPT
+        with ESMTP id S240939AbjIGQYG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Sep 2023 12:11:02 -0400
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BBF09EFA
-        for <linux-security-module@vger.kernel.org>; Thu,  7 Sep 2023 09:07:05 -0700 (PDT)
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1c0db66af1bso8104015ad.2
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Sep 2023 09:07:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1694102457; x=1694707257; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cPFmFtA9HH9evw2frRz9Ud3CX85+1w8DshCZu0M5cvI=;
-        b=bHB+6Hwj8EB5mxZpCQ8jEtKCn+yMBnDRhwF1um/zjumulr9pXGD7kkfv6vmGxcpiKX
-         IVenFSnjPHYe7KGzmAQ3AS4THkj8yAO7U41PYI8FPoFQcJIgQGpFc/s8/RuKoDtmtdI2
-         rSroOfNZICbhYhbK+TDMsXE6KnuFptzsb7Opsz1Wvrn4Hq1K0xEn1SRUeWimPn5G1V1b
-         EXFHgP9GgRAnN0EJu7vmnl3vLJN2uWpy6BHkC9UwgvLYLzOobP4aQNpcLZGc42Sx43T1
-         TzGC60OqOz5GHshKDXJXxwHCJ8bS1FzY1Ew87NVnc95BrncGPj86V85EkWx36iJcL2ep
-         Lr0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694102457; x=1694707257;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cPFmFtA9HH9evw2frRz9Ud3CX85+1w8DshCZu0M5cvI=;
-        b=Iuc1avtMcNx6hSF2dAJBqqWmrFMYfm6s0aKAB0oKFQrfr8LOMIBTdbp3ldO1WQQVoR
-         jAMSY79lqAwpBl46WwSKVxb4QYRrovqZKPK6FDIXateG4WQzdR4Ibd/6cbN/rLqwkw8x
-         PSM9O6nWTyXXHSygWR/Qw3gKrDEvp2ggg/ZHZXi7WR/xOXTg2ehAq5IMFCDRz5KiwigF
-         9uYq+Eg5m4J9SARsJ94zEMTpeLq7gfJyLTyTY7ujA+3YxTv61XjX2I0ZYs+A8WRYcHmz
-         90F8otq15wFuyZNude+ncTbTotWc+1kwy/xD6dBxsQNJiTIblVApn6BBiyTFkJno9S4m
-         aNKA==
-X-Gm-Message-State: AOJu0YxLckWb7KG0+fC0S3BfwL3C+z6o9BU9mqzWdHKDp+iqytn26jry
-        7LyxUM9JHPoCvjN+/aeSYD3gc+pLCVTE38QVVTBu2CMJ6WmUESw=
-X-Google-Smtp-Source: AGHT+IEXXpK1IgRaRwbQH/GiQGHD+POk8strud0/16z8Swy/D5DTl0hWL4ivTjqH7IUBgKBfJHVDcBvHZF0xaSnLKfw=
-X-Received: by 2002:a25:aacd:0:b0:cf2:a664:688e with SMTP id
- t71-20020a25aacd000000b00cf2a664688emr21622816ybi.40.1694101373482; Thu, 07
- Sep 2023 08:42:53 -0700 (PDT)
+        Thu, 7 Sep 2023 12:24:06 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A503C272B;
+        Thu,  7 Sep 2023 09:21:12 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 001EAC116D6;
+        Thu,  7 Sep 2023 11:30:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1694086232;
+        bh=BQqmAsnKsYCURZdBUxzJ5oq3xlzAgdnhH5VorW6j2es=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=r6lYQANfxUUFWoyZp/V5KNiQHdM+KGxHUGVv4pBcJQhRwOn4+5pLAvcr3hecL4Ucm
+         nSg2sGI4ndAzw8OGj7Eb+6ZKbKjlRgaDPgZXIzgENndX8qklFZbFfz3Vv0QA2YGdTv
+         edRhLRXleubbSps3JiKxCVXgJ8r6e62wLhHU06hA=
+Date:   Thu, 7 Sep 2023 12:30:29 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Nathan Chancellor <nathan@kernel.org>, stable@vger.kernel.org,
+        linux-security-module@vger.kernel.org, devicetree@vger.kernel.org,
+        frowand.list@gmail.com, robh+dt@kernel.org, sashal@kernel.org,
+        dmitry.kasatkin@gmail.com, linux-integrity@vger.kernel.org,
+        zohar@linux.ibm.com
+Subject: Re: [PATCH 5.15] of: kexec: Mark ima_{free,stable}_kexec_buffer() as
+ __init
+Message-ID: <2023090723-mocha-overfed-f6df@gregkh>
+References: <20230905-5-15-of-kexec-modpost-warning-v1-1-4138b2e96b4e@kernel.org>
+ <169403211998.243709.4772468997015448407.robh@kernel.org>
 MIME-Version: 1.0
-References: <20230828195802.135055-5-casey@schaufler-ca.com>
- <6bdfc1b73926b16fc4eea848f25275ed.paul@paul-moore.com> <fd1981c0-3f64-adb5-dece-a25494119992@schaufler-ca.com>
-In-Reply-To: <fd1981c0-3f64-adb5-dece-a25494119992@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 7 Sep 2023 11:42:42 -0400
-Message-ID: <CAHC9VhT-GVq1D-AKMv_R3uKNm_iDV8uA3pB1ky5ScBnEdoPuvg@mail.gmail.com>
-Subject: Re: [PATCH v14 4/11] LSM: syscalls for current process attributes
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module@vger.kernel.org, jmorris@namei.org,
-        serge@hallyn.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <169403211998.243709.4772468997015448407.robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 6, 2023 at 7:48=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
-> On 9/6/2023 4:22 PM, Paul Moore wrote:
-> > On Aug 28, 2023 Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> Create a system call lsm_get_self_attr() to provide the security
-> >> module maintained attributes of the current process.
-> >> Create a system call lsm_set_self_attr() to set a security
-> >> module maintained attribute of the current process.
-> >> Historically these attributes have been exposed to user space via
-> >> entries in procfs under /proc/self/attr.
-> >>
-> >> The attribute value is provided in a lsm_ctx structure. The structure
-> >> identifies the size of the attribute, and the attribute value. The for=
-mat
-> >> of the attribute value is defined by the security module. A flags fiel=
-d
-> >> is included for LSM specific information. It is currently unused and m=
-ust
-> >> be 0. The total size of the data, including the lsm_ctx structure and =
-any
-> >> padding, is maintained as well.
-> >>
-> >> struct lsm_ctx {
-> >>         __u64 id;
-> >>         __u64 flags;
-> >>         __u64 len;
-> >>         __u64 ctx_len;
-> >>         __u8 ctx[];
-> >> };
-> >>
-> >> Two new LSM hooks are used to interface with the LSMs.
-> >> security_getselfattr() collects the lsm_ctx values from the
-> >> LSMs that support the hook, accounting for space requirements.
-> >> security_setselfattr() identifies which LSM the attribute is
-> >> intended for and passes it along.
-> >>
-> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> >> Reviewed-by: Kees Cook <keescook@chromium.org>
-> >> Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> >> Reviewed-by: John Johansen <john.johansen@canonical.com>
-> >> ---
-> >>  Documentation/userspace-api/lsm.rst |  70 +++++++++++++
-> >>  include/linux/lsm_hook_defs.h       |   4 +
-> >>  include/linux/lsm_hooks.h           |   1 +
-> >>  include/linux/security.h            |  19 ++++
-> >>  include/linux/syscalls.h            |   5 +
-> >>  include/uapi/linux/lsm.h            |  36 +++++++
-> >>  kernel/sys_ni.c                     |   2 +
-> >>  security/Makefile                   |   1 +
-> >>  security/lsm_syscalls.c             |  57 +++++++++++
-> >>  security/security.c                 | 146 +++++++++++++++++++++++++++=
-+
-> >>  10 files changed, 341 insertions(+)
-> >>  create mode 100644 Documentation/userspace-api/lsm.rst
-> >>  create mode 100644 security/lsm_syscalls.c
-> > ..
-> >
-> >> diff --git a/security/security.c b/security/security.c
-> >> index 82253294069c..aa4ade1f71b9 100644
-> >> --- a/security/security.c
-> >> +++ b/security/security.c
-> >> @@ -3798,6 +3798,152 @@ void security_d_instantiate(struct dentry *den=
-try, struct inode *inode)
-> >>  }
-> >>  EXPORT_SYMBOL(security_d_instantiate);
-> >>
-> >> +/**
-> >> + * security_getselfattr - Read an LSM attribute of the current proces=
-s.
-> >> + * @attr: which attribute to return
-> >> + * @uctx: the user-space destination for the information, or NULL
-> >> + * @size: pointer to the size of space available to receive the data
-> >> + * @flags: special handling options. LSM_FLAG_SINGLE indicates that o=
-nly
-> >> + * attributes associated with the LSM identified in the passed @ctx b=
-e
-> >> + * reported.
-> >> + *
-> >> + * A NULL value for @uctx can be used to get both the number of attri=
-butes
-> >> + * and the size of the data.
-> >> + *
-> >> + * Returns the number of attributes found on success, negative value
-> >> + * on error. @size is reset to the total size of the data.
-> >> + * If @size is insufficient to contain the data -E2BIG is returned.
-> >> + */
-> >> +int security_getselfattr(unsigned int attr, struct lsm_ctx __user *uc=
-tx,
-> >> +                     size_t __user *size, u32 flags)
-> >> +{
-> >> +    struct security_hook_list *hp;
-> >> +    struct lsm_ctx lctx =3D { .id =3D LSM_ID_UNDEF, };
-> >> +    u8 __user *base =3D (u8 __user *)uctx;
-> >> +    size_t total =3D 0;
-> >> +    size_t entrysize;
-> >> +    size_t left;
-> >> +    bool toobig =3D false;
-> >> +    bool single =3D false;
-> >> +    int count =3D 0;
-> >> +    int rc;
-> >> +
-> >> +    if (attr =3D=3D LSM_ATTR_UNDEF)
-> >> +            return -EINVAL;
-> >> +    if (size =3D=3D NULL)
-> >> +            return -EINVAL;
-> >> +    if (get_user(left, size))
-> >> +            return -EFAULT;
-> >> +
-> >> +    if (flags) {
-> >> +            /*
-> >> +             * Only flag supported is LSM_FLAG_SINGLE
-> >> +             */
-> >> +            if (flags & LSM_FLAG_SINGLE)
-> >> +                    return -EINVAL;
-> > Should this be something like the following?
-> >
-> >   if (flags & ~LSM_FLAG_SINGLE)
-> >     return -EINVAL;
->
-> Yes. I have a fix ready. There are a couple other touch-ups, too.
+On Wed, Sep 06, 2023 at 03:28:51PM -0500, Rob Herring wrote:
+> 
+> On Tue, 05 Sep 2023 13:36:11 -0700, Nathan Chancellor wrote:
+> > This commit has no direct upstream equivalent.
+> > 
+> > After commit d48016d74836 ("mm,ima,kexec,of: use memblock_free_late from
+> > ima_free_kexec_buffer") in 5.15, there is a modpost warning for certain
+> > configurations:
+> > 
+> >   WARNING: modpost: vmlinux.o(.text+0xb14064): Section mismatch in reference from the function ima_free_kexec_buffer() to the function .init.text:__memblock_free_late()
+> >   The function ima_free_kexec_buffer() references
+> >   the function __init __memblock_free_late().
+> >   This is often because ima_free_kexec_buffer lacks a __init
+> >   annotation or the annotation of __memblock_free_late is wrong.
+> > 
+> > In mainline, there is no issue because ima_free_kexec_buffer() is marked
+> > as __init, which was done as part of commit b69a2afd5afc ("x86/kexec:
+> > Carry forward IMA measurement log on kexec") in 6.0, which is not
+> > suitable for stable.
+> > 
+> > Mark ima_free_kexec_buffer() and its single caller
+> > ima_load_kexec_buffer() as __init in 5.15, as ima_load_kexec_buffer() is
+> > only called from ima_init(), which is __init, clearing up the warning.
+> > 
+> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> > ---
+> >  drivers/of/kexec.c                 | 2 +-
+> >  include/linux/of.h                 | 2 +-
+> >  security/integrity/ima/ima.h       | 2 +-
+> >  security/integrity/ima/ima_kexec.c | 2 +-
+> >  4 files changed, 4 insertions(+), 4 deletions(-)
+> > 
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+> 
 
-Great.  Since you are doing another revision, can you double check all
-of the patch subject lines to ensure you don't have any double spaces?
- I see at least one, possibly two more.
+Now queued up, thanks.
 
---=20
-paul-moore.com
+greg k-h
