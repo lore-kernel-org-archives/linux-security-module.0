@@ -2,202 +2,262 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AEE2EEB564
-	for <linux-security-module@archiver.kernel.org>; Sat,  9 Sep 2023 08:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B21EEE14AA
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Sep 2023 19:19:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344124AbjIIIgw (ORCPT
+        id S238223AbjIITTr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 9 Sep 2023 04:36:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40970 "EHLO
+        Sat, 9 Sep 2023 15:19:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344093AbjIIIgw (ORCPT
+        with ESMTP id S230331AbjIITTr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 9 Sep 2023 04:36:52 -0400
-Received: from mail-pg1-f207.google.com (mail-pg1-f207.google.com [209.85.215.207])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B210610FB
-        for <linux-security-module@vger.kernel.org>; Sat,  9 Sep 2023 01:36:47 -0700 (PDT)
-Received: by mail-pg1-f207.google.com with SMTP id 41be03b00d2f7-56c556b5aceso3778534a12.1
-        for <linux-security-module@vger.kernel.org>; Sat, 09 Sep 2023 01:36:47 -0700 (PDT)
+        Sat, 9 Sep 2023 15:19:47 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D14471AA;
+        Sat,  9 Sep 2023 12:19:42 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-52683da3f5cso4034788a12.3;
+        Sat, 09 Sep 2023 12:19:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1694287181; x=1694891981; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VCiyyGxHUfWj2a16BGYodmWe931Hll8Cz0TSaFHH9lw=;
+        b=pcYcBHUa1ZOeFmlvLlLGJe32hsdS5pUtSTW99rbNWnuZzY8FRhIACbOrQ3jDEqEJO1
+         LR3gooP4tu9T+376zemeTE3CruhYYF5eNmQ6bQ61rA2gH1ydYqB9BBDuMAdQ9BfNzzJS
+         mWi308RskTk7WEqT3lVw2sCnA3VY1Es38vjfpoRzHF47b4T2M4TSZzCmmQNvvdh5bmnc
+         5Z/lnFgjLwEXbwZAlerztiCz1cEVkMzX0NicB4DFw7fH1xYQsIAML5UXzak9kgz0N2bM
+         efgOwWpvNQXQhlBbm7f8mJxosOBXR4C7If0sxWmxAWne3cq9qqd9FWNyU9SCarWHCDhg
+         l4iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694248607; x=1694853407;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9DaMzJPCCqO3Sj8Zi/fs2W6mKRm6U/Kf8tVr0vb3FcY=;
-        b=J+2sED4qnGtyPZUzxhkLSe5aYrx3Hkqk8C0MlCbhkTfgqNuu+oF/LA4y0HpcxDdwg6
-         CoPrX1iWUSqW1ajzgnINH/T3/SJd2ZG6FYvm9xTGctqlJ8Esg6slJsAOoZKVNAX2urIO
-         CflpjIXHcBlHFkKrMv+P/AnPB3bpzpHsaBOxmueZezgieQt4EJe8bJtTgXBpt7EUitML
-         i0/zNXrSqaTnScWmRWkJTWbyzrpHX5x79QXESvmBA73AHQkIhcMuzEEr/00jdeE17t3V
-         ubzgfZH8JAd6vbxz/n4xCsSKW4/NmymFq0iRHrLbX+xZkeGzgw1nU2515+bVubiFHAd3
-         RADQ==
-X-Gm-Message-State: AOJu0Yx/F7kr0JTKvB703SpRhB1FHrdMe1OiF3ystlx0o8pF2zE13fK2
-        nM2zl3n3j5jxTqOtcdgOIt8X4bsbtISUZzwK+7qX6knockdi
-X-Google-Smtp-Source: AGHT+IHvDWa6k1bW5pNkjHG2+dFjKxK96jlXp3NwM3hlkAYdVD5+FzJITBcAm6zHFDoqseaOfNfuwAGqUYGx3tJrgTJV/+2oPFlC
+        d=1e100.net; s=20230601; t=1694287181; x=1694891981;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VCiyyGxHUfWj2a16BGYodmWe931Hll8Cz0TSaFHH9lw=;
+        b=bfITykF9cW0Tts9bw1t7nEkUIO6VHPByxjsBP9mp8wqxXYxuWGIUnzqiqPpoARS6B4
+         beM+RpZWMWkYGuCScmVYpM0fftR05Oe3PUrAEB+a4vVxyj+XKQlUal/F18dEkvlgDA1p
+         Khpgzw0GBT2fT/NYME2wtQKwkiBXVGVqgjPMNwX/opKpcPqU8M5hGBK9otuBVDfIBR+l
+         vl7MvXR6voHxFYMz3GQItcwq+Gd/+jQF/GuIhF+D2oDeg4Y7rUxRX/2ytE1pmtTa49k7
+         232Ko8Vp+cIqexfZjZCVYZ3a6ZVNnn0L92dlrr98IAt/2djBz3d+byrIUy1I7Do1P0bL
+         J/YQ==
+X-Gm-Message-State: AOJu0YyPKSN9Km+p6+I2yyYwnpl4eQKVoVe4Ln/J4QtxzQgdMdkTqTMe
+        gMljZ6shp7vFgT1O2xlIb6Jam5HeqVE=
+X-Google-Smtp-Source: AGHT+IEQnfQJXsZfD5l3eTHMFXEnf/LuX1aOWRKHKb0YO9vboO3g/ow1Ng2yjIbywfhnwipFXttfcA==
+X-Received: by 2002:a05:6402:493:b0:523:100b:462b with SMTP id k19-20020a056402049300b00523100b462bmr5019955edv.5.1694287181004;
+        Sat, 09 Sep 2023 12:19:41 -0700 (PDT)
+Received: from f.. (cst-prg-30-5.cust.vodafone.cz. [46.135.30.5])
+        by smtp.gmail.com with ESMTPSA id d4-20020aa7d5c4000000b0052544bca116sm2482314eds.13.2023.09.09.12.19.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Sep 2023 12:19:40 -0700 (PDT)
+From:   Mateusz Guzik <mjguzik@gmail.com>
+To:     linux-security-module@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, paul@paul-moore.com,
+        Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2] cred: add get_cred_many and put_cred_many
+Date:   Sat,  9 Sep 2023 21:19:32 +0200
+Message-Id: <20230909191932.3187633-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Received: by 2002:a17:903:230c:b0:1c3:5d8d:bc2f with SMTP id
- d12-20020a170903230c00b001c35d8dbc2fmr1893830plh.0.1694248607275; Sat, 09 Sep
- 2023 01:36:47 -0700 (PDT)
-Date:   Sat, 09 Sep 2023 01:36:47 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000065deef0604e8fe03@google.com>
-Subject: [syzbot] [integrity?] [lsm?] INFO: task hung in process_measurement (2)
-From:   syzbot <syzbot+1de5a37cb85a2d536330@syzkaller.appspotmail.com>
-To:     dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, paul@paul-moore.com,
-        serge@hallyn.com, syzkaller-bugs@googlegroups.com,
-        zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+Some of the frequent consumers of get_cred and put_cred operate on 2
+references on the same creds back-to-back.
 
-syzbot found the following issue on:
+Switch them to doing the work in one go instead.
 
-HEAD commit:    7ba2090ca64e Merge tag 'ceph-for-6.6-rc1' of https://githu..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14074c94680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ed626705db308b2d
-dashboard link: https://syzkaller.appspot.com/bug?extid=1de5a37cb85a2d536330
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+v2:
+- add kdoc entries
+- hoist validate_cred call in exit_creds
+- reword commit message
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/7abbf7618c3a/disk-7ba2090c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/694adc723518/vmlinux-7ba2090c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3c5d9addc4e4/bzImage-7ba2090c.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1de5a37cb85a2d536330@syzkaller.appspotmail.com
-
-INFO: task syz-executor.0:8008 blocked for more than 143 seconds.
-      Not tainted 6.5.0-syzkaller-12107-g7ba2090ca64e #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor.0  state:D stack:27472 pid:8008  ppid:5056   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5382 [inline]
- __schedule+0x1873/0x48f0 kernel/sched/core.c:6695
- schedule+0xc3/0x180 kernel/sched/core.c:6771
- schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:6830
- rwsem_down_write_slowpath+0xedd/0x13a0 kernel/locking/rwsem.c:1178
- __down_write_common+0x1aa/0x200 kernel/locking/rwsem.c:1306
- inode_lock include/linux/fs.h:802 [inline]
- process_measurement+0x43b/0x1cf0 security/integrity/ima/ima_main.c:247
- ima_file_check+0xf1/0x170 security/integrity/ima/ima_main.c:543
- do_open fs/namei.c:3641 [inline]
- path_openat+0x2812/0x3180 fs/namei.c:3796
- do_filp_open+0x234/0x490 fs/namei.c:3823
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1422
- do_sys_open fs/open.c:1437 [inline]
- __do_sys_creat fs/open.c:1513 [inline]
- __se_sys_creat fs/open.c:1507 [inline]
- __x64_sys_creat+0x123/0x160 fs/open.c:1507
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fb7faa7cae9
-RSP: 002b:00007fb7fb88a0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
-RAX: ffffffffffffffda RBX: 00007fb7fab9c050 RCX: 00007fb7faa7cae9
-RDX: 0000000000000000 RSI: 00000000000001f2 RDI: 0000000020000280
-RBP: 00007fb7faac847a R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007fb7fab9c050 R15: 00007ffebde5d0b8
- </TASK>
-INFO: lockdep is turned off.
-NMI backtrace for cpu 1
-CPU: 1 PID: 29 Comm: khungtaskd Not tainted 6.5.0-syzkaller-12107-g7ba2090ca64e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
- nmi_cpu_backtrace+0x498/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x310 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:222 [inline]
- watchdog+0xdf5/0xe40 kernel/hung_task.c:379
- kthread+0x2b8/0x350 kernel/kthread.c:388
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:304
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 8771 Comm: syz-executor.0 Not tainted 6.5.0-syzkaller-12107-g7ba2090ca64e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
-RIP: 0010:__asan_memset+0x31/0x40 mm/kasan/shadow.c:87
-Code: 53 48 89 d3 41 89 f6 48 89 fd 48 8b 4c 24 18 48 89 d6 ba 01 00 00 00 e8 6d ea ff ff 84 c0 74 12 48 89 ef 44 89 f6 48 89 da 5b <41> 5e 5d e9 87 02 e2 08 31 c0 5b 41 5e 5d c3 f3 0f 1e fa 41 57 41
-RSP: 0018:ffffc90016796d50 EFLAGS: 00000202
-RAX: ffffc90016797501 RBX: ffffc90016796e78 RCX: ffffffff813d953c
-RDX: 0000000000000010 RSI: 0000000000000000 RDI: ffffc90016796e90
-RBP: ffffc90016796e90 R08: ffffc90016796e9f R09: 1ffff92002cf2dd3
-R10: dffffc0000000000 R11: fffff52002cf2dd4 R12: ffffc90016797530
-R13: dffffc0000000000 R14: 0000000000000000 R15: 1ffff92002cf2dc8
-FS:  00007f87258b56c0(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f306edfe000 CR3: 0000000063639000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- unwind_next_frame+0x13ac/0x29e0 arch/x86/kernel/unwind_orc.c:592
- arch_stack_walk+0x146/0x1a0 arch/x86/kernel/stacktrace.c:25
- stack_trace_save+0x117/0x1c0 kernel/stacktrace.c:122
- save_stack+0xfa/0x1e0 mm/page_owner.c:128
- __set_page_owner+0x29/0x380 mm/page_owner.c:192
- set_page_owner include/linux/page_owner.h:31 [inline]
- post_alloc_hook+0x1e6/0x210 mm/page_alloc.c:1536
- prep_new_page mm/page_alloc.c:1543 [inline]
- get_page_from_freelist+0x31db/0x3360 mm/page_alloc.c:3170
- __alloc_pages+0x255/0x670 mm/page_alloc.c:4426
- __folio_alloc+0x13/0x30 mm/page_alloc.c:4458
- vma_alloc_folio+0x48a/0x9a0 mm/mempolicy.c:2259
- shmem_alloc_folio mm/shmem.c:1658 [inline]
- shmem_alloc_and_acct_folio+0x438/0x9b0 mm/shmem.c:1683
- shmem_get_folio_gfp+0xca4/0x2b60 mm/shmem.c:2020
- shmem_get_folio mm/shmem.c:2143 [inline]
- shmem_write_begin+0x170/0x300 mm/shmem.c:2688
- generic_perform_write+0x31b/0x630 mm/filemap.c:3942
- shmem_file_write_iter+0xfc/0x120 mm/shmem.c:2865
- call_write_iter include/linux/fs.h:1985 [inline]
- new_sync_write fs/read_write.c:491 [inline]
- vfs_write+0x782/0xaf0 fs/read_write.c:584
- ksys_write+0x1a0/0x2c0 fs/read_write.c:637
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f8724a7b82f
-Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 b9 80 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 0c 81 02 00 48
-RSP: 002b:00007f87258b4e70 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000001000000 RCX: 00007f8724a7b82f
-RDX: 0000000001000000 RSI: 00007f871b1ff000 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000012605
-R10: 0000000020024d42 R11: 0000000000000293 R12: 0000000000000003
-R13: 00007f87258b4f3c R14: 00007f87258b4f40 R15: 00007f871b1ff000
- </TASK>
-
-
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ include/linux/cred.h | 59 +++++++++++++++++++++++++++++++++++++-------
+ kernel/cred.c        | 26 ++++++++++---------
+ 2 files changed, 65 insertions(+), 20 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index f923528d5cc4..56bc432fe49b 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -218,6 +218,20 @@ static inline bool cap_ambient_invariant_ok(const struct cred *cred)
+ 					  cred->cap_inheritable));
+ }
+ 
++/**
++ * get_new_cred_many - Get references on a new set of credentials
++ * @cred: The new credentials to reference
++ * @nr: Number of references to acquire
++ *
++ * Get references on the specified set of new credentials.  The caller must
++ * release all acquired references.
++ */
++static inline struct cred *get_new_cred_many(struct cred *cred, int nr)
++{
++	atomic_add(nr, &cred->usage);
++	return cred;
++}
++
+ /**
+  * get_new_cred - Get a reference on a new set of credentials
+  * @cred: The new credentials to reference
+@@ -227,16 +241,16 @@ static inline bool cap_ambient_invariant_ok(const struct cred *cred)
+  */
+ static inline struct cred *get_new_cred(struct cred *cred)
+ {
+-	atomic_inc(&cred->usage);
+-	return cred;
++	return get_new_cred_many(cred, 1);
+ }
+ 
+ /**
+- * get_cred - Get a reference on a set of credentials
++ * get_cred_many - Get references on a set of credentials
+  * @cred: The credentials to reference
++ * @nr: Number of references to acquire
+  *
+- * Get a reference on the specified set of credentials.  The caller must
+- * release the reference.  If %NULL is passed, it is returned with no action.
++ * Get references on the specified set of credentials.  The caller must release
++ * all acquired reference.  If %NULL is passed, it is returned with no action.
+  *
+  * This is used to deal with a committed set of credentials.  Although the
+  * pointer is const, this will temporarily discard the const and increment the
+@@ -244,14 +258,28 @@ static inline struct cred *get_new_cred(struct cred *cred)
+  * accidental alteration of a set of credentials that should be considered
+  * immutable.
+  */
+-static inline const struct cred *get_cred(const struct cred *cred)
++static inline const struct cred *get_cred_many(const struct cred *cred, int nr)
+ {
+ 	struct cred *nonconst_cred = (struct cred *) cred;
+ 	if (!cred)
+ 		return cred;
+ 	validate_creds(cred);
+ 	nonconst_cred->non_rcu = 0;
+-	return get_new_cred(nonconst_cred);
++	return get_new_cred_many(nonconst_cred, nr);
++}
++
++/*
++ * get_cred - Get a reference on a set of credentials
++ * @cred: The credentials to reference
++ *
++ * Get a reference on the specified set of credentials.  The caller must
++ * release the reference.  If %NULL is passed, it is returned with no action.
++ *
++ * This is used to deal with a committed set of credentials.
++ */
++static inline const struct cred *get_cred(const struct cred *cred)
++{
++	return get_cred_many(cred, 1);
+ }
+ 
+ static inline const struct cred *get_cred_rcu(const struct cred *cred)
+@@ -269,6 +297,7 @@ static inline const struct cred *get_cred_rcu(const struct cred *cred)
+ /**
+  * put_cred - Release a reference to a set of credentials
+  * @cred: The credentials to release
++ * @nr: Number of references to release
+  *
+  * Release a reference to a set of credentials, deleting them when the last ref
+  * is released.  If %NULL is passed, nothing is done.
+@@ -277,17 +306,29 @@ static inline const struct cred *get_cred_rcu(const struct cred *cred)
+  * on task_struct are attached by const pointers to prevent accidental
+  * alteration of otherwise immutable credential sets.
+  */
+-static inline void put_cred(const struct cred *_cred)
++static inline void put_cred_many(const struct cred *_cred, int nr)
+ {
+ 	struct cred *cred = (struct cred *) _cred;
+ 
+ 	if (cred) {
+ 		validate_creds(cred);
+-		if (atomic_dec_and_test(&(cred)->usage))
++		if (atomic_sub_and_test(nr, &cred->usage))
+ 			__put_cred(cred);
+ 	}
+ }
+ 
++/*
++ * put_cred - Release a reference to a set of credentials
++ * @cred: The credentials to release
++ *
++ * Release a reference to a set of credentials, deleting them when the last ref
++ * is released.  If %NULL is passed, nothing is done.
++ */
++static inline void put_cred(const struct cred *cred)
++{
++	put_cred_many(cred, 1);
++}
++
+ /**
+  * current_cred - Access the current task's subjective credentials
+  *
+diff --git a/kernel/cred.c b/kernel/cred.c
+index 98cb4eca23fb..9398e534b997 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -162,23 +162,29 @@ EXPORT_SYMBOL(__put_cred);
+  */
+ void exit_creds(struct task_struct *tsk)
+ {
+-	struct cred *cred;
++	struct cred *real_cred, *cred;
+ 
+ 	kdebug("exit_creds(%u,%p,%p,{%d,%d})", tsk->pid, tsk->real_cred, tsk->cred,
+ 	       atomic_read(&tsk->cred->usage),
+ 	       read_cred_subscribers(tsk->cred));
+ 
+-	cred = (struct cred *) tsk->real_cred;
++	real_cred = (struct cred *) tsk->real_cred;
+ 	tsk->real_cred = NULL;
+-	validate_creds(cred);
+-	alter_cred_subscribers(cred, -1);
+-	put_cred(cred);
+ 
+ 	cred = (struct cred *) tsk->cred;
+ 	tsk->cred = NULL;
++
+ 	validate_creds(cred);
+-	alter_cred_subscribers(cred, -1);
+-	put_cred(cred);
++	if (real_cred == cred) {
++		alter_cred_subscribers(cred, -2);
++		put_cred_many(cred, 2);
++	} else {
++		validate_creds(real_cred);
++		alter_cred_subscribers(real_cred, -1);
++		put_cred(real_cred);
++		alter_cred_subscribers(cred, -1);
++		put_cred(cred);
++	}
+ 
+ #ifdef CONFIG_KEYS_REQUEST_CACHE
+ 	key_put(tsk->cached_requested_key);
+@@ -355,8 +361,7 @@ int copy_creds(struct task_struct *p, unsigned long clone_flags)
+ #endif
+ 		clone_flags & CLONE_THREAD
+ 	    ) {
+-		p->real_cred = get_cred(p->cred);
+-		get_cred(p->cred);
++		p->real_cred = get_cred_many(p->cred, 2);
+ 		alter_cred_subscribers(p->cred, 2);
+ 		kdebug("share_creds(%p{%d,%d})",
+ 		       p->cred, atomic_read(&p->cred->usage),
+@@ -520,8 +525,7 @@ int commit_creds(struct cred *new)
+ 		proc_id_connector(task, PROC_EVENT_GID);
+ 
+ 	/* release the old obj and subj refs both */
+-	put_cred(old);
+-	put_cred(old);
++	put_cred_many(old, 2);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(commit_creds);
+-- 
+2.39.2
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
