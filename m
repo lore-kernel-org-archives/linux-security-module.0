@@ -2,235 +2,100 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C09EEB56E
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Sep 2023 22:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 125E0EEB57A
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Sep 2023 00:15:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244651AbjIHWSK (ORCPT
+        id S231316AbjIIAPz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Sep 2023 18:18:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37926 "EHLO
+        Fri, 8 Sep 2023 20:15:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244712AbjIHWSJ (ORCPT
+        with ESMTP id S1345351AbjIIAPz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Sep 2023 18:18:09 -0400
-Received: from mail-vk1-xa2d.google.com (mail-vk1-xa2d.google.com [IPv6:2607:f8b0:4864:20::a2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D029D1FC9
-        for <linux-security-module@vger.kernel.org>; Fri,  8 Sep 2023 15:18:01 -0700 (PDT)
-Received: by mail-vk1-xa2d.google.com with SMTP id 71dfb90a1353d-49032a0ff13so965553e0c.0
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Sep 2023 15:18:01 -0700 (PDT)
+        Fri, 8 Sep 2023 20:15:55 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0A081FE9
+        for <linux-security-module@vger.kernel.org>; Fri,  8 Sep 2023 17:15:50 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-59b5a586da6so21399527b3.1
+        for <linux-security-module@vger.kernel.org>; Fri, 08 Sep 2023 17:15:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1694211481; x=1694816281; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cSRvHYm8s43TE4XVO2qA12F06WNT4dmrU+ghW6YhLOk=;
-        b=bdS9DMN8F0N4W+0fTMt66eFFYKTm58fQsyXSU4BUksE674XbrMz4eWpo32mHLDgQBs
-         NftVkUOZfuu0AsZQtlEoKp+01rQze87ZABomB+Js+5RPhOhElAfEEsbnCOaGflc7O07i
-         BioHyJw1Ft3Xzb3HCfh0EGAaL28y1Jl8nAPVu70EeXQwjSKlh50U3i0etTbPYWFGn+gJ
-         HdQFRhpWj0mESm/gdIMdqCKjg+JEeEK//g9ho1tJ+IoED/BI9J32SKWiL8IqwbMO+fvo
-         1TpbzmKxianQINCh2KUVXno+FnU5OwHhNq6mXl8Y3UDnt6b4fZuYnKiTL29+3/2Ruo1S
-         Js6A==
+        d=google.com; s=20221208; t=1694218549; x=1694823349; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gaKhly8Aj9nDlRectFKYGw3FxO6EGE4C2aH6vsrGIcs=;
+        b=KKQYboSqcTfMiYuHqb6JaslyaUwLzygQtr54knTg8NFmKZzW9Nk9F02RAnx7QH76ia
+         RSnP7F+UCzWFEgW1vS7n2nD/rmqu97xxXhcj5PwkUBzHhxGFYXhOM0um0yr9FX8DpsCH
+         21bYQnWQAdXtwyqFTHsM9D2GXmjWt7d51G5geMz2N4THsLnsSmGJFJh325W3DOtzhQG+
+         mKmymS6dV9lG4v1aHafJwZMd4+rREJjtGYyKpGi9L+IMoZ3vprp5C3XlcQHUBn1z2+j9
+         MaVh85U/qkraojXJqCxJBnLJIvLcUlXYYdEsb1ph6ov4zAOxrXGLaXGELdxBclajwmko
+         Lk4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694211481; x=1694816281;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cSRvHYm8s43TE4XVO2qA12F06WNT4dmrU+ghW6YhLOk=;
-        b=kcV07AeVKA4wgc+KE7eWWNOX8cYOglIJFT/StgxpBCbFm2VQiZo8dtXPp1XnaBrJ8r
-         WRf5vnJthwZbj8pT4vD53pKN6OONsycoEnmyGhnN+cgjD5Prtp/7KcUeO2ioiogotXja
-         FNDYK2IbdumB5ki/QOV5KgCElxsnRzNGqTHEzRWLEosKR+svHtxFVkOB1SvB6I34Qwpk
-         HlzAkYmYKZcKKh4PGtqPshRzOiuZnO1BuWtuMnuIHeZpv3yO+4qleQsEf8IoR0gPp/0v
-         aqTcIpROJ+rWoH+QOVRvLyFQE3HvAHVc5fyxGLW5owtCgU+k10Cx368kC26sWH4nW9yD
-         I7dQ==
-X-Gm-Message-State: AOJu0YzMhKHQLbLEKBM2VvDd4sSxNSPGnRYa3rfrfrfUgS4EzMF5fT5G
-        AMUkenqCeBGScKAEP5aoPTWH
-X-Google-Smtp-Source: AGHT+IFCKXrZh2SIoevgtALR7ev1UXuYlWloay+x+eo1txWIY5uYUbTTN5e0YDBRhlfSP+cjm5EI6g==
-X-Received: by 2002:a1f:ea04:0:b0:48d:3434:fe1a with SMTP id i4-20020a1fea04000000b0048d3434fe1amr3767674vkh.3.1694211480842;
-        Fri, 08 Sep 2023 15:18:00 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id k13-20020ac8604d000000b00403b44bc230sm911197qtm.95.2023.09.08.15.18.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Sep 2023 15:18:00 -0700 (PDT)
-Date:   Fri, 08 Sep 2023 18:17:59 -0400
-Message-ID: <c16eadecb8d8c66e5ea98b52710d301c.paul@paul-moore.com>
-From:   Paul Moore <paul@paul-moore.com>
-To:     Mateusz Guzik <mjguzik@gmail.com>,
-        linux-security-module@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>
-Subject: Re: [PATCH] cred: add get_cred_many and put_cred_many
-References: <20230815183759.1821357-1-mjguzik@gmail.com>
-In-Reply-To: <20230815183759.1821357-1-mjguzik@gmail.com>
+        d=1e100.net; s=20230601; t=1694218549; x=1694823349;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gaKhly8Aj9nDlRectFKYGw3FxO6EGE4C2aH6vsrGIcs=;
+        b=mRBkgCXGc5LzDz0w8QK++1gWDWSwkyTLyfZuBfOD2p6I6AeS0/AchNa7NXarMiMn+z
+         9Vto83vuGUuOXO2kDDM11FfsFLJcyDcprYZfZ18VR7RoB1pvlnFJBmVWJcSarXhZqatj
+         5K7ewBYVZDHMlJCtFslV3RYo5Ss1kkNBAgD7HXvyJ7rWtI5a1ahxo8mSHJyYsvGyQumV
+         xaTl9mtU/M8SNqXXpIQaSUGIuPwGYKslGYUsgUUeLnqrK0D+E5Jjo+ssNwvV+ftxI2vR
+         zI+a6IX4EfvT/yagZ7tlA3Bnzl60RqC0b9xignSxyggA9rXhp1Y8/Dn/LGNg2RnXDTnF
+         mr9w==
+X-Gm-Message-State: AOJu0YzotHOF8WbtjmXLRoMVVSSk7X0rs6KWcVPpJF64X0+5xxQsNU7c
+        5FG2ckVXJq6tYuIvxLt6mpfLl/PL+jI=
+X-Google-Smtp-Source: AGHT+IF1C60bg2DJN40Ko3jIsOcOxP0NOjMSP0DFTt+pfC3PQMs+2qr1EtNSX5EQJ2FP9+vXkLa3AHa75+U=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a81:9848:0:b0:59b:5a5b:3a91 with SMTP id
+ p69-20020a819848000000b0059b5a5b3a91mr89060ywg.2.1694218549752; Fri, 08 Sep
+ 2023 17:15:49 -0700 (PDT)
+Date:   Fri,  8 Sep 2023 17:15:33 -0700
+In-Reply-To: <20230908074222.28723-2-vbabka@suse.cz>
+Mime-Version: 1.0
+References: <20230908074222.28723-2-vbabka@suse.cz>
+X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
+Message-ID: <169421599820.98577.9267896589643015779.b4-ty@google.com>
+Subject: Re: [PATCH gmem FIXUP v2] mm, compaction: make testing
+ mapping_unmovable() safe
+From:   Sean Christopherson <seanjc@google.com>
+To:     Sean Christopherson <seanjc@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc:     ackerleytng@google.com, akpm@linux-foundation.org,
+        anup@brainfault.org, aou@eecs.berkeley.edu,
+        chao.p.peng@linux.intel.com, chenhuacai@kernel.org,
+        david@redhat.com, isaku.yamahata@gmail.com, jarkko@kernel.org,
+        jmorris@namei.org, kirill.shutemov@linux.intel.com,
+        kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+        kvmarm@lists.linux.dev, liam.merwick@oracle.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-mm@kvack.org,
+        linux-riscv@lists.infradead.org,
+        linux-security-module@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, mail@maciej.szmigiero.name,
+        maz@kernel.org, michael.roth@amd.com, mpe@ellerman.id.au,
+        oliver.upton@linux.dev, palmer@dabbelt.com,
+        paul.walmsley@sifive.com, paul@paul-moore.com, pbonzini@redhat.com,
+        qperret@google.com, serge@hallyn.com, tabba@google.com,
+        vannapurve@google.com, wei.w.wang@intel.com, willy@infradead.org,
+        yu.c.zhang@linux.intel.com
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Aug 15, 2023 Mateusz Guzik <mjguzik@gmail.com> wrote:
+On Fri, 08 Sep 2023 09:42:23 +0200, Vlastimil Babka wrote:
+> As Kirill pointed out, mapping can be removed under us due to
+> truncation. Test it under folio lock as already done for the async
+> compaction / dirty folio case. To prevent locking every folio with
+> mapping to do the test, do it only for unevictable folios, as we can
+> expect the unmovable mapping folios are also unevictable. To enforce
+> that expecation, make mapping_set_unmovable() also set AS_UNEVICTABLE.
 > 
-> Shaves back-to-back atomics in a few places.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
->  include/linux/cred.h | 27 +++++++++++++++++++++------
->  kernel/cred.c        | 29 +++++++++++++++++------------
->  2 files changed, 38 insertions(+), 18 deletions(-)
+> [...]
 
-Since there doesn't appear to be a dedicated maintainer for the
-credential code I can volunteer to pick this up via the LSM tree.
-Perhaps I should volunteer to maintain the credential code.
+Applied to kvm-x86 guest_memfd, thanks!
 
-Regardless, I think this patch needs some additional work, starting
-with the commit description.  I understand this isn't a very large
-patch, but a quick discussion of how you are adding two new functions
-to reduce the number of atomic operations that happen in a select
-number of code paths where the caller takes multiple references ...
-or something along those lines.
-
-More comments below.
-
-> diff --git a/include/linux/cred.h b/include/linux/cred.h
-> index 9ed9232af934..b2b570ba204a 100644
-> --- a/include/linux/cred.h
-> +++ b/include/linux/cred.h
-> @@ -226,12 +226,17 @@ static inline bool cap_ambient_invariant_ok(const struct cred *cred)
->   * Get a reference on the specified set of new credentials.  The caller must
->   * release the reference.
->   */
-> -static inline struct cred *get_new_cred(struct cred *cred)
-> +static inline struct cred *get_new_cred_many(struct cred *cred, int nr)
->  {
-> -	atomic_inc(&cred->usage);
-> +	atomic_add(nr, &cred->usage);
->  	return cred;
->  }
->  
-> +static inline struct cred *get_new_cred(struct cred *cred)
-> +{
-> +	return get_new_cred_many(cred, 1);
-> +}
-
-You need to add a kdoc comment header for get_new_cred_many() and
-move the get_new_cred() comment down to match up with the function.
-
->  /**
->   * get_cred - Get a reference on a set of credentials
->   * @cred: The credentials to reference
-> @@ -245,14 +250,19 @@ static inline struct cred *get_new_cred(struct cred *cred)
->   * accidental alteration of a set of credentials that should be considered
->   * immutable.
->   */
-> -static inline const struct cred *get_cred(const struct cred *cred)
-> +static inline const struct cred *get_cred_many(const struct cred *cred, int nr)
->  {
->  	struct cred *nonconst_cred = (struct cred *) cred;
->  	if (!cred)
->  		return cred;
->  	validate_creds(cred);
->  	nonconst_cred->non_rcu = 0;
-> -	return get_new_cred(nonconst_cred);
-> +	return get_new_cred_many(nonconst_cred, nr);
-> +}
-> +
-> +static inline const struct cred *get_cred(const struct cred *cred)
-> +{
-> +	return get_cred_many(cred, 1);
->  }
-
-Same issue with the kdoc comment headers.
-
->  static inline const struct cred *get_cred_rcu(const struct cred *cred)
-> @@ -278,17 +288,22 @@ static inline const struct cred *get_cred_rcu(const struct cred *cred)
->   * on task_struct are attached by const pointers to prevent accidental
->   * alteration of otherwise immutable credential sets.
->   */
-> -static inline void put_cred(const struct cred *_cred)
-> +static inline void put_cred_many(const struct cred *_cred, int nr)
->  {
->  	struct cred *cred = (struct cred *) _cred;
->  
->  	if (cred) {
->  		validate_creds(cred);
-> -		if (atomic_dec_and_test(&(cred)->usage))
-> +		if (atomic_sub_and_test(nr, &cred->usage))
->  			__put_cred(cred);
->  	}
->  }
->  
-> +static inline void put_cred(const struct cred *cred)
-> +{
-> +	put_cred_many(cred, 1);
-> +}
-
-Same issue with the kdoc comment headers.
-
->  /**
->   * current_cred - Access the current task's subjective credentials
->   *
-> diff --git a/kernel/cred.c b/kernel/cred.c
-> index 811ad654abd1..8a506bc7c1b8 100644
-> --- a/kernel/cred.c
-> +++ b/kernel/cred.c
-> @@ -159,23 +159,30 @@ EXPORT_SYMBOL(__put_cred);
->   */
->  void exit_creds(struct task_struct *tsk)
->  {
-> -	struct cred *cred;
-> +	struct cred *real_cred, *cred;
->  
->  	kdebug("exit_creds(%u,%p,%p,{%d,%d})", tsk->pid, tsk->real_cred, tsk->cred,
->  	       atomic_read(&tsk->cred->usage),
->  	       read_cred_subscribers(tsk->cred));
->  
-> -	cred = (struct cred *) tsk->real_cred;
-> +	real_cred = (struct cred *) tsk->real_cred;
->  	tsk->real_cred = NULL;
-> -	validate_creds(cred);
-> -	alter_cred_subscribers(cred, -1);
-> -	put_cred(cred);
->  
->  	cred = (struct cred *) tsk->cred;
->  	tsk->cred = NULL;
-> -	validate_creds(cred);
-
-Since both branches of the if-statement below end up validating @cred
-you might as well still do the validation check here.
-
-> -	alter_cred_subscribers(cred, -1);
-> -	put_cred(cred);
-> +
-> +	if (real_cred == cred) {
-> +		validate_creds(cred);
-> +		alter_cred_subscribers(cred, -2);
-> +		put_cred_many(cred, 2);
-> +	} else {
-> +		validate_creds(real_cred);
-> +		validate_creds(cred);
-> +		alter_cred_subscribers(real_cred, -1);
-> +		put_cred(real_cred);
-> +		alter_cred_subscribers(cred, -1);
-> +		put_cred(cred);
-> +	}
->  
->  #ifdef CONFIG_KEYS_REQUEST_CACHE
->  	key_put(tsk->cached_requested_key);
-> @@ -352,8 +359,7 @@ int copy_creds(struct task_struct *p, unsigned long clone_flags)
->  #endif
->  		clone_flags & CLONE_THREAD
->  	    ) {
-> -		p->real_cred = get_cred(p->cred);
-> -		get_cred(p->cred);
-> +		p->real_cred = get_cred_many(p->cred, 2);
->  		alter_cred_subscribers(p->cred, 2);
->  		kdebug("share_creds(%p{%d,%d})",
->  		       p->cred, atomic_read(&p->cred->usage),
-> @@ -517,8 +523,7 @@ int commit_creds(struct cred *new)
->  		proc_id_connector(task, PROC_EVENT_GID);
->  
->  	/* release the old obj and subj refs both */
-> -	put_cred(old);
-> -	put_cred(old);
-> +	put_cred_many(old, 2);
->  	return 0;
->  }
->  EXPORT_SYMBOL(commit_creds);
-> -- 
-> 2.39.2
+[1/1] mm, compaction: make testing mapping_unmovable() safe
+      https://github.com/kvm-x86/linux/commit/4876a35647b9
 
 --
-paul-moore.com
+https://github.com/kvm-x86/linux/tree/next
+https://github.com/kvm-x86/linux/tree/fixes
