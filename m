@@ -2,262 +2,201 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B21EEE14AA
-	for <linux-security-module@archiver.kernel.org>; Sat,  9 Sep 2023 19:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 398E6CA0EC3
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Sep 2023 22:09:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238223AbjIITTr (ORCPT
+        id S237936AbjIKWGJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 9 Sep 2023 15:19:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42352 "EHLO
+        Mon, 11 Sep 2023 18:06:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbjIITTr (ORCPT
+        with ESMTP id S237891AbjIKNTT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 9 Sep 2023 15:19:47 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D14471AA;
-        Sat,  9 Sep 2023 12:19:42 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-52683da3f5cso4034788a12.3;
-        Sat, 09 Sep 2023 12:19:42 -0700 (PDT)
+        Mon, 11 Sep 2023 09:19:19 -0400
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8EBFEB;
+        Mon, 11 Sep 2023 06:19:14 -0700 (PDT)
+Received: by mail-ot1-x336.google.com with SMTP id 46e09a7af769-6bd8639e7e5so3288375a34.1;
+        Mon, 11 Sep 2023 06:19:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694287181; x=1694891981; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VCiyyGxHUfWj2a16BGYodmWe931Hll8Cz0TSaFHH9lw=;
-        b=pcYcBHUa1ZOeFmlvLlLGJe32hsdS5pUtSTW99rbNWnuZzY8FRhIACbOrQ3jDEqEJO1
-         LR3gooP4tu9T+376zemeTE3CruhYYF5eNmQ6bQ61rA2gH1ydYqB9BBDuMAdQ9BfNzzJS
-         mWi308RskTk7WEqT3lVw2sCnA3VY1Es38vjfpoRzHF47b4T2M4TSZzCmmQNvvdh5bmnc
-         5Z/lnFgjLwEXbwZAlerztiCz1cEVkMzX0NicB4DFw7fH1xYQsIAML5UXzak9kgz0N2bM
-         efgOwWpvNQXQhlBbm7f8mJxosOBXR4C7If0sxWmxAWne3cq9qqd9FWNyU9SCarWHCDhg
-         l4iA==
+        d=gmail.com; s=20221208; t=1694438354; x=1695043154; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dZAzIIMzf1qPGHHQFdp02fgFY8ovyjwDuzAUQe5+kww=;
+        b=Nd4oHenOHfHGXOPqHZ2VN4aefvLQBjoKU1RkgClvfYM54W7ADDIVhdzIZ/VJgEwdMe
+         SebwEdM1UgrzQJhJ73ljlqdq7Hrk6eVyeNHuZUG4E3ALESGq2r4QUI05F7OpYDNw3/08
+         5YojrUBHPVbnJKO3UHWcC30BMboRgj6fy8+6TzDZ47DZgMSmX2culGDDUTwBozrxYQ02
+         QLam8zpEq3R6Ny36DwE0TJT+qTVkJTpjqfu1WfT1Y5NAzt6p3Znd7GMtVJtkG1qPQ/lK
+         HWsSVrnC7Igw84jTsmZAclhpWpDYen/b+4AONJUv+3NxY4g+ZLMj7OUsyajyxGhGEKbA
+         yd0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694287181; x=1694891981;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VCiyyGxHUfWj2a16BGYodmWe931Hll8Cz0TSaFHH9lw=;
-        b=bfITykF9cW0Tts9bw1t7nEkUIO6VHPByxjsBP9mp8wqxXYxuWGIUnzqiqPpoARS6B4
-         beM+RpZWMWkYGuCScmVYpM0fftR05Oe3PUrAEB+a4vVxyj+XKQlUal/F18dEkvlgDA1p
-         Khpgzw0GBT2fT/NYME2wtQKwkiBXVGVqgjPMNwX/opKpcPqU8M5hGBK9otuBVDfIBR+l
-         vl7MvXR6voHxFYMz3GQItcwq+Gd/+jQF/GuIhF+D2oDeg4Y7rUxRX/2ytE1pmtTa49k7
-         232Ko8Vp+cIqexfZjZCVYZ3a6ZVNnn0L92dlrr98IAt/2djBz3d+byrIUy1I7Do1P0bL
-         J/YQ==
-X-Gm-Message-State: AOJu0YyPKSN9Km+p6+I2yyYwnpl4eQKVoVe4Ln/J4QtxzQgdMdkTqTMe
-        gMljZ6shp7vFgT1O2xlIb6Jam5HeqVE=
-X-Google-Smtp-Source: AGHT+IEQnfQJXsZfD5l3eTHMFXEnf/LuX1aOWRKHKb0YO9vboO3g/ow1Ng2yjIbywfhnwipFXttfcA==
-X-Received: by 2002:a05:6402:493:b0:523:100b:462b with SMTP id k19-20020a056402049300b00523100b462bmr5019955edv.5.1694287181004;
-        Sat, 09 Sep 2023 12:19:41 -0700 (PDT)
-Received: from f.. (cst-prg-30-5.cust.vodafone.cz. [46.135.30.5])
-        by smtp.gmail.com with ESMTPSA id d4-20020aa7d5c4000000b0052544bca116sm2482314eds.13.2023.09.09.12.19.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Sep 2023 12:19:40 -0700 (PDT)
-From:   Mateusz Guzik <mjguzik@gmail.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, paul@paul-moore.com,
-        Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2] cred: add get_cred_many and put_cred_many
-Date:   Sat,  9 Sep 2023 21:19:32 +0200
-Message-Id: <20230909191932.3187633-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1694438354; x=1695043154;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dZAzIIMzf1qPGHHQFdp02fgFY8ovyjwDuzAUQe5+kww=;
+        b=QRtQk3dyzPKWGlurVUQugdjVldYRHkjtDl+P952qDSJ+Gavskgfc/2I6kWkjOS6JS9
+         tkwSyVzBVxtAPdxGyVOiKURZBMK4uU96IrPhqBsQ51QQH3Ff1870g6ZSTjFzUeRVSwop
+         h582LSdfJC9wd1xt07mQlNd9CjzCHGnpwk2DRFXK6jkQ1TSySgAhkow73x0PlLbRFucg
+         bywZJNZAiuOnHdq+RE4zmSalNC6IvvWNi/xQfVbew8ubKXyQh3ofo+cbgNxAzi/MDIMx
+         UOPfq6uTXSS6wQ2bTBvmzqImZEhD7DXljHqsNWHfdV5wd6t/toohmdurHT02qUv+ZF1P
+         uPRw==
+X-Gm-Message-State: AOJu0YycR1TbyZiUJtZ9gKg+WL+yyL2V22wkBA1LD8ZuPA8qgEizwAeO
+        Yarw+L4p/oNOnt9imINWBf3h9YzIYXGyp4mG1MM=
+X-Google-Smtp-Source: AGHT+IF8qbD6uz9otQZQEGtQsPL1DHxdrKK0dBiU8LawxxVZ1ppEHEbFpM8gS5aweNPYJmJhdCoyODSPMja4C28SAFU=
+X-Received: by 2002:a05:6830:2088:b0:6c0:b3fb:2e65 with SMTP id
+ y8-20020a056830208800b006c0b3fb2e65mr10241850otq.16.1694438354175; Mon, 11
+ Sep 2023 06:19:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230906115928.3749928-1-alpic@google.com> <202309090600.NSyo7d2q-lkp@intel.com>
+In-Reply-To: <202309090600.NSyo7d2q-lkp@intel.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Mon, 11 Sep 2023 09:19:02 -0400
+Message-ID: <CAEjxPJ4GOq3E4zqXbEMKUxqewopyeU5nmUg89rL+P5YsuEBi7A@mail.gmail.com>
+Subject: Re: [PATCH V2] SELinux: Check correct permissions for FS_IOC32_*
+To:     kernel test robot <lkp@intel.com>
+Cc:     Alfred Piccioni <alpic@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        oe-kbuild-all@lists.linux.dev, stable@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Some of the frequent consumers of get_cred and put_cred operate on 2
-references on the same creds back-to-back.
+On Fri, Sep 8, 2023 at 6:54=E2=80=AFPM kernel test robot <lkp@intel.com> wr=
+ote:
+>
+> Hi Alfred,
+>
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on 50a510a78287c15cee644f345ef8bac8977986a7]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Alfred-Piccioni/SE=
+Linux-Check-correct-permissions-for-FS_IOC32_/20230906-200131
+> base:   50a510a78287c15cee644f345ef8bac8977986a7
+> patch link:    https://lore.kernel.org/r/20230906115928.3749928-1-alpic%4=
+0google.com
+> patch subject: [PATCH V2] SELinux: Check correct permissions for FS_IOC32=
+_*
+> config: i386-debian-10.3 (https://download.01.org/0day-ci/archive/2023090=
+9/202309090600.NSyo7d2q-lkp@intel.com/config)
+> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20230909/202309090600.NSyo7d2q-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202309090600.NSyo7d2q-lkp=
+@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+>    security/selinux/hooks.c: In function 'selinux_file_ioctl':
+> >> security/selinux/hooks.c:3647:9: error: duplicate case value
+>     3647 |         case FS_IOC32_GETFLAGS:
+>          |         ^~~~
+>    security/selinux/hooks.c:3645:9: note: previously used here
+>     3645 |         case FS_IOC_GETFLAGS:
+>          |         ^~~~
+>    security/selinux/hooks.c:3648:9: error: duplicate case value
+>     3648 |         case FS_IOC32_GETVERSION:
+>          |         ^~~~
+>    security/selinux/hooks.c:3646:9: note: previously used here
+>     3646 |         case FS_IOC_GETVERSION:
+>          |         ^~~~
+>    security/selinux/hooks.c:3654:9: error: duplicate case value
+>     3654 |         case FS_IOC32_SETFLAGS:
+>          |         ^~~~
+>    security/selinux/hooks.c:3652:9: note: previously used here
+>     3652 |         case FS_IOC_SETFLAGS:
+>          |         ^~~~
+>    security/selinux/hooks.c:3655:9: error: duplicate case value
+>     3655 |         case FS_IOC32_SETVERSION:
+>          |         ^~~~
+>    security/selinux/hooks.c:3653:9: note: previously used here
+>     3653 |         case FS_IOC_SETVERSION:
+>          |         ^~~~
 
-Switch them to doing the work in one go instead.
+Not sure of the right way to fix this while addressing the original
+issue that this patch was intended to fix. Looking in fs/ioctl.c, I
+see that the some FS_IOC32 values are remapped to the corresponding
+FS_IOC values by the compat ioctl syscall entrypoint. Also notice this
+comment there:
 
-v2:
-- add kdoc entries
-- hoist validate_cred call in exit_creds
-- reword commit message
+        /* RED-PEN how should LSM module know it's handling 32bit? */
+        error =3D security_file_ioctl(f.file, cmd, arg);
+        if (error)
+                goto out;
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- include/linux/cred.h | 59 +++++++++++++++++++++++++++++++++++++-------
- kernel/cred.c        | 26 ++++++++++---------
- 2 files changed, 65 insertions(+), 20 deletions(-)
+So perhaps this is a defect in LSM that needs to be addressed?
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index f923528d5cc4..56bc432fe49b 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -218,6 +218,20 @@ static inline bool cap_ambient_invariant_ok(const struct cred *cred)
- 					  cred->cap_inheritable));
- }
- 
-+/**
-+ * get_new_cred_many - Get references on a new set of credentials
-+ * @cred: The new credentials to reference
-+ * @nr: Number of references to acquire
-+ *
-+ * Get references on the specified set of new credentials.  The caller must
-+ * release all acquired references.
-+ */
-+static inline struct cred *get_new_cred_many(struct cred *cred, int nr)
-+{
-+	atomic_add(nr, &cred->usage);
-+	return cred;
-+}
-+
- /**
-  * get_new_cred - Get a reference on a new set of credentials
-  * @cred: The new credentials to reference
-@@ -227,16 +241,16 @@ static inline bool cap_ambient_invariant_ok(const struct cred *cred)
-  */
- static inline struct cred *get_new_cred(struct cred *cred)
- {
--	atomic_inc(&cred->usage);
--	return cred;
-+	return get_new_cred_many(cred, 1);
- }
- 
- /**
-- * get_cred - Get a reference on a set of credentials
-+ * get_cred_many - Get references on a set of credentials
-  * @cred: The credentials to reference
-+ * @nr: Number of references to acquire
-  *
-- * Get a reference on the specified set of credentials.  The caller must
-- * release the reference.  If %NULL is passed, it is returned with no action.
-+ * Get references on the specified set of credentials.  The caller must release
-+ * all acquired reference.  If %NULL is passed, it is returned with no action.
-  *
-  * This is used to deal with a committed set of credentials.  Although the
-  * pointer is const, this will temporarily discard the const and increment the
-@@ -244,14 +258,28 @@ static inline struct cred *get_new_cred(struct cred *cred)
-  * accidental alteration of a set of credentials that should be considered
-  * immutable.
-  */
--static inline const struct cred *get_cred(const struct cred *cred)
-+static inline const struct cred *get_cred_many(const struct cred *cred, int nr)
- {
- 	struct cred *nonconst_cred = (struct cred *) cred;
- 	if (!cred)
- 		return cred;
- 	validate_creds(cred);
- 	nonconst_cred->non_rcu = 0;
--	return get_new_cred(nonconst_cred);
-+	return get_new_cred_many(nonconst_cred, nr);
-+}
-+
-+/*
-+ * get_cred - Get a reference on a set of credentials
-+ * @cred: The credentials to reference
-+ *
-+ * Get a reference on the specified set of credentials.  The caller must
-+ * release the reference.  If %NULL is passed, it is returned with no action.
-+ *
-+ * This is used to deal with a committed set of credentials.
-+ */
-+static inline const struct cred *get_cred(const struct cred *cred)
-+{
-+	return get_cred_many(cred, 1);
- }
- 
- static inline const struct cred *get_cred_rcu(const struct cred *cred)
-@@ -269,6 +297,7 @@ static inline const struct cred *get_cred_rcu(const struct cred *cred)
- /**
-  * put_cred - Release a reference to a set of credentials
-  * @cred: The credentials to release
-+ * @nr: Number of references to release
-  *
-  * Release a reference to a set of credentials, deleting them when the last ref
-  * is released.  If %NULL is passed, nothing is done.
-@@ -277,17 +306,29 @@ static inline const struct cred *get_cred_rcu(const struct cred *cred)
-  * on task_struct are attached by const pointers to prevent accidental
-  * alteration of otherwise immutable credential sets.
-  */
--static inline void put_cred(const struct cred *_cred)
-+static inline void put_cred_many(const struct cred *_cred, int nr)
- {
- 	struct cred *cred = (struct cred *) _cred;
- 
- 	if (cred) {
- 		validate_creds(cred);
--		if (atomic_dec_and_test(&(cred)->usage))
-+		if (atomic_sub_and_test(nr, &cred->usage))
- 			__put_cred(cred);
- 	}
- }
- 
-+/*
-+ * put_cred - Release a reference to a set of credentials
-+ * @cred: The credentials to release
-+ *
-+ * Release a reference to a set of credentials, deleting them when the last ref
-+ * is released.  If %NULL is passed, nothing is done.
-+ */
-+static inline void put_cred(const struct cred *cred)
-+{
-+	put_cred_many(cred, 1);
-+}
-+
- /**
-  * current_cred - Access the current task's subjective credentials
-  *
-diff --git a/kernel/cred.c b/kernel/cred.c
-index 98cb4eca23fb..9398e534b997 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -162,23 +162,29 @@ EXPORT_SYMBOL(__put_cred);
-  */
- void exit_creds(struct task_struct *tsk)
- {
--	struct cred *cred;
-+	struct cred *real_cred, *cred;
- 
- 	kdebug("exit_creds(%u,%p,%p,{%d,%d})", tsk->pid, tsk->real_cred, tsk->cred,
- 	       atomic_read(&tsk->cred->usage),
- 	       read_cred_subscribers(tsk->cred));
- 
--	cred = (struct cred *) tsk->real_cred;
-+	real_cred = (struct cred *) tsk->real_cred;
- 	tsk->real_cred = NULL;
--	validate_creds(cred);
--	alter_cred_subscribers(cred, -1);
--	put_cred(cred);
- 
- 	cred = (struct cred *) tsk->cred;
- 	tsk->cred = NULL;
-+
- 	validate_creds(cred);
--	alter_cred_subscribers(cred, -1);
--	put_cred(cred);
-+	if (real_cred == cred) {
-+		alter_cred_subscribers(cred, -2);
-+		put_cred_many(cred, 2);
-+	} else {
-+		validate_creds(real_cred);
-+		alter_cred_subscribers(real_cred, -1);
-+		put_cred(real_cred);
-+		alter_cred_subscribers(cred, -1);
-+		put_cred(cred);
-+	}
- 
- #ifdef CONFIG_KEYS_REQUEST_CACHE
- 	key_put(tsk->cached_requested_key);
-@@ -355,8 +361,7 @@ int copy_creds(struct task_struct *p, unsigned long clone_flags)
- #endif
- 		clone_flags & CLONE_THREAD
- 	    ) {
--		p->real_cred = get_cred(p->cred);
--		get_cred(p->cred);
-+		p->real_cred = get_cred_many(p->cred, 2);
- 		alter_cred_subscribers(p->cred, 2);
- 		kdebug("share_creds(%p{%d,%d})",
- 		       p->cred, atomic_read(&p->cred->usage),
-@@ -520,8 +525,7 @@ int commit_creds(struct cred *new)
- 		proc_id_connector(task, PROC_EVENT_GID);
- 
- 	/* release the old obj and subj refs both */
--	put_cred(old);
--	put_cred(old);
-+	put_cred_many(old, 2);
- 	return 0;
- }
- EXPORT_SYMBOL(commit_creds);
--- 
-2.39.2
 
+>
+>
+> vim +3647 security/selinux/hooks.c
+>
+>   3634
+>   3635  static int selinux_file_ioctl(struct file *file, unsigned int cmd=
+,
+>   3636                                unsigned long arg)
+>   3637  {
+>   3638          const struct cred *cred =3D current_cred();
+>   3639          int error =3D 0;
+>   3640
+>   3641          switch (cmd) {
+>   3642          case FIONREAD:
+>   3643          case FIBMAP:
+>   3644          case FIGETBSZ:
+>   3645          case FS_IOC_GETFLAGS:
+>   3646          case FS_IOC_GETVERSION:
+> > 3647          case FS_IOC32_GETFLAGS:
+>   3648          case FS_IOC32_GETVERSION:
+>   3649                  error =3D file_has_perm(cred, file, FILE__GETATTR=
+);
+>   3650                  break;
+>   3651
+>   3652          case FS_IOC_SETFLAGS:
+>   3653          case FS_IOC_SETVERSION:
+>   3654          case FS_IOC32_SETFLAGS:
+>   3655          case FS_IOC32_SETVERSION:
+>   3656                  error =3D file_has_perm(cred, file, FILE__SETATTR=
+);
+>   3657                  break;
+>   3658
+>   3659          /* sys_ioctl() checks */
+>   3660          case FIONBIO:
+>   3661          case FIOASYNC:
+>   3662                  error =3D file_has_perm(cred, file, 0);
+>   3663                  break;
+>   3664
+>   3665          case KDSKBENT:
+>   3666          case KDSKBSENT:
+>   3667                  error =3D cred_has_capability(cred, CAP_SYS_TTY_C=
+ONFIG,
+>   3668                                              CAP_OPT_NONE, true);
+>   3669                  break;
+>   3670
+>   3671          case FIOCLEX:
+>   3672          case FIONCLEX:
+>   3673                  if (!selinux_policycap_ioctl_skip_cloexec())
+>   3674                          error =3D ioctl_has_perm(cred, file, FILE=
+__IOCTL, (u16) cmd);
+>   3675                  break;
+>   3676
+>   3677          /* default case assumes that the command will go
+>   3678           * to the file's ioctl() function.
+>   3679           */
+>   3680          default:
+>   3681                  error =3D ioctl_has_perm(cred, file, FILE__IOCTL,=
+ (u16) cmd);
+>   3682          }
+>   3683          return error;
+>   3684  }
+>   3685
