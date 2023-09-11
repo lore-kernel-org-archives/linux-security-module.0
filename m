@@ -2,212 +2,184 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3CECA0EDD
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Sep 2023 22:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED65ACA0EDA
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Sep 2023 22:09:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357902AbjIKWGv (ORCPT
+        id S1357892AbjIKWGs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Sep 2023 18:06:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60588 "EHLO
+        Mon, 11 Sep 2023 18:06:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238206AbjIKNtn (ORCPT
+        with ESMTP id S242922AbjIKQed (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Sep 2023 09:49:43 -0400
-Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88DE8F5;
-        Mon, 11 Sep 2023 06:49:39 -0700 (PDT)
-Received: by mail-oo1-xc2a.google.com with SMTP id 006d021491bc7-573449a364fso2914900eaf.1;
-        Mon, 11 Sep 2023 06:49:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694440179; x=1695044979; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UXNPbouy3kzuW6cEr2/zAGNQTmDNOg3cj29kcDr8jVg=;
-        b=b1jpZvlNtfsi5DB/9yhslbfEuSSKOJz/rQVzCa8FwN0GRfyJwAkcZ1IMFPrzjAMLEg
-         5fcROyU8mHE4oHCw8D7Aj8LbjpkVEWxeQAqSSmZPx+rf8Ur2xQpQ9d5OH2vfT8C2usUP
-         Z4mNyEnWpRsKhiL1LPCRCtFLg8ZyFZHOraAmdn0ooqkio6HvL8zjKYPrUsMZjh5mi7RN
-         8sTKQqtjQkQZjXJ90zMs4iQEz4BlswgZcd9dC8G+xnFMcNP5jhWWOORrmNiQCHq7mq5N
-         8ceEaZgGkQt9ICarOVI5E+TocYp4yj3D4mDO/sDcbv8VcsDTHXlFZkde9g4zAooMl52j
-         /0Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694440179; x=1695044979;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UXNPbouy3kzuW6cEr2/zAGNQTmDNOg3cj29kcDr8jVg=;
-        b=CdQEpKWw76nPpvQIErHxXKJmaxDSmANJ+jPNMtkjE/YwY+AVqXc8h0a41qFT+ZGucd
-         zbhpUQWJql+EV0RISgm+JBRE6CfY774wpqaLBZqXkptvLEIPkjoJ9d7cXes4WiUqCxPb
-         69a+0nfpL4rKVJC/bxTGasnWbiuFEwPt0DIeKzTCe7qoNODxIST87jHnJqZ1Iju3jlTh
-         hnqjF7IeABwYqVgqmvdBG1unP66ajrk9VsfUa2899yFzRSKH1ohtM8OrI1Q12IJ0R2Jf
-         1TFxf0iTPLLTnbGPP3P0QnVVZavQ8K5x89pCgN1S8AZYxdQNgdA1eBwECMS0WhnVRlvl
-         GnMw==
-X-Gm-Message-State: AOJu0YwpGR1kiuvsJBrX5WPQgcOKIkqDaOmUyOYY4Y2sNDOxaWvV3TBc
-        ugQiWYpcwEElynJgVNzZ3YMZ93PIukZ5mVsGuFc=
-X-Google-Smtp-Source: AGHT+IE4R9jl7ZSD4oR4TffX/ALcpWOZ4zwagoM4Tx84LF1QGH9ViZAd4OeqM7xUiHyfzOu7FdoyK4H2SxtpGRO8HUM=
-X-Received: by 2002:a05:6820:170:b0:576:8d6e:9a41 with SMTP id
- k16-20020a056820017000b005768d6e9a41mr6173164ood.1.1694440178811; Mon, 11 Sep
- 2023 06:49:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230906115928.3749928-1-alpic@google.com> <202309090600.NSyo7d2q-lkp@intel.com>
- <CAEjxPJ4GOq3E4zqXbEMKUxqewopyeU5nmUg89rL+P5YsuEBi7A@mail.gmail.com>
-In-Reply-To: <CAEjxPJ4GOq3E4zqXbEMKUxqewopyeU5nmUg89rL+P5YsuEBi7A@mail.gmail.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Mon, 11 Sep 2023 09:49:27 -0400
-Message-ID: <CAEjxPJ4uoqkwmbeOOmUHJwoKiK3cnfJP5P2w+hOXr4BZNtQ+JQ@mail.gmail.com>
-Subject: Re: [PATCH V2] SELinux: Check correct permissions for FS_IOC32_*
-To:     kernel test robot <lkp@intel.com>
-Cc:     Alfred Piccioni <alpic@google.com>,
+        Mon, 11 Sep 2023 12:34:33 -0400
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28F2EF9
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Sep 2023 09:34:27 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Rksk92h18zMpp3l;
+        Mon, 11 Sep 2023 16:34:25 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Rksk77429zMpp9y;
+        Mon, 11 Sep 2023 18:34:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1694450065;
+        bh=0hFruZJStHpPF1Wqo50DPh1U7wqvk9JxmohujdtDbTw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Fr7Wgm3YM831AOjTywMLv1N2mQ9HYqiQIBAWoxCl7gHiXAFmiIT9VfdORoNSb4UCn
+         ZNUSE7IyAaJtBofi1jvpuk+uvWuJFyYJHGKPd4XR91M3G7U8rlgMDZclxXUns829e2
+         heI4EcUO1XSG9f2OUsttoRGGaa0/OqLqcLDZ9H50=
+Date:   Mon, 11 Sep 2023 18:34:20 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
         Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        oe-kbuild-all@lists.linux.dev, stable@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Matt Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support
+Message-ID: <20230911.eushohth1Ue2@digikod.net>
+References: <20230814172816.3907299-1-gnoack@google.com>
+ <20230818.iechoCh0eew0@digikod.net>
+ <ZOjCz5j4+tgptF53@google.com>
+ <20230825.Zoo4ohn1aivo@digikod.net>
+ <20230826.ohtooph0Ahmu@digikod.net>
+ <ZPMiVaL3kVaTnivh@google.com>
+ <20230904.aiWae8eineo4@digikod.net>
+ <ZP7lxmXklksadvz+@google.com>
+ <20230911.jie6Rai8ughe@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230911.jie6Rai8ughe@digikod.net>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 11, 2023 at 9:19=E2=80=AFAM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
->
-> On Fri, Sep 8, 2023 at 6:54=E2=80=AFPM kernel test robot <lkp@intel.com> =
-wrote:
-> >
-> > Hi Alfred,
-> >
-> > kernel test robot noticed the following build errors:
-> >
-> > [auto build test ERROR on 50a510a78287c15cee644f345ef8bac8977986a7]
-> >
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Alfred-Piccioni/=
-SELinux-Check-correct-permissions-for-FS_IOC32_/20230906-200131
-> > base:   50a510a78287c15cee644f345ef8bac8977986a7
-> > patch link:    https://lore.kernel.org/r/20230906115928.3749928-1-alpic=
-%40google.com
-> > patch subject: [PATCH V2] SELinux: Check correct permissions for FS_IOC=
-32_*
-> > config: i386-debian-10.3 (https://download.01.org/0day-ci/archive/20230=
-909/202309090600.NSyo7d2q-lkp@intel.com/config)
-> > compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
-hive/20230909/202309090600.NSyo7d2q-lkp@intel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
-rsion of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202309090600.NSyo7d2q-l=
-kp@intel.com/
-> >
-> > All errors (new ones prefixed by >>):
-> >
-> >    security/selinux/hooks.c: In function 'selinux_file_ioctl':
-> > >> security/selinux/hooks.c:3647:9: error: duplicate case value
-> >     3647 |         case FS_IOC32_GETFLAGS:
-> >          |         ^~~~
-> >    security/selinux/hooks.c:3645:9: note: previously used here
-> >     3645 |         case FS_IOC_GETFLAGS:
-> >          |         ^~~~
-> >    security/selinux/hooks.c:3648:9: error: duplicate case value
-> >     3648 |         case FS_IOC32_GETVERSION:
-> >          |         ^~~~
-> >    security/selinux/hooks.c:3646:9: note: previously used here
-> >     3646 |         case FS_IOC_GETVERSION:
-> >          |         ^~~~
-> >    security/selinux/hooks.c:3654:9: error: duplicate case value
-> >     3654 |         case FS_IOC32_SETFLAGS:
-> >          |         ^~~~
-> >    security/selinux/hooks.c:3652:9: note: previously used here
-> >     3652 |         case FS_IOC_SETFLAGS:
-> >          |         ^~~~
-> >    security/selinux/hooks.c:3655:9: error: duplicate case value
-> >     3655 |         case FS_IOC32_SETVERSION:
-> >          |         ^~~~
-> >    security/selinux/hooks.c:3653:9: note: previously used here
-> >     3653 |         case FS_IOC_SETVERSION:
-> >          |         ^~~~
->
-> Not sure of the right way to fix this while addressing the original
-> issue that this patch was intended to fix. Looking in fs/ioctl.c, I
-> see that the some FS_IOC32 values are remapped to the corresponding
-> FS_IOC values by the compat ioctl syscall entrypoint. Also notice this
-> comment there:
->
->         /* RED-PEN how should LSM module know it's handling 32bit? */
->         error =3D security_file_ioctl(f.file, cmd, arg);
->         if (error)
->                 goto out;
->
-> So perhaps this is a defect in LSM that needs to be addressed?
+On Mon, Sep 11, 2023 at 05:25:34PM +0200, Mickaël Salaün wrote:
+> On Mon, Sep 11, 2023 at 12:02:46PM +0200, Günther Noack wrote:
+> > Hello!
+> > 
+> > On Mon, Sep 04, 2023 at 08:08:29PM +0200, Mickaël Salaün wrote:
+> > > On Sat, Sep 02, 2023 at 01:53:57PM +0200, Günther Noack wrote:
+> > > > On Sat, Aug 26, 2023 at 08:26:30PM +0200, Mickaël Salaün wrote:
+> > > > > On Fri, Aug 25, 2023 at 06:50:29PM +0200, Mickaël Salaün wrote:
+> > > > > > On Fri, Aug 25, 2023 at 05:03:43PM +0200, Günther Noack wrote:
 
-Note btw that some of the 32-bit ioctl commands are only handled in
-the fs-specific compat_ioctl routines, e.g. ext4_compat_ioctl()
-handles EXT4_IOC32_GETVERSION =3D=3D FS_IOC32_GETVERSION and ditto for
-_SETVERSION.
+> > > > > > > (In fact, it seems to me almost like FIOQSIZE might rather be missing a security
+> > > > > > > hook check for one of the "getting file attribute" hooks?)
+> > > > > > > 
+> > > > > > > So basically, the implementation that I currently ended up with is:
+> > > > > > > 
+> > > > > > 
+> > > > > > Before checking these commands, we first need to check that the original
+> > > > > > domain handle LANDLOCK_ACCESS_FS_IOCTL. We should try to pack this new
+> > > > > > bit and replace the file's allowed_access field (see
+> > > > > > landlock_add_fs_access_mask() and similar helpers in the network patch
+> > > > > > series that does a similar thing but for ruleset's handle access
+> > > > > > rights), but here is the idea:
+> > > > > > 
+> > > > > > if (!landlock_file_handles_ioctl(file))
+> > > > > > 	return 0;
+> > > > > > 
+> > > > > > > switch (cmd) {
+> > > > > > 	/*
+> > > > > > 	 * Allows file descriptor and file description operations (see
+> > > > > > 	 * fcntl commands).
+> > > > > > 	 */
+> > > > > > >   case FIOCLEX:
+> > > > > > >   case FIONCLEX:
+> > > > > > >   case FIONBIO:
+> > > > > > >   case FIOASYNC:
+> > > > > > 
+> > > > > > >   case FIOQSIZE:
+> > > > > 
+> > > > > We need to handle FIOQSIZE as done by do_vfs_ioctl: add the same i_mode
+> > > > > checks. A kselftest test should check that ENOTTY is returned according
+> > > > > to the file type and the access rights.
+> > > > 
+> > > > It's not clear to me why we would need to add the same i_mode checks for
+> > > > S_ISDIR() || S_ISREG() || S_ISLNK() there?  If these checks in do_vfs_ioctl()
+> > > > fail, it returns -ENOTTY.  Is that not an appropriate error already?
+> > > 
+> > > The LSM IOCTL hook is called before do_vfs_ioctl(), and I think that
+> > > Landlock should not change the error codes according to the error types
+> > > (i.e. return ENOTTY when the inode is something else than a directory,
+> > > regular file, or symlink). Indeed, I think it's valuable to not blindly
+> > > return EACCES when the IOCTL doesn't make sense for this file type. This
+> > > should help user space handle meaningful error messages, inconsistent
+> > > requests, and fallback mechanisms. Tests should check these return
+> > > codes, see the network patch series (and especially the latest reviews
+> > > and changes) that takes care of this kind of error codes compatibility.
+> > > 
+> > > We could also return 0 (i.e. accept the request) and rely on the
+> > > do_vfs_ioctl() check to return ENOTTY, but this is unnecessary risky
+> > > from an access control point of view. Let's directly return ENOTTY as a
+> > > safeguard (which BTW also avoids some useless CPU instructions) and test
+> > > this behavior.
+> > > 
+> > > I think an access control mechanism, and especially Landlock, should be
+> > > as discreet as possible, and help developers quickly debug issues (and
+> > > avoid going through the access control layer if it doesn't make sense).
+> > > I think error ordering like this could be useful but I'd like to get
+> > > other point of views.
+> > 
+> > I see what you mean now, OK.
+> > 
+> > Another option, btw, would be to return ENOTTY generally when Landlock denies an
+> > IOCTL attempt, instead of EACCES, as I have previously suggested in
+> > https://lore.kernel.org/all/ZNpnrCjYqFoGkwyf@google.com/ -- should we maybe just
+> > do that instead?
+> > 
+> > I believe that users of ioctl(2) should be better equipped to deal with ENOTTY,
+> > because that is an error that ioctl(2) can return in general, whereas EACCES can
+> > only be returned if one of the specific subcommands returns it.
+> > 
+> > According to the man page, ENOTTY is the error that ioctl(2) returns if the
+> > given "request does not apply to the kind of object that the file descriptor fd
+> > references".
+> > 
+> > That is not 100% what is happening here, but from the errors listed in ioctl(2),
+> > this seems to be the closest, semantically.
+> > 
+> > What do you think?
+> 
+> ENOTTY has a (kinda) well-defined semantic, which should not depend on
+> an access control. Other LSMs already return EACCES for denied IOCTLs,
+> so the man page should be updated with this information instead. ;)
 
->
->
-> >
-> >
-> > vim +3647 security/selinux/hooks.c
-> >
-> >   3634
-> >   3635  static int selinux_file_ioctl(struct file *file, unsigned int c=
-md,
-> >   3636                                unsigned long arg)
-> >   3637  {
-> >   3638          const struct cred *cred =3D current_cred();
-> >   3639          int error =3D 0;
-> >   3640
-> >   3641          switch (cmd) {
-> >   3642          case FIONREAD:
-> >   3643          case FIBMAP:
-> >   3644          case FIGETBSZ:
-> >   3645          case FS_IOC_GETFLAGS:
-> >   3646          case FS_IOC_GETVERSION:
-> > > 3647          case FS_IOC32_GETFLAGS:
-> >   3648          case FS_IOC32_GETVERSION:
-> >   3649                  error =3D file_has_perm(cred, file, FILE__GETAT=
-TR);
-> >   3650                  break;
-> >   3651
-> >   3652          case FS_IOC_SETFLAGS:
-> >   3653          case FS_IOC_SETVERSION:
-> >   3654          case FS_IOC32_SETFLAGS:
-> >   3655          case FS_IOC32_SETVERSION:
-> >   3656                  error =3D file_has_perm(cred, file, FILE__SETAT=
-TR);
-> >   3657                  break;
-> >   3658
-> >   3659          /* sys_ioctl() checks */
-> >   3660          case FIONBIO:
-> >   3661          case FIOASYNC:
-> >   3662                  error =3D file_has_perm(cred, file, 0);
-> >   3663                  break;
-> >   3664
-> >   3665          case KDSKBENT:
-> >   3666          case KDSKBSENT:
-> >   3667                  error =3D cred_has_capability(cred, CAP_SYS_TTY=
-_CONFIG,
-> >   3668                                              CAP_OPT_NONE, true)=
-;
-> >   3669                  break;
-> >   3670
-> >   3671          case FIOCLEX:
-> >   3672          case FIONCLEX:
-> >   3673                  if (!selinux_policycap_ioctl_skip_cloexec())
-> >   3674                          error =3D ioctl_has_perm(cred, file, FI=
-LE__IOCTL, (u16) cmd);
-> >   3675                  break;
-> >   3676
-> >   3677          /* default case assumes that the command will go
-> >   3678           * to the file's ioctl() function.
-> >   3679           */
-> >   3680          default:
-> >   3681                  error =3D ioctl_has_perm(cred, file, FILE__IOCT=
-L, (u16) cmd);
-> >   3682          }
-> >   3683          return error;
-> >   3684  }
-> >   3685
+Well, thinking about this again, for the sake of consistency with other
+IOCTLs, we should not specifically handle IOCTL error codes, but instead
+return either 0 or -EACCES. The network error cases are special because
+the LSM is called before some user-provided data are interpreted by the
+network stack, and in this case we need to interpret these data ourself.
+But in the case of IOCTLs, we may only need to handle the cases where an
+IOCTL command may be interpreted by different implementations (e.g. VFS
+or FS implementation), but even that is not a good idea, see below.
+
+For FIOQSIZE, I don't think anymore that we should try to mimic the
+do_vfs_ioctl() implementation. In fact, this approach could end up
+confusing developers and leaking metadata (see FIGETBSZ). Even with
+FIONREAD, the FS (i.e. vfs_ioctl() call) should follow the same
+semantic as the VFS (i.e. do_vfs_ioctl() code), so we should treat them
+the same and keep it simple: either return 0 or -EACCES.
+
+About the file_ioctl() IOCTLs, we should check that there are no
+overlapping with other IOCTLs (with different name). I think we should
+trust the FS implementation to implement the same semantic, but much
+less the device drivers. The main issue is with VFS and FS code
+returning -ENOIOCTLCMD because in this case it is forwarded to any
+implementation.
+
+However, in the case of delegation, and as a safeguard, what we could do
+to avoid driver IOCTL command overlaps is to check if the file is a
+block or character device. In this case, we just don't delegate any
+access right but make LANDLOCK_ACCESS_FS_IOCTL handle them (we need to
+manage VFS's IOCTLs that deal with block/char device though). Again, we
+should make sure that -ENOIOCTLCMD will not trick us (for the delegate
+cases). I'm not sure how the link between drivers and the FS storing the
+related block/char device is managed though. Does that make sense?
