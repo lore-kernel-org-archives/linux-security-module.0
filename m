@@ -2,145 +2,112 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EBCCA0EDF
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Sep 2023 22:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B77CA0EE8
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Sep 2023 22:09:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357910AbjIKWGw (ORCPT
+        id S1357856AbjIKWGi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Sep 2023 18:06:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45612 "EHLO
+        Mon, 11 Sep 2023 18:06:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244317AbjIKUFJ (ORCPT
+        with ESMTP id S236526AbjIKKu3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Sep 2023 16:05:09 -0400
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16909185
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Sep 2023 13:05:04 -0700 (PDT)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-59254e181a2so46594627b3.1
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Sep 2023 13:05:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1694462703; x=1695067503; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rhlMLK8WCLZGaMrHreCTIhW1CPUp3+vyJu4Njc0iJm8=;
-        b=WIsqxOb3QL8dFzesIx76fkB0GekBAc3GAzQbCH11tFsTIS6044a34z6tyWDi/YZVHG
-         5CfZLEb4froN/F86b35qPZui69zbvIeGUltF6JHCetdQW81PSoXjhMx/OIym+PNWjvDX
-         PYuXq7Zpy19w46Qzv2/O3qX4pa1fjYal3OAVYS34B7gT6Xx8yvTamrmTU9IGzNXTaR46
-         q0HGpN4DgMWaINBUoALs3xrDyvUk2AZALBCiXaUauuFhynMLIfJap5BxawR0/BCbp6Km
-         bS2srerKgYzxVWcr8HI1x1Setr7mRXnGFq5XdCkx23MEV3SC+r5fzQk/a1PF91WHuR5E
-         MefA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694462703; x=1695067503;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rhlMLK8WCLZGaMrHreCTIhW1CPUp3+vyJu4Njc0iJm8=;
-        b=cqvXrQdO2D3laQL9DX8NyFhuWNxGUmeD0VQxrB/2/JFJpSJ4bUcNkjITJ/AuF4oN4N
-         DLmKPIb+iebdOVjFxb7rAJgZRVSvHJ7rU8T8h53OjFjVXFqeTgRsVoeN/bmtp2ee5USR
-         XmZR1qd1+ocsKH+781bPUs9RlJpcAI9mCOWRh6Gw/h8oDmdMiZ2o8wsTx4bypuNO1FID
-         J/uNZsVMHN3V/HYskOYOld9wNMNkxzVh5gEJ5GQ94isPtV8HEZ+hXfo2ZkyJjg1SiAsE
-         C3Hnyql6NCb43f3QkXqoMG8mx5qEs/lx+KEdVSIYVdP2Eyy3s+LLKs4X7Ec8OZHZarV+
-         vssg==
-X-Gm-Message-State: AOJu0YxIjYpbPMpoE0ZhewfID+RjlxVPcyZZlyKyupKqslGgeJHm/43P
-        LBkLeYqDzzk7hsVz1qoJ06tIihk4BtkSjn7lLOYce1LU/8EpVXSM7w==
-X-Google-Smtp-Source: AGHT+IHGzHQq2UJBivPZSkdEihaA6buSKaXJziY2+kx8pFy7tor3uBu5RFPf9BRQHI51DwMhlDxBfrlRXXv9mpp0BfE=
-X-Received: by 2002:a0d:c404:0:b0:594:e357:a1f8 with SMTP id
- g4-20020a0dc404000000b00594e357a1f8mr10068624ywd.24.1694462703084; Mon, 11
- Sep 2023 13:05:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
- <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com> <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
- <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
- <CAHC9VhQhf+ik5S_aJOVn59pax1Aa0vO5gJ4YoxrtGRKtoWh7sA@mail.gmail.com> <f8f32da5-6f31-d197-7405-8f308bd29228@I-love.SAKURA.ne.jp>
-In-Reply-To: <f8f32da5-6f31-d197-7405-8f308bd29228@I-love.SAKURA.ne.jp>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 11 Sep 2023 16:04:52 -0400
-Message-ID: <CAHC9VhTktg4RFWw+rSZ6wWQ8iR3n2p8XaOO95BbJ1QGAd4y9fg@mail.gmail.com>
-Subject: Re: ANN: new LSM guidelines
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 11 Sep 2023 06:50:29 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11675E9;
+        Mon, 11 Sep 2023 03:50:25 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD08AC433C9;
+        Mon, 11 Sep 2023 10:50:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694429424;
+        bh=5eCOHpwInPjQA6NxPDr5kZtgwrG8Hy+L9RSiIjoYzXQ=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=I63fO3Oped5CcoSGIlghzn65dDLDS3AgXMOjiToNZvSUdrhpid8dA2fwnZ3L0uvuQ
+         vRO43uNZPPKAjLBYaxKuEpPRCi/DBPQ5JahZ+/xplfXgFn+m6+K1DVaoMVszFQn7e3
+         c/7ShNyPjBTDlCTah8S2O9CnI6mNmrRR5K25WKyBtu4HXfsGlCg1Nmd2cAEeAGJtqk
+         +Xaszsx6GIBzt4dpxcFYC1VW/aJEKgOxHSFW2mvoY/oVjBtFiZDYuvh56WBy8I8ZL6
+         aLRIobdGSMWYlt8ZweMRDuHBYUhcsbpwXJ23mEyEwkNhh06xFKUyD5SbyXxtBFA6QG
+         oJalfh9jeUlHA==
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Mon, 11 Sep 2023 13:50:18 +0300
+Message-Id: <CVG13KLCIT1X.1MQT6HYAYFRAU@suppilovahvero>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-nfs@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <selinux@vger.kernel.org>,
+        "Roberto Sassu" <roberto.sassu@huawei.com>,
+        "Stefan Berger" <stefanb@linux.ibm.com>
+Subject: Re: [PATCH v2 11/25] security: Align inode_setattr hook definition
+ with EVM
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Casey Schaufler" <casey@schaufler-ca.com>,
+        "Roberto Sassu" <roberto.sassu@huaweicloud.com>,
+        <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+        <chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
+        <kolga@netapp.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+        <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
+        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
+        <dhowells@redhat.com>, <stephen.smalley.work@gmail.com>,
+        <eparis@parisplace.org>
+X-Mailer: aerc 0.14.0
+References: <20230831104136.903180-1-roberto.sassu@huaweicloud.com>
+ <20230831104136.903180-12-roberto.sassu@huaweicloud.com>
+ <CVAFV92MONCH.257Y9YQ3OEU4B@suppilovahvero>
+ <19943e35-2e7c-d27a-1a5d-189eea439dfd@schaufler-ca.com>
+In-Reply-To: <19943e35-2e7c-d27a-1a5d-189eea439dfd@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 8, 2023 at 8:46=E2=80=AFPM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2023/08/03 7:00, Paul Moore wrote:
-> > * The new LSM must be sufficiently unique to justify the additional wor=
-k
-> > involved in reviewing, maintaining, and supporting the LSM.  It is reas=
-onable
-> > for there to be a level of overlap between LSMs, but either the securit=
-y model
-> > or the admin/user experience must be significantly unique.
+On Tue Sep 5, 2023 at 6:56 PM EEST, Casey Schaufler wrote:
+> On 9/4/2023 2:08 PM, Jarkko Sakkinen wrote:
+> > On Thu Aug 31, 2023 at 1:41 PM EEST, Roberto Sassu wrote:
+> >> From: Roberto Sassu <roberto.sassu@huawei.com>
+> >>
+> >> Add the idmap parameter to the definition, so that evm_inode_setattr()=
+ can
+> >> be registered as this hook implementation.
+> >>
+> >> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> >> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> >> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> >>  include/linux/lsm_hook_defs.h | 3 ++-
+> >>  security/security.c           | 2 +-
+> >>  security/selinux/hooks.c      | 3 ++-
+> >>  security/smack/smack_lsm.c    | 4 +++-
+> >>  4 files changed, 8 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_de=
+fs.h
+> >> index 4bdddb52a8fe..fdf075a6b1bb 100644
+> >> --- a/include/linux/lsm_hook_defs.h
+> >> +++ b/include/linux/lsm_hook_defs.h
+> >> @@ -134,7 +134,8 @@ LSM_HOOK(int, 0, inode_readlink, struct dentry *de=
+ntry)
+> >>  LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct ino=
+de *inode,
+> >>  	 bool rcu)
+> >>  LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
+> >> -LSM_HOOK(int, 0, inode_setattr, struct dentry *dentry, struct iattr *=
+attr)
+> >> +LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentr=
+y *dentry,
+> >> +	 struct iattr *attr)
+> > LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry =
+*dentry, struct iattr *attr)
+> >
+> > Only 99 characters, i.e. breaking into two lines is not necessary.
 >
-> s/work/burden/ ?
-
-Possibly, although I think I prefer "work" here since it has a more
-positive connotation than "burden".
-
-> > * Any userspace tools or patches created in support of the LSM must be =
-publicly
-> > available, with a public git repository preferable over a tarball snaps=
-hot.
+> We're keeping the LSM code in the ancient 80 character format.
+> Until we get some fresh, young maintainers involved who can convince
+> us that line wrapped 80 character terminals are kewl we're sticking
+> with what we know.
 >
-> What is the definition of "publicly" here? Everyone can download related =
-resources
-> including the source code etc. anonymously (e.g. without asking for creat=
-ing user
-> account and/or buying subscriptions ) ?
+> 	https://lwn.net/Articles/822168/
 
-I agree with Serge that you bring up a very good point, and I think
-the requirement of being able to download and use the tools without
-requiring a account, subscription, etc. is a good one.
+Pretty artificial counter-example tbh :-) Even with Rust people tend to
+stick one character variable names for trivial integer indices.
 
-I've replaced that guideline with the following:
-
-"If new userspace tools, or patches to existing tools, are necessary to
-configure, operate, or otherwise manage the LSM, these tools or patches mus=
-t
-be publicly available without download restrictions requiring accounts,
-subscriptions, etc.  Maintaining these tools or patches in a public git
-repository is preferable over tarball snapshots."
-
-I made a similar edit to the test suite guidelines:
-
-"New LSMs must be accompanied by a test suite to verify basic functionality
-and help identify regressions.  The test suite must be publicly available
-without download restrictions requiring accounts, subscriptions, etc.  Test
-coverage does not need to reach a specific percentage, but core functionali=
-ty
-and any user interfaces should be well covered by the test suite.  Maintain=
-ing
-the test suite in a public git repository is preferable over tarball snapsh=
-ots.
-Integrating the test suite with existing automated Linux kernel testing
-services is encouraged."
-
-What do you think?
-
-> If one of userspace tools designed for the new LSM depends on the LSM ID,=
- when can
-> the author of the new LSM obtain the stable LSM ID for that LSM ?
-
-A permanent LSM ID is assigned to LSMs when they are merged into the
-upstream LSM tree.  This is no different than any other kernel defined
-macro constant, enum, magic number, etc. that is shared between kernel
-and userspace and is considered part of the kernel's API.
-
-LSM developers creating userspace tooling that makes use of the LSM ID
-numbers should use the macro name and not the number, this should
-allow the tooling to support the permanent LSM ID with a simple
-recompile.
-
-I understand you are opposed to the numeric LSM ID as part of the
-kernel's API, but I believe this is both the correct way forward, and
-consistent with other kernel APIs.  It is your right to disagree, but
-I have yet to see a reason to revisit this decision and respectfully
-request that you accept this and refrain from revisiting this argument
-unless you have new information which would warrant a new discussion.
-
---=20
-paul-moore.com
+BR, Jarkko
