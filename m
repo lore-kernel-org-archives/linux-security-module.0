@@ -2,184 +2,145 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED65ACA0EDA
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Sep 2023 22:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EBCCA0EDF
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Sep 2023 22:09:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357892AbjIKWGs (ORCPT
+        id S1357910AbjIKWGw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Sep 2023 18:06:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41390 "EHLO
+        Mon, 11 Sep 2023 18:06:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242922AbjIKQed (ORCPT
+        with ESMTP id S244317AbjIKUFJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Sep 2023 12:34:33 -0400
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28F2EF9
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Sep 2023 09:34:27 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Rksk92h18zMpp3l;
-        Mon, 11 Sep 2023 16:34:25 +0000 (UTC)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Rksk77429zMpp9y;
-        Mon, 11 Sep 2023 18:34:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1694450065;
-        bh=0hFruZJStHpPF1Wqo50DPh1U7wqvk9JxmohujdtDbTw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Fr7Wgm3YM831AOjTywMLv1N2mQ9HYqiQIBAWoxCl7gHiXAFmiIT9VfdORoNSb4UCn
-         ZNUSE7IyAaJtBofi1jvpuk+uvWuJFyYJHGKPd4XR91M3G7U8rlgMDZclxXUns829e2
-         heI4EcUO1XSG9f2OUsttoRGGaa0/OqLqcLDZ9H50=
-Date:   Mon, 11 Sep 2023 18:34:20 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Matt Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support
-Message-ID: <20230911.eushohth1Ue2@digikod.net>
-References: <20230814172816.3907299-1-gnoack@google.com>
- <20230818.iechoCh0eew0@digikod.net>
- <ZOjCz5j4+tgptF53@google.com>
- <20230825.Zoo4ohn1aivo@digikod.net>
- <20230826.ohtooph0Ahmu@digikod.net>
- <ZPMiVaL3kVaTnivh@google.com>
- <20230904.aiWae8eineo4@digikod.net>
- <ZP7lxmXklksadvz+@google.com>
- <20230911.jie6Rai8ughe@digikod.net>
+        Mon, 11 Sep 2023 16:05:09 -0400
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16909185
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Sep 2023 13:05:04 -0700 (PDT)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-59254e181a2so46594627b3.1
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Sep 2023 13:05:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1694462703; x=1695067503; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rhlMLK8WCLZGaMrHreCTIhW1CPUp3+vyJu4Njc0iJm8=;
+        b=WIsqxOb3QL8dFzesIx76fkB0GekBAc3GAzQbCH11tFsTIS6044a34z6tyWDi/YZVHG
+         5CfZLEb4froN/F86b35qPZui69zbvIeGUltF6JHCetdQW81PSoXjhMx/OIym+PNWjvDX
+         PYuXq7Zpy19w46Qzv2/O3qX4pa1fjYal3OAVYS34B7gT6Xx8yvTamrmTU9IGzNXTaR46
+         q0HGpN4DgMWaINBUoALs3xrDyvUk2AZALBCiXaUauuFhynMLIfJap5BxawR0/BCbp6Km
+         bS2srerKgYzxVWcr8HI1x1Setr7mRXnGFq5XdCkx23MEV3SC+r5fzQk/a1PF91WHuR5E
+         MefA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694462703; x=1695067503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rhlMLK8WCLZGaMrHreCTIhW1CPUp3+vyJu4Njc0iJm8=;
+        b=cqvXrQdO2D3laQL9DX8NyFhuWNxGUmeD0VQxrB/2/JFJpSJ4bUcNkjITJ/AuF4oN4N
+         DLmKPIb+iebdOVjFxb7rAJgZRVSvHJ7rU8T8h53OjFjVXFqeTgRsVoeN/bmtp2ee5USR
+         XmZR1qd1+ocsKH+781bPUs9RlJpcAI9mCOWRh6Gw/h8oDmdMiZ2o8wsTx4bypuNO1FID
+         J/uNZsVMHN3V/HYskOYOld9wNMNkxzVh5gEJ5GQ94isPtV8HEZ+hXfo2ZkyJjg1SiAsE
+         C3Hnyql6NCb43f3QkXqoMG8mx5qEs/lx+KEdVSIYVdP2Eyy3s+LLKs4X7Ec8OZHZarV+
+         vssg==
+X-Gm-Message-State: AOJu0YxIjYpbPMpoE0ZhewfID+RjlxVPcyZZlyKyupKqslGgeJHm/43P
+        LBkLeYqDzzk7hsVz1qoJ06tIihk4BtkSjn7lLOYce1LU/8EpVXSM7w==
+X-Google-Smtp-Source: AGHT+IHGzHQq2UJBivPZSkdEihaA6buSKaXJziY2+kx8pFy7tor3uBu5RFPf9BRQHI51DwMhlDxBfrlRXXv9mpp0BfE=
+X-Received: by 2002:a0d:c404:0:b0:594:e357:a1f8 with SMTP id
+ g4-20020a0dc404000000b00594e357a1f8mr10068624ywd.24.1694462703084; Mon, 11
+ Sep 2023 13:05:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230911.jie6Rai8ughe@digikod.net>
-X-Infomaniak-Routing: alpha
+References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
+ <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com> <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
+ <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
+ <CAHC9VhQhf+ik5S_aJOVn59pax1Aa0vO5gJ4YoxrtGRKtoWh7sA@mail.gmail.com> <f8f32da5-6f31-d197-7405-8f308bd29228@I-love.SAKURA.ne.jp>
+In-Reply-To: <f8f32da5-6f31-d197-7405-8f308bd29228@I-love.SAKURA.ne.jp>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 11 Sep 2023 16:04:52 -0400
+Message-ID: <CAHC9VhTktg4RFWw+rSZ6wWQ8iR3n2p8XaOO95BbJ1QGAd4y9fg@mail.gmail.com>
+Subject: Re: ANN: new LSM guidelines
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 11, 2023 at 05:25:34PM +0200, Mickaël Salaün wrote:
-> On Mon, Sep 11, 2023 at 12:02:46PM +0200, Günther Noack wrote:
-> > Hello!
-> > 
-> > On Mon, Sep 04, 2023 at 08:08:29PM +0200, Mickaël Salaün wrote:
-> > > On Sat, Sep 02, 2023 at 01:53:57PM +0200, Günther Noack wrote:
-> > > > On Sat, Aug 26, 2023 at 08:26:30PM +0200, Mickaël Salaün wrote:
-> > > > > On Fri, Aug 25, 2023 at 06:50:29PM +0200, Mickaël Salaün wrote:
-> > > > > > On Fri, Aug 25, 2023 at 05:03:43PM +0200, Günther Noack wrote:
+On Fri, Sep 8, 2023 at 8:46=E2=80=AFPM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2023/08/03 7:00, Paul Moore wrote:
+> > * The new LSM must be sufficiently unique to justify the additional wor=
+k
+> > involved in reviewing, maintaining, and supporting the LSM.  It is reas=
+onable
+> > for there to be a level of overlap between LSMs, but either the securit=
+y model
+> > or the admin/user experience must be significantly unique.
+>
+> s/work/burden/ ?
 
-> > > > > > > (In fact, it seems to me almost like FIOQSIZE might rather be missing a security
-> > > > > > > hook check for one of the "getting file attribute" hooks?)
-> > > > > > > 
-> > > > > > > So basically, the implementation that I currently ended up with is:
-> > > > > > > 
-> > > > > > 
-> > > > > > Before checking these commands, we first need to check that the original
-> > > > > > domain handle LANDLOCK_ACCESS_FS_IOCTL. We should try to pack this new
-> > > > > > bit and replace the file's allowed_access field (see
-> > > > > > landlock_add_fs_access_mask() and similar helpers in the network patch
-> > > > > > series that does a similar thing but for ruleset's handle access
-> > > > > > rights), but here is the idea:
-> > > > > > 
-> > > > > > if (!landlock_file_handles_ioctl(file))
-> > > > > > 	return 0;
-> > > > > > 
-> > > > > > > switch (cmd) {
-> > > > > > 	/*
-> > > > > > 	 * Allows file descriptor and file description operations (see
-> > > > > > 	 * fcntl commands).
-> > > > > > 	 */
-> > > > > > >   case FIOCLEX:
-> > > > > > >   case FIONCLEX:
-> > > > > > >   case FIONBIO:
-> > > > > > >   case FIOASYNC:
-> > > > > > 
-> > > > > > >   case FIOQSIZE:
-> > > > > 
-> > > > > We need to handle FIOQSIZE as done by do_vfs_ioctl: add the same i_mode
-> > > > > checks. A kselftest test should check that ENOTTY is returned according
-> > > > > to the file type and the access rights.
-> > > > 
-> > > > It's not clear to me why we would need to add the same i_mode checks for
-> > > > S_ISDIR() || S_ISREG() || S_ISLNK() there?  If these checks in do_vfs_ioctl()
-> > > > fail, it returns -ENOTTY.  Is that not an appropriate error already?
-> > > 
-> > > The LSM IOCTL hook is called before do_vfs_ioctl(), and I think that
-> > > Landlock should not change the error codes according to the error types
-> > > (i.e. return ENOTTY when the inode is something else than a directory,
-> > > regular file, or symlink). Indeed, I think it's valuable to not blindly
-> > > return EACCES when the IOCTL doesn't make sense for this file type. This
-> > > should help user space handle meaningful error messages, inconsistent
-> > > requests, and fallback mechanisms. Tests should check these return
-> > > codes, see the network patch series (and especially the latest reviews
-> > > and changes) that takes care of this kind of error codes compatibility.
-> > > 
-> > > We could also return 0 (i.e. accept the request) and rely on the
-> > > do_vfs_ioctl() check to return ENOTTY, but this is unnecessary risky
-> > > from an access control point of view. Let's directly return ENOTTY as a
-> > > safeguard (which BTW also avoids some useless CPU instructions) and test
-> > > this behavior.
-> > > 
-> > > I think an access control mechanism, and especially Landlock, should be
-> > > as discreet as possible, and help developers quickly debug issues (and
-> > > avoid going through the access control layer if it doesn't make sense).
-> > > I think error ordering like this could be useful but I'd like to get
-> > > other point of views.
-> > 
-> > I see what you mean now, OK.
-> > 
-> > Another option, btw, would be to return ENOTTY generally when Landlock denies an
-> > IOCTL attempt, instead of EACCES, as I have previously suggested in
-> > https://lore.kernel.org/all/ZNpnrCjYqFoGkwyf@google.com/ -- should we maybe just
-> > do that instead?
-> > 
-> > I believe that users of ioctl(2) should be better equipped to deal with ENOTTY,
-> > because that is an error that ioctl(2) can return in general, whereas EACCES can
-> > only be returned if one of the specific subcommands returns it.
-> > 
-> > According to the man page, ENOTTY is the error that ioctl(2) returns if the
-> > given "request does not apply to the kind of object that the file descriptor fd
-> > references".
-> > 
-> > That is not 100% what is happening here, but from the errors listed in ioctl(2),
-> > this seems to be the closest, semantically.
-> > 
-> > What do you think?
-> 
-> ENOTTY has a (kinda) well-defined semantic, which should not depend on
-> an access control. Other LSMs already return EACCES for denied IOCTLs,
-> so the man page should be updated with this information instead. ;)
+Possibly, although I think I prefer "work" here since it has a more
+positive connotation than "burden".
 
-Well, thinking about this again, for the sake of consistency with other
-IOCTLs, we should not specifically handle IOCTL error codes, but instead
-return either 0 or -EACCES. The network error cases are special because
-the LSM is called before some user-provided data are interpreted by the
-network stack, and in this case we need to interpret these data ourself.
-But in the case of IOCTLs, we may only need to handle the cases where an
-IOCTL command may be interpreted by different implementations (e.g. VFS
-or FS implementation), but even that is not a good idea, see below.
+> > * Any userspace tools or patches created in support of the LSM must be =
+publicly
+> > available, with a public git repository preferable over a tarball snaps=
+hot.
+>
+> What is the definition of "publicly" here? Everyone can download related =
+resources
+> including the source code etc. anonymously (e.g. without asking for creat=
+ing user
+> account and/or buying subscriptions ) ?
 
-For FIOQSIZE, I don't think anymore that we should try to mimic the
-do_vfs_ioctl() implementation. In fact, this approach could end up
-confusing developers and leaking metadata (see FIGETBSZ). Even with
-FIONREAD, the FS (i.e. vfs_ioctl() call) should follow the same
-semantic as the VFS (i.e. do_vfs_ioctl() code), so we should treat them
-the same and keep it simple: either return 0 or -EACCES.
+I agree with Serge that you bring up a very good point, and I think
+the requirement of being able to download and use the tools without
+requiring a account, subscription, etc. is a good one.
 
-About the file_ioctl() IOCTLs, we should check that there are no
-overlapping with other IOCTLs (with different name). I think we should
-trust the FS implementation to implement the same semantic, but much
-less the device drivers. The main issue is with VFS and FS code
-returning -ENOIOCTLCMD because in this case it is forwarded to any
-implementation.
+I've replaced that guideline with the following:
 
-However, in the case of delegation, and as a safeguard, what we could do
-to avoid driver IOCTL command overlaps is to check if the file is a
-block or character device. In this case, we just don't delegate any
-access right but make LANDLOCK_ACCESS_FS_IOCTL handle them (we need to
-manage VFS's IOCTLs that deal with block/char device though). Again, we
-should make sure that -ENOIOCTLCMD will not trick us (for the delegate
-cases). I'm not sure how the link between drivers and the FS storing the
-related block/char device is managed though. Does that make sense?
+"If new userspace tools, or patches to existing tools, are necessary to
+configure, operate, or otherwise manage the LSM, these tools or patches mus=
+t
+be publicly available without download restrictions requiring accounts,
+subscriptions, etc.  Maintaining these tools or patches in a public git
+repository is preferable over tarball snapshots."
+
+I made a similar edit to the test suite guidelines:
+
+"New LSMs must be accompanied by a test suite to verify basic functionality
+and help identify regressions.  The test suite must be publicly available
+without download restrictions requiring accounts, subscriptions, etc.  Test
+coverage does not need to reach a specific percentage, but core functionali=
+ty
+and any user interfaces should be well covered by the test suite.  Maintain=
+ing
+the test suite in a public git repository is preferable over tarball snapsh=
+ots.
+Integrating the test suite with existing automated Linux kernel testing
+services is encouraged."
+
+What do you think?
+
+> If one of userspace tools designed for the new LSM depends on the LSM ID,=
+ when can
+> the author of the new LSM obtain the stable LSM ID for that LSM ?
+
+A permanent LSM ID is assigned to LSMs when they are merged into the
+upstream LSM tree.  This is no different than any other kernel defined
+macro constant, enum, magic number, etc. that is shared between kernel
+and userspace and is considered part of the kernel's API.
+
+LSM developers creating userspace tooling that makes use of the LSM ID
+numbers should use the macro name and not the number, this should
+allow the tooling to support the permanent LSM ID with a simple
+recompile.
+
+I understand you are opposed to the numeric LSM ID as part of the
+kernel's API, but I believe this is both the correct way forward, and
+consistent with other kernel APIs.  It is your right to disagree, but
+I have yet to see a reason to revisit this decision and respectfully
+request that you accept this and refrain from revisiting this argument
+unless you have new information which would warrant a new discussion.
+
+--=20
+paul-moore.com
