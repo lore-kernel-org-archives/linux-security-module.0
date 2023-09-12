@@ -2,104 +2,176 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33283EE3F38
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Sep 2023 21:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94AE7EE3F38
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Sep 2023 21:42:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236400AbjILVcY convert rfc822-to-8bit (ORCPT
+        id S231901AbjILVmo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Sep 2023 17:32:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37356 "EHLO
+        Tue, 12 Sep 2023 17:42:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234541AbjILVcX (ORCPT
+        with ESMTP id S229754AbjILVmo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Sep 2023 17:32:23 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86D1C10CC
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 14:32:19 -0700 (PDT)
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38CKg1Hb013873
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 14:32:18 -0700
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3t2y8d0f96-12
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 14:32:18 -0700
-Received: from twshared68648.02.prn6.facebook.com (2620:10d:c085:108::8) by
- mail.thefacebook.com (2620:10d:c085:21d::8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Tue, 12 Sep 2023 14:32:16 -0700
-Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-        id A80FE37F4073D; Tue, 12 Sep 2023 14:29:27 -0700 (PDT)
-From:   Andrii Nakryiko <andrii@kernel.org>
-To:     <bpf@vger.kernel.org>
-CC:     <linux-fsdevel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>, <keescook@chromium.org>,
-        <brauner@kernel.org>, <lennart@poettering.net>,
-        <kernel-team@meta.com>, <sargun@sargun.me>
-Subject: [PATCH v4 bpf-next 09/12] libbpf: add BPF token support to bpf_map_create() API
-Date:   Tue, 12 Sep 2023 14:29:03 -0700
-Message-ID: <20230912212906.3975866-10-andrii@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230912212906.3975866-1-andrii@kernel.org>
-References: <20230912212906.3975866-1-andrii@kernel.org>
+        Tue, 12 Sep 2023 17:42:44 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D900D10CC;
+        Tue, 12 Sep 2023 14:42:39 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-31dca134c83so6223100f8f.3;
+        Tue, 12 Sep 2023 14:42:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1694554958; x=1695159758; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WFaOTmDPotpKYMAcf5yM0TcQqzxe8ODUt6hexnT/A0c=;
+        b=TjQ2ykqctLgzK7UjJcyHABJFHi/TSC7lNcyFlhU5jggpdWfaaFSKCbEpagdbSUq/Rg
+         U7864mKIPqw8W1JZN8DyW42Bc8QYNt+neRFDjbC3ga/nQc4EFYuSzicUDmbj5xayOSKC
+         QGBi2c8+02flsZr6+nvfs7WPj5xEk6KHZ3rv+Qd2mwMzxuvPSiBqbpUwnIy+x20KKy58
+         mI/DkO+R1WF6J/sNEw9oouh7E0Nwm66IAUjm1V1l7ZKNK5hDmwPXHFh338vq5bawRHnT
+         TNTMMCq0jo17B54bbhM1hJYk0qSMo41CStgi9OJYrOMpKVnS6kiYBMbpp7yS66IHYswQ
+         ZgHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694554958; x=1695159758;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WFaOTmDPotpKYMAcf5yM0TcQqzxe8ODUt6hexnT/A0c=;
+        b=Ll455L4hqgYY7/sgDWGry7pHMY6AQUbIsN2E6eP3AhhDCoDhUwtvHYlnpD9KmsOLBw
+         9p4+wCdxnxJUw0ktvAg6meMI9DvKm6Vfn6CKwUmxX7x9MssUEWkLj4krGoXXSZrrqIe6
+         WS3k/Bc8vz6OlBtzQNN/TPwm1rnTyTLnSGlnET8QnO/Bwnpkmm8i8d+ZLDjgxUTCro/3
+         fXpQLqpPQxjIGXsn+1vrooHSKb3sPmxlco8iIDEL7jnGq7ITIte8LKkew7uMKXGFQ6Wo
+         HMi6qp5G/79vl45zovFsX5oq7koi92zm5FvmVAknl6MjcpGZZZjlHHQ4AjFqz0Mnp/rQ
+         Coow==
+X-Gm-Message-State: AOJu0YxwzTVjPKrWD7feuewTClWxsIE10pD83olLQ90/twfU9kEBELqO
+        WZ90UxmqM5IbuEHvJaGz6JpPQkfI56tJJT7Xqag=
+X-Google-Smtp-Source: AGHT+IEhRRG514ufB436LVfvzZzc6rfX+gY/FmR3l3MHxREzX2mGs4J/uEWee+nkCy6tB3h40S+ubYQL2Fe/XibJ46E=
+X-Received: by 2002:adf:ed86:0:b0:31c:887f:82f3 with SMTP id
+ c6-20020adfed86000000b0031c887f82f3mr596126wro.40.1694554957893; Tue, 12 Sep
+ 2023 14:42:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: ETiQG2_eANuK1qGCgAYOMkEG2eXf-lLp
-X-Proofpoint-ORIG-GUID: ETiQG2_eANuK1qGCgAYOMkEG2eXf-lLp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-12_20,2023-09-05_01,2023-05-22_02
+References: <20230912212906.3975866-1-andrii@kernel.org> <20230912212906.3975866-9-andrii@kernel.org>
+In-Reply-To: <20230912212906.3975866-9-andrii@kernel.org>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Tue, 12 Sep 2023 14:42:26 -0700
+Message-ID: <CAEf4BzZZSQ5m8mqMM=YVQ7kHOKuyxDu4qajWqLnGCX4x+bL=HA@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 08/12] libbpf: add bpf_token_create() API
+To:     Andrii Nakryiko <andrii@kernel.org>
+Cc:     bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
+        sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add ability to provide token_fd for BPF_MAP_CREATE command through
-bpf_map_create() API.
+On Tue, Sep 12, 2023 at 2:30=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org>=
+ wrote:
+>
+> Add low-level wrapper API for BPF_TOKEN_CREATE command in bpf() syscall.
+>
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
+>  tools/lib/bpf/bpf.c      | 19 +++++++++++++++++++
+>  tools/lib/bpf/bpf.h      | 29 +++++++++++++++++++++++++++++
+>  tools/lib/bpf/libbpf.map |  1 +
+>  3 files changed, 49 insertions(+)
+>
+> diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+> index b0f1913763a3..593ff9ea120d 100644
+> --- a/tools/lib/bpf/bpf.c
+> +++ b/tools/lib/bpf/bpf.c
+> @@ -1271,3 +1271,22 @@ int bpf_prog_bind_map(int prog_fd, int map_fd,
+>         ret =3D sys_bpf(BPF_PROG_BIND_MAP, &attr, attr_sz);
+>         return libbpf_err_errno(ret);
+>  }
+> +
+> +int bpf_token_create(int bpffs_path_fd, const char *bpffs_pathname,
+> +                    struct bpf_token_create_opts *opts)
+> +{
+> +       const size_t attr_sz =3D offsetofend(union bpf_attr, token_create=
+);
+> +       union bpf_attr attr;
+> +       int fd;
+> +
+> +       if (!OPTS_VALID(opts, bpf_token_create_opts))
+> +               return libbpf_err(-EINVAL);
+> +
+> +       memset(&attr, 0, attr_sz);
+> +       attr.token_create.bpffs_path_fd =3D bpffs_path_fd;
+> +       attr.token_create.bpffs_pathname =3D ptr_to_u64(bpffs_pathname);
+> +       attr.token_create.flags =3D OPTS_GET(opts, flags, 0);
+> +
+> +       fd =3D sys_bpf_fd(BPF_TOKEN_CREATE, &attr, attr_sz);
+> +       return libbpf_err_errno(fd);
+> +}
+> diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
+> index 74c2887cfd24..16d5c257066c 100644
+> --- a/tools/lib/bpf/bpf.h
+> +++ b/tools/lib/bpf/bpf.h
+> @@ -635,6 +635,35 @@ struct bpf_test_run_opts {
+>  LIBBPF_API int bpf_prog_test_run_opts(int prog_fd,
+>                                       struct bpf_test_run_opts *opts);
+>
+> +struct bpf_token_create_opts {
+> +       size_t sz; /* size of this struct for forward/backward compatibil=
+ity */
+> +       __u32 flags;
+> +       size_t :0;
+> +};
+> +#define bpf_token_create_opts__last_field flags
+> +
+> +/**
+> + * @brief **bpf_token_create()** creates a new instance of BPF token, pi=
+nning
+> + * it at the specified location in BPF FS.
+> + *
+> + * BPF token created and pinned with this API can be subsequently opened=
+ using
+> + * bpf_obj_get() API to obtain FD that can be passed to bpf() syscall fo=
+r
+> + * commands like BPF_PROG_LOAD, BPF_MAP_CREATE, etc.
+> + *
+> + * @param pin_path_fd O_PATH FD (see man 2 openat() for semantics) speci=
+fying,
+> + * in combination with *pin_pathname*, target location in BPF FS at whic=
+h to
+> + * create and pin BPF token.
+> + * @param pin_pathname absolute or relative path specifying, in combinat=
+ion
+> + * with *pin_path_fd*, specifying in combination with *pin_path_fd*, tar=
+get
+> + * location in BPF FS at which to create and pin BPF token.
+> + * @param opts optional BPF token creation options, can be NULL
+> + *
 
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- tools/lib/bpf/bpf.c | 4 +++-
- tools/lib/bpf/bpf.h | 4 +++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+this description is obviously outdated (there is no pinning involved
+anymore) and I just realized after sending patches out, I'll fix it
+for next revision
 
-diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-index 593ff9ea120d..f9ee7608a96a 100644
---- a/tools/lib/bpf/bpf.c
-+++ b/tools/lib/bpf/bpf.c
-@@ -169,7 +169,7 @@ int bpf_map_create(enum bpf_map_type map_type,
- 		   __u32 max_entries,
- 		   const struct bpf_map_create_opts *opts)
- {
--	const size_t attr_sz = offsetofend(union bpf_attr, map_extra);
-+	const size_t attr_sz = offsetofend(union bpf_attr, map_token_fd);
- 	union bpf_attr attr;
- 	int fd;
- 
-@@ -198,6 +198,8 @@ int bpf_map_create(enum bpf_map_type map_type,
- 	attr.numa_node = OPTS_GET(opts, numa_node, 0);
- 	attr.map_ifindex = OPTS_GET(opts, map_ifindex, 0);
- 
-+	attr.map_token_fd = OPTS_GET(opts, token_fd, 0);
-+
- 	fd = sys_bpf_fd(BPF_MAP_CREATE, &attr, attr_sz);
- 	return libbpf_err_errno(fd);
- }
-diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
-index 16d5c257066c..415ecebd41aa 100644
---- a/tools/lib/bpf/bpf.h
-+++ b/tools/lib/bpf/bpf.h
-@@ -51,8 +51,10 @@ struct bpf_map_create_opts {
- 
- 	__u32 numa_node;
- 	__u32 map_ifindex;
-+
-+	__u32 token_fd;
- };
--#define bpf_map_create_opts__last_field map_ifindex
-+#define bpf_map_create_opts__last_field token_fd
- 
- LIBBPF_API int bpf_map_create(enum bpf_map_type map_type,
- 			      const char *map_name,
--- 
-2.34.1
 
+> + * @return 0, on success; negative error code, otherwise (errno is also =
+set to
+> + * the error code)
+> + */
+> +LIBBPF_API int bpf_token_create(int bpffs_path_fd, const char *bpffs_pat=
+hname,
+> +                               struct bpf_token_create_opts *opts);
+> +
+>  #ifdef __cplusplus
+>  } /* extern "C" */
+>  #endif
+> diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
+> index 57712321490f..c45c28a5e14c 100644
+> --- a/tools/lib/bpf/libbpf.map
+> +++ b/tools/lib/bpf/libbpf.map
+> @@ -400,4 +400,5 @@ LIBBPF_1.3.0 {
+>                 bpf_program__attach_netfilter;
+>                 bpf_program__attach_tcx;
+>                 bpf_program__attach_uprobe_multi;
+> +               bpf_token_create;
+>  } LIBBPF_1.2.0;
+> --
+> 2.34.1
+>
+>
