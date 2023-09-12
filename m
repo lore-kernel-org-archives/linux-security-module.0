@@ -2,319 +2,206 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F4AFEE3F31
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Sep 2023 21:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E00EE3F38
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Sep 2023 21:29:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229780AbjILVCO (ORCPT
+        id S237223AbjILV3g convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Sep 2023 17:02:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35112 "EHLO
+        Tue, 12 Sep 2023 17:29:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237426AbjILVCG (ORCPT
+        with ESMTP id S233082AbjILV3b (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Sep 2023 17:02:06 -0400
-Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 817AA10DD
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 14:02:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1694552522; bh=QUxa5qfQ2yoMwNBu3j0TFzU79I6CvGM+LdAFgw4GuXM=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=D0YVa6sppX83SX18hGNiFMW6OIghAbgK1pDXjA77QyqysPX+uZE1L/20letT71GHXdFzks5Z7wUoXNPhkr6BQKMNwjJY/MfCBBeVZFqI0cuVyVjhd9XuYb9dLpqddD9AqAS+Uj6XdO9ZpMBMq/91a1JklwytXdMownMTrmAmCwdsyiAl8cUp7iZz/xZFIARsc634cLBIoZlCl4LfZ4+kmNxrm9jZnSNa1I5WPu5vCJnZXgbLrL/zD9VSL/F6Z0gDQcK/z66ChNvS01HB3c51VOCbto3f5b5UR84HE91u3HE6InQlwqZHHsqPuleJoUgzXPqqlo8acbwjw16QA4BU+Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1694552522; bh=tl7TO9k060zsMHGCGNAyWDal1V1TvMPB3ScajfDLX1N=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=pGdlt9ED77ZZpnvcy6sFz3A3WivTLj5+urIdRsIMXInpS9LD3NlrJ/1uG3FYq3IYwh2VVqgmrRdmvM9uGU1RHmx7qF2f9uC+uMMgKIo4xM6CvCvE3zBf3qU+BNcTvD5IBOeSmIYbs3qEOzQGOfM1g+5CtJy97iYuenIZ583ic4eGphLneixhbfmdemg3mVs+G5Rzgn3HXpJzmP7T5yybJRmzi77bU9hCCRNqnYjCRTldDuuqt/LnNIOIEMX2QTBhVXAxNGNlI1QJHz3LCk6WjMoOvafQitjRv1TW+UVgCd1E8ZPc4BcK8r5VKtYSV3/UsbCwtmhysqW25/RxkumLkw==
-X-YMail-OSG: blW_mU0VM1mOOJplAr1UemXa9tSD5dNNQXvcr9EWW5ZyxfLQh2.CUIvXXSbdYxN
- JZSzHPhuFMECCveQapc5U_e0SAqekyzExEmJ7anWBvbQBOwwuXbWHEw1OhiBBAl6mDgI7hhEUZBH
- UN0x9wUwoiBg.kata0h7YqrOem.ubaNo9ITcS1FfvF5u_rbQ6wnD_jaDvU6q_3NshRt4jYRF6pBP
- tanrG9kTC5tn.ecfIMe.m9kQXRlGo7TvQi3ZQ_5knT8pa.CkTmvr3VNgKSArstjHxXyky6dx_ckf
- zQI7bbB_GrDVGYbkJxBN8PaaDVl.a6EZuaaUOCFg7J2sC9mtxeL4eMUADNm6jupxk63atgQQB3n6
- f37U9_Ips7l.Bjv9BqTlJweBobMryHzMlNeO2WiqiQw_LPhkqrXaJSI8394TKNZSrEpqKZVGnKuU
- ce1ZcteHezXNjyAwf9CjANas4zk6R_WCQk.XjEmO.dPdcqplyDf7iCRNrM1KA9.Ep5.rBG8VXRDS
- iuCNzxeKxl_bgE1rNWRwziU5PDEIMK4TT7F3ASMySbS8.QWE8kNtpC_mWunoonUJRwGQsWEykyRM
- cOWOoaOO8Mw9jmhUG9D4YIW6UylLF7EuOGQT3U7go7uIg5GwgH8la9fNEVokwYzkl.5lNCMuMZst
- fjm1kT6CHUkyGNVWwVYAjbUuBVpPtit20EkmAURQwGmgtABamqW7mYENbBtoTDcgZeg2JPMXubEC
- GmibZNrFte1l1vlnrPeca7kN3rae6Qh5nLgpUnz79EH4sR1lsuATn9VcORL.u7B1MHXvlezMnY7J
- CcBnquQtidH22OZeu3tX45ntXVH8CEe7IzcHPPJUgIma7mOq2k0c9r8n_AvDZvzkpygVceqGkGqZ
- NqvLCxjx32zomV9Pi09NJ1Q0.uAGuMEWro5UT6CRcCQv5gaW9cLdUEuTX0eEt24myUsmQzl6geF6
- trl0URUGrY2A_oAX4q4q9Qtq.GhGvaQY7w6aWOv3ZSf06_cz3zYJNfSPUDCe6OpadbXhAS5tdTig
- K1CeHqzoJJjJkQxKYjM_k6sE74TLtLe1YtXHnHrwOCscr57L.egaaWn1q.Ih.KM7Jqwz.q8tFl4.
- ueH2WQudIlGeMVu1DFtIGB0y1nJg2FXC_SRkfMyPbJWd5nuwpZup0kapU0ix.fLHJXCKCG2lreoO
- UZBnSVOJtfhGBEb9ZsaAMUm1l2yi3bd6IyQU4iI7poVrGbdq093w35F3JhJPdT6YkyjLf0CWIA6T
- jFSsK33hX2qxjJjYLJOWS69B4Ftvd1x05oSiMqDDllgUX0XLH2W2bcOF_9TMdHBFbWstnR9osZRI
- C0wPGimGuL_aoV5oXYBKLHfGsm.9CIbN0D8nnFxRMFNG.s1DWaD0rGW66WKHJ4nKfallhm_oRm82
- DTjrfSd8BjTwMWmBzAZs2yXWyY.pK_kFHKWNVXJMEXucwM_wrsprl2YVGRYMKi31qD.tQ1J.RIy4
- 8zV9e.RyFL3mYzcukwAHZf0c8Y9W0HpyWrcR0SnHkVzCbd.luTtJ1_2KzM9RDNp183VHsPtNbpN_
- PJq0mbQEw9JvZ6Gsp20f9aP2LHCrZ4jtbaLo35zShzDz7oA756NW3twuCIPnCCxnKE9BRyDp9alQ
- FZcuMdG399fwfzLilQ09Mz7P4tVdN9.D1eGUHSL5f1IOf.RIizghEp2tAW.dN.O6rvFWTZwk_U.G
- TDU6ix9H9WpbfKLd3s_0umZy_XnJUR2QSmGmKsdw34Fj9VY3O4vE8exDWAPSaN.HFG66Kvg2G7q9
- gFk2GxiVZsfsfYraGsxUdSCPAftekw4DbkjuTpoCZ.sDaP3wItBV1sMndvEro6XkUfT3yAUW2YmP
- 8eB7ZqsEB3l3hABP9p8fEdHJ0ECvWuwGLNAQH3miBw.O2GANBuucOrfywsHjAiIJ6jkgRDsxPe9Y
- hV8b8uiyPxS44ZgQP2CjIIYyTRR1fxJcMuWJkkJhaZCbRtnajZPozBTT0tbrShl6BkAIcvJWsvkj
- kCDfHdepkvrWU2dynphxqFzD3kKlH6HWHByH1SfNMpTm.FaugG6Ry.So5qbX_ZlcK.D9M6bLRaE9
- fnh74hH703p4iO.4KVDflPYDbboWwkNLPI70.0YvVeNQiWiN7CamRLVSCLp3lRFi.dqny5EcJo6p
- DRONU6.Bld9bYwYeOZWUc4FVzKkP4pvotSv_HgRzB9VJ.5fPaMrQfNLqfUa.b8QHQJT.aW0rDIcL
- ZbLcbMj5TNWKfnznJEq_9Idohisa556nxvpRCkqB8KVwlD06zBdXpEAWElhsmw_r36x0OdvNgHAe
- 1peHvjKuSxMdtlZUntL1nM8CoI6YB
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: cf37f695-b99e-40e4-a64e-2e7561f5ea09
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 12 Sep 2023 21:02:02 +0000
-Received: by hermes--production-ne1-7b767b77cc-84nnk (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID dca4072a6b7e00ec57f039d5e03e840b;
-          Tue, 12 Sep 2023 21:01:56 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     casey@schaufler-ca.com, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org
-Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net, selinux@vger.kernel.org
-Subject: [PATCH v15 10/11] SELinux: Add selfattr hooks
-Date:   Tue, 12 Sep 2023 13:56:55 -0700
-Message-ID: <20230912205658.3432-11-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230912205658.3432-1-casey@schaufler-ca.com>
-References: <20230912205658.3432-1-casey@schaufler-ca.com>
+        Tue, 12 Sep 2023 17:29:31 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FCAF10D3
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 14:29:27 -0700 (PDT)
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38CKioER017009
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 14:29:27 -0700
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3t2ya00d71-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 14:29:27 -0700
+Received: from twshared15338.14.prn3.facebook.com (2620:10d:c0a8:1c::11) by
+ mail.thefacebook.com (2620:10d:c0a8:82::b) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Tue, 12 Sep 2023 14:29:22 -0700
+Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
+        id C6A7137F405B4; Tue, 12 Sep 2023 14:29:06 -0700 (PDT)
+From:   Andrii Nakryiko <andrii@kernel.org>
+To:     <bpf@vger.kernel.org>
+CC:     <linux-fsdevel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>, <keescook@chromium.org>,
+        <brauner@kernel.org>, <lennart@poettering.net>,
+        <kernel-team@meta.com>, <sargun@sargun.me>
+Subject: [PATCH v4 bpf-next 00/12] BPF token and BPF FS-based delegation
+Date:   Tue, 12 Sep 2023 14:28:54 -0700
+Message-ID: <20230912212906.3975866-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.34.1
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: UXQWiHxTC5ppTm0KH09kiX1_m7SNqhRW
+X-Proofpoint-GUID: UXQWiHxTC5ppTm0KH09kiX1_m7SNqhRW
+Content-Transfer-Encoding: 8BIT
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-12_20,2023-09-05_01,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add hooks for setselfattr and getselfattr. These hooks are not very
-different from their setprocattr and getprocattr equivalents, and
-much of the code is shared.
+This patch set introduces an ability to delegate a subset of BPF subsystem
+functionality from privileged system-wide daemon (e.g., systemd or any other
+container manager) through special mount options for userns-bound BPF FS to
+a *trusted* unprivileged application. Trust is the key here. This
+functionality is not about allowing unconditional unprivileged BPF usage.
+Establishing trust, though, is completely up to the discretion of respective
+privileged application that would create and mount a BPF FS instance with
+delegation enabled, as different production setups can and do achieve it
+through a combination of different means (signing, LSM, code reviews, etc),
+and it's undesirable and infeasible for kernel to enforce any particular way
+of validating trustworthiness of particular process.
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Cc: selinux@vger.kernel.org
-Cc: Paul Moore <paul@paul-moore.com>
----
- security/selinux/hooks.c | 134 +++++++++++++++++++++++++++++++--------
- 1 file changed, 107 insertions(+), 27 deletions(-)
+The main motivation for this work is a desire to enable containerized BPF
+applications to be used together with user namespaces. This is currently
+impossible, as CAP_BPF, required for BPF subsystem usage, cannot be namespaced
+or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to BPF
+helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safely read
+arbitrary memory, and it's impossible to ensure that they only read memory of
+processes belonging to any given namespace. This means that it's impossible to
+have a mechanically verifiable namespace-aware CAP_BPF capability, and as such
+another mechanism to allow safe usage of BPF functionality is necessary.BPF FS
+delegation mount options and BPF token derived from such BPF FS instance is
+such a mechanism. Kernel makes no assumption about what "trusted" constitutes
+in any particular case, and it's up to specific privileged applications and
+their surrounding infrastructure to decide that. What kernel provides is a set
+of APIs to setup and mount special BPF FS instanecs and derive BPF tokens from
+it. BPF FS and BPF token are both bound to its owning userns and in such a way
+are constrained inside intended container. Users can then pass BPF token FD to
+privileged bpf() syscall commands, like BPF map creation and BPF program
+loading, to perform such operations without having init userns privileged.
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 3ad500dff390..f066dcf30ec0 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6279,8 +6279,8 @@ static void selinux_d_instantiate(struct dentry *dentry, struct inode *inode)
- 		inode_doinit_with_dentry(inode, dentry);
- }
- 
--static int selinux_getprocattr(struct task_struct *p,
--			       const char *name, char **value)
-+static int selinux_lsm_getattr(unsigned int attr, struct task_struct *p,
-+			       char **value)
- {
- 	const struct task_security_struct *__tsec;
- 	u32 sid;
-@@ -6297,20 +6297,27 @@ static int selinux_getprocattr(struct task_struct *p,
- 			goto bad;
- 	}
- 
--	if (!strcmp(name, "current"))
-+	switch (attr) {
-+	case LSM_ATTR_CURRENT:
- 		sid = __tsec->sid;
--	else if (!strcmp(name, "prev"))
-+		break;
-+	case LSM_ATTR_PREV:
- 		sid = __tsec->osid;
--	else if (!strcmp(name, "exec"))
-+		break;
-+	case LSM_ATTR_EXEC:
- 		sid = __tsec->exec_sid;
--	else if (!strcmp(name, "fscreate"))
-+		break;
-+	case LSM_ATTR_FSCREATE:
- 		sid = __tsec->create_sid;
--	else if (!strcmp(name, "keycreate"))
-+		break;
-+	case LSM_ATTR_KEYCREATE:
- 		sid = __tsec->keycreate_sid;
--	else if (!strcmp(name, "sockcreate"))
-+		break;
-+	case LSM_ATTR_SOCKCREATE:
- 		sid = __tsec->sockcreate_sid;
--	else {
--		error = -EINVAL;
-+		break;
-+	default:
-+		error = -EOPNOTSUPP;
- 		goto bad;
- 	}
- 	rcu_read_unlock();
-@@ -6328,7 +6335,7 @@ static int selinux_getprocattr(struct task_struct *p,
- 	return error;
- }
- 
--static int selinux_setprocattr(const char *name, void *value, size_t size)
-+static int selinux_lsm_setattr(u64 attr, void *value, size_t size)
- {
- 	struct task_security_struct *tsec;
- 	struct cred *new;
-@@ -6339,23 +6346,31 @@ static int selinux_setprocattr(const char *name, void *value, size_t size)
- 	/*
- 	 * Basic control over ability to set these attributes at all.
- 	 */
--	if (!strcmp(name, "exec"))
-+	switch (attr) {
-+	case LSM_ATTR_EXEC:
- 		error = avc_has_perm(mysid, mysid, SECCLASS_PROCESS,
- 				     PROCESS__SETEXEC, NULL);
--	else if (!strcmp(name, "fscreate"))
-+		break;
-+	case LSM_ATTR_FSCREATE:
- 		error = avc_has_perm(mysid, mysid, SECCLASS_PROCESS,
- 				     PROCESS__SETFSCREATE, NULL);
--	else if (!strcmp(name, "keycreate"))
-+		break;
-+	case LSM_ATTR_KEYCREATE:
- 		error = avc_has_perm(mysid, mysid, SECCLASS_PROCESS,
- 				     PROCESS__SETKEYCREATE, NULL);
--	else if (!strcmp(name, "sockcreate"))
-+		break;
-+	case LSM_ATTR_SOCKCREATE:
- 		error = avc_has_perm(mysid, mysid, SECCLASS_PROCESS,
- 				     PROCESS__SETSOCKCREATE, NULL);
--	else if (!strcmp(name, "current"))
-+		break;
-+	case LSM_ATTR_CURRENT:
- 		error = avc_has_perm(mysid, mysid, SECCLASS_PROCESS,
- 				     PROCESS__SETCURRENT, NULL);
--	else
--		error = -EINVAL;
-+		break;
-+	default:
-+		error = -EOPNOTSUPP;
-+		break;
-+	}
- 	if (error)
- 		return error;
- 
-@@ -6367,13 +6382,14 @@ static int selinux_setprocattr(const char *name, void *value, size_t size)
- 		}
- 		error = security_context_to_sid(value, size,
- 						&sid, GFP_KERNEL);
--		if (error == -EINVAL && !strcmp(name, "fscreate")) {
-+		if (error == -EINVAL && attr == LSM_ATTR_FSCREATE) {
- 			if (!has_cap_mac_admin(true)) {
- 				struct audit_buffer *ab;
- 				size_t audit_size;
- 
--				/* We strip a nul only if it is at the end, otherwise the
--				 * context contains a nul and we should audit that */
-+				/* We strip a nul only if it is at the end,
-+				 * otherwise the context contains a nul and
-+				 * we should audit that */
- 				if (str[size - 1] == '\0')
- 					audit_size = size - 1;
- 				else
-@@ -6384,7 +6400,8 @@ static int selinux_setprocattr(const char *name, void *value, size_t size)
- 				if (!ab)
- 					return error;
- 				audit_log_format(ab, "op=fscreate invalid_context=");
--				audit_log_n_untrustedstring(ab, value, audit_size);
-+				audit_log_n_untrustedstring(ab, value,
-+							    audit_size);
- 				audit_log_end(ab);
- 
- 				return error;
-@@ -6407,11 +6424,11 @@ static int selinux_setprocattr(const char *name, void *value, size_t size)
- 	   checks and may_create for the file creation checks. The
- 	   operation will then fail if the context is not permitted. */
- 	tsec = selinux_cred(new);
--	if (!strcmp(name, "exec")) {
-+	if (attr == LSM_ATTR_EXEC) {
- 		tsec->exec_sid = sid;
--	} else if (!strcmp(name, "fscreate")) {
-+	} else if (attr == LSM_ATTR_FSCREATE) {
- 		tsec->create_sid = sid;
--	} else if (!strcmp(name, "keycreate")) {
-+	} else if (attr == LSM_ATTR_KEYCREATE) {
- 		if (sid) {
- 			error = avc_has_perm(mysid, sid,
- 					     SECCLASS_KEY, KEY__CREATE, NULL);
-@@ -6419,9 +6436,9 @@ static int selinux_setprocattr(const char *name, void *value, size_t size)
- 				goto abort_change;
- 		}
- 		tsec->keycreate_sid = sid;
--	} else if (!strcmp(name, "sockcreate")) {
-+	} else if (attr == LSM_ATTR_SOCKCREATE) {
- 		tsec->sockcreate_sid = sid;
--	} else if (!strcmp(name, "current")) {
-+	} else if (attr == LSM_ATTR_CURRENT) {
- 		error = -EINVAL;
- 		if (sid == 0)
- 			goto abort_change;
-@@ -6463,6 +6480,67 @@ static int selinux_setprocattr(const char *name, void *value, size_t size)
- 	return error;
- }
- 
-+static int selinux_getselfattr(unsigned int attr, struct lsm_ctx __user *ctx,
-+			       size_t *size, u32 flags)
-+{
-+	char *value;
-+	size_t total_len;
-+	int len;
-+	int rc = 0;
-+
-+	len = selinux_lsm_getattr(attr, current, &value);
-+	if (len < 0)
-+		return len;
-+
-+	total_len = ALIGN(struct_size(ctx, ctx, len), 8);
-+
-+	if (total_len > *size)
-+		rc = -E2BIG;
-+	else if (ctx)
-+		rc = lsm_fill_user_ctx(ctx, value, len, LSM_ID_SELINUX, 0);
-+
-+	kfree(value);
-+	*size = total_len;
-+	if (rc < 0)
-+		return rc;
-+	return 1;
-+}
-+
-+static int selinux_setselfattr(unsigned int attr, struct lsm_ctx *ctx,
-+			       size_t size, u32 flags)
-+{
-+	int rc;
-+
-+	rc = selinux_lsm_setattr(attr, ctx->ctx, ctx->ctx_len);
-+	if (rc > 0)
-+		return 0;
-+	return rc;
-+}
-+
-+static int selinux_getprocattr(struct task_struct *p,
-+			       const char *name, char **value)
-+{
-+	unsigned int attr = lsm_name_to_attr(name);
-+	int rc;
-+
-+	if (attr) {
-+		rc = selinux_lsm_getattr(attr, p, value);
-+		if (rc != -EOPNOTSUPP)
-+			return rc;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int selinux_setprocattr(const char *name, void *value, size_t size)
-+{
-+	int attr = lsm_name_to_attr(name);
-+
-+	if (attr)
-+		return selinux_lsm_setattr(attr, value, size);
-+	return -EINVAL;
-+}
-+
- static int selinux_ismaclabel(const char *name)
- {
- 	return (strcmp(name, XATTR_SELINUX_SUFFIX) == 0);
-@@ -7091,6 +7169,8 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- 
- 	LSM_HOOK_INIT(d_instantiate, selinux_d_instantiate),
- 
-+	LSM_HOOK_INIT(getselfattr, selinux_getselfattr),
-+	LSM_HOOK_INIT(setselfattr, selinux_setselfattr),
- 	LSM_HOOK_INIT(getprocattr, selinux_getprocattr),
- 	LSM_HOOK_INIT(setprocattr, selinux_setprocattr),
- 
+This v4 incorporates feedback and suggestions ([3]) received on v3 of this
+patch set, and instead of allowing to create BPF tokens directly assuming
+capable(CAP_SYS_ADMIN), we instead enhance BPF FS to accepts a few new
+delegation mount options. If these options are used and BPF FS itself is
+properly created, set up, and mounted inside the user namespaced container,
+user application is able to derive a BPF token object from BPF FS instance,
+and pass that token to bpf() syscall. As explained in patch #2, BPF token
+itself doesn't grant access to BPF functionality, but instead allows kernel to
+do namespaced capabilities checks (ns_capable() vs capable()) for CAP_BPF,
+CAP_PERFMON, CAP_NET_ADMIN, and CAP_SYS_ADMIN, as applicable. So it forms one
+half of a puzzle and allows container managers and sys admins to have safe and
+flexible configuration options: determining which containers get delegation of
+BPF functionality through BPF FS, and then which applications within such
+containers are allowed to perform bpf() commands, based on namespaces
+capabilities.
+
+Previous attempt at addressing this very same problem ([0]) attempted to
+utilize authoritative LSM approach, but was conclusively rejected by upstream
+LSM maintainers. BPF token concept is not changing anything about LSM
+approach, but can be combined with LSM hooks for very fine-grained security
+policy. Some ideas about making BPF token more convenient to use with LSM (in
+particular custom BPF LSM programs) was briefly described in recent LSF/MM/BPF
+2023 presentation ([1]). E.g., an ability to specify user-provided data
+(context), which in combination with BPF LSM would allow implementing a very
+dynamic and fine-granular custom security policies on top of BPF token. In the
+interest of minimizing API surface area and discussions this was relegated to
+follow up patches, as it's not essential to the fundamental concept of
+delegatable BPF token.
+
+It should be noted that BPF token is conceptually quite similar to the idea of
+/dev/bpf device file, proposed by Song a while ago ([2]). The biggest
+difference is the idea of using virtual anon_inode file to hold BPF token and
+allowing multiple independent instances of them, each (potentially) with its
+own set of restrictions. And also, crucially, BPF token approach is not using
+any special stateful task-scoped flags. Instead, bpf() syscall accepts
+token_fd parameters explicitly for each relevant BPF command. This addresses
+main concerns brought up during the /dev/bpf discussion, and fits better with
+overall BPF subsystem design.
+
+This patch set adds a basic minimum of functionality to make BPF token idea
+useful and to discuss API and functionality. Currently only low-level libbpf
+APIs support creating and passing BPF token around, allowing to test kernel
+functionality, but for the most part is not sufficient for real-world
+applications, which typically use high-level libbpf APIs based on `struct
+bpf_object` type. This was done with the intent to limit the size of patch set
+and concentrate on mostly kernel-side changes. All the necessary plumbing for
+libbpf will be sent as a separate follow up patch set kernel support makes it
+upstream.
+
+Another part that should happen once kernel-side BPF token is established, is
+a set of conventions between applications (e.g., systemd), tools (e.g.,
+bpftool), and libraries (e.g., libbpf) on exposing delegatable BPF FS
+instance(s) at well-defined locations to allow applications take advantage of
+this in automatic fashion without explicit code changes on BPF application's
+side. But I'd like to postpone this discussion to after BPF token concept
+lands.
+
+  [0] https://lore.kernel.org/bpf/20230412043300.360803-1-andrii@kernel.org/
+  [1] http://vger.kernel.org/bpfconf2023_material/Trusted_unprivileged_BPF_LSFMM2023.pdf
+  [2] https://lore.kernel.org/bpf/20190627201923.2589391-2-songliubraving@fb.com/
+  [3] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef785e@brauner/
+
+v3->v4;
+  - add delegation mount options to BPF FS;
+  - BPF token is derived from the instance of BPF FS and associates itself
+    with BPF FS' owning userns;
+  - BPF token doesn't grant BPF functionality directly, it just turns
+    capable() checks into ns_capable() checks within BPF FS' owning user;
+  - BPF token cannot be pinned;
+v2->v3:
+  - make BPF_TOKEN_CREATE pin created BPF token in BPF FS, and disallow
+    BPF_OBJ_PIN for BPF token;
+v1->v2:
+  - fix build failures on Kconfig with CONFIG_BPF_SYSCALL unset;
+  - drop BPF_F_TOKEN_UNKNOWN_* flags and simplify UAPI (Stanislav).
+
+
+Andrii Nakryiko (12):
+  bpf: add BPF token delegation mount options to BPF FS
+  bpf: introduce BPF token object
+  bpf: add BPF token support to BPF_MAP_CREATE command
+  bpf: add BPF token support to BPF_BTF_LOAD command
+  bpf: add BPF token support to BPF_PROG_LOAD command
+  bpf: take into account BPF token when fetching helper protos
+  bpf: consistenly use BPF token throughout BPF verifier logic
+  libbpf: add bpf_token_create() API
+  libbpf: add BPF token support to bpf_map_create() API
+  libbpf: add BPF token support to bpf_btf_load() API
+  libbpf: add BPF token support to bpf_prog_load() API
+  selftests/bpf: add BPF token-enabled tests
+
+ drivers/media/rc/bpf-lirc.c                   |   2 +-
+ include/linux/bpf.h                           |  78 ++-
+ include/linux/filter.h                        |   2 +-
+ include/uapi/linux/bpf.h                      |  44 ++
+ kernel/bpf/Makefile                           |   2 +-
+ kernel/bpf/arraymap.c                         |   2 +-
+ kernel/bpf/cgroup.c                           |   6 +-
+ kernel/bpf/core.c                             |   3 +-
+ kernel/bpf/helpers.c                          |   6 +-
+ kernel/bpf/inode.c                            |  93 ++-
+ kernel/bpf/syscall.c                          | 183 ++++--
+ kernel/bpf/token.c                            | 229 +++++++
+ kernel/bpf/verifier.c                         |  13 +-
+ kernel/trace/bpf_trace.c                      |   2 +-
+ net/core/filter.c                             |  36 +-
+ net/ipv4/bpf_tcp_ca.c                         |   2 +-
+ net/netfilter/nf_bpf_link.c                   |   2 +-
+ tools/include/uapi/linux/bpf.h                |  44 ++
+ tools/lib/bpf/bpf.c                           |  30 +-
+ tools/lib/bpf/bpf.h                           |  39 +-
+ tools/lib/bpf/libbpf.map                      |   1 +
+ .../selftests/bpf/prog_tests/libbpf_probes.c  |   4 +
+ .../selftests/bpf/prog_tests/libbpf_str.c     |   6 +
+ .../testing/selftests/bpf/prog_tests/token.c  | 621 ++++++++++++++++++
+ 24 files changed, 1346 insertions(+), 104 deletions(-)
+ create mode 100644 kernel/bpf/token.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
+
 -- 
-2.41.0
+2.34.1
 
