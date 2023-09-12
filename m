@@ -2,237 +2,139 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B05CA0ECA
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Sep 2023 09:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC0ACA0ECF
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Sep 2023 09:46:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233256AbjILJAd (ORCPT
+        id S232331AbjILJql (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Sep 2023 05:00:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42002 "EHLO
+        Tue, 12 Sep 2023 05:46:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233199AbjILJA0 (ORCPT
+        with ESMTP id S232241AbjILJqk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Sep 2023 05:00:26 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40B5110D1
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 02:00:21 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-401d6f6b2e0so40362975e9.1
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 02:00:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1694509220; x=1695114020; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DPuhXIrsoDRwKm2c4doZfBy6UJlqWZcuCP4pbW2cMJU=;
-        b=0eBJ92P6BYnTkFW0+cPbzrWvT42U+FZO2ZI5HfpmEOnYc6XlGdpqGiChXcjooLDxyQ
-         3OwHffrWQUUyvACncs+0v0HOoxrUUFC27rFzupl8j62NlinAHFO4C0yN2Us0U6IpsUBd
-         7TBnjsyHF2xdn/7mv0uLqOAuEEqRr1WdHGG1Mqao9y9JFRoKcozoIHAjBVObZc6FRUZs
-         lF9JUj+zrq+y7StxK+nBlzxvz6bp4qDrFsOLbXYGuAhs3mPneCzRCi028ZUZ7TMHGbk7
-         bCjhdef7Z8roSo5pjKlsBA522t3CM2konVhuFqhXAccjYehxWgSuPllKbaqp2s4AdiaL
-         svJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694509220; x=1695114020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DPuhXIrsoDRwKm2c4doZfBy6UJlqWZcuCP4pbW2cMJU=;
-        b=pZ/y286pNGP53K27e4X3Ky6bpRc5uiaNj59yU/6KcAIFG6PisfIwObG9X7+pWkI0lj
-         49SurNDuNsxjrcCoOwPhb7tl80pJs7XMYYJueKV0ur9HOh+zEbq+3qEa1CUDz/WlgELH
-         40PtK4jOFt42hQsH3sugBHm+5kpHE/dv8ozUTTD0ADREhqRXjsaG/leznonM5Gyku8nu
-         3RzwA4Qils1DghwrEW+WvNHDy4zYkBGhw4929OwNzB4IiAaqxzfzwY3Yfe4/Jeb7TAAO
-         x1xoNdPOG24vKQdeqHBs3gCQuWxcqheIm5PsO6UEP/LaSZ51f6KJ8Eii5F2D/B1xhg24
-         uiow==
-X-Gm-Message-State: AOJu0Yyd/LaagSPEKVwXCTVQa7WkCjQP/r48ZvmTfYsGk6laRKWj/yOj
-        87JUxyRAVOOzZj6YmVhiataxfdn29zUWgOE9xUdMPA==
-X-Google-Smtp-Source: AGHT+IEruaY/XJBjah+iWq3HcBLI4GKyhigsTj6VWb1ntfR010vgfqEBZKHcesQHRAHWD6nSXOXZYQmhyGeyUOCjYig=
-X-Received: by 2002:a05:6000:1245:b0:319:6b14:555c with SMTP id
- j5-20020a056000124500b003196b14555cmr1373860wrx.3.1694509220233; Tue, 12 Sep
- 2023 02:00:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230906115928.3749928-1-alpic@google.com> <202309090600.NSyo7d2q-lkp@intel.com>
- <CAEjxPJ4GOq3E4zqXbEMKUxqewopyeU5nmUg89rL+P5YsuEBi7A@mail.gmail.com> <CAEjxPJ4uoqkwmbeOOmUHJwoKiK3cnfJP5P2w+hOXr4BZNtQ+JQ@mail.gmail.com>
-In-Reply-To: <CAEjxPJ4uoqkwmbeOOmUHJwoKiK3cnfJP5P2w+hOXr4BZNtQ+JQ@mail.gmail.com>
-From:   Alfred Piccioni <alpic@google.com>
-Date:   Tue, 12 Sep 2023 11:00:07 +0200
-Message-ID: <CALcwBGBPaYh98d+3_3k8o+8WCbYU8cNPoOHaqhUduKZYz7Ntow@mail.gmail.com>
-Subject: Re: [PATCH V2] SELinux: Check correct permissions for FS_IOC32_*
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     kernel test robot <lkp@intel.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        oe-kbuild-all@lists.linux.dev, stable@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 12 Sep 2023 05:46:40 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAE6212E;
+        Tue, 12 Sep 2023 02:46:36 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABD8DC433C7;
+        Tue, 12 Sep 2023 09:46:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694511996;
+        bh=7DHj9Jb6FeJL+iN5c+SG2J1fsifqdWlfmhVDvfRmFmA=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=YNEWSRxx6rYG5byoNYu25NrTupZZrCJHQFsBmqTcSdHCcUA9Mcg5oN5lge5vsYtn0
+         2kwHtncXuTIcZBX2e+eBJlY1FakhW0sidIOjrD/0IPBRNHM+cKvysBeJe32QOPyG0x
+         aIYNam3ajzSElhdt/yI7YJAafhncq55xLyjQuL1Gjt1hhA7wznNtqCdAcTv5Vt6b+l
+         56EK+ScpE47SXN+JwnuyZnZfsRKvsCIFe55fWC7g1Q1IOlp0VOb4354uFRnCyUzYaw
+         CFLQ0ZgauqCIMX5nRbio2Xs6G1piGNwG6cahxvSfBGthHhQSUjZNMbDKcFVIQeTvv3
+         dN4/T8eNdKY9g==
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 12 Sep 2023 12:46:32 +0300
+Message-Id: <CVGUDAU0TSNU.2KQP3U44NG61T@suppilovahvero>
+Cc:     <linux-integrity@vger.kernel.org>,
+        "Mimi Zohar" <zohar@linux.ibm.com>,
+        "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>,
+        "Paul Moore" <paul@paul-moore.com>,
+        "James Morris" <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, "joeyli" <jlee@suse.com>
+Subject: Re: [PATCH] integrity: powerpc: Do not select CA_MACHINE_KEYRING
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     =?utf-8?q?Michal_Such=C3=A1nek?= <msuchanek@suse.de>
+X-Mailer: aerc 0.14.0
+References: <20230907165224.32256-1-msuchanek@suse.de>
+ <CVGF1AQT9WI4.2660NVII9NIDU@suppilovahvero>
+ <20230912075134.GM8826@kitsune.suse.cz>
+In-Reply-To: <20230912075134.GM8826@kitsune.suse.cz>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 11, 2023 at 3:49=E2=80=AFPM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
+On Tue Sep 12, 2023 at 10:51 AM EEST, Michal Such=C3=A1nek wrote:
+> On Tue, Sep 12, 2023 at 12:45:35AM +0300, Jarkko Sakkinen wrote:
+> > On Thu Sep 7, 2023 at 7:52 PM EEST, Michal Suchanek wrote:
+> > > No other platform needs CA_MACHINE_KEYRING, either.
+> > >
+> > > This is policy that should be decided by the administrator, not Kconf=
+ig
+> >=20
+> > s/administrator/distributor/ ?
 >
-> On Mon, Sep 11, 2023 at 9:19=E2=80=AFAM Stephen Smalley
-> <stephen.smalley.work@gmail.com> wrote:
-> >
-> > On Fri, Sep 8, 2023 at 6:54=E2=80=AFPM kernel test robot <lkp@intel.com=
-> wrote:
-> > >
-> > > Hi Alfred,
-> > >
-> > > kernel test robot noticed the following build errors:
-> > >
-> > > [auto build test ERROR on 50a510a78287c15cee644f345ef8bac8977986a7]
-> > >
-> > > url:    https://github.com/intel-lab-lkp/linux/commits/Alfred-Piccion=
-i/SELinux-Check-correct-permissions-for-FS_IOC32_/20230906-200131
-> > > base:   50a510a78287c15cee644f345ef8bac8977986a7
-> > > patch link:    https://lore.kernel.org/r/20230906115928.3749928-1-alp=
-ic%40google.com
-> > > patch subject: [PATCH V2] SELinux: Check correct permissions for FS_I=
-OC32_*
-> > > config: i386-debian-10.3 (https://download.01.org/0day-ci/archive/202=
-30909/202309090600.NSyo7d2q-lkp@intel.com/config)
-> > > compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> > > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/a=
-rchive/20230909/202309090600.NSyo7d2q-lkp@intel.com/reproduce)
-> > >
-> > > If you fix the issue in a separate patch/commit (i.e. not just a new =
-version of
-> > > the same patch/commit), kindly add following tags
-> > > | Reported-by: kernel test robot <lkp@intel.com>
-> > > | Closes: https://lore.kernel.org/oe-kbuild-all/202309090600.NSyo7d2q=
--lkp@intel.com/
-> > >
-> > > All errors (new ones prefixed by >>):
-> > >
-> > >    security/selinux/hooks.c: In function 'selinux_file_ioctl':
-> > > >> security/selinux/hooks.c:3647:9: error: duplicate case value
-> > >     3647 |         case FS_IOC32_GETFLAGS:
-> > >          |         ^~~~
-> > >    security/selinux/hooks.c:3645:9: note: previously used here
-> > >     3645 |         case FS_IOC_GETFLAGS:
-> > >          |         ^~~~
-> > >    security/selinux/hooks.c:3648:9: error: duplicate case value
-> > >     3648 |         case FS_IOC32_GETVERSION:
-> > >          |         ^~~~
-> > >    security/selinux/hooks.c:3646:9: note: previously used here
-> > >     3646 |         case FS_IOC_GETVERSION:
-> > >          |         ^~~~
-> > >    security/selinux/hooks.c:3654:9: error: duplicate case value
-> > >     3654 |         case FS_IOC32_SETFLAGS:
-> > >          |         ^~~~
-> > >    security/selinux/hooks.c:3652:9: note: previously used here
-> > >     3652 |         case FS_IOC_SETFLAGS:
-> > >          |         ^~~~
-> > >    security/selinux/hooks.c:3655:9: error: duplicate case value
-> > >     3655 |         case FS_IOC32_SETVERSION:
-> > >          |         ^~~~
-> > >    security/selinux/hooks.c:3653:9: note: previously used here
-> > >     3653 |         case FS_IOC_SETVERSION:
-> > >          |         ^~~~
-> >
-> > Not sure of the right way to fix this while addressing the original
-> > issue that this patch was intended to fix. Looking in fs/ioctl.c, I
-> > see that the some FS_IOC32 values are remapped to the corresponding
-> > FS_IOC values by the compat ioctl syscall entrypoint. Also notice this
-> > comment there:
-> >
-> >         /* RED-PEN how should LSM module know it's handling 32bit? */
-> >         error =3D security_file_ioctl(f.file, cmd, arg);
-> >         if (error)
-> >                 goto out;
-> >
-> > So perhaps this is a defect in LSM that needs to be addressed?
+> It depends on the situation. Ideally the administrator would pick the
+> distributor that provides a policy that is considered fitting for the
+> purpose or roll their own. Unfortunately, they don't always have the
+> choice.
 >
-> Note btw that some of the 32-bit ioctl commands are only handled in
-> the fs-specific compat_ioctl routines, e.g. ext4_compat_ioctl()
-> handles EXT4_IOC32_GETVERSION =3D=3D FS_IOC32_GETVERSION and ditto for
-> _SETVERSION.
+> For the kerenel's part it should support wide range of policies for
+> different use cases, and not force the hand of the administrator or
+> distributor.
 >
-> >
-> >
+> >=20
+> > > dependencies.
 > > >
+> > > cc: joeyli <jlee@suse.com>
+> > > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> > > ---
+> > >  security/integrity/Kconfig | 2 --
+> > >  1 file changed, 2 deletions(-)
 > > >
-> > > vim +3647 security/selinux/hooks.c
-> > >
-> > >   3634
-> > >   3635  static int selinux_file_ioctl(struct file *file, unsigned int=
- cmd,
-> > >   3636                                unsigned long arg)
-> > >   3637  {
-> > >   3638          const struct cred *cred =3D current_cred();
-> > >   3639          int error =3D 0;
-> > >   3640
-> > >   3641          switch (cmd) {
-> > >   3642          case FIONREAD:
-> > >   3643          case FIBMAP:
-> > >   3644          case FIGETBSZ:
-> > >   3645          case FS_IOC_GETFLAGS:
-> > >   3646          case FS_IOC_GETVERSION:
-> > > > 3647          case FS_IOC32_GETFLAGS:
-> > >   3648          case FS_IOC32_GETVERSION:
-> > >   3649                  error =3D file_has_perm(cred, file, FILE__GET=
-ATTR);
-> > >   3650                  break;
-> > >   3651
-> > >   3652          case FS_IOC_SETFLAGS:
-> > >   3653          case FS_IOC_SETVERSION:
-> > >   3654          case FS_IOC32_SETFLAGS:
-> > >   3655          case FS_IOC32_SETVERSION:
-> > >   3656                  error =3D file_has_perm(cred, file, FILE__SET=
-ATTR);
-> > >   3657                  break;
-> > >   3658
-> > >   3659          /* sys_ioctl() checks */
-> > >   3660          case FIONBIO:
-> > >   3661          case FIOASYNC:
-> > >   3662                  error =3D file_has_perm(cred, file, 0);
-> > >   3663                  break;
-> > >   3664
-> > >   3665          case KDSKBENT:
-> > >   3666          case KDSKBSENT:
-> > >   3667                  error =3D cred_has_capability(cred, CAP_SYS_T=
-TY_CONFIG,
-> > >   3668                                              CAP_OPT_NONE, tru=
-e);
-> > >   3669                  break;
-> > >   3670
-> > >   3671          case FIOCLEX:
-> > >   3672          case FIONCLEX:
-> > >   3673                  if (!selinux_policycap_ioctl_skip_cloexec())
-> > >   3674                          error =3D ioctl_has_perm(cred, file, =
-FILE__IOCTL, (u16) cmd);
-> > >   3675                  break;
-> > >   3676
-> > >   3677          /* default case assumes that the command will go
-> > >   3678           * to the file's ioctl() function.
-> > >   3679           */
-> > >   3680          default:
-> > >   3681                  error =3D ioctl_has_perm(cred, file, FILE__IO=
-CTL, (u16) cmd);
-> > >   3682          }
-> > >   3683          return error;
-> > >   3684  }
-> > >   3685
+> > > diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
+> > > index 232191ee09e3..b6e074ac0227 100644
+> > > --- a/security/integrity/Kconfig
+> > > +++ b/security/integrity/Kconfig
+> > > @@ -68,8 +68,6 @@ config INTEGRITY_MACHINE_KEYRING
+> > >  	depends on INTEGRITY_ASYMMETRIC_KEYS
+> > >  	depends on SYSTEM_BLACKLIST_KEYRING
+> > >  	depends on LOAD_UEFI_KEYS || LOAD_PPC_KEYS
+> > > -	select INTEGRITY_CA_MACHINE_KEYRING if LOAD_PPC_KEYS
+> > > -	select INTEGRITY_CA_MACHINE_KEYRING_MAX if LOAD_PPC_KEYS
+> > >  	help
+> > >  	 If set, provide a keyring to which Machine Owner Keys (MOK) may
+> > >  	 be added. This keyring shall contain just MOK keys.  Unlike keys
+> > > --=20
+> > > 2.41.0
+> >=20
+> > I'd suggest to add even fixes tag.
+>
+> Here it is
+>
+> Fixes: d7d91c4743c4 ("integrity: PowerVM machine keyring enablement")
 
-Hey Stephen,
+commit b755dd58d180b796d21bc14d03045e4ab84222b0 (HEAD -> next, origin/next)
+Author: Michal Suchanek <msuchanek@suse.de>
+Date:   Thu Sep 7 18:52:19 2023 +0200
 
-Thanks for looking into it a bit deeper! This seems a bit of a pickle.
-I can think of a few somewhat hacky ways to fix this.
+    integrity: powerpc: Do not select CA_MACHINE_KEYRING
 
-I can just set the flags to check `if FS_IOC32_*; set FS_IOC_*;`,
-which is the quickest but kinda hacky.
+    No other platform needs CA_MACHINE_KEYRING, either.
 
-I can go with the other plan of dropping the irrelevant bytes from the
-cmd code, so all codes will be read as u16. This effectively does the
-same thing, but may be unclear.
+    This is policy that should be decided by the administrator, not Kconfig
+    dependencies.
 
-I can also look into whether this can be solved at the LSM or a higher
-level. Perhaps the filesystems setting `if FS_IOC32_*; set FS_IOC_*;`
-is a hint that something else interesting is going wrong.
+    Fixes: d7d91c4743c4 ("integrity: PowerVM machine keyring enablement")
+    Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+    Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-I'll spend a little time thinking and investigating and get back with
-a more concrete solution. I'll also need to do a bit more robust
-testing; it built on my machine!
+diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
+index 232191ee09e3..b6e074ac0227 100644
+--- a/security/integrity/Kconfig
++++ b/security/integrity/Kconfig
+@@ -68,8 +68,6 @@ config INTEGRITY_MACHINE_KEYRING
+        depends on INTEGRITY_ASYMMETRIC_KEYS
+        depends on SYSTEM_BLACKLIST_KEYRING
+        depends on LOAD_UEFI_KEYS || LOAD_PPC_KEYS
+-       select INTEGRITY_CA_MACHINE_KEYRING if LOAD_PPC_KEYS
+-       select INTEGRITY_CA_MACHINE_KEYRING_MAX if LOAD_PPC_KEYS
+        help
+         If set, provide a keyring to which Machine Owner Keys (MOK) may
+         be added. This keyring shall contain just MOK keys.  Unlike keys
 
-Thanks!
+If this look good to you, I'll put it to the -rc2 pull request.
+
+> Thanks
+>
+> Michal
+
+BR, Jarkko
