@@ -2,126 +2,170 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB96EE3F0C
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Sep 2023 19:03:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E085EEE3F0C
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Sep 2023 19:22:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231454AbjILTDb (ORCPT
+        id S231219AbjILTWr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Sep 2023 15:03:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57110 "EHLO
+        Tue, 12 Sep 2023 15:22:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230204AbjILTDb (ORCPT
+        with ESMTP id S229781AbjILTWp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Sep 2023 15:03:31 -0400
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3079DE6
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 12:03:27 -0700 (PDT)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-58c92a2c52dso57217997b3.2
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 12:03:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1694545406; x=1695150206; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wQ1VKdN/aBfUAopT+hjJ8o44myACeHU5luAW7mCybTQ=;
-        b=RsEhX3eLLEzfIDPk1fqE0zP03ve6e+bKfSqKGPyvHiz2cs4JkUX0VYsDtKQijE2bmI
-         ZQ8GS0WtQX7cuVeXTukkAIJCdhEKk9tFzKKiPjUVdoyRabPIZB+OrCRMcZTegoniH3z1
-         KbDxYlkWIhOTwvlJHoz9EWIgtHvqhr9LsQ/2Geh6W/7GmUk6OfC6kRgev6OJfRWwBQp5
-         /QcLyZJbbsR2W2qShXB6r2H8Gz3ZZtsRokVTi2fvefIW1zXK7rZ2mD7XY/nTo50COHPI
-         OoY/L4VGXGcRyoVguX/W2EUOc04ye3zPTMW5q0LDjyZXKjhYzJuRQXcQt6AT8zc6ST+p
-         K4Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694545406; x=1695150206;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wQ1VKdN/aBfUAopT+hjJ8o44myACeHU5luAW7mCybTQ=;
-        b=ibskaQnqkLO70UyoxFdItKhSqPA1nWPKQKwSYHIlDzhnhmzoivXMFcwMHKQEB/66fb
-         dzOwEhK2j1gaHe2Cf7noiQ1IVmeE0XG6PKKp9k7lw0g+8OEt3IETNj9B9f8OIQqpGspS
-         y+yFjxx2sn7334KWFxzhhPdWm8sNUcWkNnWFLFGtAL+I1YdKneXmTUiBSBJg1aoSR4U3
-         F1xzIXVLYTIHVPXpGHqWZU3NRV1ei/CWHFQrFTbCW4M6a+AAaRm5zXa/kf6zqy9lKinA
-         p81b8LaNmdSjBBQo/kTOSkQsBn5Mofh2dCbaHw+tNAKaShosS01hIh6qrRblSBKgkuvg
-         M1AQ==
-X-Gm-Message-State: AOJu0YxxktpJqUqotSRRNimSAMmM6+1Ff+Ta+YgPhUYKPKWHMOVlHXos
-        c7Ap/zgIAWdkbx6jUDbvUElHR5p8ldMhe5R5o43CPxraIKW08sI=
-X-Google-Smtp-Source: AGHT+IFI+lUutYWATIzO1Rj/u84oQuaK0f+o0uPgJsL+KQ5ISKdIp8saLOGc8LfYWJyuz6TNGxKzqilqJpZHtuUhIZ4=
-X-Received: by 2002:a0d:c947:0:b0:592:2d33:16b8 with SMTP id
- l68-20020a0dc947000000b005922d3316b8mr356914ywd.30.1694545406339; Tue, 12 Sep
- 2023 12:03:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
- <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com> <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
- <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
- <CAHC9VhQhf+ik5S_aJOVn59pax1Aa0vO5gJ4YoxrtGRKtoWh7sA@mail.gmail.com>
- <f8f32da5-6f31-d197-7405-8f308bd29228@I-love.SAKURA.ne.jp>
- <CAHC9VhTktg4RFWw+rSZ6wWQ8iR3n2p8XaOO95BbJ1QGAd4y9fg@mail.gmail.com>
- <43d84d6c-18ac-6689-cddc-d079cfa19d4d@I-love.SAKURA.ne.jp>
- <CAHC9VhSG2UzE9N0-tAJc8B3Mj1PEuJ2b6wso_DUs_Y83yqwhjA@mail.gmail.com>
- <c8d58922-9af4-b425-03c6-6710ad17b739@schaufler-ca.com> <CAHC9VhTdtF=_4nj3-eQvBUhWhnEss28KKUKCciBCrBL9pN+uQw@mail.gmail.com>
-In-Reply-To: <CAHC9VhTdtF=_4nj3-eQvBUhWhnEss28KKUKCciBCrBL9pN+uQw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 12 Sep 2023 15:03:15 -0400
-Message-ID: <CAHC9VhQ4xAvNK8QaHpYL4bUankB86fi6NW9eo6VNnrbi_dTd+Q@mail.gmail.com>
-Subject: Re: ANN: new LSM guidelines
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Tue, 12 Sep 2023 15:22:45 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7792C1;
+        Tue, 12 Sep 2023 12:22:41 -0700 (PDT)
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38CJKReI027902;
+        Tue, 12 Sep 2023 19:22:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=wWnLfUaBsk8/9XZq7ZQH7mewYkodHLrDkdq6gKH9nHs=;
+ b=b+rGIeotYwJ5mm+tN5Cg3Mvkl+ATz7Iwb3w7/mN+KOnolFN67Z3rNdqMH6TebkCJms/D
+ juB77jj9kdSVl8cQORe+9OacFjlBnRTWD/W2vwnlwsQ2jmOXEo+vhEaDv+h4fbgae2FL
+ KojfLqUQ4L6uc78RWLDMdwTDnmjZJSofYqK41V3DS+rMq2Bm15ImsVLVCoacAp8+A0Uc
+ 4QFyDgMtGExEkiHg0vmVAiPdCBJuQk8v1WecfWt3k4hj1nYk1eO5jDmkWbl1JR2CIZqM
+ 0Q42ej1ks0lqYnOQsSs5FOM3UC/UIbaXAlzmSviuQPTU1R+SmRkd19m5tgPn/rX9twco hw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3t2x24r0xe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Sep 2023 19:22:24 +0000
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 38CJLjsN032516;
+        Tue, 12 Sep 2023 19:22:24 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3t2x24r0xa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Sep 2023 19:22:24 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+        by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 38CIOmoM002779;
+        Tue, 12 Sep 2023 19:22:23 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+        by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3t14hkweur-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Sep 2023 19:22:23 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+        by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 38CJMMEN41353628
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Sep 2023 19:22:22 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 42AC758059;
+        Tue, 12 Sep 2023 19:22:22 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E074058058;
+        Tue, 12 Sep 2023 19:22:20 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.watson.ibm.com (unknown [9.31.99.213])
+        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Sep 2023 19:22:20 +0000 (GMT)
+Message-ID: <afba92bc2961c758d34ab340de207beb0a3b84b0.camel@linux.ibm.com>
+Subject: Re: [PATCH] integrity: powerpc: Do not select CA_MACHINE_KEYRING
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Michal =?ISO-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>,
+        Nayna <nayna@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         linux-security-module@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-kernel@vger.kernel.org, joeyli <jlee@suse.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Date:   Tue, 12 Sep 2023 15:22:20 -0400
+In-Reply-To: <CVGUFUEQVCHS.37OA20PNG9EVB@suppilovahvero>
+References: <20230907165224.32256-1-msuchanek@suse.de>
+         <20230907173232.GD8826@kitsune.suse.cz>
+         <92e23f29-1a16-54da-48d1-59186158e923@linux.vnet.ibm.com>
+         <20230912074116.GL8826@kitsune.suse.cz>
+         <CVGUFUEQVCHS.37OA20PNG9EVB@suppilovahvero>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 3IPyqn1Wmos6pu4cDwBz0Ld8z88iSZJL
+X-Proofpoint-ORIG-GUID: Hba6BnrVByWDG4ASRxD3uNw2IT8kyZ52
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-12_18,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 malwarescore=0 adultscore=0 mlxlogscore=997
+ phishscore=0 bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2308100000 definitions=main-2309120160
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Sep 12, 2023 at 3:00=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Tue, Sep 12, 2023 at 2:40=E2=80=AFPM Casey Schaufler <casey@schaufler-=
-ca.com> wrote:
-> > On 9/12/2023 11:08 AM, Paul Moore wrote:
-> > >
-> > > Once again, we've already discussed this many, many times: out-of-tre=
-e
-> > > LSMs are not the priority and that is not going to change.  One
-> > > corollary of this is that we are not going to assign LSM IDs to LSMs
-> > > that remain out-of-tree as this would negatively impact the LSM layer
-> > > by cluttering/depleting the LSM ID space.  LSMs that are working
-> > > towards integration with the upstream Linux kernel can self-assign a
-> > > temporary LSM ID which will be finalized upon merging in the LSM tree=
-.
-> > > Based on all of the arguments you have already submitted - and let us
-> > > be very clear: you are the only one speaking out against this - I see
-> > > no reason to change this policy.
+On Tue, 2023-09-12 at 12:49 +0300, Jarkko Sakkinen wrote:
+> On Tue Sep 12, 2023 at 10:41 AM EEST, Michal Suchánek wrote:
+> > On Mon, Sep 11, 2023 at 11:39:38PM -0400, Nayna wrote:
+> > > 
+> > > On 9/7/23 13:32, Michal Suchánek wrote:
+> > > > Adding more CC's from the original patch, looks like get_maintainers is
+> > > > not that great for this file.
+> > > > 
+> > > > On Thu, Sep 07, 2023 at 06:52:19PM +0200, Michal Suchanek wrote:
+> > > > > No other platform needs CA_MACHINE_KEYRING, either.
+> > > > > 
+> > > > > This is policy that should be decided by the administrator, not Kconfig
+> > > > > dependencies.
+> > > 
+> > > We certainly agree that flexibility is important. However, in this case,
+> > > this also implies that we are expecting system admins to be security
+> > > experts. As per our understanding, CA based infrastructure(PKI) is the
+> > > standard to be followed and not the policy decision. And we can only speak
+> > > for Power.
+> > > 
+> > > INTEGRITY_CA_MACHINE_KEYRING ensures that we always have CA signed leaf
+> > > certs.
 > >
-> > I won't say this is a great idea, or that I endorse it, but we could
-> > allocate a range of LSM ID values ( 10000 - 10999 ? ) that we promise
-> > will never be given to an upstream LSM. We wouldn't make any guarantees
-> > about conflicts otherwise. These could be used by LSMs before they are
-> > accepted upstream or by LSMs that don't have upstream aspirations. I
-> > seriously doubt that anyone using such an LSM is going to be mixing
-> > multiple such LSMs without being capable of managing ID conflicts.
->
-> Not a crazy idea.  I had debated something similar, a reserved
-> "private use" or "experimentation" range; there is definitely
-> precedence for that in other areas, e.g. network protocols.  What held
-> me back is that invariably folks will want to create long-term
-> persistent registrations against this space for their out-of-tree LSMs
-> which would require some sort of unofficial, adhoc registration
-> authority which starts to get a bit silly in my opinion (the
-> registration authority for the Linux kernel API is the upstream Linux
-> kernel community).
->
-> Temporary assignments while a LSM is undergoing the review-revision
-> cycle on its way to being merged is something different and if we need
-> a couple of reserved numbers for that (one or two MAX) we can consider
-> that, but I don't expect this to be a major problem in practice.  LSMs
-> that are in this transient pre-merge state shouldn't be used for
-> production purposes and thus a LSM ID change on merging shouldn't be a
-> problem.
+> > And that's the problem.
+> >
+> > From a distribution point of view there are two types of leaf certs:
+> >
+> >  - leaf certs signed by the distribution CA which need not be imported
+> >    because the distribution CA cert is enrolled one way or another
+> >  - user generated ad-hoc certificates that are not signed in any way,
+> >    and enrolled by the user
+> >
+> > The latter are vouched for by the user by enrolling the certificate, and
+> > confirming that they really want to trust this certificate. Enrolling
+> > user certificates is vital for usability or secure boot. Adding extra
+> > step of creating a CA certificate stored on the same system only
+> > complicates things with no added benefit.
+> 
+> This all comes down to the generic fact that kernel should not
+> proactively define what it *expects* sysadmins.
+> 
+> CA based infrastructure like anything is a policy decision not
+> a decision to be enforced by kernel.
 
-Just to avoid any confusion on this, a reserved range at this point in
-time is currently a NACK from my perspective.  I am open to consider
-reserving one, maybe two, ID numbers in the future for in-development
-LSMs if we start having problems, but I will need to see persistent
-problems first.
+Secure boot requires a signature chain of trust.  IMA extends the
+secure and trusted boot concepts to the kernel. Missing from that
+signature chain of trust is the ability of allowing the end
+machine/system owner to load other certificates without recompiling the
+kernel. The introduction of the machine keyring was to address this.
 
---=20
-paul-moore.com
+I'm not questioning the end user's intent on loading local or third
+party keys via the normal mechanisms. If the existing mechanism(s) for
+loading local or third party keys were full-proof, then loading a
+single certificate, self-signed or not, would be fine. However, that
+isn't the reality.  The security of the two-stage approach is simply
+not equivalent to loading a single certificate.  Documentation could
+help the end user/system owner to safely create (and manage) separate
+certificate signing and code signing certs.
+
+Unlike UEFI based systems, PowerVM defines two variables trustedcadb
+and moduledb, for storing certificate signing and code signing
+certificates respectively.  First the certs on the trustedcadb are
+loaded and then the ones on moduledb are loaded.
+
+-- 
+thanks,
+
+Mimi
+
