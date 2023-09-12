@@ -2,350 +2,161 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F6ACA0EC6
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Sep 2023 23:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C293CA0ECB
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Sep 2023 01:59:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232827AbjIKXTl (ORCPT
+        id S236187AbjILB7J (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Sep 2023 19:19:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37246 "EHLO
+        Mon, 11 Sep 2023 21:59:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237448AbjIKWxV (ORCPT
+        with ESMTP id S236228AbjILB6y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Sep 2023 18:53:21 -0400
-Received: from sonic317-39.consmr.mail.ne1.yahoo.com (sonic317-39.consmr.mail.ne1.yahoo.com [66.163.184.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AFB71905A
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Sep 2023 15:31:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1694471442; bh=UUgz2B5wg4S6yAnMOKzi3AsEIZNsX57mspyGve0DwoE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=QzVCmMmQ19oej/7CEtji2ZrslIFVrTsh9Gu4KPLmMdfJ/TeOYUc9BJ3n2KLsEdcGSm6L6dlN6Gta7b844LsjWJuxW6daDJWdGGDL9mntrbj6CYhfZ2CLho0jX5Cl0qOi1Z4koFrSMM5tBw09YJFczfxlG+Eisok/1Snc+aH+oiUxVzpaHCRyXTqBmAoU0kWQgEZvKeks8k0Oc41sTZGfLBgHARjrKWR0zaU1sCidGauuujkZlUqizoWprwpKbnYVY4kTOxAVJ1h+gfXwalXcTCHWaI2ZBB6Cizs2rq9F2u/gM5UMtMHgH9N/Jj9SkqO/HWx9YD094KghTvngokY+kQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1694471442; bh=ORyopPV8gih3V6gIF1F3vATZCTfF9ZIDchbRvnqV9+7=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=aeGyD76CsgU90TCvKUMPPOjNqYcf4anpDtsdXsb5cSF1oqcibldbJfvm8QoxTq2AO3kqKFcSG7RtwrBDOAX5OswJ1ztIvZBsrWV8nEk0algR0ADuTfY0b93KOW8hVCYBNPCNNuURnBK2uoI9tmLkrPCYddk9XLC2CnjBeiC0pVtykTr5HnhOOI57E3HOwzSU4H8LVuVKMgts7NyAWcZzQ9pUCaMua7UtB8uNqoK1lDJUWjxXvVnf0pKfYUjWp43QvLkvpO+t+o4CHf6FXf/ex05LX8XPzXJZZXZQSHBa7iLIBJYqbfY8gBR5hnP1bXz0qLFasebLFxfn1VZt3f9FsA==
-X-YMail-OSG: aRg8FcIVM1mwFl4uoud2FulZbKh97FKZ7mx06BUNUySGkRyruapt7sHJLeME0Jy
- YS.tus7zjnbg6Rsv06vHB8lWxXw6oRiOpSOFM1bd.EJX3gvfkL84Qhi3MgkIj.xD7.71rsfypGB.
- Q3ewyBCVMJCUX6ESacE5kEIwAWJMXQdaKEdmQJlgNPny4PEWnFnt_KqU5hireTbzOGgPxsev0._5
- 0HzH8_yuUyGIQWFdXKsEhNZV.MhppAtBcd5V10zFYfVetNo6b3xQE16axxd6RV3jFzCptwO2OnSU
- uJA7owKGv6aQXETXTkF0nVqRj4.njXZ_APcbctcRrgogrXmWZrUDm.pEWrtWQ9pj88sAY0GHLYQT
- AC3erXfOB.b2Q8xeQt21GYzXJhNPGxGtKqO5JQmBdq.7mIhtFe9GzMpZo9ROZmmOrdxf_kUC.Gp4
- tDZAE2LfDrsuLP2rHypbdjQlz9NNstZugVBldrqocFtzhPeox4MWZKk6SriZRh8WWb27YH2.AODg
- 9HfGVCb1aAcrbkgw8GZxg2kiW9FVPQpWimgn3G5e9PCwuoilSsGHYK6ZHgS3a4puMgrlfKhu0MF8
- dNjlwUwQIT8pGJg5CHQkoBsVXKDXNxWTwcCctxRZMkTpIBmAIDjl7awOIg__ev8nwEe9dTSTsSqZ
- xSts.768JzYlGzxtGJQ19q143kmQ6GZhFZcwP.X90m_X8Zsa1OQTF5kPdfeFVjWWKYCHO4q9gq8N
- 7I9MbAq6mbxFJr2uyGt4Xhyz2TLLOaQrVfEcjR8utdGXJUti2.zSnUFjGM7tK4axBfwa3E5RYZ6h
- bhV0UurWTY4G53aLzD3iNLlyd.1Td9j_lpUJnLB0_e5OCpmuGm1zIzIHpnBVLRtvUC4ZR4GbqJzm
- zL6xRZeIQVeXzE6r_ajAh3WYLpBO4ZqjmFmRaCJCEThyBwj7Yz3iN6CCaf1lnXedY6PMAICoSYo6
- LB4kXJWkE4ZUd3EbZawAsC4aw_zmxXe0YbUCzE94XY.lAQiBWhBoxTH8rmuZXa0wD12CdXkWvqnm
- idwfu.UzqmnM8kP4__KPZjvk4AXuN374ztu_5PEJLlyGhN2U0qu3c8gWEqqaWxhZZciyoA4Ii479
- au.P64bZbpLbnrhOBA48CSWhFWZ_e2.ZUZcS6Jsan4ZlCi5EowNz659ydwcBmLFjdQLvjNVOdZqG
- 9dE1lNrwsYPtDXlOKnAJ5IHcGpSZA8EV71U.C_QX7OKKcA9ndPY5Kt7uNDxhV6Q7Gs2DraIbePV3
- l7VEC0PNxwR8Ok.JRSg2lEMOvVSPBcdsf74kVgkEB5iAXs3L8gwCJ6gNiQI8NCdcNQlTM8hDpB68
- p.i5WwkNRiDQBw8ASUMNsrCGbjh8hnD.wCQmr3sBeGyG7UX5_3DNvANloNGjEX2qfbjrrl3n5jzX
- O6u2O9Kwb2ZWdMLZIBqQEfwNEyOzfz2HoTY98H_CNvQvQkr.s6A0u6QhxWWSFvwA7Dv7iTC6Rw2s
- XjVYjbzogiDUsxEPoYcucGiyXj1N4n7HKmFBBAniN9I.vRPjxkNJMbXldI_mnXj.JwdHlt1USohg
- 36nErN2sOH2Z_5ems8X2a5yPKKi_Qr56JDxJ7mW7XlG8oNS6ZvsrGQdhaU9RfXVNaZCcheGS7uGr
- wsFRWBpo9TZPna7lFil6YYhFmtg0YuYaJTl3cn0g9ujauQL1m_ZqPwzmnUPllhXqSH1tPmmvDhMF
- aKB9e3YQoCut0bq.JMy3yFqI3Quzp8SaZ2jvSX8dySefQVYbJ3hj6HCEpdQmhPienMqeigcKIqn.
- lpk2EEXki7ioG.H5l2gWzO121SOO_Qhe5emM33oMSYETm.jtKaTSKjabIqzwTTEuNV.Ow62HS5M1
- G3m8JAJt4CSMwnrIIuFmDjgE20P1JqnPtx_FlpYMLTvamf7wB28.gBdsopjU_RkuBL89N39BW_61
- x8u7JMemM_bs3aVc4l8ELvPi7QKNyTcrkiMH5ANLYdFFGXST.uX.FYbxdIHm42PvfdoLgr_e.Xrf
- em1AXkHdtFGjvXHsbjyS75LgDdta5OVE.5m6EmuTmN10BrjMRcWIVdkbUalXQ_MmppX_2Y_.4l.t
- h7DlckOznnLf9NjKc7UZ.06tu5BqHHKUYLxjkejyBHQFje4W9kG._xLOkXg2CO0AJqyQPY4jZNqy
- W6ND4JL652redG5o_5eXWw0AeiBQy7cOZSL9geK.tEmyvXsefNQGZHhXlg07WlC74M47jy8fiTXq
- SxHZ5kPonod29nyebaL.OkkD1Tc94488MEV9eyn5KrUSsxg.8w.ZNif6Q3zmK1KZBXACX1_XKfyb
- Q6Qnv2w0-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: cdda92d8-d76e-4d8b-8667-c1b92d795c98
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Mon, 11 Sep 2023 22:30:42 +0000
-Received: by hermes--production-bf1-865889d799-5m62n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8d3f1abcca143a9e2bba0e3e7669e2ea;
-          Mon, 11 Sep 2023 22:08:52 +0000 (UTC)
-Message-ID: <ebd82727-cc8e-d922-972b-ebd2cc47f1ee@schaufler-ca.com>
-Date:   Mon, 11 Sep 2023 15:08:48 -0700
+        Mon, 11 Sep 2023 21:58:54 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4727131D83
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Sep 2023 18:29:44 -0700 (PDT)
+Received: from fsav414.sakura.ne.jp (fsav414.sakura.ne.jp [133.242.250.113])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 38C1TbR8038262;
+        Tue, 12 Sep 2023 10:29:37 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav414.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp);
+ Tue, 12 Sep 2023 10:29:37 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 38C1Tb3s038258
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 12 Sep 2023 10:29:37 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <43d84d6c-18ac-6689-cddc-d079cfa19d4d@I-love.SAKURA.ne.jp>
+Date:   Tue, 12 Sep 2023 10:29:35 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH v14 04/11] LSM: syscalls for current process attributes
+ Thunderbird/102.15.0
+Subject: Re: ANN: new LSM guidelines
 Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20230828195802.135055-1-casey@schaufler-ca.com>
- <20230828195802.135055-5-casey@schaufler-ca.com>
- <20230907.go2eLeCo6ov1@digikod.net>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20230907.go2eLeCo6ov1@digikod.net>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
+ <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com>
+ <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
+ <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
+ <CAHC9VhQhf+ik5S_aJOVn59pax1Aa0vO5gJ4YoxrtGRKtoWh7sA@mail.gmail.com>
+ <f8f32da5-6f31-d197-7405-8f308bd29228@I-love.SAKURA.ne.jp>
+ <CAHC9VhTktg4RFWw+rSZ6wWQ8iR3n2p8XaOO95BbJ1QGAd4y9fg@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhTktg4RFWw+rSZ6wWQ8iR3n2p8XaOO95BbJ1QGAd4y9fg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.21797 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/7/2023 8:37 AM, Mickaël Salaün wrote:
-> On Mon, Aug 28, 2023 at 12:57:54PM -0700, Casey Schaufler wrote:
->> Create a system call lsm_get_self_attr() to provide the security
->> module maintained attributes of the current process.
->> Create a system call lsm_set_self_attr() to set a security
->> module maintained attribute of the current process.
->> Historically these attributes have been exposed to user space via
->> entries in procfs under /proc/self/attr.
->>
->> The attribute value is provided in a lsm_ctx structure. The structure
->> identifies the size of the attribute, and the attribute value. The format
->> of the attribute value is defined by the security module. A flags field
->> is included for LSM specific information. It is currently unused and must
->> be 0. The total size of the data, including the lsm_ctx structure and any
->> padding, is maintained as well.
->>
->> struct lsm_ctx {
->>         __u64 id;
->>         __u64 flags;
->>         __u64 len;
->>         __u64 ctx_len;
->>         __u8 ctx[];
->> };
->>
->> Two new LSM hooks are used to interface with the LSMs.
->> security_getselfattr() collects the lsm_ctx values from the
->> LSMs that support the hook, accounting for space requirements.
->> security_setselfattr() identifies which LSM the attribute is
->> intended for and passes it along.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> Reviewed-by: Kees Cook <keescook@chromium.org>
->> Reviewed-by: Serge Hallyn <serge@hallyn.com>
->> Reviewed-by: John Johansen <john.johansen@canonical.com>
->> ---
->>  Documentation/userspace-api/lsm.rst |  70 +++++++++++++
->>  include/linux/lsm_hook_defs.h       |   4 +
->>  include/linux/lsm_hooks.h           |   1 +
->>  include/linux/security.h            |  19 ++++
->>  include/linux/syscalls.h            |   5 +
->>  include/uapi/linux/lsm.h            |  36 +++++++
->>  kernel/sys_ni.c                     |   2 +
->>  security/Makefile                   |   1 +
->>  security/lsm_syscalls.c             |  57 +++++++++++
->>  security/security.c                 | 146 ++++++++++++++++++++++++++++
->>  10 files changed, 341 insertions(+)
->>  create mode 100644 Documentation/userspace-api/lsm.rst
->>  create mode 100644 security/lsm_syscalls.c
->>
->> +/**
->> + * security_getselfattr - Read an LSM attribute of the current process.
->> + * @attr: which attribute to return
->> + * @uctx: the user-space destination for the information, or NULL
->> + * @size: pointer to the size of space available to receive the data
->> + * @flags: special handling options. LSM_FLAG_SINGLE indicates that only
->> + * attributes associated with the LSM identified in the passed @ctx be
->> + * reported.
->> + *
->> + * A NULL value for @uctx can be used to get both the number of attributes
->> + * and the size of the data.
->> + *
->> + * Returns the number of attributes found on success, negative value
->> + * on error. @size is reset to the total size of the data.
->> + * If @size is insufficient to contain the data -E2BIG is returned.
->> + */
->> +int security_getselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
->> +			 size_t __user *size, u32 flags)
->> +{
->> +	struct security_hook_list *hp;
->> +	struct lsm_ctx lctx = { .id = LSM_ID_UNDEF, };
->> +	u8 __user *base = (u8 __user *)uctx;
->> +	size_t total = 0;
->> +	size_t entrysize;
->> +	size_t left;
->> +	bool toobig = false;
->> +	bool single = false;
-> Much easier to read with these booleans.
->
->> +	int count = 0;
->> +	int rc;
->> +
->> +	if (attr == LSM_ATTR_UNDEF)
->> +		return -EINVAL;
->> +	if (size == NULL)
->> +		return -EINVAL;
->> +	if (get_user(left, size))
->> +		return -EFAULT;
->> +
->> +	if (flags) {
->> +		/*
->> +		 * Only flag supported is LSM_FLAG_SINGLE
->> +		 */
->> +		if (flags & LSM_FLAG_SINGLE)
->> +			return -EINVAL;
->> +		if (uctx &&
->> +		    copy_struct_from_user(&lctx, sizeof(lctx), uctx, left))
-> Again, I'm not sure is copy_struct_from_user() should be used here
-> because it checks that the user space structures ends with zeros, which
-> is inconsistent with the case without LSM_FLAG_SINGLE. Anyway, this code
-> should at least properly handle the copy_struct_from_user() error codes
-> which includes EFAULT *and* E2BIG.
+On 2023/09/12 5:04, Paul Moore wrote:
+>> If one of userspace tools designed for the new LSM depends on the LSM ID, when can
+>> the author of the new LSM obtain the stable LSM ID for that LSM ?
+> 
+> A permanent LSM ID is assigned to LSMs when they are merged into the
+> upstream LSM tree.  This is no different than any other kernel defined
+> macro constant, enum, magic number, etc. that is shared between kernel
+> and userspace and is considered part of the kernel's API.
 
-Further testing makes your point. The checking in copy_struct_from_user()
-is really annoying. I'm going to fix this.
+Then, your
 
->
->> +			return -EFAULT;
->> +		/*
->> +		 * If the LSM ID isn't specified it is an error.
->> +		 */
->> +		if (lctx.id == LSM_ID_UNDEF)
->> +			return -EINVAL;
->> +		single = true;
->> +	}
->> +
->> +	/*
->> +	 * In the usual case gather all the data from the LSMs.
->> +	 * In the single case only get the data from the LSM specified.
->> +	 */
->> +	hlist_for_each_entry(hp, &security_hook_heads.getselfattr, list) {
->> +		if (single) {
->> +			if (count > 0)
->> +				break;
->> +			if (lctx.id != hp->lsmid->id)
->> +				continue;
->> +		}
->> +		entrysize = left;
->> +		if (base)
->> +			uctx = (struct lsm_ctx __user *)(base + total);
->> +		rc = hp->hook.getselfattr(attr, uctx, &entrysize, flags);
->> +		if (rc == -EOPNOTSUPP) {
->> +			rc = 0;
-> Not a big deal but with LSM_FLAG_SINGLE, if the selected LSM doesn't
-> implement this hook, this will uselessly loop over all LSMs.
-> I'd add:
->
-> if (single)
-> 	/* Still try to write 0 as the total size for consistency. */
-> 	break;
+  * The new LSM must be sufficiently unique to justify the additional work
+  involved in reviewing, maintaining, and supporting the LSM.  It is reasonable
+  for there to be a level of overlap between LSMs, but either the security model
+  or the admin/user experience must be significantly unique.
 
-I'm trying to keep LSM_FLAG_SINGLE from being a complete special case.
-Asking for an attribute that the specified LSM doesn't support is a
-programming error, so I'm not concerned about a trivial performance
-issue.
+is an ultimately unfair requirement, for the combination of
 
->
->> +			continue;
->> +		}
->> +		if (rc == -E2BIG) {
->> +			toobig = true;
->> +			left = 0;
->> +			total += entrysize;
-> I'm not sure what is the desired behavior with LSM_FLAG_SINGLE in this
-> case but I'd add:
->
-> if (single)
-> 	break;
+  Ultimately, new LSMs are added to the kernel at the discretion of the maintainers
+  and reviewers.
 
-I'm shifting the control logic a bit. I think it'll look cleaner.
+and
 
->
->> +			continue;
->> +		}
->> +		if (rc < 0)
->> +			return rc;
-> I think this should be a break instead of the return rc for consistency
-> reasons.
+  A permanent LSM ID is assigned to LSMs when they are merged into the upstream
+  LSM tree.
 
-No one has ever accused me of being consistent. I believe in using
-return aggressively.
+causes locking out not-yet-in-tree and out-of-tree LSMs.
 
->
->> +
->> +		left -= entrysize;
->> +		total += entrysize;
->> +		count += rc;
-> You could simplify a bit by replacing the first single check with this
-> one:
->
-> if (single)
-> 	break;
+> I understand you are opposed to the numeric LSM ID as part of the
+> kernel's API, but I believe this is both the correct way forward, and
+> consistent with other kernel APIs.  It is your right to disagree, but
+> I have yet to see a reason to revisit this decision and respectfully
+> request that you accept this and refrain from revisiting this argument
+> unless you have new information which would warrant a new discussion.
 
-As above, I think I'm making this clearer in v15.
+I'm not against the numeric LSM ID itself. I'm against the policy for assigning
+numeric LSM ID. The numeric LSM ID can become the correct way forward only if
+the following problem is solved.
 
->
->> +	}
->> +	if (put_user(total, size))
->> +		return -EFAULT;
->> +	if (toobig)
->> +		return -E2BIG;
->> +	if (count == 0)
->> +		return LSM_RET_DEFAULT(getselfattr);
->> +	return count;
->> +}
->> +
-> It would be nice to add a comment before all these three syscall
-> documentations to keep up-to-date the related user space documentation
-> in lsm_syscalls.c
 
-Good thinking.
 
->
->> +/**
->> + * security_setselfattr - Set an LSM attribute on the current process.
->> + * @attr: which attribute to set
->> + * @uctx: the user-space source for the information
->> + * @size: the size of the data
->> + * @flags: reserved for future use, must be 0
->> + *
->> + * Set an LSM attribute for the current process. The LSM, attribute
->> + * and new value are included in @uctx.
->> + *
->> + * Returns 0 on success, -EINVAL if the input is inconsistent, -EFAULT
->> + * if the user buffer is inaccessible or an LSM specific failure.
->> + */
->> +int security_setselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
->> +			 size_t size, u32 flags)
->> +{
->> +	struct security_hook_list *hp;
->> +	struct lsm_ctx *lctx;
->> +	int rc = LSM_RET_DEFAULT(setselfattr);
->> +
->> +	if (flags)
->> +		return -EINVAL;
->> +	if (size < sizeof(*lctx) || size > PAGE_SIZE)
-> I would be better to return -E2BIG if size > PAGE_SIZE, and update the
-> (two) documentations accordingly.
->
->> +		return -EINVAL;
->> +
->> +	lctx = kmalloc(size, GFP_KERNEL);
->> +	if (lctx == NULL)
->> +		return -ENOMEM;
->> +
->> +	if (copy_from_user(lctx, uctx, size)) {
->> +		rc = -EFAULT;
->> +		goto free_out;
->> +	}
->> +
->> +	if (size < lctx->len || size < lctx->ctx_len + sizeof(*lctx) ||
->> +	    lctx->len < lctx->ctx_len + sizeof(*lctx)) {
->> +		rc = -EINVAL;
->> +		goto free_out;
->> +	}
->> +
->> +	hlist_for_each_entry(hp, &security_hook_heads.setselfattr, list)
->> +		if ((hp->lsmid->id) == lctx->id) {
->> +			rc = hp->hook.setselfattr(attr, lctx, size, flags);
-> There is no need (at least for now) to directly expose lctx->id nor
-> lctx->flags. It would be simpler to only pass lctx->ctx and
-> lctx->ctx_len to the hooks.
+A market is not a location where only products that passed a patent examination
+are available. There are always products which failed to pass a patent examination.
+But you are trying to make products which failed to pass a patent examination into
+unavailable state, by requiring each product to get a barcode number which is assigned
+to only products that passed a patent examination. Such situation is a regression
+compared to requiring each product to have a product name.
 
-No. Absolutely not. I dislike passing string/length pairs, especially when
-they are both contained in a structure.
+A Linux kernel is not a program where only codes that passed a patent examination
+can be loaded and executed. There are always programs which failed to pass a patent
+examination. But you are trying to make programs which failed to pass a patent
+examination into unavailable state, by requiring each program to get an identifier
+which is assigned to only programs that passed a patent examination.
 
->
->> +			break;
->> +		}
->> +
->> +free_out:
->> +	kfree(lctx);
->> +	return rc;
->> +}
->> +
->>  /**
->>   * security_getprocattr() - Read an attribute for a task
->>   * @p: the task
->> -- 
->> 2.41.0
->>
+LSMs are one of programs designed for the Linux kernel. That is, there are always
+LSMs which failed to become one of in-tree LSMs. But you are trying to make LSMs
+which failed to pass a patent examination into unavailable state, by requiring
+each LSM to get an LSM ID which is assigned to only programs that passed a patent
+examination.
+
+> LSM developers creating userspace tooling that makes use of the LSM ID
+> numbers should use the macro name and not the number, this should
+> allow the tooling to support the permanent LSM ID with a simple
+> recompile.
+
+"Using the macro name and not the number" is the catch-22 situation. The problem is
+that LSMs which are under review for becoming one of in-tree LSMs (and LSMs which
+failed to become one of in-tree LSMs due to the patent examination) cannot rely on
+the macro from the code in the public git repository due to lack of a stable number
+for that macro.
+
+When someone wants to try the userspace tooling, you are saying that that someone
+can use -DLSM_NUMERIC_ID_FOR_THAT_LSM_MODULE=... argument to gcc when compiling
+the userspace, without saying the ... part. The consequence will be conflicts
+between multiple LSMs and/or non-working userspace tools. This will not facilitate
+use of the LSM interface.
+
+
+
+Whether LSM ID is "consistent with other kernel APIs" is completely irrelevant.
+
+The LSM ID must behave like PCI device IDs and/or entries in /etc/services .
+That is, whether the device driver and/or networking services are available
+in the upstream kernel is irrelevant. PCI device drivers which are not available
+in the upstream kernel are allowed to be loaded. The LSM ID database must behave
+like the list of all LSMs which are publicly available in the world, rather than
+what LSMs are permitted to be loaded and what userspace tools can work.
+
+The current LSM ID is designed for locking out all products which are not available
+in the upstream market. The concept of LSM ID must be changed to allow any product
+to be publicly available from somewhere in the world. Otherwise, use of numeric ID
+(and the "LSM syscall patchset" which uses the numeric ID) is a complete garbage.
+
+
+
+The LSM ID is not a API. The LSM ID is a publicly available database.
+Passing a patent examination must not be a requirement for assigning a stable LSM ID.
+The LSM ID numbers must be available to all publicly available LSMs.
+
+That is, either get rid of the patent examination requirement (so that whatever
+proposed LSMs can become in-tree as long as maintaining and supporting the new
+LSM for an extended period of time are committed), or assign the LSM ID by an
+independent organization rather than at the discretion of the maintainers and
+reviewers (so that whatever LSM can obtain a stable LSM ID regardless of whether
+that LSM succeeds in becoming one of in-tree LSMs).
+
