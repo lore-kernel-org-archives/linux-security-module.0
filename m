@@ -2,248 +2,259 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B87BBCA0EC3
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Sep 2023 11:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 857F7CA0ED3
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Sep 2023 12:01:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234490AbjILLOG (ORCPT
+        id S234942AbjILMBP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Sep 2023 07:14:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49466 "EHLO
+        Tue, 12 Sep 2023 08:01:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234498AbjILLMC (ORCPT
+        with ESMTP id S235049AbjILMAt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Sep 2023 07:12:02 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A19571728
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 04:11:58 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-9ad8d47ef2fso47698066b.1
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 04:11:58 -0700 (PDT)
+        Tue, 12 Sep 2023 08:00:49 -0400
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1B7D1721;
+        Tue, 12 Sep 2023 05:00:24 -0700 (PDT)
+Received: by mail-oi1-x231.google.com with SMTP id 5614622812f47-3aa1c046659so4019254b6e.0;
+        Tue, 12 Sep 2023 05:00:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1694517117; x=1695121917; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1694520024; x=1695124824; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+qntkmutwprS+2oQeQzgmaP97TAaIsTbzLeg5qvDo3I=;
-        b=iMzepLjNMKLJcQYvd5fyO+0ZOQ90UpaYBgzGzIm7H58asy0ZRDjtnwgLLDhr+Y7RoA
-         PFDxp0+dLGLpL0AwUT/sT5su7Rl7SnVKKRCb6T3uFCWjDYrvt5JucNYAJA7tz4x6qwFZ
-         6QFX6rvRGgY4PqLVTvn3fI/Wvuhcf0VKmq/x3Xg+MvjsOL9iKAEmMaR3L70dtVWKT5WM
-         j+/scgZ5VdLXCIfJ2CsmT5Yhb6r9gkEEnnImnm3cIviardcyc7Hp78CS24ILZFWLp41l
-         5ac+povKJbVzTzodm+nFR2y7QknUg+9UKV+bMPwkxNHADXXpzARlF8CkYBaytmRQ+KYE
-         bsbQ==
+        bh=Bfx8qyKxeQqpt+NjmLCChFJkKXstxcEm0yVFNB6xs3M=;
+        b=avlBQkyEf08TjKYKIX0fCBFXXTM0CDhQgHJz4JYUseFE06UX4tJKx0SpAbkf9r0/rH
+         bi6gyBInkEFhYzglHYGMnJZ73vMWEpcnc8EV5v7tvXKg50V4CG7yPyZIdWGtrcjcTCOM
+         DfM5eD0I/xFbKijk1ktSUBzjexlTFohuKodYBoLzpc2uoxCZUvipcG4k9u/8AGSDFUf3
+         WRhJlElNX00O5hYndAbfEKxk+7zqgx4qL3qTVojQFht13KiatSQAQlluURNtuz+IP1E0
+         uD7zCruVtVenzba4wIYFRMUzKW8KHPFsqELVE5NRzmkT8/YLvroDXTg2BvF6YTTh+KZe
+         KniA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694517117; x=1695121917;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1694520024; x=1695124824;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+qntkmutwprS+2oQeQzgmaP97TAaIsTbzLeg5qvDo3I=;
-        b=Ru30mv+348u/CU79pcmqBu1vyBFnN6nIUZeXDsCzrT5Fvt7bo1FLwJ2G2z4ecDdv0n
-         57Tme/U/ozBYriS6GhFwGQf/g+74aA5YR6u2VSF1w6rgNt8+FMnKLsoqnRjDKKMrIODg
-         UfrVXrdAc41ONWGksX8V2ttKhFQl5646o75R0jjG4UiVW52td6fypVawU1ehxIFmCr6u
-         k/wufNs/XNGvUFqkIBM0uq0oK46N7BhIsuMOrOk3k7SzL9nlJxfBbeM1c4LDnnMYrQMP
-         HiOE1FWuZnTBcSwsfUMzW5lt8z9uYNV5xwEsTRlInmS3qFvEABffNoGprvgCsuEGVA4v
-         ScQA==
-X-Gm-Message-State: AOJu0Yyaqk9AQfqgxHUEnm4Tmx1L1PxA6KmY328vwYRZYelx7+27IeAi
-        f0kfOVMwV/d6KV6fkbDOUIg+GA==
-X-Google-Smtp-Source: AGHT+IFcfRE8ddxwpToYbqFfRtOil3lX24xXTcYqNYqRo7uISxMJRRm2P8R9+XFaZVp+WcaxzQj80A==
-X-Received: by 2002:a17:906:51c8:b0:9a9:e4ce:c9a2 with SMTP id v8-20020a17090651c800b009a9e4cec9a2mr10496806ejk.53.1694517117122;
-        Tue, 12 Sep 2023 04:11:57 -0700 (PDT)
-Received: from localhost ([82.150.214.1])
-        by smtp.gmail.com with UTF8SMTPSA id u17-20020a170906069100b009a5f7fb51d5sm6638903ejb.21.2023.09.12.04.11.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Sep 2023 04:11:56 -0700 (PDT)
-From:   David Gstir <david@sigma-star.at>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     David Gstir <david@sigma-star.at>, Shawn Guo <shawnguo@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        sigma star Kernel Team <upstream+dcp@sigma-star.at>,
-        David Howells <dhowells@redhat.com>,
-        Li Yang <leoyang.li@nxp.com>, Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Steven Rostedt (Google)" <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-security-module@vger.kernel.org,
-        Richard Weinberger <richard@nod.at>,
-        David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Subject: [PATCH v2 3/3] doc: trusted-encrypted: add DCP as new trust source
-Date:   Tue, 12 Sep 2023 13:11:14 +0200
-Message-ID: <20230912111115.24274-4-david@sigma-star.at>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230912111115.24274-1-david@sigma-star.at>
-References: <20230912111115.24274-1-david@sigma-star.at>
+        bh=Bfx8qyKxeQqpt+NjmLCChFJkKXstxcEm0yVFNB6xs3M=;
+        b=Xu3JQdmKUSPYIM3dqHOCiBuVdwYB+kxUqcRJ9eVde9jrQCpfH/iz3ONVMMM0Zj/eL1
+         5s4+RuKqKRpSol/ZLwXmrncncCbjllhz00YiY6PHL/rk7t9tsT0j6ZhHesIsRmVY9Xuu
+         lSkuTyVMVl0QEpCcyg2unuUuYbDOo4B134TXS/cCFDMv/OiDGfTPblamxdXJn7r68PtM
+         GEm7xwtQO8oM7LId3RerVnF+7+W8ZtrLwBnTA53Nqr74Yb7w/DWiuahv/jWX6WdVyN8W
+         rfm3rZ9nuMcU09PQNPaOi6QzrVLJ25Dum5za7vP1lP/GUgjW60XjA/aeRL7wiYQqFvjn
+         tiaw==
+X-Gm-Message-State: AOJu0YwSQrBlqrUNujo6r56ZEi5I9cIV4/NFLGL6s5+LLgJLo9wKOYVd
+        SF3QuafifAl7/tG+mRRn/gY97ODu8kNluDkeuZI=
+X-Google-Smtp-Source: AGHT+IFu915Ongf7qGoEx5uG6du+SHYbHAjqGAg+yP49LNsWS4aGUG+9ov+iK1LrZOQ+/4kcWO7JdRp0uCHJtdCPT8Q=
+X-Received: by 2002:a05:6808:14d5:b0:3a4:ccf:6a63 with SMTP id
+ f21-20020a05680814d500b003a40ccf6a63mr15980885oiw.55.1694520024037; Tue, 12
+ Sep 2023 05:00:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230906115928.3749928-1-alpic@google.com> <202309090600.NSyo7d2q-lkp@intel.com>
+ <CAEjxPJ4GOq3E4zqXbEMKUxqewopyeU5nmUg89rL+P5YsuEBi7A@mail.gmail.com>
+ <CAEjxPJ4uoqkwmbeOOmUHJwoKiK3cnfJP5P2w+hOXr4BZNtQ+JQ@mail.gmail.com> <CALcwBGBPaYh98d+3_3k8o+8WCbYU8cNPoOHaqhUduKZYz7Ntow@mail.gmail.com>
+In-Reply-To: <CALcwBGBPaYh98d+3_3k8o+8WCbYU8cNPoOHaqhUduKZYz7Ntow@mail.gmail.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Tue, 12 Sep 2023 08:00:12 -0400
+Message-ID: <CAEjxPJ6gFh7h5MnEEqTL34_dVEoAmoGfqa01eeYHnOECjkYxBg@mail.gmail.com>
+Subject: Re: [PATCH V2] SELinux: Check correct permissions for FS_IOC32_*
+To:     Alfred Piccioni <alpic@google.com>
+Cc:     kernel test robot <lkp@intel.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        oe-kbuild-all@lists.linux.dev, stable@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Update the documentation for trusted and encrypted KEYS with DCP as new
-trust source:
+On Tue, Sep 12, 2023 at 5:00=E2=80=AFAM Alfred Piccioni <alpic@google.com> =
+wrote:
+>
+> On Mon, Sep 11, 2023 at 3:49=E2=80=AFPM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+> >
+> > On Mon, Sep 11, 2023 at 9:19=E2=80=AFAM Stephen Smalley
+> > <stephen.smalley.work@gmail.com> wrote:
+> > >
+> > > On Fri, Sep 8, 2023 at 6:54=E2=80=AFPM kernel test robot <lkp@intel.c=
+om> wrote:
+> > > >
+> > > > Hi Alfred,
+> > > >
+> > > > kernel test robot noticed the following build errors:
+> > > >
+> > > > [auto build test ERROR on 50a510a78287c15cee644f345ef8bac8977986a7]
+> > > >
+> > > > url:    https://github.com/intel-lab-lkp/linux/commits/Alfred-Picci=
+oni/SELinux-Check-correct-permissions-for-FS_IOC32_/20230906-200131
+> > > > base:   50a510a78287c15cee644f345ef8bac8977986a7
+> > > > patch link:    https://lore.kernel.org/r/20230906115928.3749928-1-a=
+lpic%40google.com
+> > > > patch subject: [PATCH V2] SELinux: Check correct permissions for FS=
+_IOC32_*
+> > > > config: i386-debian-10.3 (https://download.01.org/0day-ci/archive/2=
+0230909/202309090600.NSyo7d2q-lkp@intel.com/config)
+> > > > compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+> > > > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci=
+/archive/20230909/202309090600.NSyo7d2q-lkp@intel.com/reproduce)
+> > > >
+> > > > If you fix the issue in a separate patch/commit (i.e. not just a ne=
+w version of
+> > > > the same patch/commit), kindly add following tags
+> > > > | Reported-by: kernel test robot <lkp@intel.com>
+> > > > | Closes: https://lore.kernel.org/oe-kbuild-all/202309090600.NSyo7d=
+2q-lkp@intel.com/
+> > > >
+> > > > All errors (new ones prefixed by >>):
+> > > >
+> > > >    security/selinux/hooks.c: In function 'selinux_file_ioctl':
+> > > > >> security/selinux/hooks.c:3647:9: error: duplicate case value
+> > > >     3647 |         case FS_IOC32_GETFLAGS:
+> > > >          |         ^~~~
+> > > >    security/selinux/hooks.c:3645:9: note: previously used here
+> > > >     3645 |         case FS_IOC_GETFLAGS:
+> > > >          |         ^~~~
+> > > >    security/selinux/hooks.c:3648:9: error: duplicate case value
+> > > >     3648 |         case FS_IOC32_GETVERSION:
+> > > >          |         ^~~~
+> > > >    security/selinux/hooks.c:3646:9: note: previously used here
+> > > >     3646 |         case FS_IOC_GETVERSION:
+> > > >          |         ^~~~
+> > > >    security/selinux/hooks.c:3654:9: error: duplicate case value
+> > > >     3654 |         case FS_IOC32_SETFLAGS:
+> > > >          |         ^~~~
+> > > >    security/selinux/hooks.c:3652:9: note: previously used here
+> > > >     3652 |         case FS_IOC_SETFLAGS:
+> > > >          |         ^~~~
+> > > >    security/selinux/hooks.c:3655:9: error: duplicate case value
+> > > >     3655 |         case FS_IOC32_SETVERSION:
+> > > >          |         ^~~~
+> > > >    security/selinux/hooks.c:3653:9: note: previously used here
+> > > >     3653 |         case FS_IOC_SETVERSION:
+> > > >          |         ^~~~
+> > >
+> > > Not sure of the right way to fix this while addressing the original
+> > > issue that this patch was intended to fix. Looking in fs/ioctl.c, I
+> > > see that the some FS_IOC32 values are remapped to the corresponding
+> > > FS_IOC values by the compat ioctl syscall entrypoint. Also notice thi=
+s
+> > > comment there:
+> > >
+> > >         /* RED-PEN how should LSM module know it's handling 32bit? */
+> > >         error =3D security_file_ioctl(f.file, cmd, arg);
+> > >         if (error)
+> > >                 goto out;
+> > >
+> > > So perhaps this is a defect in LSM that needs to be addressed?
+> >
+> > Note btw that some of the 32-bit ioctl commands are only handled in
+> > the fs-specific compat_ioctl routines, e.g. ext4_compat_ioctl()
+> > handles EXT4_IOC32_GETVERSION =3D=3D FS_IOC32_GETVERSION and ditto for
+> > _SETVERSION.
+> >
+> > >
+> > >
+> > > >
+> > > >
+> > > > vim +3647 security/selinux/hooks.c
+> > > >
+> > > >   3634
+> > > >   3635  static int selinux_file_ioctl(struct file *file, unsigned i=
+nt cmd,
+> > > >   3636                                unsigned long arg)
+> > > >   3637  {
+> > > >   3638          const struct cred *cred =3D current_cred();
+> > > >   3639          int error =3D 0;
+> > > >   3640
+> > > >   3641          switch (cmd) {
+> > > >   3642          case FIONREAD:
+> > > >   3643          case FIBMAP:
+> > > >   3644          case FIGETBSZ:
+> > > >   3645          case FS_IOC_GETFLAGS:
+> > > >   3646          case FS_IOC_GETVERSION:
+> > > > > 3647          case FS_IOC32_GETFLAGS:
+> > > >   3648          case FS_IOC32_GETVERSION:
+> > > >   3649                  error =3D file_has_perm(cred, file, FILE__G=
+ETATTR);
+> > > >   3650                  break;
+> > > >   3651
+> > > >   3652          case FS_IOC_SETFLAGS:
+> > > >   3653          case FS_IOC_SETVERSION:
+> > > >   3654          case FS_IOC32_SETFLAGS:
+> > > >   3655          case FS_IOC32_SETVERSION:
+> > > >   3656                  error =3D file_has_perm(cred, file, FILE__S=
+ETATTR);
+> > > >   3657                  break;
+> > > >   3658
+> > > >   3659          /* sys_ioctl() checks */
+> > > >   3660          case FIONBIO:
+> > > >   3661          case FIOASYNC:
+> > > >   3662                  error =3D file_has_perm(cred, file, 0);
+> > > >   3663                  break;
+> > > >   3664
+> > > >   3665          case KDSKBENT:
+> > > >   3666          case KDSKBSENT:
+> > > >   3667                  error =3D cred_has_capability(cred, CAP_SYS=
+_TTY_CONFIG,
+> > > >   3668                                              CAP_OPT_NONE, t=
+rue);
+> > > >   3669                  break;
+> > > >   3670
+> > > >   3671          case FIOCLEX:
+> > > >   3672          case FIONCLEX:
+> > > >   3673                  if (!selinux_policycap_ioctl_skip_cloexec()=
+)
+> > > >   3674                          error =3D ioctl_has_perm(cred, file=
+, FILE__IOCTL, (u16) cmd);
+> > > >   3675                  break;
+> > > >   3676
+> > > >   3677          /* default case assumes that the command will go
+> > > >   3678           * to the file's ioctl() function.
+> > > >   3679           */
+> > > >   3680          default:
+> > > >   3681                  error =3D ioctl_has_perm(cred, file, FILE__=
+IOCTL, (u16) cmd);
+> > > >   3682          }
+> > > >   3683          return error;
+> > > >   3684  }
+> > > >   3685
+>
+> Hey Stephen,
+>
+> Thanks for looking into it a bit deeper! This seems a bit of a pickle.
+> I can think of a few somewhat hacky ways to fix this.
+>
+> I can just set the flags to check `if FS_IOC32_*; set FS_IOC_*;`,
+> which is the quickest but kinda hacky.
+>
+> I can go with the other plan of dropping the irrelevant bytes from the
+> cmd code, so all codes will be read as u16. This effectively does the
+> same thing, but may be unclear.
+>
+> I can also look into whether this can be solved at the LSM or a higher
+> level. Perhaps the filesystems setting `if FS_IOC32_*; set FS_IOC_*;`
+> is a hint that something else interesting is going wrong.
+>
+> I'll spend a little time thinking and investigating and get back with
+> a more concrete solution. I'll also need to do a bit more robust
+> testing; it built on my machine!
 
-- Describe security properties of DCP trust source
-- Describe key usage
-- Document blob format
+Likewise for me; I don't generally try building for 32-bit systems.
+Remapping FS_IOC32_* to FS_IOC_* in selinux_file_ioctl() seems
+reasonable to me although optimally that would be conditional on
+whether selinux_file_ioctl() is being called from the compat ioctl
+syscall (e.g. adding a flag to the LSM hook to indicate this or using
+a separate hook for it). Otherwise we might misinterpret some other
+ioctl on 64-bit.
 
-Co-developed-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Co-developed-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Signed-off-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Signed-off-by: David Gstir <david@sigma-star.at>
----
- .../security/keys/trusted-encrypted.rst       | 85 +++++++++++++++++++
- 1 file changed, 85 insertions(+)
+If we didn't have compatibility requirements, it would be tempting to
+just get rid of all the special case ioctl command handling in
+selinux_file_ioctl() and let ioctl_has_perm() handle them all with the
+extended ioctl permissions support. But that would require a SELinux
+policy cap to switch it on conditionally for compatibility at least
+and not sure anyone is willing to refactor their policies accordingly.
 
-diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-index 9bc9db8ec651..4452070afbe9 100644
---- a/Documentation/security/keys/trusted-encrypted.rst
-+++ b/Documentation/security/keys/trusted-encrypted.rst
-@@ -42,6 +42,14 @@ safe.
-          randomly generated and fused into each SoC at manufacturing time.
-          Otherwise, a common fixed test key is used instead.
- 
-+     (4) DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs)
-+
-+         Rooted to a one-time programmable key (OTP) that is generally burnt
-+         in the on-chip fuses and is accessible to the DCP encryption engine only.
-+         DCP provides two keys that can be used as root of trust: the OTP key
-+         and the UNIQUE key. Default is to use the UNIQUE key, but selecting
-+         the OTP key can be done via a module parameter (dcp_use_otp_key).
-+
-   *  Execution isolation
- 
-      (1) TPM
-@@ -57,6 +65,12 @@ safe.
- 
-          Fixed set of operations running in isolated execution environment.
- 
-+     (4) DCP
-+
-+         Fixed set of cryptographic operations running in isolated execution
-+         environment. Only basic blob key encryption is executed there.
-+         The actual key sealing/unsealing is done on main processor/kernel space.
-+
-   * Optional binding to platform integrity state
- 
-      (1) TPM
-@@ -79,6 +93,11 @@ safe.
-          Relies on the High Assurance Boot (HAB) mechanism of NXP SoCs
-          for platform integrity.
- 
-+     (4) DCP
-+
-+         Relies on Secure/Trusted boot process (called HAB by vendor) for
-+         platform integrity.
-+
-   *  Interfaces and APIs
- 
-      (1) TPM
-@@ -94,6 +113,11 @@ safe.
- 
-          Interface is specific to silicon vendor.
- 
-+     (4) DCP
-+
-+         Vendor-specific API that is implemented as part of the DCP crypto driver in
-+         ``drivers/crypto/mxs-dcp.c``.
-+
-   *  Threat model
- 
-      The strength and appropriateness of a particular trust source for a given
-@@ -129,6 +153,13 @@ selected trust source:
-      CAAM HWRNG, enable CRYPTO_DEV_FSL_CAAM_RNG_API and ensure the device
-      is probed.
- 
-+  *  DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs)
-+
-+     The DCP hardware device itself does not provide a dedicated RNG interface,
-+     so the kernel default RNG is used. SoCs with DCP like the i.MX6ULL do have
-+     a dedicated hardware RNG that is independent from DCP which can be enabled
-+     to back the kernel RNG.
-+
- Users may override this by specifying ``trusted.rng=kernel`` on the kernel
- command-line to override the used RNG with the kernel's random number pool.
- 
-@@ -231,6 +262,19 @@ Usage::
- CAAM-specific format.  The key length for new keys is always in bytes.
- Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
- 
-+Trusted Keys usage: DCP
-+-----------------------
-+
-+Usage::
-+
-+    keyctl add trusted name "new keylen" ring
-+    keyctl add trusted name "load hex_blob" ring
-+    keyctl print keyid
-+
-+"keyctl print" returns an ASCII hex copy of the sealed key, which is in format
-+specific to this DCP key-blob implementation.  The key length for new keys is
-+always in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
-+
- Encrypted Keys usage
- --------------------
- 
-@@ -426,3 +470,44 @@ string length.
- privkey is the binary representation of TPM2B_PUBLIC excluding the
- initial TPM2B header which can be reconstructed from the ASN.1 octed
- string length.
-+
-+DCP Blob Format
-+---------------
-+
-+The Data Co-Processor (DCP) provides hardware-bound AES keys using its
-+AES encryption engine only. It does not provide direct key sealing/unsealing.
-+To make DCP hardware encryption keys usable as trust source, we define
-+our own custom format that uses a hardware-bound key to secure the sealing
-+key stored in the key blob.
-+
-+Whenever a new trusted key using DCP is generated, we generate a random 128-bit
-+blob encryption key (BEK) and 128-bit nonce. The BEK and nonce are used to
-+encrypt the trusted key payload using AES-128-GCM.
-+
-+The BEK itself is encrypted using the hardware-bound key using the DCP's AES
-+encryption engine with AES-128-ECB. The encrypted BEK, generated nonce,
-+BEK-encrypted payload and authentication tag make up the blob format together
-+with a version number, payload length and authentication tag::
-+
-+    /*
-+     * struct dcp_blob_fmt - DCP BLOB format.
-+     *
-+     * @fmt_version: Format version, currently being %1
-+     * @blob_key: Random AES 128 key which is used to encrypt @payload,
-+     *            @blob_key itself is encrypted with OTP or UNIQUE device key in
-+     *            AES-128-ECB mode by DCP.
-+     * @nonce: Random nonce used for @payload encryption.
-+     * @payload_len: Length of the plain text @payload.
-+     * @payload: The payload itself, encrypted using AES-128-GCM and @blob_key,
-+     *           GCM auth tag of size AES_BLOCK_SIZE is attached at the end of it.
-+     *
-+     * The total size of a DCP BLOB is sizeof(struct dcp_blob_fmt) + @payload_len +
-+     * AES_BLOCK_SIZE.
-+     */
-+    struct dcp_blob_fmt {
-+            __u8 fmt_version;
-+            __u8 blob_key[AES_KEYSIZE_128];
-+            __u8 nonce[AES_KEYSIZE_128];
-+            __le32 payload_len;
-+            __u8 payload[];
-+    } __packed;
--- 
-2.35.3
-
+>
+> Thanks!
