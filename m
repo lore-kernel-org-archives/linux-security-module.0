@@ -2,208 +2,120 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 578E5EDEC7A
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 15:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D368BEE01FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 18:01:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237892AbjIMPXp (ORCPT
+        id S231512AbjIMSBJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Sep 2023 11:23:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43580 "EHLO
+        Wed, 13 Sep 2023 14:01:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239282AbjIMPXl (ORCPT
+        with ESMTP id S229552AbjIMSBI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Sep 2023 11:23:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 281FD1724
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 08:22:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694618570;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TIhG5T2KIKMdZjw60PIq0vQttf6HwO/EKV4ZJ8HdZ78=;
-        b=C1FOQ2k9WNQeFoapB6Ov7fjtdZFOnkvpemndXQp71XkE5GNgkWXnptvFc4SG2t1I63qXGw
-        lIURANhAw42/C/HyEk1pFD5dxog2aMzCaitHhp4caILkMOK3EnyzrpbwW2HiU57u8nmtvz
-        Iu2MUDUMAt3O6J4F4zUTbFd8OXWXWFQ=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-680-kXq4ehMsMz2RIRYQBeN1jw-1; Wed, 13 Sep 2023 11:22:48 -0400
-X-MC-Unique: kXq4ehMsMz2RIRYQBeN1jw-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-993eeb3a950so483171666b.2
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 08:22:48 -0700 (PDT)
+        Wed, 13 Sep 2023 14:01:08 -0400
+Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A544619AE
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 11:01:04 -0700 (PDT)
+Received: by mail-vs1-xe30.google.com with SMTP id ada2fe7eead31-450f46861edso75130137.1
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 11:01:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1694628064; x=1695232864; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+vAzLmGMAp2tLkE5jF8uMDyOlDhTRpufcEG/UTA0iE4=;
+        b=Lqk+6MhewheZV/HnSCFxNfB+Cv5CQtLIZ4jL6mXZFRAjMOg0KrI5DNoIowWRXMJslV
+         0z7a5sF5SAVrINSzQTtTIcwJ98fQQ9eHJ0yEjMsq0p/IqRoozr+9OgHafqdJHWaw9qoJ
+         06NySlexI1bwxuh0Wsb6RcIUgXvYYBMTa2TWTdBQwbQhUvwBvW+Lv0T2KLPcgLmYbMmi
+         v3vZON5li/didHu7yNvEnb5QfejnHTSXdsv7kezdJv11uJUHMhbUCE7ngUWjJi3wa/Ri
+         FaXHy9ob4IzN8CVbK8Ib0nYAqutiGfqRsal8BnHS4n2hbVqCu5QkWPUXqoGsFznjY5Jp
+         Q/Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694618567; x=1695223367;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1694628064; x=1695232864;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TIhG5T2KIKMdZjw60PIq0vQttf6HwO/EKV4ZJ8HdZ78=;
-        b=VGj4SQpq8TXltyfmNUjUKKTvuGZyseiSQbaNZmis96+COhDMGM1PIBXSohkFMIyaZa
-         KGSqaKklrtxnCKlrQ18qbA812KQJbpQE4eIdXkn1TAhZjU9uTbyqHp5ZPNf5C5TjkAoT
-         od2rc+EqrSRY+RTtf/fd7XKAxS0jYhctGaAXaDOZ9K4L3N7t8u9dUUUO5qg67H0gueNe
-         MY1OOmqK1yzX5Ztr1/2kG9dDMQOE2pIxguewYT3QugAuluUUlIvewHRHov7u3xAcuXIR
-         Mfr3sgC0wMmVAofpd61vdCvwW0t9SXFE1rxrDbxDOGT82I3YkbxZr3TC2S5WnuDqqJ/C
-         thJg==
-X-Gm-Message-State: AOJu0YzD5voB9BqSpWUxLAlmmJTWO3/4mosN4Cwoxe3kyyWeocQ4MGC1
-        EV/KtnablTQr4YsvdyBOFUfvASL3GGZkb4YaoUdTmXtsj/mrHIatG5sjwapb80Ytorewl6XkRGO
-        MTWfLRcGzNbLsLb3Knd+qzixkxHoGo69ztknY
-X-Received: by 2002:a17:906:20dd:b0:9a6:5696:388e with SMTP id c29-20020a17090620dd00b009a65696388emr2105314ejc.77.1694618567061;
-        Wed, 13 Sep 2023 08:22:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGUbVOcJrl/IQ8dCV2GLwgGWT9XogEbtVBr/RtvLl6AfXCidW8q9QonDLUeH+Pc13/vJ+qjnA==
-X-Received: by 2002:a17:906:20dd:b0:9a6:5696:388e with SMTP id c29-20020a17090620dd00b009a65696388emr2105305ejc.77.1694618566882;
-        Wed, 13 Sep 2023 08:22:46 -0700 (PDT)
-Received: from maszat.piliscsaba.szeredi.hu (79-120-253-96.pool.digikabel.hu. [79.120.253.96])
-        by smtp.gmail.com with ESMTPSA id q18-20020a170906a09200b0099b8234a9fesm8640663ejy.1.2023.09.13.08.22.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Sep 2023 08:22:45 -0700 (PDT)
-From:   Miklos Szeredi <mszeredi@redhat.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: [RFC PATCH 3/3] add listmnt(2) syscall
-Date:   Wed, 13 Sep 2023 17:22:36 +0200
-Message-ID: <20230913152238.905247-4-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230913152238.905247-1-mszeredi@redhat.com>
-References: <20230913152238.905247-1-mszeredi@redhat.com>
+        bh=+vAzLmGMAp2tLkE5jF8uMDyOlDhTRpufcEG/UTA0iE4=;
+        b=YLqevybL2+SZc5D8wRNdYdOvrvBIJmAOJGgTdeuAKHZpfXjZP4hn4UHV8Rrt8RNaSu
+         2P7FzJEHWy+l6IuV4kBl9Be/PcBJArbwhf9fbNwbKstfvXeKyQrgg1OXGKQaoCgZh4UE
+         3DgP//P6nD9LZeXRr7myWfGKJcfDvWbpncL0Jli7WotuS/A5Dtfgt3eGCSdPiwRaG+xC
+         TA1ZmzNkxJ40wj2bfqyV6qr957S7L0oORn9JFgDKQI0pjYVs2+elA4BO7Z6YFPE7SuoP
+         BajyNuKp29Ywv28orcFN9NAdQBYi0m06hZ4RKZ/FmqM7ErfmFM2/8YtahFxoJz8qj2NO
+         Howw==
+X-Gm-Message-State: AOJu0YyatMYSgWEJQfpuvPjB/o9qO2zK0vvPdRVdlf5nlAp4y7rj1k/Z
+        WS9lVFagSqUw8XbI+yG120hGbwkNFGytXL+UD25U
+X-Google-Smtp-Source: AGHT+IH07JbseX8uP3kiuYtDXMzC+h6hmNtycAjFH0PiWnxFgz9UZIkNt1kSn4BNdb1k4n3piH8drftpQj1UGeBnCsw=
+X-Received: by 2002:a67:e8ca:0:b0:44d:626b:94da with SMTP id
+ y10-20020a67e8ca000000b0044d626b94damr3287173vsn.32.1694628063809; Wed, 13
+ Sep 2023 11:01:03 -0700 (PDT)
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="US-ASCII"; x-default=true
+References: <20230729024026.32228-1-yuehaibing@huawei.com> <CAHC9VhRW0Jt0pitVx1cw-zJGWfTmvTU4RSmOFKANYJA7CeEF7g@mail.gmail.com>
+In-Reply-To: <CAHC9VhRW0Jt0pitVx1cw-zJGWfTmvTU4RSmOFKANYJA7CeEF7g@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 13 Sep 2023 14:00:53 -0400
+Message-ID: <CAHC9VhSisEfQd0KCu7f8yKBwnrduFOPhP2SzWDfXiuvGh2g13A@mail.gmail.com>
+Subject: Re: [PATCH v3 -next] keys: Remove unused extern declarations
+To:     dhowells@redhat.com, jarkko@kernel.org
+Cc:     Yue Haibing <yuehaibing@huawei.com>, jmorris@namei.org,
+        serge@hallyn.com, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add way to query the children of a particular mount.  This is a more
-flexible way to iterate the mount tree than having to parse the complete
-/proc/self/mountinfo.
+On Mon, Aug 7, 2023 at 5:46=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
+> On Fri, Jul 28, 2023 at 10:40=E2=80=AFPM Yue Haibing <yuehaibing@huawei.c=
+om> wrote:
+> >
+> > From: YueHaibing <yuehaibing@huawei.com>
+> >
+> > Since commit b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
+> > iterate_over_keyring() is never used, so can be removed.
+> >
+> > And commit b5f545c880a2 ("[PATCH] keys: Permit running process to insta=
+ntiate keys")
+> > left behind keyring_search_instkey().
+> >
+> > Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
+> > Fixes: b5f545c880a2 ("[PATCH] keys: Permit running process to instantia=
+te keys")
+> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > ---
+> > v3: Add Fixes tag
+> > v2: Also remove keyring_search_instkey()
+> > ---
+> >  security/keys/internal.h | 7 -------
+> >  1 file changed, 7 deletions(-)
+>
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-Lookup the mount by the old (32bit) or new (64bit) mount ID.  If a mount
-needs to be queried based on path, then statx(2) can be used to first query
-the mount ID belonging to the path.
+Jarkko or David, please merge this or explain what is wrong with this patch=
+.
 
-Return an array of new (64bit) mount ID's.  Without privileges only mounts
-are listed which are reachable from the task's root.
+> > diff --git a/security/keys/internal.h b/security/keys/internal.h
+> > index 3c1e7122076b..471cf36dedc0 100644
+> > --- a/security/keys/internal.h
+> > +++ b/security/keys/internal.h
+> > @@ -109,13 +109,6 @@ extern void __key_link_end(struct key *keyring,
+> >  extern key_ref_t find_key_to_update(key_ref_t keyring_ref,
+> >                                     const struct keyring_index_key *ind=
+ex_key);
+> >
+> > -extern struct key *keyring_search_instkey(struct key *keyring,
+> > -                                         key_serial_t target_id);
+> > -
+> > -extern int iterate_over_keyring(const struct key *keyring,
+> > -                               int (*func)(const struct key *key, void=
+ *data),
+> > -                               void *data);
+> > -
+> >  struct keyring_search_context {
+> >         struct keyring_index_key index_key;
+> >         const struct cred       *cred;
+> > --
+> > 2.34.1
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- arch/x86/entry/syscalls/syscall_64.tbl |  1 +
- fs/namespace.c                         | 51 ++++++++++++++++++++++++++
- include/linux/syscalls.h               |  2 +
- include/uapi/asm-generic/unistd.h      |  5 ++-
- 4 files changed, 58 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 6d807c30cd16..0d9a47b0ce9b 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -376,6 +376,7 @@
- 452	common	fchmodat2		sys_fchmodat2
- 453	64	map_shadow_stack	sys_map_shadow_stack
- 454	common	statmnt			sys_statmnt
-+455	common	listmnt			sys_listmnt
- 
- #
- # Due to a historical design error, certain syscalls are numbered differently
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 088a52043bba..5362b1ffb26f 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4988,6 +4988,57 @@ SYSCALL_DEFINE5(statmnt, u64, mnt_id,
- 	return err;
- }
- 
-+static long do_listmnt(struct vfsmount *mnt, u64 __user *buf, size_t bufsize,
-+		      const struct path *root)
-+{
-+	struct mount *r, *m = real_mount(mnt);
-+	struct path rootmnt = { .mnt = root->mnt, .dentry = root->mnt->mnt_root };
-+	long ctr = 0;
-+
-+	if (!capable(CAP_SYS_ADMIN) &&
-+	    !is_path_reachable(m, mnt->mnt_root, &rootmnt))
-+		return -EPERM;
-+
-+	list_for_each_entry(r, &m->mnt_mounts, mnt_child) {
-+		if (!capable(CAP_SYS_ADMIN) &&
-+		    !is_path_reachable(r, r->mnt.mnt_root, root))
-+			continue;
-+
-+		if (ctr >= bufsize)
-+			return -EOVERFLOW;
-+		if (put_user(r->mnt_id_unique, buf + ctr))
-+			return -EFAULT;
-+		ctr++;
-+		if (ctr < 0)
-+			return -ERANGE;
-+	}
-+	return ctr;
-+}
-+
-+SYSCALL_DEFINE4(listmnt, u64, mnt_id, u64 __user *, buf, size_t, bufsize,
-+		unsigned int, flags)
-+{
-+	struct vfsmount *mnt;
-+	struct path root;
-+	long err;
-+
-+	if (flags)
-+		return -EINVAL;
-+
-+	down_read(&namespace_sem);
-+	mnt = lookup_mnt_in_ns(mnt_id, current->nsproxy->mnt_ns);
-+	err = -ENOENT;
-+	if (mnt) {
-+		get_fs_root(current->fs, &root);
-+		err = do_listmnt(mnt, buf, bufsize, &root);
-+		path_put(&root);
-+	}
-+	up_read(&namespace_sem);
-+
-+	return err;
-+}
-+
-+
- static void __init init_mount_tree(void)
- {
- 	struct vfsmount *mnt;
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 1099bd307fa7..5d776cdb6f18 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -411,6 +411,8 @@ asmlinkage long sys_fstatfs64(unsigned int fd, size_t sz,
- asmlinkage long sys_statmnt(u64 mnt_id, u64 mask,
- 			    struct statmnt __user *buf, size_t bufsize,
- 			    unsigned int flags);
-+asmlinkage long sys_listmnt(u64 mnt_id, u64 __user *buf, size_t bufsize,
-+			    unsigned int flags);
- asmlinkage long sys_truncate(const char __user *path, long length);
- asmlinkage long sys_ftruncate(unsigned int fd, unsigned long length);
- #if BITS_PER_LONG == 32
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 640997231ff6..a2b41370f603 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -826,8 +826,11 @@ __SYSCALL(__NR_fchmodat2, sys_fchmodat2)
- #define __NR_statmnt   454
- __SYSCALL(__NR_statmnt, sys_statmnt)
- 
-+#define __NR_listmnt   455
-+__SYSCALL(__NR_listmnt, sys_listmnt)
-+
- #undef __NR_syscalls
--#define __NR_syscalls 455
-+#define __NR_syscalls 456
- 
- /*
-  * 32 bit systems traditionally used different
--- 
-2.41.0
-
+--=20
+paul-moore.com
