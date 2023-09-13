@@ -2,155 +2,199 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E64EEB58C
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 03:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 306A8CA5507
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 08:36:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233304AbjIMDxR (ORCPT
+        id S238968AbjIMIg3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Sep 2023 23:53:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46266 "EHLO
+        Wed, 13 Sep 2023 04:36:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238250AbjIMDxQ (ORCPT
+        with ESMTP id S238922AbjIMIg3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Sep 2023 23:53:16 -0400
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D8AD172A
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 20:53:11 -0700 (PDT)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-59b50b4556eso52580857b3.1
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Sep 2023 20:53:11 -0700 (PDT)
+        Wed, 13 Sep 2023 04:36:29 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DE29E73
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 01:36:25 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-403061cdf2bso40070135e9.2
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 01:36:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1694577190; x=1695181990; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=sigma-star.at; s=google; t=1694594184; x=1695198984; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SYJQAFk4TkvEcbrRQ1V1P9VjmHlaAWhJgURQMMrzUVs=;
-        b=TgVdUgXlHE++B7QdiRngObxD4+vgLgdHkfH8kKzmXhJ9ZqMqGZUDG2aJ8F3FEAX16O
-         TX6cP4RsTx9nbUSfMXFt5upGFW3OvEQTZdYj1V88Xe++hsLTE8lbh2m+cmkfdVvx/bqn
-         aKPgGTHwA5igBOZi1KuoaCvZG4WOnQBoQSqhqtbQLJwYcmv835INoZJ0xt/2+CJrG7gr
-         cWI8HWeFLIGK8/0iNBlg8BjTJG8eT2hr9beJIIGHzIhhCBGbqTdcxDpw4LBpbXeTm0V4
-         QZBauudmg6ULa91fn0/RytR3d3626yoSTtxUeNpsF44N9l8q0GiUvfgYKH2Qe/i/zX3s
-         ZLgg==
+        bh=uolj6bycuQLgVCoKuVx7OW6O8ol63jhVI8+H9GWvM7E=;
+        b=Vmz3kM5iod7g2/kTmUqwIehe1BC7Wxz1zWFdOdF3TiSQsYUBaxOQUqq9BK9dTs12l4
+         Qa+A/Qt0st2kubPQLk7YJt3Gt5Q8uWWQdCBrh4fgdJ/9NpqSmGxukKY5YTWplAhyXtxX
+         Wz+yaTS3GyCnYY7Mf22/8xGWnpd2yPH7dfL3a4/+4+gw7TrrxzEuwcNiVnskIJ9aXhBz
+         1NRE7h54vKgvrb8aYRScrg+awzMReU669L344JEz2BXhFyS35akvZVZRfvXNw+F5mOLb
+         cua7JIXoBMe7BQsGydTrHjsbtx62c3IYrvZH3zepxtKy60RzQKp8BwJl0bI1/72YViQK
+         bcmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694577190; x=1695181990;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1694594184; x=1695198984;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SYJQAFk4TkvEcbrRQ1V1P9VjmHlaAWhJgURQMMrzUVs=;
-        b=cNglNAUpeKWrZr0/r7U4gfjY/ecb0lZrW95nnIsRKvHZKmW1lAI+P+h+FrIusNjj+v
-         VdRKWd8wjl0TZA1MD+tdc/8pvoxMs1qIRuPdnF9vuId5O2Orx3vsN5aL72tIC0d+GrcI
-         iyOwUAOWuwBoYfDDnJAMgmVtBPOcq+TMfOSUbK/YldDqwQJyY5XPwe8/jttcKhbFQhpz
-         wBqXkfr03N7AT2/+vKgxoH8lcrBbQ7nGGoYgc0XkfSEphVFdfok6Eo0qNYA+dEzUYpiL
-         9VaGU5iPw3NfUkcmLUgYnaHnAbWD0jHEbNWY0uA8m8bDt6+ICn6k3VSgc69pmiewjl9g
-         +3RA==
-X-Gm-Message-State: AOJu0YzGHo8DWVyfpaLffgUfCTGxJdLDMFqfVnpX9oPUlsNbEzq1HBIw
-        MftuEHQM+8D+GbNz+Jz99i4ADa6DHV2mBmEbNFeC
-X-Google-Smtp-Source: AGHT+IGWFtCPQVNwSqBN05Ij423EEN2/RjQvZH93bfk5icnuXTXVrRWFfuWbtfhha38djcat1yub4i+QKIKm61zQI50=
-X-Received: by 2002:a0d:ebc3:0:b0:57a:9b2c:51f1 with SMTP id
- u186-20020a0debc3000000b0057a9b2c51f1mr1446354ywe.1.1694577190229; Tue, 12
- Sep 2023 20:53:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230906115928.3749928-1-alpic@google.com> <202309090600.NSyo7d2q-lkp@intel.com>
- <CAEjxPJ4GOq3E4zqXbEMKUxqewopyeU5nmUg89rL+P5YsuEBi7A@mail.gmail.com>
-In-Reply-To: <CAEjxPJ4GOq3E4zqXbEMKUxqewopyeU5nmUg89rL+P5YsuEBi7A@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 12 Sep 2023 23:52:59 -0400
-Message-ID: <CAHC9VhRFs0gaMpnnFb2dLy7SWQRbPT_8Wpf3a5WbHiasE8UPiQ@mail.gmail.com>
-Subject: Re: [PATCH V2] SELinux: Check correct permissions for FS_IOC32_*
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     kernel test robot <lkp@intel.com>,
-        Alfred Piccioni <alpic@google.com>,
-        Eric Paris <eparis@parisplace.org>,
-        oe-kbuild-all@lists.linux.dev, stable@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        bh=uolj6bycuQLgVCoKuVx7OW6O8ol63jhVI8+H9GWvM7E=;
+        b=tiNX3PX3VkOMB/Xm6UGVuUSDr+9zxeqb3VU2UuDZSYU7JDgTiOVNap3gcXE2pKIR//
+         Rn3tudfv8Z1P86vxpzr2FMXIYbA2ieX84WTwoMubsxdInOGABInSOUWhtNNZ20XiXjgy
+         qHHQJ4vVBEK6V1aMmqG4SSQ8uiH2OO4i7Li1NmYrdL2yaFwb/dZUPEm+ZEu9+V93peT/
+         t9UXg05YTM4h3nN4ioS7yHArx818K938Djs9MQf4lW/ZuXppyLWXxmtfKBdVpEvepIPs
+         4yxdWq2gKC8ab/EtbJNY18QWM2RTWy2oTHpfSBpsONZoI2cCZ+ssR40y2wvmP9IfD14o
+         EFjw==
+X-Gm-Message-State: AOJu0YyJ6COGXOXbQ7JWYkLNcxYohbQQwT1Mi6I6K4WfZC5h6gisF33I
+        ksOi/fWiawd4tfVg9/wJ3W6D1g==
+X-Google-Smtp-Source: AGHT+IGXZEXOiBFL14tbu7JB9wJiL81o7SR10ExAo1isVi5iswnBwwcoSwfHQtzWGjeJP8MxZaq/dw==
+X-Received: by 2002:a05:600c:2159:b0:402:f503:6d1b with SMTP id v25-20020a05600c215900b00402f5036d1bmr1463747wml.0.1694594183662;
+        Wed, 13 Sep 2023 01:36:23 -0700 (PDT)
+Received: from smtpclient.apple (clnet-p106-198.ikbnet.co.at. [83.175.106.198])
+        by smtp.gmail.com with ESMTPSA id y17-20020adff151000000b0031c5dda3aedsm14955606wro.95.2023.09.13.01.36.22
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Sep 2023 01:36:23 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.700.6\))
+Subject: Re: [PATCH v2 1/3] crypto: mxs-dcp: Add support for hardware provided
+ keys
+From:   David Gstir <david@sigma-star.at>
+In-Reply-To: <CVH49V57VE6R.2488KOQMR5AKQ@suppilovahvero>
+Date:   Wed, 13 Sep 2023 10:36:11 +0200
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        sigma star Kernel Team <upstream+dcp@sigma-star.at>,
+        David Howells <dhowells@redhat.com>,
+        Li Yang <leoyang.li@nxp.com>, Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Steven Rostedt (Google)" <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Oberhollenzer <david.oberhollenzer@sigma-star.at>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <F2794F55-D63B-448D-B954-C3C25E0B474D@sigma-star.at>
+References: <20230912111115.24274-1-david@sigma-star.at>
+ <20230912111115.24274-2-david@sigma-star.at>
+ <CVH49V57VE6R.2488KOQMR5AKQ@suppilovahvero>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+X-Mailer: Apple Mail (2.3731.700.6)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 11, 2023 at 9:19=E2=80=AFAM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
-> On Fri, Sep 8, 2023 at 6:54=E2=80=AFPM kernel test robot <lkp@intel.com> =
-wrote:
-> >
-> > Hi Alfred,
-> >
-> > kernel test robot noticed the following build errors:
-> >
-> > [auto build test ERROR on 50a510a78287c15cee644f345ef8bac8977986a7]
-> >
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Alfred-Piccioni/=
-SELinux-Check-correct-permissions-for-FS_IOC32_/20230906-200131
-> > base:   50a510a78287c15cee644f345ef8bac8977986a7
-> > patch link:    https://lore.kernel.org/r/20230906115928.3749928-1-alpic=
-%40google.com
-> > patch subject: [PATCH V2] SELinux: Check correct permissions for FS_IOC=
-32_*
-> > config: i386-debian-10.3 (https://download.01.org/0day-ci/archive/20230=
-909/202309090600.NSyo7d2q-lkp@intel.com/config)
-> > compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
-hive/20230909/202309090600.NSyo7d2q-lkp@intel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
-rsion of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202309090600.NSyo7d2q-l=
-kp@intel.com/
-> >
-> > All errors (new ones prefixed by >>):
-> >
-> >    security/selinux/hooks.c: In function 'selinux_file_ioctl':
-> > >> security/selinux/hooks.c:3647:9: error: duplicate case value
-> >     3647 |         case FS_IOC32_GETFLAGS:
-> >          |         ^~~~
-> >    security/selinux/hooks.c:3645:9: note: previously used here
-> >     3645 |         case FS_IOC_GETFLAGS:
-> >          |         ^~~~
-> >    security/selinux/hooks.c:3648:9: error: duplicate case value
-> >     3648 |         case FS_IOC32_GETVERSION:
-> >          |         ^~~~
-> >    security/selinux/hooks.c:3646:9: note: previously used here
-> >     3646 |         case FS_IOC_GETVERSION:
-> >          |         ^~~~
-> >    security/selinux/hooks.c:3654:9: error: duplicate case value
-> >     3654 |         case FS_IOC32_SETFLAGS:
-> >          |         ^~~~
-> >    security/selinux/hooks.c:3652:9: note: previously used here
-> >     3652 |         case FS_IOC_SETFLAGS:
-> >          |         ^~~~
-> >    security/selinux/hooks.c:3655:9: error: duplicate case value
-> >     3655 |         case FS_IOC32_SETVERSION:
-> >          |         ^~~~
-> >    security/selinux/hooks.c:3653:9: note: previously used here
-> >     3653 |         case FS_IOC_SETVERSION:
-> >          |         ^~~~
->
-> Not sure of the right way to fix this while addressing the original
-> issue that this patch was intended to fix. Looking in fs/ioctl.c, I
-> see that the some FS_IOC32 values are remapped to the corresponding
-> FS_IOC values by the compat ioctl syscall entrypoint. Also notice this
-> comment there:
->
->         /* RED-PEN how should LSM module know it's handling 32bit? */
->         error =3D security_file_ioctl(f.file, cmd, arg);
->         if (error)
->                 goto out;
+Hi Jarkko,
 
-What is both interesting and scary is that the "RED-PEN" comment seems
-to go back at least as far as git, which is a lifetime these days.
-This has been broken for a while.
+thanks for the review!
 
-> So perhaps this is a defect in LSM that needs to be addressed?
+> On 12.09.2023, at 19:32, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+>=20
+> On Tue Sep 12, 2023 at 2:11 PM EEST, David Gstir wrote:
 
-I think so.  I would suggest a new security_file_ioctl_compat() hook
-as I often worry that flags are too easy to misuse whereas a separate
-hook, especially one with "_compat" at the end, are a bit more clear.
-The good news is that of the three LSMs that have file_ioctl hook
-implementations it looks like only SELinux will need a dedicated
-compat hook implementation (*maybe* TOMOYO, but I think it should be
-okay reusing the existing tomoyo_file_ioctl() implementation).
+[...]
 
---=20
-paul-moore.com
+>> - /* Payload contains the key. */
+>> - desc->control0 |=3D MXS_DCP_CONTROL0_PAYLOAD_KEY;
+>> + if (key_referenced) {
+>> + /* Set OTP key bit to select the key via KEY_SELECT. */
+>> + desc->control0 |=3D MXS_DCP_CONTROL0_OTP_KEY;
+>> + } else {
+>> + /* Payload contains the key. */
+>> + desc->control0 |=3D MXS_DCP_CONTROL0_PAYLOAD_KEY;
+>> + }
+>=20
+> Remove curly braces (coding style).
+
+Will fix that and all similar cases for v3.
+
+
+>> +static int mxs_dcp_aes_setrefkey(struct crypto_skcipher *tfm, const =
+u8 *key,
+>> + unsigned int len)
+>> +{
+>> + struct dcp_async_ctx *actx =3D crypto_skcipher_ctx(tfm);
+>> +
+>> + if (len !=3D DCP_PAES_KEYSIZE)
+>> + return -EINVAL;
+>> +
+>> + switch (key[0]) {
+>> + case DCP_PAES_KEY_SLOT0:
+>> + case DCP_PAES_KEY_SLOT1:
+>> + case DCP_PAES_KEY_SLOT2:
+>> + case DCP_PAES_KEY_SLOT3:
+>> + case DCP_PAES_KEY_UNIQUE:
+>> + case DCP_PAES_KEY_OTP:
+>> + memcpy(actx->key, key, len);
+>> + break;
+>=20
+> I don't understand why the "commit" is split into two parts
+> (memcpy and assignments in different code blocks). You should
+> probably rather:
+>=20
+> switch (key[0]) {
+> case DCP_PAES_KEY_SLOT0:
+> case DCP_PAES_KEY_SLOT1:
+> case DCP_PAES_KEY_SLOT2:
+> case DCP_PAES_KEY_SLOT3:
+> case DCP_PAES_KEY_UNIQUE:
+> case DCP_PAES_KEY_OTP:
+> memcpy(actx->key, key, len);
+> actx->key_len =3D len;
+> actx->refkey =3D true;
+> return 0;
+>=20
+> default:
+> return -EINVAL;
+> }
+> }
+>=20
+> Or alternatively you can move all operations after the switch-case
+> statement. IMHO, any state change is better to put into a singular
+> location.
+
+Makes sense. I=E2=80=99ll change that.
+
+
+>> diff --git a/include/soc/fsl/dcp.h b/include/soc/fsl/dcp.h
+>> new file mode 100644
+>> index 000000000000..df6678ee10a1
+>> --- /dev/null
+>> +++ b/include/soc/fsl/dcp.h
+>> @@ -0,0 +1,19 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (C) 2021 sigma star gmbh
+>> + * Authors: David Gstir <david@sigma-star.at>
+>> + *          Richard Weinberger <richard@sigma-star.at>
+>=20
+> Git already has author-field and commit can have co-developed-by so
+> this is totally obsolete.
+
+Also noted for v3.
+
+Thanks,
+- David
+
+--
+sigma star gmbh | Eduard-Bodem-Gasse 6, 6020 Innsbruck, Austria
+UID/VAT Nr: ATU 66964118 | FN: 374287y
+
