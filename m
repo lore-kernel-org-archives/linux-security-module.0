@@ -2,60 +2,61 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF15EDEC71
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 15:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 578E5EDEC7A
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 15:23:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241245AbjIMPXn (ORCPT
+        id S237892AbjIMPXp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Sep 2023 11:23:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43572 "EHLO
+        Wed, 13 Sep 2023 11:23:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238441AbjIMPXk (ORCPT
+        with ESMTP id S239282AbjIMPXl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Sep 2023 11:23:40 -0400
+        Wed, 13 Sep 2023 11:23:41 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2C73F1BF6
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 08:22:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 281FD1724
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 08:22:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694618564;
+        s=mimecast20190719; t=1694618570;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=fibNFcMGfhpyzyB1Dlmhk6FIYISVfSif6JjtonTL8MA=;
-        b=SOkpT1pAJioV8vwayhi6YzbU+r5oVA28EKhheRrPcqPvi+2mILhqHedt3RWFMl780VkocI
-        i3pO9DySWebawOJTk/er/mjeuc1iA20iwyeADkKoZuyI0zgqCJRsHl9NRnlXnEQ0v5TCgX
-        OjY86sN23Hp0x+WhhAfTuMe//42Ptc0=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TIhG5T2KIKMdZjw60PIq0vQttf6HwO/EKV4ZJ8HdZ78=;
+        b=C1FOQ2k9WNQeFoapB6Ov7fjtdZFOnkvpemndXQp71XkE5GNgkWXnptvFc4SG2t1I63qXGw
+        lIURANhAw42/C/HyEk1pFD5dxog2aMzCaitHhp4caILkMOK3EnyzrpbwW2HiU57u8nmtvz
+        Iu2MUDUMAt3O6J4F4zUTbFd8OXWXWFQ=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-638-_7RKnktRMOuonUhBjFQEcg-1; Wed, 13 Sep 2023 11:22:42 -0400
-X-MC-Unique: _7RKnktRMOuonUhBjFQEcg-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-94a355c9028so457336166b.3
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 08:22:42 -0700 (PDT)
+ us-mta-680-kXq4ehMsMz2RIRYQBeN1jw-1; Wed, 13 Sep 2023 11:22:48 -0400
+X-MC-Unique: kXq4ehMsMz2RIRYQBeN1jw-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-993eeb3a950so483171666b.2
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 08:22:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694618561; x=1695223361;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fibNFcMGfhpyzyB1Dlmhk6FIYISVfSif6JjtonTL8MA=;
-        b=QRh2ficWtbNq3/Iw8pWQR+OCys7TQC92UvEMFt+NwmhS1bM6M9Kau5GoTl4gQh6G5b
-         yqCpqH7PztQjR8MPPPezXnEbWb9ZTiFgzUo5xutt8b42+oYKAHwdjw/AAR9HRKG6lAr7
-         MJkNlXBkP5NlSqfRNHIhGTdugceCu3Z+aGILcUW2N2zMM9uyZOFvbeAuBU9Lnup+bfxg
-         DtjiWSz+fxS/BkxNFCyA+5NFOnb1u+ht8I4zUv2G6wXdydYeY5YN9U86Kttzlqeyrh7I
-         URN+LLm7n6+n4pf7omMCJpOkRagGXhnwy7bCdU4BLbiGDMmD09I4xzR6XAFEHITeOUNf
-         ni6w==
-X-Gm-Message-State: AOJu0YzjMYn2WmFX+KgGf4xNbMu2Fj9l7jd9IhRIdSk7swn3iRd30kZ+
-        NTrd/TG6fMoEyON6jXZcU+9MVRVORSLSJrFqCXl7a263lacD5sVVRPrPoQa4TD2zR1fxp5fV8h+
-        SfvxUj++tmhwPzjF/VgTl79x1GEynTxCtMtBr
-X-Received: by 2002:a17:907:7742:b0:9a5:d657:47ee with SMTP id kx2-20020a170907774200b009a5d65747eemr2413301ejc.58.1694618561496;
-        Wed, 13 Sep 2023 08:22:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHCeVwF2+JcYHZGB2lIjCz1DTX4prKbW5ev4Hq7EfxD4YhEjBelhKvfKIbxLCPEf3bhJHP1ig==
-X-Received: by 2002:a17:907:7742:b0:9a5:d657:47ee with SMTP id kx2-20020a170907774200b009a5d65747eemr2413286ejc.58.1694618561127;
-        Wed, 13 Sep 2023 08:22:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1694618567; x=1695223367;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TIhG5T2KIKMdZjw60PIq0vQttf6HwO/EKV4ZJ8HdZ78=;
+        b=VGj4SQpq8TXltyfmNUjUKKTvuGZyseiSQbaNZmis96+COhDMGM1PIBXSohkFMIyaZa
+         KGSqaKklrtxnCKlrQ18qbA812KQJbpQE4eIdXkn1TAhZjU9uTbyqHp5ZPNf5C5TjkAoT
+         od2rc+EqrSRY+RTtf/fd7XKAxS0jYhctGaAXaDOZ9K4L3N7t8u9dUUUO5qg67H0gueNe
+         MY1OOmqK1yzX5Ztr1/2kG9dDMQOE2pIxguewYT3QugAuluUUlIvewHRHov7u3xAcuXIR
+         Mfr3sgC0wMmVAofpd61vdCvwW0t9SXFE1rxrDbxDOGT82I3YkbxZr3TC2S5WnuDqqJ/C
+         thJg==
+X-Gm-Message-State: AOJu0YzD5voB9BqSpWUxLAlmmJTWO3/4mosN4Cwoxe3kyyWeocQ4MGC1
+        EV/KtnablTQr4YsvdyBOFUfvASL3GGZkb4YaoUdTmXtsj/mrHIatG5sjwapb80Ytorewl6XkRGO
+        MTWfLRcGzNbLsLb3Knd+qzixkxHoGo69ztknY
+X-Received: by 2002:a17:906:20dd:b0:9a6:5696:388e with SMTP id c29-20020a17090620dd00b009a65696388emr2105314ejc.77.1694618567061;
+        Wed, 13 Sep 2023 08:22:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGUbVOcJrl/IQ8dCV2GLwgGWT9XogEbtVBr/RtvLl6AfXCidW8q9QonDLUeH+Pc13/vJ+qjnA==
+X-Received: by 2002:a17:906:20dd:b0:9a6:5696:388e with SMTP id c29-20020a17090620dd00b009a65696388emr2105305ejc.77.1694618566882;
+        Wed, 13 Sep 2023 08:22:46 -0700 (PDT)
 Received: from maszat.piliscsaba.szeredi.hu (79-120-253-96.pool.digikabel.hu. [79.120.253.96])
-        by smtp.gmail.com with ESMTPSA id q18-20020a170906a09200b0099b8234a9fesm8640663ejy.1.2023.09.13.08.22.39
+        by smtp.gmail.com with ESMTPSA id q18-20020a170906a09200b0099b8234a9fesm8640663ejy.1.2023.09.13.08.22.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Sep 2023 08:22:40 -0700 (PDT)
+        Wed, 13 Sep 2023 08:22:45 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
@@ -66,10 +67,12 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Al Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <christian@brauner.io>,
         Amir Goldstein <amir73il@gmail.com>
-Subject: [RFC PATCH 0/3] quering mount attributes
-Date:   Wed, 13 Sep 2023 17:22:33 +0200
-Message-ID: <20230913152238.905247-1-mszeredi@redhat.com>
+Subject: [RFC PATCH 3/3] add listmnt(2) syscall
+Date:   Wed, 13 Sep 2023 17:22:36 +0200
+Message-ID: <20230913152238.905247-4-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230913152238.905247-1-mszeredi@redhat.com>
+References: <20230913152238.905247-1-mszeredi@redhat.com>
 MIME-Version: 1.0
 X-Mimecast-Spam-Score: 0
 X-Mimecast-Originator: redhat.com
@@ -78,204 +81,129 @@ Content-Type: text/plain; charset="US-ASCII"; x-default=true
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Implement the mount querying syscalls agreed on at LSF/MM 2023.  This is an
-RFC with just x86_64 syscalls.
+Add way to query the children of a particular mount.  This is a more
+flexible way to iterate the mount tree than having to parse the complete
+/proc/self/mountinfo.
 
-Excepting notification this should allow full replacement for
-parsing /proc/self/mountinfo.
+Lookup the mount by the old (32bit) or new (64bit) mount ID.  If a mount
+needs to be queried based on path, then statx(2) can be used to first query
+the mount ID belonging to the path.
 
-It is not a replacement for /proc/$OTHER_PID/mountinfo, since mount
-namespace and root are taken from the current task.  I guess namespace and
-root could be switched before invoking these syscalls but that sounds a bit
-complicated.  Not sure if this is a problem.
+Return an array of new (64bit) mount ID's.  Without privileges only mounts
+are listed which are reachable from the task's root.
 
-Test utility attached at the end.
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
+ arch/x86/entry/syscalls/syscall_64.tbl |  1 +
+ fs/namespace.c                         | 51 ++++++++++++++++++++++++++
+ include/linux/syscalls.h               |  2 +
+ include/uapi/asm-generic/unistd.h      |  5 ++-
+ 4 files changed, 58 insertions(+), 1 deletion(-)
 
-Miklos Szeredi (3):
-  add unique mount ID
-  add statmnt(2) syscall
-  add listmnt(2) syscall
-
- arch/x86/entry/syscalls/syscall_64.tbl |   2 +
- fs/internal.h                          |   5 +
- fs/mount.h                             |   3 +-
- fs/namespace.c                         | 365 +++++++++++++++++++++++++
- fs/proc_namespace.c                    |  19 +-
- fs/stat.c                              |   9 +-
- fs/statfs.c                            |   1 +
- include/linux/syscalls.h               |   5 +
- include/uapi/asm-generic/unistd.h      |   8 +-
- include/uapi/linux/mount.h             |  36 +++
- include/uapi/linux/stat.h              |   1 +
- 11 files changed, 443 insertions(+), 11 deletions(-)
-
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 6d807c30cd16..0d9a47b0ce9b 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -376,6 +376,7 @@
+ 452	common	fchmodat2		sys_fchmodat2
+ 453	64	map_shadow_stack	sys_map_shadow_stack
+ 454	common	statmnt			sys_statmnt
++455	common	listmnt			sys_listmnt
+ 
+ #
+ # Due to a historical design error, certain syscalls are numbered differently
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 088a52043bba..5362b1ffb26f 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4988,6 +4988,57 @@ SYSCALL_DEFINE5(statmnt, u64, mnt_id,
+ 	return err;
+ }
+ 
++static long do_listmnt(struct vfsmount *mnt, u64 __user *buf, size_t bufsize,
++		      const struct path *root)
++{
++	struct mount *r, *m = real_mount(mnt);
++	struct path rootmnt = { .mnt = root->mnt, .dentry = root->mnt->mnt_root };
++	long ctr = 0;
++
++	if (!capable(CAP_SYS_ADMIN) &&
++	    !is_path_reachable(m, mnt->mnt_root, &rootmnt))
++		return -EPERM;
++
++	list_for_each_entry(r, &m->mnt_mounts, mnt_child) {
++		if (!capable(CAP_SYS_ADMIN) &&
++		    !is_path_reachable(r, r->mnt.mnt_root, root))
++			continue;
++
++		if (ctr >= bufsize)
++			return -EOVERFLOW;
++		if (put_user(r->mnt_id_unique, buf + ctr))
++			return -EFAULT;
++		ctr++;
++		if (ctr < 0)
++			return -ERANGE;
++	}
++	return ctr;
++}
++
++SYSCALL_DEFINE4(listmnt, u64, mnt_id, u64 __user *, buf, size_t, bufsize,
++		unsigned int, flags)
++{
++	struct vfsmount *mnt;
++	struct path root;
++	long err;
++
++	if (flags)
++		return -EINVAL;
++
++	down_read(&namespace_sem);
++	mnt = lookup_mnt_in_ns(mnt_id, current->nsproxy->mnt_ns);
++	err = -ENOENT;
++	if (mnt) {
++		get_fs_root(current->fs, &root);
++		err = do_listmnt(mnt, buf, bufsize, &root);
++		path_put(&root);
++	}
++	up_read(&namespace_sem);
++
++	return err;
++}
++
++
+ static void __init init_mount_tree(void)
+ {
+ 	struct vfsmount *mnt;
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 1099bd307fa7..5d776cdb6f18 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -411,6 +411,8 @@ asmlinkage long sys_fstatfs64(unsigned int fd, size_t sz,
+ asmlinkage long sys_statmnt(u64 mnt_id, u64 mask,
+ 			    struct statmnt __user *buf, size_t bufsize,
+ 			    unsigned int flags);
++asmlinkage long sys_listmnt(u64 mnt_id, u64 __user *buf, size_t bufsize,
++			    unsigned int flags);
+ asmlinkage long sys_truncate(const char __user *path, long length);
+ asmlinkage long sys_ftruncate(unsigned int fd, unsigned long length);
+ #if BITS_PER_LONG == 32
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index 640997231ff6..a2b41370f603 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -826,8 +826,11 @@ __SYSCALL(__NR_fchmodat2, sys_fchmodat2)
+ #define __NR_statmnt   454
+ __SYSCALL(__NR_statmnt, sys_statmnt)
+ 
++#define __NR_listmnt   455
++__SYSCALL(__NR_listmnt, sys_listmnt)
++
+ #undef __NR_syscalls
+-#define __NR_syscalls 455
++#define __NR_syscalls 456
+ 
+ /*
+  * 32 bit systems traditionally used different
 -- 
 2.41.0
-
-=== statmnt.c ===
-#define _GNU_SOURCE
-#include <unistd.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <sys/mount.h>
-#include <sys/stat.h>
-#include <err.h>
-
-struct stmt_str {
-	__u32 off;
-	__u32 len;
-};
-
-struct statmnt {
-	__u64 mask;		/* What results were written [uncond] */
-	__u32 sb_dev_major;	/* Device ID */
-	__u32 sb_dev_minor;
-	__u64 sb_magic;		/* ..._SUPER_MAGIC */
-	__u32 sb_flags;		/* MS_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIME} */
-	__u32 __spare1;
-	__u64 mnt_id;		/* Unique ID of mount */
-	__u64 mnt_parent_id;	/* Unique ID of parent (for root == mnt_id) */
-	__u32 mnt_id_old;	/* Reused IDs used in proc/.../mountinfo */
-	__u32 mnt_parent_id_old;
-	__u64 mnt_attr;		/* MOUNT_ATTR_... */
-	__u64 mnt_propagation;	/* MS_{SHARED,SLAVE,PRIVATE,UNBINDABLE} */
-	__u64 mnt_peer_group;	/* ID of shared peer group */
-	__u64 mnt_master;	/* Mount receives propagation from this ID */
-	__u64 propagate_from;	/* Propagation from in current namespace */
-	__u64 __spare[20];
-	struct stmt_str mnt_root;	/* Root of mount relative to root of fs */
-	struct stmt_str mountpoint;	/* Mountpoint relative to root of process */
-	struct stmt_str fs_type;	/* Filesystem type[.subtype] */
-	struct stmt_str sb_opts;	/* Super block string options (nul delimted) */
-};
-
-#define STMT_SB_BASIC		0x00000001U     /* Want/got sb_... */
-#define STMT_MNT_BASIC		0x00000002U	/* Want/got mnt_... */
-#define STMT_PROPAGATE_FROM	0x00000004U	/* Want/got propagate_from */
-#define STMT_MNT_ROOT		0x00000008U	/* Want/got mnt_root  */
-#define STMT_MOUNTPOINT		0x00000010U	/* Want/got mountpoint */
-#define STMT_FS_TYPE		0x00000020U	/* Want/got fs_type */
-#define STMT_SB_OPTS		0x00000040U	/* Want/got sb_opts */
-
-#define __NR_statmnt   454
-#define __NR_listmnt   455
-
-#define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
-
-int main(int argc, char *argv[])
-{
-	char buf[65536];
-	struct statmnt *st = (void *) buf;
-	char *end;
-	const char *arg = argv[1];
-	long res;
-	int list = 0;
-	unsigned long mnt_id;
-	unsigned int mask = STMT_SB_BASIC | STMT_MNT_BASIC | STMT_PROPAGATE_FROM | STMT_MNT_ROOT | STMT_MOUNTPOINT | STMT_FS_TYPE | STMT_SB_OPTS;
-
-	if (arg && strcmp(arg, "-l") == 0) {
-		list = 1;
-		arg = argv[2];
-	}
-	if (argc != list + 2)
-		errx(1, "usage: %s [-l] (mnt_id|path)", argv[0]);
-
-	mnt_id = strtol(arg, &end, 0);
-	if (!mnt_id || *end != '\0') {
-		struct statx sx;
-
-		res = statx(AT_FDCWD, arg, 0, STATX_MNT_ID_UNIQUE, &sx);
-		if (res == -1)
-			err(1, "%s", arg);
-
-		if (!(sx.stx_mask & (STATX_MNT_ID | STATX_MNT_ID_UNIQUE)))
-			errx(1, "Sorry, no mount ID");
-
-		mnt_id = sx.stx_mnt_id;
-	}
-
-
-	if (list) {
-		size_t size = 8192;
-		uint64_t list[size];
-		long i, num;
-
-		res = syscall(__NR_listmnt, mnt_id, list, size, 0);
-		if (res == -1)
-			err(1, "listmnt(%lu)", mnt_id);
-
-		num = res;
-		for (i = 0; i < num; i++) {
-			printf("0x%lx / ", list[i]);
-
-			res = syscall(__NR_statmnt, list[i], STMT_MNT_BASIC | STMT_MOUNTPOINT, &buf, sizeof(buf), 0);
-			if (res == -1) {
-				printf("???\t[%s]\n", strerror(errno));
-			} else {
-				printf("%u\t%s\n", st->mnt_id_old,
-				       (st->mask & STMT_MOUNTPOINT) ? buf + st->mountpoint.off : "???");
-			}
-		}
-
-		return 0;
-	}
-
-	res = syscall(__NR_statmnt, mnt_id, mask, &buf, sizeof(buf), 0);
-	if (res == -1)
-		err(1, "statmnt(%lu)", mnt_id);
-
-	printf("mask: 0x%llx\n", st->mask);
-	if (st->mask & STMT_SB_BASIC) {
-		printf("sb_dev_major: %u\n", st->sb_dev_major);
-		printf("sb_dev_minor: %u\n", st->sb_dev_minor);
-		printf("sb_magic: 0x%llx\n", st->sb_magic);
-		printf("sb_flags: 0x%08x\n", st->sb_flags);
-	}
-	if (st->mask & STMT_MNT_BASIC) {
-		printf("mnt_id: 0x%llx\n", st->mnt_id);
-		printf("mnt_parent_id: 0x%llx\n", st->mnt_parent_id);
-		printf("mnt_id_old: %u\n", st->mnt_id_old);
-		printf("mnt_parent_id_old: %u\n", st->mnt_parent_id_old);
-		printf("mnt_attr: 0x%08llx\n", st->mnt_attr);
-		printf("mnt_propagation: %s%s%s%s\n",
-		       st->mnt_propagation & MS_SHARED ? "shared," : "",
-		       st->mnt_propagation & MS_SLAVE ? "slave," : "",
-		       st->mnt_propagation & MS_UNBINDABLE ? "unbindable," : "",
-		       st->mnt_propagation & MS_PRIVATE ? "private" : "");
-		printf("mnt_peer_group: %llu\n", st->mnt_peer_group);
-		printf("mnt_master: %llu\n", st->mnt_master);
-	}
-	if (st->mask & STMT_PROPAGATE_FROM) {
-		printf("propagate_from: %llu\n", st->propagate_from);
-	}
-	if (st->mask & STMT_MNT_ROOT) {
-		printf("mnt_root: %i/%u <%s>\n", st->mnt_root.off,
-		       st->mnt_root.len, buf + st->mnt_root.off);
-	}
-	if (st->mask & STMT_MOUNTPOINT) {
-		printf("mountpoint: %i/%u <%s>\n", st->mountpoint.off,
-		       st->mountpoint.len, buf + st->mountpoint.off);
-	}
-	if (st->mask & STMT_FS_TYPE) {
-		printf("fs_type: %i/%u <%s>\n", st->fs_type.off,
-		       st->fs_type.len, buf + st->fs_type.off);
-	}
-
-	if (st->mask & STMT_SB_OPTS) {
-		char *p = buf + st->sb_opts.off;
-		char *end = p + st->sb_opts.len;
-
-		printf("sb_opts: %i/%u ", st->sb_opts.off, st->sb_opts.len);
-		for (; p < end; p += strlen(p) + 1)
-			printf("<%s>, ", p);
-		printf("\n");
-	}
-
-	return 0;
-}
 
