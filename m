@@ -2,117 +2,89 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADEB4EE0211
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 22:05:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DE1EE0210
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 22:09:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232968AbjIMWFp (ORCPT
+        id S232758AbjIMWJk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Sep 2023 18:05:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46144 "EHLO
+        Wed, 13 Sep 2023 18:09:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232969AbjIMWFo (ORCPT
+        with ESMTP id S229743AbjIMWJk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Sep 2023 18:05:44 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61937173A
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 15:05:40 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-59b4ec8d9c1so3572537b3.0
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 15:05:40 -0700 (PDT)
+        Wed, 13 Sep 2023 18:09:40 -0400
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FF0198B
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 15:09:35 -0700 (PDT)
+Received: by mail-qt1-x831.google.com with SMTP id d75a77b69052e-41501ffb771so1601661cf.0
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 15:09:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1694642739; x=1695247539; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JVmZ1wjz2vdbI7NtJ0YI8N3uei5EgQ+dXDf+/tA5ZIE=;
-        b=XTFW68ehP3luXdnHU6zrPxVeZoOsdHFCNwwuDZmzD4ZffVEPrvppwKrgASxwPIv/w0
-         pfQR02WWbwgU2YOM81tryuEGB7u4JCec0NBoUxlCgxy8FOUqvCPhsgqYjXIfEKr2HnBs
-         NXtFXSdLmu0qtXk4DbzlLThZqe/hniz8PeHOJlsSVBxOIJz+WJVbl1un0gstwcPUvStv
-         aBjX/pGRJfuvFEgrLbmpPixVp9UXCespOC6oIXtH17/yj6R6u/xrP5rWds3XnT1Vj0ed
-         fwzu6xWVwLe1BarLxp3MrVHCKlxMTfxxBSFp7DFAvjVy56oBgOoIazYhaZ7vJaJ3A9aG
-         LIBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694642739; x=1695247539;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=paul-moore.com; s=google; t=1694642975; x=1695247775; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:to:from:message-id:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JVmZ1wjz2vdbI7NtJ0YI8N3uei5EgQ+dXDf+/tA5ZIE=;
-        b=JXPyWCUGIez//Lf8O52tKmvWTSlIhz+gydsklMEqaCpzDShZ72hQqMEg2QeruCrK8E
-         dPIlTxlIkiqnw1yfqO2Z8vn4swbOuslslCzsHdicVhZgXEV2nQs/7U/YD1MOc4gHTbTC
-         5lMoiKTcJvoAk/S6oaJFStUCZeXOVV/j03Xwp9R+iXLl4vbpv92F4mgEVRnjHrrXpy2Z
-         AaYBp682F+tbz+SvoOBK64G2oAStaHQEBm/LQ7fsrFrvgOZzZ+69CuJjkJx4mNKh6N9Q
-         APz1ag+nDuJvNpS7SuDx1cvA7FFeyrLMqAeYM+a8MgZVed3UN1VY1T6OZDhJJ4De4Nks
-         AkqA==
-X-Gm-Message-State: AOJu0Yx5imFBUDsg0Hlu05roQ9t7oRinXuN4BPERe4JaiWkxU5SX01Dd
-        tg83KkaQnRASgV/HBAbPcPVr47X6Cqzu1GDvqZJE
-X-Google-Smtp-Source: AGHT+IEv5bGyaGHp/r15bo8eEWH+Hp6YKbglRQ588twqmPBJ6bDDlVdygzQTA/WO7dQpk5ltXfldSTg5qbaUSBo/ga8=
-X-Received: by 2002:a0d:dc43:0:b0:56d:43cb:da98 with SMTP id
- f64-20020a0ddc43000000b0056d43cbda98mr3813028ywe.29.1694642739476; Wed, 13
- Sep 2023 15:05:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <ZOXIjzLnnbuoLOrF@gmail.com> <20230823.xeiYoo3BuPhu@digikod.net>
-In-Reply-To: <20230823.xeiYoo3BuPhu@digikod.net>
+        bh=uYRxBFgVFD3g7dMotvqFon+/Ds8u8KlVSqggHQwswao=;
+        b=Pa2un/WC1bOm0UN0Z3XNjiAr8HUGxknCiskMXKrD8bx4A7lZUuyX88+FLfdcBHg+if
+         nb4NZBhsKuw7pw1HC9rUq8eNoRxSdhruL/P5lGU+zSlGHKlK3a5ppAM96uVkj4JIZe4g
+         +ilUrL1Jdhi8UD0aBb5o5wMLmJ1YwxkUrB2JHN38nL6jr6rGTXRfvc/ZYO/v8uNGtmG9
+         NyzP4iGSkre/+8S/8bm6z5lWGmP/zL0da17ylHKxV3qU2Vq/UFcuHyLzfuASn9bxbLaT
+         SWrPeryeIkiTQu205Bn6A9mHNQR36277Yy03vx5tFBYavEWdhDVY9WdAD1t/gQEDTxVZ
+         BlSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694642975; x=1695247775;
+        h=in-reply-to:references:subject:to:from:message-id:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uYRxBFgVFD3g7dMotvqFon+/Ds8u8KlVSqggHQwswao=;
+        b=r9e6NLXML/cq7EG8G9ZDW/KDe8dTAXHOvsCjS9UkjMGlMiHY+KyF86CgnT3QXbgEBI
+         LZ51tnGOVNDK2+w/TyVFYy0zhMBgIhe2SaTlC+UKH/Wn9OPIoRE9hU4qpvEALJ7kfRpP
+         gHd+0aaHJpqckfkjxO8AhzqJZGxC6laZSuy0UZBhkVKnTqnPZlVLDVl7iNkUBOv+6Gc+
+         wC4w+QV4fxILlpCXLCjF2qZ5kEDw0SD2cZ743BuJx2oglftAEgssvzmyeq7mh8UiKzdK
+         9Sbu2qn1JMCrZDlPGVheAtb/JUKWWfc2m25nZqglwEJoao/EZqFt+xFvh2EvabxL7JQt
+         4xog==
+X-Gm-Message-State: AOJu0Yyu2A9Se8phcswNa+rYqbPE78B99XQgqbkIytuwqiK1IJIFb7X5
+        qmaXWl8dcuxAo5Wdd/FueoYY
+X-Google-Smtp-Source: AGHT+IFfuUvflJnphRC6dw5Z435IV8TEDBTv8LxO/Jl0qaQJY71C0u+HDCAIS7pUDDTh0TOR1XAMdg==
+X-Received: by 2002:a05:622a:50b:b0:403:b645:86fa with SMTP id l11-20020a05622a050b00b00403b64586famr4449573qtx.24.1694642974893;
+        Wed, 13 Sep 2023 15:09:34 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id iw10-20020a05622a6f8a00b004033c3948f9sm68689qtb.42.2023.09.13.15.09.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Sep 2023 15:09:34 -0700 (PDT)
+Date:   Wed, 13 Sep 2023 18:09:33 -0400
+Message-ID: <4a94978e8cc264e51af6ed6c798407a3.paul@paul-moore.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 13 Sep 2023 18:05:28 -0400
-Message-ID: <CAHC9VhQWcxsatoTtQ031PwL-qKsa10S7vxwzv2g_StNLsJDxfQ@mail.gmail.com>
-Subject: Re: [PATCH] lsm: constify 'sb' parameter in security_sb_remount()
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     Khadija Kamran <kamrankhadijadj@gmail.com>,
+To:     Khadija Kamran <kamrankhadijadj@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        ztarkhani@microsoft.com, alison.schofield@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-security-module@vger.kernel.org, ztarkhani@microsoft.com,
+        alison.schofield@intel.com
+Subject: Re: [PATCH] lsm: constify 'file' parameter in  security_bprm_creds_from_file()
+References: <ZOWyiUTHCmKvsoX8@gmail.com>
+In-Reply-To: <ZOWyiUTHCmKvsoX8@gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 23, 2023 at 8:44=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> Hi Khadija,
->
-> On Wed, Aug 23, 2023 at 01:51:27PM +0500, Khadija Kamran wrote:
-> > The "sb_remount" hook has implementations registered in SELinux and
-> > Landlock. Looking at the function implementations we observe that the
-> > "sb" parameter is not changing.
-> >
-> > Mark the "sb" parameter of LSM hook security_sb_remount() as "const"
-> > since it will not be changing in the LSM hook.
-> >
-> > Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
-> > ---
-> >  include/linux/lsm_hook_defs.h | 2 +-
-> >  include/linux/security.h      | 2 +-
-> >  security/landlock/fs.c        | 2 +-
-> >  security/security.c           | 2 +-
-> >  security/selinux/hooks.c      | 2 +-
-> >  5 files changed, 5 insertions(+), 5 deletions(-)
->
-> > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > index 1c0c198f6fdb..fabe324922ec 100644
-> > --- a/security/landlock/fs.c
-> > +++ b/security/landlock/fs.c
-> > @@ -1074,7 +1074,7 @@ static int hook_sb_umount(struct vfsmount *const =
-mnt, const int flags)
-> >       return -EPERM;
-> >  }
-> >
-> > -static int hook_sb_remount(struct super_block *const sb, void *const m=
-nt_opts)
-> > +static int hook_sb_remount(const struct super_block *const sb, void *c=
-onst mnt_opts)
->
-> Please format with clang-format -i security/landlock/*.[ch]
+On Aug 23, 2023 Khadija Kamran <kamrankhadijadj@gmail.com> wrote:
+> 
+> The 'bprm_creds_from_file' hook has implementation registered in
+> commoncap. Looking at the function implementation we observe that the
+> 'file' parameter is not changing.
+> 
+> Mark the 'file' parameter of LSM hook security_bprm_creds_from_file() as
+> 'const' since it will not be changing in the LSM hook.
+> 
+> Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
+> ---
+>  include/linux/fs.h            | 2 +-
+>  include/linux/lsm_hook_defs.h | 2 +-
+>  include/linux/security.h      | 6 +++---
+>  security/commoncap.c          | 4 ++--
+>  security/security.c           | 2 +-
+>  5 files changed, 8 insertions(+), 8 deletions(-)
 
-Hi Khadija, can you please format the security/landlock/fs.c change as
-requested by Micka=C3=ABl?
+Merged into lsm/next, thanks!
 
-You can find information on running clang-format on the Linux kernel
-at the link below:
-* https://www.kernel.org/doc/html/next/process/clang-format.html
-
---=20
+--
 paul-moore.com
