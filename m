@@ -2,87 +2,88 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DE1EE0210
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 22:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 115CCEE020F
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 22:13:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232758AbjIMWJk (ORCPT
+        id S232903AbjIMWNK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Sep 2023 18:09:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59470 "EHLO
+        Wed, 13 Sep 2023 18:13:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229743AbjIMWJk (ORCPT
+        with ESMTP id S232828AbjIMWNK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Sep 2023 18:09:40 -0400
-Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FF0198B
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 15:09:35 -0700 (PDT)
-Received: by mail-qt1-x831.google.com with SMTP id d75a77b69052e-41501ffb771so1601661cf.0
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 15:09:35 -0700 (PDT)
+        Wed, 13 Sep 2023 18:13:10 -0400
+Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E32421998
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 15:13:05 -0700 (PDT)
+Received: by mail-qk1-x733.google.com with SMTP id af79cd13be357-770ef353b8fso24324285a.0
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 15:13:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1694642975; x=1695247775; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1694643185; x=1695247985; darn=vger.kernel.org;
         h=in-reply-to:references:subject:to:from:message-id:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uYRxBFgVFD3g7dMotvqFon+/Ds8u8KlVSqggHQwswao=;
-        b=Pa2un/WC1bOm0UN0Z3XNjiAr8HUGxknCiskMXKrD8bx4A7lZUuyX88+FLfdcBHg+if
-         nb4NZBhsKuw7pw1HC9rUq8eNoRxSdhruL/P5lGU+zSlGHKlK3a5ppAM96uVkj4JIZe4g
-         +ilUrL1Jdhi8UD0aBb5o5wMLmJ1YwxkUrB2JHN38nL6jr6rGTXRfvc/ZYO/v8uNGtmG9
-         NyzP4iGSkre/+8S/8bm6z5lWGmP/zL0da17ylHKxV3qU2Vq/UFcuHyLzfuASn9bxbLaT
-         SWrPeryeIkiTQu205Bn6A9mHNQR36277Yy03vx5tFBYavEWdhDVY9WdAD1t/gQEDTxVZ
-         BlSA==
+        bh=2p17mow8jOToGHzl/reGSy5sg/JPF1WcbOesSQaNA64=;
+        b=Fbb5HPISxCDtWGpl9r3GRmDhaUeVYIxqa/1sg3oUyaCODR7H7YtjdVKfm5TgrSdI2W
+         CYQjkRmu1bdtMzeHAnIfXefzKarvguH2nD5PWKaIcVDe5VxHuJM7OHMNhVIblIJSe0Hs
+         XFTGtdCC10260Pg255cABzIPiQUxPG2E2WbCB8Gn8i1Nu8uI6XKWipqGAOmlO8jZ+GM4
+         t/dGefIWmD4X1OUL6UkoNcrM6QjIykoAmgnUXdYEfn2JxFFoBM5Gu1twISGfZKpyNfkQ
+         Hdqt4L4TG0QqHzm+iuKmAI53+ytfdMUWr3lN3RoI0zhS+W8GzswF10JomlybLIs10mP2
+         seeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694642975; x=1695247775;
+        d=1e100.net; s=20230601; t=1694643185; x=1695247985;
         h=in-reply-to:references:subject:to:from:message-id:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uYRxBFgVFD3g7dMotvqFon+/Ds8u8KlVSqggHQwswao=;
-        b=r9e6NLXML/cq7EG8G9ZDW/KDe8dTAXHOvsCjS9UkjMGlMiHY+KyF86CgnT3QXbgEBI
-         LZ51tnGOVNDK2+w/TyVFYy0zhMBgIhe2SaTlC+UKH/Wn9OPIoRE9hU4qpvEALJ7kfRpP
-         gHd+0aaHJpqckfkjxO8AhzqJZGxC6laZSuy0UZBhkVKnTqnPZlVLDVl7iNkUBOv+6Gc+
-         wC4w+QV4fxILlpCXLCjF2qZ5kEDw0SD2cZ743BuJx2oglftAEgssvzmyeq7mh8UiKzdK
-         9Sbu2qn1JMCrZDlPGVheAtb/JUKWWfc2m25nZqglwEJoao/EZqFt+xFvh2EvabxL7JQt
-         4xog==
-X-Gm-Message-State: AOJu0Yyu2A9Se8phcswNa+rYqbPE78B99XQgqbkIytuwqiK1IJIFb7X5
-        qmaXWl8dcuxAo5Wdd/FueoYY
-X-Google-Smtp-Source: AGHT+IFfuUvflJnphRC6dw5Z435IV8TEDBTv8LxO/Jl0qaQJY71C0u+HDCAIS7pUDDTh0TOR1XAMdg==
-X-Received: by 2002:a05:622a:50b:b0:403:b645:86fa with SMTP id l11-20020a05622a050b00b00403b64586famr4449573qtx.24.1694642974893;
-        Wed, 13 Sep 2023 15:09:34 -0700 (PDT)
+        bh=2p17mow8jOToGHzl/reGSy5sg/JPF1WcbOesSQaNA64=;
+        b=nCdZMtNUTgfKzcCGPF5c+KceRufo6IgmtAfOC1OwXBuPBxbG4lINX1bTkImR5CzXpK
+         8n4xtLo5WIf1yY74Y3hyUUy2wtgPRAdelVq5v1DsIJydMhNeq6ofGt5x23pex394uHFa
+         n/u+yluHleg2jR0ubnxNR4LICctgmO896amgNU3zjUykBdzbughoPpC/hZZL5uVdom/N
+         /m+AIrMZHvnSqaAJ7va9Z/VHBUqh2V+R2bdVI4LGXy+J6w977QDVpvYpRXbtPRR4VkJt
+         UtVM1AUsrDoT3bK9sPd/5hOo6X1k3GWy2TPDa+vzmScEDG9yaoE7gA/pUInzxfjCT0I+
+         a7iQ==
+X-Gm-Message-State: AOJu0YywaNockweo+cNKyPePltzjXAsYM4XXJmf/S84weGHvjHgg6R9Y
+        IiBOGORuh0wBt5OkRcUav6Hu
+X-Google-Smtp-Source: AGHT+IF2ufzmX0mgSW8tYUOIhjgdVWAPVJoSNbm23WjMTFdbfD9qge9HiUsqmQYmCws2E0YhK7FVzg==
+X-Received: by 2002:ac8:5e49:0:b0:415:15bd:94d2 with SMTP id i9-20020ac85e49000000b0041515bd94d2mr4259821qtx.43.1694643184892;
+        Wed, 13 Sep 2023 15:13:04 -0700 (PDT)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id iw10-20020a05622a6f8a00b004033c3948f9sm68689qtb.42.2023.09.13.15.09.34
+        by smtp.gmail.com with ESMTPSA id m4-20020ac807c4000000b00410ab3c78efsm73610qth.11.2023.09.13.15.13.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Sep 2023 15:09:34 -0700 (PDT)
-Date:   Wed, 13 Sep 2023 18:09:33 -0400
-Message-ID: <4a94978e8cc264e51af6ed6c798407a3.paul@paul-moore.com>
+        Wed, 13 Sep 2023 15:13:04 -0700 (PDT)
+Date:   Wed, 13 Sep 2023 18:13:03 -0400
+Message-ID: <82e3a9c95fdc838943802d9a22d83aa8.paul@paul-moore.com>
 From:   Paul Moore <paul@paul-moore.com>
 To:     Khadija Kamran <kamrankhadijadj@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>,
+        John Johansen <john.johansen@canonical.com>,
         James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org, ztarkhani@microsoft.com,
-        alison.schofield@intel.com
-Subject: Re: [PATCH] lsm: constify 'file' parameter in  security_bprm_creds_from_file()
-References: <ZOWyiUTHCmKvsoX8@gmail.com>
-In-Reply-To: <ZOWyiUTHCmKvsoX8@gmail.com>
+        "Serge E. Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        ztarkhani@microsoft.com, alison.schofield@intel.com
+Subject: Re: [PATCH] lsm: constify 'bprm' parameter in  security_bprm_committing_creds()
+References: <ZOW5rC1MngXvPQLz@gmail.com>
+In-Reply-To: <ZOW5rC1MngXvPQLz@gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On Aug 23, 2023 Khadija Kamran <kamrankhadijadj@gmail.com> wrote:
 > 
-> The 'bprm_creds_from_file' hook has implementation registered in
-> commoncap. Looking at the function implementation we observe that the
-> 'file' parameter is not changing.
+> The 'bprm_committing_creds' hook has implementations registered in
+> SELinux and Apparmor. Looking at the function implementations we observe
+> that the 'bprm' parameter is not changing.
 > 
-> Mark the 'file' parameter of LSM hook security_bprm_creds_from_file() as
-> 'const' since it will not be changing in the LSM hook.
+> Mark the 'bprm' parameter of LSM hook security_bprm_committing_creds()
+> as 'const' since it will not be changing in the LSM hook.
 > 
 > Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
 > ---
->  include/linux/fs.h            | 2 +-
 >  include/linux/lsm_hook_defs.h | 2 +-
->  include/linux/security.h      | 6 +++---
->  security/commoncap.c          | 4 ++--
+>  include/linux/security.h      | 4 ++--
+>  security/apparmor/lsm.c       | 2 +-
 >  security/security.c           | 2 +-
->  5 files changed, 8 insertions(+), 8 deletions(-)
+>  security/selinux/hooks.c      | 2 +-
+>  5 files changed, 6 insertions(+), 6 deletions(-)
 
 Merged into lsm/next, thanks!
 
