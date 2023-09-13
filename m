@@ -2,87 +2,91 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA8A8EE0211
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 21:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44828EE020F
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 22:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232821AbjIMV5H (ORCPT
+        id S232883AbjIMWB4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Sep 2023 17:57:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33214 "EHLO
+        Wed, 13 Sep 2023 18:01:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232667AbjIMV5G (ORCPT
+        with ESMTP id S229918AbjIMWBz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Sep 2023 17:57:06 -0400
-Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11DB61981
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 14:57:02 -0700 (PDT)
-Received: by mail-qt1-x832.google.com with SMTP id d75a77b69052e-414b3da2494so1406491cf.3
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 14:57:02 -0700 (PDT)
+        Wed, 13 Sep 2023 18:01:55 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3D481981
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 15:01:51 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-591ba8bd094so3234547b3.3
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 15:01:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1694642221; x=1695247021; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:to:from:message-id:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f1fI0z3hvkFXxuX039z2cx7VykRCuw0/mepb/WnviFM=;
-        b=dWjb7IrzdiUAoGHgGxD5Yv9XACKsKLdMwTBARFmvQbr6cUEl5ROshC/+wDRODVMTTO
-         eOatVIl6mi+JR30RD15ChqvKi1hmyLvLRkKDN57KbTmvGudqhY4Ahfzh1EwJo2dm0ojN
-         /A3hvW0qc7FG6S7xAUB+ERqDOx50kFHHElCt88aoyM8qUaLuIJPsai004gFM6f8YqTS8
-         vfALYZ7UzhPlnLrCE32InBLj4E4akFMgDIjdML9coqz3eRQk00356bzVC2YkwiAIwQWU
-         18BVWNUItVflJPLSsk11aIAuYtCerHhmqWK5/MnaszKaKRZNagLrIgeDf/BpGY3eQkOc
-         PHLw==
+        d=paul-moore.com; s=google; t=1694642511; x=1695247311; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J1BzhoPhb2//zdQEYrBqERcWxq7EXQZgg5EE9xLjsNE=;
+        b=LuZacEr4T49S9dYehNHwcdL+HHWpbtTipqgkL/fQ3wwsOeHDCHOBglFEHAzGa5a1qr
+         T0xZxk4PUlkGLQZEGKJSCywWAg/F/PDM4HcWOBC+seSjtcatOKFbJuRFL1s/g7QGKv1z
+         zfa1VcQeVyhh5t9X1vbTg2THofL8+PCxdWD8O66DZjKWbrCICZM9fVa1Dsx6ngHaKIIk
+         g7O219biUD3FuyGnMfUGoKAy4yemS4x9U50wY/+CkChdM+4rbfGjodAVey2wPsqqbCHb
+         yixBRqkpajxc/4daptt3p047jWQSIUBtwvhmyn7Fgpw7OGgojtP7K7GVi0OnaRSc4VO1
+         PmoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694642221; x=1695247021;
-        h=in-reply-to:references:subject:to:from:message-id:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f1fI0z3hvkFXxuX039z2cx7VykRCuw0/mepb/WnviFM=;
-        b=IxE9aKG51tPllkT64kKR9cGe07LO/5uUyRwPLtClSpxnjXDPZ4QOFG9smJqRraUht0
-         slBUi5gtDq3AL6vBfpXQecjN2D3Eg1yb+ubZiEiPuHj4GY0RVT30QrQU8972aWx4oCmE
-         l5Jwqixgjy+3iL/JUFUBObMgLo0GC1fQXsinlHksrTthhzPMUrXNs6AbnbNEPufUkQpe
-         Uk1UlskckmOCfCYC5ekOpFM9Fw15bgXAPw228Yewo+1/vL6mNzwkWRphRrTMouWT+Gzx
-         htOO2Xmyr5XJ+YGEF7nBHP3CWOG2gkRIjPOYfAMYJBqPk4fgxEZMgKwEp3nKD0boUnTH
-         THrQ==
-X-Gm-Message-State: AOJu0YyX+xgYGWamvqg7a3R+spGDS5m9I/g094wd1ShX09vbpUtW/00K
-        DlyahzQauxeyPoTTGCqxZxyS
-X-Google-Smtp-Source: AGHT+IEEx7g9ZHMZUerHPAehv2TzUr0HZkUE7qk5Y9FLUTaJrd6lNIRKttrjoAVsDGIy8Hnp/Bc4ag==
-X-Received: by 2002:ac8:5753:0:b0:410:97af:cf86 with SMTP id 19-20020ac85753000000b0041097afcf86mr3909186qtx.31.1694642220981;
-        Wed, 13 Sep 2023 14:57:00 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id y13-20020ac8524d000000b0041519ba589fsm67514qtn.6.2023.09.13.14.57.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Sep 2023 14:57:00 -0700 (PDT)
-Date:   Wed, 13 Sep 2023 17:56:59 -0400
-Message-ID: <476895eed013ebdb836ae40fc1f62561.paul@paul-moore.com>
+        d=1e100.net; s=20230601; t=1694642511; x=1695247311;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J1BzhoPhb2//zdQEYrBqERcWxq7EXQZgg5EE9xLjsNE=;
+        b=b4a6ghTljaOQ5zUqAkTNXfnExBWRy5p/okXdYx6xf5QtjPLia4hM4h52tzB2cHwMEe
+         ZysZRiUz9i+c2eCs4hbqUDXx8zHoRnluJppm/K24Dxa4djqPBpVcgwogv0cdp/gHmwbR
+         x4cgypgetJtyIJS3iy7GhNj0LTAoU846phLkduhLurjaDJvyRT3n8UCoibdbiY/Grziq
+         R5XAZe5zGyLU6iWDGcmypwBgQRNpmMOckX2emNjUf3QnEhZjY7cLTLirGUeVoy+OQUe1
+         O0SZfDiTseCOqCgvPqn/ZKP1co0RKgc6vO7Z5HBL08JxO5veZe53dAD87wJxMIEYtJci
+         qvCA==
+X-Gm-Message-State: AOJu0YzuJQWn7OcYo38rRUhBd997rTTt3+8m22cL5J6AGA5H1echxLGR
+        hvQVRY16+FCnZ7PgUghUSD4HcAHWQdOtkAeaEqMd
+X-Google-Smtp-Source: AGHT+IE/S8VnWj48T5HhcdZ/RxneEfjJCCSGxot8kBZp01rmiH8JIaXQtCkeGNS/ETtaApzkkbtjU52xB6QNSy4jSfg=
+X-Received: by 2002:a81:8392:0:b0:595:2de4:c991 with SMTP id
+ t140-20020a818392000000b005952de4c991mr3691240ywf.29.1694642511140; Wed, 13
+ Sep 2023 15:01:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <ZOWtBTKkfcc8sKkY@gmail.com> <ZOX2XDdrfk8rO9+t@casper.infradead.org>
+In-Reply-To: <ZOX2XDdrfk8rO9+t@casper.infradead.org>
 From:   Paul Moore <paul@paul-moore.com>
-To:     Khadija Kamran <kamrankhadijadj@gmail.com>,
-        linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
+Date:   Wed, 13 Sep 2023 18:01:40 -0400
+Message-ID: <CAHC9VhRBMmt9UG+FM6ZUERJdoa8UDO-LqoqMK_WadvUvCzTBcw@mail.gmail.com>
+Subject: Re: [PATCH] lsm: constify the 'mm' parameter in security_vm_enough_memory_mm()
+To:     Khadija Kamran <kamrankhadijadj@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
         linux-security-module@vger.kernel.org,
         Stephen Smalley <stephen.smalley.work@gmail.com>,
         Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
         ztarkhani@microsoft.com, alison.schofield@intel.com
-Subject: Re: [PATCH] lsm: constify 'sb' parameter in security_quotactl()
-References: <ZOWq2d5c7MpLl5A4@gmail.com>
-In-Reply-To: <ZOWq2d5c7MpLl5A4@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Aug 23, 2023 Khadija Kamran <kamrankhadijadj@gmail.com> wrote:
-> 
-> SELinux registers the implementation for the "quotactl" hook. Looking at
-> the function implementation we observe that the parameter "sb" is not
-> changing.
-> 
-> Mark the "sb" parameter of LSM hook security_quotactl() as "const" since
-> it will not be changing in the LSM hook.
-> 
-> Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
-> ---
->  include/linux/lsm_hook_defs.h | 2 +-
->  include/linux/security.h      | 4 ++--
->  security/security.c           | 2 +-
->  security/selinux/hooks.c      | 4 ++--
->  4 files changed, 6 insertions(+), 6 deletions(-)
+On Wed, Aug 23, 2023 at 8:07=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
+> wrote:
+> On Wed, Aug 23, 2023 at 11:53:57AM +0500, Khadija Kamran wrote:
+> > +++ b/include/linux/mm.h
+> > @@ -3064,7 +3064,7 @@ void anon_vma_interval_tree_verify(struct anon_vm=
+a_chain *node);
+> >            avc; avc =3D anon_vma_interval_tree_iter_next(avc, start, la=
+st))
+> >
+> >  /* mmap.c */
+> > -extern int __vm_enough_memory(struct mm_struct *mm, long pages, int ca=
+p_sys_admin);
+> > +extern int __vm_enough_memory(const struct mm_struct *mm, long pages, =
+int cap_sys_admin);
+>
+> Could you remove the 'extern' when you touch a function prototype?
 
-Looks good to me, merged into lsm/next.  Thanks!
+Khadija, can you please make the change Matthew is requesting?
 
---
+--=20
 paul-moore.com
