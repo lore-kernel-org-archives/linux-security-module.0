@@ -2,218 +2,171 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A2ECA5534
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 09:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 928B1EDEC71
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 15:23:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239467AbjIMJqb (ORCPT
+        id S237311AbjIMPXi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Sep 2023 05:46:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54474 "EHLO
+        Wed, 13 Sep 2023 11:23:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229644AbjIMJq2 (ORCPT
+        with ESMTP id S235530AbjIMPXi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Sep 2023 05:46:28 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1CCE199E;
-        Wed, 13 Sep 2023 02:46:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694598384; x=1726134384;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S0U1sJQmWgIOy7aN4TQkzxQY5zUz0O3HFLs3l1IT65o=;
-  b=Z73vORS4r7aFus1jYIalJeAp2YdmpBZQOJcPSu6CWRNpGA3l706Ni7YL
-   8E2hDTwKxKqzK8pEU6FBNoSvkKzgqhrtqAOVv0/Vh9cE9B+I0TiET7dDl
-   k1a0SuKToc9eEnI4P8eDsoRqfT/mfcKaxNNlDKVYdbdUns0VK+hq1zQ8+
-   oaOKGdm70hvvjP7lXPe92TXiHaqQPlT5QwgbvDyhPfay3HVtxu8YUWwAJ
-   pkkJACc9iarQyhqPXG4ecvjdElbJ+cCSsayRYztVhrnn4fJ+E1bXxK+gk
-   djU17aULKsI+f9KhYMrs5/BXPA7cmAP4Sfo2eBB1asExuM0LDbZ4v9w5e
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10831"; a="382420818"
-X-IronPort-AV: E=Sophos;i="6.02,142,1688454000"; 
-   d="scan'208";a="382420818"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2023 02:46:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10831"; a="814156788"
-X-IronPort-AV: E=Sophos;i="6.02,142,1688454000"; 
-   d="scan'208";a="814156788"
-Received: from lkp-server02.sh.intel.com (HELO cf13c67269a2) ([10.239.97.151])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Sep 2023 02:46:19 -0700
-Received: from kbuild by cf13c67269a2 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qgMRt-0000Lc-23;
-        Wed, 13 Sep 2023 09:46:17 +0000
-Date:   Wed, 13 Sep 2023 17:45:46 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
-        sargun@sargun.me
-Subject: Re: [PATCH v4 bpf-next 06/12] bpf: take into account BPF token when
- fetching helper protos
-Message-ID: <202309131744.fLl0eeCO-lkp@intel.com>
-References: <20230912212906.3975866-7-andrii@kernel.org>
+        Wed, 13 Sep 2023 11:23:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 722681BFB
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 08:22:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1694618565;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FTfXorS8NWDW0bcx6yY89gzPkWn52B0igCnyNn6sVfo=;
+        b=CI4YrKqLga1J3UNnKEA1GKG0v3Zg5pYCnK1zPrv2XCWQxhi0vDWMfmEKaVxlQHOrKRn81S
+        bGm+d/W6l3GYGqoKC2xiexqccmZbB3e9jtZqRelcWTYUAtRX3kQHJNsJsqPem57NCtdY7i
+        lzmBoTK9zJCTgXF7OZEIgs7Yj578zYA=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-618-fRxVvvelMT-SDHWf4TavaA-1; Wed, 13 Sep 2023 11:22:44 -0400
+X-MC-Unique: fRxVvvelMT-SDHWf4TavaA-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-997c891a88dso469500066b.3
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 08:22:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694618563; x=1695223363;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FTfXorS8NWDW0bcx6yY89gzPkWn52B0igCnyNn6sVfo=;
+        b=E1WAYJxEXaeD1K+uXaPT1L1hSac1N6gEadoIgg4xGJWmAqWRfTzIZpvDLQn42GlbGl
+         HcdfJ4ej4ARtNS/8JS+lj8qRK/ci066BtLXB9MPBDtZHj8N7XNNCnQBr54KTJrXFhHez
+         Lqy3e0nXgMwREEqmGbo4sgkvqqv8Io2UzQ7e+16us2737Vx1t5WiM1q5lm30/Sbb6Cwl
+         Z5donXCB10lpVKkoLF+PDPj09MhpRAKoR58n7ysoZ6FXV9BlC4p3GRxhp3KBWsyCMfXt
+         O535AMF0HGutaeQSuQxMLDsWya2+2lwuoEKmPOOAmMT1F9Ed+8xIKUxhBXAQgrhpTKoS
+         /uIg==
+X-Gm-Message-State: AOJu0YypEAeeFIX8frgohP0158T9yC2rjZtHS02Hmhm/pga7Nv82YZAc
+        G0fAocln78Uxfpv6zbBdAzVn28i20ufk6D8v0VYshmDLe5xI4h7qA45NjmgFZ+yZYOxfPr+iNNr
+        cxS4058ewBwuoTZyRJs3cDPI6lesRghgYb2Cx
+X-Received: by 2002:a17:906:8a4a:b0:9a2:1e03:1573 with SMTP id gx10-20020a1709068a4a00b009a21e031573mr2203447ejc.65.1694618563220;
+        Wed, 13 Sep 2023 08:22:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEPav7CS9OAXNz5wCBb3Ckycl9EWcatp0ojEQPYZQSdhbugHLMMEeHnm8tMl75k1c+1hzp+Ig==
+X-Received: by 2002:a17:906:8a4a:b0:9a2:1e03:1573 with SMTP id gx10-20020a1709068a4a00b009a21e031573mr2203439ejc.65.1694618562971;
+        Wed, 13 Sep 2023 08:22:42 -0700 (PDT)
+Received: from maszat.piliscsaba.szeredi.hu (79-120-253-96.pool.digikabel.hu. [79.120.253.96])
+        by smtp.gmail.com with ESMTPSA id q18-20020a170906a09200b0099b8234a9fesm8640663ejy.1.2023.09.13.08.22.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Sep 2023 08:22:41 -0700 (PDT)
+From:   Miklos Szeredi <mszeredi@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: [RFC PATCH 1/3] add unique mount ID
+Date:   Wed, 13 Sep 2023 17:22:34 +0200
+Message-ID: <20230913152238.905247-2-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230913152238.905247-1-mszeredi@redhat.com>
+References: <20230913152238.905247-1-mszeredi@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230912212906.3975866-7-andrii@kernel.org>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"; x-default=true
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Andrii,
+If a mount is released then it's mnt_id can immediately be reused.  This is
+bad news for user interfaces that want to uniquely identify a mount.
 
-kernel test robot noticed the following build errors:
+Implementing a unique mount ID is trivial (use a 64bit counter).
+Unfortunately userspace assumes 32bit size and would overflow after the
+counter reaches 2^32.
 
-[auto build test ERROR on bpf-next/master]
+Introduce a new 64bit ID alongside the old one.  Allow new interfaces to
+work on both the old and new IDs by starting the counter from 2^32.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bpf-add-BPF-token-delegation-mount-options-to-BPF-FS/20230913-053240
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20230912212906.3975866-7-andrii%40kernel.org
-patch subject: [PATCH v4 bpf-next 06/12] bpf: take into account BPF token when fetching helper protos
-config: um-allyesconfig (https://download.01.org/0day-ci/archive/20230913/202309131744.fLl0eeCO-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project.git f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230913/202309131744.fLl0eeCO-lkp@intel.com/reproduce)
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/mount.h                | 3 ++-
+ fs/namespace.c            | 4 ++++
+ fs/stat.c                 | 9 +++++++--
+ include/uapi/linux/stat.h | 1 +
+ 4 files changed, 14 insertions(+), 3 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309131744.fLl0eeCO-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from net/core/filter.c:21:
-   In file included from include/linux/bpf_verifier.h:7:
-   In file included from include/linux/bpf.h:31:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __raw_readb(PCI_IOBASE + addr);
-                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-   #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-                                                     ^
-   In file included from net/core/filter.c:21:
-   In file included from include/linux/bpf_verifier.h:7:
-   In file included from include/linux/bpf.h:31:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-   #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-                                                     ^
-   In file included from net/core/filter.c:21:
-   In file included from include/linux/bpf_verifier.h:7:
-   In file included from include/linux/bpf.h:31:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writeb(value, PCI_IOBASE + addr);
-                               ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:692:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsb(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:700:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsw(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:708:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsl(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:717:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesb(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
-   include/asm-generic/io.h:726:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesw(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
-   include/asm-generic/io.h:735:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesl(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
->> net/core/filter.c:11721:7: error: implicit declaration of function 'bpf_token_capable' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-           if (!bpf_token_capable(prog->aux->token, CAP_PERFMON))
-                ^
-   12 warnings and 1 error generated.
-
-
-vim +/bpf_token_capable +11721 net/core/filter.c
-
- 11687	
- 11688	static const struct bpf_func_proto *
- 11689	bpf_sk_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 11690	{
- 11691		const struct bpf_func_proto *func;
- 11692	
- 11693		switch (func_id) {
- 11694		case BPF_FUNC_skc_to_tcp6_sock:
- 11695			func = &bpf_skc_to_tcp6_sock_proto;
- 11696			break;
- 11697		case BPF_FUNC_skc_to_tcp_sock:
- 11698			func = &bpf_skc_to_tcp_sock_proto;
- 11699			break;
- 11700		case BPF_FUNC_skc_to_tcp_timewait_sock:
- 11701			func = &bpf_skc_to_tcp_timewait_sock_proto;
- 11702			break;
- 11703		case BPF_FUNC_skc_to_tcp_request_sock:
- 11704			func = &bpf_skc_to_tcp_request_sock_proto;
- 11705			break;
- 11706		case BPF_FUNC_skc_to_udp6_sock:
- 11707			func = &bpf_skc_to_udp6_sock_proto;
- 11708			break;
- 11709		case BPF_FUNC_skc_to_unix_sock:
- 11710			func = &bpf_skc_to_unix_sock_proto;
- 11711			break;
- 11712		case BPF_FUNC_skc_to_mptcp_sock:
- 11713			func = &bpf_skc_to_mptcp_sock_proto;
- 11714			break;
- 11715		case BPF_FUNC_ktime_get_coarse_ns:
- 11716			return &bpf_ktime_get_coarse_ns_proto;
- 11717		default:
- 11718			return bpf_base_func_proto(func_id, prog);
- 11719		}
- 11720	
- 11721		if (!bpf_token_capable(prog->aux->token, CAP_PERFMON))
- 11722			return NULL;
- 11723	
- 11724		return func;
- 11725	}
- 11726	
-
+diff --git a/fs/mount.h b/fs/mount.h
+index 130c07c2f8d2..a14f762b3f29 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -72,7 +72,8 @@ struct mount {
+ 	struct fsnotify_mark_connector __rcu *mnt_fsnotify_marks;
+ 	__u32 mnt_fsnotify_mask;
+ #endif
+-	int mnt_id;			/* mount identifier */
++	int mnt_id;			/* mount identifier, reused */
++	u64 mnt_id_unique;		/* mount ID unique until reboot */
+ 	int mnt_group_id;		/* peer group identifier */
+ 	int mnt_expiry_mark;		/* true if marked for expiry */
+ 	struct hlist_head mnt_pins;
+diff --git a/fs/namespace.c b/fs/namespace.c
+index e157efc54023..de47c5f66e17 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -68,6 +68,9 @@ static u64 event;
+ static DEFINE_IDA(mnt_id_ida);
+ static DEFINE_IDA(mnt_group_ida);
+ 
++/* Don't allow confusion with mount ID allocated wit IDA */
++static atomic64_t mnt_id_ctr = ATOMIC64_INIT(1ULL << 32);
++
+ static struct hlist_head *mount_hashtable __read_mostly;
+ static struct hlist_head *mountpoint_hashtable __read_mostly;
+ static struct kmem_cache *mnt_cache __read_mostly;
+@@ -131,6 +134,7 @@ static int mnt_alloc_id(struct mount *mnt)
+ 	if (res < 0)
+ 		return res;
+ 	mnt->mnt_id = res;
++	mnt->mnt_id_unique = atomic64_inc_return(&mnt_id_ctr);
+ 	return 0;
+ }
+ 
+diff --git a/fs/stat.c b/fs/stat.c
+index 6822ac77aec2..46d901b6b2de 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -280,8 +280,13 @@ static int vfs_statx(int dfd, struct filename *filename, int flags,
+ 
+ 	error = vfs_getattr(&path, stat, request_mask, flags);
+ 
+-	stat->mnt_id = real_mount(path.mnt)->mnt_id;
+-	stat->result_mask |= STATX_MNT_ID;
++	if (request_mask & STATX_MNT_ID_UNIQUE) {
++		stat->mnt_id = real_mount(path.mnt)->mnt_id_unique;
++		stat->result_mask |= STATX_MNT_ID_UNIQUE;
++	} else {
++		stat->mnt_id = real_mount(path.mnt)->mnt_id;
++		stat->result_mask |= STATX_MNT_ID;
++	}
+ 
+ 	if (path.mnt->mnt_root == path.dentry)
+ 		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
+diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+index 7cab2c65d3d7..2f2ee82d5517 100644
+--- a/include/uapi/linux/stat.h
++++ b/include/uapi/linux/stat.h
+@@ -154,6 +154,7 @@ struct statx {
+ #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
+ #define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
+ #define STATX_DIOALIGN		0x00002000U	/* Want/got direct I/O alignment info */
++#define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
+ 
+ #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.41.0
+
