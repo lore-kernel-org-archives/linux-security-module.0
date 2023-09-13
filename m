@@ -2,137 +2,85 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CFCEE0200
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 18:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B6FEE0207
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 19:31:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229933AbjIMSmF (ORCPT
+        id S232256AbjIMTbU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Sep 2023 14:42:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45200 "EHLO
+        Wed, 13 Sep 2023 15:31:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229797AbjIMSmE (ORCPT
+        with ESMTP id S231172AbjIMTbT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Sep 2023 14:42:04 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A5B1A3;
-        Wed, 13 Sep 2023 11:42:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694630520; x=1726166520;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=efM8CDotFiLZ34XLPxPB/I5B9udJDpiuZFDvc+UHFlw=;
-  b=m4kMbcoFqNEyH6RZXRlbFMZ/DBVo9FktmGZIdzjTurqcQd0IX5Ydf0vY
-   p3lpGSTLYp6vxqfQ48LjVMq8xWJ3tLu3kbMbX3YGOcGuN1AHnQKqdP9xP
-   WsXtYSxJ3U9qdqBlGeHuWBz9JP7VWD0nMESndTDoMyG7tSUZwc74oxJTA
-   5g/JfzJMpxgOPzn2ml+lJXF3OOYKmDi8qwIloW0ZPO446ZcpIDpaB9CIV
-   cPPyZiKobKNtNjiEKmMT8y/gVOpESTa3UIXorW2O19TZtqLTEOM2U30V4
-   h5EEAf74sC9XUBe6VBQGjJ9siuBP8k4XsePrhU+djqDSfVDnvObDhvHYw
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10832"; a="377663154"
-X-IronPort-AV: E=Sophos;i="6.02,143,1688454000"; 
-   d="scan'208";a="377663154"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2023 11:41:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10832"; a="991040388"
-X-IronPort-AV: E=Sophos;i="6.02,143,1688454000"; 
-   d="scan'208";a="991040388"
-Received: from lkp-server02.sh.intel.com (HELO 9ef86b2655e5) ([10.239.97.151])
-  by fmsmga006.fm.intel.com with ESMTP; 13 Sep 2023 11:41:57 -0700
-Received: from kbuild by 9ef86b2655e5 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qgUoF-0000T7-0Y;
-        Wed, 13 Sep 2023 18:41:55 +0000
-Date:   Thu, 14 Sep 2023 02:41:26 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
-        sargun@sargun.me
-Subject: Re: [PATCH v4 bpf-next 06/12] bpf: take into account BPF token when
- fetching helper protos
-Message-ID: <202309140202.lwVDn4bK-lkp@intel.com>
-References: <20230912212906.3975866-7-andrii@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230912212906.3975866-7-andrii@kernel.org>
+        Wed, 13 Sep 2023 15:31:19 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CE671998;
+        Wed, 13 Sep 2023 12:31:15 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A853AC433C7;
+        Wed, 13 Sep 2023 19:31:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694633475;
+        bh=C5MM0pQBeJTV7oKReAH8MdIvNB44HPHwyKyQ454VPuw=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=XhvgIIM3My7ZToxpu2qpNFYsq/knw6btBfJOWmShiLr0GeXvJBCc2Ua5wgCwnE4v7
+         Ba+JxSN7CiQxFb4FRBp/BftSNy9fpCmvii1YHnFFlvr1o/V1OGCWaYdX4XBGZkiSr4
+         T7/uAcXdjqNsJVyBLWMKGa+ebxAcPsMMuXUajy129VAZgyhOD3RfbMvElx4OB8V8La
+         Nh8Qa+x9ZWqXlj7ofYldnmTzrbei+Mm3YFXhqq+TE/Fr2P4cv66KtVA0lkAzlijvFw
+         e9hytBimSMcVesk1l2sibvY9WE8CdzhqBfHxKstWxPa0xQOjUmyhQMNfl9ovTEnVQt
+         v909QacM7+32Q==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Wed, 13 Sep 2023 22:31:11 +0300
+Message-Id: <CVI1FHKRSG47.2CV547I19B9ZT@suppilovahvero>
+Cc:     "Yue Haibing" <yuehaibing@huawei.com>, <jmorris@namei.org>,
+        <serge@hallyn.com>, <keyrings@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 -next] keys: Remove unused extern declarations
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Paul Moore" <paul@paul-moore.com>, <dhowells@redhat.com>
+X-Mailer: aerc 0.14.0
+References: <20230729024026.32228-1-yuehaibing@huawei.com>
+ <CAHC9VhRW0Jt0pitVx1cw-zJGWfTmvTU4RSmOFKANYJA7CeEF7g@mail.gmail.com>
+ <CAHC9VhSisEfQd0KCu7f8yKBwnrduFOPhP2SzWDfXiuvGh2g13A@mail.gmail.com>
+In-Reply-To: <CAHC9VhSisEfQd0KCu7f8yKBwnrduFOPhP2SzWDfXiuvGh2g13A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Andrii,
+On Wed Sep 13, 2023 at 9:00 PM EEST, Paul Moore wrote:
+> On Mon, Aug 7, 2023 at 5:46=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+> > On Fri, Jul 28, 2023 at 10:40=E2=80=AFPM Yue Haibing <yuehaibing@huawei=
+.com> wrote:
+> > >
+> > > From: YueHaibing <yuehaibing@huawei.com>
+> > >
+> > > Since commit b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
+> > > iterate_over_keyring() is never used, so can be removed.
+> > >
+> > > And commit b5f545c880a2 ("[PATCH] keys: Permit running process to ins=
+tantiate keys")
+> > > left behind keyring_search_instkey().
+> > >
+> > > Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
+> > > Fixes: b5f545c880a2 ("[PATCH] keys: Permit running process to instant=
+iate keys")
+> > > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > > ---
+> > > v3: Add Fixes tag
+> > > v2: Also remove keyring_search_instkey()
+> > > ---
+> > >  security/keys/internal.h | 7 -------
+> > >  1 file changed, 7 deletions(-)
+> >
+> > Reviewed-by: Paul Moore <paul@paul-moore.com>
+>
+> Jarkko or David, please merge this or explain what is wrong with this pat=
+ch.
 
-kernel test robot noticed the following build errors:
+Sorry, I was aiming to pick this, and thanks for reminding.
 
-[auto build test ERROR on bpf-next/master]
+Applied.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bpf-add-BPF-token-delegation-mount-options-to-BPF-FS/20230913-053240
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20230912212906.3975866-7-andrii%40kernel.org
-patch subject: [PATCH v4 bpf-next 06/12] bpf: take into account BPF token when fetching helper protos
-config: i386-randconfig-r015-20230913 (https://download.01.org/0day-ci/archive/20230914/202309140202.lwVDn4bK-lkp@intel.com/config)
-compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230914/202309140202.lwVDn4bK-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309140202.lwVDn4bK-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> net/core/filter.c:11721:7: error: call to undeclared function 'bpf_token_capable'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-           if (!bpf_token_capable(prog->aux->token, CAP_PERFMON))
-                ^
-   1 error generated.
-
-
-vim +/bpf_token_capable +11721 net/core/filter.c
-
- 11687	
- 11688	static const struct bpf_func_proto *
- 11689	bpf_sk_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 11690	{
- 11691		const struct bpf_func_proto *func;
- 11692	
- 11693		switch (func_id) {
- 11694		case BPF_FUNC_skc_to_tcp6_sock:
- 11695			func = &bpf_skc_to_tcp6_sock_proto;
- 11696			break;
- 11697		case BPF_FUNC_skc_to_tcp_sock:
- 11698			func = &bpf_skc_to_tcp_sock_proto;
- 11699			break;
- 11700		case BPF_FUNC_skc_to_tcp_timewait_sock:
- 11701			func = &bpf_skc_to_tcp_timewait_sock_proto;
- 11702			break;
- 11703		case BPF_FUNC_skc_to_tcp_request_sock:
- 11704			func = &bpf_skc_to_tcp_request_sock_proto;
- 11705			break;
- 11706		case BPF_FUNC_skc_to_udp6_sock:
- 11707			func = &bpf_skc_to_udp6_sock_proto;
- 11708			break;
- 11709		case BPF_FUNC_skc_to_unix_sock:
- 11710			func = &bpf_skc_to_unix_sock_proto;
- 11711			break;
- 11712		case BPF_FUNC_skc_to_mptcp_sock:
- 11713			func = &bpf_skc_to_mptcp_sock_proto;
- 11714			break;
- 11715		case BPF_FUNC_ktime_get_coarse_ns:
- 11716			return &bpf_ktime_get_coarse_ns_proto;
- 11717		default:
- 11718			return bpf_base_func_proto(func_id, prog);
- 11719		}
- 11720	
- 11721		if (!bpf_token_capable(prog->aux->token, CAP_PERFMON))
- 11722			return NULL;
- 11723	
- 11724		return func;
- 11725	}
- 11726	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+BR, Jarkko
