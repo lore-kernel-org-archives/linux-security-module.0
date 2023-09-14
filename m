@@ -2,57 +2,60 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB7BEE0203
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Sep 2023 01:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 964D3EE021D
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Sep 2023 01:56:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234199AbjINB4M (ORCPT
+        id S233742AbjINB4T (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Sep 2023 21:56:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60612 "EHLO
+        Wed, 13 Sep 2023 21:56:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234060AbjINBzq (ORCPT
+        with ESMTP id S233831AbjINBzw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Sep 2023 21:55:46 -0400
-Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27C201BE6
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 18:55:36 -0700 (PDT)
-Received: by mail-pl1-x649.google.com with SMTP id d9443c01a7336-1c08a15fcf4so3862535ad.3
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 18:55:36 -0700 (PDT)
+        Wed, 13 Sep 2023 21:55:52 -0400
+Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A778B1BFA
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 18:55:40 -0700 (PDT)
+Received: by mail-pg1-x549.google.com with SMTP id 41be03b00d2f7-563ab574cb5so349264a12.1
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 18:55:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1694656535; x=1695261335; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bJKy84XSuMTmOC63vQkGfkXTGkwOOuRa5fNJs1nSv9Y=;
-        b=OmuuHmVp88oV0ZN3hZneCd3NQcP8EpH+nCF9AJeg07IQEEJGUgx+JQcAqnKVzOhs/N
-         wD/5hTrs4+3L1wdSxsivTdczQ9+GFlaeSzD0r9Nyz8I/MoFmP98hkTY1NEz6yGDILjyT
-         WY9l+VT3Muh5SS43js3l9zMDeJN8Vfsxe1jpPnmcvCYpxfUVNLUMF9b15oNtLmtGHZBF
-         JTD887sOuuGmszapf8eR1Qdc/KM9HW/JEntrvs7aSsIxYqnEeu2WaJX8JZw4Chz3XshG
-         o9N1oUr70zvmwoj1FNfBubKfB5GVLoL/MXjFlD11N0/AEwyWRkbhVGJvtX/arbuehnI5
-         H6tA==
+        d=google.com; s=20230601; t=1694656540; x=1695261340; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=/PWByveWahNDDpwQn3dTY8oCHEhRVqmq8s8F8KhgOhw=;
+        b=eFPOkpWWd8xq7LTpLgL5afY9xRV7JuEnSft/7W+iLQ8SEPNAPSc1BU9+Rq++vp/jmM
+         +B2ZDp/ygrGfDaywVyGk4JbP2gM/uvIe4rcn9j30ICeS9+lvYuafcDxm+/LzgnqeKJSO
+         m+aokiGenzhffVe3JNg+AcIzEluVvT6EILnORPWgaloXVbyjtctfbjU/lwLQwxTTNQhZ
+         XNQMN52mqUDDAY6Qts6VxvmN4JJd/6Jo3WOg0m/NV5H/QkAX1jLpT0p5w9dv8/DcZiSj
+         3MdTJ3kqHDSaL5ueiBdnlpOa0WD0qGwCQzQc5TIT3CBz0elzO4Z7HsAp4uf8xIQh3P8s
+         HFGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694656535; x=1695261335;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bJKy84XSuMTmOC63vQkGfkXTGkwOOuRa5fNJs1nSv9Y=;
-        b=okx9jFWOhEZzfwJrD+U5i/1gIu8J3GcYZJ0geET87NGUqRTcGVKX4DRAu39kzmTf5R
-         X4ZwKjG8kv76cZpq4i3zaojsqTm2GfIcrfe6D6MRn3gt15ZxYcJ9iNwl5/HmIUfu2pge
-         X/SaT2avFFslAbUgCxADQpHinvC5rOMC2ojKhFisYHgycySsGX0MPw+RR6kLosB/35UY
-         aZGR908c7iHE/BtEX/V2ydBpTow2vUkaf3TmP9F4078Lf473xFnltJpIsy4zStSNwxVL
-         Q3fctydMCA68Y5BkrmfXpdjOJbXjWsPBf72Om8Yrs5eznoQVbuA4FThgEI2DfoioPrsM
-         izOw==
-X-Gm-Message-State: AOJu0YzcjuDwOrsu/+QoQkccujFYeqwBXUtnEEkAS+UThRkWNBMfgH8/
-        Dh3XnYxt+/svvteqOTyGwsHTSM8DOfM=
-X-Google-Smtp-Source: AGHT+IGnw6PJDWM0E1VK/7ZuUO30qpP9NQbgvDz7dNd87qt+PDes/hO2OajwY8ZpLg9diAiXM3Vfd4Drz0o=
+        d=1e100.net; s=20230601; t=1694656540; x=1695261340;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/PWByveWahNDDpwQn3dTY8oCHEhRVqmq8s8F8KhgOhw=;
+        b=dNA0Gyo5gwdqsX97thcHdNYOGfBfgAwFbvOIia/4htfqUpEeICHXiI+l+yExLKEss5
+         BjWR9XH9sI+ASXpt4LBWjm28Z8znO/f7vu5OEhyG3NzVq+J3VR16VaRhNUapYAEhYtsa
+         PNUwFA0LsWzn5qCJoJBJpyXYtmdOKrWQ658aaqHWSr4HAXIuAMfWISX7tMI3QEhjikcr
+         YguGe5DBr92VS++sYDivmFIroI7kKo3mbM8AfbJ05V0BexAWpu7LdBrW++BQOBD5Qaae
+         TbEAtCSSN7kJMxRsmbgFKXgMQDqnsdZWwotFtxPlqHCXg0MfPdgeUn+8EsaxWjgPU4KZ
+         tREA==
+X-Gm-Message-State: AOJu0YwSLuowRczaRohqDfoWF9zWMdOrjnLejCTsIFWCKLnbexB8lU7/
+        9y1/0t4GFZsbHF0nSprAliKOK1fc3Zs=
+X-Google-Smtp-Source: AGHT+IFH7Y8a1vBNnSACzhOpKycbEt9pew6IzwhiL/gw/jXJMO2Ad5b3/QDP/rYw9JwfwFTkI8vz1sHeU4s=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:903:2445:b0:1c3:1ceb:97b6 with SMTP id
- l5-20020a170903244500b001c31ceb97b6mr183120pls.7.1694656535510; Wed, 13 Sep
- 2023 18:55:35 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a17:903:230b:b0:1bf:cc5:7b53 with SMTP id
+ d11-20020a170903230b00b001bf0cc57b53mr198908plh.1.1694656539979; Wed, 13 Sep
+ 2023 18:55:39 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date:   Wed, 13 Sep 2023 18:54:58 -0700
+Date:   Wed, 13 Sep 2023 18:55:00 -0700
+In-Reply-To: <20230914015531.1419405-1-seanjc@google.com>
 Mime-Version: 1.0
+References: <20230914015531.1419405-1-seanjc@google.com>
 X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
-Message-ID: <20230914015531.1419405-1-seanjc@google.com>
-Subject: [RFC PATCH v12 00/33] KVM: guest_memfd() and per-page attributes
+Message-ID: <20230914015531.1419405-3-seanjc@google.com>
+Subject: [RFC PATCH v12 02/33] KVM: Use gfn instead of hva for mmu_notifier_retry
 From:   Sean Christopherson <seanjc@google.com>
 To:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
@@ -96,205 +99,269 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This is hopefully the last RFC for implementing fd-based (instead of vma-based)
-memory for KVM guests.  If you want the full background of why we are doing
-this, please go read the v10 cover letter.  With luck, v13 will be a "normal"
-series that's ready for inclusion.
+From: Chao Peng <chao.p.peng@linux.intel.com>
 
-Tagged RFC as there are still several empty changelogs, a lot of missing
-documentation, and a handful of TODOs.  And I haven't tested or proofread this
-anywhere near as much as I normally would.  I am posting even though the
-remaining TODOs aren't _that_ big so that people can test this new version
-without having to wait a few weeks to close out the remaining TODOs, i.e. to
-give us at least some chance of hitting v6.7.
+Currently in mmu_notifier invalidate path, hva range is recorded and
+then checked against by mmu_notifier_retry_hva() in the page fault
+handling path. However, for the to be introduced private memory, a page
+fault may not have a hva associated, checking gfn(gpa) makes more sense.
 
-The most relevant TODO item for non-KVM folks is that we are planning on
-dropping the dedicated "gmem" file system.  Assuming that pans out, the patch
-to export security_inode_init_security_anon() should go away.
+For existing hva based shared memory, gfn is expected to also work. The
+only downside is when aliasing multiple gfns to a single hva, the
+current algorithm of checking multiple ranges could result in a much
+larger range being rejected. Such aliasing should be uncommon, so the
+impact is expected small.
 
-KVM folks, there a few changes I want to highlight and get feedback on, all of
-which are directly related to the "annotated memory faults" series[*]:
+Suggested-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+Reviewed-by: Fuad Tabba <tabba@google.com>
+Tested-by: Fuad Tabba <tabba@google.com>
+[sean: convert vmx_set_apic_access_page_addr() to gfn-based API]
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/mmu/mmu.c   | 10 ++++++----
+ arch/x86/kvm/vmx/vmx.c   | 11 +++++------
+ include/linux/kvm_host.h | 33 +++++++++++++++++++++------------
+ virt/kvm/kvm_main.c      | 40 +++++++++++++++++++++++++++++++---------
+ 4 files changed, 63 insertions(+), 31 deletions(-)
 
- - Rename kvm_run.memory to kvm_run.memory_fault
- - Place "memory_fault" in a separate union
- - Return -EFAULT or -EHWPOISON with exiting with KVM_EXIT_MEMORY_FAULT
-
-The first one is pretty self-explanatory, "run->memory.gpa" looks quite odd and
-would prevent ever doing something directly with memory.
-
-Putting the struct in a separate union is not at all necessary for supporting
-private memory, it's purely forward looking to Anish series, which wants to
-annotate (fill memory_fault) on all faults, even if KVM ultimately doesn't exit
-to userspace (x86 has a few unfortunate flows where KVM can clobber a previous
-exit, or suppress a memory fault exit).  Using a separate union, i.e. different
-bytes in kvm_run, allows exiting to userspace with both memory_fault and the
-"normal" union filled, e.g. if KVM starts an MMIO exit and then hits a memory
-fault exit, the MMIO exit will be preserved.  It's unlikely userspace will be
-able to do anything useful with the info in that case, but the reverse will
-likely be much more interesting, e.g. if KVM hits a memory fault and then doesn't
-report it to userspace for whatever reason.
-
-As for returning -EFAULT/-EHWPOISON, far too many helpers that touch guest
-memory, i.e. can "fault", return 0 on success, which makes it all bug impossible
-to use '0' to signal "exit to userspace".  Rather than use '0' for _just_ the
-case where the guest is accessing private vs. shared, my thought is to use
--EFAULT everywhere except for the poisoned page case.
-
-[*] https://lore.kernel.org/all/20230908222905.1321305-1-amoorthy@google.com
-
-TODOs [owner]:
- - Documentation [none]
- - Changelogs [Sean]
- - Fully anonymous inode vs. proper filesystem [Paolo]
- - kvm_gmem_error_page() testing (my version is untested) [Isaku?]
-
-v12:
- - Squash fixes from others. [Many people]
- - Kill of the .on_unlock() callback and use .on_lock() when handling
-   memory attributes updates. [Isaku]
- - Add more tests. [Ackerley]
- - Move range_has_attrs() to common code. [Paolo]
- - Return actually number of address spaces for the VM-scoped version of
-   KVM_CAP_MULTI_ADDRESS_SPACE. [Paolo]
- - Move forward declaration of "struct kvm_gfn_range" to kvm_types.h. [Yuan]
- - Plumb code to have HVA-based mmu_notifier events affect only shared
-   mappings. [Asish]
- - Clean up kvm_vm_ioctl_set_mem_attributes() math. [Binbin]
- - Collect a few reviews and acks. [Paolo, Paul]
- - Unconditionally advertise a synchronized MMU on PPC. [Paolo]
- - Check for error return from filemap_grab_folio(). [A
- - Make max_order optional. [Fuad]
- - Remove signal injection, zap SPTEs on memory error. [Isaku]
- - Add KVM_CAP_GUEST_MEMFD. [Xiaoyao]
- - Invoke kvm_arch_pre_set_memory_attributes() instead of
-   kvm_mmu_unmap_gfn_range().
- - Rename kvm_run.memory to kvm_run.memory_fault
- - Place "memory_fault" in a separate union
- - Return -EFAULT and -EHWPOISON with KVM_EXIT_MEMORY_FAULT
- - "Init" run->exit_reason in x86's vcpu_run()
-
-v11:
- - https://lore.kernel.org/all/20230718234512.1690985-1-seanjc@google.com
- - Test private<=>shared conversions *without* doing fallocate()
- - PUNCH_HOLE all memory between iterations of the conversion test so that
-   KVM doesn't retain pages in the guest_memfd
- - Rename hugepage control to be a very generic ALLOW_HUGEPAGE, instead of
-   giving it a THP or PMD specific name.
- - Fold in fixes from a lot of people (thank you!)
- - Zap SPTEs *before* updating attributes to ensure no weirdness, e.g. if
-   KVM handles a page fault and looks at inconsistent attributes
- - Refactor MMU interaction with attributes updates to reuse much of KVM's
-   framework for mmu_notifiers.
-
-v10: https://lore.kernel.org/all/20221202061347.1070246-1-chao.p.peng@linux.intel.com
-
-Ackerley Tng (1):
-  KVM: selftests: Test KVM exit behavior for private memory/access
-
-Chao Peng (8):
-  KVM: Use gfn instead of hva for mmu_notifier_retry
-  KVM: Add KVM_EXIT_MEMORY_FAULT exit to report faults to userspace
-  KVM: Introduce per-page memory attributes
-  KVM: x86: Disallow hugepages when memory attributes are mixed
-  KVM: x86/mmu: Handle page fault for private memory
-  KVM: selftests: Add KVM_SET_USER_MEMORY_REGION2 helper
-  KVM: selftests: Expand set_memory_region_test to validate
-    guest_memfd()
-  KVM: selftests: Add basic selftest for guest_memfd()
-
-Sean Christopherson (21):
-  KVM: Tweak kvm_hva_range and hva_handler_t to allow reusing for gfn
-    ranges
-  KVM: PPC: Drop dead code related to KVM_ARCH_WANT_MMU_NOTIFIER
-  KVM: PPC: Return '1' unconditionally for KVM_CAP_SYNC_MMU
-  KVM: Convert KVM_ARCH_WANT_MMU_NOTIFIER to
-    CONFIG_KVM_GENERIC_MMU_NOTIFIER
-  KVM: Introduce KVM_SET_USER_MEMORY_REGION2
-  KVM: Add a dedicated mmu_notifier flag for reclaiming freed memory
-  KVM: Drop .on_unlock() mmu_notifier hook
-  KVM: Set the stage for handling only shared mappings in mmu_notifier
-    events
-  mm: Add AS_UNMOVABLE to mark mapping as completely unmovable
-  security: Export security_inode_init_security_anon() for use by KVM
-  KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for guest-specific backing
-    memory
-  KVM: Add transparent hugepage support for dedicated guest memory
-  KVM: x86: "Reset" vcpu->run->exit_reason early in KVM_RUN
-  KVM: Drop superfluous __KVM_VCPU_MULTIPLE_ADDRESS_SPACE macro
-  KVM: Allow arch code to track number of memslot address spaces per VM
-  KVM: x86: Add support for "protected VMs" that can utilize private
-    memory
-  KVM: selftests: Drop unused kvm_userspace_memory_region_find() helper
-  KVM: selftests: Convert lib's mem regions to
-    KVM_SET_USER_MEMORY_REGION2
-  KVM: selftests: Add support for creating private memslots
-  KVM: selftests: Introduce VM "shape" to allow tests to specify the VM
-    type
-  KVM: selftests: Add GUEST_SYNC[1-6] macros for synchronizing more data
-
-Vishal Annapurve (3):
-  KVM: selftests: Add helpers to convert guest memory b/w private and
-    shared
-  KVM: selftests: Add helpers to do KVM_HC_MAP_GPA_RANGE hypercalls
-    (x86)
-  KVM: selftests: Add x86-only selftest for private memory conversions
-
- Documentation/virt/kvm/api.rst                | 116 ++++
- arch/arm64/include/asm/kvm_host.h             |   2 -
- arch/arm64/kvm/Kconfig                        |   2 +-
- arch/mips/include/asm/kvm_host.h              |   2 -
- arch/mips/kvm/Kconfig                         |   2 +-
- arch/powerpc/include/asm/kvm_host.h           |   2 -
- arch/powerpc/kvm/Kconfig                      |   8 +-
- arch/powerpc/kvm/book3s_hv.c                  |   2 +-
- arch/powerpc/kvm/powerpc.c                    |   7 +-
- arch/riscv/include/asm/kvm_host.h             |   2 -
- arch/riscv/kvm/Kconfig                        |   2 +-
- arch/x86/include/asm/kvm_host.h               |  17 +-
- arch/x86/include/uapi/asm/kvm.h               |   3 +
- arch/x86/kvm/Kconfig                          |  14 +-
- arch/x86/kvm/debugfs.c                        |   2 +-
- arch/x86/kvm/mmu/mmu.c                        | 264 +++++++-
- arch/x86/kvm/mmu/mmu_internal.h               |   2 +
- arch/x86/kvm/mmu/tdp_mmu.c                    |   2 +-
- arch/x86/kvm/vmx/vmx.c                        |  11 +-
- arch/x86/kvm/x86.c                            |  25 +-
- include/linux/kvm_host.h                      | 143 +++-
- include/linux/kvm_types.h                     |   1 +
- include/linux/pagemap.h                       |  19 +-
- include/uapi/linux/kvm.h                      |  67 ++
- include/uapi/linux/magic.h                    |   1 +
- mm/compaction.c                               |  43 +-
- mm/migrate.c                                  |   2 +
- security/security.c                           |   1 +
- tools/testing/selftests/kvm/Makefile          |   3 +
- tools/testing/selftests/kvm/dirty_log_test.c  |   2 +-
- .../testing/selftests/kvm/guest_memfd_test.c  | 165 +++++
- .../selftests/kvm/include/kvm_util_base.h     | 148 +++-
- .../testing/selftests/kvm/include/test_util.h |   5 +
- .../selftests/kvm/include/ucall_common.h      |  11 +
- .../selftests/kvm/include/x86_64/processor.h  |  15 +
- .../selftests/kvm/kvm_page_table_test.c       |   2 +-
- tools/testing/selftests/kvm/lib/kvm_util.c    | 231 ++++---
- tools/testing/selftests/kvm/lib/memstress.c   |   3 +-
- .../selftests/kvm/set_memory_region_test.c    | 100 +++
- .../kvm/x86_64/private_mem_conversions_test.c | 410 +++++++++++
- .../kvm/x86_64/private_mem_kvm_exits_test.c   | 121 ++++
- .../kvm/x86_64/ucna_injection_test.c          |   2 +-
- virt/kvm/Kconfig                              |  17 +
- virt/kvm/Makefile.kvm                         |   1 +
- virt/kvm/dirty_ring.c                         |   2 +-
- virt/kvm/guest_mem.c                          | 637 ++++++++++++++++++
- virt/kvm/kvm_main.c                           | 482 +++++++++++--
- virt/kvm/kvm_mm.h                             |  38 ++
- 48 files changed, 2888 insertions(+), 271 deletions(-)
- create mode 100644 tools/testing/selftests/kvm/guest_memfd_test.c
- create mode 100644 tools/testing/selftests/kvm/x86_64/private_mem_conversions_test.c
- create mode 100644 tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c
- create mode 100644 virt/kvm/guest_mem.c
-
-
-base-commit: 0bb80ecc33a8fb5a682236443c1e740d5c917d1d
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index e1d011c67cc6..0f0231d2b74f 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -3056,7 +3056,7 @@ static void direct_pte_prefetch(struct kvm_vcpu *vcpu, u64 *sptep)
+  *
+  * There are several ways to safely use this helper:
+  *
+- * - Check mmu_invalidate_retry_hva() after grabbing the mapping level, before
++ * - Check mmu_invalidate_retry_gfn() after grabbing the mapping level, before
+  *   consuming it.  In this case, mmu_lock doesn't need to be held during the
+  *   lookup, but it does need to be held while checking the MMU notifier.
+  *
+@@ -4358,7 +4358,7 @@ static bool is_page_fault_stale(struct kvm_vcpu *vcpu,
+ 		return true;
+ 
+ 	return fault->slot &&
+-	       mmu_invalidate_retry_hva(vcpu->kvm, fault->mmu_seq, fault->hva);
++	       mmu_invalidate_retry_gfn(vcpu->kvm, fault->mmu_seq, fault->gfn);
+ }
+ 
+ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+@@ -6253,7 +6253,9 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
+ 
+ 	write_lock(&kvm->mmu_lock);
+ 
+-	kvm_mmu_invalidate_begin(kvm, 0, -1ul);
++	kvm_mmu_invalidate_begin(kvm);
++
++	kvm_mmu_invalidate_range_add(kvm, gfn_start, gfn_end);
+ 
+ 	flush = kvm_rmap_zap_gfn_range(kvm, gfn_start, gfn_end);
+ 
+@@ -6266,7 +6268,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
+ 	if (flush)
+ 		kvm_flush_remote_tlbs_range(kvm, gfn_start, gfn_end - gfn_start);
+ 
+-	kvm_mmu_invalidate_end(kvm, 0, -1ul);
++	kvm_mmu_invalidate_end(kvm);
+ 
+ 	write_unlock(&kvm->mmu_lock);
+ }
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 72e3943f3693..6e502ba93141 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -6757,10 +6757,10 @@ static void vmx_set_apic_access_page_addr(struct kvm_vcpu *vcpu)
+ 		return;
+ 
+ 	/*
+-	 * Grab the memslot so that the hva lookup for the mmu_notifier retry
+-	 * is guaranteed to use the same memslot as the pfn lookup, i.e. rely
+-	 * on the pfn lookup's validation of the memslot to ensure a valid hva
+-	 * is used for the retry check.
++	 * Explicitly grab the memslot using KVM's internal slot ID to ensure
++	 * KVM doesn't unintentionally grab a userspace memslot.  It _should_
++	 * be impossible for userspace to create a memslot for the APIC when
++	 * APICv is enabled, but paranoia won't hurt in this case.
+ 	 */
+ 	slot = id_to_memslot(slots, APIC_ACCESS_PAGE_PRIVATE_MEMSLOT);
+ 	if (!slot || slot->flags & KVM_MEMSLOT_INVALID)
+@@ -6785,8 +6785,7 @@ static void vmx_set_apic_access_page_addr(struct kvm_vcpu *vcpu)
+ 		return;
+ 
+ 	read_lock(&vcpu->kvm->mmu_lock);
+-	if (mmu_invalidate_retry_hva(kvm, mmu_seq,
+-				     gfn_to_hva_memslot(slot, gfn))) {
++	if (mmu_invalidate_retry_gfn(kvm, mmu_seq, gfn)) {
+ 		kvm_make_request(KVM_REQ_APIC_PAGE_RELOAD, vcpu);
+ 		read_unlock(&vcpu->kvm->mmu_lock);
+ 		goto out;
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index fb6c6109fdca..11d091688346 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -787,8 +787,8 @@ struct kvm {
+ 	struct mmu_notifier mmu_notifier;
+ 	unsigned long mmu_invalidate_seq;
+ 	long mmu_invalidate_in_progress;
+-	unsigned long mmu_invalidate_range_start;
+-	unsigned long mmu_invalidate_range_end;
++	gfn_t mmu_invalidate_range_start;
++	gfn_t mmu_invalidate_range_end;
+ #endif
+ 	struct list_head devices;
+ 	u64 manual_dirty_log_protect;
+@@ -1392,10 +1392,9 @@ void kvm_mmu_free_memory_cache(struct kvm_mmu_memory_cache *mc);
+ void *kvm_mmu_memory_cache_alloc(struct kvm_mmu_memory_cache *mc);
+ #endif
+ 
+-void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
+-			      unsigned long end);
+-void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned long start,
+-			    unsigned long end);
++void kvm_mmu_invalidate_begin(struct kvm *kvm);
++void kvm_mmu_invalidate_range_add(struct kvm *kvm, gfn_t start, gfn_t end);
++void kvm_mmu_invalidate_end(struct kvm *kvm);
+ 
+ long kvm_arch_dev_ioctl(struct file *filp,
+ 			unsigned int ioctl, unsigned long arg);
+@@ -1970,9 +1969,9 @@ static inline int mmu_invalidate_retry(struct kvm *kvm, unsigned long mmu_seq)
+ 	return 0;
+ }
+ 
+-static inline int mmu_invalidate_retry_hva(struct kvm *kvm,
++static inline int mmu_invalidate_retry_gfn(struct kvm *kvm,
+ 					   unsigned long mmu_seq,
+-					   unsigned long hva)
++					   gfn_t gfn)
+ {
+ 	lockdep_assert_held(&kvm->mmu_lock);
+ 	/*
+@@ -1981,10 +1980,20 @@ static inline int mmu_invalidate_retry_hva(struct kvm *kvm,
+ 	 * that might be being invalidated. Note that it may include some false
+ 	 * positives, due to shortcuts when handing concurrent invalidations.
+ 	 */
+-	if (unlikely(kvm->mmu_invalidate_in_progress) &&
+-	    hva >= kvm->mmu_invalidate_range_start &&
+-	    hva < kvm->mmu_invalidate_range_end)
+-		return 1;
++	if (unlikely(kvm->mmu_invalidate_in_progress)) {
++		/*
++		 * Dropping mmu_lock after bumping mmu_invalidate_in_progress
++		 * but before updating the range is a KVM bug.
++		 */
++		if (WARN_ON_ONCE(kvm->mmu_invalidate_range_start == INVALID_GPA ||
++				 kvm->mmu_invalidate_range_end == INVALID_GPA))
++			return 1;
++
++		if (gfn >= kvm->mmu_invalidate_range_start &&
++		    gfn < kvm->mmu_invalidate_range_end)
++			return 1;
++	}
++
+ 	if (kvm->mmu_invalidate_seq != mmu_seq)
+ 		return 1;
+ 	return 0;
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 0524933856d4..4fad3b01dc1f 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -543,9 +543,7 @@ static inline struct kvm *mmu_notifier_to_kvm(struct mmu_notifier *mn)
+ 
+ typedef bool (*gfn_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
+ 
+-typedef void (*on_lock_fn_t)(struct kvm *kvm, unsigned long start,
+-			     unsigned long end);
+-
++typedef void (*on_lock_fn_t)(struct kvm *kvm);
+ typedef void (*on_unlock_fn_t)(struct kvm *kvm);
+ 
+ struct kvm_mmu_notifier_range {
+@@ -637,7 +635,8 @@ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
+ 				locked = true;
+ 				KVM_MMU_LOCK(kvm);
+ 				if (!IS_KVM_NULL_FN(range->on_lock))
+-					range->on_lock(kvm, range->start, range->end);
++					range->on_lock(kvm);
++
+ 				if (IS_KVM_NULL_FN(range->handler))
+ 					break;
+ 			}
+@@ -742,15 +741,26 @@ static void kvm_mmu_notifier_change_pte(struct mmu_notifier *mn,
+ 	kvm_handle_hva_range(mn, address, address + 1, arg, kvm_change_spte_gfn);
+ }
+ 
+-void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
+-			      unsigned long end)
++void kvm_mmu_invalidate_begin(struct kvm *kvm)
+ {
++	lockdep_assert_held_write(&kvm->mmu_lock);
+ 	/*
+ 	 * The count increase must become visible at unlock time as no
+ 	 * spte can be established without taking the mmu_lock and
+ 	 * count is also read inside the mmu_lock critical section.
+ 	 */
+ 	kvm->mmu_invalidate_in_progress++;
++
++	if (likely(kvm->mmu_invalidate_in_progress == 1))
++		kvm->mmu_invalidate_range_start = INVALID_GPA;
++}
++
++void kvm_mmu_invalidate_range_add(struct kvm *kvm, gfn_t start, gfn_t end)
++{
++	lockdep_assert_held_write(&kvm->mmu_lock);
++
++	WARN_ON_ONCE(!kvm->mmu_invalidate_in_progress);
++
+ 	if (likely(kvm->mmu_invalidate_in_progress == 1)) {
+ 		kvm->mmu_invalidate_range_start = start;
+ 		kvm->mmu_invalidate_range_end = end;
+@@ -771,6 +781,12 @@ void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
+ 	}
+ }
+ 
++static bool kvm_mmu_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
++{
++	kvm_mmu_invalidate_range_add(kvm, range->start, range->end);
++	return kvm_unmap_gfn_range(kvm, range);
++}
++
+ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+ 					const struct mmu_notifier_range *range)
+ {
+@@ -778,7 +794,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+ 	const struct kvm_mmu_notifier_range hva_range = {
+ 		.start		= range->start,
+ 		.end		= range->end,
+-		.handler	= kvm_unmap_gfn_range,
++		.handler	= kvm_mmu_unmap_gfn_range,
+ 		.on_lock	= kvm_mmu_invalidate_begin,
+ 		.on_unlock	= kvm_arch_guest_memory_reclaimed,
+ 		.flush_on_ret	= true,
+@@ -817,8 +833,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+ 	return 0;
+ }
+ 
+-void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned long start,
+-			    unsigned long end)
++void kvm_mmu_invalidate_end(struct kvm *kvm)
+ {
+ 	/*
+ 	 * This sequence increase will notify the kvm page fault that
+@@ -833,6 +848,13 @@ void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned long start,
+ 	 * in conjunction with the smp_rmb in mmu_invalidate_retry().
+ 	 */
+ 	kvm->mmu_invalidate_in_progress--;
++
++	/*
++	 * Assert that at least one range must be added between start() and
++	 * end().  Not adding a range isn't fatal, but it is a KVM bug.
++	 */
++	WARN_ON_ONCE(kvm->mmu_invalidate_in_progress &&
++		     kvm->mmu_invalidate_range_start == INVALID_GPA);
+ }
+ 
+ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
 -- 
 2.42.0.283.g2d96d420d3-goog
 
