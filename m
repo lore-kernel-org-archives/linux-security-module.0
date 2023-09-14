@@ -2,60 +2,60 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01704EE0219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D23F7EE0212
 	for <linux-security-module@archiver.kernel.org>; Thu, 14 Sep 2023 02:11:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233345AbjINCLw (ORCPT
+        id S233324AbjINCLv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Sep 2023 22:11:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60512 "EHLO
+        Wed, 13 Sep 2023 22:11:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234148AbjINB4B (ORCPT
+        with ESMTP id S234136AbjINBzz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Sep 2023 21:56:01 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFBA4210B
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 18:55:44 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d7e8e12df78so539515276.3
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 18:55:44 -0700 (PDT)
+        Wed, 13 Sep 2023 21:55:55 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D68AC2100
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 18:55:42 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-58d9e327d3aso6069787b3.3
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 18:55:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1694656544; x=1695261344; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1694656542; x=1695261342; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=5olfKKfAgOBEIWorNeGA6oMvbpwHV/k+KeYKQRUdq04=;
-        b=bdIMT7k5UpwL0z+XvScHcf9jpYN5+dVi5xzFu2O9MWIMM32oAqzM4KN8XykaM16YUY
-         YzvZruztiA1/vZf9OVN4agBdyBZdVJTRdZsLki+sc0NJ/iTeGg4HJx7Fz5o4p9z1qrMH
-         sNAU5f5GrWFx3jgKckDFayc2lvRg3R08qo7wl+R40CLvXsPK0E9+KoamWo7PO3XnEmjc
-         jNgIPGBPFoX5C5cWybiYlObLpUam/IHDObmiBrAQsWahbH1j0lv6H5AmJbhXuP6FVAqQ
-         vP/oeOfpaTVLYk9IHWTWHxkne3AuKTv2FkpHSLunQI9BfcDIgV8bYjVSJcTg5zFk3CTb
-         0yYw==
+        bh=ipMZPiP5QxzJYr8+L2XHaFOQ2agfNk5lTTsPLIZe0Eo=;
+        b=IYqzzwJlcplJX/r3J2tz2Ie0U2pJa6yJcoFIB2mB3qtz8aNbHRzP/mQbr+c1Q4EAD9
+         WzQ6HwL6/29VikUHsAqcBLdxf2EvUtO2LVzfI30VLqUj3j6/z36Z3ki3tYTVTuWVQ0JX
+         eQqYMl9YiacRKgBEVR+bHlHlUvWTxHAcMvGXmw0pOgmG2GxWIOR2hFPo4S5hUmw4jhhF
+         X0k81+npQ2v0TL4UTz84eaHb9zta3wNn+5IKYz4udxRG0wLrqCUIWlM37rOk87V68NqQ
+         ZN4axMlE4i8JIPbNMc00N0jXXDwV7FgxAcYSAueGtP0VB/6fETCF571k696jITYuJl5D
+         ovqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694656544; x=1695261344;
+        d=1e100.net; s=20230601; t=1694656542; x=1695261342;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5olfKKfAgOBEIWorNeGA6oMvbpwHV/k+KeYKQRUdq04=;
-        b=Gc1vrdxcVgrwUsdD2KaepvvpiT9HnAxW0bBHOpyqJD3qJJu70XahDD6YEJV94N8WmK
-         0awwK0BiWvSxjHt1RJAeulZ+72wMhk3Ei1EMbJr3IHV/IG3qzHrlosJDxke+8H7O9q0Z
-         giF5+Ab6ouUTe08TtWQh2kqO8im1NdCwUGAMXa8k0LLCIxNEKwtcHHbw2tCy8BCiGYhB
-         ysIQewbXkXJWwQFYoHzrF9NZNC89FJUq33LuuVx5am9ZcaYf2UHGsUSjEwkQ7PShnPou
-         fv0mI1jTUewvCtxlDGRREt/nMCsjC+lSirz8ZtdT66woih4fScfF+cg6rqRavA6EWHXa
-         DRLg==
-X-Gm-Message-State: AOJu0YxKjLXfekuR4NGxGcKlQEzkZSf7dkJKmDl+Wbi90HKbhrPz3MH/
-        WA8LJ27qgbA7oC05K+9IpJKta+4dJU4=
-X-Google-Smtp-Source: AGHT+IFAWDIKY3pID0CrDZgtjj2bXptPteu0k42w51y6Ps+oH46knUj2OnzhEQTEbd0IbAu5MzXei5K4JBI=
+        bh=ipMZPiP5QxzJYr8+L2XHaFOQ2agfNk5lTTsPLIZe0Eo=;
+        b=UGYf3cAflqRcqQ4cWtqP1rwYJIaDq3CVtUtsWC9SukyDECLMBdfPM1LtlzSQl2toG+
+         1PoWkXD/Mbgp+4lfpg8rPs3cU07vptoFU9Uu7ZTsj/Je7xqB/SvSUZW1m0WCmOAWtLFz
+         YVMD3qcuKja/OHkxvtQD4JoRaWa2IjxjC5SXw709Z/zxbeOeU0IhaYUvroY9sI7bEW0L
+         vLrvombejWBlENmW135c06RvtbQbeBqvVpNwQ6ShGc3/xoJnexOFWt1Z7CIg802COGWY
+         RkQ5+wG1lPDvSYD4B4nGgvOcpI0IJjbgsseK8Q2Ohq2y+MOJdo3FCPRTq7OVyOWyZVsn
+         o0Aw==
+X-Gm-Message-State: AOJu0Yx9PpkM7wci982ammA+7dohDLV8Stlf4z0Y7RjCYay9laE9qrt7
+        9wfxAoRhzG7uIMnwZv6/rJLOq2wOvjw=
+X-Google-Smtp-Source: AGHT+IHZ9maMkZbk/mDeS4QG3cCYdpuky8EXqvBvcYXtjkjg3bX1mPxWKIK7RZclMdxYQ1SdoMO1l2xcItw=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:684:b0:d81:8e4d:b681 with SMTP id
- i4-20020a056902068400b00d818e4db681mr15248ybt.12.1694656543919; Wed, 13 Sep
- 2023 18:55:43 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a05:690c:b0a:b0:59b:ebe0:9fd6 with SMTP id
+ cj10-20020a05690c0b0a00b0059bebe09fd6mr14465ywb.6.1694656542028; Wed, 13 Sep
+ 2023 18:55:42 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date:   Wed, 13 Sep 2023 18:55:02 -0700
+Date:   Wed, 13 Sep 2023 18:55:01 -0700
 In-Reply-To: <20230914015531.1419405-1-seanjc@google.com>
 Mime-Version: 1.0
 References: <20230914015531.1419405-1-seanjc@google.com>
 X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
-Message-ID: <20230914015531.1419405-5-seanjc@google.com>
-Subject: [RFC PATCH v12 04/33] KVM: PPC: Return '1' unconditionally for KVM_CAP_SYNC_MMU
+Message-ID: <20230914015531.1419405-4-seanjc@google.com>
+Subject: [RFC PATCH v12 03/33] KVM: PPC: Drop dead code related to KVM_ARCH_WANT_MMU_NOTIFIER
 From:   Sean Christopherson <seanjc@google.com>
 To:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
@@ -99,37 +99,51 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Advertise that KVM's MMU is synchronized with the primary MMU for all
-flavors of PPC KVM support, i.e. advertise that the MMU is synchronized
-when CONFIG_KVM_BOOK3S_HV_POSSIBLE=y but the VM is not using hypervisor
-mode (a.k.a. PR VMs).  PR VMs, via kvm_unmap_gfn_range_pr(), do the right
-thing for mmu_notifier invalidation events, and more tellingly, KVM
-returns '1' for KVM_CAP_SYNC_MMU when CONFIG_KVM_BOOK3S_HV_POSSIBLE=n
-and CONFIG_KVM_BOOK3S_PR_POSSIBLE=y, i.e. KVM already advertises a
-synchronized MMU for PR VMs, just not when CONFIG_KVM_BOOK3S_HV_POSSIBLE=y.
+Assert that both KVM_ARCH_WANT_MMU_NOTIFIER and CONFIG_MMU_NOTIFIER are
+defined when KVM is enabled, and return '1' unconditionally for the
+CONFIG_KVM_BOOK3S_HV_POSSIBLE=n path.  All flavors of PPC support for KVM
+select MMU_NOTIFIER, and KVM_ARCH_WANT_MMU_NOTIFIER is unconditionally
+defined by arch/powerpc/include/asm/kvm_host.h.
 
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Effectively dropping use of KVM_ARCH_WANT_MMU_NOTIFIER will simplify a
+future cleanup to turn KVM_ARCH_WANT_MMU_NOTIFIER into a Kconfig, i.e.
+will allow combining all of the
+
+  #if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
+
+checks into a single
+
+  #ifdef CONFIG_KVM_GENERIC_MMU_NOTIFIER
+
+without having to worry about PPC's "bare" usage of
+KVM_ARCH_WANT_MMU_NOTIFIER.
+
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/powerpc/kvm/powerpc.c | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/powerpc/kvm/powerpc.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
-index b0a512ede764..8d3ec483bc2b 100644
+index 7197c8256668..b0a512ede764 100644
 --- a/arch/powerpc/kvm/powerpc.c
 +++ b/arch/powerpc/kvm/powerpc.c
-@@ -635,11 +635,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- #if !defined(CONFIG_MMU_NOTIFIER) || !defined(KVM_ARCH_WANT_MMU_NOTIFIER)
- 		BUILD_BUG();
+@@ -632,12 +632,13 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 		break;
  #endif
--#ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
--		r = hv_enabled;
--#else
- 		r = 1;
--#endif
+ 	case KVM_CAP_SYNC_MMU:
++#if !defined(CONFIG_MMU_NOTIFIER) || !defined(KVM_ARCH_WANT_MMU_NOTIFIER)
++		BUILD_BUG();
++#endif
+ #ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
+ 		r = hv_enabled;
+-#elif defined(KVM_ARCH_WANT_MMU_NOTIFIER)
+-		r = 1;
+ #else
+-		r = 0;
++		r = 1;
+ #endif
  		break;
  #ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
- 	case KVM_CAP_PPC_HTAB_FD:
 -- 
 2.42.0.283.g2d96d420d3-goog
 
