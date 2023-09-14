@@ -2,142 +2,215 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B0AEE0210
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Sep 2023 22:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C01EE0216
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Sep 2023 01:56:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232970AbjIMWTJ (ORCPT
+        id S234216AbjINB4N (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Sep 2023 18:19:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38178 "EHLO
+        Wed, 13 Sep 2023 21:56:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232920AbjIMWTI (ORCPT
+        with ESMTP id S233821AbjINBzr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Sep 2023 18:19:08 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42C1C1999
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 15:19:04 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-59bbed7353aso5508577b3.0
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 15:19:04 -0700 (PDT)
+        Wed, 13 Sep 2023 21:55:47 -0400
+Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B6F51BEC
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 18:55:38 -0700 (PDT)
+Received: by mail-pl1-x64a.google.com with SMTP id d9443c01a7336-1c40ac5b6e7so2353215ad.0
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 18:55:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1694643543; x=1695248343; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5pve2evvQG8Wu6dcM6eIRAvQq/3oe/203mcy+b19gA8=;
-        b=JXbUn+C9hYr/UbHJPlAGR8ydV8unkggCBmeHKJrtstvUXX5xlvGSLHbVR2PGqqqga3
-         RBNAKTCLk18m6fy1aCkgJUriHC4Br0AtOieTzKtoq2N7PcBka1sfSi8LLyFUU/w+b6A6
-         JZmuQRxhom7rrHmoxkNnvNXVnUp1TogQlszyEjF/K6Lkr7EnUpMi3HOZ80v78mnKIaeE
-         VtcW9ptQ83XitvjCAUe4LB4G2KQvkoU39Ww5BdMUpr84JMNjcm4gStsOsMcxtYyu75yx
-         Hua1TEXEyX2C7P+AzlNzDA0njmcKZ89FJoB8khjZokXn8YeLtzB9vM0nW6TiuO6R8+bG
-         wIUA==
+        d=google.com; s=20230601; t=1694656538; x=1695261338; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=/cDQ8+RWss5y1dl7//cmz9qd0NB/VeUV6+/tNlKTQHI=;
+        b=I61QeonfDfbPpd4GYcwE0QD/p/5nFsuyazAl0/5THkU78bB6zFnLULWVQMViErK366
+         4fwSun3TIxw0TPsCKO7+AffbVvASa3E4cR9oJFRSNRzq4t+o1+QaPFt73vTk/9HBR7JS
+         BhB6ro1LiHAXYVTveA5K9NTX87g0nmbV1/P0LXOViUJj8do3vIkoBQ15MnpFUn6KL3N4
+         FsSIwKbB/N9tSfvIgH5gsMZPRfAqX/N+kltJ5NEWRnyFjsuFzmWco17OT5y3gWtCkaFf
+         o8f1oPkix4j2vsnzO3QU2r0ZH+CG2+V4AnvfRbDny3TjdQt1aMzwQiTz5QuBQEjfQqyk
+         Ql5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694643543; x=1695248343;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5pve2evvQG8Wu6dcM6eIRAvQq/3oe/203mcy+b19gA8=;
-        b=pDUeKbSA+81ziHPnJ4Xyz5qhFhO93BKdX/haDbQlkSV2nzzAiVCdFG0wPWUtx5GhHW
-         Xy1XhBA3DbE7Dndhe9l1iPSChRIDriOwZkE2oEPddXqGu37gkj61Jc674oEpRyjVyYh0
-         ufpVSpRbA/eqg9fhi0Xd85YCdFfiQ228gm3G2CFEsXe6oai66Ctw9tIln874BlK2f3O2
-         PqlZ+aFF6NxsdAcgOPU2nohF7rG/CFeEjPBYhRVfoYbtVZmkGxXPd8Z12ykZXLSa7RgP
-         uT0v3e9J7OosqBem17xU3E6EA9/xyyE6lWU+dBAgCNK5qgMMEkAEdeT1RLSzTCYNjjjR
-         wcQA==
-X-Gm-Message-State: AOJu0YxscNHJNk5ORrQCjUzR3l5NOm39RLKsfHvGyRYs/bzuQu6X3668
-        ZUQsVLEA/6Deyd36bUZR0rAmVM9vPhX8s2YdCuc3
-X-Google-Smtp-Source: AGHT+IHd6f6RECjVcqmCL7A7894346dihNwE1aPIds0EMQzgoG2VHb2Uwc+wEHwTPX1DhNcQCvdHYBRnbGkUN+jxvow=
-X-Received: by 2002:a81:91d3:0:b0:59b:52c2:5f15 with SMTP id
- i202-20020a8191d3000000b0059b52c25f15mr19342ywg.25.1694643543316; Wed, 13 Sep
- 2023 15:19:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <ZOXG/VVC1XRc7TtI@gmail.com> <202308240128.Gsn0b0Fv-lkp@intel.com>
-In-Reply-To: <202308240128.Gsn0b0Fv-lkp@intel.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 13 Sep 2023 18:18:52 -0400
-Message-ID: <CAHC9VhS2Smf9V0xJoBeuVfpMP2fhUnn8za_rLzJCmLB_-wBVLA@mail.gmail.com>
-Subject: Re: [PATCH] lsm: constify 'mnt_opts' parameter in security_free_mnt_opts()
-To:     Khadija Kamran <kamrankhadijadj@gmail.com>
-Cc:     kernel test robot <lkp@intel.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
+        d=1e100.net; s=20230601; t=1694656538; x=1695261338;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/cDQ8+RWss5y1dl7//cmz9qd0NB/VeUV6+/tNlKTQHI=;
+        b=Chnbm9YN0vkRfKRb9MyXC3zIOW+uU64VFGKz9S00eJA5kcezRAMrXcl7LxaXQebbis
+         FGhzTUiaVYvE6oi/eVb+rHPJCvhUDvIsX1SypSo8QTlMHi/9bR0usDgCkXdYxby3GA4b
+         SlQXP2KGM+CUQ6hzlUUVM3ZZ4iANHmUv+jb5TmcxBgRff9P3bNsyI3+jSnIdiFMIIvsV
+         pJ8ajRbk8snqtOTBY6x55WDK3Rlm+/EO7lbio7+jIinAtrP6MuUfWZhwlBbCohg56VYq
+         alk/aZ8FhnMQzc9uyzLvia0aEzRKRRk5SuytU4/MujJp41JBEQxXgDkUNSEEwgrXSzVH
+         Oe8w==
+X-Gm-Message-State: AOJu0YyRtFtZmV0jweC3jBg7rabm5dGz3PkC+ZrfM2u8jnMYyNy0BGRm
+        TCrcbh7Humir8hTshuiD+lFBleaEInA=
+X-Google-Smtp-Source: AGHT+IE0PXMQEm/IFGrVOf6ppWkIN82E9wFoqnKGFhjVJyi0Xqws7PTmRSBCpdZciUBlWguOQ7crfgDDDDg=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:e88f:b0:1b8:8c7:31e6 with SMTP id
+ w15-20020a170902e88f00b001b808c731e6mr201908plg.1.1694656537960; Wed, 13 Sep
+ 2023 18:55:37 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date:   Wed, 13 Sep 2023 18:54:59 -0700
+In-Reply-To: <20230914015531.1419405-1-seanjc@google.com>
+Mime-Version: 1.0
+References: <20230914015531.1419405-1-seanjc@google.com>
+X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
+Message-ID: <20230914015531.1419405-2-seanjc@google.com>
+Subject: [RFC PATCH v12 01/33] KVM: Tweak kvm_hva_range and hva_handler_t to
+ allow reusing for gfn ranges
+From:   Sean Christopherson <seanjc@google.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Sean Christopherson <seanjc@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, ztarkhani@microsoft.com,
-        alison.schofield@intel.com, llvm@lists.linux.dev,
-        oe-kbuild-all@lists.linux.dev
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 23, 2023 at 1:22=E2=80=AFPM kernel test robot <lkp@intel.com> w=
-rote:
->
-> Hi Khadija,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on pcmoore-selinux/next]
-> [also build test ERROR on pcmoore-audit/next linus/master v6.5-rc7 next-2=
-0230823]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Khadija-Kamran/lsm=
--constify-mnt_opts-parameter-in-security_free_mnt_opts/20230823-170310
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.g=
-it next
-> patch link:    https://lore.kernel.org/r/ZOXG%2FVVC1XRc7TtI%40gmail.com
-> patch subject: [PATCH] lsm: constify 'mnt_opts' parameter in security_fre=
-e_mnt_opts()
-> config: riscv-randconfig-001-20230823 (https://download.01.org/0day-ci/ar=
-chive/20230824/202308240128.Gsn0b0Fv-lkp@intel.com/config)
-> compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project.git =
-f28c006a5895fc0e329fe15fead81e37457cb1d1)
-> reproduce: (https://download.01.org/0day-ci/archive/20230824/202308240128=
-.Gsn0b0Fv-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202308240128.Gsn0b0Fv-lkp=
-@intel.com/
->
-> All errors (new ones prefixed by >>):
->
-> >> fs/btrfs/super.c:1523:25: error: passing 'void **' to parameter of typ=
-e 'const void **' discards qualifiers in nested pointer types [-Werror,-Win=
-compatible-pointer-types-discards-qualifiers]
->            security_free_mnt_opts(&new_sec_opts);
->                                   ^~~~~~~~~~~~~
->    include/linux/security.h:301:42: note: passing argument to parameter '=
-mnt_opts' here
->    void security_free_mnt_opts(const void **mnt_opts);
->                                             ^
->    fs/btrfs/super.c:1536:25: error: passing 'void **' to parameter of typ=
-e 'const void **' discards qualifiers in nested pointer types [-Werror,-Win=
-compatible-pointer-types-discards-qualifiers]
->            security_free_mnt_opts(&new_sec_opts);
->                                   ^~~~~~~~~~~~~
->    include/linux/security.h:301:42: note: passing argument to parameter '=
-mnt_opts' here
->    void security_free_mnt_opts(const void **mnt_opts);
->                                             ^
->    fs/btrfs/super.c:1699:26: error: passing 'void **' to parameter of typ=
-e 'const void **' discards qualifiers in nested pointer types [-Werror,-Win=
-compatible-pointer-types-discards-qualifiers]
->                    security_free_mnt_opts(&new_sec_opts);
->                                           ^~~~~~~~~~~~~
->    include/linux/security.h:301:42: note: passing argument to parameter '=
-mnt_opts' here
->    void security_free_mnt_opts(const void **mnt_opts);
->                                             ^
->    3 errors generated.
+Rework and rename "struct kvm_hva_range" into "kvm_mmu_notifier_range" so
+that the structure can be used to handle notifications that operate on gfn
+context, i.e. that aren't tied to a host virtual address.
 
-Hi Khadija, can you check to see if these errors can be resolved?
+Practically speaking, this is a nop for 64-bit kernels as the only
+meaningful change is to store start+end as u64s instead of unsigned longs.
 
---=20
-paul-moore.com
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ virt/kvm/kvm_main.c | 34 +++++++++++++++++++---------------
+ 1 file changed, 19 insertions(+), 15 deletions(-)
+
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 486800a7024b..0524933856d4 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -541,18 +541,22 @@ static inline struct kvm *mmu_notifier_to_kvm(struct mmu_notifier *mn)
+ 	return container_of(mn, struct kvm, mmu_notifier);
+ }
+ 
+-typedef bool (*hva_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
++typedef bool (*gfn_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
+ 
+ typedef void (*on_lock_fn_t)(struct kvm *kvm, unsigned long start,
+ 			     unsigned long end);
+ 
+ typedef void (*on_unlock_fn_t)(struct kvm *kvm);
+ 
+-struct kvm_hva_range {
+-	unsigned long start;
+-	unsigned long end;
++struct kvm_mmu_notifier_range {
++	/*
++	 * 64-bit addresses, as KVM notifiers can operate on host virtual
++	 * addresses (unsigned long) and guest physical addresses (64-bit).
++	 */
++	u64 start;
++	u64 end;
+ 	union kvm_mmu_notifier_arg arg;
+-	hva_handler_t handler;
++	gfn_handler_t handler;
+ 	on_lock_fn_t on_lock;
+ 	on_unlock_fn_t on_unlock;
+ 	bool flush_on_ret;
+@@ -581,7 +585,7 @@ static const union kvm_mmu_notifier_arg KVM_MMU_NOTIFIER_NO_ARG;
+ 	     node = interval_tree_iter_next(node, start, last))	     \
+ 
+ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
+-						  const struct kvm_hva_range *range)
++						  const struct kvm_mmu_notifier_range *range)
+ {
+ 	bool ret = false, locked = false;
+ 	struct kvm_gfn_range gfn_range;
+@@ -608,9 +612,9 @@ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
+ 			unsigned long hva_start, hva_end;
+ 
+ 			slot = container_of(node, struct kvm_memory_slot, hva_node[slots->node_idx]);
+-			hva_start = max(range->start, slot->userspace_addr);
+-			hva_end = min(range->end, slot->userspace_addr +
+-						  (slot->npages << PAGE_SHIFT));
++			hva_start = max_t(unsigned long, range->start, slot->userspace_addr);
++			hva_end = min_t(unsigned long, range->end,
++					slot->userspace_addr + (slot->npages << PAGE_SHIFT));
+ 
+ 			/*
+ 			 * To optimize for the likely case where the address
+@@ -660,10 +664,10 @@ static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
+ 						unsigned long start,
+ 						unsigned long end,
+ 						union kvm_mmu_notifier_arg arg,
+-						hva_handler_t handler)
++						gfn_handler_t handler)
+ {
+ 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
+-	const struct kvm_hva_range range = {
++	const struct kvm_mmu_notifier_range range = {
+ 		.start		= start,
+ 		.end		= end,
+ 		.arg		= arg,
+@@ -680,10 +684,10 @@ static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
+ static __always_inline int kvm_handle_hva_range_no_flush(struct mmu_notifier *mn,
+ 							 unsigned long start,
+ 							 unsigned long end,
+-							 hva_handler_t handler)
++							 gfn_handler_t handler)
+ {
+ 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
+-	const struct kvm_hva_range range = {
++	const struct kvm_mmu_notifier_range range = {
+ 		.start		= start,
+ 		.end		= end,
+ 		.handler	= handler,
+@@ -771,7 +775,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+ 					const struct mmu_notifier_range *range)
+ {
+ 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
+-	const struct kvm_hva_range hva_range = {
++	const struct kvm_mmu_notifier_range hva_range = {
+ 		.start		= range->start,
+ 		.end		= range->end,
+ 		.handler	= kvm_unmap_gfn_range,
+@@ -835,7 +839,7 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
+ 					const struct mmu_notifier_range *range)
+ {
+ 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
+-	const struct kvm_hva_range hva_range = {
++	const struct kvm_mmu_notifier_range hva_range = {
+ 		.start		= range->start,
+ 		.end		= range->end,
+ 		.handler	= (void *)kvm_null_fn,
+-- 
+2.42.0.283.g2d96d420d3-goog
+
