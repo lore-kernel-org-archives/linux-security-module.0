@@ -2,170 +2,160 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E47EDE9A1
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Sep 2023 10:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19979EEAA45
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Sep 2023 14:20:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237611AbjINKOQ (ORCPT
+        id S239978AbjINOUE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Sep 2023 06:14:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56612 "EHLO
+        Thu, 14 Sep 2023 10:20:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237638AbjINKOO (ORCPT
+        with ESMTP id S239861AbjINOUD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Sep 2023 06:14:14 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A91131BE9
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Sep 2023 03:14:09 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-99c93638322so174158766b.1
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Sep 2023 03:14:09 -0700 (PDT)
+        Thu, 14 Sep 2023 10:20:03 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD944CE
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Sep 2023 07:19:59 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-d81a47e12b5so557173276.0
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Sep 2023 07:19:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1694686448; x=1695291248; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TPuDwD4ZrkyAZ/NBOLS8VaQLWjoMvPUnZLd4ZQdk17o=;
-        b=QLPVbta0mIgsVHxTB342Kfkc6P5mkwpvc8LRZIviHrsloFuQwMwZ0sM6jGWy9nCBOT
-         uTUyoG8ex9Jy1lIJaB8zz4u0JxQthyFIW0HmvV7XCC5pkgb/0nUKcjHwgc4G15a6EL2C
-         eVC25wejuY9fv1OJMSV8kXuBjt6XPECvgOaMA=
+        d=google.com; s=20230601; t=1694701199; x=1695305999; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OinN3M2z4I/Qg8aCda0iI1MRdyz332KlEPPYu5muKwI=;
+        b=xr88NZ3hWTH3lnvGOdBo9NgKqtBG+RfRf+Ma5OOyyYFnq+jFzL65M+V4WoaB9eRMHm
+         971zh2UCBLYdP76uV+Mq30FSgo6lprEyIAHWM6SBOSR9aKHFIc5lP5hALT7lI7DW6hc3
+         2tZv6v0YmnnxQkLA7ALzjmjCaSIA/hUFh0usopy9109tuTlYRCtAakmcXQ/bUatDDHbU
+         h5CBK2/vAkKySfz1KsqCjlBwoLMQf8sHXlk0K2SGK3ckc7R6E0h0vvWF8riWY0TWrINA
+         Zq48Rcr1pRGc9ZQz2lqK1ZZMhdG35Thg67A8WQXciGYHbeYiyMYi5tFD6yK2xNXXqIYv
+         i2IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694686448; x=1695291248;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TPuDwD4ZrkyAZ/NBOLS8VaQLWjoMvPUnZLd4ZQdk17o=;
-        b=O0jvB0mWbOUBcDmLuHPYik8w9ClFC0oBs5CXmSnEQCOP47Tg+V56slSDcb3pGeKSmU
-         jWwm43svsgZPJCe0bPF6hCL+3ijWjPAy2kur+D7zffQ/3wR7mkzoOEko++6U5Xc9kMk4
-         g+uaUoay9O3kQBA6Gvl4chEyPeJWCHNanKQ9rVfnFI1FxmZWiVVnRGDlcvHYMqyNyZUY
-         vYrupJs8zWzXYi78zmODz64tFutT3LzV4Sc4fVMDIV/1m6ojFLe3vjHs1ZJF/PMXZwXY
-         Runds6Q7cXFShSFcaFIK8xgf64nn8264WIIDxSfHrccfJC6ICLgHtO/odp1Fe7sx2oTU
-         J3Vg==
-X-Gm-Message-State: AOJu0YzVrNJQVWDBUVZNweip7ubXCs2VSG6n0IyroIHYrEtLhce39+uZ
-        hbywTRn6K2UK7ceQEA/vbm0t5iKfZbaiVha8QpmgqQ5q34eib55faUg=
-X-Google-Smtp-Source: AGHT+IGWbiyTK876nyDnSZchKAdndIJh+WgEikVLilcv45driRsG8+782uLgZQcb00o4mLm3qnrfRcUzbWyYeD/tVxI=
-X-Received: by 2002:a17:906:51c5:b0:9ad:a46c:66a2 with SMTP id
- v5-20020a17090651c500b009ada46c66a2mr2033508ejk.11.1694686448127; Thu, 14 Sep
- 2023 03:14:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230913152238.905247-1-mszeredi@redhat.com> <20230913152238.905247-3-mszeredi@redhat.com>
- <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
-In-Reply-To: <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 14 Sep 2023 12:13:54 +0200
-Message-ID: <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        d=1e100.net; s=20230601; t=1694701199; x=1695305999;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OinN3M2z4I/Qg8aCda0iI1MRdyz332KlEPPYu5muKwI=;
+        b=Z7n67L1ZhTcKsBqRHRR/xhFSIgTin/rQla3bhO4A8A9Ifi/w9Kl5NVc7dIl0Qc1szD
+         VJv71uhAOkSZ3CeZNZUhT/px24j9cxyD01yJXV4CWVIKqHpY/hi3uP0rMyCSS67fKWDG
+         2b3SShr3WL755qEwP2xEiLaWmf/18qkCIWsbo2wTYRgKVfyy3SgNBwtzPGqzgJpnqPOM
+         GtxDIM/oh+V7W/4qrzng/I8rYkB+XEeccIq6TyMRTVn4LAFsMV5GJ3PcddjXOuHIAGA0
+         Cuts8GMOIe7TUKVdusSfWW36elDgtfDSBEYQ7rwp4+1A6eB92ZmyjG3xYQcWGqn+VsCc
+         UWew==
+X-Gm-Message-State: AOJu0Yzx1QL4Q12Om488+NheheI8Z62eTmI/xiwE92IdSVn74e3adrRh
+        LksQLxaJdhsZeVZr0tR/Rn0V4F1MX8Y=
+X-Google-Smtp-Source: AGHT+IEn69IOl2rxglDVCjXW4KTdScyqCw6tLi48MQpyb+nW1MjRKbjq1lfqPgEextp+IedkDxkiKrdOCXU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:e6c4:0:b0:d78:f45:d7bd with SMTP id
+ d187-20020a25e6c4000000b00d780f45d7bdmr129688ybh.4.1694701199053; Thu, 14 Sep
+ 2023 07:19:59 -0700 (PDT)
+Date:   Thu, 14 Sep 2023 07:19:57 -0700
+In-Reply-To: <54d3e6bf-d374-caa5-0920-bb2fe3b7595c@linux.intel.com>
+Mime-Version: 1.0
+References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-3-seanjc@google.com>
+ <54d3e6bf-d374-caa5-0920-bb2fe3b7595c@linux.intel.com>
+Message-ID: <ZQMWjbt/SzKvag2K@google.com>
+Subject: Re: [RFC PATCH v12 02/33] KVM: Use gfn instead of hva for mmu_notifier_retry
+From:   Sean Christopherson <seanjc@google.com>
+To:     Binbin Wu <binbin.wu@linux.intel.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 14 Sept 2023 at 11:28, Christian Brauner <brauner@kernel.org> wrote:
->
-> On Wed, Sep 13, 2023 at 05:22:35PM +0200, Miklos Szeredi wrote:
-> > Add a way to query attributes of a single mount instead of having to parse
-> > the complete /proc/$PID/mountinfo, which might be huge.
-> >
-> > Lookup the mount by the old (32bit) or new (64bit) mount ID.  If a mount
-> > needs to be queried based on path, then statx(2) can be used to first query
-> > the mount ID belonging to the path.
-> >
-> > Design is based on a suggestion by Linus:
-> >
-> >   "So I'd suggest something that is very much like "statfsat()", which gets
-> >    a buffer and a length, and returns an extended "struct statfs" *AND*
-> >    just a string description at the end."
->
-> So what we agreed to at LSFMM was that we split filesystem option
-> retrieval into a separate system call and just have a very focused
-> statx() for mounts with just binary and non-variable sized information.
-> We even gave David a hard time about this. :) I would really love if we
-> could stick to that.
->
-> Linus, I realize this was your suggestion a long time ago but I would
-> really like us to avoid structs with variable sized fields at the end of
-> a struct. That's just so painful for userspace and universally disliked.
-> If you care I can even find the LSFMM video where we have users of that
-> api requesting that we please don't do this. So it'd be great if you
-> wouldn't insist on it.
-
-I completely missed that.
-
-What I'm thinking is making it even simpler for userspace:
-
-struct statmnt {
-  ...
-  char *mnt_root;
-  char *mountpoint;
-  char *fs_type;
-  u32 num_opts;
-  char *opts;
-};
-
-I'd still just keep options nul delimited.
-
-Is there a good reason not to return pointers (pointing to within the
-supplied buffer obviously) to userspace?
-
->
-> This will also allow us to turn statmnt() into an extensible argument
-> system call versioned by size just like we do any new system calls with
-> struct arguments (e.g., mount_setattr(), clone3(), openat2() and so on).
-> Which is how we should do things like that.
-
-The mask mechanism also allow versioning of the struct.
-
->
-> Other than that I really think this is on track for what we ultimately
-> want.
->
-> > +struct stmt_str {
-> > +     __u32 off;
-> > +     __u32 len;
-> > +};
+On Thu, Sep 14, 2023, Binbin Wu wrote:
+> 
+> On 9/14/2023 9:55 AM, Sean Christopherson wrote:
+> > +void kvm_mmu_invalidate_end(struct kvm *kvm)
+> >   {
+> >   	/*
+> >   	 * This sequence increase will notify the kvm page fault that
+> > @@ -833,6 +848,13 @@ void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned long start,
+> >   	 * in conjunction with the smp_rmb in mmu_invalidate_retry().
+> >   	 */
+> >   	kvm->mmu_invalidate_in_progress--;
 > > +
-> > +struct statmnt {
-> > +     __u64 mask;             /* What results were written [uncond] */
-> > +     __u32 sb_dev_major;     /* Device ID */
-> > +     __u32 sb_dev_minor;
-> > +     __u64 sb_magic;         /* ..._SUPER_MAGIC */
-> > +     __u32 sb_flags;         /* MS_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIME} */
-> > +     __u32 __spare1;
-> > +     __u64 mnt_id;           /* Unique ID of mount */
-> > +     __u64 mnt_parent_id;    /* Unique ID of parent (for root == mnt_id) */
-> > +     __u32 mnt_id_old;       /* Reused IDs used in proc/.../mountinfo */
-> > +     __u32 mnt_parent_id_old;
-> > +     __u64 mnt_attr;         /* MOUNT_ATTR_... */
-> > +     __u64 mnt_propagation;  /* MS_{SHARED,SLAVE,PRIVATE,UNBINDABLE} */
-> > +     __u64 mnt_peer_group;   /* ID of shared peer group */
-> > +     __u64 mnt_master;       /* Mount receives propagation from this ID */
-> > +     __u64 propagate_from;   /* Propagation from in current namespace */
-> > +     __u64 __spare[20];
-> > +     struct stmt_str mnt_root;       /* Root of mount relative to root of fs */
-> > +     struct stmt_str mountpoint;     /* Mountpoint relative to root of process */
-> > +     struct stmt_str fs_type;        /* Filesystem type[.subtype] */
->
-> I think if we want to do this here we should add:
->
-> __u64 fs_type
-> __u64 fs_subtype
->
-> fs_type can just be our filesystem magic number and we introduce magic
+> > +	/*
+> > +	 * Assert that at least one range must be added between start() and
+> > +	 * end().  Not adding a range isn't fatal, but it is a KVM bug.
+> > +	 */
+> > +	WARN_ON_ONCE(kvm->mmu_invalidate_in_progress &&
+> > +		     kvm->mmu_invalidate_range_start == INVALID_GPA);
+> Should the check happen before the decrease of kvm->mmu_invalidate_in_progress?
+> Otherwise, KVM calls kvm_mmu_invalidate_begin(), then kvm_mmu_invalidate_end()
+> the check will not take effect.
 
-It's already there: sb_magic.
+Indeed.  I'm pretty sure I added this code, not sure what I was thinking.  There's
+no reason to check mmu_invalidate_in_progress, it's not like KVM allows
+mmu_invalidate_in_progress to go negative.  The comment is also a bit funky.  I'll
+post a fixup patch to make it look like this (assuming I'm not forgetting a subtle
+reason for guarding the check with the in-progress flag):
 
-However it's not a 1:1 mapping (ext* only has one magic).
+	/*
+	 * Assert that at least one range was added between start() and end().
+	 * Not adding a range isn't fatal, but it is a KVM bug.
+	 */
+	WARN_ON_ONCE(kvm->mmu_invalidate_range_start == INVALID_GPA);
 
-> numbers for sub types as well. So we don't need to use strings here.
+Regarding kvm->mmu_invalidate_in_progress, this would be a good opportunity to
+move the BUG_ON() into the common end(), e.g. as is, an end() without a start()
+from something other than the generic mmu_notifier would go unnoticed.  And I
+_think_ we can replace the BUG_ON() with a KVM_BUG_ON() without putting the
+kernel at risk.  E.g.
 
-Ugh.
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index dd948276e5d6..54480655bcce 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -870,6 +870,7 @@ void kvm_mmu_invalidate_end(struct kvm *kvm)
+         * in conjunction with the smp_rmb in mmu_invalidate_retry().
+         */
+        kvm->mmu_invalidate_in_progress--;
++       KVM_BUG_ON(kvm->mmu_invalidate_in_progress < 0, kvm);
+ 
+        /*
+         * Assert that at least one range was added between start() and end().
+@@ -905,8 +906,6 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
+         */
+        if (wake)
+                rcuwait_wake_up(&kvm->mn_memslots_update_rcuwait);
+-
+-       BUG_ON(kvm->mmu_invalidate_in_progress < 0);
+ }
+ 
+ static int kvm_mmu_notifier_clear_flush_young(struct mmu_notifier *mn,
 
-Thanks,
-Miklos
