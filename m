@@ -2,161 +2,187 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881C1EEAA6E
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Sep 2023 20:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CD4EEAA7B
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Sep 2023 23:19:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbjINUkD (ORCPT
+        id S230196AbjINXTm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Sep 2023 16:40:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58460 "EHLO
+        Thu, 14 Sep 2023 19:19:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229614AbjINUkC (ORCPT
+        with ESMTP id S230061AbjINXTm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Sep 2023 16:40:02 -0400
-Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC9CB26B2
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Sep 2023 13:39:54 -0700 (PDT)
-Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-5924093a9b2so16458017b3.2
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Sep 2023 13:39:54 -0700 (PDT)
+        Thu, 14 Sep 2023 19:19:42 -0400
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C988A2710
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Sep 2023 16:19:37 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-59c0dd156e5so371097b3.3
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Sep 2023 16:19:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1694723994; x=1695328794; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NaSIjMfdl0Gv6CgKXRD6SAmPWndDpWS6dyBZZ4689K4=;
-        b=N5vvMHout599KVr+BGn43S8hqeXB+KRKk6fLGZeqH/6Sa/KHg2mV1dqbVR4OAGBegk
-         Ji5qkNbtns/pRRU4ch0nMHYxILVIki++jUhPsRYJEzKDXwQ3uR6+euAmw7kIRxHk34NN
-         t6m3FY6bN7ptMEUgR4bI3pPfJwdUF1GcsxBDRvFIsHARq4ZzeSAaeHrZD4DvmpJG2usa
-         A6+OMkrr3cpHV9CqRMrtKpuRRz5Tz5V/koYSkndU4SRwuaxDvcx4LjBYwxfELnfuT5i3
-         48NTSzk/fqv2BDjyvYRESc8yRbNb4U+EQY62len0BNjVClZ73w1Zao5CdVDH9iS4jADm
-         eMhQ==
+        d=google.com; s=20230601; t=1694733577; x=1695338377; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4dPufiPQCtPzWz5WHSfvhHWIcWm8zH/JZg221REQo40=;
+        b=BE71Wxnxf9TXA4uEG1U0seh2vfYltm/8zcCFo5uV0eHujhfmKpQ6viEb+NNBb6Dwhc
+         P8bs3PYzSbe3D4fPu4d+k7pb0gvCNTZ/skyj5fMz59hs2XZDM9Iu8EIT2QGUj8CwD2hF
+         VhP+MTv0bFqBaHPQ1155wjxTqW899a7knVyzkqvEyTb10+GMcMamfhqMH+ycTMc3nHO3
+         6TpxZWCJ3/7kuA/983/tRwmmq72d/RwcxFAXY8BXaGPZVMoy3HoUsXsh/WP+ZEUko9kB
+         uumFQJq+gwCpW4SLi2GtEJ/RodOlKnZ/i0sCV5zSDbqp6z708wVn/Y3sxijCTb3ibSzT
+         MMzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694723994; x=1695328794;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NaSIjMfdl0Gv6CgKXRD6SAmPWndDpWS6dyBZZ4689K4=;
-        b=PXHSYA2JC8+o0bfD/H+rPtK2Lyq0wvvn44V/Nb8D0osLxIFX5Sgs9k8CEKHmBRYHkU
-         Wy3YrdhZWRRSAVPxieGr/Q+ejcLGVOtJcT3TkpUjaYj6gETCehSB/VL7RTYU9Ufbhcaa
-         DJekvboOqdyAHlOdyMmq/8o66hpMJqdadZCxZrWo+CNb3bhY69a6ZpXjFzcOEklXBHY8
-         gBMw3AQuBMalrCkS6OkNJg063SBGVmt6NYRO7XUGstQiQb/tgvaSVVGtZWX/b1mGITih
-         Yw/+uoxE1I79az049KeWTVa/kUiV68g+myHDDNtjZWVLUiOVT2EG7asG+KNX3qFTsRdN
-         mvTA==
-X-Gm-Message-State: AOJu0Yz3LOzwAC1w2Z9baVFqqD1b1dEJtDV3bpWgkSOdhoKxezR+igmA
-        r0gAwY50295xhzF2QFlf5hUF3+oXIGi8wDlkiIF4
-X-Google-Smtp-Source: AGHT+IHq8rrjq9tCJqLC7OfNa2hY3WISMCd4iUOBtPL6TwaHsYbzZZlii/9C2ThIbkYmqI7J/8s3pycN3nmMnaBACaI=
-X-Received: by 2002:a0d:c942:0:b0:577:189b:ad4 with SMTP id
- l63-20020a0dc942000000b00577189b0ad4mr6892155ywd.48.1694723994051; Thu, 14
- Sep 2023 13:39:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230913152238.905247-1-mszeredi@redhat.com> <20230913152238.905247-3-mszeredi@redhat.com>
-In-Reply-To: <20230913152238.905247-3-mszeredi@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 14 Sep 2023 16:39:43 -0400
-Message-ID: <CAHC9VhSQb0fYz9FqEu-1jQ1UNsnt-asrKuPt4ufui92GC+=5=Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
+        d=1e100.net; s=20230601; t=1694733577; x=1695338377;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4dPufiPQCtPzWz5WHSfvhHWIcWm8zH/JZg221REQo40=;
+        b=fuXEq1gxzANXPSOUfgHwwQDEGF3YJxqES7Eja66k8UVSB6HSH+prSlHxaByu1+DEis
+         ViJEdIbytBtLeRloD2ozsxjZ9nYGlJpJRUKCc77Bsyi1861rtMNUGaD4ZrS5sjbPrPKg
+         +zZSWSMvo3JCim6GxFamYi4Y5hzeGevGPoX2d2Nadpwx8kp2DfpCUiuNf+004qLwGO5I
+         VlU2prehF8Xi3kwKdmZ0U7qCaxW8wv1CF9lVZY4D4YttPkfjaGLMqz6LV0rZSKLOl+hL
+         1cjEeQA/dl4xsN0Vy8yiL9RXfN8QB7ZdmpG5KIHyoqUceSud1HHqXTyK/KoH2kHvDJyg
+         I7Lw==
+X-Gm-Message-State: AOJu0Yx4r4ZeXIvF5XsnquggYOPvzpxQwz2o8mJ56/FBA4xfSWXWG9fp
+        sme3e7jKGXSfKpmWCi0adGCUZEAOVt5bDaAijg==
+X-Google-Smtp-Source: AGHT+IGXEzZPfzBJslkSHoMTui4zDBSgnXtUGummxt07D80J/zY1rCAlKy2IgGo0zSECxNr/ULgwmLbLuPQoPz0S1A==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
+ (user=ackerleytng job=sendgmr) by 2002:a25:aa83:0:b0:d77:984e:c770 with SMTP
+ id t3-20020a25aa83000000b00d77984ec770mr158034ybi.5.1694733576882; Thu, 14
+ Sep 2023 16:19:36 -0700 (PDT)
+Date:   Thu, 14 Sep 2023 23:19:34 +0000
+In-Reply-To: <ZQNN2AyDJ8dF0/6D@google.com>
+Mime-Version: 1.0
+References: <ZOO782YGRY0YMuPu@google.com> <diqzttsiu67n.fsf@ackerleytng-ctop.c.googlers.com>
+ <ZQNN2AyDJ8dF0/6D@google.com>
+Message-ID: <diqzv8ccjqbd.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From:   Ackerley Tng <ackerleytng@google.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     pbonzini@redhat.com, maz@kernel.org, oliver.upton@linux.dev,
+        chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, willy@infradead.org,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
+        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
+        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
+        david@redhat.com, qperret@google.com, michael.roth@amd.com,
+        wei.w.wang@intel.com, liam.merwick@oracle.com,
+        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 13, 2023 at 11:23=E2=80=AFAM Miklos Szeredi <mszeredi@redhat.co=
-m> wrote:
->
-> Add a way to query attributes of a single mount instead of having to pars=
-e
-> the complete /proc/$PID/mountinfo, which might be huge.
->
-> Lookup the mount by the old (32bit) or new (64bit) mount ID.  If a mount
-> needs to be queried based on path, then statx(2) can be used to first que=
-ry
-> the mount ID belonging to the path.
->
-> Design is based on a suggestion by Linus:
->
->   "So I'd suggest something that is very much like "statfsat()", which ge=
-ts
->    a buffer and a length, and returns an extended "struct statfs" *AND*
->    just a string description at the end."
->
-> The interface closely mimics that of statx.
->
-> Handle ASCII attributes by appending after the end of the structure (as p=
-er
-> above suggestion).  Allow querying multiple string attributes with
-> individual offset/length for each.  String are nul terminated (terminatio=
-n
-> isn't counted in length).
->
-> Mount options are also delimited with nul characters.  Unlike proc, speci=
-al
-> characters are not quoted.
->
-> Link: https://lore.kernel.org/all/CAHk-=3Dwh5YifP7hzKSbwJj94+DZ2czjrZsczy=
-6GBimiogZws=3Drg@mail.gmail.com/
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
->  fs/internal.h                          |   5 +
->  fs/namespace.c                         | 312 ++++++++++++++++++++++++-
->  fs/proc_namespace.c                    |  19 +-
->  fs/statfs.c                            |   1 +
->  include/linux/syscalls.h               |   3 +
->  include/uapi/asm-generic/unistd.h      |   5 +-
->  include/uapi/linux/mount.h             |  36 +++
->  8 files changed, 373 insertions(+), 9 deletions(-)
+Sean Christopherson <seanjc@google.com> writes:
 
-...
+> On Mon, Aug 28, 2023, Ackerley Tng wrote:
+>> Sean Christopherson <seanjc@google.com> writes:
+>> >> If we track struct kvm with the inode, then I think (a), (b) and (c) can
+>> >> be independent of the refcounting method. What do you think?
+>> >
+>> > No go.  Because again, the inode (physical memory) is coupled to the virtual machine
+>> > as a thing, not to a "struct kvm".  Or more concretely, the inode is coupled to an
+>> > ASID or an HKID, and there can be multiple "struct kvm" objects associated with a
+>> > single ASID.  And at some point in the future, I suspect we'll have multiple KVM
+>> > objects per HKID too.
+>> >
+>> > The current SEV use case is for the migration helper, where two KVM objects share
+>> > a single ASID (the "real" VM and the helper).  I suspect TDX will end up with
+>> > similar behavior where helper "VMs" can use the HKID of the "real" VM.  For KVM,
+>> > that means multiple struct kvm objects being associated with a single HKID.
+>> >
+>> > To prevent use-after-free, KVM "just" needs to ensure the helper instances can't
+>> > outlive the real instance, i.e. can't use the HKID/ASID after the owning virtual
+>> > machine has been destroyed.
+>> >
+>> > To put it differently, "struct kvm" is a KVM software construct that _usually_,
+>> > but not always, is associated 1:1 with a virtual machine.
+>> >
+>> > And FWIW, stashing the pointer without holding a reference would not be a complete
+>> > solution, because it couldn't guard against KVM reusing a pointer.  E.g. if a
+>> > struct kvm was unbound and then freed, KVM could reuse the same memory for a new
+>> > struct kvm, with a different ASID/HKID, and get a false negative on the rebinding
+>> > check.
+>> 
+>> I agree that inode (physical memory) is coupled to the virtual machine
+>> as a more generic concept.
+>> 
+>> I was hoping that in the absence of CC hardware providing a HKID/ASID,
+>> the struct kvm pointer could act as a representation of the "virtual
+>> machine". You're definitely right that KVM could reuse a pointer and so
+>> that idea doesn't stand.
+>> 
+>> I thought about generating UUIDs to represent "virtual machines" in the
+>> absence of CC hardware, and this UUID could be transferred during
+>> intra-host migration, but this still doesn't take host userspace out of
+>> the TCB. A malicious host VMM could just use the migration ioctl to copy
+>> the UUID to a malicious dumper VM, which would then pass checks with a
+>> gmem file linked to the malicious dumper VM. This is fine for HKID/ASIDs
+>> because the memory is encrypted; with UUIDs there's no memory
+>> encryption.
+>
+> I don't understand what problem you're trying to solve.  I don't see a need to
+> provide a single concrete representation/definition of a "virtual machine".  E.g.
+> there's no need for a formal definition to securely perform intrahost migration,
+> KVM just needs to ensure that the migration doesn't compromise guest security,
+> functionality, etc.
+>
+> That gets a lot more complex if the target KVM instance (module, not "struct kvm")
+> is a different KVM, e.g. when migrating to a different host.  Then there needs to
+> be a way to attest that the target is trusted and whatnot, but that still doesn't
+> require there to be a formal definition of a "virtual machine".
+>
+>> Circling back to the original topic, was associating the file with
+>> struct kvm at gmem file creation time meant to constrain the use of the
+>> gmem file to one struct kvm, or one virtual machine, or something else?
+>
+> It's meant to keep things as simple as possible (relatively speaking).  A 1:1
+> association between a KVM instance and a gmem instance means we don't have to
+> worry about the edge cases and oddities I pointed out earlier in this thread.
+>
 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index de47c5f66e17..088a52043bba 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
+I looked through this thread again and re-read the edge cases and
+oddities that was pointed out earlier (last paragraph at [1]) and I
+think I understand better, and I have just one last clarification.
 
-...
+It was previously mentioned that binding on creation time simplifies the
+lifecycle of memory:
 
-> +static int do_statmnt(struct stmt_state *s)
-> +{
-> +       struct statmnt *sm =3D &s->sm;
-> +       struct mount *m =3D real_mount(s->mnt);
-> +
-> +       if (!capable(CAP_SYS_ADMIN) &&
-> +           !is_path_reachable(m, m->mnt.mnt_root, &s->root))
-> +               return -EPERM;
+"(a) prevent a different VM from *ever* binding to the gmem instance" [1]
 
-I realize statmnt() is different from fstatfs(), but from an access
-control perspective they look a lot alike to me which is why I think
-we should probably have a security_sb_statfs() call here.  Same thing
-for the listmnt() syscall in patch 3/3.
+Does this actually mean
 
-> +       stmt_numeric(s, STMT_SB_BASIC, stmt_sb_basic);
-> +       stmt_numeric(s, STMT_MNT_BASIC, stmt_mnt_basic);
-> +       stmt_numeric(s, STMT_PROPAGATE_FROM, stmt_propagate_from);
-> +       stmt_string(s, STMT_MNT_ROOT, stmt_mnt_root, &sm->mnt_root);
-> +       stmt_string(s, STMT_MOUNTPOINT, stmt_mountpoint, &sm->mountpoint)=
-;
-> +       stmt_string(s, STMT_FS_TYPE, stmt_fs_type, &sm->fs_type);
-> +       stmt_string(s, STMT_SB_OPTS, stmt_sb_opts, &sm->sb_opts);
-> +
-> +       if (s->err)
-> +               return s->err;
-> +
-> +       if (copy_to_user(s->buf, sm, min_t(size_t, s->bufsize, sizeof(*sm=
-))))
-> +               return -EFAULT;
-> +
-> +       return 0;
-> +}
+"prevent a different struct kvm from *ever* binding to this gmem file"
 
---=20
-paul-moore.com
+?
+
+If so, then binding on creation
+
++ Makes the gmem *file* (and just not the bindings xarray) the binding
+  between struct kvm and the file.
++ Simplifies the KVM-userspace contract to "this gmem file can only be
+  used with this struct kvm"
+
+Binding on creation doesn't offer any way to block the contents of the
+inode from being used with another "virtual machine" though, since we
+can have more than one gmem file pointing to the same inode, and the
+other gmem file is associated with another struct kvm. (And a strut kvm
+isn't associated 1:1 with a virtual machine [2])
+
+The point about an inode needing to be coupled to a virtual machine as a
+thing [2] led me to try to find a single concrete representation of a
+"virtual machine".
+
+Is locking inode contents to a "virtual machine" outside the scope of
+gmem? If so, then it is fine to bind on creation time, use a VM ioctl
+over a system ioctl, and the method of refcounting in gmem v12 is okay.
+
+[1] https://lore.kernel.org/lkml/ZNKv9ul2I7A4V7IF@google.com/
+[2] https://lore.kernel.org/lkml/ZOO782YGRY0YMuPu@google.com/
+
+> <snip>
