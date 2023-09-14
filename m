@@ -2,61 +2,61 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE54EE021A
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Sep 2023 02:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B78EE0213
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Sep 2023 02:01:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234742AbjINCBD (ORCPT
+        id S233860AbjINCBs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Sep 2023 22:01:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39206 "EHLO
+        Wed, 13 Sep 2023 22:01:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234749AbjINB77 (ORCPT
+        with ESMTP id S234359AbjINCA2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Sep 2023 21:59:59 -0400
-Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C15B3C07
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 18:56:32 -0700 (PDT)
-Received: by mail-pl1-x649.google.com with SMTP id d9443c01a7336-1c31359832dso3887525ad.3
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 18:56:32 -0700 (PDT)
+        Wed, 13 Sep 2023 22:00:28 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAB953C3B
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 18:56:42 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d814a1f7378so2791633276.1
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Sep 2023 18:56:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1694656592; x=1695261392; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1694656602; x=1695261402; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vjv0zC4RrtxbIkJLIAO5e3EhKuQZW28HjcF6ypERxIg=;
-        b=4dEdCKgsqAUfA71gJDGn1QkhjWkryjd4tWQSydavJOoANvp/FtV+Br8R0i1zeosT3Y
-         u8pvf7DfZ8MHlLpx2+B3bj7hUFd7pFeNJPnwR3f+bRUa38lwP1kOt1Pp5T/X4ZMWLUx7
-         s1o9dH78hruSsEApGeTQuP+TKkGaZlSggRV7vwNwF739cPJ8WAgLjdLVVWZaeUJTWN9S
-         OfbOmimZGumNiujKk3Ydfl2B1x9HG901OBVUL/c3lLv3JYZvI5b0ZvfbvuxJSCkGdvlG
-         OydBaR5ujEvrTFiOuFZiWEuPFp9bWOar6/5nW/qVCcOifbAiW0IuWtjlcA3Cm3zHyg2w
-         WXfg==
+        bh=XfRZ+8VXY/OEYZxaTO5L0PdI0q7LErIUsWDHkpQzw6o=;
+        b=l3BonxJdDqv4PXjYVu3aUocYQ9/4wGlG3MVyAzuD+6hLcVpCWZJag+qi56/00dcABa
+         qDPXZ+depM2SZ/ceR3ickjwo1cwyTHNtb+s2Q84/eH0bLnpDGQVdybyn51b96kUZbIqy
+         4u/gLryerp5xCyYrXmcWItcDT74RFRFSiF84D6FKfUVcbLA/r/xjLPKTFkmF16mDmHzG
+         5UXHHeToMIqfnBLGdTTkSUiCw43q+b+/kfr98ms/R7Hg8fzresYS/Ti0/MhENw0Pt0X5
+         jr9ZuOrZT99AbU7R1Qm7d0kKeiZvS3RuDy/ikPqqdbEglG0rXjQbwmejyGNAt8LT1K7B
+         nLIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694656592; x=1695261392;
+        d=1e100.net; s=20230601; t=1694656602; x=1695261402;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Vjv0zC4RrtxbIkJLIAO5e3EhKuQZW28HjcF6ypERxIg=;
-        b=pz4f+6ZGCHNYpDOLRe6BBVTWkYji24y6tR6HCXF68Pbj3co8dRPIqJoejhi0O0U3r6
-         tr2naUHS3XI6qtxFp99/mLsPOmQdaGqDQ0+uQGAYdXs0N0beYWFrurdg7x+Dskgeioby
-         sQ12BcCt4gzdcP55wZvn4B3r/xo5tNJ8PiNGYJZdPorbmUQ+I77dxiW2kOz4GqcwKshE
-         vFadyQVmHlwW5LKLQnTO7cyUf4hf+d/hTj8knvbk0Xyqy1sJMNcEtiHtCJj5oquHTyN7
-         nWgVJGdh7B+iLcZ8MWo6gww983+rHvWxN1kEFJKkW3rLfqOdecabgmY4k+tlRXJUpJlK
-         dUAA==
-X-Gm-Message-State: AOJu0YxpHJw37YpYTsnp15bTLDCkLMNnQLGqfRuC5eOBFolL8ztOvm7d
-        l6x/B7K2TawYj5ZgCp6u1kukdDCPPaM=
-X-Google-Smtp-Source: AGHT+IH29SvaM4IJ2/NXJnaPAeFMS+fjtgLQL7Rq48UqpO83PYLOZng2qV6FMiS0c4sL4jzOiYmTHdNxdV0=
+        bh=XfRZ+8VXY/OEYZxaTO5L0PdI0q7LErIUsWDHkpQzw6o=;
+        b=wIXGT7rjhMm+rcgK9f20d69Gq/+EnV+uRBzucJBmmPGaYcC9ShHh1UOeEZIgfVoAxB
+         45NPt3ihkfw8BYkQRKZdPcFcZ/f4inACxZ4ZUlQuzhIpJOPghNM0Xuieoo2I6jBHX/EB
+         +UnkI9JfvDRtIj+d5OJ3a87sULL6Z4JFP7Dvvyl9+WD/HLepRXXMLMC2vbjvD770SWNq
+         4R110E1GdcQR3E/wHmx+TxBeY9yAKsu8CrL+DfHUNKuLzM0T4ATQGu+yf5Y+6IsVTl0y
+         yn0BQ5bHSVYsYkqOWAaRoLzTNxbNesiSax5kh6EbAC3OCOjJNrEr3JMQIANtTW67Bu/Q
+         YQvg==
+X-Gm-Message-State: AOJu0YweVKlFIEnvH2VJb6p+J4jWSVqcQ+Adg/8SEMxu7czXz3pYamBE
+        WC/6foDHVKvy/1BkrO6a7/Vl5QeUWsw=
+X-Google-Smtp-Source: AGHT+IGRS3O+T9+VVevze+Os2k+DiGR8L+K7fuRVrk/vVySDtGkT7cNTInKtJxs4EW7npy+OCmJw4oxYHnE=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:e551:b0:1c3:a4f2:7c85 with SMTP id
- n17-20020a170902e55100b001c3a4f27c85mr212223plf.6.1694656591946; Wed, 13 Sep
- 2023 18:56:31 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a25:d141:0:b0:d77:fb00:b246 with SMTP id
+ i62-20020a25d141000000b00d77fb00b246mr14108ybg.1.1694656602040; Wed, 13 Sep
+ 2023 18:56:42 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date:   Wed, 13 Sep 2023 18:55:26 -0700
+Date:   Wed, 13 Sep 2023 18:55:31 -0700
 In-Reply-To: <20230914015531.1419405-1-seanjc@google.com>
 Mime-Version: 1.0
 References: <20230914015531.1419405-1-seanjc@google.com>
 X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
-Message-ID: <20230914015531.1419405-29-seanjc@google.com>
-Subject: [RFC PATCH v12 28/33] KVM: selftests: Add GUEST_SYNC[1-6] macros for
- synchronizing more data
+Message-ID: <20230914015531.1419405-34-seanjc@google.com>
+Subject: [RFC PATCH v12 33/33] KVM: selftests: Test KVM exit behavior for
+ private memory/access
 From:   Sean Christopherson <seanjc@google.com>
 To:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
@@ -100,37 +100,168 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add GUEST_SYNC[1-6]() so that tests can pass the maximum amount of
-information supported via ucall(), without needing to resort to shared
-memory.
+From: Ackerley Tng <ackerleytng@google.com>
 
+"Testing private access when memslot gets deleted" tests the behavior
+of KVM when a private memslot gets deleted while the VM is using the
+private memslot. When KVM looks up the deleted (slot = NULL) memslot,
+KVM should exit to userspace with KVM_EXIT_MEMORY_FAULT.
+
+In the second test, upon a private access to non-private memslot, KVM
+should also exit to userspace with KVM_EXIT_MEMORY_FAULT.
+
+sean: These testcases belong in set_memory_region_test.c, they're private
+variants on existing testscases and aren't as robust, e.g. don't ensure
+the vCPU is actually running and accessing memory when converting and
+deleting.
+
+Signed-off-by: Ackerley Tng <ackerleytng@google.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- tools/testing/selftests/kvm/include/ucall_common.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ .../kvm/x86_64/private_mem_kvm_exits_test.c   | 121 ++++++++++++++++++
+ 2 files changed, 122 insertions(+)
+ create mode 100644 tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c
 
-diff --git a/tools/testing/selftests/kvm/include/ucall_common.h b/tools/testing/selftests/kvm/include/ucall_common.h
-index 112bc1da732a..7cf40aba7add 100644
---- a/tools/testing/selftests/kvm/include/ucall_common.h
-+++ b/tools/testing/selftests/kvm/include/ucall_common.h
-@@ -54,6 +54,17 @@ int ucall_nr_pages_required(uint64_t page_size);
- #define GUEST_SYNC_ARGS(stage, arg1, arg2, arg3, arg4)	\
- 				ucall(UCALL_SYNC, 6, "hello", stage, arg1, arg2, arg3, arg4)
- #define GUEST_SYNC(stage)	ucall(UCALL_SYNC, 2, "hello", stage)
-+#define GUEST_SYNC1(arg0)	ucall(UCALL_SYNC, 1, arg0)
-+#define GUEST_SYNC2(arg0, arg1)	ucall(UCALL_SYNC, 2, arg0, arg1)
-+#define GUEST_SYNC3(arg0, arg1, arg2) \
-+				ucall(UCALL_SYNC, 3, arg0, arg1, arg2)
-+#define GUEST_SYNC4(arg0, arg1, arg2, arg3) \
-+				ucall(UCALL_SYNC, 4, arg0, arg1, arg2, arg3)
-+#define GUEST_SYNC5(arg0, arg1, arg2, arg3, arg4) \
-+				ucall(UCALL_SYNC, 5, arg0, arg1, arg2, arg3, arg4)
-+#define GUEST_SYNC6(arg0, arg1, arg2, arg3, arg4, arg5) \
-+				ucall(UCALL_SYNC, 6, arg0, arg1, arg2, arg3, arg4, arg5)
+diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+index 2b1ef809d73a..f7fdd8244547 100644
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@ -82,6 +82,7 @@ TEST_GEN_PROGS_x86_64 += x86_64/nested_exceptions_test
+ TEST_GEN_PROGS_x86_64 += x86_64/platform_info_test
+ TEST_GEN_PROGS_x86_64 += x86_64/pmu_event_filter_test
+ TEST_GEN_PROGS_x86_64 += x86_64/private_mem_conversions_test
++TEST_GEN_PROGS_x86_64 += x86_64/private_mem_kvm_exits_test
+ TEST_GEN_PROGS_x86_64 += x86_64/set_boot_cpu_id
+ TEST_GEN_PROGS_x86_64 += x86_64/set_sregs_test
+ TEST_GEN_PROGS_x86_64 += x86_64/smaller_maxphyaddr_emulation_test
+diff --git a/tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c b/tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c
+new file mode 100644
+index 000000000000..1a61c51c2390
+--- /dev/null
++++ b/tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c
+@@ -0,0 +1,121 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2022, Google LLC.
++ */
++#include <linux/kvm.h>
++#include <pthread.h>
++#include <stdint.h>
 +
- #define GUEST_PRINTF(_fmt, _args...) ucall_fmt(UCALL_PRINTF, _fmt, ##_args)
- #define GUEST_DONE()		ucall(UCALL_DONE, 0)
- 
++#include "kvm_util.h"
++#include "processor.h"
++#include "test_util.h"
++
++/* Arbitrarily selected to avoid overlaps with anything else */
++#define EXITS_TEST_GVA 0xc0000000
++#define EXITS_TEST_GPA EXITS_TEST_GVA
++#define EXITS_TEST_NPAGES 1
++#define EXITS_TEST_SIZE (EXITS_TEST_NPAGES * PAGE_SIZE)
++#define EXITS_TEST_SLOT 10
++
++static uint64_t guest_repeatedly_read(void)
++{
++	volatile uint64_t value;
++
++	while (true)
++		value = *((uint64_t *) EXITS_TEST_GVA);
++
++	return value;
++}
++
++static uint32_t run_vcpu_get_exit_reason(struct kvm_vcpu *vcpu)
++{
++	int r;
++
++	r = _vcpu_run(vcpu);
++	if (r) {
++		TEST_ASSERT(errno == EFAULT, KVM_IOCTL_ERROR(KVM_RUN, r));
++		TEST_ASSERT_EQ(vcpu->run->exit_reason, KVM_EXIT_MEMORY_FAULT);
++	}
++	return vcpu->run->exit_reason;
++}
++
++const struct vm_shape protected_vm_shape = {
++	.mode = VM_MODE_DEFAULT,
++	.type = KVM_X86_SW_PROTECTED_VM,
++};
++
++static void test_private_access_memslot_deleted(void)
++{
++	struct kvm_vm *vm;
++	struct kvm_vcpu *vcpu;
++	pthread_t vm_thread;
++	void *thread_return;
++	uint32_t exit_reason;
++
++	vm = vm_create_shape_with_one_vcpu(protected_vm_shape, &vcpu,
++					   guest_repeatedly_read);
++
++	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
++				    EXITS_TEST_GPA, EXITS_TEST_SLOT,
++				    EXITS_TEST_NPAGES,
++				    KVM_MEM_PRIVATE);
++
++	virt_map(vm, EXITS_TEST_GVA, EXITS_TEST_GPA, EXITS_TEST_NPAGES);
++
++	/* Request to access page privately */
++	vm_mem_set_private(vm, EXITS_TEST_GPA, EXITS_TEST_SIZE);
++
++	pthread_create(&vm_thread, NULL,
++		       (void *(*)(void *))run_vcpu_get_exit_reason,
++		       (void *)vcpu);
++
++	vm_mem_region_delete(vm, EXITS_TEST_SLOT);
++
++	pthread_join(vm_thread, &thread_return);
++	exit_reason = (uint32_t)(uint64_t)thread_return;
++
++	TEST_ASSERT_EQ(exit_reason, KVM_EXIT_MEMORY_FAULT);
++	TEST_ASSERT_EQ(vcpu->run->memory_fault.flags, KVM_MEMORY_EXIT_FLAG_PRIVATE);
++	TEST_ASSERT_EQ(vcpu->run->memory_fault.gpa, EXITS_TEST_GPA);
++	TEST_ASSERT_EQ(vcpu->run->memory_fault.size, EXITS_TEST_SIZE);
++
++	kvm_vm_free(vm);
++}
++
++static void test_private_access_memslot_not_private(void)
++{
++	struct kvm_vm *vm;
++	struct kvm_vcpu *vcpu;
++	uint32_t exit_reason;
++
++	vm = vm_create_shape_with_one_vcpu(protected_vm_shape, &vcpu,
++					   guest_repeatedly_read);
++
++	/* Add a non-private memslot (flags = 0) */
++	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
++				    EXITS_TEST_GPA, EXITS_TEST_SLOT,
++				    EXITS_TEST_NPAGES, 0);
++
++	virt_map(vm, EXITS_TEST_GVA, EXITS_TEST_GPA, EXITS_TEST_NPAGES);
++
++	/* Request to access page privately */
++	vm_mem_set_private(vm, EXITS_TEST_GPA, EXITS_TEST_SIZE);
++
++	exit_reason = run_vcpu_get_exit_reason(vcpu);
++
++	TEST_ASSERT_EQ(exit_reason, KVM_EXIT_MEMORY_FAULT);
++	TEST_ASSERT_EQ(vcpu->run->memory_fault.flags, KVM_MEMORY_EXIT_FLAG_PRIVATE);
++	TEST_ASSERT_EQ(vcpu->run->memory_fault.gpa, EXITS_TEST_GPA);
++	TEST_ASSERT_EQ(vcpu->run->memory_fault.size, EXITS_TEST_SIZE);
++
++	kvm_vm_free(vm);
++}
++
++int main(int argc, char *argv[])
++{
++	TEST_REQUIRE(kvm_has_cap(KVM_CAP_GUEST_MEMFD));
++	TEST_REQUIRE(kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(KVM_X86_SW_PROTECTED_VM));
++
++	test_private_access_memslot_deleted();
++	test_private_access_memslot_not_private();
++}
 -- 
 2.42.0.283.g2d96d420d3-goog
 
