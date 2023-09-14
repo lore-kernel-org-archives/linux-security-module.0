@@ -2,228 +2,256 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CA1EDE994
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Sep 2023 08:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DEBEDE990
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Sep 2023 08:34:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236188AbjINII1 (ORCPT
+        id S236422AbjINIev (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Sep 2023 04:08:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59980 "EHLO
+        Thu, 14 Sep 2023 04:34:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236217AbjINII0 (ORCPT
+        with ESMTP id S236334AbjINIeu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Sep 2023 04:08:26 -0400
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fad])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B07751FC3
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Sep 2023 01:08:21 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RmVLq5pYwzMpp4b;
-        Thu, 14 Sep 2023 08:08:19 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RmVLq2BM9zMppKW;
-        Thu, 14 Sep 2023 10:08:19 +0200 (CEST)
+        Thu, 14 Sep 2023 04:34:50 -0400
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35B2C1BFC;
+        Thu, 14 Sep 2023 01:34:46 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RmVxJ4v4QzMqW3B;
+        Thu, 14 Sep 2023 08:34:44 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RmVxF3g18zMppB1;
+        Thu, 14 Sep 2023 10:34:41 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1694678899;
-        bh=ktfuWaf8TABuJWOYecuo23gRzCBWxu9Q7NzVgqvLcKY=;
+        s=20191114; t=1694680484;
+        bh=Va+NlpX2Fn3CXeGKO0bJw1cjeZ8M1RUU583bKxbztGM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0zB12mBGf3fXeaSev+4ORh1Uv3IlTGYrigTqUgQ1CfgzdmCMXzWUVbsRuZZ9iHniV
-         pcHmOzH7s9wq3luFhc0s+LfQEfavrN9aqVc0k2ikpRUUptvitE2One0d+Bh6iPAnOM
-         9W+SYMRa+uDh6Mp7Xr1NikWce/y2xQpGt/0DZOtA=
-Date:   Thu, 14 Sep 2023 10:08:18 +0200
+        b=JJDPXtN85mA0ECbgb/P6nSTAambq+SvK403uk3q2xR72YbZt3XpkR1akykmczbctQ
+         lb2SzJsIxSUbvsma+gz3o8zqZxYkuaZPtHjssiOp7wkjovGZ3DrPjyjrp0tXYRbp0z
+         KqF66IZrgTwUuJzQRHOPpJxUyFL8bEPr41l5FOBU=
+Date:   Thu, 14 Sep 2023 10:34:40 +0200
 From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     artem.kuzin@huawei.com, gnoack3000@gmail.com,
-        willemdebruijn.kernel@gmail.com, yusongping@huawei.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org
-Subject: Re: [PATCH v11.1] selftests/landlock: Add 11 new test suites
- dedicated to network
-Message-ID: <20230914.ASu9sho1Aef0@digikod.net>
-References: <20230515161339.631577-11-konstantin.meskhidze@huawei.com>
- <20230706145543.1284007-1-mic@digikod.net>
- <3db64cf8-6a45-a361-aa57-9bfbaf866ef8@digikod.net>
- <b2a94da1-f9df-b684-7666-1c63060f68f1@huawei.com>
- <20230817.koh5see0eaLa@digikod.net>
- <239800f3-baf4-1c7d-047f-8ba90b097bee@huawei.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
+        Konrad Wilk <konrad.wilk@oracle.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] certs: Restrict blacklist updates to the secondary
+ trusted keyring
+Message-ID: <20230914.shah5al9Kaib@digikod.net>
+References: <20230911.chaeghaeJ4ei@digikod.net>
+ <CEA476C1-4CE5-4FFC-91D7-6061C8605B18@oracle.com>
+ <ba2f5560800608541e81fbdd28efa9875b35e491.camel@linux.ibm.com>
+ <932231F5-8050-4436-84B8-D7708DC43845@oracle.com>
+ <7335a4587233626a39ce9bc8a969957d7f43a34c.camel@linux.ibm.com>
+ <FD6FB139-F901-4E55-9705-E7B0023BDBA8@oracle.com>
+ <1149b6dbfdaabef3e48dc2852cc76aa11a6dd6b0.camel@linux.ibm.com>
+ <4A0505D0-2933-43BD-BEEA-94350BB22AE7@oracle.com>
+ <20230913.Ceifae7ievei@digikod.net>
+ <D0F16BFD-72EB-4BE2-BA3D-BAE1BCCDCB6F@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <239800f3-baf4-1c7d-047f-8ba90b097bee@huawei.com>
+In-Reply-To: <D0F16BFD-72EB-4BE2-BA3D-BAE1BCCDCB6F@oracle.com>
 X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 11, 2023 at 01:13:24PM +0300, Konstantin Meskhidze (A) wrote:
+CCing the LSM mailing list for this potential new LSM proposal:
+
+On Wed, Sep 13, 2023 at 10:29:58PM +0000, Eric Snowberg wrote:
 > 
 > 
-> 8/17/2023 6:08 PM, Mickaël Salaün пишет:
-> > On Sat, Aug 12, 2023 at 05:37:00PM +0300, Konstantin Meskhidze (A) wrote:
-> > > 
-> > > 
-> > > 7/12/2023 10:02 AM, Mickaël Salaün пишет:
-> > > > > On 06/07/2023 16:55, Mickaël Salaün wrote:
-> > > > > From: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> > > > > > > This patch is a revamp of the v11 tests [1] with new tests
-> > > (see the
-> > > > > "Changes since v11" description).  I (Mickaël) only added the following
-> > > > > todo list and the "Changes since v11" sections in this commit message.
-> > > > > I think this patch is good but it would appreciate reviews.
-> > > > > You can find the diff of my changes here but it is not really readable:
-> > > > > https://git.kernel.org/mic/c/78edf722fba5 (landlock-net-v11 branch)
-> > > > > [1] https://lore.kernel.org/all/20230515161339.631577-11-konstantin.meskhidze@huawei.com/
-> > > > > TODO:
-> > > > > - Rename all "net_service" to "net_port".
-> > > > > - Fix the two kernel bugs found with the new tests.
-> > > > > - Update this commit message with a small description of all tests.
-> > > > > [...]
+> > On Sep 13, 2023, at 4:21 AM, Mickaël Salaün <mic@digikod.net> wrote:
 > > 
-> > > > We should also add a test to make sure errno is the same with and
-> > > > without sandboxing when using port 0 for connect and consistent with
-> > > > bind (using an available port). The test fixture and variants should be
-> > > > quite similar to the "ipv4" ones, but we can also add AF_INET6 variants,
-> > > > which will result in 8 "ip" variants:
-> > > > > TEST_F(ip, port_zero)
-> > > > {
-> > > > 	if (variant->sandbox == TCP_SANDBOX) {
-> > > > 		/* Denies any connect and bind. */
-> > > > 	}
-> > > > 	/* Checks errno for port 0. */
-> > > > }
-> > > As I understand the would be the next test cases:
-> > > 
-> > > 	1. ip4, sandboxed, bind port 0 -> should return EACCES (denied by
-> > > landlock).
+> > On Wed, Sep 13, 2023 at 02:40:17AM +0000, Eric Snowberg wrote:
+> >> 
+> >> 
+> >>> On Sep 12, 2023, at 4:47 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >>> 
+> >>> On Tue, 2023-09-12 at 17:11 +0000, Eric Snowberg wrote:
+> >>>> 
+> >>>>> On Sep 12, 2023, at 5:54 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >>>>> 
+> >>>>> On Tue, 2023-09-12 at 02:00 +0000, Eric Snowberg wrote:
+> >>>>>> 
+> >>>>>>> On Sep 11, 2023, at 5:08 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >>>>>>> 
+> >>>>>>> On Mon, 2023-09-11 at 22:17 +0000, Eric Snowberg wrote:
+> >>>>>>>> 
+> >>>>>>>>> On Sep 11, 2023, at 10:51 AM, Mickaël Salaün <mic@digikod.net> wrote:
+> >>>>>>>>> 
+> >>>>>>>>> On Mon, Sep 11, 2023 at 09:29:07AM -0400, Mimi Zohar wrote:
+> >>>>>>>>>> Hi Eric,
+> >>>>>>>>>> 
+> >>>>>>>>>> On Fri, 2023-09-08 at 17:34 -0400, Eric Snowberg wrote:
+> >>>>>>>>>>> Currently root can dynamically update the blacklist keyring if the hash
+> >>>>>>>>>>> being added is signed and vouched for by the builtin trusted keyring.
+> >>>>>>>>>>> Currently keys in the secondary trusted keyring can not be used.
+> >>>>>>>>>>> 
+> >>>>>>>>>>> Keys within the secondary trusted keyring carry the same capabilities as
+> >>>>>>>>>>> the builtin trusted keyring.  Relax the current restriction for updating
+> >>>>>>>>>>> the .blacklist keyring and allow the secondary to also be referenced as
+> >>>>>>>>>>> a trust source.  Since the machine keyring is linked to the secondary
+> >>>>>>>>>>> trusted keyring, any key within it may also be used.
+> >>>>>>>>>>> 
+> >>>>>>>>>>> An example use case for this is IMA appraisal.  Now that IMA both
+> >>>>>>>>>>> references the blacklist keyring and allows the machine owner to add
+> >>>>>>>>>>> custom IMA CA certs via the machine keyring, this adds the additional
+> >>>>>>>>>>> capability for the machine owner to also do revocations on a running
+> >>>>>>>>>>> system.
+> >>>>>>>>>>> 
+> >>>>>>>>>>> IMA appraisal usage example to add a revocation for /usr/foo:
+> >>>>>>>>>>> 
+> >>>>>>>>>>> sha256sum /bin/foo | awk '{printf "bin:" $1}' > hash.txt
+> >>>>>>>>>>> 
+> >>>>>>>>>>> openssl smime -sign -in hash.txt -inkey machine-private-key.pem \
+> >>>>>>>>>>>   -signer machine-certificate.pem -noattr -binary -outform DER \
+> >>>>>>>>>>>   -out hash.p7s
+> >>>>>>>>>>> 
+> >>>>>>>>>>> keyctl padd blacklist "$(< hash.txt)" %:.blacklist < hash.p7s
+> >>>>>>>>>>> 
+> >>>>>>>>>>> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> >>>>>>>>>> 
+> >>>>>>>>>> The secondary keyring may include both CA and code signing keys.  With
+> >>>>>>>>>> this change any key loaded onto the secondary keyring may blacklist a
+> >>>>>>>>>> hash.  Wouldn't it make more sense to limit blacklisting
+> >>>>>>>>>> certificates/hashes to at least CA keys? 
+> >>>>>>>>> 
+> >>>>>>>>> Some operational constraints may limit what a CA can sign.
+> >>>>>>>> 
+> >>>>>>>> Agreed.  
+> >>>>>>>> 
+> >>>>>>>> Is there precedents for requiring this S/MIME to be signed by a CA? 
+> >>>>>>>> 
+> >>>>>>>>> This change is critical and should be tied to a dedicated kernel config
+> >>>>>>>>> (disabled by default), otherwise existing systems using this feature
+> >>>>>>>>> will have their threat model automatically changed without notice.
+> >>>>>>>> 
+> >>>>>>>> Today we have INTEGRITY_CA_MACHINE_KEYRING_MAX.  This can 
+> >>>>>>>> be enabled to enforce CA restrictions on the machine keyring.  Mimi, would 
+> >>>>>>>> this be a suitable solution for what you are after?
+> >>>>>>> 
+> >>>>>>> There needs to be some correlation between the file hashes being added
+> >>>>>>> to the blacklist and the certificate that signed them.  Without that
+> >>>>>>> correlation, any key on the secondary trusted keyring could add any
+> >>>>>>> file hashes it wants to the blacklist.
+> >>>>>> 
+> >>>>>> Today any key in the secondary trusted keyring can be used to validate a 
+> >>>>>> signed kernel module.  At a later time, if a new hash is added to the blacklist 
+> >>>>>> keyring to revoke loading a signed kernel module,  the ability to do the 
+> >>>>>> revocation with this additional change would be more restrictive than loading 
+> >>>>>> the original module.
+> >>>>> 
+> >>>>> A public key on the secondary keyring is used to verify code that it
+> >>>>> signed, but does not impact any other code. Allowing any public key on
+> >>>>> the secondary keyring to blacklist any file hash is giving it more
+> >>>>> privileges than it originally had.
+> >>>>> 
+> >>>>> This requirement isn't different than how Certificate Revocation List
+> >>>>> (CRL) work.  Not any CA can revoke a certificate.
+> >>>> 
+> >>>> In UEFI Secure Boot we have the Forbidden Signature Database (DBX).  
+> >>>> Root can update the DBX on a host.  The requirement placed on updating 
+> >>>> it is the new DBX entry must be signed by any key contained within the 
+> >>>> KEK.  Following a reboot, all DBX entries load into the .blacklist keyring.  
+> >>>> There is not a requirement similar to how CRL’s work here, any KEK key 
+> >>>> can be used.
+> >>>> 
+> >>>> With architectures booted through a shim there is the MOKX.  Similar to 
+> >>>> DBX, MOKX have the same capabilities, however they do not need to be 
+> >>>> signed by any key, the machine owner must show they have physical 
+> >>>> presence (and potentially a MOK password) for inclusion.  Again there 
+> >>>> is not a requirement similar to how CRL’s work here either.  The machine 
+> >>>> owner can decide what is included.
+> >>>> 
+> >>>> Today when a kernel is built, any number of keys may be included within 
+> >>>> the builtin trusted keyring.  The keys included in the kernel may not have 
+> >>>> a single usage field set or the CA bit set.  There are no requirements on 
+> >>>> how these keys get used later on.  Any key in the builtin trusted keyring 
+> >>>> can be used to sign a revocation that can be added to the blacklist keyring.  
+> >>>> Additionally, any key in the MOK can be used to sign this kernel and it will 
+> >>>> boot.  Before booting the kernel, MOK keys have more privileges than 
+> >>>> after the kernel is booted in some instances.
+> >>>> 
+> >>>> Today MOK keys can be loaded into the machine keyring.  These keys get 
+> >>>> linked to the secondary trusted keyring.  Currently key usage enforcement
+> >>>> is being applied to these keys behind some Kconfig options.  By default 
+> >>>> anything in the secondary has the same capabilities as the builtin trusted 
+> >>>> keyring.  What is challenging here with this request is the inconsistency 
+> >>>> between how everything else currently works. 
+> >>>> 
+> >>>> Root can not arbitrarily add things to the secondary trusted keyring.  These 
+> >>>> keys must be signed by something in either the machine or the builtin.  In 
+> >>>> this thread [1], Jarkko is saying CA based infrastructure should be a policy 
+> >>>> decision not to be enforced by the kernel. Wouldn’t this apply here as well?
+> >>>> 
+> >>>> 1. https://lore.kernel.org/lkml/CVGUFUEQVCHS.37OA20PNG9EVB@suppilovahvero/
+> >>> 
+> >>> Mickaël said, "This change is critical and should be tied to a
+> >>> dedicated kernel config
+> >>> (disabled by default), otherwise existing systems using this feature
+> >>> will have their threat model automatically changed without notice."
+> >> 
+> >> I was thinking he meant it is critical not to change the current behavior
+> >> by limiting blacklisting to only CA keys.  Not that it was critical to add
+> >> CA enforcement.  Maybe Mickaël can comment?
 > > 
-> > Without any allowed port, yes. This test case is useful.
+> > I meant that applying this patch as-is may change the threat model used
+> > by some users. Currently, only signed hashes vouched by the builtin
+> > trusted keyring are valid. If we extend this mechanism to the secondary
+> > trusted keyring without notice, this means that more certificates could
+> > vouch blacklisted hashes, which may include some certificates with an
+> > initial different usage.
 > > 
-> > By tuning /proc/sys/net/ipv4/ip_local_port_range (see
-> > inet_csk_find_open_port call) we should be able to pick a specific
-> > allowed port and test it.  We can also test for the EADDRINUSE error to
-> > make sure error ordering is correct (compared with -EACCES).
->   Sorry, did not get this case. Could please explain it with more details?
-
-According to bind(2), if no port are available, the syscall should
-return EADDRINUSE. And this returned value should be the same whatever
-the process is sandbox or not (and never EACCES). But as I explained
-just below, we cannot know this random port from the LSM hook, so no
-need to tweak /proc/sys/net/ipv4/ip_local_port_range, and your this is
-correct:
-
-1. ip4, sandboxed, bind port 0 -> should return EACCES (denied by
-landlock).
-
-> > 
-> > However, I think the current LSM API don't enable to infer this random
-> > port because the LSM hook is called before a port is picked.  If this is
-> > correct, the best way to control port binding would be to always deny
-> > binding on port zero/random (when restricting port binding, whatever
-> > exception rules are in place). This explanation should be part of a
-> > comment for this specific exception.
+> > See commit 4da8f8c8a1e0 ("dm verity: Add support for signature
+> > verification with 2nd keyring") that adds
+> > CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_SECONDARY_KEYRING:
+> > https://lore.kernel.org/all/20201023170512.201124-1-mic@digikod.net/
 > 
->   Yep, if some LSM rule (for bind) has been applied a with specific port,
-> other attemps to bind with zero/random ports would be refused by LSM
-> security checks.
-
-To say it another way, we should not allow to add a rule with port 0 for
-LANDLOCK_ACCESS_NET_BIND_TCP, but return -EINVAL in this case. This
-limitation should be explained, documented and tested.
-
-With (only) LANDLOCK_ACCESS_NET_CONNECT_TCP it should be allowed though
-(except if there is also LANDLOCK_ACCESS_NET_BIND_TCP) of course.
-Another test should cover the case with a new rule with these two access
-rights and port 0.
-
-> > 
-> > Cc Paul
-> > 
-> > > 	2. ip4, non-sandboxed, bind port 0 -> should return 0 (should be bounded to
-> > > random port).
-> > 
-> > I think so but we need to make sure the random port cannot be < 1024, I
-> > guess with /proc/sys/net/ipv4/ip_local_port_range but I don't know for
-> > IPv6.
+> Thanks for clarifying.  I’ll add something similar in v2.
 > 
->   For ipv4 when connecting to a server a client binds to a random port
-> within /proc/sys/net/ipv4/ip_local_port_range, by default one my machine
-> this range is: cat /proc/sys/net/ipv4/ip_local_port_range
-> 32768   60999.
-> But for ipv6 there is no such tuning range.
-
-Ok, let's just assume that the test system doesn't have
-ip_local_port_range < 1024, put this assumption in a comment, and don't
-touch ip_local_port_range at all.
-
+> >> 
+> >>> As a possible alternative I suggested limiting which file hashes the
+> >>> certs on the secondary (or machine) keyring could blacklist.
+> >> 
+> >> I’m not sure I completely understand your suggestion here.
+> >> Do you mean, verify the CA bit is set for secondary keys, but
+> >> ignore the bit for builtin?  And then only use those keys to add
+> >> hashes to the blacklist keyring?  If I have that right, what would 
+> >> be the justification for the change based on how things currently
+> >> get included in the blacklist keyring?  Thanks.
+> > 
+> > I'd like to be able to specify which kind of certificate can vouch for
+> > blacklisting hashes, and for other usages, but AFAIK this is not the
+> > path Linux has followed (e.g. unlike Windows). We only have the keyring
+> > to identify an usage, which is unfortunate. On the other side, this
+> > approach lets users manage their certificates without constraint, which
+> > is quite (too?) flexible.
 > 
-> > 
-> > > 	3. ip6, sandboxed, bind port 0 -> should return EACCES (denied by
-> > > landlock).
-> > > 	4. ip6, non-sandboxed, bind port 0 -> should return 0 (should be bounded to
-> > > random port).
-> > > 	5. ip4, sandboxed, bind some available port, connect port 0 -> should
-> > > return -EACCES (denied by landlock).
-
-If a rule allows connecting to port 0, then it should be ECONNREFUSED,
-otherwise EACCES indeed. Both cases should be tested.
-
-> > 
-> > Yes, but don't need to bind to anything (same for the next ones).
-> > 
-> > > 	6. ip4, non-sandboxed, bind some available port, connect port 0 -> should
-> > > return ECONNREFUSED.
-> > 
-> > Yes, but without any binding.
-> > 
-> > > 	7. ip6, sandboxed, bind some available port, connect port 0 -> should
-> > > return -EACCES (denied by landlock)
-> > > 	8. ip6, non-sandboxed, some bind available port, connect port 0 -> should
-> > > return ECONNREFUSED.
-> > > 
-> > > Correct?
-> > 
-> > Thinking more about this case, being able to add a rule with port zero
-> > *for a connect action* looks legitimate.  A rule with both connect and
-> > bind actions on port zero should then be denied.  We should fix
-> > add_rule_net_service() and test that (with a first layer allowing port
-> > zero, and a second without rule, for connect).
+> Yes, it is very flexible. What I believe Mimi is after is having a way to 
+> track what cert actually vouched for each specific binary hash.  But this
+> information is not tracked, plus entries within it can come from various 
+> sources that are not signed (dbx, mokx, compiled in).  Also key usage is 
+> being ignored.
 > 
->  So with first rule allowing port 0 connect action, the second rule with
-> some another port and connect action,
-
-Yes, but the first rule being part of a first layer/restriction, and the
-second rule part of a second layer.
-
-> as a result test should allow that.
-> Correct?
-
-The first layer should return ECONNREFUSED when connecting on port 0
-(allowed but nothing listening), and once the second layer is enforced,
-EACCES should be returned on port 0.
-
-> > 
-> > 
-> > > 
-> > > > > [...]
-> > > > > > +FIXTURE(inet)
-> > > > > +{
-> > > > > +	struct service_fixture srv0, srv1;
-> > > > > +};
-> > > > > The "inet" variants are useless and should be removed. The
-> > > "inet"
-> > > > fixture can then be renamed to "ipv4_tcp".
-> > > >   So inet should be changed to ipv4_tcp and ipv6_tcp with next
-> > > variants:
-> > > 
-> > >   - ipv4_tcp.no_sandbox_with_ipv4.port_endianness
-> > >   - ipv4_tcp.sandbox_with_ipv4.port_endianness
-> > >   - ipv6_tcp.no_sandbox_with_ipv6.port_endianness
-> > >   - ipv6_tcp.sandbox_with_ipv6.port_endianness
-> > > ????
-> > > 
-> > >    in this case we need double copy of TEST_F(inet, port_endianness) :
-> > > 	TEST_F(ipv4_tcp, port_endianness)
-> > > 	TEST_F(ipv6_tcp, port_endianness)
-> > 
-> > There is no need for any variant for the port_endianness test. You can
-> > rename "inet" to "ipv4_tcp" (and not "inet_tcp" like I said before).
-> > .
+> > A complementary approach would be to create an
+> > LSM (or a dedicated interface) to tie certificate properties to a set of
+> > kernel usages, while still letting users configure these constraints.
+> 
+> That is an interesting idea.  Would the other security maintainers be in 
+> support of such an approach?  Would a LSM be the correct interface?  
+> Some of the recent work I have done with introducing key usage and CA 
+> enforcement is difficult for a distro to pick up, since these changes can be 
+> viewed as a regression.  Each end-user has different signing procedures 
+> and policies, so making something work for everyone is difficult.  Letting the 
+> user configure these constraints would solve this problem.
+> 
