@@ -2,88 +2,161 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61483EEAA66
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Sep 2023 19:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 881C1EEAA6E
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Sep 2023 20:40:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233356AbjINTfp (ORCPT
+        id S229487AbjINUkD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Sep 2023 15:35:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49264 "EHLO
+        Thu, 14 Sep 2023 16:40:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229980AbjINTfl (ORCPT
+        with ESMTP id S229614AbjINUkC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Sep 2023 15:35:41 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2876826AB
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Sep 2023 12:35:37 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id af79cd13be357-770ef4d36f2so86972385a.0
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Sep 2023 12:35:37 -0700 (PDT)
+        Thu, 14 Sep 2023 16:40:02 -0400
+Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC9CB26B2
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Sep 2023 13:39:54 -0700 (PDT)
+Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-5924093a9b2so16458017b3.2
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Sep 2023 13:39:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1694720136; x=1695324936; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:to:from:message-id:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bhzt7woUu7b+LnfC6SMihfQRxp2ROfPzJT4I0mUPjCU=;
-        b=SouEFi6Pa8vVFKo4FoE2TYQdM/SBebI+6NNJ0k9OlepaFMqnqPCvpXPKqyk31Yga+h
-         oFpxOqcFifRufbYtnrPDQR1al+vaGWD7yprk3r7NKKZAR8avw9E+345hw8KzAdEc/e70
-         p7FWngYzF6qPN5uAbiaALJ1gYXSSqT+CrWPSn9PImSwQ8fxMm/WnraGkPxTTAUIxiMWj
-         6HM2eDU8d2yjuTH/Jw+UoRS42C78N/gsjXCtKjC4YSIKokYOoS5cN2JSRDXRmFrFm2lM
-         xKxcO0Qsj1WWdMIw1UHOGjiqKYq1UxpRNHR+yW5yGrpePZ14DS7QhcR/qv8JOrbXNNvk
-         mB+g==
+        d=paul-moore.com; s=google; t=1694723994; x=1695328794; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NaSIjMfdl0Gv6CgKXRD6SAmPWndDpWS6dyBZZ4689K4=;
+        b=N5vvMHout599KVr+BGn43S8hqeXB+KRKk6fLGZeqH/6Sa/KHg2mV1dqbVR4OAGBegk
+         Ji5qkNbtns/pRRU4ch0nMHYxILVIki++jUhPsRYJEzKDXwQ3uR6+euAmw7kIRxHk34NN
+         t6m3FY6bN7ptMEUgR4bI3pPfJwdUF1GcsxBDRvFIsHARq4ZzeSAaeHrZD4DvmpJG2usa
+         A6+OMkrr3cpHV9CqRMrtKpuRRz5Tz5V/koYSkndU4SRwuaxDvcx4LjBYwxfELnfuT5i3
+         48NTSzk/fqv2BDjyvYRESc8yRbNb4U+EQY62len0BNjVClZ73w1Zao5CdVDH9iS4jADm
+         eMhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694720136; x=1695324936;
-        h=in-reply-to:references:subject:to:from:message-id:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bhzt7woUu7b+LnfC6SMihfQRxp2ROfPzJT4I0mUPjCU=;
-        b=YgIDuj0+U6IA+lPU2BqY4naw9CI4/m1j2lazmf/AQdC15Q4F0zi8+IO/+wTIAS5QvO
-         0usBxzbkJ3WB9XiDdp/Ag3CGdLCwwgYkQUrGrlgXqR8CTnPXcEsvwNM5/rC5ox3k/BBo
-         1Lr5J5kXI/CMVwtn7fucKfNsuA5q+oUBPNHpzpKpfuSlamCqYNIclcn8KTJ5rFi9eb5m
-         jmxu0lTW5aE4UN6FeDvh9V5q7MpZD36Ci6Xma8OLjLDZyJINWgGfkSo+rL9aYYmwuDbH
-         hltt6+IkXBw2g5iMhDNZM9vKLTwkOanxIsBQNFRe69ePZ+c3cettQL9VmDqoBDvuWBT3
-         vPkg==
-X-Gm-Message-State: AOJu0YzXNHHqpq3WeEOt6GjYn0hf3MiE+y6whMioBSg+rvibmdFlz1Mp
-        oj+toQ+vNKNAZSEOVcMzrrHK
-X-Google-Smtp-Source: AGHT+IFf+Btkyt3Zj3w+He3Gu0o8QU6bctV9HMlyovOVbOfHa4yuylmXr8fH+j6V8C936k23RSue5w==
-X-Received: by 2002:a05:620a:4728:b0:76e:eeaa:a06e with SMTP id bs40-20020a05620a472800b0076eeeaaa06emr7273564qkb.4.1694720136248;
-        Thu, 14 Sep 2023 12:35:36 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id p9-20020a05620a132900b0077241440be8sm692552qkj.7.2023.09.14.12.35.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Sep 2023 12:35:35 -0700 (PDT)
-Date:   Thu, 14 Sep 2023 15:35:35 -0400
-Message-ID: <d9054dab0a970c154c46bb48bafa2904.paul@paul-moore.com>
+        d=1e100.net; s=20230601; t=1694723994; x=1695328794;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NaSIjMfdl0Gv6CgKXRD6SAmPWndDpWS6dyBZZ4689K4=;
+        b=PXHSYA2JC8+o0bfD/H+rPtK2Lyq0wvvn44V/Nb8D0osLxIFX5Sgs9k8CEKHmBRYHkU
+         Wy3YrdhZWRRSAVPxieGr/Q+ejcLGVOtJcT3TkpUjaYj6gETCehSB/VL7RTYU9Ufbhcaa
+         DJekvboOqdyAHlOdyMmq/8o66hpMJqdadZCxZrWo+CNb3bhY69a6ZpXjFzcOEklXBHY8
+         gBMw3AQuBMalrCkS6OkNJg063SBGVmt6NYRO7XUGstQiQb/tgvaSVVGtZWX/b1mGITih
+         Yw/+uoxE1I79az049KeWTVa/kUiV68g+myHDDNtjZWVLUiOVT2EG7asG+KNX3qFTsRdN
+         mvTA==
+X-Gm-Message-State: AOJu0Yz3LOzwAC1w2Z9baVFqqD1b1dEJtDV3bpWgkSOdhoKxezR+igmA
+        r0gAwY50295xhzF2QFlf5hUF3+oXIGi8wDlkiIF4
+X-Google-Smtp-Source: AGHT+IHq8rrjq9tCJqLC7OfNa2hY3WISMCd4iUOBtPL6TwaHsYbzZZlii/9C2ThIbkYmqI7J/8s3pycN3nmMnaBACaI=
+X-Received: by 2002:a0d:c942:0:b0:577:189b:ad4 with SMTP id
+ l63-20020a0dc942000000b00577189b0ad4mr6892155ywd.48.1694723994051; Thu, 14
+ Sep 2023 13:39:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230913152238.905247-1-mszeredi@redhat.com> <20230913152238.905247-3-mszeredi@redhat.com>
+In-Reply-To: <20230913152238.905247-3-mszeredi@redhat.com>
 From:   Paul Moore <paul@paul-moore.com>
-To:     Khadija Kamran <kamrankhadijadj@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        ztarkhani@microsoft.com, alison.schofield@intel.com
-Subject: Re: [PATCH] lsm: constify 'sb' parameter in security_sb_kern_mount()
-References: <ZOXK6MywWFIdUTsr@gmail.com>
-In-Reply-To: <ZOXK6MywWFIdUTsr@gmail.com>
+Date:   Thu, 14 Sep 2023 16:39:43 -0400
+Message-ID: <CAHC9VhSQb0fYz9FqEu-1jQ1UNsnt-asrKuPt4ufui92GC+=5=Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Aug 23, 2023 Khadija Kamran <kamrankhadijadj@gmail.com> wrote:
-> 
-> The "sb_kern_mount" hook has implementation registered in SELinux.
-> Looking at the function implementation we observe that the "sb"
-> parameter is not changing.
-> 
-> Mark the "sb" parameter of LSM hook security_sb_kern_mount() as "const"
-> since it will not be changing in the LSM hook.
-> 
-> Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
+On Wed, Sep 13, 2023 at 11:23=E2=80=AFAM Miklos Szeredi <mszeredi@redhat.co=
+m> wrote:
+>
+> Add a way to query attributes of a single mount instead of having to pars=
+e
+> the complete /proc/$PID/mountinfo, which might be huge.
+>
+> Lookup the mount by the old (32bit) or new (64bit) mount ID.  If a mount
+> needs to be queried based on path, then statx(2) can be used to first que=
+ry
+> the mount ID belonging to the path.
+>
+> Design is based on a suggestion by Linus:
+>
+>   "So I'd suggest something that is very much like "statfsat()", which ge=
+ts
+>    a buffer and a length, and returns an extended "struct statfs" *AND*
+>    just a string description at the end."
+>
+> The interface closely mimics that of statx.
+>
+> Handle ASCII attributes by appending after the end of the structure (as p=
+er
+> above suggestion).  Allow querying multiple string attributes with
+> individual offset/length for each.  String are nul terminated (terminatio=
+n
+> isn't counted in length).
+>
+> Mount options are also delimited with nul characters.  Unlike proc, speci=
+al
+> characters are not quoted.
+>
+> Link: https://lore.kernel.org/all/CAHk-=3Dwh5YifP7hzKSbwJj94+DZ2czjrZsczy=
+6GBimiogZws=3Drg@mail.gmail.com/
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 > ---
->  include/linux/lsm_hook_defs.h | 2 +-
->  include/linux/security.h      | 2 +-
->  security/security.c           | 2 +-
->  security/selinux/hooks.c      | 4 ++--
->  4 files changed, 5 insertions(+), 5 deletions(-)
+>  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
+>  fs/internal.h                          |   5 +
+>  fs/namespace.c                         | 312 ++++++++++++++++++++++++-
+>  fs/proc_namespace.c                    |  19 +-
+>  fs/statfs.c                            |   1 +
+>  include/linux/syscalls.h               |   3 +
+>  include/uapi/asm-generic/unistd.h      |   5 +-
+>  include/uapi/linux/mount.h             |  36 +++
+>  8 files changed, 373 insertions(+), 9 deletions(-)
 
-Merged into lsm/next, thanks!
+...
 
---
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index de47c5f66e17..088a52043bba 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+
+...
+
+> +static int do_statmnt(struct stmt_state *s)
+> +{
+> +       struct statmnt *sm =3D &s->sm;
+> +       struct mount *m =3D real_mount(s->mnt);
+> +
+> +       if (!capable(CAP_SYS_ADMIN) &&
+> +           !is_path_reachable(m, m->mnt.mnt_root, &s->root))
+> +               return -EPERM;
+
+I realize statmnt() is different from fstatfs(), but from an access
+control perspective they look a lot alike to me which is why I think
+we should probably have a security_sb_statfs() call here.  Same thing
+for the listmnt() syscall in patch 3/3.
+
+> +       stmt_numeric(s, STMT_SB_BASIC, stmt_sb_basic);
+> +       stmt_numeric(s, STMT_MNT_BASIC, stmt_mnt_basic);
+> +       stmt_numeric(s, STMT_PROPAGATE_FROM, stmt_propagate_from);
+> +       stmt_string(s, STMT_MNT_ROOT, stmt_mnt_root, &sm->mnt_root);
+> +       stmt_string(s, STMT_MOUNTPOINT, stmt_mountpoint, &sm->mountpoint)=
+;
+> +       stmt_string(s, STMT_FS_TYPE, stmt_fs_type, &sm->fs_type);
+> +       stmt_string(s, STMT_SB_OPTS, stmt_sb_opts, &sm->sb_opts);
+> +
+> +       if (s->err)
+> +               return s->err;
+> +
+> +       if (copy_to_user(s->buf, sm, min_t(size_t, s->bufsize, sizeof(*sm=
+))))
+> +               return -EFAULT;
+> +
+> +       return 0;
+> +}
+
+--=20
 paul-moore.com
