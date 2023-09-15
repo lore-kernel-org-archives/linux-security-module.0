@@ -2,130 +2,138 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9D7EE644D
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Sep 2023 09:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D10EE6457
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Sep 2023 11:30:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233839AbjIOJl2 convert rfc822-to-8bit (ORCPT
+        id S234343AbjIOLaI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Sep 2023 05:41:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60636 "EHLO
+        Fri, 15 Sep 2023 07:30:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233872AbjIOJlT (ORCPT
+        with ESMTP id S234331AbjIOLaH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Sep 2023 05:41:19 -0400
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 556F1271C;
-        Fri, 15 Sep 2023 02:40:31 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Rn84T1Yt9z9xqnp;
-        Fri, 15 Sep 2023 17:28:09 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwAHXrlkJgRlA3tfAA--.51551S2;
-        Fri, 15 Sep 2023 10:40:02 +0100 (CET)
-Message-ID: <a0913021426ead2fc5e2a3db013335a67cdd4322.camel@huaweicloud.com>
-Subject: Re: [PATCH v3 25/25] integrity: Switch from rbtree to LSM-managed
- blob for integrity_iint_cache
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
-        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com,
-        tom@talpey.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Fri, 15 Sep 2023 11:39:44 +0200
-In-Reply-To: <82486de4-2917-afb6-2ae3-6ea7f1346dc0@linux.ibm.com>
-References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
-         <20230904134049.1802006-6-roberto.sassu@huaweicloud.com>
-         <82486de4-2917-afb6-2ae3-6ea7f1346dc0@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Fri, 15 Sep 2023 07:30:07 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F711B0
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Sep 2023 04:30:00 -0700 (PDT)
+Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 38FBTtfe019206;
+        Fri, 15 Sep 2023 20:29:55 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
+ Fri, 15 Sep 2023 20:29:55 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 38FBTsxT019201
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 15 Sep 2023 20:29:55 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <4a6b6e2c-9872-4d4c-e42e-4ff0fb79f3ae@I-love.SAKURA.ne.jp>
+Date:   Fri, 15 Sep 2023 20:29:54 +0900
 MIME-Version: 1.0
-X-CM-TRANSID: GxC2BwAHXrlkJgRlA3tfAA--.51551S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15tFWxGr47CFW7try7KFg_yoW8Kr4DpF
-        4SgayUJw1Dtryvkr4vvFW5urWSgayjgayUWrn0k3WkZr95Zr1YgF45ury09FyUGrWrtw10
-        qr4j9ry7Z3WDA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgABBF1jj4-wdgABs+
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: ANN: new LSM guidelines
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
+ <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com>
+ <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
+ <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
+ <CAHC9VhQhf+ik5S_aJOVn59pax1Aa0vO5gJ4YoxrtGRKtoWh7sA@mail.gmail.com>
+ <f8f32da5-6f31-d197-7405-8f308bd29228@I-love.SAKURA.ne.jp>
+ <CAHC9VhTktg4RFWw+rSZ6wWQ8iR3n2p8XaOO95BbJ1QGAd4y9fg@mail.gmail.com>
+ <43d84d6c-18ac-6689-cddc-d079cfa19d4d@I-love.SAKURA.ne.jp>
+ <CAHC9VhSG2UzE9N0-tAJc8B3Mj1PEuJ2b6wso_DUs_Y83yqwhjA@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhSG2UzE9N0-tAJc8B3Mj1PEuJ2b6wso_DUs_Y83yqwhjA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2023-09-12 at 12:19 -0400, Stefan Berger wrote:
-> On 9/4/23 09:40, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Before the security field of kernel objects could be shared among LSMs with
-> > the LSM stacking feature, IMA and EVM had to rely on an alternative storage
-> > of inode metadata. The association between inode metadata and inode is
-> > maintained through an rbtree.
-> > 
-> > With the reservation mechanism offered by the LSM infrastructure, the
-> > rbtree is no longer necessary, as each LSM could reserve a space in the
-> > security blob for each inode. Thus, request from the 'integrity' LSM a
-> > space in the security blob for the pointer of inode metadata
-> > (integrity_iint_cache structure).
-> > 
-> > Prefer this to allocating the integrity_iint_cache structure directly, as
-> > IMA would require it only for a subset of inodes. Always allocating it
-> > would cause a waste of memory.
-> > 
-> > Introduce two primitives for getting and setting the pointer of
-> > integrity_iint_cache in the security blob, respectively
-> > integrity_inode_get_iint() and integrity_inode_set_iint(). This would make
-> > the code more understandable, as they directly replace rbtree operations.
-> > 
-> > Locking is not needed, as access to inode metadata is not shared, it is per
-> > inode.
-> > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> > ---
-> > 
-> > @@ -145,10 +91,8 @@ static void integrity_inode_free(struct inode *inode)
-> >   	if (!IS_IMA(inode))
-> >   		return;
-> 
-> I think you can remove this check !IS_IMA()  as well since the next 
-> function called here integrity_iint_find() already has this check:
-> 
-> struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
-> {
->          if (!IS_IMA(inode))
->                  return NULL;
-> 
->          return integrity_inode_get_iint(inode);
-> }
+On 9/12/2023 11:08 AM, Paul Moore wrote:
+> Once again, we've already discussed this many, many times: out-of-tree
+> LSMs are not the priority and that is not going to change.  One
+> corollary of this is that we are not going to assign LSM IDs to LSMs
+> that remain out-of-tree as this would negatively impact the LSM layer
+> by cluttering/depleting the LSM ID space.  LSMs that are working
+> towards integration with the upstream Linux kernel can self-assign a
+> temporary LSM ID which will be finalized upon merging in the LSM tree.
+> Based on all of the arguments you have already submitted - and let us
+> be very clear: you are the only one speaking out against this - I see
+> no reason to change this policy.
 
-I agree, thanks!
+The sane and the better usage of LSM ID is to register any publicly available
+LSMs. If LSM ID serves as an index for what LSMs are available in the world,
+by maintaining "the LSM module name, the LSM ID value, short description about
+that LSM module, the public git repository or web site for more information
+about that LSM module" pairs, people can easily find what LSMs could be used
+for their purpose, and developers can avoid re-inventing similar LSM modules
+which are already available somewhere in the world (and optionally helps
+avoiding module name collisions with any publicly available LSMs).
 
-Roberto
+If you worry about cluttering/depleting the LSM ID space, don't assign
+64 bits for LSM ID; the LSM community won't accept 100+ LSMs for in-tree.
 
-> >   
-> > -	write_lock(&integrity_iint_lock);
-> > -	iint = __integrity_iint_find(inode);
-> > -	rb_erase(&iint->rb_node, &integrity_iint_tree);
-> > -	write_unlock(&integrity_iint_lock);
-> > +	iint = integrity_iint_find(inode);         <--------------
-> > +	integrity_inode_set_iint(inode, NULL);
-> >   
-> >   	iint_free(iint);
-> >   }
++/**
++ * struct lsm_id - Identify a Linux Security Module.
++ * @lsm: name of the LSM, must be approved by the LSM maintainers
++ * @id: LSM ID number from uapi/linux/lsm.h
++ *
++ * Contains the information that identifies the LSM.
++ */
++struct lsm_id {
++	const char	*name;
++	u64		id;
++};
+
+Developers will more likely to abuse LSM ID (as if randomly generated GUID, or
+something like 0xdeadbeef) if the LSM community does not allow out-of-tree
+LSM modules to have a persistent registration. Once some value is assigned and
+published via a publicly available git repository by the LSM module author,
+the merit of "LSM: Identify modules by more than name" will be lost.
+
+> As discussed many times prior, I consider in-tree, upstreamed LSMs my
+> priority when it comes to decision making.  LSMs which are under
+> development and are working to be merged come next, and LSMs which
+> have decided to remain out-of-tree remain last.  I do not
+> intentionally plan to make life difficult for the out-of-tree LSMs,
+> but if that happens as a result of design decisions intended to
+> benefit in-tree LSMs that is acceptable as far as I am concerned.  You
+> are free to disagree, but I believe the policy I've described here is
+> consistent with the bulk of the other kernel subsystems and I have no
+> plans to change this policy.
+
+I don't care if out-of-tree code encounters build failures like
+https://sourceware.org/bugzilla/show_bug.cgi?id=30831 due to changing
+in-kernel APIs. That's what remaining out-of-tree means. But they have
+the rights/freedom to fix and load and run their code using their resources.
+
+In-tree Linux kernel developers do not prevent out-of-tree Linux kernel
+developers from loading and running their out-of-tree code. I absolutely
+resist if out-of-tree code encounters loss of ability to load and run
+that code (e.g. sys_init_module() prevents out-of-tree modules from
+loading because your priority of out-of-tree modules is the lowest).
+
+Although LKM-based LSM modules are not currently supported, people have
+the rights/freedom to load and run out-of-tree LSM modules by rebuilding
+their kernels.
+
+Those who develop a kernel module have rights/freedom to give any name.
+But as a whole, developers try to avoid identifier collisions.
+
+You are intentionally making life difficult for the out-of-tree LSMs, by
+requiring an LSM ID (and facilitating LSM ID collisions). No matter how
+priority of out-of-tree LSMs is low for you, what you are about to merge
+goes against the "developers try to avoid identifier collisions" effort.
+
+Introducing a numeric identifier is a good opportunity for permanently
+eliminating possibility of identifier collisions. But current usage of this
+numeric identifier is designed for facilitating possibility of identifier
+collisions.
 
