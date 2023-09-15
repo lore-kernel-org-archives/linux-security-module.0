@@ -2,92 +2,160 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F127BEE6459
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Sep 2023 11:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 358AEEE0214
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Sep 2023 14:26:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233006AbjIOLck (ORCPT
+        id S235724AbjIOO00 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Sep 2023 07:32:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56980 "EHLO
+        Fri, 15 Sep 2023 10:26:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232906AbjIOLck (ORCPT
+        with ESMTP id S235710AbjIOO0Z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Sep 2023 07:32:40 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 248001AB
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Sep 2023 04:32:35 -0700 (PDT)
-Received: from fsav314.sakura.ne.jp (fsav314.sakura.ne.jp [153.120.85.145])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 38FBWXI2019756;
-        Fri, 15 Sep 2023 20:32:33 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav314.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp);
- Fri, 15 Sep 2023 20:32:33 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 38FBWW8A019752
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 15 Sep 2023 20:32:32 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <1f5e725d-58b6-eca2-97dc-d7c1209ff167@I-love.SAKURA.ne.jp>
-Date:   Fri, 15 Sep 2023 20:32:32 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v15 01/11] LSM: Identify modules by more than name
-Content-Language: en-US
-To:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org
-Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-        john.johansen@canonical.com, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        mic@digikod.net
-References: <20230912205658.3432-1-casey@schaufler-ca.com>
- <20230912205658.3432-2-casey@schaufler-ca.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20230912205658.3432-2-casey@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Fri, 15 Sep 2023 10:26:25 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C36D1FC9
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Sep 2023 07:26:19 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d814634fe4bso2702153276.1
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Sep 2023 07:26:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1694787978; x=1695392778; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=n3wwM0IxTv36mTuzbjanMwII1EwyeoxiFmog5O5ddM4=;
+        b=fq/Z51Vl+wsdyQeFFTigKSJR/xZ5ekxgC0VPW+sxlOZjsXFQYVeCN1l4NLXvaxsfPX
+         lBZW4eUXMZ5ZpCEcIK9CTAo/kYuG0IuVEK/nJYBUDODEvqV8S2yQXSb8opZue6gk+gR7
+         7TKaLmemzjsULzHlVAfxEzORHOEbfrBfrZv0y+UHE3yuSV0QWuuO7/TStU6B1Gu5eE1U
+         793YcHzKnwESwHWSIud2iQfG4jbTVZniCyUdD/aFjkGGzcGwzZ/Q/A8ymOekRe7cZMXx
+         R2AVrzJjxkBpflOkQj5nyQ7CSVTLosaDnlUtjdyPCGxHfPnIvrJ0XxWa1lidx7r5AMDt
+         dP1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694787978; x=1695392778;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n3wwM0IxTv36mTuzbjanMwII1EwyeoxiFmog5O5ddM4=;
+        b=D5qNrmaLVPtoYlzI0N7G0cI7t+O74T732Yf+v5BjDbjQUxu71fgCouMUz9Zc3RH0x7
+         M6XpN7YclxXaP4oF4IiYMjTPzvtqyWmJV/X9KOxvzM0h4rppsb8MvDDOfz0ldazyC2Zl
+         veOnzp1dZxNXFAbDtkW6h3ySWVHvwLfd2gF7e08fsoWLj3N903iJRQf4CDGzEZ6e7Ru+
+         DpFa4WMsAARyIhOxBrXDCHh6jCp5tvm70TiHTX9SVO1yxcN3DJP2QbKpA5g1M9IJlF0a
+         un04fdhC4/XUvDyHJE+FmhyLqrKO9znPFKAPgduPcjMWCOBcaiB+6tkE1pnWVv+fTac9
+         cKIg==
+X-Gm-Message-State: AOJu0Yx5zVgaroqaFdIjfqryOlgAgDJ7qBz1IPvEgP4cwUAEKOyV3CaN
+        Uosc4WA5rVpKJvM4pQtvZC4tfH0k5LY=
+X-Google-Smtp-Source: AGHT+IEtd+ZFiwjGOxGj1IwoYm6uY+zMlhHeo3LWWwltDCF+cgsfqNfOOXS7Bflkew1pSHX6ZJTGM/96YR0=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:bc8:0:b0:d80:eb4:9ca with SMTP id
+ 191-20020a250bc8000000b00d800eb409camr37310ybl.0.1694787978719; Fri, 15 Sep
+ 2023 07:26:18 -0700 (PDT)
+Date:   Fri, 15 Sep 2023 07:26:16 -0700
+In-Reply-To: <ZQPuMK6D/7UzDH+D@yzhao56-desk.sh.intel.com>
+Mime-Version: 1.0
+References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-19-seanjc@google.com>
+ <ZQPuMK6D/7UzDH+D@yzhao56-desk.sh.intel.com>
+Message-ID: <ZQRpiOd1DNDDJQ3r@google.com>
+Subject: Re: [RFC PATCH v12 18/33] KVM: x86/mmu: Handle page fault for private memory
+From:   Sean Christopherson <seanjc@google.com>
+To:     Yan Zhao <yan.y.zhao@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2023/09/13 5:56, Casey Schaufler wrote:
-> Create a struct lsm_id to contain identifying information about Linux
-> Security Modules (LSMs). At inception this contains the name of the
-> module and an identifier associated with the security module.  Change
-> the security_add_hooks() interface to use this structure.  Change the
-> individual modules to maintain their own struct lsm_id and pass it to
-> security_add_hooks().
+On Fri, Sep 15, 2023, Yan Zhao wrote:
+> On Wed, Sep 13, 2023 at 06:55:16PM -0700, Sean Christopherson wrote:
+> ....
+> > +static void kvm_mmu_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
+> > +					      struct kvm_page_fault *fault)
+> > +{
+> > +	kvm_prepare_memory_fault_exit(vcpu, fault->gfn << PAGE_SHIFT,
+> > +				      PAGE_SIZE, fault->write, fault->exec,
+> > +				      fault->is_private);
+> > +}
+> > +
+> > +static int kvm_faultin_pfn_private(struct kvm_vcpu *vcpu,
+> > +				   struct kvm_page_fault *fault)
+> > +{
+> > +	int max_order, r;
+> > +
+> > +	if (!kvm_slot_can_be_private(fault->slot)) {
+> > +		kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
+> > +		return -EFAULT;
+> > +	}
+> > +
+> > +	r = kvm_gmem_get_pfn(vcpu->kvm, fault->slot, fault->gfn, &fault->pfn,
+> > +			     &max_order);
+> > +	if (r) {
+> > +		kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
+> > +		return r;
+> > +	}
+> > +
+> > +	fault->max_level = min(kvm_max_level_for_order(max_order),
+> > +			       fault->max_level);
+> > +	fault->map_writable = !(fault->slot->flags & KVM_MEM_READONLY);
+> > +
+> > +	return RET_PF_CONTINUE;
+> > +}
+> > +
+> >  static int __kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+> >  {
+> >  	struct kvm_memory_slot *slot = fault->slot;
+> > @@ -4293,6 +4356,14 @@ static int __kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+> >  			return RET_PF_EMULATE;
+> >  	}
+> >  
+> > +	if (fault->is_private != kvm_mem_is_private(vcpu->kvm, fault->gfn)) {
+> In patch 21,
+> fault->is_private is set as:
+> 	".is_private = kvm_mem_is_private(vcpu->kvm, cr2_or_gpa >> PAGE_SHIFT)",
+> then, the inequality here means memory attribute has been updated after
+> last check.
+> So, why an exit to user space for converting is required instead of a mere retry?
 > 
-> The values are for LSM identifiers are defined in a new UAPI
-> header file linux/lsm.h. Each existing LSM has been updated to
-> include it's LSMID in the lsm_id.
-> 
-> The LSM ID values are sequential, with the oldest module
-> LSM_ID_CAPABILITY being the lowest value and the existing modules
-> numbered in the order they were included in the main line kernel.
-> This is an arbitrary convention for assigning the values, but
-> none better presents itself. The value 0 is defined as being invalid.
-> The values 1-99 are reserved for any special case uses which may
-> arise in the future. This may include attributes of the LSM
-> infrastructure itself, possibly related to namespacing or network
-> attribute management. A special range is identified for such attributes
-> to help reduce confusion for developers unfamiliar with LSMs.
-> 
-> LSM attribute values are defined for the attributes presented by
-> modules that are available today. As with the LSM IDs, The value 0
-> is defined as being invalid. The values 1-99 are reserved for any
-> special case uses which may arise in the future.
-> 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: linux-security-module <linux-security-module@vger.kernel.org>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> Reviewed-by: Mickael Salaun <mic@digikod.net>
-> Reviewed-by: John Johansen <john.johansen@canonical.com>
+> Or, is it because how .is_private is assigned in patch 21 is subjected to change
+> in future? 
 
-Nacked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+This.  Retrying on SNP or TDX would hang the guest.  I suppose we could special
+case VMs where .is_private is derived from the memory attributes, but the
+SW_PROTECTED_VM type is primary a development vehicle at this point.  I'd like to
+have it mimic SNP/TDX as much as possible; performance is a secondary concern.
 
-https://lkml.kernel.org/r/4a6b6e2c-9872-4d4c-e42e-4ff0fb79f3ae@I-love.SAKURA.ne.jp
-
+E.g. userspace needs to be prepared for "spurious" exits due to races on SNP and
+TDX, which this can theoretically exercise.  Though the window is quite small so
+I doubt that'll actually happen in practice; which of course also makes it less
+important to retry instead of exiting.
