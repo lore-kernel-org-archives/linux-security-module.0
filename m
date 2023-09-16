@@ -2,128 +2,304 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC27CCD37AC
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Sep 2023 21:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA07BC46CA1
+	for <linux-security-module@archiver.kernel.org>; Sat, 16 Sep 2023 00:56:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236780AbjIOVFj (ORCPT
+        id S231489AbjIPAzr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Sep 2023 17:05:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43360 "EHLO
+        Fri, 15 Sep 2023 20:55:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237792AbjIOVFf (ORCPT
+        with ESMTP id S238821AbjIPAzj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Sep 2023 17:05:35 -0400
-Received: from mail-oo1-xc49.google.com (mail-oo1-xc49.google.com [IPv6:2607:f8b0:4864:20::c49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB56A1
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Sep 2023 14:05:30 -0700 (PDT)
-Received: by mail-oo1-xc49.google.com with SMTP id 006d021491bc7-5712ca11ee6so3680437eaf.2
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Sep 2023 14:05:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1694811929; x=1695416729; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yleJC+7YBNlUjlYVNZzM9vt9cQFuPW3G+hVjyHJnwaw=;
-        b=ogYHCZ2nyrdLNWE91OqecuE80rv024odTbCeKa7WT8GM/View0HLXL2xILl+Fs6nk2
-         T7NjFUrAfuO6olCOMtbd8Ik97WXqPabhkIaT84HZzjK44vlEmdKYD/NlTtt85n1uYokM
-         6JU2vXeqU9cgAmBieBC0IrXp2bthviZGvvIMD5wZKlGVdRM2ElX6XSsJpDRtCDVTGARU
-         qJ7eAMvHsgmnlbjKRUeknfoOZeL2nCrUjMSs0IzGqOytc7nfCzdzkzuJgeBb22sNXHL/
-         wNvo9WV6ascGkLS1cTXkzEpyWlcvTlAx5DUq64U3kdziKTqEYhCJ2whNmhvzXt5eph5G
-         T5sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694811929; x=1695416729;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yleJC+7YBNlUjlYVNZzM9vt9cQFuPW3G+hVjyHJnwaw=;
-        b=SIyGSbrZ8hx30t1jeIBmExPx7HLTJaP+/R0UalDA7bAYMM6938ktjJEA5DW/Fuctqn
-         HaqjxqtEfEUDaNcr3n/CgmyYAHUi24sZooFgsb/2kuGVF0lH7+OsplGYbR7np5TwfmVF
-         jf6IStfAI6QMR92AH21W+BlCVyo+BOJpg/X1EFk0wNMaCgIN9r6L6W6MXYaGgpGwK4NT
-         b1bfc1bL2o6wdGiq2wkXyqBEkOnEvxqNJWR4weeSfpCLGlIdE/ndFWLplSgu4sawIig3
-         +IRGX+9koH0vnkGk8xw6ob4jUfEoVhiBupxVjJMt0ETExB68E3oHT7XX8RJOpRTxs+t3
-         6tGA==
-X-Gm-Message-State: AOJu0YwKWEi2PuW13NinOcvwyCCvz+qODr1U99Y8i713xtPgretzWwaZ
-        ztrLIIvLN0tKgbHPCoGsaDwgCk0w98A=
-X-Google-Smtp-Source: AGHT+IF9PpTOkzcgimAJrduyF4qwfWt2KP5EbzIhLTMy/s4gm21Ep/5FIgTjRytGlNZlubXZjpDBAQBvLB0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a4a:2c02:0:b0:571:1762:7718 with SMTP id
- o2-20020a4a2c02000000b0057117627718mr908496ooo.1.1694811929595; Fri, 15 Sep
- 2023 14:05:29 -0700 (PDT)
-Date:   Fri, 15 Sep 2023 14:05:27 -0700
-In-Reply-To: <d4166c97-6ab3-89a2-eb12-f492f7521f69@intel.com>
-Mime-Version: 1.0
-References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-2-seanjc@google.com>
- <d4166c97-6ab3-89a2-eb12-f492f7521f69@intel.com>
-Message-ID: <ZQTHF3J+6FXwRx98@google.com>
-Subject: Re: [RFC PATCH v12 01/33] KVM: Tweak kvm_hva_range and hva_handler_t
- to allow reusing for gfn ranges
-From:   Sean Christopherson <seanjc@google.com>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Anish Moorthy <amoorthy@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Isaku Yamahata <isaku.yamahata@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 15 Sep 2023 20:55:39 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D3ADE46
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Sep 2023 17:54:42 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2075C433CB
+        for <linux-security-module@vger.kernel.org>; Sat, 16 Sep 2023 00:54:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694825681;
+        bh=sMIRUgAz3TYjvXj3nt8cWKXj4GnlPtpw5NrtaT5M9Vw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pXocS2qv8pF+G4w13HTtKVQre4xxHfrK/x52f8rkJ460HbJpxQ/4UlMj4YFuL0g5l
+         U2sbvo1XS5vSAJPW/WoWQ0C2EH97QLPLgwelaA3lAm1YizAQayj6Ng3DcYjmAzNLx+
+         BxOc43vx2xQj7RGbfxQr5zfZTYJHlYMKtUtJJh6vNwdVPJQGp2PrgWX9u4NzBlQyy5
+         kCMFQTuwTtczyCmig2QbBHqULCi6TTY6z5QOYy5sJWWZOb4juG5mJlitH604OgmiQZ
+         zlh4zbyV+SsfFGcEuMKX7PKGjgEaCLt6yGoZc1lxHWCNMTU+IyLN8xkNRDTsBC0JDb
+         7inzxKpIQNOtQ==
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-52f33659d09so3188618a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Sep 2023 17:54:41 -0700 (PDT)
+X-Gm-Message-State: AOJu0YxQCdknxGsnf6pCjK4mKkzkJt0T3PGH33LbADA3qb+9Z5EFQ7BF
+        angP7L+1VYuzGscEMcp1TxjFVYWcAppcyMjulwe1ag==
+X-Google-Smtp-Source: AGHT+IGnQSbEnSvvwFlJPLtSWWk1YNhH0ZYobCmvCxVohsU+XdeWzj2CYr6ERYF8pZl/d01CPoksBnpjg6SyOmbilko=
+X-Received: by 2002:a05:6402:22b1:b0:530:bea1:9e9c with SMTP id
+ cx17-20020a05640222b100b00530bea19e9cmr369956edb.41.1694825680274; Fri, 15
+ Sep 2023 17:54:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230616000441.3677441-1-kpsingh@kernel.org> <20230616000441.3677441-3-kpsingh@kernel.org>
+ <72bd13a2-a5b3-328e-a751-87102107293e@schaufler-ca.com> <CAEf4BzYuurXCTfqkfLc3RvWZiUzJ2am2GwcYgZgiEb91cGGZaw@mail.gmail.com>
+In-Reply-To: <CAEf4BzYuurXCTfqkfLc3RvWZiUzJ2am2GwcYgZgiEb91cGGZaw@mail.gmail.com>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Sat, 16 Sep 2023 02:54:29 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ4B=hcOgz_C3jYQzRYchXQGCbSQym6a2aQEM7OXbdho7w@mail.gmail.com>
+Message-ID: <CACYkzJ4B=hcOgz_C3jYQzRYchXQGCbSQym6a2aQEM7OXbdho7w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] security: Count the LSMs enabled at compile time
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        paul@paul-moore.com, keescook@chromium.org, song@kernel.org,
+        daniel@iogearbox.net, ast@kernel.org, jannh@google.com,
+        Kui-Feng Lee <sinquersw@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 15, 2023, Xiaoyao Li wrote:
-> On 9/14/2023 9:54 AM, Sean Christopherson wrote:
-> > Rework and rename "struct kvm_hva_range" into "kvm_mmu_notifier_range" so
-> > that the structure can be used to handle notifications that operate on gfn
-> > context, i.e. that aren't tied to a host virtual address.
-> > 
-> > Practically speaking, this is a nop for 64-bit kernels as the only
-> > meaningful change is to store start+end as u64s instead of unsigned longs.
-> > 
-> > Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >   virt/kvm/kvm_main.c | 34 +++++++++++++++++++---------------
-> >   1 file changed, 19 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > index 486800a7024b..0524933856d4 100644
-> > --- a/virt/kvm/kvm_main.c
-> > +++ b/virt/kvm/kvm_main.c
-> > @@ -541,18 +541,22 @@ static inline struct kvm *mmu_notifier_to_kvm(struct mmu_notifier *mn)
-> >   	return container_of(mn, struct kvm, mmu_notifier);
-> >   }
-> > -typedef bool (*hva_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
-> > +typedef bool (*gfn_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
-> 
-> Is it worth mentioning the rename of it as well in changelog?
+On Sat, Jun 17, 2023 at 12:27=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Thu, Jun 15, 2023 at 5:38=E2=80=AFPM Casey Schaufler <casey@schaufler-=
+ca.com> wrote:
+> >
+> > On 6/15/2023 5:04 PM, KP Singh wrote:
+> > > These macros are a clever trick to determine a count of the number of
+> > > LSMs that are enabled in the config to ascertain the maximum number o=
+f
+> > > static calls that need to be configured per LSM hook.
+> > >
+> > > Without this one would need to generate static calls for (number of
+> > > possible LSMs * number of LSM hooks) which ends up being quite wastef=
+ul
+> > > especially when some LSMs are not compiled into the kernel.
+> > >
+> > > Suggested-by: Kui-Feng Lee <sinquersw@gmail.com>
+> > > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > > ---
+> > >  include/linux/lsm_count.h | 131 ++++++++++++++++++++++++++++++++++++=
+++
+> > >  1 file changed, 131 insertions(+)
+> > >  create mode 100644 include/linux/lsm_count.h
+> > >
+> > > diff --git a/include/linux/lsm_count.h b/include/linux/lsm_count.h
+> > > new file mode 100644
+> > > index 000000000000..818f62ffa723
+> > > --- /dev/null
+> > > +++ b/include/linux/lsm_count.h
+> > > @@ -0,0 +1,131 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > +
+> > > +/*
+> > > + * Copyright (C) 2023 Google LLC.
+> > > + */
+> > > +
+> > > +#ifndef __LINUX_LSM_COUNT_H
+> > > +#define __LINUX_LSM_COUNT_H
+> > > +
+> > > +#include <linux/kconfig.h>
+> > > +
+> > > +/*
+> > > + * Macros to count the number of LSMs enabled in the kernel at compi=
+le time.
+> > > + */
+> > > +
+> > > +#define __LSM_COUNT_15(x, y...) 15
+> > > +#define __LSM_COUNT_14(x, y...) 14
+> > > +#define __LSM_COUNT_13(x, y...) 13
+> > > +#define __LSM_COUNT_12(x, y...) 12
+> > > +#define __LSM_COUNT_11(x, y...) 11
+> > > +#define __LSM_COUNT_10(x, y...) 10
+> > > +#define __LSM_COUNT_9(x, y...) 9
+> > > +#define __LSM_COUNT_8(x, y...) 8
+> > > +#define __LSM_COUNT_7(x, y...) 7
+> > > +#define __LSM_COUNT_6(x, y...) 6
+> > > +#define __LSM_COUNT_5(x, y...) 5
+> > > +#define __LSM_COUNT_4(x, y...) 4
+> > > +#define __LSM_COUNT_3(x, y...) 3
+> > > +#define __LSM_COUNT_2(x, y...) 2
+> > > +#define __LSM_COUNT_1(x, y...) 1
+> > > +#define __LSM_COUNT_0(x, y...) 0
+> > > +
+> > > +#define __LSM_COUNT1_15(x, y...) __LSM_COUNT ## x ## _15(y)
+> > > +#define __LSM_COUNT1_14(x, y...) __LSM_COUNT ## x ## _14(y)
+> > > +#define __LSM_COUNT1_13(x, y...) __LSM_COUNT ## x ## _13(y)
+> > > +#define __LSM_COUNT1_12(x, y...) __LSM_COUNT ## x ## _12(y)
+> > > +#define __LSM_COUNT1_10(x, y...) __LSM_COUNT ## x ## _11(y)
+> > > +#define __LSM_COUNT1_9(x, y...) __LSM_COUNT ## x ## _10(y)
+> > > +#define __LSM_COUNT1_8(x, y...) __LSM_COUNT ## x ## _9(y)
+> > > +#define __LSM_COUNT1_7(x, y...) __LSM_COUNT ## x ## _8(y)
+> > > +#define __LSM_COUNT1_6(x, y...) __LSM_COUNT ## x ## _7(y)
+> > > +#define __LSM_COUNT1_5(x, y...) __LSM_COUNT ## x ## _6(y)
+> > > +#define __LSM_COUNT1_4(x, y...) __LSM_COUNT ## x ## _5(y)
+> > > +#define __LSM_COUNT1_3(x, y...) __LSM_COUNT ## x ## _4(y)
+> > > +#define __LSM_COUNT1_2(x, y...) __LSM_COUNT ## x ## _3(y)
+> > > +#define __LSM_COUNT1_1(x, y...) __LSM_COUNT ## x ## _2(y)
+> > > +#define __LSM_COUNT1_0(x, y...) __LSM_COUNT ## x ## _1(y)
+> > > +#define __LSM_COUNT(x, y...) __LSM_COUNT ## x ## _0(y)
+> > > +
+> > > +#define __LSM_COUNT_EXPAND(x...) __LSM_COUNT(x)
+> > > +
+> > > +#if IS_ENABLED(CONFIG_SECURITY)
+> > > +#define CAPABILITIES_ENABLED 1,
+> > > +#else
+> > > +#define CAPABILITIES_ENABLED
+> > > +#endif
+> > > +
+> > > +#if IS_ENABLED(CONFIG_SECURITY_SELINUX)
+> > > +#define SELINUX_ENABLED 1,
+> > > +#else
+> > > +#define SELINUX_ENABLED
+> > > +#endif
+> > > +
+> > > +#if IS_ENABLED(CONFIG_SECURITY_SMACK)
+> > > +#define SMACK_ENABLED 1,
+> > > +#else
+> > > +#define SMACK_ENABLED
+> > > +#endif
+> > > +
+> > > +#if IS_ENABLED(CONFIG_SECURITY_APPARMOR)
+> > > +#define APPARMOR_ENABLED 1,
+> > > +#else
+> > > +#define APPARMOR_ENABLED
+> > > +#endif
+> > > +
+> > > +#if IS_ENABLED(CONFIG_SECURITY_TOMOYO)
+> > > +#define TOMOYO_ENABLED 1,
+> > > +#else
+> > > +#define TOMOYO_ENABLED
+> > > +#endif
+> > > +
+> > > +#if IS_ENABLED(CONFIG_SECURITY_YAMA)
+> > > +#define YAMA_ENABLED 1,
+> > > +#else
+> > > +#define YAMA_ENABLED
+> > > +#endif
+> > > +
+> > > +#if IS_ENABLED(CONFIG_SECURITY_LOADPIN)
+> > > +#define LOADPIN_ENABLED 1,
+> > > +#else
+> > > +#define LOADPIN_ENABLED
+> > > +#endif
+> > > +
+> > > +#if IS_ENABLED(CONFIG_SECURITY_LOCKDOWN_LSM)
+> > > +#define LOCKDOWN_ENABLED 1,
+> > > +#else
+> > > +#define LOCKDOWN_ENABLED
+> > > +#endif
+> > > +
+> > > +#if IS_ENABLED(CONFIG_BPF_LSM)
+> > > +#define BPF_LSM_ENABLED 1,
+> > > +#else
+> > > +#define BPF_LSM_ENABLED
+> > > +#endif
+> > > +
+> > > +#if IS_ENABLED(CONFIG_BPF_LSM)
+> > > +#define BPF_LSM_ENABLED 1,
+> > > +#else
+> > > +#define BPF_LSM_ENABLED
+> > > +#endif
+>
+> duplicate that redefined BPF_LSM_ENABLED unnecessarily
+>
+> > > +
+> > > +#if IS_ENABLED(CONFIG_SECURITY_LANDLOCK)
+> > > +#define LANDLOCK_ENABLED 1,
+> > > +#else
+> > > +#define LANDLOCK_ENABLED
+> > > +#endif
+> > > +
+> > > +#define MAX_LSM_COUNT                        \
+> > > +     __LSM_COUNT_EXPAND(             \
+> > > +             CAPABILITIES_ENABLED    \
+> > > +             SELINUX_ENABLED         \
+> > > +             SMACK_ENABLED           \
+> > > +             APPARMOR_ENABLED        \
+> > > +             TOMOYO_ENABLED          \
+> > > +             YAMA_ENABLED            \
+> > > +             LOADPIN_ENABLED         \
+> > > +             LOCKDOWN_ENABLED        \
+> > > +             BPF_LSM_ENABLED         \
+> > > +             LANDLOCK_ENABLED)
+> > > +
+> >
+> > Wouldn't the following be simpler? It's from my LSM syscall patchset.
+>
+> Of course it would be, but unfortunately it doesn't work with the
+> UNROLL() macro. This MAX_LSM_COUNT has to evaluate a compile-time
+> integer *literal* (not any sort of expression), so that UNROLL(N,...)
+> can do its magic.
+>
+>
+> KP, this __LSM_COUNT_EXPAND() is actually doing exactly what already
+> existing COUNT_ARGS() macro from linux/kernel.h does, which is
+> implemented way more succinctly:
+>
+> #define __COUNT_ARGS(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11,
+> _12, _n, X...) _n
+> #define COUNT_ARGS(X...) __COUNT_ARGS(, ##X, 12, 11, 10, 9, 8, 7, 6,
+> 5, 4, 3, 2, 1, 0)
+>
+>
+> The only problem is that:
+>
+> #define ___COUNT_ARGS(args...) COUNT_ARGS(args)
+> #define MAX_LSM_COUNT                   \
+>         ___COUNT_ARGS(                  \
+>                 CAPABILITIES_ENABLED    \
+>                 SELINUX_ENABLED         \
+>                 SMACK_ENABLED           \
+>                 APPARMOR_ENABLED        \
+>                 TOMOYO_ENABLED          \
+>                 YAMA_ENABLED            \
+>                 LOADPIN_ENABLED         \
+>                 LOCKDOWN_ENABLED        \
+>                 BPF_LSM_ENABLED         \
+>                 LANDLOCK_ENABLED)
+>
+> overcounts by one, because of that trailing command within each
+> XXX_ENABLED definition.
+>
+>
+> But still, instead of a multi-line __LSM_COUNT{,1}_N set of macros, it
+> might be better to use the COUNT_ARGS trick, but just account for
+> those trailing commas? E.g., maybe just do a COUNT_COMMAS() macro
+> which will adjust all the return values by 1 down, except when there
+> is no comma (still 0).
+>
+> It's pretty minor in the grand scheme of things, but just something
+> for you to be aware of.
 
-Meh, I suppose.  At some point, we do have to assume a certain level of code
-literacy though :-)
+I am back and revving this up again (after a hiatus due to health
+stuff and then ramping back at work). Apologies for the radio silence
+here.
+
+I agree, Also if you notice CAPABILITIES_ENABLED is kinda bogus, and
+CONFIG_SECURITY is used as a proxy, overcounting by 1 is actually what
+I need. So, thanks, this makes it much simpler.
+
+^^
+(I realized I had replied the above to Andrii and not replied back to the l=
+ist).
+
+>
+>
+> > It certainly takes up fewer lines and would be easier to maintain
+> > than the set of macros you've proposed.
+> >
+> > +#define LSM_COUNT ( \
+> > +       (IS_ENABLED(CONFIG_SECURITY) ? 1 : 0) + \
+> > +       (IS_ENABLED(CONFIG_SECURITY_SELINUX) ? 1 : 0) + \
+> > +       (IS_ENABLED(CONFIG_SECURITY_SMACK) ? 1 : 0) + \
+> > +       (IS_ENABLED(CONFIG_SECURITY_TOMOYO) ? 1 : 0) + \
+> > +       (IS_ENABLED(CONFIG_IMA) ? 1 : 0) + \
+> > +       (IS_ENABLED(CONFIG_SECURITY_APPARMOR) ? 1 : 0) + \
+> > +       (IS_ENABLED(CONFIG_SECURITY_YAMA) ? 1 : 0) + \
+> > +       (IS_ENABLED(CONFIG_SECURITY_LOADPIN) ? 1 : 0) + \
+> > +       (IS_ENABLED(CONFIG_SECURITY_SAFESETID) ? 1 : 0) + \
+> > +       (IS_ENABLED(CONFIG_SECURITY_LOCKDOWN_LSM) ? 1 : 0) + \
+> > +       (IS_ENABLED(CONFIG_BPF_LSM) ? 1 : 0) + \
+> > +       (IS_ENABLED(CONFIG_SECURITY_LANDLOCK) ? 1 : 0))
+> >
+> >
+> > > +#endif  /* __LINUX_LSM_COUNT_H */
+> >
