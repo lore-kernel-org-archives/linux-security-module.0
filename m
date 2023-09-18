@@ -2,173 +2,145 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B3BCD13D9
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Sep 2023 20:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE976CD37B0
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Sep 2023 21:25:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229881AbjIRU6Q (ORCPT
+        id S229590AbjIRVZU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Sep 2023 16:58:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36926 "EHLO
+        Mon, 18 Sep 2023 17:25:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230109AbjIRU6N (ORCPT
+        with ESMTP id S229510AbjIRVZT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Sep 2023 16:58:13 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE4AA135
-        for <linux-security-module@vger.kernel.org>; Mon, 18 Sep 2023 13:58:03 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1c1ff5b741cso46521515ad.2
-        for <linux-security-module@vger.kernel.org>; Mon, 18 Sep 2023 13:58:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1695070683; x=1695675483; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tauh1TRK/BMeBu2l0gaSo+cZtciZh4ApAYeMwZDiN0w=;
-        b=EtjCD8XVeuyu4XPhxQV+t9HYnYbdWObJjfzOR6vxv4ywzcteSLd7/vnG2MUSzDQt0O
-         LG3v00URknQcK8wR6BKbWHM6eXxfkaSoTz3oz+YjLfafcEqWoJnyWOQMsRNxOTVXNPt1
-         k2+lRenwmrczPR68IB+I7VjepnnPHVIkCEGo9oCT9gNgE61pRdv1/i+GTi8g92PWdnpH
-         L5pXGhySoxVwoCymRI4vbFm7w6Lx9+eU8phNMgqBFG8qk8Mr7IzfHSlpL9Nfmq4N0fxV
-         SyKHj8YGRldXW5vDWguPg+toMxg+W7nv35SzMx4cGWB8jM0fT8CS+mDmZDCF/b9Kq0cs
-         dwBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695070683; x=1695675483;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tauh1TRK/BMeBu2l0gaSo+cZtciZh4ApAYeMwZDiN0w=;
-        b=N1A2nRKzLFK0MMa8tmPhiDRLwnpgX4dnsWpqaDIuekZ7JW3ZePGHjg+2YQMsTXTL9m
-         FEAusi+f2HSZ3ol/z9h6Kp3MHHIeSxp+3xH+D+Ha2hUYL8dsF4usZwlBgvF7DsdjNToN
-         GjWLctwj83A5j4RZ7jwTVzE+xYs0Vy7e4IH4YM2mkrM74p0up7lV5BMbSOHjpiKcAmEx
-         BPLEwemQ8D0yx+UsN33BSAKkwJjRqF7YkPBGXzpB/tBzKInkLjeSJf0cwgbkgf060Xqs
-         riNPBBwuRqyNZUhZA3342fiw7qIpudHLOn1x4S3QjAPpZYQHcGQPxv4oT6qn/A3Ww079
-         fbRg==
-X-Gm-Message-State: AOJu0YzB7s8chF9Aj0WAuUXrzH2iL9SnzLUyyy5U7jLene28iFr9QYaU
-        nwlP940lYG5VEe0QBJY5mBZJqA==
-X-Google-Smtp-Source: AGHT+IHW/N9kktGUP1je9DFFNRd7ALIMHRTanWQ0GwsItBzOAA3iVWzYW3fREWh2c3rpYKzuxfVf5w==
-X-Received: by 2002:a17:903:24e:b0:1bc:6799:3f6c with SMTP id j14-20020a170903024e00b001bc67993f6cmr10039131plh.35.1695070683210;
-        Mon, 18 Sep 2023 13:58:03 -0700 (PDT)
-Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
-        by smtp.gmail.com with ESMTPSA id 9-20020a170902c20900b001b87d3e845bsm2813998pll.149.2023.09.18.13.58.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Sep 2023 13:58:02 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <59DA5D4F-8242-4BD4-AE1C-FC5A6464E377@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_5D26C71F-6AC4-4378-9A44-BBCB7136D1A4";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-Date:   Mon, 18 Sep 2023 14:58:00 -0600
-In-Reply-To: <20230918-grafik-zutreffen-995b321017ae@brauner>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
-To:     Christian Brauner <brauner@kernel.org>
-References: <20230913152238.905247-1-mszeredi@redhat.com>
- <20230913152238.905247-3-mszeredi@redhat.com>
- <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
- <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
- <20230914-lockmittel-verknallen-d1a18d76ba44@brauner>
- <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
- <20230918-grafik-zutreffen-995b321017ae@brauner>
-X-Mailer: Apple Mail (2.3273)
+        Mon, 18 Sep 2023 17:25:19 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B59F590
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Sep 2023 14:25:13 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ABDBC433C7;
+        Mon, 18 Sep 2023 21:25:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695072313;
+        bh=v7HrHk/auMBPUrO+Ktdp23Bxj9pNu96eMnMq/wlxdGU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ZoG2gMilxigu+rUgAM1cruo7UGM9cTU5qkMCuifSSJDpRcusYMXASNM6PORB4R/VL
+         +inaCMw/Tk42dLkmVdqem6iKsmVTogiRErc3isNgLreaW4NaPGRubBfAmw2oGO5mHQ
+         dPp8EHiI0G51HFrg6p8zzygkLizMptGNk7rBeG7tIZ0OKEFApI9qi0hKyiLmojRB0J
+         3aTTyLtsgKPulBbsIJBI6aw9CLXEV7oSpfSfQXrN3GCnZTu6Zl521Qk8BrehPNNREz
+         f4Seh5ieGSNRN3BMlPuuN1/2wygSElfzepWuG1Zjx5CJpEpOmgKf4y320jepyWGRFM
+         1Q5EIL4uRKbKQ==
+From:   KP Singh <kpsingh@kernel.org>
+To:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Cc:     paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
+        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
+        kpsingh@kernel.org
+Subject: [PATCH v3 0/5] Reduce overhead of LSMs with static calls
+Date:   Mon, 18 Sep 2023 23:24:54 +0200
+Message-ID: <20230918212459.1937798-1-kpsingh@kernel.org>
+X-Mailer: git-send-email 2.42.0.459.ge4e396fd5e-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+# Background
 
---Apple-Mail=_5D26C71F-6AC4-4378-9A44-BBCB7136D1A4
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
+LSM hooks (callbacks) are currently invoked as indirect function calls. These
+callbacks are registered into a linked list at boot time as the order of the
+LSMs can be configured on the kernel command line with the "lsm=" command line
+parameter.
 
-On Sep 18, 2023, at 7:51 AM, Christian Brauner <brauner@kernel.org> wrote:
-> 
-> 
->> The type and subtype are naturally limited to sane sizes, those are
->> not an issue.
-> 
-> What's the limit for fstype actually? I don't think there is one.
-> There's one by chance but not by design afaict?
-> 
-> Maybe crazy idea:
-> That magic number thing that we do in include/uapi/linux/magic.h
-> is there a good reason for this or why don't we just add a proper,
-> simple enum:
-> 
-> enum {
-> 	FS_TYPE_ADFS        1
-> 	FS_TYPE_AFFS        2
-> 	FS_TYPE_AFS         3
-> 	FS_TYPE_AUTOFS      4
-> 	FS_TYPE_EXT2	    5
-> 	FS_TYPE_EXT3	    6
-> 	FS_TYPE_EXT4	    7
-> 	.
-> 	.
-> 	.
-> 	FS_TYPE_MAX
-> }
-> 
-> that we start returning from statmount(). We can still return both the
-> old and the new fstype? It always felt a bit odd that fs developers to
-> just select a magic number.
+Indirect function calls have a high overhead due to retpoline mitigation for
+various speculative execution attacks.
 
-Yes, there is a very good reason that there isn't an enum for filesystem
-type, which is because this API would be broken if it encounters any
-filesystem that is not listed there.  Often a single filesystem driver in
-the kernel will have multiple different magic numbers to handle versions,
-endianness, etc.
+Retpolines remain relevant even with newer generation CPUs as recently
+discovered speculative attacks, like Spectre BHB need Retpolines to mitigate
+against branch history injection and still need to be used in combination with
+newer mitigation features like eIBRS.
 
-Having a 32-bit magic number allows decentralized development with low
-chance of collision, and using new filesystems without having to patch
-every kernel for this new API to work with that filesystem.  Also,
-filesystems come and go (though more slowly) over time, and keeping the
-full list of every filesystem ever developed in the kernel enum would be
-a headache.
+This overhead is especially significant for the "bpf" LSM which allows the user
+to implement LSM functionality with eBPF program. In order to facilitate this
+the "bpf" LSM provides a default callback for all LSM hooks. When enabled,
+the "bpf" LSM incurs an unnecessary / avoidable indirect call. This is
+especially bad in OS hot paths (e.g. in the networking stack).
+This overhead prevents the adoption of bpf LSM on performance critical
+systems, and also, in general, slows down all LSMs.
 
-The field in the statmnt() call would need to be at a fixed-size 32-bit
-value in any case, so having it return the existing magic will "just work"
-because userspace tools already know and understand these magic values,
-while introducing an in-kernel enum would be broken for multiple reasons.
+Since we know the address of the enabled LSM callbacks at compile time and only
+the order is determined at boot time, the LSM framework can allocate static
+calls for each of the possible LSM callbacks and these calls can be updated once
+the order is determined at boot.
 
-Cheers, Andreas
+This series is a respin of the RFC proposed by Paul Renauld (renauld@google.com)
+and Brendan Jackman (jackmanb@google.com) [1]
 
+# Performance improvement
+
+With this patch-set some syscalls with lots of LSM hooks in their path
+benefitted at an average of ~3% and I/O and Pipe based system calls benefitting
+the most.
+
+Here are the results of the relevant Unixbench system benchmarks with BPF LSM
+and SELinux enabled with default policies enabled with and without these
+patches.
+
+Benchmark                                               Delta(%): (+ is better)
+===============================================================================
+Execl Throughput                                             +1.9356
+File Write 1024 bufsize 2000 maxblocks                       +6.5953
+Pipe Throughput                                              +9.5499
+Pipe-based Context Switching                                 +3.0209
+Process Creation                                             +2.3246
+Shell Scripts (1 concurrent)                                 +1.4975
+System Call Overhead                                         +2.7815
+System Benchmarks Index Score (Partial Only):                +3.4859
+
+In the best case, some syscalls like eventfd_create benefitted to about ~10%.
+The full analysis can be viewed at https://kpsingh.ch/lsm-perf
+
+[1] https://lore.kernel.org/linux-security-module/20200820164753.3256899-1-jackmanb@chromium.org/
 
 
+# BPF LSM Side effects
+
+Patch 4 of the series also addresses the issues with the side effects of the
+default value return values of the BPF LSM callbacks and also removes the
+overheads associated with them making it deployable at hyperscale.
+
+# v2 -> v3
+
+* Fixed a build issue on archs which don't have static calls and enable
+  CONFIG_SECURITY.
+* Updated the LSM_COUNT macros based on Andrii's suggestions.
+* Changed the security_ prefix to lsm_prefix based on Casey's suggestion.
+* Inlined static_branch_maybe into lsm_for_each_hook on Kees' feedback.
+
+# v1 -> v2 (based on linux-next, next-20230614)
+
+* Incorporated suggestions from Kees
+* Changed the way MAX_LSMs are counted from a binary based generator to a clever header.
+* Add CONFIG_SECURITY_HOOK_LIKELY to configure the likelihood of LSM hooks.
 
 
+KP Singh (5):
+  kernel: Add helper macros for loop unrolling
+  security: Count the LSMs enabled at compile time
+  security: Replace indirect LSM hook calls with static calls
+  bpf: Only enable BPF LSM hooks when an LSM program is attached
+  security: Add CONFIG_SECURITY_HOOK_LIKELY
 
---Apple-Mail=_5D26C71F-6AC4-4378-9A44-BBCB7136D1A4
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+ include/linux/bpf.h       |   1 +
+ include/linux/bpf_lsm.h   |   5 +
+ include/linux/lsm_count.h | 106 +++++++++++++++++++
+ include/linux/lsm_hooks.h |  81 +++++++++++++--
+ include/linux/unroll.h    |  36 +++++++
+ kernel/bpf/trampoline.c   |  29 +++++-
+ security/Kconfig          |  11 ++
+ security/bpf/hooks.c      |  25 ++++-
+ security/security.c       | 213 +++++++++++++++++++++++++-------------
+ 9 files changed, 424 insertions(+), 83 deletions(-)
+ create mode 100644 include/linux/lsm_count.h
+ create mode 100644 include/linux/unroll.h
 
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
+-- 
+2.42.0.459.ge4e396fd5e-goog
 
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmUIudgACgkQcqXauRfM
-H+ANkBAAswMy3DnkxDykTG0XPE8YNdNKUuKmr8Ybnx3zZSYjr6gt0M9Z1RjbfXwb
-/gD7LMA5LRDiD18iwMdA7xhAhzCSFdycXADobuQQihqo5gAwRlm4iMDLharQlJSr
-OP5T5z92C7iBtV2ntUZ+vq0Ojh0jshFZXpwcWSMzoG5AD+lY5ci+ML+2fvKdCNbJ
-jUaY2xlOEu5TDwJeI52lT5gxKWezZHxk1oPWtFrAmyenRHDhe6Hq8fL36EtpHyTI
-iBzu3chvZ073H9i72vZt34nQBy7MATe3k4mRQQhsGhKuJGmXY2s/zil60fBzR2oh
-vqW5JGq4cj/HTjDNyjED8wS5yeAlvKFlAL53ojeM6VhipOR9IGUEb+RYefmcVaZ+
-ZyK3IgXrfFNhfLNxlrT33S8Y+EhPg5b8iFF06aroPs4hmwIpMy2whpnmjcQju84w
-4zVjFSo1spBY39cU6YWxGogITC/VT9WOtv4+ckr1Xn4gnMr3PFs7XnAumh3kC1a1
-JqmHbw38TLOFXAFV2Nkc6MWHdxCDjmFr24OkpoaR4sv+QxnK7v62JN8NIBGeVlDC
-+jV5+LjSC2l502sVAqbOxamoTfv3u7r2UvB0zddiirtKl3/dUjwCmXFms90STFxP
-OnbdmtAnZu5wK1yWNVUojzLnWliZmcFAfLA1/lVTl1ttjlmG0Sw=
-=7iPD
------END PGP SIGNATURE-----
-
---Apple-Mail=_5D26C71F-6AC4-4378-9A44-BBCB7136D1A4--
