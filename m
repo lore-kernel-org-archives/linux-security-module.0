@@ -2,256 +2,349 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD65CD13DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Sep 2023 17:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6674FC46CA1
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Sep 2023 17:07:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230355AbjIRRCq (ORCPT
+        id S229698AbjIRRHE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Sep 2023 13:02:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58760 "EHLO
+        Mon, 18 Sep 2023 13:07:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231295AbjIRRCj (ORCPT
+        with ESMTP id S229476AbjIRRHD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Sep 2023 13:02:39 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98DAEAC;
-        Mon, 18 Sep 2023 10:02:33 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91C11C32785;
-        Mon, 18 Sep 2023 14:29:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695047388;
-        bh=kJa0GvslCCcWNV+hoWf/bww4C4/mthZSRBqChvvgee0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=guDI6Ni1l8l6BlhUUQMujoFH6hG+mfolikP/DaDNJta6Y43W00WHf90XlGHF6fHLo
-         NLgTDf8e1LD6OKhsssCr5QyqmFMLYPcQv4q2Sge6U1hWlCbIZBfkFgLTH5Q2JJqC0V
-         /TixeU5oylxH/lRszFSHlcZoVIh8rI3E8dQ8uH0fj7KYaAnRtezR9wKqFF/cuEG423
-         b4X1uiT7KuLkQQ/pMTDyNEsMyTpQnMkajMWonbBz/hYRMOVjVDjbgXjp/BSqBX2LNb
-         mdFN1nlYAXuq2dTc7swZjhVeGzk3qAQNPkqN6kNHs11fgf7J/JMBCYd5b8O9l89Ovl
-         WOwmwv1x1PPNQ==
-Message-ID: <3183d8b21e78dce2c1d5cbc8a1304f2937110621.camel@kernel.org>
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
+        Mon, 18 Sep 2023 13:07:03 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D8BA94
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Sep 2023 10:06:57 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-500a8b2b73eso7662082e87.0
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Sep 2023 10:06:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1695056815; x=1695661615; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PomBX+56H7vrYuyW5mK+RISliEIE/fWMnEIx5++eWoM=;
+        b=K1Cx1ugIjqoeo8R7drjdK753s1LB0JY1q/7ziUzD/wDsksPInI8iIWEWIkxwC7zpwR
+         Tf3iR+oMhLkiMa235lheRlFdODuSLnmsT6uIEB1Gb58FJ8pWuqSlXUVZojuUAcIB/3zf
+         QIQmnjC7JmhXSCRPvFH6X7DR3WcmsAjbfPrxCHl/+kVB9liC1lSL5vZS5SFXL2L0dq7G
+         czSxEYqVeuCsFotr/G33oNHbyiknHatbk6J/ZZyzaZct0L/0HaOoyBPmxXDnB9HJGFK0
+         slAmeiDAHtFgtJdP1HOncruk1Bo+eUGKLQflH22tOkEmkYjN3NZu/OzhxutsrIzjA4WP
+         UOdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695056815; x=1695661615;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PomBX+56H7vrYuyW5mK+RISliEIE/fWMnEIx5++eWoM=;
+        b=ccG69vPEsLVXj/KKYSZlGpADAYNbWfcSknPvEs0jZLwZOCy6zNw9sQApdix6Q8lZoY
+         GKU0iBiMANG3sLCSMDJLvtJLdzSOgcifgCyVlB1GAMU7r5VIECd/UuQkEd7CRWLqgaBv
+         VmwMa1mmVeCyrC9WSerhxk/8UexOPUDLzu25h/V3sglfPhDuGLAa3X8HYciNoIgvh5Xe
+         ONph2F4Nr5L0Vy9C1V47ThHHReNMRvtrwCCE1kN8pcKLRNxbRk2c+c4qwLG3joeOYmhf
+         rZ+LKA4WGErKQBkZDxzd9zrvqwGtVT+7/nWTjJ1yxKTMUcXyzMYGM1sIkAX65wdu00Jf
+         Fg+g==
+X-Gm-Message-State: AOJu0YwD/U6rFJl6CfUJxtdsUhyjvgnhlCqoJIpM8nDC3P0OxkGLiHS/
+        lAqWvZ3zutp2e18qfa7IfsMtStGIpyqpHagQUKSC6Q==
+X-Google-Smtp-Source: AGHT+IE7PudVFRyVTSCFUj5G+MB8048X5oL3dmIhNpgsFEidEOg0vjf8zvgHSO8ppzPINT/Im8PoZw==
+X-Received: by 2002:a17:906:3158:b0:9ad:c763:c3fd with SMTP id e24-20020a170906315800b009adc763c3fdmr7616048eje.28.1695046717137;
+        Mon, 18 Sep 2023 07:18:37 -0700 (PDT)
+Received: from localhost ([82.150.214.1])
+        by smtp.gmail.com with UTF8SMTPSA id jg36-20020a170907972400b009adc743340fsm5470921ejc.197.2023.09.18.07.18.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Sep 2023 07:18:36 -0700 (PDT)
+From:   David Gstir <david@sigma-star.at>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     David Gstir <david@sigma-star.at>, Shawn Guo <shawnguo@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        sigma star Kernel Team <upstream+dcp@sigma-star.at>,
         David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 18 Sep 2023 10:29:46 -0400
-In-Reply-To: <20230914-lockmittel-verknallen-d1a18d76ba44@brauner>
-References: <20230913152238.905247-1-mszeredi@redhat.com>
-         <20230913152238.905247-3-mszeredi@redhat.com>
-         <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
-         <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
-         <20230914-lockmittel-verknallen-d1a18d76ba44@brauner>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Li Yang <leoyang.li@nxp.com>, Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Steven Rostedt (Google)" <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-security-module@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        David Oberhollenzer <david.oberhollenzer@sigma-star.at>
+Subject: [PATCH v3 1/3] crypto: mxs-dcp: Add support for hardware provided keys
+Date:   Mon, 18 Sep 2023 16:18:23 +0200
+Message-ID: <20230918141826.8139-2-david@sigma-star.at>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20230918141826.8139-1-david@sigma-star.at>
+References: <20230918141826.8139-1-david@sigma-star.at>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2023-09-14 at 17:26 +0200, Christian Brauner wrote:
-> On Thu, Sep 14, 2023 at 12:13:54PM +0200, Miklos Szeredi wrote:
-> > On Thu, 14 Sept 2023 at 11:28, Christian Brauner <brauner@kernel.org> w=
-rote:
-> > >=20
-> > > On Wed, Sep 13, 2023 at 05:22:35PM +0200, Miklos Szeredi wrote:
-> > > > Add a way to query attributes of a single mount instead of having t=
-o parse
-> > > > the complete /proc/$PID/mountinfo, which might be huge.
-> > > >=20
-> > > > Lookup the mount by the old (32bit) or new (64bit) mount ID.  If a =
-mount
-> > > > needs to be queried based on path, then statx(2) can be used to fir=
-st query
-> > > > the mount ID belonging to the path.
-> > > >=20
-> > > > Design is based on a suggestion by Linus:
-> > > >=20
-> > > >   "So I'd suggest something that is very much like "statfsat()", wh=
-ich gets
-> > > >    a buffer and a length, and returns an extended "struct statfs" *=
-AND*
-> > > >    just a string description at the end."
-> > >=20
-> > > So what we agreed to at LSFMM was that we split filesystem option
-> > > retrieval into a separate system call and just have a very focused
-> > > statx() for mounts with just binary and non-variable sized informatio=
-n.
-> > > We even gave David a hard time about this. :) I would really love if =
-we
-> > > could stick to that.
-> > >=20
-> > > Linus, I realize this was your suggestion a long time ago but I would
-> > > really like us to avoid structs with variable sized fields at the end=
- of
-> > > a struct. That's just so painful for userspace and universally dislik=
-ed.
-> > > If you care I can even find the LSFMM video where we have users of th=
-at
-> > > api requesting that we please don't do this. So it'd be great if you
-> > > wouldn't insist on it.
-> >=20
-> > I completely missed that.
->=20
-> No worries, I think the discussion touching on this starts at:
-> https://youtu.be/j3fp2MtRr2I?si=3Df-YBg6uWq80dV3VC&t=3D1603
-> (with David talking quietly without a microphone for some parts
-> unfortunately...)
->=20
-> > What I'm thinking is making it even simpler for userspace:
-> >=20
-> > struct statmnt {
-> >   ...
-> >   char *mnt_root;
-> >   char *mountpoint;
-> >   char *fs_type;
-> >   u32 num_opts;
-> >   char *opts;
-> > };
-> >=20
-> > I'd still just keep options nul delimited.
-> >=20
-> > Is there a good reason not to return pointers (pointing to within the
-> > supplied buffer obviously) to userspace?
->=20
-> It's really unpleasant to program with. Yes, I think you pointed out
-> before that it often doesn't matter much as long as the system call is
-> really only relevant to some special purpose userspace.
->=20
-> But statmount() will be used pretty extensively pretty quickly for the
-> purpose of finding out mount options on a mount (Querying a whole
-> sequences of mounts via repeated listmount() + statmount() calls on the
-> other hand will be rarer.).
->=20
-> And there's just so many tools that need this: libmount, systemd, all
-> kinds of container runtimes, path lookup libraries such as libpathrs,
-> languages like go and rust that expose and wrap these calls and so on.
->=20
-> Most of these tools don't need to know about filesystem mount options
-> and if they do they can just query that through an extra system call. No
-> harm in doing that.
->=20
-> The agreement we came to to split out listing submounts into a separate
-> system call was exactly to avoid having to have a variable sized pointer
-> at the end of the struct statmnt (That's also part of the video above
-> btw.) and to make it as simple as possible.
->=20
-> Plus, the format for how to return arbitrary filesystem mount options
-> warrants a separate discussion imho as that's not really vfs level
-> information.
->=20
-> > > This will also allow us to turn statmnt() into an extensible argument
-> > > system call versioned by size just like we do any new system calls wi=
-th
-> > > struct arguments (e.g., mount_setattr(), clone3(), openat2() and so o=
-n).
-> > > Which is how we should do things like that.
-> >=20
-> > The mask mechanism also allow versioning of the struct.
->=20
-> Yes, but this is done with reserved space which just pushes away the
-> problem and bloats the struct for the sake of an unknown future. If we
-> were to use an extensible argument struct we would just version by size.
-> The only requirement is that you extend by 64 bit (see struct
-> clone_args) which had been extended.
->=20
->=20
+DCP is capable to performing AES with hardware-bound keys.
+These keys are not stored in main memory and are therefore not directly
+accessible by the operating system.
 
-Fixed size structs are much nicer to deal with, and most of the fields
-we're talking about don't change ofetn enough to make trying to strive
-for perfect atomicity worthwhile.
+So instead of feeding the key into DCP, we need to place a
+reference to such a key before initiating the crypto operation.
+Keys are referenced by a one byte identifiers.
 
-What sort of interface are you thinking for fetching variable-length
-string info? It sounds a lot like getxattr that uses a mnt_id in place
-of a pathname. getmntattr() ?
+DCP supports 6 different keys: 4 slots in the secure memory area,
+a one time programmable key which can be burnt via on-chip fuses
+and an unique device key.
 
+Using these keys is restricted to in-kernel users that use them as building
+block for other crypto tools such as trusted keys. Allowing userspace
+(e.g. via AF_ALG) to use these keys to crypt or decrypt data is a security
+risk, because there is no access control mechanism.
 
-> > >=20
-> > > Other than that I really think this is on track for what we ultimatel=
-y
-> > > want.
-> > >=20
-> > > > +struct stmt_str {
-> > > > +     __u32 off;
-> > > > +     __u32 len;
-> > > > +};
-> > > > +
-> > > > +struct statmnt {
-> > > > +     __u64 mask;             /* What results were written [uncond]=
- */
-> > > > +     __u32 sb_dev_major;     /* Device ID */
-> > > > +     __u32 sb_dev_minor;
-> > > > +     __u64 sb_magic;         /* ..._SUPER_MAGIC */
-> > > > +     __u32 sb_flags;         /* MS_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZ=
-YTIME} */
-> > > > +     __u32 __spare1;
-> > > > +     __u64 mnt_id;           /* Unique ID of mount */
-> > > > +     __u64 mnt_parent_id;    /* Unique ID of parent (for root =3D=
-=3D mnt_id) */
-> > > > +     __u32 mnt_id_old;       /* Reused IDs used in proc/.../mounti=
-nfo */
-> > > > +     __u32 mnt_parent_id_old;
-> > > > +     __u64 mnt_attr;         /* MOUNT_ATTR_... */
-> > > > +     __u64 mnt_propagation;  /* MS_{SHARED,SLAVE,PRIVATE,UNBINDABL=
-E} */
-> > > > +     __u64 mnt_peer_group;   /* ID of shared peer group */
-> > > > +     __u64 mnt_master;       /* Mount receives propagation from th=
-is ID */
-> > > > +     __u64 propagate_from;   /* Propagation from in current namesp=
-ace */
-> > > > +     __u64 __spare[20];
-> > > > +     struct stmt_str mnt_root;       /* Root of mount relative to =
-root of fs */
-> > > > +     struct stmt_str mountpoint;     /* Mountpoint relative to roo=
-t of process */
-> > > > +     struct stmt_str fs_type;        /* Filesystem type[.subtype] =
-*/
-> > >=20
+Co-developed-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Co-developed-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
+Signed-off-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
+Signed-off-by: David Gstir <david@sigma-star.at>
+---
+ drivers/crypto/mxs-dcp.c | 104 ++++++++++++++++++++++++++++++++++-----
+ include/soc/fsl/dcp.h    |  17 +++++++
+ 2 files changed, 110 insertions(+), 11 deletions(-)
+ create mode 100644 include/soc/fsl/dcp.h
 
-A bit tangential to this discussion, but one thing we could consider is
-adding something like a mnt_change_cookie field that increments on any
-significant changes on the mount: i.e. remounts with new options,
-changes to parentage or propagation, etc.
+diff --git a/drivers/crypto/mxs-dcp.c b/drivers/crypto/mxs-dcp.c
+index f6b7bce0e656..2dc664fb2faf 100644
+--- a/drivers/crypto/mxs-dcp.c
++++ b/drivers/crypto/mxs-dcp.c
+@@ -15,6 +15,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/stmp_device.h>
+ #include <linux/clk.h>
++#include <soc/fsl/dcp.h>
+ 
+ #include <crypto/aes.h>
+ #include <crypto/sha1.h>
+@@ -101,6 +102,7 @@ struct dcp_async_ctx {
+ 	struct crypto_skcipher		*fallback;
+ 	unsigned int			key_len;
+ 	uint8_t				key[AES_KEYSIZE_128];
++	bool				key_referenced;
+ };
+ 
+ struct dcp_aes_req_ctx {
+@@ -155,6 +157,7 @@ static struct dcp *global_sdcp;
+ #define MXS_DCP_CONTROL0_HASH_TERM		(1 << 13)
+ #define MXS_DCP_CONTROL0_HASH_INIT		(1 << 12)
+ #define MXS_DCP_CONTROL0_PAYLOAD_KEY		(1 << 11)
++#define MXS_DCP_CONTROL0_OTP_KEY		(1 << 10)
+ #define MXS_DCP_CONTROL0_CIPHER_ENCRYPT		(1 << 8)
+ #define MXS_DCP_CONTROL0_CIPHER_INIT		(1 << 9)
+ #define MXS_DCP_CONTROL0_ENABLE_HASH		(1 << 6)
+@@ -168,6 +171,8 @@ static struct dcp *global_sdcp;
+ #define MXS_DCP_CONTROL1_CIPHER_MODE_ECB	(0 << 4)
+ #define MXS_DCP_CONTROL1_CIPHER_SELECT_AES128	(0 << 0)
+ 
++#define MXS_DCP_CONTROL1_KEY_SELECT_SHIFT	8
++
+ static int mxs_dcp_start_dma(struct dcp_async_ctx *actx)
+ {
+ 	int dma_err;
+@@ -224,13 +229,16 @@ static int mxs_dcp_run_aes(struct dcp_async_ctx *actx,
+ 	struct dcp *sdcp = global_sdcp;
+ 	struct dcp_dma_desc *desc = &sdcp->coh->desc[actx->chan];
+ 	struct dcp_aes_req_ctx *rctx = skcipher_request_ctx(req);
++	bool key_referenced = actx->key_referenced;
+ 	int ret;
+ 
+-	key_phys = dma_map_single(sdcp->dev, sdcp->coh->aes_key,
+-				  2 * AES_KEYSIZE_128, DMA_TO_DEVICE);
+-	ret = dma_mapping_error(sdcp->dev, key_phys);
+-	if (ret)
+-		return ret;
++	if (!key_referenced) {
++		key_phys = dma_map_single(sdcp->dev, sdcp->coh->aes_key,
++					  2 * AES_KEYSIZE_128, DMA_TO_DEVICE);
++		ret = dma_mapping_error(sdcp->dev, key_phys);
++		if (ret)
++			return ret;
++	}
+ 
+ 	src_phys = dma_map_single(sdcp->dev, sdcp->coh->aes_in_buf,
+ 				  DCP_BUF_SZ, DMA_TO_DEVICE);
+@@ -255,8 +263,12 @@ static int mxs_dcp_run_aes(struct dcp_async_ctx *actx,
+ 		    MXS_DCP_CONTROL0_INTERRUPT |
+ 		    MXS_DCP_CONTROL0_ENABLE_CIPHER;
+ 
+-	/* Payload contains the key. */
+-	desc->control0 |= MXS_DCP_CONTROL0_PAYLOAD_KEY;
++	if (key_referenced)
++		/* Set OTP key bit to select the key via KEY_SELECT. */
++		desc->control0 |= MXS_DCP_CONTROL0_OTP_KEY;
++	else
++		/* Payload contains the key. */
++		desc->control0 |= MXS_DCP_CONTROL0_PAYLOAD_KEY;
+ 
+ 	if (rctx->enc)
+ 		desc->control0 |= MXS_DCP_CONTROL0_CIPHER_ENCRYPT;
+@@ -270,6 +282,9 @@ static int mxs_dcp_run_aes(struct dcp_async_ctx *actx,
+ 	else
+ 		desc->control1 |= MXS_DCP_CONTROL1_CIPHER_MODE_CBC;
+ 
++	if (key_referenced)
++		desc->control1 |= sdcp->coh->aes_key[0] << MXS_DCP_CONTROL1_KEY_SELECT_SHIFT;
++
+ 	desc->next_cmd_addr = 0;
+ 	desc->source = src_phys;
+ 	desc->destination = dst_phys;
+@@ -284,9 +299,9 @@ static int mxs_dcp_run_aes(struct dcp_async_ctx *actx,
+ err_dst:
+ 	dma_unmap_single(sdcp->dev, src_phys, DCP_BUF_SZ, DMA_TO_DEVICE);
+ err_src:
+-	dma_unmap_single(sdcp->dev, key_phys, 2 * AES_KEYSIZE_128,
+-			 DMA_TO_DEVICE);
+-
++	if (!key_referenced)
++		dma_unmap_single(sdcp->dev, key_phys, 2 * AES_KEYSIZE_128,
++				 DMA_TO_DEVICE);
+ 	return ret;
+ }
+ 
+@@ -453,7 +468,7 @@ static int mxs_dcp_aes_enqueue(struct skcipher_request *req, int enc, int ecb)
+ 	struct dcp_aes_req_ctx *rctx = skcipher_request_ctx(req);
+ 	int ret;
+ 
+-	if (unlikely(actx->key_len != AES_KEYSIZE_128))
++	if (unlikely(actx->key_len != AES_KEYSIZE_128 && !actx->key_referenced))
+ 		return mxs_dcp_block_fallback(req, enc);
+ 
+ 	rctx->enc = enc;
+@@ -500,6 +515,7 @@ static int mxs_dcp_aes_setkey(struct crypto_skcipher *tfm, const u8 *key,
+ 	 * there can still be an operation in progress.
+ 	 */
+ 	actx->key_len = len;
++	actx->key_referenced = false;
+ 	if (len == AES_KEYSIZE_128) {
+ 		memcpy(actx->key, key, len);
+ 		return 0;
+@@ -516,6 +532,32 @@ static int mxs_dcp_aes_setkey(struct crypto_skcipher *tfm, const u8 *key,
+ 	return crypto_skcipher_setkey(actx->fallback, key, len);
+ }
+ 
++static int mxs_dcp_aes_setrefkey(struct crypto_skcipher *tfm, const u8 *key,
++				 unsigned int len)
++{
++	struct dcp_async_ctx *actx = crypto_skcipher_ctx(tfm);
++
++	if (len != DCP_PAES_KEYSIZE)
++		return -EINVAL;
++
++	switch (key[0]) {
++	case DCP_PAES_KEY_SLOT0:
++	case DCP_PAES_KEY_SLOT1:
++	case DCP_PAES_KEY_SLOT2:
++	case DCP_PAES_KEY_SLOT3:
++	case DCP_PAES_KEY_UNIQUE:
++	case DCP_PAES_KEY_OTP:
++		memcpy(actx->key, key, len);
++		actx->key_len = len;
++		actx->key_referenced = true;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static int mxs_dcp_aes_fallback_init_tfm(struct crypto_skcipher *tfm)
+ {
+ 	const char *name = crypto_tfm_alg_name(crypto_skcipher_tfm(tfm));
+@@ -539,6 +581,13 @@ static void mxs_dcp_aes_fallback_exit_tfm(struct crypto_skcipher *tfm)
+ 	crypto_free_skcipher(actx->fallback);
+ }
+ 
++static int mxs_dcp_paes_init_tfm(struct crypto_skcipher *tfm)
++{
++	crypto_skcipher_set_reqsize(tfm, sizeof(struct dcp_aes_req_ctx));
++
++	return 0;
++}
++
+ /*
+  * Hashing (SHA1/SHA256)
+  */
+@@ -889,6 +938,39 @@ static struct skcipher_alg dcp_aes_algs[] = {
+ 		.ivsize			= AES_BLOCK_SIZE,
+ 		.init			= mxs_dcp_aes_fallback_init_tfm,
+ 		.exit			= mxs_dcp_aes_fallback_exit_tfm,
++	}, {
++		.base.cra_name		= "ecb(paes)",
++		.base.cra_driver_name	= "ecb-paes-dcp",
++		.base.cra_priority	= 401,
++		.base.cra_alignmask	= 15,
++		.base.cra_flags		= CRYPTO_ALG_ASYNC | CRYPTO_ALG_INTERNAL,
++		.base.cra_blocksize	= AES_BLOCK_SIZE,
++		.base.cra_ctxsize	= sizeof(struct dcp_async_ctx),
++		.base.cra_module	= THIS_MODULE,
++
++		.min_keysize		= DCP_PAES_KEYSIZE,
++		.max_keysize		= DCP_PAES_KEYSIZE,
++		.setkey			= mxs_dcp_aes_setrefkey,
++		.encrypt		= mxs_dcp_aes_ecb_encrypt,
++		.decrypt		= mxs_dcp_aes_ecb_decrypt,
++		.init			= mxs_dcp_paes_init_tfm,
++	}, {
++		.base.cra_name		= "cbc(paes)",
++		.base.cra_driver_name	= "cbc-paes-dcp",
++		.base.cra_priority	= 401,
++		.base.cra_alignmask	= 15,
++		.base.cra_flags		= CRYPTO_ALG_ASYNC | CRYPTO_ALG_INTERNAL,
++		.base.cra_blocksize	= AES_BLOCK_SIZE,
++		.base.cra_ctxsize	= sizeof(struct dcp_async_ctx),
++		.base.cra_module	= THIS_MODULE,
++
++		.min_keysize		= DCP_PAES_KEYSIZE,
++		.max_keysize		= DCP_PAES_KEYSIZE,
++		.setkey			= mxs_dcp_aes_setrefkey,
++		.encrypt		= mxs_dcp_aes_cbc_encrypt,
++		.decrypt		= mxs_dcp_aes_cbc_decrypt,
++		.ivsize			= AES_BLOCK_SIZE,
++		.init			= mxs_dcp_paes_init_tfm,
+ 	},
+ };
+ 
+diff --git a/include/soc/fsl/dcp.h b/include/soc/fsl/dcp.h
+new file mode 100644
+index 000000000000..cda89e260c46
+--- /dev/null
++++ b/include/soc/fsl/dcp.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2021 sigma star gmbh
++ */
++
++#ifndef MXS_DCP_H
++#define MXS_DCP_H
++
++#define DCP_PAES_KEYSIZE 1
++#define DCP_PAES_KEY_SLOT0 0x00
++#define DCP_PAES_KEY_SLOT1 0x01
++#define DCP_PAES_KEY_SLOT2 0x02
++#define DCP_PAES_KEY_SLOT3 0x03
++#define DCP_PAES_KEY_UNIQUE 0xfe
++#define DCP_PAES_KEY_OTP 0xff
++
++#endif /* MXS_DCP_H */
+-- 
+2.35.3
 
-That might make it more palatable to do something with separate syscalls
-for the string-based fields. You could do:
-
-statmnt(...);
-getmntattr(mnt, "mnt.fstype", ...);
-statmnt(...);
-
-...and then if the mnt_change_cookie hasn't changed, you know that the
-string option was stable during that window.
-
-
-> > > I think if we want to do this here we should add:
-> > >=20
-> > > __u64 fs_type
-> > > __u64 fs_subtype
-> > >=20
-> > > fs_type can just be our filesystem magic number and we introduce magi=
-c
-> >=20
-> > It's already there: sb_magic.
-> >=20
-> > However it's not a 1:1 mapping (ext* only has one magic).
->=20
-> That's a very odd choice but probably fixable by giving it a subtype.
->=20
-> >=20
-> > > numbers for sub types as well. So we don't need to use strings here.
-> >=20
-> > Ugh.
->=20
-> Hm, idk. It's not that bad imho. We'll have to make some ugly tradeoffs.
-
---=20
-Jeff Layton <jlayton@kernel.org>
