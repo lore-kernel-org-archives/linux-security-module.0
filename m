@@ -2,209 +2,173 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E789CD37B0
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Sep 2023 18:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B3BCD13D9
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Sep 2023 20:58:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229563AbjIRSKM (ORCPT
+        id S229881AbjIRU6Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Sep 2023 14:10:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45676 "EHLO
+        Mon, 18 Sep 2023 16:58:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjIRSKL (ORCPT
+        with ESMTP id S230109AbjIRU6N (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Sep 2023 14:10:11 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2048.outbound.protection.outlook.com [40.107.244.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8C95FB;
-        Mon, 18 Sep 2023 11:10:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Zv2h3OKQFvoe6TTN/8PO3vD/Owbu7UNfs+iIgPii41GL9jy/SR8ycX4K72sf0ZBzJaOENT+6OpDD2txPMYQCMUT5cnQ9Ax3l7TlvrIkT66uvbJ0gcTuzykV0s6xyr4Pe0FdEutsaIEOUZsfwzqIrmvPoGbpG7lGziHaf8Jx/BehL7kv+kFtEBNd92LyT4taT2oesQjDlv/p8vVU5jQ5rYnmCXtqOSkQDBrnLFYZrEPlw1mk9MzUuQmMNphGDiG7qPA4A6lN5dijJhSijWHvmFKuPxz5onwHq3fQvtGAqmpIuQt1AruFqsnDIkXMzxN3RMMzEdhtLPEEVUbCqV4bKPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ui00fgoUGuvv4efb1zdLO+78IhADs4VjQNoD9jVITVE=;
- b=WB1hkV3qU8mCLZv2srAiD9GNUmwPVjmAsqa4FPCFrWykgYzmVh/T/goLFUG2Ac+/2FRgtlOHTIdlcLycYMFk/uVLqjJy5FmbATrmUJaLAg6xLyk4I0MVOTzmrPvI/qUiFEQFehp2iJ0r1+kbQC6uSfFy7M50Yw6MX37ebfY284MC/uyfLGkZPPWQSyF0gZJcGb16LE5f+upoqOl0aFKVHC/ZaN8ToBV/mvAIgYJshjb4KdOQ7zzs49YoZ27Ke52/ki4RTpLA+DBXwhbmd2hwPuwYK/7J/1uzGGbU2Uwh5b7oRWrGJx+VfL2CTDmGWmFzgZR1VZgNW2+W1Qdja/Uqvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ui00fgoUGuvv4efb1zdLO+78IhADs4VjQNoD9jVITVE=;
- b=QrdMfrDTLfxAXeFz0An7O3CkZRQCeMQ2tsChY4Bmurmf9OViQP2lCVa5ldD3TWK+M9l28YMqqYCL+e/EeBRfo+VipZvv43W4T/T+sSh0yPJiwLYs8ARam4z0f0Nedwr5to+5PhRnd+GPpH52S6qecWB95aH7o45hnmza8NzAJ3U=
-Received: from MN2PR15CA0012.namprd15.prod.outlook.com (2603:10b6:208:1b4::25)
- by BL3PR12MB6523.namprd12.prod.outlook.com (2603:10b6:208:3bf::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.27; Mon, 18 Sep
- 2023 18:09:59 +0000
-Received: from MN1PEPF0000F0E5.namprd04.prod.outlook.com
- (2603:10b6:208:1b4:cafe::95) by MN2PR15CA0012.outlook.office365.com
- (2603:10b6:208:1b4::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.26 via Frontend
- Transport; Mon, 18 Sep 2023 18:09:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MN1PEPF0000F0E5.mail.protection.outlook.com (10.167.242.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6792.20 via Frontend Transport; Mon, 18 Sep 2023 18:09:57 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Mon, 18 Sep
- 2023 13:09:56 -0500
-Date:   Mon, 18 Sep 2023 13:07:54 -0500
-From:   Michael Roth <michael.roth@amd.com>
-To:     Sean Christopherson <seanjc@google.com>
-CC:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-        "Oliver Upton" <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        "Michael Ellerman" <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        "Paul Walmsley" <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, <kvm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
-        <linux-mips@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-        <kvm-riscv@lists.infradead.org>, <linux-riscv@lists.infradead.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Chao Peng" <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        "Jarkko Sakkinen" <jarkko@kernel.org>,
-        Anish Moorthy <amoorthy@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Isaku Yamahata <isaku.yamahata@intel.com>,
-        "Xu Yilun" <yilun.xu@intel.com>, Vlastimil Babka <vbabka@suse.cz>,
-        "Vishal Annapurve" <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        "Isaku Yamahata" <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Kalra, Ashish" <Ashish.Kalra@amd.com>
-Subject: Re: [RFC PATCH v12 10/33] KVM: Set the stage for handling only
- shared mappings in mmu_notifier events
-Message-ID: <20230918180754.iomoaqnw75j3rrxb@amd.com>
-References: <20230914015531.1419405-1-seanjc@google.com>
- <20230914015531.1419405-11-seanjc@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20230914015531.1419405-11-seanjc@google.com>
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E5:EE_|BL3PR12MB6523:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1fbb331e-c212-48f7-9870-08dbb87278e2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: nubEhsrBRvQJ6oma/H/fezu40fl8JjosgGr2UV3f6xuzgQMloCWUp72moVwjS3pI5/Oj96YFIfM/WIGvT0yzDGpEpYVWuuXxNqepQhKPL6LTYGoZ06fmZQW3Ma7BiSzzibtevEJzgUzQexmNCGcPx+q8oITBnfWr2MVgIe6/s9tfwS/fp6Cqusz4StPVX/wq5qt9GPAk/QCfEaQibhFQ9GLX07vIQPE0U52iCZeSPdqMKzSN462deDp5f06n18eQTOQpOPMpVtCC4PI7518DU2mXUUwPT6kmBpLO6fm/gRYy9Mm07S9mGjb7vj82D2dROY+sIYL3Qe7pxzCEVRUEHdTI0zZ22eu1rPNE91uiF4EBfZVYbPlbfuiH2gnBDezUqFj2tvuRRKoorWpnE5HoI1e66yH5W/vm/v4ZDdXsEElxce6zNYCAXaBzp8Qs67VhfxNXA4weRBwnKse6Xgwe0UQrKNS0NRavXG4wmhbvQ/n+otdwmQAIEf4uXMLL3+/2LIFOZFIA4zsWxUxAleZBJ/a6zs9yxkm9OSgdZUpORNt4uXySWk5waQEf8YgGS6WKToleU0JNSpaKmnbolWHBGHwQfNhyEIK/iBhWZv0tFTkbmqWh0gQLCflo0mLoRVgL0Frg407g6sqSLdoLjZuwhHSkjKM9w44Xkv9RSqEU/0mASkrA1lH0e3wdFNWRQjtiSR21ng8CWyImExG7ezjf8vnSR74f4E/0Fjg02Q02YC5RulcqfRx9AaVQyVOjBU4tUHaaFX+KujOT9O2XOEVBWw==
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(396003)(39860400002)(136003)(346002)(376002)(451199024)(1800799009)(186009)(82310400011)(36840700001)(40470700004)(46966006)(4326008)(16526019)(26005)(40480700001)(426003)(336012)(2616005)(1076003)(40460700003)(8676002)(8936002)(83380400001)(356005)(82740400003)(2906002)(81166007)(36860700001)(36756003)(41300700001)(44832011)(86362001)(70586007)(70206006)(316002)(6916009)(54906003)(7416002)(7406005)(5660300002)(966005)(47076005)(478600001)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2023 18:09:57.2580
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1fbb331e-c212-48f7-9870-08dbb87278e2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: MN1PEPF0000F0E5.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6523
+        Mon, 18 Sep 2023 16:58:13 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE4AA135
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Sep 2023 13:58:03 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1c1ff5b741cso46521515ad.2
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Sep 2023 13:58:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1695070683; x=1695675483; darn=vger.kernel.org;
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tauh1TRK/BMeBu2l0gaSo+cZtciZh4ApAYeMwZDiN0w=;
+        b=EtjCD8XVeuyu4XPhxQV+t9HYnYbdWObJjfzOR6vxv4ywzcteSLd7/vnG2MUSzDQt0O
+         LG3v00URknQcK8wR6BKbWHM6eXxfkaSoTz3oz+YjLfafcEqWoJnyWOQMsRNxOTVXNPt1
+         k2+lRenwmrczPR68IB+I7VjepnnPHVIkCEGo9oCT9gNgE61pRdv1/i+GTi8g92PWdnpH
+         L5pXGhySoxVwoCymRI4vbFm7w6Lx9+eU8phNMgqBFG8qk8Mr7IzfHSlpL9Nfmq4N0fxV
+         SyKHj8YGRldXW5vDWguPg+toMxg+W7nv35SzMx4cGWB8jM0fT8CS+mDmZDCF/b9Kq0cs
+         dwBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695070683; x=1695675483;
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tauh1TRK/BMeBu2l0gaSo+cZtciZh4ApAYeMwZDiN0w=;
+        b=N1A2nRKzLFK0MMa8tmPhiDRLwnpgX4dnsWpqaDIuekZ7JW3ZePGHjg+2YQMsTXTL9m
+         FEAusi+f2HSZ3ol/z9h6Kp3MHHIeSxp+3xH+D+Ha2hUYL8dsF4usZwlBgvF7DsdjNToN
+         GjWLctwj83A5j4RZ7jwTVzE+xYs0Vy7e4IH4YM2mkrM74p0up7lV5BMbSOHjpiKcAmEx
+         BPLEwemQ8D0yx+UsN33BSAKkwJjRqF7YkPBGXzpB/tBzKInkLjeSJf0cwgbkgf060Xqs
+         riNPBBwuRqyNZUhZA3342fiw7qIpudHLOn1x4S3QjAPpZYQHcGQPxv4oT6qn/A3Ww079
+         fbRg==
+X-Gm-Message-State: AOJu0YzB7s8chF9Aj0WAuUXrzH2iL9SnzLUyyy5U7jLene28iFr9QYaU
+        nwlP940lYG5VEe0QBJY5mBZJqA==
+X-Google-Smtp-Source: AGHT+IHW/N9kktGUP1je9DFFNRd7ALIMHRTanWQ0GwsItBzOAA3iVWzYW3fREWh2c3rpYKzuxfVf5w==
+X-Received: by 2002:a17:903:24e:b0:1bc:6799:3f6c with SMTP id j14-20020a170903024e00b001bc67993f6cmr10039131plh.35.1695070683210;
+        Mon, 18 Sep 2023 13:58:03 -0700 (PDT)
+Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
+        by smtp.gmail.com with ESMTPSA id 9-20020a170902c20900b001b87d3e845bsm2813998pll.149.2023.09.18.13.58.01
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Sep 2023 13:58:02 -0700 (PDT)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <59DA5D4F-8242-4BD4-AE1C-FC5A6464E377@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_5D26C71F-6AC4-4378-9A44-BBCB7136D1A4";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+Date:   Mon, 18 Sep 2023 14:58:00 -0600
+In-Reply-To: <20230918-grafik-zutreffen-995b321017ae@brauner>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+To:     Christian Brauner <brauner@kernel.org>
+References: <20230913152238.905247-1-mszeredi@redhat.com>
+ <20230913152238.905247-3-mszeredi@redhat.com>
+ <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
+ <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
+ <20230914-lockmittel-verknallen-d1a18d76ba44@brauner>
+ <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
+ <20230918-grafik-zutreffen-995b321017ae@brauner>
+X-Mailer: Apple Mail (2.3273)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 13, 2023 at 06:55:08PM -0700, Sean Christopherson wrote:
-> Add flags to "struct kvm_gfn_range" to let notifier events target only
-> shared and only private mappings, and write up the existing mmu_notifier
-> events to be shared-only (private memory is never associated with a
-> userspace virtual address, i.e. can't be reached via mmu_notifiers).
+
+--Apple-Mail=_5D26C71F-6AC4-4378-9A44-BBCB7136D1A4
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
+
+On Sep 18, 2023, at 7:51 AM, Christian Brauner <brauner@kernel.org> wrote:
 > 
-> Add two flags so that KVM can handle the three possibilities (shared,
-> private, and shared+private) without needing something like a tri-state
-> enum.
 > 
-> Link: https://lore.kernel.org/all/ZJX0hk+KpQP0KUyB@google.com
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  include/linux/kvm_host.h | 2 ++
->  virt/kvm/kvm_main.c      | 7 +++++++
->  2 files changed, 9 insertions(+)
+>> The type and subtype are naturally limited to sane sizes, those are
+>> not an issue.
 > 
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index d8c6ce6c8211..b5373cee2b08 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -263,6 +263,8 @@ struct kvm_gfn_range {
->  	gfn_t start;
->  	gfn_t end;
->  	union kvm_mmu_notifier_arg arg;
-> +	bool only_private;
-> +	bool only_shared;
->  	bool may_block;
->  };
->  bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range);
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 174de2789657..a41f8658dfe0 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -635,6 +635,13 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
->  			 * the second or later invocation of the handler).
->  			 */
->  			gfn_range.arg = range->arg;
-> +
-> +			/*
-> +			 * HVA-based notifications aren't relevant to private
-> +			 * mappings as they don't have a userspace mapping.
-> +			 */
-> +			gfn_range.only_private = false;
-> +			gfn_range.only_shared = true;
->  			gfn_range.may_block = range->may_block;
-
-Who is supposed to read only_private/only_shared? Is it supposed to be
-plumbed onto arch code and handled specially there?
-
-I ask because I see elsewhere you have:
-
-    /*
-     * If one or more memslots were found and thus zapped, notify arch code
-     * that guest memory has been reclaimed.  This needs to be done *after*
-     * dropping mmu_lock, as x86's reclaim path is slooooow.
-     */
-    if (__kvm_handle_hva_range(kvm, &hva_range).found_memslot)
-            kvm_arch_guest_memory_reclaimed(kvm);
-
-and if there are any MMU notifier events that touch HVAs, then
-kvm_arch_guest_memory_reclaimed()->wbinvd_on_all_cpus() will get called,
-which causes the performance issues for SEV and SNP that Ashish had brought
-up. Technically that would only need to happen if there are GPAs in that
-memslot that aren't currently backed by gmem pages (and then gmem could handle
-its own wbinvd_on_all_cpus() (or maybe clflush per-page)). 
-
-Actually, even if there are shared pages in the GPA range, the
-kvm_arch_guest_memory_reclaimed()->wbinvd_on_all_cpus() can be skipped for
-guests that only use gmem pages for private memory. Is that acceptable? Just
-trying to figure out where this only_private/only_shared handling ties into
-that (or if it's a separate thing entirely).
-
--Mike
-
->  
->  			/*
-> -- 
-> 2.42.0.283.g2d96d420d3-goog
+> What's the limit for fstype actually? I don't think there is one.
+> There's one by chance but not by design afaict?
 > 
+> Maybe crazy idea:
+> That magic number thing that we do in include/uapi/linux/magic.h
+> is there a good reason for this or why don't we just add a proper,
+> simple enum:
+> 
+> enum {
+> 	FS_TYPE_ADFS        1
+> 	FS_TYPE_AFFS        2
+> 	FS_TYPE_AFS         3
+> 	FS_TYPE_AUTOFS      4
+> 	FS_TYPE_EXT2	    5
+> 	FS_TYPE_EXT3	    6
+> 	FS_TYPE_EXT4	    7
+> 	.
+> 	.
+> 	.
+> 	FS_TYPE_MAX
+> }
+> 
+> that we start returning from statmount(). We can still return both the
+> old and the new fstype? It always felt a bit odd that fs developers to
+> just select a magic number.
+
+Yes, there is a very good reason that there isn't an enum for filesystem
+type, which is because this API would be broken if it encounters any
+filesystem that is not listed there.  Often a single filesystem driver in
+the kernel will have multiple different magic numbers to handle versions,
+endianness, etc.
+
+Having a 32-bit magic number allows decentralized development with low
+chance of collision, and using new filesystems without having to patch
+every kernel for this new API to work with that filesystem.  Also,
+filesystems come and go (though more slowly) over time, and keeping the
+full list of every filesystem ever developed in the kernel enum would be
+a headache.
+
+The field in the statmnt() call would need to be at a fixed-size 32-bit
+value in any case, so having it return the existing magic will "just work"
+because userspace tools already know and understand these magic values,
+while introducing an in-kernel enum would be broken for multiple reasons.
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_5D26C71F-6AC4-4378-9A44-BBCB7136D1A4
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmUIudgACgkQcqXauRfM
+H+ANkBAAswMy3DnkxDykTG0XPE8YNdNKUuKmr8Ybnx3zZSYjr6gt0M9Z1RjbfXwb
+/gD7LMA5LRDiD18iwMdA7xhAhzCSFdycXADobuQQihqo5gAwRlm4iMDLharQlJSr
+OP5T5z92C7iBtV2ntUZ+vq0Ojh0jshFZXpwcWSMzoG5AD+lY5ci+ML+2fvKdCNbJ
+jUaY2xlOEu5TDwJeI52lT5gxKWezZHxk1oPWtFrAmyenRHDhe6Hq8fL36EtpHyTI
+iBzu3chvZ073H9i72vZt34nQBy7MATe3k4mRQQhsGhKuJGmXY2s/zil60fBzR2oh
+vqW5JGq4cj/HTjDNyjED8wS5yeAlvKFlAL53ojeM6VhipOR9IGUEb+RYefmcVaZ+
+ZyK3IgXrfFNhfLNxlrT33S8Y+EhPg5b8iFF06aroPs4hmwIpMy2whpnmjcQju84w
+4zVjFSo1spBY39cU6YWxGogITC/VT9WOtv4+ckr1Xn4gnMr3PFs7XnAumh3kC1a1
+JqmHbw38TLOFXAFV2Nkc6MWHdxCDjmFr24OkpoaR4sv+QxnK7v62JN8NIBGeVlDC
++jV5+LjSC2l502sVAqbOxamoTfv3u7r2UvB0zddiirtKl3/dUjwCmXFms90STFxP
+OnbdmtAnZu5wK1yWNVUojzLnWliZmcFAfLA1/lVTl1ttjlmG0Sw=
+=7iPD
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_5D26C71F-6AC4-4378-9A44-BBCB7136D1A4--
