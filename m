@@ -2,146 +2,142 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14AF1CD37B0
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Sep 2023 06:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA03CD13DD
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Sep 2023 07:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239894AbjIRG4l (ORCPT
+        id S240396AbjIRHyF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Sep 2023 02:56:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37986 "EHLO
+        Mon, 18 Sep 2023 03:54:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239945AbjIRG4b (ORCPT
+        with ESMTP id S240512AbjIRHxi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Sep 2023 02:56:31 -0400
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc08])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FEC1F1
-        for <linux-security-module@vger.kernel.org>; Sun, 17 Sep 2023 23:56:23 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RpwYw44wgzMpvj8;
-        Mon, 18 Sep 2023 06:56:20 +0000 (UTC)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RpwYv6pBhzMpp9q;
-        Mon, 18 Sep 2023 08:56:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1695020180;
-        bh=W0JS7Bsx1CtCiU+24S/P6j4fgRH6Nm/XGb0DMnycSRo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PuCP25W3BWxawH4FD41ECC4I/T+/fGUZai+OpF8YFpl8xNgHCHuk6ncer63+nxfQF
-         CoKF35XYAssQVf21LhB3vIJJB/xrf59n91vR9uxpGuy1A4S2oBOCnMPyXr1u6TRmao
-         g1MaS+PpRZkv4AYsy8x2ekqJoqsgoLkFXWSgK/YY=
-Date:   Mon, 18 Sep 2023 08:56:16 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-Cc:     Paul Moore <paul@paul-moore.com>, artem.kuzin@huawei.com,
-        gnoack3000@gmail.com, willemdebruijn.kernel@gmail.com,
-        yusongping@huawei.com, linux-security-module@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
-Subject: Re: [PATCH v11.1] selftests/landlock: Add 11 new test suites
- dedicated to network
-Message-ID: <20230918.shauB5gei9Ai@digikod.net>
-References: <20230515161339.631577-11-konstantin.meskhidze@huawei.com>
- <20230706145543.1284007-1-mic@digikod.net>
- <3db64cf8-6a45-a361-aa57-9bfbaf866ef8@digikod.net>
- <b2a94da1-f9df-b684-7666-1c63060f68f1@huawei.com>
- <20230817.koh5see0eaLa@digikod.net>
- <239800f3-baf4-1c7d-047f-8ba90b097bee@huawei.com>
- <20230914.ASu9sho1Aef0@digikod.net>
- <076bfaa6-1e0b-c95b-5727-00001c79f2c0@huawei.com>
+        Mon, 18 Sep 2023 03:53:38 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC9DA129;
+        Mon, 18 Sep 2023 00:51:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1695023515; x=1726559515;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=F92rNU2upp1sAb9O/m30BxSQQfs05gdxlTOIwaluPho=;
+  b=gb7QfdLj4L4ihjLLOdTuzP5NQV5P4uW9ry5TMuFR+qGTTL8tk9tg2hAS
+   +FA9C1A+STzOT2Zfdx9AodyatFQNUuqo/cL4NoP87EGW4VHh+D6SqINnM
+   bO8ldFVJOf+GwVG4b5rncPstb0wKDqmk0df9xBFm8LHQQv5XALa1B1Vs8
+   qYfKxpIWGVWh8cU9BHZa6VyvAeEA8NSlcPsPOi4mX/HxcjLTl9RgZeWGO
+   +0fvkETy1/Jq0AubCahWBZJ1ZrGNFmeQMJY1KS0KiDUv2Phz+mna0bxLU
+   ZFAA1BHEz22zpDPmaWKWsKV7gLZrJ0gcr7bW1dM6Ox1gKw45olY9+KT4l
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10836"; a="382335539"
+X-IronPort-AV: E=Sophos;i="6.02,156,1688454000"; 
+   d="scan'208";a="382335539"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2023 00:51:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10836"; a="811262156"
+X-IronPort-AV: E=Sophos;i="6.02,156,1688454000"; 
+   d="scan'208";a="811262156"
+Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.238.8.84]) ([10.238.8.84])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2023 00:51:45 -0700
+Message-ID: <d66795f8-e524-2912-4b71-92ca4ffe8807@linux.intel.com>
+Date:   Mon, 18 Sep 2023 15:51:43 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <076bfaa6-1e0b-c95b-5727-00001c79f2c0@huawei.com>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [RFC PATCH v12 11/33] KVM: Introduce per-page memory attributes
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20230914015531.1419405-1-seanjc@google.com>
+ <20230914015531.1419405-12-seanjc@google.com>
+From:   Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20230914015531.1419405-12-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 15, 2023 at 11:54:46AM +0300, Konstantin Meskhidze (A) wrote:
-> 
-> 
-> 9/14/2023 11:08 AM, Mickaël Salaün пишет:
-> > On Mon, Sep 11, 2023 at 01:13:24PM +0300, Konstantin Meskhidze (A) wrote:
-> > > 
-> > > 
-> > > 8/17/2023 6:08 PM, Mickaël Salaün пишет:
-> > > > On Sat, Aug 12, 2023 at 05:37:00PM +0300, Konstantin Meskhidze (A) wrote:
-> > > > > > > > > 7/12/2023 10:02 AM, Mickaël Salaün пишет:
-> > > > > > > On 06/07/2023 16:55, Mickaël Salaün wrote:
-> > > > > > > From: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> > > > > > > > > This patch is a revamp of the v11 tests [1] with new tests
-> > > > > (see the
-> > > > > > > "Changes since v11" description).  I (Mickaël) only added the following
-> > > > > > > todo list and the "Changes since v11" sections in this commit message.
-> > > > > > > I think this patch is good but it would appreciate reviews.
-> > > > > > > You can find the diff of my changes here but it is not really readable:
-> > > > > > > https://git.kernel.org/mic/c/78edf722fba5 (landlock-net-v11 branch)
-> > > > > > > [1] https://lore.kernel.org/all/20230515161339.631577-11-konstantin.meskhidze@huawei.com/
-> > > > > > > TODO:
-> > > > > > > - Rename all "net_service" to "net_port".
-> > > > > > > - Fix the two kernel bugs found with the new tests.
-> > > > > > > - Update this commit message with a small description of all tests.
-> > > > > > > [...]
-> > > > > > > We should also add a test to make sure errno is the same
-> > > with and
-> > > > > > without sandboxing when using port 0 for connect and consistent with
-> > > > > > bind (using an available port). The test fixture and variants should be
-> > > > > > quite similar to the "ipv4" ones, but we can also add AF_INET6 variants,
-> > > > > > which will result in 8 "ip" variants:
-> > > > > > > TEST_F(ip, port_zero)
-> > > > > > {
-> > > > > > 	if (variant->sandbox == TCP_SANDBOX) {
-> > > > > > 		/* Denies any connect and bind. */
-> > > > > > 	}
-> > > > > > 	/* Checks errno for port 0. */
-> > > > > > }
-> > > > > As I understand the would be the next test cases:
-> > > > > > > 	1. ip4, sandboxed, bind port 0 -> should return EACCES
-> > > (denied by
-> > > > > landlock).
-> > > > > Without any allowed port, yes. This test case is useful.
-> > > > > By tuning /proc/sys/net/ipv4/ip_local_port_range (see
-> > > > inet_csk_find_open_port call) we should be able to pick a specific
-> > > > allowed port and test it.  We can also test for the EADDRINUSE error to
-> > > > make sure error ordering is correct (compared with -EACCES).
-> > >   Sorry, did not get this case. Could please explain it with more details?
-> > 
-> > According to bind(2), if no port are available, the syscall should
-> > return EADDRINUSE. And this returned value should be the same whatever
-> > the process is sandbox or not (and never EACCES). But as I explained
-> > just below, we cannot know this random port from the LSM hook, so no
-> > need to tweak /proc/sys/net/ipv4/ip_local_port_range, and your this is
-> > correct:
-> > 
-> > 1. ip4, sandboxed, bind port 0 -> should return EACCES (denied by
-> > landlock).
-> 
->   yep, adding rule with port 0 (for bind) returns EINVAL then
->   calling bind port 0 returns EACCES cause there is no rule with port 0.
-> > 
-> > > > > However, I think the current LSM API don't enable to infer this
-> > > random
-> > > > port because the LSM hook is called before a port is picked.  If this is
-> > > > correct, the best way to control port binding would be to always deny
-> > > > binding on port zero/random (when restricting port binding, whatever
-> > > > exception rules are in place). This explanation should be part of a
-> > > > comment for this specific exception.
-> > > 
-> > >   Yep, if some LSM rule (for bind) has been applied a with specific port,
-> > > other attemps to bind with zero/random ports would be refused by LSM
-> > > security checks.
-> > 
-> > To say it another way, we should not allow to add a rule with port 0 for
-> > LANDLOCK_ACCESS_NET_BIND_TCP, but return -EINVAL in this case. This
-> > limitation should be explained, documented and tested.
-> > 
-> > With (only) LANDLOCK_ACCESS_NET_CONNECT_TCP it should be allowed though
-> > (except if there is also LANDLOCK_ACCESS_NET_BIND_TCP) of course.
-> > Another test should cover the case with a new rule with these two access
-> > rights and port 0.
-> 
->  I think it's possible to have LANDLOCK_ACCESS_NET_CONNECT_TCP with port 0
-> with LANDLOCK_ACCESS_NET_BIND_TCP at the same time, cause
-> LANDLOCK_ACCESS_NET_BIND_TCP rule is allowed (by Landlock) with any other
-> port but 0.
 
-It would mask the fact that port zero cannot be allowed, which could be
-possible one day. So for now we need to return EINVAL in this case.
+
+On 9/14/2023 9:55 AM, Sean Christopherson wrote:
+> From: Chao Peng <chao.p.peng@linux.intel.com>
+[...]
+>   
+> +#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
+> +/*
+> + * Returns true if _all_ gfns in the range [@start, @end) have attributes
+> + * matching @attrs.
+> + */
+> +bool kvm_range_has_memory_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
+> +				     unsigned long attrs)
+> +{
+> +	XA_STATE(xas, &kvm->mem_attr_array, start);
+> +	unsigned long index;
+> +	bool has_attrs;
+> +	void *entry;
+> +
+> +	rcu_read_lock();
+> +
+> +	if (!attrs) {
+> +		has_attrs = !xas_find(&xas, end);
+IIUIC, xas_find() is inclusive for "end", so here should be "end - 1" ?
+
+
+> +		goto out;
+> +	}
+> +
+> +	has_attrs = true;
+> +	for (index = start; index < end; index++) {
+> +		do {
+> +			entry = xas_next(&xas);
+> +		} while (xas_retry(&xas, entry));
+> +
+> +		if (xas.xa_index != index || xa_to_value(entry) != attrs) {
+> +			has_attrs = false;
+> +			break;
+> +		}
+> +	}
+> +
+> +out:
+> +	rcu_read_unlock();
+> +	return has_attrs;
+> +}
+> +
+>
+[...]
