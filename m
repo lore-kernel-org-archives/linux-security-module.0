@@ -2,142 +2,89 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA03CD13DD
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Sep 2023 07:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8517CD13D2
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Sep 2023 15:18:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240396AbjIRHyF (ORCPT
+        id S232854AbjIRPSu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Sep 2023 03:54:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49288 "EHLO
+        Mon, 18 Sep 2023 11:18:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240512AbjIRHxi (ORCPT
+        with ESMTP id S233456AbjIRPSt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Sep 2023 03:53:38 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC9DA129;
-        Mon, 18 Sep 2023 00:51:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1695023515; x=1726559515;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=F92rNU2upp1sAb9O/m30BxSQQfs05gdxlTOIwaluPho=;
-  b=gb7QfdLj4L4ihjLLOdTuzP5NQV5P4uW9ry5TMuFR+qGTTL8tk9tg2hAS
-   +FA9C1A+STzOT2Zfdx9AodyatFQNUuqo/cL4NoP87EGW4VHh+D6SqINnM
-   bO8ldFVJOf+GwVG4b5rncPstb0wKDqmk0df9xBFm8LHQQv5XALa1B1Vs8
-   qYfKxpIWGVWh8cU9BHZa6VyvAeEA8NSlcPsPOi4mX/HxcjLTl9RgZeWGO
-   +0fvkETy1/Jq0AubCahWBZJ1ZrGNFmeQMJY1KS0KiDUv2Phz+mna0bxLU
-   ZFAA1BHEz22zpDPmaWKWsKV7gLZrJ0gcr7bW1dM6Ox1gKw45olY9+KT4l
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10836"; a="382335539"
-X-IronPort-AV: E=Sophos;i="6.02,156,1688454000"; 
-   d="scan'208";a="382335539"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2023 00:51:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10836"; a="811262156"
-X-IronPort-AV: E=Sophos;i="6.02,156,1688454000"; 
-   d="scan'208";a="811262156"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.238.8.84]) ([10.238.8.84])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2023 00:51:45 -0700
-Message-ID: <d66795f8-e524-2912-4b71-92ca4ffe8807@linux.intel.com>
-Date:   Mon, 18 Sep 2023 15:51:43 +0800
+        Mon, 18 Sep 2023 11:18:49 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30FB6E73
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Sep 2023 08:17:21 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-404c023ef5eso28595215e9.2
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Sep 2023 08:17:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1695050238; x=1695655038; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3lFpWEQNX0RgOS+vwuIIC94hCwP0MrQhLUc3uHKyySs=;
+        b=eiEci7qCy6lw3Eas2Sc0yeiGZiE2eCnRW0KuIIUmBA114vUTcBgIMlt/rEkdkrvSXU
+         C6ArRKpz4/eO5oYjJ7jYw01DeQth5IOWjzYGyXgx7wWaT2Lm1sSWRXk4PeafB5Wf5xRh
+         v4tF4cpBFyhSFVxeeBGPYXtRswEUnhqO+pqgo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695050238; x=1695655038;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3lFpWEQNX0RgOS+vwuIIC94hCwP0MrQhLUc3uHKyySs=;
+        b=oYa1j+s7+59BR1FUPaolyL+8g1e8Pl+l7wHAs2CJgUtTX9elWBbTLbtLsY4qTnD1mx
+         oOHlvWMMlFM2O7mRb5NvonJOnRW4rKY4S6ifqiHSQ/IyAaZMudcM2vugB/n2hovnKj7C
+         ih8PBNkhUUgP6RB9EuVl89UARSsS2NWfktZEIALHln7qRkjaGPe9uVOcXX53rGrjl2zp
+         EN+SiKmU5MAEDo2nPtlgrxEYuJfTKnfdub0aE/bsOVYLvcE6j+wPGyrucmJMkGP7ZGDF
+         9YDxUtktfJDzdQk/5FphBLJEoyOcglBjWVFq0RFWwmes7UhjozNA2zf8oJz0ufOvip9C
+         iM+A==
+X-Gm-Message-State: AOJu0YwS+/Zaq6bWq8qMmo2TTQow9aWoyKHxH2ujKMoFHpO4SMdB5KbV
+        LDSvthT4xXVzafCVLSHoBW4X3uStTFkZlJBpWrBSFtKs5tCetsWt
+X-Google-Smtp-Source: AGHT+IFnzEkphfcA1k56lMmjABKC+h4WWJYwladyvHeyaRQV3hNEF1Dw61zv3yr9gv0EEochrOGS5dXCs2GS30BWGs0=
+X-Received: by 2002:adf:a3c4:0:b0:31f:f664:d87 with SMTP id
+ m4-20020adfa3c4000000b0031ff6640d87mr7329776wrb.20.1695048675110; Mon, 18 Sep
+ 2023 07:51:15 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [RFC PATCH v12 11/33] KVM: Introduce per-page memory attributes
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Anish Moorthy <amoorthy@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Isaku Yamahata <isaku.yamahata@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20230914015531.1419405-1-seanjc@google.com>
- <20230914015531.1419405-12-seanjc@google.com>
-From:   Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20230914015531.1419405-12-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20230913152238.905247-1-mszeredi@redhat.com> <20230913152238.905247-3-mszeredi@redhat.com>
+ <20230914-salzig-manifest-f6c3adb1b7b4@brauner> <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
+ <20230914-lockmittel-verknallen-d1a18d76ba44@brauner> <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
+ <20230918-grafik-zutreffen-995b321017ae@brauner> <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
+ <20230918-hierbei-erhielten-ba5ef74a5b52@brauner> <CAJfpegtaGXoZkMWLnk3PcibAvp7kv-4Yobo=UJj943L6v3ctJQ@mail.gmail.com>
+ <20230918-stuhl-spannend-9904d4addc93@brauner>
+In-Reply-To: <20230918-stuhl-spannend-9904d4addc93@brauner>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 18 Sep 2023 16:51:03 +0200
+Message-ID: <CAJfpegvxNhty2xZW+4MM9Gepotii3CD1p0fyvLDQB82hCYzfLQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, 18 Sept 2023 at 16:40, Christian Brauner <brauner@kernel.org> wrote:
 
+> What we're talking about here is a nicely typed struct which returns two
+> paths @mnt_root and @mnt_point which can both be represented as u64
+> pointers with length parameters like we do in other binary structs such
+> as bpf and clone3 and a few others. That is a compromise I can live
+> with. I'm really trying to find as much common ground here as we can.
 
-On 9/14/2023 9:55 AM, Sean Christopherson wrote:
-> From: Chao Peng <chao.p.peng@linux.intel.com>
-[...]
->   
-> +#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
-> +/*
-> + * Returns true if _all_ gfns in the range [@start, @end) have attributes
-> + * matching @attrs.
-> + */
-> +bool kvm_range_has_memory_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
-> +				     unsigned long attrs)
-> +{
-> +	XA_STATE(xas, &kvm->mem_attr_array, start);
-> +	unsigned long index;
-> +	bool has_attrs;
-> +	void *entry;
-> +
-> +	rcu_read_lock();
-> +
-> +	if (!attrs) {
-> +		has_attrs = !xas_find(&xas, end);
-IIUIC, xas_find() is inclusive for "end", so here should be "end - 1" ?
+So to be clear about your proposal: .mnt_root and .mountpoint are
+initialized by the caller to buffers that the kernel can copy paths
+into?
 
+If there's an overflow (one of the buffers was too small) the syscall
+returns -EOVERFLOW?
 
-> +		goto out;
-> +	}
-> +
-> +	has_attrs = true;
-> +	for (index = start; index < end; index++) {
-> +		do {
-> +			entry = xas_next(&xas);
-> +		} while (xas_retry(&xas, entry));
-> +
-> +		if (xas.xa_index != index || xa_to_value(entry) != attrs) {
-> +			has_attrs = false;
-> +			break;
-> +		}
-> +	}
-> +
-> +out:
-> +	rcu_read_unlock();
-> +	return has_attrs;
-> +}
-> +
->
-[...]
+Thanks,
+Miklos
