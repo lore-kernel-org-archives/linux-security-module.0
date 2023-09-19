@@ -2,105 +2,223 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53022CE79AB
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Sep 2023 16:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF17ACE79AA
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Sep 2023 21:28:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231707AbjISQrj (ORCPT
+        id S233351AbjISV3D (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Sep 2023 12:47:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38944 "EHLO
+        Tue, 19 Sep 2023 17:29:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbjISQri (ORCPT
+        with ESMTP id S229690AbjISV3D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Sep 2023 12:47:38 -0400
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51455D7
-        for <linux-security-module@vger.kernel.org>; Tue, 19 Sep 2023 09:47:32 -0700 (PDT)
-Received: by mail-yb1-xb34.google.com with SMTP id 3f1490d57ef6-d8521c7172eso1905161276.1
-        for <linux-security-module@vger.kernel.org>; Tue, 19 Sep 2023 09:47:32 -0700 (PDT)
+        Tue, 19 Sep 2023 17:29:03 -0400
+Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 783F9AD;
+        Tue, 19 Sep 2023 14:28:57 -0700 (PDT)
+Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-1d69b2ffa1fso2686253fac.2;
+        Tue, 19 Sep 2023 14:28:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1695142051; x=1695746851; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1695158937; x=1695763737; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b0a58sjbAG0A2Db53/Y8qtKDwxJA4NQiN/zlKOHGSV8=;
-        b=TM5ZUjOAzUYh87fKhiMIZzbDLLxZSC9g19dR6Q+EqAjA3RUbVL08w5sQA0i/jRpJwF
-         tPoFJz7i1Iw8+NicI8zzMJtfE/IxN9SOqt0mwSVX9BgcAg3MYT5ASg9mIGBOhD1xe2Nh
-         e+u6g+Y+raaSc8Rlza9rqVA7+VfU0JoGmVGmONTXc7BHTjLfGFHdDteXVXiaeamEhaX8
-         HG5Z1H4PLT5JrUycpXIiKN679HLoI8QnvpWbEfFUl2SwzVhZofsDtNQqAnE/N6NPlfm6
-         oK10qiklJ9CXHOAZqLbx7SajBzbMwAelNZO2AOckBqL0L6yDHb+QrDHEyAr0zbseh6BA
-         PbdQ==
+        bh=k83mB67AhO9crOADOMNRAqoI12asl4cHCEzQDkmUjKY=;
+        b=aozX6lmnXxRKnK3BNK0hYG13zEunx9VGbc0EyxTW+CbUFmDUeb5nqSQFUKKC7KGiFb
+         biVR7VYyVVUkmwperKkWTSlEjSalORaeiDmX7PVUPlIzndOynKMbCrdF1ppPseJKJkzZ
+         TXdxeRhjo4PGzDdTDo9lRudVyeymTMU/KkxQrKlOCCI4qTSB7TXiD5kGlmhkKdOTPPy9
+         y2s+ZLSTfBBwD0bPXUmx/MquYLEkG1i/q8QfIuLo0DOo/vjzUt1aVpR1X3mdq2fI5S64
+         w+w+jhwiADgpEsWoHZ4rYpA3RuOhNNsDQFIg29veLM0w8yqPKZmVT6fX6Ju4i16C+c74
+         VEfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695142051; x=1695746851;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1695158937; x=1695763737;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b0a58sjbAG0A2Db53/Y8qtKDwxJA4NQiN/zlKOHGSV8=;
-        b=i/AYa5UJwTUdE4e87oEUYKt7bY4KtcbrDYoj3xk0F3wXBXS6EW4hZTnPBt8I3IGwDc
-         PQ9PId2VjcvR0bEU1kAfh/4mJxR5+0eiy1LkIX5o46Ngjq3OqNNfoHtIZlbp83Zgb1Ce
-         pM6CFwGpJftw3vHuLorewV6baf4SdJeWD/QVr6rDwLi+kGUSGbTs3bxeIMXGm1YBZ9Ou
-         xdfnJKiFmfYMJbGF1OCs0MghNrPmkemnHwvCKFhDNfoNExA9OatU+JIYXdY0BmW8p/AT
-         +16Dtu0Ur4/D/0H7DVqDBRMtOhEDU3RiS1REpRXvJdoqZ2z6AebIvljzQPskot/4wRQT
-         T1Qg==
-X-Gm-Message-State: AOJu0Yx2q5KRtq/mipKPxeGrlnpmCbSQK/JmuF/97KXx/OJBFH2I4hXf
-        dT3jXrw0z3BENxGujhpZ5Qwi8FoIQ/ODkyu3R3n2QfnfcIWBaN0wHw==
-X-Google-Smtp-Source: AGHT+IHQGZRJnMfzYeI6Lr+HTWzOiuLwrjHGYMEEG1yEiRl6RXbYpezvkhRILNjas2h7ziHxZ5/E1l2+WRXKacc09uc=
-X-Received: by 2002:a5b:8d2:0:b0:d5d:4df9:b6e2 with SMTP id
- w18-20020a5b08d2000000b00d5d4df9b6e2mr105144ybq.46.1695142051445; Tue, 19 Sep
- 2023 09:47:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230913152238.905247-1-mszeredi@redhat.com> <20230913152238.905247-4-mszeredi@redhat.com>
- <20230917005419.397938-1-mattlloydhouse@gmail.com> <CAOssrKcECS_CvifP1vMM8YOyMW7dkGXTDTKY2CRr-fPrJk76ZA@mail.gmail.com>
- <20230918-einblick-klaut-0a010e0abc70@brauner>
-In-Reply-To: <20230918-einblick-klaut-0a010e0abc70@brauner>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 19 Sep 2023 12:47:20 -0400
-Message-ID: <CAHC9VhQsChQO9aaY+NTtmvJgXBodvXO6rUN3d7ZyHGqitLBABw@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] add listmnt(2) syscall
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew House <mattlloydhouse@gmail.com>,
+        bh=k83mB67AhO9crOADOMNRAqoI12asl4cHCEzQDkmUjKY=;
+        b=T0lDkENS3J6rg+bWwhm9926pWime04CiZ64GK3OaNByF7fy/5rQdzZ2cTlFDD8wR+A
+         tczuf0K5Rupm00J8/rPeYy4qdDJgF0ff0pIWS5eSyIq6jB+rbIkxtbX11IMugxVFIelI
+         0RuzkEfJONDjH8R8bAzz/CSgnj0coWPFku4eJyzFdr99A868FHK9o+cvz7tP49OQAAsU
+         fGze7XHEJ1DddYBQBxUQBaLEyDywdZD28l2ivylxyqGHwUHqHJCd5DgnX5nZAkT/L2KD
+         H6a/YOiMzUPQ4S6BOu6IphR1bpP/Vw77CV6a0rakS1OyCTc0SO/8Gg8f9GK85wFHoifa
+         +C+g==
+X-Gm-Message-State: AOJu0YzNa9tKgHQVavM9v0kahmNghL36fhE12cjdT2mkLJEp2XXQ9oMk
+        R58oPfovW56oViuD/Fo5Q+E=
+X-Google-Smtp-Source: AGHT+IGSw6IsB8OK6JkcDjxUHlHYWdIdH576aFSFhR7R4tcyE4+vdzO3paz63AelUmM2aazXgb99+Q==
+X-Received: by 2002:a05:6870:391f:b0:1bf:e522:7133 with SMTP id b31-20020a056870391f00b001bfe5227133mr736132oap.38.1695158936538;
+        Tue, 19 Sep 2023 14:28:56 -0700 (PDT)
+Received: from firmament.. (h198-137-20-64.xnet.uga.edu. [198.137.20.64])
+        by smtp.gmail.com with ESMTPSA id z185-20020a8189c2000000b0059af9f2ee68sm3377091ywf.66.2023.09.19.14.28.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Sep 2023 14:28:56 -0700 (PDT)
+From:   Matthew House <mattlloydhouse@gmail.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-api@vger.kernel.org, linux-man@vger.kernel.org,
         linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
         Ian Kent <raven@themaw.net>,
         David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <christian@brauner.io>,
         Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+Date:   Tue, 19 Sep 2023 17:28:38 -0400
+Message-ID: <20230919212840.144314-1-mattlloydhouse@gmail.com>
+In-Reply-To: <CAJfpegs6g8JQDtaHsECA_12ss_8KXOHVRH9gwwPf5WamzxXOWQ@mail.gmail.com>
+References: <20230914-salzig-manifest-f6c3adb1b7b4@brauner> <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com> <20230914-lockmittel-verknallen-d1a18d76ba44@brauner> <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com> <20230918-grafik-zutreffen-995b321017ae@brauner> <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com> <20230918-hierbei-erhielten-ba5ef74a5b52@brauner> <CAJfpegtaGXoZkMWLnk3PcibAvp7kv-4Yobo=UJj943L6v3ctJQ@mail.gmail.com> <20230918-stuhl-spannend-9904d4addc93@brauner> <CAJfpegvxNhty2xZW+4MM9Gepotii3CD1p0fyvLDQB82hCYzfLQ@mail.gmail.com> <20230918-bestialisch-brutkasten-1fb34abdc33c@brauner> <CAJfpegvTiK=RM+0y07h-2vT6Zk2GCu6F98c=_CNx8B1ytFtO-g@mail.gmail.com> <20230919003800.93141-1-mattlloydhouse@gmail.com> <CAJfpegs6g8JQDtaHsECA_12ss_8KXOHVRH9gwwPf5WamzxXOWQ@mail.gmail.com>
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 18, 2023 at 12:52=E2=80=AFPM Christian Brauner <brauner@kernel.=
-org> wrote:
-> On Sun, Sep 17, 2023 at 04:32:04PM +0200, Miklos Szeredi wrote:
-> > On Sun, Sep 17, 2023 at 2:54=E2=80=AFAM Matthew House <mattlloydhouse@g=
-mail.com> wrote:
-> >
-> > > > +       list_for_each_entry(r, &m->mnt_mounts, mnt_child) {
-> > > > +               if (!capable(CAP_SYS_ADMIN) &&
+On Tue, Sep 19, 2023 at 4:02 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Tue, 19 Sept 2023 at 02:38, Matthew House <mattlloydhouse@gmail.com> w=
+rote:
 >
+> > One natural solution is to set either of the two lengths to the expected
+> > size if the provided buffer are too small. That way, the caller learns =
+both
+> > which of the buffers is too small, and how large they need to be. Repla=
+cing
+> > a provided size with an expected size in this way already has precedent=
+ in
+> > existing syscalls:
 >
-> > Good point.  That issue was nagging at the back of my mind.  Having an
-> > explicit flag nicely solves the issue.
+> This is where the thread started.  Knowing the size of the buffer is
+> no good, since the needed buffer could change between calls.
+
+As Brauner mentioned, this does not change with the single-buffer
+interface. And since changes are not likely to occur extremely frequently,
+I feel like it would be better for the caller to only need one retry in the
+common case rather than N retries for however many doublings it takes to
+fit the whole buffer.
+
+> We are trying to create a simple interface, no?  My proposal would
+> need a helper like this:
 >
-> Ideally we avoid multiple capable(CAP_SYS_ADMIN) calls by only doing it
-> once and saving the return value. capable() call's aren't that cheap.
+> struct statmnt *statmount(uint64_t mnt_id, uint64_t mask, unsigned int fl=
+ags)
+> {
+>         size_t bufsize =3D 1 << 15;
+>         void *buf;
+>         int ret;
+>
+>         for (;;) {
+>                 buf =3D malloc(bufsize <<=3D 1);
+>                 if (!buf)
+>                         return NULL;
+>                 ret =3D syscall(__NR_statmnt, mnt_id, mask, buf, bufsize,=
+ flags);
+>                 if (!ret)
+>                         return buf;
+>                 free(buf);
+>                 if (errno !=3D EOVERFLOW)
+>                         return NULL;
+>         }
+> }
+>
+> Christian's would be (ignoring .fs_type for now):
+>
+> int statmount(uint64_t mnt_id, uint64_t mask, struct statmnt *st,
+> unsigned int flags)
+> {
+>         int ret;
+>
+>         st->mnt_root_size =3D 1 << 15;
+>         st->mountpoint_size =3D 1 << 15;
+>         for (;;) {
+>                 st->mnt_root =3D malloc(st->mnt_root_size <<=3D 1);
+>                 st->mountpoint =3D malloc(st->mountpoint <<=3D 1);
+>                 if (!st->mnt_root || !st->mountpoint) {
+>                         free(st->mnt_root);
+>                         free(st->mountpoint);
+>                         return -1;
+>                 }
+>                 ret =3D syscall(__NR_statmnt, mnt_id, mask, st,
+> sizeof(*st), flags);
+>                 if (!ret || errno !=3D EOVERFLOW)
+>                         return ret;
+>                 free(st->mnt_root);
+>                 free(st->mountpoint);
+>         }
+> }
+>
+> It's not hugely more complex, but more complex nonetheless.
+>
+> Also having the helper allocate buffers inside the struct could easily
+> result in leaks since it's not obvious what the caller needs to free,
+> while in the first example it is.
 
-Agreed.  The capability check doesn't do any subject/object
-comparisons so calling it for each mount is overkill.  However, I
-would think we would want the LSM hook called from inside the loop as
-that could involve a subject (@current) and object (individual mount
-point) comparison.
+There's nothing stopping the userspace helper from exposing a contiguous
+buffer that can be easily freed, even if the kernel API uses a separate-
+buffer interface internally. It just takes a bit of addition in the helper
+to calculate the correct pointers. To wit:
 
-> Plus, we should decide whether this should trigger an audit event or
-> not: capable(CAP_SYS_ADMIN) triggers an audit event,
-> ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN) wouldn't.
+struct statmnt *statmount(uint64_t mnt_id, uint64_t mask, unsigned int flag=
+s)
+{
+        uint32_t mnt_root_size =3D PATH_MAX;
+        uint32_t mountpoint_size =3D PATH_MAX;
+        struct statmnt *st;
+        int ret;
 
-Why would we not want to audit the capable() call?
+        for (;;) {
+                st =3D malloc(sizeof(*st) + mnt_root_size + mountpoint_size=
+);
+                if (!st)
+                        return NULL;
+                st->mnt_root =3D (char *)st + sizeof(*st);
+                st->mountpoint =3D (char *)st + sizeof(*st) + mnt_root_size;
+                st->mnt_root_size =3D mnt_root_size;
+                st->mountpoint_size =3D mountpoint_size;
+                ret =3D syscall(__NR_statmnt, mnt_id, mask, st, sizeof(*st),
+                              flags);
+                if (ret) {
+                        free(st);
+                        return NULL;
+                }
+                if (st->mnt_root_size <=3D mnt_root_size &&
+                    st->mountpoint_size <=3D mountpoint_size)
+                        return st;
+                mnt_root_size =3D st->mnt_root_size;
+                mountpoint_size =3D st->mountpoint_size;
+                free(st);
+        }
+}
 
---=20
-paul-moore.com
+(This is also far more helpful for users of the returned struct statmnt *,
+since they can just dereference the two pointers instead of having to
+decode the offsets by hand.)
+
+More generally speaking, the biggest reason I dislike the current single-
+buffer interface is that the output is "all or nothing": either the caller
+has enough space in the buffer to store every single string, or it's unable
+to get any fields at all, just an -EOVERFLOW. There's no room for the
+caller to say that it just wants the integer fields and doesn't care about
+the strings. Thus, to reliably call statmnt() on an arbitrary mount, the
+ability to dynamically allocate memory is effectively mandatory. The only
+real solution to this would be additional statx-like flags to select the
+returned strings.
+
+Meanwhile, with a separate-buffer interface, where the caller provides a
+pointer and capacity for each string, granular output would be trivial: the
+caller could just specify NULL/0 for any string it doesn't want, and still
+successfully retrieve all the integer fields. This would also work well if
+the caller, e.g., wants to set a hard cap of PATH_MAX bytes for each string
+(since it's using static buffers), but nonetheless wants to retrieve the
+integer fields if a string is too long.
+
+Besides that, if the caller is written in standard C but doesn't want to
+use malloc(3) to allocate the buffer, then its helper function must be
+written very carefully (with a wrapper struct around the header and data)
+to satisfy the aliasing rules, which forbid programs from using a struct
+statmnt * pointer to read from a declared char[N] array. In practice,
+callers tend to very rarely exercise this proper care with existing single-
+buffer interfaces, such as recvmsg(2)'s msg_control buffer, and I would not
+be very happy if statmnt() further contributed to this widespread issue.
+
+Thank you,
+Matthew House
