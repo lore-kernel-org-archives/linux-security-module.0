@@ -2,246 +2,141 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A24CE79AB
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 09:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 541B8CE79AE
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 09:42:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234128AbjITJ1y (ORCPT
+        id S234139AbjITJmd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Sep 2023 05:27:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35502 "EHLO
+        Wed, 20 Sep 2023 05:42:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234148AbjITJ10 (ORCPT
+        with ESMTP id S234093AbjITJmc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Sep 2023 05:27:26 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 085F7132;
-        Wed, 20 Sep 2023 02:27:14 -0700 (PDT)
-Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4RrCml0LrJz6HJbf;
-        Wed, 20 Sep 2023 17:25:11 +0800 (CST)
-Received: from mscphis00759.huawei.com (10.123.66.134) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Wed, 20 Sep 2023 10:27:07 +0100
-From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-To:     <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
-Subject: [PATCH v12 12/12] landlock: Document Landlock's network support
-Date:   Wed, 20 Sep 2023 17:26:40 +0800
-Message-ID: <20230920092641.832134-13-konstantin.meskhidze@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230920092641.832134-1-konstantin.meskhidze@huawei.com>
-References: <20230920092641.832134-1-konstantin.meskhidze@huawei.com>
+        Wed, 20 Sep 2023 05:42:32 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FABDAC
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 02:42:25 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9adcb89b48bso679220466b.2
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 02:42:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1695202943; x=1695807743; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=sPlkIvPDxHBu09fqyp3+rcJT14SZCmXx3kcNtFIsNHA=;
+        b=LGF3wy/6BP4rTpA6OxATm+cFbrSp6xO2/sdYSRGAWvmYx5uWsUg4bX9XoMxEn/TDNV
+         dNIVYIQTG9Nlp81YE/newR0T6Gjyn6tniBBQYECLoy68eQ+5/1if1b3H26FE33HGS7f2
+         9SlpEDjT+Mu48kunkBlt8MPOogVSxX3m2Ffi8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695202943; x=1695807743;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sPlkIvPDxHBu09fqyp3+rcJT14SZCmXx3kcNtFIsNHA=;
+        b=Ogz359i/98cW4W0yGkWSLKiS+ZBUgDgYs+8AiqT39SvO7ZjpT5aWXECPV8hMS37bYQ
+         Dcmh8R/0BX5lUhgWvBySWl/UhW2aNGFuD8mTQKZjsoN75RdikHDjQsME+2HUqyoTbNBO
+         88AyTfccv5GsUMsLw7UfCKjBN01URqkAXIBrQYkEWxp2K1cbw0cUm4ujLkJCH9SP3M3w
+         GNIIHVFe4WoMSVQUsg/nV2rC1raXicGy86ZXz2UuXcAK3bDu6GmiTlOT7r6bvMJ/sPyJ
+         W3GhOrKcpCcA7vJ0W27REVggcsvrbjTz8rWMMYr6PjhR+0JOB/uqX19Tq1/sn7H2S9Gs
+         jkog==
+X-Gm-Message-State: AOJu0YyO6ad0dFl8BtR/lC59nYlqX9HLK+RTPMvUdzb4dqhhKKmVUQMW
+        3P3gPHTPt0zInKUmWslrpkkanybYlqaB9GL+O3lPAQ==
+X-Google-Smtp-Source: AGHT+IGbxlevBwR6/CUZrxHt/0KkW1ezOx8b8uj9MHT64X1QkBY9+uMrq/r34Kpm3OqbttRaWQsd2frU9FSaMrU6P3Y=
+X-Received: by 2002:a17:907:78d0:b0:9a9:f136:3aa4 with SMTP id
+ kv16-20020a17090778d000b009a9f1363aa4mr1616580ejc.38.1695202943718; Wed, 20
+ Sep 2023 02:42:23 -0700 (PDT)
 MIME-Version: 1.0
+References: <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
+ <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
+ <20230914-lockmittel-verknallen-d1a18d76ba44@brauner> <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
+ <20230918-grafik-zutreffen-995b321017ae@brauner> <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
+ <20230918-hierbei-erhielten-ba5ef74a5b52@brauner> <CAJfpegtaGXoZkMWLnk3PcibAvp7kv-4Yobo=UJj943L6v3ctJQ@mail.gmail.com>
+ <20230918-stuhl-spannend-9904d4addc93@brauner> <CAJfpegvxNhty2xZW+4MM9Gepotii3CD1p0fyvLDQB82hCYzfLQ@mail.gmail.com>
+ <20230918-bestialisch-brutkasten-1fb34abdc33c@brauner> <CAJfpegvTiK=RM+0y07h-2vT6Zk2GCu6F98c=_CNx8B1ytFtO-g@mail.gmail.com>
+ <20230919003800.93141-1-mattlloydhouse@gmail.com> <CAJfpegs6g8JQDtaHsECA_12ss_8KXOHVRH9gwwPf5WamzxXOWQ@mail.gmail.com>
+ <20230919212840.144314-1-mattlloydhouse@gmail.com>
+In-Reply-To: <20230919212840.144314-1-mattlloydhouse@gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 20 Sep 2023 11:42:11 +0200
+Message-ID: <CAJfpeguMf7ouiW79iey1i68kYnCcvcpEXLpUNf+CF=aNWxXO2Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+To:     Matthew House <mattlloydhouse@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.123.66.134]
-X-ClientProxiedBy: mscpeml500002.china.huawei.com (7.188.26.138) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Describe network access rules for TCP sockets. Add network access
-example in the tutorial. Add kernel configuration support for network.
+On Tue, 19 Sept 2023 at 23:28, Matthew House <mattlloydhouse@gmail.com> wrote:
 
-Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
----
+> More generally speaking, the biggest reason I dislike the current single-
+> buffer interface is that the output is "all or nothing": either the caller
+> has enough space in the buffer to store every single string, or it's unable
+> to get any fields at all, just an -EOVERFLOW. There's no room for the
+> caller to say that it just wants the integer fields and doesn't care about
+> the strings. Thus, to reliably call statmnt() on an arbitrary mount, the
+> ability to dynamically allocate memory is effectively mandatory. The only
+> real solution to this would be additional statx-like flags to select the
+> returned strings.
 
-Changes since v11:
-* Fixes documentaion as suggested in Günther's and Mickaёl's reviews:
-https://lore.kernel.org/netdev/3ad02c76-90d8-4723-e554-7f97ef115fc0@digikod.net/
+It's already there:
 
-Changes since v10:
-* Fixes documentaion as Mickaёl suggested:
-https://lore.kernel.org/linux-security-module/ec23be77-566e-c8fd-179e-f50e025ac2cf@digikod.net/
+#define STMT_MNT_ROOT 0x00000008U /* Want/got mnt_root  */
+#define STMT_MNT_POINT 0x00000010U /* Want/got mnt_point */
+#define STMT_FS_TYPE 0x00000020U /* Want/got fs_type */
 
-Changes since v9:
-* Minor refactoring.
+For example, it's perfectly fine to do the following, and it's
+guaranteed not to return EOVERFLOW:
 
-Changes since v8:
-* Minor refactoring.
+        struct statmnt st;
+        unsigned int mask = STMT_SB_BASIC | STMT_MNT_BASIC;
 
-Changes since v7:
-* Fixes documentaion logic errors and typos as Mickaёl suggested:
-https://lore.kernel.org/netdev/9f354862-2bc3-39ea-92fd-53803d9bbc21@digikod.net/
+        ret = statmount(mnt_id, mask, &st, sizeof(st), flags);
 
-Changes since v6:
-* Adds network support documentaion.
+> Besides that, if the caller is written in standard C but doesn't want to
+> use malloc(3) to allocate the buffer, then its helper function must be
+> written very carefully (with a wrapper struct around the header and data)
+> to satisfy the aliasing rules, which forbid programs from using a struct
+> statmnt * pointer to read from a declared char[N] array.
 
----
- Documentation/userspace-api/landlock.rst | 87 ++++++++++++++++++------
- 1 file changed, 66 insertions(+), 21 deletions(-)
+I think you interpret aliasing rules incorrectly.  The issue with
+aliasing is if you access the same piece of memory though different
+types.  Which is not the case here.  In fact with the latest
+incarnation of the interface[1] there's no need to access the
+underlying buffer at all:
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index f6a7da21708a..affadd9ac662 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -11,10 +11,10 @@ Landlock: unprivileged access control
- :Date: October 2022
+        printf("mnt_root: <%s>\n", st->str + st->mnt_root);
 
- The goal of Landlock is to enable to restrict ambient rights (e.g. global
--filesystem access) for a set of processes.  Because Landlock is a stackable
--LSM, it makes possible to create safe security sandboxes as new security layers
--in addition to the existing system-wide access-controls. This kind of sandbox
--is expected to help mitigate the security impact of bugs or
-+filesystem or network access) for a set of processes.  Because Landlock
-+is a stackable LSM, it makes possible to create safe security sandboxes as new
-+security layers in addition to the existing system-wide access-controls. This
-+kind of sandbox is expected to help mitigate the security impact of bugs or
- unexpected/malicious behaviors in user space applications.  Landlock empowers
- any process, including unprivileged ones, to securely restrict themselves.
+So the following is perfectly safe to do (as long as you don't care
+about buffer overflow):
 
-@@ -28,20 +28,34 @@ appropriately <kernel_support>`.
- Landlock rules
- ==============
+        char buf[10000];
+        struct statmnt *st = (void *) buf;
 
--A Landlock rule describes an action on an object.  An object is currently a
--file hierarchy, and the related filesystem actions are defined with `access
--rights`_.  A set of rules is aggregated in a ruleset, which can then restrict
-+A Landlock rule describes an action on an object which the process intends to
-+perform.  A set of rules is aggregated in a ruleset, which can then restrict
- the thread enforcing it, and its future children.
+        ret = statmount(mnt_id, mask, st, sizeof(buf), flags);
 
-+The two existing types of rules are:
-+
-+Filesystem rules
-+    For these rules, the object is a file hierarchy,
-+    and the related filesystem actions are defined with
-+    `filesystem access rights`.
-+
-+Network rules (since ABI v4)
-+    For these rules, the object is currently a TCP port,
-+    and the related actions are defined with `network access rights`.
-+
- Defining and enforcing a security policy
- ----------------------------------------
+If you do care about handling buffer overflows, then dynamic
+allocation is the only sane way.
 
--We first need to define the ruleset that will contain our rules.  For this
--example, the ruleset will contain rules that only allow read actions, but write
--actions will be denied.  The ruleset then needs to handle both of these kind of
--actions.  This is required for backward and forward compatibility (i.e. the
--kernel and user space may not know each other's supported restrictions), hence
--the need to be explicit about the denied-by-default access rights.
-+We first need to define the ruleset that will contain our rules.
-+
-+For this example, the ruleset will contain rules that only allow filesystem
-+read actions and establish a specific TCP connection. Filesystem write
-+actions and other TCP actions will be denied.
-+
-+The ruleset then needs to handle both of these kind of actions.  This is
-+required for backward and forward compatibility (i.e. the kernel and user
-+space may not know each other's supported restrictions), hence the need
-+to be explicit about the denied-by-default access rights.
+And before you dive into how this is going to be horrible because the
+buffer size needs to be doubled an unknown number of times, think a
+bit:  have you *ever* seen a line in /proc/self/mountinfo longer than
+say 1000 characters?   So if the buffer starts out at 64k, how often
+will this doubling happen?   Right: practically never.  Adding
+complexity to handle this case is nonsense, as I've said many times.
+And there is definitely nonzero complexity involved (just see the
+special casing in getxattr and listxattr implementations all over the
+place).
 
- .. code-block:: c
+Thanks,
+Miklos
 
-@@ -62,6 +76,9 @@ the need to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_FS_MAKE_SYM |
-             LANDLOCK_ACCESS_FS_REFER |
-             LANDLOCK_ACCESS_FS_TRUNCATE,
-+        .handled_access_net =
-+            LANDLOCK_ACCESS_NET_BIND_TCP |
-+            LANDLOCK_ACCESS_NET_CONNECT_TCP,
-     };
-
- Because we may not know on which kernel version an application will be
-@@ -70,9 +87,7 @@ should try to protect users as much as possible whatever the kernel they are
- using.  To avoid binary enforcement (i.e. either all security features or
- none), we can leverage a dedicated Landlock command to get the current version
- of the Landlock ABI and adapt the handled accesses.  Let's check if we should
--remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
--access rights, which are only supported starting with the second and third
--version of the ABI.
-+remove access rights which are only supported in higher versions of the ABI.
-
- .. code-block:: c
-
-@@ -92,6 +107,11 @@ version of the ABI.
-     case 2:
-         /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
-         ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
-+    case 3:
-+        /* Removes network support for ABI < 4 */
-+        ruleset_attr.handled_access_net &=
-+            ~(LANDLOCK_ACCESS_NET_BIND_TCP |
-+              LANDLOCK_ACCESS_NET_CONNECT_TCP);
-     }
-
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -143,10 +163,23 @@ for the ruleset creation, by filtering access rights according to the Landlock
- ABI version.  In this example, this is not required because all of the requested
- ``allowed_access`` rights are already available in ABI 1.
-
--We now have a ruleset with one rule allowing read access to ``/usr`` while
--denying all other handled accesses for the filesystem.  The next step is to
--restrict the current thread from gaining more privileges (e.g. thanks to a SUID
--binary).
-+For network access-control, we can add a set of rules that allow to use a port
-+number for a specific action: HTTPS connections.
-+
-+.. code-block:: c
-+
-+    struct landlock_net_port_attr net_port = {
-+        .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
-+        .port = 443,
-+    };
-+
-+    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-+                            &net_port, 0);
-+
-+The next step is to restrict the current thread from gaining more privileges
-+(e.g. through a SUID binary). We now have a ruleset with the first rule allowing
-+read access to ``/usr`` while denying all other handled accesses for the filesystem,
-+and a second rule allowing HTTPS connections.
-
- .. code-block:: c
-
-@@ -355,7 +388,7 @@ Access rights
- -------------
-
- .. kernel-doc:: include/uapi/linux/landlock.h
--    :identifiers: fs_access
-+    :identifiers: fs_access net_access
-
- Creating a new ruleset
- ----------------------
-@@ -374,6 +407,7 @@ Extending a ruleset
-
- .. kernel-doc:: include/uapi/linux/landlock.h
-     :identifiers: landlock_rule_type landlock_path_beneath_attr
-+                  landlock_net_service_attr
-
- Enforcing a ruleset
- -------------------
-@@ -451,6 +485,12 @@ always allowed when using a kernel that only supports the first or second ABI.
- Starting with the Landlock ABI version 3, it is now possible to securely control
- truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access right.
-
-+Network support (ABI < 4)
-+-------------------------
-+
-+Starting with the Landlock ABI version 4, it is now possible to restrict TCP
-+bind and connect actions to only a set of allowed ports.
-+
- .. _kernel_support:
-
- Kernel support
-@@ -469,6 +509,11 @@ still enable it by adding ``lsm=landlock,[...]`` to
- Documentation/admin-guide/kernel-parameters.rst thanks to the bootloader
- configuration.
-
-+To be able to explicitly allow TCP operations (e.g., adding a network rule with
-+``LANDLOCK_ACCESS_NET_TCP_BIND``), the kernel must support TCP (``CONFIG_INET=y``).
-+Otherwise, sys_landlock_add_rule() returns an ``EAFNOSUPPORT`` error, which can
-+safely be ignored because this kind of TCP operation is already not possible.
-+
- Questions and answers
- =====================
-
---
-2.25.1
-
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git#statmount-v2
