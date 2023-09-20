@@ -2,88 +2,180 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2700AC04FF1
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 19:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 571F5C05024
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 21:00:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229832AbjITTYf (ORCPT
+        id S230088AbjITVAb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Sep 2023 15:24:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49060 "EHLO
+        Wed, 20 Sep 2023 17:00:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229825AbjITTYe (ORCPT
+        with ESMTP id S230004AbjITVAb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Sep 2023 15:24:34 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9957594
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 12:24:28 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-68fac16ee5fso135756b3a.1
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 12:24:28 -0700 (PDT)
+        Wed, 20 Sep 2023 17:00:31 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED0AFC2
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 14:00:24 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d818fb959f4so432143276.1
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 14:00:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1695237868; x=1695842668; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sbkk6hz3XsIl+HyZho/PKECXy7y/OprsUmNHvfxO5Ic=;
-        b=PuyaXsLW8bmQg9pl9NLPku49J91+nxRDXvRxSDP1C/o5ZSWSW3Iyv1PXnpHLtSizL7
-         zeeZg/JcK94oZCWBimd4GvXDvNPqFmpmZtFEK18GQkQcUWAf1RMi8xo5H2q9Idfq/WeU
-         o5HW6yWOXooVH3Sc6plnKtoFrrI7rwWZlLqy4=
+        d=google.com; s=20230601; t=1695243624; x=1695848424; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WD85YU6GCdPtOsLZeVlIeZZfzAYdtoOH/7wu6gyWXNI=;
+        b=lrXR4KDKyB3CuUyGP5uNfXTfoHTjrrZkUVpu9kQNuYv9InUBqUeB4fMdB30349PPIZ
+         RcGYV8CUadyrYi4ihZfTHpQg/09qpPl+c/zYxq0o2P7dwkfgXkXcp+bq3MVEF+9duUBe
+         HTtCh9+ypTXfAcyFaAzJk68f4w++iv6tmGozumlieWuG+llNlw0IlHzHC0WhvmQeQ47D
+         BIPb11gg7udeYiklPqgWMrsDyd383pwOvV8mQ+zScwuU8lJXO0Vahq5kKfJ4f6dThPzb
+         EXaItMpjNVLeAY+6Kq+gMt7n0juNGBqQvhqE4dZEpjqEgFDXknQSWJecxRAUASzTRNFm
+         LQQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695237868; x=1695842668;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sbkk6hz3XsIl+HyZho/PKECXy7y/OprsUmNHvfxO5Ic=;
-        b=RDJnTS1MCJ7X96poYj8LxGwM+7gJ/aMhAxhAHqXap7MtZECsKKo2sNSwUYVNnBtqJN
-         NICOtWlNSFco7QYB+y8eSvyPR8lMS8S/Em2FrygVK6N77v3XsnFWaQRlerNVE+Q8dFzJ
-         yqb6aD7Pnt0HU8qDkE1RFnnUfMukk1mQxoV8GM6pn/vKAOjZMjXDEauGma4m+QvM1s9N
-         2g1hTAiNdhMv/C4FrKhEryLdbW265kKNgfRNSUYesU4ku0aE91ugdPBHRBXKOSkTIwGk
-         Thjf5lfdJGUXmYZJ6Mgs5yV99KljkC7TuB94Rvdy6cQeGxtVtxrCwwyoph+t1ZpYInZT
-         KqeA==
-X-Gm-Message-State: AOJu0YxTSav+LqBO0LmbgcaBOEvvAgCHK6WYwk+0GBVCAbobl6ddJB7m
-        mRlX60k4LQXVoNBywNnzVF10Qg==
-X-Google-Smtp-Source: AGHT+IHRSye8QE+aWI++EX2U6GXV5VK/MwMR/Sxvbydxbkc0t16NEDXtfQUuSkg2yfOlJI1h0KfKsg==
-X-Received: by 2002:a05:6a20:5485:b0:153:8754:8a7f with SMTP id i5-20020a056a20548500b0015387548a7fmr3943631pzk.4.1695237868064;
-        Wed, 20 Sep 2023 12:24:28 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id dh2-20020a056a00478200b00690bd3c0723sm3366388pfb.99.2023.09.20.12.24.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Sep 2023 12:24:27 -0700 (PDT)
-Date:   Wed, 20 Sep 2023 12:24:26 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        paul@paul-moore.com, song@kernel.org, daniel@iogearbox.net,
-        ast@kernel.org, Kui-Feng Lee <sinquersw@gmail.com>
-Subject: Re: [PATCH v3 2/5] security: Count the LSMs enabled at compile time
-Message-ID: <202309201221.205BA18@keescook>
-References: <20230918212459.1937798-1-kpsingh@kernel.org>
- <20230918212459.1937798-3-kpsingh@kernel.org>
- <98b02c73-295d-baad-5c77-0c8b74826ca9@schaufler-ca.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <98b02c73-295d-baad-5c77-0c8b74826ca9@schaufler-ca.com>
+        d=1e100.net; s=20230601; t=1695243624; x=1695848424;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WD85YU6GCdPtOsLZeVlIeZZfzAYdtoOH/7wu6gyWXNI=;
+        b=aYnhnKXp+oZbvcYq01/E/Yb9iaCiYpO68lrc8y51oKKm3NQeAeAys8U/gwYK/+fnSA
+         gKCAmuhbqxhKqp3EIaGq38z3ROeyeSb2EppDptTszsDABhFtckkdScWI7WH4EkmDr9bs
+         kwotEH4mFhST3jfcYyv1yEGRWC/m+X8iyOEXFZjBrI9bMvK53mOt3mSAhYy0pezRBJVb
+         BJGSYQ2PRVZi0AeqYoihuhZO2UnK+4k1bRue6uAkP+kQ4AvX+VLe4Jaq+hMAS/Jtl/fc
+         MH0ivz+9lm/TjrdEg+PQU6KxMHm7/pGjU+Vq2Z8PfhGhlVaUghAxuy+VurRSe82mwNZ6
+         a6ag==
+X-Gm-Message-State: AOJu0Yw9jSOH2zKFC0brVD0XrQsWhOQixiA4FamIhb8mO+1hOduIWhOc
+        PGe0OMjRcIQJa3oGS7LGXmYOwXBekPc=
+X-Google-Smtp-Source: AGHT+IE6bowhyf6hyHthYBPyW6IZfmwFxVZA3ErkF6QZibGvin1ESoG81Vf7MPhR8G5wDRxCxsmQT8EV7w4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:496:0:b0:d7f:2cb6:7d88 with SMTP id
+ 144-20020a250496000000b00d7f2cb67d88mr58003ybe.13.1695243624102; Wed, 20 Sep
+ 2023 14:00:24 -0700 (PDT)
+Date:   Wed, 20 Sep 2023 14:00:22 -0700
+In-Reply-To: <ZQP6ZqXH81V24Lj/@yzhao56-desk.sh.intel.com>
+Mime-Version: 1.0
+References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-12-seanjc@google.com>
+ <ZQP6ZqXH81V24Lj/@yzhao56-desk.sh.intel.com>
+Message-ID: <ZQtdZmJ3SekURjiQ@google.com>
+Subject: Re: [RFC PATCH v12 11/33] KVM: Introduce per-page memory attributes
+From:   Sean Christopherson <seanjc@google.com>
+To:     Yan Zhao <yan.y.zhao@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/18/2023 2:24 PM, KP Singh wrote:
-> [...]
-> +#define __COUNT_COMMAS(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _n, X...) _n
-> +#define COUNT_COMMAS(a, X...) __COUNT_COMMAS(, ##X, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-> +#define ___COUNT_COMMAS(args...) COUNT_COMMAS(args)
+On Fri, Sep 15, 2023, Yan Zhao wrote:
+> On Wed, Sep 13, 2023 at 06:55:09PM -0700, Sean Christopherson wrote:
+> > From: Chao Peng <chao.p.peng@linux.intel.com>
+> > 
+> > In confidential computing usages, whether a page is private or shared is
+> > necessary information for KVM to perform operations like page fault
+> > handling, page zapping etc. There are other potential use cases for
+> > per-page memory attributes, e.g. to make memory read-only (or no-exec,
+> > or exec-only, etc.) without having to modify memslots.
+> > 
+> ...
+> >> +bool kvm_range_has_memory_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
+> > +				     unsigned long attrs)
+> > +{
+> > +	XA_STATE(xas, &kvm->mem_attr_array, start);
+> > +	unsigned long index;
+> > +	bool has_attrs;
+> > +	void *entry;
+> > +
+> > +	rcu_read_lock();
+> > +
+> > +	if (!attrs) {
+> > +		has_attrs = !xas_find(&xas, end);
+> > +		goto out;
+> > +	}
+> > +
+> > +	has_attrs = true;
+> > +	for (index = start; index < end; index++) {
+> > +		do {
+> > +			entry = xas_next(&xas);
+> > +		} while (xas_retry(&xas, entry));
+> > +
+> > +		if (xas.xa_index != index || xa_to_value(entry) != attrs) {
+> Should "xa_to_value(entry) != attrs" be "!(xa_to_value(entry) & attrs)" ?
 
-Oh! Oops, I missed that this _DOES_ already exist in Linux:
+No, the exact comparsion is deliberate.  The intent of the API is to determine
+if the entire range already has the desired attributes, not if there is overlap
+between the two.
 
-cf14f27f82af ("macro: introduce COUNT_ARGS() macro")
+E.g. if/when RWX attributes are supported, the exact comparison is needed to
+handle a RW => R conversion.
 
-now in include/linux/args.h as COUNT_ARGS():
+> > +			has_attrs = false;
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> > +out:
+> > +	rcu_read_unlock();
+> > +	return has_attrs;
+> > +}
+> > +
+> ...
+> > +/* Set @attributes for the gfn range [@start, @end). */
+> > +static int kvm_vm_set_mem_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
+> > +				     unsigned long attributes)
+> > +{
+> > +	struct kvm_mmu_notifier_range pre_set_range = {
+> > +		.start = start,
+> > +		.end = end,
+> > +		.handler = kvm_arch_pre_set_memory_attributes,
+> > +		.on_lock = kvm_mmu_invalidate_begin,
+> > +		.flush_on_ret = true,
+> > +		.may_block = true,
+> > +	};
+> > +	struct kvm_mmu_notifier_range post_set_range = {
+> > +		.start = start,
+> > +		.end = end,
+> > +		.arg.attributes = attributes,
+> > +		.handler = kvm_arch_post_set_memory_attributes,
+> > +		.on_lock = kvm_mmu_invalidate_end,
+> > +		.may_block = true,
+> > +	};
+> > +	unsigned long i;
+> > +	void *entry;
+> > +	int r = 0;
+> > +
+> > +	entry = attributes ? xa_mk_value(attributes) : NULL;
+> Also here, do we need to get existing attributes of a GFN first ?
 
-#define __COUNT_ARGS(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _n, X...) _n
-#define COUNT_ARGS(X...) __COUNT_ARGS(, ##X, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-
-I think this can be refactored to use that?
-
--Kees
-
--- 
-Kees Cook
+No?  @entry is the new value that will be set for all entries.  This line doesn't
+touch the xarray in any way.  Maybe I'm just not understanding your question.
