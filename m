@@ -2,61 +2,67 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 571F5C05024
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 21:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F354FC2FC03
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 21:03:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230088AbjITVAb (ORCPT
+        id S229974AbjITVD7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Sep 2023 17:00:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45098 "EHLO
+        Wed, 20 Sep 2023 17:03:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230004AbjITVAb (ORCPT
+        with ESMTP id S229662AbjITVD5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Sep 2023 17:00:31 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED0AFC2
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 14:00:24 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d818fb959f4so432143276.1
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 14:00:24 -0700 (PDT)
+        Wed, 20 Sep 2023 17:03:57 -0400
+Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 436E6C2
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 14:03:51 -0700 (PDT)
+Received: by mail-pl1-x64a.google.com with SMTP id d9443c01a7336-1c577fea3dcso1840545ad.2
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 14:03:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695243624; x=1695848424; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1695243830; x=1695848630; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WD85YU6GCdPtOsLZeVlIeZZfzAYdtoOH/7wu6gyWXNI=;
-        b=lrXR4KDKyB3CuUyGP5uNfXTfoHTjrrZkUVpu9kQNuYv9InUBqUeB4fMdB30349PPIZ
-         RcGYV8CUadyrYi4ihZfTHpQg/09qpPl+c/zYxq0o2P7dwkfgXkXcp+bq3MVEF+9duUBe
-         HTtCh9+ypTXfAcyFaAzJk68f4w++iv6tmGozumlieWuG+llNlw0IlHzHC0WhvmQeQ47D
-         BIPb11gg7udeYiklPqgWMrsDyd383pwOvV8mQ+zScwuU8lJXO0Vahq5kKfJ4f6dThPzb
-         EXaItMpjNVLeAY+6Kq+gMt7n0juNGBqQvhqE4dZEpjqEgFDXknQSWJecxRAUASzTRNFm
-         LQQg==
+        bh=QFTXI1M20f8gmG6BvRAdcxEpoXePrbyr+CokqbvWBWc=;
+        b=YBB92SBCF7Hff5sSHvPsWLZsVpMrv+Nl0UIbQv7rB4s5KbvjkoryE7ANGFhAl3ZUOY
+         XOz5HSz1JykM+i1Yb2lu7wu5YhqpmGp0qiwqGjag6g21TIuaOTtBANkCbe2wlhf62FxN
+         1lak6BOZ+i864pP48UrkEPAxbstc16yg2iUAL3kqaQojWszOZsLaQGyqW7Q17wFRA5pS
+         YukXT15ZjEfn2V/sRN4udANdKQS7bHzeb1rCtJKrCEAXpTbsKVowFQcM2dYmMaK7zbY1
+         ARgNAbrAoaznbzr/fpH9ZnScVlSvAGQdDwVENeAYFHe1suNMj9gpIDcA1dEq4I4cKDvO
+         t3zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695243624; x=1695848424;
+        d=1e100.net; s=20230601; t=1695243830; x=1695848630;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WD85YU6GCdPtOsLZeVlIeZZfzAYdtoOH/7wu6gyWXNI=;
-        b=aYnhnKXp+oZbvcYq01/E/Yb9iaCiYpO68lrc8y51oKKm3NQeAeAys8U/gwYK/+fnSA
-         gKCAmuhbqxhKqp3EIaGq38z3ROeyeSb2EppDptTszsDABhFtckkdScWI7WH4EkmDr9bs
-         kwotEH4mFhST3jfcYyv1yEGRWC/m+X8iyOEXFZjBrI9bMvK53mOt3mSAhYy0pezRBJVb
-         BJGSYQ2PRVZi0AeqYoihuhZO2UnK+4k1bRue6uAkP+kQ4AvX+VLe4Jaq+hMAS/Jtl/fc
-         MH0ivz+9lm/TjrdEg+PQU6KxMHm7/pGjU+Vq2Z8PfhGhlVaUghAxuy+VurRSe82mwNZ6
-         a6ag==
-X-Gm-Message-State: AOJu0Yw9jSOH2zKFC0brVD0XrQsWhOQixiA4FamIhb8mO+1hOduIWhOc
-        PGe0OMjRcIQJa3oGS7LGXmYOwXBekPc=
-X-Google-Smtp-Source: AGHT+IE6bowhyf6hyHthYBPyW6IZfmwFxVZA3ErkF6QZibGvin1ESoG81Vf7MPhR8G5wDRxCxsmQT8EV7w4=
+        bh=QFTXI1M20f8gmG6BvRAdcxEpoXePrbyr+CokqbvWBWc=;
+        b=IhhF5QmVlw/l6/pKjFDrwMmOsP2BBFX8DXob8B9CPZ5a2TnmC7vF8zSDGcHrZPZfiG
+         5qbTbgnSyCO5tK3ZP8uxEbaqtlNKntY4RgdOkxcHcwxot7G8/COimOyOkwJlDR9RblJI
+         J/e2JADUv/X0QO9jDfZlEvwN90CKm89lZzsP5LM+g+QbiGtXOetfdRbnWbBRY0s0AEe8
+         BJp9GGDBZkwettF2xTBRJFRTFkQi8C3xhwPR0GZmqxNNzh0OYssFJ1rh+qN6jPtLCxsu
+         Dh1IHKvm1c5MIKE2GkJzUw5urzJm0ckaFK+Njs8MsBHsaLK2iMKbQyKBIJOtuEq2R6zK
+         EvwQ==
+X-Gm-Message-State: AOJu0Yzs39QlEebN2VyaHKf9Gj3UaDlM1PAqtuGqFv7EuWAvVfb2K8Ml
+        fx/fm81kNnHVI9p5Q7tz1vs0k2q3ivE=
+X-Google-Smtp-Source: AGHT+IH5QBEwnaGAG6ouJVZQG2FiwG4z7ywKiDhgLSOOF+0VMXfLus6G3HR8pg7XpQjZrIgu3wnPZ1Tf/l8=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:496:0:b0:d7f:2cb6:7d88 with SMTP id
- 144-20020a250496000000b00d7f2cb67d88mr58003ybe.13.1695243624102; Wed, 20 Sep
- 2023 14:00:24 -0700 (PDT)
-Date:   Wed, 20 Sep 2023 14:00:22 -0700
-In-Reply-To: <ZQP6ZqXH81V24Lj/@yzhao56-desk.sh.intel.com>
+ (user=seanjc job=sendgmr) by 2002:a17:902:c407:b0:1c3:411c:9b7c with SMTP id
+ k7-20020a170902c40700b001c3411c9b7cmr51568plk.13.1695243830643; Wed, 20 Sep
+ 2023 14:03:50 -0700 (PDT)
+Date:   Wed, 20 Sep 2023 14:03:49 -0700
+In-Reply-To: <d66795f8-e524-2912-4b71-92ca4ffe8807@linux.intel.com>
 Mime-Version: 1.0
 References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-12-seanjc@google.com>
- <ZQP6ZqXH81V24Lj/@yzhao56-desk.sh.intel.com>
-Message-ID: <ZQtdZmJ3SekURjiQ@google.com>
+ <d66795f8-e524-2912-4b71-92ca4ffe8807@linux.intel.com>
+Message-ID: <ZQteNbPfx6P3r6B8@google.com>
 Subject: Re: [RFC PATCH v12 11/33] KVM: Introduce per-page memory attributes
 From:   Sean Christopherson <seanjc@google.com>
-To:     Yan Zhao <yan.y.zhao@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+To:     Binbin Wu <binbin.wu@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
         Huacai Chen <chenhuacai@kernel.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
@@ -68,13 +74,7 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         Chao Peng <chao.p.peng@linux.intel.com>,
         Fuad Tabba <tabba@google.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
@@ -97,18 +97,18 @@ Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 15, 2023, Yan Zhao wrote:
-> On Wed, Sep 13, 2023 at 06:55:09PM -0700, Sean Christopherson wrote:
+On Mon, Sep 18, 2023, Binbin Wu wrote:
+> 
+> 
+> On 9/14/2023 9:55 AM, Sean Christopherson wrote:
 > > From: Chao Peng <chao.p.peng@linux.intel.com>
-> > 
-> > In confidential computing usages, whether a page is private or shared is
-> > necessary information for KVM to perform operations like page fault
-> > handling, page zapping etc. There are other potential use cases for
-> > per-page memory attributes, e.g. to make memory read-only (or no-exec,
-> > or exec-only, etc.) without having to modify memslots.
-> > 
-> ...
-> >> +bool kvm_range_has_memory_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
+> [...]
+> > +#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
+> > +/*
+> > + * Returns true if _all_ gfns in the range [@start, @end) have attributes
+> > + * matching @attrs.
+> > + */
+> > +bool kvm_range_has_memory_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
 > > +				     unsigned long attrs)
 > > +{
 > > +	XA_STATE(xas, &kvm->mem_attr_array, start);
@@ -120,62 +120,7 @@ On Fri, Sep 15, 2023, Yan Zhao wrote:
 > > +
 > > +	if (!attrs) {
 > > +		has_attrs = !xas_find(&xas, end);
-> > +		goto out;
-> > +	}
-> > +
-> > +	has_attrs = true;
-> > +	for (index = start; index < end; index++) {
-> > +		do {
-> > +			entry = xas_next(&xas);
-> > +		} while (xas_retry(&xas, entry));
-> > +
-> > +		if (xas.xa_index != index || xa_to_value(entry) != attrs) {
-> Should "xa_to_value(entry) != attrs" be "!(xa_to_value(entry) & attrs)" ?
+> IIUIC, xas_find() is inclusive for "end", so here should be "end - 1" ?
 
-No, the exact comparsion is deliberate.  The intent of the API is to determine
-if the entire range already has the desired attributes, not if there is overlap
-between the two.
-
-E.g. if/when RWX attributes are supported, the exact comparison is needed to
-handle a RW => R conversion.
-
-> > +			has_attrs = false;
-> > +			break;
-> > +		}
-> > +	}
-> > +
-> > +out:
-> > +	rcu_read_unlock();
-> > +	return has_attrs;
-> > +}
-> > +
-> ...
-> > +/* Set @attributes for the gfn range [@start, @end). */
-> > +static int kvm_vm_set_mem_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
-> > +				     unsigned long attributes)
-> > +{
-> > +	struct kvm_mmu_notifier_range pre_set_range = {
-> > +		.start = start,
-> > +		.end = end,
-> > +		.handler = kvm_arch_pre_set_memory_attributes,
-> > +		.on_lock = kvm_mmu_invalidate_begin,
-> > +		.flush_on_ret = true,
-> > +		.may_block = true,
-> > +	};
-> > +	struct kvm_mmu_notifier_range post_set_range = {
-> > +		.start = start,
-> > +		.end = end,
-> > +		.arg.attributes = attributes,
-> > +		.handler = kvm_arch_post_set_memory_attributes,
-> > +		.on_lock = kvm_mmu_invalidate_end,
-> > +		.may_block = true,
-> > +	};
-> > +	unsigned long i;
-> > +	void *entry;
-> > +	int r = 0;
-> > +
-> > +	entry = attributes ? xa_mk_value(attributes) : NULL;
-> Also here, do we need to get existing attributes of a GFN first ?
-
-No?  @entry is the new value that will be set for all entries.  This line doesn't
-touch the xarray in any way.  Maybe I'm just not understanding your question.
+Yes, that does appear to be the case.  Inclusive vs. exclusive on gfn ranges has
+is the bane of my existence.
