@@ -2,286 +2,111 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3471C00454
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 15:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 951D8C04AA9
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 15:44:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234907AbjITPIq (ORCPT
+        id S236432AbjITPpB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Sep 2023 11:08:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43000 "EHLO
+        Wed, 20 Sep 2023 11:45:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234696AbjITPIq (ORCPT
+        with ESMTP id S234622AbjITPpA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Sep 2023 11:08:46 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7D90AF
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 08:08:39 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1c0c6d4d650so62150795ad.0
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 08:08:39 -0700 (PDT)
+        Wed, 20 Sep 2023 11:45:00 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0697CAF
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 08:44:55 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1c43166b7e5so50620495ad.3
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 08:44:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1695222519; x=1695827319; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1695224694; x=1695829494; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A1hTqSXJfm7wcfrItcK5JrSlQOXjCv7HTCeKCGqvymQ=;
-        b=fCLx4kJnxRnvn2RBWIlJp2xgrtfnSQrRXiPLB6hWl09ua9FnqQEnts2Slj+yPV7BJL
-         qFTne1skdJE2P4UCMjVODMRwLc/zXesV8i6pYKRaDa/jleDOBjTrHnJqNEJszw7Cow92
-         w/fCEPPX4mjYH6I9tfTeiuSFbgSP0O8pZB0SY=
+        bh=dQNo/7m+9++c/N59rrtD7EFgYIcDr9yhzLesZUcLlbI=;
+        b=D7KSFNsgMgUF9jumnNwcCdCpkQtizbxnfZJUCkWtLEzsQkxe2zqNNvCiKKTDhwk2Ua
+         DWNXbS5CUC68TG1vSgVtxqU2zC321cw3vRotW2zLlQC+jgXxRR3W3b1QZ/vfxqJ/Bnn+
+         xgraNgUif/bLx1zNaka762rjME3UCz4PUPFw0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695222519; x=1695827319;
+        d=1e100.net; s=20230601; t=1695224694; x=1695829494;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=A1hTqSXJfm7wcfrItcK5JrSlQOXjCv7HTCeKCGqvymQ=;
-        b=SNNx0TiiYf0bO7O/4YbHRzYDuxty65Ay/ex3j8WkStg/eUMkfoYatOz27gMS6pvaNV
-         xTpWck80aoYU3J6rzF46eIetC7/7DNHQkz/tCn9jeRuB6eTHyGCuUcbhIKH/Wil67uFE
-         RBRJDxA+bX1QxjLFUO7F/BmPy+gNGp0KlwuBGRKVwgHnWV5ntgGSTdTOGaV85AdwVza+
-         WUUT6WBCcZEn/EDoXBw81GY3n6HQCiC2Wtjhuq+bM5GvGCrXs47qP+vtH+XassrdbRwM
-         fAMDcAakopbAzMmE2KPT+xg8PVT9I7KemtO2ZWPmbfUMQYkamkZoRZ9qTaOxjLYVjubA
-         iIpA==
-X-Gm-Message-State: AOJu0YxHBAYQFmuJ4nUKl+57q2yZFUnfxsNz/ep4PcCd84S2djoP/Zcp
-        t7JZs3SvwKyFZatT/VnOMqiK5A==
-X-Google-Smtp-Source: AGHT+IEYvSSgs4VfBdmet/Ntoo1ukThK7r/ZFBYCpjSeCZ3+S9ZUzjkeWklpd+2K8Ou/noxLiQj4Rg==
-X-Received: by 2002:a17:902:c404:b0:1be:e7ba:3a97 with SMTP id k4-20020a170902c40400b001bee7ba3a97mr3205943plk.15.1695222519016;
-        Wed, 20 Sep 2023 08:08:39 -0700 (PDT)
+        bh=dQNo/7m+9++c/N59rrtD7EFgYIcDr9yhzLesZUcLlbI=;
+        b=dkYsOs6tVyhlQWPKYE/IRLzn7hOO4+Qn99/GRchSNybqbVRkOgmc5EWhDekheqDIMO
+         i4pK/EjsIA7RcFdw0zpbO+TxVUdKqwnKdq4P6MiviRElbrGcXOq3iaaoHdpFCQHJk1pU
+         jAAe2W3KKQrlyYCS7d8rmvZGyOGwi8uZMw0PDyntJJLo+IzDyVsCTV3bJMoIANzvZRsF
+         FIhsEP+xPo1fjeOwSEFgxb1qvJlNGG3d1dfiZYNTEZReXgTusIaeiSnL2QCZyAxnZ+9J
+         37LkAXPf4ZUmi9e1FlNtHW0krvZ0HbiJmb7D9b+8E9+sYCQrHe02Wd1beTiOqLt3U/yV
+         X/Zg==
+X-Gm-Message-State: AOJu0YxUT8EjZWMMtu/R0rJGnquy/STcvcAJFlLEt54LBqPhHbfEIqnz
+        W0XsUohV+6aa3umQIgwSkiaoUw==
+X-Google-Smtp-Source: AGHT+IHRAS+gnucMNkh5YLNn4zi1V35FmEsgOxnUBXnohSRpWJbdgtifaPuh8zXnvg0GrB8kYDJShA==
+X-Received: by 2002:a17:902:d88e:b0:1c5:ae89:e1bc with SMTP id b14-20020a170902d88e00b001c5ae89e1bcmr2398804plz.65.1695224694423;
+        Wed, 20 Sep 2023 08:44:54 -0700 (PDT)
 Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id e3-20020a170902b78300b001c56157f062sm6096848pls.227.2023.09.20.08.08.38
+        by smtp.gmail.com with ESMTPSA id n6-20020a170902e54600b001b694140d96sm12044869plf.170.2023.09.20.08.44.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Sep 2023 08:08:38 -0700 (PDT)
-Date:   Wed, 20 Sep 2023 08:08:37 -0700
+        Wed, 20 Sep 2023 08:44:53 -0700 (PDT)
+Date:   Wed, 20 Sep 2023 08:44:53 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        serge@hallyn.com, john.johansen@canonical.com,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net,
-        Dave Chinner <david@fromorbit.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v15 01/11] LSM: Identify modules by more than name
-Message-ID: <202309200803.1911A584@keescook>
-References: <20230912205658.3432-1-casey@schaufler-ca.com>
- <20230912205658.3432-2-casey@schaufler-ca.com>
- <1f5e725d-58b6-eca2-97dc-d7c1209ff167@I-love.SAKURA.ne.jp>
- <568c0730-b458-04b4-dbfa-77da1758aa05@schaufler-ca.com>
- <94743c22-bc76-e741-e577-3e0845423f69@I-love.SAKURA.ne.jp>
- <6df9f8b8-5653-09a5-ae0a-6526016abaff@schaufler-ca.com>
- <ec37cd2f-24ee-3273-c253-58d480569117@I-love.SAKURA.ne.jp>
+To:     KP Singh <kpsingh@kernel.org>
+Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        paul@paul-moore.com, casey@schaufler-ca.com, song@kernel.org,
+        daniel@iogearbox.net, ast@kernel.org
+Subject: Re: [PATCH v3 5/5] security: Add CONFIG_SECURITY_HOOK_LIKELY
+Message-ID: <202309200840.722352CCB@keescook>
+References: <20230918212459.1937798-1-kpsingh@kernel.org>
+ <20230918212459.1937798-6-kpsingh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ec37cd2f-24ee-3273-c253-58d480569117@I-love.SAKURA.ne.jp>
+In-Reply-To: <20230918212459.1937798-6-kpsingh@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 20, 2023 at 07:20:35PM +0900, Tetsuo Handa wrote:
-> On 2023/09/18 1:38, Casey Schaufler wrote:
-> > On 9/15/2023 11:32 PM, Tetsuo Handa wrote:
-> >> +/**
-> >> + * struct lsm_id - Identify a Linux Security Module.
-> >> + * @lsm: name of the LSM, must be approved by the LSM maintainers
-> >>
-> >> Why can't you understand that "approved by the LSM maintainers" is a horrible
-> >> requirement for LSM modules which cannot become one of in-tree LSMs?
-> >>
-> >> One of reasons for not every proposed LSM module can become in-tree is out of
-> >> the LSM community's resources for reviewing/maintaining (or failure to acquire
-> >> attention from the LSM community enough to get reviewed).
-> >>
-> >> + * @id: LSM ID number from uapi/linux/lsm.h
-> >>
-> >> Since the LSM community cannot accept all of proposed LSMs due to limited resources,
-> >> the LSM community is responsible for allowing whatever proposed LSMs (effectively any
-> >> publicly available LSMs) to live as out-of-tree LSMs, by approving the LSM name and
-> >> assigning a permanent LSM ID number.
-> >>
-> >> The only exception the LSM community can refuse to approve/assign would be that the name
-> >> is not appropriate (e.g. a LSM module named "FuckYou") or the name is misleading (e.g.
-> >> "selinux+", "smock", "tomato", "apparmour"). Otherwise, no matter how many times you repeat
-> >> "we don't care out-of-tree LSMs" or "I do not intentionally plan to make life difficult for
-> >> the out-of-tree LSMs", this patch is intended to lock out out-of-tree LSMs.
-> > 
-> > That is a false statement. There is a huge difference between apathy and malice. 
+On Mon, Sep 18, 2023 at 11:24:59PM +0200, KP Singh wrote:
+> This config influences the nature of the static key that guards the
+> static call for LSM hooks.
 > 
-> Dave Chinner wrote at https://lkml.kernel.org/r/ZQo94mCzV7hOrVkh@dread.disaster.area
-> as a response to "We don't care about out of tree filesystems.":
+> When enabled, it indicates that an LSM static call slot is more likely
+> to be initialized. When disabled, it optimizes for the case when static
+> call slot is more likely to be not initialized.
 > 
->   In this case, we most certainly do care. Downstream distros support
->   all sorts of out of tree filesystems loaded via kernel modules, so a
->   syscall that is used to uniquely identify a filesystem type to
->   userspace *must* have a mechanism for the filesystem to provide that
->   unique identifier to userspace.
+> When a major LSM like (SELinux, AppArmor, Smack etc) is active on a
+> system the system would benefit from enabling the config. However there
+> are other cases which would benefit from the config being disabled
+> (e.g. a system with a BPF LSM with no hooks enabled by default, or an
+> LSM like loadpin / yama). Ultimately, there is no one-size fits all
+> solution.
 > 
->   Fundamentally, the kernel does not and should not dictate what
->   filesystem types it supports; the user decides what filesystem they
->   need to use, and it is the kernel's job to provide infrastructure
->   that works with that user's choice.
-> 
-> Can you see? What you are trying to is NACKed by simple s/filesystem/LSM/g .
-> 
-> The kernel is ultimately there for users. The kernel is never there for doing patent
-> acquisition competition. If the LSM community accepts only LSMs which won the patent
-> acquisition competition as in-tree (as described in "ANN: new LSM guidelines"),
-> the LSM community is responsible for allowing any publicly available LSMs to live as
-> out of tree modules.
-> 
-> Unless the policy is updated to approve any publicly available LSMs and assign a unique
-> identifier (which can be passed to the syscalls introduced by this series) to each
-> publicly available LSM, this series is a regression.
-> 
-> The "[PATCH v15 01/11] LSM: Identify modules by more than name" is exactly doing
-> "LSM: allow only in-tree LSM modules, lock out out-of-tree LSM modules".
-> Nack, Nack, Nack, Nack, Nack!!!!!
+> with CONFIG_SECURITY_HOOK_LIKELY enabled, the inactive /
+> uninitialized case is penalized with a direct jmp (still better than
+> an indirect jmp):
+> [...]
+> index 52c9af08ad35..bd2a0dff991a 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -32,6 +32,17 @@ config SECURITY
+>  
+>  	  If you are unsure how to answer this question, answer N.
+>  
+> +config SECURITY_HOOK_LIKELY
+> +	bool "LSM hooks are likely to be initialized"
+> +	depends on SECURITY
+> +	default y
+> +	help
+> +	  This controls the behaviour of the static keys that guard LSM hooks.
+> +	  If LSM hooks are likely to be initialized by LSMs, then one gets
+> +	  better performance by enabling this option. However, if the system is
+> +	  using an LSM where hooks are much likely to be disabled, one gets
+> +	  better performance by disabling this config.
 
-I feel like you are willfully not listening to us when we say that this
-doesn't block out of tree LSMs. Again, there is nothing here that stops
-it. To prove this point, here is an out of tree LSM that works with this
-series. So let's move from theoretical to practical: given this example,
-why do you think out of tree LSMs are blocked?
+Since you described the situations where it's a net benefit, this could
+be captured in the Kconfig too. How about this, which tracks the "major"
+LSMs as in the DEFAULT_SECURITY choice:
 
-
-From a6f50cb719aac2452506babda07657f9f6961a95 Mon Sep 17 00:00:00 2001
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 20 Sep 2023 08:00:31 -0700
-Subject: [PATCH] security: Add GOAT LSM
-
-This will never go upstream, but it still works with the new LSM
-syscalls.
-
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-security-module@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- include/uapi/linux/lsm.h |  2 ++
- security/Kconfig         |  1 +
- security/Makefile        |  1 +
- security/goat/Kconfig    |  9 +++++++
- security/goat/Makefile   |  2 ++
- security/goat/goat.c     | 51 ++++++++++++++++++++++++++++++++++++++++
- 6 files changed, 66 insertions(+)
- create mode 100644 security/goat/Kconfig
- create mode 100644 security/goat/Makefile
- create mode 100644 security/goat/goat.c
-
-diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
-index eeda59a77c02..23b7a8f79cef 100644
---- a/include/uapi/linux/lsm.h
-+++ b/include/uapi/linux/lsm.h
-@@ -63,6 +63,8 @@ struct lsm_ctx {
- #define LSM_ID_BPF		110
- #define LSM_ID_LANDLOCK		111
- 
-+#define LSM_ID_GOAT		1138
-+
- /*
-  * LSM_ATTR_XXX definitions identify different LSM attributes
-  * which are used in the kernel's LSM userspace API. Support
-diff --git a/security/Kconfig b/security/Kconfig
-index 52c9af08ad35..0c692913a1a6 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -194,6 +194,7 @@ source "security/yama/Kconfig"
- source "security/safesetid/Kconfig"
- source "security/lockdown/Kconfig"
- source "security/landlock/Kconfig"
-+source "security/goat/Kconfig"
- 
- source "security/integrity/Kconfig"
- 
-diff --git a/security/Makefile b/security/Makefile
-index 59f238490665..1d260f994fac 100644
---- a/security/Makefile
-+++ b/security/Makefile
-@@ -25,6 +25,7 @@ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
- obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
- obj-$(CONFIG_BPF_LSM)			+= bpf/
- obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
-+obj-$(CONFIG_SECURITY_GOAT)		+= goat/
- 
- # Object integrity file lists
- obj-$(CONFIG_INTEGRITY)			+= integrity/
-diff --git a/security/goat/Kconfig b/security/goat/Kconfig
-new file mode 100644
-index 000000000000..dd25848e3204
---- /dev/null
-+++ b/security/goat/Kconfig
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+config SECURITY_GOAT
-+	bool "Greatest Of All Time security features"
-+	depends on SECURITY
-+	help
-+	  This LSM provides the greatest security features of all
-+	  time.
-+
-+	  If in doubt, choose "Heck yeah".
-diff --git a/security/goat/Makefile b/security/goat/Makefile
-new file mode 100644
-index 000000000000..e673c913f66f
---- /dev/null
-+++ b/security/goat/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-$(CONFIG_SECURITY_GOAT) += goat.o
-diff --git a/security/goat/goat.c b/security/goat/goat.c
-new file mode 100644
-index 000000000000..f1eee60c9217
---- /dev/null
-+++ b/security/goat/goat.c
-@@ -0,0 +1,51 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Greatest Linux Security Module Of All Time
-+ *
-+ * Author: Kees Cook <keescook@chromium.org>
-+ */
-+
-+#define pr_fmt(fmt) "GOAT: " fmt
-+
-+#include <linux/module.h>
-+#include <linux/lsm_hooks.h>
-+#include <uapi/linux/lsm.h>
-+
-+const struct lsm_id goat_lsmid = {
-+	.name = "goat",
-+	.id = LSM_ID_GOAT,
-+};
-+
-+static int goat_read_file(struct file *file, enum kernel_read_file_id id,
-+			  bool contents)
-+{
-+	pr_info("universally allowing file read\n");
-+	return 0;
-+}
-+
-+static int goat_load_data(enum kernel_load_data_id id, bool contents)
-+{
-+	pr_info("No blobs allowed!\n");
-+	return -EUCLEAN;
-+}
-+
-+static struct security_hook_list goat_hooks[] __ro_after_init = {
-+	LSM_HOOK_INIT(kernel_read_file, goat_read_file),
-+	LSM_HOOK_INIT(kernel_load_data, goat_load_data),
-+};
-+
-+static int __init goat_init(void)
-+{
-+	pr_info("GOAT loading: Bleeeaaaeeeeggh\n");
-+
-+	security_add_hooks(goat_hooks, ARRAY_SIZE(goat_hooks), &goat_lsmid);
-+
-+	return 0;
-+}
-+
-+DEFINE_LSM(goat) = {
-+	.name = "goat",
-+	.init = goat_init,
-+};
--- 
-2.34.1
+	depends on SECURITY && EXPERT
+	default BPF_LSM || SECURITY_SELINUX || SECURITY_SMACK || SECURITY_TOMOYO || SECURITY_APPARMOR
 
 
 -- 
