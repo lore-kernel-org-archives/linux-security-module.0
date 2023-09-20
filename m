@@ -2,211 +2,133 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B336CE79D2
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 13:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D56CE79D2
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 13:56:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235125AbjITN0b (ORCPT
+        id S236527AbjITN4H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Sep 2023 09:26:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51960 "EHLO
+        Wed, 20 Sep 2023 09:56:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234573AbjITN02 (ORCPT
+        with ESMTP id S236413AbjITNzc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Sep 2023 09:26:28 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50DDCAD;
-        Wed, 20 Sep 2023 06:26:22 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-d8168d08bebso6733138276.0;
-        Wed, 20 Sep 2023 06:26:22 -0700 (PDT)
+        Wed, 20 Sep 2023 09:55:32 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75DFDD8
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 06:55:07 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-59c07ca1b44so74052187b3.3
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 06:55:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695216381; x=1695821181; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cLSemmPCVbpBlbh+m2deXKw5bP0O8nVBE628nBizgpw=;
-        b=RQYqQdAIbUXNvEhfRe/HFWt7N28jaTRuPd17fEMx3dUCartjNCLSDJy3zlRg9vf8F9
-         4Vg93ygpGkhRCnV8uxNY+AX8ZGNEhDGSjzLFPfvUBr8tb+y4WHQK9trD4jTiG241f50x
-         y/ZpsvVNHAVlhCmRdQkLJD2vaAv+9N0AKegvIa3XePuOUqYD7FaJhOpi3fHLXOD/GI28
-         DlhFrTvIpiFtqNBd5qOgKx+8rxa8vvoG6iKthVjXfl92wDKNbZVWFqj5HjxYOlsK6dx7
-         fqiXk9lHrcnSITMYj1kiMcp1addBrKr+MKMF0PcRXJOb9wxcfWpYqd2AyFd10VMItcrj
-         9sIQ==
+        d=google.com; s=20230601; t=1695218106; x=1695822906; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0APReAt4bNnnd5kx+NahuCYj0tgbUgwxY6/xmv3q1x8=;
+        b=qYN6MLIfTj4icmmBpIkd0WLhJxjSRWRnp5CVrZ5zO23Hc6SEWKaxnDv2NJItwfDuFQ
+         6RVvMGhZPLFVWocauiDyLryXn63S6KPTLdALA3Qsdgqj3uuPB/A2o/4ptf1HYp9bQI/0
+         1cYLmwlGz2SJqRrIPPncawpZ4aDzCTJ8sW2gL6tfKGnzilsZLa6El4ASlO1PaFkjNm/O
+         bYywfPO/0UW/nevxIlFfp0aeaozdgulhoho9Sa50zXYSvg9W6zOTkgKB/8FODKp3Zw2Z
+         dwA7/f8AInE7LDVv1jVJABSqsl1VCpa8fzDiXuUQzjW4V/dFydMGpeKFv2KS3ghLlvrS
+         QzZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695216381; x=1695821181;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cLSemmPCVbpBlbh+m2deXKw5bP0O8nVBE628nBizgpw=;
-        b=Nl9yXsz8DlvYoEuM7gjXbMpWWYgsLxZyvLkVH3/XWQLSQGQa0sNIvr8Z4AZan+MV5w
-         q1y2+NW41fBh/Q455bDdC9LnZUzT+SBbxb3gs2YfRj0TQsZxRI9rnf0eWwVB3GSTxke9
-         cUtkgj9GGj2gTeu6HlhVc8DgRuOYJnpfVfz1RWFpKpesUTBvPNfTBCvsET+0Y8nigRYL
-         sUlKCdsbcA9rX3LyXZZealw7Vo5tMFDOcCd5KWu+rM5b0vMpElQb/Xwu9xR49VL4sg7W
-         O8UJ4hM7x4QK/Tcuun1GS06wNu7BwvZ9d4oNaH7RKJqso0FBXbjR8tm1/ftRhHV9RX6Z
-         I9Fw==
-X-Gm-Message-State: AOJu0YwU1seGA6BmXAXdwiu7kkTLpAw4SvcLk931DugktkTaWO7UVksE
-        unjei1UFjk0NVzSmMCsHkjE=
-X-Google-Smtp-Source: AGHT+IE/ekXzgzpQL2FYG5TRav8078a0qwSHcWzbwuzfHEewjceyL2ZgX3yM7AlZ0hCrmKJZWHto5w==
-X-Received: by 2002:a25:d895:0:b0:d77:f89f:fe59 with SMTP id p143-20020a25d895000000b00d77f89ffe59mr2427415ybg.27.1695216381300;
-        Wed, 20 Sep 2023 06:26:21 -0700 (PDT)
-Received: from firmament.. ([89.187.171.240])
-        by smtp.gmail.com with ESMTPSA id t76-20020a25aad2000000b00d80df761a6csm3355421ybi.10.2023.09.20.06.26.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Sep 2023 06:26:20 -0700 (PDT)
-From:   Matthew House <mattlloydhouse@gmail.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-Date:   Wed, 20 Sep 2023 09:26:03 -0400
-Message-ID: <20230920132606.187860-1-mattlloydhouse@gmail.com>
-In-Reply-To: <CAJfpeguMf7ouiW79iey1i68kYnCcvcpEXLpUNf+CF=aNWxXO2Q@mail.gmail.com>
-References: <20230914-salzig-manifest-f6c3adb1b7b4@brauner> <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com> <20230914-lockmittel-verknallen-d1a18d76ba44@brauner> <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com> <20230918-grafik-zutreffen-995b321017ae@brauner> <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com> <20230918-hierbei-erhielten-ba5ef74a5b52@brauner> <CAJfpegtaGXoZkMWLnk3PcibAvp7kv-4Yobo=UJj943L6v3ctJQ@mail.gmail.com> <20230918-stuhl-spannend-9904d4addc93@brauner> <CAJfpegvxNhty2xZW+4MM9Gepotii3CD1p0fyvLDQB82hCYzfLQ@mail.gmail.com> <20230918-bestialisch-brutkasten-1fb34abdc33c@brauner> <CAJfpegvTiK=RM+0y07h-2vT6Zk2GCu6F98c=_CNx8B1ytFtO-g@mail.gmail.com> <20230919003800.93141-1-mattlloydhouse@gmail.com> <CAJfpegs6g8JQDtaHsECA_12ss_8KXOHVRH9gwwPf5WamzxXOWQ@mail.gmail.com> <20230919212840.144314-1-mattlloydhouse@gmail.com> <CAJfpeguMf7ouiW79iey1i68kYnCcvcpEXLpUNf+CF=aNWxXO2Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+        d=1e100.net; s=20230601; t=1695218106; x=1695822906;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0APReAt4bNnnd5kx+NahuCYj0tgbUgwxY6/xmv3q1x8=;
+        b=k0K1ONl8OfqJPa3IDFOTU+gpNFaM07YnZ3lNZt4beF3Sqb6lGIETqnvEfMB6lnqKAx
+         SKozpvNidWe5LDHBWn0nx7yQDhT+zYtpVsZrggsFF5j5xFgkXjJfeLod43UeuYcPW/6Y
+         4zwz0KDYf72WDoakyBPqaCh7nNrLL+dDHt3ak2sj9/yrjYw1AhXyg0eJDr5e5xOd3bNC
+         fzfyYGjS7lfIQLl+Inz8AOCHGPpRdNDFYGa5I4EX3MmFR9dsicsDilEP51KlHFsk3GSF
+         PaBwek9Kqin66wYKjbXfApvbtf+hRWaABu0Bom39werA0TUcF8fFjBGr6IeNh5Xl/dv3
+         VDIg==
+X-Gm-Message-State: AOJu0Yx7dmmw9njuj0XttbPfCnEsIyAFnCQ2Dyh67zFFwoIKJnVAaacc
+        FP5qf6HHPgfisa26Za85vokz7w8FRGw=
+X-Google-Smtp-Source: AGHT+IHuQ24Hy0wlZqpKThD2hndi3rYWapG+J/d1L/ai4z7W/k7rmZdxNg2zwHr4zmYKJTJyjaSKmjFgB/U=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a81:ae57:0:b0:59b:ee27:bbe9 with SMTP id
+ g23-20020a81ae57000000b0059bee27bbe9mr35901ywk.9.1695218106527; Wed, 20 Sep
+ 2023 06:55:06 -0700 (PDT)
+Date:   Wed, 20 Sep 2023 06:55:05 -0700
+In-Reply-To: <ZQqMBEL61p739dpF@yilunxu-OptiPlex-7050>
+Mime-Version: 1.0
+References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-3-seanjc@google.com>
+ <ZQqMBEL61p739dpF@yilunxu-OptiPlex-7050>
+Message-ID: <ZQr5uXhV6Cnx4DYT@google.com>
+Subject: Re: [RFC PATCH v12 02/33] KVM: Use gfn instead of hva for mmu_notifier_retry
+From:   Sean Christopherson <seanjc@google.com>
+To:     Xu Yilun <yilun.xu@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 20, 2023 at 5:42 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> On Tue, 19 Sept 2023 at 23:28, Matthew House <mattlloydhouse@gmail.com> w=
-rote:
->
-> > More generally speaking, the biggest reason I dislike the current singl=
-e-
-> > buffer interface is that the output is "all or nothing": either the cal=
-ler
-> > has enough space in the buffer to store every single string, or it's un=
-able
-> > to get any fields at all, just an -EOVERFLOW. There's no room for the
-> > caller to say that it just wants the integer fields and doesn't care ab=
-out
-> > the strings. Thus, to reliably call statmnt() on an arbitrary mount, the
-> > ability to dynamically allocate memory is effectively mandatory. The on=
-ly
-> > real solution to this would be additional statx-like flags to select the
-> > returned strings.
->
-> It's already there:
->
-> #define STMT_MNT_ROOT 0x00000008U /* Want/got mnt_root  */
-> #define STMT_MNT_POINT 0x00000010U /* Want/got mnt_point */
-> #define STMT_FS_TYPE 0x00000020U /* Want/got fs_type */
->
-> For example, it's perfectly fine to do the following, and it's
-> guaranteed not to return EOVERFLOW:
->=20
->         struct statmnt st;
->         unsigned int mask =3D STMT_SB_BASIC | STMT_MNT_BASIC;
->=20
->         ret =3D statmount(mnt_id, mask, &st, sizeof(st), flags);
+On Wed, Sep 20, 2023, Xu Yilun wrote:
+> On 2023-09-13 at 18:55:00 -0700, Sean Christopherson wrote:
+> > +void kvm_mmu_invalidate_range_add(struct kvm *kvm, gfn_t start, gfn_t end)
+> > +{
+> > +	lockdep_assert_held_write(&kvm->mmu_lock);
+> > +
+> > +	WARN_ON_ONCE(!kvm->mmu_invalidate_in_progress);
+> > +
+> >  	if (likely(kvm->mmu_invalidate_in_progress == 1)) {
+> >  		kvm->mmu_invalidate_range_start = start;
+> >  		kvm->mmu_invalidate_range_end = end;
+> 
+> IIUC, Now we only add or override a part of the invalidate range in
+> these fields, IOW only the range in last slot is stored when we unlock.
 
-Whoops, my apologies; perhaps I should try to learn to read for once. (I
-just saw the undecorated sequence of stmt_numeric() and stmt_string() calls
-and didn't notice the early exits within the functions.) I withdraw that
-particular objection.
+Ouch.  Good catch!
 
-> > Besides that, if the caller is written in standard C but doesn't want to
-> > use malloc(3) to allocate the buffer, then its helper function must be
-> > written very carefully (with a wrapper struct around the header and dat=
-a)
-> > to satisfy the aliasing rules, which forbid programs from using a struct
-> > statmnt * pointer to read from a declared char[N] array.
->
-> I think you interpret aliasing rules incorrectly.  The issue with
-> aliasing is if you access the same piece of memory though different
-> types.  Which is not the case here.  In fact with the latest
-> incarnation of the interface[1] there's no need to access the
-> underlying buffer at all:
->
->         printf("mnt_root: <%s>\n", st->str + st->mnt_root);
->
-> So the following is perfectly safe to do (as long as you don't care
-> about buffer overflow):
->
->         char buf[10000];
->         struct statmnt *st =3D (void *) buf;
->
->         ret =3D statmount(mnt_id, mask, st, sizeof(buf), flags);
+> That may break mmu_invalidate_retry_gfn() cause it can never know the
+> whole invalidate range.
+> 
+> How about we extend the mmu_invalidate_range_start/end everytime so that
+> it records the whole invalidate range:
+> 
+> if (kvm->mmu_invalidate_range_start == INVALID_GPA) {
+> 	kvm->mmu_invalidate_range_start = start;
+> 	kvm->mmu_invalidate_range_end = end;
+> } else {
+> 	kvm->mmu_invalidate_range_start =
+> 		min(kvm->mmu_invalidate_range_start, start);
+> 	kvm->mmu_invalidate_range_end =
+> 		max(kvm->mmu_invalidate_range_end, end);
+> }
 
-The declared type of a variable *is* one of the different types, as far as
-the aliasing rules are concerned. In C17, section 6.5 ("Expressions"):
+Yeah, that does seem to be the easiest solution.
 
-> The *effective type* of an object for an access to its stored value is
-> the declared type of the object, if any. [More rules about objects with
-> no declared type, i.e., those created with malloc(3) or realloc(3)...]
->
-> An object shall have its stored value accessed only by an lvalue
-> expression that has one of the following types:
->
-> -- a type compatible with the effective type of the object,
->
-> -- a qualified version of a type compatible with the effective type of
->    the object,
->
-> -- a type that is the signed or unsigned type corresponding to the
->    effective type of the object,
->
-> -- a type that is the signed or unsigned type corresponding to a
->    qualified version of the effective type of the object,
->
-> -- an aggregate or union type that includes one of the aforementioned
->    types among its members (including, recursively, a member of a
->    subaggregate or contained union), or
->
-> -- a character type.
-
-In this case, buf is declared in the program as a char[10000] array, so the
-declared type of each element is char, and the effective type of each
-element is also char. If we want to access, say, st->mnt_id, the lvalue
-expression has type __u64, and it tries to access 8 of the char objects.
-However, the integer type that __u64 expands to doesn't meet any of those
-criteria, so the aliasing rules are violated and the behavior is undefined.
-
-(The statmount() helper could in theory avoid UB by saying the struct
-statmnt object is stored in the buffer as if by memcpy(3), but it would
-still be UB for the caller to access the fields of that pointer directly
-instead of memcpy'ing them back out of the buffer. And practically no one
-does that in the real world.)
-
-It's a common misconception that the aliasing rules as written are about
-accessing the same object through two different pointer types. That
-corollary is indeed what compilers mainly care about, but the C/C++
-standards further say that objects in memory "remember" the types they were
-created with, and they demand that programs respect objects' original types
-when trying to access them (except when accessing their raw representations
-via a pointer of character type).
-
-> If you do care about handling buffer overflows, then dynamic
-> allocation is the only sane way.
->
-> And before you dive into how this is going to be horrible because the
-> buffer size needs to be doubled an unknown number of times, think a
-> bit:  have you *ever* seen a line in /proc/self/mountinfo longer than
-> say 1000 characters?   So if the buffer starts out at 64k, how often
-> will this doubling happen?   Right: practically never.  Adding
-> complexity to handle this case is nonsense, as I've said many times.
-> And there is definitely nonzero complexity involved (just see the
-> special casing in getxattr and listxattr implementations all over the
-> place).
->
-> Thanks,
-> Miklos
-
-I've always felt that capacity doubling is a bit wasteful, but it's
-definitely something I can live with, especially if providing size feedback
-is as complex as you suggest. Still, I'm not a big fan of single-buffer
-interfaces in general, with how poorly they tend to interact with C's
-aliasing rules. (Also, those kinds of interfaces also invite alignment
-errors: for instance, your snippet above is missing the necessary union to
-prevent the buffer from being misaligned, which would cause UB when you
-cast it to a struct statmnt *.)
-
-Thank you,
-Matthew House
+I'll post a fixup patch, unless you want the honors.
