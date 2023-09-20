@@ -2,218 +2,287 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6CFCE79DD
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 14:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3471C00454
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 15:08:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235136AbjITOYU (ORCPT
+        id S234907AbjITPIq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Sep 2023 10:24:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44534 "EHLO
+        Wed, 20 Sep 2023 11:08:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235091AbjITOYT (ORCPT
+        with ESMTP id S234696AbjITPIq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Sep 2023 10:24:19 -0400
-Received: from mail-pj1-x1049.google.com (mail-pj1-x1049.google.com [IPv6:2607:f8b0:4864:20::1049])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B243BD6
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 07:24:10 -0700 (PDT)
-Received: by mail-pj1-x1049.google.com with SMTP id 98e67ed59e1d1-274a28033b2so3636945a91.2
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 07:24:10 -0700 (PDT)
+        Wed, 20 Sep 2023 11:08:46 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7D90AF
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 08:08:39 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1c0c6d4d650so62150795ad.0
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 08:08:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695219850; x=1695824650; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DOI6e5Fz0eSccYOGv0a2XgOrMIQyrqURVkPdu4XpUSk=;
-        b=OdKcggWCZY2WLZg3BR5y9Qaj6VyhXLyvl6oJlR09C7EAcdWY7dpuz50dDSjkdtsSix
-         RMq4f2c/gEEGfZc3SPb7ZbGg38xceu/gcoJCvba3XRu7T9YAfJmD94dU2FUkIKE8Scpv
-         AjMy76ufmRmNk7SZqkvRXWqyoQMPu2HUzT3Xi1u7MZjreQ/5XUKrlvPn57iY//9mAIEO
-         uhPy6gEzm3RXtu+TSpKXLcEc//YAmg35x5qKKnXJG/tuB4GKwyzMKJABJ8gPnDz/mO6q
-         /giYzhixp+w5k4J00eWuKJF+0OWk+J0bGfmL7vSpMRs5E9O8HO4hXDdrjVXFbI0ThYsn
-         eOqg==
+        d=chromium.org; s=google; t=1695222519; x=1695827319; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=A1hTqSXJfm7wcfrItcK5JrSlQOXjCv7HTCeKCGqvymQ=;
+        b=fCLx4kJnxRnvn2RBWIlJp2xgrtfnSQrRXiPLB6hWl09ua9FnqQEnts2Slj+yPV7BJL
+         qFTne1skdJE2P4UCMjVODMRwLc/zXesV8i6pYKRaDa/jleDOBjTrHnJqNEJszw7Cow92
+         w/fCEPPX4mjYH6I9tfTeiuSFbgSP0O8pZB0SY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695219850; x=1695824650;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DOI6e5Fz0eSccYOGv0a2XgOrMIQyrqURVkPdu4XpUSk=;
-        b=N1sSWK0rPMLxOYGknNLw3XBYxLdac0yCOaY45ePiACoq1l8OPo5PQ+hVQN/cirtlOb
-         HygIpHFYDlGHI6A35SDFUWfwey8WYPUsVkmECILsfgG3ncehAd+IeWl+H6vITIyJE9y8
-         oASkTJNLXu20AWBQ53KNTXBHR1prrg2zMWE4rxJnr1bEU7qhNEU0SswTzVNRnrNold1Z
-         BRsKYquWqsBX5Pk9F+Yng4MX2en+rDyKvJZMU998REXwDmaOTnfcJlxrFyxQLaZn4oEv
-         yES5vZNDBfOrLYbUjWGCb0I5aS1FoW3B8RTEpouI/RkAOzNcA8NOg+xfI4PC+apWA77B
-         FbOQ==
-X-Gm-Message-State: AOJu0YykD2U8vVN0gReJ58SHgVMVVTsa22inNQydfHlUEn/tv7HrC5DN
-        sZaMbxtt687xwqTjo1k8dMMAbBkAcj8=
-X-Google-Smtp-Source: AGHT+IG+7+KaIB01fLVIPGeb7tjb/zu/hrsNFs+xXo/mmyM/aDSVQYbb0kWI4ACm+gkgu18FM/xCEI0V+P0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:f203:b0:1c0:ac09:4032 with SMTP id
- m3-20020a170902f20300b001c0ac094032mr25326plc.9.1695219850013; Wed, 20 Sep
- 2023 07:24:10 -0700 (PDT)
-Date:   Wed, 20 Sep 2023 07:24:08 -0700
-In-Reply-To: <e397d30c-c6af-e68f-d18e-b4e3739c5389@linux.intel.com>
-Mime-Version: 1.0
-References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-15-seanjc@google.com>
- <e397d30c-c6af-e68f-d18e-b4e3739c5389@linux.intel.com>
-Message-ID: <ZQsAiGuw/38jIOV7@google.com>
-Subject: Re: [RFC PATCH v12 14/33] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-From:   Sean Christopherson <seanjc@google.com>
-To:     Binbin Wu <binbin.wu@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Anish Moorthy <amoorthy@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Isaku Yamahata <isaku.yamahata@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+        d=1e100.net; s=20230601; t=1695222519; x=1695827319;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A1hTqSXJfm7wcfrItcK5JrSlQOXjCv7HTCeKCGqvymQ=;
+        b=SNNx0TiiYf0bO7O/4YbHRzYDuxty65Ay/ex3j8WkStg/eUMkfoYatOz27gMS6pvaNV
+         xTpWck80aoYU3J6rzF46eIetC7/7DNHQkz/tCn9jeRuB6eTHyGCuUcbhIKH/Wil67uFE
+         RBRJDxA+bX1QxjLFUO7F/BmPy+gNGp0KlwuBGRKVwgHnWV5ntgGSTdTOGaV85AdwVza+
+         WUUT6WBCcZEn/EDoXBw81GY3n6HQCiC2Wtjhuq+bM5GvGCrXs47qP+vtH+XassrdbRwM
+         fAMDcAakopbAzMmE2KPT+xg8PVT9I7KemtO2ZWPmbfUMQYkamkZoRZ9qTaOxjLYVjubA
+         iIpA==
+X-Gm-Message-State: AOJu0YxHBAYQFmuJ4nUKl+57q2yZFUnfxsNz/ep4PcCd84S2djoP/Zcp
+        t7JZs3SvwKyFZatT/VnOMqiK5A==
+X-Google-Smtp-Source: AGHT+IEYvSSgs4VfBdmet/Ntoo1ukThK7r/ZFBYCpjSeCZ3+S9ZUzjkeWklpd+2K8Ou/noxLiQj4Rg==
+X-Received: by 2002:a17:902:c404:b0:1be:e7ba:3a97 with SMTP id k4-20020a170902c40400b001bee7ba3a97mr3205943plk.15.1695222519016;
+        Wed, 20 Sep 2023 08:08:39 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id e3-20020a170902b78300b001c56157f062sm6096848pls.227.2023.09.20.08.08.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Sep 2023 08:08:38 -0700 (PDT)
+Date:   Wed, 20 Sep 2023 08:08:37 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        serge@hallyn.com, john.johansen@canonical.com,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net,
+        Dave Chinner <david@fromorbit.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH v15 01/11] LSM: Identify modules by more than name
+Message-ID: <202309200803.1911A584@keescook>
+References: <20230912205658.3432-1-casey@schaufler-ca.com>
+ <20230912205658.3432-2-casey@schaufler-ca.com>
+ <1f5e725d-58b6-eca2-97dc-d7c1209ff167@I-love.SAKURA.ne.jp>
+ <568c0730-b458-04b4-dbfa-77da1758aa05@schaufler-ca.com>
+ <94743c22-bc76-e741-e577-3e0845423f69@I-love.SAKURA.ne.jp>
+ <6df9f8b8-5653-09a5-ae0a-6526016abaff@schaufler-ca.com>
+ <ec37cd2f-24ee-3273-c253-58d480569117@I-love.SAKURA.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ec37cd2f-24ee-3273-c253-58d480569117@I-love.SAKURA.ne.jp>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Sep 19, 2023, Binbin Wu wrote:
+On Wed, Sep 20, 2023 at 07:20:35PM +0900, Tetsuo Handa wrote:
+> On 2023/09/18 1:38, Casey Schaufler wrote:
+> > On 9/15/2023 11:32 PM, Tetsuo Handa wrote:
+> >> +/**
+> >> + * struct lsm_id - Identify a Linux Security Module.
+> >> + * @lsm: name of the LSM, must be approved by the LSM maintainers
+> >>
+> >> Why can't you understand that "approved by the LSM maintainers" is a horrible
+> >> requirement for LSM modules which cannot become one of in-tree LSMs?
+> >>
+> >> One of reasons for not every proposed LSM module can become in-tree is out of
+> >> the LSM community's resources for reviewing/maintaining (or failure to acquire
+> >> attention from the LSM community enough to get reviewed).
+> >>
+> >> + * @id: LSM ID number from uapi/linux/lsm.h
+> >>
+> >> Since the LSM community cannot accept all of proposed LSMs due to limited resources,
+> >> the LSM community is responsible for allowing whatever proposed LSMs (effectively any
+> >> publicly available LSMs) to live as out-of-tree LSMs, by approving the LSM name and
+> >> assigning a permanent LSM ID number.
+> >>
+> >> The only exception the LSM community can refuse to approve/assign would be that the name
+> >> is not appropriate (e.g. a LSM module named "FuckYou") or the name is misleading (e.g.
+> >> "selinux+", "smock", "tomato", "apparmour"). Otherwise, no matter how many times you repeat
+> >> "we don't care out-of-tree LSMs" or "I do not intentionally plan to make life difficult for
+> >> the out-of-tree LSMs", this patch is intended to lock out out-of-tree LSMs.
+> > 
+> > That is a false statement. There is a huge difference between apathy and malice. 
 > 
+> Dave Chinner wrote at https://lkml.kernel.org/r/ZQo94mCzV7hOrVkh@dread.disaster.area
+> as a response to "We don't care about out of tree filesystems.":
 > 
-> On 9/14/2023 9:55 AM, Sean Christopherson wrote:
-> [...]
-> > +
-> > +static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
-> > +				      pgoff_t end)
-> > +{
-> > +	struct kvm_memory_slot *slot;
-> > +	struct kvm *kvm = gmem->kvm;
-> > +	unsigned long index;
-> > +	bool flush = false;
-> > +
-> > +	KVM_MMU_LOCK(kvm);
-> > +
-> > +	kvm_mmu_invalidate_begin(kvm);
-> > +
-> > +	xa_for_each_range(&gmem->bindings, index, slot, start, end - 1) {
-> > +		pgoff_t pgoff = slot->gmem.pgoff;
-> > +
-> > +		struct kvm_gfn_range gfn_range = {
-> > +			.start = slot->base_gfn + max(pgoff, start) - pgoff,
-> > +			.end = slot->base_gfn + min(pgoff + slot->npages, end) - pgoff,
-> > +			.slot = slot,
-> > +			.may_block = true,
-> > +		};
-> > +
-> > +		flush |= kvm_mmu_unmap_gfn_range(kvm, &gfn_range);
-> > +	}
-> > +
-> > +	if (flush)
-> > +		kvm_flush_remote_tlbs(kvm);
-> > +
-> > +	KVM_MMU_UNLOCK(kvm);
-> > +}
-> > +
-> > +static void kvm_gmem_invalidate_end(struct kvm_gmem *gmem, pgoff_t start,
-> > +				    pgoff_t end)
-> > +{
-> > +	struct kvm *kvm = gmem->kvm;
-> > +
-> > +	KVM_MMU_LOCK(kvm);
-> > +	if (xa_find(&gmem->bindings, &start, end - 1, XA_PRESENT))
-> > +		kvm_mmu_invalidate_end(kvm);
-> kvm_mmu_invalidate_begin() is called unconditionally in
-> kvm_gmem_invalidate_begin(),
-> but kvm_mmu_invalidate_end() is not here.
-> This makes the kvm_gmem_invalidate_{begin, end}() calls asymmetric.
-
-Another ouch :-(
-
-And there should be no need to acquire mmu_lock() unconditionally, the inode's
-mutex protects the bindings, not mmu_lock.
-
-I'll get a fix posted today.  I think KVM can also add a sanity check to detect
-unresolved invalidations, e.g.
-
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 7ba1ab1832a9..2a2d18070856 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1381,8 +1381,13 @@ static void kvm_destroy_vm(struct kvm *kvm)
-         * No threads can be waiting in kvm_swap_active_memslots() as the
-         * last reference on KVM has been dropped, but freeing
-         * memslots would deadlock without this manual intervention.
-+        *
-+        * If the count isn't unbalanced, i.e. KVM did NOT unregister between
-+        * a start() and end(), then there shouldn't be any in-progress
-+        * invalidations.
-         */
-        WARN_ON(rcuwait_active(&kvm->mn_memslots_update_rcuwait));
-+       WARN_ON(!kvm->mn_active_invalidate_count && kvm->mmu_invalidate_in_progress);
-        kvm->mn_active_invalidate_count = 0;
- #else
-        kvm_flush_shadow_all(kvm);
-
-
-or an alternative style
-
-	if (kvm->mn_active_invalidate_count)
-		kvm->mn_active_invalidate_count = 0;
-	else
-		WARN_ON(kvm->mmu_invalidate_in_progress)
-
-> > +	KVM_MMU_UNLOCK(kvm);
-> > +}
-> > +
-> > +static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
-> > +{
-> > +	struct list_head *gmem_list = &inode->i_mapping->private_list;
-> > +	pgoff_t start = offset >> PAGE_SHIFT;
-> > +	pgoff_t end = (offset + len) >> PAGE_SHIFT;
-> > +	struct kvm_gmem *gmem;
-> > +
-> > +	/*
-> > +	 * Bindings must stable across invalidation to ensure the start+end
-> > +	 * are balanced.
-> > +	 */
-> > +	filemap_invalidate_lock(inode->i_mapping);
-> > +
-> > +	list_for_each_entry(gmem, gmem_list, entry) {
-> > +		kvm_gmem_invalidate_begin(gmem, start, end);
-> > +		kvm_gmem_invalidate_end(gmem, start, end);
-> > +	}
-> Why to loop for each gmem in gmem_list here?
+>   In this case, we most certainly do care. Downstream distros support
+>   all sorts of out of tree filesystems loaded via kernel modules, so a
+>   syscall that is used to uniquely identify a filesystem type to
+>   userspace *must* have a mechanism for the filesystem to provide that
+>   unique identifier to userspace.
 > 
-> IIUIC, offset is the offset according to the inode, it is only meaningful to
-> the inode passed in, i.e, it is only meaningful to the gmem binding with the
-> inode, not others.
+>   Fundamentally, the kernel does not and should not dictate what
+>   filesystem types it supports; the user decides what filesystem they
+>   need to use, and it is the kernel's job to provide infrastructure
+>   that works with that user's choice.
+> 
+> Can you see? What you are trying to is NACKed by simple s/filesystem/LSM/g .
+> 
+> The kernel is ultimately there for users. The kernel is never there for doing patent
+> acquisition competition. If the LSM community accepts only LSMs which won the patent
+> acquisition competition as in-tree (as described in "ANN: new LSM guidelines"),
+> the LSM community is responsible for allowing any publicly available LSMs to live as
+> out of tree modules.
+> 
+> Unless the policy is updated to approve any publicly available LSMs and assign a unique
+> identifier (which can be passed to the syscalls introduced by this series) to each
+> publicly available LSM, this series is a regression.
+> 
+> The "[PATCH v15 01/11] LSM: Identify modules by more than name" is exactly doing
+> "LSM: allow only in-tree LSM modules, lock out out-of-tree LSM modules".
+> Nack, Nack, Nack, Nack, Nack!!!!!
 
-The code is structured to allow for multiple gmem instances per inode.  This isn't
-actually possible in the initial code base, but it's on the horizon[*].  I included
-the list-based infrastructure in this initial series to ensure that guest_memfd
-can actually support multiple files per inode, and to minimize the churn when the
-"link" support comes along.
+I feel like you are willfully not listening to us when we say that this
+doesn't block out of tree LSMs. Again, there is nothing here that stops
+it. To prove this point, here is an out of tree LSM that works with this
+series. So let's move from theoretical to practical: given this example,
+why do you think out of tree LSMs are blocked?
 
-[*] https://lore.kernel.org/all/cover.1691446946.git.ackerleytng@google.com
 
+From a6f50cb719aac2452506babda07657f9f6961a95 Mon Sep 17 00:00:00 2001
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 20 Sep 2023 08:00:31 -0700
+Subject: [PATCH] security: Add GOAT LSM
+
+This will never go upstream, but it still works with the new LSM
+syscalls.
+
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/uapi/linux/lsm.h |  2 ++
+ security/Kconfig         |  1 +
+ security/Makefile        |  1 +
+ security/goat/Kconfig    |  9 +++++++
+ security/goat/Makefile   |  2 ++
+ security/goat/goat.c     | 51 ++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 66 insertions(+)
+ create mode 100644 security/goat/Kconfig
+ create mode 100644 security/goat/Makefile
+ create mode 100644 security/goat/goat.c
+
+diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
+index eeda59a77c02..23b7a8f79cef 100644
+--- a/include/uapi/linux/lsm.h
++++ b/include/uapi/linux/lsm.h
+@@ -63,6 +63,8 @@ struct lsm_ctx {
+ #define LSM_ID_BPF		110
+ #define LSM_ID_LANDLOCK		111
+ 
++#define LSM_ID_GOAT		1138
++
+ /*
+  * LSM_ATTR_XXX definitions identify different LSM attributes
+  * which are used in the kernel's LSM userspace API. Support
+diff --git a/security/Kconfig b/security/Kconfig
+index 52c9af08ad35..0c692913a1a6 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -194,6 +194,7 @@ source "security/yama/Kconfig"
+ source "security/safesetid/Kconfig"
+ source "security/lockdown/Kconfig"
+ source "security/landlock/Kconfig"
++source "security/goat/Kconfig"
+ 
+ source "security/integrity/Kconfig"
+ 
+diff --git a/security/Makefile b/security/Makefile
+index 59f238490665..1d260f994fac 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -25,6 +25,7 @@ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+ obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
+ obj-$(CONFIG_BPF_LSM)			+= bpf/
+ obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
++obj-$(CONFIG_SECURITY_GOAT)		+= goat/
+ 
+ # Object integrity file lists
+ obj-$(CONFIG_INTEGRITY)			+= integrity/
+diff --git a/security/goat/Kconfig b/security/goat/Kconfig
+new file mode 100644
+index 000000000000..dd25848e3204
+--- /dev/null
++++ b/security/goat/Kconfig
+@@ -0,0 +1,9 @@
++# SPDX-License-Identifier: GPL-2.0-only
++config SECURITY_GOAT
++	bool "Greatest Of All Time security features"
++	depends on SECURITY
++	help
++	  This LSM provides the greatest security features of all
++	  time.
++
++	  If in doubt, choose "Heck yeah".
+diff --git a/security/goat/Makefile b/security/goat/Makefile
+new file mode 100644
+index 000000000000..e673c913f66f
+--- /dev/null
++++ b/security/goat/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++obj-$(CONFIG_SECURITY_GOAT) += goat.o
+diff --git a/security/goat/goat.c b/security/goat/goat.c
+new file mode 100644
+index 000000000000..f1eee60c9217
+--- /dev/null
++++ b/security/goat/goat.c
+@@ -0,0 +1,51 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Greatest Linux Security Module Of All Time
++ *
++ * Author: Kees Cook <keescook@chromium.org>
++ */
++
++#define pr_fmt(fmt) "GOAT: " fmt
++
++#include <linux/module.h>
++#include <linux/lsm_hooks.h>
++#include <uapi/linux/lsm.h>
++
++const struct lsm_id goat_lsmid = {
++	.name = "goat",
++	.id = LSM_ID_GOAT,
++};
++
++static int goat_read_file(struct file *file, enum kernel_read_file_id id,
++			  bool contents)
++{
++	pr_info("universally allowing file read\n");
++	return 0;
++}
++
++static int goat_load_data(enum kernel_load_data_id id, bool contents)
++{
++	pr_info("No blobs allowed!\n");
++	return -EUCLEAN;
++}
++
++static struct security_hook_list goat_hooks[] __ro_after_init = {
++	LSM_HOOK_INIT(kernel_read_file, goat_read_file),
++	LSM_HOOK_INIT(kernel_load_data, goat_load_data),
++};
++
++static int __init goat_init(void)
++{
++	pr_info("GOAT loading: Bleeeaaaeeeeggh\n");
++
++	security_add_hooks(goat_hooks, ARRAY_SIZE(goat_hooks), &goat_lsmid);
++
++	return 0;
++}
++
++DEFINE_LSM(goat) = {
++	.name = "goat",
++	.init = goat_init,
++};
+-- 
+2.34.1
+
+
+-- 
+Kees Cook
