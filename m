@@ -2,226 +2,108 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 834C2CE79A8
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 00:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E18FCE79A8
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 02:29:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231455AbjITAdu (ORCPT
+        id S232380AbjITC3u (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Sep 2023 20:33:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55284 "EHLO
+        Tue, 19 Sep 2023 22:29:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231191AbjITAdt (ORCPT
+        with ESMTP id S232415AbjITC3i (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Sep 2023 20:33:49 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01B77AF
-        for <linux-security-module@vger.kernel.org>; Tue, 19 Sep 2023 17:33:43 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1c46b30a1ceso28861825ad.3
-        for <linux-security-module@vger.kernel.org>; Tue, 19 Sep 2023 17:33:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1695170022; x=1695774822; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gKQxNeellezX5Y0mQHg8y7UScp5LaytEe/qPzTBC6Ug=;
-        b=Oo7MfOyfCxd6jBY7koJG3ilRZjbLrb/6faxcyiCvyQuXClPaPvZRuCIh61yNvtj9wt
-         XVqN49okFD0N0arnBKyj+h0w2O+xZQbJhy95NZmapczcPmf8W1NYN9uci24gw3Yd/bIZ
-         RXc0g1puSf56N2NohIElAsWNgPh5CLC+hqVLqwybmvzwJSB0sp73Qv4siMn58RmX/q06
-         P6r3OD+4kZbRk8ze0zsTMQN8Np8Vu2LD7StMKvJr03Kiz+XHjRluQXQ4pTUx5KyhAByU
-         hqa8PqJ2arTDBruOKhyW9wADEJxLeX5In8ruTvgcGM6tQZ+XSqRNxIwE9xUPTHK+iIv9
-         rSuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695170022; x=1695774822;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gKQxNeellezX5Y0mQHg8y7UScp5LaytEe/qPzTBC6Ug=;
-        b=gJKrSpwfz38eJ5OMO2+GP0YhCitz8sEhzOo9IYnNKovhwF0P0yIH1jjm5RxfFnwsyq
-         4Z1UFsXoJ93GSQbzMKeqhkTsFEcJBQwEVMhcLQe0oxNPKx59yQjdydXd1nN9+OTC+BDt
-         Vm3/Zu/y3rX+xKo74nFTsOMqWY/WLv00O5NhWOTzQoasox7pIS4AR889wcLv9IZ6AGxP
-         SSixtJkjP4/JrFYS4XaqOYTu7E2bDb2NSxp/6b+DZmtvLu4Z7KVdrGQoYmu10/H9sbjv
-         /+L/4r9D7Q9gXqHki/8SXOT+7KiS3zGEG555jaQtJvVG87upOMandpYeddmIS7V0+q77
-         x+ig==
-X-Gm-Message-State: AOJu0Yzdf9qyd+aYoP+Qwsr0gJMv61uTeyQrJM7aG76TveMwNJEozi2h
-        +AcUVf3wfvYi5mRITbIWh6aDjQ==
-X-Google-Smtp-Source: AGHT+IEq+pZ9/XpOY8sFOY3TimoLUCK6/YD5xSWxI22i6qGdReylNBwBjv8Uita4Yd+EI2ifHtwMGA==
-X-Received: by 2002:a17:902:c40a:b0:1b7:e355:d1ea with SMTP id k10-20020a170902c40a00b001b7e355d1eamr1160432plk.24.1695170022429;
-        Tue, 19 Sep 2023 17:33:42 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
-        by smtp.gmail.com with ESMTPSA id ji22-20020a170903325600b001c1f0b3e900sm7106591plb.229.2023.09.19.17.33.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Sep 2023 17:33:41 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qil9u-0030Yl-2u;
-        Wed, 20 Sep 2023 10:33:38 +1000
-Date:   Wed, 20 Sep 2023 10:33:38 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Andreas Dilger <adilger@dilger.ca>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-Message-ID: <ZQo94mCzV7hOrVkh@dread.disaster.area>
-References: <20230913152238.905247-1-mszeredi@redhat.com>
- <20230913152238.905247-3-mszeredi@redhat.com>
- <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
- <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
- <20230914-lockmittel-verknallen-d1a18d76ba44@brauner>
- <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
- <20230918-grafik-zutreffen-995b321017ae@brauner>
- <59DA5D4F-8242-4BD4-AE1C-FC5A6464E377@dilger.ca>
- <20230919-gewusel-hingabe-714c000cef8f@brauner>
+        Tue, 19 Sep 2023 22:29:38 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4115F12B;
+        Tue, 19 Sep 2023 19:29:15 -0700 (PDT)
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38K2S8Rf003320;
+        Wed, 20 Sep 2023 02:29:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=ZeuHGNNQIYn6AC2Wgt8zBkj72vfNGJb+GzJ8E/p0r0k=;
+ b=LlfYsStlF53VM6wLLOzrFGtVQHJU6TUR6bSaDg1Z/gvyShhfNrm4YAQyDpowG0OWVU9G
+ THNVu/YwaA2NoS8oApqqxgPDo21rNwiEtu9Sr/jFxOYXli5tEbdaqDO9yM0xJ7fDa2xs
+ n2nrDd4DEBii6ExIkSNoiydv9+t/rL4q0vONIIF5iBgBhnwTpt/tZAzIOv34j1gQrT1m
+ 1KUq1nSTLj1m8HdYfVINkk2sKfvuchfxBQz/qD5f48NNwNoZwVevBMVdL089YUjTNEAl
+ Rhzv+ckQjD6IM+uQogF5OdbdgmYCrYG1COUTqDmyzJprjyg/Gl8gEV754kAx8Cs6VuzR OA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3t7pea22uj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 20 Sep 2023 02:29:14 +0000
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 38K2KFNv013186;
+        Wed, 20 Sep 2023 02:29:13 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3t7pea22ud-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 20 Sep 2023 02:29:13 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 38K27b6R010460;
+        Wed, 20 Sep 2023 02:29:12 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+        by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3t5rwk9gb0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 20 Sep 2023 02:29:12 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+        by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 38K2TCfR20447800
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Sep 2023 02:29:12 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4F35858051;
+        Wed, 20 Sep 2023 02:29:12 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E7F3B5805E;
+        Wed, 20 Sep 2023 02:29:11 +0000 (GMT)
+Received: from [9.61.135.7] (unknown [9.61.135.7])
+        by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 20 Sep 2023 02:29:11 +0000 (GMT)
+Message-ID: <eaa7c485-ce72-9caf-57de-3ab29cb815e1@linux.vnet.ibm.com>
+Date:   Tue, 19 Sep 2023 22:29:11 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230919-gewusel-hingabe-714c000cef8f@brauner>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH] ima: Remove deprecated IMA_TRUSTED_KEYRING Kconfig
+To:     Oleksandr Tymoshenko <ovt@google.com>, nayna@linux.ibm.com
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, zohar@linux.ibm.com
+References: <20230711164447.714035-1-nayna@linux.ibm.com>
+ <20230919073238.2476335-1-ovt@google.com>
+Content-Language: en-US
+From:   Nayna <nayna@linux.vnet.ibm.com>
+In-Reply-To: <20230919073238.2476335-1-ovt@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: LKMt1k38ux8P_HK3BAcqQMQducq5pOm7
+X-Proofpoint-ORIG-GUID: tQMETAueg5Y_ecMbVcBKz9nNzHLPx5jA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-20_02,2023-09-19_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ mlxlogscore=526 bulkscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309200014
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Sep 19, 2023 at 02:50:28PM +0200, Christian Brauner wrote:
-> On Mon, Sep 18, 2023 at 02:58:00PM -0600, Andreas Dilger wrote:
-> > On Sep 18, 2023, at 7:51 AM, Christian Brauner <brauner@kernel.org> wrote:
-> > > 
-> > > 
-> > >> The type and subtype are naturally limited to sane sizes, those are
-> > >> not an issue.
-> > > 
-> > > What's the limit for fstype actually? I don't think there is one.
-> > > There's one by chance but not by design afaict?
-> > > 
-> > > Maybe crazy idea:
-> > > That magic number thing that we do in include/uapi/linux/magic.h
-> > > is there a good reason for this or why don't we just add a proper,
-> > > simple enum:
-> > > 
-> > > enum {
-> > > 	FS_TYPE_ADFS        1
-> > > 	FS_TYPE_AFFS        2
-> > > 	FS_TYPE_AFS         3
-> > > 	FS_TYPE_AUTOFS      4
-> > > 	FS_TYPE_EXT2	    5
-> > > 	FS_TYPE_EXT3	    6
-> > > 	FS_TYPE_EXT4	    7
-> > > 	.
-> > > 	.
-> > > 	.
-> > > 	FS_TYPE_MAX
-> > > }
-> > > 
-> > > that we start returning from statmount(). We can still return both the
-> > > old and the new fstype? It always felt a bit odd that fs developers to
-> > > just select a magic number.
-> > 
-> > Yes, there is a very good reason that there isn't an enum for filesystem
-> 
-> I think this isn't all that relevant to the patchset so I'm not going to
-> spend a lot of time on this discussion but I'm curious.
-> 
-> > type, which is because this API would be broken if it encounters any
-> > filesystem that is not listed there.  Often a single filesystem driver in
-> > the kernel will have multiple different magic numbers to handle versions,
-> > endianness, etc.
-> 
-> Why isn't this a problem for magically chosen numbers?
 
-What problem are you asking about? The 32 bit space that contains
-a few hundred magic numbers remains a vast field of empty space that
-makes collisions easy to avoid....
-
-> > Having a 32-bit magic number allows decentralized development with low
-> > chance of collision, and using new filesystems without having to patch
-> > every kernel for this new API to work with that filesystem.  Also,
-> 
-> We don't care about out of tree filesystems.
-
-In this case, we most certainly do care. Downstream distros support
-all sorts of out of tree filesystems loaded via kernel modules, so a
-syscall that is used to uniquely identify a filesystem type to
-userspace *must* have a mechanism for the filesystem to provide that
-unique identifier to userspace.
-
-Fundamentally, the kernel does not and should not dictate what
-filesystem types it supports; the user decides what filesystem they
-need to use, and it is the kernel's job to provide infrastructure
-that works with that user's choice.
-
-Remember: it's not just applications that stat the mounted
-filesystem that know about the filesystem amgic numbers.  Apps like
-grub, libblkid, etc all look at filesystem magic numbers directly on
-the block device to identify the type of filesystem that is on the
-device.
-
-If we introduce a new identifer specific to mounted kernel
-filesystems, these sorts of apps now need to use two different
-identifiers in different contexts instead of the same magic number
-everywhere. That's not a win for anyone.
-
-Magic numbers are also portable - it does not matter what OS you see
-that FS on, it has the same unique, stable type identifier. You can
-look at the block device and identify the filesystem by it's magic
-number, you can stat the mounted filesystem and get the same magic
-number. It just works the same *everywhere*.
-
-Magic numbers have served the purpose of being unique filesystem
-identifiers for over 40 years. They work just fine for this purpose
-and nothing has changed in the past couple of decades that has
-broken them or needs fixing.
-
-> > filesystems come and go (though more slowly) over time, and keeping the
-> 
-> Even if we did ever remove a filesystem we'd obviously leave the enum in
-> place. Same thig we do for deprecated flags, same thing we'd do for
-> magic numbers.
-
-So why try to replace magic numbers if we must replicate all the
-same unique, stable behaviour that magic numbers already provide the
-kernel and userspace with?
-
+On 9/19/23 03:32, Oleksandr Tymoshenko wrote:
+> Hello,
 >
-> > full list of every filesystem ever developed in the kernel enum would be
-> > a headache.
-> 
-> I really don't follow this argument.
+> There are two Kconfigs that depend on IMA_TRUSTED_KEYRING:
+> IMA_LOAD_X509 and IMA_BLACKLIST_KEYRING. Removing IMA_TRUSTED_KEYRING
+> makes them unreachable. Should they be removed too or should
+> the dependency clauses be removed?
+>
+>
+Thanks Oleksandr for noticing this. Since IMA_TRUSTED_KEYRING is 
+deprecated in favor of INTEGRITY_TRUSTED_KEYRING, I think the dependency 
+clause should be updated to use INTEGRITY_TRUSTED_KEYRING.
 
-The kernel currently doesn't need to know about all the potential
-fuse filesystem types that can be mounted. It doesn't need to know
-about all the 3rd party filesystems that could be mounted. these all
-just work and userspace can identify them just fine via their unique
-magic numbers that are passed through the kernel interfaces from the
-filesystem.
+Thanks & Regards,
 
-Then enum proposal breaks these existing working use cases unless
-the enum explicitly includes ever possible filesystem type that the
-kernel might expose to userspace. The kernel *should not care* what
-filesystems it exposes to userspace and that's the whole point of using
-a filesystem supplied magic number as the unique identifier for the
-filesystem...
+    - Nayna
 
-> > The field in the statmnt() call would need to be at a fixed-size 32-bit
-> > value in any case, so having it return the existing magic will "just work"
-> > because userspace tools already know and understand these magic values,
-> > while introducing an in-kernel enum would be broken for multiple reasons.
-> 
-> We already do expose the magic number in statmount() but it can't
-> differentiate between ext2, ext3, and ext4 for example which is why I
-> asked.
-
-That's just an extN quirk, and it's trivial to fix for the new
-interface. Define new magic numbers for ext3 and ext4 and only use
-them in the new interface, leave the old interfaces using the ext2
-magic number for all of them.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
