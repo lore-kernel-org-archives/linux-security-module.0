@@ -2,42 +2,42 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55564CE79B1
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 09:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF36CE79B0
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 09:27:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234157AbjITJ1k (ORCPT
+        id S234138AbjITJ1l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Sep 2023 05:27:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60302 "EHLO
+        Wed, 20 Sep 2023 05:27:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234161AbjITJ1Z (ORCPT
+        with ESMTP id S234166AbjITJ1Z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Wed, 20 Sep 2023 05:27:25 -0400
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BEAF12C;
-        Wed, 20 Sep 2023 02:27:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63443131;
+        Wed, 20 Sep 2023 02:27:10 -0700 (PDT)
 Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4RrCjP4P2pz6D95T;
-        Wed, 20 Sep 2023 17:22:17 +0800 (CST)
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4RrCmf31lLz6HJc8;
+        Wed, 20 Sep 2023 17:25:06 +0800 (CST)
 Received: from mscphis00759.huawei.com (10.123.66.134) by
  lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Wed, 20 Sep 2023 10:27:05 +0100
+ 15.1.2507.31; Wed, 20 Sep 2023 10:26:58 +0100
 From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 To:     <mic@digikod.net>
 CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
         <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
         <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
         <artem.kuzin@huawei.com>
-Subject: [PATCH v12 11/12] samples/landlock: Add network demo
-Date:   Wed, 20 Sep 2023 17:26:39 +0800
-Message-ID: <20230920092641.832134-12-konstantin.meskhidze@huawei.com>
+Subject: [PATCH v12 06/12] landlock: Refactor layer helpers
+Date:   Wed, 20 Sep 2023 17:26:34 +0800
+Message-ID: <20230920092641.832134-7-konstantin.meskhidze@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230920092641.832134-1-konstantin.meskhidze@huawei.com>
 References: <20230920092641.832134-1-konstantin.meskhidze@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.123.66.134]
 X-ClientProxiedBy: mscpeml500002.china.huawei.com (7.188.26.138) To
  lhrpeml500004.china.huawei.com (7.191.163.9)
@@ -45,271 +45,287 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This commit adds network demo. It's possible to allow a sandboxer to
-bind/connect to a list of particular ports restricting network
-actions to the rest of ports.
+Add new key_type argument to the landlock_init_layer_masks() helper.
+Add a masks_array_size argument to the landlock_unmask_layers() helper.
+These modifications support implementing new rule types in the next
+Landlock versions.
 
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
 Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 ---
 
 Changes since v11:
-* Changes ENV_PATH_TOKEN to ENV_DELIMITER.
-* Refactors populate_ruleset_net():
-  - Deletes parse_port_num() helper.
-  - Uses strsep() instead of strtok().
-* Fixes wrong printf format.
+* None.
 
 Changes since v10:
-* Refactors populate_ruleset_net() helper.
-* Code style minor fix.
+* Minor fix.
 
 Changes since v9:
-* Deletes ports converting.
-* Minor fixes.
+* Refactors commit message.
 
 Changes since v8:
-* Convert ports to __be16.
-* Minor fixes.
+* None.
 
 Changes since v7:
-* Removes network support if ABI < 4.
-* Removes network support if not set by a user.
+* Refactors commit message, adds a co-developer.
+* Minor fixes.
 
 Changes since v6:
-* Removes network support if ABI < 3.
+* Removes masks_size attribute from init_layer_masks().
+* Refactors init_layer_masks() with new landlock_key_type.
 
 Changes since v5:
-* Makes network ports sandboxing optional.
-* Fixes some logic errors.
+* Splits commit.
 * Formats code with clang-format-14.
 
 Changes since v4:
-* Adds ENV_TCP_BIND_NAME "LL_TCP_BIND" and
-ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT" variables
-to insert TCP ports.
-* Renames populate_ruleset() to populate_ruleset_fs().
-* Adds populate_ruleset_net() and parse_port_num() helpers.
-* Refactors main() to support network sandboxing.
+* Refactors init_layer_masks(), get_handled_accesses()
+and unmask_layers() functions to support multiple rule types.
+* Refactors landlock_get_fs_access_mask() function with
+LANDLOCK_MASK_ACCESS_FS mask.
+
+Changes since v3:
+* Splits commit.
+* Refactors landlock_unmask_layers functions.
 
 ---
- samples/landlock/sandboxer.c | 114 ++++++++++++++++++++++++++++++-----
- 1 file changed, 99 insertions(+), 15 deletions(-)
+ security/landlock/fs.c      | 43 ++++++++++++++++++---------------
+ security/landlock/ruleset.c | 48 +++++++++++++++++++++++++------------
+ security/landlock/ruleset.h | 17 ++++++-------
+ 3 files changed, 66 insertions(+), 42 deletions(-)
 
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index e2056c8b902c..bd1794039078 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -8,6 +8,7 @@
-  */
-
- #define _GNU_SOURCE
-+#include <arpa/inet.h>
- #include <errno.h>
- #include <fcntl.h>
- #include <linux/landlock.h>
-@@ -51,7 +52,9 @@ static inline int landlock_restrict_self(const int ruleset_fd,
-
- #define ENV_FS_RO_NAME "LL_FS_RO"
- #define ENV_FS_RW_NAME "LL_FS_RW"
--#define ENV_PATH_TOKEN ":"
-+#define ENV_TCP_BIND_NAME "LL_TCP_BIND"
-+#define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
-+#define ENV_DELIMITER ":"
-
- static int parse_path(char *env_path, const char ***const path_list)
- {
-@@ -60,13 +63,13 @@ static int parse_path(char *env_path, const char ***const path_list)
- 	if (env_path) {
- 		num_paths++;
- 		for (i = 0; env_path[i]; i++) {
--			if (env_path[i] == ENV_PATH_TOKEN[0])
-+			if (env_path[i] == ENV_DELIMITER[0])
- 				num_paths++;
- 		}
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index e6a19ff1765a..bc7c126deea2 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -442,20 +442,22 @@ static bool is_access_to_paths_allowed(
  	}
- 	*path_list = malloc(num_paths * sizeof(**path_list));
- 	for (i = 0; i < num_paths; i++)
--		(*path_list)[i] = strsep(&env_path, ENV_PATH_TOKEN);
-+		(*path_list)[i] = strsep(&env_path, ENV_DELIMITER);
 
- 	return num_paths;
- }
-@@ -81,8 +84,8 @@ static int parse_path(char *env_path, const char ***const path_list)
+ 	if (unlikely(dentry_child1)) {
+-		landlock_unmask_layers(find_rule(domain, dentry_child1),
+-				       landlock_init_layer_masks(
+-					       domain, LANDLOCK_MASK_ACCESS_FS,
+-					       &_layer_masks_child1),
+-				       &_layer_masks_child1);
++		landlock_unmask_layers(
++			find_rule(domain, dentry_child1),
++			landlock_init_layer_masks(
++				domain, LANDLOCK_MASK_ACCESS_FS,
++				&_layer_masks_child1, LANDLOCK_KEY_INODE),
++			&_layer_masks_child1, ARRAY_SIZE(_layer_masks_child1));
+ 		layer_masks_child1 = &_layer_masks_child1;
+ 		child1_is_directory = d_is_dir(dentry_child1);
+ 	}
+ 	if (unlikely(dentry_child2)) {
+-		landlock_unmask_layers(find_rule(domain, dentry_child2),
+-				       landlock_init_layer_masks(
+-					       domain, LANDLOCK_MASK_ACCESS_FS,
+-					       &_layer_masks_child2),
+-				       &_layer_masks_child2);
++		landlock_unmask_layers(
++			find_rule(domain, dentry_child2),
++			landlock_init_layer_masks(
++				domain, LANDLOCK_MASK_ACCESS_FS,
++				&_layer_masks_child2, LANDLOCK_KEY_INODE),
++			&_layer_masks_child2, ARRAY_SIZE(_layer_masks_child2));
+ 		layer_masks_child2 = &_layer_masks_child2;
+ 		child2_is_directory = d_is_dir(dentry_child2);
+ 	}
+@@ -508,14 +510,15 @@ static bool is_access_to_paths_allowed(
 
- /* clang-format on */
+ 		rule = find_rule(domain, walker_path.dentry);
+ 		allowed_parent1 = landlock_unmask_layers(
+-			rule, access_masked_parent1, layer_masks_parent1);
++			rule, access_masked_parent1, layer_masks_parent1,
++			ARRAY_SIZE(*layer_masks_parent1));
+ 		allowed_parent2 = landlock_unmask_layers(
+-			rule, access_masked_parent2, layer_masks_parent2);
++			rule, access_masked_parent2, layer_masks_parent2,
++			ARRAY_SIZE(*layer_masks_parent2));
 
--static int populate_ruleset(const char *const env_var, const int ruleset_fd,
--			    const __u64 allowed_access)
-+static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
-+			       const __u64 allowed_access)
- {
- 	int num_paths, i, ret = 1;
- 	char *env_path_name;
-@@ -143,6 +146,39 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
- 	return ret;
- }
-
-+static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
-+				const __u64 allowed_access)
-+{
-+	int ret = 1;
-+	char *env_port_name, *strport;
-+	struct landlock_net_port_attr net_port = {
-+		.allowed_access = allowed_access,
-+		.port = 0,
-+	};
-+
-+	env_port_name = getenv(env_var);
-+	if (!env_port_name)
-+		return 0;
-+	env_port_name = strdup(env_port_name);
-+	unsetenv(env_var);
-+
-+	while ((strport = strsep(&env_port_name, ENV_DELIMITER))) {
-+		net_port.port = atoi(strport);
-+		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-+				      &net_port, 0)) {
-+			fprintf(stderr,
-+				"Failed to update the ruleset with port \"%llu\": %s\n",
-+				net_port.port, strerror(errno));
-+			goto out_free_name;
-+		}
-+	}
-+	ret = 0;
-+
-+out_free_name:
-+	free(env_port_name);
-+	return ret;
-+}
-+
- /* clang-format off */
-
- #define ACCESS_FS_ROUGHLY_READ ( \
-@@ -166,39 +202,58 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
-
- /* clang-format on */
-
--#define LANDLOCK_ABI_LAST 3
-+#define LANDLOCK_ABI_LAST 4
-
- int main(const int argc, char *const argv[], char *const *const envp)
- {
- 	const char *cmd_path;
- 	char *const *cmd_argv;
- 	int ruleset_fd, abi;
-+	char *env_port_name;
- 	__u64 access_fs_ro = ACCESS_FS_ROUGHLY_READ,
- 	      access_fs_rw = ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE;
-+
- 	struct landlock_ruleset_attr ruleset_attr = {
- 		.handled_access_fs = access_fs_rw,
-+		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
-+				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
- 	};
-
- 	if (argc < 2) {
- 		fprintf(stderr,
--			"usage: %s=\"...\" %s=\"...\" %s <cmd> [args]...\n\n",
--			ENV_FS_RO_NAME, ENV_FS_RW_NAME, argv[0]);
-+			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
-+			"<cmd> [args]...\n\n",
-+			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-+			ENV_TCP_CONNECT_NAME, argv[0]);
- 		fprintf(stderr,
- 			"Launch a command in a restricted environment.\n\n");
--		fprintf(stderr, "Environment variables containing paths, "
--				"each separated by a colon:\n");
-+		fprintf(stderr,
-+			"Environment variables containing paths and ports "
-+			"each separated by a colon:\n");
- 		fprintf(stderr,
- 			"* %s: list of paths allowed to be used in a read-only way.\n",
- 			ENV_FS_RO_NAME);
- 		fprintf(stderr,
--			"* %s: list of paths allowed to be used in a read-write way.\n",
-+			"* %s: list of paths allowed to be used in a read-write way.\n\n",
- 			ENV_FS_RW_NAME);
-+		fprintf(stderr,
-+			"Environment variables containing ports are optional "
-+			"and could be skipped.\n");
-+		fprintf(stderr,
-+			"* %s: list of ports allowed to bind (server).\n",
-+			ENV_TCP_BIND_NAME);
-+		fprintf(stderr,
-+			"* %s: list of ports allowed to connect (client).\n",
-+			ENV_TCP_CONNECT_NAME);
- 		fprintf(stderr,
- 			"\nexample:\n"
- 			"%s=\"/bin:/lib:/usr:/proc:/etc:/dev/urandom\" "
- 			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
-+			"%s=\"9418\" "
-+			"%s=\"80:443\" "
- 			"%s bash -i\n\n",
--			ENV_FS_RO_NAME, ENV_FS_RW_NAME, argv[0]);
-+			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-+			ENV_TCP_CONNECT_NAME, argv[0]);
- 		fprintf(stderr,
- 			"This sandboxer can use Landlock features "
- 			"up to ABI version %d.\n",
-@@ -255,7 +310,12 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 	case 2:
- 		/* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
- 		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
+ 		/* Stops when a rule from each layer grants access. */
+ 		if (allowed_parent1 && allowed_parent2)
+ 			break;
 -
-+		__attribute__((fallthrough));
-+	case 3:
-+		/* Removes network support for ABI < 4 */
-+		ruleset_attr.handled_access_net &=
-+			~(LANDLOCK_ACCESS_NET_BIND_TCP |
-+			  LANDLOCK_ACCESS_NET_CONNECT_TCP);
- 		fprintf(stderr,
- 			"Hint: You should update the running kernel "
- 			"to leverage Landlock features "
-@@ -274,18 +334,42 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 	access_fs_ro &= ruleset_attr.handled_access_fs;
- 	access_fs_rw &= ruleset_attr.handled_access_fs;
+ jump_up:
+ 		if (walker_path.dentry == walker_path.mnt->mnt_root) {
+ 			if (follow_up(&walker_path)) {
+@@ -554,8 +557,8 @@ static inline int check_access_path(const struct landlock_ruleset *const domain,
+ {
+ 	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
 
-+	/* Removes bind access attribute if not supported by a user. */
-+	env_port_name = getenv(ENV_TCP_BIND_NAME);
-+	if (!env_port_name) {
-+		ruleset_attr.handled_access_net &=
-+			~LANDLOCK_ACCESS_NET_BIND_TCP;
-+	}
-+	/* Removes connect access attribute if not supported by a user. */
-+	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
-+	if (!env_port_name) {
-+		ruleset_attr.handled_access_net &=
-+			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+-	access_request =
+-		landlock_init_layer_masks(domain, access_request, &layer_masks);
++	access_request = landlock_init_layer_masks(
++		domain, access_request, &layer_masks, LANDLOCK_KEY_INODE);
+ 	if (is_access_to_paths_allowed(domain, path, access_request,
+ 				       &layer_masks, NULL, 0, NULL, NULL))
+ 		return 0;
+@@ -641,7 +644,8 @@ static bool collect_domain_accesses(
+ 		return true;
+
+ 	access_dom = landlock_init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
+-					       layer_masks_dom);
++					       layer_masks_dom,
++					       LANDLOCK_KEY_INODE);
+
+ 	dget(dir);
+ 	while (true) {
+@@ -649,7 +653,8 @@ static bool collect_domain_accesses(
+
+ 		/* Gets all layers allowing all domain accesses. */
+ 		if (landlock_unmask_layers(find_rule(domain, dir), access_dom,
+-					   layer_masks_dom)) {
++					   layer_masks_dom,
++					   ARRAY_SIZE(*layer_masks_dom))) {
+ 			/*
+ 			 * Stops when all handled accesses are allowed by at
+ 			 * least one rule in each layer.
+@@ -764,7 +769,7 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+ 		 */
+ 		access_request_parent1 = landlock_init_layer_masks(
+ 			dom, access_request_parent1 | access_request_parent2,
+-			&layer_masks_parent1);
++			&layer_masks_parent1, LANDLOCK_KEY_INODE);
+ 		if (is_access_to_paths_allowed(
+ 			    dom, new_dir, access_request_parent1,
+ 			    &layer_masks_parent1, NULL, 0, NULL, NULL))
+@@ -1140,7 +1145,7 @@ static int hook_file_open(struct file *const file)
+ 	if (is_access_to_paths_allowed(
+ 		    dom, &file->f_path,
+ 		    landlock_init_layer_masks(dom, full_access_request,
+-					      &layer_masks),
++					      &layer_masks, LANDLOCK_KEY_INODE),
+ 		    &layer_masks, NULL, 0, NULL, NULL)) {
+ 		allowed_access = full_access_request;
+ 	} else {
+diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+index 1cf6ac7a3c2f..4c209acee01e 100644
+--- a/security/landlock/ruleset.c
++++ b/security/landlock/ruleset.c
+@@ -572,14 +572,15 @@ landlock_find_rule(const struct landlock_ruleset *const ruleset,
+ /*
+  * @layer_masks is read and may be updated according to the access request and
+  * the matching rule.
++ * @masks_array_size must be equal to ARRAY_SIZE(*layer_masks).
+  *
+  * Returns true if the request is allowed (i.e. relevant layer masks for the
+  * request are empty).
+  */
+-bool landlock_unmask_layers(
+-	const struct landlock_rule *const rule,
+-	const access_mask_t access_request,
+-	layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
++bool landlock_unmask_layers(const struct landlock_rule *const rule,
++			    const access_mask_t access_request,
++			    layer_mask_t (*const layer_masks)[],
++			    const size_t masks_array_size)
+ {
+ 	size_t layer_level;
+
+@@ -611,8 +612,7 @@ bool landlock_unmask_layers(
+ 		 * requested access.
+ 		 */
+ 		is_empty = true;
+-		for_each_set_bit(access_bit, &access_req,
+-				 ARRAY_SIZE(*layer_masks)) {
++		for_each_set_bit(access_bit, &access_req, masks_array_size) {
+ 			if (layer->access & BIT_ULL(access_bit))
+ 				(*layer_masks)[access_bit] &= ~layer_bit;
+ 			is_empty = is_empty && !(*layer_masks)[access_bit];
+@@ -623,6 +623,10 @@ bool landlock_unmask_layers(
+ 	return false;
+ }
+
++typedef access_mask_t
++get_access_mask_t(const struct landlock_ruleset *const ruleset,
++		  const u16 layer_level);
++
+ /**
+  * landlock_init_layer_masks - Initialize layer masks from an access request
+  *
+@@ -632,19 +636,34 @@ bool landlock_unmask_layers(
+  * @domain: The domain that defines the current restrictions.
+  * @access_request: The requested access rights to check.
+  * @layer_masks: The layer masks to populate.
++ * @key_type: The key type to switch between access masks of different types.
+  *
+  * Returns: An access mask where each access right bit is set which is handled
+  * in any of the active layers in @domain.
+  */
+-access_mask_t landlock_init_layer_masks(
+-	const struct landlock_ruleset *const domain,
+-	const access_mask_t access_request,
+-	layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
++access_mask_t
++landlock_init_layer_masks(const struct landlock_ruleset *const domain,
++			  const access_mask_t access_request,
++			  layer_mask_t (*const layer_masks)[],
++			  const enum landlock_key_type key_type)
+ {
+ 	access_mask_t handled_accesses = 0;
+-	size_t layer_level;
++	size_t layer_level, num_access;
++	get_access_mask_t *get_access_mask;
++
++	switch (key_type) {
++	case LANDLOCK_KEY_INODE:
++		get_access_mask = landlock_get_fs_access_mask;
++		num_access = LANDLOCK_NUM_ACCESS_FS;
++		break;
++	default:
++		WARN_ON_ONCE(1);
++		return 0;
 +	}
 +
- 	ruleset_fd =
- 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
- 	if (ruleset_fd < 0) {
- 		perror("Failed to create a ruleset");
- 		return 1;
- 	}
--	if (populate_ruleset(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro)) {
-+
-+	if (populate_ruleset_fs(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro)) {
-+		goto err_close_ruleset;
-+	}
-+	if (populate_ruleset_fs(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
- 		goto err_close_ruleset;
- 	}
--	if (populate_ruleset(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
-+
-+	if (populate_ruleset_net(ENV_TCP_BIND_NAME, ruleset_fd,
-+				 LANDLOCK_ACCESS_NET_BIND_TCP)) {
-+		goto err_close_ruleset;
-+	}
-+	if (populate_ruleset_net(ENV_TCP_CONNECT_NAME, ruleset_fd,
-+				 LANDLOCK_ACCESS_NET_CONNECT_TCP)) {
- 		goto err_close_ruleset;
- 	}
-+
- 	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
- 		perror("Failed to restrict privileges");
- 		goto err_close_ruleset;
++	memset(layer_masks, 0,
++	       array_size(sizeof((*layer_masks)[0]), num_access));
+
+-	memset(layer_masks, 0, sizeof(*layer_masks));
+ 	/* An empty access request can happen because of O_WRONLY | O_RDWR. */
+ 	if (!access_request)
+ 		return 0;
+@@ -654,10 +673,9 @@ access_mask_t landlock_init_layer_masks(
+ 		const unsigned long access_req = access_request;
+ 		unsigned long access_bit;
+
+-		for_each_set_bit(access_bit, &access_req,
+-				 ARRAY_SIZE(*layer_masks)) {
++		for_each_set_bit(access_bit, &access_req, num_access) {
+ 			if (BIT_ULL(access_bit) &
+-			    landlock_get_fs_access_mask(domain, layer_level)) {
++			    get_access_mask(domain, layer_level)) {
+ 				(*layer_masks)[access_bit] |=
+ 					BIT_ULL(layer_level);
+ 				handled_accesses |= BIT_ULL(access_bit);
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index 3a7f03b39d4f..1ede2b9a79b7 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -266,14 +266,15 @@ landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
+ 	return landlock_get_raw_fs_access_mask(ruleset, layer_level) |
+ 	       LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
+ }
+-bool landlock_unmask_layers(
+-	const struct landlock_rule *const rule,
+-	const access_mask_t access_request,
+-	layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS]);
++bool landlock_unmask_layers(const struct landlock_rule *const rule,
++			    const access_mask_t access_request,
++			    layer_mask_t (*const layer_masks)[],
++			    const size_t masks_array_size);
+
+-access_mask_t landlock_init_layer_masks(
+-	const struct landlock_ruleset *const domain,
+-	const access_mask_t access_request,
+-	layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS]);
++access_mask_t
++landlock_init_layer_masks(const struct landlock_ruleset *const domain,
++			  const access_mask_t access_request,
++			  layer_mask_t (*const layer_masks)[],
++			  const enum landlock_key_type key_type);
+
+ #endif /* _SECURITY_LANDLOCK_RULESET_H */
 --
 2.25.1
 
