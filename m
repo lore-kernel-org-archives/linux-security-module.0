@@ -2,130 +2,211 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6028FCE79B9
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 10:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B336CE79D2
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 13:26:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234128AbjITKUr (ORCPT
+        id S235125AbjITN0b (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Sep 2023 06:20:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49526 "EHLO
+        Wed, 20 Sep 2023 09:26:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233864AbjITKUp (ORCPT
+        with ESMTP id S234573AbjITN02 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Sep 2023 06:20:45 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF11AC
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 03:20:39 -0700 (PDT)
-Received: from fsav311.sakura.ne.jp (fsav311.sakura.ne.jp [153.120.85.142])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 38KAKb2V096280;
-        Wed, 20 Sep 2023 19:20:37 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav311.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav311.sakura.ne.jp);
- Wed, 20 Sep 2023 19:20:37 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav311.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 38KAKaKw096276
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 20 Sep 2023 19:20:36 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <ec37cd2f-24ee-3273-c253-58d480569117@I-love.SAKURA.ne.jp>
-Date:   Wed, 20 Sep 2023 19:20:35 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v15 01/11] LSM: Identify modules by more than name
-Content-Language: en-US
-To:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org
-Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-        john.johansen@canonical.com, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        mic@digikod.net, Dave Chinner <david@fromorbit.com>,
+        Wed, 20 Sep 2023 09:26:28 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50DDCAD;
+        Wed, 20 Sep 2023 06:26:22 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-d8168d08bebso6733138276.0;
+        Wed, 20 Sep 2023 06:26:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695216381; x=1695821181; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cLSemmPCVbpBlbh+m2deXKw5bP0O8nVBE628nBizgpw=;
+        b=RQYqQdAIbUXNvEhfRe/HFWt7N28jaTRuPd17fEMx3dUCartjNCLSDJy3zlRg9vf8F9
+         4Vg93ygpGkhRCnV8uxNY+AX8ZGNEhDGSjzLFPfvUBr8tb+y4WHQK9trD4jTiG241f50x
+         y/ZpsvVNHAVlhCmRdQkLJD2vaAv+9N0AKegvIa3XePuOUqYD7FaJhOpi3fHLXOD/GI28
+         DlhFrTvIpiFtqNBd5qOgKx+8rxa8vvoG6iKthVjXfl92wDKNbZVWFqj5HjxYOlsK6dx7
+         fqiXk9lHrcnSITMYj1kiMcp1addBrKr+MKMF0PcRXJOb9wxcfWpYqd2AyFd10VMItcrj
+         9sIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695216381; x=1695821181;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cLSemmPCVbpBlbh+m2deXKw5bP0O8nVBE628nBizgpw=;
+        b=Nl9yXsz8DlvYoEuM7gjXbMpWWYgsLxZyvLkVH3/XWQLSQGQa0sNIvr8Z4AZan+MV5w
+         q1y2+NW41fBh/Q455bDdC9LnZUzT+SBbxb3gs2YfRj0TQsZxRI9rnf0eWwVB3GSTxke9
+         cUtkgj9GGj2gTeu6HlhVc8DgRuOYJnpfVfz1RWFpKpesUTBvPNfTBCvsET+0Y8nigRYL
+         sUlKCdsbcA9rX3LyXZZealw7Vo5tMFDOcCd5KWu+rM5b0vMpElQb/Xwu9xR49VL4sg7W
+         O8UJ4hM7x4QK/Tcuun1GS06wNu7BwvZ9d4oNaH7RKJqso0FBXbjR8tm1/ftRhHV9RX6Z
+         I9Fw==
+X-Gm-Message-State: AOJu0YwU1seGA6BmXAXdwiu7kkTLpAw4SvcLk931DugktkTaWO7UVksE
+        unjei1UFjk0NVzSmMCsHkjE=
+X-Google-Smtp-Source: AGHT+IE/ekXzgzpQL2FYG5TRav8078a0qwSHcWzbwuzfHEewjceyL2ZgX3yM7AlZ0hCrmKJZWHto5w==
+X-Received: by 2002:a25:d895:0:b0:d77:f89f:fe59 with SMTP id p143-20020a25d895000000b00d77f89ffe59mr2427415ybg.27.1695216381300;
+        Wed, 20 Sep 2023 06:26:21 -0700 (PDT)
+Received: from firmament.. ([89.187.171.240])
+        by smtp.gmail.com with ESMTPSA id t76-20020a25aad2000000b00d80df761a6csm3355421ybi.10.2023.09.20.06.26.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Sep 2023 06:26:20 -0700 (PDT)
+From:   Matthew House <mattlloydhouse@gmail.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <20230912205658.3432-1-casey@schaufler-ca.com>
- <20230912205658.3432-2-casey@schaufler-ca.com>
- <1f5e725d-58b6-eca2-97dc-d7c1209ff167@I-love.SAKURA.ne.jp>
- <568c0730-b458-04b4-dbfa-77da1758aa05@schaufler-ca.com>
- <94743c22-bc76-e741-e577-3e0845423f69@I-love.SAKURA.ne.jp>
- <6df9f8b8-5653-09a5-ae0a-6526016abaff@schaufler-ca.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <6df9f8b8-5653-09a5-ae0a-6526016abaff@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+Date:   Wed, 20 Sep 2023 09:26:03 -0400
+Message-ID: <20230920132606.187860-1-mattlloydhouse@gmail.com>
+In-Reply-To: <CAJfpeguMf7ouiW79iey1i68kYnCcvcpEXLpUNf+CF=aNWxXO2Q@mail.gmail.com>
+References: <20230914-salzig-manifest-f6c3adb1b7b4@brauner> <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com> <20230914-lockmittel-verknallen-d1a18d76ba44@brauner> <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com> <20230918-grafik-zutreffen-995b321017ae@brauner> <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com> <20230918-hierbei-erhielten-ba5ef74a5b52@brauner> <CAJfpegtaGXoZkMWLnk3PcibAvp7kv-4Yobo=UJj943L6v3ctJQ@mail.gmail.com> <20230918-stuhl-spannend-9904d4addc93@brauner> <CAJfpegvxNhty2xZW+4MM9Gepotii3CD1p0fyvLDQB82hCYzfLQ@mail.gmail.com> <20230918-bestialisch-brutkasten-1fb34abdc33c@brauner> <CAJfpegvTiK=RM+0y07h-2vT6Zk2GCu6F98c=_CNx8B1ytFtO-g@mail.gmail.com> <20230919003800.93141-1-mattlloydhouse@gmail.com> <CAJfpegs6g8JQDtaHsECA_12ss_8KXOHVRH9gwwPf5WamzxXOWQ@mail.gmail.com> <20230919212840.144314-1-mattlloydhouse@gmail.com> <CAJfpeguMf7ouiW79iey1i68kYnCcvcpEXLpUNf+CF=aNWxXO2Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2023/09/18 1:38, Casey Schaufler wrote:
-> On 9/15/2023 11:32 PM, Tetsuo Handa wrote:
->> +/**
->> + * struct lsm_id - Identify a Linux Security Module.
->> + * @lsm: name of the LSM, must be approved by the LSM maintainers
->>
->> Why can't you understand that "approved by the LSM maintainers" is a horrible
->> requirement for LSM modules which cannot become one of in-tree LSMs?
->>
->> One of reasons for not every proposed LSM module can become in-tree is out of
->> the LSM community's resources for reviewing/maintaining (or failure to acquire
->> attention from the LSM community enough to get reviewed).
->>
->> + * @id: LSM ID number from uapi/linux/lsm.h
->>
->> Since the LSM community cannot accept all of proposed LSMs due to limited resources,
->> the LSM community is responsible for allowing whatever proposed LSMs (effectively any
->> publicly available LSMs) to live as out-of-tree LSMs, by approving the LSM name and
->> assigning a permanent LSM ID number.
->>
->> The only exception the LSM community can refuse to approve/assign would be that the name
->> is not appropriate (e.g. a LSM module named "FuckYou") or the name is misleading (e.g.
->> "selinux+", "smock", "tomato", "apparmour"). Otherwise, no matter how many times you repeat
->> "we don't care out-of-tree LSMs" or "I do not intentionally plan to make life difficult for
->> the out-of-tree LSMs", this patch is intended to lock out out-of-tree LSMs.
-> 
-> That is a false statement. There is a huge difference between apathy and malice. 
+On Wed, Sep 20, 2023 at 5:42 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Tue, 19 Sept 2023 at 23:28, Matthew House <mattlloydhouse@gmail.com> w=
+rote:
+>
+> > More generally speaking, the biggest reason I dislike the current singl=
+e-
+> > buffer interface is that the output is "all or nothing": either the cal=
+ler
+> > has enough space in the buffer to store every single string, or it's un=
+able
+> > to get any fields at all, just an -EOVERFLOW. There's no room for the
+> > caller to say that it just wants the integer fields and doesn't care ab=
+out
+> > the strings. Thus, to reliably call statmnt() on an arbitrary mount, the
+> > ability to dynamically allocate memory is effectively mandatory. The on=
+ly
+> > real solution to this would be additional statx-like flags to select the
+> > returned strings.
+>
+> It's already there:
+>
+> #define STMT_MNT_ROOT 0x00000008U /* Want/got mnt_root  */
+> #define STMT_MNT_POINT 0x00000010U /* Want/got mnt_point */
+> #define STMT_FS_TYPE 0x00000020U /* Want/got fs_type */
+>
+> For example, it's perfectly fine to do the following, and it's
+> guaranteed not to return EOVERFLOW:
+>=20
+>         struct statmnt st;
+>         unsigned int mask =3D STMT_SB_BASIC | STMT_MNT_BASIC;
+>=20
+>         ret =3D statmount(mnt_id, mask, &st, sizeof(st), flags);
 
-Dave Chinner wrote at https://lkml.kernel.org/r/ZQo94mCzV7hOrVkh@dread.disaster.area
-as a response to "We don't care about out of tree filesystems.":
+Whoops, my apologies; perhaps I should try to learn to read for once. (I
+just saw the undecorated sequence of stmt_numeric() and stmt_string() calls
+and didn't notice the early exits within the functions.) I withdraw that
+particular objection.
 
-  In this case, we most certainly do care. Downstream distros support
-  all sorts of out of tree filesystems loaded via kernel modules, so a
-  syscall that is used to uniquely identify a filesystem type to
-  userspace *must* have a mechanism for the filesystem to provide that
-  unique identifier to userspace.
+> > Besides that, if the caller is written in standard C but doesn't want to
+> > use malloc(3) to allocate the buffer, then its helper function must be
+> > written very carefully (with a wrapper struct around the header and dat=
+a)
+> > to satisfy the aliasing rules, which forbid programs from using a struct
+> > statmnt * pointer to read from a declared char[N] array.
+>
+> I think you interpret aliasing rules incorrectly.  The issue with
+> aliasing is if you access the same piece of memory though different
+> types.  Which is not the case here.  In fact with the latest
+> incarnation of the interface[1] there's no need to access the
+> underlying buffer at all:
+>
+>         printf("mnt_root: <%s>\n", st->str + st->mnt_root);
+>
+> So the following is perfectly safe to do (as long as you don't care
+> about buffer overflow):
+>
+>         char buf[10000];
+>         struct statmnt *st =3D (void *) buf;
+>
+>         ret =3D statmount(mnt_id, mask, st, sizeof(buf), flags);
 
-  Fundamentally, the kernel does not and should not dictate what
-  filesystem types it supports; the user decides what filesystem they
-  need to use, and it is the kernel's job to provide infrastructure
-  that works with that user's choice.
+The declared type of a variable *is* one of the different types, as far as
+the aliasing rules are concerned. In C17, section 6.5 ("Expressions"):
 
-Can you see? What you are trying to is NACKed by simple s/filesystem/LSM/g .
+> The *effective type* of an object for an access to its stored value is
+> the declared type of the object, if any. [More rules about objects with
+> no declared type, i.e., those created with malloc(3) or realloc(3)...]
+>
+> An object shall have its stored value accessed only by an lvalue
+> expression that has one of the following types:
+>
+> -- a type compatible with the effective type of the object,
+>
+> -- a qualified version of a type compatible with the effective type of
+>    the object,
+>
+> -- a type that is the signed or unsigned type corresponding to the
+>    effective type of the object,
+>
+> -- a type that is the signed or unsigned type corresponding to a
+>    qualified version of the effective type of the object,
+>
+> -- an aggregate or union type that includes one of the aforementioned
+>    types among its members (including, recursively, a member of a
+>    subaggregate or contained union), or
+>
+> -- a character type.
 
-The kernel is ultimately there for users. The kernel is never there for doing patent
-acquisition competition. If the LSM community accepts only LSMs which won the patent
-acquisition competition as in-tree (as described in "ANN: new LSM guidelines"),
-the LSM community is responsible for allowing any publicly available LSMs to live as
-out of tree modules.
+In this case, buf is declared in the program as a char[10000] array, so the
+declared type of each element is char, and the effective type of each
+element is also char. If we want to access, say, st->mnt_id, the lvalue
+expression has type __u64, and it tries to access 8 of the char objects.
+However, the integer type that __u64 expands to doesn't meet any of those
+criteria, so the aliasing rules are violated and the behavior is undefined.
 
-Unless the policy is updated to approve any publicly available LSMs and assign a unique
-identifier (which can be passed to the syscalls introduced by this series) to each
-publicly available LSM, this series is a regression.
+(The statmount() helper could in theory avoid UB by saying the struct
+statmnt object is stored in the buffer as if by memcpy(3), but it would
+still be UB for the caller to access the fields of that pointer directly
+instead of memcpy'ing them back out of the buffer. And practically no one
+does that in the real world.)
 
-The "[PATCH v15 01/11] LSM: Identify modules by more than name" is exactly doing
-"LSM: allow only in-tree LSM modules, lock out out-of-tree LSM modules".
-Nack, Nack, Nack, Nack, Nack!!!!!
+It's a common misconception that the aliasing rules as written are about
+accessing the same object through two different pointer types. That
+corollary is indeed what compilers mainly care about, but the C/C++
+standards further say that objects in memory "remember" the types they were
+created with, and they demand that programs respect objects' original types
+when trying to access them (except when accessing their raw representations
+via a pointer of character type).
 
-> 
->>
->> + *
->> + * Contains the information that identifies the LSM.
->> + */
->> +struct lsm_id {
->> +	const char	*name;
->> +	u64		id;
->> +};
->>
->> Therefore, unless you change the policy for assigning LSM ID, I keep NACK on this change.
->>
+> If you do care about handling buffer overflows, then dynamic
+> allocation is the only sane way.
+>
+> And before you dive into how this is going to be horrible because the
+> buffer size needs to be doubled an unknown number of times, think a
+> bit:  have you *ever* seen a line in /proc/self/mountinfo longer than
+> say 1000 characters?   So if the buffer starts out at 64k, how often
+> will this doubling happen?   Right: practically never.  Adding
+> complexity to handle this case is nonsense, as I've said many times.
+> And there is definitely nonzero complexity involved (just see the
+> special casing in getxattr and listxattr implementations all over the
+> place).
+>
+> Thanks,
+> Miklos
 
+I've always felt that capacity doubling is a bit wasteful, but it's
+definitely something I can live with, especially if providing size feedback
+is as complex as you suggest. Still, I'm not a big fan of single-buffer
+interfaces in general, with how poorly they tend to interact with C's
+aliasing rules. (Also, those kinds of interfaces also invite alignment
+errors: for instance, your snippet above is missing the necessary union to
+prevent the buffer from being misaligned, which would cause UB when you
+cast it to a struct statmnt *.)
+
+Thank you,
+Matthew House
