@@ -2,85 +2,106 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A059C04AA7
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 15:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 049D7C04AA9
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Sep 2023 15:54:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234622AbjITPsU (ORCPT
+        id S235461AbjITPyd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Sep 2023 11:48:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34366 "EHLO
+        Wed, 20 Sep 2023 11:54:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234617AbjITPsT (ORCPT
+        with ESMTP id S235426AbjITPyc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Sep 2023 11:48:19 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E302BA3
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 08:48:13 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id 41be03b00d2f7-565e54cb93aso4110351a12.3
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 08:48:13 -0700 (PDT)
+        Wed, 20 Sep 2023 11:54:32 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1C2FC6
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 08:54:26 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id 98e67ed59e1d1-27666e94ad7so771806a91.0
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Sep 2023 08:54:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1695224892; x=1695829692; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1695225266; x=1695830066; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JG6AMx69HAwK3LvGawCCvsiysMo16gJkJBfu4krPdX4=;
-        b=L6cQHymBGBbw4mCcBEECSQ1ouVljdF71w1E83JxX+tX0t4RKg2Dx0h9lKTLEQKeMwK
-         xoyJXaZ9Ac3MrjuKyjF1j6gnEHDDyTU9sArG4I2ZY7ZgnO01OCdvCBXBrWwBRTXW3mWV
-         Qht773L/wU/Bc41ikWoMHTA/CB539WL0JO310=
+        bh=cvzJPQO/bADTYnKAw8CDtr04xbcONw8HjKLsAZQM774=;
+        b=QdmQFYlf8kJ5ERGCY6MN5OwJC8rcuoNumDIOpHBk3/gUr+DyHaHgWJndKqmLmZZvim
+         WdbLzHs44mTFFRFsj/4FfJihZy9IEIZSqWQRbdgfWVN5GZUCnRxRsfmZ9dv9GvKd5A2U
+         Bs2klVY2CFvLt4TwP+0KaTL1Yth83rPyA0IdA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695224892; x=1695829692;
+        d=1e100.net; s=20230601; t=1695225266; x=1695830066;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JG6AMx69HAwK3LvGawCCvsiysMo16gJkJBfu4krPdX4=;
-        b=jnqyLfsABV3jvOBRazXBeSJ9GX2w+mgWquEZ8UQI9OC59f5ZMdu1qctre4KDrqxEMp
-         UnFuzaPUYioZfkjZ/lE5+S5arI0JsbhxCtKsDqsvHr8Rr71fYnTJsDycdijzCavXLFnb
-         DJ4YoLPxMuCY6IqdWXLq0qHyHS4efnaFos15eicsdrQtyhAj6G8XmrMltlmqJ8D5f1XK
-         hUR2/AKehHms69jR5JghlEL/5jRV7XAfEgEMGNxGy9NGU1hPYec3pMAMOXybXl1ZFf/e
-         6ogMuKkhxUFy0qtD3X3gNY3m3PP+vGAvF4zy7lvaPNTVE54M22FxRSUOjmftfAk8Wihm
-         ZN1g==
-X-Gm-Message-State: AOJu0Yyn8o1fXx2r0ulJEGWDyxVbTz84ce9uUluJsa6XomyQlbbubMzX
-        HvW/N340GgJeA3/fzdd1M2ogcw==
-X-Google-Smtp-Source: AGHT+IF3jUYC3V9O4e6ev1/IQ/oataOazO91sNIhbn8jC3dux8A4pM5zLj/0IGha9pWLZSSePT1FLA==
-X-Received: by 2002:a17:90b:60f:b0:271:9237:a07f with SMTP id gb15-20020a17090b060f00b002719237a07fmr3157518pjb.32.1695224892075;
-        Wed, 20 Sep 2023 08:48:12 -0700 (PDT)
+        bh=cvzJPQO/bADTYnKAw8CDtr04xbcONw8HjKLsAZQM774=;
+        b=rxi5Y4m2fSSFG6n2DFXRBDQ406yQPlnD4yVog1uryq4LfPTvOBgPxa1252pkn/2O/E
+         VA3NHl5vO7PXwenaZH1i6RqMcRH4CFsfsjIA/cKNHsOHlWGdHVPKyIQPdixGMSpZoerP
+         GHee+uWn9UKvqGoRssimcpi6SOTgCNqL3FQxZEPHoKnuW1DRc/svFd0EDGnXSGkj/xtE
+         DhIYWT2gIsoqL39FKrQ4JEnuIE9BUke8qG3m3B29gUNdRMMheI9gTPVG9D6VCH5Lf2UN
+         HI8IkwSSGZWLZKR1x6tktggD3gprgTE+RQg9fbdo2gKEG5At/KITcT6he5MMbABSQPnv
+         3FHQ==
+X-Gm-Message-State: AOJu0YwDvPR2FZSPBtK/tOm97tHEMfuZ6APikPbqtOo+CQAI7HErwIsF
+        C92LycwynV3kb1IdYJbpRrOfgQ==
+X-Google-Smtp-Source: AGHT+IG4/LCvBOh0cOC4pD2Z/5P+TJilImO7/jqJyK2O5LkDYpzfajqXXpz5jfN2q0iv2SzN27CkkA==
+X-Received: by 2002:a17:90a:db82:b0:26b:513a:30b0 with SMTP id h2-20020a17090adb8200b0026b513a30b0mr4468518pjv.10.1695225257588;
+        Wed, 20 Sep 2023 08:54:17 -0700 (PDT)
 Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id bb18-20020a17090b009200b0026fb228fafasm1489400pjb.18.2023.09.20.08.48.11
+        by smtp.gmail.com with ESMTPSA id s62-20020a17090a69c400b002682523653asm1599254pjj.49.2023.09.20.08.54.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Sep 2023 08:48:11 -0700 (PDT)
-Date:   Wed, 20 Sep 2023 08:48:11 -0700
+        Wed, 20 Sep 2023 08:54:16 -0700 (PDT)
+Date:   Wed, 20 Sep 2023 08:54:16 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     KP Singh <kpsingh@kernel.org>
 Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
         paul@paul-moore.com, casey@schaufler-ca.com, song@kernel.org,
-        daniel@iogearbox.net, ast@kernel.org,
-        Kui-Feng Lee <sinquersw@gmail.com>
-Subject: Re: [PATCH v3 2/5] security: Count the LSMs enabled at compile time
-Message-ID: <202309200847.975DE8B704@keescook>
+        daniel@iogearbox.net, ast@kernel.org
+Subject: Re: [PATCH v3 3/5] security: Replace indirect LSM hook calls with
+ static calls
+Message-ID: <202309200848.7099DFF1B@keescook>
 References: <20230918212459.1937798-1-kpsingh@kernel.org>
- <20230918212459.1937798-3-kpsingh@kernel.org>
+ <20230918212459.1937798-4-kpsingh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230918212459.1937798-3-kpsingh@kernel.org>
+In-Reply-To: <20230918212459.1937798-4-kpsingh@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 18, 2023 at 11:24:56PM +0200, KP Singh wrote:
-> These macros are a clever trick to determine a count of the number of
-> LSMs that are enabled in the config to ascertain the maximum number of
-> static calls that need to be configured per LSM hook.
+On Mon, Sep 18, 2023 at 11:24:57PM +0200, KP Singh wrote:
+> LSM hooks are currently invoked from a linked list as indirect calls
+> which are invoked using retpolines as a mitigation for speculative
+> attacks (Branch History / Target injection) and add extra overhead which
+> is especially bad in kernel hot paths:
+
+I feel like the performance details in the cover letter should be
+repeated in this patch, since it's the one doing the heavy lifting.
+
+> [...]
 > 
-> Without this one would need to generate static calls for (number of
-> possible LSMs * number of LSM hooks) which ends up being quite wasteful
-> especially when some LSMs are not compiled into the kernel.
-> 
-> Suggested-by: Kui-Feng Lee <sinquersw@gmail.com>
-> Suggested-by: Andrii Nakryiko <andrii@kernel.org
 > Signed-off-by: KP Singh <kpsingh@kernel.org>
 
-I may extract this into a separate header in the future -- I have plans
-to make strscpy() take a variable number of arguments. ;) Regardless,
-for the LSM usage:
+Regardless, this is a nice improvement on execution time and one of the
+more complex cases for static calls.
+
+> -struct security_hook_heads {
+> -	#define LSM_HOOK(RET, DEFAULT, NAME, ...) struct hlist_head NAME;
+> -	#include "lsm_hook_defs.h"
+> +/*
+> + * @key: static call key as defined by STATIC_CALL_KEY
+> + * @trampoline: static call trampoline as defined by STATIC_CALL_TRAMP
+> + * @hl: The security_hook_list as initialized by the owning LSM.
+> + * @active: Enabled when the static call has an LSM hook associated.
+> + */
+> +struct lsm_static_call {
+> +	struct static_call_key *key;
+> +	void *trampoline;
+> +	struct security_hook_list *hl;
+> +	/* this needs to be true or false based on what the key defaults to */
+> +	struct static_key_false *active;
+> +};
+
+Can this be marked __randomize_layout too?
+
+Everything else looks good to me. I actually find the result more
+readable that before. But then I do love a good macro. :)
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
 
