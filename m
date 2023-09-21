@@ -2,556 +2,173 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1239E7D0AF
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Sep 2023 22:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A5C0E7D0A1
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Sep 2023 23:03:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230226AbjIUWSh (ORCPT
+        id S229497AbjIUXDY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Sep 2023 18:18:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50278 "EHLO
+        Thu, 21 Sep 2023 19:03:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229735AbjIUWSh (ORCPT
+        with ESMTP id S229458AbjIUXDX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Sep 2023 18:18:37 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3554F94
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Sep 2023 15:18:29 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-d8195078f69so1753743276.3
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Sep 2023 15:18:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1695334708; x=1695939508; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4EjZHM9RcmiFaqXNqF9PYUmTMuhkK5GIefqNBNTI2Iw=;
-        b=WOFddY2IrLJt5kvzOPENgarchLujjysaawQWeicc0MPppSegnXSbJH5at9MMAQieUV
-         NwefbKxluG0FbmWEOd8WxvR6PI4/MRDxxnCAuskPMKQSSp9z05OnNfuGbukuXMlVk1y4
-         yV5HwIrYDz1fDNd/+C95LJ2dnJ3pUocFZLwApSIofgMRQmd2m7UxoIbzURsZSFH8kkdQ
-         50Czwt4rv1Kj70D9e2Z66eKWrZxPTA7UECCd5dNHOftQ3ct6eOUcaF1N9IfSTLDuIS1I
-         wIgekZmsXSbdYp+M5yIBequ1tniZeOdXdw3tjvWNUQSTTZSvPPrujcYNy5BU/zsu/RQs
-         1jVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695334708; x=1695939508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4EjZHM9RcmiFaqXNqF9PYUmTMuhkK5GIefqNBNTI2Iw=;
-        b=G4fgiWT0Ltmj1dG7rLbGmdgb6SIfhYsdgvUcnawElBwCBKsr8gUQ2Pd1Uj7xGFHCTF
-         gwTUsLLuH7UK/SvBj+3Ao2WQGqFz0ub9UYliIKLNQVBMACyF28PqFZzygtmAO5f+ugv2
-         GtExguZ02TghTPcff/e9B5JespT7JdyyZzprgPMk6p3PwECAg9f/0Yt7hIjjVOUVDhmd
-         3YWyg1zvbDra5shroATcQi4gfwn90sy/1q1p/eT5/EHtyvcnIQ4i88mJhGm96XMK+yxA
-         5Li6jBYD+pbMJiTvWVkEhfqrbAp4G2BcjueRvMt4u2Q959S0wxSUKpk8ecTU3XOs3g4s
-         fT3Q==
-X-Gm-Message-State: AOJu0YwTE7TYvLFniqyB3OoyMJhtmi5/M+cFXdG7MQibOnLitMgIU73j
-        axdTzoPmblTWim3951sFBacCF91U0T6vA4ixufL+FjI+rRbnOYpySA==
-X-Google-Smtp-Source: AGHT+IF4pdlX8WhgOn5+tafdV8bBKUupKpeQa3UI3HwcSexSNosk/a81FJowmkafGGM88J16OGfu9MkSAlJBrOm582I=
-X-Received: by 2002:a25:8244:0:b0:d7a:d716:233c with SMTP id
- d4-20020a258244000000b00d7ad716233cmr6540225ybn.41.1695334708123; Thu, 21 Sep
- 2023 15:18:28 -0700 (PDT)
+        Thu, 21 Sep 2023 19:03:23 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A72DA8F
+        for <linux-security-module@vger.kernel.org>; Thu, 21 Sep 2023 16:03:17 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28FCBC433CB;
+        Thu, 21 Sep 2023 23:03:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695337397;
+        bh=yiAJPS7cKpcCnvkdPKJifp9st2pGuTa8PlkgrYBhlyM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dX2mvSjp7wfXE1Tjc+4tIe794raC6MxcsKr547VvZA2ukL9HWXm4+F+IVphoQdfoA
+         EX+IsZX9+I2+nUJVwEVUULMqiuy0XSPGd8jDJwSxD1VbV7OLeWJTY4punVYjqzABiq
+         A7IAyfgVhQ+S5onKlArxFyDLtFZ8IqsFUtjT7DwO5He+wfRXe6MdZ7V6tceirA66rf
+         ClXe7dVbQYnTgQNTLxtHI4fA7kBBNxfm3sNbD35CyFyddsmyvwNCdwbQ74gFJh82fV
+         oPWmx04zP1k5aan/2B2JMWgzLidzncz1lbD25lrttOMIMZq+rsIaoA+J8W4W2DP43W
+         j1i3ToXmmSHGg==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-50437f39c9dso288462e87.3;
+        Thu, 21 Sep 2023 16:03:17 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yw9YNpZup638hgJcX+nY68mVvyRnuSvuIiT7ueRe6UYl2XXX5Ry
+        LJd0cLENMYFFGJrVO36xbqVBQRFKncac7YjY5UU=
+X-Google-Smtp-Source: AGHT+IGwkoTBc42qppCWTYzp8kbRv8cvjHGFQplKxNefKyB24GZRp2GsOnKoTooRX75pS1haD8jDx4Q/U1umWcFLSKg=
+X-Received: by 2002:ac2:5b1c:0:b0:503:314f:affe with SMTP id
+ v28-20020ac25b1c000000b00503314faffemr5989903lfn.17.1695337395346; Thu, 21
+ Sep 2023 16:03:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230912212906.3975866-3-andrii@kernel.org> <3808036a0b32a17a7fd9e7d671b5458d.paul@paul-moore.com>
- <CAEf4BzYiKhG3ZL-GGQ4fHzSu6RKx2fh2JHwcL9_XKzQBvx3Bjg@mail.gmail.com>
- <CAHC9VhSOCAb6JQJn96xgwNNMGM0mKXf64ygkj4=Yv0FA8AYR=Q@mail.gmail.com> <CAEf4BzZC+9GbCsG56B2Q=woq+RHQS8oMTGJSNiMFKZpOKHhKpg@mail.gmail.com>
-In-Reply-To: <CAEf4BzZC+9GbCsG56B2Q=woq+RHQS8oMTGJSNiMFKZpOKHhKpg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 21 Sep 2023 18:18:17 -0400
-Message-ID: <CAHC9VhTiqhQcfDr-7mThY1kH-Fwa7NUUU8ZWZvLFVudgtO8RAA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/12] bpf: introduce BPF token object
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
-        sargun@sargun.me, selinux@vger.kernel.org
+References: <20230918212459.1937798-1-kpsingh@kernel.org> <20230918212459.1937798-6-kpsingh@kernel.org>
+In-Reply-To: <20230918212459.1937798-6-kpsingh@kernel.org>
+From:   Song Liu <song@kernel.org>
+Date:   Thu, 21 Sep 2023 16:03:02 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW5LkyY8=t-yLKpS-fNWOy+yngEy96xkvajfgqA2HKLTFw@mail.gmail.com>
+Message-ID: <CAPhsuW5LkyY8=t-yLKpS-fNWOy+yngEy96xkvajfgqA2HKLTFw@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] security: Add CONFIG_SECURITY_HOOK_LIKELY
+To:     KP Singh <kpsingh@kernel.org>
+Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
+        daniel@iogearbox.net, ast@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 15, 2023 at 4:59=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
-> On Thu, Sep 14, 2023 at 5:55=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Thu, Sep 14, 2023 at 1:31=E2=80=AFPM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > > On Wed, Sep 13, 2023 at 2:46=E2=80=AFPM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> > > >
-> > > > On Sep 12, 2023 Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
-> > > > >
-> > > > > Add new kind of BPF kernel object, BPF token. BPF token is meant =
-to
-> > > > > allow delegating privileged BPF functionality, like loading a BPF
-> > > > > program or creating a BPF map, from privileged process to a *trus=
-ted*
-> > > > > unprivileged process, all while have a good amount of control ove=
-r which
-> > > > > privileged operations could be performed using provided BPF token=
-.
-> > > > >
-> > > > > This is achieved through mounting BPF FS instance with extra dele=
-gation
-> > > > > mount options, which determine what operations are delegatable, a=
-nd also
-> > > > > constraining it to the owning user namespace (as mentioned in the
-> > > > > previous patch).
-> > > > >
-> > > > > BPF token itself is just a derivative from BPF FS and can be crea=
-ted
-> > > > > through a new bpf() syscall command, BPF_TOKEN_CREAT, which accep=
+On Mon, Sep 18, 2023 at 2:25=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
+:
+>
+[...]
+>    0xffffffff818f0e72 <+66>:    mov    %r14,%rdi
+>    0xffffffff818f0e75 <+69>:    mov    %ebp,%esi
+>    0xffffffff818f0e77 <+71>:    mov    %rbx,%rdx
+>    0xffffffff818f0e7a <+74>:    nopl   0x0(%rax,%rax,1)
+>    0xffffffff818f0e7f <+79>:    test   %eax,%eax
+>    0xffffffff818f0e81 <+81>:    jne    0xffffffff818f0e4d <security_file_=
+ioctl+29>
+>    0xffffffff818f0e83 <+83>:    jmp    0xffffffff818f0e49 <security_file_=
+ioctl+25>
+>    0xffffffff818f0e85 <+85>:    endbr64
+>    0xffffffff818f0e89 <+89>:    mov    %r14,%rdi
+>    0xffffffff818f0e8c <+92>:    mov    %ebp,%esi
+>    0xffffffff818f0e8e <+94>:    mov    %rbx,%rdx
+>    0xffffffff818f0e91 <+97>:    pop    %rbx
+>    0xffffffff818f0e92 <+98>:    pop    %r14
+>    0xffffffff818f0e94 <+100>:   pop    %rbp
+>    0xffffffff818f0e95 <+101>:   ret
+>
+> Signed-off-by: KP Singh <kpsingh@kernel.org>
+
+Acked-by: Song Liu <song@kernel.org>
+
+Thanks,
+Song
+
+
+
+> ---
+>  security/Kconfig    | 11 +++++++++++
+>  security/security.c | 12 +++++++-----
+>  2 files changed, 18 insertions(+), 5 deletions(-)
+>
+> diff --git a/security/Kconfig b/security/Kconfig
+> index 52c9af08ad35..bd2a0dff991a 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -32,6 +32,17 @@ config SECURITY
+>
+>           If you are unsure how to answer this question, answer N.
+>
+> +config SECURITY_HOOK_LIKELY
+> +       bool "LSM hooks are likely to be initialized"
+> +       depends on SECURITY
+> +       default y
+> +       help
+> +         This controls the behaviour of the static keys that guard LSM h=
+ooks.
+> +         If LSM hooks are likely to be initialized by LSMs, then one get=
+s
+> +         better performance by enabling this option. However, if the sys=
+tem is
+> +         using an LSM where hooks are much likely to be disabled, one ge=
 ts
-> > > > > a path specification (using the usual fd + string path combo) to =
-a BPF
-> > > > > FS mount. Currently, BPF token "inherits" delegated command, map =
-types,
-> > > > > prog type, and attach type bit sets from BPF FS as is. In the fut=
-ure,
-> > > > > having an BPF token as a separate object with its own FD, we can =
-allow
-> > > > > to further restrict BPF token's allowable set of things either at=
- the creation
-> > > > > time or after the fact, allowing the process to guard itself furt=
-her
-> > > > > from, e.g., unintentionally trying to load undesired kind of BPF
-> > > > > programs. But for now we keep things simple and just copy bit set=
-s as is.
-> > > > >
-> > > > > When BPF token is created from BPF FS mount, we take reference to=
- the
-> > > > > BPF super block's owning user namespace, and then use that namesp=
-ace for
-> > > > > checking all the {CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, CAP_SYS_AD=
-MIN}
-> > > > > capabilities that are normally only checked against init userns (=
-using
-> > > > > capable()), but now we check them using ns_capable() instead (if =
-BPF
-> > > > > token is provided). See bpf_token_capable() for details.
-> > > > >
-> > > > > Such setup means that BPF token in itself is not sufficient to gr=
-ant BPF
-> > > > > functionality. User namespaced process has to *also* have necessa=
-ry
-> > > > > combination of capabilities inside that user namespace. So while
-> > > > > previously CAP_BPF was useless when granted within user namespace=
-, now
-> > > > > it gains a meaning and allows container managers and sys admins t=
-o have
-> > > > > a flexible control over which processes can and need to use BPF
-> > > > > functionality within the user namespace (i.e., container in pract=
-ice).
-> > > > > And BPF FS delegation mount options and derived BPF tokens serve =
-as
-> > > > > a per-container "flag" to grant overall ability to use bpf() (plu=
-s further
-> > > > > restrict on which parts of bpf() syscalls are treated as namespac=
-ed).
-> > > > >
-> > > > > The alternative to creating BPF token object was:
-> > > > >   a) not having any extra object and just pasing BPF FS path to e=
-ach
-> > > > >      relevant bpf() command. This seems suboptimal as it's racy (=
-mount
-> > > > >      under the same path might change in between checking it and =
-using it
-> > > > >      for bpf() command). And also less flexible if we'd like to f=
-urther
-> > > > >      restrict ourselves compared to all the delegated functionali=
-ty
-> > > > >      allowed on BPF FS.
-> > > > >   b) use non-bpf() interface, e.g., ioctl(), but otherwise also c=
-reate
-> > > > >      a dedicated FD that would represent a token-like functionali=
-ty. This
-> > > > >      doesn't seem superior to having a proper bpf() command, so
-> > > > >      BPF_TOKEN_CREATE was chosen.
-> > > > >
-> > > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > > > ---
-> > > > >  include/linux/bpf.h            |  36 +++++++
-> > > > >  include/uapi/linux/bpf.h       |  39 +++++++
-> > > > >  kernel/bpf/Makefile            |   2 +-
-> > > > >  kernel/bpf/inode.c             |   4 +-
-> > > > >  kernel/bpf/syscall.c           |  17 +++
-> > > > >  kernel/bpf/token.c             | 189 +++++++++++++++++++++++++++=
-++++++
-> > > > >  tools/include/uapi/linux/bpf.h |  39 +++++++
-> > > > >  7 files changed, 324 insertions(+), 2 deletions(-)
-> > > > >  create mode 100644 kernel/bpf/token.c
-> > > >
-> > > > ...
-> > > >
-> > > > > diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
-> > > > > new file mode 100644
-> > > > > index 000000000000..f6ea3eddbee6
-> > > > > --- /dev/null
-> > > > > +++ b/kernel/bpf/token.c
-> > > > > @@ -0,0 +1,189 @@
-> > > > > +#include <linux/bpf.h>
-> > > > > +#include <linux/vmalloc.h>
-> > > > > +#include <linux/anon_inodes.h>
-> > > > > +#include <linux/fdtable.h>
-> > > > > +#include <linux/file.h>
-> > > > > +#include <linux/fs.h>
-> > > > > +#include <linux/kernel.h>
-> > > > > +#include <linux/idr.h>
-> > > > > +#include <linux/namei.h>
-> > > > > +#include <linux/user_namespace.h>
-> > > > > +
-> > > > > +bool bpf_token_capable(const struct bpf_token *token, int cap)
-> > > > > +{
-> > > > > +     /* BPF token allows ns_capable() level of capabilities */
-> > > > > +     if (token) {
-> > > > > +             if (ns_capable(token->userns, cap))
-> > > > > +                     return true;
-> > > > > +             if (cap !=3D CAP_SYS_ADMIN && ns_capable(token->use=
-rns, CAP_SYS_ADMIN))
-> > > > > +                     return true;
-> > > > > +     }
-> > > > > +     /* otherwise fallback to capable() checks */
-> > > > > +     return capable(cap) || (cap !=3D CAP_SYS_ADMIN && capable(C=
-AP_SYS_ADMIN));
-> > > > > +}
-> > > >
-> > > > While the above looks to be equivalent to the bpf_capable() functio=
-n it
-> > > > replaces, for callers checking CAP_BPF and CAP_SYS_ADMIN, I'm looki=
-ng
-> > > > quickly at patch 3/12 and this is also being used to replace a
-> > > > capable(CAP_NET_ADMIN) call which results in a change in behavior.
-> > > > The current code which performs a capable(CAP_NET_ADMIN) check cann=
-ot
-> > > > be satisfied by CAP_SYS_ADMIN, but this patchset using
-> > > > bpf_token_capable(token, CAP_NET_ADMIN) can be satisfied by either
-> > > > CAP_NET_ADMIN or CAP_SYS_ADMIN.
-> > > >
-> > > > It seems that while bpf_token_capable() can be used as a replacemen=
-t
-> > > > for bpf_capable(), it is not currently a suitable replacement for a
-> > > > generic capable() call.  Perhaps this is intentional, but I didn't =
-see
-> > > > it mentioned in the commit description, or in the comments, and I
-> > > > wanted to make sure it wasn't an oversight.
-> > >
-> > > You are right. It is an intentional attempt to unify all such checks.
-> > > If you look at bpf_prog_load(), we have this:
-> > >
-> > > if (is_net_admin_prog_type(type) && !capable(CAP_NET_ADMIN) &&
-> > > !capable(CAP_SYS_ADMIN))
-> > >     return -EPERM;
-> > >
-> > > So seeing that, I realized that we did have an intent to always use
-> > > CAP_SYS_ADMIN as a "fallback" cap, even for CAP_NET_ADMIN when it
-> > > comes to using network-enabled BPF programs. So I decided that
-> > > unifying all this makes sense.
-> > >
-> > > I'll add a comment mentioning this, I should have been more explicit
-> > > from the get go.
-> >
-> > Thanks for the clarification.  I'm not to worried about checking
-> > CAP_SYS_ADMIN as a fallback, but I always get a little twitchy when I
-> > see capability changes in the code without any mention.
-> >
-> > A mention in the commit description is good, and you could also draft
-> > up a standalone patch that adds the CAP_SYS_ADMIN fallback to the
-> > current in-tree code.  That would be a good way to really highlight
-> > the capability changes and deal with any issues that might arise
-> > (review, odd corner cases?, etc.) prior to the BPF capability
-> > delegation patcheset we are discussing here.
+> +         better performance by disabling this config.
+> +
+>  config SECURITYFS
+>         bool "Enable the securityfs filesystem"
+>         help
+> diff --git a/security/security.c b/security/security.c
+> index d1ee72e563cc..7ab0e044f83d 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -105,9 +105,9 @@ static __initdata struct lsm_info *exclusive;
+>   * Define static calls and static keys for each LSM hook.
+>   */
 >
-> Sure, sounds good, I'll add this as a pre-patch for next revision.
-
-My apologies on the delay, I've been traveling this week and haven't
-had the time to dig back into this.
-
-I do see that you've posted another revision of this patchset with the
-capability pre-patch, thanks for doing that.
-
-> > > > > +#define BPF_TOKEN_INODE_NAME "bpf-token"
-> > > > > +
-> > > > > +/* Alloc anon_inode and FD for prepared token.
-> > > > > + * Returns fd >=3D 0 on success; negative error, otherwise.
-> > > > > + */
-> > > > > +int bpf_token_new_fd(struct bpf_token *token)
-> > > > > +{
-> > > > > +     return anon_inode_getfd(BPF_TOKEN_INODE_NAME, &bpf_token_fo=
-ps, token, O_CLOEXEC);
-> > > > > +}
-> > > > > +
-> > > > > +struct bpf_token *bpf_token_get_from_fd(u32 ufd)
-> > > > > +{
-> > > > > +     struct fd f =3D fdget(ufd);
-> > > > > +     struct bpf_token *token;
-> > > > > +
-> > > > > +     if (!f.file)
-> > > > > +             return ERR_PTR(-EBADF);
-> > > > > +     if (f.file->f_op !=3D &bpf_token_fops) {
-> > > > > +             fdput(f);
-> > > > > +             return ERR_PTR(-EINVAL);
-> > > > > +     }
-> > > > > +
-> > > > > +     token =3D f.file->private_data;
-> > > > > +     bpf_token_inc(token);
-> > > > > +     fdput(f);
-> > > > > +
-> > > > > +     return token;
-> > > > > +}
-> > > > > +
-> > > > > +bool bpf_token_allow_cmd(const struct bpf_token *token, enum bpf=
-_cmd cmd)
-> > > > > +{
-> > > > > +     if (!token)
-> > > > > +             return false;
-> > > > > +
-> > > > > +     return token->allowed_cmds & (1ULL << cmd);
-> > > > > +}
-> > > >
-> > > > I mentioned this a while back, likely in the other threads where th=
-is
-> > > > token-based approach was only being discussed in general terms, but=
- I
-> > > > think we want to have a LSM hook at the point of initial token
-> > > > delegation for this and a hook when the token is used.  My initial
-> > > > thinking is that we should be able to address the former with a hoo=
-k
-> > > > in bpf_fill_super() and the latter either in bpf_token_get_from_fd(=
-)
-> > > > or bpf_token_allow_XXX(); bpf_token_get_from_fd() would be simpler,
-> > > > but it doesn't allow for much in the way of granularity.  Inserting=
- the
-> > > > LSM hooks in bpf_token_allow_XXX() would also allow the BPF code to=
- fall
-> > > > gracefully fallback to the system-wide checks if the LSM denied the
-> > > > requested access whereas an access denial in bpf_token_get_from_fd(=
-)
-> > > > denial would cause the operation to error out.
-> > >
-> > > I think the bpf_fill_super() LSM hook makes sense, but I thought
-> > > someone mentioned that we already have some generic LSM hook for
-> > > validating mounts? If we don't, I can certainly add one for BPF FS
-> > > specifically.
-> >
-> > We do have security_sb_mount(), but that is a generic mount operation
-> > access control and not well suited for controlling the mount-based
-> > capability delegation that you are proposing here.  However, if you or
-> > someone else has a clever way to make security_sb_mount() work for
-> > this purpose I would be very happy to review that code.
+> -#define DEFINE_LSM_STATIC_CALL(NUM, NAME, RET, ...)                    \
+> -       DEFINE_STATIC_CALL_NULL(LSM_STATIC_CALL(NAME, NUM),             \
+> -                               *((RET(*)(__VA_ARGS__))NULL));          \
+> +#define DEFINE_LSM_STATIC_CALL(NUM, NAME, RET, ...)               \
+> +       DEFINE_STATIC_CALL_NULL(LSM_STATIC_CALL(NAME, NUM),       \
+> +                               *((RET(*)(__VA_ARGS__))NULL));    \
+>         DEFINE_STATIC_KEY_FALSE(SECURITY_HOOK_ACTIVE_KEY(NAME, NUM));
 >
-> To be honest, I'm a bit out of my depth here, as I don't know the
-> mounting parts well. Perhaps someone from VFS side can advise. But
-> regardless, I have no problem adding a new LSM hook as well, ideally
-> not very BPF-specific. If you have a specific form of it in mind, I'd
-> be curious to see it and implement it.
-
-I agree that there can be benefits to generalized LSM hooks, but in
-this hook I think it may need to be BPF specific simply because the
-hook would be dealing with the specific concept of delegating BPF
-permissions.
-
-I haven't taken the time to write up any hook patches yet as I wanted
-to discuss it with you and the others on the To/CC line, but it seems
-like we are roughly on the same page, at least with the initial
-delegation hook, so I can put something together if you aren't
-comfortable working on this (more on this below) ...
-
-> > > As for the bpf_token_allow_xxx(). This feels a bit too specific and
-> > > narrow-focused. What if we later add yet another dimension for BPF FS
-> > > and token? Do we need to introduce yet another LSM for each such case=
-?
-> >
-> > [I'm assuming you meant new LSM *hook*]
+>  #define LSM_HOOK(RET, DEFAULT, NAME, ...)                              \
+> @@ -825,7 +825,8 @@ static int lsm_superblock_alloc(struct super_block *s=
+b)
+>   */
+>  #define __CALL_STATIC_VOID(NUM, HOOK, ...)                              =
+    \
+>  do {                                                                    =
+    \
+> -       if (static_branch_unlikely(&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM)))=
+ {    \
+> +       if (static_branch_maybe(CONFIG_SECURITY_HOOK_LIKELY,             =
+    \
+> +                               &SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM))) { =
+    \
+>                 static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__);    =
+    \
+>         }                                                                =
+    \
+>  } while (0);
+> @@ -837,7 +838,8 @@ do {                                                 =
+                            \
 >
-> yep, of course, sorry about using terminology sloppily
+>  #define __CALL_STATIC_INT(NUM, R, HOOK, LABEL, ...)                     =
+    \
+>  do {                                                                    =
+    \
+> -       if (static_branch_unlikely(&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM)))=
+ {  \
+> +       if (static_branch_maybe(CONFIG_SECURITY_HOOK_LIKELY,             =
+    \
+> +                               &SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM))) { =
+    \
+>                 R =3D static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__=
+);    \
+>                 if (R !=3D 0)                                            =
+      \
+>                         goto LABEL;                                      =
+    \
+> --
+> 2.42.0.459.ge4e396fd5e-goog
 >
-> >
-> > Possibly.  There are also some other issues which I've been thinking
-> > about along these lines, specifically the fact that the
-> > capability/command delegation happens after the existing
-> > security_bpf() hook is called which makes things rather awkward from a
-> > LSM perspective: the LSM would first need to allow the process access
-> > to the desired BPF op using it's current LSM specific security
-> > attributes (e.g. SELinux security domain, etc.) and then later
-> > consider the op in the context of the delegated access control rights
-> > (if the LSM decides to support those hooks).
-> >
-> > I suspect that if we want to make this practical we would need to
-> > either move some of the token code up into __sys_bpf() so we could
-> > have a better interaction with security_bpf(), or we need to consider
-> > moving the security_bpf() call into the op specific functions.  I'm
-> > still thinking on this (lots of reviews to get through this week), but
-> > I'm hoping there is a better way because I'm not sure I like either
-> > option very much.
->
-> Yes, security_bpf() is happening extremely early and is lacking a lot
-> of context. I'm not sure if moving it around is a good idea as it
-> basically changes its semantics.
-
-There are a couple of things that make this not quite as scary as it
-may seem.  The first is that currently only SELinux implements a
-security_bpf() hook and the implementation is rather simplistic in
-terms of what information it requires to perform the existing access
-controls; decomposing the single security_bpf() call site into
-multiple op specific calls, perhaps with some op specific hooks,
-should be doable without causing major semantic changes.  The second
-thing is that we could augment the existing security_bpf() hook and
-call site with a new LSM hook(s) that are called from the op specific
-call sites; this would allow those LSMs that desire the current
-semantics to use the existing security_bpf() hook and those that wish
-to use the new semantics could implement the new hook(s).  This is
-very similar to the pathname-based and inode-based hooks in the VFS
-layer, some LSMs choose to implement pathname-based security and use
-one set of hooks, while others implement a label-based security
-mechanism and use a different set of hooks.
-
-> But adding a new set of coherent LSM
-> hooks per each appropriate BPF operation with good context to make
-> decisions sounds like a good improvement. E.g., for BPF_PROG_LOAD, we
-> can have LSM hook after struct bpf_prog is allocated, bpf_token is
-> available, attributes are sanity checked. All that together is a very
-> useful and powerful context that can be used both by more fixed LSM
-> policies (like SELinux), and very dynamic user-defined BPF LSM
-> programs.
-
-This is where it is my turn to mention that I'm getting a bit out of
-my depth, but I'm hopeful that the two of us can keep each other from
-drowning :)
-
-Typically the LSM hook call sites end up being in the same general
-area as the capability checks, usually just after (we want the normal
-Linux discretionary access controls to always come first for the sake
-of consistency).  Sticking with that approach it looks like we would
-end up with a LSM call in bpf_prog_load() right after bpf_capable()
-call, the only gotcha with that is the bpf_prog struct isn't populated
-yet, but how important is that when we have the bpf_attr info (honest
-question, I don't know the answer to this)?
-
-Ignoring the bpf_prog struct, do you think something like this would
-work for a hook call site (please forgive the pseudo code)?
-
-  int bpf_prog_load(...)
-  {
-         ...
-     bpf_cap =3D bpf_token_capable(token, CAP_BPF);
-     err =3D security_bpf_token(BPF_PROG_LOAD, attr, uattr_size, token);
-     if (err)
-       return err;
-    ...
-  }
-
-Assuming this type of hook configuration, and an empty/passthrough
-security_bpf() hook, a LSM would first see the various
-capable()/ns_capable() checks present in bpf_token_capable() followed
-by a BPF op check, complete with token, in the security_bpf_token()
-hook.  Further assuming that we convert the bpf_token_new_fd() to use
-anon_inode_getfd_secure() instead of anon_inode_getfd() and the
-security_bpf_token() could still access the token fd via the bpf_attr
-struct I think we could do something like this for the SELinux case
-(more rough pseudo code):
-
-  int selinux_bpf_token(...)
-  {
-    ssid =3D current_sid();
-    if (token) {
-      /* this could be simplified with better integration
-       * in bpf_token_get_from_fd() */
-      fd =3D fdget(attr->prog_token_fd);
-      inode =3D file_inode(fd.file);
-      isec =3D selinux_inode(inode);
-      tsid =3D isec->sid;
-      fdput(fd);
-    } else
-      tsid =3D ssid;
-    switch(cmd) {
-    ...
-    case BPF_PROG_LOAD:
-      rc =3D avc_has_perm(ssid, tsid, SECCLAS_BPF, BPF__PROG_LOAD);
-      break;
-    default:
-      rc =3D 0;
-    }
-    return rc;
-  }
-
-This would preserve the current behaviour when a token was not present:
-
- allow @current @current : bpf { prog_load }
-
-... but this would change to the following if a token was present:
-
- allow @current @DELEGATED_ANON_INODE : bpf { prog_load }
-
-That seems reasonable to me, but I've CC'd the SELinux list on this so
-others can sanity check the above :)
-
-> But I'd like to keep all that outside of the BPF token feature itself,
-> as it's already pretty hard to get a consensus just on those bits, so
-> complicating this with simultaneously designing a new set of LSM hooks
-> is something that we should avoid. Let's keep discussing this, but not
-> block that on BPF token.
-
-The unfortunate aspect of disconnecting new functionality from the
-associated access controls is that it introduces a gap where the new
-functionality is not secured in a manner that users expect.  There are
-billions of systems/users that rely on LSM-based access controls for a
-large part of their security story, and I think we are doing them a
-disservice by not including the LSM controls with new security
-significant features.
-
-We (the LSM folks) are happy to work with you to get this sorted out,
-and I would hope my comments in this thread (as well as prior
-iterations) and the rough design above is a good faith indicator of
-that.
-
-> > > But also see bpf_prog_load(). There are two checks, allow_prog_type
-> > > and allow_attach_type, which are really only meaningful in
-> > > combination. And yet you'd have to have two separate LSM hooks for
-> > > that.
-> > >
-> > > So I feel like the better approach is less mechanistically
-> > > concentrating on BPF token operations themselves, but rather on more
-> > > semantically meaningful operations that are token-enabled. E.g.,
-> > > protect BPF program loading, BPF map creation, BTF loading, etc. And
-> > > we do have such LSM hooks right now, though they might not be the mos=
-t
-> > > convenient. So perhaps the right move is to add new ones that would
-> > > provide a bit more context (e.g., we can pass in the BPF token that
-> > > was used for the operation, attributes with which map/prog was
-> > > created, etc). Low-level token LSMs seem hard to use cohesively in
-> > > practice, though.
-> >
-> > Can you elaborate a bit more?  It's hard to judge the comments above
-> > without some more specifics about hook location, parameters, etc.
->
-> So something like my above proposal for a new LSM hook in
-> BPF_PROG_LOAD command. Just right before passing bpf_prog to BPF
-> verifier, we can have
->
-> err =3D security_bpf_prog_load(prog, attr, token)
-> if (err)
->     return -EPERM;
->
-> Program, attributes, and token give a lot of inputs for security
-> policy logic to make a decision about allowing that specific BPF
-> program to be verified and loaded or not. I know how this could be
-> used from BPF LSM side, but I assume that SELinux and others can take
-> advantage of that provided additional context as well.
-
-If you think a populated bpf_prog struct is important for BPF LSM
-programs then I have no problem with that hook placement.  It's a lot
-later in the process than we might normally want to place the hook,
-but we can still safely error out here so that should be okay.
-
-From a LSM perspective I think we can make either work, I think the
-big question is which would you rather have in the BPF code: the
-security_bpf_prog_load() hook you've suggested here or the
-security_bpf_token() hook I suggested above?
-
-> Similarly we can have a BPF_MAP_CREATE-specific LSM hook with context
-> relevant to creating a BPF map. And so on.
-
-Of course.  I've been operating under the assumption that whatever we
-do for one op we should be able to apply the same idea to the others
-that need it.
-
---=20
-paul-moore.com
