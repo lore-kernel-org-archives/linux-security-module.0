@@ -2,123 +2,115 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C84CFE7D0A0
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Sep 2023 17:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DBEE7D0A2
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Sep 2023 17:50:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230195AbjIURcQ (ORCPT
+        id S229910AbjIURuI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Sep 2023 13:32:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55068 "EHLO
+        Thu, 21 Sep 2023 13:50:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230081AbjIURcD (ORCPT
+        with ESMTP id S229835AbjIURtx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Sep 2023 13:32:03 -0400
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [IPv6:2001:1600:4:17::190e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD8F10919;
-        Thu, 21 Sep 2023 10:07:32 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RrlY55m19zMqhBY;
-        Thu, 21 Sep 2023 06:16:57 +0000 (UTC)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RrlY35QQvz3f;
-        Thu, 21 Sep 2023 08:16:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1695277017;
-        bh=JPGqIw4NybtPv8UXpkiwD6sCB9HCR+gM6q1qZN9IqXk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=YchhqMwoEcrcTmhUUQ9lpZZ8cs3lJqNM4E1jZL1qt4XqjlAFav6irE0qMM/KUEjor
-         M88gN/aDWfE3sWP2nf+DSZjStURCumnvl9CRZ9cj1Y2e4+jYZTFjqbRgUx3GL5+xMj
-         oNyd2c6uILdSsyYJu/YaEeK46TOeELV0lOaM0bdo=
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Ben Scarlato <akhna@google.com>,
-        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-        Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@google.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Shervin Oloumi <enlightened@google.com>, audit@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [RFC PATCH v1 0/7] Landlock audit support
-Date:   Thu, 21 Sep 2023 08:16:34 +0200
-Message-ID: <20230921061641.273654-1-mic@digikod.net>
+        Thu, 21 Sep 2023 13:49:53 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09EC84697;
+        Thu, 21 Sep 2023 10:12:24 -0700 (PDT)
+Received: from fsav314.sakura.ne.jp (fsav314.sakura.ne.jp [153.120.85.145])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 38LDKAiK029837;
+        Thu, 21 Sep 2023 22:20:10 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav314.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp);
+ Thu, 21 Sep 2023 22:20:10 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 38LDKACn029819
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 21 Sep 2023 22:20:10 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <cb67f607-3a9d-34d2-0877-a3ff957da79e@I-love.SAKURA.ne.jp>
+Date:   Thu, 21 Sep 2023 22:20:09 +0900
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 2/5] security: Count the LSMs enabled at compile time
+Content-Language: en-US
+To:     KP Singh <kpsingh@kernel.org>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Cc:     paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
+        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
+        Kui-Feng Lee <sinquersw@gmail.com>
+References: <20230918212459.1937798-1-kpsingh@kernel.org>
+ <20230918212459.1937798-3-kpsingh@kernel.org>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20230918212459.1937798-3-kpsingh@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+On 2023/09/19 6:24, KP Singh wrote:
+> These macros are a clever trick to determine a count of the number of
+> LSMs that are enabled in the config to ascertain the maximum number of
+> static calls that need to be configured per LSM hook.
 
-This patch series adds basic audit support to Landlock for most actions.
-Logging denied requests is useful for different use cases:
-* app developers: to ease and speed up sandboxing support
-* power users: to understand denials
-* sysadmins: to look for users' issues
-* tailored distro maintainers: to get usage metrics from their fleet
-* security experts: to detect attack attempts
+As a LKM-based LSM user, indirect function calls using a linked list have
+an advantage which this series kills. There always is a situation where a
+LSM cannot be built into vmlinux (and hence has to be loaded as a LKM-based
+LSM) due to distributor's support policy. Therefore, honestly speaking,
+I don't want LSM infrastructure to define the maximum number of "slots" or
+"static calls"...
 
-To make logs useful, they need to contain the most relevant Landlock
-domain that denied an action, and the reason. This translates to the
-latest nested domain and the related missing access rights.
+> 
+> Without this one would need to generate static calls for (number of
+> possible LSMs * number of LSM hooks) which ends up being quite wasteful
+> especially when some LSMs are not compiled into the kernel.
 
-Two "Landlock permissions" are used to describe mandatory restrictions
-enforced on all domains:
-* fs_layout: change the view of filesystem with mount operations.
-* ptrace: tamper with a process.
+I can't interpret "number of possible LSMs * number of LSM hooks" part.
+Is this tokenized as "number of possible LSMs" (an integer) * (multipled by)
+"number of LSM hooks" (an integer) ? But the next patch includes
 
-Here is an example of logs, result of the sandboxer activity:
-tid=267 comm="sandboxer" op=create-ruleset ruleset=1 handled_access_fs=execute,write_file,read_file,read_dir,remove_dir,remove_file,make_char,make_dir,make_reg,make_sock,make_fifo,make_block,make_sym,refer,truncate
-tid=267 comm="sandboxer" op=restrict-self domain=2 ruleset=1 parent=0
-op=release-ruleset ruleset=1
-tid=267 comm="bash" domain=2 op=open errno=13 missing-fs-accesses=write_file,read_file missing-permission= path="/dev/tty" dev="devtmpfs" ino=9
-tid=268 comm="ls" domain=2 op=open errno=13 missing-fs-accesses=read_dir missing-permission= path="/" dev="vda2" ino=256
-tid=269 comm="touch" domain=2 op=mknod errno=13 missing-fs-accesses=make_reg missing-permission= path="/" dev="vda2" ino=256
-tid=270 comm="umount" domain=2 op=umount errno=1 missing-fs-accesses= missing-permission=fs_layout name="/" dev="tmpfs" ino=1
-tid=271 comm="strace" domain=2 op=ptrace errno=1 missing-fs-accesses= missing-permission=ptrace opid=1 ocomm="systemd"
+  struct lsm_static_calls_table {
+  #define LSM_HOOK(RET, DEFAULT, NAME, ...) \
+  		struct lsm_static_call NAME[MAX_LSM_COUNT];
+  	#include <linux/lsm_hook_defs.h>
+  	#undef LSM_HOOK
+  } __randomize_layout;
 
-As highlighted in comments, support for audit is not complete yet with
-this series: some actions are not logged (e.g. file reparenting), and
-rule additions are not logged neither.
+which seems to me that lsm_static_calls_table will get "number of possible
+LSMs" static calls for each LSM hook defined in linux/lsm_hook_defs.h .
+How did this patch help reducing static calls? What does "possible LSMs" mean?
+Should "number of possible LSMs" be replaced with "number of built-in LSMs" ?
 
-I'm also not sure if we need to have seccomp-like features such as
-SECCOMP_FILTER_FLAG_LOG, SECCOMP_RET_LOG, and
-/proc/sys/kernel/seccomp/actions_logged
+> Suggested-by: Andrii Nakryiko <andrii@kernel.org
 
-I'd like to get some early feedback on this proposal.
+Trailing ">" is missing.
 
-This series is based on v6.6-rc2
+> +/*
+> + * Macros to count the number of LSMs enabled in the kernel at compile time.
+> + */
+> +#define MAX_LSM_COUNT			\
+> +	___COUNT_COMMAS(		\
+> +		CAPABILITIES_ENABLED	\
+> +		SELINUX_ENABLED		\
+> +		SMACK_ENABLED		\
+> +		APPARMOR_ENABLED	\
+> +		TOMOYO_ENABLED		\
+> +		YAMA_ENABLED		\
+> +		LOADPIN_ENABLED		\
+> +		LOCKDOWN_ENABLED	\
+> +		BPF_LSM_ENABLED		\
+> +		LANDLOCK_ENABLED)
 
-Regards,
+Since IS_ENABLED(CONFIG_FOO) is evaluated to either 1 or 0, why can't you directly
+do like IS_ENABLED(CONFIG_FOO) + IS_ENABLED(CONFIG_BAR) + IS_ENABLED(CONFIG_BUZ) ?
+If you can't do direct "+", can't you still do indirect "+" like something below?
 
-Mickaël Salaün (7):
-  lsm: Add audit_log_lsm_data() helper
-  landlock: Factor out check_access_path()
-  landlock: Log ruleset creation and release
-  landlock: Log domain creation and enforcement
-  landlock: Log file-related requests
-  landlock: Log mount-related requests
-  landlock: Log ptrace requests
-
- include/linux/lsm_audit.h    |   2 +
- include/uapi/linux/audit.h   |   1 +
- security/landlock/Makefile   |   2 +
- security/landlock/audit.c    | 283 +++++++++++++++++++++++++++++++++++
- security/landlock/audit.h    |  88 +++++++++++
- security/landlock/fs.c       | 169 ++++++++++++++++-----
- security/landlock/ptrace.c   |  47 +++++-
- security/landlock/ruleset.c  |   6 +
- security/landlock/ruleset.h  |  10 ++
- security/landlock/syscalls.c |  12 ++
- security/lsm_audit.c         |  26 ++--
- 11 files changed, 595 insertions(+), 51 deletions(-)
- create mode 100644 security/landlock/audit.c
- create mode 100644 security/landlock/audit.h
-
-
-base-commit: ce9ecca0238b140b88f43859b211c9fdfd8e5b70
--- 
-2.42.0
+#if IS_ENABLED(CONFIG_FOO)
+#define FOO_ENABLED 1
+#else
+#define FOO_ENABLED 0
+#endif
 
