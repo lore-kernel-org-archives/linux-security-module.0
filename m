@@ -2,116 +2,279 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 006ABE7D0AB
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Sep 2023 17:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 200D5E7D0A2
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Sep 2023 17:24:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230138AbjIURLA (ORCPT
+        id S229597AbjIURYm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Sep 2023 13:11:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59020 "EHLO
+        Thu, 21 Sep 2023 13:24:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231366AbjIURKX (ORCPT
+        with ESMTP id S229595AbjIURYX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Sep 2023 13:10:23 -0400
-Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A5AF93C8
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Sep 2023 10:05:45 -0700 (PDT)
-Received: by mail-pl1-x649.google.com with SMTP id d9443c01a7336-1c43cd8b6cbso10004575ad.0
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Sep 2023 10:05:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695315945; x=1695920745; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VFujV55InQpfIcmwhWIdcFo9LOSK6bP3ULKilR3pEPA=;
-        b=gRy2oWe5kbczxsDfBAGWqWCwRfa8u5S5khYqBsdItMdbjTMG6GouRWGgkuTQ4abr63
-         9xT4kzmjSvVpuTHFqWd8z0iWk/QRG7IY5/Bb6FwyMZeq+BfmAJP7zD4b8bOOFUeqUyWz
-         d/L92J0F8YvOlv7RGv+S+HyP/kqpPo55vDyvrENu80MQXvrJ2s8K3ZlyZv91GG95zkVl
-         RjOPaoFbQ0nhjhBE6Gz4eDsmKXK+k++QCTj7Ji/2IhFjzhglHAlMyU3lkRqxBdyBRcXP
-         oUkj/BvJxgVYEwKlnaiaejjIXnZOjQlhVBLF6XREIrpHRiUZ4Il21yqnee2dFSG+c9pm
-         PF5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695315945; x=1695920745;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VFujV55InQpfIcmwhWIdcFo9LOSK6bP3ULKilR3pEPA=;
-        b=G3IuqkCAzv7Wt1ZCfghw3m0AB+nksD/AmqhuFoSpSusa7hBFce2yAReWKmY2+LILj2
-         mUsxE0OHgAnPIPt6lhagRIBoHO+7Amt1REcejxmgKRSL9pkiZlEnecXbePBBVK3XQFga
-         7/fDXln38lTtE+7+QEPHiX3kM2XxjealUqKbbylSuflB/RQ9zvdUMIVy26rqm+rEVIWl
-         eFjqD8LizBjNBjHxRf7Elr/pjFsq2yqhUhSkLrcVeu9rSBSmmimXhlA/yRiN8/KmosW2
-         Q0K9TtiYoLlExhPWp4PNAB5aZhPu3R3sp4TzRgK74yTUr3QHM+aP/eFP7VctUQPj5ub1
-         GYFg==
-X-Gm-Message-State: AOJu0YymWYIrPIW2P6ZWZQLF9AuwTL/YBs2wxO3H/ea207PXrTL2S9Ow
-        yrt3GpzqK0nlR1z9l+OQu83GswKmofc=
-X-Google-Smtp-Source: AGHT+IGn6bxt0aytyfRrQvdNGXaSXeT8sIcIptWMB2qfEas65NY2TcrLdWuDyigFBOjNZ28AUG3erUeC33s=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:ce86:b0:1c3:c127:558 with SMTP id
- f6-20020a170902ce8600b001c3c1270558mr71199plg.0.1695306271120; Thu, 21 Sep
- 2023 07:24:31 -0700 (PDT)
-Date:   Thu, 21 Sep 2023 07:24:29 -0700
-In-Reply-To: <ZQus1v3AvEZjuat9@yilunxu-OptiPlex-7050>
-Mime-Version: 1.0
-References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-3-seanjc@google.com>
- <ZQqMBEL61p739dpF@yilunxu-OptiPlex-7050> <ZQr5uXhV6Cnx4DYT@google.com> <ZQus1v3AvEZjuat9@yilunxu-OptiPlex-7050>
-Message-ID: <ZQxSHXIGdWXy+zDU@google.com>
-Subject: Re: [RFC PATCH v12 02/33] KVM: Use gfn instead of hva for mmu_notifier_retry
-From:   Sean Christopherson <seanjc@google.com>
-To:     Xu Yilun <yilun.xu@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Thu, 21 Sep 2023 13:24:23 -0400
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D94B10906
+        for <linux-security-module@vger.kernel.org>; Thu, 21 Sep 2023 10:07:30 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RrlYD10SYzMpp2X;
+        Thu, 21 Sep 2023 06:17:04 +0000 (UTC)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RrlYC4BjrzMppKR;
+        Thu, 21 Sep 2023 08:17:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1695277024;
+        bh=aXxAzAZrVv/AQrM1hbU5eAstfAxS1hqSXWRkrvqIPdw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NIkVnGqhXST4ff8AXuEDBtYbO577M5gPCcl8ioUJLhFVZ/9MT+b5xSJWdc/Ejx95W
+         34dNrLXehRDfDf4p/H+ylzPrcZHOg03FmLJcrXkmVut5vV/xcwyn7vnt78ptkUEXtC
+         2pLnKDwNZSOXw6R9CHZ5lP7yTTxoAm0ndKQvkLGI=
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
         Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Anish Moorthy <amoorthy@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Isaku Yamahata <isaku.yamahata@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Ben Scarlato <akhna@google.com>,
+        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+        Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@google.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Shervin Oloumi <enlightened@google.com>, audit@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [RFC PATCH v1 6/7] landlock: Log mount-related requests
+Date:   Thu, 21 Sep 2023 08:16:40 +0200
+Message-ID: <20230921061641.273654-7-mic@digikod.net>
+In-Reply-To: <20230921061641.273654-1-mic@digikod.net>
+References: <20230921061641.273654-1-mic@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 21, 2023, Xu Yilun wrote:
-> When the invalidation acrosses multiple slots, I'm not sure if the
-> contiguous HVA range must correspond to contiguous GFN range. If not,
-> are we producing a larger range than required?
+Add audit support for mount, move_mount, umount, remount, and pivot_root
+requests.
 
-Multiple invalidations are all but guaranteed to yield a range that covers addresses
-that aren't actually being invalidated.  This is true today.
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ security/landlock/audit.c | 26 ++++++++++++-
+ security/landlock/audit.h | 13 ++++++-
+ security/landlock/fs.c    | 82 ++++++++++++++++++++++++++++++++++-----
+ 3 files changed, 109 insertions(+), 12 deletions(-)
 
-> And when the invalidation acrosses multiple address space, I'm almost
-> sure it is wrong to merge GFN ranges from different address spaces. 
+diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+index 148fc0fafef4..89bd701d124f 100644
+--- a/security/landlock/audit.c
++++ b/security/landlock/audit.c
+@@ -18,6 +18,11 @@ static const char *op_to_string(enum landlock_operation operation)
+ {
+ 	const char *const desc[] = {
+ 		[0] = "",
++		[LANDLOCK_OP_MOUNT] = "mount",
++		[LANDLOCK_OP_MOVE_MOUNT] = "move_mount",
++		[LANDLOCK_OP_UMOUNT] = "umount",
++		[LANDLOCK_OP_REMOUNT] = "remount",
++		[LANDLOCK_OP_PIVOT_ROOT] = "pivot_root",
+ 		[LANDLOCK_OP_MKDIR] = "mkdir",
+ 		[LANDLOCK_OP_MKNOD] = "mknod",
+ 		[LANDLOCK_OP_SYMLINK] = "symlink",
+@@ -33,6 +38,20 @@ static const char *op_to_string(enum landlock_operation operation)
+ 	return desc[operation];
+ }
+ 
++static const char *perm_to_string(enum landlock_permission permission)
++{
++	const char *const desc[] = {
++		[0] = "",
++		[LANDLOCK_PERM_PTRACE] = "ptrace",
++		[LANDLOCK_PERM_FS_LAYOUT] = "fs_layout",
++	};
++
++	if (WARN_ON_ONCE(permission < 0 || permission > ARRAY_SIZE(desc)))
++		return "unknown";
++
++	return desc[permission];
++}
++
+ #define BIT_INDEX(bit) HWEIGHT(bit - 1)
+ 
+ static void log_accesses(struct audit_buffer *const ab,
+@@ -177,8 +196,11 @@ update_request(struct landlock_request *const request,
+ 	WARN_ON_ONCE(request->youngest_domain);
+ 	WARN_ON_ONCE(request->missing_access);
+ 
+-	if (WARN_ON_ONCE(!access_request))
++	if (!access_request) {
++		/* No missing accesses. */
++		request->youngest_domain = node->id;
+ 		return;
++	}
+ 
+ 	if (WARN_ON_ONCE(!layer_masks))
+ 		return;
+@@ -240,6 +262,8 @@ log_request(const int error, struct landlock_request *const request,
+ 			 request->youngest_domain,
+ 			 op_to_string(request->operation), -error);
+ 	log_accesses(ab, request->missing_access);
++	audit_log_format(ab, " missing-permission=%s",
++			 perm_to_string(request->missing_permission));
+ 	audit_log_lsm_data(ab, &request->audit);
+ 	audit_log_end(ab);
+ }
+diff --git a/security/landlock/audit.h b/security/landlock/audit.h
+index 8edc68b98fca..e559fb6a89dd 100644
+--- a/security/landlock/audit.h
++++ b/security/landlock/audit.h
+@@ -14,7 +14,12 @@
+ #include "ruleset.h"
+ 
+ enum landlock_operation {
+-	LANDLOCK_OP_MKDIR = 1,
++	LANDLOCK_OP_MOUNT = 1,
++	LANDLOCK_OP_MOVE_MOUNT,
++	LANDLOCK_OP_UMOUNT,
++	LANDLOCK_OP_REMOUNT,
++	LANDLOCK_OP_PIVOT_ROOT,
++	LANDLOCK_OP_MKDIR,
+ 	LANDLOCK_OP_MKNOD,
+ 	LANDLOCK_OP_SYMLINK,
+ 	LANDLOCK_OP_UNLINK,
+@@ -23,8 +28,14 @@ enum landlock_operation {
+ 	LANDLOCK_OP_OPEN,
+ };
+ 
++enum landlock_permission {
++	LANDLOCK_PERM_PTRACE = 1,
++	LANDLOCK_PERM_FS_LAYOUT,
++};
++
+ struct landlock_request {
+ 	const enum landlock_operation operation;
++	const enum landlock_permission missing_permission;
+ 	access_mask_t missing_access;
+ 	u64 youngest_domain;
+ 	struct common_audit_data audit;
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 104dfb2abc32..8600530e304c 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -1050,17 +1050,41 @@ static int hook_sb_mount(const char *const dev_name,
+ 			 const struct path *const path, const char *const type,
+ 			 const unsigned long flags, void *const data)
+ {
+-	if (!landlock_get_current_domain())
++	const struct landlock_ruleset *const dom =
++		landlock_get_current_domain();
++	struct landlock_request request = {
++		.operation = LANDLOCK_OP_MOUNT,
++		.missing_permission = LANDLOCK_PERM_FS_LAYOUT,
++		.audit = {
++			.type = LSM_AUDIT_DATA_PATH,
++			.u.path = *path,
++		},
++	};
++
++	if (!dom)
+ 		return 0;
+-	return -EPERM;
++
++	return landlock_log_request(-EPERM, &request, dom, 0, NULL);
+ }
+ 
+ static int hook_move_mount(const struct path *const from_path,
+ 			   const struct path *const to_path)
+ {
+-	if (!landlock_get_current_domain())
++	const struct landlock_ruleset *const dom =
++		landlock_get_current_domain();
++	struct landlock_request request = {
++		.operation = LANDLOCK_OP_MOVE_MOUNT,
++		.missing_permission = LANDLOCK_PERM_FS_LAYOUT,
++		.audit = {
++			.type = LSM_AUDIT_DATA_PATH,
++			.u.path = *to_path,
++		},
++	};
++
++	if (!dom)
+ 		return 0;
+-	return -EPERM;
++
++	return landlock_log_request(-EPERM, &request, dom, 0, NULL);
+ }
+ 
+ /*
+@@ -1069,16 +1093,42 @@ static int hook_move_mount(const struct path *const from_path,
+  */
+ static int hook_sb_umount(struct vfsmount *const mnt, const int flags)
+ {
+-	if (!landlock_get_current_domain())
++	const struct landlock_ruleset *const dom =
++		landlock_get_current_domain();
++	struct landlock_request request = {
++		.operation = LANDLOCK_OP_UMOUNT,
++		.missing_permission = LANDLOCK_PERM_FS_LAYOUT,
++		.audit = {
++			// TODO: try to print the mounted path
++			// cf. dentry_path()
++			.type = LSM_AUDIT_DATA_DENTRY,
++			.u.dentry = mnt->mnt_root,
++		},
++	};
++
++	if (!dom)
+ 		return 0;
+-	return -EPERM;
++
++	return landlock_log_request(-EPERM, &request, dom, 0, NULL);
+ }
+ 
+ static int hook_sb_remount(struct super_block *const sb, void *const mnt_opts)
+ {
+-	if (!landlock_get_current_domain())
++	const struct landlock_ruleset *const dom =
++		landlock_get_current_domain();
++	struct landlock_request request = {
++		.operation = LANDLOCK_OP_REMOUNT,
++		.missing_permission = LANDLOCK_PERM_FS_LAYOUT,
++		.audit = {
++			.type = LSM_AUDIT_DATA_DENTRY,
++			.u.dentry = sb->s_root,
++		},
++	};
++
++	if (!dom)
+ 		return 0;
+-	return -EPERM;
++
++	return landlock_log_request(-EPERM, &request, dom, 0, NULL);
+ }
+ 
+ /*
+@@ -1092,9 +1142,21 @@ static int hook_sb_remount(struct super_block *const sb, void *const mnt_opts)
+ static int hook_sb_pivotroot(const struct path *const old_path,
+ 			     const struct path *const new_path)
+ {
+-	if (!landlock_get_current_domain())
++	const struct landlock_ruleset *const dom =
++		landlock_get_current_domain();
++	struct landlock_request request = {
++		.operation = LANDLOCK_OP_PIVOT_ROOT,
++		.missing_permission = LANDLOCK_PERM_FS_LAYOUT,
++		.audit = {
++			.type = LSM_AUDIT_DATA_PATH,
++			.u.path = *new_path,
++		},
++	};
++
++	if (!dom)
+ 		return 0;
+-	return -EPERM;
++
++	return landlock_log_request(-EPERM, &request, dom, 0, NULL);
+ }
+ 
+ /* Path hooks */
+-- 
+2.42.0
 
-It's not "wrong" in the sense that false positives do not cause functional
-problems, at worst a false positive can unnecessarily stall a vCPU until the
-unrelated invalidations complete.
-
-Multiple concurrent invalidations are not common, and if they do happen, they are
-likely related and will have spacial locality in both host virtual address space
-and guest physical address space.  Given that, we chose for the simple (and fast!)
-approach of maintaining a single all-encompassing range.
