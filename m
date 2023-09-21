@@ -2,104 +2,160 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E99E7D0A6
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Sep 2023 20:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8695E7D0A2
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Sep 2023 20:33:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230391AbjIUUOD (ORCPT
+        id S231907AbjIUUdZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Sep 2023 16:14:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52140 "EHLO
+        Thu, 21 Sep 2023 16:33:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230269AbjIUUNo (ORCPT
+        with ESMTP id S231953AbjIUUdG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Sep 2023 16:13:44 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E7F392819
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Sep 2023 11:54:36 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d818fb959f4so1845522276.1
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Sep 2023 11:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695322461; x=1695927261; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6b+r/qO6jTNd+eQdEZK212ydTtWtBK6Hb2cWKKJgo7o=;
-        b=Rj6H/jq0RXpY6lFrI48jysV0iZ9hkRY63vhJoo1NBULrphM3/NtWmTeUAgPbaVLWnL
-         blwB1Gf5itzJyTfd4/8graG0p8h2Mvb4HQNRWMFgXF355oqG+Z2Z4cAyfX/3a2e64Oh+
-         S9Tayz78LEE56OXeOWL0lH2KtavjvhJr6+oNUqarw1rvSUdAr/XaHgx/Zt/TlIysK/sc
-         tvFi4R/oUrfVnPM+c0eOzGTVoZZPLLBMyRjgzgtQk8159LPH8yCZnwc6x4Msd5h5cNkr
-         91O3eSVTt8y37hSV2VYuau4Rne3ppvinyRoVOlnbn8p5cjCCq+sxqted5uv3Bpk1zMZ0
-         0mjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695322461; x=1695927261;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6b+r/qO6jTNd+eQdEZK212ydTtWtBK6Hb2cWKKJgo7o=;
-        b=d7wkWHCqHFb6/3F1PQqMIqhRSZ6V5MNdLfnbh8TVYrOC0JgXvAVuobswrtC6vB/95S
-         JE7+Vlvaoes+YWFBTHL67nnxZVI++Ywwi0bHk3NG+lv9MtcSsPk1MLEuWRxBtU8gmVs9
-         sjApxDYkLnEe7UIOnRCZYtb+jLgU/0iGK92OTiLufnybSyc28KKjFsyKrLq1+4cKt0DM
-         qqzw6YDAtBC8ZKSazGK0Ckm0pI+97KmZD4OxaPLIz7jl9BLIz60QkyKx3Uss8Tdwux9H
-         VrlFKIWGYzyUJbaGADKzqVP3x7x65smmeJWjuy+v5DV4BuCfgOLLJjmn9EMZUvR9oJ2E
-         nS+g==
-X-Gm-Message-State: AOJu0YxQhcNCGss9/71cZbyTizXHq33d+MnT5qndzpbaE968aOXwpOnf
-        I9UXzEE0L0vw0DZqR/nrKgOFfvo=
-X-Google-Smtp-Source: AGHT+IFLA7pELMkRmPVUcV9dQSyP5wShtjA3I4pLFmR0wr3ICAIAxSCbstWOoMP3LDJ/cCr9C0wtfNw=
-X-Received: from hmarynka.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:925])
- (user=ovt job=sendgmr) by 2002:a25:408f:0:b0:d7f:8774:dfd4 with SMTP id
- n137-20020a25408f000000b00d7f8774dfd4mr62822yba.12.1695278727640; Wed, 20 Sep
- 2023 23:45:27 -0700 (PDT)
-Date:   Thu, 21 Sep 2023 06:45:05 +0000
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.42.0.459.ge4e396fd5e-goog
-Message-ID: <20230921064506.3420402-1-ovt@google.com>
-Subject: [PATCH] ima: Finish deprecation of IMA_TRUSTED_KEYRING Kconfig
-From:   Oleksandr Tymoshenko <ovt@google.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Cc:     ovt@google.com, rnv@google.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+        Thu, 21 Sep 2023 16:33:06 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37DF586111
+        for <linux-security-module@vger.kernel.org>; Thu, 21 Sep 2023 10:37:55 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AA39C4E757
+        for <linux-security-module@vger.kernel.org>; Thu, 21 Sep 2023 14:14:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695305649;
+        bh=KlkOjcXb0cHh5t1CjCCbqUvSBR8pKSTpPS0Loql+GfA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=u0sg6t4I4yW/mXkFHpdpXqosGHgg7C0+IV+BY+W6mVIY8P+yKbZ2fD9aqOmhIlBHc
+         mOgQ6MikpwoaQnR0U3WyVVpu+ayIB2aCEeg690Czy05Qrpq0sUmLYwxDcGSCvLvs1h
+         z0aPd/1Mci+VmKilxFun3t84JYofL4DzOAEeyVda1sEZ3O5oJ3DZk00+jyQv0cWqJb
+         x7NoMYCmiuXH6kVu8omdmXcRvLbjfvz6J+azzQkesL/SBgiUqpFDpEG1WSFZLXGhk6
+         ewCYu0qX2q8xOYTJKo0INGnSozOPcbbpPYKHobf6mE3CqdxSOXcPy0weive1ApLaQc
+         pgx+OYDD6PRHw==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5043120ffbcso877607e87.2
+        for <linux-security-module@vger.kernel.org>; Thu, 21 Sep 2023 07:14:09 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzPEnrgIK9Kcq3K9cIKcHIkg2NqbZYOyfamfJR4drpYXoLQyurc
+        DGF3xU0TLj+356KdbbdcmY7ZZPzVfoLeQbWrTcbISw==
+X-Google-Smtp-Source: AGHT+IGasP641htQm4SmX0/XiYvGFP4Ximw7EqIZmOnsOZKkzf1zkCc5ySy88IqgOGqKy92hPytG1LuADlQ401mvN2s=
+X-Received: by 2002:a19:3813:0:b0:4ff:7046:984a with SMTP id
+ f19-20020a193813000000b004ff7046984amr4432863lfa.7.1695305647578; Thu, 21 Sep
+ 2023 07:14:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230918212459.1937798-1-kpsingh@kernel.org> <20230918212459.1937798-3-kpsingh@kernel.org>
+ <cb67f607-3a9d-34d2-0877-a3ff957da79e@I-love.SAKURA.ne.jp>
+In-Reply-To: <cb67f607-3a9d-34d2-0877-a3ff957da79e@I-love.SAKURA.ne.jp>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Thu, 21 Sep 2023 16:13:56 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ7Dn=W1Kd5M_bXOzoomzdjMXBoEZZo5k=cgQ4R6f5G+vw@mail.gmail.com>
+Message-ID: <CACYkzJ7Dn=W1Kd5M_bXOzoomzdjMXBoEZZo5k=cgQ4R6f5G+vw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] security: Count the LSMs enabled at compile time
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
+        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
+        Kui-Feng Lee <sinquersw@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The removal of IMA_TRUSTED_KEYRING made IMA_LOAD_X509
-and IMA_BLACKLIST_KEYRING unavailable because the latter
-two depend on the former. Since IMA_TRUSTED_KEYRING was
-deprecated in favor of INTEGRITY_TRUSTED_KEYRING use it
-as a dependency for the two Kconfigs affected by the
-deprecation.
+On Thu, Sep 21, 2023 at 3:21=E2=80=AFPM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2023/09/19 6:24, KP Singh wrote:
+> > These macros are a clever trick to determine a count of the number of
+> > LSMs that are enabled in the config to ascertain the maximum number of
+> > static calls that need to be configured per LSM hook.
+>
+> As a LKM-based LSM user, indirect function calls using a linked list have
+> an advantage which this series kills. There always is a situation where a
+> LSM cannot be built into vmlinux (and hence has to be loaded as a LKM-bas=
+ed
+> LSM) due to distributor's support policy. Therefore, honestly speaking,
+> I don't want LSM infrastructure to define the maximum number of "slots" o=
+r
+> "static calls"...
+>
+> >
+> > Without this one would need to generate static calls for (number of
+> > possible LSMs * number of LSM hooks) which ends up being quite wasteful
+> > especially when some LSMs are not compiled into the kernel.
+>
+> I can't interpret "number of possible LSMs * number of LSM hooks" part.
+> Is this tokenized as "number of possible LSMs" (an integer) * (multipled =
+by)
+> "number of LSM hooks" (an integer) ? But the next patch includes
+>
 
-Fixes: 5087fd9e80e5 ("ima: Remove deprecated IMA_TRUSTED_KEYRING Kconfig")
-Signed-off-by: Oleksandr Tymoshenko <ovt@google.com>
----
- security/integrity/ima/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The tokenization is in the name of the static call slots. you cannot
+have __SCT__lsm_static_call_bprm_check_security_1+1+1 it's not a valid
+name. You may want to build security/security.i to see what's going on
+(and actually try disabling some of the DEFINE_STATIC_CALL macros to
+reduce further expansion of macros.
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index ecddc807c536..4e559bd1fd41 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -269,7 +269,7 @@ config IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
- config IMA_BLACKLIST_KEYRING
- 	bool "Create IMA machine owner blacklist keyrings (EXPERIMENTAL)"
- 	depends on SYSTEM_TRUSTED_KEYRING
--	depends on IMA_TRUSTED_KEYRING
-+	depends on INTEGRITY_TRUSTED_KEYRING
- 	default n
- 	help
- 	   This option creates an IMA blacklist keyring, which contains all
-@@ -279,7 +279,7 @@ config IMA_BLACKLIST_KEYRING
- 
- config IMA_LOAD_X509
- 	bool "Load X509 certificate onto the '.ima' trusted keyring"
--	depends on IMA_TRUSTED_KEYRING
-+	depends on INTEGRITY_TRUSTED_KEYRING
- 	default n
- 	help
- 	   File signature verification is based on the public keys
--- 
-2.42.0.459.ge4e396fd5e-goog
+>   struct lsm_static_calls_table {
+>   #define LSM_HOOK(RET, DEFAULT, NAME, ...) \
+>                 struct lsm_static_call NAME[MAX_LSM_COUNT];
 
+Each LSM that is compiled in the kernel can theoretically register a
+callback, so we add MAX_LSM_COUNT slots. Now the word "possible"
+because one may compile the LSM but not choose to enable it with the
+lsm=3D parameter.
+
+
+>         #include <linux/lsm_hook_defs.h>
+>         #undef LSM_HOOK
+>   } __randomize_layout;
+>
+> which seems to me that lsm_static_calls_table will get "number of possibl=
+e
+> LSMs" static calls for each LSM hook defined in linux/lsm_hook_defs.h .
+> How did this patch help reducing static calls? What does "possible LSMs" =
+mean?
+
+If the kernel is compiled only with CONFIG_BPF_LSM, CONFIG_SELINUX and
+CONFIG_SECURITY (for capabilities) and not any other LSM, then one
+does not need to generate 12 slots for all each LSM hook when there
+are only 3 LSMs compiled in (capabilities being implicitly behind
+CONFIG_SECURITY).
+
+> Should "number of possible LSMs" be replaced with "number of built-in LSM=
+s" ?
+
+Sure. I think "compiled LSMs" is a better word here.
+
+
+>
+> > Suggested-by: Andrii Nakryiko <andrii@kernel.org
+>
+> Trailing ">" is missing.
+
+Fixed.
+
+>
+> > +/*
+> > + * Macros to count the number of LSMs enabled in the kernel at compile=
+ time.
+> > + */
+> > +#define MAX_LSM_COUNT                        \
+> > +     ___COUNT_COMMAS(                \
+> > +             CAPABILITIES_ENABLED    \
+> > +             SELINUX_ENABLED         \
+> > +             SMACK_ENABLED           \
+> > +             APPARMOR_ENABLED        \
+> > +             TOMOYO_ENABLED          \
+> > +             YAMA_ENABLED            \
+> > +             LOADPIN_ENABLED         \
+> > +             LOCKDOWN_ENABLED        \
+> > +             BPF_LSM_ENABLED         \
+> > +             LANDLOCK_ENABLED)
+>
+> Since IS_ENABLED(CONFIG_FOO) is evaluated to either 1 or 0, why can't you=
+ directly
+> do like IS_ENABLED(CONFIG_FOO) + IS_ENABLED(CONFIG_BAR) + IS_ENABLED(CONF=
+IG_BUZ) ?
+> If you can't do direct "+", can't you still do indirect "+" like somethin=
+g below?
+>
+> #if IS_ENABLED(CONFIG_FOO)
+> #define FOO_ENABLED 1
+> #else
+> #define FOO_ENABLED 0
+> #endif
+>
