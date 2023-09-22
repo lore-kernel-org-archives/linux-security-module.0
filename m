@@ -2,173 +2,110 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6733CD4F3B
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Sep 2023 09:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8728CCD4F5B
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Sep 2023 11:25:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231180AbjIVJ1a (ORCPT
+        id S233669AbjIVLZk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Sep 2023 05:27:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56590 "EHLO
+        Fri, 22 Sep 2023 07:25:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229559AbjIVJ13 (ORCPT
+        with ESMTP id S233542AbjIVLZk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Sep 2023 05:27:29 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79864198
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Sep 2023 02:27:23 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-d8164e661abso2263716276.1
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Sep 2023 02:27:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1695374842; x=1695979642; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dUsw/sfVCl6MTODztp5pfdtfeJTvlbxrkbvvWFQDC0g=;
-        b=WnSaDB/mkLML8d+v+QLa9MoiH11sNAMFhzul6W2W+ETwqSH2/W0cd58pmNmVnkfPVl
-         3+ejqRecJLKEhi2BmLpgzuXAqZXgRB3Dr+BFDtX6FIet4O4NLHwSZCPPp1DoQqvT3oLF
-         ZpPbDEb6UhlTkLg70huj6cefDtwstrwpHsH6Do0J5y1iz/khxH0czoF/sOlVZodmqjM6
-         d3EtfkQKEwNy6ICSRL0OJM1bbcWI6y5tWnNG0HHGdB7uCa5qaagVHy5LFVUT4kDQ2uJ6
-         K/Fg18ZQn0iYaVeyCottpKKFnI5GbUxjrTrdiSv8Tp343ZTbrnxBmpTvtlgAz8NxP0AJ
-         Z7pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695374842; x=1695979642;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dUsw/sfVCl6MTODztp5pfdtfeJTvlbxrkbvvWFQDC0g=;
-        b=DRWZUz2gGXBXSexx6UcfrNYdONu7cDmNhAyO42JC8zcUVCcSodmiofficPjePUSvrq
-         vTmA1NJBHx1Dz7J1NTunjxedWezz50UOzdexKSpcaf16JGvXxnvsjBdUhevYETMBLje1
-         19PKnmhoewrkJM3pj1E5rDENJ0mdYIlCgRsjCxKrKqJeRyY6Io4j/38wPMhvd/Grd/5H
-         vpI8kFKUhIOZTSwGH288dY14oeeoQlsAEw0YJs1iVKtuuoRl0cpO0v54Y5ctYxBXtHWL
-         pbSssLMz6ayomVTnH49xy9kVIOOKfI/TkyRYI9Irdu0LtxwHXSYtCoTuVCusgUM1Z7Ow
-         R85A==
-X-Gm-Message-State: AOJu0Yw5ios6IGu4nkcUBok798xBvPj5NIvHKeMr/BV94wDOTXE0nX20
-        RiF/S/fHbgqfpEmz9LBWI0WxUGpnjisz2L3c3/ko
-X-Google-Smtp-Source: AGHT+IHWcifQ3cnzHufT41+GtP5iVL/vJLwKoXU7wdpw+prh7kdb7xnGr3HnQxfK8sANXszV/K7RCeUQf85zVL0jqKk=
-X-Received: by 2002:a25:ad50:0:b0:d11:45d3:b25d with SMTP id
- l16-20020a25ad50000000b00d1145d3b25dmr7910229ybe.46.1695374842573; Fri, 22
- Sep 2023 02:27:22 -0700 (PDT)
+        Fri, 22 Sep 2023 07:25:40 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2112191
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Sep 2023 04:25:32 -0700 (PDT)
+Received: from fsav117.sakura.ne.jp (fsav117.sakura.ne.jp [27.133.134.244])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 38MBPQGE017411;
+        Fri, 22 Sep 2023 20:25:26 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav117.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav117.sakura.ne.jp);
+ Fri, 22 Sep 2023 20:25:26 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav117.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 38MBPQGe017408
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 22 Sep 2023 20:25:26 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <dde20522-af01-c198-5872-b19ef378f286@I-love.SAKURA.ne.jp>
+Date:   Fri, 22 Sep 2023 20:25:26 +0900
 MIME-Version: 1.0
-References: <20230912212906.3975866-3-andrii@kernel.org> <3808036a0b32a17a7fd9e7d671b5458d.paul@paul-moore.com>
- <CAEf4BzYiKhG3ZL-GGQ4fHzSu6RKx2fh2JHwcL9_XKzQBvx3Bjg@mail.gmail.com>
- <CAHC9VhSOCAb6JQJn96xgwNNMGM0mKXf64ygkj4=Yv0FA8AYR=Q@mail.gmail.com>
- <CAEf4BzZC+9GbCsG56B2Q=woq+RHQS8oMTGJSNiMFKZpOKHhKpg@mail.gmail.com> <CAHC9VhTiqhQcfDr-7mThY1kH-Fwa7NUUU8ZWZvLFVudgtO8RAA@mail.gmail.com>
-In-Reply-To: <CAHC9VhTiqhQcfDr-7mThY1kH-Fwa7NUUU8ZWZvLFVudgtO8RAA@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 22 Sep 2023 05:27:11 -0400
-Message-ID: <CAHC9VhSLtPYBVSeQGYNJ7Kqq7_M4Cgpqn1LXFiEUCx6G2YMRrg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/12] bpf: introduce BPF token object
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
-        sargun@sargun.me, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 2/5] security: Count the LSMs enabled at compile time
+Content-Language: en-US
+To:     KP Singh <kpsingh@kernel.org>
+Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
+        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
+        Kui-Feng Lee <sinquersw@gmail.com>
+References: <20230918212459.1937798-1-kpsingh@kernel.org>
+ <20230918212459.1937798-3-kpsingh@kernel.org>
+ <cb67f607-3a9d-34d2-0877-a3ff957da79e@I-love.SAKURA.ne.jp>
+ <CACYkzJ5GFsgc3vzJXH34hgoTc+CEf+7rcktj0QGeQ5e8LobRcw@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CACYkzJ5GFsgc3vzJXH34hgoTc+CEf+7rcktj0QGeQ5e8LobRcw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 21, 2023 at 6:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
+On 2023/09/21 22:58, KP Singh wrote:
+> On Thu, Sep 21, 2023 at 3:21 PM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>
+>> On 2023/09/19 6:24, KP Singh wrote:
+>>> These macros are a clever trick to determine a count of the number of
+>>> LSMs that are enabled in the config to ascertain the maximum number of
+>>> static calls that need to be configured per LSM hook.
+>>
+>> As a LKM-based LSM user, indirect function calls using a linked list have
+>> an advantage which this series kills. There always is a situation where a
+> 
+> 
+>> LSM cannot be built into vmlinux (and hence has to be loaded as a LKM-based
+>> LSM) due to distributor's support policy. Therefore, honestly speaking,
+>> I don't want LSM infrastructure to define the maximum number of "slots" or
+>> "static calls"...
+>>
+> 
+> Yeah, LSMs are not meant to be used from a kernel module. The data
+> structure is actually __ro_after_init. So, I am not even sure how you
+> are using it in kernel modules (unless you are patching this out).
+> And, if you are really patching stuff to get your out of tree LSMs to
+> work, then you might as well add your "custom" LSM config here or just
+> override this count.
 
-...
+I'm using LKM-based LSM with any version between 2.6.0 and 6.6-rc2, without patching
+__ro_after_init out. We can load LKM-based LSMs, without patching the original kernel.
+And it seems to me that several proprietary security products for Linux are using
+this trick, for LSMs for such products cannot be built into distributor's kernels...
 
-> Typically the LSM hook call sites end up being in the same general
-> area as the capability checks, usually just after (we want the normal
-> Linux discretionary access controls to always come first for the sake
-> of consistency).  Sticking with that approach it looks like we would
-> end up with a LSM call in bpf_prog_load() right after bpf_capable()
-> call, the only gotcha with that is the bpf_prog struct isn't populated
-> yet, but how important is that when we have the bpf_attr info (honest
-> question, I don't know the answer to this)?
->
-> Ignoring the bpf_prog struct, do you think something like this would
-> work for a hook call site (please forgive the pseudo code)?
->
->   int bpf_prog_load(...)
->   {
->          ...
->      bpf_cap =3D bpf_token_capable(token, CAP_BPF);
->      err =3D security_bpf_token(BPF_PROG_LOAD, attr, uattr_size, token);
->      if (err)
->        return err;
->     ...
->   }
->
-> Assuming this type of hook configuration, and an empty/passthrough
-> security_bpf() hook, a LSM would first see the various
-> capable()/ns_capable() checks present in bpf_token_capable() followed
-> by a BPF op check, complete with token, in the security_bpf_token()
-> hook.  Further assuming that we convert the bpf_token_new_fd() to use
-> anon_inode_getfd_secure() instead of anon_inode_getfd() and the
-> security_bpf_token() could still access the token fd via the bpf_attr
-> struct I think we could do something like this for the SELinux case
-> (more rough pseudo code):
->
->   int selinux_bpf_token(...)
->   {
->     ssid =3D current_sid();
->     if (token) {
->       /* this could be simplified with better integration
->        * in bpf_token_get_from_fd() */
->       fd =3D fdget(attr->prog_token_fd);
->       inode =3D file_inode(fd.file);
->       isec =3D selinux_inode(inode);
->       tsid =3D isec->sid;
->       fdput(fd);
->     } else
->       tsid =3D ssid;
->     switch(cmd) {
->     ...
->     case BPF_PROG_LOAD:
->       rc =3D avc_has_perm(ssid, tsid, SECCLAS_BPF, BPF__PROG_LOAD);
->       break;
->     default:
->       rc =3D 0;
->     }
->     return rc;
->   }
->
-> This would preserve the current behaviour when a token was not present:
->
->  allow @current @current : bpf { prog_load }
->
-> ... but this would change to the following if a token was present:
->
->  allow @current @DELEGATED_ANON_INODE : bpf { prog_load }
->
-> That seems reasonable to me, but I've CC'd the SELinux list on this so
-> others can sanity check the above :)
+----------
+[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-6.6.0-rc2+ root=/dev/sda1 ro vconsole.keymap=jp106 vconsole.font=latarcyrheb-sun16 security=none sysrq_always_enabled console=ttyS0,115200n8 console=tty0 LANG=en_US.UTF-8 init=/sbin/akari-init
+(...snipped...)
+[  147.238458] AKARI: 1.0.48   2023/05/27
+[  147.244867] Access Keeping And Regulating Instrument registered.
+[  147.261232] Calling /sbin/ccs-init to load policy. Please wait.
+239 domains. 11807 ACL entries.
+1938 KB used by policy.
+[  147.768694] CCSecurity: 1.8.9   2021/04/01
+[  147.768740] Mandatory Access Control activated.
+----------
 
-I thought it might be helpful to add a bit more background on my
-thinking for the SELinux folks, especially since the object label used
-in the example above is a bit unusual.  As a reminder, the object
-label in the delegated case is not the current domain as it is now for
-standard BPF program loads, it is the label of the BPF delegation
-token (anonymous inode) that is created by the process/orchestrator
-that manages the namespace and explicitly enabled the BPF privilege
-delegation.  The BPF token can be labeled using the existing anonymous
-inode transition rules.
+> 
+> The performance benefits here outweigh the need for a completely
+> unsupported use case.
 
-First off I decided to reuse the existing permission so as not to
-break current policies.  We can always separate the PROG_LOAD
-permission into a standard and delegated permission if desired, but I
-believe we would need to gate that with a policy capability and
-preserve some form of access control for the legacy PROG_LOAD-only
-case.
+LKM-based LSMs are not officially supported since 2.6.24. But people need LKM-based LSMs.
+It is very sad that the LSM community is trying to lock out out of tree LSMs
+( https://lkml.kernel.org/r/ec37cd2f-24ee-3273-c253-58d480569117@I-love.SAKURA.ne.jp ).
+The LSM interface is a common property for *all* Linux users.
 
-Preserving the PROG_LOAD permission does present a challenge with
-respect to differentiating the delegated program load from a normal
-program load while ensuring that existing policies continue to work
-and delegated operations require explicit policy adjustments.
-Changing the object label in the delegated case was the only approach
-I could think of that would satisfy all of these constraints, but I'm
-open to other ideas, tweaks, etc. and I would love to get some other
-opinions on this.
+I'm not objecting the performance benefits by replacing with static calls.
+I'm not happy that the LSM community ignores the Torvald's comment at https://lkml.org/lkml/2007/10/1/192
+and does not listen to minority's voices.
 
-Thoughts?
-
---=20
-paul-moore.com
