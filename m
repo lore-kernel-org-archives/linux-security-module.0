@@ -2,84 +2,169 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15EDFE7D0B4
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Sep 2023 23:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B02B1E7D0CB
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Sep 2023 05:19:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229576AbjIUX3j (ORCPT
+        id S230403AbjIVFTv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Sep 2023 19:29:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46354 "EHLO
+        Fri, 22 Sep 2023 01:19:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjIUX3i (ORCPT
+        with ESMTP id S229887AbjIVFTv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Sep 2023 19:29:38 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3FA68F
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Sep 2023 16:29:31 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2c127ac7255so24431931fa.0
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Sep 2023 16:29:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1695338970; x=1695943770; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aMggTAfGNFGXjxKJt1wg6jNgFr8aapVARuQaiT0jkvA=;
-        b=K/Qg2EdX/ZIv2tGiQ7iXg0HkOsYdf2PdzedRozFVDC/vyxX2/smEscNz/Yf7kdijad
-         yn9eJTC/5TuFv3ZN5pplXvjc5416hmCkt7Ue3VqNmqq97wnByRK6rlaMKHQSGNxQoWET
-         g7AS9ClUnmO1qUXV/k/gvswz5IFh2ZAeiTTOXVWVtJ/a2+B/n302+bQfe0G6M37a6OjZ
-         3ERE570WzY0TO1YjKYWYWWVrDG4q/akToRtP4Xsql+DHt11lhJ4uWNjT5HwVnWCpgT27
-         BujMa5nhpGWpORyKYijUIVSPGPPTf2kEEfg2nJWtJ4vFChVnN2vZbq6qyqlvLETjmXi6
-         B0fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695338970; x=1695943770;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aMggTAfGNFGXjxKJt1wg6jNgFr8aapVARuQaiT0jkvA=;
-        b=ACQbK7blgm+kVqqQfbenislo6CDL4Df0lf7K2+P3hZzGqWldLqI4qBDBg+EtYqRpEy
-         duhIk4Krl3b4YSmC21mSJnVn6F9szqwsLvpP6hmz6SZfDydSrbx3i3NXIiHI5Jim0dy4
-         y/Lt1wRAZ7DmKf8tu+zEg4uieIsbt1s0/OEdyPEfHConiOK2EerZ70J8752M9cASX0a3
-         7LCsMlBgQ0t938uGdiFj/ocOzVSd4G6BXKbZqJ78kbWNZXWbmb/nibn+XmWwd4QN/V8G
-         N6c4eULu3IPANTjdpOFuj3e7Rf16LBgWhq/vds5MLg2rbDxVtjtVAJkmEMY9yXNb3QBg
-         IDCg==
-X-Gm-Message-State: AOJu0YzRtOnVRa8OZovrtkBXJYUZqAYtMlkobLwYpwTP8k3YeG41oVbY
-        nZJViRk/RoVTWNG5yzgkjlaz
-X-Google-Smtp-Source: AGHT+IF+ugMQqBNBA0uxr5vgjIORPC3Xv0X6MthEzVBv5udxLHG+sgk55eID+CKfPRXt2nu+mHXsjQ==
-X-Received: by 2002:a2e:3511:0:b0:2b9:f13b:6139 with SMTP id z17-20020a2e3511000000b002b9f13b6139mr5875357ljz.20.1695338969895;
-        Thu, 21 Sep 2023 16:29:29 -0700 (PDT)
-Received: from localhost (60.red-80-35-249.staticip.rima-tde.net. [80.35.249.60])
-        by smtp.gmail.com with ESMTPSA id p8-20020a170906614800b009828e26e519sm1701009ejl.122.2023.09.21.16.29.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Sep 2023 16:29:29 -0700 (PDT)
-Date:   Thu, 21 Sep 2023 19:29:28 -0400
-Message-ID: <d96d63446c1548ea284eed7d383ccedd.paul@paul-moore.com>
-From:   Paul Moore <paul@paul-moore.com>
-To:     Mateusz Guzik <mjguzik@gmail.com>,
-        linux-security-module@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] cred: add get_cred_many and put_cred_many
-References: <20230909191932.3187633-1-mjguzik@gmail.com>
-In-Reply-To: <20230909191932.3187633-1-mjguzik@gmail.com>
+        Fri, 22 Sep 2023 01:19:51 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BF01192;
+        Thu, 21 Sep 2023 22:19:45 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id DF86A5C021D;
+        Fri, 22 Sep 2023 01:19:41 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Fri, 22 Sep 2023 01:19:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1695359981; x=1695446381; bh=sI
+        mZwawhrAlSAj9rqR6mD9oRS9gtqddfHemubwEJhpQ=; b=UDpnI/8mmlayVHLf4l
+        m4/3gUF7uj7omy6k4ElJUy7kaedsiQK2G+KLjdnJPz5BvxqKX5Zv7UXZ/yAB9gIT
+        C8AhvX+rF6zYoK2cQq0hTkuMoimVo2piGEzU8Ex9ldUBbMJuU3hwzNh9pTm3zAGr
+        9TtXINNzgKK1UmNE8NdlL+FL8WkVS00xpgdiRIGo9gR1W91I0tH2ZgPPiJ1RQV3a
+        FR6x9Q37pL+xgSjcDRh+MtRPI0FMD7Sj1UjP5iFpL91vsea7tjRIx9ICNI/VeRIu
+        o5bUJar+5lmDOarTmN8dvFOEIzw66bfF9nTclIRfTbLia3XyZZPxh5WItJ21od0/
+        7avA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1695359981; x=1695446381; bh=sImZwawhrAlSA
+        j9rqR6mD9oRS9gtqddfHemubwEJhpQ=; b=Ca+52/0T1ttXgBWJ149du7KE2simN
+        flPwcv7AuBKThqVk3cbbDD4ulrwPqmDQOgVRXV+Q/cKX7cCMxVoZejyzXsi23lOV
+        7rglRfNpLcwMKZRwGwQo9txpDKQZpW/QzqfNePgZxkoIzzMfMNUPjDRRI+tJ9CPj
+        sEhRFTW9dIWydA6g0bh66V/97F/hSV6AcKa6+5UsoKXTQNnjTwmUPHwmJCK7KrKg
+        raQcnEs9dbjxjo8m1T061ZHbzZ+wDZhICzNiwsunec17MszjKU4InXP8dOvjpYML
+        ybQhSxFK0txWyAJRQlpVqCdAP9revo3K3sU0O4adCcV+z7wr8Lie8FPXg==
+X-ME-Sender: <xms:7SMNZbSKZYdBbPKLuDBcwGe0Rb78gbgTbNPGLvcyjGW89vrVcRrIjA>
+    <xme:7SMNZczivx6RZ1a-Wue-RUncrJaSwItjoQqqcqplOj_U2aAkQSwJfsVE7gLaKuPbb
+    xPQNEMuVJOFOoOI8n8>
+X-ME-Received: <xmr:7SMNZQ0x53Caj-6dCgL0WSHUpz47vB-7yZghDjkeiMGWtzzU2ibesQ8hsopY0PjejJ8ZW7GwwDJ1VXBlyE5ot9OlDw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudekjedgledtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    gfrhhlucfvnfffucdluddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddt
+    tddvnecuhfhrohhmpeflrghnucfjvghnughrihhkucfhrghrrhcuoehkvghrnhgvlhesjh
+    hfrghrrhdrtggtqeenucggtffrrghtthgvrhhnpeehgeefffejveeuleekueeguefftdef
+    hefgtedtieeghefhtefgiefhiefhtdetheenucffohhmrghinhepkhgvrhhnvghlrdhorh
+    hgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhgv
+    rhhnvghlsehjfhgrrhhrrdgttg
+X-ME-Proxy: <xmx:7SMNZbD8YIuRD_AooZ6bAE5jgsJAsZUYkFBlqVy-y2u_JPeGHHg0Bw>
+    <xmx:7SMNZUh71Uk48BslAAQw-dkeZ6UrzSexw4yb1Tp2WwCp5u1x14QHvg>
+    <xmx:7SMNZfrJ7tM1-HQRbxW7EH-oXOoo6Udc79IBAEVQr3KIOlBPQzcE5w>
+    <xmx:7SMNZdZ9IB3bBaTU5JbU9kDaqqLPemtOSuHUowrJlD7h9jdnKXFrmw>
+Feedback-ID: i01d149f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 22 Sep 2023 01:19:39 -0400 (EDT)
+Date:   Fri, 22 Sep 2023 07:19:36 +0200
+From:   Jan Hendrik Farr <kernel@jfarr.cc>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-efi@vger.kernel.org,
+        kexec@lists.infradead.org, Pingfan Liu <piliu@redhat.com>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Philipp Rudo <prudo@redhat.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, keyrings@vger.kernel.org,
+        Luca Boccassi <bluca@debian.org>, lennart@poettering.net,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, mjg59@google.com,
+        James.Bottomley@hansenpartnership.com
+Subject: Re: [PATCH 0/2] Sign the Image which is zboot's payload
+Message-ID: <ZQ0j6Es88aR8cjRv@desktop>
+References: <20230921133703.39042-1-kernelfans@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230921133703.39042-1-kernelfans@gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sep  9, 2023 Mateusz Guzik <mjguzik@gmail.com> wrote:
-> 
-> Some of the frequent consumers of get_cred and put_cred operate on 2
-> references on the same creds back-to-back.
-> 
-> Switch them to doing the work in one go instead.
-> 
-> v2:
-> - add kdoc entries
-> - hoist validate_cred call in exit_creds
-> - reword commit message
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
->  include/linux/cred.h | 59 +++++++++++++++++++++++++++++++++++++-------
->  kernel/cred.c        | 26 ++++++++++---------
->  2 files changed, 65 insertions(+), 20 deletions(-)
+Hi Pingfan!
 
-Merged into lsm/next, thanks for your patience Mateusz.
+On 21 21:37:01, Pingfan Liu wrote:
+> From: Pingfan Liu <piliu@redhat.com>
+> 
 
---
-paul-moore.com
+> For security boot, the vmlinuz.efi will be signed so UEFI boot loader
+> can check against it. But at present, there is no signature for kexec
+> file load, this series makes a signature on the zboot's payload -- Image
+> before it is compressed. As a result, the kexec-tools parses and
+> decompresses the Image.gz to get the Image, which has signature and can
+> be checked against during kexec file load
+
+I missed some of the earlier discussion about this zboot kexec support.
+So just let me know if I'm missing something here. You were exploring
+these two options in getting this supported:
+
+1. Making kexec_file_load do all the work.
+
+This option makes the signature verification easy. kexec_file_load
+checks the signature on the pe file and then extracts it and does the
+kexec.
+
+This is similar to how I'm approaching UKI support in [1].
+
+2. Extract in userspace and pass decompressed kernel to kexec_file_load
+
+This options requires the decompressed kernel to have a valid signature on
+it. That's why this patch adds the ability to add that signature to the
+kernel contained inside the zboot image.
+
+This option would not make sense for UKI support as it would not
+validate the signature with respect to the initrd and cmdline that it
+contains. Am I correct in thinking that there is no similar issue with
+zboot images? They don't contain any more information besides the kernel
+that is intended to be securely signed, right? Do you have a reference
+for the zboot image layout somewhere?
+
+> I hesitate to post this series, 
+
+I appreciate you sending it, it's helping the discussion along.
+
+> [...] since Ard has recommended using an
+> emulated UEFI boot service to resolve the UKI kexec load problem [1].
+> since on aarch64, vmlinuz.efi has faced the similar issue at present.
+> But anyway, I have a crude outline of it and am sending it out for
+> discussion.
+
+The more I'm thinking about it, the more I like Ard's idea. There's now
+already two different formats trying to be added to kexec that are
+pretty different from each other, yet they both have the UEFI interface
+in common. I think if the kernel supported kexec'ing EFI applications
+that would be a more flexible and forward-looking approach. It's a
+standard that both zboot and UKI as well as all future formats for UEFI
+platforms will support anyways. So while it's more work right now to
+implement, I think it'll likely pay off.
+
+It is significantly more work than the other options though. So I think
+before work is started on it, it would be nice to get some type of
+consensus on these things (not an exhaustive list, please feel free to
+add to it):
+
+1. Is it the right approach? It adds a significant amount of userspace
+API.
+2. What subset of the UEFI spec needs/should to be supported?
+3. Can we let runtime services still be handled by the firmware after
+exiting boot services?
+4. How can we debug the stubs that are being invoked?
+5. Can we let the EFI binary know that this is a kexec and not a normal
+bootup. Potentially systemd-stub would want to change how/if it does TPM
+PCR measurements.
+...
+
+
+[1] https://lore.kernel.org/kexec/20230911052535.335770-2-kernel@jfarr.cc/T/
+
+Added some more CCs.
+
