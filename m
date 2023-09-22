@@ -2,110 +2,169 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8728CCD4F5B
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Sep 2023 11:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C235E6FE3E
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Sep 2023 14:30:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233669AbjIVLZk (ORCPT
+        id S229621AbjIVOas (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Sep 2023 07:25:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56482 "EHLO
+        Fri, 22 Sep 2023 10:30:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233542AbjIVLZk (ORCPT
+        with ESMTP id S229720AbjIVOar (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Sep 2023 07:25:40 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2112191
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Sep 2023 04:25:32 -0700 (PDT)
-Received: from fsav117.sakura.ne.jp (fsav117.sakura.ne.jp [27.133.134.244])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 38MBPQGE017411;
-        Fri, 22 Sep 2023 20:25:26 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav117.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav117.sakura.ne.jp);
- Fri, 22 Sep 2023 20:25:26 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav117.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 38MBPQGe017408
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 22 Sep 2023 20:25:26 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <dde20522-af01-c198-5872-b19ef378f286@I-love.SAKURA.ne.jp>
-Date:   Fri, 22 Sep 2023 20:25:26 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 2/5] security: Count the LSMs enabled at compile time
-Content-Language: en-US
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
-        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        Kui-Feng Lee <sinquersw@gmail.com>
-References: <20230918212459.1937798-1-kpsingh@kernel.org>
- <20230918212459.1937798-3-kpsingh@kernel.org>
- <cb67f607-3a9d-34d2-0877-a3ff957da79e@I-love.SAKURA.ne.jp>
- <CACYkzJ5GFsgc3vzJXH34hgoTc+CEf+7rcktj0QGeQ5e8LobRcw@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CACYkzJ5GFsgc3vzJXH34hgoTc+CEf+7rcktj0QGeQ5e8LobRcw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 22 Sep 2023 10:30:47 -0400
+Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D3A194
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Sep 2023 07:30:40 -0700 (PDT)
+Received: by mail-pl1-x649.google.com with SMTP id d9443c01a7336-1c40ac5b6e7so17775055ad.0
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Sep 2023 07:30:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1695393040; x=1695997840; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KA5pwz3/DRQHr6a2ee4M3bjnbEYA57TwsoBM67hI6zU=;
+        b=KasGxCGhlZLETJKdrWXwCt6Sdf48q70UTGzJbwZWC64s/HsrhafPEns5rIOCSmMzCF
+         Z5vslQF3uqwntveLyJRT9X55sm2SN9LTyROw1FjsOmgBxDplUWBzYf6ax3BA5UjL4ELb
+         YJsPknZYvqdQlxlzPz5zEqhGnX9Tu6BG6ioY3BFN0N3mSdjWPjyuvkUiP6pxEe6NnfWJ
+         PLkmtSJXOkV0KCojJ/JCp+rGSD8krrci1aKN7jafsYbX+RWwpM95HeeOfmLnmkf1PMs0
+         7NxA3aqKWL8UbhrNt+pus28C2KMT02kQ3ra3JKNW0AJ2IeAxWRuxOn4ft3DclAvaZpdM
+         jwSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695393040; x=1695997840;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KA5pwz3/DRQHr6a2ee4M3bjnbEYA57TwsoBM67hI6zU=;
+        b=hAbl0rOcO08tuP68VQS3KnOw5NnZrztksEXRMsBm0xwHrRFVwvG2R5q7R4KbF+Exqa
+         N4buGar26SXqMuD9MIRJ//cn842b6KB6u+EM0bfi4de8GaZDhXWLg3W0BqXm76LZqjbu
+         9jp34E5Ie4e80j7K2uehq2GqDv/Vm8uB0aEJRig1r+x3xCqtlgMqqTjYiE9e4rIogVtd
+         Am4vcdIEFc80gGzX6/eARqrCLBVi5VzRW+KrnLECae43hVrbvKnQDPFDlXqnOKMQka/J
+         rCT0Ea3AKk5g5ORKs4KSdMCp4ZrRE+7ZHKKcY/xOlfEJ6de80EEwzGJLpT5ffwTipyOg
+         L6MQ==
+X-Gm-Message-State: AOJu0Yz3brXSPXdWmVf75hZUojmNIpknx6AXH7uZyz0wVvoKr5Jm3zN8
+        rv20tPphL07RqxlQ57wl5tTheQrsN7g=
+X-Google-Smtp-Source: AGHT+IE7TdAMSox3QZ9i3XY42vmW+YqwJtHLDXCrkzOQDSyIHqr/K/m4w9DaaKuedrPKXRX2zXN/sfp+lRA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:903:1cf:b0:1b9:df8f:888c with SMTP id
+ e15-20020a17090301cf00b001b9df8f888cmr102903plh.8.1695393039713; Fri, 22 Sep
+ 2023 07:30:39 -0700 (PDT)
+Date:   Fri, 22 Sep 2023 07:30:38 -0700
+In-Reply-To: <117db856-9aec-e91c-b1d4-db2b90ae563d@intel.com>
+Mime-Version: 1.0
+References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-8-seanjc@google.com>
+ <117db856-9aec-e91c-b1d4-db2b90ae563d@intel.com>
+Message-ID: <ZQ2lDk3iOEz8NNg0@google.com>
+Subject: Re: [RFC PATCH v12 07/33] KVM: Add KVM_EXIT_MEMORY_FAULT exit to
+ report faults to userspace
+From:   Sean Christopherson <seanjc@google.com>
+To:     Xiaoyao Li <xiaoyao.li@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2023/09/21 22:58, KP Singh wrote:
-> On Thu, Sep 21, 2023 at 3:21 PM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>
->> On 2023/09/19 6:24, KP Singh wrote:
->>> These macros are a clever trick to determine a count of the number of
->>> LSMs that are enabled in the config to ascertain the maximum number of
->>> static calls that need to be configured per LSM hook.
->>
->> As a LKM-based LSM user, indirect function calls using a linked list have
->> an advantage which this series kills. There always is a situation where a
+On Fri, Sep 22, 2023, Xiaoyao Li wrote:
+> On 9/14/2023 9:55 AM, Sean Christopherson wrote:
+> > From: Chao Peng <chao.p.peng@linux.intel.com>
+> > 
+> > Add a new KVM exit type to allow userspace to handle memory faults that
+> > KVM cannot resolve, but that userspace *may* be able to handle (without
+> > terminating the guest).
+> > 
+> > KVM will initially use KVM_EXIT_MEMORY_FAULT to report implicit
+> > conversions between private and shared memory.  With guest private memory,
+> > there will be  two kind of memory conversions:
+> > 
+> >    - explicit conversion: happens when the guest explicitly calls into KVM
+> >      to map a range (as private or shared)
+> > 
+> >    - implicit conversion: happens when the guest attempts to access a gfn
+> >      that is configured in the "wrong" state (private vs. shared)
+> > 
+> > On x86 (first architecture to support guest private memory), explicit
+> > conversions will be reported via KVM_EXIT_HYPERCALL+KVM_HC_MAP_GPA_RANGE,
 > 
+> side topic.
 > 
->> LSM cannot be built into vmlinux (and hence has to be loaded as a LKM-based
->> LSM) due to distributor's support policy. Therefore, honestly speaking,
->> I don't want LSM infrastructure to define the maximum number of "slots" or
->> "static calls"...
->>
+> Do we expect to integrate TDVMCALL(MAPGPA) of TDX into KVM_HC_MAP_GPA_RANGE?
+
+Yes, that's my expectation.
+
+> > but reporting KVM_EXIT_HYPERCALL for implicit conversions is undesriable
+> > as there is (obviously) no hypercall, and there is no guarantee that the
+> > guest actually intends to convert between private and shared, i.e. what
+> > KVM thinks is an implicit conversion "request" could actually be the
+> > result of a guest code bug.
+> > 
+> > KVM_EXIT_MEMORY_FAULT will be used to report memory faults that appear to
+> > be implicit conversions.
+> > 
+> > Place "struct memory_fault" in a second anonymous union so that filling
+> > memory_fault doesn't clobber state from other yet-to-be-fulfilled exits,
+> > and to provide additional information if KVM does NOT ultimately exit to
+> > userspace with KVM_EXIT_MEMORY_FAULT, e.g. if KVM suppresses (or worse,
+> > loses) the exit, as KVM often suppresses exits for memory failures that
+> > occur when accessing paravirt data structures.  The initial usage for
+> > private memory will be all-or-nothing, but other features such as the
+> > proposed "userfault on missing mappings" support will use
+> > KVM_EXIT_MEMORY_FAULT for potentially _all_ guest memory accesses, i.e.
+> > will run afoul of KVM's various quirks.
 > 
-> Yeah, LSMs are not meant to be used from a kernel module. The data
-> structure is actually __ro_after_init. So, I am not even sure how you
-> are using it in kernel modules (unless you are patching this out).
-> And, if you are really patching stuff to get your out of tree LSMs to
-> work, then you might as well add your "custom" LSM config here or just
-> override this count.
-
-I'm using LKM-based LSM with any version between 2.6.0 and 6.6-rc2, without patching
-__ro_after_init out. We can load LKM-based LSMs, without patching the original kernel.
-And it seems to me that several proprietary security products for Linux are using
-this trick, for LSMs for such products cannot be built into distributor's kernels...
-
-----------
-[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-6.6.0-rc2+ root=/dev/sda1 ro vconsole.keymap=jp106 vconsole.font=latarcyrheb-sun16 security=none sysrq_always_enabled console=ttyS0,115200n8 console=tty0 LANG=en_US.UTF-8 init=/sbin/akari-init
-(...snipped...)
-[  147.238458] AKARI: 1.0.48   2023/05/27
-[  147.244867] Access Keeping And Regulating Instrument registered.
-[  147.261232] Calling /sbin/ccs-init to load policy. Please wait.
-239 domains. 11807 ACL entries.
-1938 KB used by policy.
-[  147.768694] CCSecurity: 1.8.9   2021/04/01
-[  147.768740] Mandatory Access Control activated.
-----------
-
+> So when exit reason is KVM_EXIT_MEMORY_FAULT, how can we tell which field in
+> the first union is valid?
 > 
-> The performance benefits here outweigh the need for a completely
-> unsupported use case.
+> When exit reason is not KVM_EXIT_MEMORY_FAULT, how can we know the info in
+> the second union run.memory is valid without a run.memory.valid field?
 
-LKM-based LSMs are not officially supported since 2.6.24. But people need LKM-based LSMs.
-It is very sad that the LSM community is trying to lock out out of tree LSMs
-( https://lkml.kernel.org/r/ec37cd2f-24ee-3273-c253-58d480569117@I-love.SAKURA.ne.jp ).
-The LSM interface is a common property for *all* Linux users.
+I'll respond to this separately with a trimmed Cc list.  I suspect this will be
+a rather lengthy conversation, and it has almost nothing to do with guest_memfd.
 
-I'm not objecting the performance benefits by replacing with static calls.
-I'm not happy that the LSM community ignores the Torvald's comment at https://lkml.org/lkml/2007/10/1/192
-and does not listen to minority's voices.
+> > +Note!  KVM_EXIT_MEMORY_FAULT is unique among all KVM exit reasons in that it
+> > +accompanies a return code of '-1', not '0'!  errno will always be set to EFAULT
+> > +or EHWPOISON when KVM exits with KVM_EXIT_MEMORY_FAULT, userspace should assume
+> > +kvm_run.exit_reason is stale/undefined for all other error numbers.
+> > +
+> 
+> Initially, this section is the copy of struct kvm_run and had comments for
+> each field accordingly. Unfortunately, the consistence has not been well
+> maintained during the new filed being added.
+> 
+> Do we expect to fix it?
 
+AFAIK, no one is working on cleaning up this section of the docs, but as always,
+patches are welcome :-)
