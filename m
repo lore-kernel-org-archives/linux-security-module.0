@@ -2,85 +2,84 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD36CD4850
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Sep 2023 18:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D134FCE7A86
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Sep 2023 21:19:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233185AbjIVSmg (ORCPT
+        id S229799AbjIVVT3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Sep 2023 14:42:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54068 "EHLO
+        Fri, 22 Sep 2023 17:19:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232403AbjIVSmg (ORCPT
+        with ESMTP id S229746AbjIVVT2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Sep 2023 14:42:36 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8B9DA9;
-        Fri, 22 Sep 2023 11:42:29 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-532c66a105bso3054534a12.3;
-        Fri, 22 Sep 2023 11:42:29 -0700 (PDT)
+        Fri, 22 Sep 2023 17:19:28 -0400
+Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FD72C1;
+        Fri, 22 Sep 2023 14:19:23 -0700 (PDT)
+Received: by mail-oi1-x230.google.com with SMTP id 5614622812f47-3add83c9043so1580036b6e.2;
+        Fri, 22 Sep 2023 14:19:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695408148; x=1696012948; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A07py4MTlmtIRoHDL+wrJZuQS+RAbNl3SUABDDToi9g=;
-        b=lbI5k+/gyR4nsvGKGxtc7PY4jdOLk0VIA7k/HjMup0Rd6CbZfMjMZsrIhYZvPT7l7P
-         e/CKbcN9vPweVOEi7u3zWBKKTl1AcMv85o2epKEWNXibWv/5e89TICUsmLaYyQXslYvt
-         lP/7DQKHg+wByXmyBvVVqsI7a5NEbDFMUeNF6Ss0WEi1/G50N73XF9wyJv4Q8iTxFfcp
-         /MqafQvQ/WVRR634CrgYK4/3FbUDz/R9VYdKbrAyBL72zXnem/wXOiaeZ1VirH+qtwXo
-         FtvFASfoJBiAROUCSFEMtnQQjxqca/e0eL5N/F5EEBpqTHTDUmM/alD8iD3u39TbuDsk
-         vALw==
+        d=gmail.com; s=20230601; t=1695417562; x=1696022362; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=33plBw2S6RxLVTFtd8vbQkwkLM7hKUemGtBycCXA6jA=;
+        b=DKJEpv40AlsLxKXnWmRq1YWHL3gZqrPlE3qPHg5SVijtsQFgfKiK/KyjL4Kp+Vwep+
+         Bxkc1bTKAum7eyqoUXinVRp66EmgXbcCM2J3J4Etx80ym3jVMOi9XZYSU/Z4Wl5byXJ3
+         IGHCT+/7uTyPmJQb7Sj6spwfm+TU2EtRgerXh45iBryWge/7gxDYEIU06RfHXodUK3Se
+         e45ebQY6TTjNzCKkSiYYI5E9oZJDsp5g+SgIpsg/XaweW+QhOEh9rReFSvYlIkq1sRX+
+         q4sWXhQZROQqVlsJZvaCMHFR2GrardBZmrmcuFtiI9ow7Z5fsXjcraoXroYx7oEy6JyS
+         84yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695408148; x=1696012948;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A07py4MTlmtIRoHDL+wrJZuQS+RAbNl3SUABDDToi9g=;
-        b=ShPBoIm3I/fUdog0C7bo2bULhdTa3CCUg0ULPsKhNXyrDOsUgvmgaou3o959bLRgqH
-         RMd0VDBs0HctLamfPQG7W6BEu9Fk8uGLYx+OAvFuiy2lE7ZNd+TtX37cw4cjOnkLZsWW
-         6CPdn+QuWo8psLMDIv5oV88wWLYzrTaAcdhjkUlwagK16a/HtBLB3ueFyh5VSwqlXzMw
-         BMC+DbqLE7gPWSMdnBiLVmAqkz6Bt0kLoj54/eZQVh9cUUwg4mbIbVBwWL7UBRhiu6Oh
-         ag2TeQvRkEH+qRSgowuJ+QnUc+vG0wTsvbF/sOSKpZQkRJ/oMt+hvoWSoDacHPhV753A
-         jy8w==
-X-Gm-Message-State: AOJu0Yze1q3vpsLVmKizfGfZio6zZ2m3xABqN0PWfdoH7F+FTBMxFpAF
-        XVxDUYwFWTy+iet5bCyP9Ms=
-X-Google-Smtp-Source: AGHT+IGAXpsGQGhQAXFNELhiI7tG9YTVnUt0vp01z0qFoa9vgsCbFmzQ0pGhjEszK3XUaBkCBTSscg==
-X-Received: by 2002:a17:906:28d:b0:9b0:169b:eece with SMTP id 13-20020a170906028d00b009b0169beecemr213729ejf.40.1695408148133;
-        Fri, 22 Sep 2023 11:42:28 -0700 (PDT)
-Received: from f (cst-prg-31-165.cust.vodafone.cz. [46.135.31.165])
-        by smtp.gmail.com with ESMTPSA id md1-20020a170906ae8100b009a1be9c29d7sm3079107ejb.179.2023.09.22.11.42.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Sep 2023 11:42:27 -0700 (PDT)
-Date:   Fri, 22 Sep 2023 20:42:24 +0200
-From:   Mateusz Guzik <mjguzik@gmail.com>
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
-        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        renauld@google.com
-Subject: Re: [PATCH v4 0/5] Reduce overhead of LSMs with static calls
-Message-ID: <20230922184224.kx4jiejmtnvfrxrq@f>
-References: <20230922145505.4044003-1-kpsingh@kernel.org>
+        d=1e100.net; s=20230601; t=1695417562; x=1696022362;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=33plBw2S6RxLVTFtd8vbQkwkLM7hKUemGtBycCXA6jA=;
+        b=cMyvW4zt3y2F3qJR/CObFHCQirIlmoignV7iZ625SiI+iHU5lbY5s8bIK34mXKLcHt
+         TNtX5UvGKOichHLr3GQTlJeZN/Jh9q6RyXflFcal1J/obr1sWuaTs1LfXBdOj/z4xYkU
+         +Po4FDulQQqNSO0dCbi7eAFPjqXCh/alpQFFY1VFlpEsiBozvYSQz28ouaHgzC7t0LOK
+         3xBvxyUbqxS2sJYoo20Uvr+DMU5e03W8QX7zs8VLMa+MkUdlEYddRb1izIHISz3FXLqk
+         CJ4pswntQaNhB78G5FeINzaXxi4QtKzZMx/ZrT9Fqss5nYdtF0Gn6ZVmbhQMB9EUruQC
+         R62A==
+X-Gm-Message-State: AOJu0YyRmq8RRK5UGpKkdQU1uho+JqOQbaoSp+uYUNQETLXiP7voSaz8
+        GA5TYr8UswFVlQsIbxh3mxBxzAJKqldO5w9ub2RjfbC9
+X-Google-Smtp-Source: AGHT+IEYL77hJxK6Usm7w5Mx7ub+ceAqRbev1H58TlAkTLpno6EgQQCAoipS/BPBlCKgfN735T3QADZuX7LDc0xvryo=
+X-Received: by 2002:aca:2101:0:b0:3a7:4802:c3f with SMTP id
+ 1-20020aca2101000000b003a748020c3fmr821282oiz.52.1695417562384; Fri, 22 Sep
+ 2023 14:19:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230922145505.4044003-1-kpsingh@kernel.org>
+Received: by 2002:ac9:5dc9:0:b0:4f0:1250:dd51 with HTTP; Fri, 22 Sep 2023
+ 14:19:21 -0700 (PDT)
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Fri, 22 Sep 2023 23:19:21 +0200
+Message-ID: <CAGudoHFfG7mARwSqcoLNwV81-KX4Bici5FQHjoNG4f9m83oLyg@mail.gmail.com>
+Subject: use per-cpu refcounts for apparmor labels?
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 22, 2023 at 04:55:00PM +0200, KP Singh wrote:
-> Since we know the address of the enabled LSM callbacks at compile time and only
-> the order is determined at boot time, the LSM framework can allocate static
-> calls for each of the possible LSM callbacks and these calls can be updated once
-> the order is determined at boot.
-> 
+I'm sanity-checking perf in various microbenchmarks and I found
+apparmor to be the main bottleneck in some of them.
 
-Any plans to further depessimize the state by not calling into these
-modules if not configured?
+For example: will-it-scale open1_processes -t 16, top of the profile:
+  20.17%  [kernel]                   [k] apparmor_file_alloc_security
+  20.08%  [kernel]                   [k] apparmor_file_open
+  20.05%  [kernel]                   [k] apparmor_file_free_security
+  18.39%  [kernel]                   [k] apparmor_current_getsecid_subj
+[snip]
 
-For example Debian has a milipede:
-CONFIG_LSM="landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf"
+This serializes on refing/unrefing apparmor objs, sounds like a great
+candidate for per-cpu refcounting instead (I'm assuming they are
+expected to be long-lived).
 
-Everything is enabled (but not configured).
+I would hack it up myself, but I failed to find a clear spot to switch
+back from per-cpu to centalized operation and don't want to put
+serious effort into it.
 
-In particular tomoyo is quite nasty, rolling with big memsets only to
-find it is not even enabled.
+Can you sort this out?
+
+Thanks,
+-- 
+Mateusz Guzik <mjguzik gmail.com>
