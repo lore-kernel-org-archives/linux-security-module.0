@@ -2,342 +2,261 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8B6CE7A88
-	for <linux-security-module@archiver.kernel.org>; Sat, 23 Sep 2023 14:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C72D6CE7A88
+	for <linux-security-module@archiver.kernel.org>; Sat, 23 Sep 2023 16:06:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231764AbjIWOyU (ORCPT
+        id S231869AbjIWQHB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 23 Sep 2023 10:54:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44066 "EHLO
+        Sat, 23 Sep 2023 12:07:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231603AbjIWOyT (ORCPT
+        with ESMTP id S230526AbjIWQHA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 23 Sep 2023 10:54:19 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B2E5180;
-        Sat, 23 Sep 2023 07:54:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1695480852; x=1727016852;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2GU4L5XwbONvpT/KbcdubrCADKBC+cDuByHqBIFHzqM=;
-  b=nBpOo08g/iaRggCMFNCgI42VL1FUNyzYjMgI9Zt4VuMTgt2SW1QNnKlN
-   dAccIgYbdM8FeD6ykmxbEE7L9V3VqWihW20AdeAME7kaVZ9F3j2eAkkWi
-   k29OnzAHbOrfghZv3vOyvf5M0igfhMKOgTFhUXTFaWsEW8nwGwkGU2lT8
-   3g8ZgAJXxW2fyuHy1UPgRLAM9blIoh4YwZmnIpMquf5NuRzk3gMLXU5mc
-   SzkuDkyglBb3m8iZYT9v8jZaia9w4fg2xqnJnI8DJq4bgnt4W2le/KJCk
-   +eGkFDp0F7urfdjXWXLhMN8OtQOY79viumOK8zmvDH+abPuyRLA4JFktv
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10842"; a="411959294"
-X-IronPort-AV: E=Sophos;i="6.03,171,1694761200"; 
-   d="scan'208";a="411959294"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2023 07:54:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10842"; a="724507506"
-X-IronPort-AV: E=Sophos;i="6.03,171,1694761200"; 
-   d="scan'208";a="724507506"
-Received: from lkp-server02.sh.intel.com (HELO 493f6c7fed5d) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 23 Sep 2023 07:54:08 -0700
-Received: from kbuild by 493f6c7fed5d with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qk40z-0002Uv-0g;
-        Sat, 23 Sep 2023 14:53:55 +0000
-Date:   Sat, 23 Sep 2023 22:52:33 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     KP Singh <kpsingh@kernel.org>,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, paul@paul-moore.com,
-        keescook@chromium.org, casey@schaufler-ca.com, song@kernel.org,
-        daniel@iogearbox.net, ast@kernel.org, kpsingh@kernel.org,
-        renauld@google.com
-Subject: Re: [PATCH v4 3/5] security: Replace indirect LSM hook calls with
- static calls
-Message-ID: <202309232244.uCfB7AMn-lkp@intel.com>
-References: <20230922145505.4044003-4-kpsingh@kernel.org>
+        Sat, 23 Sep 2023 12:07:00 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4AFE139
+        for <linux-security-module@vger.kernel.org>; Sat, 23 Sep 2023 09:06:53 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63E26C433CD
+        for <linux-security-module@vger.kernel.org>; Sat, 23 Sep 2023 16:06:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695485213;
+        bh=qw6onMa9f3p2GbSd4m629e1VcU32hUzhGQcWmSQ0GcE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=c2TvBxd6b52Q31r7pATPxku3HBg0sumUlt+TJZyCFiyocWp2nPLWdcHdk8Zfwioey
+         Rr6zo8f4TM6bx/rAkozUsZxysdm4FODpNunTZpECJA/SL1iObl9V2fqpaNantQz7Wf
+         gsJy2Oowxw6aRqVf+myoVXbie2k741hO3zFEdOloy2fVY2sgTvLi3C/RH9cMts8PNk
+         ixGV2CVAvQgYXPYbES3H8CqwAR79lwVsVFUqFcITwKYrjaP0R4HQ9S2gonifaLbiR1
+         3KQOKvAF9v25JS9ENJ+zRINNcWA6VYq+JQgxBmn30j0ynPSE37+b3w+t+NUD6DGIMP
+         MhJ1t75lX/ysA==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5031426b626so5866801e87.3
+        for <linux-security-module@vger.kernel.org>; Sat, 23 Sep 2023 09:06:53 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzT65bF6ShWIifgw10AqBStNtTEdnXO//+rp5zN7eQndCQtV4eX
+        1HbVECTKTogZQDLYCPETvGMHPj7fHxSkdQUAZpSuyA==
+X-Google-Smtp-Source: AGHT+IGmBvzDlT3b8OwVZug0FXqO2/Vp6kt9JrK44gwJoHFMrBlJ96XGWB1+OkuFvA+/1ZllbobJrT63az6f2srBhN8=
+X-Received: by 2002:a05:6512:12cb:b0:503:3644:4a99 with SMTP id
+ p11-20020a05651212cb00b0050336444a99mr2721821lfg.51.1695485211400; Sat, 23
+ Sep 2023 09:06:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230922145505.4044003-4-kpsingh@kernel.org>
+References: <20230918212459.1937798-1-kpsingh@kernel.org> <20230918212459.1937798-3-kpsingh@kernel.org>
+ <cb67f607-3a9d-34d2-0877-a3ff957da79e@I-love.SAKURA.ne.jp>
+ <CACYkzJ5GFsgc3vzJXH34hgoTc+CEf+7rcktj0QGeQ5e8LobRcw@mail.gmail.com>
+ <dde20522-af01-c198-5872-b19ef378f286@I-love.SAKURA.ne.jp>
+ <CACYkzJ5M0Bw9S_mkFkjR_-bRsKryXh2LKiurjMX9WW-d0Mr6bg@mail.gmail.com> <ed785c86-a1d8-caff-c629-f8a50549e05b@I-love.SAKURA.ne.jp>
+In-Reply-To: <ed785c86-a1d8-caff-c629-f8a50549e05b@I-love.SAKURA.ne.jp>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Sat, 23 Sep 2023 18:06:40 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ4TLCMFEa5h-iEVC-58cakjduw44c-ct64SgBe0_jFKuQ@mail.gmail.com>
+Message-ID: <CACYkzJ4TLCMFEa5h-iEVC-58cakjduw44c-ct64SgBe0_jFKuQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] security: Count the LSMs enabled at compile time
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
+        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
+        Kui-Feng Lee <sinquersw@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi KP,
+On Sat, Sep 23, 2023 at 8:57=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2023/09/22 23:45, KP Singh wrote:
+> >> I'm using LKM-based LSM with any version between 2.6.0 and 6.6-rc2, wi=
+thout patching
+> >> __ro_after_init out. We can load LKM-based LSMs, without patching the =
+original kernel.
+> >
+> > Then __ro_after_init is broken in your tree and you are missing some pa=
+tches.
+>
+> This fact applies to vanilla upstream kernel tree; __ro_after_init is not=
+ broken and
+> some patches are not missing. See https://akari.osdn.jp/1.0/chapter-3.htm=
+l.en for details.
+>
 
-kernel test robot noticed the following build warnings:
+You are trying to use an unexported symbol from the module with lots
+of hackery to write to be supported and bring it up in a discussion?
+Good luck!
 
-[auto build test WARNING on bpf-next/master]
-[also build test WARNING on bpf/master pcmoore-selinux/next linus/master v6.6-rc2 next-20230921]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Regardless, if what you are doing really works after
+https://lore.kernel.org/all/20200107133154.588958-1-omosnace@redhat.com,
+then we need to fix this as the security_hook_heads should be
+immutable after boot. I tried a build where the symbols are exported
+and sure enough the module is unable to write to it. So, either your
+kernel has the old CONFIG_SECURITY_HOOKS_WRITABLE, or it should
+ideally fail with something like:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/KP-Singh/kernel-Add-helper-macros-for-loop-unrolling/20230922-225925
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20230922145505.4044003-4-kpsingh%40kernel.org
-patch subject: [PATCH v4 3/5] security: Replace indirect LSM hook calls with static calls
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20230923/202309232244.uCfB7AMn-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230923/202309232244.uCfB7AMn-lkp@intel.com/reproduce)
+[   23.990387] kernel tried to execute NX-protected page - exploit
+attempt? (uid: 0)
+[   23.996796] BUG: unable to handle page fault for address: ffffffff83adf2=
+70
+[   23.997433] #PF: supervisor instruction fetch in kernel mode
+[   23.997936] #PF: error_code(0x0011) - permissions violation
+[   23.998416] PGD 3247067 P4D 3247067 PUD 3248063 PMD 100b9e063 PTE
+8000000003adf163
+[   23.999069] Oops: 0011 [#1] PREEMPT SMP NOPTI
+[   23.999445] CPU: 0 PID: 302 Comm: insmod Tainted: G           O
+  6.6.0-rc2-next-20230921-dirty #13
+[   24.000230] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[   24.001024] RIP: 0010:security_add_hooks+0x0/0xa0
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309232244.uCfB7AMn-lkp@intel.com/
+If this is not happening, then it's a bug and you chose to report it.
 
-All warnings (new ones prefixed by >>):
+>
+>
+> >>>
+> >>> The performance benefits here outweigh the need for a completely
+> >>> unsupported use case.
+> >>
+> >> LKM-based LSMs are not officially supported since 2.6.24. But people n=
+eed LKM-based LSMs.
+> >> It is very sad that the LSM community is trying to lock out out of tre=
+e LSMs
+> >> ( https://lkml.kernel.org/r/ec37cd2f-24ee-3273-c253-58d480569117@I-lov=
+e.SAKURA.ne.jp ).
+> >> The LSM interface is a common property for *all* Linux users.
+> >
+> > Again, I don't understand how this locks out out-of-tree LSMs. One can
+> > go and patch static calls the same way one hacked around by directly
+> > adding stuff to the security_hook_heads. I am not going to suggest any
+> > hacks here but there are pretty obvious solutions out there.;
+>
+> The change that locks out out-of-tree LSMs (regardless of whether that LS=
+M is LKM-based LSM
+> or not) is a series including "[PATCH v15 01/11] LSM: Identify modules by=
+ more than name".
 
-   security/security.c: In function 'security_binder_set_context_mgr':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:872:16: note: in expansion of macro 'call_int_hook'
-     872 |         return call_int_hook(binder_set_context_mgr, 0, mgr);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_binder_transaction':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:887:16: note: in expansion of macro 'call_int_hook'
-     887 |         return call_int_hook(binder_transaction, 0, from, to);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_binder_transfer_binder':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:902:16: note: in expansion of macro 'call_int_hook'
-     902 |         return call_int_hook(binder_transfer_binder, 0, from, to);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_binder_transfer_file':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:918:16: note: in expansion of macro 'call_int_hook'
-     918 |         return call_int_hook(binder_transfer_file, 0, from, to, file);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_ptrace_access_check':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:937:16: note: in expansion of macro 'call_int_hook'
-     937 |         return call_int_hook(ptrace_access_check, 0, child, mode);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_ptrace_traceme':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:952:16: note: in expansion of macro 'call_int_hook'
-     952 |         return call_int_hook(ptrace_traceme, 0, parent);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_capget':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:974:16: note: in expansion of macro 'call_int_hook'
-     974 |         return call_int_hook(capget, 0, target,
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_capset':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:996:16: note: in expansion of macro 'call_int_hook'
-     996 |         return call_int_hook(capset, 0, new, old,
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_capable':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1018:16: note: in expansion of macro 'call_int_hook'
-    1018 |         return call_int_hook(capable, 0, cred, ns, cap, opts);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_quotactl':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1034:16: note: in expansion of macro 'call_int_hook'
-    1034 |         return call_int_hook(quotactl, 0, cmds, type, id, sb);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_quota_on':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1047:16: note: in expansion of macro 'call_int_hook'
-    1047 |         return call_int_hook(quota_on, 0, dentry);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_syslog':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1062:16: note: in expansion of macro 'call_int_hook'
-    1062 |         return call_int_hook(syslog, 0, type);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_settime64':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1077:16: note: in expansion of macro 'call_int_hook'
-    1077 |         return call_int_hook(settime, 0, ts, tz);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_bprm_creds_for_exec':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1132:16: note: in expansion of macro 'call_int_hook'
-    1132 |         return call_int_hook(bprm_creds_for_exec, 0, bprm);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_bprm_creds_from_file':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1156:16: note: in expansion of macro 'call_int_hook'
-    1156 |         return call_int_hook(bprm_creds_from_file, 0, bprm, file);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_bprm_check':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1175:15: note: in expansion of macro 'call_int_hook'
-    1175 |         ret = call_int_hook(bprm_check_security, 0, bprm);
-         |               ^~~~~~~~~~~~~
-   security/security.c: In function 'security_fs_context_submount':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1225:16: note: in expansion of macro 'call_int_hook'
-    1225 |         return call_int_hook(fs_context_submount, 0, fc, reference);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_fs_context_dup':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1241:16: note: in expansion of macro 'call_int_hook'
-    1241 |         return call_int_hook(fs_context_dup, 0, fc, src_fc);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_sb_alloc':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1289:14: note: in expansion of macro 'call_int_hook'
-    1289 |         rc = call_int_hook(sb_alloc_security, 0, sb);
-         |              ^~~~~~~~~~~~~
-   security/security.c: In function 'security_sb_eat_lsm_opts':
->> security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1347:16: note: in expansion of macro 'call_int_hook'
-    1347 |         return call_int_hook(sb_eat_lsm_opts, 0, options, mnt_opts);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_sb_mnt_opts_compat':
-   security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1364:16: note: in expansion of macro 'call_int_hook'
-    1364 |         return call_int_hook(sb_mnt_opts_compat, 0, sb, mnt_opts);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_sb_remount':
-   security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1381:16: note: in expansion of macro 'call_int_hook'
-    1381 |         return call_int_hook(sb_remount, 0, sb, mnt_opts);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_sb_kern_mount':
-   security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1395:16: note: in expansion of macro 'call_int_hook'
-    1395 |         return call_int_hook(sb_kern_mount, 0, sb);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_sb_show_options':
-   security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1409:16: note: in expansion of macro 'call_int_hook'
-    1409 |         return call_int_hook(sb_show_options, 0, m, sb);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_sb_statfs':
-   security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1423:16: note: in expansion of macro 'call_int_hook'
-    1423 |         return call_int_hook(sb_statfs, 0, dentry);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_sb_mount':
-   security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1446:16: note: in expansion of macro 'call_int_hook'
-    1446 |         return call_int_hook(sb_mount, 0, dev_name, path, type, flags, data);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_sb_umount':
-   security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1460:16: note: in expansion of macro 'call_int_hook'
-    1460 |         return call_int_hook(sb_umount, 0, mnt, flags);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_sb_pivotroot':
-   security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1475:16: note: in expansion of macro 'call_int_hook'
-    1475 |         return call_int_hook(sb_pivotroot, 0, old_path, new_path);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_sb_set_mnt_opts':
-   security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1494:16: note: in expansion of macro 'call_int_hook'
-    1494 |         return call_int_hook(sb_set_mnt_opts,
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_sb_clone_mnt_opts':
-   security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1516:16: note: in expansion of macro 'call_int_hook'
-    1516 |         return call_int_hook(sb_clone_mnt_opts, 0, oldsb, newsb,
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_move_mount':
-   security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1533:16: note: in expansion of macro 'call_int_hook'
-    1533 |         return call_int_hook(move_mount, 0, from_path, to_path);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_path_notify':
-   security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1550:16: note: in expansion of macro 'call_int_hook'
-    1550 |         return call_int_hook(path_notify, 0, path, mask, obj_type);
-         |                ^~~~~~~~~~~~~
-   security/security.c: In function 'security_inode_alloc':
-   security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
-   security/security.c:1569:14: note: in expansion of macro 'call_int_hook'
-    1569 |         rc = call_int_hook(inode_alloc_security, 0, inode);
-         |              ^~~~~~~~~~~~~
-   security/security.c: In function 'security_dentry_create_files_as':
-   security/security.c:851:1: warning: label 'out' defined but not used [-Wunused-label]
-     851 | out:                                                                    \
-         | ^~~
+This does not belong here, please stop cross posting stuff.
 
+>
+> I was not pushing LKM-based LSM because the LSM community wanted to make =
+it possible to
+> enable arbitrary combinations (e.g. enabling selinux and smack at the sam=
+e time) before
+> making it possible to use LKM-based LSMs.
+>
+> According to https://marc.info/?l=3Dlinux-security-module&m=3D12323207632=
+9805 (Jan 2009),
+> Casey said that "SELinux and Smack should never be stacked in the same ke=
+rnel.".
+> I'm personally wondering how many users will enable selinux and smack at =
+the same time.
+> But in that post, Casey also said "You could revive the notion of loadabl=
+e modules
+> while you're at it." while implementing LSM Multiplexer LSM.
+>
+> According to https://marc.info/?l=3Dlinux-security-module&m=3D13305541010=
+7878 (Feb 2012),
+> Casey said that support for multiple concurrent LSMs should be able to ha=
+ndle
+> loadable/unloadable LSMs.
+> The reason for removing unload support was that no in-tree users needed i=
+t, and
+> out of tree use-cases are generally not supported in mainline. That is, w=
+hen the
+> LSM interface became static, the LSM community was not seeing the reality=
+.
+> I don't think that rmmod support for LKM-based LSMs is needed, but I beli=
+eve that
+> insmod support for LKM-based LSMs is needed.
+>
+> According to https://lkml.kernel.org/r/50ABE354.1040407@schaufler-ca.com =
+(Nov 2012),
+> Casey said that reintroducing LSMs as loadable modules is a work for anot=
+her day
+> and a separate battle to fight.
+>
+> These postings (just picked up from LSM mailing list archives matching ke=
+yword "loadable"
+> and sent from Casey) indicate that the LSM community was not making chang=
+es that forever
+> makes LKM-based LSMs impossible.
+>
+> Finally, pasting Casey's message (Feb 2016) here (because the archive did=
+ not find this post):
+>
+>   From: Casey Schaufler <casey@schaufler-ca.com>
+>   Subject: Re: LSM as a kernel module
+>   Date: Mon, 22 Feb 2016 10:17:26 -0800
+>   Message-ID: <56CB50B6.6060702@schaufler-ca.com>
+>   To: Roman Kubiak <r.kubiak@samsung.com>, linux-security-module@vger.ker=
+nel.org
+>
+>   On 2/22/2016 5:37 AM, Roman Kubiak wrote:
+>   > I just wanted to make sure that it's not possible and is not planned =
+in the future
+>   > to have LSM modules loaded as .ko kernel modules. Is that true for no=
+w and the far/near future ?
+>   >
+>   > best regards
+>
+>   Tetsuo Handa is holding out hope for loadable security modules*.
+>   The work I've been doing on module stacking does not include
+>   support for loadable modules, but I've committed to not making
+>   it impossible. There has never really been a major issue with
+>   loading a security module, although there are a host of minor
+>   ones. The big problem is unloading the module and cleaning up
+>   properly.
+>
+>   Near term I believe that you can count on not having to worry
+>   about dynamically loadable security modules. At some point in
+>   the future we may have an important use case, but I don't see
+>   that until before some time in the 20s.
+>
+>   So now I'm curious. What are you up to that would be spoiled
+>   by loadable security modules?
+>
+>
+>   ---
+>   * The original name for the infrastructure was indeed
+>     "Loadable Security Modules". The memory management and
+>     security policy implications resulted in steadily
+>     diminishing support for any sort of dynamic configuration.
+>     It wasn't long before "Loadable" became "Linux".
+>
+> But while I was waiting for "make it possible to enable arbitrary combina=
+tions" change,
+> the LSM community started making changes (such as defining the maximum nu=
+mber of "slots"
+> or "static calls" based on all LSMs are built into vmlinux) that violate =
+Casey's promise.
+>
+> As a reminder to tell that I still want to make LKM-based LSM officially =
+supported again,
+> I'm responding to changes (like this patch) that are based on "any LSM mu=
+st be built into
+> vmlinux". Please be careful not to make changes that forever make LKM-bas=
+ed LSMs impossible.
+>
+>
+>
+> >
+> > My recommendation would be to use BPF LSM for any custom MAC policy
+> > logic. That's the whole goal of the BPF LSM is to safely enable these
+> > use cases without relying on LSM internals and hacks.
+>
+> I'm fine if you can reimplement TOMOYO (or AKARI or CaitSith) using BPF L=
+SM.
+> Since BPF has many limitations, not every custom MAC policy can be implem=
+ented using BPF.
 
-vim +/out +851 security/security.c
+Please stop making generic statements, either be explicit about your
+understanding of the limitations or don't claim them without evidence.
 
-   845	
-   846	#define call_int_hook(FUNC, IRC, ...)					\
-   847	({									\
-   848		__label__ out;							\
-   849		int RC = IRC;							\
-   850		LSM_LOOP_UNROLL(__CALL_STATIC_INT, RC, FUNC, out, __VA_ARGS__);	\
- > 851	out:									\
-   852		RC;								\
-   853	})
-   854	
+- KP
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> The need to insmod LKM-based LSMs will remain because the LSM community w=
+ill not accept
+> whatever LSMs (that are publicly available) and the Linux distributors wi=
+ll not build
+> whatever LSMs (that are publicly available) into their vmlinux.
+>
+> But "LSM: Identify modules by more than name" is the worst change because=
+ that change
+> locks out any publicly available out of tree LSMs, far away from allowing=
+ LKM-based LSMs.
+>
