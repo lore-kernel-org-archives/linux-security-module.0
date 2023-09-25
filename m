@@ -2,85 +2,121 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF85CE7A95
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 13:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CFECE7A97
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 15:22:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231452AbjIYNVJ (ORCPT
+        id S232749AbjIYPWj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Sep 2023 09:21:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33006 "EHLO
+        Mon, 25 Sep 2023 11:22:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231984AbjIYNVH (ORCPT
+        with ESMTP id S232287AbjIYPWh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Sep 2023 09:21:07 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31525124
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Sep 2023 06:21:01 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9ad8d47ef2fso776348266b.1
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Sep 2023 06:21:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1695648059; x=1696252859; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bn7iTgk75DF3DW8sTBDK7BwRnFNBYwDw+r/Tm44OLFA=;
-        b=GNagsra4GCGDzTy92nT4uU054HTMhUzj2r5S1XoXuehiAyadddYpumYs2vyWIaXAWg
-         XDxiLhjp0/2e3mA8dvWOaRpHj+sjDd7Zeo+3G0My3yJDVMj9KJn67DhdzQ5db31/lq7n
-         GusMJST4VmMIvjWLabaoC+IT9aZa49UuVVAB4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695648059; x=1696252859;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Bn7iTgk75DF3DW8sTBDK7BwRnFNBYwDw+r/Tm44OLFA=;
-        b=Ey/VKtY7lnsDuu5N8t+/a2CWjV0GE+XCpj2uo4mK8cc5THNYKtDzJF6k/rA5hrHVpJ
-         zH06jNLIqB99Nibj0BNOAV4Qsa7BifqJN1er/i8eriRnmmMTYJpjuGnI3Muubtn24j97
-         3vGOTLLhMk3lmCX0BYDqxgj+qwYBZ01OInYyVzchFpFvSJJxLRCUGcypWzVhhjFToD3z
-         HHn3jsSgmmkCzdmpXvGA1+ATMZsO/Y9f2e+d2hehRVsMtQAkoLe8xXoIU6Ikps4/fYTm
-         aVn/uPS9IhvisOXEbKLfX4izQ3NmPbL37Fy5+6gvNTM1vNakcBTyY42+LHFBlX4vmx99
-         SDJQ==
-X-Gm-Message-State: AOJu0YyXjk01YOwB5SCGUC5BG3nJT0HzQ4cBhDhIG9Die74sNbj1JW+B
-        pq6QhWNoPtCXAeu4vUDqzR6xOqyvfBHC3/sq0bbbpw==
-X-Google-Smtp-Source: AGHT+IHmxMwgC53O5hQ/QSKMb6t/FgpbrX6Ui+dVQFc7nP6qEjhRvhi5crY4OxsJkC1oykn7zUX+j49dgMzgcYgF0b0=
-X-Received: by 2002:a17:906:3089:b0:9ad:7d5c:52f5 with SMTP id
- 9-20020a170906308900b009ad7d5c52f5mr5603619ejv.75.1695648059583; Mon, 25 Sep
- 2023 06:20:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230913152238.905247-1-mszeredi@redhat.com> <20230913152238.905247-3-mszeredi@redhat.com>
- <44631c05-6b8a-42dc-b37e-df6776baa5d4@app.fastmail.com> <20230925-total-debatten-2a1f839fde5a@brauner>
- <CAJfpegvUCoKebYS=_3eZtCH49nObotuWc=_khFcHshKjRG8h6Q@mail.gmail.com> <20230925-wahlrecht-zuber-3cdc5a83d345@brauner>
-In-Reply-To: <20230925-wahlrecht-zuber-3cdc5a83d345@brauner>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 25 Sep 2023 15:20:48 +0200
-Message-ID: <CAJfpegvAVJUhgKZH2Dqo1s1xyT3nSopUg6J+8pEFYOnFDssH8g@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 25 Sep 2023 11:22:37 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 838BB9C;
+        Mon, 25 Sep 2023 08:22:31 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F12DC433C8;
+        Mon, 25 Sep 2023 15:22:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695655351;
+        bh=OGt2FOw6lDFFBJRltNV7eb25Y3RCJfPYVc/8wsDj+lM=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=Kp0VVt1IVmvLWEfHcZ2kGDvXU/kqTSlU+zkPCXYtz6OOHZKhyu9V5NSp0G4CcW036
+         DQ9LCiRXD6Q490pl7u8169h7tTEUAz8V7ziRXZiOnxF5dDnpKDrQj68Gjg0adng4T5
+         EC3+inaGcrSbVlkKIJs09PWUwziCRokB4AboyUs2UgQ2pt7Zy2tOwb59ADnu4WpGap
+         yRdxENwoFnqspD1+SNBWaf1kvwgaAh2yycGM8qQMtVXclYdN2nIeGugErrwJvR4YEl
+         H9OHYREey3oOXKbuXZV2mFLTFooU8OLOf/hOR2Asgxbi05opItQVsGdjANQ69Zqjb3
+         L4QCoe2YqHFVQ==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Mon, 25 Sep 2023 18:22:22 +0300
+Message-Id: <CVS3NIJ8OO6Y.2C6GJ9OBR6COC@suppilovahvero>
+Cc:     "Shawn Guo" <shawnguo@kernel.org>,
+        "Jonathan Corbet" <corbet@lwn.net>,
+        "Sascha Hauer" <s.hauer@pengutronix.de>,
+        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+        "Fabio Estevam" <festevam@gmail.com>,
+        "NXP Linux Team" <linux-imx@nxp.com>,
+        "Ahmad Fatoum" <a.fatoum@pengutronix.de>,
+        "sigma star Kernel Team" <upstream+dcp@sigma-star.at>,
+        "David Howells" <dhowells@redhat.com>,
+        "Li Yang" <leoyang.li@nxp.com>, "Paul Moore" <paul@paul-moore.com>,
+        "James Morris" <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        "Randy Dunlap" <rdunlap@infradead.org>,
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "Tejun Heo" <tj@kernel.org>,
+        "Steven Rostedt (Google)" <rostedt@goodmis.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linuxppc-dev@lists.ozlabs.org>,
+        <linux-security-module@vger.kernel.org>,
+        "Richard Weinberger" <richard@nod.at>,
+        "David Oberhollenzer" <david.oberhollenzer@sigma-star.at>
+Subject: Re: [PATCH v3 1/3] crypto: mxs-dcp: Add support for hardware
+ provided keys
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "David Gstir" <david@sigma-star.at>,
+        "Mimi Zohar" <zohar@linux.ibm.com>,
+        "James Bottomley" <jejb@linux.ibm.com>,
+        "Herbert Xu" <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+X-Mailer: aerc 0.14.0
+References: <20230918141826.8139-1-david@sigma-star.at>
+ <20230918141826.8139-2-david@sigma-star.at>
+In-Reply-To: <20230918141826.8139-2-david@sigma-star.at>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 25 Sept 2023 at 15:19, Christian Brauner <brauner@kernel.org> wrote:
+On Mon Sep 18, 2023 at 5:18 PM EEST, David Gstir wrote:
+> DCP is capable to performing AES with hardware-bound keys.
+> These keys are not stored in main memory and are therefore not directly
+> accessible by the operating system.
 >
-> > How about passing u64 *?
->
-> struct statmnt_req {
->         __u64 mnt_id;
->         __u64 mask;
-> };
->
-> ?
+> So instead of feeding the key into DCP, we need to place a
+> reference to such a key before initiating the crypto operation.
+> Keys are referenced by a one byte identifiers.
 
-I'm fine with that as well.
+Not sure what the action of feeding key into DCP even means if such
+action does not exists.
 
-Thanks,
-Miklos
+What you probably would want to describe here is how keys get created
+and how they are referenced by the kernel.
+
+For the "use" part please try to avoid academic paper style long
+expression starting with "we" pronomine.
+
+So the above paragraph would normalize into "The keys inside DCP
+are referenced by one byte identifier". Here of course would be
+for the context nice to know what is this set of DCP keys. E.g.
+are total 256 keys or some subset?
+
+When using too much prose there can be surprsingly little digestable
+information, thus this nitpicking.
+
+> DCP supports 6 different keys: 4 slots in the secure memory area,
+> a one time programmable key which can be burnt via on-chip fuses
+> and an unique device key.
+>
+> Using these keys is restricted to in-kernel users that use them as buildi=
+ng
+> block for other crypto tools such as trusted keys. Allowing userspace
+> (e.g. via AF_ALG) to use these keys to crypt or decrypt data is a securit=
+y
+> risk, because there is no access control mechanism.
+
+Unless this patch has anything else than trusted keys this should not
+be an open-ended sentence. You want to say roughly that DCP hardware
+keys are implemented for the sake to implement trusted keys support,
+and exactly and only that.
+
+This description also lacks actions taken by the code changes below,
+which is really the beef of any commit description.
+
+BR, Jarkko
