@@ -2,97 +2,134 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E48ACE7A8C
-	for <linux-security-module@archiver.kernel.org>; Sun, 24 Sep 2023 19:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA81CE7A8B
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 00:56:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231379AbjIXTsZ (ORCPT
+        id S229561AbjIYA4O (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 24 Sep 2023 15:48:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55782 "EHLO
+        Sun, 24 Sep 2023 20:56:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbjIXTsY (ORCPT
+        with ESMTP id S229483AbjIYA4O (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 24 Sep 2023 15:48:24 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90E5DD3;
-        Sun, 24 Sep 2023 12:48:18 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20080C433C7;
-        Sun, 24 Sep 2023 19:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695584898;
-        bh=aWZU5UswlWXquKo6TvzlVJ0C2F5RZIJgKxqaiKhJe0w=;
-        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=P7MuQXYExhov1tOcpJNBJi+Dptm2BawzZz407EtRwDNs0+z52FABR1ecbYXtEX6jb
-         b4ZLH4pkOC77kz3n4wSTvRGzGqaPj/4lkcqXXyIYfp6ljxnRDcb1qKBB8X/AXCgVI6
-         82vNGIkMjWEWvi/Gq9H7WnzU0f6sbqfObsxvH2HkACKrZhy99munQ/ygsamKl8SH/6
-         J2EKMTuIjq4FuGxeZXA7F9mwbCx1YmBIcCjMRjEmfREWMAApupMouHnJYZKmXXK1XZ
-         SH4mGe4Wp69zQ6mbayHCa3CSbaA/XJwrtnOLRbnCy0zxICkpoaykhoh0+cHInynUDO
-         g/vNs/JQX26Qw==
-Date:   Sun, 24 Sep 2023 12:48:15 -0700
-From:   Kees Cook <kees@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Kees Cook <keescook@chromium.org>
-CC:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        serge@hallyn.com, john.johansen@canonical.com,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net,
-        Dave Chinner <david@fromorbit.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v15 01/11] LSM: Identify modules by more than name
-User-Agent: K-9 Mail for Android
-In-Reply-To: <dfdb82a8-85b2-4704-35b9-3ad901a179f1@I-love.SAKURA.ne.jp>
-References: <20230912205658.3432-1-casey@schaufler-ca.com> <20230912205658.3432-2-casey@schaufler-ca.com> <1f5e725d-58b6-eca2-97dc-d7c1209ff167@I-love.SAKURA.ne.jp> <568c0730-b458-04b4-dbfa-77da1758aa05@schaufler-ca.com> <94743c22-bc76-e741-e577-3e0845423f69@I-love.SAKURA.ne.jp> <6df9f8b8-5653-09a5-ae0a-6526016abaff@schaufler-ca.com> <ec37cd2f-24ee-3273-c253-58d480569117@I-love.SAKURA.ne.jp> <202309200803.1911A584@keescook> <af696700-ae4b-346e-4c52-3a7a21b0f46c@I-love.SAKURA.ne.jp> <202309231838.CB16E6B5@keescook> <dfdb82a8-85b2-4704-35b9-3ad901a179f1@I-love.SAKURA.ne.jp>
-Message-ID: <407A11DD-932D-441E-B4EC-673F4423CEDD@kernel.org>
+        Sun, 24 Sep 2023 20:56:14 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74D11E8
+        for <linux-security-module@vger.kernel.org>; Sun, 24 Sep 2023 17:56:06 -0700 (PDT)
+Received: from fsav116.sakura.ne.jp (fsav116.sakura.ne.jp [27.133.134.243])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 38P0tlNp091055;
+        Mon, 25 Sep 2023 09:55:47 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav116.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp);
+ Mon, 25 Sep 2023 09:55:47 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 38P0tlBT091052
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 25 Sep 2023 09:55:47 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <8912fc96-cb8e-ec3b-273d-6bd8ad6b5513@I-love.SAKURA.ne.jp>
+Date:   Mon, 25 Sep 2023 09:55:47 +0900
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: ANN: new LSM guidelines
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <kees@kernel.org>
+Cc:     linux-security-module@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <CAHC9VhRsxARUsFcJC-5zp9pX8LWbKQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com>
+ <4708afda-8867-735a-2f55-ca974e76cc9c@schaufler-ca.com>
+ <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
+ <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
+ <CAHC9VhQhf+ik5S_aJOVn59pax1Aa0vO5gJ4YoxrtGRKtoWh7sA@mail.gmail.com>
+ <f8f32da5-6f31-d197-7405-8f308bd29228@I-love.SAKURA.ne.jp>
+ <CAHC9VhTktg4RFWw+rSZ6wWQ8iR3n2p8XaOO95BbJ1QGAd4y9fg@mail.gmail.com>
+ <43d84d6c-18ac-6689-cddc-d079cfa19d4d@I-love.SAKURA.ne.jp>
+ <CAHC9VhSG2UzE9N0-tAJc8B3Mj1PEuJ2b6wso_DUs_Y83yqwhjA@mail.gmail.com>
+ <c8d58922-9af4-b425-03c6-6710ad17b739@schaufler-ca.com>
+ <CAHC9VhTdtF=_4nj3-eQvBUhWhnEss28KKUKCciBCrBL9pN+uQw@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhTdtF=_4nj3-eQvBUhWhnEss28KKUKCciBCrBL9pN+uQw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On September 24, 2023 4:06:07 AM PDT, Tetsuo Handa <penguin-kernel@I-love=
-=2ESAKURA=2Ene=2Ejp> wrote:
->Patch description says
->
->  The LSM ID values are sequential, with the oldest module
->  LSM_ID_CAPABILITY being the lowest value and the existing modules
->  numbered in the order they were included in the main line kernel=2E
->  This is an arbitrary convention for assigning the values, but
->  none better presents itself=2E The value 0 is defined as being invalid=
-=2E
+On 2023/09/13 4:00, Paul Moore wrote:
+> On Tue, Sep 12, 2023 at 2:40 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 9/12/2023 11:08 AM, Paul Moore wrote:
+>>>
+>>> Once again, we've already discussed this many, many times: out-of-tree
+>>> LSMs are not the priority and that is not going to change.  One
+>>> corollary of this is that we are not going to assign LSM IDs to LSMs
+>>> that remain out-of-tree as this would negatively impact the LSM layer
+>>> by cluttering/depleting the LSM ID space.
 
-"in the order they were included in the main line kernel" Out of trees are=
-n't in main line=2E
+Like Kees Cook said, we don't need to worry about depleting the LSM ID space
+because lsm_id::id is a u64. We only need to worry about cluttering/conflicting
+the values.
 
-And "This is an arbitrary convention" specifically says it's arbitrary=2E
+>>>                                            LSMs that are working
+>>> towards integration with the upstream Linux kernel can self-assign a
+>>> temporary LSM ID which will be finalized upon merging in the LSM tree.
 
-There is literally nothing here stopping out of tree modules=2E I have pro=
-ven this, and so have you with these quotes=2E What is left to object to?
+A review might take years (like we did with the pathname based access control
+in the past). What userspace would want to use of long-term non-persistent
+registrations? At the stage of publishing an LSM (and userspace tools which
+make use of LSM ID value), the LSM ID value should be long-term persistent
+registrations. Recompiling userspace tools every time is no good.
 
->You withdraw your "Reviewed-by" response unless "The LSM ID values are se=
-quential"
->and "must be approved by the LSM maintainers" are removed and "the LSM ma=
-intainers/community
->shall never complain about what names and/or values are assigned" is adde=
-d, don't you?
+>>> Based on all of the arguments you have already submitted - and let us
+>>> be very clear: you are the only one speaking out against this - I see
+>>> no reason to change this policy.
+>>
+>> I won't say this is a great idea, or that I endorse it, but we could
+>> allocate a range of LSM ID values ( 10000 - 10999 ? ) that we promise
+>> will never be given to an upstream LSM. We wouldn't make any guarantees
+>> about conflicts otherwise. These could be used by LSMs before they are
+>> accepted upstream or by LSMs that don't have upstream aspirations. I
+>> seriously doubt that anyone using such an LSM is going to be mixing
+>> multiple such LSMs without being capable of managing ID conflicts.
+> 
+> Not a crazy idea.  I had debated something similar, a reserved
+> "private use" or "experimentation" range; there is definitely
+> precedence for that in other areas, e.g. network protocols.  What held
+> me back is that invariably folks will want to create long-term
+> persistent registrations against this space for their out-of-tree LSMs
+> which would require some sort of unofficial, adhoc registration
+> authority which starts to get a bit silly in my opinion (the
+> registration authority for the Linux kernel API is the upstream Linux
+> kernel community).
 
-*For main line kernels*
+Not silly at all. I do want to create long-term persistent registrations
+against this space for any publicly available LSMs.
 
-Please, understand both the *intent* and *reality*: this does not block ou=
-t of tree LSMs, full stop=2E
+The sane and the better usage of LSM ID is to register any publicly available
+LSMs. If LSM ID serves as an index for what LSMs are available in the world,
+by maintaining "the LSM module name, the LSM ID value, short description about
+that LSM module, the public git repository or web site for more information
+about that LSM module" pairs, people can easily find what LSMs could be used
+for their purpose, and developers can avoid re-inventing similar LSM modules
+which are already available somewhere in the world (and optionally helps
+avoiding module name collisions with any publicly available LSMs).
 
->Keeping how the HUGE space is used under control of the LSM community wil=
-l be
->better for both in-tree and out-of-tree LSM modules=2E I really can't und=
-erstand
->why you don't want to utilize this opportunity=2E
+> 
+> Temporary assignments while a LSM is undergoing the review-revision
+> cycle on its way to being merged is something different and if we need
+> a couple of reserved numbers for that (one or two MAX) we can consider
+> that, but I don't expect this to be a major problem in practice.  LSMs
+> that are in this transient pre-merge state shouldn't be used for
+> production purposes and thus a LSM ID change on merging shouldn't be a
+> problem.
 
-I cannot understand what else you need to hear=2E
+It is possible that more than 3 LSMs concurrently get under the review;
+reserving 2 at most can deplete the reserved LSM ID space.
 
--Kees
+No userspace tools want to recompile due to unstable LSM ID values.
+Temporary assignments is no good.
 
-
---=20
-Kees Cook
