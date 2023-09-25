@@ -2,113 +2,124 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD25BCD54BE
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 20:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99246CE7A97
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 22:02:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232809AbjIYUIs (ORCPT
+        id S229481AbjIYWCV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Sep 2023 16:08:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57936 "EHLO
+        Mon, 25 Sep 2023 18:02:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbjIYUIr (ORCPT
+        with ESMTP id S229459AbjIYWCU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Sep 2023 16:08:47 -0400
-Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BAD99B;
-        Mon, 25 Sep 2023 13:08:41 -0700 (PDT)
-Received: by mail-ot1-x336.google.com with SMTP id 46e09a7af769-6c4e38483d2so1860490a34.1;
-        Mon, 25 Sep 2023 13:08:41 -0700 (PDT)
+        Mon, 25 Sep 2023 18:02:20 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90FD2116
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Sep 2023 15:02:13 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1c3d8fb23d9so50849115ad.0
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Sep 2023 15:02:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695672520; x=1696277320; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lucKNU0RDlL+gBnOBSIzkQDlaCBNbwXXxr+QvoDA/74=;
-        b=lariq36/d+f/al4vHhTQbnn44OcryJfHK8thSKHlPrLFpIyU0Nc70B/A5ittPnuVhf
-         iecsQ7/6Th/REP2vmJ3T85l1y6wGuLsu/n6FPQgZhY5EjIs9EsGvuTX5PM5/Q9rvimE1
-         xRjxAdCNN+vISidhNnHY4WEo9PDuZErvcjUEZuTVN3cK0ayfDfPLg/fPrxHNLDq8jjhL
-         QFTYsciV75f3t/I0ZS6KH9gHR1Ex7G6LwZ+iZx5JAy0QpC3jQ+obhMQQUCUrPUrv1WjN
-         7Wtl1wL+YFLn/lPpQUICyoYd2tYX+t6q+1MK4O9CzHHk/Wcf5sJX+EKMtx2ykcKW5PFQ
-         q3kw==
+        d=chromium.org; s=google; t=1695679333; x=1696284133; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jIm/cOjAUf8gm+eb/2LJmZ6n9G3ThUBS4oFwikE7Fu8=;
+        b=lKK+VgGbVlU1oQ2MOdySSS9+mO7bWnOkfcjYYEpv+nrEc16Z0K0IHnvrT+G94vzyNs
+         O4kZSnQHoPc048nrROdEQo0hvBoNQRbKx9wjNuSgUj7kxbG3aj53A0+SYrBn/9kjwRDJ
+         ycFQKUKUMSxFAOST/58bF4DmWWyTZqAfFAb9Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695672520; x=1696277320;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lucKNU0RDlL+gBnOBSIzkQDlaCBNbwXXxr+QvoDA/74=;
-        b=q5hj4wjTFwWjnLDVVUCKe/hNnsB3AGEja9EBaPa3I1xkr87ZQpup2wRw+OSMmNVnh7
-         bLtOqFU2jK88xNbAkp8h0x6+IFnIzlv5jxkOEOf4YN6iBNltXEyNGnzjmc5TNC2YepV2
-         l0TCN947Wufk4Z+yBsi1m7zxHJSb35XJahg1OdZS26g9e5RFiIYf08yZsjRvsuefrfcD
-         r4JW83u5ZW0xUNqE0Marq9S1SU1aN2zEaF33EgqBxNKI984O/CY7De6yY2e7LnKTZCYE
-         N2dq1L9QDcl96EWYFwMofIW2BkGNShzRAVcr9sqBJWkMksAKXxh6rTaVwdWUJAeQQPj9
-         JYDg==
-X-Gm-Message-State: AOJu0YysvVcn5gA49u/NL7jJfRwJ2VE+YXQkymsEM5NPXhpwR8YdoxuB
-        Y4xK4pdTdak/RA0uzK/HtreHM2PI04MK1BcT8kWp9fb6
-X-Google-Smtp-Source: AGHT+IE7lqvRfNQg+VrNy2nvHedN1/dcCykJg3BOdtyADFUdUiVakRQGF9UpmrugTJZV+kbYTmCjbar6IOP7e4AOlws=
-X-Received: by 2002:a9d:7d87:0:b0:6b9:1af3:3307 with SMTP id
- j7-20020a9d7d87000000b006b91af33307mr8243104otn.17.1695672520323; Mon, 25 Sep
- 2023 13:08:40 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ac9:5dc9:0:b0:4f0:1250:dd51 with HTTP; Mon, 25 Sep 2023
- 13:08:39 -0700 (PDT)
-In-Reply-To: <202309231925.D9C4917@keescook>
-References: <20230922145505.4044003-1-kpsingh@kernel.org> <20230922184224.kx4jiejmtnvfrxrq@f>
- <CACYkzJ67gw6bvTzX6wx_OtxUXi6kpVT196CXV6XCN1AaGQuKAw@mail.gmail.com>
- <CAGudoHE+od5oZLVAU4z3nXCNGk6uangd+zmDEuoATmDLHeFLGQ@mail.gmail.com>
- <CAGudoHFiVLmaMbFJno47_-x3Rs2tvgXNKyNznJeCq_cF8hFVvA@mail.gmail.com> <202309231925.D9C4917@keescook>
-From:   Mateusz Guzik <mjguzik@gmail.com>
-Date:   Mon, 25 Sep 2023 22:08:39 +0200
-Message-ID: <CAGudoHHm-ofzATMdE_HU2e0voKiQnkkcL+1+F73azxNeHCvYSA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] Reduce overhead of LSMs with static calls
-To:     Kees Cook <keescook@chromium.org>
+        d=1e100.net; s=20230601; t=1695679333; x=1696284133;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jIm/cOjAUf8gm+eb/2LJmZ6n9G3ThUBS4oFwikE7Fu8=;
+        b=bE6lZesxdDEJMB5F8vUMSLs6FazWFJEYeksL7wpzS8pFF2iMNpFE7oopACNZf7rZAd
+         Dr6+H7AD6dcxnCvtUq8oEY4K2WTThR7Bl9JLa+I6j1Ou/8g3OlFl+4IK94jazxq9Dnqn
+         f+kBjF6vlvUKMqam8EMXo5PqJA34eZmy6TU0M+nD5WXzh1nPC3rH5FzIn3jL5Jjh077r
+         MUfZjf1fHOF+vZBYpHu4qs1Nrd/dWsnX0n8XrLT43Iz6FW7SjsuVc+Bq3LYdXDGje8KF
+         JmrZBZkdikwC8HVxJaDnRPyc9dB3EVmhG5XvM7NrqBu3BRenM20IIeVQdoUWmXV6Ke/D
+         qkmQ==
+X-Gm-Message-State: AOJu0Yyqt4LATijMR9pkSfYnhk3XGqgX8ZNiEZV/D51jClVovEhNdV5t
+        36tNoLiFxhASSI7zPxSPUEDsSw==
+X-Google-Smtp-Source: AGHT+IGp1td/ukjkCNci2jzFtAsWNrJSOxLnJChMCPfFPTaLkvfQN/uCFTw0eypjSXm48FWFmTLuEg==
+X-Received: by 2002:a17:902:ced2:b0:1bd:a42a:215e with SMTP id d18-20020a170902ced200b001bda42a215emr7198535plg.38.1695679333053;
+        Mon, 25 Sep 2023 15:02:13 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id f9-20020a170902ce8900b001c5076ae6absm9418062plg.126.2023.09.25.15.02.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Sep 2023 15:02:12 -0700 (PDT)
+Date:   Mon, 25 Sep 2023 15:02:10 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Mateusz Guzik <mjguzik@gmail.com>
 Cc:     KP Singh <kpsingh@kernel.org>,
         linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
         paul@paul-moore.com, casey@schaufler-ca.com, song@kernel.org,
         daniel@iogearbox.net, ast@kernel.org, renauld@google.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v4 0/5] Reduce overhead of LSMs with static calls
+Message-ID: <202309251500.B80E2D66@keescook>
+References: <20230922145505.4044003-1-kpsingh@kernel.org>
+ <20230922184224.kx4jiejmtnvfrxrq@f>
+ <CACYkzJ67gw6bvTzX6wx_OtxUXi6kpVT196CXV6XCN1AaGQuKAw@mail.gmail.com>
+ <CAGudoHE+od5oZLVAU4z3nXCNGk6uangd+zmDEuoATmDLHeFLGQ@mail.gmail.com>
+ <CAGudoHFiVLmaMbFJno47_-x3Rs2tvgXNKyNznJeCq_cF8hFVvA@mail.gmail.com>
+ <202309231925.D9C4917@keescook>
+ <CAGudoHHm-ofzATMdE_HU2e0voKiQnkkcL+1+F73azxNeHCvYSA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHHm-ofzATMdE_HU2e0voKiQnkkcL+1+F73azxNeHCvYSA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/24/23, Kees Cook <keescook@chromium.org> wrote:
-> That said, I've long advocated[1] for a way to explicitly disable LSMs
-> without affecting operational ordering. I think it would be very nice to
-> be able to boot with something like:
->
-> lsm=!yama
->
-> to disable Yama. Or for your case, "lsm=!tomoyo". Right now, you have to
-> figure out what the lsm list is, and then create a new one with the
-> LSM you want disabled removed from the list. i.e. with v6.2 and later
-> check the boot log, and you'll see:
->
-> LSM: initializing lsm=lockdown,capability,landlock,yama,integrity,apparmor
->
-> If you wanted to boot with Yama removed, you'd then pass:
->
-> 	lsm=lockdown,capability,landlock,integrity,apparmor
->
-> As a boot param. But I think this is fragile since now any new LSMs will
-> be by-default disabled once a sysadmin overrides the "lsm" list. Note
-> that booting with "lsm.debug=1" will show even more details. See commit
-> 86ef3c735ec8 ("LSM: Better reporting of actual LSMs at boot").
->
-> So, if a distro has no support for an LSM but they want it _available_
-> in the kernel, they should leave it built in, but remove it from the
-> "lsm=" list. That's a reasonable bug to file against a distro...
->
+On Mon, Sep 25, 2023 at 10:08:39PM +0200, Mateusz Guzik wrote:
+> On 9/24/23, Kees Cook <keescook@chromium.org> wrote:
+> > That said, I've long advocated[1] for a way to explicitly disable LSMs
+> > without affecting operational ordering. I think it would be very nice to
+> > be able to boot with something like:
+> >
+> > lsm=!yama
+> >
+> > to disable Yama. Or for your case, "lsm=!tomoyo". Right now, you have to
+> > figure out what the lsm list is, and then create a new one with the
+> > LSM you want disabled removed from the list. i.e. with v6.2 and later
+> > check the boot log, and you'll see:
+> >
+> > LSM: initializing lsm=lockdown,capability,landlock,yama,integrity,apparmor
+> >
+> > If you wanted to boot with Yama removed, you'd then pass:
+> >
+> > 	lsm=lockdown,capability,landlock,integrity,apparmor
+> >
+> > As a boot param. But I think this is fragile since now any new LSMs will
+> > be by-default disabled once a sysadmin overrides the "lsm" list. Note
+> > that booting with "lsm.debug=1" will show even more details. See commit
+> > 86ef3c735ec8 ("LSM: Better reporting of actual LSMs at boot").
+> >
+> > So, if a distro has no support for an LSM but they want it _available_
+> > in the kernel, they should leave it built in, but remove it from the
+> > "lsm=" list. That's a reasonable bug to file against a distro...
+> >
+> 
+> Maybe I once more expressed myself poorly, I meant to say stock Debian
+> does not ship any tooling for tomoyo, but the kernel has support
+> compiled in.
 
-Maybe I once more expressed myself poorly, I meant to say stock Debian
-does not ship any tooling for tomoyo, but the kernel has support
-compiled in.
+If there is no tooling Debian should either not build the support into
+the kernel or should leave it out of the CONFIG_LSM list.
 
-Ultimately, after stacking got implemented, it was inevitable diestros
-like Debian will enable whatever modules and expect them to not be a
-problem if not configured by userspace.
+> Ultimately, after stacking got implemented, it was inevitable diestros
+> like Debian will enable whatever modules and expect them to not be a
+> problem if not configured by userspace.
+> 
+> I don't think any form of messing with CONFIG_LSM is a viable option,
+> even if you make it a boot param.
+> 
+> What should happen instead is that modules which are not given any
+> config don't get in the way.
 
-I don't think any form of messing with CONFIG_LSM is a viable option,
-even if you make it a boot param.
+Right -- this is an open problem, and I think we can solve it using the
+static_call system (much like how the BPF LSM is doing it).
 
-What should happen instead is that modules which are not given any
-config don't get in the way.
+-Kees
 
 -- 
-Mateusz Guzik <mjguzik gmail.com>
+Kees Cook
