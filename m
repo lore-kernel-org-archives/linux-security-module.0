@@ -2,114 +2,106 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D09FCE7A9B
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 15:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 938DECE7A8C
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 15:50:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232960AbjIYPru (ORCPT
+        id S232542AbjIYPuI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Sep 2023 11:47:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58094 "EHLO
+        Mon, 25 Sep 2023 11:50:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232721AbjIYPrc (ORCPT
+        with ESMTP id S229611AbjIYPt6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Sep 2023 11:47:32 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 131E91A7;
-        Mon, 25 Sep 2023 08:47:21 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 750045C1F9F;
-        Mon, 25 Sep 2023 11:47:20 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Mon, 25 Sep 2023 11:47:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; t=1695656840; x=1695743240; bh=+v
-        KhvI/Ayw8ZF2UMd/3KHjztbHQPAFx3voTEU49nlf4=; b=WkfjzfyYFriipTXDab
-        kMvNOuVMtPiVAVxp5nPRHIiz3sc424JdoohsczIhiRYO5u8KboaEnDTSxZCHqqr3
-        1YbKC3t5TdnBCovjgaRL553v4McpdnCsdq6sa34kS/dIYlEPhRyOgDKXKFW1Zxnu
-        WRI5VM41w83BSEFH4JCsDQbCfD5LqeE9ydf4nAbaehkz79Fgh7x3C2KML72OMuuV
-        JIbtidNR6OmswPAoiFlie2nyo5g/U4Wb7ZRYTx2rx/n5ohbFSO3d15X3wD+QpmrJ
-        PWcFqM0I264rUBA4fLGicgMyiRDCCoz7+Mwa1RKvsnqyKArBJ1lFPpe+S/7y8+dv
-        ReOw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1695656840; x=1695743240; bh=+vKhvI/Ayw8ZF
-        2UMd/3KHjztbHQPAFx3voTEU49nlf4=; b=qhW3cYQzCW1SmMCDtbbaOAlLC8MLF
-        uRpPar5Pu7DFJzrZsNsD2GTnINJvmscfADFXTQvL/v9Kf9vv7tp2gmaMkZAq3f/H
-        QojF0lZ2MEjOxto+IGA/EqxAlogl2gaNie22+Ui6nTrd0Lw8PxhIAx1+rqkvv3u/
-        /MhFTeE8CXWcG6zunhRUJGNcCR72d8ru++yvF8gV2KEfBby2Z5LxrLBs1d+0+ttn
-        /xD3X8rx5t6UE8dlPxOaR5M5j8u6D8rIOAG1zFRkJvbInpMzoe1AnphDE4yTrDPL
-        SicNdoK7VPSGkillo4uyg77GuandCkLZaMz9twEh2AUfUu7WOtycfXe4Q==
-X-ME-Sender: <xms:h6sRZd7JelL0FGWIpCurmNpmDBV7yL3sUj2xm2eS2D-hqUMyIAVW3w>
-    <xme:h6sRZa6DQ1QsHVJKCHhqEqzJ23j6G15ltitzFpG9yeL98VoeGsoOvPGlU8p-AYOK0
-    asvEUCoq2bIu1kU2pQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudelgedgledvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:h6sRZUe91cjMxwK0fX14VR2KnvHzScL0VG5VvLXnMaYRiVetzrUEZQ>
-    <xmx:h6sRZWLNZt-HSEc3gc8zdbLiRVUi6puW7dMZPnjUipnHI833MWl9Pg>
-    <xmx:h6sRZRJD5wkBjw2mr5X1HQZCfB6GUTYnpji-oNQ6ft6sZpiUIU6LYA>
-    <xmx:iKsRZbBbK3gU_S6YiUCjqDqmuYcB5C_8_NqaxbYi7RFwj4gqQjX64w>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 6F8A9B60089; Mon, 25 Sep 2023 11:47:19 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-957-ga1ccdb4cff-fm-20230919.001-ga1ccdb4c
+        Mon, 25 Sep 2023 11:49:58 -0400
+Received: from sonic301-37.consmr.mail.ne1.yahoo.com (sonic301-37.consmr.mail.ne1.yahoo.com [66.163.184.206])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BA72CDF
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Sep 2023 08:48:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1695656936; bh=MrOhSvI+t/+YXuvHl9aFhZ3yD3jslvUTZqhw5s2F5mA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=VYHCI66kbMY7vbRYYC1DH0xr3udfSQ8s4cOg0fL2CmIkEttaxDhzidckzzpSLW+Ud6QEX8w5oJ1Ku4NgK8ppGE8WmTlU9AN0nex2ts3T32iABwxtTzor/nchMdPfdRTWh/5xE62apgCSLdtHQTHC4lzQpPZnnYHEa6/spmUo/r6Tx3gKo2aQufTLt8QMrHsPvtUUf5bMDQaRMONUnbVvnlldAxCdV0lbur+ECRWrxyCVS143CvA+YtsHIq8oySA2xonFsE+cXKsHD+y+NKIyQzRAcCKXOdzvfPLZXROiQ/pLFPzXv3iCSJCn9eRbTFiEZ2ZgzRoHh8lYRm51dYDBkA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1695656936; bh=Fqv8WmN3Rx+OtpAwF8tBtz4uHJQ1JuHKsewrVd9LRs4=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=NEhtyOuXbkPA0SA1/ZHKM+uNU1YyqcJ6M5GtVzIb2jaOqRTwWQkScu0+rIAPT/TOzqmH/7TZTyQIlwXg9tlsuvc92TPui9GAU/VnA6VcOXbflOrP34aE+z0JHpp8zQy6nuO86rip0Qr/UrJ62AnuqVhf4hg3dWIEbUOXHashPFmMLshwQBBholGV1Mr7j2vxWuEHEyPJJ7V0KDNrKbu+ulzRek2YFOGXKxeEkQ+hhM1JZY91pWiEdkTo69xut73//6NCw/SmbdlZSPOicaQukiAjmeCWV2rXpFaVVXpR2b7ALyc570yY/uUFcO4GDJaSFmq56V//EIyx57/TMjszAA==
+X-YMail-OSG: XvLL108VM1mYqWdeWEogulB1IRsUtR6JWxsTc1IOuWb8h4SRSqkcL.34fyZwrbF
+ I8fUp_ZV68SFeELU1LMJ6P_DIea9KMwIjhJngazi7vnx5TLcpFO48IIdSxK_jA8sCQDBXBCKbkT1
+ QUwVaBio2N_ZHbW3.K13_fDpHxWyvtfmA4I2ro83KCOMuK8ZI_zBvKQ2NSAlk6yr9QoXmC5qVbwk
+ olUht1LOKzOu.Qn8iwHj_3RY_4ronKPNvkcmDQEiPP4Hjcuaw9bKVglNZFHbvjcpsogqNJTjrYcP
+ 1NLG4U2Am5ikL5KpeRq8o1b_kCBij6LxKV14byA8mvLT6jhJE16QtaW1Sr3SJAJTKWGEFBUG6DB7
+ Yo_wfqkBbp35FiGD9ke82iKUGy3fPAX33f2ECoVHHVRUFL0ITOpMm3QfgW8GwPs2gufi761xm9Uw
+ ratukRzT9pBxkMXl35m6dBKWjSd0LDfI9h5R8Bv1Zaq.AoC6Hj64QfBn.P3SX5eWQbZmvLwRUTq_
+ gq1zWkuRABCzwNeqlFctvqjluYD4BISH2VMpvKo5SUoBJxblxwBRTC4AiuXyb4fhyd_06kLZd21e
+ ly4Xl12TDVjUOkO3Trz8RkVmObRSc6yvyxFitVewFvgYMB.ab_g6goNW8ugt7bWfyIkLNMuHCwnA
+ aHO8d9n.TlZ00nwtXiQD9UgWq1SnFWoAG1j9daw2WHBhesXgfHfKRiC8NEgCVr1ieTFQ4spGLLnv
+ LvnqH7fR3IU1A00D2aTu9G6Qtc4MXFBOANaHN9GxOpeORouJDDwWE.YdJ0Cn7r3kfK7ND2EqkMrS
+ ctJL4Ej9Dzmci8sFqBReZwYJ_2OJYqOf6xBtpusnr74Cv07GkU6La1czfq5GSq.8k9r9c3ATtlS9
+ RnHxRjrcA_nzFDP07C.ACNUPj4oRMgWB6wighQ5QH.401QZ79k1JijfZoVbaI24eWZIR0XA5KFeA
+ 7eZaXdNTzeZCkZCHPeQG5wzJ5EU6E0cWStYLkJ7KGcs6eeOldJoIkct7JaeT7uCf6kXuDd1ieD_3
+ hG5Uep_._lxt7v71zdkuIFNe7xK0YmU3PbWsJHNZE3mG.lxdrqL34NwgenUVQPywnR1sZgSdxW0L
+ CVIfh6i5SXGv1UJ1kD_BWuuQ34fk52J6QaEYnVbQtHPvidDyEioFwIIhKX3bOAKnJCOpWC0yywtq
+ jZl1zXEADQsraiXERMBSGmg3Dyd5nnA005swxZ2bGy6t7vFMXtVkOLlzFyQ5DL4TESqG26WxXMXu
+ u21q0LOoW0SJTS2tXpKfjSewyIXyLFL8inGbP8tJ.xv5azp0OTKFSZQm81D2xGNCV5y0B.2xKrH6
+ PpGoennHmjGhToL6OUUwaFOI3Th8cpt0Q6UvI1gkFzGHLCqBEzt0dQpUP0TQGNuNRFZX5mn_XWVI
+ _GXRa0wV.pHFbK_YnCiLXiOIOncgcgR4hE3QZFGjShgBr0eK.WvhHaWhJ6Mm2nUcT1Ev2vCEKYiR
+ SNNLrS8a12j9W2c_u6mGbCS1L2jiRlAGrsYfs8mi0XCCnmup20Ie0rbRtJSEtIPYJf0MXqMNv5Om
+ HI7IiemZBwa4OYEzrUc3hcFD2T0h2CJAm.OBFa6WEefEuLWWiLT3NyV5HgacVyGfK_2ykSqcP2Xk
+ .9n_f3Dm0ehKQtTlN21E7GoJSUKIGojh497KEOLiNDsLP6enKAji5b0gr4FFnGfoHy9DjsCCbRGe
+ _OVPob8zha52AJX7diz6qD_6wuHTdfOQvkQTkzK5pbPQLvr8H6UPnwnw5CMQUiT4acwDzo_iapZ5
+ uj_M7QugZ5UQJos5Enkq8cOBHSfjGAzUzeycZDf9.CWc2xKn8xgznfF3adrchIi432GzgOLeoug0
+ SHTJLDzMcaisfQDl6jfVz2YYRXppnYJ3BIwK.twY.KIJLXBS34VMhUu_umjrz3vjIdlVeU6RYuyG
+ HqKsJI2rzvAHIJ1YiIts0oZ5nkK3MSdjl.NRNt3sUEUdnSpI1eWGN5Nu7xOKbGRpfSZCVpFb3LTT
+ T3bWS4BFyd4qbNKwNI.tZRxUiiKtd.ZuPJIU8UxfgT3NqqqGGeQ1lvDYxqcLTb7zk73SF7rFbDAi
+ WFDEhGquN4Lq8onbdsgsEH8LIVZ0Y4f.Oumz18Xeqs7zCa4lWzTqDXGKkh8X8KwDXePqQIM__Xrl
+ 6ed_C9oPwhRL6sqbHIUk6RMu.fUEufzF0zkljSZcaNdItXuE8JwPoIlCL9x7thJJ3xbcpckFBagu
+ IMAuu9E3Cz6jb_Hu0LmtjUx5WU0lVNPR5UFB8YoU0hid9httiMZpokwdjCGASygak5_fDAaIMJOG
+ q69WqrWvIjg--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: f599b712-7155-4bdc-9761-7c8cd2088439
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Mon, 25 Sep 2023 15:48:56 +0000
+Received: by hermes--production-bf1-678f64c47b-5k7bw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 82fe741eda72d826510c5ca8bacf2bdd;
+          Mon, 25 Sep 2023 15:48:54 +0000 (UTC)
+Message-ID: <06009947-a481-bbca-506a-20b10367b1e5@schaufler-ca.com>
+Date:   Mon, 25 Sep 2023 08:48:49 -0700
 MIME-Version: 1.0
-Message-Id: <15fb406a-0f12-4708-abe7-91a464fecbc2@app.fastmail.com>
-In-Reply-To: <CAJfpegvAVJUhgKZH2Dqo1s1xyT3nSopUg6J+8pEFYOnFDssH8g@mail.gmail.com>
-References: <20230913152238.905247-1-mszeredi@redhat.com>
- <20230913152238.905247-3-mszeredi@redhat.com>
- <44631c05-6b8a-42dc-b37e-df6776baa5d4@app.fastmail.com>
- <20230925-total-debatten-2a1f839fde5a@brauner>
- <CAJfpegvUCoKebYS=_3eZtCH49nObotuWc=_khFcHshKjRG8h6Q@mail.gmail.com>
- <20230925-wahlrecht-zuber-3cdc5a83d345@brauner>
- <CAJfpegvAVJUhgKZH2Dqo1s1xyT3nSopUg6J+8pEFYOnFDssH8g@mail.gmail.com>
-Date:   Mon, 25 Sep 2023 17:46:59 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Miklos Szeredi" <miklos@szeredi.hu>,
-        "Christian Brauner" <brauner@kernel.org>
-Cc:     "Miklos Szeredi" <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        "Karel Zak" <kzak@redhat.com>, "Ian Kent" <raven@themaw.net>,
-        "David Howells" <dhowells@redhat.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Alexander Viro" <viro@zeniv.linux.org.uk>,
-        "Christian Brauner" <christian@brauner.io>,
-        "Amir Goldstein" <amir73il@gmail.com>
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 2/5] security: Count the LSMs enabled at compile time
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        KP Singh <kpsingh@kernel.org>
+Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        paul@paul-moore.com, keescook@chromium.org, song@kernel.org,
+        daniel@iogearbox.net, ast@kernel.org,
+        Kui-Feng Lee <sinquersw@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20230918212459.1937798-1-kpsingh@kernel.org>
+ <20230918212459.1937798-3-kpsingh@kernel.org>
+ <cb67f607-3a9d-34d2-0877-a3ff957da79e@I-love.SAKURA.ne.jp>
+ <CACYkzJ5GFsgc3vzJXH34hgoTc+CEf+7rcktj0QGeQ5e8LobRcw@mail.gmail.com>
+ <dde20522-af01-c198-5872-b19ef378f286@I-love.SAKURA.ne.jp>
+ <CACYkzJ5M0Bw9S_mkFkjR_-bRsKryXh2LKiurjMX9WW-d0Mr6bg@mail.gmail.com>
+ <ed785c86-a1d8-caff-c629-f8a50549e05b@I-love.SAKURA.ne.jp>
+ <CACYkzJ4TLCMFEa5h-iEVC-58cakjduw44c-ct64SgBe0_jFKuQ@mail.gmail.com>
+ <6a80711e-edc4-9fab-6749-f1efa9e4231e@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <6a80711e-edc4-9fab-6749-f1efa9e4231e@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21797 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 25, 2023, at 15:20, Miklos Szeredi wrote:
-> On Mon, 25 Sept 2023 at 15:19, Christian Brauner <brauner@kernel.org> wrote:
->>
->> > How about passing u64 *?
->>
->> struct statmnt_req {
->>         __u64 mnt_id;
->>         __u64 mask;
->> };
->>
->> ?
+On 9/25/2023 4:03 AM, Tetsuo Handa wrote:
+> On 2023/09/24 1:06, KP Singh wrote:
+>>> I was not pushing LKM-based LSM because the LSM community wanted to make it possible to
+>>> enable arbitrary combinations (e.g. enabling selinux and smack at the same time) before
+>>> making it possible to use LKM-based LSMs.
+> (...snipped...)
+>>> As a reminder to tell that I still want to make LKM-based LSM officially supported again,
+>>> I'm responding to changes (like this patch) that are based on "any LSM must be built into
+>>> vmlinux". Please be careful not to make changes that forever make LKM-based LSMs impossible.
+> You did not recognize the core chunk of this post. :-(
 >
-> I'm fine with that as well.
+> It is Casey's commitment that the LSM infrastructure will not forbid LKM-based LSMs.
 
-Yes, this looks fine for the compat syscall purpose.
+... And this code doesn't. I you want LKM based LSM support I suggest you
+provide patches. If there is anything in the LSM infrastructure that you can't
+work around I'll help work out how to do it. But I am not going to do it for
+you, and I don't think anyone else is inclined to, either.
 
-Not sure if losing visibility of the mnt_id and mask in ptrace
-or seccomp/bpf is a problem though.
 
-    Arnd
