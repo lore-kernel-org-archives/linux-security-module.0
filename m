@@ -2,151 +2,113 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA95CE7AAF
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 17:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD25BCD54BE
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 20:08:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233150AbjIYRhz (ORCPT
+        id S232809AbjIYUIs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Sep 2023 13:37:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59890 "EHLO
+        Mon, 25 Sep 2023 16:08:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233073AbjIYRhv (ORCPT
+        with ESMTP id S229481AbjIYUIr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Sep 2023 13:37:51 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACC87111
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Sep 2023 10:37:44 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-597f461adc5so134230567b3.1
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Sep 2023 10:37:44 -0700 (PDT)
+        Mon, 25 Sep 2023 16:08:47 -0400
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BAD99B;
+        Mon, 25 Sep 2023 13:08:41 -0700 (PDT)
+Received: by mail-ot1-x336.google.com with SMTP id 46e09a7af769-6c4e38483d2so1860490a34.1;
+        Mon, 25 Sep 2023 13:08:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695663464; x=1696268264; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4OSNJSuzGEyn2eFVxut8UHIn8mk8UoHB1vJTBDeWUjg=;
-        b=vHOkqRox53qWWq1w+Y3R/aBAcsqP2f0/LNwJwmzxBUBvbELxtAJ6WQLQ4COw481jWg
-         5XpcRTOL103TSrAzZNlnTMG1Cf+eOC0WZxF+FCAwmbRRdVNuLepHIOBdWyDB08n5YCSe
-         jlJtH2FuqegQqHwVchEEPTST2X8ZE5G4nYrRSKwHxa5x5HM0vMXNJ87VZ0aQtzsS9kdv
-         jAQqIus3+oLXkGka3TY1JEsJ79dwBXNI8OvA2hAUtIPbElxcF8AXME0DcJe+DbcurUGr
-         L+0oTtRH3YdccuVR3DF+3bqDuzvatC7Ug4oeHYoRIb1aOoKvXGwV8mY7IhxF6UXG9hwd
-         1UMg==
+        d=gmail.com; s=20230601; t=1695672520; x=1696277320; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lucKNU0RDlL+gBnOBSIzkQDlaCBNbwXXxr+QvoDA/74=;
+        b=lariq36/d+f/al4vHhTQbnn44OcryJfHK8thSKHlPrLFpIyU0Nc70B/A5ittPnuVhf
+         iecsQ7/6Th/REP2vmJ3T85l1y6wGuLsu/n6FPQgZhY5EjIs9EsGvuTX5PM5/Q9rvimE1
+         xRjxAdCNN+vISidhNnHY4WEo9PDuZErvcjUEZuTVN3cK0ayfDfPLg/fPrxHNLDq8jjhL
+         QFTYsciV75f3t/I0ZS6KH9gHR1Ex7G6LwZ+iZx5JAy0QpC3jQ+obhMQQUCUrPUrv1WjN
+         7Wtl1wL+YFLn/lPpQUICyoYd2tYX+t6q+1MK4O9CzHHk/Wcf5sJX+EKMtx2ykcKW5PFQ
+         q3kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695663464; x=1696268264;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4OSNJSuzGEyn2eFVxut8UHIn8mk8UoHB1vJTBDeWUjg=;
-        b=N9u2zYPmttNFWMJxwVzWSfsczUxnUlNbQeM+KYaB9OaeNXpUixGhgz3WaMm6rFctm2
-         i9ggUuC8XBANiOaQQqfYaNk4y4sGfu8G27I62FQhinSySeOdb4T1N2t2crrDi1Zvi6Pw
-         e8Kw2UT9nIbhKWBRyjyk1DnCnoWTFK8Hdj4Gm99YmQl14Y4Dwi8VBBdZ+0adBfaTLGnG
-         pLufQsWNjqElqMCpmBTPksiLMmmqUyhdo4GJn+dElLT5M99oidhvaq50g/4TNw+pvfYN
-         nlbqdxkUVes4OXsdd0W12AwaTMWv3ia/TVnbvz3hJIgnW4p6aUyraqNU8LFBVU3njYRR
-         M1og==
-X-Gm-Message-State: AOJu0YzG0442M06ysMWAQmA1t9umXFbpkun3CzDWoYWCZbEOL/M/1VjW
-        x9lBi5yLfQv7CuQbhyBYjttC0xKlAsE=
-X-Google-Smtp-Source: AGHT+IFbdNqdQBINXaKsxLFNsbPAlNsb64v79jTXlms6OpZDsyyWIMsDvfLKOISLOkUltg3c0KbHgHQxQwM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:abac:0:b0:d81:fc08:29ea with SMTP id
- v41-20020a25abac000000b00d81fc0829eamr67094ybi.2.1695663463860; Mon, 25 Sep
- 2023 10:37:43 -0700 (PDT)
-Date:   Mon, 25 Sep 2023 10:37:42 -0700
-In-Reply-To: <ZQuahXpq2fy8rMDV@yzhao56-desk.sh.intel.com>
-Mime-Version: 1.0
-References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-12-seanjc@google.com>
- <ZQP6ZqXH81V24Lj/@yzhao56-desk.sh.intel.com> <ZQtdZmJ3SekURjiQ@google.com> <ZQuahXpq2fy8rMDV@yzhao56-desk.sh.intel.com>
-Message-ID: <ZRHFZmaa/6HQnZD1@google.com>
-Subject: Re: [RFC PATCH v12 11/33] KVM: Introduce per-page memory attributes
-From:   Sean Christopherson <seanjc@google.com>
-To:     Yan Zhao <yan.y.zhao@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Anish Moorthy <amoorthy@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Isaku Yamahata <isaku.yamahata@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+        d=1e100.net; s=20230601; t=1695672520; x=1696277320;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lucKNU0RDlL+gBnOBSIzkQDlaCBNbwXXxr+QvoDA/74=;
+        b=q5hj4wjTFwWjnLDVVUCKe/hNnsB3AGEja9EBaPa3I1xkr87ZQpup2wRw+OSMmNVnh7
+         bLtOqFU2jK88xNbAkp8h0x6+IFnIzlv5jxkOEOf4YN6iBNltXEyNGnzjmc5TNC2YepV2
+         l0TCN947Wufk4Z+yBsi1m7zxHJSb35XJahg1OdZS26g9e5RFiIYf08yZsjRvsuefrfcD
+         r4JW83u5ZW0xUNqE0Marq9S1SU1aN2zEaF33EgqBxNKI984O/CY7De6yY2e7LnKTZCYE
+         N2dq1L9QDcl96EWYFwMofIW2BkGNShzRAVcr9sqBJWkMksAKXxh6rTaVwdWUJAeQQPj9
+         JYDg==
+X-Gm-Message-State: AOJu0YysvVcn5gA49u/NL7jJfRwJ2VE+YXQkymsEM5NPXhpwR8YdoxuB
+        Y4xK4pdTdak/RA0uzK/HtreHM2PI04MK1BcT8kWp9fb6
+X-Google-Smtp-Source: AGHT+IE7lqvRfNQg+VrNy2nvHedN1/dcCykJg3BOdtyADFUdUiVakRQGF9UpmrugTJZV+kbYTmCjbar6IOP7e4AOlws=
+X-Received: by 2002:a9d:7d87:0:b0:6b9:1af3:3307 with SMTP id
+ j7-20020a9d7d87000000b006b91af33307mr8243104otn.17.1695672520323; Mon, 25 Sep
+ 2023 13:08:40 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ac9:5dc9:0:b0:4f0:1250:dd51 with HTTP; Mon, 25 Sep 2023
+ 13:08:39 -0700 (PDT)
+In-Reply-To: <202309231925.D9C4917@keescook>
+References: <20230922145505.4044003-1-kpsingh@kernel.org> <20230922184224.kx4jiejmtnvfrxrq@f>
+ <CACYkzJ67gw6bvTzX6wx_OtxUXi6kpVT196CXV6XCN1AaGQuKAw@mail.gmail.com>
+ <CAGudoHE+od5oZLVAU4z3nXCNGk6uangd+zmDEuoATmDLHeFLGQ@mail.gmail.com>
+ <CAGudoHFiVLmaMbFJno47_-x3Rs2tvgXNKyNznJeCq_cF8hFVvA@mail.gmail.com> <202309231925.D9C4917@keescook>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Mon, 25 Sep 2023 22:08:39 +0200
+Message-ID: <CAGudoHHm-ofzATMdE_HU2e0voKiQnkkcL+1+F73azxNeHCvYSA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] Reduce overhead of LSMs with static calls
+To:     Kees Cook <keescook@chromium.org>
+Cc:     KP Singh <kpsingh@kernel.org>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        paul@paul-moore.com, casey@schaufler-ca.com, song@kernel.org,
+        daniel@iogearbox.net, ast@kernel.org, renauld@google.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 21, 2023, Yan Zhao wrote:
-> On Wed, Sep 20, 2023 at 02:00:22PM -0700, Sean Christopherson wrote:
-> > On Fri, Sep 15, 2023, Yan Zhao wrote:
-> > > On Wed, Sep 13, 2023 at 06:55:09PM -0700, Sean Christopherson wrote:
-> > > > +/* Set @attributes for the gfn range [@start, @end). */
-> > > > +static int kvm_vm_set_mem_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
-> > > > +				     unsigned long attributes)
-> > > > +{
-> > > > +	struct kvm_mmu_notifier_range pre_set_range = {
-> > > > +		.start = start,
-> > > > +		.end = end,
-> > > > +		.handler = kvm_arch_pre_set_memory_attributes,
-> > > > +		.on_lock = kvm_mmu_invalidate_begin,
-> > > > +		.flush_on_ret = true,
-> > > > +		.may_block = true,
-> > > > +	};
-> > > > +	struct kvm_mmu_notifier_range post_set_range = {
-> > > > +		.start = start,
-> > > > +		.end = end,
-> > > > +		.arg.attributes = attributes,
-> > > > +		.handler = kvm_arch_post_set_memory_attributes,
-> > > > +		.on_lock = kvm_mmu_invalidate_end,
-> > > > +		.may_block = true,
-> > > > +	};
-> > > > +	unsigned long i;
-> > > > +	void *entry;
-> > > > +	int r = 0;
-> > > > +
-> > > > +	entry = attributes ? xa_mk_value(attributes) : NULL;
-> > > Also here, do we need to get existing attributes of a GFN first ?
-> > 
-> > No?  @entry is the new value that will be set for all entries.  This line doesn't
-> > touch the xarray in any way.  Maybe I'm just not understanding your question.
-> Hmm, I thought this interface was to allow users to add/remove an attribute to a GFN
-> rather than overwrite all attributes of a GFN. Now I think I misunderstood the intention.
-> 
-> But I wonder if there is a way for users to just add one attribute, as I don't find
-> ioctl like KVM_GET_MEMORY_ATTRIBUTES for users to get current attributes and then to
-> add/remove one based on that. e.g. maybe in future, KVM wants to add one attribute in
-> kernel without being told by userspace ?
+On 9/24/23, Kees Cook <keescook@chromium.org> wrote:
+> That said, I've long advocated[1] for a way to explicitly disable LSMs
+> without affecting operational ordering. I think it would be very nice to
+> be able to boot with something like:
+>
+> lsm=!yama
+>
+> to disable Yama. Or for your case, "lsm=!tomoyo". Right now, you have to
+> figure out what the lsm list is, and then create a new one with the
+> LSM you want disabled removed from the list. i.e. with v6.2 and later
+> check the boot log, and you'll see:
+>
+> LSM: initializing lsm=lockdown,capability,landlock,yama,integrity,apparmor
+>
+> If you wanted to boot with Yama removed, you'd then pass:
+>
+> 	lsm=lockdown,capability,landlock,integrity,apparmor
+>
+> As a boot param. But I think this is fragile since now any new LSMs will
+> be by-default disabled once a sysadmin overrides the "lsm" list. Note
+> that booting with "lsm.debug=1" will show even more details. See commit
+> 86ef3c735ec8 ("LSM: Better reporting of actual LSMs at boot").
+>
+> So, if a distro has no support for an LSM but they want it _available_
+> in the kernel, they should leave it built in, but remove it from the
+> "lsm=" list. That's a reasonable bug to file against a distro...
+>
 
-The plan is that memory attributes will be 100% userspace driven, i.e. that KVM
-will never add its own attributes.  That's why there is (currently) no
-KVM_GET_MEMORY_ATTRIBUTES, the intended usage model is that userspace is fully
-responsible for managing attributes, and so should never need to query information
-that it already knows.  If there's a compelling case for getting attributes then
-we could certainly add such an ioctl(), but I hope we never need to add a GET
-because that likely means we've made mistakes along the way.
+Maybe I once more expressed myself poorly, I meant to say stock Debian
+does not ship any tooling for tomoyo, but the kernel has support
+compiled in.
 
-Giving userspace full control of attributes allows for a simpler uAPI, e.g. if
-userspace doesn't have full control, then setting or clearing bits requires a RMW
-operation, which means creating a more complex ioctl().  That's why its a straight
-SET operation and not an OR type operation.
+Ultimately, after stacking got implemented, it was inevitable diestros
+like Debian will enable whatever modules and expect them to not be a
+problem if not configured by userspace.
+
+I don't think any form of messing with CONFIG_LSM is a viable option,
+even if you make it a boot param.
+
+What should happen instead is that modules which are not given any
+config don't get in the way.
+
+-- 
+Mateusz Guzik <mjguzik gmail.com>
