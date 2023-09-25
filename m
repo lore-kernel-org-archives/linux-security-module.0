@@ -2,106 +2,151 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 938DECE7A8C
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 15:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA95CE7AAF
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 17:37:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232542AbjIYPuI (ORCPT
+        id S233150AbjIYRhz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Sep 2023 11:50:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58288 "EHLO
+        Mon, 25 Sep 2023 13:37:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbjIYPt6 (ORCPT
+        with ESMTP id S233073AbjIYRhv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Sep 2023 11:49:58 -0400
-Received: from sonic301-37.consmr.mail.ne1.yahoo.com (sonic301-37.consmr.mail.ne1.yahoo.com [66.163.184.206])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BA72CDF
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Sep 2023 08:48:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1695656936; bh=MrOhSvI+t/+YXuvHl9aFhZ3yD3jslvUTZqhw5s2F5mA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=VYHCI66kbMY7vbRYYC1DH0xr3udfSQ8s4cOg0fL2CmIkEttaxDhzidckzzpSLW+Ud6QEX8w5oJ1Ku4NgK8ppGE8WmTlU9AN0nex2ts3T32iABwxtTzor/nchMdPfdRTWh/5xE62apgCSLdtHQTHC4lzQpPZnnYHEa6/spmUo/r6Tx3gKo2aQufTLt8QMrHsPvtUUf5bMDQaRMONUnbVvnlldAxCdV0lbur+ECRWrxyCVS143CvA+YtsHIq8oySA2xonFsE+cXKsHD+y+NKIyQzRAcCKXOdzvfPLZXROiQ/pLFPzXv3iCSJCn9eRbTFiEZ2ZgzRoHh8lYRm51dYDBkA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1695656936; bh=Fqv8WmN3Rx+OtpAwF8tBtz4uHJQ1JuHKsewrVd9LRs4=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=NEhtyOuXbkPA0SA1/ZHKM+uNU1YyqcJ6M5GtVzIb2jaOqRTwWQkScu0+rIAPT/TOzqmH/7TZTyQIlwXg9tlsuvc92TPui9GAU/VnA6VcOXbflOrP34aE+z0JHpp8zQy6nuO86rip0Qr/UrJ62AnuqVhf4hg3dWIEbUOXHashPFmMLshwQBBholGV1Mr7j2vxWuEHEyPJJ7V0KDNrKbu+ulzRek2YFOGXKxeEkQ+hhM1JZY91pWiEdkTo69xut73//6NCw/SmbdlZSPOicaQukiAjmeCWV2rXpFaVVXpR2b7ALyc570yY/uUFcO4GDJaSFmq56V//EIyx57/TMjszAA==
-X-YMail-OSG: XvLL108VM1mYqWdeWEogulB1IRsUtR6JWxsTc1IOuWb8h4SRSqkcL.34fyZwrbF
- I8fUp_ZV68SFeELU1LMJ6P_DIea9KMwIjhJngazi7vnx5TLcpFO48IIdSxK_jA8sCQDBXBCKbkT1
- QUwVaBio2N_ZHbW3.K13_fDpHxWyvtfmA4I2ro83KCOMuK8ZI_zBvKQ2NSAlk6yr9QoXmC5qVbwk
- olUht1LOKzOu.Qn8iwHj_3RY_4ronKPNvkcmDQEiPP4Hjcuaw9bKVglNZFHbvjcpsogqNJTjrYcP
- 1NLG4U2Am5ikL5KpeRq8o1b_kCBij6LxKV14byA8mvLT6jhJE16QtaW1Sr3SJAJTKWGEFBUG6DB7
- Yo_wfqkBbp35FiGD9ke82iKUGy3fPAX33f2ECoVHHVRUFL0ITOpMm3QfgW8GwPs2gufi761xm9Uw
- ratukRzT9pBxkMXl35m6dBKWjSd0LDfI9h5R8Bv1Zaq.AoC6Hj64QfBn.P3SX5eWQbZmvLwRUTq_
- gq1zWkuRABCzwNeqlFctvqjluYD4BISH2VMpvKo5SUoBJxblxwBRTC4AiuXyb4fhyd_06kLZd21e
- ly4Xl12TDVjUOkO3Trz8RkVmObRSc6yvyxFitVewFvgYMB.ab_g6goNW8ugt7bWfyIkLNMuHCwnA
- aHO8d9n.TlZ00nwtXiQD9UgWq1SnFWoAG1j9daw2WHBhesXgfHfKRiC8NEgCVr1ieTFQ4spGLLnv
- LvnqH7fR3IU1A00D2aTu9G6Qtc4MXFBOANaHN9GxOpeORouJDDwWE.YdJ0Cn7r3kfK7ND2EqkMrS
- ctJL4Ej9Dzmci8sFqBReZwYJ_2OJYqOf6xBtpusnr74Cv07GkU6La1czfq5GSq.8k9r9c3ATtlS9
- RnHxRjrcA_nzFDP07C.ACNUPj4oRMgWB6wighQ5QH.401QZ79k1JijfZoVbaI24eWZIR0XA5KFeA
- 7eZaXdNTzeZCkZCHPeQG5wzJ5EU6E0cWStYLkJ7KGcs6eeOldJoIkct7JaeT7uCf6kXuDd1ieD_3
- hG5Uep_._lxt7v71zdkuIFNe7xK0YmU3PbWsJHNZE3mG.lxdrqL34NwgenUVQPywnR1sZgSdxW0L
- CVIfh6i5SXGv1UJ1kD_BWuuQ34fk52J6QaEYnVbQtHPvidDyEioFwIIhKX3bOAKnJCOpWC0yywtq
- jZl1zXEADQsraiXERMBSGmg3Dyd5nnA005swxZ2bGy6t7vFMXtVkOLlzFyQ5DL4TESqG26WxXMXu
- u21q0LOoW0SJTS2tXpKfjSewyIXyLFL8inGbP8tJ.xv5azp0OTKFSZQm81D2xGNCV5y0B.2xKrH6
- PpGoennHmjGhToL6OUUwaFOI3Th8cpt0Q6UvI1gkFzGHLCqBEzt0dQpUP0TQGNuNRFZX5mn_XWVI
- _GXRa0wV.pHFbK_YnCiLXiOIOncgcgR4hE3QZFGjShgBr0eK.WvhHaWhJ6Mm2nUcT1Ev2vCEKYiR
- SNNLrS8a12j9W2c_u6mGbCS1L2jiRlAGrsYfs8mi0XCCnmup20Ie0rbRtJSEtIPYJf0MXqMNv5Om
- HI7IiemZBwa4OYEzrUc3hcFD2T0h2CJAm.OBFa6WEefEuLWWiLT3NyV5HgacVyGfK_2ykSqcP2Xk
- .9n_f3Dm0ehKQtTlN21E7GoJSUKIGojh497KEOLiNDsLP6enKAji5b0gr4FFnGfoHy9DjsCCbRGe
- _OVPob8zha52AJX7diz6qD_6wuHTdfOQvkQTkzK5pbPQLvr8H6UPnwnw5CMQUiT4acwDzo_iapZ5
- uj_M7QugZ5UQJos5Enkq8cOBHSfjGAzUzeycZDf9.CWc2xKn8xgznfF3adrchIi432GzgOLeoug0
- SHTJLDzMcaisfQDl6jfVz2YYRXppnYJ3BIwK.twY.KIJLXBS34VMhUu_umjrz3vjIdlVeU6RYuyG
- HqKsJI2rzvAHIJ1YiIts0oZ5nkK3MSdjl.NRNt3sUEUdnSpI1eWGN5Nu7xOKbGRpfSZCVpFb3LTT
- T3bWS4BFyd4qbNKwNI.tZRxUiiKtd.ZuPJIU8UxfgT3NqqqGGeQ1lvDYxqcLTb7zk73SF7rFbDAi
- WFDEhGquN4Lq8onbdsgsEH8LIVZ0Y4f.Oumz18Xeqs7zCa4lWzTqDXGKkh8X8KwDXePqQIM__Xrl
- 6ed_C9oPwhRL6sqbHIUk6RMu.fUEufzF0zkljSZcaNdItXuE8JwPoIlCL9x7thJJ3xbcpckFBagu
- IMAuu9E3Cz6jb_Hu0LmtjUx5WU0lVNPR5UFB8YoU0hid9httiMZpokwdjCGASygak5_fDAaIMJOG
- q69WqrWvIjg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: f599b712-7155-4bdc-9761-7c8cd2088439
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Mon, 25 Sep 2023 15:48:56 +0000
-Received: by hermes--production-bf1-678f64c47b-5k7bw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 82fe741eda72d826510c5ca8bacf2bdd;
-          Mon, 25 Sep 2023 15:48:54 +0000 (UTC)
-Message-ID: <06009947-a481-bbca-506a-20b10367b1e5@schaufler-ca.com>
-Date:   Mon, 25 Sep 2023 08:48:49 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 2/5] security: Count the LSMs enabled at compile time
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        KP Singh <kpsingh@kernel.org>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        paul@paul-moore.com, keescook@chromium.org, song@kernel.org,
-        daniel@iogearbox.net, ast@kernel.org,
-        Kui-Feng Lee <sinquersw@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20230918212459.1937798-1-kpsingh@kernel.org>
- <20230918212459.1937798-3-kpsingh@kernel.org>
- <cb67f607-3a9d-34d2-0877-a3ff957da79e@I-love.SAKURA.ne.jp>
- <CACYkzJ5GFsgc3vzJXH34hgoTc+CEf+7rcktj0QGeQ5e8LobRcw@mail.gmail.com>
- <dde20522-af01-c198-5872-b19ef378f286@I-love.SAKURA.ne.jp>
- <CACYkzJ5M0Bw9S_mkFkjR_-bRsKryXh2LKiurjMX9WW-d0Mr6bg@mail.gmail.com>
- <ed785c86-a1d8-caff-c629-f8a50549e05b@I-love.SAKURA.ne.jp>
- <CACYkzJ4TLCMFEa5h-iEVC-58cakjduw44c-ct64SgBe0_jFKuQ@mail.gmail.com>
- <6a80711e-edc4-9fab-6749-f1efa9e4231e@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <6a80711e-edc4-9fab-6749-f1efa9e4231e@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21797 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+        Mon, 25 Sep 2023 13:37:51 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACC87111
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Sep 2023 10:37:44 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-597f461adc5so134230567b3.1
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Sep 2023 10:37:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1695663464; x=1696268264; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4OSNJSuzGEyn2eFVxut8UHIn8mk8UoHB1vJTBDeWUjg=;
+        b=vHOkqRox53qWWq1w+Y3R/aBAcsqP2f0/LNwJwmzxBUBvbELxtAJ6WQLQ4COw481jWg
+         5XpcRTOL103TSrAzZNlnTMG1Cf+eOC0WZxF+FCAwmbRRdVNuLepHIOBdWyDB08n5YCSe
+         jlJtH2FuqegQqHwVchEEPTST2X8ZE5G4nYrRSKwHxa5x5HM0vMXNJ87VZ0aQtzsS9kdv
+         jAQqIus3+oLXkGka3TY1JEsJ79dwBXNI8OvA2hAUtIPbElxcF8AXME0DcJe+DbcurUGr
+         L+0oTtRH3YdccuVR3DF+3bqDuzvatC7Ug4oeHYoRIb1aOoKvXGwV8mY7IhxF6UXG9hwd
+         1UMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695663464; x=1696268264;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4OSNJSuzGEyn2eFVxut8UHIn8mk8UoHB1vJTBDeWUjg=;
+        b=N9u2zYPmttNFWMJxwVzWSfsczUxnUlNbQeM+KYaB9OaeNXpUixGhgz3WaMm6rFctm2
+         i9ggUuC8XBANiOaQQqfYaNk4y4sGfu8G27I62FQhinSySeOdb4T1N2t2crrDi1Zvi6Pw
+         e8Kw2UT9nIbhKWBRyjyk1DnCnoWTFK8Hdj4Gm99YmQl14Y4Dwi8VBBdZ+0adBfaTLGnG
+         pLufQsWNjqElqMCpmBTPksiLMmmqUyhdo4GJn+dElLT5M99oidhvaq50g/4TNw+pvfYN
+         nlbqdxkUVes4OXsdd0W12AwaTMWv3ia/TVnbvz3hJIgnW4p6aUyraqNU8LFBVU3njYRR
+         M1og==
+X-Gm-Message-State: AOJu0YzG0442M06ysMWAQmA1t9umXFbpkun3CzDWoYWCZbEOL/M/1VjW
+        x9lBi5yLfQv7CuQbhyBYjttC0xKlAsE=
+X-Google-Smtp-Source: AGHT+IFbdNqdQBINXaKsxLFNsbPAlNsb64v79jTXlms6OpZDsyyWIMsDvfLKOISLOkUltg3c0KbHgHQxQwM=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:abac:0:b0:d81:fc08:29ea with SMTP id
+ v41-20020a25abac000000b00d81fc0829eamr67094ybi.2.1695663463860; Mon, 25 Sep
+ 2023 10:37:43 -0700 (PDT)
+Date:   Mon, 25 Sep 2023 10:37:42 -0700
+In-Reply-To: <ZQuahXpq2fy8rMDV@yzhao56-desk.sh.intel.com>
+Mime-Version: 1.0
+References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-12-seanjc@google.com>
+ <ZQP6ZqXH81V24Lj/@yzhao56-desk.sh.intel.com> <ZQtdZmJ3SekURjiQ@google.com> <ZQuahXpq2fy8rMDV@yzhao56-desk.sh.intel.com>
+Message-ID: <ZRHFZmaa/6HQnZD1@google.com>
+Subject: Re: [RFC PATCH v12 11/33] KVM: Introduce per-page memory attributes
+From:   Sean Christopherson <seanjc@google.com>
+To:     Yan Zhao <yan.y.zhao@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/25/2023 4:03 AM, Tetsuo Handa wrote:
-> On 2023/09/24 1:06, KP Singh wrote:
->>> I was not pushing LKM-based LSM because the LSM community wanted to make it possible to
->>> enable arbitrary combinations (e.g. enabling selinux and smack at the same time) before
->>> making it possible to use LKM-based LSMs.
-> (...snipped...)
->>> As a reminder to tell that I still want to make LKM-based LSM officially supported again,
->>> I'm responding to changes (like this patch) that are based on "any LSM must be built into
->>> vmlinux". Please be careful not to make changes that forever make LKM-based LSMs impossible.
-> You did not recognize the core chunk of this post. :-(
->
-> It is Casey's commitment that the LSM infrastructure will not forbid LKM-based LSMs.
+On Thu, Sep 21, 2023, Yan Zhao wrote:
+> On Wed, Sep 20, 2023 at 02:00:22PM -0700, Sean Christopherson wrote:
+> > On Fri, Sep 15, 2023, Yan Zhao wrote:
+> > > On Wed, Sep 13, 2023 at 06:55:09PM -0700, Sean Christopherson wrote:
+> > > > +/* Set @attributes for the gfn range [@start, @end). */
+> > > > +static int kvm_vm_set_mem_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
+> > > > +				     unsigned long attributes)
+> > > > +{
+> > > > +	struct kvm_mmu_notifier_range pre_set_range = {
+> > > > +		.start = start,
+> > > > +		.end = end,
+> > > > +		.handler = kvm_arch_pre_set_memory_attributes,
+> > > > +		.on_lock = kvm_mmu_invalidate_begin,
+> > > > +		.flush_on_ret = true,
+> > > > +		.may_block = true,
+> > > > +	};
+> > > > +	struct kvm_mmu_notifier_range post_set_range = {
+> > > > +		.start = start,
+> > > > +		.end = end,
+> > > > +		.arg.attributes = attributes,
+> > > > +		.handler = kvm_arch_post_set_memory_attributes,
+> > > > +		.on_lock = kvm_mmu_invalidate_end,
+> > > > +		.may_block = true,
+> > > > +	};
+> > > > +	unsigned long i;
+> > > > +	void *entry;
+> > > > +	int r = 0;
+> > > > +
+> > > > +	entry = attributes ? xa_mk_value(attributes) : NULL;
+> > > Also here, do we need to get existing attributes of a GFN first ?
+> > 
+> > No?  @entry is the new value that will be set for all entries.  This line doesn't
+> > touch the xarray in any way.  Maybe I'm just not understanding your question.
+> Hmm, I thought this interface was to allow users to add/remove an attribute to a GFN
+> rather than overwrite all attributes of a GFN. Now I think I misunderstood the intention.
+> 
+> But I wonder if there is a way for users to just add one attribute, as I don't find
+> ioctl like KVM_GET_MEMORY_ATTRIBUTES for users to get current attributes and then to
+> add/remove one based on that. e.g. maybe in future, KVM wants to add one attribute in
+> kernel without being told by userspace ?
 
-... And this code doesn't. I you want LKM based LSM support I suggest you
-provide patches. If there is anything in the LSM infrastructure that you can't
-work around I'll help work out how to do it. But I am not going to do it for
-you, and I don't think anyone else is inclined to, either.
+The plan is that memory attributes will be 100% userspace driven, i.e. that KVM
+will never add its own attributes.  That's why there is (currently) no
+KVM_GET_MEMORY_ATTRIBUTES, the intended usage model is that userspace is fully
+responsible for managing attributes, and so should never need to query information
+that it already knows.  If there's a compelling case for getting attributes then
+we could certainly add such an ioctl(), but I hope we never need to add a GET
+because that likely means we've made mistakes along the way.
 
-
+Giving userspace full control of attributes allows for a simpler uAPI, e.g. if
+userspace doesn't have full control, then setting or clearing bits requires a RMW
+operation, which means creating a more complex ioctl().  That's why its a straight
+SET operation and not an OR type operation.
