@@ -2,120 +2,234 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B4BCE7A8C
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 04:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D749CE7A89
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 08:56:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229710AbjIYEc1 (ORCPT
+        id S232844AbjIYI4I (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Sep 2023 00:32:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50948 "EHLO
+        Mon, 25 Sep 2023 04:56:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbjIYEc0 (ORCPT
+        with ESMTP id S232159AbjIYI4H (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Sep 2023 00:32:26 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50E6E92
-        for <linux-security-module@vger.kernel.org>; Sun, 24 Sep 2023 21:32:19 -0700 (PDT)
-Received: from fsav311.sakura.ne.jp (fsav311.sakura.ne.jp [153.120.85.142])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 38P4W3VZ057764;
-        Mon, 25 Sep 2023 13:32:03 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav311.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav311.sakura.ne.jp);
- Mon, 25 Sep 2023 13:32:03 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav311.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 38P4W39m057759
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 25 Sep 2023 13:32:03 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <6e1c25f5-b78c-8b4e-ddc3-484129c4c0ec@I-love.SAKURA.ne.jp>
-Date:   Mon, 25 Sep 2023 13:32:03 +0900
+        Mon, 25 Sep 2023 04:56:07 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75C67C0;
+        Mon, 25 Sep 2023 01:56:00 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A08BC4339A;
+        Mon, 25 Sep 2023 08:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695632160;
+        bh=OAHGiE3HtiQuwoXQpyli72/6uLnWVVPrSWTK/m76VUg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=FAMvLJECwoxaPpqGbYpHmiWyMRIpqfItq9r1MoG95mNmgRk6w+3/ov1yIqVPwWosX
+         tn5V20TmbuxyIjpW6J3S8N2uDHjIK05dYR9iXrV5ING/joODy34fmMA9iKjo6nIz0z
+         xIPrPld25ZS+PFbGwWuQzNT/3GK/xmcNTPZN71/rmTxntGWj/vG/Mq55AoauETDWo8
+         dhpXQyWMw8huYCbBpJvn4+tX5pi+Uc+YbTRnfV1jdpUgURb+dibAi6G5ZBzIVfFJIN
+         9cFJ7+324FybQFWIpvnSQwyY7YwXN6sktVP3Qzw9eEoj2hb/RTf2dDGcBvmKxbaBdz
+         8BlBGAJgTGFJA==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5043120ffbcso8447763e87.2;
+        Mon, 25 Sep 2023 01:56:00 -0700 (PDT)
+X-Gm-Message-State: AOJu0YxQg320B1LuzYMq7T92vl9prUrSC0BjndBlhvqyYQ6o99ws/2le
+        FADkW5uK8emOqqw2o2tObYFeXo5+COl4uons7vs=
+X-Google-Smtp-Source: AGHT+IHdWMl/7v2aSkpx8fA68Ctqs2uUqJy0Qw1DszW5NlpXS1U3dVeLT7Sy6ikU1FB/vTB2nfITSm8TKbj97xSlKT8=
+X-Received: by 2002:a05:6512:318d:b0:4fd:f84f:83c1 with SMTP id
+ i13-20020a056512318d00b004fdf84f83c1mr5950519lfe.64.1695632158118; Mon, 25
+ Sep 2023 01:55:58 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: ANN: new LSM guidelines
-Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <kees@kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
- <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
- <CAHC9VhQhf+ik5S_aJOVn59pax1Aa0vO5gJ4YoxrtGRKtoWh7sA@mail.gmail.com>
- <f8f32da5-6f31-d197-7405-8f308bd29228@I-love.SAKURA.ne.jp>
- <CAHC9VhTktg4RFWw+rSZ6wWQ8iR3n2p8XaOO95BbJ1QGAd4y9fg@mail.gmail.com>
- <43d84d6c-18ac-6689-cddc-d079cfa19d4d@I-love.SAKURA.ne.jp>
- <CAHC9VhSG2UzE9N0-tAJc8B3Mj1PEuJ2b6wso_DUs_Y83yqwhjA@mail.gmail.com>
- <c8d58922-9af4-b425-03c6-6710ad17b739@schaufler-ca.com>
- <CAHC9VhTdtF=_4nj3-eQvBUhWhnEss28KKUKCciBCrBL9pN+uQw@mail.gmail.com>
- <8912fc96-cb8e-ec3b-273d-6bd8ad6b5513@I-love.SAKURA.ne.jp>
- <202309241827.6818149EC8@keescook>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <202309241827.6818149EC8@keescook>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20230921133703.39042-1-kernelfans@gmail.com> <ZQ0j6Es88aR8cjRv@desktop>
+ <CAF+s44R0ty0-aV+Amw2pL58YGa4JHt_y0WpiDMzehULPiC_aJw@mail.gmail.com>
+In-Reply-To: <CAF+s44R0ty0-aV+Amw2pL58YGa4JHt_y0WpiDMzehULPiC_aJw@mail.gmail.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Mon, 25 Sep 2023 08:55:46 +0000
+X-Gmail-Original-Message-ID: <CAMj1kXF0rZ0Ej-+x__E9=Ca8Mesb+N+35etqiUzEMzhRR6trCg@mail.gmail.com>
+Message-ID: <CAMj1kXF0rZ0Ej-+x__E9=Ca8Mesb+N+35etqiUzEMzhRR6trCg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Sign the Image which is zboot's payload
+To:     Pingfan Liu <piliu@redhat.com>
+Cc:     Jan Hendrik Farr <kernel@jfarr.cc>,
+        Pingfan Liu <kernelfans@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-efi@vger.kernel.org,
+        kexec@lists.infradead.org, Baoquan He <bhe@redhat.com>,
+        Dave Young <dyoung@redhat.com>,
+        Philipp Rudo <prudo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, keyrings@vger.kernel.org,
+        Luca Boccassi <bluca@debian.org>, lennart@poettering.net,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, mjg59@google.com,
+        James.Bottomley@hansenpartnership.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2023/09/25 10:32, Kees Cook wrote:
-> On Mon, Sep 25, 2023 at 09:55:47AM +0900, Tetsuo Handa wrote:
->> On 2023/09/13 4:00, Paul Moore wrote:
->>> On Tue, Sep 12, 2023 at 2:40 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>> On 9/12/2023 11:08 AM, Paul Moore wrote:
->>>>>
->>>>> Once again, we've already discussed this many, many times: out-of-tree
->>>>> LSMs are not the priority and that is not going to change.  One
->>>>> corollary of this is that we are not going to assign LSM IDs to LSMs
->>>>> that remain out-of-tree as this would negatively impact the LSM layer
->>>>> by cluttering/depleting the LSM ID space.
->>
->> Like Kees Cook said, we don't need to worry about depleting the LSM ID space
->> because lsm_id::id is a u64. We only need to worry about cluttering/conflicting
->> the values.
-> 
-> Right, this will go one of two ways:
-> 
-> 1) author: "Hello, here is a new LSM I'd like to upstream, here it is. I assigned
->             it the next LSM ID."
->    maintainer(s): "Okay, sounds good. *review*"
-> 
-> 2) author: "Hello, here is an LSM that has been in active use at $Place,
->             and we have $Xxx many userspace applications that we cannot easily
->             rebuild. We used LSM ID $Value that is far away from the sequential
->             list of LSM IDs, and we'd really prefer to keep that assignment."
->   maintainer(s): "Okay, sounds good. *review*"
-> 
-> No problems detected.
+On Mon, 25 Sept 2023 at 03:01, Pingfan Liu <piliu@redhat.com> wrote:
+>
+> On Fri, Sep 22, 2023 at 1:19=E2=80=AFPM Jan Hendrik Farr <kernel@jfarr.cc=
+> wrote:
+> >
+...
+> > I missed some of the earlier discussion about this zboot kexec support.
+> > So just let me know if I'm missing something here. You were exploring
+> > these two options in getting this supported:
+> >
+> > 1. Making kexec_file_load do all the work.
+> >
+> > This option makes the signature verification easy. kexec_file_load
+> > checks the signature on the pe file and then extracts it and does the
+> > kexec.
+> >
+> > This is similar to how I'm approaching UKI support in [1].
+> >
+>
+> Yes, that is my original try.
+>
+> > 2. Extract in userspace and pass decompressed kernel to kexec_file_load
+> >
+> > This option requires the decompressed kernel to have a valid signature =
+on
+> > it. That's why this patch adds the ability to add that signature to the
+> > kernel contained inside the zboot image.
+> >
+>
+> You got it.
+>
+> > This option would not make sense for UKI support as it would not
+> > validate the signature with respect to the initrd and cmdline that it
+> > contains. Am I correct in thinking that there is no similar issue with
+> > zboot images? They don't contain any more information besides the kerne=
+l
+> > that is intended to be securely signed, right? Do you have a reference
+>
+> If using my second method, it means to unpack the UKI image in user
+> space, and pass the kernel image, initrd and cmdline through
+> kexec_file_load interface. If the UKI can have signature on the initrd
+> and cmdline, we extend the capability of that interface to check those
+> verification.
+>
+> > for the zboot image layout somewhere?
+> >
+>
+> Sorry that maybe there is no document. I understand them through the code=
+.
+> The zboot image, aka, vmlinuz.efi looks like:
+> PE header, which is formed manually in arch/arm64/kernel/head.S
+> EFI decompressor, which consists of
+> drivers/firmware/efi/libstub/zboot.c and libstub
+> Image.gz, which is formed by compressing Image as instructed in Makefile.=
+zboot
+>
+>
 
-No problem if what you wrote above is the policy. What is important is that the assigned
-LSM ID value remains available for that LSM. "Okay, sounds good." has to be the only
-requirement for assigning long-term persistent registrations. Whether that LSM succeeds
-to become in-tree must be irrelevant for assigning permanently available LSM ID value.
+Indeed, this is currently only documented in code. zboot is a PE
+executable that decompresses the kernel and boots it, but it also
+carries the base and size of the compressed payload in its header,
+along with the compression type so non-EFI loaders can run it as well
+(QEMU implements this for gzip on arm64)
 
-It is not clear whether the proposed LSM ID value is added to include/uapi/linux/lsm.h file
-of the upstream Linux kernel (it is required for avoid cluttering/conflicting) before
-the LSM module which wants to use that LSM ID value succeeds to become in-tree.
+> > > I hesitate to post this series,
+> >
+> > I appreciate you sending it, it's helping the discussion along.
+> >
 
-But if LSM ID serves as an index for what LSMs are available in the world,
-by maintaining "the LSM module name, the LSM ID value, short description about
-that LSM module, the public git repository or web site for more information
-about that LSM module" pairs (e.g. somewhere in the LSM community's Wiki rather than
-in include/uapi/linux/lsm.h ), people can easily find what LSMs could be used
-for their purpose, and developers can avoid re-inventing similar LSM modules
-which are already available somewhere in the world.
+Absolutely. RFCs are important because nobody knows how exactly the
+code will look until someone takes the time to implement it. So your
+work on this is much appreciated, even if we may decide to take
+another approach down the road.
 
-That's what I said
+> > > [...] since Ard has recommended using an
+> > > emulated UEFI boot service to resolve the UKI kexec load problem [1].
+> > > since on aarch64, vmlinuz.efi has faced the similar issue at present.
+> > > But anyway, I have a crude outline of it and am sending it out for
+> > > discussion.
+> >
+> > The more I'm thinking about it, the more I like Ard's idea. There's now
+> > already two different formats trying to be added to kexec that are
+> > pretty different from each other, yet they both have the UEFI interface
+> > in common. I think if the kernel supported kexec'ing EFI applications
+> > that would be a more flexible and forward-looking approach. It's a
+>
+> Yes, I agree. That method is attractive, originally I had a try when
+> Ard suggested it but there was no clear boundary on which boot service
+> should be implemented for zboot, so I did not move on along that
+> direction.
+>
+> Now, UKI poses another challenge to kexec_file_load, and seems to
+> require more than zboot. And it appears that Ard's approach is a
+> silver bullet for that issue.
+>
 
-  Since the LSM community cannot accept all of proposed LSMs due to limited resources,
-  the LSM community is responsible for allowing whatever proposed LSMs (effectively any
-  publicly available LSMs) to live as out-of-tree LSMs, by approving the LSM name and
-  assigning a permanent LSM ID number.
+Yes, it looks appealing but it will take some time to iterate on ideas
+and converge on an implementation.
 
-in https://lkml.kernel.org/r/94743c22-bc76-e741-e577-3e0845423f69@I-love.SAKURA.ne.jp .
+> > standard that both zboot and UKI as well as all future formats for UEFI
+> > platforms will support anyways. So while it's more work right now to
+> > implement, I think it'll likely pay off.
+> >
+> > It is significantly more work than the other options though. So I think
+> > before work is started on it, it would be nice to get some type of
+> > consensus on these things (not an exhaustive list, please feel free to
+> > add to it):
+> >
+>
+> I try to answer part of the questions.
+>
+> > 1. Is it the right approach? It adds a significant amount of userspace
+> > API.
+>
+> My crude assumption: this new stub will replace the purgatory, and I
+> am not sure whether kexec-tools source tree will accommodate it. It
+> can be signed and checked during the kexec_file_load.
+>
+> > 2. What subset of the UEFI spec needs/should to be supported?
+> > 3. Can we let runtime services still be handled by the firmware after
+> > exiting boot services?
+>
+> I think the runtime services survive through the kexec process. It is
+> derived from the real firmware, not related with this stub
+>
 
-Casey and Paul, do you agree to change your policy for assigning LSM ID ?
+Yes, this should be possible.
 
+> > 4. How can we debug the stubs that are being invoked?
+> > 5. Can we let the EFI binary know that this is a kexec and not a normal
+> > bootup. Potentially systemd-stub would want to change how/if it does TP=
+M
+> > PCR measurements.
+> > ...
+> >
+>
+
+Not sure whether this matters. The TPM logic is exposed via EFI
+protocols, and the kernel could either expose them or not. If it does,
+and we execute the EFI stub (sytemd-stub) code all the way through to
+ExitBootServices() while executing in the old kernel, we could even
+take PCR measurements and display them, giving us secure and measured
+boot for kexec.
+
+> Besides these questions, I wonder whether a highly configured EDK2 can
+> be used as the stub (ArmVirtQemuKernel.dsc can be the start point).
+> But there should be efforts to exclude the drivers which have the MMIO
+> access. I saw Ard is active in EDK2, maybe that is the reason why he
+> did not pick up EDK2 to serve the stub.
+>
+
+I don't think EDK2 is suitable for this - the code style is different,
+the license is different and it is simply a lot of code.
+
+What I would prefer is to define a subset of the EFI boot services
+that we actually rely on, and perhaps even introduce some other
+constraints on the EFI code, e.g., allow it to run unprivileged.
+
+That way, kexec could execute the EFI stub as an ordinary user process
+(to some extent), including allocations for the decompressed kernel,
+initrd, etc. Finally, the only thing purgatory would need to do is
+linearize the populated regions in the VA space and copy them to
+physical memory.
+
+This all sounds very high-level, and there may be some difficulties
+down the road, but I think this deserves a proper look because it is
+an appealing way to make EFI execution idempotent in the context of
+kexec, and also reduces the arch-specific logic substantially.
