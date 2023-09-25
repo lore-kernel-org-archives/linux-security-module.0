@@ -2,198 +2,113 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E8CECE7A94
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 11:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1197CE7A95
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Sep 2023 12:57:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229556AbjIYLW4 (ORCPT
+        id S231181AbjIYM57 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Sep 2023 07:22:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40876 "EHLO
+        Mon, 25 Sep 2023 08:57:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbjIYLWy (ORCPT
+        with ESMTP id S230120AbjIYM56 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Sep 2023 07:22:54 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AB1AD3
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Sep 2023 04:22:47 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D38F7C433C7
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Sep 2023 11:22:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695640966;
-        bh=9B0VMWVCC/JnnEl+dQaf/YsS5ypMm+klOTZzH+rWoWQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=c3iyGDiqBpp8eLHl/BU8sccyPXnhuLvfQVf23ABFxEL6vrMXgluyo7MuG8P116VC8
-         tR7uF1w4zhHchu2HVXrzMWVAb2aYy/bIUbWMwP78wlQYCOptoJQANX6tsM3KBJqpuL
-         ZhRQBw3F/uwkTEaK9U025gkq2FOKkVNFB5rPJvMix6a1KT3+IKCcLE1AUzu34NhRXv
-         WlI4IJS+4/FBeDHV47TxCNtHnp9lcdVswgdj4Oim0TXXwkWHmAfdl88qAW921leeZf
-         oqlKWBKqzDmDKjww8VndBK6STi2dr83LNzxaBZkifv1v0CUyHmmqB848HkZLXJ72OS
-         T6KKm+yX+s8Zw==
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-533edb5ac54so2828452a12.0
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Sep 2023 04:22:46 -0700 (PDT)
-X-Gm-Message-State: AOJu0Yz/crrZQ03i4Q6JR/1/09ySq4lywkVZ/3Ks28QV3wIDjodZZg8D
-        b0tKXWtNeFv/eZe7BTRhId5i6X6eR2ggYr/5WkrDnQ==
-X-Google-Smtp-Source: AGHT+IGtn6AgZOvnNk7P2eY7QpV59/VNCHiQT4Ka4mGDL7IHPTeC0MbtLyjGiv+4fvLujL7GdF/pMU1wn+TkCjrR22s=
-X-Received: by 2002:aa7:ca54:0:b0:532:c08a:eac0 with SMTP id
- j20-20020aa7ca54000000b00532c08aeac0mr4682310edt.26.1695640965276; Mon, 25
- Sep 2023 04:22:45 -0700 (PDT)
+        Mon, 25 Sep 2023 08:57:58 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4980B10A;
+        Mon, 25 Sep 2023 05:57:52 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id B555B5C2725;
+        Mon, 25 Sep 2023 08:57:51 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Mon, 25 Sep 2023 08:57:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1695646671; x=1695733071; bh=GU
+        RwEQjHVcDB6mdGxNVBiDVcooHojwDOtnH43Ifl4O0=; b=E0GtQRrGZ4xYAllJad
+        I+DxPM0CKNc/UPWHvTvQihcdjR7FYSkLepOWzMuGdug/oP/H4ls008ugct6FSzYh
+        wt1OgUEMIO0si9Ep/acl8Z4udTnm1Jp7mW8Yq8TnuCE+5morI7ZxVDG8xjR33ceF
+        jhO1c32TKYnGJPDptO+cCKNcq6D2K1PXrrudu6rMnShE89vkcrq3Nb9e+/36s77m
+        bEwelchxNEG76wfYMWWplmPUJPmdwEVx82EJd52J41bwUOGwzIc0yh0kKzRlWf7A
+        jZIx+sdkC68IbCDk2pA2oaiJ+Xgo2vFVt0lzBtaR+My2OG5r7ENeC8/nqhdhHTXJ
+        3W0A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1695646671; x=1695733071; bh=GURwEQjHVcDB6
+        mdGxNVBiDVcooHojwDOtnH43Ifl4O0=; b=R8tclYI2FqII62SdxIlbAvuaduWu6
+        FEr6D3l9H9B6wgDzSK7i6qAiui6UCmZG8OkUs58DsRP7UWxp55/9P//JX/8WEwDy
+        bp1QnJf0sE6nopvJN+5RT1ykH6aeddglXaZ0H5qT/LjYA6R2j8ctoF6/zeO0aLoC
+        brKtXXN/rPKd1n9lLIS/o/kRT3m7qgsjZRdzL+masZAJlI245MTPdvH8BD/5cBlw
+        QEf4cUVfC8GQCTZ0YolVzsEKDDbdDW3b0PWrB618niRRUg/QMB1kvgmkt6gxINZ0
+        Upg3ZUmV6tTpNJhaPJsg6NBwsabqu9FrlwCMW4ZvHGRK2UhkpJ/Cv8Xmw==
+X-ME-Sender: <xms:z4MRZWN1qqBPYKQl3Rf0QXXn8_rs-cymOhdgtTJA8KTQ3TgG2ku0dg>
+    <xme:z4MRZU8JRedri1jsDJ9sWWA6maVlyd1DfWiDR45cnWCpD6C_oCZV3f_pJ5pljtV62
+    63ud_Yk1nyfMJiWrEs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudelgedgheejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:z4MRZdRI9owEyhLNEsFuWNe7f56A0uhIynzQK7ZgztqUR08rABrCIw>
+    <xmx:z4MRZWvmnop5BLLXN0TbEkCoxEcrRkA3uNq4SVHh2eRv0U5UodvYHQ>
+    <xmx:z4MRZecBlDkiQRn1EJmf-Kdr6Q9Jg1gqbFrwCXrdGsxicxMuLNT3og>
+    <xmx:z4MRZfXbqtPxm8s6mmd2WYSBwH2MaP3a6tycQd6de29EbV4LcgSTow>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 498C3B6008D; Mon, 25 Sep 2023 08:57:51 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-761-gece9e40c48-fm-20230913.001-gece9e40c
 MIME-Version: 1.0
-References: <20230918212459.1937798-1-kpsingh@kernel.org> <20230918212459.1937798-3-kpsingh@kernel.org>
- <cb67f607-3a9d-34d2-0877-a3ff957da79e@I-love.SAKURA.ne.jp>
- <CACYkzJ5GFsgc3vzJXH34hgoTc+CEf+7rcktj0QGeQ5e8LobRcw@mail.gmail.com>
- <dde20522-af01-c198-5872-b19ef378f286@I-love.SAKURA.ne.jp>
- <CACYkzJ5M0Bw9S_mkFkjR_-bRsKryXh2LKiurjMX9WW-d0Mr6bg@mail.gmail.com>
- <ed785c86-a1d8-caff-c629-f8a50549e05b@I-love.SAKURA.ne.jp>
- <CACYkzJ4TLCMFEa5h-iEVC-58cakjduw44c-ct64SgBe0_jFKuQ@mail.gmail.com> <6a80711e-edc4-9fab-6749-f1efa9e4231e@I-love.SAKURA.ne.jp>
-In-Reply-To: <6a80711e-edc4-9fab-6749-f1efa9e4231e@I-love.SAKURA.ne.jp>
-From:   KP Singh <kpsingh@kernel.org>
-Date:   Mon, 25 Sep 2023 13:22:34 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ4AGRcqLPqWY65OC778EPaUwTBpyOMfiVBXa4EmnHTXGQ@mail.gmail.com>
-Message-ID: <CACYkzJ4AGRcqLPqWY65OC778EPaUwTBpyOMfiVBXa4EmnHTXGQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] security: Count the LSMs enabled at compile time
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
-        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        Kui-Feng Lee <sinquersw@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <44631c05-6b8a-42dc-b37e-df6776baa5d4@app.fastmail.com>
+In-Reply-To: <20230913152238.905247-3-mszeredi@redhat.com>
+References: <20230913152238.905247-1-mszeredi@redhat.com>
+ <20230913152238.905247-3-mszeredi@redhat.com>
+Date:   Mon, 25 Sep 2023 14:57:31 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Miklos Szeredi" <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
+        "Karel Zak" <kzak@redhat.com>, "Ian Kent" <raven@themaw.net>,
+        "David Howells" <dhowells@redhat.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        "Christian Brauner" <christian@brauner.io>,
+        "Amir Goldstein" <amir73il@gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 25, 2023 at 1:03=E2=80=AFPM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On 2023/09/24 1:06, KP Singh wrote:
-> >> I was not pushing LKM-based LSM because the LSM community wanted to ma=
-ke it possible to
-> >> enable arbitrary combinations (e.g. enabling selinux and smack at the =
-same time) before
-> >> making it possible to use LKM-based LSMs.
-> (...snipped...)
-> >> As a reminder to tell that I still want to make LKM-based LSM official=
-ly supported again,
-> >> I'm responding to changes (like this patch) that are based on "any LSM=
- must be built into
-> >> vmlinux". Please be careful not to make changes that forever make LKM-=
-based LSMs impossible.
->
-> You did not recognize the core chunk of this post. :-(
->
-> It is Casey's commitment that the LSM infrastructure will not forbid LKM-=
-based LSMs.
-> We will start allowing LKM-based LSMs. But it is not clear how we can mak=
-e it possible to
-> allow LKM-based LSMs.
+On Wed, Sep 13, 2023, at 17:22, Miklos Szeredi wrote:
 
-I think this needs to be discussed if and when we allow LKM based LSMs.
+>  asmlinkage long sys_fstatfs64(unsigned int fd, size_t sz,
+>  				struct statfs64 __user *buf);
+> +asmlinkage long sys_statmnt(u64 mnt_id, u64 mask,
+> +			    struct statmnt __user *buf, size_t bufsize,
+> +			    unsigned int flags);
 
->
-> Suppose you replace the linked list (which does not need to limit number =
-of LSMs activated)
-> with static calls (which limits number of LSMs activated, due to use of c=
-ompile-time determined
-> MAX_LSM_COUNT value at
->
->   struct lsm_static_calls_table {
->         #define LSM_HOOK(RET, DEFAULT, NAME, ...) \
->                 struct lsm_static_call NAME[MAX_LSM_COUNT];
->         #include <linux/lsm_hook_defs.h>
->         #undef LSM_HOOK
->   } __randomize_layout;
->
-> . If NAME[MAX_LSM_COUNT] were allocated like
->
->   NAME =3D kcalloc(sizeof(struct lsm_static_call), number_of_max_lsms_to_=
-activate, GFP_KERNEL | __GFP_NOFAIL);
->
-> (where number_of_max_lsms_to_activate is controlled using kernel command =
-line parameter)
-> rater than
->
->   struct lsm_static_call NAME[MAX_LSM_COUNT];
->
-> , it is easy to allow LKM-based LSMs.
->
+This definition is problematic on 32-bit architectures for two
+reasons:
 
-One needs to know MAX_LSM_COUNT at compile time (not via kernel
-command line), I really suggest you try out your suggestions before
-posting them. I had explained this to you earlier, you still chose to
-ignore and keep suggesting stuff that does not work.
+- 64-bit register arguments are passed in pairs of registers
+  on two architectures, so anything passing those needs to
+  have a separate entry point for compat syscalls on 64-bit
+  architectures. I would suggest also using the same one on
+  32-bit ones, so you don't rely on the compiler splitting
+  up the long arguments into pairs.
 
-https://lore.kernel.org/bpf/CACYkzJ7Dn=3DW1Kd5M_bXOzoomzdjMXBoEZZo5k=3DcgQ4=
-R6f5G+vw@mail.gmail.com/
+- There is a limit of six argument registers for system call
+  entry points, but with two pairs and three single registers
+  you end up with seven of them.
 
-It is used in the preprocessor to generate the static calls, it cannot
-come from the command line.
+The listmnt syscall in patch 3 also has the first problem,
+but not the second.
 
-> But if NAME[MAX_LSM_COUNT] is allocated in a way which cannot be expanded=
- using kernel
-> command line parameter (this is what "[PATCH v3 2/5] security: Count the =
-LSMs enabled
-> at compile time" does), how can the LKM-based LSMs be registered? Introdu=
-ce a LSM module
-> which revives the linked list and registration function (which this patch=
- tried to remove) ?
-> If yes, do we want to use
->
->   #define LSM_HOOK(RET, DEFAULT, NAME, ...) \
->
-> for built-in LSMs and a different macro for LKM-based LSMs?
->
-> Do we want/agree to manage two different set of macros/functions only for=
- handling
-> both built-in LSMs and loadable LSMs?
-
-We will see when this happens. I don't think it's a difficult problem
-and there are many ways to implement this:
-
-* Add a new slot(s) for modular LSMs (One can add up to N fast modular LSMs=
-)
-* Fallback to a linked list for modular LSMs, that's not a complexity.
-There are serious performance gains and I think it's a fair trade-off.
-This isn't even complex.
-
-Now, this patch and the patch that makes security_hook_heads
-__ro_after_init by removing CONFIG_SECURITY_HOOKS_WRITABLE breaks your
-hack. But that hack (https://akari.osdn.jp/1.0/chapter-3.html.en) is
-unsupported.
-
->
-> That's a lot of complication, compared to temporarily making the security=
-_hook_heads writable.
-
-No, that's not complicated.  All I can say is, when the time comes,
-and if the community agrees on LMK based modules, this patch won't
-make it any difficult or easy. There are many implementations, even
-this patch, that can provide LKM based LSMs API (but hacks will be
-hard, sure!)
-
-
-- KP
-
->
->
->
-> > You are trying to use an unexported symbol from the module with lots
-> > of hackery to write to be supported and bring it up in a discussion?
-> > Good luck!
->
-> Currently LKM-based LSMs is not officially supported. But LKM-based LSMs =
-will become
-> officially supported in the future. Therefore, I respond to any attempt w=
-hich tries
-> to make LKM-based LSMs impossible.
->
-> >
-> > Regardless, if what you are doing really works after
-> > https://lore.kernel.org/all/20200107133154.588958-1-omosnace@redhat.com=
-,
-> > then we need to fix this as the security_hook_heads should be
-> > immutable after boot.
->
-> You should learn how the __ro_after_init works. I will throw NACK if some=
-one tries
-> to add an exception to __ro_after_init handling before we make it possibl=
-e to allow
-> LKM-based LSMs.
->
+      Arnd
