@@ -2,181 +2,133 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A3AE7E64C
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Sep 2023 16:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0BE9E7E65A
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Sep 2023 18:04:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235290AbjIZQYq (ORCPT
+        id S235526AbjIZSEZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Sep 2023 12:24:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57718 "EHLO
+        Tue, 26 Sep 2023 14:04:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235280AbjIZQYo (ORCPT
+        with ESMTP id S235524AbjIZSEY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Sep 2023 12:24:44 -0400
-Received: from mail-ej1-x649.google.com (mail-ej1-x649.google.com [IPv6:2a00:1450:4864:20::649])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 398939F
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 09:24:37 -0700 (PDT)
-Received: by mail-ej1-x649.google.com with SMTP id a640c23a62f3a-993eeb3a950so772589166b.2
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 09:24:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695745475; x=1696350275; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vFkpn2H397KrVSqmEDJx57x47TGFCVVPTN7FsnVWNzE=;
-        b=1hFoAxEOGZbiAoDfKUO45fdAWUEnVPrTBLwCnAr5TndUi/CpxBn4N2Vq1G7Cor+nrS
-         TlakioOk9Tsthn2A54LcuTsp8JDA2B4qaImYYhJ8y8tJv2k705Z349CfRgjJkCFso9b/
-         ihC9g1f0pzKXY/pbEy5j6vbvMVfaG4BDrS0R1cZPB5r5fSeaGnaoPEbVxr/SYTQmZcex
-         M+u2H29QOgUKN2lbH5joPfQMlQazTm9aYcB9SF0Dgn8t8EL5jQSumXFzt2ExdyR04+g4
-         zvUYFoT2XN5GNc8iPiQQv0BDq1LmY60xhNJyYnGij0FXmQZ7+wtrVOdnYJ+5KsoK/Ehx
-         /cmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695745475; x=1696350275;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vFkpn2H397KrVSqmEDJx57x47TGFCVVPTN7FsnVWNzE=;
-        b=v2otWTOXUj7C3SAahVf/f0Nt+Icm4EEbp7tAzTVl+gBSxVs3RCUnn+EK0f7B8xU7OR
-         ZRmIoI/U/ERYRcoBq/B1Y/cz2bbHhwWulQuAliYMyVMplra1PbNT06cJJU7/YZDjpmoa
-         CV7H1FIvHSfcs+7vTQu3/6isedOyb2IRb8LY5v6yKXjMxmHjkjVkKXpJ2Cp/2DdaxFyM
-         XlxM91fk4EphlGISzTlq4yxbgGutjW1+8IPbuRXWtzFVrZf0TYVRY8NxQUNllw1bx8ZZ
-         YKqCHcBGh28KYiiHca66AmRu0SvzBHr0z6oAB5qPIuKQnUq8Yy1UM8dbMI/KYwBdKuNa
-         lwyg==
-X-Gm-Message-State: AOJu0YxrlTaMq5KBsthkELi+lhvtsxFSAupd5KTbOCJsY2mKKX7PytLq
-        DZ1AB8btFsvstC08WOfTstZVajfd/u8=
-X-Google-Smtp-Source: AGHT+IHBoakqhkhiVEAsv+mZQ0hK5/qDN1CmFMFNKuR5J4mjx2CZrD8PGaR7oJWeHShb9Petn58MPj8g4wE=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:dc99:dac4:b719:7cd8])
- (user=gnoack job=sendgmr) by 2002:a17:907:7110:b0:9a1:b087:3bcb with SMTP id
- zr16-20020a170907711000b009a1b0873bcbmr34230ejb.7.1695745475433; Tue, 26 Sep
- 2023 09:24:35 -0700 (PDT)
-Date:   Tue, 26 Sep 2023 18:24:32 +0200
-In-Reply-To: <20230921061641.273654-1-mic@digikod.net>
-Message-Id: <ZRMFwNzBJyyr85hV@google.com>
-Mime-Version: 1.0
-References: <20230921061641.273654-1-mic@digikod.net>
-Subject: Re: [RFC PATCH v1 0/7] Landlock audit support
-From:   "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
-To:     "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
-Cc:     Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Ben Scarlato <akhna@google.com>, Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@google.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Shervin Oloumi <enlightened@google.com>, audit@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 26 Sep 2023 14:04:24 -0400
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02olkn2104.outbound.protection.outlook.com [40.92.49.104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3335510A;
+        Tue, 26 Sep 2023 11:04:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Zfkkaaqyh6M4MPbEhgl+X+KWv1jSUBI87qzFo5q1f74llCH1ci5A8xfnfEx4LYTvB+mi8xCegvQc4yWCmpfog9gTaUHCeEwDOnO9xyxQ1HEqUTWaMo16S8/oBKwC+DMNwr7wSKeHIb2Oxh1G8CKr1Uq/IEfLWJNNkMETNOJKj70qnwCx4ufeo4abWOqWKNQxBXHmSEJyH/r2x+14IfFBljzqjcXnRFlzNXY9hJqBhBLhpV80HiMUd3JEK/pg1LodkOM6TM06gWwvGMwMF9gaqWr2Lk2v61HoSB+a9i8dz8Cr54eoHSIaniRqzNrIWHKV7R2zmxFoOBiP2GOOyX5NjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RwVWlXQeoym0mywKOq9pNSsKico5ab6LLcX/fLgmsKc=;
+ b=jMsaO2cq+EWIbNhYYKNAjQfALFNkFys5/3gMFROa+DqwzkahztB1qkvsg7KjBendDzPjBsCVAAtjIjGmNQSwHWHHssFzr92l2PWDL8Hy2WaMNzdmvtnvGx9vMnMAWXyAysbVf7W98QIHXB4WnFXnbpQipkMTEoTWKK0bs47u5r8OdmoESAaLXk3IzpmAyB13QMjS+5OQ0xHd5SZP7gpKsi9GJAghKl5PNosRAhpRvH9dmBJ0+IxK2zjH8Hy2e1elaJkX39NbX+X8u9u3W2hh7a8xmmnl8KcySKCAPhSmLWbGavN5RxWP+FGcjrW7j49hsRQxDHlA7T4aRr6rTgOhUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RwVWlXQeoym0mywKOq9pNSsKico5ab6LLcX/fLgmsKc=;
+ b=o8XM9qAFgMLeT6wtS5rc9bEjU2b/zTnAv4TGY/ypdoPUH94ClDw5w0BgvFJB/mCaa8f0rp6Nmg8CKYOFT9I1EQiz1JdHNF1SsP+aUWr2oLt2duCg6dyluOKuvTiK/xT9v6h8r0n0kWVWHUerf7hfDsECS9+zdOrdJwZ+ZE6C8ZuPFG3Yzwn4Ce8L2Tq1MHvyCvdWtCr4JsPcvSTCGvQCgVUZ0mjlr7bIlAA8DEZFgpaksh1JSkUhOWZl6GYNWVza3ZAwTRRF3JLPKd2l8lLxLY1w7Rq2mby4JEeb2gC2GlWp1yzQlo6JNUHJa1MpVhZdkcyot3LacZPktmbbBu/S7A==
+Received: from VI1P193MB0752.EURP193.PROD.OUTLOOK.COM (2603:10a6:800:32::19)
+ by PAXP193MB1629.EURP193.PROD.OUTLOOK.COM (2603:10a6:102:13f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6813.28; Tue, 26 Sep
+ 2023 18:04:15 +0000
+Received: from VI1P193MB0752.EURP193.PROD.OUTLOOK.COM
+ ([fe80::3164:ae5c:78f7:23ad]) by VI1P193MB0752.EURP193.PROD.OUTLOOK.COM
+ ([fe80::3164:ae5c:78f7:23ad%4]) with mapi id 15.20.6813.024; Tue, 26 Sep 2023
+ 18:04:15 +0000
+From:   Juntong Deng <juntong.deng@outlook.com>
+To:     shuah@kernel.org, mic@digikod.net, brauner@kernel.org,
+        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+        paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-riscv@lists.infradead.org,
+        bpf@vger.kernel.org, linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH] selftests: Fix wrong TARGET in kselftest top level Makefile
+Date:   Wed, 27 Sep 2023 02:03:23 +0800
+Message-ID: <VI1P193MB0752596147F224B9F921C85199C3A@VI1P193MB0752.EURP193.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.39.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN:  [Ier0yVm8oTt2wRApjFme38b5i3hVTU7C]
+X-ClientProxiedBy: AM9P193CA0005.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21e::10) To VI1P193MB0752.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:800:32::19)
+X-Microsoft-Original-Message-ID: <20230926180323.21921-1-juntong.deng@outlook.com>
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VI1P193MB0752:EE_|PAXP193MB1629:EE_
+X-MS-Office365-Filtering-Correlation-Id: 61d13663-69a7-4085-66c5-08dbbebafe85
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: lihTRgR9Sr4MI15Ka9DYgAztiI6JS8M9R8kNeHHgSiWGOD6CLwjqnPzla3oMZZKHt4gOLIGPynowX7M9Y3BCpscgPGFzp0tK4zMir7UEMkF49/mKgCWANTUDYtIb0HD2dZskXaLlFkusJZYCl3F7NqSt3Tewga9YsJa8BlI/DSoyAIMb3+0YKYZynaWcDvg2hUWvxM0kc0/w+jhHSKRE/el7duglX4+KW2zGEiGEyO1sC0kWTBiohkBtzyO0d3ygY3A5sBw1xheRKp88vvNDKorCbHO5yNVUKSL9izUt+j4OLlhy/aIIiE9BssakyyVL/ArenVV4EJo9zhO7yVjq/5uwiSrnxK40h+H+bNwlErLI5w4TRYZwF0CRAvEOiRihcJA/MQLVqV/t8DPF9l67cdFrMfChgnAwNlr7ZG4iZtU/dO4uDEfy7HaPXIK1zsQj3bvj/pYaJyGVmm+5/jq4DZ1akI1c+LhyJk7beOr2sopS8dsP3GF3pAiXBs5r86HZD6OpVpgsRheQBCZ+BM0Vx9JzF9a76sgJAAn4eZ3Sj7kgxq8VRZjVhndh/mDU2gAR
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?pIZEGfMgfEHrNru7pYofKvThXDbVcUzHcsAxbS1Tl+BMhjkpJbjNoyFjaWUu?=
+ =?us-ascii?Q?urNluKWZmTzz1yzkstF6pV+6GIL02oU0cCq0xhttsMKpMYzWs0r+LxRDGmBV?=
+ =?us-ascii?Q?MRM0Pg0kwbpj8nX3IU6zMhHSFU+puFtmwwkLvg1dukkXtI2P3zUCnpI2WTPT?=
+ =?us-ascii?Q?VAtv0t2sg1yd6QZ1o+0OE6QOIL3KkeN3HaBGIfcaZJf6bbbM/xrenp/hOZVz?=
+ =?us-ascii?Q?kbnO/bW5Xdce+DjgY0hK7+VNE7Eai9FGOOIP6YQHUHepqEnKL8CA2TafP8E2?=
+ =?us-ascii?Q?MNdPRyPSZzf3OoMRB8J9QDGMpwbUy81K0REivp1alXnIYm2ISRZhjJaRSn7l?=
+ =?us-ascii?Q?0LW/Q6e2oQkuvGDpZdukTlLhcFYjtZjfs5qsjgx9nN8AUxhnthCacLuXItm/?=
+ =?us-ascii?Q?WqWmcgvQMeq6UDL0w8wXzFXZZCQ72DgKHk/D+db2U9KUjzsxeCZh61XMxB73?=
+ =?us-ascii?Q?6ZQ/v9CqdiTLvJpnrcU4x5ctXajI++SgNdGI8cfUQEsRdatoU0HcpCktt4z7?=
+ =?us-ascii?Q?eOrmE5nPY7EPu9H7Jq3qlnxGpHzCOQNLEvmtcggRGQXyz3AtVLeP5HCsSFtw?=
+ =?us-ascii?Q?4Qw0pzYnkG1wZeZFuxeJol/obp6IoO25lCC9KNWOZ9NQ2T8M6SRGvVE/1dqT?=
+ =?us-ascii?Q?2u4jYoy0NeXZnj2vdiO9QGMDaRbXtqYhlmxftHcr9GGuF/x/lX1voZB2cYgp?=
+ =?us-ascii?Q?01rkuNUKaBFcZCV7VGBe+hl2M8vHeaKNbbCHG2Hs/N2URQzdGY6VlOTWeKAz?=
+ =?us-ascii?Q?UsrlsVOKMYs9TfKOCeqmoxcFUZhmiCORbM+XD9Ym2Aii8e0KRs3R/gubU/ia?=
+ =?us-ascii?Q?QuE3Zc6upD25PVrJUmUBtNm7f86FaiOXiU9RJt8pvi4boltfTk+wEiqiSNSQ?=
+ =?us-ascii?Q?iZrniHoCnq8HwWO/6Jk7SbB5oGDRW54GDJmWganLz9d/VW1ZUeW660xT3jv1?=
+ =?us-ascii?Q?rSIFXwpGU7L9UUKYr8/4r5+96zckZlcAgqIMGfOUz9Lqbu5E9SIs7ILUrkVw?=
+ =?us-ascii?Q?HuMKyZG0LKAvoBrhKA0/v/thgHZg5rjS/FJ5ivlb8N7cys+UcRygJ1osDQwh?=
+ =?us-ascii?Q?oUbBluuObTvkrVqMpWnJdqQzFOlI61pEYAVIg+AUnK82MytVhKIkiA51OcOC?=
+ =?us-ascii?Q?TS/0LQk2GobL//W/UMH43YwvMeN8CGA0JZhcwHSt2uK2fBHcPLPfe1+pawkd?=
+ =?us-ascii?Q?6stuy16gPMPlT2mOsyaetg0DIz0Ni4esliPHc6a/wDZ8spYTuHizTx1eZkA?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61d13663-69a7-4085-66c5-08dbbebafe85
+X-MS-Exchange-CrossTenant-AuthSource: VI1P193MB0752.EURP193.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2023 18:04:15.0017
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXP193MB1629
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Micka=C3=ABl!
+The 'uevents' subdirectory does not exist in tools/testing/selftests/
+and adding 'uevents' to the TARGETS list results in the following error:
 
-On Thu, Sep 21, 2023 at 08:16:34AM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> This patch series adds basic audit support to Landlock for most actions.
-> Logging denied requests is useful for different use cases:
-> * app developers: to ease and speed up sandboxing support
-> * power users: to understand denials
-> * sysadmins: to look for users' issues
-> * tailored distro maintainers: to get usage metrics from their fleet
-> * security experts: to detect attack attempts
->=20
-> To make logs useful, they need to contain the most relevant Landlock
-> domain that denied an action, and the reason. This translates to the
-> latest nested domain and the related missing access rights.
+make[1]: Entering directory 'xx/tools/testing/selftests/uevents'
+make[1]: *** No targets specified and no makefile found. Stop.
+make[1]: Leaving directory 'xx/tools/testing/selftests/uevents'
 
-Is "domain" always the latest nested domain, or is that the domain which ca=
-used
-the check to fail because it denied the requested access right?  (If it is =
-just
-the counter of how many domains are stacked, this could maybe also be queri=
-ed
-through proc instead?)
+What actually exists in tools/testing/selftests/ is the 'uevent'
+subdirectory.
 
+Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+---
+ tools/testing/selftests/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Two "Landlock permissions" are used to describe mandatory restrictions
-> enforced on all domains:
-> * fs_layout: change the view of filesystem with mount operations.
-> * ptrace: tamper with a process.
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 42806add0114..1a21d6beebc6 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -92,7 +92,7 @@ endif
+ TARGETS += tmpfs
+ TARGETS += tpm2
+ TARGETS += tty
+-TARGETS += uevents
++TARGETS += uevent
+ TARGETS += user
+ TARGETS += user_events
+ TARGETS += vDSO
+-- 
+2.39.2
 
-I find the term "access" already a bit overloaded, and the term "permission=
-"
-also already appears in other contexts.  Maybe we can avoid the additional
-terminology by grouping these two together in the log format, and calling t=
-hem
-the "cause" or "reason" for the deny decision?  In a sense, the access righ=
-ts
-and the other permissions can already be told apart by their names, so they
-might also both appear under the same key without causing additional confus=
-ion?
-
-
-> Here is an example of logs, result of the sandboxer activity:
-> tid=3D267 comm=3D"sandboxer" op=3Dcreate-ruleset ruleset=3D1 handled_acce=
-ss_fs=3Dexecute,write_file,read_file,read_dir,remove_dir,remove_file,make_c=
-har,make_dir,make_reg,make_sock,make_fifo,make_block,make_sym,refer,truncat=
-e
-> tid=3D267 comm=3D"sandboxer" op=3Drestrict-self domain=3D2 ruleset=3D1 pa=
-rent=3D0
-> op=3Drelease-ruleset ruleset=3D1
-> tid=3D267 comm=3D"bash" domain=3D2 op=3Dopen errno=3D13 missing-fs-access=
-es=3Dwrite_file,read_file missing-permission=3D path=3D"/dev/tty" dev=3D"de=
-vtmpfs" ino=3D9
-> tid=3D268 comm=3D"ls" domain=3D2 op=3Dopen errno=3D13 missing-fs-accesses=
-=3Dread_dir missing-permission=3D path=3D"/" dev=3D"vda2" ino=3D256
-> tid=3D269 comm=3D"touch" domain=3D2 op=3Dmknod errno=3D13 missing-fs-acce=
-sses=3Dmake_reg missing-permission=3D path=3D"/" dev=3D"vda2" ino=3D256
-> tid=3D270 comm=3D"umount" domain=3D2 op=3Dumount errno=3D1 missing-fs-acc=
-esses=3D missing-permission=3Dfs_layout name=3D"/" dev=3D"tmpfs" ino=3D1
-> tid=3D271 comm=3D"strace" domain=3D2 op=3Dptrace errno=3D1 missing-fs-acc=
-esses=3D missing-permission=3Dptrace opid=3D1 ocomm=3D"systemd"
-
-In more complicated cases like "refer" and "open", it is possible that more=
- than
-one access right is missing, and presumably they'll both be listed in
-missing-fs-accesses=3D.  In this case, it is not clear to me whether the do=
-main=3D
-number is referring to the first or the second of these missing rights.
-(Assuming that the domain=3D is about the domain which caused the denial.)
-
-
-> As highlighted in comments, support for audit is not complete yet with
-> this series: some actions are not logged (e.g. file reparenting), and
-> rule additions are not logged neither.
-
-When ftruncate(2) gets denied, it is also not possible to tell which of the
-nested domains is responsible, without additional changes to what we carry
-around in the file's security blob.  (Right now, we calculate the overall
-truncation right in advance at open(2) time, and just store that bit with t=
-he
-newly opened file.)
-
-
-> I'm also not sure if we need to have seccomp-like features such as
-> SECCOMP_FILTER_FLAG_LOG, SECCOMP_RET_LOG, and
-> /proc/sys/kernel/seccomp/actions_logged
->=20
-> I'd like to get some early feedback on this proposal.
-
-If you want to have the full feature set as proposed above for other operat=
-ions
-as well, like file reparenting and truncation, it'll complicate the Landloc=
-k
-logic and increase the amount of data that needs to be kept around just for
-logging.  I'm not convinced that this is worth it.  After all, the simpler =
-the
-Landlock implementation is, the easier it'll be to reason about its logic a=
-nd
-its security guarantees.
-
-A possible simplification would be to omit the domain number which is
-responsible for a "deny" decision.  I feel that for debugging, knowing the =
-fact
-that Landlock denied an operation might already be a big step forward, and =
-the
-exact domain responsible for it might not be that important?
-
-=E2=80=94G=C3=BCnther
-
---=20
-Sent using Mutt =F0=9F=90=95 Woof Woof
