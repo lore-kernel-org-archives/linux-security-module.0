@@ -2,200 +2,127 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30849E7E625
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Sep 2023 11:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DB0E7E62E
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Sep 2023 12:48:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231362AbjIZLQk convert rfc822-to-8bit (ORCPT
+        id S231362AbjIZMtB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Sep 2023 07:16:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42596 "EHLO
+        Tue, 26 Sep 2023 08:49:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229556AbjIZLQj (ORCPT
+        with ESMTP id S234560AbjIZMtA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Sep 2023 07:16:39 -0400
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34090E9;
-        Tue, 26 Sep 2023 04:16:32 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Rvxgx3Gbvz9xHvZ;
-        Tue, 26 Sep 2023 19:03:57 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwB3z5BmvRJl0dQRAQ--.20692S2;
-        Tue, 26 Sep 2023 12:16:03 +0100 (CET)
-Message-ID: <41711c1e42c1a248a0143b8aa9cefcc1004900a9.camel@huaweicloud.com>
-Subject: Re: [PATCH v3 20/25] security: Introduce key_post_create_or_update
- hook
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Tue, 26 Sep 2023 13:15:48 +0200
-In-Reply-To: <20230904134049.1802006-1-roberto.sassu@huaweicloud.com>
-References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
-         <20230904134049.1802006-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Tue, 26 Sep 2023 08:49:00 -0400
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 778A7FB;
+        Tue, 26 Sep 2023 05:48:53 -0700 (PDT)
+Received: from [192.168.192.83] (unknown [50.39.103.33])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 744923F1DB;
+        Tue, 26 Sep 2023 12:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1695732531;
+        bh=gsf5Dcm+oBvt0OepvgcW/nShbExlI1OvGeUPMDjYhrI=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=II5niPaDBIMHxuG6ai8j6A+VHw++umAb1/E4ACNhGAdkyVH69wgavwqr9ZPIjClHR
+         GkhrpvCUh6Sin2lx08+/pC+RXzF0HBSDDicEpaWmCUDSZUjD8jfDv3zDsxjslbtY6h
+         hr8z09Ow0rPItwwHeOTESsnnk8+4Fc8E4xfegqpIEV1mOldn5bgUhNKttg/k2/zTyv
+         OPOfMkrjEAYnEIggXcNXOdje0KMrIGUgy++xBlAk99wZSB5lgKoUMMPJF+fWKMa6rw
+         Y99dUivatZ1SI/YtvFM6C0czTelLMOLT2p3RBoY4ZKCvkjBsmjKQpanbiHUJnUv2i8
+         IV/tgYC3HBivg==
+Message-ID: <a3635704-3585-2d3e-8882-e7c9ce63a720@canonical.com>
+Date:   Tue, 26 Sep 2023 05:48:47 -0700
 MIME-Version: 1.0
-X-CM-TRANSID: LxC2BwB3z5BmvRJl0dQRAQ--.20692S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF4fXFyUCr4DZF48Kw48JFb_yoWrtr4kpa
-        yjk3WrK3yftFyaqrZ3AF12gayFy3y8K347G39xWr1UJFnavw1xur42kr4DurW3XryrGry0
-        qw42vFW3Gr1q9rJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-        0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcV
-        CF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-        6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrfOzDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAMBF1jj5BT2AAAsg
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [apparmor] use per-cpu refcounts for apparmor labels?
+Content-Language: en-US
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
+        linux-kernel@vger.kernel.org
+References: <CAGudoHFfG7mARwSqcoLNwV81-KX4Bici5FQHjoNG4f9m83oLyg@mail.gmail.com>
+ <87a5t9bypm.fsf@intel.com>
+ <c6379a39-42f2-b3f9-c835-bbebe516ba3a@canonical.com>
+ <20230926063857.h3afce5hagnlkoob@f>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <20230926063857.h3afce5hagnlkoob@f>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2023-09-04 at 15:40 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+On 9/25/23 23:38, Mateusz Guzik wrote:
+> On Mon, Sep 25, 2023 at 11:21:26PM -0700, John Johansen wrote:
+>> On 9/25/23 16:49, Vinicius Costa Gomes wrote:
+>>> Hi Mateusz,
+>>>
+>>> Mateusz Guzik <mjguzik@gmail.com> writes:
+>>>
+>>>> I'm sanity-checking perf in various microbenchmarks and I found
+>>>> apparmor to be the main bottleneck in some of them.
+>>>>
+>>>> For example: will-it-scale open1_processes -t 16, top of the profile:
+>>>>     20.17%  [kernel]                   [k] apparmor_file_alloc_security
+>>>>     20.08%  [kernel]                   [k] apparmor_file_open
+>>>>     20.05%  [kernel]                   [k] apparmor_file_free_security
+>>>>     18.39%  [kernel]                   [k] apparmor_current_getsecid_subj
+>>>> [snip]
+>>>>
+>>>> This serializes on refing/unrefing apparmor objs, sounds like a great
+>>>> candidate for per-cpu refcounting instead (I'm assuming they are
+>>>> expected to be long-lived).
+>>>>
+>>>> I would hack it up myself, but I failed to find a clear spot to switch
+>>>> back from per-cpu to centalized operation and don't want to put
+>>>> serious effort into it.
+>>>>
+>>>> Can you sort this out?
+>>>
+>>
+>> I will add looking into it on the todo list. Its going to have to come
+>> after some other major cleanups land, and I am not sure we can make
+>> the semantic work well for some of these. For other we might get away
+>> with switching to a critical section like Vinicius's patch has done
+>> for apparmor_current_getsecid_subj.
+>>
 > 
-> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> the key_post_create_or_update hook.
+> Is there an eta?
 > 
-> It is useful for IMA to measure the key content after creation or update,
-> so that remote verifiers are aware of the operation.
+sorry no
+
+> I looked at dodging ref round trips myself, but then found that ref
+> manipulation in apparmor_file_alloc_security and the free counterpart
+> cannot be avoided. Thus per-cpu refs instead.
 > 
-> LSMs can benefit from this hook to make their decision on the new or
-> successfully updated key content. The new hook cannot return an error and
-> cannot cause the operation to be reverted.
+
+right for file_aloc/free, I don't see a way around keeping a ref count.
+
+> Perhaps making the label as stale would be a good enough switching
+> point? Is it *guaranteed* to get labelled as stale before it gets freed?
 > 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  include/linux/lsm_hook_defs.h |  3 +++
->  include/linux/security.h      | 11 +++++++++++
->  security/keys/key.c           |  7 ++++++-
+no. the stale flag only indicates the label has been replaced, and we
+make no guarentees as to when it will get set/be in use beyond so
+point after it happens.
 
-Hi David, Jarkko
-
-could you please review and ack this patch?
-
-Thanks a lot!
-
-Roberto
-
->  security/security.c           | 19 +++++++++++++++++++
->  4 files changed, 39 insertions(+), 1 deletion(-)
+> btw, __aa_proxy_redirect open-codes setting the flag.
 > 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index eedc26790a07..7512b4c46aa8 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -399,6 +399,9 @@ LSM_HOOK(void, LSM_RET_VOID, key_free, struct key *key)
->  LSM_HOOK(int, 0, key_permission, key_ref_t key_ref, const struct cred *cred,
->  	 enum key_need_perm need_perm)
->  LSM_HOOK(int, 0, key_getsecurity, struct key *key, char **buffer)
-> +LSM_HOOK(void, LSM_RET_VOID, key_post_create_or_update, struct key *keyring,
-> +	 struct key *key, const void *payload, size_t payload_len,
-> +	 unsigned long flags, bool create)
->  #endif /* CONFIG_KEYS */
->  
->  #ifdef CONFIG_AUDIT
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index e543ae80309b..f50b78481753 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -1959,6 +1959,9 @@ void security_key_free(struct key *key);
->  int security_key_permission(key_ref_t key_ref, const struct cred *cred,
->  			    enum key_need_perm need_perm);
->  int security_key_getsecurity(struct key *key, char **_buffer);
-> +void security_key_post_create_or_update(struct key *keyring, struct key *key,
-> +					const void *payload, size_t payload_len,
-> +					unsigned long flags, bool create);
->  
->  #else
->  
-> @@ -1986,6 +1989,14 @@ static inline int security_key_getsecurity(struct key *key, char **_buffer)
->  	return 0;
->  }
->  
-> +static inline void security_key_post_create_or_update(struct key *keyring,
-> +						      struct key *key,
-> +						      const void *payload,
-> +						      size_t payload_len,
-> +						      unsigned long flags,
-> +						      bool create)
-> +{ }
-> +
->  #endif
->  #endif /* CONFIG_KEYS */
->  
-> diff --git a/security/keys/key.c b/security/keys/key.c
-> index 5c0c7df833f8..0f9c6faf3491 100644
-> --- a/security/keys/key.c
-> +++ b/security/keys/key.c
-> @@ -934,6 +934,8 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
->  		goto error_link_end;
->  	}
->  
-> +	security_key_post_create_or_update(keyring, key, payload, plen, flags,
-> +					   true);
->  	ima_post_key_create_or_update(keyring, key, payload, plen,
->  				      flags, true);
->  
-> @@ -967,10 +969,13 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
->  
->  	key_ref = __key_update(key_ref, &prep);
->  
-> -	if (!IS_ERR(key_ref))
-> +	if (!IS_ERR(key_ref)) {
-> +		security_key_post_create_or_update(keyring, key, payload, plen,
-> +						   flags, false);
->  		ima_post_key_create_or_update(keyring, key,
->  					      payload, plen,
->  					      flags, false);
-> +	}
->  
->  	goto error_free_prep;
->  }
-> diff --git a/security/security.c b/security/security.c
-> index 554f4925323d..957e53ba904f 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -5169,6 +5169,25 @@ int security_key_getsecurity(struct key *key, char **buffer)
->  	*buffer = NULL;
->  	return call_int_hook(key_getsecurity, 0, key, buffer);
->  }
-> +
-> +/**
-> + * security_key_post_create_or_update() - Notification of key create or update
-> + * @keyring: keyring to which the key is linked to
-> + * @key: created or updated key
-> + * @payload: data used to instantiate or update the key
-> + * @payload_len: length of payload
-> + * @flags: key flags
-> + * @create: flag indicating whether the key was created or updated
-> + *
-> + * Notify the caller of a key creation or update.
-> + */
-> +void security_key_post_create_or_update(struct key *keyring, struct key *key,
-> +					const void *payload, size_t payload_len,
-> +					unsigned long flags, bool create)
-> +{
-> +	call_void_hook(key_post_create_or_update, keyring, key, payload,
-> +		       payload_len, flags, create);
-> +}
->  #endif	/* CONFIG_KEYS */
->  
->  #ifdef CONFIG_AUDIT
+yes, I am aware.
+
+>>> I was looking at this same workload, and proposed a patch[1] some time
+>>> ago, see if it helps:
+>>>
+>>> https://lists.ubuntu.com/archives/apparmor/2023-August/012914.html
+>>>
+>>> But my idea was different, in many cases, we are looking at the label
+>>> associated with the current task, and there's no need to take the
+>>> refcount.
+>>>
+>>
+>> yes, and thanks for that.
+>>
 
