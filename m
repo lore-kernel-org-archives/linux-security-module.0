@@ -2,87 +2,204 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A7BAE7F140
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Sep 2023 22:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB85E7F143
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Sep 2023 23:01:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229584AbjIZWj4 (ORCPT
+        id S230102AbjIZXB5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Sep 2023 18:39:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39338 "EHLO
+        Tue, 26 Sep 2023 19:01:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229867AbjIZWhz (ORCPT
+        with ESMTP id S230447AbjIZW75 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Sep 2023 18:37:55 -0400
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76C015263
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 14:23:16 -0700 (PDT)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-59f57ad6126so80467807b3.3
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 14:23:16 -0700 (PDT)
+        Tue, 26 Sep 2023 18:59:57 -0400
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB5837DB4
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 14:20:28 -0700 (PDT)
+Received: by mail-qt1-x831.google.com with SMTP id d75a77b69052e-414ba610766so127101cf.0
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 14:20:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1695763395; x=1696368195; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1695763228; x=1696368028; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XvEGktDy6wVzsHKD7sbhO0JqQ1zPMg4qiAh3tOHA+/g=;
-        b=bCIXZMLJA5wWRe9Lui102KzBEKXfl2XcEdGj4tt9DA/ZBUp27XbEuOcnV2xFbgEe1h
-         od0lBnRIQA72IJl+gPnd2ocpZ+gi8q1F5fZSxDwZYhLvt/pEoN4blhk8g88Tpml9uBVX
-         AiquYUzBPt5nVYETkE+vdLHbjKIROnsZIxe1cJ9MrOgGKOJtESGi7w+9xZMqAJPCHqB9
-         e5kWxMM9EXoho/cIo7IaBH4eiIkdarC+qaF6Fc401HEZVv11lqay4pyWCGZJUx1laW1B
-         08OhZ0iEswD6rJUL+nF9rYNvoUw0DMhiCfLaNwQu7d5EVSDJhJvhhkjQSGb0El/ECdCh
-         btDw==
+        bh=+yfCPJ+h1vKT/btr1jZvB3H+pqknpmQhzFvkl0ehzB0=;
+        b=porLy9Nf/CvM4T5KPhRvXoRRB8oCDEt/RP7LAuYpmLeTLjehCEwKDDwpvuL+CYIYsh
+         bIJLw+ulc4DB+fpnh7x+0PwZu2QIUoihAD8jokNQtg/Jkl5kuAyt6p8skqeTA8J8aP67
+         w92qhkFzRDnol7/aT5B4YKrjy6oNBzyUqDdz3YixUHC9ifD/oPCDgXdxHI7cbzwe4xmt
+         Rsp4E13BuVMFJpzyWpnId0t1Qed4PrM70tx8KFMIeD6QuhVvmK1oSirshXsfpWM/wpLi
+         NUiV2rpmUHOmLzQLA1p65+Y59qNPSe9SSVlGnwfao28MnO480AtAqE0h4H1e//Lv4VTu
+         reuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695763395; x=1696368195;
+        d=1e100.net; s=20230601; t=1695763228; x=1696368028;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XvEGktDy6wVzsHKD7sbhO0JqQ1zPMg4qiAh3tOHA+/g=;
-        b=mA2zcUmyKMmLv9yzWDAPbzdveLbA/YL1P9lvlMdKlMFNDIIM4CIL+ncUqH3k3qVnnU
-         0+P/zFlaauIkH8RSCmZlCpvqnk73Z5/lXyHdLnIl0yiCW4KARQdabMzYjcpAb6Z//y1o
-         KRMuBmb3gYtwSmmxF+wgdX7E6flbeoRDb7q8LsOj2WcqC6LqkteYoEVERRInQCKwzHI9
-         +w/mC3P6dLPk5PH6FDaYOa0MY+2Q5AFh3SdSGby5j74qv4dC88YiMzSg7DzLEw3EmO6V
-         X9JTBI4f1iuKVflumVtK57tQZfuqa4zgH3k/e6lcbmffRDEooZs/EDkaPcH7RQdiP/yA
-         oIbA==
-X-Gm-Message-State: AOJu0YygRc+dvDiGdG+mtYv1JBeRfYlSpEjdh8MDRvYMvzXT+8YPWeN/
-        q83lkZ6+PE6SYEzcVocqLoalGDg/0FmFOTmUx9WV
-X-Google-Smtp-Source: AGHT+IFSifY8rHWsv4ru2mx1UVdurLwMQssqx80hdP8CCE126cpTiZsmwmEZwqvNWwPuRfhNuW3XL2vD2eeHgauN9SM=
-X-Received: by 2002:a0d:d515:0:b0:595:59f:28d7 with SMTP id
- x21-20020a0dd515000000b00595059f28d7mr191922ywd.48.1695763395674; Tue, 26 Sep
- 2023 14:23:15 -0700 (PDT)
+        bh=+yfCPJ+h1vKT/btr1jZvB3H+pqknpmQhzFvkl0ehzB0=;
+        b=jA2P/50bA86j0vgbLMCDT8hIofqmivE6OIHhJDvOANNWCN36vsZtaoer1Yg45FHNzL
+         ol+2A5b8QAgWJFzfp5ivLt5ohkf4GHlqgSfGBt24Rj5w4KH/mViW6mZvGbNE+vUsD3Je
+         END3z1+qur4J8JdGh3uq7TIGn7kcsI/v+OGuKmYAChbe+ku13lr2wBQ/JZ8mlPxmycI+
+         61Jg8vkO4xSX3RC904Fwq0DU/ZjSWWRHG1uxIe/DvOB50YtpAapvFpkQoO7XLQs+N0mV
+         hUNEanacA1c/e9uE5SkLxMQHhprzsEiMKVVUw/rYise8omJFNc2rcq3f6up6rLC0+zjH
+         Uv7w==
+X-Gm-Message-State: AOJu0Yw/btJngNkvtBo1Ad1k9kO4bIhfoJczfrjG9QaybC7MQGsM04PA
+        a2pYdjD0TlmOHIu+FLPFGoqXBR+E9/7WXVVINk9Z7f4Zbh5PW6SnKKJBJs+6
+X-Google-Smtp-Source: AGHT+IGlC2Cfe5ksujev4GRMEvbJr3s/cuOJfP0+eExFS0lmCzk+qbaTOLoUEVFab0BBpr3Ih/5JbGIbUb328dtOH0c=
+X-Received: by 2002:a05:622a:5cf:b0:403:e1d1:8b63 with SMTP id
+ d15-20020a05622a05cf00b00403e1d18b63mr447837qtb.24.1695763227794; Tue, 26 Sep
+ 2023 14:20:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHC9VhTepATGki_8_nyUcmCCvJ2hpLO4bWFhF-gJ3CQceEBMfA@mail.gmail.com>
- <CAHC9VhQ9EfH5sb85+uwyB726iDNR47k=sfr0zBCENz=-PerR9A@mail.gmail.com>
- <CAHC9VhQhf+ik5S_aJOVn59pax1Aa0vO5gJ4YoxrtGRKtoWh7sA@mail.gmail.com>
- <f8f32da5-6f31-d197-7405-8f308bd29228@I-love.SAKURA.ne.jp>
- <CAHC9VhTktg4RFWw+rSZ6wWQ8iR3n2p8XaOO95BbJ1QGAd4y9fg@mail.gmail.com>
- <43d84d6c-18ac-6689-cddc-d079cfa19d4d@I-love.SAKURA.ne.jp>
- <CAHC9VhSG2UzE9N0-tAJc8B3Mj1PEuJ2b6wso_DUs_Y83yqwhjA@mail.gmail.com>
- <c8d58922-9af4-b425-03c6-6710ad17b739@schaufler-ca.com> <CAHC9VhTdtF=_4nj3-eQvBUhWhnEss28KKUKCciBCrBL9pN+uQw@mail.gmail.com>
- <8912fc96-cb8e-ec3b-273d-6bd8ad6b5513@I-love.SAKURA.ne.jp>
- <202309241827.6818149EC8@keescook> <6e1c25f5-b78c-8b4e-ddc3-484129c4c0ec@I-love.SAKURA.ne.jp>
-In-Reply-To: <6e1c25f5-b78c-8b4e-ddc3-484129c4c0ec@I-love.SAKURA.ne.jp>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 26 Sep 2023 17:23:04 -0400
-Message-ID: <CAHC9VhRmvyEOFLePc3fhQ0XPruzxwe-yrqTAyy8k1ATDz0t1SQ@mail.gmail.com>
-Subject: Re: ANN: new LSM guidelines
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <kees@kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20230921061641.273654-1-mic@digikod.net> <20230921061641.273654-6-mic@digikod.net>
+ <CALmYWFubLv+yd9NWMMwt4FUdYnbghMC=GHeZm4oaSOctqnwbVA@mail.gmail.com> <20230926.di9Esee2xahi@digikod.net>
+In-Reply-To: <20230926.di9Esee2xahi@digikod.net>
+From:   Jeff Xu <jeffxu@google.com>
+Date:   Tue, 26 Sep 2023 14:19:51 -0700
+Message-ID: <CALmYWFuerqvZ3HoUnc9xXYhR8vBgg9qAyA-ncHai4ksN-c-gGQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 5/7] landlock: Log file-related requests
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Ben Scarlato <akhna@google.com>,
+        =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+        Jorge Lucangeli Obes <jorgelo@google.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Shervin Oloumi <enlightened@google.com>, audit@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 25, 2023 at 12:32=E2=80=AFAM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
+On Tue, Sep 26, 2023 at 6:35=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
 >
-> Casey and Paul, do you agree to change your policy for assigning LSM ID ?
+> On Mon, Sep 25, 2023 at 06:26:28PM -0700, Jeff Xu wrote:
+> > On Wed, Sep 20, 2023 at 11:17=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@=
+digikod.net> wrote:
+> > >
+> > > Add audit support for mkdir, mknod, symlink, unlink, rmdir, truncate,
+> > > and open requests.
+> > >
+> > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > > ---
+> > >  security/landlock/audit.c | 114 ++++++++++++++++++++++++++++++++++++=
+++
+> > >  security/landlock/audit.h |  32 +++++++++++
+> > >  security/landlock/fs.c    |  62 ++++++++++++++++++---
+> > >  3 files changed, 199 insertions(+), 9 deletions(-)
+> > >
+>
+> > > +static void
+> > > +log_request(const int error, struct landlock_request *const request,
+> > > +           const struct landlock_ruleset *const domain,
+> > > +           const access_mask_t access_request,
+> > > +           const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCE=
+SS_FS])
+> > > +{
+> > > +       struct audit_buffer *ab;
+> > > +
+> > > +       if (WARN_ON_ONCE(!error))
+> > > +               return;
+> > > +       if (WARN_ON_ONCE(!request))
+> > > +               return;
+> > > +       if (WARN_ON_ONCE(!domain || !domain->hierarchy))
+> > > +               return;
+> > > +
+> > > +       /* Uses GFP_ATOMIC to not sleep. */
+> > > +       ab =3D audit_log_start(audit_context(), GFP_ATOMIC | __GFP_NO=
+WARN,
+> > > +                            AUDIT_LANDLOCK);
+> > > +       if (!ab)
+> > > +               return;
+> > > +
+> > > +       update_request(request, domain, access_request, layer_masks);
+> > > +
+> > > +       log_task(ab);
+> > > +       audit_log_format(ab, " domain=3D%llu op=3D%s errno=3D%d missi=
+ng-fs-accesses=3D",
+> > > +                        request->youngest_domain,
+> > > +                        op_to_string(request->operation), -error);
+> > > +       log_accesses(ab, request->missing_access);
+> > > +       audit_log_lsm_data(ab, &request->audit);
+> > > +       audit_log_end(ab);
+> > > +}
+> > > +
+> > > +// TODO: Make it generic, not FS-centric.
+> > > +int landlock_log_request(
+> > > +       const int error, struct landlock_request *const request,
+> > > +       const struct landlock_ruleset *const domain,
+> > > +       const access_mask_t access_request,
+> > > +       const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_F=
+S])
+> > > +{
+> > > +       /* No need to log the access request, only the missing access=
+es. */
+> > > +       log_request(error, request, domain, access_request, layer_mas=
+ks);
+> > > +       return error;
+> > > +}
+>
+> > > @@ -636,7 +638,8 @@ static bool is_access_to_paths_allowed(
+> > >  }
+> > >
+> > >  static int current_check_access_path(const struct path *const path,
+> > > -                                    access_mask_t access_request)
+> > > +                                    access_mask_t access_request,
+> > > +                                    struct landlock_request *const r=
+equest)
+> > >  {
+> > >         const struct landlock_ruleset *const dom =3D
+> > >                 landlock_get_current_domain();
+> > > @@ -650,7 +653,10 @@ static int current_check_access_path(const struc=
+t path *const path,
+> > >                                        NULL, 0, NULL, NULL))
+> > >                 return 0;
+> > >
+> > > -       return -EACCES;
+> > > +       request->audit.type =3D LSM_AUDIT_DATA_PATH;
+> > > +       request->audit.u.path =3D *path;
+> > > +       return landlock_log_request(-EACCES, request, dom, access_req=
+uest,
+> > > +                                   &layer_masks);
+> >
+> > It might be more readable to let landlock_log_request return void.
+> > Then the code will look like below.
+> >
+> > landlock_log_request(-EACCES, request, dom, access_request,  &layer_mas=
+ks);
+> > return -EACCES;
+> >
+> > The allow/deny logic will be in this function, i.e. reader
+> > doesn't need to check landlock_log_request's implementation to find
+> > out it never returns 0.
+>
+> I did that in an early version of this patch, but I finally choose to wri=
+te
+> 'return lanlock_log_request();` for mainly two reasons:
+> * to help not forget to call this function at any non-zero return values
+>   (which can easily be checked with grep),
 
-No LSM ID value is guaranteed until it is present in a tagged release
-from Linus' tree, and once a LSM ID is present in a tagged release
-from Linus' tree it should not change.  That's *the* policy.
+"grep -A 2 landlock_log_request" would serve the same purpose though.
 
---=20
-paul-moore.com
+> * to do tail calls.
+>
+> I guess compiler should be smart enough to do tail calls with a variable
+> set indirection, but I'd like to check that.
+>
+
+What are tail calls and what is the benefit of this code pattern ?
+i.e. pass the return value into landlock_log_request() and make it a
+single point of setting return value for all landlock hooks.
+
+> To make it easier to read (and to not forget returning the error), the
+> landlock_log_request() calls a void log_request() helper, and returns
+> the error itself. It is then easy to review and know what's happening
+> without reading log_request().
+>
+> I'd like the compiler to check itself that every LSM hook returned
+> values are either 0 or comming from landlock_log_request() but I think
+> it's not possible right now. Coccinelle might help here though.
+>
+> BTW, in a next version, we might have landlock_log_request() called even
+> for allowed requests (i.e. returned value of 0).
