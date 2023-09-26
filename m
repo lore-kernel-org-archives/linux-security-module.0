@@ -2,126 +2,84 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7033DEE14D8
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Sep 2023 06:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F178EE7D273
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Sep 2023 10:06:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233811AbjIZGjK (ORCPT
+        id S234333AbjIZKGQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Sep 2023 02:39:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49504 "EHLO
+        Tue, 26 Sep 2023 06:06:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233757AbjIZGjJ (ORCPT
+        with ESMTP id S232671AbjIZKGO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Sep 2023 02:39:09 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F8B116;
-        Mon, 25 Sep 2023 23:39:02 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2bfed7c4e6dso135128941fa.1;
-        Mon, 25 Sep 2023 23:39:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695710340; x=1696315140; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xOK6OfHsH5UzXX07PzrwQsARRjCcdnyHQS4dDua03nw=;
-        b=eVBYK/fZZ8sArYAzt80NlSEYz5YueAeTBmFrv1BxvFdVsIuLC4Plueq9E4SW7V8rhp
-         s0dZhrb1JdrjoCvTmSTdp2ls3R+6aM39VBwALow+xq5vA8+RRcOm6Imv8gBuqb7guN8V
-         1gP4qqiy/lCJbysGtH1PypTLuJJ+QJupGB26gyo0hcthkRkTtOR1CpJFTo8gW9tHlyZC
-         CJF47ol8t5pS0yo47UKX94fsrKP7hdwj/oy4H53ngC+xgXPoBgFjVA2MiEP/xaLReqQ6
-         ATTpzkY2ji093g6ulAkz/uiZlfgUiE5oPhNi5FhiiKw36ornbV7f1jxVeFuZ0WrLmDzC
-         LDYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695710340; x=1696315140;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xOK6OfHsH5UzXX07PzrwQsARRjCcdnyHQS4dDua03nw=;
-        b=HiBM1U6+j7skFecrjJqGdh2k2btq/9VzXwzu4c7j9imRN0GVwP3KzVUhk957ThpJRu
-         yKOZdjzkxwrJ/4Dzd3OHQWV3o5h/EfOcHmnncxu8eyOq5mB/rV7xKmZpnMl/o64RWFov
-         KoA3OaZVIs/38b5yiAOuZZON+FeGPOzsWbjNQ2b3SAzV5/yrG5POBAi2LrIvCgmkYFjo
-         W42e951IsjObh78peF7uO/sAT7FissUuB49iqL6eBkYr0PlyBalD3VejtC52HBIhIokH
-         OnC+Dn2ypjRmB+66ecbI7MOeFVWqGgXvD8/wKHl2jcb5HJkDV14R8ikaeDFYQ+OCfX/q
-         ursw==
-X-Gm-Message-State: AOJu0YwK0qcMxI/sfNM87/ayn7DBxLjZf446QYx1wNrYHp6hVXtAdfIx
-        SEC/WR/X/oVYicsoJUbWhIpi9mL6U60H9g==
-X-Google-Smtp-Source: AGHT+IEZbAEvu9lgt5JJh/Z2GjloOrBpRgTUgnNCYG3KavjqfNt/qHcgljINrUwUMAXGwze8s6FBiQ==
-X-Received: by 2002:a2e:97c8:0:b0:2bc:e954:4203 with SMTP id m8-20020a2e97c8000000b002bce9544203mr7159098ljj.26.1695710340426;
-        Mon, 25 Sep 2023 23:39:00 -0700 (PDT)
-Received: from f (cst-prg-24-34.cust.vodafone.cz. [46.135.24.34])
-        by smtp.gmail.com with ESMTPSA id lw3-20020a170906bcc300b009ade1a4f795sm7244603ejb.168.2023.09.25.23.38.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Sep 2023 23:38:59 -0700 (PDT)
-Date:   Tue, 26 Sep 2023 08:38:57 +0200
-From:   Mateusz Guzik <mjguzik@gmail.com>
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [apparmor] use per-cpu refcounts for apparmor labels?
-Message-ID: <20230926063857.h3afce5hagnlkoob@f>
-References: <CAGudoHFfG7mARwSqcoLNwV81-KX4Bici5FQHjoNG4f9m83oLyg@mail.gmail.com>
- <87a5t9bypm.fsf@intel.com>
- <c6379a39-42f2-b3f9-c835-bbebe516ba3a@canonical.com>
+        Tue, 26 Sep 2023 06:06:14 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C39397;
+        Tue, 26 Sep 2023 03:06:08 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E6EC433C7;
+        Tue, 26 Sep 2023 10:06:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695722768;
+        bh=5onSzf5BNFbFhVXiA+U4L0mSIUR02CQroDNZdJ/Wi8s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mrlvP8M/WGIMxDQUlrAlDtJCIhJZnHOgxzaN4l3cUscNnqxCn8ER5BobU0+J74MCE
+         QkGCBpL/mpoZzwdWQAWchoUjjSzZbJGiXMPs5wnwY1O5Ke+c7JAnCKkCIY4J3krVq1
+         3I5Ucfi2Q/lddDf4MoiCUadOrNh7FTCHxhTDNefq0c9Uro5lQ9CUy99DiEm0HJLVH+
+         L8Yj0OX0qmlABgA5Ja/dlIcLitbUSFNVKnGgd0g0QBM3b6m0U2Tsb38gBBySZ+yMmD
+         INRhtBhTfEDY9BFOyxPTMzqwOeitd6z0BsY1qnQezsMf2S7P1yUX6fZeLXTC93B5Dc
+         gflwbcNWun4OQ==
+Date:   Tue, 26 Sep 2023 12:05:57 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+Message-ID: <20230926-kajak-klarzukommen-e6c6e3662798@brauner>
+References: <20230913152238.905247-1-mszeredi@redhat.com>
+ <20230913152238.905247-3-mszeredi@redhat.com>
+ <44631c05-6b8a-42dc-b37e-df6776baa5d4@app.fastmail.com>
+ <20230925-total-debatten-2a1f839fde5a@brauner>
+ <CAJfpegvUCoKebYS=_3eZtCH49nObotuWc=_khFcHshKjRG8h6Q@mail.gmail.com>
+ <20230925-wahlrecht-zuber-3cdc5a83d345@brauner>
+ <CAJfpegvAVJUhgKZH2Dqo1s1xyT3nSopUg6J+8pEFYOnFDssH8g@mail.gmail.com>
+ <15fb406a-0f12-4708-abe7-91a464fecbc2@app.fastmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c6379a39-42f2-b3f9-c835-bbebe516ba3a@canonical.com>
+In-Reply-To: <15fb406a-0f12-4708-abe7-91a464fecbc2@app.fastmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 25, 2023 at 11:21:26PM -0700, John Johansen wrote:
-> On 9/25/23 16:49, Vinicius Costa Gomes wrote:
-> > Hi Mateusz,
-> > 
-> > Mateusz Guzik <mjguzik@gmail.com> writes:
-> > 
-> > > I'm sanity-checking perf in various microbenchmarks and I found
-> > > apparmor to be the main bottleneck in some of them.
-> > > 
-> > > For example: will-it-scale open1_processes -t 16, top of the profile:
-> > >    20.17%  [kernel]                   [k] apparmor_file_alloc_security
-> > >    20.08%  [kernel]                   [k] apparmor_file_open
-> > >    20.05%  [kernel]                   [k] apparmor_file_free_security
-> > >    18.39%  [kernel]                   [k] apparmor_current_getsecid_subj
-> > > [snip]
-> > > 
-> > > This serializes on refing/unrefing apparmor objs, sounds like a great
-> > > candidate for per-cpu refcounting instead (I'm assuming they are
-> > > expected to be long-lived).
-> > > 
-> > > I would hack it up myself, but I failed to find a clear spot to switch
-> > > back from per-cpu to centalized operation and don't want to put
-> > > serious effort into it.
-> > > 
-> > > Can you sort this out?
-> > 
+On Mon, Sep 25, 2023 at 05:46:59PM +0200, Arnd Bergmann wrote:
+> On Mon, Sep 25, 2023, at 15:20, Miklos Szeredi wrote:
+> > On Mon, 25 Sept 2023 at 15:19, Christian Brauner <brauner@kernel.org> wrote:
+> >>
+> >> > How about passing u64 *?
+> >>
+> >> struct statmnt_req {
+> >>         __u64 mnt_id;
+> >>         __u64 mask;
+> >> };
+> >>
+> >> ?
+> >
+> > I'm fine with that as well.
 > 
-> I will add looking into it on the todo list. Its going to have to come
-> after some other major cleanups land, and I am not sure we can make
-> the semantic work well for some of these. For other we might get away
-> with switching to a critical section like Vinicius's patch has done
-> for apparmor_current_getsecid_subj.
+> Yes, this looks fine for the compat syscall purpose.
 > 
+> Not sure if losing visibility of the mnt_id and mask in ptrace
+> or seccomp/bpf is a problem though.
 
-Is there an eta?
-
-I looked at dodging ref round trips myself, but then found that ref
-manipulation in apparmor_file_alloc_security and the free counterpart
-cannot be avoided. Thus per-cpu refs instead.
-
-Perhaps making the label as stale would be a good enough switching
-point? Is it *guaranteed* to get labelled as stale before it gets freed?
-
-btw, __aa_proxy_redirect open-codes setting the flag.
-
-> > I was looking at this same workload, and proposed a patch[1] some time
-> > ago, see if it helps:
-> > 
-> > https://lists.ubuntu.com/archives/apparmor/2023-August/012914.html
-> > 
-> > But my idea was different, in many cases, we are looking at the label
-> > associated with the current task, and there's no need to take the
-> > refcount.
-> > 
-> 
-> yes, and thanks for that.
-> 
+It's an information retrieval syscall so there shouldn't be any need to
+block it and I think that this ship has sailed in general. Container
+workloads should migrate from seccomp to landlock if they need to filter
+system calls like this.
