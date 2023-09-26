@@ -2,163 +2,109 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 258C9E7E635
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Sep 2023 13:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83410E7E635
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Sep 2023 13:49:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234735AbjIZNf2 (ORCPT
+        id S234854AbjIZNtz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Sep 2023 09:35:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59978 "EHLO
+        Tue, 26 Sep 2023 09:49:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232437AbjIZNf2 (ORCPT
+        with ESMTP id S234876AbjIZNty (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Sep 2023 09:35:28 -0400
-Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [IPv6:2001:1600:3:17::1909])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89EDDF3
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 06:35:19 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Rw12X6Fv0zMqNvd;
-        Tue, 26 Sep 2023 13:35:16 +0000 (UTC)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Rw12W3Nlcz3c;
-        Tue, 26 Sep 2023 15:35:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1695735316;
-        bh=DaquuYbB+BuVAxp5Q2HGlWY0Bkt6IL6OFvGLP6jMVFc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=J1dHxz9dgNb4jzA/X/Jtc8pqx/N2aZT8RbKWzxApbPwRjEfNmZELOc1L9c+eoK2xb
-         5y1UGmljikrxTDHSKUTvRjLXBFvrekLQj7p9dkTZvBpKr/tT4I4qoKTA2REUTjwb7v
-         56XQGSplcwptTzKKT2u3CW/6n2SJw59i/DCH6jpk=
-Date:   Tue, 26 Sep 2023 15:35:07 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     Jeff Xu <jeffxu@google.com>
-Cc:     Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Ben Scarlato <akhna@google.com>,
-        =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
-        Jorge Lucangeli Obes <jorgelo@google.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Shervin Oloumi <enlightened@google.com>, audit@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 5/7] landlock: Log file-related requests
-Message-ID: <20230926.di9Esee2xahi@digikod.net>
-References: <20230921061641.273654-1-mic@digikod.net>
- <20230921061641.273654-6-mic@digikod.net>
- <CALmYWFubLv+yd9NWMMwt4FUdYnbghMC=GHeZm4oaSOctqnwbVA@mail.gmail.com>
+        Tue, 26 Sep 2023 09:49:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6FF510E
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 06:49:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1695736141;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4a0+/j3wqqmi1vR/kPX5Kqapr51Hnx898rdCOogEsLU=;
+        b=BEzsnhIAJFuHg5/vBw0yXAxQ53zKFrFp2dYvamwG/o/o/YDUfcaYA1HdE2WEVd0C4ylCUH
+        jRhVDyFVQ6ZFpn+npqH65vWdtGs3vdegAZ5qxbJZc1nxxYihEVKaLlnUAeMbapFPDxBN8k
+        IFrkviWQtRzHaln6mIMvpplTC4DeM9A=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-75-td5N-bvqNoevhu9VjagDWQ-1; Tue, 26 Sep 2023 09:48:57 -0400
+X-MC-Unique: td5N-bvqNoevhu9VjagDWQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A2B45101A529;
+        Tue, 26 Sep 2023 13:48:56 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.2.16.53])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3291A140273D;
+        Tue, 26 Sep 2023 13:48:53 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+References: <20230913152238.905247-1-mszeredi@redhat.com>
+        <20230913152238.905247-3-mszeredi@redhat.com>
+        <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
+        <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
+        <20230914-lockmittel-verknallen-d1a18d76ba44@brauner>
+        <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
+        <20230918-grafik-zutreffen-995b321017ae@brauner>
+        <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
+Date:   Tue, 26 Sep 2023 15:48:51 +0200
+In-Reply-To: <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
+        (Miklos Szeredi's message of "Mon, 18 Sep 2023 16:14:02 +0200")
+Message-ID: <871qeloxj0.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALmYWFubLv+yd9NWMMwt4FUdYnbghMC=GHeZm4oaSOctqnwbVA@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 25, 2023 at 06:26:28PM -0700, Jeff Xu wrote:
-> On Wed, Sep 20, 2023 at 11:17 PM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > Add audit support for mkdir, mknod, symlink, unlink, rmdir, truncate,
-> > and open requests.
-> >
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > ---
-> >  security/landlock/audit.c | 114 ++++++++++++++++++++++++++++++++++++++
-> >  security/landlock/audit.h |  32 +++++++++++
-> >  security/landlock/fs.c    |  62 ++++++++++++++++++---
-> >  3 files changed, 199 insertions(+), 9 deletions(-)
-> >
+* Miklos Szeredi:
 
-> > +static void
-> > +log_request(const int error, struct landlock_request *const request,
-> > +           const struct landlock_ruleset *const domain,
-> > +           const access_mask_t access_request,
-> > +           const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
-> > +{
-> > +       struct audit_buffer *ab;
-> > +
-> > +       if (WARN_ON_ONCE(!error))
-> > +               return;
-> > +       if (WARN_ON_ONCE(!request))
-> > +               return;
-> > +       if (WARN_ON_ONCE(!domain || !domain->hierarchy))
-> > +               return;
-> > +
-> > +       /* Uses GFP_ATOMIC to not sleep. */
-> > +       ab = audit_log_start(audit_context(), GFP_ATOMIC | __GFP_NOWARN,
-> > +                            AUDIT_LANDLOCK);
-> > +       if (!ab)
-> > +               return;
-> > +
-> > +       update_request(request, domain, access_request, layer_masks);
-> > +
-> > +       log_task(ab);
-> > +       audit_log_format(ab, " domain=%llu op=%s errno=%d missing-fs-accesses=",
-> > +                        request->youngest_domain,
-> > +                        op_to_string(request->operation), -error);
-> > +       log_accesses(ab, request->missing_access);
-> > +       audit_log_lsm_data(ab, &request->audit);
-> > +       audit_log_end(ab);
-> > +}
-> > +
-> > +// TODO: Make it generic, not FS-centric.
-> > +int landlock_log_request(
-> > +       const int error, struct landlock_request *const request,
-> > +       const struct landlock_ruleset *const domain,
-> > +       const access_mask_t access_request,
-> > +       const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
-> > +{
-> > +       /* No need to log the access request, only the missing accesses. */
-> > +       log_request(error, request, domain, access_request, layer_masks);
-> > +       return error;
-> > +}
+> On Mon, Sep 18, 2023 at 3:51=E2=80=AFPM Christian Brauner <brauner@kernel=
+.org> wrote:
+>
+>> I really would prefer a properly typed struct and that's what everyone
+>> was happy with in the session as well. So I would not like to change the
+>> main parameters.
+>
+> I completely  agree.  Just would like to understand this point:
+>
+>   struct statmnt *statmnt(u64 mntid, u64 mask, unsigned int flags);
+>
+> What's not properly typed about this interface?
+>
+> I guess the answer is that it's not a syscall interface, which will
+> have an added [void *buf, size_t bufsize], while the buffer sizing is
+> done by a simple libc wrapper.
+>
+> Do you think that's a problem?  If so, why?
 
-> > @@ -636,7 +638,8 @@ static bool is_access_to_paths_allowed(
-> >  }
-> >
-> >  static int current_check_access_path(const struct path *const path,
-> > -                                    access_mask_t access_request)
-> > +                                    access_mask_t access_request,
-> > +                                    struct landlock_request *const request)
-> >  {
-> >         const struct landlock_ruleset *const dom =
-> >                 landlock_get_current_domain();
-> > @@ -650,7 +653,10 @@ static int current_check_access_path(const struct path *const path,
-> >                                        NULL, 0, NULL, NULL))
-> >                 return 0;
-> >
-> > -       return -EACCES;
-> > +       request->audit.type = LSM_AUDIT_DATA_PATH;
-> > +       request->audit.u.path = *path;
-> > +       return landlock_log_request(-EACCES, request, dom, access_request,
-> > +                                   &layer_masks);
-> 
-> It might be more readable to let landlock_log_request return void.
-> Then the code will look like below.
-> 
-> landlock_log_request(-EACCES, request, dom, access_request,  &layer_masks);
-> return -EACCES;
-> 
-> The allow/deny logic will be in this function, i.e. reader
-> doesn't need to check landlock_log_request's implementation to find
-> out it never returns 0.
+Try-and-resize interfaces can be quite bad for data obtained from the
+network.  If the first call provides the minimum buffer size (like
+getgroups, but unlike readlink or the glibc *_r interfaces for NSS),
+this could at least allow us to avoid allocating too much.  In
+userspace, we cannot reduce the size of the heap allocation without
+knowing where the pointers are and what they mean.
 
-I did that in an early version of this patch, but I finally choose to write
-'return lanlock_log_request();` for mainly two reasons:
-* to help not forget to call this function at any non-zero return values
-  (which can easily be checked with grep),
-* to do tail calls.
+I also don't quite understand the dislike of variable-sized records.
+Don't getdents, inotify, Netlink all use them?  And I think at least for
+Netlink, more stuff is added all the time?
 
-I guess compiler should be smart enough to do tail calls with a variable
-set indirection, but I'd like to check that.
+Thanks,
+Florian
 
-To make it easier to read (and to not forget returning the error), the
-landlock_log_request() calls a void log_request() helper, and returns
-the error itself. It is then easy to review and know what's happening
-without reading log_request().
-
-I'd like the compiler to check itself that every LSM hook returned
-values are either 0 or comming from landlock_log_request() but I think
-it's not possible right now. Coccinelle might help here though.
-
-BTW, in a next version, we might have landlock_log_request() called even
-for allowed requests (i.e. returned value of 0).
