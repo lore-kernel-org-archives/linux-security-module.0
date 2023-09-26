@@ -2,127 +2,163 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DB0E7E62E
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Sep 2023 12:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 258C9E7E635
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Sep 2023 13:35:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231362AbjIZMtB (ORCPT
+        id S234735AbjIZNf2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Sep 2023 08:49:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42474 "EHLO
+        Tue, 26 Sep 2023 09:35:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234560AbjIZMtA (ORCPT
+        with ESMTP id S232437AbjIZNf2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Sep 2023 08:49:00 -0400
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 778A7FB;
-        Tue, 26 Sep 2023 05:48:53 -0700 (PDT)
-Received: from [192.168.192.83] (unknown [50.39.103.33])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 744923F1DB;
-        Tue, 26 Sep 2023 12:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1695732531;
-        bh=gsf5Dcm+oBvt0OepvgcW/nShbExlI1OvGeUPMDjYhrI=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=II5niPaDBIMHxuG6ai8j6A+VHw++umAb1/E4ACNhGAdkyVH69wgavwqr9ZPIjClHR
-         GkhrpvCUh6Sin2lx08+/pC+RXzF0HBSDDicEpaWmCUDSZUjD8jfDv3zDsxjslbtY6h
-         hr8z09Ow0rPItwwHeOTESsnnk8+4Fc8E4xfegqpIEV1mOldn5bgUhNKttg/k2/zTyv
-         OPOfMkrjEAYnEIggXcNXOdje0KMrIGUgy++xBlAk99wZSB5lgKoUMMPJF+fWKMa6rw
-         Y99dUivatZ1SI/YtvFM6C0czTelLMOLT2p3RBoY4ZKCvkjBsmjKQpanbiHUJnUv2i8
-         IV/tgYC3HBivg==
-Message-ID: <a3635704-3585-2d3e-8882-e7c9ce63a720@canonical.com>
-Date:   Tue, 26 Sep 2023 05:48:47 -0700
+        Tue, 26 Sep 2023 09:35:28 -0400
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [IPv6:2001:1600:3:17::1909])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89EDDF3
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 06:35:19 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Rw12X6Fv0zMqNvd;
+        Tue, 26 Sep 2023 13:35:16 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Rw12W3Nlcz3c;
+        Tue, 26 Sep 2023 15:35:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1695735316;
+        bh=DaquuYbB+BuVAxp5Q2HGlWY0Bkt6IL6OFvGLP6jMVFc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=J1dHxz9dgNb4jzA/X/Jtc8pqx/N2aZT8RbKWzxApbPwRjEfNmZELOc1L9c+eoK2xb
+         5y1UGmljikrxTDHSKUTvRjLXBFvrekLQj7p9dkTZvBpKr/tT4I4qoKTA2REUTjwb7v
+         56XQGSplcwptTzKKT2u3CW/6n2SJw59i/DCH6jpk=
+Date:   Tue, 26 Sep 2023 15:35:07 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     Jeff Xu <jeffxu@google.com>
+Cc:     Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Ben Scarlato <akhna@google.com>,
+        =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
+        Jorge Lucangeli Obes <jorgelo@google.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Shervin Oloumi <enlightened@google.com>, audit@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 5/7] landlock: Log file-related requests
+Message-ID: <20230926.di9Esee2xahi@digikod.net>
+References: <20230921061641.273654-1-mic@digikod.net>
+ <20230921061641.273654-6-mic@digikod.net>
+ <CALmYWFubLv+yd9NWMMwt4FUdYnbghMC=GHeZm4oaSOctqnwbVA@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [apparmor] use per-cpu refcounts for apparmor labels?
-Content-Language: en-US
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
-        linux-kernel@vger.kernel.org
-References: <CAGudoHFfG7mARwSqcoLNwV81-KX4Bici5FQHjoNG4f9m83oLyg@mail.gmail.com>
- <87a5t9bypm.fsf@intel.com>
- <c6379a39-42f2-b3f9-c835-bbebe516ba3a@canonical.com>
- <20230926063857.h3afce5hagnlkoob@f>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20230926063857.h3afce5hagnlkoob@f>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALmYWFubLv+yd9NWMMwt4FUdYnbghMC=GHeZm4oaSOctqnwbVA@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/25/23 23:38, Mateusz Guzik wrote:
-> On Mon, Sep 25, 2023 at 11:21:26PM -0700, John Johansen wrote:
->> On 9/25/23 16:49, Vinicius Costa Gomes wrote:
->>> Hi Mateusz,
->>>
->>> Mateusz Guzik <mjguzik@gmail.com> writes:
->>>
->>>> I'm sanity-checking perf in various microbenchmarks and I found
->>>> apparmor to be the main bottleneck in some of them.
->>>>
->>>> For example: will-it-scale open1_processes -t 16, top of the profile:
->>>>     20.17%  [kernel]                   [k] apparmor_file_alloc_security
->>>>     20.08%  [kernel]                   [k] apparmor_file_open
->>>>     20.05%  [kernel]                   [k] apparmor_file_free_security
->>>>     18.39%  [kernel]                   [k] apparmor_current_getsecid_subj
->>>> [snip]
->>>>
->>>> This serializes on refing/unrefing apparmor objs, sounds like a great
->>>> candidate for per-cpu refcounting instead (I'm assuming they are
->>>> expected to be long-lived).
->>>>
->>>> I would hack it up myself, but I failed to find a clear spot to switch
->>>> back from per-cpu to centalized operation and don't want to put
->>>> serious effort into it.
->>>>
->>>> Can you sort this out?
->>>
->>
->> I will add looking into it on the todo list. Its going to have to come
->> after some other major cleanups land, and I am not sure we can make
->> the semantic work well for some of these. For other we might get away
->> with switching to a critical section like Vinicius's patch has done
->> for apparmor_current_getsecid_subj.
->>
+On Mon, Sep 25, 2023 at 06:26:28PM -0700, Jeff Xu wrote:
+> On Wed, Sep 20, 2023 at 11:17 PM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > Add audit support for mkdir, mknod, symlink, unlink, rmdir, truncate,
+> > and open requests.
+> >
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > ---
+> >  security/landlock/audit.c | 114 ++++++++++++++++++++++++++++++++++++++
+> >  security/landlock/audit.h |  32 +++++++++++
+> >  security/landlock/fs.c    |  62 ++++++++++++++++++---
+> >  3 files changed, 199 insertions(+), 9 deletions(-)
+> >
+
+> > +static void
+> > +log_request(const int error, struct landlock_request *const request,
+> > +           const struct landlock_ruleset *const domain,
+> > +           const access_mask_t access_request,
+> > +           const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
+> > +{
+> > +       struct audit_buffer *ab;
+> > +
+> > +       if (WARN_ON_ONCE(!error))
+> > +               return;
+> > +       if (WARN_ON_ONCE(!request))
+> > +               return;
+> > +       if (WARN_ON_ONCE(!domain || !domain->hierarchy))
+> > +               return;
+> > +
+> > +       /* Uses GFP_ATOMIC to not sleep. */
+> > +       ab = audit_log_start(audit_context(), GFP_ATOMIC | __GFP_NOWARN,
+> > +                            AUDIT_LANDLOCK);
+> > +       if (!ab)
+> > +               return;
+> > +
+> > +       update_request(request, domain, access_request, layer_masks);
+> > +
+> > +       log_task(ab);
+> > +       audit_log_format(ab, " domain=%llu op=%s errno=%d missing-fs-accesses=",
+> > +                        request->youngest_domain,
+> > +                        op_to_string(request->operation), -error);
+> > +       log_accesses(ab, request->missing_access);
+> > +       audit_log_lsm_data(ab, &request->audit);
+> > +       audit_log_end(ab);
+> > +}
+> > +
+> > +// TODO: Make it generic, not FS-centric.
+> > +int landlock_log_request(
+> > +       const int error, struct landlock_request *const request,
+> > +       const struct landlock_ruleset *const domain,
+> > +       const access_mask_t access_request,
+> > +       const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
+> > +{
+> > +       /* No need to log the access request, only the missing accesses. */
+> > +       log_request(error, request, domain, access_request, layer_masks);
+> > +       return error;
+> > +}
+
+> > @@ -636,7 +638,8 @@ static bool is_access_to_paths_allowed(
+> >  }
+> >
+> >  static int current_check_access_path(const struct path *const path,
+> > -                                    access_mask_t access_request)
+> > +                                    access_mask_t access_request,
+> > +                                    struct landlock_request *const request)
+> >  {
+> >         const struct landlock_ruleset *const dom =
+> >                 landlock_get_current_domain();
+> > @@ -650,7 +653,10 @@ static int current_check_access_path(const struct path *const path,
+> >                                        NULL, 0, NULL, NULL))
+> >                 return 0;
+> >
+> > -       return -EACCES;
+> > +       request->audit.type = LSM_AUDIT_DATA_PATH;
+> > +       request->audit.u.path = *path;
+> > +       return landlock_log_request(-EACCES, request, dom, access_request,
+> > +                                   &layer_masks);
 > 
-> Is there an eta?
+> It might be more readable to let landlock_log_request return void.
+> Then the code will look like below.
 > 
-sorry no
-
-> I looked at dodging ref round trips myself, but then found that ref
-> manipulation in apparmor_file_alloc_security and the free counterpart
-> cannot be avoided. Thus per-cpu refs instead.
+> landlock_log_request(-EACCES, request, dom, access_request,  &layer_masks);
+> return -EACCES;
 > 
+> The allow/deny logic will be in this function, i.e. reader
+> doesn't need to check landlock_log_request's implementation to find
+> out it never returns 0.
 
-right for file_aloc/free, I don't see a way around keeping a ref count.
+I did that in an early version of this patch, but I finally choose to write
+'return lanlock_log_request();` for mainly two reasons:
+* to help not forget to call this function at any non-zero return values
+  (which can easily be checked with grep),
+* to do tail calls.
 
-> Perhaps making the label as stale would be a good enough switching
-> point? Is it *guaranteed* to get labelled as stale before it gets freed?
-> 
-no. the stale flag only indicates the label has been replaced, and we
-make no guarentees as to when it will get set/be in use beyond so
-point after it happens.
+I guess compiler should be smart enough to do tail calls with a variable
+set indirection, but I'd like to check that.
 
-> btw, __aa_proxy_redirect open-codes setting the flag.
-> 
-yes, I am aware.
+To make it easier to read (and to not forget returning the error), the
+landlock_log_request() calls a void log_request() helper, and returns
+the error itself. It is then easy to review and know what's happening
+without reading log_request().
 
->>> I was looking at this same workload, and proposed a patch[1] some time
->>> ago, see if it helps:
->>>
->>> https://lists.ubuntu.com/archives/apparmor/2023-August/012914.html
->>>
->>> But my idea was different, in many cases, we are looking at the label
->>> associated with the current task, and there's no need to take the
->>> refcount.
->>>
->>
->> yes, and thanks for that.
->>
+I'd like the compiler to check itself that every LSM hook returned
+values are either 0 or comming from landlock_log_request() but I think
+it's not possible right now. Coccinelle might help here though.
 
+BTW, in a next version, we might have landlock_log_request() called even
+for allowed requests (i.e. returned value of 0).
