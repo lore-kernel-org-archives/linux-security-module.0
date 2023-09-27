@@ -2,112 +2,94 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 155FDE7F143
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Sep 2023 23:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72ABDE7F14B
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Sep 2023 02:02:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232180AbjIZXX5 (ORCPT
+        id S229650AbjI0CCq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Sep 2023 19:23:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39606 "EHLO
+        Tue, 26 Sep 2023 22:02:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232524AbjIZXV4 (ORCPT
+        with ESMTP id S234838AbjI0CAo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Sep 2023 19:21:56 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 836145274;
-        Tue, 26 Sep 2023 15:23:57 -0700 (PDT)
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38QLJDwm008181;
-        Tue, 26 Sep 2023 21:36:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=HdYo7IF3hvnNdrc0T8ThUqLB1fvlrLKGIPhITVuMjN8=;
- b=NTKpIytOOZuX/yP+0E+Jkq6/im6xcHz8j2qloyPZ0kRf7vo8yxJvy7unQIYWcUgu3L+3
- YuRtJCYXIsgV9YdYXIvf9zITmfijhh5r8ArKf/thA21jr9aOd4uu06Fh/0434HcGIVlr
- wM55xURNC7dBgx5Fc1eVA9sqyYLk4DHB0+3k6vrI5GZ/73O9wbljhS2A0aaShWFKrWFl
- LDQ725wwWU9l0Df7D2nYYIqlsCorC8SiJE6IVchR3JfPGj2CJmZKP3iuYeOn9G7uarv6
- 3ArmMjS5GSJ2kl0YRs96+nrjDGzGbCyfigeSlG8rQBY4YiEY+B8aHFF/7cpEdyVOIVqx UQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tc6me1k2c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Sep 2023 21:36:16 +0000
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 38QLaDVX009478;
-        Tue, 26 Sep 2023 21:36:13 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tc6me1jkd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Sep 2023 21:36:12 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 38QJPrWT008250;
-        Tue, 26 Sep 2023 21:32:49 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-        by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3tabbn6h33-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Sep 2023 21:32:49 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-        by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 38QLWmZF7537308
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Sep 2023 21:32:48 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 80F1358055;
-        Tue, 26 Sep 2023 21:32:48 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D95EC58063;
-        Tue, 26 Sep 2023 21:32:47 +0000 (GMT)
-Received: from [9.61.144.60] (unknown [9.61.144.60])
-        by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Sep 2023 21:32:47 +0000 (GMT)
-Message-ID: <ed95040b-2368-473b-1dda-5d8c0eaa3259@linux.vnet.ibm.com>
-Date:   Tue, 26 Sep 2023 17:32:47 -0400
+        Tue, 26 Sep 2023 22:00:44 -0400
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA7353599
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 18:18:30 -0700 (PDT)
+Received: by mail-il1-x131.google.com with SMTP id e9e14a558f8ab-351265d0d67so5547265ab.0
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 18:18:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1695777510; x=1696382310; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pSK45h5LTS9VqkVC57gaj2Wd82aeyGKZrEYe4dJCVic=;
+        b=bxVM6N7U4F+Ynjj38INwi6ASqm3IBKUZ2yJDT7Ckbee+wq9E3UZNBRzyGfQcYS34Zm
+         390zUF6zyX1jXsJs0qezpAIk0Fh/LHYP2jTC2k9Oekg0LvZ2uiw1Xok3H/KHren2K1Kj
+         zuzTpI7pO+/1KMER6qwgrgRDhYD6SZbd/b9wM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695777510; x=1696382310;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pSK45h5LTS9VqkVC57gaj2Wd82aeyGKZrEYe4dJCVic=;
+        b=wlALNW2u7RRDK1I1FqxLpN/xsTcKJRz9vNQhBSSp9ZLETxntH0bHbCTvOrc0kBqq65
+         Y7YLrzedBowK728kkR4MAO1ajRR06bVFXkrfdvyAT4fK8MJLKejfzW/fHyIqXj8aAFfk
+         vHwPykMBHLAZ8e4udFgZSSF407zGsZnLOHUmRjteJTMR9ENcqLFIicZfcwEN1gDiwUxZ
+         srGYX0pHgqucLxtLbZSwtWpC0bIA/JBmWkm5vITtRmFZQt+CDOj8f+f8Ncfphbrlgzeh
+         YBRFTuknA4Erq2kxcJuv08BRXhMqjPmhEzKKY8bwKaQ5MISftL9HwaasMAWzA/I0IFbl
+         SOag==
+X-Gm-Message-State: AOJu0Yzxkj0lEK9E4bwSRK5KOvq3A/w3nFNvT4y0wnc2vGknjiQY5jAS
+        v9X9ASM9kOgqduesx0gybEeuMg==
+X-Google-Smtp-Source: AGHT+IE2jaCutfBvakslg8GPNafee+TlzK+8frCnXrODTVfbk9z1YRbburEMP7cvS9iSP7ZFw0fvlQ==
+X-Received: by 2002:a92:cc46:0:b0:350:f353:4017 with SMTP id t6-20020a92cc46000000b00350f3534017mr614948ilq.0.1695777510062;
+        Tue, 26 Sep 2023 18:18:30 -0700 (PDT)
+Received: from [192.168.1.128] ([38.15.45.1])
+        by smtp.gmail.com with ESMTPSA id y3-20020a92d203000000b0034f3220c086sm2389624ily.12.2023.09.26.18.18.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Sep 2023 18:18:29 -0700 (PDT)
+Message-ID: <fc915b30-5842-5851-bd76-71c2133685b9@linuxfoundation.org>
+Date:   Tue, 26 Sep 2023 19:18:28 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH] ima: Finish deprecation of IMA_TRUSTED_KEYRING Kconfig
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] selftests: Fix wrong TARGET in kselftest top level
+ Makefile
 Content-Language: en-US
-To:     Oleksandr Tymoshenko <ovt@google.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     rnv@google.com, linux-integrity@vger.kernel.org,
+To:     Juntong Deng <juntong.deng@outlook.com>, shuah@kernel.org,
+        mic@digikod.net, brauner@kernel.org, keescook@chromium.org,
+        tony.luck@intel.com, gpiccoli@igalia.com, paul.walmsley@sifive.com,
+        palmer@dabbelt.com, aou@eecs.berkeley.edu
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>
-References: <20230921064506.3420402-1-ovt@google.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-In-Reply-To: <20230921064506.3420402-1-ovt@google.com>
+        linux-hardening@vger.kernel.org, linux-riscv@lists.infradead.org,
+        bpf@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <VI1P193MB0752596147F224B9F921C85199C3A@VI1P193MB0752.EURP193.PROD.OUTLOOK.COM>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <VI1P193MB0752596147F224B9F921C85199C3A@VI1P193MB0752.EURP193.PROD.OUTLOOK.COM>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: fwjYmKAlxZvFNdVeaJ5d8wlks2OY9nkT
-X-Proofpoint-GUID: JOJkSSU5U-SAKUyZv7E0aYNsAI5y13bt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-09-26_15,2023-09-26_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- mlxlogscore=395 spamscore=0 clxscore=1015 priorityscore=1501
- impostorscore=0 suspectscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2309180000 definitions=main-2309260184
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 9/26/23 12:03, Juntong Deng wrote:
+> The 'uevents' subdirectory does not exist in tools/testing/selftests/
+> and adding 'uevents' to the TARGETS list results in the following error:
+> 
+> make[1]: Entering directory 'xx/tools/testing/selftests/uevents'
+> make[1]: *** No targets specified and no makefile found. Stop.
+> make[1]: Leaving directory 'xx/tools/testing/selftests/uevents'
+> 
+> What actually exists in tools/testing/selftests/ is the 'uevent'
+> subdirectory.
+> 
+> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+> ---
 
-On 9/21/23 02:45, Oleksandr Tymoshenko wrote:
-> The removal of IMA_TRUSTED_KEYRING made IMA_LOAD_X509
-> and IMA_BLACKLIST_KEYRING unavailable because the latter
-> two depend on the former. Since IMA_TRUSTED_KEYRING was
-> deprecated in favor of INTEGRITY_TRUSTED_KEYRING use it
-> as a dependency for the two Kconfigs affected by the
-> deprecation.
->
-> Fixes: 5087fd9e80e5 ("ima: Remove deprecated IMA_TRUSTED_KEYRING Kconfig")
-> Signed-off-by: Oleksandr Tymoshenko <ovt@google.com>
+Thank you. Applied now to linux-kselftest fixes for the next rc
 
-Thanks for doing this.
-
-Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
+thanks,
+-- Shuah
 
