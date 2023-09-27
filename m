@@ -2,160 +2,116 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E3C1E810AD
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Sep 2023 09:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD86E810C2
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Sep 2023 10:44:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230057AbjI0Jwe (ORCPT
+        id S230000AbjI0Koc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Sep 2023 05:52:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56560 "EHLO
+        Wed, 27 Sep 2023 06:44:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbjI0Jwe (ORCPT
+        with ESMTP id S229539AbjI0Kob (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Sep 2023 05:52:34 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC5C1E6;
-        Wed, 27 Sep 2023 02:52:32 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FDACC433C8;
-        Wed, 27 Sep 2023 09:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695808352;
-        bh=VXPzy64VO8OMYFUF9Lq8/LYWzjxp4777wpEdNLgLPO4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=B0kcuppnDszjLUg3fyRSEmD/DynnfjEI9CetLkZBEVjlIKPs54E16VYC8A3X2L5Vx
-         ko+aCD21e/lSSbzEC6mM7Z5RFMPEeP3snEA4ocOy856bLuZR3BtzaIs1Ep9yteBr+W
-         lqStjHeI7rxXxxNUWY7lCp8+7No3QqMcRz0cTKXKo9TZT/7arsD+IK9h6yiRMyj/9g
-         nDgydlSmzGKAHUeMJ/0mvx8NxNSu+ZyOUIwH7AqcIlgICz5oFeIZuvbhcRHEoE2gbK
-         Vzt2nbHHqjl3YeWhdQEdfGeIcjcS3UXCSgIf2XSuTFhJTCv3Rofp28i/TTj9BJyU6k
-         qa9XVKeSC2tFA==
-Date:   Wed, 27 Sep 2023 11:52:27 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        lennart@poettering.net, kernel-team@meta.com, sargun@sargun.me
-Subject: Re: [PATCH v5 bpf-next 03/13] bpf: introduce BPF token object
-Message-ID: <20230927-kaution-ventilator-33a41ee74d63@brauner>
-References: <20230919214800.3803828-1-andrii@kernel.org>
- <20230919214800.3803828-4-andrii@kernel.org>
- <20230926-augen-biodiesel-fdb05e859aac@brauner>
- <CAEf4BzaH64kkccc1P-hqQj6Mccr3Q6x059G=A95d=KfU=yBMJQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzaH64kkccc1P-hqQj6Mccr3Q6x059G=A95d=KfU=yBMJQ@mail.gmail.com>
+        Wed, 27 Sep 2023 06:44:31 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C74F613A;
+        Wed, 27 Sep 2023 03:44:30 -0700 (PDT)
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38RAcnIL004125;
+        Wed, 27 Sep 2023 10:44:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=4hh9pQFoSQtWQmXHc6fkRjVQoy1/XTcQP3OWu3H0GiQ=;
+ b=r2Gt5D4IcbtQRXa3vjUo3j3t8gnpmvczDrfLNmp/3WUaUlb6qtlcVi+4kJa6z9Fc/4r+
+ eVeAaqissBiWYi14yqXZSzzqiN+R4j1ov/Gvr4dpW7arfuxRbpcNvfY9mSsu7CfZoV4v
+ NJSwOSoi3glYLyRYfvTjeUVRehGXxtoV7q7OIUhOvQiB3EgNX/y5VG4wOhwhOnCkbmCZ
+ 2r6ehgQ0I455+ltowlypHPIHbc6yplWHS0qztKGBd7CY+m/gzUD8a/Cy9VUksDwbBS/f
+ cMqX6uWh32/LiYiRfs3B7O3n0sdLDqVyb6tVCrNyRUAeUcxIgHqbjgAHO4hIidy4FuxI vg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tcjewrphn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Sep 2023 10:44:26 +0000
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 38RAdNWU006762;
+        Wed, 27 Sep 2023 10:44:26 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tcjewrphc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Sep 2023 10:44:26 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+        by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 38R9bnru010996;
+        Wed, 27 Sep 2023 10:44:25 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+        by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3tabukjky0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Sep 2023 10:44:25 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+        by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 38RAiOOd40108488
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Sep 2023 10:44:24 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9591758058;
+        Wed, 27 Sep 2023 10:44:24 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0CC4B58057;
+        Wed, 27 Sep 2023 10:44:24 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.13.22])
+        by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Sep 2023 10:44:23 +0000 (GMT)
+Message-ID: <0d71b67e129b095ea698b39d0b1d05119bd0b464.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Finish deprecation of IMA_TRUSTED_KEYRING Kconfig
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Oleksandr Tymoshenko <ovt@google.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Cc:     rnv@google.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 27 Sep 2023 06:44:23 -0400
+In-Reply-To: <CACGj0Cgh7Vjf5EcY7F+pf9bCjXhhJYN-xf3NeC8WWjT4+j9RrA@mail.gmail.com>
+References: <20230921064506.3420402-1-ovt@google.com>
+         <CACGj0Cgh7Vjf5EcY7F+pf9bCjXhhJYN-xf3NeC8WWjT4+j9RrA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: yPVR1wZ2GPRfNAZc7aHrDbG4F0Oo93fA
+X-Proofpoint-ORIG-GUID: lQms7bM5daC611CdLTZVr0jymAgkAz6G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-09-27_05,2023-09-27_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ lowpriorityscore=0 suspectscore=0 adultscore=0 spamscore=0 mlxlogscore=433
+ impostorscore=0 phishscore=0 malwarescore=0 priorityscore=1501 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
+ definitions=main-2309270087
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> > > +#define BPF_TOKEN_INODE_NAME "bpf-token"
-> > > +
-> > > +/* Alloc anon_inode and FD for prepared token.
-> > > + * Returns fd >= 0 on success; negative error, otherwise.
-> > > + */
-> > > +int bpf_token_new_fd(struct bpf_token *token)
-> > > +{
-> > > +     return anon_inode_getfd(BPF_TOKEN_INODE_NAME, &bpf_token_fops, token, O_CLOEXEC);
+On Mon, 2023-09-25 at 21:20 -0700, Oleksandr Tymoshenko wrote:
+> On Wed, Sep 20, 2023 at 11:45 PM Oleksandr Tymoshenko <ovt@google.com> wrote:
 > >
-> > It's unnecessary to use the anonymous inode infrastructure for bpf
-> > tokens. It adds even more moving parts and makes reasoning about it even
-> > harder. Just keep it all in bpffs. IIRC, something like the following
-> > (broken, non-compiling draft) should work:
+> > The removal of IMA_TRUSTED_KEYRING made IMA_LOAD_X509
+> > and IMA_BLACKLIST_KEYRING unavailable because the latter
+> > two depend on the former. Since IMA_TRUSTED_KEYRING was
+> > deprecated in favor of INTEGRITY_TRUSTED_KEYRING use it
+> > as a dependency for the two Kconfigs affected by the
+> > deprecation.
 > >
-> > /* bpf_token_file - get an unlinked file living in bpffs */
-> > struct file *bpf_token_file(...)
-> > {
-> >         inode = bpf_get_inode(bpffs_mnt->mnt_sb, dir, mode);
-> >         inode->i_op = &bpf_token_iop;
-> >         inode->i_fop = &bpf_token_fops;
-> >
-> >         // some other stuff you might want or need
-> >
-> >         res = alloc_file_pseudo(inode, bpffs_mnt, "bpf-token", O_RDWR, &bpf_token_fops);
-> > }
-> >
-> > Now set your private data that you might need, reserve an fd, install
-> > the file into the fdtable and return the fd. You should have an unlinked
-> > bpffs file that serves as your bpf token.
+> > Fixes: 5087fd9e80e5 ("ima: Remove deprecated IMA_TRUSTED_KEYRING Kconfig")
+> > Signed-off-by: Oleksandr Tymoshenko <ovt@google.com>
 > 
-> Just to make sure I understand. You are saying that instead of having
-> `struct bpf_token *` and passing that into internal APIs
-> (bpf_token_capable() and bpf_token_allow_xxx()), I should just pass
-> around `struct super_block *` representing BPF FS instance? Or `struct
-> bpf_mount_opts *` maybe? Or 'struct vfsmount *'? (Any preferences
-> here?). Is that right?
+> Gentle ping, IMA_LOAD_X509 and IMA_BLACKLIST_KEYRING options are
+> currently broken on all branches.
 
-No, that's not what I meant.
+Sorry for the delay.  It's now in linux-next.
 
-So, what you're doing right now to create a bpf token file descriptor is:
+-- 
+thanks,
 
-return anon_inode_getfd(BPF_TOKEN_INODE_NAME, &bpf_token_fops, token, O_CLOEXEC);
+Mimi
 
-which is using the anonymous inode infrastructure. That is an entirely
-different filesystems (glossing over details) that is best leveraged for
-stuff like kvm fds and other stuff that doesn't need or have its own
-filesytem implementation.
-
-But you do have your own filesystem implementation so why abuse another
-one to create bpf token fds when they can just be created directly from
-the bpffs instance.
-
-IOW, everything stays the same apart from the fact that bpf token fds
-are actually file descriptors referring to a detached bpffs file instead
-of an anonymous inode file. IOW, bpf tokens are actual bpffs objects
-tied to a bpffs instance.
-
-**BROKEN BROKEN BROKEN AND UGLY**
-
-int bpf_token_create(union bpf_attr *attr)
-{
-        struct inode *inode;
-        struct path path;
-        struct bpf_mount_opts *mnt_opts;
-        struct bpf_token *token;
-        struct fd fd;
-        int fd, ret;
-        struct file *file;
-
-        fd = fdget(attr->token_create.bpffs_path_fd);
-        if (!fd.file)
-                goto cleanup;
-
-        if (fd.file->f_path->dentry != fd.file->f_path->dentry->d_sb->s_root)
-                goto cleanup;
-
-        inode = bpf_get_inode(fd.file->f_path->mnt->mnt_sb, NULL, 1234123412341234);
-        if (!inode)
-                goto cleanup;
-
-        fd = get_unused_fd_flags(O_RDWR | O_CLOEXEC);
-        if (fd < 0)
-                goto cleanup;
-
-        clear_nlink(inode); /* make sure it is unlinked */
-
-        file = alloc_file_pseudo(inode, fd.file->f_path->mnt, "bpf-token", O_RDWR, &&bpf_token_fops);
-        if (IS_ERR(file))
-                goto cleanup;
-
-        token = bpf_token_alloc();
-        if (!token)
-                goto cleanup;
-
-        /* remember bpffs owning userns for future ns_capable() checks */
-        token->userns = get_user_ns(path.dentry->d_sb->s_user_ns);
-
-        mnt_opts = path.dentry->d_sb->s_fs_info;
-        token->allowed_cmds = mnt_opts->delegate_cmds;
-        token->allowed_maps = mnt_opts->delegate_maps;
-        token->allowed_progs = mnt_opts->delegate_progs;
-        token->allowed_attachs = mnt_opts->delegate_attachs;
-
-        file->private_data = token;
-        fd_install(fd, file);
-        return fd;
-
-cleanup:
-        // cleanup stuff here
-        return -SOME_ERROR;
-}
