@@ -2,188 +2,184 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22757E80A9B
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Sep 2023 06:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5336E80A9E
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Sep 2023 07:22:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229634AbjI0GdW (ORCPT
+        id S230006AbjI0HWe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Sep 2023 02:33:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38528 "EHLO
+        Wed, 27 Sep 2023 03:22:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229757AbjI0GdU (ORCPT
+        with ESMTP id S229499AbjI0HWb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Sep 2023 02:33:20 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0384F9
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 23:33:16 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-5344d996bedso4889766a12.3
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 23:33:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1695796395; x=1696401195; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T708F5QyhTdSRBo0vkbwGJcJTd2q8jjeOwZduLQ6af4=;
-        b=OxYooSxZ/WhtvBZWVgJBfx9u+BDCWlewHJqOvmrZLqfysuCUmFsca26/TBKNArOmdI
-         9JLqTqlteiqUa7M/Qfg24OvO0TW5UaYES4k0W+XhWGhXSYEcPgOdjKIhBS+IEB/Uhtdk
-         +O2KyOkb1YGGLJ8KaSPIPO7WjSmmuV8IqVc5C5yPXQFi1fJEysMffGNcKdV+FfSmBAzQ
-         we+lZh503R05Azi+Kigz86jx/u8YWmpH1odxhZGjYxHSPeH7uGh+m6n+JM4+ZAvxJghQ
-         Fm9JOd/Kktw/EpKCQCOrVVTGFgwXWDXHYzcmaPQbdyFIG5A1dQHVFDb/HztsFUfbkyBx
-         pR1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695796395; x=1696401195;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T708F5QyhTdSRBo0vkbwGJcJTd2q8jjeOwZduLQ6af4=;
-        b=DXpUYQ13KiZdhkopj0n0Q9x6mQVgThivNPI/yRM/UiUovaxtoCn7ZnXdWWXuqnU2kQ
-         HSW+JeSpv7PqEkNFzt9iim5pa+weXTyixgkDF3tS8c5bydWHcPJgfU5zJqG/uwD1kqdG
-         Nf4ZEU4UXZqT5lpQ3JcWUxCUFNf+GZd4iVrdgOLwblOJtqFl5xJEb27tsvj//f5gLA0v
-         kcRgkUT1jtqi8IhywStYNSy48Wmsjffro9vW6fyVyE9JuPiSNmTei6b5ohAFoS1vJUTE
-         hAoB2u8RVndlfYlJb6a1w7AenIctSZXmaiV0Bh60Z11h+y9Z6S5fy6oi+8XyGxa1eaIe
-         yNwA==
-X-Gm-Message-State: AOJu0Ywg8ySNCICkh/HwPdp8Y9ouGoWR48ve5EXDZycfV2XDaDOo9gCM
-        HpVpi0KxXp5Y3F/sYtYQ7wTfyw==
-X-Google-Smtp-Source: AGHT+IEOdVKh3lqrnVsm5wgtPLXy5Xv/FFQE8Bm/j/IIYkd2ZH2UDUPzX449yWw9sMd34VT6PLwL3g==
-X-Received: by 2002:a17:906:5390:b0:9aa:25f5:8d95 with SMTP id g16-20020a170906539000b009aa25f58d95mr858687ejo.59.1695796394622;
-        Tue, 26 Sep 2023 23:33:14 -0700 (PDT)
-Received: from smtpclient.apple (213-225-13-130.nat.highway.a1.net. [213.225.13.130])
-        by smtp.gmail.com with ESMTPSA id p7-20020a170906140700b009829d2e892csm8988478ejc.15.2023.09.26.23.33.12
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Sep 2023 23:33:14 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.700.6\))
-Subject: Re: [PATCH v3 2/3] KEYS: trusted: Introduce support for NXP DCP-based
- trusted keys
-From:   David Gstir <david@sigma-star.at>
-In-Reply-To: <CVS3WN3Q04XY.B40S4RBH9QM7@suppilovahvero>
-Date:   Wed, 27 Sep 2023 08:33:01 +0200
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        sigma star Kernel Team <upstream+dcp@sigma-star.at>,
-        David Howells <dhowells@redhat.com>,
-        Li Yang <leoyang.li@nxp.com>, Paul Moore <paul@paul-moore.com>,
+        Wed, 27 Sep 2023 03:22:31 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BB78BF;
+        Wed, 27 Sep 2023 00:22:30 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2FB5C433CB;
+        Wed, 27 Sep 2023 07:22:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695799349;
+        bh=ie+gDwMLwUQ8Z89F6h2q5E8Syfe9PDI3vuz9pSKTnG0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gCFdqpmx9M72kPP7CNAQQGCOQmOE3LpCAmQ7oxYgX1FAzceSh53vZTXDqWK521DCP
+         N2LENb/9ieHXwkGBQMjNyoGFrcfFqfhaaiSQuiUyTYnZ2mxoloO6iHHeWtSI/zGhQ3
+         abBsJPJTyQp+/nW54GsFeXrMGlX7XeybL6I97AjNyE3vLWG7VowMDx2au2HQqYlgVT
+         NHMoXKe7etrDw8ITUnIg+q9drfFcxNxcQcY5KF3mrrGGWKb+pv9ZlGoz3AAvYXJgfq
+         4xVBCbDVhR+FNR+UksAazFv1PUDFea7B51i3gEr+W2o8NqqnsA5t/Msf5/EHzcN6q7
+         ZGS1UD6VY+O5A==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
         Randy Dunlap <rdunlap@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Steven Rostedt (Google)" <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <085CABBD-1EA1-44A9-AA9C-C04039A627AB@sigma-star.at>
-References: <20230918141826.8139-1-david@sigma-star.at>
- <20230918141826.8139-3-david@sigma-star.at>
- <CVS3WN3Q04XY.B40S4RBH9QM7@suppilovahvero>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-X-Mailer: Apple Mail (2.3731.700.6)
+        Oleksandr Tymoshenko <ovt@google.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ima: rework CONFIG_IMA dependency block
+Date:   Wed, 27 Sep 2023 09:22:14 +0200
+Message-Id: <20230927072223.2555698-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Jarkko,
+From: Arnd Bergmann <arnd@arndb.de>
 
-> On 25.09.2023, at 17:34, Jarkko Sakkinen <jarkko@kernel.org> wrote:
->=20
-> On Mon Sep 18, 2023 at 5:18 PM EEST, David Gstir wrote:
->> DCP (Data Co-Processor) is the little brother of NXP's CAAM IP.
->>=20
->> Beside of accelerated crypto operations, it also offers support for
->> hardware-bound keys. Using this feature it is possible to implement a =
-blob
->> mechanism just like CAAM offers. Unlike on CAAM, constructing and
->> parsing the blob has to happen in software.
->>=20
->> We chose the following format for the blob:
->=20
-> Who is we?
+Changing the direct dependencies of IMA_BLACKLIST_KEYRING and
+IMA_LOAD_X509 caused them to no longer depend on IMA, but a
+a configuration without IMA results in link failures:
 
-The authors of this patch. But I=E2=80=99ll rephrase that to get rid
-of the academic paper style.
+arm-linux-gnueabi-ld: security/integrity/iint.o: in function `integrity_load_keys':
+iint.c:(.init.text+0xd8): undefined reference to `ima_load_x509'
 
-> And there is no choosing anything if the below structure if hardware
-> defined (not software defined):
+aarch64-linux-ld: security/integrity/digsig_asymmetric.o: in function `asymmetric_verify':
+digsig_asymmetric.c:(.text+0x104): undefined reference to `ima_blacklist_keyring'
 
-The below structure is actually software-defined by this patch.
-Contrary to CAAM, DCP does not have a key blob feature.
-DCP=E2=80=99s hardware-bound UNIQUE or OTP key is used to bind
-these key blobs to a specific DCP chip.
+Adding explicit dependencies on IMA would fix this, but a more reliable
+way to do this is to enclose the entire Kconfig file in an 'if IMA' block.
+This also allows removing the existing direct dependencies.
 
+Fixes: be210c6d3597f ("ima: Finish deprecation of IMA_TRUSTED_KEYRING Kconfig")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ security/integrity/ima/Kconfig | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
->=20
->> /*
->> * struct dcp_blob_fmt - DCP BLOB format.
->> *
->> * @fmt_version: Format version, currently being %1
->> * @blob_key: Random AES 128 key which is used to encrypt @payload,
->> *            @blob_key itself is encrypted with OTP or UNIQUE device =
-key in
->> *            AES-128-ECB mode by DCP.
->> * @nonce: Random nonce used for @payload encryption.
->> * @payload_len: Length of the plain text @payload.
->> * @payload: The payload itself, encrypted using AES-128-GCM and =
-@blob_key,
->> *           GCM auth tag of size AES_BLOCK_SIZE is attached at the =
-end of it.
->> *
->> * The total size of a DCP BLOB is sizeof(struct dcp_blob_fmt) + =
-@payload_len +
->> * AES_BLOCK_SIZE.
->> */
->> struct dcp_blob_fmt {
->> __u8 fmt_version;
->> __u8 blob_key[AES_KEYSIZE_128];
->> __u8 nonce[AES_KEYSIZE_128];
->> __le32 payload_len;
->> __u8 payload[];
->> } __packed;
->>=20
->> @payload is the key provided by trusted_key_ops->seal().
->>=20
->> By default the UNIQUE device key is used, it is also possible to use
->> the OTP key. While the UNIQUE device key should be unique it is not
->> entirely clear whether this is the case due to unclear documentation.
->> If someone wants to be sure they can burn their own unique key
->> into the OTP fuse and set the use_otp_key module parameter.
->>=20
->> Co-developed-by: Richard Weinberger <richard@nod.at>
->> Signed-off-by: Richard Weinberger <richard@nod.at>
->> Co-developed-by: David Oberhollenzer =
-<david.oberhollenzer@sigma-star.at>
->> Signed-off-by: David Oberhollenzer =
-<david.oberhollenzer@sigma-star.at>
->> Signed-off-by: David Gstir <david@sigma-star.at>
->> ---
->> .../admin-guide/kernel-parameters.txt         |  13 +
->=20
-> Separate commit for this.
->=20
->> MAINTAINERS                                   |   9 +
->=20
-> Ditto (i.e. total two additional patches).
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 4e559bd1fd41c..a6bd817efc1a6 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -29,9 +29,11 @@ config IMA
+ 	  to learn more about IMA.
+ 	  If unsure, say N.
+ 
++if IMA
++
+ config IMA_KEXEC
+ 	bool "Enable carrying the IMA measurement list across a soft boot"
+-	depends on IMA && TCG_TPM && HAVE_IMA_KEXEC
++	depends on TCG_TPM && HAVE_IMA_KEXEC
+ 	default n
+ 	help
+ 	   TPM PCRs are only reset on a hard reboot.  In order to validate
+@@ -43,7 +45,6 @@ config IMA_KEXEC
+ 
+ config IMA_MEASURE_PCR_IDX
+ 	int
+-	depends on IMA
+ 	range 8 14
+ 	default 10
+ 	help
+@@ -53,7 +54,7 @@ config IMA_MEASURE_PCR_IDX
+ 
+ config IMA_LSM_RULES
+ 	bool
+-	depends on IMA && AUDIT && (SECURITY_SELINUX || SECURITY_SMACK || SECURITY_APPARMOR)
++	depends on AUDIT && (SECURITY_SELINUX || SECURITY_SMACK || SECURITY_APPARMOR)
+ 	default y
+ 	help
+ 	  Disabling this option will disregard LSM based policy rules.
+@@ -61,7 +62,6 @@ config IMA_LSM_RULES
+ choice
+ 	prompt "Default template"
+ 	default IMA_NG_TEMPLATE
+-	depends on IMA
+ 	help
+ 	  Select the default IMA measurement template.
+ 
+@@ -80,14 +80,12 @@ endchoice
+ 
+ config IMA_DEFAULT_TEMPLATE
+ 	string
+-	depends on IMA
+ 	default "ima-ng" if IMA_NG_TEMPLATE
+ 	default "ima-sig" if IMA_SIG_TEMPLATE
+ 
+ choice
+ 	prompt "Default integrity hash algorithm"
+ 	default IMA_DEFAULT_HASH_SHA1
+-	depends on IMA
+ 	help
+ 	   Select the default hash algorithm used for the measurement
+ 	   list, integrity appraisal and audit log.  The compiled default
+@@ -117,7 +115,6 @@ endchoice
+ 
+ config IMA_DEFAULT_HASH
+ 	string
+-	depends on IMA
+ 	default "sha1" if IMA_DEFAULT_HASH_SHA1
+ 	default "sha256" if IMA_DEFAULT_HASH_SHA256
+ 	default "sha512" if IMA_DEFAULT_HASH_SHA512
+@@ -126,7 +123,6 @@ config IMA_DEFAULT_HASH
+ 
+ config IMA_WRITE_POLICY
+ 	bool "Enable multiple writes to the IMA policy"
+-	depends on IMA
+ 	default n
+ 	help
+ 	  IMA policy can now be updated multiple times.  The new rules get
+@@ -137,7 +133,6 @@ config IMA_WRITE_POLICY
+ 
+ config IMA_READ_POLICY
+ 	bool "Enable reading back the current IMA policy"
+-	depends on IMA
+ 	default y if IMA_WRITE_POLICY
+ 	default n if !IMA_WRITE_POLICY
+ 	help
+@@ -147,7 +142,6 @@ config IMA_READ_POLICY
+ 
+ config IMA_APPRAISE
+ 	bool "Appraise integrity measurements"
+-	depends on IMA
+ 	default n
+ 	help
+ 	  This option enables local measurement integrity appraisal.
+@@ -304,7 +298,6 @@ config IMA_APPRAISE_SIGNED_INIT
+ 
+ config IMA_MEASURE_ASYMMETRIC_KEYS
+ 	bool
+-	depends on IMA
+ 	depends on ASYMMETRIC_PUBLIC_KEY_SUBTYPE=y
+ 	default y
+ 
+@@ -323,7 +316,8 @@ config IMA_SECURE_AND_OR_TRUSTED_BOOT
+ 
+ config IMA_DISABLE_HTABLE
+ 	bool "Disable htable to allow measurement of duplicate records"
+-	depends on IMA
+ 	default n
+ 	help
+ 	   This option disables htable to allow measurement of duplicate records.
++
++endif
+-- 
+2.39.2
 
-Will do for v4!=20
-
-Thanks,
-- David=
