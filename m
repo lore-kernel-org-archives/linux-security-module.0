@@ -2,94 +2,130 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72ABDE7F14B
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Sep 2023 02:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB05E80A8A
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Sep 2023 05:23:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbjI0CCq (ORCPT
+        id S229852AbjI0FXT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Sep 2023 22:02:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39366 "EHLO
+        Wed, 27 Sep 2023 01:23:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234838AbjI0CAo (ORCPT
+        with ESMTP id S229546AbjI0FWg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Sep 2023 22:00:44 -0400
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA7353599
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 18:18:30 -0700 (PDT)
-Received: by mail-il1-x131.google.com with SMTP id e9e14a558f8ab-351265d0d67so5547265ab.0
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Sep 2023 18:18:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1695777510; x=1696382310; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pSK45h5LTS9VqkVC57gaj2Wd82aeyGKZrEYe4dJCVic=;
-        b=bxVM6N7U4F+Ynjj38INwi6ASqm3IBKUZ2yJDT7Ckbee+wq9E3UZNBRzyGfQcYS34Zm
-         390zUF6zyX1jXsJs0qezpAIk0Fh/LHYP2jTC2k9Oekg0LvZ2uiw1Xok3H/KHren2K1Kj
-         zuzTpI7pO+/1KMER6qwgrgRDhYD6SZbd/b9wM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695777510; x=1696382310;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pSK45h5LTS9VqkVC57gaj2Wd82aeyGKZrEYe4dJCVic=;
-        b=wlALNW2u7RRDK1I1FqxLpN/xsTcKJRz9vNQhBSSp9ZLETxntH0bHbCTvOrc0kBqq65
-         Y7YLrzedBowK728kkR4MAO1ajRR06bVFXkrfdvyAT4fK8MJLKejfzW/fHyIqXj8aAFfk
-         vHwPykMBHLAZ8e4udFgZSSF407zGsZnLOHUmRjteJTMR9ENcqLFIicZfcwEN1gDiwUxZ
-         srGYX0pHgqucLxtLbZSwtWpC0bIA/JBmWkm5vITtRmFZQt+CDOj8f+f8Ncfphbrlgzeh
-         YBRFTuknA4Erq2kxcJuv08BRXhMqjPmhEzKKY8bwKaQ5MISftL9HwaasMAWzA/I0IFbl
-         SOag==
-X-Gm-Message-State: AOJu0Yzxkj0lEK9E4bwSRK5KOvq3A/w3nFNvT4y0wnc2vGknjiQY5jAS
-        v9X9ASM9kOgqduesx0gybEeuMg==
-X-Google-Smtp-Source: AGHT+IE2jaCutfBvakslg8GPNafee+TlzK+8frCnXrODTVfbk9z1YRbburEMP7cvS9iSP7ZFw0fvlQ==
-X-Received: by 2002:a92:cc46:0:b0:350:f353:4017 with SMTP id t6-20020a92cc46000000b00350f3534017mr614948ilq.0.1695777510062;
-        Tue, 26 Sep 2023 18:18:30 -0700 (PDT)
-Received: from [192.168.1.128] ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id y3-20020a92d203000000b0034f3220c086sm2389624ily.12.2023.09.26.18.18.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Sep 2023 18:18:29 -0700 (PDT)
-Message-ID: <fc915b30-5842-5851-bd76-71c2133685b9@linuxfoundation.org>
-Date:   Tue, 26 Sep 2023 19:18:28 -0600
+        Wed, 27 Sep 2023 01:22:36 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E46345FD1;
+        Tue, 26 Sep 2023 22:19:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1695791982; x=1727327982;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=XWRHK3XHMCPUS7DjwBYEn6sN3WEf4Pd1a63R09LlTdM=;
+  b=Rn0ykur+VAe+a1zUi7FEh4gFnxrFp628QOzK1Yld8tZhYzThnszJp/w+
+   Ywz2A0oi8KtkX4j/5zi+g3SG3duu/9UfmpT5BMmMUt7G6Fx2d3PeegCjk
+   8e/8j2kTtqx3d+tlzb2hvCy47F3H+b3hTj8/CWLUnzKfs4YHM6cCA0C6v
+   TLqQH/aIfG191BNg9R+LE/gD9lYMoAH4vXBHB6uXNPkmhzW34XHyhmWBM
+   eHkfrUGMlBsUoQFi4HPfYCjGistMDujHxTvc6e6zwGuSFzFgimPi38UZW
+   +sEoJGpwLdsVYwLJcSCh9le0vKpCGCd5lEyeqJFTr0WfmNwHYazmgFNau
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10845"; a="381633578"
+X-IronPort-AV: E=Sophos;i="6.03,179,1694761200"; 
+   d="scan'208";a="381633578"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2023 22:19:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10845"; a="725676254"
+X-IronPort-AV: E=Sophos;i="6.03,179,1694761200"; 
+   d="scan'208";a="725676254"
+Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.238.8.84]) ([10.238.8.84])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2023 22:19:32 -0700
+Message-ID: <483f9e1e-7d01-5f06-3bfa-3788d2554724@linux.intel.com>
+Date:   Wed, 27 Sep 2023 13:19:29 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.1
-Subject: Re: [PATCH] selftests: Fix wrong TARGET in kselftest top level
- Makefile
-Content-Language: en-US
-To:     Juntong Deng <juntong.deng@outlook.com>, shuah@kernel.org,
-        mic@digikod.net, brauner@kernel.org, keescook@chromium.org,
-        tony.luck@intel.com, gpiccoli@igalia.com, paul.walmsley@sifive.com,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-riscv@lists.infradead.org,
-        bpf@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <VI1P193MB0752596147F224B9F921C85199C3A@VI1P193MB0752.EURP193.PROD.OUTLOOK.COM>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <VI1P193MB0752596147F224B9F921C85199C3A@VI1P193MB0752.EURP193.PROD.OUTLOOK.COM>
+Subject: Re: [RFC PATCH v12 11/33] KVM: Introduce per-page memory attributes
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20230914015531.1419405-1-seanjc@google.com>
+ <20230914015531.1419405-12-seanjc@google.com>
+ <d66795f8-e524-2912-4b71-92ca4ffe8807@linux.intel.com>
+ <ZQteNbPfx6P3r6B8@google.com>
+From:   Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <ZQteNbPfx6P3r6B8@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/26/23 12:03, Juntong Deng wrote:
-> The 'uevents' subdirectory does not exist in tools/testing/selftests/
-> and adding 'uevents' to the TARGETS list results in the following error:
-> 
-> make[1]: Entering directory 'xx/tools/testing/selftests/uevents'
-> make[1]: *** No targets specified and no makefile found. Stop.
-> make[1]: Leaving directory 'xx/tools/testing/selftests/uevents'
-> 
-> What actually exists in tools/testing/selftests/ is the 'uevent'
-> subdirectory.
-> 
-> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
-> ---
 
-Thank you. Applied now to linux-kselftest fixes for the next rc
 
-thanks,
--- Shuah
+On 9/21/2023 5:03 AM, Sean Christopherson wrote:
+> On Mon, Sep 18, 2023, Binbin Wu wrote:
+>>
+>> On 9/14/2023 9:55 AM, Sean Christopherson wrote:
+>>> From: Chao Peng <chao.p.peng@linux.intel.com>
+>> [...]
+>>> +#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
+>>> +/*
+>>> + * Returns true if _all_ gfns in the range [@start, @end) have attributes
+>>> + * matching @attrs.
+>>> + */
+>>> +bool kvm_range_has_memory_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
+>>> +				     unsigned long attrs)
+>>> +{
+>>> +	XA_STATE(xas, &kvm->mem_attr_array, start);
+>>> +	unsigned long index;
+>>> +	bool has_attrs;
+>>> +	void *entry;
+>>> +
+>>> +	rcu_read_lock();
+>>> +
+>>> +	if (!attrs) {
+>>> +		has_attrs = !xas_find(&xas, end);
+>> IIUIC, xas_find() is inclusive for "end", so here should be "end - 1" ?
+> Yes, that does appear to be the case.  Inclusive vs. exclusive on gfn ranges has
+> is the bane of my existence.
+
+Seems this one is not included in the "KVM: guest_memfd fixes" patch series?
+https://lore.kernel.org/kvm/20230921203331.3746712-1-seanjc@google.com/
+
+
 
