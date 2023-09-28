@@ -2,216 +2,238 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0860DE743C0
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Sep 2023 20:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFB9E743C4
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Sep 2023 21:27:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231774AbjI1UYu (ORCPT
+        id S232530AbjI1V1p (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Sep 2023 16:24:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46650 "EHLO
+        Thu, 28 Sep 2023 17:27:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231310AbjI1UYt (ORCPT
+        with ESMTP id S232537AbjI1V1o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Sep 2023 16:24:49 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FF6E180
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Sep 2023 13:24:48 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33795C433CB;
-        Thu, 28 Sep 2023 20:24:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695932687;
-        bh=EtoawVmbh1KqBL+Lgi6yCiqhYndtQsokqVtzUkIBO5A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UFmMG56VT3nPf08OSTtpTCV+wOF+JyiJ+sx5ZpMC2g/ocKPWr9m1OMMMplHgC8XCi
-         6oH7EYD3JztxfUEO3CTcKdHgRhBja6NEUXOfJyUtNcmM77v8nlps6REIj/AND/J+uF
-         2EZKCactLEA308KoasXvVesq+5utEYbzo/YUrooaxMguFenrkTUZ5khLH/crLkzFwq
-         7pbm5fjzNcnlCenuS10svUDi5gz6RONKGcyVdo7vlgtbIKL/qLziFckhsqQXxx9ki1
-         h9A/ogPtl5DhOGutbMlORSSoo9nN5t1YLxbHV+nqQuzuf2Hz3SrTv7pel1Hf9D2lJU
-         GCxvV1mJ2NxBA==
-From:   KP Singh <kpsingh@kernel.org>
-To:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Cc:     paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
-        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        kpsingh@kernel.org, renauld@google.com
-Subject: [PATCH v5 5/5] security: Add CONFIG_SECURITY_HOOK_LIKELY
-Date:   Thu, 28 Sep 2023 22:24:10 +0200
-Message-ID: <20230928202410.3765062-6-kpsingh@kernel.org>
-X-Mailer: git-send-email 2.42.0.582.g8ccd20d70d-goog
-In-Reply-To: <20230928202410.3765062-1-kpsingh@kernel.org>
-References: <20230928202410.3765062-1-kpsingh@kernel.org>
+        Thu, 28 Sep 2023 17:27:44 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F408C1A4
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Sep 2023 14:27:41 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-111-87.bstnma.fios.verizon.net [173.48.111.87])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 38SLQvsp021536
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 28 Sep 2023 17:26:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1695936425; bh=w4hql40FuyyfsTNK9D530X9ExV2y5b7TU7/1a0HHsnU=;
+        h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+        b=NGPOVv6aP7Wgx4/k9ruqGjDYWmjUQVAfEL5fppG6yE2RNxUM6uiyoWrXBZfGmZyL2
+         gb1zEZjWcSSCFd+NWg1/BYhZ5jeEptXNin1ZAM6seg38Angccj8YOPtyzxOx/hDFrb
+         Q+ePr/t98/fHq2BcSzJCThnFTNb50fVmlIrGfb3oMvB11ToZpH+p8R2mhaDk4/44dl
+         uEHGVh6Q6Ih5iyFuN8+PasXijpXT1PXJm+5Rkla8PX5Glna1OAsFe3wre6CQl62oa4
+         RAr1Z2b44rKF067M11yaRPI56z2wMDur4vLyEnjrhgmaYzW5D9XQ8I+PJlbP887wDq
+         NXSNNWLPWiTbQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 06AD715C0266; Thu, 28 Sep 2023 17:26:57 -0400 (EDT)
+Date:   Thu, 28 Sep 2023 17:26:56 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>, Jeremy Kerr <jk@ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Carlos Llamas <cmllamas@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Mattia Dongili <malattia@linux.it>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Brad Warrum <bwarrum@linux.ibm.com>,
+        Ritu Agarwal <rituagar@linux.ibm.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Mark Gross <markgross@kernel.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Sterba <dsterba@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Ian Kent <raven@themaw.net>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        Joel Becker <jlbec@evilplan.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>,
+        Yue Hu <huyue2@gl0jj8bn.sched.sma.tdnsstic1.cn>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Jan Kara <jack@suse.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Christoph Hellwig <hch@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <muchun.song@linux.dev>, Jan Kara <jack@suse.cz>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Dave Kleikamp <shaggy@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Bob Copeland <me@bobcopeland.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        Anders Larsen <al@alarsen.net>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Evgeniy Dushistov <dushistov@mail.ru>,
+        Chandan Babu R <chandan.babu@oracle.com>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-usb@vger.kernel.org, v9fs@lists.linux.dev,
+        linux-afs@lists.infradead.org, autofs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@telemann.coda.cs.cmu.edu, linux-efi@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, gfs2@lists.linux.dev,
+        linux-um@lists.infradead.org, linux-mtd@lists.infradead.org,
+        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
+        linux-unionfs@vger.kernel.org, linux-hardening@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org,
+        linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        bpf@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: Re: [PATCH 86/87] fs: switch timespec64 fields in inode to discrete
+ integers
+Message-ID: <20230928212656.GC189345@mit.edu>
+References: <20230928110554.34758-1-jlayton@kernel.org>
+ <20230928110554.34758-2-jlayton@kernel.org>
+ <6020d6e7-b187-4abb-bf38-dc09d8bd0f6d@app.fastmail.com>
+ <af047e4a1c6947c59d4a13d4ae221c784a5386b4.camel@kernel.org>
+ <20230928171943.GK11439@frogsfrogsfrogs>
+ <6a6f37d16b55a3003af3f3dbb7778a367f68cd8d.camel@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6a6f37d16b55a3003af3f3dbb7778a367f68cd8d.camel@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This config influences the nature of the static key that guards the
-static call for LSM hooks.
+On Thu, Sep 28, 2023 at 01:40:55PM -0400, Jeff Layton wrote:
+> 
+> Correct. We'd lose some fidelity in currently stored timestamps, but as
+> Linus and Ted pointed out, anything below ~100ns granularity is
+> effectively just noise, as that's the floor overhead for calling into
+> the kernel. It's hard to argue that any application needs that sort of
+> timestamp resolution, at least with contemporary hardware. 
+> 
+> Doing that would mean that tests that store specific values in the
+> atime/mtime and expect to be able to fetch exactly that value back would
+> break though, so we'd have to be OK with that if we want to try it. The
+> good news is that it's relatively easy to experiment with new ways to
+> store timestamps with these wrappers in place.
 
-When enabled, it indicates that an LSM static call slot is more likely
-to be initialized. When disabled, it optimizes for the case when static
-call slot is more likely to be not initialized.
+The reason why we store 1ns granularity in ext4's on-disk format (and
+accept that we only support times only a couple of centuries into the
+future, as opposed shooting for an on-disk format good for several
+millennia :-), was in case there was userspace that might try to store
+a very fine-grained timestamp and want to be able to get it back
+bit-for-bit identical.
 
-When a major LSM like (SELinux, AppArmor, Smack etc) is active on a
-system the system would benefit from enabling the config. However there
-are other cases which would benefit from the config being disabled
-(e.g. a system with a BPF LSM with no hooks enabled by default, or an
-LSM like loadpin / yama). Ultimately, there is no one-size fits all
-solution.
+For example, what if someone was trying to implement some kind of
+steganographic scheme where they going store a secret message (or more
+likely, a 256-bit AES key) in the nanosecond fields of the file's
+{c,m,a,cr}time timestamps, "hiding in plain sight".  Not that I think
+that we have to support something like that, since the field is for
+*timestamps* not cryptographic bits, so if we break someone who is
+doing that, do we care?
 
-with CONFIG_SECURITY_HOOK_LIKELY enabled, the inactive /
-uninitialized case is penalized with a direct jmp (still better than
-an indirect jmp):
+I don't think anyone will complain about breaking the userspace API
+--- especially since if, say, the CIA was using this for their spies'
+drop boxes, they probably wouldn't want to admit it.  :-)
 
-function security_file_ioctl:
-   0xffffffff818f0c80 <+0>:	endbr64
-   0xffffffff818f0c84 <+4>:	nopl   0x0(%rax,%rax,1)
-   0xffffffff818f0c89 <+9>:	push   %rbp
-   0xffffffff818f0c8a <+10>:	push   %r14
-   0xffffffff818f0c8c <+12>:	push   %rbx
-   0xffffffff818f0c8d <+13>:	mov    %rdx,%rbx
-   0xffffffff818f0c90 <+16>:	mov    %esi,%ebp
-   0xffffffff818f0c92 <+18>:	mov    %rdi,%r14
-   0xffffffff818f0c95 <+21>:	jmp    0xffffffff818f0ca8 <security_file_ioctl+40>
-
-   jump to skip the inactive BPF LSM hook.
-
-   0xffffffff818f0c97 <+23>:	mov    %r14,%rdi
-   0xffffffff818f0c9a <+26>:	mov    %ebp,%esi
-   0xffffffff818f0c9c <+28>:	mov    %rbx,%rdx
-   0xffffffff818f0c9f <+31>:	call   0xffffffff8141e3b0 <bpf_lsm_file_ioctl>
-   0xffffffff818f0ca4 <+36>:	test   %eax,%eax
-   0xffffffff818f0ca6 <+38>:	jne    0xffffffff818f0cbf <security_file_ioctl+63>
-   0xffffffff818f0ca8 <+40>:	endbr64
-   0xffffffff818f0cac <+44>:	jmp    0xffffffff818f0ccd <security_file_ioctl+77>
-
-   jump to skip the empty slot.
-
-   0xffffffff818f0cae <+46>:	mov    %r14,%rdi
-   0xffffffff818f0cb1 <+49>:	mov    %ebp,%esi
-   0xffffffff818f0cb3 <+51>:	mov    %rbx,%rdx
-   0xffffffff818f0cb6 <+54>:	nopl   0x0(%rax,%rax,1)
-  				^^^^^^^^^^^^^^^^^^^^^^^
-				Empty slot
-
-   0xffffffff818f0cbb <+59>:	test   %eax,%eax
-   0xffffffff818f0cbd <+61>:	je     0xffffffff818f0ccd <security_file_ioctl+77>
-   0xffffffff818f0cbf <+63>:	endbr64
-   0xffffffff818f0cc3 <+67>:	pop    %rbx
-   0xffffffff818f0cc4 <+68>:	pop    %r14
-   0xffffffff818f0cc6 <+70>:	pop    %rbp
-   0xffffffff818f0cc7 <+71>:	cs jmp 0xffffffff82c00000 <__x86_return_thunk>
-   0xffffffff818f0ccd <+77>:	endbr64
-   0xffffffff818f0cd1 <+81>:	xor    %eax,%eax
-   0xffffffff818f0cd3 <+83>:	jmp    0xffffffff818f0cbf <security_file_ioctl+63>
-   0xffffffff818f0cd5 <+85>:	mov    %r14,%rdi
-   0xffffffff818f0cd8 <+88>:	mov    %ebp,%esi
-   0xffffffff818f0cda <+90>:	mov    %rbx,%rdx
-   0xffffffff818f0cdd <+93>:	pop    %rbx
-   0xffffffff818f0cde <+94>:	pop    %r14
-   0xffffffff818f0ce0 <+96>:	pop    %rbp
-   0xffffffff818f0ce1 <+97>:	ret
-
-When the config is disabled, the case optimizes the scenario above.
-
-security_file_ioctl:
-   0xffffffff818f0e30 <+0>:	endbr64
-   0xffffffff818f0e34 <+4>:	nopl   0x0(%rax,%rax,1)
-   0xffffffff818f0e39 <+9>:	push   %rbp
-   0xffffffff818f0e3a <+10>:	push   %r14
-   0xffffffff818f0e3c <+12>:	push   %rbx
-   0xffffffff818f0e3d <+13>:	mov    %rdx,%rbx
-   0xffffffff818f0e40 <+16>:	mov    %esi,%ebp
-   0xffffffff818f0e42 <+18>:	mov    %rdi,%r14
-   0xffffffff818f0e45 <+21>:	xchg   %ax,%ax
-   0xffffffff818f0e47 <+23>:	xchg   %ax,%ax
-
-   The static keys in their disabled state do not create jumps leading
-   to faster code.
-
-   0xffffffff818f0e49 <+25>:	xor    %eax,%eax
-   0xffffffff818f0e4b <+27>:	xchg   %ax,%ax
-   0xffffffff818f0e4d <+29>:	pop    %rbx
-   0xffffffff818f0e4e <+30>:	pop    %r14
-   0xffffffff818f0e50 <+32>:	pop    %rbp
-   0xffffffff818f0e51 <+33>:	cs jmp 0xffffffff82c00000 <__x86_return_thunk>
-   0xffffffff818f0e57 <+39>:	endbr64
-   0xffffffff818f0e5b <+43>:	mov    %r14,%rdi
-   0xffffffff818f0e5e <+46>:	mov    %ebp,%esi
-   0xffffffff818f0e60 <+48>:	mov    %rbx,%rdx
-   0xffffffff818f0e63 <+51>:	call   0xffffffff8141e3b0 <bpf_lsm_file_ioctl>
-   0xffffffff818f0e68 <+56>:	test   %eax,%eax
-   0xffffffff818f0e6a <+58>:	jne    0xffffffff818f0e4d <security_file_ioctl+29>
-   0xffffffff818f0e6c <+60>:	jmp    0xffffffff818f0e47 <security_file_ioctl+23>
-   0xffffffff818f0e6e <+62>:	endbr64
-   0xffffffff818f0e72 <+66>:	mov    %r14,%rdi
-   0xffffffff818f0e75 <+69>:	mov    %ebp,%esi
-   0xffffffff818f0e77 <+71>:	mov    %rbx,%rdx
-   0xffffffff818f0e7a <+74>:	nopl   0x0(%rax,%rax,1)
-   0xffffffff818f0e7f <+79>:	test   %eax,%eax
-   0xffffffff818f0e81 <+81>:	jne    0xffffffff818f0e4d <security_file_ioctl+29>
-   0xffffffff818f0e83 <+83>:	jmp    0xffffffff818f0e49 <security_file_ioctl+25>
-   0xffffffff818f0e85 <+85>:	endbr64
-   0xffffffff818f0e89 <+89>:	mov    %r14,%rdi
-   0xffffffff818f0e8c <+92>:	mov    %ebp,%esi
-   0xffffffff818f0e8e <+94>:	mov    %rbx,%rdx
-   0xffffffff818f0e91 <+97>:	pop    %rbx
-   0xffffffff818f0e92 <+98>:	pop    %r14
-   0xffffffff818f0e94 <+100>:	pop    %rbp
-   0xffffffff818f0e95 <+101>:	ret
-
-Acked-by: Song Liu <song@kernel.org>
-Signed-off-by: KP Singh <kpsingh@kernel.org>
----
- security/Kconfig    | 11 +++++++++++
- security/security.c |  6 ++++--
- 2 files changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/security/Kconfig b/security/Kconfig
-index 52c9af08ad35..317018dcbc67 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -32,6 +32,17 @@ config SECURITY
- 
- 	  If you are unsure how to answer this question, answer N.
- 
-+config SECURITY_HOOK_LIKELY
-+	bool "LSM hooks are likely to be initialized"
-+	depends on SECURITY && EXPERT
-+	default SECURITY_SELINUX || SECURITY_SMACK || SECURITY_TOMOYO || SECURITY_APPARMOR
-+	help
-+	  This controls the behaviour of the static keys that guard LSM hooks.
-+	  If LSM hooks are likely to be initialized by LSMs, then one gets
-+	  better performance by enabling this option. However, if the system is
-+	  using an LSM where hooks are much likely to be disabled, one gets
-+	  better performance by disabling this config.
-+
- config SECURITYFS
- 	bool "Enable the securityfs filesystem"
- 	help
-diff --git a/security/security.c b/security/security.c
-index d1ee72e563cc..b8eac2e8a59d 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -825,7 +825,8 @@ static int lsm_superblock_alloc(struct super_block *sb)
-  */
- #define __CALL_STATIC_VOID(NUM, HOOK, ...)				     \
- do {									     \
--	if (static_branch_unlikely(&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM))) {    \
-+	if (static_branch_maybe(CONFIG_SECURITY_HOOK_LIKELY,		     \
-+				&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM))) {     \
- 		static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__);	     \
- 	}								     \
- } while (0);
-@@ -837,7 +838,8 @@ do {									     \
- 
- #define __CALL_STATIC_INT(NUM, R, HOOK, LABEL, ...)			     \
- do {									     \
--	if (static_branch_unlikely(&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM))) {  \
-+	if (static_branch_maybe(CONFIG_SECURITY_HOOK_LIKELY,		     \
-+				&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM))) {     \
- 		R = static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__);    \
- 		if (R != 0)						     \
- 			goto LABEL;					     \
--- 
-2.42.0.582.g8ccd20d70d-goog
-
+       	    	     	      	      	    - Ted
