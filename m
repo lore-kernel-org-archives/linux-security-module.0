@@ -2,165 +2,187 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18128E743C0
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Sep 2023 20:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33347E743C0
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Sep 2023 20:24:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230345AbjI1UY1 (ORCPT
+        id S230325AbjI1UYe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Sep 2023 16:24:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53356 "EHLO
+        Thu, 28 Sep 2023 16:24:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230246AbjI1UY0 (ORCPT
+        with ESMTP id S231446AbjI1UYd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Sep 2023 16:24:26 -0400
+        Thu, 28 Sep 2023 16:24:33 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6386519F
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Sep 2023 13:24:22 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90432C433C7;
-        Thu, 28 Sep 2023 20:24:18 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C8F519C
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Sep 2023 13:24:30 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44CE0C433CC;
+        Thu, 28 Sep 2023 20:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695932662;
-        bh=SlOuoQn/8Al4k/7Si7CZD1d46I2Ly+emoNkcQOfYzwU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Fh11ktqcrosvCgKSL/WuLbRYRGL/PL5p/drSGFx2Pmw+edsH05/45jNkvMsZHPmUi
-         Gth1HZyGlo9BeEvvB812P0yyO8KJXxMVhw2+xJgAgOUFZg40JhuQX08DmCybXvDWFJ
-         26pINhZR0O33Tm8UeH/E3UIJgrMNM7AGyMcXBgcf/oTEucBiRbkQoBW5gxmEmpfXS/
-         pa94oFYiYptTBvaupJxjTIJWzKMsJR+PX/oG4a9dzG/EXmREvZhVbxdwiSGyHy+x3k
-         L/8Znzo62iBE1mXC4GtZi52bItF+bAFwk4hE+zs6TmkYDQj+qvwYvxzCPTUrajp9Gn
-         B6Yb5/c5BaGcA==
+        s=k20201202; t=1695932670;
+        bh=YwkcC//jT+wVcODAvmEk31HCnO5Vo+gEW1wd+qFiIJc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=t3bVyRelpGxRmOg6PaM5Fj0+lKdoXKhZi/NNwHCJu5ECTPA40eMquxiKW+SCpLzBO
+         9C2wMWUEi11GDqmattCqULfR1OV81IJFyW3QIJzxt5J3TM9cwVZCgaPZMr39VIPNmG
+         FaVHQWTiX/dJCMCMhiYutETNEnMNfXM26FGcdCBSLRUIiRbiPjsZ7ZiB103hWH+AqY
+         be8+osGtesWLclMTjRsiE0eTluYU/MEw5AevbxPzEw3420oZEieCf/RUK65OKcGRG3
+         BpBxsyYW0E14L3MLUGfbR1D3F8PopUsVsY2DLC2zlKXg07Hhwi2LrNQ3q6Z7XgRAx9
+         dqUal9Dajze2A==
 From:   KP Singh <kpsingh@kernel.org>
 To:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org
 Cc:     paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
         song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        kpsingh@kernel.org, renauld@google.com
-Subject: [PATCH v5 0/5] Reduce overhead of LSMs with static calls
-Date:   Thu, 28 Sep 2023 22:24:05 +0200
-Message-ID: <20230928202410.3765062-1-kpsingh@kernel.org>
+        kpsingh@kernel.org, renauld@google.com,
+        Kui-Feng Lee <sinquersw@gmail.com>,
+        Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH v5 2/5] security: Count the LSMs enabled at compile time
+Date:   Thu, 28 Sep 2023 22:24:07 +0200
+Message-ID: <20230928202410.3765062-3-kpsingh@kernel.org>
 X-Mailer: git-send-email 2.42.0.582.g8ccd20d70d-goog
+In-Reply-To: <20230928202410.3765062-1-kpsingh@kernel.org>
+References: <20230928202410.3765062-1-kpsingh@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-# Background
+These macros are a clever trick to determine a count of the number of
+LSMs that are enabled in the config to ascertain the maximum number of
+static calls that need to be configured per LSM hook.
 
-LSM hooks (callbacks) are currently invoked as indirect function calls. These
-callbacks are registered into a linked list at boot time as the order of the
-LSMs can be configured on the kernel command line with the "lsm=" command line
-parameter.
+Without this one would need to generate static calls for the total
+number of LSMs in the kernel (even if they are not compiled) times the
+number of LSM hooks which ends up being quite wasteful.
 
-Indirect function calls have a high overhead due to retpoline mitigation for
-various speculative execution attacks.
-
-Retpolines remain relevant even with newer generation CPUs as recently
-discovered speculative attacks, like Spectre BHB need Retpolines to mitigate
-against branch history injection and still need to be used in combination with
-newer mitigation features like eIBRS.
-
-This overhead is especially significant for the "bpf" LSM which allows the user
-to implement LSM functionality with eBPF program. In order to facilitate this
-the "bpf" LSM provides a default callback for all LSM hooks. When enabled,
-the "bpf" LSM incurs an unnecessary / avoidable indirect call. This is
-especially bad in OS hot paths (e.g. in the networking stack).
-This overhead prevents the adoption of bpf LSM on performance critical
-systems, and also, in general, slows down all LSMs.
-
-Since we know the address of the enabled LSM callbacks at compile time and only
-the order is determined at boot time, the LSM framework can allocate static
-calls for each of the possible LSM callbacks and these calls can be updated once
-the order is determined at boot.
-
-This series is a respin of the RFC proposed by Paul Renauld (renauld@google.com)
-and Brendan Jackman (jackmanb@google.com) [1]
-
-# Performance improvement
-
-With this patch-set some syscalls with lots of LSM hooks in their path
-benefitted at an average of ~3% and I/O and Pipe based system calls benefitting
-the most.
-
-Here are the results of the relevant Unixbench system benchmarks with BPF LSM
-and SELinux enabled with default policies enabled with and without these
-patches.
-
-Benchmark                                               Delta(%): (+ is better)
-===============================================================================
-Execl Throughput                                             +1.9356
-File Write 1024 bufsize 2000 maxblocks                       +6.5953
-Pipe Throughput                                              +9.5499
-Pipe-based Context Switching                                 +3.0209
-Process Creation                                             +2.3246
-Shell Scripts (1 concurrent)                                 +1.4975
-System Call Overhead                                         +2.7815
-System Benchmarks Index Score (Partial Only):                +3.4859
-
-In the best case, some syscalls like eventfd_create benefitted to about ~10%.
-The full analysis can be viewed at https://kpsingh.ch/lsm-perf
-
-[1] https://lore.kernel.org/linux-security-module/20200820164753.3256899-1-jackmanb@chromium.org/
-
-
-# BPF LSM Side effects
-
-Patch 4 of the series also addresses the issues with the side effects of the
-default value return values of the BPF LSM callbacks and also removes the
-overheads associated with them making it deployable at hyperscale.
-
-# v4 -> v5
-
-* Rebase to linux-next/master
-* Fixed the case where MAX_LSM_COUNT comes to zero when just CONFIG_SECURITY
-  is compiled in without any other LSM enabled as reported here:
-
-  https://lore.kernel.org/bpf/202309271206.d7fb60f9-oliver.sang@intel.com
-
-# v3 -> v4
-
-* Refactor LSM count macros to use COUNT_ARGS
-* Change CONFIG_SECURITY_HOOK_LIKELY likely's default value to be based on
-  the LSM enabled and have it depend on CONFIG_EXPERT. There are a lot of subtle
-  options behind CONFIG_EXPERT and this should, hopefully alleviate concerns
-  about yet another knob.
-* __randomize_layout for struct lsm_static_call and, in addition to the cover
-  letter add performance numbers to 3rd patch and some minor commit message
-  updates.
-* Rebase to linux-next.
-
-# v2 -> v3
-
-* Fixed a build issue on archs which don't have static calls and enable
-  CONFIG_SECURITY.
-* Updated the LSM_COUNT macros based on Andrii's suggestions.
-* Changed the security_ prefix to lsm_prefix based on Casey's suggestion.
-* Inlined static_branch_maybe into lsm_for_each_hook on Kees' feedback.
-
-# v1 -> v2 (based on linux-next, next-20230614)
-
-* Incorporated suggestions from Kees
-* Changed the way MAX_LSMs are counted from a binary based generator to a clever header.
-* Add CONFIG_SECURITY_HOOK_LIKELY to configure the likelihood of LSM hooks.
-
-
-KP Singh (5):
-  kernel: Add helper macros for loop unrolling
-  security: Count the LSMs enabled at compile time
-  security: Replace indirect LSM hook calls with static calls
-  bpf: Only enable BPF LSM hooks when an LSM program is attached
-  security: Add CONFIG_SECURITY_HOOK_LIKELY
-
- include/linux/bpf.h       |   1 +
- include/linux/bpf_lsm.h   |   5 +
- include/linux/lsm_count.h | 114 ++++++++++++++++++++
- include/linux/lsm_hooks.h |  81 +++++++++++++--
- include/linux/unroll.h    |  36 +++++++
- kernel/bpf/trampoline.c   |  29 +++++-
- security/Kconfig          |  11 ++
- security/bpf/hooks.c      |  25 ++++-
- security/security.c       | 213 +++++++++++++++++++++++++-------------
- 9 files changed, 432 insertions(+), 83 deletions(-)
+Suggested-by: Kui-Feng Lee <sinquersw@gmail.com>
+Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+Acked-by: Song Liu <song@kernel.org>
+Signed-off-by: KP Singh <kpsingh@kernel.org>
+---
+ include/linux/lsm_count.h | 114 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 114 insertions(+)
  create mode 100644 include/linux/lsm_count.h
- create mode 100644 include/linux/unroll.h
 
+diff --git a/include/linux/lsm_count.h b/include/linux/lsm_count.h
+new file mode 100644
+index 000000000000..dbb3c8573959
+--- /dev/null
++++ b/include/linux/lsm_count.h
+@@ -0,0 +1,114 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * Copyright (C) 2023 Google LLC.
++ */
++
++#ifndef __LINUX_LSM_COUNT_H
++#define __LINUX_LSM_COUNT_H
++
++#include <linux/args.h>
++
++#ifdef CONFIG_SECURITY
++
++/*
++ * Macros to count the number of LSMs enabled in the kernel at compile time.
++ */
++
++/*
++ * Capabilities is enabled when CONFIG_SECURITY is enabled.
++ */
++#if IS_ENABLED(CONFIG_SECURITY)
++#define CAPABILITIES_ENABLED 1,
++#else
++#define CAPABILITIES_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_SELINUX)
++#define SELINUX_ENABLED 1,
++#else
++#define SELINUX_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_SMACK)
++#define SMACK_ENABLED 1,
++#else
++#define SMACK_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_APPARMOR)
++#define APPARMOR_ENABLED 1,
++#else
++#define APPARMOR_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_TOMOYO)
++#define TOMOYO_ENABLED 1,
++#else
++#define TOMOYO_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_YAMA)
++#define YAMA_ENABLED 1,
++#else
++#define YAMA_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_LOADPIN)
++#define LOADPIN_ENABLED 1,
++#else
++#define LOADPIN_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_LOCKDOWN_LSM)
++#define LOCKDOWN_ENABLED 1,
++#else
++#define LOCKDOWN_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_SAFESETID)
++#define SAFESETID_ENABLED 1,
++#else
++#define SAFESETID_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_BPF_LSM)
++#define BPF_LSM_ENABLED 1,
++#else
++#define BPF_LSM_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_LANDLOCK)
++#define LANDLOCK_ENABLED 1,
++#else
++#define LANDLOCK_ENABLED
++#endif
++
++/*
++ *  There is a trailing comma that we need to be accounted for. This is done by
++ *  using a skipped argument in __COUNT_LSMS
++ */
++#define __COUNT_LSMS(skipped_arg, args...) COUNT_ARGS(args...)
++#define COUNT_LSMS(args...) __COUNT_LSMS(args)
++
++#define MAX_LSM_COUNT			\
++	COUNT_LSMS(			\
++		CAPABILITIES_ENABLED	\
++		SELINUX_ENABLED		\
++		SMACK_ENABLED		\
++		APPARMOR_ENABLED	\
++		TOMOYO_ENABLED		\
++		YAMA_ENABLED		\
++		LOADPIN_ENABLED		\
++		LOCKDOWN_ENABLED	\
++		SAFESETID_ENABLED	\
++		BPF_LSM_ENABLED		\
++		LANDLOCK_ENABLED)
++
++#else
++
++#define MAX_LSM_COUNT 0
++
++#endif /* CONFIG_SECURITY */
++
++#endif  /* __LINUX_LSM_COUNT_H */
 -- 
 2.42.0.582.g8ccd20d70d-goog
 
