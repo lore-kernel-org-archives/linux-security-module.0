@@ -2,168 +2,90 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4098FE80ABC
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Sep 2023 23:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DA9CE7B1A
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Sep 2023 10:07:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229736AbjI0XqR (ORCPT
+        id S230511AbjI1KHg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Sep 2023 19:46:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39200 "EHLO
+        Thu, 28 Sep 2023 06:07:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjI0XqQ (ORCPT
+        with ESMTP id S230478AbjI1KHe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Sep 2023 19:46:16 -0400
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB9D4F4;
-        Wed, 27 Sep 2023 16:46:14 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id C2A775C25C4;
-        Wed, 27 Sep 2023 19:46:11 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Wed, 27 Sep 2023 19:46:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; t=1695858371; x=1695944771; bh=G6
-        UCu/TfSXHA2VOhzGvLxdM7gLocfJLCtB0VrZapTnA=; b=gkrf6LLSJ4W6bIbZAg
-        RzRrvqvIMGENAZfJ2MuWXpjgmu3CDKFxyE+BUpA6eI0v3xoVi/7f82fM6Q8L1jyE
-        LuyTdQnTd4Z5C9oBPclRNfpOwVe2iuPmeAKumst+04vq4YaUT0Mkoz11P9D4I3BW
-        tKv1F8THI8SihsqqM6c8WLXpG32JuEjvxMiE8i2A+DYOuN3mTTpPuRjXOSgHyGp5
-        Q/E9/lxRTWLNuvrAVLGvn+XgXLP87DYLhgoBzhXvskZ7HoNFFFPdkN7KjT/NqwjD
-        kheq+mSyZZrd9CDjqPVbOlGteB1dFrZcaaaQKSQvTHGJgPOhHteExVIOZFPGBAYH
-        guTw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1695858371; x=1695944771; bh=G6UCu/TfSXHA2
-        VOhzGvLxdM7gLocfJLCtB0VrZapTnA=; b=Hmm9fUuXDcXY0zLBnAEMqUgWwdkrA
-        rm5nPnXd8wmybWfO5FfyDR7VseP1xVciL1FmdrCIbhJRKZ1npjJKOpySufVgilJ+
-        vwAvpA70ByYJ+MYfT0v8uVhF6mL6M9+SVRM85ZKZrEu76LxDSbowR4Hn6+aOoCVF
-        FgP4zK5KVpZgNpkyX1+n/pcyCl5QbqC0CKflTmOr9HkiCY6MuMwPqJFoGRSlq3E5
-        mZs9v/uKVOCQbsDYjo0SCp7WzTFmB1eeyqkUuYRN1pgPO+5myu6m/Qwjxh9xEw1m
-        zdVM0T0joL1gdyL8WLzgufoRRJKU3IU2gICpoo8+gseEP36h7DU67lqjQ==
-X-ME-Sender: <xms:w74UZUGHeKWbHFUQ89FiZrSRFLRZgQ-TJf_NlDR79AgyrHqcNN9x-Q>
-    <xme:w74UZdUYuBN8owHxwAIabVQK0zonvgI4gL4fnFW2KXKp-mToXsCdEAEB6dU4Y5GdH
-    8wXITcsSbXJb7xpDJ8>
-X-ME-Received: <xmr:w74UZeJIbl2ZOqSzTq-XWIlwSFZdRHCcggijAa1m8saJbUhACg9mg9qXilOJrJjua3JJT_ZMjqlleeAGlWuW54N_Hg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvjedrtdehgddviecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfg
-    hrlhcuvffnffculdduhedmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomheplfgrnhcujfgvnhgurhhikhcuhfgrrhhruceokhgvrhhnvghlsehjfh
-    grrhhrrdgttgeqnecuggftrfgrthhtvghrnhepffefjeffveegjeduieevkedtieevfeeg
-    gffhffevueejfefhfeffvddvgfeivdehnecuffhomhgrihhnpehgihhthhhusgdrtghomh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkvghr
-    nhgvlhesjhhfrghrrhdrtggt
-X-ME-Proxy: <xmx:w74UZWGAq05zu-YoceKhnkzl4U5tslkxAnBjpJegOjNxpcwLBoMDew>
-    <xmx:w74UZaWTDEhuxjVOt4aNPiS2RhoTYoTZeQuk1cd8ksjD09bFkUokRQ>
-    <xmx:w74UZZO3A61IEoE9FBL_xddZMINYhIenZVs51JsmrwM0RsMBDthseg>
-    <xmx:w74UZRMeebJ4ohThUUrTJUPsvLE1Mj2QR6myIGaKI0MsCML3ZWUvKw>
-Feedback-ID: i01d149f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 27 Sep 2023 19:46:08 -0400 (EDT)
-Date:   Thu, 28 Sep 2023 01:46:06 +0200
-From:   Jan Hendrik Farr <kernel@jfarr.cc>
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     Pingfan Liu <piliu@redhat.com>, Pingfan Liu <kernelfans@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-efi@vger.kernel.org,
-        kexec@lists.infradead.org, Baoquan He <bhe@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        Philipp Rudo <prudo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, keyrings@vger.kernel.org,
-        Luca Boccassi <bluca@debian.org>, lennart@poettering.net,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, mjg59@google.com,
-        James.Bottomley@hansenpartnership.com
-Subject: Re: [PATCH 0/2] Sign the Image which is zboot's payload
-Message-ID: <ZRS-vnMyjZRKRLhT@desktop>
-References: <20230921133703.39042-1-kernelfans@gmail.com>
- <ZQ0j6Es88aR8cjRv@desktop>
- <CAF+s44R0ty0-aV+Amw2pL58YGa4JHt_y0WpiDMzehULPiC_aJw@mail.gmail.com>
- <CAMj1kXF0rZ0Ej-+x__E9=Ca8Mesb+N+35etqiUzEMzhRR6trCg@mail.gmail.com>
+        Thu, 28 Sep 2023 06:07:34 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3148B199
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Sep 2023 03:07:30 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-9ad8a822508so1645485466b.0
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Sep 2023 03:07:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1695895648; x=1696500448; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DtI3kB3DRHPB9DqqP0XY+HAtUyMDubLkneuHlzD3860=;
+        b=gYiPrQmN1jhYL+x8C0LEoXUdQcqshHo58gF2gKveAmY9rYqXs3JSyK6HSznIH6b1i8
+         iRV/Or2UlbUuiqfPM4vmn3DQyXSjSbZTph6iyrIYNSHjMThz1dVLZzjbULl05eZl8fp3
+         crc2xqIaMfNBcq1E1iWQx3ucLokdBXwTU7fJ8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695895648; x=1696500448;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DtI3kB3DRHPB9DqqP0XY+HAtUyMDubLkneuHlzD3860=;
+        b=RtNN3ClwI0nGoh9MgbUVfIY1YgPHmjGBFdRPbourvkuEWKXqL/ccVDfYkk+AbAjYhX
+         qQjpT8JIL07LAJmvieMJdHxEKGZLq5K/SlCbvPPRFPUIBZVzWHEsaRBLefZMAZPA3rvB
+         WoHcEuyUFksRj+MpoZNpXYV0EaI0/mQyY0Fh07VjL5a3JerW6k7rF2nNjkyD/7xvvh6+
+         iOQfboO5N43qj9Yl1kbLjhYQY9VfImVBVINUYNDk9dCgvQ9pAF0X5wAfBoIxrS4afAFK
+         vS0xYoC01c8pEbfxognsTrxVTHH1/jf7tvHEsYbB2IQtPpvsuUt7JbYFTKDnglX7Jxr9
+         CnzQ==
+X-Gm-Message-State: AOJu0YwEnDqR+I0ayyMTGWctk2WU8/BekTZAcez29DvoXgwbkmehjrnl
+        hYtc8B3b7MenXmbYGKaG8Ov4E/rxL9zDCCyv3SZY8A==
+X-Google-Smtp-Source: AGHT+IEDypM3eCKriTL3toxyQv8Q1keb6DT2jEmjFo0FJ1MxFnDwMp3fk9njVXSZqz8oyH0A9Xgaw9Xxa1l5dOcoVH0=
+X-Received: by 2002:a17:907:7609:b0:9a5:cf23:de5b with SMTP id
+ jx9-20020a170907760900b009a5cf23de5bmr846668ejc.38.1695895648586; Thu, 28 Sep
+ 2023 03:07:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXF0rZ0Ej-+x__E9=Ca8Mesb+N+35etqiUzEMzhRR6trCg@mail.gmail.com>
+References: <20230913152238.905247-1-mszeredi@redhat.com> <20230913152238.905247-4-mszeredi@redhat.com>
+ <20230917005419.397938-1-mattlloydhouse@gmail.com> <CAOssrKcECS_CvifP1vMM8YOyMW7dkGXTDTKY2CRr-fPrJk76ZA@mail.gmail.com>
+ <20230918-einblick-klaut-0a010e0abc70@brauner> <CAHC9VhQsChQO9aaY+NTtmvJgXBodvXO6rUN3d7ZyHGqitLBABw@mail.gmail.com>
+In-Reply-To: <CAHC9VhQsChQO9aaY+NTtmvJgXBodvXO6rUN3d7ZyHGqitLBABw@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 28 Sep 2023 12:07:17 +0200
+Message-ID: <CAJfpegtJwcS9=7dCAVCEoBwD_U2MX44a6B62iDsc78AZt6nM7Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/3] add listmnt(2) syscall
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew House <mattlloydhouse@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 25 08:55:46, Ard Biesheuvel wrote:
-> On Mon, 25 Sept 2023 at 03:01, Pingfan Liu <piliu@redhat.com> wrote:
+On Tue, 19 Sept 2023 at 18:48, Paul Moore <paul@paul-moore.com> wrote:
+
+> > Ideally we avoid multiple capable(CAP_SYS_ADMIN) calls by only doing it
+> > once and saving the return value. capable() call's aren't that cheap.
 >
-> [...]
->
-> > > 4. How can we debug the stubs that are being invoked?
-> > > 5. Can we let the EFI binary know that this is a kexec and not a normal
-> > > bootup. Potentially systemd-stub would want to change how/if it does TPM
-> > > PCR measurements.
-> > > ...
-> > >
-> >
-> 
-> Not sure whether this matters. The TPM logic is exposed via EFI
-> protocols, and the kernel could either expose them or not. If it does,
-> and we execute the EFI stub (sytemd-stub) code all the way through to
-> ExitBootServices() while executing in the old kernel, we could even
-> take PCR measurements and display them, giving us secure and measured
-> boot for kexec.
-> 
+> Agreed.  The capability check doesn't do any subject/object
+> comparisons so calling it for each mount is overkill.  However, I
+> would think we would want the LSM hook called from inside the loop as
+> that could involve a subject (@current) and object (individual mount
+> point) comparison.
 
-I think we should definitely delay any of the measurements until
-ExitBootServices(). We don't wan't measurements of a kernel that is not
-running and might even get unloaded before being kexec'ed to make their
-way into the TPM.
+The security_sb_statfs() one?
 
-> > Besides these questions, I wonder whether a highly configured EDK2 can
-> > be used as the stub (ArmVirtQemuKernel.dsc can be the start point).
-> > But there should be efforts to exclude the drivers which have the MMIO
-> > access. I saw Ard is active in EDK2, maybe that is the reason why he
-> > did not pick up EDK2 to serve the stub.
-> >
-> 
-> I don't think EDK2 is suitable for this - the code style is different,
-> the license is different and it is simply a lot of code.
-> 
-> What I would prefer is to define a subset of the EFI boot services
-> that we actually rely on, and perhaps even introduce some other
-> constraints on the EFI code, e.g., allow it to run unprivileged.
-> 
-> That way, kexec could execute the EFI stub as an ordinary user process
-> (to some extent), including allocations for the decompressed kernel,
-> initrd, etc. Finally, the only thing purgatory would need to do is
-> linearize the populated regions in the VA space and copy them to
-> physical memory.
-> 
-> This all sounds very high-level, and there may be some difficulties
-> down the road, but I think this deserves a proper look because it is
-> an appealing way to make EFI execution idempotent in the context of
-> kexec, and also reduces the arch-specific logic substantially.
+Should a single failure result in a complete failure?
 
-I just started work on a proof-of-concept implementation of this [1]. It's
-kinda unorganized and early right now though. Currently just testing with
-executing a bzimage with the normal EFI stub on x86. At this point it starts
-executing the EFI stub which checks efi_system_table->hdr.signature for the
-correct signature (which I have not set yet). That causes the EFI stub to
-exit. It does correctly call the exit function from my provided boot services
-table and the correct ExitStatus gets logged in dmesg. So it's able to call
-into my boot services correctly.
+Why is it not enough to check permission on the parent?
 
-This is definitly the most low level code I've ever written though, so
-I'm just learning this stuff.
-
-Next I'll work on setting up a proper memory mapping for the EFI
-application.
-
-After that I'll work on implementing the needed boot services and
-protocols.
-
-[1] https://github.com/Cydox/linux/commits/kexec-uefi
-
---
-
-Jan
+Thanks,
+Miklos
