@@ -2,203 +2,141 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB7FE732DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Sep 2023 15:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BC9E732E3
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Sep 2023 15:28:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231857AbjI1PQx (ORCPT
+        id S231422AbjI1P2F (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Sep 2023 11:16:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49492 "EHLO
+        Thu, 28 Sep 2023 11:28:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231607AbjI1PQv (ORCPT
+        with ESMTP id S231332AbjI1P2F (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Sep 2023 11:16:51 -0400
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 032D61B4
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Sep 2023 08:16:42 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RxHBc2LNBzMqlhq;
-        Thu, 28 Sep 2023 15:16:40 +0000 (UTC)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RxHBY1ysMz3b;
-        Thu, 28 Sep 2023 17:16:37 +0200 (CEST)
+        Thu, 28 Sep 2023 11:28:05 -0400
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [IPv6:2001:1600:3:17::190d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED75E99
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Sep 2023 08:28:02 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RxHRg6mXXzMr3yF;
+        Thu, 28 Sep 2023 15:27:59 +0000 (UTC)
+Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RxHRf70HvzMppDN;
+        Thu, 28 Sep 2023 17:27:58 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1695914200;
-        bh=ty+Igy5Z/FBAQVOTtSC3W8YKuuYo88dx2jkpPtYf+zU=;
+        s=20191114; t=1695914879;
+        bh=5TbzNnbHjMBaw/hqLYXv0/YPa4xbm8wFAcwV61jhk4M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=akyX00moNZoUYSxVDpJ6Hqr7CJADdBA3JZZ8ZEpdVGyNM81jVH3rf91R/I74k1y0J
-         5pvZ+Djjc3+U0BRx3MIq4zdKFw3Yb1aTvRca4QZNUo2cjID8PYIZBfWRPP7jr4C1gK
-         AYVjurC0hmyiDXSnU8lSsDr4SQ6ZeMfvVxEQlZco=
-Date:   Thu, 28 Sep 2023 17:16:22 +0200
+        b=spWoM0mbRhMT5nzVdAn/x+LHYB1Jj7njxIUT6IcE5acIQ30gQlXV+o2IIEzE64pGX
+         6pxI++jHHiSfFtzHTzr8XS7txfAxpFMfUoEvnSGItvez3EgaTB8kteU8Vg2UE93QRW
+         dTTe90yMw7QhhE8jXssngHGNRjxj7mzulpthbxrc=
+Date:   Thu, 28 Sep 2023 17:27:46 +0200
 From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     Jeff Xu <jeffxu@google.com>
-Cc:     Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
+To:     Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
         Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Ben Scarlato <akhna@google.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     Ben Scarlato <akhna@google.com>,
         =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
+        Jeff Xu <jeffxu@google.com>,
         Jorge Lucangeli Obes <jorgelo@google.com>,
         Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
         Shervin Oloumi <enlightened@google.com>, audit@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 5/7] landlock: Log file-related requests
-Message-ID: <20230928.Haewoh8Aishe@digikod.net>
+Subject: Re: [RFC PATCH v1 0/7] Landlock audit support
+Message-ID: <20230928.wae8Caitha7n@digikod.net>
 References: <20230921061641.273654-1-mic@digikod.net>
- <20230921061641.273654-6-mic@digikod.net>
- <CALmYWFubLv+yd9NWMMwt4FUdYnbghMC=GHeZm4oaSOctqnwbVA@mail.gmail.com>
- <20230926.di9Esee2xahi@digikod.net>
- <CALmYWFuerqvZ3HoUnc9xXYhR8vBgg9qAyA-ncHai4ksN-c-gGQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALmYWFuerqvZ3HoUnc9xXYhR8vBgg9qAyA-ncHai4ksN-c-gGQ@mail.gmail.com>
+In-Reply-To: <20230921061641.273654-1-mic@digikod.net>
 X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Sep 26, 2023 at 02:19:51PM -0700, Jeff Xu wrote:
-> On Tue, Sep 26, 2023 at 6:35 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > On Mon, Sep 25, 2023 at 06:26:28PM -0700, Jeff Xu wrote:
-> > > On Wed, Sep 20, 2023 at 11:17 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > >
-> > > > Add audit support for mkdir, mknod, symlink, unlink, rmdir, truncate,
-> > > > and open requests.
-> > > >
-> > > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > > > ---
-> > > >  security/landlock/audit.c | 114 ++++++++++++++++++++++++++++++++++++++
-> > > >  security/landlock/audit.h |  32 +++++++++++
-> > > >  security/landlock/fs.c    |  62 ++++++++++++++++++---
-> > > >  3 files changed, 199 insertions(+), 9 deletions(-)
-> > > >
-> >
-> > > > +static void
-> > > > +log_request(const int error, struct landlock_request *const request,
-> > > > +           const struct landlock_ruleset *const domain,
-> > > > +           const access_mask_t access_request,
-> > > > +           const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
-> > > > +{
-> > > > +       struct audit_buffer *ab;
-> > > > +
-> > > > +       if (WARN_ON_ONCE(!error))
-> > > > +               return;
-> > > > +       if (WARN_ON_ONCE(!request))
-> > > > +               return;
-> > > > +       if (WARN_ON_ONCE(!domain || !domain->hierarchy))
-> > > > +               return;
-> > > > +
-> > > > +       /* Uses GFP_ATOMIC to not sleep. */
-> > > > +       ab = audit_log_start(audit_context(), GFP_ATOMIC | __GFP_NOWARN,
-> > > > +                            AUDIT_LANDLOCK);
-> > > > +       if (!ab)
-> > > > +               return;
-> > > > +
-> > > > +       update_request(request, domain, access_request, layer_masks);
-> > > > +
-> > > > +       log_task(ab);
-> > > > +       audit_log_format(ab, " domain=%llu op=%s errno=%d missing-fs-accesses=",
-> > > > +                        request->youngest_domain,
-> > > > +                        op_to_string(request->operation), -error);
-> > > > +       log_accesses(ab, request->missing_access);
-> > > > +       audit_log_lsm_data(ab, &request->audit);
-> > > > +       audit_log_end(ab);
-> > > > +}
-> > > > +
-> > > > +// TODO: Make it generic, not FS-centric.
-> > > > +int landlock_log_request(
-> > > > +       const int error, struct landlock_request *const request,
-> > > > +       const struct landlock_ruleset *const domain,
-> > > > +       const access_mask_t access_request,
-> > > > +       const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
-> > > > +{
-> > > > +       /* No need to log the access request, only the missing accesses. */
-> > > > +       log_request(error, request, domain, access_request, layer_masks);
-> > > > +       return error;
-> > > > +}
-> >
-> > > > @@ -636,7 +638,8 @@ static bool is_access_to_paths_allowed(
-> > > >  }
-> > > >
-> > > >  static int current_check_access_path(const struct path *const path,
-> > > > -                                    access_mask_t access_request)
-> > > > +                                    access_mask_t access_request,
-> > > > +                                    struct landlock_request *const request)
-> > > >  {
-> > > >         const struct landlock_ruleset *const dom =
-> > > >                 landlock_get_current_domain();
-> > > > @@ -650,7 +653,10 @@ static int current_check_access_path(const struct path *const path,
-> > > >                                        NULL, 0, NULL, NULL))
-> > > >                 return 0;
-> > > >
-> > > > -       return -EACCES;
-> > > > +       request->audit.type = LSM_AUDIT_DATA_PATH;
-> > > > +       request->audit.u.path = *path;
-> > > > +       return landlock_log_request(-EACCES, request, dom, access_request,
-> > > > +                                   &layer_masks);
-> > >
-> > > It might be more readable to let landlock_log_request return void.
-> > > Then the code will look like below.
-> > >
-> > > landlock_log_request(-EACCES, request, dom, access_request,  &layer_masks);
-> > > return -EACCES;
-> > >
-> > > The allow/deny logic will be in this function, i.e. reader
-> > > doesn't need to check landlock_log_request's implementation to find
-> > > out it never returns 0.
-> >
-> > I did that in an early version of this patch, but I finally choose to write
-> > 'return lanlock_log_request();` for mainly two reasons:
-> > * to help not forget to call this function at any non-zero return values
-> >   (which can easily be checked with grep),
+I talked about this patch series at the Kernel Recipes conference, and
+you might want to take a look at the future work:
+https://landlock.io/talks/2023-09-25_landlock-audit-kr.pdf
+
+In a nutshell, new syscall flags:
+* For landlock_create_ruleset() to opt-in for logging ruleset-related
+  and domain-related use
+* For landlock_add_rule() to opt-in for logging this rule if it granted
+  the requested access
+* For landlock_restrict_self() to opt-in for:
+  * not log anything
+  * handle a permissive mode to log actions that would have been denied
+    (very useful to build a sandbox)
+
+
+On Thu, Sep 21, 2023 at 08:16:34AM +0200, Mickaël Salaün wrote:
+> Hi,
 > 
-> "grep -A 2 landlock_log_request" would serve the same purpose though.
-
-Yes, there is always a way to find a pattern, and the best tool might be
-Coccinelle, but I think it's harder to miss with such tail calls.
-
+> This patch series adds basic audit support to Landlock for most actions.
+> Logging denied requests is useful for different use cases:
+> * app developers: to ease and speed up sandboxing support
+> * power users: to understand denials
+> * sysadmins: to look for users' issues
+> * tailored distro maintainers: to get usage metrics from their fleet
+> * security experts: to detect attack attempts
 > 
-> > * to do tail calls.
-> >
-> > I guess compiler should be smart enough to do tail calls with a variable
-> > set indirection, but I'd like to check that.
-> >
+> To make logs useful, they need to contain the most relevant Landlock
+> domain that denied an action, and the reason. This translates to the
+> latest nested domain and the related missing access rights.
 > 
-> What are tail calls and what is the benefit of this code pattern ?
-> i.e. pass the return value into landlock_log_request() and make it a
-> single point of setting return value for all landlock hooks.
-
-landlock_log_request() should only be called at the end of LSM hooks.
-Tail calls is basically when you call a function at the end of the
-caller. This enables replacing "call" with "jmp" and save stack space.
-landlock_log_request() can fit with this pattern (if not using the
-caller's stack, which is not currently the case). See this tail call
-optimization example: https://godbolt.org/z/r88ofcW6x
-
-I find it less error prone to not duplicate the error code (once for
-landlock_log_request and another for the caller's returned value). I
-also don't really see the pro of using a variable only to share this
-value. In ptrace.c, an "err" variable is used to check if the error is 0
-or not, but that is handled differently for most hooks.
-
-Makeing landlock_log_request() return a value also encourages us (thanks
-to compiler warnings) to use this value and keep the error handling
-consistent (especially for future code).
-
-Another feature that I'd like to add is to support a "permissive mode",
-that would enable to quickly see the impact of a sandbox without
-applying it for real. This might change some landlock_log_request()
-calls, so we'll see what fits best.
-
+> Two "Landlock permissions" are used to describe mandatory restrictions
+> enforced on all domains:
+> * fs_layout: change the view of filesystem with mount operations.
+> * ptrace: tamper with a process.
 > 
-> > To make it easier to read (and to not forget returning the error), the
-> > landlock_log_request() calls a void log_request() helper, and returns
-> > the error itself. It is then easy to review and know what's happening
-> > without reading log_request().
-> >
-> > I'd like the compiler to check itself that every LSM hook returned
-> > values are either 0 or comming from landlock_log_request() but I think
-> > it's not possible right now. Coccinelle might help here though.
-> >
-> > BTW, in a next version, we might have landlock_log_request() called even
-> > for allowed requests (i.e. returned value of 0).
+> Here is an example of logs, result of the sandboxer activity:
+> tid=267 comm="sandboxer" op=create-ruleset ruleset=1 handled_access_fs=execute,write_file,read_file,read_dir,remove_dir,remove_file,make_char,make_dir,make_reg,make_sock,make_fifo,make_block,make_sym,refer,truncate
+> tid=267 comm="sandboxer" op=restrict-self domain=2 ruleset=1 parent=0
+> op=release-ruleset ruleset=1
+> tid=267 comm="bash" domain=2 op=open errno=13 missing-fs-accesses=write_file,read_file missing-permission= path="/dev/tty" dev="devtmpfs" ino=9
+> tid=268 comm="ls" domain=2 op=open errno=13 missing-fs-accesses=read_dir missing-permission= path="/" dev="vda2" ino=256
+> tid=269 comm="touch" domain=2 op=mknod errno=13 missing-fs-accesses=make_reg missing-permission= path="/" dev="vda2" ino=256
+> tid=270 comm="umount" domain=2 op=umount errno=1 missing-fs-accesses= missing-permission=fs_layout name="/" dev="tmpfs" ino=1
+> tid=271 comm="strace" domain=2 op=ptrace errno=1 missing-fs-accesses= missing-permission=ptrace opid=1 ocomm="systemd"
+> 
+> As highlighted in comments, support for audit is not complete yet with
+> this series: some actions are not logged (e.g. file reparenting), and
+> rule additions are not logged neither.
+> 
+> I'm also not sure if we need to have seccomp-like features such as
+> SECCOMP_FILTER_FLAG_LOG, SECCOMP_RET_LOG, and
+> /proc/sys/kernel/seccomp/actions_logged
+> 
+> I'd like to get some early feedback on this proposal.
+> 
+> This series is based on v6.6-rc2
+> 
+> Regards,
+> 
+> Mickaël Salaün (7):
+>   lsm: Add audit_log_lsm_data() helper
+>   landlock: Factor out check_access_path()
+>   landlock: Log ruleset creation and release
+>   landlock: Log domain creation and enforcement
+>   landlock: Log file-related requests
+>   landlock: Log mount-related requests
+>   landlock: Log ptrace requests
+> 
+>  include/linux/lsm_audit.h    |   2 +
+>  include/uapi/linux/audit.h   |   1 +
+>  security/landlock/Makefile   |   2 +
+>  security/landlock/audit.c    | 283 +++++++++++++++++++++++++++++++++++
+>  security/landlock/audit.h    |  88 +++++++++++
+>  security/landlock/fs.c       | 169 ++++++++++++++++-----
+>  security/landlock/ptrace.c   |  47 +++++-
+>  security/landlock/ruleset.c  |   6 +
+>  security/landlock/ruleset.h  |  10 ++
+>  security/landlock/syscalls.c |  12 ++
+>  security/lsm_audit.c         |  26 ++--
+>  11 files changed, 595 insertions(+), 51 deletions(-)
+>  create mode 100644 security/landlock/audit.c
+>  create mode 100644 security/landlock/audit.h
+> 
+> 
+> base-commit: ce9ecca0238b140b88f43859b211c9fdfd8e5b70
+> -- 
+> 2.42.0
+> 
