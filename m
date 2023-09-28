@@ -2,130 +2,165 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4570DE743C2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18128E743C0
 	for <linux-security-module@archiver.kernel.org>; Thu, 28 Sep 2023 20:24:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230246AbjI1UY2 (ORCPT
+        id S230345AbjI1UY1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Sep 2023 16:24:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53358 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230325AbjI1UY1 (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
         Thu, 28 Sep 2023 16:24:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53356 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230246AbjI1UY0 (ORCPT
+        <rfc822;linux-security-module@vger.kernel.org>);
+        Thu, 28 Sep 2023 16:24:26 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AC2C180
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Sep 2023 13:24:26 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C852C433C8;
-        Thu, 28 Sep 2023 20:24:22 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6386519F
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Sep 2023 13:24:22 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90432C433C7;
+        Thu, 28 Sep 2023 20:24:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695932665;
-        bh=xFLt7v04zqMvc7GvlpAipIRzjXFrz3eROkcu4+kDjw4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ohMUj++JdV+H3esHCPLyQZbCGd6rY2RFrI83nK8yium1KADOY1xf8r2uvWRQdX4Hl
-         Ja63hNPNZWOzqRZi5CD3Ia6egBa+ZcbcLsOATxXBrBsH6gMxhg1181SVYVIOFXIU/x
-         u1S4vT3zjmKKogwVbWZ4CRROJyp6xCNbzpI0pBNndMudh+N7b3LrxylP0SKrz/i4m6
-         h2n4DVJMrrTlE1BFXJ2ND5OHJMliBFghP+0LAir6fVrLRsvl6HTK9tn0SLjHVeWABZ
-         lR66AgGboshYWkSDJ/16FmVsP9uF4HX4SZfDkug44DJkYKkS26Cnocyjdtt/3hjNIM
-         H4zhemzAH16iw==
+        s=k20201202; t=1695932662;
+        bh=SlOuoQn/8Al4k/7Si7CZD1d46I2Ly+emoNkcQOfYzwU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Fh11ktqcrosvCgKSL/WuLbRYRGL/PL5p/drSGFx2Pmw+edsH05/45jNkvMsZHPmUi
+         Gth1HZyGlo9BeEvvB812P0yyO8KJXxMVhw2+xJgAgOUFZg40JhuQX08DmCybXvDWFJ
+         26pINhZR0O33Tm8UeH/E3UIJgrMNM7AGyMcXBgcf/oTEucBiRbkQoBW5gxmEmpfXS/
+         pa94oFYiYptTBvaupJxjTIJWzKMsJR+PX/oG4a9dzG/EXmREvZhVbxdwiSGyHy+x3k
+         L/8Znzo62iBE1mXC4GtZi52bItF+bAFwk4hE+zs6TmkYDQj+qvwYvxzCPTUrajp9Gn
+         B6Yb5/c5BaGcA==
 From:   KP Singh <kpsingh@kernel.org>
 To:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org
 Cc:     paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
         song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
         kpsingh@kernel.org, renauld@google.com
-Subject: [PATCH v5 1/5] kernel: Add helper macros for loop unrolling
-Date:   Thu, 28 Sep 2023 22:24:06 +0200
-Message-ID: <20230928202410.3765062-2-kpsingh@kernel.org>
+Subject: [PATCH v5 0/5] Reduce overhead of LSMs with static calls
+Date:   Thu, 28 Sep 2023 22:24:05 +0200
+Message-ID: <20230928202410.3765062-1-kpsingh@kernel.org>
 X-Mailer: git-send-email 2.42.0.582.g8ccd20d70d-goog
-In-Reply-To: <20230928202410.3765062-1-kpsingh@kernel.org>
-References: <20230928202410.3765062-1-kpsingh@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This helps in easily initializing blocks of code (e.g. static calls and
-keys).
+# Background
 
-UNROLL(N, MACRO, __VA_ARGS__) calls MACRO N times with the first
-argument as the index of the iteration. This allows string pasting to
-create unique tokens for variable names, function calls etc.
+LSM hooks (callbacks) are currently invoked as indirect function calls. These
+callbacks are registered into a linked list at boot time as the order of the
+LSMs can be configured on the kernel command line with the "lsm=" command line
+parameter.
 
-As an example:
+Indirect function calls have a high overhead due to retpoline mitigation for
+various speculative execution attacks.
 
-	#include <linux/unroll.h>
+Retpolines remain relevant even with newer generation CPUs as recently
+discovered speculative attacks, like Spectre BHB need Retpolines to mitigate
+against branch history injection and still need to be used in combination with
+newer mitigation features like eIBRS.
 
-	#define MACRO(N, a, b)            \
-		int add_##N(int a, int b) \
-		{                         \
-			return a + b + N; \
-		}
+This overhead is especially significant for the "bpf" LSM which allows the user
+to implement LSM functionality with eBPF program. In order to facilitate this
+the "bpf" LSM provides a default callback for all LSM hooks. When enabled,
+the "bpf" LSM incurs an unnecessary / avoidable indirect call. This is
+especially bad in OS hot paths (e.g. in the networking stack).
+This overhead prevents the adoption of bpf LSM on performance critical
+systems, and also, in general, slows down all LSMs.
 
-	UNROLL(2, MACRO, x, y)
+Since we know the address of the enabled LSM callbacks at compile time and only
+the order is determined at boot time, the LSM framework can allocate static
+calls for each of the possible LSM callbacks and these calls can be updated once
+the order is determined at boot.
 
-expands to:
+This series is a respin of the RFC proposed by Paul Renauld (renauld@google.com)
+and Brendan Jackman (jackmanb@google.com) [1]
 
-	int add_0(int x, int y)
-	{
-		return x + y + 0;
-	}
+# Performance improvement
 
-	int add_1(int x, int y)
-	{
-		return x + y + 1;
-	}
+With this patch-set some syscalls with lots of LSM hooks in their path
+benefitted at an average of ~3% and I/O and Pipe based system calls benefitting
+the most.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-Acked-by: Song Liu <song@kernel.org>
-Signed-off-by: KP Singh <kpsingh@kernel.org>
----
- include/linux/unroll.h | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+Here are the results of the relevant Unixbench system benchmarks with BPF LSM
+and SELinux enabled with default policies enabled with and without these
+patches.
+
+Benchmark                                               Delta(%): (+ is better)
+===============================================================================
+Execl Throughput                                             +1.9356
+File Write 1024 bufsize 2000 maxblocks                       +6.5953
+Pipe Throughput                                              +9.5499
+Pipe-based Context Switching                                 +3.0209
+Process Creation                                             +2.3246
+Shell Scripts (1 concurrent)                                 +1.4975
+System Call Overhead                                         +2.7815
+System Benchmarks Index Score (Partial Only):                +3.4859
+
+In the best case, some syscalls like eventfd_create benefitted to about ~10%.
+The full analysis can be viewed at https://kpsingh.ch/lsm-perf
+
+[1] https://lore.kernel.org/linux-security-module/20200820164753.3256899-1-jackmanb@chromium.org/
+
+
+# BPF LSM Side effects
+
+Patch 4 of the series also addresses the issues with the side effects of the
+default value return values of the BPF LSM callbacks and also removes the
+overheads associated with them making it deployable at hyperscale.
+
+# v4 -> v5
+
+* Rebase to linux-next/master
+* Fixed the case where MAX_LSM_COUNT comes to zero when just CONFIG_SECURITY
+  is compiled in without any other LSM enabled as reported here:
+
+  https://lore.kernel.org/bpf/202309271206.d7fb60f9-oliver.sang@intel.com
+
+# v3 -> v4
+
+* Refactor LSM count macros to use COUNT_ARGS
+* Change CONFIG_SECURITY_HOOK_LIKELY likely's default value to be based on
+  the LSM enabled and have it depend on CONFIG_EXPERT. There are a lot of subtle
+  options behind CONFIG_EXPERT and this should, hopefully alleviate concerns
+  about yet another knob.
+* __randomize_layout for struct lsm_static_call and, in addition to the cover
+  letter add performance numbers to 3rd patch and some minor commit message
+  updates.
+* Rebase to linux-next.
+
+# v2 -> v3
+
+* Fixed a build issue on archs which don't have static calls and enable
+  CONFIG_SECURITY.
+* Updated the LSM_COUNT macros based on Andrii's suggestions.
+* Changed the security_ prefix to lsm_prefix based on Casey's suggestion.
+* Inlined static_branch_maybe into lsm_for_each_hook on Kees' feedback.
+
+# v1 -> v2 (based on linux-next, next-20230614)
+
+* Incorporated suggestions from Kees
+* Changed the way MAX_LSMs are counted from a binary based generator to a clever header.
+* Add CONFIG_SECURITY_HOOK_LIKELY to configure the likelihood of LSM hooks.
+
+
+KP Singh (5):
+  kernel: Add helper macros for loop unrolling
+  security: Count the LSMs enabled at compile time
+  security: Replace indirect LSM hook calls with static calls
+  bpf: Only enable BPF LSM hooks when an LSM program is attached
+  security: Add CONFIG_SECURITY_HOOK_LIKELY
+
+ include/linux/bpf.h       |   1 +
+ include/linux/bpf_lsm.h   |   5 +
+ include/linux/lsm_count.h | 114 ++++++++++++++++++++
+ include/linux/lsm_hooks.h |  81 +++++++++++++--
+ include/linux/unroll.h    |  36 +++++++
+ kernel/bpf/trampoline.c   |  29 +++++-
+ security/Kconfig          |  11 ++
+ security/bpf/hooks.c      |  25 ++++-
+ security/security.c       | 213 +++++++++++++++++++++++++-------------
+ 9 files changed, 432 insertions(+), 83 deletions(-)
+ create mode 100644 include/linux/lsm_count.h
  create mode 100644 include/linux/unroll.h
 
-diff --git a/include/linux/unroll.h b/include/linux/unroll.h
-new file mode 100644
-index 000000000000..d42fd6366373
---- /dev/null
-+++ b/include/linux/unroll.h
-@@ -0,0 +1,36 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/*
-+ * Copyright (C) 2023 Google LLC.
-+ */
-+
-+#ifndef __UNROLL_H
-+#define __UNROLL_H
-+
-+#include <linux/args.h>
-+
-+#define UNROLL(N, MACRO, args...) CONCATENATE(__UNROLL_, N)(MACRO, args)
-+
-+#define __UNROLL_0(MACRO, args...)
-+#define __UNROLL_1(MACRO, args...)  __UNROLL_0(MACRO, args)  MACRO(0, args)
-+#define __UNROLL_2(MACRO, args...)  __UNROLL_1(MACRO, args)  MACRO(1, args)
-+#define __UNROLL_3(MACRO, args...)  __UNROLL_2(MACRO, args)  MACRO(2, args)
-+#define __UNROLL_4(MACRO, args...)  __UNROLL_3(MACRO, args)  MACRO(3, args)
-+#define __UNROLL_5(MACRO, args...)  __UNROLL_4(MACRO, args)  MACRO(4, args)
-+#define __UNROLL_6(MACRO, args...)  __UNROLL_5(MACRO, args)  MACRO(5, args)
-+#define __UNROLL_7(MACRO, args...)  __UNROLL_6(MACRO, args)  MACRO(6, args)
-+#define __UNROLL_8(MACRO, args...)  __UNROLL_7(MACRO, args)  MACRO(7, args)
-+#define __UNROLL_9(MACRO, args...)  __UNROLL_8(MACRO, args)  MACRO(8, args)
-+#define __UNROLL_10(MACRO, args...) __UNROLL_9(MACRO, args)  MACRO(9, args)
-+#define __UNROLL_11(MACRO, args...) __UNROLL_10(MACRO, args) MACRO(10, args)
-+#define __UNROLL_12(MACRO, args...) __UNROLL_11(MACRO, args) MACRO(11, args)
-+#define __UNROLL_13(MACRO, args...) __UNROLL_12(MACRO, args) MACRO(12, args)
-+#define __UNROLL_14(MACRO, args...) __UNROLL_13(MACRO, args) MACRO(13, args)
-+#define __UNROLL_15(MACRO, args...) __UNROLL_14(MACRO, args) MACRO(14, args)
-+#define __UNROLL_16(MACRO, args...) __UNROLL_15(MACRO, args) MACRO(15, args)
-+#define __UNROLL_17(MACRO, args...) __UNROLL_16(MACRO, args) MACRO(16, args)
-+#define __UNROLL_18(MACRO, args...) __UNROLL_17(MACRO, args) MACRO(17, args)
-+#define __UNROLL_19(MACRO, args...) __UNROLL_18(MACRO, args) MACRO(18, args)
-+#define __UNROLL_20(MACRO, args...) __UNROLL_19(MACRO, args) MACRO(19, args)
-+
-+#endif /* __UNROLL_H */
 -- 
 2.42.0.582.g8ccd20d70d-goog
 
