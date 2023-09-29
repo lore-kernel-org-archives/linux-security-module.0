@@ -2,231 +2,200 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 557B1E80ABE
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Sep 2023 10:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2579CE728C4
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Sep 2023 16:03:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233024AbjI2KRT (ORCPT
+        id S233464AbjI2QDw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 Sep 2023 06:17:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33084 "EHLO
+        Fri, 29 Sep 2023 12:03:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232786AbjI2KRP (ORCPT
+        with ESMTP id S233141AbjI2QDw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 Sep 2023 06:17:15 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41C48C0;
-        Fri, 29 Sep 2023 03:17:13 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C55EAC433C7;
-        Fri, 29 Sep 2023 10:16:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695982632;
-        bh=P0eff07RhtpS5UOcz3JkNsf+Ld6yeT/W26VJM0WDCPo=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=XzS9mEvGo34Ng6IbV0phy7oFkBghevr6TXQtKuvgCZiNk6sipSIK1ybdV8fiZNmJi
-         ryG2oocKEqZZKJ0Qpanb9xZf3XPiR4Bq6wmT9EMmf0fleXLKV9fNEg9/bkdRQXUeb0
-         6CCRA5VO7ZThmTCkkfWYanznw4Z3cZqE/s5mMA3tjLRXwYn9bn1bqt+qj2Mv3mg9Lj
-         pTssK95Hwcb1T8QjlazVp2JhItPwZmMqN2Vq1pnJqTnlHDG5dK0bcBFAZ33vjsFaWl
-         leIqxKSfZkutf2lGQF/4jFFb0IVmQg0er/lH6TmX4JwaSuIbh4XkLnYFCd3nLSRRA6
-         40ODyX835zJVA==
-Message-ID: <d52b4330cd26e8ef9b2999281b05e50bd7106b3a.camel@kernel.org>
-Subject: Re: [PATCH 86/87] fs: switch timespec64 fields in inode to discrete
- integers
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Sterba <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>, Jeremy Kerr <jk@ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arve =?ISO-8859-1?Q?Hj=F8nnev=E5g?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Carlos Llamas <cmllamas@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Mattia Dongili <malattia@linux.it>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Brad Warrum <bwarrum@linux.ibm.com>,
-        Ritu Agarwal <rituagar@linux.ibm.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Mark Gross <markgross@kernel.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Sterba <dsterba@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Ian Kent <raven@themaw.net>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Salah Triki <salah.triki@gmail.com>,
-        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Joel Becker <jlbec@evilplan.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Christoph Hellwig <hch@infradead.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <muchun.song@linux.dev>, Jan Kara <jack@suse.cz>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Dave Kleikamp <shaggy@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Neil Brown <neilb@suse.de>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Bob Copeland <me@bobcopeland.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        Anders Larsen <al@alarsen.net>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Evgeniy Dushistov <dushistov@mail.ru>,
-        Chandan Babu R <chandan.babu@oracle.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>,
-        Yonghong Song <yonghong.song@linux.dev>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
+        Fri, 29 Sep 2023 12:03:52 -0400
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [IPv6:2001:1600:4:17::190c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E10831A7
+        for <linux-security-module@vger.kernel.org>; Fri, 29 Sep 2023 09:03:47 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RxwBT28DwzMpntj;
+        Fri, 29 Sep 2023 16:03:45 +0000 (UTC)
+Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RxwBS1ZLbzMppDK;
+        Fri, 29 Sep 2023 18:03:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1696003425;
+        bh=9RrEUFMCn3XCiafqX02HANvSi6JI9RSYZUTuuo4vMGM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PmUDX9Yl22c3K6Uy7nyCVqGYQwEqgZeEyNfYJnWxrvzwh+DA4ecdNXsqCbRU7kZTg
+         3a9bkB0Jx5c8RUeWWKss/4/P7rU0+vE7doSEsE3j1i9qydVx+80D8fWMuRc5vY7Mt9
+         rY5hrhzoHGVCsRQTthsUUAGdMLSqO2MQGAniNVUY=
+Date:   Fri, 29 Sep 2023 18:03:37 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc:     Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
         Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-usb@vger.kernel.org, v9fs@lists.linux.dev,
-        linux-afs@lists.infradead.org, autofs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, linux-efi@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, gfs2@lists.linux.dev,
-        linux-um@lists.infradead.org, linux-mtd@lists.infradead.org,
-        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-        linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
-        linux-unionfs@vger.kernel.org, linux-hardening@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org,
-        linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        bpf@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Date:   Fri, 29 Sep 2023 06:16:57 -0400
-In-Reply-To: <20230929-yuppie-unzweifelhaft-434bf13bc964@brauner>
-References: <20230928110554.34758-1-jlayton@kernel.org>
-         <20230928110554.34758-2-jlayton@kernel.org>
-         <6020d6e7-b187-4abb-bf38-dc09d8bd0f6d@app.fastmail.com>
-         <af047e4a1c6947c59d4a13d4ae221c784a5386b4.camel@kernel.org>
-         <20230929-yuppie-unzweifelhaft-434bf13bc964@brauner>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Ben Scarlato <akhna@google.com>, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@google.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Shervin Oloumi <enlightened@google.com>, audit@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/7] Landlock audit support
+Message-ID: <20230928.ooP7aeghohqu@digikod.net>
+References: <20230921061641.273654-1-mic@digikod.net>
+ <ZRMFwNzBJyyr85hV@google.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZRMFwNzBJyyr85hV@google.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2023-09-29 at 11:44 +0200, Christian Brauner wrote:
-> > It is a lot of churn though.
->=20
-> I think that i_{a,c,m}time shouldn't be accessed directly by
-> filesystems same as no filesystem should really access i_{g,u}id which
-> we also provide i_{g,u}id_{read,write}() accessors for. The mode is
-> another example where really most often should use helpers because of all
-> the set*id stripping that we need to do (and the bugs that we had
-> because of this...).
->=20
-> The interdependency between ctime and mtime is enough to hide this in
-> accessors. The other big advantage is simply grepability. So really I
-> would like to see this change even without the type switch.
->=20
-> In other words, there's no need to lump the two changes together. Do the
-> conversion part and we can argue about the switch to discrete integers
-> separately.
->=20
-> The other adavantage is that we have a cycle to see any possible
-> regression from the conversion.
->=20
-> Thoughts anyone?
+On Tue, Sep 26, 2023 at 06:24:32PM +0200, Günther Noack wrote:
+> Hi Mickaël!
+> 
+> On Thu, Sep 21, 2023 at 08:16:34AM +0200, Mickaël Salaün wrote:
+> > This patch series adds basic audit support to Landlock for most actions.
+> > Logging denied requests is useful for different use cases:
+> > * app developers: to ease and speed up sandboxing support
+> > * power users: to understand denials
+> > * sysadmins: to look for users' issues
+> > * tailored distro maintainers: to get usage metrics from their fleet
+> > * security experts: to detect attack attempts
+> > 
+> > To make logs useful, they need to contain the most relevant Landlock
+> > domain that denied an action, and the reason. This translates to the
+> > latest nested domain and the related missing access rights.
+> 
+> Is "domain" always the latest nested domain, or is that the domain which caused
+> the check to fail because it denied the requested access right?  (If it is just
+> the counter of how many domains are stacked, this could maybe also be queried
+> through proc instead?)
 
-That works for me, and sort of what I was planning anyway. I mostly just
-did the change to timestamp storage to see what it would look like
-afterward.
+The logged domain is the latest nested domain that denied at least one
+access request (others might be denied by older domains).
 
-FWIW, I'm planning to do a v2 patchbomb early next week, with the
-changes that Chuck suggested (specific helpers for fetching the _sec and
-_nsec fields). For now, I'll drop the change from timespec64 to discrete
-fields. We can do that in a separate follow-on set.
---=20
-Jeff Layton <jlayton@kernel.org>
+What do you mean to query it through proc?
+
+> 
+> 
+> > Two "Landlock permissions" are used to describe mandatory restrictions
+> > enforced on all domains:
+> > * fs_layout: change the view of filesystem with mount operations.
+> > * ptrace: tamper with a process.
+> 
+> I find the term "access" already a bit overloaded, and the term "permission"
+> also already appears in other contexts.  Maybe we can avoid the additional
+> terminology by grouping these two together in the log format, and calling them
+> the "cause" or "reason" for the deny decision?  In a sense, the access rights
+> and the other permissions can already be told apart by their names, so they
+> might also both appear under the same key without causing additional confusion?
+
+I choose to have two fields (missing-fs-accesses and missing-permission)
+because one is specific to the FS access rights and the other is
+generic. The reason of a deny is specifically the "missing FS accesses
+or the missing permissions". I though about a generic "missing-accesses"
+but in this case we'll need to prefix all rights with "fs_" or
+"generic_", which seems too verbose. I think that tying to the access
+right types would be less confusing when parsing these logs.
+
+I'm not a fan of the "permission" name neither, but I didn't find a
+better name. This comes from EACCES vs. EPERM.
+
+BTW, I should use fs_topology instead of fs_layout.
+
+> 
+> 
+> > Here is an example of logs, result of the sandboxer activity:
+> > tid=267 comm="sandboxer" op=create-ruleset ruleset=1 handled_access_fs=execute,write_file,read_file,read_dir,remove_dir,remove_file,make_char,make_dir,make_reg,make_sock,make_fifo,make_block,make_sym,refer,truncate
+> > tid=267 comm="sandboxer" op=restrict-self domain=2 ruleset=1 parent=0
+> > op=release-ruleset ruleset=1
+> > tid=267 comm="bash" domain=2 op=open errno=13 missing-fs-accesses=write_file,read_file missing-permission= path="/dev/tty" dev="devtmpfs" ino=9
+> > tid=268 comm="ls" domain=2 op=open errno=13 missing-fs-accesses=read_dir missing-permission= path="/" dev="vda2" ino=256
+> > tid=269 comm="touch" domain=2 op=mknod errno=13 missing-fs-accesses=make_reg missing-permission= path="/" dev="vda2" ino=256
+> > tid=270 comm="umount" domain=2 op=umount errno=1 missing-fs-accesses= missing-permission=fs_layout name="/" dev="tmpfs" ino=1
+> > tid=271 comm="strace" domain=2 op=ptrace errno=1 missing-fs-accesses= missing-permission=ptrace opid=1 ocomm="systemd"
+> 
+> In more complicated cases like "refer" and "open", it is possible that more than
+> one access right is missing, and presumably they'll both be listed in
+> missing-fs-accesses=.  In this case, it is not clear to me whether the domain=
+> number is referring to the first or the second of these missing rights.
+> (Assuming that the domain= is about the domain which caused the denial.)
+
+In the case of "open", only the missing access rigths from the youngest
+domain (that denied at least one request) are printed. This enables to
+focus on this one, which should be the most common use case and the more
+useful when debugging a sandbox. This also means that the logs are not
+complete, only the more relevant informations are logged.
+
+It is more complex in the case of "refer" because two paths/objects are
+involved. I'm not sure how to log such request yet, but I think an
+useful log entry should contain both the source and the destination
+paths, which would be new compared to other LSMs. This would require to
+extend furthermore audit_log_lsm_data(), probably by adding a prefix to
+the "path=" string. I'd like to log only one entry per denial, and then
+only one set of missing rights per domain. This should be OK by
+extracting the youngest missing access rights from the destination
+and/or the source (according to the same domain).
+
+> 
+> 
+> > As highlighted in comments, support for audit is not complete yet with
+> > this series: some actions are not logged (e.g. file reparenting), and
+> > rule additions are not logged neither.
+> 
+> When ftruncate(2) gets denied, it is also not possible to tell which of the
+> nested domains is responsible, without additional changes to what we carry
+> around in the file's security blob.  (Right now, we calculate the overall
+> truncation right in advance at open(2) time, and just store that bit with the
+> newly opened file.)
+
+Right, one solution would be to add a pointer to the domain that set the
+restrictions, but I'd like to avoid that. Instead, we should be able to
+identify the struct file at open time (another case for logging a
+granted access), and then delegate the complexity of domain tracking and
+file lifetime to the (user space) log parser.
+
+> 
+> 
+> > I'm also not sure if we need to have seccomp-like features such as
+> > SECCOMP_FILTER_FLAG_LOG, SECCOMP_RET_LOG, and
+> > /proc/sys/kernel/seccomp/actions_logged
+> > 
+> > I'd like to get some early feedback on this proposal.
+> 
+> If you want to have the full feature set as proposed above for other operations
+> as well, like file reparenting and truncation, it'll complicate the Landlock
+> logic and increase the amount of data that needs to be kept around just for
+> logging.  I'm not convinced that this is worth it.  After all, the simpler the
+> Landlock implementation is, the easier it'll be to reason about its logic and
+> its security guarantees.
+
+I'd also like to keep the *enforcement implementation* as simple as
+possible, and move most of the logging complexity to the audit.c file
+and user space parsers. This patch series doesn't add complexity to the
+enforcement logic, only to the audit logic.
+
+The amount of data should only be a 64-bit ID per domain and ruleset,
+and maybe the same for landlock_file_security (but I guess there are
+other ways to identify a struct file).
+
+Being able to debug Landlock policies is a critical feature for its
+adoption.
+
+> 
+> A possible simplification would be to omit the domain number which is
+> responsible for a "deny" decision.  I feel that for debugging, knowing the fact
+> that Landlock denied an operation might already be a big step forward, and the
+> exact domain responsible for it might not be that important?
+
+Debugging a set of nested policies would be very challenging without the
+ability to identify the exact domain causing denials. Storing an ID
+doesn't look like a significant burden isn't it?
+
+> 
+> —Günther
+> 
+> -- 
+> Sent using Mutt 🐕 Woof Woof
