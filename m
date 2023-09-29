@@ -2,200 +2,255 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2579CE728C4
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Sep 2023 16:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51746E728C3
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Sep 2023 16:04:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233464AbjI2QDw (ORCPT
+        id S233061AbjI2QEH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 Sep 2023 12:03:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40764 "EHLO
+        Fri, 29 Sep 2023 12:04:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233141AbjI2QDw (ORCPT
+        with ESMTP id S233141AbjI2QEH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 Sep 2023 12:03:52 -0400
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [IPv6:2001:1600:4:17::190c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E10831A7
-        for <linux-security-module@vger.kernel.org>; Fri, 29 Sep 2023 09:03:47 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RxwBT28DwzMpntj;
-        Fri, 29 Sep 2023 16:03:45 +0000 (UTC)
-Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RxwBS1ZLbzMppDK;
-        Fri, 29 Sep 2023 18:03:44 +0200 (CEST)
+        Fri, 29 Sep 2023 12:04:07 -0400
+Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACA0A1B4
+        for <linux-security-module@vger.kernel.org>; Fri, 29 Sep 2023 09:04:04 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RxwBq0Mp2zMqF4w;
+        Fri, 29 Sep 2023 16:04:03 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RxwBn61fdzr1;
+        Fri, 29 Sep 2023 18:04:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1696003425;
-        bh=9RrEUFMCn3XCiafqX02HANvSi6JI9RSYZUTuuo4vMGM=;
+        s=20191114; t=1696003442;
+        bh=CMlikyU4Judx0co7OWrQWMzjDIrDxc++8ElpfXH0CmQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PmUDX9Yl22c3K6Uy7nyCVqGYQwEqgZeEyNfYJnWxrvzwh+DA4ecdNXsqCbRU7kZTg
-         3a9bkB0Jx5c8RUeWWKss/4/P7rU0+vE7doSEsE3j1i9qydVx+80D8fWMuRc5vY7Mt9
-         rY5hrhzoHGVCsRQTthsUUAGdMLSqO2MQGAniNVUY=
-Date:   Fri, 29 Sep 2023 18:03:37 +0200
+        b=Wkh0xDBBphMQb0NXKRnQh+8C7tCsaUGDFofPzCkUBaHES8bldLo2PGZs38Nx+SjOA
+         HnhNFgszNsOp4QDWoRcHTVykilOLYvZW1VXa0nXy6m03i/I8qLomRLuQ1YxFSQES8T
+         x7Vjm+7bub9l81NIXLEdxyiXBhnZDM4LY7Qw+T6o=
+Date:   Fri, 29 Sep 2023 18:04:00 +0200
 From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+To:     Jeff Xu <jeffxu@google.com>
 Cc:     Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
         Paul Moore <paul@paul-moore.com>,
         "Serge E . Hallyn" <serge@hallyn.com>,
-        Ben Scarlato <akhna@google.com>, Jeff Xu <jeffxu@google.com>,
+        Ben Scarlato <akhna@google.com>,
+        =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
         Jorge Lucangeli Obes <jorgelo@google.com>,
         Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
         Shervin Oloumi <enlightened@google.com>, audit@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/7] Landlock audit support
-Message-ID: <20230928.ooP7aeghohqu@digikod.net>
+Subject: Re: [RFC PATCH v1 5/7] landlock: Log file-related requests
+Message-ID: <20230929.Zausiachi5Eu@digikod.net>
 References: <20230921061641.273654-1-mic@digikod.net>
- <ZRMFwNzBJyyr85hV@google.com>
+ <20230921061641.273654-6-mic@digikod.net>
+ <CALmYWFubLv+yd9NWMMwt4FUdYnbghMC=GHeZm4oaSOctqnwbVA@mail.gmail.com>
+ <20230926.di9Esee2xahi@digikod.net>
+ <CALmYWFuerqvZ3HoUnc9xXYhR8vBgg9qAyA-ncHai4ksN-c-gGQ@mail.gmail.com>
+ <20230928.Haewoh8Aishe@digikod.net>
+ <CALmYWFvT8EBh+DwW0gw8yU36FKQxtsmO2s5sU6DD8_pfA9yxYg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZRMFwNzBJyyr85hV@google.com>
+In-Reply-To: <CALmYWFvT8EBh+DwW0gw8yU36FKQxtsmO2s5sU6DD8_pfA9yxYg@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Sep 26, 2023 at 06:24:32PM +0200, Günther Noack wrote:
-> Hi Mickaël!
+On Thu, Sep 28, 2023 at 01:04:01PM -0700, Jeff Xu wrote:
+> On Thu, Sep 28, 2023 at 8:16 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > On Tue, Sep 26, 2023 at 02:19:51PM -0700, Jeff Xu wrote:
+> > > On Tue, Sep 26, 2023 at 6:35 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > >
+> > > > On Mon, Sep 25, 2023 at 06:26:28PM -0700, Jeff Xu wrote:
+> > > > > On Wed, Sep 20, 2023 at 11:17 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > >
+> > > > > > Add audit support for mkdir, mknod, symlink, unlink, rmdir, truncate,
+> > > > > > and open requests.
+> > > > > >
+> > > > > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > > > > > ---
+> > > > > >  security/landlock/audit.c | 114 ++++++++++++++++++++++++++++++++++++++
+> > > > > >  security/landlock/audit.h |  32 +++++++++++
+> > > > > >  security/landlock/fs.c    |  62 ++++++++++++++++++---
+> > > > > >  3 files changed, 199 insertions(+), 9 deletions(-)
+> > > > > >
+> > > >
+> > > > > > +static void
+> > > > > > +log_request(const int error, struct landlock_request *const request,
+> > > > > > +           const struct landlock_ruleset *const domain,
+> > > > > > +           const access_mask_t access_request,
+> > > > > > +           const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
+> > > > > > +{
+> > > > > > +       struct audit_buffer *ab;
+> > > > > > +
+> > > > > > +       if (WARN_ON_ONCE(!error))
+> > > > > > +               return;
+> > > > > > +       if (WARN_ON_ONCE(!request))
+> > > > > > +               return;
+> > > > > > +       if (WARN_ON_ONCE(!domain || !domain->hierarchy))
+> > > > > > +               return;
+> > > > > > +
+> > > > > > +       /* Uses GFP_ATOMIC to not sleep. */
+> > > > > > +       ab = audit_log_start(audit_context(), GFP_ATOMIC | __GFP_NOWARN,
+> > > > > > +                            AUDIT_LANDLOCK);
+> > > > > > +       if (!ab)
+> > > > > > +               return;
+> > > > > > +
+> > > > > > +       update_request(request, domain, access_request, layer_masks);
+> > > > > > +
+> > > > > > +       log_task(ab);
+> > > > > > +       audit_log_format(ab, " domain=%llu op=%s errno=%d missing-fs-accesses=",
+> > > > > > +                        request->youngest_domain,
+> > > > > > +                        op_to_string(request->operation), -error);
+> > > > > > +       log_accesses(ab, request->missing_access);
+> > > > > > +       audit_log_lsm_data(ab, &request->audit);
+> > > > > > +       audit_log_end(ab);
+> > > > > > +}
+> > > > > > +
+> > > > > > +// TODO: Make it generic, not FS-centric.
+> > > > > > +int landlock_log_request(
+> > > > > > +       const int error, struct landlock_request *const request,
+> > > > > > +       const struct landlock_ruleset *const domain,
+> > > > > > +       const access_mask_t access_request,
+> > > > > > +       const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
+> > > > > > +{
+> > > > > > +       /* No need to log the access request, only the missing accesses. */
+> > > > > > +       log_request(error, request, domain, access_request, layer_masks);
+> > > > > > +       return error;
+> > > > > > +}
+> > > >
+> > > > > > @@ -636,7 +638,8 @@ static bool is_access_to_paths_allowed(
+> > > > > >  }
+> > > > > >
+> > > > > >  static int current_check_access_path(const struct path *const path,
+> > > > > > -                                    access_mask_t access_request)
+> > > > > > +                                    access_mask_t access_request,
+> > > > > > +                                    struct landlock_request *const request)
+> > > > > >  {
+> > > > > >         const struct landlock_ruleset *const dom =
+> > > > > >                 landlock_get_current_domain();
+> > > > > > @@ -650,7 +653,10 @@ static int current_check_access_path(const struct path *const path,
+> > > > > >                                        NULL, 0, NULL, NULL))
+> > > > > >                 return 0;
+> > > > > >
+> > > > > > -       return -EACCES;
+> > > > > > +       request->audit.type = LSM_AUDIT_DATA_PATH;
+> > > > > > +       request->audit.u.path = *path;
+> > > > > > +       return landlock_log_request(-EACCES, request, dom, access_request,
+> > > > > > +                                   &layer_masks);
+> > > > >
+> > > > > It might be more readable to let landlock_log_request return void.
+> > > > > Then the code will look like below.
+> > > > >
+> > > > > landlock_log_request(-EACCES, request, dom, access_request,  &layer_masks);
+> > > > > return -EACCES;
+> > > > >
+> > > > > The allow/deny logic will be in this function, i.e. reader
+> > > > > doesn't need to check landlock_log_request's implementation to find
+> > > > > out it never returns 0.
+> > > >
+> > > > I did that in an early version of this patch, but I finally choose to write
+> > > > 'return lanlock_log_request();` for mainly two reasons:
+> > > > * to help not forget to call this function at any non-zero return values
+> > > >   (which can easily be checked with grep),
+> > >
+> > > "grep -A 2 landlock_log_request" would serve the same purpose though.
+> >
+> > Yes, there is always a way to find a pattern, and the best tool might be
+> > Coccinelle, but I think it's harder to miss with such tail calls.
+> >
+> > >
+> > > > * to do tail calls.
+> > > >
+> > > > I guess compiler should be smart enough to do tail calls with a variable
+> > > > set indirection, but I'd like to check that.
+> > > >
+> > >
+> > > What are tail calls and what is the benefit of this code pattern ?
+> > > i.e. pass the return value into landlock_log_request() and make it a
+> > > single point of setting return value for all landlock hooks.
+> >
+> > landlock_log_request() should only be called at the end of LSM hooks.
+> > Tail calls is basically when you call a function at the end of the
+> > caller. This enables replacing "call" with "jmp" and save stack space.
+> > landlock_log_request() can fit with this pattern (if not using the
+> > caller's stack, which is not currently the case). See this tail call
+> > optimization example: https://godbolt.org/z/r88ofcW6x
+> >
+> Thanks for giving the context of the tail call.
+> Compile options are controlled by makefile, and can be customized. In
+> the past, I have had different projects setting different O levels for
+> various reasons, including disable optimization completely. Individual
+> Compiler implementation  also matters, gcc vs clang, etc. I think the
+> tail call is probably not essential to the discussion.
 > 
-> On Thu, Sep 21, 2023 at 08:16:34AM +0200, Mickaël Salaün wrote:
-> > This patch series adds basic audit support to Landlock for most actions.
-> > Logging denied requests is useful for different use cases:
-> > * app developers: to ease and speed up sandboxing support
-> > * power users: to understand denials
-> > * sysadmins: to look for users' issues
-> > * tailored distro maintainers: to get usage metrics from their fleet
-> > * security experts: to detect attack attempts
-> > 
-> > To make logs useful, they need to contain the most relevant Landlock
-> > domain that denied an action, and the reason. This translates to the
-> > latest nested domain and the related missing access rights.
-> 
-> Is "domain" always the latest nested domain, or is that the domain which caused
-> the check to fail because it denied the requested access right?  (If it is just
-> the counter of how many domains are stacked, this could maybe also be queried
-> through proc instead?)
+> > I find it less error prone to not duplicate the error code (once for
+> > landlock_log_request and another for the caller's returned value). I
+> > also don't really see the pro of using a variable only to share this
+> > value. In ptrace.c, an "err" variable is used to check if the error is 0
+> > or not, but that is handled differently for most hooks.
+> >
+> > Makeing landlock_log_request() return a value also encourages us (thanks
+> > to compiler warnings) to use this value and keep the error handling
+> > consistent (especially for future code).
+> >
+> One general assumption about logging function is that it is not part
+> of the main business logic, i.e. if the logging statement is
+> removed/commented out, it doesn't have side effects to the main
+> business logic. This is probably why most log functions return void.
 
-The logged domain is the latest nested domain that denied at least one
-access request (others might be denied by older domains).
+I get it. We need to be careful not to add blind spots though. If audit
+is not compiled, the inline function call will just be removed.
+Otherwise, logging or not depends on the audit framework and the runtime
+configuration.
 
-What do you mean to query it through proc?
-
-> 
-> 
-> > Two "Landlock permissions" are used to describe mandatory restrictions
-> > enforced on all domains:
-> > * fs_layout: change the view of filesystem with mount operations.
-> > * ptrace: tamper with a process.
-> 
-> I find the term "access" already a bit overloaded, and the term "permission"
-> also already appears in other contexts.  Maybe we can avoid the additional
-> terminology by grouping these two together in the log format, and calling them
-> the "cause" or "reason" for the deny decision?  In a sense, the access rights
-> and the other permissions can already be told apart by their names, so they
-> might also both appear under the same key without causing additional confusion?
-
-I choose to have two fields (missing-fs-accesses and missing-permission)
-because one is specific to the FS access rights and the other is
-generic. The reason of a deny is specifically the "missing FS accesses
-or the missing permissions". I though about a generic "missing-accesses"
-but in this case we'll need to prefix all rights with "fs_" or
-"generic_", which seems too verbose. I think that tying to the access
-right types would be less confusing when parsing these logs.
-
-I'm not a fan of the "permission" name neither, but I didn't find a
-better name. This comes from EACCES vs. EPERM.
-
-BTW, I should use fs_topology instead of fs_layout.
+Another thing to keep in mind is that for now, if the log failed somehow
+(e.g. because of not enough memory), it will not impact the decision
+(either accept or deny). However, I guess we may want to be able to
+control this behavior is some cases one day, and in this case the log
+function needs to return an error.
 
 > 
-> 
-> > Here is an example of logs, result of the sandboxer activity:
-> > tid=267 comm="sandboxer" op=create-ruleset ruleset=1 handled_access_fs=execute,write_file,read_file,read_dir,remove_dir,remove_file,make_char,make_dir,make_reg,make_sock,make_fifo,make_block,make_sym,refer,truncate
-> > tid=267 comm="sandboxer" op=restrict-self domain=2 ruleset=1 parent=0
-> > op=release-ruleset ruleset=1
-> > tid=267 comm="bash" domain=2 op=open errno=13 missing-fs-accesses=write_file,read_file missing-permission= path="/dev/tty" dev="devtmpfs" ino=9
-> > tid=268 comm="ls" domain=2 op=open errno=13 missing-fs-accesses=read_dir missing-permission= path="/" dev="vda2" ino=256
-> > tid=269 comm="touch" domain=2 op=mknod errno=13 missing-fs-accesses=make_reg missing-permission= path="/" dev="vda2" ino=256
-> > tid=270 comm="umount" domain=2 op=umount errno=1 missing-fs-accesses= missing-permission=fs_layout name="/" dev="tmpfs" ino=1
-> > tid=271 comm="strace" domain=2 op=ptrace errno=1 missing-fs-accesses= missing-permission=ptrace opid=1 ocomm="systemd"
-> 
-> In more complicated cases like "refer" and "open", it is possible that more than
-> one access right is missing, and presumably they'll both be listed in
-> missing-fs-accesses=.  In this case, it is not clear to me whether the domain=
-> number is referring to the first or the second of these missing rights.
-> (Assuming that the domain= is about the domain which caused the denial.)
+> > Another feature that I'd like to add is to support a "permissive mode",
+> > that would enable to quickly see the impact of a sandbox without
+> > applying it for real. This might change some landlock_log_request()
+> > calls, so we'll see what fits best.
+> >
+> It is an excellent feature to have.
+> To implement that, I guess there will be a common function as a switch
+> to allow/deny, and logging the decision, depending on the permissive
+> setting.
 
-In the case of "open", only the missing access rigths from the youngest
-domain (that denied at least one request) are printed. This enables to
-focus on this one, which should be the most common use case and the more
-useful when debugging a sandbox. This also means that the logs are not
-complete, only the more relevant informations are logged.
+Permissive mode will be per domain/sandbox, so it will add complexity to
+the current logging mechanism, but that is worth it.
 
-It is more complex in the case of "refer" because two paths/objects are
-involved. I'm not sure how to log such request yet, but I think an
-useful log entry should contain both the source and the destination
-paths, which would be new compared to other LSMs. This would require to
-extend furthermore audit_log_lsm_data(), probably by adding a prefix to
-the "path=" string. I'd like to log only one entry per denial, and then
-only one set of missing rights per domain. This should be OK by
-extracting the youngest missing access rights from the destination
-and/or the source (according to the same domain).
+> From that point, preparing the code towards that goal makes sense.
+> 
+> > >
+> > > > To make it easier to read (and to not forget returning the error), the
+> > > > landlock_log_request() calls a void log_request() helper, and returns
+> > > > the error itself. It is then easy to review and know what's happening
+> > > > without reading log_request().
+> > > >
+> > > > I'd like the compiler to check itself that every LSM hook returned
+> > > > values are either 0 or comming from landlock_log_request() but I think
+> > > > it's not possible right now. Coccinelle might help here though.
+> > > >
+> > > > BTW, in a next version, we might have landlock_log_request() called even
+> > > > for allowed requests (i.e. returned value of 0).
+> When there is more business logic to landlock_log_request, it is
+> probably better to rename the function. Most devs might assume the log
+> function does nothing but logging.  Having some meaningful name, e.g.
+> check_permissive_and_audit_log,  will help with readability.
 
-> 
-> 
-> > As highlighted in comments, support for audit is not complete yet with
-> > this series: some actions are not logged (e.g. file reparenting), and
-> > rule additions are not logged neither.
-> 
-> When ftruncate(2) gets denied, it is also not possible to tell which of the
-> nested domains is responsible, without additional changes to what we carry
-> around in the file's security blob.  (Right now, we calculate the overall
-> truncation right in advance at open(2) time, and just store that bit with the
-> newly opened file.)
+As for the permissive mode, this would be per domain.
 
-Right, one solution would be to add a pointer to the domain that set the
-restrictions, but I'd like to avoid that. Instead, we should be able to
-identify the struct file at open time (another case for logging a
-granted access), and then delegate the complexity of domain tracking and
-file lifetime to the (user space) log parser.
+I'd like to keep the audit.h functions with the same prefix.
+What about landlock_log_result()?
 
 > 
-> 
-> > I'm also not sure if we need to have seccomp-like features such as
-> > SECCOMP_FILTER_FLAG_LOG, SECCOMP_RET_LOG, and
-> > /proc/sys/kernel/seccomp/actions_logged
-> > 
-> > I'd like to get some early feedback on this proposal.
-> 
-> If you want to have the full feature set as proposed above for other operations
-> as well, like file reparenting and truncation, it'll complicate the Landlock
-> logic and increase the amount of data that needs to be kept around just for
-> logging.  I'm not convinced that this is worth it.  After all, the simpler the
-> Landlock implementation is, the easier it'll be to reason about its logic and
-> its security guarantees.
-
-I'd also like to keep the *enforcement implementation* as simple as
-possible, and move most of the logging complexity to the audit.c file
-and user space parsers. This patch series doesn't add complexity to the
-enforcement logic, only to the audit logic.
-
-The amount of data should only be a 64-bit ID per domain and ruleset,
-and maybe the same for landlock_file_security (but I guess there are
-other ways to identify a struct file).
-
-Being able to debug Landlock policies is a critical feature for its
-adoption.
-
-> 
-> A possible simplification would be to omit the domain number which is
-> responsible for a "deny" decision.  I feel that for debugging, knowing the fact
-> that Landlock denied an operation might already be a big step forward, and the
-> exact domain responsible for it might not be that important?
-
-Debugging a set of nested policies would be very challenging without the
-ability to identify the exact domain causing denials. Storing an ID
-doesn't look like a significant burden isn't it?
-
-> 
-> —Günther
-> 
-> -- 
-> Sent using Mutt 🐕 Woof Woof
+> Thanks!
+> -Jeff
