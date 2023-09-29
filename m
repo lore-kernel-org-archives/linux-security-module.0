@@ -2,582 +2,273 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F2DEE743D7
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Sep 2023 00:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F45CE743E3
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Sep 2023 03:28:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232558AbjI2Amm (ORCPT
+        id S232617AbjI2D2S (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Sep 2023 20:42:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42458 "EHLO
+        Thu, 28 Sep 2023 23:28:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232484AbjI2Aml (ORCPT
+        with ESMTP id S229541AbjI2D2N (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Sep 2023 20:42:41 -0400
-Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D42A1B0;
-        Thu, 28 Sep 2023 17:42:36 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 1D5643200035;
-        Thu, 28 Sep 2023 20:42:32 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 28 Sep 2023 20:42:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1695948151; x=1696034551; bh=X2bcFttqBl9ewIB92kZeWxLF/sT/vAAecpU
-        4Oe2o/Fw=; b=RuSKU+YG6nEu1UC6E4fWV00ynkFktchoQ/0a7a/Ukbm8NHAUpSw
-        jzlojUegTrEjSnF2FYFUT3h4y8YkdYJVzuM5dvHzYExm6/dfRnJfx1Utxbpu+thA
-        DOEYbK+WpaZCCn8XwOODYkGzCLN1hqEH/lGe1fImbxtedVoGOFQls+f28cb7n5S5
-        OaHfODuWXIqU41qtye9qcuOS+WQxHDkd3RP4Cv8ttHnXtN9Q5JvrzfVnhKmrliqo
-        F/IHj0LU0ZfFzHVgbrMOmpGggRn15MuefwAEEa0J5Q8lJsOphJwZBStvgaE0YHnl
-        7HDugUAPkUod2b+aWt5cSZGsp5Uvo0w7P3g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1695948151; x=1696034551; bh=X2bcFttqBl9ewIB92kZeWxLF/sT/vAAecpU
-        4Oe2o/Fw=; b=Ezk1uitAAhUL81xhswK6jqifHqlqdF4jll/MZSzA2ZYXyiAXZ7+
-        mybEB4JHTiaRUmSFux4GYrcQ5yrlYR+RW45TiU41MXRBWGO61Auo5UHXw3e0IqTr
-        Z9UkBZOBOKnlExh26XJjID25h35rHZzjTkkGucBhR+hs4rKAlx/SyCdOlSzHfU1O
-        3EVImT1W5RSKME5sQU2Yc92TO7ZqO6onepohC8pMBzG8tkoW02MGq317q+vLk+2t
-        L+TgRCvWeXRxfzyQuwwO9H2Tnc+Zjko16Qxk3YV//OGWedCS9fW1ltx55ZlnI+Qe
-        e8CtWYvS1uh6QQ8ewdPq12ST9FmiS6kFBYw==
-X-ME-Sender: <xms:dx0WZRlfAwbN11kYKcBL6NmOR36t4He8eWFqMEff9vVadsuOwD7oNg>
-    <xme:dx0WZc0P4jf47U7jvtIamRzckIvYSqwgJZaVbDKwkL8NtJ4rwJkDla0qMr-d1MnCj
-    ZY7eOShjfeX>
-X-ME-Received: <xmr:dx0WZXpAzzPExUneyyXMfjFR-7dnb9oMnNP53Jwwas0L4_tgl4i6pA1-ArMA5D7gXXQ0mQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrtddugdeflecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttdefjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    eugeevheeujeejvdegieehkeeuudfhgfeujefgveegudejieeigeetheekhedvkeenucff
-    ohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:dx0WZRl8h8To65P8KqCy9ZVjyGO1i23frQ_tndsxmrqR7XN0OCR6Rg>
-    <xmx:dx0WZf0Qfrg54N7zRoLX3Ye8_O6fzWtIX6gZvK55p0v5mHAAALfZiA>
-    <xmx:dx0WZQsmE2Fqm4L3hLm9b2H8weAuJQSNYOwieLuD1fucEOFyIlD3mg>
-    <xmx:dx0WZdOdvKHLGu8VwPMLXoKsl6oX_fqlcluUKemjYPmaVTaiGdFWow>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 28 Sep 2023 20:42:25 -0400 (EDT)
-Message-ID: <5787bac5-b368-485a-f906-44e7049d4b8f@themaw.net>
-Date:   Fri, 29 Sep 2023 08:42:22 +0800
+        Thu, 28 Sep 2023 23:28:13 -0400
+Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E53819C;
+        Thu, 28 Sep 2023 20:28:10 -0700 (PDT)
+Received: by mail-ua1-x931.google.com with SMTP id a1e0cc1a2514c-79df12ff0f0so5164966241.3;
+        Thu, 28 Sep 2023 20:28:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695958089; x=1696562889; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IiAb/i1gc98L6SazD4d4ItKm7HOWY4Sc1dUvsARnIt8=;
+        b=Zj6wu2hbBXtbYyTQuFA71C53wbF8PuIPcek7IRZ5p5evtCnhM4RHLS1ciB8ceh/nam
+         AazrV5vm/uC2lXnN6Oi09ElGY7GqmeLgUPi7gERFik0UB2dcHZPMxLEzaAHc0KizeCcJ
+         jy+iCmTdIuJvAx4iVchMJciykIgMZGLaLtji5QTDBg1zO8WyQ1X70ZdoW5ZcjlhgAimF
+         GneNVj6PBDgt5LT0ZFaMAwwHlIojzeBSnC7YTWSSWAn5ilhjP8I4llftBM2mLboWhMvN
+         pu7fLkxmrB+0/olPBxMkkiJXYp0il+Anbp5cqKpOpjUe8ZE97A9IJQU+ZRU+ZOMzZvKI
+         3aUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695958089; x=1696562889;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IiAb/i1gc98L6SazD4d4ItKm7HOWY4Sc1dUvsARnIt8=;
+        b=tL7/g17bpWYcQYaJ16R4JZ+biK1Gzl6plQR7vIhuLMke8njsTE+mA7K+O/hOZJUfrs
+         yec+HsfW8H1aqMyFEu1FyaYpr8jvcsfwJTkxVOA+nBY8PLe1mEEq1rbktn5n6fyzhkkE
+         G6UUV8aUtMya88qBCriEZ/KuiHvfbZy3YjKVtUUAlx3Yc4S9LP3s/iULgvpgzMaFE94n
+         Z4HlHI5iUKIAc1ggoo9adkYq7fkgVt3w/pqmrlVEsPhC2P0VH2r3yGW6goQNy26UCXDR
+         S+L39Q/NMYC6x4/75GDS40EZ31xBA8wyF1/uwS3YZwPoNeWpvf/YlnFSldK9nKPIfNwy
+         FIAg==
+X-Gm-Message-State: AOJu0YyZcKHQstOpPp3yV73AfiQhyqeovlppFglKFv2NaFHBTg3r4tb2
+        F9X2MQBXEcoseJuroV2v5fq4LegLSMMWjlh0Qtg=
+X-Google-Smtp-Source: AGHT+IFwxD5MHwB8nCElH3p97gGzSZFtR6vWTxEs/mssfRQyF6PkJIQiA0uHM4z+FM+M3FEQI561MxdOs0m92SBkdVk=
+X-Received: by 2002:a05:6102:d8:b0:452:6da0:678f with SMTP id
+ u24-20020a05610200d800b004526da0678fmr2890488vsp.9.1695958089382; Thu, 28 Sep
+ 2023 20:28:09 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 3/4] add statmount(2) syscall
-To:     Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Karel Zak <kzak@redhat.com>,
-        David Howells <dhowells@redhat.com>,
+References: <20230928110554.34758-1-jlayton@kernel.org> <20230928110554.34758-2-jlayton@kernel.org>
+ <6020d6e7-b187-4abb-bf38-dc09d8bd0f6d@app.fastmail.com> <af047e4a1c6947c59d4a13d4ae221c784a5386b4.camel@kernel.org>
+ <20230928171943.GK11439@frogsfrogsfrogs>
+In-Reply-To: <20230928171943.GK11439@frogsfrogsfrogs>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 29 Sep 2023 06:27:57 +0300
+Message-ID: <CAOQ4uxjTpPPUa3VXW+DWKy72JABOZBCXD6pjNk-FhJZWnqvNPA@mail.gmail.com>
+Subject: Re: [PATCH 86/87] fs: switch timespec64 fields in inode to discrete integers
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Jeff Layton <jlayton@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Matthew House <mattlloydhouse@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <20230928130147.564503-1-mszeredi@redhat.com>
- <20230928130147.564503-4-mszeredi@redhat.com>
-Content-Language: en-US
-From:   Ian Kent <raven@themaw.net>
-In-Reply-To: <20230928130147.564503-4-mszeredi@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        David Sterba <dsterba@suse.cz>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>, Jeremy Kerr <jk@ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Carlos Llamas <cmllamas@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Mattia Dongili <malattia@linux.it>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Brad Warrum <bwarrum@linux.ibm.com>,
+        Ritu Agarwal <rituagar@linux.ibm.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Mark Gross <markgross@kernel.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Sterba <dsterba@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Ian Kent <raven@themaw.net>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        Joel Becker <jlbec@evilplan.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Jan Kara <jack@suse.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Christoph Hellwig <hch@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <muchun.song@linux.dev>, Jan Kara <jack@suse.cz>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Dave Kleikamp <shaggy@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Bob Copeland <me@bobcopeland.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        Anders Larsen <al@alarsen.net>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Evgeniy Dushistov <dushistov@mail.ru>,
+        Chandan Babu R <chandan.babu@oracle.com>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-usb@vger.kernel.org, v9fs@lists.linux.dev,
+        linux-afs@lists.infradead.org, autofs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, linux-efi@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, gfs2@lists.linux.dev,
+        linux-um@lists.infradead.org, linux-mtd@lists.infradead.org,
+        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
+        linux-unionfs@vger.kernel.org, linux-hardening@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org,
+        linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        bpf@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 28/9/23 21:01, Miklos Szeredi wrote:
-> Add a way to query attributes of a single mount instead of having to parse
-> the complete /proc/$PID/mountinfo, which might be huge.
+On Thu, Sep 28, 2023 at 8:19=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
 >
-> Lookup the mount the new 64bit mount ID.  If a mount needs to be queried
-> based on path, then statx(2) can be used to first query the mount ID
-> belonging to the path.
+> On Thu, Sep 28, 2023 at 01:06:03PM -0400, Jeff Layton wrote:
+> > On Thu, 2023-09-28 at 11:48 -0400, Arnd Bergmann wrote:
+> > > On Thu, Sep 28, 2023, at 07:05, Jeff Layton wrote:
+> > > > This shaves 8 bytes off struct inode, according to pahole.
+> > > >
+> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > >
+> > > FWIW, this is similar to the approach that Deepa suggested
+> > > back in 2016:
+> > >
+> > > https://lore.kernel.org/lkml/1452144972-15802-3-git-send-email-deepa.=
+kernel@gmail.com/
+> > >
+> > > It was NaKed at the time because of the added complexity,
+> > > though it would have been much easier to do it then,
+> > > as we had to touch all the timespec references anyway.
+> > >
+> > > The approach still seems ok to me, but I'm not sure it's worth
+> > > doing it now if we didn't do it then.
+> > >
+> >
+> > I remember seeing those patches go by. I don't remember that change
+> > being NaK'ed, but I wasn't paying close attention at the time
+> >
+> > Looking at it objectively now, I think it's worth it to recover 8 bytes
+> > per inode and open a 4 byte hole that Amir can use to grow the
+> > i_fsnotify_mask. We might even able to shave off another 12 bytes
+> > eventually if we can move to a single 64-bit word per timestamp.
 >
-> Design is based on a suggestion by Linus:
+> I don't think you can, since btrfs timestamps utilize s64 seconds
+> counting in both directions from the Unix epoch.  They also support ns
+> resolution:
 >
->    "So I'd suggest something that is very much like "statfsat()", which gets
->     a buffer and a length, and returns an extended "struct statfs" *AND*
->     just a string description at the end."
+>         struct btrfs_timespec {
+>                 __le64 sec;
+>                 __le32 nsec;
+>         } __attribute__ ((__packed__));
 >
-> The interface closely mimics that of statx.
+> --D
 >
-> Handle ASCII attributes by appending after the end of the structure (as per
-> above suggestion).  Pointers to strings are stored in u64 members to make
-> the structure the same regardless of pointer size.  Strings are nul
-> terminated.
->
-> Link: https://lore.kernel.org/all/CAHk-=wh5YifP7hzKSbwJj94+DZ2czjrZsczy6GBimiogZws=rg@mail.gmail.com/
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->   arch/x86/entry/syscalls/syscall_32.tbl |   1 +
->   arch/x86/entry/syscalls/syscall_64.tbl |   1 +
->   fs/namespace.c                         | 283 +++++++++++++++++++++++++
->   fs/statfs.c                            |   1 +
->   include/linux/syscalls.h               |   5 +
->   include/uapi/asm-generic/unistd.h      |   5 +-
->   include/uapi/linux/mount.h             |  56 +++++
->   7 files changed, 351 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-> index 2d0b1bd866ea..317b1320ad18 100644
-> --- a/arch/x86/entry/syscalls/syscall_32.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
-> @@ -457,3 +457,4 @@
->   450	i386	set_mempolicy_home_node		sys_set_mempolicy_home_node
->   451	i386	cachestat		sys_cachestat
->   452	i386	fchmodat2		sys_fchmodat2
-> +454	i386	statmount		sys_statmount
-> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-> index 1d6eee30eceb..7312c440978f 100644
-> --- a/arch/x86/entry/syscalls/syscall_64.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-> @@ -375,6 +375,7 @@
->   451	common	cachestat		sys_cachestat
->   452	common	fchmodat2		sys_fchmodat2
->   453	64	map_shadow_stack	sys_map_shadow_stack
-> +454	common	statmount		sys_statmount
->   
->   #
->   # Due to a historical design error, certain syscalls are numbered differently
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index c3a41200fe70..3326ba2b2810 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -4687,6 +4687,289 @@ int show_path(struct seq_file *m, struct dentry *root)
->   	return 0;
->   }
->   
-> +static struct vfsmount *lookup_mnt_in_ns(u64 id, struct mnt_namespace *ns)
-> +{
-> +	struct mount *mnt;
-> +	struct vfsmount *res = NULL;
-> +
-> +	lock_ns_list(ns);
-> +	list_for_each_entry(mnt, &ns->list, mnt_list) {
-> +		if (!mnt_is_cursor(mnt) && id == mnt->mnt_id_unique) {
-> +			res = &mnt->mnt;
-> +			break;
-> +		}
-> +	}
-> +	unlock_ns_list(ns);
-> +	return res;
-> +}
 
-Seems like we might need to consider making (struct mnt_namespace)->list
+Sure we can.
+That's what btrfs_inode is for.
+vfs inode also does not store i_otime (birth time) and there is even a
+precedent of vfs/btrfs variable size mismatch:
 
-a hashed list.
+        /* full 64 bit generation number, struct vfs_inode doesn't have a b=
+ig
+         * enough field for this.
+         */
+        u64 generation;
 
+If we decide that vfs should use "bigtime", btrfs pre-historic
+timestamps are not a show stopper.
 
-The number of mounts could be large, for example people using autofs direct
-
-mount setups.
-
-
-It's not common for people to have of the order of 8k map entries (for
-
-which there is a trigger mount per entry plus any mounts that have been
-
-automounted) but it does happen. A small setup would be of the order of
-
-1k map entries plus automounted mounts so the benefit is likely still
-
-there to some extent.
-
-
-Ian
-
-> +
-> +struct stmt_state {
-> +	struct statmnt __user *const buf;
-> +	size_t const bufsize;
-> +	struct vfsmount *const mnt;
-> +	u64 const mask;
-> +	struct seq_file seq;
-> +	struct path root;
-> +	struct statmnt sm;
-> +	size_t pos;
-> +	int err;
-> +};
-> +
-> +typedef int (*stmt_func_t)(struct stmt_state *);
-> +
-> +static int stmt_string_seq(struct stmt_state *s, stmt_func_t func)
-> +{
-> +	size_t rem = s->bufsize - s->pos - sizeof(s->sm);
-> +	struct seq_file *seq = &s->seq;
-> +	int ret;
-> +
-> +	seq->count = 0;
-> +	seq->size = min(seq->size, rem);
-> +	seq->buf = kvmalloc(seq->size, GFP_KERNEL_ACCOUNT);
-> +	if (!seq->buf)
-> +		return -ENOMEM;
-> +
-> +	ret = func(s);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (seq_has_overflowed(seq)) {
-> +		if (seq->size == rem)
-> +			return -EOVERFLOW;
-> +		seq->size *= 2;
-> +		if (seq->size > MAX_RW_COUNT)
-> +			return -ENOMEM;
-> +		kvfree(seq->buf);
-> +		return 0;
-> +	}
-> +
-> +	/* Done */
-> +	return 1;
-> +}
-> +
-> +static void stmt_string(struct stmt_state *s, u64 mask, stmt_func_t func,
-> +		       u32 *str)
-> +{
-> +	int ret = s->pos + sizeof(s->sm) >= s->bufsize ? -EOVERFLOW : 0;
-> +	struct statmnt *sm = &s->sm;
-> +	struct seq_file *seq = &s->seq;
-> +
-> +	if (s->err || !(s->mask & mask))
-> +		return;
-> +
-> +	seq->size = PAGE_SIZE;
-> +	while (!ret)
-> +		ret = stmt_string_seq(s, func);
-> +
-> +	if (ret < 0) {
-> +		s->err = ret;
-> +	} else {
-> +		seq->buf[seq->count++] = '\0';
-> +		if (copy_to_user(s->buf->str + s->pos, seq->buf, seq->count)) {
-> +			s->err = -EFAULT;
-> +		} else {
-> +			*str = s->pos;
-> +			s->pos += seq->count;
-> +		}
-> +	}
-> +	kvfree(seq->buf);
-> +	sm->mask |= mask;
-> +}
-> +
-> +static void stmt_numeric(struct stmt_state *s, u64 mask, stmt_func_t func)
-> +{
-> +	if (s->err || !(s->mask & mask))
-> +		return;
-> +
-> +	s->err = func(s);
-> +	s->sm.mask |= mask;
-> +}
-> +
-> +static u64 mnt_to_attr_flags(struct vfsmount *mnt)
-> +{
-> +	unsigned int mnt_flags = READ_ONCE(mnt->mnt_flags);
-> +	u64 attr_flags = 0;
-> +
-> +	if (mnt_flags & MNT_READONLY)
-> +		attr_flags |= MOUNT_ATTR_RDONLY;
-> +	if (mnt_flags & MNT_NOSUID)
-> +		attr_flags |= MOUNT_ATTR_NOSUID;
-> +	if (mnt_flags & MNT_NODEV)
-> +		attr_flags |= MOUNT_ATTR_NODEV;
-> +	if (mnt_flags & MNT_NOEXEC)
-> +		attr_flags |= MOUNT_ATTR_NOEXEC;
-> +	if (mnt_flags & MNT_NODIRATIME)
-> +		attr_flags |= MOUNT_ATTR_NODIRATIME;
-> +	if (mnt_flags & MNT_NOSYMFOLLOW)
-> +		attr_flags |= MOUNT_ATTR_NOSYMFOLLOW;
-> +
-> +	if (mnt_flags & MNT_NOATIME)
-> +		attr_flags |= MOUNT_ATTR_NOATIME;
-> +	else if (mnt_flags & MNT_RELATIME)
-> +		attr_flags |= MOUNT_ATTR_RELATIME;
-> +	else
-> +		attr_flags |= MOUNT_ATTR_STRICTATIME;
-> +
-> +	if (is_idmapped_mnt(mnt))
-> +		attr_flags |= MOUNT_ATTR_IDMAP;
-> +
-> +	return attr_flags;
-> +}
-> +
-> +static u64 mnt_to_propagation_flags(struct mount *m)
-> +{
-> +	u64 propagation = 0;
-> +
-> +	if (IS_MNT_SHARED(m))
-> +		propagation |= MS_SHARED;
-> +	if (IS_MNT_SLAVE(m))
-> +		propagation |= MS_SLAVE;
-> +	if (IS_MNT_UNBINDABLE(m))
-> +		propagation |= MS_UNBINDABLE;
-> +	if (!propagation)
-> +		propagation |= MS_PRIVATE;
-> +
-> +	return propagation;
-> +}
-> +
-> +static int stmt_sb_basic(struct stmt_state *s)
-> +{
-> +	struct super_block *sb = s->mnt->mnt_sb;
-> +
-> +	s->sm.sb_dev_major = MAJOR(sb->s_dev);
-> +	s->sm.sb_dev_minor = MINOR(sb->s_dev);
-> +	s->sm.sb_magic = sb->s_magic;
-> +	s->sm.sb_flags = sb->s_flags & (SB_RDONLY|SB_SYNCHRONOUS|SB_DIRSYNC|SB_LAZYTIME);
-> +
-> +	return 0;
-> +}
-> +
-> +static int stmt_mnt_basic(struct stmt_state *s)
-> +{
-> +	struct mount *m = real_mount(s->mnt);
-> +
-> +	s->sm.mnt_id = m->mnt_id_unique;
-> +	s->sm.mnt_parent_id = m->mnt_parent->mnt_id_unique;
-> +	s->sm.mnt_id_old = m->mnt_id;
-> +	s->sm.mnt_parent_id_old = m->mnt_parent->mnt_id;
-> +	s->sm.mnt_attr = mnt_to_attr_flags(&m->mnt);
-> +	s->sm.mnt_propagation = mnt_to_propagation_flags(m);
-> +	s->sm.mnt_peer_group = IS_MNT_SHARED(m) ? m->mnt_group_id : 0;
-> +	s->sm.mnt_master = IS_MNT_SLAVE(m) ? m->mnt_master->mnt_group_id : 0;
-> +
-> +	return 0;
-> +}
-> +
-> +static int stmt_propagate_from(struct stmt_state *s)
-> +{
-> +	struct mount *m = real_mount(s->mnt);
-> +
-> +	if (!IS_MNT_SLAVE(m))
-> +		return 0;
-> +
-> +	s->sm.propagate_from = get_dominating_id(m, &current->fs->root);
-> +
-> +	return 0;
-> +}
-> +
-> +static int stmt_mnt_root(struct stmt_state *s)
-> +{
-> +	struct seq_file *seq = &s->seq;
-> +	int err = show_path(seq, s->mnt->mnt_root);
-> +
-> +	if (!err && !seq_has_overflowed(seq)) {
-> +		seq->buf[seq->count] = '\0';
-> +		seq->count = string_unescape_inplace(seq->buf, UNESCAPE_OCTAL);
-> +	}
-> +	return err;
-> +}
-> +
-> +static int stmt_mnt_point(struct stmt_state *s)
-> +{
-> +	struct vfsmount *mnt = s->mnt;
-> +	struct path mnt_path = { .dentry = mnt->mnt_root, .mnt = mnt };
-> +	int err = seq_path_root(&s->seq, &mnt_path, &s->root, "");
-> +
-> +	return err == SEQ_SKIP ? 0 : err;
-> +}
-> +
-> +static int stmt_fs_type(struct stmt_state *s)
-> +{
-> +	struct seq_file *seq = &s->seq;
-> +	struct super_block *sb = s->mnt->mnt_sb;
-> +
-> +	seq_puts(seq, sb->s_type->name);
-> +	return 0;
-> +}
-> +
-> +static int do_statmount(struct stmt_state *s)
-> +{
-> +	struct statmnt *sm = &s->sm;
-> +	struct mount *m = real_mount(s->mnt);
-> +	size_t copysize = min_t(size_t, s->bufsize, sizeof(*sm));
-> +	int err;
-> +
-> +	err = security_sb_statfs(s->mnt->mnt_root);
-> +	if (err)
-> +		return err;
-> +
-> +	if (!capable(CAP_SYS_ADMIN) &&
-> +	    !is_path_reachable(m, m->mnt.mnt_root, &s->root))
-> +		return -EPERM;
-> +
-> +	stmt_numeric(s, STMT_SB_BASIC, stmt_sb_basic);
-> +	stmt_numeric(s, STMT_MNT_BASIC, stmt_mnt_basic);
-> +	stmt_numeric(s, STMT_PROPAGATE_FROM, stmt_propagate_from);
-> +	stmt_string(s, STMT_FS_TYPE, stmt_fs_type, &sm->fs_type);
-> +	stmt_string(s, STMT_MNT_ROOT, stmt_mnt_root, &sm->mnt_root);
-> +	stmt_string(s, STMT_MNT_POINT, stmt_mnt_point, &sm->mnt_point);
-> +
-> +	if (s->err)
-> +		return s->err;
-> +
-> +	/* Return the number of bytes copied to the buffer */
-> +	sm->size = copysize + s->pos;
-> +
-> +	if (copy_to_user(s->buf, sm, copysize))
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> +
-> +SYSCALL_DEFINE4(statmount, const struct __mount_arg __user *, req,
-> +		struct statmnt __user *, buf, size_t, bufsize,
-> +		unsigned int, flags)
-> +{
-> +	struct vfsmount *mnt;
-> +	struct __mount_arg kreq;
-> +	int ret;
-> +
-> +	if (flags)
-> +		return -EINVAL;
-> +
-> +	if (copy_from_user(&kreq, req, sizeof(kreq)))
-> +		return -EFAULT;
-> +
-> +	down_read(&namespace_sem);
-> +	mnt = lookup_mnt_in_ns(kreq.mnt_id, current->nsproxy->mnt_ns);
-> +	ret = -ENOENT;
-> +	if (mnt) {
-> +		struct stmt_state s = {
-> +			.mask = kreq.request_mask,
-> +			.buf = buf,
-> +			.bufsize = bufsize,
-> +			.mnt = mnt,
-> +		};
-> +
-> +		get_fs_root(current->fs, &s.root);
-> +		ret = do_statmount(&s);
-> +		path_put(&s.root);
-> +	}
-> +	up_read(&namespace_sem);
-> +
-> +	return ret;
-> +}
-> +
->   static void __init init_mount_tree(void)
->   {
->   	struct vfsmount *mnt;
-> diff --git a/fs/statfs.c b/fs/statfs.c
-> index 96d1c3edf289..cc774c2e2c9a 100644
-> --- a/fs/statfs.c
-> +++ b/fs/statfs.c
-> @@ -9,6 +9,7 @@
->   #include <linux/security.h>
->   #include <linux/uaccess.h>
->   #include <linux/compat.h>
-> +#include <uapi/linux/mount.h>
->   #include "internal.h"
->   
->   static int flags_by_mnt(int mnt_flags)
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index 22bc6bc147f8..ba371024d902 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -74,6 +74,8 @@ struct landlock_ruleset_attr;
->   enum landlock_rule_type;
->   struct cachestat_range;
->   struct cachestat;
-> +struct statmnt;
-> +struct __mount_arg;
->   
->   #include <linux/types.h>
->   #include <linux/aio_abi.h>
-> @@ -408,6 +410,9 @@ asmlinkage long sys_statfs64(const char __user *path, size_t sz,
->   asmlinkage long sys_fstatfs(unsigned int fd, struct statfs __user *buf);
->   asmlinkage long sys_fstatfs64(unsigned int fd, size_t sz,
->   				struct statfs64 __user *buf);
-> +asmlinkage long sys_statmount(const struct __mount_arg __user *req,
-> +			      struct statmnt __user *buf, size_t bufsize,
-> +			      unsigned int flags);
->   asmlinkage long sys_truncate(const char __user *path, long length);
->   asmlinkage long sys_ftruncate(unsigned int fd, unsigned long length);
->   #if BITS_PER_LONG == 32
-> diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-> index abe087c53b4b..8f034e934a2e 100644
-> --- a/include/uapi/asm-generic/unistd.h
-> +++ b/include/uapi/asm-generic/unistd.h
-> @@ -823,8 +823,11 @@ __SYSCALL(__NR_cachestat, sys_cachestat)
->   #define __NR_fchmodat2 452
->   __SYSCALL(__NR_fchmodat2, sys_fchmodat2)
->   
-> +#define __NR_statmount   454
-> +__SYSCALL(__NR_statmount, sys_statmount)
-> +
->   #undef __NR_syscalls
-> -#define __NR_syscalls 453
-> +#define __NR_syscalls 455
->   
->   /*
->    * 32 bit systems traditionally used different
-> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-> index bb242fdcfe6b..d2c988ab526b 100644
-> --- a/include/uapi/linux/mount.h
-> +++ b/include/uapi/linux/mount.h
-> @@ -138,4 +138,60 @@ struct mount_attr {
->   /* List of all mount_attr versions. */
->   #define MOUNT_ATTR_SIZE_VER0	32 /* sizeof first published struct */
->   
-> +
-> +/*
-> + * Structure for getting mount/superblock/filesystem info with statmount(2).
-> + *
-> + * The interface is similar to statx(2): individual fields or groups can be
-> + * selected with the @mask argument of statmount().  Kernel will set the @mask
-> + * field according to the supported fields.
-> + *
-> + * If string fields are selected, then the caller needs to pass a buffer that
-> + * has space after the fixed part of the structure.  Nul terminated strings are
-> + * copied there and offsets relative to @str are stored in the relevant fields.
-> + * If the buffer is too small, then EOVERFLOW is returned.  The actually used
-> + * size is returned in @size.
-> + */
-> +struct statmnt {
-> +	__u32 size;		/* Total size, including strings */
-> +	__u32 __spare1;
-> +	__u64 mask;		/* What results were written */
-> +	__u32 sb_dev_major;	/* Device ID */
-> +	__u32 sb_dev_minor;
-> +	__u64 sb_magic;		/* ..._SUPER_MAGIC */
-> +	__u32 sb_flags;		/* MS_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIME} */
-> +	__u32 fs_type;		/* [str] Filesystem type */
-> +	__u64 mnt_id;		/* Unique ID of mount */
-> +	__u64 mnt_parent_id;	/* Unique ID of parent (for root == mnt_id) */
-> +	__u32 mnt_id_old;	/* Reused IDs used in proc/.../mountinfo */
-> +	__u32 mnt_parent_id_old;
-> +	__u64 mnt_attr;		/* MOUNT_ATTR_... */
-> +	__u64 mnt_propagation;	/* MS_{SHARED,SLAVE,PRIVATE,UNBINDABLE} */
-> +	__u64 mnt_peer_group;	/* ID of shared peer group */
-> +	__u64 mnt_master;	/* Mount receives propagation from this ID */
-> +	__u64 propagate_from;	/* Propagation from in current namespace */
-> +	__u32 mnt_root;		/* [str] Root of mount relative to root of fs */
-> +	__u32 mnt_point;	/* [str] Mountpoint relative to current root */
-> +	__u64 __spare2[50];
-> +	char str[];		/* Variable size part containing strings */
-> +};
-> +
-> +/*
-> + * To be used on the kernel ABI only for passing 64bit arguments to statmount(2)
-> + */
-> +struct __mount_arg {
-> +	__u64 mnt_id;
-> +	__u64 request_mask;
-> +};
-> +
-> +/*
-> + * @mask bits for statmount(2)
-> + */
-> +#define STMT_SB_BASIC		0x00000001U     /* Want/got sb_... */
-> +#define STMT_MNT_BASIC		0x00000002U	/* Want/got mnt_... */
-> +#define STMT_PROPAGATE_FROM	0x00000004U	/* Want/got propagate_from */
-> +#define STMT_MNT_ROOT		0x00000008U	/* Want/got mnt_root  */
-> +#define STMT_MNT_POINT		0x00000010U	/* Want/got mnt_point */
-> +#define STMT_FS_TYPE		0x00000020U	/* Want/got fs_type */
-> +
->   #endif /* _UAPI_LINUX_MOUNT_H */
+Thanks,
+Amir.
