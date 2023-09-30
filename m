@@ -2,122 +2,132 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2F9E77377
-	for <linux-security-module@archiver.kernel.org>; Sat, 30 Sep 2023 16:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA69E748E6
+	for <linux-security-module@archiver.kernel.org>; Sat, 30 Sep 2023 20:40:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232715AbjI3QOO (ORCPT
+        id S231436AbjI3UkV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 30 Sep 2023 12:14:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44230 "EHLO
+        Sat, 30 Sep 2023 16:40:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231580AbjI3QOO (ORCPT
+        with ESMTP id S231351AbjI3UkU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 30 Sep 2023 12:14:14 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7682FB9;
-        Sat, 30 Sep 2023 09:14:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1696090452; x=1727626452;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BBGRDQrt5IKd0oWFR3VNPSBvkxTXjwI0I+Nd1sQeCQg=;
-  b=UQYs11bZFatX1yN1HAs6UxZZriyv9ZdzWaufOInvOHgnsEt39f0yQ6fw
-   EboMPMK2FqhPsBizg/S4JWand4JaOkGYuxPJVll1RDhgHoG7lpK+WG6ZW
-   y2WwAbbAVrJLW7j56qIR2t/RvcuiOTycFQB2FhXkSyVCNnih+meBrB3Hp
-   Ty0X5kPgzptH7o2CMn5lHzVRDQ/d1BFic7E6vK+yUbHOVm4lOIiJwJ54f
-   IIFYE6JzVZeYYewFv4iYmxb8aXNhZ4/YlRWPjXYJ6cFXAK/IczuYfnOfs
-   cCLWs7t1mX8vrwiQOk/IX0q7sCtU10mGBVgdvMELa8pU7qYAi5kkFdsnx
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10849"; a="1050835"
-X-IronPort-AV: E=Sophos;i="6.03,190,1694761200"; 
-   d="scan'208";a="1050835"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2023 09:14:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.03,190,1694761200"; 
-   d="scan'208";a="1148265"
-Received: from lkp-server02.sh.intel.com (HELO c3b01524d57c) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 30 Sep 2023 09:14:09 -0700
-Received: from kbuild by c3b01524d57c with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qmcbV-0004Gl-2p;
-        Sat, 30 Sep 2023 16:14:05 +0000
-Date:   Sun, 1 Oct 2023 00:13:06 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     KP Singh <kpsingh@kernel.org>,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, paul@paul-moore.com,
-        keescook@chromium.org, casey@schaufler-ca.com, song@kernel.org,
-        daniel@iogearbox.net, ast@kernel.org, kpsingh@kernel.org,
-        renauld@google.com
+        Sat, 30 Sep 2023 16:40:20 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EBCEC4
+        for <linux-security-module@vger.kernel.org>; Sat, 30 Sep 2023 13:40:18 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-6910ea9cddbso13325842b3a.0
+        for <linux-security-module@vger.kernel.org>; Sat, 30 Sep 2023 13:40:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1696106418; x=1696711218; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/fXBByQPl8KY7eiFEi5g6L19V9juEXVrdMizugwt5T4=;
+        b=UCapHfXuAQofwKnuRppIQtd8zlMH0w/4XEYYCviKk7tevL8rzYJ9Wgt/QqjQ9tcSP1
+         G2jv1WU/OvcHrYjdNfxTrpCxKlTxDHjyRS0FhCt6LkteUtHeCaE0II0nxdGesZq3ZpE2
+         +eUpzxfCVrpwuft3reOSlho+coG7y4SaxUO6Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696106418; x=1696711218;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/fXBByQPl8KY7eiFEi5g6L19V9juEXVrdMizugwt5T4=;
+        b=WA3KLrrQZKKLHVZF51+hug24eU5cetAz/O3gc7d2MCRnlct2/PEgLsB40WBh5AzQ3C
+         i44N0vGWmv3gAYYSu0KgVayrhhRQHMQrIvMw/v6YbKI6OPHXLCQ4ofTX3stUYCvHHAP0
+         ovZlgIdns1QWbfW2wy+M1r8XJcCZ496Dw+SmqG04NmiuKYmoB8/oWs7kvB8YEHpgI+gs
+         xsQtsJjhjELugM1j98F3AZESSOtdByjq914wjDitumWav2iHK87pWrpbuJOHt6ECpamP
+         TFL/8wq3tvs5qAZc7fBFJDeWNZ5/0dRk+uXkCKe8O7tow5a7Co6/ceCP/uaIBtDr6DdX
+         JlXA==
+X-Gm-Message-State: AOJu0YwWJ54+cMH7L59izNAo+FbTuKvBqdNfuIYJeWoRLYp9dOWa829/
+        sJUYjo2aJWm8ttzRU9R2sdF4SQ==
+X-Google-Smtp-Source: AGHT+IHkTbEpe8NOY7N2PNQrvQoHeBby2OJO5lF43caE809j96ZmiK/fEidsdab5v6MBMYeNGYv2cg==
+X-Received: by 2002:a05:6a20:3d85:b0:133:f0b9:856d with SMTP id s5-20020a056a203d8500b00133f0b9856dmr9963086pzi.17.1696106417880;
+        Sat, 30 Sep 2023 13:40:17 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id e24-20020a62aa18000000b0068ff6d21563sm17490177pff.148.2023.09.30.13.40.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Sep 2023 13:40:17 -0700 (PDT)
+Date:   Sat, 30 Sep 2023 13:40:14 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     kernel test robot <lkp@intel.com>
+Cc:     KP Singh <kpsingh@kernel.org>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        oe-kbuild-all@lists.linux.dev, paul@paul-moore.com,
+        casey@schaufler-ca.com, song@kernel.org, daniel@iogearbox.net,
+        ast@kernel.org, renauld@google.com
 Subject: Re: [PATCH v5 3/5] security: Replace indirect LSM hook calls with
  static calls
-Message-ID: <202309302332.1mxVwb0U-lkp@intel.com>
+Message-ID: <202309301339.8196ECC78@keescook>
 References: <20230928202410.3765062-4-kpsingh@kernel.org>
+ <202309302332.1mxVwb0U-lkp@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230928202410.3765062-4-kpsingh@kernel.org>
+In-Reply-To: <202309302332.1mxVwb0U-lkp@intel.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi KP,
+On Sun, Oct 01, 2023 at 12:13:06AM +0800, kernel test robot wrote:
+> Hi KP,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on bpf-next/master]
+> [also build test ERROR on bpf/master pcmoore-selinux/next linus/master v6.6-rc3 next-20230929]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/KP-Singh/kernel-Add-helper-macros-for-loop-unrolling/20230929-042610
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+> patch link:    https://lore.kernel.org/r/20230928202410.3765062-4-kpsingh%40kernel.org
+> patch subject: [PATCH v5 3/5] security: Replace indirect LSM hook calls with static calls
+> config: i386-randconfig-001-20230930 (https://download.01.org/0day-ci/archive/20230930/202309302332.1mxVwb0U-lkp@intel.com/config)
+> compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230930/202309302332.1mxVwb0U-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202309302332.1mxVwb0U-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+> >> security/security.c:139:1: error: Only string constants are supported as initializers for randomized structures with flexible arrays
+>      139 | };
+>          | ^
 
-kernel test robot noticed the following build errors:
+Uuh, where is there a flexible array here?
 
-[auto build test ERROR on bpf-next/master]
-[also build test ERROR on bpf/master pcmoore-selinux/next linus/master v6.6-rc3 next-20230929]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> vim +139 security/security.c
+> 
+>    118	
+>    119	/*
+>    120	 * Initialise a table of static calls for each LSM hook.
+>    121	 * DEFINE_STATIC_CALL_NULL invocation above generates a key (STATIC_CALL_KEY)
+>    122	 * and a trampoline (STATIC_CALL_TRAMP) which are used to call
+>    123	 * __static_call_update when updating the static call.
+>    124	 */
+>    125	struct lsm_static_calls_table static_calls_table __ro_after_init = {
+>    126	#define INIT_LSM_STATIC_CALL(NUM, NAME)					\
+>    127		(struct lsm_static_call) {					\
+>    128			.key = &STATIC_CALL_KEY(LSM_STATIC_CALL(NAME, NUM)),	\
+>    129			.trampoline = LSM_HOOK_TRAMP(NAME, NUM),		\
+>    130			.active = &SECURITY_HOOK_ACTIVE_KEY(NAME, NUM),		\
+>    131		},
+>    132	#define LSM_HOOK(RET, DEFAULT, NAME, ...)				\
+>    133		.NAME = {							\
+>    134			LSM_DEFINE_UNROLL(INIT_LSM_STATIC_CALL, NAME)		\
+>    135		},
+>    136	#include <linux/lsm_hook_defs.h>
+>    137	#undef LSM_HOOK
+>    138	#undef INIT_LSM_STATIC_CALL
+>  > 139	};
+>    140	
 
-url:    https://github.com/intel-lab-lkp/linux/commits/KP-Singh/kernel-Add-helper-macros-for-loop-unrolling/20230929-042610
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20230928202410.3765062-4-kpsingh%40kernel.org
-patch subject: [PATCH v5 3/5] security: Replace indirect LSM hook calls with static calls
-config: i386-randconfig-001-20230930 (https://download.01.org/0day-ci/archive/20230930/202309302332.1mxVwb0U-lkp@intel.com/config)
-compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230930/202309302332.1mxVwb0U-lkp@intel.com/reproduce)
+*confused*
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309302332.1mxVwb0U-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> security/security.c:139:1: error: Only string constants are supported as initializers for randomized structures with flexible arrays
-     139 | };
-         | ^
-
-
-vim +139 security/security.c
-
-   118	
-   119	/*
-   120	 * Initialise a table of static calls for each LSM hook.
-   121	 * DEFINE_STATIC_CALL_NULL invocation above generates a key (STATIC_CALL_KEY)
-   122	 * and a trampoline (STATIC_CALL_TRAMP) which are used to call
-   123	 * __static_call_update when updating the static call.
-   124	 */
-   125	struct lsm_static_calls_table static_calls_table __ro_after_init = {
-   126	#define INIT_LSM_STATIC_CALL(NUM, NAME)					\
-   127		(struct lsm_static_call) {					\
-   128			.key = &STATIC_CALL_KEY(LSM_STATIC_CALL(NAME, NUM)),	\
-   129			.trampoline = LSM_HOOK_TRAMP(NAME, NUM),		\
-   130			.active = &SECURITY_HOOK_ACTIVE_KEY(NAME, NUM),		\
-   131		},
-   132	#define LSM_HOOK(RET, DEFAULT, NAME, ...)				\
-   133		.NAME = {							\
-   134			LSM_DEFINE_UNROLL(INIT_LSM_STATIC_CALL, NAME)		\
-   135		},
-   136	#include <linux/lsm_hook_defs.h>
-   137	#undef LSM_HOOK
-   138	#undef INIT_LSM_STATIC_CALL
- > 139	};
-   140	
+-Kees
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Kees Cook
