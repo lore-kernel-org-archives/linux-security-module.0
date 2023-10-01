@@ -2,175 +2,167 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A37A0E748ED
-	for <linux-security-module@archiver.kernel.org>; Sun,  1 Oct 2023 14:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 466E5E748E9
+	for <linux-security-module@archiver.kernel.org>; Sun,  1 Oct 2023 14:43:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235005AbjJAO0V (ORCPT
+        id S231185AbjJAOno (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 1 Oct 2023 10:26:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48794 "EHLO
+        Sun, 1 Oct 2023 10:43:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233590AbjJAO0U (ORCPT
+        with ESMTP id S230173AbjJAOnn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 1 Oct 2023 10:26:20 -0400
+        Sun, 1 Oct 2023 10:43:43 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AE7EAB
-        for <linux-security-module@vger.kernel.org>; Sun,  1 Oct 2023 07:26:17 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B68B6C433CB
-        for <linux-security-module@vger.kernel.org>; Sun,  1 Oct 2023 14:26:16 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B00183
+        for <linux-security-module@vger.kernel.org>; Sun,  1 Oct 2023 07:43:41 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F5DBC433CA
+        for <linux-security-module@vger.kernel.org>; Sun,  1 Oct 2023 14:43:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696170376;
-        bh=4PCgQ6n3OWAggDFGP5fJ11V+Hd6aNBbabWmB4liLuJY=;
+        s=k20201202; t=1696171421;
+        bh=MxXNKGkMABTj7m1F3TnGs0m9Nxu+TtI9S/sISzcyIis=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DkrBtIjTBLk1KZZHshUVg4hxGseJez4aSI/vrYq4mOJmtpFDuCpfw64uXb8im7EEo
-         y40WGkEevTgrdKyc4SpVDcJ0DfgYrAq01XGtHyVYeASaIl0d1ve9Pc0K53Nf9LGY6t
-         k+R3GdMzo9TXCx060Y0We9URNWQPqIeOOwyQ4LMLd9wkEko8a5F7VQ3Yix6Y6w9L3i
-         SIW317VGkcMI63V7F2gTO0xT5cW1gBhEx4CS0tnXqa6VxXjabwEwLK1Xgsv77H4U/7
-         Lb/VSuIB3fYSQgNbCHH+rVOAypwQNpnV0PwAJ9AtuEXdinsMyKq3HTradjj0T+jdx9
-         HsztzKVEVN1IQ==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5362bcc7026so5947276a12.1
-        for <linux-security-module@vger.kernel.org>; Sun, 01 Oct 2023 07:26:16 -0700 (PDT)
-X-Gm-Message-State: AOJu0YwSGBdoRIqYF310iQ8JZz9J47Qrisw1krf8DG3PC2qnd5dmST7Q
-        XVXPMiJiBrZuQrWoQCuGlTzLY+UeTtvZcp+MmZvPOw==
-X-Google-Smtp-Source: AGHT+IGfWEn9cKGXm8yfkaoBd5C90LjZNxSm8Ua8OhdToxN8IgqT44UN6FqWeKogo2WhZ+xSy/lcJ4EAaRIKXCwBw3w=
-X-Received: by 2002:a05:6402:400d:b0:538:8d4:2077 with SMTP id
- d13-20020a056402400d00b0053808d42077mr3837502eda.13.1696170375101; Sun, 01
- Oct 2023 07:26:15 -0700 (PDT)
+        b=MDa/wof5f7n7KdZbQpuQjIEyiC75hw90J5UMHSP9yMZDgwbymTUeCS/mBw70cluho
+         7YTQyxWz9o0Hj+/HIXJ6g4+Zv3t9DjCkWirjPrb/Kslm63xSmvxenLbs4cC8ZiIPBK
+         LDbhl6uf8k6CcRbRurIKrOy7hJEeSxeqaz630aVE80zCSo9Y7sL/eIryJ+dxFVH38U
+         yFTf4pWZLebL6iErYhMl3K9yNoywxBsLR/ZzOMa/PQSQyyR0R4KgdiVpOTxw262xGQ
+         YreEImWKUmmltNRzrcrmWU4apV0O3O8xlFDV9EqzBUge7ByIyoFm3fhUUXTeE6ruh8
+         b6jZEM0qiTndw==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5384975e34cso628282a12.0
+        for <linux-security-module@vger.kernel.org>; Sun, 01 Oct 2023 07:43:41 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzIf1YRIimbIls7M1YOSkICp427LOiK59AS9h9pdnJFsMUaTLJl
+        Xwofbz1BEa8DgObc6l8PzuXMUaAbAjdAfyxLqZxX3w==
+X-Google-Smtp-Source: AGHT+IFXD1zwL0BFsbEcDshW+JOKqTiSKH988yrcZYFh4rFUK1Gnv1NJrE+66LFvnxVk3cg6eZMEkAlM70J6AnkSh6w=
+X-Received: by 2002:aa7:c7c3:0:b0:530:52a0:8b1a with SMTP id
+ o3-20020aa7c7c3000000b0053052a08b1amr7385105eds.25.1696171419555; Sun, 01 Oct
+ 2023 07:43:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230918212459.1937798-1-kpsingh@kernel.org> <20230918212459.1937798-3-kpsingh@kernel.org>
- <cb67f607-3a9d-34d2-0877-a3ff957da79e@I-love.SAKURA.ne.jp>
- <CACYkzJ5GFsgc3vzJXH34hgoTc+CEf+7rcktj0QGeQ5e8LobRcw@mail.gmail.com>
- <dde20522-af01-c198-5872-b19ef378f286@I-love.SAKURA.ne.jp>
- <CACYkzJ5M0Bw9S_mkFkjR_-bRsKryXh2LKiurjMX9WW-d0Mr6bg@mail.gmail.com>
- <ed785c86-a1d8-caff-c629-f8a50549e05b@I-love.SAKURA.ne.jp>
- <CACYkzJ4TLCMFEa5h-iEVC-58cakjduw44c-ct64SgBe0_jFKuQ@mail.gmail.com>
- <6a80711e-edc4-9fab-6749-f1efa9e4231e@I-love.SAKURA.ne.jp>
- <CACYkzJ4AGRcqLPqWY65OC778EPaUwTBpyOMfiVBXa4EmnHTXGQ@mail.gmail.com> <c1683052-aa5a-e0d5-25ae-40316273ed1b@I-love.SAKURA.ne.jp>
-In-Reply-To: <c1683052-aa5a-e0d5-25ae-40316273ed1b@I-love.SAKURA.ne.jp>
+References: <cc8e16bb-5083-01da-4a77-d251a76dc8ff@I-love.SAKURA.ne.jp>
+ <CACYkzJ5k7oYxFgWp9bz1Wmp3n6LcU39Mh-HXFWTKnZnpY-Ef7w@mail.gmail.com> <153e7c39-d2e2-db31-68cd-cb05eb2d46db@I-love.SAKURA.ne.jp>
+In-Reply-To: <153e7c39-d2e2-db31-68cd-cb05eb2d46db@I-love.SAKURA.ne.jp>
 From:   KP Singh <kpsingh@kernel.org>
-Date:   Sun, 1 Oct 2023 16:26:04 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ7_42dhynhmuCBF6z0hyMkYL_FxLR9rM1beCwJVkEv9gQ@mail.gmail.com>
-Message-ID: <CACYkzJ7_42dhynhmuCBF6z0hyMkYL_FxLR9rM1beCwJVkEv9gQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] security: Count the LSMs enabled at compile time
+Date:   Sun, 1 Oct 2023 16:43:28 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ79fvoQW5uqavdLV=N8zw6uern8m-6cM44YYFDhJF248A@mail.gmail.com>
+Message-ID: <CACYkzJ79fvoQW5uqavdLV=N8zw6uern8m-6cM44YYFDhJF248A@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] LSM: Allow dynamically appendable LSM modules.
 To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
-        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        Kui-Feng Lee <sinquersw@gmail.com>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>, bpf <bpf@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Oct 1, 2023 at 12:51=E2=80=AFPM Tetsuo Handa
+On Sun, Oct 1, 2023 at 1:08=E2=80=AFPM Tetsuo Handa
 <penguin-kernel@i-love.sakura.ne.jp> wrote:
 >
-> On 2023/09/25 20:22, KP Singh wrote:
-> >> It is Casey's commitment that the LSM infrastructure will not forbid L=
-KM-based LSMs.
-> >> We will start allowing LKM-based LSMs. But it is not clear how we can =
-make it possible to
-> >> allow LKM-based LSMs.
+> On 2023/09/28 1:02, KP Singh wrote:
+> >> Question for KP Singh would be how can we allow dynamically appendable
+> >> LSM modules if current linked list is replaced with static calls with
+> >> minimal-sized array...
 > >
-> > I think this needs to be discussed if and when we allow LKM based LSMs.
+> > As I suggested in the other thread:
+> >
+> > https://lore.kernel.org/bpf/20230918212459.1937798-1-kpsingh@kernel.org=
+/T/#md21b9d9cc769f39e451d20364857b693d3fcb587
+> >
+> > You can add extra static call slots and fallback to a linked list
+> > based implementation if you have more than say N modules [1] and
+> > fallback to a linked list implementation [2].
 >
-> It is *now* (i.e. before your proposal is accepted) that we need to discu=
-ss.
+> As I explained in the other thread:
 >
-> > One needs to know MAX_LSM_COUNT at compile time (not via kernel
-> > command line), I really suggest you try out your suggestions before
-> > posting them. I had explained this to you earlier, you still chose to
-> > ignore and keep suggesting stuff that does not work.
+> https://lkml.kernel.org/r/c1683052-aa5a-e0d5-25ae-40316273ed1b@I-love.SAK=
+URA.ne.jp
 >
-> Your proposal needs to know MAX_LSM_COUNT at compile time, that's why
-> we need to discuss now.
+> build-time configuration does not help at all.
+>
+> >
+> > for [1] you can just do MAX_LSM_COUNT you can just do:
+> >
+> > #ifdef CONFIG_MODULAR_LSM
+> > #define MODULAR_LSM_ENABLED "1,1,1,1"
+> > #endif
+> >
+> > and use it in the LSM_COUNT.
+> >
+> > for [2] you can choose to export a better module API than directly
+> > exposing security_hook_heads.
+> >
+> > Now, comes the question of whether we need dynamically loaded LSMs, I
+> > am not in favor of this. Please share your limitations of BPF as you
+> > mentioned and what's missing to implement dynamic LSMs. My question
+> > still remains unanswered.
+> >
+> > Until I hear the real limitations of using BPF, it's a NAK from me.
+>
+> Simple questions that TOMOYO/AKARI/CaitSith LSMs depend:
+>
+>   Q1: How can the BPF allow allocating permanent memory (e.g. kmalloc()) =
+that remains
+>       the lifetime of the kernel (e.g. before starting the global init pr=
+ocess till
+>       the content of RAM is lost by stopping electric power supply) ?
 
-People already mention that you seem to deliberately ignore advice
-given to you and continue with your own narrative. Here's my last
-attempt to explain things to you:
+This is very much possible using global BPF maps. Maps can be "pinned"
+so that they remain allocated until explicitly freed [or RAM is lost
+by stopping electric power supply"]
 
-You are conflating two use cases, built-in out-of-tree LSMS and
-modular LSMs. However, the proposed changes block neither of the use
-cases.
+Here's an example of BPF program that allocates maps:
 
-* For modules that are out-of-tree but compiled into the kernel, they
-can just modify the MAX_LSM_COUNT
-* For dynamically loadable LSMs, you anyways want a separate
-security_hook_heads. The __ro_after_init should not be relaxed on the
-existing security_hook_heads to prevent any memory corruption from
-overriding LSM callbacks, this lowers the existing security posture.
-And then, in the call_int_hook and security_for_each_hook you can
-iterate over both the static call slots.
+    https://elixir.bootlin.com/linux/latest/source/tools/testing/selftests/=
+bpf/progs/test_pinning.c#L26
 
-^^ I said the above multiple times but you ignored all of it!
+and the corresponding userspace code that does the pinning:
+
+    https://elixir.bootlin.com/linux/latest/source/tools/testing/selftests/=
+bpf/prog_tests/pinning.c
+
+Specifically for LSMs, we also added support for security blobs which
+are tied to a particular object and are free with the object, have a
+look at the storage which is allocated in the program:
+
+   https://elixir.bootlin.com/linux/latest/source/tools/testing/selftests/b=
+pf/progs/local_storage.c#L79
+
+Again, code and context on what you want to do will let me help you more he=
+re.
+
+>
+>   Q2: How can the BPF allow interacting with other process (e.g. inter pr=
+ocess communication
+>       using read()/write()) which involves opening some file on the files=
+ystem and sleeping
+>       for arbitrary duration?
+
+The BPF program runs in the kernel context, so yes all of this is
+possible. IPC can be done with the bpf_ring_buffer / maps and BPF also
+has the ability to send signals. One can poll on the ring buffer on
+events and data from the BPF program and do a lots of things.
+
+* e.g. receive and log command line parameters (e.g. from the security
+hook bprm_committed_creds).
+* Trigger various actions in user space.
+
+Can you share your module code here, so that one can provide more
+concrete suggestions?
 
 - KP
 
 >
-> > We will see when this happens. I don't think it's a difficult problem
-> > and there are many ways to implement this:
+>
+>
+> >>  struct security_hook_heads security_hook_heads __ro_after_init;
+> >> +EXPORT_SYMBOL_GPL(security_hook_heads);
 > >
-> > * Add a new slot(s) for modular LSMs (One can add up to N fast modular =
-LSMs)
-> > * Fallback to a linked list for modular LSMs, that's not a complexity.
-> > There are serious performance gains and I think it's a fair trade-off.
-> > This isn't even complex.
+> > Rather than exposting security_hook_heads, this should actually export
+> > security_hook_module_register. This should internally handle any data
+> > structures used and also not need the special magic that you did for
+> > __ro_after_init.
 >
-> That won't help at all. You became so blind because what you want to use =
-(i.e.
-> SELinux and BPF) are already supported by Linux distributors. The reason =
-I'm
-> insisting on supporting LKM-based LSMs is that Linux distributors cannot =
-afford
-> supporting minor LSMs.
->
-> Dave Chinner said
->
->   Downstream distros support all sorts of out of tree filesystems loaded
->   via kernel modules
->
-> at https://lkml.kernel.org/r/ZQo94mCzV7hOrVkh@dread.disaster.area , and e=
-.g.
-> antivirus software vendors use out of tree filesystems loaded via kernel
-> modules (because neither the upstream kernel community nor the Linux dist=
-ributors
-> can afford supporting out of tree filesystems used by antivirus software =
-vendors).
->
-> If Linux distributors decide "we don't allow loading out of tree filesyst=
-ems
-> via kernel modules because we can't support", that's the end of the world=
- for
-> such filesystems.
->
-> What I'm saying is nothing but s/filesystem/LSM/g .
-> If Linux distributors decide "we don't allow loading out of tree LSMs
-> via kernel modules because we can't support", that's the end of the world=
- for
-> LKM-based LSMs.
->
-> The mechanism which makes LKM-based LSMs possible must not be disabled by
-> the person/organization who builds the vmlinux.
->
-> You might still say that "You can build your vmlinux and distribute it", =
-but
-> that is also impossible in practice. Some device drivers are meant to be =
-loaded
-> for Linux distribution's prebuilt kernels. Also, debuginfo package is nee=
-ded for
-> analyzing vmcore. Building vmlinux and distributing it is not practical w=
-ithout
-> becoming a well-known Linux distributors enough to get out-of-tree device=
- drivers
-> being prebuilt (such as Red Hat).
->
-> Again, you are so blind.
->
-> > Now, this patch and the patch that makes security_hook_heads
-> > __ro_after_init by removing CONFIG_SECURITY_HOOKS_WRITABLE breaks your
-> > hack.
->
-> Like I demonstrated at https://lkml.kernel.org/r/cc8e16bb-5083-01da-4a77-=
-d251a76dc8ff@I-love.SAKURA.ne.jp ,
-> removing CONFIG_SECURITY_HOOKS_WRITABLE does not break my hack.
+> I'm fine if security_hook_module_register() (and related code) cannot be
+> disabled by the kernel configuration.
 >
