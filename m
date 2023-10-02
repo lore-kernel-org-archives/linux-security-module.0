@@ -2,91 +2,128 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 776EBE784B8
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Oct 2023 14:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB76E748F8
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Oct 2023 17:06:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237813AbjJBOfK (ORCPT
+        id S238648AbjJBRGM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 2 Oct 2023 10:35:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46896 "EHLO
+        Mon, 2 Oct 2023 13:06:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237810AbjJBOfC (ORCPT
+        with ESMTP id S238636AbjJBRGL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 2 Oct 2023 10:35:02 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8C52BD
-        for <linux-security-module@vger.kernel.org>; Mon,  2 Oct 2023 07:34:56 -0700 (PDT)
-Received: from fsav117.sakura.ne.jp (fsav117.sakura.ne.jp [27.133.134.244])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 392EYtHl047040;
-        Mon, 2 Oct 2023 23:34:55 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav117.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav117.sakura.ne.jp);
- Mon, 02 Oct 2023 23:34:55 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav117.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 392EYtSw047032
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 2 Oct 2023 23:34:55 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <29ada58d-29e1-14ef-a59e-1d099c1dd301@I-love.SAKURA.ne.jp>
-Date:   Mon, 2 Oct 2023 23:34:55 +0900
+        Mon, 2 Oct 2023 13:06:11 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F00DFC6
+        for <linux-security-module@vger.kernel.org>; Mon,  2 Oct 2023 10:06:05 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-690d2441b95so2350701b3a.1
+        for <linux-security-module@vger.kernel.org>; Mon, 02 Oct 2023 10:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1696266365; x=1696871165; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FWT1o7z+vodeJwxdjf+52i0N/hl1q9fVGZUu0nFHkQk=;
+        b=FQkoKYpZXBPpHO5//K/PtTfjf55oDt15pi5E9qsM+hV2MxF0mprASsxwOL9XdAxdYH
+         SOxrZbHl/xNBhSDa6TphXObcSTzbr3l1vNvfOxrpGI4wTEjRw2juWLcoDlTfz7CbUwVd
+         z9vqTZxjKDgFle51hwoyOiWDuF95OP3c/vfkE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696266365; x=1696871165;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FWT1o7z+vodeJwxdjf+52i0N/hl1q9fVGZUu0nFHkQk=;
+        b=B2DqIYguxYKh3nZbK7e/DOGScgnIaEhnRqOEKCOAOd4C5MTvoUZEx/1PAeuPOxuIXD
+         m6kgfp+MKu/w2jvteIeeyt2HisgPeaLElj5gYJRHcI9S9zhPMFRiqGEL/cg91TPV34Od
+         bkLX1Nu3Hd4cn2ftkPxHZaPgy9nNmFw6OeuE87UDCQIsraLGW3Nuu/6tuxnwdTjQlqxZ
+         mkb9WqaNZKf3Ec7AujMHjPiul8+yR+LosKubjLVeuUd76VzOi+5HmHK/e7pjOny4TjLB
+         IzuMa5vWyREmAzUou9ETRmTbIVMjHa0rTed3nwigaYBqMVuAua12jBXe+2ZHghW+L+ek
+         ZxjA==
+X-Gm-Message-State: AOJu0Yw9gKshd2+yerww51/5XfxJRfDdbwOIrNy441yOeePekw+nFrQQ
+        zsbHnpLy8kL26zqD9iOz8CV6mg==
+X-Google-Smtp-Source: AGHT+IHWktqy/Ig5bRtUEX5eoAhhEFlysZrPjWA3hlV06CMuNlNAfXU2aoElCs528ZaVE/QaTnBecw==
+X-Received: by 2002:a05:6a00:188d:b0:68b:a137:373d with SMTP id x13-20020a056a00188d00b0068ba137373dmr320609pfh.17.1696266365160;
+        Mon, 02 Oct 2023 10:06:05 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id z35-20020a056a001da300b00692c5b1a731sm15616362pfw.186.2023.10.02.10.06.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Oct 2023 10:06:04 -0700 (PDT)
+Date:   Mon, 2 Oct 2023 10:05:57 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Kees Cook <kees@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        KP Singh <kpsingh@kernel.org>,
+        Paul Moore <paul@paul-moore.com>, bpf <bpf@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC PATCH 1/2] LSM: Allow dynamically appendable LSM modules.
+Message-ID: <202310021000.B494D0DD@keescook>
+References: <cc8e16bb-5083-01da-4a77-d251a76dc8ff@I-love.SAKURA.ne.jp>
+ <57295dac-9abd-3bac-ff5d-ccf064947162@schaufler-ca.com>
+ <b2cd749e-a716-1a13-6550-44a232deac25@I-love.SAKURA.ne.jp>
+ <06BC106C-E0FD-4ACA-83A8-DFD1400B696E@kernel.org>
+ <51d6c605-25cc-71fc-9c11-707b78297b38@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 2/5] security: Count the LSMs enabled at compile time
-Content-Language: en-US
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        paul@paul-moore.com, keescook@chromium.org, song@kernel.org,
-        daniel@iogearbox.net, ast@kernel.org,
-        Kui-Feng Lee <sinquersw@gmail.com>,
-        KP Singh <kpsingh@kernel.org>
-References: <20230918212459.1937798-1-kpsingh@kernel.org>
- <20230918212459.1937798-3-kpsingh@kernel.org>
- <cb67f607-3a9d-34d2-0877-a3ff957da79e@I-love.SAKURA.ne.jp>
- <CACYkzJ5GFsgc3vzJXH34hgoTc+CEf+7rcktj0QGeQ5e8LobRcw@mail.gmail.com>
- <dde20522-af01-c198-5872-b19ef378f286@I-love.SAKURA.ne.jp>
- <CACYkzJ5M0Bw9S_mkFkjR_-bRsKryXh2LKiurjMX9WW-d0Mr6bg@mail.gmail.com>
- <ed785c86-a1d8-caff-c629-f8a50549e05b@I-love.SAKURA.ne.jp>
- <CACYkzJ4TLCMFEa5h-iEVC-58cakjduw44c-ct64SgBe0_jFKuQ@mail.gmail.com>
- <6a80711e-edc4-9fab-6749-f1efa9e4231e@I-love.SAKURA.ne.jp>
- <CACYkzJ4AGRcqLPqWY65OC778EPaUwTBpyOMfiVBXa4EmnHTXGQ@mail.gmail.com>
- <c1683052-aa5a-e0d5-25ae-40316273ed1b@I-love.SAKURA.ne.jp>
- <d9765991-45bb-ba9a-18d4-d29eab3e29b9@schaufler-ca.com>
- <f739db5c-7d76-7a86-c4b5-794eeffd6a2d@I-love.SAKURA.ne.jp>
-In-Reply-To: <f739db5c-7d76-7a86-c4b5-794eeffd6a2d@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <51d6c605-25cc-71fc-9c11-707b78297b38@I-love.SAKURA.ne.jp>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2023/10/02 19:56, Tetsuo Handa wrote:
->> This is exactly the solution I have been contemplating since this
->> discussion began. It will address the bulk of the issue. I'm almost
->> mad/crazy enough to produce the patch to demonstrate it. Almost.
+On Mon, Oct 02, 2023 at 07:04:27PM +0900, Tetsuo Handa wrote:
+> On 2023/10/02 0:44, Kees Cook wrote:
+> > On October 1, 2023 4:31:05 AM PDT, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+> >> Kees Cook said there is no problem if the policy of assigning LSM ID value were
+> >>
+> >>  1) author: "Hello, here is a new LSM I'd like to upstream, here it is. I assigned
+> >>              it the next LSM ID."
+> >>     maintainer(s): "Okay, sounds good. *review*"
+> >>
+> >>  2) author: "Hello, here is an LSM that has been in active use at $Place,
+> >>              and we have $Xxx many userspace applications that we cannot easily
+> >>              rebuild. We used LSM ID $Value that is far away from the sequential
+> >>              list of LSM IDs, and we'd really prefer to keep that assignment."
+> >>    maintainer(s): "Okay, sounds good. *review*"
+> >>
+> >> and I agreed at https://lkml.kernel.org/r/6e1c25f5-b78c-8b4e-ddc3-484129c4c0ec@I-love.SAKURA.ne.jp .
+> >>
+> >> But Paul Moore's response was
+> >>
+> >>  No LSM ID value is guaranteed until it is present in a tagged release
+> >>  from Linus' tree, and once a LSM ID is present in a tagged release
+> >>  from Linus' tree it should not change.  That's *the* policy.
+> >>
+> >> which means that the policy is not what Kees Cook has said.
+> > 
+> > These don't conflict at all! Paul is saying an ID isn't guaranteed in upstream
+> > until it's in upstream. I'm saying the id space is large enough that you could
+> > make a new out of tree LSM every second for the next billion years. The upstream
+> > assignment process is likely sequential, but that out of sequence LSMs that show
+> > a need to be upstream could make a case for their existing value.
 > 
-> Yes, please show us one.
+> Excuse me? If the LSM community wants the assignment sequential, the LSM community
+> cannot admit the LSM value assigned to a not-yet-in-tree LSM.
+> 
+> If "Okay, sounds good." does not imply that the LSM community admits the LSM value
+> assigned to a not-yet-in-tree LSM, what did "Okay, sounds good." mean?
 
-If "[PATCH v15 01/11] LSM: Identify modules by more than name" does not allow LKM-based
-LSMs (which are likely out-of-tree) to have stable LSM ID values, lsm_list_modules()
-provided by "[PATCH v15 05/11] LSM: Create lsm_list_modules system call" cannot report
-stable string names. And "[PATCH v15 11/11] LSM: selftests for Linux Security Module
-syscalls" cannot work on LKM-based LSMs.
+I'm saying that if someone participates with upstream correctly, they'll
+get a sequential ID since that is the expected process.
 
-Then, how are LKM-based LSMs activated? LKM-based LSMs can use LSM hooks but cannot use
-(or show up in) lsm_get_self_attr()/lsm_set_self_attr()/lsm_list_modules() syscalls?
-That looks quite strange, for the title of "[PATCH v15 01/11]" is not "LSM: Identify only
-built-in and in-tree modules by more than name".
+And if an LSM is out of tree for years and years in some large ecosystem
+that has deeply hard-coded the LSM ID but now wants the LSM to land
+upstream, then it's likely that an out-of-sequence ID would be accepted.
 
-If you think about allowing LKM-based LSMs a bit, you will find that how can the current policy
-be compatible. We cannot introduce lsm_get_self_attr()/lsm_set_self_attr()/lsm_list_modules()
-syscalls without admitting stable LSM ID values being assigned to any publicly available LSMs.
+My point is that there is nothing technical stopping an out-of-tree LSM
+from existing, and that the political issues for bringing a large
+out-of-tree LSM upstream are going to have plenty of other negotiations
+around maintaining operational behavior, of which and LSM ID is unlikely
+to be a sticking point. Every release that some code (LSM or not) is out
+of tree makes it that much harder to land upstream. (In other words, the
+challenges to upstreaming a long-time-out-of-tree codebase are much
+larger than dealing with an out-of-sequence LSM ID.)
 
-Simple notification to the LSM community has to be the only requirement for assigning
-stable LSM ID values. You should not distinguish in-tree and not-in-tree LSMs regarding
-"[PATCH v15 00/11] LSM: Three basic syscalls". Otherwise, the attempt to introduce these
-syscalls is a regression that will harm LKM-based LSMs.
+-Kees
 
+-- 
+Kees Cook
