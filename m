@@ -2,287 +2,187 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3494E7AD58
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Oct 2023 15:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20968E7AD78
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Oct 2023 15:59:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240092AbjJCPJ2 (ORCPT
+        id S240116AbjJCP7h (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 Oct 2023 11:09:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43112 "EHLO
+        Tue, 3 Oct 2023 11:59:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230511AbjJCPJ1 (ORCPT
+        with ESMTP id S232098AbjJCP7g (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 Oct 2023 11:09:27 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B8DAAB
-        for <linux-security-module@vger.kernel.org>; Tue,  3 Oct 2023 08:09:24 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E717C433CC
-        for <linux-security-module@vger.kernel.org>; Tue,  3 Oct 2023 15:09:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696345763;
-        bh=xili5ahztGCigSuWtN2klBzlj5tALq8D+QHJ5FTEeG8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ok+Zobs9ANL3MKJxt9DwwVfhBsX4CYzTA64QHQ4hV3p1Nh27dBWsyXFCuaIdB8TX0
-         hpRcO1Le/mp3BQaHsMn4kAg+GfY1lH1x7jG5w+UFCCOVb/i6n8p+E5ZGF6n5wa0VbS
-         QpMvLFgSNdK5Xh2ExAI+5gNLeOoRewAtK10OntisrpUSiNe6Gt/cKPGha2IpuqSZfU
-         OueGQRnjmlHToRy/R8ZtEA0fg7ATx7u9PXQmZ3d7xq+yraBba0iHfHamWYSqgAUyLK
-         wAEmUiyC0VXiImZ/JOg9F0xbTcr8bD9ipFalkaGLBpmT5SCRA7eZsD6U0ZhrXrz2ef
-         UPZF15Ueddpww==
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5333fb34be3so1795832a12.1
-        for <linux-security-module@vger.kernel.org>; Tue, 03 Oct 2023 08:09:23 -0700 (PDT)
-X-Gm-Message-State: AOJu0Ywn7uckziQcvpMK213m0KjQdHw5u88gxieQbH3n56ARDxUdRQF/
-        FOTCY2q7YG6ddrKhPcOo16WCO/kYUS4ygsT2kKJ/8w==
-X-Google-Smtp-Source: AGHT+IHI3ARey7PwaGYuDokjykmLRJO8o+a20vQHodc/VeYToF8aS6AdCE338+Jz53lL+HrCW7eBZBeS3+NMDhKQ8j4=
-X-Received: by 2002:aa7:d5c4:0:b0:533:4f9b:67c8 with SMTP id
- d4-20020aa7d5c4000000b005334f9b67c8mr13137081eds.16.1696345761707; Tue, 03
- Oct 2023 08:09:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <cc8e16bb-5083-01da-4a77-d251a76dc8ff@I-love.SAKURA.ne.jp>
- <CACYkzJ5k7oYxFgWp9bz1Wmp3n6LcU39Mh-HXFWTKnZnpY-Ef7w@mail.gmail.com>
- <153e7c39-d2e2-db31-68cd-cb05eb2d46db@I-love.SAKURA.ne.jp>
- <CACYkzJ79fvoQW5uqavdLV=N8zw6uern8m-6cM44YYFDhJF248A@mail.gmail.com> <f249c8f0-e053-066b-edc5-59a1a00a0868@I-love.SAKURA.ne.jp>
-In-Reply-To: <f249c8f0-e053-066b-edc5-59a1a00a0868@I-love.SAKURA.ne.jp>
-From:   KP Singh <kpsingh@kernel.org>
-Date:   Tue, 3 Oct 2023 17:09:10 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ7kzXGcjRdyaOWCaigPWcKXU7_KW_bFg9ptrnwAeJ2AgQ@mail.gmail.com>
-Message-ID: <CACYkzJ7kzXGcjRdyaOWCaigPWcKXU7_KW_bFg9ptrnwAeJ2AgQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] LSM: Allow dynamically appendable LSM modules.
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>, bpf <bpf@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 3 Oct 2023 11:59:36 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CF53E6
+        for <linux-security-module@vger.kernel.org>; Tue,  3 Oct 2023 08:59:30 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-d814634fe4bso1294136276.1
+        for <linux-security-module@vger.kernel.org>; Tue, 03 Oct 2023 08:59:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1696348769; x=1696953569; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xP89tk8jeFUDqiHwgtcyinENLLmFDFAo+sp2wFgmRBw=;
+        b=3VHfewwIV0zOljG/ol2pjU+0vBAWkOLQRPOSIDg5brqaS+50EHIiCl+ps7d84LasCC
+         jz7EfaUe1TP4lksfzPRXjmqvTy2qhmWi6rE0bUp0X2soN22L9f7Tpzv33HVo7nNh1DpK
+         xVGLumlTXW1AIwOdhs8KaR033H4JRtK7qJDnzZJbOZVOAIuVgRgMfBtgHnv9p3YdnuwS
+         poxsb3AIswlAkEV08xxGKdQ+PCQ4u8RqOWnx7mo22z94u7AEoRP+Ocm9CDkjVMbyosWx
+         CaUYYlWPcDj5t6s+bBhCEmtwG+DQmiZ1F93IWvadR9nnbUGaPS4AG69AHcpqDEFwXAXk
+         PMAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696348769; x=1696953569;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xP89tk8jeFUDqiHwgtcyinENLLmFDFAo+sp2wFgmRBw=;
+        b=T5jgbbn2DBOshFUKnNHvdYwueW2PKML47BztNI1knENDQlR5+oln5w7AFXQqOa6HPJ
+         t4G7dZZTr1kHmZuhu/ONcMr3KMnO2qRXhqIJqpAmu8G35CtOdmbQUGFakIGKsUSCwgwM
+         G149CbZ/quq37xvU2zEL/KmHRa9Frq6DnX0CsEWoJHjfXznAmaNx0AKN6dkpikpVGSy3
+         H8FfSEwamNY7/kqczMs8kFXapdy2DPdJivJQBG6k6xgySTihU/nvtHpsbKt2hQJyir5t
+         1zTwWutFvwICCNZJviBJ0yvVvSFn5LpCcQ7fdZs9fTUmiJqKN4c5i8fRdvZT1dm07GP3
+         NgeA==
+X-Gm-Message-State: AOJu0YwahmcGAIFwEfDxUnsoTQJJP32dXaEAXON0kS3icNkEFQy0X5qF
+        +ecm3c2nnYNZESR5HRc3RbqVVeqTFvY=
+X-Google-Smtp-Source: AGHT+IHlsTPxnmIroL8cntBugIBpa7VGBcPZjKPldlj/dItcEWdxSvIkKSkj76hPSiTFqWvviFkle9Hc81s=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:3604:0:b0:d7a:c85c:725b with SMTP id
+ d4-20020a253604000000b00d7ac85c725bmr227114yba.7.1696348768967; Tue, 03 Oct
+ 2023 08:59:28 -0700 (PDT)
+Date:   Tue, 3 Oct 2023 08:59:27 -0700
+In-Reply-To: <CA+EHjTzSUXx8P9gWmUERg4owxH6r6yNPm1_RL-BzS_2CNPtRKw@mail.gmail.com>
+Mime-Version: 1.0
+References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-12-seanjc@google.com>
+ <CA+EHjTzSUXx8P9gWmUERg4owxH6r6yNPm1_RL-BzS_2CNPtRKw@mail.gmail.com>
+Message-ID: <ZRw6X2BptZnRPNK7@google.com>
+Subject: Re: [RFC PATCH v12 11/33] KVM: Introduce per-page memory attributes
+From:   Sean Christopherson <seanjc@google.com>
+To:     Fuad Tabba <tabba@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 3, 2023 at 4:28=E2=80=AFPM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On 2023/10/01 23:43, KP Singh wrote:
-> >>> Now, comes the question of whether we need dynamically loaded LSMs, I
-> >>> am not in favor of this. Please share your limitations of BPF as you
-> >>> mentioned and what's missing to implement dynamic LSMs. My question
-> >>> still remains unanswered.
-> >>>
-> >>> Until I hear the real limitations of using BPF, it's a NAK from me.
-> >>
-> >> Simple questions that TOMOYO/AKARI/CaitSith LSMs depend:
-> >>
-> >>   Q1: How can the BPF allow allocating permanent memory (e.g. kmalloc(=
-)) that remains
-> >>       the lifetime of the kernel (e.g. before starting the global init=
- process till
-> >>       the content of RAM is lost by stopping electric power supply) ?
+On Tue, Oct 03, 2023, Fuad Tabba wrote:
+> Hi,
+> 
+> > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> > index d2d913acf0df..f8642ff2eb9d 100644
+> > --- a/include/uapi/linux/kvm.h
+> > +++ b/include/uapi/linux/kvm.h
+> > @@ -1227,6 +1227,7 @@ struct kvm_ppc_resize_hpt {
+> >  #define KVM_CAP_ARM_EAGER_SPLIT_CHUNK_SIZE 228
+> >  #define KVM_CAP_ARM_SUPPORTED_BLOCK_SIZES 229
+> >  #define KVM_CAP_USER_MEMORY2 230
+> > +#define KVM_CAP_MEMORY_ATTRIBUTES 231
 > >
-> > This is very much possible using global BPF maps. Maps can be "pinned"
-> > so that they remain allocated until explicitly freed [or RAM is lost
-> > by stopping electric power supply"]
+> >  #ifdef KVM_CAP_IRQ_ROUTING
 > >
-> > Here's an example of BPF program that allocates maps:
+> > @@ -2293,4 +2294,17 @@ struct kvm_s390_zpci_op {
+> >  /* flags for kvm_s390_zpci_op->u.reg_aen.flags */
+> >  #define KVM_S390_ZPCIOP_REGAEN_HOST    (1 << 0)
 > >
-> >     https://elixir.bootlin.com/linux/latest/source/tools/testing/selfte=
-sts/bpf/progs/test_pinning.c#L26
-> >
-> > and the corresponding userspace code that does the pinning:
-> >
-> >     https://elixir.bootlin.com/linux/latest/source/tools/testing/selfte=
-sts/bpf/prog_tests/pinning.c
->
-> I know nothing about BPF. But that looks "allocate once" (i.e. almost "st=
-atic char buf[SIZE]").
+> > +/* Available with KVM_CAP_MEMORY_ATTRIBUTES */
+> > +#define KVM_GET_SUPPORTED_MEMORY_ATTRIBUTES    _IOR(KVMIO,  0xd2, __u64)
+> > +#define KVM_SET_MEMORY_ATTRIBUTES              _IOW(KVMIO,  0xd3, struct kvm_memory_attributes)
+> > +
+> > +struct kvm_memory_attributes {
+> > +       __u64 address;
+> > +       __u64 size;
+> > +       __u64 attributes;
+> > +       __u64 flags;
+> > +};
+> > +
+> > +#define KVM_MEMORY_ATTRIBUTE_PRIVATE           (1ULL << 3)
+> > +
+> 
+> In pKVM, we don't want to allow setting (or clearing) of PRIVATE/SHARED
+> attributes from userspace.
 
-Happy to help you here!
+Why not?  The whole thing falls apart if userspace doesn't *know* the state of a
+page, and the only way for userspace to know the state of a page at a given moment
+in time is if userspace controls the attributes.  E.g. even if KVM were to provide
+a way for userspace to query attributes, the attributes exposed to usrspace would
+become stale the instant KVM drops slots_lock (or whatever lock protects the attributes)
+since userspace couldn't prevent future changes.
 
-> What I expected is "allocate memory where amount is determined at runtime=
-" (e.g. alloc(), realloc()).
+Why does pKVM need to prevent userspace from stating *its* view of attributes?
 
-One can use dynamically sized allocations on the ring buffer with
-dynamic pointers:
+If the goal is to reduce memory overhead, that can be solved by using an internal,
+non-ABI attributes flag to track pKVM's view of SHARED vs. PRIVATE.  If the guest
+attempts to access memory where pKVM and userspace don't agree on the state,
+generate an exit to userspace.  Or kill the guest.  Or do something else entirely.
 
-http://vger.kernel.org/bpfconf2022_material/lsfmmbpf2022-dynptr.pdf
+> However, we'd like to use the attributes xarray to track the sharing state of
+> guest pages at the host kernel.
+> 
+> Moreover, we'd rather the default guest page state be PRIVATE, and
+> only specify which pages are shared. All pKVM guest pages start off as
+> private, and the majority will remain so.
 
-Furthermore, there are some use cases that seemingly need dynamic
-memory allocation but not really. e.g. there was a need to audit
-command line arguments and while it seems dynamic and one can chunk
-the allocation to finite sizes, put these on a ring buffer and process
-the chunks.
+I would rather optimize kvm_vm_set_mem_attributes() to generate range-based
+xarray entries, at which point it shouldn't matter all that much whether PRIVATE
+or SHARED is the default "empty" state.  We opted not to do that for the initial
+merge purely to keep the code as simple as possible (which is obviously still not
+exactly simple).
 
-It would be nice to see more details of where the dynamic allocation
-is needed. Security blobs are allocated dynamically but have a fixed
-size.
+With range-based xarray entries, the cost of tagging huge chunks of memory as
+PRIVATE should be a non-issue.  And if that's not enough for whatever reason, I
+would rather define the polarity of PRIVATE on a per-VM basis, but only for internal
+storage.
+ 
+> I'm not sure if this is the best way to do this: One idea would be to move
+> the definition of KVM_MEMORY_ATTRIBUTE_PRIVATE to
+> arch/*/include/asm/kvm_host.h, which is where kvm_arch_supported_attributes()
+> lives as well. This would allow different architectures to specify their own
+> attributes (i.e., instead we'd have a KVM_MEMORY_ATTRIBUTE_SHARED for pKVM).
+> This wouldn't help in terms of preventing userspace from clearing attributes
+> (i.e., setting a 0 attribute) though.
+> 
+> The other thing, which we need for pKVM anyway, is to make
+> kvm_vm_set_mem_attributes() global, so that it can be called from outside of
+> kvm_main.c (already have a local patch for this that declares it in
+> kvm_host.h),
 
->
-> >
-> > Specifically for LSMs, we also added support for security blobs which
-> > are tied to a particular object and are free with the object, have a
-> > look at the storage which is allocated in the program:
-> >
-> >    https://elixir.bootlin.com/linux/latest/source/tools/testing/selftes=
-ts/bpf/progs/local_storage.c#L79
-> >
-> > Again, code and context on what you want to do will let me help you mor=
-e here.
->
-> I don't have any BPF code.
-> I have several LKM-based LSMs in https://osdn.net/projects/akari/scm/svn/=
-tree/head/branches/ .
+That's no problem, but I am definitely opposed to KVM modifying attributes that
+are owned by userspace.
 
-Thanks for the pointers, I will read through them.
+> and not gate this function by KVM_GENERIC_MEMORY_ATTRIBUTES.
 
->
-> >
-> >>
-> >>   Q2: How can the BPF allow interacting with other process (e.g. inter=
- process communication
-> >>       using read()/write()) which involves opening some file on the fi=
-lesystem and sleeping
-> >>       for arbitrary duration?
-> >
-> > The BPF program runs in the kernel context, so yes all of this is
-> > possible. IPC can be done with the bpf_ring_buffer / maps and BPF also
-> > has the ability to send signals. One can poll on the ring buffer on
-> > events and data from the BPF program and do a lots of things.
->
-> OK, BPF allows sleeping operations; that's good.
->
-> Some of core requirements for implementing TOMOYO/AKARI/CaitSith-like pro=
-grams
-> using BPF will be:
->
->   The program registered cannot be stopped/removed by the root user.
->   This is made possible by either building the program into vmlinux or lo=
-ading
->   the program as a LKM without module_exit() callback. Is it possible to =
-guaranee
->   that a BPF program cannot be stopped/removed by user's operations?
-
-Yes, there is a security_bpf hook where a BPF MAC policy can be
-implemented and other LSMs do that already.
-
->
->   The program registered cannot be terminated by safety mechanisms (e.g. =
-excessive
->   CPU time consumption). Are there mechanisms in BPF that wouldn't have t=
-erminated
->   a program if the program were implemented as a LKM rather than a BPF pr=
-ogram?
->
-
-The kernel does not terminate BPF LSM programs, once a BPF program is
-loaded and attached to the LSM hook, it's JITed into a native code.
-From there onwards, as far as the kernel is concerned it's just like
-any other kernel function.
-
->   Ideally, the BPF program is built into vmlinux and is started before th=
-e global init
->   process starts. (But whether building into vmlinux is possible does not=
- matter here
->   because I have trouble building into vmlinux. As a fallback, when we ca=
-n start matters.)
->   When is the earliest timing for starting a BPF program that must remain=
- till stopping
-
-The kernel actually supports preloading certain BPF programs during early i=
-nit.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/commit/?id=
-=3D0bc23a1d1c8a1b4a5e4b973a7a80a6d067bd3eef
-
-This allows you to preload before init.
-
-
->   electric power supply? Is that when /init in a initramfs starts? Is tha=
-t when init=3D
->   kernel command line option is processed? More later than when init=3D i=
-s processed?
-
-Also, It depends on whether you trust init or not (e.g. if the init
-blob is somehow appraised and measured, then you can trust it to load
-the right BPF LSM programs). and then you can choose to not preload
-bpf programs in the kernel, rather load them sometime early in /init.
-
->
->   Amount of memory needed for managing data is not known at compile time.=
- Thus, I need
->   kmalloc()-like memory allocation mechanism rather than allocating from =
-some pool, and
->   manage chunk of memory regions using linked list. Does BPF have kmalloc=
-()-like memory
->   allocation mechanism that allows allocating up to 32KB (8 pages if PAGE=
-_SIZE=3D4096).
->
-
-You use the ring buffer as a large pool and use dynamic pointers to
-carve chunks out of it, if truly dynamic memory is needed.
-
-> And maybe somewhere documented question:
->
->   What kernel functions can a BPF program call / what kernel data can a B=
-PF program access?
-
-BPF programs can access kernel data dynamically (accesses relocated at
-load time without needing a recompile) There are lot of good details
-in:
-
-https://nakryiko.com/posts/bpf-core-reference-guide/
-
-
->   The tools/testing/selftests/bpf/progs/test_d_path.c suggests that a BPF=
- program can call
->   d_path() defined in fs/d_path.c . But is that because d_path() is marke=
-d as EXPORT_SYMBOL() ?
->   Or can a BPF program call almost all functions (like SystemTap script c=
-an insert hooks into
->   almost all functions)? Even functions / data in LKM can be accessed by =
-a BPF program?
->
-
-It's not all kernel functions, but there is a wide range of helpers
-and kfuncs (examples in tools/testing/selftests/bpf) and if there is
-something missing, we will help you.
-
->
->
-> On 2023/10/02 22:04, KP Singh wrote:
-> >>> There are still a bunch of details (e.g. shared blobs) that it doesn'=
-t
-> >>> address. On the other hand, your memory management magic doesn't
-> >>> address those issues either.
-> >>
-> >> Security is always trial-and-error. Just give all Linux users chances =
-to continue
-> >> trial-and-error. You don't need to forbid LKM-based LSMs just because =
-blob management
-> >> is not addressed. Please open the LSM infrastructure to anyone.
-> >
-> > It already is, the community is already using BPF LSM.
-> >
-> > e.g. https://github.com/linux-lock/bpflock
-> >
->
-> Thank you for an example. But the project says
->
->   bpflock is not a mandatory access control labeling solution, and it doe=
-s not
->   intent to replace AppArmor, SELinux, and other MAC solutions. bpflock u=
-ses a
->   simple declarative security profile.
->
-> which is different from what I want to know (whether it is realistic to
-> implement TOMOYO/AKARI/CaitSith-like programs using BPF).
-
-Agreed, I was sharing it more as a code sample. There is an
-interesting talk by Meta at LPC which I quite excited about in this
-space:
-
-https://lpc.events/event/17/contributions/1602/
-
-These are just examples of flexible MAC implementations using BPF.
-
-- KP
-
-- KP
->
+As above, I am opposed to pKVM having a completely different ABI for managing
+PRIVATE vs. SHARED.  I have no objection to pKVM using unclaimed flags in the
+attributes to store extra metadata, but if KVM_SET_MEMORY_ATTRIBUTES doesn't work
+for pKVM, then we've failed miserably and should revist the uAPI.
