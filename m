@@ -2,145 +2,68 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5771EE776D1
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Oct 2023 22:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF792E75433
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Oct 2023 08:23:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236823AbjJBWvB (ORCPT
+        id S239790AbjJCIXv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 2 Oct 2023 18:51:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49228 "EHLO
+        Tue, 3 Oct 2023 04:23:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236756AbjJBWvA (ORCPT
+        with ESMTP id S239501AbjJCIXd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 2 Oct 2023 18:51:00 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22155CE;
-        Mon,  2 Oct 2023 15:50:58 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C30AC433C7;
-        Mon,  2 Oct 2023 22:50:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696287057;
-        bh=/OqHkpnCr2yp1sDRAdjhGT7oMqmIEUALgDHapbczbmI=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=YOzaTs8xV30AkpqZbykvhJSF0mNTVlgNrJdaZuah8iyObs6eMafbHTI/hNig4dWQX
-         vrC2a+GKlGOLBX6HK26gDeMOht2XNo+CNdwjXs5srCzTgdOfpbbQUUJDqTUYD0tuXj
-         5Ogpu/QrdP84k1KW44KYcZ484+H0U8gegEkBVgqLEnbrUOc4eqSG0slsHEIvnlad3P
-         Z56UeZDV+NpTwaI3LNFfV23LROuNH6PrMrmZQyTOgf4na/6gwlG+gzXU8XkYhLdzKb
-         7UXnUl6BPmy6BcW3oSUZm6y9Paqwl5OjOF2Z6r/UPVGqTS98/289KlB2V8IYDupALH
-         TqzvT1Mi7RhWQ==
-Mime-Version: 1.0
+        Tue, 3 Oct 2023 04:23:33 -0400
+Received: from mail.venturelinkbiz.com (mail.venturelinkbiz.com [51.195.119.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFFD95FC3
+        for <linux-security-module@vger.kernel.org>; Tue,  3 Oct 2023 01:12:03 -0700 (PDT)
+Received: by mail.venturelinkbiz.com (Postfix, from userid 1002)
+        id 4F5B6461DE; Tue,  3 Oct 2023 08:10:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturelinkbiz.com;
+        s=mail; t=1696320658;
+        bh=JBV4b8UUo1MSngn/QBoedt1Dv52bT8rWeq4R22MtJMs=;
+        h=Date:From:To:Subject:From;
+        b=H3RtAWkvC5j3hnT6kEyoRDMbBtEqqK1oQXWPXcAbv0RcFmgMqGefuGpWJUHpHMU0t
+         jkLY1mTIGxkq8xeAh0cb9Q1Tro25t15BnUn3qheQ0Pr5C9mdASsLPWeff0O7sRtnXO
+         DfATF3LgMyPJjV0u0p0WOk+zuECFPbgcA3w20o4zFWYvIUYmCFmOKqAm7Wz1A6vQ6i
+         InAEiKWHyVonOB4mc/EoEDE0v3/N/7MR/E1cYyZ5/sy01D2o3OcrTVSuFmGk3otzDt
+         4AhYarBNKxZySsNylyjKc/7ha6bXHSX37sbICpa7LFVLnFgKMzLwFKcc/VfbKcF5mb
+         74Tg7wiUB/OIQ==
+Received: by mail.venturelinkbiz.com for <linux-security-module@vger.kernel.org>; Tue,  3 Oct 2023 08:10:46 GMT
+Message-ID: <20231003064500-0.1.2r.7keo.0.o8bjca3ogr@venturelinkbiz.com>
+Date:   Tue,  3 Oct 2023 08:10:46 GMT
+From:   "Michal Rmoutil" <michal.rmoutil@venturelinkbiz.com>
+To:     <linux-security-module@vger.kernel.org>
+Subject: =?UTF-8?Q?Efektivn=C3=AD_sledov=C3=A1n=C3=AD_a_optimalizace_v=C3=BDroby_pro_va=C5=A1i_spole=C4=8Dnost?=
+X-Mailer: mail.venturelinkbiz.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 03 Oct 2023 01:50:43 +0300
-Message-Id: <CVYBKLX6LJR4.22G72LXAHW77W@seitikki>
-Cc:     "Mimi Zohar" <zohar@linux.ibm.com>,
-        "James Bottomley" <jejb@linux.ibm.com>,
-        "Herbert Xu" <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Shawn Guo" <shawnguo@kernel.org>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        "Sascha Hauer" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "Fabio Estevam" <festevam@gmail.com>,
-        "NXP Linux Team" <linux-imx@nxp.com>,
-        "Ahmad Fatoum" <a.fatoum@pengutronix.de>,
-        "sigma star Kernel Team" <upstream+dcp@sigma-star.at>,
-        "David Howells" <dhowells@redhat.com>,
-        "Li Yang" <leoyang.li@nxp.com>, "Paul Moore" <paul@paul-moore.com>,
-        "James Morris" <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Randy Dunlap" <rdunlap@infradead.org>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Tejun Heo" <tj@kernel.org>,
-        "Steven Rostedt (Google)" <rostedt@goodmis.org>,
-        <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linuxppc-dev@lists.ozlabs.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "Richard Weinberger" <richard@nod.at>,
-        "David Oberhollenzer" <david.oberhollenzer@sigma-star.at>
-Subject: Re: [PATCH v3 1/3] crypto: mxs-dcp: Add support for hardware
- provided keys
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "David Gstir" <david@sigma-star.at>
-X-Mailer: aerc 0.14.0
-References: <20230918141826.8139-1-david@sigma-star.at>
- <20230918141826.8139-2-david@sigma-star.at>
- <CVS3NIJ8OO6Y.2C6GJ9OBR6COC@suppilovahvero>
- <88FFAB6B-10A8-4732-A901-50859E22352D@sigma-star.at>
-In-Reply-To: <88FFAB6B-10A8-4732-A901-50859E22352D@sigma-star.at>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed Sep 27, 2023 at 9:25 AM EEST, David Gstir wrote:
-> Jarkko,
->
-> > On 25.09.2023, at 17:22, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> >=20
-> > On Mon Sep 18, 2023 at 5:18 PM EEST, David Gstir wrote:
-> >> DCP is capable to performing AES with hardware-bound keys.
-> >> These keys are not stored in main memory and are therefore not directl=
-y
-> >> accessible by the operating system.
-> >>=20
-> >> So instead of feeding the key into DCP, we need to place a
-> >> reference to such a key before initiating the crypto operation.
-> >> Keys are referenced by a one byte identifiers.
-> >=20
-> > Not sure what the action of feeding key into DCP even means if such
-> > action does not exists.
-> >=20
-> > What you probably would want to describe here is how keys get created
-> > and how they are referenced by the kernel.
-> >=20
-> > For the "use" part please try to avoid academic paper style long
-> > expression starting with "we" pronomine.
-> >=20
-> > So the above paragraph would normalize into "The keys inside DCP
-> > are referenced by one byte identifier". Here of course would be
-> > for the context nice to know what is this set of DCP keys. E.g.
-> > are total 256 keys or some subset?
-> >=20
-> > When using too much prose there can be surprsingly little digestable
-> > information, thus this nitpicking.
->
-> Thanks for reviewing that in detail! I=E2=80=99ll rephrase the commit
-> messages on all patches to get rid of the academic paper style.
->
->
-> >=20
-> >> DCP supports 6 different keys: 4 slots in the secure memory area,
-> >> a one time programmable key which can be burnt via on-chip fuses
-> >> and an unique device key.
-> >>=20
-> >> Using these keys is restricted to in-kernel users that use them as bui=
-lding
-> >> block for other crypto tools such as trusted keys. Allowing userspace
-> >> (e.g. via AF_ALG) to use these keys to crypt or decrypt data is a secu=
-rity
-> >> risk, because there is no access control mechanism.
-> >=20
-> > Unless this patch has anything else than trusted keys this should not
-> > be an open-ended sentence. You want to say roughly that DCP hardware
-> > keys are implemented for the sake to implement trusted keys support,
-> > and exactly and only that.
-> >=20
-> > This description also lacks actions taken by the code changes below,
-> > which is really the beef of any commit description.
->
-> You=E2=80=99re right. I=E2=80=99ll add that.
+Dobr=C3=A9 r=C3=A1no,
 
-Yup, I'm just doing my part of the job, as I'm expected to do it :-)
-Thanks for understanding.
+m=C3=A1te mo=C5=BEnost sledovat stav ka=C5=BEd=C3=A9ho stroje a v=C3=BDro=
+bn=C3=ADho procesu z kancel=C3=A1=C5=99e, konferen=C4=8Dn=C3=AD m=C3=ADst=
+nosti nebo dokonce z domova =C4=8Di na cest=C3=A1ch =E2=80=93 na va=C5=A1=
+em telefonu?
 
-> Thanks,
-> - David
+Poskytujeme rychle implementovateln=C3=BD a snadno pou=C5=BEiteln=C3=BD n=
+=C3=A1stroj, kter=C3=BD zachyt=C3=AD i n=C4=9Bkolikasekundov=C3=BD mikrop=
+rostoj a okam=C5=BEit=C4=9B p=C5=99epo=C4=8D=C3=ADt=C3=A1 vyu=C5=BEit=C3=AD=
+ stroje v kontextu dan=C3=A9 v=C3=BDrobn=C3=AD zak=C3=A1zky.
 
-BR, Jarkko
+Kdykoli vid=C3=ADte stav objedn=C3=A1vky a jste informov=C3=A1ni o p=C5=99=
+=C3=ADpadn=C3=A9m sn=C3=AD=C5=BEen=C3=AD efektivity. Syst=C3=A9m s=C3=A1m=
+ analyzuje data a p=C5=99ipravuje cenn=C3=A9 reporty, co=C5=BE oper=C3=A1=
+tor=C5=AFm umo=C5=BE=C5=88uje soust=C5=99edit se na v=C3=BDrobn=C3=AD c=C3=
+=ADl.
+
+C=C3=ADl je jednoduch=C3=BD: jeden pohled =E2=80=93 cel=C3=A1 tov=C3=A1rn=
+a. =C4=8Cek=C3=A1m na odpov=C4=9B=C4=8F, jestli vid=C3=ADte mo=C5=BEnost =
+vyu=C5=BEit=C3=AD takov=C3=A9ho n=C3=A1stroje ve va=C5=A1=C3=AD firm=C4=9B=
+=2E
+
+
+Pozdravy
+Michal Rmoutil
