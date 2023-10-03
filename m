@@ -2,215 +2,166 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 498A0E7AD5E
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Oct 2023 14:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D85E7AD57
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Oct 2023 14:28:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240045AbjJCO2H (ORCPT
+        id S240040AbjJCO2L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 Oct 2023 10:28:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54304 "EHLO
+        Tue, 3 Oct 2023 10:28:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240040AbjJCO2H (ORCPT
+        with ESMTP id S240056AbjJCO2K (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 Oct 2023 10:28:07 -0400
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5763EB7
-        for <linux-security-module@vger.kernel.org>; Tue,  3 Oct 2023 07:28:02 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4S0Kt91BckzMqNvw;
-        Tue,  3 Oct 2023 14:28:01 +0000 (UTC)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4S0Kt84ZdCz15j;
-        Tue,  3 Oct 2023 16:28:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1696343281;
-        bh=8o3s6lqVYJhqJeJSLA9BJ9VB8l+K54dTRhe+K/XEuVo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zzZPeVIaH+aUbgllGiHU3YcMDmgUGtdAH8tj7sxHnOfHNGOFBh4+L/Cs+WA4tgBYy
-         9GXySQdjdaU/g6OCYzgUgWF/J1GAElx5BB5O2qv1lj9648mn8X4l6XEYB11Rd/Eruz
-         vyMpy4SmevYspiw34alBZyRKvuKT2iILwyiFh1eY=
-Date:   Tue, 3 Oct 2023 16:28:01 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH v15 07/11] LSM: Helpers for attribute names and filling
- lsm_ctx
-Message-ID: <20231003.Ic1FohLoc8Ph@digikod.net>
-References: <20230912205658.3432-1-casey@schaufler-ca.com>
- <20230912205658.3432-8-casey@schaufler-ca.com>
+        Tue, 3 Oct 2023 10:28:10 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53245AF;
+        Tue,  3 Oct 2023 07:28:05 -0700 (PDT)
+Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 393ERivo053873;
+        Tue, 3 Oct 2023 23:27:44 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
+ Tue, 03 Oct 2023 23:27:44 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 393ERhuw053870
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 3 Oct 2023 23:27:44 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <f249c8f0-e053-066b-edc5-59a1a00a0868@I-love.SAKURA.ne.jp>
+Date:   Tue, 3 Oct 2023 23:27:42 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230912205658.3432-8-casey@schaufler-ca.com>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [RFC PATCH 1/2] LSM: Allow dynamically appendable LSM modules.
+Content-Language: en-US
+To:     KP Singh <kpsingh@kernel.org>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>, bpf <bpf@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <cc8e16bb-5083-01da-4a77-d251a76dc8ff@I-love.SAKURA.ne.jp>
+ <CACYkzJ5k7oYxFgWp9bz1Wmp3n6LcU39Mh-HXFWTKnZnpY-Ef7w@mail.gmail.com>
+ <153e7c39-d2e2-db31-68cd-cb05eb2d46db@I-love.SAKURA.ne.jp>
+ <CACYkzJ79fvoQW5uqavdLV=N8zw6uern8m-6cM44YYFDhJF248A@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CACYkzJ79fvoQW5uqavdLV=N8zw6uern8m-6cM44YYFDhJF248A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Sep 12, 2023 at 01:56:52PM -0700, Casey Schaufler wrote:
-> Add lsm_name_to_attr(), which translates a text string to a
-> LSM_ATTR value if one is available.
+On 2023/10/01 23:43, KP Singh wrote:
+>>> Now, comes the question of whether we need dynamically loaded LSMs, I
+>>> am not in favor of this. Please share your limitations of BPF as you
+>>> mentioned and what's missing to implement dynamic LSMs. My question
+>>> still remains unanswered.
+>>>
+>>> Until I hear the real limitations of using BPF, it's a NAK from me.
+>>
+>> Simple questions that TOMOYO/AKARI/CaitSith LSMs depend:
+>>
+>>   Q1: How can the BPF allow allocating permanent memory (e.g. kmalloc()) that remains
+>>       the lifetime of the kernel (e.g. before starting the global init process till
+>>       the content of RAM is lost by stopping electric power supply) ?
 > 
-> Add lsm_fill_user_ctx(), which fills a struct lsm_ctx, including
-> the trailing attribute value.
+> This is very much possible using global BPF maps. Maps can be "pinned"
+> so that they remain allocated until explicitly freed [or RAM is lost
+> by stopping electric power supply"]
 > 
-> Both are used in module specific components of LSM system calls.
+> Here's an example of BPF program that allocates maps:
 > 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> Reviewed-by: John Johansen <john.johansen@canonical.com>
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+>     https://elixir.bootlin.com/linux/latest/source/tools/testing/selftests/bpf/progs/test_pinning.c#L26
+> 
+> and the corresponding userspace code that does the pinning:
+> 
+>     https://elixir.bootlin.com/linux/latest/source/tools/testing/selftests/bpf/prog_tests/pinning.c
 
-Reviewed-by: Mickaël Salaün <mic@digikod.net>
+I know nothing about BPF. But that looks "allocate once" (i.e. almost "static char buf[SIZE]").
+What I expected is "allocate memory where amount is determined at runtime" (e.g. alloc(), realloc()).
 
-> ---
->  include/linux/security.h | 14 ++++++++++++++
->  security/lsm_syscalls.c  | 24 +++++++++++++++++++++++
->  security/security.c      | 41 ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 79 insertions(+)
 > 
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 8831d7cf0a6b..e567f910a1c2 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -32,6 +32,7 @@
->  #include <linux/string.h>
->  #include <linux/mm.h>
->  #include <linux/sockptr.h>
-> +#include <uapi/linux/lsm.h>
->  
->  struct linux_binprm;
->  struct cred;
-> @@ -264,6 +265,7 @@ int unregister_blocking_lsm_notifier(struct notifier_block *nb);
->  /* prototypes */
->  extern int security_init(void);
->  extern int early_security_init(void);
-> +extern u64 lsm_name_to_attr(const char *name);
->  
->  /* Security operations */
->  int security_binder_set_context_mgr(const struct cred *mgr);
-> @@ -490,6 +492,8 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
->  int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
->  int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
->  int security_locked_down(enum lockdown_reason what);
-> +int lsm_fill_user_ctx(struct lsm_ctx __user *ctx, void *context,
-> +		      size_t context_size, u64 id, u64 flags);
->  #else /* CONFIG_SECURITY */
->  
->  static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
-> @@ -507,6 +511,11 @@ static inline  int unregister_blocking_lsm_notifier(struct notifier_block *nb)
->  	return 0;
->  }
->  
-> +static inline u64 lsm_name_to_attr(const char *name)
-> +{
-> +	return LSM_ATTR_UNDEF;
-> +}
-> +
->  static inline void security_free_mnt_opts(void **mnt_opts)
->  {
->  }
-> @@ -1415,6 +1424,11 @@ static inline int security_locked_down(enum lockdown_reason what)
->  {
->  	return 0;
->  }
-> +static inline int lsm_fill_user_ctx(struct lsm_ctx __user *ctx, void *context,
-> +				    size_t context_size, u64 id, u64 flags)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
->  #endif	/* CONFIG_SECURITY */
->  
->  #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
-> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
-> index 329aaca5efc0..5d391b1f7e69 100644
-> --- a/security/lsm_syscalls.c
-> +++ b/security/lsm_syscalls.c
-> @@ -17,6 +17,30 @@
->  #include <linux/lsm_hooks.h>
->  #include <uapi/linux/lsm.h>
->  
-> +/**
-> + * lsm_name_to_attr - map an LSM attribute name to its ID
-> + * @name: name of the attribute
-> + *
-> + * Returns the LSM attribute value associated with @name, or 0 if
-> + * there is no mapping.
-> + */
-> +u64 lsm_name_to_attr(const char *name)
-> +{
-> +	if (!strcmp(name, "current"))
-> +		return LSM_ATTR_CURRENT;
-> +	if (!strcmp(name, "exec"))
-> +		return LSM_ATTR_EXEC;
-> +	if (!strcmp(name, "fscreate"))
-> +		return LSM_ATTR_FSCREATE;
-> +	if (!strcmp(name, "keycreate"))
-> +		return LSM_ATTR_KEYCREATE;
-> +	if (!strcmp(name, "prev"))
-> +		return LSM_ATTR_PREV;
-> +	if (!strcmp(name, "sockcreate"))
-> +		return LSM_ATTR_SOCKCREATE;
-> +	return LSM_ATTR_UNDEF;
-> +}
-> +
->  /**
->   * sys_lsm_set_self_attr - Set current task's security module attribute
->   * @attr: which attribute to set
-> diff --git a/security/security.c b/security/security.c
-> index 0d179750d964..9136a4c3b0bc 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -771,6 +771,47 @@ static int lsm_superblock_alloc(struct super_block *sb)
->  	return 0;
->  }
->  
-> +/**
-> + * lsm_fill_user_ctx - Fill a user space lsm_ctx structure
-> + * @ctx: an LSM context to be filled
-> + * @context: the new context value
-> + * @context_size: the size of the new context value
-> + * @id: LSM id
-> + * @flags: LSM defined flags
-> + *
-> + * Fill all of the fields in a user space lsm_ctx structure.
-> + * Caller is assumed to have verified that @ctx has enough space
-> + * for @context.
-> + *
-> + * Returns 0 on success, -EFAULT on a copyout error, -ENOMEM
-> + * if memory can't be allocated.
-> + */
-> +int lsm_fill_user_ctx(struct lsm_ctx __user *ctx, void *context,
-> +		      size_t context_size, u64 id, u64 flags)
-> +{
-> +	struct lsm_ctx *lctx;
-> +	size_t locallen = struct_size(lctx, ctx, context_size);
-> +	int rc = 0;
-> +
-> +	lctx = kzalloc(locallen, GFP_KERNEL);
-> +	if (lctx == NULL)
-> +		return -ENOMEM;
-> +
-> +	lctx->id = id;
-> +	lctx->flags = flags;
-> +	lctx->ctx_len = context_size;
-> +	lctx->len = locallen;
-> +
-> +	memcpy(lctx->ctx, context, context_size);
-> +
-> +	if (copy_to_user(ctx, lctx, locallen))
-> +		rc = -EFAULT;
-> +
-> +	kfree(lctx);
-> +
-> +	return rc;
-> +}
-> +
->  /*
->   * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
->   * can be accessed with:
-> -- 
-> 2.41.0
+> Specifically for LSMs, we also added support for security blobs which
+> are tied to a particular object and are free with the object, have a
+> look at the storage which is allocated in the program:
 > 
+>    https://elixir.bootlin.com/linux/latest/source/tools/testing/selftests/bpf/progs/local_storage.c#L79
+> 
+> Again, code and context on what you want to do will let me help you more here.
+
+I don't have any BPF code.
+I have several LKM-based LSMs in https://osdn.net/projects/akari/scm/svn/tree/head/branches/ .
+
+> 
+>>
+>>   Q2: How can the BPF allow interacting with other process (e.g. inter process communication
+>>       using read()/write()) which involves opening some file on the filesystem and sleeping
+>>       for arbitrary duration?
+> 
+> The BPF program runs in the kernel context, so yes all of this is
+> possible. IPC can be done with the bpf_ring_buffer / maps and BPF also
+> has the ability to send signals. One can poll on the ring buffer on
+> events and data from the BPF program and do a lots of things.
+
+OK, BPF allows sleeping operations; that's good.
+
+Some of core requirements for implementing TOMOYO/AKARI/CaitSith-like programs
+using BPF will be:
+
+  The program registered cannot be stopped/removed by the root user.
+  This is made possible by either building the program into vmlinux or loading
+  the program as a LKM without module_exit() callback. Is it possible to guaranee
+  that a BPF program cannot be stopped/removed by user's operations?
+
+  The program registered cannot be terminated by safety mechanisms (e.g. excessive
+  CPU time consumption). Are there mechanisms in BPF that wouldn't have terminated
+  a program if the program were implemented as a LKM rather than a BPF program?
+
+  Ideally, the BPF program is built into vmlinux and is started before the global init
+  process starts. (But whether building into vmlinux is possible does not matter here
+  because I have trouble building into vmlinux. As a fallback, when we can start matters.)
+  When is the earliest timing for starting a BPF program that must remain till stopping
+  electric power supply? Is that when /init in a initramfs starts? Is that when init=
+  kernel command line option is processed? More later than when init= is processed?
+
+  Amount of memory needed for managing data is not known at compile time. Thus, I need
+  kmalloc()-like memory allocation mechanism rather than allocating from some pool, and
+  manage chunk of memory regions using linked list. Does BPF have kmalloc()-like memory
+  allocation mechanism that allows allocating up to 32KB (8 pages if PAGE_SIZE=4096).
+
+And maybe somewhere documented question:
+
+  What kernel functions can a BPF program call / what kernel data can a BPF program access?
+  The tools/testing/selftests/bpf/progs/test_d_path.c suggests that a BPF program can call
+  d_path() defined in fs/d_path.c . But is that because d_path() is marked as EXPORT_SYMBOL() ?
+  Or can a BPF program call almost all functions (like SystemTap script can insert hooks into
+  almost all functions)? Even functions / data in LKM can be accessed by a BPF program?
+
+
+
+On 2023/10/02 22:04, KP Singh wrote:
+>>> There are still a bunch of details (e.g. shared blobs) that it doesn't
+>>> address. On the other hand, your memory management magic doesn't
+>>> address those issues either.
+>>
+>> Security is always trial-and-error. Just give all Linux users chances to continue
+>> trial-and-error. You don't need to forbid LKM-based LSMs just because blob management
+>> is not addressed. Please open the LSM infrastructure to anyone.
+> 
+> It already is, the community is already using BPF LSM.
+> 
+> e.g. https://github.com/linux-lock/bpflock
+> 
+
+Thank you for an example. But the project says
+
+  bpflock is not a mandatory access control labeling solution, and it does not
+  intent to replace AppArmor, SELinux, and other MAC solutions. bpflock uses a
+  simple declarative security profile.
+
+which is different from what I want to know (whether it is realistic to
+implement TOMOYO/AKARI/CaitSith-like programs using BPF).
+
