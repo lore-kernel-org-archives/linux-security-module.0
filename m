@@ -2,60 +2,61 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20968E7AD78
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Oct 2023 15:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA24E776C4
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Oct 2023 18:33:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240116AbjJCP7h (ORCPT
+        id S240785AbjJCSdx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 Oct 2023 11:59:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52824 "EHLO
+        Tue, 3 Oct 2023 14:33:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232098AbjJCP7g (ORCPT
+        with ESMTP id S240779AbjJCSdw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 Oct 2023 11:59:36 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CF53E6
-        for <linux-security-module@vger.kernel.org>; Tue,  3 Oct 2023 08:59:30 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-d814634fe4bso1294136276.1
-        for <linux-security-module@vger.kernel.org>; Tue, 03 Oct 2023 08:59:30 -0700 (PDT)
+        Tue, 3 Oct 2023 14:33:52 -0400
+Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49846B8
+        for <linux-security-module@vger.kernel.org>; Tue,  3 Oct 2023 11:33:48 -0700 (PDT)
+Received: by mail-qv1-xf2f.google.com with SMTP id 6a1803df08f44-65b162328edso7110796d6.2
+        for <linux-security-module@vger.kernel.org>; Tue, 03 Oct 2023 11:33:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696348769; x=1696953569; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xP89tk8jeFUDqiHwgtcyinENLLmFDFAo+sp2wFgmRBw=;
-        b=3VHfewwIV0zOljG/ol2pjU+0vBAWkOLQRPOSIDg5brqaS+50EHIiCl+ps7d84LasCC
-         jz7EfaUe1TP4lksfzPRXjmqvTy2qhmWi6rE0bUp0X2soN22L9f7Tpzv33HVo7nNh1DpK
-         xVGLumlTXW1AIwOdhs8KaR033H4JRtK7qJDnzZJbOZVOAIuVgRgMfBtgHnv9p3YdnuwS
-         poxsb3AIswlAkEV08xxGKdQ+PCQ4u8RqOWnx7mo22z94u7AEoRP+Ocm9CDkjVMbyosWx
-         CaUYYlWPcDj5t6s+bBhCEmtwG+DQmiZ1F93IWvadR9nnbUGaPS4AG69AHcpqDEFwXAXk
-         PMAw==
+        d=google.com; s=20230601; t=1696358027; x=1696962827; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R9RZg3twPdN7SJarZ/3IsJk/93o/jgnrY3ylxDmEVWY=;
+        b=eRtKp9K05iEcq6czK8WWvk3WTZ++XgFDyLqcu6+1oX0ugzs8SjqUerdeOsn8Jn+S+a
+         Rpy8LEd552jIM6/9NM7DAXHJHLHqrqEU9NkfUoEkAJsUCI4BBoOpbhMm2G1dEj63V9fv
+         /GYqc7rk7Ox2I814AlsLCgXMhhIGZ3uN5dkK/9Njfh/kuHoBPue1SCkb//S7UQQjvIwm
+         3dkBcWU5wQzUGxI2n4IsVN3KFkCvOu5/a7L0L1DgESfayIvlDgdBurP8CVKwG/KPWgtd
+         vToJJ9OFs+FK9KcJByAuVo/wM10OAXozd8GmN+xOsbcI+ovtuuCBE965+d1yFEMfZ+LE
+         LSFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696348769; x=1696953569;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xP89tk8jeFUDqiHwgtcyinENLLmFDFAo+sp2wFgmRBw=;
-        b=T5jgbbn2DBOshFUKnNHvdYwueW2PKML47BztNI1knENDQlR5+oln5w7AFXQqOa6HPJ
-         t4G7dZZTr1kHmZuhu/ONcMr3KMnO2qRXhqIJqpAmu8G35CtOdmbQUGFakIGKsUSCwgwM
-         G149CbZ/quq37xvU2zEL/KmHRa9Frq6DnX0CsEWoJHjfXznAmaNx0AKN6dkpikpVGSy3
-         H8FfSEwamNY7/kqczMs8kFXapdy2DPdJivJQBG6k6xgySTihU/nvtHpsbKt2hQJyir5t
-         1zTwWutFvwICCNZJviBJ0yvVvSFn5LpCcQ7fdZs9fTUmiJqKN4c5i8fRdvZT1dm07GP3
-         NgeA==
-X-Gm-Message-State: AOJu0YwahmcGAIFwEfDxUnsoTQJJP32dXaEAXON0kS3icNkEFQy0X5qF
-        +ecm3c2nnYNZESR5HRc3RbqVVeqTFvY=
-X-Google-Smtp-Source: AGHT+IHlsTPxnmIroL8cntBugIBpa7VGBcPZjKPldlj/dItcEWdxSvIkKSkj76hPSiTFqWvviFkle9Hc81s=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:3604:0:b0:d7a:c85c:725b with SMTP id
- d4-20020a253604000000b00d7ac85c725bmr227114yba.7.1696348768967; Tue, 03 Oct
- 2023 08:59:28 -0700 (PDT)
-Date:   Tue, 3 Oct 2023 08:59:27 -0700
-In-Reply-To: <CA+EHjTzSUXx8P9gWmUERg4owxH6r6yNPm1_RL-BzS_2CNPtRKw@mail.gmail.com>
-Mime-Version: 1.0
+        d=1e100.net; s=20230601; t=1696358027; x=1696962827;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R9RZg3twPdN7SJarZ/3IsJk/93o/jgnrY3ylxDmEVWY=;
+        b=nYYhvSFq9s4y5/a6QcMlZ/vIdgEM9bR98WkpCufKOiyoUfYPOJWqb8iAkzu27cEKgF
+         ETCE1z2E1ktUePZuKTfC2eiLTDAltyDq+UhNrVzQaZZsHxaOhDSCQ1+O8DTLFyqPBSNz
+         Hb7bxh0na51sgovlQ5p+Ayygipj1QqNCgGFhPWoKepbKTXNEuUxZHnu7MDwKVE55kEiJ
+         Usw7E/KCf6LPbe+MPq+dPOaDLyweQz0//zdYZqtiuAM+O2rMwY9GvFP4OmqUAnqn9Imo
+         ZY8jEJA9QlT1Q8XkwGY45RO7WZqGITooi03mqOVabYVf4Yu8vigIdSPKEfWrQnYgNsLT
+         qMBQ==
+X-Gm-Message-State: AOJu0Yy9Bf5eANdJzn/PMHWR058FPrnGgg5e3LcpFfZXMT/y8ki68DHV
+        QoO7ynC6dx2LW6TRMc6zpvY5HHXWDVeapwR9oONE3g==
+X-Google-Smtp-Source: AGHT+IFD9MiWpIrPl+X1KG+mF8SaIxZsGnEuN1WGAxrVYz5JoBkTLtzwKfCvY0TUsCLlDtWXvgqIVLrhKrhnAnrWPa0=
+X-Received: by 2002:a0c:c409:0:b0:64f:3699:90cd with SMTP id
+ r9-20020a0cc409000000b0064f369990cdmr170157qvi.42.1696358027177; Tue, 03 Oct
+ 2023 11:33:47 -0700 (PDT)
+MIME-Version: 1.0
 References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-12-seanjc@google.com>
- <CA+EHjTzSUXx8P9gWmUERg4owxH6r6yNPm1_RL-BzS_2CNPtRKw@mail.gmail.com>
-Message-ID: <ZRw6X2BptZnRPNK7@google.com>
+ <CA+EHjTzSUXx8P9gWmUERg4owxH6r6yNPm1_RL-BzS_2CNPtRKw@mail.gmail.com> <ZRw6X2BptZnRPNK7@google.com>
+In-Reply-To: <ZRw6X2BptZnRPNK7@google.com>
+From:   Fuad Tabba <tabba@google.com>
+Date:   Tue, 3 Oct 2023 19:33:09 +0100
+Message-ID: <CA+EHjTzx+0pxh7DYONZUeJsm1GCiC6L8Vg_Tm9MLVEae-FKuQg@mail.gmail.com>
 Subject: Re: [RFC PATCH v12 11/33] KVM: Introduce per-page memory attributes
-From:   Sean Christopherson <seanjc@google.com>
-To:     Fuad Tabba <tabba@google.com>
+To:     Sean Christopherson <seanjc@google.com>
 Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
         Huacai Chen <chenhuacai@kernel.org>,
@@ -92,97 +93,168 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Liam Merwick <liam.merwick@oracle.com>,
         Isaku Yamahata <isaku.yamahata@gmail.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 03, 2023, Fuad Tabba wrote:
-> Hi,
-> 
-> > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> > index d2d913acf0df..f8642ff2eb9d 100644
-> > --- a/include/uapi/linux/kvm.h
-> > +++ b/include/uapi/linux/kvm.h
-> > @@ -1227,6 +1227,7 @@ struct kvm_ppc_resize_hpt {
-> >  #define KVM_CAP_ARM_EAGER_SPLIT_CHUNK_SIZE 228
-> >  #define KVM_CAP_ARM_SUPPORTED_BLOCK_SIZES 229
-> >  #define KVM_CAP_USER_MEMORY2 230
-> > +#define KVM_CAP_MEMORY_ATTRIBUTES 231
+Hi Sean,
+
+
+On Tue, Oct 3, 2023 at 4:59=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
+>
+> On Tue, Oct 03, 2023, Fuad Tabba wrote:
+> > Hi,
 > >
-> >  #ifdef KVM_CAP_IRQ_ROUTING
+> > > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> > > index d2d913acf0df..f8642ff2eb9d 100644
+> > > --- a/include/uapi/linux/kvm.h
+> > > +++ b/include/uapi/linux/kvm.h
+> > > @@ -1227,6 +1227,7 @@ struct kvm_ppc_resize_hpt {
+> > >  #define KVM_CAP_ARM_EAGER_SPLIT_CHUNK_SIZE 228
+> > >  #define KVM_CAP_ARM_SUPPORTED_BLOCK_SIZES 229
+> > >  #define KVM_CAP_USER_MEMORY2 230
+> > > +#define KVM_CAP_MEMORY_ATTRIBUTES 231
+> > >
+> > >  #ifdef KVM_CAP_IRQ_ROUTING
+> > >
+> > > @@ -2293,4 +2294,17 @@ struct kvm_s390_zpci_op {
+> > >  /* flags for kvm_s390_zpci_op->u.reg_aen.flags */
+> > >  #define KVM_S390_ZPCIOP_REGAEN_HOST    (1 << 0)
+> > >
+> > > +/* Available with KVM_CAP_MEMORY_ATTRIBUTES */
+> > > +#define KVM_GET_SUPPORTED_MEMORY_ATTRIBUTES    _IOR(KVMIO,  0xd2, __=
+u64)
+> > > +#define KVM_SET_MEMORY_ATTRIBUTES              _IOW(KVMIO,  0xd3, st=
+ruct kvm_memory_attributes)
+> > > +
+> > > +struct kvm_memory_attributes {
+> > > +       __u64 address;
+> > > +       __u64 size;
+> > > +       __u64 attributes;
+> > > +       __u64 flags;
+> > > +};
+> > > +
+> > > +#define KVM_MEMORY_ATTRIBUTE_PRIVATE           (1ULL << 3)
+> > > +
 > >
-> > @@ -2293,4 +2294,17 @@ struct kvm_s390_zpci_op {
-> >  /* flags for kvm_s390_zpci_op->u.reg_aen.flags */
-> >  #define KVM_S390_ZPCIOP_REGAEN_HOST    (1 << 0)
+> > In pKVM, we don't want to allow setting (or clearing) of PRIVATE/SHARED
+> > attributes from userspace.
+>
+> Why not?  The whole thing falls apart if userspace doesn't *know* the sta=
+te of a
+> page, and the only way for userspace to know the state of a page at a giv=
+en moment
+> in time is if userspace controls the attributes.  E.g. even if KVM were t=
+o provide
+> a way for userspace to query attributes, the attributes exposed to usrspa=
+ce would
+> become stale the instant KVM drops slots_lock (or whatever lock protects =
+the attributes)
+> since userspace couldn't prevent future changes.
+
+I think I might not quite understand the purpose of the
+KVM_SET_MEMORY_ATTRIBUTES ABI. In pKVM, all of a protected guest's
+memory is private by default, until the guest shares it with the host
+(via a hypercall), or another guest (future work). When the guest
+shares it, userspace is notified via KVM_EXIT_HYPERCALL. In many use
+cases, userspace doesn't need to keep track directly of all of this,
+but can reactively un/map the memory being un/shared.
+
+> Why does pKVM need to prevent userspace from stating *its* view of attrib=
+utes?
+>
+> If the goal is to reduce memory overhead, that can be solved by using an =
+internal,
+> non-ABI attributes flag to track pKVM's view of SHARED vs. PRIVATE.  If t=
+he guest
+> attempts to access memory where pKVM and userspace don't agree on the sta=
+te,
+> generate an exit to userspace.  Or kill the guest.  Or do something else =
+entirely.
+
+For the pKVM hypervisor the guest's view of the attributes doesn't
+matter. The hypervisor at the end of the day is the ultimate arbiter
+for what is shared and with how. For pKVM (at least in my port of
+guestmem), we use the memory attributes from guestmem essentially to
+control which memory can be mapped by the host.
+
+One difference between pKVM and TDX (as I understand it), is that TDX
+uses the msb of the guest's IPA to indicate whether memory is shared
+or private, and that can generate a mismatch on guest memory access
+between what it thinks the state is, and what the sharing state in
+reality is. pKVM doesn't have that. Memory is private by default, and
+can be shared in-place, both in the guest's IPA space as well as the
+underlying physical page.
+
+> > However, we'd like to use the attributes xarray to track the sharing st=
+ate of
+> > guest pages at the host kernel.
 > >
-> > +/* Available with KVM_CAP_MEMORY_ATTRIBUTES */
-> > +#define KVM_GET_SUPPORTED_MEMORY_ATTRIBUTES    _IOR(KVMIO,  0xd2, __u64)
-> > +#define KVM_SET_MEMORY_ATTRIBUTES              _IOW(KVMIO,  0xd3, struct kvm_memory_attributes)
-> > +
-> > +struct kvm_memory_attributes {
-> > +       __u64 address;
-> > +       __u64 size;
-> > +       __u64 attributes;
-> > +       __u64 flags;
-> > +};
-> > +
-> > +#define KVM_MEMORY_ATTRIBUTE_PRIVATE           (1ULL << 3)
-> > +
-> 
-> In pKVM, we don't want to allow setting (or clearing) of PRIVATE/SHARED
-> attributes from userspace.
+> > Moreover, we'd rather the default guest page state be PRIVATE, and
+> > only specify which pages are shared. All pKVM guest pages start off as
+> > private, and the majority will remain so.
+>
+> I would rather optimize kvm_vm_set_mem_attributes() to generate range-bas=
+ed
+> xarray entries, at which point it shouldn't matter all that much whether =
+PRIVATE
+> or SHARED is the default "empty" state.  We opted not to do that for the =
+initial
+> merge purely to keep the code as simple as possible (which is obviously s=
+till not
+> exactly simple).
+>
+> With range-based xarray entries, the cost of tagging huge chunks of memor=
+y as
+> PRIVATE should be a non-issue.  And if that's not enough for whatever rea=
+son, I
+> would rather define the polarity of PRIVATE on a per-VM basis, but only f=
+or internal
+> storage.
 
-Why not?  The whole thing falls apart if userspace doesn't *know* the state of a
-page, and the only way for userspace to know the state of a page at a given moment
-in time is if userspace controls the attributes.  E.g. even if KVM were to provide
-a way for userspace to query attributes, the attributes exposed to usrspace would
-become stale the instant KVM drops slots_lock (or whatever lock protects the attributes)
-since userspace couldn't prevent future changes.
+Sounds good.
 
-Why does pKVM need to prevent userspace from stating *its* view of attributes?
+> > I'm not sure if this is the best way to do this: One idea would be to m=
+ove
+> > the definition of KVM_MEMORY_ATTRIBUTE_PRIVATE to
+> > arch/*/include/asm/kvm_host.h, which is where kvm_arch_supported_attrib=
+utes()
+> > lives as well. This would allow different architectures to specify thei=
+r own
+> > attributes (i.e., instead we'd have a KVM_MEMORY_ATTRIBUTE_SHARED for p=
+KVM).
+> > This wouldn't help in terms of preventing userspace from clearing attri=
+butes
+> > (i.e., setting a 0 attribute) though.
+> >
+> > The other thing, which we need for pKVM anyway, is to make
+> > kvm_vm_set_mem_attributes() global, so that it can be called from outsi=
+de of
+> > kvm_main.c (already have a local patch for this that declares it in
+> > kvm_host.h),
+>
+> That's no problem, but I am definitely opposed to KVM modifying attribute=
+s that
+> are owned by userspace.
+>
+> > and not gate this function by KVM_GENERIC_MEMORY_ATTRIBUTES.
+>
+> As above, I am opposed to pKVM having a completely different ABI for mana=
+ging
+> PRIVATE vs. SHARED.  I have no objection to pKVM using unclaimed flags in=
+ the
+> attributes to store extra metadata, but if KVM_SET_MEMORY_ATTRIBUTES does=
+n't work
+> for pKVM, then we've failed miserably and should revist the uAPI.
 
-If the goal is to reduce memory overhead, that can be solved by using an internal,
-non-ABI attributes flag to track pKVM's view of SHARED vs. PRIVATE.  If the guest
-attempts to access memory where pKVM and userspace don't agree on the state,
-generate an exit to userspace.  Or kill the guest.  Or do something else entirely.
+Like I said, pKVM doesn't need a userspace ABI for managing
+PRIVATE/SHARED, just a way of tracking in the host kernel of what is
+shared (as opposed to the hypervisor, which already has the
+knowledge). The solution could simply be that pKVM does not enable
+KVM_GENERIC_MEMORY_ATTRIBUTES, has its own tracking of the status of
+the guest pages, and only selects KVM_PRIVATE_MEM.
 
-> However, we'd like to use the attributes xarray to track the sharing state of
-> guest pages at the host kernel.
-> 
-> Moreover, we'd rather the default guest page state be PRIVATE, and
-> only specify which pages are shared. All pKVM guest pages start off as
-> private, and the majority will remain so.
-
-I would rather optimize kvm_vm_set_mem_attributes() to generate range-based
-xarray entries, at which point it shouldn't matter all that much whether PRIVATE
-or SHARED is the default "empty" state.  We opted not to do that for the initial
-merge purely to keep the code as simple as possible (which is obviously still not
-exactly simple).
-
-With range-based xarray entries, the cost of tagging huge chunks of memory as
-PRIVATE should be a non-issue.  And if that's not enough for whatever reason, I
-would rather define the polarity of PRIVATE on a per-VM basis, but only for internal
-storage.
- 
-> I'm not sure if this is the best way to do this: One idea would be to move
-> the definition of KVM_MEMORY_ATTRIBUTE_PRIVATE to
-> arch/*/include/asm/kvm_host.h, which is where kvm_arch_supported_attributes()
-> lives as well. This would allow different architectures to specify their own
-> attributes (i.e., instead we'd have a KVM_MEMORY_ATTRIBUTE_SHARED for pKVM).
-> This wouldn't help in terms of preventing userspace from clearing attributes
-> (i.e., setting a 0 attribute) though.
-> 
-> The other thing, which we need for pKVM anyway, is to make
-> kvm_vm_set_mem_attributes() global, so that it can be called from outside of
-> kvm_main.c (already have a local patch for this that declares it in
-> kvm_host.h),
-
-That's no problem, but I am definitely opposed to KVM modifying attributes that
-are owned by userspace.
-
-> and not gate this function by KVM_GENERIC_MEMORY_ATTRIBUTES.
-
-As above, I am opposed to pKVM having a completely different ABI for managing
-PRIVATE vs. SHARED.  I have no objection to pKVM using unclaimed flags in the
-attributes to store extra metadata, but if KVM_SET_MEMORY_ATTRIBUTES doesn't work
-for pKVM, then we've failed miserably and should revist the uAPI.
+Thanks!
+/fuad
