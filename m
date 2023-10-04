@@ -2,58 +2,59 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 532A4E7C4F0
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Oct 2023 19:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C11B1E7C4F0
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Oct 2023 19:38:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233832AbjJDT0k (ORCPT
+        id S233578AbjJDTiF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Oct 2023 15:26:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43088 "EHLO
+        Wed, 4 Oct 2023 15:38:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233717AbjJDT0k (ORCPT
+        with ESMTP id S243746AbjJDTiA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Oct 2023 15:26:40 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BB7BB8
-        for <linux-security-module@vger.kernel.org>; Wed,  4 Oct 2023 12:26:36 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-d84d883c1b6so1249751276.0
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Oct 2023 12:26:36 -0700 (PDT)
+        Wed, 4 Oct 2023 15:38:00 -0400
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC60CBD
+        for <linux-security-module@vger.kernel.org>; Wed,  4 Oct 2023 12:37:55 -0700 (PDT)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-579de633419so1581417b3.3
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Oct 2023 12:37:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1696447595; x=1697052395; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1696448275; x=1697053075; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WNtOw2zMeICJpsM+W2CmdJ9g0vBMt1nGnueozCmL+A4=;
-        b=GfjOpnhj1vdKHS5of/zaqv1fOPr+VgZCxdsnGEpuNKNXCAsfniLQVPfdCN6S2XK2wP
-         EHLwXGrXFS5A6sTUBoovXrJEmO6JqqHBBY+z1B3PNEv7ZiWGUO5R9wrH34kG/Gs6ryyg
-         7yDENMRdXNCRJprDDhNT6QRbtcP6aRy/C5i7vXpwssRf0hAOWjvnKdlLGF8GnMVu/hd7
-         Uif3NQu2d6H5WVIqU+GzCVRoe7ddiy6gh2GoUNW8mozMvUGBX4ENvhYRKMp4fCUtQuWJ
-         ONOo6g0giEth4/yH0wtx2Vegm0iLqwH/Q3969gcRQDhotrC6SlXw861gN9ktD7BZyObg
-         7imw==
+        bh=mQGn2Phe0RwYW5SGubGGOv+c/hAGSSs2LrA09w+wOG8=;
+        b=TilTgkhZouIPuv7GuwoG4+G6t7andK6GaOW7wftIFaIREBfgJYPJjkN6KSK+Avay1v
+         okj2r3PfUPtWwxcVfYzuc5MIEkhfTszqWOo4sILSQ+TwvnDqz3vm/FRq/pTgPApIJcuR
+         xeu8lYuf4TL5C3DOHXnWsxMwLmJ8NFRWzBd9dMgzmLbzx2UVGMEkHFAy7LdbgWhwznu9
+         q4MPPTMc+XkAxik+CKCeMKAMl6Ppmmh6L4Fb2iaAJqVXH69Q8w9yDfPkAQh5pDn7RGoo
+         QKUSyOL5Kit6+OQz+MneFcrB66bi0fLGTNflIfkoKvSCaS7dbthDD6qpSpwI/e+ED9en
+         /4fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696447595; x=1697052395;
+        d=1e100.net; s=20230601; t=1696448275; x=1697053075;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WNtOw2zMeICJpsM+W2CmdJ9g0vBMt1nGnueozCmL+A4=;
-        b=c33m2L0NHGI/PMZrEy3pcalB7ngiK0RWJC4WL81pOGQOms9ply/NOOLCSItzusD8UU
-         ksq8CYyqysHI1GQdMAzipKJBUtb9cJ5rB3jDJWZ1CSpitkHQo0Kw0crTt6lwCyqLEBRR
-         9A7uxJckM0WynR6m6bDRbBk0EcWqgAgmxhtkdQa6+KCYPv5NOPpmVPXHlYbbaIyIzeUp
-         x9qHuSauletsav7YIsboEPPof4fkDdC7p3IHWAILznnErJXrNvLAzU3KZNsiJEhnjDSA
-         5O2svB/N+IikTWeOU7YG4QR9tQu8Te4XMx9+vFnAgRx7Jc4qKCSEuDLY6JU6qig1sKfQ
-         4mig==
-X-Gm-Message-State: AOJu0YzKTGkZjGezqu7zxRPBdtb9PWlAhh8WSY6STCHQcaLiFWJzqzWy
-        kekCTFnx760XoOHO5jhiPQSaYc0L9aHJE3U2l423
-X-Google-Smtp-Source: AGHT+IFgQ7KZulHqW46gnSInyJ+hza/7XB/qpXUHTrPS/mp0lJLZMqv7XZDUdzy8LdR5GaTKoIzODIK9K08t+Z+ygNE=
-X-Received: by 2002:a5b:a44:0:b0:d86:4342:290 with SMTP id z4-20020a5b0a44000000b00d8643420290mr568657ybq.21.1696447595426;
- Wed, 04 Oct 2023 12:26:35 -0700 (PDT)
+        bh=mQGn2Phe0RwYW5SGubGGOv+c/hAGSSs2LrA09w+wOG8=;
+        b=G7hORnw/3nwXc4mUl0p7ZOjkxYePSBJ0siuz1G3r40eYdpsjlQdOs4B339bSjKjFm+
+         wQ6FFOo3d+CE5RAnRlOxvlvsfin7k+cdoU/eeHd8vU6YWvbnqBFn2LmC6IUyfFdNPdm0
+         9m73PmlWkykGyGiW8ZdBDka5oeu2D/fAZwnZ0yu63UteaRIZYJv2pkyJiIFebV3zqhvc
+         7qtkk02mRnvs9P5n6x9ohJMidladvMm3+2Cm8d8Z2+wNnrOFawQvDUXNYeuVW6X704Xg
+         +DTSVNp+bLrJ+O0NXUX2Cr8ec6A4yQ2AdRKHUViFRbl9b8ivpQb/A9QmtSwMAuWlSLf2
+         vqBg==
+X-Gm-Message-State: AOJu0YwBq/XOFEBauN8WgT7GCxkkF58wwKzZ/2QhYJVO3YCk6Bd+FhlY
+        hzIjWZFXV6xJPCV2wxRtqJQXLmrm+zM75C0Ke9Qx
+X-Google-Smtp-Source: AGHT+IF/30kkFHZBZjg3KbcOdEkEVasuK1il9LqueAt4mYRrIgMYFlqbwoL44JXav1232SSuhV3Vc5nqAWjjxjk5xw0=
+X-Received: by 2002:a05:6902:18c9:b0:d1a:955f:304d with SMTP id
+ ck9-20020a05690218c900b00d1a955f304dmr3631465ybb.64.1696448274671; Wed, 04
+ Oct 2023 12:37:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230928130147.564503-1-mszeredi@redhat.com> <20230928130147.564503-4-mszeredi@redhat.com>
-In-Reply-To: <20230928130147.564503-4-mszeredi@redhat.com>
+References: <20230928130147.564503-1-mszeredi@redhat.com> <20230928130147.564503-5-mszeredi@redhat.com>
+In-Reply-To: <20230928130147.564503-5-mszeredi@redhat.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 4 Oct 2023 15:26:24 -0400
-Message-ID: <CAHC9VhQxMHBiB--QuV-g6ffghdN-G4N0fX3i-v+z-nc9n1p49A@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] add statmount(2) syscall
+Date:   Wed, 4 Oct 2023 15:37:43 -0400
+Message-ID: <CAHC9VhQD9r+Qf5Vz1XmxUdJJJO7HNTKdo8Ux=n+xkxr=JGFMrw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] add listmount(2) syscall
 To:     Miklos Szeredi <mszeredi@redhat.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-api@vger.kernel.org, linux-man@vger.kernel.org,
@@ -72,90 +73,92 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 28, 2023 at 9:03=E2=80=AFAM Miklos Szeredi <mszeredi@redhat.com=
+On Thu, Sep 28, 2023 at 9:04=E2=80=AFAM Miklos Szeredi <mszeredi@redhat.com=
 > wrote:
 >
-> Add a way to query attributes of a single mount instead of having to pars=
-e
-> the complete /proc/$PID/mountinfo, which might be huge.
+> Add way to query the children of a particular mount.  This is a more
+> flexible way to iterate the mount tree than having to parse the complete
+> /proc/self/mountinfo.
 >
-> Lookup the mount the new 64bit mount ID.  If a mount needs to be queried
+> Lookup the mount by the new 64bit mount ID.  If a mount needs to be queri=
+ed
 > based on path, then statx(2) can be used to first query the mount ID
 > belonging to the path.
 >
-> Design is based on a suggestion by Linus:
+> Return an array of new (64bit) mount ID's.  Without privileges only mount=
+s
+> are listed which are reachable from the task's root.
 >
->   "So I'd suggest something that is very much like "statfsat()", which ge=
-ts
->    a buffer and a length, and returns an extended "struct statfs" *AND*
->    just a string description at the end."
->
-> The interface closely mimics that of statx.
->
-> Handle ASCII attributes by appending after the end of the structure (as p=
-er
-> above suggestion).  Pointers to strings are stored in u64 members to make
-> the structure the same regardless of pointer size.  Strings are nul
-> terminated.
->
-> Link: https://lore.kernel.org/all/CAHk-=3Dwh5YifP7hzKSbwJj94+DZ2czjrZsczy=
-6GBimiogZws=3Drg@mail.gmail.com/
 > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 > ---
->  arch/x86/entry/syscalls/syscall_32.tbl |   1 +
->  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
->  fs/namespace.c                         | 283 +++++++++++++++++++++++++
->  fs/statfs.c                            |   1 +
->  include/linux/syscalls.h               |   5 +
->  include/uapi/asm-generic/unistd.h      |   5 +-
->  include/uapi/linux/mount.h             |  56 +++++
->  7 files changed, 351 insertions(+), 1 deletion(-)
+>  arch/x86/entry/syscalls/syscall_32.tbl |  1 +
+>  arch/x86/entry/syscalls/syscall_64.tbl |  1 +
+>  fs/namespace.c                         | 69 ++++++++++++++++++++++++++
+>  include/linux/syscalls.h               |  3 ++
+>  include/uapi/asm-generic/unistd.h      |  5 +-
+>  include/uapi/linux/mount.h             |  3 ++
+>  6 files changed, 81 insertions(+), 1 deletion(-)
 
 ...
 
 > diff --git a/fs/namespace.c b/fs/namespace.c
-> index c3a41200fe70..3326ba2b2810 100644
+> index 3326ba2b2810..050e2d2af110 100644
 > --- a/fs/namespace.c
 > +++ b/fs/namespace.c
-
-...
-
-> +static int do_statmount(struct stmt_state *s)
+> @@ -4970,6 +4970,75 @@ SYSCALL_DEFINE4(statmount, const struct __mount_ar=
+g __user *, req,
+>         return ret;
+>  }
+>
+> +static long do_listmount(struct vfsmount *mnt, u64 __user *buf, size_t b=
+ufsize,
+> +                        const struct path *root, unsigned int flags)
 > +{
-> +       struct statmnt *sm =3D &s->sm;
-> +       struct mount *m =3D real_mount(s->mnt);
-> +       size_t copysize =3D min_t(size_t, s->bufsize, sizeof(*sm));
+> +       struct mount *r, *m =3D real_mount(mnt);
+> +       struct path rootmnt =3D {
+> +               .mnt =3D root->mnt,
+> +               .dentry =3D root->mnt->mnt_root
+> +       };
+> +       long ctr =3D 0;
+> +       bool reachable_only =3D true;
 > +       int err;
 > +
-> +       err =3D security_sb_statfs(s->mnt->mnt_root);
+> +       err =3D security_sb_statfs(mnt->mnt_root);
 > +       if (err)
 > +               return err;
+> +
+> +       if (flags & LISTMOUNT_UNREACHABLE) {
+> +               if (!capable(CAP_SYS_ADMIN))
+> +                       return -EPERM;
+> +               reachable_only =3D false;
+> +       }
+> +
+> +       if (reachable_only && !is_path_reachable(m, mnt->mnt_root, &rootm=
+nt))
+> +               return capable(CAP_SYS_ADMIN) ? 0 : -EPERM;
+> +
+> +       list_for_each_entry(r, &m->mnt_mounts, mnt_child) {
+> +               if (reachable_only &&
+> +                   !is_path_reachable(r, r->mnt.mnt_root, root))
+> +                       continue;
 
-Thank you for adding the security_sb_statfs() call to this operation,
-however I believe we want to place it *after* the capability check to
-be consistent with other LSM calls.
+I believe we would want to move the security_sb_statfs() call from
+above to down here; something like this I think ...
 
-> +       if (!capable(CAP_SYS_ADMIN) &&
-> +           !is_path_reachable(m, m->mnt.mnt_root, &s->root))
-> +               return -EPERM;
-> +
-> +       stmt_numeric(s, STMT_SB_BASIC, stmt_sb_basic);
-> +       stmt_numeric(s, STMT_MNT_BASIC, stmt_mnt_basic);
-> +       stmt_numeric(s, STMT_PROPAGATE_FROM, stmt_propagate_from);
-> +       stmt_string(s, STMT_FS_TYPE, stmt_fs_type, &sm->fs_type);
-> +       stmt_string(s, STMT_MNT_ROOT, stmt_mnt_root, &sm->mnt_root);
-> +       stmt_string(s, STMT_MNT_POINT, stmt_mnt_point, &sm->mnt_point);
-> +
-> +       if (s->err)
-> +               return s->err;
-> +
-> +       /* Return the number of bytes copied to the buffer */
-> +       sm->size =3D copysize + s->pos;
-> +
-> +       if (copy_to_user(s->buf, sm, copysize))
-> +               return -EFAULT;
-> +
-> +       return 0;
+  err =3D security_sb_statfs(r->mnt.mnt_root);
+  if (err)
+    /* if we can't access the mount, pretend it doesn't exist */
+    continue;
+
+> +               if (ctr >=3D bufsize)
+> +                       return -EOVERFLOW;
+> +               if (put_user(r->mnt_id_unique, buf + ctr))
+> +                       return -EFAULT;
+> +               ctr++;
+> +               if (ctr < 0)
+> +                       return -ERANGE;
+> +       }
+> +       return ctr;
 > +}
 
 --=20
