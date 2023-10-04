@@ -2,61 +2,128 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3126FE7B5E8
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Oct 2023 10:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F12E7B5EE
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Oct 2023 11:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232939AbjJDKtG (ORCPT
+        id S242133AbjJDLBy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Oct 2023 06:49:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41612 "EHLO
+        Wed, 4 Oct 2023 07:01:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232840AbjJDKtF (ORCPT
+        with ESMTP id S242044AbjJDLBx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Oct 2023 06:49:05 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8167A1;
-        Wed,  4 Oct 2023 03:49:01 -0700 (PDT)
-Received: from fsav118.sakura.ne.jp (fsav118.sakura.ne.jp [27.133.134.245])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 394Amoet011186;
-        Wed, 4 Oct 2023 19:48:50 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav118.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp);
- Wed, 04 Oct 2023 19:48:50 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 394Amo2c011182
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 4 Oct 2023 19:48:50 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <80e720b6-3cae-ed56-bc7b-e3701b98f6b2@I-love.SAKURA.ne.jp>
-Date:   Wed, 4 Oct 2023 19:48:48 +0900
+        Wed, 4 Oct 2023 07:01:53 -0400
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0D3EA1
+        for <linux-security-module@vger.kernel.org>; Wed,  4 Oct 2023 04:01:48 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4S0sFl0WlJzMqGWl;
+        Wed,  4 Oct 2023 11:01:47 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4S0sFf5pRbzMppB8;
+        Wed,  4 Oct 2023 13:01:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1696417306;
+        bh=gWybje2HvLgDOH5ZYG1Lx+4xobEwytv14WvC0k0ZXhQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NlG1gyKYLonJ1+MJppZUKCtoojLOgIeJbKleESzlTWhJtG4VndWzCUSU64xXJh6iu
+         T7kCQFVJV6tXIWJ9h2K86LxQSFmErn/4HiC2IYPyQNTVfJ3gA12QhyEXH8o7DQzUOK
+         kq+wAhIkTPO2dLkT8kJDGGiT3OXNWvnZsMHiDrF8=
+Date:   Wed, 4 Oct 2023 13:01:45 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com, Arnd Bergmann <arnd@arndb.de>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: build warning after merge of the landlock tree
+Message-ID: <20231004.SeachioS1aop@digikod.net>
+References: <20231003142737.381e7dcb@canb.auug.org.au>
+ <20230920092641.832134-12-konstantin.meskhidze@huawei.com>
+ <20231003.ahPha5bengee@digikod.net>
+ <CAMuHMdVZsA4H47od6FV9+OzgWB2hnTQGr8YOcAL3yyURdm1AoA@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [RFC PATCH 1/2] LSM: Allow dynamically appendable LSM modules.
-Content-Language: en-US
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        KP Singh <kpsingh@kernel.org>,
-        Paul Moore <paul@paul-moore.com>, bpf <bpf@vger.kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <cc8e16bb-5083-01da-4a77-d251a76dc8ff@I-love.SAKURA.ne.jp>
- <57295dac-9abd-3bac-ff5d-ccf064947162@schaufler-ca.com>
- <b2cd749e-a716-1a13-6550-44a232deac25@I-love.SAKURA.ne.jp>
- <1b9f0e3f-0ff3-5b2d-19fa-dfa83afab8a6@schaufler-ca.com>
- <36776914-189b-3f51-9b56-b4273a625005@I-love.SAKURA.ne.jp>
-In-Reply-To: <36776914-189b-3f51-9b56-b4273a625005@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdVZsA4H47od6FV9+OzgWB2hnTQGr8YOcAL3yyURdm1AoA@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2023/10/04 19:40, Tetsuo Handa wrote:
-> does not enable Smack/TOMOYO/AppArmor is "Smack/TOMOYO/AppArmor are not attractive".
+On Tue, Oct 03, 2023 at 03:23:22PM +0200, Geert Uytterhoeven wrote:
+> Hi Mickaël,
+> 
+> On Tue, Oct 3, 2023 at 3:15 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Tue, Oct 03, 2023 at 02:27:37PM +1100, Stephen Rothwell wrote:
+> > > After merging the landlock tree, today's linux-next build (powerpc
+> > > allyesconfig) produced this warning:
+> > >
+> > > samples/landlock/sandboxer.c: In function 'populate_ruleset_net':
+> > > samples/landlock/sandboxer.c:170:78: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type '__u64' {aka 'long unsigned int'} [-Wformat=]
+> > >   170 |                                 "Failed to update the ruleset with port \"%llu\": %s\n",
+> > >       |                                                                           ~~~^
+> > >       |                                                                              |
+> > >       |                                                                              long long unsigned int
+> > >       |                                                                           %lu
+> > >   171 |                                 net_port.port, strerror(errno));
+> > >       |                                 ~~~~~~~~~~~~~
+> > >       |                                         |
+> > >       |                                         __u64 {aka long unsigned int}
+> > >
+> > > Introduced by commit
+> > >
+> > >   24889e7a2079 ("samples/landlock: Add network demo")
+> >
+> > PowerPC-64 follows the LP64 data model and then uses int-l64.h (instead of
+> > int-ll64.h like most architectures) for user space code.
+> >
+> > Here is the same code with the (suggested) "%lu" token on x86_86:
+> >
+> >   samples/landlock/sandboxer.c: In function ‘populate_ruleset_net’:
+> >   samples/landlock/sandboxer.c:170:77: error: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘__u64’ {aka ‘long long unsigned int’} [-Werror=format=]
+> >     170 |                                 "Failed to update the ruleset with port \"%lu\": %s\n",
+> >         |                                                                           ~~^
+> >         |                                                                             |
+> >         |                                                                             long unsigned int
+> >         |                                                                           %llu
+> >     171 |                                 net_port.port, strerror(errno));
+> >         |                                 ~~~~~~~~~~~~~
+> >         |                                         |
+> >         |                                         __u64 {aka long long unsigned int}
+> >
+> >
+> > We would then need to cast __u64 to unsigned long long to avoid this warning,
+> > which may look useless, of even buggy, for people taking a look at this sample.
+> 
+> In userspace code, you are supposed to #include <inttypes.h>
+> and use PRIu64.
 
-does not enable Smack/TOMOYO/AppArmor is NOT "Smack/TOMOYO/AppArmor are not attractive".
+Thanks for these tips!
 
+> 
+> > Anyway, it makes more sense to cast it to __u16 because it is the
+> > expected type for a TCP port. I'm updating the patch with that.
+> > Konstantin, please take this fix for the next series:
+> > https://git.kernel.org/mic/c/fc9de206a61a
+> 
+> Until someone passes a too large number, and it becomes truncated...
+
+That should not happen because it is checked by the kernel (for this
+specific case), but let's make it simple and print the 64-bit value.
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
