@@ -2,30 +2,30 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 681CCE936F8
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Oct 2023 22:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A00BBE93714
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Oct 2023 22:10:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233439AbjJDWJ5 (ORCPT
+        id S239255AbjJDWKn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Oct 2023 18:09:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36192 "EHLO
+        Wed, 4 Oct 2023 18:10:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231594AbjJDWJz (ORCPT
+        with ESMTP id S233563AbjJDWJ5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Oct 2023 18:09:55 -0400
+        Wed, 4 Oct 2023 18:09:57 -0400
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F3E82DD;
-        Wed,  4 Oct 2023 15:09:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 811D3E4;
+        Wed,  4 Oct 2023 15:09:54 -0700 (PDT)
 Received: by linux.microsoft.com (Postfix, from userid 1052)
-        id 4ECF020B74C6; Wed,  4 Oct 2023 15:09:50 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4ECF020B74C6
+        id D315F20B74D8; Wed,  4 Oct 2023 15:09:50 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D315F20B74D8
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1696457390;
-        bh=jGkhEn3ZFwR/GgtoddxjP0SkUVW+MWODAqAxLOOgeiA=;
+        bh=eJS+kBKHSIzGbwwv49yX5DCUKZVKLPE/A7wfEDIcA9E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nuhx3tGLEpT1yj9wFPQtNUAp58mBUdu6GBUGTyQanRtHBOjkklh16yYhfT9aY0gZ6
-         huOxUMcbhYESb6WW6vXHU/8mSbvsqk89Rk2fl2wtXbNFAmFLSjD1JGmX36qdulk0db
-         U3zyyXu0wECnsvsnkjfsa1e7L/jMxHR89VyWuDh0=
+        b=kivRmiQvs0LNuyzLsMCEEVEdqNtf6L5xl16co++lbJNojj2N7CnDAjy+8HfjVqa3s
+         DI8XBOrh8ocu5/dAKmmJnSU0tv9SUOOLCgLQQKevgS84tyQYx8ciXVaHBv2Q7ijzXh
+         hX5dxUtiY48KK7vGUG+7aj/jEn3ihq7B4AgdN2lw=
 From:   Fan Wu <wufan@linux.microsoft.com>
 To:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
         serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
@@ -36,222 +36,82 @@ Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
         dm-devel@redhat.com, audit@vger.kernel.org,
         roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
         Fan Wu <wufan@linux.microsoft.com>
-Subject: [RFC PATCH v11 03/19] ipe: add evaluation loop
-Date:   Wed,  4 Oct 2023 15:09:30 -0700
-Message-Id: <1696457386-3010-4-git-send-email-wufan@linux.microsoft.com>
+Subject: [RFC PATCH v11 12/19] dm: add finalize hook to target_type
+Date:   Wed,  4 Oct 2023 15:09:39 -0700
+Message-Id: <1696457386-3010-13-git-send-email-wufan@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1696457386-3010-1-git-send-email-wufan@linux.microsoft.com>
 References: <1696457386-3010-1-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Deven Bowers <deven.desai@linux.microsoft.com>
+This patch adds a target finalize hook.
 
-IPE must have a centralized function to evaluate incoming callers
-against IPE's policy. This iteration of the policy for against the rules
-for that specific caller is known as the evaluation loop.
+The hook is triggered just before activating an inactive table of a
+mapped device. If it returns an error the __bind get cancelled.
 
-Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+The dm-verity target will use this hook to attach the dm-verity's
+roothash metadata to the block_device struct of the mapped device.
+
 Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 
 ---
-v2:
-+ Split evaluation loop, access control hooks, and evaluation loop from policy parser and userspace interface to pass mailing list character limit
-
-v3:
-+ Move ipe_load_properties to patch 04.
-+ Remove useless 0-initializations Prefix extern variables with ipe_
-+ Remove kernel module parameters, as these are exposed through sysctls.
-+ Add more prose to the IPE base config option help text.
-+ Use GFP_KERNEL for audit_log_start.
-+ Remove unnecessary caching system.
-+ Remove comments from headers
-+ Use rcu_access_pointer for rcu-pointer null check
-+ Remove usage of reqprot; use prot only.
-+Move policy load and activation audit event to 03/12
-
-v4:
-+ Remove sysctls in favor of securityfs nodes
-+ Re-add kernel module parameters, as these are now exposed through securityfs.
-+ Refactor property audit loop to a separate function.
-
-v5:
-+ fix minor grammatical errors
-+ do not group rule by curly-brace in audit record,
-+ reconstruct the exact rule.
-
-v6:
-+ No changes
-
-v7:
-+ Further split lsm creation into a separate commit from the evaluation loop and audit system, for easier review.
-+ Propagating changes to support the new ipe_context structure in the evaluation loop.
-
-v8:
-+ Remove ipe_hook enumeration; hooks can be correlated via syscall record.
-
-v9:
-+ Remove ipe_context related code and simplify the evaluation loop.
-
-v10:
-+ Split eval part and boot_verified part
-
-v11:
-+ Fix code style issues
+v1-v10:
+  + Not present
 ---
- security/ipe/Makefile |  1 +
- security/ipe/eval.c   | 96 +++++++++++++++++++++++++++++++++++++++++++
- security/ipe/eval.h   | 24 +++++++++++
- 3 files changed, 121 insertions(+)
- create mode 100644 security/ipe/eval.c
- create mode 100644 security/ipe/eval.h
+ drivers/md/dm.c               | 12 ++++++++++++
+ include/linux/device-mapper.h |  7 +++++++
+ 2 files changed, 19 insertions(+)
 
-diff --git a/security/ipe/Makefile b/security/ipe/Makefile
-index c09aec4904f2..57fe922cf1fc 100644
---- a/security/ipe/Makefile
-+++ b/security/ipe/Makefile
-@@ -6,6 +6,7 @@
- #
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 64a1f306c96c..3be9cc35306d 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -2239,6 +2239,18 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
+ 		goto out;
+ 	}
  
- obj-$(CONFIG_SECURITY_IPE) += \
-+	eval.o \
- 	ipe.o \
- 	policy.o \
- 	policy_parser.o \
-diff --git a/security/ipe/eval.c b/security/ipe/eval.c
-new file mode 100644
-index 000000000000..5533c359bbeb
---- /dev/null
-+++ b/security/ipe/eval.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) Microsoft Corporation. All rights reserved.
-+ */
++	for (unsigned int i = 0; i < t->num_targets; i++) {
++		struct dm_target *ti = dm_table_get_target(t, i);
 +
-+#include <linux/fs.h>
-+#include <linux/types.h>
-+#include <linux/slab.h>
-+#include <linux/file.h>
-+#include <linux/sched.h>
-+#include <linux/rcupdate.h>
-+
-+#include "ipe.h"
-+#include "eval.h"
-+#include "policy.h"
-+
-+struct ipe_policy __rcu *ipe_active_policy;
-+
-+/**
-+ * evaluate_property - Analyze @ctx against a property.
-+ * @ctx: Supplies a pointer to the context to be evaluated.
-+ * @p: Supplies a pointer to the property to be evaluated.
-+ *
-+ * Return:
-+ * * true	- The current @ctx match the @p
-+ * * false	- The current @ctx doesn't match the @p
-+ */
-+static bool evaluate_property(const struct ipe_eval_ctx *const ctx,
-+			      struct ipe_prop *p)
-+{
-+	return false;
-+}
-+
-+/**
-+ * ipe_evaluate_event - Analyze @ctx against the current active policy.
-+ * @ctx: Supplies a pointer to the context to be evaluated.
-+ *
-+ * This is the loop where all policy evaluation happens against IPE policy.
-+ *
-+ * Return:
-+ * * 0		- OK
-+ * * -EACCES	- @ctx did not pass evaluation.
-+ * * !0		- Error
-+ */
-+int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
-+{
-+	bool match = false;
-+	enum ipe_action_type action;
-+	struct ipe_policy *pol = NULL;
-+	const struct ipe_rule *rule = NULL;
-+	const struct ipe_op_table *rules = NULL;
-+	struct ipe_prop *prop = NULL;
-+
-+	rcu_read_lock();
-+
-+	pol = rcu_dereference(ipe_active_policy);
-+	if (!pol) {
-+		rcu_read_unlock();
-+		return 0;
-+	}
-+
-+	if (ctx->op == IPE_OP_INVALID) {
-+		rcu_read_unlock();
-+		if (pol->parsed->global_default_action == IPE_ACTION_DENY)
-+			return -EACCES;
-+		return 0;
-+	}
-+
-+	rules = &pol->parsed->rules[ctx->op];
-+
-+	list_for_each_entry(rule, &rules->rules, next) {
-+		match = true;
-+
-+		list_for_each_entry(prop, &rule->props, next) {
-+			match = match && evaluate_property(ctx, prop);
-+			if (!match)
-+				break;
++		if (ti->type->finalize) {
++			ret = ti->type->finalize(ti);
++			if (ret) {
++				old_map = ERR_PTR(ret);
++				goto out;
++			}
 +		}
-+
-+		if (match)
-+			break;
 +	}
 +
-+	if (match)
-+		action = rule->action;
-+	else if (rules->default_action != IPE_ACTION_INVALID)
-+		action = rules->default_action;
-+	else
-+		action = pol->parsed->global_default_action;
-+
-+	rcu_read_unlock();
-+	if (action == IPE_ACTION_DENY)
-+		return -EACCES;
-+
-+	return 0;
-+}
-diff --git a/security/ipe/eval.h b/security/ipe/eval.h
-new file mode 100644
-index 000000000000..6b434515968f
---- /dev/null
-+++ b/security/ipe/eval.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
+ 	old_map = rcu_dereference_protected(md->map, lockdep_is_held(&md->suspend_lock));
+ 	rcu_assign_pointer(md->map, (void *)t);
+ 	md->immutable_target_type = dm_table_get_immutable_target_type(t);
+diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+index 69d0435c7ebb..4040e84a8ec7 100644
+--- a/include/linux/device-mapper.h
++++ b/include/linux/device-mapper.h
+@@ -160,6 +160,12 @@ typedef int (*dm_dax_zero_page_range_fn)(struct dm_target *ti, pgoff_t pgoff,
+  */
+ typedef size_t (*dm_dax_recovery_write_fn)(struct dm_target *ti, pgoff_t pgoff,
+ 		void *addr, size_t bytes, struct iov_iter *i);
 +/*
-+ * Copyright (C) Microsoft Corporation. All rights reserved.
++ * Returns:
++ *  < 0 : error
++ *  = 0 : success
 + */
-+
-+#ifndef _IPE_EVAL_H
-+#define _IPE_EVAL_H
-+
-+#include <linux/file.h>
-+#include <linux/types.h>
-+
-+#include "policy.h"
-+
-+extern struct ipe_policy __rcu *ipe_active_policy;
-+
-+struct ipe_eval_ctx {
-+	enum ipe_op_type op;
-+
-+	const struct file *file;
-+};
-+
-+int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx);
-+
-+#endif /* _IPE_EVAL_H */
++typedef int (*dm_finalize_fn) (struct dm_target *target);
+ 
+ void dm_error(const char *message);
+ 
+@@ -209,6 +215,7 @@ struct target_type {
+ 	dm_dax_direct_access_fn direct_access;
+ 	dm_dax_zero_page_range_fn dax_zero_page_range;
+ 	dm_dax_recovery_write_fn dax_recovery_write;
++	dm_finalize_fn finalize;
+ 
+ 	/* For internal device-mapper use. */
+ 	struct list_head list;
 -- 
 2.25.1
 
