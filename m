@@ -2,40 +2,41 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33CB8E7C4EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Oct 2023 19:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 448BAE7C4E9
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Oct 2023 19:01:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245232AbjJDTBB (ORCPT
+        id S245212AbjJDTBI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Oct 2023 15:01:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37844 "EHLO
+        Wed, 4 Oct 2023 15:01:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245229AbjJDS7S (ORCPT
+        with ESMTP id S245244AbjJDS7U (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Oct 2023 14:59:18 -0400
+        Wed, 4 Oct 2023 14:59:20 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C0281FFD;
-        Wed,  4 Oct 2023 11:55:28 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EFB6C433CD;
-        Wed,  4 Oct 2023 18:55:27 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140E510D9;
+        Wed,  4 Oct 2023 11:55:30 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F738C433C7;
+        Wed,  4 Oct 2023 18:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696445727;
-        bh=MoIiW0tMHURG7cJf6w6ln0tYlsyoiEpsfqWIhLoofRM=;
+        s=k20201202; t=1696445730;
+        bh=CrI2oE9zvS7rLm3o68ETT7yHLDkYN2B8nD8SI4vNyfw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JPqhVdWskSIIpfDDjPHzSCqQNZIl417YlCoBc9LPz5sjsfGqE07PJZOhE6sbqYP2X
-         0U1dSNp6FcjR7IOU1yow1ION3UjDnESIbSQDkdDpWksH/8zYMZcB3idwbfTAzC0HXB
-         /qVg/1XnBw320D6Hhx0qh2KItlWeJkAItTSMRcgeDL9uG/CHgx4Ckr4D4rAbL+jDlv
-         QwK/9vxexr4tqB/vjwaQtmI63IBMlRihiEOuGgDK0Y/BnD4ubIzD95kSWb57EJGSzJ
-         nPT6UIVKEBcI2UHtAFu84iqq2l6M7LkuDXctHZOMs99yMKIepLnPV/675uCcQfewxu
-         QIoYrlMYYkRpQ==
+        b=Mj23CMF1wPG5z6bEMvvYf+X6rPahpOrgAsQU5jbz4pVIXc6QGhXgd1Ej9CoclvQfG
+         zqg3Gv/qCiVvi4w8LOEzHJDS9o18NAokf23yk1cuVPRGiIwZtfI3Fwx6aW/FkBxPD3
+         ig2WakoncNMFhlEzh5Dj4AuyaBYePBslTp6RVsPqP4Dtx4RVaEgXRf50pPpqqjf8vh
+         ngkQxmeeLVADAKSN/oMmyw6A1mk9UcNJEKTDIxiEP3j39K5Z+zLYQ2txRZeDIY2DIT
+         S8vLeFRncvS3GXwPZsAtV31xssViXmbWDzusPv6eoGQ36h0GuKhYudDbB8rxq7xLBF
+         +H9+ji+iezkyQ==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
-Subject: [PATCH v2 84/89] apparmor: convert to new timestamp accessors
-Date:   Wed,  4 Oct 2023 14:53:09 -0400
-Message-ID: <20231004185347.80880-82-jlayton@kernel.org>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v2 86/89] security: convert to new timestamp accessors
+Date:   Wed,  4 Oct 2023 14:53:11 -0400
+Message-ID: <20231004185347.80880-84-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231004185347.80880-1-jlayton@kernel.org>
 References: <20231004185221.80802-1-jlayton@kernel.org>
@@ -47,17 +48,17 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 Convert to using the new inode timestamp accessor functions.
 
+Acked-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- security/apparmor/apparmorfs.c    | 7 ++++---
- security/apparmor/policy_unpack.c | 4 ++--
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ security/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index c198a8a2047b..27b0540a761c 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -226,7 +226,7 @@ static int __aafs_setup_d_inode(struct inode *dir, struct dentry *dentry,
+diff --git a/security/inode.c b/security/inode.c
+index 3aa75fffa8c9..9e7cde913667 100644
+--- a/security/inode.c
++++ b/security/inode.c
+@@ -145,7 +145,7 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
  
  	inode->i_ino = get_next_ino();
  	inode->i_mode = mode;
@@ -65,43 +66,7 @@ index c198a8a2047b..27b0540a761c 100644
 +	simple_inode_init_ts(inode);
  	inode->i_private = data;
  	if (S_ISDIR(mode)) {
- 		inode->i_op = iops ? iops : &simple_dir_inode_operations;
-@@ -1557,7 +1557,8 @@ void __aafs_profile_migrate_dents(struct aa_profile *old,
- 		if (new->dents[i]) {
- 			struct inode *inode = d_inode(new->dents[i]);
- 
--			inode->i_mtime = inode_set_ctime_current(inode);
-+			inode_set_mtime_to_ts(inode,
-+					      inode_set_ctime_current(inode));
- 		}
- 		old->dents[i] = NULL;
- 	}
-@@ -2546,7 +2547,7 @@ static int aa_mk_null_file(struct dentry *parent)
- 
- 	inode->i_ino = get_next_ino();
- 	inode->i_mode = S_IFCHR | S_IRUGO | S_IWUGO;
--	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
-+	simple_inode_init_ts(inode);
- 	init_special_inode(inode, S_IFCHR | S_IRUGO | S_IWUGO,
- 			   MKDEV(MEM_MAJOR, 3));
- 	d_instantiate(dentry, inode);
-diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index 94d0f801eb49..7f0e58f3e1fc 100644
---- a/security/apparmor/policy_unpack.c
-+++ b/security/apparmor/policy_unpack.c
-@@ -89,10 +89,10 @@ void __aa_loaddata_update(struct aa_loaddata *data, long revision)
- 		struct inode *inode;
- 
- 		inode = d_inode(data->dents[AAFS_LOADDATA_DIR]);
--		inode->i_mtime = inode_set_ctime_current(inode);
-+		inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
- 
- 		inode = d_inode(data->dents[AAFS_LOADDATA_REVISION]);
--		inode->i_mtime = inode_set_ctime_current(inode);
-+		inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
- 	}
- }
- 
+ 		inode->i_op = &simple_dir_inode_operations;
 -- 
 2.41.0
 
