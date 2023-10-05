@@ -2,191 +2,94 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 065D3E92710
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 178D9E9270F
 	for <linux-security-module@archiver.kernel.org>; Thu,  5 Oct 2023 14:42:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237021AbjJEOmZ (ORCPT
+        id S237134AbjJEOm0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:42:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49620 "EHLO
+        Thu, 5 Oct 2023 10:42:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236232AbjJEOhD (ORCPT
+        with ESMTP id S236511AbjJEOgk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Oct 2023 10:37:03 -0400
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D0B73F016;
-        Thu,  5 Oct 2023 07:02:52 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 08D525C025F;
-        Thu,  5 Oct 2023 00:23:41 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 05 Oct 2023 00:23:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1696479821; x=1696566221; bh=Z9/BddHtqtTSTcngqikz3LcXGL1B2ri4Bu8
-        DyrtBFpA=; b=ZATk2PEGSVbByPxxMHhCET54U+sK7GsAptaPN938K3RVWhuGZ5y
-        1MPF+9p64wEAdmCwLrRQXrxD/Z8DVIFcnUnqWreXfhPid6+S7dKJ/TEGIN/wGi+b
-        w7UeuMfX/bLTSQO+fVc34VBq1wO1dUgJOvxF0tpJTnyQf5cE3IPdC2sYfKA0jAjG
-        5+IYUWyKC3qnAOwJfJdm5vsBkqiziGe+7EGb5i4r5JXCRTl9hWca88GkjTghPVez
-        acMX6X1LbL2muWnR1934QI1V9CGQfyDgJAgufvqQ2Kw6mzMfrzzzygVbLH2Ee0dr
-        54v+p6eYw+ouexAq5fVz/hwiI28hqHXDmsQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1696479821; x=1696566221; bh=Z9/BddHtqtTSTcngqikz3LcXGL1B2ri4Bu8
-        DyrtBFpA=; b=l1tqXNRK10fDiiVcNwtJA0uOc/5R0o5gnOO61e6/GXPLBmaxAmP
-        Oes8qYtqeVZfnPgVVCdc+RXPh8Gw9bfax7tqiszQxZsc85fSVpprBRMLvFkJmvnH
-        AhuqzooUTZ3Ah1sL4WvIfKU7IApqwjqXF/qoM9FYe9hU9wotxuQwckbMOMgEs8JM
-        TWOrzse4ZMt0lJw+bjUgBvNWj8zsbaiaoj4aFj16uOh6cmN1xnxFqsMEU0vEg1qx
-        BnLb9yq7cETJbSx70aGg7piPq5Ve5NY2TfQmWSplWeVPXzqFIsG5cJ8txrx7Ofi+
-        zpApTEwfl5TEODfW27Y5c9DHpS3Oza52BjQ==
-X-ME-Sender: <xms:SzoeZVQem9RMqeDhYeJaTvhJcFyq8Erl84K7YNXvrekTeVeuRl77JQ>
-    <xme:SzoeZex9sfi01AN7RobO41A27ETMlq08vkJbH__Szc2EzG4-TijY3Rs1Donu3wGlw
-    2oRFxP9O-RN>
-X-ME-Received: <xmr:SzoeZa39pA9oM1GJ4l2oTNh7mzcWmIitokwjaPOcg3v-vpVeSsY8LGcWiTNs_xPb6X8aH0DdfOhih5BftqSNWevnZ0dPSJDOjZDm1mo-eBNYrvT9r9S8pdCg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrgeefgdekvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthekredttdefjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    egvdetvedvfeeivdeuueejgeetvdehlefhheethfekgfejueffgeeugfekudfhjeenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
-    hthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:SzoeZdDciAtZwRk0Yzved4E9M2AnwsGT0W61S7IhiM0cqL1pTlvSgQ>
-    <xmx:SzoeZeiorAuaxLm_o3gm8qM5bD_cHVJOcDx1E1A_txs2tFOUDKYmXg>
-    <xmx:SzoeZRr3Cn8PLYe1aG08RrTR45DiIX7qCZO690Qp2De1v4Np-NTcwg>
-    <xmx:TToeZe5FzehY4x2bDePAxtenrqdu9Dbp12yeuFC_F0HeclaNBJgGDg>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 5 Oct 2023 00:23:33 -0400 (EDT)
-Message-ID: <a25f2736-1837-f4ca-b401-85db24f46452@themaw.net>
-Date:   Thu, 5 Oct 2023 12:23:29 +0800
+        Thu, 5 Oct 2023 10:36:40 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6EAE3F031
+        for <linux-security-module@vger.kernel.org>; Thu,  5 Oct 2023 07:01:18 -0700 (PDT)
+Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 395DxTnc037452;
+        Thu, 5 Oct 2023 22:59:29 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
+ Thu, 05 Oct 2023 22:59:28 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 395DxSeT037448
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 5 Oct 2023 22:59:28 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <9745237d-8cec-ce3b-1b3a-4068def7e3f4@I-love.SAKURA.ne.jp>
+Date:   Thu, 5 Oct 2023 22:59:27 +0900
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 4/4] add listmount(2) syscall
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Matthew House <mattlloydhouse@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <20230928130147.564503-1-mszeredi@redhat.com>
- <20230928130147.564503-5-mszeredi@redhat.com>
- <CAHC9VhQD9r+Qf5Vz1XmxUdJJJO7HNTKdo8Ux=n+xkxr=JGFMrw@mail.gmail.com>
- <CAJfpegsPbDgaz46x4Rr9ZgCpF9rohVHsvuWtQ5LNAdiYU_D4Ww@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [RFC PATCH 1/2] LSM: Allow dynamically appendable LSM modules.
 Content-Language: en-US
-From:   Ian Kent <raven@themaw.net>
-In-Reply-To: <CAJfpegsPbDgaz46x4Rr9ZgCpF9rohVHsvuWtQ5LNAdiYU_D4Ww@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     =?UTF-8?Q?Jos=c3=a9_Bollo?= <jobol@nonadev.net>,
+        KP Singh <kpsingh@kernel.org>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>, bpf <bpf@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <cc8e16bb-5083-01da-4a77-d251a76dc8ff@I-love.SAKURA.ne.jp>
+ <CACYkzJ5k7oYxFgWp9bz1Wmp3n6LcU39Mh-HXFWTKnZnpY-Ef7w@mail.gmail.com>
+ <20231005114754.56c40a2f@d-jobol>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20231005114754.56c40a2f@d-jobol>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/10/23 12:01, Miklos Szeredi wrote:
-> On Wed, 4 Oct 2023 at 21:38, Paul Moore <paul@paul-moore.com> wrote:
->> On Thu, Sep 28, 2023 at 9:04 AM Miklos Szeredi <mszeredi@redhat.com> wrote:
->>> Add way to query the children of a particular mount.  This is a more
->>> flexible way to iterate the mount tree than having to parse the complete
->>> /proc/self/mountinfo.
->>>
->>> Lookup the mount by the new 64bit mount ID.  If a mount needs to be queried
->>> based on path, then statx(2) can be used to first query the mount ID
->>> belonging to the path.
->>>
->>> Return an array of new (64bit) mount ID's.  Without privileges only mounts
->>> are listed which are reachable from the task's root.
->>>
->>> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->>> ---
->>>   arch/x86/entry/syscalls/syscall_32.tbl |  1 +
->>>   arch/x86/entry/syscalls/syscall_64.tbl |  1 +
->>>   fs/namespace.c                         | 69 ++++++++++++++++++++++++++
->>>   include/linux/syscalls.h               |  3 ++
->>>   include/uapi/asm-generic/unistd.h      |  5 +-
->>>   include/uapi/linux/mount.h             |  3 ++
->>>   6 files changed, 81 insertions(+), 1 deletion(-)
->> ...
+On 2023/10/05 18:47, José Bollo wrote:
+>> Now, comes the question of whether we need dynamically loaded LSMs, I
+>> am not in favor of this. Please share your limitations of BPF as you
+>> mentioned and what's missing to implement dynamic LSMs. My question
+>> still remains unanswered.
 >>
->>> diff --git a/fs/namespace.c b/fs/namespace.c
->>> index 3326ba2b2810..050e2d2af110 100644
->>> --- a/fs/namespace.c
->>> +++ b/fs/namespace.c
->>> @@ -4970,6 +4970,75 @@ SYSCALL_DEFINE4(statmount, const struct __mount_arg __user *, req,
->>>          return ret;
->>>   }
->>>
->>> +static long do_listmount(struct vfsmount *mnt, u64 __user *buf, size_t bufsize,
->>> +                        const struct path *root, unsigned int flags)
->>> +{
->>> +       struct mount *r, *m = real_mount(mnt);
->>> +       struct path rootmnt = {
->>> +               .mnt = root->mnt,
->>> +               .dentry = root->mnt->mnt_root
->>> +       };
->>> +       long ctr = 0;
->>> +       bool reachable_only = true;
->>> +       int err;
->>> +
->>> +       err = security_sb_statfs(mnt->mnt_root);
->>> +       if (err)
->>> +               return err;
->>> +
->>> +       if (flags & LISTMOUNT_UNREACHABLE) {
->>> +               if (!capable(CAP_SYS_ADMIN))
->>> +                       return -EPERM;
->>> +               reachable_only = false;
->>> +       }
->>> +
->>> +       if (reachable_only && !is_path_reachable(m, mnt->mnt_root, &rootmnt))
->>> +               return capable(CAP_SYS_ADMIN) ? 0 : -EPERM;
->>> +
->>> +       list_for_each_entry(r, &m->mnt_mounts, mnt_child) {
->>> +               if (reachable_only &&
->>> +                   !is_path_reachable(r, r->mnt.mnt_root, root))
->>> +                       continue;
->> I believe we would want to move the security_sb_statfs() call from
->> above to down here; something like this I think ...
->>
->>    err = security_sb_statfs(r->mnt.mnt_root);
->>    if (err)
->>      /* if we can't access the mount, pretend it doesn't exist */
->>      continue;
-> Hmm.  Why is this specific to listing mounts (i.e. why doesn't readdir
-> have a similar filter)?
->
-> Also why hasn't this come up with regards to the proc interfaces that
-> list mounts?
+>> Until I hear the real limitations of using BPF, it's a NAK from me.
+> 
+> Hi all,
+> 
+> I don't understand the reason why you want to enforce implementers to
+> use your BPF?
 
-The proc interfaces essentially use <mount namespace>->list to provide
+Because if whatever LSM modules were implemented using BPF, we won't need
+to support LKM-based LSM. Supporting LKM-based LSM is expected because
+the LSM community cannot accept whatever LSMs and the Linux distributor
+cannot accept whatever LSMs.
 
-the mounts that can be seen so it's filtered by mount namespace of the
+> 
+> Even if it can do any possible thing that security implementer wants,
+> why enforcing to use it? For experimenting? But then after successful
+> experimentation the implementer must translate to real LSM and rewrite
+> almost every thing.
 
-task that's doing the open().
+Not for experimenting. The advantage of implementing an LSM module using
+BPF is that we can load that LSM without making that LSM module in-tree (i.e.
+accepted by the LSM community) and built-in (i.e. accepted by the Linux
+distributor). That is, the implementer will not try to rewrite a BPF-based
+LSM to non BPF-based LSM if the implementer succeed to write that LSM using BPF.
 
+But remaining out-of-tree (i.e. not accepted by the LSM community) might have
+disadvantage that the BPF-based LSM is not identified as a LSM because the LSM ID
+value won't be assigned. (I don't know where BPF-based LSMs are located in the
+kernel source tree. All BPF-based LSMs except trivial examples included in the
+kernel source tree will remain out-of-tree ?)
 
-See fs/namespace.c:mnt_list_next() and just below the m_start(), m_next(),
+> 
+> And also why to use faty BPF for a tricky simple stuff?
 
-etc.
-
-
-Ian
-
->
-> I just want to understand the big picture here.
->
-> Thanks,
-> Miklos
