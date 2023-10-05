@@ -2,133 +2,111 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A73E9270C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA88E9270E
 	for <linux-security-module@archiver.kernel.org>; Thu,  5 Oct 2023 14:42:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236286AbjJEOmY (ORCPT
+        id S235396AbjJEOmW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:42:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49618 "EHLO
+        Thu, 5 Oct 2023 10:42:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237337AbjJEOjE (ORCPT
+        with ESMTP id S237021AbjJEOhs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Oct 2023 10:39:04 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E725826181
-        for <linux-security-module@vger.kernel.org>; Thu,  5 Oct 2023 07:05:37 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-59f6e6b7600so10831467b3.3
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Oct 2023 07:05:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1696514737; x=1697119537; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YUPOooK4Ns6DH/Jalgn9lVTRMXc80w0ZAjwIoNKA7QA=;
-        b=gZJjm7wIgO3iNaVndIuYT4UV17QLvXVqy6yrN8Ec6SpZ1nPqHW9BOYT9/GBBD2pxUY
-         4X6htYn6c+WhUk2zH/Ppo9KAs97EYf/C5jPcdpK6dBpy5vqEYhqHKDSBAWyau5FJH84h
-         y0yt9V/2+L5zoliDdtajzBAAVTAOcuemc6Dp53MKB/NmrALbmsdPSCdVqnFUt0PV1PFk
-         SM5UvQ/PBgLUYEybmLEXY+7EjY2/Z/M3tEW7ME5LUcvM4gNv3LUBa8lkS5aaZ2T1W50K
-         QgFN7cgf79mUY8nEGz0LU993w2u2BA+LaJA58F7x7VOPCvsWz5UcDkQPS9CaD/Ps1kCr
-         1tGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696514737; x=1697119537;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YUPOooK4Ns6DH/Jalgn9lVTRMXc80w0ZAjwIoNKA7QA=;
-        b=dugF2FT4njTfgBWopJfTAC/nmH5zMbj3xpwR13e7mg55a47lGEvtmWov8F5DY+wqFw
-         gpbwtloCnFpaEOi1U1q7hiiKERVm7147oHbWeDCey6IoARA/diMZ1jBRXoILJP4DKrSm
-         Fi4MU8KdznwxvaJQX95J6S+x4rQpKfWcPJzmzxAisyvEj0ty/gJYElLIPylW44rAAI5W
-         D94/uKMoaWvXJ2iVARAU8OeVO/bsBto3TPbfNIwVTd966kObJoZNNulQkROiP5fthodY
-         gSYHLywKtwflecPc9dbGfHngfN8fRpclXrJwhuFHIlF+04Zl+Mp91lj3YU2KLC83WBGi
-         YDGA==
-X-Gm-Message-State: AOJu0YxRp2n8g2XV4SoP1aKmQOfiPI2iwqPd80s90O34ur+iWvF4fQ0c
-        TpEUh3KmJC1FJ3nZ0nRxQ0quVV8Vq/N3feghez09
-X-Google-Smtp-Source: AGHT+IEhII1+ssm6kMv+2+D8NIey8gXMZEJQg4s9lOhq3v8CS0TIyvbGSdMA3HXKy2CrlPTC5uALpYCU+9MbO/YcHp4=
-X-Received: by 2002:a25:bb83:0:b0:d80:1bbf:fabf with SMTP id
- y3-20020a25bb83000000b00d801bbffabfmr4580170ybg.2.1696514736829; Thu, 05 Oct
- 2023 07:05:36 -0700 (PDT)
+        Thu, 5 Oct 2023 10:37:48 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B42204E35A
+        for <linux-security-module@vger.kernel.org>; Thu,  5 Oct 2023 07:03:26 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1DC8C4AF71
+        for <linux-security-module@vger.kernel.org>; Thu,  5 Oct 2023 13:26:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696512381;
+        bh=6mUgLSnm4Kc6OY+sFrERl85k6Jk4/7QG8hihF86ti4M=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lqFWaQzZooeQt1OHHnMDx3Nhb3xVcKAAd+TWPLpY4IL4qIyjVZMSfqKiVKM9s7oXk
+         GuWk3axUIJJsCZfoZyzWBhnN9BhrBwbJzTVg7o3Ilz3Rhp+JwQBm2Ts0E9hILthjYD
+         srTdVeZFXidzZpq0wrt1jVtDPGs7WE2m+dTyyo9w2VGs80nSJwr0o7TLlcZ9ZGHHOr
+         ONe57mugQpnRV8QJL+p6b587kuA6dQuJe51hhQgO6/POSraodfz9lOQN8bX/Gban/p
+         gNMFLKMPyafSd/9e2akqR9nW8OKCR5Udigskggeu+gu/h3/e3RQNoIV8n1du0EE1ab
+         4AbeDxKVNf61Q==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5334d78c5f6so1715459a12.2
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Oct 2023 06:26:20 -0700 (PDT)
+X-Gm-Message-State: AOJu0YwppI5HcotZX9ocANxnhKl5NzYB5mrOMyyrX6cTs6H+LO4+FVlq
+        SIxu18gUyaUcgtcAZVoVetKF13qP/FaqBFVtUzI/nQ==
+X-Google-Smtp-Source: AGHT+IGjEoiN5sIey9XlvsLiGVpcrzObalyvIGnXglMXvNE6FLnE02Xn7KXKfKtdJpJoQEp9dBTg8bLESCIN87KN+xM=
+X-Received: by 2002:a05:6402:134f:b0:532:bb18:7986 with SMTP id
+ y15-20020a056402134f00b00532bb187986mr5067221edw.39.1696512379251; Thu, 05
+ Oct 2023 06:26:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <CEA476C1-4CE5-4FFC-91D7-6061C8605B18@oracle.com>
- <ba2f5560800608541e81fbdd28efa9875b35e491.camel@linux.ibm.com>
- <932231F5-8050-4436-84B8-D7708DC43845@oracle.com> <7335a4587233626a39ce9bc8a969957d7f43a34c.camel@linux.ibm.com>
- <FD6FB139-F901-4E55-9705-E7B0023BDBA8@oracle.com> <1149b6dbfdaabef3e48dc2852cc76aa11a6dd6b0.camel@linux.ibm.com>
- <4A0505D0-2933-43BD-BEEA-94350BB22AE7@oracle.com> <20230913.Ceifae7ievei@digikod.net>
- <D0F16BFD-72EB-4BE2-BA3D-BAE1BCCDCB6F@oracle.com> <20230914.shah5al9Kaib@digikod.net>
- <20231005.dajohf2peiBu@digikod.net>
-In-Reply-To: <20231005.dajohf2peiBu@digikod.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 5 Oct 2023 10:05:25 -0400
-Message-ID: <CAHC9VhQioMnXdbBugn3h8TBmOPvv_pCehMh8ON5LOOPmt1=6LA@mail.gmail.com>
-Subject: Re: RFC: New LSM to control usage of x509 certificates
-To:     Eric Snowberg <eric.snowberg@oracle.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
+References: <20230928202410.3765062-1-kpsingh@kernel.org> <20230928202410.3765062-5-kpsingh@kernel.org>
+ <ZR5vSyyNGBb8TvNH@krava>
+In-Reply-To: <ZR5vSyyNGBb8TvNH@krava>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Thu, 5 Oct 2023 15:26:08 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ69x9jX3scjSA7zT99CJoM+eG6FDQdBT-SCxm47a6UEoA@mail.gmail.com>
+Message-ID: <CACYkzJ69x9jX3scjSA7zT99CJoM+eG6FDQdBT-SCxm47a6UEoA@mail.gmail.com>
+Subject: Re: [PATCH v5 4/5] bpf: Only enable BPF LSM hooks when an LSM program
+ is attached
+To:     Jiri Olsa <olsajiri@gmail.com>
+Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
+        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
+        renauld@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 5, 2023 at 6:32=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
+On Thu, Oct 5, 2023 at 10:09=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
+e:
 >
-> The initial subject was "Re: [PATCH] certs: Restrict blacklist updates
-> to the secondary trusted keyring":
-> https://lore.kernel.org/all/20230908213428.731513-1-eric.snowberg@oracle.=
-com/
+> On Thu, Sep 28, 2023 at 10:24:09PM +0200, KP Singh wrote:
 >
-> On Thu, Sep 14, 2023 at 10:34:44AM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> > CCing the LSM mailing list for this potential new LSM proposal:
-> > On Wed, Sep 13, 2023 at 10:29:58PM +0000, Eric Snowberg wrote:
-> > > > On Sep 13, 2023, at 4:21 AM, Micka=C3=ABl Sala=C3=BCn <mic@digikod.=
-net> wrote:
-> > > > On Wed, Sep 13, 2023 at 02:40:17AM +0000, Eric Snowberg wrote:
-> > > >>> On Sep 12, 2023, at 4:47 PM, Mimi Zohar <zohar@linux.ibm.com> wro=
-te:
+> SNIP
+>
+> > diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
+> > index e97aeda3a86b..df9699bce372 100644
+> > --- a/kernel/bpf/trampoline.c
+> > +++ b/kernel/bpf/trampoline.c
+> > @@ -13,6 +13,7 @@
+> >  #include <linux/bpf_verifier.h>
+> >  #include <linux/bpf_lsm.h>
+> >  #include <linux/delay.h>
+> > +#include <linux/bpf_lsm.h>
+> >
+> >  /* dummy _ops. The verifier will operate on target program's ops. */
+> >  const struct bpf_verifier_ops bpf_extension_verifier_ops =3D {
+> > @@ -514,7 +515,7 @@ static int __bpf_trampoline_link_prog(struct bpf_tr=
+amp_link *link, struct bpf_tr
+> >  {
+> >       enum bpf_tramp_prog_type kind;
+> >       struct bpf_tramp_link *link_exiting;
+> > -     int err =3D 0;
+> > +     int err =3D 0, num_lsm_progs =3D 0;
+> >       int cnt =3D 0, i;
+> >
+> >       kind =3D bpf_attach_type_to_tramp(link->link.prog);
+> > @@ -545,8 +546,14 @@ static int __bpf_trampoline_link_prog(struct bpf_t=
+ramp_link *link, struct bpf_tr
+> >                       continue;
+> >               /* prog already linked */
+> >               return -EBUSY;
+> > +
+> > +             if (link_exiting->link.prog->type =3D=3D BPF_PROG_TYPE_LS=
+M)
+> > +                     num_lsm_progs++;
+>
+> this looks wrong, it's never reached.. seems like we should add separate
+> hlist_for_each_entry loop over trampoline's links for this check/init of
+> num_lsm_progs ?
+>
+> jirka
 
-[Just a reminder that trimming massive emails to the relevant portions
-is a nice thing to do]
+Good catch, I missed this during my rebase, after
+https://lore.kernel.org/bpf/20220510205923.3206889-2-kuifeng@fb.com/
+this condition is basically never reached. I will do a general loop
+over to count LSM programs and toggle the hook to true (and same for
+unlink).
 
-> > > > A complementary approach would be to create an
-> > > > LSM (or a dedicated interface) to tie certificate properties to a s=
-et of
-> > > > kernel usages, while still letting users configure these constraint=
-s.
-> > >
-> > > That is an interesting idea.  Would the other security maintainers be=
- in
-> > > support of such an approach?  Would a LSM be the correct interface?
-> > > Some of the recent work I have done with introducing key usage and CA
-> > > enforcement is difficult for a distro to pick up, since these changes=
- can be
-> > > viewed as a regression.  Each end-user has different signing procedur=
-es
-> > > and policies, so making something work for everyone is difficult.  Le=
-tting the
-> > > user configure these constraints would solve this problem.
+- KP
 
-I can't say that I have been following this thread very closely, but I
-see no reason why we wouldn't support a LSM that enforces access
-controls on certificates/keys based on their attributes/properties.
-We do have some LSM control points for the kernel keyring, which are
-used by at least one LSM, but I'm sure you would probably need some
-additional control points.
-
-If you are interested in pursuing the creation of a new LSM, and
-likely new LSM hooks, we do have some documented guidelines you should
-keep in mind:
-
-* https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
-
---=20
-paul-moore.com
+[...]
