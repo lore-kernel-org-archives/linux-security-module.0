@@ -2,40 +2,42 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9ADAE94114
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 20:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A182E94116
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 20:47:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233568AbjJFUrU (ORCPT
+        id S233627AbjJFUr3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Oct 2023 16:47:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37268 "EHLO
+        Fri, 6 Oct 2023 16:47:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233605AbjJFUrQ (ORCPT
+        with ESMTP id S233606AbjJFUr1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Oct 2023 16:47:16 -0400
+        Fri, 6 Oct 2023 16:47:27 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D845F4
-        for <linux-security-module@vger.kernel.org>; Fri,  6 Oct 2023 13:47:15 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E51CC433C9;
-        Fri,  6 Oct 2023 20:47:12 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E30CFD
+        for <linux-security-module@vger.kernel.org>; Fri,  6 Oct 2023 13:47:18 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DEDAC433C8;
+        Fri,  6 Oct 2023 20:47:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696625234;
-        bh=qwKIPfKZM6npQcifFwSvOsU2Y934lnGzJ+dV6UWEaoM=;
+        s=k20201202; t=1696625237;
+        bh=6sVmxKblEF00JE0Lc5YD1cGhezWuYx0Ygc3bygqY480=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B5K07b3laprrD5isfF5n7LRzu4hCt4zkXwOWm9oB/IEk7xYZHO7Vbu/jkyMlYyNF4
-         I0jiuhWld3oQGMxqbovUI+ouLeFuAKP3lRmEZC6e0GyJXlbn5UiYDg4k/osYfvPHPt
-         VlTyep+a+KdEU1r+zgW75uLJzTRlNCCGzThy7OL0CJx/2BL6tZz29uducAz6LgofJ1
-         jKCEKk9Q41qhikPbCgR4ec05THMB7+l+QZDSiAHYADc/uzPTjxB+poT2Dtsj4RLlFJ
-         nO7YhYEi9Xa/K6YqBVLIswy44xczC7xoIihsw6cx0EHTScMYMOTslIGOFSFZQJzTM0
-         AcGPd6o0E3UPA==
+        b=Uh4amCrxQobt6j/MzMBO6815z5NsfeaRzfhMg1wuFLJQun4SbMP54ORKDC1HAHFLU
+         rb4SK1BsFDn4yYIrD8k/fQT4uhT8oal2RMs2oSqO5zQcqkJtHVKY//ewbK5TCQIX+9
+         xm/K1BacJWGtevgD5pGYslDwK+g8CRsSw3xOKmmxDoaJ1/FiN0kRkiW51tgvCrdkgD
+         zto6k0KRAo1mtEVQxzmkFJhycWIMoMFCXC/vgj2op7sIVbp0R5kn90oCGFKg6hOaq6
+         Vbxz0jBc6Rh4Acqz1AtivqyR62ONZDNj9uY4XgaEcJzLRJRd6prl5Sy4ekVYIwKTDo
+         Gmrl3cfIRVsTg==
 From:   KP Singh <kpsingh@kernel.org>
 To:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org
 Cc:     paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
         song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        kpsingh@kernel.org, renauld@google.com, pabeni@redhat.com
-Subject: [PATCH v6 1/5] kernel: Add helper macros for loop unrolling
-Date:   Fri,  6 Oct 2023 22:46:57 +0200
-Message-ID: <20231006204701.549230-2-kpsingh@kernel.org>
+        kpsingh@kernel.org, renauld@google.com, pabeni@redhat.com,
+        Kui-Feng Lee <sinquersw@gmail.com>,
+        Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH v6 2/5] security: Count the LSMs enabled at compile time
+Date:   Fri,  6 Oct 2023 22:46:58 +0200
+Message-ID: <20231006204701.549230-3-kpsingh@kernel.org>
 X-Mailer: git-send-email 2.42.0.609.gbb76f46606-goog
 In-Reply-To: <20231006204701.549230-1-kpsingh@kernel.org>
 References: <20231006204701.549230-1-kpsingh@kernel.org>
@@ -44,88 +46,143 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This helps in easily initializing blocks of code (e.g. static calls and
-keys).
+These macros are a clever trick to determine a count of the number of
+LSMs that are enabled in the config to ascertain the maximum number of
+static calls that need to be configured per LSM hook.
 
-UNROLL(N, MACRO, __VA_ARGS__) calls MACRO N times with the first
-argument as the index of the iteration. This allows string pasting to
-create unique tokens for variable names, function calls etc.
+Without this one would need to generate static calls for the total
+number of LSMs in the kernel (even if they are not compiled) times the
+number of LSM hooks which ends up being quite wasteful.
 
-As an example:
-
-	#include <linux/unroll.h>
-
-	#define MACRO(N, a, b)            \
-		int add_##N(int a, int b) \
-		{                         \
-			return a + b + N; \
-		}
-
-	UNROLL(2, MACRO, x, y)
-
-expands to:
-
-	int add_0(int x, int y)
-	{
-		return x + y + 0;
-	}
-
-	int add_1(int x, int y)
-	{
-		return x + y + 1;
-	}
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+Suggested-by: Kui-Feng Lee <sinquersw@gmail.com>
+Suggested-by: Andrii Nakryiko <andrii@kernel.org>
 Acked-by: Song Liu <song@kernel.org>
 Signed-off-by: KP Singh <kpsingh@kernel.org>
 ---
- include/linux/unroll.h | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 include/linux/unroll.h
+ include/linux/lsm_count.h | 114 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 114 insertions(+)
+ create mode 100644 include/linux/lsm_count.h
 
-diff --git a/include/linux/unroll.h b/include/linux/unroll.h
+diff --git a/include/linux/lsm_count.h b/include/linux/lsm_count.h
 new file mode 100644
-index 000000000000..d42fd6366373
+index 000000000000..dbb3c8573959
 --- /dev/null
-+++ b/include/linux/unroll.h
-@@ -0,0 +1,36 @@
++++ b/include/linux/lsm_count.h
+@@ -0,0 +1,114 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +
 +/*
 + * Copyright (C) 2023 Google LLC.
 + */
 +
-+#ifndef __UNROLL_H
-+#define __UNROLL_H
++#ifndef __LINUX_LSM_COUNT_H
++#define __LINUX_LSM_COUNT_H
 +
 +#include <linux/args.h>
 +
-+#define UNROLL(N, MACRO, args...) CONCATENATE(__UNROLL_, N)(MACRO, args)
++#ifdef CONFIG_SECURITY
 +
-+#define __UNROLL_0(MACRO, args...)
-+#define __UNROLL_1(MACRO, args...)  __UNROLL_0(MACRO, args)  MACRO(0, args)
-+#define __UNROLL_2(MACRO, args...)  __UNROLL_1(MACRO, args)  MACRO(1, args)
-+#define __UNROLL_3(MACRO, args...)  __UNROLL_2(MACRO, args)  MACRO(2, args)
-+#define __UNROLL_4(MACRO, args...)  __UNROLL_3(MACRO, args)  MACRO(3, args)
-+#define __UNROLL_5(MACRO, args...)  __UNROLL_4(MACRO, args)  MACRO(4, args)
-+#define __UNROLL_6(MACRO, args...)  __UNROLL_5(MACRO, args)  MACRO(5, args)
-+#define __UNROLL_7(MACRO, args...)  __UNROLL_6(MACRO, args)  MACRO(6, args)
-+#define __UNROLL_8(MACRO, args...)  __UNROLL_7(MACRO, args)  MACRO(7, args)
-+#define __UNROLL_9(MACRO, args...)  __UNROLL_8(MACRO, args)  MACRO(8, args)
-+#define __UNROLL_10(MACRO, args...) __UNROLL_9(MACRO, args)  MACRO(9, args)
-+#define __UNROLL_11(MACRO, args...) __UNROLL_10(MACRO, args) MACRO(10, args)
-+#define __UNROLL_12(MACRO, args...) __UNROLL_11(MACRO, args) MACRO(11, args)
-+#define __UNROLL_13(MACRO, args...) __UNROLL_12(MACRO, args) MACRO(12, args)
-+#define __UNROLL_14(MACRO, args...) __UNROLL_13(MACRO, args) MACRO(13, args)
-+#define __UNROLL_15(MACRO, args...) __UNROLL_14(MACRO, args) MACRO(14, args)
-+#define __UNROLL_16(MACRO, args...) __UNROLL_15(MACRO, args) MACRO(15, args)
-+#define __UNROLL_17(MACRO, args...) __UNROLL_16(MACRO, args) MACRO(16, args)
-+#define __UNROLL_18(MACRO, args...) __UNROLL_17(MACRO, args) MACRO(17, args)
-+#define __UNROLL_19(MACRO, args...) __UNROLL_18(MACRO, args) MACRO(18, args)
-+#define __UNROLL_20(MACRO, args...) __UNROLL_19(MACRO, args) MACRO(19, args)
++/*
++ * Macros to count the number of LSMs enabled in the kernel at compile time.
++ */
 +
-+#endif /* __UNROLL_H */
++/*
++ * Capabilities is enabled when CONFIG_SECURITY is enabled.
++ */
++#if IS_ENABLED(CONFIG_SECURITY)
++#define CAPABILITIES_ENABLED 1,
++#else
++#define CAPABILITIES_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_SELINUX)
++#define SELINUX_ENABLED 1,
++#else
++#define SELINUX_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_SMACK)
++#define SMACK_ENABLED 1,
++#else
++#define SMACK_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_APPARMOR)
++#define APPARMOR_ENABLED 1,
++#else
++#define APPARMOR_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_TOMOYO)
++#define TOMOYO_ENABLED 1,
++#else
++#define TOMOYO_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_YAMA)
++#define YAMA_ENABLED 1,
++#else
++#define YAMA_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_LOADPIN)
++#define LOADPIN_ENABLED 1,
++#else
++#define LOADPIN_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_LOCKDOWN_LSM)
++#define LOCKDOWN_ENABLED 1,
++#else
++#define LOCKDOWN_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_SAFESETID)
++#define SAFESETID_ENABLED 1,
++#else
++#define SAFESETID_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_BPF_LSM)
++#define BPF_LSM_ENABLED 1,
++#else
++#define BPF_LSM_ENABLED
++#endif
++
++#if IS_ENABLED(CONFIG_SECURITY_LANDLOCK)
++#define LANDLOCK_ENABLED 1,
++#else
++#define LANDLOCK_ENABLED
++#endif
++
++/*
++ *  There is a trailing comma that we need to be accounted for. This is done by
++ *  using a skipped argument in __COUNT_LSMS
++ */
++#define __COUNT_LSMS(skipped_arg, args...) COUNT_ARGS(args...)
++#define COUNT_LSMS(args...) __COUNT_LSMS(args)
++
++#define MAX_LSM_COUNT			\
++	COUNT_LSMS(			\
++		CAPABILITIES_ENABLED	\
++		SELINUX_ENABLED		\
++		SMACK_ENABLED		\
++		APPARMOR_ENABLED	\
++		TOMOYO_ENABLED		\
++		YAMA_ENABLED		\
++		LOADPIN_ENABLED		\
++		LOCKDOWN_ENABLED	\
++		SAFESETID_ENABLED	\
++		BPF_LSM_ENABLED		\
++		LANDLOCK_ENABLED)
++
++#else
++
++#define MAX_LSM_COUNT 0
++
++#endif /* CONFIG_SECURITY */
++
++#endif  /* __LINUX_LSM_COUNT_H */
 -- 
 2.42.0.609.gbb76f46606-goog
 
