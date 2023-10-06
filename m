@@ -2,181 +2,168 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C71FE81E1F
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 18:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BE5E94115
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 20:47:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231163AbjJFSc4 (ORCPT
+        id S233556AbjJFUrT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Oct 2023 14:32:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47204 "EHLO
+        Fri, 6 Oct 2023 16:47:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230415AbjJFSc4 (ORCPT
+        with ESMTP id S233595AbjJFUrP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Oct 2023 14:32:56 -0400
+        Fri, 6 Oct 2023 16:47:15 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ACF3BE
-        for <linux-security-module@vger.kernel.org>; Fri,  6 Oct 2023 11:32:55 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98DBCC433CB
-        for <linux-security-module@vger.kernel.org>; Fri,  6 Oct 2023 18:32:54 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D519BF
+        for <linux-security-module@vger.kernel.org>; Fri,  6 Oct 2023 13:47:12 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A053C433C8;
+        Fri,  6 Oct 2023 20:47:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696617174;
-        bh=Wo5TVsAh4zwAyG8YmJok1TKMSHsOxoXM59UTIVqzIQM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=PMnehza84yQrST6C04Zo/j199M6miOPmmndVao5lnwEDABWosVZyOlIfmWYumVJu+
-         BgdJ4C/ErVd0lGVYVestMG8DGZejaiZfVlTg3eAA+ey0h168u+ETHC6a01eHlq+o6N
-         NXkx5Yg8Nch5VlC50wjlS7GDTztEs86kg/sHK/WiJ2lrCIg7YqrjXIp/irtvbQMiLS
-         yUUrbZ7eK+hcNCSSHhANe/pxG8S9m7ZkQEMp0avclZK7Vb9WfmTXjWwjhIG5w6rBEU
-         cPwKLVmqmsu1g1RnrpbikqDkQasfCO0abo7LG0BBQfQK/Y5q6hXpom3Wyx31VlgInc
-         /PxiPO3S1cnQw==
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-405524e6768so23682145e9.2
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Oct 2023 11:32:54 -0700 (PDT)
-X-Gm-Message-State: AOJu0YySHZAhuJmyeF73f1CXd81tC3Xohv4m0okczq8i0yS43cic5XJl
-        UEDqWJkyEKGQesGklFJ6YUaTNQa46D0N4SgW3h5WEQ==
-X-Google-Smtp-Source: AGHT+IEKq7JkOnxheDwh+EPrFD06USuUEnDxzzGY/pl2gR2Zu8Xw2N+xl5PYO3drM5T863PU1C9rwL7BPhVdYcCO87o=
-X-Received: by 2002:a5d:6d41:0:b0:323:2f54:b6cb with SMTP id
- k1-20020a5d6d41000000b003232f54b6cbmr8405157wri.8.1696617172896; Fri, 06 Oct
- 2023 11:32:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230928202410.3765062-1-kpsingh@kernel.org> <20230928202410.3765062-5-kpsingh@kernel.org>
- <ZR5vSyyNGBb8TvNH@krava> <CACYkzJ69x9jX3scjSA7zT99CJoM+eG6FDQdBT-SCxm47a6UEoA@mail.gmail.com>
- <CACYkzJ7Q0NEc9HThS1DZr0pMC+zO0GSToWmwQkTgXTeDs5VKaw@mail.gmail.com>
- <ZR6/iMnfl1q6Hf9I@krava> <CACYkzJ7aeBjMFTrBPf5u-Wib0Jk=rOX31yeBT5koUt=iYUF2MA@mail.gmail.com>
- <ZR+2+gQ3B3tgFI/8@krava> <ZR/Nz+aPH4sIQMwT@krava> <CACYkzJ5zGma1OJyxfnx=P7gNJDcTbQ8mJ56dqszyJj+guXg9Zw@mail.gmail.com>
-In-Reply-To: <CACYkzJ5zGma1OJyxfnx=P7gNJDcTbQ8mJ56dqszyJj+guXg9Zw@mail.gmail.com>
+        s=k20201202; t=1696625231;
+        bh=yeLqXmCc0qg7/DrbJH3QU47gD+zmfFYsvS6T3omPD1U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=vBburHcpRruGZeCUlqS9l0/K0hTg1VRMHByVqST7W8QPy7g4bI5fBZA1TKuiuYbS+
+         p3ujITN6Pd1eySXSZYqJ4TO+Q/co9FE7azWmGvDJNp0MtBdehBSAFCe97jpc9joyBQ
+         jMjbC2/oE/B2PKjY0km/Ramw23tjVyThx47inZXdl/HQulYXN4tTdujYVYxghqJX+z
+         VOw+I0yuxsv8LDUhCiBPW1+Uh4Ukgv21aDls1z33OjjcOODtWJBsFzQxpLjnsowm9C
+         D4ZyaSdzeBA9xAVE8e/7XcAa7ZE0qkDCy1AVckVP85KjXlw+RZ/3CIQw2RdjCUUfr+
+         LnBCgEiJv6uzg==
 From:   KP Singh <kpsingh@kernel.org>
-Date:   Fri, 6 Oct 2023 20:32:41 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ7OyKvYP+cmTbMn3DWn8vFtwC-CJHJqYOBjJg0fmu2Yvw@mail.gmail.com>
-Message-ID: <CACYkzJ7OyKvYP+cmTbMn3DWn8vFtwC-CJHJqYOBjJg0fmu2Yvw@mail.gmail.com>
-Subject: Re: [PATCH v5 4/5] bpf: Only enable BPF LSM hooks when an LSM program
- is attached
-To:     Jiri Olsa <olsajiri@gmail.com>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
+To:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Cc:     paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
         song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        renauld@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        kpsingh@kernel.org, renauld@google.com, pabeni@redhat.com
+Subject: [PATCH v6 0/5] Reduce overhead of LSMs with static calls
+Date:   Fri,  6 Oct 2023 22:46:56 +0200
+Message-ID: <20231006204701.549230-1-kpsingh@kernel.org>
+X-Mailer: git-send-email 2.42.0.609.gbb76f46606-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 6, 2023 at 12:57=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
-:
->
-> On Fri, Oct 6, 2023 at 11:05=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wr=
-ote:
-> >
-> > On Fri, Oct 06, 2023 at 09:27:57AM +0200, Jiri Olsa wrote:
-> >
-> > SNIP
-> >
-> > > >  static int __bpf_trampoline_link_prog(struct bpf_tramp_link *link,
-> > > > struct bpf_trampoline *tr)
-> > > >  {
-> > > >         enum bpf_tramp_prog_type kind;
-> > > >         struct bpf_tramp_link *link_exiting;
-> > > > -       int err =3D 0, num_lsm_progs =3D 0;
-> > > > +       int err =3D 0;
-> > > >         int cnt =3D 0, i;
-> > > >
-> > > >         kind =3D bpf_attach_type_to_tramp(link->link.prog);
-> > > > @@ -547,15 +566,14 @@ static int __bpf_trampoline_link_prog(struct
-> > > > bpf_tramp_link *link, struct bpf_tr
-> > > >                 /* prog already linked */
-> > > >                 return -EBUSY;
-> > > >
-> > > > -               if (link_exiting->link.prog->type =3D=3D BPF_PROG_T=
-YPE_LSM)
-> > > > -                       num_lsm_progs++;
-> > > >         }
-> > > >
-> > > > -       if (!num_lsm_progs && link->link.prog->type =3D=3D BPF_PROG=
-_TYPE_LSM)
-> > > > -               bpf_lsm_toggle_hook(tr->func.addr, true);
-> > > > -
-> > > >         hlist_add_head(&link->tramp_hlist, &tr->progs_hlist[kind]);
-> > > >         tr->progs_cnt[kind]++;
-> > > > +
-> > > > +       if (link->link.prog->type =3D=3D BPF_PROG_TYPE_LSM)
-> > > > +               bpf_trampoline_toggle_lsm(tr, kind);
-> > >
-> > > how about keeping BPF_PROG_TYPE_LSM progs type count of attached prog=
-rams
-> > > in bpf_trampoline and toggle lsm on first coming in and last going ou=
-t?
-> >
-> > hm we actually allow other tracing program types to attach to bpf_lsm_*
-> > functions, so I wonder we should toggle the lsm hook for each program
-> > type (for bpf_lsm_* trampolines) because they'd expect the hook is call=
-ed
->
-> Tracing is about tracing, attaching a tracing program to bpf_lsm_ that
-> changes the actual trace here is not something I would recommend.
-> Infact, I have used tracing programs to figure out whether bpf_lsm_*
-> is being called to debug stuff. Tracing users can always attach to
-> security_* if they like.
->
+# Background
 
-I will rev up with this fix and send it out as I will be unavailable
-for the next 2 weeks.
+LSM hooks (callbacks) are currently invoked as indirect function calls. These
+callbacks are registered into a linked list at boot time as the order of the
+LSMs can be configured on the kernel command line with the "lsm=" command line
+parameter.
 
-- KP
+Indirect function calls have a high overhead due to retpoline mitigation for
+various speculative execution attacks.
 
-> - KP
->
-> >
-> > but I'm not sure it's a valid use case to have like normal fentry progr=
-am
-> > attached to bpf_lsm_XXX function
-> >
-> > jirka
-> >
-> > >
-> > > also the trampoline attach is actually made in bpf_trampoline_update,
-> > > so I wonder it'd make more sense to put it in there, but it's already
-> > > complicated, so it actually might be easier in here
-> > >
-> > > jirka
-> > >
-> > > > +
-> > > >         err =3D bpf_trampoline_update(tr, true /* lock_direct_mutex=
- */);
-> > > >         if (err) {
-> > > >                 hlist_del_init(&link->tramp_hlist);
-> > > > @@ -578,7 +596,6 @@ static int __bpf_trampoline_unlink_prog(struct
-> > > > bpf_tramp_link *link, struct bpf_
-> > > >  {
-> > > >         struct bpf_tramp_link *link_exiting;
-> > > >         enum bpf_tramp_prog_type kind;
-> > > > -       bool lsm_link_found =3D false;
-> > > >         int err, num_lsm_progs =3D 0;
-> > > >
-> > > >         kind =3D bpf_attach_type_to_tramp(link->link.prog);
-> > > > @@ -595,18 +612,14 @@ static int __bpf_trampoline_unlink_prog(struc=
-t
-> > > > bpf_tramp_link *link, struct bpf_
-> > > >                                      tramp_hlist) {
-> > > >                         if (link_exiting->link.prog->type =3D=3D BP=
-F_PROG_TYPE_LSM)
-> > > >                                 num_lsm_progs++;
-> > > > -
-> > > > -                       if (link_exiting->link.prog =3D=3D link->li=
-nk.prog)
-> > > > -                               lsm_link_found =3D true;
-> > > >                 }
-> > > >         }
-> > > >
-> > > >         hlist_del_init(&link->tramp_hlist);
-> > > >         tr->progs_cnt[kind]--;
-> > > >
-> > > > -       if (lsm_link_found && num_lsm_progs =3D=3D 1)
-> > > > -               bpf_lsm_toggle_hook(tr->func.addr, false);
-> > > > -
-> > > > +       if (link->link.prog->type =3D=3D BPF_PROG_TYPE_LSM)
-> > > > +               bpf_trampoline_toggle_lsm(tr, kind);
-> > > >         return bpf_trampoline_update(tr, true /* lock_direct_mutex =
-*/);
-> > > >  }
-> > > >
-> > > >
-> > > > - KP
-> >
+Retpolines remain relevant even with newer generation CPUs as recently
+discovered speculative attacks, like Spectre BHB need Retpolines to mitigate
+against branch history injection and still need to be used in combination with
+newer mitigation features like eIBRS.
+
+This overhead is especially significant for the "bpf" LSM which allows the user
+to implement LSM functionality with eBPF program. In order to facilitate this
+the "bpf" LSM provides a default callback for all LSM hooks. When enabled,
+the "bpf" LSM incurs an unnecessary / avoidable indirect call. This is
+especially bad in OS hot paths (e.g. in the networking stack).
+This overhead prevents the adoption of bpf LSM on performance critical
+systems, and also, in general, slows down all LSMs.
+
+Since we know the address of the enabled LSM callbacks at compile time and only
+the order is determined at boot time, the LSM framework can allocate static
+calls for each of the possible LSM callbacks and these calls can be updated once
+the order is determined at boot.
+
+This series is a respin of the RFC proposed by Paul Renauld (renauld@google.com)
+and Brendan Jackman (jackmanb@google.com) [1]
+
+# Performance improvement
+
+With this patch-set some syscalls with lots of LSM hooks in their path
+benefitted at an average of ~3% and I/O and Pipe based system calls benefitting
+the most.
+
+Here are the results of the relevant Unixbench system benchmarks with BPF LSM
+and SELinux enabled with default policies enabled with and without these
+patches.
+
+Benchmark                                               Delta(%): (+ is better)
+===============================================================================
+Execl Throughput                                             +1.9356
+File Write 1024 bufsize 2000 maxblocks                       +6.5953
+Pipe Throughput                                              +9.5499
+Pipe-based Context Switching                                 +3.0209
+Process Creation                                             +2.3246
+Shell Scripts (1 concurrent)                                 +1.4975
+System Call Overhead                                         +2.7815
+System Benchmarks Index Score (Partial Only):                +3.4859
+
+In the best case, some syscalls like eventfd_create benefitted to about ~10%.
+The full analysis can be viewed at https://kpsingh.ch/lsm-perf
+
+[1] https://lore.kernel.org/linux-security-module/20200820164753.3256899-1-jackmanb@chromium.org/
+
+
+# BPF LSM Side effects
+
+Patch 4 of the series also addresses the issues with the side effects of the
+default value return values of the BPF LSM callbacks and also removes the
+overheads associated with them making it deployable at hyperscale.
+
+# v5 -> v6
+
+* Fix a bug in BPF LSM hook toggle logic.
+
+# v4 -> v5
+
+* Rebase to linux-next/master
+* Fixed the case where MAX_LSM_COUNT comes to zero when just CONFIG_SECURITY
+  is compiled in without any other LSM enabled as reported here:
+
+  https://lore.kernel.org/bpf/202309271206.d7fb60f9-oliver.sang@intel.com
+
+# v3 -> v4
+
+* Refactor LSM count macros to use COUNT_ARGS
+* Change CONFIG_SECURITY_HOOK_LIKELY likely's default value to be based on
+  the LSM enabled and have it depend on CONFIG_EXPERT. There are a lot of subtle
+  options behind CONFIG_EXPERT and this should, hopefully alleviate concerns
+  about yet another knob.
+* __randomize_layout for struct lsm_static_call and, in addition to the cover
+  letter add performance numbers to 3rd patch and some minor commit message
+  updates.
+* Rebase to linux-next.
+
+# v2 -> v3
+
+* Fixed a build issue on archs which don't have static calls and enable
+  CONFIG_SECURITY.
+* Updated the LSM_COUNT macros based on Andrii's suggestions.
+* Changed the security_ prefix to lsm_prefix based on Casey's suggestion.
+* Inlined static_branch_maybe into lsm_for_each_hook on Kees' feedback.
+
+# v1 -> v2 (based on linux-next, next-20230614)
+
+* Incorporated suggestions from Kees
+* Changed the way MAX_LSMs are counted from a binary based generator to a clever header.
+* Add CONFIG_SECURITY_HOOK_LIKELY to configure the likelihood of LSM hooks.
+
+
+KP Singh (5):
+  kernel: Add helper macros for loop unrolling
+  security: Count the LSMs enabled at compile time
+  security: Replace indirect LSM hook calls with static calls
+  bpf: Only enable BPF LSM hooks when an LSM program is attached
+  security: Add CONFIG_SECURITY_HOOK_LIKELY
+
+ include/linux/bpf_lsm.h   |   5 +
+ include/linux/lsm_count.h | 114 +++++++++++++++++++++
+ include/linux/lsm_hooks.h |  81 +++++++++++++--
+ include/linux/unroll.h    |  36 +++++++
+ kernel/bpf/trampoline.c   |  24 +++++
+ security/Kconfig          |  11 ++
+ security/bpf/hooks.c      |  25 ++++-
+ security/security.c       | 209 +++++++++++++++++++++++++-------------
+ 8 files changed, 425 insertions(+), 80 deletions(-)
+ create mode 100644 include/linux/lsm_count.h
+ create mode 100644 include/linux/unroll.h
+
+-- 
+2.42.0.609.gbb76f46606-goog
+
