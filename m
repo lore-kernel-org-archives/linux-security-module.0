@@ -2,42 +2,40 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A182E94116
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 20:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56C42E94116
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 20:47:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233627AbjJFUr3 (ORCPT
+        id S233603AbjJFUri (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Oct 2023 16:47:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44412 "EHLO
+        Fri, 6 Oct 2023 16:47:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233606AbjJFUr1 (ORCPT
+        with ESMTP id S233606AbjJFUra (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Oct 2023 16:47:27 -0400
+        Fri, 6 Oct 2023 16:47:30 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E30CFD
-        for <linux-security-module@vger.kernel.org>; Fri,  6 Oct 2023 13:47:18 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DEDAC433C8;
-        Fri,  6 Oct 2023 20:47:14 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5286B123
+        for <linux-security-module@vger.kernel.org>; Fri,  6 Oct 2023 13:47:24 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20A13C433D9;
+        Fri,  6 Oct 2023 20:47:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696625237;
-        bh=6sVmxKblEF00JE0Lc5YD1cGhezWuYx0Ygc3bygqY480=;
+        s=k20201202; t=1696625243;
+        bh=F615IKuA7bDZOZiywezIBUwni47usqqUl3FhcOL75r4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uh4amCrxQobt6j/MzMBO6815z5NsfeaRzfhMg1wuFLJQun4SbMP54ORKDC1HAHFLU
-         rb4SK1BsFDn4yYIrD8k/fQT4uhT8oal2RMs2oSqO5zQcqkJtHVKY//ewbK5TCQIX+9
-         xm/K1BacJWGtevgD5pGYslDwK+g8CRsSw3xOKmmxDoaJ1/FiN0kRkiW51tgvCrdkgD
-         zto6k0KRAo1mtEVQxzmkFJhycWIMoMFCXC/vgj2op7sIVbp0R5kn90oCGFKg6hOaq6
-         Vbxz0jBc6Rh4Acqz1AtivqyR62ONZDNj9uY4XgaEcJzLRJRd6prl5Sy4ekVYIwKTDo
-         Gmrl3cfIRVsTg==
+        b=MkzEEFHURUlhaf/Rs8JSHdDfbBI8A0FrdRbWcJ3VY3hVDGsRp5hZGazKfEdx7+BRN
+         upgSGxx0r59J54ZIi80xeidaW285E538KNXAaTh+YIGBAlLhgRqE6rLVPRP8iA3o4c
+         LepH9+vwFjA35hmI5aaZcY3LGbq4W8havVvOQY9Jdlv94xKRxgj6V4oxyyPUbx1IeK
+         L10ptWrZjb6+TJS+YEv5TJK6no/8ShW1Q0R6q0xQ6uankxaNqrrsFVilRuM6oOk+2I
+         REwvW6APsSwEkBhfYOlXqVedPLbpZp4hsMnW/TelYJe5cLqUVOmQ1UKtK8ff5AYSru
+         JhyOymH4AEbnA==
 From:   KP Singh <kpsingh@kernel.org>
 To:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org
 Cc:     paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
         song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        kpsingh@kernel.org, renauld@google.com, pabeni@redhat.com,
-        Kui-Feng Lee <sinquersw@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v6 2/5] security: Count the LSMs enabled at compile time
-Date:   Fri,  6 Oct 2023 22:46:58 +0200
-Message-ID: <20231006204701.549230-3-kpsingh@kernel.org>
+        kpsingh@kernel.org, renauld@google.com, pabeni@redhat.com
+Subject: [PATCH v6 4/5] bpf: Only enable BPF LSM hooks when an LSM program is attached
+Date:   Fri,  6 Oct 2023 22:47:00 +0200
+Message-ID: <20231006204701.549230-5-kpsingh@kernel.org>
 X-Mailer: git-send-email 2.42.0.609.gbb76f46606-goog
 In-Reply-To: <20231006204701.549230-1-kpsingh@kernel.org>
 References: <20231006204701.549230-1-kpsingh@kernel.org>
@@ -46,143 +44,247 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-These macros are a clever trick to determine a count of the number of
-LSMs that are enabled in the config to ascertain the maximum number of
-static calls that need to be configured per LSM hook.
+BPF LSM hooks have side-effects (even when a default value is returned),
+as some hooks end up behaving differently due to the very presence of
+the hook.
 
-Without this one would need to generate static calls for the total
-number of LSMs in the kernel (even if they are not compiled) times the
-number of LSM hooks which ends up being quite wasteful.
+The static keys guarding the BPF LSM hooks are disabled by default and
+enabled only when a BPF program is attached implementing the hook
+logic. This avoids the issue of the side-effects and also the minor
+overhead associated with the empty callback.
 
-Suggested-by: Kui-Feng Lee <sinquersw@gmail.com>
-Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+security_file_ioctl:
+   0xffffffff818f0e30 <+0>:	endbr64
+   0xffffffff818f0e34 <+4>:	nopl   0x0(%rax,%rax,1)
+   0xffffffff818f0e39 <+9>:	push   %rbp
+   0xffffffff818f0e3a <+10>:	push   %r14
+   0xffffffff818f0e3c <+12>:	push   %rbx
+   0xffffffff818f0e3d <+13>:	mov    %rdx,%rbx
+   0xffffffff818f0e40 <+16>:	mov    %esi,%ebp
+   0xffffffff818f0e42 <+18>:	mov    %rdi,%r14
+   0xffffffff818f0e45 <+21>:	jmp    0xffffffff818f0e57 <security_file_ioctl+39>
+   				^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+   Static key enabled for SELinux
+
+   0xffffffff818f0e47 <+23>:	xchg   %ax,%ax
+   				^^^^^^^^^^^^^^
+
+   Static key disabled for BPF. This gets patched when a BPF LSM program
+   is attached
+
+   0xffffffff818f0e49 <+25>:	xor    %eax,%eax
+   0xffffffff818f0e4b <+27>:	xchg   %ax,%ax
+   0xffffffff818f0e4d <+29>:	pop    %rbx
+   0xffffffff818f0e4e <+30>:	pop    %r14
+   0xffffffff818f0e50 <+32>:	pop    %rbp
+   0xffffffff818f0e51 <+33>:	cs jmp 0xffffffff82c00000 <__x86_return_thunk>
+   0xffffffff818f0e57 <+39>:	endbr64
+   0xffffffff818f0e5b <+43>:	mov    %r14,%rdi
+   0xffffffff818f0e5e <+46>:	mov    %ebp,%esi
+   0xffffffff818f0e60 <+48>:	mov    %rbx,%rdx
+   0xffffffff818f0e63 <+51>:	call   0xffffffff819033c0 <selinux_file_ioctl>
+   0xffffffff818f0e68 <+56>:	test   %eax,%eax
+   0xffffffff818f0e6a <+58>:	jne    0xffffffff818f0e4d <security_file_ioctl+29>
+   0xffffffff818f0e6c <+60>:	jmp    0xffffffff818f0e47 <security_file_ioctl+23>
+   0xffffffff818f0e6e <+62>:	endbr64
+   0xffffffff818f0e72 <+66>:	mov    %r14,%rdi
+   0xffffffff818f0e75 <+69>:	mov    %ebp,%esi
+   0xffffffff818f0e77 <+71>:	mov    %rbx,%rdx
+   0xffffffff818f0e7a <+74>:	call   0xffffffff8141e3b0 <bpf_lsm_file_ioctl>
+   0xffffffff818f0e7f <+79>:	test   %eax,%eax
+   0xffffffff818f0e81 <+81>:	jne    0xffffffff818f0e4d <security_file_ioctl+29>
+   0xffffffff818f0e83 <+83>:	jmp    0xffffffff818f0e49 <security_file_ioctl+25>
+   0xffffffff818f0e85 <+85>:	endbr64
+   0xffffffff818f0e89 <+89>:	mov    %r14,%rdi
+   0xffffffff818f0e8c <+92>:	mov    %ebp,%esi
+   0xffffffff818f0e8e <+94>:	mov    %rbx,%rdx
+   0xffffffff818f0e91 <+97>:	pop    %rbx
+   0xffffffff818f0e92 <+98>:	pop    %r14
+   0xffffffff818f0e94 <+100>:	pop    %rbp
+   0xffffffff818f0e95 <+101>:	ret
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 Acked-by: Song Liu <song@kernel.org>
 Signed-off-by: KP Singh <kpsingh@kernel.org>
 ---
- include/linux/lsm_count.h | 114 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 114 insertions(+)
- create mode 100644 include/linux/lsm_count.h
+ include/linux/bpf_lsm.h   |  5 +++++
+ include/linux/lsm_hooks.h | 13 ++++++++++++-
+ kernel/bpf/trampoline.c   | 24 ++++++++++++++++++++++++
+ security/bpf/hooks.c      | 25 ++++++++++++++++++++++++-
+ security/security.c       |  3 ++-
+ 5 files changed, 67 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/lsm_count.h b/include/linux/lsm_count.h
-new file mode 100644
-index 000000000000..dbb3c8573959
---- /dev/null
-+++ b/include/linux/lsm_count.h
-@@ -0,0 +1,114 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
+diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+index 1de7ece5d36d..5bbc31ac948c 100644
+--- a/include/linux/bpf_lsm.h
++++ b/include/linux/bpf_lsm.h
+@@ -29,6 +29,7 @@ int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+ 
+ bool bpf_lsm_is_sleepable_hook(u32 btf_id);
+ bool bpf_lsm_is_trusted(const struct bpf_prog *prog);
++void bpf_lsm_toggle_hook(void *addr, bool value);
+ 
+ static inline struct bpf_storage_blob *bpf_inode(
+ 	const struct inode *inode)
+@@ -78,6 +79,10 @@ static inline void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog,
+ {
+ }
+ 
++static inline void bpf_lsm_toggle_hook(void *addr, bool value)
++{
++}
 +
-+/*
-+ * Copyright (C) 2023 Google LLC.
-+ */
+ #endif /* CONFIG_BPF_LSM */
+ 
+ #endif /* _LINUX_BPF_LSM_H */
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index c77a1859214d..57ffe4eb6d30 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -97,11 +97,14 @@ struct lsm_static_calls_table {
+  * @scalls: The beginning of the array of static calls assigned to this hook.
+  * @hook: The callback for the hook.
+  * @lsm: The name of the lsm that owns this hook.
++ * @default_state: The state of the LSM hook when initialized. If set to false,
++ * the static key guarding the hook will be set to disabled.
+  */
+ struct security_hook_list {
+ 	struct lsm_static_call	*scalls;
+ 	union security_list_options	hook;
+ 	const char			*lsm;
++	bool				default_state;
+ } __randomize_layout;
+ 
+ /*
+@@ -151,7 +154,15 @@ static inline struct xattr *lsm_get_xattr_slot(struct xattr *xattrs,
+ #define LSM_HOOK_INIT(NAME, CALLBACK)			\
+ 	{						\
+ 		.scalls = static_calls_table.NAME,	\
+-		.hook = { .NAME = CALLBACK }		\
++		.hook = { .NAME = CALLBACK },		\
++		.default_state = true			\
++	}
 +
-+#ifndef __LINUX_LSM_COUNT_H
-+#define __LINUX_LSM_COUNT_H
++#define LSM_HOOK_INIT_DISABLED(NAME, CALLBACK)		\
++	{						\
++		.scalls = static_calls_table.NAME,	\
++		.hook = { .NAME = CALLBACK },		\
++		.default_state = false			\
+ 	}
+ 
+ extern char *lsm_names;
+diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
+index e97aeda3a86b..44788e2eaa1b 100644
+--- a/kernel/bpf/trampoline.c
++++ b/kernel/bpf/trampoline.c
+@@ -13,6 +13,7 @@
+ #include <linux/bpf_verifier.h>
+ #include <linux/bpf_lsm.h>
+ #include <linux/delay.h>
++#include <linux/bpf_lsm.h>
+ 
+ /* dummy _ops. The verifier will operate on target program's ops. */
+ const struct bpf_verifier_ops bpf_extension_verifier_ops = {
+@@ -510,6 +511,21 @@ static enum bpf_tramp_prog_type bpf_attach_type_to_tramp(struct bpf_prog *prog)
+ 	}
+ }
+ 
++static void bpf_trampoline_toggle_lsm(struct bpf_trampoline *tr,
++				      enum bpf_tramp_prog_type kind)
++{
++	struct bpf_tramp_link *link;
++	bool found = false;
 +
-+#include <linux/args.h>
++	hlist_for_each_entry(link, &tr->progs_hlist[kind], tramp_hlist) {
++		if (link->link.prog->type == BPF_PROG_TYPE_LSM) {
++			found  = true;
++			break;
++		}
++	}
++	bpf_lsm_toggle_hook(tr->func.addr, found);
++}
 +
-+#ifdef CONFIG_SECURITY
+ static int __bpf_trampoline_link_prog(struct bpf_tramp_link *link, struct bpf_trampoline *tr)
+ {
+ 	enum bpf_tramp_prog_type kind;
+@@ -549,6 +565,10 @@ static int __bpf_trampoline_link_prog(struct bpf_tramp_link *link, struct bpf_tr
+ 
+ 	hlist_add_head(&link->tramp_hlist, &tr->progs_hlist[kind]);
+ 	tr->progs_cnt[kind]++;
 +
-+/*
-+ * Macros to count the number of LSMs enabled in the kernel at compile time.
-+ */
++	if (link->link.prog->type == BPF_PROG_TYPE_LSM)
++		bpf_trampoline_toggle_lsm(tr, kind);
 +
-+/*
-+ * Capabilities is enabled when CONFIG_SECURITY is enabled.
-+ */
-+#if IS_ENABLED(CONFIG_SECURITY)
-+#define CAPABILITIES_ENABLED 1,
-+#else
-+#define CAPABILITIES_ENABLED
-+#endif
+ 	err = bpf_trampoline_update(tr, true /* lock_direct_mutex */);
+ 	if (err) {
+ 		hlist_del_init(&link->tramp_hlist);
+@@ -582,6 +602,10 @@ static int __bpf_trampoline_unlink_prog(struct bpf_tramp_link *link, struct bpf_
+ 	}
+ 	hlist_del_init(&link->tramp_hlist);
+ 	tr->progs_cnt[kind]--;
 +
-+#if IS_ENABLED(CONFIG_SECURITY_SELINUX)
-+#define SELINUX_ENABLED 1,
-+#else
-+#define SELINUX_ENABLED
-+#endif
++	if (link->link.prog->type == BPF_PROG_TYPE_LSM)
++		bpf_trampoline_toggle_lsm(tr, kind);
 +
-+#if IS_ENABLED(CONFIG_SECURITY_SMACK)
-+#define SMACK_ENABLED 1,
-+#else
-+#define SMACK_ENABLED
-+#endif
+ 	return bpf_trampoline_update(tr, true /* lock_direct_mutex */);
+ }
+ 
+diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
+index cfaf1d0e6a5f..47e1a4777ec9 100644
+--- a/security/bpf/hooks.c
++++ b/security/bpf/hooks.c
+@@ -8,7 +8,7 @@
+ 
+ static struct security_hook_list bpf_lsm_hooks[] __ro_after_init = {
+ 	#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
+-	LSM_HOOK_INIT(NAME, bpf_lsm_##NAME),
++	LSM_HOOK_INIT_DISABLED(NAME, bpf_lsm_##NAME),
+ 	#include <linux/lsm_hook_defs.h>
+ 	#undef LSM_HOOK
+ 	LSM_HOOK_INIT(inode_free_security, bpf_inode_storage_free),
+@@ -32,3 +32,26 @@ DEFINE_LSM(bpf) = {
+ 	.init = bpf_lsm_init,
+ 	.blobs = &bpf_lsm_blob_sizes
+ };
 +
-+#if IS_ENABLED(CONFIG_SECURITY_APPARMOR)
-+#define APPARMOR_ENABLED 1,
-+#else
-+#define APPARMOR_ENABLED
-+#endif
++void bpf_lsm_toggle_hook(void *addr, bool value)
++{
++	struct lsm_static_call *scalls;
++	struct security_hook_list *h;
++	int i, j;
 +
-+#if IS_ENABLED(CONFIG_SECURITY_TOMOYO)
-+#define TOMOYO_ENABLED 1,
-+#else
-+#define TOMOYO_ENABLED
-+#endif
++	for (i = 0; i < ARRAY_SIZE(bpf_lsm_hooks); i++) {
++		h = &bpf_lsm_hooks[i];
++		if (h->hook.lsm_callback != addr)
++			continue;
 +
-+#if IS_ENABLED(CONFIG_SECURITY_YAMA)
-+#define YAMA_ENABLED 1,
-+#else
-+#define YAMA_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_SECURITY_LOADPIN)
-+#define LOADPIN_ENABLED 1,
-+#else
-+#define LOADPIN_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_SECURITY_LOCKDOWN_LSM)
-+#define LOCKDOWN_ENABLED 1,
-+#else
-+#define LOCKDOWN_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_SECURITY_SAFESETID)
-+#define SAFESETID_ENABLED 1,
-+#else
-+#define SAFESETID_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_BPF_LSM)
-+#define BPF_LSM_ENABLED 1,
-+#else
-+#define BPF_LSM_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_SECURITY_LANDLOCK)
-+#define LANDLOCK_ENABLED 1,
-+#else
-+#define LANDLOCK_ENABLED
-+#endif
-+
-+/*
-+ *  There is a trailing comma that we need to be accounted for. This is done by
-+ *  using a skipped argument in __COUNT_LSMS
-+ */
-+#define __COUNT_LSMS(skipped_arg, args...) COUNT_ARGS(args...)
-+#define COUNT_LSMS(args...) __COUNT_LSMS(args)
-+
-+#define MAX_LSM_COUNT			\
-+	COUNT_LSMS(			\
-+		CAPABILITIES_ENABLED	\
-+		SELINUX_ENABLED		\
-+		SMACK_ENABLED		\
-+		APPARMOR_ENABLED	\
-+		TOMOYO_ENABLED		\
-+		YAMA_ENABLED		\
-+		LOADPIN_ENABLED		\
-+		LOCKDOWN_ENABLED	\
-+		SAFESETID_ENABLED	\
-+		BPF_LSM_ENABLED		\
-+		LANDLOCK_ENABLED)
-+
-+#else
-+
-+#define MAX_LSM_COUNT 0
-+
-+#endif /* CONFIG_SECURITY */
-+
-+#endif  /* __LINUX_LSM_COUNT_H */
++		for (j = 0; j < MAX_LSM_COUNT; j++) {
++			scalls = &h->scalls[j];
++			if (scalls->hl != &bpf_lsm_hooks[i])
++				continue;
++			if (value)
++				static_branch_enable(scalls->active);
++			else
++				static_branch_disable(scalls->active);
++		}
++	}
++}
+diff --git a/security/security.c b/security/security.c
+index ce4c0a9107ea..f45e875b6d93 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -382,7 +382,8 @@ static void __init lsm_static_call_init(struct security_hook_list *hl)
+ 			__static_call_update(scall->key, scall->trampoline,
+ 					     hl->hook.lsm_callback);
+ 			scall->hl = hl;
+-			static_branch_enable(scall->active);
++			if (hl->default_state)
++				static_branch_enable(scall->active);
+ 			return;
+ 		}
+ 		scall++;
 -- 
 2.42.0.609.gbb76f46606-goog
 
