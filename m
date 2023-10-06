@@ -2,160 +2,181 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59997E81DF1
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 12:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C71FE81E1F
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 18:32:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232186AbjJFMtH (ORCPT
+        id S231163AbjJFSc4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Oct 2023 08:49:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52002 "EHLO
+        Fri, 6 Oct 2023 14:32:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232146AbjJFMtG (ORCPT
+        with ESMTP id S230415AbjJFSc4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Oct 2023 08:49:06 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05ACCCF
-        for <linux-security-module@vger.kernel.org>; Fri,  6 Oct 2023 05:49:04 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9a6190af24aso375854966b.0
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Oct 2023 05:49:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1696596542; x=1697201342; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9AHjmOOVg74tMZjWptrYGXUC/br+tpPBZRDuB46pbJ4=;
-        b=cybkrnUGy9JdW8Bq6HZ3s8LtKVkPFd3uIuxU3nZegmL8NCx/gJJvd4tkIGEOEjaGVc
-         TBoQtvncVvvHAiLlNaACmW3GzFvABrLFQMBK7qZkiOr99ujkOEw1F7OLlOWTYVCaevW+
-         0CZrL8GNUXClnCF0odjdk3rC5BDyMihuR2Mfw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696596542; x=1697201342;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9AHjmOOVg74tMZjWptrYGXUC/br+tpPBZRDuB46pbJ4=;
-        b=a3DaRHkne9HRNWfPR4ABOxg+jX+L+eFPYgde4gwpS2KKMctY0bqKql5Nde73Hs0rxs
-         gDbagwZMeX3imIOcYf9lERtL+hCOMGMbveTGbRermzEtO7gWj8NAKAvkjZ5Or9BKeiI/
-         +y/SDR7/fIyV0i8T26GMYlHcdD4RcEAEIOsp5b9RIf5ffTNxm4EJ9l5jVGedBrCP2gMQ
-         NuJoiEU8pQ0FA1DA9p3ipYuFPcu9tefoLDy50amuG5Qphsx8KGeSwvpkO50j2tQfgg89
-         KN6PG2w41v92UmZHqtJAc+uraSkkB0kCqsJncY8FYX4Q7wy6bEdAvoiWe6fD2sZHlmaG
-         JP3Q==
-X-Gm-Message-State: AOJu0YytVpmdvvuSPw2cwZtftrKZRrRGUAmxnDiiBPYTeSRhZEOi60fP
-        zANHilq/CrvYLWLwZUD/WrpYWZTZTFSUvUsFAJiMNw==
-X-Google-Smtp-Source: AGHT+IHvhpoQukvgif68v6ZXOt6wMxc0dIOaTCgNjhO+rpuGoNyF7BA9zqJTf0SIaSVv9SnHJJPet2kdIR96Z6Sp450=
-X-Received: by 2002:a17:907:7790:b0:9b9:facb:d950 with SMTP id
- ky16-20020a170907779000b009b9facbd950mr1823443ejc.72.1696596542320; Fri, 06
- Oct 2023 05:49:02 -0700 (PDT)
+        Fri, 6 Oct 2023 14:32:56 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ACF3BE
+        for <linux-security-module@vger.kernel.org>; Fri,  6 Oct 2023 11:32:55 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98DBCC433CB
+        for <linux-security-module@vger.kernel.org>; Fri,  6 Oct 2023 18:32:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696617174;
+        bh=Wo5TVsAh4zwAyG8YmJok1TKMSHsOxoXM59UTIVqzIQM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=PMnehza84yQrST6C04Zo/j199M6miOPmmndVao5lnwEDABWosVZyOlIfmWYumVJu+
+         BgdJ4C/ErVd0lGVYVestMG8DGZejaiZfVlTg3eAA+ey0h168u+ETHC6a01eHlq+o6N
+         NXkx5Yg8Nch5VlC50wjlS7GDTztEs86kg/sHK/WiJ2lrCIg7YqrjXIp/irtvbQMiLS
+         yUUrbZ7eK+hcNCSSHhANe/pxG8S9m7ZkQEMp0avclZK7Vb9WfmTXjWwjhIG5w6rBEU
+         cPwKLVmqmsu1g1RnrpbikqDkQasfCO0abo7LG0BBQfQK/Y5q6hXpom3Wyx31VlgInc
+         /PxiPO3S1cnQw==
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-405524e6768so23682145e9.2
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Oct 2023 11:32:54 -0700 (PDT)
+X-Gm-Message-State: AOJu0YySHZAhuJmyeF73f1CXd81tC3Xohv4m0okczq8i0yS43cic5XJl
+        UEDqWJkyEKGQesGklFJ6YUaTNQa46D0N4SgW3h5WEQ==
+X-Google-Smtp-Source: AGHT+IEKq7JkOnxheDwh+EPrFD06USuUEnDxzzGY/pl2gR2Zu8Xw2N+xl5PYO3drM5T863PU1C9rwL7BPhVdYcCO87o=
+X-Received: by 2002:a5d:6d41:0:b0:323:2f54:b6cb with SMTP id
+ k1-20020a5d6d41000000b003232f54b6cbmr8405157wri.8.1696617172896; Fri, 06 Oct
+ 2023 11:32:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230928130147.564503-1-mszeredi@redhat.com> <20230928130147.564503-2-mszeredi@redhat.com>
- <CAJfpeguTQvA6cq-3JCEZx6wP+nvZX8E6_77pNRJUU2_S7cyAiA@mail.gmail.com> <CAOQ4uxgoA5eQCqXp0H7S+CtVM77OD4caQr59yHymtZUTwBCqLw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgoA5eQCqXp0H7S+CtVM77OD4caQr59yHymtZUTwBCqLw@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 6 Oct 2023 14:48:51 +0200
-Message-ID: <CAJfpegudgvPQamq_9XyzE8-m5iVQSA=-2YPDcpt5sCtjmd9z0A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] add unique mount ID
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Matthew House <mattlloydhouse@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Paul Moore <paul@paul-moore.com>
+References: <20230928202410.3765062-1-kpsingh@kernel.org> <20230928202410.3765062-5-kpsingh@kernel.org>
+ <ZR5vSyyNGBb8TvNH@krava> <CACYkzJ69x9jX3scjSA7zT99CJoM+eG6FDQdBT-SCxm47a6UEoA@mail.gmail.com>
+ <CACYkzJ7Q0NEc9HThS1DZr0pMC+zO0GSToWmwQkTgXTeDs5VKaw@mail.gmail.com>
+ <ZR6/iMnfl1q6Hf9I@krava> <CACYkzJ7aeBjMFTrBPf5u-Wib0Jk=rOX31yeBT5koUt=iYUF2MA@mail.gmail.com>
+ <ZR+2+gQ3B3tgFI/8@krava> <ZR/Nz+aPH4sIQMwT@krava> <CACYkzJ5zGma1OJyxfnx=P7gNJDcTbQ8mJ56dqszyJj+guXg9Zw@mail.gmail.com>
+In-Reply-To: <CACYkzJ5zGma1OJyxfnx=P7gNJDcTbQ8mJ56dqszyJj+guXg9Zw@mail.gmail.com>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Fri, 6 Oct 2023 20:32:41 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ7OyKvYP+cmTbMn3DWn8vFtwC-CJHJqYOBjJg0fmu2Yvw@mail.gmail.com>
+Message-ID: <CACYkzJ7OyKvYP+cmTbMn3DWn8vFtwC-CJHJqYOBjJg0fmu2Yvw@mail.gmail.com>
+Subject: Re: [PATCH v5 4/5] bpf: Only enable BPF LSM hooks when an LSM program
+ is attached
+To:     Jiri Olsa <olsajiri@gmail.com>
+Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
+        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
+        renauld@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 6 Oct 2023 at 13:44, Amir Goldstein <amir73il@gmail.com> wrote:
+On Fri, Oct 6, 2023 at 12:57=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
+:
 >
-> On Thu, Oct 5, 2023 at 6:52=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu>=
- wrote:
+> On Fri, Oct 6, 2023 at 11:05=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wr=
+ote:
 > >
-> > On Thu, 28 Sept 2023 at 15:03, Miklos Szeredi <mszeredi@redhat.com> wro=
-te:
+> > On Fri, Oct 06, 2023 at 09:27:57AM +0200, Jiri Olsa wrote:
+> >
+> > SNIP
+> >
+> > > >  static int __bpf_trampoline_link_prog(struct bpf_tramp_link *link,
+> > > > struct bpf_trampoline *tr)
+> > > >  {
+> > > >         enum bpf_tramp_prog_type kind;
+> > > >         struct bpf_tramp_link *link_exiting;
+> > > > -       int err =3D 0, num_lsm_progs =3D 0;
+> > > > +       int err =3D 0;
+> > > >         int cnt =3D 0, i;
+> > > >
+> > > >         kind =3D bpf_attach_type_to_tramp(link->link.prog);
+> > > > @@ -547,15 +566,14 @@ static int __bpf_trampoline_link_prog(struct
+> > > > bpf_tramp_link *link, struct bpf_tr
+> > > >                 /* prog already linked */
+> > > >                 return -EBUSY;
+> > > >
+> > > > -               if (link_exiting->link.prog->type =3D=3D BPF_PROG_T=
+YPE_LSM)
+> > > > -                       num_lsm_progs++;
+> > > >         }
+> > > >
+> > > > -       if (!num_lsm_progs && link->link.prog->type =3D=3D BPF_PROG=
+_TYPE_LSM)
+> > > > -               bpf_lsm_toggle_hook(tr->func.addr, true);
+> > > > -
+> > > >         hlist_add_head(&link->tramp_hlist, &tr->progs_hlist[kind]);
+> > > >         tr->progs_cnt[kind]++;
+> > > > +
+> > > > +       if (link->link.prog->type =3D=3D BPF_PROG_TYPE_LSM)
+> > > > +               bpf_trampoline_toggle_lsm(tr, kind);
 > > >
-> > > If a mount is released then its mnt_id can immediately be reused.  Th=
-is is
-> > > bad news for user interfaces that want to uniquely identify a mount.
+> > > how about keeping BPF_PROG_TYPE_LSM progs type count of attached prog=
+rams
+> > > in bpf_trampoline and toggle lsm on first coming in and last going ou=
+t?
+> >
+> > hm we actually allow other tracing program types to attach to bpf_lsm_*
+> > functions, so I wonder we should toggle the lsm hook for each program
+> > type (for bpf_lsm_* trampolines) because they'd expect the hook is call=
+ed
+>
+> Tracing is about tracing, attaching a tracing program to bpf_lsm_ that
+> changes the actual trace here is not something I would recommend.
+> Infact, I have used tracing programs to figure out whether bpf_lsm_*
+> is being called to debug stuff. Tracing users can always attach to
+> security_* if they like.
+>
+
+I will rev up with this fix and send it out as I will be unavailable
+for the next 2 weeks.
+
+- KP
+
+> - KP
+>
+> >
+> > but I'm not sure it's a valid use case to have like normal fentry progr=
+am
+> > attached to bpf_lsm_XXX function
+> >
+> > jirka
+> >
 > > >
-> > > Implementing a unique mount ID is trivial (use a 64bit counter).
-> > > Unfortunately userspace assumes 32bit size and would overflow after t=
-he
-> > > counter reaches 2^32.
+> > > also the trampoline attach is actually made in bpf_trampoline_update,
+> > > so I wonder it'd make more sense to put it in there, but it's already
+> > > complicated, so it actually might be easier in here
 > > >
-> > > Introduce a new 64bit ID alongside the old one.  Initialize the count=
-er to
-> > > 2^32, this guarantees that the old and new IDs are never mixed up.
+> > > jirka
+> > >
+> > > > +
+> > > >         err =3D bpf_trampoline_update(tr, true /* lock_direct_mutex=
+ */);
+> > > >         if (err) {
+> > > >                 hlist_del_init(&link->tramp_hlist);
+> > > > @@ -578,7 +596,6 @@ static int __bpf_trampoline_unlink_prog(struct
+> > > > bpf_tramp_link *link, struct bpf_
+> > > >  {
+> > > >         struct bpf_tramp_link *link_exiting;
+> > > >         enum bpf_tramp_prog_type kind;
+> > > > -       bool lsm_link_found =3D false;
+> > > >         int err, num_lsm_progs =3D 0;
+> > > >
+> > > >         kind =3D bpf_attach_type_to_tramp(link->link.prog);
+> > > > @@ -595,18 +612,14 @@ static int __bpf_trampoline_unlink_prog(struc=
+t
+> > > > bpf_tramp_link *link, struct bpf_
+> > > >                                      tramp_hlist) {
+> > > >                         if (link_exiting->link.prog->type =3D=3D BP=
+F_PROG_TYPE_LSM)
+> > > >                                 num_lsm_progs++;
+> > > > -
+> > > > -                       if (link_exiting->link.prog =3D=3D link->li=
+nk.prog)
+> > > > -                               lsm_link_found =3D true;
+> > > >                 }
+> > > >         }
+> > > >
+> > > >         hlist_del_init(&link->tramp_hlist);
+> > > >         tr->progs_cnt[kind]--;
+> > > >
+> > > > -       if (lsm_link_found && num_lsm_progs =3D=3D 1)
+> > > > -               bpf_lsm_toggle_hook(tr->func.addr, false);
+> > > > -
+> > > > +       if (link->link.prog->type =3D=3D BPF_PROG_TYPE_LSM)
+> > > > +               bpf_trampoline_toggle_lsm(tr, kind);
+> > > >         return bpf_trampoline_update(tr, true /* lock_direct_mutex =
+*/);
+> > > >  }
+> > > >
+> > > >
+> > > > - KP
 > >
-> > It occurred to me that it might make sense to make this counter
-> > per-namespace.  That would allow more separation between namespaces,
-> > like preventing the observation of mount creations in other
-> > namespaces.
-> >
->
-> Preventing the observation of mount creations in other mount namespaces
-> is independent of whether a global mntid namespace is used.
-
-A local ID space makes observation of mount creations in other
-namespaces impossible.  While a global ID space does not.  ID
-allocation could be designed in a way that makes observation
-impossible, but that basically boils down to allocating separate
-ranges to each namespace, which is equivalent to identifying mounts by
-an {NSID, MNTID} pair.
-
->
-> > Does a global number make any sense?
-> >
->
-> I think global mntid namepsace makes notifications API a lot easier.
-> A process (e.g. systemd) may set marks to watch new mounts on
-> different mount namespaces.
->
-> If mntid could collide in different mount namepsaces, we will either
-> need to describe the mount namespace in the event or worse,
-> map child mount namespace mntid to parent mount namespace
-> like with uids.
-
-Mntids are quite different from uids in that a certain ID is only
-valid in a certain namespace.   There's no inheritance or sharing of
-mounts.  Also mounts cannot be moved from one namespace to another
-(with the exception of mounts created in an anonymous namespace).
-
-> If we use a global mntid namespace, multi mount namespace
-> watching becomes much much easier.
-
-If the watcher wants to interpret the received event it will have to
-know the namespace anyway.  Otherwise it's just a meaningless number.
-
-> Regarding the possible scopes for watching added/removed mounts
-> we could support:
-> - watch parent mount for children mounts (akin to inotify directory watch=
-)
-
-This probably makes sense.
-
-> - watch all mounts of a filesystem
-
-I don't see a use case.
-
-> - watch all mounts in mount namespace
-
-Yes.
-
-> - watch on entire system
-
-Again, I don't see how this could make sense.  Each time
-unshare(CLONE_NEWNS) is invoked a storm of mount creation events will
-happen.
-
-I'd imagine that watching mounts is primarily to complement the
-directory tree notifications, so that all changes to the path lookup
-namespace of a process could be monitored.
-
-Thanks,
-Miklos
