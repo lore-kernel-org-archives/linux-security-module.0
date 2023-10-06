@@ -2,176 +2,96 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA79E92FDB
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 03:21:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C4AE92FDD
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 04:21:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229848AbjJFDVX (ORCPT
+        id S229938AbjJFEVb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Oct 2023 23:21:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38480 "EHLO
+        Fri, 6 Oct 2023 00:21:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229670AbjJFDVV (ORCPT
+        with ESMTP id S229815AbjJFEVa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Oct 2023 23:21:21 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5706CE7
-        for <linux-security-module@vger.kernel.org>; Thu,  5 Oct 2023 20:21:18 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-59f6902dc8bso25481807b3.0
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Oct 2023 20:21:18 -0700 (PDT)
+        Fri, 6 Oct 2023 00:21:30 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A91DE
+        for <linux-security-module@vger.kernel.org>; Thu,  5 Oct 2023 21:21:29 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1c5cd27b1acso13641705ad.2
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Oct 2023 21:21:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696562477; x=1697167277; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+GCfD3J/utVXt7fNFcXS7tndSxc76Lg25lhLquZNVGo=;
-        b=hrtpfTHdnDlVQOSCXorsT/aQpCWyDltEjd8ggllmcRKf0hehE+I3NnH7FBjDok1ZhH
-         zxiW3QeU7M+QnZdyltwO1UIpQuMKmo9EQEhNWpfk6pSMe/HEt+4b3rNW8zjTdMQg/B10
-         iZCLZl51zE9bQUpUbrhdEF9Fmxm16pzP4f8ofIJuXk4gLecrkB9/Q9kxBHT8rugTv8s/
-         bNMRxJ7Ujm366qW+kXMXoWNpdDO/O2Ot3Am4VUOq6Zgsd/yx/oiEIVzi0LddaCdnW98k
-         ehUE5i2UPtmnCpl8Hmq2OcMNaedBdRXW8yU7hbzO+v/QqNJ1b108X36Fx61ihw91uxsp
-         thqg==
+        d=chromium.org; s=google; t=1696566089; x=1697170889; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=31a7+5f+dKEUOjTapfT2dmGxD91zYjZdh7R9akPGW1Y=;
+        b=XnQhiNzTpVp1s3lQ4cNxN7gDMaIo8+CKS5Qu9MWe7VHjPsNAsw01dzkM35kyDCYpPd
+         SJQh23ZKJ9WSbeLCAp5iZJSwUSEnIbse8IPv7ab0URZYdexztqDRISg1Jz4/Najhe64P
+         GLCMJzDEyAO7VjLo5UvjJCZ7mIJu5B13bAJYc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696562477; x=1697167277;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+GCfD3J/utVXt7fNFcXS7tndSxc76Lg25lhLquZNVGo=;
-        b=wdiy/H3z7jxN4fFUTajBv3j9odAwi2PeVuS38Gegyb6G0xMADfi3P3kYOfUKRswTNy
-         JNCXZz4lH4dtTI7J7k9CQNZofMT+KUDFyRIx4ZNNGPviDfGEQCW7ETv7z8oCakR5PUXw
-         5z2UtT7HBew05uvLveCKMiEsZxT8Ti4HZIdxieB8mmMKn6JY88OPX9hqO8F8LjWrI590
-         8UK2vMbnkXGECrCzu4X51xckKjiztw97gwMuu2S8dx80RGuJeW9RyN1HXKgItXfffGSt
-         eoK3w3TS33jKREbSiGtVqKKIEMlZcdWrUn/zDgjkz17vlATWU+BfLn3LoB/Uvo3EkO4d
-         L+/A==
-X-Gm-Message-State: AOJu0Yw/b8sh2xhG25EfP49vJcPX0D7LmHsaFMWpiBAbmFZQwXxaKQgY
-        7+IBPdxyc1pBlRFXSW8HFnfw4jtk4UM=
-X-Google-Smtp-Source: AGHT+IHbgJX1dul2brLKqtxy3zNH4Wq8osuz6z+RCm0MrNAV7Qoo4mqOPY/NVTlIcosnwAkmq4EHKfjNEDc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:ae41:0:b0:d78:a78:6fc7 with SMTP id
- g1-20020a25ae41000000b00d780a786fc7mr101904ybe.6.1696562477545; Thu, 05 Oct
- 2023 20:21:17 -0700 (PDT)
-Date:   Thu, 5 Oct 2023 20:21:15 -0700
-In-Reply-To: <CA+EHjTwTgEVtea7wgef5G6EEgFa0so_GbNXTMZNKyFE=ucyV0g@mail.gmail.com>
-Mime-Version: 1.0
-References: <CA+EHjTwTgEVtea7wgef5G6EEgFa0so_GbNXTMZNKyFE=ucyV0g@mail.gmail.com>
-Message-ID: <ZR99K_ZuWXEtfDuR@google.com>
-Subject: Re: [RFC PATCH v12 11/33] KVM: Introduce per-page memory attributes
-From:   Sean Christopherson <seanjc@google.com>
-To:     Fuad Tabba <tabba@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, KVM <kvm@vger.kernel.org>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        KVMARM <kvmarm@lists.linux.dev>,
-        LinuxMIPS <linux-mips@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Anish Moorthy <amoorthy@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Isaku Yamahata <isaku.yamahata@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        d=1e100.net; s=20230601; t=1696566089; x=1697170889;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=31a7+5f+dKEUOjTapfT2dmGxD91zYjZdh7R9akPGW1Y=;
+        b=T/LeLLJLxOL3PNmZy79bz+9Cxlkj2CEAVptFpWTpRbsjtN/DCwDEFw2XJ0uV9W5pw4
+         TLIzSdvzSki8Mz0ol+ViCGOiRVb11nBf8EJCE12f2Q8OFabUukHdWOpkT86Ij8gyoNpH
+         TJBGjlPwzYuXt3OTF73xmOdxFovdjJMd+5BMXCnDj0K866Ngkat+Gy8x94Vd/9+AOUal
+         FXVIXdccXx27U37bh8Lw1Yf3MonYwm5Odo4/LhHIh3iEtT70pqgRxuHaqZD9jDy6zVCc
+         skX4lnWNCvJsLzkHxBNJ79vy7sXCd19O/uHwDEZ54SaY8asq5tSO5/BjPmogqlsdkcdD
+         rzRQ==
+X-Gm-Message-State: AOJu0Yz5YnzD1fYhom2esQLdHR9QG18deCk18XaikW6QIA37QpwE6CUD
+        yHL/wIvnjHgUeUMABIeeAxWIpA==
+X-Google-Smtp-Source: AGHT+IGopr7FkMNaDgBjublbZIBMMlQiWD+3JIFSW0Wg9pUK8sYj3ONwZZMOK+8xPV5llqQjeKeInA==
+X-Received: by 2002:a17:902:8649:b0:1bb:9c45:130f with SMTP id y9-20020a170902864900b001bb9c45130fmr6189953plt.69.1696566088853;
+        Thu, 05 Oct 2023 21:21:28 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:4afa:2f75:6a8f:b6ea])
+        by smtp.gmail.com with ESMTPSA id jb17-20020a170903259100b001c8836a3795sm2619729plb.271.2023.10.05.21.18.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Oct 2023 21:19:56 -0700 (PDT)
+Date:   Fri, 6 Oct 2023 13:18:37 +0900
+From:   Sergey Senozhatsky <senozhatsky@chromium.org>
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Anil Altinay <aaltinay@google.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3] apparmor: global buffers spin lock may get contended
+Message-ID: <20231006041837.GA17924@google.com>
+References: <YO2S+C7Cw7AS7bsg@google.com>
+ <cfd5cc6f-5943-2e06-1dbe-f4b4ad5c1fa1@canonical.com>
+ <Y19GhTg8Q/3ym/VD@google.com>
+ <dac1c2d5-367f-c8a7-c61e-c1774d98d602@canonical.com>
+ <4595e7b4-ea31-5b01-f636-259e84737dfc@canonical.com>
+ <Y+9aoFjrYkpFSvuE@linutronix.de>
+ <f3fd5dd8-9d78-43be-fc5c-bf990ad3a64d@canonical.com>
+ <CACCxZWOK6=mHNQrWEhjw4pC2i3qBKYdn9joiaaCNE7ge8FAz0A@mail.gmail.com>
+ <CACCxZWO-+M-J_enENr7q1WDcu1U8vYFoytqJxAh=x-nuP268zA@mail.gmail.com>
+ <31d6e8d6-0747-a282-746b-5c144a9970bb@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <31d6e8d6-0747-a282-746b-5c144a9970bb@canonical.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 05, 2023, Fuad Tabba wrote:
-> Hi Sean,
->=20
-> On Tue, Oct 3, 2023 at 9:51=E2=80=AFPM Sean Christopherson <seanjc@google=
-.com> wrote:
-> > > Like I said, pKVM doesn't need a userspace ABI for managing PRIVATE/S=
-HARED,
-> > > just a way of tracking in the host kernel of what is shared (as oppos=
-ed to
-> > > the hypervisor, which already has the knowledge). The solution could =
-simply
-> > > be that pKVM does not enable KVM_GENERIC_MEMORY_ATTRIBUTES, has its o=
-wn
-> > > tracking of the status of the guest pages, and only selects KVM_PRIVA=
-TE_MEM.
-> >
-> > At the risk of overstepping my bounds, I think that effectively giving =
-the guest
-> > full control over what is shared vs. private is a mistake.  It more or =
-less locks
-> > pKVM into a single model, and even within that model, dealing with erro=
-rs and/or
-> > misbehaving guests becomes unnecessarily problematic.
-> >
-> > Using KVM_SET_MEMORY_ATTRIBUTES may not provide value *today*, e.g. the=
- userspace
-> > side of pKVM could simply "reflect" all conversion hypercalls, and term=
-inate the
-> > VM on errors.  But the cost is very minimal, e.g. a single extra ioctl(=
-) per
-> > converion, and the upside is that pKVM won't be stuck if a use case com=
-es along
-> > that wants to go beyond "all conversion requests either immediately suc=
-ceed or
-> > terminate the guest".
->=20
-> Now that I understand the purpose of KVM_SET_MEMORY_ATTRIBUTES, I
-> agree. However, pKVM needs to track at the host kernel (i.e., EL1)
-> whether guest memory is shared or private.
+On (23/06/26 17:31), John Johansen wrote:
+> On 6/26/23 16:33, Anil Altinay wrote:
+> > Hi John,
+> > 
+> > I was wondering if you get a chance to work on patch v4. Please let me know if you need help with testing.
+> > 
+> 
+> yeah, testing help is always much appreciated. I have a v4, and I am
+> working on 3 alternate version to compare against, to help give a better
+> sense if we can get away with simplifying or tweak the scaling.
+>
+> I should be able to post them out some time tonight.
 
-Why does EL1 need it's own view/opinion?  E.g. is it to avoid a accessing d=
-ata
-that is still private according to EL2 (on behalf of the guest)?
+Hi John,
 
-Assuming that's the case, why can't EL1 wait until it gets confirmation fro=
-m EL2
-that the data is fully shared before doing whatever it is that needs to be =
-done?
-
-Ah, is the problem that whether or not .mmap() is allowed keys off of the s=
-tate
-of the memory attributes?  If that's so, then yeah, an internal flag in att=
-ributes
-is probably the way to go.  It doesn't need to be a "host kernel private" f=
-lag
-though, e.g. an IN_FLUX flag to capture that the attributes aren't fully re=
-alized
-might be more intuitive for readers, and might have utility for other attri=
-butes
-in the future too.
-
-> One approach would be to add another flag to the attributes that
-> tracks the host kernel view. The way KVM_SET_MEMORY_ATTRIBUTES is
-> implemented now, userspace can zero it, so in that case, that
-> operation would need to be masked to avoid that.
->=20
-> Another approach would be to have a pKVM-specific xarray (or similar)
-> to do the tracking, but since there is a structure that's already
-> doing something similar (i.e.,the attributes array), it seems like it
-> would be unnecessary overhead.
->=20
-> Do you have any ideas or preferences?
->=20
-> Cheers,
-> /fuad
+Did you get a chance to post v4? I may be able to give it some testing
+on our real-life case.
