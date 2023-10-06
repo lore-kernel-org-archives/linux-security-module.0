@@ -2,213 +2,156 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A35AE7AD44
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Oct 2023 16:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F570E92FCF
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 00:27:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235517AbjJEQjc (ORCPT
+        id S229506AbjJFA1X (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:39:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53000 "EHLO
+        Thu, 5 Oct 2023 20:27:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231749AbjJEQiU (ORCPT
+        with ESMTP id S229455AbjJFA1W (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Oct 2023 12:38:20 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AEF28693;
-        Thu,  5 Oct 2023 01:09:51 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40566f89f6eso6271165e9.3;
-        Thu, 05 Oct 2023 01:09:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696493390; x=1697098190; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vac1cc2NhqqKLkLLqOWp/M2Xk8kK7YsIhEZC7x4c1VE=;
-        b=ifxXrmyMYXHjcpSGaFKIgeQotHSKfSy5PDv2NeErW+QuINbwTDPPthQY9ge6UjkvqN
-         SdR/RMTwtvSzLsGxO4FrJRIMm2HbQuWoRcc/2Wrn9/JjQgUbRCeMdng4N62/JemSG8G5
-         dqjj34jnlTLGAry+8qwAq4KJXYx+Di5xsP1JGpVYALs8MFBsQwltpyVqZxD6kkS4USzg
-         Nx02WxzNoDD/DL1liaBN/qmzcdwl7ZaFeDJ5YFDOSrm258/3VddP285dhAEq12YJ12nv
-         J6CGzrKVOQdeiy1hPCVfZJfAqHdzevVbtOkm1scaZW7pDbWhwvVHQWKq0qwyc7B6evwi
-         oU9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696493390; x=1697098190;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vac1cc2NhqqKLkLLqOWp/M2Xk8kK7YsIhEZC7x4c1VE=;
-        b=ZNqJZ8iv/ZSPCDc4ddPW/WwHppgM1sMSuUlTdUKG0hZFeIkA/MYjG4SpOJ8/h0479r
-         h6OdwwpFYg4SGNdgBc/2lf9RZOb0OF0HqNfWCn9Eeu1QhAOFqLixO2uH73pBm3XcZ3p3
-         HWmEMsBNIvk5C7VkrUsxcbOaI9Rysh0/DT2C3wR+iFQkh1TKh3jWtkku7xrfucA7/e6w
-         bLI58gIdjjbdY43cA8z48fUWrztilwTEc1oEvxJ7NdjIF+AhYfpy2B3KS9o9vb+QkSoP
-         lH3yIumHK3Vo+fhw7YsyUjICEYJ+4YWOsyA7ZoMcyh5r8qbPSlNUvYUOKHGge/i7Krwg
-         pdjg==
-X-Gm-Message-State: AOJu0Yy6lirmVtyVpQGQRGOj4EO13FlllqmvRVhb7XOjX5ZT7n+gto4P
-        yMIQYSiPLfjjERe8poIdgoQ=
-X-Google-Smtp-Source: AGHT+IGgFchs9lATe9wTJNhW991KYQ9SWvuqIs9rt0eFGO2Eyw1PAmzzNgwHsXi/uGf+PI9L6DTL0A==
-X-Received: by 2002:a05:600c:220b:b0:406:7029:c4f2 with SMTP id z11-20020a05600c220b00b004067029c4f2mr4051867wml.26.1696493389528;
-        Thu, 05 Oct 2023 01:09:49 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id y6-20020a1c4b06000000b00405588aa40asm923957wma.24.2023.10.05.01.09.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 01:09:49 -0700 (PDT)
-From:   Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date:   Thu, 5 Oct 2023 10:09:47 +0200
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
-        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        renauld@google.com
-Subject: Re: [PATCH v5 4/5] bpf: Only enable BPF LSM hooks when an LSM
- program is attached
-Message-ID: <ZR5vSyyNGBb8TvNH@krava>
-References: <20230928202410.3765062-1-kpsingh@kernel.org>
- <20230928202410.3765062-5-kpsingh@kernel.org>
+        Thu, 5 Oct 2023 20:27:22 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 238CFD6;
+        Thu,  5 Oct 2023 17:27:18 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id D6DBD5C022E;
+        Thu,  5 Oct 2023 20:27:14 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Thu, 05 Oct 2023 20:27:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+        1696552034; x=1696638434; bh=T0KKGiY1Q8zqQlnDql/yrnMneNPlqDlkRnN
+        aCenas50=; b=NsjPxZnjfyHwzZfOHHXiexldWr+qApfmB0/vePs04hlPTprXeLP
+        muo00EbDjfVB1reJo4Gi4OS1KB2yKHJLXypX7FP9f8SiFiuTTmSrdGnGbT4K689r
+        z66w+t1ZqKIb1NIjSbKd+C3UTVrNSLtPth5mcA3FYufCXiws+vpJmy2O516DHjyJ
+        ihdQSZ38omannW+GHVLJOeh9SQ6MZquPLile5x3UrWcDg4Q2JEJiJD9zcQTBoNRr
+        6x/a/6VF9DRNQK9BxCUhL2jfUfE394R7CcxAHV7hxrIaVlniEjAEaUKbHFTqMYQa
+        fqyo8jR86/CgH3mfBPaM3dcgHcKEAjlyiog==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1696552034; x=1696638434; bh=T0KKGiY1Q8zqQlnDql/yrnMneNPlqDlkRnN
+        aCenas50=; b=X888C7YOEFoEUmRM8CxSfxcrCdN9fA9Y5Wy6nLVEg9ywh69eNaa
+        6W3pVRhpXRkpqInMSTExphzKk98r8O/8dVuEsTt+gm6V9pxt9eSkQ0j65XTkkWJ0
+        MNvfAOLtcJrmVR4FChTj/BXwfRhGsHO0CZN6T1pxihIcqNsUqpLgodWcxVVSjxe/
+        J7WaYl4kaoT0sRg5jCO/jRjX+EIu36obx3yapz54vniMmrIyIrQVRmJgS2iIcYTP
+        sEUVz7bYc3OLvHqkLUkELZaiyWx+0oNyWsIpVwsggmP9Jww+pZlAhtsozkL3qGOp
+        +1/5oNgpXRGev7OaRgAzJ4sTXuSzyXpcK/Q==
+X-ME-Sender: <xms:YVQfZfmuJNp-n-wtUgJgsFbSLdiR22bouAjj_2tgWzTIrIUUBX2gCQ>
+    <xme:YVQfZS1SVFoihWiBusOuFwPtyP31D50Ca_GbiWm7abTAAL_2bs4isr20RLkFfjAcL
+    BxjfhFtL5fb>
+X-ME-Received: <xmr:YVQfZVrDl_aaip9HvCknlI6jRPyGFHmp4XIR2As3mc0fM0hq9NcHh2YOfCQYeFPLTHjC0FB7jevxc-zpl4gQfd14McbIogeQGtJNcrdmu93JGq2r-eLXH8Xs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrgeehgdefhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttdefjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    euhfeuieeijeeuveekgfeitdethefguddtleffhfelfeelhfduuedvfefhgefhheenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
+    hthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:YlQfZXl1_L8TMWe7RLDu62ZvUSa2BREvMrbrCCOrXMfOn5Qm8b3OIw>
+    <xmx:YlQfZd1-2AUNUqJXnkVrBopvHNDc9gw-i0J_3MpQWHS7GRNgMX9LPw>
+    <xmx:YlQfZWsuyxmLje11F-KKbJnHXS9c6kPzsNYDWePd3DSoN72GFSt7dw>
+    <xmx:YlQfZXMBhWMqKgsB-pnkEyij8sgxlC3Mdp0aHMAxo11bXMPdJ4_mbQ>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 5 Oct 2023 20:27:07 -0400 (EDT)
+Message-ID: <7fe3c01f-c225-394c-fac5-cabfc70f3606@themaw.net>
+Date:   Fri, 6 Oct 2023 08:27:03 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230928202410.3765062-5-kpsingh@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v3 4/4] add listmount(2) syscall
+Content-Language: en-US
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew House <mattlloydhouse@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20230928130147.564503-1-mszeredi@redhat.com>
+ <20230928130147.564503-5-mszeredi@redhat.com>
+ <CAHC9VhQD9r+Qf5Vz1XmxUdJJJO7HNTKdo8Ux=n+xkxr=JGFMrw@mail.gmail.com>
+ <CAJfpegsPbDgaz46x4Rr9ZgCpF9rohVHsvuWtQ5LNAdiYU_D4Ww@mail.gmail.com>
+ <a25f2736-1837-f4ca-b401-85db24f46452@themaw.net>
+ <CAJfpegv78njkWdaShTskKXoGOpKAndvYYJwq7CLibiu+xmLCvg@mail.gmail.com>
+From:   Ian Kent <raven@themaw.net>
+In-Reply-To: <CAJfpegv78njkWdaShTskKXoGOpKAndvYYJwq7CLibiu+xmLCvg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 28, 2023 at 10:24:09PM +0200, KP Singh wrote:
+On 5/10/23 23:47, Miklos Szeredi wrote:
+> On Thu, 5 Oct 2023 at 06:23, Ian Kent <raven@themaw.net> wrote:
+>
+>> The proc interfaces essentially use <mount namespace>->list to provide
+>>
+>> the mounts that can be seen so it's filtered by mount namespace of the
+>>
+>> task that's doing the open().
+>>
+>>
+>> See fs/namespace.c:mnt_list_next() and just below the m_start(), m_next(),
+> /proc/$PID/mountinfo will list the mount namespace of $PID.  Whether
+> current task has permission to do so is decided at open time.
+>
+> listmount() will list the children of the given mount ID.  The mount
+> ID is looked up in the task's mount namespace, so this cannot be used
+> to list mounts of other namespaces.  It's a more limited interface.
 
-SNIP
+Yep. But isn't the ability to see these based on task privilege?
 
-> diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
-> index e97aeda3a86b..df9699bce372 100644
-> --- a/kernel/bpf/trampoline.c
-> +++ b/kernel/bpf/trampoline.c
-> @@ -13,6 +13,7 @@
->  #include <linux/bpf_verifier.h>
->  #include <linux/bpf_lsm.h>
->  #include <linux/delay.h>
-> +#include <linux/bpf_lsm.h>
->  
->  /* dummy _ops. The verifier will operate on target program's ops. */
->  const struct bpf_verifier_ops bpf_extension_verifier_ops = {
-> @@ -514,7 +515,7 @@ static int __bpf_trampoline_link_prog(struct bpf_tramp_link *link, struct bpf_tr
->  {
->  	enum bpf_tramp_prog_type kind;
->  	struct bpf_tramp_link *link_exiting;
-> -	int err = 0;
-> +	int err = 0, num_lsm_progs = 0;
->  	int cnt = 0, i;
->  
->  	kind = bpf_attach_type_to_tramp(link->link.prog);
-> @@ -545,8 +546,14 @@ static int __bpf_trampoline_link_prog(struct bpf_tramp_link *link, struct bpf_tr
->  			continue;
->  		/* prog already linked */
->  		return -EBUSY;
-> +
-> +		if (link_exiting->link.prog->type == BPF_PROG_TYPE_LSM)
-> +			num_lsm_progs++;
 
-this looks wrong, it's never reached.. seems like we should add separate
-hlist_for_each_entry loop over trampoline's links for this check/init of
-num_lsm_progs ?
+Is the proc style restriction actually what we need here (or some variation
 
-jirka
+of that implementation)?
 
->  	}
->  
-> +	if (!num_lsm_progs && link->link.prog->type == BPF_PROG_TYPE_LSM)
-> +		bpf_lsm_toggle_hook(tr->func.addr, true);
-> +
->  	hlist_add_head(&link->tramp_hlist, &tr->progs_hlist[kind]);
->  	tr->progs_cnt[kind]++;
->  	err = bpf_trampoline_update(tr, true /* lock_direct_mutex */);
-> @@ -569,8 +576,10 @@ int bpf_trampoline_link_prog(struct bpf_tramp_link *link, struct bpf_trampoline
->  
->  static int __bpf_trampoline_unlink_prog(struct bpf_tramp_link *link, struct bpf_trampoline *tr)
->  {
-> +	struct bpf_tramp_link *link_exiting;
->  	enum bpf_tramp_prog_type kind;
-> -	int err;
-> +	bool lsm_link_found = false;
-> +	int err, num_lsm_progs = 0;
->  
->  	kind = bpf_attach_type_to_tramp(link->link.prog);
->  	if (kind == BPF_TRAMP_REPLACE) {
-> @@ -580,8 +589,24 @@ static int __bpf_trampoline_unlink_prog(struct bpf_tramp_link *link, struct bpf_
->  		tr->extension_prog = NULL;
->  		return err;
->  	}
-> +
-> +	if (link->link.prog->type == BPF_PROG_TYPE_LSM) {
-> +		hlist_for_each_entry(link_exiting, &tr->progs_hlist[kind],
-> +				     tramp_hlist) {
-> +			if (link_exiting->link.prog->type == BPF_PROG_TYPE_LSM)
-> +				num_lsm_progs++;
-> +
-> +			if (link_exiting->link.prog == link->link.prog)
-> +				lsm_link_found = true;
-> +		}
-> +	}
-> +
->  	hlist_del_init(&link->tramp_hlist);
->  	tr->progs_cnt[kind]--;
-> +
-> +	if (lsm_link_found && num_lsm_progs == 1)
-> +		bpf_lsm_toggle_hook(tr->func.addr, false);
-> +
->  	return bpf_trampoline_update(tr, true /* lock_direct_mutex */);
->  }
->  
-> diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
-> index cfaf1d0e6a5f..1957244196d0 100644
-> --- a/security/bpf/hooks.c
-> +++ b/security/bpf/hooks.c
-> @@ -8,7 +8,7 @@
->  
->  static struct security_hook_list bpf_lsm_hooks[] __ro_after_init = {
->  	#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
-> -	LSM_HOOK_INIT(NAME, bpf_lsm_##NAME),
-> +	LSM_HOOK_INIT_DISABLED(NAME, bpf_lsm_##NAME),
->  	#include <linux/lsm_hook_defs.h>
->  	#undef LSM_HOOK
->  	LSM_HOOK_INIT(inode_free_security, bpf_inode_storage_free),
-> @@ -32,3 +32,26 @@ DEFINE_LSM(bpf) = {
->  	.init = bpf_lsm_init,
->  	.blobs = &bpf_lsm_blob_sizes
->  };
-> +
-> +void bpf_lsm_toggle_hook(void *addr, bool value)
-> +{
-> +	struct lsm_static_call *scalls;
-> +	struct security_hook_list *h;
-> +	int i, j;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(bpf_lsm_hooks); i++) {
-> +		h = &bpf_lsm_hooks[i];
-> +		scalls = h->scalls;
-> +		if (h->hook.lsm_callback == addr)
-> +			continue;
-> +
-> +		for (j = 0; j < MAX_LSM_COUNT; j++) {
-> +			if (scalls[j].hl != h)
-> +				continue;
-> +			if (value)
-> +				static_branch_enable(scalls[j].active);
-> +			else
-> +				static_branch_disable(scalls[j].active);
-> +		}
-> +	}
-> +}
-> diff --git a/security/security.c b/security/security.c
-> index c2c2cf6b711f..d1ee72e563cc 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -382,7 +382,8 @@ static void __init lsm_static_call_init(struct security_hook_list *hl)
->  			__static_call_update(scall->key, scall->trampoline,
->  					     hl->hook.lsm_callback);
->  			scall->hl = hl;
-> -			static_branch_enable(scall->active);
-> +			if (hl->default_state)
-> +				static_branch_enable(scall->active);
->  			return;
->  		}
->  		scall++;
-> -- 
-> 2.42.0.582.g8ccd20d70d-goog
-> 
-> 
+
+An privileged task typically has the init namespace as its mount namespace
+
+and mounts should propagate from there so it should be able to see all 
+mounts.
+
+
+If the file handle has been opened in a task that is using some other mount
+
+namespace then presumably that's what the program author wants the task 
+to see.
+
+So I'm not sure I see a problem obeying the namespace of a given task.
+
+
+Ian
+
+>
+> I sort of understand the reasoning behind calling into a security hook
+> on entry to statmount() and listmount().  And BTW I also think that if
+> statmount() and listmount() is limited in this way, then the same
+> limitation should be applied to the proc interfaces.  But that needs
+> to be done real carefully because it might cause regressions.  OTOH if
+> it's only done on the new interfaces, then what is the point, since
+> the old interfaces will be available indefinitely?
+>
+> Also I cannot see the point in hiding some mount ID's from the list.
+> It seems to me that the list is just an array of numbers that in
+> itself doesn't carry any information.
+>
+> Thanks,
+> Miklos
