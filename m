@@ -2,189 +2,158 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E111E94133
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 22:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 872B4E94139
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 23:08:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233755AbjJFWUO (ORCPT
+        id S233822AbjJFXIG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Oct 2023 18:20:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59612 "EHLO
+        Fri, 6 Oct 2023 19:08:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233545AbjJFWUN (ORCPT
+        with ESMTP id S233627AbjJFXIG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Oct 2023 18:20:13 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D57E5E4
-        for <linux-security-module@vger.kernel.org>; Fri,  6 Oct 2023 15:20:12 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1c7373cff01so28803885ad.1
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Oct 2023 15:20:12 -0700 (PDT)
+        Fri, 6 Oct 2023 19:08:06 -0400
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7D0493
+        for <linux-security-module@vger.kernel.org>; Fri,  6 Oct 2023 16:08:04 -0700 (PDT)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-5a1d0fee86aso32027887b3.2
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Oct 2023 16:08:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1696630812; x=1697235612; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=a45KGJOK0lNMKA48/FSSfQen0gMhbbqMC081n0Yh3GE=;
-        b=SZ+LArAHRcE4rFsdyUlszct4kw+wflUStU67dmnffh0j7yL0V+d41Ku7tXU6yKaY0F
-         ElhVPjRZEM6jYOOv9wrWsoZy139xcNSiI3D3EcEMNpO5GJblQYDV+rCiA3d0EWfuZVni
-         3s0qVwY3137hG6Nao1Ukly8VTnMuKPJ9Tc+mU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696630812; x=1697235612;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1696633684; x=1697238484; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=a45KGJOK0lNMKA48/FSSfQen0gMhbbqMC081n0Yh3GE=;
-        b=vUOsbNeIcZRz4XzueQ1U9AMOG7eBvqn+TNjLlJzHgsBf4lIdPMfs8Er/f1xqVmFErO
-         AY75q8hVh4bCA99cyeii7ASi+2IqsBuhlziDcmhKy6MJNo+LlT6IdakLWRS0s7unmqTC
-         dUUW6xb1uNMcU9r9w2exaNrmGgDaZjsNbrKXfA26vUgbJzWHLeWkyS33HvUgHy2cdvXw
-         kYcOspRUMkCaZryZ/VNs9C4j/rGExr8cQOgkPeMFudHFmr8oJv5h/rI2JlpLRtptycmr
-         JK7RwdLp5ik3uh4612+HxQiZxZy2tXgMUR0jxz8zF72Kceef6hH7oDNA+pQH1jypgyc4
-         REbg==
-X-Gm-Message-State: AOJu0Yw3xJQdgUsYrXQRbNWAjyEUtscvBwgHu9FCkf/bywoXUWG+SC7W
-        QVd+vNOu2paLB15sMeThjUZvMg==
-X-Google-Smtp-Source: AGHT+IFkyQFr+Srsd18oIXq0XAKKGbVW+B3IfqxGoZy+QvFuFcl1PQlLow2cebiuz5cTsk8Cr+N6lA==
-X-Received: by 2002:a17:903:2290:b0:1c6:2655:625d with SMTP id b16-20020a170903229000b001c62655625dmr8500567plh.15.1696630812284;
-        Fri, 06 Oct 2023 15:20:12 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id x16-20020a170902ec9000b001c61901ed2esm4391498plg.219.2023.10.06.15.20.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Oct 2023 15:20:11 -0700 (PDT)
-Date:   Fri, 6 Oct 2023 15:20:10 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        paul@paul-moore.com, casey@schaufler-ca.com, song@kernel.org,
-        daniel@iogearbox.net, ast@kernel.org, renauld@google.com,
-        pabeni@redhat.com
-Subject: Re: [PATCH v6 5/5] security: Add CONFIG_SECURITY_HOOK_LIKELY
-Message-ID: <202310061520.8C935383@keescook>
-References: <20231006204701.549230-1-kpsingh@kernel.org>
- <20231006204701.549230-6-kpsingh@kernel.org>
+        bh=F50fu8DXl9ERFHVYVt4zY9h1hnn4ptAJ3MO5xm3ht8M=;
+        b=DSWU7Th6ZPr/C9XYfy2ArD7EwQYRdfx5NerMmWa6VeiCNw24YRrs4c7/Vfca2xgG4O
+         aiv44TiryMe03QX0qA4WsJTNRtLHaZmTv5GAFT+E90Slc9yUpNis1hUvIqujMk9dy+Lu
+         whWgQoQmCxAp1reO223+nIWNoses+CDen4cXjYYHWeYzLJ0XgXhVLoiKgmVihZ7t0VBF
+         KVUvLeTTU1rCg0CZsgE8hY/Wnvf7cl6RkUSwfcA/M9AgkF8uRT5sXVjkWFUGMQ7x9ArI
+         g9ogSHC6U/qeV7Vb1LKQIgnT0KsuxnywtMV2ZAYQh0Qi2tCddZbyOa0V2URk+/YnNPYn
+         rhyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696633684; x=1697238484;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F50fu8DXl9ERFHVYVt4zY9h1hnn4ptAJ3MO5xm3ht8M=;
+        b=lHb9NVj8h/N0u4qKtdStI+n5LuidpmqP6Uay+DvN2nIEOd0FfFU4Vb70LWlaSrOlzC
+         yupIy8imElp80XdbOGEItjMR/Ym9ablKG67gjzSWi6o9mbH1yOY3kmYo4q/kz8uShCH0
+         n18+GLRsDxn9JJWhW6vaEs6sig/Lrhi2TbUAFacybyFh8pkX1CkmUtr4gTfloR5XNLJG
+         1T/5l2Dl25OWL9DgfLow7EhTd0KLrQKgH1dGulsVvSkYSALq+V8kfd+lp0WJqZW+cU13
+         OqXLARBTylaW4z0bnoTAbgHhzxDLovPSUgmJEj6sHbm/wdJqlQ1Pz6S7b4yoTIxrz5oj
+         xAQQ==
+X-Gm-Message-State: AOJu0YxTLVKp51p9gvuj9PvwOqyBWCPrhTXa9FIi4ajPXL7xNFO8tvpy
+        tXozjMP3RobE2SPl5P6C+M07JOJG7WUp2rv9d2BZ
+X-Google-Smtp-Source: AGHT+IFptmDYsPUwJNXgzo/KC+xeqdAaTYpkEhIAeXQIc7ZwVI4dQTLTBID85bUW0YeCyFWkPLg7ZtNgHG2nI/ZPkQI=
+X-Received: by 2002:a25:b31a:0:b0:d4b:ab7b:17ed with SMTP id
+ l26-20020a25b31a000000b00d4bab7b17edmr8590362ybj.4.1696633683762; Fri, 06 Oct
+ 2023 16:08:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231006204701.549230-6-kpsingh@kernel.org>
+References: <20230928130147.564503-1-mszeredi@redhat.com> <20230928130147.564503-5-mszeredi@redhat.com>
+ <CAHC9VhQD9r+Qf5Vz1XmxUdJJJO7HNTKdo8Ux=n+xkxr=JGFMrw@mail.gmail.com>
+ <CAJfpegsPbDgaz46x4Rr9ZgCpF9rohVHsvuWtQ5LNAdiYU_D4Ww@mail.gmail.com>
+ <a25f2736-1837-f4ca-b401-85db24f46452@themaw.net> <CAJfpegv78njkWdaShTskKXoGOpKAndvYYJwq7CLibiu+xmLCvg@mail.gmail.com>
+ <CAHC9VhTwnjhfmkT5Rzt+SBf-8hyw4PYkbuPYnm6XLoyY7VAUiw@mail.gmail.com> <CAJfpegsZqF4TnnFBsV-tzi=w_7M=To5DeAjyW=cei9YuG+qMfg@mail.gmail.com>
+In-Reply-To: <CAJfpegsZqF4TnnFBsV-tzi=w_7M=To5DeAjyW=cei9YuG+qMfg@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 6 Oct 2023 19:07:52 -0400
+Message-ID: <CAHC9VhS5cRA3FFWAttuy-tNP=p+Rk1O3Sq8Np29jenFQprFi4A@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] add listmount(2) syscall
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Ian Kent <raven@themaw.net>, Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew House <mattlloydhouse@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 06, 2023 at 10:47:01PM +0200, KP Singh wrote:
-> This config influences the nature of the static key that guards the
-> static call for LSM hooks.
-> 
-> When enabled, it indicates that an LSM static call slot is more likely
-> to be initialized. When disabled, it optimizes for the case when static
-> call slot is more likely to be not initialized.
-> 
-> When a major LSM like (SELinux, AppArmor, Smack etc) is active on a
-> system the system would benefit from enabling the config. However there
-> are other cases which would benefit from the config being disabled
-> (e.g. a system with a BPF LSM with no hooks enabled by default, or an
-> LSM like loadpin / yama). Ultimately, there is no one-size fits all
-> solution.
-> 
-> with CONFIG_SECURITY_HOOK_LIKELY enabled, the inactive /
-> uninitialized case is penalized with a direct jmp (still better than
-> an indirect jmp):
-> 
-> function security_file_ioctl:
->    0xffffffff818f0c80 <+0>:	endbr64
->    0xffffffff818f0c84 <+4>:	nopl   0x0(%rax,%rax,1)
->    0xffffffff818f0c89 <+9>:	push   %rbp
->    0xffffffff818f0c8a <+10>:	push   %r14
->    0xffffffff818f0c8c <+12>:	push   %rbx
->    0xffffffff818f0c8d <+13>:	mov    %rdx,%rbx
->    0xffffffff818f0c90 <+16>:	mov    %esi,%ebp
->    0xffffffff818f0c92 <+18>:	mov    %rdi,%r14
->    0xffffffff818f0c95 <+21>:	jmp    0xffffffff818f0ca8 <security_file_ioctl+40>
-> 
->    jump to skip the inactive BPF LSM hook.
-> 
->    0xffffffff818f0c97 <+23>:	mov    %r14,%rdi
->    0xffffffff818f0c9a <+26>:	mov    %ebp,%esi
->    0xffffffff818f0c9c <+28>:	mov    %rbx,%rdx
->    0xffffffff818f0c9f <+31>:	call   0xffffffff8141e3b0 <bpf_lsm_file_ioctl>
->    0xffffffff818f0ca4 <+36>:	test   %eax,%eax
->    0xffffffff818f0ca6 <+38>:	jne    0xffffffff818f0cbf <security_file_ioctl+63>
->    0xffffffff818f0ca8 <+40>:	endbr64
->    0xffffffff818f0cac <+44>:	jmp    0xffffffff818f0ccd <security_file_ioctl+77>
-> 
->    jump to skip the empty slot.
-> 
->    0xffffffff818f0cae <+46>:	mov    %r14,%rdi
->    0xffffffff818f0cb1 <+49>:	mov    %ebp,%esi
->    0xffffffff818f0cb3 <+51>:	mov    %rbx,%rdx
->    0xffffffff818f0cb6 <+54>:	nopl   0x0(%rax,%rax,1)
->   				^^^^^^^^^^^^^^^^^^^^^^^
-> 				Empty slot
-> 
->    0xffffffff818f0cbb <+59>:	test   %eax,%eax
->    0xffffffff818f0cbd <+61>:	je     0xffffffff818f0ccd <security_file_ioctl+77>
->    0xffffffff818f0cbf <+63>:	endbr64
->    0xffffffff818f0cc3 <+67>:	pop    %rbx
->    0xffffffff818f0cc4 <+68>:	pop    %r14
->    0xffffffff818f0cc6 <+70>:	pop    %rbp
->    0xffffffff818f0cc7 <+71>:	cs jmp 0xffffffff82c00000 <__x86_return_thunk>
->    0xffffffff818f0ccd <+77>:	endbr64
->    0xffffffff818f0cd1 <+81>:	xor    %eax,%eax
->    0xffffffff818f0cd3 <+83>:	jmp    0xffffffff818f0cbf <security_file_ioctl+63>
->    0xffffffff818f0cd5 <+85>:	mov    %r14,%rdi
->    0xffffffff818f0cd8 <+88>:	mov    %ebp,%esi
->    0xffffffff818f0cda <+90>:	mov    %rbx,%rdx
->    0xffffffff818f0cdd <+93>:	pop    %rbx
->    0xffffffff818f0cde <+94>:	pop    %r14
->    0xffffffff818f0ce0 <+96>:	pop    %rbp
->    0xffffffff818f0ce1 <+97>:	ret
-> 
-> When the config is disabled, the case optimizes the scenario above.
-> 
-> security_file_ioctl:
->    0xffffffff818f0e30 <+0>:	endbr64
->    0xffffffff818f0e34 <+4>:	nopl   0x0(%rax,%rax,1)
->    0xffffffff818f0e39 <+9>:	push   %rbp
->    0xffffffff818f0e3a <+10>:	push   %r14
->    0xffffffff818f0e3c <+12>:	push   %rbx
->    0xffffffff818f0e3d <+13>:	mov    %rdx,%rbx
->    0xffffffff818f0e40 <+16>:	mov    %esi,%ebp
->    0xffffffff818f0e42 <+18>:	mov    %rdi,%r14
->    0xffffffff818f0e45 <+21>:	xchg   %ax,%ax
->    0xffffffff818f0e47 <+23>:	xchg   %ax,%ax
-> 
->    The static keys in their disabled state do not create jumps leading
->    to faster code.
-> 
->    0xffffffff818f0e49 <+25>:	xor    %eax,%eax
->    0xffffffff818f0e4b <+27>:	xchg   %ax,%ax
->    0xffffffff818f0e4d <+29>:	pop    %rbx
->    0xffffffff818f0e4e <+30>:	pop    %r14
->    0xffffffff818f0e50 <+32>:	pop    %rbp
->    0xffffffff818f0e51 <+33>:	cs jmp 0xffffffff82c00000 <__x86_return_thunk>
->    0xffffffff818f0e57 <+39>:	endbr64
->    0xffffffff818f0e5b <+43>:	mov    %r14,%rdi
->    0xffffffff818f0e5e <+46>:	mov    %ebp,%esi
->    0xffffffff818f0e60 <+48>:	mov    %rbx,%rdx
->    0xffffffff818f0e63 <+51>:	call   0xffffffff8141e3b0 <bpf_lsm_file_ioctl>
->    0xffffffff818f0e68 <+56>:	test   %eax,%eax
->    0xffffffff818f0e6a <+58>:	jne    0xffffffff818f0e4d <security_file_ioctl+29>
->    0xffffffff818f0e6c <+60>:	jmp    0xffffffff818f0e47 <security_file_ioctl+23>
->    0xffffffff818f0e6e <+62>:	endbr64
->    0xffffffff818f0e72 <+66>:	mov    %r14,%rdi
->    0xffffffff818f0e75 <+69>:	mov    %ebp,%esi
->    0xffffffff818f0e77 <+71>:	mov    %rbx,%rdx
->    0xffffffff818f0e7a <+74>:	nopl   0x0(%rax,%rax,1)
->    0xffffffff818f0e7f <+79>:	test   %eax,%eax
->    0xffffffff818f0e81 <+81>:	jne    0xffffffff818f0e4d <security_file_ioctl+29>
->    0xffffffff818f0e83 <+83>:	jmp    0xffffffff818f0e49 <security_file_ioctl+25>
->    0xffffffff818f0e85 <+85>:	endbr64
->    0xffffffff818f0e89 <+89>:	mov    %r14,%rdi
->    0xffffffff818f0e8c <+92>:	mov    %ebp,%esi
->    0xffffffff818f0e8e <+94>:	mov    %rbx,%rdx
->    0xffffffff818f0e91 <+97>:	pop    %rbx
->    0xffffffff818f0e92 <+98>:	pop    %r14
->    0xffffffff818f0e94 <+100>:	pop    %rbp
->    0xffffffff818f0e95 <+101>:	ret
-> 
-> Acked-by: Song Liu <song@kernel.org>
-> Signed-off-by: KP Singh <kpsingh@kernel.org>
+On Fri, Oct 6, 2023 at 4:53=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> w=
+rote:
+> On Fri, 6 Oct 2023 at 04:56, Paul Moore <paul@paul-moore.com> wrote:
+>
+> > > Also I cannot see the point in hiding some mount ID's from the list.
+> > > It seems to me that the list is just an array of numbers that in
+> > > itself doesn't carry any information.
+> >
+> > I think it really comes down to the significance of the mount ID, and
+> > I can't say I know enough of the details here to be entirely
+> > comfortable taking a hard stance on this.  Can you help me understand
+> > the mount ID concept a bit better?
+>
+> Mount ID is a descriptor that allows referring to a specific struct
+> mount from userspace.
+>
+> The old 32 bit mount id is allocated with IDA from a global pool.
+> Because it's non-referencing it doesn't allow uniquely identifying a
+> mount.  That was a design mistake that I made back in 2008, thinking
+> that the same sort of dense descriptor space as used for file
+> descriptors would work.  Originally it was used to identify the mount
+> and the parent mount in /proc/PID/mountinfo.  Later it was also added
+> to the following interfaces:
+>
+>  - name_to_handle_at(2) returns 32 bit value
+>  - /proc/PID/FD/fdinfo
+>  - statx(2) returns 64 bit value
+>
+> It was never used on the kernel interfaces as an input argument.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Thanks for the background.
 
--- 
-Kees Cook
+> statmount(2) and listmount(2) require the mount to be identified by
+> userspace, so having a unique ID is important.  So the "[1/4] add
+> unique mount ID" adds a new 64 bit ID (still global) that is allocated
+> sequentially and only reused after reboot.   It is used as an input to
+> these syscalls.  It is returned by statx(2) if requested by
+> STATX_MNT_ID_UNIQUE and as an array of ID's by listmount(2).
+>
+> I can see mild security problems with the global allocation, since a
+> task can observe mounts being done in other namespaces.  This doesn't
+> sound too serious, and the old ID has similar issues.  But I think
+> making the new ID be local to the mount namespace is also feasible.
+
+The LSM hook API is designed to operate independently from any of the
+kernel namespaces; while some LSMs may choose to be aware of
+namespaces and adjust their controls accordingly, there is no
+requirement that they do so.  For that reason, I'm not too bothered
+either way if the mount ID is global or tied to a namespace.
+
+> > While I'm reasonably confident that we want a security_sb_statfs()
+> > control point in statmount(), it may turn out that we don't want/need
+> > a call in the listmount() case.  Perhaps your original patch was
+> > correct in the sense that we only want a single security_sb_statfs()
+> > call for the root (implying that the child mount IDs are attributes of
+> > the root/parent mount)?  Maybe it's something else entirely?
+>
+> Mounts are arranged in a tree (I think it obvious how) and
+> listmount(2) just lists the IDs of the immediate children of a mount.
+>
+> I don't see ID being an attribute of a mount, it's a descriptor.
+
+In this case I think the approach you took originally in this thread
+is likely what we want, call security_sb_statfs() against the root
+mount in listmount().  Just please move it after the capability
+checks.
+
+If you look at the two LSMs which implement the security_sb_statfs(),
+Smack and SELinux, you see that Smack treats this as a read operation
+between the current process and the specified mount and SELinux treats
+this as a filesystem:getattr operations between the current process
+and the specified mount.  In both cases I can see that being the right
+approach for reading a list of child mounts off of a root mount.
+
+Does that sound good?  I'm guessing that's okay since that was how you
+wrote it in your original patch, but there has been a lot of
+discussion since then :)
+
+--=20
+paul-moore.com
