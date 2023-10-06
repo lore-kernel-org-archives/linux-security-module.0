@@ -2,127 +2,166 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF23EE92FF9
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 08:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBC7E92FF8
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 09:05:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231207AbjJFIyF (ORCPT
+        id S230238AbjJFJF0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Oct 2023 04:54:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33712 "EHLO
+        Fri, 6 Oct 2023 05:05:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231136AbjJFIyE (ORCPT
+        with ESMTP id S231215AbjJFJFZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Oct 2023 04:54:04 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C0C9E
-        for <linux-security-module@vger.kernel.org>; Fri,  6 Oct 2023 01:54:00 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-53406799540so3418346a12.1
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Oct 2023 01:54:00 -0700 (PDT)
+        Fri, 6 Oct 2023 05:05:25 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F111F93;
+        Fri,  6 Oct 2023 02:05:23 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-3231d6504e1so1719922f8f.2;
+        Fri, 06 Oct 2023 02:05:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1696582439; x=1697187239; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3xGSg1ywEPdzy+7pm5ys+NDpYYhLyChWJlGKSbRiijw=;
-        b=e9JOMdBddiy+e2X+XurG3ruDYEHCQk3UVKyXYxDFYF6XrhfOyP7Ato/eVIEGR8Logq
-         81e6/dyfh73Lsst2k4dsDNpGBJCi7izTL7CPKkAFe4U2y+awEF+a7D+evT3y7n39fFWx
-         lJs5HQgMTUkhEIyVnUfxn+0aQVgdBiP30I5CQ=
+        d=gmail.com; s=20230601; t=1696583122; x=1697187922; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tV8vdtRv0dLgQHb0i++2h3/DMYxrtErGTtvFqRlaYuM=;
+        b=dZa02X+kRu9jyFk9y1mToMqN33813nIXY7XQmwBsE+PgI7CrbMS1sTE/Wgl06sM04R
+         NySjt3Hn44CQrU0Z9OQY0qsThUsWktrF6eu8Ax4bdcqmS9sGFWXg8oZa5OTP7h+6b7W3
+         h6HbSW2iizKvk0r1HV00dqj4/wFrXzkSv8qqhcpd9H8ItTg+FV42T8KV7MFgbRvbMJ3+
+         Sm/rdBLzzqoLbKAdRLtNV9olcAsa9BlOQYGbbbwGv3T1TWyxpWtP4gV1uglDmbBHOan7
+         QBtw1tc4MuDkgZt4TEiKocPKByUQ5KMWVuj4QD0wZhaiLQgQRgP0vGXRpdF2/GOEdoIp
+         6U+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696582439; x=1697187239;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3xGSg1ywEPdzy+7pm5ys+NDpYYhLyChWJlGKSbRiijw=;
-        b=ZDlqRYC7NnlFLxkPyH+ujXhs3vXOIwrqAeD4UlWAKi8R8Dig3/GinVNz0xFKkH5z3s
-         zjmATgNmt2wY8GPsAR2AFAmxyDDZMQwkNGtTrEaGKlQ/Wae+3ZfS/9WEiq9icz0OQhIL
-         j5HLs7VUP4cIBzE4y/DN3nk0qw0fShzEd2hs8fp8wkmljJ1pH82eqlc5G9OyNp//buZe
-         T+a8C5xIut5vIqfhyBOUL7Qg1wZP0AArgSdh9d3L+ORJV5s/paNMSHRp4qjJ+xlgTnpO
-         0ot4FzJnqHGR1pd0pBOr2bgYbMw+sJrlyUzGb5BViG7E4gRuAUJ/ygfJTo5PrMQO8ICC
-         mx0Q==
-X-Gm-Message-State: AOJu0Yykld7oBaOGa/ku2HlsfO3wscDkXRIpPicjMcVcDarQO0y0uJDR
-        IZiJy371V5ezAXoiY2lSR13oSP8nqMSVE+WDiYnlOQ==
-X-Google-Smtp-Source: AGHT+IE83piQJm/UCJj7lGXWIXCxJWyzvaAX8JQ2evdgbQBnXPLUaWBfp6YDG5512fSgiL66epwHp3T7nz1LEyZLGHk=
-X-Received: by 2002:a17:906:109e:b0:9b2:a7f2:f819 with SMTP id
- u30-20020a170906109e00b009b2a7f2f819mr6282014eju.31.1696582438701; Fri, 06
- Oct 2023 01:53:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696583122; x=1697187922;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tV8vdtRv0dLgQHb0i++2h3/DMYxrtErGTtvFqRlaYuM=;
+        b=mTZkyA/+gUWs+4hKxw4SKFPhquL2gIo3+/bQQYul4m9LUfZGW1iLt/QLCkKZ55qS5j
+         DWuWT2AeuJ8Et8MRqx8QAx96qB3/gb2YHwO7wED5ZkB5qE+g6KrHdoKBFddBNtjJFT+K
+         Z1vVQc4rT+T4bqM57QbeyYzXkRBB9CoX+FmYjkz2kM30G5StbS8nEhjB5E1X91MeX+Hf
+         gctu73srKOtZ6aWvgbr+H8VHZP37b+fwSIaPFoxO45zpi8PxrsXgU4CPnLeNv8xHH6rN
+         jFkFG9VOU7Ab3jXApjZOCO2U0Q6VGNHtBSybGwYRloDD3nsLBJyvM+PSBbSBm9RrHx8S
+         wWcQ==
+X-Gm-Message-State: AOJu0YwtOfKtDZaQSEFkJdX2WwXCJVd/1Umy4OUmaEvl24gJxcB9qk5V
+        x/n2QfkKhANOAs3xjePcxLs=
+X-Google-Smtp-Source: AGHT+IHw6Yxkg8as3r/flQofvYoN/GP3MsFDBicu3V1whChqfhmdL98ABCljUUSixXXHiG2DHxuQSA==
+X-Received: by 2002:a05:6000:18b:b0:323:1689:6607 with SMTP id p11-20020a056000018b00b0032316896607mr6995613wrx.5.1696583121924;
+        Fri, 06 Oct 2023 02:05:21 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id n9-20020adff089000000b0031ad2f9269dsm1167270wro.40.2023.10.06.02.05.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Oct 2023 02:05:21 -0700 (PDT)
+From:   Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date:   Fri, 6 Oct 2023 11:05:19 +0200
+To:     KP Singh <kpsingh@kernel.org>
+Cc:     Jiri Olsa <olsajiri@gmail.com>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
+        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
+        renauld@google.com
+Subject: Re: [PATCH v5 4/5] bpf: Only enable BPF LSM hooks when an LSM
+ program is attached
+Message-ID: <ZR/Nz+aPH4sIQMwT@krava>
+References: <20230928202410.3765062-1-kpsingh@kernel.org>
+ <20230928202410.3765062-5-kpsingh@kernel.org>
+ <ZR5vSyyNGBb8TvNH@krava>
+ <CACYkzJ69x9jX3scjSA7zT99CJoM+eG6FDQdBT-SCxm47a6UEoA@mail.gmail.com>
+ <CACYkzJ7Q0NEc9HThS1DZr0pMC+zO0GSToWmwQkTgXTeDs5VKaw@mail.gmail.com>
+ <ZR6/iMnfl1q6Hf9I@krava>
+ <CACYkzJ7aeBjMFTrBPf5u-Wib0Jk=rOX31yeBT5koUt=iYUF2MA@mail.gmail.com>
+ <ZR+2+gQ3B3tgFI/8@krava>
 MIME-Version: 1.0
-References: <20230928130147.564503-1-mszeredi@redhat.com> <20230928130147.564503-5-mszeredi@redhat.com>
- <CAHC9VhQD9r+Qf5Vz1XmxUdJJJO7HNTKdo8Ux=n+xkxr=JGFMrw@mail.gmail.com>
- <CAJfpegsPbDgaz46x4Rr9ZgCpF9rohVHsvuWtQ5LNAdiYU_D4Ww@mail.gmail.com>
- <a25f2736-1837-f4ca-b401-85db24f46452@themaw.net> <CAJfpegv78njkWdaShTskKXoGOpKAndvYYJwq7CLibiu+xmLCvg@mail.gmail.com>
- <CAHC9VhTwnjhfmkT5Rzt+SBf-8hyw4PYkbuPYnm6XLoyY7VAUiw@mail.gmail.com>
-In-Reply-To: <CAHC9VhTwnjhfmkT5Rzt+SBf-8hyw4PYkbuPYnm6XLoyY7VAUiw@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 6 Oct 2023 10:53:47 +0200
-Message-ID: <CAJfpegsZqF4TnnFBsV-tzi=w_7M=To5DeAjyW=cei9YuG+qMfg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] add listmount(2) syscall
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Ian Kent <raven@themaw.net>, Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Matthew House <mattlloydhouse@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZR+2+gQ3B3tgFI/8@krava>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 6 Oct 2023 at 04:56, Paul Moore <paul@paul-moore.com> wrote:
+On Fri, Oct 06, 2023 at 09:27:57AM +0200, Jiri Olsa wrote:
 
-> > Also I cannot see the point in hiding some mount ID's from the list.
-> > It seems to me that the list is just an array of numbers that in
-> > itself doesn't carry any information.
->
-> I think it really comes down to the significance of the mount ID, and
-> I can't say I know enough of the details here to be entirely
-> comfortable taking a hard stance on this.  Can you help me understand
-> the mount ID concept a bit better?
+SNIP
 
-Mount ID is a descriptor that allows referring to a specific struct
-mount from userspace.
+> >  static int __bpf_trampoline_link_prog(struct bpf_tramp_link *link,
+> > struct bpf_trampoline *tr)
+> >  {
+> >         enum bpf_tramp_prog_type kind;
+> >         struct bpf_tramp_link *link_exiting;
+> > -       int err = 0, num_lsm_progs = 0;
+> > +       int err = 0;
+> >         int cnt = 0, i;
+> > 
+> >         kind = bpf_attach_type_to_tramp(link->link.prog);
+> > @@ -547,15 +566,14 @@ static int __bpf_trampoline_link_prog(struct
+> > bpf_tramp_link *link, struct bpf_tr
+> >                 /* prog already linked */
+> >                 return -EBUSY;
+> > 
+> > -               if (link_exiting->link.prog->type == BPF_PROG_TYPE_LSM)
+> > -                       num_lsm_progs++;
+> >         }
+> > 
+> > -       if (!num_lsm_progs && link->link.prog->type == BPF_PROG_TYPE_LSM)
+> > -               bpf_lsm_toggle_hook(tr->func.addr, true);
+> > -
+> >         hlist_add_head(&link->tramp_hlist, &tr->progs_hlist[kind]);
+> >         tr->progs_cnt[kind]++;
+> > +
+> > +       if (link->link.prog->type == BPF_PROG_TYPE_LSM)
+> > +               bpf_trampoline_toggle_lsm(tr, kind);
+> 
+> how about keeping BPF_PROG_TYPE_LSM progs type count of attached programs
+> in bpf_trampoline and toggle lsm on first coming in and last going out?
 
-The old 32 bit mount id is allocated with IDA from a global pool.
-Because it's non-referencing it doesn't allow uniquely identifying a
-mount.  That was a design mistake that I made back in 2008, thinking
-that the same sort of dense descriptor space as used for file
-descriptors would work.  Originally it was used to identify the mount
-and the parent mount in /proc/PID/mountinfo.  Later it was also added
-to the following interfaces:
+hm we actually allow other tracing program types to attach to bpf_lsm_*
+functions, so I wonder we should toggle the lsm hook for each program
+type (for bpf_lsm_* trampolines) because they'd expect the hook is called
 
- - name_to_handle_at(2) returns 32 bit value
- - /proc/PID/FD/fdinfo
- - statx(2) returns 64 bit value
+but I'm not sure it's a valid use case to have like normal fentry program
+attached to bpf_lsm_XXX function
 
-It was never used on the kernel interfaces as an input argument.
+jirka
 
-statmount(2) and listmount(2) require the mount to be identified by
-userspace, so having a unique ID is important.  So the "[1/4] add
-unique mount ID" adds a new 64 bit ID (still global) that is allocated
-sequentially and only reused after reboot.   It is used as an input to
-these syscalls.  It is returned by statx(2) if requested by
-STATX_MNT_ID_UNIQUE and as an array of ID's by listmount(2).
-
-I can see mild security problems with the global allocation, since a
-task can observe mounts being done in other namespaces.  This doesn't
-sound too serious, and the old ID has similar issues.  But I think
-making the new ID be local to the mount namespace is also feasible.
-
-> While I'm reasonably confident that we want a security_sb_statfs()
-> control point in statmount(), it may turn out that we don't want/need
-> a call in the listmount() case.  Perhaps your original patch was
-> correct in the sense that we only want a single security_sb_statfs()
-> call for the root (implying that the child mount IDs are attributes of
-> the root/parent mount)?  Maybe it's something else entirely?
-
-Mounts are arranged in a tree (I think it obvious how) and
-listmount(2) just lists the IDs of the immediate children of a mount.
-
-I don't see ID being an attribute of a mount, it's a descriptor.
-
-Thanks,
-Miklos
+> 
+> also the trampoline attach is actually made in bpf_trampoline_update,
+> so I wonder it'd make more sense to put it in there, but it's already
+> complicated, so it actually might be easier in here
+> 
+> jirka
+> 
+> > +
+> >         err = bpf_trampoline_update(tr, true /* lock_direct_mutex */);
+> >         if (err) {
+> >                 hlist_del_init(&link->tramp_hlist);
+> > @@ -578,7 +596,6 @@ static int __bpf_trampoline_unlink_prog(struct
+> > bpf_tramp_link *link, struct bpf_
+> >  {
+> >         struct bpf_tramp_link *link_exiting;
+> >         enum bpf_tramp_prog_type kind;
+> > -       bool lsm_link_found = false;
+> >         int err, num_lsm_progs = 0;
+> > 
+> >         kind = bpf_attach_type_to_tramp(link->link.prog);
+> > @@ -595,18 +612,14 @@ static int __bpf_trampoline_unlink_prog(struct
+> > bpf_tramp_link *link, struct bpf_
+> >                                      tramp_hlist) {
+> >                         if (link_exiting->link.prog->type == BPF_PROG_TYPE_LSM)
+> >                                 num_lsm_progs++;
+> > -
+> > -                       if (link_exiting->link.prog == link->link.prog)
+> > -                               lsm_link_found = true;
+> >                 }
+> >         }
+> > 
+> >         hlist_del_init(&link->tramp_hlist);
+> >         tr->progs_cnt[kind]--;
+> > 
+> > -       if (lsm_link_found && num_lsm_progs == 1)
+> > -               bpf_lsm_toggle_hook(tr->func.addr, false);
+> > -
+> > +       if (link->link.prog->type == BPF_PROG_TYPE_LSM)
+> > +               bpf_trampoline_toggle_lsm(tr, kind);
+> >         return bpf_trampoline_update(tr, true /* lock_direct_mutex */);
+> >  }
+> > 
+> > 
+> > - KP
