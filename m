@@ -2,158 +2,175 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 872B4E94139
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Oct 2023 23:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD31EE14D8
+	for <linux-security-module@archiver.kernel.org>; Sat,  7 Oct 2023 08:44:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233822AbjJFXIG (ORCPT
+        id S234169AbjJGIon (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Oct 2023 19:08:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35008 "EHLO
+        Sat, 7 Oct 2023 04:44:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233627AbjJFXIG (ORCPT
+        with ESMTP id S234148AbjJGIom (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Oct 2023 19:08:06 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7D0493
-        for <linux-security-module@vger.kernel.org>; Fri,  6 Oct 2023 16:08:04 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-5a1d0fee86aso32027887b3.2
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Oct 2023 16:08:04 -0700 (PDT)
+        Sat, 7 Oct 2023 04:44:42 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8529B9C;
+        Sat,  7 Oct 2023 01:44:41 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-307d58b3efbso2581399f8f.0;
+        Sat, 07 Oct 2023 01:44:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1696633684; x=1697238484; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1696668280; x=1697273080; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=F50fu8DXl9ERFHVYVt4zY9h1hnn4ptAJ3MO5xm3ht8M=;
-        b=DSWU7Th6ZPr/C9XYfy2ArD7EwQYRdfx5NerMmWa6VeiCNw24YRrs4c7/Vfca2xgG4O
-         aiv44TiryMe03QX0qA4WsJTNRtLHaZmTv5GAFT+E90Slc9yUpNis1hUvIqujMk9dy+Lu
-         whWgQoQmCxAp1reO223+nIWNoses+CDen4cXjYYHWeYzLJ0XgXhVLoiKgmVihZ7t0VBF
-         KVUvLeTTU1rCg0CZsgE8hY/Wnvf7cl6RkUSwfcA/M9AgkF8uRT5sXVjkWFUGMQ7x9ArI
-         g9ogSHC6U/qeV7Vb1LKQIgnT0KsuxnywtMV2ZAYQh0Qi2tCddZbyOa0V2URk+/YnNPYn
-         rhyQ==
+        bh=X9zty6feyT9bIEnH+Zx66cAwWs1o3qUaVJu27Ykhp5s=;
+        b=QPBnGHI7sS/U3qifuXpUfIXKlpdqdUc3UMHGFSGyQ5CsWb8LwD9y/msRnfd/jN/vZP
+         2JNkok4IIWfYCPlFhyvR06PhIDcIZfKvbp0cmHDP00U9exIGxCzbtzMra/2JaMXDkdKt
+         V4TG3sDy/pGqz9eGJk6siq4X3Yy6xpzsurZpsb/ekhYlKJjHK+HJLeVJRV/HoppOY92C
+         c7q1VC7HCkqkZXSp/diqdA0hqfw4DJxQMd9TYaiyyMKjGoRXxyr3HDKSSizejfsYtgXO
+         kv2zo8O50vz+uV7vgVyvlqagCZMznlGZRfaZw+nlMh8Yss+EhnEcDLWs/avM8ym2/sV7
+         5sfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696633684; x=1697238484;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1696668280; x=1697273080;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F50fu8DXl9ERFHVYVt4zY9h1hnn4ptAJ3MO5xm3ht8M=;
-        b=lHb9NVj8h/N0u4qKtdStI+n5LuidpmqP6Uay+DvN2nIEOd0FfFU4Vb70LWlaSrOlzC
-         yupIy8imElp80XdbOGEItjMR/Ym9ablKG67gjzSWi6o9mbH1yOY3kmYo4q/kz8uShCH0
-         n18+GLRsDxn9JJWhW6vaEs6sig/Lrhi2TbUAFacybyFh8pkX1CkmUtr4gTfloR5XNLJG
-         1T/5l2Dl25OWL9DgfLow7EhTd0KLrQKgH1dGulsVvSkYSALq+V8kfd+lp0WJqZW+cU13
-         OqXLARBTylaW4z0bnoTAbgHhzxDLovPSUgmJEj6sHbm/wdJqlQ1Pz6S7b4yoTIxrz5oj
-         xAQQ==
-X-Gm-Message-State: AOJu0YxTLVKp51p9gvuj9PvwOqyBWCPrhTXa9FIi4ajPXL7xNFO8tvpy
-        tXozjMP3RobE2SPl5P6C+M07JOJG7WUp2rv9d2BZ
-X-Google-Smtp-Source: AGHT+IFptmDYsPUwJNXgzo/KC+xeqdAaTYpkEhIAeXQIc7ZwVI4dQTLTBID85bUW0YeCyFWkPLg7ZtNgHG2nI/ZPkQI=
-X-Received: by 2002:a25:b31a:0:b0:d4b:ab7b:17ed with SMTP id
- l26-20020a25b31a000000b00d4bab7b17edmr8590362ybj.4.1696633683762; Fri, 06 Oct
- 2023 16:08:03 -0700 (PDT)
+        bh=X9zty6feyT9bIEnH+Zx66cAwWs1o3qUaVJu27Ykhp5s=;
+        b=Vox+kd9zqD/Yze0ZhffVAYNQ7FVUeCvv+yu9jlkE5hl/ObGcK8EVC2UUR46x096WuJ
+         bMeiIX35bhqeT6B4xt1BTty1nQujPEmmv3xq40FC0gsyQMbuv75YlLsWU8V6hASQuYTw
+         XpQclK2qJwq7tTFxh/XrLGitYquF/ye5ZYKojqi9HvxINjLHDywSkrXqoBSkcjgYxLBW
+         tW4AwkbVkxOZSgv+y2CFvqYy6k7X1zyUFwNopjiTXz0lU8+OKab0ZTcK6/0+spuY8OmN
+         oLZiDDjfeQRz0iaF58bhdT3Ddisb5WvSuSIkydVjezy0Bgm2H4sQUGDaxGRHzuCOfttk
+         7aig==
+X-Gm-Message-State: AOJu0YwKKU+dMSUf83oGMuaI2gHGNwtB9gpgMADPgLAcgKgtEHLWBzyL
+        1Sd3TlTzBdrZ89Jwu8B0UpA=
+X-Google-Smtp-Source: AGHT+IFyYTJvL+MJISM4tGj+EZ/JB9L3NTY87UPGmuTu8Bkgiut8bg68s57cRMDbsMC3qYeoaNWaeQ==
+X-Received: by 2002:adf:f20c:0:b0:320:77f:a982 with SMTP id p12-20020adff20c000000b00320077fa982mr9498244wro.45.1696668280008;
+        Sat, 07 Oct 2023 01:44:40 -0700 (PDT)
+Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
+        by smtp.gmail.com with ESMTPSA id a12-20020adff7cc000000b0031423a8f4f7sm3677850wrq.56.2023.10.07.01.44.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Oct 2023 01:44:39 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 1/3] fs: get mnt_writers count for an open backing file's real path
+Date:   Sat,  7 Oct 2023 11:44:31 +0300
+Message-Id: <20231007084433.1417887-2-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231007084433.1417887-1-amir73il@gmail.com>
+References: <20231007084433.1417887-1-amir73il@gmail.com>
 MIME-Version: 1.0
-References: <20230928130147.564503-1-mszeredi@redhat.com> <20230928130147.564503-5-mszeredi@redhat.com>
- <CAHC9VhQD9r+Qf5Vz1XmxUdJJJO7HNTKdo8Ux=n+xkxr=JGFMrw@mail.gmail.com>
- <CAJfpegsPbDgaz46x4Rr9ZgCpF9rohVHsvuWtQ5LNAdiYU_D4Ww@mail.gmail.com>
- <a25f2736-1837-f4ca-b401-85db24f46452@themaw.net> <CAJfpegv78njkWdaShTskKXoGOpKAndvYYJwq7CLibiu+xmLCvg@mail.gmail.com>
- <CAHC9VhTwnjhfmkT5Rzt+SBf-8hyw4PYkbuPYnm6XLoyY7VAUiw@mail.gmail.com> <CAJfpegsZqF4TnnFBsV-tzi=w_7M=To5DeAjyW=cei9YuG+qMfg@mail.gmail.com>
-In-Reply-To: <CAJfpegsZqF4TnnFBsV-tzi=w_7M=To5DeAjyW=cei9YuG+qMfg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 6 Oct 2023 19:07:52 -0400
-Message-ID: <CAHC9VhS5cRA3FFWAttuy-tNP=p+Rk1O3Sq8Np29jenFQprFi4A@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] add listmount(2) syscall
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Ian Kent <raven@themaw.net>, Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Matthew House <mattlloydhouse@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 6, 2023 at 4:53=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> w=
-rote:
-> On Fri, 6 Oct 2023 at 04:56, Paul Moore <paul@paul-moore.com> wrote:
->
-> > > Also I cannot see the point in hiding some mount ID's from the list.
-> > > It seems to me that the list is just an array of numbers that in
-> > > itself doesn't carry any information.
-> >
-> > I think it really comes down to the significance of the mount ID, and
-> > I can't say I know enough of the details here to be entirely
-> > comfortable taking a hard stance on this.  Can you help me understand
-> > the mount ID concept a bit better?
->
-> Mount ID is a descriptor that allows referring to a specific struct
-> mount from userspace.
->
-> The old 32 bit mount id is allocated with IDA from a global pool.
-> Because it's non-referencing it doesn't allow uniquely identifying a
-> mount.  That was a design mistake that I made back in 2008, thinking
-> that the same sort of dense descriptor space as used for file
-> descriptors would work.  Originally it was used to identify the mount
-> and the parent mount in /proc/PID/mountinfo.  Later it was also added
-> to the following interfaces:
->
->  - name_to_handle_at(2) returns 32 bit value
->  - /proc/PID/FD/fdinfo
->  - statx(2) returns 64 bit value
->
-> It was never used on the kernel interfaces as an input argument.
+A writeable mapped backing file can perform writes to the real inode.
+Therefore, the real path mount must be kept writable so long as the
+writable map exists.
 
-Thanks for the background.
+This may not be strictly needed for ovelrayfs private upper mount,
+but it is correct to take the mnt_writers count in the vfs helper.
 
-> statmount(2) and listmount(2) require the mount to be identified by
-> userspace, so having a unique ID is important.  So the "[1/4] add
-> unique mount ID" adds a new 64 bit ID (still global) that is allocated
-> sequentially and only reused after reboot.   It is used as an input to
-> these syscalls.  It is returned by statx(2) if requested by
-> STATX_MNT_ID_UNIQUE and as an array of ID's by listmount(2).
->
-> I can see mild security problems with the global allocation, since a
-> task can observe mounts being done in other namespaces.  This doesn't
-> sound too serious, and the old ID has similar issues.  But I think
-> making the new ID be local to the mount namespace is also feasible.
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ fs/internal.h | 15 +++++++++++++--
+ fs/open.c     | 34 ++++++++++++++++++++++++++++------
+ 2 files changed, 41 insertions(+), 8 deletions(-)
 
-The LSM hook API is designed to operate independently from any of the
-kernel namespaces; while some LSMs may choose to be aware of
-namespaces and adjust their controls accordingly, there is no
-requirement that they do so.  For that reason, I'm not too bothered
-either way if the mount ID is global or tied to a namespace.
+diff --git a/fs/internal.h b/fs/internal.h
+index f08d8fe3ae5e..846d5133dd9c 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -96,13 +96,24 @@ struct file *alloc_empty_file_noaccount(int flags, const struct cred *cred);
+ struct file *alloc_empty_backing_file(int flags, const struct cred *cred);
+ void release_empty_file(struct file *f);
+ 
++static inline void file_put_write_access(struct file *file)
++{
++	put_write_access(file->f_inode);
++	mnt_put_write_access(file->f_path.mnt);
++	if (unlikely(file->f_mode & FMODE_BACKING)) {
++		struct path *real_path = backing_file_real_path(file);
++
++		if (real_path->mnt)
++			mnt_put_write_access(real_path->mnt);
++	}
++}
++
+ static inline void put_file_access(struct file *file)
+ {
+ 	if ((file->f_mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ) {
+ 		i_readcount_dec(file->f_inode);
+ 	} else if (file->f_mode & FMODE_WRITER) {
+-		put_write_access(file->f_inode);
+-		mnt_put_write_access(file->f_path.mnt);
++		file_put_write_access(file);
+ 	}
+ }
+ 
+diff --git a/fs/open.c b/fs/open.c
+index a65ce47810cf..2f3e28512663 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -870,6 +870,33 @@ SYSCALL_DEFINE3(fchown, unsigned int, fd, uid_t, user, gid_t, group)
+ 	return ksys_fchown(fd, user, group);
+ }
+ 
++static inline int file_get_write_access(struct file *f)
++{
++	int error;
++
++	error = get_write_access(f->f_inode);
++	if (unlikely(error))
++		return error;
++	error = mnt_get_write_access(f->f_path.mnt);
++	if (unlikely(error))
++		goto cleanup_inode;
++	if (unlikely(f->f_mode & FMODE_BACKING)) {
++		struct path *real_path = backing_file_real_path(f);
++
++		if (real_path->mnt)
++			error = mnt_get_write_access(real_path->mnt);
++		if (unlikely(error))
++			goto cleanup_mnt;
++	}
++	return 0;
++
++cleanup_mnt:
++	mnt_put_write_access(f->f_path.mnt);
++cleanup_inode:
++	put_write_access(f->f_inode);
++	return error;
++}
++
+ static int do_dentry_open(struct file *f,
+ 			  struct inode *inode,
+ 			  int (*open)(struct inode *, struct file *))
+@@ -892,14 +919,9 @@ static int do_dentry_open(struct file *f,
+ 	if ((f->f_mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ) {
+ 		i_readcount_inc(inode);
+ 	} else if (f->f_mode & FMODE_WRITE && !special_file(inode->i_mode)) {
+-		error = get_write_access(inode);
++		error = file_get_write_access(f);
+ 		if (unlikely(error))
+ 			goto cleanup_file;
+-		error = mnt_get_write_access(f->f_path.mnt);
+-		if (unlikely(error)) {
+-			put_write_access(inode);
+-			goto cleanup_file;
+-		}
+ 		f->f_mode |= FMODE_WRITER;
+ 	}
+ 
+-- 
+2.34.1
 
-> > While I'm reasonably confident that we want a security_sb_statfs()
-> > control point in statmount(), it may turn out that we don't want/need
-> > a call in the listmount() case.  Perhaps your original patch was
-> > correct in the sense that we only want a single security_sb_statfs()
-> > call for the root (implying that the child mount IDs are attributes of
-> > the root/parent mount)?  Maybe it's something else entirely?
->
-> Mounts are arranged in a tree (I think it obvious how) and
-> listmount(2) just lists the IDs of the immediate children of a mount.
->
-> I don't see ID being an attribute of a mount, it's a descriptor.
-
-In this case I think the approach you took originally in this thread
-is likely what we want, call security_sb_statfs() against the root
-mount in listmount().  Just please move it after the capability
-checks.
-
-If you look at the two LSMs which implement the security_sb_statfs(),
-Smack and SELinux, you see that Smack treats this as a read operation
-between the current process and the specified mount and SELinux treats
-this as a filesystem:getattr operations between the current process
-and the specified mount.  In both cases I can see that being the right
-approach for reading a list of child mounts off of a root mount.
-
-Does that sound good?  I'm guessing that's okay since that was how you
-wrote it in your original patch, but there has been a lot of
-discussion since then :)
-
---=20
-paul-moore.com
