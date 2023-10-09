@@ -2,71 +2,231 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6A0E95A9B
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Oct 2023 15:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B871E95A9B
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Oct 2023 15:38:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377030AbjJIPhl (ORCPT
+        id S1377727AbjJIPh6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Oct 2023 11:37:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41916 "EHLO
+        Mon, 9 Oct 2023 11:37:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377046AbjJIPhc (ORCPT
+        with ESMTP id S1377718AbjJIPhm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Oct 2023 11:37:32 -0400
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A354AD6E
-        for <linux-security-module@vger.kernel.org>; Mon,  9 Oct 2023 08:36:32 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4S436Q2zgVzMqDhj;
-        Mon,  9 Oct 2023 15:36:30 +0000 (UTC)
-Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4S436P6ywXzMpnPc;
-        Mon,  9 Oct 2023 17:36:29 +0200 (CEST)
+        Mon, 9 Oct 2023 11:37:42 -0400
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [IPv6:2001:1600:3:17::190d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5BEF11D
+        for <linux-security-module@vger.kernel.org>; Mon,  9 Oct 2023 08:37:09 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4S43775RMKzMpnst;
+        Mon,  9 Oct 2023 15:37:07 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4S43752y9GzMppB4;
+        Mon,  9 Oct 2023 17:37:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1696865790;
-        bh=BJqZcTfNbCj0R22YsFOtc6MUhionL6VnJo/5ED1Q1KA=;
+        s=20191114; t=1696865827;
+        bh=cckq9ovgURWeuDsq98a+f35kYfa/8F4jXEqh6IzlR3E=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ESHYUKQGz5ESQZslyPoQ8hV+1Vgjw30+yBsbFzwEKZ0Z0/wt6+K2uCxV4ci1E3GOP
-         ohJiSW2yU+ZPaDixYZuGzyfV2swjlfxsTKOzAh21K9eQiY1WpJNCf+OHbFZZmISfsM
-         Tj4un9AiOdrBihzbjEtPox761tbxdn5dNsh0mZjQ=
-Date:   Mon, 9 Oct 2023 17:36:24 +0200
+        b=tCck3znyNdWqN3MzYz+w3ihd5zetMeMTIID7gg9ktvqZXEOS47+8RiDEAiFaYNtg0
+         K+AzQkBxYmuVtBqcloRyGcuNQ5nhrergMzSc3qsP375Id+fzyhNTZ8kIYXxmA1CFBM
+         On1W6gqkPYtxBCw7BzeLe9zfDCF0u5jN9bC7xTGU=
+Date:   Mon, 9 Oct 2023 17:36:59 +0200
 From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-Subject: Re: [PATCH v12 08/12] landlock: Add network rules and TCP hooks
- support
-Message-ID: <20231009.Aej2eequoodi@digikod.net>
-References: <20230920092641.832134-1-konstantin.meskhidze@huawei.com>
- <20230920092641.832134-9-konstantin.meskhidze@huawei.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH v15 04/11] LSM: syscalls for current process attributes
+Message-ID: <20231009.MieQu5ou2loo@digikod.net>
+References: <20230912205658.3432-1-casey@schaufler-ca.com>
+ <20230912205658.3432-5-casey@schaufler-ca.com>
+ <20231003.kooghohS2Aiz@digikod.net>
+ <CAHC9VhT_ijmqo9ap-EokWHuALsMAqome2qcWgst3eRP6m+vbRA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230920092641.832134-9-konstantin.meskhidze@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhT_ijmqo9ap-EokWHuALsMAqome2qcWgst3eRP6m+vbRA@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 20, 2023 at 05:26:36PM +0800, Konstantin Meskhidze wrote:
-> This commit adds network rules support in the ruleset management
-> helpers and the landlock_create_ruleset syscall.
-> Refactor user space API to support network actions. Add new network
-> access flags, network rule and network attributes. Increment Landlock
-> ABI version. Expand access_masks_t to u32 to be sure network access
-> rights can be stored. Implement socket_bind() and socket_connect()
-> LSM hooks, which enables to restrict TCP socket binding and connection
-> to specific ports.
-> The new landlock_net_port_attr structure has two fields. The allowed_access
-> field contains the LANDLOCK_ACCESS_NET_* rights. The port field contains
-> the port value according to the allowed protocol. This field can
-> take up to a 64-bit value [1] but the maximum value depends on the related
-> protocol (e.g. 16-bit for TCP).
+On Thu, Oct 05, 2023 at 09:04:34PM -0400, Paul Moore wrote:
+> On Tue, Oct 3, 2023 at 10:09 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Tue, Sep 12, 2023 at 01:56:49PM -0700, Casey Schaufler wrote:
+> > > Create a system call lsm_get_self_attr() to provide the security
+> > > module maintained attributes of the current process.
+> > > Create a system call lsm_set_self_attr() to set a security
+> > > module maintained attribute of the current process.
+> > > Historically these attributes have been exposed to user space via
+> > > entries in procfs under /proc/self/attr.
+> > >
+> > > The attribute value is provided in a lsm_ctx structure. The structure
+> > > identifies the size of the attribute, and the attribute value. The format
+> > > of the attribute value is defined by the security module. A flags field
+> > > is included for LSM specific information. It is currently unused and must
+> > > be 0. The total size of the data, including the lsm_ctx structure and any
+> > > padding, is maintained as well.
+> > >
+> > > struct lsm_ctx {
+> > >         __u64 id;
+> > >         __u64 flags;
+> > >         __u64 len;
+> > >         __u64 ctx_len;
+> > >         __u8 ctx[];
+> > > };
+> > >
+> > > Two new LSM hooks are used to interface with the LSMs.
+> > > security_getselfattr() collects the lsm_ctx values from the
+> > > LSMs that support the hook, accounting for space requirements.
+> > > security_setselfattr() identifies which LSM the attribute is
+> > > intended for and passes it along.
+> > >
+> > > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> > > Reviewed-by: John Johansen <john.johansen@canonical.com>
+> > > ---
+> > >  Documentation/userspace-api/lsm.rst |  70 +++++++++++++
+> > >  include/linux/lsm_hook_defs.h       |   4 +
+> > >  include/linux/lsm_hooks.h           |   1 +
+> > >  include/linux/security.h            |  19 ++++
+> > >  include/linux/syscalls.h            |   5 +
+> > >  include/uapi/linux/lsm.h            |  36 +++++++
+> > >  kernel/sys_ni.c                     |   2 +
+> > >  security/Makefile                   |   1 +
+> > >  security/lsm_syscalls.c             |  57 +++++++++++
+> > >  security/security.c                 | 152 ++++++++++++++++++++++++++++
+> > >  10 files changed, 347 insertions(+)
+> > >  create mode 100644 Documentation/userspace-api/lsm.rst
+> > >  create mode 100644 security/lsm_syscalls.c
 > 
-> [1]
-> https://lore.kernel.org/r/278ab07f-7583-a4e0-3d37-1bacd091531d@digikod.net
+> ...
+> 
+> > > diff --git a/security/security.c b/security/security.c
+> > > index a3489c04b783..0d179750d964 100644
+> > > --- a/security/security.c
+> > > +++ b/security/security.c
+> > > @@ -3837,6 +3837,158 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
+> > >  }
+> > >  EXPORT_SYMBOL(security_d_instantiate);
+> > >
+> > > +/*
+> > > + * Please keep this in sync with it's counterpart in security/lsm_syscalls.c
+> > > + */
+> > > +
+> > > +/**
+> > > + * security_getselfattr - Read an LSM attribute of the current process.
+> > > + * @attr: which attribute to return
+> > > + * @uctx: the user-space destination for the information, or NULL
+> > > + * @size: pointer to the size of space available to receive the data
+> > > + * @flags: special handling options. LSM_FLAG_SINGLE indicates that only
+> > > + * attributes associated with the LSM identified in the passed @ctx be
+> > > + * reported.
+> > > + *
+> > > + * A NULL value for @uctx can be used to get both the number of attributes
+> > > + * and the size of the data.
+> > > + *
+> > > + * Returns the number of attributes found on success, negative value
+> > > + * on error. @size is reset to the total size of the data.
+> > > + * If @size is insufficient to contain the data -E2BIG is returned.
+> > > + */
+> > > +int security_getselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
+> > > +                      size_t __user *size, u32 flags)
+> > > +{
+> > > +     struct security_hook_list *hp;
+> > > +     struct lsm_ctx lctx = { .id = LSM_ID_UNDEF, };
+> > > +     u8 __user *base = (u8 __user *)uctx;
+> > > +     size_t total = 0;
+> > > +     size_t entrysize;
+> > > +     size_t left;
+> > > +     bool toobig = false;
+> > > +     bool single = false;
+> > > +     int count = 0;
+> > > +     int rc;
+> > > +
+> > > +     if (attr == LSM_ATTR_UNDEF)
+> > > +             return -EINVAL;
+> > > +     if (size == NULL)
+> > > +             return -EINVAL;
+> > > +     if (get_user(left, size))
+> > > +             return -EFAULT;
+> > > +
+> > > +     if (flags) {
+> > > +             /*
+> > > +              * Only flag supported is LSM_FLAG_SINGLE
+> > > +              */
+> > > +             if (flags != LSM_FLAG_SINGLE)
+> > > +                     return -EINVAL;
+> > > +             if (uctx && copy_from_user(&lctx, uctx, sizeof(lctx)))
+> >
+> > I'm not sure if we should return -EINVAL or -EFAULT when uctx == NULL.
+> > Because uctx is optional (when LSM_FLAG_SINGLE is not set), I guess
+> > -EINVAL is OK.
+> 
+> That's a good point, we should probably the error codes here: if uctx
+> is NULL in the LSM_FLAG_SINGLE case we should return -EINVAL, if the
+> copy_from_user() fails we should return -EFAULT.
+> 
+> > > +                     return -EFAULT;
+> > > +             /*
+> > > +              * If the LSM ID isn't specified it is an error.
+> > > +              */
+> > > +             if (lctx.id == LSM_ID_UNDEF)
+> > > +                     return -EINVAL;
+> > > +             single = true;
+> > > +     }
+> > > +
+> > > +     /*
+> > > +      * In the usual case gather all the data from the LSMs.
+> > > +      * In the single case only get the data from the LSM specified.
+> > > +      */
+> > > +     hlist_for_each_entry(hp, &security_hook_heads.getselfattr, list) {
+> > > +             if (single && lctx.id != hp->lsmid->id)
+> > > +                     continue;
+> > > +             entrysize = left;
+> > > +             if (base)
+> > > +                     uctx = (struct lsm_ctx __user *)(base + total);
+> > > +             rc = hp->hook.getselfattr(attr, uctx, &entrysize, flags);
+> > > +             if (rc == -EOPNOTSUPP) {
+> > > +                     rc = 0;
+> > > +                     continue;
+> > > +             }
+> > > +             if (rc == -E2BIG) {
+> > > +                     toobig = true;
+> > > +                     left = 0;
+> > > +             } else if (rc < 0)
+> > > +                     return rc;
+> > > +             else
+> > > +                     left -= entrysize;
+> > > +
+> > > +             total += entrysize;
+> > > +             count += rc;
+> >
+> > There is a bug if rc == -E2BIG
+> 
+> Can you elaborate a bit more on this? Nothing is jumping out at me as
+> obviously broken... are you talking about @count becoming garbage due
+> to @rc being equal to -E2BIG?  If that is the case it should be okay
+> since we explicitly return -E2BIG, not @count, if @toobig is true.
 
-Could you please include here the rationale to not tie access rights to
-sockets' file descriptor, and link [2]?
+Indeed, in this case count will not be returned thanks to toobig. I'd
+suggest to "continue" if rc == -E2BIG (like for -EOPNOTSUPP) to avoid an
+inconsistent count value, which could bite us one day.
 
-[2] https://lore.kernel.org/r/263c1eb3-602f-57fe-8450-3f138581bee7@digikod.net
+> 
+> > > +             if (single)
+> > > +                     break;
+> > > +     }
+> > > +     if (put_user(total, size))
+> > > +             return -EFAULT;
+> > > +     if (toobig)
+> > > +             return -E2BIG;
+> > > +     if (count == 0)
+> > > +             return LSM_RET_DEFAULT(getselfattr);
+> > > +     return count;
+> > > +}
+> 
+> -- 
+> paul-moore.com
