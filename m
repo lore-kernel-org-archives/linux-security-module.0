@@ -2,231 +2,217 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B871E95A9B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79818E95A91
 	for <linux-security-module@archiver.kernel.org>; Mon,  9 Oct 2023 15:38:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377727AbjJIPh6 (ORCPT
+        id S1377764AbjJIPh7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Oct 2023 11:37:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44252 "EHLO
+        Mon, 9 Oct 2023 11:37:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377718AbjJIPhm (ORCPT
+        with ESMTP id S1377762AbjJIPht (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Oct 2023 11:37:42 -0400
-Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [IPv6:2001:1600:3:17::190d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5BEF11D
-        for <linux-security-module@vger.kernel.org>; Mon,  9 Oct 2023 08:37:09 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4S43775RMKzMpnst;
-        Mon,  9 Oct 2023 15:37:07 +0000 (UTC)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4S43752y9GzMppB4;
-        Mon,  9 Oct 2023 17:37:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1696865827;
-        bh=cckq9ovgURWeuDsq98a+f35kYfa/8F4jXEqh6IzlR3E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tCck3znyNdWqN3MzYz+w3ihd5zetMeMTIID7gg9ktvqZXEOS47+8RiDEAiFaYNtg0
-         K+AzQkBxYmuVtBqcloRyGcuNQ5nhrergMzSc3qsP375Id+fzyhNTZ8kIYXxmA1CFBM
-         On1W6gqkPYtxBCw7BzeLe9zfDCF0u5jN9bC7xTGU=
-Date:   Mon, 9 Oct 2023 17:36:59 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        serge@hallyn.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH v15 04/11] LSM: syscalls for current process attributes
-Message-ID: <20231009.MieQu5ou2loo@digikod.net>
-References: <20230912205658.3432-1-casey@schaufler-ca.com>
- <20230912205658.3432-5-casey@schaufler-ca.com>
- <20231003.kooghohS2Aiz@digikod.net>
- <CAHC9VhT_ijmqo9ap-EokWHuALsMAqome2qcWgst3eRP6m+vbRA@mail.gmail.com>
+        Mon, 9 Oct 2023 11:37:49 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3974127;
+        Mon,  9 Oct 2023 08:37:24 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-3296b87aa13so2822996f8f.3;
+        Mon, 09 Oct 2023 08:37:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696865843; x=1697470643; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wmy0daGALQ1py5IbjkFGv3XbOVsnYmBR2h2654w7l88=;
+        b=J2QIG6VLwdE0eespBrzmL+vciAO356222tPl2UlxUgRvzrGusMqWrmzkVFlSXv2h2t
+         5+PhGl6FDqZLSz/RpgtfN/uIJF5kj5pKw9Rb5omfnOsK3PqHD8HcJNjcnl7Ojf8v4os3
+         L3nw1koRKyI0Pw6ET7TWYMW1IFl9eMKMxXBj9LjarvmyO4xuh6iTz5TCR/xvPsAR6r77
+         fhHAcwQbKIisfYNy2fSK+HwPkaPvbB7T5tS6NobMv+9Hp38oGYGAZu80ugxfTNpJsxb+
+         aLZJp/oJpViWOVoT6N0e9SdUBQXxxn861VAsHdlwxCr9aIhGA3udcRpQxZmk9f5a+T7u
+         Sgqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696865843; x=1697470643;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wmy0daGALQ1py5IbjkFGv3XbOVsnYmBR2h2654w7l88=;
+        b=cQorfbXS8ev2Ypz9XxT8ppErKdAeBpHOGbhFLs5hJTsvVKEuccizqKjYdm80BFOQpv
+         cTNS52NenGH6dR5CQ7HDaTy21iqIqayOe7vD8xdH+ow7V4CVRe9GqvSgy26urbD0DiI3
+         lk29Qc7j+JGhKxCWuPyw1IGAmYoe8aAJmscUh1XdxvfPgtCYTeJbtGqEwu8C0ewcXG+p
+         hOGjZJBBvQczBYH7tIHqb9A6hHJUg9OhXihf7fLCyhtUfR50/PRrOtlFXeWyO6SvcHGu
+         oQZL72piHknPZhJHsFPkIKgUTnINkH4lvpe5ac+Bdqj4WDh6LR2txwNfAXRozX3zWH3Y
+         3YfA==
+X-Gm-Message-State: AOJu0YxwpqnFXKt1va0QmcFBFlQR/cj828rsOsyyop9EuQEn11HyGWfO
+        6GC7eaL27dGr2x+Tati7q1Y=
+X-Google-Smtp-Source: AGHT+IEkgTUmTfWy3RPhueraFJ/Pb9buE12pC3YvZg1L7Auowskq7n3WIOQKtLtyVnCEzublhLPVMw==
+X-Received: by 2002:adf:e3ca:0:b0:317:6a07:83a7 with SMTP id k10-20020adfe3ca000000b003176a0783a7mr13822243wrm.38.1696865842859;
+        Mon, 09 Oct 2023 08:37:22 -0700 (PDT)
+Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
+        by smtp.gmail.com with ESMTPSA id g7-20020a056000118700b003143c9beeaesm9939924wrx.44.2023.10.09.08.37.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Oct 2023 08:37:22 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 2/3] fs: create helper file_user_path() for user displayed mapped file path
+Date:   Mon,  9 Oct 2023 18:37:11 +0300
+Message-Id: <20231009153712.1566422-3-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231009153712.1566422-1-amir73il@gmail.com>
+References: <20231009153712.1566422-1-amir73il@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhT_ijmqo9ap-EokWHuALsMAqome2qcWgst3eRP6m+vbRA@mail.gmail.com>
-X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 05, 2023 at 09:04:34PM -0400, Paul Moore wrote:
-> On Tue, Oct 3, 2023 at 10:09 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > On Tue, Sep 12, 2023 at 01:56:49PM -0700, Casey Schaufler wrote:
-> > > Create a system call lsm_get_self_attr() to provide the security
-> > > module maintained attributes of the current process.
-> > > Create a system call lsm_set_self_attr() to set a security
-> > > module maintained attribute of the current process.
-> > > Historically these attributes have been exposed to user space via
-> > > entries in procfs under /proc/self/attr.
-> > >
-> > > The attribute value is provided in a lsm_ctx structure. The structure
-> > > identifies the size of the attribute, and the attribute value. The format
-> > > of the attribute value is defined by the security module. A flags field
-> > > is included for LSM specific information. It is currently unused and must
-> > > be 0. The total size of the data, including the lsm_ctx structure and any
-> > > padding, is maintained as well.
-> > >
-> > > struct lsm_ctx {
-> > >         __u64 id;
-> > >         __u64 flags;
-> > >         __u64 len;
-> > >         __u64 ctx_len;
-> > >         __u8 ctx[];
-> > > };
-> > >
-> > > Two new LSM hooks are used to interface with the LSMs.
-> > > security_getselfattr() collects the lsm_ctx values from the
-> > > LSMs that support the hook, accounting for space requirements.
-> > > security_setselfattr() identifies which LSM the attribute is
-> > > intended for and passes it along.
-> > >
-> > > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> > > Reviewed-by: John Johansen <john.johansen@canonical.com>
-> > > ---
-> > >  Documentation/userspace-api/lsm.rst |  70 +++++++++++++
-> > >  include/linux/lsm_hook_defs.h       |   4 +
-> > >  include/linux/lsm_hooks.h           |   1 +
-> > >  include/linux/security.h            |  19 ++++
-> > >  include/linux/syscalls.h            |   5 +
-> > >  include/uapi/linux/lsm.h            |  36 +++++++
-> > >  kernel/sys_ni.c                     |   2 +
-> > >  security/Makefile                   |   1 +
-> > >  security/lsm_syscalls.c             |  57 +++++++++++
-> > >  security/security.c                 | 152 ++++++++++++++++++++++++++++
-> > >  10 files changed, 347 insertions(+)
-> > >  create mode 100644 Documentation/userspace-api/lsm.rst
-> > >  create mode 100644 security/lsm_syscalls.c
-> 
-> ...
-> 
-> > > diff --git a/security/security.c b/security/security.c
-> > > index a3489c04b783..0d179750d964 100644
-> > > --- a/security/security.c
-> > > +++ b/security/security.c
-> > > @@ -3837,6 +3837,158 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
-> > >  }
-> > >  EXPORT_SYMBOL(security_d_instantiate);
-> > >
-> > > +/*
-> > > + * Please keep this in sync with it's counterpart in security/lsm_syscalls.c
-> > > + */
-> > > +
-> > > +/**
-> > > + * security_getselfattr - Read an LSM attribute of the current process.
-> > > + * @attr: which attribute to return
-> > > + * @uctx: the user-space destination for the information, or NULL
-> > > + * @size: pointer to the size of space available to receive the data
-> > > + * @flags: special handling options. LSM_FLAG_SINGLE indicates that only
-> > > + * attributes associated with the LSM identified in the passed @ctx be
-> > > + * reported.
-> > > + *
-> > > + * A NULL value for @uctx can be used to get both the number of attributes
-> > > + * and the size of the data.
-> > > + *
-> > > + * Returns the number of attributes found on success, negative value
-> > > + * on error. @size is reset to the total size of the data.
-> > > + * If @size is insufficient to contain the data -E2BIG is returned.
-> > > + */
-> > > +int security_getselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
-> > > +                      size_t __user *size, u32 flags)
-> > > +{
-> > > +     struct security_hook_list *hp;
-> > > +     struct lsm_ctx lctx = { .id = LSM_ID_UNDEF, };
-> > > +     u8 __user *base = (u8 __user *)uctx;
-> > > +     size_t total = 0;
-> > > +     size_t entrysize;
-> > > +     size_t left;
-> > > +     bool toobig = false;
-> > > +     bool single = false;
-> > > +     int count = 0;
-> > > +     int rc;
-> > > +
-> > > +     if (attr == LSM_ATTR_UNDEF)
-> > > +             return -EINVAL;
-> > > +     if (size == NULL)
-> > > +             return -EINVAL;
-> > > +     if (get_user(left, size))
-> > > +             return -EFAULT;
-> > > +
-> > > +     if (flags) {
-> > > +             /*
-> > > +              * Only flag supported is LSM_FLAG_SINGLE
-> > > +              */
-> > > +             if (flags != LSM_FLAG_SINGLE)
-> > > +                     return -EINVAL;
-> > > +             if (uctx && copy_from_user(&lctx, uctx, sizeof(lctx)))
-> >
-> > I'm not sure if we should return -EINVAL or -EFAULT when uctx == NULL.
-> > Because uctx is optional (when LSM_FLAG_SINGLE is not set), I guess
-> > -EINVAL is OK.
-> 
-> That's a good point, we should probably the error codes here: if uctx
-> is NULL in the LSM_FLAG_SINGLE case we should return -EINVAL, if the
-> copy_from_user() fails we should return -EFAULT.
-> 
-> > > +                     return -EFAULT;
-> > > +             /*
-> > > +              * If the LSM ID isn't specified it is an error.
-> > > +              */
-> > > +             if (lctx.id == LSM_ID_UNDEF)
-> > > +                     return -EINVAL;
-> > > +             single = true;
-> > > +     }
-> > > +
-> > > +     /*
-> > > +      * In the usual case gather all the data from the LSMs.
-> > > +      * In the single case only get the data from the LSM specified.
-> > > +      */
-> > > +     hlist_for_each_entry(hp, &security_hook_heads.getselfattr, list) {
-> > > +             if (single && lctx.id != hp->lsmid->id)
-> > > +                     continue;
-> > > +             entrysize = left;
-> > > +             if (base)
-> > > +                     uctx = (struct lsm_ctx __user *)(base + total);
-> > > +             rc = hp->hook.getselfattr(attr, uctx, &entrysize, flags);
-> > > +             if (rc == -EOPNOTSUPP) {
-> > > +                     rc = 0;
-> > > +                     continue;
-> > > +             }
-> > > +             if (rc == -E2BIG) {
-> > > +                     toobig = true;
-> > > +                     left = 0;
-> > > +             } else if (rc < 0)
-> > > +                     return rc;
-> > > +             else
-> > > +                     left -= entrysize;
-> > > +
-> > > +             total += entrysize;
-> > > +             count += rc;
-> >
-> > There is a bug if rc == -E2BIG
-> 
-> Can you elaborate a bit more on this? Nothing is jumping out at me as
-> obviously broken... are you talking about @count becoming garbage due
-> to @rc being equal to -E2BIG?  If that is the case it should be okay
-> since we explicitly return -E2BIG, not @count, if @toobig is true.
+Overlayfs uses backing files with "fake" overlayfs f_path and "real"
+underlying f_inode, in order to use underlying inode aops for mapped
+files and to display the overlayfs path in /proc/<pid>/maps.
 
-Indeed, in this case count will not be returned thanks to toobig. I'd
-suggest to "continue" if rc == -E2BIG (like for -EOPNOTSUPP) to avoid an
-inconsistent count value, which could bite us one day.
+In preparation for storing the overlayfs "fake" path instead of the
+underlying "real" path in struct backing_file, define a noop helper
+file_user_path() that returns f_path for now.
 
-> 
-> > > +             if (single)
-> > > +                     break;
-> > > +     }
-> > > +     if (put_user(total, size))
-> > > +             return -EFAULT;
-> > > +     if (toobig)
-> > > +             return -E2BIG;
-> > > +     if (count == 0)
-> > > +             return LSM_RET_DEFAULT(getselfattr);
-> > > +     return count;
-> > > +}
-> 
-> -- 
-> paul-moore.com
+Use the new helper in procfs and kernel logs whenever a path of a
+mapped file is displayed to users.
+
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ arch/arc/kernel/troubleshoot.c |  6 ++++--
+ fs/proc/base.c                 |  2 +-
+ fs/proc/nommu.c                |  2 +-
+ fs/proc/task_mmu.c             |  4 ++--
+ fs/proc/task_nommu.c           |  2 +-
+ include/linux/fs.h             | 14 ++++++++++++++
+ kernel/trace/trace_output.c    |  2 +-
+ 7 files changed, 24 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arc/kernel/troubleshoot.c b/arch/arc/kernel/troubleshoot.c
+index d5b3ed2c58f5..c380d8c30704 100644
+--- a/arch/arc/kernel/troubleshoot.c
++++ b/arch/arc/kernel/troubleshoot.c
+@@ -90,10 +90,12 @@ static void show_faulting_vma(unsigned long address)
+ 	 */
+ 	if (vma) {
+ 		char buf[ARC_PATH_MAX];
+-		char *nm = "?";
++		char *nm = "anon";
+ 
+ 		if (vma->vm_file) {
+-			nm = file_path(vma->vm_file, buf, ARC_PATH_MAX-1);
++			/* XXX: can we use %pD below and get rid of buf? */
++			nm = d_path(file_user_path(vma->vm_file), buf,
++				    ARC_PATH_MAX-1);
+ 			if (IS_ERR(nm))
+ 				nm = "?";
+ 		}
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ffd54617c354..20695c928ee6 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -2218,7 +2218,7 @@ static int map_files_get_link(struct dentry *dentry, struct path *path)
+ 	rc = -ENOENT;
+ 	vma = find_exact_vma(mm, vm_start, vm_end);
+ 	if (vma && vma->vm_file) {
+-		*path = vma->vm_file->f_path;
++		*path = *file_user_path(vma->vm_file);
+ 		path_get(path);
+ 		rc = 0;
+ 	}
+diff --git a/fs/proc/nommu.c b/fs/proc/nommu.c
+index 4d3493579458..c6e7ebc63756 100644
+--- a/fs/proc/nommu.c
++++ b/fs/proc/nommu.c
+@@ -58,7 +58,7 @@ static int nommu_region_show(struct seq_file *m, struct vm_region *region)
+ 
+ 	if (file) {
+ 		seq_pad(m, ' ');
+-		seq_file_path(m, file, "");
++		seq_path(m, file_user_path(file), "");
+ 	}
+ 
+ 	seq_putc(m, '\n');
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 3dd5be96691b..1593940ca01e 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -296,7 +296,7 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
+ 		if (anon_name)
+ 			seq_printf(m, "[anon_shmem:%s]", anon_name->name);
+ 		else
+-			seq_file_path(m, file, "\n");
++			seq_path(m, file_user_path(file), "\n");
+ 		goto done;
+ 	}
+ 
+@@ -1967,7 +1967,7 @@ static int show_numa_map(struct seq_file *m, void *v)
+ 
+ 	if (file) {
+ 		seq_puts(m, " file=");
+-		seq_file_path(m, file, "\n\t= ");
++		seq_path(m, file_user_path(file), "\n\t= ");
+ 	} else if (vma_is_initial_heap(vma)) {
+ 		seq_puts(m, " heap");
+ 	} else if (vma_is_initial_stack(vma)) {
+diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
+index 7cebd397cc26..bce674533000 100644
+--- a/fs/proc/task_nommu.c
++++ b/fs/proc/task_nommu.c
+@@ -157,7 +157,7 @@ static int nommu_vma_show(struct seq_file *m, struct vm_area_struct *vma)
+ 
+ 	if (file) {
+ 		seq_pad(m, ' ');
+-		seq_file_path(m, file, "");
++		seq_path(m, file_user_path(file), "");
+ 	} else if (mm && vma_is_initial_stack(vma)) {
+ 		seq_pad(m, ' ');
+ 		seq_puts(m, "[stack]");
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7f7e7d2efbeb..a8e4e1cac48e 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2472,6 +2472,20 @@ static inline const struct path *file_real_path(struct file *f)
+ 	return &f->f_path;
+ }
+ 
++/*
++ * file_user_path - get the path to display for memory mapped file
++ *
++ * When mmapping a file on a stackable filesystem (e.g., overlayfs), the file
++ * stored in ->vm_file is a backing file whose f_inode is on the underlying
++ * filesystem.  When the mapped file path is displayed to user (e.g. via
++ * /proc/<pid>/maps), this helper should be used to get the path to display
++ * to the user, which is the path of the fd that user has requested to map.
++ */
++static inline const struct path *file_user_path(struct file *f)
++{
++	return &f->f_path;
++}
++
+ static inline struct file *file_clone_open(struct file *file)
+ {
+ 	return dentry_open(&file->f_path, file->f_flags, file->f_cred);
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index db575094c498..d8b302d01083 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -404,7 +404,7 @@ static int seq_print_user_ip(struct trace_seq *s, struct mm_struct *mm,
+ 			vmstart = vma->vm_start;
+ 		}
+ 		if (file) {
+-			ret = trace_seq_path(s, &file->f_path);
++			ret = trace_seq_path(s, file_user_path(file));
+ 			if (ret)
+ 				trace_seq_printf(s, "[+0x%lx]",
+ 						 ip - vmstart);
+-- 
+2.34.1
+
