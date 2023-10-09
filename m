@@ -2,55 +2,54 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B98FE92FFC
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Oct 2023 15:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F405CE9371E
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Oct 2023 15:38:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377749AbjJIPiE (ORCPT
+        id S1377858AbjJIPiG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Oct 2023 11:38:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41954 "EHLO
+        Mon, 9 Oct 2023 11:38:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377773AbjJIPht (ORCPT
+        with ESMTP id S1377050AbjJIPhs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Oct 2023 11:37:49 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 541A4133;
-        Mon,  9 Oct 2023 08:37:26 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-405417465aaso45093405e9.1;
-        Mon, 09 Oct 2023 08:37:26 -0700 (PDT)
+        Mon, 9 Oct 2023 11:37:48 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C1F310F4;
+        Mon,  9 Oct 2023 08:37:21 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-32483535e51so4666534f8f.0;
+        Mon, 09 Oct 2023 08:37:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696865845; x=1697470645; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a+HQeegMFxdTmIDUpikNUTP1EtMcJMa5JsrdaHT+oHI=;
-        b=RTONlsEOkrCOArytf6/vvcav2wand0FWjRSCuvH9GyLIQO1XlpiBzEl0EKlKHRFy+Z
-         qUL21DjsuE42Pgt30EjUF6H/Xcu08KR+j2lExMP6wwnJT+A9rD7tw0lJ/oWv7b9NKKoS
-         AuS44COFYNCO/vcYZVmZBISvd7jbJ1MWWJ49aOHwTR/YLDVw20EP0KWhtZrULA7w8DMn
-         4d5BaTaHrRyc9u276BgiAogZ2uGC5N4VcHDTIyj1YuiNOUzHllJp9LzakbQpjNc+j2UP
-         b37JUnKKIcwXra05GwzeIe9O7f1PiPD3gg7jmbCQpcJFbdbxNe9QrjvVvPLoeOHGPbXx
-         YBLQ==
+        d=gmail.com; s=20230601; t=1696865840; x=1697470640; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oDR0W7u1G7fFVPvWf4mUuccTiiZy5dNsBJkbrHnXXc8=;
+        b=KKl87cIx5hkk5Rnk2q/+ufl3/XOUsyfscNQUMmCFiB9ghDf85Q6AX2pY1whXL3V8hV
+         sfZ4jPmu4a7c6w67B/gFSyIqaI7iITaSq6AzygRnrqRulxUSMLB/wJu+vXZ7bdli+2ry
+         /vLQEkEk3ZDi3UjEVbQJSlysjY5DYw+hzJtlk8jZQSla+7bwMsa85+Zec6DImCemEaG3
+         hLytWcLPO/SvnXqsU5KOdYqYqqYgpSCr6UWVKChrIRDSSLIIWgpYa9Rr2iQnsibVnoQ5
+         v7wZCcxGvurG+Q3jEzAZFAjuK7QE+L6MV5vfBGKuIte88LdGSAq7h/npi2eiPkg711Hi
+         SJQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696865845; x=1697470645;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a+HQeegMFxdTmIDUpikNUTP1EtMcJMa5JsrdaHT+oHI=;
-        b=OlKvk2PvEKCdSeROV5M8EMBDIcwFZO7HsIieNLhcZBt8Gbzky2FM5yVbUSzqs917LG
-         6OJ6Ua6ew+elWHZr4pDmMnu8TpQ7u2LwFDyJ6lA4PnDK7oVkc3PW1U7yJo1AO1IB+qTo
-         8MRkMg45hXpgA+tjmAkxVHZqcdZZnZ1lsRsmIABur5fY7nK6HzSNdmxaAV1NdfvNA8qb
-         jh0HcOJAcCnkEcmPmWUN1yG42jRQvYjvmm2ocytE6/Fm8huRKzoBpWWWrHTziursrwUs
-         fV6OpquDFTW8/gZCFzhTR7bVY5qRYzBUmJvvzITISpxz1F1o09VWEUXW9+3XPgYNF82L
-         yQbA==
-X-Gm-Message-State: AOJu0YwWtR2Xq/nZNioVse/xkcCTqPqOnk1ZcjdBCiQbTT6hIQRLVcKB
-        ASrjdqmlBBdi50vgxwP6tnA=
-X-Google-Smtp-Source: AGHT+IFgK5KMOpEDr9wVY4CaERQNmSjbu5seeXhEaWKuEXZ/0l5iKQo6/MWCUvdOiy6PL/vWXvZQ0g==
-X-Received: by 2002:adf:f74f:0:b0:319:68ba:7c8e with SMTP id z15-20020adff74f000000b0031968ba7c8emr13896792wrp.38.1696865844676;
-        Mon, 09 Oct 2023 08:37:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696865840; x=1697470640;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oDR0W7u1G7fFVPvWf4mUuccTiiZy5dNsBJkbrHnXXc8=;
+        b=KK5ociEXLKkCb3T5sJ3F/Z6QlZ7q7ry2fPSGRpCkdN30mRryZsdDw/9ONBZzE/mkyt
+         jmFVx2L7JnWiZd5B1o7H2JdLPpmZQ4WfqFL4xMzPhmy3LTFZ65AEPd9oA1bep2gHihUI
+         zyhWu+OpOworuWtlKte2ionqrdvfJyxf5908H/G1BxGsGVTlQvnmfooRKBj2etRpv6YS
+         pDT4QVFdSKW2tXYMPe7eN+YJAXhutDxLFDUJyrW2tg48KRij//FequtJdWOAjnBi3ybS
+         uln8KfP2KO9H+tHtGnWfJtYvkvSINcETocZHAe+E3lvN0lrI//nOxvh5RpnZkiMfG2oD
+         apNg==
+X-Gm-Message-State: AOJu0YwMkXN4BndRHvjdFrW1Wozyxj8KE2svJQIqfsoeivwiRY02j2kr
+        bU08XNaytzwqmXSjWcwxK84=
+X-Google-Smtp-Source: AGHT+IGALbyf0lFjKf5XyJU0wNZWyFwLqh1az96WG1MqE6EIC6IBRC7FVKbhAiMxfAHBpVE/d+bloQ==
+X-Received: by 2002:a5d:4f85:0:b0:31a:ea9a:b602 with SMTP id d5-20020a5d4f85000000b0031aea9ab602mr15429199wru.1.1696865839526;
+        Mon, 09 Oct 2023 08:37:19 -0700 (PDT)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id g7-20020a056000118700b003143c9beeaesm9939924wrx.44.2023.10.09.08.37.23
+        by smtp.gmail.com with ESMTPSA id g7-20020a056000118700b003143c9beeaesm9939924wrx.44.2023.10.09.08.37.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Oct 2023 08:37:24 -0700 (PDT)
+        Mon, 09 Oct 2023 08:37:19 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Christian Brauner <brauner@kernel.org>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
@@ -62,241 +61,169 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         linux-security-module@vger.kernel.org,
         linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 3/3] fs: store real path instead of fake path in backing file f_path
-Date:   Mon,  9 Oct 2023 18:37:12 +0300
-Message-Id: <20231009153712.1566422-4-amir73il@gmail.com>
+Subject: [PATCH v3 0/3] Reduce impact of overlayfs backing files fake path
+Date:   Mon,  9 Oct 2023 18:37:09 +0300
+Message-Id: <20231009153712.1566422-1-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231009153712.1566422-1-amir73il@gmail.com>
-References: <20231009153712.1566422-1-amir73il@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-A backing file struct stores two path's, one "real" path that is referring
-to f_inode and one "fake" path, which should be displayed to users in
-/proc/<pid>/maps.
+Hi Christian,
 
-There is a lot more potential code that needs to know the "real" path, then
-code that needs to know the "fake" path.
+Following v3 addresses Al's review comments on v2.
 
-Instead of code having to request the "real" path with file_real_path(),
-store the "real" path in f_path and require code that needs to know the
-"fake" path request it with file_user_path().
-Replace the file_real_path() helper with a simple const accessor f_path().
-
-After this change, file_dentry() is not expected to observe any files
-with overlayfs f_path and real f_inode, so the call to ->d_real() should
-not be needed.  Leave the ->d_real() call for now and add an assertion
-in ovl_d_real() to catch if we made wrong assumptions.
-
-Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
-Link: https://lore.kernel.org/r/CAJfpegtt48eXhhjDFA1ojcHPNKj3Go6joryCPtEFAKpocyBsnw@mail.gmail.com/
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/file_table.c          | 12 ++++++------
- fs/internal.h            |  2 +-
- fs/open.c                | 23 +++++++++++------------
- fs/overlayfs/super.c     | 16 ++++++++++++----
- include/linux/fs.h       | 22 ++++------------------
- include/linux/fsnotify.h |  3 +--
- 6 files changed, 35 insertions(+), 43 deletions(-)
+This is another step in the multi step plan to reduce the vulnerability
+of filesystems code to overlayfs backing files whose f_path and f_inode
+are not on the same sb.
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 08fd1dd6d863..fa92743ba6a9 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -44,10 +44,10 @@ static struct kmem_cache *filp_cachep __read_mostly;
- 
- static struct percpu_counter nr_files __cacheline_aligned_in_smp;
- 
--/* Container for backing file with optional real path */
-+/* Container for backing file with optional user path */
- struct backing_file {
- 	struct file file;
--	struct path real_path;
-+	struct path user_path;
- };
- 
- static inline struct backing_file *backing_file(struct file *f)
-@@ -55,11 +55,11 @@ static inline struct backing_file *backing_file(struct file *f)
- 	return container_of(f, struct backing_file, file);
- }
- 
--struct path *backing_file_real_path(struct file *f)
-+struct path *backing_file_user_path(struct file *f)
- {
--	return &backing_file(f)->real_path;
-+	return &backing_file(f)->user_path;
- }
--EXPORT_SYMBOL_GPL(backing_file_real_path);
-+EXPORT_SYMBOL_GPL(backing_file_user_path);
- 
- static inline void file_free(struct file *f)
- {
-@@ -68,7 +68,7 @@ static inline void file_free(struct file *f)
- 		percpu_counter_dec(&nr_files);
- 	put_cred(f->f_cred);
- 	if (unlikely(f->f_mode & FMODE_BACKING)) {
--		path_put(backing_file_real_path(f));
-+		path_put(backing_file_user_path(f));
- 		kfree(backing_file(f));
- 	} else {
- 		kmem_cache_free(filp_cachep, f);
-diff --git a/fs/internal.h b/fs/internal.h
-index 4e93a685bdaa..58e43341aebf 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -101,7 +101,7 @@ static inline void file_put_write_access(struct file *file)
- 	put_write_access(file->f_inode);
- 	mnt_put_write_access(file->f_path.mnt);
- 	if (unlikely(file->f_mode & FMODE_BACKING))
--		mnt_put_write_access(backing_file_real_path(file)->mnt);
-+		mnt_put_write_access(backing_file_user_path(file)->mnt);
- }
- 
- static inline void put_file_access(struct file *file)
-diff --git a/fs/open.c b/fs/open.c
-index fe63e236da22..02dc608d40d8 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -881,7 +881,7 @@ static inline int file_get_write_access(struct file *f)
- 	if (unlikely(error))
- 		goto cleanup_inode;
- 	if (unlikely(f->f_mode & FMODE_BACKING)) {
--		error = mnt_get_write_access(backing_file_real_path(f)->mnt);
-+		error = mnt_get_write_access(backing_file_user_path(f)->mnt);
- 		if (unlikely(error))
- 			goto cleanup_mnt;
- 	}
-@@ -1182,20 +1182,19 @@ EXPORT_SYMBOL_GPL(kernel_file_open);
- 
- /**
-  * backing_file_open - open a backing file for kernel internal use
-- * @path:	path of the file to open
-+ * @user_path:	path that the user reuqested to open
-  * @flags:	open flags
-  * @real_path:	path of the backing file
-  * @cred:	credentials for open
-  *
-  * Open a backing file for a stackable filesystem (e.g., overlayfs).
-- * @path may be on the stackable filesystem and backing inode on the
-- * underlying filesystem. In this case, we want to be able to return
-- * the @real_path of the backing inode. This is done by embedding the
-- * returned file into a container structure that also stores the path of
-- * the backing inode on the underlying filesystem, which can be
-- * retrieved using backing_file_real_path().
-+ * @user_path may be on the stackable filesystem and @real_path on the
-+ * underlying filesystem.  In this case, we want to be able to return the
-+ * @user_path of the stackable filesystem. This is done by embedding the
-+ * returned file into a container structure that also stores the stacked
-+ * file's path, which can be retrieved using backing_file_user_path().
-  */
--struct file *backing_file_open(const struct path *path, int flags,
-+struct file *backing_file_open(const struct path *user_path, int flags,
- 			       const struct path *real_path,
- 			       const struct cred *cred)
- {
-@@ -1206,9 +1205,9 @@ struct file *backing_file_open(const struct path *path, int flags,
- 	if (IS_ERR(f))
- 		return f;
- 
--	f->f_path = *path;
--	path_get(real_path);
--	*backing_file_real_path(f) = *real_path;
-+	path_get(user_path);
-+	*backing_file_user_path(f) = *user_path;
-+	f->f_path = *real_path;
- 	error = do_dentry_open(f, d_inode(real_path->dentry), NULL);
- 	if (error) {
- 		fput(f);
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 3fa2416264a4..400a925a8ad2 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -34,14 +34,22 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
- 	struct dentry *real = NULL, *lower;
- 	int err;
- 
--	/* It's an overlay file */
-+	/*
-+	 * vfs is only expected to call d_real() with NULL from d_real_inode()
-+	 * and with overlay inode from file_dentry() on an overlay file.
-+	 *
-+	 * TODO: remove @inode argument from d_real() API, remove code in this
-+	 * function that deals with non-NULL @inode and remove d_real() call
-+	 * from file_dentry().
-+	 */
- 	if (inode && d_inode(dentry) == inode)
- 		return dentry;
-+	else if (inode)
-+		goto bug;
- 
- 	if (!d_is_reg(dentry)) {
--		if (!inode || inode == d_inode(dentry))
--			return dentry;
--		goto bug;
-+		/* d_real_inode() is only relevant for regular files */
-+		return dentry;
- 	}
- 
- 	real = ovl_dentry_upper(dentry);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index a8e4e1cac48e..b0624d83c2db 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2451,26 +2451,10 @@ struct file *dentry_open(const struct path *path, int flags,
- 			 const struct cred *creds);
- struct file *dentry_create(const struct path *path, int flags, umode_t mode,
- 			   const struct cred *cred);
--struct file *backing_file_open(const struct path *path, int flags,
-+struct file *backing_file_open(const struct path *user_path, int flags,
- 			       const struct path *real_path,
- 			       const struct cred *cred);
--struct path *backing_file_real_path(struct file *f);
--
--/*
-- * file_real_path - get the path corresponding to f_inode
-- *
-- * When opening a backing file for a stackable filesystem (e.g.,
-- * overlayfs) f_path may be on the stackable filesystem and f_inode on
-- * the underlying filesystem.  When the path associated with f_inode is
-- * needed, this helper should be used instead of accessing f_path
-- * directly.
--*/
--static inline const struct path *file_real_path(struct file *f)
--{
--	if (unlikely(f->f_mode & FMODE_BACKING))
--		return backing_file_real_path(f);
--	return &f->f_path;
--}
-+struct path *backing_file_user_path(struct file *f);
- 
- /*
-  * file_user_path - get the path to display for memory mapped file
-@@ -2483,6 +2467,8 @@ static inline const struct path *file_real_path(struct file *f)
-  */
- static inline const struct path *file_user_path(struct file *f)
- {
-+	if (unlikely(f->f_mode & FMODE_BACKING))
-+		return backing_file_user_path(f);
- 	return &f->f_path;
- }
- 
-diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index ed48e4f1e755..bcb6609b54b3 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -96,8 +96,7 @@ static inline int fsnotify_file(struct file *file, __u32 mask)
- 	if (file->f_mode & FMODE_NONOTIFY)
- 		return 0;
- 
--	/* Overlayfs internal files have fake f_path */
--	path = file_real_path(file);
-+	path = &file->f_path;
- 	return fsnotify_parent(path->dentry, mask, path, FSNOTIFY_EVENT_PATH);
- }
- 
+History:
+--------
+When overlayfs was first merged, overlayfs files of regular files and
+directories, the ones that are installed in file table, had a "fake" path,
+namely, f_path is the overlayfs path and f_inode is the "real" inode on
+the underlying filesystem.
+
+At that time, all filesystem syscalls, generic vfs code and any filesystem
+code (among the fs that are supported as overlayfs underlying layers) had
+to be aware of the possibility of a file with "fake" path and had to use
+the helper file_dentry() to get the "real" dentry and the helper
+locks_inode() to get to the overlayfs inode.
+At that time, there was no way to get the "real" path.
+
+This situation was fragile because many filesystem developers were not
+aware of having to deal with file with "fake" path.
+Admittedly, it wasn't very well documented either.
+
+Backing files:
+--------------
+The first big step to reduce the impact of files with fake path was in
+v4.19 that introduced d1d04ef8572b ("ovl: stack file ops").  Since
+v4.19, f_inode of the overlayfs files that are installed in file table
+are overlayfs inodes, so those files are no longer odd.
+
+As a result of this change, a lot of syscalls code, which take fd as an
+argument, is no longer exposed to files with "fake" path and the helper
+file_locks() was no longer needed.
+
+However, since v4.19, overlayfs uses internal backing files with "fake"
+path, so generic vfs code that overlayfs calls with the backing files and
+filesystem code still needs to be aware of files with "fake" path.
+
+The one place where the internal backing files are "exposed" to users
+is when users mmap overlayfs files, the backing file (and not the
+overlayfs file) is stored in vm_file. The reason that overlayfs backing
+files use a "fake" path is so that /proc/<pid>/maps will disaply the
+overlayfs file path to users.
+
+Recently:
+---------
+In v6.5, we took another small step by introducing of the backing_file
+container and the file_real_path() helper.  This change allowed vfs and
+filesystem code to get the "real" path of an overlayfs backing file.
+With this change, we were able to make fsnotify work correctly and
+report events on the "real" filesystem objects that were accessed via
+overlayfs.
+
+This method works fine, but it still leaves the vfs vulnerable to new
+code that is not aware of files with fake path.  A recent example is
+commit db1d1e8b9867 ("IMA: use vfs_getattr_nosec to get the i_version").
+This commit uses direct referencing to f_path in IMA code that otherwise
+uses file_inode() and file_dentry() to reference the filesystem objects
+that it is measuring.
+
+Coming up:
+----------
+This patch set actually implements my initial proposal [1] that was
+proposed for v6.5 - instead of having filesystem code opt-in to get the
+"real" path, have generic code opt-in for the "fake" path in the few
+places that it is needed.
+
+It is possible that I missed a few places that need opt-in for "fake"
+path, but in most likelihood, a missed opt-in to "fake" path would just
+result in printing the "real" path to user and if %pD is used for
+printing, that will probably make no difference anyway.
+
+Is it far more likely that new filesystems code that does not use the
+file_dentry() and file_real_path() helpers will end up causing crashes
+or averting LSM/audit rules if we keep the "fake" path exposed by default.
+
+Future:
+-------
+This change already makes file_dentry() moot, but for now we did not
+change this helper just added a WARN_ON() in ovl_d_real() to catch if we
+have made any wrong assumptions.
+
+After the dust settles on this change, we can make file_dentry() a plain
+accessor and we can drop the inode argument to ->d_real().
+
+Testing:
+--------
+As usual, I ran fstests with overlayfs over xfs and all the LTS tests
+that test fsnotify + overlayfs.
+
+I have limited testing ability for audit/IMA/LSM modules, so we will
+have to rely on other people and bots testing of linux-next.
+Syzbot has been known to be very obsessive about reporting bugs of
+overlayfs + IMA.
+
+Merging:
+--------
+The branch that I tested [2] is based on both the stable vfs.mount.write
+branch and vfs.misc of the moment.
+
+If you agree to stage these patches in vfs tree, they would need
+to be based on both vfs.mount.write and the file_free_rcu patches.
+So perhaps split the file_free_rcu patches out of vfs.misc and into a
+vfs.file topic branch that is based on the stable vfs.mount.write branch
+and add my patches on top?
+
+I don't need vfs.file to be stable, I understand that the file_free_rcu()
+patches may still change, but since I would like to test overlayfs-next
+together with the "fake" path patches, it would be nice if the vfs.file
+branch would be more stable than vfs.misc usually is.
+
+Thanks,
+Amir.
+
+Changes since v2:
+- No need to check for NULL user_path->mnt (viro)
+- Simplify the ovl_d_real() assertion of non-NULL inode (viro)
+- Remove f_path() accessor (viro)
+
+Changes since v1:
+- backing_file (fake_file rebranded) container already merged
+- fsnotify support for backing files already merged
+- Take mnt_writers refcount on the "real" path
+- Rename file_fake_path() => file_user_path()
+- No need to use file_user_path() for exe_file path access
+- No need to use file_user_path() in audit/LSM code
+- Added file_user_path() in some tracing/debugging code
+
+[1] https://lore.kernel.org/r/20230609073239.957184-1-amir73il@gmail.com/
+[2] https://github.com/amir73il/linux/commits/ovl_fake_path
+
+Amir Goldstein (3):
+  fs: get mnt_writers count for an open backing file's real path
+  fs: create helper file_user_path() for user displayed mapped file path
+  fs: store real path instead of fake path in backing file f_path
+
+ arch/arc/kernel/troubleshoot.c |  6 ++--
+ fs/file_table.c                | 12 ++++----
+ fs/internal.h                  | 11 +++++--
+ fs/open.c                      | 52 +++++++++++++++++++++++-----------
+ fs/overlayfs/super.c           | 16 ++++++++---
+ fs/proc/base.c                 |  2 +-
+ fs/proc/nommu.c                |  2 +-
+ fs/proc/task_mmu.c             |  4 +--
+ fs/proc/task_nommu.c           |  2 +-
+ include/linux/fs.h             | 22 +++++++-------
+ include/linux/fsnotify.h       |  3 +-
+ kernel/trace/trace_output.c    |  2 +-
+ 12 files changed, 84 insertions(+), 50 deletions(-)
+
 -- 
 2.34.1
 
