@@ -2,328 +2,293 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91071E95A91
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Oct 2023 10:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08069E95A8E
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Oct 2023 14:12:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345822AbjJIKLe (ORCPT
+        id S1376940AbjJIOMz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Oct 2023 06:11:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48468 "EHLO
+        Mon, 9 Oct 2023 10:12:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346058AbjJIKLe (ORCPT
+        with ESMTP id S1376937AbjJIOMy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Oct 2023 06:11:34 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C424A3;
-        Mon,  9 Oct 2023 03:11:28 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-53b962f09e0so2490255a12.0;
-        Mon, 09 Oct 2023 03:11:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696846287; x=1697451087; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VK2n1agOr8eZYdCQ0u7RzEERl6DLK/2StuInLyfvlaY=;
-        b=OYse4GJB3vHlv2LFPfGqhhquBIZ5Lv5K3xWoBDfJKcUbBc0DEY8EV1UXW2ArAg1dKQ
-         9jo2+oWs8VHzy9C+Vy+KG7jKQCnj5Xbwo+BKl/QVgtEqL/M621PI3JmUGvmTHwlzIZqX
-         UG8ok9ZzDwFL0fQq29+etjPWAzvBzz5aKSiolkOoeFbRhBYCG/bDveIB10DsG2jxbFz3
-         3y1XuloiCqsokCGgDnqLUzL7ZGoGSvZ3rWQmWm/ybr+JKSnccZOr33V1kQ+KdPd5tUa5
-         Hf73ECEvRWWAqDllei8m/CpPu1p/hnN7+zokum6tcxRWHGkvkWqQntcWeZdVeorFHYnu
-         Nu3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696846287; x=1697451087;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VK2n1agOr8eZYdCQ0u7RzEERl6DLK/2StuInLyfvlaY=;
-        b=MCzHx4h7shswy/xkRDWfKzhKZIzO61XTTldOeV1Ka49ghak7qb3Dqnu4NnGrcRJvD6
-         IxJiLDYSwaP7TcFDAWmOBzRucI9wFfwXoW6B5yxbAeUJyk0eid6Qu0iSfqaUa5vx5mSy
-         Ps9UG02fwKRR4VeYhohepM9rcDmY5JPsSIkwTo7VP05e16nE2z+uN6iCP6gQ47b7trEZ
-         A6n8WT9RSZogedzi/qEx2PrS40drN2kF3472JQPFh3bOsHfzf8IaOLJ8AROVe6LsbhPl
-         gzWBr83MF0Rc/OO9GbDUboLFbFBhpye2xH9VIpZW29PZ/oRYWSVR9ky36u92VKzOlkVI
-         t5Sg==
-X-Gm-Message-State: AOJu0YyXHjX6KXO9DhAC9/2EKTOa0zuFcYqj1pEvVdJgGIe92AsUv1YZ
-        8erLsPjV8DDV1X2GowinvIw=
-X-Google-Smtp-Source: AGHT+IHAp5DeOhEwkJOPpWgWDk6QV0eN/dk4ic76QGVBOPvdjCNneebstLrePvGTGdkxRqByrrntuQ==
-X-Received: by 2002:a17:906:53d4:b0:9ae:5bd7:d2b4 with SMTP id p20-20020a17090653d400b009ae5bd7d2b4mr14179387ejo.68.1696846286506;
-        Mon, 09 Oct 2023 03:11:26 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id w18-20020a17090652d200b0099d798a6bb5sm6578605ejn.67.2023.10.09.03.11.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Oct 2023 03:11:25 -0700 (PDT)
-From:   Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date:   Mon, 9 Oct 2023 12:10:54 +0200
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
-        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        renauld@google.com, pabeni@redhat.com
-Subject: Re: [PATCH v6 4/5] bpf: Only enable BPF LSM hooks when an LSM
- program is attached
-Message-ID: <ZSPRrtkKtf9WyBOy@krava>
-References: <20231006204701.549230-1-kpsingh@kernel.org>
- <20231006204701.549230-5-kpsingh@kernel.org>
+        Mon, 9 Oct 2023 10:12:54 -0400
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [IPv6:2001:1600:4:17::190e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6786CA3
+        for <linux-security-module@vger.kernel.org>; Mon,  9 Oct 2023 07:12:51 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4S41Fq2tc5zMpvNs;
+        Mon,  9 Oct 2023 14:12:47 +0000 (UTC)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4S41Fp6Rk6zMppKk;
+        Mon,  9 Oct 2023 16:12:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1696860767;
+        bh=buHZKhO/nLIP3/eBbEgU9e8Wj4f7qFQb74pdqW/Z9lw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1bfAXniqxPxqD/LBnwcR/koD4IyzvbT3y1RVDBnW5KP/Z0D7oFLai7LxuFawyeCTd
+         BWzrjotkFvTUjIqrJpP9t1HX0m2JN0vfl0DSAPnnqnxTZdNSIhpzgB6N4ExKN74e9q
+         chYncqb1Y9hmA9n2QJ1btqQqU8w2AUxNSzXM2L4M=
+Date:   Mon, 9 Oct 2023 16:12:41 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+Subject: Re: [PATCH v12 08/12] landlock: Add network rules and TCP hooks
+ support
+Message-ID: <20231009.meet7uTaeghu@digikod.net>
+References: <20230920092641.832134-1-konstantin.meskhidze@huawei.com>
+ <20230920092641.832134-9-konstantin.meskhidze@huawei.com>
+ <20231001.oobeez8AeYae@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20231006204701.549230-5-kpsingh@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231001.oobeez8AeYae@digikod.net>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 06, 2023 at 10:47:00PM +0200, KP Singh wrote:
-> BPF LSM hooks have side-effects (even when a default value is returned),
-> as some hooks end up behaving differently due to the very presence of
-> the hook.
+On Mon, Oct 02, 2023 at 10:26:36PM +0200, Mickaël Salaün wrote:
+> Thanks for this new version Konstantin. I pushed this series, with minor
+> changes, to -next. So far, no warning. But it needs some changes, mostly
+> kernel-only, but also one with the handling of port 0 with bind (see my
+> review below).
 > 
-> The static keys guarding the BPF LSM hooks are disabled by default and
-> enabled only when a BPF program is attached implementing the hook
-> logic. This avoids the issue of the side-effects and also the minor
-> overhead associated with the empty callback.
-> 
-> security_file_ioctl:
->    0xffffffff818f0e30 <+0>:	endbr64
->    0xffffffff818f0e34 <+4>:	nopl   0x0(%rax,%rax,1)
->    0xffffffff818f0e39 <+9>:	push   %rbp
->    0xffffffff818f0e3a <+10>:	push   %r14
->    0xffffffff818f0e3c <+12>:	push   %rbx
->    0xffffffff818f0e3d <+13>:	mov    %rdx,%rbx
->    0xffffffff818f0e40 <+16>:	mov    %esi,%ebp
->    0xffffffff818f0e42 <+18>:	mov    %rdi,%r14
->    0xffffffff818f0e45 <+21>:	jmp    0xffffffff818f0e57 <security_file_ioctl+39>
->    				^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
->    Static key enabled for SELinux
-> 
->    0xffffffff818f0e47 <+23>:	xchg   %ax,%ax
->    				^^^^^^^^^^^^^^
-> 
->    Static key disabled for BPF. This gets patched when a BPF LSM program
->    is attached
-> 
->    0xffffffff818f0e49 <+25>:	xor    %eax,%eax
->    0xffffffff818f0e4b <+27>:	xchg   %ax,%ax
->    0xffffffff818f0e4d <+29>:	pop    %rbx
->    0xffffffff818f0e4e <+30>:	pop    %r14
->    0xffffffff818f0e50 <+32>:	pop    %rbp
->    0xffffffff818f0e51 <+33>:	cs jmp 0xffffffff82c00000 <__x86_return_thunk>
->    0xffffffff818f0e57 <+39>:	endbr64
->    0xffffffff818f0e5b <+43>:	mov    %r14,%rdi
->    0xffffffff818f0e5e <+46>:	mov    %ebp,%esi
->    0xffffffff818f0e60 <+48>:	mov    %rbx,%rdx
->    0xffffffff818f0e63 <+51>:	call   0xffffffff819033c0 <selinux_file_ioctl>
->    0xffffffff818f0e68 <+56>:	test   %eax,%eax
->    0xffffffff818f0e6a <+58>:	jne    0xffffffff818f0e4d <security_file_ioctl+29>
->    0xffffffff818f0e6c <+60>:	jmp    0xffffffff818f0e47 <security_file_ioctl+23>
->    0xffffffff818f0e6e <+62>:	endbr64
->    0xffffffff818f0e72 <+66>:	mov    %r14,%rdi
->    0xffffffff818f0e75 <+69>:	mov    %ebp,%esi
->    0xffffffff818f0e77 <+71>:	mov    %rbx,%rdx
->    0xffffffff818f0e7a <+74>:	call   0xffffffff8141e3b0 <bpf_lsm_file_ioctl>
->    0xffffffff818f0e7f <+79>:	test   %eax,%eax
->    0xffffffff818f0e81 <+81>:	jne    0xffffffff818f0e4d <security_file_ioctl+29>
->    0xffffffff818f0e83 <+83>:	jmp    0xffffffff818f0e49 <security_file_ioctl+25>
->    0xffffffff818f0e85 <+85>:	endbr64
->    0xffffffff818f0e89 <+89>:	mov    %r14,%rdi
->    0xffffffff818f0e8c <+92>:	mov    %ebp,%esi
->    0xffffffff818f0e8e <+94>:	mov    %rbx,%rdx
->    0xffffffff818f0e91 <+97>:	pop    %rbx
->    0xffffffff818f0e92 <+98>:	pop    %r14
->    0xffffffff818f0e94 <+100>:	pop    %rbp
->    0xffffffff818f0e95 <+101>:	ret
-> 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> Acked-by: Song Liu <song@kernel.org>
-> Signed-off-by: KP Singh <kpsingh@kernel.org>
+> On Wed, Sep 20, 2023 at 05:26:36PM +0800, Konstantin Meskhidze wrote:
+> > This commit adds network rules support in the ruleset management
+> > helpers and the landlock_create_ruleset syscall.
+> > Refactor user space API to support network actions. Add new network
+> > access flags, network rule and network attributes. Increment Landlock
+> > ABI version. Expand access_masks_t to u32 to be sure network access
+> > rights can be stored. Implement socket_bind() and socket_connect()
+> > LSM hooks, which enables to restrict TCP socket binding and connection
+> > to specific ports.
+> > The new landlock_net_port_attr structure has two fields. The allowed_access
+> > field contains the LANDLOCK_ACCESS_NET_* rights. The port field contains
+> > the port value according to the allowed protocol. This field can
+> > take up to a 64-bit value [1] but the maximum value depends on the related
+> > protocol (e.g. 16-bit for TCP).
+> > 
+> > [1]
+> > https://lore.kernel.org/r/278ab07f-7583-a4e0-3d37-1bacd091531d@digikod.net
+> > 
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> > ---
+> > 
+> > Changes since v11:
+> > * Replace dates with "2022-2023" in net.c/h files headers.
+> > * Removes WARN_ON_ONCE(!domain) in check_socket_access().
+> > * Using "typeof(*address)" instead of offsetofend(struct sockaddr, sa_family).
+> > * Renames LANDLOCK_RULE_NET_SERVICE to LANDLOCK_RULE_NET_PORT.
+> > * Renames landlock_net_service_attr to landlock_net_port_attr.
+> > * Defines two add_rule_net_service() functions according to
+> >   IS_ENABLED(CONFIG_INET) instead of changing the body of the only
+> >   function.
+> > * Adds af_family consistency check while handling AF_UNSPEC specifically.
+> > * Adds bind_access_mask in add_rule_net_service() to deny all rules with bind
+> >   action on port zero.
+> > * Minor fixes.
+> > * Refactors commit message.
+> > 
+> > Changes since v10:
+> > * Removes "packed" attribute.
+> > * Applies Mickaёl's patch with some refactoring.
+> > * Deletes get_port() and check_addrlen() helpers.
+> > * Refactors check_socket_access() by squashing get_port() and
+> >   check_addrlen() helpers into it.
+> > * Fixes commit message.
+> > 
+> > Changes since v9:
+> > * Changes UAPI port field to __u64.
+> > * Moves shared code into check_socket_access().
+> > * Adds get_raw_handled_net_accesses() and
+> >   get_current_net_domain() helpers.
+> > * Minor fixes.
+> > 
+> > Changes since v8:
+> > * Squashes commits.
+> > * Refactors commit message.
+> > * Changes UAPI port field to __be16.
+> > * Changes logic of bind/connect hooks with AF_UNSPEC families.
+> > * Adds address length checking.
+> > * Minor fixes.
+> > 
+> > Changes since v7:
+> > * Squashes commits.
+> > * Increments ABI version to 4.
+> > * Refactors commit message.
+> > * Minor fixes.
+> > 
+> > Changes since v6:
+> > * Renames landlock_set_net_access_mask() to landlock_add_net_access_mask()
+> >   because it OR values.
+> > * Makes landlock_add_net_access_mask() more resilient incorrect values.
+> > * Refactors landlock_get_net_access_mask().
+> > * Renames LANDLOCK_MASK_SHIFT_NET to LANDLOCK_SHIFT_ACCESS_NET and use
+> >   LANDLOCK_NUM_ACCESS_FS as value.
+> > * Updates access_masks_t to u32 to support network access actions.
+> > * Refactors landlock internal functions to support network actions with
+> >   landlock_key/key_type/id types.
+> > 
+> > Changes since v5:
+> > * Gets rid of partial revert from landlock_add_rule
+> > syscall.
+> > * Formats code with clang-format-14.
+> > 
+> > Changes since v4:
+> > * Refactors landlock_create_ruleset() - splits ruleset and
+> > masks checks.
+> > * Refactors landlock_create_ruleset() and landlock mask
+> > setters/getters to support two rule types.
+> > * Refactors landlock_add_rule syscall add_rule_path_beneath
+> > function by factoring out get_ruleset_from_fd() and
+> > landlock_put_ruleset().
+> > 
+> > Changes since v3:
+> > * Splits commit.
+> > * Adds network rule support for internal landlock functions.
+> > * Adds set_mask and get_mask for network.
+> > * Adds rb_root root_net_port.
+> > 
+> > ---
+> >  include/uapi/linux/landlock.h                |  47 ++++
+> >  security/landlock/Kconfig                    |   3 +-
+> >  security/landlock/Makefile                   |   2 +
+> >  security/landlock/limits.h                   |   5 +
+> >  security/landlock/net.c                      | 241 +++++++++++++++++++
+> >  security/landlock/net.h                      |  35 +++
+> >  security/landlock/ruleset.c                  |  62 ++++-
+> >  security/landlock/ruleset.h                  |  59 ++++-
+> >  security/landlock/setup.c                    |   2 +
+> >  security/landlock/syscalls.c                 |  33 ++-
+> >  tools/testing/selftests/landlock/base_test.c |   2 +-
+> >  11 files changed, 467 insertions(+), 24 deletions(-)
+> >  create mode 100644 security/landlock/net.c
+> >  create mode 100644 security/landlock/net.h
+> > 
 
-small nit, but looks good
-
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-
-jirka
-
-
-> ---
->  include/linux/bpf_lsm.h   |  5 +++++
->  include/linux/lsm_hooks.h | 13 ++++++++++++-
->  kernel/bpf/trampoline.c   | 24 ++++++++++++++++++++++++
->  security/bpf/hooks.c      | 25 ++++++++++++++++++++++++-
->  security/security.c       |  3 ++-
->  5 files changed, 67 insertions(+), 3 deletions(-)
+> > diff --git a/security/landlock/net.c b/security/landlock/net.c
+> > new file mode 100644
+> > index 000000000000..62b830653e25
+> > --- /dev/null
+> > +++ b/security/landlock/net.c
+> > @@ -0,0 +1,241 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Landlock LSM - Network management and hooks
+> > + *
+> > + * Copyright © 2022-2023 Huawei Tech. Co., Ltd.
+> > + * Copyright © 2022-2023 Microsoft Corporation
+> > + */
+> > +
+> > +#include <linux/in.h>
+> > +#include <linux/net.h>
+> > +#include <linux/socket.h>
+> > +#include <net/ipv6.h>
+> > +
+> > +#include "common.h"
+> > +#include "cred.h"
+> > +#include "limits.h"
+> > +#include "net.h"
+> > +#include "ruleset.h"
+> > +
+> > +int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
+> > +			     const u16 port, access_mask_t access_rights)
 > 
-> diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-> index 1de7ece5d36d..5bbc31ac948c 100644
-> --- a/include/linux/bpf_lsm.h
-> +++ b/include/linux/bpf_lsm.h
-> @@ -29,6 +29,7 @@ int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
->  
->  bool bpf_lsm_is_sleepable_hook(u32 btf_id);
->  bool bpf_lsm_is_trusted(const struct bpf_prog *prog);
-> +void bpf_lsm_toggle_hook(void *addr, bool value);
-
-nit, this could be static, unless there are future plans ;-)
-
->  
->  static inline struct bpf_storage_blob *bpf_inode(
->  	const struct inode *inode)
-> @@ -78,6 +79,10 @@ static inline void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog,
->  {
->  }
->  
-> +static inline void bpf_lsm_toggle_hook(void *addr, bool value)
-> +{
-> +}
-> +
->  #endif /* CONFIG_BPF_LSM */
->  
->  #endif /* _LINUX_BPF_LSM_H */
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index c77a1859214d..57ffe4eb6d30 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -97,11 +97,14 @@ struct lsm_static_calls_table {
->   * @scalls: The beginning of the array of static calls assigned to this hook.
->   * @hook: The callback for the hook.
->   * @lsm: The name of the lsm that owns this hook.
-> + * @default_state: The state of the LSM hook when initialized. If set to false,
-> + * the static key guarding the hook will be set to disabled.
->   */
->  struct security_hook_list {
->  	struct lsm_static_call	*scalls;
->  	union security_list_options	hook;
->  	const char			*lsm;
-> +	bool				default_state;
->  } __randomize_layout;
->  
->  /*
-> @@ -151,7 +154,15 @@ static inline struct xattr *lsm_get_xattr_slot(struct xattr *xattrs,
->  #define LSM_HOOK_INIT(NAME, CALLBACK)			\
->  	{						\
->  		.scalls = static_calls_table.NAME,	\
-> -		.hook = { .NAME = CALLBACK }		\
-> +		.hook = { .NAME = CALLBACK },		\
-> +		.default_state = true			\
-> +	}
-> +
-> +#define LSM_HOOK_INIT_DISABLED(NAME, CALLBACK)		\
-> +	{						\
-> +		.scalls = static_calls_table.NAME,	\
-> +		.hook = { .NAME = CALLBACK },		\
-> +		.default_state = false			\
->  	}
->  
->  extern char *lsm_names;
-> diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
-> index e97aeda3a86b..44788e2eaa1b 100644
-> --- a/kernel/bpf/trampoline.c
-> +++ b/kernel/bpf/trampoline.c
-> @@ -13,6 +13,7 @@
->  #include <linux/bpf_verifier.h>
->  #include <linux/bpf_lsm.h>
->  #include <linux/delay.h>
-> +#include <linux/bpf_lsm.h>
->  
->  /* dummy _ops. The verifier will operate on target program's ops. */
->  const struct bpf_verifier_ops bpf_extension_verifier_ops = {
-> @@ -510,6 +511,21 @@ static enum bpf_tramp_prog_type bpf_attach_type_to_tramp(struct bpf_prog *prog)
->  	}
->  }
->  
-> +static void bpf_trampoline_toggle_lsm(struct bpf_trampoline *tr,
-> +				      enum bpf_tramp_prog_type kind)
-> +{
-> +	struct bpf_tramp_link *link;
-> +	bool found = false;
-> +
-> +	hlist_for_each_entry(link, &tr->progs_hlist[kind], tramp_hlist) {
-> +		if (link->link.prog->type == BPF_PROG_TYPE_LSM) {
-> +			found  = true;
-> +			break;
-> +		}
-> +	}
-> +	bpf_lsm_toggle_hook(tr->func.addr, found);
-> +}
-> +
->  static int __bpf_trampoline_link_prog(struct bpf_tramp_link *link, struct bpf_trampoline *tr)
->  {
->  	enum bpf_tramp_prog_type kind;
-> @@ -549,6 +565,10 @@ static int __bpf_trampoline_link_prog(struct bpf_tramp_link *link, struct bpf_tr
->  
->  	hlist_add_head(&link->tramp_hlist, &tr->progs_hlist[kind]);
->  	tr->progs_cnt[kind]++;
-> +
-> +	if (link->link.prog->type == BPF_PROG_TYPE_LSM)
-> +		bpf_trampoline_toggle_lsm(tr, kind);
-> +
->  	err = bpf_trampoline_update(tr, true /* lock_direct_mutex */);
->  	if (err) {
->  		hlist_del_init(&link->tramp_hlist);
-> @@ -582,6 +602,10 @@ static int __bpf_trampoline_unlink_prog(struct bpf_tramp_link *link, struct bpf_
->  	}
->  	hlist_del_init(&link->tramp_hlist);
->  	tr->progs_cnt[kind]--;
-> +
-> +	if (link->link.prog->type == BPF_PROG_TYPE_LSM)
-> +		bpf_trampoline_toggle_lsm(tr, kind);
-> +
->  	return bpf_trampoline_update(tr, true /* lock_direct_mutex */);
->  }
->  
-> diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
-> index cfaf1d0e6a5f..47e1a4777ec9 100644
-> --- a/security/bpf/hooks.c
-> +++ b/security/bpf/hooks.c
-> @@ -8,7 +8,7 @@
->  
->  static struct security_hook_list bpf_lsm_hooks[] __ro_after_init = {
->  	#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
-> -	LSM_HOOK_INIT(NAME, bpf_lsm_##NAME),
-> +	LSM_HOOK_INIT_DISABLED(NAME, bpf_lsm_##NAME),
->  	#include <linux/lsm_hook_defs.h>
->  	#undef LSM_HOOK
->  	LSM_HOOK_INIT(inode_free_security, bpf_inode_storage_free),
-> @@ -32,3 +32,26 @@ DEFINE_LSM(bpf) = {
->  	.init = bpf_lsm_init,
->  	.blobs = &bpf_lsm_blob_sizes
->  };
-> +
-> +void bpf_lsm_toggle_hook(void *addr, bool value)
-> +{
-> +	struct lsm_static_call *scalls;
-> +	struct security_hook_list *h;
-> +	int i, j;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(bpf_lsm_hooks); i++) {
-> +		h = &bpf_lsm_hooks[i];
-> +		if (h->hook.lsm_callback != addr)
-> +			continue;
-> +
-> +		for (j = 0; j < MAX_LSM_COUNT; j++) {
-> +			scalls = &h->scalls[j];
-> +			if (scalls->hl != &bpf_lsm_hooks[i])
-> +				continue;
-> +			if (value)
-> +				static_branch_enable(scalls->active);
-> +			else
-> +				static_branch_disable(scalls->active);
-> +		}
-> +	}
-> +}
-> diff --git a/security/security.c b/security/security.c
-> index ce4c0a9107ea..f45e875b6d93 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -382,7 +382,8 @@ static void __init lsm_static_call_init(struct security_hook_list *hl)
->  			__static_call_update(scall->key, scall->trampoline,
->  					     hl->hook.lsm_callback);
->  			scall->hl = hl;
-> -			static_branch_enable(scall->active);
-> +			if (hl->default_state)
-> +				static_branch_enable(scall->active);
->  			return;
->  		}
->  		scall++;
-> -- 
-> 2.42.0.609.gbb76f46606-goog
+> This function is only used in add_rule_net_service(), so it should not
+> be exported, and we can merge it (into landlock_add_rule_net_port).
+> 
+> > +{
+> > +	int err;
+> > +	const struct landlock_id id = {
+> > +		.key.data = (__force uintptr_t)htons(port),
+> > +		.type = LANDLOCK_KEY_NET_PORT,
+> > +	};
+> > +
+> > +	BUILD_BUG_ON(sizeof(port) > sizeof(id.key.data));
+> > +
+> > +	/* Transforms relative access rights to absolute ones. */
+> > +	access_rights |= LANDLOCK_MASK_ACCESS_NET &
+> > +			 ~landlock_get_net_access_mask(ruleset, 0);
+> > +
+> > +	mutex_lock(&ruleset->lock);
+> > +	err = landlock_insert_rule(ruleset, id, access_rights);
+> > +	mutex_unlock(&ruleset->lock);
+> > +
+> > +	return err;
+> > +}
+> > +
+> > +int add_rule_net_service(struct landlock_ruleset *ruleset,
+> 
+> We should only export functions with a "landlock_" prefix, and "service"
+> is now replaced with "port", which gives landlock_add_rule_net_port().
+> 
+> For consistency, we should also rename add_rule_path_beneath() into
+> landlock_add_rule_path_beneath(), move it into fs.c, and merge
+> landlock_append_fs_rule() into it (being careful to not move the related
+> code to ease review). This change should be part of the "landlock:
+> Refactor landlock_add_rule() syscall" patch. Please be careful to keep
+> the other changes happening in other patches.
 > 
 > 
+> > +			 const void __user *const rule_attr)
+> > +{
+> > +	struct landlock_net_port_attr net_port_attr;
+> > +	int res;
+> > +	access_mask_t mask, bind_access_mask;
+> > +
+> > +	/* Copies raw user space buffer. */
+> > +	res = copy_from_user(&net_port_attr, rule_attr, sizeof(net_port_attr));
+> 
+> We should include <linux/uaccess.h> because of copy_from_user().
+> 
+> Same for landlock_add_rule_path_beneath().
+> 
+> > +	if (res)
+> > +		return -EFAULT;
+> > +
+> > +	/*
+> > +	 * Informs about useless rule: empty allowed_access (i.e. deny rules)
+> > +	 * are ignored by network actions.
+> > +	 */
+> > +	if (!net_port_attr.allowed_access)
+> > +		return -ENOMSG;
+> > +
+> > +	/*
+> > +	 * Checks that allowed_access matches the @ruleset constraints
+> > +	 * (ruleset->access_masks[0] is automatically upgraded to 64-bits).
+> > +	 */
+> > +	mask = landlock_get_net_access_mask(ruleset, 0);
+> > +	if ((net_port_attr.allowed_access | mask) != mask)
+> > +		return -EINVAL;
+> > +
+> > +	/*
+> > +	 * Denies inserting a rule with port 0 (for bind action) or
+> > +	 * higher than 65535.
+> > +	 */
+> > +	bind_access_mask = net_port_attr.allowed_access &
+> > +			   LANDLOCK_ACCESS_NET_BIND_TCP;
+> > +	if (((net_port_attr.port == 0) &&
+> > +	     (bind_access_mask == LANDLOCK_ACCESS_NET_BIND_TCP)) ||
+> > +	    (net_port_attr.port > U16_MAX))
+> > +		return -EINVAL;
+> > +
+> > +	/* Imports the new rule. */
+> > +	return landlock_append_net_rule(ruleset, net_port_attr.port,
+> > +					net_port_attr.allowed_access);
+> > +}
+
+Please ignore the above suggestions. Thinking more about this, let's
+keep the static add_rule_net_service() in syscalls.c, and only make the
+inline landlock_add_rule_net_service() return -EAFNOSUPPORT (which is
+already the case with this patch when CONFIG_INET is not set). This will
+slightly change the current semantic but enable to check all the
+syscalls arguments even if CONFIG_INET is not set, which is a good thing
+(and should be reflected in tests). It is better to group all the code
+handling user space memory copying and ABI specificities in the
+syscalls.c file. This approach is simpler, it will avoid the exported
+function issues (e.g. add_rule_net_service), and it will not require
+more changes to the fs.[ch] files.
