@@ -2,178 +2,292 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB45CD8CAE
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Oct 2023 18:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCA0CD98C0
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Oct 2023 21:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234090AbjJJS27 (ORCPT
+        id S234488AbjJJVUQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Oct 2023 14:28:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50314 "EHLO
+        Tue, 10 Oct 2023 17:20:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233867AbjJJS2z (ORCPT
+        with ESMTP id S231841AbjJJVUP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Oct 2023 14:28:55 -0400
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9421D9E;
-        Tue, 10 Oct 2023 11:28:53 -0700 (PDT)
-Received: by mail-qv1-xf2b.google.com with SMTP id 6a1803df08f44-65b0383f618so38729856d6.1;
-        Tue, 10 Oct 2023 11:28:53 -0700 (PDT)
+        Tue, 10 Oct 2023 17:20:15 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C04AC
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Oct 2023 14:20:12 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-d9a516b015cso1526652276.2
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Oct 2023 14:20:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696962532; x=1697567332; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1696972811; x=1697577611; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wnajvNZsdDrjqmDE9m+4VY4K3z2D3qww+2KfBOKVw1Y=;
-        b=e4zTVIDgV/xdihFaUQvo1GC7mqQhc260fXf41qKAW8YQIHQKU7kYtnvStm4greE1Qu
-         XGmkU/bkciHoI8q5QpalDiQ4+4vRkjWKIWQP99Fo/bRhtp+Y+mJPHAMJP9cc32kBZrxf
-         mAbeycr9JiCT7u10FBE3FnWNuCOY5eBuC6GMd07Mpr/I4HGBZOTzv7b6eMG5ocsDbvoe
-         YP5oJ7jCCF2jwQyU4g6JGte25odgGX4UZ8WYorBsllu94PTMDEg8ZDnIu4ClmN0uJ8o/
-         3BTXtEzdGkxVmasNV28zhP+rw73ANJDyl5GYaq37wQeke69f6HWxMTf5duV8n+ECl9q6
-         eenA==
+        bh=l5WnvZdCnoM58J1wFevooPtZFhGHwe1PvsjVxfIMlrQ=;
+        b=Xa3B6S4FoNNOJkLolu/6hpaaiFcTJRpQcG2QS6rUW63xDa3sR902LM9KB/JySIt1l+
+         uo6aTQ+5Teh+r3nhZLJLMaj5cXakz20jDVnhsQS5QyXizjh8pZedG868l/t+3BSGWxt7
+         vwCzMv9lzI6j11/FmTchKHaaK7//Dkkg4IfP/KNrp6kpc6n/1R/iw5UBad6ic0/OHak5
+         xnW87RD94VeGppYkEv1NRtGK79uy0eQCWpwJ8K/mqX6awoZ/ByoHzehu5CDSMsTdb3Ds
+         PecDuB6i4ioeRNz/htjWpUZ24eQz08SLDcdWrUSZ+39o9UN0OwRx9+Z0zYNkkmnFXXHa
+         zlHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696962532; x=1697567332;
+        d=1e100.net; s=20230601; t=1696972811; x=1697577611;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wnajvNZsdDrjqmDE9m+4VY4K3z2D3qww+2KfBOKVw1Y=;
-        b=HD2uaq4IQFzewxbqqqpRDtvjPM6cLZ4JhuVXRKcX7oaJWOWxVM4wdMoBUPSE1Xw5wY
-         nSVKXEO+WVk6r4Nn2INLRzN9pWPyilg0uA3MidB4fXFbh8El/mSteTljwaUiFwHPGaqd
-         jHfqzYT3m47sC+u+oxpiPo8cFLpS4XjKKk4Hz8xEGCr0hn/c6ODbmHi9ttJjXemWkfoQ
-         I/GDRTg9RgvqD+NhGm1bN5Krq+QH1gCO+CgS3aq4vriXic+VIux4HEvwOLYHcgpoKGvD
-         FYN1DE6adTb2zA2w81STBQ8Phs5aoab8tDhK3rb4+h/VZFGXkB+NQG3M3sR/s6+dA5WO
-         UE6A==
-X-Gm-Message-State: AOJu0YzLf5D2XwmSqOVFIsBpDbrES7scfGHRhTtGkI9A+7uivXtU/a51
-        a/iyLcYZmqfEBIA970OeXlpUMXPOs36fdff/8Yw=
-X-Google-Smtp-Source: AGHT+IGOjBU3V2UBhf2oW84TcfxBy53NLZBbEJsIqRV0DPj+iZr9o2ZQe+dH7YssI0mKsfkjputPkReAeBl2Xjmhbqk=
-X-Received: by 2002:a0c:cb0b:0:b0:66a:f5ef:d7e7 with SMTP id
- o11-20020a0ccb0b000000b0066af5efd7e7mr12457450qvk.27.1696962532599; Tue, 10
- Oct 2023 11:28:52 -0700 (PDT)
+        bh=l5WnvZdCnoM58J1wFevooPtZFhGHwe1PvsjVxfIMlrQ=;
+        b=tYAhYnmCeBlntW6Dwyt4B3i5Tu9XVKrC2TN3CkQpwGWPKn1UdqFCmNEFML450VEeAm
+         r/1T2xWvlO4vVZU5fsodKUrbnErRkfyjOKg6TJ5eIqO6SUfIkogh1zxKBAmZz+v7BN5z
+         ASg+m4sZxYnkSXhQzKG1eGxTe6t7uske9QD3e+hXUqLvVMS629O3hsrZyiZXwO4o9iQU
+         ykaAyVYB3stEy98BzWNXWt9K5nDGEwwI3IfyefSrEIMUma3vbfkp5qMRmlqpx7DS2Kix
+         PsFymDgj7+QC+ljHwG9qDrTp2laHXqwJDZZtOA5/7lUPqmPlj9PSwATUPvR9JDgZ6+QA
+         0GYA==
+X-Gm-Message-State: AOJu0Yy4wc115ejuKzny8gGfvooeapAZdwDQ77rF8iIfCc+AkBxmATa3
+        SR2Mlf2WxhesxnX1zfKV+mFDFwhBmeP0G+W7zYAH
+X-Google-Smtp-Source: AGHT+IF625SGysDbsQ+Cvj60L41qzvjjwZ4GrMKwK623Ur1RKSHKqJcNcRxnrMbipgypR7FJzfoKE1Htra2884IwPZA=
+X-Received: by 2002:a25:c785:0:b0:d84:a6e8:9b9 with SMTP id
+ w127-20020a25c785000000b00d84a6e809b9mr20105448ybe.28.1696972810186; Tue, 10
+ Oct 2023 14:20:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <20231009153712.1566422-1-amir73il@gmail.com> <20231009153712.1566422-4-amir73il@gmail.com>
- <CAJfpegtcNOCMp+QBPFD5aUEok6u7AqwrGqAqMCZeeuyq6xfYFw@mail.gmail.com>
- <CAOQ4uxiAHJy6viXBubm0y7x3J3P7N5XijOU8C340fi2Dpc7zXA@mail.gmail.com>
- <CAOQ4uxipA5oCQXn1-JZ+TbXw2-5O+_++FfNHC6fKqhNXfR7C0w@mail.gmail.com>
- <CAJfpeguEf71ZknP5rGU9YNtJTp1wBGBKyv6M0JZ=5ETuaipDxQ@mail.gmail.com>
- <20231010165504.GP800259@ZenIV> <20231010174146.GQ800259@ZenIV>
- <CAOQ4uxjHKU0q8dSBQhGpcdp-Dg1Hx-zxs3AurXZBQnKBkV7PAw@mail.gmail.com> <20231010182141.GR800259@ZenIV>
-In-Reply-To: <20231010182141.GR800259@ZenIV>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 10 Oct 2023 21:28:41 +0300
-Message-ID: <CAOQ4uxg7ZmDfyEam2v7Be5Chv_WBccxpExTnG+70fRz9BooyyQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] fs: store real path instead of fake path in
- backing file f_path
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Christian Brauner <brauner@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
+References: <20230912212906.3975866-3-andrii@kernel.org> <3808036a0b32a17a7fd9e7d671b5458d.paul@paul-moore.com>
+ <CAEf4BzYiKhG3ZL-GGQ4fHzSu6RKx2fh2JHwcL9_XKzQBvx3Bjg@mail.gmail.com>
+ <CAHC9VhSOCAb6JQJn96xgwNNMGM0mKXf64ygkj4=Yv0FA8AYR=Q@mail.gmail.com>
+ <CAEf4BzZC+9GbCsG56B2Q=woq+RHQS8oMTGJSNiMFKZpOKHhKpg@mail.gmail.com>
+ <CAHC9VhTiqhQcfDr-7mThY1kH-Fwa7NUUU8ZWZvLFVudgtO8RAA@mail.gmail.com> <CAEf4BzZ8RvGwzVfm-EN1qdDiTv3Q2eYxBKOdBgGT96XzcvJCpw@mail.gmail.com>
+In-Reply-To: <CAEf4BzZ8RvGwzVfm-EN1qdDiTv3Q2eYxBKOdBgGT96XzcvJCpw@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 10 Oct 2023 17:19:59 -0400
+Message-ID: <CAHC9VhTp-YPRi8NzCr4_GT8BiWUcpQ4RrYqVQNE1HZwFOOffMg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/12] bpf: introduce BPF token object
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
+        sargun@sargun.me, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 10, 2023 at 9:21=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> On Tue, Oct 10, 2023 at 08:57:21PM +0300, Amir Goldstein wrote:
-> > On Tue, Oct 10, 2023 at 8:41=E2=80=AFPM Al Viro <viro@zeniv.linux.org.u=
-k> wrote:
-> > >
-> > > On Tue, Oct 10, 2023 at 05:55:04PM +0100, Al Viro wrote:
-> > > > On Tue, Oct 10, 2023 at 03:34:45PM +0200, Miklos Szeredi wrote:
-> > > > > On Tue, 10 Oct 2023 at 15:17, Amir Goldstein <amir73il@gmail.com>=
- wrote:
+On Fri, Sep 22, 2023 at 6:35=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+> On Thu, Sep 21, 2023 at 3:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On Fri, Sep 15, 2023 at 4:59=E2=80=AFPM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
+> > > On Thu, Sep 14, 2023 at 5:55=E2=80=AFPM Paul Moore <paul@paul-moore.c=
+om> wrote:
+> > > > On Thu, Sep 14, 2023 at 1:31=E2=80=AFPM Andrii Nakryiko
+> > > > <andrii.nakryiko@gmail.com> wrote:
+> > > > > On Wed, Sep 13, 2023 at 2:46=E2=80=AFPM Paul Moore <paul@paul-moo=
+re.com> wrote:
+> > > > > >
+> > > > > > On Sep 12, 2023 Andrii Nakryiko <andrii.nakryiko@gmail.com> wro=
+te:
+
+...
+
+> > > > > > I mentioned this a while back, likely in the other threads wher=
+e this
+> > > > > > token-based approach was only being discussed in general terms,=
+ but I
+> > > > > > think we want to have a LSM hook at the point of initial token
+> > > > > > delegation for this and a hook when the token is used.  My init=
+ial
+> > > > > > thinking is that we should be able to address the former with a=
+ hook
+> > > > > > in bpf_fill_super() and the latter either in bpf_token_get_from=
+_fd()
+> > > > > > or bpf_token_allow_XXX(); bpf_token_get_from_fd() would be simp=
+ler,
+> > > > > > but it doesn't allow for much in the way of granularity.  Inser=
+ting the
+> > > > > > LSM hooks in bpf_token_allow_XXX() would also allow the BPF cod=
+e to fall
+> > > > > > gracefully fallback to the system-wide checks if the LSM denied=
+ the
+> > > > > > requested access whereas an access denial in bpf_token_get_from=
+_fd()
+> > > > > > denial would cause the operation to error out.
 > > > > >
-> > > > > > Sorry, you asked about ovl mount.
-> > > > > > To me it makes sense that if users observe ovl paths in writabl=
-e mapped
-> > > > > > memory, that ovl should not be remounted RO.
-> > > > > > Anyway, I don't see a good reason to allow remount RO for ovl i=
-n that case.
-> > > > > > Is there?
-> > > > >
-> > > > > Agreed.
-> > > > >
-> > > > > But is preventing remount RO important enough to warrant special
-> > > > > casing of backing file in generic code?  I'm not convinced either
-> > > > > way...
+> > > > > I think the bpf_fill_super() LSM hook makes sense, but I thought
+> > > > > someone mentioned that we already have some generic LSM hook for
+> > > > > validating mounts? If we don't, I can certainly add one for BPF F=
+S
+> > > > > specifically.
 > > > >
-> > > > You definitely want to guarantee that remounting filesystem r/o
-> > > > prevents the changes of visible contents; it's not just POSIX,
-> > > > it's a fairly basic common assumption about any local filesystems.
+> > > > We do have security_sb_mount(), but that is a generic mount operati=
+on
+> > > > access control and not well suited for controlling the mount-based
+> > > > capability delegation that you are proposing here.  However, if you=
+ or
+> > > > someone else has a clever way to make security_sb_mount() work for
+> > > > this purpose I would be very happy to review that code.
 > > >
-> > > Incidentally, could we simply keep a reference to original struct fil=
-e
-> > > instead of messing with path?
-> > >
-> > > The only caller of backing_file_open() gets &file->f_path as user_pat=
-h; how
-> > > about passing file instead, and having backing_file_open() do get_fil=
-e()
-> > > on it and stash the sucker into your object?
-> > >
-> > > And have put_file_access() do
-> > >         if (unlikely(file->f_mode & FMODE_BACKING))
-> > >                 fput(backing_file(file)->file);
-> > > in the end.
-> > >
-> > > No need to mess with write access in any special way and it's closer
-> > > to the semantics we have for normal mmap(), after all - it keeps the
-> > > file we'd passed to it open as long as mapping is there.
-> > >
-> > > Comments?
+> > > To be honest, I'm a bit out of my depth here, as I don't know the
+> > > mounting parts well. Perhaps someone from VFS side can advise. But
+> > > regardless, I have no problem adding a new LSM hook as well, ideally
+> > > not very BPF-specific. If you have a specific form of it in mind, I'd
+> > > be curious to see it and implement it.
 > >
-> > Seems good to me.
-> > It also shrinks backing_file by one pointer.
-> >
-> > I think this patch can be an extra one after
-> > "fs: store real path instead of fake path in backing file f_path"
-> >
-> > Instead of changing storing of real_path to storing orig file in
-> > one change?
-> >
-> > If there are no objections, I will write it up.
+> > I agree that there can be benefits to generalized LSM hooks, but in
+> > this hook I think it may need to be BPF specific simply because the
+> > hook would be dealing with the specific concept of delegating BPF
+> > permissions.
 >
-> Actually, now that I'd looked at it a bit more...  Look:
-> we don't need to do *anything* in put_file_access(); just
-> make file_free()
->         if (unlikely(f->f_mode & FMODE_BACKING))
->                 fput(backing_file(f)->user_file);
-> instead of conditional path_put().  That + change of open_backing_file()
-> prototype + get_file() in there pretty much eliminates the work done
-> in 1/3 - you don't need to mess with {get,put}_file_write_access()
-> at all.
->
-> I'd start with this:
->
-> struct file *vm_user_file(struct vm_area_struct *vma)
-> {
->         return vma->vm_file;
-> }
-> + replace file =3D vma->vm_file; with file =3D vm_user_file(vma) in
-> the places affected by your 2/3.  That's the first (obviously
-> safe) commit.  Then the change of backing_file_open() combined
-> with making vm_user_file() do this:
->         file =3D vma->vm_file;
->         if (file && unlikely(file->f_mode & FMODE_BACKING))
->                 file =3D backing_file(file)->user_file;
->         return file;
->
-> Voila.  Two-commit series, considerably smaller than your
-> variant...
->
+> Sure. As an alternative, if this is about controlling BPF delegation,
+> instead of doing mount-time checks and LSM hook, perhaps we can add a
+> new LSM hook to BPF_CREATE_TOKEN, just like we have ones for
+> BPF_MAP_CREATE and BPF_PROG_LOAD. That will enable controlling
+> delegation more directly when it is actually attempted to be used.
 
-Yap. looks very nice.
-I will try that out tomorrow.
+I'm also going to reply to the v6 patchset, but I thought there were
+some important points in this thread that were worth responding to
+here so that it would have the context of our previous discussion.
 
-Anyway, it doesn't hurt to have the current version in linux-next
-for the night to see if the change from fake f_path to real f_path
-has any unexpected outcomes.
+So yes, from an LSM perspective we are concerned with who grants the
+delegation (creates the token) and who leverages that token to do
+work.  When this patchset was still using anonymous inodes, marking
+and controlling token creation was relatively easy as we have existing
+hooks/control-points for anonymous inodes which take into account the
+anonymous inode class/type, e.g. bpffs.  Now that this patchset is
+using a regular bpffs inode we may need to do some additional work so
+that we can mark the bpffs token inode as a "token" so that we can
+later distinguish it from an ordinary bpffs inode; it might also serve
+as a convenient place to control creation of the token, but as you
+have already mentioned we could also control this from the existing
+security_bpf(BPF_CREATE_TOKEN, ...) hook at the top of __sys_bpf().
 
-Thanks for the suggestions!
-Amir.
+Anyway, more on this in the v6 patchset.
+
+> > I haven't taken the time to write up any hook patches yet as I wanted
+> > to discuss it with you and the others on the To/CC line, but it seems
+> > like we are roughly on the same page, at least with the initial
+> > delegation hook, so I can put something together if you aren't
+> > comfortable working on this (more on this below) ...
+>
+> I'd appreciate the help from the SELinux side specifically, yes. I'm
+> absolutely OK to add a few new LSM hooks, though.
+
+I just want to say again that I'm very happy we can work together to
+make sure everything is covered :)
+
+> > > > > As for the bpf_token_allow_xxx(). This feels a bit too specific a=
+nd
+> > > > > narrow-focused. What if we later add yet another dimension for BP=
+F FS
+> > > > > and token? Do we need to introduce yet another LSM for each such =
+case?
+> > > >
+> > > > [I'm assuming you meant new LSM *hook*]
+> > >
+> > > yep, of course, sorry about using terminology sloppily
+> > >
+> > > > Possibly.  There are also some other issues which I've been thinkin=
+g
+> > > > about along these lines, specifically the fact that the
+> > > > capability/command delegation happens after the existing
+> > > > security_bpf() hook is called which makes things rather awkward fro=
+m a
+> > > > LSM perspective: the LSM would first need to allow the process acce=
+ss
+> > > > to the desired BPF op using it's current LSM specific security
+> > > > attributes (e.g. SELinux security domain, etc.) and then later
+> > > > consider the op in the context of the delegated access control righ=
+ts
+> > > > (if the LSM decides to support those hooks).
+> > > >
+> > > > I suspect that if we want to make this practical we would need to
+> > > > either move some of the token code up into __sys_bpf() so we could
+> > > > have a better interaction with security_bpf(), or we need to consid=
+er
+> > > > moving the security_bpf() call into the op specific functions.  I'm
+> > > > still thinking on this (lots of reviews to get through this week), =
+but
+> > > > I'm hoping there is a better way because I'm not sure I like either
+> > > > option very much.
+> > >
+> > > Yes, security_bpf() is happening extremely early and is lacking a lot
+> > > of context. I'm not sure if moving it around is a good idea as it
+> > > basically changes its semantics.
+> >
+> > There are a couple of things that make this not quite as scary as it
+> > may seem.  The first is that currently only SELinux implements a
+> > security_bpf() hook and the implementation is rather simplistic in
+> > terms of what information it requires to perform the existing access
+> > controls; decomposing the single security_bpf() call site into
+> > multiple op specific calls, perhaps with some op specific hooks,
+> > should be doable without causing major semantic changes.  The second
+> > thing is that we could augment the existing security_bpf() hook and
+> > call site with a new LSM hook(s) that are called from the op specific
+> > call sites; this would allow those LSMs that desire the current
+> > semantics to use the existing security_bpf() hook and those that wish
+> > to use the new semantics could implement the new hook(s).  This is
+> > very similar to the pathname-based and inode-based hooks in the VFS
+> > layer, some LSMs choose to implement pathname-based security and use
+> > one set of hooks, while others implement a label-based security
+> > mechanism and use a different set of hooks.
+>
+> Agreed. I think new LSM hooks that are operation-specific make a lot
+> of sense. I'd probably not touch existing security_bpf(), it's an
+> early-entry LSM hook for anything bpf() syscall-specific. This might
+> be very useful in some cases, probably.
+>
+> > > But adding a new set of coherent LSM
+> > > hooks per each appropriate BPF operation with good context to make
+> > > decisions sounds like a good improvement. E.g., for BPF_PROG_LOAD, we
+> > > can have LSM hook after struct bpf_prog is allocated, bpf_token is
+> > > available, attributes are sanity checked. All that together is a very
+> > > useful and powerful context that can be used both by more fixed LSM
+> > > policies (like SELinux), and very dynamic user-defined BPF LSM
+> > > programs.
+> >
+> > This is where it is my turn to mention that I'm getting a bit out of
+> > my depth, but I'm hopeful that the two of us can keep each other from
+> > drowning :)
+> >
+> > Typically the LSM hook call sites end up being in the same general
+> > area as the capability checks, usually just after (we want the normal
+> > Linux discretionary access controls to always come first for the sake
+> > of consistency).  Sticking with that approach it looks like we would
+> > end up with a LSM call in bpf_prog_load() right after bpf_capable()
+> > call, the only gotcha with that is the bpf_prog struct isn't populated
+> > yet, but how important is that when we have the bpf_attr info (honest
+> > question, I don't know the answer to this)?
+>
+> Ok, so I agree in general about having LSM hooks close to capability
+> checks, but at least specifically for BPF_PROG_CREATE, it won't work.
+> This bpf_capable() check you mention. This is just one check. If you
+> look into bpf_prog_load() in kernel/bpf/syscall.c, you'll see that we
+> can also check CAP_PERFMON, CAP_NET_ADMIN, and CAP_SYS_ADMIN, in
+> addition to CAP_BPF, based on various aspects (like program type +
+> subtype).
+
+That's a fair point.
+
+> So for such a complex BPF_PROG_CREATE operation I think we
+> should deviate a bit and place LSM in a logical place that would
+> enable doing LSM enforcement with lots of relevant information, but
+> before doing anything dangerous or expensive.
+>
+> For BPF_PROG_LOAD that place seems to be right before bpf_check(),
+> which is BPF verification ...
+
+> ... Right now we have `security_bpf_prog_alloc(prog->aux);`, which is
+> almost in the ideal place, but provides prog->aux instead of program
+> itself (not sure why), and doesn't provide bpf_attr and bpf_token.
+>
+> So I'm thinking that maybe we get rid of bpf_prog_alloc() in favor of
+> new security_bpf_prog_load(prog, &attr, token)?
+
+That sounds reasonable.  We'll need to make sure we update the docs
+for that LSM hook to indicate that it performs both allocation of the
+LSM's BPF program state (it's current behavior), as well as access
+control for BPF program loads both with and without delegation.
+
+I think those are the big points worth wrapping up here in this
+thread, I'll move the rest over to the v6 patchset.
+
+--=20
+paul-moore.com
