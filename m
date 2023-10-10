@@ -2,182 +2,241 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB727CD6907
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Oct 2023 08:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C5CCD690C
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Oct 2023 09:14:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1443087AbjJJIhF (ORCPT
+        id S229541AbjJJJOL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Oct 2023 04:37:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43870 "EHLO
+        Tue, 10 Oct 2023 05:14:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1443048AbjJJIga (ORCPT
+        with ESMTP id S229694AbjJJJOK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Oct 2023 04:36:30 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F473B0;
-        Tue, 10 Oct 2023 01:35:53 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-53829312d12so13926112a12.0;
-        Tue, 10 Oct 2023 01:35:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696926951; x=1697531751; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BMi8wdVxApb25LjYsbqQ7Zs0KqzUPo1pOmHWaAx78bA=;
-        b=FD7U6M8XqN+Yj1c9oZwfBz+QO7QV/lKsyM6Z0PZLD9bQGR6Wuz3feG/ZK4G86sBDzQ
-         Fr+PRwuF3zFqxaOY/o58hzfxRVnTG+L9WEs4/S5/IFalX6Bjm8mffprvRp6wT8C5wUvU
-         7N9nQRlFqYXx6fkI4fQ99/ARSONVieFevAN4y1uEy9VccRmaTh+JOnfLWbeLr4NwFmfL
-         FqHqwvAbH6/LWRUL/N/3b/IpZjTPmER4O0/ZTeA/YvMvYTt5KNtQB7v/m4JNnLCLbi78
-         IxC99pr6WLFyBgTCI7KfffWmW/fVRlXjqZcK20UaqJS3n8dk1uEA/OF10i0KRUbpOsD4
-         rseQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696926951; x=1697531751;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BMi8wdVxApb25LjYsbqQ7Zs0KqzUPo1pOmHWaAx78bA=;
-        b=Pe2TqSsvN0on/FjHSIIZSWf2IJeRbnwUXPFYfVbPCsdPgQti/Vt+M36hITaPTMduLn
-         NF010Nj6CnmwC24wibRWhz6Hm9yYKuYEOtQ6ARayP3lX1iCu6kX+lXArlHPKQ6Q3CzId
-         AK/4j7ifYtpK91ZHa9SCdgpC/c9Nm0J8QPF51Rj6rpHHYgZ9gBeyQ2aZlhRb66fn0L3i
-         GxcR03EMUQ88TUHdktxyupU4BB+86+rzli+rBjeU0osVLd7YueFhr2zDrjs6y+Hk093E
-         nY6sYt/gLRKBSU2/4ATNUvsp3E+n3eQIbc0uAJV3qZK6kA3esgQlS+n7NBeqZWVnI0tY
-         WsWw==
-X-Gm-Message-State: AOJu0YyAxHpxqyvHzvP3kgWOkMlyLvseIu8tNHw2CZbJw7tU+6P2Fq5q
-        yn7v1m5MT7ZoOzIfb8zWi9EUmDp4S6Q=
-X-Google-Smtp-Source: AGHT+IErGjDETTfbLZBe+IUptE2vO9PBQ0X0ZvVP3jvwOnlcuV4fFhG+shtCF2fNB/No8v3wNNpRIw==
-X-Received: by 2002:a05:6402:1a33:b0:522:582c:f427 with SMTP id be19-20020a0564021a3300b00522582cf427mr13675180edb.14.1696926951033;
-        Tue, 10 Oct 2023 01:35:51 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id u1-20020a05640207c100b005311e934765sm7279443edy.27.2023.10.10.01.35.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Oct 2023 01:35:49 -0700 (PDT)
-From:   Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date:   Tue, 10 Oct 2023 10:35:48 +0200
-To:     Andrii Nakryiko <andrii@kernel.org>
-Cc:     bpf@vger.kernel.org, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
-        sargun@sargun.me
-Subject: Re: [PATCH v6 bpf-next 04/13] bpf: add BPF token support to
- BPF_MAP_CREATE command
-Message-ID: <ZSUM5A+dJHptbRSx@krava>
-References: <20230927225809.2049655-1-andrii@kernel.org>
- <20230927225809.2049655-5-andrii@kernel.org>
+        Tue, 10 Oct 2023 05:14:10 -0400
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 297D8A4
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Oct 2023 02:14:07 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4S4VZj0J0qzMq9pR;
+        Tue, 10 Oct 2023 09:14:05 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4S4VZd3TbZzMppBm;
+        Tue, 10 Oct 2023 11:14:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1696929244;
+        bh=DmhMn+vZSARxLDuUBIWnbvYSOLeU0DysGOMTDQ6nU4Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=U7+/Im0QDANsJTlneaGyYRsleuvfIKUJmYhchY5Y9icq0OgAbXBPe3xltkdhfE0pn
+         U3Fg7ERD+Ps6OEmTupWdekJ6jJCYn5ZfC3MHL6CQqLx0w/ivytjPTzPLsSmwlqZCCl
+         lOatDcGlutBWmFfJAHlScHxSf0ZpD0BwskkcPYxQ=
+Date:   Tue, 10 Oct 2023 11:14:00 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH v15 04/11] LSM: syscalls for current process attributes
+Message-ID: <20231010.eisha1Fohj8u@digikod.net>
+References: <20230912205658.3432-1-casey@schaufler-ca.com>
+ <20230912205658.3432-5-casey@schaufler-ca.com>
+ <20231003.kooghohS2Aiz@digikod.net>
+ <CAHC9VhT_ijmqo9ap-EokWHuALsMAqome2qcWgst3eRP6m+vbRA@mail.gmail.com>
+ <20231009.MieQu5ou2loo@digikod.net>
+ <CAHC9VhS_pFy=WUq8F7jXQ3gstdM36FG52NQ+OeESHRSa54h7MQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230927225809.2049655-5-andrii@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhS_pFy=WUq8F7jXQ3gstdM36FG52NQ+OeESHRSa54h7MQ@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 27, 2023 at 03:58:00PM -0700, Andrii Nakryiko wrote:
+On Mon, Oct 09, 2023 at 12:04:31PM -0400, Paul Moore wrote:
+> On Mon, Oct 9, 2023 at 11:37 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Thu, Oct 05, 2023 at 09:04:34PM -0400, Paul Moore wrote:
+> > > On Tue, Oct 3, 2023 at 10:09 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > On Tue, Sep 12, 2023 at 01:56:49PM -0700, Casey Schaufler wrote:
+> > > > > Create a system call lsm_get_self_attr() to provide the security
+> > > > > module maintained attributes of the current process.
+> > > > > Create a system call lsm_set_self_attr() to set a security
+> > > > > module maintained attribute of the current process.
+> > > > > Historically these attributes have been exposed to user space via
+> > > > > entries in procfs under /proc/self/attr.
+> > > > >
+> > > > > The attribute value is provided in a lsm_ctx structure. The structure
+> > > > > identifies the size of the attribute, and the attribute value. The format
+> > > > > of the attribute value is defined by the security module. A flags field
+> > > > > is included for LSM specific information. It is currently unused and must
+> > > > > be 0. The total size of the data, including the lsm_ctx structure and any
+> > > > > padding, is maintained as well.
+> > > > >
+> > > > > struct lsm_ctx {
+> > > > >         __u64 id;
+> > > > >         __u64 flags;
+> > > > >         __u64 len;
+> > > > >         __u64 ctx_len;
+> > > > >         __u8 ctx[];
+> > > > > };
+> > > > >
+> > > > > Two new LSM hooks are used to interface with the LSMs.
+> > > > > security_getselfattr() collects the lsm_ctx values from the
+> > > > > LSMs that support the hook, accounting for space requirements.
+> > > > > security_setselfattr() identifies which LSM the attribute is
+> > > > > intended for and passes it along.
+> > > > >
+> > > > > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > > > > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > > > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> > > > > Reviewed-by: John Johansen <john.johansen@canonical.com>
+> > > > > ---
+> > > > >  Documentation/userspace-api/lsm.rst |  70 +++++++++++++
+> > > > >  include/linux/lsm_hook_defs.h       |   4 +
+> > > > >  include/linux/lsm_hooks.h           |   1 +
+> > > > >  include/linux/security.h            |  19 ++++
+> > > > >  include/linux/syscalls.h            |   5 +
+> > > > >  include/uapi/linux/lsm.h            |  36 +++++++
+> > > > >  kernel/sys_ni.c                     |   2 +
+> > > > >  security/Makefile                   |   1 +
+> > > > >  security/lsm_syscalls.c             |  57 +++++++++++
+> > > > >  security/security.c                 | 152 ++++++++++++++++++++++++++++
+> > > > >  10 files changed, 347 insertions(+)
+> > > > >  create mode 100644 Documentation/userspace-api/lsm.rst
+> > > > >  create mode 100644 security/lsm_syscalls.c
+> > >
+> > > ...
+> > >
+> > > > > diff --git a/security/security.c b/security/security.c
+> > > > > index a3489c04b783..0d179750d964 100644
+> > > > > --- a/security/security.c
+> > > > > +++ b/security/security.c
+> > > > > @@ -3837,6 +3837,158 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
+> > > > >  }
+> > > > >  EXPORT_SYMBOL(security_d_instantiate);
+> > > > >
+> > > > > +/*
+> > > > > + * Please keep this in sync with it's counterpart in security/lsm_syscalls.c
+> > > > > + */
+> > > > > +
+> > > > > +/**
+> > > > > + * security_getselfattr - Read an LSM attribute of the current process.
+> > > > > + * @attr: which attribute to return
+> > > > > + * @uctx: the user-space destination for the information, or NULL
+> > > > > + * @size: pointer to the size of space available to receive the data
+> > > > > + * @flags: special handling options. LSM_FLAG_SINGLE indicates that only
+> > > > > + * attributes associated with the LSM identified in the passed @ctx be
+> > > > > + * reported.
+> > > > > + *
+> > > > > + * A NULL value for @uctx can be used to get both the number of attributes
+> > > > > + * and the size of the data.
+> > > > > + *
+> > > > > + * Returns the number of attributes found on success, negative value
+> > > > > + * on error. @size is reset to the total size of the data.
+> > > > > + * If @size is insufficient to contain the data -E2BIG is returned.
+> > > > > + */
+> > > > > +int security_getselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
+> > > > > +                      size_t __user *size, u32 flags)
+> > > > > +{
+> > > > > +     struct security_hook_list *hp;
+> > > > > +     struct lsm_ctx lctx = { .id = LSM_ID_UNDEF, };
+> > > > > +     u8 __user *base = (u8 __user *)uctx;
+> > > > > +     size_t total = 0;
+> > > > > +     size_t entrysize;
+> > > > > +     size_t left;
+> > > > > +     bool toobig = false;
+> > > > > +     bool single = false;
+> > > > > +     int count = 0;
+> > > > > +     int rc;
+> > > > > +
+> > > > > +     if (attr == LSM_ATTR_UNDEF)
+> > > > > +             return -EINVAL;
+> > > > > +     if (size == NULL)
+> > > > > +             return -EINVAL;
+> > > > > +     if (get_user(left, size))
+> > > > > +             return -EFAULT;
+> > > > > +
+> > > > > +     if (flags) {
+> > > > > +             /*
+> > > > > +              * Only flag supported is LSM_FLAG_SINGLE
+> > > > > +              */
+> > > > > +             if (flags != LSM_FLAG_SINGLE)
+> > > > > +                     return -EINVAL;
+> > > > > +             if (uctx && copy_from_user(&lctx, uctx, sizeof(lctx)))
+> > > >
+> > > > I'm not sure if we should return -EINVAL or -EFAULT when uctx == NULL.
+> > > > Because uctx is optional (when LSM_FLAG_SINGLE is not set), I guess
+> > > > -EINVAL is OK.
+> > >
+> > > That's a good point, we should probably the error codes here: if uctx
+> > > is NULL in the LSM_FLAG_SINGLE case we should return -EINVAL, if the
+> > > copy_from_user() fails we should return -EFAULT.
+> > >
+> > > > > +                     return -EFAULT;
+> > > > > +             /*
+> > > > > +              * If the LSM ID isn't specified it is an error.
+> > > > > +              */
+> > > > > +             if (lctx.id == LSM_ID_UNDEF)
+> > > > > +                     return -EINVAL;
+> > > > > +             single = true;
+> > > > > +     }
+> > > > > +
+> > > > > +     /*
+> > > > > +      * In the usual case gather all the data from the LSMs.
+> > > > > +      * In the single case only get the data from the LSM specified.
+> > > > > +      */
+> > > > > +     hlist_for_each_entry(hp, &security_hook_heads.getselfattr, list) {
+> > > > > +             if (single && lctx.id != hp->lsmid->id)
+> > > > > +                     continue;
+> > > > > +             entrysize = left;
+> > > > > +             if (base)
+> > > > > +                     uctx = (struct lsm_ctx __user *)(base + total);
+> > > > > +             rc = hp->hook.getselfattr(attr, uctx, &entrysize, flags);
+> > > > > +             if (rc == -EOPNOTSUPP) {
+> > > > > +                     rc = 0;
+> > > > > +                     continue;
+> > > > > +             }
+> > > > > +             if (rc == -E2BIG) {
+> > > > > +                     toobig = true;
+> > > > > +                     left = 0;
+> > > > > +             } else if (rc < 0)
+> > > > > +                     return rc;
+> > > > > +             else
+> > > > > +                     left -= entrysize;
+> > > > > +
+> > > > > +             total += entrysize;
+> > > > > +             count += rc;
+> > > >
+> > > > There is a bug if rc == -E2BIG
+> > >
+> > > Can you elaborate a bit more on this? Nothing is jumping out at me as
+> > > obviously broken... are you talking about @count becoming garbage due
+> > > to @rc being equal to -E2BIG?  If that is the case it should be okay
+> > > since we explicitly return -E2BIG, not @count, if @toobig is true.
+> >
+> > Indeed, in this case count will not be returned thanks to toobig. I'd
+> > suggest to "continue" if rc == -E2BIG (like for -EOPNOTSUPP) to avoid an
+> > inconsistent count value, which could bite us one day.
+> 
+> Okay, how about we reset @rc to zero in the -E2BIG case?  We don't
+> want to bypass the lower part of the loop in this case as we still
+> need to update @total.
+> 
+>   if (rc == -E2BIG) {
+>     rc = 0;
+>     left = 0;
+>     toobig = true;
+>   }
 
-SNIP
+Indeed, this is better.
 
-> -#define BPF_MAP_CREATE_LAST_FIELD map_extra
-> +#define BPF_MAP_CREATE_LAST_FIELD map_token_fd
->  /* called via syscall */
->  static int map_create(union bpf_attr *attr)
->  {
->  	const struct bpf_map_ops *ops;
-> +	struct bpf_token *token = NULL;
->  	int numa_node = bpf_map_attr_numa_node(attr);
->  	u32 map_type = attr->map_type;
->  	struct bpf_map *map;
-> @@ -1157,14 +1158,32 @@ static int map_create(union bpf_attr *attr)
->  	if (!ops->map_mem_usage)
->  		return -EINVAL;
->  
-> +	if (attr->map_token_fd) {
-> +		token = bpf_token_get_from_fd(attr->map_token_fd);
-> +		if (IS_ERR(token))
-> +			return PTR_ERR(token);
-> +
-> +		/* if current token doesn't grant map creation permissions,
-> +		 * then we can't use this token, so ignore it and rely on
-> +		 * system-wide capabilities checks
-> +		 */
-> +		if (!bpf_token_allow_cmd(token, BPF_MAP_CREATE) ||
-> +		    !bpf_token_allow_map_type(token, attr->map_type)) {
-> +			bpf_token_put(token);
-> +			token = NULL;
-> +		}
-> +	}
-> +
-> +	err = -EPERM;
-> +
->  	/* Intent here is for unprivileged_bpf_disabled to block BPF map
->  	 * creation for unprivileged users; other actions depend
->  	 * on fd availability and access to bpffs, so are dependent on
->  	 * object creation success. Even with unprivileged BPF disabled,
->  	 * capability checks are still carried out.
->  	 */
-> -	if (sysctl_unprivileged_bpf_disabled && !bpf_capable())
-> -		return -EPERM;
-> +	if (sysctl_unprivileged_bpf_disabled && !bpf_token_capable(token, CAP_BPF))
-> +		goto put_token;
->  
->  	/* check privileged map type permissions */
->  	switch (map_type) {
-> @@ -1197,25 +1216,27 @@ static int map_create(union bpf_attr *attr)
->  	case BPF_MAP_TYPE_LRU_PERCPU_HASH:
->  	case BPF_MAP_TYPE_STRUCT_OPS:
->  	case BPF_MAP_TYPE_CPUMAP:
-> -		if (!bpf_capable())
-> -			return -EPERM;
-> +		if (!bpf_token_capable(token, CAP_BPF))
-> +			goto put_token;
->  		break;
->  	case BPF_MAP_TYPE_SOCKMAP:
->  	case BPF_MAP_TYPE_SOCKHASH:
->  	case BPF_MAP_TYPE_DEVMAP:
->  	case BPF_MAP_TYPE_DEVMAP_HASH:
->  	case BPF_MAP_TYPE_XSKMAP:
-> -		if (!bpf_net_capable())
-> -			return -EPERM;
-> +		if (!bpf_token_capable(token, CAP_NET_ADMIN))
-> +			goto put_token;
->  		break;
->  	default:
->  		WARN(1, "unsupported map type %d", map_type);
-> -		return -EPERM;
-> +		goto put_token;
->  	}
->  
->  	map = ops->map_alloc(attr);
-> -	if (IS_ERR(map))
-> -		return PTR_ERR(map);
-> +	if (IS_ERR(map)) {
-> +		err = PTR_ERR(map);
-> +		goto put_token;
-> +	}
->  	map->ops = ops;
->  	map->map_type = map_type;
->  
-> @@ -1252,7 +1273,7 @@ static int map_create(union bpf_attr *attr)
->  		map->btf = btf;
->  
->  		if (attr->btf_value_type_id) {
-> -			err = map_check_btf(map, btf, attr->btf_key_type_id,
-> +			err = map_check_btf(map, token, btf, attr->btf_key_type_id,
->  					    attr->btf_value_type_id);
->  			if (err)
->  				goto free_map;
+To avoid useless calls to getselfattr hooks, we could also patch the
+last part of the loop:
+-		if (single)
++		if (single || left <= 0)
+ 			break;
 
-I might be missing something, but should we call bpf_token_put(token)
-on non-error path as well? probably after bpf_map_save_memcg call
-
-jirka
-
-> @@ -1293,6 +1314,8 @@ static int map_create(union bpf_attr *attr)
->  free_map:
->  	btf_put(map->btf);
->  	map->ops->map_free(map);
-> +put_token:
-> +	bpf_token_put(token);
->  	return err;
->  }
->  
-
-SNIP
+> 
+> -- 
+> paul-moore.com
