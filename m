@@ -2,123 +2,123 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC59CD6E54
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Oct 2023 09:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A738CD6E54
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Oct 2023 10:12:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231157AbjJKJ31 (ORCPT
+        id S234430AbjJKKMK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Oct 2023 05:29:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44548 "EHLO
+        Wed, 11 Oct 2023 06:12:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231221AbjJKJ3Y (ORCPT
+        with ESMTP id S233592AbjJKKMJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Oct 2023 05:29:24 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C280F9C;
-        Wed, 11 Oct 2023 02:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697016563; x=1728552563;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uOn9nCRKML7IrJqltDC1Cnn+y4rvEVeFVa1KlsqUdw8=;
-  b=nKgb3IdO5KhdhbGRHSnZ45XA9BjS5Q0gwdp2TUlvYaELznpfqkqeqA5j
-   a7r4e7aYWtkeuB+Ajz2YEBS7uiyW8+eQkJScuZrwTL1MsFEgvynOfx1u8
-   4FDe5v6IN4PXH2r7QYEdoUbpYvMWZa6Yynq2/rcsEKlOQLJcR9qfmsaVB
-   QXgnGvQ4XD9gsQpRRJCoAIAlUT5G6kgDhaqirEB12kAdzvsFnYC6FTv2K
-   OfvEQcbdbIECyen7SdQYBiOwh5mTnxYMVhq0RUrZWFErNDSCWrSykWycL
-   f/ztYYVPmHtf0mQqF3+P/1ab6KdcMbdnSKxv3RHQ8/doyH8aO+zpcDFnN
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="364903691"
-X-IronPort-AV: E=Sophos;i="6.03,214,1694761200"; 
-   d="scan'208";a="364903691"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2023 02:29:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="753753766"
-X-IronPort-AV: E=Sophos;i="6.03,214,1694761200"; 
-   d="scan'208";a="753753766"
-Received: from lkp-server02.sh.intel.com (HELO f64821696465) ([10.239.97.151])
-  by orsmga002.jf.intel.com with ESMTP; 11 Oct 2023 02:29:10 -0700
-Received: from kbuild by f64821696465 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qqVWK-00024F-1o;
-        Wed, 11 Oct 2023 09:28:59 +0000
-Date:   Wed, 11 Oct 2023 17:27:18 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     KP Singh <kpsingh@kernel.org>,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, paul@paul-moore.com,
-        keescook@chromium.org, casey@schaufler-ca.com, song@kernel.org,
-        daniel@iogearbox.net, ast@kernel.org, kpsingh@kernel.org,
-        renauld@google.com, pabeni@redhat.com
-Subject: Re: [PATCH v6 3/5] security: Replace indirect LSM hook calls with
- static calls
-Message-ID: <202310111711.wLbijitj-lkp@intel.com>
-References: <20231006204701.549230-4-kpsingh@kernel.org>
+        Wed, 11 Oct 2023 06:12:09 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28B33A4;
+        Wed, 11 Oct 2023 03:12:08 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED25EC433C8;
+        Wed, 11 Oct 2023 10:12:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1697019127;
+        bh=0ArQgzQ4dKVLY9l4ESHcxBl/89hy5GRkTw8PcjI+eQk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=YVcO2DJPQ9FTgBiId6sWJhnpSYL3fO9MPn+hFyaRMESm+qo/ahgZglNFumE8XK/fW
+         Wh99gFk5q6vG4BA/7/YE0YoTLsQUCoqks8u/xatRA4PtvLwoc3YDR4tY/oCu02FIES
+         bK2TpLMCVfdrQQ2MCrAg/Uo6Q6gpoHoUTTDbMClABDIoA2MokI775YsQzrKV2Ys0m3
+         SCRZ75iTQJe4UGG+fU70j/ypbc0WP3MEwFNELjJiKR78do+IsatvoqIZa8msLZa+eO
+         t+h0kzh+9NRXCfaLEYoD9JRusXorC1+/AM/vLGYC8pvor9ocdbWHhiX3bHvxXCeZ+2
+         FHyYnsFDfJt2A==
+Message-ID: <186a4b62517ead88df8c3c0e9e9585e88f9a6fd8.camel@kernel.org>
+Subject: Re: [PATCH] KEYS: trusted: Rollback init_trusted() consistently
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     keyrings@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "open list:KEYS-TRUSTED" <linux-integrity@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Date:   Wed, 11 Oct 2023 13:12:02 +0300
+In-Reply-To: <CAFA6WYMdrCfqMVExYBbhCK7vUSQffyUfSWpQO0=HeQc6Edz9OA@mail.gmail.com>
+References: <20231010231616.3122392-1-jarkko@kernel.org>
+         <CAFA6WYMdrCfqMVExYBbhCK7vUSQffyUfSWpQO0=HeQc6Edz9OA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.46.4-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231006204701.549230-4-kpsingh@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi KP,
+T24gV2VkLCAyMDIzLTEwLTExIGF0IDExOjI3ICswNTMwLCBTdW1pdCBHYXJnIHdyb3RlOgo+IE9u
+IFdlZCwgMTEgT2N0IDIwMjMgYXQgMDQ6NDYsIEphcmtrbyBTYWtraW5lbiA8amFya2tvQGtlcm5l
+bC5vcmc+IHdyb3RlOgo+ID4gCj4gPiBEbyBiaW5kIG5laXRoZXIgc3RhdGljIGNhbGxzIG5vciB0
+cnVzdGVkX2tleV9leGl0KCkgYmVmb3JlIGEgc3VjY2Vzc2Z1bAo+ID4gaW5pdCwgaW4gb3JkZXIg
+dG8gbWFpbnRhaW4gYSBjb25zaXN0ZW50IHN0YXRlLiBJbiBhZGRpdGlvbiwgZGVwYXJ0IHRoZQo+
+ID4gaW5pdF90cnVzdGVkKCkgaW4gdGhlIGNhc2Ugb2YgYSByZWFsIGVycm9yIChpLmUuIGdldHRp
+bmcgYmFjayBzb21ldGhpbmcKPiA+IGVsc2UgdGhhbiAtRU5PREVWKS4KPiA+IAo+ID4gUmVwb3J0
+ZWQtYnk6IExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0BsaW51eC1mb3VuZGF0aW9uLm9yZz4KPiA+
+IENsb3NlczogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtaW50ZWdyaXR5L0NBSGstPXdo
+T1BvTGFXTThTOEdnb09QVDdhMituTUg1aDNUTEt0bj1SXzN3NFIxX1V2Z0BtYWlsLmdtYWlsLmNv
+bS8KPiA+IENjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnwqAjIHY1LjEzKwo+ID4gRml4ZXM6IDVk
+MDY4MmJlMzE4OSAoIktFWVM6IHRydXN0ZWQ6IEFkZCBnZW5lcmljIHRydXN0ZWQga2V5cyBmcmFt
+ZXdvcmsiKQo+ID4gU2lnbmVkLW9mZi1ieTogSmFya2tvIFNha2tpbmVuIDxqYXJra29Aa2VybmVs
+Lm9yZz4KPiA+IC0tLQo+ID4gwqBzZWN1cml0eS9rZXlzL3RydXN0ZWQta2V5cy90cnVzdGVkX2Nv
+cmUuYyB8IDIwICsrKysrKysrKystLS0tLS0tLS0tCj4gPiDCoDEgZmlsZSBjaGFuZ2VkLCAxMCBp
+bnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL3NlY3Vy
+aXR5L2tleXMvdHJ1c3RlZC1rZXlzL3RydXN0ZWRfY29yZS5jIGIvc2VjdXJpdHkva2V5cy90cnVz
+dGVkLWtleXMvdHJ1c3RlZF9jb3JlLmMKPiA+IGluZGV4IDg1ZmI1YzIyNTI5YS4uZmVlMWFiMmM3
+MzRkIDEwMDY0NAo+ID4gLS0tIGEvc2VjdXJpdHkva2V5cy90cnVzdGVkLWtleXMvdHJ1c3RlZF9j
+b3JlLmMKPiA+ICsrKyBiL3NlY3VyaXR5L2tleXMvdHJ1c3RlZC1rZXlzL3RydXN0ZWRfY29yZS5j
+Cj4gPiBAQCAtMzU4LDE3ICszNTgsMTcgQEAgc3RhdGljIGludCBfX2luaXQgaW5pdF90cnVzdGVk
+KHZvaWQpCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKCFnZXRfcmFuZG9t
+KQo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBnZXRf
+cmFuZG9tID0ga2VybmVsX2dldF9yYW5kb207Cj4gPiAKPiA+IC3CoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIHN0YXRpY19jYWxsX3VwZGF0ZSh0cnVzdGVkX2tleV9zZWFsLAo+ID4gLcKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCB0cnVzdGVkX2tleV9zb3VyY2VzW2ldLm9wcy0+c2VhbCk7Cj4gPiAtwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCBzdGF0aWNfY2FsbF91cGRhdGUodHJ1c3RlZF9rZXlfdW5zZWFsLAo+
+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCB0cnVzdGVkX2tleV9zb3VyY2VzW2ldLm9wcy0+dW5zZWFsKTsKPiA+IC3C
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0YXRpY19jYWxsX3VwZGF0ZSh0cnVzdGVkX2tl
+eV9nZXRfcmFuZG9tLAo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBnZXRfcmFuZG9tKTsKPiA+IC3CoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIHRydXN0ZWRfa2V5X2V4aXQgPSB0cnVzdGVkX2tleV9zb3VyY2Vz
+W2ldLm9wcy0+ZXhpdDsKPiA+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG1pZ3JhdGFi
+bGUgPSB0cnVzdGVkX2tleV9zb3VyY2VzW2ldLm9wcy0+bWlncmF0YWJsZTsKPiA+IC0KPiA+IMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXQgPSB0cnVzdGVkX2tleV9zb3VyY2VzW2ld
+Lm9wcy0+aW5pdCgpOwo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKCFyZXQp
+Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAoIXJldCkgewo+ID4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0YXRpY19jYWxsX3VwZGF0
+ZSh0cnVzdGVkX2tleV9zZWFsLCB0cnVzdGVkX2tleV9zb3VyY2VzW2ldLm9wcy0+c2VhbCk7Cj4g
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc3RhdGljX2Nh
+bGxfdXBkYXRlKHRydXN0ZWRfa2V5X3Vuc2VhbCwgdHJ1c3RlZF9rZXlfc291cmNlc1tpXS5vcHMt
+PnVuc2VhbCk7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgc3RhdGljX2NhbGxfdXBkYXRlKHRydXN0ZWRfa2V5X2dldF9yYW5kb20sIGdldF9yYW5kb20p
+Owo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHRydXN0ZWRfa2V5X2V4aXQgPSB0cnVzdGVkX2tleV9zb3VyY2VzW2ldLm9wcy0+ZXhpdDsKPiA+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBtaWdyYXRhYmxl
+ID0gdHJ1c3RlZF9rZXlfc291cmNlc1tpXS5vcHMtPm1pZ3JhdGFibGU7Cj4gPiArwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCB9Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBpZiAoIXJldCB8fCByZXQgIT0gLUVOT0RFVikKPiAKPiBBcyBtZW50aW9uZWQgaW4gdGhl
+IG90aGVyIHRocmVhZCwgd2Ugc2hvdWxkIGFsbG93IG90aGVyIHRydXN0IHNvdXJjZXMKPiB0byBi
+ZSBpbml0aWFsaXplZCBpZiB0aGUgcHJpbWFyeSBvbmUgZmFpbHMuCgpJIHNlbnQgdGhlIHBhdGNo
+IGJlZm9yZSBJIHJlY2VpdmVkIHRoYXQgcmVzcG9uc2UgYnV0IGhlcmUncyB3aGF0IHlvdQp3cm90
+ZToKCiJXZSBzaG91bGQgZ2l2ZSBvdGhlciB0cnVzdCBzb3VyY2VzIGEgY2hhbmNlIHRvIHJlZ2lz
+dGVyIGZvciB0cnVzdGVkCmtleXMgaWYgdGhlIHByaW1hcnkgb25lIGZhaWxzLiIKCjEuIFRoaXMg
+Y29uZGl0aW9uIGlzIGxhY2tpbmcgYW4gaW5saW5lIGNvbW1lbnQuCjIuIE5laXRoZXIgdGhpcyBy
+ZXNwb25zZSBvciB0aGUgb25lIHRoYXQgeW91IHBvaW50ZWQgb3V0IGhhcyBhbnkKICAgZXhwbGFu
+YXRpb24gd2h5IGZvciBhbnkgc3lzdGVtIGZhaWx1cmUgdGhlIHByb2Nlc3Mgc2hvdWxkCiAgIGNv
+bnRpbnVlLgoKWW91IHNob3VsZCByZWFsbHkga25vdyB0aGUgc2l0dWF0aW9ucyAoZS5nLiBsaXN0
+IG9mIHBvc2l4IGVycm9yCmNvZGUpIHdoZW4gdGhlIHByb2Nlc3MgY2FuIGNvbnRpbnVlIGFuZCAi
+YWxsb3cgbGlzdCIgdGhvc2UuIFRoaXMKd2F5IHdheSB0b28gYWJzdHJhY3QuIEl0IGNhbm5vdCBi
+ZSBsZXQgYWxsIHBvc3NpYmxlIHN5c3RlbSBmYWlsdXJlcwpwYXNzLgoKQ2FuIHlvdSBlLmcuIGV4
+cGxhaW4gYSBsZWdpdCB1c2UgY2FzZSB3aGVuIHNvbWV0aGluZyBlbHNlIGlzCnJldHVybmVkIHRo
+YW4gLUVOT0RFViBidXQgaXQgaXMgY29vbCBhbmQgd2UgY2FuIGNvbnRpbnVlIGluIApzb21lIHJl
+YWwgd29ybGQgdXNlIGNhc2U/CgpCUiwgSmFya2tvCg==
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on bpf-next/master]
-[also build test ERROR on bpf/master pcmoore-selinux/next linus/master v6.6-rc5 next-20231010]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/KP-Singh/kernel-Add-helper-macros-for-loop-unrolling/20231007-044922
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20231006204701.549230-4-kpsingh%40kernel.org
-patch subject: [PATCH v6 3/5] security: Replace indirect LSM hook calls with static calls
-config: i386-randconfig-014-20231011 (https://download.01.org/0day-ci/archive/20231011/202310111711.wLbijitj-lkp@intel.com/config)
-compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231011/202310111711.wLbijitj-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202310111711.wLbijitj-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> security/security.c:139:1: error: Only string constants are supported as initializers for randomized structures with flexible arrays
-    };
-    ^
-
-
-vim +139 security/security.c
-
-   118	
-   119	/*
-   120	 * Initialise a table of static calls for each LSM hook.
-   121	 * DEFINE_STATIC_CALL_NULL invocation above generates a key (STATIC_CALL_KEY)
-   122	 * and a trampoline (STATIC_CALL_TRAMP) which are used to call
-   123	 * __static_call_update when updating the static call.
-   124	 */
-   125	struct lsm_static_calls_table static_calls_table __ro_after_init = {
-   126	#define INIT_LSM_STATIC_CALL(NUM, NAME)					\
-   127		(struct lsm_static_call) {					\
-   128			.key = &STATIC_CALL_KEY(LSM_STATIC_CALL(NAME, NUM)),	\
-   129			.trampoline = LSM_HOOK_TRAMP(NAME, NUM),		\
-   130			.active = &SECURITY_HOOK_ACTIVE_KEY(NAME, NUM),		\
-   131		},
-   132	#define LSM_HOOK(RET, DEFAULT, NAME, ...)				\
-   133		.NAME = {							\
-   134			LSM_DEFINE_UNROLL(INIT_LSM_STATIC_CALL, NAME)		\
-   135		},
-   136	#include <linux/lsm_hook_defs.h>
-   137	#undef LSM_HOOK
-   138	#undef INIT_LSM_STATIC_CALL
- > 139	};
-   140	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
