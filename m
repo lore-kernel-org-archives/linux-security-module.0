@@ -2,155 +2,176 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F49CD6E7F
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Oct 2023 15:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA429CD98EE
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Oct 2023 16:02:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235091AbjJKPn7 convert rfc822-to-8bit (ORCPT
+        id S232743AbjJKQCU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Oct 2023 11:43:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57138 "EHLO
+        Wed, 11 Oct 2023 12:02:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346776AbjJKPn5 (ORCPT
+        with ESMTP id S232345AbjJKQCT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Oct 2023 11:43:57 -0400
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35C468F;
-        Wed, 11 Oct 2023 08:43:54 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4S5Gv93w7mz9yGdg;
-        Wed, 11 Oct 2023 23:31:01 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwCX8JGOwiZl4p0FAg--.29227S2;
-        Wed, 11 Oct 2023 16:43:25 +0100 (CET)
-Message-ID: <b9e204c1b34c204133059b87a9a307ae5bccb84b.camel@huaweicloud.com>
-Subject: Re: [PATCH v3 04/25] ima: Align ima_file_mprotect() definition with
- LSM infrastructure
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
-        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com,
-        tom@talpey.com, dmitry.kasatkin@gmail.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, dhowells@redhat.com,
-        jarkko@kernel.org, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, casey@schaufler-ca.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
-        Stefan Berger <stefanb@linux.ibm.com>
-Date:   Wed, 11 Oct 2023 17:43:07 +0200
-In-Reply-To: <443fb4da33eb0ac51a580e8fd51fa271a59172ef.camel@linux.ibm.com>
-References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
-         <20230904133415.1799503-5-roberto.sassu@huaweicloud.com>
-         <443fb4da33eb0ac51a580e8fd51fa271a59172ef.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Wed, 11 Oct 2023 12:02:19 -0400
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3EF0A4
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Oct 2023 09:02:16 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4S5Hb95CC8zMpnw3;
+        Wed, 11 Oct 2023 16:02:13 +0000 (UTC)
+Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4S5Hb923C1zMpnPf;
+        Wed, 11 Oct 2023 18:02:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1697040133;
+        bh=PXdZZri2UgVudcCp6iGj1khwqrx7yccQv3dd/KtwPtI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rgdwf8PiZ1j6yIbwLjrdoWQbgB3H/aF428G3Q2MwAH3L8xhxPQaxwSZHIUkVTtcv5
+         mA0jYlw9ujDvxQncxvg5HToGuhWCOOWm5imfimxfEaO4O+Ld6Ih4cNZ3oQcoMPEk7i
+         J8Nr6PPX+qMCU4MrfkEgXLzhYo7cxVkZ0VK0vh+8=
+Date:   Wed, 11 Oct 2023 18:02:13 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com, Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH v12 08/12] landlock: Add network rules and TCP hooks
+ support
+Message-ID: <20231011.shuu8oomi4Mo@digikod.net>
+References: <20230920092641.832134-1-konstantin.meskhidze@huawei.com>
+ <20230920092641.832134-9-konstantin.meskhidze@huawei.com>
+ <20231001.oobeez8AeYae@digikod.net>
+ <ad7d294e-267c-d233-e8d6-c92108f229d8@huawei.com>
 MIME-Version: 1.0
-X-CM-TRANSID: LxC2BwCX8JGOwiZl4p0FAg--.29227S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF1ftrW5Xr45Kr13urW7Jwb_yoW5Kr4DpF
-        s8Ka47GrWxJFy09ryIqa47ua43K3yIgw1UXa9Ig34Sy3WqqFnYqr13JF18ur1Fyr9YkF1I
-        vay7tay3A3WqyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-        6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFYFCUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAHBF1jj5TqEAAAsd
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ad7d294e-267c-d233-e8d6-c92108f229d8@huawei.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2023-10-11 at 10:51 -0400, Mimi Zohar wrote:
-> On Mon, 2023-09-04 at 15:33 +0200, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Change ima_file_mprotect() definition, so that it can be registered
-> > as implementation of the file_mprotect hook.
-> > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > ---
-> >  include/linux/ima.h               | 5 +++--
-> >  security/integrity/ima/ima_main.c | 6 ++++--
-> >  security/security.c               | 2 +-
-> >  3 files changed, 8 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/include/linux/ima.h b/include/linux/ima.h
-> > index 893c3b98b4d0..56e72c0beb96 100644
-> > --- a/include/linux/ima.h
-> > +++ b/include/linux/ima.h
-> > @@ -24,7 +24,8 @@ extern void ima_post_create_tmpfile(struct mnt_idmap *idmap,
-> >  extern void ima_file_free(struct file *file);
-> >  extern int ima_file_mmap(struct file *file, unsigned long reqprot,
-> >  			 unsigned long prot, unsigned long flags);
-> > -extern int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot);
-> > +int ima_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
-> > +		      unsigned long prot);
+On Wed, Oct 11, 2023 at 04:53:57AM +0300, Konstantin Meskhidze (A) wrote:
 > 
-> "extern" is needed here and similarly in 5/25.
-
-I removed because of a complain from checkpatch.pl --strict.
-
-Roberto
-
-> Mimi
 > 
-> >  extern int ima_load_data(enum kernel_load_data_id id, bool contents);
-> >  extern int ima_post_load_data(char *buf, loff_t size,
-> >  			      enum kernel_load_data_id id, char *description);
-> > @@ -88,7 +89,7 @@ static inline int ima_file_mmap(struct file *file, unsigned long reqprot,
-> >  }
-> >  
-> >  static inline int ima_file_mprotect(struct vm_area_struct *vma,
-> > -				    unsigned long prot)
-> > +				    unsigned long reqprot, unsigned long prot)
-> >  {
-> >  	return 0;
-> >  }
-> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> > index 52e742d32f4b..e9e2a3ad25a1 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -441,7 +441,8 @@ int ima_file_mmap(struct file *file, unsigned long reqprot,
-> >  /**
-> >   * ima_file_mprotect - based on policy, limit mprotect change
-> >   * @vma: vm_area_struct protection is set to
-> > - * @prot: contains the protection that will be applied by the kernel.
-> > + * @reqprot: protection requested by the application
-> > + * @prot: protection that will be applied by the kernel
-> >   *
-> >   * Files can be mmap'ed read/write and later changed to execute to circumvent
-> >   * IMA's mmap appraisal policy rules.  Due to locking issues (mmap semaphore
-> > @@ -451,7 +452,8 @@ int ima_file_mmap(struct file *file, unsigned long reqprot,
-> >   *
-> >   * On mprotect change success, return 0.  On failure, return -EACESS.
-> >   */
-> > -int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
-> > +int ima_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
-> > +		      unsigned long prot)
-> >  {
-> >  	struct ima_template_desc *template = NULL;
-> >  	struct file *file;
-> > diff --git a/security/security.c b/security/security.c
-> > index 96f2c68a1571..dffb67e6e119 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -2721,7 +2721,7 @@ int security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
-> >  	ret = call_int_hook(file_mprotect, 0, vma, reqprot, prot);
-> >  	if (ret)
-> >  		return ret;
-> > -	return ima_file_mprotect(vma, prot);
-> > +	return ima_file_mprotect(vma, reqprot, prot);
-> >  }
-> >  
-> >  /**
-> 
+> 10/2/2023 11:26 PM, Mickaël Salaün пишет:
+> > Thanks for this new version Konstantin. I pushed this series, with minor
+> > changes, to -next. So far, no warning. But it needs some changes, mostly
+> > kernel-only, but also one with the handling of port 0 with bind (see my
+> > review below).
+> > 
+> > On Wed, Sep 20, 2023 at 05:26:36PM +0800, Konstantin Meskhidze wrote:
+> > > This commit adds network rules support in the ruleset management
+> > > helpers and the landlock_create_ruleset syscall.
+> > > Refactor user space API to support network actions. Add new network
+> > > access flags, network rule and network attributes. Increment Landlock
+> > > ABI version. Expand access_masks_t to u32 to be sure network access
+> > > rights can be stored. Implement socket_bind() and socket_connect()
+> > > LSM hooks, which enables to restrict TCP socket binding and connection
+> > > to specific ports.
+> > > The new landlock_net_port_attr structure has two fields. The allowed_access
+> > > field contains the LANDLOCK_ACCESS_NET_* rights. The port field contains
+> > > the port value according to the allowed protocol. This field can
+> > > take up to a 64-bit value [1] but the maximum value depends on the related
+> > > protocol (e.g. 16-bit for TCP).
+> > > 
+> > > [1]
+> > > https://lore.kernel.org/r/278ab07f-7583-a4e0-3d37-1bacd091531d@digikod.net
+> > > 
+> > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > > Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> > > ---
+> > > 
 
+> > > +int add_rule_net_service(struct landlock_ruleset *ruleset,
+> > 
+> > We should only export functions with a "landlock_" prefix, and "service"
+> > is now replaced with "port", which gives landlock_add_rule_net_port().
+> > 
+> > For consistency, we should also rename add_rule_path_beneath() into
+> > landlock_add_rule_path_beneath(), move it into fs.c, and merge
+> > landlock_append_fs_rule() into it (being careful to not move the related
+> > code to ease review). This change should be part of the "landlock:
+> > Refactor landlock_add_rule() syscall" patch. Please be careful to keep
+> > the other changes happening in other patches.
+> > 
+> > 
+> > > +			 const void __user *const rule_attr)
+> > > +{
+> > > +	struct landlock_net_port_attr net_port_attr;
+> > > +	int res;
+> > > +	access_mask_t mask, bind_access_mask;
+> > > +
+> > > +	/* Copies raw user space buffer. */
+> > > +	res = copy_from_user(&net_port_attr, rule_attr, sizeof(net_port_attr));
+> > 
+> > We should include <linux/uaccess.h> because of copy_from_user().
+> > 
+> > Same for landlock_add_rule_path_beneath().
+> > 
+> > > +	if (res)
+> > > +		return -EFAULT;
+> > > +
+> > > +	/*
+> > > +	 * Informs about useless rule: empty allowed_access (i.e. deny rules)
+> > > +	 * are ignored by network actions.
+> > > +	 */
+> > > +	if (!net_port_attr.allowed_access)
+> > > +		return -ENOMSG;
+> > > +
+> > > +	/*
+> > > +	 * Checks that allowed_access matches the @ruleset constraints
+> > > +	 * (ruleset->access_masks[0] is automatically upgraded to 64-bits).
+> > > +	 */
+> > > +	mask = landlock_get_net_access_mask(ruleset, 0);
+> > > +	if ((net_port_attr.allowed_access | mask) != mask)
+> > > +		return -EINVAL;
+> > > +
+> > > +	/*
+> > > +	 * Denies inserting a rule with port 0 (for bind action) or
+> > > +	 * higher than 65535.
+> > > +	 */
+> > > +	bind_access_mask = net_port_attr.allowed_access &
+> > > +			   LANDLOCK_ACCESS_NET_BIND_TCP;
+> > > +	if (((net_port_attr.port == 0) &&
+> > > +	     (bind_access_mask == LANDLOCK_ACCESS_NET_BIND_TCP)) ||
+> > 
+> > For context about "port 0 binding" see
+> > https://lore.kernel.org/all/7cb458f1-7aff-ccf3-abfd-b563bfc65b84@huawei.com/
+> > 
+> > I previously said:
+> > > > > To say it another way, we should not allow to add a rule with port
+> > > > > 0 for
+> > > > > LANDLOCK_ACCESS_NET_BIND_TCP, but return -EINVAL in this case. This
+> > > > > limitation should be explained, documented and tested.
+> > 
+> > Thinking more about this port 0 for bind (and after an interesting
+> > discussion with Eric), it would be a mistake to forbid a rule to bind on
+> > port 0 because this is very useful for some network services, and
+> > because it would not be reasonable to have an LSM hook to control such
+> > "random ports". Instead we should document what using this value means
+> > (i.e. pick a dynamic available port in a range defined by the sysadmin)
+> > and highlight the fact that it is controlled with the
+> > /proc/sys/net/ipv4/ip_local_port_range sysctl, which is also used by
+> > IPv6.
+> 
+>   Hi Mickaёl.
+>   I also wonder which part of documentation (landlock.rst) we should include
+> zero port description in?
+
+This documentation should be in the struct landlock_net_port_attr's @port
+description, which will then be part of the generated documentation.
+
+
+> > 
+> > We then need to test binding on port zero by getting the binded port
+> > (cf. getsockopt/getsockname) and checking that we can indeed connect to
+> > it.
+> > 
+> > > +	    (net_port_attr.port > U16_MAX))
+> > > +		return -EINVAL;
+> > > +
+> > > +	/* Imports the new rule. */
+> > > +	return landlock_append_net_rule(ruleset, net_port_attr.port,
+> > > +					net_port_attr.allowed_access);
+> > > +}
