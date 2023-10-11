@@ -2,452 +2,323 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC1ACD98E5
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Oct 2023 01:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD43CD98E6
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Oct 2023 02:35:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344687AbjJKByF (ORCPT
+        id S1344777AbjJKCfU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Oct 2023 21:54:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33826 "EHLO
+        Tue, 10 Oct 2023 22:35:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344671AbjJKByE (ORCPT
+        with ESMTP id S1344584AbjJKCfU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Oct 2023 21:54:04 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98C0C92;
-        Tue, 10 Oct 2023 18:54:01 -0700 (PDT)
-Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4S4whx1XGwz6J9fr;
-        Wed, 11 Oct 2023 09:50:57 +0800 (CST)
-Received: from [10.123.123.126] (10.123.123.126) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Wed, 11 Oct 2023 02:53:58 +0100
-Message-ID: <ad7d294e-267c-d233-e8d6-c92108f229d8@huawei.com>
-Date:   Wed, 11 Oct 2023 04:53:57 +0300
+        Tue, 10 Oct 2023 22:35:20 -0400
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB54F94;
+        Tue, 10 Oct 2023 19:35:17 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.169])
+        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4S4xh01RqDz4f3lg4;
+        Wed, 11 Oct 2023 10:35:12 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+        by APP3 (Coremail) with SMTP id _Ch0CgA3jUzfCSZlasr_CQ--.47802S2;
+        Wed, 11 Oct 2023 10:35:14 +0800 (CST)
+Subject: Re: [PATCH v6 bpf-next 03/13] bpf: introduce BPF token object
+To:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
+        sargun@sargun.me
+References: <20230927225809.2049655-1-andrii@kernel.org>
+ <20230927225809.2049655-4-andrii@kernel.org>
+From:   Hou Tao <houtao@huaweicloud.com>
+Message-ID: <be371dfe-d297-7de3-0812-eb069232f410@huaweicloud.com>
+Date:   Wed, 11 Oct 2023 10:35:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v12 08/12] landlock: Add network rules and TCP hooks
- support
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>, Eric Dumazet <edumazet@google.com>
-References: <20230920092641.832134-1-konstantin.meskhidze@huawei.com>
- <20230920092641.832134-9-konstantin.meskhidze@huawei.com>
- <20231001.oobeez8AeYae@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <20231001.oobeez8AeYae@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.123.123.126]
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
+In-Reply-To: <20230927225809.2049655-4-andrii@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-CM-TRANSID: _Ch0CgA3jUzfCSZlasr_CQ--.47802S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3AFyxJrWDXrW5WrWDXFyUAwb_yoWfJFW3pF
+        4rJFyjkr48JrW0gFn2qa18ZF1Fkw4DX3yUWrWUWryfArsFq3s2gFyFgFWa9F4ftr1Uu34I
+        qFs09398Wr9rZFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+        0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+        e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+        6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+        kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+        14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa
+        7IU1zuWJUUUUU==
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi,
 
+On 9/28/2023 6:57 AM, Andrii Nakryiko wrote:
+> Add new kind of BPF kernel object, BPF token. BPF token is meant to
+> allow delegating privileged BPF functionality, like loading a BPF
+> program or creating a BPF map, from privileged process to a *trusted*
+> unprivileged process, all while have a good amount of control over which
+> privileged operations could be performed using provided BPF token.
+>
+> This is achieved through mounting BPF FS instance with extra delegation
+> mount options, which determine what operations are delegatable, and also
+> constraining it to the owning user namespace (as mentioned in the
+> previous patch).
+SNIP
+> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> index 70bfa997e896..78692911f4a0 100644
+> --- a/include/uapi/linux/bpf.h
+> +++ b/include/uapi/linux/bpf.h
+> @@ -847,6 +847,37 @@ union bpf_iter_link_info {
+>   *		Returns zero on success. On error, -1 is returned and *errno*
+>   *		is set appropriately.
+>   *
+> + * BPF_TOKEN_CREATE
+> + *	Description
+> + *		Create BPF token with embedded information about what
+> + *		BPF-related functionality it allows:
+> + *		- a set of allowed bpf() syscall commands;
+> + *		- a set of allowed BPF map types to be created with
+> + *		BPF_MAP_CREATE command, if BPF_MAP_CREATE itself is allowed;
+> + *		- a set of allowed BPF program types and BPF program attach
+> + *		types to be loaded with BPF_PROG_LOAD command, if
+> + *		BPF_PROG_LOAD itself is allowed.
+> + *
+> + *		BPF token is created (derived) from an instance of BPF FS,
+> + *		assuming it has necessary delegation mount options specified.
+> + *		BPF FS mount is specified with openat()-style path FD + string.
+> + *		This BPF token can be passed as an extra parameter to various
+> + *		bpf() syscall commands to grant BPF subsystem functionality to
+> + *		unprivileged processes.
+> + *
+> + *		When created, BPF token is "associated" with the owning
+> + *		user namespace of BPF FS instance (super block) that it was
+> + *		derived from, and subsequent BPF operations performed with
+> + *		BPF token would be performing capabilities checks (i.e.,
+> + *		CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, CAP_SYS_ADMIN) within
+> + *		that user namespace. Without BPF token, such capabilities
+> + *		have to be granted in init user namespace, making bpf()
+> + *		syscall incompatible with user namespace, for the most part.
+> + *
+> + *	Return
+> + *		A new file descriptor (a nonnegative integer), or -1 if an
+> + *		error occurred (in which case, *errno* is set appropriately).
+> + *
+>   * NOTES
+>   *	eBPF objects (maps and programs) can be shared between processes.
+>   *
+> @@ -901,6 +932,8 @@ enum bpf_cmd {
+>  	BPF_ITER_CREATE,
+>  	BPF_LINK_DETACH,
+>  	BPF_PROG_BIND_MAP,
+> +	BPF_TOKEN_CREATE,
+> +	__MAX_BPF_CMD,
+>  };
+>  
+>  enum bpf_map_type {
+> @@ -1694,6 +1727,12 @@ union bpf_attr {
+>  		__u32		flags;		/* extra flags */
+>  	} prog_bind_map;
+>  
+> +	struct { /* struct used by BPF_TOKEN_CREATE command */
+> +		__u32		flags;
+> +		__u32		bpffs_path_fd;
+> +		__u64		bpffs_pathname;
 
-10/2/2023 11:26 PM, Mickaël Salaün пишет:
-> Thanks for this new version Konstantin. I pushed this series, with minor
-> changes, to -next. So far, no warning. But it needs some changes, mostly
-> kernel-only, but also one with the handling of port 0 with bind (see my
-> review below).
-> 
-> On Wed, Sep 20, 2023 at 05:26:36PM +0800, Konstantin Meskhidze wrote:
->> This commit adds network rules support in the ruleset management
->> helpers and the landlock_create_ruleset syscall.
->> Refactor user space API to support network actions. Add new network
->> access flags, network rule and network attributes. Increment Landlock
->> ABI version. Expand access_masks_t to u32 to be sure network access
->> rights can be stored. Implement socket_bind() and socket_connect()
->> LSM hooks, which enables to restrict TCP socket binding and connection
->> to specific ports.
->> The new landlock_net_port_attr structure has two fields. The allowed_access
->> field contains the LANDLOCK_ACCESS_NET_* rights. The port field contains
->> the port value according to the allowed protocol. This field can
->> take up to a 64-bit value [1] but the maximum value depends on the related
->> protocol (e.g. 16-bit for TCP).
->> 
->> [1]
->> https://lore.kernel.org/r/278ab07f-7583-a4e0-3d37-1bacd091531d@digikod.net
->> 
->> Signed-off-by: Mickaël Salaün <mic@digikod.net>
->> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->> ---
->> 
->> Changes since v11:
->> * Replace dates with "2022-2023" in net.c/h files headers.
->> * Removes WARN_ON_ONCE(!domain) in check_socket_access().
->> * Using "typeof(*address)" instead of offsetofend(struct sockaddr, sa_family).
->> * Renames LANDLOCK_RULE_NET_SERVICE to LANDLOCK_RULE_NET_PORT.
->> * Renames landlock_net_service_attr to landlock_net_port_attr.
->> * Defines two add_rule_net_service() functions according to
->>   IS_ENABLED(CONFIG_INET) instead of changing the body of the only
->>   function.
->> * Adds af_family consistency check while handling AF_UNSPEC specifically.
->> * Adds bind_access_mask in add_rule_net_service() to deny all rules with bind
->>   action on port zero.
->> * Minor fixes.
->> * Refactors commit message.
->> 
->> Changes since v10:
->> * Removes "packed" attribute.
->> * Applies Mickaёl's patch with some refactoring.
->> * Deletes get_port() and check_addrlen() helpers.
->> * Refactors check_socket_access() by squashing get_port() and
->>   check_addrlen() helpers into it.
->> * Fixes commit message.
->> 
->> Changes since v9:
->> * Changes UAPI port field to __u64.
->> * Moves shared code into check_socket_access().
->> * Adds get_raw_handled_net_accesses() and
->>   get_current_net_domain() helpers.
->> * Minor fixes.
->> 
->> Changes since v8:
->> * Squashes commits.
->> * Refactors commit message.
->> * Changes UAPI port field to __be16.
->> * Changes logic of bind/connect hooks with AF_UNSPEC families.
->> * Adds address length checking.
->> * Minor fixes.
->> 
->> Changes since v7:
->> * Squashes commits.
->> * Increments ABI version to 4.
->> * Refactors commit message.
->> * Minor fixes.
->> 
->> Changes since v6:
->> * Renames landlock_set_net_access_mask() to landlock_add_net_access_mask()
->>   because it OR values.
->> * Makes landlock_add_net_access_mask() more resilient incorrect values.
->> * Refactors landlock_get_net_access_mask().
->> * Renames LANDLOCK_MASK_SHIFT_NET to LANDLOCK_SHIFT_ACCESS_NET and use
->>   LANDLOCK_NUM_ACCESS_FS as value.
->> * Updates access_masks_t to u32 to support network access actions.
->> * Refactors landlock internal functions to support network actions with
->>   landlock_key/key_type/id types.
->> 
->> Changes since v5:
->> * Gets rid of partial revert from landlock_add_rule
->> syscall.
->> * Formats code with clang-format-14.
->> 
->> Changes since v4:
->> * Refactors landlock_create_ruleset() - splits ruleset and
->> masks checks.
->> * Refactors landlock_create_ruleset() and landlock mask
->> setters/getters to support two rule types.
->> * Refactors landlock_add_rule syscall add_rule_path_beneath
->> function by factoring out get_ruleset_from_fd() and
->> landlock_put_ruleset().
->> 
->> Changes since v3:
->> * Splits commit.
->> * Adds network rule support for internal landlock functions.
->> * Adds set_mask and get_mask for network.
->> * Adds rb_root root_net_port.
->> 
->> ---
->>  include/uapi/linux/landlock.h                |  47 ++++
->>  security/landlock/Kconfig                    |   3 +-
->>  security/landlock/Makefile                   |   2 +
->>  security/landlock/limits.h                   |   5 +
->>  security/landlock/net.c                      | 241 +++++++++++++++++++
->>  security/landlock/net.h                      |  35 +++
->>  security/landlock/ruleset.c                  |  62 ++++-
->>  security/landlock/ruleset.h                  |  59 ++++-
->>  security/landlock/setup.c                    |   2 +
->>  security/landlock/syscalls.c                 |  33 ++-
->>  tools/testing/selftests/landlock/base_test.c |   2 +-
->>  11 files changed, 467 insertions(+), 24 deletions(-)
->>  create mode 100644 security/landlock/net.c
->>  create mode 100644 security/landlock/net.h
->> 
->> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
->> index 81d09ef9aa50..3b8400e8a4d9 100644
->> --- a/include/uapi/linux/landlock.h
->> +++ b/include/uapi/linux/landlock.h
->> @@ -31,6 +31,12 @@ struct landlock_ruleset_attr {
->>  	 * this access right.
->>  	 */
->>  	__u64 handled_access_fs;
->> +	/**
->> +	 * @handled_access_net: Bitmask of actions (cf. `Network flags`_)
->> +	 * that is handled by this ruleset and should then be forbidden if no
->> +	 * rule explicitly allow them.
->> +	 */
->> +	__u64 handled_access_net;
->>  };
->> 
->>  /*
->> @@ -54,6 +60,11 @@ enum landlock_rule_type {
->>  	 * landlock_path_beneath_attr .
->>  	 */
->>  	LANDLOCK_RULE_PATH_BENEATH = 1,
->> +	/**
->> +	 * @LANDLOCK_RULE_NET_PORT: Type of a &struct
->> +	 * landlock_net_port_attr .
->> +	 */
->> +	LANDLOCK_RULE_NET_PORT = 2,
->>  };
->> 
->>  /**
->> @@ -79,6 +90,23 @@ struct landlock_path_beneath_attr {
->>  	 */
->>  } __attribute__((packed));
->> 
->> +/**
->> + * struct landlock_net_port_attr - Network service definition
-> 
-> "Network port definition"
-> 
-> 
->> diff --git a/security/landlock/Kconfig b/security/landlock/Kconfig
->> index c1e862a38410..10c099097533 100644
->> --- a/security/landlock/Kconfig
->> +++ b/security/landlock/Kconfig
->> @@ -2,7 +2,8 @@
->> 
->>  config SECURITY_LANDLOCK
->>  	bool "Landlock support"
->> -	depends on SECURITY
->> +	depends on SECURITY && !ARCH_EPHEMERAL_INODES
-> 
-> !ARCH_EPHEMERAL_INODES is definitely gone now.
-> 
->> +	select SECURITY_NETWORK
->>  	select SECURITY_PATH
->>  	help
->>  	  Landlock is a sandboxing mechanism that enables processes to restrict
->> diff --git a/security/landlock/Makefile b/security/landlock/Makefile
->> index 7bbd2f413b3e..53d3c92ae22e 100644
->> --- a/security/landlock/Makefile
->> +++ b/security/landlock/Makefile
->> @@ -2,3 +2,5 @@ obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
->> 
->>  landlock-y := setup.o syscalls.o object.o ruleset.o \
->>  	cred.o ptrace.o fs.o
->> +
->> +landlock-$(CONFIG_INET) += net.o
->> \ No newline at end of file
->> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
->> index bafb3b8dc677..93c9c6f91556 100644
->> --- a/security/landlock/limits.h
->> +++ b/security/landlock/limits.h
->> @@ -23,6 +23,11 @@
->>  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
->>  #define LANDLOCK_SHIFT_ACCESS_FS	0
->> 
->> +#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_TCP
->> +#define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
->> +#define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
->> +#define LANDLOCK_SHIFT_ACCESS_NET	LANDLOCK_NUM_ACCESS_FS
->> +
->>  /* clang-format on */
->> 
->>  #endif /* _SECURITY_LANDLOCK_LIMITS_H */
->> diff --git a/security/landlock/net.c b/security/landlock/net.c
->> new file mode 100644
->> index 000000000000..62b830653e25
->> --- /dev/null
->> +++ b/security/landlock/net.c
->> @@ -0,0 +1,241 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Landlock LSM - Network management and hooks
->> + *
->> + * Copyright © 2022-2023 Huawei Tech. Co., Ltd.
->> + * Copyright © 2022-2023 Microsoft Corporation
->> + */
->> +
->> +#include <linux/in.h>
->> +#include <linux/net.h>
->> +#include <linux/socket.h>
->> +#include <net/ipv6.h>
->> +
->> +#include "common.h"
->> +#include "cred.h"
->> +#include "limits.h"
->> +#include "net.h"
->> +#include "ruleset.h"
->> +
->> +int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
->> +			     const u16 port, access_mask_t access_rights)
-> 
-> This function is only used in add_rule_net_service(), so it should not
-> be exported, and we can merge it (into landlock_add_rule_net_port).
-> 
->> +{
->> +	int err;
->> +	const struct landlock_id id = {
->> +		.key.data = (__force uintptr_t)htons(port),
->> +		.type = LANDLOCK_KEY_NET_PORT,
->> +	};
->> +
->> +	BUILD_BUG_ON(sizeof(port) > sizeof(id.key.data));
->> +
->> +	/* Transforms relative access rights to absolute ones. */
->> +	access_rights |= LANDLOCK_MASK_ACCESS_NET &
->> +			 ~landlock_get_net_access_mask(ruleset, 0);
->> +
->> +	mutex_lock(&ruleset->lock);
->> +	err = landlock_insert_rule(ruleset, id, access_rights);
->> +	mutex_unlock(&ruleset->lock);
->> +
->> +	return err;
->> +}
->> +
->> +int add_rule_net_service(struct landlock_ruleset *ruleset,
-> 
-> We should only export functions with a "landlock_" prefix, and "service"
-> is now replaced with "port", which gives landlock_add_rule_net_port().
-> 
-> For consistency, we should also rename add_rule_path_beneath() into
-> landlock_add_rule_path_beneath(), move it into fs.c, and merge
-> landlock_append_fs_rule() into it (being careful to not move the related
-> code to ease review). This change should be part of the "landlock:
-> Refactor landlock_add_rule() syscall" patch. Please be careful to keep
-> the other changes happening in other patches.
-> 
-> 
->> +			 const void __user *const rule_attr)
->> +{
->> +	struct landlock_net_port_attr net_port_attr;
->> +	int res;
->> +	access_mask_t mask, bind_access_mask;
->> +
->> +	/* Copies raw user space buffer. */
->> +	res = copy_from_user(&net_port_attr, rule_attr, sizeof(net_port_attr));
-> 
-> We should include <linux/uaccess.h> because of copy_from_user().
-> 
-> Same for landlock_add_rule_path_beneath().
-> 
->> +	if (res)
->> +		return -EFAULT;
->> +
->> +	/*
->> +	 * Informs about useless rule: empty allowed_access (i.e. deny rules)
->> +	 * are ignored by network actions.
->> +	 */
->> +	if (!net_port_attr.allowed_access)
->> +		return -ENOMSG;
->> +
->> +	/*
->> +	 * Checks that allowed_access matches the @ruleset constraints
->> +	 * (ruleset->access_masks[0] is automatically upgraded to 64-bits).
->> +	 */
->> +	mask = landlock_get_net_access_mask(ruleset, 0);
->> +	if ((net_port_attr.allowed_access | mask) != mask)
->> +		return -EINVAL;
->> +
->> +	/*
->> +	 * Denies inserting a rule with port 0 (for bind action) or
->> +	 * higher than 65535.
->> +	 */
->> +	bind_access_mask = net_port_attr.allowed_access &
->> +			   LANDLOCK_ACCESS_NET_BIND_TCP;
->> +	if (((net_port_attr.port == 0) &&
->> +	     (bind_access_mask == LANDLOCK_ACCESS_NET_BIND_TCP)) ||
-> 
-> For context about "port 0 binding" see
-> https://lore.kernel.org/all/7cb458f1-7aff-ccf3-abfd-b563bfc65b84@huawei.com/
-> 
-> I previously said:
->>> > To say it another way, we should not allow to add a rule with port
->>> > 0 for
->>> > LANDLOCK_ACCESS_NET_BIND_TCP, but return -EINVAL in this case. This
->>> > limitation should be explained, documented and tested.
-> 
-> Thinking more about this port 0 for bind (and after an interesting
-> discussion with Eric), it would be a mistake to forbid a rule to bind on
-> port 0 because this is very useful for some network services, and
-> because it would not be reasonable to have an LSM hook to control such
-> "random ports". Instead we should document what using this value means
-> (i.e. pick a dynamic available port in a range defined by the sysadmin)
-> and highlight the fact that it is controlled with the
-> /proc/sys/net/ipv4/ip_local_port_range sysctl, which is also used by
-> IPv6.
+Because bppfs_pathname is a string pointer, so __aligned_u64 is preferred.
+> +	} token_create;
+> +
+>  } __attribute__((aligned(8)));
+>  
+>  /* The description below is an attempt at providing documentation to eBPF
+> diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+> index f526b7573e97..4ce95acfcaa7 100644
+> --- a/kernel/bpf/Makefile
+> +++ b/kernel/bpf/Makefile
+> @@ -6,7 +6,7 @@ cflags-nogcse-$(CONFIG_X86)$(CONFIG_CC_IS_GCC) := -fno-gcse
+>  endif
+>  CFLAGS_core.o += $(call cc-disable-warning, override-init) $(cflags-nogcse-yy)
+>  
+> -obj-$(CONFIG_BPF_SYSCALL) += syscall.o verifier.o inode.o helpers.o tnum.o log.o
+> +obj-$(CONFIG_BPF_SYSCALL) += syscall.o verifier.o inode.o helpers.o tnum.o log.o token.o
+>  obj-$(CONFIG_BPF_SYSCALL) += bpf_iter.o map_iter.o task_iter.o prog_iter.o link_iter.o
+>  obj-$(CONFIG_BPF_SYSCALL) += hashtab.o arraymap.o percpu_freelist.o bpf_lru_list.o lpm_trie.o map_in_map.o bloom_filter.o
+>  obj-$(CONFIG_BPF_SYSCALL) += local_storage.o queue_stack_maps.o ringbuf.o
+> diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+> index 24b3faf901f4..de1fdf396521 100644
+> --- a/kernel/bpf/inode.c
+> +++ b/kernel/bpf/inode.c
+> @@ -99,9 +99,9 @@ static const struct inode_operations bpf_prog_iops = { };
+>  static const struct inode_operations bpf_map_iops  = { };
+>  static const struct inode_operations bpf_link_iops  = { };
+>  
+> -static struct inode *bpf_get_inode(struct super_block *sb,
+> -				   const struct inode *dir,
+> -				   umode_t mode)
+> +struct inode *bpf_get_inode(struct super_block *sb,
+> +			    const struct inode *dir,
+> +			    umode_t mode)
+>  {
+>  	struct inode *inode;
+>  
+> @@ -603,11 +603,13 @@ static int bpf_show_options(struct seq_file *m, struct dentry *root)
+>  {
+>  	struct bpf_mount_opts *opts = root->d_sb->s_fs_info;
+>  	umode_t mode = d_inode(root)->i_mode & S_IALLUGO & ~S_ISVTX;
+> +	u64 mask;
+>  
+>  	if (mode != S_IRWXUGO)
+>  		seq_printf(m, ",mode=%o", mode);
+>  
+> -	if (opts->delegate_cmds == ~0ULL)
+> +	mask = (1ULL << __MAX_BPF_CMD) - 1;
+> +	if ((opts->delegate_cmds & mask) == mask)
+>  		seq_printf(m, ",delegate_cmds=any");
 
-   Hi Mickaёl.
-   I also wonder which part of documentation (landlock.rst) we should 
-include zero port description in?
-> 
-> We then need to test binding on port zero by getting the binded port
-> (cf. getsockopt/getsockname) and checking that we can indeed connect to
-> it.
-> 
->> +	    (net_port_attr.port > U16_MAX))
->> +		return -EINVAL;
->> +
->> +	/* Imports the new rule. */
->> +	return landlock_append_net_rule(ruleset, net_port_attr.port,
->> +					net_port_attr.allowed_access);
->> +}
-> 
->> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
->> index 1ede2b9a79b7..9bd0483c64d4 100644
->> --- a/security/landlock/ruleset.h
->> +++ b/security/landlock/ruleset.h
->> @@ -33,13 +33,16 @@
->>  typedef u16 access_mask_t;
->>  /* Makes sure all filesystem access rights can be stored. */
->>  static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
->> +/* Makes sure all network access rights can be stored. */
->> +static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_NET);
->>  /* Makes sure for_each_set_bit() and for_each_clear_bit() calls are OK. */
->>  static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
->> 
->>  /* Ruleset access masks. */
->> -typedef u16 access_masks_t;
->> +typedef u32 access_masks_t;
->>  /* Makes sure all ruleset access rights can be stored. */
->> -static_assert(BITS_PER_TYPE(access_masks_t) >= LANDLOCK_NUM_ACCESS_FS);
->> +static_assert(BITS_PER_TYPE(access_masks_t) >=
->> +	      LANDLOCK_NUM_ACCESS_FS + LANDLOCK_NUM_ACCESS_NET);
->> 
->>  typedef u16 layer_mask_t;
->>  /* Makes sure all layers can be checked. */
->> @@ -84,6 +87,11 @@ enum landlock_key_type {
->>  	 * keys.
->>  	 */
->>  	LANDLOCK_KEY_INODE = 1,
->> +	/**
->> +	 * @LANDLOCK_KEY_NET_PORT: Type of &landlock_ruleset.root_net_port's
->> +	 * node keys.
->> +	 */
->> +	LANDLOCK_KEY_NET_PORT = 2,
-> 
-> You don't need to specify "2".
-> 
-> 
->> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
->> index 8a54e87dbb17..da6cbd0032ca 100644
->> --- a/security/landlock/syscalls.c
->> +++ b/security/landlock/syscalls.c
->> @@ -29,6 +29,7 @@
->>  #include "cred.h"
->>  #include "fs.h"
->>  #include "limits.h"
->> +#include "net.h"
->>  #include "ruleset.h"
->>  #include "setup.h"
->> 
->> @@ -74,7 +75,8 @@ static void build_check_abi(void)
->>  {
->>  	struct landlock_ruleset_attr ruleset_attr;
->>  	struct landlock_path_beneath_attr path_beneath_attr;
->> -	size_t ruleset_size, path_beneath_size;
->> +	struct landlock_net_port_attr net_port_attr;
->> +	size_t ruleset_size, path_beneath_size, net_service_size;
-> 
-> net_port_size
-> .
+Should we add a BUILD_BUG_ON assertion to guarantee __MAX_BPF_CMD is
+less than sizeof(u64) * 8 ?
+>  	else if (opts->delegate_cmds)
+>  		seq_printf(m, ",delegate_cmds=0x%llx", opts->delegate_cmds);
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index 7445dad01fb3..b47791a80930 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -5304,6 +5304,20 @@ static int bpf_prog_bind_map(union bpf_attr *attr)
+>  	return ret;
+>  }
+>  
+> +#define BPF_TOKEN_CREATE_LAST_FIELD token_create.bpffs_pathname
+> +
+> +static int token_create(union bpf_attr *attr)
+> +{
+> +	if (CHECK_ATTR(BPF_TOKEN_CREATE))
+> +		return -EINVAL;
+> +
+> +	/* no flags are supported yet */
+> +	if (attr->token_create.flags)
+> +		return -EINVAL;
+> +
+> +	return bpf_token_create(attr);
+> +}
+> +
+>  static int __sys_bpf(int cmd, bpfptr_t uattr, unsigned int size)
+>  {
+>  	union bpf_attr attr;
+> @@ -5437,6 +5451,9 @@ static int __sys_bpf(int cmd, bpfptr_t uattr, unsigned int size)
+>  	case BPF_PROG_BIND_MAP:
+>  		err = bpf_prog_bind_map(&attr);
+>  		break;
+> +	case BPF_TOKEN_CREATE:
+> +		err = token_create(&attr);
+> +		break;
+>  	default:
+>  		err = -EINVAL;
+>  		break;
+> diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
+> new file mode 100644
+> index 000000000000..779aad5007a3
+> --- /dev/null
+> +++ b/kernel/bpf/token.c
+SNIP
+> +#define BPF_TOKEN_INODE_NAME "bpf-token"
+> +
+> +static const struct inode_operations bpf_token_iops = { };
+> +
+> +static const struct file_operations bpf_token_fops = {
+> +	.release	= bpf_token_release,
+> +	.show_fdinfo	= bpf_token_show_fdinfo,
+> +};
+> +
+> +int bpf_token_create(union bpf_attr *attr)
+> +{
+> +	struct bpf_mount_opts *mnt_opts;
+> +	struct bpf_token *token = NULL;
+> +	struct inode *inode;
+> +	struct file *file;
+> +	struct path path;
+> +	umode_t mode;
+> +	int err, fd;
+> +
+> +	err = user_path_at(attr->token_create.bpffs_path_fd,
+> +			   u64_to_user_ptr(attr->token_create.bpffs_pathname),
+> +			   LOOKUP_FOLLOW | LOOKUP_EMPTY, &path);
+> +	if (err)
+> +		return err;
+
+Need to check the mount is a bpffs mount instead of other filesystem mount.
+> +
+> +	if (path.mnt->mnt_root != path.dentry) {
+> +		err = -EINVAL;
+> +		goto out_path;
+> +	}
+> +	err = path_permission(&path, MAY_ACCESS);
+> +	if (err)
+> +		goto out_path;
+> +
+> +	mode = S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
+> +	inode = bpf_get_inode(path.mnt->mnt_sb, NULL, mode);
+> +	if (IS_ERR(inode)) {
+> +		err = PTR_ERR(inode);
+> +		goto out_path;
+> +	}
+> +
+> +	inode->i_op = &bpf_token_iops;
+> +	inode->i_fop = &bpf_token_fops;
+> +	clear_nlink(inode); /* make sure it is unlinked */
+> +
+> +	file = alloc_file_pseudo(inode, path.mnt, BPF_TOKEN_INODE_NAME, O_RDWR, &bpf_token_fops);
+> +	if (IS_ERR(file)) {
+> +		iput(inode);
+> +		err = PTR_ERR(file);
+> +		goto out_file;
+
+goto out_path ?
+> +	}
+> +
+> +	token = bpf_token_alloc();
+> +	if (!token) {
+> +		err = -ENOMEM;
+> +		goto out_file;
+> +	}
+> +
+> +	/* remember bpffs owning userns for future ns_capable() checks */
+> +	token->userns = get_user_ns(path.dentry->d_sb->s_user_ns);
+> +
+> +	mnt_opts = path.dentry->d_sb->s_fs_info;
+> +	token->allowed_cmds = mnt_opts->delegate_cmds;
+> +
+> +	fd = get_unused_fd_flags(O_CLOEXEC);
+> +	if (fd < 0) {
+> +		err = fd;
+> +		goto out_token;
+> +	}
+> +
+> +	file->private_data = token;
+> +	fd_install(fd, file);
+> +
+> +	path_put(&path);
+> +	return fd;
+> +
+> +out_token:
+> +	bpf_token_free(token);
+> +out_file:
+> +	fput(file);
+> +out_path:
+> +	path_put(&path);
+> +	return err;
+> +}
+> +
+.
+
