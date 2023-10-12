@@ -2,25 +2,25 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4F4CDB474
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Oct 2023 22:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FBECDB474
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Oct 2023 22:32:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1443017AbjJLWcX convert rfc822-to-8bit (ORCPT
+        id S1443022AbjJLWc2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Oct 2023 18:32:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57512 "EHLO
+        Thu, 12 Oct 2023 18:32:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1442975AbjJLWcW (ORCPT
+        with ESMTP id S1442975AbjJLWcY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Oct 2023 18:32:22 -0400
+        Thu, 12 Oct 2023 18:32:24 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C834CF
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Oct 2023 15:32:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D5CCA
+        for <linux-security-module@vger.kernel.org>; Thu, 12 Oct 2023 15:32:21 -0700 (PDT)
 Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39CLu3dv019290
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Oct 2023 15:32:20 -0700
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39CLu3dx019290
+        for <linux-security-module@vger.kernel.org>; Thu, 12 Oct 2023 15:32:21 -0700
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3tpjtjj53c-2
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3tpjtjj53c-4
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
         for <linux-security-module@vger.kernel.org>; Thu, 12 Oct 2023 15:32:20 -0700
 Received: from twshared19681.14.frc2.facebook.com (2620:10d:c085:108::4) by
@@ -28,23 +28,23 @@ Received: from twshared19681.14.frc2.facebook.com (2620:10d:c085:108::4) by
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.2507.23; Thu, 12 Oct 2023 15:32:19 -0700
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-        id 619B439A3A52D; Thu, 12 Oct 2023 15:29:21 -0700 (PDT)
+        id 2DD1539A3A759; Thu, 12 Oct 2023 15:29:40 -0700 (PDT)
 From:   Andrii Nakryiko <andrii@kernel.org>
 To:     <bpf@vger.kernel.org>, <netdev@vger.kernel.org>
 CC:     <linux-fsdevel@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>, <keescook@chromium.org>,
         <brauner@kernel.org>, <lennart@poettering.net>,
         <kernel-team@meta.com>, <sargun@sargun.me>
-Subject: [PATCH v7 bpf-next 09/18] bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free LSM hooks
-Date:   Thu, 12 Oct 2023 15:28:01 -0700
-Message-ID: <20231012222810.4120312-10-andrii@kernel.org>
+Subject: [PATCH v7 bpf-next 17/18] selftests/bpf: add BPF token-enabled tests
+Date:   Thu, 12 Oct 2023 15:28:09 -0700
+Message-ID: <20231012222810.4120312-18-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231012222810.4120312-1-andrii@kernel.org>
 References: <20231012222810.4120312-1-andrii@kernel.org>
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: RtH88aQTdSxd0Y942XfyaZvve_B_d1hH
-X-Proofpoint-GUID: RtH88aQTdSxd0Y942XfyaZvve_B_d1hH
+X-Proofpoint-ORIG-GUID: aD2_gNjjicK9_e72p7VWL4kS0biTi9Va
+X-Proofpoint-GUID: aD2_gNjjicK9_e72p7VWL4kS0biTi9Va
 Content-Transfer-Encoding: 8BIT
 X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
@@ -54,321 +54,671 @@ X-Proofpoint-Virus-Version: vendor=baseguard
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Based on upstream discussion ([0]), rework existing
-bpf_prog_alloc_security LSM hook. Rename it to bpf_prog_load and instead
-of passing bpf_prog_aux, pass proper bpf_prog pointer for a full BPF
-program struct. Also, we pass bpf_attr union with all the user-provided
-arguments for BPF_PROG_LOAD command.  This will give LSMs as much
-information as we can basically provide.
+Add a selftest that attempts to conceptually replicate intended BPF
+token use cases inside user namespaced container.
 
-The hook is also BPF token-aware now, and optional bpf_token struct is
-passed as a third argument. bpf_prog_load LSM hook is called after
-a bunch of sanity checks were performed, bpf_prog and bpf_prog_aux were
-allocated and filled out, but right before performing full-fledged BPF
-verification step.
+Child process is forked. It is then put into its own userns and mountns.
+Child creates BPF FS context object and sets it up as desired. This
+ensures child userns is captures as owning userns for this instance of
+BPF FS.
 
-bpf_prog_free LSM hook is now accepting struct bpf_prog argument, for
-consistency. SELinux code is adjusted to all new names, types, and
-signatures.
+This context is passed back to privileged parent process through Unix
+socket, where parent creates and mounts it as a detached mount. This
+mount FD is passed back to the child to be used for BPF token creation,
+which allows otherwise privileged BPF operations to succeed inside
+userns.
 
-Note, given that bpf_prog_load (previously bpf_prog_alloc) hook can be
-used by some LSMs to allocate extra security blob, but also by other
-LSMs to reject BPF program loading, we need to make sure that
-bpf_prog_free LSM hook is called after bpf_prog_load/bpf_prog_alloc one
-*even* if the hook itself returned error. If we don't do that, we run
-the risk of leaking memory. This seems to be possible today when
-combining SELinux and BPF LSM, as one example, depending on their
-relative ordering.
+We validate that all of token-enabled privileged commands (BPF_BTF_LOAD,
+BPF_MAP_CREATE, and BPF_PROG_LOAD) work as intended. They should only
+succeed inside the userns if a) BPF token is provided with proper
+allowed sets of commands and types; and b) namespaces CAP_BPF and other
+privileges are set. Lacking a) or b) should lead to -EPERM failures.
 
-Also, for BPF LSM setup, add bpf_prog_load and bpf_prog_free to
-sleepable LSM hooks list, as they are both executed in sleepable
-context. Also drop bpf_prog_load hook from untrusted, as there is no
-issue with refcount or anything else anymore, that originally forced us
-to add it to untrusted list in c0c852dd1876 ("bpf: Do not mark certain LSM
-hook arguments as trusted"). We now trigger this hook much later and it
-should not be an issue anymore.
+Based on suggested workflow by Christian Brauner ([0]).
 
-  [0] https://lore.kernel.org/bpf/9fe88aef7deabbe87d3fc38c4aea3c69.paul@paul-moore.com/
+  [0] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef785e@brauner/
 
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- include/linux/lsm_hook_defs.h |  5 +++--
- include/linux/security.h      | 12 +++++++-----
- kernel/bpf/bpf_lsm.c          |  5 +++--
- kernel/bpf/syscall.c          | 25 +++++++++++++------------
- security/security.c           | 25 +++++++++++++++----------
- security/selinux/hooks.c      | 15 ++++++++-------
- 6 files changed, 49 insertions(+), 38 deletions(-)
+ .../testing/selftests/bpf/prog_tests/token.c  | 629 ++++++++++++++++++
+ 1 file changed, 629 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index ac962c4cb44b..f7088a06c593 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -400,8 +400,9 @@ LSM_HOOK(int, 0, bpf_map, struct bpf_map *map, fmode_t fmode)
- LSM_HOOK(int, 0, bpf_prog, struct bpf_prog *prog)
- LSM_HOOK(int, 0, bpf_map_alloc_security, struct bpf_map *map)
- LSM_HOOK(void, LSM_RET_VOID, bpf_map_free_security, struct bpf_map *map)
--LSM_HOOK(int, 0, bpf_prog_alloc_security, struct bpf_prog_aux *aux)
--LSM_HOOK(void, LSM_RET_VOID, bpf_prog_free_security, struct bpf_prog_aux *aux)
-+LSM_HOOK(int, 0, bpf_prog_load, struct bpf_prog *prog, union bpf_attr *attr,
-+	 struct bpf_token *token)
-+LSM_HOOK(void, LSM_RET_VOID, bpf_prog_free, struct bpf_prog *prog)
- #endif /* CONFIG_BPF_SYSCALL */
- 
- LSM_HOOK(int, 0, locked_down, enum lockdown_reason what)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 5f16eecde00b..b9fb101561b6 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -2020,15 +2020,16 @@ static inline void securityfs_remove(struct dentry *dentry)
- union bpf_attr;
- struct bpf_map;
- struct bpf_prog;
--struct bpf_prog_aux;
-+struct bpf_token;
- #ifdef CONFIG_SECURITY
- extern int security_bpf(int cmd, union bpf_attr *attr, unsigned int size);
- extern int security_bpf_map(struct bpf_map *map, fmode_t fmode);
- extern int security_bpf_prog(struct bpf_prog *prog);
- extern int security_bpf_map_alloc(struct bpf_map *map);
- extern void security_bpf_map_free(struct bpf_map *map);
--extern int security_bpf_prog_alloc(struct bpf_prog_aux *aux);
--extern void security_bpf_prog_free(struct bpf_prog_aux *aux);
-+extern int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
-+				  struct bpf_token *token);
-+extern void security_bpf_prog_free(struct bpf_prog *prog);
- #else
- static inline int security_bpf(int cmd, union bpf_attr *attr,
- 					     unsigned int size)
-@@ -2054,12 +2055,13 @@ static inline int security_bpf_map_alloc(struct bpf_map *map)
- static inline void security_bpf_map_free(struct bpf_map *map)
- { }
- 
--static inline int security_bpf_prog_alloc(struct bpf_prog_aux *aux)
-+static inline int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
-+					 struct bpf_token *token)
- {
- 	return 0;
- }
- 
--static inline void security_bpf_prog_free(struct bpf_prog_aux *aux)
-+static inline void security_bpf_prog_free(struct bpf_prog *prog)
- { }
- #endif /* CONFIG_SECURITY */
- #endif /* CONFIG_BPF_SYSCALL */
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index e14c822f8911..3e956f6302f3 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -263,6 +263,8 @@ BTF_ID(func, bpf_lsm_bpf_map)
- BTF_ID(func, bpf_lsm_bpf_map_alloc_security)
- BTF_ID(func, bpf_lsm_bpf_map_free_security)
- BTF_ID(func, bpf_lsm_bpf_prog)
-+BTF_ID(func, bpf_lsm_bpf_prog_load)
-+BTF_ID(func, bpf_lsm_bpf_prog_free)
- BTF_ID(func, bpf_lsm_bprm_check_security)
- BTF_ID(func, bpf_lsm_bprm_committed_creds)
- BTF_ID(func, bpf_lsm_bprm_committing_creds)
-@@ -346,8 +348,7 @@ BTF_SET_END(sleepable_lsm_hooks)
- 
- BTF_SET_START(untrusted_lsm_hooks)
- BTF_ID(func, bpf_lsm_bpf_map_free_security)
--BTF_ID(func, bpf_lsm_bpf_prog_alloc_security)
--BTF_ID(func, bpf_lsm_bpf_prog_free_security)
-+BTF_ID(func, bpf_lsm_bpf_prog_free)
- BTF_ID(func, bpf_lsm_file_alloc_security)
- BTF_ID(func, bpf_lsm_file_free_security)
- #ifdef CONFIG_SECURITY_NETWORK
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index f0e22d116041..ee0fea87b17b 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2138,7 +2138,7 @@ static void __bpf_prog_put_rcu(struct rcu_head *rcu)
- 	kvfree(aux->func_info);
- 	kfree(aux->func_info_aux);
- 	free_uid(aux->user);
--	security_bpf_prog_free(aux);
-+	security_bpf_prog_free(aux->prog);
- 	bpf_prog_free(aux->prog);
- }
- 
-@@ -2728,10 +2728,6 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
- 	prog->aux->token = token;
- 	token = NULL;
- 
--	err = security_bpf_prog_alloc(prog->aux);
--	if (err)
--		goto free_prog;
--
- 	prog->aux->user = get_current_user();
- 	prog->len = attr->insn_cnt;
- 
-@@ -2739,12 +2735,12 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
- 	if (copy_from_bpfptr(prog->insns,
- 			     make_bpfptr(attr->insns, uattr.is_kernel),
- 			     bpf_prog_insn_size(prog)) != 0)
--		goto free_prog_sec;
-+		goto free_prog;
- 	/* copy eBPF program license from user space */
- 	if (strncpy_from_bpfptr(license,
- 				make_bpfptr(attr->license, uattr.is_kernel),
- 				sizeof(license) - 1) < 0)
--		goto free_prog_sec;
-+		goto free_prog;
- 	license[sizeof(license) - 1] = 0;
- 
- 	/* eBPF programs must be GPL compatible to use GPL-ed functions */
-@@ -2758,25 +2754,29 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
- 	if (bpf_prog_is_dev_bound(prog->aux)) {
- 		err = bpf_prog_dev_bound_init(prog, attr);
- 		if (err)
--			goto free_prog_sec;
-+			goto free_prog;
- 	}
- 
- 	if (type == BPF_PROG_TYPE_EXT && dst_prog &&
- 	    bpf_prog_is_dev_bound(dst_prog->aux)) {
- 		err = bpf_prog_dev_bound_inherit(prog, dst_prog);
- 		if (err)
--			goto free_prog_sec;
-+			goto free_prog;
- 	}
- 
- 	/* find program type: socket_filter vs tracing_filter */
- 	err = find_prog_type(type, prog);
- 	if (err < 0)
--		goto free_prog_sec;
-+		goto free_prog;
- 
- 	prog->aux->load_time = ktime_get_boottime_ns();
- 	err = bpf_obj_name_cpy(prog->aux->name, attr->prog_name,
- 			       sizeof(attr->prog_name));
- 	if (err < 0)
-+		goto free_prog;
+diff --git a/tools/testing/selftests/bpf/prog_tests/token.c b/tools/testing/selftests/bpf/prog_tests/token.c
+new file mode 100644
+index 000000000000..41cee6b4731e
+--- /dev/null
++++ b/tools/testing/selftests/bpf/prog_tests/token.c
+@@ -0,0 +1,629 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
++#define _GNU_SOURCE
++#include <test_progs.h>
++#include <bpf/btf.h>
++#include "cap_helpers.h"
++#include <fcntl.h>
++#include <sched.h>
++#include <signal.h>
++#include <unistd.h>
++#include <linux/filter.h>
++#include <linux/unistd.h>
++#include <sys/mount.h>
++#include <sys/socket.h>
++#include <sys/syscall.h>
++#include <sys/un.h>
 +
-+	err = security_bpf_prog_load(prog, attr, token);
-+	if (err)
- 		goto free_prog_sec;
- 
- 	/* run eBPF verifier */
-@@ -2822,10 +2822,11 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
- 	 */
- 	__bpf_prog_put_noref(prog, prog->aux->real_func_cnt);
- 	return err;
++/* copied from include/uapi/linux/mount.h, as including it conflicts with
++ * sys/mount.h include
++ */
++enum fsconfig_command {
++	FSCONFIG_SET_FLAG       = 0,    /* Set parameter, supplying no value */
++	FSCONFIG_SET_STRING     = 1,    /* Set parameter, supplying a string value */
++	FSCONFIG_SET_BINARY     = 2,    /* Set parameter, supplying a binary blob value */
++	FSCONFIG_SET_PATH       = 3,    /* Set parameter, supplying an object by path */
++	FSCONFIG_SET_PATH_EMPTY = 4,    /* Set parameter, supplying an object by (empty) path */
++	FSCONFIG_SET_FD         = 5,    /* Set parameter, supplying an object by fd */
++	FSCONFIG_CMD_CREATE     = 6,    /* Invoke superblock creation */
++	FSCONFIG_CMD_RECONFIGURE = 7,   /* Invoke superblock reconfiguration */
++};
 +
- free_prog_sec:
--	free_uid(prog->aux->user);
--	security_bpf_prog_free(prog->aux);
-+	security_bpf_prog_free(prog);
- free_prog:
-+	free_uid(prog->aux->user);
- 	if (prog->aux->attach_btf)
- 		btf_put(prog->aux->attach_btf);
- 	bpf_prog_free(prog);
-diff --git a/security/security.c b/security/security.c
-index 23b129d482a7..bc8b72325c3b 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -5180,16 +5180,21 @@ int security_bpf_map_alloc(struct bpf_map *map)
- }
- 
- /**
-- * security_bpf_prog_alloc() - Allocate a bpf program LSM blob
-- * @aux: bpf program aux info struct
-+ * security_bpf_prog_load() - Check if loading of BPF program is allowed
-+ * @prog BPF program object
-+ * @attr: BPF syscall attributes used to create BPF program
-+ * @token: BPF token used to grant user access to BPF subsystem
-  *
-- * Initialize the security field inside bpf program.
-+ * Do a check when the kernel allocates BPF program object and is about to
-+ * pass it to BPF verifier for additional correctness checks. This is also the
-+ * point where LSM blob is allocated for LSMs that need them.
-  *
-  * Return: Returns 0 on success, error on failure.
-  */
--int security_bpf_prog_alloc(struct bpf_prog_aux *aux)
-+int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
-+			   struct bpf_token *token)
- {
--	return call_int_hook(bpf_prog_alloc_security, 0, aux);
-+	return call_int_hook(bpf_prog_load, 0, prog, attr, token);
- }
- 
- /**
-@@ -5204,14 +5209,14 @@ void security_bpf_map_free(struct bpf_map *map)
- }
- 
- /**
-- * security_bpf_prog_free() - Free a bpf program's LSM blob
-- * @aux: bpf program aux info struct
-+ * security_bpf_prog_free() - Free a BPF program's LSM blob
-+ * @prog: BPF program struct
-  *
-- * Clean up the security information stored inside bpf prog.
-+ * Clean up the security information stored inside BPF program.
-  */
--void security_bpf_prog_free(struct bpf_prog_aux *aux)
-+void security_bpf_prog_free(struct bpf_prog *prog)
- {
--	call_void_hook(bpf_prog_free_security, aux);
-+	call_void_hook(bpf_prog_free, prog);
- }
- #endif /* CONFIG_BPF_SYSCALL */
- 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 2aa0e219d721..f386adb0f27d 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6805,7 +6805,8 @@ static void selinux_bpf_map_free(struct bpf_map *map)
- 	kfree(bpfsec);
- }
- 
--static int selinux_bpf_prog_alloc(struct bpf_prog_aux *aux)
-+static int selinux_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
-+				 struct bpf_token *token)
- {
- 	struct bpf_security_struct *bpfsec;
- 
-@@ -6814,16 +6815,16 @@ static int selinux_bpf_prog_alloc(struct bpf_prog_aux *aux)
- 		return -ENOMEM;
- 
- 	bpfsec->sid = current_sid();
--	aux->security = bpfsec;
-+	prog->aux->security = bpfsec;
- 
- 	return 0;
- }
- 
--static void selinux_bpf_prog_free(struct bpf_prog_aux *aux)
-+static void selinux_bpf_prog_free(struct bpf_prog *prog)
- {
--	struct bpf_security_struct *bpfsec = aux->security;
-+	struct bpf_security_struct *bpfsec = prog->aux->security;
- 
--	aux->security = NULL;
-+	prog->aux->security = NULL;
- 	kfree(bpfsec);
- }
- #endif
-@@ -7180,7 +7181,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(bpf_map, selinux_bpf_map),
- 	LSM_HOOK_INIT(bpf_prog, selinux_bpf_prog),
- 	LSM_HOOK_INIT(bpf_map_free_security, selinux_bpf_map_free),
--	LSM_HOOK_INIT(bpf_prog_free_security, selinux_bpf_prog_free),
-+	LSM_HOOK_INIT(bpf_prog_free, selinux_bpf_prog_free),
- #endif
- 
- #ifdef CONFIG_PERF_EVENTS
-@@ -7238,7 +7239,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- #endif
- #ifdef CONFIG_BPF_SYSCALL
- 	LSM_HOOK_INIT(bpf_map_alloc_security, selinux_bpf_map_alloc),
--	LSM_HOOK_INIT(bpf_prog_alloc_security, selinux_bpf_prog_alloc),
-+	LSM_HOOK_INIT(bpf_prog_load, selinux_bpf_prog_load),
- #endif
- #ifdef CONFIG_PERF_EVENTS
- 	LSM_HOOK_INIT(perf_event_alloc, selinux_perf_event_alloc),
++static inline int sys_fsopen(const char *fsname, unsigned flags)
++{
++	return syscall(__NR_fsopen, fsname, flags);
++}
++
++static inline int sys_fsconfig(int fs_fd, unsigned cmd, const char *key, const void *val, int aux)
++{
++	return syscall(__NR_fsconfig, fs_fd, cmd, key, val, aux);
++}
++
++static inline int sys_fsmount(int fs_fd, unsigned flags, unsigned ms_flags)
++{
++	return syscall(__NR_fsmount, fs_fd, flags, ms_flags);
++}
++
++static int drop_priv_caps(__u64 *old_caps)
++{
++	return cap_disable_effective((1ULL << CAP_BPF) |
++				     (1ULL << CAP_PERFMON) |
++				     (1ULL << CAP_NET_ADMIN) |
++				     (1ULL << CAP_SYS_ADMIN), old_caps);
++}
++
++static int restore_priv_caps(__u64 old_caps)
++{
++	return cap_enable_effective(old_caps, NULL);
++}
++
++static int set_delegate_mask(int fs_fd, const char *key, __u64 mask)
++{
++	char buf[32];
++	int err;
++
++	snprintf(buf, sizeof(buf), "0x%llx", (unsigned long long)mask);
++	err = sys_fsconfig(fs_fd, FSCONFIG_SET_STRING, key,
++			   mask == ~0ULL ? "any" : buf, 0);
++	if (err < 0)
++		err = -errno;
++	return err;
++}
++
++#define zclose(fd) do { if (fd >= 0) close(fd); fd = -1; } while (0)
++
++struct bpffs_opts {
++	__u64 cmds;
++	__u64 maps;
++	__u64 progs;
++	__u64 attachs;
++};
++
++static int setup_bpffs_fd(struct bpffs_opts *opts)
++{
++	int fs_fd = -1, err;
++
++	/* create VFS context */
++	fs_fd = sys_fsopen("bpf", 0);
++	if (!ASSERT_GE(fs_fd, 0, "fs_fd"))
++		goto cleanup;
++
++	/* set up token delegation mount options */
++	err = set_delegate_mask(fs_fd, "delegate_cmds", opts->cmds);
++	if (!ASSERT_OK(err, "fs_cfg_cmds"))
++		goto cleanup;
++	err = set_delegate_mask(fs_fd, "delegate_maps", opts->maps);
++	if (!ASSERT_OK(err, "fs_cfg_maps"))
++		goto cleanup;
++	err = set_delegate_mask(fs_fd, "delegate_progs", opts->progs);
++	if (!ASSERT_OK(err, "fs_cfg_progs"))
++		goto cleanup;
++	err = set_delegate_mask(fs_fd, "delegate_attachs", opts->attachs);
++	if (!ASSERT_OK(err, "fs_cfg_attachs"))
++		goto cleanup;
++
++	return fs_fd;
++cleanup:
++	zclose(fs_fd);
++	return -1;
++}
++
++static int materialize_bpffs_fd(int fs_fd)
++{
++	int mnt_fd, err;
++
++	/* instantiate FS object */
++	err = sys_fsconfig(fs_fd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
++	if (err < 0)
++		return -errno;
++
++	/* create O_PATH fd for detached mount */
++	mnt_fd = sys_fsmount(fs_fd, 0, 0);
++	if (err < 0)
++		return -errno;
++
++	return mnt_fd;
++}
++
++/* send FD over Unix domain (AF_UNIX) socket */
++static int sendfd(int sockfd, int fd)
++{
++	struct msghdr msg = {};
++	struct cmsghdr *cmsg;
++	int fds[1] = { fd }, err;
++	char iobuf[1];
++	struct iovec io = {
++		.iov_base = iobuf,
++		.iov_len = sizeof(iobuf),
++	};
++	union {
++		char buf[CMSG_SPACE(sizeof(fds))];
++		struct cmsghdr align;
++	} u;
++
++	msg.msg_iov = &io;
++	msg.msg_iovlen = 1;
++	msg.msg_control = u.buf;
++	msg.msg_controllen = sizeof(u.buf);
++	cmsg = CMSG_FIRSTHDR(&msg);
++	cmsg->cmsg_level = SOL_SOCKET;
++	cmsg->cmsg_type = SCM_RIGHTS;
++	cmsg->cmsg_len = CMSG_LEN(sizeof(fds));
++	memcpy(CMSG_DATA(cmsg), fds, sizeof(fds));
++
++	err = sendmsg(sockfd, &msg, 0);
++	if (err < 0)
++		err = -errno;
++	if (!ASSERT_EQ(err, 1, "sendmsg"))
++		return -EINVAL;
++
++	return 0;
++}
++
++/* receive FD over Unix domain (AF_UNIX) socket */
++static int recvfd(int sockfd, int *fd)
++{
++	struct msghdr msg = {};
++	struct cmsghdr *cmsg;
++	int fds[1], err;
++	char iobuf[1];
++	struct iovec io = {
++		.iov_base = iobuf,
++		.iov_len = sizeof(iobuf),
++	};
++	union {
++		char buf[CMSG_SPACE(sizeof(fds))];
++		struct cmsghdr align;
++	} u;
++
++	msg.msg_iov = &io;
++	msg.msg_iovlen = 1;
++	msg.msg_control = u.buf;
++	msg.msg_controllen = sizeof(u.buf);
++
++	err = recvmsg(sockfd, &msg, 0);
++	if (err < 0)
++		err = -errno;
++	if (!ASSERT_EQ(err, 1, "recvmsg"))
++		return -EINVAL;
++
++	cmsg = CMSG_FIRSTHDR(&msg);
++	if (!ASSERT_OK_PTR(cmsg, "cmsg_null") ||
++	    !ASSERT_EQ(cmsg->cmsg_len, CMSG_LEN(sizeof(fds)), "cmsg_len") ||
++	    !ASSERT_EQ(cmsg->cmsg_level, SOL_SOCKET, "cmsg_level") ||
++	    !ASSERT_EQ(cmsg->cmsg_type, SCM_RIGHTS, "cmsg_type"))
++		return -EINVAL;
++
++	memcpy(fds, CMSG_DATA(cmsg), sizeof(fds));
++	*fd = fds[0];
++
++	return 0;
++}
++
++static ssize_t write_nointr(int fd, const void *buf, size_t count)
++{
++	ssize_t ret;
++
++	do {
++		ret = write(fd, buf, count);
++	} while (ret < 0 && errno == EINTR);
++
++	return ret;
++}
++
++static int write_file(const char *path, const void *buf, size_t count)
++{
++	int fd;
++	ssize_t ret;
++
++	fd = open(path, O_WRONLY | O_CLOEXEC | O_NOCTTY | O_NOFOLLOW);
++	if (fd < 0)
++		return -1;
++
++	ret = write_nointr(fd, buf, count);
++	close(fd);
++	if (ret < 0 || (size_t)ret != count)
++		return -1;
++
++	return 0;
++}
++
++static int create_and_enter_userns(void)
++{
++	uid_t uid;
++	gid_t gid;
++	char map[100];
++
++	uid = getuid();
++	gid = getgid();
++
++	if (unshare(CLONE_NEWUSER))
++		return -1;
++
++	if (write_file("/proc/self/setgroups", "deny", sizeof("deny") - 1) &&
++	    errno != ENOENT)
++		return -1;
++
++	snprintf(map, sizeof(map), "0 %d 1", uid);
++	if (write_file("/proc/self/uid_map", map, strlen(map)))
++		return -1;
++
++
++	snprintf(map, sizeof(map), "0 %d 1", gid);
++	if (write_file("/proc/self/gid_map", map, strlen(map)))
++		return -1;
++
++	if (setgid(0))
++		return -1;
++
++	if (setuid(0))
++		return -1;
++
++	return 0;
++}
++
++typedef int (*child_callback_fn)(int);
++
++static void child(int sock_fd, struct bpffs_opts *bpffs_opts, child_callback_fn callback)
++{
++	LIBBPF_OPTS(bpf_map_create_opts, map_opts);
++	int mnt_fd = -1, fs_fd = -1, err = 0;
++
++	/* setup userns with root mappings */
++	err = create_and_enter_userns();
++	if (!ASSERT_OK(err, "create_and_enter_userns"))
++		goto cleanup;
++
++	/* setup mountns to allow creating BPF FS (fsopen("bpf")) from unpriv process */
++	err = unshare(CLONE_NEWNS);
++	if (!ASSERT_OK(err, "create_mountns"))
++		goto cleanup;
++
++	err = mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0);
++	if (!ASSERT_OK(err, "remount_root"))
++		goto cleanup;
++
++	fs_fd = setup_bpffs_fd(bpffs_opts);
++	if (!ASSERT_GE(fs_fd, 0, "setup_bpffs")) {
++		err = -EINVAL;
++		goto cleanup;
++	}
++
++	/* pass BPF FS context object to parent */
++	err = sendfd(sock_fd, fs_fd);
++	if (!ASSERT_OK(err, "send_fs_fd"))
++		goto cleanup;
++
++	/* avoid mucking around with mount namespaces and mounting at
++	 * well-known path, just get detach-mounted BPF FS fd back from parent
++	 */
++	err = recvfd(sock_fd, &mnt_fd);
++	if (!ASSERT_OK(err, "recv_mnt_fd"))
++		goto cleanup;
++
++	/* do custom test logic with customly set up BPF FS instance */
++	err = callback(mnt_fd);
++	if (!ASSERT_OK(err, "test_callback"))
++		goto cleanup;
++
++	err = 0;
++cleanup:
++	zclose(sock_fd);
++	zclose(mnt_fd);
++
++	exit(-err);
++}
++
++static int wait_for_pid(pid_t pid)
++{
++	int status, ret;
++
++again:
++	ret = waitpid(pid, &status, 0);
++	if (ret == -1) {
++		if (errno == EINTR)
++			goto again;
++
++		return -1;
++	}
++
++	if (!WIFEXITED(status))
++		return -1;
++
++	return WEXITSTATUS(status);
++}
++
++static void parent(int child_pid, int sock_fd)
++{
++	int fs_fd = -1, mnt_fd = -1, err;
++
++	err = recvfd(sock_fd, &fs_fd);
++	if (!ASSERT_OK(err, "recv_bpffs_fd"))
++		goto cleanup;
++
++	mnt_fd = materialize_bpffs_fd(fs_fd);
++	if (!ASSERT_GE(mnt_fd, 0, "materialize_bpffs_fd")) {
++		err = -EINVAL;
++		goto cleanup;
++	}
++	zclose(fs_fd);
++
++	/* pass BPF FS context object to parent */
++	err = sendfd(sock_fd, mnt_fd);
++	if (!ASSERT_OK(err, "send_mnt_fd"))
++		goto cleanup;
++	zclose(mnt_fd);
++
++	err = wait_for_pid(child_pid);
++	ASSERT_OK(err, "waitpid_child");
++
++cleanup:
++	zclose(sock_fd);
++	zclose(fs_fd);
++	zclose(mnt_fd);
++
++	if (child_pid > 0)
++		(void)kill(child_pid, SIGKILL);
++}
++
++static void subtest_userns(struct bpffs_opts *bpffs_opts, child_callback_fn cb)
++{
++	int sock_fds[2] = { -1, -1 };
++	int child_pid = 0, err;
++
++	err = socketpair(AF_UNIX, SOCK_STREAM, 0, sock_fds);
++	if (!ASSERT_OK(err, "socketpair"))
++		goto cleanup;
++
++	child_pid = fork();
++	if (!ASSERT_GE(child_pid, 0, "fork"))
++		goto cleanup;
++
++	if (child_pid == 0) {
++		zclose(sock_fds[0]);
++		return child(sock_fds[1], bpffs_opts, cb);
++
++	} else {
++		zclose(sock_fds[1]);
++		return parent(child_pid, sock_fds[0]);
++	}
++
++cleanup:
++	zclose(sock_fds[0]);
++	zclose(sock_fds[1]);
++	if (child_pid > 0)
++		(void)kill(child_pid, SIGKILL);
++}
++
++static int userns_map_create(int mnt_fd)
++{
++	LIBBPF_OPTS(bpf_map_create_opts, map_opts);
++	int err, token_fd = -1, map_fd = -1;
++	__u64 old_caps = 0;
++
++	/* create BPF token from BPF FS mount */
++	token_fd = bpf_token_create(mnt_fd, "", NULL);
++	if (!ASSERT_GT(token_fd, 0, "token_create")) {
++		err = -EINVAL;
++		goto cleanup;
++	}
++
++	/* while inside non-init userns, we need both a BPF token *and*
++	 * CAP_BPF inside current userns to create privileged map; let's test
++	 * that neither BPF token alone nor namespaced CAP_BPF is sufficient
++	 */
++	err = drop_priv_caps(&old_caps);
++	if (!ASSERT_OK(err, "drop_caps"))
++		goto cleanup;
++
++	/* no token, no CAP_BPF -> fail */
++	map_opts.token_fd = 0;
++	map_fd = bpf_map_create(BPF_MAP_TYPE_STACK, "wo_token_wo_bpf", 0, 8, 1, &map_opts);
++	if (!ASSERT_LT(map_fd, 0, "stack_map_wo_token_wo_cap_bpf_should_fail")) {
++		err = -EINVAL;
++		goto cleanup;
++	}
++
++	/* token without CAP_BPF -> fail */
++	map_opts.token_fd = token_fd;
++	map_fd = bpf_map_create(BPF_MAP_TYPE_STACK, "w_token_wo_bpf", 0, 8, 1, &map_opts);
++	if (!ASSERT_LT(map_fd, 0, "stack_map_w_token_wo_cap_bpf_should_fail")) {
++		err = -EINVAL;
++		goto cleanup;
++	}
++
++	/* get back effective local CAP_BPF (and CAP_SYS_ADMIN) */
++	err = restore_priv_caps(old_caps);
++	if (!ASSERT_OK(err, "restore_caps"))
++		goto cleanup;
++
++	/* CAP_BPF without token -> fail */
++	map_opts.token_fd = 0;
++	map_fd = bpf_map_create(BPF_MAP_TYPE_STACK, "wo_token_w_bpf", 0, 8, 1, &map_opts);
++	if (!ASSERT_LT(map_fd, 0, "stack_map_wo_token_w_cap_bpf_should_fail")) {
++		err = -EINVAL;
++		goto cleanup;
++	}
++
++	/* finally, namespaced CAP_BPF + token -> success */
++	map_opts.token_fd = token_fd;
++	map_fd = bpf_map_create(BPF_MAP_TYPE_STACK, "w_token_w_bpf", 0, 8, 1, &map_opts);
++	if (!ASSERT_GT(map_fd, 0, "stack_map_w_token_w_cap_bpf")) {
++		err = -EINVAL;
++		goto cleanup;
++	}
++
++cleanup:
++	zclose(token_fd);
++	zclose(map_fd);
++	return err;
++}
++
++static int userns_btf_load(int mnt_fd)
++{
++	LIBBPF_OPTS(bpf_btf_load_opts, btf_opts);
++	int err, token_fd = -1, btf_fd = -1;
++	const void *raw_btf_data;
++	struct btf *btf = NULL;
++	__u32 raw_btf_size;
++	__u64 old_caps = 0;
++
++	/* create BPF token from BPF FS mount */
++	token_fd = bpf_token_create(mnt_fd, "", NULL);
++	if (!ASSERT_GT(token_fd, 0, "token_create")) {
++		err = -EINVAL;
++		goto cleanup;
++	}
++
++	/* while inside non-init userns, we need both a BPF token *and*
++	 * CAP_BPF inside current userns to create privileged map; let's test
++	 * that neither BPF token alone nor namespaced CAP_BPF is sufficient
++	 */
++	err = drop_priv_caps(&old_caps);
++	if (!ASSERT_OK(err, "drop_caps"))
++		goto cleanup;
++
++	/* setup a trivial BTF data to load to the kernel */
++	btf = btf__new_empty();
++	if (!ASSERT_OK_PTR(btf, "empty_btf"))
++		goto cleanup;
++
++	ASSERT_GT(btf__add_int(btf, "int", 4, 0), 0, "int_type");
++
++	raw_btf_data = btf__raw_data(btf, &raw_btf_size);
++	if (!ASSERT_OK_PTR(raw_btf_data, "raw_btf_data"))
++		goto cleanup;
++
++	/* no token + no CAP_BPF -> failure */
++	btf_opts.token_fd = 0;
++	btf_fd = bpf_btf_load(raw_btf_data, raw_btf_size, &btf_opts);
++	if (!ASSERT_LT(btf_fd, 0, "no_token_no_cap_should_fail"))
++		goto cleanup;
++
++	/* token + no CAP_BPF -> failure */
++	btf_opts.token_fd = token_fd;
++	btf_fd = bpf_btf_load(raw_btf_data, raw_btf_size, &btf_opts);
++	if (!ASSERT_LT(btf_fd, 0, "token_no_cap_should_fail"))
++		goto cleanup;
++
++	/* get back effective local CAP_BPF (and CAP_SYS_ADMIN) */
++	err = restore_priv_caps(old_caps);
++	if (!ASSERT_OK(err, "restore_caps"))
++		goto cleanup;
++
++	/* token + CAP_BPF -> success */
++	btf_opts.token_fd = token_fd;
++	btf_fd = bpf_btf_load(raw_btf_data, raw_btf_size, &btf_opts);
++	if (!ASSERT_GT(btf_fd, 0, "token_and_cap_success"))
++		goto cleanup;
++
++	err = 0;
++cleanup:
++	btf__free(btf);
++	zclose(btf_fd);
++	zclose(token_fd);
++	return err;
++}
++
++static int userns_prog_load(int mnt_fd)
++{
++	LIBBPF_OPTS(bpf_prog_load_opts, prog_opts);
++	int err, token_fd = -1, prog_fd = -1;
++	struct bpf_insn insns[] = {
++		/* bpf_jiffies64() requires CAP_BPF */
++		BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0, BPF_FUNC_jiffies64),
++		/* bpf_get_current_task() requires CAP_PERFMON */
++		BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0, BPF_FUNC_get_current_task),
++		/* r0 = 0; exit; */
++		BPF_MOV64_IMM(BPF_REG_0, 0),
++		BPF_EXIT_INSN(),
++	};
++	size_t insn_cnt = ARRAY_SIZE(insns);
++	__u64 old_caps = 0;
++
++	/* create BPF token from BPF FS mount */
++	token_fd = bpf_token_create(mnt_fd, "", NULL);
++	if (!ASSERT_GT(token_fd, 0, "token_create")) {
++		err = -EINVAL;
++		goto cleanup;
++	}
++
++	/* validate we can successfully load BPF program with token; this
++	 * being XDP program (CAP_NET_ADMIN) using bpf_jiffies64() (CAP_BPF)
++	 * and bpf_get_current_task() (CAP_PERFMON) helpers validates we have
++	 * BPF token wired properly in a bunch of places in the kernel
++	 */
++	prog_opts.token_fd = token_fd;
++	prog_opts.expected_attach_type = BPF_XDP;
++	prog_fd = bpf_prog_load(BPF_PROG_TYPE_XDP, "token_prog", "GPL",
++				insns, insn_cnt, &prog_opts);
++	if (!ASSERT_GT(prog_fd, 0, "prog_fd")) {
++		err = -EPERM;
++		goto cleanup;
++	}
++
++	/* no token + caps -> failure */
++	prog_opts.token_fd = 0;
++	prog_fd = bpf_prog_load(BPF_PROG_TYPE_XDP, "token_prog", "GPL",
++				insns, insn_cnt, &prog_opts);
++	if (!ASSERT_EQ(prog_fd, -EPERM, "prog_fd_eperm")) {
++		err = -EPERM;
++		goto cleanup;
++	}
++
++	err = drop_priv_caps(&old_caps);
++	if (!ASSERT_OK(err, "drop_caps"))
++		goto cleanup;
++
++	/* no caps + token -> failure */
++	prog_opts.token_fd = token_fd;
++	prog_fd = bpf_prog_load(BPF_PROG_TYPE_XDP, "token_prog", "GPL",
++				insns, insn_cnt, &prog_opts);
++	if (!ASSERT_EQ(prog_fd, -EPERM, "prog_fd_eperm")) {
++		err = -EPERM;
++		goto cleanup;
++	}
++
++	/* no caps + no token -> definitely a failure */
++	prog_opts.token_fd = 0;
++	prog_fd = bpf_prog_load(BPF_PROG_TYPE_XDP, "token_prog", "GPL",
++				insns, insn_cnt, &prog_opts);
++	if (!ASSERT_EQ(prog_fd, -EPERM, "prog_fd_eperm")) {
++		err = -EPERM;
++		goto cleanup;
++	}
++
++	err = 0;
++cleanup:
++	zclose(prog_fd);
++	zclose(token_fd);
++	return err;
++}
++
++void test_token(void)
++{
++	if (test__start_subtest("map_token")) {
++		struct bpffs_opts opts = {
++			.cmds = 1ULL << BPF_MAP_CREATE,
++			.maps = 1ULL << BPF_MAP_TYPE_STACK,
++		};
++
++		subtest_userns(&opts, userns_map_create);
++	}
++	if (test__start_subtest("btf_token")) {
++		struct bpffs_opts opts = {
++			.cmds = 1ULL << BPF_BTF_LOAD,
++		};
++
++		subtest_userns(&opts, userns_btf_load);
++	}
++	if (test__start_subtest("prog_token")) {
++		struct bpffs_opts opts = {
++			.cmds = 1ULL << BPF_PROG_LOAD,
++			.progs = 1ULL << BPF_PROG_TYPE_XDP,
++			.attachs = 1ULL << BPF_XDP,
++		};
++
++		subtest_userns(&opts, userns_prog_load);
++	}
++}
 -- 
 2.34.1
 
