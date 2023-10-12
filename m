@@ -2,138 +2,442 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE7DCDB47E
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Oct 2023 17:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61FB6CDB482
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Oct 2023 21:48:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347342AbjJLRQd (ORCPT
+        id S1442918AbjJLVsq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Oct 2023 13:16:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58704 "EHLO
+        Thu, 12 Oct 2023 17:48:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344032AbjJLRQc (ORCPT
+        with ESMTP id S1442911AbjJLVsp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Oct 2023 13:16:32 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1422D6;
-        Thu, 12 Oct 2023 10:16:27 -0700 (PDT)
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39CH2IQJ007409;
-        Thu, 12 Oct 2023 17:15:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=ruLAwstVJYOfziGmebf4MFgKg/exPipsxwb0UugNc+4=;
- b=b2mv3jUxA6k4cTp8yMzRSfLlz0S4Zy/Nc0UwZtt3Szi4QUfJ1Q+rStBO4u52y64zObaR
- ro/AiG7XiWrbz4Pxcgz9EmLvf/DoOywBPWDCH+I3Nw05JfLi0tzpjZhIZc9vM232dnMU
- ETX0JVSw5lp/ME6rm38lMrh2gPaoZc4AzFLlIFe846AJwQY9cbLP0b7r9Q38S68ztnAV
- AOmOZTArLtdDroBx2bmcjeCB4ANq065yMuOgntkJ1pyl2UaNiVdHVeKhzTVxiGMuQGae
- khByidn34IHmUOGBnrkpqPr2uJPly5yHdMsKno390q7OztC+dZWRvsQh/nZ2oWwWMOkO hA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tpmuj0d14-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Oct 2023 17:15:44 +0000
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39CHFhwb020298;
-        Thu, 12 Oct 2023 17:15:43 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tpmuj0cwm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Oct 2023 17:15:43 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 39CFCsfw028188;
-        Thu, 12 Oct 2023 17:10:53 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-        by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3tkj1yh8y6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Oct 2023 17:10:53 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-        by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39CHAqUv50135662
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Oct 2023 17:10:53 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C5ADB5805A;
-        Thu, 12 Oct 2023 17:10:52 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87EDD5805D;
-        Thu, 12 Oct 2023 17:10:50 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.watson.ibm.com (unknown [9.31.99.90])
-        by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Oct 2023 17:10:50 +0000 (GMT)
-Message-ID: <102b06b30518ac6595022e079de92717c92f3b8e.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 02/25] ima: Align ima_post_path_mknod() definition
- with LSM infrastructure
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Thu, 12 Oct 2023 13:10:50 -0400
-In-Reply-To: <4866a6ef46deebf9a9afdeb7efd600edb589da93.camel@huaweicloud.com>
-References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
-         <20230904133415.1799503-3-roberto.sassu@huaweicloud.com>
-         <a733fe780a3197150067ad35ed280bf85e11fa97.camel@linux.ibm.com>
-         <b51baf7741de1fdee8b36a87bd2dde71184d47a8.camel@huaweicloud.com>
-         <8646e30b0074a2932076b5a0a792b14be034de98.camel@linux.ibm.com>
-         <16c8c95f2e63ab9a2fba8cba919bf129d0541b61.camel@huaweicloud.com>
-         <c16551704db68c6e0ba89c729c892e9401f05dfc.camel@linux.ibm.com>
-         <2336abd6ae195eda221d54e3c2349a4760afaff2.camel@huaweicloud.com>
-         <84cfe4d93cb5b02591f4bd921b828eb6f3e95faa.camel@linux.ibm.com>
-         <4866a6ef46deebf9a9afdeb7efd600edb589da93.camel@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: JsOvQDlFYlC1UJRUF-UeTH3-IMW7Gucg
-X-Proofpoint-GUID: d359mtKa2PkNdJRCP2N4Q_la3JjXXcGd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-12_09,2023-10-12_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- clxscore=1015 malwarescore=0 spamscore=0 mlxscore=0 mlxlogscore=806
- phishscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2309180000 definitions=main-2310120143
+        Thu, 12 Oct 2023 17:48:45 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2187DB7;
+        Thu, 12 Oct 2023 14:48:43 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-53dd752685fso2582513a12.3;
+        Thu, 12 Oct 2023 14:48:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697147321; x=1697752121; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5f34d/54d+kiM5sXpTVq+9nnyF4hihBFGEFclSCpah0=;
+        b=MHPbQ4Fb+OA4NErnPIgIdO+O9IcRvXwXYRZCioYyWSWi4DGVlHIfRb4r8woM6ANwXS
+         oinFpjt9KT849E1QucPeVXz4uIfb18oVSZf7/sBztGTf57491bf/BCfxbG3cZUtuj2m2
+         U9rZDzqdWVP1Pyk7JJr9en2Dc2RLw2JZdt+5ZlyIM9QPig52H0Qnj2Q45h9EoQLfTCfl
+         BT0G3gwmyJfIpWOD0dU/1mnVDhwmUXXrkGVSJTynzKmOIAq6EdQecgeB0ZSsbgUBoPhR
+         i5CWuKSazpsp+AMHsipPvk0I5W+rtV8GbqvT/nQxsfslgwSqmDvr/rVPpoTxbsR9ymM/
+         l+JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697147321; x=1697752121;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5f34d/54d+kiM5sXpTVq+9nnyF4hihBFGEFclSCpah0=;
+        b=WVjqwSxlbRpUcFYKlxGFufHx2NgK4V6FrTHYw/FF4aElc+7AdiLcizd88gxnMD7V92
+         adS2fZSKtisc5z00Y2CCaqh23FJ8MZd1HTjGqRKxfbmXW7pEsIq7y3Xfrli6YB/yqnnC
+         7M6tLiR+1OFUYt9asj7etLZGKT9lHRMzr113wCkCoXMqmLIFtIrAI8LTOJNz5+prrSfi
+         XDWgs+g+Fupctivp/BsPz7IAFEUftelIuXTooE6cNUh9ctCnhCFvecHpc4ph3AFTc9Jh
+         4XUYdxaYDKwbTpDNbQ6RnXZPs0It3oJUo+5658KmTA6uTuR8Edt5MxvjxXAQMcWvXTRE
+         EjNA==
+X-Gm-Message-State: AOJu0YyRPhDBVIpinEOWlw0c+aG5vhZjb045R6FVZMkSbmdSi7RLGgoq
+        3N71SP+sbSU83/K4hvilot9U/0svpPgxQsDiWbA7Zkrx
+X-Google-Smtp-Source: AGHT+IFhrxpcs90I38dMC7XmHNykLCWnRf3serdBt6dQCxQldGiTVFkxGn+USEBYpzhaL/+fX796IMRqW2QQi/00FGo=
+X-Received: by 2002:aa7:cf87:0:b0:525:570c:566b with SMTP id
+ z7-20020aa7cf87000000b00525570c566bmr20998366edx.22.1697147321311; Thu, 12
+ Oct 2023 14:48:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230927225809.2049655-4-andrii@kernel.org> <53183ab045f8154ef94070039d53bbab.paul@paul-moore.com>
+ <CAEf4BzaTZ_EY4JVZ3ozGzed1PeD+HNGgkDw6jGpWYD_K9c8RFw@mail.gmail.com>
+In-Reply-To: <CAEf4BzaTZ_EY4JVZ3ozGzed1PeD+HNGgkDw6jGpWYD_K9c8RFw@mail.gmail.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Thu, 12 Oct 2023 14:48:29 -0700
+Message-ID: <CAEf4BzYa9V5FWLqq5wmdTJdtD3yHE-FdvBN7E33bb7+r2eGYBg@mail.gmail.com>
+Subject: Re: [PATCH v6 3/13] bpf: introduce BPF token object
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
+        sargun@sargun.me, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> > > > > We need to make sure that ima_post_path_mknod() has the same parameters
-> > > > > as the LSM hook at the time we register it to the LSM infrastructure.
-> > > > 
-> > > > I'm trying to understand why the pre hook parameters and the missing
-> > > > IMA parameter are used, as opposed to just defining the new
-> > > > post_path_mknod hook like IMA.
-> > > 
-> > > As an empyrical rule, I pass the same parameters as the corresponding
-> > > pre hook (plus idmap, in this case). This is similar to the
-> > > inode_setxattr hook. But I can be wrong, if desired I can reduce.
-> > 
-> > The inode_setxattr hook change example is legitimate, as EVM includes
-> > idmap, while IMA doesn't. 
-> > 
-> > Unless there is a good reason for the additional parameters, I'm not
-> > sure that adding them makes sense.  Not modifying the parameter list
-> > will reduce the size of this patch set.
-> 
-> The hook is going to be used by any LSM. Without knowing all the
-> possible use cases, maybe it is better to include more information now,
-> than modifying the hook and respective implementations later.
-> 
-> (again, no problem to reduce)
+On Wed, Oct 11, 2023 at 5:31=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Tue, Oct 10, 2023 at 6:17=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> >
+> > On Sep 27, 2023 Andrii Nakryiko <andrii@kernel.org> wrote:
+> > >
+> > > Add new kind of BPF kernel object, BPF token. BPF token is meant to
+> > > allow delegating privileged BPF functionality, like loading a BPF
+> > > program or creating a BPF map, from privileged process to a *trusted*
+> > > unprivileged process, all while have a good amount of control over wh=
+ich
+> > > privileged operations could be performed using provided BPF token.
+> > >
+> > > This is achieved through mounting BPF FS instance with extra delegati=
+on
+> > > mount options, which determine what operations are delegatable, and a=
+lso
+> > > constraining it to the owning user namespace (as mentioned in the
+> > > previous patch).
+> > >
+> > > BPF token itself is just a derivative from BPF FS and can be created
+> > > through a new bpf() syscall command, BPF_TOKEN_CREAT, which accepts
+> > > a path specification (using the usual fd + string path combo) to a BP=
+F
+> > > FS mount. Currently, BPF token "inherits" delegated command, map type=
+s,
+> > > prog type, and attach type bit sets from BPF FS as is. In the future,
+> > > having an BPF token as a separate object with its own FD, we can allo=
+w
+> > > to further restrict BPF token's allowable set of things either at the=
+ creation
+> > > time or after the fact, allowing the process to guard itself further
+> > > from, e.g., unintentionally trying to load undesired kind of BPF
+> > > programs. But for now we keep things simple and just copy bit sets as=
+ is.
+> > >
+> > > When BPF token is created from BPF FS mount, we take reference to the
+> > > BPF super block's owning user namespace, and then use that namespace =
+for
+> > > checking all the {CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, CAP_SYS_ADMIN}
+> > > capabilities that are normally only checked against init userns (usin=
+g
+> > > capable()), but now we check them using ns_capable() instead (if BPF
+> > > token is provided). See bpf_token_capable() for details.
+> > >
+> > > Such setup means that BPF token in itself is not sufficient to grant =
+BPF
+> > > functionality. User namespaced process has to *also* have necessary
+> > > combination of capabilities inside that user namespace. So while
+> > > previously CAP_BPF was useless when granted within user namespace, no=
+w
+> > > it gains a meaning and allows container managers and sys admins to ha=
+ve
+> > > a flexible control over which processes can and need to use BPF
+> > > functionality within the user namespace (i.e., container in practice)=
+.
+> > > And BPF FS delegation mount options and derived BPF tokens serve as
+> > > a per-container "flag" to grant overall ability to use bpf() (plus fu=
+rther
+> > > restrict on which parts of bpf() syscalls are treated as namespaced).
+> > >
+> > > The alternative to creating BPF token object was:
+> > >   a) not having any extra object and just pasing BPF FS path to each
+> > >      relevant bpf() command. This seems suboptimal as it's racy (moun=
+t
+> > >      under the same path might change in between checking it and usin=
+g it
+> > >      for bpf() command). And also less flexible if we'd like to furth=
+er
+> > >      restrict ourselves compared to all the delegated functionality
+> > >      allowed on BPF FS.
+> > >   b) use non-bpf() interface, e.g., ioctl(), but otherwise also creat=
+e
+> > >      a dedicated FD that would represent a token-like functionality. =
+This
+> > >      doesn't seem superior to having a proper bpf() command, so
+> > >      BPF_TOKEN_CREATE was chosen.
+> > >
+> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > ---
+> > >  include/linux/bpf.h            |  40 +++++++
+> > >  include/uapi/linux/bpf.h       |  39 +++++++
+> > >  kernel/bpf/Makefile            |   2 +-
+> > >  kernel/bpf/inode.c             |  10 +-
+> > >  kernel/bpf/syscall.c           |  17 +++
+> > >  kernel/bpf/token.c             | 197 +++++++++++++++++++++++++++++++=
+++
+> > >  tools/include/uapi/linux/bpf.h |  39 +++++++
+> > >  7 files changed, 339 insertions(+), 5 deletions(-)
+> > >  create mode 100644 kernel/bpf/token.c
+> > >
+> > > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> > > index a5bd40f71fd0..c43131a24579 100644
+> > > --- a/include/linux/bpf.h
+> > > +++ b/include/linux/bpf.h
+> > > @@ -1572,6 +1576,13 @@ struct bpf_mount_opts {
+> > >       u64 delegate_attachs;
+> > >  };
+> > >
+> > > +struct bpf_token {
+> > > +     struct work_struct work;
+> > > +     atomic64_t refcnt;
+> > > +     struct user_namespace *userns;
+> > > +     u64 allowed_cmds;
+> >
+> > We'll also need a 'void *security' field to go along with the BPF token
+> > allocation/creation/free hooks, see my comments below.  This is similar
+> > to what we do for other kernel objects.
+> >
+>
+> ok, I'm thinking of adding a dedicated patch for all the
+> security-related stuff and refactoring of existing LSM hook(s).
+>
+> > > +};
+> > > +
+> >
+> > ...
+> >
+> > > diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
+> > > new file mode 100644
+> > > index 000000000000..779aad5007a3
+> > > --- /dev/null
+> > > +++ b/kernel/bpf/token.c
+> > > @@ -0,0 +1,197 @@
+> > > +#include <linux/bpf.h>
+> > > +#include <linux/vmalloc.h>
+> > > +#include <linux/anon_inodes.h>
+> >
+> > Probably don't need the anon_inode.h include anymore.
+>
+> yep, dropped
+>
+> >
+> > > +#include <linux/fdtable.h>
+> > > +#include <linux/file.h>
+> > > +#include <linux/fs.h>
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/idr.h>
+> > > +#include <linux/namei.h>
+> > > +#include <linux/user_namespace.h>
+> > > +
+> > > +bool bpf_token_capable(const struct bpf_token *token, int cap)
+> > > +{
+> > > +     /* BPF token allows ns_capable() level of capabilities */
+> > > +     if (token) {
+> >
+> > I think we want a LSM hook here before the token is used in the
+> > capability check.  The LSM will see the capability check, but it will
+> > not be able to distinguish it from the process which created the
+> > delegation token.  This is arguably the purpose of the delegation, but
+> > with the LSM we want to be able to control who can use the delegated
+> > privilege.  How about something like this:
+> >
+> >   if (security_bpf_token_capable(token, cap))
+> >      return false;
+>
+> sounds good, I'll add this hook
+>
+> btw, I'm thinking of guarding the BPF_TOKEN_CREATE command behind the
+> ns_capable(CAP_BPF) check, WDYT? This seems appropriate. You can get
+> BPF token only if you have CAP_BPF **within the userns**, so any
+> process not granted CAP_BPF within namespace ("container") is
+> guaranteed to not be able to do anything with BPF token.
+>
+> >
+> > > +             if (ns_capable(token->userns, cap))
+> > > +                     return true;
+> > > +             if (cap !=3D CAP_SYS_ADMIN && ns_capable(token->userns,=
+ CAP_SYS_ADMIN))
+> > > +                     return true;
+> > > +     }
+> > > +     /* otherwise fallback to capable() checks */
+> > > +     return capable(cap) || (cap !=3D CAP_SYS_ADMIN && capable(CAP_S=
+YS_ADMIN));
+> > > +}
+> > > +
+> > > +void bpf_token_inc(struct bpf_token *token)
+> > > +{
+> > > +     atomic64_inc(&token->refcnt);
+> > > +}
+> > > +
+> > > +static void bpf_token_free(struct bpf_token *token)
+> > > +{
+> >
+> > We should have a LSM hook here to handle freeing the LSM state
+> > associated with the token.
+> >
+> >   security_bpf_token_free(token);
+> >
+>
+> yep
+>
+> > > +     put_user_ns(token->userns);
+> > > +     kvfree(token);
+> > > +}
+> >
+> > ...
+> >
+> > > +static struct bpf_token *bpf_token_alloc(void)
+> > > +{
+> > > +     struct bpf_token *token;
+> > > +
+> > > +     token =3D kvzalloc(sizeof(*token), GFP_USER);
+> > > +     if (!token)
+> > > +             return NULL;
+> > > +
+> > > +     atomic64_set(&token->refcnt, 1);
+> >
+> > We should have a LSM hook here to allocate the LSM state associated
+> > with the token.
+> >
+> >   if (security_bpf_token_alloc(token)) {
+> >     kvfree(token);
+> >     return NULL;
+> >   }
+> >
+> > > +     return token;
+> > > +}
+> >
+> > ...
+> >
+>
+> Would having userns and allowed_* masks filled out by that time inside
+> the token be useful (seems so if we treat bpf_token_alloc as generic
+> LSM hook). If yes, I'll add security_bpf_token_alloc() after all that
+> is filled out, right before we try to get unused fd. WDYT?
+>
+>
+> > > +int bpf_token_create(union bpf_attr *attr)
+> > > +{
+> > > +     struct bpf_mount_opts *mnt_opts;
+> > > +     struct bpf_token *token =3D NULL;
+> > > +     struct inode *inode;
+> > > +     struct file *file;
+> > > +     struct path path;
+> > > +     umode_t mode;
+> > > +     int err, fd;
+> > > +
+> > > +     err =3D user_path_at(attr->token_create.bpffs_path_fd,
+> > > +                        u64_to_user_ptr(attr->token_create.bpffs_pat=
+hname),
+> > > +                        LOOKUP_FOLLOW | LOOKUP_EMPTY, &path);
+> > > +     if (err)
+> > > +             return err;
+> > > +
+> > > +     if (path.mnt->mnt_root !=3D path.dentry) {
+> > > +             err =3D -EINVAL;
+> > > +             goto out_path;
+> > > +     }
+> > > +     err =3D path_permission(&path, MAY_ACCESS);
+> > > +     if (err)
+> > > +             goto out_path;
+> > > +
+> > > +     mode =3D S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
+> > > +     inode =3D bpf_get_inode(path.mnt->mnt_sb, NULL, mode);
+> > > +     if (IS_ERR(inode)) {
+> > > +             err =3D PTR_ERR(inode);
+> > > +             goto out_path;
+> > > +     }
+> > > +
+> > > +     inode->i_op =3D &bpf_token_iops;
+> > > +     inode->i_fop =3D &bpf_token_fops;
+> > > +     clear_nlink(inode); /* make sure it is unlinked */
+> > > +
+> > > +     file =3D alloc_file_pseudo(inode, path.mnt, BPF_TOKEN_INODE_NAM=
+E, O_RDWR, &bpf_token_fops);
+> > > +     if (IS_ERR(file)) {
+> > > +             iput(inode);
+> > > +             err =3D PTR_ERR(file);
+> > > +             goto out_file;
+> > > +     }
+> > > +
+> > > +     token =3D bpf_token_alloc();
+> > > +     if (!token) {
+> > > +             err =3D -ENOMEM;
+> > > +             goto out_file;
+> > > +     }
+> > > +
+> > > +     /* remember bpffs owning userns for future ns_capable() checks =
+*/
+> > > +     token->userns =3D get_user_ns(path.dentry->d_sb->s_user_ns);
+> > > +
+> > > +     mnt_opts =3D path.dentry->d_sb->s_fs_info;
+> > > +     token->allowed_cmds =3D mnt_opts->delegate_cmds;
+> >
+> > I think we would want a LSM hook here, both to control the creation
+> > of the token and mark it with the security attributes of the creating
+> > process.  How about something like this:
+> >
+> >   err =3D security_bpf_token_create(token);
+> >   if (err)
+> >     goto out_token;
+>
+> hmm... so you'd like both security_bpf_token_alloc() and
+> security_bpf_token_create()? They seem almost identical, do we need
+> two? Or is it that the security_bpf_token_alloc() is supposed to be
+> only used to create those `void *security` context pieces, while
+> security_bpf_token_create() is actually going to be used for
+> enforcement? For my own education, is there some explicit flag or some
+> other sort of mark between LSM hooks for setting up security vs
+> enforcement? Or is it mostly based on convention and implicitly
+> following the split?
+>
+> >
+> > > +     fd =3D get_unused_fd_flags(O_CLOEXEC);
+> > > +     if (fd < 0) {
+> > > +             err =3D fd;
+> > > +             goto out_token;
+> > > +     }
+> > > +
+> > > +     file->private_data =3D token;
+> > > +     fd_install(fd, file);
+> > > +
+> > > +     path_put(&path);
+> > > +     return fd;
+> > > +
+> > > +out_token:
+> > > +     bpf_token_free(token);
+> > > +out_file:
+> > > +     fput(file);
+> > > +out_path:
+> > > +     path_put(&path);
+> > > +     return err;
+> > > +}
+> >
+> > ...
+> >
+> > > +bool bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd=
+ cmd)
+> > > +{
+> > > +     if (!token)
+> > > +             return false;
+> > > +
+> > > +     return token->allowed_cmds & (1ULL << cmd);
+> >
+> > Similar to bpf_token_capable(), I believe we want a LSM hook here to
+> > control who is allowed to use the delegated privilege.
+> >
+> >   bool bpf_token_allow_cmd(...)
+> >   {
+> >     if (token && (token->allowed_cmds & (1ULL << cmd))
+> >       return security_bpf_token_cmd(token, cmd);
+>
+> ok, so I guess I'll have to add all four variants:
+> security_bpf_token_{cmd,map_type,prog_type,attach_type}, right?
+>
 
-Unless there is a known use case for a specific parameter, please
-minimize them.   Additional parameters can be added later as needed. 
+Thinking a bit more about this, I think this is unnecessary. All these
+allow checks to control other BPF commands (BPF map creation, BPF
+program load, bpf() syscall command, etc). We have dedicated LSM hooks
+for each such operation, most importantly security_bpf_prog_load() and
+security_bpf_map_create(). I'm extending both of those to be
+token-aware, and struct bpf_token is one of the input arguments, so if
+LSM need to override BPF token allow_* checks, they can do in
+respective more specialized hooks.
 
--- 
-thanks,
+Adding so many token hooks, one for each different allow mask (or any
+other sort of "allow something" parameter) seems to be excessive. It
+will both add too many super-detailed LSM hooks and will unnecessarily
+tie BPF token implementation details to LSM hook implementations, IMO.
+I'll send v7 with just security_bpf_token_{create,free}(), please take
+a look and let me know if you are still not convinced.
 
-Mimi
-
+>
+>
+> >     return false;
+> >   }
+> >
+> > > +}
+> >
+> > --
+> > paul-moore.com
