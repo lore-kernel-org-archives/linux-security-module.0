@@ -2,194 +2,119 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B096CDB482
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Oct 2023 02:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBD6CDB483
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Oct 2023 07:39:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbjJMCkG (ORCPT
+        id S229830AbjJMHjG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Oct 2023 22:40:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60490 "EHLO
+        Fri, 13 Oct 2023 03:39:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229499AbjJMCkF (ORCPT
+        with ESMTP id S229688AbjJMHjF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Oct 2023 22:40:05 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7C4DDE;
-        Thu, 12 Oct 2023 19:40:03 -0700 (PDT)
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-        by mailout.nyi.internal (Postfix) with ESMTP id 646F45C0380;
-        Thu, 12 Oct 2023 22:40:01 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Thu, 12 Oct 2023 22:40:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1697164801; x=1697251201; bh=v/NfjpcqgjT4cCUGFXPV+Rh0Ny4ORRueTJG
-        R6kwHMb8=; b=h98MYJKTyJxh5BlvDbqEbS/QDtKUAxWwg2gGTDuH6bPyNZVeWqr
-        wx7264K7BBz32R/co1ATerAhNOMz75YLvm0fgTpgMMNQu55w/LVhZfVZ8OAJaCJq
-        7nb9dXr37pUg3xsw+b7il6/ccYQEcPhPb1vK4CCQEDrzy95IV5o4SoOHlrLXJpUS
-        Eb6yPF/vCqUumwQwHr6SUOmSXmec1KGdbHy/VnWCwJ1VS7MFAVN4kRWjtDai5r4e
-        6Iyb5UfYgyfG6nkNOqOd32AZHM4b4h2XiUHG2i77ha6HhTxsKzAs97rGYCPcA6Jm
-        X5Z16cCuPlMvm2fDFuvmbQ+0wtUWZGtKmxA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1697164801; x=1697251201; bh=v/NfjpcqgjT4cCUGFXPV+Rh0Ny4ORRueTJG
-        R6kwHMb8=; b=Jt+wF3cEaxzWcr3/XY+Wti7uxW1slOr+Hh/k2JZeVBiHjcLII+Z
-        nY0JUMQAUmDbFKRWkpDfuKIptHIvAR4kGoNSizhDviET/VuKiZVCLSJwzXlYZuVd
-        CpnkeoHXGKe3B0+EamZEayG0kSpjwW7ne9v4AUmksO5OEuGQtcIFvB9B8Tp7Kdlb
-        8KnNMyLprmaqX8wELioBDQZV7M5B73HYVbhOMQu/7XxjsD97mBwdVhOEsAQdEYiM
-        4Zs6ZIclabu89A++eIi9tF47Z7p4t5528a4i5yVVr0vyQgwSV2oj8Dm/R1FxOYyU
-        hjjXgGv4TTuQcjNkFh96NNn3NsYXWo/LI0g==
-X-ME-Sender: <xms:AK4oZfYmg8hEeYfVAyN9-NVArxIb9pHAIGMu3LtUcRruvGFiFXYofA>
-    <xme:AK4oZea2lrufPdbPIb_b2cpZxrufVNi-KdhmDGxE6gD8ljT5zvF1TCt_XZjTxXcnY
-    ctZD-IlCEos>
-X-ME-Received: <xmr:AK4oZR_c5k74EqiyFt1B-u0NuLBMh1OUK8IicBC-0xnMyiMUjlVPKb21xDJnQHX7pAYonr_C7pXIwMswwGu5E6yaqAnpZ1_E9drmkcuN1Xom8hNHEleP_4lU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedriedugdeitdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfhvfevfhfujggtgfesthekredttdefjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    ekueffkefhffetjeeikeevtdfhgefhgeetfedvgeevveejgeffleelffekveejtdenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
-    hthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:AK4oZVr_hhUjuDK8v1CelxtwSzRQiPkQJ28QaIhT5GG36oeAhMe8dA>
-    <xmx:AK4oZapZISNp-1EU-J-rAeME2Ys8rS-j8-lysqiKkCn9cG15lAW-6g>
-    <xmx:AK4oZbSFYIFmjcllZIBS8h0RkMXumwjif1oWQKDJk2WMEEF9D0_4Rw>
-    <xmx:Aa4oZVB9SQ5uAQPRwuokl4D2K98Gt4SH7aFjq0x66MdNJYh_gIZC1A>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Oct 2023 22:39:53 -0400 (EDT)
-Message-ID: <c45fc3e5-05ca-14ab-0536-4f670973b927@themaw.net>
-Date:   Fri, 13 Oct 2023 10:39:49 +0800
+        Fri, 13 Oct 2023 03:39:05 -0400
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4F2EB8;
+        Fri, 13 Oct 2023 00:39:01 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4S6J2l2TKpz9xrtb;
+        Fri, 13 Oct 2023 15:26:07 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwA3Q5Tr8yhlfkQgAg--.14800S2;
+        Fri, 13 Oct 2023 08:38:32 +0100 (CET)
+Message-ID: <893bc5837fea4395bfb19e35097810ec7e425917.camel@huaweicloud.com>
+Subject: Re: [PATCH v3 02/25] ima: Align ima_post_path_mknod() definition
+ with LSM infrastructure
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com,
+        tom@talpey.com, dmitry.kasatkin@gmail.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, dhowells@redhat.com,
+        jarkko@kernel.org, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Fri, 13 Oct 2023 09:38:16 +0200
+In-Reply-To: <102b06b30518ac6595022e079de92717c92f3b8e.camel@linux.ibm.com>
+References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
+         <20230904133415.1799503-3-roberto.sassu@huaweicloud.com>
+         <a733fe780a3197150067ad35ed280bf85e11fa97.camel@linux.ibm.com>
+         <b51baf7741de1fdee8b36a87bd2dde71184d47a8.camel@huaweicloud.com>
+         <8646e30b0074a2932076b5a0a792b14be034de98.camel@linux.ibm.com>
+         <16c8c95f2e63ab9a2fba8cba919bf129d0541b61.camel@huaweicloud.com>
+         <c16551704db68c6e0ba89c729c892e9401f05dfc.camel@linux.ibm.com>
+         <2336abd6ae195eda221d54e3c2349a4760afaff2.camel@huaweicloud.com>
+         <84cfe4d93cb5b02591f4bd921b828eb6f3e95faa.camel@linux.ibm.com>
+         <4866a6ef46deebf9a9afdeb7efd600edb589da93.camel@huaweicloud.com>
+         <102b06b30518ac6595022e079de92717c92f3b8e.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.4-0ubuntu2 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-From:   Ian Kent <raven@themaw.net>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Matthew House <mattlloydhouse@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <20230928130147.564503-1-mszeredi@redhat.com>
- <20230928130147.564503-5-mszeredi@redhat.com>
- <CAHC9VhQD9r+Qf5Vz1XmxUdJJJO7HNTKdo8Ux=n+xkxr=JGFMrw@mail.gmail.com>
- <CAJfpegsPbDgaz46x4Rr9ZgCpF9rohVHsvuWtQ5LNAdiYU_D4Ww@mail.gmail.com>
- <a25f2736-1837-f4ca-b401-85db24f46452@themaw.net>
- <CAJfpegv78njkWdaShTskKXoGOpKAndvYYJwq7CLibiu+xmLCvg@mail.gmail.com>
- <7fe3c01f-c225-394c-fac5-cabfc70f3606@themaw.net>
-Content-Language: en-US
-Subject: Re: [PATCH v3 4/4] add listmount(2) syscall
-In-Reply-To: <7fe3c01f-c225-394c-fac5-cabfc70f3606@themaw.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: LxC2BwA3Q5Tr8yhlfkQgAg--.14800S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr45AFW8ZFyDGF45GrWxZwb_yoW8GF4kpr
+        W09a47KwsrJr15ur10va1Fqr4Fka13JFW5XrWrtr17A34qkryFqF4jkr1Yka1kGrW8G3Wa
+        vF4UJ3s7Wr15ZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAJBF1jj5D5TgABsY
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/10/23 08:27, Ian Kent wrote:
-> On 5/10/23 23:47, Miklos Szeredi wrote:
->> On Thu, 5 Oct 2023 at 06:23, Ian Kent <raven@themaw.net> wrote:
->>
->>> The proc interfaces essentially use <mount namespace>->list to provide
->>>
->>> the mounts that can be seen so it's filtered by mount namespace of the
->>>
->>> task that's doing the open().
->>>
->>>
->>> See fs/namespace.c:mnt_list_next() and just below the m_start(), 
->>> m_next(),
->> /proc/$PID/mountinfo will list the mount namespace of $PID. Whether
->> current task has permission to do so is decided at open time.
->>
->> listmount() will list the children of the given mount ID.  The mount
->> ID is looked up in the task's mount namespace, so this cannot be used
->> to list mounts of other namespaces.  It's a more limited interface.
->
-> Yep. But isn't the ability to see these based on task privilege?
->
->
-> Is the proc style restriction actually what we need here (or some 
-> variation
->
-> of that implementation)?
->
->
-> An privileged task typically has the init namespace as its mount 
-> namespace
->
-> and mounts should propagate from there so it should be able to see all 
-> mounts.
->
->
-> If the file handle has been opened in a task that is using some other 
-> mount
->
-> namespace then presumably that's what the program author wants the 
-> task to see.
->
-> So I'm not sure I see a problem obeying the namespace of a given task.
+On Thu, 2023-10-12 at 13:10 -0400, Mimi Zohar wrote:
+> > > > > > We need to make sure that ima_post_path_mknod() has the
+> > > > > > same parameters
+> > > > > > as the LSM hook at the time we register it to the LSM
+> > > > > > infrastructure.
+> > > > > 
+> > > > > I'm trying to understand why the pre hook parameters and the
+> > > > > missing
+> > > > > IMA parameter are used, as opposed to just defining the new
+> > > > > post_path_mknod hook like IMA.
+> > > > 
+> > > > As an empyrical rule, I pass the same parameters as the
+> > > > corresponding
+> > > > pre hook (plus idmap, in this case). This is similar to the
+> > > > inode_setxattr hook. But I can be wrong, if desired I can
+> > > > reduce.
+> > > 
+> > > The inode_setxattr hook change example is legitimate, as EVM
+> > > includes
+> > > idmap, while IMA doesn't. 
+> > > 
+> > > Unless there is a good reason for the additional parameters, I'm
+> > > not
+> > > sure that adding them makes sense.  Not modifying the parameter
+> > > list
+> > > will reduce the size of this patch set.
+> > 
+> > The hook is going to be used by any LSM. Without knowing all the
+> > possible use cases, maybe it is better to include more information
+> > now,
+> > than modifying the hook and respective implementations later.
+> > 
+> > (again, no problem to reduce)
+> 
+> Unless there is a known use case for a specific parameter, please
+> minimize them.   Additional parameters can be added later as needed. 
 
-I've had a look through the code we had in the old fsinfo() proposal
+Ok. I did the same for inode_post_create_tmpfile.
 
-because I think we need to consider the use cases that are needed.
+Thanks
 
+Roberto
 
-IIRC initially we had a flag FSINFO_ATTR_MOUNT_CHILDREN that essentially
-
-enumerated the children of the given mount in much the same way as is
-
-done now in this system call.
-
-
-But because we needed to enumerate mounts in the same way as the proc file
-
-system mount tables a flag FSINFO_ATTR_MOUNT_ALL was added that essentially
-
-used the mount namespace mounts list in a similar way to the proc file
-
-system so that a list of mounts for a mount namespace could be retrieved.
-
-
-This later use case is what is used by processes that monitor mounts and
-
-is what's needed more so than enumerating the children as we do now.
-
-
-I'm still looking at the mount id lookup.
-
-
-Ian
-
->
->
-> Ian
->
->>
->> I sort of understand the reasoning behind calling into a security hook
->> on entry to statmount() and listmount().  And BTW I also think that if
->> statmount() and listmount() is limited in this way, then the same
->> limitation should be applied to the proc interfaces.  But that needs
->> to be done real carefully because it might cause regressions. OTOH if
->> it's only done on the new interfaces, then what is the point, since
->> the old interfaces will be available indefinitely?
->>
->> Also I cannot see the point in hiding some mount ID's from the list.
->> It seems to me that the list is just an array of numbers that in
->> itself doesn't carry any information.
->>
->> Thanks,
->> Miklos
