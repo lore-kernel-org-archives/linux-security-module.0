@@ -2,166 +2,194 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AF4CDB482
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Oct 2023 23:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B096CDB482
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Oct 2023 02:40:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233727AbjJLXwH (ORCPT
+        id S229510AbjJMCkG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Oct 2023 19:52:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39412 "EHLO
+        Thu, 12 Oct 2023 22:40:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233273AbjJLXwF (ORCPT
+        with ESMTP id S229499AbjJMCkF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Oct 2023 19:52:05 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 304ACCC;
-        Thu, 12 Oct 2023 16:52:03 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-53de8fc1ad8so2669859a12.0;
-        Thu, 12 Oct 2023 16:52:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697154721; x=1697759521; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZrpCiUJ4JqBu9o+NEI2JRUxMkcVvZpog0cH6f0L59+c=;
-        b=VSGOKFSi5tN+WR7suNkiWWvvE+jvzG92pk+5TmRSl4mUTSrJrNJ5W7TiiwrPO2KMW7
-         PrqXtE7A2py5kycEMPzhk3RZkSp+9OzvH28owz7UYn2zxWRDCLX+/ICzBx1w88aAAB4l
-         11Fesi8s53HS9sCDiy48VBJxU9K6ZNbkzEy3+67WHYTZR+BIqjC/W6BeBoPzAgjffx6H
-         yyqBLFlsTDl6kw4Y4lUHfJ9AfA8uIcVXpf7VYt0gqwVOhCkbo4tVWgAjbA3GtFPgJpir
-         lifrbVfzgHw1fzqD8rO+0RV1PlTuafz0Hqe5t7iU24/2y1ukn8elEZ6gCF8mT8mBWcI/
-         yeOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697154721; x=1697759521;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZrpCiUJ4JqBu9o+NEI2JRUxMkcVvZpog0cH6f0L59+c=;
-        b=Zbb99Pip9zWedtUD2BcRY6TyoZRaGtntIV1GsY0DkR38CqtGz71+/c0Ubv1mMclHEQ
-         /6WEeYRhY5uI0Jr40rdLVVocsP1ABc0Gy1J8/+Kl4J1OM/Cmtj+KVeBczqAZbCNruHre
-         VXKBPUlHanAdEhXaOdfPEiosYU7Ovn6pQXTMRdp3HCKlA3+uKLQ1vERWAZ68Xgp6ClQe
-         1rjCVmTjWy3QrIF9jUJE3WQ3dnTp1n2mHxQcZixY5r/6Pgzm1TaaXxUqyESKhDll/HKo
-         F4EzKZL4+43qz/w7iF6HXV74oXk/MubnZ4ORoYCes4jqGK78tED4GldYc6209IYppqYn
-         TlVg==
-X-Gm-Message-State: AOJu0YxiOBEaBRIqe8/4XRE4ZVSrffRqbv+AcLBbZHOSlPtHNyBqA7+a
-        X8irqbpmY9f+jixSE4KXi7ammgRwuCXfK2ntP3s=
-X-Google-Smtp-Source: AGHT+IHv3VDK3DVm3XB3NfwJ0Jfb2RMkvo5rJNSsJXlbOXLNihpGlJ//0wCQcAkxKT+WnoCJ7Haihua4z6j4WqE2jwA=
-X-Received: by 2002:aa7:da84:0:b0:536:2b33:83ed with SMTP id
- q4-20020aa7da84000000b005362b3383edmr25843419eds.24.1697154721408; Thu, 12
- Oct 2023 16:52:01 -0700 (PDT)
+        Thu, 12 Oct 2023 22:40:05 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7C4DDE;
+        Thu, 12 Oct 2023 19:40:03 -0700 (PDT)
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+        by mailout.nyi.internal (Postfix) with ESMTP id 646F45C0380;
+        Thu, 12 Oct 2023 22:40:01 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute7.internal (MEProxy); Thu, 12 Oct 2023 22:40:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+        1697164801; x=1697251201; bh=v/NfjpcqgjT4cCUGFXPV+Rh0Ny4ORRueTJG
+        R6kwHMb8=; b=h98MYJKTyJxh5BlvDbqEbS/QDtKUAxWwg2gGTDuH6bPyNZVeWqr
+        wx7264K7BBz32R/co1ATerAhNOMz75YLvm0fgTpgMMNQu55w/LVhZfVZ8OAJaCJq
+        7nb9dXr37pUg3xsw+b7il6/ccYQEcPhPb1vK4CCQEDrzy95IV5o4SoOHlrLXJpUS
+        Eb6yPF/vCqUumwQwHr6SUOmSXmec1KGdbHy/VnWCwJ1VS7MFAVN4kRWjtDai5r4e
+        6Iyb5UfYgyfG6nkNOqOd32AZHM4b4h2XiUHG2i77ha6HhTxsKzAs97rGYCPcA6Jm
+        X5Z16cCuPlMvm2fDFuvmbQ+0wtUWZGtKmxA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1697164801; x=1697251201; bh=v/NfjpcqgjT4cCUGFXPV+Rh0Ny4ORRueTJG
+        R6kwHMb8=; b=Jt+wF3cEaxzWcr3/XY+Wti7uxW1slOr+Hh/k2JZeVBiHjcLII+Z
+        nY0JUMQAUmDbFKRWkpDfuKIptHIvAR4kGoNSizhDviET/VuKiZVCLSJwzXlYZuVd
+        CpnkeoHXGKe3B0+EamZEayG0kSpjwW7ne9v4AUmksO5OEuGQtcIFvB9B8Tp7Kdlb
+        8KnNMyLprmaqX8wELioBDQZV7M5B73HYVbhOMQu/7XxjsD97mBwdVhOEsAQdEYiM
+        4Zs6ZIclabu89A++eIi9tF47Z7p4t5528a4i5yVVr0vyQgwSV2oj8Dm/R1FxOYyU
+        hjjXgGv4TTuQcjNkFh96NNn3NsYXWo/LI0g==
+X-ME-Sender: <xms:AK4oZfYmg8hEeYfVAyN9-NVArxIb9pHAIGMu3LtUcRruvGFiFXYofA>
+    <xme:AK4oZea2lrufPdbPIb_b2cpZxrufVNi-KdhmDGxE6gD8ljT5zvF1TCt_XZjTxXcnY
+    ctZD-IlCEos>
+X-ME-Received: <xmr:AK4oZR_c5k74EqiyFt1B-u0NuLBMh1OUK8IicBC-0xnMyiMUjlVPKb21xDJnQHX7pAYonr_C7pXIwMswwGu5E6yaqAnpZ1_E9drmkcuN1Xom8hNHEleP_4lU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedriedugdeitdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfhvfevfhfujggtgfesthekredttdefjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    ekueffkefhffetjeeikeevtdfhgefhgeetfedvgeevveejgeffleelffekveejtdenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
+    hthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:AK4oZVr_hhUjuDK8v1CelxtwSzRQiPkQJ28QaIhT5GG36oeAhMe8dA>
+    <xmx:AK4oZapZISNp-1EU-J-rAeME2Ys8rS-j8-lysqiKkCn9cG15lAW-6g>
+    <xmx:AK4oZbSFYIFmjcllZIBS8h0RkMXumwjif1oWQKDJk2WMEEF9D0_4Rw>
+    <xmx:Aa4oZVB9SQ5uAQPRwuokl4D2K98Gt4SH7aFjq0x66MdNJYh_gIZC1A>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 12 Oct 2023 22:39:53 -0400 (EDT)
+Message-ID: <c45fc3e5-05ca-14ab-0536-4f670973b927@themaw.net>
+Date:   Fri, 13 Oct 2023 10:39:49 +0800
 MIME-Version: 1.0
-References: <20230927225809.2049655-4-andrii@kernel.org> <53183ab045f8154ef94070039d53bbab.paul@paul-moore.com>
- <CAEf4BzaTZ_EY4JVZ3ozGzed1PeD+HNGgkDw6jGpWYD_K9c8RFw@mail.gmail.com>
- <CAEf4BzYa9V5FWLqq5wmdTJdtD3yHE-FdvBN7E33bb7+r2eGYBg@mail.gmail.com> <CAHC9VhQuoPUwctgUFNEkXZmutweEpGMVBAx5NmE7PvbE7oeR=g@mail.gmail.com>
-In-Reply-To: <CAHC9VhQuoPUwctgUFNEkXZmutweEpGMVBAx5NmE7PvbE7oeR=g@mail.gmail.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Thu, 12 Oct 2023 16:51:49 -0700
-Message-ID: <CAEf4BzZaOQ+pJw+WN7KrtCxzKHSjvvRJKOue_sfpNVccoBqh6Q@mail.gmail.com>
-Subject: Re: [PATCH v6 3/13] bpf: introduce BPF token object
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
-        sargun@sargun.me, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+From:   Ian Kent <raven@themaw.net>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew House <mattlloydhouse@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20230928130147.564503-1-mszeredi@redhat.com>
+ <20230928130147.564503-5-mszeredi@redhat.com>
+ <CAHC9VhQD9r+Qf5Vz1XmxUdJJJO7HNTKdo8Ux=n+xkxr=JGFMrw@mail.gmail.com>
+ <CAJfpegsPbDgaz46x4Rr9ZgCpF9rohVHsvuWtQ5LNAdiYU_D4Ww@mail.gmail.com>
+ <a25f2736-1837-f4ca-b401-85db24f46452@themaw.net>
+ <CAJfpegv78njkWdaShTskKXoGOpKAndvYYJwq7CLibiu+xmLCvg@mail.gmail.com>
+ <7fe3c01f-c225-394c-fac5-cabfc70f3606@themaw.net>
+Content-Language: en-US
+Subject: Re: [PATCH v3 4/4] add listmount(2) syscall
+In-Reply-To: <7fe3c01f-c225-394c-fac5-cabfc70f3606@themaw.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 12, 2023 at 4:43=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
+On 6/10/23 08:27, Ian Kent wrote:
+> On 5/10/23 23:47, Miklos Szeredi wrote:
+>> On Thu, 5 Oct 2023 at 06:23, Ian Kent <raven@themaw.net> wrote:
+>>
+>>> The proc interfaces essentially use <mount namespace>->list to provide
+>>>
+>>> the mounts that can be seen so it's filtered by mount namespace of the
+>>>
+>>> task that's doing the open().
+>>>
+>>>
+>>> See fs/namespace.c:mnt_list_next() and just below the m_start(), 
+>>> m_next(),
+>> /proc/$PID/mountinfo will list the mount namespace of $PID. Whether
+>> current task has permission to do so is decided at open time.
+>>
+>> listmount() will list the children of the given mount ID.  The mount
+>> ID is looked up in the task's mount namespace, so this cannot be used
+>> to list mounts of other namespaces.  It's a more limited interface.
 >
-> On Thu, Oct 12, 2023 at 5:48=E2=80=AFPM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> > On Wed, Oct 11, 2023 at 5:31=E2=80=AFPM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > >
-> > > ok, so I guess I'll have to add all four variants:
-> > > security_bpf_token_{cmd,map_type,prog_type,attach_type}, right?
-> > >
-> >
-> > Thinking a bit more about this, I think this is unnecessary. All these
-> > allow checks to control other BPF commands (BPF map creation, BPF
-> > program load, bpf() syscall command, etc). We have dedicated LSM hooks
-> > for each such operation, most importantly security_bpf_prog_load() and
-> > security_bpf_map_create(). I'm extending both of those to be
-> > token-aware, and struct bpf_token is one of the input arguments, so if
-> > LSM need to override BPF token allow_* checks, they can do in
-> > respective more specialized hooks.
-> >
-> > Adding so many token hooks, one for each different allow mask (or any
-> > other sort of "allow something" parameter) seems to be excessive. It
-> > will both add too many super-detailed LSM hooks and will unnecessarily
-> > tie BPF token implementation details to LSM hook implementations, IMO.
-> > I'll send v7 with just security_bpf_token_{create,free}(), please take
-> > a look and let me know if you are still not convinced.
+> Yep. But isn't the ability to see these based on task privilege?
 >
-> I'm hoping my last email better explains why we only really need
-> security_bpf_token_cmd() and security_bpf_token_capable() as opposed
-> to the full list of security_bpf_token_XXX().  If not, please let me
-> know and I'll try to do a better job explaining my reasoning :)
 >
-> One thing I didn't discuss in my last email was why there is value in
-> having both security_bpf_token_{cmd,capable}() as well as
-> security_bpf_prog_load(); I'll try to do that below.
+> Is the proc style restriction actually what we need here (or some 
+> variation
 >
-> As we talked about previously, the reason for having
-> security_bpf_prog_load() is to provide a token-aware version of
-> security_bpf().  Currently the LSMs enforce their access controls
-> around BPF commands using the security_bpf() hook which is
-> unfortunately well before we have access to the BPF token.  If we want
-> to be able to take the BPF token into account we need to have a hook
-> placed after the token is retrieved and validated, hence the
-> security_bpf_prog_load() hook.  In a kernel that provides BPF tokens,
-> I would expect that LSMs would use security_bpf() to control access to
-> BPF operations where a token is not a concern, and new token-aware
-> security_bpf_OPERATION() hooks when the LSM needs to consider the BPF
-> token.
+> of that implementation)?
 >
-> With the understanding that security_bpf_prog_load() is essentially a
-> token-aware version of security_bpf(), I'm hopeful that you can begin
-> to understand that it  serves a different purpose than
-> security_bpf_token_{cmd,capable}().  The simple answer is that
-> security_bpf_token_cmd() applies to more than just BPF_PROG_LOAD, but
-> the better answer is that it has the ability to impact more than just
-> the LSM authorization decision.  Hooking the LSM into the
-> bpf_token_allow_cmd() function allows the LSM to authorize the
-> individual command overrides independent of the command specific LSM
-> hook, if one exists.  The security_bpf_token_cmd() hook can allow or
-> disallow the use of a token for all aspects of a specific BPF
-> operation including all of the token related logic outside of the LSM,
-> something the security_bpf_prog_load() hook could never do.
 >
-> I'm hoping that makes sense :)
+> An privileged task typically has the init namespace as its mount 
+> namespace
+>
+> and mounts should propagate from there so it should be able to see all 
+> mounts.
+>
+>
+> If the file handle has been opened in a task that is using some other 
+> mount
+>
+> namespace then presumably that's what the program author wants the 
+> task to see.
+>
+> So I'm not sure I see a problem obeying the namespace of a given task.
 
-Yes, I think I understand what you are trying to do, but I need to
-clarify something about the bpf_token_allow_cmd() check. It's
-meaningless for any command besides BPF_PROG_LOAD, BPF_MAP_CREATE, and
-BPF_BTF_LOAD. For any other command you cannot even specify token_fd.
-So even if you create a token allowing, say, BPF_MAP_LOOKUP_ELEM, it
-has no effect, because BPF_MAP_LOOKUP_ELEM is doing its own checks
-based on the provided BPF map FD.
+I've had a look through the code we had in the old fsinfo() proposal
 
-So only if the command is token-aware itself, this allowed_cmd makes
-any difference. And in such a case we'll most probably have and/or
-want to have an LSM hook for that specific command that accepts struct
-bpf_token as an argument. Which is what I did for
-security_bpf_prog_load and security_bpf_map_create.
+because I think we need to consider the use cases that are needed.
 
-Granted, we don't have any LSM hooks for BPF_BTF_LOAD, mostly because
-BTF is just a blob of type info data, and I guess no one bothered to
-control the ability to load that. But we can add that easily, if you
-think it's important.
 
-So taking everything you said, I still think we don't want a
-bpf_token_capable hook, and we'll just be getting targeted LSM hooks
-if we need them for some new or existing BPF commands.
+IIRC initially we had a flag FSINFO_ATTR_MOUNT_CHILDREN that essentially
 
-Basically, bpf_token's allow_cmd doesn't give you a bypass for
-non-token checks we are already doing. So security_bpf() for
-everything besides BPF_PROG_LOAD/BPF_MAP_CREATE/BPF_BTF_LOAD is a
-completely valid way to restrict everything. You won't miss anything.
+enumerated the children of the given mount in much the same way as is
+
+done now in this system call.
+
+
+But because we needed to enumerate mounts in the same way as the proc file
+
+system mount tables a flag FSINFO_ATTR_MOUNT_ALL was added that essentially
+
+used the mount namespace mounts list in a similar way to the proc file
+
+system so that a list of mounts for a mount namespace could be retrieved.
+
+
+This later use case is what is used by processes that monitor mounts and
+
+is what's needed more so than enumerating the children as we do now.
+
+
+I'm still looking at the mount id lookup.
+
+
+Ian
 
 >
-> --
-> paul-moore.com
+>
+> Ian
+>
+>>
+>> I sort of understand the reasoning behind calling into a security hook
+>> on entry to statmount() and listmount().  And BTW I also think that if
+>> statmount() and listmount() is limited in this way, then the same
+>> limitation should be applied to the proc interfaces.  But that needs
+>> to be done real carefully because it might cause regressions. OTOH if
+>> it's only done on the new interfaces, then what is the point, since
+>> the old interfaces will be available indefinitely?
+>>
+>> Also I cannot see the point in hiding some mount ID's from the list.
+>> It seems to me that the list is just an array of numbers that in
+>> itself doesn't carry any information.
+>>
+>> Thanks,
+>> Miklos
