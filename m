@@ -2,147 +2,286 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A20CDB47E
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Oct 2023 19:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE81CDB47E
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Oct 2023 21:15:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230469AbjJMTqC (ORCPT
+        id S231553AbjJMVPo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Oct 2023 15:46:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45100 "EHLO
+        Fri, 13 Oct 2023 17:15:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229830AbjJMTqB (ORCPT
+        with ESMTP id S229958AbjJMVPo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Oct 2023 15:46:01 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24B8DAD;
-        Fri, 13 Oct 2023 12:46:00 -0700 (PDT)
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39DJgHCq011983;
-        Fri, 13 Oct 2023 19:45:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=Pc0KhaMZjt1JJ8BTzzbAY2PLqOgVWSZXPMggq2UpqC4=;
- b=oNakhZdhqyiBB1xeneH9eObxYi6grzwt2PDYW492vVwRxRHgvoQ4Syn9r9QPmjAYIaTP
- 6aKFPreFl3Yp9g31WJWZvNEcbbD4/UuZ238sO1vfk6vrhXcrc7ds24k3ugEI1rGJrgIZ
- KPrd7F0Vljj/fqcs80mDqn6AHRCyivlWACao6vOPeXQjaf8OXIoG3LlbGWw6i1nEDfVV
- 7tGi264DEu0LvW8MdjleOwBT44b+/tIluYg2nsH2wmZvDndITs0RoqvP9z+mK+rJD81O
- Y/Ww8GD1Twmteqk/oZTZ8T4kZFtlTRyhnJ6+naZx+yLRRvKo/g5SgJmy6fK3rOUAbsmF pg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tqc9gr3q0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 Oct 2023 19:45:19 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39DJhCV3014636;
-        Fri, 13 Oct 2023 19:45:19 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tqc9gr3ja-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 Oct 2023 19:45:18 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 39DJHpjQ008837;
-        Fri, 13 Oct 2023 19:45:13 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-        by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3tpt57p9ef-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 Oct 2023 19:45:13 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-        by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39DJjDH564029094
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 13 Oct 2023 19:45:13 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1013E58061;
-        Fri, 13 Oct 2023 19:45:13 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5C56A58057;
-        Fri, 13 Oct 2023 19:45:11 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.129.99])
-        by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 13 Oct 2023 19:45:11 +0000 (GMT)
-Message-ID: <ea1de829cec76d7e20efa305df0b0758fc986aac.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 00/25] security: Move IMA and EVM to the LSM
- infrastructure
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Fri, 13 Oct 2023 15:45:10 -0400
-In-Reply-To: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
-References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: vFTp2Ee0JeBQOP1vrgvHIBWFlp1Y_sdO
-X-Proofpoint-ORIG-GUID: iQnGzuzPyAealHWZ8tc09AvVLAvGFvSP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-13_11,2023-10-12_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015
- mlxscore=0 adultscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2309180000 definitions=main-2310130170
+        Fri, 13 Oct 2023 17:15:44 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBCE7BF
+        for <linux-security-module@vger.kernel.org>; Fri, 13 Oct 2023 14:15:38 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-5a7ba0828efso31397567b3.3
+        for <linux-security-module@vger.kernel.org>; Fri, 13 Oct 2023 14:15:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1697231738; x=1697836538; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dLQj5ZtRhq6MJlTujO1awDYkdSdBvUj8+lUyHnK/bd4=;
+        b=SOFfq/eBOF46t8KmBVttTNwb/Ms9aEFLYPFekKQUyfhV1GEwPF/pi6ecxjZMQpA2/C
+         gJ3ylnLqIFiMtTDnIgfza01kRKbnZw2o8hu4U6jfdI60xd9TARK9D2GZwSrpjX+cAVaE
+         z01nYYRkKUuUCuixgXjcG8NDzNeUwNLor3lAMO2cJFZVc2LnMohl1erMYoCI2nji7A9D
+         kyBsvGVLp/Pf5eDdzzQQIoJTOSjN+Hb8/ObhonKWfLRaUc9Qais+kOWNnUm6zKm8fC9K
+         qgl7CoxFr4fgXS63q0oRJfHmL89xx8d/o7VPSF9t7y4OiQXZHwFPt25xcdD0/Z5b+DKt
+         f56w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697231738; x=1697836538;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dLQj5ZtRhq6MJlTujO1awDYkdSdBvUj8+lUyHnK/bd4=;
+        b=AbwsoQRMvoUutTfUhsj6I2G5nXv0XMPqUjlCIaOAl86vCNSWPWGqvB1cQArF/2ZGYk
+         VpGpTGUeTM+gSPKBnaIr0riplzjkwDnUC0nTHWJ0eKSUAm0dlb1Rmk565Hs8UygizfIc
+         O76JDfru4B7o6WYgB0I+AUnGYlWfBTADh3g85xK3yuYKlHJAlj69yUFpbk4yoIZIKeI8
+         VbQnJEba77S0F+Gt3QPEypAVuaXXkB31+4+r1egSUUrfwfTQpt4FoOPGlIFL6RuQCLr+
+         +SzX+FZOXEhZeWAJzxB25dRq2g6NX0c8+eLe+c5GsfIy41afYO0RxbE0MBJckPs67mP6
+         vd7g==
+X-Gm-Message-State: AOJu0YzLubcgyadmXbn1RlwXxHRInQrodmihwg2WM7BUmpHRww7tLykr
+        xplgLOUL+gvg3uZ+w3XnGMd2VSWxWT/X6LeFmQ==
+X-Google-Smtp-Source: AGHT+IE9Y/CTy90dFiEu+jR5Pxz9wsQqLKZYtYve5r7Wzy5bzGLDis9NzbyVIICb9r05qqznex/94g==
+X-Received: by 2002:a0d:caca:0:b0:5a7:d133:370d with SMTP id m193-20020a0dcaca000000b005a7d133370dmr12555978ywd.16.1697231737932;
+        Fri, 13 Oct 2023 14:15:37 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id e5-20020a05620a12c500b007756c8ce8f5sm945199qkl.59.2023.10.13.14.15.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Oct 2023 14:15:37 -0700 (PDT)
+Date:   Fri, 13 Oct 2023 17:15:36 -0400
+Message-ID: <f739928b1db9a9e45da89249c0389e85.paul@paul-moore.com>
+From:   Paul Moore <paul@paul-moore.com>
+To:     Andrii Nakryiko <andrii@kernel.org>, <bpf@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+Cc:     <linux-fsdevel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>, <keescook@chromium.org>,
+        <brauner@kernel.org>, <lennart@poettering.net>,
+        <kernel-team@meta.com>, <sargun@sargun.me>
+Subject: Re: [PATCH v7 6/18] bpf: add BPF token support to BPF_PROG_LOAD  command
+References: <20231012222810.4120312-7-andrii@kernel.org>
+In-Reply-To: <20231012222810.4120312-7-andrii@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2023-09-04 at 15:33 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+On Oct 12, 2023 Andrii Nakryiko <andrii@kernel.org> wrote:
 > 
-> IMA and EVM are not effectively LSMs, especially due the fact that in the
-> past they could not provide a security blob while there is another LSM
-> active.
+> Add basic support of BPF token to BPF_PROG_LOAD. Wire through a set of
+> allowed BPF program types and attach types, derived from BPF FS at BPF
+> token creation time. Then make sure we perform bpf_token_capable()
+> checks everywhere where it's relevant.
 > 
-> That changed in the recent years, the LSM stacking feature now makes it
-> possible to stack together multiple LSMs, and allows them to provide a
-> security blob for most kernel objects. While the LSM stacking feature has
-> some limitations being worked out, it is already suitable to make IMA and
-> EVM as LSMs.
-> 
-> In short, while this patch set is big, it does not make any functional
-> change to IMA and EVM. IMA and EVM functions are called by the LSM
-> infrastructure in the same places as before (except ima_post_path_mknod()),
-> rather being hardcoded calls, and the inode metadata pointer is directly
-> stored in the inode security blob rather than in a separate rbtree.
-> 
-> More specifically, patches 1-11 make IMA and EVM functions suitable to
-> be registered to the LSM infrastructure, by aligning function parameters.
-> 
-> Patches 12-20 add new LSM hooks in the same places where IMA and EVM
-> functions are called, if there is no LSM hook already.
-> 
-> Patches 21-24 do the bulk of the work, remove hardcoded calls to IMA, EVM
-> and integrity functions, register those functions in the LSM
-> infrastructure, and let the latter call them. In addition, they also
-> reserve one slot for EVM to supply an xattr with the inode_init_security
-> hook.
-> 
-> Finally, patch 25 removes the rbtree used to bind metadata to the inodes,
-> and instead reserves a space in the inode security blob to store the
-> pointer to metadata. This also brings performance improvements due to
-> retrieving metadata in constant time, as opposed to logarithmic.
-> 
-> The patch set applies on top of lsm/next, commit 8e4672d6f902 ("lsm:
-> constify the 'file' parameter in security_binder_transfer_file()")
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
+>  include/linux/bpf.h                           |  6 ++
+>  include/uapi/linux/bpf.h                      |  2 +
+>  kernel/bpf/core.c                             |  1 +
+>  kernel/bpf/inode.c                            |  6 +-
+>  kernel/bpf/syscall.c                          | 87 ++++++++++++++-----
+>  kernel/bpf/token.c                            | 27 ++++++
+>  tools/include/uapi/linux/bpf.h                |  2 +
+>  .../selftests/bpf/prog_tests/libbpf_probes.c  |  2 +
+>  .../selftests/bpf/prog_tests/libbpf_str.c     |  3 +
+>  9 files changed, 110 insertions(+), 26 deletions(-)
 
-Thanks, Roberto!   There were just a few suggestions/changes, which
-though minor, will result in some patch churn.   Other than that, there
-were some suggestions patch description suggestions.
+...
 
--- 
-thanks,
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index a2c9edcbcd77..c6b00aee3b62 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -2584,13 +2584,15 @@ static bool is_perfmon_prog_type(enum bpf_prog_type prog_type)
+>  }
+>  
+>  /* last field in 'union bpf_attr' used by this command */
+> -#define	BPF_PROG_LOAD_LAST_FIELD log_true_size
+> +#define BPF_PROG_LOAD_LAST_FIELD prog_token_fd
+>  
+>  static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
+>  {
+>  	enum bpf_prog_type type = attr->prog_type;
+>  	struct bpf_prog *prog, *dst_prog = NULL;
+>  	struct btf *attach_btf = NULL;
+> +	struct bpf_token *token = NULL;
+> +	bool bpf_cap;
+>  	int err;
+>  	char license[128];
+>  
+> @@ -2606,10 +2608,31 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
+>  				 BPF_F_XDP_DEV_BOUND_ONLY))
+>  		return -EINVAL;
+>  
+> +	bpf_prog_load_fixup_attach_type(attr);
+> +
+> +	if (attr->prog_token_fd) {
+> +		token = bpf_token_get_from_fd(attr->prog_token_fd);
+> +		if (IS_ERR(token))
+> +			return PTR_ERR(token);
+> +		/* if current token doesn't grant prog loading permissions,
+> +		 * then we can't use this token, so ignore it and rely on
+> +		 * system-wide capabilities checks
+> +		 */
+> +		if (!bpf_token_allow_cmd(token, BPF_PROG_LOAD) ||
+> +		    !bpf_token_allow_prog_type(token, attr->prog_type,
+> +					       attr->expected_attach_type)) {
+> +			bpf_token_put(token);
+> +			token = NULL;
+> +		}
 
-Mimi
+At the start of this effort I mentioned how we wanted to have LSM
+control points when the token is created and when it is used.  It is
+for this reason that we still want a hook inside the
+bpf_token_allow_cmd() function as it allows us to enable/disable use
+of the token when its use is first attempted.  If the LSM decides to
+disallow use of the token in this particular case then the token is
+disabled (set to NULL) while the operation is still allowed to move
+forward, simply without the token.  It's a much cleaner and well
+behaved approach as it allows the normal BPF access controls to do
+their work.
 
+> +	}
+> +
+> +	bpf_cap = bpf_token_capable(token, CAP_BPF);
 
+Similar to the above comment, we want to a LSM control point in
+bpf_token_capable() so that the LSM can control the token's
+ability to delegate capability privileges when they are used.  Having
+to delay this access control point to security_bpf_prog_load() is not
+only awkward but it requires either manual synchronization between
+all of the different LSMs and the the capability checks in the
+bpf_prog_load() function or a completely different set of LSM
+permissions for a token-based BPF program load over a normal BPF
+program load.
 
+We really need these hooks Andrii, I wouldn't have suggested them if
+I didn't believe they were important.
+
+> +	err = -EPERM;
+> +
+>  	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) &&
+>  	    (attr->prog_flags & BPF_F_ANY_ALIGNMENT) &&
+> -	    !bpf_capable())
+> -		return -EPERM;
+> +	    !bpf_cap)
+> +		goto put_token;
+>  
+>  	/* Intent here is for unprivileged_bpf_disabled to block BPF program
+>  	 * creation for unprivileged users; other actions depend
+> @@ -2618,21 +2641,23 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
+>  	 * capability checks are still carried out for these
+>  	 * and other operations.
+>  	 */
+> -	if (sysctl_unprivileged_bpf_disabled && !bpf_capable())
+> -		return -EPERM;
+> +	if (sysctl_unprivileged_bpf_disabled && !bpf_cap)
+> +		goto put_token;
+>  
+>  	if (attr->insn_cnt == 0 ||
+> -	    attr->insn_cnt > (bpf_capable() ? BPF_COMPLEXITY_LIMIT_INSNS : BPF_MAXINSNS))
+> -		return -E2BIG;
+> +	    attr->insn_cnt > (bpf_cap ? BPF_COMPLEXITY_LIMIT_INSNS : BPF_MAXINSNS)) {
+> +		err = -E2BIG;
+> +		goto put_token;
+> +	}
+>  	if (type != BPF_PROG_TYPE_SOCKET_FILTER &&
+>  	    type != BPF_PROG_TYPE_CGROUP_SKB &&
+> -	    !bpf_capable())
+> -		return -EPERM;
+> +	    !bpf_cap)
+> +		goto put_token;
+>  
+> -	if (is_net_admin_prog_type(type) && !bpf_net_capable())
+> -		return -EPERM;
+> -	if (is_perfmon_prog_type(type) && !perfmon_capable())
+> -		return -EPERM;
+> +	if (is_net_admin_prog_type(type) && !bpf_token_capable(token, CAP_NET_ADMIN))
+> +		goto put_token;
+> +	if (is_perfmon_prog_type(type) && !bpf_token_capable(token, CAP_PERFMON))
+> +		goto put_token;
+>  
+>  	/* attach_prog_fd/attach_btf_obj_fd can specify fd of either bpf_prog
+>  	 * or btf, we need to check which one it is
+> @@ -2642,27 +2667,33 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
+>  		if (IS_ERR(dst_prog)) {
+>  			dst_prog = NULL;
+>  			attach_btf = btf_get_by_fd(attr->attach_btf_obj_fd);
+> -			if (IS_ERR(attach_btf))
+> -				return -EINVAL;
+> +			if (IS_ERR(attach_btf)) {
+> +				err = -EINVAL;
+> +				goto put_token;
+> +			}
+>  			if (!btf_is_kernel(attach_btf)) {
+>  				/* attaching through specifying bpf_prog's BTF
+>  				 * objects directly might be supported eventually
+>  				 */
+>  				btf_put(attach_btf);
+> -				return -ENOTSUPP;
+> +				err = -ENOTSUPP;
+> +				goto put_token;
+>  			}
+>  		}
+>  	} else if (attr->attach_btf_id) {
+>  		/* fall back to vmlinux BTF, if BTF type ID is specified */
+>  		attach_btf = bpf_get_btf_vmlinux();
+> -		if (IS_ERR(attach_btf))
+> -			return PTR_ERR(attach_btf);
+> -		if (!attach_btf)
+> -			return -EINVAL;
+> +		if (IS_ERR(attach_btf)) {
+> +			err = PTR_ERR(attach_btf);
+> +			goto put_token;
+> +		}
+> +		if (!attach_btf) {
+> +			err = -EINVAL;
+> +			goto put_token;
+> +		}
+>  		btf_get(attach_btf);
+>  	}
+>  
+> -	bpf_prog_load_fixup_attach_type(attr);
+>  	if (bpf_prog_load_check_attach(type, attr->expected_attach_type,
+>  				       attach_btf, attr->attach_btf_id,
+>  				       dst_prog)) {
+> @@ -2670,7 +2701,8 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
+>  			bpf_prog_put(dst_prog);
+>  		if (attach_btf)
+>  			btf_put(attach_btf);
+> -		return -EINVAL;
+> +		err = -EINVAL;
+> +		goto put_token;
+>  	}
+>  
+>  	/* plain bpf_prog allocation */
+> @@ -2680,7 +2712,8 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
+>  			bpf_prog_put(dst_prog);
+>  		if (attach_btf)
+>  			btf_put(attach_btf);
+> -		return -ENOMEM;
+> +		err = -EINVAL;
+> +		goto put_token;
+>  	}
+>  
+>  	prog->expected_attach_type = attr->expected_attach_type;
+> @@ -2691,6 +2724,10 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
+>  	prog->aux->sleepable = attr->prog_flags & BPF_F_SLEEPABLE;
+>  	prog->aux->xdp_has_frags = attr->prog_flags & BPF_F_XDP_HAS_FRAGS;
+>  
+> +	/* move token into prog->aux, reuse taken refcnt */
+> +	prog->aux->token = token;
+> +	token = NULL;
+> +
+>  	err = security_bpf_prog_alloc(prog->aux);
+>  	if (err)
+>  		goto free_prog;
+> @@ -2792,6 +2829,8 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
+>  	if (prog->aux->attach_btf)
+>  		btf_put(prog->aux->attach_btf);
+>  	bpf_prog_free(prog);
+> +put_token:
+> +	bpf_token_put(token);
+>  	return err;
+>  }
+
+--
+paul-moore.com
