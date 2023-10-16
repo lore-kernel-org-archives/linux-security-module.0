@@ -2,47 +2,49 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47337CDB482
-	for <linux-security-module@archiver.kernel.org>; Mon, 16 Oct 2023 18:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2C7CDB483
+	for <linux-security-module@archiver.kernel.org>; Mon, 16 Oct 2023 18:03:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233853AbjJPSDD convert rfc822-to-8bit (ORCPT
+        id S233634AbjJPSDF convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 16 Oct 2023 14:03:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59388 "EHLO
+        Mon, 16 Oct 2023 14:03:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234089AbjJPSCw (ORCPT
+        with ESMTP id S233889AbjJPSC5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 16 Oct 2023 14:02:52 -0400
+        Mon, 16 Oct 2023 14:02:57 -0400
 Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3171113
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:02:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11FE3FA
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:02:55 -0700 (PDT)
 Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.17.1.19/8.17.1.19) with ESMTP id 39GFHPW9011571
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:02:48 -0700
+        by m0001303.ppops.net (8.17.1.19/8.17.1.19) with ESMTP id 39GFHPWO011571
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:02:54 -0700
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by m0001303.ppops.net (PPS) with ESMTPS id 3trsmp5sxa-6
+        by m0001303.ppops.net (PPS) with ESMTPS id 3trsmp5sxa-20
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:02:47 -0700
-Received: from twshared32169.15.frc2.facebook.com (2620:10d:c0a8:1b::30) by
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:02:54 -0700
+Received: from twshared9518.03.prn6.facebook.com (2620:10d:c0a8:1b::30) by
  mail.thefacebook.com (2620:10d:c0a8:82::b) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Mon, 16 Oct 2023 11:02:29 -0700
+ 15.1.2507.23; Mon, 16 Oct 2023 11:02:49 -0700
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-        id 0D37139D9C236; Mon, 16 Oct 2023 11:02:20 -0700 (PDT)
+        id D287C39D9C2C3; Mon, 16 Oct 2023 11:02:39 -0700 (PDT)
 From:   Andrii Nakryiko <andrii@kernel.org>
 To:     <bpf@vger.kernel.org>, <netdev@vger.kernel.org>
 CC:     <linux-fsdevel@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>, <keescook@chromium.org>,
         <brauner@kernel.org>, <lennart@poettering.net>,
         <kernel-team@meta.com>, <sargun@sargun.me>
-Subject: [PATCH v8 bpf-next 00/18] BPF token and BPF FS-based delegation
-Date:   Mon, 16 Oct 2023 11:02:02 -0700
-Message-ID: <20231016180220.3866105-1-andrii@kernel.org>
+Subject: [PATCH v8 bpf-next 09/18] bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free LSM hooks
+Date:   Mon, 16 Oct 2023 11:02:11 -0700
+Message-ID: <20231016180220.3866105-10-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231016180220.3866105-1-andrii@kernel.org>
+References: <20231016180220.3866105-1-andrii@kernel.org>
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: CfHG_iRa7QfuUFFAXi5f55HToWvYMHpB
-X-Proofpoint-ORIG-GUID: CfHG_iRa7QfuUFFAXi5f55HToWvYMHpB
+X-Proofpoint-GUID: NsW1ds53VYlQLw5dP3ii3u6HywRJevZm
+X-Proofpoint-ORIG-GUID: NsW1ds53VYlQLw5dP3ii3u6HywRJevZm
 Content-Transfer-Encoding: 8BIT
 X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
@@ -52,197 +54,321 @@ X-Proofpoint-Virus-Version: vendor=baseguard
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch set introduces an ability to delegate a subset of BPF subsystem
-functionality from privileged system-wide daemon (e.g., systemd or any other
-container manager) through special mount options for userns-bound BPF FS to
-a *trusted* unprivileged application. Trust is the key here. This
-functionality is not about allowing unconditional unprivileged BPF usage.
-Establishing trust, though, is completely up to the discretion of respective
-privileged application that would create and mount a BPF FS instance with
-delegation enabled, as different production setups can and do achieve it
-through a combination of different means (signing, LSM, code reviews, etc),
-and it's undesirable and infeasible for kernel to enforce any particular way
-of validating trustworthiness of particular process.
+Based on upstream discussion ([0]), rework existing
+bpf_prog_alloc_security LSM hook. Rename it to bpf_prog_load and instead
+of passing bpf_prog_aux, pass proper bpf_prog pointer for a full BPF
+program struct. Also, we pass bpf_attr union with all the user-provided
+arguments for BPF_PROG_LOAD command.  This will give LSMs as much
+information as we can basically provide.
 
-The main motivation for this work is a desire to enable containerized BPF
-applications to be used together with user namespaces. This is currently
-impossible, as CAP_BPF, required for BPF subsystem usage, cannot be namespaced
-or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to BPF
-helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safely read
-arbitrary memory, and it's impossible to ensure that they only read memory of
-processes belonging to any given namespace. This means that it's impossible to
-have a mechanically verifiable namespace-aware CAP_BPF capability, and as such
-another mechanism to allow safe usage of BPF functionality is necessary.BPF FS
-delegation mount options and BPF token derived from such BPF FS instance is
-such a mechanism. Kernel makes no assumption about what "trusted" constitutes
-in any particular case, and it's up to specific privileged applications and
-their surrounding infrastructure to decide that. What kernel provides is a set
-of APIs to setup and mount special BPF FS instanecs and derive BPF tokens from
-it. BPF FS and BPF token are both bound to its owning userns and in such a way
-are constrained inside intended container. Users can then pass BPF token FD to
-privileged bpf() syscall commands, like BPF map creation and BPF program
-loading, to perform such operations without having init userns privileged.
+The hook is also BPF token-aware now, and optional bpf_token struct is
+passed as a third argument. bpf_prog_load LSM hook is called after
+a bunch of sanity checks were performed, bpf_prog and bpf_prog_aux were
+allocated and filled out, but right before performing full-fledged BPF
+verification step.
 
-This version incorporates feedback and suggestions ([3]) received on v3 of
-this patch set, and instead of allowing to create BPF tokens directly assuming
-capable(CAP_SYS_ADMIN), we instead enhance BPF FS to accepts a few new
-delegation mount options. If these options are used and BPF FS itself is
-properly created, set up, and mounted inside the user namespaced container,
-user application is able to derive a BPF token object from BPF FS instance,
-and pass that token to bpf() syscall. As explained in patch #2, BPF token
-itself doesn't grant access to BPF functionality, but instead allows kernel to
-do namespaced capabilities checks (ns_capable() vs capable()) for CAP_BPF,
-CAP_PERFMON, CAP_NET_ADMIN, and CAP_SYS_ADMIN, as applicable. So it forms one
-half of a puzzle and allows container managers and sys admins to have safe and
-flexible configuration options: determining which containers get delegation of
-BPF functionality through BPF FS, and then which applications within such
-containers are allowed to perform bpf() commands, based on namespaces
-capabilities.
+bpf_prog_free LSM hook is now accepting struct bpf_prog argument, for
+consistency. SELinux code is adjusted to all new names, types, and
+signatures.
 
-Previous attempt at addressing this very same problem ([0]) attempted to
-utilize authoritative LSM approach, but was conclusively rejected by upstream
-LSM maintainers. BPF token concept is not changing anything about LSM
-approach, but can be combined with LSM hooks for very fine-grained security
-policy. Some ideas about making BPF token more convenient to use with LSM (in
-particular custom BPF LSM programs) was briefly described in recent LSF/MM/BPF
-2023 presentation ([1]). E.g., an ability to specify user-provided data
-(context), which in combination with BPF LSM would allow implementing a very
-dynamic and fine-granular custom security policies on top of BPF token. In the
-interest of minimizing API surface area and discussions this was relegated to
-follow up patches, as it's not essential to the fundamental concept of
-delegatable BPF token.
+Note, given that bpf_prog_load (previously bpf_prog_alloc) hook can be
+used by some LSMs to allocate extra security blob, but also by other
+LSMs to reject BPF program loading, we need to make sure that
+bpf_prog_free LSM hook is called after bpf_prog_load/bpf_prog_alloc one
+*even* if the hook itself returned error. If we don't do that, we run
+the risk of leaking memory. This seems to be possible today when
+combining SELinux and BPF LSM, as one example, depending on their
+relative ordering.
 
-It should be noted that BPF token is conceptually quite similar to the idea of
-/dev/bpf device file, proposed by Song a while ago ([2]). The biggest
-difference is the idea of using virtual anon_inode file to hold BPF token and
-allowing multiple independent instances of them, each (potentially) with its
-own set of restrictions. And also, crucially, BPF token approach is not using
-any special stateful task-scoped flags. Instead, bpf() syscall accepts
-token_fd parameters explicitly for each relevant BPF command. This addresses
-main concerns brought up during the /dev/bpf discussion, and fits better with
-overall BPF subsystem design.
+Also, for BPF LSM setup, add bpf_prog_load and bpf_prog_free to
+sleepable LSM hooks list, as they are both executed in sleepable
+context. Also drop bpf_prog_load hook from untrusted, as there is no
+issue with refcount or anything else anymore, that originally forced us
+to add it to untrusted list in c0c852dd1876 ("bpf: Do not mark certain LSM
+hook arguments as trusted"). We now trigger this hook much later and it
+should not be an issue anymore.
 
-This patch set adds a basic minimum of functionality to make BPF token idea
-useful and to discuss API and functionality. Currently only low-level libbpf
-APIs support creating and passing BPF token around, allowing to test kernel
-functionality, but for the most part is not sufficient for real-world
-applications, which typically use high-level libbpf APIs based on `struct
-bpf_object` type. This was done with the intent to limit the size of patch set
-and concentrate on mostly kernel-side changes. All the necessary plumbing for
-libbpf will be sent as a separate follow up patch set kernel support makes it
-upstream.
+  [0] https://lore.kernel.org/bpf/9fe88aef7deabbe87d3fc38c4aea3c69.paul@paul-moore.com/
 
-Another part that should happen once kernel-side BPF token is established, is
-a set of conventions between applications (e.g., systemd), tools (e.g.,
-bpftool), and libraries (e.g., libbpf) on exposing delegatable BPF FS
-instance(s) at well-defined locations to allow applications take advantage of
-this in automatic fashion without explicit code changes on BPF application's
-side. But I'd like to postpone this discussion to after BPF token concept
-lands.
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ include/linux/lsm_hook_defs.h |  5 +++--
+ include/linux/security.h      | 12 +++++++-----
+ kernel/bpf/bpf_lsm.c          |  5 +++--
+ kernel/bpf/syscall.c          | 25 +++++++++++++------------
+ security/security.c           | 25 +++++++++++++++----------
+ security/selinux/hooks.c      | 15 ++++++++-------
+ 6 files changed, 49 insertions(+), 38 deletions(-)
 
-  [0] https://lore.kernel.org/bpf/20230412043300.360803-1-andrii@kernel.org/
-  [1] http://vger.kernel.org/bpfconf2023_material/Trusted_unprivileged_BPF_LSFMM2023.pdf
-  [2] https://lore.kernel.org/bpf/20190627201923.2589391-2-songliubraving@fb.com/
-  [3] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef785e@brauner/
-
-v7->v8:
-  - add bpf_token_allow_cmd and bpf_token_capable hooks (Paul);
-  - inline bpf_token_alloc() into bpf_token_create() to prevent accidental
-    divergence with security_bpf_token_create() hook (Paul);
-v6->v7:
-  - separate patches to refactor bpf_prog_alloc/bpf_map_alloc LSM hooks, as
-    discussed with Paul, and now they also accept struct bpf_token;
-  - added bpf_token_create/bpf_token_free to allow LSMs (SELinux,
-    specifically) to set up security LSM blob (Paul);
-  - last patch also wires bpf_security_struct setup by SELinux, similar to how
-    it's done for BPF map/prog, though I'm not sure if that's enough, so worst
-    case it's easy to drop this patch if more full fledged SELinux
-    implementation will be done separately;
-  - small fixes for issues caught by code reviews (Jiri, Hou);
-  - fix for test_maps test that doesn't use LIBBPF_OPTS() macro (CI);
-v5->v6:
-  - fix possible use of uninitialized variable in selftests (CI);
-  - don't use anon_inode, instead create one from BPF FS instance (Christian);
-  - don't store bpf_token inside struct bpf_map, instead pass it explicitly to
-    map_check_btf(). We do store bpf_token inside prog->aux, because it's used
-    during verification and even can be checked during attach time for some
-    program types;
-  - LSM hooks are left intact pending the conclusion of discussion with Paul
-    Moore; I'd prefer to do LSM-related changes as a follow up patch set
-    anyways;
-v4->v5:
-  - add pre-patch unifying CAP_NET_ADMIN handling inside kernel/bpf/syscall.c
-    (Paul Moore);
-  - fix build warnings and errors in selftests and kernel, detected by CI and
-    kernel test robot;
-v3->v4:
-  - add delegation mount options to BPF FS;
-  - BPF token is derived from the instance of BPF FS and associates itself
-    with BPF FS' owning userns;
-  - BPF token doesn't grant BPF functionality directly, it just turns
-    capable() checks into ns_capable() checks within BPF FS' owning user;
-  - BPF token cannot be pinned;
-v2->v3:
-  - make BPF_TOKEN_CREATE pin created BPF token in BPF FS, and disallow
-    BPF_OBJ_PIN for BPF token;
-v1->v2:
-  - fix build failures on Kconfig with CONFIG_BPF_SYSCALL unset;
-  - drop BPF_F_TOKEN_UNKNOWN_* flags and simplify UAPI (Stanislav).
-
-Andrii Nakryiko (18):
-  bpf: align CAP_NET_ADMIN checks with bpf_capable() approach
-  bpf: add BPF token delegation mount options to BPF FS
-  bpf: introduce BPF token object
-  bpf: add BPF token support to BPF_MAP_CREATE command
-  bpf: add BPF token support to BPF_BTF_LOAD command
-  bpf: add BPF token support to BPF_PROG_LOAD command
-  bpf: take into account BPF token when fetching helper protos
-  bpf: consistenly use BPF token throughout BPF verifier logic
-  bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free LSM hooks
-  bpf,lsm: refactor bpf_map_alloc/bpf_map_free LSM hooks
-  bpf,lsm: add BPF token LSM hooks
-  libbpf: add bpf_token_create() API
-  selftests/bpf: fix test_maps' use of bpf_map_create_opts
-  libbpf: add BPF token support to bpf_map_create() API
-  libbpf: add BPF token support to bpf_btf_load() API
-  libbpf: add BPF token support to bpf_prog_load() API
-  selftests/bpf: add BPF token-enabled tests
-  bpf,selinux: allocate bpf_security_struct per BPF token
-
- drivers/media/rc/bpf-lirc.c                   |   2 +-
- include/linux/bpf.h                           |  83 ++-
- include/linux/filter.h                        |   2 +-
- include/linux/lsm_hook_defs.h                 |  15 +-
- include/linux/security.h                      |  43 +-
- include/uapi/linux/bpf.h                      |  44 ++
- kernel/bpf/Makefile                           |   2 +-
- kernel/bpf/arraymap.c                         |   2 +-
- kernel/bpf/bpf_lsm.c                          |  15 +-
- kernel/bpf/cgroup.c                           |   6 +-
- kernel/bpf/core.c                             |   3 +-
- kernel/bpf/helpers.c                          |   6 +-
- kernel/bpf/inode.c                            |  98 ++-
- kernel/bpf/syscall.c                          | 215 ++++--
- kernel/bpf/token.c                            | 247 +++++++
- kernel/bpf/verifier.c                         |  13 +-
- kernel/trace/bpf_trace.c                      |   2 +-
- net/core/filter.c                             |  36 +-
- net/ipv4/bpf_tcp_ca.c                         |   2 +-
- net/netfilter/nf_bpf_link.c                   |   2 +-
- security/security.c                           | 101 ++-
- security/selinux/hooks.c                      |  47 +-
- tools/include/uapi/linux/bpf.h                |  44 ++
- tools/lib/bpf/bpf.c                           |  30 +-
- tools/lib/bpf/bpf.h                           |  39 +-
- tools/lib/bpf/libbpf.map                      |   1 +
- .../bpf/map_tests/map_percpu_stats.c          |  20 +-
- .../selftests/bpf/prog_tests/libbpf_probes.c  |   4 +
- .../selftests/bpf/prog_tests/libbpf_str.c     |   6 +
- .../testing/selftests/bpf/prog_tests/token.c  | 629 ++++++++++++++++++
- 30 files changed, 1577 insertions(+), 182 deletions(-)
- create mode 100644 kernel/bpf/token.c
- create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
-
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index ac962c4cb44b..f7088a06c593 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -400,8 +400,9 @@ LSM_HOOK(int, 0, bpf_map, struct bpf_map *map, fmode_t fmode)
+ LSM_HOOK(int, 0, bpf_prog, struct bpf_prog *prog)
+ LSM_HOOK(int, 0, bpf_map_alloc_security, struct bpf_map *map)
+ LSM_HOOK(void, LSM_RET_VOID, bpf_map_free_security, struct bpf_map *map)
+-LSM_HOOK(int, 0, bpf_prog_alloc_security, struct bpf_prog_aux *aux)
+-LSM_HOOK(void, LSM_RET_VOID, bpf_prog_free_security, struct bpf_prog_aux *aux)
++LSM_HOOK(int, 0, bpf_prog_load, struct bpf_prog *prog, union bpf_attr *attr,
++	 struct bpf_token *token)
++LSM_HOOK(void, LSM_RET_VOID, bpf_prog_free, struct bpf_prog *prog)
+ #endif /* CONFIG_BPF_SYSCALL */
+ 
+ LSM_HOOK(int, 0, locked_down, enum lockdown_reason what)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 5f16eecde00b..b9fb101561b6 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -2020,15 +2020,16 @@ static inline void securityfs_remove(struct dentry *dentry)
+ union bpf_attr;
+ struct bpf_map;
+ struct bpf_prog;
+-struct bpf_prog_aux;
++struct bpf_token;
+ #ifdef CONFIG_SECURITY
+ extern int security_bpf(int cmd, union bpf_attr *attr, unsigned int size);
+ extern int security_bpf_map(struct bpf_map *map, fmode_t fmode);
+ extern int security_bpf_prog(struct bpf_prog *prog);
+ extern int security_bpf_map_alloc(struct bpf_map *map);
+ extern void security_bpf_map_free(struct bpf_map *map);
+-extern int security_bpf_prog_alloc(struct bpf_prog_aux *aux);
+-extern void security_bpf_prog_free(struct bpf_prog_aux *aux);
++extern int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
++				  struct bpf_token *token);
++extern void security_bpf_prog_free(struct bpf_prog *prog);
+ #else
+ static inline int security_bpf(int cmd, union bpf_attr *attr,
+ 					     unsigned int size)
+@@ -2054,12 +2055,13 @@ static inline int security_bpf_map_alloc(struct bpf_map *map)
+ static inline void security_bpf_map_free(struct bpf_map *map)
+ { }
+ 
+-static inline int security_bpf_prog_alloc(struct bpf_prog_aux *aux)
++static inline int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
++					 struct bpf_token *token)
+ {
+ 	return 0;
+ }
+ 
+-static inline void security_bpf_prog_free(struct bpf_prog_aux *aux)
++static inline void security_bpf_prog_free(struct bpf_prog *prog)
+ { }
+ #endif /* CONFIG_SECURITY */
+ #endif /* CONFIG_BPF_SYSCALL */
+diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+index e14c822f8911..3e956f6302f3 100644
+--- a/kernel/bpf/bpf_lsm.c
++++ b/kernel/bpf/bpf_lsm.c
+@@ -263,6 +263,8 @@ BTF_ID(func, bpf_lsm_bpf_map)
+ BTF_ID(func, bpf_lsm_bpf_map_alloc_security)
+ BTF_ID(func, bpf_lsm_bpf_map_free_security)
+ BTF_ID(func, bpf_lsm_bpf_prog)
++BTF_ID(func, bpf_lsm_bpf_prog_load)
++BTF_ID(func, bpf_lsm_bpf_prog_free)
+ BTF_ID(func, bpf_lsm_bprm_check_security)
+ BTF_ID(func, bpf_lsm_bprm_committed_creds)
+ BTF_ID(func, bpf_lsm_bprm_committing_creds)
+@@ -346,8 +348,7 @@ BTF_SET_END(sleepable_lsm_hooks)
+ 
+ BTF_SET_START(untrusted_lsm_hooks)
+ BTF_ID(func, bpf_lsm_bpf_map_free_security)
+-BTF_ID(func, bpf_lsm_bpf_prog_alloc_security)
+-BTF_ID(func, bpf_lsm_bpf_prog_free_security)
++BTF_ID(func, bpf_lsm_bpf_prog_free)
+ BTF_ID(func, bpf_lsm_file_alloc_security)
+ BTF_ID(func, bpf_lsm_file_free_security)
+ #ifdef CONFIG_SECURITY_NETWORK
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index f0e22d116041..ee0fea87b17b 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -2138,7 +2138,7 @@ static void __bpf_prog_put_rcu(struct rcu_head *rcu)
+ 	kvfree(aux->func_info);
+ 	kfree(aux->func_info_aux);
+ 	free_uid(aux->user);
+-	security_bpf_prog_free(aux);
++	security_bpf_prog_free(aux->prog);
+ 	bpf_prog_free(aux->prog);
+ }
+ 
+@@ -2728,10 +2728,6 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
+ 	prog->aux->token = token;
+ 	token = NULL;
+ 
+-	err = security_bpf_prog_alloc(prog->aux);
+-	if (err)
+-		goto free_prog;
+-
+ 	prog->aux->user = get_current_user();
+ 	prog->len = attr->insn_cnt;
+ 
+@@ -2739,12 +2735,12 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
+ 	if (copy_from_bpfptr(prog->insns,
+ 			     make_bpfptr(attr->insns, uattr.is_kernel),
+ 			     bpf_prog_insn_size(prog)) != 0)
+-		goto free_prog_sec;
++		goto free_prog;
+ 	/* copy eBPF program license from user space */
+ 	if (strncpy_from_bpfptr(license,
+ 				make_bpfptr(attr->license, uattr.is_kernel),
+ 				sizeof(license) - 1) < 0)
+-		goto free_prog_sec;
++		goto free_prog;
+ 	license[sizeof(license) - 1] = 0;
+ 
+ 	/* eBPF programs must be GPL compatible to use GPL-ed functions */
+@@ -2758,25 +2754,29 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
+ 	if (bpf_prog_is_dev_bound(prog->aux)) {
+ 		err = bpf_prog_dev_bound_init(prog, attr);
+ 		if (err)
+-			goto free_prog_sec;
++			goto free_prog;
+ 	}
+ 
+ 	if (type == BPF_PROG_TYPE_EXT && dst_prog &&
+ 	    bpf_prog_is_dev_bound(dst_prog->aux)) {
+ 		err = bpf_prog_dev_bound_inherit(prog, dst_prog);
+ 		if (err)
+-			goto free_prog_sec;
++			goto free_prog;
+ 	}
+ 
+ 	/* find program type: socket_filter vs tracing_filter */
+ 	err = find_prog_type(type, prog);
+ 	if (err < 0)
+-		goto free_prog_sec;
++		goto free_prog;
+ 
+ 	prog->aux->load_time = ktime_get_boottime_ns();
+ 	err = bpf_obj_name_cpy(prog->aux->name, attr->prog_name,
+ 			       sizeof(attr->prog_name));
+ 	if (err < 0)
++		goto free_prog;
++
++	err = security_bpf_prog_load(prog, attr, token);
++	if (err)
+ 		goto free_prog_sec;
+ 
+ 	/* run eBPF verifier */
+@@ -2822,10 +2822,11 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
+ 	 */
+ 	__bpf_prog_put_noref(prog, prog->aux->real_func_cnt);
+ 	return err;
++
+ free_prog_sec:
+-	free_uid(prog->aux->user);
+-	security_bpf_prog_free(prog->aux);
++	security_bpf_prog_free(prog);
+ free_prog:
++	free_uid(prog->aux->user);
+ 	if (prog->aux->attach_btf)
+ 		btf_put(prog->aux->attach_btf);
+ 	bpf_prog_free(prog);
+diff --git a/security/security.c b/security/security.c
+index 23b129d482a7..bc8b72325c3b 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -5180,16 +5180,21 @@ int security_bpf_map_alloc(struct bpf_map *map)
+ }
+ 
+ /**
+- * security_bpf_prog_alloc() - Allocate a bpf program LSM blob
+- * @aux: bpf program aux info struct
++ * security_bpf_prog_load() - Check if loading of BPF program is allowed
++ * @prog BPF program object
++ * @attr: BPF syscall attributes used to create BPF program
++ * @token: BPF token used to grant user access to BPF subsystem
+  *
+- * Initialize the security field inside bpf program.
++ * Do a check when the kernel allocates BPF program object and is about to
++ * pass it to BPF verifier for additional correctness checks. This is also the
++ * point where LSM blob is allocated for LSMs that need them.
+  *
+  * Return: Returns 0 on success, error on failure.
+  */
+-int security_bpf_prog_alloc(struct bpf_prog_aux *aux)
++int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
++			   struct bpf_token *token)
+ {
+-	return call_int_hook(bpf_prog_alloc_security, 0, aux);
++	return call_int_hook(bpf_prog_load, 0, prog, attr, token);
+ }
+ 
+ /**
+@@ -5204,14 +5209,14 @@ void security_bpf_map_free(struct bpf_map *map)
+ }
+ 
+ /**
+- * security_bpf_prog_free() - Free a bpf program's LSM blob
+- * @aux: bpf program aux info struct
++ * security_bpf_prog_free() - Free a BPF program's LSM blob
++ * @prog: BPF program struct
+  *
+- * Clean up the security information stored inside bpf prog.
++ * Clean up the security information stored inside BPF program.
+  */
+-void security_bpf_prog_free(struct bpf_prog_aux *aux)
++void security_bpf_prog_free(struct bpf_prog *prog)
+ {
+-	call_void_hook(bpf_prog_free_security, aux);
++	call_void_hook(bpf_prog_free, prog);
+ }
+ #endif /* CONFIG_BPF_SYSCALL */
+ 
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 2aa0e219d721..f386adb0f27d 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6805,7 +6805,8 @@ static void selinux_bpf_map_free(struct bpf_map *map)
+ 	kfree(bpfsec);
+ }
+ 
+-static int selinux_bpf_prog_alloc(struct bpf_prog_aux *aux)
++static int selinux_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
++				 struct bpf_token *token)
+ {
+ 	struct bpf_security_struct *bpfsec;
+ 
+@@ -6814,16 +6815,16 @@ static int selinux_bpf_prog_alloc(struct bpf_prog_aux *aux)
+ 		return -ENOMEM;
+ 
+ 	bpfsec->sid = current_sid();
+-	aux->security = bpfsec;
++	prog->aux->security = bpfsec;
+ 
+ 	return 0;
+ }
+ 
+-static void selinux_bpf_prog_free(struct bpf_prog_aux *aux)
++static void selinux_bpf_prog_free(struct bpf_prog *prog)
+ {
+-	struct bpf_security_struct *bpfsec = aux->security;
++	struct bpf_security_struct *bpfsec = prog->aux->security;
+ 
+-	aux->security = NULL;
++	prog->aux->security = NULL;
+ 	kfree(bpfsec);
+ }
+ #endif
+@@ -7180,7 +7181,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(bpf_map, selinux_bpf_map),
+ 	LSM_HOOK_INIT(bpf_prog, selinux_bpf_prog),
+ 	LSM_HOOK_INIT(bpf_map_free_security, selinux_bpf_map_free),
+-	LSM_HOOK_INIT(bpf_prog_free_security, selinux_bpf_prog_free),
++	LSM_HOOK_INIT(bpf_prog_free, selinux_bpf_prog_free),
+ #endif
+ 
+ #ifdef CONFIG_PERF_EVENTS
+@@ -7238,7 +7239,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+ #endif
+ #ifdef CONFIG_BPF_SYSCALL
+ 	LSM_HOOK_INIT(bpf_map_alloc_security, selinux_bpf_map_alloc),
+-	LSM_HOOK_INIT(bpf_prog_alloc_security, selinux_bpf_prog_alloc),
++	LSM_HOOK_INIT(bpf_prog_load, selinux_bpf_prog_load),
+ #endif
+ #ifdef CONFIG_PERF_EVENTS
+ 	LSM_HOOK_INIT(perf_event_alloc, selinux_perf_event_alloc),
 -- 
 2.34.1
 
