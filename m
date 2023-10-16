@@ -2,42 +2,42 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FEACDB465
-	for <linux-security-module@archiver.kernel.org>; Mon, 16 Oct 2023 18:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A72AACDB485
+	for <linux-security-module@archiver.kernel.org>; Mon, 16 Oct 2023 18:03:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233889AbjJPSDF convert rfc822-to-8bit (ORCPT
+        id S233951AbjJPSDF convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Mon, 16 Oct 2023 14:03:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60694 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233951AbjJPSC5 (ORCPT
+        with ESMTP id S234011AbjJPSDB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 16 Oct 2023 14:02:57 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 660AFFB
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:02:55 -0700 (PDT)
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39GFHsEc006721
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:02:54 -0700
+        Mon, 16 Oct 2023 14:03:01 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3412D101
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:03:00 -0700 (PDT)
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39GFdPgx001990
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:03:00 -0700
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3tqrh85vqj-8
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3ts80ph7j0-3
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:02:53 -0700
-Received: from twshared15338.14.prn3.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c085:21d::8) with Microsoft SMTP Server
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:02:59 -0700
+Received: from twshared58712.02.prn6.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:11d::8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Mon, 16 Oct 2023 11:02:50 -0700
+ 15.1.2507.23; Mon, 16 Oct 2023 11:02:58 -0700
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-        id E305939D9C2CA; Mon, 16 Oct 2023 11:02:41 -0700 (PDT)
+        id 0791339D9C301; Mon, 16 Oct 2023 11:02:46 -0700 (PDT)
 From:   Andrii Nakryiko <andrii@kernel.org>
 To:     <bpf@vger.kernel.org>, <netdev@vger.kernel.org>
 CC:     <linux-fsdevel@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>, <keescook@chromium.org>,
         <brauner@kernel.org>, <lennart@poettering.net>,
         <kernel-team@meta.com>, <sargun@sargun.me>
-Subject: [PATCH v8 bpf-next 10/18] bpf,lsm: refactor bpf_map_alloc/bpf_map_free LSM hooks
-Date:   Mon, 16 Oct 2023 11:02:12 -0700
-Message-ID: <20231016180220.3866105-11-andrii@kernel.org>
+Subject: [PATCH v8 bpf-next 12/18] libbpf: add bpf_token_create() API
+Date:   Mon, 16 Oct 2023 11:02:14 -0700
+Message-ID: <20231016180220.3866105-13-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231016180220.3866105-1-andrii@kernel.org>
 References: <20231016180220.3866105-1-andrii@kernel.org>
@@ -45,191 +45,101 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: lEfd_wB6N4ta_q4J5L9_9BrtjRvPK1zM
-X-Proofpoint-ORIG-GUID: lEfd_wB6N4ta_q4J5L9_9BrtjRvPK1zM
+X-Proofpoint-GUID: wAxrdZfDwQp9v_eCl1xm1rtReCeheMi7
+X-Proofpoint-ORIG-GUID: wAxrdZfDwQp9v_eCl1xm1rtReCeheMi7
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2023-10-16_10,2023-10-12_01,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Similarly to bpf_prog_alloc LSM hook, rename and extend bpf_map_alloc
-hook into bpf_map_create, taking not just struct bpf_map, but also
-bpf_attr and bpf_token, to give a fuller context to LSMs.
-
-Unlike bpf_prog_alloc, there is no need to move the hook around, as it
-currently is firing right before allocating BPF map ID and FD, which
-seems to be a sweet spot.
-
-But like bpf_prog_alloc/bpf_prog_free combo, make sure that bpf_map_free
-LSM hook is called even if bpf_map_create hook returned error, as if few
-LSMs are combined together it could be that one LSM successfully
-allocated security blob for its needs, while subsequent LSM rejected BPF
-map creation. The former LSM would still need to free up LSM blob, so we
-need to ensure security_bpf_map_free() is called regardless of the
-outcome.
+Add low-level wrapper API for BPF_TOKEN_CREATE command in bpf() syscall.
 
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- include/linux/lsm_hook_defs.h |  5 +++--
- include/linux/security.h      |  6 ++++--
- kernel/bpf/bpf_lsm.c          |  6 +++---
- kernel/bpf/syscall.c          |  4 ++--
- security/security.c           | 16 ++++++++++------
- security/selinux/hooks.c      |  7 ++++---
- 6 files changed, 26 insertions(+), 18 deletions(-)
+ tools/lib/bpf/bpf.c      | 19 +++++++++++++++++++
+ tools/lib/bpf/bpf.h      | 28 ++++++++++++++++++++++++++++
+ tools/lib/bpf/libbpf.map |  1 +
+ 3 files changed, 48 insertions(+)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index f7088a06c593..0adfb136521a 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -398,8 +398,9 @@ LSM_HOOK(void, LSM_RET_VOID, audit_rule_free, void *lsmrule)
- LSM_HOOK(int, 0, bpf, int cmd, union bpf_attr *attr, unsigned int size)
- LSM_HOOK(int, 0, bpf_map, struct bpf_map *map, fmode_t fmode)
- LSM_HOOK(int, 0, bpf_prog, struct bpf_prog *prog)
--LSM_HOOK(int, 0, bpf_map_alloc_security, struct bpf_map *map)
--LSM_HOOK(void, LSM_RET_VOID, bpf_map_free_security, struct bpf_map *map)
-+LSM_HOOK(int, 0, bpf_map_create, struct bpf_map *map, union bpf_attr *attr,
-+	 struct bpf_token *token)
-+LSM_HOOK(void, LSM_RET_VOID, bpf_map_free, struct bpf_map *map)
- LSM_HOOK(int, 0, bpf_prog_load, struct bpf_prog *prog, union bpf_attr *attr,
- 	 struct bpf_token *token)
- LSM_HOOK(void, LSM_RET_VOID, bpf_prog_free, struct bpf_prog *prog)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index b9fb101561b6..59c5fab2c4d6 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -2025,7 +2025,8 @@ struct bpf_token;
- extern int security_bpf(int cmd, union bpf_attr *attr, unsigned int size);
- extern int security_bpf_map(struct bpf_map *map, fmode_t fmode);
- extern int security_bpf_prog(struct bpf_prog *prog);
--extern int security_bpf_map_alloc(struct bpf_map *map);
-+extern int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
-+				   struct bpf_token *token);
- extern void security_bpf_map_free(struct bpf_map *map);
- extern int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
- 				  struct bpf_token *token);
-@@ -2047,7 +2048,8 @@ static inline int security_bpf_prog(struct bpf_prog *prog)
- 	return 0;
+diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+index b0f1913763a3..593ff9ea120d 100644
+--- a/tools/lib/bpf/bpf.c
++++ b/tools/lib/bpf/bpf.c
+@@ -1271,3 +1271,22 @@ int bpf_prog_bind_map(int prog_fd, int map_fd,
+ 	ret = sys_bpf(BPF_PROG_BIND_MAP, &attr, attr_sz);
+ 	return libbpf_err_errno(ret);
  }
++
++int bpf_token_create(int bpffs_path_fd, const char *bpffs_pathname,
++		     struct bpf_token_create_opts *opts)
++{
++	const size_t attr_sz = offsetofend(union bpf_attr, token_create);
++	union bpf_attr attr;
++	int fd;
++
++	if (!OPTS_VALID(opts, bpf_token_create_opts))
++		return libbpf_err(-EINVAL);
++
++	memset(&attr, 0, attr_sz);
++	attr.token_create.bpffs_path_fd = bpffs_path_fd;
++	attr.token_create.bpffs_pathname = ptr_to_u64(bpffs_pathname);
++	attr.token_create.flags = OPTS_GET(opts, flags, 0);
++
++	fd = sys_bpf_fd(BPF_TOKEN_CREATE, &attr, attr_sz);
++	return libbpf_err_errno(fd);
++}
+diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
+index 74c2887cfd24..a5ddb0393fee 100644
+--- a/tools/lib/bpf/bpf.h
++++ b/tools/lib/bpf/bpf.h
+@@ -635,6 +635,34 @@ struct bpf_test_run_opts {
+ LIBBPF_API int bpf_prog_test_run_opts(int prog_fd,
+ 				      struct bpf_test_run_opts *opts);
  
--static inline int security_bpf_map_alloc(struct bpf_map *map)
-+static inline int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
-+					  struct bpf_token *token)
- {
- 	return 0;
- }
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index 3e956f6302f3..9e4e615f11eb 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -260,8 +260,8 @@ bpf_lsm_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- BTF_SET_START(sleepable_lsm_hooks)
- BTF_ID(func, bpf_lsm_bpf)
- BTF_ID(func, bpf_lsm_bpf_map)
--BTF_ID(func, bpf_lsm_bpf_map_alloc_security)
--BTF_ID(func, bpf_lsm_bpf_map_free_security)
-+BTF_ID(func, bpf_lsm_bpf_map_create)
-+BTF_ID(func, bpf_lsm_bpf_map_free)
- BTF_ID(func, bpf_lsm_bpf_prog)
- BTF_ID(func, bpf_lsm_bpf_prog_load)
- BTF_ID(func, bpf_lsm_bpf_prog_free)
-@@ -347,7 +347,7 @@ BTF_ID(func, bpf_lsm_userns_create)
- BTF_SET_END(sleepable_lsm_hooks)
- 
- BTF_SET_START(untrusted_lsm_hooks)
--BTF_ID(func, bpf_lsm_bpf_map_free_security)
-+BTF_ID(func, bpf_lsm_bpf_map_free)
- BTF_ID(func, bpf_lsm_bpf_prog_free)
- BTF_ID(func, bpf_lsm_file_alloc_security)
- BTF_ID(func, bpf_lsm_file_free_security)
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index ee0fea87b17b..160571b65b41 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1285,9 +1285,9 @@ static int map_create(union bpf_attr *attr)
- 			attr->btf_vmlinux_value_type_id;
- 	}
- 
--	err = security_bpf_map_alloc(map);
-+	err = security_bpf_map_create(map, attr, token);
- 	if (err)
--		goto free_map;
-+		goto free_map_sec;
- 
- 	err = bpf_map_alloc_id(map);
- 	if (err)
-diff --git a/security/security.c b/security/security.c
-index bc8b72325c3b..145e8082b9a6 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -5167,16 +5167,20 @@ int security_bpf_prog(struct bpf_prog *prog)
- }
- 
- /**
-- * security_bpf_map_alloc() - Allocate a bpf map LSM blob
-- * @map: bpf map
-+ * security_bpf_map_create() - Check if BPF map creation is allowed
-+ * @map BPF map object
-+ * @attr: BPF syscall attributes used to create BPF map
-+ * @token: BPF token used to grant user access
-  *
-- * Initialize the security field inside bpf map.
-+ * Do a check when the kernel creates a new BPF map. This is also the
-+ * point where LSM blob is allocated for LSMs that need them.
-  *
-  * Return: Returns 0 on success, error on failure.
-  */
--int security_bpf_map_alloc(struct bpf_map *map)
-+int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
-+			    struct bpf_token *token)
- {
--	return call_int_hook(bpf_map_alloc_security, 0, map);
-+	return call_int_hook(bpf_map_create, 0, map, attr, token);
- }
- 
- /**
-@@ -5205,7 +5209,7 @@ int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
-  */
- void security_bpf_map_free(struct bpf_map *map)
- {
--	call_void_hook(bpf_map_free_security, map);
-+	call_void_hook(bpf_map_free, map);
- }
- 
- /**
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index f386adb0f27d..3d5dea4f1df0 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6783,7 +6783,8 @@ static int selinux_bpf_prog(struct bpf_prog *prog)
- 			    BPF__PROG_RUN, NULL);
- }
- 
--static int selinux_bpf_map_alloc(struct bpf_map *map)
-+static int selinux_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
-+				  struct bpf_token *token)
- {
- 	struct bpf_security_struct *bpfsec;
- 
-@@ -7180,7 +7181,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(bpf, selinux_bpf),
- 	LSM_HOOK_INIT(bpf_map, selinux_bpf_map),
- 	LSM_HOOK_INIT(bpf_prog, selinux_bpf_prog),
--	LSM_HOOK_INIT(bpf_map_free_security, selinux_bpf_map_free),
-+	LSM_HOOK_INIT(bpf_map_free, selinux_bpf_map_free),
- 	LSM_HOOK_INIT(bpf_prog_free, selinux_bpf_prog_free),
++struct bpf_token_create_opts {
++	size_t sz; /* size of this struct for forward/backward compatibility */
++	__u32 flags;
++	size_t :0;
++};
++#define bpf_token_create_opts__last_field flags
++
++/**
++ * @brief **bpf_token_create()** creates a new instance of BPF token derived
++ * from specified BPF FS mount point.
++ *
++ * BPF token created with this API can be passed to bpf() syscall for
++ * commands like BPF_PROG_LOAD, BPF_MAP_CREATE, etc.
++ *
++ * @param bpffs_path_fd O_PATH FD (see man 2 openat() for semantics) specifying,
++ * in combination with *bpffs_pathname*, BPF FS mount from which to derive
++ * a BPF token instance.
++ * @param pin_pathname absolute or relative path specifying,in combination
++ * with *bpffs_pathname*, BPF FS mount from which to derive a BPF token
++ * instance.
++ * @param opts optional BPF token creation options, can be NULL
++ *
++ * @return BPF token FD > 0, on success; negative error code, otherwise (errno
++ * is also set to the error code)
++ */
++LIBBPF_API int bpf_token_create(int bpffs_path_fd, const char *bpffs_pathname,
++				struct bpf_token_create_opts *opts);
++
+ #ifdef __cplusplus
+ } /* extern "C" */
  #endif
- 
-@@ -7238,7 +7239,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(audit_rule_init, selinux_audit_rule_init),
- #endif
- #ifdef CONFIG_BPF_SYSCALL
--	LSM_HOOK_INIT(bpf_map_alloc_security, selinux_bpf_map_alloc),
-+	LSM_HOOK_INIT(bpf_map_create, selinux_bpf_map_create),
- 	LSM_HOOK_INIT(bpf_prog_load, selinux_bpf_prog_load),
- #endif
- #ifdef CONFIG_PERF_EVENTS
+diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
+index cc973b678a39..9d05ebcd3a9e 100644
+--- a/tools/lib/bpf/libbpf.map
++++ b/tools/lib/bpf/libbpf.map
+@@ -400,6 +400,7 @@ LIBBPF_1.3.0 {
+ 		bpf_program__attach_netfilter;
+ 		bpf_program__attach_tcx;
+ 		bpf_program__attach_uprobe_multi;
++		bpf_token_create;
+ 		ring__avail_data_size;
+ 		ring__consume;
+ 		ring__consumer_pos;
 -- 
 2.34.1
 
