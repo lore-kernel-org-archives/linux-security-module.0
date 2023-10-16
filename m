@@ -2,188 +2,114 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1BB7CDB47E
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Oct 2023 21:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D87C46CA1
+	for <linux-security-module@archiver.kernel.org>; Mon, 16 Oct 2023 01:50:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231469AbjJMVzj (ORCPT
+        id S231149AbjJPBuo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Oct 2023 17:55:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57526 "EHLO
+        Sun, 15 Oct 2023 21:50:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232105AbjJMVzi (ORCPT
+        with ESMTP id S231139AbjJPBun (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Oct 2023 17:55:38 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE6FACE;
-        Fri, 13 Oct 2023 14:55:36 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-53dd752685fso4573233a12.3;
-        Fri, 13 Oct 2023 14:55:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697234135; x=1697838935; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IIsoon5ifapyRHJFHWDM6c5fi2ejPFzuYB8rlmAp+E4=;
-        b=ipyAs54/+GsCk8OOtlvDe7OeTPzUwUccB2tNIm1ue+YjOu98ZTXVl162L7WgkJZo+P
-         WoJZlgIqMacCliwLL79PaN4NLXaEZHvU8Rg8FoKxY7lRGy9hDlrXaLvGIZOu12r+Iwc0
-         0ODhJFOfGZU1vKVqkVSsuFWXVVVvU6kBwfY3iop1WPwU0Nku6k5kjE/PwV1gP180OpEN
-         cQh6oj6+ZsI9TgjHUSPHF9EU9vHjpaUuqVvDAwQgOIsSflrVK+JfagWN9a8Jzuy2NTd2
-         gMzZNKQNT/EuuJJC6c69lyxKyJZJDbZXjWAgECzKE0seQHnpy6IC4y47HY4EP0wDAv8g
-         PxRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697234135; x=1697838935;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IIsoon5ifapyRHJFHWDM6c5fi2ejPFzuYB8rlmAp+E4=;
-        b=PbpwYgKC0chNAeHkRimnW6A5YQqYTxRZN9/A9eIlw+imurdN1FFEYZKxzVikwgyrCd
-         7fBOoUJywS5UukANQf4uOeavOnBrxbGuBsC7z0LWTWDwNhfYeUq6dqzDA7QVVecEVD9+
-         0Sx2KTqyAyafgtebpdAvr5c9NTaySdIx0H/em5yXP5J6/kFZ5OimtutnrVMAvsNE2UWn
-         gQ4qoO+UG+1wrPej1ZXbYzuaXUWKXhKjq9vNnWRLAk8MBsS5I2a8CdnHt+LtKs1CYihJ
-         5B3bsj5QSOwMCuStAuFPfLpvJJ8aSyIsSpWiHU3jHAMdqlMmRjvzUjcOjAX0c4/8MjYh
-         J6rA==
-X-Gm-Message-State: AOJu0Yzo49JT/yH3hKXGAke33AIl7UYiglGxpXV4hSQ7wWZf4iRypbGd
-        pzFwk25DeaEJy/tWHCqZw2ERw8GDPaoWmHdonJs=
-X-Google-Smtp-Source: AGHT+IFRq0uCNp2DqUaQzM1voq5+iFisevdEN33yDgeV9vMFdHUgZLKLjCIYxV2ALVtrXgCkixX3qn+aEchlhlCXLQo=
-X-Received: by 2002:a50:9fc1:0:b0:53e:2e0a:f5c6 with SMTP id
- c59-20020a509fc1000000b0053e2e0af5c6mr2895234edf.40.1697234135345; Fri, 13
- Oct 2023 14:55:35 -0700 (PDT)
+        Sun, 15 Oct 2023 21:50:43 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5069DA;
+        Sun, 15 Oct 2023 18:50:40 -0700 (PDT)
+Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4S80NW0GNlz67jkV;
+        Mon, 16 Oct 2023 09:47:23 +0800 (CST)
+Received: from mscphis00759.huawei.com (10.123.66.134) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.31; Mon, 16 Oct 2023 02:50:37 +0100
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+To:     <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>
+Subject: [PATCH v13 00/12] Network support for Landlock
+Date:   Mon, 16 Oct 2023 09:50:18 +0800
+Message-ID: <20231016015030.1684504-1-konstantin.meskhidze@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20231012222810.4120312-7-andrii@kernel.org> <f739928b1db9a9e45da89249c0389e85.paul@paul-moore.com>
-In-Reply-To: <f739928b1db9a9e45da89249c0389e85.paul@paul-moore.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Fri, 13 Oct 2023 14:55:24 -0700
-Message-ID: <CAEf4BzZWDSZOyoVF+8pKBcvwjcpCC-XMG8J9kaJXXS=P+i5FmA@mail.gmail.com>
-Subject: Re: [PATCH v7 6/18] bpf: add BPF token support to BPF_PROG_LOAD command
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
-        sargun@sargun.me
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.123.66.134]
+X-ClientProxiedBy: mscpeml500002.china.huawei.com (7.188.26.138) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 13, 2023 at 2:15=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Oct 12, 2023 Andrii Nakryiko <andrii@kernel.org> wrote:
-> >
-> > Add basic support of BPF token to BPF_PROG_LOAD. Wire through a set of
-> > allowed BPF program types and attach types, derived from BPF FS at BPF
-> > token creation time. Then make sure we perform bpf_token_capable()
-> > checks everywhere where it's relevant.
-> >
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > ---
-> >  include/linux/bpf.h                           |  6 ++
-> >  include/uapi/linux/bpf.h                      |  2 +
-> >  kernel/bpf/core.c                             |  1 +
-> >  kernel/bpf/inode.c                            |  6 +-
-> >  kernel/bpf/syscall.c                          | 87 ++++++++++++++-----
-> >  kernel/bpf/token.c                            | 27 ++++++
-> >  tools/include/uapi/linux/bpf.h                |  2 +
-> >  .../selftests/bpf/prog_tests/libbpf_probes.c  |  2 +
-> >  .../selftests/bpf/prog_tests/libbpf_str.c     |  3 +
-> >  9 files changed, 110 insertions(+), 26 deletions(-)
->
-> ...
->
-> > diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> > index a2c9edcbcd77..c6b00aee3b62 100644
-> > --- a/kernel/bpf/syscall.c
-> > +++ b/kernel/bpf/syscall.c
-> > @@ -2584,13 +2584,15 @@ static bool is_perfmon_prog_type(enum bpf_prog_=
-type prog_type)
-> >  }
-> >
-> >  /* last field in 'union bpf_attr' used by this command */
-> > -#define      BPF_PROG_LOAD_LAST_FIELD log_true_size
-> > +#define BPF_PROG_LOAD_LAST_FIELD prog_token_fd
-> >
-> >  static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uat=
-tr_size)
-> >  {
-> >       enum bpf_prog_type type =3D attr->prog_type;
-> >       struct bpf_prog *prog, *dst_prog =3D NULL;
-> >       struct btf *attach_btf =3D NULL;
-> > +     struct bpf_token *token =3D NULL;
-> > +     bool bpf_cap;
-> >       int err;
-> >       char license[128];
-> >
-> > @@ -2606,10 +2608,31 @@ static int bpf_prog_load(union bpf_attr *attr, =
-bpfptr_t uattr, u32 uattr_size)
-> >                                BPF_F_XDP_DEV_BOUND_ONLY))
-> >               return -EINVAL;
-> >
-> > +     bpf_prog_load_fixup_attach_type(attr);
-> > +
-> > +     if (attr->prog_token_fd) {
-> > +             token =3D bpf_token_get_from_fd(attr->prog_token_fd);
-> > +             if (IS_ERR(token))
-> > +                     return PTR_ERR(token);
-> > +             /* if current token doesn't grant prog loading permission=
-s,
-> > +              * then we can't use this token, so ignore it and rely on
-> > +              * system-wide capabilities checks
-> > +              */
-> > +             if (!bpf_token_allow_cmd(token, BPF_PROG_LOAD) ||
-> > +                 !bpf_token_allow_prog_type(token, attr->prog_type,
-> > +                                            attr->expected_attach_type=
-)) {
-> > +                     bpf_token_put(token);
-> > +                     token =3D NULL;
-> > +             }
->
-> At the start of this effort I mentioned how we wanted to have LSM
-> control points when the token is created and when it is used.  It is
-> for this reason that we still want a hook inside the
-> bpf_token_allow_cmd() function as it allows us to enable/disable use
-> of the token when its use is first attempted.  If the LSM decides to
-> disallow use of the token in this particular case then the token is
-> disabled (set to NULL) while the operation is still allowed to move
-> forward, simply without the token.  It's a much cleaner and well
-> behaved approach as it allows the normal BPF access controls to do
-> their work.
+Hi,
+This is a new V13 patch related to Landlock LSM network confinement.
+It is based on v6.6-rc2 kernel version.
 
-I see, ok, so you want to be able to say "no BPF token for you", but
-not just error out the entire operation. Makes sense.
+It brings refactoring of previous patch version V12.
+Mostly there are fixes of logic and typos, refactoring some selftests.
 
->
-> > +     }
-> > +
-> > +     bpf_cap =3D bpf_token_capable(token, CAP_BPF);
->
-> Similar to the above comment, we want to a LSM control point in
-> bpf_token_capable() so that the LSM can control the token's
-> ability to delegate capability privileges when they are used.  Having
-> to delay this access control point to security_bpf_prog_load() is not
-> only awkward but it requires either manual synchronization between
-> all of the different LSMs and the the capability checks in the
-> bpf_prog_load() function or a completely different set of LSM
-> permissions for a token-based BPF program load over a normal BPF
-> program load.
->
-> We really need these hooks Andrii, I wouldn't have suggested them if
-> I didn't believe they were important.
+All test were run in QEMU evironment and compiled with
+ -static flag.
+ 1. network_test: 77/77 tests passed.
+ 2. base_test: 7/7 tests passed.
+ 3. fs_test: 108/108 tests passed.
+ 4. ptrace_test: 8/8 tests passed.
 
-No problem, I'll add both of them. I really didn't want to add hooks
-for allow_{maps,progs,attachs} (which you agreed shouldn't be added,
-so we are good), but I think allow_cmds and capable checks are fine.
-Will add in the next revision.
+Previous versions:
+v12: https://lore.kernel.org/linux-security-module/20230920092641.832134-1-konstantin.meskhidze@huawei.com/
+v11: https://lore.kernel.org/linux-security-module/20230515161339.631577-1-konstantin.meskhidze@huawei.com/
+v10: https://lore.kernel.org/linux-security-module/20230323085226.1432550-1-konstantin.meskhidze@huawei.com/
+v9: https://lore.kernel.org/linux-security-module/20230116085818.165539-1-konstantin.meskhidze@huawei.com/
+v8: https://lore.kernel.org/linux-security-module/20221021152644.155136-1-konstantin.meskhidze@huawei.com/
+v7: https://lore.kernel.org/linux-security-module/20220829170401.834298-1-konstantin.meskhidze@huawei.com/
+v6: https://lore.kernel.org/linux-security-module/20220621082313.3330667-1-konstantin.meskhidze@huawei.com/
+v5: https://lore.kernel.org/linux-security-module/20220516152038.39594-1-konstantin.meskhidze@huawei.com
+v4: https://lore.kernel.org/linux-security-module/20220309134459.6448-1-konstantin.meskhidze@huawei.com/
+v3: https://lore.kernel.org/linux-security-module/20220124080215.265538-1-konstantin.meskhidze@huawei.com/
+v2: https://lore.kernel.org/linux-security-module/20211228115212.703084-1-konstantin.meskhidze@huawei.com/
+v1: https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/
 
->
-> > +     err =3D -EPERM;
-> > +
-> >       if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) &&
-> >           (attr->prog_flags & BPF_F_ANY_ALIGNMENT) &&
-> > -         !bpf_capable())
-> > -             return -EPERM;
-> > +         !bpf_cap)
-> > +             goto put_token;
-> >
+Konstantin Meskhidze (11):
+  landlock: Make ruleset's access masks more generic
+  landlock: Refactor landlock_find_rule/insert_rule
+  landlock: Refactor merge/inherit_ruleset functions
+  landlock: Move and rename layer helpers
+  landlock: Refactor layer helpers
+  landlock: Refactor landlock_add_rule() syscall
+  landlock: Add network rules and TCP hooks support
+  selftests/landlock: Share enforce_ruleset()
+  selftests/landlock: Add 7 new test variants dedicated to network
+  samples/landlock: Add network demo
+  landlock: Document Landlock's network support
 
-[...]
+Mickaël Salaün (1):
+  landlock: Allow FS topology changes for domains without such rule type
+
+ Documentation/userspace-api/landlock.rst     |   93 +-
+ include/uapi/linux/landlock.h                |   56 +
+ samples/landlock/sandboxer.c                 |  115 +-
+ security/landlock/Kconfig                    |    1 +
+ security/landlock/Makefile                   |    2 +
+ security/landlock/fs.c                       |  232 +--
+ security/landlock/limits.h                   |    6 +
+ security/landlock/net.c                      |  198 ++
+ security/landlock/net.h                      |   33 +
+ security/landlock/ruleset.c                  |  405 ++++-
+ security/landlock/ruleset.h                  |  181 +-
+ security/landlock/setup.c                    |    2 +
+ security/landlock/syscalls.c                 |  158 +-
+ tools/testing/selftests/landlock/base_test.c |    2 +-
+ tools/testing/selftests/landlock/common.h    |   10 +
+ tools/testing/selftests/landlock/config      |    4 +
+ tools/testing/selftests/landlock/fs_test.c   |   73 +-
+ tools/testing/selftests/landlock/net_test.c  | 1688 ++++++++++++++++++
+ 18 files changed, 2910 insertions(+), 349 deletions(-)
+ create mode 100644 security/landlock/net.c
+ create mode 100644 security/landlock/net.h
+ create mode 100644 tools/testing/selftests/landlock/net_test.c
+
+--
+2.25.1
+
