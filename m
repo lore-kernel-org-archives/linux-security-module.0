@@ -2,116 +2,116 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2CCCDB484
-	for <linux-security-module@archiver.kernel.org>; Mon, 16 Oct 2023 18:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50179CDB483
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Oct 2023 07:01:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233948AbjJPSD0 convert rfc822-to-8bit (ORCPT
+        id S234416AbjJQHBv convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 16 Oct 2023 14:03:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56786 "EHLO
+        Tue, 17 Oct 2023 03:01:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234124AbjJPSDW (ORCPT
+        with ESMTP id S229666AbjJQHBu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 16 Oct 2023 14:03:22 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C33910D
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:03:14 -0700 (PDT)
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39GFUrNf016389
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:03:13 -0700
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3ts7vhs9d3-18
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Oct 2023 11:03:13 -0700
-Received: from twshared15247.17.frc2.facebook.com (2620:10d:c085:108::8) by
- mail.thefacebook.com (2620:10d:c085:21d::8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Mon, 16 Oct 2023 11:03:04 -0700
-Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-        id 6BBB939D9C372; Mon, 16 Oct 2023 11:02:59 -0700 (PDT)
-From:   Andrii Nakryiko <andrii@kernel.org>
-To:     <bpf@vger.kernel.org>, <netdev@vger.kernel.org>
-CC:     <linux-fsdevel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>, <keescook@chromium.org>,
-        <brauner@kernel.org>, <lennart@poettering.net>,
-        <kernel-team@meta.com>, <sargun@sargun.me>
-Subject: [PATCH v8 bpf-next 18/18] bpf,selinux: allocate bpf_security_struct per BPF token
-Date:   Mon, 16 Oct 2023 11:02:20 -0700
-Message-ID: <20231016180220.3866105-19-andrii@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231016180220.3866105-1-andrii@kernel.org>
-References: <20231016180220.3866105-1-andrii@kernel.org>
-MIME-Version: 1.0
+        Tue, 17 Oct 2023 03:01:50 -0400
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7015783;
+        Tue, 17 Oct 2023 00:01:45 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4S8l1p3p5Hz9ylWC;
+        Tue, 17 Oct 2023 14:48:46 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwAXcJE+MS5lg+dfAg--.50713S2;
+        Tue, 17 Oct 2023 08:01:26 +0100 (CET)
+Message-ID: <468436cf766732a3cfc55d07ad119a6ccdc815c1.camel@huaweicloud.com>
+Subject: Re: [PATCH v15 00/11] LSM: Three basic syscalls
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net
+Date:   Tue, 17 Oct 2023 09:01:15 +0200
+In-Reply-To: <CAHC9VhRQ7xpeSX7b3VZfzQ15noJ8mgauNMuHWo_n3hMgsYMAfQ@mail.gmail.com>
+References: <20230912205658.3432-1-casey.ref@schaufler-ca.com>
+         <20230912205658.3432-1-casey@schaufler-ca.com>
+         <CAHC9VhRcbp3iWQwL7FTUrcU1C3OsZ413Nbq+17oTwW7hZ7XvBw@mail.gmail.com>
+         <CAHC9VhSqY5+DR-jXprrftb1=CzDvhTh0Ep66A16RMd4L7W7TYw@mail.gmail.com>
+         <ae39864947debbc7c460db478b8abe1c147b7d5c.camel@huaweicloud.com>
+         <CAHC9VhRQ7xpeSX7b3VZfzQ15noJ8mgauNMuHWo_n3hMgsYMAfQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: dbD-eOWKobge0_CFLQ_tcs5DBT5C5OoU
-X-Proofpoint-ORIG-GUID: dbD-eOWKobge0_CFLQ_tcs5DBT5C5OoU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-16_10,2023-10-12_01,2023-05-22_02
+User-Agent: Evolution 3.44.4-0ubuntu2 
+MIME-Version: 1.0
+X-CM-TRANSID: LxC2BwAXcJE+MS5lg+dfAg--.50713S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZryfurWftr4Duw15tF4xZwb_yoW8ur4rpF
+        WDKay0kF4kAF1jkrn7Za1rAa48Kryru3yjgF98Cry7ArW5CFy0grW2kFW2vryUWrn3ta4r
+        Xr4UKFyDC3Wqy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgANBF1jj5EcEgABsk
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Utilize newly added bpf_token_create/bpf_token_free LSM hooks to
-allocate struct bpf_security_struct for each BPF token object in
-SELinux. This just follows similar pattern for BPF prog and map.
+On Mon, 2023-10-16 at 11:06 -0400, Paul Moore wrote:
+> On Mon, Oct 16, 2023 at 8:05 AM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > 
+> > Sorry, I just noticed LSM_ID_IMA. Since we have the 'integrity' LSM, I
+> > think it should be LSM_ID_INTEGRITY.
+> > 
+> > Mimi, all, do you agree? If yes, I send a patch shortly.
+> 
+> I believe LSM_ID_IMA is the better option, despite "integrity" already
+> being present in Kconfig and possibly other areas.  "IMA" is a
+> specific thing/LSM whereas "integrity" is a property, principle, or
+> quality.  Especially as we move forward with promoting IMA as a full
+> and proper LSM, we should work towards referring to it as "IMA" and
+> not "integrity".
+> 
+> If anything we should be working to support "IMA" in places where we
+> currently have "integrity" so that we can eventually deprecate
+> "integrity".
 
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- security/selinux/hooks.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Hi Paul
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 3d5dea4f1df0..acd84839ae2c 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6828,6 +6828,29 @@ static void selinux_bpf_prog_free(struct bpf_prog *prog)
- 	prog->aux->security = NULL;
- 	kfree(bpfsec);
- }
-+
-+static int selinux_bpf_token_create(struct bpf_token *token, union bpf_attr *attr,
-+				    struct path *path)
-+{
-+	struct bpf_security_struct *bpfsec;
-+
-+	bpfsec = kzalloc(sizeof(*bpfsec), GFP_KERNEL);
-+	if (!bpfsec)
-+		return -ENOMEM;
-+
-+	bpfsec->sid = current_sid();
-+	token->security = bpfsec;
-+
-+	return 0;
-+}
-+
-+static void selinux_bpf_token_free(struct bpf_token *token)
-+{
-+	struct bpf_security_struct *bpfsec = token->security;
-+
-+	token->security = NULL;
-+	kfree(bpfsec);
-+}
- #endif
- 
- struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
-@@ -7183,6 +7206,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(bpf_prog, selinux_bpf_prog),
- 	LSM_HOOK_INIT(bpf_map_free, selinux_bpf_map_free),
- 	LSM_HOOK_INIT(bpf_prog_free, selinux_bpf_prog_free),
-+	LSM_HOOK_INIT(bpf_token_free, selinux_bpf_token_free),
- #endif
- 
- #ifdef CONFIG_PERF_EVENTS
-@@ -7241,6 +7265,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- #ifdef CONFIG_BPF_SYSCALL
- 	LSM_HOOK_INIT(bpf_map_create, selinux_bpf_map_create),
- 	LSM_HOOK_INIT(bpf_prog_load, selinux_bpf_prog_load),
-+	LSM_HOOK_INIT(bpf_token_create, selinux_bpf_token_create),
- #endif
- #ifdef CONFIG_PERF_EVENTS
- 	LSM_HOOK_INIT(perf_event_alloc, selinux_perf_event_alloc),
--- 
-2.34.1
+I fully understand your argument. However, 'integrity' has been the
+word to identify the integrity subsystem since long time ago.
+
+Reducing the scope to 'ima' would create some confusion since, while
+'ima' is associated to integrity, it would not encompass EVM.
+
+The term 'integrity', although it is a property, it precisely
+identifies in the kernel context the scope and goals of the subsystem,
+and is general enough to encompass new projects going in a similar
+direction (such as my integrity digest cache).
+
+From a technical perspective, at the moment it is not possible to split
+'integrity' in two standalone LSMs 'ima' and 'evm', as IMA and EVM work
+on shared integrity metadata. Also my integrity digest cache is using
+the same metadata.
+
+In addition, making IMA and EVM as standalone LSMs would require a much
+longer development cycle to make them use disjoint metadata and to
+define proper communication interfaces. It would be not anymore a
+technical move of function calls from a place to another, like for the
+current patch set, but would require substantial time to validate the
+new design.
+
+To submit my patch set in the current state, the only thing I need is
+to have LSM_ID_INTEGRITY defined.
+
+Roberto
 
