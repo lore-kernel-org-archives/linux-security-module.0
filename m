@@ -2,113 +2,77 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3859FCDB474
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Oct 2023 13:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E59FDCDB474
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Oct 2023 14:33:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343644AbjJQN4Z (ORCPT
+        id S1343853AbjJQOdu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 17 Oct 2023 09:56:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36988 "EHLO
+        Tue, 17 Oct 2023 10:33:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343684AbjJQN4Z (ORCPT
+        with ESMTP id S1343637AbjJQOdt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 17 Oct 2023 09:56:25 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A1ECF5;
-        Tue, 17 Oct 2023 06:56:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697550982; x=1729086982;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WcBUtEAJe/ah7+TklnC7EIaNuN0jruDSdP3tyvkNCd0=;
-  b=hFZSV9SsgvWuu6FW9vOiGlPkONXLPKIhnDYWJ16OltQBlWdaC0TjPQ5g
-   OC9b7RRJvRR4x/G0s8+9kzFU9o9rSUGsidKHh1xGmlJK8s5E1QyBayyil
-   XByW6KGFEqVizcy1W8kPqfgMEb1SjBK+XTYILlxjvD4sE6GoKk76utYcm
-   4B2wG3qmC83AxBjLgvgrgwnrLHHu8Eem6YohAfXj6W0WVlyxiVp3u6Mmf
-   VOBtgMvIdM+85LkAfmlAe/6teLR1RgRqEt5EBgT47G/5olTCiC1t8Eh34
-   zyLqP6xg0q7NEZy8EPR1yMcP7qoy3FNWKnOkVQzSOiXxZuFfRTVJ4EmX7
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10866"; a="388645428"
-X-IronPort-AV: E=Sophos;i="6.03,232,1694761200"; 
-   d="scan'208";a="388645428"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2023 06:56:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10866"; a="826453794"
-X-IronPort-AV: E=Sophos;i="6.03,232,1694761200"; 
-   d="scan'208";a="826453794"
-Received: from lkp-server02.sh.intel.com (HELO f64821696465) ([10.239.97.151])
-  by fmsmga004.fm.intel.com with ESMTP; 17 Oct 2023 06:56:18 -0700
-Received: from kbuild by f64821696465 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qskYS-0009eV-1J;
-        Tue, 17 Oct 2023 13:56:16 +0000
-Date:   Tue, 17 Oct 2023 21:56:01 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
-        sargun@sargun.me
-Subject: Re: [PATCH v8 bpf-next 09/18] bpf,lsm: refactor
- bpf_prog_alloc/bpf_prog_free LSM hooks
-Message-ID: <202310172156.zcehiHbq-lkp@intel.com>
-References: <20231016180220.3866105-10-andrii@kernel.org>
+        Tue, 17 Oct 2023 10:33:49 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FF8592;
+        Tue, 17 Oct 2023 07:33:48 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC591C433C8;
+        Tue, 17 Oct 2023 14:33:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1697553227;
+        bh=Md1yoB7CnP/OCO7Dq7WJ4rYYyE4bhXLe0LJv3Xd4MmU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PQEAqpnbfeSCRvNKTvHSIERCPbuZnKMhrJ/+ssd0LDNybpWChzonTWwHCMH03LfwT
+         ChW9J2kt5KIFmaT28vd0g9mixQ9UJEpOpDlG1NXbA39bsCpvklrGtJGrene8m/5AKK
+         8XFisogiVBc0TED2DvvvILH4Xrs9paz2eAsrwzlTu/pXzs0tMcl7cGt42kPb4mopfN
+         dDF/a92TSKMZ4Wo5YtHMdlxkJ3lPvXq2BSUYV385mLBj0USWSqsZ2RJ5XwJr625050
+         GuuouHEIJuVv2gFAx2ANBul9bsOAP9TuzPEgyZelYGEgiuY8Bhz/P+S/p0+BazA2OV
+         Pw0uYMjhum2BQ==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] landlock: fix typo in landlock_append_net_rule() stub function
+Date:   Tue, 17 Oct 2023 16:33:35 +0200
+Message-Id: <20231017143341.2875980-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231016180220.3866105-10-andrii@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Andrii,
+From: Arnd Bergmann <arnd@arndb.de>
 
-kernel test robot noticed the following build warnings:
+There is an extraneous semicolon in the empty stub helper for
+this function tha causes randconfig builds to break:
 
-[auto build test WARNING on bpf-next/master]
+In file included from security/landlock/setup.c:17:
+security/landlock/net.h:28:1: error: expected identifier or '(' before '{' token
+security/landlock/net.h:26:1: error: 'landlock_append_net_rule' declared 'static' but never defined [-Werror=unused-function]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bpf-align-CAP_NET_ADMIN-checks-with-bpf_capable-approach/20231017-152928
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20231016180220.3866105-10-andrii%40kernel.org
-patch subject: [PATCH v8 bpf-next 09/18] bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free LSM hooks
-config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20231017/202310172156.zcehiHbq-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231017/202310172156.zcehiHbq-lkp@intel.com/reproduce)
+Fixes: 614d46b333ab9 ("landlock: Add network rules and TCP hooks support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ security/landlock/net.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202310172156.zcehiHbq-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> security/security.c:5196: warning: Function parameter or member 'prog' not described in 'security_bpf_prog_load'
-
-
-vim +5196 security/security.c
-
-55e853201a9e03 Paul Moore      2023-02-16  5181  
-55e853201a9e03 Paul Moore      2023-02-16  5182  /**
-82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5183   * security_bpf_prog_load() - Check if loading of BPF program is allowed
-82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5184   * @prog BPF program object
-82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5185   * @attr: BPF syscall attributes used to create BPF program
-82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5186   * @token: BPF token used to grant user access to BPF subsystem
-55e853201a9e03 Paul Moore      2023-02-16  5187   *
-82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5188   * Do a check when the kernel allocates BPF program object and is about to
-82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5189   * pass it to BPF verifier for additional correctness checks. This is also the
-82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5190   * point where LSM blob is allocated for LSMs that need them.
-55e853201a9e03 Paul Moore      2023-02-16  5191   *
-55e853201a9e03 Paul Moore      2023-02-16  5192   * Return: Returns 0 on success, error on failure.
-55e853201a9e03 Paul Moore      2023-02-16  5193   */
-82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5194  int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
-82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5195  			   struct bpf_token *token)
-afdb09c720b62b Chenbo Feng     2017-10-18 @5196  {
-82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5197  	return call_int_hook(bpf_prog_load, 0, prog, attr, token);
-afdb09c720b62b Chenbo Feng     2017-10-18  5198  }
-55e853201a9e03 Paul Moore      2023-02-16  5199  
-
+diff --git a/security/landlock/net.h b/security/landlock/net.h
+index 588a49fd69076..09960c237a13e 100644
+--- a/security/landlock/net.h
++++ b/security/landlock/net.h
+@@ -24,7 +24,7 @@ static inline void landlock_add_net_hooks(void)
+ 
+ static inline int
+ landlock_append_net_rule(struct landlock_ruleset *const ruleset, const u16 port,
+-			 access_mask_t access_rights);
++			 access_mask_t access_rights)
+ {
+ 	return -EAFNOSUPPORT;
+ }
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.2
+
