@@ -2,142 +2,226 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4D9CDB474
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Oct 2023 17:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66226CDB474
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Oct 2023 17:32:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234991AbjJQR3X (ORCPT
+        id S232648AbjJQRc3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 17 Oct 2023 13:29:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43102 "EHLO
+        Tue, 17 Oct 2023 13:32:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234992AbjJQR3W (ORCPT
+        with ESMTP id S232025AbjJQRc2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 17 Oct 2023 13:29:22 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18306112
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Oct 2023 10:29:18 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id 3f1490d57ef6-d84f18e908aso6712988276.1
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Oct 2023 10:29:18 -0700 (PDT)
+        Tue, 17 Oct 2023 13:32:28 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E49F98;
+        Tue, 17 Oct 2023 10:32:26 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-52bd9ddb741so10429185a12.0;
+        Tue, 17 Oct 2023 10:32:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1697563758; x=1698168558; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697563945; x=1698168745; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w1ro9HlJSCZOnQY3V+1VmfmbVpDBOi+uN5Fq4ETuRqg=;
-        b=deAuIb4pEhjm6eBPy09V3tBAICS79bZ60HcDl2EaptWgOX65CHSTtunZZBxZywbUxc
-         7f/LQE141m184U03smIc9cArPvIvNYDioVqhTS+gfnVqBeUF9afNOp16zXYcDEeWe5vr
-         EqdXfpM6LQWgrJhH0Tsl67FUAhZp26IVs6T3bMgKMU8V6wv9YGhB+rL36JPgLuYVYq73
-         petuYj48JGDAZMHz/6hXb4+5JgL7/m6oIlqO+QeoJrBUGJc4CMSPtDfyqOV6p62xxonx
-         Iy7WCVQP07odKbIUI/GZKYzITHpkahyoCLxVvrjmQaxVKPWlBdM1IUcYIn/TbocVdrFe
-         Gd+A==
+        bh=1pVb3nd+X8dVBnTnMAKO6K124VfixR+DKVbfHkqiwnQ=;
+        b=kpqBWV6Y2C4+j3/+WERZFhFHVfpfo1fQxmuCujnQFISOJYD4Ff6dQjD+FSXAmn/bs6
+         XPSUYrEAptNtaL7mWErHbeyngGp5oirArw3Haniqb4K5tVp8I6KkB1dol3LMCuLOPyMK
+         isFORZQLgnD4OIVxnq2EsPYx/tPrUvP/b6asOhF1OeZk/TauQ97ZR9092VadcyZWmqgY
+         lRjjL7D511YpX/+FBJ3nKeIWMe4duFWWezR0qEhLWJczcJR1vAuZosMgKGIOCGmN+JN4
+         bzKtvUOLkuURYaW5eDsfQim37s/gopl4Jg2/sb6ISO2yvfwMTjl3K4D6dy6/7Jd74ECT
+         XogA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697563758; x=1698168558;
+        d=1e100.net; s=20230601; t=1697563945; x=1698168745;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=w1ro9HlJSCZOnQY3V+1VmfmbVpDBOi+uN5Fq4ETuRqg=;
-        b=kERu2R/8WgrBrLam20ieU9TRO9I1WVysvvPIUdvebYhc7G+R6i+6U6zDxH0g4KtMXu
-         DvthF1IjVamTdCmbMaypq2Hng6yKGyLZ4VYGAF+7UvEJW+o035G1ucabjbQbrJniK6rc
-         wDoXydWUWY8iT2tJZWIm2MQye42p1+QeWqNskc+bH/mHPrgKYvveU/cKBbxUFhVfokK7
-         i4UpaO2Sq5pwXAG8sfJpPycFDhtRP8TmhdLo6LXtV/mtf5FE9qeVrIrqimVfjN/krJAs
-         bTd96rDS1V+51njLPJGNZYw1a+SG+xtGz2MO4Rj8/yZTRmOx7AVo/LTCbJpTt+8g7nSJ
-         oOhA==
-X-Gm-Message-State: AOJu0YwaWxSWWyjmklojoGx1XTaqyGuZ3v2YBLPO6CKGm3fhsiJ4THAG
-        YUfuRqYPZA6FRokH7psws+R1xuggAYT1kULyJZMC
-X-Google-Smtp-Source: AGHT+IE20i63zTruAYA/HeKI6xRC7P5Iphgvp7RwIHUvJvGWCiFiihYJF7iPPrjTqS0EbJ0jsUao4v+7X57KlQGZQNY=
-X-Received: by 2002:a25:2383:0:b0:d9a:3bbb:8602 with SMTP id
- j125-20020a252383000000b00d9a3bbb8602mr2572828ybj.64.1697563757988; Tue, 17
- Oct 2023 10:29:17 -0700 (PDT)
+        bh=1pVb3nd+X8dVBnTnMAKO6K124VfixR+DKVbfHkqiwnQ=;
+        b=t2YDcTVZBhAu0SPV4/JKo6PE3hU0XWZyJpwF+l27vP389vwOGRtIQaB4ZDr4PB5kgy
+         C3T6EVFi2uOCnOJrr8W+BQEdCSBpJOSo8wxj2BhXOnW/1UQMqxrSZu+HGyZ1nF2oU27d
+         R4tJnjCyie3Sko2c0VFpMG5gXz7z4175LWAeTHGNMyPwGJyOomlzase0c4fagVl/RFeH
+         OQmsqGfrNQldSVzdDqRGtesnT9ltncfHds8HBHKGIIQSaQs6SkXQviT9Clb+hW3Ndu0k
+         z4Ht3RXVRpuSaWoFWVfmlCshZcAg8gsHnIO3yDkz8EfJBOlcFm5D9c6HTu1DWnFTugAG
+         Kw8A==
+X-Gm-Message-State: AOJu0YxJi1PFIf3Jwa6lsPSXQn7/PBPUn1czjEOVDtHoM/57Q3XNkWMS
+        I58BEW57bC/0E8qD/eZK7Vhalw4jE2qTQi9Ycc8=
+X-Google-Smtp-Source: AGHT+IEJFlx67yTO5zvCdPDh2En50wVFcfRoncVmwrd9zx9wYk80D7kZAhcK06adauwCd3qynz7L85kCUjn4EidmQ5Y=
+X-Received: by 2002:a50:d09b:0:b0:53e:f4:ef85 with SMTP id v27-20020a50d09b000000b0053e00f4ef85mr2226865edd.10.1697563944308;
+ Tue, 17 Oct 2023 10:32:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <CEA476C1-4CE5-4FFC-91D7-6061C8605B18@oracle.com>
- <ba2f5560800608541e81fbdd28efa9875b35e491.camel@linux.ibm.com>
- <932231F5-8050-4436-84B8-D7708DC43845@oracle.com> <7335a4587233626a39ce9bc8a969957d7f43a34c.camel@linux.ibm.com>
- <FD6FB139-F901-4E55-9705-E7B0023BDBA8@oracle.com> <1149b6dbfdaabef3e48dc2852cc76aa11a6dd6b0.camel@linux.ibm.com>
- <4A0505D0-2933-43BD-BEEA-94350BB22AE7@oracle.com> <20230913.Ceifae7ievei@digikod.net>
- <D0F16BFD-72EB-4BE2-BA3D-BAE1BCCDCB6F@oracle.com> <20230914.shah5al9Kaib@digikod.net>
- <20231005.dajohf2peiBu@digikod.net> <d3b51f26c14fd273d41da3432895fdce9f4d047c.camel@linux.ibm.com>
- <CAHC9VhRdU1CZJpPSEdSmui-Xirr0j261K=+SM7KiDwiPG-JSrQ@mail.gmail.com> <a851227aaa75ab16b0d6dd93433e1ee1679715f9.camel@linux.ibm.com>
-In-Reply-To: <a851227aaa75ab16b0d6dd93433e1ee1679715f9.camel@linux.ibm.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 17 Oct 2023 13:29:07 -0400
-Message-ID: <CAHC9VhS_Ttdy5ZB=jYdVfNyaJfn_7G1wztr5+g0g7uUDForXvA@mail.gmail.com>
-Subject: Re: RFC: New LSM to control usage of x509 certificates
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
+References: <20231016180220.3866105-1-andrii@kernel.org> <20231016180220.3866105-18-andrii@kernel.org>
+ <ZS5ptHMhvMAkB+Tb@krava>
+In-Reply-To: <ZS5ptHMhvMAkB+Tb@krava>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Tue, 17 Oct 2023 10:32:12 -0700
+Message-ID: <CAEf4BzZEoAAfb3BdDavAjHAsQSEsEOwHA7ELUMGqskinH19HTQ@mail.gmail.com>
+Subject: Re: [PATCH v8 bpf-next 17/18] selftests/bpf: add BPF token-enabled tests
+To:     Jiri Olsa <olsajiri@gmail.com>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
+        sargun@sargun.me
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 17, 2023 at 1:09=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
-ote:
-> On Tue, 2023-10-17 at 11:45 -0400, Paul Moore wrote:
-> > On Tue, Oct 17, 2023 at 9:48=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com=
-> wrote:
-> > > On Thu, 2023-10-05 at 12:32 +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> > > > > > > A complementary approach would be to create an
-> > > > > > > LSM (or a dedicated interface) to tie certificate properties =
-to a set of
-> > > > > > > kernel usages, while still letting users configure these cons=
-traints.
-> > > > > >
-> > > > > > That is an interesting idea.  Would the other security maintain=
-ers be in
-> > > > > > support of such an approach?  Would a LSM be the correct interf=
-ace?
-> > > > > > Some of the recent work I have done with introducing key usage =
-and CA
-> > > > > > enforcement is difficult for a distro to pick up, since these c=
-hanges can be
-> > > > > > viewed as a regression.  Each end-user has different signing pr=
-ocedures
-> > > > > > and policies, so making something work for everyone is difficul=
-t.  Letting the
-> > > > > > user configure these constraints would solve this problem.
-> > >
-> > > Something definitely needs to be done about controlling the usage of
-> > > x509 certificates.  My concern is the level of granularity.  Would th=
-is
-> > > be at the LSM hook level or even finer granaularity?
+On Tue, Oct 17, 2023 at 4:02=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
+e:
+>
+> On Mon, Oct 16, 2023 at 11:02:19AM -0700, Andrii Nakryiko wrote:
+> > Add a selftest that attempts to conceptually replicate intended BPF
+> > token use cases inside user namespaced container.
 > >
-> > You lost me, what do you mean by finer granularity than a LSM-based
-> > access control?  Can you give an existing example in the Linux kernel
-> > of access control granularity that is finer grained than what is
-> > provided by the LSMs?
+> > Child process is forked. It is then put into its own userns and mountns=
+.
+> > Child creates BPF FS context object and sets it up as desired. This
+> > ensures child userns is captures as owning userns for this instance of
+> > BPF FS.
+> >
+> > This context is passed back to privileged parent process through Unix
+> > socket, where parent creates and mounts it as a detached mount. This
+> > mount FD is passed back to the child to be used for BPF token creation,
+> > which allows otherwise privileged BPF operations to succeed inside
+> > userns.
+> >
+> > We validate that all of token-enabled privileged commands (BPF_BTF_LOAD=
+,
+> > BPF_MAP_CREATE, and BPF_PROG_LOAD) work as intended. They should only
+> > succeed inside the userns if a) BPF token is provided with proper
+> > allowed sets of commands and types; and b) namespaces CAP_BPF and other
+> > privileges are set. Lacking a) or b) should lead to -EPERM failures.
+> >
+> > Based on suggested workflow by Christian Brauner ([0]).
+> >
+> >   [0] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef7=
+85e@brauner/
+> >
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
+> >  .../testing/selftests/bpf/prog_tests/token.c  | 629 ++++++++++++++++++
+> >  1 file changed, 629 insertions(+)
+> >  create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
+> >
+> > diff --git a/tools/testing/selftests/bpf/prog_tests/token.c b/tools/tes=
+ting/selftests/bpf/prog_tests/token.c
+> > new file mode 100644
+> > index 000000000000..41cee6b4731e
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/bpf/prog_tests/token.c
+> > @@ -0,0 +1,629 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
+> > +#define _GNU_SOURCE
+> > +#include <test_progs.h>
+> > +#include <bpf/btf.h>
+> > +#include "cap_helpers.h"
+> > +#include <fcntl.h>
+> > +#include <sched.h>
+> > +#include <signal.h>
+> > +#include <unistd.h>
+> > +#include <linux/filter.h>
+> > +#include <linux/unistd.h>
+> > +#include <sys/mount.h>
+> > +#include <sys/socket.h>
+> > +#include <sys/syscall.h>
+> > +#include <sys/un.h>
+> > +
+> > +/* copied from include/uapi/linux/mount.h, as including it conflicts w=
+ith
+> > + * sys/mount.h include
+> > + */
+> > +enum fsconfig_command {
+> > +     FSCONFIG_SET_FLAG       =3D 0,    /* Set parameter, supplying no =
+value */
+> > +     FSCONFIG_SET_STRING     =3D 1,    /* Set parameter, supplying a s=
+tring value */
+> > +     FSCONFIG_SET_BINARY     =3D 2,    /* Set parameter, supplying a b=
+inary blob value */
+> > +     FSCONFIG_SET_PATH       =3D 3,    /* Set parameter, supplying an =
+object by path */
+> > +     FSCONFIG_SET_PATH_EMPTY =3D 4,    /* Set parameter, supplying an =
+object by (empty) path */
+> > +     FSCONFIG_SET_FD         =3D 5,    /* Set parameter, supplying an =
+object by fd */
+> > +     FSCONFIG_CMD_CREATE     =3D 6,    /* Invoke superblock creation *=
+/
+> > +     FSCONFIG_CMD_RECONFIGURE =3D 7,   /* Invoke superblock reconfigur=
+ation */
+> > +};
 >
-> The current x509 certificate access control granularity is at the
-> keyring level.  Any key on the keyring may be used to verify a
-> signature.  Finer granularity could associate a set of certificates on
-> a particular keyring with an LSM hook - kernel modules, BPRM, kexec,
-> firmware, etc.  Even finer granularity could somehow limit a key's
-> signature verification to files in particular software package(s) for
-> example.
+> I'm getting compilation fail, because fsconfig_command seems to be
+> included through the sys/mount.h include, but CI is green hum :-\
 >
-> Perhaps Micka=C3=ABl and Eric were thinking about a new LSM to control us=
-age
-> of x509 certificates from a totally different perspective.  I'd like to
-> hear what they're thinking.
+> when I get -E output I can see:
 >
-> I hope this addressed your questions.
+>         ...
+>         # 16 "./cap_helpers.h"
+>         int cap_enable_effective(__u64 caps, __u64 *old_caps);
+>         int cap_disable_effective(__u64 caps, __u64 *old_caps);
+>         # 7 "/home/jolsa/kernel/linux-qemu/tools/testing/selftests/bpf/pr=
+og_tests/token.c" 2
+>
+>         # 1 "/usr/include/sys/mount.h" 1 3 4
+>         # 27 "/usr/include/sys/mount.h" 3 4
+>         # 1 "/usr/lib/gcc/x86_64-redhat-linux/13/include/stddef.h" 1 3 4
+>         # 28 "/usr/include/sys/mount.h" 2 3 4
+>
+>         # 1 "/home/jolsa/kernel/linux-qemu/tools/include/uapi/linux/mount=
+.h" 1 3 4
+>         # 96 "/home/jolsa/kernel/linux-qemu/tools/include/uapi/linux/moun=
+t.h" 3 4
+>
+>         # 96 "/home/jolsa/kernel/linux-qemu/tools/include/uapi/linux/moun=
+t.h" 3 4
+>         enum fsconfig_command {
+>          FSCONFIG_SET_FLAG =3D 0,
+>          FSCONFIG_SET_STRING =3D 1,
+>          FSCONFIG_SET_BINARY =3D 2,
+>          FSCONFIG_SET_PATH =3D 3,
+>          FSCONFIG_SET_PATH_EMPTY =3D 4,
+>          FSCONFIG_SET_FD =3D 5,
+>          FSCONFIG_CMD_CREATE =3D 6,
+>          FSCONFIG_CMD_RECONFIGURE =3D 7,
+>         };
+>
+>
+>         ...
+>
+>
+>         # 21 "/home/jolsa/kernel/linux-qemu/tools/testing/selftests/bpf/p=
+rog_tests/token.c"
+>         enum fsconfig_command {
+>          FSCONFIG_SET_FLAG =3D 0,
+>          FSCONFIG_SET_STRING =3D 1,
+>          FSCONFIG_SET_BINARY =3D 2,
+>          FSCONFIG_SET_PATH =3D 3,
+>          FSCONFIG_SET_PATH_EMPTY =3D 4,
+>          FSCONFIG_SET_FD =3D 5,
+>          FSCONFIG_CMD_CREATE =3D 6,
+>          FSCONFIG_CMD_RECONFIGURE =3D 7,
+>         };
+>
+>
+> it's probably included through this bit in the /usr/include/sys/mount.h:
+>
+>         #ifdef __has_include
+>         # if __has_include ("linux/mount.h")
+>         #  include "linux/mount.h"
+>         # endif
+>         #endif
+>
+> which was added 'recently' in https://sourceware.org/git/?p=3Dglibc.git;a=
+=3Dcommit;h=3D774058d72942249f71d74e7f2b639f77184160a6
+>
+> maybe you use older glibs headers? or perhaps it might be my build setup
 
-Okay, so you were talking about finer granularity when compared to the
-*current* LSM keyring hooks.  Gotcha.
+No, I'm pretty sure I have older headers. I'd like this to work in
+both environments, so I need to fix this. I'll try to make this work
+with uapi header, I guess. Thanks for reporting!
 
-If we need additional, or modified, hooks that shouldn't be a problem.
-Although I'm guessing the answer is going to be moving towards
-purpose/operation specific keyrings which might fit in well with the
-current keyring level controls.
+>
+> jirka
+>
 
---=20
-paul-moore.com
+[...]
