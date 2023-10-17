@@ -2,144 +2,168 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E03DCDB482
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Oct 2023 17:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B3ECDB474
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Oct 2023 17:59:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234917AbjJQRqs (ORCPT
+        id S233549AbjJQR7H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 17 Oct 2023 13:46:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47192 "EHLO
+        Tue, 17 Oct 2023 13:59:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232025AbjJQRqr (ORCPT
+        with ESMTP id S232380AbjJQR7G (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 17 Oct 2023 13:46:47 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3AFB9E;
-        Tue, 17 Oct 2023 10:46:45 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-53e84912038so5209798a12.1;
-        Tue, 17 Oct 2023 10:46:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697564804; x=1698169604; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZTJcOzkVSYuq3kdfWyM6/478vxCOCOP6lLPkJ2SdCTM=;
-        b=W0eBRw7pPBw0LgH7eY75+XKjNwPp6qARg0GYJU1DBzYzRycL2nFcUHueMOW0NjR94r
-         iMptzkXIt03mGzygTNRBXA1k4f9D5GtxhdUOvGExTXpIIEtnkKVnrzMzoOq2Ohxcnjpu
-         TQTmbHY7isk53BAEgL5M6xITC8UF6TK3o2Eyoii6apY1QXqEZHGO9TrOOn7XD0hcLDE1
-         xNsOE2qsMudG3Gd4YDXu5W6v7GBgb3QF1hVZ5EhP7R8DxFGqj+2LgwJZYyGeY+ZW7guG
-         jFDaQccXS+mDbxpgT8jQJB5/vNX7Cq4naPyLx/xJd+gHoKAvBDy5XgapNAMG6v7Su22f
-         jQyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697564804; x=1698169604;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZTJcOzkVSYuq3kdfWyM6/478vxCOCOP6lLPkJ2SdCTM=;
-        b=nIOgyr587rGbEWtdGa15D+x4ASLnnrF5zV4xgPqaDNZd8x2VMJ4/o9Ia3IsR/Ltpa7
-         WfhHTT/B1AQ0Ttgh0f+t9Ph0IGmXz8kEKZsOgEgIp//Lap/nitPxorPW5C8ZzpvzaoqX
-         JeFhZWiXgQIwNlR8H0pSmythe6tOasYQwx5lXObgFrMpU9Z3RtHP5gVdzw1nWbpHjwaz
-         hldcrwQsn9mmjXI+hqV3FGkLG7aC6v4UZX2jRInsprgXcdHw/FNkoKj1CT69CT+x+q3g
-         gHVH9ulkwzzAyeKOljg9a47OpgEgow8dRHt1n22GvMZIFxfvAyj64s6l0FCWZxlFJnf0
-         a3xw==
-X-Gm-Message-State: AOJu0Yy8B0KjElDHJ7m05m6Krpe99/x9gta5Brye3Jz/owNERzhGIr1I
-        OJ4hdLD0N9DxwGtOedCrfAw9Go2xkXhDTStrYKM=
-X-Google-Smtp-Source: AGHT+IF5SdawNji0JQ5EenvvwzkSH87GiKHVfD8DHFgGHgtaMPq9u4MQVqu7f7GBxWz3XY3Y2YEWNPJNHJ+Djc05Tfg=
-X-Received: by 2002:a05:6402:2314:b0:53d:b839:2045 with SMTP id
- l20-20020a056402231400b0053db8392045mr2345712eda.25.1697564803833; Tue, 17
- Oct 2023 10:46:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <20231016180220.3866105-10-andrii@kernel.org> <202310172156.zcehiHbq-lkp@intel.com>
-In-Reply-To: <202310172156.zcehiHbq-lkp@intel.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Tue, 17 Oct 2023 10:46:32 -0700
-Message-ID: <CAEf4BzbJBDkCTO9VOdBiMzrhwOXAd3UsguJqNA5oZAR7Q8Eo8A@mail.gmail.com>
-Subject: Re: [PATCH v8 bpf-next 09/18] bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free
- LSM hooks
-To:     kernel test robot <lkp@intel.com>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
-        sargun@sargun.me
+        Tue, 17 Oct 2023 13:59:06 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E917183;
+        Tue, 17 Oct 2023 10:59:04 -0700 (PDT)
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39HHdXgS001103;
+        Tue, 17 Oct 2023 17:58:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=mIiiX48jXcI+ggkjVD3XIoTCMcDHfU0m83MXsFV2PMo=;
+ b=dKs0XWCqoHWOYpcqFgYrhYpCaIiOIsIz646f/0cF993dVkNzjTgdYAEDMX9NcVgIc84h
+ dqWMwukQbi+I7Nk3vC4f5VcOrXCSN6RK3GlPrksnh4sIAh9Y14/WUZiEjLCfI9LdhHCm
+ AEuv9SeLmJ9wNkyNEdsA/bW6PN9d1R8R80YDIsV+QVI1YW/vbzxpcz8F4xGFHD1M8+0o
+ ic6W8U1jdFAcFK6N63tDyd8ya+93P3omOAL3JubFJAceC4zcg8ROSTXpTcWRDal5ATM9
+ U0V9kKzNqjHxR/lY14KOCG4EdNBtJeexrEFe4TH+GoAhxidsNET8eJYFQ3FbBuXrJOtX pw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tsxv20kyh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 17 Oct 2023 17:58:42 +0000
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39HHsAPi030062;
+        Tue, 17 Oct 2023 17:58:41 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tsxv20kvg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 17 Oct 2023 17:58:41 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 39HFfOio019700;
+        Tue, 17 Oct 2023 17:58:29 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+        by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3tr811j7ad-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 17 Oct 2023 17:58:29 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+        by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39HHwSXq28705464
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Oct 2023 17:58:29 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D267158043;
+        Tue, 17 Oct 2023 17:58:28 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1DD4258055;
+        Tue, 17 Oct 2023 17:58:28 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.watson.ibm.com (unknown [9.31.99.90])
+        by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Tue, 17 Oct 2023 17:58:28 +0000 (GMT)
+Message-ID: <5c795b4cf6d7460af205e85a36194fa188136c38.camel@linux.ibm.com>
+Subject: Re: RFC: New LSM to control usage of x509 certificates
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
+        Konrad Wilk <konrad.wilk@oracle.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Date:   Tue, 17 Oct 2023 13:58:27 -0400
+In-Reply-To: <CAHC9VhS_Ttdy5ZB=jYdVfNyaJfn_7G1wztr5+g0g7uUDForXvA@mail.gmail.com>
+References: <CEA476C1-4CE5-4FFC-91D7-6061C8605B18@oracle.com>
+         <ba2f5560800608541e81fbdd28efa9875b35e491.camel@linux.ibm.com>
+         <932231F5-8050-4436-84B8-D7708DC43845@oracle.com>
+         <7335a4587233626a39ce9bc8a969957d7f43a34c.camel@linux.ibm.com>
+         <FD6FB139-F901-4E55-9705-E7B0023BDBA8@oracle.com>
+         <1149b6dbfdaabef3e48dc2852cc76aa11a6dd6b0.camel@linux.ibm.com>
+         <4A0505D0-2933-43BD-BEEA-94350BB22AE7@oracle.com>
+         <20230913.Ceifae7ievei@digikod.net>
+         <D0F16BFD-72EB-4BE2-BA3D-BAE1BCCDCB6F@oracle.com>
+         <20230914.shah5al9Kaib@digikod.net> <20231005.dajohf2peiBu@digikod.net>
+         <d3b51f26c14fd273d41da3432895fdce9f4d047c.camel@linux.ibm.com>
+         <CAHC9VhRdU1CZJpPSEdSmui-Xirr0j261K=+SM7KiDwiPG-JSrQ@mail.gmail.com>
+         <a851227aaa75ab16b0d6dd93433e1ee1679715f9.camel@linux.ibm.com>
+         <CAHC9VhS_Ttdy5ZB=jYdVfNyaJfn_7G1wztr5+g0g7uUDForXvA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: xhU62rCo7Z1G441wmbcp9hX6le7Dx3nJ
+X-Proofpoint-GUID: m1tCyNGrSf7TNB1ZbSRFtfORm9m6AEs8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-17_03,2023-10-17_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ adultscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 spamscore=0 suspectscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2309180000 definitions=main-2310170152
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 17, 2023 at 6:56=E2=80=AFAM kernel test robot <lkp@intel.com> w=
-rote:
->
-> Hi Andrii,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on bpf-next/master]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bp=
-f-align-CAP_NET_ADMIN-checks-with-bpf_capable-approach/20231017-152928
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git =
-master
-> patch link:    https://lore.kernel.org/r/20231016180220.3866105-10-andrii=
-%40kernel.org
-> patch subject: [PATCH v8 bpf-next 09/18] bpf,lsm: refactor bpf_prog_alloc=
-/bpf_prog_free LSM hooks
-> config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/202310=
-17/202310172156.zcehiHbq-lkp@intel.com/config)
-> compiler: m68k-linux-gcc (GCC) 13.2.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20231017/202310172156.zcehiHbq-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202310172156.zcehiHbq-lkp=
-@intel.com/
->
-> All warnings (new ones prefixed by >>):
->
-> >> security/security.c:5196: warning: Function parameter or member 'prog'=
- not described in 'security_bpf_prog_load'
->
->
-> vim +5196 security/security.c
->
-> 55e853201a9e03 Paul Moore      2023-02-16  5181
-> 55e853201a9e03 Paul Moore      2023-02-16  5182  /**
-> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5183   * security_bpf_prog_loa=
-d() - Check if loading of BPF program is allowed
-> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5184   * @prog BPF program obj=
-ect
+On Tue, 2023-10-17 at 13:29 -0400, Paul Moore wrote:
+> On Tue, Oct 17, 2023 at 1:09 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > On Tue, 2023-10-17 at 11:45 -0400, Paul Moore wrote:
+> > > On Tue, Oct 17, 2023 at 9:48 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > > > On Thu, 2023-10-05 at 12:32 +0200, Mickaël Salaün wrote:
+> > > > > > > > A complementary approach would be to create an
+> > > > > > > > LSM (or a dedicated interface) to tie certificate properties to a set of
+> > > > > > > > kernel usages, while still letting users configure these constraints.
+> > > > > > >
+> > > > > > > That is an interesting idea.  Would the other security maintainers be in
+> > > > > > > support of such an approach?  Would a LSM be the correct interface?
+> > > > > > > Some of the recent work I have done with introducing key usage and CA
+> > > > > > > enforcement is difficult for a distro to pick up, since these changes can be
+> > > > > > > viewed as a regression.  Each end-user has different signing procedures
+> > > > > > > and policies, so making something work for everyone is difficult.  Letting the
+> > > > > > > user configure these constraints would solve this problem.
+> > > >
+> > > > Something definitely needs to be done about controlling the usage of
+> > > > x509 certificates.  My concern is the level of granularity.  Would this
+> > > > be at the LSM hook level or even finer granaularity?
+> > >
+> > > You lost me, what do you mean by finer granularity than a LSM-based
+> > > access control?  Can you give an existing example in the Linux kernel
+> > > of access control granularity that is finer grained than what is
+> > > provided by the LSMs?
+> >
+> > The current x509 certificate access control granularity is at the
+> > keyring level.  Any key on the keyring may be used to verify a
+> > signature.  Finer granularity could associate a set of certificates on
+> > a particular keyring with an LSM hook - kernel modules, BPRM, kexec,
+> > firmware, etc.  Even finer granularity could somehow limit a key's
+> > signature verification to files in particular software package(s) for
+> > example.
+> >
+> > Perhaps Mickaël and Eric were thinking about a new LSM to control usage
+> > of x509 certificates from a totally different perspective.  I'd like to
+> > hear what they're thinking.
+> >
+> > I hope this addressed your questions.
+> 
+> Okay, so you were talking about finer granularity when compared to the
+> *current* LSM keyring hooks.  Gotcha.
+> 
+> If we need additional, or modified, hooks that shouldn't be a problem.
+> Although I'm guessing the answer is going to be moving towards
+> purpose/operation specific keyrings which might fit in well with the
+> current keyring level controls.
 
-missing colon after @prog, cute, will fix
+I don't believe defining per purpose/operation specific keyrings will
+resolve the underlying problem of granularity.  For example, different
+applications could be signed with different keys and should only be
+verified with the specific key.
 
-> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5185   * @attr: BPF syscall at=
-tributes used to create BPF program
-> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5186   * @token: BPF token use=
-d to grant user access to BPF subsystem
-> 55e853201a9e03 Paul Moore      2023-02-16  5187   *
-> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5188   * Do a check when the k=
-ernel allocates BPF program object and is about to
-> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5189   * pass it to BPF verifi=
-er for additional correctness checks. This is also the
-> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5190   * point where LSM blob =
-is allocated for LSMs that need them.
-> 55e853201a9e03 Paul Moore      2023-02-16  5191   *
-> 55e853201a9e03 Paul Moore      2023-02-16  5192   * Return: Returns 0 on =
-success, error on failure.
-> 55e853201a9e03 Paul Moore      2023-02-16  5193   */
-> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5194  int security_bpf_prog_lo=
-ad(struct bpf_prog *prog, union bpf_attr *attr,
-> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5195                          =
-  struct bpf_token *token)
-> afdb09c720b62b Chenbo Feng     2017-10-18 @5196  {
-> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5197         return call_int_h=
-ook(bpf_prog_load, 0, prog, attr, token);
-> afdb09c720b62b Chenbo Feng     2017-10-18  5198  }
-> 55e853201a9e03 Paul Moore      2023-02-16  5199
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+-- 
+thanks,
+
+Mimi
+
