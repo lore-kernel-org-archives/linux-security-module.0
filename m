@@ -2,148 +2,113 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F80CDB474
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Oct 2023 15:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C37C41513
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Oct 2023 15:46:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235054AbjJQPoo (ORCPT
+        id S235179AbjJQPqP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 17 Oct 2023 11:44:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58542 "EHLO
+        Tue, 17 Oct 2023 11:46:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229586AbjJQPon (ORCPT
+        with ESMTP id S235202AbjJQPqF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 17 Oct 2023 11:44:43 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59048B0;
-        Tue, 17 Oct 2023 08:44:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697557482; x=1729093482;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XgkULBRZsTb/2jKvTsppmPErophz+plcbU7s38fli/I=;
-  b=EewtEhMo0EmpB8HrDUe2ayEOEW1ac3dk+p4ipKOXp3TM170DG65GZ3ri
-   tpRTy59kZ0fUsz4lyBZD0UHyRq2ndU3wxHpG3qBfA7keKwZEnFk/bd9S5
-   PVbnT10wPzBhu811a87avcRyyh8lpew93gWuexEfy/p+U3VPx05IE1Pjy
-   1OA81MgpA5f2xpHLUILY0h5l+J89fab5kawUtiJ84OXd2IWZPsLZvc12p
-   wB6v5H/+rD2bR4QkBEyeY78ChVgCUy2Pmz2H0E3v8CWAKK34w3GVoFF4c
-   EBFXnS2IS9/+VTmWwwbWWCnO3tokmO10edN8BN/Gim+eEx3pgGjoSqhNN
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10866"; a="472035332"
-X-IronPort-AV: E=Sophos;i="6.03,232,1694761200"; 
-   d="scan'208";a="472035332"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2023 08:44:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10866"; a="822023718"
-X-IronPort-AV: E=Sophos;i="6.03,232,1694761200"; 
-   d="scan'208";a="822023718"
-Received: from lkp-server02.sh.intel.com (HELO f64821696465) ([10.239.97.151])
-  by fmsmga008.fm.intel.com with ESMTP; 17 Oct 2023 08:44:39 -0700
-Received: from kbuild by f64821696465 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qsmFJ-0009l1-13;
-        Tue, 17 Oct 2023 15:44:37 +0000
-Date:   Tue, 17 Oct 2023 23:44:27 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
-        sargun@sargun.me
-Subject: Re: [PATCH v8 bpf-next 11/18] bpf,lsm: add BPF token LSM hooks
-Message-ID: <202310172329.EQgtSkRh-lkp@intel.com>
-References: <20231016180220.3866105-12-andrii@kernel.org>
+        Tue, 17 Oct 2023 11:46:05 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C37B115
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Oct 2023 08:45:52 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-d849df4f1ffso6654639276.0
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Oct 2023 08:45:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1697557551; x=1698162351; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0mrgPXshN0v6qqkRfhdm7z++OcXc8cz4EqlaMatvDL4=;
+        b=Y+7Tt7h+hxvay5+yY0XwfwxvEwvC1rwyUBnqH6sFMgEth05lz/zC9WMXxw7oDNbnMk
+         XJmM9PD8Rq2oDMAT0+73d88mCtMg3S5Z+JjcMw4hrZnh6acmdOdLmjbEmKmVYfiODRLH
+         Uo21Z8o+/DPowcTUs1CeDBkNTfjodR/N1plj1hlL/31d89Zud6oAgbEbsiwTInHqIouT
+         rRM1ZFKXe2Vko+dMlSPVcnZ2N8+gwESESSmCUGksSR8Z3C0cL2TAfM/a12KpT8OQnr+S
+         U5a8KtrzN7hPtbCRaZMwpE7mOZdUqV/Pa8fwJ/ZYAeI8SAfzd17VK1tWCrvFhhjpOqWc
+         orUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697557551; x=1698162351;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0mrgPXshN0v6qqkRfhdm7z++OcXc8cz4EqlaMatvDL4=;
+        b=Um9LNe62BRRXTN9QyYNGGgqSY8+3kanodTSCBkvPAtJRUU1toZJJMat3cKcaRiqH7C
+         mjkDC4HkAYkJMtW8iuZEz1bXeeIcjZHVjO2pjc8izZsuZwAYsBplZgIqkybNlMKlF2nY
+         Mdm1o7QwiYeizMQ4tG7J/FDx+w+AAkvqrFclk7uvJFEx8hx/G1JALyBf19Rkn+9b/Pru
+         n8S+j2dhzxoLWdYnfrCLrl3fXSmyVVcnsxvDgz/9rOgWuShiO5Bar288orHZ3HCJFSk7
+         c/oLQ0cBVJB7P6ZC/vcwq2Ol3Ji+H4+fwyROCOIGIbTBn3cRNezNypzLeUokNax8zJtj
+         Ereg==
+X-Gm-Message-State: AOJu0YxeZMqiRzc4yFOn6jEyG3q/VYscCjyncWD6QVVcZXilfc7usT+h
+        wZyoX2dovEtgfl8x/61nlTi5J/gTwApKWNvOIX25
+X-Google-Smtp-Source: AGHT+IGHRxj2dP4KvVblGmde8rkHCNUaoyj84XhV8ASt9OQHBcIZq+PiPzhrUnobB2KaHgLd0Lat/LiyB1T8gyOqrHg=
+X-Received: by 2002:a25:c712:0:b0:d9a:52ee:6080 with SMTP id
+ w18-20020a25c712000000b00d9a52ee6080mr2021464ybe.37.1697557551094; Tue, 17
+ Oct 2023 08:45:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231016180220.3866105-12-andrii@kernel.org>
+References: <CEA476C1-4CE5-4FFC-91D7-6061C8605B18@oracle.com>
+ <ba2f5560800608541e81fbdd28efa9875b35e491.camel@linux.ibm.com>
+ <932231F5-8050-4436-84B8-D7708DC43845@oracle.com> <7335a4587233626a39ce9bc8a969957d7f43a34c.camel@linux.ibm.com>
+ <FD6FB139-F901-4E55-9705-E7B0023BDBA8@oracle.com> <1149b6dbfdaabef3e48dc2852cc76aa11a6dd6b0.camel@linux.ibm.com>
+ <4A0505D0-2933-43BD-BEEA-94350BB22AE7@oracle.com> <20230913.Ceifae7ievei@digikod.net>
+ <D0F16BFD-72EB-4BE2-BA3D-BAE1BCCDCB6F@oracle.com> <20230914.shah5al9Kaib@digikod.net>
+ <20231005.dajohf2peiBu@digikod.net> <d3b51f26c14fd273d41da3432895fdce9f4d047c.camel@linux.ibm.com>
+In-Reply-To: <d3b51f26c14fd273d41da3432895fdce9f4d047c.camel@linux.ibm.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 17 Oct 2023 11:45:40 -0400
+Message-ID: <CAHC9VhRdU1CZJpPSEdSmui-Xirr0j261K=+SM7KiDwiPG-JSrQ@mail.gmail.com>
+Subject: Re: RFC: New LSM to control usage of x509 certificates
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
+        Konrad Wilk <konrad.wilk@oracle.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Andrii,
+On Tue, Oct 17, 2023 at 9:48=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+> On Thu, 2023-10-05 at 12:32 +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> > > > > A complementary approach would be to create an
+> > > > > LSM (or a dedicated interface) to tie certificate properties to a=
+ set of
+> > > > > kernel usages, while still letting users configure these constrai=
+nts.
+> > > >
+> > > > That is an interesting idea.  Would the other security maintainers =
+be in
+> > > > support of such an approach?  Would a LSM be the correct interface?
+> > > > Some of the recent work I have done with introducing key usage and =
+CA
+> > > > enforcement is difficult for a distro to pick up, since these chang=
+es can be
+> > > > viewed as a regression.  Each end-user has different signing proced=
+ures
+> > > > and policies, so making something work for everyone is difficult.  =
+Letting the
+> > > > user configure these constraints would solve this problem.
+>
+> Something definitely needs to be done about controlling the usage of
+> x509 certificates.  My concern is the level of granularity.  Would this
+> be at the LSM hook level or even finer granaularity?
 
-kernel test robot noticed the following build warnings:
+You lost me, what do you mean by finer granularity than a LSM-based
+access control?  Can you give an existing example in the Linux kernel
+of access control granularity that is finer grained than what is
+provided by the LSMs?
 
-[auto build test WARNING on bpf-next/master]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bpf-align-CAP_NET_ADMIN-checks-with-bpf_capable-approach/20231017-152928
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20231016180220.3866105-12-andrii%40kernel.org
-patch subject: [PATCH v8 bpf-next 11/18] bpf,lsm: add BPF token LSM hooks
-config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20231017/202310172329.EQgtSkRh-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231017/202310172329.EQgtSkRh-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202310172329.EQgtSkRh-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   security/security.c:5182: warning: Function parameter or member 'map' not described in 'security_bpf_map_create'
-   security/security.c:5200: warning: Function parameter or member 'prog' not described in 'security_bpf_prog_load'
->> security/security.c:5217: warning: Function parameter or member 'token' not described in 'security_bpf_token_create'
-
-
-vim +5217 security/security.c
-
-  5168	
-  5169	/**
-  5170	 * security_bpf_map_create() - Check if BPF map creation is allowed
-  5171	 * @map BPF map object
-  5172	 * @attr: BPF syscall attributes used to create BPF map
-  5173	 * @token: BPF token used to grant user access
-  5174	 *
-  5175	 * Do a check when the kernel creates a new BPF map. This is also the
-  5176	 * point where LSM blob is allocated for LSMs that need them.
-  5177	 *
-  5178	 * Return: Returns 0 on success, error on failure.
-  5179	 */
-  5180	int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
-  5181				    struct bpf_token *token)
-> 5182	{
-  5183		return call_int_hook(bpf_map_create, 0, map, attr, token);
-  5184	}
-  5185	
-  5186	/**
-  5187	 * security_bpf_prog_load() - Check if loading of BPF program is allowed
-  5188	 * @prog BPF program object
-  5189	 * @attr: BPF syscall attributes used to create BPF program
-  5190	 * @token: BPF token used to grant user access to BPF subsystem
-  5191	 *
-  5192	 * Do a check when the kernel allocates BPF program object and is about to
-  5193	 * pass it to BPF verifier for additional correctness checks. This is also the
-  5194	 * point where LSM blob is allocated for LSMs that need them.
-  5195	 *
-  5196	 * Return: Returns 0 on success, error on failure.
-  5197	 */
-  5198	int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
-  5199				   struct bpf_token *token)
-  5200	{
-  5201		return call_int_hook(bpf_prog_load, 0, prog, attr, token);
-  5202	}
-  5203	
-  5204	/**
-  5205	 * security_bpf_token_create() - Check if creating of BPF token is allowed
-  5206	 * @token BPF token object
-  5207	 * @attr: BPF syscall attributes used to create BPF token
-  5208	 * @path: path pointing to BPF FS mount point from which BPF token is created
-  5209	 *
-  5210	 * Do a check when the kernel instantiates a new BPF token object from BPF FS
-  5211	 * instance. This is also the point where LSM blob can be allocated for LSMs.
-  5212	 *
-  5213	 * Return: Returns 0 on success, error on failure.
-  5214	 */
-  5215	int security_bpf_token_create(struct bpf_token *token, union bpf_attr *attr,
-  5216				      struct path *path)
-> 5217	{
-  5218		return call_int_hook(bpf_token_create, 0, token, attr, path);
-  5219	}
-  5220	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+paul-moore.com
