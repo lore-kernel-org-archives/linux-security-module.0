@@ -2,43 +2,43 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCD2CDB482
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Oct 2023 09:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DA7CDB474
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Oct 2023 09:26:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234833AbjJQJZa (ORCPT
+        id S234752AbjJQJ0m (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 17 Oct 2023 05:25:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59934 "EHLO
+        Tue, 17 Oct 2023 05:26:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234771AbjJQJZ3 (ORCPT
+        with ESMTP id S234674AbjJQJ0k (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 17 Oct 2023 05:25:29 -0400
+        Tue, 17 Oct 2023 05:26:40 -0400
 Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EC7D93;
-        Tue, 17 Oct 2023 02:25:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F1D18E;
+        Tue, 17 Oct 2023 02:26:39 -0700 (PDT)
 Received: from [192.168.192.84] (unknown [50.39.103.33])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 9B00D3F6DB;
-        Tue, 17 Oct 2023 09:25:23 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 845403F6DB;
+        Tue, 17 Oct 2023 09:26:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1697534726;
-        bh=xM+ZxEbFfU9u3PyBqFOFwrsLiubbJoaYw8wHKK6VpwY=;
+        s=20210705; t=1697534797;
+        bh=2ax4mAP+yVFBMlaJnxjACD7VuhYksjw5EpROGDN71OI=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=VELGR6ipIUTd43tIJl+1o/cwwAZDzDopKUKtApuinjI4+BeID/jGrdi4dIFocH8wq
-         UGh+oQRKpBTd+d7KVVOl1Qk2l+9wn0ZfgheDn4ljrlQSrY+/8xUezTQ4/IuesSRQvm
-         fweZTZyyqPOyQ3l+aJvYwgUr/H8MGqMAkS3eCQMLIx41hoTI/Yd1CbtamX9dbvW7zM
-         76/5J/Lmd/z675upWqXt8K5rQ3Bz4NMFk6G19oZ3AN7iFw9FycAXSbOCwQwwRVrjso
-         Y1M7bu2cDaguzqkrnmTq0bRxqlUddCO4xLfS6v1QI0Y56/hU6gL1rLD8nVGwLMdkF7
-         /O8DCaC9DxVXA==
-Message-ID: <acc4a7fa-d423-418d-81d7-35d4416afdd0@canonical.com>
-Date:   Tue, 17 Oct 2023 02:25:23 -0700
+        b=OZUkC9wC21O22v0mzYdRTM4vYccx+pGkrrXyvcSm4Zp5S80Y8MmNb+s/uyV/fvD6C
+         ZBy7eMgHYL+1f5VhMbO2865/+yYG1Pb9Sgcn9bfOp+M4w/hutn2aWsJT6ryPe7NIVx
+         QOQbde1wsUSHHao2Z/N1wWkwO7DxjZbM+RZKSGVEXVEs/T7TejZljwDUoGx2z0S2FZ
+         RAAYgqKuXqrQYNhWW5kISQ4h2bkeYu0PvMbxSAHDad7zgyjg5PlF8jUU+ZUoNNHNQH
+         wLdlRy+jRWd5qibuN4n4e2wVgkOL3fPSVSGEqqsn1MOUMHuOgD5LgD3EAYc7dPOCxL
+         48glrDVH1PYrQ==
+Message-ID: <ff0e8a95-7395-41b3-b3b4-e0f678a2a581@canonical.com>
+Date:   Tue, 17 Oct 2023 02:26:35 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] apparmor: experiment with faster backoff on global
- buffer
+Subject: Re: [PATCH v5 4/4] apparmor: limit the number of buffers in percpu
+ cache
 Content-Language: en-US
 To:     Sergey Senozhatsky <senozhatsky@chromium.org>
 Cc:     Anil Altinay <aaltinay@google.com>,
@@ -110,32 +110,44 @@ Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Instead of doubling hold count when contention is encounter increase
-it by 8x. This makes for a faster back off, but results in buffers
-being held longer.
+Force buffers to be returned to the global pool, regardless of contention
+when the percpu cache is full. This ensures that the percpu buffer list
+never grows longer than needed.
 
 Signed-off-by: John Johansen <john.johansen@canonical.com>
 ---
-  security/apparmor/lsm.c | 4 ++--
-  1 file changed, 2 insertions(+), 2 deletions(-)
+  security/apparmor/lsm.c | 9 ++++++++-
+  1 file changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index fd6779ff0da4..52423d88854a 100644
+index 52423d88854a..e6765f64f6bf 100644
 --- a/security/apparmor/lsm.c
 +++ b/security/apparmor/lsm.c
-@@ -1796,10 +1796,10 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
+@@ -56,6 +56,7 @@ struct aa_local_cache {
+  	struct list_head head;
+  };
   
-  static void update_contention(struct aa_local_cache *cache)
-  {
--	cache->contention += 1;
-+	cache->contention += 3;
-  	if (cache->contention > 9)
-  		cache->contention = 9;
--	cache->hold += 1 << cache->contention;		/* 2, 4, 8, ... */
-+	cache->hold += 1 << cache->contention;		/* 8, 64, 512, ... */
-  }
++#define MAX_LOCAL_COUNT 2
+  #define RESERVE_COUNT 2
+  static int reserve_count = RESERVE_COUNT;
+  static int buffer_count;
+@@ -1878,9 +1879,15 @@ void aa_put_buffer(char *buf)
   
-  char *aa_get_buffer(bool in_atomic)
+  	cache = get_cpu_ptr(&aa_local_buffers);
+  	if (!cache->hold) {
++		bool must_lock = cache->count >= MAX_LOCAL_COUNT;
++
+  		put_cpu_ptr(&aa_local_buffers);
+  
+-		if (spin_trylock(&aa_buffers_lock)) {
++		if (must_lock) {
++			spin_lock(&aa_buffers_lock);
++			goto locked;
++		} else if (spin_trylock(&aa_buffers_lock)) {
++		locked:
+  			/* put back on global list */
+  			list_add(&aa_buf->list, &aa_global_buffers);
+  			buffer_count++;
 -- 
 2.34.1
 
