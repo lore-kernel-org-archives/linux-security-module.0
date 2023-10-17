@@ -2,42 +2,42 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3A3CDB482
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Oct 2023 09:21:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACDCCDB474
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Oct 2023 09:23:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234819AbjJQJVY (ORCPT
+        id S234650AbjJQJXP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 17 Oct 2023 05:21:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54704 "EHLO
+        Tue, 17 Oct 2023 05:23:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234861AbjJQJVN (ORCPT
+        with ESMTP id S234594AbjJQJXO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 17 Oct 2023 05:21:13 -0400
+        Tue, 17 Oct 2023 05:23:14 -0400
 Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 141B1FD;
-        Tue, 17 Oct 2023 02:21:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE7728E;
+        Tue, 17 Oct 2023 02:23:11 -0700 (PDT)
 Received: from [192.168.192.84] (unknown [50.39.103.33])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id F36DF3F6DB;
-        Tue, 17 Oct 2023 09:21:05 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 639863F6DB;
+        Tue, 17 Oct 2023 09:23:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1697534469;
-        bh=xbVNB24QIXoDLyX8fTF3YUGvdQKnrjQAH4j2H+QZ1qs=;
+        s=20210705; t=1697534590;
+        bh=9c9TrpFFr39n7AXXEsBDFsE50iLezhEQNKHyfR6r7yw=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=pwMqaHHxqMAtY/ylGxnfHVWACF6632jfiUOZmq1dHCLHOWc9YHosDYfMkec3g2eha
-         kFtaRcBXTrbrcmIKWY4G18yDwYz16NNdD7dwgdImkhkGDg2AqkfOPSI8IYHiWS1vrQ
-         ADCVmh9AoEvpMHWEA7MVcdppMh2o0j3d5QTbPyH6Sadlo82ESolbG8SPGcHLTu5E81
-         E+9nX50dej0ssQ5vBzoEgalcX1qv0KsV4MilPjIFzn7eE6CVByCem1qoPhIRJyf/Po
-         Jm50Q033Cvg48J4rAHVbwyA/IsHDj5qqvfpeyfL3iWUk/aH6kJseDW+3pfE3kosOVV
-         ElcAzpOCqADFg==
-Message-ID: <ffd13862-bc57-45ae-9fd0-454ee2d30fc2@canonical.com>
-Date:   Tue, 17 Oct 2023 02:21:01 -0700
+        b=t4iIuE/XQvWpJTYTfjzAU5mXCZJZxWo6GZ1SZjJFPhRoIlw/0KfDqvnZY1BGlCUgj
+         7qSA9iHQer2IOsrwRsXL8b802hv11nRBD1QpglRSnGO51FF8IxQDlhuQK6UWEfm18U
+         BnqOYdUKdNfomiAxHYrQpVxHlbxfGn9msewX70V4Lv1geAHdpfODkPidjr9fnbPijf
+         AWA4Yu4Vf6twdv4MNcKe0TH2tgu+F3y6s/ghtzjhbsgYrZvndnxrRrcGl0DD7DOjuM
+         k61in4yXHCLZGmayUV6yMtjvtl+gE6gcjuaZi+X3oWyd8W8q8g3BbG1sZMvrdSyciG
+         JBh/vqrYe/H/w==
+Message-ID: <94e2be56-b461-403c-b231-71d3dbee7b03@canonical.com>
+Date:   Tue, 17 Oct 2023 02:23:05 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH v5 0/4] apparmor: cache buffers on percpu list if there is
+Subject: Re: [PATCH v5 1/4] apparmor: cache buffers on percpu list if there is
  lock, contention
 Content-Language: en-US
 To:     Sergey Senozhatsky <senozhatsky@chromium.org>
@@ -59,6 +59,7 @@ References: <YO2S+C7Cw7AS7bsg@google.com>
  <CACCxZWO-+M-J_enENr7q1WDcu1U8vYFoytqJxAh=x-nuP268zA@mail.gmail.com>
  <31d6e8d6-0747-a282-746b-5c144a9970bb@canonical.com>
  <20231006041837.GA17924@google.com>
+ <ffd13862-bc57-45ae-9fd0-454ee2d30fc2@canonical.com>
 From:   John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
  xsFNBE5mrPoBEADAk19PsgVgBKkImmR2isPQ6o7KJhTTKjJdwVbkWSnNn+o6Up5knKP1f49E
@@ -103,38 +104,11 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20231006041837.GA17924@google.com>
+In-Reply-To: <ffd13862-bc57-45ae-9fd0-454ee2d30fc2@canonical.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
-
-On 10/5/23 21:18, Sergey Senozhatsky wrote:
-> On (23/06/26 17:31), John Johansen wrote:
->> On 6/26/23 16:33, Anil Altinay wrote:
->>> Hi John,
->>>
->>> I was wondering if you get a chance to work on patch v4. Please let me know if you need help with testing.
->>>
->>
->> yeah, testing help is always much appreciated. I have a v4, and I am
->> working on 3 alternate version to compare against, to help give a better
->> sense if we can get away with simplifying or tweak the scaling.
->>
->> I should be able to post them out some time tonight.
-> 
-> Hi John,
-> 
-> Did you get a chance to post v4? I may be able to give it some testing
-> on our real-life case.
-
-sorry yes, how about a v5. That is simplified with 3 follow on patches
-that aren't strictly necessary, but some combination of them might be
-better than just the base patch, but splitting them out makes the
-individual changes easier to review.
-
----
-
 
 df323337e507 ("apparmor: Use a memory pool instead per-CPU caches")
 changed buffer allocation to use a memory pool, however on a heavily
@@ -148,33 +122,136 @@ try to put them back to the global list but if contention is
 encountered, put the buffer on the percpu list.
 
 The length of time a buffer is held on the percpu list is dynamically
-adjusted based on lock contention.
-
-v5:
-- simplify base patch by removing: improvements can be added later
-   - MAX_LOCAL and must lock
-   - contention scaling.
-v4:
-- fix percpu ->count buffer count which had been spliced across a
-   debug patch.
-- introduce define for MAX_LOCAL_COUNT
-- rework count check and locking around it.
-- update commit message to reference commit that introduced the
-   memory.
-v3:
-- limit number of buffers that can be pushed onto the percpu
-   list. This avoids a problem on some kernels where one percpu
-   list can inherit buffers from another cpu after a reschedule,
-   causing more kernel memory to used than is necessary. Under
-   normal conditions this should eventually return to normal
-   but under pathelogical conditions the extra memory consumption
-   may have been unbouanded
-v2:
-- dynamically adjust buffer hold time on percpu list based on
-   lock contention.
-v1:
-- cache buffers on percpu list on lock contention
+adjusted based on lock contention.  The amount of hold time is
+increased and decreased linearly.
 
 Reported-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 Signed-off-by: John Johansen <john.johansen@canonical.com>
+---
+  security/apparmor/lsm.c | 67 ++++++++++++++++++++++++++++++++++++++---
+  1 file changed, 62 insertions(+), 5 deletions(-)
+
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index c80c1bd3024a..ce4f3e7a784d 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -49,12 +49,19 @@ union aa_buffer {
+  	DECLARE_FLEX_ARRAY(char, buffer);
+  };
+  
++struct aa_local_cache {
++	unsigned int hold;
++	unsigned int count;
++	struct list_head head;
++};
++
+  #define RESERVE_COUNT 2
+  static int reserve_count = RESERVE_COUNT;
+  static int buffer_count;
+  
+  static LIST_HEAD(aa_global_buffers);
+  static DEFINE_SPINLOCK(aa_buffers_lock);
++static DEFINE_PER_CPU(struct aa_local_cache, aa_local_buffers);
+  
+  /*
+   * LSM hook functions
+@@ -1789,11 +1796,32 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
+  char *aa_get_buffer(bool in_atomic)
+  {
+  	union aa_buffer *aa_buf;
++	struct aa_local_cache *cache;
+  	bool try_again = true;
+  	gfp_t flags = (GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_NOWARN);
+  
++	/* use per cpu cached buffers first */
++	cache = get_cpu_ptr(&aa_local_buffers);
++	if (!list_empty(&cache->head)) {
++		aa_buf = list_first_entry(&cache->head, union aa_buffer, list);
++		list_del(&aa_buf->list);
++		cache->hold--;
++		cache->count--;
++		put_cpu_ptr(&aa_local_buffers);
++		return &aa_buf->buffer[0];
++	}
++	put_cpu_ptr(&aa_local_buffers);
++
++	if (!spin_trylock(&aa_buffers_lock)) {
++		cache = get_cpu_ptr(&aa_local_buffers);
++		cache->hold += 1;
++		put_cpu_ptr(&aa_local_buffers);
++		spin_lock(&aa_buffers_lock);
++	} else {
++		cache = get_cpu_ptr(&aa_local_buffers);
++		put_cpu_ptr(&aa_local_buffers);
++	}
+  retry:
+-	spin_lock(&aa_buffers_lock);
+  	if (buffer_count > reserve_count ||
+  	    (in_atomic && !list_empty(&aa_global_buffers))) {
+  		aa_buf = list_first_entry(&aa_global_buffers, union aa_buffer,
+@@ -1819,6 +1847,7 @@ char *aa_get_buffer(bool in_atomic)
+  	if (!aa_buf) {
+  		if (try_again) {
+  			try_again = false;
++			spin_lock(&aa_buffers_lock);
+  			goto retry;
+  		}
+  		pr_warn_once("AppArmor: Failed to allocate a memory buffer.\n");
+@@ -1830,15 +1859,34 @@ char *aa_get_buffer(bool in_atomic)
+  void aa_put_buffer(char *buf)
+  {
+  	union aa_buffer *aa_buf;
++	struct aa_local_cache *cache;
+  
+  	if (!buf)
+  		return;
+  	aa_buf = container_of(buf, union aa_buffer, buffer[0]);
+  
+-	spin_lock(&aa_buffers_lock);
+-	list_add(&aa_buf->list, &aa_global_buffers);
+-	buffer_count++;
+-	spin_unlock(&aa_buffers_lock);
++	cache = get_cpu_ptr(&aa_local_buffers);
++	if (!cache->hold) {
++		put_cpu_ptr(&aa_local_buffers);
++
++		if (spin_trylock(&aa_buffers_lock)) {
++			/* put back on global list */
++			list_add(&aa_buf->list, &aa_global_buffers);
++			buffer_count++;
++			spin_unlock(&aa_buffers_lock);
++			cache = get_cpu_ptr(&aa_local_buffers);
++			put_cpu_ptr(&aa_local_buffers);
++			return;
++		}
++		/* contention on global list, fallback to percpu */
++		cache = get_cpu_ptr(&aa_local_buffers);
++		cache->hold += 1;
++	}
++
++	/* cache in percpu list */
++	list_add(&aa_buf->list, &cache->head);
++	cache->count++;
++	put_cpu_ptr(&aa_local_buffers);
+  }
+  
+  /*
+@@ -1880,6 +1928,15 @@ static int __init alloc_buffers(void)
+  	union aa_buffer *aa_buf;
+  	int i, num;
+  
++	/*
++	 * per cpu set of cached allocated buffers used to help reduce
++	 * lock contention
++	 */
++	for_each_possible_cpu(i) {
++		per_cpu(aa_local_buffers, i).hold = 0;
++		per_cpu(aa_local_buffers, i).count = 0;
++		INIT_LIST_HEAD(&per_cpu(aa_local_buffers, i).head);
++	}
+  	/*
+  	 * A function may require two buffers at once. Usually the buffers are
+  	 * used for a short period of time and are shared. On UP kernel buffers
+-- 
+2.34.1
 
