@@ -2,126 +2,104 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9603C41513
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Oct 2023 20:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 675B6CDB47E
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Oct 2023 21:50:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231283AbjJRUkb (ORCPT
+        id S231217AbjJRVun (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Oct 2023 16:40:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44868 "EHLO
+        Wed, 18 Oct 2023 17:50:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231986AbjJRUka (ORCPT
+        with ESMTP id S230334AbjJRVum (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Oct 2023 16:40:30 -0400
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7608BFE
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Oct 2023 13:40:28 -0700 (PDT)
-Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-d9c1989509bso88005276.1
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Oct 2023 13:40:28 -0700 (PDT)
+        Wed, 18 Oct 2023 17:50:42 -0400
+Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E7E7EA
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Oct 2023 14:50:40 -0700 (PDT)
+Received: by mail-ua1-x92f.google.com with SMTP id a1e0cc1a2514c-7b6f67c708eso248613241.1
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Oct 2023 14:50:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1697661627; x=1698266427; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bBX89TOd2XNsREV6sYMesdAWMTbxT15WNrv90h+6g78=;
-        b=ZXy7YbZ1cQoQ85IEgJn6bMs73ecSNPeamVrsQCbPQvLSxKjBkbuiPpVgCBgz0XPWE4
-         xQY+ZxxW/NxOPdTtGxRw8aYCY8uOG0LT4GI1PvBslEGDlcGDq5M3q9dSy1xGPBJSULP+
-         XFArkP9O+D1vzXObAmDGzdxsLKNS3t3jZfLhSEKegWNmz+wVjqf9E9VX5Nl6Y+HybnKl
-         jwAdVCqI+Kkv+qGIx9JRIeMvoqQxXIESwDZQ7OMDD8lxZs2KzXLc5S+3Xbm+lRuZAuKu
-         NO0J3Ki9gnBK8Q5vH6/NqOCzgFzF13y80qAnh20ZvqB99sMfNf3UHw8T5hfKtpp8LBnt
-         q+ig==
+        d=paul-moore.com; s=google; t=1697665839; x=1698270639; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=12ZNiADi9ssycDc+bEPaWkSEvy1cOSFuVIyjqybmu+o=;
+        b=HXedCzt7sjj0Uvg71jVr0TPB+kCLGpfdZv2guCIE9QCizpzf5NxtQ1EK5ZykfQ+bJr
+         MT3HFcgOQ22cxytQ1ZFtYSTTOPCF90X4qXVwyG1Jry1/zaDXs65gBvRcYKwgi+H4JByp
+         WiettwTmuoIUjYTU+YJKuDhVJOa0uWFCTvil6DlS5Gz56Iru0eFNC95n7hJeQZ7+fhYV
+         uNR3GAanAINni7LP0HoZeUGxeHW5ZweO6gy8kXYs3yjiN5gleTnvrvcvOGoYXXWBwaWc
+         7OOqfAbFX5iUP87DJVvtTXhP9S2E6e9YIWNPLA16AVYK/Vhl1VLFqvH5NWqs8MARAFil
+         LWLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697661627; x=1698266427;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bBX89TOd2XNsREV6sYMesdAWMTbxT15WNrv90h+6g78=;
-        b=A54FEQbva38ulWZFNYQxxFKOzFP0lZKJL9vKGXQDOw/e5BrOAKLP58m2yj9VRARs73
-         0I5vypDlip2O0F4hgd7GeKQNUoHHbn2X2rUZ6rXnhgcx/KXwt3vPnR7ryVyC4NhvmnzE
-         QFrIGdiN5ii1bWmwf35+WW1pYnpIUAZQIwng8LSC82/VOmNlrVe7NWr04WZ6QVP22+kc
-         6sVbGhtnPh8sLgk4u/0nOXhpEhWgf0xReB2/3Pdy7EOXUFnN52ybabEulOy/U7Vb6g3f
-         VH99DF4OPYHGaHb70ePNRMvFbk+5uZgLwfASd4G+/8Jk3PbP7819tLX/xvQpBoCqVwSb
-         BOeQ==
-X-Gm-Message-State: AOJu0YztidVEUBEA8CwCPl7qAj5K+c3ptrYMqsFPgxWlVuLQinBhv0TG
-        nFRa48jRghot5TDqUOQf16olqripM/9eVqq2cTVZ
-X-Google-Smtp-Source: AGHT+IFvWReW4umGMptCXdVoLxvyKYnY8atS/QTLxHeGyisEa9Zy3YvSppV2FjksorUXbkn+U5CwQD1Uwh/uypYMywc=
-X-Received: by 2002:a25:bc13:0:b0:d81:5cbb:689e with SMTP id
- i19-20020a25bc13000000b00d815cbb689emr4428344ybh.21.1697661627592; Wed, 18
- Oct 2023 13:40:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230912205658.3432-1-casey.ref@schaufler-ca.com>
- <20230912205658.3432-1-casey@schaufler-ca.com> <CAHC9VhRcbp3iWQwL7FTUrcU1C3OsZ413Nbq+17oTwW7hZ7XvBw@mail.gmail.com>
- <CAHC9VhSqY5+DR-jXprrftb1=CzDvhTh0Ep66A16RMd4L7W7TYw@mail.gmail.com>
- <ae39864947debbc7c460db478b8abe1c147b7d5c.camel@huaweicloud.com>
- <CAHC9VhRQ7xpeSX7b3VZfzQ15noJ8mgauNMuHWo_n3hMgsYMAfQ@mail.gmail.com>
- <468436cf766732a3cfc55d07ad119a6ccdc815c1.camel@huaweicloud.com>
- <CAHC9VhTjHT-DGKu0=cZPVb=+kMwmbPdr8HiVWJq-yzaDiYk_SA@mail.gmail.com>
- <6f33144c850c40e9438a6de2cf3004e223508755.camel@huaweicloud.com>
- <2637d5294d4a7ae871f1b758f5a30234836e2463.camel@huaweicloud.com>
- <c896c8ed559d0075146070be232e449b6951eb99.camel@linux.ibm.com>
- <283bf52d-af6e-4d20-a5ba-d98511c2e530@huaweicloud.com> <CAHC9VhSiUgY1Dzy6LGOjPF6XQ3pVBiZ9LPdcQANNXZ9rj-WURw@mail.gmail.com>
- <80f05011bf9fe19bde1f923e98c2db69ffc91065.camel@linux.ibm.com>
-In-Reply-To: <80f05011bf9fe19bde1f923e98c2db69ffc91065.camel@linux.ibm.com>
+        d=1e100.net; s=20230601; t=1697665839; x=1698270639;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=12ZNiADi9ssycDc+bEPaWkSEvy1cOSFuVIyjqybmu+o=;
+        b=VlM84hKZ/FNOUYIYVMFMEwZgZmtUDMvLXAkxKc/ZfXfJ48H+2y4cYDPZNJ97oqaSOY
+         asWq/MHKF4aE0eaEnyUFwpyYOQ606sm2yKBKQSwxkriz9SQ44gugyY9S0FjTSLDDuncK
+         aIYq7uMYrGV592rTRxcXcC0+tBxtyeXHvUepagR9lqsGmj//18Q/uPzNed41m2WQwDfE
+         I/Y1aKtVgN8B33QwUGnmceWz1oKG1vg2bL7ZOqyut33WUxVC/kfcuM4FI2aKLyI9gKSy
+         u8/iO9fcO730Gmu7ICNVlZbFg51RBdeh/ZFNbFeZZTb31DGlfI8P0HDpnltj5RQPvyny
+         ETHA==
+X-Gm-Message-State: AOJu0YyuUb4ka0tClfjUcmWia2efFfk+Jfkm9PAM5QObdgDt4M96aBDh
+        w/nHC2/sEd6aieh+XmEeDHIaoiLljxZkZIqJdA==
+X-Google-Smtp-Source: AGHT+IFcnhlYvlKc17O51i9NmbkjiAPpNhS4zHkGLvXtoBkCKNKpykALrDpJOPxlLIRSOdFEPmVXsw==
+X-Received: by 2002:a67:a406:0:b0:457:bc5f:b4a8 with SMTP id n6-20020a67a406000000b00457bc5fb4a8mr292269vse.28.1697665839210;
+        Wed, 18 Oct 2023 14:50:39 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id kq11-20020ac8618b000000b00419b094537esm255833qtb.59.2023.10.18.14.50.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Oct 2023 14:50:38 -0700 (PDT)
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 18 Oct 2023 16:40:16 -0400
-Message-ID: <CAHC9VhSqgAD09QL2n0aoWLK7RGPkkjZHBrDCQmt1p3=ozpdt4A@mail.gmail.com>
-Subject: Re: [PATCH v15 00/11] LSM: Three basic syscalls
-To:     Mimi Zohar <zohar@linux.ibm.com>
+To:     linux-security-module@vger.kernel.org
 Cc:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        serge@hallyn.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net,
-        linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH] lsm: drop LSM_ID_IMA
+Date:   Wed, 18 Oct 2023 17:50:33 -0400
+Message-ID: <20231018215032.348429-2-paul@paul-moore.com>
+X-Mailer: git-send-email 2.42.0
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1173; i=paul@paul-moore.com; h=from:subject; bh=XJE3jNOfcjc5EO090HhJGrkcvGkKQP/Whdd/3qhf1FQ=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBlMFMoiYtUYkaNz1u3iH2zVCjBpR+JD4JLEMCve 7IkUeUX2Y6JAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZTBTKAAKCRDqIPLalzeJ c8ggD/9koF+7//2pdtYUBDdBXvpXSn53ItP6uLqTuI5hEV2mJVsZ9b16q4JYtkxC8IhtUxnUwvm Z4RZP2HWRiz6M8BtCoqB2me09drjW6NL8nnDNr8r/PXRz1phBmbPtEsvSE090e83D+Y2IUh2Zv9 0BASHlF6jOsV9bvxD4L4Jn6UYD0pzEAuvqQCe+Ge2lAn6K8bjeKa7mkcMgcAFoshMLR+nIu/x7k a2cfH3al1P1PJCFb3ab1OIUvtnvpncW2ul342zsZjTjt5puv9TE/THpVlskYo+vwD42t17XlfGx XmERwdF/x88fLVmMkTRsVoyHLIDEI4LQU/yNMPBY8Q2N9r3KXDU+98WIcSqIsfYb9dk2oTtilVk 2+WkOrspINmA+YEqUNFepiVznutopJd5ihIBNsy8lQt4WgYRrxHT7voVG8rPV4fjw3rArdPxSIv gwgH8vPQf0fsxGtyezGYFo7cEEIcjwc6uQ17dQgyeS2OU2zDLoajsRaF18Erh9e1//h6hSP2KEd pNtHi1xgcIrKYdB/kSRLQRpGOL7+K+cnKttb25r/gkzvQC4B45Iqd74V5nnPxh5nCH5x1tI1Gk4 pIAR9tevOllkk1FtwWqVm/wQCOGPp3cjcg+rI1rPZCmUEsK4GBQphwFasXNuNNUW3hZEmfXywya 9upGlaCk22XsPmA==
+X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 18, 2023 at 4:23=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
-ote:
-> On Wed, 2023-10-18 at 12:35 -0400, Paul Moore wrote:
-> > On Wed, Oct 18, 2023 at 10:15=E2=80=AFAM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > On 10/18/2023 3:09 PM, Mimi Zohar wrote:
-> >
-> > ...
-> >
-> > > > I agree with Roberto.  All three should be defined: LSM_ID_INTEGRIT=
-Y,
-> > > > LSM_ID_IMA, LSM_ID_EVM.
-> > >
-> > > I did not try yet, but the 'integrity' LSM does not need an LSM ID. W=
-ith
-> > > the last version adding hooks to 'ima' or 'evm', it should be suffici=
-ent
-> > > to keep DEFINE_LSM(integrity) with the request to store a pointer in =
-the
-> > > security blob (even the init function can be a dummy function).
-> >
-> > First off, this *really* should have been brought up way, way, *way*
-> > before now.  This patchset has been discussed for months, and bringing
-> > up concerns in the eleventh hour is borderline rude.
->
-> As everyone knows IMA and EVM are not LSMs at this point.
+When IMA becomes a proper LSM we will reintroduce an appropriate
+LSM ID, but drop it from the userspace API for now in an effort
+to put an end to debates around the naming of the LSM ID macro.
 
-Considering all the work Roberto has been doing to make that happen,
-not to mention the discussions we've had on this topic, that's an
-awfully small technicality to use as the basis of an argument.
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ include/uapi/linux/lsm.h | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-> So the only thing that is "rude" is the way you're responding in this
-> thread.
+diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
+index eeda59a77c02..f0386880a78e 100644
+--- a/include/uapi/linux/lsm.h
++++ b/include/uapi/linux/lsm.h
+@@ -54,14 +54,13 @@ struct lsm_ctx {
+ #define LSM_ID_SELINUX		101
+ #define LSM_ID_SMACK		102
+ #define LSM_ID_TOMOYO		103
+-#define LSM_ID_IMA		104
+-#define LSM_ID_APPARMOR		105
+-#define LSM_ID_YAMA		106
+-#define LSM_ID_LOADPIN		107
+-#define LSM_ID_SAFESETID	108
+-#define LSM_ID_LOCKDOWN		109
+-#define LSM_ID_BPF		110
+-#define LSM_ID_LANDLOCK		111
++#define LSM_ID_APPARMOR		104
++#define LSM_ID_YAMA		105
++#define LSM_ID_LOADPIN		106
++#define LSM_ID_SAFESETID	107
++#define LSM_ID_LOCKDOWN		108
++#define LSM_ID_BPF		109
++#define LSM_ID_LANDLOCK		110
+ 
+ /*
+  * LSM_ATTR_XXX definitions identify different LSM attributes
+-- 
+2.42.0
 
-Agree to disagree.
-
-> > At least we haven't shipped this in a tagged release from Linus yet,
-> > so there is that.
->
-> What does that have to do with anything?!  Code changes.
-
-Code can change, Linux kernel APIs should not change.
-
---=20
-paul-moore.com
