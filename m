@@ -2,141 +2,234 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E987CDB47E
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Oct 2023 09:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B233CDB482
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Oct 2023 12:20:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230519AbjJRJdL convert rfc822-to-8bit (ORCPT
+        id S229529AbjJRMUr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Oct 2023 05:33:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53252 "EHLO
+        Wed, 18 Oct 2023 08:20:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231317AbjJRJcr (ORCPT
+        with ESMTP id S230125AbjJRMUq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Oct 2023 05:32:47 -0400
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8145120;
-        Wed, 18 Oct 2023 02:31:54 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4S9QJb3wMRzB03Zw;
-        Wed, 18 Oct 2023 17:18:55 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwAHqrXopS9lvfVoAg--.58417S2;
-        Wed, 18 Oct 2023 10:31:29 +0100 (CET)
-Message-ID: <2637d5294d4a7ae871f1b758f5a30234836e2463.camel@huaweicloud.com>
-Subject: Re: [PATCH v15 00/11] LSM: Three basic syscalls
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        serge@hallyn.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net,
-        linux-integrity@vger.kernel.org
-Date:   Wed, 18 Oct 2023 11:31:17 +0200
-In-Reply-To: <6f33144c850c40e9438a6de2cf3004e223508755.camel@huaweicloud.com>
-References: <20230912205658.3432-1-casey.ref@schaufler-ca.com>
-         <20230912205658.3432-1-casey@schaufler-ca.com>
-         <CAHC9VhRcbp3iWQwL7FTUrcU1C3OsZ413Nbq+17oTwW7hZ7XvBw@mail.gmail.com>
-         <CAHC9VhSqY5+DR-jXprrftb1=CzDvhTh0Ep66A16RMd4L7W7TYw@mail.gmail.com>
-         <ae39864947debbc7c460db478b8abe1c147b7d5c.camel@huaweicloud.com>
-         <CAHC9VhRQ7xpeSX7b3VZfzQ15noJ8mgauNMuHWo_n3hMgsYMAfQ@mail.gmail.com>
-         <468436cf766732a3cfc55d07ad119a6ccdc815c1.camel@huaweicloud.com>
-         <CAHC9VhTjHT-DGKu0=cZPVb=+kMwmbPdr8HiVWJq-yzaDiYk_SA@mail.gmail.com>
-         <6f33144c850c40e9438a6de2cf3004e223508755.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Wed, 18 Oct 2023 08:20:46 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C62710F
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Oct 2023 05:20:42 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1ca72f8ff3aso23040955ad.0
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Oct 2023 05:20:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1697631642; x=1698236442; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bo5moLBTUoQHfJoA1LKj3zHr6PsF4ViCLevZ9oHJwHI=;
+        b=en8S0J2wxvLdAfpsybKy7ObQt33HTqQwxrmECeRWk0wwlY4s0Rw8G0AR2TLN9lJQnE
+         mb/HHWYYZntj/0hn70tOxfyW83W8dQc5tLp8Pr2CEnuDCKNx6itxBnMRZ54VrioXEo+B
+         74j+/3XewH4xR6Oc+bYGicwT1ShPFg6jlj0Do7P31ZHxjaOeV1BpAYcAPtIh78ZnVAdO
+         7DtGaMTOGAxO5YSVae0SdvTv87dgNAKl5Ye/UmDHSW6AlH7z7I8DLTDFDpgGjWsqpxwH
+         u4RdruVbSMBz/GdIx3BeehGA9LXMcK/eAic4TwPX0YOBK3DXdtnpDLeVBmLN+2pgv7cI
+         vjOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697631642; x=1698236442;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bo5moLBTUoQHfJoA1LKj3zHr6PsF4ViCLevZ9oHJwHI=;
+        b=EAD/l8fQKIAtaOTKwYpWzgoR3M+1zBAuf8TgAkcwa6oa0xzsYofzJfi725N6y0zmBr
+         iv0tVpJBmgtvh6GovDvdf4fZcejnX/OVykzuCSRkAoHH9iBGFSJvCO/gPbq83DmGPPBc
+         MnxOHtTlhg81+Mx2tbuKFX7JYbZiMT6HyDwFA9NOnw4K/exXM89zCdfUe91zYNlrguGU
+         lpBRTeLYmo3nml3gA3YxaHD2Snn1qAoGO/dMhvgglsLmVmcOZ9pGQ5NQr1xQShgED+xS
+         TTOdhty9vUwayH8YFzyxH2P+8Tx+LNp0uvctSrwusOvF2SeHZXBkAXzNw3tNgZPCzN49
+         gclQ==
+X-Gm-Message-State: AOJu0YxyKO8UCW59ZBSfHCj2tlcoeJZ82ehc280Lo+nd7u6hgdunrPpW
+        5pTFZzFNf00BHoKdwuUJHcBm5A==
+X-Google-Smtp-Source: AGHT+IH/dlKFdhiooDIWatgta3krCMDtgHat6P4/L4sS4r83UzhM2vfKuOjiKSjj/CajnMd/EpKlEQ==
+X-Received: by 2002:a17:902:d3c4:b0:1ca:64f:35ff with SMTP id w4-20020a170902d3c400b001ca064f35ffmr5185792plb.48.1697631641870;
+        Wed, 18 Oct 2023 05:20:41 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([61.213.176.6])
+        by smtp.gmail.com with ESMTPSA id i12-20020a170902eb4c00b001c9b384731esm3383452pli.270.2023.10.18.05.20.39
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 18 Oct 2023 05:20:41 -0700 (PDT)
+From:   Yunhui Cui <cuiyunhui@bytedance.com>
+To:     serge@hallyn.com, jmorris@namei.org, peterz@infradead.org,
+        cuiyunhui@bytedance.com, chris.hyser@oracle.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] capabilities: add a option PR_SET_CAPS for sys_prctl
+Date:   Wed, 18 Oct 2023 20:20:06 +0800
+Message-Id: <20231018122006.24899-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 MIME-Version: 1.0
-X-CM-TRANSID: GxC2BwAHqrXopS9lvfVoAg--.58417S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGw4fuF13Zr4xGrWDAw1rXrb_yoW5Ar43pF
-        4UKa1UKF4kZry0kFn2va1rAw1Yg3yFvryUWr98Jr18Za4qyryFqrW2kFW7ury5Wrn5t34U
-        Zr4YqFyxu34qyaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAOBF1jj5UsaQAAsq
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2023-10-17 at 18:07 +0200, Roberto Sassu wrote:
-> On Tue, 2023-10-17 at 11:58 -0400, Paul Moore wrote:
-> > On Tue, Oct 17, 2023 at 3:01 AM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > On Mon, 2023-10-16 at 11:06 -0400, Paul Moore wrote:
-> > > > On Mon, Oct 16, 2023 at 8:05 AM Roberto Sassu
-> > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > 
-> > > > > Sorry, I just noticed LSM_ID_IMA. Since we have the 'integrity' LSM, I
-> > > > > think it should be LSM_ID_INTEGRITY.
-> > > > > 
-> > > > > Mimi, all, do you agree? If yes, I send a patch shortly.
-> > > > 
-> > > > I believe LSM_ID_IMA is the better option, despite "integrity" already
-> > > > being present in Kconfig and possibly other areas.  "IMA" is a
-> > > > specific thing/LSM whereas "integrity" is a property, principle, or
-> > > > quality.  Especially as we move forward with promoting IMA as a full
-> > > > and proper LSM, we should work towards referring to it as "IMA" and
-> > > > not "integrity".
-> > > > 
-> > > > If anything we should be working to support "IMA" in places where we
-> > > > currently have "integrity" so that we can eventually deprecate
-> > > > "integrity".
-> > > 
-> > > Hi Paul
-> > > 
-> > > I fully understand your argument. However, 'integrity' has been the
-> > > word to identify the integrity subsystem since long time ago.
-> > > 
-> > > Reducing the scope to 'ima' would create some confusion since, while
-> > > 'ima' is associated to integrity, it would not encompass EVM.
-> > 
-> > Using LSM_ID_IMA to reference the combination of IMA+EVM makes much
-> > more sense to me than using LSM_ID_INTEGRITY, especially as we move
-> > towards promoting IMA+EVM and adopting LSM hooks for integrity
-> > verification, opening the door for other integrity focused LSMs.
-> 
-> + Mimi, linux-integrity
-> 
-> Ok, just to understand before posting v4, the code looks like this:
+By infecting the container process, the already running container is
+cloned, which means that each process of the container forks
+independently. But the process in the container lacks some permissions
+that cannot be completed.
 
-I worked on a new proposal. Let me know what you think. It is available
-here:
+For a container that is already running, we cannot modify the
+configuration and restart it to complete the permission elevation.
+Since capset() can only complete the setting of a subset of the
+capabilities of the process, it cannot meet the requirements for
+raising permissions. So an option is added to prctl() to complete it.
 
-https://github.com/robertosassu/linux/tree/ima-evm-lsms-v4-devel-v6
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+---
+ include/linux/capability.h |  1 +
+ include/uapi/linux/prctl.h |  1 +
+ kernel/capability.c        | 82 +++++++++++++++++++++++++++-----------
+ security/commoncap.c       |  7 ++++
+ 4 files changed, 67 insertions(+), 24 deletions(-)
 
-
-I made IMA and EVM as standalone LSMs and removed 'integrity'. They
-maintain the same properties of 'integrity', i.e. they are the last and
-always enabled.
-
-During initialization, 'ima' and 'evm' call integrity_iintcache_init(),
-so that they can get integrity metadata. I added a check to ensure that
-this function is called only once. I also added the lsmid parameter so
-that the integrity-specific functions are added under the LSM ID of the
-caller.
-
-I added a new LSM ID for EVM, does not look good that IMA and EVM are
-represented by LSM_ID_IMA.
-
-Finally, I had to drop the patch to remove the rbtree, because without
-the 'integrity' LSM, space in the security blob cannot be reserved.
-Since integrity metadata is shared, it cannot be reserved by 'ima' or
-'evm'.
-
-An intermediate solution would be to keep the 'integrity' LSM just to
-reserve space in the security blob. Or, we remove the rbtree if/when
-IMA and EVM use disjoint integrity metadata.
-
-Roberto
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index ecce0f43c73a..b656c40b281c 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -211,6 +211,7 @@ extern bool capable(int cap);
+ extern bool ns_capable(struct user_namespace *ns, int cap);
+ extern bool ns_capable_noaudit(struct user_namespace *ns, int cap);
+ extern bool ns_capable_setid(struct user_namespace *ns, int cap);
++extern int _capset(cap_user_header_t header, const cap_user_data_t data, bool prctl);
+ #else
+ static inline bool has_capability(struct task_struct *t, int cap)
+ {
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index 82cb4210ba50..9a8dae2be801 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -246,6 +246,7 @@ struct prctl_mm_map {
+ # define PR_SCHED_CORE_SHARE_FROM	3 /* pull core_sched cookie to pid */
+ # define PR_SCHED_CORE_MAX		4
+ 
++#define PR_SET_CAPS			63
+ /* Clone and personalize thread */
+ #define PR_PERSONALIZED_CLONE		1000
+ /* Isolation eventfd & epollfd during fork */
+diff --git a/kernel/capability.c b/kernel/capability.c
+index 1444f3954d75..968edd8b3564 100644
+--- a/kernel/capability.c
++++ b/kernel/capability.c
+@@ -201,25 +201,29 @@ SYSCALL_DEFINE2(capget, cap_user_header_t, header, cap_user_data_t, dataptr)
+ 	return ret;
+ }
+ 
+-/**
+- * sys_capset - set capabilities for a process or (*) a group of processes
+- * @header: pointer to struct that contains capability version and
+- *	target pid data
+- * @data: pointer to struct that contains the effective, permitted,
+- *	and inheritable capabilities
+- *
+- * Set capabilities for the current process only.  The ability to any other
+- * process(es) has been deprecated and removed.
+- *
+- * The restrictions on setting capabilities are specified as:
+- *
+- * I: any raised capabilities must be a subset of the old permitted
+- * P: any raised capabilities must be a subset of the old permitted
+- * E: must be set to a subset of new permitted
+- *
+- * Returns 0 on success and < 0 on error.
+- */
+-SYSCALL_DEFINE2(capset, cap_user_header_t, header, const cap_user_data_t, data)
++static int __capset(struct cred *new,
++	       const struct cred *old,
++	       const kernel_cap_t *effective,
++	       const kernel_cap_t *inheritable,
++	       const kernel_cap_t *permitted)
++{
++	new->cap_effective   = *effective;
++	new->cap_inheritable = *inheritable;
++	new->cap_permitted   = *permitted;
++
++	/*
++	 * Mask off ambient bits that are no longer both permitted and
++	 * inheritable.
++	 */
++	new->cap_ambient = cap_intersect(new->cap_ambient,
++					 cap_intersect(*permitted,
++						       *inheritable));
++	if (WARN_ON(!cap_ambient_invariant_ok(new)))
++		return -EINVAL;
++	return 0;
++}
++
++int _capset(cap_user_header_t header, const cap_user_data_t data, bool prctl)
+ {
+ 	struct __user_cap_data_struct kdata[_KERNEL_CAPABILITY_U32S];
+ 	unsigned i, tocopy, copybytes;
+@@ -266,11 +270,17 @@ SYSCALL_DEFINE2(capset, cap_user_header_t, header, const cap_user_data_t, data)
+ 	if (!new)
+ 		return -ENOMEM;
+ 
+-	ret = security_capset(new, current_cred(),
+-			      &effective, &inheritable, &permitted);
+-	if (ret < 0)
+-		goto error;
+-
++	if (!prctl) {
++		ret = security_capset(new, current_cred(),
++				&effective, &inheritable, &permitted);
++		if (ret < 0)
++			goto error;
++	} else {
++		ret = __capset(new, current_cred(),
++				 &effective, &inheritable, &permitted);
++		if (ret < 0)
++			goto error;
++	}
+ 	audit_log_capset(new, current_cred());
+ 
+ 	return commit_creds(new);
+@@ -279,6 +289,30 @@ SYSCALL_DEFINE2(capset, cap_user_header_t, header, const cap_user_data_t, data)
+ 	abort_creds(new);
+ 	return ret;
+ }
++EXPORT_SYMBOL(_capset);
++
++/**
++ * sys_capset - set capabilities for a process or (*) a group of processes
++ * @header: pointer to struct that contains capability version and
++ *	target pid data
++ * @data: pointer to struct that contains the effective, permitted,
++ *	and inheritable capabilities
++ *
++ * Set capabilities for the current process only.  The ability to any other
++ * process(es) has been deprecated and removed.
++ *
++ * The restrictions on setting capabilities are specified as:
++ *
++ * I: any raised capabilities must be a subset of the old permitted
++ * P: any raised capabilities must be a subset of the old permitted
++ * E: must be set to a subset of new permitted
++ *
++ * Returns 0 on success and < 0 on error.
++ */
++SYSCALL_DEFINE2(capset, cap_user_header_t, header, const cap_user_data_t, data)
++{
++	return _capset(header, data, false);
++}
+ 
+ /**
+  * has_ns_capability - Does a task have a capability in a specific user ns
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 482807dec118..dd7f058e7d03 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -1266,6 +1266,13 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+ 			new->securebits &= ~issecure_mask(SECURE_KEEP_CAPS);
+ 		return commit_creds(new);
+ 
++	case PR_SET_CAPS:
++		if (unlikely(!access_ok((void __user *)arg2, sizeof(cap_user_header_t))))
++			return -EFAULT;
++		if (unlikely(!access_ok((void __user *)arg3, sizeof(cap_user_data_t))))
++			return -EFAULT;
++		return _capset((cap_user_header_t)arg2, (cap_user_data_t)arg3, true);
++
+ 	case PR_CAP_AMBIENT:
+ 		if (arg2 == PR_CAP_AMBIENT_CLEAR_ALL) {
+ 			if (arg3 | arg4 | arg5)
+-- 
+2.20.1
 
