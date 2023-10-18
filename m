@@ -2,142 +2,156 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85EF8CDB47E
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Oct 2023 14:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 766E7CDB47E
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Oct 2023 16:34:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345475AbjJRO0D (ORCPT
+        id S229853AbjJRQeq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Oct 2023 10:26:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54038 "EHLO
+        Wed, 18 Oct 2023 12:34:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345530AbjJROZn (ORCPT
+        with ESMTP id S229537AbjJRQep (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Oct 2023 10:25:43 -0400
-X-Greylist: delayed 6020 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 18 Oct 2023 07:14:08 PDT
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEC5630C5
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Oct 2023 07:14:08 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4S9Xs95kx0zMqBDW;
-        Wed, 18 Oct 2023 14:14:05 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4S9Xs900CdzMppKm;
-        Wed, 18 Oct 2023 16:14:04 +0200 (CEST)
+        Wed, 18 Oct 2023 12:34:45 -0400
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F46DBD
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Oct 2023 09:34:42 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4S9bzN6GprzMpnhB;
+        Wed, 18 Oct 2023 16:34:40 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4S9bzN2h3VzMpp9v;
+        Wed, 18 Oct 2023 18:34:40 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1697638445;
-        bh=AJCppQD+bLjbEs7xewzXV45Zcp0SfH1Bhh+lWslfscM=;
+        s=20191114; t=1697646880;
+        bh=CQUmmHiSErLby2lNEYPNY/t43aBfTRQam0pIROhUnrI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=n23hMfMY7BCeeWfC+vRX7uYp3N2pqK1TOOIKiCpU1sWaX5L85cu8QOJvf3HhcUjx0
-         72e2daim6t3sKxX3Bjj93peawurco7/d809Ro3jVgn5rsGowPdzmA2GWt7hsyOmib4
-         aVsI6v+B2mIOSlnfQgc3KKNanxmjtBWB5Sy7YNR0=
-Date:   Wed, 18 Oct 2023 16:14:03 +0200
+        b=HAyEtaWARBhPTyUtyfN33vMCk9hST5LcmB8oBQu4G997Gl8hUQsPsuvk66cGBUkKS
+         g2CDYUE8PAHS6U9iEsQk2VxJl4SGjJ8eJqNgRAofXIySb0ZHYrdCUFgWJZXU6jWKLA
+         hpatlFElhV05pDDOKPwUsSsfZO8U1XSIh9/8ADEM=
+Date:   Wed, 18 Oct 2023 18:34:38 +0200
 From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: RFC: New LSM to control usage of x509 certificates
-Message-ID: <20231018.heiju2Shexai@digikod.net>
-References: <D0F16BFD-72EB-4BE2-BA3D-BAE1BCCDCB6F@oracle.com>
- <20230914.shah5al9Kaib@digikod.net>
- <20231005.dajohf2peiBu@digikod.net>
- <d3b51f26c14fd273d41da3432895fdce9f4d047c.camel@linux.ibm.com>
- <CAHC9VhRdU1CZJpPSEdSmui-Xirr0j261K=+SM7KiDwiPG-JSrQ@mail.gmail.com>
- <a851227aaa75ab16b0d6dd93433e1ee1679715f9.camel@linux.ibm.com>
- <CAHC9VhS_Ttdy5ZB=jYdVfNyaJfn_7G1wztr5+g0g7uUDForXvA@mail.gmail.com>
- <5c795b4cf6d7460af205e85a36194fa188136c38.camel@linux.ibm.com>
- <CAHC9VhTug20M0ET=QojUPtjrGkeHfU=ADDNrKfXmLTQPG_i1vw@mail.gmail.com>
- <2512D2AE-4ACA-41B9-B9FB-C2B4802B9A10@oracle.com>
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+Subject: Re: [PATCH v13 07/12] landlock: Refactor landlock_add_rule() syscall
+Message-ID: <20231018.quie0uuphieB@digikod.net>
+References: <20231016015030.1684504-1-konstantin.meskhidze@huawei.com>
+ <20231016015030.1684504-8-konstantin.meskhidze@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2512D2AE-4ACA-41B9-B9FB-C2B4802B9A10@oracle.com>
+In-Reply-To: <20231016015030.1684504-8-konstantin.meskhidze@huawei.com>
 X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 17, 2023 at 07:34:25PM +0000, Eric Snowberg wrote:
+On Mon, Oct 16, 2023 at 09:50:25AM +0800, Konstantin Meskhidze wrote:
+> Change the landlock_add_rule() syscall to support new rule types
+> in future Landlock versions. Add the add_rule_path_beneath() helper
+> to support current filesystem rules.
 > 
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> Link: https://lore.kernel.org/r/20230920092641.832134-8-konstantin.meskhidze@huawei.com
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ---
 > 
-> > On Oct 17, 2023, at 12:51 PM, Paul Moore <paul@paul-moore.com> wrote:
-> > 
-> > On Tue, Oct 17, 2023 at 1:59 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >> On Tue, 2023-10-17 at 13:29 -0400, Paul Moore wrote:
-> >>> On Tue, Oct 17, 2023 at 1:09 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >>>> On Tue, 2023-10-17 at 11:45 -0400, Paul Moore wrote:
-> >>>>> On Tue, Oct 17, 2023 at 9:48 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >>>>>> On Thu, 2023-10-05 at 12:32 +0200, Mickaël Salaün wrote:
-> >>>>>>>>>> A complementary approach would be to create an
-> >>>>>>>>>> LSM (or a dedicated interface) to tie certificate properties to a set of
-> >>>>>>>>>> kernel usages, while still letting users configure these constraints.
-> >>>>>>>>> 
-> >>>>>>>>> That is an interesting idea.  Would the other security maintainers be in
-> >>>>>>>>> support of such an approach?  Would a LSM be the correct interface?
-> >>>>>>>>> Some of the recent work I have done with introducing key usage and CA
-> >>>>>>>>> enforcement is difficult for a distro to pick up, since these changes can be
-> >>>>>>>>> viewed as a regression.  Each end-user has different signing procedures
-> >>>>>>>>> and policies, so making something work for everyone is difficult.  Letting the
-> >>>>>>>>> user configure these constraints would solve this problem.
-> >>>>>> 
-> >>>>>> Something definitely needs to be done about controlling the usage of
-> >>>>>> x509 certificates.  My concern is the level of granularity.  Would this
-> >>>>>> be at the LSM hook level or even finer granaularity?
-> >>>>> 
-> >>>>> You lost me, what do you mean by finer granularity than a LSM-based
-> >>>>> access control?  Can you give an existing example in the Linux kernel
-> >>>>> of access control granularity that is finer grained than what is
-> >>>>> provided by the LSMs?
-> >>>> 
-> >>>> The current x509 certificate access control granularity is at the
-> >>>> keyring level.  Any key on the keyring may be used to verify a
-> >>>> signature.  Finer granularity could associate a set of certificates on
-> >>>> a particular keyring with an LSM hook - kernel modules, BPRM, kexec,
-> >>>> firmware, etc.  Even finer granularity could somehow limit a key's
-> >>>> signature verification to files in particular software package(s) for
-> >>>> example.
-> >>>> 
-> >>>> Perhaps Mickaël and Eric were thinking about a new LSM to control usage
-> >>>> of x509 certificates from a totally different perspective.  I'd like to
-> >>>> hear what they're thinking.
-> >>>> 
-> >>>> I hope this addressed your questions.
-> >>> 
-> >>> Okay, so you were talking about finer granularity when compared to the
-> >>> *current* LSM keyring hooks.  Gotcha.
-> >>> 
-> >>> If we need additional, or modified, hooks that shouldn't be a problem.
-> >>> Although I'm guessing the answer is going to be moving towards
-> >>> purpose/operation specific keyrings which might fit in well with the
-> >>> current keyring level controls.
-> >> 
-> >> I don't believe defining per purpose/operation specific keyrings will
-> >> resolve the underlying problem of granularity.
-> > 
-> > Perhaps not completely, but for in-kernel operations I believe it is
-> > an attractive idea.
+> Changes since v12:
+> * None.
 > 
-> Could the X.509 Extended Key Usage (EKU) extension [1], be used here?  
-> Various OIDs would need to be defined or assigned for each purpose.  
-> Once assigned, the kernel could parse this information and do the
-> enforcement.  Then all keys could continue to remain in the .builtin, 
-> .secondary, and .machine keyrings.   Only a subset of each keyring 
-> would be used for verification based on what is contained in the EKU.
+> Changes since v11:
+> * None.
 > 
-> 1. https://www.rfc-editor.org/rfc/rfc5280#section-4.2.1.12
+> Changes since v10:
+> * None.
+> 
+> Changes since v9:
+> * Minor fixes:
+> 	- deletes unnecessary curly braces.
+> 	- deletes unnecessary empty line.
+> 
+> Changes since v8:
+> * Refactors commit message.
+> * Minor fixes.
+> 
+> Changes since v7:
+> * None
+> 
+> Changes since v6:
+> * None
+> 
+> Changes since v5:
+> * Refactors syscall landlock_add_rule() and add_rule_path_beneath() helper
+> to make argument check ordering consistent and get rid of partial revertings
+> in following patches.
+> * Rolls back refactoring base_test.c seltest.
+> * Formats code with clang-format-14.
+> 
+> Changes since v4:
+> * Refactors add_rule_path_beneath() and landlock_add_rule() functions
+> to optimize code usage.
+> * Refactors base_test.c seltest: adds LANDLOCK_RULE_PATH_BENEATH
+> rule type in landlock_add_rule() call.
+> 
+> Changes since v3:
+> * Split commit.
+> * Refactors landlock_add_rule syscall.
+> 
+> ---
+>  security/landlock/syscalls.c | 92 +++++++++++++++++++-----------------
+>  1 file changed, 48 insertions(+), 44 deletions(-)
+> 
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index d35cd5d304db..8a54e87dbb17 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -274,6 +274,47 @@ static int get_path_from_fd(const s32 fd, struct path *const path)
+>  	return err;
+>  }
+> 
+> +static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
+> +				 const void __user *const rule_attr)
+> +{
+> +	struct landlock_path_beneath_attr path_beneath_attr;
+> +	struct path path;
+> +	int res, err;
+> +	access_mask_t mask;
+> +
+> +	/* Copies raw user space buffer, only one type for now. */
+> +	res = copy_from_user(&path_beneath_attr, rule_attr,
+> +			     sizeof(path_beneath_attr));
+> +	if (res)
+> +		return -EFAULT;
+> +
+> +	/*
+> +	 * Informs about useless rule: empty allowed_access (i.e. deny rules)
+> +	 * are ignored in path walks.
+> +	 */
+> +	if (!path_beneath_attr.allowed_access)
+> +		return -ENOMSG;
+> +
+> +	/*
+> +	 * Checks that allowed_access matches the @ruleset constraints
+> +	 * (ruleset->access_masks[0] is automatically upgraded to 64-bits).
+> +	 */
 
-I was also thinking about this kind of use cases. Because it might be
-difficult in practice to control all certificate properties, we might
-want to let sysadmins configure these subset of keyring according to
-various certificate properties. There are currently LSM hooks to control
-interactions with kernel keys by user space, and keys are already tied
-to LSM blobs. New LSM hooks could be added to dynamically filter
-keyrings according to kernel usages (e.g. kernel module verification, a
-subset of an authentication mechanism according to the checked object).
+You now can replace this comment block with that:
++	/* Checks that allowed_access matches the @ruleset constraints. */
+
+> +	mask = landlock_get_raw_fs_access_mask(ruleset, 0);
+> +	if ((path_beneath_attr.allowed_access | mask) != mask)
+> +		return -EINVAL;
+> +
+> +	/* Gets and checks the new rule. */
+> +	err = get_path_from_fd(path_beneath_attr.parent_fd, &path);
+> +	if (err)
+> +		return err;
+> +
+> +	/* Imports the new rule. */
+> +	err = landlock_append_fs_rule(ruleset, &path,
+> +				      path_beneath_attr.allowed_access);
+> +	path_put(&path);
+> +	return err;
+> +}
