@@ -2,280 +2,141 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA4BBCDB482
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Oct 2023 22:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E987CDB47E
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Oct 2023 09:33:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232763AbjJQWbv (ORCPT
+        id S230519AbjJRJdL convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 17 Oct 2023 18:31:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46692 "EHLO
+        Wed, 18 Oct 2023 05:33:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232068AbjJQWbu (ORCPT
+        with ESMTP id S231317AbjJRJcr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 17 Oct 2023 18:31:50 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C2B89F;
-        Tue, 17 Oct 2023 15:31:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697581908; x=1729117908;
-  h=date:from:to:cc:subject:message-id;
-  bh=+PZzgswT11tTCY1wW5RYTAzOwYzHytdZcwrWclS/1Lw=;
-  b=RX1xwzxHHVS1Xqa2ZB8M59a/5KlE7AHXttUf18CmqCTmyk+znWkRsJOd
-   o2oIWpd1sqKovnh+W5RGy7vrsbGBBqn1YUiDyi2m6UXNbZN9Z20qcCw+f
-   lajK/uR3AFAVg+r/ZS9wRjj863HU8VvL/DqiWzMuqifIz8dU7y2E5Y2oF
-   d1Z/TneK4MK1cCf06oxFW06ecD1BpDfqbkSQCnix6xZG95IKn7PggKrv3
-   ZLya+3bVVeLExoolwrWvJswco1uC1IRQH3jb3315UzAoQqCsn4erx1I+q
-   jzMLWhVm42rH8T9ZGgTDSgXV3Rj2+ePxaSCEvXUOFEKDls9v7fLVlLzOq
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10866"; a="376260810"
-X-IronPort-AV: E=Sophos;i="6.03,233,1694761200"; 
-   d="scan'208";a="376260810"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2023 15:31:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10866"; a="759988573"
-X-IronPort-AV: E=Sophos;i="6.03,233,1694761200"; 
-   d="scan'208";a="759988573"
-Received: from lkp-server02.sh.intel.com (HELO f64821696465) ([10.239.97.151])
-  by fmsmga007.fm.intel.com with ESMTP; 17 Oct 2023 15:31:45 -0700
-Received: from kbuild by f64821696465 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qssbF-000ABQ-0H;
-        Tue, 17 Oct 2023 22:31:42 +0000
-Date:   Wed, 18 Oct 2023 06:30:37 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux Memory Management List <linux-mm@kvack.org>,
-        amd-gfx@lists.freedesktop.org, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [linux-next:master] BUILD REGRESSION
- 4d5ab2376ec576af173e5eac3887ed0b51bd8566
-Message-ID: <202310180627.U2wgFLJO-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+        Wed, 18 Oct 2023 05:32:47 -0400
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8145120;
+        Wed, 18 Oct 2023 02:31:54 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4S9QJb3wMRzB03Zw;
+        Wed, 18 Oct 2023 17:18:55 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwAHqrXopS9lvfVoAg--.58417S2;
+        Wed, 18 Oct 2023 10:31:29 +0100 (CET)
+Message-ID: <2637d5294d4a7ae871f1b758f5a30234836e2463.camel@huaweicloud.com>
+Subject: Re: [PATCH v15 00/11] LSM: Three basic syscalls
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net,
+        linux-integrity@vger.kernel.org
+Date:   Wed, 18 Oct 2023 11:31:17 +0200
+In-Reply-To: <6f33144c850c40e9438a6de2cf3004e223508755.camel@huaweicloud.com>
+References: <20230912205658.3432-1-casey.ref@schaufler-ca.com>
+         <20230912205658.3432-1-casey@schaufler-ca.com>
+         <CAHC9VhRcbp3iWQwL7FTUrcU1C3OsZ413Nbq+17oTwW7hZ7XvBw@mail.gmail.com>
+         <CAHC9VhSqY5+DR-jXprrftb1=CzDvhTh0Ep66A16RMd4L7W7TYw@mail.gmail.com>
+         <ae39864947debbc7c460db478b8abe1c147b7d5c.camel@huaweicloud.com>
+         <CAHC9VhRQ7xpeSX7b3VZfzQ15noJ8mgauNMuHWo_n3hMgsYMAfQ@mail.gmail.com>
+         <468436cf766732a3cfc55d07ad119a6ccdc815c1.camel@huaweicloud.com>
+         <CAHC9VhTjHT-DGKu0=cZPVb=+kMwmbPdr8HiVWJq-yzaDiYk_SA@mail.gmail.com>
+         <6f33144c850c40e9438a6de2cf3004e223508755.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.4-0ubuntu2 
+MIME-Version: 1.0
+X-CM-TRANSID: GxC2BwAHqrXopS9lvfVoAg--.58417S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGw4fuF13Zr4xGrWDAw1rXrb_yoW5Ar43pF
+        4UKa1UKF4kZry0kFn2va1rAw1Yg3yFvryUWr98Jr18Za4qyryFqrW2kFW7ury5Wrn5t34U
+        Zr4YqFyxu34qyaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAOBF1jj5UsaQAAsq
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: 4d5ab2376ec576af173e5eac3887ed0b51bd8566  Add linux-next specific files for 20231017
+On Tue, 2023-10-17 at 18:07 +0200, Roberto Sassu wrote:
+> On Tue, 2023-10-17 at 11:58 -0400, Paul Moore wrote:
+> > On Tue, Oct 17, 2023 at 3:01 AM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > On Mon, 2023-10-16 at 11:06 -0400, Paul Moore wrote:
+> > > > On Mon, Oct 16, 2023 at 8:05 AM Roberto Sassu
+> > > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > > 
+> > > > > Sorry, I just noticed LSM_ID_IMA. Since we have the 'integrity' LSM, I
+> > > > > think it should be LSM_ID_INTEGRITY.
+> > > > > 
+> > > > > Mimi, all, do you agree? If yes, I send a patch shortly.
+> > > > 
+> > > > I believe LSM_ID_IMA is the better option, despite "integrity" already
+> > > > being present in Kconfig and possibly other areas.  "IMA" is a
+> > > > specific thing/LSM whereas "integrity" is a property, principle, or
+> > > > quality.  Especially as we move forward with promoting IMA as a full
+> > > > and proper LSM, we should work towards referring to it as "IMA" and
+> > > > not "integrity".
+> > > > 
+> > > > If anything we should be working to support "IMA" in places where we
+> > > > currently have "integrity" so that we can eventually deprecate
+> > > > "integrity".
+> > > 
+> > > Hi Paul
+> > > 
+> > > I fully understand your argument. However, 'integrity' has been the
+> > > word to identify the integrity subsystem since long time ago.
+> > > 
+> > > Reducing the scope to 'ima' would create some confusion since, while
+> > > 'ima' is associated to integrity, it would not encompass EVM.
+> > 
+> > Using LSM_ID_IMA to reference the combination of IMA+EVM makes much
+> > more sense to me than using LSM_ID_INTEGRITY, especially as we move
+> > towards promoting IMA+EVM and adopting LSM hooks for integrity
+> > verification, opening the door for other integrity focused LSMs.
+> 
+> + Mimi, linux-integrity
+> 
+> Ok, just to understand before posting v4, the code looks like this:
 
-Error/Warning reports:
+I worked on a new proposal. Let me know what you think. It is available
+here:
 
-https://lore.kernel.org/oe-kbuild-all/202309212121.cul1pTRa-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202309212339.hxhBu2F1-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202310171612.nWyFirmz-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202310171657.KGpaQG47-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202310171905.azfrKoID-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202310172007.cCfBVBuG-lkp@intel.com
+https://github.com/robertosassu/linux/tree/ima-evm-lsms-v4-devel-v6
 
-Error/Warning: (recently discovered and may have been fixed)
 
-drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu13/smu_v13_0_6_ppt.c:286:52: warning: '%s' directive output may be truncated writing up to 29 bytes into a region of size 23 [-Wformat-truncation=]
-drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu14/smu_v14_0.c:72:52: warning: '%s' directive output may be truncated writing up to 29 bytes into a region of size 23 [-Wformat-truncation=]
-drivers/gpu/drm/msm/adreno/a6xx_gmu.c:1752:(.text+0x455c): undefined reference to `qmp_get'
-drivers/gpu/drm/msm/adreno/a6xx_gmu.c:994:(.text+0x369c): undefined reference to `qmp_send'
-kernel/bpf/helpers.c:1909:19: warning: no previous declaration for 'bpf_percpu_obj_new_impl' [-Wmissing-declarations]
-kernel/bpf/helpers.c:1945:18: warning: no previous declaration for 'bpf_percpu_obj_drop_impl' [-Wmissing-declarations]
-kernel/bpf/helpers.c:2480:18: warning: no previous declaration for 'bpf_throw' [-Wmissing-declarations]
-security/landlock/net.h:26:1: warning: 'landlock_append_net_rule' declared 'static' but never defined [-Wunused-function]
-security/landlock/net.h:26:1: warning: 'landlock_append_net_rule' used but never defined
-security/landlock/net.h:28:1: error: expected identifier or '('
-security/landlock/net.h:28:1: error: expected identifier or '(' before '{' token
+I made IMA and EVM as standalone LSMs and removed 'integrity'. They
+maintain the same properties of 'integrity', i.e. they are the last and
+always enabled.
 
-Unverified Error/Warning (likely false positive, please contact us if interested):
+During initialization, 'ima' and 'evm' call integrity_iintcache_init(),
+so that they can get integrity metadata. I added a check to ensure that
+this function is called only once. I also added the lsmid parameter so
+that the integrity-specific functions are added under the LSM ID of the
+caller.
 
-Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml:
-Documentation/devicetree/bindings/mfd/qcom-pm8xxx.yaml:
+I added a new LSM ID for EVM, does not look good that IMA and EVM are
+represented by LSM_ID_IMA.
 
-Error/Warning ids grouped by kconfigs:
+Finally, I had to drop the patch to remove the rbtree, because without
+the 'integrity' LSM, space in the security blob cannot be reserved.
+Since integrity metadata is shared, it cannot be reserved by 'ima' or
+'evm'.
 
-gcc_recent_errors
-|-- arm-buildonly-randconfig-r006-20230322
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
-|-- arm64-randconfig-r003-20220728
-|   |-- drivers-gpu-drm-msm-adreno-a6xx_gmu.c:(.text):undefined-reference-to-qmp_get
-|   `-- drivers-gpu-drm-msm-adreno-a6xx_gmu.c:(.text):undefined-reference-to-qmp_send
-|-- i386-buildonly-randconfig-004-20231017
-|   |-- security-landlock-net.h:error:expected-identifier-or-(-before-token
-|   |-- security-landlock-net.h:warning:landlock_append_net_rule-declared-static-but-never-defined
-|   `-- security-landlock-net.h:warning:landlock_append_net_rule-used-but-never-defined
-|-- loongarch-randconfig-001-20231017
-|   |-- Documentation-devicetree-bindings-mfd-qcom-pm8xxx.yaml:
-|   `-- Documentation-devicetree-bindings-mfd-qcom-tcsr.yaml:
-|-- microblaze-randconfig-r004-20230514
-|   |-- security-landlock-net.h:error:expected-identifier-or-(-before-token
-|   |-- security-landlock-net.h:warning:landlock_append_net_rule-declared-static-but-never-defined
-|   `-- security-landlock-net.h:warning:landlock_append_net_rule-used-but-never-defined
-|-- openrisc-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
-|-- openrisc-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
-|-- powerpc-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
-|-- powerpc-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
-|-- riscv-randconfig-001-20231017
-|   |-- security-landlock-net.h:warning:landlock_append_net_rule-declared-static-but-never-defined
-|   `-- security-landlock-net.h:warning:landlock_append_net_rule-used-but-never-defined
-|-- riscv-randconfig-002-20231017
-|   |-- security-landlock-net.h:warning:landlock_append_net_rule-declared-static-but-never-defined
-|   `-- security-landlock-net.h:warning:landlock_append_net_rule-used-but-never-defined
-|-- x86_64-buildonly-randconfig-004-20231017
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
-|-- x86_64-randconfig-001-20231017
-|   |-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_percpu_obj_drop_impl
-|   |-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_percpu_obj_new_impl
-|   `-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_throw
-`-- x86_64-randconfig-015-20231017
-    |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
-    `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
-clang_recent_errors
-`-- hexagon-buildonly-randconfig-r005-20211202
-    `-- security-landlock-net.h:error:expected-identifier-or-(
+An intermediate solution would be to keep the 'integrity' LSM just to
+reserve space in the security blob. Or, we remove the rbtree if/when
+IMA and EVM use disjoint integrity metadata.
 
-elapsed time: 1053m
+Roberto
 
-configs tested: 128
-configs skipped: 2
-
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                              allmodconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                              allyesconfig   gcc  
-arc                                 defconfig   gcc  
-arc                   randconfig-001-20231017   gcc  
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   gcc  
-arm                              allyesconfig   gcc  
-arm                                 defconfig   gcc  
-arm                   randconfig-001-20231017   gcc  
-arm64                            allmodconfig   gcc  
-arm64                             allnoconfig   gcc  
-arm64                            allyesconfig   gcc  
-arm64                               defconfig   gcc  
-csky                             allmodconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                             allyesconfig   gcc  
-csky                                defconfig   gcc  
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20231017   gcc  
-i386         buildonly-randconfig-002-20231017   gcc  
-i386         buildonly-randconfig-003-20231017   gcc  
-i386         buildonly-randconfig-004-20231017   gcc  
-i386         buildonly-randconfig-005-20231017   gcc  
-i386         buildonly-randconfig-006-20231017   gcc  
-i386                              debian-10.3   gcc  
-i386                                defconfig   gcc  
-i386                  randconfig-001-20231017   gcc  
-i386                  randconfig-002-20231017   gcc  
-i386                  randconfig-003-20231017   gcc  
-i386                  randconfig-004-20231017   gcc  
-i386                  randconfig-005-20231017   gcc  
-i386                  randconfig-006-20231017   gcc  
-i386                  randconfig-011-20231017   gcc  
-i386                  randconfig-012-20231017   gcc  
-i386                  randconfig-013-20231017   gcc  
-i386                  randconfig-014-20231017   gcc  
-i386                  randconfig-015-20231017   gcc  
-i386                  randconfig-016-20231017   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                        allyesconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20231017   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                             allmodconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-openrisc                         allmodconfig   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                         allyesconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                           allmodconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                           allyesconfig   gcc  
-parisc                              defconfig   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   gcc  
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   gcc  
-riscv                               defconfig   gcc  
-riscv                 randconfig-001-20231017   gcc  
-riscv                          rv32_defconfig   gcc  
-s390                             allmodconfig   gcc  
-s390                              allnoconfig   gcc  
-s390                             allyesconfig   gcc  
-s390                                defconfig   gcc  
-s390                  randconfig-001-20231017   gcc  
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                            allyesconfig   gcc  
-sparc                               defconfig   gcc  
-sparc                 randconfig-001-20231017   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   clang
-um                                  defconfig   gcc  
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   gcc  
-x86_64       buildonly-randconfig-001-20231017   gcc  
-x86_64       buildonly-randconfig-002-20231017   gcc  
-x86_64       buildonly-randconfig-003-20231017   gcc  
-x86_64       buildonly-randconfig-004-20231017   gcc  
-x86_64       buildonly-randconfig-005-20231017   gcc  
-x86_64       buildonly-randconfig-006-20231017   gcc  
-x86_64                              defconfig   gcc  
-x86_64                randconfig-001-20231017   gcc  
-x86_64                randconfig-002-20231017   gcc  
-x86_64                randconfig-003-20231017   gcc  
-x86_64                randconfig-004-20231017   gcc  
-x86_64                randconfig-005-20231017   gcc  
-x86_64                randconfig-006-20231017   gcc  
-x86_64                randconfig-011-20231017   gcc  
-x86_64                randconfig-012-20231017   gcc  
-x86_64                randconfig-013-20231017   gcc  
-x86_64                randconfig-014-20231017   gcc  
-x86_64                randconfig-015-20231017   gcc  
-x86_64                randconfig-016-20231017   gcc  
-x86_64                          rhel-8.3-rust   clang
-x86_64                               rhel-8.3   gcc  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
