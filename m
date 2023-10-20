@@ -2,138 +2,144 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82654C00A98
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Oct 2023 16:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B618C0032E
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Oct 2023 19:40:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377869AbjJTQgU (ORCPT
+        id S230153AbjJTTkU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Oct 2023 12:36:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37968 "EHLO
+        Fri, 20 Oct 2023 15:40:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229875AbjJTQgT (ORCPT
+        with ESMTP id S230037AbjJTTkT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Oct 2023 12:36:19 -0400
-Received: from sonic312-30.consmr.mail.ne1.yahoo.com (sonic312-30.consmr.mail.ne1.yahoo.com [66.163.191.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADB1FD68
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Oct 2023 09:36:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1697819777; bh=8VUAv3B1Isg6MKeGEkZxQ1vzCh11D5OxMNtlylBo9Bc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=r5k0RKcGdHuK2FO9pc+UWZOZuNE1qJ6QQ3YU3DmXh4piPki3uQlGDUaZhJm6UIPbp7ktkXOzS/nJnankBHYXUmmLwfLNIYT1qRBi1HKHF/DiHILeLKVOfdzHQo0U8LBoVraNmvZxzVfi2LlYhVIOlPbayZ7UC6wCwzpfz018D1X8Wkvx4gmoG55eEkELMElDnbbaQrHYKipZiEoVLssgo2RS1HVBtSPsXAHamSJDXA/NEsxMlFOpDRC8ILsVykAVYWTgP7pgXbnWtscQiaczRbCJYNqtC91SqAHfQK5vNxWO7BT1QN1X6R2ZhG1wYot6qTzidq8OJlUzm8ZNvJOd+w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1697819777; bh=0ZB/dvXobrb/1h8Rhh4ke8J4D93KwC3Ua1J3Qljde7P=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=sIeS7ipQjc+Mir1lQqdbZjeCzVe+1KqjLbggtIVsoAqY5cLM7W92v8g3uJIeGZDSeml/uO0Eo7uJzIOF8HedvGNR88Jhem5TMjoXVXHPaiuilYT4t/YOVfrE5j8z3Qh2UjaeBqSGGkcTL+fetKCv4MZbLFY9DETtxjiAXyKad1TugPOe+IWmKcBjhbEXcsFzTge6X8czDYh4qR8C8BAm33f1Bp2uGj/Blfel6CMkWHvvVLBIrMdC/jFGd7QnyhKSOVwVXjfFmVlCPFAK7Y1Qq9aiYBKFdYEFopKmQcoYSqTl4pUdVHnJdCW7HcwgYhghSbmTgsWqz/MdhMXNrOQIOg==
-X-YMail-OSG: RDZaU2IVM1n41Wv8sIw1y6UJGbGC6TCoqb7iD2xWQozSb_Vgy6L4TqbkJJ.LiUV
- Iv7osvv5uIy1i.5B.xjltXLLkx8IRc2upA7.jP1OdbcN_e44Rx0yu8DLQYwz4gtnV65cRHQcfvyC
- RsOzhjWQppB1wesjOaHbvTpfT9yPnR9NmQAinwTAsjh4I1qpC8cm2M1njah7YKLV.1GxLnlMxyKL
- MgUxRRM4Lu2VabVWTJYL747mP7dKtH_.0k4eWJyAqpX2ZcyZchtL5IeJiUx4Dv5dbtK6gd2JOG0Q
- sQdgG9Tn9JpSq_M24CzjLyFOrTswPRLu3coI5ESypC3BGOOgfe9y4n4XOdm004L1R7pXemZl6fV8
- e3DRG2zKWndT2tLBco3Ms6LSBNNFdIVeo88pTvlrzgbBOD.9EfOO39GFB3QiEFG55dJ7uCBcidzH
- CgCEvZgLiO2jIWTDT7P2y_pG2t3S54VRpeGDoDpaoKRutYD89N9KHPgfyg_Hw0lX1oEk1w96rsxh
- UanzRd4fcE8EG29941TesbhPDRs18rvkCXFptXwMH6nBufNpM5UxD69tRK4asH47dhyzFkzQFWjM
- g_UHl9t5rGxNokvpsX8vcqLSZOmowPyLd.pQjkDRaXwAw5DgivYiX5VYUkK9uXKNHlS8XXnXGHsz
- PbJDxNpsotsMhTt.K9SzXHk_eNy5_WXteurLMAVrULtBU6VQNsv1GswufevYPqV7X2am5kpnhQKF
- PpaTzH6Ef2M2NgwGGsCB0goSTcTptEEZ6mIxyX3_ZequaTbqlPLTiqEEqUfqmoDoZGuSjDI3FjN0
- cSy_C3205pbugq6D1P0e2AW5fTJgbyzG5iKaaMTLQLEQIhZ1Kfh9yaftJhn8k8HhPcgeC3Lh3b68
- hwq_A6r.NqNXB6qngZuiGh8AZJrgexOk2BOX9TXjoIshTK5xhi3AMNpYuZ4kZ9HVlm8wYQpjdLCK
- QSjkCkpbotPtAJNshC.I4FHtp.Ivewu2wHkIChjfPujHG9Fd69FtImPCE_8QdLLQR6LPeqmxNpZ2
- OJhRLpXabUCvWjEOkfUkgjJFY3kfQpSbbdkGmH8X8B8ki_eiK6hgfYXsVJwMic8qxaAqJCgqhHsT
- xv3Q8OSxVZrqYwj5Lmk3idO4eNQKQSl.hQSSnFM3rbXx5AjgQfg_qIB_n7HaN9K6yFWgkcRU2Scm
- p.BseoG62O1PJBOu7x3LOzFMp3WaELbPWDeAKQVpidUm0LfbNwprolj0agBYv1ts05TfSHDVYbxP
- szzUhxIe0VO8AQsGI0rYLTOlbL4KPdmU9yB9rSoA4n6X7ehF5ufKR6brvBHM1ZPqh7bOsOs37mqJ
- 1.oQ3WY_yfRYD5KQopTY6gciTFS5.v47c4T0xPqTZw4sJ7Cfl4YkeCoVOa4OpmKb.2REd8P3Iz5s
- usDMEPe3ZxIHOH3IDFSZ8QcBwu06icq5T1LWPZAC.2nKF6wGL_qIHVZoExuOeqIUlLV.wfPycLyb
- IdbWBrhN3D9p6erB8ZAWGjR8Cp6E05mRA7Xni.UT6LoHYRUA2jd3iE3B9zIm0rgJf3byWKHynJzc
- bFdnDPo9meEhnoShEcyZWY_Jn9x6NLrcKra35iKbIHwSF4R.5Zzg7BNKyi2tKYn1CjZFeJNeXwx1
- Vprj.JWQfD7FJoux6H2pBky0XNcpyk9Y1ueFeywoHhNgPFDWONXEXh3Njwqpza4V38OuzSLGVxZJ
- AXIFMMivD_GNn1ZIIkgs2AAV_7FzUoUmSFPBFBNs8hYDIWfIC6WJ.GjjfoxP_8DR4CQcRS8wXNGR
- Eqdg1JIMo5SMPC.kvmdT5e8V73iYXLITDkQitE.YzUCKS9qDUlvrA3OdKTGibkLSfXkPg35Wcnii
- bAT30G5__XSQkD3m82tdJtJNJdyPNO70hrSQ2CcfDpgiaA_3a03zWl2leSDKA1x4ybvd7yACSD9H
- YZH2Y2PNOb8QSuNEncMnacAxumI2uenhH4whLhIjyAXEkcpdckf018X_qWVostN8dexWexvfczmG
- Aab5rU5Yb6VkYn6DH939lB5_7GL9etV3EOvPBsqutDgN5LecFJrEDkGZwU0NQ_dUn5o4EJ6mivIY
- hSE7h2kIZzDMqhJ1ItjjSiOb8k.ChF0zqqRfCCKP9KOaky06Fw3fvET9o.DEp6ThVjd6lgodNLm0
- f7Mc6k4iyDiKMzCKFiIUI.H_hq7opxjoo7ChG1yI3tAqFr7gTo6afSvU5SaAP9qrNEB7SHfQZ4MK
- IX06TzoMUTKQlp4WE6DLS9C5VHQfzZgsVDykPGElZwa8QQDla9A3o7aRPGC65i8QckvT3Z0duXIW
- F8sYHhzelVD.NGiE-
+        Fri, 20 Oct 2023 15:40:19 -0400
+Received: from sonic315-27.consmr.mail.ne1.yahoo.com (sonic315-27.consmr.mail.ne1.yahoo.com [66.163.190.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9669D65
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Oct 2023 12:40:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1697830816; bh=P4+dGmicz9DIRgkMgvxzJNVTrGjiL0Qm6oIu+orhbyc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=LroFa3qO6pBy7tLhU2ovGSSj/YrCevYSvCG4rHeNSvKyXlp50Zaxiz/SuBnuaUW73mKhLZlyLbwbmYdfM3beqZznaUAELtmElAzcaw6mY1CHVC1jAY1OZt4xOi5vp4Ogw//ZY30uAakLYPl+ZHrm+7e7y0kBOSI9gjBN4oOCInseFhG6UvgRvJMfINsycXeZqNGQ6Rx3WN+9jnl7ryL68MC8unq7XhUjyW/syjB9zv729+aOEBfhmcZuoK6MamuA1bl5ONDRsenmuEdHAaeSUADgshKT3J8gIwbrc9R2BkUuhYfBRVIydGFkir8ZcqtqaTBxAR2TBWx8VWvVdezelw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1697830816; bh=8geZSWnK915HLFaha7VQtqVdHbbNlm/muP/a81Uh7MZ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=T7Vbt5cW0WIIxo14iznqW7PtVty3tsdpTJ18ZHmytY+0FyvgMhuypZaRXMFKQ3Tm9Kg+qVVbDQQGFu9s+HF0T2T9zSjOlqe1yiJjAFtx8LB0wBMKePzRIFpSU85O8nmBikWpmrcGN2vHMjiyF6qEbS4yX/LqaQFn5IVoRnUVOE6o5heM1KqYBGIrgp5yPp6nZEAhoWy6i3rzFLkcwNVR1wnlIOvYVAGAzIi1s4vbKVmS1Zm4XWuKcjSwceh88dlLC81oE1ovIVMNsGTqqN49m5skVPz96aekOmJCTg953rTbLZVxyqzc73cantsqy0zio1jfs27GDimHKZHad+fAWw==
+X-YMail-OSG: 8IEvnCgVM1k3HIj8QSXm.EDFHxycBdzdL8VmP.KjBaVop4mD3TwdjQI1z2rL8Wg
+ CxegDuBxiPU4Qz7VVP72FwSpeQhAh96Nuo1beDjSJYVYLU94_UiYRwx1nCSLHA.7bN29Wu.HBiK6
+ A_LsXDoejIEEX.cVRogn95WPE97SFMHhZvwE_rMZ5l2CTHGgS7TSi6Tq7GAh7mUbQl_iwOJ51Ekq
+ LdMX5Ix9S0zCDXSNGOUt2ufCF9s1cqHqZUR9pfkdMV7Hz6sBeJeGkGTDfIZ4j6xHn29JE_iyPOeq
+ yRGkTuFXeUzkOyvSxz4cTGh3lyg.0yGj1YRCfdKBDRAstp90mpookOLXBhcKFY6.vu02i9lD_lTs
+ 71oJhfsGEeXcxDNee_j1J5DNwbkR3DXBPu7YGqNAUgakgYuGH4ACL3AN.z5uh_YFa.13af3UZlGC
+ IotS0R6S3.xcQCh95OZLPy5y97.zScLtZFGNf3TU2ueaS93os2JshDbze.pguqGl3BO1hgi39SL9
+ qfR4aiEjHIh3kaXmbU_h7pz9W9jso_ooAxnOceO7cHOPb02dsv4InWw_rsduBal0d34h4B3TU79Q
+ soxNxRhaj7Pl_DYBhcwLTyrR66FMZTS3KCM3BIH0FoDPinQ0HfUYWbi1VK1o.a378K9sEM6kbm75
+ n.nbbeQui1LANINxpTpsOUSHi89oQ_a_X5JztS6c0eqQiOVvFlfWJMFICWHrXTuJEFtFtFzb9Gxk
+ 2pKeIJ7U73.Gz7h.pIYq0hSeX1o65qZfe1lz7M7kJwmzlQbcXj47ik8XDpzBd.sEmc8O3BZWCXCR
+ X4kGOeUdKRo6fH.I0YMOva9EN0W7b5ZzZb4k.5z6E5M79.vzrNtmQQrwvgzRNJTWKvQMHRxnd6YR
+ bAFiYEepWwRTa9YpN9K.xbx0.5ggYKUsap_LBmt92wSFDhBUoUwqxwj0UIjKPybadTtpT4TMJaaK
+ UIelVtdKx8GR4q2pnPI43Yt2U0V1kixqy4egK9DRFazZefKcriWR28J2he7QP4t0X5dXPSelRqS3
+ unbIXVH3iEs.QcL6.UKgBkbscwOHuPqoBsoDmsiZRMSfW_PwZ4faPwPdqGGsTbVQMGokFNI7fhWB
+ 22hArxfYPhCNDQMgfzaFzV0oLHdJ.iOsCMpe50K6Sb3uDF9Brsy2dtQoNE78guSeHG0Jawps9o6x
+ i16JoR40dJzPMJocu7MtwJ0IAdZaur62eb22KGVxHMuAZnk7HPQ9UyvPfmjbf_oKMGQsDHkovcXV
+ wsJPjxBHlCe.tiYt9mztOg9WH5O8KjHnles3vSftKFxDazO7RakVVzoYzNieiPICD6eJewckH5OW
+ yhWCP2JSGlYo2o9m2A3V8sfmLK7T9NR863gKqp6Nsfmn2yqjWLCJRqkPUtG6F9YQPVprX2avxYBo
+ BYwviCy34Yk99q1TjvzEt.WjF80FkJIygrCzTXS215ssHNlmSxlRs1ma29Rc0neD2YFRIJwRua4a
+ oF5B1AvsKf7ACmHOUWfI_ETL4fg5R.kRM56AUZh7.CqPLvvg_NV3Uy8lS9YN1z9KawHFlc9gCfip
+ Av0XyLDJmNU3qGUsk51wbtNrqJbahSfxatus1ONYThyUrIWc5G2wsXNvkz.mHHUz07mWxtRO5F7n
+ CiEVG6IE3LToCVsOr.D6KYunFWDANGhH3aFh25q9biamI3hP821FxoSsfBRuklTRp1zL06Gnmq3W
+ Sjctv4O4Yai1JC_C8VXCBDRYI.N.UkBN6nUoBDRKWc.bQH9aUqvJulYxpO.vvalqy4IV_i_rqH4g
+ zz9_uBMvhMIpcBrHSK4XefsDU_5.wz_mYMp_SxWs_Ymg1gsM8JooSUSrs_gB9YAhjxpay_387xV4
+ sVmt1_IaAdrlQtRTWqBc3q5HNJgLogqWU4EbMasJsP_tc5oN6k8SnYwikNJyDKP7.9laNxFGpAEL
+ SgFcV9bGeML9BNLQpNPMz38zphxTRZrd5xJ4PI8EdVjyB_oDQzL1U6ft849U.KhxlADhBxahZmP1
+ pjxGpJdk9TC.FSqC_MwXwjzjohtUPC.0tPczVv58Bpb.L0MJloSxPBmC_5p.UUq8.nGv974H5vC3
+ Z6iPcM3k.IlapLO9BTpKF2T1_tzFQuGYvxJjOqts3nroGSJjFtsGqGI8t.dRcQn8EjLzC_0XIiM3
+ fHoMPwERQ0z5r19mXHZTrXTP.lQpGT5639YnA8fTtMb4M1jJpf8ZBDC4WGg72KEUSPRGyWzqJkQ9
+ wF4viW2sdjut4Ek8tn2pD4wqbJg13cWex290ZVYWaosH1QARqGY3KiVrP97CceKXNeS9GNmN9fN0
+ .UWjbZcBa8QtU
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: da1684e5-5c62-460a-97c6-d0ef1043aa9f
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Fri, 20 Oct 2023 16:36:17 +0000
-Received: by hermes--production-ne1-68668bc7f7-bjk24 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 81c233cec5c2721208e7bbfbac96bdf8;
-          Fri, 20 Oct 2023 16:36:15 +0000 (UTC)
-Message-ID: <5c942750-3383-47bc-8326-3ed173ebfe8f@schaufler-ca.com>
-Date:   Fri, 20 Oct 2023 09:36:13 -0700
+X-Sonic-ID: fbd246bd-d168-47ed-ac28-d72132a1d3dd
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Fri, 20 Oct 2023 19:40:16 +0000
+Received: by hermes--production-ne1-68668bc7f7-bhhrm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f0b4bd6dfbd94eb190fd6ebd13636346;
+          Fri, 20 Oct 2023 19:40:15 +0000 (UTC)
+Message-ID: <c47ed955-f2c4-4356-a13e-90fb8fad6449@schaufler-ca.com>
+Date:   Fri, 20 Oct 2023 12:40:13 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 00/11] LSM: Three basic syscalls
+Subject: Re: [PATCH v15 08/11] Smack: implement setselfattr and getselfattr
+ hooks
 Content-Language: en-US
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-security-module@vger.kernel.org, jmorris@namei.org,
-        serge@hallyn.com, keescook@chromium.org,
+To:     =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc:     paul@paul-moore.com, linux-security-module@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
         john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
         stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net,
-        linux-integrity@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20230912205658.3432-1-casey.ref@schaufler-ca.com>
- <CAHC9VhRcbp3iWQwL7FTUrcU1C3OsZ413Nbq+17oTwW7hZ7XvBw@mail.gmail.com>
- <CAHC9VhSqY5+DR-jXprrftb1=CzDvhTh0Ep66A16RMd4L7W7TYw@mail.gmail.com>
- <ae39864947debbc7c460db478b8abe1c147b7d5c.camel@huaweicloud.com>
- <CAHC9VhRQ7xpeSX7b3VZfzQ15noJ8mgauNMuHWo_n3hMgsYMAfQ@mail.gmail.com>
- <468436cf766732a3cfc55d07ad119a6ccdc815c1.camel@huaweicloud.com>
- <CAHC9VhTjHT-DGKu0=cZPVb=+kMwmbPdr8HiVWJq-yzaDiYk_SA@mail.gmail.com>
- <6f33144c850c40e9438a6de2cf3004e223508755.camel@huaweicloud.com>
- <2637d5294d4a7ae871f1b758f5a30234836e2463.camel@huaweicloud.com>
- <c896c8ed559d0075146070be232e449b6951eb99.camel@linux.ibm.com>
- <283bf52d-af6e-4d20-a5ba-d98511c2e530@huaweicloud.com>
- <CAHC9VhSiUgY1Dzy6LGOjPF6XQ3pVBiZ9LPdcQANNXZ9rj-WURw@mail.gmail.com>
- <80f05011bf9fe19bde1f923e98c2db69ffc91065.camel@linux.ibm.com>
- <CAHC9VhSqgAD09QL2n0aoWLK7RGPkkjZHBrDCQmt1p3=ozpdt4A@mail.gmail.com>
- <e12f63037405f41a1be979b1424d1404d3139a4d.camel@huaweicloud.com>
+        linux-api@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20230912205658.3432-1-casey@schaufler-ca.com>
+ <20230912205658.3432-9-casey@schaufler-ca.com>
+ <20231003.uva7zohqueNu@digikod.net>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <e12f63037405f41a1be979b1424d1404d3139a4d.camel@huaweicloud.com>
+In-Reply-To: <20231003.uva7zohqueNu@digikod.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Mailer: WebService/1.1.21797 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/19/2023 12:45 AM, Roberto Sassu wrote:
-> On Wed, 2023-10-18 at 16:40 -0400, Paul Moore wrote:
->> On Wed, Oct 18, 2023 at 4:23 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
->>> On Wed, 2023-10-18 at 12:35 -0400, Paul Moore wrote:
->>>> On Wed, Oct 18, 2023 at 10:15 AM Roberto Sassu
->>>> <roberto.sassu@huaweicloud.com> wrote:
->>>>> On 10/18/2023 3:09 PM, Mimi Zohar wrote:
->>>> ...
->>>>
->>>>>> I agree with Roberto.  All three should be defined: LSM_ID_INTEGRITY,
->>>>>> LSM_ID_IMA, LSM_ID_EVM.
->>>>> I did not try yet, but the 'integrity' LSM does not need an LSM ID. With
->>>>> the last version adding hooks to 'ima' or 'evm', it should be sufficient
->>>>> to keep DEFINE_LSM(integrity) with the request to store a pointer in the
->>>>> security blob (even the init function can be a dummy function).
->>>> First off, this *really* should have been brought up way, way, *way*
->>>> before now.  This patchset has been discussed for months, and bringing
->>>> up concerns in the eleventh hour is borderline rude.
->>> As everyone knows IMA and EVM are not LSMs at this point.
->> Considering all the work Roberto has been doing to make that happen,
->> not to mention the discussions we've had on this topic, that's an
->> awfully small technicality to use as the basis of an argument.
-> Sorry Paul, but I've been working on this patch set for a long time and
-> you were also involved in the prerequisites (like making the
-> 'integrity' LSM as the last).
->
-> I thought it was clear at this point that we were going to add the
-> hooks to the 'integrity' LSM.
 
-There's a chicken/egg issue here. You can hold up the syscalls patch
-forever if you insist on it accommodating every patch set that's in the
-pipeline. I understand that you've been working on the integrity rework
-for some time. I understand that it's frustrating when things change out
-from under you. Believe me, I do.
 
+On 10/3/2023 7:28 AM, Mickaël Salaün wrote:
+> On Tue, Sep 12, 2023 at 01:56:53PM -0700, Casey Schaufler wrote:
+>> Implement Smack support for security_[gs]etselfattr.
+>> Refactor the setprocattr hook to avoid code duplication.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> Reviewed-by: John Johansen <john.johansen@canonical.com>
+>> ---
+>>  security/smack/smack_lsm.c | 95 ++++++++++++++++++++++++++++++++++++--
+>>  1 file changed, 90 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+>> index f73f9a2834eb..12160d060cc1 100644
+>> --- a/security/smack/smack_lsm.c
+>> +++ b/security/smack/smack_lsm.c
+>> @@ -3626,6 +3626,46 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+>>  	return;
+>>  }
+>>  
+>> +/**
+>> + * smack_getselfattr - Smack current process attribute
+>> + * @attr: which attribute to fetch
+>> + * @ctx: buffer to receive the result
+>> + * @size: available size in, actual size out
+>> + * @flags: unused
+>> + *
+>> + * Fill the passed user space @ctx with the details of the requested
+>> + * attribute.
+>> + *
+>> + * Returns the number of attributes on success, an error code otherwise.
+>> + * There will only ever be one attribute.
+>> + */
+>> +static int smack_getselfattr(unsigned int attr, struct lsm_ctx __user *ctx,
+>> +			     size_t *size, u32 flags)
+>> +{
+>> +	struct smack_known *skp = smk_of_current();
+>> +	int total;
+>> +	int slen;
+>> +	int rc;
+>> +
+>> +	if (attr != LSM_ATTR_CURRENT)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	slen = strlen(skp->smk_known) + 1;
 >
-> I really have no problem to rebase my work on top of other work, but I
-> was very surprised to see LSM_ID_IMA instead of LSM_ID_INTEGRITY, and
-> at minimum this should have been agreed with Mimi. And also, I was not
-> convinced with the argument that LSM_ID_IMA should represent IMA+EVM.
+>> +	total = ALIGN(slen + sizeof(*ctx), 8);
+>> +	if (total > *size)
+>> +		rc = -E2BIG;
+>> +	else if (ctx)
+>> +		rc = lsm_fill_user_ctx(ctx, skp->smk_known, slen, LSM_ID_SMACK,
+>> +				       0);
+>> +	else
+>> +		rc = 1;
+> Can we move these checks into lsm_fill_user_ctx()? They are similar for
+> AppArmor and SELinux.
 >
-> Roberto
->
+>> +
+>> +	*size = total;
+>> +	if (rc >= 0)
+>> +		return 1;
+>> +	return rc;
+>> +}
