@@ -2,43 +2,43 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B80C0032E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DB3C07480
 	for <linux-security-module@archiver.kernel.org>; Fri, 20 Oct 2023 16:00:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377842AbjJTQAM (ORCPT
+        id S1377835AbjJTQAO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Oct 2023 12:00:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49140 "EHLO
+        Fri, 20 Oct 2023 12:00:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377844AbjJTQAK (ORCPT
+        with ESMTP id S1377848AbjJTQAN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Oct 2023 12:00:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13A34D6C
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Oct 2023 08:58:47 -0700 (PDT)
+        Fri, 20 Oct 2023 12:00:13 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E92E7D68
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Oct 2023 08:58:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1697817526;
+        s=mimecast20190719; t=1697817524;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=JMYHGo5Ykl6Wn0M8yf0bZNH2F3mIqZDULBM08KnlTxM=;
-        b=CZNA65P4Wrv4VA9PzrtWU+ib8OYezmCS5ZBdOoEdTXrr42uidb17QpuOsZ/meKLNTVQTn1
-        SLjZA1ZomkZM8v0SeaQM6BywE/ugPIOx9+yFQbTg79TlLzYPwwshY3YsH2MedE5mc/fFA/
-        B5WcP1AOMZcm4Mp7zlZtaMXsPXJDG9Y=
+        bh=/YaH8GqSCmsbSQK65aeluJxBiMUQ9PtkPz8wZaXPjys=;
+        b=d2e40n5DEADygEzcI8LgACvPuOmgAn6ebIYWH0uacHJt70Jd0V47SRWfeMgLlrKKycXCuq
+        bPlgteLVxAJW8SRHHTBN3jlb1KEA/LO5e0YNIvnZ5RQU+VqAJ+a1YgHuRvm2NcL1uyT2ro
+        5WYyNYVJ43zbBTjq4kibi8GQWAU9Vuk=
 Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
  by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-169-9ZumjUbuNZaU9A4VhoVF5g-1; Fri, 20 Oct 2023 11:58:43 -0400
-X-MC-Unique: 9ZumjUbuNZaU9A4VhoVF5g-1
+ us-mta-648-GcMYqtHEOs6LTSLRuNoADw-1; Fri, 20 Oct 2023 11:58:39 -0400
+X-MC-Unique: GcMYqtHEOs6LTSLRuNoADw-1
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 89CBB29AA2CE;
-        Fri, 20 Oct 2023 15:58:42 +0000 (UTC)
-Received: from max-p1.redhat.com (unknown [10.39.208.31])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7D33710828;
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2F7E33C28647;
         Fri, 20 Oct 2023 15:58:39 +0000 (UTC)
+Received: from max-p1.redhat.com (unknown [10.39.208.31])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 219DB10828;
+        Fri, 20 Oct 2023 15:58:35 +0000 (UTC)
 From:   Maxime Coquelin <maxime.coquelin@redhat.com>
 To:     mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
         paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
@@ -48,9 +48,9 @@ To:     mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         david.marchand@redhat.com, lulu@redhat.com
 Cc:     Maxime Coquelin <maxime.coquelin@redhat.com>
-Subject: [PATCH v4 4/4] vduse: Add LSM hooks to check Virtio device type
-Date:   Fri, 20 Oct 2023 17:58:19 +0200
-Message-ID: <20231020155819.24000-5-maxime.coquelin@redhat.com>
+Subject: [PATCH v4 3/4] vduse: Temporarily disable control queue features
+Date:   Fri, 20 Oct 2023 17:58:18 +0200
+Message-ID: <20231020155819.24000-4-maxime.coquelin@redhat.com>
 In-Reply-To: <20231020155819.24000-1-maxime.coquelin@redhat.com>
 References: <20231020155819.24000-1-maxime.coquelin@redhat.com>
 MIME-Version: 1.0
@@ -59,260 +59,90 @@ X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch introduces LSM hooks for devices creation,
-destruction and opening operations, checking the
-application is allowed to perform these operations for
-the Virtio device type.
+Virtio-net driver control queue implementation is not safe
+when used with VDUSE. If the VDUSE application does not
+reply to control queue messages, it currently ends up
+hanging the kernel thread sending this command.
+
+Some work is on-going to make the control queue
+implementation robust with VDUSE. Until it is completed,
+let's disable control virtqueue and features that depend on
+it.
 
 Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 ---
- drivers/vdpa/vdpa_user/vduse_dev.c  | 12 +++++++
- include/linux/lsm_hook_defs.h       |  4 +++
- include/linux/security.h            | 15 ++++++++
- security/security.c                 | 42 ++++++++++++++++++++++
- security/selinux/hooks.c            | 55 +++++++++++++++++++++++++++++
- security/selinux/include/classmap.h |  2 ++
- 6 files changed, 130 insertions(+)
+ drivers/vdpa/vdpa_user/vduse_dev.c | 37 ++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
 diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-index 0243dee9cf0e..ca64eac11ddb 100644
+index 73ad3b7efd8e..0243dee9cf0e 100644
 --- a/drivers/vdpa/vdpa_user/vduse_dev.c
 +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-@@ -8,6 +8,7 @@
-  *
-  */
+@@ -28,6 +28,7 @@
+ #include <uapi/linux/virtio_config.h>
+ #include <uapi/linux/virtio_ids.h>
+ #include <uapi/linux/virtio_blk.h>
++#include <uapi/linux/virtio_ring.h>
+ #include <linux/mod_devicetable.h>
  
-+#include "linux/security.h"
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/cdev.h>
-@@ -1443,6 +1444,10 @@ static int vduse_dev_open(struct inode *inode, struct file *file)
- 	if (dev->connected)
- 		goto unlock;
+ #include "iova_domain.h"
+@@ -46,6 +47,30 @@
  
-+	ret = -EPERM;
-+	if (security_vduse_dev_open(dev->device_id))
-+		goto unlock;
+ #define IRQ_UNBOUND -1
+ 
++#define VDUSE_NET_VALID_FEATURES_MASK           \
++	(BIT_ULL(VIRTIO_NET_F_CSUM) |           \
++	 BIT_ULL(VIRTIO_NET_F_GUEST_CSUM) |     \
++	 BIT_ULL(VIRTIO_NET_F_MTU) |            \
++	 BIT_ULL(VIRTIO_NET_F_MAC) |            \
++	 BIT_ULL(VIRTIO_NET_F_GUEST_TSO4) |     \
++	 BIT_ULL(VIRTIO_NET_F_GUEST_TSO6) |     \
++	 BIT_ULL(VIRTIO_NET_F_GUEST_ECN) |      \
++	 BIT_ULL(VIRTIO_NET_F_GUEST_UFO) |      \
++	 BIT_ULL(VIRTIO_NET_F_HOST_TSO4) |      \
++	 BIT_ULL(VIRTIO_NET_F_HOST_TSO6) |      \
++	 BIT_ULL(VIRTIO_NET_F_HOST_ECN) |       \
++	 BIT_ULL(VIRTIO_NET_F_HOST_UFO) |       \
++	 BIT_ULL(VIRTIO_NET_F_MRG_RXBUF) |      \
++	 BIT_ULL(VIRTIO_NET_F_STATUS) |         \
++	 BIT_ULL(VIRTIO_NET_F_HOST_USO) |       \
++	 BIT_ULL(VIRTIO_F_ANY_LAYOUT) |         \
++	 BIT_ULL(VIRTIO_RING_F_INDIRECT_DESC) | \
++	 BIT_ULL(VIRTIO_RING_F_EVENT_IDX) |          \
++	 BIT_ULL(VIRTIO_F_VERSION_1) |          \
++	 BIT_ULL(VIRTIO_F_ACCESS_PLATFORM) |     \
++	 BIT_ULL(VIRTIO_F_RING_PACKED) |        \
++	 BIT_ULL(VIRTIO_F_IN_ORDER))
 +
- 	ret = 0;
- 	dev->connected = true;
- 	file->private_data = dev;
-@@ -1655,6 +1660,9 @@ static int vduse_destroy_dev(char *name)
- 	if (!dev)
- 		return -EINVAL;
+ struct vduse_virtqueue {
+ 	u16 index;
+ 	u16 num_max;
+@@ -1778,6 +1803,16 @@ static struct attribute *vduse_dev_attrs[] = {
  
-+	if (security_vduse_dev_destroy(dev->device_id))
-+		return -EPERM;
-+
- 	mutex_lock(&dev->lock);
- 	if (dev->vdev || dev->connected) {
- 		mutex_unlock(&dev->lock);
-@@ -1819,6 +1827,10 @@ static int vduse_create_dev(struct vduse_dev_config *config,
- 	int ret;
- 	struct vduse_dev *dev;
+ ATTRIBUTE_GROUPS(vduse_dev);
  
-+	ret = -EPERM;
-+	if (security_vduse_dev_create(config->device_id))
-+		goto err;
++static void vduse_dev_features_filter(struct vduse_dev_config *config)
++{
++	/*
++	 * Temporarily filter out virtio-net's control virtqueue and features
++	 * that depend on it while CVQ is being made more robust for VDUSE.
++	 */
++	if (config->device_id == VIRTIO_ID_NET)
++		config->features &= VDUSE_NET_VALID_FEATURES_MASK;
++}
 +
- 	ret = -EEXIST;
- 	if (vduse_find_dev(config->name))
- 		goto err;
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index ac962c4cb44b..0b3999ab3264 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -419,3 +419,7 @@ LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
- LSM_HOOK(int, 0, uring_sqpoll, void)
- LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
- #endif /* CONFIG_IO_URING */
-+
-+LSM_HOOK(int, 0, vduse_dev_create, u32 device_id)
-+LSM_HOOK(int, 0, vduse_dev_destroy, u32 device_id)
-+LSM_HOOK(int, 0, vduse_dev_open, u32 device_id)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 5f16eecde00b..a650c500f841 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -484,6 +484,9 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
- int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
- int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
- int security_locked_down(enum lockdown_reason what);
-+int security_vduse_dev_create(u32 device_id);
-+int security_vduse_dev_destroy(u32 device_id);
-+int security_vduse_dev_open(u32 device_id);
- #else /* CONFIG_SECURITY */
- 
- static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
-@@ -1395,6 +1398,18 @@ static inline int security_locked_down(enum lockdown_reason what)
+ static int vduse_create_dev(struct vduse_dev_config *config,
+ 			    void *config_buf, u64 api_version)
  {
- 	return 0;
- }
-+static inline int security_vduse_dev_create(u32 device_id)
-+{
-+	return 0;
-+}
-+static inline int security_vduse_dev_destroy(u32 device_id)
-+{
-+	return 0;
-+}
-+static inline int security_vduse_dev_open(u32 device_id)
-+{
-+	return 0;
-+}
- #endif	/* CONFIG_SECURITY */
+@@ -1793,6 +1828,8 @@ static int vduse_create_dev(struct vduse_dev_config *config,
+ 	if (!dev)
+ 		goto err;
  
- #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
-diff --git a/security/security.c b/security/security.c
-index 23b129d482a7..8d7d4d2eca0b 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -5337,3 +5337,45 @@ int security_uring_cmd(struct io_uring_cmd *ioucmd)
- 	return call_int_hook(uring_cmd, 0, ioucmd);
- }
- #endif /* CONFIG_IO_URING */
++	vduse_dev_features_filter(config);
 +
-+/**
-+ * security_vduse_dev_create() - Check if a VDUSE device type creation is allowed
-+ * @device_id: the Virtio device ID
-+ *
-+ * Check whether the Virtio device creation is allowed
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
-+int security_vduse_dev_create(u32 device_id)
-+{
-+	return call_int_hook(vduse_dev_create, 0, device_id);
-+}
-+EXPORT_SYMBOL(security_vduse_dev_create);
-+
-+/**
-+ * security_vduse_dev_destroy() - Check if a VDUSE device type destruction is allowed
-+ * @device_id: the Virtio device ID
-+ *
-+ * Check whether the Virtio device destruction is allowed
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
-+int security_vduse_dev_destroy(u32 device_id)
-+{
-+	return call_int_hook(vduse_dev_destroy, 0, device_id);
-+}
-+EXPORT_SYMBOL(security_vduse_dev_destroy);
-+
-+/**
-+ * security_vduse_dev_open() - Check if a VDUSE device type opening is allowed
-+ * @device_id: the Virtio device ID
-+ *
-+ * Check whether the Virtio device opening is allowed
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
-+int security_vduse_dev_open(u32 device_id)
-+{
-+	return call_int_hook(vduse_dev_open, 0, device_id);
-+}
-+EXPORT_SYMBOL(security_vduse_dev_open);
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 2aa0e219d721..65d9262a37f7 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -21,6 +21,7 @@
-  *  Copyright (C) 2016 Mellanox Technologies
-  */
- 
-+#include "av_permissions.h"
- #include <linux/init.h>
- #include <linux/kd.h>
- #include <linux/kernel.h>
-@@ -92,6 +93,7 @@
- #include <linux/fsnotify.h>
- #include <linux/fanotify.h>
- #include <linux/io_uring.h>
-+#include <uapi/linux/virtio_ids.h>
- 
- #include "avc.h"
- #include "objsec.h"
-@@ -6950,6 +6952,56 @@ static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
- }
- #endif /* CONFIG_IO_URING */
- 
-+static int vduse_check_device_type(u32 sid, u32 device_id)
-+{
-+	u32 requested;
-+
-+	if (device_id == VIRTIO_ID_NET)
-+		requested = VDUSE__NET;
-+	else if (device_id == VIRTIO_ID_BLOCK)
-+		requested = VDUSE__BLOCK;
-+	else
-+		return -EINVAL;
-+
-+	return avc_has_perm(sid, sid, SECCLASS_VDUSE, requested, NULL);
-+}
-+
-+static int selinux_vduse_dev_create(u32 device_id)
-+{
-+	u32 sid = current_sid();
-+	int ret;
-+
-+	ret = avc_has_perm(sid, sid, SECCLASS_VDUSE, VDUSE__DEVCREATE, NULL);
-+	if (ret)
-+		return ret;
-+
-+	return vduse_check_device_type(sid, device_id);
-+}
-+
-+static int selinux_vduse_dev_destroy(u32 device_id)
-+{
-+	u32 sid = current_sid();
-+	int ret;
-+
-+	ret = avc_has_perm(sid, sid, SECCLASS_VDUSE, VDUSE__DEVDESTROY, NULL);
-+	if (ret)
-+		return ret;
-+
-+	return vduse_check_device_type(sid, device_id);
-+}
-+
-+static int selinux_vduse_dev_open(u32 device_id)
-+{
-+	u32 sid = current_sid();
-+	int ret;
-+
-+	ret = avc_has_perm(sid, sid, SECCLASS_VDUSE, VDUSE__DEVOPEN, NULL);
-+	if (ret)
-+		return ret;
-+
-+	return vduse_check_device_type(sid, device_id);
-+}
-+
- /*
-  * IMPORTANT NOTE: When adding new hooks, please be careful to keep this order:
-  * 1. any hooks that don't belong to (2.) or (3.) below,
-@@ -7243,6 +7295,9 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- #ifdef CONFIG_PERF_EVENTS
- 	LSM_HOOK_INIT(perf_event_alloc, selinux_perf_event_alloc),
- #endif
-+	LSM_HOOK_INIT(vduse_dev_create, selinux_vduse_dev_create),
-+	LSM_HOOK_INIT(vduse_dev_destroy, selinux_vduse_dev_destroy),
-+	LSM_HOOK_INIT(vduse_dev_open, selinux_vduse_dev_open),
- };
- 
- static __init int selinux_init(void)
-diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-index a3c380775d41..d3dc37fb03d4 100644
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -256,6 +256,8 @@ const struct security_class_mapping secclass_map[] = {
- 	  { "override_creds", "sqpoll", "cmd", NULL } },
- 	{ "user_namespace",
- 	  { "create", NULL } },
-+	{ "vduse",
-+	  { "devcreate", "devdestroy", "devopen", "net", "block", NULL} },
- 	{ NULL }
-   };
- 
+ 	dev->api_version = api_version;
+ 	dev->device_features = config->features;
+ 	dev->device_id = config->device_id;
 -- 
 2.41.0
 
