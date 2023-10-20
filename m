@@ -2,29 +2,29 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3ED1C001DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Oct 2023 04:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C210CDB47E
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Oct 2023 09:40:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376262AbjJTEIo (ORCPT
+        id S1376699AbjJTJkT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Oct 2023 00:08:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60194 "EHLO
+        Fri, 20 Oct 2023 05:40:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346919AbjJTEIn (ORCPT
+        with ESMTP id S1376724AbjJTJkS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Oct 2023 00:08:43 -0400
+        Fri, 20 Oct 2023 05:40:18 -0400
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62250C9;
-        Thu, 19 Oct 2023 21:08:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A828CD49;
+        Fri, 20 Oct 2023 02:40:13 -0700 (PDT)
 Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4SBWFc1XwSz6HJh3;
-        Fri, 20 Oct 2023 12:05:08 +0800 (CST)
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4SBfdK1gNqz6K6SY;
+        Fri, 20 Oct 2023 17:37:41 +0800 (CST)
 Received: from [10.123.123.126] (10.123.123.126) by
  lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Fri, 20 Oct 2023 05:08:34 +0100
-Message-ID: <57f150b2-0920-8567-8351-1bdb74684cfa@huawei.com>
-Date:   Fri, 20 Oct 2023 07:08:33 +0300
+ 15.1.2507.31; Fri, 20 Oct 2023 10:40:09 +0100
+Message-ID: <6bfe79f5-d24a-9f9d-b297-e16115613fa3@huawei.com>
+Date:   Fri, 20 Oct 2023 12:40:08 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.4.1
@@ -38,13 +38,13 @@ CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
         <artem.kuzin@huawei.com>
 References: <20231016015030.1684504-1-konstantin.meskhidze@huawei.com>
  <20231016015030.1684504-9-konstantin.meskhidze@huawei.com>
- <20231017.xahKoo9Koo8v@digikod.net>
+ <20231018.eeNgiaTh1aht@digikod.net>
 From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <20231017.xahKoo9Koo8v@digikod.net>
+In-Reply-To: <20231018.eeNgiaTh1aht@digikod.net>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.123.123.126]
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
  lhrpeml500004.china.huawei.com (7.191.163.9)
 X-CFilter-Loop: Reflected
 Precedence: bulk
@@ -52,34 +52,16 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 
 
-10/18/2023 3:29 PM, Mickaël Salaün пишет:
+10/18/2023 7:34 PM, Mickaël Salaün пишет:
 > On Mon, Oct 16, 2023 at 09:50:26AM +0800, Konstantin Meskhidze wrote:
 >> This commit adds network rules support in the ruleset management
-> 
-> Here are some advices to better write commit messages:
-> https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
-> The "Describe your changes in imperative mood" part is important for
-> this commit and others. Most of this patch series' commit messages need
-> small updates.
-
-  Ok. I will refactor commit messages with "imperative mood". Thanks.
-> 
 >> helpers and the landlock_create_ruleset syscall.
 >> Refactor user space API to support network actions. Add new network
 >> access flags, network rule and network attributes. Increment Landlock
 >> ABI version. Expand access_masks_t to u32 to be sure network access
-> 
-> Please explain the "why" (when it makes sense) instead of just listing
-> the "what".
-
-   Ok.
-
-> 
 >> rights can be stored. Implement socket_bind() and socket_connect()
 >> LSM hooks, which enables to restrict TCP socket binding and connection
 >> to specific ports.
-> 
-> I reworded and moved this part in last:
 >> For the file system, a file descriptor is a direct access to a file/data.
 >> But for the network, it's impossible to identify for which data/peer a
 >> newly created socket will give access to, it's needed to wait for a
@@ -87,41 +69,16 @@ List-ID: <linux-security-module.vger.kernel.org>
 >> That's why the access rights (related to ports) are tied to an opened
 >> socket, but this would not align with the way Landlock access control
 >> works for the filesystem [2].
-
-    Thanks.
-> 
-> Please add empty line to split paragraphs.
-
-   Got it.
-> 
 >> The new landlock_net_port_attr structure has two fields. The allowed_access
 >> field contains the LANDLOCK_ACCESS_NET_* rights. The port field contains
 >> the port value according to the allowed protocol. This field can
 >> take up to a 64-bit value [1] but the maximum value depends on the related
 >> protocol (e.g. 16-bit for TCP).
-> 
-> For the file system, a file descriptor is a direct access to a file/data.
-> However, for network sockets, we cannot identify for which data or peer a newly
-> created socket will give access to. Indeed, we need to wait for a connect or
-> bind request to identify the use case for this socket.
-> 
-> Access rights are not tied to socket file descriptors. Instead, bind and
-> connect actions are controlled by the task's domain.  As for the filesystem, a
-> directory file descriptor may enable to open another file (i.e. a new data
-> item), but this opening is restricted by the task's domain, not the file
-> descriptor's access rights [2].
-> 
 >> 
 >> [1]
 >> https://lore.kernel.org/r/278ab07f-7583-a4e0-3d37-1bacd091531d@digikod.net
 >> [2]
 >> https://lore.kernel.org/all/263c1eb3-602f-57fe-8450-3f138581bee7@digikod.net
-> 
-> [1] https://lore.kernel.org/r/278ab07f-7583-a4e0-3d37-1bacd091531d@digikod.net
-> [2] https://lore.kernel.org/r/263c1eb3-602f-57fe-8450-3f138581bee7@digikod.net
->  
-   Thanks.
-> 
 >> 
 >> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 >> Link: https://lore.kernel.org/r/20230920092641.832134-9-konstantin.meskhidze@huawei.com
@@ -255,11 +212,6 @@ List-ID: <linux-security-module.vger.kernel.org>
 >> +	 * landlock_net_port_attr .
 >> +	 */
 >> +	LANDLOCK_RULE_NET_PORT = 2,
-> 
-> We don't need the explicit " = 2".
-
-   Fixed. Thanks.
-> 
 >>  };
 >> 
 >>  /**
@@ -289,26 +241,6 @@ List-ID: <linux-security-module.vger.kernel.org>
 >> +	 * port number range. This port range can be controlled by a
 >> +	 * sysadmin with /proc/sys/net/ipv4/ip_local_port_range sysctl,
 >> +	 * which is also used by IPv6.
-> 
-> This looks too inspired from
-> https://www.lifewire.com/port-0-in-tcp-and-udp-818145
-
-   Yep. You are right.
-> 
-> Let's make it simpler:
-> 
->   * @port: Network port.
->   *
->   * It should be noted that port 0 passed to :manpage:`bind(2)` will
->   * bind to an available port from a specific port range. This can be
->   * configured thanks to the ``/proc/sys/net/ipv4/ip_local_port_range``
->   * sysctl (also used for IPv6). A Landlock rule with port 0 and the
->   * ``LANDLOCK_ACCESS_NET_BIND_TCP`` right means that requesting to bind
->   * on port 0 is allowed and it will automatically translate to binding
->   * on the related port range.
->   
-     Thanks.
-> 
 >> +	 */
 >> +	__u64 port;
 >> +};
@@ -328,12 +260,6 @@ List-ID: <linux-security-module.vger.kernel.org>
 >> + *
 >> + * These flags enable to restrict a sandboxed process to a set of network
 >> + * actions.
-> 
-> You can add:
-> "This is supported since ABI 4."
-
-    Updated.
-> 
 >> + *
 >> + * TCP sockets with allowed actions:
 >> + *
@@ -455,12 +381,6 @@ List-ID: <linux-security-module.vger.kernel.org>
 >> +}
 >> +
 >> +static int check_socket_access(struct socket *const sock,
-> 
-> To be consistent with current_check_access_path(), please rename to
-> current_check_access_socket().
-
-   Done. Thanks.
-> 
 >> +			       struct sockaddr *const address,
 >> +			       const int addrlen,
 >> +			       const access_mask_t access_request)
@@ -473,11 +393,6 @@ List-ID: <linux-security-module.vger.kernel.org>
 >> +		.type = LANDLOCK_KEY_NET_PORT,
 >> +	};
 >> +	const struct landlock_ruleset *const domain = get_current_net_domain();
-> 
-> For consistency with other functions, s/domain/dom/g
-
-  Ok. Fixed.
-> 
 >> +
 >> +	if (!domain)
 >> +		return 0;
@@ -506,11 +421,6 @@ List-ID: <linux-security-module.vger.kernel.org>
 >> +		port = ((struct sockaddr_in6 *)address)->sin6_port;
 >> +		break;
 >> +#endif
-> 
-> #endif /* IS_ENABLED(CONFIG_INET) */
-
-   #endif /* IS_ENABLED(CONFIG_IPV6) */ I suppose.
-> 
 >> +	default:
 >> +		return 0;
 >> +	}
@@ -682,33 +592,6 @@ List-ID: <linux-security-module.vger.kernel.org>
 >>  		landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
 >> +	if (net_access_mask)
 >> +		landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
-> 
-> This is good, but it is not tested: we need to add a test that both
-> handle FS and net restrictions. You can add one in net.c, just handling
-> LANDLOCK_ACCESS_FS_READ_DIR and LANDLOCK_ACCESS_NET_BIND_TCP, add one
-> rule with path_beneath (e.g. /dev) and another with net_port, and check
-> that open("/") is denied, open("/dev") is allowed, and and only the
-> allowed port is allowed with bind(). This test should be simple and can
-> only check against an IPv4 socket, i.e. using ipv4_tcp fixture, just
-> after port_endianness. fcntl.h should then be included by net.c
-
-   Ok.
-> 
-> I guess that was the purpose of layout1.with_net (in fs_test.c) but it
-
-   Yep. I added this kind of nest in fs_test.c to test both fs and 
-network rules together.
-> is not complete. You can revamp this test and move it to net.c
-> following the above suggestions, keeping it consistent with other tests
-> in net.c . You don't need the test_open() nor create_ruleset() helpers.
-> 
-> This test must failed if we change "ruleset->access_masks[layer_level] |="
-> to "ruleset->access_masks[layer_level] =" in
-> landlock_add_fs_access_mask() or landlock_add_net_access_mask().
-
-   Do you want to change it? Why?
-   Fs and network masks are ORed to not intersect with each other.
-> 
 >>  	return new_ruleset;
 >>  }
 >> 
@@ -735,12 +618,6 @@ network rules together.
 >> +
 >>  	default:
 >> +		WARN_ON_ONCE(1);
-> 
-> Please move this WARN to the patch that added the previous and next
-> lines.
-
-   OK. Will be moved.
-> 
 >>  		return ERR_PTR(-EINVAL);
 >>  	}
 >>  }
@@ -802,11 +679,6 @@ network rules together.
 >>   * @access_request: The requested access rights to check.
 >> - * @layer_masks: The layer masks to populate.
 >> + * @layer_masks: It must contain LANDLOCK_NUM_ACCESS_FS or LANDLOCK_NUM_ACCESS_NET
-> 
-> "%LANDLOCK_NUM_ACCESS_FS or %LANDLOCK_NUM_ACCESS_NET"
-
-   Done.
-> 
 >> + * elements according to @key_type.
 >>   * @key_type: The key type to switch between access masks of different types.
 >>   *
@@ -865,10 +737,6 @@ network rules together.
 >>  	 * reaches zero.
 >>  	 */
 >>  	struct rb_root root_inode;
-> 
-> #if IS_ENABLED(CONFIG_INET)
->  
-   OK. Done.
 >> +	/**
 >> +	 * @root_net_port: Root of a red-black tree containing &struct
 >> +	 * landlock_rule nodes with network port. Once a ruleset is tied to a
@@ -876,11 +744,6 @@ network rules together.
 >> +	 * reaches zero.
 >> +	 */
 >> +	struct rb_root root_net_port;
-> 
-> #endif /* IS_ENABLED(CONFIG_INET) */
-
-  Done.
-> 
 >>  	/**
 >>  	 * @hierarchy: Enables hierarchy identification even when a parent
 >>  	 * domain vanishes.  This is needed for the ptrace protection.
@@ -1046,12 +909,6 @@ network rules together.
 >> 
 >> -	/* Copies raw user space buffer, only one type for now. */
 >> +	/* Copies raw user space buffer. */
-> 
-> Shouldn't this be part of a previous patch?
-
-I did it according Gunter's suggestion
-https://lore.kernel.org/netdev/20230627.82cde73b1efe@gnoack.org/
-> 
 >>  	res = copy_from_user(&path_beneath_attr, rule_attr,
 >>  			     sizeof(path_beneath_attr));
 >>  	if (res)
@@ -1082,17 +939,16 @@ https://lore.kernel.org/netdev/20230627.82cde73b1efe@gnoack.org/
 >> +	 * Checks that allowed_access matches the @ruleset constraints
 >> +	 * (ruleset->access_masks[0] is automatically upgraded to 64-bits).
 >> +	 */
+> 
+> You can replace this comment block with that:
+> +	/* Checks that allowed_access matches the @ruleset constraints. */
+> 
+    Done.
 >> +	mask = landlock_get_net_access_mask(ruleset, 0);
 >> +	if ((net_port_attr.allowed_access | mask) != mask)
 >> +		return -EINVAL;
 >> +
 >> +	/* Denies inserting a rule with port higher than 65535. */
-> 
-> For consistency with the following comment:
-> "Denies inserting a rule with port greater than 65535."
-> 
-   Done. Thanks.
-> 
 >> +	if (net_port_attr.port > U16_MAX)
 >> +		return -EINVAL;
 >> +
@@ -1100,72 +956,4 @@ https://lore.kernel.org/netdev/20230627.82cde73b1efe@gnoack.org/
 >> +	return landlock_append_net_rule(ruleset, net_port_attr.port,
 >> +					net_port_attr.allowed_access);
 >> +}
->> +
->>  /**
->>   * sys_landlock_add_rule - Add a new rule to a ruleset
->>   *
->>   * @ruleset_fd: File descriptor tied to the ruleset that should be extended
->>   *		with the new rule.
->> - * @rule_type: Identify the structure type pointed to by @rule_attr (only
->> - *             %LANDLOCK_RULE_PATH_BENEATH for now).
->> + * @rule_type: Identify the structure type pointed to by @rule_attr:
->> + *             %LANDLOCK_RULE_PATH_BENEATH or %LANDLOCK_RULE_NET_PORT.
->>   * @rule_attr: Pointer to a rule (only of type &struct
->>   *             landlock_path_beneath_attr for now).
->>   * @flags: Must be 0.
->> @@ -332,6 +382,8 @@ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
->>   * Possible returned errors are:
->>   *
->>   * - %EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
->> + * - %EAFNOSUPPORT: @rule_type is LANDLOCK_RULE_NET_PORT but TCP/IP is not
-> 
-> %LANDLOCK_RULE_NET_PORT
-
-  Done.
-> 
->> + *   supported by the running kernel;
->>   * - %EINVAL: @flags is not 0, or inconsistent access in the rule (i.e.
->>   *   &landlock_path_beneath_attr.allowed_access is not a subset of the
-> 
-> &landlock_path_beneath_attr.allowed_access or
-> &landlock_net_port_attr.allowed_access is not a subset of the
-
-   Fixed. Thanks.
-> 
->>   *   ruleset handled accesses);
-> 
-> EINVAL description needs to be updated, especially for port > U16_MAX:
-> - *   ruleset handled accesses);
-> + *   ruleset handled accesses), or &landlock_net_port_attr.port is
-> +     greater than 65535;
-
-  Done. Thanks.
-> 
-> 
->> @@ -366,6 +418,9 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
->>  	case LANDLOCK_RULE_PATH_BENEATH:
->>  		err = add_rule_path_beneath(ruleset, rule_attr);
->>  		break;
->> +	case LANDLOCK_RULE_NET_PORT:
->> +		err = add_rule_net_port(ruleset, rule_attr);
->> +		break;
->>  	default:
->>  		err = -EINVAL;
->>  		break;
->> diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
->> index 792c3f0a59b4..646f778dfb1e 100644
->> --- a/tools/testing/selftests/landlock/base_test.c
->> +++ b/tools/testing/selftests/landlock/base_test.c
->> @@ -75,7 +75,7 @@ TEST(abi_version)
->>  	const struct landlock_ruleset_attr ruleset_attr = {
->>  		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
->>  	};
->> -	ASSERT_EQ(3, landlock_create_ruleset(NULL, 0,
->> +	ASSERT_EQ(4, landlock_create_ruleset(NULL, 0,
->>  					     LANDLOCK_CREATE_RULESET_VERSION));
->> 
->>  	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
->> --
->> 2.25.1
->> 
 > .
