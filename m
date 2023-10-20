@@ -2,189 +2,130 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 304DDC0032E
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Oct 2023 20:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A075C001DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Oct 2023 21:56:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230200AbjJTUkm (ORCPT
+        id S229928AbjJTV4e (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Oct 2023 16:40:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56528 "EHLO
+        Fri, 20 Oct 2023 17:56:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230114AbjJTUkl (ORCPT
+        with ESMTP id S229603AbjJTV4d (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Oct 2023 16:40:41 -0400
-Received: from sonic315-27.consmr.mail.ne1.yahoo.com (sonic315-27.consmr.mail.ne1.yahoo.com [66.163.190.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E600E8
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Oct 2023 13:40:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1697834438; bh=0tyHuoq7ukxabsiZKHTzk2ePpLaOW35wAKtGeJ1D824=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=LYbLYInxF/o0MPHkGv1XjPVSL6Ui05EQ5Nwh1GaP94AYAOEXLaPRllhSgAXAoMMEqHw+BCG6KMup/THnQ8N1+IwEUr3m3DUzz+QqA+bGiSWwIEXg6I6RQxjPJ/t91zbxKPnngacXlpjfqIcPfcwU+hqKHQKbK0F6DYiVpC1ULVQDnccL0yu548+SjAksdqHvAohK/ph/zT1HOwpoVt5WNljLf5XwPbdCM+qmGtxuqBSToV9ofFkhtrijLBhdPvyuwVBG8Dws3Eb61Xp53lBz2PS3Lsd3HpbMO5n/xI4yQ/1X3yaYT5061SOTmgwvNuYAw1gE2joJTIYLho9eltPY2A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1697834438; bh=2QRPDRfbcEjwhcYstA2So2kUc1ZPy6LvYss2S9XGReH=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=uTF6wU2wJ4HYCMXgafXHyh2CM5Y0PC99ZceHK+4avVtm45YNHS585HCH8d3fGaWi9VVX3vFOuuAT3aaUOmAGnB9ug/d2wXiyDqdwZzivwO6+bnJyQFfiW21gBkViBkU/SPF/C3W6S1aHnJY++REsyIc4fqdv3QU7hhN+zN44HXNjx85oC9rRrTTDXUP58tGr5+H/l7P6/IuB43diLRmBluZHWhgbuJWQc/jBFOcA/MNEv26vXslMnGc8jQZV4SloD9k4M8RkXzUflMf5T1klDJk6vwRfPqoZC3FZYEQyJm69ERuYK2DJY6QCxXKqGP+IUpoojWJORocnM6wFU+Ygnw==
-X-YMail-OSG: F5xAfWcVM1n_Si1_eT.TI_20zjDsPsrvPVF6m4HdERdpJYxaxO_N8u2o4yncx.7
- zdwWtixCjxsD4rbBcwHCFeF249lC27Aj_HKPbWW6E_0B19VJYNDbMBziOH3fFFzKDCbOfyARrNXG
- tzYSw0uY8QV4ZYmwUsVVgGAAebMTKI2x9XLlHAv9VXLJzlYGmzioDfRcqcnUDpn.t6JlzGFtjqAK
- mpVFYkgrIfQAj2HNO_BIYC1U0C3ZKXwZGwRhii4il0gr2LF9k_xcAQ7LOnGNMktLxbSmPILXZ9oL
- 4bLNOLdCJMNdF_spzCp0eSeN59dJUTFVKtHQh5b3JVvYj_p9rCGSVPZtXGR73qzUgHIQEGSHukhU
- o.TfkXjV8V94BCNF04ODgt1pTakMsFcyl.vIYTbq7wVeqXHQcbxxNu.UPf.DqlWU.7ynCA5jbPCX
- N5nRglHLaJnenNmx0btulZoIuQ3IetA.DnJOPdBI6fgzF4Zhj0PePlTZpKnN6mxMscfxOBvGLYUZ
- MyoPGU1WrlDUwCyaipgvvy053579HwtS7e1gPSYWFbP.3zpbcdB1kw5qAK.H1CgxA_sHGdqZhbcH
- 11oMuZvAeH3IfG2F6Rd9DyvXmg8QNnNNw8OchSpWb09LfA6Hkkp.axLtXmRgqCXGwzgsE_CAehAh
- 43To51.dGPmTKM1uGDzNse1hlKcwXxttMoSF.crS53C8sU1sOKsATyosVCHnPuztxYxcb8GJ.hsD
- Wv3wLOWnSI.7MIQ5qacsyN3q03KNvbaBFA0my9Uwn.ICD3VVfyBp0KuUz11fcJtZxTolhV3lG.pt
- xJ0yF3SbT1yt1ZrKy8j.ETGe_r9yd20o7JIo6KLsaLCw1SuIQPVgMIiwElBtD9XunbGAsWEyZEUo
- rWqwZLrg2sNQRY2LwDDMAe9s6HAil9YHwlSJPV4ItE2GrABvb8YJx2QMiphXzaPFvbpqdrlZVhoq
- 1DERoGgtNiK7gcAUMr9QMjQRpiVPkZoas4341JS4GNI00.7HxPdNHY2aS.ZABRdfi.k2HKPq.j9b
- GWHQjn.LDFFYoRBD_CgtDe0IuC6PVtcL4Mj3rjkdGFm2Jcx05guvW6ocOl3_3am0YQ52JlVoh7o3
- ia8MsvWCe5UVrKg1F7iVYj3rVTMQHsw9N6SpL23t7025JU40hYfXp_PPhAJvt3iT89x6Z_NNvrhe
- wRlUya4icvv_NVdFs4t1qdnCq0Q.zUc5qMq09qMXRcE.pFITBb1HlMKCcn1BRKbRnocHp0XiadiA
- v0NPbhRSUgLeEO6zhoK4HP4A.znuJ1t7pIcS.mN.c2FgiwuCy.pJzQzv4pG9GKS0bPWp6FawBLFx
- Jr0cDlJisgtfJpr670SyIVctiOsu4MFaJ69Ihlf1lvBpaWsQn8reqe7b1apofA9m9DA8oHRVDsYz
- lidtpYU1ik0YpyVOBBJnJXAlgu2fWdn5or8ToM6DURqhlWwEbagEJNwi5fR4HmHGLAGm7qWiFMBd
- W9Svms.HVRGfBqIUUjckpfgGu9gBsGkabzEt2LWOAgfWwfsDr46TgUtdiu8rSmcq9xrIisG8Ot8W
- Bk1Pu_SOvDRguO_ThOde5uzGGLEAKQVxsQO.ZuoYbK2qegBM59ljrnifqRfI8WYBa0xh1BPyg4_C
- a9FKHF1zs7Yu7fjYKSlCowzmg4nKadpQG_WsMJjwluBojgR_Dyyrl1H2uC2xDm2cGC6ampXdGiuE
- vxLNfyTdeeNxiKejxoBcgGNcf3HPfd3DYa513txQPSO.ikfRmrg4nEz.WLRbpzs8y_gE.XiaW_01
- z3YE_QuGeZiAYDJ98P6YvRoMut.EZ3aqeOyMhk7z8F0bH.syuit9t3Z0Wi_cNHqGArUeLOlpS1vR
- svU2R7hIfXBvGN5barbzwWGh6dOFdy817ZNpk3uEiuHZaE1TbLe7D7IvxxRfltRxFAJbAEPRVEii
- xP06_K13CTCkEPZxkLz4oIhEPXNX5Y9lPq5vOyHB09W6reYgBJ9AcxVPtp4mAH4rIsgD4Nw.SOHa
- EB.2UztYzAqPpQzKyd4kkMNecrxk6qIRuccWpz_J4DGYqP.ozbnaBO3AWHvCnFuQfxiSEMOwCoGr
- Lea5UQ8jvgCUoqQMOyZQNsHCFaXAgJ0NYM2gYAEw1CxC3vzHveBj4PnXsa2LnuSlS1nibbbIDowH
- 8ddgD.s8K9BrMew0929EiRzvgDcKqLZBYYizCS.kYXN8NkQAMe3bNtabomWDq_fCjVtgH8o_uclU
- zy6BaUXJKReFmgFTVAGCEXg.3wxKfZoMoxZkjZwrm.t4PwMD7p974idEJ5rSZngMgGl8lPY7GiN5
- qx6u23kGGmIeUyFlq
+        Fri, 20 Oct 2023 17:56:33 -0400
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25101D45
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Oct 2023 14:56:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1697838990; bh=pAE3HNmxsR+/70LYiFn6rv3areWPnvojUZSQTQ/QPiM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=PszDSzIsNZvlR5FF91cpoRuoQR8Ad367I4JfmzKYVrEN4Dvihm80nawN6dbGcCypYcmZUR/h9Le3FE03mm0UZEt0drz63HQSJBSqvfSJoKkw/Y7PMKYnuJ0TnEFD8atq5LF7nLfnCYHSuANmGQQ45ZM8Q2zRtXXfAndvCeZ8GV+gp3PexECkTBfq83/7QvmpMWkRwsHkbLhOwHvLIoO495qPtoaHRvogQ/8QuFd0EGUTnFi2y4D3nPHzGT8y2u/c3VLor63RuDb0x1FpCHDLqf+NN6ePsGPf2o4mXlpmQcAmsVrcjVZvfYIx4SK2iBYlloUokNmV315UjTyaxR1uCg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1697838990; bh=19x8ECL3f4roGQiATYQSqes/rs2KU7T0pfLwjqdbHB8=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=WhNDdqZIZ0W9UPP59iUytc/IUGoqoUOUWqYHVrGl9a0emrfzjoktm2uq6u4OMXNfBldqRl1Mj+nFtL9ZuR8HYW/vmH2wEs0ipqq72kpqwZ/r/gWteljiHWPA+aNaBAd6X5o8fBagAQFtdeEaN8gysmSFQfqXkVI3eLUcQzNIxpBcYtIXcnhqFvUS5+LQEYebhT8jKeGfUqYSCQVJsMaEzUbp6uheSAUqwMqE/oVEgFc8WTIcpYRBVESytM2HwTAOTk9JUmED7GQ3OA72Ul9eif9ns6HQEhYQEyySJljyjnM1fTqGZdwgSiI5JPQ7q/kELuHjVbeNM0YxRcEZYS0pUw==
+X-YMail-OSG: 8.tWE8YVM1ljOUSDM2c2AJYGGCLIjqSomXgEvdXccLy0.5uZizeq6uxuRED61T6
+ 3oKB.OwoN.mRf2UGUpPjDSvHvxuJj6AxtfPMjaNI.qmGG2kzkkBsnl.45BOlkoPnf9wj8_X8PibJ
+ BlqjWlXDifhNqv6aSCigScn9XC05zAY2AVdQi9LdewzUkoSLoset2hHafc4aJC.e4HclhwA2XzGG
+ oFrXDRg2XV10Xp.uZnKEcWIN18mwWYfo_cl.gQyT6WAxaw4Bh5o9bn3UIGnNuOAjluIucp2Q_8li
+ goIclEzckr4n18ye_JFfwzUQBFuBNztHbrtHf.qGzRRLU7ajIN1zPk6J5Jn6MeUvEjRU4LZboO5B
+ M8QCaiqrSAN3yhq0eDHtuj_DCdCjpMsNP2ozPyJ0eE1f0TBeud.Y9ZYgwFNx7jvXj_l4HHeaD2LN
+ sZC1TFnfAZ3gcBG2CT8c19SOb1mDfw3SYBrHDc.RttjXaP85WgkBdYYKNbDjIbe.HlWnjynnq9MC
+ 5k4DgjUe.yPdKp1Q6Nw4QccRkI2OGryEKGX.ZyFoazsvlH134MnS8E4ACgTQValeZPgAq9waE_F9
+ oFR9dLyutUL3rccKeZXy2Pq0GBKsZ_jxE4hEmBHQjiKKhj0.RnwMT.LZtTye06BP8EPjOthiQ8YO
+ MdZu.urBSQs2s4MXyjSlIsLGlBcB91ZcURkW1eb0UamaiMRTzDck0bBwDKQIsTO3qnrKgcL1r8ui
+ 5UX23me6CAQ9iAtPIzxsSxOcgosQ2xqn5hJSx_yRraIwNpYQZ2VjWOkI5q_0JSdRIlpkEzH3J1I6
+ MtSD712diqlxjboGD2.SykuaifonzKoKp2sDFf9JKfKOIXPq3PeUucwtAjRnQv54PV0qDjuhmphb
+ BH7vZQRJ8MT2q7hku5l8mt.ol0mC3GgmrKMQ8f3FFrctZpxMURnZgUv9n.dZ9wGL7pJ58gik_Wuc
+ qZDz0CK9bI5NSA57b2QhdY6cWX5FXybcjSjoF5bpXIPZ1PSL_peuaMhFqJdoUmj_8Gq2KdMR9Jbg
+ fAzUhe8SFr4vOLpza2FGNLqZagZVJEGUEBMIQlXcLj_zX1cyjoJ6L4B0XOIhu5dGrT3.Te1mqPj4
+ HWKrnuEqZteXtJp7.QgN8LIK9f7Fp3xTH9qDyNgNdVrNI0yadLjoC.fJ1ZMfxDxufr4vI7QKK8cc
+ 1XpN7dk_ADSUQ2sFXtipozZIwb6oMvvzg3Q8cKG9rFETduMoEFGHvYQRq9hmcOoTKkBpURPUD7w0
+ zec1cdIHwb.wVv9C8ozzXV0Ssvh.xJGqdXcEYciCOk.0JzmIpYFloe1gW2k2on7APtQL798OI6gZ
+ r_FXhOOdPVkzYb43S.b4vN82hZ4S1jaggNLd8qFLSpuA9sgxZvS2oHNe_4LSxMpGqNtkLW93rF4l
+ jYjMaKQREgteFx33GS.nVNScGSH6JzGo3ImlchtW6Csv7oY8lHF77jtUj51EWV.7rUFMma6Q68jI
+ Uobbq4EnhZCqGMl38eFfBAPdql0.RErPPEmq4kQ4MPxiAQu9N5Qwe6i7ZmtHNNlAY72lXPWAlNRf
+ 6vyzdu0poQiRWcLWEPvkih7auSgqEN4EqxBYeYptMR9sBVsXVxK_ugrlgPqNI3ZEU5m6ZdhXgLYY
+ qMFGrQAbKUKDOMAgYQ98Nb81I40MU._Hdx2OQxo8hjGoyA7YO3FXRDwJifWbZaKJ7amyW7nDzIXN
+ 5uvGN2GmpK02tiDOLJAfMf1amDq9o1wa1koYoCujKMreslsnXZAfPgStF.d0XfekT5q1NN.dRRbB
+ 8GMrKd0tuMxH7VdJUvWKS89xb5ITRGi30f94Vbadk5H0lQq9qFoEVdCA3AVxrWyHhA7C6gYm.PPK
+ uIz.Srsx0na02P_5ODR3Hkn47.IA5aKjI9CAZoOLRufhYHt.th8k7rSsOAh.7luWhAdLDg4QGYXN
+ C5MiKmEwXW1x2gienHCi_xI3J12ZjTasVhJnvdTVvAmG_3mxdx32yohnWd3ynAzMSjFk2sphM54B
+ FqSv2z6yBTIrebOxOKHTdxcSmVSQn3VrVVPbEJeYsZcfws0zOgcfN1G40xeTLJtdLjl06Un4rNmg
+ tufY2oE69x.OXfcW76OD_665C7kMKEXFP0K2dVGZwrB8LtXGhukuG.U24clu0ZmDHa6K3pY1DX.m
+ QuiH55TAK3XdVFqTQota0_s86MfQsx_Ok2EEL1MIOBViqpjk72c4I3Nurg4GxW9Go7_M8_6z5YVJ
+ ackEk56a7DtCpFnI2DIRVb0UaPrjlcfjTa.FfHem17h16z.DxsehUL8yTvRimzxKAT0cJlK9FK9f
+ _neKavgIeeg--
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 26126cbb-5042-43f6-aed0-e14ada6998b7
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Fri, 20 Oct 2023 20:40:38 +0000
-Received: by hermes--production-ne1-68668bc7f7-pg4xv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f4e6d5428ea504def3051c6bffc80b3a;
-          Fri, 20 Oct 2023 20:40:36 +0000 (UTC)
-Message-ID: <a47971c0-f692-4f48-92a0-4f15c73d05e7@schaufler-ca.com>
-Date:   Fri, 20 Oct 2023 13:40:34 -0700
+X-Sonic-ID: 093840f1-5a1b-4e5f-b43d-164e81cefd04
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Fri, 20 Oct 2023 21:56:30 +0000
+Received: by hermes--production-ne1-68668bc7f7-mqln8 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a7d51f71c4754dc41c637c9276aa294d;
+          Fri, 20 Oct 2023 21:56:29 +0000 (UTC)
+Message-ID: <1764a96f-6d24-4585-a24b-667a5ea075c3@schaufler-ca.com>
+Date:   Fri, 20 Oct 2023 14:56:28 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] LSM: Allow dynamically appendable LSM modules.
+Subject: Re: [PATCH] lsm: drop LSM_ID_IMA
 Content-Language: en-US
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        KP Singh <kpsingh@kernel.org>,
-        Paul Moore <paul@paul-moore.com>, bpf <bpf@vger.kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         Casey Schaufler <casey@schaufler-ca.com>
-References: <cc8e16bb-5083-01da-4a77-d251a76dc8ff@I-love.SAKURA.ne.jp>
- <57295dac-9abd-3bac-ff5d-ccf064947162@schaufler-ca.com>
- <b2cd749e-a716-1a13-6550-44a232deac25@I-love.SAKURA.ne.jp>
- <1b9f0e3f-0ff3-5b2d-19fa-dfa83afab8a6@schaufler-ca.com>
- <36776914-189b-3f51-9b56-b4273a625005@I-love.SAKURA.ne.jp>
+References: <20231018215032.348429-2-paul@paul-moore.com>
+ <72a92e27855af2291273209d328e1b79f3b61663.camel@huaweicloud.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <36776914-189b-3f51-9b56-b4273a625005@I-love.SAKURA.ne.jp>
+In-Reply-To: <72a92e27855af2291273209d328e1b79f3b61663.camel@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.21797 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/4/2023 3:40 AM, Tetsuo Handa wrote:
-> On 2023/10/02 0:19, Casey Schaufler wrote:
->>> I'm fine if security_loadable_hook_heads() (and related code) cannot be
->>> disabled by the kernel configuration.
->> CONFIG_SECURITY ensures that you will be unhappy.
-> I don't care about Linux distributors who chose CONFIG_SECURITY=n in their
-> kernel configurations. What I'm saying is that security_loadable_hook_heads
-> (and related code) do not depend on some build-time configuration. Also, I
-> don't care about Linux distributors who patch their kernel source code in
-> order to remove security_loadable_hook_heads (and related code) before
-> building their kernels.
+On 10/19/2023 1:08 AM, Roberto Sassu wrote:
+> On Wed, 2023-10-18 at 17:50 -0400, Paul Moore wrote:
+>> When IMA becomes a proper LSM we will reintroduce an appropriate
+>> LSM ID, but drop it from the userspace API for now in an effort
+>> to put an end to debates around the naming of the LSM ID macro.
+>>
+>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
 >
-> But if a kernel is targeted for specific environment where out-of-tree LKMs
-> (e.g. storage driver, filesystems) are not required, the person/organization
-> who builds that kernel can protect that kernel from out-of-tree LKMs
-> (including LKM-based LSMs) by enforcing module signing functionality.
+> This makes sense according to the new goal of making 'ima' and 'evm' as
+> standalone LSMs.
 >
-> Also if a kernel is ultimately targeted for specific environment where LKM
-> support is not required, the person/organization who builds that kernel can
-> protect that kernel from out-of-tree LKMs (including LKM-based LSMs) by
-> disabling loadable module functionality.
+> Otherwise, if we took existing LSMs, we should have defined
+> LSM_ID_INTEGRITY, associated to DEFINE_LSM(integrity).
 >
-> Linux distributors that I want to run LSMs are generally trying to support
-> as much users/environments as possible. The combination of enabling loadable
-> module functionality and not enforcing module signing functionality is a good
-> balance for that purpose.
->
->> Even setting that aside, it's the developer's job to sell the code to
->> the communities involved. I could rant at certain distros for not including
->> Smack, but until such time as I've made doing that attractive it really
->> doesn't make any sense to do so. You don't think I've spent years on stacking
->> because I want to run Android containers on Ubuntu, do you?
-> Which one ("the LSM community" or "the Linux distributors") do you mean by
-> "the communities involved" ?
+> If we proceed with the new direction, I will add the new LSM IDs as
+> soon as IMA and EVM become LSMs.
 
-There's a reason I used the plural "communities" instead of the singular
-"community". In the case of loadable LSMs we're talking about *at least*
-the LSM developers, Linux distributors, networking developers, the performance
-crowd, all those people wound up in secure/trusted boot, API and real-time.
-
-> For out-of-tree LKMs (e.g. storage driver, filesystems) that can be loaded as
-> a loadable kernel module, the provider/developer can directly sell the code to
-> end users (i.e. they can sell without being accepted by the upstream Linux
-> community and being enabled by the Linux distributors' kernel configurations).
->
-> But for out-of-tree LSMs that cannot be loaded as a loadable kernel module,
-> the provider/developer currently cannot directly sell the code to end users.
->
-> You said
->
->   This makes it sound like LSMs are always developed for corporate use.
->   While that is generally true, we should acknowledge that the "sponsor"
->   of an LSM could be a corporation/government, a foundation or a hobbyist.
->   A large, comprehensive LSM from a billion dollar corporation in support
->   of a specific product should require more commitment than a small, targeted
->   LSM of general interest from joe@schlobotnit.org. I trust that we would
->   have the wisdom to make such a distinction, but I don't think we want to
->   scare off developers by making it sound like an LSM is something that only
->   a corporation can provide a support plan for.
->
-> at https://lkml.kernel.org/r/847729f6-99a6-168e-92a6-b1cff1e6b97f@schaufler-ca.com .
->
-> But "it's the developer's job to sell the code to the communities involved" is
-> too hard for alone developer who can write a code and provide support for that code
-> but cannot afford doing activities for selling that code (e.g. limited involvement
-> with communities).
->
-> Your "it's the developer's job" comment sounds like "LSMs are always developed by
-> those corporation/government who has much involvement with communities" which
-> scares off developers who can't afford doing activities for selling that code.
-
-Sorry, but you've chosen the wrong person to present that argument to.
-Smack was developed without any corporate, government or foundation support.
-I wrote it in a theater green room  during rehearsals for a production of
-"Madmoiselle Modiste". It has, from time to time, received corporate support,
-but is currently completely self funded. Yes, it's hard. Yes, the commitment
-could well scare off many developers. If you want easy, create websites.
+This seems right to me. Thank You.
 
 >
->>>> On a less happy note, you haven't addressed security blobs in any way. You
->>>> need to provide a mechanism to allow an LSM to share security blobs with
->>>> builtin LSMs and other loadable LSMs.
->>> Not all LKM-based LSMs need to use security blobs.
->> If you only want to support "minor" LSMs, those that don't use shared blobs,
->> the loadable list implementation will suit you just fine. And because you won't
->> be using any of the LSM infrastructure that needs the LSM ID, that won't be
->> an issue.
-> Minor LSMs can work without using shared blobs managed by the LSM infrastructure.
-> AKARI/CaitSith are LKM-based LSMs that do not need to use shared blobs managed by
-> the LSM infrastructure. TOMOYO does not need an LSM ID value, but you are trying
-> to make an LSM ID mandatory for using the LSM infrastructure.
+> Roberto
 >
->> You can make something that will work. Whether you can sell it upstream will
->> depend on any number of factors. But working code is always a great start.
-> Selling a code to the upstream is not sufficient for allowing end users to use
-> that code.
->
-> For https://bugzilla.redhat.com/show_bug.cgi?id=542986 case, the reason that Red Hat
-> does not enable Smack/TOMOYO/AppArmor is "Smack/TOMOYO/AppArmor are not attractive".
-
-And YAMA is enabled because it *is* attractive to RedHat's support based business
-model. Even if we did have loadable LSM support I doubt RedHat would even consider
-enabling it. Their model is based on selling support.
-
-> After all, requiring any LSMs to be built-in is an unreasonable barrier compared to
-> other LKMs (e.g. storage driver, filesystems).
->
+>> ---
+>>  include/uapi/linux/lsm.h | 15 +++++++--------
+>>  1 file changed, 7 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
+>> index eeda59a77c02..f0386880a78e 100644
+>> --- a/include/uapi/linux/lsm.h
+>> +++ b/include/uapi/linux/lsm.h
+>> @@ -54,14 +54,13 @@ struct lsm_ctx {
+>>  #define LSM_ID_SELINUX		101
+>>  #define LSM_ID_SMACK		102
+>>  #define LSM_ID_TOMOYO		103
+>> -#define LSM_ID_IMA		104
+>> -#define LSM_ID_APPARMOR		105
+>> -#define LSM_ID_YAMA		106
+>> -#define LSM_ID_LOADPIN		107
+>> -#define LSM_ID_SAFESETID	108
+>> -#define LSM_ID_LOCKDOWN		109
+>> -#define LSM_ID_BPF		110
+>> -#define LSM_ID_LANDLOCK		111
+>> +#define LSM_ID_APPARMOR		104
+>> +#define LSM_ID_YAMA		105
+>> +#define LSM_ID_LOADPIN		106
+>> +#define LSM_ID_SAFESETID	107
+>> +#define LSM_ID_LOCKDOWN		108
+>> +#define LSM_ID_BPF		109
+>> +#define LSM_ID_LANDLOCK		110
+>>  
+>>  /*
+>>   * LSM_ATTR_XXX definitions identify different LSM attributes
