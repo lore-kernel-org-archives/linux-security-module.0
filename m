@@ -2,424 +2,192 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE0ACDB474
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Oct 2023 14:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 037D7CDB474
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Oct 2023 15:05:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377583AbjJTO5x (ORCPT
+        id S1377616AbjJTPFl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Oct 2023 10:57:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38678 "EHLO
+        Fri, 20 Oct 2023 11:05:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377598AbjJTO5w (ORCPT
+        with ESMTP id S1377577AbjJTPFk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Oct 2023 10:57:52 -0400
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [IPv6:2001:1600:4:17::1908])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44829D5D
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Oct 2023 07:57:48 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SBnkc6psDzMq06D;
-        Fri, 20 Oct 2023 14:57:44 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SBnkc1QKXzMpp01;
-        Fri, 20 Oct 2023 16:57:44 +0200 (CEST)
+        Fri, 20 Oct 2023 11:05:40 -0400
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0DF0A3
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Oct 2023 08:05:37 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SBnvg6nBDzMqHLL;
+        Fri, 20 Oct 2023 15:05:35 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4SBnvg2176z3b;
+        Fri, 20 Oct 2023 17:05:35 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1697813864;
-        bh=+E3xuq2zscvbr6YOq9c7+a3VmTvrRogs9lMHmeV5taM=;
+        s=20191114; t=1697814335;
+        bh=njuqT2Dtzt8yD2SS29IDyPbGdkQ7KqlUSdyk8Y00fEw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qzA0ywzN5ziDEy154xfSJ4qEGNj8DgZciquGG3ZrQk4LuTqFIqVqG1Tp1KG7PyGcO
-         /E1EBc1XmNxptF8Ssp4WE4he2DxcTEteUskQkmNULrJxpP3aL7vfxu2vc1ijxuGVKh
-         WA9aA5orDwzxy4fKeY+5Y8+7CzmaReH29Ib2Hjpk=
-Date:   Fri, 20 Oct 2023 16:57:39 +0200
+        b=1R/2CEEIjZpCzEI5IaiHOAoSCZTzCcczh2J9P0+9cEY4bG5fjoD29S1DvB8v4fNZZ
+         o3WWCJwyg3PKNRTtM0G4sRouZ0AOeGcLMiBpZMs5gytpno/ssnLjERUQzd6cgOKqvt
+         x+zgYJnq4HfYZ7TsTo2KqnMTqxERGpY5ZIF5ONyM=
+Date:   Fri, 20 Oct 2023 17:05:33 +0200
 From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Matt Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support
-Message-ID: <20231020.moefooYeV9ei@digikod.net>
-References: <20230814172816.3907299-1-gnoack@google.com>
- <20230818.iechoCh0eew0@digikod.net>
- <ZOjCz5j4+tgptF53@google.com>
- <20230825.Zoo4ohn1aivo@digikod.net>
- <20230826.ohtooph0Ahmu@digikod.net>
- <ZPMiVaL3kVaTnivh@google.com>
- <20230904.aiWae8eineo4@digikod.net>
- <ZP7lxmXklksadvz+@google.com>
- <20230911.jie6Rai8ughe@digikod.net>
- <ZTGpIBve2LVlbt6p@google.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
+        Konrad Wilk <konrad.wilk@oracle.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        KP Singh <kpsingh@kernel.org>
+Subject: Re: RFC: New LSM to control usage of x509 certificates
+Message-ID: <20231020.wae7johZae2i@digikod.net>
+References: <CAHC9VhRdU1CZJpPSEdSmui-Xirr0j261K=+SM7KiDwiPG-JSrQ@mail.gmail.com>
+ <a851227aaa75ab16b0d6dd93433e1ee1679715f9.camel@linux.ibm.com>
+ <CAHC9VhS_Ttdy5ZB=jYdVfNyaJfn_7G1wztr5+g0g7uUDForXvA@mail.gmail.com>
+ <5c795b4cf6d7460af205e85a36194fa188136c38.camel@linux.ibm.com>
+ <CAHC9VhTug20M0ET=QojUPtjrGkeHfU=ADDNrKfXmLTQPG_i1vw@mail.gmail.com>
+ <2512D2AE-4ACA-41B9-B9FB-C2B4802B9A10@oracle.com>
+ <20231018.heiju2Shexai@digikod.net>
+ <18FC67B7-7966-49B7-8C27-F815F1568781@oracle.com>
+ <20231019.vair7OoRie7w@digikod.net>
+ <0296DA27-7CAF-4605-AF67-3645F82BEE4D@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZTGpIBve2LVlbt6p@google.com>
+In-Reply-To: <0296DA27-7CAF-4605-AF67-3645F82BEE4D@oracle.com>
 X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 20, 2023 at 12:09:36AM +0200, Günther Noack wrote:
-> Hello!
+On Thu, Oct 19, 2023 at 11:08:38PM +0000, Eric Snowberg wrote:
 > 
-> On Mon, Sep 11, 2023 at 05:25:31PM +0200, Mickaël Salaün wrote:
-> > On Mon, Sep 11, 2023 at 12:02:46PM +0200, Günther Noack wrote:
-> > > Thank you for making the algorithm that explicit -- that helps to trace down the
-> > > differences.  I can follow the logic now, but I still don't understand what your
-> > > underlying rationale for that is?
-> > > 
-> > > I believe that fundamentally, a core difference is:
-> > > 
-> > > For an access right R and a file F, for these two cases:
-> > > 
-> > >  (a) the access right R is unhandled  (nothing gets restricted)
-> > >  (b) the access right R is handled, but R is granted for F in a rule.
-> > > 
-> > > I believe that accesses in case (a) and (b) to the file F should have the same
-> > > results.
-> > > 
-> > > This is at least how the existing Landlock implementation works, as far as I can
-> > > tell.
-> > > 
-> > > ("Refer" is an exceptional case, but we have documented that it was always
-> > > "implicitly handled" in ABI V1, which makes it consistent again.)
-> > > 
-> > > 
-> > > When I expand your code above to a boolean table, I end up with the following
-> > > decisions, depending on whether IOCTL and READ are handled or not, and whether
-> > > they are explicitly permitted for the file through a rule:
-> > > 
-> > > 
-> > > Mickaël's        IOCTL      IOCTL      IOCTL
-> > > suggestion       handled,   handled,   unhandled
-> > > 2023-09-04       file       file not
-> > >                  permitted  permitted
-> > > --------------------------------------------------
-> > > READ handled,
-> > > file permitted   allow      allow      allow
-> > > 
-> > > READ handled,
-> > > f not permitted  deny       deny       allow
-> > > 
-> > > READ unhandled   allow      deny       allow
-> > > 
-> > > 
-> > > In patch set V3, this is different: Because I think that cases (a) and (b) from
-> > > above should always behave the same, the first and third column and row must be
-> > > symmetric and have the same entries.  So, in patch set V3, it is sufficient if
-> > > *one of* the two rights IOCTL and READ_FILE are present, in order to use the
-> > > FIONREAD IOCTL:
-> > > 
-> > > 
-> > > Günther's        IOCTL      IOCTL      IOCTL
-> > > patch set V3     handled,   handled,   unhandled
-> > > 2023-08-14       file       file not
-> > >                  permitted  permitted
-> > > --------------------------------------------------
-> > > READ handled,
-> > > file permitted   allow      allow      allow
-> > > 
-> > > READ handled,
-> > > f not permitted  allow      deny       allow
-> > > 
-> > > READ unhandled   allow      allow      allow
+> 
+> > On Oct 19, 2023, at 3:12 AM, Mickaël Salaün <mic@digikod.net> wrote:
 > > 
-> > A first difference is about (READ unhandled) AND (IOCTL handled +
-> > file not permitted). It will not be possible to follow the same logic
-> > with new Landlock access right (e.g. LANDLOCK_ACCESS_FS_READ_METADATA
-> > that should also allow FS_IOC_FSGETXATTR), and I'd like to keep it
-> > consistent.
+> > On Wed, Oct 18, 2023 at 11:12:45PM +0000, Eric Snowberg wrote:
+> >> 
+> >> 
+> >>> On Oct 18, 2023, at 8:14 AM, Mickaël Salaün <mic@digikod.net> wrote:
+> >>> 
+> >>> On Tue, Oct 17, 2023 at 07:34:25PM +0000, Eric Snowberg wrote:
+> >>>> 
+> >>>> 
+> >>>>> On Oct 17, 2023, at 12:51 PM, Paul Moore <paul@paul-moore.com> wrote:
+> >>>>> 
+> >>>>> On Tue, Oct 17, 2023 at 1:59 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >>>>>> On Tue, 2023-10-17 at 13:29 -0400, Paul Moore wrote:
+> >>>>>>> On Tue, Oct 17, 2023 at 1:09 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >>>>>>>> On Tue, 2023-10-17 at 11:45 -0400, Paul Moore wrote:
+> >>>>>>>>> On Tue, Oct 17, 2023 at 9:48 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >>>>>>>>>> On Thu, 2023-10-05 at 12:32 +0200, Mickaël Salaün wrote:
+> >>>>>>>>>>>>>> A complementary approach would be to create an
+> >>>>>>>>>>>>>> LSM (or a dedicated interface) to tie certificate properties to a set of
+> >>>>>>>>>>>>>> kernel usages, while still letting users configure these constraints.
+> >>>>>>>>>>>>> 
+> >>>>>>>>>>>>> That is an interesting idea.  Would the other security maintainers be in
+> >>>>>>>>>>>>> support of such an approach?  Would a LSM be the correct interface?
+> >>>>>>>>>>>>> Some of the recent work I have done with introducing key usage and CA
+> >>>>>>>>>>>>> enforcement is difficult for a distro to pick up, since these changes can be
+> >>>>>>>>>>>>> viewed as a regression.  Each end-user has different signing procedures
+> >>>>>>>>>>>>> and policies, so making something work for everyone is difficult.  Letting the
+> >>>>>>>>>>>>> user configure these constraints would solve this problem.
+> >>>>>>>>>> 
+> >>>>>>>>>> Something definitely needs to be done about controlling the usage of
+> >>>>>>>>>> x509 certificates.  My concern is the level of granularity.  Would this
+> >>>>>>>>>> be at the LSM hook level or even finer granaularity?
+> >>>>>>>>> 
+> >>>>>>>>> You lost me, what do you mean by finer granularity than a LSM-based
+> >>>>>>>>> access control?  Can you give an existing example in the Linux kernel
+> >>>>>>>>> of access control granularity that is finer grained than what is
+> >>>>>>>>> provided by the LSMs?
+> >>>>>>>> 
+> >>>>>>>> The current x509 certificate access control granularity is at the
+> >>>>>>>> keyring level.  Any key on the keyring may be used to verify a
+> >>>>>>>> signature.  Finer granularity could associate a set of certificates on
+> >>>>>>>> a particular keyring with an LSM hook - kernel modules, BPRM, kexec,
+> >>>>>>>> firmware, etc.  Even finer granularity could somehow limit a key's
+> >>>>>>>> signature verification to files in particular software package(s) for
+> >>>>>>>> example.
+> >>>>>>>> 
+> >>>>>>>> Perhaps Mickaël and Eric were thinking about a new LSM to control usage
+> >>>>>>>> of x509 certificates from a totally different perspective.  I'd like to
+> >>>>>>>> hear what they're thinking.
+> >>>>>>>> 
+> >>>>>>>> I hope this addressed your questions.
+> >>>>>>> 
+> >>>>>>> Okay, so you were talking about finer granularity when compared to the
+> >>>>>>> *current* LSM keyring hooks.  Gotcha.
+> >>>>>>> 
+> >>>>>>> If we need additional, or modified, hooks that shouldn't be a problem.
+> >>>>>>> Although I'm guessing the answer is going to be moving towards
+> >>>>>>> purpose/operation specific keyrings which might fit in well with the
+> >>>>>>> current keyring level controls.
+> >>>>>> 
+> >>>>>> I don't believe defining per purpose/operation specific keyrings will
+> >>>>>> resolve the underlying problem of granularity.
+> >>>>> 
+> >>>>> Perhaps not completely, but for in-kernel operations I believe it is
+> >>>>> an attractive idea.
+> >>>> 
+> >>>> Could the X.509 Extended Key Usage (EKU) extension [1], be used here?  
+> >>>> Various OIDs would need to be defined or assigned for each purpose.  
+> >>>> Once assigned, the kernel could parse this information and do the
+> >>>> enforcement.  Then all keys could continue to remain in the .builtin, 
+> >>>> .secondary, and .machine keyrings.   Only a subset of each keyring 
+> >>>> would be used for verification based on what is contained in the EKU.
+> >>>> 
+> >>>> 1. https://www.rfc-editor.org/rfc/rfc5280#section-4.2.1.12
+> >>> 
+> >>> I was also thinking about this kind of use cases. Because it might be
+> >>> difficult in practice to control all certificate properties, we might
+> >>> want to let sysadmins configure these subset of keyring according to
+> >>> various certificate properties.
+> >> 
+> >> I agree, a configuration component for a sysadmin would be needed.
+> >> 
+> >>> There are currently LSM hooks to control
+> >>> interactions with kernel keys by user space, and keys are already tied
+> >>> to LSM blobs. New LSM hooks could be added to dynamically filter
+> >>> keyrings according to kernel usages (e.g. kernel module verification, a
+> >>> subset of an authentication mechanism according to the checked object).
+> >> 
+> >> If an LSM hook could dynamically filter keyrings, and the EKU was used, 
+> >> is there an opinion on how flexible this should be?  Meaning, should there 
+> >> be OIDs defined and carried in mainline code?  This would make it easier 
+> >> to setup and use.  However who would be the initial OID owner?  Or would 
+> >> predefined OIDs not be contained within mainline code, leaving it to the 
+> >> sysadmin to create a policy that would be fed to the LSM to do the filtering.
 > > 
-> > A second difference is about (READ handled + f not permitted) AND
-> > (IOCTL handled + file permitted). The reasoning was to avoid giving too
-> > much power to LANDLOCK_ACCESS_FS_IOCTL and dowgrade it as new access
-> > rights are implemented. This looks quite similar to the CAP_SYS_ADMIN
-> > right that can basically do anything, and new capabilites are mainly a
-> > subset of this one. My proposal was to incrementally downgrade the power
-> > given by LANDLOCK_ACCESS_FS_IOCTL while still being compatible. On the
-> > I was thinking that, if we make a requirement to have the "new correct"
-> > access right, the application update might drop the IOCTL access right.
-> > I now think this reasoning is flawed.
-> > 
-> > Indeed, this comparaison doesn't fit well because IOCTLs are not a
-> > superset of all access rights, and because nothing can force developers
-> > that already gave access to all IOCTLs for a file to not just add
-> > another access right (instead of swapping them).
-> > 
-> > Instead, I think user space libraries should manage this kind of access
-> > right swapping when possible and have a fallback mechanism relying on
-> > the LANDLOCK_ACCESS_FS_IOCTL right. This would be valuable because they
-> > may be updated before the (stable system) kernel, and this would be
-> > easier for developers to manage.
-> > 
-> > In a nutshell, it is about giving control for an action (e.g. FIONREAD)
-> > to either a unique access right or to a set of access rights. At first,
-> > I would have preferred to have a unique access right to control an
-> > action, because it is simpler (e.g. for audit/debug). On the other hand,
-> > we need to handle access rights that allow the same action (e.g. file
-> > read OR write for FIOQSIZE). I now think your approach (i.e. set of
-> > access rights to control an action) could make more sense. Another good
-> > point is to not downgrade the power of LANDLOCK_ACCESS_FS_IOCTL, which
-> > could in fact be difficult to understand for users. Nested Landlock
-> > domains should also be easier to manage with this logic.
+> > The more flexible approach would be to not hardcode any policy in the
+> > kernel but let sysadmins define their own, including OIDs. We "just"
+> > need to find an adequate configuration scheme to define these
+> > constraints.
+> 
+> Also, with the flexible approach, the policy would need to be given to the 
+> kernel before any kernel module loads, fs-verity starts, or anything dealing 
+> with digital signature based IMA runs, etc.  With hardcoded policies this 
+> could be setup from the kernel command line or be set from a Kconfig.  
+> I assume with a flexible approach, this would need to come in early within 
+> the initram?
 
-Hmm, in fact I think my initial reasoning was better. I still agree with
-my suggestion from 2023-09-04, and I think you're now proposing the
-same. Handling access right in an exclusive way (i.e. a specific IOCTL
-command is always handle by only one access rigth, but this one may
-depend on the handle access rights) is indeed better because it will
-force developers to not use the generic IOCTL access right instead of
-e.g. the GFX one once they want to use it. In practice, it can reduce
-the set of IOCTL commands allowed for LANDLOCK_ACCESS_FS_IOCTL-only file
-hierarchies if users only allow the new LANDLOCK_ACCESS_FS_GFX to the
-appropriate (e.g. /dev/dri) files.
-
-To summarize, the reasoning is as follow: when READ is handled, the
-related IOCTL commands (e.g. FIONREAD) are delegated to the READ access
-right (both for the ruleset and the related rules), and the IOCTL access
-right doesn't handle at all FIONREAD. If READ is not handled, then the
-IOCTL access right handles FIONREAD as well. The same logic applies to
-any current or future access rights, like LANDLOCK_ACCESS_FS_GFX.
+Yes, either the cmdline and/or the initramfs.
 
 > 
-> After we discussed this difficult topic briefly off-list, let me try to
-> summarize my takeaways and write it up here for reference.
+> > We already have an ASN.1 parser in the kernel, so we might
+> > want to leverage that to match a certificate.
 > 
-> I think the requirements for the logic of the IOCTL right are as follows:
-> 
->  (1) In the future, if a new FOO access right is introduced, this right should
->      implicitly give access to FOO-related IOCTLs on the affected same files,
->      *without requiring the LANDLOCK_ACCESS_FS_IOCTL right*.
-> 
->      Example: If in Landlock version 10, we introduce LANDLOCK_ACCESS_FS_GFX for
->      graphics-related functionality, this access right should potentially give
->      access to graphics-related ioctl commands.  I'll use the "GFX" example
->      below as a stand-in for a generic future access right which should give
->      access to a set of IOCTL commands.
-> 
-> and then the ones which are a bit more obvious:
-> 
->  (2) When stacking additional Landlock layers, the thread's available access can
->      only be restricted further (it should not accidentally be able to do more
->      than before).
-> 
->  (3) Landlock usages need to stay compatible across kernel versions.
->      The Landlock usages that are in use today need to do the same thing
->      in future kernel versions.
-> 
-> I had indeed overlooked requirement (1) and did not realize that my proposal was
-> going to be at odds with that.
-> 
-> 
-> 
-> ## Some counterexamples for approaches that don't work
-> 
-> So: Counterexample for why my earlier proposal (OR-combination) does not work:
-> 
->   In my proposal, a GFX-related IOCTL would be permitted when *either one* of
->   the ..._GFX or the ..._IOCTL rights are available for the file.  (The READ
->   right in the tables above should work the same as the GFX or FOO rights from
->   requirement (1), for consistency).
-> 
->   So a user who today uses
-> 
->     handled: LANDLOCK_ACCESS_FS_IOCTL
->     allowed: (nothing)
-> 
->   will expect that GFX-related IOCTL operations are forbidden.  (We do not know
->   yet whether the "GFX" access right will ever exist, therefore it is covered by
->   LANDLOCK_ACCESS_FS_IOCTL.)
-> 
->   Now we introduce the LANDLOCK_ACCESS_FS_GFX right, and suddenly, GFX-related
->   IOCTL commands are checked with a new logic: You *either* need to have the
->   LANDLOCK_ACCESS_FS_IOCTL right, *or* the LANDLOCK_ACCESS_FS_GFX right.  So
->   when the user again uses
-> 
->     handled: LANDLOCK_ACCESS_FS_IOCTL
->     allowed: (nothing)
-> 
->   the user would according to the new logic suddenly *have* the
->   LANDLOCK_ACCESS_FS_GFX right, and these IOCTL commands would be permitted.
-> 
->   This is a change of how Landlock behaves compared to the earlier version,
->   and that is at odds with rule (3).
-> 
-> 
-> The other obvious bitwise combination (AND) does not work either -- that one
-> would violate requirement (1).
-> 
+> We have the parser, however after parsing the certificate we do not 
+> retain all the information within it.  Some of the recent changes I have 
+> done required modifications to the public_key struct.  If there isn’t any 
+> type of hard coded policy, what would be the reception of retaining the 
+> entire cert within the kernel? 
 
-Good summary, thanks!
-
-> 
-> ## A new proposal
-> 
-> We have discussed above that one option would be to start distinguishing between
-> the case where a right is "not handled" and the case where the right is
-> "handled, but allowed on the file".
-> 
-> This is not very nice, because it would be inconsistent with the semantics which
-> we had before for all other rights.
-> 
-> After thinking a bit more about it, one way to look at it is that we are using
-> the "handled" flags to control how the IOCTLs are grouped.  I agree that we have
-> to control the IOCTL grouping, but I am not sure whether the "handled" flags are
-> the right place to do that. -- We could just as well pass instructions about the
-> IOCTL grouping out of band, and I think it might make that logic clearer:
-> 
-> To put forward something concrete, how about this:
-> 
-> * LANDLOCK_ACCESS_FS_IOCTL: This access right controls the invocation of IOCTL
->   commands, unless these commands are controlled by another access right.
-> 
->   In every layer, each IOCTL command is only controlled through one access right.
-
-Yes, I agree with that, see the reasoning about handling access right in
-an exclusive way above.
-
-> 
-> * LANDLOCK_ACCESS_FS_READ_FILE: This access right controls opening files for
->   reading, and additionally the use of the FIONREAD ioctl command.
-
-Yes
-
-> 
-> * We introduce a flag in struct landlock_ruleset_attr which controls whether the
->   graphics-related IOCTLs are controlled through the LANDLOCK_ACCESS_FS_GFX
->   access right, rather than through LANDLOCK_ACCESS_FS_IOCTL.
-> 
->   (This could potentially also be put in the "flags" argument to
->   landlock_create_ruleset(), but it feels a bit more appropriate in the struct I
->   think, as it influences the interpretation of the logic.  But I'm open to
->   suggestions.)
-> 
-
-What would be the difference with creating a
-LANDLOCK_ACCESS_FS_GFX_IOCTL access right?
-
-The main issue with this approach is that it complexifies the usage of
-Landlock, and users would need to tweak more knobs to configure a
-ruleset.
-
-What about keeping my proposal (mainly the IOCTL handling and delegation
-logic) for the user interface, and translate that for kernel internals
-to your proposal? See the below example.
-
-
-> 
-> Example: Without the flag, the IOCTL groups will be:
-> 
->   These are always permitted:   FIOCLEX, FIONCLEX, FIONBIO, etc.
->   LANDLOCK_ACCESS_FS_READ_FILE: controls FIONREAD
->   LANDLOCK_ACCESS_FS_IOCTL:     controls all other IOCTL commands
-> 
-> but when users set the flag, the IOCTL groups will be:
-> 
->   These are always permitted:   FIOCLEX, FIONCLEX, FIONBIO, etc.
->   LANDLOCK_ACCESS_FS_READ_FILE: controls FIONREAD
->   LANDLOCK_ACCESS_FS_GFX:       controls (list of gfx-related IOCTLs)
->   LANDLOCK_ACCESS_FS_IOCTL:     controls all other IOCTL commands
-> 
-
-Does this mean that handling LANDLOCK_ACCESS_FS_GFX without the flag
-would not allow GFX-related IOCTL commands? Thit would be inconsistent
-with the way LANDLOCK_ACCESS_FS_READ_FILE is handled.
-
-Would this flag works with non-GFX access rights as well? Would there be
-potentially one new flag per new access right?
-
-> 
-> Implementation-wise, I think it would actually look very similar to what would
-> be needed for your proposal of having a new special meaning for "handled".  It
-> would have the slight advantage that the new flag is actually only needed at the
-> time when we introduce a new way of grouping the IOCTL commands, so we would
-> only burden users with the additional complexity when it's actually required.
-
-Indeed, and burdening users with more flags would increase the cost of
-(properly) using Landlock.
-
-I'm definitely in favor to make the Landlock interface as simple as
-possible, taking into account the inherent compatibilty complexity, and
-pushing most of this complexity handling to user space libraries, and if
-it not possible, pushing the rest of the complexity into the kernel.
-
-> 
-> One implementation approach that I find reasonable to think about is to create
-> "synthetic" access rights when rulesets are enabled.  That is, we introduce
-> LANDLOCK_ACCESS_FS_SYNTHETIC_GFX_IOCTL (name TBD), but we keep this constant
-> private to the kernel.
-> 
-> * *At ruleset enablement time*, we populate the bit for this access right either
->   from the LANDLOCK_ACCESS_FS_GFX or the LANDLOCK_ACCESS_FS_IOCTL bit from the
->   same access_mask_t, depending on the IOCTL grouping which the ruleset is
->   configured with.
-> 
-> * *In hook_file_open*, we then check for LANDLOCK_ACCESS_FS_SYNTHETIC_GFX_IOCTL
->   for the GFX-related IOCTL commands.
-> 
-> I'm in favor of using the synthetic access rights, because I find it clearer to
-> understand that the effective access rights for a file from different layers are
-> just combined with a bitwise AND, and will give the right results.  We could
-> probably also make these path walk helpers aware of the special cases and only
-> have the synthetic right in layer_masks_dom, but I'd prefer not to complicate
-> these helpers even further.
-
-I like this synthetic access right approach, but what worries me is that
-it will potentially double the number of access rights. This is not an
-issue for the handled access right (i.e. per ruleset layer), but we
-should avoid that for allowed accesses (i.e. rules). Indeed, the
-layer_masks[] size is proportional to the number of potential allowed
-access rights, and increasing this array could increase the kernel stack
-size (see is_access_to_paths_allowed).  It would not be an issue for now
-though, we have a lot of room, it is just something to keep in mind.
-
-Because of the way we need to compare file hierarchies (cf. FS_REFER),
-it seems to be safer to only rely on (synthetic) access rights. So I
-think it is the right approach.
-
-> 
-> 
-> Sorry for the long mail, I hope that the examples clarify it a bit. :)
-> 
-> In summary, it seems conceptually cleaner to me to control every IOCTL command
-> with only one access right, and let users control which one that should be with
-> a separate flag, so that "handled" keeps its original semantics.  It would also
-> have the upside that we can delay that implementation until the time where we
-> actually introduce new IOCTL-aware access rights on top of the current patch st.
-
-I don't see how we'll not get an inconsistent logic: a first one with
-old/current access rights, and another one for future access rights
-(e.g. GFX).
-
-> 
-> I'd be interested to hear your thoughts on it.
-
-Thanks for this detailed explanation, that is useful.
-
-I'm in favor of the synthetic access right, but I'd like to not add
-optional flags to the user API.  What do you think about the kernel
-doing the translation to the synthetic access rights?
-
-To make the reasoning easier for the kernel implementation, following
-the synthetic access rights idea, we can create these groups:
-
-* IOCTL_CMD_G1: FIOQSIZE
-* IOCTL_CMD_G2: FS_IOCT_FIEMAP | FIBMAP | FIGETBSZ
-* IOCTL_CMD_G3: FIONREAD | FIDEDUPRANGE
-* IOCTL_CMD_G4: FICLONE | FICLONERANGE | FS_IOC_RESVSP | FS_IOC_RESVSP64
-  | FS_IOC_UNRESVSP | FS_IOC_UNRESVSP64 | FS_IOC_ZERO_RANGE
-
-Existing (and future) access rights would automatically get the related
-IOCTL fine-grained rights *if* LANDLOCK_ACCESS_FS_IOCTL is handled:
-* LANDLOCK_ACCESS_FS_WRITE_FILE: IOCTL_CMD_G1 | IOCTL_CMD_G2 | IOCTL_CMD_G4
-* LANDLOCK_ACCESS_FS_READ_FILE: IOCTL_CMD_G1 | IOCTL_CMD_G2 | IOCTL_CMD_G3
-* LANDLOCK_ACCESS_FS_READ_DIR: IOCTL_CMD_G1
-
-This works with the ruleset handled access rights and the related rules
-allowed accesses by simply ORing the access rights.
-
-We should also keep in mind that some IOCTL commands may only be related
-to some specific file types or filesystems, either now or in the future
-(see the GFX example).
+I think it would make sense to have a default policy loaded at boot
+time, then load and take into account new pieces of policies at run
+time, but only parse/tag/assign a role to certificates/keys when they
+are loaded.
