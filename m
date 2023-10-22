@@ -2,242 +2,146 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDE1C001E0
-	for <linux-security-module@archiver.kernel.org>; Sat, 21 Oct 2023 15:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7155BCDB474
+	for <linux-security-module@archiver.kernel.org>; Sun, 22 Oct 2023 07:47:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229784AbjJUPU0 (ORCPT
+        id S231302AbjJVHrE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 21 Oct 2023 11:20:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42594 "EHLO
+        Sun, 22 Oct 2023 03:47:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbjJUPU0 (ORCPT
+        with ESMTP id S229574AbjJVHrD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 21 Oct 2023 11:20:26 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02F54B9
-        for <linux-security-module@vger.kernel.org>; Sat, 21 Oct 2023 08:20:21 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C6EFC433C9
-        for <linux-security-module@vger.kernel.org>; Sat, 21 Oct 2023 15:20:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697901620;
-        bh=0Gmd61gVU7OV3YQ4CdC1tFp5ZjI/yfun2/AA4yKUQn8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ofwQDabjnop143X1Ma1r9TGfS0it3pZz8d80plBFGPtcBUz+3iBkOWeoIwm03UVBw
-         lSxiJ99ukL7ZHMoU24vesBXawiYXzOTUxJ4lS8PWODQtSJvDn0P1tEzX1kgaReVj3S
-         CdQAHWtuQCEj9mdCO5wLjuNN6G7oOXFzEcR8bqB/pXFel/xby16/k4NwBqVRB7rDg+
-         w9Vyzn937OP105XcgCWxpXA0bSqajWIrTCDyUoGTN7XuHCzcjJvN4uBMVF+jVhbQYF
-         /qr2QE4qVcRdFhzuWOdSvyUOEXuwrzebzxpmkmDmTLEftGx3n7HfE0CnQix5xMdvsY
-         rx508mntkPd0Q==
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-53f9af41444so2791711a12.1
-        for <linux-security-module@vger.kernel.org>; Sat, 21 Oct 2023 08:20:20 -0700 (PDT)
-X-Gm-Message-State: AOJu0YxqpKUSaifuRMmribWRz3oLXHL7FwnV6wxXsBhXI0Lc6SUp1vjr
-        MeTxDAd2LschZS01pzohEuzJExY5vQAMfTc3xzXa6Q==
-X-Google-Smtp-Source: AGHT+IE20Xo6pHoho6fajct5r8/9HwJGbi2wxF8EWCRcozI+zZ8JbKmbMm7ZluTNXF/fnSeWrQ5j48PUtExd1rh3AEk=
-X-Received: by 2002:a05:6402:26d2:b0:53e:94f8:85b0 with SMTP id
- x18-20020a05640226d200b0053e94f885b0mr4279905edd.13.1697901618959; Sat, 21
- Oct 2023 08:20:18 -0700 (PDT)
+        Sun, 22 Oct 2023 03:47:03 -0400
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F5BCC;
+        Sun, 22 Oct 2023 00:47:00 -0700 (PDT)
+Received: from [192.168.192.84] (unknown [50.39.103.33])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 534A342732;
+        Sun, 22 Oct 2023 07:46:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1697960814;
+        bh=WB+8WjIO1VEXw7L2QJVhv5i0iYMRF2BYuApMSurcBbA=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=hD1YRBqV+2Av9c8qCN3I9BXfyFyyYFa1C8XnXJrTjBLe+IqfIu1iMaEKJJyx+GLiX
+         4os4A70v0TO1nRi1XEFt2YEFOVuzHjl6/JmLei4ae8+ni+MhXwJNbpZdCVEZFzPhRl
+         SuAAgadg1YS4k6ewby7yF5pMXaqLb01Es/6TXuvUX8RmXTuL45rmJP/0hcEH3F5TgT
+         xFAgE5xu0PgUlFrg5SpFcqhuj2pwvobVZjuHBgsx5gSA6CJQASWSGFhAnxxqD0gaSD
+         Q54oX+YkkX/+YewaqYinKhMD5TupV88eSgmoec6dPfJ2Jae8ip5Z5tPvptvxtiyxRF
+         bbMrqqZo18rBA==
+Message-ID: <528363d9-bf39-401d-b696-a034917a4610@canonical.com>
+Date:   Sun, 22 Oct 2023 00:46:48 -0700
 MIME-Version: 1.0
-References: <cc8e16bb-5083-01da-4a77-d251a76dc8ff@I-love.SAKURA.ne.jp>
- <CACYkzJ5k7oYxFgWp9bz1Wmp3n6LcU39Mh-HXFWTKnZnpY-Ef7w@mail.gmail.com>
- <153e7c39-d2e2-db31-68cd-cb05eb2d46db@I-love.SAKURA.ne.jp>
- <CACYkzJ79fvoQW5uqavdLV=N8zw6uern8m-6cM44YYFDhJF248A@mail.gmail.com>
- <f249c8f0-e053-066b-edc5-59a1a00a0868@I-love.SAKURA.ne.jp>
- <CACYkzJ7kzXGcjRdyaOWCaigPWcKXU7_KW_bFg9ptrnwAeJ2AgQ@mail.gmail.com> <d060365e-7c87-451e-a92a-edb4904e77a7@I-love.SAKURA.ne.jp>
-In-Reply-To: <d060365e-7c87-451e-a92a-edb4904e77a7@I-love.SAKURA.ne.jp>
-From:   KP Singh <kpsingh@kernel.org>
-Date:   Sat, 21 Oct 2023 17:20:08 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ7S00K8f-H7EdDz3CFyxbfoQ1zQXDj7oWpY3dkDjFb0LA@mail.gmail.com>
-Message-ID: <CACYkzJ7S00K8f-H7EdDz3CFyxbfoQ1zQXDj7oWpY3dkDjFb0LA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] LSM: Allow dynamically appendable LSM modules.
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] apparmor: mark new functions static
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@kernel.org>, Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Georgia Garcia <georgia.garcia@canonical.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Khadija Kamran <kamrankhadijadj@gmail.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>, bpf <bpf@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Christian Brauner <brauner@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20231020131303.785906-1-arnd@kernel.org>
+From:   John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20231020131303.785906-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Oct 21, 2023 at 4:19=E2=80=AFPM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On 2023/10/04 0:09, KP Singh wrote:
-> >> What I expected is "allocate memory where amount is determined at runt=
-ime" (e.g. alloc(), realloc()).
-> >
-> > One can use dynamically sized allocations on the ring buffer with
-> > dynamic pointers:
-> >
-> > http://vger.kernel.org/bpfconf2022_material/lsfmmbpf2022-dynptr.pdf
-> >
-> > Furthermore, there are some use cases that seemingly need dynamic
-> > memory allocation but not really. e.g. there was a need to audit
-> > command line arguments and while it seems dynamic and one can chunk
-> > the allocation to finite sizes, put these on a ring buffer and process
-> > the chunks.
-> >
-> > It would be nice to see more details of where the dynamic allocation
-> > is needed. Security blobs are allocated dynamically but have a fixed
-> > size.
->
-> Dynamic allocation is not for security blobs. Dynamic allocation is for
-> holding requested pathnames (short-lived allocation), holding audit logs
-> (FIFO allocation), holding/appending access control rules (long-lived
+On 10/20/23 06:12, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Two new functions were introduced as global functions when they are
+> only called from inside the file that defines them and should have
+> been static:
+> 
+> security/apparmor/lsm.c:658:5: error: no previous prototype for 'apparmor_uring_override_creds' [-Werror=missing-prototypes]
+> security/apparmor/lsm.c:682:5: error: no previous prototype for 'apparmor_uring_sqpoll' [-Werror=missing-prototypes]
+> 
+> Fixes: c4371d90633b7 ("apparmor: add io_uring mediation")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-This is a ring buffer, BPF already has one and used for the very use
-case you mentioned (audit logs). Please read the original RFC and
-patches for BPF LSM. We have deployed this at scale and it's very
-efficient (memory and compute wise).
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-> allocation).
+I have pulled this into apparmor-next
 
-This is a map, not all maps need to be preallocated. An access control
-rule can fundamentally be implemented as a map.
+> ---
+>   security/apparmor/lsm.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index 91ff91cf1aaef..4981bdf029931 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -655,7 +655,7 @@ static int profile_uring(struct aa_profile *profile, u32 request,
+>    * Check to see if the current task is allowed to override it's credentials
+>    * to service an io_uring operation.
+>    */
+> -int apparmor_uring_override_creds(const struct cred *new)
+> +static int apparmor_uring_override_creds(const struct cred *new)
+>   {
+>   	struct aa_profile *profile;
+>   	struct aa_label *label;
+> @@ -679,7 +679,7 @@ int apparmor_uring_override_creds(const struct cred *new)
+>    * Check to see if the current task is allowed to create a new io_uring
+>    * kernel polling thread.
+>    */
+> -int apparmor_uring_sqpoll(void)
+> +static int apparmor_uring_sqpoll(void)
+>   {
+>   	struct aa_profile *profile;
+>   	struct aa_label *label;
 
-I recommend reading most of the BPF selftests to learn what can be
-done / accomplished.
-
->
->
->
-> >> Some of core requirements for implementing TOMOYO/AKARI/CaitSith-like =
-programs
-> >> using BPF will be:
-> >>
-> >>   The program registered cannot be stopped/removed by the root user.
-> >>   This is made possible by either building the program into vmlinux or=
- loading
-> >>   the program as a LKM without module_exit() callback. Is it possible =
-to guaranee
-> >>   that a BPF program cannot be stopped/removed by user's operations?
-> >
-> > Yes, there is a security_bpf hook where a BPF MAC policy can be
-> > implemented and other LSMs do that already.
-> >
-> >>
-> >>   The program registered cannot be terminated by safety mechanisms (e.=
-g. excessive
-> >>   CPU time consumption). Are there mechanisms in BPF that wouldn't hav=
-e terminated
-> >>   a program if the program were implemented as a LKM rather than a BPF=
- program?
-> >>
-> >
-> > The kernel does not terminate BPF LSM programs, once a BPF program is
-> > loaded and attached to the LSM hook, it's JITed into a native code.
-> > From there onwards, as far as the kernel is concerned it's just like
-> > any other kernel function.
->
-> I was finally able to build and load tools/testing/selftests/bpf/progs/ls=
-m.c and
-> tools/testing/selftests/bpf/prog_tests/test_lsm.c , and I found fatal lim=
-itation
-
-Programs can also be pinned on /sys/bpf similar to maps, this allows
-them to persist even after the loading program goes away.
-
-Here's an example of a pinned program:
-
-https://elixir.bootlin.com/linux/latest/source/tools/testing/selftests/bpf/=
-flow_dissector_load.c#L39
-
-> that the program registered is terminated when the file descriptor which =
-refers to
-> tools/testing/selftests/bpf/lsm.bpf.o is closed (due to e.g. process term=
-ination).
-> That is, eBPF programs are not reliable/robust enough to implement TOMOYO=
-/AKARI/
-> CaitSith-like programs. Re-registering when the file descriptor is closed=
- is racy
-
-Not needed as programs can be pinned too.
-
-> because some critical operations might fail to be traced/checked by the L=
-SM hooks.
->
-> Also, I think that automatic cleanup upon closing the file descriptor imp=
-lies that
-> allocating resources (or getting reference counts) that are not managed b=
-y the BPF
-> (e.g. files under /sys/kernel/securitytomoyo/ directory) is not permitted=
-. That's
-> very bad.
->
-> >
-> >>
-> >>   Amount of memory needed for managing data is not known at compile ti=
-me. Thus, I need
-> >>   kmalloc()-like memory allocation mechanism rather than allocating fr=
-om some pool, and
-> >>   manage chunk of memory regions using linked list. Does BPF have kmal=
-loc()-like memory
-> >>   allocation mechanism that allows allocating up to 32KB (8 pages if P=
-AGE_SIZE=3D4096).
-> >>
-> >
-> > You use the ring buffer as a large pool and use dynamic pointers to
-> > carve chunks out of it, if truly dynamic memory is needed.
->
-> TOMOYO/AKARI/CaitSith-like programs do need dynamic memory allocation, as=
- max amount of
-> memory varies from less than 1MB to more than 10MB. Preallocation is too =
-much wasteful.
->
->
->
-> >
-> >> And maybe somewhere documented question:
-> >>
-> >>   What kernel functions can a BPF program call / what kernel data can =
-a BPF program access?
-> >
-> > BPF programs can access kernel data dynamically (accesses relocated at
-> > load time without needing a recompile) There are lot of good details
-> > in:
-> >
-> > https://nakryiko.com/posts/bpf-core-reference-guide/
-> >
-> >
-> >>   The tools/testing/selftests/bpf/progs/test_d_path.c suggests that a =
-BPF program can call
-> >>   d_path() defined in fs/d_path.c . But is that because d_path() is ma=
-rked as EXPORT_SYMBOL() ?
-> >>   Or can a BPF program call almost all functions (like SystemTap scrip=
-t can insert hooks into
-> >>   almost all functions)? Even functions / data in LKM can be accessed =
-by a BPF program?
-> >>
-> >
-> > It's not all kernel functions, but there is a wide range of helpers
-> > and kfuncs (examples in tools/testing/selftests/bpf) and if there is
-> > something missing, we will help you.
->
-> I couldn't build tools/testing/selftests/bpf/progs/lsm.c with printk() ad=
-ded.
-> Sending to /sys/kernel/debug/tracing/trace_pipe via bpf_printk() is not e=
-nough for
-> reporting critical/urgent problems. Synchronous operation is important.
-
-you cannot call any function from within BPF. If you need to call
-something they need to be exported as a kfunc (you need to send
-patches on the mailing list for it). This is because we want to ensure
-that BPF programs can be verified.
-
->
-> Since printk() is not callable, most of functions which TOMOYO/AKARI/Cait=
-Sith-like
-> programs use seem to be not callable.
-
-It seems like you are trying to 1:1 re-implement an existing LSM's
-code base in BPF, that's surely not going to work. You need to think
-about the use-case / policy you are trying to implement and then write
-the code in BPF independently. Please share concrete examples of the
-policy you want to implement and we try to help you. Asking for
-features where you want a 1:1 parity with kernel code without concrete
-policy use-cases is not going to enable us to help you.
-
-- KP
-
->
