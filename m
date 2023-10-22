@@ -2,135 +2,208 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F468C07545
-	for <linux-security-module@archiver.kernel.org>; Sun, 22 Oct 2023 13:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B38C00A8F
+	for <linux-security-module@archiver.kernel.org>; Sun, 22 Oct 2023 19:40:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229588AbjJVNel (ORCPT
+        id S229452AbjJVTkq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 22 Oct 2023 09:34:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58180 "EHLO
+        Sun, 22 Oct 2023 15:40:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbjJVNel (ORCPT
+        with ESMTP id S232856AbjJVTkj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 22 Oct 2023 09:34:41 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0A59DC;
-        Sun, 22 Oct 2023 06:34:38 -0700 (PDT)
-Received: from fsav415.sakura.ne.jp (fsav415.sakura.ne.jp [133.242.250.114])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 39MDYOVY016439;
-        Sun, 22 Oct 2023 22:34:24 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav415.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp);
- Sun, 22 Oct 2023 22:34:24 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 39MDYNUN016436
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 22 Oct 2023 22:34:24 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <c588ca5d-c343-4ea2-a1f1-4efe67ebb8e3@I-love.SAKURA.ne.jp>
-Date:   Sun, 22 Oct 2023 22:34:20 +0900
+        Sun, 22 Oct 2023 15:40:39 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9136BF7
+        for <linux-security-module@vger.kernel.org>; Sun, 22 Oct 2023 12:40:36 -0700 (PDT)
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id F22D13F140
+        for <linux-security-module@vger.kernel.org>; Sun, 22 Oct 2023 19:40:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1698003635;
+        bh=47jpj8y9wBd7Zg0OmQJRAjuqRq+DYCKjX3d9uClSbpk=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=PAEgI/urxMwyeuPRnk98RIyEvk+Tmu+agMC9TUd46N45eoj9i/vZR+mwqhi5VG8ri
+         NrR7rb9aW0yTkARG1sH0MogtvZ30wA5orsl/biNCI4WTui2pntXrG5QGfq95c9X+VD
+         3Bm/FHAma7kYzyZS8XwMlixPWu1Ozbl+FVizB80QwnkPxelm2bbTwo0qbD6ybbxQGi
+         bJgthf2tqYwf/5e+jpB6xSOXhR90K5enjkS9Yqr7aJloyFc1HQQutNukSaiuahQRMn
+         7yjLLiB23LfzwWQ/HlMI3qqykuglPEv449JT60DTDLMxdDsRUvcjbW8v2rtVXfwDdZ
+         Udgk2uAJfu+/g==
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4084001846eso18368325e9.1
+        for <linux-security-module@vger.kernel.org>; Sun, 22 Oct 2023 12:40:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698003634; x=1698608434;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=47jpj8y9wBd7Zg0OmQJRAjuqRq+DYCKjX3d9uClSbpk=;
+        b=ccrFsQe8PURQTtjPoFxKpit+CkcVY5FFuMiWyEqwFV0QVGmDWIg0OirMuiAvKmUyyH
+         8cXMs3RHCYVPB54+7WUt5WzOZYbQ3+3pZCVIv9GWxckU7v3xo1wKT23ZfXEsazOTbqg1
+         SIjg7Wdt3k4LxzlhklZ2+FoHunNZtwgt3RZFMHFd7KJviGo8BtjKJOv3bmyADwezf/HV
+         /I1K0QlUiNLyfUVeLhnly0MLr3Myh5e0le2XYLdJ0NDlxdgbsslhVoMePsrNn4rGbWrM
+         adxb2IPybUb23Gtj2/hUyD94wWnBtnkFrfz95G2ZWWUEEMjDDs2rvn3tOTjrIs1P2MfF
+         qpzA==
+X-Gm-Message-State: AOJu0YyLxBulyTBumGggDoQciyflhg7EM/4FTkp5v1D0P79ZG7DWCMRE
+        5yAyF6AJAf74MA9gDyEuHYF76AlmbRBskd6gaCH4SSqCAK+NlLWANO8D0i94TTP4+oKrwKGWk8o
+        t1TAbON8UyJRK3cKQw0an2Vo1fPO9nMhulbmsv9mp+4bKRm55SdFkug==
+X-Received: by 2002:adf:ef8b:0:b0:32d:96a7:9551 with SMTP id d11-20020adfef8b000000b0032d96a79551mr4967364wro.36.1698003634509;
+        Sun, 22 Oct 2023 12:40:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpLdRBIeVWYwo3xURbI5pzw5n3xFTx5Mo5MIsfkN8aLsxEaxi5atFcCBTp7YwPa6dq+CuLMg==
+X-Received: by 2002:adf:ef8b:0:b0:32d:96a7:9551 with SMTP id d11-20020adfef8b000000b0032d96a79551mr4967354wro.36.1698003634173;
+        Sun, 22 Oct 2023 12:40:34 -0700 (PDT)
+Received: from localhost ([2001:67c:1560:8007::aac:c15c])
+        by smtp.gmail.com with ESMTPSA id q18-20020adff792000000b0030647449730sm6208438wrp.74.2023.10.22.12.40.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Oct 2023 12:40:33 -0700 (PDT)
+From:   Dimitri John Ledkov <dimitri.ledkov@canonical.com>
+To:     John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-crypto@vger.kernel.org, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] apparmor: switch SECURITY_APPARMOR_HASH from sha1 to sha256
+Date:   Sun, 22 Oct 2023 20:40:26 +0100
+Message-Id: <20231022194026.313584-1-dimitri.ledkov@canonical.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] LSM: Allow dynamically appendable LSM modules.
-Content-Language: en-US
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>, bpf <bpf@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <cc8e16bb-5083-01da-4a77-d251a76dc8ff@I-love.SAKURA.ne.jp>
- <CACYkzJ5k7oYxFgWp9bz1Wmp3n6LcU39Mh-HXFWTKnZnpY-Ef7w@mail.gmail.com>
- <153e7c39-d2e2-db31-68cd-cb05eb2d46db@I-love.SAKURA.ne.jp>
- <CACYkzJ79fvoQW5uqavdLV=N8zw6uern8m-6cM44YYFDhJF248A@mail.gmail.com>
- <f249c8f0-e053-066b-edc5-59a1a00a0868@I-love.SAKURA.ne.jp>
- <CACYkzJ7kzXGcjRdyaOWCaigPWcKXU7_KW_bFg9ptrnwAeJ2AgQ@mail.gmail.com>
- <d060365e-7c87-451e-a92a-edb4904e77a7@I-love.SAKURA.ne.jp>
- <CACYkzJ7S00K8f-H7EdDz3CFyxbfoQ1zQXDj7oWpY3dkDjFb0LA@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CACYkzJ7S00K8f-H7EdDz3CFyxbfoQ1zQXDj7oWpY3dkDjFb0LA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2023/10/22 0:20, KP Singh wrote:
->> Since printk() is not callable, most of functions which TOMOYO/AKARI/CaitSith-like
->> programs use seem to be not callable.
-> 
-> It seems like you are trying to 1:1 re-implement an existing LSM's
-> code base in BPF,
+sha1 is insecure and has colisions, thus it is not useful for even
+lightweight policy hash checks. Switch to sha256, which on modern
+hardware is fast enough.
 
-Yes, that is the goal. Since you said
+Separately as per NIST Policy on Hash Functions, sha1 usage must be
+withdrawn by 2030. This config option currently is one of many that
+holds up sha1 usage.
 
-  "Until I hear the real limitations of using BPF, it's a NAK from me."
+Signed-off-by: Dimitri John Ledkov <dimitri.ledkov@canonical.com>
+---
+ security/apparmor/Kconfig      | 12 ++++++------
+ security/apparmor/apparmorfs.c | 16 ++++++++--------
+ security/apparmor/crypto.c     |  6 +++---
+ 3 files changed, 17 insertions(+), 17 deletions(-)
 
-at https://lkml.kernel.org/r/CACYkzJ5k7oYxFgWp9bz1Wmp3n6LcU39Mh-HXFWTKnZnpY-Ef7w@mail.gmail.com ,
-I want to know whether it is possible to re-implement TOMOYO LSM as an eBPF program.
-
-If it is possible to re-implement TOMOYO LSM as an eBPF program, my desire to
-allow appending LKM-based LSMs after boot will be significantly reduced, which
-in turn will become my ACK to "security: Count the LSMs enabled at compile time"
-in your "Reduce overhead of LSMs with static calls" proposal.
-
->                   that's surely not going to work. You need to think
-> about the use-case / policy you are trying to implement and then write
-> the code in BPF independently. Please share concrete examples of the
-> policy you want to implement and we try to help you. Asking for
-> features where you want a 1:1 parity with kernel code without concrete
-> policy use-cases is not going to enable us to help you.
-
-The code which I want to re-implement using eBPF is all of security/tomoyo/ directory.
-
-
-
->> I couldn't build tools/testing/selftests/bpf/progs/lsm.c with printk() added.
->> Sending to /sys/kernel/debug/tracing/trace_pipe via bpf_printk() is not enough for
->> reporting critical/urgent problems. Synchronous operation is important.
-> 
-> you cannot call any function from within BPF. If you need to call
-> something they need to be exported as a kfunc (you need to send
-> patches on the mailing list for it). This is because we want to ensure
-> that BPF programs can be verified.
-
-TOMOYO needs to be able to call d_absolute_path() in order to calculate
-requested pathname, call call_usermodehelper(UMH_WAIT_PROC) in order to load
-policy upon activation, call get_mm_exe_file() in order to know the pathname
-of executable, get_user_pages_remote() in order to examine argv/envp passed to
-execve() system call etc. etc. in addition to performing complicated comparison
-including loop like https://elixir.bootlin.com/linux/v6.6-rc6/source/security/tomoyo/group.c#L120 .
-
-If any of above requirements cannot be satisfied in eBPF, that will become
-the real limitations of using BPF.
-
-
-
->> I was finally able to build and load tools/testing/selftests/bpf/progs/lsm.c and
->> tools/testing/selftests/bpf/prog_tests/test_lsm.c , and I found fatal limitation
-> 
-> Programs can also be pinned on /sys/bpf similar to maps, this allows
-> them to persist even after the loading program goes away.
-> 
-> Here's an example of a pinned program:
-> 
-> https://elixir.bootlin.com/linux/latest/source/tools/testing/selftests/bpf/flow_dissector_load.c#L39
-> 
->> that the program registered is terminated when the file descriptor which refers to
->> tools/testing/selftests/bpf/lsm.bpf.o is closed (due to e.g. process termination).
->> That is, eBPF programs are not reliable/robust enough to implement TOMOYO/AKARI/
->> CaitSith-like programs. Re-registering when the file descriptor is closed is racy
-> 
-> Not needed as programs can be pinned too.
-> 
-
-That's good but not enough. We will need to forbid unlink/umount because detach_program()
-says "/* To unpin, it is necessary and sufficient to just remove this dir */". Hooking
-security_inode_unlink()/security_sb_umount() and return an error if the requested file was
-the eBPF version of TOMOYO (or maps etc. related to the eBPF version of TOMOYO) or the
-requested filesystem was sysfs might be able to forbid "unpin" operation... That would be
-the next step to check if re-implementing all of security/tomoyo/ directory using eBPF
-is possible...
+diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+index e0d1dd0a19..64cc3044a4 100644
+--- a/security/apparmor/Kconfig
++++ b/security/apparmor/Kconfig
+@@ -57,10 +57,10 @@ config SECURITY_APPARMOR_INTROSPECT_POLICY
+ 	  cpu is paramount.
+ 
+ config SECURITY_APPARMOR_HASH
+-	bool "Enable introspection of sha1 hashes for loaded profiles"
++	bool "Enable introspection of sha256 hashes for loaded profiles"
+ 	depends on SECURITY_APPARMOR_INTROSPECT_POLICY
+ 	select CRYPTO
+-	select CRYPTO_SHA1
++	select CRYPTO_SHA256
+ 	default y
+ 	help
+ 	  This option selects whether introspection of loaded policy
+@@ -74,10 +74,10 @@ config SECURITY_APPARMOR_HASH_DEFAULT
+        depends on SECURITY_APPARMOR_HASH
+        default y
+        help
+-         This option selects whether sha1 hashing of loaded policy
+-	 is enabled by default. The generation of sha1 hashes for
+-	 loaded policy provide system administrators a quick way
+-	 to verify that policy in the kernel matches what is expected,
++	 This option selects whether sha256 hashing of loaded policy
++	 is enabled by default. The generation of sha256 hashes for
++	 loaded policy provide system administrators a quick way to
++	 verify that policy in the kernel matches what is expected,
+ 	 however it can slow down policy load on some devices. In
+ 	 these cases policy hashing can be disabled by default and
+ 	 enabled only if needed.
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index a608a6bd76..082581397d 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -1474,7 +1474,7 @@ int __aa_fs_create_rawdata(struct aa_ns *ns, struct aa_loaddata *rawdata)
+ 	rawdata->dents[AAFS_LOADDATA_REVISION] = dent;
+ 
+ 	if (aa_g_hash_policy) {
+-		dent = aafs_create_file("sha1", S_IFREG | 0444, dir,
++		dent = aafs_create_file("sha256", S_IFREG | 0444, dir,
+ 					      rawdata, &seq_rawdata_hash_fops);
+ 		if (IS_ERR(dent))
+ 			goto fail;
+@@ -1644,11 +1644,11 @@ static const char *rawdata_get_link_base(struct dentry *dentry,
+ 	return target;
+ }
+ 
+-static const char *rawdata_get_link_sha1(struct dentry *dentry,
++static const char *rawdata_get_link_sha256(struct dentry *dentry,
+ 					 struct inode *inode,
+ 					 struct delayed_call *done)
+ {
+-	return rawdata_get_link_base(dentry, inode, done, "sha1");
++	return rawdata_get_link_base(dentry, inode, done, "sha256");
+ }
+ 
+ static const char *rawdata_get_link_abi(struct dentry *dentry,
+@@ -1665,8 +1665,8 @@ static const char *rawdata_get_link_data(struct dentry *dentry,
+ 	return rawdata_get_link_base(dentry, inode, done, "raw_data");
+ }
+ 
+-static const struct inode_operations rawdata_link_sha1_iops = {
+-	.get_link	= rawdata_get_link_sha1,
++static const struct inode_operations rawdata_link_sha256_iops = {
++	.get_link	= rawdata_get_link_sha256,
+ };
+ 
+ static const struct inode_operations rawdata_link_abi_iops = {
+@@ -1739,7 +1739,7 @@ int __aafs_profile_mkdir(struct aa_profile *profile, struct dentry *parent)
+ 	profile->dents[AAFS_PROF_ATTACH] = dent;
+ 
+ 	if (profile->hash) {
+-		dent = create_profile_file(dir, "sha1", profile,
++		dent = create_profile_file(dir, "sha256", profile,
+ 					   &seq_profile_hash_fops);
+ 		if (IS_ERR(dent))
+ 			goto fail;
+@@ -1749,9 +1749,9 @@ int __aafs_profile_mkdir(struct aa_profile *profile, struct dentry *parent)
+ #ifdef CONFIG_SECURITY_APPARMOR_EXPORT_BINARY
+ 	if (profile->rawdata) {
+ 		if (aa_g_hash_policy) {
+-			dent = aafs_create("raw_sha1", S_IFLNK | 0444, dir,
++			dent = aafs_create("raw_sha256", S_IFLNK | 0444, dir,
+ 					   profile->label.proxy, NULL, NULL,
+-					   &rawdata_link_sha1_iops);
++					   &rawdata_link_sha256_iops);
+ 			if (IS_ERR(dent))
+ 				goto fail;
+ 			aa_get_proxy(profile->label.proxy);
+diff --git a/security/apparmor/crypto.c b/security/apparmor/crypto.c
+index 6724e2ff6d..aad486b2fc 100644
+--- a/security/apparmor/crypto.c
++++ b/security/apparmor/crypto.c
+@@ -106,16 +106,16 @@ static int __init init_profile_hash(void)
+ 	if (!apparmor_initialized)
+ 		return 0;
+ 
+-	tfm = crypto_alloc_shash("sha1", 0, 0);
++	tfm = crypto_alloc_shash("sha256", 0, 0);
+ 	if (IS_ERR(tfm)) {
+ 		int error = PTR_ERR(tfm);
+-		AA_ERROR("failed to setup profile sha1 hashing: %d\n", error);
++		AA_ERROR("failed to setup profile sha256 hashing: %d\n", error);
+ 		return error;
+ 	}
+ 	apparmor_tfm = tfm;
+ 	apparmor_hash_size = crypto_shash_digestsize(apparmor_tfm);
+ 
+-	aa_info_message("AppArmor sha1 policy hashing enabled");
++	aa_info_message("AppArmor sha256 policy hashing enabled");
+ 
+ 	return 0;
+ }
+-- 
+2.34.1
 
