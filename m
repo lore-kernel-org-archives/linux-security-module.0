@@ -2,215 +2,182 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB63CDB474
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Oct 2023 07:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE5CC001E0
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Oct 2023 08:31:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233419AbjJWHoI (ORCPT
+        id S233466AbjJWIb3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Oct 2023 03:44:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46824 "EHLO
+        Mon, 23 Oct 2023 04:31:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233409AbjJWHoG (ORCPT
+        with ESMTP id S233097AbjJWIbF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Oct 2023 03:44:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3ABECC
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Oct 2023 00:43:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1698047001;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=n4pnr/01geKklbuZTPmDUDub+KmFboZIfKOWl4pyxfw=;
-        b=YxBDk43PwUK96/JvEN6u2jFtIZamtPlR7tfIrLwAVf1kdtBCPbqH/0+DzgzdkY4QCnUNiV
-        a7C6ecxm+iTjnfQa6mHUNr9iiIwXyeWvExbLaPcS2dJrxjCJfBkV7Y2UaB0u6W3KF0E9E1
-        Q/ll4wcRXBNM+DH+mTyKuX83fw0Bdig=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-596-13mRTdf7PIKXi3XcFY6UZQ-1; Mon, 23 Oct 2023 03:43:16 -0400
-X-MC-Unique: 13mRTdf7PIKXi3XcFY6UZQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7A07A3C1043C;
-        Mon, 23 Oct 2023 07:43:15 +0000 (UTC)
-Received: from [10.39.208.17] (unknown [10.39.208.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1A6651C060AE;
-        Mon, 23 Oct 2023 07:43:11 +0000 (UTC)
-Message-ID: <86532026-d1bc-491e-8fae-765ce493b7c2@redhat.com>
-Date:   Mon, 23 Oct 2023 09:43:10 +0200
+        Mon, 23 Oct 2023 04:31:05 -0400
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [IPv6:2001:1600:3:17::42af])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADF071712
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Oct 2023 01:30:57 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SDT0s5N12zMq5T6;
+        Mon, 23 Oct 2023 08:30:53 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4SDT0s2Qx9zXZK;
+        Mon, 23 Oct 2023 10:30:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1698049853;
+        bh=Sa8y9t8zzJaOO3fi9Pyo4TJOkjYhu4szCXILEJmE850=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1Z+YTMB7aWgmHuw+0wfOY6Hfs49JtIMKwWsVXiOLB/3cNdELGZYabySXESxyM4u/3
+         Tme5RbDXoYbQa2/99gb8zFlT8AFkJwWpEPFJpp0yuc247BuczJ5Em8HI38kdi0HQ9V
+         1uNoTVNX5S5v+34+SCRA36DmwBUsWHgStYaaXgWA=
+Date:   Mon, 23 Oct 2023 10:30:50 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+Subject: Re: [PATCH v13 08/12] landlock: Add network rules and TCP hooks
+ support
+Message-ID: <20231023.Ahng6xut7aiB@digikod.net>
+References: <20231016015030.1684504-1-konstantin.meskhidze@huawei.com>
+ <20231016015030.1684504-9-konstantin.meskhidze@huawei.com>
+ <20231017.xahKoo9Koo8v@digikod.net>
+ <57f150b2-0920-8567-8351-1bdb74684cfa@huawei.com>
+ <20231020.ido6Aih0eiGh@digikod.net>
+ <ae62c363-e9bf-3ab8-991a-0902b0d195cb@huawei.com>
+ <20231020.ooS5Phaiqu6k@digikod.net>
+ <ed35b3a1-b060-dec6-fa18-efa6743bd1c2@huawei.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] vduse: Temporarily disable control queue features
-Content-Language: en-US
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     mst@redhat.com, xuanzhuo@linux.alibaba.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        xieyongji@bytedance.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        david.marchand@redhat.com, lulu@redhat.com
-References: <20231020155819.24000-1-maxime.coquelin@redhat.com>
- <20231020155819.24000-4-maxime.coquelin@redhat.com>
- <CACGkMEsKvLTQNPp3JE9V4MBEuv5LVC+tRXgYYijgb9N0DNtGZw@mail.gmail.com>
-From:   Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <CACGkMEsKvLTQNPp3JE9V4MBEuv5LVC+tRXgYYijgb9N0DNtGZw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+In-Reply-To: <ed35b3a1-b060-dec6-fa18-efa6743bd1c2@huawei.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 10/23/23 05:08, Jason Wang wrote:
-> On Fri, Oct 20, 2023 at 11:58 PM Maxime Coquelin
-> <maxime.coquelin@redhat.com> wrote:
->>
->> Virtio-net driver control queue implementation is not safe
->> when used with VDUSE. If the VDUSE application does not
->> reply to control queue messages, it currently ends up
->> hanging the kernel thread sending this command.
->>
->> Some work is on-going to make the control queue
->> implementation robust with VDUSE. Until it is completed,
->> let's disable control virtqueue and features that depend on
->> it.
->>
->> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+On Mon, Oct 23, 2023 at 10:23:35AM +0300, Konstantin Meskhidze (A) wrote:
 > 
-> I wonder if it's better to do this with patch 2 or before patch 2 to
-> unbreak the bisection?
-
-I think it would be better to keep it in a dedicated patch to ease the
-revert later when your work will have been accepted, so before patch 2.
-
-Thanks,
-Maxime
-
-> Thanks
 > 
->> ---
->>   drivers/vdpa/vdpa_user/vduse_dev.c | 37 ++++++++++++++++++++++++++++++
->>   1 file changed, 37 insertions(+)
->>
->> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
->> index 73ad3b7efd8e..0243dee9cf0e 100644
->> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
->> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
->> @@ -28,6 +28,7 @@
->>   #include <uapi/linux/virtio_config.h>
->>   #include <uapi/linux/virtio_ids.h>
->>   #include <uapi/linux/virtio_blk.h>
->> +#include <uapi/linux/virtio_ring.h>
->>   #include <linux/mod_devicetable.h>
->>
->>   #include "iova_domain.h"
->> @@ -46,6 +47,30 @@
->>
->>   #define IRQ_UNBOUND -1
->>
->> +#define VDUSE_NET_VALID_FEATURES_MASK           \
->> +       (BIT_ULL(VIRTIO_NET_F_CSUM) |           \
->> +        BIT_ULL(VIRTIO_NET_F_GUEST_CSUM) |     \
->> +        BIT_ULL(VIRTIO_NET_F_MTU) |            \
->> +        BIT_ULL(VIRTIO_NET_F_MAC) |            \
->> +        BIT_ULL(VIRTIO_NET_F_GUEST_TSO4) |     \
->> +        BIT_ULL(VIRTIO_NET_F_GUEST_TSO6) |     \
->> +        BIT_ULL(VIRTIO_NET_F_GUEST_ECN) |      \
->> +        BIT_ULL(VIRTIO_NET_F_GUEST_UFO) |      \
->> +        BIT_ULL(VIRTIO_NET_F_HOST_TSO4) |      \
->> +        BIT_ULL(VIRTIO_NET_F_HOST_TSO6) |      \
->> +        BIT_ULL(VIRTIO_NET_F_HOST_ECN) |       \
->> +        BIT_ULL(VIRTIO_NET_F_HOST_UFO) |       \
->> +        BIT_ULL(VIRTIO_NET_F_MRG_RXBUF) |      \
->> +        BIT_ULL(VIRTIO_NET_F_STATUS) |         \
->> +        BIT_ULL(VIRTIO_NET_F_HOST_USO) |       \
->> +        BIT_ULL(VIRTIO_F_ANY_LAYOUT) |         \
->> +        BIT_ULL(VIRTIO_RING_F_INDIRECT_DESC) | \
->> +        BIT_ULL(VIRTIO_RING_F_EVENT_IDX) |          \
->> +        BIT_ULL(VIRTIO_F_VERSION_1) |          \
->> +        BIT_ULL(VIRTIO_F_ACCESS_PLATFORM) |     \
->> +        BIT_ULL(VIRTIO_F_RING_PACKED) |        \
->> +        BIT_ULL(VIRTIO_F_IN_ORDER))
->> +
->>   struct vduse_virtqueue {
->>          u16 index;
->>          u16 num_max;
->> @@ -1778,6 +1803,16 @@ static struct attribute *vduse_dev_attrs[] = {
->>
->>   ATTRIBUTE_GROUPS(vduse_dev);
->>
->> +static void vduse_dev_features_filter(struct vduse_dev_config *config)
->> +{
->> +       /*
->> +        * Temporarily filter out virtio-net's control virtqueue and features
->> +        * that depend on it while CVQ is being made more robust for VDUSE.
->> +        */
->> +       if (config->device_id == VIRTIO_ID_NET)
->> +               config->features &= VDUSE_NET_VALID_FEATURES_MASK;
->> +}
->> +
->>   static int vduse_create_dev(struct vduse_dev_config *config,
->>                              void *config_buf, u64 api_version)
->>   {
->> @@ -1793,6 +1828,8 @@ static int vduse_create_dev(struct vduse_dev_config *config,
->>          if (!dev)
->>                  goto err;
->>
->> +       vduse_dev_features_filter(config);
->> +
->>          dev->api_version = api_version;
->>          dev->device_features = config->features;
->>          dev->device_id = config->device_id;
->> --
->> 2.41.0
->>
+> 10/20/2023 6:41 PM, Mickaël Salaün пишет:
+> > On Fri, Oct 20, 2023 at 02:58:31PM +0300, Konstantin Meskhidze (A) wrote:
+> > > 
+> > > 
+> > > 10/20/2023 12:49 PM, Mickaël Salaün пишет:
+> > > > On Fri, Oct 20, 2023 at 07:08:33AM +0300, Konstantin Meskhidze (A) wrote:
+> > > > > > > > > 10/18/2023 3:29 PM, Mickaël Salaün пишет:
+> > > > > > On Mon, Oct 16, 2023 at 09:50:26AM +0800, Konstantin Meskhidze wrote:
+> > 
+> > > > > > > diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> > > > > > > index 4c209acee01e..1fe4298ff4a7 100644
+> > > > > > > --- a/security/landlock/ruleset.c
+> > > > > > > +++ b/security/landlock/ruleset.c
+> > > > > > > @@ -36,6 +36,11 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+> > > > > > >  	refcount_set(&new_ruleset->usage, 1);
+> > > > > > >  	mutex_init(&new_ruleset->lock);
+> > > > > > >  	new_ruleset->root_inode = RB_ROOT;
+> > > > > > > +
+> > > > > > > +#if IS_ENABLED(CONFIG_INET)
+> > > > > > > +	new_ruleset->root_net_port = RB_ROOT;
+> > > > > > > +#endif /* IS_ENABLED(CONFIG_INET) */
+> > > > > > > +
+> > > > > > >  	new_ruleset->num_layers = num_layers;
+> > > > > > >  	/*
+> > > > > > >  	 * hierarchy = NULL
+> > > > > > > @@ -46,16 +51,21 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+> > > > > > >  }
+> > > > > > > > >  struct landlock_ruleset *
+> > > > > > > -landlock_create_ruleset(const access_mask_t fs_access_mask)
+> > > > > > > +landlock_create_ruleset(const access_mask_t fs_access_mask,
+> > > > > > > +			const access_mask_t net_access_mask)
+> > > > > > >  {
+> > > > > > >  	struct landlock_ruleset *new_ruleset;
+> > > > > > > > >  	/* Informs about useless ruleset. */
+> > > > > > > -	if (!fs_access_mask)
+> > > > > > > +	if (!fs_access_mask && !net_access_mask)
+> > > > > > >  		return ERR_PTR(-ENOMSG);
+> > > > > > >  	new_ruleset = create_ruleset(1);
+> > > > > > > -	if (!IS_ERR(new_ruleset))
+> > > > > > > +	if (IS_ERR(new_ruleset))
+> > > > > > > +		return new_ruleset;
+> > > > > > > +	if (fs_access_mask)
+> > > > > > >  		landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
+> > > > > > > +	if (net_access_mask)
+> > > > > > > +		landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
+> > > > > > > This is good, but it is not tested: we need to add a test that
+> > > > > both
+> > > > > > handle FS and net restrictions. You can add one in net.c, just handling
+> > > > > > LANDLOCK_ACCESS_FS_READ_DIR and LANDLOCK_ACCESS_NET_BIND_TCP, add one
+> > > > > > rule with path_beneath (e.g. /dev) and another with net_port, and check
+> > > > > > that open("/") is denied, open("/dev") is allowed, and and only the
+> > > > > > allowed port is allowed with bind(). This test should be simple and can
+> > > > > > only check against an IPv4 socket, i.e. using ipv4_tcp fixture, just
+> > > > > > after port_endianness. fcntl.h should then be included by net.c
+> > > > > > >   Ok.
+> > > > > > > I guess that was the purpose of layout1.with_net (in fs_test.c)
+> > > > > but it
+> > > > > > >   Yep. I added this kind of nest in fs_test.c to test both
+> > > fs and network
+> > > > > rules together.
+> > > > > > is not complete. You can revamp this test and move it to net.c
+> > > > > > following the above suggestions, keeping it consistent with other tests
+> > > > > > in net.c . You don't need the test_open() nor create_ruleset() helpers.
+> > > > > > > This test must failed if we change
+> > > > > "ruleset->access_masks[layer_level] |="
+> > > > > > to "ruleset->access_masks[layer_level] =" in
+> > > > > > landlock_add_fs_access_mask() or landlock_add_net_access_mask().
+> > > > > > >   Do you want to change it? Why?
+> > > > > The kernel code is correct and must not be changed. However, if
+> > > by
+> > > > mistake we change it and remove the OR, a test should catch that. We
+> > > > need a test to assert this assumption.
+> > > >   OK. I will add additional assert simulating
+> > > "ruleset->access_masks[layer_level] =" kernel code.
+> > > > >   Fs and network masks are ORed to not intersect with each other.
+> > > > > Yes, they are ORed, and we need a test to check that. Noting is
+> > > > currently testing this OR (and the different rule type consistency).
+> > > > I'm suggesting to revamp the layout1.with_net test into
+> > > > ipv4_tcp.with_fs and make it check ruleset->access_masks[] and rule
+> > > > addition of different types.
+> > > 
+> > >   I will move layout1.with_net test into net.c and rename it. Looks like
+> > >   it just needed to add "ruleset->access_masks[layer_level] =" assert
+> > >   because the test already has rule addition with different types.
+> > 
+> > The with_net test doesn't have FS rules, which is the main missing part.
+> > You'll need to rely on the net.c helpers, use the hardcoded paths, and
+> > only handle one access right of each type as I suggested above.
+> > 
 > 
+>  This is with_net code:
+> 
+>   ....
+>   /* Adds a network rule. */
+> 	
+> ASSERT_EQ(0, landlock_add_rule(ruleset_fd_net, LANDLOCK_RULE_NET_PORT,
+> 				       &tcp_bind, 0));
+> 
+> 	enforce_ruleset(_metadata, ruleset_fd_net);
+> 	ASSERT_EQ(0, close(ruleset_fd_net));
+> 
+> 	ruleset_fd = create_ruleset(_metadata, ACCESS_RW, rules);
+> 
+> 	ASSERT_LE(0, ruleset_fd);
+> 	enforce_ruleset(_metadata, ruleset_fd);
+> 	ASSERT_EQ(0, close(ruleset_fd));
+> ....
+> 
+> It has FS rules - just after ruleset_fd_net rule inforced.
+> Or maybe I missed something?
 
+ruleset_fd_net and ruleset_fd are two different rulesets, and then
+they create two different layers. We need to test support for FS and net
+with the same ruleset/layer to check ruleset->access_masks[layer_level].
+
+> 
+> > > 
+> > >   Do you have any more review updates so far?
+> > 
+> > That's all for this patch series. :)
+> 
+>   Ok. Thanks.
+> > .
