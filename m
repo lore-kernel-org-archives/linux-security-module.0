@@ -2,138 +2,116 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCBA4C001E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Oct 2023 16:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F130C25B46
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Oct 2023 20:42:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230305AbjJWQL2 (ORCPT
+        id S230213AbjJWUmv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Oct 2023 12:11:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38822 "EHLO
+        Mon, 23 Oct 2023 16:42:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231938AbjJWQL1 (ORCPT
+        with ESMTP id S230356AbjJWUmu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Oct 2023 12:11:27 -0400
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 177C310A
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Oct 2023 09:11:25 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SDfsw34tDz9v7K5
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Oct 2023 23:55:32 +0800 (CST)
-Received: from [10.206.134.65] (unknown [10.206.134.65])
-        by APP1 (Coremail) with SMTP id LxC2BwDHIJIamzZlcJfGAg--.12387S2;
-        Mon, 23 Oct 2023 17:11:11 +0100 (CET)
-Message-ID: <a52e1040-0110-40fb-8d22-876bda122b19@huaweicloud.com>
-Date:   Mon, 23 Oct 2023 18:11:03 +0200
+        Mon, 23 Oct 2023 16:42:50 -0400
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80788D7A
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Oct 2023 13:42:46 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SDnFJ3yQFzMpnvw;
+        Mon, 23 Oct 2023 20:42:44 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SDnFH4644zMppt6;
+        Mon, 23 Oct 2023 22:42:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1698093764;
+        bh=9ioWM+lHac+DfHBhyDZ2lGrwrqcK03XcwTtuCKefMlc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LTh2hXLYx+Rai0Seg3E6HM8Zq7ssEOuUMvHVlerzShUgRSqjSWhIxmgM++lLQWDLR
+         bPnbTHjaMNRG+HGk+Jae2OJleCARRX6Kcj7TD8D/laPWRheip+tTiHCb9GNlnU+yXj
+         LDTCeOxy1PivBlUgtZoFL5MP8orUq2CFG0wVQ+ws=
+Date:   Mon, 23 Oct 2023 22:42:39 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>
+Cc:     landlock@lists.linux.dev, linux-security-module@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: Sandbox escape through missing restrictions for unix socket
+ abstract namespace
+Message-ID: <20231023.ahphah4Wii4v@digikod.net>
+References: <3MCqhJ90QpVfPgUui9PFA8mbfxk71A6UY2gIuKqWfXQ_rPkUC-NMQ-iHKZ1BnGjK6EXwHpEdDiyAUfXhxWaarFlwpQZPs-05myboXJw2pjo=@protonmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: drop LSM_ID_IMA
-Content-Language: en-US
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>,
-        linux-security-module@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>
-References: <20231018215032.348429-2-paul@paul-moore.com>
- <72a92e27855af2291273209d328e1b79f3b61663.camel@huaweicloud.com>
- <1764a96f-6d24-4585-a24b-667a5ea075c3@schaufler-ca.com>
- <f47097f8-3391-42a7-b8b5-81e1be2d8e68@huaweicloud.com>
- <88f4f464-ac09-4c93-95f4-fe4546b78a08@schaufler-ca.com>
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <88f4f464-ac09-4c93-95f4-fe4546b78a08@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwDHIJIamzZlcJfGAg--.12387S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGFW5ZFW3WFWftw18Cw17ZFb_yoW5Crykpr
-        n5KF47tFWUAw1xCw4Iv3WYy34jkrWDJw15W34UWF1UJ3Wqyryvqr4DWr4Y9r1DWr4vyrWr
-        XF1Utry3u3srA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgvb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-        AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVW3JVWrJr1lIx
-        AIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIev
-        Ja73UjIFyTuYvjxUwmhFDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgATBF1jj5Ff6QABsC
-X-CFilter-Loop: Reflected
+In-Reply-To: <3MCqhJ90QpVfPgUui9PFA8mbfxk71A6UY2gIuKqWfXQ_rPkUC-NMQ-iHKZ1BnGjK6EXwHpEdDiyAUfXhxWaarFlwpQZPs-05myboXJw2pjo=@protonmail.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/23/2023 5:48 PM, Casey Schaufler wrote:
-> On 10/23/2023 8:20 AM, Roberto Sassu wrote:
->> On 10/20/2023 11:56 PM, Casey Schaufler wrote:
->>> On 10/19/2023 1:08 AM, Roberto Sassu wrote:
->>>> On Wed, 2023-10-18 at 17:50 -0400, Paul Moore wrote:
->>>>> When IMA becomes a proper LSM we will reintroduce an appropriate
->>>>> LSM ID, but drop it from the userspace API for now in an effort
->>>>> to put an end to debates around the naming of the LSM ID macro.
->>>>>
->>>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
->>>> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
->>>>
->>>> This makes sense according to the new goal of making 'ima' and 'evm' as
->>>> standalone LSMs.
->>>>
->>>> Otherwise, if we took existing LSMs, we should have defined
->>>> LSM_ID_INTEGRITY, associated to DEFINE_LSM(integrity).
->>>>
->>>> If we proceed with the new direction, I will add the new LSM IDs as
->>>> soon as IMA and EVM become LSMs.
->>>
->>> This seems right to me. Thank You.
->>
->> Perfect! Is it fine to assign an LSM ID to 'ima' and 'evm' and keep
->> the 'integrity' LSM to reserve space in the security blob without LSM
->> ID (as long as it does not register any hook)?
+Hi Björn,
+
+(CCing the Landlock and LSM mailing lists.)
+
+On Mon, Oct 23, 2023 at 07:45:16PM +0000, Björn Roy Baron wrote:
+> Hi Mickaël Salaün,
 > 
-> That will work, although it makes me wonder if all the data in the 'integrity' blob
-> is used by both IMA and EVM. If these are going to be separate LSMs they should probably
-> have their own security blobs. If there is data in common then an 'integrity' blob can
-> still makes sense.
+> Landlock doesn't have any restrictions for connecting to unix socket
+> in the abstract namespace. This means that if you don't use seccomp to
+> restrict access to the connect syscall or don't use a network
+> namespace to isolate the abstract namespace, on systems with a gui a
+> sandboxed process will be able to connect to the socket at
+> @/tmp/.X11-unix/X0 to send key presses to Xorg to make the desktop
+> environment run arbitrary processes outside of the sandbox. About a
+> month ago I reported a sandbox escape in a sandboxing library which
+> didn't have those restrictions.
 
-Yes, at the moment there is data in common, and we would need to check 
-case-by-case. Would be good to do after moving IMA and EVM to the LSM 
-infrastructure.
+Thanks for the heads up. Abstract unix sockets don't rely on the
+filesystem. In fact the path used as an "abstract address" (after the
+leading NULL character) is just a string from the kernel point of view.
+There is then no way to properly tie it to filesystem access control
+(contrary to unix socket files).
 
-Roberto
+I agree that this might be confusing, but we need network restrictions
+to control such socket. We are working on TCP access control [1] which
+is a first step into being able to more broadly restrict network access.
+We also talked about another complementary approach to more broadly
+restrict socket creation [2].
 
->> Thanks
->>
->> Roberto
->>
->>>> Roberto
->>>>
->>>>> ---
->>>>>    include/uapi/linux/lsm.h | 15 +++++++--------
->>>>>    1 file changed, 7 insertions(+), 8 deletions(-)
->>>>>
->>>>> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
->>>>> index eeda59a77c02..f0386880a78e 100644
->>>>> --- a/include/uapi/linux/lsm.h
->>>>> +++ b/include/uapi/linux/lsm.h
->>>>> @@ -54,14 +54,13 @@ struct lsm_ctx {
->>>>>    #define LSM_ID_SELINUX        101
->>>>>    #define LSM_ID_SMACK        102
->>>>>    #define LSM_ID_TOMOYO        103
->>>>> -#define LSM_ID_IMA        104
->>>>> -#define LSM_ID_APPARMOR        105
->>>>> -#define LSM_ID_YAMA        106
->>>>> -#define LSM_ID_LOADPIN        107
->>>>> -#define LSM_ID_SAFESETID    108
->>>>> -#define LSM_ID_LOCKDOWN        109
->>>>> -#define LSM_ID_BPF        110
->>>>> -#define LSM_ID_LANDLOCK        111
->>>>> +#define LSM_ID_APPARMOR        104
->>>>> +#define LSM_ID_YAMA        105
->>>>> +#define LSM_ID_LOADPIN        106
->>>>> +#define LSM_ID_SAFESETID    107
->>>>> +#define LSM_ID_LOCKDOWN        108
->>>>> +#define LSM_ID_BPF        109
->>>>> +#define LSM_ID_LANDLOCK        110
->>>>>      /*
->>>>>     * LSM_ATTR_XXX definitions identify different LSM attributes
->>
+[1] https://lore.kernel.org/r/20231016015030.1684504-1-konstantin.meskhidze@huawei.com
+[2] https://lore.kernel.org/r/b8a2045a-e7e8-d141-7c01-bf47874c7930@digikod.net
 
+> 
+> While this is not technically a violation of the documentation, it is
+> surprising that you need seccomp or a network namespace in addition to
+> Landlock to actually restrict filesystem access. In other places like
+> ptrace access Landlock already does the necessary restrictions to
+> prevent a program outside of the sandbox from getting hijacked.
+
+The ptrace restrictions was a minimal requirement to not let processes
+trivially bypass any sandbox. There are other missing access control
+such as process signaling or networking. We'll get there but it takes
+time. In the meantime, seccomp is a nice complement to Landlock to fill
+these gaps.
+
+About abstract unix socket control, I think it would be nice to be able
+to scope access to such sockets the same way ptrace is limited (but this
+time it would be opt-in). I think the same approach would fit well for
+signaling too.
+
+> 
+> I have written a write up of the security issue in the aforementioned
+> sandboxing library which I want to publish on my blog. But I first
+> want to give you the chance of adding a fix to Landlock if you
+> consider this a bug in Landlock.
+
+This is not a bug even if it might be surprising. We should probably
+extend the documentation to explicitly list this example as a
+limitation. Feel free to send a patch, or I'll add that to my todo list.
+
+Feel free to share a link to your blog once you published your write up.
+
+Regards,
+ Mickaël
+
+> 
+> Cheers,
+> Bjorn Baron
