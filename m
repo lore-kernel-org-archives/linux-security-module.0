@@ -2,208 +2,74 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B38C00A8F
-	for <linux-security-module@archiver.kernel.org>; Sun, 22 Oct 2023 19:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A18C0032E
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Oct 2023 00:55:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229452AbjJVTkq (ORCPT
+        id S229623AbjJWAzY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 22 Oct 2023 15:40:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53928 "EHLO
+        Sun, 22 Oct 2023 20:55:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232856AbjJVTkj (ORCPT
+        with ESMTP id S229446AbjJWAzY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 22 Oct 2023 15:40:39 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9136BF7
-        for <linux-security-module@vger.kernel.org>; Sun, 22 Oct 2023 12:40:36 -0700 (PDT)
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id F22D13F140
-        for <linux-security-module@vger.kernel.org>; Sun, 22 Oct 2023 19:40:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1698003635;
-        bh=47jpj8y9wBd7Zg0OmQJRAjuqRq+DYCKjX3d9uClSbpk=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-        b=PAEgI/urxMwyeuPRnk98RIyEvk+Tmu+agMC9TUd46N45eoj9i/vZR+mwqhi5VG8ri
-         NrR7rb9aW0yTkARG1sH0MogtvZ30wA5orsl/biNCI4WTui2pntXrG5QGfq95c9X+VD
-         3Bm/FHAma7kYzyZS8XwMlixPWu1Ozbl+FVizB80QwnkPxelm2bbTwo0qbD6ybbxQGi
-         bJgthf2tqYwf/5e+jpB6xSOXhR90K5enjkS9Yqr7aJloyFc1HQQutNukSaiuahQRMn
-         7yjLLiB23LfzwWQ/HlMI3qqykuglPEv449JT60DTDLMxdDsRUvcjbW8v2rtVXfwDdZ
-         Udgk2uAJfu+/g==
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4084001846eso18368325e9.1
-        for <linux-security-module@vger.kernel.org>; Sun, 22 Oct 2023 12:40:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698003634; x=1698608434;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=47jpj8y9wBd7Zg0OmQJRAjuqRq+DYCKjX3d9uClSbpk=;
-        b=ccrFsQe8PURQTtjPoFxKpit+CkcVY5FFuMiWyEqwFV0QVGmDWIg0OirMuiAvKmUyyH
-         8cXMs3RHCYVPB54+7WUt5WzOZYbQ3+3pZCVIv9GWxckU7v3xo1wKT23ZfXEsazOTbqg1
-         SIjg7Wdt3k4LxzlhklZ2+FoHunNZtwgt3RZFMHFd7KJviGo8BtjKJOv3bmyADwezf/HV
-         /I1K0QlUiNLyfUVeLhnly0MLr3Myh5e0le2XYLdJ0NDlxdgbsslhVoMePsrNn4rGbWrM
-         adxb2IPybUb23Gtj2/hUyD94wWnBtnkFrfz95G2ZWWUEEMjDDs2rvn3tOTjrIs1P2MfF
-         qpzA==
-X-Gm-Message-State: AOJu0YyLxBulyTBumGggDoQciyflhg7EM/4FTkp5v1D0P79ZG7DWCMRE
-        5yAyF6AJAf74MA9gDyEuHYF76AlmbRBskd6gaCH4SSqCAK+NlLWANO8D0i94TTP4+oKrwKGWk8o
-        t1TAbON8UyJRK3cKQw0an2Vo1fPO9nMhulbmsv9mp+4bKRm55SdFkug==
-X-Received: by 2002:adf:ef8b:0:b0:32d:96a7:9551 with SMTP id d11-20020adfef8b000000b0032d96a79551mr4967364wro.36.1698003634509;
-        Sun, 22 Oct 2023 12:40:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFpLdRBIeVWYwo3xURbI5pzw5n3xFTx5Mo5MIsfkN8aLsxEaxi5atFcCBTp7YwPa6dq+CuLMg==
-X-Received: by 2002:adf:ef8b:0:b0:32d:96a7:9551 with SMTP id d11-20020adfef8b000000b0032d96a79551mr4967354wro.36.1698003634173;
-        Sun, 22 Oct 2023 12:40:34 -0700 (PDT)
-Received: from localhost ([2001:67c:1560:8007::aac:c15c])
-        by smtp.gmail.com with ESMTPSA id q18-20020adff792000000b0030647449730sm6208438wrp.74.2023.10.22.12.40.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Oct 2023 12:40:33 -0700 (PDT)
-From:   Dimitri John Ledkov <dimitri.ledkov@canonical.com>
-To:     John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-crypto@vger.kernel.org, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] apparmor: switch SECURITY_APPARMOR_HASH from sha1 to sha256
-Date:   Sun, 22 Oct 2023 20:40:26 +0100
-Message-Id: <20231022194026.313584-1-dimitri.ledkov@canonical.com>
-X-Mailer: git-send-email 2.34.1
+        Sun, 22 Oct 2023 20:55:24 -0400
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1840B7;
+        Sun, 22 Oct 2023 17:55:21 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R251e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0VuctJle_1698022518;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0VuctJle_1698022518)
+          by smtp.aliyun-inc.com;
+          Mon, 23 Oct 2023 08:55:19 +0800
+From:   Yang Li <yang.lee@linux.alibaba.com>
+To:     john.johansen@canonical.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>,
+        Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] apparmor: Fix some kernel-doc comments
+Date:   Mon, 23 Oct 2023 08:55:17 +0800
+Message-Id: <20231023005517.115318-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-sha1 is insecure and has colisions, thus it is not useful for even
-lightweight policy hash checks. Switch to sha256, which on modern
-hardware is fast enough.
+Fix some kernel-doc comments to silence the warnings:
+security/apparmor/capability.c:66: warning: Function parameter or member 'ad' not described in 'audit_caps'
+security/apparmor/capability.c:66: warning: Excess function parameter 'as' description in 'audit_caps'
+security/apparmor/capability.c:154: warning: Function parameter or member 'subj_cred' not described in 'aa_capable'
+security/apparmor/capability.c:154: warning: Excess function parameter 'subj_cread' description in 'aa_capable'
 
-Separately as per NIST Policy on Hash Functions, sha1 usage must be
-withdrawn by 2030. This config option currently is one of many that
-holds up sha1 usage.
-
-Signed-off-by: Dimitri John Ledkov <dimitri.ledkov@canonical.com>
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=7035
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
 ---
- security/apparmor/Kconfig      | 12 ++++++------
- security/apparmor/apparmorfs.c | 16 ++++++++--------
- security/apparmor/crypto.c     |  6 +++---
- 3 files changed, 17 insertions(+), 17 deletions(-)
+ security/apparmor/capability.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
-index e0d1dd0a19..64cc3044a4 100644
---- a/security/apparmor/Kconfig
-+++ b/security/apparmor/Kconfig
-@@ -57,10 +57,10 @@ config SECURITY_APPARMOR_INTROSPECT_POLICY
- 	  cpu is paramount.
+diff --git a/security/apparmor/capability.c b/security/apparmor/capability.c
+index 0b7d2b1086c9..9934df16c843 100644
+--- a/security/apparmor/capability.c
++++ b/security/apparmor/capability.c
+@@ -51,7 +51,7 @@ static void audit_cb(struct audit_buffer *ab, void *va)
  
- config SECURITY_APPARMOR_HASH
--	bool "Enable introspection of sha1 hashes for loaded profiles"
-+	bool "Enable introspection of sha256 hashes for loaded profiles"
- 	depends on SECURITY_APPARMOR_INTROSPECT_POLICY
- 	select CRYPTO
--	select CRYPTO_SHA1
-+	select CRYPTO_SHA256
- 	default y
- 	help
- 	  This option selects whether introspection of loaded policy
-@@ -74,10 +74,10 @@ config SECURITY_APPARMOR_HASH_DEFAULT
-        depends on SECURITY_APPARMOR_HASH
-        default y
-        help
--         This option selects whether sha1 hashing of loaded policy
--	 is enabled by default. The generation of sha1 hashes for
--	 loaded policy provide system administrators a quick way
--	 to verify that policy in the kernel matches what is expected,
-+	 This option selects whether sha256 hashing of loaded policy
-+	 is enabled by default. The generation of sha256 hashes for
-+	 loaded policy provide system administrators a quick way to
-+	 verify that policy in the kernel matches what is expected,
- 	 however it can slow down policy load on some devices. In
- 	 these cases policy hashing can be disabled by default and
- 	 enabled only if needed.
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index a608a6bd76..082581397d 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -1474,7 +1474,7 @@ int __aa_fs_create_rawdata(struct aa_ns *ns, struct aa_loaddata *rawdata)
- 	rawdata->dents[AAFS_LOADDATA_REVISION] = dent;
+ /**
+  * audit_caps - audit a capability
+- * @as: audit data
++ * @ad: audit data
+  * @profile: profile being tested for confinement (NOT NULL)
+  * @cap: capability tested
+  * @error: error code returned by test
+@@ -140,7 +140,7 @@ static int profile_capable(struct aa_profile *profile, int cap,
  
- 	if (aa_g_hash_policy) {
--		dent = aafs_create_file("sha1", S_IFREG | 0444, dir,
-+		dent = aafs_create_file("sha256", S_IFREG | 0444, dir,
- 					      rawdata, &seq_rawdata_hash_fops);
- 		if (IS_ERR(dent))
- 			goto fail;
-@@ -1644,11 +1644,11 @@ static const char *rawdata_get_link_base(struct dentry *dentry,
- 	return target;
- }
- 
--static const char *rawdata_get_link_sha1(struct dentry *dentry,
-+static const char *rawdata_get_link_sha256(struct dentry *dentry,
- 					 struct inode *inode,
- 					 struct delayed_call *done)
- {
--	return rawdata_get_link_base(dentry, inode, done, "sha1");
-+	return rawdata_get_link_base(dentry, inode, done, "sha256");
- }
- 
- static const char *rawdata_get_link_abi(struct dentry *dentry,
-@@ -1665,8 +1665,8 @@ static const char *rawdata_get_link_data(struct dentry *dentry,
- 	return rawdata_get_link_base(dentry, inode, done, "raw_data");
- }
- 
--static const struct inode_operations rawdata_link_sha1_iops = {
--	.get_link	= rawdata_get_link_sha1,
-+static const struct inode_operations rawdata_link_sha256_iops = {
-+	.get_link	= rawdata_get_link_sha256,
- };
- 
- static const struct inode_operations rawdata_link_abi_iops = {
-@@ -1739,7 +1739,7 @@ int __aafs_profile_mkdir(struct aa_profile *profile, struct dentry *parent)
- 	profile->dents[AAFS_PROF_ATTACH] = dent;
- 
- 	if (profile->hash) {
--		dent = create_profile_file(dir, "sha1", profile,
-+		dent = create_profile_file(dir, "sha256", profile,
- 					   &seq_profile_hash_fops);
- 		if (IS_ERR(dent))
- 			goto fail;
-@@ -1749,9 +1749,9 @@ int __aafs_profile_mkdir(struct aa_profile *profile, struct dentry *parent)
- #ifdef CONFIG_SECURITY_APPARMOR_EXPORT_BINARY
- 	if (profile->rawdata) {
- 		if (aa_g_hash_policy) {
--			dent = aafs_create("raw_sha1", S_IFLNK | 0444, dir,
-+			dent = aafs_create("raw_sha256", S_IFLNK | 0444, dir,
- 					   profile->label.proxy, NULL, NULL,
--					   &rawdata_link_sha1_iops);
-+					   &rawdata_link_sha256_iops);
- 			if (IS_ERR(dent))
- 				goto fail;
- 			aa_get_proxy(profile->label.proxy);
-diff --git a/security/apparmor/crypto.c b/security/apparmor/crypto.c
-index 6724e2ff6d..aad486b2fc 100644
---- a/security/apparmor/crypto.c
-+++ b/security/apparmor/crypto.c
-@@ -106,16 +106,16 @@ static int __init init_profile_hash(void)
- 	if (!apparmor_initialized)
- 		return 0;
- 
--	tfm = crypto_alloc_shash("sha1", 0, 0);
-+	tfm = crypto_alloc_shash("sha256", 0, 0);
- 	if (IS_ERR(tfm)) {
- 		int error = PTR_ERR(tfm);
--		AA_ERROR("failed to setup profile sha1 hashing: %d\n", error);
-+		AA_ERROR("failed to setup profile sha256 hashing: %d\n", error);
- 		return error;
- 	}
- 	apparmor_tfm = tfm;
- 	apparmor_hash_size = crypto_shash_digestsize(apparmor_tfm);
- 
--	aa_info_message("AppArmor sha1 policy hashing enabled");
-+	aa_info_message("AppArmor sha256 policy hashing enabled");
- 
- 	return 0;
- }
+ /**
+  * aa_capable - test permission to use capability
+- * @subj_cread: cred we are testing capability against
++ * @subj_cred: cred we are testing capability against
+  * @label: label being tested for capability (NOT NULL)
+  * @cap: capability to be tested
+  * @opts: CAP_OPT_NOAUDIT bit determines whether audit record is generated
 -- 
-2.34.1
+2.20.1.7.g153144c
 
