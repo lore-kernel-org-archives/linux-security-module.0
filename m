@@ -2,124 +2,123 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE64C001E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Oct 2023 15:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E7E2C004C0
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Oct 2023 15:20:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231535AbjJWPNq (ORCPT
+        id S229829AbjJWPUa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Oct 2023 11:13:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39040 "EHLO
+        Mon, 23 Oct 2023 11:20:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231317AbjJWPNp (ORCPT
+        with ESMTP id S230289AbjJWPU3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Oct 2023 11:13:45 -0400
-Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3FE0FF
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Oct 2023 08:13:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1698074023; bh=5qhVm0qgr8MH691SK66XJk00Hxsjalx43/T/nxE11RE=; h=Date:Subject:To:References:From:In-Reply-To:From:Subject:Reply-To; b=eIMVqvXCK0N6enOdR3XYdaij+4lApowWtvpfSolkqo6niG1w3GuRDrnZXRYu2EmyosncbxXJONkYIrI8CGTLxPunP07yBauVcuKHYwYzaAH60XH7B5xgmGY/fZiXrJ7aW9ylgD4aA/+3Iz4vdYyUutrtnrozf/Jgky63arzVmd7DUdil4F5BG4vwmdoFvfowWXorMaicn8IF22xeoIuMsDnDb0WY+NWhX3eXqERM3TyWQbwSy4nOwnzHHx2ZSt6RlRT9DnRK+duKMIIMTEEHCOcP87YJIrN8n69Q8aUrYpWWeOnkDYY7A2sQi5wCoIoGxuOiuS3+TLzIqputSDIgdQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1698074023; bh=OaJlbcPRdhgb16Vxj8vBgx/z56oKzG59epzMgdrnPPK=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ZS5lJatzliNW+xOxGVTQVU3VNWMMrOjl30HLcBo4zgU/K5JWHSesSDUUv7JSnFoCIuPLTD7bJkOyuTMHYel0cyhF90dmqA/bz0fVC7w8V8d3jmxU+AplBL8WPEqUxbnThMagTY1R6Tz4lOw4IgoCu92b3OiyTmbELtztHXrUwa59nwBNhFWvk3UgMZ7H0dM8LSg6KVos+3oQxx/mmFa5iIHg9SjTQfVtgeegr56ONLEoC+0bwZ6s8aHfBh5426h5xz+/lsOhcX0RjT2/RlakjjY2GUZqzHjkCoQjiNUedBdQjBMMdDSUHtrLpY3nbjHkkOCtjkKAL0LZzi9ozN9DbQ==
-X-YMail-OSG: CWBLw44VM1nf33uQEfb5bmH6sn7LKTfUX_Zz6p2tdKu2BCeBfDnhjEtyXFu9tTZ
- INuvp51.xhDXrHRjZ8zS7rHCdZaZ9f4U9mRO543iHR9gDkzsbijT1aoNuFprr38ne5yWz9b8GPUp
- G6RB0SiByS9A4wcCvplNnVcb_xyQDcDjfUKdpJJlnjUnu2ONjembyT1z5xea4l1UNbyq0g8Ipcvi
- 7qtVDQTuYT3yOztcsd95uhxdmp40iY1Jovtzy7LsILZkFL4aILM1RFKD4ESs9df4Rg.V2QyrjNRX
- vVlS2eRZYvt8AvsT0yXGfT.PMuGRff3NAxLKLKQ.XztolTXTs0F2hpQoC9.1eD3ujRV8vIVx5WyJ
- 3zHGzJONe42UhKC8p0A3YJQjrpGnjxXUi_4_G2RS6jHFixHva_Cjo383j9N84tYzhaYvl5LF5y6I
- tcGopQq1NKZTKwi8g.YCxcnK2HTV4V5vHpbcDXeb0cOmMRIAf_QOK_c1bfDmW2n8TzRZJEA_zcLO
- J_iCJWZk7IZ0GZMVpP5yFIARWA.vNu4J9F.fimHvVX4fgrwAwjtl9RHtcZQnGATeuxO4HKe_gH0w
- cNO4mpcSjXCIahpC84IA0RbRGBih_Y8L71uF3.I5Wrq_wCHkIaZkPK7Q_2wK3ZrW0beGvyJPPTKZ
- Z3PgtyCFRuHj6Swu4bzOYSkaRWcLMvY1e9WQKQS8IGPEPsvM7EGJWoMPHIqdHD4VhifdAecVokec
- Js8hkbSu3EdsGse94rg1o5Uz0Lj.mjS0eKD991Q807VGmgDPZk6RzPxsXqTWLiVCOebBgUpmGXt9
- Vp7xSp7aQyuZQ4QMfiX8gpFygfV4c43OMGmmST9TLFCXKJITSt3sqig5KE4rs1JwzmKBKt52ktO4
- i_qGAf6DLrEvybANwnQsLtk6TQKejF9yrajdgX7sZQVHRajuhg2mImI.21WFAbxWnklckFYLl9Ck
- J2X0OxzmTAKb8GiFkxqjjy5zY0yWGaKTpcDW2o.LMA76xh5ZF2E8.8XYgLNtwZuOIdeeN.8jZW_X
- A_GQkgzaI7qexP2WaynyyqhY3R1w9iTuCMaP0n8IiNSTbvCu9wPvBtO2bXd4r9kIXj9nHxwwc.GT
- EhTsT.D.HGL8f2z56LWSfzh5NRmHBSbRXTGGAeGenrxtMbPeAPQXnQHVftkWfA7g0.XiWFrtg7S3
- 1HRLBVsQNVi2iPNgAcOPa4m8aIGZmSrUgkRFFxzxHL28EisTRC2utWp.zTIVUH4EYvNP3fHUCizL
- m8H5TnMFhBP.4gvpr2z9JsDLZ.Hpiy4MrhMzi.K1Z5da7ZqZgWBBMECHSpAaJxdakU2f6Zr2ug37
- iR2HsGf8cxj.EwW.GznGZIiSIwBDzxFo3vCeYMRBl50pVRCEOYE2hzn0_aSOYu7C1dND4Tb4hjgE
- AgA0O4FBQLg993a0h0pzkwEpT_HetVvbZ5qC_d7zPfutzEitaM3r_AG04vta45CxtUIFm99rJNyt
- 2i2gCIy8wreoLz3R4OUfFBF.X1aBOdXqnjw_zMrfCfvEcEY99GomnsKokrTLjWHCMxOfcwZh2nz3
- JNCh_JLDpgakNH3lyoH_xeU0fAWJe_dg4U2tZhI.28OQAOX5iIBsuc3HVjB8m_nICk6N_qpGKhOL
- 4._AZ7JfdKEwP5D19M7Tp8BL19Ni7uxNDQ.ayKgN9dI1S0wWGAfVFbr03tQ8CBH2ZxVlJljDlu8g
- ChM8zzKaTcP4gELWwEwJoKQu9HRPyvMr4.lTT572rcixr6ggO87byZPy4_fjesStsn4ykb1IqNlw
- gYl.z9m7rV2sxAWp.NVvYFEqMHMO57vt26qZn1Ce3LmLsJnEN5l89byUMhbKK_grfrr61FPUZWly
- ViSzc08YI_4tyDDizDfjpj32H7cwzL18am8syU63aZnS72_4L8XUgzlUlNpWIBNhtpA3tx5lEdgu
- PJ_CM81tRGX0EI6tjlT3ne1jINNqOZwTGuUuopImu3vBwZPp.xAENw3hPTPZV9EdHPJ4K3TlVkUx
- eAkzYrni9qXD4KIG3W.WHH2mMTIpgZNrSxV1bX.D4AeAKvRWXP4J49i.0uytCyhYYyXJ_LED1W4b
- 1EfZPNtyGwxy7DDjdgi2uf.Pi5t1VmPVYIHMLWUv6f6WC5p9TWr71ADWb7mckh9BNOXhG6I1_w0i
- zOcp5n0byV7u_FNC5jARO.JzXbCTcXVdbBSnFdjpLkLToNKYkitIgtI571xRkNn5qwLAa8i7bn29
- 89.PcdiEqIotFuLewpOhulTmoTJUCs13s1pdK5qFpJyyQhWZwMU9_JbspwhR0mFZxwPVqfI5RPUc
- CknMKcw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 5c4d3800-39da-4bf1-8665-b40081fd39d8
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Mon, 23 Oct 2023 15:13:43 +0000
-Received: by hermes--production-ne1-68668bc7f7-pg4xv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6749c8cefbdd6387e1e81113019a3174;
-          Mon, 23 Oct 2023 15:13:38 +0000 (UTC)
-Message-ID: <64626db9-e37a-4c65-a455-fc3985382216@schaufler-ca.com>
-Date:   Mon, 23 Oct 2023 08:13:35 -0700
+        Mon, 23 Oct 2023 11:20:29 -0400
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9029FFD
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Oct 2023 08:20:26 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SDdl42z2wz9v7cD
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Oct 2023 23:04:32 +0800 (CST)
+Received: from [10.206.134.65] (unknown [10.206.134.65])
+        by APP1 (Coremail) with SMTP id LxC2BwCH4JEmjzZl7QTGAg--.12433S2;
+        Mon, 23 Oct 2023 16:20:11 +0100 (CET)
+Message-ID: <f47097f8-3391-42a7-b8b5-81e1be2d8e68@huaweicloud.com>
+Date:   Mon, 23 Oct 2023 17:20:03 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] vduse: Add LSM hooks to check Virtio device type
+Subject: Re: [PATCH] lsm: drop LSM_ID_IMA
 Content-Language: en-US
-To:     Maxime Coquelin <maxime.coquelin@redhat.com>, mst@redhat.com,
-        jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        xieyongji@bytedance.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        david.marchand@redhat.com, lulu@redhat.com,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20231020155819.24000-1-maxime.coquelin@redhat.com>
- <20231020155819.24000-5-maxime.coquelin@redhat.com>
- <c8f189e6-c79b-429a-ab36-2193bb68e3e9@schaufler-ca.com>
- <923f87a1-1871-479e-832e-db67b5ae87fd@redhat.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <923f87a1-1871-479e-832e-db67b5ae87fd@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>
+References: <20231018215032.348429-2-paul@paul-moore.com>
+ <72a92e27855af2291273209d328e1b79f3b61663.camel@huaweicloud.com>
+ <1764a96f-6d24-4585-a24b-667a5ea075c3@schaufler-ca.com>
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+In-Reply-To: <1764a96f-6d24-4585-a24b-667a5ea075c3@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21797 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-CM-TRANSID: LxC2BwCH4JEmjzZl7QTGAg--.12433S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zr4DWryUuFyUZw17XrWkWFg_yoW8ur43pr
+        n8KFW7tFWUZF17Cw4Iv3ZxAw17CFWkJr17W34Uuw4Uta1FyF97trs2gF4akrn0qr4vyrWr
+        KFnFq345u3srArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUgmb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+        AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
+        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
+        IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
+        KfnxnUUI43ZEXa7IU1CPfJUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgATBF1jj5FfcAAAsa
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/23/2023 12:28 AM, Maxime Coquelin wrote:
->
->
-> On 10/21/23 00:20, Casey Schaufler wrote:
->> On 10/20/2023 8:58 AM, Maxime Coquelin wrote:
->>> This patch introduces LSM hooks for devices creation,
->>> destruction and opening operations, checking the
->>> application is allowed to perform these operations for
->>> the Virtio device type.
+On 10/20/2023 11:56 PM, Casey Schaufler wrote:
+> On 10/19/2023 1:08 AM, Roberto Sassu wrote:
+>> On Wed, 2023-10-18 at 17:50 -0400, Paul Moore wrote:
+>>> When IMA becomes a proper LSM we will reintroduce an appropriate
+>>> LSM ID, but drop it from the userspace API for now in an effort
+>>> to put an end to debates around the naming of the LSM ID macro.
+>>>
+>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+>> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
 >>
->> Why do you think that there needs to be a special LSM check for virtio
->> devices? What can't existing device attributes be used?
->
-> Michael asked for a way for SELinux to allow/prevent the creation of
-> some types of devices [0].
->
-> A device is created using ioctl() on VDUSE control chardev. Its type is
-> specified via a field in the structure passed in argument.
->
-> I didn't see other way than adding dedicated LSM hooks to achieve this,
-> but it is possible that their is a better way to do it?
+>> This makes sense according to the new goal of making 'ima' and 'evm' as
+>> standalone LSMs.
+>>
+>> Otherwise, if we took existing LSMs, we should have defined
+>> LSM_ID_INTEGRITY, associated to DEFINE_LSM(integrity).
+>>
+>> If we proceed with the new direction, I will add the new LSM IDs as
+>> soon as IMA and EVM become LSMs.
+> 
+> This seems right to me. Thank You.
 
-At the very least the hook should be made more general, and I'd have to
-see a proposal before commenting on that. security_dev_destroy(dev) might
-be a better approach. If there's reason to control destruction of vduse
-devices it's reasonable to assume that there are other devices with the
-same or similar properties.
+Perfect! Is it fine to assign an LSM ID to 'ima' and 'evm' and keep the 
+'integrity' LSM to reserve space in the security blob without LSM ID (as 
+long as it does not register any hook)?
 
-Since SELinux is your target use case, can you explain why you can't
-create SELinux policy to enforce the restrictions you're after? I believe
-(but can be proven wrong, of course) that SELinux has mechanism for dealing
-with controls on ioctls.
+Thanks
 
+Roberto
 
->
-> Thanks,
-> Maxime
->
-> [0]:
-> https://lore.kernel.org/all/20230829130430-mutt-send-email-mst@kernel.org/
->
+>> Roberto
+>>
+>>> ---
+>>>   include/uapi/linux/lsm.h | 15 +++++++--------
+>>>   1 file changed, 7 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
+>>> index eeda59a77c02..f0386880a78e 100644
+>>> --- a/include/uapi/linux/lsm.h
+>>> +++ b/include/uapi/linux/lsm.h
+>>> @@ -54,14 +54,13 @@ struct lsm_ctx {
+>>>   #define LSM_ID_SELINUX		101
+>>>   #define LSM_ID_SMACK		102
+>>>   #define LSM_ID_TOMOYO		103
+>>> -#define LSM_ID_IMA		104
+>>> -#define LSM_ID_APPARMOR		105
+>>> -#define LSM_ID_YAMA		106
+>>> -#define LSM_ID_LOADPIN		107
+>>> -#define LSM_ID_SAFESETID	108
+>>> -#define LSM_ID_LOCKDOWN		109
+>>> -#define LSM_ID_BPF		110
+>>> -#define LSM_ID_LANDLOCK		111
+>>> +#define LSM_ID_APPARMOR		104
+>>> +#define LSM_ID_YAMA		105
+>>> +#define LSM_ID_LOADPIN		106
+>>> +#define LSM_ID_SAFESETID	107
+>>> +#define LSM_ID_LOCKDOWN		108
+>>> +#define LSM_ID_BPF		109
+>>> +#define LSM_ID_LANDLOCK		110
+>>>   
+>>>   /*
+>>>    * LSM_ATTR_XXX definitions identify different LSM attributes
+
