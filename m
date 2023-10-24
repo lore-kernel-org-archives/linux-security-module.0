@@ -2,202 +2,156 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68AC3C07545
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Oct 2023 14:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF01BC25B6D
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Oct 2023 15:30:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343651AbjJXO6h (ORCPT
+        id S234779AbjJXPaz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Oct 2023 10:58:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50482 "EHLO
+        Tue, 24 Oct 2023 11:30:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234594AbjJXO6g (ORCPT
+        with ESMTP id S234824AbjJXPal (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Oct 2023 10:58:36 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EED8ACC;
-        Tue, 24 Oct 2023 07:58:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1698159514; x=1729695514;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=C6IdOkpwYw0wn6gnNyHdezVBscMASvkkdmL0IsrKTB4=;
-  b=lxA+ktu1i7bHsnLoRENmxbe3jf3C4T4B4nPolAFkKBEniXbkGT3TL8Fm
-   fBcw3XfRPDNhQmQU8zSXP6KSxDxS6/naJ41WwAPP6ZRuixXl53IsC+c5Q
-   QLK4D0cfs3n2t2Wz845tf9UJ/oUY/OSpmv6HaSG/1Ti2qoW1Bc9vYBhJK
-   wNBC+srRtpSiUu4QyDvgVj0XHCGdt+dFZHdldOsQ3f9D8ovvHL3hS+8fS
-   vlpRMdwGcM1Sf2+mBkYDnshsc6TuJVmjDDhVQ+GCNVjIKQZWKsrqyP7QA
-   hGUCSbKjHczwVFvalprYTZwWZ+0yS0gNzHp2jvT7TraeR9ULXkpoDwLaT
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10873"; a="8628355"
-X-IronPort-AV: E=Sophos;i="6.03,248,1694761200"; 
-   d="scan'208";a="8628355"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2023 07:58:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10873"; a="752020214"
-X-IronPort-AV: E=Sophos;i="6.03,248,1694761200"; 
-   d="scan'208";a="752020214"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orsmga007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Oct 2023 07:58:26 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.32; Tue, 24 Oct 2023 07:58:25 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.32 via Frontend Transport; Tue, 24 Oct 2023 07:58:25 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.40) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.32; Tue, 24 Oct 2023 07:58:23 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Wjuk/pW9epPX/FOusgSl61Vvmw84JesLRZd3LwcWwOptsjmdAAnCP6GLaZoZyDXRUlVUCm2t7HSrioob3mEvfYbqywggvyB2in5FRKzWG/7OwwGtI7i7dc26YC3ThQhr6Yb0HlhPoAhj9DtE1/XfnHNANgnIAUOt7q4zokWMQOVLNYqyVMs8dF1gVItB/ZJPsGETIKW18arZFOEtPJo06KY1L4y19oVRaNmgMn9eM4md7YXpOXPO3j0+fSJ4KKx+Szj2+WVGrsB/qLN9ldLxmCUuVnEp9G1bt7bya4Lp4Yr82lrM/x+nHdXtWwv1wQzPnq2/sXoutNoL2Wt1153Yng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y8XBX0j0ydhGIkL0qgMDNdsWCbMCEwGqKzO5JaoqHWE=;
- b=oasHWGF65Gf4GOH7Eqbr0jC9LBQ+3vJNQ0++pzuXAn6VcNN9YeKG7X8ryKqW8xPAgUBqHigcImJnSp0kjE1lPd4wuk5yPYjjq8Lkn3tlFGdDg6wdm7UQSw7oZwuaGbAt3lizzkeSpMOKRdt8i85n8Ry5ADKvFCmILrIs9ot3gVqYr2nGwnyYPEirPFTfy0O2Sm2SY5Tis0vjBE1X5OQvSq+2tSZdtmwFajwc8BcNXMRElzVVJDpyV8ioecCrtdOJcVhEU1FWkUdWBDbF6UVDS/IjjX2GmRWh4ZhRZbIiAqeKJFRT67EUxz3kzcgub3C9jkgX/opluaoebizjaE3HQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB6779.namprd11.prod.outlook.com (2603:10b6:510:1ca::17)
- by DS7PR11MB7691.namprd11.prod.outlook.com (2603:10b6:8:e4::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.33; Tue, 24 Oct
- 2023 14:58:18 +0000
-Received: from PH8PR11MB6779.namprd11.prod.outlook.com
- ([fe80::29f0:3f0f:2591:d1f6]) by PH8PR11MB6779.namprd11.prod.outlook.com
- ([fe80::29f0:3f0f:2591:d1f6%3]) with mapi id 15.20.6907.032; Tue, 24 Oct 2023
- 14:58:17 +0000
-Date:   Tue, 24 Oct 2023 22:58:10 +0800
-From:   kernel test robot <oliver.sang@intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-CC:     <oe-lkp@lists.linux.dev>, <lkp@intel.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>, <oliver.sang@intel.com>
-Subject: [robertosassu:ima-evm-lsms-v4-devel-v7] [evm]  ea31d8b249:
- Kernel_panic-not_syncing:security_add_hooks_Too_many_LSMs_registered
-Message-ID: <202310242253.12601f42-oliver.sang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SG2PR04CA0194.apcprd04.prod.outlook.com
- (2603:1096:4:14::32) To PH8PR11MB6779.namprd11.prod.outlook.com
- (2603:10b6:510:1ca::17)
+        Tue, 24 Oct 2023 11:30:41 -0400
+Received: from sonic302-27.consmr.mail.ne1.yahoo.com (sonic302-27.consmr.mail.ne1.yahoo.com [66.163.186.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84F771FD6
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Oct 2023 08:30:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1698161408; bh=/YWm8GWX2383RfzFLFlBBduZ0aqXcPqlJQ3Z3PAB/jk=; h=Date:Subject:To:References:From:In-Reply-To:From:Subject:Reply-To; b=oRrVD3MghqUvCPNNVDqxY5gD7/iZWJ5beBwVmbM46N6KeIOs98QvthAVhKEqsIkclvk2wr1RXcfh1Gr3Q9EPSBj8NdS4zZGcW9UCm5m1ulk8NLBRrAIHp+CVVALv42qCeuxR5m5DS0HrmwFxH+tX60aoePLSiKoJ0LtvYlVA03XZ4WYcRC4WsA/A5zYl7N5CcjC3dHDXaeztY6QqgwVUiiclG33TY2ZpLFZZPr9ZW9UcSVGNeRHEEmKbpeOgAEqshiva/kMjcAduiUARZTkk+jHai9o3jSo8NunwUuun3vGLXJ9W+Kcv6LQsU9AzT0aMWiZEOnCGA3OC+8k+opl/KA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1698161408; bh=CkIOfqZ9TC1VkyJ7eKh3XTtlD8DmK8bQcnLdZ7gE9j3=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=difXLLaq92rU/B3K+Bjmm2EFmg4IhMPFDeOBmICWrC4kLTaWJwpOmdJArLY/vgFDiaELYzA1wT6ByMn1aliB+dUL1vDBj/UgYwEbEiUr5WV8C9nt85x0TLFmAa1AoOy+TQpgngTEItfGFH+Uz2Ir+ASn4e09OoB7qsntaTkR1tpMNtf9j+2Ki4dyCU9u24ehTcEr9jonmsGS+XZaM0ZKvni/VuVTHxfEhiE45eVmjSgJ5pfa3l9I6YiEZWXZJbs9b8bAA78VatUKaZV7iuoLxvgIuNFFu+QFDPLGnpJkqB89Y0bqNSvpkUjNVcwvUS8TEruyVDdrz2JTKiEijrTFxg==
+X-YMail-OSG: B4ESFpwVM1kBZ6lSz8rkkaXhskytnfYU40elwEwgBiLLQZujXONemP5xHi72sOt
+ ai7ZWBC8CJCZVw8MUfjwqrM7kujN_pfUkWR6Zt67bdR01U2nvtGsfaVBSHrZ3316B7mYc_IWswMN
+ ggHnj0tqoBGKOUm238BxaeXRIZIb7Y7remZYF16w4dTf3g00wwfa2o7bO3bJshxzTdIS3n9bnr.Y
+ zgkhl26mNCNNJd3ifh46QkCxH2cLgOiYrq2fzGI_CIAgPedHsCSRCBCJR.A9QobIPbYIKTUepx2b
+ 9NEoDaq8c2EBUA3_SQsOU4SFDtvkREnQ4S5km3n6P8XHEgosm5ElHGSMq7hCXF6v7CW2ESUMpuGV
+ kqyif8dqRE8x2kXdMZl4unuwbhGdQxYyMjWeleyaDZ75r.J9sq.70lsmOeAsTJlJk7bTqWvAns5j
+ 9N3jGik3y_WrUhae2XxGtXPdwfspZN07uA8BrhekX1GU9CrdMY5bexy_y0bflZmRczNgzVOuxkEd
+ N.JRSeGCb0bXiqurRm7wx0ukYjWlSSrITGsjSX4DiB8iNVbwY7s.8mrH0A9qXB1zuGpr3aFqKER_
+ YsAXJ3Dub.E36nnjS01zDrGsXR8iyer5Lo39Wlr6IQxmxQkScTB8CP.G8xlCHJK7foJJZkrm2ITG
+ k5EsS2oKD1n_jGS2fMv.HmDboZqQzb3EbOMSBeLTUcbTLoZsxAFFzz8W7.FJKHvxoocaPs6Mm..J
+ 1NWrMNKhhSsALI1rgzQI4YVkCAOesI21bAt5LIw7qDpQbKjheooVsnGc7.ZQ2zk9FgJwP841XowD
+ LHYXSgzJB.fPth.0GIf8VY8h.DzdmdVSRwJuE0RbY9hcPAep2EFO4hPDKdkG4N1n049FAKQTNIHE
+ _mOkgno3yu7MdYLZ9Vafa_p1Aurny4ey2tihyVujaKTKUJWySHsgvJh9vuUPUIMEcx7tGGiDRmsm
+ L9qDppwVWYk64CutoaIO4W8BSJRbkD7DNVyUTYGIWLmLtsye8mYBTr4Qpm1kktuQn6ntqNDW1tX.
+ aPEk22pkRLczeUR0LLCuK7xguidMOmuwyom39hoQr93cFpQg6RnB7b0fC9Wz.1aAoJA.lXOGAdKp
+ MDqq0k6h8JCoXYC8oY.k.oFiKzPhaqG2akyD2NZoeddH0QwuMRDKM5YBJrTupWtdU64rWwl0ev4l
+ 5EySje8tQ.6JwdR1rEeXav9YhHq1DndSBnHS_sFLl5Fvyo1hp1ij6dpHltSamh1sdGwF3p8LD9UX
+ VrcCEKAOFcLIpnQO24mVN9VlR8DHuN6orecrrTDxPZ4EhtMyZ9u4_vKTPzso_wgzUmX25PAbhxrn
+ gkr3yR0Oqrv8fyOxKXqTpr7jmeGB7HY5xi0llqq892PQWtSG24g.sM4pn8qomh5awh_UkBYqUr7n
+ FJmTPO5ygl39LKxOBgO.8AUELQZXuDED7yCozPTL2o1vp0IXWH9zJzHOGpPD.drvVlQbGhBR4BU3
+ teZ.UGUYmCT12Ai1SlvovfEPawwJl5DTGxSZRfuuiLZJWayFO0W6s_F2sl8W3LOXd1i_XbEx6VIt
+ X_nSzWMDPuzwpnqGbweg_fQq2gWezXFsxqNm0mY_LEu.UyjbmCbDQDSh8uph0Ui6fC19B9UC89ns
+ 4_q6PUJxpnkDn0OHDZmaOJ0Yj0cF4AYaUga8QttzcCcBp2azGw3jkZC8u12c5phBZnzfeiAJKJqM
+ Ul8H2Qezo2QN888BOZF1CqhlltfHFAECwvsGWOOj44Mff71H6inqBAI9zrdqeW3PMsPYyqRdbWDb
+ WHWVZyM88odTnXedhvC8uaAUN_knRzbg5qveYAtspLDjA5dcotfI9tvJn6HonYV1iC.ewiopqRA7
+ ..oT.N.99eAxxayy0qggE8iAYwCuBOXcZxAUmUT517W8cWADDOtUUT8Y4VDJkg36s_Dw5Y8WFSil
+ 7PwsD5GVd2R.ojPy.fm1DL5PAP6IwySw0Mt3Y7tEI0d5jJkuVcSzM5RTPW41d50dZMcXHFrNrpy.
+ mIB0rKUB18MHUyqQ3AivrRQuJHxz2Xk9Sdg4XHmozlxE9hF9BLUf6t.tIRDxEYAxYgW27qPjrQ5U
+ Wd63CeBd70IjSp8Z38CmiuAYOOTg3usrE8MkoGDmdiunuNm45dx6jzp_7uN81VcYaKd.M8oI7igV
+ UwfUmmtRbZb3tSSFtYZxWHAz1rojkTe5HxGVL1nLpWtn12nKKt6OFbKSPaJtvJCD2kn3cWdxXz.D
+ 9ODnAeiXLD.YGqz7ntz8UGXx6K.yjOTZT7MEg8Uk22BDRSeQvNVgJa_SgAcfpqZERieIhgSddOJx
+ LSqt7JB01NQ--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: b51fecd6-b267-4256-b431-c807c318f436
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Tue, 24 Oct 2023 15:30:08 +0000
+Received: by hermes--production-ne1-68668bc7f7-tcb7m (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5fc5461d31a49f2849dcb731ecf23d84;
+          Tue, 24 Oct 2023 15:30:03 +0000 (UTC)
+Message-ID: <b307ec62-7cfd-4a58-88ef-ea549c64e75e@schaufler-ca.com>
+Date:   Tue, 24 Oct 2023 08:30:00 -0700
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB6779:EE_|DS7PR11MB7691:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6fb0d005-0329-406b-943b-08dbd4a1a7f6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: z8Y892IxGcOzDujuH7M8MGPlp1/7KsjZj9+TzWscmcW9JRqkK8dVp0KGvtI/b9pq08GBYSJk/3H2gF3oo8y4ZOQx3n2fTJT64q4PedDQAC/443Nw50eoZ257iqPxqzw5kVCg3REZpnTU3EtM6x88LNTFNMXX2S546XFarWhxsk3Bxbs9/BK87wjdICVSda2vR8jlKkkNSxW+ifwA3QWiJ1f0cfrEuwD6YKFpfPxzJSmxXXTr/6Tg1hPKxPSJirOIPTQMCb+67VaYkiy33QKRhKNfCFhea4OXzPchc1u+j2zfK9Iag6JzHXKgxO9olBIqfxRuiAKa7uwPRvn8+AJc6RDBofBt3dlrxk5iz0IWOnuK7xdD7sk7l4W8Z9Yo9/UNYPgdHh9IyB2b33kComnfWevKeBJn7e887CPNSEQ52siNquIxT/h8k+ROM/qN63GPS04w7xJsIHYhaL91Rfb1zOeJb2mzwrSiBt5G2e8StmwWqwM7buVrWNGcdWa8GdmeMsg5oRQFa8GFA/7SGYFJYG/YkFBxAd8RoClo2Fw6wsZFc9FN0RCa+SoL0/IZCGf1rbIC/zXYTkXzTIjEp9I4qQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB6779.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(136003)(376002)(396003)(346002)(366004)(230922051799003)(64100799003)(186009)(451199024)(1800799009)(2906002)(4326008)(8676002)(8936002)(5660300002)(41300700001)(6506007)(6666004)(83380400001)(6512007)(38100700002)(86362001)(15650500001)(82960400001)(66946007)(107886003)(66556008)(66476007)(6916009)(316002)(966005)(6486002)(2616005)(26005)(1076003)(478600001)(36756003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?D3x47SiEMm1AhHLrMXWKPXLklSD6+Ucor8mfmh+Kq19GI7Z09SJSvO/Yhq9c?=
- =?us-ascii?Q?Y9bEsui4PD1hK8IN2+MNpHG2iuFj4ceG4qb9uDa2dJkfCyqtb5TOfd2NSmQK?=
- =?us-ascii?Q?zGXm3IiV5AgaDEsaTGOIoteLbmDoapaQSC/e8KB5VN1KyA0aOx41ZVgXJ1Fy?=
- =?us-ascii?Q?NekXeJCaD6XapxNBT/OgY8OcD0Hp0ifW7n2x1toLbJ3G8bHNbFFEfcIw5bIe?=
- =?us-ascii?Q?duKRQMFeKBGFLWHde0tBQXSvQ8dBliqsro0vprX6Xvkw6A12ONyNnBhZ3YXM?=
- =?us-ascii?Q?xh6Rk1pGWYDlor8ARA7Sft9GnVmsKb8sOj9FZDE0wQUQi21nPzczLges4wF4?=
- =?us-ascii?Q?X8PdLgU4i0/w5fa7OK4KWZkNdcKolUmtsHavSdFb2HtHKMTMduitC//xjr2G?=
- =?us-ascii?Q?wL/Tp0gtPhdZCtrK9zsdTjABE/tjUPLccvr0zHqbYYAHGkN5bWlsi6yDlgGm?=
- =?us-ascii?Q?yoAayFY3MJ6/GP4BKGQXGH4i9UzM498AOKn29dv+m4/XzE+/OqkWHEqwvckI?=
- =?us-ascii?Q?gYIPcIL1NrpqBRMWX9HBW8a0pz+V9IMudtnRUFMbASXrJYJDbw59O1AuZS4H?=
- =?us-ascii?Q?Vqm56KeplXNJxyQ+Ouij5La2NLBjHVpssZtU9lWvNmSjS/+BUhSx214z56ah?=
- =?us-ascii?Q?NpTFGO8hyhVqTyVHS+TvZkCOTjH45MGgxhIgqIxWMRFvhtrg3kV6xocfBhr1?=
- =?us-ascii?Q?7HP02bLrDiL7lbIikbI5sg7kS2QMuNwykN9Vr2HqdjiAKypfTpzi2QkUZyb1?=
- =?us-ascii?Q?YrXkmhM0x+wLbVgdcR5k8/Q4pM9X8+1zVLSWVTgFM/y7v+uRlHeMB9dYhW/K?=
- =?us-ascii?Q?Vvkos7AAjosrQewZhRmPz8tAKYPkSnjmpAfurM2JxWd2Xn1ztnEZ75cOMw+/?=
- =?us-ascii?Q?YvJ29ePDWp1gP+cSu/vOrZkk4Zkw+ughjjzo7HUniQ/teE5RULD6gtni6xWG?=
- =?us-ascii?Q?X3sI+mCL/Q9dS10bfir18t1uT3MH2O1U+y2tj4cScWf+J2KIVbrLXqPOaUq7?=
- =?us-ascii?Q?j7w9YTeomjHWtJozZzTpGFCTOd1mvv2lr5w6yaEVnmBmXj7mg+hYaiuS4Wzf?=
- =?us-ascii?Q?SPw37BWDTaBSESX3IoliTxMq48hiK2hnlWHLGhvUpj2leAsyENSnGdidfg6i?=
- =?us-ascii?Q?WAPo2wS0CXA2JNfODOcia74wCuEtqq3R3ml0RL/Z0QG5NXzB/EwvhFL/AQE0?=
- =?us-ascii?Q?Ak7lo4uhNggnfOLi4NoPcfKkKBMGcANHW3tbywLRNpk0fZNiBOeU+ZpJPJDH?=
- =?us-ascii?Q?ZkJFHgwbOR/dljkJLAI1WQTlS9tEydQ+32g7K5oA8hHJ3dX8kiMk6+XHEWKz?=
- =?us-ascii?Q?2j1JgYT7HTUOQ+EjZNbSmNLHIm0OvpVssSR7uj39IhnsxS8rp32pLy40BMpZ?=
- =?us-ascii?Q?WsdOnn2ugKkkT4Q9V2kneK8/vXYe/Lme7plFPRcWq1xFtahPpPNsNdCXC6PE?=
- =?us-ascii?Q?tR+ax3H2ftdGkCzblUbh6hpnt9B2Lu5WgEzP0F1Ou1BFolAsnA0L0oLHXqPF?=
- =?us-ascii?Q?QlDPcwIqlunOYGDs/v4Dqp32U9QkSuxUduwVIQIo8XjI2wPk2Vz3xgb+YBjz?=
- =?us-ascii?Q?3DkOTjxm1GRNiHrM8spNxQkXj3q+kg1HouZTFCfRcJPHVbNFFfyDeUvf016T?=
- =?us-ascii?Q?sQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6fb0d005-0329-406b-943b-08dbd4a1a7f6
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB6779.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2023 14:58:17.7654
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hID5v3OuXGZB68VFSABI6NLa2ksyjAW5ZgA6g7H0rno7Mv/Pil+Jq/kB1ctVBpzpC4teh+f7+V7U9XdP/CORRA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB7691
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] vduse: Add LSM hooks to check Virtio device type
+Content-Language: en-US
+To:     Maxime Coquelin <maxime.coquelin@redhat.com>, mst@redhat.com,
+        jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        xieyongji@bytedance.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        david.marchand@redhat.com, lulu@redhat.com,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20231020155819.24000-1-maxime.coquelin@redhat.com>
+ <20231020155819.24000-5-maxime.coquelin@redhat.com>
+ <c8f189e6-c79b-429a-ab36-2193bb68e3e9@schaufler-ca.com>
+ <923f87a1-1871-479e-832e-db67b5ae87fd@redhat.com>
+ <64626db9-e37a-4c65-a455-fc3985382216@schaufler-ca.com>
+ <7524dee3-7c48-4864-8182-1b166b0f6faa@redhat.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <7524dee3-7c48-4864-8182-1b166b0f6faa@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21797 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 10/24/2023 2:49 AM, Maxime Coquelin wrote:
+>
+>
+> On 10/23/23 17:13, Casey Schaufler wrote:
+>> On 10/23/2023 12:28 AM, Maxime Coquelin wrote:
+>>>
+>>>
+>>> On 10/21/23 00:20, Casey Schaufler wrote:
+>>>> On 10/20/2023 8:58 AM, Maxime Coquelin wrote:
+>>>>> This patch introduces LSM hooks for devices creation,
+>>>>> destruction and opening operations, checking the
+>>>>> application is allowed to perform these operations for
+>>>>> the Virtio device type.
+>>>>
+>>>> Why do you think that there needs to be a special LSM check for virtio
+>>>> devices? What can't existing device attributes be used?
+>>>
+>>> Michael asked for a way for SELinux to allow/prevent the creation of
+>>> some types of devices [0].
+>>>
+>>> A device is created using ioctl() on VDUSE control chardev. Its type is
+>>> specified via a field in the structure passed in argument.
+>>>
+>>> I didn't see other way than adding dedicated LSM hooks to achieve this,
+>>> but it is possible that their is a better way to do it?
+>>
+>> At the very least the hook should be made more general, and I'd have to
+>> see a proposal before commenting on that. security_dev_destroy(dev)
+>> might
+>> be a better approach. If there's reason to control destruction of vduse
+>> devices it's reasonable to assume that there are other devices with the
+>> same or similar properties.
+>
+> VDUSE is different from other devices as the device is actually
+> implemented by the user-space application, so this is very specific in
+> my opinion.
 
+This is hardly unique. If you're implementing the device
+in user-space you may well be able to implement the desired
+controls there.
 
-Message-ID: <202310242253.12601f42-oliver.sang@intel.com>
-TO: Roberto Sassu <roberto.sassu@huawei.com>
-CC: oe-lkp@lists.linux.dev, lkp@intel.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
-BCC: 
+>
+>>
+>> Since SELinux is your target use case, can you explain why you can't
+>> create SELinux policy to enforce the restrictions you're after? I
+>> believe
+>> (but can be proven wrong, of course) that SELinux has mechanism for
+>> dealing
+>> with controls on ioctls.
+>>
+>
+> I am not aware of such mechanism to deal with ioctl(), if you have a
+> pointer that would be welcome.
 
+security/selinux/hooks.c
 
-
-Hello,
-
-kernel test robot noticed "Kernel_panic-not_syncing:security_add_hooks_Too_many_LSMs_registered" on:
-
-commit: ea31d8b2497ad757c81550037fe49a28e8fe5887 ("evm: Move to LSM infrastructure")
-https://github.com/robertosassu/linux ima-evm-lsms-v4-devel-v7
-
-in testcase: boot
-
-compiler: gcc-12
-test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-+----------------------------------------------------------------------+------------+------------+
-|                                                                      | df77cb3dab | ea31d8b249 |
-+----------------------------------------------------------------------+------------+------------+
-| Kernel_panic-not_syncing:security_add_hooks_Too_many_LSMs_registered | 0          | 6          |
-+----------------------------------------------------------------------+------------+------------+
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202310242253.12601f42-oliver.sang@intel.com
-
-
-[    9.120367][    T0] x86/fpu: x87 FPU will use FXSAVE
-[    9.133888][    T0] Freeing SMP alternatives memory: 32K
-[    9.136370][    T0] pid_max: default: 32768 minimum: 301
-[    9.144589][    T0] LSM: initializing lsm=capability,landlock,safesetid,integrity,ima,evm
-[    9.148867][    T0] landlock: Up and running.
-[    9.152625][    T0] Kernel panic - not syncing: security_add_hooks Too many LSMs registered.
-[    9.156308][    T0] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.6.0-rc3-00044-gea31d8b2497a #1 0abe8f00443bfd0d07e7cec4aee08e82c1b9667d
-[    9.156308][    T0] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[    9.156308][    T0] Call Trace:
-[ 9.156308][ T0] dump_stack_lvl (kbuild/src/consumer/lib/dump_stack.c:107) 
-[ 9.156308][ T0] dump_stack (kbuild/src/consumer/lib/dump_stack.c:114) 
-[ 9.156308][ T0] panic (kbuild/src/consumer/kernel/panic.c:340) 
-[ 9.156308][ T0] security_add_hooks (kbuild/src/consumer/security/security.c:559) 
-[ 9.156308][ T0] init_evm_lsm (kbuild/src/consumer/security/integrity/evm/evm_main.c:1046) 
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20231024/202310242253.12601f42-oliver.sang@intel.com
-
-
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+>
+> Thanks,
+> Maxime
+>
+>>
+>>>
+>>> Thanks,
+>>> Maxime
+>>>
+>>> [0]:
+>>> https://lore.kernel.org/all/20230829130430-mutt-send-email-mst@kernel.org/
+>>>
+>>>
+>>
+>
