@@ -2,248 +2,342 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A44C25B6C
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Oct 2023 16:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3003FC07545
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Oct 2023 17:52:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343859AbjJXQVU (ORCPT
+        id S234854AbjJXRw0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Oct 2023 12:21:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33812 "EHLO
+        Tue, 24 Oct 2023 13:52:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343786AbjJXQU5 (ORCPT
+        with ESMTP id S234315AbjJXRwZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Oct 2023 12:20:57 -0400
+        Tue, 24 Oct 2023 13:52:25 -0400
 Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E043810F2
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Oct 2023 09:20:53 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-53e3e7e478bso7077058a12.0
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Oct 2023 09:20:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24F7AE8;
+        Tue, 24 Oct 2023 10:52:23 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-53ed4688b9fso7096113a12.0;
+        Tue, 24 Oct 2023 10:52:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1698164452; x=1698769252; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1698169941; x=1698774741; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+qntkmutwprS+2oQeQzgmaP97TAaIsTbzLeg5qvDo3I=;
-        b=HcRwS17ufuRUW3CRl/tZfzLcNU/Yl2oyBRikCVDTyXaWBaE/Mpt0ru0TZTba95TNwT
-         aTU9VHu++Ye2UXcFhuSkFnnRwJOrJ7OC6ZScNW9XdfaA52SuzW+9w+jfcwRXs12vJ/45
-         lTNXJlkBqjXUonDu7wYpa3f+MN92iOCZmjuJsrDOJDcJm6R0ufXCFcBc8zellwSkeJKR
-         6Un6reyGpehkT/Sbzmo+phF0Obts3pxhH1/DLJamoMLho8SyShJW3kyGzmYAZfypaN0r
-         nyqTOHaTd/GWs4MI4FYeXKPzVh/MxEv7eiqrjjNBpIrIGc6QKop3nh5ozN9cUgX953A9
-         8o4g==
+        bh=T46xYbc9SnhWUAzFRxoyQoMZoGtasSe/R4I6iHwAO7w=;
+        b=BJzYRlrO3LhcbLoBTmbqPSpA/ZXwXlkxVh6WNVPcOjdZbbtPp/ukBnYMSkayYYfgsF
+         ungpcoEKG/blUkVU5a0ue1FOTY/VDriuoJwMaG+raBJ1hS2mTrvxht6USbl1BnSlqLQF
+         Jog1zd12lfxvEnhESXl/htbSJCsPHs5H4dP5pWZ+HiwBr3mUP9I1j98TkPKH+OT5eJsG
+         HrWATggqO1VOqDXolvDv7KK2bY9yFQzcTDWV7J78p+HWdSM/2XafZLoyudlP7pKyqKtl
+         8q8kLl+NINRy95DSsoPy6DEyFkF4JeE+uvXn/ljQair6OPrr0h/zSpIzyGpchrTWXSdF
+         L+cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698164452; x=1698769252;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1698169941; x=1698774741;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+qntkmutwprS+2oQeQzgmaP97TAaIsTbzLeg5qvDo3I=;
-        b=UjdZnnc+m8AqG0OdqC6c1+Cda5Rx3ApzmzJBbYJlGsEWRV1Q2GwR5DKa+yIOrI992T
-         l3OvDVt293YpwX7LDhM17BtwSgRaS1nzJPTE7aczkDLMTyrkpi+rsEKFcPON/28S4yIn
-         k6W7FqRVEq5qbL8GEaUQhun/7xZl1r5maZ5j1hb7WmQ7zYSr7RnTjaJ06H1Ah5ZSoyB7
-         EKYaOtCbNu6bA5yXTqpTVMV4uONU1afS1mX45sH4s1EFTuIO3UY2kDSiPxUGmX/hJnM1
-         ZgbGgU03Wc9lrjOHSxuGi0Yc44Q8oBpQCe1K/AurdBOSWauRS2/ZxwdGsLsYClXpibZK
-         zowg==
-X-Gm-Message-State: AOJu0Yw+OhMjSVpWCWY3UGMgd90BT1iBUl2/eA23p0WQuMgF5Z6d+Y/l
-        w+4jexY5geuE2odbjdGDuOEGyw==
-X-Google-Smtp-Source: AGHT+IF0iLrbDbUm1V98XXFpcmmPGqY4cfPlX1aQoOtBifDgtK4ig3PeyUmZMmyPcMbx9I21p02aGQ==
-X-Received: by 2002:a05:6402:5106:b0:53e:4dc6:a2e8 with SMTP id m6-20020a056402510600b0053e4dc6a2e8mr11045680edd.19.1698164451864;
-        Tue, 24 Oct 2023 09:20:51 -0700 (PDT)
-Received: from localhost (clnet-p106-198.ikbnet.co.at. [83.175.106.198])
-        by smtp.gmail.com with UTF8SMTPSA id dk18-20020a0564021d9200b005402c456892sm4624084edb.33.2023.10.24.09.20.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Oct 2023 09:20:51 -0700 (PDT)
-From:   David Gstir <david@sigma-star.at>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     David Gstir <david@sigma-star.at>, Shawn Guo <shawnguo@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        sigma star Kernel Team <upstream+dcp@sigma-star.at>,
-        David Howells <dhowells@redhat.com>,
-        Li Yang <leoyang.li@nxp.com>, Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Steven Rostedt (Google)" <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-security-module@vger.kernel.org,
-        Richard Weinberger <richard@nod.at>,
-        David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Subject: [PATCH v4 5/5] docs: trusted-encrypted: add DCP as new trust source
-Date:   Tue, 24 Oct 2023 18:20:19 +0200
-Message-ID: <20231024162024.51260-6-david@sigma-star.at>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231024162024.51260-1-david@sigma-star.at>
-References: <20231024162024.51260-1-david@sigma-star.at>
+        bh=T46xYbc9SnhWUAzFRxoyQoMZoGtasSe/R4I6iHwAO7w=;
+        b=gkHCJCGymKHX3BpL7Jxvg0JiHHUfAUIUfCAHWYZsr/7HddxyHaueZooKgy0V/KBd8t
+         dlIIXluaq34SD4hVc/AWyRUMNw4Jnbjiap4lWibmvkndoRX5oSVGVZMOiuQcTQhALyaj
+         3wtoyAilqgH9nWolpbHJk6Q+H6UD1usnwVyHC7P34sMkbzqY7LntdoqAkr3CQc+fiYmo
+         lGiUSmtpv1EPCZQ9HFkGnIalIH8YSAgKOu+3cq8wOaB0OeFhhm58UhOOrb5ruOuWjbxm
+         184JFe1lZ7QW61tlUt62iaLIEQ+/7d7tuaYkXaHYb/jIJMn/RHMwM7tnnYRrt3NHNUP9
+         xMAA==
+X-Gm-Message-State: AOJu0YxO53JugiQ0apDsARaeh2H7Zu1Txu5ooPtB7pLzGRPdR2CmMh22
+        aWeL78rGIQj9Yx1wzfaoHZLXRp+xS/qzQUn/hlU=
+X-Google-Smtp-Source: AGHT+IFnWsGWEYeJij82wqTSVOt37wI6bf5HG3ryeu/szQVpa/IlM/AEGs/P1oIaYcgW47iV8bupkeXyX3uS9Kc4cs4=
+X-Received: by 2002:a17:907:728b:b0:9b7:292:85f6 with SMTP id
+ dt11-20020a170907728b00b009b7029285f6mr9888199ejc.12.1698169941102; Tue, 24
+ Oct 2023 10:52:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231016180220.3866105-1-andrii@kernel.org>
+In-Reply-To: <20231016180220.3866105-1-andrii@kernel.org>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Tue, 24 Oct 2023 10:52:09 -0700
+Message-ID: <CAEf4BzaMLg31g6Jm9LmFM9UYUjm1Eq7P6Y-KnoiDoh7Sbj_RWg@mail.gmail.com>
+Subject: Re: [PATCH v8 bpf-next 00/18] BPF token and BPF FS-based delegation
+To:     Andrii Nakryiko <andrii@kernel.org>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     bpf@vger.kernel.org, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
+        sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Update the documentation for trusted and encrypted KEYS with DCP as new
-trust source:
+On Mon, Oct 16, 2023 at 11:04=E2=80=AFAM Andrii Nakryiko <andrii@kernel.org=
+> wrote:
+>
+> This patch set introduces an ability to delegate a subset of BPF subsyste=
+m
+> functionality from privileged system-wide daemon (e.g., systemd or any ot=
+her
+> container manager) through special mount options for userns-bound BPF FS =
+to
+> a *trusted* unprivileged application. Trust is the key here. This
+> functionality is not about allowing unconditional unprivileged BPF usage.
+> Establishing trust, though, is completely up to the discretion of respect=
+ive
+> privileged application that would create and mount a BPF FS instance with
+> delegation enabled, as different production setups can and do achieve it
+> through a combination of different means (signing, LSM, code reviews, etc=
+),
+> and it's undesirable and infeasible for kernel to enforce any particular =
+way
+> of validating trustworthiness of particular process.
+>
+> The main motivation for this work is a desire to enable containerized BPF
+> applications to be used together with user namespaces. This is currently
+> impossible, as CAP_BPF, required for BPF subsystem usage, cannot be names=
+paced
+> or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to BP=
+F
+> helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safely=
+ read
+> arbitrary memory, and it's impossible to ensure that they only read memor=
+y of
+> processes belonging to any given namespace. This means that it's impossib=
+le to
+> have a mechanically verifiable namespace-aware CAP_BPF capability, and as=
+ such
+> another mechanism to allow safe usage of BPF functionality is necessary.B=
+PF FS
+> delegation mount options and BPF token derived from such BPF FS instance =
+is
+> such a mechanism. Kernel makes no assumption about what "trusted" constit=
+utes
+> in any particular case, and it's up to specific privileged applications a=
+nd
+> their surrounding infrastructure to decide that. What kernel provides is =
+a set
+> of APIs to setup and mount special BPF FS instanecs and derive BPF tokens=
+ from
+> it. BPF FS and BPF token are both bound to its owning userns and in such =
+a way
+> are constrained inside intended container. Users can then pass BPF token =
+FD to
+> privileged bpf() syscall commands, like BPF map creation and BPF program
+> loading, to perform such operations without having init userns privileged=
+.
+>
+> This version incorporates feedback and suggestions ([3]) received on v3 o=
+f
+> this patch set, and instead of allowing to create BPF tokens directly ass=
+uming
+> capable(CAP_SYS_ADMIN), we instead enhance BPF FS to accepts a few new
+> delegation mount options. If these options are used and BPF FS itself is
+> properly created, set up, and mounted inside the user namespaced containe=
+r,
+> user application is able to derive a BPF token object from BPF FS instanc=
+e,
+> and pass that token to bpf() syscall. As explained in patch #2, BPF token
+> itself doesn't grant access to BPF functionality, but instead allows kern=
+el to
+> do namespaced capabilities checks (ns_capable() vs capable()) for CAP_BPF=
+,
+> CAP_PERFMON, CAP_NET_ADMIN, and CAP_SYS_ADMIN, as applicable. So it forms=
+ one
+> half of a puzzle and allows container managers and sys admins to have saf=
+e and
+> flexible configuration options: determining which containers get delegati=
+on of
+> BPF functionality through BPF FS, and then which applications within such
+> containers are allowed to perform bpf() commands, based on namespaces
+> capabilities.
+>
+> Previous attempt at addressing this very same problem ([0]) attempted to
+> utilize authoritative LSM approach, but was conclusively rejected by upst=
+ream
+> LSM maintainers. BPF token concept is not changing anything about LSM
+> approach, but can be combined with LSM hooks for very fine-grained securi=
+ty
+> policy. Some ideas about making BPF token more convenient to use with LSM=
+ (in
+> particular custom BPF LSM programs) was briefly described in recent LSF/M=
+M/BPF
+> 2023 presentation ([1]). E.g., an ability to specify user-provided data
+> (context), which in combination with BPF LSM would allow implementing a v=
+ery
+> dynamic and fine-granular custom security policies on top of BPF token. I=
+n the
+> interest of minimizing API surface area and discussions this was relegate=
+d to
+> follow up patches, as it's not essential to the fundamental concept of
+> delegatable BPF token.
+>
+> It should be noted that BPF token is conceptually quite similar to the id=
+ea of
+> /dev/bpf device file, proposed by Song a while ago ([2]). The biggest
+> difference is the idea of using virtual anon_inode file to hold BPF token=
+ and
+> allowing multiple independent instances of them, each (potentially) with =
+its
+> own set of restrictions. And also, crucially, BPF token approach is not u=
+sing
+> any special stateful task-scoped flags. Instead, bpf() syscall accepts
+> token_fd parameters explicitly for each relevant BPF command. This addres=
+ses
+> main concerns brought up during the /dev/bpf discussion, and fits better =
+with
+> overall BPF subsystem design.
+>
+> This patch set adds a basic minimum of functionality to make BPF token id=
+ea
+> useful and to discuss API and functionality. Currently only low-level lib=
+bpf
+> APIs support creating and passing BPF token around, allowing to test kern=
+el
+> functionality, but for the most part is not sufficient for real-world
+> applications, which typically use high-level libbpf APIs based on `struct
+> bpf_object` type. This was done with the intent to limit the size of patc=
+h set
+> and concentrate on mostly kernel-side changes. All the necessary plumbing=
+ for
+> libbpf will be sent as a separate follow up patch set kernel support make=
+s it
+> upstream.
+>
+> Another part that should happen once kernel-side BPF token is established=
+, is
+> a set of conventions between applications (e.g., systemd), tools (e.g.,
+> bpftool), and libraries (e.g., libbpf) on exposing delegatable BPF FS
+> instance(s) at well-defined locations to allow applications take advantag=
+e of
+> this in automatic fashion without explicit code changes on BPF applicatio=
+n's
+> side. But I'd like to postpone this discussion to after BPF token concept
+> lands.
+>
+>   [0] https://lore.kernel.org/bpf/20230412043300.360803-1-andrii@kernel.o=
+rg/
+>   [1] http://vger.kernel.org/bpfconf2023_material/Trusted_unprivileged_BP=
+F_LSFMM2023.pdf
+>   [2] https://lore.kernel.org/bpf/20190627201923.2589391-2-songliubraving=
+@fb.com/
+>   [3] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef785=
+e@brauner/
+>
+> v7->v8:
+>   - add bpf_token_allow_cmd and bpf_token_capable hooks (Paul);
+>   - inline bpf_token_alloc() into bpf_token_create() to prevent accidenta=
+l
+>     divergence with security_bpf_token_create() hook (Paul);
 
-- Describe security properties of DCP trust source
-- Describe key usage
-- Document blob format
+Hi Paul,
 
-Co-developed-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Co-developed-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Signed-off-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Signed-off-by: David Gstir <david@sigma-star.at>
----
- .../security/keys/trusted-encrypted.rst       | 85 +++++++++++++++++++
- 1 file changed, 85 insertions(+)
+I believe I addressed all the concerns you had in this revision. Can
+you please take a look and confirm that all things look good to you
+from LSM perspective? Thanks!
 
-diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-index 9bc9db8ec651..4452070afbe9 100644
---- a/Documentation/security/keys/trusted-encrypted.rst
-+++ b/Documentation/security/keys/trusted-encrypted.rst
-@@ -42,6 +42,14 @@ safe.
-          randomly generated and fused into each SoC at manufacturing time.
-          Otherwise, a common fixed test key is used instead.
- 
-+     (4) DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs)
-+
-+         Rooted to a one-time programmable key (OTP) that is generally burnt
-+         in the on-chip fuses and is accessible to the DCP encryption engine only.
-+         DCP provides two keys that can be used as root of trust: the OTP key
-+         and the UNIQUE key. Default is to use the UNIQUE key, but selecting
-+         the OTP key can be done via a module parameter (dcp_use_otp_key).
-+
-   *  Execution isolation
- 
-      (1) TPM
-@@ -57,6 +65,12 @@ safe.
- 
-          Fixed set of operations running in isolated execution environment.
- 
-+     (4) DCP
-+
-+         Fixed set of cryptographic operations running in isolated execution
-+         environment. Only basic blob key encryption is executed there.
-+         The actual key sealing/unsealing is done on main processor/kernel space.
-+
-   * Optional binding to platform integrity state
- 
-      (1) TPM
-@@ -79,6 +93,11 @@ safe.
-          Relies on the High Assurance Boot (HAB) mechanism of NXP SoCs
-          for platform integrity.
- 
-+     (4) DCP
-+
-+         Relies on Secure/Trusted boot process (called HAB by vendor) for
-+         platform integrity.
-+
-   *  Interfaces and APIs
- 
-      (1) TPM
-@@ -94,6 +113,11 @@ safe.
- 
-          Interface is specific to silicon vendor.
- 
-+     (4) DCP
-+
-+         Vendor-specific API that is implemented as part of the DCP crypto driver in
-+         ``drivers/crypto/mxs-dcp.c``.
-+
-   *  Threat model
- 
-      The strength and appropriateness of a particular trust source for a given
-@@ -129,6 +153,13 @@ selected trust source:
-      CAAM HWRNG, enable CRYPTO_DEV_FSL_CAAM_RNG_API and ensure the device
-      is probed.
- 
-+  *  DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs)
-+
-+     The DCP hardware device itself does not provide a dedicated RNG interface,
-+     so the kernel default RNG is used. SoCs with DCP like the i.MX6ULL do have
-+     a dedicated hardware RNG that is independent from DCP which can be enabled
-+     to back the kernel RNG.
-+
- Users may override this by specifying ``trusted.rng=kernel`` on the kernel
- command-line to override the used RNG with the kernel's random number pool.
- 
-@@ -231,6 +262,19 @@ Usage::
- CAAM-specific format.  The key length for new keys is always in bytes.
- Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
- 
-+Trusted Keys usage: DCP
-+-----------------------
-+
-+Usage::
-+
-+    keyctl add trusted name "new keylen" ring
-+    keyctl add trusted name "load hex_blob" ring
-+    keyctl print keyid
-+
-+"keyctl print" returns an ASCII hex copy of the sealed key, which is in format
-+specific to this DCP key-blob implementation.  The key length for new keys is
-+always in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
-+
- Encrypted Keys usage
- --------------------
- 
-@@ -426,3 +470,44 @@ string length.
- privkey is the binary representation of TPM2B_PUBLIC excluding the
- initial TPM2B header which can be reconstructed from the ASN.1 octed
- string length.
-+
-+DCP Blob Format
-+---------------
-+
-+The Data Co-Processor (DCP) provides hardware-bound AES keys using its
-+AES encryption engine only. It does not provide direct key sealing/unsealing.
-+To make DCP hardware encryption keys usable as trust source, we define
-+our own custom format that uses a hardware-bound key to secure the sealing
-+key stored in the key blob.
-+
-+Whenever a new trusted key using DCP is generated, we generate a random 128-bit
-+blob encryption key (BEK) and 128-bit nonce. The BEK and nonce are used to
-+encrypt the trusted key payload using AES-128-GCM.
-+
-+The BEK itself is encrypted using the hardware-bound key using the DCP's AES
-+encryption engine with AES-128-ECB. The encrypted BEK, generated nonce,
-+BEK-encrypted payload and authentication tag make up the blob format together
-+with a version number, payload length and authentication tag::
-+
-+    /*
-+     * struct dcp_blob_fmt - DCP BLOB format.
-+     *
-+     * @fmt_version: Format version, currently being %1
-+     * @blob_key: Random AES 128 key which is used to encrypt @payload,
-+     *            @blob_key itself is encrypted with OTP or UNIQUE device key in
-+     *            AES-128-ECB mode by DCP.
-+     * @nonce: Random nonce used for @payload encryption.
-+     * @payload_len: Length of the plain text @payload.
-+     * @payload: The payload itself, encrypted using AES-128-GCM and @blob_key,
-+     *           GCM auth tag of size AES_BLOCK_SIZE is attached at the end of it.
-+     *
-+     * The total size of a DCP BLOB is sizeof(struct dcp_blob_fmt) + @payload_len +
-+     * AES_BLOCK_SIZE.
-+     */
-+    struct dcp_blob_fmt {
-+            __u8 fmt_version;
-+            __u8 blob_key[AES_KEYSIZE_128];
-+            __u8 nonce[AES_KEYSIZE_128];
-+            __le32 payload_len;
-+            __u8 payload[];
-+    } __packed;
--- 
-2.35.3
 
+> v6->v7:
+>   - separate patches to refactor bpf_prog_alloc/bpf_map_alloc LSM hooks, =
+as
+>     discussed with Paul, and now they also accept struct bpf_token;
+>   - added bpf_token_create/bpf_token_free to allow LSMs (SELinux,
+>     specifically) to set up security LSM blob (Paul);
+>   - last patch also wires bpf_security_struct setup by SELinux, similar t=
+o how
+>     it's done for BPF map/prog, though I'm not sure if that's enough, so =
+worst
+>     case it's easy to drop this patch if more full fledged SELinux
+>     implementation will be done separately;
+>   - small fixes for issues caught by code reviews (Jiri, Hou);
+>   - fix for test_maps test that doesn't use LIBBPF_OPTS() macro (CI);
+> v5->v6:
+>   - fix possible use of uninitialized variable in selftests (CI);
+>   - don't use anon_inode, instead create one from BPF FS instance (Christ=
+ian);
+>   - don't store bpf_token inside struct bpf_map, instead pass it explicit=
+ly to
+>     map_check_btf(). We do store bpf_token inside prog->aux, because it's=
+ used
+>     during verification and even can be checked during attach time for so=
+me
+>     program types;
+>   - LSM hooks are left intact pending the conclusion of discussion with P=
+aul
+>     Moore; I'd prefer to do LSM-related changes as a follow up patch set
+>     anyways;
+> v4->v5:
+>   - add pre-patch unifying CAP_NET_ADMIN handling inside kernel/bpf/sysca=
+ll.c
+>     (Paul Moore);
+>   - fix build warnings and errors in selftests and kernel, detected by CI=
+ and
+>     kernel test robot;
+> v3->v4:
+>   - add delegation mount options to BPF FS;
+>   - BPF token is derived from the instance of BPF FS and associates itsel=
+f
+>     with BPF FS' owning userns;
+>   - BPF token doesn't grant BPF functionality directly, it just turns
+>     capable() checks into ns_capable() checks within BPF FS' owning user;
+>   - BPF token cannot be pinned;
+> v2->v3:
+>   - make BPF_TOKEN_CREATE pin created BPF token in BPF FS, and disallow
+>     BPF_OBJ_PIN for BPF token;
+> v1->v2:
+>   - fix build failures on Kconfig with CONFIG_BPF_SYSCALL unset;
+>   - drop BPF_F_TOKEN_UNKNOWN_* flags and simplify UAPI (Stanislav).
+>
+> Andrii Nakryiko (18):
+>   bpf: align CAP_NET_ADMIN checks with bpf_capable() approach
+>   bpf: add BPF token delegation mount options to BPF FS
+>   bpf: introduce BPF token object
+>   bpf: add BPF token support to BPF_MAP_CREATE command
+>   bpf: add BPF token support to BPF_BTF_LOAD command
+>   bpf: add BPF token support to BPF_PROG_LOAD command
+>   bpf: take into account BPF token when fetching helper protos
+>   bpf: consistenly use BPF token throughout BPF verifier logic
+>   bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free LSM hooks
+>   bpf,lsm: refactor bpf_map_alloc/bpf_map_free LSM hooks
+>   bpf,lsm: add BPF token LSM hooks
+>   libbpf: add bpf_token_create() API
+>   selftests/bpf: fix test_maps' use of bpf_map_create_opts
+>   libbpf: add BPF token support to bpf_map_create() API
+>   libbpf: add BPF token support to bpf_btf_load() API
+>   libbpf: add BPF token support to bpf_prog_load() API
+>   selftests/bpf: add BPF token-enabled tests
+>   bpf,selinux: allocate bpf_security_struct per BPF token
+>
+>  drivers/media/rc/bpf-lirc.c                   |   2 +-
+>  include/linux/bpf.h                           |  83 ++-
+>  include/linux/filter.h                        |   2 +-
+>  include/linux/lsm_hook_defs.h                 |  15 +-
+>  include/linux/security.h                      |  43 +-
+>  include/uapi/linux/bpf.h                      |  44 ++
+>  kernel/bpf/Makefile                           |   2 +-
+>  kernel/bpf/arraymap.c                         |   2 +-
+>  kernel/bpf/bpf_lsm.c                          |  15 +-
+>  kernel/bpf/cgroup.c                           |   6 +-
+>  kernel/bpf/core.c                             |   3 +-
+>  kernel/bpf/helpers.c                          |   6 +-
+>  kernel/bpf/inode.c                            |  98 ++-
+>  kernel/bpf/syscall.c                          | 215 ++++--
+>  kernel/bpf/token.c                            | 247 +++++++
+>  kernel/bpf/verifier.c                         |  13 +-
+>  kernel/trace/bpf_trace.c                      |   2 +-
+>  net/core/filter.c                             |  36 +-
+>  net/ipv4/bpf_tcp_ca.c                         |   2 +-
+>  net/netfilter/nf_bpf_link.c                   |   2 +-
+>  security/security.c                           | 101 ++-
+>  security/selinux/hooks.c                      |  47 +-
+>  tools/include/uapi/linux/bpf.h                |  44 ++
+>  tools/lib/bpf/bpf.c                           |  30 +-
+>  tools/lib/bpf/bpf.h                           |  39 +-
+>  tools/lib/bpf/libbpf.map                      |   1 +
+>  .../bpf/map_tests/map_percpu_stats.c          |  20 +-
+>  .../selftests/bpf/prog_tests/libbpf_probes.c  |   4 +
+>  .../selftests/bpf/prog_tests/libbpf_str.c     |   6 +
+>  .../testing/selftests/bpf/prog_tests/token.c  | 629 ++++++++++++++++++
+>  30 files changed, 1577 insertions(+), 182 deletions(-)
+>  create mode 100644 kernel/bpf/token.c
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
+>
+> --
+> 2.34.1
+>
+>
