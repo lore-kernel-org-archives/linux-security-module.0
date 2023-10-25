@@ -2,123 +2,193 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD49C07545
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 13:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCF0C0032E
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 13:17:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234967AbjJYNO6 (ORCPT
+        id S1344506AbjJYNRx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Oct 2023 09:14:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57094 "EHLO
+        Wed, 25 Oct 2023 09:17:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344191AbjJYNO5 (ORCPT
+        with ESMTP id S234528AbjJYNRw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Oct 2023 09:14:57 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7707F184
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 06:14:54 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id 3f1490d57ef6-d9c687f83a2so5165573276.3
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 06:14:54 -0700 (PDT)
+        Wed, 25 Oct 2023 09:17:52 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43B3B133
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 06:17:49 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-d9ad90e1038so5011384276.3
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 06:17:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1698239693; x=1698844493; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1698239868; x=1698844668; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6CrHvt4UKLHsJTJWppL1/cl7hwIF7jsKkGSVTj4BAQA=;
-        b=Mq9+Xk8S10B9qmZrxxn5mQDGCmWGhL4Epsov6pHJpwa1JBaD5kHoVe1tz4f1lupC2C
-         N3hwOoc2IGC/F0y5Y8sOM/QYzYh7t7sMQkYS9yBeMBE5QVYeJwIwu/QiHCSd9PXXghi+
-         hryUH+nmes2f19xGDHFQb/pGe+JPdnzM1P8vi6f/jqX7Qa85zttrKrcM7R2oY2lpkdK8
-         XZ20pp+q/KnDBd9xUo3ymuPhx9zvDKcLLFT6OLhQFTlyD5sGqYE2v13fUFOLW+zAZ9lG
-         xCQMiGl1uX3CmIbuQfwei7M/8DLB7gt/j3dXsBdcsBKNK9dq8fkDVGhsEsq4SAW3fju8
-         4YTA==
+        bh=OhI+0U3C4maNiYVWrEGT2SlLeFp5Rtq5XADzsjH+0y0=;
+        b=YUExOLi3bB63BLB3LmYOz5fXJsFz3giuSe6MQq8EMmn0CbAicL3fynsuabXbu5RnpM
+         8YerNvWGWSvLxa4RpdC8ZKkr6GO+zdwHREY0+u6WbPDTZxY+HFatJXYan1fFXjo1IKdZ
+         vGEF4K/J3gwmKsairkEsU5iQ7q5Z1Av03mCrwGf7P42OsacRgFuwDhR5676fhGxlXki8
+         lFKd24FRToX7wRSQOqIZAmTOxSTYCIl9/0b9RZGhHsO3R6+yi2d9Zi1Uwp5XD+D9tPlf
+         s1OBenoev16RvP2Jd8aoDcQDGm7D28qgTAnINVZAzfr0KmVchGFRN/KpvWSgc+Mwd0iC
+         2fsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698239693; x=1698844493;
+        d=1e100.net; s=20230601; t=1698239868; x=1698844668;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6CrHvt4UKLHsJTJWppL1/cl7hwIF7jsKkGSVTj4BAQA=;
-        b=HvgcZQPy/FPtwp/RVXo+2PhWKNA3FEJlSkU04Z3whTYbNkZGIx8LkolPSvSZb8aiXJ
-         AOwYh9qp1c2YU6BunDPdfNxZY0k6TjFtRgHYcedXfcwhjGk12b2Vnd04fatfQVK9iU6T
-         B0HqHdwKQndkClxPAHb5bgW/8Q3PWfZFt/Rx6xE2cbssUUk+hqoYoya91Q+OREvN5fJw
-         boLctjZPQliRZpcBpQn/4ICkKMMk3m6ALs94wbMhwp/UKVJ4Lo4uGgE1oTEgKQvPf0cN
-         yf7oo6Q4hnfdn3J4Lqf6D1s7yNQmezRpumFXriazTOkINVId11KRaJSMHkOWrYy+kSFB
-         kPHQ==
-X-Gm-Message-State: AOJu0YxGCB4qVQENrhwdsWgMbWlRSVZ3RqgopBk3k6YPzh1/0lGhg7fl
-        9UAGQGtCOvtDrwSlKwsEWUAQjbBtWLIT/B1WGvOMxwFLdaYc8K4=
-X-Google-Smtp-Source: AGHT+IFjJ2AMJ+YMbCCSrZFd6In20n3oGUGrpZT4pHiAecE25rn8JdAPgUHG27eXksqGQtVmcg563jGR7nGJt0C27cs=
-X-Received: by 2002:a25:ade4:0:b0:d9a:be04:7fae with SMTP id
- d36-20020a25ade4000000b00d9abe047faemr15416874ybe.17.1698239693546; Wed, 25
- Oct 2023 06:14:53 -0700 (PDT)
+        bh=OhI+0U3C4maNiYVWrEGT2SlLeFp5Rtq5XADzsjH+0y0=;
+        b=gQgJWotJ+zs8M5xgcUy2X62Bhnts2SZXnCQ55ycTBwIDuXEx9XLxbk59HuEu9u+Zj/
+         59mCEdatEh/SvmqAs0u4KoyvLoUYxyEKYcqHXQDrzDqFEvfUwcIfAOc7w2uaLc1zIJ65
+         qcFJeR7mMXYtdRDaf1sRRl15tmi1vdAd9+IY6jQVOszHjB4dBzCocxDrz7priyucpH3T
+         pZ6UERzvMweJOoRYRWl3uYyqI9q6OyoZuxU2cokGCj1QESTq6X10R1fSff3ommQvpjmT
+         02GBPNjz7IR5jurS0cWWILBC6E8jvs2qHraoNAqTAT/LnbWmpkz/G7s3Bx6PBPWqj8dA
+         YkFA==
+X-Gm-Message-State: AOJu0YwdPjV5CwegsUrQeRROnZH3kTGBW2daoqH/SHzyaUWU7l6pVOCn
+        sNDH+z9SzkMu/Uyt6s8Vwu4le8ITvUPQhpSRmUpQ
+X-Google-Smtp-Source: AGHT+IEmM4VRNzvMlwEig7LRJ0/I8fW70H8OJI07w9jqnVgfL3k2gIIT/BmMHa1TUskU3QK75Bw+pBd7fYHozFYVqsg=
+X-Received: by 2002:a25:5856:0:b0:da0:86e8:aea4 with SMTP id
+ m83-20020a255856000000b00da086e8aea4mr840904ybb.57.1698239868426; Wed, 25 Oct
+ 2023 06:17:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20231018215032.348429-2-paul@paul-moore.com> <72a92e27855af2291273209d328e1b79f3b61663.camel@huaweicloud.com>
- <1764a96f-6d24-4585-a24b-667a5ea075c3@schaufler-ca.com> <f47097f8-3391-42a7-b8b5-81e1be2d8e68@huaweicloud.com>
- <88f4f464-ac09-4c93-95f4-fe4546b78a08@schaufler-ca.com> <CAHC9VhSVcfsCM6GjxJrSPCXV3PYRahXJi5HiNyKGCt8f_fOpmA@mail.gmail.com>
- <93b2ea72-a9b1-4d50-bc4a-3d60d91dd44b@huaweicloud.com>
-In-Reply-To: <93b2ea72-a9b1-4d50-bc4a-3d60d91dd44b@huaweicloud.com>
+References: <20231025094224.72858-1-michael.weiss@aisec.fraunhofer.de>
+In-Reply-To: <20231025094224.72858-1-michael.weiss@aisec.fraunhofer.de>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 25 Oct 2023 09:14:42 -0400
-Message-ID: <CAHC9VhQ3kKGWNUx=+vEZ58CUJo2YKVu4rrOjE+w5x9jKnP9MWA@mail.gmail.com>
-Subject: Re: [PATCH] lsm: drop LSM_ID_IMA
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>
+Date:   Wed, 25 Oct 2023 09:17:37 -0400
+Message-ID: <CAHC9VhThNGA+qRgs=rOmEfvffj3qLzB=Jx4ii-uksuU1YJ6F5w@mail.gmail.com>
+Subject: Re: [RESEND RFC PATCH v2 00/14] device_cgroup: guard mknod for
+ non-initial user namespace
+To:     =?UTF-8?Q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
+Cc:     Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Quentin Monnet <quentin@isovalent.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gyroidos@aisec.fraunhofer.de, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 25, 2023 at 6:36=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On 10/24/2023 11:18 PM, Paul Moore wrote:
-> > On Mon, Oct 23, 2023 at 11:48=E2=80=AFAM Casey Schaufler <casey@schaufl=
-er-ca.com> wrote:
-> >> On 10/23/2023 8:20 AM, Roberto Sassu wrote:
-> >>> On 10/20/2023 11:56 PM, Casey Schaufler wrote:
-> >>>> On 10/19/2023 1:08 AM, Roberto Sassu wrote:
-> >>>>> On Wed, 2023-10-18 at 17:50 -0400, Paul Moore wrote:
-> >>>>>> When IMA becomes a proper LSM we will reintroduce an appropriate
-> >>>>>> LSM ID, but drop it from the userspace API for now in an effort
-> >>>>>> to put an end to debates around the naming of the LSM ID macro.
-> >>>>>>
-> >>>>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> >>>>> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> >>>>>
-> >>>>> This makes sense according to the new goal of making 'ima' and 'evm=
-' as
-> >>>>> standalone LSMs.
-> >>>>>
-> >>>>> Otherwise, if we took existing LSMs, we should have defined
-> >>>>> LSM_ID_INTEGRITY, associated to DEFINE_LSM(integrity).
-> >>>>>
-> >>>>> If we proceed with the new direction, I will add the new LSM IDs as
-> >>>>> soon as IMA and EVM become LSMs.
-> >>>>
-> >>>> This seems right to me. Thank You.
-> >>>
-> >>> Perfect! Is it fine to assign an LSM ID to 'ima' and 'evm' and keep
-> >>> the 'integrity' LSM to reserve space in the security blob without LSM
-> >>> ID (as long as it does not register any hook)?
-> >>
-> >> That will work, although it makes me wonder if all the data in the 'in=
-tegrity' blob
-> >> is used by both IMA and EVM. If these are going to be separate LSMs th=
-ey should probably
-> >> have their own security blobs. If there is data in common then an 'int=
-egrity' blob can
-> >> still makes sense.
-> >
-> > Users interact with IMA and EVM, not the "integrity" layer, yes?  If
-> > so, I'm not sure it makes sense to have an "integrity" LSM, we should
-> > just leave it at "IMA" and "EVM".
+On Wed, Oct 25, 2023 at 5:42=E2=80=AFAM Michael Wei=C3=9F
+<michael.weiss@aisec.fraunhofer.de> wrote:
 >
-> The problem is who reserves and manages the shared integrity metadata.
-> For now, it is still the 'integrity' LSM. If not, it would be IMA or EVM
-> on behalf of the other (depending on which ones are enabled). Probably
-> the second would not be a good idea.
+> Introduce the flag BPF_DEVCG_ACC_MKNOD_UNS for bpf programs of type
+> BPF_PROG_TYPE_CGROUP_DEVICE which allows to guard access to mknod
+> in non-initial user namespaces.
+>
+> If a container manager restricts its unprivileged (user namespaced)
+> children by a device cgroup, it is not necessary to deny mknod()
+> anymore. Thus, user space applications may map devices on different
+> locations in the file system by using mknod() inside the container.
+>
+> A use case for this, we also use in GyroidOS, is to run virsh for
+> VMs inside an unprivileged container. virsh creates device nodes,
+> e.g., "/var/run/libvirt/qemu/11-fgfg.dev/null" which currently fails
+> in a non-initial userns, even if a cgroup device white list with the
+> corresponding major, minor of /dev/null exists. Thus, in this case
+> the usual bind mounts or pre populated device nodes under /dev are
+> not sufficient.
+>
+> To circumvent this limitation, allow mknod() by checking CAP_MKNOD
+> in the userns by implementing the security_inode_mknod_nscap(). The
+> hook implementation checks if the corresponding permission flag
+> BPF_DEVCG_ACC_MKNOD_UNS is set for the device in the bpf program.
+> To avoid to create unusable inodes in user space the hook also
+> checks SB_I_NODEV on the corresponding super block.
+>
+> Further, the security_sb_alloc_userns() hook is implemented using
+> cgroup_bpf_current_enabled() to allow usage of device nodes on super
+> blocks mounted by a guarded task.
+>
+> Patch 1 to 3 rework the current devcgroup_inode hooks as an LSM
+>
+> Patch 4 to 8 rework explicit calls to devcgroup_check_permission
+> also as LSM hooks and finalize the conversion of the device_cgroup
+> subsystem to a LSM.
+>
+> Patch 9 and 10 introduce new generic security hooks to be used
+> for the actual mknod device guard implementation.
+>
+> Patch 11 wires up the security hooks in the vfs
+>
+> Patch 12 and 13 provide helper functions in the bpf cgroup
+> subsystem.
+>
+> Patch 14 finally implement the LSM hooks to grand access
+>
+> Signed-off-by: Michael Wei=C3=9F <michael.weiss@aisec.fraunhofer.de>
+> ---
+> Changes in v2:
+> - Integrate this as LSM (Christian, Paul)
+> - Switched to a device cgroup specific flag instead of a generic
+>   bpf program flag (Christian)
+> - do not ignore SB_I_NODEV in fs/namei.c but use LSM hook in
+>   sb_alloc_super in fs/super.c
+> - Link to v1: https://lore.kernel.org/r/20230814-devcg_guard-v1-0-654971a=
+b88b1@aisec.fraunhofer.de
+>
+> Michael Wei=C3=9F (14):
+>   device_cgroup: Implement devcgroup hooks as lsm security hooks
+>   vfs: Remove explicit devcgroup_inode calls
+>   device_cgroup: Remove explicit devcgroup_inode hooks
+>   lsm: Add security_dev_permission() hook
+>   device_cgroup: Implement dev_permission() hook
+>   block: Switch from devcgroup_check_permission to security hook
+>   drm/amdkfd: Switch from devcgroup_check_permission to security hook
+>   device_cgroup: Hide devcgroup functionality completely in lsm
+>   lsm: Add security_inode_mknod_nscap() hook
+>   lsm: Add security_sb_alloc_userns() hook
+>   vfs: Wire up security hooks for lsm-based device guard in userns
+>   bpf: Add flag BPF_DEVCG_ACC_MKNOD_UNS for device access
+>   bpf: cgroup: Introduce helper cgroup_bpf_current_enabled()
+>   device_cgroup: Allow mknod in non-initial userns if guarded
+>
+>  block/bdev.c                                 |   9 +-
+>  drivers/gpu/drm/amd/amdkfd/kfd_priv.h        |   7 +-
+>  fs/namei.c                                   |  24 ++--
+>  fs/super.c                                   |   6 +-
+>  include/linux/bpf-cgroup.h                   |   2 +
+>  include/linux/device_cgroup.h                |  67 -----------
+>  include/linux/lsm_hook_defs.h                |   4 +
+>  include/linux/security.h                     |  18 +++
+>  include/uapi/linux/bpf.h                     |   1 +
+>  init/Kconfig                                 |   4 +
+>  kernel/bpf/cgroup.c                          |  14 +++
+>  security/Kconfig                             |   1 +
+>  security/Makefile                            |   2 +-
+>  security/device_cgroup/Kconfig               |   7 ++
+>  security/device_cgroup/Makefile              |   4 +
+>  security/{ =3D> device_cgroup}/device_cgroup.c |   3 +-
+>  security/device_cgroup/device_cgroup.h       |  20 ++++
+>  security/device_cgroup/lsm.c                 | 114 +++++++++++++++++++
+>  security/security.c                          |  75 ++++++++++++
+>  19 files changed, 294 insertions(+), 88 deletions(-)
+>  delete mode 100644 include/linux/device_cgroup.h
+>  create mode 100644 security/device_cgroup/Kconfig
+>  create mode 100644 security/device_cgroup/Makefile
+>  rename security/{ =3D> device_cgroup}/device_cgroup.c (99%)
+>  create mode 100644 security/device_cgroup/device_cgroup.h
+>  create mode 100644 security/device_cgroup/lsm.c
 
-I'm not certain that managing kernel metadata alone necessitates a LSM
-ID token value.  Does "integrity" have any user visible "things" that
-it would want to expose to userspace?
+Hi Michael,
+
+I think this was lost because it wasn't CC'd to the LSM list (see
+below).  I've CC'd the list on my reply, but future patch submissions
+that involve the LSM must be posted to the LSM list if you would like
+them to be considered.
+
+http://vger.kernel.org/vger-lists.html#linux-security-module
 
 --=20
 paul-moore.com
