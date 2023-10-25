@@ -2,325 +2,128 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C942FC25B6F
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 14:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A27C0032E
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 15:19:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344732AbjJYODx (ORCPT
+        id S234998AbjJYPTk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Oct 2023 10:03:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44178 "EHLO
+        Wed, 25 Oct 2023 11:19:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344191AbjJYODu (ORCPT
+        with ESMTP id S232469AbjJYPTk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Oct 2023 10:03:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ADD9198
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 07:02:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1698242539;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EC7RFMR3rA+1DRsmRuXrj1V+WaMGVpdP+bUvoE8xfhg=;
-        b=eRT+80Ik72k/kKweWI9HHWnYmkNJi/tUs3njPBBhfDB5zQ7KoD3a6R7mYhNFcqXH+7nduP
-        iBE9w3jojUoeyglRwPFppCl/2oq2rXnkq8z/VfC17XzDc4Wr3xD5lQpDdlqi4r1gwe9OYP
-        k4PBIrhLHnEMR3vLk2PZHZ3aYOb0BTE=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-482-yBs6cKp-MOmkJrJ8Y6HVgA-1; Wed, 25 Oct 2023 10:02:18 -0400
-X-MC-Unique: yBs6cKp-MOmkJrJ8Y6HVgA-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-9bd7c682b33so360639766b.3
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 07:02:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698242537; x=1698847337;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EC7RFMR3rA+1DRsmRuXrj1V+WaMGVpdP+bUvoE8xfhg=;
-        b=k5roNka/CIYzJxHSxqyrr2YJ2MAJ2HG325xl4nEIp7hCBoVeYpwgl72dsoummRXsKo
-         Am5EnXZdNjIyWOfTFLw+H1RZFLiue5MdBVnDEyYFYDhIdpGEJGSETtKSRktctSF8r7ZP
-         0WO368BT3c10y6a0jleTzZUBEKBWFAjqhT9XdAZJBmjf7xH4yfir+oW0TkgyB6pMR0CS
-         8HPuTIaZPNFXikZ/9cNBxdba4/RBg6yYVh452p3wEj/z7LMCvTwWSKf2FDOXfjJi3A1Y
-         UwzxTvQXMzf6D9Jw/a6rC7Y6eEmHV4fSpYjAnLISHK5yLbmH66O1wnvRd/v2TIzS2C3a
-         lqbA==
-X-Gm-Message-State: AOJu0YxB+oHRGU729A4XblKyLPDSsoHTamgkMyXrVLbcL9iZ4i0+LBhk
-        tDl+KZQyPkRMnaLuz1pwT+Los868ElOrLAfVN9PYOeaoXVtUnHnzHyPeTWzDZKtzOWJ08atdFtH
-        JS7ssWYXQCdAaCWmu61x37yimUusJDXDQEhCa
-X-Received: by 2002:a17:907:6093:b0:9ba:2f20:3d7b with SMTP id ht19-20020a170907609300b009ba2f203d7bmr13334955ejc.71.1698242537067;
-        Wed, 25 Oct 2023 07:02:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEjMjmoMNoYOpgsb76Zi6H4tYS6A+eLzcgNpATF2jXSDinHL2btMGhhvP35HJjX0s8ljGUJzA==
-X-Received: by 2002:a17:907:6093:b0:9ba:2f20:3d7b with SMTP id ht19-20020a170907609300b009ba2f203d7bmr13334928ejc.71.1698242536775;
-        Wed, 25 Oct 2023 07:02:16 -0700 (PDT)
-Received: from maszat.piliscsaba.szeredi.hu (92-249-235-200.pool.digikabel.hu. [92.249.235.200])
-        by smtp.gmail.com with ESMTPSA id vl9-20020a170907b60900b00989828a42e8sm9857073ejc.154.2023.10.25.07.02.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 07:02:15 -0700 (PDT)
-From:   Miklos Szeredi <mszeredi@redhat.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Matthew House <mattlloydhouse@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v4 6/6] wire up syscalls for statmount/listmount
-Date:   Wed, 25 Oct 2023 16:02:04 +0200
-Message-ID: <20231025140205.3586473-7-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20231025140205.3586473-1-mszeredi@redhat.com>
-References: <20231025140205.3586473-1-mszeredi@redhat.com>
+        Wed, 25 Oct 2023 11:19:40 -0400
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1598F129
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 08:19:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1698247177; bh=m1/30qna0rd38NEzQlZsDzeCUyP9P3MKgm9JFjG/u30=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=JFvdGUDLlaK+F2CnR0PPqmgKJ4rC6H1CSC5PuGTvFduf+z4mS2jF2Io3KC73FntP0Ic1Jeu62xHnfq4FNsX8yUF81nmvklIRCEjpZoqyHS7WwKS8mjdtgydCtjPLNuEPMdJ7E6hGCtf6TYoo4WSdDrUDEnff/B0DnRCEhb9punXj8PO/t0qdizsowQVnrcLClxhSzoJbDY+l+J62/s128IJTKg9SFUSz/zH8rM2ytgA5EWA1VBxoZSTeK/wb2jV6iCtGekjkTtf0cTEgZcZSRKcw+KnZG09+S9CMZwf53oWRaWTE9nY7hWk6iF+q8SphOQqQiJc6PmEEbLS09P0kPQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1698247177; bh=AJE08/vzZyE23+24AxR1izbHVSJQ1LVGOIQaE545DXM=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=C9bwvBQA+SdTDZaWyTXSx+POOplC5AwFmqTq8uM7ki/ysGP4b6+tsqui63oZhprGYJotKazmOzLeD+EIE+1IWl176YooOJLaiDuPmQ5qyJpi+SvRazfB/iyUaNNjxWOXLY8E09ZmiJBZw4DTu7TfjGA97uMopbpWNAg4/2sh5FuEC/mpLj9cZBCWnMtMygBN/dPNORgT5kYJ9R85dQlZvenedDNDX1Yku5nTQ1CKMJIkQkdGMC7cpyJ/8cOKGOFM5yAOJy5v5GDppIPqnsalI0O0S2EmDsK2q17Z8KgCYcaBivuo2EwEdOBrqWaUCsbH2sjy9FMsAY0DAXbnT7Ct3g==
+X-YMail-OSG: z1qmn7sVM1lbID6v2t6GerKcT05eRnkQtl10IpwY.zTUC7E1iknU2geR_9KQ4LM
+ QY1h39vTsFFFsaxini7RKKVfZeo.2yl1JkcEyH.JgEGk0US2Cv4fxhzQ90ZKH82Pyo6u4D78P3Ro
+ cXDMx.rcWS1vvpSTK.rTnf9nkF0a6ue_ddkHATVqiCZ1Nw3vflPVVhQBIRZaE7aAz2BWQ8TV1lCV
+ gzVOqZCHCMlwVqBs1eOLnko6a5K9kWDIQfTdfJQg4yoLgz_0FKab5fXYowx.PSOp.kA63dqsCC7h
+ klEHyLwKWOwAYRKaAV6oQw0DViNrrlC3.PDg24qp3gEzYymYF2fZ4zyuM.rGbNbq_4CaSMfFGyGP
+ VjF1YG3J15pPb.RiJ.chZdQCIyjr4hqDT6UOpaiAPh97Ciz5iBKcqWjvZ2mfgsM8UNeqGBL3CCJj
+ vBsZPHD5BE5UX8qdu.pyUsHTz.neiuXJ.FxKZ4qSP4VcuzIDewHdaxR4RtMKPRB6oSKcGCtdEH6b
+ Om_i2wJL_BUmg_RB4xojUCvAi4KX2fcnjQmFPSRx4zOGp.7YQVvDEAhNsl1W7CaeBMzUKyg.HEcr
+ K2sL01CnKRWSdJPYT1wP8EAvSvmusQZtKIPx1W1WfVIPMbUcSpwqGIj0teQI6cow3uZSUp82gUBT
+ 2QQ6zOEZR3OFg17iCGBvZy1SyLtRyxsOcnLKggrxjQV9vUF150JnSQABEv91DpPZAtVvYw4rsMph
+ mhYFpA9hmWeWm6j59XNa856nfvXEsuyc_8mRAMMaERC_fyQOHWU060IksZJkQZbriRN_qTA6_MZH
+ wng_QU58ezqbm7_CYnuzeWHwRzKig9AAzlqSP0nkT0yC9YSUPC.GMLKUhVDneNPzcomqYx0oyMyb
+ oJUj6nUK0maqVyKuA2YhrfPtiPD8I5_JHzhGPLdVtUp7i5bSQItaWGXUrAddlqfgvos3zOravufg
+ g8GLFPiqPjdS3EN4TBQk9ukuYedPyGPvY5.Q_rgJVwfAF0GQUrZlFYU14gDv5JIf9o615hvP.q1Z
+ Tud.s1iPU3PnjHHKQ0OOwKqivYzUkiHy8d0irKlziqJ5msejs1vC6y_Ed3RHDFUP7gs5wcGrum6K
+ RJzrizGgo.vgSsHgTG1dcOx9fjYO611x_gP9thAo5IrC_eT9Y7lZqeTa.fw.TF1Ai25EU2.RHRPE
+ ddQrEoWiEQOaTSjumlZF2Rw2ICM.8VGK3PsNDjjYcGnF4cKxJhW.V3YVTv3ECCaUomZUWlX8FH3K
+ xl8ZPjEEJMTrEd5mGpEFhRDogv1jQkPjJNw1oV17HgKJMIRl.a7dO_gEPsWDTb97HeX.C7IW_mEM
+ iL6Ok.pVtORWF6mLDqvl4fcmAjfmIGzV8ddLmIAZkAyEMoODOd_juR3B_uOWqqWa6Vp9BcrlYKZh
+ FBNQVmE6n6fIF_EaZs4D7l8Xm6lYfE.eA_owtYUnGOj_X0WpADq7uZi.eleEIDlFXAx3Je9GobbL
+ Nj3Xp67cgLjZTJuAxodObv679uJk5HoxsZjvOjWf_Cz.oLa0Ta85a7EPEYQ1rIxaJ5dm1xGWFaJD
+ U9Y7R2OyQboOUtELjJJD7CxXoM9yqN.ktaeWjLQgBekVTE7Hu_Q1DcUcbJJyJK1YdqZJAFQLYyDd
+ sKosZYV0V0XYUsNMgFugWTzRCmfV9QV7LiKJ1DxjAuE2V722udFZiNmw6ikppbjMy_.lDvUos0eE
+ HpwmMZvWRP134bVoaNfGTTB86fA61PO4lqIurkBqjSaesGIeeadaE1SsQC8Z.8YCZ.cXdv_HeZPY
+ emJxuYUOgsfbImPe3CxKmY4lXpBt2tgz2_z6Vz_NiPZVOvshAXCglYyNBwBcgZBTQqQP1QtclNGl
+ blWrqwBMbDVrll8VuLi042hsj4x1HE3yk_W.m7FSgtxLK98h7.TAMZ27wcS11vEdLlljiJ_fljgH
+ kq4YOJfHAUnVqm5dLnB02a46m8iQqpmmufdno40H1yK7TvJc8GLMxVe51FCFr_FtFEmFA5nmVMwp
+ adfBzs86yYPf.LiXICwMJfAB5C8r1O2HS9vaUvh2BnuPr.HP7Swh2QAQK95m6q7ZP9IStM6bi2zJ
+ 0gqQGJPZ1qinTo0JrEvdBUSKpiVO5oMxBuGkRqRD3FjLIzRQ8k3VvYQOe.eUTjFw2OQd0WOoPT9b
+ WoVDYOuxyKVSnsa4rRTwIjGZwLzkcUmN6LH37NrJ8g3p3O29Xoq7H7jL.0gddbGHaDVaIe9ZV4mM
+ edX7qhfh.I9vWNeOb93opLIltcxlaTuqrGMxej.4ndJ2UQyvYUcoEKxfVLkXZBcnckvmHA0aFJiM
+ -
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: f4170662-dc9b-4b34-bcae-b330ac052bb8
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 25 Oct 2023 15:19:37 +0000
+Received: by hermes--production-ne1-68668bc7f7-j2rhn (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b2801747aa7b49229e5d98b03566bac8;
+          Wed, 25 Oct 2023 15:19:33 +0000 (UTC)
+Message-ID: <5df43557-7261-47a1-9066-b7ba42145af0@schaufler-ca.com>
+Date:   Wed, 25 Oct 2023 08:19:31 -0700
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/3] lsm: cleanup the size counters in
+ security_getselfattr()
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?= =?UTF-8?Q?n?= <mic@digikod.net>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20231024213525.361332-4-paul@paul-moore.com>
+ <20231024213525.361332-5-paul@paul-moore.com>
+ <8fcaab11-6340-4056-b9e0-4650be05b270@schaufler-ca.com>
+ <CAHC9VhR_Mm0aZKafhhaQHnasU_30Uvy9zUvEMs9COzh22QSNWw@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhR_Mm0aZKafhhaQHnasU_30Uvy9zUvEMs9COzh22QSNWw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="US-ASCII"; x-default=true
+X-Mailer: WebService/1.1.21797 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Wire up all archs.
+On 10/24/2023 6:43 PM, Paul Moore wrote:
+> On Tue, Oct 24, 2023 at 6:23 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 10/24/2023 2:35 PM, Paul Moore wrote:
+>>> Zero out all of the size counters in the -E2BIG case (buffer too
+>>> small) to help make the current code a bit more robust in the face of
+>>> future code changes.
+>> I don't see how this change would have the described effect.
+>> What it looks like it would do is change the return from -E2BIG
+>> to 0, which would not have the desired result.
+> When @toobig is true, which it will be when one of the individual LSMs
+> return -E2BIG, the return value of security_getselfattr() is fixed to
+> -E2BIG (check the if-statements at the end of the function).  Setting
+> @rc to zero as in this patch simply preserves some sanity in the
+> @count variable as we are no longer subtracting the E2BIG errno from
+> the @count value.  Granted, in the @toobig case, @count doesn't do
+> anything meaningful, but I believe this does harden the code against
+> future changes.
+>
+> Look at the discussion between Mickaël and I in the v15 04/11 patch
+> for more background.
+>
+> https://lore.kernel.org/linux-security-module/20230912205658.3432-5-casey@schaufler-ca.com
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- arch/alpha/kernel/syscalls/syscall.tbl      | 3 +++
- arch/arm/tools/syscall.tbl                  | 3 +++
- arch/arm64/include/asm/unistd32.h           | 4 ++++
- arch/ia64/kernel/syscalls/syscall.tbl       | 3 +++
- arch/m68k/kernel/syscalls/syscall.tbl       | 3 +++
- arch/microblaze/kernel/syscalls/syscall.tbl | 3 +++
- arch/mips/kernel/syscalls/syscall_n32.tbl   | 3 +++
- arch/mips/kernel/syscalls/syscall_n64.tbl   | 3 +++
- arch/mips/kernel/syscalls/syscall_o32.tbl   | 3 +++
- arch/parisc/kernel/syscalls/syscall.tbl     | 3 +++
- arch/powerpc/kernel/syscalls/syscall.tbl    | 3 +++
- arch/s390/kernel/syscalls/syscall.tbl       | 3 +++
- arch/sh/kernel/syscalls/syscall.tbl         | 3 +++
- arch/sparc/kernel/syscalls/syscall.tbl      | 3 +++
- arch/x86/entry/syscalls/syscall_32.tbl      | 3 +++
- arch/x86/entry/syscalls/syscall_64.tbl      | 2 ++
- arch/xtensa/kernel/syscalls/syscall.tbl     | 3 +++
- include/uapi/asm-generic/unistd.h           | 8 +++++++-
- 18 files changed, 58 insertions(+), 1 deletion(-)
+OK. My bad for not looking beyond the patch.
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index ad37569d0507..6c23bf68eff0 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -492,3 +492,6 @@
- 560	common	set_mempolicy_home_node		sys_ni_syscall
- 561	common	cachestat			sys_cachestat
- 562	common	fchmodat2			sys_fchmodat2
-+# 563 reserved for map_shadow_stack
-+564	common	statmount			sys_statmount
-+565	common	listmount			sys_listmount
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index c572d6c3dee0..d110a832899b 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -466,3 +466,6 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+# 453 reserved for map_shadow_stack
-+454	common	statmount			sys_statmount
-+455	common	listmount			sys_listmount
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index 78b68311ec81..b0a994c9ff3c 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -911,6 +911,10 @@ __SYSCALL(__NR_set_mempolicy_home_node, sys_set_mempolicy_home_node)
- __SYSCALL(__NR_cachestat, sys_cachestat)
- #define __NR_fchmodat2 452
- __SYSCALL(__NR_fchmodat2, sys_fchmodat2)
-+#define __NR_statmount 454
-+__SYSCALL(__NR_statmount, sys_statmount)
-+#define __NR_listmount 455
-+__SYSCALL(__NR_listmount, sys_listmount)
- 
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index 83d8609aec03..c5f45a8fc834 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -373,3 +373,6 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+# 453 reserved for map_shadow_stack
-+454	common	statmount			sys_statmount
-+455	common	listmount			sys_listmount
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index 259ceb125367..b9cabb746487 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -452,3 +452,6 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+# 453 reserved for map_shadow_stack
-+454	common	statmount			sys_statmount
-+455	common	listmount			sys_listmount
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index a3798c2637fd..89c4ed548ce8 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -458,3 +458,6 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+# 453 reserved for map_shadow_stack
-+454	common	statmount			sys_statmount
-+455	common	listmount			sys_listmount
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index 152034b8e0a0..a9d561698fe2 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -391,3 +391,6 @@
- 450	n32	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	n32	cachestat			sys_cachestat
- 452	n32	fchmodat2			sys_fchmodat2
-+# 453 reserved for map_shadow_stack
-+454	n32	statmount			sys_statmount
-+455	n32	listmount			sys_listmount
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index cb5e757f6621..80a056866da7 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -367,3 +367,6 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	n64	cachestat			sys_cachestat
- 452	n64	fchmodat2			sys_fchmodat2
-+# 453 reserved for map_shadow_stack
-+454	n64	statmount			sys_statmount
-+455	n64	listmount			sys_listmount
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 1a646813afdc..139ddc691176 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -440,3 +440,6 @@
- 450	o32	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	o32	cachestat			sys_cachestat
- 452	o32	fchmodat2			sys_fchmodat2
-+# 453 reserved for map_shadow_stack
-+454	o32	statmount			sys_statmount
-+455	o32	listmount			sys_listmount
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index e97c175b56f9..46fa753f0d64 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -451,3 +451,6 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+# 453 reserved for map_shadow_stack
-+454	common	statmount			sys_statmount
-+455	common	listmount			sys_listmount
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index 20e50586e8a2..106937744525 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -539,3 +539,6 @@
- 450 	nospu	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+# 453 reserved for map_shadow_stack
-+454	common	statmount			sys_statmount
-+455	common	listmount			sys_listmount
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 0122cc156952..57dd9202f8d7 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -455,3 +455,6 @@
- 450  common	set_mempolicy_home_node	sys_set_mempolicy_home_node	sys_set_mempolicy_home_node
- 451  common	cachestat		sys_cachestat			sys_cachestat
- 452  common	fchmodat2		sys_fchmodat2			sys_fchmodat2
-+# 453 reserved for map_shadow_stack
-+454  common	statmount		sys_statmount			sys_statmount
-+455  common	listmount		sys_listmount			sys_listmount
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index e90d585c4d3e..0c7407a0e32c 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -455,3 +455,6 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+# 453 reserved for map_shadow_stack
-+454	common	statmount			sys_statmount
-+455	common	listmount			sys_listmount
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index 4ed06c71c43f..a0fd36469478 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -498,3 +498,6 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+# 453 reserved for map_shadow_stack
-+454	common	statmount			sys_statmount
-+455	common	listmount			sys_listmount
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 2d0b1bd866ea..4f41977bd4c1 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -457,3 +457,6 @@
- 450	i386	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	i386	cachestat		sys_cachestat
- 452	i386	fchmodat2		sys_fchmodat2
-+# 563 reserved for map_shadow_stack
-+454	i386	statmount		sys_statmount
-+455	i386	listmount		sys_listmount
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 1d6eee30eceb..a1b3ce7d22cc 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -375,6 +375,8 @@
- 451	common	cachestat		sys_cachestat
- 452	common	fchmodat2		sys_fchmodat2
- 453	64	map_shadow_stack	sys_map_shadow_stack
-+454	common	statmount		sys_statmount
-+455	common	listmount		sys_listmount
- 
- #
- # Due to a historical design error, certain syscalls are numbered differently
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index fc1a4f3c81d9..73378984702b 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -423,3 +423,6 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+# 453 reserved for map_shadow_stack
-+454	common	statmount			sys_statmount
-+455	common	listmount			sys_listmount
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index abe087c53b4b..8df6a747e21a 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -823,8 +823,14 @@ __SYSCALL(__NR_cachestat, sys_cachestat)
- #define __NR_fchmodat2 452
- __SYSCALL(__NR_fchmodat2, sys_fchmodat2)
- 
-+#define __NR_statmount   454
-+__SYSCALL(__NR_statmount, sys_statmount)
-+
-+#define __NR_listmount   455
-+__SYSCALL(__NR_listmount, sys_listmount)
-+
- #undef __NR_syscalls
--#define __NR_syscalls 453
-+#define __NR_syscalls 456
- 
- /*
-  * 32 bit systems traditionally used different
--- 
-2.41.0
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
+>
+>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+>>> ---
+>>>  security/security.c | 3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/security/security.c b/security/security.c
+>>> index 988483fcf153..9c63acded4ee 100644
+>>> --- a/security/security.c
+>>> +++ b/security/security.c
+>>> @@ -3951,8 +3951,9 @@ int security_getselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
+>>>                       continue;
+>>>               }
+>>>               if (rc == -E2BIG) {
+>>> -                     toobig = true;
+>>> +                     rc = 0;
+>>>                       left = 0;
+>>> +                     toobig = true;
+>>>               } else if (rc < 0)
+>>>                       return rc;
+>>>               else
