@@ -2,127 +2,123 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C03C07545
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 11:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD49C07545
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 13:14:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234898AbjJYLya (ORCPT
+        id S234967AbjJYNO6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Oct 2023 07:54:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50950 "EHLO
+        Wed, 25 Oct 2023 09:14:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234897AbjJYLy3 (ORCPT
+        with ESMTP id S1344191AbjJYNO5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Oct 2023 07:54:29 -0400
-Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57E5E186
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 04:54:26 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SFnQm0zRMzMpp4B;
-        Wed, 25 Oct 2023 11:54:24 +0000 (UTC)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4SFnQk6tmVz3d;
-        Wed, 25 Oct 2023 13:54:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1698234864;
-        bh=mMYv/OtCtrMkSzUGCDriDfowe8jgvj19HXrHCnj/SwM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WKlVFa/XjMXHzCCMDDthMvz02Bgem94sRhDHQNoLhGYAc/bVNvnEhiMxm5DTZHOLl
-         mVMffrv7ck2pEkUAAHNAKJbtDBD0ZlstfQegKG4xbb+PNSOPdFyjKID1WeZlcIDlZV
-         BPY/K3CbLj9VsfHcrIQyirsQlZ2KQs9nqznhfaRU=
-Date:   Wed, 25 Oct 2023 13:54:21 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Stefan Bavendiek <stefan.bavendiek@mailbox.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-hardening@vger.kernel.org,
-        =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-        linux-security-module@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: Isolating abstract sockets
-Message-ID: <20231025.eecai4uGh5Ie@digikod.net>
-References: <Y59qBh9rRDgsIHaj@mailbox.org>
- <20231024134608.GC320399@mail.hallyn.com>
- <CAHC9VhRCJfBRu8172=5jF_gFhv2znQXTnGs_c_ae1G3rk_Dc-g@mail.gmail.com>
- <20231024141807.GB321218@mail.hallyn.com>
- <CAHC9VhQaotVPGzWFFzRCgw9mDDc2tu6kmGHioMBghj-ybbYx1Q@mail.gmail.com>
- <20231024160714.GA323539@mail.hallyn.com>
+        Wed, 25 Oct 2023 09:14:57 -0400
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7707F184
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 06:14:54 -0700 (PDT)
+Received: by mail-yb1-xb36.google.com with SMTP id 3f1490d57ef6-d9c687f83a2so5165573276.3
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 06:14:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1698239693; x=1698844493; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6CrHvt4UKLHsJTJWppL1/cl7hwIF7jsKkGSVTj4BAQA=;
+        b=Mq9+Xk8S10B9qmZrxxn5mQDGCmWGhL4Epsov6pHJpwa1JBaD5kHoVe1tz4f1lupC2C
+         N3hwOoc2IGC/F0y5Y8sOM/QYzYh7t7sMQkYS9yBeMBE5QVYeJwIwu/QiHCSd9PXXghi+
+         hryUH+nmes2f19xGDHFQb/pGe+JPdnzM1P8vi6f/jqX7Qa85zttrKrcM7R2oY2lpkdK8
+         XZ20pp+q/KnDBd9xUo3ymuPhx9zvDKcLLFT6OLhQFTlyD5sGqYE2v13fUFOLW+zAZ9lG
+         xCQMiGl1uX3CmIbuQfwei7M/8DLB7gt/j3dXsBdcsBKNK9dq8fkDVGhsEsq4SAW3fju8
+         4YTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698239693; x=1698844493;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6CrHvt4UKLHsJTJWppL1/cl7hwIF7jsKkGSVTj4BAQA=;
+        b=HvgcZQPy/FPtwp/RVXo+2PhWKNA3FEJlSkU04Z3whTYbNkZGIx8LkolPSvSZb8aiXJ
+         AOwYh9qp1c2YU6BunDPdfNxZY0k6TjFtRgHYcedXfcwhjGk12b2Vnd04fatfQVK9iU6T
+         B0HqHdwKQndkClxPAHb5bgW/8Q3PWfZFt/Rx6xE2cbssUUk+hqoYoya91Q+OREvN5fJw
+         boLctjZPQliRZpcBpQn/4ICkKMMk3m6ALs94wbMhwp/UKVJ4Lo4uGgE1oTEgKQvPf0cN
+         yf7oo6Q4hnfdn3J4Lqf6D1s7yNQmezRpumFXriazTOkINVId11KRaJSMHkOWrYy+kSFB
+         kPHQ==
+X-Gm-Message-State: AOJu0YxGCB4qVQENrhwdsWgMbWlRSVZ3RqgopBk3k6YPzh1/0lGhg7fl
+        9UAGQGtCOvtDrwSlKwsEWUAQjbBtWLIT/B1WGvOMxwFLdaYc8K4=
+X-Google-Smtp-Source: AGHT+IFjJ2AMJ+YMbCCSrZFd6In20n3oGUGrpZT4pHiAecE25rn8JdAPgUHG27eXksqGQtVmcg563jGR7nGJt0C27cs=
+X-Received: by 2002:a25:ade4:0:b0:d9a:be04:7fae with SMTP id
+ d36-20020a25ade4000000b00d9abe047faemr15416874ybe.17.1698239693546; Wed, 25
+ Oct 2023 06:14:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231024160714.GA323539@mail.hallyn.com>
-X-Infomaniak-Routing: alpha
+References: <20231018215032.348429-2-paul@paul-moore.com> <72a92e27855af2291273209d328e1b79f3b61663.camel@huaweicloud.com>
+ <1764a96f-6d24-4585-a24b-667a5ea075c3@schaufler-ca.com> <f47097f8-3391-42a7-b8b5-81e1be2d8e68@huaweicloud.com>
+ <88f4f464-ac09-4c93-95f4-fe4546b78a08@schaufler-ca.com> <CAHC9VhSVcfsCM6GjxJrSPCXV3PYRahXJi5HiNyKGCt8f_fOpmA@mail.gmail.com>
+ <93b2ea72-a9b1-4d50-bc4a-3d60d91dd44b@huaweicloud.com>
+In-Reply-To: <93b2ea72-a9b1-4d50-bc4a-3d60d91dd44b@huaweicloud.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 25 Oct 2023 09:14:42 -0400
+Message-ID: <CAHC9VhQ3kKGWNUx=+vEZ58CUJo2YKVu4rrOjE+w5x9jKnP9MWA@mail.gmail.com>
+Subject: Re: [PATCH] lsm: drop LSM_ID_IMA
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 24, 2023 at 11:07:14AM -0500, Serge E. Hallyn wrote:
-> On Tue, Oct 24, 2023 at 10:29:17AM -0400, Paul Moore wrote:
-> > On Tue, Oct 24, 2023 at 10:18 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > > On Tue, Oct 24, 2023 at 10:14:29AM -0400, Paul Moore wrote:
-> > > > On Tue, Oct 24, 2023 at 9:46 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > > > > On Sun, Dec 18, 2022 at 08:29:10PM +0100, Stefan Bavendiek wrote:
-> > > > > > When building userspace application sandboxes, one issue that does not seem trivial to solve is the isolation of abstract sockets.
-> > > > >
-> > > > > Veeery late reply.  Have you had any productive discussions about this in
-> > > > > other threads or venues?
-> > > > >
-> > > > > > While most IPC mechanism can be isolated by mechanisms like mount namespaces, abstract sockets are part of the network namespace.
-> > > > > > It is possible to isolate abstract sockets by using a new network namespace, however, unprivileged processes can only create a new empty network namespace, which removes network access as well and makes this useless for network clients.
-> > > > > >
-> > > > > > Same linux sandbox projects try to solve this by bridging the existing network interfaces into the new namespace or use something like slirp4netns to archive this, but this does not look like an ideal solution to this problem, especially since sandboxing should reduce the kernel attack surface without introducing more complexity.
-> > > > > >
-> > > > > > Aside from containers using namespaces, sandbox implementations based on seccomp and landlock would also run into the same problem, since landlock only provides file system isolation and seccomp cannot filter the path argument and therefore it can only be used to block new unix domain socket connections completely.
-> > > > > >
-> > > > > > Currently there does not seem to be any way to disable network namespaces in the kernel without also disabling unix domain sockets.
-> > > > > >
-> > > > > > The question is how to solve the issue of abstract socket isolation in a clean and efficient way, possibly even without namespaces.
-> > > > > > What would be the ideal way to implement a mechanism to disable abstract sockets either globally or even better, in the context of a process.
-> > > > > > And would such a patch have a realistic chance to make it into the kernel?
-> > > > >
-> > > > > Disabling them altogether would break lots of things depending on them,
-> > > > > like X :)  (@/tmp/.X11-unix/X0).  The other path is to reconsider network
-> > > > > namespaces.  There are several directions this could lead.  For one, as
-> > > > > Dinesh Subhraveti often points out, the current "network" namespace is
-> > > > > really a network device namespace.  If we instead namespace at the
-> > > > > bind/connect/etc calls, we end up with much different abilities.
-> > > >
-> > > > The LSM layer supports access controls on abstract sockets, with at
-> > > > least two (AppArmor, SELinux) providing abstract socket access
-> > > > controls, other LSMs may provide controls as well.
-> > >
-> > > Good point.  And for Stefan that may suffice, so thanks for mentioning
-> > > that.  But The LSM layer is mandatory access control for use by the
-> > > admins.  That doesn't help an unprivileged user.
-> > 
-> > Individual LSMs may implement mandatory access control models, but
-> > that is not an inherent requirement imposed by the LSM layer.  While
-> > the Landlock LSM does not (yet?) support access controls for abstract
-> > sockets, it is a discretionary access control mechanism.
+On Wed, Oct 25, 2023 at 6:36=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On 10/24/2023 11:18 PM, Paul Moore wrote:
+> > On Mon, Oct 23, 2023 at 11:48=E2=80=AFAM Casey Schaufler <casey@schaufl=
+er-ca.com> wrote:
+> >> On 10/23/2023 8:20 AM, Roberto Sassu wrote:
+> >>> On 10/20/2023 11:56 PM, Casey Schaufler wrote:
+> >>>> On 10/19/2023 1:08 AM, Roberto Sassu wrote:
+> >>>>> On Wed, 2023-10-18 at 17:50 -0400, Paul Moore wrote:
+> >>>>>> When IMA becomes a proper LSM we will reintroduce an appropriate
+> >>>>>> LSM ID, but drop it from the userspace API for now in an effort
+> >>>>>> to put an end to debates around the naming of the LSM ID macro.
+> >>>>>>
+> >>>>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> >>>>> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> >>>>>
+> >>>>> This makes sense according to the new goal of making 'ima' and 'evm=
+' as
+> >>>>> standalone LSMs.
+> >>>>>
+> >>>>> Otherwise, if we took existing LSMs, we should have defined
+> >>>>> LSM_ID_INTEGRITY, associated to DEFINE_LSM(integrity).
+> >>>>>
+> >>>>> If we proceed with the new direction, I will add the new LSM IDs as
+> >>>>> soon as IMA and EVM become LSMs.
+> >>>>
+> >>>> This seems right to me. Thank You.
+> >>>
+> >>> Perfect! Is it fine to assign an LSM ID to 'ima' and 'evm' and keep
+> >>> the 'integrity' LSM to reserve space in the security blob without LSM
+> >>> ID (as long as it does not register any hook)?
+> >>
+> >> That will work, although it makes me wonder if all the data in the 'in=
+tegrity' blob
+> >> is used by both IMA and EVM. If these are going to be separate LSMs th=
+ey should probably
+> >> have their own security blobs. If there is data in common then an 'int=
+egrity' blob can
+> >> still makes sense.
+> >
+> > Users interact with IMA and EVM, not the "integrity" layer, yes?  If
+> > so, I'm not sure it makes sense to have an "integrity" LSM, we should
+> > just leave it at "IMA" and "EVM".
+>
+> The problem is who reserves and manages the shared integrity metadata.
+> For now, it is still the 'integrity' LSM. If not, it would be IMA or EVM
+> on behalf of the other (depending on which ones are enabled). Probably
+> the second would not be a good idea.
 
-A recent discussion focused on this topic:
-https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
+I'm not certain that managing kernel metadata alone necessitates a LSM
+ID token value.  Does "integrity" have any user visible "things" that
+it would want to expose to userspace?
 
-I'd like Landlock to be able to scope the use of unix sockets according
-to a Landlock domain the same way it is done for ptrace. This would make
-it possible to easily isolate unix sockets to a sandbox even by
-unprivileged processes (without any namespace change). I'd be happy to
-help implement such mechanism.
-
-> 
-> In 2005, before namespaces were upstreamed, I posted the 'bsdjail' LSM,
-> which briefly made it into the -mm kernel, but was eventually rejected as
-> being an abuse of the LSM interface for OS level virtualization :)
-> 
-> It's not 100% clear to me whether Stefan only wants isolation, or
-> wants something closer to virtualization.
-> 
-> Stefan, would an LSM allowing you to isolate certain processes from
-> some abstract unix socket paths (or by label, whatever0 suffice for you?
-> 
-> > I'm not currently aware of a discretionary access control LSM that
-> > supports abstract socket access control, but such a LSM should be
-> > possible if someone wanted to implement one.
-> > 
-> > -- 
-> > paul-moore.com
+--=20
+paul-moore.com
