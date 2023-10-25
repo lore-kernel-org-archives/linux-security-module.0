@@ -2,193 +2,174 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCF0C0032E
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 13:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73110C0032E
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 14:03:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344506AbjJYNRx (ORCPT
+        id S235065AbjJYODt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Oct 2023 09:17:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44434 "EHLO
+        Wed, 25 Oct 2023 10:03:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234528AbjJYNRw (ORCPT
+        with ESMTP id S234938AbjJYODt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Oct 2023 09:17:52 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43B3B133
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 06:17:49 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-d9ad90e1038so5011384276.3
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 06:17:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1698239868; x=1698844668; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OhI+0U3C4maNiYVWrEGT2SlLeFp5Rtq5XADzsjH+0y0=;
-        b=YUExOLi3bB63BLB3LmYOz5fXJsFz3giuSe6MQq8EMmn0CbAicL3fynsuabXbu5RnpM
-         8YerNvWGWSvLxa4RpdC8ZKkr6GO+zdwHREY0+u6WbPDTZxY+HFatJXYan1fFXjo1IKdZ
-         vGEF4K/J3gwmKsairkEsU5iQ7q5Z1Av03mCrwGf7P42OsacRgFuwDhR5676fhGxlXki8
-         lFKd24FRToX7wRSQOqIZAmTOxSTYCIl9/0b9RZGhHsO3R6+yi2d9Zi1Uwp5XD+D9tPlf
-         s1OBenoev16RvP2Jd8aoDcQDGm7D28qgTAnINVZAzfr0KmVchGFRN/KpvWSgc+Mwd0iC
-         2fsw==
+        Wed, 25 Oct 2023 10:03:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC502186
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 07:02:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1698242532;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Rktb275++autG2dBh3wJ1wvqmgDO3Aq+V8t/EjWFz4M=;
+        b=Ps4aFeao8VWfDix9AK2JmVeE0bO9SV+xhXDriQGtPbZNm/lQLPm1ueXp9S9O/TeCYNn8kq
+        m9uWXwCSZAie9Xggv5Ok+zcVFNxKvJ7gc8uGBroN3ZbgVgR5RgS81s0nDwk9b9RxUBIThE
+        uLFgD5Urfw7V7PgRBxBSWs5XX8aY/MM=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-489-rcBehD-uOCyvQqqporC8nw-1; Wed, 25 Oct 2023 10:02:10 -0400
+X-MC-Unique: rcBehD-uOCyvQqqporC8nw-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-9b274cc9636so356055366b.0
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 07:02:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698239868; x=1698844668;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1698242529; x=1698847329;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OhI+0U3C4maNiYVWrEGT2SlLeFp5Rtq5XADzsjH+0y0=;
-        b=gQgJWotJ+zs8M5xgcUy2X62Bhnts2SZXnCQ55ycTBwIDuXEx9XLxbk59HuEu9u+Zj/
-         59mCEdatEh/SvmqAs0u4KoyvLoUYxyEKYcqHXQDrzDqFEvfUwcIfAOc7w2uaLc1zIJ65
-         qcFJeR7mMXYtdRDaf1sRRl15tmi1vdAd9+IY6jQVOszHjB4dBzCocxDrz7priyucpH3T
-         pZ6UERzvMweJOoRYRWl3uYyqI9q6OyoZuxU2cokGCj1QESTq6X10R1fSff3ommQvpjmT
-         02GBPNjz7IR5jurS0cWWILBC6E8jvs2qHraoNAqTAT/LnbWmpkz/G7s3Bx6PBPWqj8dA
-         YkFA==
-X-Gm-Message-State: AOJu0YwdPjV5CwegsUrQeRROnZH3kTGBW2daoqH/SHzyaUWU7l6pVOCn
-        sNDH+z9SzkMu/Uyt6s8Vwu4le8ITvUPQhpSRmUpQ
-X-Google-Smtp-Source: AGHT+IEmM4VRNzvMlwEig7LRJ0/I8fW70H8OJI07w9jqnVgfL3k2gIIT/BmMHa1TUskU3QK75Bw+pBd7fYHozFYVqsg=
-X-Received: by 2002:a25:5856:0:b0:da0:86e8:aea4 with SMTP id
- m83-20020a255856000000b00da086e8aea4mr840904ybb.57.1698239868426; Wed, 25 Oct
- 2023 06:17:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20231025094224.72858-1-michael.weiss@aisec.fraunhofer.de>
-In-Reply-To: <20231025094224.72858-1-michael.weiss@aisec.fraunhofer.de>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 25 Oct 2023 09:17:37 -0400
-Message-ID: <CAHC9VhThNGA+qRgs=rOmEfvffj3qLzB=Jx4ii-uksuU1YJ6F5w@mail.gmail.com>
-Subject: Re: [RESEND RFC PATCH v2 00/14] device_cgroup: guard mknod for
- non-initial user namespace
-To:     =?UTF-8?Q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
-Cc:     Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Quentin Monnet <quentin@isovalent.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
+        bh=Rktb275++autG2dBh3wJ1wvqmgDO3Aq+V8t/EjWFz4M=;
+        b=gBQ8rLOxXoIu1YtmLV4Yn3fAKmM7ndvB2FGYxKT8YHlLfWzE5jzSCzJ1DuVq/k/EKa
+         Qvhqj+dcRyw1yljMHhHoaUZJZBpFEkjPaTwC3ap/G5UDa7VDgTJRnn34202spkOzqRDB
+         BIFIjjG19YueOUTdE69wuwaYE08wxRxmcuvcMGNJ2KVaHdxDGzVEGLh0WanSRPwav8nJ
+         8Fu4+idUmBLK4Ag9czPmpnfLIWihoI/IBbgRVEEB+NnLaKGgDPZQWUSHlkcXysIkiRrg
+         0w9FQ5tZPL0VHVkyvdBrroHeL9YOuf3mkHxgRkxBSwnOeVPjom8VLn4jJViZMFFxkrjW
+         RwWQ==
+X-Gm-Message-State: AOJu0YzoPAWLU2tcgDC5M9fWELdWKtAqXFrifpTNOi/IK/jxr20NLFu3
+        V1viCXGLFzQoDDG2DnusAPd2B4cBKnu95S2iZ1ybRH/UukYkF+PdkNjJs9+t3g6iE0OuRIR/YBf
+        KIUNN1IEWg8D65TtyZPD5jIBzVI16VVw3AXj2
+X-Received: by 2002:a17:907:da3:b0:9c6:7ec2:e14e with SMTP id go35-20020a1709070da300b009c67ec2e14emr14335794ejc.50.1698242529020;
+        Wed, 25 Oct 2023 07:02:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH+8SDOqqdIbWYcTzs6rDMO30AFnhMq2M9Jv3S4dbLlbYvENSTjg76T9Wfx8VJm7Ip4DabhCA==
+X-Received: by 2002:a17:907:da3:b0:9c6:7ec2:e14e with SMTP id go35-20020a1709070da300b009c67ec2e14emr14335764ejc.50.1698242528629;
+        Wed, 25 Oct 2023 07:02:08 -0700 (PDT)
+Received: from maszat.piliscsaba.szeredi.hu (92-249-235-200.pool.digikabel.hu. [92.249.235.200])
+        by smtp.gmail.com with ESMTPSA id vl9-20020a170907b60900b00989828a42e8sm9857073ejc.154.2023.10.25.07.02.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Oct 2023 07:02:08 -0700 (PDT)
+From:   Miklos Szeredi <mszeredi@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
         Amir Goldstein <amir73il@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gyroidos@aisec.fraunhofer.de, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Matthew House <mattlloydhouse@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v4 1/6] add unique mount ID
+Date:   Wed, 25 Oct 2023 16:01:59 +0200
+Message-ID: <20231025140205.3586473-2-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20231025140205.3586473-1-mszeredi@redhat.com>
+References: <20231025140205.3586473-1-mszeredi@redhat.com>
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"; x-default=true
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 25, 2023 at 5:42=E2=80=AFAM Michael Wei=C3=9F
-<michael.weiss@aisec.fraunhofer.de> wrote:
->
-> Introduce the flag BPF_DEVCG_ACC_MKNOD_UNS for bpf programs of type
-> BPF_PROG_TYPE_CGROUP_DEVICE which allows to guard access to mknod
-> in non-initial user namespaces.
->
-> If a container manager restricts its unprivileged (user namespaced)
-> children by a device cgroup, it is not necessary to deny mknod()
-> anymore. Thus, user space applications may map devices on different
-> locations in the file system by using mknod() inside the container.
->
-> A use case for this, we also use in GyroidOS, is to run virsh for
-> VMs inside an unprivileged container. virsh creates device nodes,
-> e.g., "/var/run/libvirt/qemu/11-fgfg.dev/null" which currently fails
-> in a non-initial userns, even if a cgroup device white list with the
-> corresponding major, minor of /dev/null exists. Thus, in this case
-> the usual bind mounts or pre populated device nodes under /dev are
-> not sufficient.
->
-> To circumvent this limitation, allow mknod() by checking CAP_MKNOD
-> in the userns by implementing the security_inode_mknod_nscap(). The
-> hook implementation checks if the corresponding permission flag
-> BPF_DEVCG_ACC_MKNOD_UNS is set for the device in the bpf program.
-> To avoid to create unusable inodes in user space the hook also
-> checks SB_I_NODEV on the corresponding super block.
->
-> Further, the security_sb_alloc_userns() hook is implemented using
-> cgroup_bpf_current_enabled() to allow usage of device nodes on super
-> blocks mounted by a guarded task.
->
-> Patch 1 to 3 rework the current devcgroup_inode hooks as an LSM
->
-> Patch 4 to 8 rework explicit calls to devcgroup_check_permission
-> also as LSM hooks and finalize the conversion of the device_cgroup
-> subsystem to a LSM.
->
-> Patch 9 and 10 introduce new generic security hooks to be used
-> for the actual mknod device guard implementation.
->
-> Patch 11 wires up the security hooks in the vfs
->
-> Patch 12 and 13 provide helper functions in the bpf cgroup
-> subsystem.
->
-> Patch 14 finally implement the LSM hooks to grand access
->
-> Signed-off-by: Michael Wei=C3=9F <michael.weiss@aisec.fraunhofer.de>
-> ---
-> Changes in v2:
-> - Integrate this as LSM (Christian, Paul)
-> - Switched to a device cgroup specific flag instead of a generic
->   bpf program flag (Christian)
-> - do not ignore SB_I_NODEV in fs/namei.c but use LSM hook in
->   sb_alloc_super in fs/super.c
-> - Link to v1: https://lore.kernel.org/r/20230814-devcg_guard-v1-0-654971a=
-b88b1@aisec.fraunhofer.de
->
-> Michael Wei=C3=9F (14):
->   device_cgroup: Implement devcgroup hooks as lsm security hooks
->   vfs: Remove explicit devcgroup_inode calls
->   device_cgroup: Remove explicit devcgroup_inode hooks
->   lsm: Add security_dev_permission() hook
->   device_cgroup: Implement dev_permission() hook
->   block: Switch from devcgroup_check_permission to security hook
->   drm/amdkfd: Switch from devcgroup_check_permission to security hook
->   device_cgroup: Hide devcgroup functionality completely in lsm
->   lsm: Add security_inode_mknod_nscap() hook
->   lsm: Add security_sb_alloc_userns() hook
->   vfs: Wire up security hooks for lsm-based device guard in userns
->   bpf: Add flag BPF_DEVCG_ACC_MKNOD_UNS for device access
->   bpf: cgroup: Introduce helper cgroup_bpf_current_enabled()
->   device_cgroup: Allow mknod in non-initial userns if guarded
->
->  block/bdev.c                                 |   9 +-
->  drivers/gpu/drm/amd/amdkfd/kfd_priv.h        |   7 +-
->  fs/namei.c                                   |  24 ++--
->  fs/super.c                                   |   6 +-
->  include/linux/bpf-cgroup.h                   |   2 +
->  include/linux/device_cgroup.h                |  67 -----------
->  include/linux/lsm_hook_defs.h                |   4 +
->  include/linux/security.h                     |  18 +++
->  include/uapi/linux/bpf.h                     |   1 +
->  init/Kconfig                                 |   4 +
->  kernel/bpf/cgroup.c                          |  14 +++
->  security/Kconfig                             |   1 +
->  security/Makefile                            |   2 +-
->  security/device_cgroup/Kconfig               |   7 ++
->  security/device_cgroup/Makefile              |   4 +
->  security/{ =3D> device_cgroup}/device_cgroup.c |   3 +-
->  security/device_cgroup/device_cgroup.h       |  20 ++++
->  security/device_cgroup/lsm.c                 | 114 +++++++++++++++++++
->  security/security.c                          |  75 ++++++++++++
->  19 files changed, 294 insertions(+), 88 deletions(-)
->  delete mode 100644 include/linux/device_cgroup.h
->  create mode 100644 security/device_cgroup/Kconfig
->  create mode 100644 security/device_cgroup/Makefile
->  rename security/{ =3D> device_cgroup}/device_cgroup.c (99%)
->  create mode 100644 security/device_cgroup/device_cgroup.h
->  create mode 100644 security/device_cgroup/lsm.c
+If a mount is released then its mnt_id can immediately be reused.  This is
+bad news for user interfaces that want to uniquely identify a mount.
 
-Hi Michael,
+Implementing a unique mount ID is trivial (use a 64bit counter).
+Unfortunately userspace assumes 32bit size and would overflow after the
+counter reaches 2^32.
 
-I think this was lost because it wasn't CC'd to the LSM list (see
-below).  I've CC'd the list on my reply, but future patch submissions
-that involve the LSM must be posted to the LSM list if you would like
-them to be considered.
+Introduce a new 64bit ID alongside the old one.  Initialize the counter to
+2^32, this guarantees that the old and new IDs are never mixed up.
 
-http://vger.kernel.org/vger-lists.html#linux-security-module
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/mount.h                | 3 ++-
+ fs/namespace.c            | 4 ++++
+ fs/stat.c                 | 9 +++++++--
+ include/uapi/linux/stat.h | 1 +
+ 4 files changed, 14 insertions(+), 3 deletions(-)
 
---=20
-paul-moore.com
+diff --git a/fs/mount.h b/fs/mount.h
+index 130c07c2f8d2..a14f762b3f29 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -72,7 +72,8 @@ struct mount {
+ 	struct fsnotify_mark_connector __rcu *mnt_fsnotify_marks;
+ 	__u32 mnt_fsnotify_mask;
+ #endif
+-	int mnt_id;			/* mount identifier */
++	int mnt_id;			/* mount identifier, reused */
++	u64 mnt_id_unique;		/* mount ID unique until reboot */
+ 	int mnt_group_id;		/* peer group identifier */
+ 	int mnt_expiry_mark;		/* true if marked for expiry */
+ 	struct hlist_head mnt_pins;
+diff --git a/fs/namespace.c b/fs/namespace.c
+index e157efc54023..e02bc5f41c7b 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -68,6 +68,9 @@ static u64 event;
+ static DEFINE_IDA(mnt_id_ida);
+ static DEFINE_IDA(mnt_group_ida);
+ 
++/* Don't allow confusion with old 32bit mount ID */
++static atomic64_t mnt_id_ctr = ATOMIC64_INIT(1ULL << 32);
++
+ static struct hlist_head *mount_hashtable __read_mostly;
+ static struct hlist_head *mountpoint_hashtable __read_mostly;
+ static struct kmem_cache *mnt_cache __read_mostly;
+@@ -131,6 +134,7 @@ static int mnt_alloc_id(struct mount *mnt)
+ 	if (res < 0)
+ 		return res;
+ 	mnt->mnt_id = res;
++	mnt->mnt_id_unique = atomic64_inc_return(&mnt_id_ctr);
+ 	return 0;
+ }
+ 
+diff --git a/fs/stat.c b/fs/stat.c
+index d43a5cc1bfa4..77878ae48a0f 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -243,8 +243,13 @@ static int vfs_statx(int dfd, struct filename *filename, int flags,
+ 
+ 	error = vfs_getattr(&path, stat, request_mask, flags);
+ 
+-	stat->mnt_id = real_mount(path.mnt)->mnt_id;
+-	stat->result_mask |= STATX_MNT_ID;
++	if (request_mask & STATX_MNT_ID_UNIQUE) {
++		stat->mnt_id = real_mount(path.mnt)->mnt_id_unique;
++		stat->result_mask |= STATX_MNT_ID_UNIQUE;
++	} else {
++		stat->mnt_id = real_mount(path.mnt)->mnt_id;
++		stat->result_mask |= STATX_MNT_ID;
++	}
+ 
+ 	if (path.mnt->mnt_root == path.dentry)
+ 		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
+diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+index 7cab2c65d3d7..2f2ee82d5517 100644
+--- a/include/uapi/linux/stat.h
++++ b/include/uapi/linux/stat.h
+@@ -154,6 +154,7 @@ struct statx {
+ #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
+ #define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
+ #define STATX_DIOALIGN		0x00002000U	/* Want/got direct I/O alignment info */
++#define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
+ 
+ #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
+ 
+-- 
+2.41.0
+
