@@ -2,128 +2,124 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A27C0032E
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 15:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8F1C0032E
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 16:47:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234998AbjJYPTk (ORCPT
+        id S229837AbjJYQrA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Oct 2023 11:19:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50770 "EHLO
+        Wed, 25 Oct 2023 12:47:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232469AbjJYPTk (ORCPT
+        with ESMTP id S229583AbjJYQrA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Oct 2023 11:19:40 -0400
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1598F129
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 08:19:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1698247177; bh=m1/30qna0rd38NEzQlZsDzeCUyP9P3MKgm9JFjG/u30=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=JFvdGUDLlaK+F2CnR0PPqmgKJ4rC6H1CSC5PuGTvFduf+z4mS2jF2Io3KC73FntP0Ic1Jeu62xHnfq4FNsX8yUF81nmvklIRCEjpZoqyHS7WwKS8mjdtgydCtjPLNuEPMdJ7E6hGCtf6TYoo4WSdDrUDEnff/B0DnRCEhb9punXj8PO/t0qdizsowQVnrcLClxhSzoJbDY+l+J62/s128IJTKg9SFUSz/zH8rM2ytgA5EWA1VBxoZSTeK/wb2jV6iCtGekjkTtf0cTEgZcZSRKcw+KnZG09+S9CMZwf53oWRaWTE9nY7hWk6iF+q8SphOQqQiJc6PmEEbLS09P0kPQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1698247177; bh=AJE08/vzZyE23+24AxR1izbHVSJQ1LVGOIQaE545DXM=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=C9bwvBQA+SdTDZaWyTXSx+POOplC5AwFmqTq8uM7ki/ysGP4b6+tsqui63oZhprGYJotKazmOzLeD+EIE+1IWl176YooOJLaiDuPmQ5qyJpi+SvRazfB/iyUaNNjxWOXLY8E09ZmiJBZw4DTu7TfjGA97uMopbpWNAg4/2sh5FuEC/mpLj9cZBCWnMtMygBN/dPNORgT5kYJ9R85dQlZvenedDNDX1Yku5nTQ1CKMJIkQkdGMC7cpyJ/8cOKGOFM5yAOJy5v5GDppIPqnsalI0O0S2EmDsK2q17Z8KgCYcaBivuo2EwEdOBrqWaUCsbH2sjy9FMsAY0DAXbnT7Ct3g==
-X-YMail-OSG: z1qmn7sVM1lbID6v2t6GerKcT05eRnkQtl10IpwY.zTUC7E1iknU2geR_9KQ4LM
- QY1h39vTsFFFsaxini7RKKVfZeo.2yl1JkcEyH.JgEGk0US2Cv4fxhzQ90ZKH82Pyo6u4D78P3Ro
- cXDMx.rcWS1vvpSTK.rTnf9nkF0a6ue_ddkHATVqiCZ1Nw3vflPVVhQBIRZaE7aAz2BWQ8TV1lCV
- gzVOqZCHCMlwVqBs1eOLnko6a5K9kWDIQfTdfJQg4yoLgz_0FKab5fXYowx.PSOp.kA63dqsCC7h
- klEHyLwKWOwAYRKaAV6oQw0DViNrrlC3.PDg24qp3gEzYymYF2fZ4zyuM.rGbNbq_4CaSMfFGyGP
- VjF1YG3J15pPb.RiJ.chZdQCIyjr4hqDT6UOpaiAPh97Ciz5iBKcqWjvZ2mfgsM8UNeqGBL3CCJj
- vBsZPHD5BE5UX8qdu.pyUsHTz.neiuXJ.FxKZ4qSP4VcuzIDewHdaxR4RtMKPRB6oSKcGCtdEH6b
- Om_i2wJL_BUmg_RB4xojUCvAi4KX2fcnjQmFPSRx4zOGp.7YQVvDEAhNsl1W7CaeBMzUKyg.HEcr
- K2sL01CnKRWSdJPYT1wP8EAvSvmusQZtKIPx1W1WfVIPMbUcSpwqGIj0teQI6cow3uZSUp82gUBT
- 2QQ6zOEZR3OFg17iCGBvZy1SyLtRyxsOcnLKggrxjQV9vUF150JnSQABEv91DpPZAtVvYw4rsMph
- mhYFpA9hmWeWm6j59XNa856nfvXEsuyc_8mRAMMaERC_fyQOHWU060IksZJkQZbriRN_qTA6_MZH
- wng_QU58ezqbm7_CYnuzeWHwRzKig9AAzlqSP0nkT0yC9YSUPC.GMLKUhVDneNPzcomqYx0oyMyb
- oJUj6nUK0maqVyKuA2YhrfPtiPD8I5_JHzhGPLdVtUp7i5bSQItaWGXUrAddlqfgvos3zOravufg
- g8GLFPiqPjdS3EN4TBQk9ukuYedPyGPvY5.Q_rgJVwfAF0GQUrZlFYU14gDv5JIf9o615hvP.q1Z
- Tud.s1iPU3PnjHHKQ0OOwKqivYzUkiHy8d0irKlziqJ5msejs1vC6y_Ed3RHDFUP7gs5wcGrum6K
- RJzrizGgo.vgSsHgTG1dcOx9fjYO611x_gP9thAo5IrC_eT9Y7lZqeTa.fw.TF1Ai25EU2.RHRPE
- ddQrEoWiEQOaTSjumlZF2Rw2ICM.8VGK3PsNDjjYcGnF4cKxJhW.V3YVTv3ECCaUomZUWlX8FH3K
- xl8ZPjEEJMTrEd5mGpEFhRDogv1jQkPjJNw1oV17HgKJMIRl.a7dO_gEPsWDTb97HeX.C7IW_mEM
- iL6Ok.pVtORWF6mLDqvl4fcmAjfmIGzV8ddLmIAZkAyEMoODOd_juR3B_uOWqqWa6Vp9BcrlYKZh
- FBNQVmE6n6fIF_EaZs4D7l8Xm6lYfE.eA_owtYUnGOj_X0WpADq7uZi.eleEIDlFXAx3Je9GobbL
- Nj3Xp67cgLjZTJuAxodObv679uJk5HoxsZjvOjWf_Cz.oLa0Ta85a7EPEYQ1rIxaJ5dm1xGWFaJD
- U9Y7R2OyQboOUtELjJJD7CxXoM9yqN.ktaeWjLQgBekVTE7Hu_Q1DcUcbJJyJK1YdqZJAFQLYyDd
- sKosZYV0V0XYUsNMgFugWTzRCmfV9QV7LiKJ1DxjAuE2V722udFZiNmw6ikppbjMy_.lDvUos0eE
- HpwmMZvWRP134bVoaNfGTTB86fA61PO4lqIurkBqjSaesGIeeadaE1SsQC8Z.8YCZ.cXdv_HeZPY
- emJxuYUOgsfbImPe3CxKmY4lXpBt2tgz2_z6Vz_NiPZVOvshAXCglYyNBwBcgZBTQqQP1QtclNGl
- blWrqwBMbDVrll8VuLi042hsj4x1HE3yk_W.m7FSgtxLK98h7.TAMZ27wcS11vEdLlljiJ_fljgH
- kq4YOJfHAUnVqm5dLnB02a46m8iQqpmmufdno40H1yK7TvJc8GLMxVe51FCFr_FtFEmFA5nmVMwp
- adfBzs86yYPf.LiXICwMJfAB5C8r1O2HS9vaUvh2BnuPr.HP7Swh2QAQK95m6q7ZP9IStM6bi2zJ
- 0gqQGJPZ1qinTo0JrEvdBUSKpiVO5oMxBuGkRqRD3FjLIzRQ8k3VvYQOe.eUTjFw2OQd0WOoPT9b
- WoVDYOuxyKVSnsa4rRTwIjGZwLzkcUmN6LH37NrJ8g3p3O29Xoq7H7jL.0gddbGHaDVaIe9ZV4mM
- edX7qhfh.I9vWNeOb93opLIltcxlaTuqrGMxej.4ndJ2UQyvYUcoEKxfVLkXZBcnckvmHA0aFJiM
- -
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: f4170662-dc9b-4b34-bcae-b330ac052bb8
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 25 Oct 2023 15:19:37 +0000
-Received: by hermes--production-ne1-68668bc7f7-j2rhn (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b2801747aa7b49229e5d98b03566bac8;
-          Wed, 25 Oct 2023 15:19:33 +0000 (UTC)
-Message-ID: <5df43557-7261-47a1-9066-b7ba42145af0@schaufler-ca.com>
-Date:   Wed, 25 Oct 2023 08:19:31 -0700
+        Wed, 25 Oct 2023 12:47:00 -0400
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 055DA129
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 09:46:56 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4SFvd70SLLz9xqwl
+        for <linux-security-module@vger.kernel.org>; Thu, 26 Oct 2023 00:33:47 +0800 (CST)
+Received: from [10.48.135.27] (unknown [10.48.135.27])
+        by APP1 (Coremail) with SMTP id LxC2BwA3Q5RrRjllMzTnAg--.561S2;
+        Wed, 25 Oct 2023 17:46:42 +0100 (CET)
+Message-ID: <212613fc-6539-4031-94b7-175fd5a2603e@huaweicloud.com>
+Date:   Wed, 25 Oct 2023 18:46:33 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/3] lsm: cleanup the size counters in
- security_getselfattr()
+Subject: Re: [PATCH] lsm: drop LSM_ID_IMA
 Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?= =?UTF-8?Q?n?= <mic@digikod.net>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20231024213525.361332-4-paul@paul-moore.com>
- <20231024213525.361332-5-paul@paul-moore.com>
- <8fcaab11-6340-4056-b9e0-4650be05b270@schaufler-ca.com>
- <CAHC9VhR_Mm0aZKafhhaQHnasU_30Uvy9zUvEMs9COzh22QSNWw@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhR_Mm0aZKafhhaQHnasU_30Uvy9zUvEMs9COzh22QSNWw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.21797 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>
+References: <20231018215032.348429-2-paul@paul-moore.com>
+ <72a92e27855af2291273209d328e1b79f3b61663.camel@huaweicloud.com>
+ <1764a96f-6d24-4585-a24b-667a5ea075c3@schaufler-ca.com>
+ <f47097f8-3391-42a7-b8b5-81e1be2d8e68@huaweicloud.com>
+ <88f4f464-ac09-4c93-95f4-fe4546b78a08@schaufler-ca.com>
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+In-Reply-To: <88f4f464-ac09-4c93-95f4-fe4546b78a08@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwA3Q5RrRjllMzTnAg--.561S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw18Kry8JFyUZFyDCw1fCrg_yoW8uF18pF
+        WrtayjkF4ktw1F93sYya15Za4jk393XFy5X3s8J34Uu34qqryvvrZrJF4Y9a98Gr4Iv34F
+        vF4ag34aka4DAaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUgCb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
+        6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
+        CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF
+        0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr
+        1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsG
+        vfC2KfnxnUUI43ZEXa7IU1CPfJUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBF1jj5WEzQABso
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/24/2023 6:43 PM, Paul Moore wrote:
-> On Tue, Oct 24, 2023 at 6:23 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 10/24/2023 2:35 PM, Paul Moore wrote:
->>> Zero out all of the size counters in the -E2BIG case (buffer too
->>> small) to help make the current code a bit more robust in the face of
->>> future code changes.
->> I don't see how this change would have the described effect.
->> What it looks like it would do is change the return from -E2BIG
->> to 0, which would not have the desired result.
-> When @toobig is true, which it will be when one of the individual LSMs
-> return -E2BIG, the return value of security_getselfattr() is fixed to
-> -E2BIG (check the if-statements at the end of the function).  Setting
-> @rc to zero as in this patch simply preserves some sanity in the
-> @count variable as we are no longer subtracting the E2BIG errno from
-> the @count value.  Granted, in the @toobig case, @count doesn't do
-> anything meaningful, but I believe this does harden the code against
-> future changes.
->
-> Look at the discussion between Mickaël and I in the v15 04/11 patch
-> for more background.
->
-> https://lore.kernel.org/linux-security-module/20230912205658.3432-5-casey@schaufler-ca.com
-
-OK. My bad for not looking beyond the patch.
-
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-
->
->>> Signed-off-by: Paul Moore <paul@paul-moore.com>
->>> ---
->>>  security/security.c | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
+On 10/23/2023 5:48 PM, Casey Schaufler wrote:
+> On 10/23/2023 8:20 AM, Roberto Sassu wrote:
+>> On 10/20/2023 11:56 PM, Casey Schaufler wrote:
+>>> On 10/19/2023 1:08 AM, Roberto Sassu wrote:
+>>>> On Wed, 2023-10-18 at 17:50 -0400, Paul Moore wrote:
+>>>>> When IMA becomes a proper LSM we will reintroduce an appropriate
+>>>>> LSM ID, but drop it from the userspace API for now in an effort
+>>>>> to put an end to debates around the naming of the LSM ID macro.
+>>>>>
+>>>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+>>>> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+>>>>
+>>>> This makes sense according to the new goal of making 'ima' and 'evm' as
+>>>> standalone LSMs.
+>>>>
+>>>> Otherwise, if we took existing LSMs, we should have defined
+>>>> LSM_ID_INTEGRITY, associated to DEFINE_LSM(integrity).
+>>>>
+>>>> If we proceed with the new direction, I will add the new LSM IDs as
+>>>> soon as IMA and EVM become LSMs.
 >>>
->>> diff --git a/security/security.c b/security/security.c
->>> index 988483fcf153..9c63acded4ee 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -3951,8 +3951,9 @@ int security_getselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
->>>                       continue;
->>>               }
->>>               if (rc == -E2BIG) {
->>> -                     toobig = true;
->>> +                     rc = 0;
->>>                       left = 0;
->>> +                     toobig = true;
->>>               } else if (rc < 0)
->>>                       return rc;
->>>               else
+>>> This seems right to me. Thank You.
+>>
+>> Perfect! Is it fine to assign an LSM ID to 'ima' and 'evm' and keep
+>> the 'integrity' LSM to reserve space in the security blob without LSM
+>> ID (as long as it does not register any hook)?
+> 
+> That will work, although it makes me wonder if all the data in the 'integrity' blob
+> is used by both IMA and EVM. If these are going to be separate LSMs they should probably
+> have their own security blobs. If there is data in common then an 'integrity' blob can
+> still makes sense.
+
+Question, it might be better to ensure that 'evm' is after 'ima' like 
+when function calls were hardcoded.
+
+I'm enforcing 'ima' and 'evm' to be the last.
+
+In this case, since we have:
+
+         /* LSM_ORDER_LAST is always last. */
+         for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+                 if (lsm->order == LSM_ORDER_LAST)
+                         append_ordered_lsm(lsm, "   last");
+         }
+
+and:
+
+obj-$(CONFIG_IMA)                       += ima/
+obj-$(CONFIG_EVM)                       += evm/
+
+in the integrity Makefile, can I assume that the order will always be 
+'ima', 'evm'?
+
+I tried to invert obj-, and indeed the order is inverted. They are not 
+mutable LSMs, their order should not depend on the kernel command line. 
+Right?
+
+Thanks
+
+Roberto
+
