@@ -2,110 +2,225 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E22C25B6B
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 10:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC99BC0032E
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 11:29:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235027AbjJYKhf (ORCPT
+        id S232076AbjJYL3g (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Oct 2023 06:37:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57816 "EHLO
+        Wed, 25 Oct 2023 07:29:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234661AbjJYKhS (ORCPT
+        with ESMTP id S234703AbjJYL3g (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Oct 2023 06:37:18 -0400
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D25826B8
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 03:36:08 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4SFlPD1XlSz9yTLS
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 18:22:56 +0800 (CST)
-Received: from [10.81.215.92] (unknown [10.81.215.92])
-        by APP1 (Coremail) with SMTP id LxC2BwCX8JF97zhluf7iAg--.21488S2;
-        Wed, 25 Oct 2023 11:35:51 +0100 (CET)
-Message-ID: <93b2ea72-a9b1-4d50-bc4a-3d60d91dd44b@huaweicloud.com>
-Date:   Wed, 25 Oct 2023 12:35:34 +0200
+        Wed, 25 Oct 2023 07:29:36 -0400
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4637194
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 04:29:29 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SFmsy0xz2zMpvff;
+        Wed, 25 Oct 2023 11:29:26 +0000 (UTC)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SFmsx3n9DzMpnPn;
+        Wed, 25 Oct 2023 13:29:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1698233366;
+        bh=Q3GfLm/wl5qsxpCx/PoVD6qiO8tOiUfUm2gWs7I37eg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T0O3I08cZdyn7fpbFy+ubIqzNnrV0et33RTLvJWq97INMsOaII5Eplx3MCJ1f1UWQ
+         C1tG7o4N6c14uH0rN2WRsleIWPoP3O125Mg7dF9g2Z1IpvL1i0vIH7nZkkk4+z5wLv
+         DA+yqiG0cgmwZ9gxuaz0rlgA24WM5tGd8Todi9XM=
+Date:   Wed, 25 Oct 2023 13:29:24 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+Subject: Re: [PATCH v13 08/12] landlock: Add network rules and TCP hooks
+ support
+Message-ID: <20231025.ooG0Uach9aes@digikod.net>
+References: <20231016015030.1684504-1-konstantin.meskhidze@huawei.com>
+ <20231016015030.1684504-9-konstantin.meskhidze@huawei.com>
+ <20231017.xahKoo9Koo8v@digikod.net>
+ <57f150b2-0920-8567-8351-1bdb74684cfa@huawei.com>
+ <20231020.ido6Aih0eiGh@digikod.net>
+ <ea02392e-4460-9695-050f-7519aecebec2@huawei.com>
+ <20231024.Ahdeepoh7wos@digikod.net>
+ <bc4699d7-ab54-a3b8-06a0-1724a63c6076@huawei.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: drop LSM_ID_IMA
-To:     Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>
-References: <20231018215032.348429-2-paul@paul-moore.com>
- <72a92e27855af2291273209d328e1b79f3b61663.camel@huaweicloud.com>
- <1764a96f-6d24-4585-a24b-667a5ea075c3@schaufler-ca.com>
- <f47097f8-3391-42a7-b8b5-81e1be2d8e68@huaweicloud.com>
- <88f4f464-ac09-4c93-95f4-fe4546b78a08@schaufler-ca.com>
- <CAHC9VhSVcfsCM6GjxJrSPCXV3PYRahXJi5HiNyKGCt8f_fOpmA@mail.gmail.com>
-Content-Language: en-US
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <CAHC9VhSVcfsCM6GjxJrSPCXV3PYRahXJi5HiNyKGCt8f_fOpmA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwCX8JF97zhluf7iAg--.21488S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr4kuw4DJr47Kr1xArWrZrb_yoW8ZF47pr
-        WrKay8tF1ktr1Ykryvv3WrZa4UKrZ3Xr1UWr98C34UZa4qvryvqryxCw4Y9ayq9r40934j
-        yF4ak343uFyDZ3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgmb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-        AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
-        IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
-        KfnxnUUI43ZEXa7IU1CPfJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBF1jj5V-2gAAsF
-X-CFilter-Loop: Reflected
+In-Reply-To: <bc4699d7-ab54-a3b8-06a0-1724a63c6076@huawei.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/24/2023 11:18 PM, Paul Moore wrote:
-> On Mon, Oct 23, 2023 at 11:48 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 10/23/2023 8:20 AM, Roberto Sassu wrote:
->>> On 10/20/2023 11:56 PM, Casey Schaufler wrote:
->>>> On 10/19/2023 1:08 AM, Roberto Sassu wrote:
->>>>> On Wed, 2023-10-18 at 17:50 -0400, Paul Moore wrote:
->>>>>> When IMA becomes a proper LSM we will reintroduce an appropriate
->>>>>> LSM ID, but drop it from the userspace API for now in an effort
->>>>>> to put an end to debates around the naming of the LSM ID macro.
->>>>>>
->>>>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
->>>>> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
->>>>>
->>>>> This makes sense according to the new goal of making 'ima' and 'evm' as
->>>>> standalone LSMs.
->>>>>
->>>>> Otherwise, if we took existing LSMs, we should have defined
->>>>> LSM_ID_INTEGRITY, associated to DEFINE_LSM(integrity).
->>>>>
->>>>> If we proceed with the new direction, I will add the new LSM IDs as
->>>>> soon as IMA and EVM become LSMs.
->>>>
->>>> This seems right to me. Thank You.
->>>
->>> Perfect! Is it fine to assign an LSM ID to 'ima' and 'evm' and keep
->>> the 'integrity' LSM to reserve space in the security blob without LSM
->>> ID (as long as it does not register any hook)?
->>
->> That will work, although it makes me wonder if all the data in the 'integrity' blob
->> is used by both IMA and EVM. If these are going to be separate LSMs they should probably
->> have their own security blobs. If there is data in common then an 'integrity' blob can
->> still makes sense.
+On Tue, Oct 24, 2023 at 12:12:01PM +0300, Konstantin Meskhidze (A) wrote:
 > 
-> Users interact with IMA and EVM, not the "integrity" layer, yes?  If
-> so, I'm not sure it makes sense to have an "integrity" LSM, we should
-> just leave it at "IMA" and "EVM".
+> 
+> 10/24/2023 12:03 PM, Mickaël Salaün пишет:
+> > On Tue, Oct 24, 2023 at 06:18:54AM +0300, Konstantin Meskhidze (A) wrote:
+> > > 
+> > > 
+> > > 10/20/2023 12:49 PM, Mickaël Salaün пишет:
+> > > > On Fri, Oct 20, 2023 at 07:08:33AM +0300, Konstantin Meskhidze (A) wrote:
+> > > > > > > > > 10/18/2023 3:29 PM, Mickaël Salaün пишет:
+> > > > > > On Mon, Oct 16, 2023 at 09:50:26AM +0800, Konstantin Meskhidze wrote:
+> > 
+> > > > > > > diff --git a/security/landlock/net.h b/security/landlock/net.h
+> > > > > > > new file mode 100644
+> > > > > > > index 000000000000..588a49fd6907
+> > > > > > > --- /dev/null
+> > > > > > > +++ b/security/landlock/net.h
+> > > > > > > @@ -0,0 +1,33 @@
+> > > > > > > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > > > > > > +/*
+> > > > > > > + * Landlock LSM - Network management and hooks
+> > > > > > > + *
+> > > > > > > + * Copyright © 2022-2023 Huawei Tech. Co., Ltd.
+> > > > > > > + */
+> > > > > > > +
+> > > > > > > +#ifndef _SECURITY_LANDLOCK_NET_H
+> > > > > > > +#define _SECURITY_LANDLOCK_NET_H
+> > > > > > > +
+> > > > > > > +#include "common.h"
+> > > > > > > +#include "ruleset.h"
+> > > > > > > +#include "setup.h"
+> > > > > > > +
+> > > > > > > +#if IS_ENABLED(CONFIG_INET)
+> > > > > > > +__init void landlock_add_net_hooks(void);
+> > > > > > > +
+> > > > > > > +int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
+> > > > > > > +			     const u16 port, access_mask_t access_rights);
+> > > > > > > +#else /* IS_ENABLED(CONFIG_INET) */
+> > > > > > > +static inline void landlock_add_net_hooks(void)
+> > > > > > > +{
+> > > > > > > +}
+> > > > > > > +
+> > > > > > > +static inline int
+> > > > > > > +landlock_append_net_rule(struct landlock_ruleset *const ruleset, const u16 port,
+> > > > > > > +			 access_mask_t access_rights);
+> > > > > > > +{
+> > > > > > > +	return -EAFNOSUPPORT;
+> > > > > > > +}
+> > > > > > > +#endif /* IS_ENABLED(CONFIG_INET) */
+> > > > > > > +
+> > > > > > > +#endif /* _SECURITY_LANDLOCK_NET_H */
+> > > > > > > diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> > > > > > > index 4c209acee01e..1fe4298ff4a7 100644
+> > > > > > > --- a/security/landlock/ruleset.c
+> > > > > > > +++ b/security/landlock/ruleset.c
+> > > > > > > @@ -36,6 +36,11 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+> > > > > > >  	refcount_set(&new_ruleset->usage, 1);
+> > > > > > >  	mutex_init(&new_ruleset->lock);
+> > > > > > >  	new_ruleset->root_inode = RB_ROOT;
+> > > > > > > +
+> > > > > > > +#if IS_ENABLED(CONFIG_INET)
+> > > > > > > +	new_ruleset->root_net_port = RB_ROOT;
+> > > > > > > +#endif /* IS_ENABLED(CONFIG_INET) */
+> > > > > > > +
+> > > > > > >  	new_ruleset->num_layers = num_layers;
+> > > > > > >  	/*
+> > > > > > >  	 * hierarchy = NULL
+> > > > > > > @@ -46,16 +51,21 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+> > > > > > >  }
+> > > > > > > > >  struct landlock_ruleset *
+> > > > > > > -landlock_create_ruleset(const access_mask_t fs_access_mask)
+> > > > > > > +landlock_create_ruleset(const access_mask_t fs_access_mask,
+> > > > > > > +			const access_mask_t net_access_mask)
+> > > > > > >  {
+> > > > > > >  	struct landlock_ruleset *new_ruleset;
+> > > > > > > > >  	/* Informs about useless ruleset. */
+> > > > > > > -	if (!fs_access_mask)
+> > > > > > > +	if (!fs_access_mask && !net_access_mask)
+> > > > > > >  		return ERR_PTR(-ENOMSG);
+> > > > > > >  	new_ruleset = create_ruleset(1);
+> > > > > > > -	if (!IS_ERR(new_ruleset))
+> > > > > > > +	if (IS_ERR(new_ruleset))
+> > > > > > > +		return new_ruleset;
+> > > > > > > +	if (fs_access_mask)
+> > > > > > >  		landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
+> > > > > > > +	if (net_access_mask)
+> > > > > > > +		landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
+> > > > > > > This is good, but it is not tested: we need to add a test that
+> > > > > both
+> > > > > > handle FS and net restrictions. You can add one in net.c, just handling
+> > > > > > LANDLOCK_ACCESS_FS_READ_DIR and LANDLOCK_ACCESS_NET_BIND_TCP, add one
+> > > > > > rule with path_beneath (e.g. /dev) and another with net_port, and check
+> > > > > > that open("/") is denied, open("/dev") is allowed, and and only the
+> > > > > > allowed port is allowed with bind(). This test should be simple and can
+> > > > > > only check against an IPv4 socket, i.e. using ipv4_tcp fixture, just
+> > > > > > after port_endianness. fcntl.h should then be included by net.c
+> > > > > > >   Ok.
+> > > > > > > I guess that was the purpose of layout1.with_net (in fs_test.c)
+> > > > > but it
+> > > > > > >   Yep. I added this kind of nest in fs_test.c to test both
+> > > fs and network
+> > > > > rules together.
+> > > > > > is not complete. You can revamp this test and move it to net.c
+> > > > > > following the above suggestions, keeping it consistent with other tests
+> > > > > > in net.c . You don't need the test_open() nor create_ruleset() helpers.
+> > > > > > > This test must failed if we change
+> > > > > "ruleset->access_masks[layer_level] |="
+> > > > > > to "ruleset->access_masks[layer_level] =" in
+> > > > > > landlock_add_fs_access_mask() or landlock_add_net_access_mask().
+> > > > > > >   Do you want to change it? Why?
+> > > > > The kernel code is correct and must not be changed. However, if
+> > > by
+> > > > mistake we change it and remove the OR, a test should catch that. We
+> > > > need a test to assert this assumption.
+> > > > > >   Fs and network masks are ORed to not intersect with each
+> > > other.
+> > > > > Yes, they are ORed, and we need a test to check that. Noting is
+> > > > currently testing this OR (and the different rule type consistency).
+> > > > I'm suggesting to revamp the layout1.with_net test into
+> > > > ipv4_tcp.with_fs and make it check ruleset->access_masks[] and rule
+> > > > addition of different types.
+> > 
+> > > From the other email:
+> > > Thinking about this test. We don't need to add any additional ASSERT here.
+> > > Anyway if we accidentally change "ruleset->access_masks[layer_level] |=" to
+> > > "ruleset->access_masks[layer_level] =" we will fail either in opening
+> > > directory or in port binding, cause adding a second rule (fs or net) will
+> > > overwrite a first one's mask. it does not matter which one goes first. I
+> > > will check it and send you a message.
+> > > What do you think?
+> > 
+> > > 
+> > >   About my previous comment.
+> > > 
+> > >   Checking the code we can  notice that adding fs mask goes first:
+> > > 
+> > > ...
+> > > if (fs_access_mask)
+> > > 		landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
+> > > if (net_access_mask)
+> > > 		landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
+> > > ....
+> > > 
+> > > So with we change "ruleset->access_masks[layer_level] |="
+> > > >> > to "ruleset->access_masks[layer_level] =" in
+> > > landlock_add_fs_access_mask() nothing bad will happen.
+> > > But if we do that in landlock_add_net_access_mask()
+> > > fs mask will be overwritten and adding fs rule will fail
+> > > (as unhandled allowed_accesss).
+> > 
+> > Right. What is the conclusion here? Are you OK with my test proposal?
+> 
+>   So we just check if landlock_add_net_access_mask() would be changed by
+> mistake?
 
-The problem is who reserves and manages the shared integrity metadata. 
-For now, it is still the 'integrity' LSM. If not, it would be IMA or EVM 
-on behalf of the other (depending on which ones are enabled). Probably 
-the second would not be a good idea.
+With the current kernel code, yes.
 
-Thanks
+> Changing landlock_add_fs_access_mask() does not break the logic. Am
+> I correct here?
 
-Roberto
+Yes, only landlock_add_net_access_mask() changes would be detected with
+the current kernel code, but the test checks the whole semantic, so even
+the following code with a buggy landlock_add_fs_access_mask() would be
+detected:
 
+if (net_access_mask)
+	landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
+if (fs_access_mask)
+	landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
