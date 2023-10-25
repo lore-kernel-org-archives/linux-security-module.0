@@ -2,387 +2,459 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B07C25B6B
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 22:07:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 957F0C25B6B
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 22:46:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229797AbjJYWHl (ORCPT
+        id S230457AbjJYWq3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Oct 2023 18:07:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50808 "EHLO
+        Wed, 25 Oct 2023 18:46:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229649AbjJYWHk (ORCPT
+        with ESMTP id S229723AbjJYWq2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Oct 2023 18:07:40 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BCDC137
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 15:07:37 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-da04776a869so203574276.0
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 15:07:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698271656; x=1698876456; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PZjfm6M3ZyL4GTxC6afhaxfOainDyB0qJf3X7vDUSrY=;
-        b=KHnlA/Nr2a8xeQ/T/Ax0TvkX2lzwuAlNPAyVJ2sk0b3UTQP4ijiLguRXSNnOtECyS1
-         ORWMB4LnyLScJJWNjWdDDhBgI+V+mpH0mf6MgqrBZqxVsoZN8Tm/XdvKtbbGlmNCQlhU
-         vVqlcA2mzclTr1pa3kP924JbgQz+XugN0chpery1wsVWZjHr4oxh6KsPgbmMdTVnjcNO
-         cB1tUCX3uJA3OwETZOh9+jEedTeZEweuSQAes+r8gEKcSqNLd+4+YOpL2s/sSsQrqPz1
-         qxTfwKMUIIQFbWiuNgG02FpLDRr9l+DL8yK+ZJPc1kj4SkWp0oYrI+0GrmCZWsWub4gF
-         mM4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698271656; x=1698876456;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PZjfm6M3ZyL4GTxC6afhaxfOainDyB0qJf3X7vDUSrY=;
-        b=rlUe53EZtkre6HZx4XHUt1iBe6VbXZ5D8f8P4SyN6vGG9a08PasNvu5cug4Jdn9Gjt
-         aAN5NG/CTshNXdDwVtnlOQskVwBghYVtD+PzAo6+Cz/uyW9qYgpLZUMDci1NAhQzqSFa
-         0hgyq3ErOXGZVAWiiHR9i/PUhieS16K9FzAqwLMJZep70GHU0dp1SbG6+OLZ4/DnR3mK
-         odruo64Toyd9tcxAl6ydRU18z2pC7lbylM7U4ps3R/imTNZY1Vg9cFWyqsJWzpZI/vU0
-         hEhxBH2NCb1HrINPYVjeOYQfMnt3yQJNWRDW5wDYgz8G8eOEp8EBoKxEUG9sAE/ZarRn
-         3R7w==
-X-Gm-Message-State: AOJu0Yzbn+l/Im1mwSzVkn+YEQV+HKxIYQPtDmG8RwvL+LhXfsh6LK6E
-        UHBkDAyVxvVdsPs+zIzoS+TgB5K9FCU=
-X-Google-Smtp-Source: AGHT+IFAJkR9hmEUyRLLCIYpQZ04800OS1y5+OMGkFch3gaCiBDbRs3/GtVeFcygY7tLBXcYNTHnm7Afdgg=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:c5af:3ae7:e526:c7a2])
- (user=gnoack job=sendgmr) by 2002:a25:42c9:0:b0:d9a:bce6:acf3 with SMTP id
- p192-20020a2542c9000000b00d9abce6acf3mr313798yba.0.1698271656378; Wed, 25 Oct
- 2023 15:07:36 -0700 (PDT)
-Date:   Thu, 26 Oct 2023 00:07:28 +0200
-In-Reply-To: <20231020.moefooYeV9ei@digikod.net>
-Message-Id: <ZTmRoESR5eXEA_ky@google.com>
-Mime-Version: 1.0
-References: <20230818.iechoCh0eew0@digikod.net> <ZOjCz5j4+tgptF53@google.com>
- <20230825.Zoo4ohn1aivo@digikod.net> <20230826.ohtooph0Ahmu@digikod.net>
- <ZPMiVaL3kVaTnivh@google.com> <20230904.aiWae8eineo4@digikod.net>
- <ZP7lxmXklksadvz+@google.com> <20230911.jie6Rai8ughe@digikod.net>
- <ZTGpIBve2LVlbt6p@google.com> <20231020.moefooYeV9ei@digikod.net>
-Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support
-From:   "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
-To:     "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Matt Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 25 Oct 2023 18:46:28 -0400
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DDE5E116;
+        Wed, 25 Oct 2023 15:46:24 -0700 (PDT)
+Received: from [10.137.106.151] (unknown [131.107.159.23])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 02F9D20B74C0;
+        Wed, 25 Oct 2023 15:46:24 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 02F9D20B74C0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1698273984;
+        bh=dm0CpobQbsS7czPRbypssTTQ8Y+D288bv9BFBEkdSMg=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=VmAw5akzIQiz/kj0sGLX3UeCAxwTCCby0Z4dr5chbT8LOZuTjrV6zzf6eX6rdeTB2
+         HgzjasdJ8l9JQAN+hrSjlG6Pw2BbPf+Nau7CHPLo9dsnkAMZbhogCk09Psu6AyXNRZ
+         T0Rg2cw/n2Sjeqk/kQGKNahzQPmB22jPvN4zyRHc=
+Message-ID: <594923f6-6942-4b4b-8ca1-b9dcf74c9c1c@linux.microsoft.com>
+Date:   Wed, 25 Oct 2023 15:45:37 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v11 2/19] ipe: add policy parser
+To:     Paul Moore <paul@paul-moore.com>, corbet@lwn.net,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk,
+        agk@redhat.com, snitzer@kernel.org, eparis@redhat.com
+Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, audit@vger.kernel.org,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        Deven Bowers <deven.desai@linux.microsoft.com>
+References: <1696457386-3010-3-git-send-email-wufan@linux.microsoft.com>
+ <7c8c2a158c628a642078f746e5c42f2f.paul@paul-moore.com>
+Content-Language: en-US
+From:   Fan Wu <wufan@linux.microsoft.com>
+In-Reply-To: <7c8c2a158c628a642078f746e5c42f2f.paul@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 20, 2023 at 04:57:39PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Fri, Oct 20, 2023 at 12:09:36AM +0200, G=C3=BCnther Noack wrote:
-> > * We introduce a flag in struct landlock_ruleset_attr which controls wh=
-ether the
-> >   graphics-related IOCTLs are controlled through the LANDLOCK_ACCESS_FS=
-_GFX
-> >   access right, rather than through LANDLOCK_ACCESS_FS_IOCTL.
-> >=20
-> >   (This could potentially also be put in the "flags" argument to
-> >   landlock_create_ruleset(), but it feels a bit more appropriate in the=
- struct I
-> >   think, as it influences the interpretation of the logic.  But I'm ope=
-n to
-> >   suggestions.)
-> >=20
->=20
-> What would be the difference with creating a
-> LANDLOCK_ACCESS_FS_GFX_IOCTL access right?
->=20
-> The main issue with this approach is that it complexifies the usage of
-> Landlock, and users would need to tweak more knobs to configure a
-> ruleset.
->=20
-> What about keeping my proposal (mainly the IOCTL handling and delegation
-> logic) for the user interface, and translate that for kernel internals
-> to your proposal? See the below example.
-
-Yes!
-
-I have pondered this for about a day now, and tried to break the example in
-various ways, but I believe you are right with this -- I think we can actua=
-lly
-use the "handled" flags to control the IOCTL grouping, and then translate a=
-ll of
-it quickly to synthetic access rights for the internal logic.  When doing t=
-he
-translation only once during ruleset enablement time, we can keep using the
-existing logic for the synthetic rights and it'll obviously work correctly =
-when
-layers are stacked.  (I paraphrase it in more detail at the end, to make su=
-re we
-are on the same page. -- But I think we are.)
 
 
-> > Example: Without the flag, the IOCTL groups will be:
-> >=20
-> >   These are always permitted:   FIOCLEX, FIONCLEX, FIONBIO, etc.
-> >   LANDLOCK_ACCESS_FS_READ_FILE: controls FIONREAD
-> >   LANDLOCK_ACCESS_FS_IOCTL:     controls all other IOCTL commands
-> >=20
-> > but when users set the flag, the IOCTL groups will be:
-> >=20
-> >   These are always permitted:   FIOCLEX, FIONCLEX, FIONBIO, etc.
-> >   LANDLOCK_ACCESS_FS_READ_FILE: controls FIONREAD
-> >   LANDLOCK_ACCESS_FS_GFX:       controls (list of gfx-related IOCTLs)
-> >   LANDLOCK_ACCESS_FS_IOCTL:     controls all other IOCTL commands
-> >=20
->=20
-> Does this mean that handling LANDLOCK_ACCESS_FS_GFX without the flag
-> would not allow GFX-related IOCTL commands? Thit would be inconsistent
-> with the way LANDLOCK_ACCESS_FS_READ_FILE is handled.
+On 10/23/2023 8:52 PM, Paul Moore wrote:
+> On Oct  4, 2023 Fan Wu <wufan@linux.microsoft.com> wrote:
+>>
+>> IPE's interpretation of the what the user trusts is accomplished through
+>> its policy. IPE's design is to not provide support for a single trust
+>> provider, but to support multiple providers to enable the end-user to
+>> choose the best one to seek their needs.
+>>
+>> This requires the policy to be rather flexible and modular so that
+>> integrity providers, like fs-verity, dm-verity, dm-integrity, or
+>> some other system, can plug into the policy with minimal code changes.
+>>
+>> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+>> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+...
+>> ---
+>>   security/ipe/Makefile        |   2 +
+>>   security/ipe/policy.c        | 101 ++++++++
+>>   security/ipe/policy.h        |  83 ++++++
+>>   security/ipe/policy_parser.c | 487 +++++++++++++++++++++++++++++++++++
+>>   security/ipe/policy_parser.h |  11 +
+>>   5 files changed, 684 insertions(+)
+>>   create mode 100644 security/ipe/policy.c
+>>   create mode 100644 security/ipe/policy.h
+>>   create mode 100644 security/ipe/policy_parser.c
+>>   create mode 100644 security/ipe/policy_parser.h
+> 
+> ...
+> 
+>> diff --git a/security/ipe/policy.c b/security/ipe/policy.c
+>> new file mode 100644
+>> index 000000000000..3a529c7950a1
+>> --- /dev/null
+>> +++ b/security/ipe/policy.c
+>> @@ -0,0 +1,101 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) Microsoft Corporation. All rights reserved.
+>> + */
+> 
+> ...
+> 
+>> +static int set_pkcs7_data(void *ctx, const void *data, size_t len,
+>> +			  size_t asn1hdrlen)
+>> +{
+>> +	struct ipe_policy *p = ctx;
+>> +
+>> +	p->text = (const char *)data;
+>> +	p->textlen = len;
+>> +
+>> +	return 0;
+>> +}
+> 
+> The @asn1hdrlen parameter isn't used in this function, at least at this
+> point in the patchset, so you really should remove it.  If it is needed
+> later in the patchset you can always update the function.
+>
+Although the @asn1hdrlen is not used, it's a required parameter for the 
+pkcs7 callback. I guess adding a __always_unused might be the right 
+solution?
 
-Yes, that is how I had imagined that.  It's true that it's slightly inconsi=
-stent
-in usage, and you are right that it creates some new concepts in the API wh=
-ich
-are maybe avoidable.  Let's try it the way you proposed and control it with=
- the
-"handled" flags.
+>> diff --git a/security/ipe/policy_parser.c b/security/ipe/policy_parser.c
+>> new file mode 100644
+>> index 000000000000..c09458bd348d
+>> --- /dev/null
+>> +++ b/security/ipe/policy_parser.c
+>> @@ -0,0 +1,487 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) Microsoft Corporation. All rights reserved.
+>> + */
+> 
+> ...
+> 
+>> +/**
+>> + * remove_trailing_spaces - Truncate all trailing spaces in a string.
+>> + *
+>> + * @line: Supplies a poilcy line string for preprocessing.
+>> + *
+>> + * Return: The length of truncated string.
+>> + */
+>> +static size_t remove_trailing_spaces(char *line)
+>> +{
+>> +	size_t i = 0;
+>> +
+>> +	for (i = strlen(line); i > 0 && (line[i - 1] == ' ' || line[i - 1] == '\t'); --i)
+>> +		;
+> 
+> Maybe I've asked this before, I can't remember: could you use the
+> isspace() macro here instead of explicitly checking for ' ' and '\t'?
+> Yes, isspace() works here. I will update this part.
 
+>    i = strlen(line);
+>    while (i > 0 && isspace(line[i - 1]))
+>      i--;
+>    line[i] = '\0';
+> 
+>> +	line[i] = '\0';
+>> +
+>> +	return i;
+>> +}
+>> +
+>> +/**
+>> + * parse_version - Parse policy version.
+>> + * @ver: Supplies a version string to be parsed.
+>> + * @p: Supplies the partial parsed policy.
+>> + *
+>> + * Return:
+>> + * * 0	- OK
+>> + * * !0	- Standard errno
+>> + */
+>> +static int parse_version(char *ver, struct ipe_parsed_policy *p)
+>> +{
+>> +	int rc = 0;
+>> +	size_t sep_count = 0;
+>> +	char *token;
+>> +	u16 *const cv[] = { &p->version.major, &p->version.minor, &p->version.rev };
+>> +
+>> +	while ((token = strsep(&ver, ".")) != NULL) {
+>> +		/* prevent overflow */
+>> +		if (sep_count >= ARRAY_SIZE(cv))
+>> +			return -EBADMSG;
+>> +
+>> +		rc = kstrtou16(token, 10, cv[sep_count]);
+>> +		if (rc)
+>> +			return rc;
+>> +
+>> +		++sep_count;
+>> +	}
+>> +
+>> +	/* prevent underflow */
+>> +	if (sep_count != ARRAY_SIZE(cv))
+>> +		rc = -EBADMSG;
+> 
+> You could always just 'return -EBADMSG' here and 'return 0' below to
+> simplify things a little.
+> 
+I agree, this part is kind of unnecessary. I will update accordingly.
 
-> Would this flag works with non-GFX access rights as well? Would there be
-> potentially one new flag per new access right?
->=20
-> >=20
-> > Implementation-wise, I think it would actually look very similar to wha=
-t would
-> > be needed for your proposal of having a new special meaning for "handle=
-d".  It
-> > would have the slight advantage that the new flag is actually only need=
-ed at the
-> > time when we introduce a new way of grouping the IOCTL commands, so we =
-would
-> > only burden users with the additional complexity when it's actually req=
-uired.
->=20
-> Indeed, and burdening users with more flags would increase the cost of
-> (properly) using Landlock.
->=20
-> I'm definitely in favor to make the Landlock interface as simple as
-> possible, taking into account the inherent compatibilty complexity, and
-> pushing most of this complexity handling to user space libraries, and if
-> it not possible, pushing the rest of the complexity into the kernel.
+>> +	return rc;
+>> +}
+>> +
+>> +enum header_opt {
+>> +	IPE_HEADER_POLICY_NAME = 0,
+>> +	IPE_HEADER_POLICY_VERSION,
+>> +	__IPE_HEADER_MAX
+>> +};
+>> +
+>> +static const match_table_t header_tokens = {
+>> +	{IPE_HEADER_POLICY_NAME,	"policy_name=%s"},
+>> +	{IPE_HEADER_POLICY_VERSION,	"policy_version=%s"},
+>> +	{__IPE_HEADER_MAX,		NULL}
+>> +};
+>> +
+>> +/**
+>> + * parse_header - Parse policy header information.
+>> + * @line: Supplies header line to be parsed.
+>> + * @p: Supplies the partial parsed policy.
+>> + *
+>> + * Return:
+>> + * * 0	- OK
+>> + * * !0	- Standard errno
+>> + */
+>> +static int parse_header(char *line, struct ipe_parsed_policy *p)
+>> +{
+>> +	int rc = 0;
+>> +	char *t, *ver = NULL;
+>> +	substring_t args[MAX_OPT_ARGS];
+>> +	size_t idx = 0;
+>> +
+>> +	while ((t = strsep(&line, IPE_POLICY_DELIM)) != NULL) {
+>> +		int token;
+>> +
+>> +		if (*t == '\0')
+>> +			continue;
+>> +		if (idx >= __IPE_HEADER_MAX) {
+>> +			rc = -EBADMSG;
+>> +			goto out;
+>> +		}
+>> +
+>> +		token = match_token(t, header_tokens, args);
+>> +		if (token != idx) {
+>> +			rc = -EBADMSG;
+>> +			goto out;
+>> +		}
+>> +
+>> +		switch (token) {
+>> +		case IPE_HEADER_POLICY_NAME:
+>> +			p->name = match_strdup(&args[0]);
+>> +			if (!p->name)
+>> +				rc = -ENOMEM;
+>> +			break;
+>> +		case IPE_HEADER_POLICY_VERSION:
+>> +			ver = match_strdup(&args[0]);
+>> +			if (!ver) {
+>> +				rc = -ENOMEM;
+>> +				break;
+>> +			}
+>> +			rc = parse_version(ver, p);
+>> +			break;
+>> +		default:
+>> +			rc = -EBADMSG;
+>> +		}
+>> +		if (rc)
+>> +			goto out;
+>> +		++idx;
+>> +	}
+>> +
+>> +	if (idx != __IPE_HEADER_MAX) {
+>> +		rc = -EBADMSG;
+>> +		goto out;
+> 
+> You probably don't need to 'goto out' here.
+>
+Yes it's unnecessary, thanks for pointing that out.
 
-Ack, sounds good.
+>> +	}
+>> +
+>> +out:
+>> +	kfree(ver);
+>> +	return rc;
+>> +}
+> 
+> ...
+> 
+>> +/**
+>> + * parse_rule - parse a policy rule line.
+>> + * @line: Supplies rule line to be parsed.
+>> + * @p: Supplies the partial parsed policy.
+>> + *
+>> + * Return:
+>> + * * !IS_ERR	- OK
+>> + * * -ENOMEM	- Out of memory
+>> + * * -EBADMSG	- Policy syntax error
+>> + */
+>> +static int parse_rule(char *line, struct ipe_parsed_policy *p)
+>> +{
+>> +	int rc = 0;
+>> +	bool first_token = true, is_default_rule = false;
+>> +	bool op_parsed = false;
+>> +	enum ipe_op_type op = IPE_OP_INVALID;
+>> +	enum ipe_action_type action = IPE_ACTION_INVALID;
+>> +	struct ipe_rule *r = NULL;
+>> +	char *t;
+>> +
+>> +	r = kzalloc(sizeof(*r), GFP_KERNEL);
+>> +	if (!r)
+>> +		return -ENOMEM;
+>> +
+>> +	INIT_LIST_HEAD(&r->next);
+>> +	INIT_LIST_HEAD(&r->props);
+>> +
+>> +	while (t = strsep(&line, IPE_POLICY_DELIM), line) {
+>> +		if (*t == '\0')
+>> +			continue;
+>> +		if (first_token && token_default(t)) {
+>> +			is_default_rule = true;
+>> +		} else {
+>> +			if (!op_parsed) {
+>> +				op = parse_operation(t);
+>> +				if (op == IPE_OP_INVALID)
+>> +					rc = -EBADMSG;
+>> +				else
+>> +					op_parsed = true;
+>> +			} else {
+>> +				rc = parse_property(t, r);
+>> +			}
+>> +		}
+>> +
+>> +		if (rc)
+>> +			goto err;
+>> +		first_token = false;
+>> +	}
+>> +
+>> +	action = parse_action(t);
+>> +	if (action == IPE_ACTION_INVALID) {
+>> +		rc = -EBADMSG;
+>> +		goto err;
+>> +	}
+>> +
+>> +	if (is_default_rule) {
+>> +		if (!list_empty(&r->props)) {
+>> +			rc = -EBADMSG;
+>> +		} else if (op == IPE_OP_INVALID) {
+>> +			if (p->global_default_action != IPE_ACTION_INVALID)
+>> +				rc = -EBADMSG;
+>> +			else
+>> +				p->global_default_action = action;
+>> +		} else {
+>> +			if (p->rules[op].default_action != IPE_ACTION_INVALID)
+>> +				rc = -EBADMSG;
+>> +			else
+>> +				p->rules[op].default_action = action;
+>> +		}
+>> +	} else if (op != IPE_OP_INVALID && action != IPE_ACTION_INVALID) {
+>> +		r->op = op;
+>> +		r->action = action;
+>> +	} else {
+>> +		rc = -EBADMSG;
+>> +	}
+> 
+> I might be missing something important in the policy syntac, but could
+> this function, and perhaps the ipe_parsed_policy struct, be simplified
+> if the default action was an explicit rule?
+> 
+>   "op=DEFAULT action=ALLOW"
+>
+The complexity here arises from our need for two types of default rules: 
+one for global settings and another for operation-specific settings.
 
+To illustrate the flexibility of operation-specific default rules, users 
+can set their policy to have a default rule of 'DENY' for execution, 
+meaning all execution actions are prohibited by default. This let users 
+to create an allow-list for execution. At the same time, the default 
+rule for read can be set to 'ALLOW'.  This let users to create an 
+deny-list for read.
 
-> > One implementation approach that I find reasonable to think about is to=
- create
-> > "synthetic" access rights when rulesets are enabled.  That is, we intro=
-duce
-> > LANDLOCK_ACCESS_FS_SYNTHETIC_GFX_IOCTL (name TBD), but we keep this con=
-stant
-> > private to the kernel.
-> >=20
-> > * *At ruleset enablement time*, we populate the bit for this access rig=
-ht either
-> >   from the LANDLOCK_ACCESS_FS_GFX or the LANDLOCK_ACCESS_FS_IOCTL bit f=
-rom the
-> >   same access_mask_t, depending on the IOCTL grouping which the ruleset=
- is
-> >   configured with.
-> >=20
-> > * *In hook_file_open*, we then check for LANDLOCK_ACCESS_FS_SYNTHETIC_G=
-FX_IOCTL
-> >   for the GFX-related IOCTL commands.
-> >=20
-> > I'm in favor of using the synthetic access rights, because I find it cl=
-earer to
-> > understand that the effective access rights for a file from different l=
-ayers are
-> > just combined with a bitwise AND, and will give the right results.  We =
-could
-> > probably also make these path walk helpers aware of the special cases a=
-nd only
-> > have the synthetic right in layer_masks_dom, but I'd prefer not to comp=
-licate
-> > these helpers even further.
->=20
-> I like this synthetic access right approach, but what worries me is that
-> it will potentially double the number of access rights. This is not an
-> issue for the handled access right (i.e. per ruleset layer), but we
-> should avoid that for allowed accesses (i.e. rules). Indeed, the
-> layer_masks[] size is proportional to the number of potential allowed
-> access rights, and increasing this array could increase the kernel stack
-> size (see is_access_to_paths_allowed).  It would not be an issue for now
-> though, we have a lot of room, it is just something to keep in mind.
+Adding explicit default rules can simplify ipe_parsed_policy struct, but 
+that impose a burden on users that requires users always add the default 
+rules the end of the policy. In contrast, our current design allows 
+users to place the default rule anywhere in the policy. In practice, we 
+often position the default rule at the beginning of the policy, which 
+makes it more convenient for users to add new rules.
 
-Yes, acknowledged.
+>> +	if (rc)
+>> +		goto err;
+>> +	if (!is_default_rule)
+>> +		list_add_tail(&r->next, &p->rules[op].rules);
+>> +	else
+>> +		free_rule(r);
+>> +
+>> +	return rc;
+>> +err:
+>> +	free_rule(r);
+>> +	return rc;
+>> +}
+>> +
+>> +/**
+>> + * free_parsed_policy - free a parsed policy structure.
+>> + * @p: Supplies the parsed policy.
+>> + */
+>> +void free_parsed_policy(struct ipe_parsed_policy *p)
+>> +{
+>> +	size_t i = 0;
+>> +	struct ipe_rule *pp, *t;
+>> +
+>> +	if (IS_ERR_OR_NULL(p))
+>> +		return;
+>> +
+>> +	for (i = 0; i < ARRAY_SIZE(p->rules); ++i)
+>> +		list_for_each_entry_safe(pp, t, &p->rules[i].rules, next) {
+>> +			list_del(&pp->next);
+>> +			free_rule(pp);
+>> +		}
+>> +
+>> +	kfree(p->name);
+>> +	kfree(p);
+>> +}
+>> +
+>> +/**
+>> + * validate_policy - validate a parsed policy.
+>> + * @p: Supplies the fully parsed policy.
+>> + *
+>> + * Given a policy structure that was just parsed, validate that all
+>> + * necessary fields are present, initialized correctly.
+>> + *
+>> + * A parsed policy can be in an invalid state for use (a default was
+>> + * undefined) by just parsing the policy.
+>> + *
+>> + * Return:
+>> + * * 0		- OK
+>> + * * -EBADMSG	- Policy is invalid
+>> + */
+>> +static int validate_policy(const struct ipe_parsed_policy *p)
+>> +{
+>> +	size_t i = 0;
+>> +
+>> +	if (p->global_default_action != IPE_ACTION_INVALID)
+>> +		return 0;
+> 
+> Should the if conditional above be "==" and not "!="?
+>No, "!=" is the correct one.
 
-FWIW, LANDLOCK_ACCESS_FS_IOCTL is already 1 << 15, so adding the synthetic
-rights will indeed make access_mask_t go up to 32 bit.  (This was already d=
-one
-in the patch for the metadata access, but that one was not merged yet.)  I =
-also
-feel that the stack usage is the case where this is most likely to be an is=
-sue.
+The purpose of validation is to ensure that we have enough default rules 
+to cover all cases. If the global default action not invalid, it means 
+we have a global default rule in the policy to cover all cases, thus we 
+simply return 0.
 
+However, if there is no global default rule, then we need to ensure that 
+for each operation, there is a operation specific default rule, this is 
+validated in the for loop below.
 
-> Because of the way we need to compare file hierarchies (cf. FS_REFER),
-> it seems to be safer to only rely on (synthetic) access rights. So I
-> think it is the right approach.
->=20
-> >=20
-> >=20
-> > Sorry for the long mail, I hope that the examples clarify it a bit. :)
-> >=20
-> > In summary, it seems conceptually cleaner to me to control every IOCTL =
-command
-> > with only one access right, and let users control which one that should=
- be with
-> > a separate flag, so that "handled" keeps its original semantics.  It wo=
-uld also
-> > have the upside that we can delay that implementation until the time wh=
-ere we
-> > actually introduce new IOCTL-aware access rights on top of the current =
-patch st.
->=20
-> I don't see how we'll not get an inconsistent logic: a first one with
-> old/current access rights, and another one for future access rights
-> (e.g. GFX).
->=20
-> >=20
-> > I'd be interested to hear your thoughts on it.
->=20
-> Thanks for this detailed explanation, that is useful.
->=20
-> I'm in favor of the synthetic access right, but I'd like to not add
-> optional flags to the user API.  What do you think about the kernel
-> doing the translation to the synthetic access rights?
->=20
-> To make the reasoning easier for the kernel implementation, following
-> the synthetic access rights idea, we can create these groups:
->=20
-> * IOCTL_CMD_G1: FIOQSIZE
-> * IOCTL_CMD_G2: FS_IOCT_FIEMAP | FIBMAP | FIGETBSZ
-> * IOCTL_CMD_G3: FIONREAD | FIDEDUPRANGE
-> * IOCTL_CMD_G4: FICLONE | FICLONERANGE | FS_IOC_RESVSP | FS_IOC_RESVSP64
->   | FS_IOC_UNRESVSP | FS_IOC_UNRESVSP64 | FS_IOC_ZERO_RANGE
->=20
-> Existing (and future) access rights would automatically get the related
-> IOCTL fine-grained rights *if* LANDLOCK_ACCESS_FS_IOCTL is handled:
-> * LANDLOCK_ACCESS_FS_WRITE_FILE: IOCTL_CMD_G1 | IOCTL_CMD_G2 | IOCTL_CMD_=
-G4
-> * LANDLOCK_ACCESS_FS_READ_FILE: IOCTL_CMD_G1 | IOCTL_CMD_G2 | IOCTL_CMD_G=
-3
-> * LANDLOCK_ACCESS_FS_READ_DIR: IOCTL_CMD_G1
->=20
-> This works with the ruleset handled access rights and the related rules
-> allowed accesses by simply ORing the access rights.
->=20
-> We should also keep in mind that some IOCTL commands may only be related
-> to some specific file types or filesystems, either now or in the future
-> (see the GFX example).
+-Fan
 
-I am coming around to your approach with using "handled" bits to determine =
-the
-grouping.  Let me paraphrase some key concepts to make sure we are on the s=
-ame
-page:
-
-* The IOCTL groups are modeled as synthetic access rights, IOCTL_CMD_G1...G=
-4 in
-  your example.  Each IOCTL command maps to exactly one of these groups.
-
-  Because the presence of these groups is an implementation detail in the
-  kernel, we can adapt it later and make it more fine-grained if needed.
-
-* We use "handled" bits like LANDLOCK_ACCESS_FS_WRITE_FILE to determine the
-  synthetic access rights.
-
-  We can populate the synthetic IOCTL_CMD_G1...G4 groups depending on how t=
-he
-  "handled" bits are populated.
-
-  In my understanding, the logic could roughly be this:
-
-  static access_mask_t expand_ioctl(access_mask_t handled, access_mask_t am=
-,
-                                    access_mask_t src, access_mask_t dst)
-  {
-    if (handled & src) {
-      /* If "src" access right is handled, populate "dst" from "src". */
-      return am | ((am & src) ? dst : 0);
-    } else {
-      /* Otherwise, populate "dst" flag from "ioctl" flag. */
-      return am | ((am & LANDLOCK_ACCESS_FS_IOCTL) ? dst : 0);
-    }
-  }
-
-  static access_mask_t expand_all_ioctl(access_mask_t handled, access_mask_=
-t am)
-  {
-    am =3D expand_ioctl(handled, am,
-                      LANDLOCK_ACCESS_FS_WRITE_FILE,
-		      IOCTL_CMD_G1 | IOCTL_CMD_G2 | IOCTL_CMD_G4);
-    am =3D expand_ioctl(handled, am,
-                      LANDLOCK_ACCESS_FS_READ_FILE,
-		      IOCTL_CMD_G1 | IOCTL_CMD_G2 | IOCTL_CMD_G3);
-    am =3D expand_ioctl(handled, am,
-                      LANDLOCK_ACCESS_FS_READ_DIR,
-		      IOCTL_CMD_G1);
-    return am;
-  }
-
-  and then during the installing of a ruleset, we'd call
-  expand_all_ioctl(handled, access) for each specified file access, and
-  expand_all_ioctl(handled, handled) for the handled access rights,
-  to populate the synthetic IOCTL_CMD_G* access rights.
-
-  In expand_ioctl() above, if "src" is *not* handled, we populate the assoc=
-iated
-  synthetic access rights "dst" from the value in LANDLOCK_ACCESS_FS_IOCTL.
-  With that, when enabling a ruleset, we map everything to the most specifi=
-c
-  grouping which is available, and later on, the LSM hook can just ignore t=
-hat
-  different grouping configurations are possible.
-
-* In the ioctl LSM hook, each possible cmd is controlled by exactly one acc=
-ess
-  right.  The ones that you have listed are all controlled by one of the
-  IOCTL_CMD_G1...G4 access rights, and all others by LANDLOCK_ACCESS_FS_IOC=
-TL.
-
-I was previously concerned that the usage of "handled" to control the group=
-ing
-would be at odds with the layer composition logic, but with this logic, we =
-are
-now mapping these to the synthetic access rights at enablement time, and al=
-l the
-ruleset composition logic can stay working as it is (at least until we run =
-out
-of bits in access_mask_t).
-
-I've also been concerned before that we would break compatibility across
-versions, but this also seems less likely now that we've discussed this in =
-all
-this detail %-)
-
-I suspect that the normal upgrade path from one Landlock version to the nex=
-t
-will be for most users to always use the full set of "handled" flags that t=
-heir
-library knows about.  When we add the hypothetical "GFX" flag to that set, =
-this
-will change the IOCTL grouping a bit, so that files which were previously l=
-isted
-as having the LANDLOCK_ACCESS_FS_IOCTL right, might now not be enabled for =
-GFX
-ioctls.  But that is (A) probably correct anyway in most cases, and (B) use=
-rs
-upgrading from one Landlock ABI version to the next have a chance to read t=
-heir
-library changelog as part of that upgrade.
-
-I think this is a reasonable approach.  If you agree, I'm willing to give i=
-t a
-shot and adapt the patch set to implement that.
-
-=E2=80=94G=C3=BCnther
+>> +	for (i = 0; i < ARRAY_SIZE(p->rules); ++i) {
+>> +		if (p->rules[i].default_action == IPE_ACTION_INVALID)
+>> +			return -EBADMSG;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+> 
+> --
+> paul-moore.com
