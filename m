@@ -2,136 +2,447 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E266C07545
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 14:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B30C0032E
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 14:39:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343638AbjJYOhO (ORCPT
+        id S1344724AbjJYODw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Oct 2023 10:37:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33034 "EHLO
+        Wed, 25 Oct 2023 10:03:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343498AbjJYOhN (ORCPT
+        with ESMTP id S1344192AbjJYODu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Oct 2023 10:37:13 -0400
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E8CA93
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 07:37:10 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SFrh90q9rz9xr3C
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 22:21:13 +0800 (CST)
-Received: from [10.48.135.27] (unknown [10.48.135.27])
-        by APP1 (Coremail) with SMTP id LxC2BwCHk5QCKDllS7zlAg--.463S2;
-        Wed, 25 Oct 2023 15:36:55 +0100 (CET)
-Message-ID: <3e35d87e-bde0-4276-ae3e-761ee1d02c4a@huaweicloud.com>
-Date:   Wed, 25 Oct 2023 16:36:48 +0200
+        Wed, 25 Oct 2023 10:03:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE4C91B5
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 07:02:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1698242544;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=x1DYN7Za1uyLzcDLrfQjEDekO6UImwLBhsScIzlPerc=;
+        b=Ra5AKbkX0G3jTlb4xhI0Xf2wjv9uRXNwfwnLg+vWVKqa6rOtWPej5mZUJuuc9/Gdbmoso/
+        vUDQHokCU5LUoRgE5oQAFbhPpRB5DIQxW7QWk+zKfX352L051VCNKUDsDXNKB7MGpruk/E
+        C8x5GXz1YTkYnr/Vnz3Y8f8oJW93RNw=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-591-04eRyCJsMp25A9TQgbX-1w-1; Wed, 25 Oct 2023 10:02:09 -0400
+X-MC-Unique: 04eRyCJsMp25A9TQgbX-1w-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-9b2cf504e3aso374347366b.2
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 07:02:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698242528; x=1698847328;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x1DYN7Za1uyLzcDLrfQjEDekO6UImwLBhsScIzlPerc=;
+        b=XL2P8cLIEVI5xBUvMNsMSGtXQL1PBGoiwVIv7VQrKybKocsjUEAT8HEtxPbo8f9+C5
+         RZ+G9jyjMn5xX+iScMAaTVy2F7gEKl56bgf3z4k+Rc9eLhBSOkW75tMpEhZXZ6PZvjt0
+         1ZhTLpU6SxG/G/RuhqKrkg+n4xs6wM8sXE+ltH4itEEpBxl29x4vhwGnICQCkalrofw1
+         VAG6/+7VK4e69SFgTlmdiPIcNKSOLpztk+1MDEl6QB71EqSKzTq0L3ZNyp2D30BC3M5/
+         psVDgzRabep19Oq+e/xolrpzvfLktGI6Q5VPj0xmZKbQGKxOmTAMT5oSG/19U2rgl0f/
+         RUKQ==
+X-Gm-Message-State: AOJu0YxE18KmCATsS19TIU2toLG5HpVLJIXhyihwg0aC0TT+XaN+U5dF
+        HIZ6CxorKq89ncqnhoIktDnFsInjkC/vI/GrDVOpAv9YMBabUdKrKINu++EJoSQfYsWsB3H9sXG
+        AeacHw36nVCcsYXtpmDkXqCrRad1QP2uCAMqN
+X-Received: by 2002:a17:906:c115:b0:9be:839a:3372 with SMTP id do21-20020a170906c11500b009be839a3372mr11884367ejc.59.1698242527909;
+        Wed, 25 Oct 2023 07:02:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWrkTOkCAZfzN3xYcXcvz5ivnltGcFS7nQ3UQVnKVXqNdwubssOqdk3o6zzAPGNGJ5035rSA==
+X-Received: by 2002:a17:906:c115:b0:9be:839a:3372 with SMTP id do21-20020a170906c11500b009be839a3372mr11884320ejc.59.1698242527362;
+        Wed, 25 Oct 2023 07:02:07 -0700 (PDT)
+Received: from maszat.piliscsaba.szeredi.hu (92-249-235-200.pool.digikabel.hu. [92.249.235.200])
+        by smtp.gmail.com with ESMTPSA id vl9-20020a170907b60900b00989828a42e8sm9857073ejc.154.2023.10.25.07.02.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Oct 2023 07:02:06 -0700 (PDT)
+From:   Miklos Szeredi <mszeredi@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew House <mattlloydhouse@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v4 0/6] querying mount attributes
+Date:   Wed, 25 Oct 2023 16:01:58 +0200
+Message-ID: <20231025140205.3586473-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: drop LSM_ID_IMA
-Content-Language: en-US
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>
-References: <20231018215032.348429-2-paul@paul-moore.com>
- <72a92e27855af2291273209d328e1b79f3b61663.camel@huaweicloud.com>
- <1764a96f-6d24-4585-a24b-667a5ea075c3@schaufler-ca.com>
- <f47097f8-3391-42a7-b8b5-81e1be2d8e68@huaweicloud.com>
- <88f4f464-ac09-4c93-95f4-fe4546b78a08@schaufler-ca.com>
- <CAHC9VhSVcfsCM6GjxJrSPCXV3PYRahXJi5HiNyKGCt8f_fOpmA@mail.gmail.com>
- <93b2ea72-a9b1-4d50-bc4a-3d60d91dd44b@huaweicloud.com>
- <CAHC9VhQ3kKGWNUx=+vEZ58CUJo2YKVu4rrOjE+w5x9jKnP9MWA@mail.gmail.com>
- <fb6e908e-55b4-4264-a50e-31de4ce538f5@huaweicloud.com>
-In-Reply-To: <fb6e908e-55b4-4264-a50e-31de4ce538f5@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwCHk5QCKDllS7zlAg--.463S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZry8Zr1DKFWkAFW7AFy5urg_yoW5AFWfpr
-        yrtay8KF1Dtr1jkryvy3WrA348KrZ3Xr17Xr98Jw18Z34qvry8Xr1xAr4Uua4DGr40kw1j
-        yF43try3ZryDZ3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgGb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-        AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJw
-        CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
-        WIevJa73UjIFyTuYvjxUzsqWUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgABBF1jj5GChwAAsi
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="US-ASCII"; x-default=true
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/25/2023 4:06 PM, Roberto Sassu wrote:
-> On 10/25/2023 3:14 PM, Paul Moore wrote:
->> On Wed, Oct 25, 2023 at 6:36 AM Roberto Sassu
->> <roberto.sassu@huaweicloud.com> wrote:
->>> On 10/24/2023 11:18 PM, Paul Moore wrote:
->>>> On Mon, Oct 23, 2023 at 11:48 AM Casey Schaufler 
->>>> <casey@schaufler-ca.com> wrote:
->>>>> On 10/23/2023 8:20 AM, Roberto Sassu wrote:
->>>>>> On 10/20/2023 11:56 PM, Casey Schaufler wrote:
->>>>>>> On 10/19/2023 1:08 AM, Roberto Sassu wrote:
->>>>>>>> On Wed, 2023-10-18 at 17:50 -0400, Paul Moore wrote:
->>>>>>>>> When IMA becomes a proper LSM we will reintroduce an appropriate
->>>>>>>>> LSM ID, but drop it from the userspace API for now in an effort
->>>>>>>>> to put an end to debates around the naming of the LSM ID macro.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
->>>>>>>> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
->>>>>>>>
->>>>>>>> This makes sense according to the new goal of making 'ima' and 
->>>>>>>> 'evm' as
->>>>>>>> standalone LSMs.
->>>>>>>>
->>>>>>>> Otherwise, if we took existing LSMs, we should have defined
->>>>>>>> LSM_ID_INTEGRITY, associated to DEFINE_LSM(integrity).
->>>>>>>>
->>>>>>>> If we proceed with the new direction, I will add the new LSM IDs as
->>>>>>>> soon as IMA and EVM become LSMs.
->>>>>>>
->>>>>>> This seems right to me. Thank You.
->>>>>>
->>>>>> Perfect! Is it fine to assign an LSM ID to 'ima' and 'evm' and keep
->>>>>> the 'integrity' LSM to reserve space in the security blob without LSM
->>>>>> ID (as long as it does not register any hook)?
->>>>>
->>>>> That will work, although it makes me wonder if all the data in the 
->>>>> 'integrity' blob
->>>>> is used by both IMA and EVM. If these are going to be separate LSMs 
->>>>> they should probably
->>>>> have their own security blobs. If there is data in common then an 
->>>>> 'integrity' blob can
->>>>> still makes sense.
->>>>
->>>> Users interact with IMA and EVM, not the "integrity" layer, yes?  If
->>>> so, I'm not sure it makes sense to have an "integrity" LSM, we should
->>>> just leave it at "IMA" and "EVM".
->>>
->>> The problem is who reserves and manages the shared integrity metadata.
->>> For now, it is still the 'integrity' LSM. If not, it would be IMA or EVM
->>> on behalf of the other (depending on which ones are enabled). Probably
->>> the second would not be a good idea.
->>
->> I'm not certain that managing kernel metadata alone necessitates a LSM
->> ID token value.  Does "integrity" have any user visible "things" that
->> it would want to expose to userspace?
-> 
-> No, it doesn't. I already moved the LSM hook registration to 'ima' and 
-> 'evm'. Also the old 'integrity' initialization is done by 'ima' and 'evm'.
-> 
-> DEFINE_LSM(integrity) exists only to reserve space in the security blob 
-> and to provide the security blob offset to the get/set functions.
-> 
-> Maybe I send the patch set, so that you get a better idea.
+Implement mount querying syscalls agreed on at LSF/MM 2023.
 
-Uhm, we should have updated security.c and removed:
+Features:
 
-         (IS_ENABLED(CONFIG_IMA) ? 1 : 0) + \
+ - statx-like want/got mask
+ - allows returning ascii strings (fs type, root, mount point)
+ - returned buffer is relocatable (no pointers)
 
-Roberto
+Still missing:
+ - man pages
+ - kselftest
+
+Please find the test utility at the end of this mail.
+
+  Usage: statmnt [-l|-r] [-u] (mnt_id|path)
+
+Git tree:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git#statmount-v4
+
+
+Changes v3..v4:
+
+ - incorporate patch moving list of mounts to an rbtree
+ - wire up syscalls for all archs
+ - add LISTMOUNT_RECURSIVE (depth first iteration of mount tree)
+ - add LSMT_ROOT (list root instead of a specific mount ID)
+ - list_for_each_entry_del() moved to a separate patchset
+
+Changes v1..v3:
+
+ - rename statmnt(2) -> statmount(2)
+ - rename listmnt(2) -> listmount(2)
+ - make ABI 32bit compatible by passing 64bit args in a struct (tested on
+   i386 and x32)
+ - only accept new 64bit mount IDs
+ - fix compile on !CONFIG_PROC_FS
+ - call security_sb_statfs() in both syscalls
+ - make lookup_mnt_in_ns() static
+ - add LISTMOUNT_UNREACHABLE flag to listmnt() to explicitly ask for
+   listing unreachable mounts
+ - remove .sb_opts
+ - remove subtype from .fs_type
+ - return the number of bytes used (including strings) in .size
+ - rename .mountpoint -> .mnt_point
+ - point strings by an offset against char[] VLA at the end of the struct.
+   E.g. printf("fs_type: %s\n", st->str + st->fs_type);
+ - don't save string lengths
+ - extend spare space in struct statmnt (complete size is now 512 bytes)
+
+
+Miklos Szeredi (6):
+  add unique mount ID
+  mounts: keep list of mounts in an rbtree
+  namespace: extract show_path() helper
+  add statmount(2) syscall
+  add listmount(2) syscall
+  wire up syscalls for statmount/listmount
+
+ arch/alpha/kernel/syscalls/syscall.tbl      |   3 +
+ arch/arm/tools/syscall.tbl                  |   3 +
+ arch/arm64/include/asm/unistd32.h           |   4 +
+ arch/ia64/kernel/syscalls/syscall.tbl       |   3 +
+ arch/m68k/kernel/syscalls/syscall.tbl       |   3 +
+ arch/microblaze/kernel/syscalls/syscall.tbl |   3 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |   3 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |   3 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |   3 +
+ arch/parisc/kernel/syscalls/syscall.tbl     |   3 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    |   3 +
+ arch/s390/kernel/syscalls/syscall.tbl       |   3 +
+ arch/sh/kernel/syscalls/syscall.tbl         |   3 +
+ arch/sparc/kernel/syscalls/syscall.tbl      |   3 +
+ arch/x86/entry/syscalls/syscall_32.tbl      |   3 +
+ arch/x86/entry/syscalls/syscall_64.tbl      |   2 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     |   3 +
+ fs/internal.h                               |   2 +
+ fs/mount.h                                  |  27 +-
+ fs/namespace.c                              | 573 ++++++++++++++++----
+ fs/pnode.c                                  |   2 +-
+ fs/proc_namespace.c                         |  13 +-
+ fs/stat.c                                   |   9 +-
+ include/linux/mount.h                       |   5 +-
+ include/linux/syscalls.h                    |   8 +
+ include/uapi/asm-generic/unistd.h           |   8 +-
+ include/uapi/linux/mount.h                  |  65 +++
+ include/uapi/linux/stat.h                   |   1 +
+ 28 files changed, 635 insertions(+), 129 deletions(-)
+
+-- 
+2.41.0
+
+=== statmnt.c ===
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/mount.h>
+#include <sys/stat.h>
+#include <sys/param.h>
+#include <err.h>
+
+/*
+ * Structure for getting mount/superblock/filesystem info with statmount(2).
+ *
+ * The interface is similar to statx(2): individual fields or groups can be
+ * selected with the @mask argument of statmount().  Kernel will set the @mask
+ * field according to the supported fields.
+ *
+ * If string fields are selected, then the caller needs to pass a buffer that
+ * has space after the fixed part of the structure.  Nul terminated strings are
+ * copied there and offsets relative to @str are stored in the relevant fields.
+ * If the buffer is too small, then EOVERFLOW is returned.  The actually used
+ * size is returned in @size.
+ */
+struct statmnt {
+	__u32 size;		/* Total size, including strings */
+	__u32 __spare1;
+	__u64 mask;		/* What results were written */
+	__u32 sb_dev_major;	/* Device ID */
+	__u32 sb_dev_minor;
+	__u64 sb_magic;		/* ..._SUPER_MAGIC */
+	__u32 sb_flags;		/* MS_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIME} */
+	__u32 fs_type;		/* [str] Filesystem type */
+	__u64 mnt_id;		/* Unique ID of mount */
+	__u64 mnt_parent_id;	/* Unique ID of parent (for root == mnt_id) */
+	__u32 mnt_id_old;	/* Reused IDs used in proc/.../mountinfo */
+	__u32 mnt_parent_id_old;
+	__u64 mnt_attr;		/* MOUNT_ATTR_... */
+	__u64 mnt_propagation;	/* MS_{SHARED,SLAVE,PRIVATE,UNBINDABLE} */
+	__u64 mnt_peer_group;	/* ID of shared peer group */
+	__u64 mnt_master;	/* Mount receives propagation from this ID */
+	__u64 propagate_from;	/* Propagation from in current namespace */
+	__u32 mnt_root;		/* [str] Root of mount relative to root of fs */
+	__u32 mnt_point;	/* [str] Mountpoint relative to current root */
+	__u64 __spare2[50];
+	char str[];		/* Variable size part containing strings */
+};
+
+/*
+ * To be used on the kernel ABI only for passing 64bit arguments to statmount(2)
+ */
+struct __mount_arg {
+	__u64 mnt_id;
+	__u64 request_mask;
+};
+
+/*
+ * @mask bits for statmount(2)
+ */
+#define STMT_SB_BASIC		0x00000001U     /* Want/got sb_... */
+#define STMT_MNT_BASIC		0x00000002U	/* Want/got mnt_... */
+#define STMT_PROPAGATE_FROM	0x00000004U	/* Want/got propagate_from */
+#define STMT_MNT_ROOT		0x00000008U	/* Want/got mnt_root  */
+#define STMT_MNT_POINT		0x00000010U	/* Want/got mnt_point */
+#define STMT_FS_TYPE		0x00000020U	/* Want/got fs_type */
+
+/* listmount(2) flags */
+#define LISTMOUNT_UNREACHABLE	0x01	/* List unreachable mounts too */
+#define LISTMOUNT_RECURSIVE	0x02	/* List a mount tree */
+
+/*
+ * Special @mnt_id values that can be passed to listmount
+ */
+#define LSMT_ROOT		0xffffffffffffffff	/* root mount */
+
+#ifdef __alpha__
+#define __NR_statmount   564
+#define __NR_listmount   565
+#else
+#define __NR_statmount   454
+#define __NR_listmount   455
+#endif
+
+#define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
+
+
+static void free_if_neq(void *p, const void *q)
+{
+	if (p != q)
+		free(p);
+}
+
+static struct statmnt *statmount(uint64_t mnt_id, uint64_t mask, unsigned int flags)
+{
+	struct __mount_arg arg = {
+		.mnt_id = mnt_id,
+		.request_mask = mask,
+	};
+	union {
+		struct statmnt m;
+		char s[4096];
+	} buf;
+	struct statmnt *ret, *mm = &buf.m;
+	size_t bufsize = sizeof(buf);
+
+	while (syscall(__NR_statmount, &arg, mm, bufsize, flags) == -1) {
+		free_if_neq(mm, &buf.m);
+		if (errno != EOVERFLOW)
+			return NULL;
+		bufsize = MAX(1 << 15, bufsize << 1);
+		mm = malloc(bufsize);
+		if (!mm)
+			return NULL;
+	}
+	ret = malloc(mm->size);
+	if (ret)
+		memcpy(ret, mm, mm->size);
+	free_if_neq(mm, &buf.m);
+
+	return ret;
+}
+
+static int listmount(uint64_t mnt_id, uint64_t **listp, unsigned int flags)
+{
+	struct __mount_arg arg = {
+		.mnt_id = mnt_id,
+	};
+	uint64_t buf[512];
+	size_t bufsize = sizeof(buf);
+	uint64_t *ret, *ll = buf;
+	long len;
+
+	while ((len = syscall(__NR_listmount, &arg, ll, bufsize / sizeof(buf[0]), flags)) == -1) {
+		free_if_neq(ll, buf);
+		if (errno != EOVERFLOW)
+			return -1;
+		bufsize = MAX(1 << 15, bufsize << 1);
+		ll = malloc(bufsize);
+		if (!ll)
+			return -1;
+	}
+	bufsize = len * sizeof(buf[0]);
+	ret = malloc(bufsize);
+	if (!ret)
+		return -1;
+
+	*listp = ret;
+	memcpy(ret, ll, bufsize);
+	free_if_neq(ll, buf);
+
+	return len;
+}
+
+
+int main(int argc, char *argv[])
+{
+	struct statmnt *st;
+	char *end;
+	int res;
+	int list = 0;
+	int flags = 0;
+	uint64_t mask = STMT_SB_BASIC | STMT_MNT_BASIC | STMT_PROPAGATE_FROM | STMT_MNT_ROOT | STMT_MNT_POINT | STMT_FS_TYPE;
+	uint64_t mnt_id;
+	int opt;
+
+	for (;;) {
+		opt = getopt(argc, argv, "lru");
+		if (opt == -1)
+			break;
+		switch (opt) {
+		case 'r':
+			flags |= LISTMOUNT_RECURSIVE;
+			/* fallthrough */
+		case 'l':
+			list = 1;
+			break;
+		case 'u':
+			flags |= LISTMOUNT_UNREACHABLE;
+			break;
+		default:
+			errx(1, "usage: %s [-l|-r] [-u] (mnt_id|path)", argv[0]);
+		}
+	}
+	if (optind >= argc) {
+		if (!list)
+			errx(1, "missing mnt_id or path");
+		else
+			mnt_id = -1LL;
+	} else {
+		const char *arg = argv[optind];
+
+		mnt_id = strtoll(arg, &end, 0);
+		if (!mnt_id || *end != '\0') {
+			struct statx sx;
+
+			res = statx(AT_FDCWD, arg, 0, STATX_MNT_ID_UNIQUE, &sx);
+			if (res == -1)
+				err(1, "%s", arg);
+
+			if (!(sx.stx_mask & (STATX_MNT_ID | STATX_MNT_ID_UNIQUE)))
+				errx(1, "Sorry, no mount ID");
+
+			mnt_id = sx.stx_mnt_id;
+		}
+	}
+
+	if (list) {
+		uint64_t *list;
+		int num, i;
+
+		res = listmount(mnt_id, &list, flags);
+		if (res == -1)
+			err(1, "listmnt(0x%llx)", (unsigned long long) mnt_id);
+
+		num = res;
+		for (i = 0; i < num; i++) {
+			printf("0x%llx", (unsigned long long) list[i]);
+
+			st = statmount(list[i], STMT_MNT_POINT, 0);
+			if (!st) {
+				printf("\t[%s]\n", strerror(errno));
+			} else {
+				printf("\t%s\n", (st->mask & STMT_MNT_POINT) ? st->str + st->mnt_point : "???");
+			}
+			free(st);
+		}
+		free(list);
+
+		return 0;
+	}
+
+	st = statmount(mnt_id, mask, 0);
+	if (!st)
+		err(1, "statmnt(0x%llx)", (unsigned long long) mnt_id);
+
+	printf("size: %u\n", st->size);
+	printf("mask: 0x%llx\n", st->mask);
+	if (st->mask & STMT_SB_BASIC) {
+		printf("sb_dev_major: %u\n", st->sb_dev_major);
+		printf("sb_dev_minor: %u\n", st->sb_dev_minor);
+		printf("sb_magic: 0x%llx\n", st->sb_magic);
+		printf("sb_flags: 0x%08x\n", st->sb_flags);
+	}
+	if (st->mask & STMT_MNT_BASIC) {
+		printf("mnt_id: 0x%llx\n", st->mnt_id);
+		printf("mnt_parent_id: 0x%llx\n", st->mnt_parent_id);
+		printf("mnt_id_old: %u\n", st->mnt_id_old);
+		printf("mnt_parent_id_old: %u\n", st->mnt_parent_id_old);
+		printf("mnt_attr: 0x%08llx\n", st->mnt_attr);
+		printf("mnt_propagation: %s%s%s%s\n",
+		       st->mnt_propagation & MS_SHARED ? "shared," : "",
+		       st->mnt_propagation & MS_SLAVE ? "slave," : "",
+		       st->mnt_propagation & MS_UNBINDABLE ? "unbindable," : "",
+		       st->mnt_propagation & MS_PRIVATE ? "private" : "");
+		printf("mnt_peer_group: %llu\n", st->mnt_peer_group);
+		printf("mnt_master: %llu\n", st->mnt_master);
+	}
+	if (st->mask & STMT_PROPAGATE_FROM)
+		printf("propagate_from: %llu\n", st->propagate_from);
+	if (st->mask & STMT_MNT_ROOT)
+		printf("mnt_root: %u <%s>\n", st->mnt_root, st->str + st->mnt_root);
+	if (st->mask & STMT_MNT_POINT)
+		printf("mnt_point: %u <%s>\n", st->mnt_point, st->str + st->mnt_point);
+	if (st->mask & STMT_FS_TYPE)
+		printf("fs_type: %u <%s>\n", st->fs_type, st->str + st->fs_type);
+	free(st);
+
+	return 0;
+}
 
