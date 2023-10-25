@@ -2,225 +2,127 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC99BC0032E
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 11:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C03C07545
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Oct 2023 11:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232076AbjJYL3g (ORCPT
+        id S234898AbjJYLya (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Oct 2023 07:29:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52330 "EHLO
+        Wed, 25 Oct 2023 07:54:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234703AbjJYL3g (ORCPT
+        with ESMTP id S234897AbjJYLy3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Oct 2023 07:29:36 -0400
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4637194
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 04:29:29 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SFmsy0xz2zMpvff;
-        Wed, 25 Oct 2023 11:29:26 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SFmsx3n9DzMpnPn;
-        Wed, 25 Oct 2023 13:29:25 +0200 (CEST)
+        Wed, 25 Oct 2023 07:54:29 -0400
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57E5E186
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 04:54:26 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SFnQm0zRMzMpp4B;
+        Wed, 25 Oct 2023 11:54:24 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4SFnQk6tmVz3d;
+        Wed, 25 Oct 2023 13:54:22 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1698233366;
-        bh=Q3GfLm/wl5qsxpCx/PoVD6qiO8tOiUfUm2gWs7I37eg=;
+        s=20191114; t=1698234864;
+        bh=mMYv/OtCtrMkSzUGCDriDfowe8jgvj19HXrHCnj/SwM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T0O3I08cZdyn7fpbFy+ubIqzNnrV0et33RTLvJWq97INMsOaII5Eplx3MCJ1f1UWQ
-         C1tG7o4N6c14uH0rN2WRsleIWPoP3O125Mg7dF9g2Z1IpvL1i0vIH7nZkkk4+z5wLv
-         DA+yqiG0cgmwZ9gxuaz0rlgA24WM5tGd8Todi9XM=
-Date:   Wed, 25 Oct 2023 13:29:24 +0200
+        b=WKlVFa/XjMXHzCCMDDthMvz02Bgem94sRhDHQNoLhGYAc/bVNvnEhiMxm5DTZHOLl
+         mVMffrv7ck2pEkUAAHNAKJbtDBD0ZlstfQegKG4xbb+PNSOPdFyjKID1WeZlcIDlZV
+         BPY/K3CbLj9VsfHcrIQyirsQlZ2KQs9nqznhfaRU=
+Date:   Wed, 25 Oct 2023 13:54:21 +0200
 From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-Subject: Re: [PATCH v13 08/12] landlock: Add network rules and TCP hooks
- support
-Message-ID: <20231025.ooG0Uach9aes@digikod.net>
-References: <20231016015030.1684504-1-konstantin.meskhidze@huawei.com>
- <20231016015030.1684504-9-konstantin.meskhidze@huawei.com>
- <20231017.xahKoo9Koo8v@digikod.net>
- <57f150b2-0920-8567-8351-1bdb74684cfa@huawei.com>
- <20231020.ido6Aih0eiGh@digikod.net>
- <ea02392e-4460-9695-050f-7519aecebec2@huawei.com>
- <20231024.Ahdeepoh7wos@digikod.net>
- <bc4699d7-ab54-a3b8-06a0-1724a63c6076@huawei.com>
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Stefan Bavendiek <stefan.bavendiek@mailbox.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-hardening@vger.kernel.org,
+        =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+        linux-security-module@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: Isolating abstract sockets
+Message-ID: <20231025.eecai4uGh5Ie@digikod.net>
+References: <Y59qBh9rRDgsIHaj@mailbox.org>
+ <20231024134608.GC320399@mail.hallyn.com>
+ <CAHC9VhRCJfBRu8172=5jF_gFhv2znQXTnGs_c_ae1G3rk_Dc-g@mail.gmail.com>
+ <20231024141807.GB321218@mail.hallyn.com>
+ <CAHC9VhQaotVPGzWFFzRCgw9mDDc2tu6kmGHioMBghj-ybbYx1Q@mail.gmail.com>
+ <20231024160714.GA323539@mail.hallyn.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bc4699d7-ab54-a3b8-06a0-1724a63c6076@huawei.com>
+In-Reply-To: <20231024160714.GA323539@mail.hallyn.com>
 X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 24, 2023 at 12:12:01PM +0300, Konstantin Meskhidze (A) wrote:
+On Tue, Oct 24, 2023 at 11:07:14AM -0500, Serge E. Hallyn wrote:
+> On Tue, Oct 24, 2023 at 10:29:17AM -0400, Paul Moore wrote:
+> > On Tue, Oct 24, 2023 at 10:18 AM Serge E. Hallyn <serge@hallyn.com> wrote:
+> > > On Tue, Oct 24, 2023 at 10:14:29AM -0400, Paul Moore wrote:
+> > > > On Tue, Oct 24, 2023 at 9:46 AM Serge E. Hallyn <serge@hallyn.com> wrote:
+> > > > > On Sun, Dec 18, 2022 at 08:29:10PM +0100, Stefan Bavendiek wrote:
+> > > > > > When building userspace application sandboxes, one issue that does not seem trivial to solve is the isolation of abstract sockets.
+> > > > >
+> > > > > Veeery late reply.  Have you had any productive discussions about this in
+> > > > > other threads or venues?
+> > > > >
+> > > > > > While most IPC mechanism can be isolated by mechanisms like mount namespaces, abstract sockets are part of the network namespace.
+> > > > > > It is possible to isolate abstract sockets by using a new network namespace, however, unprivileged processes can only create a new empty network namespace, which removes network access as well and makes this useless for network clients.
+> > > > > >
+> > > > > > Same linux sandbox projects try to solve this by bridging the existing network interfaces into the new namespace or use something like slirp4netns to archive this, but this does not look like an ideal solution to this problem, especially since sandboxing should reduce the kernel attack surface without introducing more complexity.
+> > > > > >
+> > > > > > Aside from containers using namespaces, sandbox implementations based on seccomp and landlock would also run into the same problem, since landlock only provides file system isolation and seccomp cannot filter the path argument and therefore it can only be used to block new unix domain socket connections completely.
+> > > > > >
+> > > > > > Currently there does not seem to be any way to disable network namespaces in the kernel without also disabling unix domain sockets.
+> > > > > >
+> > > > > > The question is how to solve the issue of abstract socket isolation in a clean and efficient way, possibly even without namespaces.
+> > > > > > What would be the ideal way to implement a mechanism to disable abstract sockets either globally or even better, in the context of a process.
+> > > > > > And would such a patch have a realistic chance to make it into the kernel?
+> > > > >
+> > > > > Disabling them altogether would break lots of things depending on them,
+> > > > > like X :)  (@/tmp/.X11-unix/X0).  The other path is to reconsider network
+> > > > > namespaces.  There are several directions this could lead.  For one, as
+> > > > > Dinesh Subhraveti often points out, the current "network" namespace is
+> > > > > really a network device namespace.  If we instead namespace at the
+> > > > > bind/connect/etc calls, we end up with much different abilities.
+> > > >
+> > > > The LSM layer supports access controls on abstract sockets, with at
+> > > > least two (AppArmor, SELinux) providing abstract socket access
+> > > > controls, other LSMs may provide controls as well.
+> > >
+> > > Good point.  And for Stefan that may suffice, so thanks for mentioning
+> > > that.  But The LSM layer is mandatory access control for use by the
+> > > admins.  That doesn't help an unprivileged user.
+> > 
+> > Individual LSMs may implement mandatory access control models, but
+> > that is not an inherent requirement imposed by the LSM layer.  While
+> > the Landlock LSM does not (yet?) support access controls for abstract
+> > sockets, it is a discretionary access control mechanism.
+
+A recent discussion focused on this topic:
+https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
+
+I'd like Landlock to be able to scope the use of unix sockets according
+to a Landlock domain the same way it is done for ptrace. This would make
+it possible to easily isolate unix sockets to a sandbox even by
+unprivileged processes (without any namespace change). I'd be happy to
+help implement such mechanism.
+
 > 
+> In 2005, before namespaces were upstreamed, I posted the 'bsdjail' LSM,
+> which briefly made it into the -mm kernel, but was eventually rejected as
+> being an abuse of the LSM interface for OS level virtualization :)
 > 
-> 10/24/2023 12:03 PM, Mickaël Salaün пишет:
-> > On Tue, Oct 24, 2023 at 06:18:54AM +0300, Konstantin Meskhidze (A) wrote:
-> > > 
-> > > 
-> > > 10/20/2023 12:49 PM, Mickaël Salaün пишет:
-> > > > On Fri, Oct 20, 2023 at 07:08:33AM +0300, Konstantin Meskhidze (A) wrote:
-> > > > > > > > > 10/18/2023 3:29 PM, Mickaël Salaün пишет:
-> > > > > > On Mon, Oct 16, 2023 at 09:50:26AM +0800, Konstantin Meskhidze wrote:
-> > 
-> > > > > > > diff --git a/security/landlock/net.h b/security/landlock/net.h
-> > > > > > > new file mode 100644
-> > > > > > > index 000000000000..588a49fd6907
-> > > > > > > --- /dev/null
-> > > > > > > +++ b/security/landlock/net.h
-> > > > > > > @@ -0,0 +1,33 @@
-> > > > > > > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > > > > > > +/*
-> > > > > > > + * Landlock LSM - Network management and hooks
-> > > > > > > + *
-> > > > > > > + * Copyright © 2022-2023 Huawei Tech. Co., Ltd.
-> > > > > > > + */
-> > > > > > > +
-> > > > > > > +#ifndef _SECURITY_LANDLOCK_NET_H
-> > > > > > > +#define _SECURITY_LANDLOCK_NET_H
-> > > > > > > +
-> > > > > > > +#include "common.h"
-> > > > > > > +#include "ruleset.h"
-> > > > > > > +#include "setup.h"
-> > > > > > > +
-> > > > > > > +#if IS_ENABLED(CONFIG_INET)
-> > > > > > > +__init void landlock_add_net_hooks(void);
-> > > > > > > +
-> > > > > > > +int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
-> > > > > > > +			     const u16 port, access_mask_t access_rights);
-> > > > > > > +#else /* IS_ENABLED(CONFIG_INET) */
-> > > > > > > +static inline void landlock_add_net_hooks(void)
-> > > > > > > +{
-> > > > > > > +}
-> > > > > > > +
-> > > > > > > +static inline int
-> > > > > > > +landlock_append_net_rule(struct landlock_ruleset *const ruleset, const u16 port,
-> > > > > > > +			 access_mask_t access_rights);
-> > > > > > > +{
-> > > > > > > +	return -EAFNOSUPPORT;
-> > > > > > > +}
-> > > > > > > +#endif /* IS_ENABLED(CONFIG_INET) */
-> > > > > > > +
-> > > > > > > +#endif /* _SECURITY_LANDLOCK_NET_H */
-> > > > > > > diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-> > > > > > > index 4c209acee01e..1fe4298ff4a7 100644
-> > > > > > > --- a/security/landlock/ruleset.c
-> > > > > > > +++ b/security/landlock/ruleset.c
-> > > > > > > @@ -36,6 +36,11 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
-> > > > > > >  	refcount_set(&new_ruleset->usage, 1);
-> > > > > > >  	mutex_init(&new_ruleset->lock);
-> > > > > > >  	new_ruleset->root_inode = RB_ROOT;
-> > > > > > > +
-> > > > > > > +#if IS_ENABLED(CONFIG_INET)
-> > > > > > > +	new_ruleset->root_net_port = RB_ROOT;
-> > > > > > > +#endif /* IS_ENABLED(CONFIG_INET) */
-> > > > > > > +
-> > > > > > >  	new_ruleset->num_layers = num_layers;
-> > > > > > >  	/*
-> > > > > > >  	 * hierarchy = NULL
-> > > > > > > @@ -46,16 +51,21 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
-> > > > > > >  }
-> > > > > > > > >  struct landlock_ruleset *
-> > > > > > > -landlock_create_ruleset(const access_mask_t fs_access_mask)
-> > > > > > > +landlock_create_ruleset(const access_mask_t fs_access_mask,
-> > > > > > > +			const access_mask_t net_access_mask)
-> > > > > > >  {
-> > > > > > >  	struct landlock_ruleset *new_ruleset;
-> > > > > > > > >  	/* Informs about useless ruleset. */
-> > > > > > > -	if (!fs_access_mask)
-> > > > > > > +	if (!fs_access_mask && !net_access_mask)
-> > > > > > >  		return ERR_PTR(-ENOMSG);
-> > > > > > >  	new_ruleset = create_ruleset(1);
-> > > > > > > -	if (!IS_ERR(new_ruleset))
-> > > > > > > +	if (IS_ERR(new_ruleset))
-> > > > > > > +		return new_ruleset;
-> > > > > > > +	if (fs_access_mask)
-> > > > > > >  		landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
-> > > > > > > +	if (net_access_mask)
-> > > > > > > +		landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
-> > > > > > > This is good, but it is not tested: we need to add a test that
-> > > > > both
-> > > > > > handle FS and net restrictions. You can add one in net.c, just handling
-> > > > > > LANDLOCK_ACCESS_FS_READ_DIR and LANDLOCK_ACCESS_NET_BIND_TCP, add one
-> > > > > > rule with path_beneath (e.g. /dev) and another with net_port, and check
-> > > > > > that open("/") is denied, open("/dev") is allowed, and and only the
-> > > > > > allowed port is allowed with bind(). This test should be simple and can
-> > > > > > only check against an IPv4 socket, i.e. using ipv4_tcp fixture, just
-> > > > > > after port_endianness. fcntl.h should then be included by net.c
-> > > > > > >   Ok.
-> > > > > > > I guess that was the purpose of layout1.with_net (in fs_test.c)
-> > > > > but it
-> > > > > > >   Yep. I added this kind of nest in fs_test.c to test both
-> > > fs and network
-> > > > > rules together.
-> > > > > > is not complete. You can revamp this test and move it to net.c
-> > > > > > following the above suggestions, keeping it consistent with other tests
-> > > > > > in net.c . You don't need the test_open() nor create_ruleset() helpers.
-> > > > > > > This test must failed if we change
-> > > > > "ruleset->access_masks[layer_level] |="
-> > > > > > to "ruleset->access_masks[layer_level] =" in
-> > > > > > landlock_add_fs_access_mask() or landlock_add_net_access_mask().
-> > > > > > >   Do you want to change it? Why?
-> > > > > The kernel code is correct and must not be changed. However, if
-> > > by
-> > > > mistake we change it and remove the OR, a test should catch that. We
-> > > > need a test to assert this assumption.
-> > > > > >   Fs and network masks are ORed to not intersect with each
-> > > other.
-> > > > > Yes, they are ORed, and we need a test to check that. Noting is
-> > > > currently testing this OR (and the different rule type consistency).
-> > > > I'm suggesting to revamp the layout1.with_net test into
-> > > > ipv4_tcp.with_fs and make it check ruleset->access_masks[] and rule
-> > > > addition of different types.
-> > 
-> > > From the other email:
-> > > Thinking about this test. We don't need to add any additional ASSERT here.
-> > > Anyway if we accidentally change "ruleset->access_masks[layer_level] |=" to
-> > > "ruleset->access_masks[layer_level] =" we will fail either in opening
-> > > directory or in port binding, cause adding a second rule (fs or net) will
-> > > overwrite a first one's mask. it does not matter which one goes first. I
-> > > will check it and send you a message.
-> > > What do you think?
-> > 
-> > > 
-> > >   About my previous comment.
-> > > 
-> > >   Checking the code we can  notice that adding fs mask goes first:
-> > > 
-> > > ...
-> > > if (fs_access_mask)
-> > > 		landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
-> > > if (net_access_mask)
-> > > 		landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
-> > > ....
-> > > 
-> > > So with we change "ruleset->access_masks[layer_level] |="
-> > > >> > to "ruleset->access_masks[layer_level] =" in
-> > > landlock_add_fs_access_mask() nothing bad will happen.
-> > > But if we do that in landlock_add_net_access_mask()
-> > > fs mask will be overwritten and adding fs rule will fail
-> > > (as unhandled allowed_accesss).
-> > 
-> > Right. What is the conclusion here? Are you OK with my test proposal?
+> It's not 100% clear to me whether Stefan only wants isolation, or
+> wants something closer to virtualization.
 > 
->   So we just check if landlock_add_net_access_mask() would be changed by
-> mistake?
-
-With the current kernel code, yes.
-
-> Changing landlock_add_fs_access_mask() does not break the logic. Am
-> I correct here?
-
-Yes, only landlock_add_net_access_mask() changes would be detected with
-the current kernel code, but the test checks the whole semantic, so even
-the following code with a buggy landlock_add_fs_access_mask() would be
-detected:
-
-if (net_access_mask)
-	landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
-if (fs_access_mask)
-	landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
+> Stefan, would an LSM allowing you to isolate certain processes from
+> some abstract unix socket paths (or by label, whatever0 suffice for you?
+> 
+> > I'm not currently aware of a discretionary access control LSM that
+> > supports abstract socket access control, but such a LSM should be
+> > possible if someone wanted to implement one.
+> > 
+> > -- 
+> > paul-moore.com
