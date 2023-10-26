@@ -2,80 +2,86 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6718C25B48
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Oct 2023 15:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03DB3C25B48
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Oct 2023 15:12:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235120AbjJZPAh (ORCPT
+        id S235153AbjJZPMi convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Oct 2023 11:00:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45106 "EHLO
+        Thu, 26 Oct 2023 11:12:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235124AbjJZPAe (ORCPT
+        with ESMTP id S1345398AbjJZPMc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Oct 2023 11:00:34 -0400
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D59F187
-        for <linux-security-module@vger.kernel.org>; Thu, 26 Oct 2023 08:00:31 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SGTW21VgvzMrn4d;
-        Thu, 26 Oct 2023 15:00:30 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SGTW12HHhzMpnPg;
-        Thu, 26 Oct 2023 17:00:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1698332430;
-        bh=JSgWKn/7daqkUSbBNLDdLlaYRI2HPYBou+TajN6vNow=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Qg9cdymXBZhBFWXyBzxN6PUH0GEPTC5Uud88hJFSHpxyE71sS0l3MyDgEW2XJB1qI
-         Xxg0Dt2sGazdDNsVKwRE8HFXJ+QdP0gcxI8Vce7BonZnUIdSigSftM1CO7Gov6V10H
-         zwU7S7Ac1iEQAnlGTizJXtrg+yrRa9dCGISbXk/Q=
-Date:   Thu, 26 Oct 2023 17:00:27 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>
-Subject: Re: [RFC PATCH 2/3] lsm: correct error codes in
- security_getselfattr()
-Message-ID: <20231026.iFe3ieQuaegh@digikod.net>
-References: <20231024213525.361332-4-paul@paul-moore.com>
- <20231024213525.361332-6-paul@paul-moore.com>
+        Thu, 26 Oct 2023 11:12:32 -0400
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11652D57;
+        Thu, 26 Oct 2023 08:12:28 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SGTQQ05XyzB02gf;
+        Thu, 26 Oct 2023 22:56:30 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwDnPpDHgTplwlL2Ag--.10919S2;
+        Thu, 26 Oct 2023 16:12:14 +0100 (CET)
+Message-ID: <447298d65b497fb1a7f8d47c4f1a3137eba24511.camel@huaweicloud.com>
+Subject: Re: [PATCH] security: Don't yet account for IMA in LSM_CONFIG_COUNT
+  calculation
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Paul Moore <paul@paul-moore.com>, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Thu, 26 Oct 2023 17:12:03 +0200
+In-Reply-To: <dd0f6611c7b46f3cecee2b84681c45b1.paul@paul-moore.com>
+References: <20231026090259.362945-1-roberto.sassu@huaweicloud.com>
+         <dd0f6611c7b46f3cecee2b84681c45b1.paul@paul-moore.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231024213525.361332-6-paul@paul-moore.com>
-X-Infomaniak-Routing: alpha
+X-CM-TRANSID: LxC2BwDnPpDHgTplwlL2Ag--.10919S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xr47Zr18JrWxtw45WF1kAFb_yoW3GwcEkr
+        Wqkr17trZYy3ykZF43AF1F9rs29ayrJr15J3W3JrZIvw45J3WkXFWDArn5ZF1rX3Z7WrWD
+        tF93uFW0v3s7tjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbOAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+        67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
+        AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+        j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7x
+        kEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
+        JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
+        kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
+        6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIx
+        AIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
+        KfnxnUUI43ZEXa7IU1E1v3UUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQACBF1jj5WPIQACsP
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 24, 2023 at 05:35:28PM -0400, Paul Moore wrote:
-> We should return -EINVAL if the user specifies LSM_FLAG_SINGLE without
-> supplying a valid lsm_ctx struct buffer.
+On Thu, 2023-10-26 at 10:48 -0400, Paul Moore wrote:
+> On Oct 26, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+> > 
+> > Since IMA is not yet an LSM, don't account for it in the LSM_CONFIG_COUNT
+> > calculation, used to limit how many LSMs can invoke security_add_hooks().
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  security/security.c | 1 -
+> >  1 file changed, 1 deletion(-)
 > 
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> Merged into lsm/dev-staging, thanks!
 
-Reviewed-by: Mickaël Salaün <mic@digikod.net>
+Welcome!
 
-> ---
->  security/security.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/security.c b/security/security.c
-> index 9c63acded4ee..67ded406a5ea 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -3923,9 +3923,9 @@ int security_getselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
->  		/*
->  		 * Only flag supported is LSM_FLAG_SINGLE
->  		 */
-> -		if (flags != LSM_FLAG_SINGLE)
-> +		if (flags != LSM_FLAG_SINGLE || !uctx)
->  			return -EINVAL;
-> -		if (uctx && copy_from_user(&lctx, uctx, sizeof(lctx)))
-> +		if (copy_from_user(&lctx, uctx, sizeof(lctx)))
->  			return -EFAULT;
->  		/*
->  		 * If the LSM ID isn't specified it is an error.
-> -- 
-> 2.42.0
-> 
+Could you please also rebase lsm/dev-staging, to move ab3888c7198d
+("LSM: wireup Linux Security Module syscalls") after f7875966dc0c
+("tools headers UAPI: Sync files changed by new fchmodat2 and
+map_shadow_stack syscalls with the kernel sources")?
+
+Thanks
+
+Roberto
+
