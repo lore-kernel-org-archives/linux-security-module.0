@@ -2,232 +2,164 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE73AC0032E
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Oct 2023 02:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C586AC25B47
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Oct 2023 02:16:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229772AbjJZCCZ (ORCPT
+        id S229518AbjJZCQ0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Oct 2023 22:02:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56532 "EHLO
+        Wed, 25 Oct 2023 22:16:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229705AbjJZCCY (ORCPT
+        with ESMTP id S233152AbjJZCQ0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Oct 2023 22:02:24 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3135128;
-        Wed, 25 Oct 2023 19:02:20 -0700 (PDT)
-Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4SG8DH2gyyz6K8yL;
-        Thu, 26 Oct 2023 10:01:35 +0800 (CST)
-Received: from [10.123.123.126] (10.123.123.126) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Thu, 26 Oct 2023 03:02:16 +0100
-Message-ID: <9e59d159-1184-ac68-9e10-cc9fcb0666f3@huawei.com>
-Date:   Thu, 26 Oct 2023 05:02:15 +0300
+        Wed, 25 Oct 2023 22:16:26 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3360CAB
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 19:16:23 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-d9abc069c8bso255730276.3
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Oct 2023 19:16:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1698286582; x=1698891382; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w05sPWRTm+dTN05NaYeFN/A9IoO8yIGSl25pWiGAJHM=;
+        b=LPgRLYUrZq7EeZr6m/0aONn+uGDfJ1eb82weaP9IfoowOd88xTi/EkdhzO7go3omDv
+         A8hPrKrDaTFLNB4JufEBvhT7mt8G38GrcVuB+pYKh08eam+5KR90CCmzuXMacK661Oeh
+         wMgX/VNAftjTgBi75/AWdTmd3vLjct4Kq3x6K/LrBSuzNo2Y+H16BeSl0uI5wBoIlhMo
+         WtWZ0EqTsjEE3yX6qzFSbtctWMLnCiPDo71fITVu8Y75j56kc3RapaBrpNzs9ZpoOFGF
+         u0mnSxzjG3FPWFqu/D65yHSm08PLeLsbd0gvvYLtvOOxlhNBHarbIJ6kjKHKEPu54SCc
+         t1ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698286582; x=1698891382;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w05sPWRTm+dTN05NaYeFN/A9IoO8yIGSl25pWiGAJHM=;
+        b=vSevqkU/L2u1vtSIK4UG8zdjH/Xx74gBQk3dzr5LWt0fZnvq9ivcCbsE/TR+UXlEAA
+         u8Bh8b3khrBuWVjdGb6z5sZiLVHz5MTlwtNvzAYT9DXmZrCY5SSZPkYvEy+InOWPXI2P
+         Q0fIW3+X8RGRDaUsZNKNF0icK7YCpGqZm1pExUzDtGZoUsVOT83+sS0iY4YlyeF/RWGo
+         GSzxE70oQLUOmGhpvL1FSDb6OxNTN+UMI1LGN47WG1uOh5mruh4cM8p/fwUCUl/zcod0
+         sLwgMHOf0nnNn4MDSiSB/WsnNMfnI2k7g2jl/lDhakUaBw08aCCgTAmF9akfWTvbUYse
+         EFmw==
+X-Gm-Message-State: AOJu0YxBCA9hfASBcVAfPCaStA86ZIhcUEYAevDQQTeJy3rr9+fuawqF
+        DTbjDDXZO9nNtYMu/lCu3LVsHlRhDmaqTPsPrSe0
+X-Google-Smtp-Source: AGHT+IE1kF4MvlgJF/5BHrItJJ0M8T7QXsoNMMvPvjDfTuLB94fBGUcT14YecoHMjdIo4yHACm5ZO7cs5Ofw2ObQllE=
+X-Received: by 2002:a25:a2d2:0:b0:d9c:66d1:958f with SMTP id
+ c18-20020a25a2d2000000b00d9c66d1958fmr16829131ybn.55.1698286582333; Wed, 25
+ Oct 2023 19:16:22 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v13 08/12] landlock: Add network rules and TCP hooks
- support
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
-References: <20231016015030.1684504-1-konstantin.meskhidze@huawei.com>
- <20231016015030.1684504-9-konstantin.meskhidze@huawei.com>
- <20231017.xahKoo9Koo8v@digikod.net>
- <57f150b2-0920-8567-8351-1bdb74684cfa@huawei.com>
- <20231020.ido6Aih0eiGh@digikod.net>
- <ea02392e-4460-9695-050f-7519aecebec2@huawei.com>
- <20231024.Ahdeepoh7wos@digikod.net>
- <bc4699d7-ab54-a3b8-06a0-1724a63c6076@huawei.com>
- <20231025.ooG0Uach9aes@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <20231025.ooG0Uach9aes@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.123.123.126]
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
-X-CFilter-Loop: Reflected
+References: <CAHC9VhS1wwgH6NNd+cJz4MYogPiRV8NyPDd1yj5SpaxeUB4UVg@mail.gmail.com>
+ <ZTm_9Bj1XYTzL0Za@debian.me>
+In-Reply-To: <ZTm_9Bj1XYTzL0Za@debian.me>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 25 Oct 2023 22:16:11 -0400
+Message-ID: <CAHC9VhSeqEbtdno0mx-J53SSwCcsUr8_Ovj3QVji7rzbYS9bGw@mail.gmail.com>
+Subject: Re: ANN: kernel git branches and process changes
+To:     Bagas Sanjaya <bagasdotme@gmail.com>
+Cc:     Linux Security Module Subsystem 
+        <linux-security-module@vger.kernel.org>,
+        SELinux Mailing List <selinux@vger.kernel.org>,
+        Linux Kernel Audit <audit@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Oct 25, 2023 at 9:25=E2=80=AFPM Bagas Sanjaya <bagasdotme@gmail.com=
+> wrote:
+> On Wed, Oct 25, 2023 at 05:11:51PM -0400, Paul Moore wrote:
+> > #### stable-X.Y branch
+> >
+> > The stable-X.Y branch is intended for stable kernel patches and is base=
+d on
+> > Linus' X.Y-rc1 tag, or a later X.Y.Z stable kernel release tag as neede=
+d.
+> > If serious problems are identified and a patch is developed during the =
+kernel's
+> > release candidate cycle, it may be a candidate for stable kernel markin=
+g and
+> > inclusion into the stable-X.Y branch.  The main Linux kernel's document=
+ation
+> > on stable kernel patches has more information both on what patches may =
+be
+> > stable kernel candidates, and how to mark those patches appropriately; =
+upstream
+> > mailing list discussions on the merits of marking the patch for stable =
+can also
+> > be expected.  Once a patch has been merged into the stable-X.Y branch a=
+nd spent
+> > a day or two in the next branch (see the next branch notes), it will be=
+ sent to
+> > Linus for merging into the next release candidate or final kernel relea=
+se (see
+> > the notes on pull requests in this document).  If the patch has been pr=
+operly
+> > marked for stable, the other stable kernel trees will attempt to backpo=
+rt the
+> > patch as soon as it is present in Linus' tree, see the main Linux kerne=
+l
+> > documentation for more details.
+> >
+> > Unless specifically requested, developers should not base their patches=
+ on the
+> > stable-X.Y branch.  Any merge conflicts that arise from merging patches
+> > submitted upstream will be handled by the maintainer, although help and=
+/or may
+> > be requested in extreme cases.
+> >
+> > #### dev branch
+> >
+> > The dev branch is intended for development patches targeting the upcomi=
+ng merge
+> > window, and is based on Linus' latest X.Y-rc1 tag, or a later rc tag as=
+ needed
+> > to avoid serious bugs, merge conflicts, or other significant problems. =
+ This
+> > branch is the primary development branch where the majority of patches =
+are
+> > merged during the normal kernel development cycle.  Patches merged into=
+ the
+> > dev branch will be present in the next branch (see the next branch note=
+s) and
+> > will be sent to Linus during the next merge window.
+> >
+> > Developers should use the dev branch a stable basis for their own devel=
+opment
+> > work, only under extreme circumstances will the dev branch be rebased d=
+uring
+> > the X.Y-rc cycle and the maintainer will be responsible for resolving a=
+ny
+> > merge conflicts, although help and/or may be requested in extreme cases=
+.
+> >
+>
+> If I have patches targetting current (not next) release cycle, either for
+> stabilizing that cycle or for stable backports, I have to base it on dev
+> branch (not stable-X.Y), right?
+>
+> Confused...
 
+I would prefer that yes.  I know it sounds a little odd, but I'd
+rather see folks develop and test against what we believe to be the
+latest subsystem code, which is what lives in the dev branch.  If
+there are merge conflicts, I'd rather we see them when merging the fix
+into the stable-X.Y branch so we are aware of the conflict at
+development/submission time rather than waiting for the next merge
+window.  Having done this for a number of years at this point, I've
+learned to appreciate seeing merge conflicts as early in the
+development cycle as possible and I've also learned that they are
+often not as scary in practice as we imagine.
 
-10/25/2023 2:29 PM, Mickaël Salaün пишет:
-> On Tue, Oct 24, 2023 at 12:12:01PM +0300, Konstantin Meskhidze (A) wrote:
->> 
->> 
->> 10/24/2023 12:03 PM, Mickaël Salaün пишет:
->> > On Tue, Oct 24, 2023 at 06:18:54AM +0300, Konstantin Meskhidze (A) wrote:
->> > > 
->> > > 
->> > > 10/20/2023 12:49 PM, Mickaël Salaün пишет:
->> > > > On Fri, Oct 20, 2023 at 07:08:33AM +0300, Konstantin Meskhidze (A) wrote:
->> > > > > > > > > 10/18/2023 3:29 PM, Mickaël Salaün пишет:
->> > > > > > On Mon, Oct 16, 2023 at 09:50:26AM +0800, Konstantin Meskhidze wrote:
->> > 
->> > > > > > > diff --git a/security/landlock/net.h b/security/landlock/net.h
->> > > > > > > new file mode 100644
->> > > > > > > index 000000000000..588a49fd6907
->> > > > > > > --- /dev/null
->> > > > > > > +++ b/security/landlock/net.h
->> > > > > > > @@ -0,0 +1,33 @@
->> > > > > > > +/* SPDX-License-Identifier: GPL-2.0-only */
->> > > > > > > +/*
->> > > > > > > + * Landlock LSM - Network management and hooks
->> > > > > > > + *
->> > > > > > > + * Copyright © 2022-2023 Huawei Tech. Co., Ltd.
->> > > > > > > + */
->> > > > > > > +
->> > > > > > > +#ifndef _SECURITY_LANDLOCK_NET_H
->> > > > > > > +#define _SECURITY_LANDLOCK_NET_H
->> > > > > > > +
->> > > > > > > +#include "common.h"
->> > > > > > > +#include "ruleset.h"
->> > > > > > > +#include "setup.h"
->> > > > > > > +
->> > > > > > > +#if IS_ENABLED(CONFIG_INET)
->> > > > > > > +__init void landlock_add_net_hooks(void);
->> > > > > > > +
->> > > > > > > +int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
->> > > > > > > +			     const u16 port, access_mask_t access_rights);
->> > > > > > > +#else /* IS_ENABLED(CONFIG_INET) */
->> > > > > > > +static inline void landlock_add_net_hooks(void)
->> > > > > > > +{
->> > > > > > > +}
->> > > > > > > +
->> > > > > > > +static inline int
->> > > > > > > +landlock_append_net_rule(struct landlock_ruleset *const ruleset, const u16 port,
->> > > > > > > +			 access_mask_t access_rights);
->> > > > > > > +{
->> > > > > > > +	return -EAFNOSUPPORT;
->> > > > > > > +}
->> > > > > > > +#endif /* IS_ENABLED(CONFIG_INET) */
->> > > > > > > +
->> > > > > > > +#endif /* _SECURITY_LANDLOCK_NET_H */
->> > > > > > > diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
->> > > > > > > index 4c209acee01e..1fe4298ff4a7 100644
->> > > > > > > --- a/security/landlock/ruleset.c
->> > > > > > > +++ b/security/landlock/ruleset.c
->> > > > > > > @@ -36,6 +36,11 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
->> > > > > > >  	refcount_set(&new_ruleset->usage, 1);
->> > > > > > >  	mutex_init(&new_ruleset->lock);
->> > > > > > >  	new_ruleset->root_inode = RB_ROOT;
->> > > > > > > +
->> > > > > > > +#if IS_ENABLED(CONFIG_INET)
->> > > > > > > +	new_ruleset->root_net_port = RB_ROOT;
->> > > > > > > +#endif /* IS_ENABLED(CONFIG_INET) */
->> > > > > > > +
->> > > > > > >  	new_ruleset->num_layers = num_layers;
->> > > > > > >  	/*
->> > > > > > >  	 * hierarchy = NULL
->> > > > > > > @@ -46,16 +51,21 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
->> > > > > > >  }
->> > > > > > > > >  struct landlock_ruleset *
->> > > > > > > -landlock_create_ruleset(const access_mask_t fs_access_mask)
->> > > > > > > +landlock_create_ruleset(const access_mask_t fs_access_mask,
->> > > > > > > +			const access_mask_t net_access_mask)
->> > > > > > >  {
->> > > > > > >  	struct landlock_ruleset *new_ruleset;
->> > > > > > > > >  	/* Informs about useless ruleset. */
->> > > > > > > -	if (!fs_access_mask)
->> > > > > > > +	if (!fs_access_mask && !net_access_mask)
->> > > > > > >  		return ERR_PTR(-ENOMSG);
->> > > > > > >  	new_ruleset = create_ruleset(1);
->> > > > > > > -	if (!IS_ERR(new_ruleset))
->> > > > > > > +	if (IS_ERR(new_ruleset))
->> > > > > > > +		return new_ruleset;
->> > > > > > > +	if (fs_access_mask)
->> > > > > > >  		landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
->> > > > > > > +	if (net_access_mask)
->> > > > > > > +		landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
->> > > > > > > This is good, but it is not tested: we need to add a test that
->> > > > > both
->> > > > > > handle FS and net restrictions. You can add one in net.c, just handling
->> > > > > > LANDLOCK_ACCESS_FS_READ_DIR and LANDLOCK_ACCESS_NET_BIND_TCP, add one
->> > > > > > rule with path_beneath (e.g. /dev) and another with net_port, and check
->> > > > > > that open("/") is denied, open("/dev") is allowed, and and only the
->> > > > > > allowed port is allowed with bind(). This test should be simple and can
->> > > > > > only check against an IPv4 socket, i.e. using ipv4_tcp fixture, just
->> > > > > > after port_endianness. fcntl.h should then be included by net.c
->> > > > > > >   Ok.
->> > > > > > > I guess that was the purpose of layout1.with_net (in fs_test.c)
->> > > > > but it
->> > > > > > >   Yep. I added this kind of nest in fs_test.c to test both
->> > > fs and network
->> > > > > rules together.
->> > > > > > is not complete. You can revamp this test and move it to net.c
->> > > > > > following the above suggestions, keeping it consistent with other tests
->> > > > > > in net.c . You don't need the test_open() nor create_ruleset() helpers.
->> > > > > > > This test must failed if we change
->> > > > > "ruleset->access_masks[layer_level] |="
->> > > > > > to "ruleset->access_masks[layer_level] =" in
->> > > > > > landlock_add_fs_access_mask() or landlock_add_net_access_mask().
->> > > > > > >   Do you want to change it? Why?
->> > > > > The kernel code is correct and must not be changed. However, if
->> > > by
->> > > > mistake we change it and remove the OR, a test should catch that. We
->> > > > need a test to assert this assumption.
->> > > > > >   Fs and network masks are ORed to not intersect with each
->> > > other.
->> > > > > Yes, they are ORed, and we need a test to check that. Noting is
->> > > > currently testing this OR (and the different rule type consistency).
->> > > > I'm suggesting to revamp the layout1.with_net test into
->> > > > ipv4_tcp.with_fs and make it check ruleset->access_masks[] and rule
->> > > > addition of different types.
->> > 
->> > > From the other email:
->> > > Thinking about this test. We don't need to add any additional ASSERT here.
->> > > Anyway if we accidentally change "ruleset->access_masks[layer_level] |=" to
->> > > "ruleset->access_masks[layer_level] =" we will fail either in opening
->> > > directory or in port binding, cause adding a second rule (fs or net) will
->> > > overwrite a first one's mask. it does not matter which one goes first. I
->> > > will check it and send you a message.
->> > > What do you think?
->> > 
->> > > 
->> > >   About my previous comment.
->> > > 
->> > >   Checking the code we can  notice that adding fs mask goes first:
->> > > 
->> > > ...
->> > > if (fs_access_mask)
->> > > 		landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
->> > > if (net_access_mask)
->> > > 		landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
->> > > ....
->> > > 
->> > > So with we change "ruleset->access_masks[layer_level] |="
->> > > >> > to "ruleset->access_masks[layer_level] =" in
->> > > landlock_add_fs_access_mask() nothing bad will happen.
->> > > But if we do that in landlock_add_net_access_mask()
->> > > fs mask will be overwritten and adding fs rule will fail
->> > > (as unhandled allowed_accesss).
->> > 
->> > Right. What is the conclusion here? Are you OK with my test proposal?
->> 
->>   So we just check if landlock_add_net_access_mask() would be changed by
->> mistake?
-> 
-> With the current kernel code, yes.
-> 
->> Changing landlock_add_fs_access_mask() does not break the logic. Am
->> I correct here?
-> 
-> Yes, only landlock_add_net_access_mask() changes would be detected with
-> the current kernel code, but the test checks the whole semantic, so even
-> the following code with a buggy landlock_add_fs_access_mask() would be
-> detected:
-> 
-> if (net_access_mask)
-> 	landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
-> if (fs_access_mask)
-> 	landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
+Of course all of this is a general rule since you can't specify every
+single situation in guidance like the above; if there is something
+that you believe is particularly ugly you can always write the mailing
+list, or me directly if the issue is sensitive, and we can sort it
+out.  If after a few months (year?) this proves to be too painful we
+can always revisit this and update the policy, it's definitely not set
+in stone.
 
-  I agree. Thanks for the explanation.
-> .
+Hopefully you are less confused now?
+
+--=20
+paul-moore.com
