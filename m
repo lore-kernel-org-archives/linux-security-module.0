@@ -2,194 +2,158 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB3AC25B47
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Oct 2023 00:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0056C25B6B
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Oct 2023 01:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230196AbjJZAP3 (ORCPT
+        id S231383AbjJZBZS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Oct 2023 20:15:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53974 "EHLO
+        Wed, 25 Oct 2023 21:25:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbjJZAP2 (ORCPT
+        with ESMTP id S231400AbjJZBZQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Oct 2023 20:15:28 -0400
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AE5F410E;
-        Wed, 25 Oct 2023 17:15:26 -0700 (PDT)
-Received: from [10.137.106.151] (unknown [131.107.159.23])
-        by linux.microsoft.com (Postfix) with ESMTPSA id DC7A120B74C0;
-        Wed, 25 Oct 2023 17:15:25 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DC7A120B74C0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1698279326;
-        bh=Ayg5mamt8HCVNY+t4GHPswTJfJb2ciVUg3Q8qdqL6WE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ovNPjhYAJE3PiwQsqnWOT8BVxfey4Ku6txfhhlOv+IbofSxRoW2I/UfuChbVmptfZ
-         OoqUvAEgfqDQMX460M6f1L4bM/7ro6HymGSEFoD4BIoEM+SpVEJLLY/mlmG8bdt1Cy
-         XGfyJLNcmoePkK24YClYdoBvr20aQVIi2uz0YWJo=
-Message-ID: <84f25e00-3a3a-419f-baea-50d64a1d5575@linux.microsoft.com>
-Date:   Wed, 25 Oct 2023 17:15:25 -0700
+        Wed, 25 Oct 2023 21:25:16 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3184E18C;
+        Wed, 25 Oct 2023 18:25:14 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-68fb85afef4so328896b3a.1;
+        Wed, 25 Oct 2023 18:25:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698283513; x=1698888313; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XCX2BfR40dPR6z0Di3/E+Zm7hQ9vmshlYentRsEniNQ=;
+        b=UrrHOjL24lUGT3vYjeTRYav362eLoQ1A6f2SRdsrVzI9aXLvpZnhnJQHlKTRQ3moHT
+         fE8i2zztWEqc9Gd9ofAouWClq0dKMsq8sD4JiRK9J7YgSi8QKf/5TTLxAui9FLEacWVH
+         LdPQCqmIHbyn58FhOy8AeDBiNWTykbng0vzx6cJU9FFO2sioK0wou6tq23U/oZreRNq+
+         1ioti1JYYrzKltuvwpTjV9NiUOvxkhIjGMLaFiQC/03MTD5TeUOTYXIGPjpC8k2uXg5w
+         J2VbRSxvyCqv3nngUHATfAOgvg4eOK1IAdIqAH2woRj9QqRBbR0thdCDoLeuSDSUI4EZ
+         zLRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698283513; x=1698888313;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XCX2BfR40dPR6z0Di3/E+Zm7hQ9vmshlYentRsEniNQ=;
+        b=ioyz5yG3zk6V42m/fBf/QMSQgmZT6dqu7VUJYxL4NnA1M11qIYNjIRl4qphcvA0gdi
+         zO1GTQDUwd+bnovcr9QexINAnFgZ68fgeRed837hd8oAGeCXJKJYDVYxGr6jOkmRZbDN
+         /otjaQoITGSu+179/VJPqZCciq89UfENMQusClUcxz2cilxTIOZ+qfsvP1p4fBQX6184
+         3+o8Og3mnTHIsrZnqk/oGdpWhxoOZXU5MoiSPNjvueu5L+YxqXR5Lwj4RLIkS39hegFD
+         laq17Tz+j8CsePdbpBe63rCPVu0Q+SfkIJORAMaednd4khkrxEC7rzMOmB8+ZB6kU1kC
+         m7ig==
+X-Gm-Message-State: AOJu0YzmViizaianxXvMLI0tlqZVmN9jeghIuFEa0iSHL1hSI1LSR6do
+        E7+IAjMRmUOuJo5XKsOqG2wcMBy59cM=
+X-Google-Smtp-Source: AGHT+IH3wdHiv+twqgOwRF4T86HuDGc1AHw+6OJZmh2T33NU5PGoI3RJfxxrAQsZNttSyNPlkEqJ+A==
+X-Received: by 2002:a05:6a21:164a:b0:151:7d4c:899c with SMTP id no10-20020a056a21164a00b001517d4c899cmr6820387pzb.25.1698283513355;
+        Wed, 25 Oct 2023 18:25:13 -0700 (PDT)
+Received: from debian.me ([103.131.18.64])
+        by smtp.gmail.com with ESMTPSA id iw22-20020a170903045600b001bc930d4517sm9833186plb.42.2023.10.25.18.25.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Oct 2023 18:25:12 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+        id C22CF90405E7; Thu, 26 Oct 2023 08:25:08 +0700 (WIB)
+Date:   Thu, 26 Oct 2023 08:25:08 +0700
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     Paul Moore <paul@paul-moore.com>,
+        Linux Security Module Subsystem 
+        <linux-security-module@vger.kernel.org>,
+        SELinux Mailing List <selinux@vger.kernel.org>,
+        Linux Kernel Audit <audit@vger.kernel.org>
+Subject: Re: ANN: kernel git branches and process changes
+Message-ID: <ZTm_9Bj1XYTzL0Za@debian.me>
+References: <CAHC9VhS1wwgH6NNd+cJz4MYogPiRV8NyPDd1yj5SpaxeUB4UVg@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v11 3/19] ipe: add evaluation loop
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>, corbet@lwn.net,
-        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk,
-        agk@redhat.com, snitzer@kernel.org, eparis@redhat.com
-Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, audit@vger.kernel.org,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        Deven Bowers <deven.desai@linux.microsoft.com>
-References: <1696457386-3010-4-git-send-email-wufan@linux.microsoft.com>
- <aa226bdcba26d74304f6c10c290db840.paul@paul-moore.com>
-From:   Fan Wu <wufan@linux.microsoft.com>
-In-Reply-To: <aa226bdcba26d74304f6c10c290db840.paul@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jNNTzeV9Wl5NI3rC"
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhS1wwgH6NNd+cJz4MYogPiRV8NyPDd1yj5SpaxeUB4UVg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
+--jNNTzeV9Wl5NI3rC
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 10/23/2023 8:52 PM, Paul Moore wrote:
-> On Oct  4, 2023 Fan Wu <wufan@linux.microsoft.com> wrote:
->>
->> IPE must have a centralized function to evaluate incoming callers
->> against IPE's policy. This iteration of the policy for against the rules
->> for that specific caller is known as the evaluation loop.
->>
->> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
->> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-...
->> ---
->>   security/ipe/Makefile |  1 +
->>   security/ipe/eval.c   | 96 +++++++++++++++++++++++++++++++++++++++++++
->>   security/ipe/eval.h   | 24 +++++++++++
->>   3 files changed, 121 insertions(+)
->>   create mode 100644 security/ipe/eval.c
->>   create mode 100644 security/ipe/eval.h
-> 
-> ...
-> 
->> diff --git a/security/ipe/eval.c b/security/ipe/eval.c
->> new file mode 100644
->> index 000000000000..5533c359bbeb
->> --- /dev/null
->> +++ b/security/ipe/eval.c
->> @@ -0,0 +1,96 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) Microsoft Corporation. All rights reserved.
->> + */
->> +
->> +#include <linux/fs.h>
->> +#include <linux/types.h>
->> +#include <linux/slab.h>
->> +#include <linux/file.h>
->> +#include <linux/sched.h>
->> +#include <linux/rcupdate.h>
->> +
->> +#include "ipe.h"
->> +#include "eval.h"
->> +#include "policy.h"
->> +
->> +struct ipe_policy __rcu *ipe_active_policy;
->> +
->> +/**
->> + * evaluate_property - Analyze @ctx against a property.
->> + * @ctx: Supplies a pointer to the context to be evaluated.
->> + * @p: Supplies a pointer to the property to be evaluated.
->> + *
->> + * Return:
->> + * * true	- The current @ctx match the @p
->> + * * false	- The current @ctx doesn't match the @p
->> + */
->> +static bool evaluate_property(const struct ipe_eval_ctx *const ctx,
->> +			      struct ipe_prop *p)
->> +{
->> +	return false;
->> +}
->> +
->> +/**
->> + * ipe_evaluate_event - Analyze @ctx against the current active policy.
->> + * @ctx: Supplies a pointer to the context to be evaluated.
->> + *
->> + * This is the loop where all policy evaluation happens against IPE policy.
->> + *
->> + * Return:
->> + * * 0		- OK
->> + * * -EACCES	- @ctx did not pass evaluation.
->> + * * !0		- Error
->> + */
->> +int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
->> +{
->> +	bool match = false;
->> +	enum ipe_action_type action;
->> +	struct ipe_policy *pol = NULL;
->> +	const struct ipe_rule *rule = NULL;
->> +	const struct ipe_op_table *rules = NULL;
->> +	struct ipe_prop *prop = NULL;
->> +
->> +	rcu_read_lock();
->> +
->> +	pol = rcu_dereference(ipe_active_policy);
->> +	if (!pol) {
->> +		rcu_read_unlock();
->> +		return 0;
->> +	}
->> +
->> +	if (ctx->op == IPE_OP_INVALID) {
->> +		rcu_read_unlock();
->> +		if (pol->parsed->global_default_action == IPE_ACTION_DENY)
->> +			return -EACCES;
-> 
-> Assuming that the RCU lock protects @pol, shouldn't it be held until
-> after the global_default_action comparison?
-> 
-Yes for this part the unlock should be moved after the comparison. 
-Thanks for spotting this.
+On Wed, Oct 25, 2023 at 05:11:51PM -0400, Paul Moore wrote:
+> #### stable-X.Y branch
+>=20
+> The stable-X.Y branch is intended for stable kernel patches and is based =
+on
+> Linus' X.Y-rc1 tag, or a later X.Y.Z stable kernel release tag as needed.
+> If serious problems are identified and a patch is developed during the ke=
+rnel's
+> release candidate cycle, it may be a candidate for stable kernel marking =
+and
+> inclusion into the stable-X.Y branch.  The main Linux kernel's documentat=
+ion
+> on stable kernel patches has more information both on what patches may be
+> stable kernel candidates, and how to mark those patches appropriately; up=
+stream
+> mailing list discussions on the merits of marking the patch for stable ca=
+n also
+> be expected.  Once a patch has been merged into the stable-X.Y branch and=
+ spent
+> a day or two in the next branch (see the next branch notes), it will be s=
+ent to
+> Linus for merging into the next release candidate or final kernel release=
+ (see
+> the notes on pull requests in this document).  If the patch has been prop=
+erly
+> marked for stable, the other stable kernel trees will attempt to backport=
+ the
+> patch as soon as it is present in Linus' tree, see the main Linux kernel
+> documentation for more details.
+>=20
+> Unless specifically requested, developers should not base their patches o=
+n the
+> stable-X.Y branch.  Any merge conflicts that arise from merging patches
+> submitted upstream will be handled by the maintainer, although help and/o=
+r may
+> be requested in extreme cases.
+>=20
+> #### dev branch
+>=20
+> The dev branch is intended for development patches targeting the upcoming=
+ merge
+> window, and is based on Linus' latest X.Y-rc1 tag, or a later rc tag as n=
+eeded
+> to avoid serious bugs, merge conflicts, or other significant problems.  T=
+his
+> branch is the primary development branch where the majority of patches are
+> merged during the normal kernel development cycle.  Patches merged into t=
+he
+> dev branch will be present in the next branch (see the next branch notes)=
+ and
+> will be sent to Linus during the next merge window.
+>=20
+> Developers should use the dev branch a stable basis for their own develop=
+ment
+> work, only under extreme circumstances will the dev branch be rebased dur=
+ing
+> the X.Y-rc cycle and the maintainer will be responsible for resolving any
+> merge conflicts, although help and/or may be requested in extreme cases.
+>=20
 
->> +		return 0;
->> +	}
->> +
->> +	rules = &pol->parsed->rules[ctx->op];
->> +
->> +	list_for_each_entry(rule, &rules->rules, next) {
->> +		match = true;
->> +
->> +		list_for_each_entry(prop, &rule->props, next) {
->> +			match = match && evaluate_property(ctx, prop);
-> 
-> The @match variable will always be true on the right side above, or am
-> I missing something?
-> 
-Yes the "match &&" are completely unnecessary. I will remove them.
+If I have patches targetting current (not next) release cycle, either for
+stabilizing that cycle or for stable backports, I have to base it on dev
+branch (not stable-X.Y), right?
 
--Fan
->> +			if (!match)
->> +				break;
->> +		}
->> +
->> +		if (match)
->> +			break;
->> +	}
->> +
->> +	if (match)
->> +		action = rule->action;
->> +	else if (rules->default_action != IPE_ACTION_INVALID)
->> +		action = rules->default_action;
->> +	else
->> +		action = pol->parsed->global_default_action;
->> +
->> +	rcu_read_unlock();
->> +	if (action == IPE_ACTION_DENY)
->> +		return -EACCES;
->> +
->> +	return 0;
->> +}
-> 
-> --
-> paul-moore.com
+Confused...
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--jNNTzeV9Wl5NI3rC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZTm/7wAKCRD2uYlJVVFO
+o4nnAQDaCea9De+zP5o4fq6lLWaUgO2beGdbsMmenlgFyWqHLwD8C6wjKW5U5ETq
+Q9LVCkWxuIUBt1O4MPy6CnB/u4vfjAs=
+=ZQeB
+-----END PGP SIGNATURE-----
+
+--jNNTzeV9Wl5NI3rC--
