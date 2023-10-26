@@ -2,160 +2,101 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B78BAC25B6B
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Oct 2023 15:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C77C25B67
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Oct 2023 15:59:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235068AbjJZPie (ORCPT
+        id S231738AbjJZP7P (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Oct 2023 11:38:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44176 "EHLO
+        Thu, 26 Oct 2023 11:59:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231280AbjJZPie (ORCPT
+        with ESMTP id S231546AbjJZP7P (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Oct 2023 11:38:34 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F33B21A7
-        for <linux-security-module@vger.kernel.org>; Thu, 26 Oct 2023 08:38:31 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-d849df4f1ffso793833276.0
-        for <linux-security-module@vger.kernel.org>; Thu, 26 Oct 2023 08:38:31 -0700 (PDT)
+        Thu, 26 Oct 2023 11:59:15 -0400
+Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 055641A6
+        for <linux-security-module@vger.kernel.org>; Thu, 26 Oct 2023 08:59:13 -0700 (PDT)
+Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-1eb39505ba4so707717fac.0
+        for <linux-security-module@vger.kernel.org>; Thu, 26 Oct 2023 08:59:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1698334711; x=1698939511; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1698335951; x=1698940751; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0EwAqPEcnfkwo9lWk9v82S2i+OA6NrB82M1LvkoKbds=;
-        b=XCXTX2cPM2O6Mo7q0rKjUP+nVa9mA/ApMI2WiJNjK4wGVrdhzvdtiAMX8kLEHYOP7z
-         EVocsvkJzpe6gP9sqZwrnGZ7+RlhK/oA7U3tQxDE9XPZZNMTHabPaDDVz/OUy+GOQC5H
-         MS3mwSlt9IC34ZbVLkr8tmOih3kp5iDBaetC6r/qg37X2CulSncT05TWaojFaUESmCHv
-         nPdcU2Q730C68S1kNXrf2ySFIx3U4MXnvUi/Lizd7noW8SeBZJvRqtBriKcqfM4TQHxp
-         XTJ2/bnPEG8x1SP16TOLxa90vsU9ZqKQ82aDda4MoYtpaQ190puMtm7aqSEh7m1+ck7Z
-         /KgA==
+        bh=hXVf0I4Mz5SjvG1c0AtJO2LhT3AtAdGjKo7FK2Zg4Ic=;
+        b=Q7TxqLm3aKTQC/ar5o37y2qiMsnmUJh60IVOClyeYjJbwpTctGZRO9B5HshK5yqlY4
+         kTgWRMIW+qY9Al/sXL9txeJHNnNmC7IDgl/gzlMRw1s9anPdkO6NYcWmOXh8dvZ5B7eP
+         k61I8D/CFFGnnqxtO6O+RRmt8Sl0TlaWDnCb4n43x2F4CClpQGJPmMD1V7dKUkENEmor
+         fmyKQ9rJ0hf8R8tb6P/tCVe6H07WbTev4kT7J+m8vm5fG+OWZispMAIghVsIe3PpfLJd
+         jclU5wD21Ps13HT90/h03jX6k4wYhkQS+o6rhuSPoOIgCCFpV2kqUJuaZ4EBJEFwIPcm
+         wnIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698334711; x=1698939511;
+        d=1e100.net; s=20230601; t=1698335951; x=1698940751;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0EwAqPEcnfkwo9lWk9v82S2i+OA6NrB82M1LvkoKbds=;
-        b=Jg2a1wJmY7psEi3BVJFVZ08q5kfs774gB1CM+/isK6VmaZ8v//6ePrhbkP/ZrEuoQq
-         xiGhVuTV3K2DxTaEeOt35eVSy0LphE/zt4iktPRLhgz+tI1vLZWLlT6vcFlTQMUR/tUh
-         iSuSVPTPvkVFD4h1HFEIItFISs8FUepEosVverLc3t+vv+aegaiUYgok5OX6o04QBLI3
-         IMa3diWGDrRbLyCUyMhE9dz/30INTPDtFzdulVe6s1a+1YvWufEQyMipX+LhQ454eXMD
-         UFLTlqLH1Sdix2qzpy7zcZ4WPZ5AYMW6AQt9MTOz4jOsxTu17L7/+IGSFMJNsYcv/Cgn
-         IJwA==
-X-Gm-Message-State: AOJu0Yzs+BD+bFFlTLVbR3WlbbDf7nnSCAWXDynZzxtSdl4rV4mEkAFQ
-        HBOCD22R7XUfkCFR1xASUFQZlqeV0zh0/dXmOdKD
-X-Google-Smtp-Source: AGHT+IG1tfbXN3bAkYv3KGKYE0d9/pH2mCKrxe3nVeAX/S2JUAcp50XxiMNthfd+B77MAkP+DZ7RZqEat+2vPhPuFKg=
-X-Received: by 2002:a25:adc8:0:b0:da0:4fba:1c61 with SMTP id
- d8-20020a25adc8000000b00da04fba1c61mr7510762ybe.46.1698334711141; Thu, 26 Oct
- 2023 08:38:31 -0700 (PDT)
+        bh=hXVf0I4Mz5SjvG1c0AtJO2LhT3AtAdGjKo7FK2Zg4Ic=;
+        b=UeCeajhkYmJwIFrhUFi3ES7Vj6H4efJF4t9Ranmu6MsBinbItAwDo+anK5voSJdaU3
+         D5hBp2QKe/tKK6/FxuwBXffu4skvP+bjyiJn8bzXQbg2ueDOMGyPj97c8fj6nxSdRhX9
+         fCTcIjro7RhEPjTSykulSgThXtra6WkzJUhXaExQJbuSSKBRPrxnnVXFsJU4Lk5Qje5t
+         J/b8pT4BC2vdL26GiBW4zDuxP0UEW3xEZbrtuXpEFlwvUFAcYyNtPQTfDUILTN9XYwyG
+         X9yNJdsWVfvUAbY5Rs7i2CsFy/pDcrMokkT1PDoNultgj9DAW5P+GCcaL49qlR3hqYSt
+         HPdg==
+X-Gm-Message-State: AOJu0YxfICSbHlcI1yjq4s/WE77NxX/llENeSJWhR8qw5YgjmVauTu8G
+        DzahCuBoiViZ40ncuT5ANxe4cPqymmSgKC4v0x8g
+X-Google-Smtp-Source: AGHT+IGb4o9qqen65yJYa9Za8Ruc7HjT8pYyYcgd4PHBmG3d3r9sBzWlY55aGRO14AFQloUnfdjPobJ3/vZmMA0zA/s=
+X-Received: by 2002:a05:6870:1049:b0:1bf:77e2:95cc with SMTP id
+ 9-20020a056870104900b001bf77e295ccmr16895417oaj.17.1698335951360; Thu, 26 Oct
+ 2023 08:59:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20231024213525.361332-4-paul@paul-moore.com> <20231024213525.361332-7-paul@paul-moore.com>
- <20231026.ieyieDie4see@digikod.net>
-In-Reply-To: <20231026.ieyieDie4see@digikod.net>
+References: <20231026090259.362945-1-roberto.sassu@huaweicloud.com>
+ <dd0f6611c7b46f3cecee2b84681c45b1.paul@paul-moore.com> <447298d65b497fb1a7f8d47c4f1a3137eba24511.camel@huaweicloud.com>
+In-Reply-To: <447298d65b497fb1a7f8d47c4f1a3137eba24511.camel@huaweicloud.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 26 Oct 2023 11:38:20 -0400
-Message-ID: <CAHC9VhTFfBVb3Ru3fhNgRV=c82UhHmhcvcpYDPUFW9G8LNHjHA@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] lsm: consolidate buffer size handling into lsm_fill_user_ctx()
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>
+Date:   Thu, 26 Oct 2023 11:59:00 -0400
+Message-ID: <CAHC9VhSMVpEvLwWvBCgz0EMEb=DG_AZ7fenVUk5vPM=v5c6kYQ@mail.gmail.com>
+Subject: Re: [PATCH] security: Don't yet account for IMA in LSM_CONFIG_COUNT calculation
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     jmorris@namei.org, serge@hallyn.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 26, 2023 at 11:13=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
-> On Tue, Oct 24, 2023 at 05:35:29PM -0400, Paul Moore wrote:
-> > While we have a lsm_fill_user_ctx() helper function designed to make
-> > life easier for LSMs which return lsm_ctx structs to userspace, we
-> > didn't include all of the buffer length safety checks and buffer
-> > padding adjustments in the helper.  This led to code duplication
-> > across the different LSMs and the possibility for mistakes across the
-> > different LSM subsystems.  In order to reduce code duplication and
-> > decrease the chances of silly mistakes, we're consolidating all of
-> > this code into the lsm_fill_user_ctx() helper.
+On Thu, Oct 26, 2023 at 11:12=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Thu, 2023-10-26 at 10:48 -0400, Paul Moore wrote:
+> > On Oct 26, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+> > >
+> > > Since IMA is not yet an LSM, don't account for it in the LSM_CONFIG_C=
+OUNT
+> > > calculation, used to limit how many LSMs can invoke security_add_hook=
+s().
+> > >
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > ---
+> > >  security/security.c | 1 -
+> > >  1 file changed, 1 deletion(-)
 > >
-> > The buffer padding is also modified from a fixed 8-byte alignment to
-> > an alignment that matches the word length of the machine
-> > (BITS_PER_LONG / 8).
-> >
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > ---
+> > Merged into lsm/dev-staging, thanks!
 >
-> > diff --git a/security/security.c b/security/security.c
-> > index 67ded406a5ea..45c4f5440c95 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-
-...
-
-> > +int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, size_t *uctx_len,
-> > +                   void *val, size_t val_len,
-> > +                   u64 id, u64 flags)
-> >  {
-> > -     struct lsm_ctx *lctx;
-> > -     size_t locallen =3D struct_size(lctx, ctx, context_size);
-> > +     struct lsm_ctx *nctx =3D NULL;
-> > +     size_t nctx_len;
-> >       int rc =3D 0;
-> >
-> > -     lctx =3D kzalloc(locallen, GFP_KERNEL);
-> > -     if (lctx =3D=3D NULL)
-> > -             return -ENOMEM;
-> > +     nctx_len =3D ALIGN(struct_size(nctx, ctx, val_len), BITS_PER_LONG=
- / 8);
+> Welcome!
 >
-> Why the arch-dependent constant?
+> Could you please also rebase lsm/dev-staging, to move ab3888c7198d
+> ("LSM: wireup Linux Security Module syscalls") after f7875966dc0c
+> ("tools headers UAPI: Sync files changed by new fchmodat2 and
+> map_shadow_stack syscalls with the kernel sources")?
 
-My thinking is that most arches tend to perform better when data is
-aligned on a word boundary and this should help achieve that in a way
-that doesn't assume the arch's word length.  If you have an idea on
-how to do this differently I'm open to suggestions.
+Let me look into that, as long as it doesn't blow up the stuff in
+lsm/dev (I don't think it would), I'll go ahead and rebase to v6.6-rc4
+which should resolve the syscall numbering conflict.
 
-It's worth noting that this is something we can change in the future
-as the lsm_ctx struct has the len field which we can use for arbitrary
-amounts of padding, including none.
-
-> I'm not even sure why we want to align this size. We'll only copy the
-> actual size right?
-
-We allocate, zero out, and copy @nctx_len/@nctx->len.
-
-> > +     if (nctx_len > *uctx_len) {
-> > +             rc =3D -E2BIG;
-> > +             goto out;
-> > +     }
-> >
-> > -     lctx->id =3D id;
-> > -     lctx->flags =3D flags;
-> > -     lctx->ctx_len =3D context_size;
-> > -     lctx->len =3D locallen;
-> > +     nctx =3D kzalloc(nctx_len, GFP_KERNEL);
-> > +     if (nctx =3D=3D NULL) {
-> > +             rc =3D -ENOMEM;
-> > +             goto out;
-> > +     }
-> > +     nctx->id =3D id;
-> > +     nctx->flags =3D flags;
-> > +     nctx->len =3D nctx_len;
-> > +     nctx->ctx_len =3D val_len;
-> > +     memcpy(nctx->ctx, val, val_len);
-> >
-> > -     memcpy(lctx->ctx, context, context_size);
-> > -
-> > -     if (copy_to_user(ctx, lctx, locallen))
-> > +     if (copy_to_user(uctx, nctx, nctx_len))
-> >               rc =3D -EFAULT;
-> >
-> > -     kfree(lctx);
-> > -
-> > +out:
-> > +     kfree(nctx);
-> > +     *uctx_len =3D nctx_len;
-> >       return rc;
-> >  }
+FWIW, I also hit the same problem with my kernel-secnext builds, if
+you're using those RPMs you'll find it's already resolved there.
 
 --=20
 paul-moore.com
