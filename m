@@ -2,151 +2,145 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A788C27C47
-	for <linux-security-module@archiver.kernel.org>; Sat, 28 Oct 2023 01:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1068BC25B67
+	for <linux-security-module@archiver.kernel.org>; Sat, 28 Oct 2023 02:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232967AbjJ1Bgl (ORCPT
+        id S232936AbjJ1CHQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 27 Oct 2023 21:36:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49738 "EHLO
+        Fri, 27 Oct 2023 22:07:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbjJ1Bgj (ORCPT
+        with ESMTP id S229446AbjJ1CHQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 27 Oct 2023 21:36:39 -0400
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DD91A6;
-        Fri, 27 Oct 2023 18:36:36 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 066505C0100;
-        Fri, 27 Oct 2023 21:36:34 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Fri, 27 Oct 2023 21:36:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1698456994; x=1698543394; bh=KsUaa2dQRxZCNliH8E4IgB96uElIa6AZYOi
-        IzXKoc/g=; b=fZYSL1Hh4egXuicxkMFg+jLgSXE3ZgD8AFpH+th6BJTlZigkseO
-        mtkr17z5D5GSLqS3VGFVp3OeFx9U78fXmtLa9W0N/XHvBo5ajUNKShNtUDs7/sKd
-        ZV4tr0uGpIz8uPI45OdgM/w5KYporhOEOR24znvm/rirYuDF3x6YBc+zxbDplwcj
-        7eBteMNTZrNWsvL9HHyHvp/BuuTW1dNXe++6VfFOS27Qnk8Z+nS9kmlR+bgDjVzf
-        gzUPt1jW0vMwPsIsCCc5Gobwv8H4jeIM+R7sWGfp/qmKEDAGzJQ7Vn3acMbKXa6M
-        jPYyerd5HZZrgWis7rMj8zYIuHGTycY1cyQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1698456994; x=1698543394; bh=KsUaa2dQRxZCNliH8E4IgB96uElIa6AZYOi
-        IzXKoc/g=; b=F3HFKyzmmg9oxz/ntz+T5+XmYWDdcKhDALX/MCh6lte6GAO0rwY
-        RBcb9BjyHp8jfuTcYbT2DGUA7udnstUUZIewC+T0DtyeWdgMhJ1CexKem91iZYy6
-        UGw2pgxXP/vDrtoAus18DfE8shNHIcPiyWKBOSmk2oal3LptEcqVlRX5oMXDlu+F
-        AF3WjmY+PFO3tr/zpnWzGTezgZo9zPILxeYMg5+G5Z3PliD3q1tUvm7YPhNsNzVD
-        HoedNHyyAhNO8zmJjwOqJoRSuLUhPzLCExH6mpE/QFi0Bg+8usyrjuGQNliseQTW
-        6ABGQ2psafUCNfRw0eRgJHREBL0cIJ+Q2tA==
-X-ME-Sender: <xms:oWU8ZeXAoF6deDOgUPP8C37DgzNB5zqFhXIx_UUlwRxfnidgTS8Z2g>
-    <xme:oWU8Zan70Wjt7XusI4EdTk3INHaBCZEJTNlCgkgZlPjZw0Z6YaGz4P_VlXKBWXG_o
-    5b2IrLD46uq>
-X-ME-Received: <xmr:oWU8ZSZVrs7Ok5a2SVYQddVtyrDFBGeXIx6fztF1Qj5veEm0bWwUb_g9XUSv6pumVvon4v7pGkdUm-az3drwVgg2PHpCw3QRedu6TbUw3NTX1OazR_mEExRB>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrleehgdegjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthekredttdefjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    egvdetvedvfeeivdeuueejgeetvdehlefhheethfekgfejueffgeeugfekudfhjeenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
-    hthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:oWU8ZVXRpVhBFGvyoK3JORYTRAnTL3oJArZ07m9g1A_Y-w8QOstB-Q>
-    <xmx:oWU8ZYlDTKU5SN-q5rutlx_Ge-tniBq1-2UQr9mEKu7oWWOVtiafRQ>
-    <xmx:oWU8ZadzWHfaQcb9lqILEARfOFF8xBUCqVR_7FZPHZC2aNr_ddzUkA>
-    <xmx:omU8ZT-ELN39i8ylB1sZIrKCuC2WhY8InDf7as0RWilH3weOxiBTDQ>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 27 Oct 2023 21:36:27 -0400 (EDT)
-Message-ID: <c938a7d9-aa9e-a3ad-a001-fb9022d21475@themaw.net>
-Date:   Sat, 28 Oct 2023 09:36:23 +0800
+        Fri, 27 Oct 2023 22:07:16 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CC01B8;
+        Fri, 27 Oct 2023 19:07:10 -0700 (PDT)
+Received: from lhrpeml500004.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4SHNDt1KnYz67bjw;
+        Sat, 28 Oct 2023 10:06:22 +0800 (CST)
+Received: from [10.123.123.126] (10.123.123.126) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.31; Sat, 28 Oct 2023 03:07:06 +0100
+Message-ID: <b24bee4a-5131-b8bd-2cdc-833fcc0297f1@huawei.com>
+Date:   Sat, 28 Oct 2023 05:07:05 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v4 2/6] mounts: keep list of mounts in an rbtree
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Matthew House <mattlloydhouse@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <20231025140205.3586473-1-mszeredi@redhat.com>
- <20231025140205.3586473-3-mszeredi@redhat.com>
- <b69c1c17-35f9-351e-79a9-ef3ef5481974@themaw.net>
- <CAOssrKe76uZ5t714=Ta7GMLnZdS4QGm-fOfT9q5hNFe1fsDMVg@mail.gmail.com>
-Content-Language: en-US
-From:   Ian Kent <raven@themaw.net>
-In-Reply-To: <CAOssrKe76uZ5t714=Ta7GMLnZdS4QGm-fOfT9q5hNFe1fsDMVg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v14 00/12] Network support for Landlock
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>, Paul Moore <paul@paul-moore.com>
+References: <20231026014751.414649-1-konstantin.meskhidze@huawei.com>
+ <20231027.weic8eidaiQu@digikod.net>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <20231027.weic8eidaiQu@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.123.123.126]
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 27/10/23 16:17, Miklos Szeredi wrote:
-> On Fri, Oct 27, 2023 at 5:12 AM Ian Kent <raven@themaw.net> wrote:
->> On 25/10/23 22:02, Miklos Szeredi wrote:
->>> The mnt.mnt_list is still used to set up the mount tree and for
->>> propagation, but not after the mount has been added to a namespace.  Hence
->>> mnt_list can live in union with rb_node.  Use MNT_ONRB mount flag to
->>> validate that the mount is on the correct list.
->> Is that accurate, propagation occurs at mount and also at umount.
-> When propagating a mount, the new mount's mnt_list is used as a head
-> for the new propagated mounts.  These are then moved to the rb tree by
-> commit_tree().
->
-> When umounting there's a "to umount" list called tmp_list in
-> umount_tree(), this list is used to collect direct umounts and then
-> propagated umounts.  The direct umounts are added in umount_tree(),
-> the propagated ones umount_one().
->
-> Note: umount_tree() can be called on a not yet finished mount, in that
-> case the mounts are still on mnt_list, so umount_tree() needs to deal
-> with both.
->
->> IDG how the change to umount_one() works, it looks like umount_list()
->>
->> uses mnt_list. It looks like propagate_umount() is also using mnt_list.
->>
->>
->> Am I missing something obvious?
-> So when a mount is part of a namespace (either anonymous or not) it is
-> on the rb tree, when not then it can temporarily be on mnt_list.
-> MNT_ONRB flag is used to validate that the mount is on the list that
-> we expect it to be on, but also to detect the case of the mount setup
-> being aborted.
->
-> We could handle the second case differently, since we should be able
-> to tell when we are removing the mount from a namespace and when we
-> are aborting a mount, but this was the least invasive way to do this.
-
-Thanks for the explanation, what you've said is essentially what I
-
-understood reading the series.
 
 
-But I still haven't quite got this so I'll need to spend more time
+10/27/2023 4:06 PM, Mickaël Salaün пишет:
+> Thanks Konstantin!
+> 
+> I did some minor cosmetic changes, extended a bit the documentation and
+> improved the ipv4_tcp.with_fs test. You can see these changes in my
+> -next branch:
+> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=nex >
+> We have a very good test coverage and I think these patches are ready
+> for mainline.  If it's OK with you, I plan to send a PR for v6.7-rc1 .
+> 
+> Regards,
+>   Mickaël
 
-on this part of the patch series.
+  Hi Mickaёl.
+  Sounds great. It's OK with me. I learned a lot about kernel 
+development process preparing these patch sets. Thank you so much for 
+tutoring and patience. I would not make that without your support.
 
-
-That's not a problem, ;).
-
-
-Ian
-
->
-> Thanks,
-> Miklos
->
+I'm ready for the next steps like we've already discussed:
+https://lore.kernel.org/linux-security-module/b4440d19-93b9-e234-007b-4fc4f987550b@digikod.net/
+> 
+> On Thu, Oct 26, 2023 at 09:47:39AM +0800, Konstantin Meskhidze wrote:
+>> Hi,
+>> This is a new V14 patch related to Landlock LSM network confinement.
+>> It is based on v6.6-rc2 kernel version.
+>> 
+>> It brings refactoring of previous patch version V13.
+>> Mostly there are fixes of logic and typos, refactoring some selftests.
+>> 
+>> All test were run in QEMU evironment and compiled with
+>>  -static flag.
+>>  1. network_test: 82/82 tests passed.
+>>  2. base_test: 7/7 tests passed.
+>>  3. fs_test: 107/107 tests passed.
+>>  4. ptrace_test: 8/8 tests passed.
+>> 
+>> Previous versions:
+>> v13: https://lore.kernel.org/linux-security-module/20231016015030.1684504-1-konstantin.meskhidze@huawei.com/
+>> v12: https://lore.kernel.org/linux-security-module/20230920092641.832134-1-konstantin.meskhidze@huawei.com/
+>> v11: https://lore.kernel.org/linux-security-module/20230515161339.631577-1-konstantin.meskhidze@huawei.com/
+>> v10: https://lore.kernel.org/linux-security-module/20230323085226.1432550-1-konstantin.meskhidze@huawei.com/
+>> v9: https://lore.kernel.org/linux-security-module/20230116085818.165539-1-konstantin.meskhidze@huawei.com/
+>> v8: https://lore.kernel.org/linux-security-module/20221021152644.155136-1-konstantin.meskhidze@huawei.com/
+>> v7: https://lore.kernel.org/linux-security-module/20220829170401.834298-1-konstantin.meskhidze@huawei.com/
+>> v6: https://lore.kernel.org/linux-security-module/20220621082313.3330667-1-konstantin.meskhidze@huawei.com/
+>> v5: https://lore.kernel.org/linux-security-module/20220516152038.39594-1-konstantin.meskhidze@huawei.com
+>> v4: https://lore.kernel.org/linux-security-module/20220309134459.6448-1-konstantin.meskhidze@huawei.com/
+>> v3: https://lore.kernel.org/linux-security-module/20220124080215.265538-1-konstantin.meskhidze@huawei.com/
+>> v2: https://lore.kernel.org/linux-security-module/20211228115212.703084-1-konstantin.meskhidze@huawei.com/
+>> v1: https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/
+>> 
+>> Konstantin Meskhidze (11):
+>>   landlock: Make ruleset's access masks more generic
+>>   landlock: Refactor landlock_find_rule/insert_rule
+>>   landlock: Refactor merge/inherit_ruleset functions
+>>   landlock: Move and rename layer helpers
+>>   landlock: Refactor layer helpers
+>>   landlock: Refactor landlock_add_rule() syscall
+>>   landlock: Add network rules and TCP hooks support
+>>   selftests/landlock: Share enforce_ruleset()
+>>   selftests/landlock: Add network tests
+>>   samples/landlock: Support TCP restrictions
+>>   landlock: Document network support
+>> 
+>> Mickaël Salaün (1):
+>>   landlock: Allow FS topology changes for domains without such rule type
+>> 
+>>  Documentation/userspace-api/landlock.rst     |   96 +-
+>>  include/uapi/linux/landlock.h                |   55 +
+>>  samples/landlock/sandboxer.c                 |  115 +-
+>>  security/landlock/Kconfig                    |    1 +
+>>  security/landlock/Makefile                   |    2 +
+>>  security/landlock/fs.c                       |  232 +--
+>>  security/landlock/limits.h                   |    6 +
+>>  security/landlock/net.c                      |  198 ++
+>>  security/landlock/net.h                      |   33 +
+>>  security/landlock/ruleset.c                  |  405 +++-
+>>  security/landlock/ruleset.h                  |  183 +-
+>>  security/landlock/setup.c                    |    2 +
+>>  security/landlock/syscalls.c                 |  158 +-
+>>  tools/testing/selftests/landlock/base_test.c |    2 +-
+>>  tools/testing/selftests/landlock/common.h    |   13 +
+>>  tools/testing/selftests/landlock/config      |    4 +
+>>  tools/testing/selftests/landlock/fs_test.c   |   10 -
+>>  tools/testing/selftests/landlock/net_test.c  | 1744 ++++++++++++++++++
+>>  18 files changed, 2908 insertions(+), 351 deletions(-)
+>>  create mode 100644 security/landlock/net.c
+>>  create mode 100644 security/landlock/net.h
+>>  create mode 100644 tools/testing/selftests/landlock/net_test.c
+>> 
+>> --
+>> 2.25.1
+>> 
+> .
