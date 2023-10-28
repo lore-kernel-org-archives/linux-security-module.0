@@ -2,249 +2,151 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA2EC25B67
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Oct 2023 08:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A788C27C47
+	for <linux-security-module@archiver.kernel.org>; Sat, 28 Oct 2023 01:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345784AbjJ0IyY (ORCPT
+        id S232967AbjJ1Bgl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 27 Oct 2023 04:54:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37314 "EHLO
+        Fri, 27 Oct 2023 21:36:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235251AbjJ0IyK (ORCPT
+        with ESMTP id S229471AbjJ1Bgj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 27 Oct 2023 04:54:10 -0400
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B64201984;
-        Fri, 27 Oct 2023 01:44:11 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4SGwqD100Jz9yKWt;
-        Fri, 27 Oct 2023 16:31:04 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwDnP5EaeDtl3AMCAw--.27269S4;
-        Fri, 27 Oct 2023 09:43:43 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, mic@digikod.net
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v4 22/23] integrity: Move integrity functions to the LSM infrastructure
-Date:   Fri, 27 Oct 2023 10:42:33 +0200
-Message-Id: <20231027084234.485243-3-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231027083558.484911-1-roberto.sassu@huaweicloud.com>
-References: <20231027083558.484911-1-roberto.sassu@huaweicloud.com>
+        Fri, 27 Oct 2023 21:36:39 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DD91A6;
+        Fri, 27 Oct 2023 18:36:36 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 066505C0100;
+        Fri, 27 Oct 2023 21:36:34 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Fri, 27 Oct 2023 21:36:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
+        1698456994; x=1698543394; bh=KsUaa2dQRxZCNliH8E4IgB96uElIa6AZYOi
+        IzXKoc/g=; b=fZYSL1Hh4egXuicxkMFg+jLgSXE3ZgD8AFpH+th6BJTlZigkseO
+        mtkr17z5D5GSLqS3VGFVp3OeFx9U78fXmtLa9W0N/XHvBo5ajUNKShNtUDs7/sKd
+        ZV4tr0uGpIz8uPI45OdgM/w5KYporhOEOR24znvm/rirYuDF3x6YBc+zxbDplwcj
+        7eBteMNTZrNWsvL9HHyHvp/BuuTW1dNXe++6VfFOS27Qnk8Z+nS9kmlR+bgDjVzf
+        gzUPt1jW0vMwPsIsCCc5Gobwv8H4jeIM+R7sWGfp/qmKEDAGzJQ7Vn3acMbKXa6M
+        jPYyerd5HZZrgWis7rMj8zYIuHGTycY1cyQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+        1698456994; x=1698543394; bh=KsUaa2dQRxZCNliH8E4IgB96uElIa6AZYOi
+        IzXKoc/g=; b=F3HFKyzmmg9oxz/ntz+T5+XmYWDdcKhDALX/MCh6lte6GAO0rwY
+        RBcb9BjyHp8jfuTcYbT2DGUA7udnstUUZIewC+T0DtyeWdgMhJ1CexKem91iZYy6
+        UGw2pgxXP/vDrtoAus18DfE8shNHIcPiyWKBOSmk2oal3LptEcqVlRX5oMXDlu+F
+        AF3WjmY+PFO3tr/zpnWzGTezgZo9zPILxeYMg5+G5Z3PliD3q1tUvm7YPhNsNzVD
+        HoedNHyyAhNO8zmJjwOqJoRSuLUhPzLCExH6mpE/QFi0Bg+8usyrjuGQNliseQTW
+        6ABGQ2psafUCNfRw0eRgJHREBL0cIJ+Q2tA==
+X-ME-Sender: <xms:oWU8ZeXAoF6deDOgUPP8C37DgzNB5zqFhXIx_UUlwRxfnidgTS8Z2g>
+    <xme:oWU8Zan70Wjt7XusI4EdTk3INHaBCZEJTNlCgkgZlPjZw0Z6YaGz4P_VlXKBWXG_o
+    5b2IrLD46uq>
+X-ME-Received: <xmr:oWU8ZSZVrs7Ok5a2SVYQddVtyrDFBGeXIx6fztF1Qj5veEm0bWwUb_g9XUSv6pumVvon4v7pGkdUm-az3drwVgg2PHpCw3QRedu6TbUw3NTX1OazR_mEExRB>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrleehgdegjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfuvfevfhfhjggtgfesthekredttdefjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    egvdetvedvfeeivdeuueejgeetvdehlefhheethfekgfejueffgeeugfekudfhjeenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
+    hthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:oWU8ZVXRpVhBFGvyoK3JORYTRAnTL3oJArZ07m9g1A_Y-w8QOstB-Q>
+    <xmx:oWU8ZYlDTKU5SN-q5rutlx_Ge-tniBq1-2UQr9mEKu7oWWOVtiafRQ>
+    <xmx:oWU8ZadzWHfaQcb9lqILEARfOFF8xBUCqVR_7FZPHZC2aNr_ddzUkA>
+    <xmx:omU8ZT-ELN39i8ylB1sZIrKCuC2WhY8InDf7as0RWilH3weOxiBTDQ>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 27 Oct 2023 21:36:27 -0400 (EDT)
+Message-ID: <c938a7d9-aa9e-a3ad-a001-fb9022d21475@themaw.net>
+Date:   Sat, 28 Oct 2023 09:36:23 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 2/6] mounts: keep list of mounts in an rbtree
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew House <mattlloydhouse@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20231025140205.3586473-1-mszeredi@redhat.com>
+ <20231025140205.3586473-3-mszeredi@redhat.com>
+ <b69c1c17-35f9-351e-79a9-ef3ef5481974@themaw.net>
+ <CAOssrKe76uZ5t714=Ta7GMLnZdS4QGm-fOfT9q5hNFe1fsDMVg@mail.gmail.com>
+Content-Language: en-US
+From:   Ian Kent <raven@themaw.net>
+In-Reply-To: <CAOssrKe76uZ5t714=Ta7GMLnZdS4QGm-fOfT9q5hNFe1fsDMVg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwDnP5EaeDtl3AMCAw--.27269S4
-X-Coremail-Antispam: 1UD129KBjvJXoW3AF13XF15ZF17Jr17Cr1rJFb_yoW7Kw1fpF
-        srKay5Jrn5ZFy2kF4kAFW5ua1fK39Ygry7Wrs8Cwn2yFyqvr10qF4DAry5uFy3WrWrtr1I
-        qFsIgr4UCw1Dt3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
-        A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-        w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-        WxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-        Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-        Ij6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-        Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64
-        vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-        jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2I
-        x0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4UJVW0owCI42IY6xAI
-        w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x
-        0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7IUbp6wtUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj5WUfgAAsI
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On 27/10/23 16:17, Miklos Szeredi wrote:
+> On Fri, Oct 27, 2023 at 5:12 AM Ian Kent <raven@themaw.net> wrote:
+>> On 25/10/23 22:02, Miklos Szeredi wrote:
+>>> The mnt.mnt_list is still used to set up the mount tree and for
+>>> propagation, but not after the mount has been added to a namespace.  Hence
+>>> mnt_list can live in union with rb_node.  Use MNT_ONRB mount flag to
+>>> validate that the mount is on the correct list.
+>> Is that accurate, propagation occurs at mount and also at umount.
+> When propagating a mount, the new mount's mnt_list is used as a head
+> for the new propagated mounts.  These are then moved to the rb tree by
+> commit_tree().
+>
+> When umounting there's a "to umount" list called tmp_list in
+> umount_tree(), this list is used to collect direct umounts and then
+> propagated umounts.  The direct umounts are added in umount_tree(),
+> the propagated ones umount_one().
+>
+> Note: umount_tree() can be called on a not yet finished mount, in that
+> case the mounts are still on mnt_list, so umount_tree() needs to deal
+> with both.
+>
+>> IDG how the change to umount_one() works, it looks like umount_list()
+>>
+>> uses mnt_list. It looks like propagate_umount() is also using mnt_list.
+>>
+>>
+>> Am I missing something obvious?
+> So when a mount is part of a namespace (either anonymous or not) it is
+> on the rb tree, when not then it can temporarily be on mnt_list.
+> MNT_ONRB flag is used to validate that the mount is on the list that
+> we expect it to be on, but also to detect the case of the mount setup
+> being aborted.
+>
+> We could handle the second case differently, since we should be able
+> to tell when we are removing the mount from a namespace and when we
+> are aborting a mount, but this was the least invasive way to do this.
 
-Remove hardcoded calls to integrity functions from the LSM infrastructure
-and, instead, register them in integrity_lsm_init() with the IMA or EVM
-LSM ID (the first non-NULL returned by ima_get_lsm_id() and
-evm_get_lsm_id()).
+Thanks for the explanation, what you've said is essentially what I
 
-Also move the global declaration of integrity_inode_get() to
-security/integrity/integrity.h, so that the function can be still called by
-IMA.
+understood reading the series.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- include/linux/integrity.h      | 26 --------------------------
- security/integrity/iint.c      | 30 +++++++++++++++++++++++++++++-
- security/integrity/integrity.h |  7 +++++++
- security/security.c            |  9 +--------
- 4 files changed, 37 insertions(+), 35 deletions(-)
 
-diff --git a/include/linux/integrity.h b/include/linux/integrity.h
-index 2ea0f2f65ab6..afaae7ad26f4 100644
---- a/include/linux/integrity.h
-+++ b/include/linux/integrity.h
-@@ -21,38 +21,12 @@ enum integrity_status {
- 
- /* List of EVM protected security xattrs */
- #ifdef CONFIG_INTEGRITY
--extern struct integrity_iint_cache *integrity_inode_get(struct inode *inode);
--extern void integrity_inode_free(struct inode *inode);
- extern void __init integrity_load_keys(void);
- 
- #else
--static inline struct integrity_iint_cache *
--				integrity_inode_get(struct inode *inode)
--{
--	return NULL;
--}
--
--static inline void integrity_inode_free(struct inode *inode)
--{
--	return;
--}
--
- static inline void integrity_load_keys(void)
- {
- }
- #endif /* CONFIG_INTEGRITY */
- 
--#ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
--
--extern int integrity_kernel_module_request(char *kmod_name);
--
--#else
--
--static inline int integrity_kernel_module_request(char *kmod_name)
--{
--	return 0;
--}
--
--#endif /* CONFIG_INTEGRITY_ASYMMETRIC_KEYS */
--
- #endif /* _LINUX_INTEGRITY_H */
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 3d9cf5041739..31a0fda3f1a1 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -171,7 +171,7 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
-  *
-  * Free the integrity information(iint) associated with an inode.
-  */
--void integrity_inode_free(struct inode *inode)
-+static void integrity_inode_free(struct inode *inode)
- {
- 	struct integrity_iint_cache *iint;
- 
-@@ -193,11 +193,39 @@ static void iint_init_once(void *foo)
- 	memset(iint, 0, sizeof(*iint));
- }
- 
-+static struct security_hook_list integrity_hooks[] __ro_after_init = {
-+	LSM_HOOK_INIT(inode_free_security, integrity_inode_free),
-+#ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
-+	LSM_HOOK_INIT(kernel_module_request, integrity_kernel_module_request),
-+#endif
-+};
-+
-+/*
-+ * Perform the initialization of the 'integrity', 'ima' and 'evm' LSMs to
-+ * ensure that the management of integrity metadata is working at the time
-+ * IMA and EVM hooks are registered to the LSM infrastructure, and to keep
-+ * the original ordering of IMA and EVM functions as when they were hardcoded.
-+ */
- static int __init integrity_lsm_init(void)
- {
-+	const struct lsm_id *lsmid;
-+
- 	iint_cache =
- 	    kmem_cache_create("iint_cache", sizeof(struct integrity_iint_cache),
- 			      0, SLAB_PANIC, iint_init_once);
-+	/*
-+	 * Obtain either the IMA or EVM LSM ID to register integrity-specific
-+	 * hooks under that LSM, since there is no LSM ID assigned to the
-+	 * 'integrity' LSM.
-+	 */
-+	lsmid = ima_get_lsm_id();
-+	if (!lsmid)
-+		lsmid = evm_get_lsm_id();
-+	/* No point in continuing, since both IMA and EVM are disabled. */
-+	if (!lsmid)
-+		return 0;
-+
-+	security_add_hooks(integrity_hooks, ARRAY_SIZE(integrity_hooks), lsmid);
- 	init_ima_lsm();
- 	init_evm_lsm();
- 	return 0;
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 7534ec06324e..e4df82d6f6e7 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -180,6 +180,7 @@ struct integrity_iint_cache {
-  * integrity data associated with an inode.
-  */
- struct integrity_iint_cache *integrity_iint_find(struct inode *inode);
-+struct integrity_iint_cache *integrity_inode_get(struct inode *inode);
- 
- int integrity_kernel_read(struct file *file, loff_t offset,
- 			  void *addr, unsigned long count);
-@@ -266,12 +267,18 @@ static inline int __init integrity_load_cert(const unsigned int id,
- #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
- int asymmetric_verify(struct key *keyring, const char *sig,
- 		      int siglen, const char *data, int datalen);
-+int integrity_kernel_module_request(char *kmod_name);
- #else
- static inline int asymmetric_verify(struct key *keyring, const char *sig,
- 				    int siglen, const char *data, int datalen)
- {
- 	return -EOPNOTSUPP;
- }
-+
-+static inline int integrity_kernel_module_request(char *kmod_name)
-+{
-+	return 0;
-+}
- #endif
- 
- #ifdef CONFIG_IMA_APPRAISE_MODSIG
-diff --git a/security/security.c b/security/security.c
-index 5bbeedd534b6..c70664c947be 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -19,7 +19,6 @@
- #include <linux/kernel.h>
- #include <linux/kernel_read_file.h>
- #include <linux/lsm_hooks.h>
--#include <linux/integrity.h>
- #include <linux/fsnotify.h>
- #include <linux/mman.h>
- #include <linux/mount.h>
-@@ -1590,7 +1589,6 @@ static void inode_free_by_rcu(struct rcu_head *head)
-  */
- void security_inode_free(struct inode *inode)
- {
--	integrity_inode_free(inode);
- 	call_void_hook(inode_free_security, inode);
- 	/*
- 	 * The inode may still be referenced in a path walk and
-@@ -3175,12 +3173,7 @@ int security_kernel_create_files_as(struct cred *new, struct inode *inode)
-  */
- int security_kernel_module_request(char *kmod_name)
- {
--	int ret;
--
--	ret = call_int_hook(kernel_module_request, 0, kmod_name);
--	if (ret)
--		return ret;
--	return integrity_kernel_module_request(kmod_name);
-+	return call_int_hook(kernel_module_request, 0, kmod_name);
- }
- 
- /**
--- 
-2.34.1
+But I still haven't quite got this so I'll need to spend more time
 
+on this part of the patch series.
+
+
+That's not a problem, ;).
+
+
+Ian
+
+>
+> Thanks,
+> Miklos
+>
