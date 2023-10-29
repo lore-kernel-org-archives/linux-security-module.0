@@ -2,132 +2,139 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 508B1C0032E
-	for <linux-security-module@archiver.kernel.org>; Sat, 28 Oct 2023 15:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 758FFC4332F
+	for <linux-security-module@archiver.kernel.org>; Sun, 29 Oct 2023 10:58:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229509AbjJ1PcZ (ORCPT
+        id S229482AbjJ2K6J (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 28 Oct 2023 11:32:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43958 "EHLO
+        Sun, 29 Oct 2023 06:58:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjJ1PcY (ORCPT
+        with ESMTP id S229446AbjJ2K6J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 28 Oct 2023 11:32:24 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7390C1
-        for <linux-security-module@vger.kernel.org>; Sat, 28 Oct 2023 08:32:21 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-d84c24a810dso2309681276.2
-        for <linux-security-module@vger.kernel.org>; Sat, 28 Oct 2023 08:32:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1698507141; x=1699111941; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P9xPC9NHDnis/tKwqDaO8Fh0oY0AWUAqa7N79wuFtP0=;
-        b=AftYDS3AppvSwdOq3+MUKRr1+B5oaovB3F0BIwxfDF/lnbL3/gUAtNZPDRMoELf/G2
-         5ylcKmJtq920s6qckXiVvVZZCG2Ze0T9S+JxH41YrAnMME/ef2hM5r+g8NwBcRekdxwH
-         qTUeP5safmdOaJQRCLDEmf8A3+VWUGbsCezrjhCwQWYdrWTGllxuj5iXVtwQLZCQEM6P
-         JSqgpzyEEKcySDFNjG1Xe3ahKQCAIgoAe/Tqzs2zco8gu81L3MVr8XYcNcGXMtUO5YoT
-         kziEV3aq5zTrSyYlYM3LMZoCAQ7qlnjKsJlvFgVCqrdnmRtmcQBZ5dOtsHV+pHZaFm7E
-         Qb2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698507141; x=1699111941;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P9xPC9NHDnis/tKwqDaO8Fh0oY0AWUAqa7N79wuFtP0=;
-        b=q9V2aICSMxiJUIcaFEqganPsp1UJr0q6X4PThDw7PbAm6mgakNAoAXHrlzgs5PVPOL
-         BK6bOeY5kGX8anncH2BB7jWHJRpLdme1YaZrG/1yyO+QVUsEOAPWAzd7f8zvnyAadDIA
-         MADPXt8ISUxvbToyl+ayxvukcQX+XIbqQtwIrU+lxgGBp152Oyx9icd9xe3t7vz8MJo4
-         bPLkAk6D7XyK4LFqIUCzaYoXqSIQF8kh89u9TctuFHrYsALOQJwX3P5wNdWTCXZog2QL
-         lAPTSsZXVRMvps/16Ru2Dw/3T5YTO/c80qBBGEn6xe5neEOaP9s2ovpZvE+nfOJjQxfW
-         oFfA==
-X-Gm-Message-State: AOJu0YyLpH9p3+yxvM+n7T4RR9MyZPWCWhLPIDPRQ/TOCvp3gdVCh0X8
-        m+3YFQHc9g6ohIpyFMytJhAmrDzMjkj8d88oNX5R
-X-Google-Smtp-Source: AGHT+IH/+cFzrYWntaF2t3N6XBlCbFamqUfA6rqLbDa1k+5nR7UoY21wECRbfQxJnJKSh5KxSsQUJ9HSmbNH5FMQBLI=
-X-Received: by 2002:a25:7694:0:b0:da0:cea9:2b43 with SMTP id
- r142-20020a257694000000b00da0cea92b43mr5296609ybc.41.1698507140829; Sat, 28
- Oct 2023 08:32:20 -0700 (PDT)
+        Sun, 29 Oct 2023 06:58:09 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0550DBE
+        for <linux-security-module@vger.kernel.org>; Sun, 29 Oct 2023 03:58:04 -0700 (PDT)
+Received: from fsav411.sakura.ne.jp (fsav411.sakura.ne.jp [133.242.250.110])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 39TAw1YC028196;
+        Sun, 29 Oct 2023 19:58:01 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav411.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp);
+ Sun, 29 Oct 2023 19:58:01 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 39TAw1hV028191
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Sun, 29 Oct 2023 19:58:01 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <c35322f3-3f89-40d2-a5fb-7226fb93d202@I-love.SAKURA.ne.jp>
+Date:   Sun, 29 Oct 2023 19:57:59 +0900
 MIME-Version: 1.0
-References: <20231027130320.69469330@canb.auug.org.au>
-In-Reply-To: <20231027130320.69469330@canb.auug.org.au>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 28 Oct 2023 11:32:10 -0400
-Message-ID: <CAHC9VhQ+Nt7CrLxSZcOVNEtAypruOmM0ST0P0JJMrOq4XYmAkw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the apparmor tree with the security tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 01/11] LSM: Identify modules by more than name
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
         linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        mic@digikod.net
+References: <20230912205658.3432-1-casey@schaufler-ca.com>
+ <20230912205658.3432-2-casey@schaufler-ca.com>
+ <e391877d-cd10-3c6d-1f57-0aaa32846a8e@I-love.SAKURA.ne.jp>
+ <30d1110a-7583-4fa1-85c8-d6ce362f5ae2@schaufler-ca.com>
+ <2fb1a8cd-88d0-40f0-b3d8-cfa8b71e7dd9@I-love.SAKURA.ne.jp>
+ <29fe1e5b-4bf3-4bb3-b8de-fbd8dfc25be3@schaufler-ca.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <29fe1e5b-4bf3-4bb3-b8de-fbd8dfc25be3@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 26, 2023 at 10:03=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.or=
-g.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the apparmor tree got a conflict in:
->
->   security/apparmor/lsm.c
->
-> between commit:
->
->   3c3bda37ca1d ("AppArmor: Add selfattr hooks")
->
-> from the security tree and commits:
->
->   bd7bd201ca46 ("apparmor: combine common_audit_data and apparmor_audit_d=
-ata")
->   d20f5a1a6e79 ("apparmor: rename audit_data->label to audit_data->subj_l=
-abel")
->
-> from the apparmor tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+On 2023/10/21 23:11, Casey Schaufler wrote:
+>> If the system call returning LSM ID value for SELinux but does not tell
+>> the caller of that system call whether a specific action might be permitted,
+>> what information does LSM ID value tell?
+> 
+> It tells the caller that the LSM is active on the system. That's it.
+> Just like reading /sys/kernel/security/lsm.
 
-Thanks Stephen.
+Then, the
 
-John, can you take a look and make sure this is correct (it looks okay to m=
-e)?
+  The calling application can use this list determine what LSM
+  specific actions it might take. That might include choosing an
+  output format, determining required privilege or bypassing
+  security module specific behavior.
 
-> diff --cc security/apparmor/lsm.c
-> index 5e16c03936b9,4d34180e9799..000000000000
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@@ -771,16 -868,11 +917,16 @@@ out
->         return error;
->
->   fail:
-> -       aad(&sa)->label =3D begin_current_label_crit_section();
-> +       ad.subj_label =3D begin_current_label_crit_section();
->  -      ad.info =3D name;
->  +      if (attr =3D=3D LSM_ATTR_CURRENT)
-> -               aad(&sa)->info =3D "current";
-> ++              ad.info =3D "current";
->  +      else if (attr =3D=3D LSM_ATTR_EXEC)
-> -               aad(&sa)->info =3D "exec";
-> ++              ad.info =3D "exec";
->  +      else
-> -               aad(&sa)->info =3D "invalid";
-> -       aad(&sa)->error =3D error =3D -EINVAL;
-> -       aa_audit_msg(AUDIT_APPARMOR_DENIED, &sa, NULL);
-> -       end_current_label_crit_section(aad(&sa)->label);
-> ++              ad.info =3D "invalid";
-> +       ad.error =3D error =3D -EINVAL;
-> +       aa_audit_msg(AUDIT_APPARMOR_DENIED, &ad, NULL);
-> +       end_current_label_crit_section(ad.subj_label);
->         goto out;
->   }
+part should be removed from the description. Instead, the description should
+emphasis that the numeric LSM ID values are there in order to allow
+identifying what LSM modules are active without interpreting string LSM names
+in /sys/kernel/security/lsm .
 
---=20
-paul-moore.com
+
+
+>> What does "choosing an output format", "determining required privilege",
+>> "bypassing security module specific behavior" mean? How can they choose
+>> meaningful output format, determine appropriate privilege, bypass security
+>> module specific behavior (if the only information the caller can know from
+>> the LSM ID value were what LSMs are enabled) ?
+> 
+> If Smack and SELinux not enabled on the system there is no point in
+> setting up a netlabel configuration, for example.
+
+I know nothing about netlabel. But can userspace make such assumption from
+this granularity? For example, if TOMOYO and AppArmor start supporting
+netlabel configuration, your assumption
+
+  If Smack and SELinux not enabled on the system there is no point in
+  setting up a netlabel configuration
+
+becomes no longer true. It is also possible that a new LSM implementation
+obtains an LSM ID for that LSM, and starts supporting netlabel configuration
+some timer later. I don't know if we come to the point where we can enable
+SELinux and Smack at the same time. But when it becomes possible to enable
+SELinux and Smack at the same time, the userspace might have already written
+code based on current situation that netlabel configuration are exclusive. Then,
+someday starting to return both LSM ID for SELinux and LSM ID for Smack might
+confuse userspace.
+
+Thus, it might be safe to determine what LSMs are active from the LSM ID values
+returned from the system call. But it is not safe to assume what functionality
+is active (e.g. netlabel configuration is interpreted) from the LSM ID values
+returned from the system call.
+
+If you want to allow userspace to make such assumption using the system call,
+the granularity the system call returns needs to be what access control mechanism
+(not only LSM modules but also eBPF-based access control mechanisms) hooks which
+LSM hooks. More information than interpreting string LSM names in 
+/sys/kernel/security/lsm will be needed.
+
+> 
+>>> I wish we could stop people from saying "BPF-based LSM". BPF is the LSM. The
+>>> eBPF programs that implement a "policy" are NOT a LSM. There needs to be a
+>>> name for that, but LSM  is  not  it.
+>> My understanding is that "BPF is not an LSM module but infrastructure for using
+>> LSM hooks".
+> 
+> As BPF is implemented as a LSM I suggest your statement is incorrect.
+
+Enumerating only LSM modules are not useful. "ID for access control mechanisms
+that can be controlled via LSM hooks" will be needed.
+
+> 
+>>
+>> The patch description lacks relationship between LSM ID value and data.
+>> In other words, why LSM ID values are needed (and are useful for doing what).
+>> If the only information the caller can know from the LSM ID value were
+>> what LSMs are enabled (i.e. the content of /sys/kernel/security/lsm ), why
+>> bother to use LSM ID values? (Yes, integer comparison is faster than string
+>> comparison. But that is not enough justification for not allowing out-of-tree
+>> LSMs and eBPF-based access control mechanisms to have stable LSM ID values.)
+>>
+
+I conclude that LSM ID values are pointless and are NOT needed.
+
