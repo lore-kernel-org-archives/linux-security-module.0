@@ -2,125 +2,97 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D0ABC4167B
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Oct 2023 16:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 775EAC4167B
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Oct 2023 20:46:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229606AbjJ3QxF (ORCPT
+        id S230062AbjJ3Uq7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Oct 2023 12:53:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32890 "EHLO
+        Mon, 30 Oct 2023 16:46:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231395AbjJ3QxF (ORCPT
+        with ESMTP id S229498AbjJ3Uq6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Oct 2023 12:53:05 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 582E6BD
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Oct 2023 09:53:02 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-d9caf5cc948so4073604276.0
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Oct 2023 09:53:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1698684781; x=1699289581; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AwMkDKq50ThyVlHovkeE8yCjhEm0AE7bUk6nbrhZfxM=;
-        b=YKBb1Aj2+IRRySeQUZXYNMwt2mr//XsiT3uMYDwhMr7+p+eL/kSW1rpi0nkVXlUcCK
-         Zor9RJ4soIH/K34NCaqhntx46T+PTQBa717CyfMhoo47okIq3Q1ZVRRnbdFYzsAxkHo6
-         rs+1VJFqq+kqAMrsvuB72ziZwp/lFGrqqFJfOMGu8TNVAitv6TpmAUVw2wJnnTkXtFve
-         TtmLm9ESkw1Bw0OoEmpWth4frkXuZJc98tkh2RBr7aACQBxa1a40GG0tufrC/o1/wRK8
-         cK3n/B32tP/LolYa5jZ2pI+OpfnSmdFVrvScyECR8mzykR9i5sezgOJnxhdCdRX4zd4H
-         mm3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698684781; x=1699289581;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AwMkDKq50ThyVlHovkeE8yCjhEm0AE7bUk6nbrhZfxM=;
-        b=gbmgOrGyxYbWWIYn5ymbS7HQ4jk+OI1YWFQ9ZuFOSlG+53+ChwumFEguYmNfDhQla2
-         umDdaix+uJA8gZdxplkIAooFORJ2Ke6rQggIEUMQnbCFborV16r0ZzBZBQHbRaRIAH6m
-         oXNsI6uQ7p4TYhJdD5eVs2GYJRbiSs8r1byJkK2FFsm4UC99cqIA6kj1aNDFhWGJmdL/
-         kd52/Jqnz7nSiM9n8+fYPHMiZgZfEEtUMirFT254Nevv78e0qSpnGvqHvG3NG4KNqq1c
-         lDZ4+2nv9ku4T4AfpGLhWBI088CMyFshk/FtrbB6LHLdELhMthlWvLvi0vaW6ft0LkkR
-         Ki4w==
-X-Gm-Message-State: AOJu0YyHaqPt45aUGb9wboVztDaHkhnlha8xvOvA9HqSLwDi8DIQ1ef1
-        0d6kKPgbrNhu1vcm/0yh8YpV/XRY6c31jHjZAZ+P
-X-Google-Smtp-Source: AGHT+IFkLfWhGCayc4iafAS6NLVIK86aPcbOyiKSW3nz6bt+VLjKZOg2dnWJbC/trJ4dWgWvUnEG6LhFmfDGu+txJRg=
-X-Received: by 2002:a05:6902:1366:b0:d9a:6b48:db71 with SMTP id
- bt6-20020a056902136600b00d9a6b48db71mr9561887ybb.62.1698684781293; Mon, 30
- Oct 2023 09:53:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20231027130320.69469330@canb.auug.org.au> <CAHC9VhQ+Nt7CrLxSZcOVNEtAypruOmM0ST0P0JJMrOq4XYmAkw@mail.gmail.com>
- <4b4eb40c-b65a-46e2-9e23-5412a9cdcad0@canonical.com>
-In-Reply-To: <4b4eb40c-b65a-46e2-9e23-5412a9cdcad0@canonical.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 30 Oct 2023 12:52:50 -0400
-Message-ID: <CAHC9VhQbxJ4-z4Hp7CSmtcTNOWGFeQF2eEyct9=nHCMN_89YXw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the apparmor tree with the security tree
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mon, 30 Oct 2023 16:46:58 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A4EBDF;
+        Mon, 30 Oct 2023 13:46:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1698698812;
+        bh=CpTdll+8XVH6r91t8HW1QM29SCZcmEjYvGOHhG+p4n8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Npu7eACCrxV4K8pPP/N0tTZUxX/RH74VmHBG2sFcmSU44BkNxjEFjs7b5GKSstz9K
+         lTJTIa/vatadaGcHkD7EiR+r0fpfUJ/sfusr+hOqd2ydWc6rjMGXFlrYi7DtCE/4Ez
+         DBrbSlIWYvNemJKH3WYrQbUL57HZAqLWpUg7Q6TfSxUNYcvRDKrLqHbYwMmM7r/Nrb
+         v8+Z4Tgwhw4nmgUlLvELl2E6K7yFGOQP7Gs6nsheqH7RbUyP0kIjNYXKsn14WnXcHO
+         8gileDbWPblxDvD0AWILYP/xEtDB04LbpTk9rVKKFx3U3F02g88mQ2kE3Etvu8NJpj
+         U6mzfZ8dcBHzA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4SK50q4hySz4wc6;
+        Tue, 31 Oct 2023 07:46:51 +1100 (AEDT)
+Date:   Tue, 31 Oct 2023 07:46:49 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     John Johansen <john.johansen@canonical.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: linux-next: manual merge of the apparmor tree with the security
+ tree
+Message-ID: <20231031074649.3bdbec45@canb.auug.org.au>
+In-Reply-To: <CAHC9VhQbxJ4-z4Hp7CSmtcTNOWGFeQF2eEyct9=nHCMN_89YXw@mail.gmail.com>
+References: <20231027130320.69469330@canb.auug.org.au>
+        <CAHC9VhQ+Nt7CrLxSZcOVNEtAypruOmM0ST0P0JJMrOq4XYmAkw@mail.gmail.com>
+        <4b4eb40c-b65a-46e2-9e23-5412a9cdcad0@canonical.com>
+        <CAHC9VhQbxJ4-z4Hp7CSmtcTNOWGFeQF2eEyct9=nHCMN_89YXw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/aiy5N31_hmy5w4rYuRJ_1ME";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Oct 29, 2023 at 5:09=E2=80=AFPM John Johansen
-<john.johansen@canonical.com> wrote:
-> On 10/28/23 08:32, Paul Moore wrote:
-> > On Thu, Oct 26, 2023 at 10:03=E2=80=AFPM Stephen Rothwell <sfr@canb.auu=
-g.org.au> wrote:
-> >>
-> >> Hi all,
-> >>
-> >> Today's linux-next merge of the apparmor tree got a conflict in:
-> >>
-> >>    security/apparmor/lsm.c
-> >>
-> >> between commit:
-> >>
-> >>    3c3bda37ca1d ("AppArmor: Add selfattr hooks")
-> >>
-> >> from the security tree and commits:
-> >>
-> >>    bd7bd201ca46 ("apparmor: combine common_audit_data and apparmor_aud=
-it_data")
-> >>    d20f5a1a6e79 ("apparmor: rename audit_data->label to audit_data->su=
-bj_label")
-> >>
-> >> from the apparmor tree.
-> >>
-> >> I fixed it up (see below) and can carry the fix as necessary. This
-> >> is now fixed as far as linux-next is concerned, but any non trivial
-> >> conflicts should be mentioned to your upstream maintainer when your tr=
-ee
-> >> is submitted for merging.  You may also want to consider cooperating
-> >> with the maintainer of the conflicting tree to minimise any particular=
-ly
-> >> complex conflicts.
-> >
-> > Thanks Stephen.
-> >
-> > John, can you take a look and make sure this is correct (it looks okay =
-to me)?
-> >
-> yes its good, thanks Stephan.
->
-> Acked-by: John Johansen <john.johansen@canonical.com>
->
-> Paul just to double check, to make sure we get ordering on this right
->     3c3bda37ca1d ("AppArmor: Add selfattr hooks")
->
-> is part of the Three basic syscalls series, the plan is still to have tha=
-t
-> series bake in next for a full cycle?
+--Sig_/aiy5N31_hmy5w4rYuRJ_1ME
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Yes, that's still the plan.  Once v6.7-rc1 is out I'll rebase the LSM
-syscall patches and I expect the vast majority of these conflicts to
-disappear, although I'm sure we'll pick up some new ones with the rest
-of the v6.7-rcX cycle :)
+Hi Paul,
 
+On Mon, 30 Oct 2023 12:52:50 -0400 Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Sun, Oct 29, 2023 at 5:09=E2=80=AFPM John Johansen <john.johansen@cano=
+nical.com> wrote:
+> >
+> > is part of the Three basic syscalls series, the plan is still to have t=
+hat
+> > series bake in next for a full cycle? =20
+>=20
+> Yes, that's still the plan.  Once v6.7-rc1 is out I'll rebase the LSM
+> syscall patches and I expect the vast majority of these conflicts to
+> disappear, although I'm sure we'll pick up some new ones with the rest
+> of the v6.7-rcX cycle :)
+
+These patches should not be in linux-next until after v6.7-rc1.
 --=20
-paul-moore.com
+Cheers,
+Stephen Rothwell
+
+--Sig_/aiy5N31_hmy5w4rYuRJ_1ME
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmVAFjkACgkQAVBC80lX
+0GyboAf/XupUfVXdKLvYrSCUgrEzBwzYxm90+mL6+/RD/KibOPbvIq0hLzt2rtFf
+qukY435IlE0d9qTl0zlf2AjGjTlLcJq99h39PfJdjX7RvePVFbThlnnk1uyQl1rl
+jmr5BJrEfB33mBg7v8q2v/dqTC7jXdHSeYbuYMwD9JDTuXY1MKOoYcD4FOw8jyiy
+re6d2+6FpNj4rIm7raCAYYja62PkHRudcwpVgXHwVNRwxjSihC2y8b9vtU6MUqsh
+ovqArLTSpdHvrFULpphUmRUuKNww/9Qf73OofVLiDZgLBsB3hzFXk8QWsLIM23X/
+Km+nVuCW4kZ4tcLeLF88fLO8XWfh8A==
+=gVFO
+-----END PGP SIGNATURE-----
+
+--Sig_/aiy5N31_hmy5w4rYuRJ_1ME--
