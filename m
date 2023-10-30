@@ -2,109 +2,127 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD585C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Oct 2023 21:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ECE2C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Oct 2023 22:00:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229498AbjJ3VUe (ORCPT
+        id S231153AbjJ3WAQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Oct 2023 17:20:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59336 "EHLO
+        Mon, 30 Oct 2023 18:00:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229755AbjJ3VUd (ORCPT
+        with ESMTP id S230106AbjJ3WAP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Oct 2023 17:20:33 -0400
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D438E1;
-        Mon, 30 Oct 2023 14:20:30 -0700 (PDT)
+        Mon, 30 Oct 2023 18:00:15 -0400
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B9DBF7
+        for <linux-security-module@vger.kernel.org>; Mon, 30 Oct 2023 15:00:12 -0700 (PDT)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-5a7c7262d5eso47873477b3.1
+        for <linux-security-module@vger.kernel.org>; Mon, 30 Oct 2023 15:00:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1698700831; x=1730236831;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=xwZy335tyH6F30dB1h6lhdiab1XKJwNJ1JIvZO/o5hc=;
-  b=d7WdwEKo5xTPtVoX9NT/LN13p3p0UBJyHzhNsWJ6XTg6fas+vhqMhirb
-   hefACUBHI7904SPYHI3TckYaH5FmGIXt59HDFweT0nMsfsga0nInUcC2W
-   K0YhwRL8n4VnruhZ5G+EmezXVodAf4Va2Ect0+OD2b9kwbbC486jC2w0T
-   k=;
-X-IronPort-AV: E=Sophos;i="6.03,264,1694736000"; 
-   d="scan'208";a="367389888"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-pdx-2c-m6i4x-b1c0e1d0.us-west-2.amazon.com) ([10.43.8.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2023 21:20:28 +0000
-Received: from smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev (pdx2-ws-svc-p26-lb5-vlan3.pdx.amazon.com [10.39.38.70])
-        by email-inbound-relay-pdx-2c-m6i4x-b1c0e1d0.us-west-2.amazon.com (Postfix) with ESMTPS id 7143D80F74;
-        Mon, 30 Oct 2023 21:20:26 +0000 (UTC)
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:5261]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.52.67:2525] with esmtp (Farcaster)
- id 62dc71b0-f8f1-4cb4-b680-a053351c0b34; Mon, 30 Oct 2023 21:20:25 +0000 (UTC)
-X-Farcaster-Flow-ID: 62dc71b0-f8f1-4cb4-b680-a053351c0b34
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.39; Mon, 30 Oct 2023 21:20:25 +0000
-Received: from 88665a182662.ant.amazon.com (10.187.171.32) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1118.39;
- Mon, 30 Oct 2023 21:20:22 +0000
-From:   Kuniyuki Iwashima <kuniyu@amazon.com>
-To:     <paul@paul-moore.com>
-CC:     <davem@davemloft.net>, <dccp@vger.kernel.org>,
-        <dsahern@kernel.org>, <edumazet@google.com>, <huw@codeweavers.com>,
-        <kuba@kernel.org>, <kuni1840@gmail.com>, <kuniyu@amazon.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <pabeni@redhat.com>
-Subject: Re: [PATCH v1 net 2/2] dccp/tcp: Call security_inet_conn_request() after setting IPv6 addresses.
-Date:   Mon, 30 Oct 2023 14:20:15 -0700
-Message-ID: <20231030212015.57180-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <CAHC9VhTrm2shkh=FHcjnqFpDLFCoBwGfsyoSuDH3UFSOeZt+HA@mail.gmail.com>
-References: <CAHC9VhTrm2shkh=FHcjnqFpDLFCoBwGfsyoSuDH3UFSOeZt+HA@mail.gmail.com>
+        d=paul-moore.com; s=google; t=1698703211; x=1699308011; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vl6sqkkoABwL8j4SqRZMYnBmV6Bv+iWE2PJFKhoRckg=;
+        b=QYpRhANy+JNMyamRlCGUiXHlNx2IHowH0Cy9kALa3G+r9NbHeZUZLAhKQ0X444ogQA
+         Jp9oVoEH/UrnkwsfBIVroHB2dG3718wU2af9PqNjPV4G50fzNcT4RiTgj8I/3G5r+JxF
+         RBPdeiF8bkeRj2+onW7pTZnA+pXsDplo3bF0+vKdGyLZbPewXR4dfUBdctHD0xZQysss
+         qQ9XZ8ozlZiXQ+K77arKLLaa1OQuYklOTLfGSE7BEoBDEMW0X/0bQyJeVUKbItcVRCJi
+         zJMIBZVEbOhumZy2MU0wJOiiHs02X2fqgqzNkBxU7dX/XIDpOG4sKhk9yPCw5ZqcPI5q
+         ywfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698703211; x=1699308011;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vl6sqkkoABwL8j4SqRZMYnBmV6Bv+iWE2PJFKhoRckg=;
+        b=OH9Kypp6JJEcyUdI9k9mz/QvBVTWv2BrU4YsV3Dn9u9+uZe9IYth9Dba6kX+L351Kg
+         yPhJUmNqfXJVbnW58lfKzmyub4e0nr0a7HsXteEO2ecb483jBNa7CVFmBQ5vtJHdeVEW
+         C+gTJ/iJm1AV4ZFKNaT0SiOLgCnfS7E4EMxWxLe9MEwKwjFZCpqN2xyX9xrapoISeb7N
+         m1uBDrqU4OOYW9byTV23ocuVUPuLaMk3M6PRwKmUfMXV73/sxCITsR9Si4zrN8ek+Ww8
+         ETNvVE4odHRjylW3mjns8GtbhwjbdPu5kxbQvkbW+jbHKkW2IqcMwzcjwmXRrt4HVvhH
+         cxJA==
+X-Gm-Message-State: AOJu0Yy+hgj9Q2KlM9HamSL3wWMlQYkB3NBOAwe0SZw2aJ+GtwJSIzKN
+        ju5UnF/9oA7JmV/yeF9jSQbYakE7Uh+qCPkxFm7u
+X-Google-Smtp-Source: AGHT+IEHNaD64e1BKBY2tf605KyQyK8JDATjsKkIBbGALDgeIlIz/WaVE3v3elWG/kwwdddXmmLCJjBKqymvgbKBLZQ=
+X-Received: by 2002:a25:9083:0:b0:d99:de67:c3dc with SMTP id
+ t3-20020a259083000000b00d99de67c3dcmr9656516ybl.2.1698703211378; Mon, 30 Oct
+ 2023 15:00:11 -0700 (PDT)
 MIME-Version: 1.0
+References: <CAHC9VhTrm2shkh=FHcjnqFpDLFCoBwGfsyoSuDH3UFSOeZt+HA@mail.gmail.com>
+ <20231030212015.57180-1-kuniyu@amazon.com>
+In-Reply-To: <20231030212015.57180-1-kuniyu@amazon.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 30 Oct 2023 18:00:00 -0400
+Message-ID: <CAHC9VhRM_-414uEaYjkMDRgWU9LbESuVzvC+KF-m=5zNTNvj-w@mail.gmail.com>
+Subject: Re: [PATCH v1 net 2/2] dccp/tcp: Call security_inet_conn_request()
+ after setting IPv6 addresses.
+To:     Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc:     davem@davemloft.net, dccp@vger.kernel.org, dsahern@kernel.org,
+        edumazet@google.com, huw@codeweavers.com, kuba@kernel.org,
+        kuni1840@gmail.com, linux-security-module@vger.kernel.org,
+        netdev@vger.kernel.org, pabeni@redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.187.171.32]
-X-ClientProxiedBy: EX19D036UWB002.ant.amazon.com (10.13.139.139) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 30 Oct 2023 17:12:33 -0400
-> On Mon, Oct 30, 2023 at 4:12 PM Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
+On Mon, Oct 30, 2023 at 5:20=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon.co=
+m> wrote:
+> From: Paul Moore <paul@paul-moore.com>
+> Date: Mon, 30 Oct 2023 17:12:33 -0400
+> > On Mon, Oct 30, 2023 at 4:12=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazo=
+n.com> wrote:
+> > >
+> > > Initially, commit 4237c75c0a35 ("[MLSXFRM]: Auto-labeling of child
+> > > sockets") introduced security_inet_conn_request() in some functions
+> > > where reqsk is allocated.  The hook is added just after the allocatio=
+n,
+> > > so reqsk's IPv6 remote address was not initialised then.
+> > >
+> > > However, SELinux/Smack started to read it in netlbl_req_setattr()
+> > > after commit e1adea927080 ("calipso: Allow request sockets to be
+> > > relabelled by the lsm.").
+> > >
+> > > Commit 284904aa7946 ("lsm: Relocate the IPv4 security_inet_conn_reque=
+st()
+> > > hooks") fixed that kind of issue only in TCPv4 because IPv6 labeling =
+was
+> > > not supported at that time.  Finally, the same issue was introduced a=
+gain
+> > > in IPv6.
+> > >
+> > > Let's apply the same fix on DCCPv6 and TCPv6.
+> > >
+> > > Fixes: e1adea927080 ("calipso: Allow request sockets to be relabelled=
+ by the lsm.")
+> > > Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+> > > ---
+> > > Cc: Huw Davies <huw@codeweavers.com>
+> > > Cc: Paul Moore <paul@paul-moore.com>
+> > > ---
+> > >  net/dccp/ipv6.c       | 6 +++---
+> > >  net/ipv6/syncookies.c | 7 ++++---
+> > >  2 files changed, 7 insertions(+), 6 deletions(-)
 > >
-> > Initially, commit 4237c75c0a35 ("[MLSXFRM]: Auto-labeling of child
-> > sockets") introduced security_inet_conn_request() in some functions
-> > where reqsk is allocated.  The hook is added just after the allocation,
-> > so reqsk's IPv6 remote address was not initialised then.
+> > Thanks for catching this and submitting a patch!
 > >
-> > However, SELinux/Smack started to read it in netlbl_req_setattr()
-> > after commit e1adea927080 ("calipso: Allow request sockets to be
-> > relabelled by the lsm.").
-> >
-> > Commit 284904aa7946 ("lsm: Relocate the IPv4 security_inet_conn_request()
-> > hooks") fixed that kind of issue only in TCPv4 because IPv6 labeling was
-> > not supported at that time.  Finally, the same issue was introduced again
-> > in IPv6.
-> >
-> > Let's apply the same fix on DCCPv6 and TCPv6.
-> >
-> > Fixes: e1adea927080 ("calipso: Allow request sockets to be relabelled by the lsm.")
-> > Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> > ---
-> > Cc: Huw Davies <huw@codeweavers.com>
-> > Cc: Paul Moore <paul@paul-moore.com>
-> > ---
-> >  net/dccp/ipv6.c       | 6 +++---
-> >  net/ipv6/syncookies.c | 7 ++++---
-> >  2 files changed, 7 insertions(+), 6 deletions(-)
-> 
-> Thanks for catching this and submitting a patch!
-> 
-> It seems like we should also update dccp_v4_conn_request(), what do you think?
+> > It seems like we should also update dccp_v4_conn_request(), what do you=
+ think?
+>
+> Yes, and it's done in patch 1 as it had a separate Fixes tag.
+> https://lore.kernel.org/netdev/20231030201042.32885-2-kuniyu@amazon.com/
 
-Yes, and it's done in patch 1 as it had a separate Fixes tag.
-https://lore.kernel.org/netdev/20231030201042.32885-2-kuniyu@amazon.com/
+Great, thanks for doing that.  netdev folks, please feel free to add
+my ACK to both patches in the patchset.
 
-It seems get_maintainers.pl suggested another email address of
-yours for patch 1.  It would be good to update .mailmap ;)
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-Thanks!
+> It seems get_maintainers.pl suggested another email address of
+> yours for patch 1.  It would be good to update .mailmap ;)
+
+Yes, I really should, thanks for the reminder.  I'll send an update to
+Linus once I get the merge window PRs sorted out.
+
+--=20
+paul-moore.com
