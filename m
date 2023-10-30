@@ -2,173 +2,168 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0724C4167B
-	for <linux-security-module@archiver.kernel.org>; Sun, 29 Oct 2023 21:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEAF3C4167B
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Oct 2023 05:37:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229778AbjJ2VKA (ORCPT
+        id S229517AbjJ3Fhj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 29 Oct 2023 17:10:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47826 "EHLO
+        Mon, 30 Oct 2023 01:37:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbjJ2VJ7 (ORCPT
+        with ESMTP id S231189AbjJ3Fhi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 29 Oct 2023 17:09:59 -0400
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B02A9BC;
-        Sun, 29 Oct 2023 14:09:56 -0700 (PDT)
-Received: from [10.8.192.2] (unknown [50.39.103.33])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 622423F1FB;
-        Sun, 29 Oct 2023 21:09:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1698613794;
-        bh=dGClXk9EY5AHSyaW5Xw39OJfNx1tcK12x9rgTjVKDk0=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=ItFS9TtzrjgjJ5wA/KMQDlqtvn1qsyx8QzcF9TMtGhgF8dgpip7OBeLGSbcagx8qH
-         bR4Z6BqCbwHUZ6ybr18tCfsDlMBHojtXORiiU5Q1RF9Y2k6DIKk6reO3uQbhENXWmS
-         EEKWahmTKmI3Jl2K1gNhyxp2cpSYL07zXaRGcHjnwzXyBjkJFjc3u7qI0Em/XHP8us
-         wvI1lP15ZlaE0eQkATZUgz408g2PGaBJlVaH0B493uTwLJlqBtuIE8pLQmL+ICywOj
-         UKj9SsRB2NDd3OqwafuAoS92udGFoCImnHcLrhB1HhFBPR+9Bh6U11IWgH6yEuCgZi
-         +Bq1xLIp5vjLA==
-Message-ID: <4b4eb40c-b65a-46e2-9e23-5412a9cdcad0@canonical.com>
-Date:   Sun, 29 Oct 2023 14:09:47 -0700
+        Mon, 30 Oct 2023 01:37:38 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ABABBC;
+        Sun, 29 Oct 2023 22:37:34 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.west.internal (Postfix) with ESMTP id 1235D3200937;
+        Mon, 30 Oct 2023 01:37:30 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Mon, 30 Oct 2023 01:37:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
+        1698644250; x=1698730650; bh=KlwqU26/TGhYg5i9/XVkf+zLh3xMVm+1VcQ
+        XYi/nzIU=; b=bxjFLz7GBjkmMmXRmQYLNY5j/3HDKh5dSWNuahcG7NeEqMKTEwv
+        9/qDvl+AgqwxTQQKbd93b/Ba91Z3NpKX6eW0IF1IaYlshR0AYQHBCJDkBtuI0Jsd
+        pzKeVCPk8/DuotQIC5pxP5EpDpRtaQ7f0m2Qt6YAfAsaeWgaMBZt6FxB8SsLJRAK
+        c3t69pQuxSFJtt2giTn3oDV+LRxkQuqUhwDCYhbCz18hY+93bPEbG/0F3sQflRSg
+        0x/E/bfOsl6dpkgaqMRmvwRzGHgwCGqpaeckRLBa/Emk6im0A8U1GWNqVZziMnZc
+        DcYMbEGBAN95jY71+zNKfr25zUpU1VwtZOw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+        1698644250; x=1698730650; bh=KlwqU26/TGhYg5i9/XVkf+zLh3xMVm+1VcQ
+        XYi/nzIU=; b=LSDQuzyZ852n5SdjaR0R0vJHVrHJkmUAG1EOBZazSTv5+J2RjI6
+        G24gBrLLpWpfRb+hbrVt9qgTzoCzQSTYd/567ySL53FXzsjamMS9Mqi5DAWNwvW2
+        j1HA2grZ3ecdAy+511jmhJzBw6iIa/jbFb7VN8kL0WELUFL+bd7LVkRllo/5tLqG
+        0XnSotZZ3rFRUGHKYb8A/Ix9nqsJ+rimXsnkuZwsUb1sG4qE3OBn+/o/SEgwmtJn
+        B21V+cFVsf7wwh5Lx818MriK4apSEpjxFZpRBo4ghyl7KOrjgoqp4eHt48wnhVkC
+        BQsazS/T+49+JHlcJhmv4n0ZFIX/BhE9HNQ==
+X-ME-Sender: <xms:GUE_ZVP0TWY92X1mUJs17BYd3bpq6iNcnlONyiTus16yLm91HicCPw>
+    <xme:GUE_ZX-1LRc-pBMS7B9wV_3zTjdF_d8rM5QXSaqf64ZjUrFLT8JhPFxKqZSFEj39v
+    QnQwEluiZkj>
+X-ME-Received: <xmr:GUE_ZUS5-lnTzT63ChMIS0aWSvbJr2bwK8f4TIdA-b_5C1skVxmZyt9eDcQNSBtw9uD93H6S4niTqAgY-g1kmKIfqoiJ4dQgaF4hUhMj8QxUVUAUcoCX7fcV>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrleelgdekjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfuhffvvehfjggtgfesthekredttdefjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    eiveelkefgtdegudefudeftdelteejtedvheeuleevvdeluefhuddtieegveelkeenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
+    hthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:GUE_ZRtmx5n2Pt8GUxOwfcskEpb8rIhqA3f7NpkOR0M2G1Wh5T2lPg>
+    <xmx:GUE_Zdd_ymZLR_JgM40DbvS-kVQywf3xCuqk8a3vBahdpVM8MQv3ug>
+    <xmx:GUE_Zd00LoCgk4mlqBY4XBfLimcgMlzTozWvmZsbmdby04rM2sNfsw>
+    <xmx:GkE_Zb1HqFhb2XhpLKpKMcZtSVj3Y4gcEv6x5vbGNL-ekOOuuMWJjQ>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 30 Oct 2023 01:37:24 -0400 (EDT)
+Message-ID: <dfb5f3d5-8db8-34af-d605-14112e8cc485@themaw.net>
+Date:   Mon, 30 Oct 2023 13:37:18 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the apparmor tree with the security
- tree
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 2/6] mounts: keep list of mounts in an rbtree
+From:   Ian Kent <raven@themaw.net>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew House <mattlloydhouse@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20231025140205.3586473-1-mszeredi@redhat.com>
+ <20231025140205.3586473-3-mszeredi@redhat.com>
+ <b69c1c17-35f9-351e-79a9-ef3ef5481974@themaw.net>
+ <CAOssrKe76uZ5t714=Ta7GMLnZdS4QGm-fOfT9q5hNFe1fsDMVg@mail.gmail.com>
+ <c938a7d9-aa9e-a3ad-a001-fb9022d21475@themaw.net>
 Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-References: <20231027130320.69469330@canb.auug.org.au>
- <CAHC9VhQ+Nt7CrLxSZcOVNEtAypruOmM0ST0P0JJMrOq4XYmAkw@mail.gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <CAHC9VhQ+Nt7CrLxSZcOVNEtAypruOmM0ST0P0JJMrOq4XYmAkw@mail.gmail.com>
+In-Reply-To: <c938a7d9-aa9e-a3ad-a001-fb9022d21475@themaw.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/28/23 08:32, Paul Moore wrote:
-> On Thu, Oct 26, 2023 at 10:03 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On 28/10/23 09:36, Ian Kent wrote:
+> On 27/10/23 16:17, Miklos Szeredi wrote:
+>> On Fri, Oct 27, 2023 at 5:12 AM Ian Kent <raven@themaw.net> wrote:
+>>> On 25/10/23 22:02, Miklos Szeredi wrote:
+>>>> The mnt.mnt_list is still used to set up the mount tree and for
+>>>> propagation, but not after the mount has been added to a 
+>>>> namespace.  Hence
+>>>> mnt_list can live in union with rb_node.  Use MNT_ONRB mount flag to
+>>>> validate that the mount is on the correct list.
+>>> Is that accurate, propagation occurs at mount and also at umount.
+>> When propagating a mount, the new mount's mnt_list is used as a head
+>> for the new propagated mounts.  These are then moved to the rb tree by
+>> commit_tree().
 >>
->> Hi all,
+>> When umounting there's a "to umount" list called tmp_list in
+>> umount_tree(), this list is used to collect direct umounts and then
+>> propagated umounts.  The direct umounts are added in umount_tree(),
+>> the propagated ones umount_one().
 >>
->> Today's linux-next merge of the apparmor tree got a conflict in:
+>> Note: umount_tree() can be called on a not yet finished mount, in that
+>> case the mounts are still on mnt_list, so umount_tree() needs to deal
+>> with both.
 >>
->>    security/apparmor/lsm.c
+>>> IDG how the change to umount_one() works, it looks like umount_list()
+>>>
+>>> uses mnt_list. It looks like propagate_umount() is also using mnt_list.
+>>>
+>>>
+>>> Am I missing something obvious?
+>> So when a mount is part of a namespace (either anonymous or not) it is
+>> on the rb tree, when not then it can temporarily be on mnt_list.
+>> MNT_ONRB flag is used to validate that the mount is on the list that
+>> we expect it to be on, but also to detect the case of the mount setup
+>> being aborted.
 >>
->> between commit:
->>
->>    3c3bda37ca1d ("AppArmor: Add selfattr hooks")
->>
->> from the security tree and commits:
->>
->>    bd7bd201ca46 ("apparmor: combine common_audit_data and apparmor_audit_data")
->>    d20f5a1a6e79 ("apparmor: rename audit_data->label to audit_data->subj_label")
->>
->> from the apparmor tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary. This
->> is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
-> 
-> Thanks Stephen.
-> 
-> John, can you take a look and make sure this is correct (it looks okay to me)?
-> 
-yes its good, thanks Stephan.
+>> We could handle the second case differently, since we should be able
+>> to tell when we are removing the mount from a namespace and when we
+>> are aborting a mount, but this was the least invasive way to do this.
+>
+> Thanks for the explanation, what you've said is essentially what I
+>
+> understood reading the series.
+>
+>
+> But I still haven't quite got this so I'll need to spend more time
+>
+> on this part of the patch series.
+>
+>
+> That's not a problem, ;).
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+After cloning your git tree and looking in there I don't see what
 
-Paul just to double check, to make sure we get ordering on this right
-    3c3bda37ca1d ("AppArmor: Add selfattr hooks")
+I was concerned about so I think I was confused by obscurity by
 
-is part of the Three basic syscalls series, the plan is still to have that
-series bake in next for a full cycle?
+diff rather than seeing a real problem, ;)
 
-Regardless, I will wait until security-ext gets merged to send my pull
-request, and handle the conflict if its present.
 
->> diff --cc security/apparmor/lsm.c
->> index 5e16c03936b9,4d34180e9799..000000000000
->> --- a/security/apparmor/lsm.c
->> +++ b/security/apparmor/lsm.c
->> @@@ -771,16 -868,11 +917,16 @@@ out
->>          return error;
+Still that union worries me a little bit so I'll keep looking at
+
+the code for a while.
+
+
+>
+>
+> Ian
+>
 >>
->>    fail:
->> -       aad(&sa)->label = begin_current_label_crit_section();
->> +       ad.subj_label = begin_current_label_crit_section();
->>   -      ad.info = name;
->>   +      if (attr == LSM_ATTR_CURRENT)
->> -               aad(&sa)->info = "current";
->> ++              ad.info = "current";
->>   +      else if (attr == LSM_ATTR_EXEC)
->> -               aad(&sa)->info = "exec";
->> ++              ad.info = "exec";
->>   +      else
->> -               aad(&sa)->info = "invalid";
->> -       aad(&sa)->error = error = -EINVAL;
->> -       aa_audit_msg(AUDIT_APPARMOR_DENIED, &sa, NULL);
->> -       end_current_label_crit_section(aad(&sa)->label);
->> ++              ad.info = "invalid";
->> +       ad.error = error = -EINVAL;
->> +       aa_audit_msg(AUDIT_APPARMOR_DENIED, &ad, NULL);
->> +       end_current_label_crit_section(ad.subj_label);
->>          goto out;
->>    }
-> 
-
+>> Thanks,
+>> Miklos
+>>
+>
