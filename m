@@ -2,236 +2,59 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4500DC4332F
-	for <linux-security-module@archiver.kernel.org>; Sat,  4 Nov 2023 03:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B62CC4332F
+	for <linux-security-module@archiver.kernel.org>; Sat,  4 Nov 2023 04:57:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229770AbjKDDUT (ORCPT
+        id S230402AbjKDE5S (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Nov 2023 23:20:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50976 "EHLO
+        Sat, 4 Nov 2023 00:57:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbjKDDUS (ORCPT
+        with ESMTP id S229509AbjKDE5R (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Nov 2023 23:20:18 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13592D42;
-        Fri,  3 Nov 2023 20:20:15 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-9c53e8b7cf4so396897066b.1;
-        Fri, 03 Nov 2023 20:20:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699068013; x=1699672813; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SOW5NXugmBea90l4dKOafO6jV5KmHbw2vGXiSLGBI9E=;
-        b=JrSDZA9DCfPytgU0t9Ztg/QkJTsd5zv5FHuyOXdAPV6jfUXLBB5Mutkb9Dpy49tEcq
-         xi5+nKLQOBU4ravY3fNU4dYKrHLGA2thf23lfqcoOx+3zt0YQVomXZ2DrtlmS/Q/PncP
-         UlN2ArUQxiyhBVhAWTVJFzRoqcRcY9N3KwTkJsXmzLJz/YHcGu7zKo7/stMNqXQvL2tc
-         6bZoJpKviL3r+NhdhmhBVccc4M7npjzlbhfcT2gR/t34MZzExS8Y/RAj7wmBA4gk5vqi
-         vXUTfWOs//4ZYlTOCStAZNXvB4szrsJbl+Q9XsIE+J09PzzlCbXsJCtvSG8PT1CjBB3Y
-         msZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699068013; x=1699672813;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SOW5NXugmBea90l4dKOafO6jV5KmHbw2vGXiSLGBI9E=;
-        b=wpTLBBj9vTbVFAztrhBfzDZ+DsqMj7zdM+2GiiSQbTNuSWqZTQr2bWhBNLp4p4UXp7
-         3ZL5RdEh4nieC95Y3c5bSVBFOi0qRhcEi13ynosVRr6JxpdOQQ0hcJyvNJouDj8WG+sF
-         91M88rnNpVDomTIOykuRMN+5k9cF/p2HW98Dx8CzzJc0QwOLjtfU0T7Vau6Z555RcMMd
-         zDQm56GJgJ128pPe3n/rsxz+Ozf8HyF52uyp3sXT/7shoYU5w8ZHAokicLWfxrDfNMUK
-         fYXS5ONstKe1A6MooYyeLwvpAryCbqltA90pRbBAu5rh1SUMflcvnZ3R6cQaTPGZ6A+t
-         vLog==
-X-Gm-Message-State: AOJu0Ywgqb32yhwsCVrsBg1B+4uJPmLuKxCqYcbUG+onOoMtB0gqYegf
-        cTuFuVtORNZTQZC2WTzhmqqgDelPqA5w30zFTcYGXPHDjzc=
-X-Google-Smtp-Source: AGHT+IH8xLd1pq+w86VCm/cKNI64XRbSamj+/kboZu69o9awtVYVZLgfXtThmlzUdhhsNjVZgvHogC1tJieS0oaaRIE=
-X-Received: by 2002:a17:907:9617:b0:9d3:f436:6826 with SMTP id
- gb23-20020a170907961700b009d3f4366826mr7837195ejc.38.1699068013082; Fri, 03
- Nov 2023 20:20:13 -0700 (PDT)
+        Sat, 4 Nov 2023 00:57:17 -0400
+X-Greylist: delayed 4219 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 03 Nov 2023 21:57:15 PDT
+Received: from mail.profitpathwaygo.com (mail.profitpathwaygo.com [141.94.21.238])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4958BE0
+        for <linux-security-module@vger.kernel.org>; Fri,  3 Nov 2023 21:57:15 -0700 (PDT)
+Received: by mail.profitpathwaygo.com (Postfix, from userid 1002)
+        id 0536248991; Tue, 31 Oct 2023 08:31:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=profitpathwaygo.com;
+        s=mail; t=1698741327;
+        bh=qp3Ofokho6Ql+WtI8ZPVilyHYhskXL7fod7u9CWs8W4=;
+        h=Date:From:To:Subject:From;
+        b=PPFELliC1xG3hVA1bNKQ0ymMy+TbhljrsDJQCgvmfYc7AQVxzJDPLG1uhHba3R+Ue
+         LD/oAMGNBXxIxAxkLiU9hmbIm93b1mmzzSYBMT6eRa4O9bJrDaCya5CX+YTKFuJHTV
+         ZuWF0btQHn4tOpHu5xZkz3PBscwkg1//rfoqwtWA9p/uwEiWoGOpgKV0qEFuXfeICQ
+         djPZQ0BDjh40gtlrcrSeVbG+0UROUANIpRcvLtoNikR7MRPPY+XT9GTS8467s4VtaE
+         o2WnE+7mkEhkYRveBQjDVQdXUegt5ed34ZcXiyh5kBsvGkaOQ3f66Z+Tk/3p9Bw3FG
+         nQpfWX8oOTe9w==
+Received: by mail.profitpathwaygo.com for <linux-security-module@vger.kernel.org>; Tue, 31 Oct 2023 08:30:48 GMT
+Message-ID: <20231031074500-0.1.2t.15sfo.0.n96j0qp1k1@profitpathwaygo.com>
+Date:   Tue, 31 Oct 2023 08:30:48 GMT
+From:   "Adam Charachuta" <adam.charachuta@profitpathwaygo.com>
+To:     <linux-security-module@vger.kernel.org>
+Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania_?=
+X-Mailer: mail.profitpathwaygo.com
 MIME-Version: 1.0
-References: <20231103190523.6353-12-andrii@kernel.org> <202311040829.XrnpSV8z-lkp@intel.com>
-In-Reply-To: <202311040829.XrnpSV8z-lkp@intel.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Fri, 3 Nov 2023 20:20:01 -0700
-Message-ID: <CAEf4Bza8V6nGgR6Nb5sEvWUMdAhKi63qCoiP4RJV85sLO7ia6Q@mail.gmail.com>
-Subject: Re: [PATCH v9 bpf-next 11/17] bpf,lsm: add BPF token LSM hooks
-To:     kernel test robot <lkp@intel.com>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, paul@paul-moore.com, brauner@kernel.org,
-        oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        kernel-team@meta.com, sargun@sargun.me
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 3, 2023 at 5:38=E2=80=AFPM kernel test robot <lkp@intel.com> wr=
-ote:
->
-> Hi Andrii,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on bpf-next/master]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bp=
-f-align-CAP_NET_ADMIN-checks-with-bpf_capable-approach/20231104-031714
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git =
-master
-> patch link:    https://lore.kernel.org/r/20231103190523.6353-12-andrii%40=
-kernel.org
-> patch subject: [PATCH v9 bpf-next 11/17] bpf,lsm: add BPF token LSM hooks
-> config: m68k-defconfig (https://download.01.org/0day-ci/archive/20231104/=
-202311040829.XrnpSV8z-lkp@intel.com/config)
-> compiler: m68k-linux-gcc (GCC) 13.2.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20231104/202311040829.XrnpSV8z-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202311040829.XrnpSV8z-lkp=
-@intel.com/
->
-> All errors (new ones prefixed by >>):
->
->    In file included from include/net/scm.h:8,
->                     from include/linux/netlink.h:9,
->                     from include/uapi/linux/neighbour.h:6,
->                     from include/linux/netdevice.h:45,
->                     from include/net/sock.h:46,
->                     from include/linux/tcp.h:19,
->                     from include/linux/ipv6.h:95,
->                     from include/net/ipv6.h:12,
->                     from include/linux/sunrpc/addr.h:14,
->                     from fs/nfsd/nfsd.h:22,
->                     from fs/nfsd/state.h:42,
->                     from fs/nfsd/xdr4.h:40,
->                     from fs/nfsd/trace.h:17,
->                     from fs/nfsd/trace.c:4:
-> >> include/linux/security.h:2084:92: error: parameter 2 ('cmd') has incom=
-plete type
->     2084 | static inline int security_bpf_token_allow_cmd(const struct bp=
-f_token *token, enum bpf_cmd cmd)
->          |                                                               =
-                ~~~~~~~~~~~~~^~~
-> >> include/linux/security.h:2084:19: error: function declaration isn't a =
-prototype [-Werror=3Dstrict-prototypes]
->     2084 | static inline int security_bpf_token_allow_cmd(const struct bp=
-f_token *token, enum bpf_cmd cmd)
->          |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    cc1: some warnings being treated as errors
+Dzie=C5=84 dobry,
 
-Ok, so apparently enum forward declaration doesn't work with static
-inline functions.
+zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
+=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
+o dalszych rozm=C3=B3w.=20
 
-Would it be ok to just #include <linux/bpf.h> in this file?
+Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
+=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
+=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
+strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
 
-$ git diff
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 1d6edbf45d1c..cfe6176824c2 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -32,6 +32,7 @@
- #include <linux/string.h>
- #include <linux/mm.h>
- #include <linux/sockptr.h>
-+#include <linux/bpf.h>
-
- struct linux_binprm;
- struct cred;
-@@ -60,7 +61,6 @@ struct fs_parameter;
- enum fs_value_type;
- struct watch;
- struct watch_notification;
--enum bpf_cmd;
-
- /* Default (no) options for the capable function */
- #define CAP_OPT_NONE 0x0
+Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
 
 
-If not, then I guess another alternative would be to pass `int cmd`
-instead of `enum bpf_cmd cmd`, but that doesn't seems like the best
-solution, tbh.
-
-Paul, any preferences?
-
-> --
->    In file included from include/net/scm.h:8,
->                     from include/linux/netlink.h:9,
->                     from include/uapi/linux/neighbour.h:6,
->                     from include/linux/netdevice.h:45,
->                     from include/net/sock.h:46,
->                     from include/linux/tcp.h:19,
->                     from include/linux/ipv6.h:95,
->                     from include/net/ipv6.h:12,
->                     from include/linux/sunrpc/addr.h:14,
->                     from fs/nfsd/nfsd.h:22,
->                     from fs/nfsd/export.c:21:
-> >> include/linux/security.h:2084:92: error: parameter 2 ('cmd') has incom=
-plete type
->     2084 | static inline int security_bpf_token_allow_cmd(const struct bp=
-f_token *token, enum bpf_cmd cmd)
->          |                                                               =
-                ~~~~~~~~~~~~~^~~
-> >> include/linux/security.h:2084:19: error: function declaration isn't a =
-prototype [-Werror=3Dstrict-prototypes]
->     2084 | static inline int security_bpf_token_allow_cmd(const struct bp=
-f_token *token, enum bpf_cmd cmd)
->          |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    fs/nfsd/export.c: In function 'exp_rootfh':
->    fs/nfsd/export.c:1017:34: warning: variable 'inode' set but not used [=
--Wunused-but-set-variable]
->     1017 |         struct inode            *inode;
->          |                                  ^~~~~
->    cc1: some warnings being treated as errors
-> --
->    In file included from include/net/scm.h:8,
->                     from include/linux/netlink.h:9,
->                     from include/uapi/linux/neighbour.h:6,
->                     from include/linux/netdevice.h:45,
->                     from include/net/sock.h:46,
->                     from include/linux/tcp.h:19,
->                     from include/linux/ipv6.h:95,
->                     from include/net/ipv6.h:12,
->                     from include/linux/sunrpc/addr.h:14,
->                     from fs/nfsd/nfsd.h:22,
->                     from fs/nfsd/state.h:42,
->                     from fs/nfsd/xdr4.h:40,
->                     from fs/nfsd/trace.h:17,
->                     from fs/nfsd/trace.c:4:
-> >> include/linux/security.h:2084:92: error: parameter 2 ('cmd') has incom=
-plete type
->     2084 | static inline int security_bpf_token_allow_cmd(const struct bp=
-f_token *token, enum bpf_cmd cmd)
->          |                                                               =
-                ~~~~~~~~~~~~~^~~
-> >> include/linux/security.h:2084:19: error: function declaration isn't a =
-prototype [-Werror=3Dstrict-prototypes]
->     2084 | static inline int security_bpf_token_allow_cmd(const struct bp=
-f_token *token, enum bpf_cmd cmd)
->          |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    In file included from fs/nfsd/trace.h:1958:
->    include/trace/define_trace.h:95:42: fatal error: ./trace.h: No such fi=
-le or directory
->       95 | #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
->          |                                          ^
->    cc1: some warnings being treated as errors
->    compilation terminated.
->
->
-> vim +2084 include/linux/security.h
->
->   2083
-> > 2084  static inline int security_bpf_token_allow_cmd(const struct bpf_t=
-oken *token, enum bpf_cmd cmd)
->   2085  {
->   2086          return 0;
->   2087  }
->   2088
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+Pozdrawiam serdecznie
+Adam Charachuta
