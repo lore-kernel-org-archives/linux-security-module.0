@@ -2,101 +2,119 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B466C4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Oct 2023 12:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE859C4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Oct 2023 18:41:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344268AbjJaMdm (ORCPT
+        id S231774AbjJaSlz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 31 Oct 2023 08:33:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37838 "EHLO
+        Tue, 31 Oct 2023 14:41:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344044AbjJaMdl (ORCPT
+        with ESMTP id S231676AbjJaSly (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 31 Oct 2023 08:33:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78FFCDB
-        for <linux-security-module@vger.kernel.org>; Tue, 31 Oct 2023 05:32:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1698755540;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=01Cuhkq/fZzHdIhk7dn370LtT6qVzQS52GEFoCa52Y8=;
-        b=EdtapYptE4dF+vxj562P0hSPy2uAL35r53AHMWkD7YCa42vB6SsbZurbPJOaBQ6Urson7A
-        hsD1AuHpQs+wGt29wsc71LxUjbMO1DI0MRrtyhePN/GGE7CBE/8Vq16XWW1g6qQy1mN2gX
-        KM2ADC+jJw5m3EWP2F3vjCdgiaXTCMo=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-534-U-TJKo_NP0my1sbQVWSu8A-1; Tue, 31 Oct 2023 08:32:12 -0400
-X-MC-Unique: U-TJKo_NP0my1sbQVWSu8A-1
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7789a691086so687849785a.0
-        for <linux-security-module@vger.kernel.org>; Tue, 31 Oct 2023 05:32:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698755532; x=1699360332;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=01Cuhkq/fZzHdIhk7dn370LtT6qVzQS52GEFoCa52Y8=;
-        b=I8epz3A3JAsgn2jXOPcdp5th+G0zZSWjC61eISJ3A3+mGzhHbuvbhJiTXI/ocC0yGt
-         inUIcYuJTT3UIxodsqj/0ZqRfaHj4fZMREY11+wcH3n1CVTdt+R6sd+o4sdrgBGOKfnt
-         SWqyBjA78OgZJ3FaEzl33bQhXa7hUZMr/PDnS8WIhOPOdoZwuA/UBJ4nE0mzMrN8ShKO
-         S1WrcghGtXIdz6/CpZVGAS8XvlSrOqhYFotQxWyvHrzoQvITFV3MLtEfhjvoGZ6amdJ4
-         WEsPjRMDDCzV87bJZudTrFCe1MNd5oetmKl83/MWuwLwyQzV9rh2ESHaq05HPwWllnQ3
-         cY7Q==
-X-Gm-Message-State: AOJu0YyOEiJWfXCOdghq6WD5pt9YcMo1QHnseSye0fRSchJc1yxoGtxi
-        gYGlUI+5OxkRqRjrqsJ/8G4VrdleZE0Ke7Oo3kb75nEdQbxaDwpCzbS94y62AIMJnw3srDvJS+q
-        T7U0a5a3ZFxL4joennS4kEtsg+efQShWAkzyk
-X-Received: by 2002:a05:620a:4109:b0:775:681d:dc06 with SMTP id j9-20020a05620a410900b00775681ddc06mr15146856qko.63.1698755532024;
-        Tue, 31 Oct 2023 05:32:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFtP5GHt2Cr+NcxBoAmMp/ehlVMchXJA7rXREzot7xDH4Twt77eyMwn8XXa3E8PspHWfUt1Kg==
-X-Received: by 2002:a05:620a:4109:b0:775:681d:dc06 with SMTP id j9-20020a05620a410900b00775681ddc06mr15146835qko.63.1698755531737;
-        Tue, 31 Oct 2023 05:32:11 -0700 (PDT)
-Received: from localhost.localdomain (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id g23-20020a05620a13d700b00777063b89casm457697qkl.5.2023.10.31.05.32.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Oct 2023 05:32:11 -0700 (PDT)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org,
-        Benjamin Coddington <bcodding@redhat.com>,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] lsm: fix default return value for vm_enough_memory
-Date:   Tue, 31 Oct 2023 13:32:06 +0100
-Message-ID: <20231031123207.758655-2-omosnace@redhat.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20231031123207.758655-1-omosnace@redhat.com>
-References: <20231031123207.758655-1-omosnace@redhat.com>
+        Tue, 31 Oct 2023 14:41:54 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BA82A3;
+        Tue, 31 Oct 2023 11:41:52 -0700 (PDT)
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39VIeBdf007624;
+        Tue, 31 Oct 2023 18:41:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=OhxT7s0ROgOqX4hjBEGVRBCrZOsmBqayX4UGjZbJ7XQ=;
+ b=VXuz51C5mgsiTlQbo/F/IXnP9QNNssQabkb7KGCswBqgjk01+QZRt1OUhJajtcdWQKEC
+ 1o3/HQYa1SujTZSfONi8B9zZAw3wbpJtu4Fna5IYrBlw3otITpvym7JOr3PEZcLV/PVs
+ BdAfCnlhyzJyFgL/BKKLy/iuarhcvnCr3Y9jgAkwmu/wqMA8dYFWisqfKpPQC4brID8g
+ BdgKV9fXti9cRb5+3EnlBuHy+1EDQC4VMa3Xc8mrOH69RnXProIrsEROt3nXInSX04ZD
+ ngKlIDU1SEJtAL/+3X0a6+5AwNy1g4XZSEnI6e/giWw7GLufWh9LJREEUyrbQGlfJnTi Uw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3u372dr2vd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 31 Oct 2023 18:41:31 +0000
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39VIeP4J009617;
+        Tue, 31 Oct 2023 18:41:30 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3u372dr2kj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 31 Oct 2023 18:41:30 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 39VGWqqY011300;
+        Tue, 31 Oct 2023 18:37:37 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+        by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3u1euk29em-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 31 Oct 2023 18:37:37 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+        by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39VIba8i17760930
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Oct 2023 18:37:37 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A13445805D;
+        Tue, 31 Oct 2023 18:37:36 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6F6F558061;
+        Tue, 31 Oct 2023 18:37:20 +0000 (GMT)
+Received: from [9.2.202.85] (unknown [9.2.202.85])
+        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Tue, 31 Oct 2023 18:37:20 +0000 (GMT)
+Message-ID: <1f7bdb13-859e-46ce-b327-8043e7dbd598@linux.ibm.com>
+Date:   Tue, 31 Oct 2023 14:37:19 -0400
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC V2] IMA Log Snapshotting Design Proposal
+To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+        peterhuewe@gmx.de, Jarkko Sakkinen <jarkko@kernel.org>,
+        jgg@ziepe.ca, bhe@redhat.com, vgoyal@redhat.com,
+        Dave Young <dyoung@redhat.com>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        jmorris@namei.org, Paul Moore <paul@paul-moore.com>,
+        serge@hallyn.com,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-security-module@vger.kernel.org
+Cc:     Tyler Hicks <tyhicks@linux.microsoft.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Sush Shringarputale <sushring@linux.microsoft.com>
+References: <6c0c32d5-e636-2a0e-5bdf-538c904ceea3@linux.microsoft.com>
+Content-Language: en-US
+From:   Ken Goldman <kgold@linux.ibm.com>
+In-Reply-To: <6c0c32d5-e636-2a0e-5bdf-538c904ceea3@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="US-ASCII"; x-default=true
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: U8ETMQ8tREdR3K8DbiFNGY17v4kgfZX2
+X-Proofpoint-ORIG-GUID: kPRWCWYcnM1PEs87tSV-atqzBwEDSCsz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-31_05,2023-10-31_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 adultscore=0 bulkscore=0 spamscore=0 mlxscore=0
+ mlxlogscore=993 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2310240000 definitions=main-2310310150
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-1 is the return value that implements a "no-op" hook, not 0.
+On 10/19/2023 2:49 PM, Tushar Sugandhi wrote:
+>    f. A new event, "snapshot_aggregate", will be computed and measured
+>         in the IMA log as part of this feature.  It should help the
+>         remote-attestation client/service to benefit from the IMA log
+>         snapshot feature.
+>         The "snapshot_aggregate" event is described in more details in
+>         section "D.1 Snapshot Aggregate Event" below.
 
-Fixes: 98e828a0650f ("security: Refactor declaration of LSM hooks")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- include/linux/lsm_hook_defs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+What is the use case for the snapshot aggregate?  My thinking is:
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 99b8176c3738d..4dd55fdfec267 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -48,7 +48,7 @@ LSM_HOOK(int, 0, quota_on, struct dentry *dentry)
- LSM_HOOK(int, 0, syslog, int type)
- LSM_HOOK(int, 0, settime, const struct timespec64 *ts,
- 	 const struct timezone *tz)
--LSM_HOOK(int, 0, vm_enough_memory, struct mm_struct *mm, long pages)
-+LSM_HOOK(int, 1, vm_enough_memory, struct mm_struct *mm, long pages)
- LSM_HOOK(int, 0, bprm_creds_for_exec, struct linux_binprm *bprm)
- LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, const struct file *file)
- LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
--- 
-2.41.0
+1. The platform must retain the entire measurement list.  Early 
+measurements can never be discarded because a new quote verifier
+must receive the entire log starting at the first measurement.
 
+In this case, isn't the snapshot aggregate redundant?
+
+2. There is a disadvantage to redundant data.  The verifier must support 
+this new event type. It receives this event and must validate the 
+aggregate against the snapshot-ed events. This is an attack surface. 
+The attacker can send an aggregate and snapshot-ed measurements that do 
+not match to exploit a flaw in the verifier.
