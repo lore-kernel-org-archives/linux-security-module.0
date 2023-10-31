@@ -2,121 +2,99 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74641C4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Oct 2023 02:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE10C4167D
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Oct 2023 06:13:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229688AbjJaCZc (ORCPT
+        id S235867AbjJaGNP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Oct 2023 22:25:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44058 "EHLO
+        Tue, 31 Oct 2023 02:13:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbjJaCZb (ORCPT
+        with ESMTP id S235856AbjJaGNN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Oct 2023 22:25:31 -0400
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55E34E4
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Oct 2023 19:25:29 -0700 (PDT)
-Received: by mail-qk1-x732.google.com with SMTP id af79cd13be357-778a6c440faso304381585a.3
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Oct 2023 19:25:29 -0700 (PDT)
+        Tue, 31 Oct 2023 02:13:13 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A3F2129
+        for <linux-security-module@vger.kernel.org>; Mon, 30 Oct 2023 23:13:11 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9936b3d0286so808127866b.0
+        for <linux-security-module@vger.kernel.org>; Mon, 30 Oct 2023 23:13:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1698719128; x=1699323928; darn=vger.kernel.org;
-        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ek8q19kEOxNIpwo6vTqnPY4hIXGFUfhkcH54NLcWDlo=;
-        b=GfMxnX7eYdukfoRR1ojQlhSLGdD1OpUnaNJjnZHS7nUO9qmFIydpG9vIKfn9U2v2Zk
-         M26BRI/GWs1OnY+LT/p2XLptl6ZDnjirl6o6fEasyhgjck5AiznjTyR9BFSpH+MEnRzA
-         XZukfzDCt98MfX0M0L8+dbsyytH425L0pPy1O+JmnhA1aQxrv1J94EUf7dIR1cGO8KKz
-         oBMXDAqF/KXY+qbT5EZQ8isflIZXRBAQX/mm8Yu4tNt1cKyYpzFeCA1yJAeXgYKCp1fG
-         Av6YmtZyUXQq3HcVv3fbAjd3NkBPxbvYJiKPRtGfVyRxrIItFRX/4uzZZffWw45boIW6
-         +SyQ==
+        d=linux-foundation.org; s=google; t=1698732789; x=1699337589; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GgoxWh+3mFmu9qGS5n4klAc9TWzAx3QMY9929RDoymk=;
+        b=fxMnBbrnp1Sbak7YSMus263BayDnXXpjuTt19N/2e/PKT1YmRI3z33TlW/U1gV4eMd
+         PQgTsQhNgM8TYnKAV/W/oCtG2Ow05+NtPGX4wZ+LU/FT9y5Xv54dkoX0GQCL8HIAbMXb
+         uudS7+yBAi2vGGagroc0T7CmNVRC8hph2jMOs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698719128; x=1699323928;
-        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ek8q19kEOxNIpwo6vTqnPY4hIXGFUfhkcH54NLcWDlo=;
-        b=if1U0szuL01RVGdxonbqIwHdEMO0uaAItVJkiAGxgII0tvOV5B7BVPdM1Qf63XqHNd
-         h4KHfJ7SeBnFRjQXml8r9a55ypmTxZwRHbpfxkW4iMjsgmtKYEbQUjCSTBKxAUKfeFmo
-         jsC005M3RjKwqEQ8KVlUisi3JYwmHclwx4XITZU34hAkjtPlFtOGKPqqPYJZhkFM68TQ
-         FvuMdNDsBO2Mr6aw5b604sRNGUQNJkhuorZjaVtdUKYHSAOqrVEH0A6Rht3b7145Qhkx
-         +lKpv8PPrFpmHUnv1kpiyIH607uvsOcVqAetLsKA94Yo9M3kwbNDcrt3vzRaQz1C1g2d
-         r43A==
-X-Gm-Message-State: AOJu0YwFaICn6aL03Z5sn70Oz5QwpJNyNwqtmRQYdv49LbpJ6r7OdUJT
-        SP4NZJssK+Fs41/KE+Mc+hId
-X-Google-Smtp-Source: AGHT+IHH0Mm6Et5uv494epJnkqipQxZD4PXhL5jDQI3GhwHVgjDrr0CGvHrnrPOrKbQhVJ9gBn1eeg==
-X-Received: by 2002:a05:620a:450b:b0:777:6c68:c5f0 with SMTP id t11-20020a05620a450b00b007776c68c5f0mr12512383qkp.0.1698719128437;
-        Mon, 30 Oct 2023 19:25:28 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id g16-20020ae9e110000000b007756d233fbdsm130640qkm.37.2023.10.30.19.25.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Oct 2023 19:25:28 -0700 (PDT)
-Date:   Mon, 30 Oct 2023 22:25:27 -0400
-Message-ID: <1cf859668ed2841067c50ebcaf01908f.paul@paul-moore.com>
-From:   Paul Moore <paul@paul-moore.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] lsm/lsm-pr-20231030
+        d=1e100.net; s=20230601; t=1698732789; x=1699337589;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GgoxWh+3mFmu9qGS5n4klAc9TWzAx3QMY9929RDoymk=;
+        b=stxkwWVePSoRS1MbDVyYAYpfXnJUoVq356uZY32Uushu5yQ2g8go4u60AYXh68rvWT
+         1W+TCjlFQ0OZE+ZVqemQsB2kNR9oJ6Lfe6p+x/Efb++hcCGreRoB3jmQJvl/TSHezZEF
+         FfRNXn/S3+sei0PDUAJakFLH28f0gfaSSjNDiccCZxd6XgCKGfSh/RqsGA1hTY8waT5t
+         P7H3sVTpNEwbQzewXcIrJmpbSn0sqlfuxXpTj2JkHu/XgTRxAABM87TXYBFpG2r1QQD0
+         dGK28Ihs7rhe0a0qfEcRC/oZxOWw7ErEQQSNKk4YV+tTyzvXx7u4rB29nhrAtmR9Fglm
+         wMiQ==
+X-Gm-Message-State: AOJu0YxVMrfZjNATuwc+EAaNixc73o4y7K88wGobMSJ+naSHvahc/eLw
+        2sLPWwxQAxJuwRChaW0QlODaTnXO4ixRRMO+sVtbM1sJ
+X-Google-Smtp-Source: AGHT+IFiy9Bne5bENmkbJu3BZKKDndIfc7bzVwbcsWAY+rE5BiKtxsCdlL6WccZNjn1wyVYqE3mCjg==
+X-Received: by 2002:a17:907:60d5:b0:9c5:2806:72e9 with SMTP id hv21-20020a17090760d500b009c5280672e9mr11299354ejc.34.1698732789553;
+        Mon, 30 Oct 2023 23:13:09 -0700 (PDT)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id rn17-20020a170906d93100b009adc7733f98sm391655ejb.97.2023.10.30.23.13.08
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Oct 2023 23:13:09 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-9ae2cc4d17eso807661266b.1
+        for <linux-security-module@vger.kernel.org>; Mon, 30 Oct 2023 23:13:08 -0700 (PDT)
+X-Received: by 2002:a17:906:99c1:b0:9c7:4d98:9847 with SMTP id
+ s1-20020a17090699c100b009c74d989847mr10898273ejn.53.1698732788596; Mon, 30
+ Oct 2023 23:13:08 -0700 (PDT)
+MIME-Version: 1.0
+References: <78932582fa556fd5fd6e8886e80e993f.paul@paul-moore.com>
+In-Reply-To: <78932582fa556fd5fd6e8886e80e993f.paul@paul-moore.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 30 Oct 2023 20:12:51 -1000
+X-Gmail-Original-Message-ID: <CAHk-=whOtZK1g_dzEnb5NEB8ssNqotmHy3CkUwbnab_4phFRdw@mail.gmail.com>
+Message-ID: <CAHk-=whOtZK1g_dzEnb5NEB8ssNqotmHy3CkUwbnab_4phFRdw@mail.gmail.com>
+Subject: Re: [GIT PULL] selinux/selinux-pr-20231030
+To:     Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+On Mon, 30 Oct 2023 at 16:16, Paul Moore <paul@paul-moore.com> wrote:
+>
+> * Use a better hashing function for the SELinux role tansition hash
+>   table.
 
-Seven LSM patches for v6.7, the highlights are below:
+Bah.
 
-* Add new credential functions, get_cred_many() and put_cred_many() to
-  save some atomic_t operations for a few operations.  While not strictly
-  LSM related, this patchset had been rotting on the mailing lists for
-  some time and since the LSMs do care a lot about credentials I thought
-  it reasonable to give this patch a home.
+While the old hash function was garbage, the new one is quite expensive.
 
-* Five patches to constify different LSM hook parameters.
+Maybe it's worth it.
 
-* Fix a spelling mistake.
+But generally, if you find that "oh, just doing a modulus with a power
+of two drops all high bits", the first thing to try is probably to
+just do "hash_long(x, N)" to get N bits instead.
 
-Please merge for v6.7-rc1, thanks.
--Paul
+Assuming the input is somewhat ok in one word, it does a fairly good
+job of mixing the bits with a simple multiply-and-shift.
 
---
-The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d1d:
+Yes, yes, jhash is a fine hash, but it does a quite *lot* of (simple)
+ALU ops. While "hash_long()" is often small enough to be inlined.
 
-  Linux 6.6-rc1 (2023-09-10 16:28:41 -0700)
+I also note that filenametr_hash() does the old "one byte at a time"
+hash and partial_name_hash(). Is there any reason that code doesn't
+use the "full_name_hash()" which does things a word at a time?
 
-are available in the Git repository at:
+Probably doesn't matter, but since I looked at this to see what the
+new hashing was, I noticed...
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
-    tags/lsm-pr-20231030
-
-for you to fetch changes up to e508560672890b2873c89258b88fade1356392ce:
-
-  lsm: fix a spelling mistake (2023-10-04 16:19:29 -0400)
-
-----------------------------------------------------------------
-lsm/stable-6.7 PR 20231030
-
-----------------------------------------------------------------
-Khadija Kamran (5):
-      lsm: constify 'sb' parameter in security_quotactl()
-      lsm: constify 'file' parameter in security_bprm_creds_from_file()
-      lsm: constify 'bprm' parameter in security_bprm_committing_creds()
-      lsm: constify 'bprm' parameter in security_bprm_committed_creds()
-      lsm: constify 'sb' parameter in security_sb_kern_mount()
-
-Mateusz Guzik (1):
-      cred: add get_cred_many and put_cred_many
-
-Paul Moore (1):
-      lsm: fix a spelling mistake
-
- include/linux/cred.h          | 59 ++++++++++++++++++++++++++++++++-----
- include/linux/fs.h            |  2 +-
- include/linux/lsm_hook_defs.h | 10 ++++----
- include/linux/security.h      | 20 +++++++--------
- kernel/cred.c                 | 26 +++++++++++--------
- security/apparmor/lsm.c       |  4 +--
- security/commoncap.c          |  4 +--
- security/security.c           | 12 ++++-----
- security/selinux/hooks.c      | 10 ++++----
- security/tomoyo/tomoyo.c      |  2 +-
- 10 files changed, 97 insertions(+), 52 deletions(-)
-
---
-paul-moore.com
+            Linus
