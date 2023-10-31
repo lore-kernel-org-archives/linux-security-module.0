@@ -2,127 +2,137 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ECE2C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Oct 2023 22:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA044C4167D
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Oct 2023 01:23:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231153AbjJ3WAQ (ORCPT
+        id S230264AbjJaBXu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Oct 2023 18:00:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56770 "EHLO
+        Mon, 30 Oct 2023 21:23:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230106AbjJ3WAP (ORCPT
+        with ESMTP id S229583AbjJaBXt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Oct 2023 18:00:15 -0400
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B9DBF7
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Oct 2023 15:00:12 -0700 (PDT)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-5a7c7262d5eso47873477b3.1
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Oct 2023 15:00:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1698703211; x=1699308011; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vl6sqkkoABwL8j4SqRZMYnBmV6Bv+iWE2PJFKhoRckg=;
-        b=QYpRhANy+JNMyamRlCGUiXHlNx2IHowH0Cy9kALa3G+r9NbHeZUZLAhKQ0X444ogQA
-         Jp9oVoEH/UrnkwsfBIVroHB2dG3718wU2af9PqNjPV4G50fzNcT4RiTgj8I/3G5r+JxF
-         RBPdeiF8bkeRj2+onW7pTZnA+pXsDplo3bF0+vKdGyLZbPewXR4dfUBdctHD0xZQysss
-         qQ9XZ8ozlZiXQ+K77arKLLaa1OQuYklOTLfGSE7BEoBDEMW0X/0bQyJeVUKbItcVRCJi
-         zJMIBZVEbOhumZy2MU0wJOiiHs02X2fqgqzNkBxU7dX/XIDpOG4sKhk9yPCw5ZqcPI5q
-         ywfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698703211; x=1699308011;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vl6sqkkoABwL8j4SqRZMYnBmV6Bv+iWE2PJFKhoRckg=;
-        b=OH9Kypp6JJEcyUdI9k9mz/QvBVTWv2BrU4YsV3Dn9u9+uZe9IYth9Dba6kX+L351Kg
-         yPhJUmNqfXJVbnW58lfKzmyub4e0nr0a7HsXteEO2ecb483jBNa7CVFmBQ5vtJHdeVEW
-         C+gTJ/iJm1AV4ZFKNaT0SiOLgCnfS7E4EMxWxLe9MEwKwjFZCpqN2xyX9xrapoISeb7N
-         m1uBDrqU4OOYW9byTV23ocuVUPuLaMk3M6PRwKmUfMXV73/sxCITsR9Si4zrN8ek+Ww8
-         ETNvVE4odHRjylW3mjns8GtbhwjbdPu5kxbQvkbW+jbHKkW2IqcMwzcjwmXRrt4HVvhH
-         cxJA==
-X-Gm-Message-State: AOJu0Yy+hgj9Q2KlM9HamSL3wWMlQYkB3NBOAwe0SZw2aJ+GtwJSIzKN
-        ju5UnF/9oA7JmV/yeF9jSQbYakE7Uh+qCPkxFm7u
-X-Google-Smtp-Source: AGHT+IEHNaD64e1BKBY2tf605KyQyK8JDATjsKkIBbGALDgeIlIz/WaVE3v3elWG/kwwdddXmmLCJjBKqymvgbKBLZQ=
-X-Received: by 2002:a25:9083:0:b0:d99:de67:c3dc with SMTP id
- t3-20020a259083000000b00d99de67c3dcmr9656516ybl.2.1698703211378; Mon, 30 Oct
- 2023 15:00:11 -0700 (PDT)
+        Mon, 30 Oct 2023 21:23:49 -0400
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2F22C1;
+        Mon, 30 Oct 2023 18:23:46 -0700 (PDT)
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+        by mailout.nyi.internal (Postfix) with ESMTP id 8DFAB5C02B7;
+        Mon, 30 Oct 2023 21:23:44 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute7.internal (MEProxy); Mon, 30 Oct 2023 21:23:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
+        1698715424; x=1698801824; bh=ECJVLlwFCF/F13QtKPM5WP7/K4iiTwcNU6h
+        5mUohoTo=; b=nhepGC7V5AVwfIUrdbvCdHNrqipLAurfvLbQehLFlJ53PiUjGoZ
+        YQNs45CB7LtqeuVosRrGDSCuNaN0knFyLHWoleezyEpj6oloWy1y5T8EzTMn6wib
+        qgRnbta7rHMoy6m2/X/nmzMo9p7hgeZL/CyqTvzZLRYo08N/IYYZBHv34K4ZEDiM
+        8F0SAyY4pTpoweMqbam8L6MaDOFST2SHTpkK2SyA7tjPSAtVu0Th86zROcl/daSv
+        ZaHowa3QE+DWxnLYTZxxPuExD2IDfLP4EkxVLOFwlZmw/CERmalaW+PssNvFlqyh
+        Vf0zb0jlh87nSrFAEnyfYZbG0spHqcDbqPA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+        1698715424; x=1698801824; bh=ECJVLlwFCF/F13QtKPM5WP7/K4iiTwcNU6h
+        5mUohoTo=; b=V8vq+xXih7rt9zzoQ8UjyrZgqbTJ3TvTAvP874IAxlU1ZKueUtG
+        9rbs1eKo1yjw0lpwbgLt1duEkvmUkBEXFzytHMf6+add0oa6AIGM54KmG8ghAUjW
+        wT5BCE2sTlUGsZ/xjujq3pzW8sNzTH3g+RE77BA+KeDTnakzcIb0TLiC02ppEb6R
+        Fpt1fTHiuGTI6fzluPvumknJRDzLCMcooAHnrHXeUtgLJZ/hel1/HGECO+m8i7Xf
+        bPwv4NJnSkmopsngxXmfUSZSSftmxvTDJsazZhukrALWo0AqKRoCHxj/dz6IxAoG
+        eD+h1q7A1dmGBYdgnl256NOMTlb15CG87gQ==
+X-ME-Sender: <xms:IFdAZbdzt5swDur9SJgkwlMlM9x9fPbrVufTYtnT3DsCCZqPw-ykZg>
+    <xme:IFdAZRPLvMUYngRg_04AFTNgQQB6N5rOM7SRkWn3-0sNFmpt5s2W-xJdQW19rX4lj
+    mzvcj7duPMx>
+X-ME-Received: <xmr:IFdAZUjhuXbqySMP7cq0xc9Y1HFDOcYPDH7gIIXImH6bWiQrkLDZUDATqZx8BuTDAdOlvlWbbR9_k-zzhwgcav07ePI69O050hrpKLoL9H4fKb6Y3gRB8p59>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedruddtuddgfeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpefkrghn
+    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
+    epgedvteevvdefiedvueeujeegtedvheelhfehtefhkefgjeeuffeguefgkeduhfejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
+    esthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:IFdAZc8Hz_CAmHd6_QT7WICbJlGEOQJa5RjU7i9Ek7WjkG18ursrIg>
+    <xmx:IFdAZXsRQnpZMiYFcq_s2XhDgYHths2h5mX8fHb5jGCOF1NLLRNbAQ>
+    <xmx:IFdAZbGPILKcM2IMg8Uch2zKFbdeoyY1WTx8T6scyqyFwSfTBFv8Vg>
+    <xmx:IFdAZQEFxaEAMEdtJXVJxFFpaZ5MEiZJF7H_gGVvB9NURssBzd_PZw>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 30 Oct 2023 21:23:38 -0400 (EDT)
+Message-ID: <e9ceb034-e37e-f0af-aee1-85f573a41418@themaw.net>
+Date:   Tue, 31 Oct 2023 09:23:34 +0800
 MIME-Version: 1.0
-References: <CAHC9VhTrm2shkh=FHcjnqFpDLFCoBwGfsyoSuDH3UFSOeZt+HA@mail.gmail.com>
- <20231030212015.57180-1-kuniyu@amazon.com>
-In-Reply-To: <20231030212015.57180-1-kuniyu@amazon.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 30 Oct 2023 18:00:00 -0400
-Message-ID: <CAHC9VhRM_-414uEaYjkMDRgWU9LbESuVzvC+KF-m=5zNTNvj-w@mail.gmail.com>
-Subject: Re: [PATCH v1 net 2/2] dccp/tcp: Call security_inet_conn_request()
- after setting IPv6 addresses.
-To:     Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc:     davem@davemloft.net, dccp@vger.kernel.org, dsahern@kernel.org,
-        edumazet@google.com, huw@codeweavers.com, kuba@kernel.org,
-        kuni1840@gmail.com, linux-security-module@vger.kernel.org,
-        netdev@vger.kernel.org, pabeni@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 2/6] mounts: keep list of mounts in an rbtree
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew House <mattlloydhouse@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20231025140205.3586473-1-mszeredi@redhat.com>
+ <20231025140205.3586473-3-mszeredi@redhat.com>
+ <b69c1c17-35f9-351e-79a9-ef3ef5481974@themaw.net>
+ <CAOssrKe76uZ5t714=Ta7GMLnZdS4QGm-fOfT9q5hNFe1fsDMVg@mail.gmail.com>
+ <c938a7d9-aa9e-a3ad-a001-fb9022d21475@themaw.net>
+ <dfb5f3d5-8db8-34af-d605-14112e8cc485@themaw.net>
+ <cbc065c0-1dc3-974f-6e48-483baaf750a3@themaw.net>
+ <CAOssrKdvTrPbnicFTiCiMNhKfdfwFEv4r_y1JeEe+H5V6LpkKg@mail.gmail.com>
+Content-Language: en-US
+From:   Ian Kent <raven@themaw.net>
+In-Reply-To: <CAOssrKdvTrPbnicFTiCiMNhKfdfwFEv4r_y1JeEe+H5V6LpkKg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Oct 30, 2023 at 5:20=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon.co=
-m> wrote:
-> From: Paul Moore <paul@paul-moore.com>
-> Date: Mon, 30 Oct 2023 17:12:33 -0400
-> > On Mon, Oct 30, 2023 at 4:12=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazo=
-n.com> wrote:
-> > >
-> > > Initially, commit 4237c75c0a35 ("[MLSXFRM]: Auto-labeling of child
-> > > sockets") introduced security_inet_conn_request() in some functions
-> > > where reqsk is allocated.  The hook is added just after the allocatio=
-n,
-> > > so reqsk's IPv6 remote address was not initialised then.
-> > >
-> > > However, SELinux/Smack started to read it in netlbl_req_setattr()
-> > > after commit e1adea927080 ("calipso: Allow request sockets to be
-> > > relabelled by the lsm.").
-> > >
-> > > Commit 284904aa7946 ("lsm: Relocate the IPv4 security_inet_conn_reque=
-st()
-> > > hooks") fixed that kind of issue only in TCPv4 because IPv6 labeling =
-was
-> > > not supported at that time.  Finally, the same issue was introduced a=
-gain
-> > > in IPv6.
-> > >
-> > > Let's apply the same fix on DCCPv6 and TCPv6.
-> > >
-> > > Fixes: e1adea927080 ("calipso: Allow request sockets to be relabelled=
- by the lsm.")
-> > > Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> > > ---
-> > > Cc: Huw Davies <huw@codeweavers.com>
-> > > Cc: Paul Moore <paul@paul-moore.com>
-> > > ---
-> > >  net/dccp/ipv6.c       | 6 +++---
-> > >  net/ipv6/syncookies.c | 7 ++++---
-> > >  2 files changed, 7 insertions(+), 6 deletions(-)
-> >
-> > Thanks for catching this and submitting a patch!
-> >
-> > It seems like we should also update dccp_v4_conn_request(), what do you=
- think?
+On 30/10/23 17:06, Miklos Szeredi wrote:
+> On Mon, Oct 30, 2023 at 6:45 AM Ian Kent <raven@themaw.net> wrote:
 >
-> Yes, and it's done in patch 1 as it had a separate Fixes tag.
-> https://lore.kernel.org/netdev/20231030201042.32885-2-kuniyu@amazon.com/
+>> Is fs/namespace.c:iterate_mounts() a problem?
+>>
+>> It's called from:
+>>
+>> 1) ./kernel/audit_tree.c:709: if (iterate_mounts(compare_root,
+>> 2) ./kernel/audit_tree.c:839:    err = iterate_mounts(tag_mount, tree, mnt);
+>> 3) ./kernel/audit_tree.c:917:        failed = iterate_mounts(tag_mount,
+>> tree, tagged);
+>>
+>>
+>>   From functions 1) audit_trim_trees(), 2) audit_add_tree_rule() and
+>>
+>> 3) audit_tag_tree().
+> So that interface works like this:
+>
+>   - collect_mounts() creates a temporary copy of a mount tree, mounts
+> are chained on mnt_list.
 
-Great, thanks for doing that.  netdev folks, please feel free to add
-my ACK to both patches in the patchset.
+Right, sorry for the noise, I didn't look far enough.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
 
-> It seems get_maintainers.pl suggested another email address of
-> yours for patch 1.  It would be good to update .mailmap ;)
+Ian
 
-Yes, I really should, thanks for the reminder.  I'll send an update to
-Linus once I get the merge window PRs sorted out.
-
---=20
-paul-moore.com
+>
+>   - iterate_mounts() is used to do some work on the temporary tree
+>
+>   - drop_collected_mounts() frees the temporary tree
+>
+> These mounts are never installed in a namespace.  My guess is that a
+> private copy is used instead of the original mount tree to prevent
+> races.
+>
+> Thanks,
+> Miklos
+>
