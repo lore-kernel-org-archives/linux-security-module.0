@@ -2,95 +2,240 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A22C4167D
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Nov 2023 22:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F9AC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Nov 2023 00:40:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234934AbjKAW0f (ORCPT
+        id S231349AbjKBAkZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Nov 2023 18:26:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36578 "EHLO
+        Wed, 1 Nov 2023 20:40:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232848AbjKAW0f (ORCPT
+        with ESMTP id S230502AbjKBAkY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Nov 2023 18:26:35 -0400
-Received: from sonic315-27.consmr.mail.ne1.yahoo.com (sonic315-27.consmr.mail.ne1.yahoo.com [66.163.190.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F07C11D
-        for <linux-security-module@vger.kernel.org>; Wed,  1 Nov 2023 15:26:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1698877591; bh=CI5Jmbvv91wNZ87a1yFPp+SbMOdm8vqBTHgkiLKLcQc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Jva7VkLIbNbu8vX5P3+ELUWHHVaKficFpRuz7/uDrcEBrVC4RcDf/Gkixxg7bZ1y4UoCLa9q07zDcSm4/ZacCyC7pXv7DPvGoP/LYauJKw/YXU2Q0yNcVpox2geHHhKSPb5ZEytxEUgCnZigOsrANi6u+wYS3E/S3GEf7N3Euj8UuvbBTix7CzzvPsTPZ7iQ5v+pI5e+/D4yWuE+S9UfFug9VOZa8JgGznx/oiwSe0g8dwIwdgjXIPSu4YBuZllpNAUqDRagrZvjVmdOvE6aohvzOS+gDn/8TX1UJ2l5yIDWuhMzerRtenFbcrp+iRjlS3NlMHQADhJBeOfoCEpOSQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1698877591; bh=N5lFJy3HyiJoxFeRMzM6d+gEtZ1I84IxCormbhilkPj=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=cPOHU90U0ZyTGi8bnROETWpgl8cQzzp4YqfOMo1KTN3pMczuJHfpgL0UWRDQQ2RabhIf09A2efrjIqMxX9BmHhj0FWCjt/RTTdPpCh9uPqbD6DysrI06x7QcRzd9kMStk01/DLeziXwWViGYHdSiwlHZlTmYekXiz+JqbrkVA+D8DhG21T/m3KID6W6kCZ/lSEBEdD8eRPk/Zr3Q2/emdICRTTc/5yyRYwakmK7bEK0QNxZwPeOGXKrUQsWMRD3TAzyADkzUVOdNy6qtg4z7EOTioEN05vg6CtCr7a9UTZxZs6M5Ninyd2wAxs7pNtDeL3Ua8fIFpraLyRXgWXWBcQ==
-X-YMail-OSG: dH7FTtwVM1kwOmueqHiAu5BbbQwtAOvv_kDdS2YUHLRWvr5VUgGpkyThTxr4BnM
- qvHgix5AkijnHy1WrApZyRipCY7iTCawdBPbVJCuQzv2jishWDNrv4OrO9kOCyVk6YVGkwES6Qb7
- qfyqCGIVSDfI.yWGtajW1WEtmjo9wETI83k_Ti0ZwilkteH092pFtEE0F7eeTMuLKezJrjybe80B
- n.wdO0.oWR2hqPKWcA5lm4lU9YbkK7u8tBOmeb.ycOzr7k0qZcjLD591YBK0XP4Ha5K.coYeGWrF
- ZqEHD6YMNnBnezg.VJZ3RxbfGek3LzT0TjFF_YMQVXY0AekdSH6l9lrUAKL2wtOLBV5fbwL_kx1P
- MSaio7QzZKrnkFvjkdFbhAIHT6InJwhtZQqSkCAagPRZJGtKBYEcRdiZnqpBqVNqYIoNP0LcDWyp
- eH2cUwo2U4RWkMvwJkkoTHv3COjwM2dXEz1l68ZLKgIRZ0auKRNqEqPVf3INWy46iZG.oh1QTU3f
- wd97Ao5MNV6dYJd7kxejDvQBbYjLhqGx4VCnDnendo_dXTwyEfLu_hQHgvwAzcsY1NbyCX6enMAR
- YfKhv2p519sQEZziyNrq0HKpjxEvG68fTV7P8laHa.2Xj2eCES15nRVuATyEe08hfXEXyolJ8X.Z
- Z2KXyK4ZYqGmxQi6L8h3ay0nqvyOReuaBcykciJP32mU5Q7wZA_N4v5sZiVNFTJR_dw1R.E_4nmc
- BIEPF_8A84ZD0qU52Leho9HDuLGhGG7pLURBHgmub0dhn2BOS.HzsAsIWWs.7CUARDUEX5lHyxCc
- rdcPVaZ6yEM.mhgwDjvM.KZ1VoVOXhBD0BWJzFCNnaPrEDlP4iHVv85Pe3pqVz9wJ0a.6Dv5LloC
- .1SmtrZls2F790q7fQrpLi5MpQ0AXazWukTDLlNKJVJSpfyVD3t7i5m5J_vctBOMX1ETlmKjqVJe
- m.7KEvvPjfw_te4ijbuZtv3gKPNBSL8iltO2jLSScwKCupCudqRbaw.bF7wPHl9JNFSb_..xc.Ih
- fJX5YVkjb.USUzFoVObAF7hHp5Ep_n8.I66Meb9dmmqBv.u3kSZr4cyXaau80jlNO5uM7ahQ.AJv
- xcNzneFzojk1_418f40PCJfE0Y9tnkQ.fP.iZF3tMF6PWSLPEykfuL1k7LK4B43TdDR8kM8Wyyro
- J8u4ZH1LRXiEJwARgttaSp5dlHyUelEMb8E13MV988eb3e1H24JScCBnsJ8KSMPumwn3EzmCZX78
- wGC68J.BMy6mNL8F6_.OuwN9taeXm3Y3_2el02VBvsBWv65GzoCKyQxl2MYsi3J6ydIi.lGhW4MB
- 2IleHALOitcqnPbuHuPxYeA.KOBGzriL6qTJtMmu1MUY_wTxoTy9MFDTtWJP7AsWj1eT8nb8rjYH
- xRjcYFEDmaaVFJEGyKyrAyA3lYsWXgjIanERhEhOa4wULuw7WwJfojCPLdCLLnuAAbZ3D6mArmgB
- Osc5Tuqd6curOJtK5uwiWOX6vnB0Xz_8Hb2OC3PPzdxLBUmdf5PANXII2n9wbs3rsXpOQCW_ZCZI
- KhfvdaOJxPnjKCyaVObg2WjJdf0XiKZBypVItK09gGlM8kHolyGlSqVES9GXpx4zdzgKplRyIuJ6
- e5UQIbIsxpZiYmWttPtEfDFlsg2hcvsFf6ib4e8cgzY7CaXfpufwxRBaFCk1pzpSKnHRmtGN8BeP
- hf0DoqnyHq9UnYlp_MnpEUWQ8FtHK5hmcdGRAMh3SbeSG7M.7b27xL6Ckk4oslCBAzRcthY7BN0p
- AAxnP4bq_VoWQqlAEjghjBDzyqyM6jGfeIBuvEfdOl2djZN9lggbTIMWQeFkuTwelyHnOCLgYQc7
- JDCc5BIKGwCvP60IPjSfcir6ZPmpFnXt.Z2diBroiEJHx9KPKmQebBz7v.FgPYbkvcgMS.0jcrvE
- ItXI0xoS7CrGxT3VqHJ63VP8SnqVsGdhr7jjk0wtu8_5aFVZllzUygf8t8OAu3CgRqjUVQ.6Tkqi
- LsnIEfoEyUoE.lxX95KsKdAc2CY1v6H255jlm1ylKgovYQHw64R2ZIsCUOhJXEuOkvCi4ytXD70b
- rgRUZwGbKvtTydUTPB1tYr6DESOT47cTCn1lMwN2oQi_fcwPMxx8Mn8UtP0zDhGQ4kD77.Uw3SGu
- F3w9t5yMVR.y6gWq7gTO5yOIoSfzOERpbiv5lNJQ5xGN9uHFU0FFVAvB7Ykr8r6n_Y73cR2_vJZL
- _5xSs6pDsf2Jr8GZfIXIIhmQ.Jf3vmbRPSgNCaklz2OCxZGtuLecPrOfLK4TTdjWXuXOd4F4FZzo
- vlZCQGrRDxYM-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: c65fb66e-a27a-44c6-b355-70d524afddb9
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Wed, 1 Nov 2023 22:26:31 +0000
-Received: by hermes--production-gq1-59b5df67b6-tqc5s (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4d5825d2ac609e50c455089abc1b4ae0;
-          Wed, 01 Nov 2023 22:26:25 +0000 (UTC)
-Message-ID: <2c71a8a6-cadc-474f-bb70-857ac91a7313@schaufler-ca.com>
-Date:   Wed, 1 Nov 2023 15:26:23 -0700
+        Wed, 1 Nov 2023 20:40:24 -0400
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1251BA6
+        for <linux-security-module@vger.kernel.org>; Wed,  1 Nov 2023 17:40:18 -0700 (PDT)
+Received: by mail-yb1-xb35.google.com with SMTP id 3f1490d57ef6-d852b28ec3bso392899276.2
+        for <linux-security-module@vger.kernel.org>; Wed, 01 Nov 2023 17:40:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1698885617; x=1699490417; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XqFTar32ASbvPrjveH78MV7Rh5xk6Ufja7S8f/Bljs0=;
+        b=F7mWy0sDxS2NsZq4r0QIIkweMjFgefI5B9XATldwoY88ve/PPhdiO6WPTlCRZzZKYH
+         bDAL7W3bJxXiOJ0tdx4Oars+508WwIqhuqekUkgZD6Kb6UhFk0q2Tl0baDFvH+0eotKR
+         242gTFN2/4qwp3Mt8DWC447jdlMMPTvPfMjumv1oPnP7lMq7CKDlxhTYm5KTON3NCoNV
+         oU2XaTDUkxocJG0bR7yLUf9xyWKv6b02FIRYAtZ3biraiF7Qq2R9xLINkiSCYFzTmqxc
+         OTBpwVzjfD+HLWavnU5OuO7RaMH9DhPxo6jRfyHL/h18I27yuPQRGDWSsHDo4FKV0SlS
+         fmhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698885617; x=1699490417;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XqFTar32ASbvPrjveH78MV7Rh5xk6Ufja7S8f/Bljs0=;
+        b=F5sBoCOaFfwo7jYdTKvll+s1u+e4e/EbY4jNg+Mw2bmNIEGsXpInGqVzOILFihXvPL
+         46Pt/+XhPA40EPIk8D2DRGnMi0yZP1SlbUeFHGelaBAzTWrHbUZYvlIevt66PyysrKvP
+         QomHnzKGr4Q+Aok9ruqG9IrBWoBndhOEd8RHOXBOx07jn08Pg13n/CB6Cy1ZYGhG9CLB
+         nWbiSa9FZ8wz3Czeo7cihxHP5hiedeiImozU82dCpSxV1ZWnyQhFuCe/ifQ8aTwkCSSF
+         tUux4iqrRoTn3fo93RS/ZhMO54roB39j8ey5pnpsg3eQioiPNFRemgUruD9wOND7ouF6
+         tKqA==
+X-Gm-Message-State: AOJu0Yx+u5/5+kBNvKe7VNGVI1kn18G2RIFIl2N2sBj/3qL8y1S1b6EU
+        +QxiWXrhNBouvudiRGwCwRwF9irm3KP1vf6RNCOe
+X-Google-Smtp-Source: AGHT+IGK/PhuZ+UhDDHZYM1Pa72OuOxp0eZOylk1ZmSUvvPb8Alc5ldvSn4N3nj0JccWeXvYLwtkGk3oqNifU7yZ4Jo=
+X-Received: by 2002:a25:da82:0:b0:da0:5ff5:5df7 with SMTP id
+ n124-20020a25da82000000b00da05ff55df7mr17332747ybf.12.1698885617167; Wed, 01
+ Nov 2023 17:40:17 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/3] LSM syscall tweaks
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>,
-        linux-security-module@vger.kernel.org
-Cc:     selinux@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20231024213525.361332-4-paul@paul-moore.com>
- <CAHC9VhQwwqji4m3mXLVzy6cY8G5ObbH3pv+AgsunQypi84cX1w@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhQwwqji4m3mXLVzy6cY8G5ObbH3pv+AgsunQypi84cX1w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.21890 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <1696457386-3010-16-git-send-email-wufan@linux.microsoft.com> <6efb7a80ba0eb3e02b3ae7a5c0a210f3.paul@paul-moore.com>
+In-Reply-To: <6efb7a80ba0eb3e02b3ae7a5c0a210f3.paul@paul-moore.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 1 Nov 2023 20:40:06 -0400
+Message-ID: <CAHC9VhQJkcb-k+o+NvVn7crrMMZqpBcZpnEbKBT+eZg4Ocjqhw@mail.gmail.com>
+Subject: Re: [PATCH RFC v11 15/19] fsverity: consume builtin signature via LSM hook
+To:     Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk,
+        agk@redhat.com, snitzer@kernel.org, eparis@redhat.com
+Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, audit@vger.kernel.org,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        Deven Bowers <deven.desai@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/1/2023 2:24 PM, Paul Moore wrote:
-> On Tue, Oct 24, 2023 at 5:39 PM Paul Moore <paul@paul-moore.com> wrote:
->> Three rather small LSM patches to address some minor issues found during
->> the review of the latest LSM syscall patchset that now lives in the
->> lsm/next-queue tree.
->>
->> I'm marking these as RFC patches as they have yet to be properly tested,
->> but I'm building a kernel now to do that and I'll report back when testing
->> has completed.  In the meantime, reviews and ACKs are appreciated.
-> I went ahead and merged these into lsm/dev-staging and rebased the
-> branch on Linus' latest to incorporate the syscall additions in his
-> tree.  As the merge window is open, I did not do the corresponding
-> update to the lsm/next branch, that will be updated when the merge
-> window is closed and -rc1 is released.
+On Mon, Oct 23, 2023 at 11:52=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+> On Oct  4, 2023 Fan Wu <wufan@linux.microsoft.com> wrote:
+> >
+> > fsverity represents a mechanism to support both integrity and
+> > authenticity protection of a file, supporting both signed and unsigned
+> > digests.
+> >
+> > An LSM which controls access to a resource based on authenticity and
+> > integrity of said resource, can then use this data to make an informed
+> > decision on the authorization (provided by the LSM's policy) of said
+> > claim.
+> >
+> > This effectively allows the extension of a policy enforcement layer in
+> > LSM for fsverity, allowing for more granular control of how a
+> > particular authenticity claim can be used. For example, "all (built-in)
+> > signed fsverity files should be allowed to execute, but only these
+> > hashes are allowed to be loaded as kernel modules".
+> >
+> > This enforcement must be done in kernel space, as a userspace only
+> > solution would fail a simple litmus test: Download a self-contained
+> > malicious binary that never touches the userspace stack. This
+> > binary would still be able to execute.
+> >
+> > Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+> > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+> > ---
+> > v1-v6:
+> >   + Not present
+> >
+> > v7:
+> >   Introduced
+> >
+> > v8:
+> >   + Split fs/verity/ changes and security/ changes into separate patche=
+s
+> >   + Change signature of fsverity_create_info to accept non-const inode
+> >   + Change signature of fsverity_verify_signature to accept non-const i=
+node
+> >   + Don't cast-away const from inode.
+> >   + Digest functionality dropped in favor of:
+> >     ("fs-verity: define a function to return the integrity protected
+> >       file digest")
+> >   + Reworded commit description and title to match changes.
+> >   + Fix a bug wherein no LSM implements the particular fsverity @name
+> >     (or LSM is disabled), and returns -EOPNOTSUPP, causing errors.
+> >
+> > v9:
+> >   + No changes
+> >
+> > v10:
+> >   + Rename the signature blob key
+> >   + Cleanup redundant code
+> >   + Make the hook call depends on CONFIG_FS_VERITY_BUILTIN_SIGNATURES
+> >
+> > v11:
+> >   + No changes
+> > ---
+> >  fs/verity/fsverity_private.h |  2 +-
+> >  fs/verity/open.c             | 26 +++++++++++++++++++++++++-
+> >  include/linux/fsverity.h     |  2 ++
+> >  3 files changed, 28 insertions(+), 2 deletions(-)
+>
+> We need an ACK from some VFS folks on this.
 
-Excellent. Thank you.
+Eric and/or Ted, can we get either an ACK or some feedback on this patch?
 
+For reference, the full patchset can be found on lore at the link below:
+
+https://lore.kernel.org/linux-security-module/1696457386-3010-1-git-send-em=
+ail-wufan@linux.microsoft.com/
+
+> > diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.=
+h
+> > index d071a6e32581..4a82716e852f 100644
+> > --- a/fs/verity/fsverity_private.h
+> > +++ b/fs/verity/fsverity_private.h
+> > @@ -108,7 +108,7 @@ int fsverity_init_merkle_tree_params(struct merkle_=
+tree_params *params,
+> >                                    unsigned int log_blocksize,
+> >                                    const u8 *salt, size_t salt_size);
+> >
+> > -struct fsverity_info *fsverity_create_info(const struct inode *inode,
+> > +struct fsverity_info *fsverity_create_info(struct inode *inode,
+> >                                          struct fsverity_descriptor *de=
+sc);
+> >
+> >  void fsverity_set_info(struct inode *inode, struct fsverity_info *vi);
+> > diff --git a/fs/verity/open.c b/fs/verity/open.c
+> > index 6c31a871b84b..5b48e2c39086 100644
+> > --- a/fs/verity/open.c
+> > +++ b/fs/verity/open.c
+> > @@ -8,6 +8,7 @@
+> >  #include "fsverity_private.h"
+> >
+> >  #include <linux/mm.h>
+> > +#include <linux/security.h>
+> >  #include <linux/slab.h>
+> >
+> >  static struct kmem_cache *fsverity_info_cachep;
+> > @@ -172,12 +173,28 @@ static int compute_file_digest(const struct fsver=
+ity_hash_alg *hash_alg,
+> >       return err;
+> >  }
+> >
+> > +#ifdef CONFIG_FS_VERITY_BUILTIN_SIGNATURES
+> > +static int fsverity_inode_setsecurity(struct inode *inode,
+> > +                                   struct fsverity_descriptor *desc)
+> > +{
+> > +     return security_inode_setsecurity(inode, FS_VERITY_INODE_SEC_NAME=
+,
+> > +                                       desc->signature,
+> > +                                       le32_to_cpu(desc->sig_size), 0)=
+;
+> > +}
+> > +#else
+> > +static inline int fsverity_inode_setsecurity(struct inode *inode,
+> > +                                          struct fsverity_descriptor *=
+desc)
+> > +{
+> > +     return 0;
+> > +}
+> > +#endif /* CONFIG_IPE_PROP_FS_VERITY*/
+> > +
+> >  /*
+> >   * Create a new fsverity_info from the given fsverity_descriptor (with=
+ optional
+> >   * appended builtin signature), and check the signature if present.  T=
+he
+> >   * fsverity_descriptor must have already undergone basic validation.
+> >   */
+> > -struct fsverity_info *fsverity_create_info(const struct inode *inode,
+> > +struct fsverity_info *fsverity_create_info(struct inode *inode,
+> >                                          struct fsverity_descriptor *de=
+sc)
+> >  {
+> >       struct fsverity_info *vi;
+> > @@ -242,6 +259,13 @@ struct fsverity_info *fsverity_create_info(const s=
+truct inode *inode,
+> >               spin_lock_init(&vi->hash_page_init_lock);
+> >       }
+> >
+> > +     err =3D fsverity_inode_setsecurity(inode, desc);
+> > +     if (err =3D=3D -EOPNOTSUPP)
+> > +             err =3D 0;
+> > +
+> > +     if (err)
+> > +             goto fail;
+> > +
+> >       return vi;
+> >
+> >  fail:
+> > diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+> > index 1eb7eae580be..9666721baf15 100644
+> > --- a/include/linux/fsverity.h
+> > +++ b/include/linux/fsverity.h
+> > @@ -319,4 +319,6 @@ static inline int fsverity_prepare_setattr(struct d=
+entry *dentry,
+> >       return 0;
+> >  }
+> >
+> > +#define FS_VERITY_INODE_SEC_NAME "fsverity.builtin-sig"
+> > +
+> >  #endif       /* _LINUX_FSVERITY_H */
+> > --
+> > 2.25.1
+
+--=20
+paul-moore.com
