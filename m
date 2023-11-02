@@ -2,177 +2,55 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C186AC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Nov 2023 08:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9A6C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Nov 2023 09:42:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229818AbjKBI6T (ORCPT
+        id S229591AbjKBJmY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Nov 2023 04:58:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38194 "EHLO
+        Thu, 2 Nov 2023 05:42:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234811AbjKBI6S (ORCPT
+        with ESMTP id S229527AbjKBJmX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Nov 2023 04:58:18 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C8BF181;
-        Thu,  2 Nov 2023 01:58:15 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-52bd9ddb741so1091766a12.0;
-        Thu, 02 Nov 2023 01:58:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698915494; x=1699520294; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XdpLtaMqlycG6dpZKoLJeqo+WNCOF7ofJ2N+iMTRVD0=;
-        b=a03a0BA0k+fWvexnChoFSNpKViajpSN9GPV3yvwruvvgOtppGbU2J2fRGD+4tula5L
-         vH0juGf8AgFZ2gF6kCNR58yxB1DIQdtVGo9aASsBHq5c3O+6tm4ra5J+wK5WkkFFEz4s
-         GdQuF/mo/loQitpPeMSJ9lPzQRxWoXWZZEg3eJMsXqU80+Eh1e9ksE4HrGfEkne4K5zl
-         C3i5+s5+hnlQTkdGSJaB6rCt0q5crfr2CgVYpb8ioLuD9lWeakb1cer34DKAjnPcD6lJ
-         k7kJsfjDwhuoOvqNKQdlwdzVwESnQykq6Ofa8xKLyeMV4YYLg2uGXILIvILXMwZZtZ8O
-         3jSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698915494; x=1699520294;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XdpLtaMqlycG6dpZKoLJeqo+WNCOF7ofJ2N+iMTRVD0=;
-        b=DkO8cHjPHCiYer5/JB69CdvV8HriOuNO16Vnpw/zUhxMBFSAgDlUxjdQ8IrI047DCx
-         r24n5OWeCWF7TdUTs3n3/9efHAmYYg0QjRNweKAiG5U409mv7qims0BzQUzNpoajl46Q
-         4GWQcOhcse0Io0FZovLGLemYj/G8LiBMb4yXoAYMgstjtQc5sfFlLC1503dln/iJxnvu
-         /YVlFomZmoXZVaUI9mlaRcTFCQSvg0HqWHvEhVRlc63USuHz7z/XoYUoevKF+HVWiOS1
-         1LqgtZD4mDKXh6s4v8djmMnIqhAjabzwbds8lovVHpsSeZAvwIvD28z9O2O/0FlFpnHn
-         xZFQ==
-X-Gm-Message-State: AOJu0Yz7MIA9BlnPNXekg5elIuTKT6csysQepif3qD4ngn7rqnj3XQxV
-        7DvVJ9bp2/TX5e7th4ULkQFd682WB07yNw==
-X-Google-Smtp-Source: AGHT+IGB6HqMMJLw26kkHPDNuOijtWxrcNXkMMGvtBcRKVnG1yLhv5wWHpvVD3g7SEBh0MR2RKEzSg==
-X-Received: by 2002:a17:906:f0c9:b0:9b8:b683:5854 with SMTP id dk9-20020a170906f0c900b009b8b6835854mr3206142ejb.61.1698915493603;
-        Thu, 02 Nov 2023 01:58:13 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id jw24-20020a17090776b800b009ad75d318ffsm881696ejc.17.2023.11.02.01.58.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Nov 2023 01:58:13 -0700 (PDT)
-From:   Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date:   Thu, 2 Nov 2023 09:58:11 +0100
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     Jiri Olsa <olsajiri@gmail.com>,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
+        Thu, 2 Nov 2023 05:42:23 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 203D4A6
+        for <linux-security-module@vger.kernel.org>; Thu,  2 Nov 2023 02:42:20 -0700 (PDT)
+Received: from fsav312.sakura.ne.jp (fsav312.sakura.ne.jp [153.120.85.143])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 3A29gIiC082564;
+        Thu, 2 Nov 2023 18:42:18 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav312.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav312.sakura.ne.jp);
+ Thu, 02 Nov 2023 18:42:18 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav312.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 3A29gI9T082561
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 2 Nov 2023 18:42:18 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <b0186178-0338-4db1-9065-b6bbda10d58f@I-love.SAKURA.ne.jp>
+Date:   Thu, 2 Nov 2023 18:42:18 +0900
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/5] Reduce overhead of LSMs with static calls
+Content-Language: en-US
+To:     KP Singh <kpsingh@kernel.org>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Cc:     paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
         song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
         renauld@google.com, pabeni@redhat.com
-Subject: Re: [PATCH v6 4/5] bpf: Only enable BPF LSM hooks when an LSM
- program is attached
-Message-ID: <ZUNko7AU7hDTk7LU@krava>
-References: <20231006204701.549230-1-kpsingh@kernel.org>
- <20231006204701.549230-5-kpsingh@kernel.org>
- <ZSPRrtkKtf9WyBOy@krava>
- <CACYkzJ5PKECadW+B9ybJUidDb6SVb6L4A2xWqwh6ybkhfZ+eag@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACYkzJ5PKECadW+B9ybJUidDb6SVb6L4A2xWqwh6ybkhfZ+eag@mail.gmail.com>
+References: <20231102005521.346983-1-kpsingh@kernel.org>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20231102005521.346983-1-kpsingh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 02, 2023 at 01:46:14AM +0100, KP Singh wrote:
-> On Mon, Oct 9, 2023 at 12:11 PM Jiri Olsa <olsajiri@gmail.com> wrote:
-> >
-> > On Fri, Oct 06, 2023 at 10:47:00PM +0200, KP Singh wrote:
-> > > BPF LSM hooks have side-effects (even when a default value is returned),
-> > > as some hooks end up behaving differently due to the very presence of
-> > > the hook.
-> > >
-> > > The static keys guarding the BPF LSM hooks are disabled by default and
-> > > enabled only when a BPF program is attached implementing the hook
-> > > logic. This avoids the issue of the side-effects and also the minor
-> > > overhead associated with the empty callback.
-> > >
-> > > security_file_ioctl:
-> > >    0xffffffff818f0e30 <+0>:   endbr64
-> > >    0xffffffff818f0e34 <+4>:   nopl   0x0(%rax,%rax,1)
-> > >    0xffffffff818f0e39 <+9>:   push   %rbp
-> > >    0xffffffff818f0e3a <+10>:  push   %r14
-> > >    0xffffffff818f0e3c <+12>:  push   %rbx
-> > >    0xffffffff818f0e3d <+13>:  mov    %rdx,%rbx
-> > >    0xffffffff818f0e40 <+16>:  mov    %esi,%ebp
-> > >    0xffffffff818f0e42 <+18>:  mov    %rdi,%r14
-> > >    0xffffffff818f0e45 <+21>:  jmp    0xffffffff818f0e57 <security_file_ioctl+39>
-> > >                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > >
-> > >    Static key enabled for SELinux
-> > >
-> > >    0xffffffff818f0e47 <+23>:  xchg   %ax,%ax
-> > >                               ^^^^^^^^^^^^^^
-> > >
-> > >    Static key disabled for BPF. This gets patched when a BPF LSM program
-> > >    is attached
-> > >
-> > >    0xffffffff818f0e49 <+25>:  xor    %eax,%eax
-> > >    0xffffffff818f0e4b <+27>:  xchg   %ax,%ax
-> > >    0xffffffff818f0e4d <+29>:  pop    %rbx
-> > >    0xffffffff818f0e4e <+30>:  pop    %r14
-> > >    0xffffffff818f0e50 <+32>:  pop    %rbp
-> > >    0xffffffff818f0e51 <+33>:  cs jmp 0xffffffff82c00000 <__x86_return_thunk>
-> > >    0xffffffff818f0e57 <+39>:  endbr64
-> > >    0xffffffff818f0e5b <+43>:  mov    %r14,%rdi
-> > >    0xffffffff818f0e5e <+46>:  mov    %ebp,%esi
-> > >    0xffffffff818f0e60 <+48>:  mov    %rbx,%rdx
-> > >    0xffffffff818f0e63 <+51>:  call   0xffffffff819033c0 <selinux_file_ioctl>
-> > >    0xffffffff818f0e68 <+56>:  test   %eax,%eax
-> > >    0xffffffff818f0e6a <+58>:  jne    0xffffffff818f0e4d <security_file_ioctl+29>
-> > >    0xffffffff818f0e6c <+60>:  jmp    0xffffffff818f0e47 <security_file_ioctl+23>
-> > >    0xffffffff818f0e6e <+62>:  endbr64
-> > >    0xffffffff818f0e72 <+66>:  mov    %r14,%rdi
-> > >    0xffffffff818f0e75 <+69>:  mov    %ebp,%esi
-> > >    0xffffffff818f0e77 <+71>:  mov    %rbx,%rdx
-> > >    0xffffffff818f0e7a <+74>:  call   0xffffffff8141e3b0 <bpf_lsm_file_ioctl>
-> > >    0xffffffff818f0e7f <+79>:  test   %eax,%eax
-> > >    0xffffffff818f0e81 <+81>:  jne    0xffffffff818f0e4d <security_file_ioctl+29>
-> > >    0xffffffff818f0e83 <+83>:  jmp    0xffffffff818f0e49 <security_file_ioctl+25>
-> > >    0xffffffff818f0e85 <+85>:  endbr64
-> > >    0xffffffff818f0e89 <+89>:  mov    %r14,%rdi
-> > >    0xffffffff818f0e8c <+92>:  mov    %ebp,%esi
-> > >    0xffffffff818f0e8e <+94>:  mov    %rbx,%rdx
-> > >    0xffffffff818f0e91 <+97>:  pop    %rbx
-> > >    0xffffffff818f0e92 <+98>:  pop    %r14
-> > >    0xffffffff818f0e94 <+100>: pop    %rbp
-> > >    0xffffffff818f0e95 <+101>: ret
-> > >
-> > > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > Acked-by: Song Liu <song@kernel.org>
-> > > Signed-off-by: KP Singh <kpsingh@kernel.org>
-> >
-> > small nit, but looks good
-> >
-> > Acked-by: Jiri Olsa <jolsa@kernel.org>
-> >
-> > jirka
-> >
-> >
-> > > ---
-> > >  include/linux/bpf_lsm.h   |  5 +++++
-> > >  include/linux/lsm_hooks.h | 13 ++++++++++++-
-> > >  kernel/bpf/trampoline.c   | 24 ++++++++++++++++++++++++
-> > >  security/bpf/hooks.c      | 25 ++++++++++++++++++++++++-
-> > >  security/security.c       |  3 ++-
-> > >  5 files changed, 67 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-> > > index 1de7ece5d36d..5bbc31ac948c 100644
-> > > --- a/include/linux/bpf_lsm.h
-> > > +++ b/include/linux/bpf_lsm.h
-> > > @@ -29,6 +29,7 @@ int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
-> > >
-> > >  bool bpf_lsm_is_sleepable_hook(u32 btf_id);
-> > >  bool bpf_lsm_is_trusted(const struct bpf_prog *prog);
-> > > +void bpf_lsm_toggle_hook(void *addr, bool value);
-> >
-> > nit, this could be static, unless there are future plans ;-)
-> 
-> Actually, this is called from trampoline.c and cannot be static.
+I didn't get your response on https://lkml.kernel.org/r/c588ca5d-c343-4ea2-a1f1-4efe67ebb8e3@I-love.SAKURA.ne.jp .
 
-ah you're right, I missed that
+Do you agree that we cannot replace LKM-based LSMs with eBPF-based access control mechanisms,
+and do you admit that this series makes LKM-based LSMs more difficult to use?
 
-jirka
