@@ -2,180 +2,214 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2432DC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Nov 2023 19:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC5EC4167B
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Nov 2023 19:33:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377391AbjKBTA4 (ORCPT
+        id S1346149AbjKBTdk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Nov 2023 15:00:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53060 "EHLO
+        Thu, 2 Nov 2023 15:33:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377385AbjKBTAu (ORCPT
+        with ESMTP id S229736AbjKBTdk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Nov 2023 15:00:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BAF5133
-        for <linux-security-module@vger.kernel.org>; Thu,  2 Nov 2023 11:59:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1698951598;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GEm2sns0/+Gc/wAqvpwT2aL5eohIrGGeBjAVrS1qrIg=;
-        b=fJcTFQHXZndQggvIKmomnTBLTGtmkPP9v7KBdRHIKoVmjt93HFq1MqagLmhUcN+eryqwOA
-        sGtqlCw0H3wgichHevFqy60z6l7RXLmLKHGJLWl7U7ZQdJQKCK9cbWnON5+E+uayNKIqNw
-        5+lKkW9j3K/xXk9DjQee7CzVh7C0qjU=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-241-y1XeOaUvPJi-0dAO7NRc1A-1; Thu, 02 Nov 2023 14:59:54 -0400
-X-MC-Unique: y1XeOaUvPJi-0dAO7NRc1A-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-408f9cee5e8so8125695e9.0
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Nov 2023 11:59:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698951594; x=1699556394;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GEm2sns0/+Gc/wAqvpwT2aL5eohIrGGeBjAVrS1qrIg=;
-        b=uEIckwHKnrHDwFDHup3sFEZh5yporWMRUHT9ybIr+AzatPSv4DA9VVp6ZaG8YCh9F3
-         9Rw+KeYGoGBNmf8OY1qI5sfScN9Ba1gk3uj/mlfy5qjAyF5uI2Pk6bBgU0Fjn/sR2/mm
-         FOElkG+8FwgfpPmt945nipiN5L+Vaa3ARghvXp9iQYtAXYuTxmzSFUzyIl+2rL0pHSMW
-         KcAbgcp7c4aAQZhtZeFt++pjio/YunCagHKIvL4UIgFKO24VccsL7gpH3OtvUSP4SFrs
-         Qpksr3IlSF/OmRCgsfLXdRBQ+Cyj+KLZp7Ulh7jlq/XquroXr3xsiayiteb4h6udyTUu
-         s+Lw==
-X-Gm-Message-State: AOJu0Yye9Njhi1ZwqPKp/4tAPT0ZjV+E/uR9/FpCyq5sX7APa8D6uERF
-        cvzOiUYUk4KxEEP/KNFXu/clkPYk8+4gTplf6JxUxW6gEuqLqc9TxRlV4Hi6ciPkLN114vr6yA1
-        o7MhzyK7Sq9L6wolhppBCAbKMIHmXPtnVvp1h
-X-Received: by 2002:a05:600c:354c:b0:408:4cf7:4f91 with SMTP id i12-20020a05600c354c00b004084cf74f91mr16063500wmq.16.1698951593778;
-        Thu, 02 Nov 2023 11:59:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHVTJzaSJ0vkl4qcwzTZ0JUe1Z1QgiS+92pttSKu/xQqyJpNN5GsaGvuUhusOPQ1kxeMxjXtw==
-X-Received: by 2002:a05:600c:354c:b0:408:4cf7:4f91 with SMTP id i12-20020a05600c354c00b004084cf74f91mr16063485wmq.16.1698951593366;
-        Thu, 02 Nov 2023 11:59:53 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:174:efc3:a5be:5586:34a6:1108])
-        by smtp.gmail.com with ESMTPSA id u17-20020a05600c19d100b00405c7591b09sm31517wmq.35.2023.11.02.11.59.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Nov 2023 11:59:52 -0700 (PDT)
-Date:   Thu, 2 Nov 2023 14:59:46 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Maxime Coquelin <maxime.coquelin@redhat.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>, jasowang@redhat.com,
-        xuanzhuo@linux.alibaba.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, xieyongji@bytedance.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        david.marchand@redhat.com, lulu@redhat.com
-Subject: Re: [PATCH v4 4/4] vduse: Add LSM hooks to check Virtio device type
-Message-ID: <20231102145932-mutt-send-email-mst@kernel.org>
-References: <20231020155819.24000-1-maxime.coquelin@redhat.com>
- <20231020155819.24000-5-maxime.coquelin@redhat.com>
- <c8f189e6-c79b-429a-ab36-2193bb68e3e9@schaufler-ca.com>
- <923f87a1-1871-479e-832e-db67b5ae87fd@redhat.com>
- <64626db9-e37a-4c65-a455-fc3985382216@schaufler-ca.com>
- <7524dee3-7c48-4864-8182-1b166b0f6faa@redhat.com>
- <b307ec62-7cfd-4a58-88ef-ea549c64e75e@schaufler-ca.com>
- <76572500-5f90-46fe-9bf2-b090bf1b616b@redhat.com>
+        Thu, 2 Nov 2023 15:33:40 -0400
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CB52D194;
+        Thu,  2 Nov 2023 12:33:31 -0700 (PDT)
+Received: from [10.137.106.151] (unknown [131.107.159.23])
+        by linux.microsoft.com (Postfix) with ESMTPSA id C019120B74C0;
+        Thu,  2 Nov 2023 12:33:30 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C019120B74C0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1698953610;
+        bh=BFv0LoFgCinTrSDNN0PUUDUwJMnBDe5xTh49JYLz3Y4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=gB5YaEFwfIAnkOlr317P5lWnHUTOq+MksL4x/t6lqhrFaWrMyEanwJnIqhD9Ufzwy
+         IolfcJ5mTJlgR6Jri9QAkbJsElG9Na29MJLxkEA1Y4/xrIcTyc/ImgDrFg6i1yx2f9
+         LLDUkRU9KCRLP3D9LBySG2QN3Iaywco1wAyL8x78=
+Message-ID: <b53c47f6-0cf3-448c-bb55-5f68ca48a872@linux.microsoft.com>
+Date:   Thu, 2 Nov 2023 12:33:30 -0700
 MIME-Version: 1.0
-In-Reply-To: <76572500-5f90-46fe-9bf2-b090bf1b616b@redhat.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v11 15/19] fsverity: consume builtin signature via LSM
+ hook
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk, agk@redhat.com,
+        snitzer@kernel.org, eparis@redhat.com, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, audit@vger.kernel.org,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        Deven Bowers <deven.desai@linux.microsoft.com>
+References: <1696457386-3010-16-git-send-email-wufan@linux.microsoft.com>
+ <6efb7a80ba0eb3e02b3ae7a5c0a210f3.paul@paul-moore.com>
+ <CAHC9VhQJkcb-k+o+NvVn7crrMMZqpBcZpnEbKBT+eZg4Ocjqhw@mail.gmail.com>
+ <20231102025355.GA1498@sol.localdomain>
+ <CAHC9VhScaajDOVpBoGPo80ceUggGyrP24pCoMy6d6uQ4r-WZjw@mail.gmail.com>
+From:   Fan Wu <wufan@linux.microsoft.com>
+In-Reply-To: <CAHC9VhScaajDOVpBoGPo80ceUggGyrP24pCoMy6d6uQ4r-WZjw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 02, 2023 at 06:56:59PM +0100, Maxime Coquelin wrote:
-> 
-> 
-> On 10/24/23 17:30, Casey Schaufler wrote:
-> > On 10/24/2023 2:49 AM, Maxime Coquelin wrote:
-> > > 
-> > > 
-> > > On 10/23/23 17:13, Casey Schaufler wrote:
-> > > > On 10/23/2023 12:28 AM, Maxime Coquelin wrote:
-> > > > > 
-> > > > > 
-> > > > > On 10/21/23 00:20, Casey Schaufler wrote:
-> > > > > > On 10/20/2023 8:58 AM, Maxime Coquelin wrote:
-> > > > > > > This patch introduces LSM hooks for devices creation,
-> > > > > > > destruction and opening operations, checking the
-> > > > > > > application is allowed to perform these operations for
-> > > > > > > the Virtio device type.
-> > > > > > 
-> > > > > > Why do you think that there needs to be a special LSM check for virtio
-> > > > > > devices? What can't existing device attributes be used?
-> > > > > 
-> > > > > Michael asked for a way for SELinux to allow/prevent the creation of
-> > > > > some types of devices [0].
-> > > > > 
-> > > > > A device is created using ioctl() on VDUSE control chardev. Its type is
-> > > > > specified via a field in the structure passed in argument.
-> > > > > 
-> > > > > I didn't see other way than adding dedicated LSM hooks to achieve this,
-> > > > > but it is possible that their is a better way to do it?
-> > > > 
-> > > > At the very least the hook should be made more general, and I'd have to
-> > > > see a proposal before commenting on that. security_dev_destroy(dev)
-> > > > might
-> > > > be a better approach. If there's reason to control destruction of vduse
-> > > > devices it's reasonable to assume that there are other devices with the
-> > > > same or similar properties.
-> > > 
-> > > VDUSE is different from other devices as the device is actually
-> > > implemented by the user-space application, so this is very specific in
-> > > my opinion.
-> > 
-> > This is hardly unique. If you're implementing the device
-> > in user-space you may well be able to implement the desired
-> > controls there.
-> > 
-> > > 
-> > > > 
-> > > > Since SELinux is your target use case, can you explain why you can't
-> > > > create SELinux policy to enforce the restrictions you're after? I
-> > > > believe
-> > > > (but can be proven wrong, of course) that SELinux has mechanism for
-> > > > dealing
-> > > > with controls on ioctls.
-> > > > 
-> > > 
-> > > I am not aware of such mechanism to deal with ioctl(), if you have a
-> > > pointer that would be welcome.
-> > 
-> > security/selinux/hooks.c
-> 
-> We might be able to extend selinux_file_ioctl(), but that will only
-> covers the ioctl for the control file, this patch also adds hook for the
-> device file opening that would need dedicated hook as the device type
-> information is stored in the device's private data.
-> 
-> Michael, before going further, I would be interested in your feedback.
-> Was this patch what you had in mind when requesting for a way to
-> allow/deny devices types for a given application?
-> 
-> Regards,
-> Maxime
 
 
-Yes, this is more or less what I had in mind.
+On 11/2/2023 8:42 AM, Paul Moore wrote:
+> On Wed, Nov 1, 2023 at 10:54 PM Eric Biggers <ebiggers@kernel.org> wrote:
+>> On Wed, Nov 01, 2023 at 08:40:06PM -0400, Paul Moore wrote:
+>>> On Mon, Oct 23, 2023 at 11:52 PM Paul Moore <paul@paul-moore.com> wrote:
+>>>> On Oct  4, 2023 Fan Wu <wufan@linux.microsoft.com> wrote:
+>>>>>
+>>>>> fsverity represents a mechanism to support both integrity and
+>>>>> authenticity protection of a file, supporting both signed and unsigned
+>>>>> digests.
+>>>>>
+>>>>> An LSM which controls access to a resource based on authenticity and
+>>>>> integrity of said resource, can then use this data to make an informed
+>>>>> decision on the authorization (provided by the LSM's policy) of said
+>>>>> claim.
+>>>>>
+>>>>> This effectively allows the extension of a policy enforcement layer in
+>>>>> LSM for fsverity, allowing for more granular control of how a
+>>>>> particular authenticity claim can be used. For example, "all (built-in)
+>>>>> signed fsverity files should be allowed to execute, but only these
+>>>>> hashes are allowed to be loaded as kernel modules".
+>>>>>
+>>>>> This enforcement must be done in kernel space, as a userspace only
+>>>>> solution would fail a simple litmus test: Download a self-contained
+>>>>> malicious binary that never touches the userspace stack. This
+>>>>> binary would still be able to execute.
+>>>>>
+>>>>> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+>>>>> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+>>>>> ---
+>>>>> v1-v6:
+>>>>>    + Not present
+>>>>>
+>>>>> v7:
+>>>>>    Introduced
+>>>>>
+>>>>> v8:
+>>>>>    + Split fs/verity/ changes and security/ changes into separate patches
+>>>>>    + Change signature of fsverity_create_info to accept non-const inode
+>>>>>    + Change signature of fsverity_verify_signature to accept non-const inode
+>>>>>    + Don't cast-away const from inode.
+>>>>>    + Digest functionality dropped in favor of:
+>>>>>      ("fs-verity: define a function to return the integrity protected
+>>>>>        file digest")
+>>>>>    + Reworded commit description and title to match changes.
+>>>>>    + Fix a bug wherein no LSM implements the particular fsverity @name
+>>>>>      (or LSM is disabled), and returns -EOPNOTSUPP, causing errors.
+>>>>>
+>>>>> v9:
+>>>>>    + No changes
+>>>>>
+>>>>> v10:
+>>>>>    + Rename the signature blob key
+>>>>>    + Cleanup redundant code
+>>>>>    + Make the hook call depends on CONFIG_FS_VERITY_BUILTIN_SIGNATURES
+>>>>>
+>>>>> v11:
+>>>>>    + No changes
+>>>>> ---
+>>>>>   fs/verity/fsverity_private.h |  2 +-
+>>>>>   fs/verity/open.c             | 26 +++++++++++++++++++++++++-
+>>>>>   include/linux/fsverity.h     |  2 ++
+>>>>>   3 files changed, 28 insertions(+), 2 deletions(-)
+>>>>
+>>>> We need an ACK from some VFS folks on this.
+>>>
+>>> Eric and/or Ted, can we get either an ACK or some feedback on this patch?
+>>>
+>>> For reference, the full patchset can be found on lore at the link below:
+>>>
+>>> https://lore.kernel.org/linux-security-module/1696457386-3010-1-git-send-email-wufan@linux.microsoft.com/
+>>
+>> Well, technically I already gave some (minor) feedback on this exact patch, and
+>> it's not yet been addressed:
+>> https://lore.kernel.org/linux-security-module/20231005022707.GA1688@quark.localdomain/
+Yes thanks for the review. We will certainly add the parameter 
+constification in the next version.
 
-> > 
-> > > 
-> > > Thanks,
-> > > Maxime
-> > > 
-> > > > 
-> > > > > 
-> > > > > Thanks,
-> > > > > Maxime
-> > > > > 
-> > > > > [0]:
-> > > > > https://lore.kernel.org/all/20230829130430-mutt-send-email-mst@kernel.org/
-> > > > > 
-> > > > > 
-> > > > 
-> > > 
-> > 
+> 
+> Hopefully Fan can comment on that, unless I'm forgetting some
+> implementation details it seems like a reasonable request.
+> 
+>> Of course, it would also be nice if the commit message mentioned what the patch
+>> actually does.
+> 
+> While I think the commit description does provide a reasonable summary
+> of IPE as it relates to fsverify, I agree that the specifics of the
+> changes presented in the patch are lacking.  Fan, could you update the
+> commit description to add a paragraph explaining what IPE would do in
+> the security_inode_setsecurity() hook called from within
+> fsverity_inode_setsecurity()?
+>
+Sorry for the lack of clarity. The hook call happens right after the 
+built-in signature verification in fsverity. This hook's main job is to 
+allow LSM to store the verified signature so that it can be used for 
+future LSM checks.
+
+>> At a higher level, I've said before, I'm not super happy about the use of
+>> fsverity builtin signatures growing.  (For some of the reasons why, see the
+>> guidance in the fsverity documentation at
+>> https://docs.kernel.org/filesystems/fsverity.html#built-in-signature-verification)
+>> That being said, if the people who are doing the broader review of IPE believe
+>> this is how its fsverity integration should work, I can live with that ...
+> 
+> Fan can surely elaborate on this more, but my understanding is that
+> IPE can help provide the missing authorization piece.
+>
+As Paul mentioned, with IPE, we can add kernel enforcement that only 
+files with the fs-verity built-in signature enabled are allowed. 
+Currently, IPE uses the above hook to save the signature in the file's 
+security blob, and then it decides whether to permit or deny file 
+operations based on the presence of the fs-verity built-in signature.
+
+But our plans don't end there. In the future, we intend to add more 
+features to address the security gaps mentioned in the documentation 
+related to the fs-verity built-in signature. For instance, we will 
+introduce a certificate policy rule to limit which signatures can be 
+trusted, thus resolving issues related to the validity period of 
+certificates. Additionally, we will implement file path rules, allowing 
+different certificates to permit or deny access to different files.
+
+>> ... I don't
+>> intend to block the IPE patchset if enough people want it to be merged.  I've
+>> really been hoping to see engagement with the people involved in IMA, as IPE
+>> basically duplicates/replaces IMA.  But I haven't seen that, so maybe things
+>> need to move on without them.
+> 
+> We are getting a bit beyond the integration of IPE and fsverity so I
+> don't want to spend a lot of time here, but IPE and IMA work quite a
+> bit differently as they serve different purposes.  IPE provides a file
+> authorization mechanism that grants access based on the specified
+> policy and the file's underlying backing store; IPE does not measure
+> files like IMA to provide additional integrity checking, it relies on
+> the storage medium's integrity mechanisms.
+> 
+> I have no doubt Fan could provide a much better summary if needed, and
+> of course there are the documentation patches in the patchset too.
+> 
+
+I would like to emphasize that IPE is not meant to replace IMA.
+
+IPE is a different approach, specifically designed for a particular part 
+of IMA's capabilities, which is "appraisal. While IPE's approach also 
+limits IPE's use cases to highly secure, locked-down devices where 
+almost everything is made read-only. In contrast, IMA is a versatile 
+solution suitable for a wide range of scenarios, and IPE cannot address 
+all of these.
+
+In practice, we often use both IMA (including measurement and appraisal) 
+and IPE simultaneously in production. These two solutions can coexist 
+and complement each other, and they are not mutually exclusive.
+
+-Fan
+
 
