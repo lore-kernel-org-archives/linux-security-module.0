@@ -2,42 +2,40 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BE2C4167B
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Nov 2023 00:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A14C8C4167D
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Nov 2023 00:55:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234813AbjKBAzh (ORCPT
+        id S234824AbjKBAzt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Nov 2023 20:55:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57182 "EHLO
+        Wed, 1 Nov 2023 20:55:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234487AbjKBAzg (ORCPT
+        with ESMTP id S234958AbjKBAzr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Nov 2023 20:55:36 -0400
+        Wed, 1 Nov 2023 20:55:47 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98FD1FC
-        for <linux-security-module@vger.kernel.org>; Wed,  1 Nov 2023 17:55:34 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 949A0C433CD;
-        Thu,  2 Nov 2023 00:55:31 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 629CB12B
+        for <linux-security-module@vger.kernel.org>; Wed,  1 Nov 2023 17:55:43 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89D89C433CA;
+        Thu,  2 Nov 2023 00:55:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698886534;
-        bh=iU8ghSAZArfPrUDx1mTaM7zZJqAsydpk+gAgLVDFjJM=;
+        s=k20201202; t=1698886542;
+        bh=pDTQGlJyhEUbr+oPLqtOR2IyJ1Tt/7G7gxE8XosZUDw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cgt/OTlq3zkiLm/RRKBe4Km3tOJe2XiCTKRT7hJH7JIQ2jvQXogq7WbxKJ6fbr3uq
-         DrKHn3rl14GSE5buzxro7P8tsS5nLE+L5DiSVXxUEDxFn1F7qjK1GX09ACP/xKpvkH
-         5M70jB0xIN2km4QOO+QzehPYc9thzyvBUy+1XRP4WEwZ1uamZzwDK7OdTHKK0wFkKM
-         EgZfmzhKbGYXJMHiYRlS4ZA26ZjA8v5HHWOjqOw++q4oyXeDfnNS3dsvzOSOxlUxV2
-         bDlYkNoTLCF/79ttNRHxWfbW40tYgy7sfzCTVHsjlTPGWD2j2JOcC/zYLsmHp7aYq7
-         WzeDTFxUi+n1g==
+        b=R2g/nebMZJQa2oKl/wCYih/1MuyLbSbg0nsjj7vnEZri6/h0kMHNAvtPzFSKS1zw+
+         kyY1Dae3cImhDTga/zWlTAj+oExgJWIo11sJBGmFyESwtV1VFryBxgfbsIu07UC3Xs
+         f1UJ/OYOo1uJHXT3ttQ7JktdVud/5YI6WEdM0tDJczBjbgn3x5huCbnwN6U0wlP4oY
+         OAuqtWVGEVFCcME0TtRUHav4jljYDsGJPaQ3Pa1c7W6k3YmEncg9ggevRtMqu+wHMN
+         z2ePZGSlajq2+N5Thf5kFsqZklPCQykjHga0JC3PvZd85tZ8gzfjo4bBg3IOncaL6j
+         lEXA7nhf95p+Q==
 From:   KP Singh <kpsingh@kernel.org>
 To:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org
 Cc:     paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
         song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        kpsingh@kernel.org, renauld@google.com, pabeni@redhat.com,
-        Kui-Feng Lee <sinquersw@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v7 2/5] security: Count the LSMs enabled at compile time
-Date:   Thu,  2 Nov 2023 01:55:18 +0100
-Message-ID: <20231102005521.346983-3-kpsingh@kernel.org>
+        kpsingh@kernel.org, renauld@google.com, pabeni@redhat.com
+Subject: [PATCH v7 5/5] security: Add CONFIG_SECURITY_HOOK_LIKELY
+Date:   Thu,  2 Nov 2023 01:55:21 +0100
+Message-ID: <20231102005521.346983-6-kpsingh@kernel.org>
 X-Mailer: git-send-email 2.42.0.820.g83a721a137-goog
 In-Reply-To: <20231102005521.346983-1-kpsingh@kernel.org>
 References: <20231102005521.346983-1-kpsingh@kernel.org>
@@ -46,144 +44,150 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-These macros are a clever trick to determine a count of the number of
-LSMs that are enabled in the config to ascertain the maximum number of
-static calls that need to be configured per LSM hook.
+This config influences the nature of the static key that guards the
+static call for LSM hooks.
 
-Without this one would need to generate static calls for the total
-number of LSMs in the kernel (even if they are not compiled) times the
-number of LSM hooks which ends up being quite wasteful.
+When enabled, it indicates that an LSM static call slot is more likely
+to be initialized. When disabled, it optimizes for the case when static
+call slot is more likely to be not initialized.
 
-Suggested-by: Kui-Feng Lee <sinquersw@gmail.com>
-Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+When a major LSM like (SELinux, AppArmor, Smack etc) is active on a
+system the system would benefit from enabling the config. However there
+are other cases which would benefit from the config being disabled
+(e.g. a system with a BPF LSM with no hooks enabled by default, or an
+LSM like loadpin / yama). Ultimately, there is no one-size fits all
+solution.
+
+with CONFIG_SECURITY_HOOK_LIKELY enabled, the inactive /
+uninitialized case is penalized with a direct jmp (still better than
+an indirect jmp):
+
+function security_file_ioctl:
+   0xffffffff818f0c80 <+0>:	endbr64
+   0xffffffff818f0c84 <+4>:	nopl   0x0(%rax,%rax,1)
+   0xffffffff818f0c89 <+9>:	push   %rbp
+   0xffffffff818f0c8a <+10>:	push   %r14
+   0xffffffff818f0c8c <+12>:	push   %rbx
+   0xffffffff818f0c8d <+13>:	mov    %rdx,%rbx
+   0xffffffff818f0c90 <+16>:	mov    %esi,%ebp
+   0xffffffff818f0c92 <+18>:	mov    %rdi,%r14
+   0xffffffff818f0c95 <+21>:	jmp    0xffffffff818f0ca8 <security_file_ioctl+40>
+
+   jump to skip the inactive BPF LSM hook.
+
+   0xffffffff818f0c97 <+23>:	mov    %r14,%rdi
+   0xffffffff818f0c9a <+26>:	mov    %ebp,%esi
+   0xffffffff818f0c9c <+28>:	mov    %rbx,%rdx
+   0xffffffff818f0c9f <+31>:	call   0xffffffff8141e3b0 <bpf_lsm_file_ioctl>
+   0xffffffff818f0ca4 <+36>:	test   %eax,%eax
+   0xffffffff818f0ca6 <+38>:	jne    0xffffffff818f0cbf <security_file_ioctl+63>
+   0xffffffff818f0ca8 <+40>:	endbr64
+   0xffffffff818f0cac <+44>:	jmp    0xffffffff818f0ccd <security_file_ioctl+77>
+
+   jump to skip the empty slot.
+
+   0xffffffff818f0cae <+46>:	mov    %r14,%rdi
+   0xffffffff818f0cb1 <+49>:	mov    %ebp,%esi
+   0xffffffff818f0cb3 <+51>:	mov    %rbx,%rdx
+   0xffffffff818f0cb6 <+54>:	nopl   0x0(%rax,%rax,1)
+  				^^^^^^^^^^^^^^^^^^^^^^^
+				Empty slot
+
+   0xffffffff818f0cbb <+59>:	test   %eax,%eax
+   0xffffffff818f0cbd <+61>:	je     0xffffffff818f0ccd <security_file_ioctl+77>
+   0xffffffff818f0cbf <+63>:	endbr64
+   0xffffffff818f0cc3 <+67>:	pop    %rbx
+   0xffffffff818f0cc4 <+68>:	pop    %r14
+   0xffffffff818f0cc6 <+70>:	pop    %rbp
+   0xffffffff818f0cc7 <+71>:	cs jmp 0xffffffff82c00000 <__x86_return_thunk>
+   0xffffffff818f0ccd <+77>:	endbr64
+   0xffffffff818f0cd1 <+81>:	xor    %eax,%eax
+   0xffffffff818f0cd3 <+83>:	jmp    0xffffffff818f0cbf <security_file_ioctl+63>
+   0xffffffff818f0cd5 <+85>:	mov    %r14,%rdi
+   0xffffffff818f0cd8 <+88>:	mov    %ebp,%esi
+   0xffffffff818f0cda <+90>:	mov    %rbx,%rdx
+   0xffffffff818f0cdd <+93>:	pop    %rbx
+   0xffffffff818f0cde <+94>:	pop    %r14
+   0xffffffff818f0ce0 <+96>:	pop    %rbp
+   0xffffffff818f0ce1 <+97>:	ret
+
+When the config is disabled, the case optimizes the scenario above.
+
+security_file_ioctl:
+   0xffffffff818f0e30 <+0>:	endbr64
+   0xffffffff818f0e34 <+4>:	nopl   0x0(%rax,%rax,1)
+   0xffffffff818f0e39 <+9>:	push   %rbp
+   0xffffffff818f0e3a <+10>:	push   %r14
+   0xffffffff818f0e3c <+12>:	push   %rbx
+   0xffffffff818f0e3d <+13>:	mov    %rdx,%rbx
+   0xffffffff818f0e40 <+16>:	mov    %esi,%ebp
+   0xffffffff818f0e42 <+18>:	mov    %rdi,%r14
+   0xffffffff818f0e45 <+21>:	xchg   %ax,%ax
+   0xffffffff818f0e47 <+23>:	xchg   %ax,%ax
+
+   The static keys in their disabled state do not create jumps leading
+   to faster code.
+
+   0xffffffff818f0e49 <+25>:	xor    %eax,%eax
+   0xffffffff818f0e4b <+27>:	xchg   %ax,%ax
+   0xffffffff818f0e4d <+29>:	pop    %rbx
+   0xffffffff818f0e4e <+30>:	pop    %r14
+   0xffffffff818f0e50 <+32>:	pop    %rbp
+   0xffffffff818f0e51 <+33>:	cs jmp 0xffffffff82c00000 <__x86_return_thunk>
+   0xffffffff818f0e57 <+39>:	endbr64
+   0xffffffff818f0e5b <+43>:	mov    %r14,%rdi
+   0xffffffff818f0e5e <+46>:	mov    %ebp,%esi
+   0xffffffff818f0e60 <+48>:	mov    %rbx,%rdx
+   0xffffffff818f0e63 <+51>:	call   0xffffffff8141e3b0 <bpf_lsm_file_ioctl>
+   0xffffffff818f0e68 <+56>:	test   %eax,%eax
+   0xffffffff818f0e6a <+58>:	jne    0xffffffff818f0e4d <security_file_ioctl+29>
+   0xffffffff818f0e6c <+60>:	jmp    0xffffffff818f0e47 <security_file_ioctl+23>
+   0xffffffff818f0e6e <+62>:	endbr64
+   0xffffffff818f0e72 <+66>:	mov    %r14,%rdi
+   0xffffffff818f0e75 <+69>:	mov    %ebp,%esi
+   0xffffffff818f0e77 <+71>:	mov    %rbx,%rdx
+   0xffffffff818f0e7a <+74>:	nopl   0x0(%rax,%rax,1)
+   0xffffffff818f0e7f <+79>:	test   %eax,%eax
+   0xffffffff818f0e81 <+81>:	jne    0xffffffff818f0e4d <security_file_ioctl+29>
+   0xffffffff818f0e83 <+83>:	jmp    0xffffffff818f0e49 <security_file_ioctl+25>
+   0xffffffff818f0e85 <+85>:	endbr64
+   0xffffffff818f0e89 <+89>:	mov    %r14,%rdi
+   0xffffffff818f0e8c <+92>:	mov    %ebp,%esi
+   0xffffffff818f0e8e <+94>:	mov    %rbx,%rdx
+   0xffffffff818f0e91 <+97>:	pop    %rbx
+   0xffffffff818f0e92 <+98>:	pop    %r14
+   0xffffffff818f0e94 <+100>:	pop    %rbp
+   0xffffffff818f0e95 <+101>:	ret
+
 Acked-by: Song Liu <song@kernel.org>
 Reviewed-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: KP Singh <kpsingh@kernel.org>
 ---
- include/linux/lsm_count.h | 114 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 114 insertions(+)
- create mode 100644 include/linux/lsm_count.h
+ security/Kconfig | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/include/linux/lsm_count.h b/include/linux/lsm_count.h
-new file mode 100644
-index 000000000000..dbb3c8573959
---- /dev/null
-+++ b/include/linux/lsm_count.h
-@@ -0,0 +1,114 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
+diff --git a/security/Kconfig b/security/Kconfig
+index 52c9af08ad35..317018dcbc67 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -32,6 +32,17 @@ config SECURITY
+ 
+ 	  If you are unsure how to answer this question, answer N.
+ 
++config SECURITY_HOOK_LIKELY
++	bool "LSM hooks are likely to be initialized"
++	depends on SECURITY && EXPERT
++	default SECURITY_SELINUX || SECURITY_SMACK || SECURITY_TOMOYO || SECURITY_APPARMOR
++	help
++	  This controls the behaviour of the static keys that guard LSM hooks.
++	  If LSM hooks are likely to be initialized by LSMs, then one gets
++	  better performance by enabling this option. However, if the system is
++	  using an LSM where hooks are much likely to be disabled, one gets
++	  better performance by disabling this config.
 +
-+/*
-+ * Copyright (C) 2023 Google LLC.
-+ */
-+
-+#ifndef __LINUX_LSM_COUNT_H
-+#define __LINUX_LSM_COUNT_H
-+
-+#include <linux/args.h>
-+
-+#ifdef CONFIG_SECURITY
-+
-+/*
-+ * Macros to count the number of LSMs enabled in the kernel at compile time.
-+ */
-+
-+/*
-+ * Capabilities is enabled when CONFIG_SECURITY is enabled.
-+ */
-+#if IS_ENABLED(CONFIG_SECURITY)
-+#define CAPABILITIES_ENABLED 1,
-+#else
-+#define CAPABILITIES_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_SECURITY_SELINUX)
-+#define SELINUX_ENABLED 1,
-+#else
-+#define SELINUX_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_SECURITY_SMACK)
-+#define SMACK_ENABLED 1,
-+#else
-+#define SMACK_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_SECURITY_APPARMOR)
-+#define APPARMOR_ENABLED 1,
-+#else
-+#define APPARMOR_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_SECURITY_TOMOYO)
-+#define TOMOYO_ENABLED 1,
-+#else
-+#define TOMOYO_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_SECURITY_YAMA)
-+#define YAMA_ENABLED 1,
-+#else
-+#define YAMA_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_SECURITY_LOADPIN)
-+#define LOADPIN_ENABLED 1,
-+#else
-+#define LOADPIN_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_SECURITY_LOCKDOWN_LSM)
-+#define LOCKDOWN_ENABLED 1,
-+#else
-+#define LOCKDOWN_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_SECURITY_SAFESETID)
-+#define SAFESETID_ENABLED 1,
-+#else
-+#define SAFESETID_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_BPF_LSM)
-+#define BPF_LSM_ENABLED 1,
-+#else
-+#define BPF_LSM_ENABLED
-+#endif
-+
-+#if IS_ENABLED(CONFIG_SECURITY_LANDLOCK)
-+#define LANDLOCK_ENABLED 1,
-+#else
-+#define LANDLOCK_ENABLED
-+#endif
-+
-+/*
-+ *  There is a trailing comma that we need to be accounted for. This is done by
-+ *  using a skipped argument in __COUNT_LSMS
-+ */
-+#define __COUNT_LSMS(skipped_arg, args...) COUNT_ARGS(args...)
-+#define COUNT_LSMS(args...) __COUNT_LSMS(args)
-+
-+#define MAX_LSM_COUNT			\
-+	COUNT_LSMS(			\
-+		CAPABILITIES_ENABLED	\
-+		SELINUX_ENABLED		\
-+		SMACK_ENABLED		\
-+		APPARMOR_ENABLED	\
-+		TOMOYO_ENABLED		\
-+		YAMA_ENABLED		\
-+		LOADPIN_ENABLED		\
-+		LOCKDOWN_ENABLED	\
-+		SAFESETID_ENABLED	\
-+		BPF_LSM_ENABLED		\
-+		LANDLOCK_ENABLED)
-+
-+#else
-+
-+#define MAX_LSM_COUNT 0
-+
-+#endif /* CONFIG_SECURITY */
-+
-+#endif  /* __LINUX_LSM_COUNT_H */
+ config SECURITYFS
+ 	bool "Enable the securityfs filesystem"
+ 	help
 -- 
 2.42.0.820.g83a721a137-goog
 
