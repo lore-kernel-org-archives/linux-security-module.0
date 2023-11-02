@@ -2,59 +2,59 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A39FDC4167B
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Nov 2023 00:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FA5C4167D
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Nov 2023 00:41:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234536AbjKBAlI (ORCPT
+        id S234645AbjKBAlg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Nov 2023 20:41:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60150 "EHLO
+        Wed, 1 Nov 2023 20:41:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234506AbjKBAlG (ORCPT
+        with ESMTP id S234640AbjKBAlf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Nov 2023 20:41:06 -0400
-Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF1611D
-        for <linux-security-module@vger.kernel.org>; Wed,  1 Nov 2023 17:41:00 -0700 (PDT)
-Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-5a92782615dso5210537b3.2
-        for <linux-security-module@vger.kernel.org>; Wed, 01 Nov 2023 17:41:00 -0700 (PDT)
+        Wed, 1 Nov 2023 20:41:35 -0400
+Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ADBA130
+        for <linux-security-module@vger.kernel.org>; Wed,  1 Nov 2023 17:41:24 -0700 (PDT)
+Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-59b5484fbe6so5377827b3.1
+        for <linux-security-module@vger.kernel.org>; Wed, 01 Nov 2023 17:41:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1698885660; x=1699490460; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1698885683; x=1699490483; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TXv7lNcUKE/bPvUbNVQ0cVR7ltHedHv7vFfJ1xNnXoo=;
-        b=D9no4B2d4cqTGIzHucsVFeKxSN5A9mmIMdqIFPQ4RzAt/VBlLU8VAsOB0wV1fh0xsm
-         H/pGzVf4EBLMd92afH6nNZWydrUBamPyPQGA09x25gWCeiCuojHllt3VZKhGgqSZ7JN2
-         q2ZJUwqYiKVXBEfkThmZU2HnvWbjFEDOVoK2ywFzJT6aTLhlR0Y36hEgrJfKxZAmvtra
-         t/yknTSLg9RmHfFDGoVX/1GkHFCPhER4T8a8fdr95/HnWQs087yaa507YscWGoUlpBP2
-         arbLoim6AdpCroVlMlqTCqOYjLwBoZrwy7LMrf4pfW3fXZGqJuYZUCqAC5oAVQ1fkOfs
-         NR3Q==
+        bh=fAm9YT2CGT8GblHULmmywbX41m2R7RbqEQjQ8qzUJ/M=;
+        b=K0JtkKnX6EbqfiBHos83i5VZIYxFdOgqSjmJHTPSh6QzqBS3iZZiHIeGNu9p63tOY3
+         p1TXNzSazLo8spWgciOgKmJpg3gQPOD6UyRBtV7dAbKUn+SWWv7yoZ/0SGlsVcnwgGy8
+         /UwOPLIzTNsDyqbyXOJH6UQ4krABzCtLLVPzg0w8QtBiKKEnJXAgAMA8IaQZlpbCpVCA
+         RYum+uBxgMeDn4EuzZUavblDvswu5HFrte+CR+0auq7Zm4Vsk10razTKtAT9QcZdMDRg
+         04xkxaBct++JULnmuBCKCSzJj9jAZY9rg2+n1vcdlGx7w8Yseh46sdOUyYRLoFPiAfkP
+         CC7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698885660; x=1699490460;
+        d=1e100.net; s=20230601; t=1698885683; x=1699490483;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TXv7lNcUKE/bPvUbNVQ0cVR7ltHedHv7vFfJ1xNnXoo=;
-        b=b3Neuzo7Jg8tAE/VWexvtR0IUBhNp45sJDQrV1RoLmYHkeBCWclULInMzwot4eI+/U
-         AqrfKbWmPo8z4j185y/LZdKVQlA8rCtz7654o83eGxOAaG8aE/PI3XMns8YU74aLiK2l
-         hBS1QGQ77UZN33BvVSGLFKLayzzjSF3wlvrStQVRQd34cfwfO514hpKGQ4oU4z+b7eDV
-         64bYOhX0gC1H3TlFl0WKAL6WVTFXrBv61kG/Zdh2WWjJPbD1okDB4SgycMKlQbXOg+Ea
-         SC7D7u6bh2DFtep3XLH2v5GgbDFNEeyF3J3lquVrdjTfVL+JJKaZqq/lwaITmHtsUyVn
-         i00w==
-X-Gm-Message-State: AOJu0YzDTmV3obYV0NuYgfAYeEzHfDJl4FOKUy1DCbBHwB31jq7qiDVy
-        juc4LvwnFDYRXXjQt0FpzILERYRECRHvX+vV1KL9
-X-Google-Smtp-Source: AGHT+IHX5SByOusRzJbw7XlPM3jE3Ppiy/SLY9W8Ke82qVvDL1WHm97FTYfGRSVFyvB1nXe4XZRil3a/EiFE9ySrnAI=
-X-Received: by 2002:a25:db13:0:b0:d9c:a3dd:664e with SMTP id
- g19-20020a25db13000000b00d9ca3dd664emr15078806ybf.56.1698885659901; Wed, 01
- Nov 2023 17:40:59 -0700 (PDT)
+        bh=fAm9YT2CGT8GblHULmmywbX41m2R7RbqEQjQ8qzUJ/M=;
+        b=k8xxb3ykaGUV12DOjZx0fSA7Mb02FsFdN8We7Hs0fztWNvVr2gmjLG+ClxCuodwmQx
+         6eGWYJqUamEqnZ6E83fS4hfN/978MWqbL+RdhjslCrammSe55d1CcJQo8oy/BKtneYjv
+         rr7Xs3pJak7tej0Bg25G2BapVg2ElHcKb93SB0/6w3ik8o3zXv033X3cTm4VJu+Dn4y2
+         7oA5Z6l/porbDEPVNvj7J+Bvt3iUf4CeBH0A7Q+IvBYqodKp0oxuzCqmwHsI7Yqd5b/h
+         U/I31h8vh+OI41/ZvD2zsg9CtFUg3pnAL1RfJHWi8pcwJqZYmG79452rYFrN5VIfqDhF
+         mlpQ==
+X-Gm-Message-State: AOJu0YyHRirEIKPIKQ++xYHpiygtuSUold/gJMpeNen3xe4TcmGKMt6H
+        oEhr3Sz0xhfkxvuAwLJzNoPEzMLjCRFhoi+0L0ys
+X-Google-Smtp-Source: AGHT+IE9R2PNJzbWCbhLDpDBJE3kRi/K1J1lLamCQI6hfAPMxVasf0j2MjEDKeFunE720qUTJiYc5/y2Q0udhgf5d6k=
+X-Received: by 2002:a5b:1ca:0:b0:c4b:ada8:8b86 with SMTP id
+ f10-20020a5b01ca000000b00c4bada88b86mr16324385ybp.64.1698885683563; Wed, 01
+ Nov 2023 17:41:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <1696457386-3010-12-git-send-email-wufan@linux.microsoft.com> <85311850a862fe6ccb946634429b890a.paul@paul-moore.com>
-In-Reply-To: <85311850a862fe6ccb946634429b890a.paul@paul-moore.com>
+References: <1696457386-3010-13-git-send-email-wufan@linux.microsoft.com> <2121d9724f32ea5926574f9aba806b69.paul@paul-moore.com>
+In-Reply-To: <2121d9724f32ea5926574f9aba806b69.paul@paul-moore.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 1 Nov 2023 20:40:49 -0400
-Message-ID: <CAHC9VhQHizyP3frH61jQi-8eNeNvg9UcPkvPv6Kk3k7rMsCziQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v11 11/19] dm verity: set DM_TARGET_SINGLETON feature flag
+Date:   Wed, 1 Nov 2023 20:41:12 -0400
+Message-ID: <CAHC9VhTC0+p9sgeEjCYBZKFu9FcPj3U5zQ7eqBOfwvg9Kd=vwA@mail.gmail.com>
+Subject: Re: [PATCH RFC v11 12/19] dm: add finalize hook to target_type
 To:     Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net,
         zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
         tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk,
@@ -73,25 +73,25 @@ On Mon, Oct 23, 2023 at 11:52=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
 rote:
 > On Oct  4, 2023 Fan Wu <wufan@linux.microsoft.com> wrote:
 > >
-> > The device-mapper has a flag to mark targets as singleton, which is a
-> > required flag for immutable targets. Without this flag, multiple
-> > dm-verity targets can be added to a mapped device, which has no
-> > practical use cases and will let dm_table_get_immutable_target return
-> > NULL. This patch adds the missing flag, restricting only one
-> > dm-verity target per mapped device.
+> > This patch adds a target finalize hook.
+> >
+> > The hook is triggered just before activating an inactive table of a
+> > mapped device. If it returns an error the __bind get cancelled.
+> >
+> > The dm-verity target will use this hook to attach the dm-verity's
+> > roothash metadata to the block_device struct of the mapped device.
 > >
 > > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 > > ---
 > > v1-v10:
 > >   + Not present
 > > ---
-> >  drivers/md/dm-verity-target.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >  drivers/md/dm.c               | 12 ++++++++++++
+> >  include/linux/device-mapper.h |  7 +++++++
+> >  2 files changed, 19 insertions(+)
 >
-> This seems reasonable to me and matches with other users of
-> DM_TARGET_IMMUTABLE.
->
-> Alasdair, Mike, can we get an ACK on this?
+> We need an ACK and confirmation from Alasdair and/or Mike that this
+> is the right approach.
 
 A gentle ping with a reminder ...
 
@@ -100,21 +100,60 @@ For reference, the full patchset can be found on lore at the link below:
 https://lore.kernel.org/linux-security-module/1696457386-3010-1-git-send-em=
 ail-wufan@linux.microsoft.com/
 
-> > diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-targe=
-t.c
-> > index 26adcfea0302..80673b66c194 100644
-> > --- a/drivers/md/dm-verity-target.c
-> > +++ b/drivers/md/dm-verity-target.c
-> > @@ -1503,7 +1503,7 @@ int dm_verity_get_root_digest(struct dm_target *t=
-i, u8 **root_digest, unsigned i
+> > diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> > index 64a1f306c96c..3be9cc35306d 100644
+> > --- a/drivers/md/dm.c
+> > +++ b/drivers/md/dm.c
+> > @@ -2239,6 +2239,18 @@ static struct dm_table *__bind(struct mapped_dev=
+ice *md, struct dm_table *t,
+> >               goto out;
+> >       }
 > >
-> >  static struct target_type verity_target =3D {
-> >       .name           =3D "verity",
-> > -     .features       =3D DM_TARGET_IMMUTABLE,
-> > +     .features       =3D DM_TARGET_SINGLETON | DM_TARGET_IMMUTABLE,
-> >       .version        =3D {1, 9, 0},
-> >       .module         =3D THIS_MODULE,
-> >       .ctr            =3D verity_ctr,
+> > +     for (unsigned int i =3D 0; i < t->num_targets; i++) {
+> > +             struct dm_target *ti =3D dm_table_get_target(t, i);
+> > +
+> > +             if (ti->type->finalize) {
+> > +                     ret =3D ti->type->finalize(ti);
+> > +                     if (ret) {
+> > +                             old_map =3D ERR_PTR(ret);
+> > +                             goto out;
+> > +                     }
+> > +             }
+> > +     }
+> > +
+> >       old_map =3D rcu_dereference_protected(md->map, lockdep_is_held(&m=
+d->suspend_lock));
+> >       rcu_assign_pointer(md->map, (void *)t);
+> >       md->immutable_target_type =3D dm_table_get_immutable_target_type(=
+t);
+> > diff --git a/include/linux/device-mapper.h b/include/linux/device-mappe=
+r.h
+> > index 69d0435c7ebb..4040e84a8ec7 100644
+> > --- a/include/linux/device-mapper.h
+> > +++ b/include/linux/device-mapper.h
+> > @@ -160,6 +160,12 @@ typedef int (*dm_dax_zero_page_range_fn)(struct dm=
+_target *ti, pgoff_t pgoff,
+> >   */
+> >  typedef size_t (*dm_dax_recovery_write_fn)(struct dm_target *ti, pgoff=
+_t pgoff,
+> >               void *addr, size_t bytes, struct iov_iter *i);
+> > +/*
+> > + * Returns:
+> > + *  < 0 : error
+> > + *  =3D 0 : success
+> > + */
+> > +typedef int (*dm_finalize_fn) (struct dm_target *target);
+> >
+> >  void dm_error(const char *message);
+> >
+> > @@ -209,6 +215,7 @@ struct target_type {
+> >       dm_dax_direct_access_fn direct_access;
+> >       dm_dax_zero_page_range_fn dax_zero_page_range;
+> >       dm_dax_recovery_write_fn dax_recovery_write;
+> > +     dm_finalize_fn finalize;
+> >
+> >       /* For internal device-mapper use. */
+> >       struct list_head list;
 > > --
 > > 2.25.1
 
