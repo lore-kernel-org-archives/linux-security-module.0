@@ -2,187 +2,202 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3203AC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Nov 2023 17:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA84C0018A
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Nov 2023 17:58:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377151AbjKBRMU (ORCPT
+        id S1344812AbjKBR6C (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Nov 2023 13:12:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34194 "EHLO
+        Thu, 2 Nov 2023 13:58:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377148AbjKBRMT (ORCPT
+        with ESMTP id S1344535AbjKBR6C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Nov 2023 13:12:19 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A48BF182;
-        Thu,  2 Nov 2023 10:12:15 -0700 (PDT)
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A2FkiEg010322;
-        Thu, 2 Nov 2023 17:11:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references :
- content-transfer-encoding : content-type : mime-version;
- s=corp-2023-03-30; bh=tONCHmV+MgkF92rZ7p02ePmu8q7+n9Vy50Fwun3oWaE=;
- b=ev3hWdpqd6kMx1Jsdq36XvxuoKsoNx0kTfT58Jo1fu+SRFDVvaCBTZXTQ3f8YkAtZRI+
- wvhhpxT14GGfrwVrj4ULXDw9+2CTLF0q8EjVcZqbxx9mEJ6J5gjG83NJA0gVdRDfX3Ui
- NtqAZ8ZOhCIF9OPKMRsveD8G61UCmtvB7uWw7yYMnsgyVXc5J+4a0GoAYAH9duR8KS63
- r2KhsXmTItr+ulvuEX+l9hBjIw4eFRFoD6pnKyNdeQF6z2mXpKzcLaW9GUTYnO3e40Bh
- e4mcpGgGTwyjwyFkj459KMBNRYXnMJ3m+fIiqIMBcHqun37AR+oepjmnZjJgtzXGYWcQ ow== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3u0tuuj7dn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 02 Nov 2023 17:11:54 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3A2G0541020079;
-        Thu, 2 Nov 2023 17:11:53 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2169.outbound.protection.outlook.com [104.47.58.169])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3u0rrf480w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 02 Nov 2023 17:11:52 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RzPwcAsutDa0VSTa+sBFFoEfuUvzx5Ewk7mPrqH//ibIBkvb4LpBoRJtbBTEY/DRDHZxgA4S4ms3lGDGE5GIClGdAeBBAlLML30jfx7o2nggNwMnNxBAkJs+UvaAhpDOKoVCdOTc9Os9k6jpPWvZeT1QdZLxC9FYPaJfWoq7sGdJWTB4PchJjzPdNEqlZvOMxSgZaDvkZbbRpy7Ma9yAnUD0elq55haFlGDuQZ+uKhOQ5L6TYEXkfHEx6GRzMJZGhg2GS7rmSiKWnOvl0upozBHVAhiIZo7v/cgCYuFhtoz2xDm+Hj5Y+IRB4YLd+VEZXbd5/xQxVb3vaZwClAFbfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tONCHmV+MgkF92rZ7p02ePmu8q7+n9Vy50Fwun3oWaE=;
- b=VSiuzwUKKQJ2wYPfUYGG0LWfHsNkRPkYBIhCYoCOp0QE1qteEY6gAeoaQIZTW2yZgOHV0pW11eDRtYs9BpvKnOahm/3HXM0IrRi/btlKBvg6O86wn/ruGAjrTCR9ocnp9lgEgmD0zVOrZh322qjl6GM2EuAj+WLWVAqN94MJq3Wlz2Xd6zbCUzcGB67o9H0DRWGUHZxVL1GEN7Hlobj+4WRhLMU8i25ymTwlG8PgK5FY8lKP9Acc6JBjFQLfVdB5/2cLEzAMsQrbkme4wL2rKojQEij48NEenyoLYYiyee6IotySkmFzjKGHywVC8/HGqOcjwX6rTgEEI1gE0ih43g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tONCHmV+MgkF92rZ7p02ePmu8q7+n9Vy50Fwun3oWaE=;
- b=Rv1vXCEjeFOaOErPR70lq3LOQZXEe93dmwX1VjdTCGPr6H/9CkK0F3sRpj6bvmilTP4kIxT/Rs36XqfJtdNElgE/WXzT0xQVLvHi2xn4hz71eznU/nL118HXLqs+fvuoojBA6f11LNh9g3089efWG0CxnPUQb7RRgYIx+2ur+8E=
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by CH3PR10MB7139.namprd10.prod.outlook.com (2603:10b6:610:127::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6954.21; Thu, 2 Nov
- 2023 17:11:51 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::adf2:9029:9b90:56f0]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::adf2:9029:9b90:56f0%7]) with mapi id 15.20.6954.019; Thu, 2 Nov 2023
- 17:11:51 +0000
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-To:     zohar@linux.ibm.com
-Cc:     dmitry.kasatkin@gmail.com, jarkko@kernel.org, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, eric.snowberg@oracle.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ima: Remove EXPERIMENTAL from IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
-Date:   Thu,  2 Nov 2023 13:06:17 -0400
-Message-Id: <20231102170617.2403495-3-eric.snowberg@oracle.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20231102170617.2403495-1-eric.snowberg@oracle.com>
-References: <20231102170617.2403495-1-eric.snowberg@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PH7PR17CA0055.namprd17.prod.outlook.com
- (2603:10b6:510:325::16) To CH2PR10MB4150.namprd10.prod.outlook.com
- (2603:10b6:610:ac::13)
+        Thu, 2 Nov 2023 13:58:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D7FD186
+        for <linux-security-module@vger.kernel.org>; Thu,  2 Nov 2023 10:57:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1698947829;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=tp8izf7QPwpHFaPqaZVcwUXFrUe8L7A/9WJXpfj40As=;
+        b=jQ3tnucv0clKthMfvijf9lMrUQvjE+1JwkwuM8Vg3Lwp3xcAv8TqVE4TCbEivZYdse+H/P
+        5oUwKlIx7uhDEvEuNpLV3x7XHX8ANMogkU0K0/J1Wm5PTLpjwq9aZx8t5TgrIHWhqn+yKm
+        7Xrd6JWJaBpl5ix9M5rFMeOqbFvKGzY=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-173-OqV3xzT6OW6kFOqF9arXhQ-1; Thu,
+ 02 Nov 2023 13:57:06 -0400
+X-MC-Unique: OqV3xzT6OW6kFOqF9arXhQ-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 60F7B1C29EB6;
+        Thu,  2 Nov 2023 17:57:04 +0000 (UTC)
+Received: from [10.39.208.33] (unknown [10.39.208.33])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6D3ED492BFC;
+        Thu,  2 Nov 2023 17:57:00 +0000 (UTC)
+Message-ID: <76572500-5f90-46fe-9bf2-b090bf1b616b@redhat.com>
+Date:   Thu, 2 Nov 2023 18:56:59 +0100
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR10MB4150:EE_|CH3PR10MB7139:EE_
-X-MS-Office365-Filtering-Correlation-Id: e94ae4f8-ed56-41e1-30db-08dbdbc6ce09
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 0hVs2F0r0Iaxqcf5ZBuVYjsdiL2ktA1EVCHV/klf8eyCOO/32saYmzllZEoujTXFSP5g23EJ71M1lMYCr7Y4/mPf7YEoJ0LpZ7HVp37yKbnTtzGKy4ymPCYug6oO9h66JhsMP5xnYImGpPVx2pQI87fItarSI9Oqr8JDBA9Yq7MZvrmUBcHAdICN19slvjQUAn+AH8SZJyomo5FGWpnAv8I+AyUFoML1ijVt+B93EdLYaHSX301/uOM8xaiqdPHRqn3thNI08QFHqNyoyuCgwX/iXEUqvUwZ0VyBkYKs5sFcZX2tCa1ShWa0MmcudAb49mMiGFExk7kig2Uh9zEzDh22nAnU6IOCDS5Xs/SL78thY9M79iGfNayzZcFxs/GphXGkA1lP5puCSmwGM7KcmbhleuAV5z7ediP1s2E/2sWR7tOO1rnYMufiKE1FPnerlYtUEgXuyU1lngAhGvSBblxD60uSlF/ZsHYDWzM6BuaRdub8P56YcP1AyIMPCD7ooTofn4zfudDdfDDYNAR02OdqDVvZ9KAP6ogHpdMZgT8=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(346002)(366004)(136003)(376002)(39860400002)(230922051799003)(186009)(1800799009)(64100799003)(451199024)(5660300002)(4326008)(41300700001)(66946007)(66556008)(66476007)(6916009)(316002)(8936002)(44832011)(966005)(6486002)(2906002)(478600001)(8676002)(6666004)(6512007)(36756003)(83380400001)(6506007)(1076003)(2616005)(86362001)(38100700002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?KpYL+5LaVVxPwlKpMsaidq9EWwAwIg3Y25L3vTxs9L1SgFj9CbSQMJ36N2vZ?=
- =?us-ascii?Q?iYon6wxqd8awILAJXptrJvrOdfhOm26DYtoxK/jDAmuxHszjGQvlrulxAmHt?=
- =?us-ascii?Q?tHwSAR0+/9KdK7EOxfA+oZQd0DIp6j91Sdm839WNFR/7Km+S3Uurba1Efl0h?=
- =?us-ascii?Q?Ow/zO/e3sc7sBMJR9mw68yLdqL1rMJAqWnOAdD7xDUFo7nLDsdFX2AjVnl5C?=
- =?us-ascii?Q?j1fhkqFoacBhdlJlnFav2xFANElBd6Qt38e+KjF2DZtS+TsKb2uhU5eL7Djr?=
- =?us-ascii?Q?1zAL2fDwBLwNYAK7Mz2JfXY7dmT/j0Jv4U1/4wJEYeR6Y2DhHf/+QEtlaM/+?=
- =?us-ascii?Q?TR3kWZxQcv/JdEmQ102ZooktCG40aFAZAnI3q7EpPDPlkzfmKfmUUwqxx7bX?=
- =?us-ascii?Q?+nvafTQKsyVrfIwHYID9l+lwYhKRlLzgOKVbQKYkwyPWR3+/Lt8jSOwzSvu9?=
- =?us-ascii?Q?wDwLB8llvPXgl1t6T4jjCSAzIPZF3M+Y4R5NokGrnV6ioaNAN4aEUTg3Nc0l?=
- =?us-ascii?Q?127YBIZls1XSLZIcr+BUdv6/i6Qr7ktA6JLyF5kbRYHk0+mgwpbUl2TqiDuj?=
- =?us-ascii?Q?BeqpWjLOxnZNLumBr5+RFOf5fUzetxLsHEp5w35dU/bVQ0aqHN3BesxDBuF4?=
- =?us-ascii?Q?rgauf3BIViNouZxb1M2tb9cqQ7JFK/Qbns3gDQXPXkWZMFCHLu2G63wbrppy?=
- =?us-ascii?Q?7b4phnDcP4+ksRunsQMieKPWIu4pgSTYUj6O6NghmvwtI1xBAPeKrnvjJ2Ch?=
- =?us-ascii?Q?dtfZtlkmL/7J6aNgLbYb2O4+DXbH4Oy/LzpKR/SZKEHsNfq35V6tULEl5afV?=
- =?us-ascii?Q?VqTAFefaQg1aFhLq2n6Cfn+9SWI7KmdAPF1dMF65Akt2TW9osxri6yaXj9ix?=
- =?us-ascii?Q?bZrtXRX2zd86yQAcSr+n+fAycIMbRBtFAK7/W6Z188Lnd8OvaXVRFmsfqffP?=
- =?us-ascii?Q?PTncAo2E7Z1aDuzORm3b2FhMbc2FA4rQwesyqILTdaiaBUiDcUgtL38sufNl?=
- =?us-ascii?Q?bQ7itj8kmgl4rv2OwlMmPrU/ONJH+n+rfNAUACzyiyzqJeAkNjXbT1ELb2y0?=
- =?us-ascii?Q?JjDEJ91y6RfO8OumNwU4/mdGLgFc1DSV2xIqIvJd3WsQOj/SCT/j254FwGiL?=
- =?us-ascii?Q?jXZ3dyr93kxwyCH8TvipOAkaIb6QPs6JYHvnKLwcNouhTAC5rOJh3ph4YKXo?=
- =?us-ascii?Q?p0L05qqPmrBPQWrHJ1f7GIbGTobV07nlFjRFl+nVf9rKTYY5yoXGhIiOiLxu?=
- =?us-ascii?Q?43eXmh0tO0UB+13EyWiZ5yeNklx5nCVxRq1Kod6p0RJXpti5ZZNpkVEe3d+q?=
- =?us-ascii?Q?Bwv1IZzFtlliRaw+uqTs6fdz11b3Wo3cwXkA2S0rjzbIWtVzjr/+CVkOe0qM?=
- =?us-ascii?Q?fyd4bVJ1RX2/DUsB7JFNzxUdizsmBaq8rA++cu0e4JIjz/Wi9EXPJtscEJ2x?=
- =?us-ascii?Q?qE3SCM1pmB9VerrRHSlr+yd0cJzo3Qko3mAHOVFGc1c7/698XveCVbCamiVe?=
- =?us-ascii?Q?upSQzxzDyt4Xv5/e5U4xN0Ph/X+GF4CQAQU0OH8LTKNfG2qCDbdqq5GiV87b?=
- =?us-ascii?Q?5elTfPCByMfhjo/fpQH1f0fCEPotcK+T9g3KvOU09X+m1coEANxqEVGwKVGd?=
- =?us-ascii?Q?mxLyyPY5eMtitxWfVy81xaw=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?3+iBcpx02hmIMFvmwheO+ayA0znPx/ED8XTbJ14o9E0bbqzK5KR8UrJFWe0h?=
- =?us-ascii?Q?c1/vdyOxc+eqPJY5BoZTOjS6+YT6JSDKlNZlWLfAjH5lQFScVTmeRUEDwkTq?=
- =?us-ascii?Q?UK/bm5yrW6oIocQbBx4ridiHVdOnVV9dZwStnsES/+5g38wjLR1Da/dXqu/y?=
- =?us-ascii?Q?WG8hPVzrV81xnXNjH9YR3evXMYwdzq2F/m96kNY8mIxqFUWpgHw2ImRdslof?=
- =?us-ascii?Q?PdNUon5J7hmh/zck3LDZH3jzVmafKGmxrn2+GBjWzSrYW2+fQbAXZ+BSu7Wj?=
- =?us-ascii?Q?FNTZsscS9uWWXR9Onz32XauyZfndUe5oddEqReKq1fzznD2iY85CgO2TDYrO?=
- =?us-ascii?Q?p0DfSekPrc9ZHlyf/yIb+8IRcC5Age1eu3WzhMDdohRKH65xg92kQ5Msaydl?=
- =?us-ascii?Q?vVfkzyf4Jp8AFYeHjjnKndVx+FkjuCc91oyqQWBIhecC3HnMmMQD2lb+bZWp?=
- =?us-ascii?Q?5lG2EkZAoPyYQr21/OL8x3Jsh6wC2Wf0PziMG8HlfTZgTCiL7OhkspOC/tHV?=
- =?us-ascii?Q?J5t5Sb9F0sgsdYLIUsSJqZe2yIVLeaBsVAyiKt36NRJy8W9EoKQj/0baHWD9?=
- =?us-ascii?Q?HWcEAWz8Mk+DSOHO/LBmn/gzXuh1VFTNIbe8NQwSgBS6EPF3qttIkPyph4EY?=
- =?us-ascii?Q?Ci6iI79MV4VHiHJfX6g1S0+qRlrs7+dLwl51MAL4RsxS5IOWV/0I5G8/knr2?=
- =?us-ascii?Q?FfX9darhtMeRsNPZDPmSOpWqOHGMfuVxDd0rCAIBfQj67PsrvBJFgyyalDkG?=
- =?us-ascii?Q?Sm9IoIKgWWeBYwcmzQVFHExes2bxcc9EiPdKTcsuRlHCM1irGqxDqScf6PIe?=
- =?us-ascii?Q?ctDAaN3l8rjXnfhjme5p0b0NuZnFf9QRi6vscsYx3RvWAsWOhQavnAUq32k3?=
- =?us-ascii?Q?ED3AaUTb8okJewJPHxT4oxXRkrJ50+SD1r5uf6xyuZjhQgrIsI9xxtU/BzpH?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e94ae4f8-ed56-41e1-30db-08dbdbc6ce09
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2023 17:11:51.2736
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vps0zmIw+JAYnZgsnE5I2D93cmz8b5MGOxw3tYYe7TkOG995cKeXSocgsDehRYvdh5sfyPkBZzIkApvC780PFdNUi7otWPP15gy8Rmz5Z0w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7139
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-02_07,2023-11-02_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0 spamscore=0
- phishscore=0 mlxlogscore=999 adultscore=0 mlxscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2310240000
- definitions=main-2311020140
-X-Proofpoint-GUID: sgMZWKg-Gle3q7GBFp3aKYm5DoEyutWt
-X-Proofpoint-ORIG-GUID: sgMZWKg-Gle3q7GBFp3aKYm5DoEyutWt
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] vduse: Add LSM hooks to check Virtio device type
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>, mst@redhat.com,
+        jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        xieyongji@bytedance.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        david.marchand@redhat.com, lulu@redhat.com
+References: <20231020155819.24000-1-maxime.coquelin@redhat.com>
+ <20231020155819.24000-5-maxime.coquelin@redhat.com>
+ <c8f189e6-c79b-429a-ab36-2193bb68e3e9@schaufler-ca.com>
+ <923f87a1-1871-479e-832e-db67b5ae87fd@redhat.com>
+ <64626db9-e37a-4c65-a455-fc3985382216@schaufler-ca.com>
+ <7524dee3-7c48-4864-8182-1b166b0f6faa@redhat.com>
+ <b307ec62-7cfd-4a58-88ef-ea549c64e75e@schaufler-ca.com>
+From:   Maxime Coquelin <maxime.coquelin@redhat.com>
+Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
+ 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
+ Mwqu3GQ=
+In-Reply-To: <b307ec62-7cfd-4a58-88ef-ea549c64e75e@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Remove the EXPERIMENTAL from the
-IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY Kconfig
-now that digitalSignature usage enforcement is set.
 
-Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-link: https://lore.kernel.org/all/20230508220708.2888510-4-eric.snowberg@oracle.com/
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
----
- security/integrity/ima/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index c5dc0fabbc8b..2b99c734d5ac 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -243,7 +243,7 @@ config IMA_APPRAISE_MODSIG
- 	   to accept such signatures.
- 
- config IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
--	bool "Permit keys validly signed by a built-in, secondary or machine CA cert (EXPERIMENTAL)"
-+	bool "Permit keys validly signed by a built-in, secondary or machine CA cert"
- 	depends on SYSTEM_TRUSTED_KEYRING
- 	depends on SECONDARY_TRUSTED_KEYRING
- 	depends on INTEGRITY_ASYMMETRIC_KEYS
--- 
-2.39.3
+On 10/24/23 17:30, Casey Schaufler wrote:
+> On 10/24/2023 2:49 AM, Maxime Coquelin wrote:
+>>
+>>
+>> On 10/23/23 17:13, Casey Schaufler wrote:
+>>> On 10/23/2023 12:28 AM, Maxime Coquelin wrote:
+>>>>
+>>>>
+>>>> On 10/21/23 00:20, Casey Schaufler wrote:
+>>>>> On 10/20/2023 8:58 AM, Maxime Coquelin wrote:
+>>>>>> This patch introduces LSM hooks for devices creation,
+>>>>>> destruction and opening operations, checking the
+>>>>>> application is allowed to perform these operations for
+>>>>>> the Virtio device type.
+>>>>>
+>>>>> Why do you think that there needs to be a special LSM check for virtio
+>>>>> devices? What can't existing device attributes be used?
+>>>>
+>>>> Michael asked for a way for SELinux to allow/prevent the creation of
+>>>> some types of devices [0].
+>>>>
+>>>> A device is created using ioctl() on VDUSE control chardev. Its type is
+>>>> specified via a field in the structure passed in argument.
+>>>>
+>>>> I didn't see other way than adding dedicated LSM hooks to achieve this,
+>>>> but it is possible that their is a better way to do it?
+>>>
+>>> At the very least the hook should be made more general, and I'd have to
+>>> see a proposal before commenting on that. security_dev_destroy(dev)
+>>> might
+>>> be a better approach. If there's reason to control destruction of vduse
+>>> devices it's reasonable to assume that there are other devices with the
+>>> same or similar properties.
+>>
+>> VDUSE is different from other devices as the device is actually
+>> implemented by the user-space application, so this is very specific in
+>> my opinion.
+> 
+> This is hardly unique. If you're implementing the device
+> in user-space you may well be able to implement the desired
+> controls there.
+> 
+>>
+>>>
+>>> Since SELinux is your target use case, can you explain why you can't
+>>> create SELinux policy to enforce the restrictions you're after? I
+>>> believe
+>>> (but can be proven wrong, of course) that SELinux has mechanism for
+>>> dealing
+>>> with controls on ioctls.
+>>>
+>>
+>> I am not aware of such mechanism to deal with ioctl(), if you have a
+>> pointer that would be welcome.
+> 
+> security/selinux/hooks.c
+
+We might be able to extend selinux_file_ioctl(), but that will only
+covers the ioctl for the control file, this patch also adds hook for the
+device file opening that would need dedicated hook as the device type
+information is stored in the device's private data.
+
+Michael, before going further, I would be interested in your feedback.
+Was this patch what you had in mind when requesting for a way to
+allow/deny devices types for a given application?
+
+Regards,
+Maxime
+
+> 
+>>
+>> Thanks,
+>> Maxime
+>>
+>>>
+>>>>
+>>>> Thanks,
+>>>> Maxime
+>>>>
+>>>> [0]:
+>>>> https://lore.kernel.org/all/20230829130430-mutt-send-email-mst@kernel.org/
+>>>>
+>>>>
+>>>
+>>
+> 
 
