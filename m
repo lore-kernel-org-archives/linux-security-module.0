@@ -2,144 +2,123 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D372EC4167D
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Nov 2023 02:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D7DC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Nov 2023 07:52:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347090AbjKBCyB (ORCPT
+        id S234223AbjKBHws (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Nov 2023 22:54:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38992 "EHLO
+        Thu, 2 Nov 2023 03:52:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344988AbjKBCyA (ORCPT
+        with ESMTP id S229481AbjKBHwr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Nov 2023 22:54:00 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C11783;
-        Wed,  1 Nov 2023 19:53:58 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 667CDC433C8;
-        Thu,  2 Nov 2023 02:53:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698893638;
-        bh=wliHaT5QZ1Qs4h9Kv8Vuq1EXR4VPMNO+swxxXK8pI2A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FfiWaHNmBnE4equDJohmlgDCUHDNxb07hGZrmQSJtpEocMDWmBGeYTWi2AZTw8j8h
-         NslJuVUJtCuyBJkDvRLuGYAYKOdBrpifUrauH0wAUfCnGHgY5nRjO74BQtAoCHX7oq
-         8c0boVj8sUYAyMM+kMTkDsevR6ASozZAe1vYQZSIcmQHc8lKxI2Vuw9dKVkTD0GPBE
-         K9AsmgwOIg4Ttn7fUk8WTXbtIMTD+hZsRvDr8Q2IPXHvdNiMw9DzMWj4EVjeqWpcav
-         za5v37/pFaQIPeY9rXzJrksMI5npYJ9oBAC1ZQehmisokLzIKHF0IU8IIFwyK+VyPe
-         nMAKYfTw6ee6Q==
-Date:   Wed, 1 Nov 2023 19:53:55 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net,
-        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        tytso@mit.edu, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-        eparis@redhat.com, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, audit@vger.kernel.org,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH RFC v11 15/19] fsverity: consume builtin signature via
- LSM hook
-Message-ID: <20231102025355.GA1498@sol.localdomain>
-References: <1696457386-3010-16-git-send-email-wufan@linux.microsoft.com>
- <6efb7a80ba0eb3e02b3ae7a5c0a210f3.paul@paul-moore.com>
- <CAHC9VhQJkcb-k+o+NvVn7crrMMZqpBcZpnEbKBT+eZg4Ocjqhw@mail.gmail.com>
+        Thu, 2 Nov 2023 03:52:47 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B64FE7;
+        Thu,  2 Nov 2023 00:52:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1698911561; x=1730447561;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=W29RWQS2NwYdEJqUIzKH/e4ox+Bt+9jFKK7JYm4Uf64=;
+  b=RdStwYVl2CrzCl8gZE8WsBHUsoE+Y5QXqdVaJ6Sp7BruHd2l8QGDH6oD
+   eUykdCK13U3EgNf3H3Ya8HbdI9Cx4KFND5MP8Iv+BiQwZ9i+9YrtJBJSY
+   x8W7JzFawv4A4jasoO5j64T9S3z+moeEU+EhXy0SDMDu5SUdStLdyY/ms
+   DKKSos5z4/Yrxu5qTrvTlK2ovY4NMcuvCnWkVRTC48Diqw53tiMvwNbrB
+   K5c+M1iOeQpiRz5CQTXuEQHu5nHEHNDaQF5iqX3VPzWsySUsmBcfEwdOu
+   gZFF2tIIN7weRyESS2T8TgwLPZn9cXrvbYZKrJDL26h4RH4Es3s0ggK3Z
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10881"; a="474898008"
+X-IronPort-AV: E=Sophos;i="6.03,270,1694761200"; 
+   d="scan'208";a="474898008"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2023 00:52:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10881"; a="761210778"
+X-IronPort-AV: E=Sophos;i="6.03,270,1694761200"; 
+   d="scan'208";a="761210778"
+Received: from lkp-server01.sh.intel.com (HELO 17d9e85e5079) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 02 Nov 2023 00:52:37 -0700
+Received: from kbuild by 17d9e85e5079 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qySVH-0001Dw-0P;
+        Thu, 02 Nov 2023 07:52:35 +0000
+Date:   Thu, 2 Nov 2023 15:51:44 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     KP Singh <kpsingh@kernel.org>,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, paul@paul-moore.com,
+        keescook@chromium.org, casey@schaufler-ca.com, song@kernel.org,
+        daniel@iogearbox.net, ast@kernel.org, kpsingh@kernel.org,
+        renauld@google.com, pabeni@redhat.com
+Subject: Re: [PATCH v7 3/5] security: Replace indirect LSM hook calls with
+ static calls
+Message-ID: <202311021532.iBwuZUZ0-lkp@intel.com>
+References: <20231102005521.346983-4-kpsingh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhQJkcb-k+o+NvVn7crrMMZqpBcZpnEbKBT+eZg4Ocjqhw@mail.gmail.com>
+In-Reply-To: <20231102005521.346983-4-kpsingh@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 01, 2023 at 08:40:06PM -0400, Paul Moore wrote:
-> On Mon, Oct 23, 2023 at 11:52 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Oct  4, 2023 Fan Wu <wufan@linux.microsoft.com> wrote:
-> > >
-> > > fsverity represents a mechanism to support both integrity and
-> > > authenticity protection of a file, supporting both signed and unsigned
-> > > digests.
-> > >
-> > > An LSM which controls access to a resource based on authenticity and
-> > > integrity of said resource, can then use this data to make an informed
-> > > decision on the authorization (provided by the LSM's policy) of said
-> > > claim.
-> > >
-> > > This effectively allows the extension of a policy enforcement layer in
-> > > LSM for fsverity, allowing for more granular control of how a
-> > > particular authenticity claim can be used. For example, "all (built-in)
-> > > signed fsverity files should be allowed to execute, but only these
-> > > hashes are allowed to be loaded as kernel modules".
-> > >
-> > > This enforcement must be done in kernel space, as a userspace only
-> > > solution would fail a simple litmus test: Download a self-contained
-> > > malicious binary that never touches the userspace stack. This
-> > > binary would still be able to execute.
-> > >
-> > > Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> > > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-> > > ---
-> > > v1-v6:
-> > >   + Not present
-> > >
-> > > v7:
-> > >   Introduced
-> > >
-> > > v8:
-> > >   + Split fs/verity/ changes and security/ changes into separate patches
-> > >   + Change signature of fsverity_create_info to accept non-const inode
-> > >   + Change signature of fsverity_verify_signature to accept non-const inode
-> > >   + Don't cast-away const from inode.
-> > >   + Digest functionality dropped in favor of:
-> > >     ("fs-verity: define a function to return the integrity protected
-> > >       file digest")
-> > >   + Reworded commit description and title to match changes.
-> > >   + Fix a bug wherein no LSM implements the particular fsverity @name
-> > >     (or LSM is disabled), and returns -EOPNOTSUPP, causing errors.
-> > >
-> > > v9:
-> > >   + No changes
-> > >
-> > > v10:
-> > >   + Rename the signature blob key
-> > >   + Cleanup redundant code
-> > >   + Make the hook call depends on CONFIG_FS_VERITY_BUILTIN_SIGNATURES
-> > >
-> > > v11:
-> > >   + No changes
-> > > ---
-> > >  fs/verity/fsverity_private.h |  2 +-
-> > >  fs/verity/open.c             | 26 +++++++++++++++++++++++++-
-> > >  include/linux/fsverity.h     |  2 ++
-> > >  3 files changed, 28 insertions(+), 2 deletions(-)
-> >
-> > We need an ACK from some VFS folks on this.
-> 
-> Eric and/or Ted, can we get either an ACK or some feedback on this patch?
-> 
-> For reference, the full patchset can be found on lore at the link below:
-> 
-> https://lore.kernel.org/linux-security-module/1696457386-3010-1-git-send-email-wufan@linux.microsoft.com/
+Hi KP,
 
-Well, technically I already gave some (minor) feedback on this exact patch, and
-it's not yet been addressed:
-https://lore.kernel.org/linux-security-module/20231005022707.GA1688@quark.localdomain/
+kernel test robot noticed the following build errors:
 
-Of course, it would also be nice if the commit message mentioned what the patch
-actually does.
+[auto build test ERROR on next-20231101]
+[cannot apply to bpf-next/master bpf/master pcmoore-selinux/next linus/master v6.6 v6.6-rc7 v6.6-rc6 v6.6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-At a higher level, I've said before, I'm not super happy about the use of
-fsverity builtin signatures growing.  (For some of the reasons why, see the
-guidance in the fsverity documentation at
-https://docs.kernel.org/filesystems/fsverity.html#built-in-signature-verification)
-That being said, if the people who are doing the broader review of IPE believe
-this is how its fsverity integration should work, I can live with that; I don't
-intend to block the IPE patchset if enough people want it to be merged.  I've
-really been hoping to see engagement with the people involved in IMA, as IPE
-basically duplicates/replaces IMA.  But I haven't seen that, so maybe things
-need to move on without them.
+url:    https://github.com/intel-lab-lkp/linux/commits/KP-Singh/kernel-Add-helper-macros-for-loop-unrolling/20231102-085857
+base:   next-20231101
+patch link:    https://lore.kernel.org/r/20231102005521.346983-4-kpsingh%40kernel.org
+patch subject: [PATCH v7 3/5] security: Replace indirect LSM hook calls with static calls
+config: x86_64-randconfig-013-20231102 (https://download.01.org/0day-ci/archive/20231102/202311021532.iBwuZUZ0-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231102/202311021532.iBwuZUZ0-lkp@intel.com/reproduce)
 
-- Eric
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202311021532.iBwuZUZ0-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> security/security.c:157:1: error: Only string constants are supported as initializers for randomized structures with flexible arrays
+     157 | };
+         | ^
+
+
+vim +157 security/security.c
+
+   136	
+   137	/*
+   138	 * Initialise a table of static calls for each LSM hook.
+   139	 * DEFINE_STATIC_CALL_NULL invocation above generates a key (STATIC_CALL_KEY)
+   140	 * and a trampoline (STATIC_CALL_TRAMP) which are used to call
+   141	 * __static_call_update when updating the static call.
+   142	 */
+   143	struct lsm_static_calls_table static_calls_table __ro_after_init = {
+   144	#define INIT_LSM_STATIC_CALL(NUM, NAME)					\
+   145		(struct lsm_static_call) {					\
+   146			.key = &STATIC_CALL_KEY(LSM_STATIC_CALL(NAME, NUM)),	\
+   147			.trampoline = LSM_HOOK_TRAMP(NAME, NUM),		\
+   148			.active = &SECURITY_HOOK_ACTIVE_KEY(NAME, NUM),		\
+   149		},
+   150	#define LSM_HOOK(RET, DEFAULT, NAME, ...)				\
+   151		.NAME = {							\
+   152			LSM_DEFINE_UNROLL(INIT_LSM_STATIC_CALL, NAME)		\
+   153		},
+   154	#include <linux/lsm_hook_defs.h>
+   155	#undef LSM_HOOK
+   156	#undef INIT_LSM_STATIC_CALL
+ > 157	};
+   158	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
