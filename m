@@ -2,211 +2,250 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C7BC4167D
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Nov 2023 08:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D570C4167D
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Nov 2023 11:14:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234738AbjKCIFz (ORCPT
+        id S230055AbjKCLOB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Nov 2023 04:05:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42504 "EHLO
+        Fri, 3 Nov 2023 07:14:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234845AbjKCIFx (ORCPT
+        with ESMTP id S1346142AbjKCLN4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Nov 2023 04:05:53 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8538D42
-        for <linux-security-module@vger.kernel.org>; Fri,  3 Nov 2023 01:05:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1698998702;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0goRDSlLlyjMoDih0tqHLHjHlJcT6C1DNszg6j75nEY=;
-        b=LPyJbcPmyjlrSPbk9FlOoLK/oas04eIrvQI2eFAsSREI6ICLc9yKKkLgRJiKSG059Aro2/
-        o0iunI/N4iYZL7M2G0/r+9dQSkrb5c/2Hf38V5TfT7mzU4u41yoOtHyEWoe7+6iKhz56sF
-        oi/rMvGeGI0BrVFFDHxAQEqok8QkmgI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-346-LfdM9_UvMYGI7dGVtvFw-w-1; Fri, 03 Nov 2023 04:05:00 -0400
-X-MC-Unique: LfdM9_UvMYGI7dGVtvFw-w-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-40839252e81so11869085e9.3
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Nov 2023 01:05:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698998699; x=1699603499;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0goRDSlLlyjMoDih0tqHLHjHlJcT6C1DNszg6j75nEY=;
-        b=ud69qBubtnDJTjC7uybabLQ/gnby1KGIyTu72N2vLTPBI+k/xcUsAMrBGUw1jgfZIQ
-         oP86fjiCcqTR7qhnwocsL/11OvkGfx5wwe59wF6o71FqsKo4bSiZiMGODRUsIlkpRUnS
-         GdGSfgJLlsOA12msQCD7lMJTUytLhE3RvL7h0vXnZGa0B2gwH/kJWr7+kAsPEtIZViyP
-         bPtSOf5kdvJhcB8aQhm1i80G2P2WxAjCD9IXQ7DQp3dBiTSwOLMUsZoYv2FI40JGGQxi
-         u6yETCTMfobe5ZU0vu6aA6HO4Hn3jjLx1QiC2UWPHak667pugNfnM5SYlAFVQvtmDOGi
-         CS+w==
-X-Gm-Message-State: AOJu0YwoXeRvr9d/8uUWLYEd6T4q0u9qCeFZCvsHdZ+XRogIh4c6OnwF
-        lUaMgfpaydovTuUaFk8FiB1lcwJxqpZo2Smvp+dEMK0Fw8OzfbT3JsDCXt3EiQLzvslJ6rc55w9
-        x+dFIKhzHewqSipduSe5R9Fu9KnenyBbshOWB
-X-Received: by 2002:a05:600c:4452:b0:405:1ba2:4fcb with SMTP id v18-20020a05600c445200b004051ba24fcbmr17479680wmn.16.1698998699397;
-        Fri, 03 Nov 2023 01:04:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFXjwfTlForiM0e7Gfu81AsDakzIXUggSQoKB86qdXt49dyHB+qYnn5A8NgeTNVESwg3RI+fQ==
-X-Received: by 2002:a05:600c:4452:b0:405:1ba2:4fcb with SMTP id v18-20020a05600c445200b004051ba24fcbmr17479651wmn.16.1698998698970;
-        Fri, 03 Nov 2023 01:04:58 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:174:efc3:a5be:5586:34a6:1108])
-        by smtp.gmail.com with ESMTPSA id r16-20020a05600c459000b003fefaf299b6sm1600329wmo.38.2023.11.03.01.04.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Nov 2023 01:04:58 -0700 (PDT)
-Date:   Fri, 3 Nov 2023 04:04:50 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Maxime Coquelin <maxime.coquelin@redhat.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>, jasowang@redhat.com,
-        xuanzhuo@linux.alibaba.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, xieyongji@bytedance.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        david.marchand@redhat.com, lulu@redhat.com
-Subject: Re: [PATCH v4 4/4] vduse: Add LSM hooks to check Virtio device type
-Message-ID: <20231103040224-mutt-send-email-mst@kernel.org>
-References: <20231020155819.24000-1-maxime.coquelin@redhat.com>
- <20231020155819.24000-5-maxime.coquelin@redhat.com>
- <c8f189e6-c79b-429a-ab36-2193bb68e3e9@schaufler-ca.com>
- <923f87a1-1871-479e-832e-db67b5ae87fd@redhat.com>
- <64626db9-e37a-4c65-a455-fc3985382216@schaufler-ca.com>
- <7524dee3-7c48-4864-8182-1b166b0f6faa@redhat.com>
- <b307ec62-7cfd-4a58-88ef-ea549c64e75e@schaufler-ca.com>
- <76572500-5f90-46fe-9bf2-b090bf1b616b@redhat.com>
- <20231102145932-mutt-send-email-mst@kernel.org>
- <598eb8df-0f5f-4f21-8c34-f54ecbbcaca2@redhat.com>
+        Fri, 3 Nov 2023 07:13:56 -0400
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 420B218B;
+        Fri,  3 Nov 2023 04:13:50 -0700 (PDT)
+Received: from [10.8.192.2] (unknown [50.39.103.33])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 80D934354F;
+        Fri,  3 Nov 2023 11:13:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1699010027;
+        bh=kv09A4g6nezeo8oelDC/CMBuWkrHQKwHC3idMyrd2Q0=;
+        h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type;
+        b=JYfy2UgylO43bC5OUkY+p9aHeuMIjrxyd5cjyvbElZeMonXvMoQ7TgFhJsE/1Itqp
+         fMTonkG8MXWo31kr4NIlWkt8NHk3TKyLlqlsNAytQLRadqzd/dkYUHU2GJghiK3q+1
+         JlXcYd0rIyOnDoui/oORYtOHhpKYTQAzsKgw7gx+KR9P4IElqVE8+AzM9U/06jjrnu
+         o1sEvJXLAwly8qDGmZbP/Up7IqUnCVCTaiU6oPZbUL5qtrF253vvEY7uGTULH5ZhH8
+         4GrGDfEgrMXpVtSxUlos1wcdDhFmaCbaV8dpFPJxUwYv00YenGpU+YLr0dNkNQ4DDn
+         wjChd8CnlKo1A==
+Message-ID: <bf45d4d9-5a15-4ba3-9f55-b8c7e300dc54@canonical.com>
+Date:   Fri, 3 Nov 2023 04:13:36 -0700
 MIME-Version: 1.0
-In-Reply-To: <598eb8df-0f5f-4f21-8c34-f54ecbbcaca2@redhat.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+From:   John Johansen <john.johansen@canonical.com>
+Subject: [GIT PULL] AppArmor updates for 6.7
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKLM <linux-kernel@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>
+Content-Language: en-US
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 03, 2023 at 08:55:19AM +0100, Maxime Coquelin wrote:
-> 
-> 
-> On 11/2/23 19:59, Michael S. Tsirkin wrote:
-> > On Thu, Nov 02, 2023 at 06:56:59PM +0100, Maxime Coquelin wrote:
-> > > 
-> > > 
-> > > On 10/24/23 17:30, Casey Schaufler wrote:
-> > > > On 10/24/2023 2:49 AM, Maxime Coquelin wrote:
-> > > > > 
-> > > > > 
-> > > > > On 10/23/23 17:13, Casey Schaufler wrote:
-> > > > > > On 10/23/2023 12:28 AM, Maxime Coquelin wrote:
-> > > > > > > 
-> > > > > > > 
-> > > > > > > On 10/21/23 00:20, Casey Schaufler wrote:
-> > > > > > > > On 10/20/2023 8:58 AM, Maxime Coquelin wrote:
-> > > > > > > > > This patch introduces LSM hooks for devices creation,
-> > > > > > > > > destruction and opening operations, checking the
-> > > > > > > > > application is allowed to perform these operations for
-> > > > > > > > > the Virtio device type.
-> > > > > > > > 
-> > > > > > > > Why do you think that there needs to be a special LSM check for virtio
-> > > > > > > > devices? What can't existing device attributes be used?
-> > > > > > > 
-> > > > > > > Michael asked for a way for SELinux to allow/prevent the creation of
-> > > > > > > some types of devices [0].
-> > > > > > > 
-> > > > > > > A device is created using ioctl() on VDUSE control chardev. Its type is
-> > > > > > > specified via a field in the structure passed in argument.
-> > > > > > > 
-> > > > > > > I didn't see other way than adding dedicated LSM hooks to achieve this,
-> > > > > > > but it is possible that their is a better way to do it?
-> > > > > > 
-> > > > > > At the very least the hook should be made more general, and I'd have to
-> > > > > > see a proposal before commenting on that. security_dev_destroy(dev)
-> > > > > > might
-> > > > > > be a better approach. If there's reason to control destruction of vduse
-> > > > > > devices it's reasonable to assume that there are other devices with the
-> > > > > > same or similar properties.
-> > > > > 
-> > > > > VDUSE is different from other devices as the device is actually
-> > > > > implemented by the user-space application, so this is very specific in
-> > > > > my opinion.
-> > > > 
-> > > > This is hardly unique. If you're implementing the device
-> > > > in user-space you may well be able to implement the desired
-> > > > controls there.
-> > > > 
-> > > > > 
-> > > > > > 
-> > > > > > Since SELinux is your target use case, can you explain why you can't
-> > > > > > create SELinux policy to enforce the restrictions you're after? I
-> > > > > > believe
-> > > > > > (but can be proven wrong, of course) that SELinux has mechanism for
-> > > > > > dealing
-> > > > > > with controls on ioctls.
-> > > > > > 
-> > > > > 
-> > > > > I am not aware of such mechanism to deal with ioctl(), if you have a
-> > > > > pointer that would be welcome.
-> > > > 
-> > > > security/selinux/hooks.c
-> > > 
-> > > We might be able to extend selinux_file_ioctl(), but that will only
-> > > covers the ioctl for the control file, this patch also adds hook for the
-> > > device file opening that would need dedicated hook as the device type
-> > > information is stored in the device's private data.
-> > > 
-> > > Michael, before going further, I would be interested in your feedback.
-> > > Was this patch what you had in mind when requesting for a way to
-> > > allow/deny devices types for a given application?
-> > > 
-> > > Regards,
-> > > Maxime
-> > 
-> > 
-> > Yes, this is more or less what I had in mind.
-> 
-> Great.
-> 
-> Do you think we need to cover both ioctl() on the control file and
-> open() on the device file, or only ioctl() is enough?
-> 
-> If the former, we will need VDUSE-specific hooks. I may be able to
-> improve my patch to have a single hook instead of 3 by passing the type
-> of operation as an extra argument (create/destroy/open).
-> 
-> If the latter, we may be able to extend the generic ioctl hook.
-> 
-> Personally, I think it would make sense to also ensure a given
-> application can only open existing VDUSE devices it supports. For
-> example, openvswitch should only be allowed to open networking VDUSE
-> devices.
-> 
-> Thanks,
-> Maxime
+Hi Linus,
 
-I agree here. I think an open hook is important.
-Make sure to document the need in the cover letter
-and commit log.
+Please pull the following apparmor for patches for the 6.7 merge
+window.
 
-> > 
-> > > > 
-> > > > > 
-> > > > > Thanks,
-> > > > > Maxime
-> > > > > 
-> > > > > > 
-> > > > > > > 
-> > > > > > > Thanks,
-> > > > > > > Maxime
-> > > > > > > 
-> > > > > > > [0]:
-> > > > > > > https://lore.kernel.org/all/20230829130430-mutt-send-email-mst@kernel.org/
-> > > > > > > 
-> > > > > > > 
-> > > > > > 
-> > > > > 
-> > > > 
-> > 
+This PR adds initial support for mediating io_uring and userns
+creation.  Adds a new restriction that tightens the use of
+change_profile, and a couple of optimizations to reduce performance
+bottle necks that have been found when retrieving the current task's
+secid and allocating work buffers.
+
+The majority of the patch set continues cleaning up and simplifying
+the code (fixing comments, removing now dead functions, and macros
+etc). Finally there are 4 bug fixes, with the regression fix having
+had a couple months of testing.
+
+These patches have been in linux-next and been tested while in there,
+and have also had a merge and regression test against your current
+tree as of a day ago.
+
+thanks
+- john
+
+
+The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
+
+   Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
+
+are available in the Git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2023-11-03
+
+for you to fetch changes up to 6cede10161be00d129a24e8b84c2674785a32cf8:
+
+   apparmor: Fix some kernel-doc comments (2023-10-23 00:26:27 -0700)
+
+----------------------------------------------------------------
++ Features
+   - optimize retrieving current task secid
+   - add base io_uring mediation
+   - add base userns mediation
+   - improve buffer allocation
+   - allow restricting unprivilege change_profile
+
++ Cleanups
+   - Fix kernel doc comments
+   - remove unused declarations
+   - remove unused functions
+   - remove unneeded #ifdef
+   - remove unused macros
+   - mark fns static
+   - cleanup fn with unused return values
+   - cleanup audit data
+   - pass cred through to audit data
+   - refcount the pdb instead of using duplicates
+   - make SK_CTX macro an inline fn
+   - some comment cleanups
+
++ Bug fixes
+   - fix regression in mount mediation
+   - fix invalid refenece
+   - use passed in gfp flags
+   - advertise avaiability of extended perms and disconnected.path
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+       apparmor: mark new functions static
+
+Dan Carpenter (1):
+       apparmor: use passed in gfp flags in aa_alloc_null()
+
+GONG, Ruiqi (2):
+       apparmor: remove unused macro
+       apparmor: remove unused PROF_* macros
+
+Gaosheng Cui (11):
+       apparmor: Fix kernel-doc warnings in apparmor/audit.c
+       apparmor: Fix kernel-doc warnings in apparmor/capability.c
+       apparmor: Fix kernel-doc warnings in apparmor/domain.c
+       apparmor: Fix kernel-doc warnings in apparmor/file.c
+       apparmor: Fix kernel-doc warnings in apparmor/label.c
+       apparmor: Fix kernel-doc warnings in apparmor/lib.c
+       apparmor: Fix kernel-doc warnings in apparmor/match.c
+       apparmor: Fix kernel-doc warnings in apparmor/resource.c
+       apparmor: Fix kernel-doc warnings in apparmor/policy_unpack.c
+       apparmor: Fix kernel-doc warnings in apparmor/policy_compat.c
+       apparmor: Fix kernel-doc warnings in apparmor/policy.c
+
+Georgia Garcia (2):
+       apparmor: fix invalid reference on profile->disconnected
+       apparmor: add io_uring mediation
+
+John Johansen (13):
+       apparmor: advertise availability of exended perms
+       apparmor: fixup return comments for kernel doc cleanups by Gaosheng Cui
+       apparmor: rename SK_CTX() to aa_sock and make it an inline fn
+       apparmor: combine common_audit_data and apparmor_audit_data
+       apparmor: rename audit_data->label to audit_data->subj_label
+       apparmor: pass cred through to audit info.
+       apparmor: provide separate audit messages for file and policy checks
+       apparmor: refcount the pdb
+       apparmor: advertise disconnected.path is available
+       apparmor: allow restricting unprivileged change_profile
+       apparmor: add user namespace creation mediation
+       apparmor: cache buffers on percpu list if there is lock contention
+       apparmor: Fix regression in mount mediation
+
+Quanfa Fu (1):
+       apparmor: make aa_set_current_onexec return void
+
+Vinicius Costa Gomes (1):
+       apparmor: Optimize retrieving current task secid
+
+Xiu Jianfeng (4):
+       apparmor: cleanup unused declarations in policy.h
+       apparmor: cleanup unused functions in file.h
+       apparmor: remove unneeded #ifdef in decompress_zstd()
+       apparmor: remove unused functions in policy_ns.c/.h
+
+Yang Li (3):
+       apparmor: Fix some kernel-doc comments
+       apparmor: Fix one kernel-doc comment
+       apparmor: Fix some kernel-doc comments
+
+  security/apparmor/apparmorfs.c         |  49 ++--
+  security/apparmor/audit.c              |  75 +++---
+  security/apparmor/capability.c         |  33 +--
+  security/apparmor/domain.c             | 193 +++++++++------
+  security/apparmor/file.c               | 217 ++++++++++-------
+  security/apparmor/include/apparmor.h   |   3 +-
+  security/apparmor/include/audit.h      |  44 ++--
+  security/apparmor/include/capability.h |   3 +-
+  security/apparmor/include/file.h       |  54 +----
+  security/apparmor/include/ipc.h        |   4 +-
+  security/apparmor/include/lib.h        |   2 +
+  security/apparmor/include/match.h      |   6 -
+  security/apparmor/include/mount.h      |  26 ++-
+  security/apparmor/include/net.h        |  25 +-
+  security/apparmor/include/perms.h      |   7 +-
+  security/apparmor/include/policy.h     |  68 ++++--
+  security/apparmor/include/policy_ns.h  |  14 --
+  security/apparmor/include/resource.h   |   3 +-
+  security/apparmor/include/task.h       |  11 +-
+  security/apparmor/ipc.c                |  53 +++--
+  security/apparmor/label.c              |  46 ++--
+  security/apparmor/lib.c                |  54 ++---
+  security/apparmor/lsm.c                | 414 ++++++++++++++++++++++++++++-----
+  security/apparmor/match.c              |  48 +---
+  security/apparmor/mount.c              | 186 +++++++++------
+  security/apparmor/net.c                |  65 +++---
+  security/apparmor/policy.c             | 133 +++++++----
+  security/apparmor/policy_compat.c      |   1 +
+  security/apparmor/policy_ns.c          |  37 ---
+  security/apparmor/policy_unpack.c      | 152 ++++++------
+  security/apparmor/resource.c           |  54 +++--
+  security/apparmor/task.c               | 104 ++++++---
+  32 files changed, 1336 insertions(+), 848 deletions(-)
 
