@@ -2,207 +2,168 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EF8C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Nov 2023 22:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1181CC4332F
+	for <linux-security-module@archiver.kernel.org>; Sat,  4 Nov 2023 00:38:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230404AbjKCWaV (ORCPT
+        id S231203AbjKDAiS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Nov 2023 18:30:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44208 "EHLO
+        Fri, 3 Nov 2023 20:38:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230343AbjKCWaV (ORCPT
+        with ESMTP id S229476AbjKDAiS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Nov 2023 18:30:21 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5309D5A
-        for <linux-security-module@vger.kernel.org>; Fri,  3 Nov 2023 15:30:17 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-d9cbba16084so2596868276.1
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Nov 2023 15:30:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1699050617; x=1699655417; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OOhQ+4ppHia6X5vZEThJt6hjspNBijG8E4l1rtJpvmc=;
-        b=Fb+t+TGVFWJo9Lt7NqbDpiCp5KTiTLq3qWK2F8FUuNtUM5WTuaxGb0+z1NVnqotvW1
-         2qZn6RS+Srkmk93yyT+/Ms2J3a7yxlyceX7Ft6kBLCx2jcS7lEJy9zgxUQXVHzj4blHS
-         fyr7qxkrJU2HwS9ru50vk3tZdpJzSWKa2JEcflHAIVzuA7GESxwEJtB/bI3b70A9QUXa
-         doEEoLqOl5hoHhMwCKdm/XfcW/zcTZPHZcjWSio+N81QNCrj++ZcVtYVoo53MGlrHnkn
-         WkerntN/joI4lYf51rws1n6PycdZxbZwUR8MePbvYxSxCedAqTx+o/U0M0YpVs5udBPf
-         IO1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699050617; x=1699655417;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OOhQ+4ppHia6X5vZEThJt6hjspNBijG8E4l1rtJpvmc=;
-        b=xFQeJKVPS+OPFflH8DNETjptEJRSKvcB6avq8Us1JnctakUil9VHVjYee9RjgdM+jC
-         DY3KpONolnPe1/GzSzNSLkitJBI4dR5Z5m93bzGrDQklrFcgyDM2GW0+0tUrOfKVdPY0
-         8EEfjRqSA27SHrUxj5bptyofexGzaLr3hc5likiT50MW/II2WjYjmsllKuI4q3WNapeB
-         3uQcWA9U8Y1n4A4k0V561GIIq/beIFLSiS/qy6A0TbBmiRD91qrq5gGXvIyzWV+DUijT
-         MjkCAoF/Er4w/Xuc9y2LTVKEesBT1Dyxd9ScAq4uR9IQATMCUASy9H7pXxXdSla2fJNt
-         4ZLg==
-X-Gm-Message-State: AOJu0Yx+nFbsBQQRgjEZAF3sbBMlvMAzyJUGzTa3IKvVGo2q9YxPxEyW
-        ESes44zfUUnS9MzSJOmz4B5ltK6mLhpgKQk+/71i
-X-Google-Smtp-Source: AGHT+IGnpRgvInClOyTeRts44EfuCsVIf/oEzDvkRyvT0ioHtkFzmAn/jixwPJXsOyu5FJvaQ36V6EmrXY08ildtF/Y=
-X-Received: by 2002:a25:8590:0:b0:da0:cf4b:c504 with SMTP id
- x16-20020a258590000000b00da0cf4bc504mr23753840ybk.8.1699050616923; Fri, 03
- Nov 2023 15:30:16 -0700 (PDT)
+        Fri, 3 Nov 2023 20:38:18 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A3E8D45;
+        Fri,  3 Nov 2023 17:38:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1699058295; x=1730594295;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Z97UFq+QehJNlR4W7nQoGDS8MXrq9lbEH00mni21Llo=;
+  b=gWuSeJ+81vAJvv8FQlY753+kp8oyz5nO10D2p4trvCOJ5s5eOZU4LRqB
+   cK8tpoVZPkLOCPRAc7sr1fzj5p/Dd3T0lTZrfNcBL5iXqW+YEEvbmfSNW
+   bl+VASWDAzTaVRoaeRF5vfLT+dHaZjsECfglI7wB+8Qq0nyvN1Lz/OUTC
+   AJ44wea9Wa5nTgv0KR9RZ4awl36J9JyeAr7hh3K+wgQCtoMgcTL0kdBlP
+   IslRmfz+mplrLz4o0t/v1SlJs63BlVrCMvV+4jscf3NFCTV0WucMA8LfR
+   YSwYp6OZ0c0WxdaSwU3jiigL4pDyZ4ybRMyajJ6/GL5lhls+ZGpDrnxgz
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10883"; a="369252331"
+X-IronPort-AV: E=Sophos;i="6.03,275,1694761200"; 
+   d="scan'208";a="369252331"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2023 17:38:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10883"; a="755313880"
+X-IronPort-AV: E=Sophos;i="6.03,275,1694761200"; 
+   d="scan'208";a="755313880"
+Received: from lkp-server01.sh.intel.com (HELO 17d9e85e5079) ([10.239.97.150])
+  by orsmga007.jf.intel.com with ESMTP; 03 Nov 2023 17:38:11 -0700
+Received: from kbuild by 17d9e85e5079 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qz4fx-00038Q-1v;
+        Sat, 04 Nov 2023 00:38:09 +0000
+Date:   Sat, 4 Nov 2023 08:36:59 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, paul@paul-moore.com, brauner@kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        kernel-team@meta.com, sargun@sargun.me
+Subject: Re: [PATCH v9 bpf-next 11/17] bpf,lsm: add BPF token LSM hooks
+Message-ID: <202311040829.XrnpSV8z-lkp@intel.com>
+References: <20231103190523.6353-12-andrii@kernel.org>
 MIME-Version: 1.0
-References: <1696457386-3010-6-git-send-email-wufan@linux.microsoft.com>
- <c53599e9d278fc55be30e3bac9411328.paul@paul-moore.com> <616a6fd7-47b1-4b46-af23-46f9b1a3eedf@linux.microsoft.com>
- <CAHC9VhScdtqJeUTTUQVk4D70tTLz4TgU_aRTMRnHa0OARyubaw@mail.gmail.com>
- <c40cd6a6-5c32-4e72-8831-f87ee0a09324@linux.microsoft.com> <CAHC9VhR9scT7V7dvN5zhAYdExORB9arWaR7Gbix1AUtAMDPHcg@mail.gmail.com>
-In-Reply-To: <CAHC9VhR9scT7V7dvN5zhAYdExORB9arWaR7Gbix1AUtAMDPHcg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 3 Nov 2023 18:30:16 -0400
-Message-ID: <CAHC9VhQLbgvg6syOB2_GYFK+zpWbyx6zrDoM1aBnA18u_Qjj4g@mail.gmail.com>
-Subject: Re: [PATCH RFC v11 5/19] ipe: introduce 'boot_verified' as a trust provider
-To:     Fan Wu <wufan@linux.microsoft.com>
-Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
-        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-        eparis@redhat.com, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, audit@vger.kernel.org,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        Deven Bowers <deven.desai@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231103190523.6353-12-andrii@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 3, 2023 at 6:15=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
-> On Thu, Nov 2, 2023 at 6:46=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com>=
- wrote:
-> > On 10/26/2023 3:12 PM, Paul Moore wrote:
-> > > On Thu, Oct 26, 2023 at 5:33=E2=80=AFPM Fan Wu <wufan@linux.microsoft=
-.com> wrote:
-> > >> On 10/23/2023 8:52 PM, Paul Moore wrote:
-> > >>> On Oct  4, 2023 Fan Wu <wufan@linux.microsoft.com> wrote:
-> > >>>>
-> > >>>> IPE is designed to provide system level trust guarantees, this usu=
-ally
-> > >>>> implies that trust starts from bootup with a hardware root of trus=
-t,
-> > >>>> which validates the bootloader. After this, the bootloader verifie=
-s the
-> > >>>> kernel and the initramfs.
-> > >>>>
-> > >>>> As there's no currently supported integrity method for initramfs, =
-and
-> > >>>> it's typically already verified by the bootloader, introduce a pro=
-perty
-> > >>>> that causes the first superblock to have an execution to be "pinne=
-d",
-> > >>>> which is typically initramfs.
-> > >>>>
-> > >>>> When the "pinned" device is unmounted, it will be "unpinned" and
-> > >>>> `boot_verified` property will always evaluate to false afterward.
-> > >>>>
-> > >>>> We use a pointer with a spin_lock to "pin" the device instead of r=
-cu
-> > >>>> because rcu synchronization may sleep, which is not allowed when
-> > >>>> unmounting a device.
-> > >>>>
-> > >>>> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> > >>>> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-> > >> ...
-> > >>>> ---
-> > >>>>    security/ipe/eval.c          | 72 +++++++++++++++++++++++++++++=
-++++++-
-> > >>>>    security/ipe/eval.h          |  2 +
-> > >>>>    security/ipe/hooks.c         | 12 ++++++
-> > >>>>    security/ipe/hooks.h         |  2 +
-> > >>>>    security/ipe/ipe.c           |  1 +
-> > >>>>    security/ipe/policy.h        |  2 +
-> > >>>>    security/ipe/policy_parser.c | 35 +++++++++++++++++-
-> > >>>>    7 files changed, 124 insertions(+), 2 deletions(-)
->
-> ...
->
-> > >>>> +/**
-> > >>>> + * from_pinned - Determine whether @sb is the pinned super_block.
-> > >>>> + * @sb: Supplies a super_block to check against the pinned super_=
-block.
-> > >>>> + *
-> > >>>> + * Return:
-> > >>>> + * * true   - @sb is the pinned super_block
-> > >>>> + * * false  - @sb is not the pinned super_block
-> > >>>> + */
-> > >>>> +static bool from_pinned(const struct super_block *sb)
-> > >>>> +{
-> > >>>> +    bool rv;
-> > >>>> +
-> > >>>> +    if (!sb)
-> > >>>> +            return false;
-> > >>>> +    spin_lock(&pin_lock);
-> > >>>> +    rv =3D !IS_ERR_OR_NULL(pinned_sb) && pinned_sb =3D=3D sb;
-> > >>>> +    spin_unlock(&pin_lock);
-> > >>>
-> > >>> It's okay for an initial version, but I still think you need to get
-> > >>> away from this spinlock in from_pinned() as quickly as possible.
-> > >>> Maybe I'm wrong, but this looks like a major source of lock content=
-ion.
-> > >>>
-> > >>> I understand the issue around RCU and the potential for matching on
-> > >>> a reused buffer/address, but if you modified IPE to have its own LS=
-M
-> > >>> security blob in super_block::security you could mark the superbloc=
-k
-> > >>> when it was mounted and do a lockless lookup here in from_pinned().
-> > >>
-> > >> Thank you for the suggestion. After some testing, I discovered that
-> > >> switching to RCU to pin the super block and using a security blob to
-> > >> mark a pinned super block works. This approach do avoid many spinloc=
-k
-> > >> operations. I'll incorporate these changes in the next version of th=
-e patch.
-> > >
-> > > I probably wasn't as clear as I should have been, I was thinking of
-> > > doing away with the @pinned_sb global variable entirely, as well as
-> > > its associated lock problems and simply marking the initramfs/initrd
-> > > superblock when it was mounted.  I will admit that I haven't fully
-> > > thought about all the implementation details, but I think you could
-> > > leverage the security_sb_mount() hook to set a flag in IPE's
-> > > superblock metadata when the initramfs was mounted.
-> >
-> > I wasn't able to find a way to let LSM pin initramfs/initrd during moun=
-t
-> > time ...
->
-> I haven't had to look at the kernel init code in a while, and I don't
-> recall ever looking at the initramfs code, but I spent some time
-> digging through the code and I wonder if it would be possible to mark
-> the initramfs superblock in wait_for_initramfs() via a new LSM hook
-> using @current->fs->root.mnt->mnt_sb?  Although I'm not completely
-> sure that it's populated.  Have you already looked at an approach like
-> this?
+Hi Andrii,
 
-Thinking about this more, the current IPE approach of treating the
-first file access as being present in the initramfs is not correct
-(one could build a system without an initramfs).  I think we need to
-do something like the above where the initramfs is explicitly marked
-in the initramfs code.
+kernel test robot noticed the following build errors:
 
-> > But I think we could replace the global variable with a flag
-> > variable ipe_sb_state so we could use atomic operation to only mark one
-> > drive as pinned without any lock. The code will be like:
-> >
-> > static void pin_sb(const struct super_block *sb)
-> > {
-> >         if (!sb)
-> >                 return;
-> >
-> >         if (!test_and_set_bit_lock(IPE_SB_PINNED, &ipe_sb_state)) {
-> >                 ipe_sb(sb)->pinned =3D true;
-> >         }
-> > }
-> >
-> > Would this sound better?
+[auto build test ERROR on bpf-next/master]
 
---=20
-paul-moore.com
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bpf-align-CAP_NET_ADMIN-checks-with-bpf_capable-approach/20231104-031714
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20231103190523.6353-12-andrii%40kernel.org
+patch subject: [PATCH v9 bpf-next 11/17] bpf,lsm: add BPF token LSM hooks
+config: m68k-defconfig (https://download.01.org/0day-ci/archive/20231104/202311040829.XrnpSV8z-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231104/202311040829.XrnpSV8z-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202311040829.XrnpSV8z-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/net/scm.h:8,
+                    from include/linux/netlink.h:9,
+                    from include/uapi/linux/neighbour.h:6,
+                    from include/linux/netdevice.h:45,
+                    from include/net/sock.h:46,
+                    from include/linux/tcp.h:19,
+                    from include/linux/ipv6.h:95,
+                    from include/net/ipv6.h:12,
+                    from include/linux/sunrpc/addr.h:14,
+                    from fs/nfsd/nfsd.h:22,
+                    from fs/nfsd/state.h:42,
+                    from fs/nfsd/xdr4.h:40,
+                    from fs/nfsd/trace.h:17,
+                    from fs/nfsd/trace.c:4:
+>> include/linux/security.h:2084:92: error: parameter 2 ('cmd') has incomplete type
+    2084 | static inline int security_bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd cmd)
+         |                                                                               ~~~~~~~~~~~~~^~~
+>> include/linux/security.h:2084:19: error: function declaration isn't a prototype [-Werror=strict-prototypes]
+    2084 | static inline int security_bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd cmd)
+         |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+--
+   In file included from include/net/scm.h:8,
+                    from include/linux/netlink.h:9,
+                    from include/uapi/linux/neighbour.h:6,
+                    from include/linux/netdevice.h:45,
+                    from include/net/sock.h:46,
+                    from include/linux/tcp.h:19,
+                    from include/linux/ipv6.h:95,
+                    from include/net/ipv6.h:12,
+                    from include/linux/sunrpc/addr.h:14,
+                    from fs/nfsd/nfsd.h:22,
+                    from fs/nfsd/export.c:21:
+>> include/linux/security.h:2084:92: error: parameter 2 ('cmd') has incomplete type
+    2084 | static inline int security_bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd cmd)
+         |                                                                               ~~~~~~~~~~~~~^~~
+>> include/linux/security.h:2084:19: error: function declaration isn't a prototype [-Werror=strict-prototypes]
+    2084 | static inline int security_bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd cmd)
+         |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/nfsd/export.c: In function 'exp_rootfh':
+   fs/nfsd/export.c:1017:34: warning: variable 'inode' set but not used [-Wunused-but-set-variable]
+    1017 |         struct inode            *inode;
+         |                                  ^~~~~
+   cc1: some warnings being treated as errors
+--
+   In file included from include/net/scm.h:8,
+                    from include/linux/netlink.h:9,
+                    from include/uapi/linux/neighbour.h:6,
+                    from include/linux/netdevice.h:45,
+                    from include/net/sock.h:46,
+                    from include/linux/tcp.h:19,
+                    from include/linux/ipv6.h:95,
+                    from include/net/ipv6.h:12,
+                    from include/linux/sunrpc/addr.h:14,
+                    from fs/nfsd/nfsd.h:22,
+                    from fs/nfsd/state.h:42,
+                    from fs/nfsd/xdr4.h:40,
+                    from fs/nfsd/trace.h:17,
+                    from fs/nfsd/trace.c:4:
+>> include/linux/security.h:2084:92: error: parameter 2 ('cmd') has incomplete type
+    2084 | static inline int security_bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd cmd)
+         |                                                                               ~~~~~~~~~~~~~^~~
+>> include/linux/security.h:2084:19: error: function declaration isn't a prototype [-Werror=strict-prototypes]
+    2084 | static inline int security_bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd cmd)
+         |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from fs/nfsd/trace.h:1958:
+   include/trace/define_trace.h:95:42: fatal error: ./trace.h: No such file or directory
+      95 | #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
+         |                                          ^
+   cc1: some warnings being treated as errors
+   compilation terminated.
+
+
+vim +2084 include/linux/security.h
+
+  2083	
+> 2084	static inline int security_bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd cmd)
+  2085	{
+  2086		return 0;
+  2087	}
+  2088	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
