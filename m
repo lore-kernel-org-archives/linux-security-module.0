@@ -2,59 +2,78 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B62CC4332F
-	for <linux-security-module@archiver.kernel.org>; Sat,  4 Nov 2023 04:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8E8C4332F
+	for <linux-security-module@archiver.kernel.org>; Sat,  4 Nov 2023 20:45:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230402AbjKDE5S (ORCPT
+        id S229894AbjKDUpZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 4 Nov 2023 00:57:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58488 "EHLO
+        Sat, 4 Nov 2023 16:45:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjKDE5R (ORCPT
+        with ESMTP id S229788AbjKDUpY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 4 Nov 2023 00:57:17 -0400
-X-Greylist: delayed 4219 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 03 Nov 2023 21:57:15 PDT
-Received: from mail.profitpathwaygo.com (mail.profitpathwaygo.com [141.94.21.238])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4958BE0
-        for <linux-security-module@vger.kernel.org>; Fri,  3 Nov 2023 21:57:15 -0700 (PDT)
-Received: by mail.profitpathwaygo.com (Postfix, from userid 1002)
-        id 0536248991; Tue, 31 Oct 2023 08:31:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=profitpathwaygo.com;
-        s=mail; t=1698741327;
-        bh=qp3Ofokho6Ql+WtI8ZPVilyHYhskXL7fod7u9CWs8W4=;
-        h=Date:From:To:Subject:From;
-        b=PPFELliC1xG3hVA1bNKQ0ymMy+TbhljrsDJQCgvmfYc7AQVxzJDPLG1uhHba3R+Ue
-         LD/oAMGNBXxIxAxkLiU9hmbIm93b1mmzzSYBMT6eRa4O9bJrDaCya5CX+YTKFuJHTV
-         ZuWF0btQHn4tOpHu5xZkz3PBscwkg1//rfoqwtWA9p/uwEiWoGOpgKV0qEFuXfeICQ
-         djPZQ0BDjh40gtlrcrSeVbG+0UROUANIpRcvLtoNikR7MRPPY+XT9GTS8467s4VtaE
-         o2WnE+7mkEhkYRveBQjDVQdXUegt5ed34ZcXiyh5kBsvGkaOQ3f66Z+Tk/3p9Bw3FG
-         nQpfWX8oOTe9w==
-Received: by mail.profitpathwaygo.com for <linux-security-module@vger.kernel.org>; Tue, 31 Oct 2023 08:30:48 GMT
-Message-ID: <20231031074500-0.1.2t.15sfo.0.n96j0qp1k1@profitpathwaygo.com>
-Date:   Tue, 31 Oct 2023 08:30:48 GMT
-From:   "Adam Charachuta" <adam.charachuta@profitpathwaygo.com>
-To:     <linux-security-module@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania_?=
-X-Mailer: mail.profitpathwaygo.com
+        Sat, 4 Nov 2023 16:45:24 -0400
+Received: from mail-oo1-xc34.google.com (mail-oo1-xc34.google.com [IPv6:2607:f8b0:4864:20::c34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 155411BC
+        for <linux-security-module@vger.kernel.org>; Sat,  4 Nov 2023 13:45:22 -0700 (PDT)
+Received: by mail-oo1-xc34.google.com with SMTP id 006d021491bc7-586ba7cdb6bso1743304eaf.2
+        for <linux-security-module@vger.kernel.org>; Sat, 04 Nov 2023 13:45:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1699130721; x=1699735521; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cqLx4B4eYaCl63fe+v3lssTiz/E1t615IQY+jLEC5QU=;
+        b=PZhJTyxscLdurdTo4s0iF7exkH5ePveQrcDu8lF5bdDDOAKcmAKftldy/h1SqZmHaM
+         alQaJ23ik20LS8hxmY4GauKrpkGlcCZcKYL+2RhW+5CzKAHxibFm07IvcHR2TUjtg/Qv
+         +/h+2CDQ7JKqbq3PZCOnbEMJxhYhty6Apn73Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699130721; x=1699735521;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cqLx4B4eYaCl63fe+v3lssTiz/E1t615IQY+jLEC5QU=;
+        b=rHkhj738V09hUfJiOXgnA4gGNzk5iZbsPWaPz0ziHAsGKgY0LhIvaDM1P6bfyN0K8S
+         lKQN1ZDEavTwPOKs8fpE9xReoqimg/Hw68fxdeQoeGvZv5hBfC7PVxi4s2slLbEl8VEz
+         HvRP9sc/wbTPKYzYR/9qwGSvHQnEuA1fPL7/7fz2UISfNDvosPMdSpi6pSuA0LoZAwvb
+         zzpP+Ar74aD409TARXoqQKDG+TJ+rsFnYLWwhG58mXXIbw6uOL00VDtHT469FlYkwqcf
+         p/KAydyd+CN1AVKboZfMdyRYMyGCYoNwjuV9/dTPdcAmcb6KK9ArzYNtoi8D1YDk5K4g
+         iUWg==
+X-Gm-Message-State: AOJu0YwzqAbZOQCOxux5EJ+yKU9qJFuNa2lLkkJim0zXwddyIOUGBOzb
+        lJLx/REjRu5SfyAt6rx27Otqyg==
+X-Google-Smtp-Source: AGHT+IGp32yGTqWv49b30WDAhnS22OWCItyJAuD53Fbd9/R1DAB9OVndnlGCgESoyNtM6mbiZdjQxQ==
+X-Received: by 2002:a05:6808:181e:b0:3ae:4cad:91a0 with SMTP id bh30-20020a056808181e00b003ae4cad91a0mr33411223oib.6.1699130721428;
+        Sat, 04 Nov 2023 13:45:21 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id m24-20020aa78a18000000b0068fcb70ccafsm3240757pfa.129.2023.11.04.13.45.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 Nov 2023 13:45:20 -0700 (PDT)
+Date:   Sat, 4 Nov 2023 13:45:20 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     KP Singh <kpsingh@kernel.org>
+Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        paul@paul-moore.com, casey@schaufler-ca.com, song@kernel.org,
+        daniel@iogearbox.net, ast@kernel.org, renauld@google.com,
+        pabeni@redhat.com
+Subject: Re: [PATCH v7 0/5] Reduce overhead of LSMs with static calls
+Message-ID: <202311041343.03239A8AC1@keescook>
+References: <20231102005521.346983-1-kpsingh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231102005521.346983-1-kpsingh@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dzie=C5=84 dobry,
+On Thu, Nov 02, 2023 at 01:55:16AM +0100, KP Singh wrote:
+> NOTE: The warning shown by the kernel test bot is spurious, there is no flex array
+> and it seems to come from an older tool chain.
+> 
+> https://lore.kernel.org/bpf/202310111711.wLbijitj-lkp@intel.com/
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+I was finally able to reproduce this and tracked it down. Fix is here:
+https://lore.kernel.org/lkml/20231104204334.work.160-kees@kernel.org/
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+-Kees
 
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
-
-
-Pozdrawiam serdecznie
-Adam Charachuta
+-- 
+Kees Cook
