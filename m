@@ -2,118 +2,77 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE2FC4167D
-	for <linux-security-module@archiver.kernel.org>; Sun,  5 Nov 2023 23:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B68B4C4332F
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Nov 2023 23:24:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229888AbjKEXOl (ORCPT
+        id S229717AbjKEXYe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 5 Nov 2023 18:14:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57014 "EHLO
+        Sun, 5 Nov 2023 18:24:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjKEXOl (ORCPT
+        with ESMTP id S229485AbjKEXYd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 5 Nov 2023 18:14:41 -0500
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A9EBE0;
-        Sun,  5 Nov 2023 15:14:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1699226076;
-        bh=KNZfu7OjolZplMBWHK4KYrGyxje/IEIPmuS4nt+hcXA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PkTUoPjS8C+kZTg2HC6IGXC2Rrya/zlyd5oe7zF2CvviO8Q5nwGYY4bOMps0a5k42
-         qcZeo2mIy5xW1uvWTjQawq5fxh3I4dii2Kqcz4rIitGtW2lFQpPWRZEgAclG4y4tBo
-         x2dJvSmADQjV5a0tVpYrcwD/1FqsoTMDYfk2WX99ADmOzOh6exVv1l+PsEwFeHzqSA
-         OK0TMydgjmA47PQB4cvgCbjHNu5TES2WjG+Wt2EN7b9xwQJgV5XurXDr25V6e4tKhF
-         qklMJbpsoN6NZmrh7ReI/Ecce/bmiwwFiUqkPUcAQs6Hrj1QRQls1rAvdXwf9eB9W6
-         HNBxeQ5wDfcag==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4SNr0X2q4sz4xPL;
-        Mon,  6 Nov 2023 10:14:36 +1100 (AEDT)
-Date:   Mon, 6 Nov 2023 10:14:34 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Subject: Re: linux-next: manual merge of the apparmor tree with the security
- tree
-Message-ID: <20231106101434.70c62773@canb.auug.org.au>
-In-Reply-To: <CAHC9VhR=x7qB3gmQg+GPYLnXtGU88S3KCiZGjRYtDKSJHp4P1g@mail.gmail.com>
-References: <20231027130320.69469330@canb.auug.org.au>
-        <CAHC9VhQ+Nt7CrLxSZcOVNEtAypruOmM0ST0P0JJMrOq4XYmAkw@mail.gmail.com>
-        <4b4eb40c-b65a-46e2-9e23-5412a9cdcad0@canonical.com>
-        <CAHC9VhQbxJ4-z4Hp7CSmtcTNOWGFeQF2eEyct9=nHCMN_89YXw@mail.gmail.com>
-        <20231031074649.3bdbec45@canb.auug.org.au>
-        <CAHC9VhR=x7qB3gmQg+GPYLnXtGU88S3KCiZGjRYtDKSJHp4P1g@mail.gmail.com>
+        Sun, 5 Nov 2023 18:24:33 -0500
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8A37CC
+        for <linux-security-module@vger.kernel.org>; Sun,  5 Nov 2023 15:24:28 -0800 (PST)
+Received: by mail-yb1-xb36.google.com with SMTP id 3f1490d57ef6-da30fd994fdso4236443276.1
+        for <linux-security-module@vger.kernel.org>; Sun, 05 Nov 2023 15:24:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1699226668; x=1699831468; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xpbld44w3hWg2EgU4TG3EohhXbrCClYElOzSlri99lk=;
+        b=AvEFqM0DgHMeKOE/rQSRmHY08KYHmzmWOOh9itvw+e7xnYV75ZwoH0EU12bjrflxE4
+         M/4dFc1Ad9EOdSdPIPuuO8qLojA0gpbuJB/oZFS92NLLoVrYelU4KMNM1O8gW4vjdYOr
+         uQhURlCz6MJMVEIbAHjF1MuLr094Ng+VN9Ej27/gHCJcwzNONYnTLeZBY+iYJOXGOJCP
+         GwCa+maB906bZKn65wH2++inVRYJaar0UHi2hyYwNRC3W6eHDb/8XUWAGKeGfsm4tUSB
+         +ZR2Lvccq7jdHaIKBdhctMSOrX20Ap5vOS04MOSRBEdfSu+B/CsYMU/CQx13Aqr5w64E
+         4g7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699226668; x=1699831468;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xpbld44w3hWg2EgU4TG3EohhXbrCClYElOzSlri99lk=;
+        b=Q7w/7sCccYcaxmXZ2jLyFs8FOupg654iUnuu5RmPp0gctDZ84pRslMbHDSP/xkya1D
+         0oU9DI0oyqN8L07VqmgCtYxtRRc3GPhQ1Kfw4jc//Ynr7HnwvzP+uUDKaOgWHBSeh7I8
+         Kzkv+tSxrHFkvAXqP02pqEnprsN4xo9wp5a7TPIDpJWMhcxl6aoy70ypWNbtmmdCIoZp
+         MYrQnqgvNnJFquAqor5bNAizNNw9Sg8Iedzra3M7aZpnuur0GS5LTBVWbqXbQaLiZ+jk
+         HrVY1Vh0ZlqBUc1Az2MQ1xb0yJVm0UWAZSPOLGxZqL48xo7j2+vASivYwVko3Ga/wQom
+         jHKg==
+X-Gm-Message-State: AOJu0Yxk6DPQgSILD2mK3uN6qWUAA9/lb2LoiUWHkNX+p3HuXbgH6X3H
+        iBMnH6JjzTmiHVpr2/h6A6FsjXigbO8zOT2Vm/XiY3J2hin7948=
+X-Google-Smtp-Source: AGHT+IE7DSnroJam8N+C7MgslfwrWeezrxfF1yd6C2pACrsl9PIOKccUgsfroEGmXRTy4VQdhwtXCh8jke+PR+byI7w=
+X-Received: by 2002:a25:9105:0:b0:da0:7fe0:dc6 with SMTP id
+ v5-20020a259105000000b00da07fe00dc6mr6746150ybl.14.1699226667720; Sun, 05 Nov
+ 2023 15:24:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_zu0BJwfrCMGY12QZZF2a/8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20231102015337.510827-2-paul@paul-moore.com>
+In-Reply-To: <20231102015337.510827-2-paul@paul-moore.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sun, 5 Nov 2023 18:24:16 -0500
+Message-ID: <CAHC9VhQk+t0XYXfLrpTWEjLOp4-Dvxt5Qv2ZC=--J7PH64J4+A@mail.gmail.com>
+Subject: Re: [PATCH] lsm: align based on pointer length in lsm_fill_user_ctx()
+To:     linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
---Sig_/_zu0BJwfrCMGY12QZZF2a/8
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-Hi Paul,
-
-[Sorry for the slow reply]
-
-On Mon, 30 Oct 2023 17:04:01 -0400 Paul Moore <paul@paul-moore.com> wrote:
+On Wed, Nov 1, 2023 at 9:53=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
 >
-> On Mon, Oct 30, 2023 at 4:46=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.o=
-rg.au> wrote:
-> >
-> > On Mon, 30 Oct 2023 12:52:50 -0400 Paul Moore <paul@paul-moore.com> wro=
-te: =20
-> > >
-> > > On Sun, Oct 29, 2023 at 5:09=E2=80=AFPM John Johansen <john.johansen@=
-canonical.com> wrote: =20
-> > > >
-> > > > is part of the Three basic syscalls series, the plan is still to ha=
-ve that
-> > > > series bake in next for a full cycle? =20
-> > >
-> > > Yes, that's still the plan.  Once v6.7-rc1 is out I'll rebase the LSM
-> > > syscall patches and I expect the vast majority of these conflicts to
-> > > disappear, although I'm sure we'll pick up some new ones with the rest
-> > > of the v6.7-rcX cycle :) =20
-> >
-> > These patches should not be in linux-next until after v6.7-rc1. =20
->=20
-> What if we wanted additional testing beyond the typical?  Do you not
-> support that?
+> Using the size of a void pointer is much cleaner than
+> BITS_PER_LONG / 8.
+>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+>  security/security.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-No, I try hard not to.  It just complicates things when I and others
-have to cope with conflicts and build problems caused by
-patches/features destined for next+1 while trying to stabilise the
-current/next release.
+Merged into lsm/dev-staging.
 
-Sometimes it happens that a feature slips after being added to -next,
-but please don't do it deliberately.
 --=20
-Cheers,
-Stephen Rothwell
-
---Sig_/_zu0BJwfrCMGY12QZZF2a/8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmVIIdoACgkQAVBC80lX
-0Gx1IAf9H6V82cvAQtkUP2Py/ZW41u9lLBGGfLJ/mePRq+auXqJ7G2Tl1wOqx+4t
-dzNmZq5f/VDFeXghE4jA6GHxst1C1/JPeIjew6g32BRSMQ0sHMIax8JFZg6kGrnf
-kE/jTG6YyW2lfK+DhfL2x7FU1d2vDK19oIwr8rR+oQjADKGAta91pGZWfCMpOpsK
-T9YMg4wqrb1iQ85g4H1aA1xnddA4+4NDqZpyyrxjeiRbdU3VtAb5IAnQAp/iFjVo
-fbtXRxW6hsk4dXxIPJG1rwttUNWBj9J23WtFyn/WdFfsFh4fsKpvpSF23AZkJ4a7
-pCQpF/51mND8VV4sBjJ67cOa3aq+sQ==
-=5v1Q
------END PGP SIGNATURE-----
-
---Sig_/_zu0BJwfrCMGY12QZZF2a/8--
+paul-moore.com
