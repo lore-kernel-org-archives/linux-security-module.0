@@ -2,170 +2,118 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8641C4332F
-	for <linux-security-module@archiver.kernel.org>; Sun,  5 Nov 2023 06:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE2FC4167D
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Nov 2023 23:14:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229480AbjKEGeA (ORCPT
+        id S229888AbjKEXOl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 5 Nov 2023 01:34:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58808 "EHLO
+        Sun, 5 Nov 2023 18:14:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbjKEGeA (ORCPT
+        with ESMTP id S229447AbjKEXOl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 5 Nov 2023 01:34:00 -0500
-Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AC2CFB;
-        Sat,  4 Nov 2023 23:33:57 -0700 (PDT)
-Received: by mail-qv1-xf33.google.com with SMTP id 6a1803df08f44-66fa16092c0so23614736d6.0;
-        Sat, 04 Nov 2023 23:33:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699166036; x=1699770836; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SPT5K74xSEFe9IlCGm6whRvfQDP+YpuOQMYi/ccTjRA=;
-        b=CO+HsjvaEoqoHBpJeKup91+egMHEXBiF64DZ0XVozHhqzFXz7FSCXcQBzlUf3N4jWp
-         sCq3i5DnKdQ29mOhUu4Cll9X0NrqaQ332Xw1+3A3/j+FHQwb5llbJT6r32kjrxCOMhHb
-         bvFcTg7w7jlgLVEgW3sGiNhsZ10KmfRLZ7p13xmB5sC2P2zL3cWpsd6HeyZxzTz5Wp8p
-         UksE5UkAxudsPHQ9WPd0wlRfVVl8ozd0kuc2TuNfuyzBFgGv5o3rXvudU9TVrCaqhVy7
-         MJYh7+mdhIhqVhszQqdYU3xTjP9BoNl4vVSZFyJ3Gvx2vTlq3C5fFbL0FWX88yGz/IuT
-         q4CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699166036; x=1699770836;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SPT5K74xSEFe9IlCGm6whRvfQDP+YpuOQMYi/ccTjRA=;
-        b=UOsGdMq6SLBtv2QW50nbslrTGm+5jTz2KnoFmrkMLehOXj8zuKpqcBJuczEQSvleHP
-         JkzUGec80ii85pO6RMEsMw4BA8ev9A1ltfpiVlokrqgJPWrlelK50EHLS/Uqjf3ciO/2
-         S/FNoxPKhQKX7qK3Jtlvvlt3NfIczCyf48JPrYztGHW1q1ufW9+auZsBBSHd0UWVKx/E
-         LQrR7yaDzSzr2Rdc0SMDK5zffZQcfbC7UvhSyLKdZGXnMQ5ciTofPxYTgDxBowVpFx2C
-         srJBkzTWP5BaXhRSprCCSOpxYe2CiSy6soFa9tFOd2RBVkXI4DYtb5fljiUkC1YyP28j
-         r+kw==
-X-Gm-Message-State: AOJu0Yz9Sy4+cNhgY1UE5JIgN4BSygTk5Y3EGrKnDqCU/Dlu3jdI/eB0
-        QthqJI7f5Hgw+pNjwVdGqMQHPCrQFEX8zQY5jmU=
-X-Google-Smtp-Source: AGHT+IF3Uw+7+Bkn6NgMAc7FueWVXrqzfZgqJmcAE2t5D8XONiN/V4uJDAcW/xEs9/tgrAW0M9hTZH7l1p1OIFFmHQM=
-X-Received: by 2002:ad4:5b83:0:b0:66d:1f11:8b7c with SMTP id
- 3-20020ad45b83000000b0066d1f118b7cmr32449097qvp.52.1699166036504; Sat, 04 Nov
- 2023 23:33:56 -0700 (PDT)
+        Sun, 5 Nov 2023 18:14:41 -0500
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A9EBE0;
+        Sun,  5 Nov 2023 15:14:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1699226076;
+        bh=KNZfu7OjolZplMBWHK4KYrGyxje/IEIPmuS4nt+hcXA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PkTUoPjS8C+kZTg2HC6IGXC2Rrya/zlyd5oe7zF2CvviO8Q5nwGYY4bOMps0a5k42
+         qcZeo2mIy5xW1uvWTjQawq5fxh3I4dii2Kqcz4rIitGtW2lFQpPWRZEgAclG4y4tBo
+         x2dJvSmADQjV5a0tVpYrcwD/1FqsoTMDYfk2WX99ADmOzOh6exVv1l+PsEwFeHzqSA
+         OK0TMydgjmA47PQB4cvgCbjHNu5TES2WjG+Wt2EN7b9xwQJgV5XurXDr25V6e4tKhF
+         qklMJbpsoN6NZmrh7ReI/Ecce/bmiwwFiUqkPUcAQs6Hrj1QRQls1rAvdXwf9eB9W6
+         HNBxeQ5wDfcag==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4SNr0X2q4sz4xPL;
+        Mon,  6 Nov 2023 10:14:36 +1100 (AEDT)
+Date:   Mon, 6 Nov 2023 10:14:34 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: linux-next: manual merge of the apparmor tree with the security
+ tree
+Message-ID: <20231106101434.70c62773@canb.auug.org.au>
+In-Reply-To: <CAHC9VhR=x7qB3gmQg+GPYLnXtGU88S3KCiZGjRYtDKSJHp4P1g@mail.gmail.com>
+References: <20231027130320.69469330@canb.auug.org.au>
+        <CAHC9VhQ+Nt7CrLxSZcOVNEtAypruOmM0ST0P0JJMrOq4XYmAkw@mail.gmail.com>
+        <4b4eb40c-b65a-46e2-9e23-5412a9cdcad0@canonical.com>
+        <CAHC9VhQbxJ4-z4Hp7CSmtcTNOWGFeQF2eEyct9=nHCMN_89YXw@mail.gmail.com>
+        <20231031074649.3bdbec45@canb.auug.org.au>
+        <CAHC9VhR=x7qB3gmQg+GPYLnXtGU88S3KCiZGjRYtDKSJHp4P1g@mail.gmail.com>
 MIME-Version: 1.0
-References: <20231103190523.6353-1-andrii@kernel.org> <20231103190523.6353-2-andrii@kernel.org>
-In-Reply-To: <20231103190523.6353-2-andrii@kernel.org>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Sun, 5 Nov 2023 14:33:20 +0800
-Message-ID: <CALOAHbD5xmQO-Acsqd0iQqjj66-CxSQVEnURNqP9zuRCc0SnYg@mail.gmail.com>
-Subject: Re: [PATCH v9 bpf-next 01/17] bpf: align CAP_NET_ADMIN checks with
- bpf_capable() approach
-To:     Andrii Nakryiko <andrii@kernel.org>
-Cc:     bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com,
-        brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        kernel-team@meta.com, sargun@sargun.me
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="Sig_/_zu0BJwfrCMGY12QZZF2a/8";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Nov 4, 2023 at 3:05=E2=80=AFAM Andrii Nakryiko <andrii@kernel.org> =
-wrote:
->
-> Within BPF syscall handling code CAP_NET_ADMIN checks stand out a bit
-> compared to CAP_BPF and CAP_PERFMON checks. For the latter, CAP_BPF or
-> CAP_PERFMON are checked first, but if they are not set, CAP_SYS_ADMIN
-> takes over and grants whatever part of BPF syscall is required.
->
-> Similar kind of checks that involve CAP_NET_ADMIN are not so consistent.
-> One out of four uses does follow CAP_BPF/CAP_PERFMON model: during
-> BPF_PROG_LOAD, if the type of BPF program is "network-related" either
-> CAP_NET_ADMIN or CAP_SYS_ADMIN is required to proceed.
->
-> But in three other cases CAP_NET_ADMIN is required even if CAP_SYS_ADMIN
-> is set:
->   - when creating DEVMAP/XDKMAP/CPU_MAP maps;
->   - when attaching CGROUP_SKB programs;
->   - when handling BPF_PROG_QUERY command.
->
-> This patch is changing the latter three cases to follow BPF_PROG_LOAD
-> model, that is allowing to proceed under either CAP_NET_ADMIN or
-> CAP_SYS_ADMIN.
->
-> This also makes it cleaner in subsequent BPF token patches to switch
-> wholesomely to a generic bpf_token_capable(int cap) check, that always
-> falls back to CAP_SYS_ADMIN if requested capability is missing.
->
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+--Sig_/_zu0BJwfrCMGY12QZZF2a/8
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Yafang Shao <laoar.shao@gmail.com>
+Hi Paul,
 
-> ---
->  kernel/bpf/syscall.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index 0ed286b8a0f0..ad4d8e433ccc 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -1096,6 +1096,11 @@ static int map_check_btf(struct bpf_map *map, cons=
-t struct btf *btf,
->         return ret;
->  }
->
-> +static bool bpf_net_capable(void)
-> +{
-> +       return capable(CAP_NET_ADMIN) || capable(CAP_SYS_ADMIN);
-> +}
-> +
->  #define BPF_MAP_CREATE_LAST_FIELD map_extra
->  /* called via syscall */
->  static int map_create(union bpf_attr *attr)
-> @@ -1199,7 +1204,7 @@ static int map_create(union bpf_attr *attr)
->         case BPF_MAP_TYPE_DEVMAP:
->         case BPF_MAP_TYPE_DEVMAP_HASH:
->         case BPF_MAP_TYPE_XSKMAP:
-> -               if (!capable(CAP_NET_ADMIN))
-> +               if (!bpf_net_capable())
->                         return -EPERM;
->                 break;
->         default:
-> @@ -2599,7 +2604,7 @@ static int bpf_prog_load(union bpf_attr *attr, bpfp=
-tr_t uattr, u32 uattr_size)
->             !bpf_capable())
->                 return -EPERM;
->
-> -       if (is_net_admin_prog_type(type) && !capable(CAP_NET_ADMIN) && !c=
-apable(CAP_SYS_ADMIN))
-> +       if (is_net_admin_prog_type(type) && !bpf_net_capable())
->                 return -EPERM;
->         if (is_perfmon_prog_type(type) && !perfmon_capable())
->                 return -EPERM;
-> @@ -3751,7 +3756,7 @@ static int bpf_prog_attach_check_attach_type(const =
-struct bpf_prog *prog,
->         case BPF_PROG_TYPE_SK_LOOKUP:
->                 return attach_type =3D=3D prog->expected_attach_type ? 0 =
-: -EINVAL;
->         case BPF_PROG_TYPE_CGROUP_SKB:
-> -               if (!capable(CAP_NET_ADMIN))
-> +               if (!bpf_net_capable())
->                         /* cg-skb progs can be loaded by unpriv user.
->                          * check permissions at attach time.
->                          */
-> @@ -3954,7 +3959,7 @@ static int bpf_prog_detach(const union bpf_attr *at=
-tr)
->  static int bpf_prog_query(const union bpf_attr *attr,
->                           union bpf_attr __user *uattr)
->  {
-> -       if (!capable(CAP_NET_ADMIN))
-> +       if (!bpf_net_capable())
->                 return -EPERM;
->         if (CHECK_ATTR(BPF_PROG_QUERY))
->                 return -EINVAL;
-> --
-> 2.34.1
->
->
+[Sorry for the slow reply]
 
+On Mon, 30 Oct 2023 17:04:01 -0400 Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Mon, Oct 30, 2023 at 4:46=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.o=
+rg.au> wrote:
+> >
+> > On Mon, 30 Oct 2023 12:52:50 -0400 Paul Moore <paul@paul-moore.com> wro=
+te: =20
+> > >
+> > > On Sun, Oct 29, 2023 at 5:09=E2=80=AFPM John Johansen <john.johansen@=
+canonical.com> wrote: =20
+> > > >
+> > > > is part of the Three basic syscalls series, the plan is still to ha=
+ve that
+> > > > series bake in next for a full cycle? =20
+> > >
+> > > Yes, that's still the plan.  Once v6.7-rc1 is out I'll rebase the LSM
+> > > syscall patches and I expect the vast majority of these conflicts to
+> > > disappear, although I'm sure we'll pick up some new ones with the rest
+> > > of the v6.7-rcX cycle :) =20
+> >
+> > These patches should not be in linux-next until after v6.7-rc1. =20
+>=20
+> What if we wanted additional testing beyond the typical?  Do you not
+> support that?
 
+No, I try hard not to.  It just complicates things when I and others
+have to cope with conflicts and build problems caused by
+patches/features destined for next+1 while trying to stabilise the
+current/next release.
+
+Sometimes it happens that a feature slips after being added to -next,
+but please don't do it deliberately.
 --=20
-Regards
-Yafang
+Cheers,
+Stephen Rothwell
+
+--Sig_/_zu0BJwfrCMGY12QZZF2a/8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmVIIdoACgkQAVBC80lX
+0Gx1IAf9H6V82cvAQtkUP2Py/ZW41u9lLBGGfLJ/mePRq+auXqJ7G2Tl1wOqx+4t
+dzNmZq5f/VDFeXghE4jA6GHxst1C1/JPeIjew6g32BRSMQ0sHMIax8JFZg6kGrnf
+kE/jTG6YyW2lfK+DhfL2x7FU1d2vDK19oIwr8rR+oQjADKGAta91pGZWfCMpOpsK
+T9YMg4wqrb1iQ85g4H1aA1xnddA4+4NDqZpyyrxjeiRbdU3VtAb5IAnQAp/iFjVo
+fbtXRxW6hsk4dXxIPJG1rwttUNWBj9J23WtFyn/WdFfsFh4fsKpvpSF23AZkJ4a7
+pCQpF/51mND8VV4sBjJ67cOa3aq+sQ==
+=5v1Q
+-----END PGP SIGNATURE-----
+
+--Sig_/_zu0BJwfrCMGY12QZZF2a/8--
