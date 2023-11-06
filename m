@@ -2,139 +2,216 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF2DC4167D
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Nov 2023 16:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D3F2C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Nov 2023 19:03:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232856AbjKFQkr (ORCPT
+        id S232005AbjKFTDW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Nov 2023 11:40:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34740 "EHLO
+        Mon, 6 Nov 2023 14:03:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232787AbjKFQkq (ORCPT
+        with ESMTP id S231801AbjKFTDW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Nov 2023 11:40:46 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F2AAF3;
-        Mon,  6 Nov 2023 08:40:43 -0800 (PST)
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A6G9wJq012558;
-        Mon, 6 Nov 2023 16:40:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=ntZsLRi2hus613FqdTu44OeobP9ahDx7BzxS4O7ju4U=;
- b=L4q+mC098fBK/UtAXsxypV3spcgftlRSQJy+2CUdgGUDbllToOxeEm8Ic1aTxLNFn60H
- kpBu540y2frJ67xd0dCxSk8FMsKSzWpz1OmRKQbbpIY/1/ke3t7u1IQVRHcYdbwxVMvE
- 26w5IES8+okz+YwgVtpyzR2PI2Lkeen0BykOmCm4v6yaUBFVW+pnKoC8gS8xTf5h8k7p
- +lCFW1muge7J1+J9RgrHgn4x0ImTND3khz6cXsT9LliFLTEUYHWC3IUv6V2pjFOk5CYS
- xCH5uZN5SrorLDmGelw7b8Msj0PHgsuuWrOOt/lGky9E/UBf2iF70MbAcTeS/6wLmdF0 ew== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3u73dwh8y0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Nov 2023 16:40:14 +0000
-Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3A6GA5af013143;
-        Mon, 6 Nov 2023 16:40:13 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3u73dwh8xj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Nov 2023 16:40:13 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3A6Eqi53028251;
-        Mon, 6 Nov 2023 16:40:12 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-        by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3u62gjt9gx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Nov 2023 16:40:12 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-        by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3A6GeBce18875026
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 6 Nov 2023 16:40:11 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 86AE658045;
-        Mon,  6 Nov 2023 16:40:11 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 44E8E58056;
-        Mon,  6 Nov 2023 16:40:09 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.58.168])
-        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Mon,  6 Nov 2023 16:40:09 +0000 (GMT)
-Message-ID: <980b8df5eccc03a67328e28b7cef2b777bc310f0.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 12/23] security: Introduce file_post_open hook
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, mic@digikod.net
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
-        Stefan Berger <stefanb@linux.ibm.com>
-Date:   Mon, 06 Nov 2023 11:40:08 -0500
-In-Reply-To: <20231027083558.484911-13-roberto.sassu@huaweicloud.com>
-References: <20231027083558.484911-1-roberto.sassu@huaweicloud.com>
-         <20231027083558.484911-13-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: zw57y4MwJGx3BnjPgEXX4OPSmxPCeezQ
-X-Proofpoint-GUID: _5sXQ_fpTpFu-_ZM3yCz4MGm249TyFjc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-06_12,2023-11-02_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- priorityscore=1501 suspectscore=0 spamscore=0 clxscore=1015 mlxscore=0
- lowpriorityscore=0 bulkscore=0 impostorscore=0 malwarescore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2310240000 definitions=main-2311060134
+        Mon, 6 Nov 2023 14:03:22 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0223BB;
+        Mon,  6 Nov 2023 11:03:18 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9d0b4dfd60dso715669466b.1;
+        Mon, 06 Nov 2023 11:03:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699297397; x=1699902197; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Po8rIN0UE2EVDqSENb5hU9jONiWYxIx8ngSOAiRM/mM=;
+        b=ViBPj2pGMgtXLPfCgAYi0yDHHxrLs5SfbbuIeBSF2w0vkmWFFIYkFCBQXS1zspXWo7
+         CL0YiNlhGfS41sfaDfO/VM9QECNp1O3psBfbY5WQZwkrBvTLVM32wgJOJVpZ8HPi/tCk
+         jv35nIbMfTDt4Gb9azTSc3PyTPZBPKobOs5/DJUUvPAFhyLJ3epLiYveo34iLYcigG83
+         qEIldEFiPbfCN7pwV0ycE3dEqK1w7rth55YyKZ7E84K+EhzWGgVBqmKG30OV4s/RNVsb
+         vKnlXdEU19nLRWErx4VQJoM0AD4Eb8loqHEAGYlOdi0yr+CTEU/sxJAJFEdqd85wuKs1
+         XErA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699297397; x=1699902197;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Po8rIN0UE2EVDqSENb5hU9jONiWYxIx8ngSOAiRM/mM=;
+        b=h0BCbFCBtRBEDxqH6ySoYTJPKSYI0CWfSh28cZHHhRrK0kXBHX0HRIDUhU4dIe2+zA
+         dqE/SLFmUVHJFTJD5GaVpg8zEH2ReouhbCSPjnNrrTqi/0JHtezBAsOgU2zpOrDi3Ogk
+         ZIjO3m7oOzxT4RrsignSC8vlWwM5Zf8X9PUBH2bLDrn4Ie0KqxK66mUMNyxXLNgiGZJG
+         EJk72x1TZKDQ2aFG+8fEKOiqcRHSxUw29Nxb5nd1CmjeV41FHXJrp6qMd6hFIuzsDWUG
+         3gN+Svoodn/AaDx/UNYPC1pKnHMdp/ZRKQO39BIK3h+RAuKWalhs3Q7mS1zHI5Jze6Sj
+         M28Q==
+X-Gm-Message-State: AOJu0YzOTwgcnJwMAJ92fIJpbuMyJEfxnjQOKr9D1QtzYm+avYdrpKnv
+        +7cPWrtznbVsXTrBH+qaE1Z22Kv/loChW1kJP7U=
+X-Google-Smtp-Source: AGHT+IGBgeJg/bNsD5dwJoZXLqPVs31CF6CY8+BoPeEjCL4gXQFiXcF/I4SXJow0aqntHGmOxou7y6/uTzGpe7ivH3w=
+X-Received: by 2002:a17:907:368a:b0:9c5:1100:9b8c with SMTP id
+ bi10-20020a170907368a00b009c511009b8cmr13952016ejc.56.1699297396812; Mon, 06
+ Nov 2023 11:03:16 -0800 (PST)
+MIME-Version: 1.0
+References: <20231103190523.6353-10-andrii@kernel.org> <7ff273d368f3f7dd383444928ca478ef.paul@paul-moore.com>
+In-Reply-To: <7ff273d368f3f7dd383444928ca478ef.paul@paul-moore.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Mon, 6 Nov 2023 11:03:05 -0800
+Message-ID: <CAEf4Bzaxv4uHK=+_vwZuvgBgq8L6d4JwxTSGxZgU44LwWYhDug@mail.gmail.com>
+Subject: Re: [PATCH v9 9/17] bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free
+ LSM hooks
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, brauner@kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        kernel-team@meta.com, sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2023-10-27 at 10:35 +0200, Roberto Sassu wrote:
-> diff --git a/security/security.c b/security/security.c
-> index 2ee958afaf40..d24a8f92d641 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2947,6 +2947,23 @@ int security_file_open(struct file *file)
->         return fsnotify_perm(file, MAY_OPEN);
->  }
->  
-> +/**
-> + * security_file_post_open() - Recheck access to a file after it has been opened
-> + * @file: the file
-> + * @mask: access mask
-> + *
-> + * Recheck access with mask after the file has been opened. The hook is useful
-> + * for LSMs that require the file content to be available in order to make
-> + * decisions.
-> + *
+On Sun, Nov 5, 2023 at 9:01=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> On Nov  3, 2023 Andrii Nakryiko <andrii@kernel.org> wrote:
+> >
+> > Based on upstream discussion ([0]), rework existing
+> > bpf_prog_alloc_security LSM hook. Rename it to bpf_prog_load and instea=
+d
+> > of passing bpf_prog_aux, pass proper bpf_prog pointer for a full BPF
+> > program struct. Also, we pass bpf_attr union with all the user-provided
+> > arguments for BPF_PROG_LOAD command.  This will give LSMs as much
+> > information as we can basically provide.
+> >
+> > The hook is also BPF token-aware now, and optional bpf_token struct is
+> > passed as a third argument. bpf_prog_load LSM hook is called after
+> > a bunch of sanity checks were performed, bpf_prog and bpf_prog_aux were
+> > allocated and filled out, but right before performing full-fledged BPF
+> > verification step.
+> >
+> > bpf_prog_free LSM hook is now accepting struct bpf_prog argument, for
+> > consistency. SELinux code is adjusted to all new names, types, and
+> > signatures.
+> >
+> > Note, given that bpf_prog_load (previously bpf_prog_alloc) hook can be
+> > used by some LSMs to allocate extra security blob, but also by other
+> > LSMs to reject BPF program loading, we need to make sure that
+> > bpf_prog_free LSM hook is called after bpf_prog_load/bpf_prog_alloc one
+> > *even* if the hook itself returned error. If we don't do that, we run
+> > the risk of leaking memory. This seems to be possible today when
+> > combining SELinux and BPF LSM, as one example, depending on their
+> > relative ordering.
+> >
+> > Also, for BPF LSM setup, add bpf_prog_load and bpf_prog_free to
+> > sleepable LSM hooks list, as they are both executed in sleepable
+> > context. Also drop bpf_prog_load hook from untrusted, as there is no
+> > issue with refcount or anything else anymore, that originally forced us
+> > to add it to untrusted list in c0c852dd1876 ("bpf: Do not mark certain =
+LSM
+> > hook arguments as trusted"). We now trigger this hook much later and it
+> > should not be an issue anymore.
+>
+> See my comment below, but it isn't clear to me if this means it is okay
+> to have `BTF_ID(func, bpf_lsm_bpf_prog_free)` called twice.  It probably
+> would be a good idea to get KP, BPF LSM maintainer, to review this change
+> as well to make sure this looks good to him.
+>
+> >   [0] https://lore.kernel.org/bpf/9fe88aef7deabbe87d3fc38c4aea3c69.paul=
+@paul-moore.com/
+> >
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
+> >  include/linux/lsm_hook_defs.h |  5 +++--
+> >  include/linux/security.h      | 12 +++++++-----
+> >  kernel/bpf/bpf_lsm.c          |  5 +++--
+> >  kernel/bpf/syscall.c          | 25 +++++++++++++------------
+> >  security/security.c           | 25 +++++++++++++++----------
+> >  security/selinux/hooks.c      | 15 ++++++++-------
+> >  6 files changed, 49 insertions(+), 38 deletions(-)
+>
+> ...
+>
+> > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> > index e14c822f8911..3e956f6302f3 100644
+> > --- a/kernel/bpf/bpf_lsm.c
+> > +++ b/kernel/bpf/bpf_lsm.c
+> > @@ -263,6 +263,8 @@ BTF_ID(func, bpf_lsm_bpf_map)
+> >  BTF_ID(func, bpf_lsm_bpf_map_alloc_security)
+> >  BTF_ID(func, bpf_lsm_bpf_map_free_security)
+> >  BTF_ID(func, bpf_lsm_bpf_prog)
+> > +BTF_ID(func, bpf_lsm_bpf_prog_load)
+> > +BTF_ID(func, bpf_lsm_bpf_prog_free)
+> >  BTF_ID(func, bpf_lsm_bprm_check_security)
+> >  BTF_ID(func, bpf_lsm_bprm_committed_creds)
+> >  BTF_ID(func, bpf_lsm_bprm_committing_creds)
+> > @@ -346,8 +348,7 @@ BTF_SET_END(sleepable_lsm_hooks)
+> >
+> >  BTF_SET_START(untrusted_lsm_hooks)
+> >  BTF_ID(func, bpf_lsm_bpf_map_free_security)
+> > -BTF_ID(func, bpf_lsm_bpf_prog_alloc_security)
+> > -BTF_ID(func, bpf_lsm_bpf_prog_free_security)
+> > +BTF_ID(func, bpf_lsm_bpf_prog_free)
+> >  BTF_ID(func, bpf_lsm_file_alloc_security)
+> >  BTF_ID(func, bpf_lsm_file_free_security)
+> >  #ifdef CONFIG_SECURITY_NETWORK
+>
+> It looks like you're calling the BTF_ID() macro on bpf_lsm_bpf_prog_free
+> twice?  I would have expected a only one macro call for each bpf_prog_loa=
+d
+> and bpf_prog_free, is that a bad assuption?
+>
 
-The hook isn't limited to "Recheck access".    It's used for measuring,
-appraising, and auditing a file's integrity.   Sorry for suggesting an
-incomplete patch description.  Please update the wording here and the
-patch description accordingly.
+Yeah, there is no problem having multiple BTF_ID() invocations for the
+same function. BTF_ID() macro (conceptually) emits a relocation that
+will instruct resolve_btfids tool to put an actual BTF ID for the
+specified function in a designated 4-byte slot.
 
-> + * Return: Returns 0 if permission is granted.
-> + */
-> +int security_file_post_open(struct file *file, int mask)
-> +{
-> +       return call_int_hook(file_post_open, 0, file, mask);
-> +}
-> +EXPORT_SYMBOL_GPL(security_file_post_open);
-> +
->  /**
->   * security_file_truncate() - Check if truncating a file is allowed
->   * @file: file
+In this case, we have two separate lists: sleepable_lsm_hooks and
+untrusted_lsm_hooks, so we need two separate BTF_ID() entries for the
+same function. It's expected to be duplicated.
 
--- 
-thanks,
+> > diff --git a/security/security.c b/security/security.c
+> > index dcb3e7014f9b..5773d446210e 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -5180,16 +5180,21 @@ int security_bpf_map_alloc(struct bpf_map *map)
+> >  }
+> >
+> >  /**
+> > - * security_bpf_prog_alloc() - Allocate a bpf program LSM blob
+> > - * @aux: bpf program aux info struct
+> > + * security_bpf_prog_load() - Check if loading of BPF program is allow=
+ed
+> > + * @prog: BPF program object
+> > + * @attr: BPF syscall attributes used to create BPF program
+> > + * @token: BPF token used to grant user access to BPF subsystem
+> >   *
+> > - * Initialize the security field inside bpf program.
+> > + * Do a check when the kernel allocates BPF program object and is abou=
+t to
+> > + * pass it to BPF verifier for additional correctness checks. This is =
+also the
+> > + * point where LSM blob is allocated for LSMs that need them.
+>
+> This is pretty nitpicky, but I'm guessing you may need to make another
+> revision to this patchset, if you do please drop the BPF verifier remark
+> from the comment above.
+>
+> Example: "Perform an access control check when the kernel loads a BPF
+> program and allocates the associated BPF program object.  This hook is
+> also responsibile for allocating any required LSM state for the BPF
+> program."
 
-Mimi
+Done, no problem.
 
+>
+> >   * Return: Returns 0 on success, error on failure.
+> >   */
+> > -int security_bpf_prog_alloc(struct bpf_prog_aux *aux)
+> > +int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr=
+,
+> > +                        struct bpf_token *token)
+> >  {
+> > -     return call_int_hook(bpf_prog_alloc_security, 0, aux);
+> > +     return call_int_hook(bpf_prog_load, 0, prog, attr, token);
+> >  }
+>
+> --
+> paul-moore.com
