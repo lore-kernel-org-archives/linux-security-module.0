@@ -2,129 +2,116 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4030C4167B
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Nov 2023 13:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05FD2C4167B
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Nov 2023 16:34:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232791AbjKFNdn (ORCPT
+        id S231860AbjKFQeo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Nov 2023 08:33:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46414 "EHLO
+        Mon, 6 Nov 2023 11:34:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232787AbjKFNdm (ORCPT
+        with ESMTP id S229974AbjKFQen (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Nov 2023 08:33:42 -0500
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B55BD107;
-        Mon,  6 Nov 2023 05:33:36 -0800 (PST)
-Received: by mail-qt1-x82b.google.com with SMTP id d75a77b69052e-41cc75c55f0so44849271cf.1;
-        Mon, 06 Nov 2023 05:33:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699277616; x=1699882416; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3kfYO/jqXsEVbiPCa+98Wg6yWGKOyc07wJKMC7BNdsQ=;
-        b=YJ1o35PIC4Ts2CiYbaO5InTOJCdp2W7SskqYLl9q2vqf+5AEaGZF7dAojOCI9X5t90
-         DiCanFZPGEx9nlNg5Gc4JwwIPYgp5yandgOoVe2/qUFP7R3sTyum/blrVhTJdo1UfOXS
-         +4XeJ6OMnDdAs9j8r+Y1gKB8JzkBrPKJ4ovcpsuHuKGgNwid+6xecdyvawhLWlQpFNJ/
-         niK3A7Q7HvFUwLYEjYdHxNwreJ5ljubf2TKqlROFTlK8bNQUEYXrj5SyUsSLHuydDkPu
-         KDYKWXzk3L206GKeUdw3aHN5ePdbYbsyail+37Mc6Yydmy1btxsNi7wBdM6a8JmbJ7hn
-         fowA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699277616; x=1699882416;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3kfYO/jqXsEVbiPCa+98Wg6yWGKOyc07wJKMC7BNdsQ=;
-        b=qIPrdjANE2+oW+qdHswEheUZ1Y7/QoLBC7jgkbnqontKWD8Ie8PoovkonHq/EPHFeZ
-         wXp2aJT+FlHEntIuNcFnCx/S8qZy5TllZiUPHoukWSnRLn5l8m+kuGRbQd6l+ARjYrCf
-         LBfWV/UxwdhA2A80XgqPhFVTZjA8VRT0it2bmMNblC9gp5QyaxEP+Tb7TgqQ2z3uL5y8
-         qJw3x5Y/NkNz+1Q9Rb8zeOJqyRxmUobQmxCHPCFvKH9TVYSE86mD2hSOCIBHOKwolY0r
-         StDC7ZdLTnfBnf/RpYdBBqb5z3/KUlwrqm8v/Se+LFTlwLmflYm2qcEFUYTU9Yp2m9st
-         xmNw==
-X-Gm-Message-State: AOJu0YxcmPPlWz6uY2vhec2/PoLO+ey0Q4shJ9VVkKi0lJxKADfi0xHa
-        RJR5LqXVt778X/3t9Nivr6ky1G+p7TyPfz/5EQz65peEK/w=
-X-Google-Smtp-Source: AGHT+IGfna+ns1OJYt9vnIpo34kwqS4zK3N8Q0DIkJXGI7keTrtYAHV1O3+FoRhLDkMnqRpc5FeiUhOWpjUGAD2eMr0=
-X-Received: by 2002:a05:6214:482:b0:66f:b7ff:1e12 with SMTP id
- pt2-20020a056214048200b0066fb7ff1e12mr16096792qvb.20.1699277615718; Mon, 06
- Nov 2023 05:33:35 -0800 (PST)
-MIME-Version: 1.0
-References: <20231025140205.3586473-1-mszeredi@redhat.com> <374433e3-ab72-64a3-0fa0-ab455268e5e0@themaw.net>
- <20231106121053.egamth3hr7zcfzji@ws.net.home>
-In-Reply-To: <20231106121053.egamth3hr7zcfzji@ws.net.home>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 6 Nov 2023 15:33:23 +0200
-Message-ID: <CAOQ4uxgn--PshKxMDmM4YoDQ8x3+a0NwCv+Bppjq-3w9V+Sxpg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] querying mount attributes
-To:     Karel Zak <kzak@redhat.com>
-Cc:     Ian Kent <raven@themaw.net>, Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Matthew House <mattlloydhouse@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 6 Nov 2023 11:34:43 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6282F3;
+        Mon,  6 Nov 2023 08:34:40 -0800 (PST)
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A6GFXWL031665;
+        Mon, 6 Nov 2023 16:33:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=pZJyqFbl59bkZ161bZWrxQkthrJNgakp9QGEaCBeqX8=;
+ b=Sz7FUgtcN3kRvlUygKYVDJIrYSgBaFBt7wvpkzv85Vy0w1N+rNLhS74XySDfmtIf0ckb
+ u/XNhPJGRszF4wjqpeDjCRJms84NqR8qYaKIeIwm5TRB+yJYzCRIDiB7nDl8WTOlSuOU
+ jD4R36YGZLZLz6K2gMYCYAC48a6TAIRZHtgKbBDYgvKS6gwhp+AdEUavH9lFwyRJVuID
+ 83CgnEf8Gb436E8r7NhEdCxvduVM3ECKpyawJp1dxj9PbAWqRUp59MHdTcgCPgXQ9DAp
+ hkwI+tAtcLmYD/Ow1mdrD57NGxlQ6etTu/WjWKD7MqqCdZHWA7xjbkmC3NhJaffjmHmH NA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3u73gh8nbh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Nov 2023 16:33:51 +0000
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3A6GI1Ta009967;
+        Mon, 6 Nov 2023 16:33:50 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3u73gh8nb2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Nov 2023 16:33:50 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+        by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3A6Fw4Jj007918;
+        Mon, 6 Nov 2023 16:33:49 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+        by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3u60nyark9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Nov 2023 16:33:49 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+        by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3A6GXn5e9831006
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 Nov 2023 16:33:49 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 646B15805A;
+        Mon,  6 Nov 2023 16:33:49 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 87C2C5805F;
+        Mon,  6 Nov 2023 16:33:46 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.58.168])
+        by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Mon,  6 Nov 2023 16:33:46 +0000 (GMT)
+Message-ID: <d64394f62a4453cd9be96a69ca46286489148365.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 20/23] ima: Move IMA-Appraisal to LSM infrastructure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
+        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, mic@digikod.net
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Date:   Mon, 06 Nov 2023 11:33:45 -0500
+In-Reply-To: <20231027084234.485243-1-roberto.sassu@huaweicloud.com>
+References: <20231027083558.484911-1-roberto.sassu@huaweicloud.com>
+         <20231027084234.485243-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 07Is1uPsVwvO7ug3J8NGrMQbHoFfeH5y
+X-Proofpoint-GUID: Oa1kOHQLNNefYUsVOYHe4V_BcB24nS7w
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-06_12,2023-11-02_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 adultscore=0
+ clxscore=1011 lowpriorityscore=0 phishscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2310240000 definitions=main-2311060133
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 6, 2023 at 2:11=E2=80=AFPM Karel Zak <kzak@redhat.com> wrote:
->
-> On Wed, Nov 01, 2023 at 07:52:45PM +0800, Ian Kent wrote:
-> > On 25/10/23 22:01, Miklos Szeredi wrote:
-> > Looks ok to me,covers the primary cases I needed when I worked
-> > on using fsinfo() in systemd.
->
-> Our work on systemd was about two areas: get mount info (stat/listmount()
-> now) from the kernel, and get the mount ID from notification.
->
-> There was watch_queue.h with WATCH_TYPE_MOUNT_NOTIFY and struct
-> mount_notification->auxiliary_mount (aka mount ID) and event subtype
-> to get the change status (new mount, umount, etc.)
->
-> For example David's:
->  https://patchwork.kernel.org/project/linux-security-module/patch/1559917=
-11016.15579.4449417925184028666.stgit@warthog.procyon.org.uk/
->
-> Do we have any replacement for this?
->
+On Fri, 2023-10-27 at 10:42 +0200, Roberto Sassu wrote:
+> Do the registration of IMA-Appraisal functions separately from the rest of
+> IMA functions, as appraisal is a separate feature not necessarily enabled
+> in the kernel configuration.
 
-The plan is to extend fanotify for mount namespace change notifications.
+Add "only" -> of IMA-Apparaisal only functions ...
 
-Here is a simple POC for FAN_UNMOUNT notification:
+> Reuse the same approach as for other IMA functions, move hardcoded calls
+> from various places in the kernel to the LSM infrastructure. Declare the
+> functions as static and register them as hook implementations in
+> init_ima_appraise_lsm(), called by init_ima_lsm().
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
-https://lore.kernel.org/linux-fsdevel/20230414182903.1852019-1-amir73il@gma=
-il.com/
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
-I was waiting for Miklos' patches to land, so that we can report
-mnt_id_unique (of mount and its parent mount) in the events.
 
-The plan is to start with setting a mark on a vfsmount to get
-FAN_MOUNT/FAN_UNMOUNT notifications for changes to direct
-children of that mount.
-
-This part, I was planning to do myself. I cannot say for sure when
-I will be able to get to it, but it should be a rather simple patch.
-
-If anybody else would like to volunteer for the task, I will be
-happy to assist.
-
-Not sure if we are going to need special notifications for mount
-move and mount beneath?
-
-Not sure if we are going to need notifications on mount attribute
-changes?
-
-We may later also implement a mark on a mount namespace
-to get events on all mount namespace changes.
-
-If you have any feedback about this rough plan, or more items
-to the wish list, please feel free to share them.
-
-Thanks,
-Amir.
