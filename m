@@ -2,212 +2,229 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4BCC4167B
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Nov 2023 21:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B83C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Nov 2023 22:29:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233125AbjKFVdw (ORCPT
+        id S233058AbjKFWaA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Nov 2023 16:33:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37420 "EHLO
+        Mon, 6 Nov 2023 17:30:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233005AbjKFVdv (ORCPT
+        with ESMTP id S232005AbjKFW37 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Nov 2023 16:33:51 -0500
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80655BB;
-        Mon,  6 Nov 2023 13:33:48 -0800 (PST)
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A6FkfC9008589;
-        Mon, 6 Nov 2023 21:33:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2023-03-30;
- bh=cdxLMUnG7uL7qMCY3v9q5mHm2umoZwbvnfcKngrF30w=;
- b=ccTxxIYJDTUM8sO2oJwqgUW0Cfl6tgMK8i7GitpU8SNXYcL07Q4V1hottOGfKbzJr5fd
- 89xLYxs3dkv/iZQy3vWjh5GrCi5nTouzZI2WX9lR/s6Zcju5sq5d7aO1p/6ErE4/xV2k
- yqu8Oj8Wxs6sbSdh8YsEm7uKJkyHjQGSPqZAIophfxWn43JBWE1NM7TyF6X2nDZVnH3Y
- GqJ1MWPoyJuDBtAbhSyyby062Q0xM1XykibtpVWdE0W7NXVEkOyJsQvPmaHQHYigx2Nb
- GDI4T2sxyvV8HHLgSYDGgd5TGw+bNAhK0fzh5cDB3V7Ik6b4M5jLdsNxVXCrwVwlfCrf TA== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3u5ccdvf3j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 06 Nov 2023 21:33:31 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3A6KqaqL038335;
-        Mon, 6 Nov 2023 21:33:31 GMT
-Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04lp2041.outbound.protection.outlook.com [104.47.73.41])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3u5cdchrv8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 06 Nov 2023 21:33:31 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I+EC8eM4Q3DTLa06LX8LcTQfnclQRX8YU3uSF7zKETKdu2SoKalr47cC78wJJFIvLPxoFJzDNAWaQRQ3slEIfJ7C9nrUsz2pU8jR8tDcbt/xIiyFbcyaSbUJLKyo7VrnSHUC4i7LzONkCwJds4h6wlgvFxzA82LNkNq/fcrmpyM/uZwMaNqv6vzp26R6MhN0gBvlY8BbH4G8rIbXJESZnyZZQGbQKyGT4KpEHFBLk6uIKoITtDkEZrIiwRaycIth4JxXfdBGnJZ1Y4cJTYCHP2O6jYE3nMI4mOu35NJR7Yi0MEV+hOnQ2RToiyI8caDnj0JaPue+GlHrIqF9/A3cRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cdxLMUnG7uL7qMCY3v9q5mHm2umoZwbvnfcKngrF30w=;
- b=LELtAkLosRJNnvvFFv408cLdzZpoHKfhic6Y++qSwSsaSZ/ds4rlvhaBERtCHRyUU9L9yVOrxwg8f5ZXP0iFxeWzLzSshzDaacxo+O+gSPQKhyb3mTWAdJX+XjfW286A5dZxbyP/xb3TEFzdLNq5Xe96OtcWDWVvav5L3M+wFLYT5/lkQFdmjxwlYuL8fiu9tYqGbdNhIcS4uuxDXWA0zUHixrgqE7cM2SFtCErmSNz4QiavlLJQbutvL45aZkgy4fILDo63iPqqqLw96iPH0exUyMgpVbM0UdzyppszqIsGyZlR8weqB/FBX5CkSwy7CBuf6zuq7n0ASD00A2TMIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Mon, 6 Nov 2023 17:29:59 -0500
+Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAFCAD51
+        for <linux-security-module@vger.kernel.org>; Mon,  6 Nov 2023 14:29:52 -0800 (PST)
+Received: by mail-yb1-xb2a.google.com with SMTP id 3f1490d57ef6-d9ac9573274so5293671276.0
+        for <linux-security-module@vger.kernel.org>; Mon, 06 Nov 2023 14:29:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cdxLMUnG7uL7qMCY3v9q5mHm2umoZwbvnfcKngrF30w=;
- b=Mq4N2x2D2Lf/0nUjBEjIgOL+XNsvJJEFutPon6RBoErRMdUtYxvr6QFvLrv8+JyMwKIJiHnpYGaviuuJ8phVtWPeP0uxnyis5cFVlXd/hpVyTPBymnnC2mAUYB2DBXV41R+V3JForhH8qyGxkDOaVBZgr8mdy70v1+DN+zjnztg=
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by PH7PR10MB6084.namprd10.prod.outlook.com (2603:10b6:510:1f8::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.33; Mon, 6 Nov
- 2023 21:33:28 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::adf2:9029:9b90:56f0]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::adf2:9029:9b90:56f0%7]) with mapi id 15.20.6954.028; Mon, 6 Nov 2023
- 21:33:28 +0000
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-CC:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] ima: Add machine keyring reference to
- IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
-Thread-Topic: [PATCH 1/2] ima: Add machine keyring reference to
- IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
-Thread-Index: AQHaDa+pZZRsKpDWhk+qRUJ4DEESTrBttPqAgAAhXIA=
-Date:   Mon, 6 Nov 2023 21:33:28 +0000
-Message-ID: <E078E14A-C743-446F-9F78-7F3DDA8A2815@oracle.com>
-References: <20231102170617.2403495-1-eric.snowberg@oracle.com>
- <20231102170617.2403495-2-eric.snowberg@oracle.com>
- <3bae86a2572e1ced0ad069ed6ecd2c0a7d33e11e.camel@linux.ibm.com>
-In-Reply-To: <3bae86a2572e1ced0ad069ed6ecd2c0a7d33e11e.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3731.700.6)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH2PR10MB4150:EE_|PH7PR10MB6084:EE_
-x-ms-office365-filtering-correlation-id: 74a8b45d-7eba-4fa8-343e-08dbdf100438
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: j3Ja46KdYBT/QPrgvCuTnHLFU+XNigQyBZJusI+dYXE7CJp8KHGMxuAOuFCzxpJuXSISWmfMsNdKFbuiWA6M6o8V9FFMFG1cLhXMoUUF4zAt27LkHUw39CzbryiI+llcHR5VU2nlajmogPQzD1NPREoGxwhRU8SWx3Fmyz0IPhQu692zzEDVhIBhW5N6XKmGCMu83txuXSiQsSRshqsdcwcB2gzrvxlXdyGGgqS6csw1Ymic7iZR6JaHEWsS0h5K7aI76fmA0RjuZuddahNylj1Nj5X5SiaavCQw2HYKdxyxCECHcrWbwMpQM4iIHFjv2ug4IAM8UE/FCF8lSbC0Eij7kC9il4C6lWbN/J4mcEcybGv7Lnpl7QkO9EZsOz/APgXmKC2NCjJznHDi9OdvWoLnrjih80OJbAy9g9TdwaOWi/Xxz03X0Ys455+vXUiJNHSp3xeTvZG5jknklWRZt9EOmLGGKIa0loatAyMsnH4qZQykKDCdBGoGwqvpPeoprTYS1m61z8ceFrhBgXzkzlqS8PBKTvIrnm27UlLmyHg/797NnGtIiUSzFsxLLvXuewfeglh+lDcsM1Zmk3DWgwp9HVTg0tOQPNDGb19XWkJbGLQgP0ZNky6f0mCsf/e326wXHp2bZ7f5FkIr6WrFpQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(366004)(136003)(346002)(39860400002)(376002)(230922051799003)(64100799003)(1800799009)(186009)(451199024)(38070700009)(2616005)(478600001)(86362001)(36756003)(33656002)(38100700002)(6512007)(122000001)(5660300002)(66946007)(83380400001)(53546011)(26005)(71200400001)(64756008)(2906002)(6506007)(41300700001)(6486002)(8936002)(66446008)(91956017)(316002)(66476007)(66556008)(8676002)(966005)(6916009)(54906003)(44832011)(4326008)(76116006)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?wsZVZDUipdwSGZq6JTH9UNSVEQa2Uds/C+tTf0wqEx8ZWXkoDwmhHl/ue6sh?=
- =?us-ascii?Q?W40nNBWBd8i25XvWH8lYLqUyt88Kj6hvSKiZNp/lViC96tAtQ9sLsWZ4+mo+?=
- =?us-ascii?Q?pB7H5s9gRjD4nQBWJRTKS81g6bzwK+k6JOhKF+N3MqLxsW09if0tUBrfxNwP?=
- =?us-ascii?Q?h0RvZz5NIrO3CKzvi4wLfKPcsWkE1o538be31CAWZjbf8awBu0Y3kKHMoxzo?=
- =?us-ascii?Q?6QxutLyf6dUW0WxOBZZyTRcvn72PtWeYRMHpIqQTE8M/P4xgXfl4RbgGNcjy?=
- =?us-ascii?Q?nhroGGEWphOARAdElhfz0xfRV6ZaLGDm8xzb7sW9CwECOCBRhjPNdsqjwUYp?=
- =?us-ascii?Q?XNcSCooANFiXa1+xZtAsiLMDAhLEn4a/SzNimz7TyA3VNH+ReCRlUT5GzxzY?=
- =?us-ascii?Q?Vjk3spxhFDhS3nrW11SL4Gq1wO5Lekm47zxbRHm6WPJ5cre44dqMkB1q5kKO?=
- =?us-ascii?Q?RDvnmUklDzf11u7DFJAN5nWzNWkvwpdIEg8kTnIJPFfQtzY8yo/xsQK3Xn/7?=
- =?us-ascii?Q?VanJYPVYbNIg9bs785b21O5ciu3jP5yefHtFRj82QPv5JYJ63Vb2eMixVr0d?=
- =?us-ascii?Q?SgwMwjk7CtLZX6k9rOJIGLKei9q0ED1cmPebLvGJDmVDmtV+A03kRex/QEvQ?=
- =?us-ascii?Q?nkt3baHiKBt0oRV+nOLp8ySYR0sdFS8/bpuClXZjUtWPpAtFp0QUs/tVoljs?=
- =?us-ascii?Q?SwUEHNWJsOEU/c6h/p6Qea24lI7yh0J00nznPOlREd150ZVCrrLcgQ0y52Rb?=
- =?us-ascii?Q?xCsczAbBgiSrYN9srCHk4I1hlQkxwOIeZ6iSvd0U6R18LT9776lWGSWL45BU?=
- =?us-ascii?Q?BtEVhJ/iECKLb2fvpTYrBbXhR2n6Qmj3hbO9q7Q1lAZ179bhFJwRwvJ0dMv6?=
- =?us-ascii?Q?IS5alpKoUmLX9/lxG/jtwy8VGOOVgMsJvi7NnydKe1FJzzJvPW/NmcVNaX+I?=
- =?us-ascii?Q?mt/IXeAWHsSstsHwGPGkkpTqmdlqdyHFUaCTcjkarJmrjyL0HDq+FyPJ8DtU?=
- =?us-ascii?Q?jIjXu72+vQDZTGVnPG7urpL1xBCNr1fsyxQW+YwUlfH/2L8axow4m9tekKUO?=
- =?us-ascii?Q?ng0y039udy70HwC+tkKmepZNAFqhsmZQMddhsqDVYBOhz2wl8I7RXlctEr/2?=
- =?us-ascii?Q?Q6+oP/fYNjugLbfGzGg/dmJIfakoUetzeeDbNKAu444Jdk/rjz3dMl96lorW?=
- =?us-ascii?Q?hysyMkB0f7X2wMMx6dGuUrGkqvSuE4ysDttu9cKGePy8WqImSntyZXPbqIZA?=
- =?us-ascii?Q?b4j6WKod+PgmhZ2Iy5n6T2L3i57hcPtGokHy2Xr6wB/ciaBSUgwLBQrDpjEj?=
- =?us-ascii?Q?vjBwZPAiqMTgEARixXkvyrO2FV+QNWIG+8WBau9B8gDzk63wBQFg+Kbj5sdX?=
- =?us-ascii?Q?efv7osAvVkM10LVa36UVu4y6D5Q0y3wjpdwDzs5o4tZyUvGAHmiyq1AJpGLd?=
- =?us-ascii?Q?Z4NMM06spMaHmzRENa0wBNuo1tL7aaBH/iAuIzEkwa33hkdAGpZdnovgmPmu?=
- =?us-ascii?Q?wieaZ/CVNY9eRqA4NjgK0hsRQpzXddHPFtemzhth4Nm4O/ejBnC1UsyQ4qm0?=
- =?us-ascii?Q?avXeopM8kMk4KeFW5bjWPwxuq/J43ggsA9kPMDV8IwlfvI9fmZNDtvjllbWL?=
- =?us-ascii?Q?wg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <9BFA86D0397FB4479E5A21E99AD08495@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=paul-moore.com; s=google; t=1699309792; x=1699914592; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E66zNXr7n8OxPZDJkTscd5st2Eb4+BXMECTd16p+KKY=;
+        b=G83UFKDBjUJQE6sMUYdBidIfkN/wfUWmRDtYjYnkhSLN1C8k2MEEn33/k11YYx2YMf
+         p9F/mm/TtKFI+Ya7L7FvJehN3IR6yqKhVQ3es09QRVRDNd2HL3l5SIpYN26rv9DrYIDb
+         3HU2jmHyt38k/wym5asGupnYI0BTKKoV1F6fKU6WHdRPhuHfQtyzBaeW2bFzdfW5YX2j
+         PBEcjTTsBtlmPbcmSWKPySkbEOoFtKw6ioyqUrH8igo5V/eeodflzl6HNY+liQ6M6bGA
+         tr2v3NqxCab7w52MXOLAYJcY8pNzTsdbF0vjWCGpHRDk6AwhLlJnrAKZk0VNHkvHHe+/
+         lNCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699309792; x=1699914592;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E66zNXr7n8OxPZDJkTscd5st2Eb4+BXMECTd16p+KKY=;
+        b=VpZFTVW+plPw9CfG2dDr3dbOjvojaVb8fSx77N+9YFSQfUcPYOxUpkizUh/Dmjy6us
+         fXKQCzwENbJ+wdKmR6L7u0t/FHHLaYiSkMYIcNefDXluMPLLAFYct5G672yGlp7EicpN
+         NPCFwwvr2YidEH7CK+Jj/oZWho7lV7CP6/y/eO1VWK1AiuZJ29eAwGURpt1/hB4Fu8BQ
+         PI7cOJerPWIAOxDSPfITQqxLr7pAqmAcXP17yWLNqnBIQjHtXprO1B768Q74sh0k7DZZ
+         H1L8XhCeg5JZ7gXWQOChlmVUU6PmJiaLduGewOvLpHMD/S6yNkv9MjyNj94ZxCCaJOtQ
+         IoVw==
+X-Gm-Message-State: AOJu0YySYlFCeLC2k4hLshQ4msnSxFKqGK4wiizbjRln2yZOaWpsLvIx
+        XMowRay7YDxqaueTzlnK9ybRjsh/NKdDaPqJcWae
+X-Google-Smtp-Source: AGHT+IG/6jCSMEcXdJXql31+PqDrBfViRunNdEn77gAOSspcDIrEyjSr07LMpHwMDmW2rtjFP6aQdvIe1WXdR8rp5JI=
+X-Received: by 2002:a25:5f4c:0:b0:da0:cea9:2b3b with SMTP id
+ h12-20020a255f4c000000b00da0cea92b3bmr28568607ybm.62.1699309792021; Mon, 06
+ Nov 2023 14:29:52 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?nNE4ZWo7LpONunXw8o+dfJN6HshynYGzduNE8mOINDxhSIqW9u4TU68Rc8EV?=
- =?us-ascii?Q?XiUHhRJn6s4zrz9u5Ko/H/rTYCejf3AwkJRPm1XOMcnnb46c7zwqBgvBr6J8?=
- =?us-ascii?Q?kk0B2HDsfiAtJ2obQo/8VEaBS7rN7dp7B1yM+Mi2TtHKuV8RFsSo+D8ZW0Nj?=
- =?us-ascii?Q?JlYi6/UE3VJVOsqIWM4PS8hM9DClL6LItt8xEkyki5N+YsW1HPeii9yIgNia?=
- =?us-ascii?Q?GpfPgwxdBbqs0jFPybUMaOWWtgrfE5fi+MgYhfW9oIPTzR7OncJSdTL0W8Sl?=
- =?us-ascii?Q?5pdups12PUzLsfJtX3eUzBAgc4/0AT6bGfspa2zNaP8Po59f/hJfxyKq1a3j?=
- =?us-ascii?Q?XV48rhcF3nyQC6bcrPmO84l6lBm/gmFDwgIoBXstXW+xyICOv16otcgs4dUH?=
- =?us-ascii?Q?X8hq6XtvCDm7jxv9JdisgWflqEKzCKsQp6d5f00Xj/giIJpV3133Aopb4YYi?=
- =?us-ascii?Q?zthFp6Yz19cE8GnXzpvaHfK6HQ08pJJDavOuH+W8j//OIiTvjCyAXwS76rdj?=
- =?us-ascii?Q?hFn6h9qbSZ0pOkvV8C1/sWBvFyHq+GLRTqNUsbN6Vdcm5sZov1n6VI4ocjf2?=
- =?us-ascii?Q?VdA/izlE7pQ3oOrcCGq7WLOYUgNdZ/PMNEAp0KHbfk+ShjtOhXg9rtVJrsfh?=
- =?us-ascii?Q?ShdcuSPUN60AJkFosJ0uTRXsrk0rZT7OhW2ShY28eKBdPrCTYH57bruawiP4?=
- =?us-ascii?Q?bKIGw7zrSBdwMTmbEiFFgVKu2ZQXliEGkvN99BcHa0sUGlKRzhhqPevNPC17?=
- =?us-ascii?Q?MzweYkTdvFiYwm27G40fdPsEc5qvkuy7N+eCKffjG62d2zJI0hpA2GlrQZHU?=
- =?us-ascii?Q?JpkrJK2O2iv5M5YlxtGQsmkhFKi2Digdlt5pI2CBQHkvutKENY2aJaJX5GEV?=
- =?us-ascii?Q?YzcZ+tG7/uNUuUXaYMwo8dvxUWLkHe7Mst2BHNyjsIFxY0OkFuFGghOHx3/j?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74a8b45d-7eba-4fa8-343e-08dbdf100438
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2023 21:33:28.6258
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IFD4bNfZU8ukjDgXkzm1wrNeP/8fTzCVs/Vy1RLcVwmA4AGT2CpbiaQXMLVRpFaa/tUlOOEIQm9a5Xpz+jyNnCEJYZjQbY7kJUDQJ5jnv/M=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6084
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-06_15,2023-11-02_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 bulkscore=0
- mlxlogscore=999 phishscore=0 spamscore=0 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2310240000
- definitions=main-2311060177
-X-Proofpoint-ORIG-GUID: SdVmS7z77vSQeQXXk5q_U_Q76repO7PC
-X-Proofpoint-GUID: SdVmS7z77vSQeQXXk5q_U_Q76repO7PC
+References: <20231103190523.6353-10-andrii@kernel.org> <7ff273d368f3f7dd383444928ca478ef.paul@paul-moore.com>
+ <CAEf4Bzaxv4uHK=+_vwZuvgBgq8L6d4JwxTSGxZgU44LwWYhDug@mail.gmail.com>
+In-Reply-To: <CAEf4Bzaxv4uHK=+_vwZuvgBgq8L6d4JwxTSGxZgU44LwWYhDug@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 6 Nov 2023 17:29:40 -0500
+Message-ID: <CAHC9VhRk8NHx2Sj222KdoyT-+mKyOHzCTOaPK0z-u=w8rFWDyw@mail.gmail.com>
+Subject: Re: [PATCH v9 9/17] bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free
+ LSM hooks
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, brauner@kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        kernel-team@meta.com, sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, Nov 6, 2023 at 2:03=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+> On Sun, Nov 5, 2023 at 9:01=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+> > On Nov  3, 2023 Andrii Nakryiko <andrii@kernel.org> wrote:
+> > >
+> > > Based on upstream discussion ([0]), rework existing
+> > > bpf_prog_alloc_security LSM hook. Rename it to bpf_prog_load and inst=
+ead
+> > > of passing bpf_prog_aux, pass proper bpf_prog pointer for a full BPF
+> > > program struct. Also, we pass bpf_attr union with all the user-provid=
+ed
+> > > arguments for BPF_PROG_LOAD command.  This will give LSMs as much
+> > > information as we can basically provide.
+> > >
+> > > The hook is also BPF token-aware now, and optional bpf_token struct i=
+s
+> > > passed as a third argument. bpf_prog_load LSM hook is called after
+> > > a bunch of sanity checks were performed, bpf_prog and bpf_prog_aux we=
+re
+> > > allocated and filled out, but right before performing full-fledged BP=
+F
+> > > verification step.
+> > >
+> > > bpf_prog_free LSM hook is now accepting struct bpf_prog argument, for
+> > > consistency. SELinux code is adjusted to all new names, types, and
+> > > signatures.
+> > >
+> > > Note, given that bpf_prog_load (previously bpf_prog_alloc) hook can b=
+e
+> > > used by some LSMs to allocate extra security blob, but also by other
+> > > LSMs to reject BPF program loading, we need to make sure that
+> > > bpf_prog_free LSM hook is called after bpf_prog_load/bpf_prog_alloc o=
+ne
+> > > *even* if the hook itself returned error. If we don't do that, we run
+> > > the risk of leaking memory. This seems to be possible today when
+> > > combining SELinux and BPF LSM, as one example, depending on their
+> > > relative ordering.
+> > >
+> > > Also, for BPF LSM setup, add bpf_prog_load and bpf_prog_free to
+> > > sleepable LSM hooks list, as they are both executed in sleepable
+> > > context. Also drop bpf_prog_load hook from untrusted, as there is no
+> > > issue with refcount or anything else anymore, that originally forced =
+us
+> > > to add it to untrusted list in c0c852dd1876 ("bpf: Do not mark certai=
+n LSM
+> > > hook arguments as trusted"). We now trigger this hook much later and =
+it
+> > > should not be an issue anymore.
+> >
+> > See my comment below, but it isn't clear to me if this means it is okay
+> > to have `BTF_ID(func, bpf_lsm_bpf_prog_free)` called twice.  It probabl=
+y
+> > would be a good idea to get KP, BPF LSM maintainer, to review this chan=
+ge
+> > as well to make sure this looks good to him.
+> >
+> > >   [0] https://lore.kernel.org/bpf/9fe88aef7deabbe87d3fc38c4aea3c69.pa=
+ul@paul-moore.com/
+> > >
+> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > ---
+> > >  include/linux/lsm_hook_defs.h |  5 +++--
+> > >  include/linux/security.h      | 12 +++++++-----
+> > >  kernel/bpf/bpf_lsm.c          |  5 +++--
+> > >  kernel/bpf/syscall.c          | 25 +++++++++++++------------
+> > >  security/security.c           | 25 +++++++++++++++----------
+> > >  security/selinux/hooks.c      | 15 ++++++++-------
+> > >  6 files changed, 49 insertions(+), 38 deletions(-)
+> >
+> > ...
+> >
+> > > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> > > index e14c822f8911..3e956f6302f3 100644
+> > > --- a/kernel/bpf/bpf_lsm.c
+> > > +++ b/kernel/bpf/bpf_lsm.c
+> > > @@ -263,6 +263,8 @@ BTF_ID(func, bpf_lsm_bpf_map)
+> > >  BTF_ID(func, bpf_lsm_bpf_map_alloc_security)
+> > >  BTF_ID(func, bpf_lsm_bpf_map_free_security)
+> > >  BTF_ID(func, bpf_lsm_bpf_prog)
+> > > +BTF_ID(func, bpf_lsm_bpf_prog_load)
+> > > +BTF_ID(func, bpf_lsm_bpf_prog_free)
+> > >  BTF_ID(func, bpf_lsm_bprm_check_security)
+> > >  BTF_ID(func, bpf_lsm_bprm_committed_creds)
+> > >  BTF_ID(func, bpf_lsm_bprm_committing_creds)
+> > > @@ -346,8 +348,7 @@ BTF_SET_END(sleepable_lsm_hooks)
+> > >
+> > >  BTF_SET_START(untrusted_lsm_hooks)
+> > >  BTF_ID(func, bpf_lsm_bpf_map_free_security)
+> > > -BTF_ID(func, bpf_lsm_bpf_prog_alloc_security)
+> > > -BTF_ID(func, bpf_lsm_bpf_prog_free_security)
+> > > +BTF_ID(func, bpf_lsm_bpf_prog_free)
+> > >  BTF_ID(func, bpf_lsm_file_alloc_security)
+> > >  BTF_ID(func, bpf_lsm_file_free_security)
+> > >  #ifdef CONFIG_SECURITY_NETWORK
+> >
+> > It looks like you're calling the BTF_ID() macro on bpf_lsm_bpf_prog_fre=
+e
+> > twice?  I would have expected a only one macro call for each bpf_prog_l=
+oad
+> > and bpf_prog_free, is that a bad assuption?
+> >
+>
+> Yeah, there is no problem having multiple BTF_ID() invocations for the
+> same function. BTF_ID() macro (conceptually) emits a relocation that
+> will instruct resolve_btfids tool to put an actual BTF ID for the
+> specified function in a designated 4-byte slot.
+>
+> In this case, we have two separate lists: sleepable_lsm_hooks and
+> untrusted_lsm_hooks, so we need two separate BTF_ID() entries for the
+> same function. It's expected to be duplicated.
 
+Okay, thanks for the explanation.  It jumped out as a deviation from
+the current code when I was looking at the changes and I was worried
+that it was a typo, but it sounds like it's expected and the proper
+thing to do.
 
-> On Nov 6, 2023, at 12:33 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
->=20
-> Hi Eric,
->=20
-> The subject line is referred to as the 'summary' phrase.  As far as I'm
-> aware the length is still between 70-75 charcaters.  Refer to=20
-> https://www.kernel.org/doc/Documentation/process/submitting-patches.rst
-> .
->=20
-> On Thu, 2023-11-02 at 13:06 -0400, Eric Snowberg wrote:
->> When the machine keyring is enabled, it may be used as a trust source
->> for the .ima keyring.  Add a reference to this in
->> IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY.
->>=20
->> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
->> ---
->> security/integrity/ima/Kconfig | 10 +++++-----
->> 1 file changed, 5 insertions(+), 5 deletions(-)
->>=20
->> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kco=
-nfig
->> index a6bd817efc1a..c5dc0fabbc8b 100644
->> --- a/security/integrity/ima/Kconfig
->> +++ b/security/integrity/ima/Kconfig
->> @@ -243,7 +243,7 @@ config IMA_APPRAISE_MODSIG
->>    to accept such signatures.
->>=20
->> config IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
->> - bool "Permit keys validly signed by a built-in or secondary CA cert (E=
-XPERIMENTAL)"
->> + bool "Permit keys validly signed by a built-in, secondary or machine C=
-A cert (EXPERIMENTAL)"
->=20
-> Please add 'machine' in between built-in and secondary, like described
-> below.
+> > > diff --git a/security/security.c b/security/security.c
+> > > index dcb3e7014f9b..5773d446210e 100644
+> > > --- a/security/security.c
+> > > +++ b/security/security.c
+> > > @@ -5180,16 +5180,21 @@ int security_bpf_map_alloc(struct bpf_map *ma=
+p)
+> > >  }
+> > >
+> > >  /**
+> > > - * security_bpf_prog_alloc() - Allocate a bpf program LSM blob
+> > > - * @aux: bpf program aux info struct
+> > > + * security_bpf_prog_load() - Check if loading of BPF program is all=
+owed
+> > > + * @prog: BPF program object
+> > > + * @attr: BPF syscall attributes used to create BPF program
+> > > + * @token: BPF token used to grant user access to BPF subsystem
+> > >   *
+> > > - * Initialize the security field inside bpf program.
+> > > + * Do a check when the kernel allocates BPF program object and is ab=
+out to
+> > > + * pass it to BPF verifier for additional correctness checks. This i=
+s also the
+> > > + * point where LSM blob is allocated for LSMs that need them.
+> >
+> > This is pretty nitpicky, but I'm guessing you may need to make another
+> > revision to this patchset, if you do please drop the BPF verifier remar=
+k
+> > from the comment above.
+> >
+> > Example: "Perform an access control check when the kernel loads a BPF
+> > program and allocates the associated BPF program object.  This hook is
+> > also responsibile for allocating any required LSM state for the BPF
+> > program."
+>
+> Done, no problem.
 
-I'll make both changes and send out a new version, thanks.
+With the comment change above, and the clarification of the BTF_ID()
+calls, feel free to add my ACK.
 
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+--=20
+paul-moore.com
