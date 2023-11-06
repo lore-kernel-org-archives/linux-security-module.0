@@ -2,61 +2,60 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B83C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Nov 2023 22:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC8FBC4332F
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Nov 2023 22:47:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233058AbjKFWaA (ORCPT
+        id S232478AbjKFWrC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Nov 2023 17:30:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57240 "EHLO
+        Mon, 6 Nov 2023 17:47:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232005AbjKFW37 (ORCPT
+        with ESMTP id S233203AbjKFWrB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Nov 2023 17:29:59 -0500
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAFCAD51
-        for <linux-security-module@vger.kernel.org>; Mon,  6 Nov 2023 14:29:52 -0800 (PST)
-Received: by mail-yb1-xb2a.google.com with SMTP id 3f1490d57ef6-d9ac9573274so5293671276.0
-        for <linux-security-module@vger.kernel.org>; Mon, 06 Nov 2023 14:29:52 -0800 (PST)
+        Mon, 6 Nov 2023 17:47:01 -0500
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D71ED73
+        for <linux-security-module@vger.kernel.org>; Mon,  6 Nov 2023 14:46:57 -0800 (PST)
+Received: by mail-yb1-xb36.google.com with SMTP id 3f1490d57ef6-d9ad90e1038so5282441276.3
+        for <linux-security-module@vger.kernel.org>; Mon, 06 Nov 2023 14:46:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1699309792; x=1699914592; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1699310816; x=1699915616; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E66zNXr7n8OxPZDJkTscd5st2Eb4+BXMECTd16p+KKY=;
-        b=G83UFKDBjUJQE6sMUYdBidIfkN/wfUWmRDtYjYnkhSLN1C8k2MEEn33/k11YYx2YMf
-         p9F/mm/TtKFI+Ya7L7FvJehN3IR6yqKhVQ3es09QRVRDNd2HL3l5SIpYN26rv9DrYIDb
-         3HU2jmHyt38k/wym5asGupnYI0BTKKoV1F6fKU6WHdRPhuHfQtyzBaeW2bFzdfW5YX2j
-         PBEcjTTsBtlmPbcmSWKPySkbEOoFtKw6ioyqUrH8igo5V/eeodflzl6HNY+liQ6M6bGA
-         tr2v3NqxCab7w52MXOLAYJcY8pNzTsdbF0vjWCGpHRDk6AwhLlJnrAKZk0VNHkvHHe+/
-         lNCg==
+        bh=m+CxpgcL4aexq1pxQBuG46UP8l7bbeWIcVPQNBNf8iQ=;
+        b=K8JQoSb7el9HTL9KRhQwzID5BJfxMEh/9nax4gEB6w7NPNEUYMyYB/g5L9qgZaDn7h
+         7TZkBg5w6YKMDW67kybRRR9kTpRtf9LgBNLx6hPbdYKiR3LJ+LC+3v2//hhs2cGHDFgx
+         bfLfPcybjI8GvoOypMOxUJ1Tvnzt971EBpiefS6dJyI1SE9/N80EiKeCplENtAsuTdEx
+         s0PFvxsUv5UK4OzRfWKmGAKM7aPPA290XxufpylJCIUb1wvEwKbFNcSukSJtF97GewSV
+         TrEovf/8cY15HXZ8+TYBAqCj4Il1L41gfLotRIyJf+l2Jss66pPuZ7bu9J+qd96V+E/o
+         xy7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699309792; x=1699914592;
+        d=1e100.net; s=20230601; t=1699310816; x=1699915616;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E66zNXr7n8OxPZDJkTscd5st2Eb4+BXMECTd16p+KKY=;
-        b=VpZFTVW+plPw9CfG2dDr3dbOjvojaVb8fSx77N+9YFSQfUcPYOxUpkizUh/Dmjy6us
-         fXKQCzwENbJ+wdKmR6L7u0t/FHHLaYiSkMYIcNefDXluMPLLAFYct5G672yGlp7EicpN
-         NPCFwwvr2YidEH7CK+Jj/oZWho7lV7CP6/y/eO1VWK1AiuZJ29eAwGURpt1/hB4Fu8BQ
-         PI7cOJerPWIAOxDSPfITQqxLr7pAqmAcXP17yWLNqnBIQjHtXprO1B768Q74sh0k7DZZ
-         H1L8XhCeg5JZ7gXWQOChlmVUU6PmJiaLduGewOvLpHMD/S6yNkv9MjyNj94ZxCCaJOtQ
-         IoVw==
-X-Gm-Message-State: AOJu0YySYlFCeLC2k4hLshQ4msnSxFKqGK4wiizbjRln2yZOaWpsLvIx
-        XMowRay7YDxqaueTzlnK9ybRjsh/NKdDaPqJcWae
-X-Google-Smtp-Source: AGHT+IG/6jCSMEcXdJXql31+PqDrBfViRunNdEn77gAOSspcDIrEyjSr07LMpHwMDmW2rtjFP6aQdvIe1WXdR8rp5JI=
-X-Received: by 2002:a25:5f4c:0:b0:da0:cea9:2b3b with SMTP id
- h12-20020a255f4c000000b00da0cea92b3bmr28568607ybm.62.1699309792021; Mon, 06
- Nov 2023 14:29:52 -0800 (PST)
+        bh=m+CxpgcL4aexq1pxQBuG46UP8l7bbeWIcVPQNBNf8iQ=;
+        b=jVDPI7fYxYrW6cZCkrAKJ9dCbrZ5IbxRq88ha+RuCBhUZ+8B74aRlnJdlOyQaHWeUz
+         gHcpbrk76ivXS47Fx6lseMm8N2eIGem0xY7J0M0xLX414PKjiJwgbklDFOM2AlJbL+vz
+         ib/jLnizd6npEDtK3cZgRB9r4CVGrlEBBx9ICo2tbWAg+Usgt1ytV49UOp6zsgDhjBK8
+         NDiV9+qkXjikF+6csmf9sccDIiFKBjrgJoIwU8z37hqjIANU9dp4oKcYdBRfoSky8a0c
+         cj6nCtKF5wf3h/FzU/xA94d/hW5all4xyCT3VhksJr/7bXSU+spDrbRA7b5z++sdQJrZ
+         99jg==
+X-Gm-Message-State: AOJu0YxPszGlI0eCviUzC9YcFP+Vtf/9mH+xEBqzjbhdI6sbMkV+MJGJ
+        NP9wUYSwIfhciOpY36WZ751vzpZOxSxXTorvYvdN
+X-Google-Smtp-Source: AGHT+IGXWhDoSXxeBh7Czg+txU8kbw2mYBGyDM2qVw79VBO13uUkESRzx7ovAgOHJjgxfDNHWL6IeHZWWm76GepPGGc=
+X-Received: by 2002:a25:ad14:0:b0:d9a:e397:3b4 with SMTP id
+ y20-20020a25ad14000000b00d9ae39703b4mr30117731ybi.46.1699310816479; Mon, 06
+ Nov 2023 14:46:56 -0800 (PST)
 MIME-Version: 1.0
-References: <20231103190523.6353-10-andrii@kernel.org> <7ff273d368f3f7dd383444928ca478ef.paul@paul-moore.com>
- <CAEf4Bzaxv4uHK=+_vwZuvgBgq8L6d4JwxTSGxZgU44LwWYhDug@mail.gmail.com>
-In-Reply-To: <CAEf4Bzaxv4uHK=+_vwZuvgBgq8L6d4JwxTSGxZgU44LwWYhDug@mail.gmail.com>
+References: <20231103190523.6353-12-andrii@kernel.org> <9d2b920cb7e59dfd56f763bdd4e53abd.paul@paul-moore.com>
+ <CAEf4BzbGjLQV0CsTwawiqHaGf4eObMQBJT-bpDpWOoQ8hNNcVQ@mail.gmail.com>
+In-Reply-To: <CAEf4BzbGjLQV0CsTwawiqHaGf4eObMQBJT-bpDpWOoQ8hNNcVQ@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 6 Nov 2023 17:29:40 -0500
-Message-ID: <CAHC9VhRk8NHx2Sj222KdoyT-+mKyOHzCTOaPK0z-u=w8rFWDyw@mail.gmail.com>
-Subject: Re: [PATCH v9 9/17] bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free
- LSM hooks
+Date:   Mon, 6 Nov 2023 17:46:45 -0500
+Message-ID: <CAHC9VhSkt8SgmJuBzd7cRf-MpZT2rwkp2ndPukCmYftNb62zmg@mail.gmail.com>
+Subject: Re: [PATCH v9 11/17] bpf,lsm: add BPF token LSM hooks
 To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
 Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
         netdev@vger.kernel.org, brauner@kernel.org,
@@ -68,161 +67,200 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 6, 2023 at 2:03=E2=80=AFPM Andrii Nakryiko
+On Mon, Nov 6, 2023 at 2:17=E2=80=AFPM Andrii Nakryiko
 <andrii.nakryiko@gmail.com> wrote:
 > On Sun, Nov 5, 2023 at 9:01=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
 rote:
 > > On Nov  3, 2023 Andrii Nakryiko <andrii@kernel.org> wrote:
 > > >
-> > > Based on upstream discussion ([0]), rework existing
-> > > bpf_prog_alloc_security LSM hook. Rename it to bpf_prog_load and inst=
-ead
-> > > of passing bpf_prog_aux, pass proper bpf_prog pointer for a full BPF
-> > > program struct. Also, we pass bpf_attr union with all the user-provid=
-ed
-> > > arguments for BPF_PROG_LOAD command.  This will give LSMs as much
-> > > information as we can basically provide.
+> > > Wire up bpf_token_create and bpf_token_free LSM hooks, which allow to
+> > > allocate LSM security blob (we add `void *security` field to struct
+> > > bpf_token for that), but also control who can instantiate BPF token.
+> > > This follows existing pattern for BPF map and BPF prog.
 > > >
-> > > The hook is also BPF token-aware now, and optional bpf_token struct i=
-s
-> > > passed as a third argument. bpf_prog_load LSM hook is called after
-> > > a bunch of sanity checks were performed, bpf_prog and bpf_prog_aux we=
-re
-> > > allocated and filled out, but right before performing full-fledged BP=
-F
-> > > verification step.
-> > >
-> > > bpf_prog_free LSM hook is now accepting struct bpf_prog argument, for
-> > > consistency. SELinux code is adjusted to all new names, types, and
-> > > signatures.
-> > >
-> > > Note, given that bpf_prog_load (previously bpf_prog_alloc) hook can b=
-e
-> > > used by some LSMs to allocate extra security blob, but also by other
-> > > LSMs to reject BPF program loading, we need to make sure that
-> > > bpf_prog_free LSM hook is called after bpf_prog_load/bpf_prog_alloc o=
-ne
-> > > *even* if the hook itself returned error. If we don't do that, we run
-> > > the risk of leaking memory. This seems to be possible today when
-> > > combining SELinux and BPF LSM, as one example, depending on their
-> > > relative ordering.
-> > >
-> > > Also, for BPF LSM setup, add bpf_prog_load and bpf_prog_free to
-> > > sleepable LSM hooks list, as they are both executed in sleepable
-> > > context. Also drop bpf_prog_load hook from untrusted, as there is no
-> > > issue with refcount or anything else anymore, that originally forced =
-us
-> > > to add it to untrusted list in c0c852dd1876 ("bpf: Do not mark certai=
-n LSM
-> > > hook arguments as trusted"). We now trigger this hook much later and =
-it
-> > > should not be an issue anymore.
-> >
-> > See my comment below, but it isn't clear to me if this means it is okay
-> > to have `BTF_ID(func, bpf_lsm_bpf_prog_free)` called twice.  It probabl=
-y
-> > would be a good idea to get KP, BPF LSM maintainer, to review this chan=
-ge
-> > as well to make sure this looks good to him.
-> >
-> > >   [0] https://lore.kernel.org/bpf/9fe88aef7deabbe87d3fc38c4aea3c69.pa=
-ul@paul-moore.com/
+> > > Also add security_bpf_token_allow_cmd() and security_bpf_token_capabl=
+e()
+> > > LSM hooks that allow LSM implementation to control and negate (if
+> > > necessary) BPF token's delegation of a specific bpf_cmd and capabilit=
+y,
+> > > respectively.
 > > >
 > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 > > > ---
-> > >  include/linux/lsm_hook_defs.h |  5 +++--
-> > >  include/linux/security.h      | 12 +++++++-----
-> > >  kernel/bpf/bpf_lsm.c          |  5 +++--
-> > >  kernel/bpf/syscall.c          | 25 +++++++++++++------------
-> > >  security/security.c           | 25 +++++++++++++++----------
-> > >  security/selinux/hooks.c      | 15 ++++++++-------
-> > >  6 files changed, 49 insertions(+), 38 deletions(-)
+> > >  include/linux/bpf.h           |  3 ++
+> > >  include/linux/lsm_hook_defs.h |  5 +++
+> > >  include/linux/security.h      | 25 +++++++++++++++
+> > >  kernel/bpf/bpf_lsm.c          |  4 +++
+> > >  kernel/bpf/token.c            | 13 ++++++--
+> > >  security/security.c           | 60 +++++++++++++++++++++++++++++++++=
+++
+> > >  6 files changed, 107 insertions(+), 3 deletions(-)
 > >
 > > ...
 > >
-> > > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-> > > index e14c822f8911..3e956f6302f3 100644
-> > > --- a/kernel/bpf/bpf_lsm.c
-> > > +++ b/kernel/bpf/bpf_lsm.c
-> > > @@ -263,6 +263,8 @@ BTF_ID(func, bpf_lsm_bpf_map)
-> > >  BTF_ID(func, bpf_lsm_bpf_map_alloc_security)
-> > >  BTF_ID(func, bpf_lsm_bpf_map_free_security)
-> > >  BTF_ID(func, bpf_lsm_bpf_prog)
-> > > +BTF_ID(func, bpf_lsm_bpf_prog_load)
-> > > +BTF_ID(func, bpf_lsm_bpf_prog_free)
-> > >  BTF_ID(func, bpf_lsm_bprm_check_security)
-> > >  BTF_ID(func, bpf_lsm_bprm_committed_creds)
-> > >  BTF_ID(func, bpf_lsm_bprm_committing_creds)
-> > > @@ -346,8 +348,7 @@ BTF_SET_END(sleepable_lsm_hooks)
+> > > diff --git a/include/linux/security.h b/include/linux/security.h
+> > > index 08fd777cbe94..1d6edbf45d1c 100644
+> > > --- a/include/linux/security.h
+> > > +++ b/include/linux/security.h
+> > > @@ -60,6 +60,7 @@ struct fs_parameter;
+> > >  enum fs_value_type;
+> > >  struct watch;
+> > >  struct watch_notification;
+> > > +enum bpf_cmd;
+> >
+> > Yes, I think it's fine to include bpf.h in security.h instead of the
+> > forward declaration.
+> >
+> > >  /* Default (no) options for the capable function */
+> > >  #define CAP_OPT_NONE 0x0
+> > > @@ -2031,6 +2032,11 @@ extern void security_bpf_map_free(struct bpf_m=
+ap *map);
+> > >  extern int security_bpf_prog_load(struct bpf_prog *prog, union bpf_a=
+ttr *attr,
+> > >                                 struct bpf_token *token);
+> > >  extern void security_bpf_prog_free(struct bpf_prog *prog);
+> > > +extern int security_bpf_token_create(struct bpf_token *token, union =
+bpf_attr *attr,
+> > > +                                  struct path *path);
+> > > +extern void security_bpf_token_free(struct bpf_token *token);
+> > > +extern int security_bpf_token_allow_cmd(const struct bpf_token *toke=
+n, enum bpf_cmd cmd);
+> > > +extern int security_bpf_token_capable(const struct bpf_token *token,=
+ int cap);
+> > >  #else
+> > >  static inline int security_bpf(int cmd, union bpf_attr *attr,
+> > >                                            unsigned int size)
+> > > @@ -2065,6 +2071,25 @@ static inline int security_bpf_prog_load(struc=
+t bpf_prog *prog, union bpf_attr *
 > > >
-> > >  BTF_SET_START(untrusted_lsm_hooks)
-> > >  BTF_ID(func, bpf_lsm_bpf_map_free_security)
-> > > -BTF_ID(func, bpf_lsm_bpf_prog_alloc_security)
-> > > -BTF_ID(func, bpf_lsm_bpf_prog_free_security)
-> > > +BTF_ID(func, bpf_lsm_bpf_prog_free)
-> > >  BTF_ID(func, bpf_lsm_file_alloc_security)
-> > >  BTF_ID(func, bpf_lsm_file_free_security)
-> > >  #ifdef CONFIG_SECURITY_NETWORK
+> > >  static inline void security_bpf_prog_free(struct bpf_prog *prog)
+> > >  { }
+> > > +
+> > > +static inline int security_bpf_token_create(struct bpf_token *token,=
+ union bpf_attr *attr,
+> > > +                                  struct path *path)
+> > > +{
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static inline void security_bpf_token_free(struct bpf_token *token)
+> > > +{ }
+> > > +
+> > > +static inline int security_bpf_token_allow_cmd(const struct bpf_toke=
+n *token, enum bpf_cmd cmd)
+> > > +{
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static inline int security_bpf_token_capable(const struct bpf_token =
+*token, int cap)
+> > > +{
+> > > +     return 0;
+> > > +}
 > >
-> > It looks like you're calling the BTF_ID() macro on bpf_lsm_bpf_prog_fre=
-e
-> > twice?  I would have expected a only one macro call for each bpf_prog_l=
-oad
-> > and bpf_prog_free, is that a bad assuption?
+> > Another nitpick, but I would prefer to shorten
+> > security_bpf_token_allow_cmd() renamed to security_bpf_token_cmd() both
+> > to shorten the name and to better fit convention.  I realize the caller
+> > is named bpf_token_allow_cmd() but I'd still rather see the LSM hook
+> > with the shorter name.
+>
+> Makes sense, renamed to security_bpf_token_cmd() and updated hook name as=
+ well
+
+Thanks.
+
+> > > diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
+> > > index 35e6f55c2a41..5d04da54faea 100644
+> > > --- a/kernel/bpf/token.c
+> > > +++ b/kernel/bpf/token.c
+> > > @@ -7,11 +7,12 @@
+> > >  #include <linux/idr.h>
+> > >  #include <linux/namei.h>
+> > >  #include <linux/user_namespace.h>
+> > > +#include <linux/security.h>
+> > >
+> > >  bool bpf_token_capable(const struct bpf_token *token, int cap)
+> > >  {
+> > >       /* BPF token allows ns_capable() level of capabilities */
+> > > -     if (token) {
+> > > +     if (token && security_bpf_token_capable(token, cap) =3D=3D 0) {
+> > >               if (ns_capable(token->userns, cap))
+> > >                       return true;
+> > >               if (cap !=3D CAP_SYS_ADMIN && ns_capable(token->userns,=
+ CAP_SYS_ADMIN))
 > >
+> > We typically perform the capability based access controls prior to the
+> > LSM controls, meaning if we want to the token controls to work in a
+> > similar way we should do something like this:
+> >
+> >   bool bpf_token_capable(...)
+> >   {
+> >     if (token) {
+> >       if (ns_capable(token, cap) ||
+> >           (cap !=3D ADMIN && ns_capable(token, ADMIN)))
+> >         return security_bpf_token_capable(token, cap);
+> >     }
+> >     return capable(cap) || (cap !=3D ADMIN && capable(...))
+> >   }
 >
-> Yeah, there is no problem having multiple BTF_ID() invocations for the
-> same function. BTF_ID() macro (conceptually) emits a relocation that
-> will instruct resolve_btfids tool to put an actual BTF ID for the
-> specified function in a designated 4-byte slot.
->
-> In this case, we have two separate lists: sleepable_lsm_hooks and
-> untrusted_lsm_hooks, so we need two separate BTF_ID() entries for the
-> same function. It's expected to be duplicated.
+> yep, makes sense, I changed it as you suggested above
 
-Okay, thanks for the explanation.  It jumped out as a deviation from
-the current code when I was looking at the changes and I was worried
-that it was a typo, but it sounds like it's expected and the proper
-thing to do.
+Thanks again.
 
-> > > diff --git a/security/security.c b/security/security.c
-> > > index dcb3e7014f9b..5773d446210e 100644
-> > > --- a/security/security.c
-> > > +++ b/security/security.c
-> > > @@ -5180,16 +5180,21 @@ int security_bpf_map_alloc(struct bpf_map *ma=
-p)
+> > > @@ -28,6 +29,7 @@ void bpf_token_inc(struct bpf_token *token)
+> > >
+> > >  static void bpf_token_free(struct bpf_token *token)
+> > >  {
+> > > +     security_bpf_token_free(token);
+> > >       put_user_ns(token->userns);
+> > >       kvfree(token);
 > > >  }
+> > > @@ -172,6 +174,10 @@ int bpf_token_create(union bpf_attr *attr)
+> > >       token->allowed_progs =3D mnt_opts->delegate_progs;
+> > >       token->allowed_attachs =3D mnt_opts->delegate_attachs;
 > > >
-> > >  /**
-> > > - * security_bpf_prog_alloc() - Allocate a bpf program LSM blob
-> > > - * @aux: bpf program aux info struct
-> > > + * security_bpf_prog_load() - Check if loading of BPF program is all=
-owed
-> > > + * @prog: BPF program object
-> > > + * @attr: BPF syscall attributes used to create BPF program
-> > > + * @token: BPF token used to grant user access to BPF subsystem
-> > >   *
-> > > - * Initialize the security field inside bpf program.
-> > > + * Do a check when the kernel allocates BPF program object and is ab=
-out to
-> > > + * pass it to BPF verifier for additional correctness checks. This i=
-s also the
-> > > + * point where LSM blob is allocated for LSMs that need them.
+> > > +     err =3D security_bpf_token_create(token, attr, &path);
+> > > +     if (err)
+> > > +             goto out_token;
+> > > +
+> > >       fd =3D get_unused_fd_flags(O_CLOEXEC);
+> > >       if (fd < 0) {
+> > >               err =3D fd;
+> > > @@ -216,8 +222,9 @@ bool bpf_token_allow_cmd(const struct bpf_token *=
+token, enum bpf_cmd cmd)
+> > >  {
+> > >       if (!token)
+> > >               return false;
+> > > -
+> > > -     return token->allowed_cmds & (1ULL << cmd);
+> > > +     if (!(token->allowed_cmds & (1ULL << cmd)))
+> > > +             return false;
+> > > +     return security_bpf_token_allow_cmd(token, cmd) =3D=3D 0;
 > >
-> > This is pretty nitpicky, but I'm guessing you may need to make another
-> > revision to this patchset, if you do please drop the BPF verifier remar=
-k
-> > from the comment above.
-> >
-> > Example: "Perform an access control check when the kernel loads a BPF
-> > program and allocates the associated BPF program object.  This hook is
-> > also responsibile for allocating any required LSM state for the BPF
-> > program."
+> > I'm not sure how much it really matters, but someone might prefer
+> > the '!!' approach/style over '=3D=3D 0'.
 >
-> Done, no problem.
+> it would have to be !security_bpf_token_cmd(), right?
 
-With the comment change above, and the clarification of the BTF_ID()
-calls, feel free to add my ACK.
+Yeah :P
+
+In most, although definitely not all, kernel functions when something
+returns 0 we consider that the positive/success case, with non-zero
+values being some sort of failure.  I must have defaulted to that
+logic here, but you are correct that just a single negation would be
+needed here.
+
+> And that single
+> negation is just very confusing when dealing with int-returning
+> function. I find it much easier to make sure the logic is correct when
+> we have explicit `=3D=3D 0`.
+
+That's fine, it's something I've seen mentioned over the years and
+thought I might offer it as a comment.  I can read either approach
+just fine :)
+
+Anyway, with the other changes mentioned above, e.g. naming and
+permission ordering, feel free to add my ACK.
 
 Acked-by: Paul Moore <paul@paul-moore.com>
 
