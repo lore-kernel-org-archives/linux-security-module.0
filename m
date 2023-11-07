@@ -2,206 +2,121 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8908C4167D
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Nov 2023 00:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78795C4167D
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Nov 2023 11:04:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229646AbjKGArm (ORCPT
+        id S234218AbjKGLEK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Nov 2023 19:47:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36822 "EHLO
+        Tue, 7 Nov 2023 06:04:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232821AbjKGArl (ORCPT
+        with ESMTP id S233987AbjKGLEJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Nov 2023 19:47:41 -0500
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E533AD73;
-        Mon,  6 Nov 2023 16:47:38 -0800 (PST)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 5A7395C01D7;
-        Mon,  6 Nov 2023 19:47:38 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 06 Nov 2023 19:47:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1699318058; x=1699404458; bh=Gw31p/x43vdxiXCzPMnjFbRQKL2XYHOsIr+
-        oWsxF2fE=; b=v9rKkBwnmH7u2D6mnOMCHaBPLBJuhu9S05QWFAghJ//bAemz5mX
-        u+Sgb0+89MKBk88i1MvG6ljOtiSO9x1laCK255CqLbTulXp5XZ6FRjjYqxItQO1d
-        5XwS5X/PUpqavceoga483BlhWEYYjpT82LS1DgErRTDP7OiCewsbhlFzE1hGZJ1+
-        bzGqHwMIJtYudPo3ZKCW0nWPKbwgIAsKdXArlTNKISMJHxMFFmzus1BvagsW9e/8
-        VBTvYXAyPeDCBEQd+2tasxzFcKENGcTgsrjOy4x2F0ONprB6UcZiQ0JWS08jgkoO
-        xIY1VeGPD8ROAfWOZYNIMiVYjnGhyZuba7g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1699318058; x=1699404458; bh=Gw31p/x43vdxiXCzPMnjFbRQKL2XYHOsIr+
-        oWsxF2fE=; b=jmup3Y5HBcICiD1KQbIbvzVxrdjy9eaXo+HcZ84ibyxib+YguY7
-        ULBSRIKZW6U7/Gv8FUFkNllD56PosjlJtlmGFzVmn0d7y9FXAgomrdhW4RJHy/+o
-        8USkFc6msw5HHv98/GEwTZXdjGFibLV1eYar0eQo3jpZ9+rVnDyBvBh0iGRYMW1n
-        1Gi22//9pVSh5XIOFcGYKjH+Zr7xaDtmDuANVp4Cxif0dKllzUpu7TeEPuqDngFO
-        3y/DSNOVYswZey1uzVsBRIXlZpPWeJLa3NFrYnT+9NEpVROD5Pf+sBMQhczGyvxu
-        iNtF2+6iejteUkdCAzRVXLcNb5TBHxe9DsA==
-X-ME-Sender: <xms:KYlJZSn2GMl7lZoOytKsohSBpZd4CoU_j7Kiij0BrS9fvMwADn7FpA>
-    <xme:KYlJZZ3Bi9BBC8BMQG9xsK6DO0M6a-GUv58JRVqXAPqNggfW0sPUNa3GEb0hwlFHP
-    ZAV0JIj1m7N>
-X-ME-Received: <xmr:KYlJZQrWkPVg9-zRZh4JD1CMQjof8rM54mLpdo_Cu83ts6h0plR0e4H5kxxeakytFC6EPhAqEEXCtG4DbKmlhxQ77AxamF1XcuZVNLWVkI4vKVoNbn_aUU-a>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudduhedgvdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfvfevfhfhufgjtgfgsehtkeertddtfeejnecuhfhrohhmpefkrghn
-    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
-    epteeghedvkeejveejuedvtdekuedtueehtdegjeeugefhleetjeevkedutdeifeefnecu
-    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:KYlJZWmKE_EgFpNkaecPme3J6_woVt_PJFByzbx7sXNvNbp9CV0IPA>
-    <xmx:KYlJZQ0JvBbpYyNyqIbkeP3KL7uZTglrrYglujg2brgeocWoziNIZA>
-    <xmx:KYlJZdskFL3TGnhj3uPwOOHB2b0kMfKCb4g68ft9_eN12wzP0662BQ>
-    <xmx:KolJZWPArFE97B2nyzH5ql1dCANx0HEKVzghE75YW9--K5O8wUX_qg>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 6 Nov 2023 19:47:32 -0500 (EST)
-Message-ID: <8f14da98-f2f5-b9ba-8d24-1b22eaa3c0d6@themaw.net>
-Date:   Tue, 7 Nov 2023 08:47:29 +0800
+        Tue, 7 Nov 2023 06:04:09 -0500
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E899FB6;
+        Tue,  7 Nov 2023 03:04:05 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SPlKv09kyz9xsNG;
+        Tue,  7 Nov 2023 18:47:47 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwBHhHSHGUpl1aU1AA--.40870S2;
+        Tue, 07 Nov 2023 12:03:46 +0100 (CET)
+Message-ID: <b560ed9477d9d03f0bf13af2ffddfeebbbf7712b.camel@huaweicloud.com>
+Subject: Re: [syzbot] [reiserfs?] possible deadlock in reiserfs_dirty_inode
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Paul Moore <paul@paul-moore.com>,
+        syzbot <syzbot+c319bb5b1014113a92cf@syzkaller.appspotmail.com>,
+        jack@suse.cz, jeffm@suse.com
+Cc:     hdanton@sina.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org,
+        roberto.sassu@huawei.com, syzkaller-bugs@googlegroups.com,
+        syzkaller@googlegroups.com, linux-security-module@vger.kernel.org
+Date:   Tue, 07 Nov 2023 12:03:32 +0100
+In-Reply-To: <CAHC9VhTFs=AHtsdzas-XXq2-Ub4V9Tbkcp4_HBspmGaARzWanw@mail.gmail.com>
+References: <000000000000cfe6f305ee84ff1f@google.com>
+         <000000000000a8d8e7060977b741@google.com>
+         <CAHC9VhTFs=AHtsdzas-XXq2-Ub4V9Tbkcp4_HBspmGaARzWanw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.4-0ubuntu2 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Content-Language: en-US
-To:     Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Matthew House <mattlloydhouse@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <20231025140205.3586473-1-mszeredi@redhat.com>
- <374433e3-ab72-64a3-0fa0-ab455268e5e0@themaw.net>
- <20231106121053.egamth3hr7zcfzji@ws.net.home>
- <CAOQ4uxgn--PshKxMDmM4YoDQ8x3+a0NwCv+Bppjq-3w9V+Sxpg@mail.gmail.com>
-From:   Ian Kent <raven@themaw.net>
-Subject: Re: [PATCH v4 0/6] querying mount attributes
-In-Reply-To: <CAOQ4uxgn--PshKxMDmM4YoDQ8x3+a0NwCv+Bppjq-3w9V+Sxpg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: LxC2BwBHhHSHGUpl1aU1AA--.40870S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZw13JF18Aw1fKr1fGr1ftFb_yoW5Xr1UpF
+        WrCrW3KwnYyr4UJr4vgF17G3W0grZ3CFy7W393trykuan2vFn7Jrs29r4xuFWFkr4DCr90
+        y3W3uwn8K34S937anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAOBF1jj5YY9AACsC
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/11/23 21:33, Amir Goldstein wrote:
-> On Mon, Nov 6, 2023 at 2:11 PM Karel Zak <kzak@redhat.com> wrote:
->> On Wed, Nov 01, 2023 at 07:52:45PM +0800, Ian Kent wrote:
->>> On 25/10/23 22:01, Miklos Szeredi wrote:
->>> Looks ok to me,covers the primary cases I needed when I worked
->>> on using fsinfo() in systemd.
->> Our work on systemd was about two areas: get mount info (stat/listmount()
->> now) from the kernel, and get the mount ID from notification.
->>
->> There was watch_queue.h with WATCH_TYPE_MOUNT_NOTIFY and struct
->> mount_notification->auxiliary_mount (aka mount ID) and event subtype
->> to get the change status (new mount, umount, etc.)
->>
->> For example David's:
->>   https://patchwork.kernel.org/project/linux-security-module/patch/155991711016.15579.4449417925184028666.stgit@warthog.procyon.org.uk/
->>
->> Do we have any replacement for this?
->>
-> The plan is to extend fanotify for mount namespace change notifications.
->
-> Here is a simple POC for FAN_UNMOUNT notification:
->
-> https://lore.kernel.org/linux-fsdevel/20230414182903.1852019-1-amir73il@gmail.com/
->
-> I was waiting for Miklos' patches to land, so that we can report
-> mnt_id_unique (of mount and its parent mount) in the events.
->
-> The plan is to start with setting a mark on a vfsmount to get
-> FAN_MOUNT/FAN_UNMOUNT notifications for changes to direct
-> children of that mount.
+On Mon, 2023-11-06 at 17:53 -0500, Paul Moore wrote:
+> On Mon, Nov 6, 2023 at 3:34 AM syzbot
+> <syzbot+c319bb5b1014113a92cf@syzkaller.appspotmail.com> wrote:
+> > 
+> > syzbot has bisected this issue to:
+> > 
+> > commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
+> > Author: Roberto Sassu <roberto.sassu@huawei.com>
+> > Date:   Fri Mar 31 12:32:18 2023 +0000
+> > 
+> >     reiserfs: Add security prefix to xattr name in reiserfs_security_write()
+> > 
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14d0b787680000
+> > start commit:   90b0c2b2edd1 Merge tag 'pinctrl-v6.7-1' of git://git.kerne..
+> > git tree:       upstream
+> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=16d0b787680000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=12d0b787680000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=93ac5233c138249e
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=c319bb5b1014113a92cf
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=113f3717680000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=154985ef680000
+> > 
+> > Reported-by: syzbot+c319bb5b1014113a92cf@syzkaller.appspotmail.com
+> > Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in reiserfs_security_write()")
+> > 
+> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+> Hi Roberto,
+> 
+> I know you were looking at this over the summer[1], did you ever find
+> a resolution to this?  If not, what do you think of just dropping
+> security xattr support on reiserfs?  Normally that wouldn't be
+> something we could consider, but given the likelihood that this hadn't
+> been working in *years* (if ever), and reiserfs is deprecated, I think
+> this is a viable option if there isn't an obvious fix.
+> 
+> [1] https://lore.kernel.org/linux-security-module/CAHC9VhTM0a7jnhxpCyonepcfWbnG-OJbbLpjQi68gL2GVnKSRg@mail.gmail.com/
 
-I'll have a look at what I needed when I was working to implement
+Hi Paul
 
-this in systemd. Without looking at the code I can say I was
+at the time, I did some investigation and came with a patch that
+(likely) solves some of the problems:
 
-handling mount, umount and I think remount events so that's probably
+https://lore.kernel.org/linux-fsdevel/4aa799a0b87d4e2ecf3fa74079402074dc42b3c5.camel@huaweicloud.com/#t
 
-a minimum.
+I did a more advanced patch (to be validated), trying to fix the root
+cause:
 
+https://lore.kernel.org/linux-fsdevel/ffde7908-be73-cc56-2646-72f4f94cb51b@huaweicloud.com/
 
-As I mentioned earlier I found I also need event rate management
+However, Jeff Mahoney (that did a lot of work in this area) suggested
+that maybe we should not try invasive changes, as anyway reiserfs will
+be removed from the kernel in 2025.
 
-which was a new requirement at the time.
+It wouldn't be a problem to move the first patch forward.
 
-
->
-> This part, I was planning to do myself. I cannot say for sure when
-> I will be able to get to it, but it should be a rather simple patch.
->
-> If anybody else would like to volunteer for the task, I will be
-> happy to assist.
-
-I would like to help with this but I'm not familiar with fanotify
-
-so I'll need to spend a bit of time on that. I am just about in
-
-a position to do that now.
-
-
-I'll also be looking at the watch queue framework that did get merged
-
-back then, I'm not sure how that will turn out.
-
-
->
-> Not sure if we are going to need special notifications for mount
-> move and mount beneath?
-
-Yes that will be an interesting question, I have noticed Christians'
-
-work on mount beneath.
-
-
-We need to provide the ability to monitor mount tables as is done by
-
-using the proc mount lists to start with and I'm pretty sure that
-
-includes at least mount, umount and moves perhaps more but I'll check
-
-what I was using.
-
-
->
-> Not sure if we are going to need notifications on mount attribute
-> changes?
-
-Also an interesting question, we will see in time I guess.
-
-
-You would think that the mount/umount/move events would get what's
-
-needed because (assuming mount move maps to remount) mount, umount
-
-and remount should cover cases were mounted mount attributes change.
-
-
->
-> We may later also implement a mark on a mount namespace
-> to get events on all mount namespace changes.
-
-Monitoring the proc mount tables essentially provides lists of mounts
-
-that are present in a mount namespace (as seen by the given process)
-
-so this is going to be needed sooner rather than later if we hope to
-
-realize improvements from our new system calls.
-
-
-Ian
+Roberto
 
