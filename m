@@ -2,105 +2,94 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B12C4332F
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Nov 2023 20:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8ABC4332F
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Nov 2023 21:00:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229880AbjKHULG (ORCPT
+        id S229506AbjKHVA7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Nov 2023 15:11:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39998 "EHLO
+        Wed, 8 Nov 2023 16:00:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229722AbjKHULF (ORCPT
+        with ESMTP id S230223AbjKHVA6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Nov 2023 15:11:05 -0500
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9CD91BD5
-        for <linux-security-module@vger.kernel.org>; Wed,  8 Nov 2023 12:11:02 -0800 (PST)
-Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-da0344eb3fdso103126276.3
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Nov 2023 12:11:02 -0800 (PST)
+        Wed, 8 Nov 2023 16:00:58 -0500
+Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9033125
+        for <linux-security-module@vger.kernel.org>; Wed,  8 Nov 2023 13:00:56 -0800 (PST)
+Received: by mail-ot1-x32c.google.com with SMTP id 46e09a7af769-6d2fedd836fso53527a34.1
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Nov 2023 13:00:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1699474262; x=1700079062; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1699477256; x=1700082056; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WdQXlJuW20JcGlaQadU7ZgL5w1/h84E2psVd7Y2aHT4=;
-        b=MZfSCdNv2PsxTeE75RiHAs/7KpUpwUrLsoi1dFjiDdIrDZhH70j9DCrJDUPEBr9IhX
-         k7gZMoJE1XPHOhvol4wxo7YxFnOFUVUxI7qgdvUuovss16SEqcZsK0viE5E7insB/olb
-         w2Ub/lJ8oeIEY8g2whWPsIFTchDQ2wo4Jx5VTOcRvECQdoHjLBNq2i/UrNUdBt/tLuvi
-         ncdkEFM88s27g6Bhd6EfrJ3NhwxK9AfPzT0C1NE8B9ITcgSEup4zX1OHLwsJ6r6fWWDp
-         VaLgVrHdENifBIUAvZtoUKQQYsi/x5aYeJhCWMpHuqbNiRms6pcmmrq5kaKKWigrfSRD
-         e7zQ==
+        bh=h7liRufg49/RU3WhlB+//eXGJe7JD0FPNb3R1JhYvKc=;
+        b=a2iNtPfVtnq8V8pyeUR0Ws20fuOBnneSVB5f62PcOknnhWShE5E8s3HDtLp5eD3eXc
+         +dSca1TMlnDZVX0tE6TewIf6iugtXHSzIMXsa3CqqCf4j/LaRHYoHQW8FuPyz554Qmfx
+         UiYDFSInrksEVPPgpIJHWvwwtbP+42UqT190G6a+ArIAsIBmDl2/4i7Tz7IyVbp2JvN4
+         1O8/p0fK45bJn5Olh9SxoiFfqr7HbQm6KwRq0W6G9QD2u0S876Au2Sz/GLDPDX1rfAIt
+         sbg4XI/6TxhoRo2McdJ4ktehUfpYug1DPl2PxPV76DkN1xLKe/g22C7Eck3vuId+DgM6
+         +wyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699474262; x=1700079062;
+        d=1e100.net; s=20230601; t=1699477256; x=1700082056;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WdQXlJuW20JcGlaQadU7ZgL5w1/h84E2psVd7Y2aHT4=;
-        b=X02siuVGMFDd9wCRFWzd+p2qOFp3Usr2W85zOhI6mogJfYj2+trEo19Hg88tRoIGlP
-         9QY6FAO+/3d3y+ENbO39C0Ds4iSYdv8dIIA1OLvMT+G2il29tRJvnl3XKJzZi2U95M16
-         01y63KFEijUgDF2EszDW+tOZP9fNJnKSFsn+ijbAaWWwDWzZluOni1mPbDVZ71pq4jPF
-         jzC16iC4eKsI0b1SR2vpqL9iwx9FLXZp194SeAz/kTNpw0wXayngZpwAdUmljn8ka62w
-         kfiswyq9ixA0M5Sthc62toW6u1eQn9uf4+8dsq0gmWltjqIZdiIZ2EHKZxmwugpl48lO
-         Fdkg==
-X-Gm-Message-State: AOJu0YzrYbG4i+J43IA1aj9BV6Nmq79+bHzenOGEzEyKKVkMn5VE1FVx
-        8oyTjt4I844OjUlfnc7obFVGvoyofh33Iuqf79hk
-X-Google-Smtp-Source: AGHT+IGx24XRQweoz1EaCe+kSiqvIrqmyKZE1dlffO9Wgq6HodmUotEUsJYVWiUyZ7p7+YFh1nttrYhrBU0rClZtQF0=
-X-Received: by 2002:a25:680c:0:b0:d9c:aa29:6180 with SMTP id
- d12-20020a25680c000000b00d9caa296180mr2811921ybc.46.1699474262093; Wed, 08
- Nov 2023 12:11:02 -0800 (PST)
+        bh=h7liRufg49/RU3WhlB+//eXGJe7JD0FPNb3R1JhYvKc=;
+        b=i1FziwFdxL8v/AlkJUwLHejqqkX5mIUzSIs05RfOeA87MFcFSAifonfRF3Qiv5/y2k
+         nhkXVh9srHLE7EhlsWFZ5ZtxIigmPhmBatnAHWQrPi7y43CJgHNieww9FxkqL2+cYMsk
+         5UMeR5yl4/ewbvBsZrWG9nqIEY/JOK2SU9ddQnhsQJj6CzknQ7we1Ag5DGFnekXp8cgF
+         VysKvxYjzLCtvQqaHo9KD3ldGM8lgkqjM51epNnc+YZtLQSPSQQhPvyqfcgPXS7rj1BG
+         i3yFdsaNUmVrfNcNQ5lTiTkW11g4IR3SAJi22lRGxFGqu5LZPxPJT2vFfKUTXYb3NTLK
+         m4Ow==
+X-Gm-Message-State: AOJu0YyVVrbR4K3zKpx1z8CG/Uzsr4CiRRj6WP31VehJ2ECkK2CPbczS
+        71RDqUCn/lkCDV2lO2HJ0dqeajixSukcf4ywBFan
+X-Google-Smtp-Source: AGHT+IEd0ZpMRgMDPqDg2Wh7KFXuaegxDDPWKJU3cYRlMeKgIo3eiH2A2tq9nK03p6GlcKcB7RZEC20oMr/OtISugh0=
+X-Received: by 2002:a05:6870:20a:b0:1f0:630c:a589 with SMTP id
+ j10-20020a056870020a00b001f0630ca589mr3530034oad.46.1699477256059; Wed, 08
+ Nov 2023 13:00:56 -0800 (PST)
 MIME-Version: 1.0
-References: <20231025140205.3586473-5-mszeredi@redhat.com> <4ab327f80c4f98dffa5736a1acba3e0d.paul@paul-moore.com>
- <20231108-zwerge-unheil-b3f48a84038d@brauner>
-In-Reply-To: <20231108-zwerge-unheil-b3f48a84038d@brauner>
+References: <20231031123207.758655-1-omosnace@redhat.com> <CAHC9VhRo2GzW0jSqmm0Sv3z_-q9PTsvScV5oQwF5uNh+ZcWreA@mail.gmail.com>
+ <CAFqZXNtFfZ3FEoVAfM5r_a-mTqphz7qw=F3_Em87dRz6ca4EaQ@mail.gmail.com>
+In-Reply-To: <CAFqZXNtFfZ3FEoVAfM5r_a-mTqphz7qw=F3_Em87dRz6ca4EaQ@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 8 Nov 2023 15:10:50 -0500
-Message-ID: <CAHC9VhSLGyFRSbeZXE7z61Y2aDJi_1Dedjw0ioFOckRCs0CRaA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/6] add statmount(2) syscall
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Matthew House <mattlloydhouse@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 8 Nov 2023 16:00:45 -0500
+Message-ID: <CAHC9VhRO=s9yt+3xcDa1y7E4csz_7mOhuf51VFkMr+sN=Ez+Vg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] lsm: fix default return values for some hooks
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     linux-security-module@vger.kernel.org,
+        Benjamin Coddington <bcodding@redhat.com>,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 8, 2023 at 2:58=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
-> > > +static int do_statmount(struct stmt_state *s)
-> > > +{
-> > > +   struct statmnt *sm =3D &s->sm;
-> > > +   struct mount *m =3D real_mount(s->mnt);
-> > > +   size_t copysize =3D min_t(size_t, s->bufsize, sizeof(*sm));
-> > > +   int err;
-> > > +
-> > > +   err =3D security_sb_statfs(s->mnt->mnt_root);
-> > > +   if (err)
-> > > +           return err;
-> > > +
-> > > +   if (!capable(CAP_SYS_ADMIN) &&
-> > > +       !is_path_reachable(m, m->mnt.mnt_root, &s->root))
-> > > +           return -EPERM;
+On Wed, Nov 8, 2023 at 4:30=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.com=
+> wrote:
+> On Wed, Nov 8, 2023 at 4:12=E2=80=AFAM Paul Moore <paul@paul-moore.com> w=
+rote:
+> > On Tue, Oct 31, 2023 at 8:32=E2=80=AFAM Ondrej Mosnacek <omosnace@redha=
+t.com> wrote:
+> > >
+> > > Some of the default return values listed in <linux/lsm_hook_defs.h>
+> > > don't match the actual no-op value and can be trivially fixed.
+> > >
+> > > Ondrej Mosnacek (2):
+> > >   lsm: fix default return value for vm_enough_memory
+> > >   lsm: fix default return value for inode_getsecctx
+> > >
+> > >  include/linux/lsm_hook_defs.h | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
 > >
-> > In order to be consistent with our typical access control ordering,
-> > please move the security_sb_statfs() call down to here, after the
-> > capability checks.
+> > These both look like reasonable -stable candidates to me, what do you t=
+hink?
 >
-> I've moved the security_sb_statfs() calls accordingly.
+> Yes, that would be my assessment as well.
 
-Okay, good.  Did I miss a comment or a patch where that happened?  I
-looked over the patchset and comments yesterday and didn't recall
-seeing anything about shuffling the access control checks.
+Okay, good.  I've just gone ahead and merged these into lsm/stable-6.7
+and I'll plan to send them up to Linus on Thursday or Friday this
+week.  Thanks.
 
 --=20
 paul-moore.com
