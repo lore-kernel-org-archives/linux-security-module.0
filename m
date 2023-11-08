@@ -2,167 +2,83 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F35C0018C
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Nov 2023 02:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED9FC4332F
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Nov 2023 03:12:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231253AbjKHC62 (ORCPT
+        id S231858AbjKHDMi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Nov 2023 21:58:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42160 "EHLO
+        Tue, 7 Nov 2023 22:12:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234538AbjKHC61 (ORCPT
+        with ESMTP id S230028AbjKHDMi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Nov 2023 21:58:27 -0500
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B73410F8
-        for <linux-security-module@vger.kernel.org>; Tue,  7 Nov 2023 18:58:25 -0800 (PST)
-Received: by mail-qk1-x72c.google.com with SMTP id af79cd13be357-778999c5ecfso412226685a.2
-        for <linux-security-module@vger.kernel.org>; Tue, 07 Nov 2023 18:58:25 -0800 (PST)
+        Tue, 7 Nov 2023 22:12:38 -0500
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 480F110F6
+        for <linux-security-module@vger.kernel.org>; Tue,  7 Nov 2023 19:12:36 -0800 (PST)
+Received: by mail-yb1-xb36.google.com with SMTP id 3f1490d57ef6-da7238b3eb4so5490464276.1
+        for <linux-security-module@vger.kernel.org>; Tue, 07 Nov 2023 19:12:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1699412304; x=1700017104; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nzWNvEllLOWjoieBIl2eE6QMomxBf/8hz+/afBXKkOM=;
-        b=BkG4zlNOe3dcnPJl63CCIj8LfPp3BOObHbuKDqblU1ZkP8hUf0HZ1/MtZ7wz16iwD3
-         BQKZNtBj7B+tTyarMlj+XXP4gtx1vfya1ulFtbvbk7NfyJ4B+tncXfLj1lvaSgJRt+3P
-         tMpu9wMww9kzk9mBb1DKFqRuDWSpMdUbAAJry1k1i08FbuyvpsVw9PbXNex4qOfFMbuK
-         uNypEmpVrerySWiaqj1E2HssadRmlpcfZ2Z1M10gdxpZMQvinPckqW4UdVy0Kvbb9HTi
-         qvVsHTX0wQQj7iAkZNi5Do7gBd5uo1aNglnXokLS/jyHuKDpRTF720VIuE0Z+W0cdPJH
-         Iy5w==
+        d=paul-moore.com; s=google; t=1699413155; x=1700017955; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MGQAU/F2NWyIFo06SHSGqSkCqe/uLciFGr239gofGyM=;
+        b=dLiigb+G0iX3pOCOrfkkf28qO2Xs6Eu7wDRgDm1WJl2bXrIzwkiCNlpIL02VTFI5u8
+         diuB//DonNPLggaurRe/Q0AwGqZ6PHPRcMqLqO1bZxdQMyLR7VtyEeMHOxSjGPEOdfOP
+         3+DyscCMJ4fNuopDl6HVE5SRDKMZbIQV/aEdmYzxBw/8g89N+8bHwctpraAf1tdKH4Fp
+         RAMf8r3jD7UW5VuuDkFOdY7ZmB5o+8bHo8i1ejYAR9oE2exzgOYUWHMagFYIyi6w8kPP
+         X0hW7i9r5tIireUzY6COkOdRsCY/nCY6ZD8FblJiLXcvODnxLAzKeO6snj1I26VhIGwa
+         DGQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699412304; x=1700017104;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nzWNvEllLOWjoieBIl2eE6QMomxBf/8hz+/afBXKkOM=;
-        b=DhMYxtxTV1nDSwyxYJfzOBVN0iQIQc56BpG77g019UmP2zmjH0MuVdOP5yftE6RflO
-         06SpiKkpXfB7axUA5Zd8VcuIdZwIyG/7jlG5DvtZQxbvTWnKHKnuw3wWiJVhHaoSktR4
-         niJEZyY3QhVFtu93tMxq+KZpynLcSW8GVPj8b3v2WtE/rG/ZwYoFncxJdyvlpjin2Usr
-         qO4CzeaovNbMgJipCJfE8F90TbMBirNYtedhyujDy5TaAo/VwgU2KUUyqutsJTeP80sj
-         alOt4niGXfK35Qr/7WfWR5rbg+Qdrz/PfClRAFHvmAAFRgU6x+mMMkheTjlQwnxplOUV
-         q0YA==
-X-Gm-Message-State: AOJu0YxhIyywTLOKF0R/RF2m7WeVVsPJp8T6k0NNEbmyiEsLktZrOTXQ
-        2NBvUOEVOLEIUKcNgIm81ufJ
-X-Google-Smtp-Source: AGHT+IEKdmc2nsSq+Is+TUp8xhak7RVs7LNnJraNn4pxrM3/s0fMxmipRfQfJN5klC8msfrNiHUbNw==
-X-Received: by 2002:a05:620a:4591:b0:773:a9f7:eaf1 with SMTP id bp17-20020a05620a459100b00773a9f7eaf1mr528210qkb.21.1699412304264;
-        Tue, 07 Nov 2023 18:58:24 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id r12-20020a05620a298c00b0077407e3d68asm559832qkp.111.2023.11.07.18.58.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Nov 2023 18:58:23 -0800 (PST)
-Date:   Tue, 07 Nov 2023 21:58:23 -0500
-Message-ID: <b25f34cd259322582cd1b927a9e50235.paul@paul-moore.com>
+        d=1e100.net; s=20230601; t=1699413155; x=1700017955;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MGQAU/F2NWyIFo06SHSGqSkCqe/uLciFGr239gofGyM=;
+        b=j7ckjpwxqVMhwmUX/y7ChFR0RbZzc/F/MuI8RemVBIy/8O7VOTKzGavRs9PEujfRnN
+         OU2NNFKNCcUBDFVuNKiJM8RPb3fUP/oPE9Bg8jegpaiL86tBdThM1aF1QZLz2hLAIcJW
+         /YvjjO8GkKxUqk0kFToBLJPPtz4XK8DoNoDw6aohFNN+cWDGRfOEKhFBq/8U74JSczW0
+         NZ2ymdrN5xvfEW4zmB/oXsCgF8XGtuea9VTgLbE/gH1bC2FDFbVd5ohEJwWp7jPMVkff
+         gL4en/AFdRoHBToGxeFbxmtlmnmxd4ngGPppSFdsaK0aj28PvX7J2qIqqaIoZg6HOvzI
+         /8cA==
+X-Gm-Message-State: AOJu0YyLmshzLNEuQYT06oFyudP0eHceYVS9dWbilVDbvUc97F+rtHbE
+        mNiplZK1trs3kUeVlm0gJjEVa0c5L20f3O9cUuTC
+X-Google-Smtp-Source: AGHT+IG5JhNEPymnvflV2fXuHIa5f+WUp+AIrXmdrAFnAR99bef08BA8r16AQwGdqkypAMD9zwdRfg/gvm7OLwAU2K8=
+X-Received: by 2002:a25:c083:0:b0:d9a:c7af:bb4d with SMTP id
+ c125-20020a25c083000000b00d9ac7afbb4dmr597877ybf.37.1699413155449; Tue, 07
+ Nov 2023 19:12:35 -0800 (PST)
+MIME-Version: 1.0
+References: <20231031123207.758655-1-omosnace@redhat.com>
+In-Reply-To: <20231031123207.758655-1-omosnace@redhat.com>
 From:   Paul Moore <paul@paul-moore.com>
-To:     Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Matthew House <mattlloydhouse@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 5/6] add listmount(2) syscall
-References: <20231025140205.3586473-6-mszeredi@redhat.com>
-In-Reply-To: <20231025140205.3586473-6-mszeredi@redhat.com>
+Date:   Tue, 7 Nov 2023 22:12:24 -0500
+Message-ID: <CAHC9VhRo2GzW0jSqmm0Sv3z_-q9PTsvScV5oQwF5uNh+ZcWreA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] lsm: fix default return values for some hooks
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     linux-security-module@vger.kernel.org,
+        Benjamin Coddington <bcodding@redhat.com>,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Oct 25, 2023 Miklos Szeredi <mszeredi@redhat.com> wrote:
-> 
-> Add way to query the children of a particular mount.  This is a more
-> flexible way to iterate the mount tree than having to parse the complete
-> /proc/self/mountinfo.
-> 
-> Allow listing either
-> 
->  - immediate child mounts only, or
-> 
->  - recursively all descendant mounts (depth first).
-> 
-> Lookup the mount by the new 64bit mount ID.  If a mount needs to be queried
-> based on path, then statx(2) can be used to first query the mount ID
-> belonging to the path.
-> 
-> Return an array of new (64bit) mount ID's.  Without privileges only mounts
-> are listed which are reachable from the task's root.
-> 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> Reviewed-by: Ian Kent <raven@themaw.net>
-> ---
->  fs/namespace.c             | 93 ++++++++++++++++++++++++++++++++++++++
->  include/linux/syscalls.h   |  3 ++
->  include/uapi/linux/mount.h |  9 ++++
->  3 files changed, 105 insertions(+)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index a980c250a3a6..0afe2344bba6 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -4958,6 +4958,99 @@ SYSCALL_DEFINE4(statmount, const struct __mount_arg __user *, req,
->  	return ret;
->  }
->  
-> +static struct mount *listmnt_first(struct mount *root)
-> +{
-> +	return list_first_entry_or_null(&root->mnt_mounts, struct mount, mnt_child);
-> +}
-> +
-> +static struct mount *listmnt_next(struct mount *curr, struct mount *root, bool recurse)
-> +{
-> +	if (recurse)
-> +		return next_mnt(curr, root);
-> +	if (!list_is_head(curr->mnt_child.next, &root->mnt_mounts))
-> +		return list_next_entry(curr, mnt_child);
-> +	return NULL;
-> +}
-> +
-> +static long do_listmount(struct vfsmount *mnt, u64 __user *buf, size_t bufsize,
-> +			 const struct path *root, unsigned int flags)
-> +{
-> +	struct mount *r, *m = real_mount(mnt);
-> +	struct path rootmnt = {
-> +		.mnt = root->mnt,
-> +		.dentry = root->mnt->mnt_root
-> +	};
-> +	long ctr = 0;
-> +	bool reachable_only = true;
-> +	bool recurse = flags & LISTMOUNT_RECURSIVE;
-> +	int err;
-> +
-> +	err = security_sb_statfs(mnt->mnt_root);
-> +	if (err)
-> +		return err;
-> +
-> +	if (flags & LISTMOUNT_UNREACHABLE) {
-> +		if (!capable(CAP_SYS_ADMIN))
-> +			return -EPERM;
-> +		reachable_only = false;
-> +	}
+On Tue, Oct 31, 2023 at 8:32=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.co=
+m> wrote:
+>
+> Some of the default return values listed in <linux/lsm_hook_defs.h>
+> don't match the actual no-op value and can be trivially fixed.
+>
+> Ondrej Mosnacek (2):
+>   lsm: fix default return value for vm_enough_memory
+>   lsm: fix default return value for inode_getsecctx
+>
+>  include/linux/lsm_hook_defs.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Similar to my comment in patch 4/6, please move the LSM call after the
-capability check.
+These both look like reasonable -stable candidates to me, what do you think=
+?
 
-> +	if (reachable_only && !is_path_reachable(m, mnt->mnt_root, &rootmnt))
-> +		return capable(CAP_SYS_ADMIN) ? 0 : -EPERM;
-> +
-> +	for (r = listmnt_first(m); r; r = listmnt_next(r, m, recurse)) {
-> +		if (reachable_only &&
-> +		    !is_path_reachable(r, r->mnt.mnt_root, root))
-> +			continue;
-> +
-> +		if (ctr >= bufsize)
-> +			return -EOVERFLOW;
-> +		if (put_user(r->mnt_id_unique, buf + ctr))
-> +			return -EFAULT;
-> +		ctr++;
-> +		if (ctr < 0)
-> +			return -ERANGE;
-> +	}
-> +	return ctr;
-> +}
-
---
+--=20
 paul-moore.com
