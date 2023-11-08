@@ -2,224 +2,149 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52517C4167B
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Nov 2023 02:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B50C4167D
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Nov 2023 02:58:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234493AbjKHCbb (ORCPT
+        id S234092AbjKHC60 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Nov 2023 21:31:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36992 "EHLO
+        Tue, 7 Nov 2023 21:58:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230389AbjKHCba (ORCPT
+        with ESMTP id S229503AbjKHC60 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Nov 2023 21:31:30 -0500
+        Tue, 7 Nov 2023 21:58:26 -0500
 Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20679184
-        for <linux-security-module@vger.kernel.org>; Tue,  7 Nov 2023 18:31:28 -0800 (PST)
-Received: by mail-qv1-xf2e.google.com with SMTP id 6a1803df08f44-66d0f945893so3266826d6.1
-        for <linux-security-module@vger.kernel.org>; Tue, 07 Nov 2023 18:31:28 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4220E12D
+        for <linux-security-module@vger.kernel.org>; Tue,  7 Nov 2023 18:58:24 -0800 (PST)
+Received: by mail-qv1-xf2e.google.com with SMTP id 6a1803df08f44-67572f4b17cso32075686d6.2
+        for <linux-security-module@vger.kernel.org>; Tue, 07 Nov 2023 18:58:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1699410687; x=1700015487; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1699412303; x=1700017103; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=ZbkEkmaPK3/ui+Xn8VLbQvKYhD+dtLCrbQNgJWW9Ttg=;
-        b=LxhvSUCZhnOYe4al9vU9nZT/XFft3qyhdedcJE2ikW68nA4I10jWpCEu5i0Sb/5VbM
-         q7z5/VZBF1kvPWWhF2vcUHMtohr9RtujrDQKv0bsWKyQ47jD9aQO9xDWM2OQC2PD+Gj8
-         k4LbOORnT4SdzMUHXB38Ns+Y4tiFMDkVWqb2OXcgzRjpATF2t/wSczWHNBU1rBzXE33R
-         4Q1TxGHe64FuLNjM+OcLamxCHHH+XmdoW+8JE+ho0D5v1VU4st7kASzDoVGbgx86uYxe
-         2uagRDMfBDuRIAuZ+k0ow3aEs3y9g1jyHdzQETZ0Z+57qTvlU4Um2sIXYZYjegoK9wQI
-         3WBg==
+        bh=WmDd3a7XDaEOynqO0NdlMTkWs1KZhBdEsZhUk0mMIQE=;
+        b=gozgtdngxtn+MbVy0gkYYAOmxHWu3c0oKNXdvpW09Ur/8p8kE0cwBMEsKuVPNO63Ue
+         kW6kvff5n0seipXtUAATcm+Ep8LystjwIutFo9K4nflNDBOfFmxR+m7WFEXju/vudOuG
+         LclB2+GgiOG7hmAQwSSYIa9RrHHavVvNg7Bi0/KGm2leSM5s5wIhy0MjHNdjOB2g98K3
+         P5pToxapDKjKUoQ2bXGVHNPyjNEBAdc7IsgBeKnPUlHYel2gL5Ce25LHzg6sNb55GxTF
+         IBT0Eb6ERUe7BUzqG9GRlyrym6Svffv8Ag3mjvGP7nplq9QS8wXuXokWYiyiHILm9HAp
+         kQZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699410687; x=1700015487;
+        d=1e100.net; s=20230601; t=1699412303; x=1700017103;
         h=in-reply-to:references:subject:cc:to:from:message-id:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZbkEkmaPK3/ui+Xn8VLbQvKYhD+dtLCrbQNgJWW9Ttg=;
-        b=oNfjQK2Y6OnbVM5syEXbholNuk4t6FNa+E9tOmQpV0ZqkKvndad65ufL4LemrKdYsq
-         GoWt3Egi5YQZxTNCHRcYjS+LXEFDU+xKbjaoSXUKIyGwxcpQ7ThlwG9Jlwz2c9y5gm89
-         k50EW76tt3/AVBctSZwPZiC20N8QA0rx6TuCbjRu/DhzzPZkwrtybpKW78hcWb+cbrkw
-         ZUISVZITMz8CeyHo8cgdcFHBR2bSMSXvdc/WajIlG7+/AavOT82KDNanCt3lKqv0ry9a
-         ouqGWVW6DxfrJYU5BN7mXqfWrjWLy/QMMPf3+sHWyxVEQhu4ibYEVm4RywaFeXqNGade
-         oAvw==
-X-Gm-Message-State: AOJu0YzUgPUk8uwQMK4yngq+4+HSyu+oHlPxuONNLy/6VKB6iNe0h+U4
-        TVoNNfovX2raykgCuFnkzhckvCFhZx+2uf6eYQ==
-X-Google-Smtp-Source: AGHT+IHTQ17LSA0ZChaX7vVfOq7M+l/b0UClJGf/WWYEXhjE85AkbiAYBvrrWJaZNK86n6MyC7kFYg==
-X-Received: by 2002:a05:6214:b26:b0:66f:ac87:73b7 with SMTP id w6-20020a0562140b2600b0066fac8773b7mr6056996qvj.15.1699410687064;
-        Tue, 07 Nov 2023 18:31:27 -0800 (PST)
+        bh=WmDd3a7XDaEOynqO0NdlMTkWs1KZhBdEsZhUk0mMIQE=;
+        b=ezrCnvIFlzR8cj9pS169Ps6OAwkxtDFs3tflmQJZBa3lUxMqDucnxQAYHqejEVe/fG
+         d9mSuwqrdQ4aEKqnFlJVkcYSezwlpfDzubaEmprtQ2CEXnY0qbZcNz0MHejtMne3olz+
+         2VfO5dSvBhhK0uXLN8OQ9eMgS7npSJIhyscRAhVFPbP3FFVWa4jBKhkikiGXsugcu/nW
+         Netuc08Daw9va7KSp4bIoN9ZXf7CayCFmcpxxPeBc0B1g+Q1j+vyXkCWR6OnT2IzhkoS
+         uAxO8pfwTVq0W23/VE6ez6RJETs+qKSc7CQ5TUJ2dBDKTqQdoxn1sHVIwUrZTqEs3Stw
+         cl0w==
+X-Gm-Message-State: AOJu0YzFubtRo+0tJ1iRJbafgXHFoOt8T4U5J8LSANZYcEP0JSW6gRve
+        5xH/kxHx4ZdBCV3XX1Qc043R
+X-Google-Smtp-Source: AGHT+IEn+yudFEwDIL+DtxHIKeAQ7qYkzHdoISAe2kEAYnAEgQ/fq5NVbk9MaBpXm92ECYZTvdhL1g==
+X-Received: by 2002:ad4:5969:0:b0:672:ab2:d9ec with SMTP id eq9-20020ad45969000000b006720ab2d9ecmr693217qvb.28.1699412303363;
+        Tue, 07 Nov 2023 18:58:23 -0800 (PST)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id m13-20020ad4504d000000b0064f3b0d0143sm548809qvq.142.2023.11.07.18.31.26
+        by smtp.gmail.com with ESMTPSA id mh21-20020a056214565500b00641899958efsm579705qvb.130.2023.11.07.18.58.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Nov 2023 18:31:26 -0800 (PST)
-Date:   Tue, 07 Nov 2023 21:31:26 -0500
-Message-ID: <2b8269b7c58ebf9b260b4e2a0676bc22.paul@paul-moore.com>
+        Tue, 07 Nov 2023 18:58:22 -0800 (PST)
+Date:   Tue, 07 Nov 2023 21:58:22 -0500
+Message-ID: <4ab327f80c4f98dffa5736a1acba3e0d.paul@paul-moore.com>
 From:   Paul Moore <paul@paul-moore.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Maxime Coquelin <maxime.coquelin@redhat.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>, jasowang@redhat.com,
-        xuanzhuo@linux.alibaba.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        xieyongji@bytedance.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        david.marchand@redhat.com, lulu@redhat.com
-Subject: Re: [PATCH v4 4/4] vduse: Add LSM hooks to check Virtio device type
-References: <20231020155819.24000-5-maxime.coquelin@redhat.com>
-In-Reply-To: <20231020155819.24000-5-maxime.coquelin@redhat.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew House <mattlloydhouse@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 4/6] add statmount(2) syscall
+References: <20231025140205.3586473-5-mszeredi@redhat.com>
+In-Reply-To: <20231025140205.3586473-5-mszeredi@redhat.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Oct 20, 2023 "Michael S. Tsirkin" <mst@redhat.com> wrote:
+On Oct 25, 2023 Miklos Szeredi <mszeredi@redhat.com> wrote:
 > 
-> This patch introduces LSM hooks for devices creation,
-> destruction and opening operations, checking the
-> application is allowed to perform these operations for
-> the Virtio device type.
+> Add a way to query attributes of a single mount instead of having to parse
+> the complete /proc/$PID/mountinfo, which might be huge.
 > 
-> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+> Lookup the mount the new 64bit mount ID.  If a mount needs to be queried
+> based on path, then statx(2) can be used to first query the mount ID
+> belonging to the path.
+> 
+> Design is based on a suggestion by Linus:
+> 
+>   "So I'd suggest something that is very much like "statfsat()", which gets
+>    a buffer and a length, and returns an extended "struct statfs" *AND*
+>    just a string description at the end."
+> 
+> The interface closely mimics that of statx.
+> 
+> Handle ASCII attributes by appending after the end of the structure (as per
+> above suggestion).  Pointers to strings are stored in u64 members to make
+> the structure the same regardless of pointer size.  Strings are nul
+> terminated.
+> 
+> Link: https://lore.kernel.org/all/CAHk-=wh5YifP7hzKSbwJj94+DZ2czjrZsczy6GBimiogZws=rg@mail.gmail.com/
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> Reviewed-by: Ian Kent <raven@themaw.net>
 > ---
->  drivers/vdpa/vdpa_user/vduse_dev.c  | 12 +++++++
->  include/linux/lsm_hook_defs.h       |  4 +++
->  include/linux/security.h            | 15 ++++++++
->  security/security.c                 | 42 ++++++++++++++++++++++
->  security/selinux/hooks.c            | 55 +++++++++++++++++++++++++++++
->  security/selinux/include/classmap.h |  2 ++
->  6 files changed, 130 insertions(+)
+>  fs/namespace.c             | 277 +++++++++++++++++++++++++++++++++++++
+>  include/linux/syscalls.h   |   5 +
+>  include/uapi/linux/mount.h |  56 ++++++++
+>  3 files changed, 338 insertions(+)
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 7a33ea391a02..a980c250a3a6 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
 
-My apologies for the late reply, I've been trying to work my way through
-the review backlog but it has been taking longer than expected; comments
-below ...
+...
 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 2aa0e219d721..65d9262a37f7 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -21,6 +21,7 @@
->   *  Copyright (C) 2016 Mellanox Technologies
->   */
->  
-> +#include "av_permissions.h"
->  #include <linux/init.h>
->  #include <linux/kd.h>
->  #include <linux/kernel.h>
-> @@ -92,6 +93,7 @@
->  #include <linux/fsnotify.h>
->  #include <linux/fanotify.h>
->  #include <linux/io_uring.h>
-> +#include <uapi/linux/virtio_ids.h>
->  
->  #include "avc.h"
->  #include "objsec.h"
-> @@ -6950,6 +6952,56 @@ static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
->  }
->  #endif /* CONFIG_IO_URING */
->  
-> +static int vduse_check_device_type(u32 sid, u32 device_id)
+> +static int do_statmount(struct stmt_state *s)
 > +{
-> +	u32 requested;
+> +	struct statmnt *sm = &s->sm;
+> +	struct mount *m = real_mount(s->mnt);
+> +	size_t copysize = min_t(size_t, s->bufsize, sizeof(*sm));
+> +	int err;
 > +
-> +	if (device_id == VIRTIO_ID_NET)
-> +		requested = VDUSE__NET;
-> +	else if (device_id == VIRTIO_ID_BLOCK)
-> +		requested = VDUSE__BLOCK;
-> +	else
-> +		return -EINVAL;
+> +	err = security_sb_statfs(s->mnt->mnt_root);
+> +	if (err)
+> +		return err;
 > +
-> +	return avc_has_perm(sid, sid, SECCLASS_VDUSE, requested, NULL);
+> +	if (!capable(CAP_SYS_ADMIN) &&
+> +	    !is_path_reachable(m, m->mnt.mnt_root, &s->root))
+> +		return -EPERM;
+
+In order to be consistent with our typical access control ordering,
+please move the security_sb_statfs() call down to here, after the
+capability checks.
+
+> +	stmt_numeric(s, STMT_SB_BASIC, stmt_sb_basic);
+> +	stmt_numeric(s, STMT_MNT_BASIC, stmt_mnt_basic);
+> +	stmt_numeric(s, STMT_PROPAGATE_FROM, stmt_propagate_from);
+> +	stmt_string(s, STMT_FS_TYPE, stmt_fs_type, &sm->fs_type);
+> +	stmt_string(s, STMT_MNT_ROOT, stmt_mnt_root, &sm->mnt_root);
+> +	stmt_string(s, STMT_MNT_POINT, stmt_mnt_point, &sm->mnt_point);
+> +
+> +	if (s->err)
+> +		return s->err;
+> +
+> +	/* Return the number of bytes copied to the buffer */
+> +	sm->size = copysize + s->pos;
+> +
+> +	if (copy_to_user(s->buf, sm, copysize))
+> +		return -EFAULT;
+> +
+> +	return 0;
 > +}
-> +
-> +static int selinux_vduse_dev_create(u32 device_id)
-> +{
-> +	u32 sid = current_sid();
-> +	int ret;
-> +
-> +	ret = avc_has_perm(sid, sid, SECCLASS_VDUSE, VDUSE__DEVCREATE, NULL);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return vduse_check_device_type(sid, device_id);
-> +}
-
-I see there has been some discussion about the need for a dedicated
-create hook as opposed to using the existing ioctl controls.  I think
-one important point that has been missing from the discussion is the
-idea of labeling the newly created device.  Unfortunately prior to a
-few minutes ago I hadn't ever looked at VDUSE so please correct me if
-I get some things wrong :)
-
-From what I can see userspace creates a new VDUSE device with
-ioctl(VDUSE_CREATE_DEV), which trigger the creation of a new
-/dev/vduse/XXX device which will be labeled according to the udev
-and SELinux configuration, likely with a generic udev label.  My
-question is if we want to be able to uniquely label each VDUSE
-device based on the process that initiates the device creation
-with the call to ioctl()?  If that is the case, we would need a
-create hook not only to control the creation of the device, but to
-record the triggering process' label in the new device; this label
-would then be used in subsequent VDUSE open and destroy operations.
-The normal device file I/O operations would still be subject to the
-standard SELinux file I/O permissions using the device file label
-assigned by systemd/udev when the device was created.
-
-> +static int selinux_vduse_dev_destroy(u32 device_id)
-> +{
-> +	u32 sid = current_sid();
-> +	int ret;
-> +
-> +	ret = avc_has_perm(sid, sid, SECCLASS_VDUSE, VDUSE__DEVDESTROY, NULL);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return vduse_check_device_type(sid, device_id);
-> +}
-> +
-> +static int selinux_vduse_dev_open(u32 device_id)
-> +{
-> +	u32 sid = current_sid();
-> +	int ret;
-> +
-> +	ret = avc_has_perm(sid, sid, SECCLASS_VDUSE, VDUSE__DEVOPEN, NULL);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return vduse_check_device_type(sid, device_id);
-> +}
-> +
->  /*
->   * IMPORTANT NOTE: When adding new hooks, please be careful to keep this order:
->   * 1. any hooks that don't belong to (2.) or (3.) below,
-> @@ -7243,6 +7295,9 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
->  #ifdef CONFIG_PERF_EVENTS
->  	LSM_HOOK_INIT(perf_event_alloc, selinux_perf_event_alloc),
->  #endif
-> +	LSM_HOOK_INIT(vduse_dev_create, selinux_vduse_dev_create),
-> +	LSM_HOOK_INIT(vduse_dev_destroy, selinux_vduse_dev_destroy),
-> +	LSM_HOOK_INIT(vduse_dev_open, selinux_vduse_dev_open),
->  };
->  
->  static __init int selinux_init(void)
-> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-> index a3c380775d41..d3dc37fb03d4 100644
-> --- a/security/selinux/include/classmap.h
-> +++ b/security/selinux/include/classmap.h
-> @@ -256,6 +256,8 @@ const struct security_class_mapping secclass_map[] = {
->  	  { "override_creds", "sqpoll", "cmd", NULL } },
->  	{ "user_namespace",
->  	  { "create", NULL } },
-> +	{ "vduse",
-> +	  { "devcreate", "devdestroy", "devopen", "net", "block", NULL} },
-
-I think we can just call the permissions "create", "open", and "destroy"
-since the "dev" prefix is somewhat implied by this being a dedicated
-VDUSE object class.
-
-I don't see where you are using the "net" and "block" permissions above,
-is this a leftover from a prior draft of this patch or are you planning
-to do something with these permissions?
-
->  	{ NULL }
->    };
->  
-> -- 
-> 2.41.0
 
 --
 paul-moore.com
