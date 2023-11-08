@@ -2,82 +2,62 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF9DC4332F
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Nov 2023 07:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B57DFC4167D
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Nov 2023 07:53:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229586AbjKHHq7 (ORCPT
+        id S231997AbjKHHxo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Nov 2023 02:46:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60192 "EHLO
+        Wed, 8 Nov 2023 02:53:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjKHHq6 (ORCPT
+        with ESMTP id S234423AbjKHHxm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Nov 2023 02:46:58 -0500
-X-Greylist: delayed 571 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 07 Nov 2023 23:46:55 PST
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8BE6113;
-        Tue,  7 Nov 2023 23:46:55 -0800 (PST)
-Received: from localhost (unknown [124.16.138.129])
-        by APP-03 (Coremail) with SMTP id rQCowAB3fDyfOktlDpduAw--.10026S2;
-        Wed, 08 Nov 2023 15:37:03 +0800 (CST)
-From:   Chen Ni <nichen@iscas.ac.cn>
-To:     zohar@linux.ibm.com, dhowells@redhat.com, jarkko@kernel.org,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        sumit.garg@linaro.org, yaelt@google.com
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] KEYS: encrypted: Add check for strsep
-Date:   Wed,  8 Nov 2023 07:36:27 +0000
-Message-Id: <20231108073627.1063464-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+        Wed, 8 Nov 2023 02:53:42 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 496D6172E;
+        Tue,  7 Nov 2023 23:53:38 -0800 (PST)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15CD9C433C7;
+        Wed,  8 Nov 2023 07:53:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1699430017;
+        bh=EO6SIeq3IRVmtcKnhSZW5myz/GbmhWsorKkfsMWlq0s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aSnRQY4BD1Zt326N3ax1KgytTnQmiA7/5HwRTE9BjxrlM6t57aKI5tDLxjWKbsBCG
+         XpmFBhlpZeeOmTQIcJ7TJYUyuhSL0UOs32vU80NdjTgdfPbEjznC54ZKN+KyoNxTdw
+         ECKKUhFw5qPTj7Z2WU6umcUrUp1qOnGIBzY2Qj+kt42o3TivB/T7wdWVIWbzGL0hEh
+         NrVwKVfnb/BFKTzlSNBaiF80d63DFH+3cZOvK1fYQKhmhvxSCQTegZP3o8BYTEtzEV
+         9iXBC4GTjo3HtNqAyVYWlcgcfxx0pKXN86hO+VdXnW0v28QiiCYVFQSSgjtosqRI6D
+         ofbIH/INlerDQ==
+Date:   Wed, 8 Nov 2023 08:53:30 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew House <mattlloydhouse@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 5/6] add listmount(2) syscall
+Message-ID: <20231108-redakteur-zuschauen-a9aeafaf4fad@brauner>
+References: <20231025140205.3586473-1-mszeredi@redhat.com>
+ <20231025140205.3586473-6-mszeredi@redhat.com>
+ <87il6d1cmu.fsf@meer.lwn.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAB3fDyfOktlDpduAw--.10026S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7XF1DKw4UJw1kCrW8uF15urg_yoW3KFX_Cr
-        yUAF1rJ3yDZF18WrWUX3y8Aw1Svr95J348ur9rKF1vy34Fqw40qFy7JFs7AFZ5Cry0qF1j
-        krs8try8A3ZrWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbVxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-        A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-        6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-        n2kIc2xKxwCY02Avz4vE14v_GF4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-        0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-        17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-        C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
-        6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
-        73UjIFyTuYvjfUYMKZDUUUU
-X-Originating-IP: [124.16.138.129]
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87il6d1cmu.fsf@meer.lwn.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add check for strsep() in order to transfer the error.
+> Why use struct __mount_arg (or struct mnt_id_req :) here rather than
+> just passing in the mount ID directly?  You don't use the request_mask
 
-Fixes: cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-provided decrypted data")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- security/keys/encrypted-keys/encrypted.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index 8af2136069d2..76f55dd13cb8 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -237,6 +237,10 @@ static int datablob_parse(char *datablob, const char **format,
- 			break;
- 		}
- 		*decrypted_data = strsep(&datablob, " \t");
-+		if (!*decrypted_data) {
-+			pr_info("encrypted_key: decrypted_data is missing\n");
-+			break;
-+		}
- 		ret = 0;
- 		break;
- 	case Opt_load:
--- 
-2.25.1
-
+Please see Arnd's detailed summary here:
+https://lore.kernel.org/lkml/44631c05-6b8a-42dc-b37e-df6776baa5d4@app.fastmail.com
