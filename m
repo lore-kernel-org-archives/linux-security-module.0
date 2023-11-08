@@ -2,123 +2,99 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2684C4167B
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Nov 2023 08:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28999C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Nov 2023 09:31:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231674AbjKHIBS convert rfc822-to-8bit (ORCPT
+        id S232634AbjKHJb1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Nov 2023 03:01:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34616 "EHLO
+        Wed, 8 Nov 2023 04:31:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232221AbjKHIBS (ORCPT
+        with ESMTP id S232723AbjKHJb1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Nov 2023 03:01:18 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC66BAF;
-        Wed,  8 Nov 2023 00:01:15 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4SQHHp0p1cz9xFPp;
-        Wed,  8 Nov 2023 15:47:50 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwAnFXUqQEtlDKtDAA--.34S2;
-        Wed, 08 Nov 2023 09:00:54 +0100 (CET)
-Message-ID: <110badd28083322d8895730bcd353d6d398f2db2.camel@huaweicloud.com>
-Subject: Re: [syzbot] [reiserfs?] possible deadlock in reiserfs_dirty_inode
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     syzbot <syzbot+c319bb5b1014113a92cf@syzkaller.appspotmail.com>,
-        jack@suse.cz, jeffm@suse.com, hdanton@sina.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com,
-        syzkaller-bugs@googlegroups.com, syzkaller@googlegroups.com,
-        linux-security-module@vger.kernel.org
-Date:   Wed, 08 Nov 2023 09:00:38 +0100
-In-Reply-To: <CAHC9VhSH-WED1kM4UQrttJb6-ZQHpB0VceW0YGX1rz8NsZrVHA@mail.gmail.com>
-References: <000000000000cfe6f305ee84ff1f@google.com>
-         <000000000000a8d8e7060977b741@google.com>
-         <CAHC9VhTFs=AHtsdzas-XXq2-Ub4V9Tbkcp4_HBspmGaARzWanw@mail.gmail.com>
-         <b560ed9477d9d03f0bf13af2ffddfeebbbf7712b.camel@huaweicloud.com>
-         <CAHC9VhSH-WED1kM4UQrttJb6-ZQHpB0VceW0YGX1rz8NsZrVHA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Wed, 8 Nov 2023 04:31:27 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A3A11B3
+        for <linux-security-module@vger.kernel.org>; Wed,  8 Nov 2023 01:30:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1699435838;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rIJ9Sp4WDXeLHrAHmgcW3eORTPdG2Gg4lSkUwSA3Tro=;
+        b=Mt1dXD+zqKrYLEgdt33A1vK/He9oQ2KrmqQR8s9og0vtpg0H5NsLa0EMATH8zxqXz/RT8e
+        FUWGi+WJNqV4RpC/Dc0WrOr1j3zK+ubmCpjNigg1+I92qQJB0X53S9KiV5XTlWPrui5Pzj
+        l1Bchkl1XRKnAmKLPFrm4hJjEpDa17o=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-539-U5pim71hPQyUXLdp2QgCIQ-1; Wed, 08 Nov 2023 04:30:37 -0500
+X-MC-Unique: U5pim71hPQyUXLdp2QgCIQ-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2803256bc44so5101040a91.1
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Nov 2023 01:30:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699435836; x=1700040636;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rIJ9Sp4WDXeLHrAHmgcW3eORTPdG2Gg4lSkUwSA3Tro=;
+        b=kwh3da8PkoQgKXJnFLbz6Tfv5wVUdINJstqxvXlV+JVrXdMqWtjyNhvSdP80Ar8VVs
+         fhq6DtmvPX0pz4NyIPWI3URGm3TYK3tMageJhSFsipgVGVB8wiIB0nmey/LP6CLHUuQo
+         Qh5FlTXL63PqxAg9hmvy563eaON+cDPxuwOzSo+JdK29m9lijx/1zB8oMsw7/qp5BXwG
+         MJSgS+iFEiG8yktv5anS77RJHGBcppRnLNBpeIMX+TtIDBaS+QSpTwrRJotX5bubNqQc
+         vHQyjc7cwDOoJR0EKo4/Z5pDP8pNgaE3XvDINmzJOD1VDKA1317CUATZO7WPUY2jN++V
+         tnDQ==
+X-Gm-Message-State: AOJu0YygLoVHjpFnHEOQHeKLGP1x72oFgC8jnIbx4V0IckwnshD2vr6b
+        cHxl1tCEZaVYfGDTEJbhVSq9MgWE5Y1jaZhH90NqCVa08AvADaZuRl3pFIuAuLpLVobjj8h+4rT
+        kyIySIUP+TYmUj3faWQ5w6I/gdECc1TPolTM1UnBgiZvX4xNCtgpV
+X-Received: by 2002:a17:90b:1d8b:b0:280:9074:eb3d with SMTP id pf11-20020a17090b1d8b00b002809074eb3dmr1121683pjb.22.1699435835975;
+        Wed, 08 Nov 2023 01:30:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH9bZILe3c2bhpCe4q7fc/KlUogt9ffT/7VG+Gw1ANZMxAhcGHfxel/wE9IvMJsNgengT/52pMt+83K3i+PiE4=
+X-Received: by 2002:a17:90b:1d8b:b0:280:9074:eb3d with SMTP id
+ pf11-20020a17090b1d8b00b002809074eb3dmr1121671pjb.22.1699435835705; Wed, 08
+ Nov 2023 01:30:35 -0800 (PST)
 MIME-Version: 1.0
-X-CM-TRANSID: LxC2BwAnFXUqQEtlDKtDAA--.34S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WrWkXFyfuFWxKw1rZw15CFg_yoW5JF4fpF
-        W5KFW5KF4vvr4xJrn2yw13Ga4I9wnxXFy7X3s3Kw1DAFW5XFyIvr4xKr43uFyY9rs3Kr1j
-        qanrKas8C3srAa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAPBF1jj5YirwACsi
-X-CFilter-Loop: Reflected
+References: <20231031123207.758655-1-omosnace@redhat.com> <CAHC9VhRo2GzW0jSqmm0Sv3z_-q9PTsvScV5oQwF5uNh+ZcWreA@mail.gmail.com>
+In-Reply-To: <CAHC9VhRo2GzW0jSqmm0Sv3z_-q9PTsvScV5oQwF5uNh+ZcWreA@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Wed, 8 Nov 2023 10:30:24 +0100
+Message-ID: <CAFqZXNtFfZ3FEoVAfM5r_a-mTqphz7qw=F3_Em87dRz6ca4EaQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] lsm: fix default return values for some hooks
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org,
+        Benjamin Coddington <bcodding@redhat.com>,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2023-11-07 at 17:26 -0500, Paul Moore wrote:
-> On Tue, Nov 7, 2023 at 6:03 AM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > On Mon, 2023-11-06 at 17:53 -0500, Paul Moore wrote:
-> > > Hi Roberto,
-> > > 
-> > > I know you were looking at this over the summer[1], did you ever find
-> > > a resolution to this?  If not, what do you think of just dropping
-> > > security xattr support on reiserfs?  Normally that wouldn't be
-> > > something we could consider, but given the likelihood that this hadn't
-> > > been working in *years* (if ever), and reiserfs is deprecated, I think
-> > > this is a viable option if there isn't an obvious fix.
-> > > 
-> > > [1] https://lore.kernel.org/linux-security-module/CAHC9VhTM0a7jnhxpCyonepcfWbnG-OJbbLpjQi68gL2GVnKSRg@mail.gmail.com/
-> > 
-> > Hi Paul
-> > 
-> > at the time, I did some investigation and came with a patch that
-> > (likely) solves some of the problems:
-> > 
-> > https://lore.kernel.org/linux-fsdevel/4aa799a0b87d4e2ecf3fa74079402074dc42b3c5.camel@huaweicloud.com/#t
-> 
-> Ah, thanks for the link, it looks like that was swallowed by my inbox.
-> In general if you feel it is worth adding my email to a patch, you
-> should probably also CC the LSM list.  If nothing else there is a
-> patchwork watching the LSM list that I use to make sure I don't
-> miss/forget about patches.
-> 
-> > I did a more advanced patch (to be validated), trying to fix the root
-> > cause:
-> > 
-> > https://lore.kernel.org/linux-fsdevel/ffde7908-be73-cc56-2646-72f4f94cb51b@huaweicloud.com/
-> > 
-> > However, Jeff Mahoney (that did a lot of work in this area) suggested
-> > that maybe we should not try invasive changes, as anyway reiserfs will
-> > be removed from the kernel in 2025.
-> 
-> I tend to agree with Jeff, which is one of the reasons I was
-> suggesting simply removing LSM xattr support from reiserfs, although
-> depending on what that involves it might be a big enough change that
-> we are better off simply leaving it broken.  I think we need to see
-> what that patch would look like first.
-> 
-> > It wouldn't be a problem to move the first patch forward.
-> 
-> I worry that the first patch you mentioned above doesn't really solve
-> anything, it only makes it the responsibility of the user to choose
-> either A) a broken system where LSM xattrs don't work or B) a system
-> that will likely deadlock/panic.  I think I would rather revert the
-> original commit and just leave the LSM xattrs broken than ask a user
-> to make that choice.
+On Wed, Nov 8, 2023 at 4:12=E2=80=AFAM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> On Tue, Oct 31, 2023 at 8:32=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.=
+com> wrote:
+> >
+> > Some of the default return values listed in <linux/lsm_hook_defs.h>
+> > don't match the actual no-op value and can be trivially fixed.
+> >
+> > Ondrej Mosnacek (2):
+> >   lsm: fix default return value for vm_enough_memory
+> >   lsm: fix default return value for inode_getsecctx
+> >
+> >  include/linux/lsm_hook_defs.h | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> These both look like reasonable -stable candidates to me, what do you thi=
+nk?
 
-Ok, that would be fine for me.
+Yes, that would be my assessment as well.
 
-Thanks
-
-Roberto
+--=20
+Ondrej Mosnacek
+Senior Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
