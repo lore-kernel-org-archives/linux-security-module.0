@@ -2,35 +2,61 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17413C4167B
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Nov 2023 16:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B12C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Nov 2023 20:11:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230175AbjKHQXy (ORCPT
+        id S229880AbjKHULG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Nov 2023 11:23:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37082 "EHLO
+        Wed, 8 Nov 2023 15:11:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbjKHQXw (ORCPT
+        with ESMTP id S229722AbjKHULF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Nov 2023 11:23:52 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B41A1FE4;
-        Wed,  8 Nov 2023 08:23:50 -0800 (PST)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4246DC433C7;
-        Wed,  8 Nov 2023 16:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1699460630;
-        bh=5fCZ7rfSZquKbxbTGp5RqeJxHmLnbRIpmC4Rako2Cbw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QYeExoDLkAvqSJ4k1lO/O2P+CeHBKbCD4mJ4+iKYa38HxVDUPABfB68PaWmLFU1e9
-         3W2uEdfmcCBTcynPc7mmK7ncwGZ2M+xB5QXbYdjYAyVGtOROdV/bUaDVoWrvuPhIU7
-         e517oi+/Qz8DJJmx5ueVxPfwspRnATj51B1MT7AGfCKJSuZO+8ZDfoXAQOqt48b16O
-         tn1JLWnWGtW0PJhhOVRxryTAw2y4TIQritCcjVEINSv2lCL9esiXJE209MDtHxO1n6
-         rfR+RkLs6iQwXnTXoS8cAM01JNeG4lkE4xHA6PoVVmmM+xatQZTQQl7a88jMyCUnye
-         SV8juozs13ORQ==
-Date:   Wed, 8 Nov 2023 17:23:43 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jonathan Corbet <corbet@lwn.net>
+        Wed, 8 Nov 2023 15:11:05 -0500
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9CD91BD5
+        for <linux-security-module@vger.kernel.org>; Wed,  8 Nov 2023 12:11:02 -0800 (PST)
+Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-da0344eb3fdso103126276.3
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Nov 2023 12:11:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1699474262; x=1700079062; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WdQXlJuW20JcGlaQadU7ZgL5w1/h84E2psVd7Y2aHT4=;
+        b=MZfSCdNv2PsxTeE75RiHAs/7KpUpwUrLsoi1dFjiDdIrDZhH70j9DCrJDUPEBr9IhX
+         k7gZMoJE1XPHOhvol4wxo7YxFnOFUVUxI7qgdvUuovss16SEqcZsK0viE5E7insB/olb
+         w2Ub/lJ8oeIEY8g2whWPsIFTchDQ2wo4Jx5VTOcRvECQdoHjLBNq2i/UrNUdBt/tLuvi
+         ncdkEFM88s27g6Bhd6EfrJ3NhwxK9AfPzT0C1NE8B9ITcgSEup4zX1OHLwsJ6r6fWWDp
+         VaLgVrHdENifBIUAvZtoUKQQYsi/x5aYeJhCWMpHuqbNiRms6pcmmrq5kaKKWigrfSRD
+         e7zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699474262; x=1700079062;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WdQXlJuW20JcGlaQadU7ZgL5w1/h84E2psVd7Y2aHT4=;
+        b=X02siuVGMFDd9wCRFWzd+p2qOFp3Usr2W85zOhI6mogJfYj2+trEo19Hg88tRoIGlP
+         9QY6FAO+/3d3y+ENbO39C0Ds4iSYdv8dIIA1OLvMT+G2il29tRJvnl3XKJzZi2U95M16
+         01y63KFEijUgDF2EszDW+tOZP9fNJnKSFsn+ijbAaWWwDWzZluOni1mPbDVZ71pq4jPF
+         jzC16iC4eKsI0b1SR2vpqL9iwx9FLXZp194SeAz/kTNpw0wXayngZpwAdUmljn8ka62w
+         kfiswyq9ixA0M5Sthc62toW6u1eQn9uf4+8dsq0gmWltjqIZdiIZ2EHKZxmwugpl48lO
+         Fdkg==
+X-Gm-Message-State: AOJu0YzrYbG4i+J43IA1aj9BV6Nmq79+bHzenOGEzEyKKVkMn5VE1FVx
+        8oyTjt4I844OjUlfnc7obFVGvoyofh33Iuqf79hk
+X-Google-Smtp-Source: AGHT+IGx24XRQweoz1EaCe+kSiqvIrqmyKZE1dlffO9Wgq6HodmUotEUsJYVWiUyZ7p7+YFh1nttrYhrBU0rClZtQF0=
+X-Received: by 2002:a25:680c:0:b0:d9c:aa29:6180 with SMTP id
+ d12-20020a25680c000000b00d9caa296180mr2811921ybc.46.1699474262093; Wed, 08
+ Nov 2023 12:11:02 -0800 (PST)
+MIME-Version: 1.0
+References: <20231025140205.3586473-5-mszeredi@redhat.com> <4ab327f80c4f98dffa5736a1acba3e0d.paul@paul-moore.com>
+ <20231108-zwerge-unheil-b3f48a84038d@brauner>
+In-Reply-To: <20231108-zwerge-unheil-b3f48a84038d@brauner>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 8 Nov 2023 15:10:50 -0500
+Message-ID: <CAHC9VhSLGyFRSbeZXE7z61Y2aDJi_1Dedjw0ioFOckRCs0CRaA@mail.gmail.com>
+Subject: Re: [PATCH v4 4/6] add statmount(2) syscall
+To:     Christian Brauner <brauner@kernel.org>
 Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-api@vger.kernel.org, linux-man@vger.kernel.org,
@@ -44,46 +70,37 @@ Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         Matthew House <mattlloydhouse@gmail.com>,
         Florian Weimer <fweimer@redhat.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 5/6] add listmount(2) syscall
-Message-ID: <20231108-grinsen-entfachen-f04195b92e7d@brauner>
-References: <20231025140205.3586473-1-mszeredi@redhat.com>
- <20231025140205.3586473-6-mszeredi@redhat.com>
- <87il6d1cmu.fsf@meer.lwn.net>
- <20231108-redakteur-zuschauen-a9aeafaf4fad@brauner>
- <87o7g4xlmb.fsf@meer.lwn.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87o7g4xlmb.fsf@meer.lwn.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 08, 2023 at 09:20:28AM -0700, Jonathan Corbet wrote:
-> Christian Brauner <brauner@kernel.org> writes:
-> 
-> >> Why use struct __mount_arg (or struct mnt_id_req :) here rather than
-> >> just passing in the mount ID directly?  You don't use the request_mask
+On Wed, Nov 8, 2023 at 2:58=E2=80=AFAM Christian Brauner <brauner@kernel.or=
+g> wrote:
+> > > +static int do_statmount(struct stmt_state *s)
+> > > +{
+> > > +   struct statmnt *sm =3D &s->sm;
+> > > +   struct mount *m =3D real_mount(s->mnt);
+> > > +   size_t copysize =3D min_t(size_t, s->bufsize, sizeof(*sm));
+> > > +   int err;
+> > > +
+> > > +   err =3D security_sb_statfs(s->mnt->mnt_root);
+> > > +   if (err)
+> > > +           return err;
+> > > +
+> > > +   if (!capable(CAP_SYS_ADMIN) &&
+> > > +       !is_path_reachable(m, m->mnt.mnt_root, &s->root))
+> > > +           return -EPERM;
 > >
-> > Please see Arnd's detailed summary here:
-> > https://lore.kernel.org/lkml/44631c05-6b8a-42dc-b37e-df6776baa5d4@app.fastmail.com
-> 
-> Ah, makes sense, I'd missed that.
-> 
-> Given this, though, it seems like maybe sys_listmount() should enforce
-> that req->request_mask==0 ?
+> > In order to be consistent with our typical access control ordering,
+> > please move the security_sb_statfs() call down to here, after the
+> > capability checks.
+>
+> I've moved the security_sb_statfs() calls accordingly.
 
-Good catch, it does now:
+Okay, good.  Did I miss a comment or a patch where that happened?  I
+looked over the patchset and comments yesterday and didn't recall
+seeing anything about shuffling the access control checks.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index ae09321b0f72..21edddd75532 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -5030,6 +5030,8 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req,
-
-        if (copy_from_user(&kreq, req, sizeof(kreq)))
-                return -EFAULT;
-+       if (kreq.request_mask != 0)
-+               return -EINVAL;
-        mnt_id = kreq.mnt_id;
-
-        down_read(&namespace_sem);
+--=20
+paul-moore.com
