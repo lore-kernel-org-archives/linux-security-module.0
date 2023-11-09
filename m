@@ -2,242 +2,247 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06ECDC4332F
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Nov 2023 21:09:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C25C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Nov 2023 08:48:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229473AbjKHVJv (ORCPT
+        id S231447AbjKIIsI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Nov 2023 16:09:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33184 "EHLO
+        Thu, 9 Nov 2023 03:48:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbjKHVJu (ORCPT
+        with ESMTP id S229697AbjKIIsI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Nov 2023 16:09:50 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2BA12581;
-        Wed,  8 Nov 2023 13:09:48 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-99bdeae1d0aso30942266b.1;
-        Wed, 08 Nov 2023 13:09:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699477787; x=1700082587; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KazIzduS9BidB+bNmstAcrQgF6siENXwi+iuOkkoB0A=;
-        b=ji+sddoGPucfnsMYY5Ui15x9+OiqhSiP9hmgCMWPq+9HfVGseChXyXm3XJG+UAqVwI
-         xpJu3E2MaKcv06nmgZ3TJ4yQ/Xixy5r5e9iQL4GGB+n/9ydyn5yNH6JS/LCyxcbHesnb
-         V/lTd8PYKx4bjr1F9sWc5fvb4yUC45lufh4Y1NnrfLXdNUSQMtGV1CK5ITWmhhOIkQ9Y
-         Bg582GU3NiRZVO2L9BaeomU0G4O5Dsr6ptWZgVW8QxgxljacI+a5VD9M5qBYvqEi9rDI
-         JwpDKggQekKmf3A3WmhA8+gGHRGwVSllkUoa9o7o8NvHLtzBTJ70SX/X3heEzQb8EkYS
-         VztA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699477787; x=1700082587;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KazIzduS9BidB+bNmstAcrQgF6siENXwi+iuOkkoB0A=;
-        b=snj7vR9N5F3InbuBNpxRQ8vZccP4U9k0yM1bn+cOVr5AhdxXmqbmfJNIVa4DsRzAik
-         gS4/a5F6gjWW1cGxcyRtf2vWSzZjmtIsXR9hJsszssQbeL+RiSXeQU3Ztp7PWjoDyOwu
-         qTnzVM4oyYN8egXUmldhYgYZaphzkiyrz9QpaBkItjdKDDMDdFO8n7xGdROmSK5m8InE
-         Quws21YMov3p99N+d9ZVQXwuZupgjtRhIuljxpYj25xB6Y3ItidZoveaa38oJdFfyfrp
-         ZfTcswRaPrbMzElz9y8z02OtMBY/T8VgDGxo7eRz0mWf1o0bDcIVkMuR277zsPfZ87vu
-         0CRA==
-X-Gm-Message-State: AOJu0YzOOwxxCyP4x6F2gwDAnEoF4XfR41hm7qbJlKFwxPoEIvzaslZd
-        IYGVmttTBzT6AQb9q2mTwKQuIeEEh3AP71UA4js=
-X-Google-Smtp-Source: AGHT+IGW85Rh+rAMkRglZRCOSxXfOd+5RIr+08ebXPpTcAJNErxjXHV3uER6A0yMTCKj2M+ow15o2uJ/GAScSrKP5MU=
-X-Received: by 2002:a17:907:a03:b0:9bd:a738:2bfe with SMTP id
- bb3-20020a1709070a0300b009bda7382bfemr2337139ejc.38.1699477786877; Wed, 08
- Nov 2023 13:09:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20231103190523.6353-1-andrii@kernel.org> <20231103190523.6353-4-andrii@kernel.org>
- <20231108-verbuchen-unteilbar-9005061e2b48@brauner>
-In-Reply-To: <20231108-verbuchen-unteilbar-9005061e2b48@brauner>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Wed, 8 Nov 2023 13:09:35 -0800
-Message-ID: <CAEf4BzZVNj=hR_TBOU5YsBM3iurqi9igSO=JZXkgXZReXfdACQ@mail.gmail.com>
-Subject: Re: [PATCH v9 bpf-next 03/17] bpf: introduce BPF token object
-To:     Christian Brauner <brauner@kernel.org>
+        Thu, 9 Nov 2023 03:48:08 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 028781BDF
+        for <linux-security-module@vger.kernel.org>; Thu,  9 Nov 2023 00:48:05 -0800 (PST)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E6DAC433C7;
+        Thu,  9 Nov 2023 08:48:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1699519685;
+        bh=RYAd4qXFWlCfiZBRCTuNCjZIwDzmv9k1JMTrqRiqfs0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vC5Z590ZM//lkVgtEYshPj8SctB7cjYwutMx6w3jb8mHCgGg58yHLCnxRu51+QWpu
+         A0rVJvBldGDClD0wHrAzOnrdU5JOyycQlCopJHP81rLz8KRcJm+o5mTcCCmvFdr7y0
+         ZQMss+ICIyxFPfEA2S2B41SFyJWTuDIlGmrAvl0wejbXCNK9sjwqP0Gct7u9sV9VG0
+         sAfEH4PqRab0cP4WPN6GttCs+CyRQfmPD1mGUJD+n7qxW6foDGjgoVveq4w/NcA67j
+         6bfYsksR7R7xN+pyiDWjzmayz6Yt+ZajTs6KVosR9bfdf+kRJFIKdNfG0cqeAnDNUZ
+         uFlwOy6rCx5Pg==
+Date:   Thu, 9 Nov 2023 09:47:59 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
 Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
         netdev@vger.kernel.org, paul@paul-moore.com,
         linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org, keescook@chromium.org,
         kernel-team@meta.com, sargun@sargun.me
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v9 bpf-next 02/17] bpf: add BPF token delegation mount
+ options to BPF FS
+Message-ID: <20231109-linden-kursprogramm-15c2cbd860b3@brauner>
+References: <20231103190523.6353-1-andrii@kernel.org>
+ <20231103190523.6353-3-andrii@kernel.org>
+ <20231108-ungeeignet-uhren-698f16b4b36b@brauner>
+ <CAEf4BzbanZO_QPhzyFgBEuB0i+uZZO4rZn7mO1qNp3aoPx+32g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzbanZO_QPhzyFgBEuB0i+uZZO4rZn7mO1qNp3aoPx+32g@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 8, 2023 at 6:28=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> On Fri, Nov 03, 2023 at 12:05:09PM -0700, Andrii Nakryiko wrote:
-> > Add new kind of BPF kernel object, BPF token. BPF token is meant to
-> > allow delegating privileged BPF functionality, like loading a BPF
-> > program or creating a BPF map, from privileged process to a *trusted*
-> > unprivileged process, all while have a good amount of control over whic=
-h
-> > privileged operations could be performed using provided BPF token.
+On Wed, Nov 08, 2023 at 01:09:27PM -0800, Andrii Nakryiko wrote:
+> On Wed, Nov 8, 2023 at 5:51 AM Christian Brauner <brauner@kernel.org> wrote:
 > >
-> > This is achieved through mounting BPF FS instance with extra delegation
-> > mount options, which determine what operations are delegatable, and als=
-o
-> > constraining it to the owning user namespace (as mentioned in the
-> > previous patch).
+> > On Fri, Nov 03, 2023 at 12:05:08PM -0700, Andrii Nakryiko wrote:
+> > > Add few new mount options to BPF FS that allow to specify that a given
+> > > BPF FS instance allows creation of BPF token (added in the next patch),
+> > > and what sort of operations are allowed under BPF token. As such, we get
+> > > 4 new mount options, each is a bit mask
+> > >   - `delegate_cmds` allow to specify which bpf() syscall commands are
+> > >     allowed with BPF token derived from this BPF FS instance;
+> > >   - if BPF_MAP_CREATE command is allowed, `delegate_maps` specifies
+> > >     a set of allowable BPF map types that could be created with BPF token;
+> > >   - if BPF_PROG_LOAD command is allowed, `delegate_progs` specifies
+> > >     a set of allowable BPF program types that could be loaded with BPF token;
+> > >   - if BPF_PROG_LOAD command is allowed, `delegate_attachs` specifies
+> > >     a set of allowable BPF program attach types that could be loaded with
+> > >     BPF token; delegate_progs and delegate_attachs are meant to be used
+> > >     together, as full BPF program type is, in general, determined
+> > >     through both program type and program attach type.
+> > >
+> > > Currently, these mount options accept the following forms of values:
+> > >   - a special value "any", that enables all possible values of a given
+> > >   bit set;
+> > >   - numeric value (decimal or hexadecimal, determined by kernel
+> > >   automatically) that specifies a bit mask value directly;
+> > >   - all the values for a given mount option are combined, if specified
+> > >   multiple times. E.g., `mount -t bpf nodev /path/to/mount -o
+> > >   delegate_maps=0x1 -o delegate_maps=0x2` will result in a combined 0x3
+> > >   mask.
+> > >
+> > > Ideally, more convenient (for humans) symbolic form derived from
+> > > corresponding UAPI enums would be accepted (e.g., `-o
+> > > delegate_progs=kprobe|tracepoint`) and I intend to implement this, but
+> > > it requires a bunch of UAPI header churn, so I postponed it until this
+> > > feature lands upstream or at least there is a definite consensus that
+> > > this feature is acceptable and is going to make it, just to minimize
+> > > amount of wasted effort and not increase amount of non-essential code to
+> > > be reviewed.
+> > >
+> > > Attentive reader will notice that BPF FS is now marked as
+> > > FS_USERNS_MOUNT, which theoretically makes it mountable inside non-init
+> > > user namespace as long as the process has sufficient *namespaced*
+> > > capabilities within that user namespace. But in reality we still
+> > > restrict BPF FS to be mountable only by processes with CAP_SYS_ADMIN *in
+> > > init userns* (extra check in bpf_fill_super()). FS_USERNS_MOUNT is added
+> > > to allow creating BPF FS context object (i.e., fsopen("bpf")) from
+> > > inside unprivileged process inside non-init userns, to capture that
+> > > userns as the owning userns. It will still be required to pass this
+> > > context object back to privileged process to instantiate and mount it.
+> > >
+> > > This manipulation is important, because capturing non-init userns as the
+> > > owning userns of BPF FS instance (super block) allows to use that userns
+> > > to constraint BPF token to that userns later on (see next patch). So
+> > > creating BPF FS with delegation inside unprivileged userns will restrict
+> > > derived BPF token objects to only "work" inside that intended userns,
+> > > making it scoped to a intended "container".
+> > >
+> > > There is a set of selftests at the end of the patch set that simulates
+> > > this sequence of steps and validates that everything works as intended.
+> > > But careful review is requested to make sure there are no missed gaps in
+> > > the implementation and testing.
+> > >
+> > > All this is based on suggestions and discussions with Christian Brauner
+> > > ([0]), to the best of my ability to follow all the implications.
 > >
-> > BPF token itself is just a derivative from BPF FS and can be created
-> > through a new bpf() syscall command, BPF_TOKEN_CREATE, which accepts
-> > a path specification (using the usual fd + string path combo) to a BPF
-> > FS mount. Currently, BPF token "inherits" delegated command, map types,
-> > prog type, and attach type bit sets from BPF FS as is. In the future,
-> > having an BPF token as a separate object with its own FD, we can allow
-> > to further restrict BPF token's allowable set of things either at the c=
-reation
-> > time or after the fact, allowing the process to guard itself further
-> > from, e.g., unintentionally trying to load undesired kind of BPF
-> > programs. But for now we keep things simple and just copy bit sets as i=
-s.
+> > "who will not be held responsible for any CVE future or present as he's
+> >  not sure whether bpf token is a good idea in general"
 > >
-> > When BPF token is created from BPF FS mount, we take reference to the
-> > BPF super block's owning user namespace, and then use that namespace fo=
-r
-> > checking all the {CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, CAP_SYS_ADMIN}
-> > capabilities that are normally only checked against init userns (using
-> > capable()), but now we check them using ns_capable() instead (if BPF
-> > token is provided). See bpf_token_capable() for details.
+> > I'm not opposing it because it's really not my subsystem. But it'd be
+> > nice if you also added a disclaimer that I'm not endorsing this. :)
 > >
-> > Such setup means that BPF token in itself is not sufficient to grant BP=
-F
-> > functionality. User namespaced process has to *also* have necessary
-> > combination of capabilities inside that user namespace. So while
-> > previously CAP_BPF was useless when granted within user namespace, now
-> > it gains a meaning and allows container managers and sys admins to have
-> > a flexible control over which processes can and need to use BPF
-> > functionality within the user namespace (i.e., container in practice).
-> > And BPF FS delegation mount options and derived BPF tokens serve as
-> > a per-container "flag" to grant overall ability to use bpf() (plus furt=
-her
-> > restrict on which parts of bpf() syscalls are treated as namespaced).
+> 
+> Sure, I'll clarify. I still appreciate your reviewing everything and
+> pointing out all the gotchas (like the reconfiguration and other
+> stuff), thanks!
+> 
+> > A comment below.
 > >
-> > Note also, BPF_TOKEN_CREATE command itself requires ns_capable(CAP_BPF)
-> > within the BPF FS owning user namespace, rounding up the ns_capable()
-> > story of BPF token.
+> > >
+> > >   [0] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef785e@brauner/
+> > >
+> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > ---
+> > >  include/linux/bpf.h | 10 ++++++
+> > >  kernel/bpf/inode.c  | 88 +++++++++++++++++++++++++++++++++++++++------
+> > >  2 files changed, 88 insertions(+), 10 deletions(-)
+> > >
+> 
+> [...]
+> 
+> > >       opt = fs_parse(fc, bpf_fs_parameters, param, &result);
+> > >       if (opt < 0) {
+> > > @@ -665,6 +692,25 @@ static int bpf_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> > >       case OPT_MODE:
+> > >               opts->mode = result.uint_32 & S_IALLUGO;
+> > >               break;
+> > > +     case OPT_DELEGATE_CMDS:
+> > > +     case OPT_DELEGATE_MAPS:
+> > > +     case OPT_DELEGATE_PROGS:
+> > > +     case OPT_DELEGATE_ATTACHS:
+> > > +             if (strcmp(param->string, "any") == 0) {
+> > > +                     msk = ~0ULL;
+> > > +             } else {
+> > > +                     err = kstrtou64(param->string, 0, &msk);
+> > > +                     if (err)
+> > > +                             return err;
+> > > +             }
+> > > +             switch (opt) {
+> > > +             case OPT_DELEGATE_CMDS: opts->delegate_cmds |= msk; break;
+> > > +             case OPT_DELEGATE_MAPS: opts->delegate_maps |= msk; break;
+> > > +             case OPT_DELEGATE_PROGS: opts->delegate_progs |= msk; break;
+> > > +             case OPT_DELEGATE_ATTACHS: opts->delegate_attachs |= msk; break;
+> > > +             default: return -EINVAL;
+> > > +             }
+> > > +             break;
+> > >       }
 > >
-> > The alternative to creating BPF token object was:
-> >   a) not having any extra object and just pasing BPF FS path to each
-> >      relevant bpf() command. This seems suboptimal as it's racy (mount
-> >      under the same path might change in between checking it and using =
-it
-> >      for bpf() command). And also less flexible if we'd like to further
->
-> I don't understand "mount under the same path might change in between
-> checking it and using it for bpf() command".
->
-> Just require userspace to open() the bpffs instance and pass that fd to
-> bpf() just as you're doing right now. If that is racy then the current
-> implementation is even more so because it is passing:
->
-> bpffs_path_fd
-> bpffs_pathname
->
-> and then performs a lookup. More on that below.
-
-Yes, this is a result of my initial confusion with how O_PATH-based
-open() works. You are right that it's not racy, I'll update the
-message.
-
->
-> I want to point out that most of this code here is unnecessary if you
-> use the bpffs fd itself as a token. But that's your decision. I'm just
-> saying that I'm not sure the critique that it's racy is valid.
-
-Ack.
-
->
-> >      restrict ourselves compared to all the delegated functionality
-> >      allowed on BPF FS.
-> >   b) use non-bpf() interface, e.g., ioctl(), but otherwise also create
-> >      a dedicated FD that would represent a token-like functionality. Th=
-is
-> >      doesn't seem superior to having a proper bpf() command, so
-> >      BPF_TOKEN_CREATE was chosen.
+> > So just to repeat that this will allow a container to set it's own
+> > delegation options:
 > >
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > ---
-> >  include/linux/bpf.h            |  41 +++++++
-> >  include/uapi/linux/bpf.h       |  39 +++++++
-> >  kernel/bpf/Makefile            |   2 +-
-> >  kernel/bpf/inode.c             |  17 ++-
-> >  kernel/bpf/syscall.c           |  17 +++
-> >  kernel/bpf/token.c             | 197 +++++++++++++++++++++++++++++++++
-> >  tools/include/uapi/linux/bpf.h |  39 +++++++
-> >  7 files changed, 342 insertions(+), 10 deletions(-)
-> >  create mode 100644 kernel/bpf/token.c
+> >         # unprivileged container
 > >
+> >         fd_fs = fsopen();
+> >         fsconfig(fd_fs, FSCONFIG_BLA_BLA, "give-me-all-the-delegation");
+> >
+> >         # Now hand of that fd_fs to a privileged process
+> >
+> >         fsconfig(fd_fs, FSCONFIG_CREATE_CMD, ...)
+> >
+> > This means the container manager can't be part of your threat model
+> > because you need to trust it to set delegation options.
+> >
+> > But if the container manager is part of your threat model then you can
+> > never trust an fd_fs handed to you because the container manager might
+> > have enabled arbitrary delegation privileges.
+> >
+> > There's ways around this:
+> >
+> > (1) kernel: Account for this in the kernel and require privileges when
+> >     setting delegation options.
+> 
+> What sort of privilege would that be? We are in an unprivileged user
+> namespace, so that would have to be some ns_capable() checks or
+> something? I can add ns_capable(CAP_BPF), but what else did you have
+> in mind?
 
-[...]
+You would require privileges in the initial namespace aka capable()
+checks similar to what you require for superblock creation.
 
-> > +
-> > +#define BPF_TOKEN_INODE_NAME "bpf-token"
-> > +
-> > +static const struct inode_operations bpf_token_iops =3D { };
-> > +
-> > +static const struct file_operations bpf_token_fops =3D {
-> > +     .release        =3D bpf_token_release,
-> > +     .show_fdinfo    =3D bpf_token_show_fdinfo,
-> > +};
-> > +
-> > +int bpf_token_create(union bpf_attr *attr)
-> > +{
-> > +     struct bpf_mount_opts *mnt_opts;
-> > +     struct bpf_token *token =3D NULL;
-> > +     struct user_namespace *userns;
-> > +     struct inode *inode;
-> > +     struct file *file;
-> > +     struct path path;
-> > +     umode_t mode;
-> > +     int err, fd;
-> > +
-> > +     err =3D user_path_at(attr->token_create.bpffs_path_fd,
-> > +                        u64_to_user_ptr(attr->token_create.bpffs_pathn=
-ame),
-> > +                        LOOKUP_FOLLOW | LOOKUP_EMPTY, &path);
->
-> Do you really need bpffs_path_fd and bpffs_pathname?
-> This seems unnecessar as you're forcing a lookup that's best done in
-> userspace through regular open() apis. So I would just make this:
->
-> struct { /* struct used by BPF_TOKEN_CREATE command */
->         __u32           flags;
->         __u32           bpffs_path_fd;
-> } token_create;
->
-> In bpf_token_create() you can then just do:
->
->         struct fd f;
->         struct path path;
->
->         f =3D fdget(attr->token_create.bpffs_path_fd);
->         if (!f.file)
->                 return -EBADF;
->
->         *path =3D f.file->f_path;
->         path_get(path);
->         fdput(f);
->
+> 
+> I think even if we say that privileged parent does FSCONFIG_SET_STRING
+> and unprivileged child just does sys_fsopen("bpf", 0) and nothing
+> more, we still can't be sure that child won't race with parent and set
+> FSCONFIG_SET_STRING at the same time. Because they both have access to
+> the same fs_fd.
 
-Yes, you are right. I'll simplify this part, thanks.
+Unless you require privileges as outlined above to set delegation
+options in which case an unprivileged container cannot change delegation
+options at all.
 
-
-> > +     if (err)
-> > +             return err;
-> > +
-> > +     if (path.mnt->mnt_root !=3D path.dentry) {
-> > +             err =3D -EINVAL;
-> > +             goto out_path;
-> > +     }
-> > +     if (path.mnt->mnt_sb->s_op !=3D &bpf_super_ops) {
-> > +             err =3D -EINVAL;
-> > +             goto out_path;
-> > +     }
-
-[...]
+> 
+> > (2) userspace: A trusted helper that allocates an fs_context fd in
+> >     the target user namespace, then sets delegation options and creates
+> >     superblock.
+> >
+> > (1) Is more restrictive but also more secure. (2) is less restrictive
+> > but requires more care from userspace.
+> >
+> > Either way I would probably consider writing a document detailing
+> > various delegation scenarios and possible pitfalls and implications
+> > before advertising it.
+> >
+> > If you choose (2) then you also need to be aware that the security of
+> > this also hinges on bpffs not allowing to reconfigure parameters once it
+> > has been mounted. Otherwise an unprivileged container can change
+> > delegation options.
+> >
+> > I would recommend that you either add a dummy bpf_reconfigure() method
+> > with a comment in it or you add a comment on top of bpf_context_ops.
+> > Something like:
+> >
+> > /*
+> >  * Unprivileged mounts of bpffs are owned by the user namespace they are
+> >  * mounted in. That means unprivileged users can change vfs mount
+> >  * options (ro<->rw, nosuid, etc.).
+> >  *
+> >  * They currently cannot change bpffs specific mount options such as
+> >  * delegation settings. If that is ever implemented it is necessary to
+> >  * require rivileges in the initial namespace. Otherwise unprivileged
+> >  * users can change delegation options to whatever they want.
+> >  */
+> 
+> Yep, I will add a custom callback. I think we can allow reconfiguring
+> towards less permissive delegation subset, but I'll need to look at
+> the specifics to see if we can support that easily.
