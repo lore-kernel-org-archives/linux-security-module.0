@@ -2,47 +2,49 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7720C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Nov 2023 03:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C9C0C4167B
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Nov 2023 03:48:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345847AbjKJDs4 convert rfc822-to-8bit (ORCPT
+        id S1345848AbjKJDs6 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Nov 2023 22:48:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40830 "EHLO
+        Thu, 9 Nov 2023 22:48:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345800AbjKJDs4 (ORCPT
+        with ESMTP id S1345800AbjKJDs5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Nov 2023 22:48:56 -0500
+        Thu, 9 Nov 2023 22:48:57 -0500
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C7AE4687
-        for <linux-security-module@vger.kernel.org>; Thu,  9 Nov 2023 19:48:54 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DEA468D
+        for <linux-security-module@vger.kernel.org>; Thu,  9 Nov 2023 19:48:55 -0800 (PST)
 Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A9MXqje005487
-        for <linux-security-module@vger.kernel.org>; Thu, 9 Nov 2023 19:48:53 -0800
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A9MXqjh005487
+        for <linux-security-module@vger.kernel.org>; Thu, 9 Nov 2023 19:48:55 -0800
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3u8nqkjakm-5
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3u8nqkjakm-8
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 09 Nov 2023 19:48:53 -0800
-Received: from twshared11278.41.prn1.facebook.com (2620:10d:c085:208::11) by
+        for <linux-security-module@vger.kernel.org>; Thu, 09 Nov 2023 19:48:54 -0800
+Received: from twshared40933.03.prn6.facebook.com (2620:10d:c085:108::8) by
  mail.thefacebook.com (2620:10d:c085:11d::8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.34; Thu, 9 Nov 2023 19:48:51 -0800
+ 15.1.2507.34; Thu, 9 Nov 2023 19:48:53 -0800
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-        id 431BA3B41DBB1; Thu,  9 Nov 2023 19:48:38 -0800 (PST)
+        id 5A4763B41DBC0; Thu,  9 Nov 2023 19:48:42 -0800 (PST)
 From:   Andrii Nakryiko <andrii@kernel.org>
 To:     <bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
         <paul@paul-moore.com>, <brauner@kernel.org>
 CC:     <linux-fsdevel@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>, <keescook@chromium.org>,
         <kernel-team@meta.com>, <sargun@sargun.me>
-Subject: [PATCH v10 bpf-next 00/17] BPF token and BPF FS-based delegation
-Date:   Thu, 9 Nov 2023 19:48:21 -0800
-Message-ID: <20231110034838.1295764-1-andrii@kernel.org>
+Subject: [PATCH v10 bpf-next 02/17] bpf: add BPF token delegation mount options to BPF FS
+Date:   Thu, 9 Nov 2023 19:48:23 -0800
+Message-ID: <20231110034838.1295764-3-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231110034838.1295764-1-andrii@kernel.org>
+References: <20231110034838.1295764-1-andrii@kernel.org>
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: fyTvUsNNGz4x-1ZwCu5emTmG-zppDJjU
-X-Proofpoint-GUID: fyTvUsNNGz4x-1ZwCu5emTmG-zppDJjU
+X-Proofpoint-ORIG-GUID: Ho5QM6r4YdWpUrH4vR1zJEwA-_Mqsv3r
+X-Proofpoint-GUID: Ho5QM6r4YdWpUrH4vR1zJEwA-_Mqsv3r
 Content-Transfer-Encoding: 8BIT
 X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
@@ -52,202 +54,270 @@ X-Proofpoint-Virus-Version: vendor=baseguard
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch set introduces an ability to delegate a subset of BPF subsystem
-functionality from privileged system-wide daemon (e.g., systemd or any other
-container manager) through special mount options for userns-bound BPF FS to
-a *trusted* unprivileged application. Trust is the key here. This
-functionality is not about allowing unconditional unprivileged BPF usage.
-Establishing trust, though, is completely up to the discretion of respective
-privileged application that would create and mount a BPF FS instance with
-delegation enabled, as different production setups can and do achieve it
-through a combination of different means (signing, LSM, code reviews, etc),
-and it's undesirable and infeasible for kernel to enforce any particular way
-of validating trustworthiness of particular process.
+Add few new mount options to BPF FS that allow to specify that a given
+BPF FS instance allows creation of BPF token (added in the next patch),
+and what sort of operations are allowed under BPF token. As such, we get
+4 new mount options, each is a bit mask
+  - `delegate_cmds` allow to specify which bpf() syscall commands are
+    allowed with BPF token derived from this BPF FS instance;
+  - if BPF_MAP_CREATE command is allowed, `delegate_maps` specifies
+    a set of allowable BPF map types that could be created with BPF token;
+  - if BPF_PROG_LOAD command is allowed, `delegate_progs` specifies
+    a set of allowable BPF program types that could be loaded with BPF token;
+  - if BPF_PROG_LOAD command is allowed, `delegate_attachs` specifies
+    a set of allowable BPF program attach types that could be loaded with
+    BPF token; delegate_progs and delegate_attachs are meant to be used
+    together, as full BPF program type is, in general, determined
+    through both program type and program attach type.
 
-The main motivation for this work is a desire to enable containerized BPF
-applications to be used together with user namespaces. This is currently
-impossible, as CAP_BPF, required for BPF subsystem usage, cannot be namespaced
-or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to BPF
-helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safely read
-arbitrary memory, and it's impossible to ensure that they only read memory of
-processes belonging to any given namespace. This means that it's impossible to
-have a mechanically verifiable namespace-aware CAP_BPF capability, and as such
-another mechanism to allow safe usage of BPF functionality is necessary.BPF FS
-delegation mount options and BPF token derived from such BPF FS instance is
-such a mechanism. Kernel makes no assumption about what "trusted" constitutes
-in any particular case, and it's up to specific privileged applications and
-their surrounding infrastructure to decide that. What kernel provides is a set
-of APIs to setup and mount special BPF FS instanecs and derive BPF tokens from
-it. BPF FS and BPF token are both bound to its owning userns and in such a way
-are constrained inside intended container. Users can then pass BPF token FD to
-privileged bpf() syscall commands, like BPF map creation and BPF program
-loading, to perform such operations without having init userns privileged.
+Currently, these mount options accept the following forms of values:
+  - a special value "any", that enables all possible values of a given
+  bit set;
+  - numeric value (decimal or hexadecimal, determined by kernel
+  automatically) that specifies a bit mask value directly;
+  - all the values for a given mount option are combined, if specified
+  multiple times. E.g., `mount -t bpf nodev /path/to/mount -o
+  delegate_maps=0x1 -o delegate_maps=0x2` will result in a combined 0x3
+  mask.
 
-This version incorporates feedback and suggestions ([3]) received on v3 of
-this patch set, and instead of allowing to create BPF tokens directly assuming
-capable(CAP_SYS_ADMIN), we instead enhance BPF FS to accept a few new
-delegation mount options. If these options are used and BPF FS itself is
-properly created, set up, and mounted inside the user namespaced container,
-user application is able to derive a BPF token object from BPF FS instance,
-and pass that token to bpf() syscall. As explained in patch #3, BPF token
-itself doesn't grant access to BPF functionality, but instead allows kernel to
-do namespaced capabilities checks (ns_capable() vs capable()) for CAP_BPF,
-CAP_PERFMON, CAP_NET_ADMIN, and CAP_SYS_ADMIN, as applicable. So it forms one
-half of a puzzle and allows container managers and sys admins to have safe and
-flexible configuration options: determining which containers get delegation of
-BPF functionality through BPF FS, and then which applications within such
-containers are allowed to perform bpf() commands, based on namespaces
-capabilities.
+Ideally, more convenient (for humans) symbolic form derived from
+corresponding UAPI enums would be accepted (e.g., `-o
+delegate_progs=kprobe|tracepoint`) and I intend to implement this, but
+it requires a bunch of UAPI header churn, so I postponed it until this
+feature lands upstream or at least there is a definite consensus that
+this feature is acceptable and is going to make it, just to minimize
+amount of wasted effort and not increase amount of non-essential code to
+be reviewed.
 
-Previous attempt at addressing this very same problem ([0]) attempted to
-utilize authoritative LSM approach, but was conclusively rejected by upstream
-LSM maintainers. BPF token concept is not changing anything about LSM
-approach, but can be combined with LSM hooks for very fine-grained security
-policy. Some ideas about making BPF token more convenient to use with LSM (in
-particular custom BPF LSM programs) was briefly described in recent LSF/MM/BPF
-2023 presentation ([1]). E.g., an ability to specify user-provided data
-(context), which in combination with BPF LSM would allow implementing a very
-dynamic and fine-granular custom security policies on top of BPF token. In the
-interest of minimizing API surface area and discussions this was relegated to
-follow up patches, as it's not essential to the fundamental concept of
-delegatable BPF token.
+Attentive reader will notice that BPF FS is now marked as
+FS_USERNS_MOUNT, which theoretically makes it mountable inside non-init
+user namespace as long as the process has sufficient *namespaced*
+capabilities within that user namespace. But in reality we still
+restrict BPF FS to be mountable only by processes with CAP_SYS_ADMIN *in
+init userns* (extra check in bpf_fill_super()). FS_USERNS_MOUNT is added
+to allow creating BPF FS context object (i.e., fsopen("bpf")) from
+inside unprivileged process inside non-init userns, to capture that
+userns as the owning userns. It will still be required to pass this
+context object back to privileged process to instantiate and mount it.
 
-It should be noted that BPF token is conceptually quite similar to the idea of
-/dev/bpf device file, proposed by Song a while ago ([2]). The biggest
-difference is the idea of using virtual anon_inode file to hold BPF token and
-allowing multiple independent instances of them, each (potentially) with its
-own set of restrictions. And also, crucially, BPF token approach is not using
-any special stateful task-scoped flags. Instead, bpf() syscall accepts
-token_fd parameters explicitly for each relevant BPF command. This addresses
-main concerns brought up during the /dev/bpf discussion, and fits better with
-overall BPF subsystem design.
+This manipulation is important, because capturing non-init userns as the
+owning userns of BPF FS instance (super block) allows to use that userns
+to constraint BPF token to that userns later on (see next patch). So
+creating BPF FS with delegation inside unprivileged userns will restrict
+derived BPF token objects to only "work" inside that intended userns,
+making it scoped to a intended "container". Also, setting these
+delegation options requires capable(CAP_SYS_ADMIN), so unprivileged
+process cannot set this up without involvement of a privileged process.
 
-This patch set adds a basic minimum of functionality to make BPF token idea
-useful and to discuss API and functionality. Currently only low-level libbpf
-APIs support creating and passing BPF token around, allowing to test kernel
-functionality, but for the most part is not sufficient for real-world
-applications, which typically use high-level libbpf APIs based on `struct
-bpf_object` type. This was done with the intent to limit the size of patch set
-and concentrate on mostly kernel-side changes. All the necessary plumbing for
-libbpf will be sent as a separate follow up patch set kernel support makes it
-upstream.
+There is a set of selftests at the end of the patch set that simulates
+this sequence of steps and validates that everything works as intended.
+But careful review is requested to make sure there are no missed gaps in
+the implementation and testing.
 
-Another part that should happen once kernel-side BPF token is established, is
-a set of conventions between applications (e.g., systemd), tools (e.g.,
-bpftool), and libraries (e.g., libbpf) on exposing delegatable BPF FS
-instance(s) at well-defined locations to allow applications take advantage of
-this in automatic fashion without explicit code changes on BPF application's
-side. But I'd like to postpone this discussion to after BPF token concept
-lands.
+This somewhat subtle set of aspects is the result of previous
+discussions ([0]) about various user namespace implications and
+interactions with BPF token functionality and is necessary to contain
+BPF token inside intended user namespace.
 
-  [0] https://lore.kernel.org/bpf/20230412043300.360803-1-andrii@kernel.org/
-  [1] http://vger.kernel.org/bpfconf2023_material/Trusted_unprivileged_BPF_LSFMM2023.pdf
-  [2] https://lore.kernel.org/bpf/20190627201923.2589391-2-songliubraving@fb.com/
-  [3] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef785e@brauner/
+  [0] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef785e@brauner/
 
-v9-v10:
-  - slight adjustments in LSM parts (Paul);
-  - setting delegate_xxx  options require capable(CAP_SYS_ADMIN) (Christian);
-  - simplify BPF_TOKEN_CREATE UAPI by accepting BPF FS FD directly (Christian);
-v8->v9:
-  - fix issue in selftests due to sys/mount.h header (Jiri);
-  - fix warning in doc comments in LSM hooks (kernel test robot);
-v7->v8:
-  - add bpf_token_allow_cmd and bpf_token_capable hooks (Paul);
-  - inline bpf_token_alloc() into bpf_token_create() to prevent accidental
-    divergence with security_bpf_token_create() hook (Paul);
-v6->v7:
-  - separate patches to refactor bpf_prog_alloc/bpf_map_alloc LSM hooks, as
-    discussed with Paul, and now they also accept struct bpf_token;
-  - added bpf_token_create/bpf_token_free to allow LSMs (SELinux,
-    specifically) to set up security LSM blob (Paul);
-  - last patch also wires bpf_security_struct setup by SELinux, similar to how
-    it's done for BPF map/prog, though I'm not sure if that's enough, so worst
-    case it's easy to drop this patch if more full fledged SELinux
-    implementation will be done separately;
-  - small fixes for issues caught by code reviews (Jiri, Hou);
-  - fix for test_maps test that doesn't use LIBBPF_OPTS() macro (CI);
-v5->v6:
-  - fix possible use of uninitialized variable in selftests (CI);
-  - don't use anon_inode, instead create one from BPF FS instance (Christian);
-  - don't store bpf_token inside struct bpf_map, instead pass it explicitly to
-    map_check_btf(). We do store bpf_token inside prog->aux, because it's used
-    during verification and even can be checked during attach time for some
-    program types;
-  - LSM hooks are left intact pending the conclusion of discussion with Paul
-    Moore; I'd prefer to do LSM-related changes as a follow up patch set
-    anyways;
-v4->v5:
-  - add pre-patch unifying CAP_NET_ADMIN handling inside kernel/bpf/syscall.c
-    (Paul Moore);
-  - fix build warnings and errors in selftests and kernel, detected by CI and
-    kernel test robot;
-v3->v4:
-  - add delegation mount options to BPF FS;
-  - BPF token is derived from the instance of BPF FS and associates itself
-    with BPF FS' owning userns;
-  - BPF token doesn't grant BPF functionality directly, it just turns
-    capable() checks into ns_capable() checks within BPF FS' owning user;
-  - BPF token cannot be pinned;
-v2->v3:
-  - make BPF_TOKEN_CREATE pin created BPF token in BPF FS, and disallow
-    BPF_OBJ_PIN for BPF token;
-v1->v2:
-  - fix build failures on Kconfig with CONFIG_BPF_SYSCALL unset;
-  - drop BPF_F_TOKEN_UNKNOWN_* flags and simplify UAPI (Stanislav).
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ include/linux/bpf.h | 10 +++++
+ kernel/bpf/inode.c  | 91 ++++++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 91 insertions(+), 10 deletions(-)
 
-Andrii Nakryiko (17):
-  bpf: align CAP_NET_ADMIN checks with bpf_capable() approach
-  bpf: add BPF token delegation mount options to BPF FS
-  bpf: introduce BPF token object
-  bpf: add BPF token support to BPF_MAP_CREATE command
-  bpf: add BPF token support to BPF_BTF_LOAD command
-  bpf: add BPF token support to BPF_PROG_LOAD command
-  bpf: take into account BPF token when fetching helper protos
-  bpf: consistently use BPF token throughout BPF verifier logic
-  bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free LSM hooks
-  bpf,lsm: refactor bpf_map_alloc/bpf_map_free LSM hooks
-  bpf,lsm: add BPF token LSM hooks
-  libbpf: add bpf_token_create() API
-  libbpf: add BPF token support to bpf_map_create() API
-  libbpf: add BPF token support to bpf_btf_load() API
-  libbpf: add BPF token support to bpf_prog_load() API
-  selftests/bpf: add BPF token-enabled tests
-  bpf,selinux: allocate bpf_security_struct per BPF token
-
- drivers/media/rc/bpf-lirc.c                   |   2 +-
- include/linux/bpf.h                           |  83 ++-
- include/linux/filter.h                        |   2 +-
- include/linux/lsm_hook_defs.h                 |  15 +-
- include/linux/security.h                      |  43 +-
- include/uapi/linux/bpf.h                      |  42 ++
- kernel/bpf/Makefile                           |   2 +-
- kernel/bpf/arraymap.c                         |   2 +-
- kernel/bpf/bpf_lsm.c                          |  15 +-
- kernel/bpf/cgroup.c                           |   6 +-
- kernel/bpf/core.c                             |   3 +-
- kernel/bpf/helpers.c                          |   6 +-
- kernel/bpf/inode.c                            | 101 ++-
- kernel/bpf/syscall.c                          | 215 ++++--
- kernel/bpf/token.c                            | 249 +++++++
- kernel/bpf/verifier.c                         |  13 +-
- kernel/trace/bpf_trace.c                      |   2 +-
- net/core/filter.c                             |  36 +-
- net/ipv4/bpf_tcp_ca.c                         |   2 +-
- net/netfilter/nf_bpf_link.c                   |   2 +-
- security/security.c                           | 101 ++-
- security/selinux/hooks.c                      |  47 +-
- tools/include/uapi/linux/bpf.h                |  42 ++
- tools/lib/bpf/bpf.c                           |  28 +-
- tools/lib/bpf/bpf.h                           |  35 +-
- tools/lib/bpf/libbpf.map                      |   1 +
- .../selftests/bpf/prog_tests/libbpf_probes.c  |   4 +
- .../selftests/bpf/prog_tests/libbpf_str.c     |   6 +
- .../testing/selftests/bpf/prog_tests/token.c  | 672 ++++++++++++++++++
- 29 files changed, 1610 insertions(+), 167 deletions(-)
- create mode 100644 kernel/bpf/token.c
- create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
-
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 4001d11be151..aeffd71cda3c 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -1564,6 +1564,16 @@ struct bpf_link_primer {
+ 	u32 id;
+ };
+ 
++struct bpf_mount_opts {
++	umode_t mode;
++
++	/* BPF token-related delegation options */
++	u64 delegate_cmds;
++	u64 delegate_maps;
++	u64 delegate_progs;
++	u64 delegate_attachs;
++};
++
+ struct bpf_struct_ops_value;
+ struct btf_member;
+ 
+diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+index 1aafb2ff2e95..53313a95fdc6 100644
+--- a/kernel/bpf/inode.c
++++ b/kernel/bpf/inode.c
+@@ -20,6 +20,7 @@
+ #include <linux/filter.h>
+ #include <linux/bpf.h>
+ #include <linux/bpf_trace.h>
++#include <linux/kstrtox.h>
+ #include "preload/bpf_preload.h"
+ 
+ enum bpf_type {
+@@ -599,10 +600,31 @@ EXPORT_SYMBOL(bpf_prog_get_type_path);
+  */
+ static int bpf_show_options(struct seq_file *m, struct dentry *root)
+ {
++	struct bpf_mount_opts *opts = root->d_sb->s_fs_info;
+ 	umode_t mode = d_inode(root)->i_mode & S_IALLUGO & ~S_ISVTX;
+ 
+ 	if (mode != S_IRWXUGO)
+ 		seq_printf(m, ",mode=%o", mode);
++
++	if (opts->delegate_cmds == ~0ULL)
++		seq_printf(m, ",delegate_cmds=any");
++	else if (opts->delegate_cmds)
++		seq_printf(m, ",delegate_cmds=0x%llx", opts->delegate_cmds);
++
++	if (opts->delegate_maps == ~0ULL)
++		seq_printf(m, ",delegate_maps=any");
++	else if (opts->delegate_maps)
++		seq_printf(m, ",delegate_maps=0x%llx", opts->delegate_maps);
++
++	if (opts->delegate_progs == ~0ULL)
++		seq_printf(m, ",delegate_progs=any");
++	else if (opts->delegate_progs)
++		seq_printf(m, ",delegate_progs=0x%llx", opts->delegate_progs);
++
++	if (opts->delegate_attachs == ~0ULL)
++		seq_printf(m, ",delegate_attachs=any");
++	else if (opts->delegate_attachs)
++		seq_printf(m, ",delegate_attachs=0x%llx", opts->delegate_attachs);
+ 	return 0;
+ }
+ 
+@@ -626,22 +648,27 @@ static const struct super_operations bpf_super_ops = {
+ 
+ enum {
+ 	OPT_MODE,
++	OPT_DELEGATE_CMDS,
++	OPT_DELEGATE_MAPS,
++	OPT_DELEGATE_PROGS,
++	OPT_DELEGATE_ATTACHS,
+ };
+ 
+ static const struct fs_parameter_spec bpf_fs_parameters[] = {
+ 	fsparam_u32oct	("mode",			OPT_MODE),
++	fsparam_string	("delegate_cmds",		OPT_DELEGATE_CMDS),
++	fsparam_string	("delegate_maps",		OPT_DELEGATE_MAPS),
++	fsparam_string	("delegate_progs",		OPT_DELEGATE_PROGS),
++	fsparam_string	("delegate_attachs",		OPT_DELEGATE_ATTACHS),
+ 	{}
+ };
+ 
+-struct bpf_mount_opts {
+-	umode_t mode;
+-};
+-
+ static int bpf_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ {
+-	struct bpf_mount_opts *opts = fc->fs_private;
++	struct bpf_mount_opts *opts = fc->s_fs_info;
+ 	struct fs_parse_result result;
+-	int opt;
++	int opt, err;
++	u64 msk;
+ 
+ 	opt = fs_parse(fc, bpf_fs_parameters, param, &result);
+ 	if (opt < 0) {
+@@ -665,6 +692,28 @@ static int bpf_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 	case OPT_MODE:
+ 		opts->mode = result.uint_32 & S_IALLUGO;
+ 		break;
++	case OPT_DELEGATE_CMDS:
++	case OPT_DELEGATE_MAPS:
++	case OPT_DELEGATE_PROGS:
++	case OPT_DELEGATE_ATTACHS:
++		if (strcmp(param->string, "any") == 0) {
++			msk = ~0ULL;
++		} else {
++			err = kstrtou64(param->string, 0, &msk);
++			if (err)
++				return err;
++		}
++		/* Setting delegation mount options requires privileges */
++		if (msk && !capable(CAP_SYS_ADMIN))
++			return -EPERM;
++		switch (opt) {
++		case OPT_DELEGATE_CMDS: opts->delegate_cmds |= msk; break;
++		case OPT_DELEGATE_MAPS: opts->delegate_maps |= msk; break;
++		case OPT_DELEGATE_PROGS: opts->delegate_progs |= msk; break;
++		case OPT_DELEGATE_ATTACHS: opts->delegate_attachs |= msk; break;
++		default: return -EINVAL;
++		}
++		break;
+ 	}
+ 
+ 	return 0;
+@@ -739,10 +788,14 @@ static int populate_bpffs(struct dentry *parent)
+ static int bpf_fill_super(struct super_block *sb, struct fs_context *fc)
+ {
+ 	static const struct tree_descr bpf_rfiles[] = { { "" } };
+-	struct bpf_mount_opts *opts = fc->fs_private;
++	struct bpf_mount_opts *opts = sb->s_fs_info;
+ 	struct inode *inode;
+ 	int ret;
+ 
++	/* Mounting an instance of BPF FS requires privileges */
++	if (fc->user_ns != &init_user_ns && !capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
+ 	ret = simple_fill_super(sb, BPF_FS_MAGIC, bpf_rfiles);
+ 	if (ret)
+ 		return ret;
+@@ -764,7 +817,10 @@ static int bpf_get_tree(struct fs_context *fc)
+ 
+ static void bpf_free_fc(struct fs_context *fc)
+ {
+-	kfree(fc->fs_private);
++	struct bpf_mount_opts *opts = fc->s_fs_info;
++
++	if (opts)
++		kfree(opts);
+ }
+ 
+ static const struct fs_context_operations bpf_context_ops = {
+@@ -786,17 +842,32 @@ static int bpf_init_fs_context(struct fs_context *fc)
+ 
+ 	opts->mode = S_IRWXUGO;
+ 
+-	fc->fs_private = opts;
++	/* start out with no BPF token delegation enabled */
++	opts->delegate_cmds = 0;
++	opts->delegate_maps = 0;
++	opts->delegate_progs = 0;
++	opts->delegate_attachs = 0;
++
++	fc->s_fs_info = opts;
+ 	fc->ops = &bpf_context_ops;
+ 	return 0;
+ }
+ 
++static void bpf_kill_super(struct super_block *sb)
++{
++	struct bpf_mount_opts *opts = sb->s_fs_info;
++
++	kill_litter_super(sb);
++	kfree(opts);
++}
++
+ static struct file_system_type bpf_fs_type = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "bpf",
+ 	.init_fs_context = bpf_init_fs_context,
+ 	.parameters	= bpf_fs_parameters,
+-	.kill_sb	= kill_litter_super,
++	.kill_sb	= bpf_kill_super,
++	.fs_flags	= FS_USERNS_MOUNT,
+ };
+ 
+ static int __init bpf_init(void)
 -- 
 2.34.1
 
