@@ -2,90 +2,112 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FE4C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Nov 2023 17:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0655EC4167B
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Nov 2023 18:25:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234918AbjKJRls (ORCPT
+        id S1345921AbjKJSZD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Nov 2023 12:41:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46510 "EHLO
+        Fri, 10 Nov 2023 13:25:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229723AbjKJRlh (ORCPT
+        with ESMTP id S1345724AbjKJSYI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Nov 2023 12:41:37 -0500
-Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35C5A44BC9
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Nov 2023 09:34:50 -0800 (PST)
-Received: by mail-qv1-xf2e.google.com with SMTP id 6a1803df08f44-66d76904928so14370006d6.2
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Nov 2023 09:34:50 -0800 (PST)
+        Fri, 10 Nov 2023 13:24:08 -0500
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDF0842C0A
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Nov 2023 09:00:33 -0800 (PST)
+Received: by mail-yb1-xb35.google.com with SMTP id 3f1490d57ef6-da819902678so2321164276.1
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Nov 2023 09:00:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1699637689; x=1700242489; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=806uJi/RCmHW2I8pFpVv69nOUnRec8UzjlA94kcoeiU=;
-        b=UIQoOVV5IJUZ28rYJ/HNpUQwin527HydemPkBcE0X8R/G9cJfkfvxCF/x1UMgvTwte
-         iq1bTcn8VVgmtrzMzLFbDHFUCyvB6jlJike1i/9ZymBHGI6iGMGRlJDeQfIshO33MAkb
-         Z1EY0soQt/idvqX+hYfb8SlOUHMdSoITy8Lx9gnNpDVe/0N4YRuQTIPD4R9AiOpbBw2k
-         qFL8MPWFz+ZjPNJv+SybCmvgbn6WCH4/uL17gLMgdL6d8UezmiF+GaJu0FkF4yCvHMVK
-         IlktqkyFywB4W9emoPiPA8dxa0PMxEqQ2qE87A0/tdGiX/p9Wcd5P9FPeogxXSMA5mXK
-         maNA==
+        d=paul-moore.com; s=google; t=1699635633; x=1700240433; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kjh5T8h9wjxj8rwI5k7AoyiBDuBw6RmJFRrtLAbwBaI=;
+        b=Kw4Hrtks//V9GCBFNsZN64xQVmTkfjmZ2nrWWg5E0PLCIPDp8/N4lquzKdEtcwEuAc
+         kpi1NA9RktLVAvG6JCjFaOfiq9amoXyXvHwnszhmYD1Vni0IuWmtBQVeOyleJRm7Eh7L
+         RxFQPh7regjuw7pZBtrgeU37b1FeIfRjSMulzUq5tfsGqoYL+lzbwHmck8OoyAx6A1Wz
+         lLvLDUlqbWoKcKWG3oI9MDTDXhMYsjRJWKINHMrELPSRk60MD+PC5TkkzURFdVnnuDCn
+         x5suwLfwKN1hpizNDNvlfwFpYsSc5uI5QYN+1IXoCPmvmE51mlNaszQLnpMrsqVhgL/g
+         fcvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699637689; x=1700242489;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=806uJi/RCmHW2I8pFpVv69nOUnRec8UzjlA94kcoeiU=;
-        b=BGxh/XMaBioEh55l4FigjY5tsXZHUSIi5mvFVZikZeB21nasZ5MJn2XD8uxrNW1RG6
-         fy11LXOFvz4+d5nWbShMvOjC1GfH0JoDiFhpdXuAoOy4Rq9KtDtyjBI701+oQf7Qnz16
-         CTp6BT4375QFI8B04J1sSyaYwkqoTp/54WRgsDpkIhwEBIG5+/n7UW0Qb7GDnU96oVl/
-         iw/V7aiyyZoDzu7BCJ7ntoCQf/grJUj3XxyLRn8DVFD68+LLr0xqfs2xe+Cgbue6ez+i
-         g8BCw2vPLDquHcbKvo0fbIf3v4PbSvM7Fi7INbr1s/ZC1JbTHLmBzi11+SFRo/JK+wZh
-         n5lQ==
-X-Gm-Message-State: AOJu0Ywx+KDiRjJ09oiRN+IMqDuxi+6uR/MN+Wv4iWeOtVWeJZ9jM88q
-        FO/2U4qI5txRTtGa1fUUefd/0r899EOsV7KIhA==
-X-Google-Smtp-Source: AGHT+IGlsJ1CE/72NXIjn+g6/nhHoLqq8a02UdGwYr0ph42J0bkkAGhcbZaagt1SZrRkO469umVZHw==
-X-Received: by 2002:a05:6214:301a:b0:66d:62a2:3281 with SMTP id ke26-20020a056214301a00b0066d62a23281mr10942068qvb.39.1699637689203;
-        Fri, 10 Nov 2023 09:34:49 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id pz6-20020ad45506000000b0065823d20381sm3051177qvb.8.2023.11.10.09.34.48
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Nov 2023 09:34:48 -0800 (PST)
-From:   Paul Moore <paul@paul-moore.com>
-To:     linux-security-module@vger.kernel.org
-Subject: [PATCH] mailmap: update/replace my old email addresses
-Date:   Fri, 10 Nov 2023 12:34:43 -0500
-Message-ID: <20231110173442.79462-2-paul@paul-moore.com>
-X-Mailer: git-send-email 2.42.1
+        d=1e100.net; s=20230601; t=1699635633; x=1700240433;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kjh5T8h9wjxj8rwI5k7AoyiBDuBw6RmJFRrtLAbwBaI=;
+        b=YlvZdvj/8t4+2s+1PmU/CJU+CYwxgj5fse1cfMwEXfFmvZNNsZz2DwdYJ5yiMN7j23
+         aHRfhvm99b0Iti1Ki9ZxkV2lxxNNEhIOXBgc53l1LKSq9+S9BkmF08czr+3VxwXNk5H+
+         qu444faH8BbuyAV5tCt9qmHH02UK7Pm9cYA3/ztrvuPQi4zwzu/Ayk9DaB/aL5HRyWqA
+         o0wJmz95dCb2c806SicO3dTkbIKoqoOm+VicAWSnChYh4DfpRfx845g/lIHyd6hOP80E
+         dmSxyFJiL/eBiyBZtfNT0A7lFLkNbVqwQ/V3j3vCdvw1vmdnV261CzeW5IN4ZbV+SC1A
+         vn4A==
+X-Gm-Message-State: AOJu0YxaBrFL+F0jGDJRnC+o9OXS/p5fWdY36nqEhfGwjf1YotP4Rb2n
+        UP11ftKRrIp0kM24uDPqAeKvc2raGhO9Q2iOlMVS
+X-Google-Smtp-Source: AGHT+IF6xmEmxjE5GSzP9TQylnTchoY8j5jR2rrNMdTsWqEfb4oLHP+Gj+Gl+tpZ0BvJlavju/oaKfSsOp4JqZZ+zWk=
+X-Received: by 2002:a25:ca17:0:b0:d9a:4870:7943 with SMTP id
+ a23-20020a25ca17000000b00d9a48707943mr8823635ybg.28.1699635632941; Fri, 10
+ Nov 2023 09:00:32 -0800 (PST)
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=956; i=paul@paul-moore.com; h=from:subject; bh=iP2HHgqUdiwTA/MeoUYRjxrBAijj/SmAVsvvAQgg2ok=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBlTmmyQqdV+5wpmJUX/zcLernCvew5yD3yRqYaS LF3vRHAL3OJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZU5psgAKCRDqIPLalzeJ c7cvEACNKcvlxRmKwAUbTbI2W13rrMA1+sWW9Mcpfb9OanGu9/X8VTtIdIjfwxPWct3JStw0Zgb coyLoQ2xPGqlQrzXxX/Ef401B81j4C+6Db4/CTSxNDZxrGsRL6ZUkOWPfDQJ0AOV79Z6vkp58ca 5Pk5A1QMvKjxHeXIcQ7C+NCmGoJqphtOm5ajF98Y2VG9evyb7G8k89WOV24VsgBSqgVawihqxx8 nBEzBfPqbYZ//NPP/43S5/Qu/mNIEvLdvvmXh1MMx1Pz2WUsgDwKRKbgNxjSbNQnWnSfmxKr6Jf j2wZpnfFIhnunf35T/RwykpvQRwT/2bKXTcDCzfqug5PX1dE4bcn9fFzK04CGzYFn+YKN7Y1P/f dmxaLMmJ4XETwFTg9WwCKF6V6SSIx6LXpjD4Q+CpfLeMr+IKgM2HMThxEkOyzbRHNGhOAspBavJ hLe4ApkeGO+bzQkZhElPqLHXv49yBxaHu152Dug5UAWIR+ictmz/SGcDka+eX5rl6Xn04mpfkIG ZBF0Fjxw764n2QEBZicdrAcKpthSptT+8zGIMXU6X5OZO9r83JFJDSbguEowS+2Ozde/ez64Nld pJG1+Eh4j2CY4LggVs1BN5T74s8BBJkUwFMdn1MB7If2Zqupa7oEY5vaZFtmI5wQsVZRz/I2nE7 Ql4Lzt/onBldziQ==
-X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
-Content-Transfer-Encoding: 8bit
+References: <20231025140205.3586473-5-mszeredi@redhat.com> <4ab327f80c4f98dffa5736a1acba3e0d.paul@paul-moore.com>
+ <20231108-zwerge-unheil-b3f48a84038d@brauner> <CAHC9VhSLGyFRSbeZXE7z61Y2aDJi_1Dedjw0ioFOckRCs0CRaA@mail.gmail.com>
+In-Reply-To: <CAHC9VhSLGyFRSbeZXE7z61Y2aDJi_1Dedjw0ioFOckRCs0CRaA@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 10 Nov 2023 12:00:22 -0500
+Message-ID: <CAHC9VhRvYua4noiHbMqcAqz=Rkz=pxSgp5fVxXX+uhz61jYFag@mail.gmail.com>
+Subject: Re: [PATCH v4 4/6] add statmount(2) syscall
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew House <mattlloydhouse@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I was recently reminded by someone who was unable to reach my old
-email address that I really should update the kernel's .mailmap
-so that people looking for me in old commits can reach my current
-email.
+On Wed, Nov 8, 2023 at 3:10=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
+> On Wed, Nov 8, 2023 at 2:58=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
+> > > > +static int do_statmount(struct stmt_state *s)
+> > > > +{
+> > > > +   struct statmnt *sm =3D &s->sm;
+> > > > +   struct mount *m =3D real_mount(s->mnt);
+> > > > +   size_t copysize =3D min_t(size_t, s->bufsize, sizeof(*sm));
+> > > > +   int err;
+> > > > +
+> > > > +   err =3D security_sb_statfs(s->mnt->mnt_root);
+> > > > +   if (err)
+> > > > +           return err;
+> > > > +
+> > > > +   if (!capable(CAP_SYS_ADMIN) &&
+> > > > +       !is_path_reachable(m, m->mnt.mnt_root, &s->root))
+> > > > +           return -EPERM;
+> > >
+> > > In order to be consistent with our typical access control ordering,
+> > > please move the security_sb_statfs() call down to here, after the
+> > > capability checks.
+> >
+> > I've moved the security_sb_statfs() calls accordingly.
+>
+> Okay, good.  Did I miss a comment or a patch where that happened?  I
+> looked over the patchset and comments yesterday and didn't recall
+> seeing anything about shuffling the access control checks.
 
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- .mailmap | 2 ++
- 1 file changed, 2 insertions(+)
+Gentle ping on this.  I'm asking because I know there have been issues
+lately with the lists and some mail providers and I want to make sure
+I'm not missing anything, I double checked lore again and didn't see
+anything there either, but I might be missing it.
 
-diff --git a/.mailmap b/.mailmap
-index 43031441b2d9..2ba581ebb2cf 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -469,6 +469,8 @@ Paul E. McKenney <paulmck@kernel.org> <paulmck@linux.vnet.ibm.com>
- Paul E. McKenney <paulmck@kernel.org> <paulmck@us.ibm.com>
- Paul Mackerras <paulus@ozlabs.org> <paulus@samba.org>
- Paul Mackerras <paulus@ozlabs.org> <paulus@au1.ibm.com>
-+Paul Moore <paul@paul-moore.com> <paul.moore@hp.com>
-+Paul Moore <paul@paul-moore.com> <pmoore@redhat.com>
- Pavankumar Kondeti <quic_pkondeti@quicinc.com> <pkondeti@codeaurora.org>
- Peter A Jonsson <pj@ludd.ltu.se>
- Peter Oruba <peter.oruba@amd.com>
--- 
-2.42.1
-
+--=20
+paul-moore.com
