@@ -2,204 +2,90 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5388C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Nov 2023 17:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FE4C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Nov 2023 17:41:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231497AbjKJRls (ORCPT
+        id S234918AbjKJRls (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Fri, 10 Nov 2023 12:41:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46524 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234766AbjKJRlh (ORCPT
+        with ESMTP id S229723AbjKJRlh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Fri, 10 Nov 2023 12:41:37 -0500
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CE7644BC8
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Nov 2023 09:34:35 -0800 (PST)
-Received: by mail-qt1-x82d.google.com with SMTP id d75a77b69052e-41cc537ed54so13521471cf.2
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Nov 2023 09:34:35 -0800 (PST)
+Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35C5A44BC9
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Nov 2023 09:34:50 -0800 (PST)
+Received: by mail-qv1-xf2e.google.com with SMTP id 6a1803df08f44-66d76904928so14370006d6.2
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Nov 2023 09:34:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1699637674; x=1700242474; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1699637689; x=1700242489; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gb2GPQxPJQ5IJEeZ0DL1pZGv1tdizA9Fxs4gXLll26Q=;
-        b=CrbQUq/dQZFug2Ek1ziIilnwER7esmmm/zf9VugEvKPeVg18ZggxrsnWoDDWeiAUwV
-         8F/Yz8osaCewInNtfeYKrTQSfq+86Nay5TfF9jOTrLa3MqPE/w7L9jH4xO351NB1hg0H
-         coZQ9Sq6Hxz2L7j1nLIv79fsRtQ9lb4j9/3XYuvergr8OQs4OpthYvfZQH8457xdyNcs
-         5YSS5XVQWVeBnYdp+1WjhywrJNklfxaXq4xcx8RBGBg+4kg4UNRw5Y7nO/BvXlEULzcE
-         DpduAR2xxhUJg9uEpMqbZuuslJQiHh2+kF2KwVCwrR4u69ZVTxF4V5+f/Fuu90jWsn+k
-         honw==
+        bh=806uJi/RCmHW2I8pFpVv69nOUnRec8UzjlA94kcoeiU=;
+        b=UIQoOVV5IJUZ28rYJ/HNpUQwin527HydemPkBcE0X8R/G9cJfkfvxCF/x1UMgvTwte
+         iq1bTcn8VVgmtrzMzLFbDHFUCyvB6jlJike1i/9ZymBHGI6iGMGRlJDeQfIshO33MAkb
+         Z1EY0soQt/idvqX+hYfb8SlOUHMdSoITy8Lx9gnNpDVe/0N4YRuQTIPD4R9AiOpbBw2k
+         qFL8MPWFz+ZjPNJv+SybCmvgbn6WCH4/uL17gLMgdL6d8UezmiF+GaJu0FkF4yCvHMVK
+         IlktqkyFywB4W9emoPiPA8dxa0PMxEqQ2qE87A0/tdGiX/p9Wcd5P9FPeogxXSMA5mXK
+         maNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699637674; x=1700242474;
+        d=1e100.net; s=20230601; t=1699637689; x=1700242489;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gb2GPQxPJQ5IJEeZ0DL1pZGv1tdizA9Fxs4gXLll26Q=;
-        b=i1lpkqWmwp1ZzYnwAJsNoBv5f+CxEKuRkz3c0RzHsBgTtQhNZwFJfi0TMx1EJwv4fX
-         qXRgjqVN/Ap1lFvd5YTwTIOECLg0tLs9BfZ5ZHYm0qE6dxfdf7+Q6FvduG144wcFnvmv
-         WSj7azRvBdXa4aqR8iangYWVVmo16/p5P+UV5NarfPIDebuub5Vxu/SF/ohzy0GyPexw
-         DDxw+pA+Qf6W03VzzTzDDL/HwlwKm85+VOVfGOwtmxWuJhqcXwOaa/kFW3e1OZF9XUBO
-         IzQfgxf6qKLgtiu1NDWDJEXZODagmk2uZ03Uae0s1uM4yUMxgAUZIsxPimj3bbcIlIcv
-         PJXA==
-X-Gm-Message-State: AOJu0YzkA1kne/k2yfQGtRsmk7UwRVZ5Qt3H9BbIRDFHqXNXdJul8ZCZ
-        1FfMzvM75L7LWORUQtuXZqSDmtn+oSHHytTmOw==
-X-Google-Smtp-Source: AGHT+IHWiQ1cz3/a8ixQeTq8PhbMrmf23GEBydZ8AR8pfng3eiEGcYszTurGmSzuo5GMJ46w0BS/rg==
-X-Received: by 2002:a05:622a:60e:b0:41e:2314:8dde with SMTP id z14-20020a05622a060e00b0041e23148ddemr9194913qta.38.1699637674067;
-        Fri, 10 Nov 2023 09:34:34 -0800 (PST)
+        bh=806uJi/RCmHW2I8pFpVv69nOUnRec8UzjlA94kcoeiU=;
+        b=BGxh/XMaBioEh55l4FigjY5tsXZHUSIi5mvFVZikZeB21nasZ5MJn2XD8uxrNW1RG6
+         fy11LXOFvz4+d5nWbShMvOjC1GfH0JoDiFhpdXuAoOy4Rq9KtDtyjBI701+oQf7Qnz16
+         CTp6BT4375QFI8B04J1sSyaYwkqoTp/54WRgsDpkIhwEBIG5+/n7UW0Qb7GDnU96oVl/
+         iw/V7aiyyZoDzu7BCJ7ntoCQf/grJUj3XxyLRn8DVFD68+LLr0xqfs2xe+Cgbue6ez+i
+         g8BCw2vPLDquHcbKvo0fbIf3v4PbSvM7Fi7INbr1s/ZC1JbTHLmBzi11+SFRo/JK+wZh
+         n5lQ==
+X-Gm-Message-State: AOJu0Ywx+KDiRjJ09oiRN+IMqDuxi+6uR/MN+Wv4iWeOtVWeJZ9jM88q
+        FO/2U4qI5txRTtGa1fUUefd/0r899EOsV7KIhA==
+X-Google-Smtp-Source: AGHT+IGlsJ1CE/72NXIjn+g6/nhHoLqq8a02UdGwYr0ph42J0bkkAGhcbZaagt1SZrRkO469umVZHw==
+X-Received: by 2002:a05:6214:301a:b0:66d:62a2:3281 with SMTP id ke26-20020a056214301a00b0066d62a23281mr10942068qvb.39.1699637689203;
+        Fri, 10 Nov 2023 09:34:49 -0800 (PST)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id r17-20020ac85e91000000b0041520676966sm2952290qtx.47.2023.11.10.09.34.33
+        by smtp.gmail.com with ESMTPSA id pz6-20020ad45506000000b0065823d20381sm3051177qvb.8.2023.11.10.09.34.48
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Nov 2023 09:34:33 -0800 (PST)
+        Fri, 10 Nov 2023 09:34:48 -0800 (PST)
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org
-Subject: [PATCH] lsm: mark the lsm_id variables are marked as static
-Date:   Fri, 10 Nov 2023 12:34:28 -0500
-Message-ID: <20231110173427.79275-2-paul@paul-moore.com>
+Subject: [PATCH] mailmap: update/replace my old email addresses
+Date:   Fri, 10 Nov 2023 12:34:43 -0500
+Message-ID: <20231110173442.79462-2-paul@paul-moore.com>
 X-Mailer: git-send-email 2.42.1
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4707; i=paul@paul-moore.com; h=from:subject; bh=vYD1CzT8jhOszJn7pO4nFORSiKDtLHYhhUEvQDEmwVA=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBlTmmjXTrmyDYJiqHYVMlG/KbBpGmm463iFXCe0 KhW2QGMI/+JAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZU5powAKCRDqIPLalzeJ c3MmEADEf87j+xFBWLUzvmv8GMYwY/6i3wIRp8paBb0AXrOGpf3Wud5Cf8SsawO1NWn2ITwAh9V foBSNSbBEJGLGMGhiye9mXOBvZBGpP58ZKNaTy1z359D40av1hp9jrp8OlB1Gbu1rvhRKl+oTVZ Uy6r8cbuVO19eyrfeYPqevauJcRxjd32FX5hX+Y79TDYkZX0EybBoJDEx3Gt/7hZITYbn7kutou pUROsy0UR9U90645VdybumL20hi1bL64dY55NAHdT+Yn4S1sQIwK+LvsFt+LtlzspmtmDS2Y7y5 QKyzprkDPr1rFHdqtUdz/4+T6KAF3Ud9MZHMj3Y7zeP2KxdxcKq+RecF6pXgqSfP2EtXbaGxspK 5JTUw1iRYfL0lUghlHiWYhU7WMI//jMb5+SsHB6BlVQ/saab4yHakIgfEdb8UwDN8jBVFpsCEls CEszW8elNvD7ak+MBjeACe04X5ThINNg2lr7QFO7VOEPSz37IlG0zAC6quB3rZPhRknbpEx5KED vvfD9KGOMoeBh2XXrlxqfLMCGV7WMFvPc3+yq8jz+qQvr97yDxZfpb/jaLtFkA3ill4pqHvXOn3 v0LcdCSpbhlFXytKLUEbBZYBDVsj42btTO5GF87Jj8t/l1IYr88R/iNVjpeCZ8kYe4Yly++xxmb MiXNpT32pFSYnBA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=956; i=paul@paul-moore.com; h=from:subject; bh=iP2HHgqUdiwTA/MeoUYRjxrBAijj/SmAVsvvAQgg2ok=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBlTmmyQqdV+5wpmJUX/zcLernCvew5yD3yRqYaS LF3vRHAL3OJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZU5psgAKCRDqIPLalzeJ c7cvEACNKcvlxRmKwAUbTbI2W13rrMA1+sWW9Mcpfb9OanGu9/X8VTtIdIjfwxPWct3JStw0Zgb coyLoQ2xPGqlQrzXxX/Ef401B81j4C+6Db4/CTSxNDZxrGsRL6ZUkOWPfDQJ0AOV79Z6vkp58ca 5Pk5A1QMvKjxHeXIcQ7C+NCmGoJqphtOm5ajF98Y2VG9evyb7G8k89WOV24VsgBSqgVawihqxx8 nBEzBfPqbYZ//NPP/43S5/Qu/mNIEvLdvvmXh1MMx1Pz2WUsgDwKRKbgNxjSbNQnWnSfmxKr6Jf j2wZpnfFIhnunf35T/RwykpvQRwT/2bKXTcDCzfqug5PX1dE4bcn9fFzK04CGzYFn+YKN7Y1P/f dmxaLMmJ4XETwFTg9WwCKF6V6SSIx6LXpjD4Q+CpfLeMr+IKgM2HMThxEkOyzbRHNGhOAspBavJ hLe4ApkeGO+bzQkZhElPqLHXv49yBxaHu152Dug5UAWIR+ictmz/SGcDka+eX5rl6Xn04mpfkIG ZBF0Fjxw764n2QEBZicdrAcKpthSptT+8zGIMXU6X5OZO9r83JFJDSbguEowS+2Ozde/ez64Nld pJG1+Eh4j2CY4LggVs1BN5T74s8BBJkUwFMdn1MB7If2Zqupa7oEY5vaZFtmI5wQsVZRz/I2nE7 Ql4Lzt/onBldziQ==
 X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-As the kernel test robot helpfully reminded us, all of the lsm_id
-instances defined inside the various LSMs should be marked as static.
-The one exception is Landlock which uses its lsm_id variable across
-multiple source files with an extern declaration in a header file.
+I was recently reminded by someone who was unable to reach my old
+email address that I really should update the kernel's .mailmap
+so that people looking for me in old commits can reach my current
+email.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Suggested-by: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
- security/apparmor/lsm.c    | 2 +-
- security/bpf/hooks.c       | 2 +-
- security/commoncap.c       | 2 +-
- security/loadpin/loadpin.c | 2 +-
- security/safesetid/lsm.c   | 2 +-
- security/selinux/hooks.c   | 2 +-
- security/smack/smack_lsm.c | 2 +-
- security/tomoyo/tomoyo.c   | 2 +-
- security/yama/yama_lsm.c   | 2 +-
- 9 files changed, 9 insertions(+), 9 deletions(-)
+ .mailmap | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 332198e0a017..e490a7000408 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1454,7 +1454,7 @@ struct lsm_blob_sizes apparmor_blob_sizes __ro_after_init = {
- 	.lbs_task = sizeof(struct aa_task_ctx),
- };
- 
--const struct lsm_id apparmor_lsmid = {
-+static const struct lsm_id apparmor_lsmid = {
- 	.name = "apparmor",
- 	.id = LSM_ID_APPARMOR,
- };
-diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
-index 91011e0c361a..57b9ffd53c98 100644
---- a/security/bpf/hooks.c
-+++ b/security/bpf/hooks.c
-@@ -16,7 +16,7 @@ static struct security_hook_list bpf_lsm_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(task_free, bpf_task_storage_free),
- };
- 
--const struct lsm_id bpf_lsmid = {
-+static const struct lsm_id bpf_lsmid = {
- 	.name = "bpf",
- 	.id = LSM_ID_BPF,
- };
-diff --git a/security/commoncap.c b/security/commoncap.c
-index a64c0c8592bb..162d96b3a676 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -1441,7 +1441,7 @@ int cap_mmap_file(struct file *file, unsigned long reqprot,
- 
- #ifdef CONFIG_SECURITY
- 
--const struct lsm_id capability_lsmid = {
-+static const struct lsm_id capability_lsmid = {
- 	.name = "capability",
- 	.id = LSM_ID_CAPABILITY,
- };
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index d682a851de58..8e93cda130f1 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -209,7 +209,7 @@ static int loadpin_load_data(enum kernel_load_data_id id, bool contents)
- 	return loadpin_check(NULL, (enum kernel_read_file_id) id);
- }
- 
--const struct lsm_id loadpin_lsmid = {
-+static const struct lsm_id loadpin_lsmid = {
- 	.name = "loadpin",
- 	.id = LSM_ID_LOADPIN,
- };
-diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-index f42d5af5ffb0..1ba564f097f5 100644
---- a/security/safesetid/lsm.c
-+++ b/security/safesetid/lsm.c
-@@ -262,7 +262,7 @@ static int safesetid_task_fix_setgroups(struct cred *new, const struct cred *old
- 	return 0;
- }
- 
--const struct lsm_id safesetid_lsmid = {
-+static const struct lsm_id safesetid_lsmid = {
- 	.name = "safesetid",
- 	.id = LSM_ID_SAFESETID,
- };
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 942f2b8c4ebb..b340425ccfae 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7031,7 +7031,7 @@ static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
- }
- #endif /* CONFIG_IO_URING */
- 
--const struct lsm_id selinux_lsmid = {
-+static const struct lsm_id selinux_lsmid = {
- 	.name = "selinux",
- 	.id = LSM_ID_SELINUX,
- };
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 99664c8cf867..53336d7daa93 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -5006,7 +5006,7 @@ struct lsm_blob_sizes smack_blob_sizes __ro_after_init = {
- 	.lbs_xattr_count = SMACK_INODE_INIT_XATTRS,
- };
- 
--const struct lsm_id smack_lsmid = {
-+static const struct lsm_id smack_lsmid = {
- 	.name = "smack",
- 	.id = LSM_ID_SMACK,
- };
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 722205433105..e10491f155a5 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -543,7 +543,7 @@ static void tomoyo_task_free(struct task_struct *task)
- 	}
- }
- 
--const struct lsm_id tomoyo_lsmid = {
-+static const struct lsm_id tomoyo_lsmid = {
- 	.name = "tomoyo",
- 	.id = LSM_ID_TOMOYO,
- };
-diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-index 5cdff292fcae..49dc52b454ef 100644
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -422,7 +422,7 @@ static int yama_ptrace_traceme(struct task_struct *parent)
- 	return rc;
- }
- 
--const struct lsm_id yama_lsmid = {
-+static const struct lsm_id yama_lsmid = {
- 	.name = "yama",
- 	.id = LSM_ID_YAMA,
- };
+diff --git a/.mailmap b/.mailmap
+index 43031441b2d9..2ba581ebb2cf 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -469,6 +469,8 @@ Paul E. McKenney <paulmck@kernel.org> <paulmck@linux.vnet.ibm.com>
+ Paul E. McKenney <paulmck@kernel.org> <paulmck@us.ibm.com>
+ Paul Mackerras <paulus@ozlabs.org> <paulus@samba.org>
+ Paul Mackerras <paulus@ozlabs.org> <paulus@au1.ibm.com>
++Paul Moore <paul@paul-moore.com> <paul.moore@hp.com>
++Paul Moore <paul@paul-moore.com> <pmoore@redhat.com>
+ Pavankumar Kondeti <quic_pkondeti@quicinc.com> <pkondeti@codeaurora.org>
+ Peter A Jonsson <pj@ludd.ltu.se>
+ Peter Oruba <peter.oruba@amd.com>
 -- 
 2.42.1
 
