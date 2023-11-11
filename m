@@ -2,40 +2,39 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D4AC4332F
-	for <linux-security-module@archiver.kernel.org>; Sat, 11 Nov 2023 10:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E7EC4332F
+	for <linux-security-module@archiver.kernel.org>; Sat, 11 Nov 2023 10:13:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229671AbjKKKMR (ORCPT
+        id S230319AbjKKKNF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 11 Nov 2023 05:12:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53736 "EHLO
+        Sat, 11 Nov 2023 05:13:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230292AbjKKKMQ (ORCPT
+        with ESMTP id S230292AbjKKKNE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 11 Nov 2023 05:12:16 -0500
+        Sat, 11 Nov 2023 05:13:04 -0500
 Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D19133860
-        for <linux-security-module@vger.kernel.org>; Sat, 11 Nov 2023 02:12:12 -0800 (PST)
-Received: from fsav115.sakura.ne.jp (fsav115.sakura.ne.jp [27.133.134.242])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 3ABABcet036629;
-        Sat, 11 Nov 2023 19:11:38 +0900 (JST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A62A73A8E
+        for <linux-security-module@vger.kernel.org>; Sat, 11 Nov 2023 02:13:01 -0800 (PST)
+Received: from fsav312.sakura.ne.jp (fsav312.sakura.ne.jp [153.120.85.143])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 3ABACRBR036798;
+        Sat, 11 Nov 2023 19:12:27 +0900 (JST)
         (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
 Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav115.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav115.sakura.ne.jp);
- Sat, 11 Nov 2023 19:11:38 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav115.sakura.ne.jp)
+ by fsav312.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav312.sakura.ne.jp);
+ Sat, 11 Nov 2023 19:12:27 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav312.sakura.ne.jp)
 Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
         (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 3ABA7mvb035781
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 3ABA7mvc035781
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 11 Nov 2023 19:11:38 +0900 (JST)
+        Sat, 11 Nov 2023 19:12:26 +0900 (JST)
         (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <39f27c5d-2c41-4f7b-a6e9-740a6af4b364@I-love.SAKURA.ne.jp>
-Date:   Sat, 11 Nov 2023 19:11:38 +0900
+Message-ID: <360548d7-25b5-43e8-9d6d-d6afd31a1f49@I-love.SAKURA.ne.jp>
+Date:   Sat, 11 Nov 2023 19:12:26 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 4/5] LSM: Add a LSM module which handles dynamically
- appendable LSM hooks.
+Subject: [PATCH 5/5] LSM: A sample of dynamically appendable LSM module.
 Content-Language: en-US
 From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 To:     linux-security-module <linux-security-module@vger.kernel.org>,
@@ -53,224 +52,60 @@ Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-TOMOYO security module will use this functionality.
+This patch demonstrates how to use PATCH 4/5. This patch is not for merge.
 
-By the way, I was surprised to see /proc/kallsyms containing many hundreds
-of symbols due to assigning "number of LSM hooks" * "number of built-in
-LSMs" for static call slots. Since the motivation of converting from
-linked list to static calls was that indirect function calls are slow,
-I expect that overhead of testing whether the list is empty is negligible.
-
-Should this LSM module occupy one set of static call slots (so that
-list_for_each_entry() is called only when this LSM module is enabled) ?
-If the overhead of testing list_for_each_entry() on an empty list is
-negligible, this module does not need to occupy one set of static call
-slots? I don't have a native hardware that is suitable for performance
-measurement...
-
-Also, since LSM hook assignment is handled by a macro, we could somehow
-let the hook assignment macro define one static call slot and call the
-next LSM hook (i.e. move static_call() from security/security.c to
-individual LSM modules). Then, loop unrolling won't be needed, and
-total number of symbols reserved for static calls will be reduced to
-"number of LSM hooks" + "sum of all LSM callbacks which are built-into
-vmlinux". Side effect of such approach is that kernel stack usage
-increases due to nested static calls. But since nest level of static
-calls is very small, kernel stack usage won't become a real problem...
+By the way, should mod_lsm_dynamic_hooks be directly exported to LKM-based
+LSMs rather than exporting mod_lsm_add_hooks() to LKM-based LSMs, so that
+LKM-based LSMs can check whether hooks which need special considerations
+(e.g. security_secid_to_secctx() and security_xfrm_state_pol_flow_match())
+are in-use and decide what to do?
 
 Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 ---
- include/linux/lsm_count.h |   2 +-
- include/linux/lsm_hooks.h |  16 ++++++
- include/uapi/linux/lsm.h  |   1 +
- security/Makefile         |   2 +-
- security/mod_lsm.c        | 100 ++++++++++++++++++++++++++++++++++++++
- security/security.c       |   2 +-
- 6 files changed, 120 insertions(+), 3 deletions(-)
- create mode 100644 security/mod_lsm.c
+ demo/Makefile |  1 +
+ demo/demo.c   | 25 +++++++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
+ create mode 100644 demo/Makefile
+ create mode 100644 demo/demo.c
 
-diff --git a/include/linux/lsm_count.h b/include/linux/lsm_count.h
-index dbb3c8573959..de8db3c77169 100644
---- a/include/linux/lsm_count.h
-+++ b/include/linux/lsm_count.h
-@@ -19,7 +19,7 @@
-  * Capabilities is enabled when CONFIG_SECURITY is enabled.
-  */
- #if IS_ENABLED(CONFIG_SECURITY)
--#define CAPABILITIES_ENABLED 1,
-+#define CAPABILITIES_ENABLED 1, 1,
- #else
- #define CAPABILITIES_ENABLED
- #endif
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 135b3f58f8d2..669ee9406a62 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -215,4 +215,20 @@ extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
- extern int lsm_inode_alloc(struct inode *inode);
- extern struct lsm_static_calls_table static_calls_table __ro_after_init;
- 
-+/* Definition of all modular callbacks. */
-+struct security_hook_mappings {
-+#define LSM_HOOK(RET, DEFAULT, NAME, ...)	\
-+	struct static_call_key *key_##NAME;	\
-+	RET (*NAME)(__VA_ARGS__);
-+#include <linux/lsm_hook_defs.h>
-+} /* __randomize_layout is useless here, for this is a "const __initdata" struct. */;
-+
-+/* Type of individual modular callback. */
-+struct security_hook_list2 {
-+	struct list_head list;
-+	union security_list_options hook;
-+} __randomize_layout;
-+
-+extern int mod_lsm_add_hooks(const struct security_hook_mappings *maps);
-+
- #endif /* ! __LINUX_LSM_HOOKS_H */
-diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
-index f0386880a78e..d458b9a123d1 100644
---- a/include/uapi/linux/lsm.h
-+++ b/include/uapi/linux/lsm.h
-@@ -61,6 +61,7 @@ struct lsm_ctx {
- #define LSM_ID_LOCKDOWN		108
- #define LSM_ID_BPF		109
- #define LSM_ID_LANDLOCK		110
-+#define LSM_ID_MOD_LSM		111
- 
- /*
-  * LSM_ATTR_XXX definitions identify different LSM attributes
-diff --git a/security/Makefile b/security/Makefile
-index 59f238490665..250b7ba23502 100644
---- a/security/Makefile
-+++ b/security/Makefile
-@@ -11,7 +11,7 @@ obj-$(CONFIG_SECURITY) 			+= lsm_syscalls.o
- obj-$(CONFIG_MMU)			+= min_addr.o
- 
- # Object file lists
--obj-$(CONFIG_SECURITY)			+= security.o
-+obj-$(CONFIG_SECURITY)			+= security.o mod_lsm.o
- obj-$(CONFIG_SECURITYFS)		+= inode.o
- obj-$(CONFIG_SECURITY_SELINUX)		+= selinux/
- obj-$(CONFIG_SECURITY_SMACK)		+= smack/
-diff --git a/security/mod_lsm.c b/security/mod_lsm.c
+diff --git a/demo/Makefile b/demo/Makefile
 new file mode 100644
-index 000000000000..f148323b724b
+index 000000000000..9b2ef5f08392
 --- /dev/null
-+++ b/security/mod_lsm.c
-@@ -0,0 +1,100 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
++++ b/demo/Makefile
+@@ -0,0 +1 @@
++obj-m = demo.o
+diff --git a/demo/demo.c b/demo/demo.c
+new file mode 100644
+index 000000000000..6f6f603b8cd7
+--- /dev/null
++++ b/demo/demo.c
+@@ -0,0 +1,25 @@
 +#include <linux/lsm_hooks.h>
++#include <uapi/linux/lsm.h>
 +
-+/* List of registered modular callbacks. */
-+static struct {
-+#define LSM_HOOK(RET, DEFAULT, NAME, ...) struct list_head NAME;
-+#include <linux/lsm_hook_defs.h>
-+} mod_lsm_dynamic_hooks;
-+
-+/* Get LSM_CALL_ARGS_xxx definitions. */
-+#include <linux/lsm_hook_args.h>
-+/* A built-in callback for calling modular "int" callbacks. */
 +#define LSM_INT_HOOK(RET, DEFAULT, NAME, ...)				\
-+	static RET mod_lsm_##NAME(__VA_ARGS__) {			\
-+		int RC = DEFAULT;					\
-+		struct security_hook_list2 *P;				\
-+									\
++	static RET test_##NAME(__VA_ARGS__) {				\
 +		pr_info_once("Called %s\n", __func__);			\
-+		list_for_each_entry(P, &mod_lsm_dynamic_hooks.NAME, list) { \
-+			RC = P->hook.NAME(LSM_CALL_ARGS_##NAME);	\
-+			if (RC != 0)					\
-+				break;					\
-+		}							\
-+		return RC;						\
++		return DEFAULT;						\
 +	}
-+/* A built-in callback for calling modular "void" callbacks. */
 +#define LSM_VOID_HOOK(RET, DEFAULT, NAME, ...)				\
-+	static RET mod_lsm_##NAME(__VA_ARGS__) {			\
-+		struct security_hook_list2 *P;				\
-+									\
++	static RET test_##NAME(__VA_ARGS__) {				\
 +		pr_info_once("Called %s\n", __func__);			\
-+		list_for_each_entry(P, &mod_lsm_dynamic_hooks.NAME, list) { \
-+			P->hook.NAME(LSM_CALL_ARGS_##NAME);		\
-+		}							\
 +	}
-+/* Generate all built-in callbacks here. */
 +#include <linux/lsm_hook_defs.h>
 +
-+/* Initialize all built-in callbacks here. */
-+#define LSM_HOOK(RET, DEFAULT, NAME, ...) LSM_HOOK_INIT(NAME, mod_lsm_##NAME),
-+static struct security_hook_list mod_lsm_builtin_hooks[] __ro_after_init = {
++static const struct security_hook_mappings test_callbacks __initconst = {
++#define LSM_HOOK(RET, DEFAULT, NAME, ...) .NAME = test_##NAME,
 +#include <linux/lsm_hook_defs.h>
 +};
 +
-+static int mod_lsm_enabled __ro_after_init = 1;
-+static struct lsm_blob_sizes mod_lsm_blob_sizes __ro_after_init = { };
-+static const struct lsm_id mod_lsm_lsmid = {
-+	.name = "mod_lsm",
-+	.id = LSM_ID_MOD_LSM,
-+};
-+
-+static int __init mod_lsm_init(void)
++static int __init test_init(void)
 +{
-+	/* Initialize modular callbacks list. */
-+#define LSM_HOOK(RET, DEFAULT, NAME, ...) INIT_LIST_HEAD(&mod_lsm_dynamic_hooks.NAME);
-+#include <linux/lsm_hook_defs.h>
-+	/* Register built-in callbacks. */
-+	security_add_hooks(mod_lsm_builtin_hooks, ARRAY_SIZE(mod_lsm_builtin_hooks), &mod_lsm_lsmid);
-+	return 0;
++	return mod_lsm_add_hooks(&test_callbacks);
 +}
-+
-+DEFINE_LSM(mod_lsm) = {
-+	.name = "mod_lsm",
-+	.enabled = &mod_lsm_enabled,
-+	.flags = 0,
-+	.blobs = &mod_lsm_blob_sizes,
-+	.init = mod_lsm_init,
-+};
-+
-+/* The only exported function for registering modular callbacks. */
-+int mod_lsm_add_hooks(const struct security_hook_mappings *maps)
-+{
-+	struct security_hook_list2 *entry;
-+	int count = 0;
-+
-+	if (!mod_lsm_enabled) {
-+		pr_info_once("Loadable LSM support is not enabled.\n");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	/* Count how meny callbacks are implemented. */
-+#define LSM_HOOK(RET, DEFAULT, NAME, ...) do { if (maps->NAME) count++; } while (0);
-+#include <linux/lsm_hook_defs.h>
-+	if (!count)
-+		return -EINVAL;
-+	/* Allocate memory for registering implemented callbacks. */
-+	entry = kmalloc_array(count, sizeof(struct security_hook_list2), GFP_KERNEL);
-+	if (!entry)
-+		return -ENOMEM;
-+	/* Registering imdividual callbacks. */
-+	count = 0;
-+#define LSM_HOOK(RET, DEFAULT, NAME, ...) do { if (maps->NAME) {	\
-+			entry[count].hook.NAME = maps->NAME;		\
-+			list_add_tail(&entry[count].list, &mod_lsm_dynamic_hooks.NAME); \
-+			count++;					\
-+		} } while (0);
-+#include <linux/lsm_hook_defs.h>
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(mod_lsm_add_hooks);
-diff --git a/security/security.c b/security/security.c
-index 986aa5e6e29d..a34530fa042a 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -42,7 +42,7 @@
-  * The capability module is accounted for by CONFIG_SECURITY
-  */
- #define LSM_CONFIG_COUNT ( \
--	(IS_ENABLED(CONFIG_SECURITY) ? 1 : 0) + \
-+	(IS_ENABLED(CONFIG_SECURITY) ? 2 : 0) + \
- 	(IS_ENABLED(CONFIG_SECURITY_SELINUX) ? 1 : 0) + \
- 	(IS_ENABLED(CONFIG_SECURITY_SMACK) ? 1 : 0) + \
- 	(IS_ENABLED(CONFIG_SECURITY_TOMOYO) ? 1 : 0) + \
++module_init(test_init);
++MODULE_LICENSE("GPL");
 -- 
 2.34.1
 
