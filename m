@@ -2,246 +2,100 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 671BCC4332F
-	for <linux-security-module@archiver.kernel.org>; Sat, 11 Nov 2023 00:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B86F4C4332F
+	for <linux-security-module@archiver.kernel.org>; Sat, 11 Nov 2023 10:08:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229594AbjKKAHV (ORCPT
+        id S229987AbjKKKIj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Nov 2023 19:07:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54090 "EHLO
+        Sat, 11 Nov 2023 05:08:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjKKAHU (ORCPT
+        with ESMTP id S229671AbjKKKIi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Nov 2023 19:07:20 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E71163C39;
-        Fri, 10 Nov 2023 16:07:15 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-5409bc907edso4141985a12.0;
-        Fri, 10 Nov 2023 16:07:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699661234; x=1700266034; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oejyImQL8cx/b1SYjw2AOt2fwAipkrscA0ZrisyqjeE=;
-        b=Eq6Xh41dpubLPjNB43+n5wSgxnWQZpHFweiWd9GFzVI9wIR40TUZYPZ3EDcdnk+0pn
-         GOFxueyS8W/JRNSi2ZRXBLpMnTDZadIWrvUnCOlEpOUv/SEVmKgSIzKQu7vek8HMGVaT
-         FWW/bvh0CwLHqX6ljI0LCzISyMyleareVA6oUKwgxjWqtaWIckZQDHzlc+S09ecknV24
-         qI7temxO/jVnUs1XohW8ZA2npwlW4uGYCUwp1e4VuPLHgr/MQpQA74Y0XZ5/B3iPUHxH
-         1TTasBBchpAr+l5Gkqj0s1iS8nDin/g22C4aYzkJIbc/9aTF2Tu8ZIQnXjIwPRg4CLCz
-         /RXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699661234; x=1700266034;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oejyImQL8cx/b1SYjw2AOt2fwAipkrscA0ZrisyqjeE=;
-        b=dyOYM31rM5w3Z6DLGoFh0KF1AztIQLettydN54+o8zjwO2NMqSg1E5I9Otce57iMMA
-         yxrbniZdYMlYIrMFlQX002LkxpqQWSyhVHO0bh4GApbrYFaBbbSMkNjcRtbMEYTLFTy1
-         sy+E4ncrLXLS9e8mZoLA2lsx5tYaWzby8vog1u4M7qwLcvIW6k7c/bhOEAtm+y5vHv+5
-         4Iq9c+6KC47XiP+9IglrkpFvjQoejKzuEWf/GZvrqpBMurOJOAUcod0n2+EltxnSnfGY
-         8Qzzmg0/MmJJWW4wcD4dn/sD/KS72FYArpYt3i+3bLwUPX/vZ/Qef+dtjtOoPjcIZyxm
-         /AZQ==
-X-Gm-Message-State: AOJu0YxbP59Mr1AdOODusKGH9iVnfZ8GRtoS8TOcJ8R/k5lXw6usc/lO
-        uL3ZRnIsGa4SIOZP7T57+n1OuwFaotozd4wPvfY=
-X-Google-Smtp-Source: AGHT+IGwAgLaDe4aM1mbP0XaFnl84VNH7U2c2+ESEjGLDM6TpUgFy7MSQDkYgSQcBKuIMn6znjzmbTnLD00dvRBHwSo=
-X-Received: by 2002:aa7:cfcf:0:b0:523:100b:462b with SMTP id
- r15-20020aa7cfcf000000b00523100b462bmr526721edy.5.1699661233588; Fri, 10 Nov
- 2023 16:07:13 -0800 (PST)
+        Sat, 11 Nov 2023 05:08:38 -0500
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4C0B3AA6
+        for <linux-security-module@vger.kernel.org>; Sat, 11 Nov 2023 02:08:34 -0800 (PST)
+Received: from fsav112.sakura.ne.jp (fsav112.sakura.ne.jp [27.133.134.239])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 3ABA7no7035784;
+        Sat, 11 Nov 2023 19:07:49 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav112.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav112.sakura.ne.jp);
+ Sat, 11 Nov 2023 19:07:49 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav112.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 3ABA7mvX035781
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 11 Nov 2023 19:07:48 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <38b318a5-0a16-4cc2-878e-4efa632236f3@I-love.SAKURA.ne.jp>
+Date:   Sat, 11 Nov 2023 19:07:48 +0900
 MIME-Version: 1.0
-References: <20231110222038.1450156-1-kpsingh@kernel.org>
-In-Reply-To: <20231110222038.1450156-1-kpsingh@kernel.org>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Fri, 10 Nov 2023 16:07:02 -0800
-Message-ID: <CAEf4BzY=GvSYPm2zOXowNS0yMuvu1=fqoDey=DyZg0j9KtQyiA@mail.gmail.com>
-Subject: Re: [PATCH v8 0/5] Reduce overhead of LSMs with static calls
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
-        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        renauld@google.com, pabeni@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To:     linux-security-module <linux-security-module@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, KP Singh <kpsingh@kernel.org>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>, song@kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>, renauld@google.com,
+        Paolo Abeni <pabeni@redhat.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [RFC PATCH 0/5] LSM: Officially support appending LSM hooks after
+ boot.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 10, 2023 at 2:20=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
-:
->
-> # Background
->
-> LSM hooks (callbacks) are currently invoked as indirect function calls. T=
-hese
-> callbacks are registered into a linked list at boot time as the order of =
-the
-> LSMs can be configured on the kernel command line with the "lsm=3D" comma=
-nd line
-> parameter.
->
-> Indirect function calls have a high overhead due to retpoline mitigation =
-for
-> various speculative execution attacks.
->
-> Retpolines remain relevant even with newer generation CPUs as recently
-> discovered speculative attacks, like Spectre BHB need Retpolines to mitig=
-ate
-> against branch history injection and still need to be used in combination=
- with
-> newer mitigation features like eIBRS.
->
-> This overhead is especially significant for the "bpf" LSM which allows th=
-e user
-> to implement LSM functionality with eBPF program. In order to facilitate =
-this
-> the "bpf" LSM provides a default callback for all LSM hooks. When enabled=
-,
-> the "bpf" LSM incurs an unnecessary / avoidable indirect call. This is
-> especially bad in OS hot paths (e.g. in the networking stack).
-> This overhead prevents the adoption of bpf LSM on performance critical
-> systems, and also, in general, slows down all LSMs.
->
-> Since we know the address of the enabled LSM callbacks at compile time an=
-d only
-> the order is determined at boot time, the LSM framework can allocate stat=
-ic
-> calls for each of the possible LSM callbacks and these calls can be updat=
-ed once
-> the order is determined at boot.
->
-> This series is a respin of the RFC proposed by Paul Renauld (renauld@goog=
-le.com)
-> and Brendan Jackman (jackmanb@google.com) [1]
->
-> # Performance improvement
->
-> With this patch-set some syscalls with lots of LSM hooks in their path
-> benefitted at an average of ~3% and I/O and Pipe based system calls benef=
-itting
-> the most.
->
-> Here are the results of the relevant Unixbench system benchmarks with BPF=
- LSM
-> and SELinux enabled with default policies enabled with and without these
-> patches.
->
-> Benchmark                                               Delta(%): (+ is b=
-etter)
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> Execl Throughput                                             +1.9356
-> File Write 1024 bufsize 2000 maxblocks                       +6.5953
-> Pipe Throughput                                              +9.5499
-> Pipe-based Context Switching                                 +3.0209
-> Process Creation                                             +2.3246
-> Shell Scripts (1 concurrent)                                 +1.4975
-> System Call Overhead                                         +2.7815
-> System Benchmarks Index Score (Partial Only):                +3.4859
->
-> In the best case, some syscalls like eventfd_create benefitted to about ~=
-10%.
-> The full analysis can be viewed at https://kpsingh.ch/lsm-perf
->
-> [1] https://lore.kernel.org/linux-security-module/20200820164753.3256899-=
-1-jackmanb@chromium.org/
->
->
-> # BPF LSM Side effects
->
-> Patch 4 of the series also addresses the issues with the side effects of =
-the
-> default value return values of the BPF LSM callbacks and also removes the
-> overheads associated with them making it deployable at hyperscale.
->
-> # v7 to v8
->
-> * Addressed Andrii's feedback
-> * Rebased (this seems to have removed the syscall changes). v7 has the re=
-quired
->   conflict resolution incase the conflicts need to be resolved again.
->
-> # v6 -> v7
->
-> * Rebased with latest LSM id changes merged
->
-> NOTE: The warning shown by the kernel test bot is spurious, there is no f=
-lex array
-> and it seems to come from an older tool chain.
->
-> https://lore.kernel.org/bpf/202310111711.wLbijitj-lkp@intel.com/
->
-> # v5 -> v6
->
-> * Fix a bug in BPF LSM hook toggle logic.
->
-> # v4 -> v5
->
-> * Rebase to linux-next/master
-> * Fixed the case where MAX_LSM_COUNT comes to zero when just CONFIG_SECUR=
-ITY
->   is compiled in without any other LSM enabled as reported here:
->
->   https://lore.kernel.org/bpf/202309271206.d7fb60f9-oliver.sang@intel.com
->
-> # v3 -> v4
->
-> * Refactor LSM count macros to use COUNT_ARGS
-> * Change CONFIG_SECURITY_HOOK_LIKELY likely's default value to be based o=
-n
->   the LSM enabled and have it depend on CONFIG_EXPERT. There are a lot of=
- subtle
->   options behind CONFIG_EXPERT and this should, hopefully alleviate conce=
-rns
->   about yet another knob.
-> * __randomize_layout for struct lsm_static_call and, in addition to the c=
-over
->   letter add performance numbers to 3rd patch and some minor commit messa=
-ge
->   updates.
-> * Rebase to linux-next.
->
-> # v2 -> v3
->
-> * Fixed a build issue on archs which don't have static calls and enable
->   CONFIG_SECURITY.
-> * Updated the LSM_COUNT macros based on Andrii's suggestions.
-> * Changed the security_ prefix to lsm_prefix based on Casey's suggestion.
-> * Inlined static_branch_maybe into lsm_for_each_hook on Kees' feedback.
->
-> # v1 -> v2 (based on linux-next, next-20230614)
->
-> * Incorporated suggestions from Kees
-> * Changed the way MAX_LSMs are counted from a binary based generator to a=
- clever header.
-> * Add CONFIG_SECURITY_HOOK_LIKELY to configure the likelihood of LSM hook=
-s.
->
->
-> KP Singh (5):
->   kernel: Add helper macros for loop unrolling
->   security: Count the LSMs enabled at compile time
->   security: Replace indirect LSM hook calls with static calls
->   bpf: Only enable BPF LSM hooks when an LSM program is attached
->   security: Add CONFIG_SECURITY_HOOK_LIKELY
->
->  include/linux/bpf_lsm.h   |   5 +
->  include/linux/lsm_count.h | 114 +++++++++++++++++++++
->  include/linux/lsm_hooks.h |  81 +++++++++++++--
->  include/linux/unroll.h    |  36 +++++++
->  kernel/bpf/trampoline.c   |  24 +++++
->  security/Kconfig          |  11 ++
->  security/bpf/hooks.c      |  25 ++++-
->  security/security.c       | 209 +++++++++++++++++++++++++-------------
->  8 files changed, 425 insertions(+), 80 deletions(-)
->  create mode 100644 include/linux/lsm_count.h
->  create mode 100644 include/linux/unroll.h
->
-> --
-> 2.42.0.869.gea05f2083d-goog
->
->
+This functionality will be used by TOMOYO security module.
 
-(carrying it over from v7) For the series:
+In order to officially use an LSM module, that LSM module has to be
+built into vmlinux. This limitation has been a big barrier for allowing
+distribution kernel users to use LSM modules which the organization who
+builds that distribution kernel cannot afford supporting [1]. Therefore,
+I've been asking for ability to append LSM hooks from LKM-based LSMs so
+that distribution kernel users can use LSMs which the organization who
+builds that distribution kernel cannot afford supporting.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+In order to unofficially use LSMs which are not built into vmlinux,
+I've been maintaining AKARI as an LKM-based LSM which can run on kernels
+between 2.6.0 and 6.6. But KP Singh's "Reduce overhead of LSMs with static
+calls" proposal will make AKARI more difficult to run because it removes
+the linked list. Therefore, reviving ability to officially append LSM
+hooks from LKM-based LSMs became an urgent matter.
+
+KP Singh suggested me to implement such LSMs as eBPF programs. But the
+result is that eBPF is too restricted to emulate such LSMs [2]. Therefore,
+I still need ability to append LSM hooks from LKM-based LSMs.
+
+KP Singh commented
+
+  I think what you can do is send patches for an API for LKM based LSMs
+  and have it merged before my series, I will work with the code I have
+  and make LKM based LSMs work. If this work gets merged, and your
+  use-case is accepted (I think I can speak for at least Kees [if not
+  others] too here) we will help you if you get stuck with MAX_LSM_COUNT
+  or a dual static call and linked list based approach.
+
+at [3] but I made this series on top of "[PATCH v7 0/5] Reduce overhead
+of LSMs with static calls", for I wanted to know how to use static_calls()
+and how does appending LSM hooks after boot will look like, with a hope
+that LSM hooks that are appended after boot can also use static calls
+so that the same structures/macros can be used for both built-in and
+loadable LSM modules.
+
+The result seems to be that linked list and static_call() are not
+compatible, for a unique symbol name has to be assigned to each static
+call. But I felt that we could avoid loop unrolling if we change the
+direction from "call all individual callbacks from security/security.c"
+to "call next callback at end of current callback if current callback
+succeeded and next callback is defined, and security/security.c calls
+only the first callback".
+
+Link: https://lkml.kernel.org/r/9b006dfe-450e-4d73-8117-9625d2586dad@I-love.SAKURA.ne.jp [1]
+Link: https://lkml.kernel.org/r/c588ca5d-c343-4ea2-a1f1-4efe67ebb8e3@I-love.SAKURA.ne.jp [2]
+Link: https://lkml.kernel.org/r/CACYkzJ7ght66802wQFKzokfJKMKDOobYgeaCpu5Gx=iX0EuJVg@mail.gmail.com [3]
