@@ -2,192 +2,246 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28654C4167B
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Nov 2023 22:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 671BCC4332F
+	for <linux-security-module@archiver.kernel.org>; Sat, 11 Nov 2023 00:07:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229729AbjKJWVH (ORCPT
+        id S229594AbjKKAHV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Nov 2023 17:21:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53704 "EHLO
+        Fri, 10 Nov 2023 19:07:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229735AbjKJWVH (ORCPT
+        with ESMTP id S229475AbjKKAHU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Nov 2023 17:21:07 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E611F449A
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Nov 2023 14:21:02 -0800 (PST)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BECBC433C8;
-        Fri, 10 Nov 2023 22:21:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1699654862;
-        bh=yF8WcnAMSPXE9oTm0i7Gjto2xr0nFhyXLJvvE2sorUA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z26uaPhDexjewthLZf5aB9/6+/T2Swa2+v7PHwcsnIG5eEJGlqXFtYzTf6b/rYrwc
-         NTMyiho9Uel9cK1TZnp112Fu+Mw0I0+DJpYGVB71E9szLy4GLN+bGuxDiM9mV+GdZD
-         zLugodB8v78SVH/AvvYssaqmUr1T1iiMKQ22UKdb8LcqJGm1PuAO33jFcCjPVVqFrs
-         yXt6dV3FGutOCfOGtrv14G7jttZod0fX7iY4s7Ycn/1rYUBqZQySXSYmU2sodrESqW
-         nmX7ITY8DDiylIg3JvugiuCaGiL/PZx9W++0YsSzGoDyc4/GCAo8IOuBZB0kPGJXkW
-         ncRyzyQ23IKLw==
-From:   KP Singh <kpsingh@kernel.org>
-To:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Cc:     paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
-        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
-        kpsingh@kernel.org, renauld@google.com, pabeni@redhat.com
-Subject: [PATCH v8 5/5] security: Add CONFIG_SECURITY_HOOK_LIKELY
-Date:   Fri, 10 Nov 2023 23:20:37 +0100
-Message-ID: <20231110222038.1450156-6-kpsingh@kernel.org>
-X-Mailer: git-send-email 2.42.0.869.gea05f2083d-goog
-In-Reply-To: <20231110222038.1450156-1-kpsingh@kernel.org>
-References: <20231110222038.1450156-1-kpsingh@kernel.org>
+        Fri, 10 Nov 2023 19:07:20 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E71163C39;
+        Fri, 10 Nov 2023 16:07:15 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-5409bc907edso4141985a12.0;
+        Fri, 10 Nov 2023 16:07:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699661234; x=1700266034; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oejyImQL8cx/b1SYjw2AOt2fwAipkrscA0ZrisyqjeE=;
+        b=Eq6Xh41dpubLPjNB43+n5wSgxnWQZpHFweiWd9GFzVI9wIR40TUZYPZ3EDcdnk+0pn
+         GOFxueyS8W/JRNSi2ZRXBLpMnTDZadIWrvUnCOlEpOUv/SEVmKgSIzKQu7vek8HMGVaT
+         FWW/bvh0CwLHqX6ljI0LCzISyMyleareVA6oUKwgxjWqtaWIckZQDHzlc+S09ecknV24
+         qI7temxO/jVnUs1XohW8ZA2npwlW4uGYCUwp1e4VuPLHgr/MQpQA74Y0XZ5/B3iPUHxH
+         1TTasBBchpAr+l5Gkqj0s1iS8nDin/g22C4aYzkJIbc/9aTF2Tu8ZIQnXjIwPRg4CLCz
+         /RXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699661234; x=1700266034;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oejyImQL8cx/b1SYjw2AOt2fwAipkrscA0ZrisyqjeE=;
+        b=dyOYM31rM5w3Z6DLGoFh0KF1AztIQLettydN54+o8zjwO2NMqSg1E5I9Otce57iMMA
+         yxrbniZdYMlYIrMFlQX002LkxpqQWSyhVHO0bh4GApbrYFaBbbSMkNjcRtbMEYTLFTy1
+         sy+E4ncrLXLS9e8mZoLA2lsx5tYaWzby8vog1u4M7qwLcvIW6k7c/bhOEAtm+y5vHv+5
+         4Iq9c+6KC47XiP+9IglrkpFvjQoejKzuEWf/GZvrqpBMurOJOAUcod0n2+EltxnSnfGY
+         8Qzzmg0/MmJJWW4wcD4dn/sD/KS72FYArpYt3i+3bLwUPX/vZ/Qef+dtjtOoPjcIZyxm
+         /AZQ==
+X-Gm-Message-State: AOJu0YxbP59Mr1AdOODusKGH9iVnfZ8GRtoS8TOcJ8R/k5lXw6usc/lO
+        uL3ZRnIsGa4SIOZP7T57+n1OuwFaotozd4wPvfY=
+X-Google-Smtp-Source: AGHT+IGwAgLaDe4aM1mbP0XaFnl84VNH7U2c2+ESEjGLDM6TpUgFy7MSQDkYgSQcBKuIMn6znjzmbTnLD00dvRBHwSo=
+X-Received: by 2002:aa7:cfcf:0:b0:523:100b:462b with SMTP id
+ r15-20020aa7cfcf000000b00523100b462bmr526721edy.5.1699661233588; Fri, 10 Nov
+ 2023 16:07:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231110222038.1450156-1-kpsingh@kernel.org>
+In-Reply-To: <20231110222038.1450156-1-kpsingh@kernel.org>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Fri, 10 Nov 2023 16:07:02 -0800
+Message-ID: <CAEf4BzY=GvSYPm2zOXowNS0yMuvu1=fqoDey=DyZg0j9KtQyiA@mail.gmail.com>
+Subject: Re: [PATCH v8 0/5] Reduce overhead of LSMs with static calls
+To:     KP Singh <kpsingh@kernel.org>
+Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        paul@paul-moore.com, keescook@chromium.org, casey@schaufler-ca.com,
+        song@kernel.org, daniel@iogearbox.net, ast@kernel.org,
+        renauld@google.com, pabeni@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This config influences the nature of the static key that guards the
-static call for LSM hooks.
+On Fri, Nov 10, 2023 at 2:20=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
+:
+>
+> # Background
+>
+> LSM hooks (callbacks) are currently invoked as indirect function calls. T=
+hese
+> callbacks are registered into a linked list at boot time as the order of =
+the
+> LSMs can be configured on the kernel command line with the "lsm=3D" comma=
+nd line
+> parameter.
+>
+> Indirect function calls have a high overhead due to retpoline mitigation =
+for
+> various speculative execution attacks.
+>
+> Retpolines remain relevant even with newer generation CPUs as recently
+> discovered speculative attacks, like Spectre BHB need Retpolines to mitig=
+ate
+> against branch history injection and still need to be used in combination=
+ with
+> newer mitigation features like eIBRS.
+>
+> This overhead is especially significant for the "bpf" LSM which allows th=
+e user
+> to implement LSM functionality with eBPF program. In order to facilitate =
+this
+> the "bpf" LSM provides a default callback for all LSM hooks. When enabled=
+,
+> the "bpf" LSM incurs an unnecessary / avoidable indirect call. This is
+> especially bad in OS hot paths (e.g. in the networking stack).
+> This overhead prevents the adoption of bpf LSM on performance critical
+> systems, and also, in general, slows down all LSMs.
+>
+> Since we know the address of the enabled LSM callbacks at compile time an=
+d only
+> the order is determined at boot time, the LSM framework can allocate stat=
+ic
+> calls for each of the possible LSM callbacks and these calls can be updat=
+ed once
+> the order is determined at boot.
+>
+> This series is a respin of the RFC proposed by Paul Renauld (renauld@goog=
+le.com)
+> and Brendan Jackman (jackmanb@google.com) [1]
+>
+> # Performance improvement
+>
+> With this patch-set some syscalls with lots of LSM hooks in their path
+> benefitted at an average of ~3% and I/O and Pipe based system calls benef=
+itting
+> the most.
+>
+> Here are the results of the relevant Unixbench system benchmarks with BPF=
+ LSM
+> and SELinux enabled with default policies enabled with and without these
+> patches.
+>
+> Benchmark                                               Delta(%): (+ is b=
+etter)
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> Execl Throughput                                             +1.9356
+> File Write 1024 bufsize 2000 maxblocks                       +6.5953
+> Pipe Throughput                                              +9.5499
+> Pipe-based Context Switching                                 +3.0209
+> Process Creation                                             +2.3246
+> Shell Scripts (1 concurrent)                                 +1.4975
+> System Call Overhead                                         +2.7815
+> System Benchmarks Index Score (Partial Only):                +3.4859
+>
+> In the best case, some syscalls like eventfd_create benefitted to about ~=
+10%.
+> The full analysis can be viewed at https://kpsingh.ch/lsm-perf
+>
+> [1] https://lore.kernel.org/linux-security-module/20200820164753.3256899-=
+1-jackmanb@chromium.org/
+>
+>
+> # BPF LSM Side effects
+>
+> Patch 4 of the series also addresses the issues with the side effects of =
+the
+> default value return values of the BPF LSM callbacks and also removes the
+> overheads associated with them making it deployable at hyperscale.
+>
+> # v7 to v8
+>
+> * Addressed Andrii's feedback
+> * Rebased (this seems to have removed the syscall changes). v7 has the re=
+quired
+>   conflict resolution incase the conflicts need to be resolved again.
+>
+> # v6 -> v7
+>
+> * Rebased with latest LSM id changes merged
+>
+> NOTE: The warning shown by the kernel test bot is spurious, there is no f=
+lex array
+> and it seems to come from an older tool chain.
+>
+> https://lore.kernel.org/bpf/202310111711.wLbijitj-lkp@intel.com/
+>
+> # v5 -> v6
+>
+> * Fix a bug in BPF LSM hook toggle logic.
+>
+> # v4 -> v5
+>
+> * Rebase to linux-next/master
+> * Fixed the case where MAX_LSM_COUNT comes to zero when just CONFIG_SECUR=
+ITY
+>   is compiled in without any other LSM enabled as reported here:
+>
+>   https://lore.kernel.org/bpf/202309271206.d7fb60f9-oliver.sang@intel.com
+>
+> # v3 -> v4
+>
+> * Refactor LSM count macros to use COUNT_ARGS
+> * Change CONFIG_SECURITY_HOOK_LIKELY likely's default value to be based o=
+n
+>   the LSM enabled and have it depend on CONFIG_EXPERT. There are a lot of=
+ subtle
+>   options behind CONFIG_EXPERT and this should, hopefully alleviate conce=
+rns
+>   about yet another knob.
+> * __randomize_layout for struct lsm_static_call and, in addition to the c=
+over
+>   letter add performance numbers to 3rd patch and some minor commit messa=
+ge
+>   updates.
+> * Rebase to linux-next.
+>
+> # v2 -> v3
+>
+> * Fixed a build issue on archs which don't have static calls and enable
+>   CONFIG_SECURITY.
+> * Updated the LSM_COUNT macros based on Andrii's suggestions.
+> * Changed the security_ prefix to lsm_prefix based on Casey's suggestion.
+> * Inlined static_branch_maybe into lsm_for_each_hook on Kees' feedback.
+>
+> # v1 -> v2 (based on linux-next, next-20230614)
+>
+> * Incorporated suggestions from Kees
+> * Changed the way MAX_LSMs are counted from a binary based generator to a=
+ clever header.
+> * Add CONFIG_SECURITY_HOOK_LIKELY to configure the likelihood of LSM hook=
+s.
+>
+>
+> KP Singh (5):
+>   kernel: Add helper macros for loop unrolling
+>   security: Count the LSMs enabled at compile time
+>   security: Replace indirect LSM hook calls with static calls
+>   bpf: Only enable BPF LSM hooks when an LSM program is attached
+>   security: Add CONFIG_SECURITY_HOOK_LIKELY
+>
+>  include/linux/bpf_lsm.h   |   5 +
+>  include/linux/lsm_count.h | 114 +++++++++++++++++++++
+>  include/linux/lsm_hooks.h |  81 +++++++++++++--
+>  include/linux/unroll.h    |  36 +++++++
+>  kernel/bpf/trampoline.c   |  24 +++++
+>  security/Kconfig          |  11 ++
+>  security/bpf/hooks.c      |  25 ++++-
+>  security/security.c       | 209 +++++++++++++++++++++++++-------------
+>  8 files changed, 425 insertions(+), 80 deletions(-)
+>  create mode 100644 include/linux/lsm_count.h
+>  create mode 100644 include/linux/unroll.h
+>
+> --
+> 2.42.0.869.gea05f2083d-goog
+>
+>
 
-When enabled, it indicates that an LSM static call slot is more likely
-to be initialized. When disabled, it optimizes for the case when static
-call slot is more likely to be not initialized.
+(carrying it over from v7) For the series:
 
-When a major LSM like (SELinux, AppArmor, Smack etc) is active on a
-system the system would benefit from enabling the config. However there
-are other cases which would benefit from the config being disabled
-(e.g. a system with a BPF LSM with no hooks enabled by default, or an
-LSM like loadpin / yama). Ultimately, there is no one-size fits all
-solution.
-
-with CONFIG_SECURITY_HOOK_LIKELY enabled, the inactive /
-uninitialized case is penalized with a direct jmp (still better than
-an indirect jmp):
-
-function security_file_ioctl:
-   0xffffffff818f0c80 <+0>:	endbr64
-   0xffffffff818f0c84 <+4>:	nopl   0x0(%rax,%rax,1)
-   0xffffffff818f0c89 <+9>:	push   %rbp
-   0xffffffff818f0c8a <+10>:	push   %r14
-   0xffffffff818f0c8c <+12>:	push   %rbx
-   0xffffffff818f0c8d <+13>:	mov    %rdx,%rbx
-   0xffffffff818f0c90 <+16>:	mov    %esi,%ebp
-   0xffffffff818f0c92 <+18>:	mov    %rdi,%r14
-   0xffffffff818f0c95 <+21>:	jmp    0xffffffff818f0ca8 <security_file_ioctl+40>
-
-   jump to skip the inactive BPF LSM hook.
-
-   0xffffffff818f0c97 <+23>:	mov    %r14,%rdi
-   0xffffffff818f0c9a <+26>:	mov    %ebp,%esi
-   0xffffffff818f0c9c <+28>:	mov    %rbx,%rdx
-   0xffffffff818f0c9f <+31>:	call   0xffffffff8141e3b0 <bpf_lsm_file_ioctl>
-   0xffffffff818f0ca4 <+36>:	test   %eax,%eax
-   0xffffffff818f0ca6 <+38>:	jne    0xffffffff818f0cbf <security_file_ioctl+63>
-   0xffffffff818f0ca8 <+40>:	endbr64
-   0xffffffff818f0cac <+44>:	jmp    0xffffffff818f0ccd <security_file_ioctl+77>
-
-   jump to skip the empty slot.
-
-   0xffffffff818f0cae <+46>:	mov    %r14,%rdi
-   0xffffffff818f0cb1 <+49>:	mov    %ebp,%esi
-   0xffffffff818f0cb3 <+51>:	mov    %rbx,%rdx
-   0xffffffff818f0cb6 <+54>:	nopl   0x0(%rax,%rax,1)
-  				^^^^^^^^^^^^^^^^^^^^^^^
-				Empty slot
-
-   0xffffffff818f0cbb <+59>:	test   %eax,%eax
-   0xffffffff818f0cbd <+61>:	je     0xffffffff818f0ccd <security_file_ioctl+77>
-   0xffffffff818f0cbf <+63>:	endbr64
-   0xffffffff818f0cc3 <+67>:	pop    %rbx
-   0xffffffff818f0cc4 <+68>:	pop    %r14
-   0xffffffff818f0cc6 <+70>:	pop    %rbp
-   0xffffffff818f0cc7 <+71>:	cs jmp 0xffffffff82c00000 <__x86_return_thunk>
-   0xffffffff818f0ccd <+77>:	endbr64
-   0xffffffff818f0cd1 <+81>:	xor    %eax,%eax
-   0xffffffff818f0cd3 <+83>:	jmp    0xffffffff818f0cbf <security_file_ioctl+63>
-   0xffffffff818f0cd5 <+85>:	mov    %r14,%rdi
-   0xffffffff818f0cd8 <+88>:	mov    %ebp,%esi
-   0xffffffff818f0cda <+90>:	mov    %rbx,%rdx
-   0xffffffff818f0cdd <+93>:	pop    %rbx
-   0xffffffff818f0cde <+94>:	pop    %r14
-   0xffffffff818f0ce0 <+96>:	pop    %rbp
-   0xffffffff818f0ce1 <+97>:	ret
-
-When the config is disabled, the case optimizes the scenario above.
-
-security_file_ioctl:
-   0xffffffff818f0e30 <+0>:	endbr64
-   0xffffffff818f0e34 <+4>:	nopl   0x0(%rax,%rax,1)
-   0xffffffff818f0e39 <+9>:	push   %rbp
-   0xffffffff818f0e3a <+10>:	push   %r14
-   0xffffffff818f0e3c <+12>:	push   %rbx
-   0xffffffff818f0e3d <+13>:	mov    %rdx,%rbx
-   0xffffffff818f0e40 <+16>:	mov    %esi,%ebp
-   0xffffffff818f0e42 <+18>:	mov    %rdi,%r14
-   0xffffffff818f0e45 <+21>:	xchg   %ax,%ax
-   0xffffffff818f0e47 <+23>:	xchg   %ax,%ax
-
-   The static keys in their disabled state do not create jumps leading
-   to faster code.
-
-   0xffffffff818f0e49 <+25>:	xor    %eax,%eax
-   0xffffffff818f0e4b <+27>:	xchg   %ax,%ax
-   0xffffffff818f0e4d <+29>:	pop    %rbx
-   0xffffffff818f0e4e <+30>:	pop    %r14
-   0xffffffff818f0e50 <+32>:	pop    %rbp
-   0xffffffff818f0e51 <+33>:	cs jmp 0xffffffff82c00000 <__x86_return_thunk>
-   0xffffffff818f0e57 <+39>:	endbr64
-   0xffffffff818f0e5b <+43>:	mov    %r14,%rdi
-   0xffffffff818f0e5e <+46>:	mov    %ebp,%esi
-   0xffffffff818f0e60 <+48>:	mov    %rbx,%rdx
-   0xffffffff818f0e63 <+51>:	call   0xffffffff8141e3b0 <bpf_lsm_file_ioctl>
-   0xffffffff818f0e68 <+56>:	test   %eax,%eax
-   0xffffffff818f0e6a <+58>:	jne    0xffffffff818f0e4d <security_file_ioctl+29>
-   0xffffffff818f0e6c <+60>:	jmp    0xffffffff818f0e47 <security_file_ioctl+23>
-   0xffffffff818f0e6e <+62>:	endbr64
-   0xffffffff818f0e72 <+66>:	mov    %r14,%rdi
-   0xffffffff818f0e75 <+69>:	mov    %ebp,%esi
-   0xffffffff818f0e77 <+71>:	mov    %rbx,%rdx
-   0xffffffff818f0e7a <+74>:	nopl   0x0(%rax,%rax,1)
-   0xffffffff818f0e7f <+79>:	test   %eax,%eax
-   0xffffffff818f0e81 <+81>:	jne    0xffffffff818f0e4d <security_file_ioctl+29>
-   0xffffffff818f0e83 <+83>:	jmp    0xffffffff818f0e49 <security_file_ioctl+25>
-   0xffffffff818f0e85 <+85>:	endbr64
-   0xffffffff818f0e89 <+89>:	mov    %r14,%rdi
-   0xffffffff818f0e8c <+92>:	mov    %ebp,%esi
-   0xffffffff818f0e8e <+94>:	mov    %rbx,%rdx
-   0xffffffff818f0e91 <+97>:	pop    %rbx
-   0xffffffff818f0e92 <+98>:	pop    %r14
-   0xffffffff818f0e94 <+100>:	pop    %rbp
-   0xffffffff818f0e95 <+101>:	ret
-
-Acked-by: Song Liu <song@kernel.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: KP Singh <kpsingh@kernel.org>
----
- security/Kconfig | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/security/Kconfig b/security/Kconfig
-index 52c9af08ad35..317018dcbc67 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -32,6 +32,17 @@ config SECURITY
- 
- 	  If you are unsure how to answer this question, answer N.
- 
-+config SECURITY_HOOK_LIKELY
-+	bool "LSM hooks are likely to be initialized"
-+	depends on SECURITY && EXPERT
-+	default SECURITY_SELINUX || SECURITY_SMACK || SECURITY_TOMOYO || SECURITY_APPARMOR
-+	help
-+	  This controls the behaviour of the static keys that guard LSM hooks.
-+	  If LSM hooks are likely to be initialized by LSMs, then one gets
-+	  better performance by enabling this option. However, if the system is
-+	  using an LSM where hooks are much likely to be disabled, one gets
-+	  better performance by disabling this config.
-+
- config SECURITYFS
- 	bool "Enable the securityfs filesystem"
- 	help
--- 
-2.42.0.869.gea05f2083d-goog
-
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
