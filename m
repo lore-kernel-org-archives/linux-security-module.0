@@ -2,207 +2,110 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F31BC072AB
-	for <linux-security-module@archiver.kernel.org>; Sun, 12 Nov 2023 07:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19794C4332F
+	for <linux-security-module@archiver.kernel.org>; Sun, 12 Nov 2023 10:03:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229588AbjKLHfP (ORCPT
+        id S229776AbjKLKD7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 12 Nov 2023 02:35:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42910 "EHLO
+        Sun, 12 Nov 2023 05:03:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230195AbjKLHfM (ORCPT
+        with ESMTP id S229536AbjKLKD6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 12 Nov 2023 02:35:12 -0500
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F09530C2;
-        Sat, 11 Nov 2023 23:35:09 -0800 (PST)
-Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-6b20577ef7bso2898931b3a.3;
-        Sat, 11 Nov 2023 23:35:09 -0800 (PST)
+        Sun, 12 Nov 2023 05:03:58 -0500
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 021292D61;
+        Sun, 12 Nov 2023 02:03:56 -0800 (PST)
+Received: by mail-pj1-x1033.google.com with SMTP id 98e67ed59e1d1-2800bdf888dso2583376a91.1;
+        Sun, 12 Nov 2023 02:03:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699774509; x=1700379309; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1699783435; x=1700388235; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=50vht9sq3pC6AQ0DqKDnr2Ivz9GlP8f6LKYeDBUf3lU=;
-        b=HBXXigIErt/LXDvGHvWXujgiBgFiWHIJs9mZOJ4W4ZNHD8xLa9HEkH3oVhBD+XN+24
-         7p/W3GMYv+lZcEuQzxHvhBOvbxCrKsgyJiV9dGpKp448VmGx6rudS2a86SBm/m8lviAz
-         DkpT5zPXVg3ULy6pAbwa4vHdLilQU/kKpSiH6f4gOmOUWsBEFOYJtpAuXkDlSQyo5E8I
-         4vM7y1MiYSfut/jzBwdyQ5jLojgwEU3swMsLE26thaAUshQK3bpmkawJQSp+6gDTp3KW
-         r8KzWtJ0AHUrQ1rYLj3GDgkgJP/+Gt9Hwk/r2jHCihwPhQHAY2bbEkvDAxXtOWUavqvO
-         Gk0w==
+        bh=s63k/oeUAOEiHqZXShqq4HE+liPGc+BR6jSLnDlt2us=;
+        b=Yfs7L+Inx0WxENft2+lAnp2FmtsrIgU90g3TcxG25rUK8D5fLhMLcdfwiImKej4Xpr
+         hfJmvjABEwdqtJVEyUqKuNJZ6eHKZTpg/pB12BmmHt/cLtoExroK00677vgSTq1Li4sw
+         EPu+UR1a5j212F80oDL9nvRz0ACrhO6/XJ5JK1b7eAw/YQqQrhFJVnV0U+Eg4PPB+rcm
+         kUmHjdcDmazgRsG0T+2VAlCvIuZ8EWMgOsXY5HGNKkVe3nZe2F+7Bxr3REHEErIp64US
+         3V5CL8Mj95gUFKlPQL8tX+ZwYGjl6YyH1Fj+OlEvDvsSVtLFGZVBiPpDdZ/bPcy0iLYk
+         0XNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699774509; x=1700379309;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1699783435; x=1700388235;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=50vht9sq3pC6AQ0DqKDnr2Ivz9GlP8f6LKYeDBUf3lU=;
-        b=vEu6Oj3Hoh3YcHjray3/PZXLU7uGK9u6godqJY8ZBHvs+ZgfpqlOExEtLTVjp+7nhu
-         atREzt3g8fkIoS0DaDHoT9V7TI/RZJWKOQdC7Onn7a7hFoJ04WTUxn3nGyBJveFgvZQZ
-         /ONLqrWQdmoD/LKfgBrwEhGV13NfXXI7JeEH9WV6yyfuvGCwgo9z3TDAFn6XWwO/ELWL
-         Zzq5K819bUj7SVpdl5gteBjxlm+vNbz+qCplocPkwbPtkojnFZtllrc2FQX1p9+dsKYz
-         ByLB82DN6cH1KTEVWJegVQaj1V+Pf6PrG/0b3rAgq3CXojWbfgudH1DzZz72BbzxfPls
-         JE0Q==
-X-Gm-Message-State: AOJu0YzO+3whrRkwFR5Kc3+XFfpVeYKesnzWqr6oHu2ZTi5ORn0zPNzv
-        UArEeQpaj5XhwXfi9wcJ1uk=
-X-Google-Smtp-Source: AGHT+IGH2gtxhjldYT1quj3TLtuuVLLB6B2UrqBde4ZiVUZJi/ui1uancDFmFfDtAVJ0Dgb6cAfDkQ==
-X-Received: by 2002:a17:902:a985:b0:1cc:5549:aabd with SMTP id bh5-20020a170902a98500b001cc5549aabdmr2353792plb.8.1699774508821;
-        Sat, 11 Nov 2023 23:35:08 -0800 (PST)
-Received: from vultr.guest ([2001:19f0:ac00:49b3:5400:4ff:fea5:2304])
-        by smtp.gmail.com with ESMTPSA id 6-20020a170902c10600b001ca4c20003dsm2217394pli.69.2023.11.11.23.35.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Nov 2023 23:35:08 -0800 (PST)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        bpf@vger.kernel.org, ligang.bdlg@bytedance.com, mhocko@suse.com,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: [RFC PATCH -mm 4/4] selftests/bpf: Add selftests for mbind(2) with lsm prog
-Date:   Sun, 12 Nov 2023 07:34:24 +0000
-Message-Id: <20231112073424.4216-5-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20231112073424.4216-1-laoar.shao@gmail.com>
-References: <20231112073424.4216-1-laoar.shao@gmail.com>
+        bh=s63k/oeUAOEiHqZXShqq4HE+liPGc+BR6jSLnDlt2us=;
+        b=MWN5Ota4BELEg0EEYwZHz3bAsBk+Gl+ZmmC6SoynmjvgfyIYMX43Ue+QHbg0rJWntW
+         urHklodnBKDwLsu29ATZd+cwGluAOT1rTklTcp+EfOemA5JfIhjyPkh2EhqsBUwn+59/
+         dIenrIOTf+7BqxRxVoIhCXcfeM91J/LWLvtMJ4+JYB5BAzB/LRL59IwCCzlOMMQhuSmX
+         mJoyv2KuJcVX9PqIGs3QZCCrGAvwE65iHejppQwmdPr0gWsBX8IQGzsNhJXNvhB1kh1a
+         jSPjsaj/OsCEfEVsHskdudDhYSf8MdSsKlwqtxvAecj49dn4tqU0U9X2rFO1CfioBtxX
+         vaqw==
+X-Gm-Message-State: AOJu0Yw/MeOS2zhLQ3V+Q6tQkLwzLqAxWlkur60GvjSZY69ChXRh2FNM
+        oAOCGIvjBdjwe3kWOrx4qN72kb9Jy+CZz7G2V560/eMXVnjdtg==
+X-Google-Smtp-Source: AGHT+IGjG5z/b7bhhJVnHm+C5wcylDhXbqxvoXWFwkHP0FCBrX04Rsqs1cPU5fFZGyv6mzEcoeIsosmaaPjliF60KOI=
+X-Received: by 2002:a17:90b:4c51:b0:280:a002:be85 with SMTP id
+ np17-20020a17090b4c5100b00280a002be85mr5987800pjb.20.1699783435348; Sun, 12
+ Nov 2023 02:03:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231111125126.11665-1-yjnworkstation@gmail.com>
+ <20231111132431.GA3717@1wt.eu> <CAHk-=whTZDjeH2FJqBozjAF44sh4XVNQrt2xdQn_Ujt=Be6=dw@mail.gmail.com>
+In-Reply-To: <CAHk-=whTZDjeH2FJqBozjAF44sh4XVNQrt2xdQn_Ujt=Be6=dw@mail.gmail.com>
+From:   Jasper Niebuhr <yjnworkstation@gmail.com>
+Date:   Sun, 12 Nov 2023 11:03:43 +0100
+Message-ID: <CAMjCObv9Z+Ood9QFA_jSQ2roSEE6C_ip=KeyoChmtyi97UoU7g@mail.gmail.com>
+Subject: Re: [PATCH] exitz syscall
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Willy Tarreau <w@1wt.eu>, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        "tytso@mit.edu" <tytso@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The result as follows,
-  #142/1   mempolicy/MPOL_BIND_with_lsm:OK
-  #142/2   mempolicy/MPOL_DEFAULT_with_lsm:OK
-  #142/3   mempolicy/MPOL_BIND_without_lsm:OK
-  #142/4   mempolicy/MPOL_DEFAULT_without_lsm:OK
-  #142     mempolicy:OK
+On Sun, Nov 12, 2023 at 2:24=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sat, 11 Nov 2023 at 05:24, Willy Tarreau <w@1wt.eu> wrote:
+> >
+> > IMHO it does not make sense to add a syscall for this, please have a
+> > look at prctl(2) instead, which is already used for similar settings.
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- tools/testing/selftests/bpf/prog_tests/mempolicy.c | 79 ++++++++++++++++++++++
- tools/testing/selftests/bpf/progs/test_mempolicy.c | 29 ++++++++
- 2 files changed, 108 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/mempolicy.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_mempolicy.c
+First of all, I had a look and now absolutely agree with this.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/mempolicy.c b/tools/testing/selftests/bpf/prog_tests/mempolicy.c
-new file mode 100644
-index 0000000..e0dfb18
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/mempolicy.c
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (C) 2023 Yafang Shao <laoar.shao@gmail.com> */
-+
-+#include <sys/types.h>
-+#include <unistd.h>
-+#include <sys/mman.h>
-+#include <numaif.h>
-+#include <test_progs.h>
-+#include "test_mempolicy.skel.h"
-+
-+#define SIZE 4096
-+
-+static void mempolicy_bind(bool success)
-+{
-+	unsigned long mask = 1;
-+	char *addr;
-+	int err;
-+
-+	addr = mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-+	if (!ASSERT_OK_PTR(addr, "mmap"))
-+		return;
-+
-+	err = mbind(addr, SIZE, MPOL_BIND, &mask, sizeof(mask), 0);
-+	if (success)
-+		ASSERT_OK(err, "mbind_success");
-+	else
-+		ASSERT_ERR(err, "mbind_fail");
-+
-+	munmap(addr, SIZE);
-+}
-+
-+static void mempolicy_default(void)
-+{
-+	char *addr;
-+	int err;
-+
-+	addr = mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-+	if (!ASSERT_OK_PTR(addr, "mmap"))
-+		return;
-+
-+	err = mbind(addr, SIZE, MPOL_DEFAULT, NULL, 0, 0);
-+	ASSERT_OK(err, "mbind_success");
-+
-+	munmap(addr, SIZE);
-+}
-+void test_mempolicy(void)
-+{
-+	struct test_mempolicy *skel;
-+	int err;
-+
-+	skel = test_mempolicy__open();
-+	if (!ASSERT_OK_PTR(skel, "open"))
-+		return;
-+
-+	skel->bss->target_pid = getpid();
-+
-+	err = test_mempolicy__load(skel);
-+	if (!ASSERT_OK(err, "load"))
-+		goto destroy;
-+
-+	/* Attach LSM prog first */
-+	err = test_mempolicy__attach(skel);
-+	if (!ASSERT_OK(err, "attach"))
-+		goto destroy;
-+
-+	/* syscall to adjust memory policy */
-+	if (test__start_subtest("MPOL_BIND_with_lsm"))
-+		mempolicy_bind(false);
-+	if (test__start_subtest("MPOL_DEFAULT_with_lsm"))
-+		mempolicy_default();
-+
-+destroy:
-+	test_mempolicy__destroy(skel);
-+
-+	if (test__start_subtest("MPOL_BIND_without_lsm"))
-+		mempolicy_bind(true);
-+	if (test__start_subtest("MPOL_DEFAULT_without_lsm"))
-+		mempolicy_default();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_mempolicy.c b/tools/testing/selftests/bpf/progs/test_mempolicy.c
-new file mode 100644
-index 0000000..2fe8c99
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_mempolicy.c
-@@ -0,0 +1,29 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (C) 2023 Yafang Shao <laoar.shao@gmail.com> */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_core_read.h>
-+
-+int target_pid;
-+
-+static int mem_policy_adjustment(u64 mode)
-+{
-+	struct task_struct *task = bpf_get_current_task_btf();
-+
-+	if (task->pid != target_pid)
-+		return 0;
-+
-+	if (mode != MPOL_BIND)
-+		return 0;
-+	return -1;
-+}
-+
-+SEC("lsm/mbind")
-+int BPF_PROG(mbind_run, u64 start, u64 len, u64 mode, const u64 *nmask, u64 maxnode, u32 flags)
-+{
-+	return mem_policy_adjustment(mode);
-+}
-+
-+char _license[] SEC("license") = "GPL";
--- 
-1.8.3.1
+> Honestly, I don't think it makes any sense at all.
+>
+> If the key manager people can't be bothered to keep track of their
+> keys, the kernel certainly shouldn't be bothered with this kind of
+> huge hammer.
+>
+> It looks like an active DoS attack to me, by anybody who just creates
+> a huge process and then sits there giggling as the machine comes to a
+> complete halt, with the kernel busy zeroing pointless crap.
 
+Fair point.
+
+Do you think it could make sense to enable zeroing on exit only for
+ranges of memory (base + len) with a config dictating the max amount
+of bytes (or pages or whatever) that a single process is allowed to
+flag for zeroing? This way the DoS issue is effectively solved and the
+config could always be set to 0 (by default I guess), which would
+effectively leave any common system unchanged. The users that actually
+want to use this feature could then decide on their own how much it is
+worth to them and how big of a task they want the kernel to perform at
+max on exit.
+
+> Do it in user space. And if your user space randomly crashes, you have
+> other problems - but you can try to use ptrace to catch even that case
+> if you care.
+>
+>           Linus
+
+Unfortunately, ptrace is something many, including me, disable on
+systems that are meant to be as secure as possible.
+
+Kind Regards,
+Jasper
