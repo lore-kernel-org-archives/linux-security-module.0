@@ -2,159 +2,90 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEDFC4332F
-	for <linux-security-module@archiver.kernel.org>; Sun, 12 Nov 2023 16:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AAF1C4332F
+	for <linux-security-module@archiver.kernel.org>; Sun, 12 Nov 2023 18:50:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231553AbjKLQpp (ORCPT
+        id S231906AbjKLSue (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 12 Nov 2023 11:45:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57176 "EHLO
+        Sun, 12 Nov 2023 13:50:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229607AbjKLQpo (ORCPT
+        with ESMTP id S231907AbjKLSud (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 12 Nov 2023 11:45:44 -0500
-Received: from sonic302-27.consmr.mail.ne1.yahoo.com (sonic302-27.consmr.mail.ne1.yahoo.com [66.163.186.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72A21D5B
-        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 08:45:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699807540; bh=QkUjV5t8IJ0GXUPo0WqgUQD/kDQxsiveoip8QzmJqJ4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=dfnVPts4tAkCBb/7VhIM0HBO88QtaFHHdFX7LUzZItAfct9HLvY4SH4Xji1GEBqcap0BuQpLaVXrBnI7V8YEa4I1KSJ4xEb54SBsig0jhRXmyqe7/S4qH5cm0aFDro6H18EkiaezpDbbHFxNi18rL17LnAu4ImGcQ9/qzwugghCni796hDWev577UvaKC3+5AigThAtok8+uuI2ImZbP0tB0bnZDGydDrDMeNkISY8BocFPKwr4At73esnsY8nuhcauQDPjV2hRYXmYmzhvYAVQ0MpvjLuPmwnuJGhC7tP08T2BCFz1EwXzLluVK72vjVGdOKjw/SxW2oQuwKyg8HQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699807540; bh=1VpxShmE6qjr4iv0t6hoTD3r2fXLL7zBdXWyC6TONjh=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Fjp1cswf+tnNTyd1jSwlOTJW2BWemhfRTBWJhc9CyUt/ryDyYrva36ectNPY5WYHb4xWgNkUUfVDDNpiYnS2dzldenMuuMHQ7qrU/KRFzofwDj/fHM/zFHYqOgj3kPOjDbNwmcNpljSzvhRAJarkycEWpm6gk1fNfoGl0nHoQ3c0kNoicWqh2s4bOyJytxLiiTybzLivlIKsEqiItuIiJpBUl8+YCZRSqSSIMWUyP5jYp2NBi0684Omo2H4kLgYArGtos5sU2DyVZdehzdNCPamsgvE1tD2Zo1KgpXaD4+Wwgo60uZYn+QHsisowGKs4c1rbNoNmrW7pdE9uriMKlw==
-X-YMail-OSG: GRlCGHQVM1kDISfaDg7rqBLZ28e3OEyiXnX.092G.bFlk1S3SXSlfjsU.40djcn
- XVRFOzUV64TK0_SbAO0mDyj4LWmvANmYG7kb541_qMCmSH4S6pwdsuZpPyKz5Rw.TQhQSPXgPPeq
- k3F5tEYHz5rZvsFRQ8KLBN5tPF1cW6xSCw3Il3AFZxY7qPL2OAVcx033TQ1zp15yAVKrD8u9pWB4
- Nm3PR8FcqySe3YObuODT7KABN2DMfqIZBcGeZ9leeqnBOpU28U5XshkfBrsds4HFNZcyI5tGX5SO
- VveaelgNY5HYv9a22DSaTimXRWbYozTc1vBfvI9QfxDSpWcOV0FL2YRdOfyKU51FUF67pOp3sNCi
- W_VzQqYBgG4k1B5EaB1_FWVAG3ZAYx40oX1yI3N2RryX4RH1PXWR5Zs2rYHcPLO0t.e_2xjz0Lfg
- Dir9uSFdc5ro72OgtUj4tHTC_51G.99fN0DQVTJkWq8.nCD2IWcYJl8J6pBpLgf65KpejC7DkXOz
- qOcsq8PUsamikc6ZtI2P10RwkgofRDq0JMCC1wEb_PcM7TyvYYq6IOop2cWBgR8Ls2AkZ1MLEY.9
- kFG.vVHKqnGKCU2.u1MRAiAaPwpkEwVwFI5lnBHWeDBaQusbRNVYdA9koQ8RmPr9S6FjTjs5egQt
- Pmh15nrPppojf5Ng5OKSsrkOVKC2moKkGpEAlbDS2fNVEbcUknySArbEJi4.bsLpeQ0Qr6Bsu.Uj
- CTq9abiW2fu7T3.iK0c7Vnhrc1yR8M1hDxr7AsO8QH8rqWe_t5j3xbH0ulIBOxETGuqyMSxURrbG
- uGQCwURKWeiYIRCbodaxPm5DnSNMdtT2KyoE0Y.Nwrvt2ZlC_m7EUgWuciD1wwR0tik9g64mnKkc
- 5kaCB_CEo1EgPjDoKm5uN21jN7Xj2XCfVoqgATcCh3Lz5lKMN7BnSV8daE4NYNDzCYWgxdXwKCvu
- 0uBVYyP2M.vs8OdAjmWo5sEG499fTFcY5XOtwc1mKrNlu.fIJDR_yhWo4NCK1LYfNYO9uEZkHQhQ
- sN4tGGbWkfnOGfYufeqheTx54kEnRSWZTT.QgfNZMxvNEg3YJb4yyMHaA5N0QJC6irBJ7LsoHXkK
- Yek4zxfZ.N5ffWnTz5aubnADNPL9aP.5Kg_e7_.imLieyL0CuB0Lv3xsoYmOMC_O6m2rg1K8Fa_x
- MTP1JBTCMNbmAy9MGUACB1E7_Wo76cbhTJYPMgdYra1sEEvPJqSp4uUcXepCGlaS.Zcf3T_d702Y
- 5ZUM7mkZHqAAtqsruiWJKQ0oaf_5AnjKzOt0ZItw9NDjrCE8P3LBIeAk_fpLxz_r9ehDXdtEJvy9
- _0M70cmHD5LFUj0XQCNXNllZVoUkSTr2uU7ANjgujRwSSojw4YBWYJ.ZDm.AGEzbW0NkEZGlZVGc
- ptVvGQKGLv.TdvrFUWb61hqQQUu3MDmpiP4KZfF4_0EdpmffRHGEvebs2rIOJTYlM8u2nSDuGF2L
- UjyLaHmcX1FM8C7OeDhGbNJMW0fCzlFvqtfL0QucO6oBGjBxLQmBfDOirGIsoIpd1g56GQu3Ffu6
- TExPK_oYCoCXr.uHZmzE6h.XNya4d6A62d1AOPU_jF3t3_IbAMhF5UqmPZDVRzUN7DO6YuTEXhCZ
- tz7tOCCfrCD02xB27tt4DcTVVFLr.5U_zEOt6bRWED3HevLGfhMKYrAAJZf31G3lfl61WugBzhRj
- 3In315niWtOvAqPQXxIv23JdyMqhh_xh89Ie5iTHmu9a_FGCxL1dCvfgSnYxnB.tjQGbvuObQkox
- evs4HQklb8cTU.aXM_Z4kFUjp.wnVnn2bOx4bSH95BFIbp3JFuJxYNFTO0AVhu0N25IB_myRKZKD
- CoM3JN7l3q8CmW7CyU87Qep8Ba6A3B4hu1YBMHLeXp8eSOWQY5qP5MfpEpxkkztT8M2RWWUWlFXq
- t5..IlfdVq.v_oKfDfoDErivdlDT734_DbjpkH5m5ThCkkIDxd5GEcZTSN.Xpt1n.wBS1TZmwqJv
- .EsPohx6KJ.jpzwT6nRl1eKKu1Fz4VEKGMWPeYabXdbDdaPg7JvJ6h_3XOgKLl5uAokS6I3p_W2S
- yp4l7VyzKs9.bW41N5OkDkYeJO39FtmYMKwrh__lZ21ex8HX_gCcz9nmhKzQGlKo2RUaNW9I0Kb9
- 1DEyYkSEz8hVxYizProGTHGtszBbiyXsK.uhW73P3y_wiVcaewLO73UClLo8iRySI70CQ_A0mB3m
- gMHulXuODRjMuVQw7Xmj5is19T0LUeH0nlar288RNCMXHALeH1li9s6hNMIjbOAi4XXallIbd7MC
- ZM62vRgwRPFIpRA--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: cfa27603-0734-49f6-ba07-41171bf30657
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Sun, 12 Nov 2023 16:45:40 +0000
-Received: by hermes--production-bf1-5b945b6d47-jx96d (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 328aad92118f82324d3a6d13ce8cfcd6;
-          Sun, 12 Nov 2023 16:45:37 +0000 (UTC)
-Message-ID: <188dc90e-864f-4681-88a5-87401c655878@schaufler-ca.com>
-Date:   Sun, 12 Nov 2023 08:45:34 -0800
+        Sun, 12 Nov 2023 13:50:33 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 703B5103
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 10:50:30 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-507c5249d55so5702276e87.3
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 10:50:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1699815028; x=1700419828; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=toLQxGAKGjPQ+cmef0067ZoK5B9j5w9kF9znNCM+IOg=;
+        b=EP6hiRyTauU6wmoXJZSX/w2H+tKn01xMgJIE0/7y2TSC8WpY+KzLvrbdUtD+BCCoeP
+         GFoDXR/ObTP8Szni04Y8dYNZ1GoqxXf1zyABzH9dgrzVHmVq4ey2HKlaDphURAVZ5rjC
+         cevKlR93kPgv50Krmwyvdw8ZOSi8NSFBJWHwo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699815028; x=1700419828;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=toLQxGAKGjPQ+cmef0067ZoK5B9j5w9kF9znNCM+IOg=;
+        b=mHGs9Idc5lXbl0jR8SQC8w5LX6nDR2sEjsCut9xxUQ40jH2OcklJ9caRAfZTFUyff+
+         90XKhiW3IGQD4LqltDLqj7yZ4kZYV1e0n3Rlq9/8UO5UPa68WU5O/qSNPawvinedWeWL
+         9fV3q/6uAtWi3kSa/w6mQtv9d8hnuWaRCXnoZjsz7qvOIi+bvXKS0YSNgZces8nwSaJQ
+         JDrl1k7jc8DNf0f2FxzoGzsh0k2qDrf43bAeCZRccrqCnUYGvSASwGVgh/E4CFOZ3CUm
+         jfeL7QW24GDXnq4zYX7/MxvzZa/1A4HUydp/6vhwKuFHMmCZRx/0FiIHBVi9154zOFUo
+         CBGw==
+X-Gm-Message-State: AOJu0Yx9VuvnbSXgjszwN/H7rrtIDjQrBmdMYx0iK+WVIc/Dh4mJRAfn
+        UQndl30P+ACtGitnMTu9yjJ/q+ms6AV+gYke4KMM4Lm1
+X-Google-Smtp-Source: AGHT+IH+eNZXvCV+AR55MyzCF2PmrY+sT9QF8vZnU3G21gWWkR188Ndk9okEHdmqa4Vg+8/YyBuPHA==
+X-Received: by 2002:ac2:5dd8:0:b0:507:c9d5:39a9 with SMTP id x24-20020ac25dd8000000b00507c9d539a9mr3012407lfq.52.1699815028399;
+        Sun, 12 Nov 2023 10:50:28 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id d25-20020a056512369900b005007fc9ccd0sm698298lfs.113.2023.11.12.10.50.27
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 12 Nov 2023 10:50:27 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-507962561adso5718829e87.0
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 10:50:27 -0800 (PST)
+X-Received: by 2002:a05:6512:3051:b0:4ff:a8c6:d1aa with SMTP id
+ b17-20020a056512305100b004ffa8c6d1aamr4427793lfb.48.1699815027222; Sun, 12
+ Nov 2023 10:50:27 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH -mm 0/4] mm, security, bpf: Fine-grained control over
- memory policy adjustments with lsm bpf
-Content-Language: en-US
-To:     Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        bpf@vger.kernel.org, ligang.bdlg@bytedance.com, mhocko@suse.com,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20231112073424.4216-1-laoar.shao@gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20231112073424.4216-1-laoar.shao@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20231111125126.11665-1-yjnworkstation@gmail.com>
+ <20231111132431.GA3717@1wt.eu> <CAHk-=whTZDjeH2FJqBozjAF44sh4XVNQrt2xdQn_Ujt=Be6=dw@mail.gmail.com>
+ <CAMjCObv9Z+Ood9QFA_jSQ2roSEE6C_ip=KeyoChmtyi97UoU7g@mail.gmail.com> <20231112154424.GE35991@mit.edu>
+In-Reply-To: <20231112154424.GE35991@mit.edu>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 12 Nov 2023 10:50:10 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj1qDhzGRYnfHb-jYHiT_3x+PuA8Zk9FosCzm5OL6e=GQ@mail.gmail.com>
+Message-ID: <CAHk-=wj1qDhzGRYnfHb-jYHiT_3x+PuA8Zk9FosCzm5OL6e=GQ@mail.gmail.com>
+Subject: Re: [PATCH] exitz syscall
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     Jasper Niebuhr <yjnworkstation@gmail.com>,
+        Willy Tarreau <w@1wt.eu>, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/11/2023 11:34 PM, Yafang Shao wrote:
-> Background
-> ==========
+On Sun, 12 Nov 2023 at 07:44, Theodore Ts'o <tytso@mit.edu> wrote:
 >
-> In our containerized environment, we've identified unexpected OOM events
-> where the OOM-killer terminates tasks despite having ample free memory.
-> This anomaly is traced back to tasks within a container using mbind(2) to
-> bind memory to a specific NUMA node. When the allocated memory on this node
-> is exhausted, the OOM-killer, prioritizing tasks based on oom_score,
-> indiscriminately kills tasks. This becomes more critical with guaranteed
-> tasks (oom_score_adj: -998) aggravating the issue.
+> How about adding a flag MLOCK_ZERO_ON_FREE used by the mlock2() system
+> call?  The number of pages which an unprivileged process can lock is
+> already capped via RLIMIT_MEMLOCK (or else mlock would be it own
+> denial of service attack).  That way if process dies from crash, the
+> keys would be zero'ed.
 
-Is there some reason why you can't fix the callers of mbind(2)?
-This looks like an user space configuration error rather than a
-system security issue.
+Yes, that is a lot better as an interface.
 
->
-> The selected victim might not have allocated memory on the same NUMA node,
-> rendering the killing ineffective. This patch aims to address this by
-> disabling MPOL_BIND in container environments.
->
-> In the container environment, our aim is to consolidate memory resource
-> control under the management of kubelet. If users express a preference for
-> binding their memory to a specific NUMA node, we encourage the adoption of
-> a standardized approach. Specifically, we recommend configuring this memory
-> policy through kubelet using cpuset.mems in the cpuset controller, rather
-> than individual users setting it autonomously. This centralized approach
-> ensures that NUMA nodes are globally managed through kubelet, promoting
-> consistency and facilitating streamlined administration of memory resources
-> across the entire containerized environment.
+However, it still needs to also make sure that the memory in question
+is not file-backed etc. Which the patch I saw didn't seem to do
+either.
 
-Changing system behavior for a single use case doesn't seem prudent.
-You're introducing a bunch of kernel code to avoid fixing a broken
-user space configuration.
+End result: as it was, that exitz patch was not helping security. It
+was anything but.
 
->
-> Proposed Solutions
-> =================
->
-> - Introduce Capability to Disable MPOL_BIND
->   Currently, any task can perform MPOL_BIND without specific capabilities.
->   Enforcing CAP_SYS_RESOURCE or CAP_SYS_NICE could be an option, but this
->   may have unintended consequences. Capabilities, being broad, might grant
->   unnecessary privileges. We should explore alternatives to prevent
->   unexpected side effects.
->
-> - Use LSM BPF to Disable MPOL_BIND
->   Introduce LSM hooks for syscalls such as mbind(2), set_mempolicy(2), and
->   set_mempolicy_home_node(2) to disable MPOL_BIND. This approach is more
->   flexibility and allows for fine-grained control without unintended
->   consequences. A sample LSM BPF program is included, demonstrating
->   practical implementation in a production environment.
->
-> Future Considerations
-> =====================
->
-> In addition, there's room for enhancement in the OOM-killer for cases
-> involving CONSTRAINT_MEMORY_POLICY. It would be more beneficial to
-> prioritize selecting a victim that has allocated memory on the same NUMA
-> node. My exploration on the lore led me to a proposal[0] related to this
-> matter, although consensus seems elusive at this point. Nevertheless,
-> delving into this specific topic is beyond the scope of the current
-> patchset.
->
-> [0]. https://lore.kernel.org/lkml/20220512044634.63586-1-ligang.bdlg@bytedance.com/ 
->
-> Yafang Shao (4):
->   mm, security: Add lsm hook for mbind(2)
->   mm, security: Add lsm hook for set_mempolicy(2)
->   mm, security: Add lsm hook for set_mempolicy_home_node(2)
->   selftests/bpf: Add selftests for mbind(2) with lsm prog
->
->  include/linux/lsm_hook_defs.h                      |  8 +++
->  include/linux/security.h                           | 26 +++++++
->  mm/mempolicy.c                                     | 13 ++++
->  security/security.c                                | 19 ++++++
->  tools/testing/selftests/bpf/prog_tests/mempolicy.c | 79 ++++++++++++++++++++++
->  tools/testing/selftests/bpf/progs/test_mempolicy.c | 29 ++++++++
->  6 files changed, 174 insertions(+)
->  create mode 100644 tools/testing/selftests/bpf/prog_tests/mempolicy.c
->  create mode 100644 tools/testing/selftests/bpf/progs/test_mempolicy.c
->
+              Linus
