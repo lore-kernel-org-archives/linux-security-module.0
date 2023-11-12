@@ -2,100 +2,91 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 840F4C4332F
-	for <linux-security-module@archiver.kernel.org>; Sun, 12 Nov 2023 13:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBBBC41535
+	for <linux-security-module@archiver.kernel.org>; Sun, 12 Nov 2023 15:45:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229541AbjKLNGG (ORCPT
+        id S231545AbjKLPo5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 12 Nov 2023 08:06:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50336 "EHLO
+        Sun, 12 Nov 2023 10:44:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjKLNGG (ORCPT
+        with ESMTP id S231429AbjKLPoz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 12 Nov 2023 08:06:06 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B55582D62;
-        Sun, 12 Nov 2023 05:06:02 -0800 (PST)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E935BC433C7;
-        Sun, 12 Nov 2023 13:05:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1699794361;
-        bh=Up28SPWOa6jD0igTTwEC4Hob6rCXj0MPSVsR3u9yY8I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kWHL919zHSqxlcyqbgg08BrTE+ngjrz6rWxfxCiUBkB45mvrC8y5Mf3hfuF5ByIK2
-         wOAIr0P5yILWvjNbCOZG2/YOz+MkNEJaRczeBqoJET7pHxtoC5nDUtNnvRDLOOr1Gp
-         BIuvXNpCtT1/6Ang0KkbWm3OCcWzyRBbtM+2DzP0BvC9E+9CC0rd2lv5wdFJL2xuJA
-         iIcAjfVQynpLZYFtGsxKCurWalPK2nOX7ye85ZpKtjlU2k5KLiIYWZnCyXPkijQYzR
-         mp1LIQhMYDGOJzx/8ClVjq9GZE3JzxGXhA8Rqcy7InDtgYud1kl9LX/qdkIetjfKNg
-         M5WiaNM4y05aQ==
-Date:   Sun, 12 Nov 2023 14:05:58 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Matthew House <mattlloydhouse@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 4/6] add statmount(2) syscall
-Message-ID: <20231112-gemessen-lauschangriff-3352c19e676a@brauner>
-References: <20231025140205.3586473-5-mszeredi@redhat.com>
- <4ab327f80c4f98dffa5736a1acba3e0d.paul@paul-moore.com>
- <20231108-zwerge-unheil-b3f48a84038d@brauner>
- <CAHC9VhSLGyFRSbeZXE7z61Y2aDJi_1Dedjw0ioFOckRCs0CRaA@mail.gmail.com>
- <CAHC9VhRvYua4noiHbMqcAqz=Rkz=pxSgp5fVxXX+uhz61jYFag@mail.gmail.com>
+        Sun, 12 Nov 2023 10:44:55 -0500
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E84C6270E
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 07:44:52 -0800 (PST)
+Received: from cwcc.thunk.org (pool-173-48-113-74.bstnma.fios.verizon.net [173.48.113.74])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 3ACFiOI9009744
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 12 Nov 2023 10:44:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1699803867; bh=Ikwnvi8v+x4raoC2mWubQl6+3PFm9Hj28qG7SUc77ew=;
+        h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+        b=GMFvLmPAS6OOIns1ZDPU8KTtXZyEsv5MS10k7s3A2qcSYMxz8e4ArvuuILYzYv4rh
+         wb6zg9+RG+xVYBm6qZ6S1rm2E0IdMrVxEFhSgJzKu7SSc15r+/0Sr8UHCm3dNJxLAN
+         Pyb+D+EW9GsywE4Gg4Eog+cS17Sp0dOMBmiXoVBGBkrTxHDUUrw9e5mDIAwP64DqbI
+         WJcRJcsbGLJwh6Zq3eT8Spyq9WY654ZCdTujNpW0js6LLVlAHoRSlFHRryYDHVkt76
+         U/z7FvMBhDuuDFnEn7V2M4ePn/LdepeM7w1FNLfrVfRmIsxb+Lr1bTFRZNmbhcMz5c
+         1wLOQBRldC+Tw==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 15A0E15C02AA; Sun, 12 Nov 2023 10:44:24 -0500 (EST)
+Date:   Sun, 12 Nov 2023 10:44:24 -0500
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Jasper Niebuhr <yjnworkstation@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Willy Tarreau <w@1wt.eu>, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] exitz syscall
+Message-ID: <20231112154424.GE35991@mit.edu>
+References: <20231111125126.11665-1-yjnworkstation@gmail.com>
+ <20231111132431.GA3717@1wt.eu>
+ <CAHk-=whTZDjeH2FJqBozjAF44sh4XVNQrt2xdQn_Ujt=Be6=dw@mail.gmail.com>
+ <CAMjCObv9Z+Ood9QFA_jSQ2roSEE6C_ip=KeyoChmtyi97UoU7g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRvYua4noiHbMqcAqz=Rkz=pxSgp5fVxXX+uhz61jYFag@mail.gmail.com>
+In-Reply-To: <CAMjCObv9Z+Ood9QFA_jSQ2roSEE6C_ip=KeyoChmtyi97UoU7g@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 10, 2023 at 12:00:22PM -0500, Paul Moore wrote:
-> On Wed, Nov 8, 2023 at 3:10 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Wed, Nov 8, 2023 at 2:58 AM Christian Brauner <brauner@kernel.org> wrote:
-> > > > > +static int do_statmount(struct stmt_state *s)
-> > > > > +{
-> > > > > +   struct statmnt *sm = &s->sm;
-> > > > > +   struct mount *m = real_mount(s->mnt);
-> > > > > +   size_t copysize = min_t(size_t, s->bufsize, sizeof(*sm));
-> > > > > +   int err;
-> > > > > +
-> > > > > +   err = security_sb_statfs(s->mnt->mnt_root);
-> > > > > +   if (err)
-> > > > > +           return err;
-> > > > > +
-> > > > > +   if (!capable(CAP_SYS_ADMIN) &&
-> > > > > +       !is_path_reachable(m, m->mnt.mnt_root, &s->root))
-> > > > > +           return -EPERM;
-> > > >
-> > > > In order to be consistent with our typical access control ordering,
-> > > > please move the security_sb_statfs() call down to here, after the
-> > > > capability checks.
-> > >
-> > > I've moved the security_sb_statfs() calls accordingly.
-> >
-> > Okay, good.  Did I miss a comment or a patch where that happened?  I
-> > looked over the patchset and comments yesterday and didn't recall
-> > seeing anything about shuffling the access control checks.
+On Sun, Nov 12, 2023 at 11:03:43AM +0100, Jasper Niebuhr wrote:
 > 
-> Gentle ping on this.  I'm asking because I know there have been issues
-> lately with the lists and some mail providers and I want to make sure
-> I'm not missing anything, I double checked lore again and didn't see
-> anything there either, but I might be missing it.
+> Do you think it could make sense to enable zeroing on exit only for
+> ranges of memory (base + len) with a config dictating the max amount
+> of bytes (or pages or whatever) that a single process is allowed to
+> flag for zeroing? This way the DoS issue is effectively solved and the
+> config could always be set to 0 (by default I guess), which would
+> effectively leave any common system unchanged. The users that actually
+> want to use this feature could then decide on their own how much it is
+> worth to them and how big of a task they want the kernel to perform at
+> max on exit.
 
-Sorry, I'm traveling so I just didn't see this. Please see:
+How about adding a flag MLOCK_ZERO_ON_FREE used by the mlock2() system
+call?  The number of pages which an unprivileged process can lock is
+already capped via RLIMIT_MEMLOCK (or else mlock would be it own
+denial of service attack).  That way if process dies from crash, the
+keys would be zero'ed.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs.mount&id=dc14fa93943918bee898d75d7ae72fc3623ce9ce
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs.mount&id=de17643cbf9b0282990bb9cf0e0bf01710c9ec03
+The argument against this is that this functionality could be an
+attractive nuisance, since best practice is to zero any keying
+information the moment you no longer need it, instead of depending on
+magic OS behavior to take care of something that you darned well
+should be doing yourself.  I understand that in your case, you're
+trying to protect a key manager, whose *job* it is to hold onto keys
+for long periods of time.  So this advice might not be as applicable
+in your case.
 
-I've folded the fixup into these patches. I probably just accidently
-dropped the diff from my reply.
+I do suspect that the chances that trying to grab a memory page after
+it has been released is one of the least likely way keys would be
+exfiltrated.  I'd be much more worried about stack/buffer overflow
+attacks in any of the libraries used by the key manager, for example.
+Or zero-day attacks on the kernel which then grab the keys from the
+key manager process while it is still running....
+
+Cheers,
+
+					- Ted
+
