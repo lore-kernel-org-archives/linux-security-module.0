@@ -2,110 +2,100 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19794C4332F
-	for <linux-security-module@archiver.kernel.org>; Sun, 12 Nov 2023 10:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 840F4C4332F
+	for <linux-security-module@archiver.kernel.org>; Sun, 12 Nov 2023 13:06:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229776AbjKLKD7 (ORCPT
+        id S229541AbjKLNGG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 12 Nov 2023 05:03:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51582 "EHLO
+        Sun, 12 Nov 2023 08:06:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbjKLKD6 (ORCPT
+        with ESMTP id S229441AbjKLNGG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 12 Nov 2023 05:03:58 -0500
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 021292D61;
-        Sun, 12 Nov 2023 02:03:56 -0800 (PST)
-Received: by mail-pj1-x1033.google.com with SMTP id 98e67ed59e1d1-2800bdf888dso2583376a91.1;
-        Sun, 12 Nov 2023 02:03:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699783435; x=1700388235; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s63k/oeUAOEiHqZXShqq4HE+liPGc+BR6jSLnDlt2us=;
-        b=Yfs7L+Inx0WxENft2+lAnp2FmtsrIgU90g3TcxG25rUK8D5fLhMLcdfwiImKej4Xpr
-         hfJmvjABEwdqtJVEyUqKuNJZ6eHKZTpg/pB12BmmHt/cLtoExroK00677vgSTq1Li4sw
-         EPu+UR1a5j212F80oDL9nvRz0ACrhO6/XJ5JK1b7eAw/YQqQrhFJVnV0U+Eg4PPB+rcm
-         kUmHjdcDmazgRsG0T+2VAlCvIuZ8EWMgOsXY5HGNKkVe3nZe2F+7Bxr3REHEErIp64US
-         3V5CL8Mj95gUFKlPQL8tX+ZwYGjl6YyH1Fj+OlEvDvsSVtLFGZVBiPpDdZ/bPcy0iLYk
-         0XNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699783435; x=1700388235;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s63k/oeUAOEiHqZXShqq4HE+liPGc+BR6jSLnDlt2us=;
-        b=MWN5Ota4BELEg0EEYwZHz3bAsBk+Gl+ZmmC6SoynmjvgfyIYMX43Ue+QHbg0rJWntW
-         urHklodnBKDwLsu29ATZd+cwGluAOT1rTklTcp+EfOemA5JfIhjyPkh2EhqsBUwn+59/
-         dIenrIOTf+7BqxRxVoIhCXcfeM91J/LWLvtMJ4+JYB5BAzB/LRL59IwCCzlOMMQhuSmX
-         mJoyv2KuJcVX9PqIGs3QZCCrGAvwE65iHejppQwmdPr0gWsBX8IQGzsNhJXNvhB1kh1a
-         jSPjsaj/OsCEfEVsHskdudDhYSf8MdSsKlwqtxvAecj49dn4tqU0U9X2rFO1CfioBtxX
-         vaqw==
-X-Gm-Message-State: AOJu0Yw/MeOS2zhLQ3V+Q6tQkLwzLqAxWlkur60GvjSZY69ChXRh2FNM
-        oAOCGIvjBdjwe3kWOrx4qN72kb9Jy+CZz7G2V560/eMXVnjdtg==
-X-Google-Smtp-Source: AGHT+IGjG5z/b7bhhJVnHm+C5wcylDhXbqxvoXWFwkHP0FCBrX04Rsqs1cPU5fFZGyv6mzEcoeIsosmaaPjliF60KOI=
-X-Received: by 2002:a17:90b:4c51:b0:280:a002:be85 with SMTP id
- np17-20020a17090b4c5100b00280a002be85mr5987800pjb.20.1699783435348; Sun, 12
- Nov 2023 02:03:55 -0800 (PST)
+        Sun, 12 Nov 2023 08:06:06 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B55582D62;
+        Sun, 12 Nov 2023 05:06:02 -0800 (PST)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E935BC433C7;
+        Sun, 12 Nov 2023 13:05:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1699794361;
+        bh=Up28SPWOa6jD0igTTwEC4Hob6rCXj0MPSVsR3u9yY8I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kWHL919zHSqxlcyqbgg08BrTE+ngjrz6rWxfxCiUBkB45mvrC8y5Mf3hfuF5ByIK2
+         wOAIr0P5yILWvjNbCOZG2/YOz+MkNEJaRczeBqoJET7pHxtoC5nDUtNnvRDLOOr1Gp
+         BIuvXNpCtT1/6Ang0KkbWm3OCcWzyRBbtM+2DzP0BvC9E+9CC0rd2lv5wdFJL2xuJA
+         iIcAjfVQynpLZYFtGsxKCurWalPK2nOX7ye85ZpKtjlU2k5KLiIYWZnCyXPkijQYzR
+         mp1LIQhMYDGOJzx/8ClVjq9GZE3JzxGXhA8Rqcy7InDtgYud1kl9LX/qdkIetjfKNg
+         M5WiaNM4y05aQ==
+Date:   Sun, 12 Nov 2023 14:05:58 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew House <mattlloydhouse@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 4/6] add statmount(2) syscall
+Message-ID: <20231112-gemessen-lauschangriff-3352c19e676a@brauner>
+References: <20231025140205.3586473-5-mszeredi@redhat.com>
+ <4ab327f80c4f98dffa5736a1acba3e0d.paul@paul-moore.com>
+ <20231108-zwerge-unheil-b3f48a84038d@brauner>
+ <CAHC9VhSLGyFRSbeZXE7z61Y2aDJi_1Dedjw0ioFOckRCs0CRaA@mail.gmail.com>
+ <CAHC9VhRvYua4noiHbMqcAqz=Rkz=pxSgp5fVxXX+uhz61jYFag@mail.gmail.com>
 MIME-Version: 1.0
-References: <20231111125126.11665-1-yjnworkstation@gmail.com>
- <20231111132431.GA3717@1wt.eu> <CAHk-=whTZDjeH2FJqBozjAF44sh4XVNQrt2xdQn_Ujt=Be6=dw@mail.gmail.com>
-In-Reply-To: <CAHk-=whTZDjeH2FJqBozjAF44sh4XVNQrt2xdQn_Ujt=Be6=dw@mail.gmail.com>
-From:   Jasper Niebuhr <yjnworkstation@gmail.com>
-Date:   Sun, 12 Nov 2023 11:03:43 +0100
-Message-ID: <CAMjCObv9Z+Ood9QFA_jSQ2roSEE6C_ip=KeyoChmtyi97UoU7g@mail.gmail.com>
-Subject: Re: [PATCH] exitz syscall
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Willy Tarreau <w@1wt.eu>, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        "tytso@mit.edu" <tytso@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhRvYua4noiHbMqcAqz=Rkz=pxSgp5fVxXX+uhz61jYFag@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Nov 12, 2023 at 2:24=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sat, 11 Nov 2023 at 05:24, Willy Tarreau <w@1wt.eu> wrote:
+On Fri, Nov 10, 2023 at 12:00:22PM -0500, Paul Moore wrote:
+> On Wed, Nov 8, 2023 at 3:10 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Wed, Nov 8, 2023 at 2:58 AM Christian Brauner <brauner@kernel.org> wrote:
+> > > > > +static int do_statmount(struct stmt_state *s)
+> > > > > +{
+> > > > > +   struct statmnt *sm = &s->sm;
+> > > > > +   struct mount *m = real_mount(s->mnt);
+> > > > > +   size_t copysize = min_t(size_t, s->bufsize, sizeof(*sm));
+> > > > > +   int err;
+> > > > > +
+> > > > > +   err = security_sb_statfs(s->mnt->mnt_root);
+> > > > > +   if (err)
+> > > > > +           return err;
+> > > > > +
+> > > > > +   if (!capable(CAP_SYS_ADMIN) &&
+> > > > > +       !is_path_reachable(m, m->mnt.mnt_root, &s->root))
+> > > > > +           return -EPERM;
+> > > >
+> > > > In order to be consistent with our typical access control ordering,
+> > > > please move the security_sb_statfs() call down to here, after the
+> > > > capability checks.
+> > >
+> > > I've moved the security_sb_statfs() calls accordingly.
 > >
-> > IMHO it does not make sense to add a syscall for this, please have a
-> > look at prctl(2) instead, which is already used for similar settings.
+> > Okay, good.  Did I miss a comment or a patch where that happened?  I
+> > looked over the patchset and comments yesterday and didn't recall
+> > seeing anything about shuffling the access control checks.
+> 
+> Gentle ping on this.  I'm asking because I know there have been issues
+> lately with the lists and some mail providers and I want to make sure
+> I'm not missing anything, I double checked lore again and didn't see
+> anything there either, but I might be missing it.
 
-First of all, I had a look and now absolutely agree with this.
+Sorry, I'm traveling so I just didn't see this. Please see:
 
-> Honestly, I don't think it makes any sense at all.
->
-> If the key manager people can't be bothered to keep track of their
-> keys, the kernel certainly shouldn't be bothered with this kind of
-> huge hammer.
->
-> It looks like an active DoS attack to me, by anybody who just creates
-> a huge process and then sits there giggling as the machine comes to a
-> complete halt, with the kernel busy zeroing pointless crap.
+https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs.mount&id=dc14fa93943918bee898d75d7ae72fc3623ce9ce
+https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs.mount&id=de17643cbf9b0282990bb9cf0e0bf01710c9ec03
 
-Fair point.
-
-Do you think it could make sense to enable zeroing on exit only for
-ranges of memory (base + len) with a config dictating the max amount
-of bytes (or pages or whatever) that a single process is allowed to
-flag for zeroing? This way the DoS issue is effectively solved and the
-config could always be set to 0 (by default I guess), which would
-effectively leave any common system unchanged. The users that actually
-want to use this feature could then decide on their own how much it is
-worth to them and how big of a task they want the kernel to perform at
-max on exit.
-
-> Do it in user space. And if your user space randomly crashes, you have
-> other problems - but you can try to use ptrace to catch even that case
-> if you care.
->
->           Linus
-
-Unfortunately, ptrace is something many, including me, disable on
-systems that are meant to be as secure as possible.
-
-Kind Regards,
-Jasper
+I've folded the fixup into these patches. I probably just accidently
+dropped the diff from my reply.
