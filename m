@@ -2,147 +2,159 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6004BC4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Nov 2023 08:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D17F7C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Nov 2023 08:51:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229580AbjKMIVP (ORCPT
+        id S229835AbjKMIvH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Nov 2023 03:21:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58184 "EHLO
+        Mon, 13 Nov 2023 03:51:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229686AbjKMIVP (ORCPT
+        with ESMTP id S229817AbjKMIvG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Nov 2023 03:21:15 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00DF310F5;
-        Mon, 13 Nov 2023 00:21:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=Vb6yF7Z1sBKdQY3wavT2xUDJmLu+GkW+0ySW8ghKdVA=; b=RGky/CDnkLKlTSPAu++ti06E7l
-        ILAUJR6hOpprntlymw3H+pU19GgkD0k1AUHCUWsxWBB7DQLk2U3onnfv7tU0IvtJuqH7gVIbjzW44
-        WRF4easbIOX+MURmTMUl5+yu0wP15LgXAhCBZKbxOp3tw7tJze4Faipi4nqb0Hme2XuwcGRMtyy+w
-        vX5z+JZhNdp44hFpuTi6awZzlLxAkrlGP3IjFQLEEojz22KpxKrjdzbTI3NxR325ZnWyFWhASqy+j
-        gn046ayl+YKyRr/4FsS5rohaCBgXJ2lq9X/B7+vjVBFdpVffo6jg/ruojCZv+GsGEKWKyXXDF7yJv
-        Y9vMTtnA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1r2SAL-00D6tb-Gh; Mon, 13 Nov 2023 08:19:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D372F300427; Mon, 13 Nov 2023 09:19:29 +0100 (CET)
-Date:   Mon, 13 Nov 2023 09:19:29 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Alexander Graf <graf@amazon.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        Forrest Yuan Yu <yuanyu@google.com>,
-        James Gowans <jgowans@amazon.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        John Andersen <john.s.andersen@intel.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Marian Rotariu <marian.c.rotariu@gmail.com>,
-        Mihai =?utf-8?B?RG9uyJt1?= <mdontu@bitdefender.com>,
-        =?utf-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>,
-        Thara Gopinath <tgopinath@microsoft.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Zahra Tarkhani <ztarkhani@microsoft.com>,
-        =?utf-8?Q?=C8=98tefan_=C8=98icleru?= <ssicleru@bitdefender.com>,
-        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
-        virtualization@lists.linux-foundation.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [RFC PATCH v2 17/19] heki: x86: Update permissions counters
- during text patching
-Message-ID: <20231113081929.GA16138@noisy.programming.kicks-ass.net>
-References: <20231113022326.24388-1-mic@digikod.net>
- <20231113022326.24388-18-mic@digikod.net>
+        Mon, 13 Nov 2023 03:51:06 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B3D810F4
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Nov 2023 00:50:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1699865416;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=abJq3b4SxArGIzdH6oN3k/sACWtPDA4b9f3Ex7vpiIc=;
+        b=jJADADId2DuCzjk+Gml9FFqGqLEfyNxDmi1onKtKB8JUtWWobKAZ7KfUMoVZiYCR35ONcY
+        jSHUw98ayqpKheMLA2Xsmm1fPVWU/kTv9ThIfX1FbFVMFjSNmVPD8PcYgRClXnISZEYzRx
+        tAjOgAr+U2Lp85s+spLRBwqZP88YFsc=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-644-tbeMXOFiOHOk-eM3OtFAjA-1; Mon, 13 Nov 2023 03:50:15 -0500
+X-MC-Unique: tbeMXOFiOHOk-eM3OtFAjA-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-27ff8065e61so4818905a91.1
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Nov 2023 00:50:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699865414; x=1700470214;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=abJq3b4SxArGIzdH6oN3k/sACWtPDA4b9f3Ex7vpiIc=;
+        b=E0QpZyG4WrQW+TitX+JKOT0w3bHdCUid58XmG5PXXjV8iw3y37BSbFWW0qwAxSryQH
+         iisu15AjGgPf19r8QZSbEfix02YT5qDK2gs0jNWXGAHWAga1Lx5o4OHsSJwxgmkaoXWj
+         BQlmmnIouEgOkcYHT8p3gDk5bom+jwFfjFDKWgDZPedByM+4flhpCpnc6yL0wJcHUuiD
+         vSvxj/Sh8WadSXF65c9tKbNY0f6WOuIqfxqKiUfn0pkeuMsHOvjEmsbgwvzsJW9wU+x+
+         cZDovTih48eKqCi106gci69eOxQMkakwrXR/TRTGrhwAeeOH80QIf7dbZvpkfMldjDz2
+         cKrg==
+X-Gm-Message-State: AOJu0YyrJBZ/H5AvBB+KHAcfYkRhPmVqGpXroks+lTOIp1kb6wLbj9xM
+        Av1kU6ZLHJiI0qXhwxtPZopwtSEscKcGgGSkFNHOl0T7pcE9BDV3TmgWeQ0k4CIh0A+Yt7A58Hf
+        0EgDrKrGOo3qb5qHKArt6x9aGi4gNL10unm7C+GicAfmU7izO3mHp
+X-Received: by 2002:a17:90a:f00e:b0:280:cd15:9684 with SMTP id bt14-20020a17090af00e00b00280cd159684mr6410466pjb.37.1699865414097;
+        Mon, 13 Nov 2023 00:50:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGLms+NRQJbWTq++B6OIejcvpHYuyFNppMncnz0QhKUjYCH64CKOAj1f2csMJ2ny7fAoEfld8lcYGI2echZ33w=
+X-Received: by 2002:a17:90a:f00e:b0:280:cd15:9684 with SMTP id
+ bt14-20020a17090af00e00b00280cd159684mr6410454pjb.37.1699865413819; Mon, 13
+ Nov 2023 00:50:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231113022326.24388-18-mic@digikod.net>
+References: <20231112073424.4216-1-laoar.shao@gmail.com> <188dc90e-864f-4681-88a5-87401c655878@schaufler-ca.com>
+ <CALOAHbD+_0tHcm72Q6TM=EXDoZFrVWAsi4AC8_xGqK3wGkEy3g@mail.gmail.com>
+In-Reply-To: <CALOAHbD+_0tHcm72Q6TM=EXDoZFrVWAsi4AC8_xGqK3wGkEy3g@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Mon, 13 Nov 2023 09:50:02 +0100
+Message-ID: <CAFqZXNsd5QCPQmOprf_iCCDNj8JKLjZWu3yA2=HtCYE+78F75A@mail.gmail.com>
+Subject: Re: [RFC PATCH -mm 0/4] mm, security, bpf: Fine-grained control over
+ memory policy adjustments with lsm bpf
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        ligang.bdlg@bytedance.com, mhocko@suse.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Nov 12, 2023 at 09:23:24PM -0500, Mickaël Salaün wrote:
-> From: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
-> 
-> X86 uses a function called __text_poke() to modify executable code. This
-> patching function is used by many features such as KProbes and FTrace.
-> 
-> Update the permissions counters for the text page so that write
-> permissions can be temporarily established in the EPT to modify the
-> instructions in that page.
-> 
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
-> Cc: Mickaël Salaün <mic@digikod.net>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Sean Christopherson <seanjc@google.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Cc: Wanpeng Li <wanpengli@tencent.com>
-> Signed-off-by: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
-> ---
-> 
-> Changes since v1:
-> * New patch
-> ---
->  arch/x86/kernel/alternative.c |  5 ++++
->  arch/x86/mm/heki.c            | 49 +++++++++++++++++++++++++++++++++++
->  include/linux/heki.h          | 14 ++++++++++
->  3 files changed, 68 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> index 517ee01503be..64fd8757ba5c 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -18,6 +18,7 @@
->  #include <linux/mmu_context.h>
->  #include <linux/bsearch.h>
->  #include <linux/sync_core.h>
-> +#include <linux/heki.h>
->  #include <asm/text-patching.h>
->  #include <asm/alternative.h>
->  #include <asm/sections.h>
-> @@ -1801,6 +1802,7 @@ static void *__text_poke(text_poke_f func, void *addr, const void *src, size_t l
->  	 */
->  	pgprot = __pgprot(pgprot_val(PAGE_KERNEL) & ~_PAGE_GLOBAL);
->  
-> +	heki_text_poke_start(pages, cross_page_boundary ? 2 : 1, pgprot);
->  	/*
->  	 * The lock is not really needed, but this allows to avoid open-coding.
->  	 */
-> @@ -1865,7 +1867,10 @@ static void *__text_poke(text_poke_f func, void *addr, const void *src, size_t l
->  	}
->  
->  	local_irq_restore(flags);
-> +
->  	pte_unmap_unlock(ptep, ptl);
-> +	heki_text_poke_end(pages, cross_page_boundary ? 2 : 1, pgprot);
-> +
->  	return addr;
->  }
+On Mon, Nov 13, 2023 at 4:17=E2=80=AFAM Yafang Shao <laoar.shao@gmail.com> =
+wrote:
+>
+> On Mon, Nov 13, 2023 at 12:45=E2=80=AFAM Casey Schaufler <casey@schaufler=
+-ca.com> wrote:
+> >
+> > On 11/11/2023 11:34 PM, Yafang Shao wrote:
+> > > Background
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >
+> > > In our containerized environment, we've identified unexpected OOM eve=
+nts
+> > > where the OOM-killer terminates tasks despite having ample free memor=
+y.
+> > > This anomaly is traced back to tasks within a container using mbind(2=
+) to
+> > > bind memory to a specific NUMA node. When the allocated memory on thi=
+s node
+> > > is exhausted, the OOM-killer, prioritizing tasks based on oom_score,
+> > > indiscriminately kills tasks. This becomes more critical with guarant=
+eed
+> > > tasks (oom_score_adj: -998) aggravating the issue.
+> >
+> > Is there some reason why you can't fix the callers of mbind(2)?
+> > This looks like an user space configuration error rather than a
+> > system security issue.
+>
+> It appears my initial description may have caused confusion. In this
+> scenario, the caller is an unprivileged user lacking any capabilities.
+> While a privileged user, such as root, experiencing this issue might
+> indicate a user space configuration error, the concerning aspect is
+> the potential for an unprivileged user to disrupt the system easily.
+> If this is perceived as a misconfiguration, the question arises: What
+> is the correct configuration to prevent an unprivileged user from
+> utilizing mbind(2)?"
+>
+> >
+> > >
+> > > The selected victim might not have allocated memory on the same NUMA =
+node,
+> > > rendering the killing ineffective. This patch aims to address this by
+> > > disabling MPOL_BIND in container environments.
+> > >
+> > > In the container environment, our aim is to consolidate memory resour=
+ce
+> > > control under the management of kubelet. If users express a preferenc=
+e for
+> > > binding their memory to a specific NUMA node, we encourage the adopti=
+on of
+> > > a standardized approach. Specifically, we recommend configuring this =
+memory
+> > > policy through kubelet using cpuset.mems in the cpuset controller, ra=
+ther
+> > > than individual users setting it autonomously. This centralized appro=
+ach
+> > > ensures that NUMA nodes are globally managed through kubelet, promoti=
+ng
+> > > consistency and facilitating streamlined administration of memory res=
+ources
+> > > across the entire containerized environment.
+> >
+> > Changing system behavior for a single use case doesn't seem prudent.
+> > You're introducing a bunch of kernel code to avoid fixing a broken
+> > user space configuration.
+>
+> Currently, there is no mechanism in place to proactively prevent an
+> unprivileged user from utilizing mbind(2). The approach adopted is to
+> monitor mbind(2) through a BPF program and trigger an alert if its
+> usage is detected. However, beyond this monitoring, the only recourse
+> is to verbally communicate with the user, advising against the use of
+> mbind(2). As a result, users will question why mbind(2) isn't outright
+> prohibited in the first place.
 
-This makes no sense, we already use a custom CR3 with userspace alias
-for the actual pages to write to, why are you then frobbing permissions
-on that *again* ?
+Is there a reason why you can't use syscall filtering via seccomp(2)?
+AFAIK, all the mainstream container tooling already has support for
+specifying seccomp filters for containers.
+
+--=20
+Ondrej Mosnacek
+Senior Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
+
