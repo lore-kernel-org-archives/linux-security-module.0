@@ -2,83 +2,107 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB635C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Nov 2023 04:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D4FC4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Nov 2023 07:37:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229896AbjKMELJ (ORCPT
+        id S229835AbjKMHhL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 12 Nov 2023 23:11:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35728 "EHLO
+        Mon, 13 Nov 2023 02:37:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229793AbjKMELI (ORCPT
+        with ESMTP id S229716AbjKMHhK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 12 Nov 2023 23:11:08 -0500
-Received: from mail-vk1-xa2c.google.com (mail-vk1-xa2c.google.com [IPv6:2607:f8b0:4864:20::a2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A698109
-        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 20:11:05 -0800 (PST)
-Received: by mail-vk1-xa2c.google.com with SMTP id 71dfb90a1353d-4acb1260852so1614027e0c.2
-        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 20:11:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1699848664; x=1700453464; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9WbW09RQCwQYYA0oy71bWYwQQSt2x1fbL3QKzF3AG4o=;
-        b=H+U4PlLTZ1GqE/KBVMAWV3jD75OCNe7hUfF9VmbBGyYUrCuEDEdudohgaSTWqIvhZ4
-         kfvv9XygMTJWcaPUhVq1e8ujykKqgGSzUe1hwSxLYuxPX82RowGSYvyDMmmX7kkR9xKK
-         SgkNjDveVzyaNCl7PK3VeVQvhd8SeSh9rvoWogedpnEpaeNzjcAC51q4JTaFEvIoPp8E
-         f+dFkkxvxocOteF5cn0fMQTtOp8z2k63tn4eqPaIuJHOFEKXiH1xPnusEKXSC6BMl23D
-         fDI7un8BOiqkvjty08TMxhGepRj04Y2Q2sTrmEb2sWV+SSOLOTeoAZLUBv0hLVTLSw3I
-         z9nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699848664; x=1700453464;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9WbW09RQCwQYYA0oy71bWYwQQSt2x1fbL3QKzF3AG4o=;
-        b=i9P2Jnfzd7nv71QmOo8swU26tPWPMuveV8QD6xcEGOeS8ykizH+fvFtgUZvS0bYpV7
-         16VpIlkPe/1fN/tOhnHrb3AYRn/XvULAS0AUyU9oWM70L+yWsTl3zClHRvoVrv7jvC8+
-         M41Y2LeuzKceofxYhCZkQqw9xUf6tsgjU+wnPzgJBnEJp6wys8wQihIh4Xzhmuna0gxK
-         5V3gm/XtajxyEGZ/FVw7yugEwrBTOkI6bVRdGnPseUU0xf3SPi5KTLVduoi2j9jcQGXG
-         xIcajwp/EZK0TkCNYjKIxf+RgMVuj7tHPIHHCENCpo3EUnbtnSR47jFrIQcP+lbHlQYN
-         S9Bw==
-X-Gm-Message-State: AOJu0YweUs/aGV9K9ICp5pJbRzg3xfwq8L/Dcv0jcalWgJB4SH0jsq3h
-        +TIpn9a8YIpNuNE4cvVN0ifwVmBRNxYvRbSLCKSeMzCyBLBfwZM=
-X-Google-Smtp-Source: AGHT+IEPY6Hauw3tdXUGMOV4VGIIf8fzv0X+9BzpAnPToQ5m2dhriD7MGKuNw6Pd4DDIKrGFgBIgWiW4rqzLEqpbXoc=
-X-Received: by 2002:ac5:cadb:0:b0:4ac:174d:4d3d with SMTP id
- m27-20020ac5cadb000000b004ac174d4d3dmr4675668vkl.2.1699848663894; Sun, 12 Nov
- 2023 20:11:03 -0800 (PST)
+        Mon, 13 Nov 2023 02:37:10 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 708A410EF;
+        Sun, 12 Nov 2023 23:37:07 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 736C6218BB;
+        Mon, 13 Nov 2023 07:37:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1699861025; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ks/7h4ZtJHP9K8LwK/ZBpyhaWgSD033ADJwO3+onHA8=;
+        b=XzV/MSc+fh8MO/HliQ6dd6hT+LI6qivOhkZXzKG9ceYbC3p36vK1kxghABdwJczXtY/16Q
+        YLTl6GnEIZTx3/JDP6D0sDnEj3YgwAfIHGa6U9H/2ss5VwURylnaHRMKDM/mWEUmXQsWmN
+        7jkmay5oXut9JbjtyRiDJ/Ymj5tY2jI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1699861025;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ks/7h4ZtJHP9K8LwK/ZBpyhaWgSD033ADJwO3+onHA8=;
+        b=ALek5AabeoPEmfthJ6aL1x/EEWmz1rGnt9a5JzNFkPEbtxbQI+k/wiDKYZN1QFyFBOekhO
+        UqF1RizTRCLXZxDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4F04C13398;
+        Mon, 13 Nov 2023 07:37:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id fiiHEiHSUWXEVgAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Mon, 13 Nov 2023 07:37:05 +0000
+Message-ID: <87fa3d2e-6822-0f24-daec-772dbe717b63@suse.cz>
+Date:   Mon, 13 Nov 2023 08:37:04 +0100
 MIME-Version: 1.0
-References: <20231110173442.79462-2-paul@paul-moore.com> <CAHC9VhSYO637Q+VE3ypBgvZcUa1X8_FvWmkiC-BGx5deDi_=Cw@mail.gmail.com>
-In-Reply-To: <CAHC9VhSYO637Q+VE3ypBgvZcUa1X8_FvWmkiC-BGx5deDi_=Cw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 12 Nov 2023 23:10:29 -0500
-Message-ID: <CAHC9VhTeE_vxVvtGN8S8r4tJSiUaoDRJV9Ryw_a3Qwx1mdr1Xw@mail.gmail.com>
-Subject: Re: [PATCH] mailmap: update/replace my old email addresses
-To:     linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] exitz syscall
+Content-Language: en-US
+To:     Theodore Ts'o <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>
+Cc:     York Jasper Niebuhr <yjnworkstation@gmail.com>,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-security-module@vger.kernel.org,
+        torvalds@linux-foundation.org
+References: <20231111125126.11665-1-yjnworkstation@gmail.com>
+ <20231111132431.GA3717@1wt.eu> <20231112045217.GA39417@mit.edu>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20231112045217.GA39417@mit.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 10, 2023 at 4:37=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Fri, Nov 10, 2023 at 12:34=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> >
-> > I was recently reminded by someone who was unable to reach my old
-> > email address that I really should update the kernel's .mailmap
-> > so that people looking for me in old commits can reach my current
-> > email.
-> >
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > ---
-> >  .mailmap | 2 ++
-> >  1 file changed, 2 insertions(+)
->
-> Merged into lsm/dev-staging.
+On 11/12/23 05:52, Theodore Ts'o wrote:
+> On Sat, Nov 11, 2023 at 02:24:31PM +0100, Willy Tarreau wrote:
+>> Hello,
+>> 
+>> On Sat, Nov 11, 2023 at 01:51:26PM +0100, York Jasper Niebuhr wrote:
+>> > Adds a system call to flag a process' resources to be cleared on
+>> > exit (or, in the case of memory, on free). Currently, only zeroing
+>> > memory is implemented.
+>> (...)
+>> 
+>> IMHO it does not make sense to add a syscall for this, please have a
+>> look at prctl(2) instead, which is already used for similar settings.
+> 
+> Another reason to use prctl() is there are other cases when you'd want
+> to zero a process's memory.  For example, if the process gets killed
+> to some kind of signal, or when it gets OOM killed (where there is no
+> system call which forces the process to exit).  Also, if you want to
+> zero memory when the process exits, you'd want to zero the process
+> memory on an exec(2).
 
-Merged into lsm/dev.
+Probably also munmap() and maybe a number of other ways where the process
+can give up its memory voluntarily. Then there are also involuntary ways
+where the a copy of the data can end up leaking elsewhere than the pages the
+process has mapped - e.g. swapout/swapin of pages, page migration...
 
---=20
-paul-moore.com
+So I'm not sure it's feasible to attempt making a whole process "sensitive"
+and close all the holes. Instead what we have is to mark specific areas as
+sensitive - things like mlock(), madvise(MADV_DONTDUMP / MADV_DONTFORK) and
+ultimately memfd_secret().
+
+> Cheers,
+> 
+> 						- Ted
+> 
+
