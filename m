@@ -2,81 +2,82 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2AD1C4167D
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Nov 2023 04:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB89C4167B
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Nov 2023 04:08:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233083AbjKMEHY (ORCPT
+        id S233125AbjKMEIo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 12 Nov 2023 23:07:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53174 "EHLO
+        Sun, 12 Nov 2023 23:08:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233086AbjKMEHX (ORCPT
+        with ESMTP id S233145AbjKMEIk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 12 Nov 2023 23:07:23 -0500
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B40091729
-        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 20:07:19 -0800 (PST)
-Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-d9c66e70ebdso3891552276.2
-        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 20:07:19 -0800 (PST)
+        Sun, 12 Nov 2023 23:08:40 -0500
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA6511FCB
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 20:08:36 -0800 (PST)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-5a87ac9d245so46989447b3.3
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 20:08:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1699848438; x=1700453238; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=paul-moore.com; s=google; t=1699848515; x=1700453315; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HlKWMNmqKqQg2CpijRIn4IqNVg9ZXn04XHUyH28+sa8=;
-        b=IDGMlsziV7rWsLxkiK46yrCFC1440sNq9BwbrSxWUgsiAhOAWcsPAFvVGys3BBxPgG
-         6gxgVxRS0F7WNv26g38T/D5/wA9kVruPW1/sbDm4EqsVmxIWmqF84r9ZRsbQiZmNWlq3
-         ezyBGX05yMdCUXY/L8XFKVDBz4fPl87gjRlP5DC/JRdC6X+Eyc/hQQywRLmEqtXmn4tA
-         Tg8f8wgSs77Gc3mEdY3R5tXdqYwRE2vXQeRqpWuWAiNKX6+AUBMg8ozKb7a3obCN+I4F
-         8X5xCbmv/FRxf8oDmiYUbJuBO/tZEWnueS++0Oxp/GTvP5JftZegnoEHAcRXH3kDN/8Z
-         yTwA==
+        bh=HPgHOPbGKf3poJBQcIdt/n0zgP5lLoYzkeW2c8zKNXE=;
+        b=QldvPWY9ppWMoHFnZ1wyb1MdtOWpSCrAfOruGHRCGAVWclcJAtmp/WWarzhXkW7yA0
+         +pU0bVuj7Pja5y5sxuiyzmlFMaMYGcl7H/4A1Yle57wmf2KyZtA89zE6VzyqkKfTINZj
+         7pcFfWIRhlRzRBH03gDtOLPKIUA9kdLn9nRgjth4Xntev55HnlXITXZkNyg19hFdEybo
+         biGhZ44l/S+eqZn16y1q6D+/MPuJhSOpRwDOCWpNnXdzR1qftKFE9C+N5Qs5iPszNwo3
+         vUs5W9DY9QcLwe0uvETzAlMlF+pIwecllZnJ6NAysq55FdUOMsq3rkRuQM6oaP6PfGgP
+         24sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699848439; x=1700453239;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1699848515; x=1700453315;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HlKWMNmqKqQg2CpijRIn4IqNVg9ZXn04XHUyH28+sa8=;
-        b=eQEyEaN3dU8kO2aT3ZJEOYY6V7pQpaNEZqhq6XybbRqbgFny10lmstGEzsqHjZmkVg
-         1pIPqCRAd5UU2O7doCcihIwSGhmHLeTm15guXtnNbmi0lhC7qjjei+wV0LDR3DUI9pAZ
-         Vn04PuMwlMCDaKSWj0fc2/+IA0yiD3W2bJ2q6B1YYPRQTaY74usE8jDm8wD9Dswu8YEI
-         NUbuuFKh2h5fr0YDLeotokJKe8hSiHNKyGv/YpAgXL0241qjV7sDGc20n5yMYked3KlH
-         +SA4jbLWS4jtNu+XrnQzXoV7ccYPYlvi61kw92HwnGs5b19w4AO+Cxu31HLT/2KpYeu0
-         DOFA==
-X-Gm-Message-State: AOJu0YwsA4kLre5LtzDN7j2ZlJhMPR5YZL0gD/vjcmeGkAdh56pUvaRm
-        ijeUshKJDPT7Kz066Th0qbP3xWILtEX7TPbiEP0B8mublh+62TI=
-X-Google-Smtp-Source: AGHT+IF/j7Tqaps4y/hdfO/N9xzGQuEXV+A/L8AG8eSFc+i50rEykkEU0t7lMJEsJJqSzOYeLS28XY298gXyDunhFbs=
-X-Received: by 2002:a25:41d0:0:b0:da0:d0be:ef06 with SMTP id
- o199-20020a2541d0000000b00da0d0beef06mr4547717yba.51.1699848438676; Sun, 12
- Nov 2023 20:07:18 -0800 (PST)
+        bh=HPgHOPbGKf3poJBQcIdt/n0zgP5lLoYzkeW2c8zKNXE=;
+        b=ktw+wB/cACM+S8Tb3z6C3XdvD0Sm6j28YNlEsBsM3f20SFX0D+68Tqq4ghFAn3Zk9x
+         Qsb3jzF/0C6iFiZ+BnQd3MftfslrErJNwbNO+6QzIyWPmp4drBdPZRUZMfg+5FYh51h4
+         8h/Uo3tDZ3adCjFdI8Q/lqjA4rJ3MpzEVMH427tK16cw6MQjBuZStvnIaxqwi0nw4u0K
+         v3VT9n6XPzW1g4rh8OGvAMj7sUEkMmXo+sw4uzmC9ZzdY3BWHpPjeLzG+K9HqwBFwXbP
+         wXEiwR3oFVSq/ClfjppdmbI+t2adifGJExAHEaIiSbq9XDGSa4/cYXOAQOwsM/Vex/Ll
+         AQEg==
+X-Gm-Message-State: AOJu0YyTrXLlvZnisNuQsGUYYZhWMHNUdNxxVmJhejjtS5DRPWSnjnHy
+        W9I7StTkjFmKus1pNkQmXXVvrs17YGbIox2To0x4jstdu1nphHE=
+X-Google-Smtp-Source: AGHT+IFwjhZJLo+9DrXl56ELfxA/rM2C64B9VBTVRMbfbWRqoUH6q/Amgsfcw0mscGsvUGNlFPqC+jBhVGZRdP1G5gI=
+X-Received: by 2002:a25:d6d1:0:b0:dae:4dfd:f6f5 with SMTP id
+ n200-20020a25d6d1000000b00dae4dfdf6f5mr5166183ybg.27.1699848515526; Sun, 12
+ Nov 2023 20:08:35 -0800 (PST)
 MIME-Version: 1.0
-References: <20231024213525.361332-4-paul@paul-moore.com>
-In-Reply-To: <20231024213525.361332-4-paul@paul-moore.com>
+References: <20231102015337.510827-2-paul@paul-moore.com> <CAHC9VhQk+t0XYXfLrpTWEjLOp4-Dvxt5Qv2ZC=--J7PH64J4+A@mail.gmail.com>
+In-Reply-To: <CAHC9VhQk+t0XYXfLrpTWEjLOp4-Dvxt5Qv2ZC=--J7PH64J4+A@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 12 Nov 2023 23:07:08 -0500
-Message-ID: <CAHC9VhT7DRUZO1RPDwXKXXJ-xsNL6pcMxEgLPsc7JTtBruzLBw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/3] LSM syscall tweaks
+Date:   Sun, 12 Nov 2023 23:08:24 -0500
+Message-ID: <CAHC9VhT0TnC=2Nza5h0fHFUkcjLjNgUbHOqEpC_fQ-8NBmKX=Q@mail.gmail.com>
+Subject: Re: [PATCH] lsm: align based on pointer length in lsm_fill_user_ctx()
 To:     linux-security-module@vger.kernel.org
-Cc:     selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 24, 2023 at 5:39=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
+On Sun, Nov 5, 2023 at 6:24=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
 >
-> Three rather small LSM patches to address some minor issues found during
-> the review of the latest LSM syscall patchset that now lives in the
-> lsm/next-queue tree.
+> On Wed, Nov 1, 2023 at 9:53=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+> >
+> > Using the size of a void pointer is much cleaner than
+> > BITS_PER_LONG / 8.
+> >
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > ---
+> >  security/security.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> I'm marking these as RFC patches as they have yet to be properly tested,
-> but I'm building a kernel now to do that and I'll report back when testin=
-g
-> has completed.  In the meantime, reviews and ACKs are appreciated.
+> Merged into lsm/dev-staging.
 
-These have been merged into lsm/dev.
+Now merged into lsm/dev.
 
 --=20
 paul-moore.com
