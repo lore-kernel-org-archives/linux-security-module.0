@@ -2,120 +2,324 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0847C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Nov 2023 00:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D0D0C4167B
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Nov 2023 02:24:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232474AbjKMAIt (ORCPT
+        id S232871AbjKMCYF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 12 Nov 2023 19:08:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43484 "EHLO
+        Sun, 12 Nov 2023 21:24:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230036AbjKMAIs (ORCPT
+        with ESMTP id S232873AbjKMCYE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 12 Nov 2023 19:08:48 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3538D40
-        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 16:08:45 -0800 (PST)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57094C433C9
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Nov 2023 00:08:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1699834125;
-        bh=J4HknDoArB4ViSGbXTge5MV2QIRiveJDtQEAca3JRFs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Hi0HjTMI+nRsZwwwx9LHEpR0yFWgWQP53nCLAd/51TrnmA6/mad2w65izFJfcsXY0
-         e6JKQ2/xhMNBfSnaOHQUpFT+ooBIhBO1vWu+aVJpKyl1eANCDLQo/X1iYeoHw6Fczn
-         8D70/txhskZtPXKmjaZkojsnkPCjhgWn4o6H/ABstX10k/5O/8zaynnJ2H4KwQqZJf
-         r6IKjf/1dp5gVo5+aztfyvY6rxkVuER09PaHgcY69tIoUqclIhpAJPSWFrIKj9v1A7
-         yvKL+c+kpGTEt+UEXbj1O6Xn7T2v06UbLe1Zp9N2BniTz4zhCG8lMT+rcsa47vJuxG
-         GcBUDiS6nXhDg==
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4af6a700086so259070e0c.1
-        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 16:08:45 -0800 (PST)
-X-Gm-Message-State: AOJu0YzgcJmMmU8pBE+E0QW1/6ki48gSzbz4bId5rmwvpst8UchZAeHr
-        JSlnid90FKj0xKSKeAPoVZzMlrj97eGnSlhhMzcizg==
-X-Google-Smtp-Source: AGHT+IExtM3e5B9oYl5Q78gHtL5BrHeWXvK+rbc/rl7vuukhHSKNddDfLnVLfVZelEBUmqmA3mEYIczPv1uoHdtexL4=
-X-Received: by 2002:a05:6122:458a:b0:495:cace:d59c with SMTP id
- de10-20020a056122458a00b00495caced59cmr5601637vkb.0.1699834124363; Sun, 12
- Nov 2023 16:08:44 -0800 (PST)
+        Sun, 12 Nov 2023 21:24:04 -0500
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA8E81BFB
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 18:24:00 -0800 (PST)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4STCsp5jGkzMpvS5;
+        Mon, 13 Nov 2023 02:23:58 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4STCsn4w8yz3W;
+        Mon, 13 Nov 2023 03:23:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1699842238;
+        bh=tY8hlJfPopuy154H09Cr6nqcw/h0DUTJ1/nUw09u9eU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=bV4lvDvQTCac2IMzSmZNNLVBOtTqAuS2XLzxMp+OAzsv+rke/FG2TXyxhi8G9+60p
+         uVBBHLsVIDwfgY2jYAyUCw2LIYtSt/u33MBaH9fX9Ljjyq03aPdOVNbFjYzptoLzUl
+         mUsHCWJz6tf9YxVBhc8meVQg8fYV2sX1kdkepvvo=
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Alexander Graf <graf@amazon.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        Forrest Yuan Yu <yuanyu@google.com>,
+        James Gowans <jgowans@amazon.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        John Andersen <john.s.andersen@intel.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Marian Rotariu <marian.c.rotariu@gmail.com>,
+        =?UTF-8?q?Mihai=20Don=C8=9Bu?= <mdontu@bitdefender.com>,
+        =?UTF-8?q?Nicu=C8=99or=20C=C3=AE=C8=9Bu?= <nicu.citu@icloud.com>,
+        Thara Gopinath <tgopinath@microsoft.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Zahra Tarkhani <ztarkhani@microsoft.com>,
+        =?UTF-8?q?=C8=98tefan=20=C8=98icleru?= <ssicleru@bitdefender.com>,
+        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
+        virtualization@lists.linux-foundation.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: [RFC PATCH v2 01/19] virt: Introduce Hypervisor Enforced Kernel Integrity (Heki)
+Date:   Sun, 12 Nov 2023 21:23:08 -0500
+Message-ID: <20231113022326.24388-2-mic@digikod.net>
+In-Reply-To: <20231113022326.24388-1-mic@digikod.net>
+References: <20231113022326.24388-1-mic@digikod.net>
 MIME-Version: 1.0
-References: <20231111125126.11665-1-yjnworkstation@gmail.com>
- <20231111132431.GA3717@1wt.eu> <CAHk-=whTZDjeH2FJqBozjAF44sh4XVNQrt2xdQn_Ujt=Be6=dw@mail.gmail.com>
-In-Reply-To: <CAHk-=whTZDjeH2FJqBozjAF44sh4XVNQrt2xdQn_Ujt=Be6=dw@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 12 Nov 2023 16:08:33 -0800
-X-Gmail-Original-Message-ID: <CALCETrV+2wPJwZ90-nZFgM9o_f0hCQ4Gf3Y+H+6cdkjoafgiZQ@mail.gmail.com>
-Message-ID: <CALCETrV+2wPJwZ90-nZFgM9o_f0hCQ4Gf3Y+H+6cdkjoafgiZQ@mail.gmail.com>
-Subject: Re: [PATCH] exitz syscall
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Willy Tarreau <w@1wt.eu>,
-        York Jasper Niebuhr <yjnworkstation@gmail.com>,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> On Nov 11, 2023, at 5:24=E2=80=AFPM, Linus Torvalds <torvalds@linux-found=
-ation.org> wrote:
->
-> =EF=BB=BFOn Sat, 11 Nov 2023 at 05:24, Willy Tarreau <w@1wt.eu> wrote:
->> IMHO it does not make sense to add a syscall for this, please have a
->> look at prctl(2) instead, which is already used for similar settings.
->
-> Honestly, I don't think it makes any sense at all.
->
-> If the key manager people can't be bothered to keep track of their
-> keys, the kernel certainly shouldn't be bothered with this kind of
-> huge hammer.
->
-> It looks like an active DoS attack to me, by anybody who just creates
-> a huge process and then sits there giggling as the machine comes to a
-> complete halt, with the kernel busy zeroing pointless crap.
+From: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
 
-The implementation in this patch is =E2=80=A6 bad.  But that aside, the who=
-le
-concept seems wrong to me: zeroing memory specifically when an mm
-exits seems rather bizarre -- it's the wrong condition. From a
-hardening perspective, there are really three concerning cases, IMO:
+Hypervisor Enforced Kernel Integrity (Heki) is a feature that will use
+the hypervisor to enhance guest virtual machine security.
 
-1. Something sensitive is in memory, and some bug (side channel or
-straight up kernel bug) allows an attacker to read it.  Zeroing early
-shortens the window but doesn't actually prevent the attack.
+Implement minimal code to introduce Heki:
 
-2. Something sensitive is in memory, and some bug allocates the memory
-before it's freed.  (I.e. allocator state gets corrupted.)  Like #1,
-all we can do is shorten the window.  But these kinds of bugs are
-quite rare.
+- Define the config variables.
 
-3. Something sensitive is in memory, it gets freed, it gets reused
-without __GFP_ZERO, and it gets leaked.  This actually seems fairly
-plausible.  While __GFP_ZERO is fairly common, there are tons of paths
-that don't use it, and bugs happen.
+- Define a kernel command line parameter "heki" to turn the feature
+  on or off. By default, Heki is on.
 
-We do have:
+- Define heki_early_init() and call it in start_kernel(). Currently,
+  this function only prints the value of the "heki" command
+  line parameter.
 
-commit 6471384af2a6530696fc0203bafe4de41a23c9ef
-Author: Alexander Potapenko <glider@google.com>
-Date:   Thu Jul 11 20:59:19 2019 -0700
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Wanpeng Li <wanpengli@tencent.com>
+Co-developed-by: Mickaël Salaün <mic@digikod.net>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Signed-off-by: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
+---
 
-    mm: security: introduce init_on_alloc=3D1 and init_on_free=3D1 boot opt=
-ions
+Changes since v1:
+* Shrinked this patch to only contain the minimal common parts.
+* Moved heki_early_init() to start_kernel().
+---
+ Kconfig              |  2 ++
+ arch/x86/Kconfig     |  1 +
+ include/linux/heki.h | 31 +++++++++++++++++++++++++++++++
+ init/main.c          |  2 ++
+ mm/mm_init.c         |  1 +
+ virt/Makefile        |  1 +
+ virt/heki/Kconfig    | 19 +++++++++++++++++++
+ virt/heki/Makefile   |  3 +++
+ virt/heki/common.h   | 16 ++++++++++++++++
+ virt/heki/main.c     | 32 ++++++++++++++++++++++++++++++++
+ 10 files changed, 108 insertions(+)
+ create mode 100644 include/linux/heki.h
+ create mode 100644 virt/heki/Kconfig
+ create mode 100644 virt/heki/Makefile
+ create mode 100644 virt/heki/common.h
+ create mode 100644 virt/heki/main.c
 
+diff --git a/Kconfig b/Kconfig
+index 745bc773f567..0c844d9bcb03 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -29,4 +29,6 @@ source "lib/Kconfig"
+ 
+ source "lib/Kconfig.debug"
+ 
++source "virt/heki/Kconfig"
++
+ source "Documentation/Kconfig"
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 66bfabae8814..424f949442bd 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -35,6 +35,7 @@ config X86_64
+ 	select SWIOTLB
+ 	select ARCH_HAS_ELFCORE_COMPAT
+ 	select ZONE_DMA32
++	select ARCH_SUPPORTS_HEKI
+ 
+ config FORCE_DYNAMIC_FTRACE
+ 	def_bool y
+diff --git a/include/linux/heki.h b/include/linux/heki.h
+new file mode 100644
+index 000000000000..4c18d2283392
+--- /dev/null
++++ b/include/linux/heki.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Hypervisor Enforced Kernel Integrity (Heki) - Definitions
++ *
++ * Copyright © 2023 Microsoft Corporation
++ */
++
++#ifndef __HEKI_H__
++#define __HEKI_H__
++
++#include <linux/types.h>
++#include <linux/cache.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/printk.h>
++
++#ifdef CONFIG_HEKI
++
++extern bool heki_enabled;
++
++void heki_early_init(void);
++
++#else /* !CONFIG_HEKI */
++
++static inline void heki_early_init(void)
++{
++}
++
++#endif /* CONFIG_HEKI */
++
++#endif /* __HEKI_H__ */
+diff --git a/init/main.c b/init/main.c
+index 436d73261810..0d28301c5402 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -99,6 +99,7 @@
+ #include <linux/init_syscalls.h>
+ #include <linux/stackdepot.h>
+ #include <linux/randomize_kstack.h>
++#include <linux/heki.h>
+ #include <net/net_namespace.h>
+ 
+ #include <asm/io.h>
+@@ -1047,6 +1048,7 @@ void start_kernel(void)
+ 	uts_ns_init();
+ 	key_init();
+ 	security_init();
++	heki_early_init();
+ 	dbg_late_init();
+ 	net_ns_init();
+ 	vfs_caches_init();
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 50f2f34745af..896977383cc3 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -26,6 +26,7 @@
+ #include <linux/pgtable.h>
+ #include <linux/swap.h>
+ #include <linux/cma.h>
++#include <linux/heki.h>
+ #include "internal.h"
+ #include "slab.h"
+ #include "shuffle.h"
+diff --git a/virt/Makefile b/virt/Makefile
+index 1cfea9436af9..4550dc624466 100644
+--- a/virt/Makefile
++++ b/virt/Makefile
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ obj-y	+= lib/
++obj-$(CONFIG_HEKI) += heki/
+diff --git a/virt/heki/Kconfig b/virt/heki/Kconfig
+new file mode 100644
+index 000000000000..49695fff6d21
+--- /dev/null
++++ b/virt/heki/Kconfig
+@@ -0,0 +1,19 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Hypervisor Enforced Kernel Integrity (Heki)
++
++config HEKI
++	bool "Hypervisor Enforced Kernel Integrity (Heki)"
++	depends on ARCH_SUPPORTS_HEKI
++	help
++	  This feature enhances guest virtual machine security by taking
++	  advantage of security features provided by the hypervisor for guests.
++	  This feature is helpful in maintaining guest virtual machine security
++	  even after the guest kernel has been compromised.
++
++config ARCH_SUPPORTS_HEKI
++	bool "Architecture support for Heki"
++	help
++	  An architecture should select this when it can successfully build
++	  and run with CONFIG_HEKI. That is, it should provide all of the
++	  architecture support required for the HEKI feature.
+diff --git a/virt/heki/Makefile b/virt/heki/Makefile
+new file mode 100644
+index 000000000000..354e567df71c
+--- /dev/null
++++ b/virt/heki/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++obj-y += main.o
+diff --git a/virt/heki/common.h b/virt/heki/common.h
+new file mode 100644
+index 000000000000..edd98fc650a8
+--- /dev/null
++++ b/virt/heki/common.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Hypervisor Enforced Kernel Integrity (Heki) - Common header
++ *
++ * Copyright © 2023 Microsoft Corporation
++ */
++
++#ifndef _HEKI_COMMON_H
++
++#ifdef pr_fmt
++#undef pr_fmt
++#endif
++
++#define pr_fmt(fmt) "heki-guest: " fmt
++
++#endif /* _HEKI_COMMON_H */
+diff --git a/virt/heki/main.c b/virt/heki/main.c
+new file mode 100644
+index 000000000000..f005dd74d586
+--- /dev/null
++++ b/virt/heki/main.c
+@@ -0,0 +1,32 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Hypervisor Enforced Kernel Integrity (Heki) - Common code
++ *
++ * Copyright © 2023 Microsoft Corporation
++ */
++
++#include <linux/heki.h>
++
++#include "common.h"
++
++bool heki_enabled __ro_after_init = true;
++
++/*
++ * Must be called after kmem_cache_init().
++ */
++__init void heki_early_init(void)
++{
++	if (!heki_enabled) {
++		pr_warn("Heki is not enabled\n");
++		return;
++	}
++	pr_warn("Heki is enabled\n");
++}
++
++static int __init heki_parse_config(char *str)
++{
++	if (strtobool(str, &heki_enabled))
++		pr_warn("Invalid option string for heki: '%s'\n", str);
++	return 1;
++}
++__setup("heki=", heki_parse_config);
+-- 
+2.42.1
 
-And I can easily imagine a useful API to flag some memory as being
-sensitive such that either the kernel will always zero it when freed
-or will make sure it's zeroed before being reallocated even if
-__GFP_ZERO is not set and init_on_alloc and init_on_free are both
-zero.
-
-This would be a rather different patch that exitz().
-
---Andy
-
-
->
-> Do it in user space. And if your user space randomly crashes, you have
-> other problems - but you can try to use ptrace to catch even that case
-> if you care.
->
->        Linus
