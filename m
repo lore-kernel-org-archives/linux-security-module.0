@@ -2,142 +2,89 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 462A0C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Nov 2023 19:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C021C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Nov 2023 19:21:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229521AbjKMTAQ (ORCPT
+        id S229521AbjKMTVj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Nov 2023 14:00:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41374 "EHLO
+        Mon, 13 Nov 2023 14:21:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbjKMTAP (ORCPT
+        with ESMTP id S229511AbjKMTVj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Nov 2023 14:00:15 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79FFC10DA;
-        Mon, 13 Nov 2023 11:00:11 -0800 (PST)
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3ADIF202009069;
-        Mon, 13 Nov 2023 18:59:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=IT6nR1umc5yLo6di+xTljouCgYu0PudLsDCQ9al543Y=;
- b=WTptFFiH8h0o1tEzutAKxWMW0zY8ZkmulLoEYvxnipfM2fwZiUVht1FBvV7TBWxXV42B
- ve8wVgB2Gh4/et6FkQIsEsuOtfehPadxqYb0HucsiV6RH7keMOAV44yp1TojPu0xxE7K
- B4q+bR5s76Mz0IDIVjieUI+DX3sMDSL40vtJhDXkabrzSIFGHFrGcRxop44WxHCH83AO
- PHKgUM6Iy6g8TpSbC+I5O6XlHQGt8rTY5WwEJ3BaaKJyqMolCzfSTiGNTfTZixzr0p4F
- HiC6+BnXCNQMjoQ30BQEIYTvEhCXZdxnvYOgV1mVrlZ89uq1CWarPQe7YHmYZjDvhts8 sg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ubrtdh8ye-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 13 Nov 2023 18:59:50 +0000
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3ADIKFZd026750;
-        Mon, 13 Nov 2023 18:59:49 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ubrtdh8y6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 13 Nov 2023 18:59:49 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3ADH43Nb003787;
-        Mon, 13 Nov 2023 18:59:48 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-        by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3uanekans5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 13 Nov 2023 18:59:48 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-        by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3ADIxlqF24314410
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 Nov 2023 18:59:47 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B0C655805D;
-        Mon, 13 Nov 2023 18:59:47 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A806258059;
-        Mon, 13 Nov 2023 18:59:46 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Mon, 13 Nov 2023 18:59:46 +0000 (GMT)
-Message-ID: <53db2f31-e383-445f-b746-961958a619bd@linux.ibm.com>
-Date:   Mon, 13 Nov 2023 13:59:46 -0500
+        Mon, 13 Nov 2023 14:21:39 -0500
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 603D218A
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Nov 2023 11:21:33 -0800 (PST)
+Received: by mail-qk1-x730.google.com with SMTP id af79cd13be357-7789577b53fso301166085a.3
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Nov 2023 11:21:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1699903292; x=1700508092; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ysGG/eyxGfq1VjeHYgkgoERVT+mdN3DzJsMgOceUTLg=;
+        b=DuHfGp0vFk69+y8N0uxqOflI57Q7ReIcaG0DV+8HyOExZnUihrD0/vBKUPL0sNa1Vt
+         Yrw4EB8AZ0uz5ZbTZ7UGTVuwZrWeSCw7l4P/WypZji4yd1RPBdxBuc1SbBX3Ptz4qqdL
+         y8ijieLWptuDMP/3xDsl4zGL8hAlUU8q09A4cAsul2zF33bOnHvFQ+vKwPA+u6XjPPTF
+         /JQhFJiIhRKAn+QKnQOi+Kd4yGsvGGi3kElhVRgI4xoiUDYleY8iMhJ4bxTtcPKwqZJs
+         e+EdeXX315Fd/qBN/sWlMWlGWmhd8Z4wjHDxtylMOhf8WhQbGOxsmS15xNyqzcJlzAyD
+         i99g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699903292; x=1700508092;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ysGG/eyxGfq1VjeHYgkgoERVT+mdN3DzJsMgOceUTLg=;
+        b=fSQ2yt4PrAwe33A9K3Y/gwNnJpPvsaigNmGImdeJ0tMxPdMVZ+VLWqvvidOdAmOxOp
+         7AmouGt4oR8u8/8ib2B7IWksBax1s9KgTXO1vLmY4eo5O7xLOqV2q9dNOclQTiMJ8VXQ
+         Rz5JvVTlMI2v2HMqTqiHIzC4uux+5cwciZzihhqy3dNF1gGEXGNeQCEoGZ+/LSIsXvkj
+         bSF/+v7tPu/jbPPFR9s1S3UyeTmgfW3wRaZRtwh/seAVPaF0CQO+pGqdNbb4VonbWpNA
+         QFT+zNlrlbse1jifs+y4ooD8Ru1Mhop8MUcWEGTieanDIJkYkRGdKjZu7rY9d5zSNL6a
+         bugA==
+X-Gm-Message-State: AOJu0YzGTvxQg1qMpsRnh3XlOy+foVp4XesHTe2FxWU8VDOui7aVytyI
+        JiQlURYZfGLluv6JdMZ4+U0Q5q8j7nELQxVt5Q==
+X-Google-Smtp-Source: AGHT+IE+xDCabEZIBme6qijAagEPvrd6/dae68al9hZIUdw5DJTmArw94v4+PetvS8lj1X0hj/SqwA==
+X-Received: by 2002:a05:620a:258b:b0:77a:2520:2793 with SMTP id x11-20020a05620a258b00b0077a25202793mr131237qko.2.1699903291859;
+        Mon, 13 Nov 2023 11:21:31 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id ts5-20020a05620a3d8500b00767e98535b7sm2081404qkn.67.2023.11.13.11.21.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Nov 2023 11:21:31 -0800 (PST)
+From:   Paul Moore <paul@paul-moore.com>
+To:     linux-security-module@vger.kernel.org
+Cc:     Serge Hallyn <serge@hallyn.com>
+Subject: [PATCH] mailmap: add entries for Serge Hallyn's dead accounts
+Date:   Mon, 13 Nov 2023 14:21:26 -0500
+Message-ID: <20231113192125.57117-2-paul@paul-moore.com>
+X-Mailer: git-send-email 2.42.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC V2] IMA Log Snapshotting Design Proposal
-To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
-        peterhuewe@gmx.de, Jarkko Sakkinen <jarkko@kernel.org>,
-        jgg@ziepe.ca, Ken Goldman <kgold@linux.ibm.com>, bhe@redhat.com,
-        vgoyal@redhat.com, Dave Young <dyoung@redhat.com>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        jmorris@namei.org, Paul Moore <paul@paul-moore.com>,
-        serge@hallyn.com,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-security-module@vger.kernel.org
-Cc:     Tyler Hicks <tyhicks@linux.microsoft.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Sush Shringarputale <sushring@linux.microsoft.com>
-References: <6c0c32d5-e636-2a0e-5bdf-538c904ceea3@linux.microsoft.com>
-Content-Language: en-US
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <6c0c32d5-e636-2a0e-5bdf-538c904ceea3@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=876; i=paul@paul-moore.com; h=from:subject; bh=7HqdIb07BkOGgY1pXu4j16ad2zOnNbTzxT+tc/NoVMw=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBlUnc18DnHA+psGmFBQfIRBTShBO0A+5pRVCBzY zT+6mzFqyKJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZVJ3NQAKCRDqIPLalzeJ cwToEACFuZ5NOnOaBcuNuP8cLNu9dgTPE7jx4KXuFbrFRbWapQ9ncWc76mxHl++EUJJUL2mtIuA a5K6CXctGB4tbCtHki1iTIGw3aZlM+zD8JE0NLvYjKYG5y+OIG3Gwa9gldhkzMBcenFLbK3JmMo ecWxtLmeloSVJDCX7drYq25TPPVBbzoH/rHwQolvGMZEm4APRCvRAOYlY3jhkUN4bQ01Mv6IsPo Rb2wis46DJv82HX1B3+UIr0sAskS8OWrXyXLRIQ45VN6JF/xcuXnK6/vK9JhZzRI0a1NFFEjDsz OyIw7V7atLgsNggmtunKNZn5/xaK/E5YRYG2tE1MtCNr32qdQYlN7EAF7bu+TwvU5tca/AWLXJJ vV3qIM7q7nZ5ZFFcAEZJCPeFXr3X+B2NdNe9rzlarWKsuho6iDfXyDbmv31fFxl+kMu9MDUQM9w 8k4KadXKw3voHyyKP6wdtD3l9Tk9/uD8LA/f0tcJLZ209CBBXZxPgdRCuxzSCM7C+fJuhWHWRVW 3u1B1eFj3+i+BTemKioYyoDM3b5OpmKhFKUsqj+qtAw25nMMcYFqpDxMB9NQl9ll0unClUQNG78 BGtaSuWwxzeLMW1VFBvEAIIoYDhpH3vGKvZ9/6hkk34bJ0i/GRLlpPBJ9ttO518fCQOtQ+HvLdx 5Au+IdsF9Ir0Tpw==
+X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: WmvznxFZu7yxlghfWUryTRibdYfAFIYI
-X-Proofpoint-ORIG-GUID: 2jVIVTCM0GihU6zmaxUPEHXg_m1XX5Cl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-13_09,2023-11-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- phishscore=0 spamscore=0 suspectscore=0 impostorscore=0 lowpriorityscore=0
- adultscore=0 bulkscore=0 clxscore=1011 malwarescore=0 mlxlogscore=505
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311060000
- definitions=main-2311130153
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+From: Serge Hallyn <serge@hallyn.com>
 
+Signed-off-by: Serge Hallyn <serge@hallyn.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ .mailmap | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On 10/19/23 14:49, Tushar Sugandhi wrote:
-> =======================================================================
-> | Introduction                                                        |
-> =======================================================================
-> This document provides a detailed overview of the proposed Kernel
-> feature IMA log snapshotting.  It describes the motivation behind the
-> proposal, the problem to be solved, a detailed solution design with
-> examples, and describes the changes to be made in the clients/services
-> which are part of remote-attestation system.  This is the 2nd version
-> of the proposal.  The first version is present here[1].
-> 
-> Table of Contents:
-> ------------------
-> A. Motivation and Background
-> B. Goals and Non-Goals
->      B.1 Goals
->      B.2 Non-Goals
-> C. Proposed Solution
->      C.1 Solution Summary
->      C.2 High-level Work-flow
-> D. Detailed Design
->      D.1 Snapshot Aggregate Event
->      D.2 Snapshot Triggering Mechanism
->      D.3 Choosing A Persistent Storage Location For Snapshots
->      D.4 Remote-Attestation Client/Service-side Changes
->          D.4.a Client-side Changes
->          D.4.b Service-side Changes
-> E. Example Walk-through
-> F. Other Design Considerations
-> G. References
-> 
-
-Userspace applications will have to know
-a) where are the shard files?
-b) how do I read the shard files while locking out the producer of the 
-shard files?
-
-IMO, this will require a well known config file and a locking method 
-(flock) so that user space applications can work together in this new 
-environment. The lock could be defined in the config file or just be the 
-config file itself.
+diff --git a/.mailmap b/.mailmap
+index 2ba581ebb2cf..35086f4a7961 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -535,6 +535,8 @@ Sebastian Reichel <sre@kernel.org> <sebastian.reichel@collabora.co.uk>
+ Sebastian Reichel <sre@kernel.org> <sre@debian.org>
+ Sedat Dilek <sedat.dilek@gmail.com> <sedat.dilek@credativ.de>
+ Senthilkumar N L <quic_snlakshm@quicinc.com> <snlakshm@codeaurora.org>
++Serge Hallyn <sergeh@kernel.org> <serge.hallyn@canonical.com>
++Serge Hallyn <sergeh@kernel.org> <serue@us.ibm.com>
+ Seth Forshee <sforshee@kernel.org> <seth.forshee@canonical.com>
+ Shannon Nelson <shannon.nelson@amd.com> <snelson@pensando.io>
+ Shannon Nelson <shannon.nelson@amd.com> <shannon.nelson@intel.com>
+-- 
+2.42.1
 
