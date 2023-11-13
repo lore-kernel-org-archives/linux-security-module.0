@@ -2,147 +2,120 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F59C4332F
-	for <linux-security-module@archiver.kernel.org>; Sun, 12 Nov 2023 20:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0847C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Nov 2023 00:08:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229738AbjKLUdB (ORCPT
+        id S232474AbjKMAIt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 12 Nov 2023 15:33:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52570 "EHLO
+        Sun, 12 Nov 2023 19:08:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229664AbjKLUdA (ORCPT
+        with ESMTP id S230036AbjKMAIs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 12 Nov 2023 15:33:00 -0500
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6672C2583
-        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 12:32:57 -0800 (PST)
-Received: by mail-yb1-xb33.google.com with SMTP id 3f1490d57ef6-da0344eb3fdso3773953276.3
-        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 12:32:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1699821176; x=1700425976; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kQZ6q7zkUzBb4xIAiq5ifefOrJoCgb7ZOALJX74IEOE=;
-        b=fFs7PJhYwN5xunvMuG0hbY5QD4uE0tlRHi0nc/jDSqm2Dez5jCXmoUFYWP4xAeGgFY
-         41jtb3VxDv1A0ExM0CLTNX5TTIru/6B1ic19+z4olqsoBhhb7LzEKtys1/6o6546NhMt
-         +SSm4CcfzmUFH74YML+Tah8Nn3fHxLBrUUNDj3zRrSC3wU6ExiEsLQP0fhAhBsBqEpdT
-         Nvf22oh+VX0XQTe0hkZdUo5B7hItfrJZsAT8xa7zYDMDaaLsCuCZcEIWsXqGVQXra9zw
-         W2sb2lZBMopD+Exqf2+XGckw8sT/cy8Djf9Z4DkhTmSFJD7mEyDeqxWGyMxqUQ50nqnf
-         iu3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699821176; x=1700425976;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kQZ6q7zkUzBb4xIAiq5ifefOrJoCgb7ZOALJX74IEOE=;
-        b=wXB8y75PNAuLz3TQf3iylLcWqio/89blMczX04vNyBq5OHF8rqbtz6Owmu01nDZFiZ
-         FYekceH+Vbzq/JVnwVMcSIrKH0p4GxQbfAtc923xunAJT+q0+daED43CCMdsMLSvZkUC
-         Z7FjulA6OOknnglvnz9lK+1/N7T6GqIdPI2J8yWldk0hbuoMCIqA97baSG6jeqjV6wtg
-         ZuG6FCz8gfjUz8VEZ1mv/PzGlRymx1G7qy/mt9owZd57NmoR4382UO4yTUy/MTi5Y8s4
-         9AKM9lTZyavi81QQmu504/bF2y94qmdauJvApBQjAU9Q1oMVQvuMiS35gJIEyKCaIhOG
-         vBlA==
-X-Gm-Message-State: AOJu0Yzy9uY9/2ecnTY7i9Vvh4myh29d3pADZK/DVi2lNJgBavDZfBfF
-        yOZMEH5N5Uyfu6qQAHcWJdGFoALjrHMwZupw5/V0hiwjOJmeY3n0AA==
-X-Google-Smtp-Source: AGHT+IFxB5XY+P9gbJKytFyNfW83PPd7xVRHBIT5WpoJ8OFrzjK3QzTvR+pgKG+BfzpG0R0eyls66J/UTrbCR5YIPWA=
-X-Received: by 2002:a25:c008:0:b0:da0:400e:750c with SMTP id
- c8-20020a25c008000000b00da0400e750cmr3784114ybf.27.1699821176534; Sun, 12 Nov
- 2023 12:32:56 -0800 (PST)
+        Sun, 12 Nov 2023 19:08:48 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3538D40
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 16:08:45 -0800 (PST)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57094C433C9
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Nov 2023 00:08:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1699834125;
+        bh=J4HknDoArB4ViSGbXTge5MV2QIRiveJDtQEAca3JRFs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Hi0HjTMI+nRsZwwwx9LHEpR0yFWgWQP53nCLAd/51TrnmA6/mad2w65izFJfcsXY0
+         e6JKQ2/xhMNBfSnaOHQUpFT+ooBIhBO1vWu+aVJpKyl1eANCDLQo/X1iYeoHw6Fczn
+         8D70/txhskZtPXKmjaZkojsnkPCjhgWn4o6H/ABstX10k/5O/8zaynnJ2H4KwQqZJf
+         r6IKjf/1dp5gVo5+aztfyvY6rxkVuER09PaHgcY69tIoUqclIhpAJPSWFrIKj9v1A7
+         yvKL+c+kpGTEt+UEXbj1O6Xn7T2v06UbLe1Zp9N2BniTz4zhCG8lMT+rcsa47vJuxG
+         GcBUDiS6nXhDg==
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4af6a700086so259070e0c.1
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 16:08:45 -0800 (PST)
+X-Gm-Message-State: AOJu0YzgcJmMmU8pBE+E0QW1/6ki48gSzbz4bId5rmwvpst8UchZAeHr
+        JSlnid90FKj0xKSKeAPoVZzMlrj97eGnSlhhMzcizg==
+X-Google-Smtp-Source: AGHT+IExtM3e5B9oYl5Q78gHtL5BrHeWXvK+rbc/rl7vuukhHSKNddDfLnVLfVZelEBUmqmA3mEYIczPv1uoHdtexL4=
+X-Received: by 2002:a05:6122:458a:b0:495:cace:d59c with SMTP id
+ de10-20020a056122458a00b00495caced59cmr5601637vkb.0.1699834124363; Sun, 12
+ Nov 2023 16:08:44 -0800 (PST)
 MIME-Version: 1.0
-References: <20231112073424.4216-1-laoar.shao@gmail.com>
-In-Reply-To: <20231112073424.4216-1-laoar.shao@gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 12 Nov 2023 15:32:45 -0500
-Message-ID: <CAHC9VhT6YmQrvfQRu0N=0tXHD2+vJQU3pTqrryMekZsEQzwqUw@mail.gmail.com>
-Subject: Re: [RFC PATCH -mm 0/4] mm, security, bpf: Fine-grained control over
- memory policy adjustments with lsm bpf
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     akpm@linux-foundation.org, jmorris@namei.org, serge@hallyn.com,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        bpf@vger.kernel.org, ligang.bdlg@bytedance.com, mhocko@suse.com
+References: <20231111125126.11665-1-yjnworkstation@gmail.com>
+ <20231111132431.GA3717@1wt.eu> <CAHk-=whTZDjeH2FJqBozjAF44sh4XVNQrt2xdQn_Ujt=Be6=dw@mail.gmail.com>
+In-Reply-To: <CAHk-=whTZDjeH2FJqBozjAF44sh4XVNQrt2xdQn_Ujt=Be6=dw@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sun, 12 Nov 2023 16:08:33 -0800
+X-Gmail-Original-Message-ID: <CALCETrV+2wPJwZ90-nZFgM9o_f0hCQ4Gf3Y+H+6cdkjoafgiZQ@mail.gmail.com>
+Message-ID: <CALCETrV+2wPJwZ90-nZFgM9o_f0hCQ4Gf3Y+H+6cdkjoafgiZQ@mail.gmail.com>
+Subject: Re: [PATCH] exitz syscall
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Willy Tarreau <w@1wt.eu>,
+        York Jasper Niebuhr <yjnworkstation@gmail.com>,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Nov 12, 2023 at 2:35=E2=80=AFAM Yafang Shao <laoar.shao@gmail.com> =
-wrote:
+> On Nov 11, 2023, at 5:24=E2=80=AFPM, Linus Torvalds <torvalds@linux-found=
+ation.org> wrote:
 >
-> Background
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> =EF=BB=BFOn Sat, 11 Nov 2023 at 05:24, Willy Tarreau <w@1wt.eu> wrote:
+>> IMHO it does not make sense to add a syscall for this, please have a
+>> look at prctl(2) instead, which is already used for similar settings.
 >
-> In our containerized environment, we've identified unexpected OOM events
-> where the OOM-killer terminates tasks despite having ample free memory.
-> This anomaly is traced back to tasks within a container using mbind(2) to
-> bind memory to a specific NUMA node. When the allocated memory on this no=
-de
-> is exhausted, the OOM-killer, prioritizing tasks based on oom_score,
-> indiscriminately kills tasks. This becomes more critical with guaranteed
-> tasks (oom_score_adj: -998) aggravating the issue.
+> Honestly, I don't think it makes any sense at all.
 >
-> The selected victim might not have allocated memory on the same NUMA node=
-,
-> rendering the killing ineffective. This patch aims to address this by
-> disabling MPOL_BIND in container environments.
+> If the key manager people can't be bothered to keep track of their
+> keys, the kernel certainly shouldn't be bothered with this kind of
+> huge hammer.
 >
-> In the container environment, our aim is to consolidate memory resource
-> control under the management of kubelet. If users express a preference fo=
-r
-> binding their memory to a specific NUMA node, we encourage the adoption o=
-f
-> a standardized approach. Specifically, we recommend configuring this memo=
-ry
-> policy through kubelet using cpuset.mems in the cpuset controller, rather
-> than individual users setting it autonomously. This centralized approach
-> ensures that NUMA nodes are globally managed through kubelet, promoting
-> consistency and facilitating streamlined administration of memory resourc=
-es
-> across the entire containerized environment.
->
-> Proposed Solutions
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> - Introduce Capability to Disable MPOL_BIND
->   Currently, any task can perform MPOL_BIND without specific capabilities=
-.
->   Enforcing CAP_SYS_RESOURCE or CAP_SYS_NICE could be an option, but this
->   may have unintended consequences. Capabilities, being broad, might gran=
-t
->   unnecessary privileges. We should explore alternatives to prevent
->   unexpected side effects.
->
-> - Use LSM BPF to Disable MPOL_BIND
->   Introduce LSM hooks for syscalls such as mbind(2), set_mempolicy(2), an=
-d
->   set_mempolicy_home_node(2) to disable MPOL_BIND. This approach is more
->   flexibility and allows for fine-grained control without unintended
->   consequences. A sample LSM BPF program is included, demonstrating
->   practical implementation in a production environment.
+> It looks like an active DoS attack to me, by anybody who just creates
+> a huge process and then sits there giggling as the machine comes to a
+> complete halt, with the kernel busy zeroing pointless crap.
 
-Without looking at the patchset in any detail yet, I wanted to point
-out that we do have some documented guidelines for adding new LSM
-hooks:
+The implementation in this patch is =E2=80=A6 bad.  But that aside, the who=
+le
+concept seems wrong to me: zeroing memory specifically when an mm
+exits seems rather bizarre -- it's the wrong condition. From a
+hardening perspective, there are really three concerning cases, IMO:
 
-https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsm-h=
-ook-guidelines
+1. Something sensitive is in memory, and some bug (side channel or
+straight up kernel bug) allows an attacker to read it.  Zeroing early
+shortens the window but doesn't actually prevent the attack.
 
-I just learned that there are provisions for adding this to the
-MAINTAINERS file, I'll be doing that shortly.  My apologies for not
-having it in there sooner.
+2. Something sensitive is in memory, and some bug allocates the memory
+before it's freed.  (I.e. allocator state gets corrupted.)  Like #1,
+all we can do is shorten the window.  But these kinds of bugs are
+quite rare.
 
-> Future Considerations
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+3. Something sensitive is in memory, it gets freed, it gets reused
+without __GFP_ZERO, and it gets leaked.  This actually seems fairly
+plausible.  While __GFP_ZERO is fairly common, there are tons of paths
+that don't use it, and bugs happen.
+
+We do have:
+
+commit 6471384af2a6530696fc0203bafe4de41a23c9ef
+Author: Alexander Potapenko <glider@google.com>
+Date:   Thu Jul 11 20:59:19 2019 -0700
+
+    mm: security: introduce init_on_alloc=3D1 and init_on_free=3D1 boot opt=
+ions
+
+
+And I can easily imagine a useful API to flag some memory as being
+sensitive such that either the kernel will always zero it when freed
+or will make sure it's zeroed before being reallocated even if
+__GFP_ZERO is not set and init_on_alloc and init_on_free are both
+zero.
+
+This would be a rather different patch that exitz().
+
+--Andy
+
+
 >
-> In addition, there's room for enhancement in the OOM-killer for cases
-> involving CONSTRAINT_MEMORY_POLICY. It would be more beneficial to
-> prioritize selecting a victim that has allocated memory on the same NUMA
-> node. My exploration on the lore led me to a proposal[0] related to this
-> matter, although consensus seems elusive at this point. Nevertheless,
-> delving into this specific topic is beyond the scope of the current
-> patchset.
+> Do it in user space. And if your user space randomly crashes, you have
+> other problems - but you can try to use ptrace to catch even that case
+> if you care.
 >
-> [0]. https://lore.kernel.org/lkml/20220512044634.63586-1-ligang.bdlg@byte=
-dance.com/
-
---=20
-paul-moore.com
+>        Linus
