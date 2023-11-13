@@ -2,401 +2,137 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A909AC4167B
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Nov 2023 02:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4F4C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Nov 2023 03:15:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233174AbjKMC1A (ORCPT
+        id S229988AbjKMDPv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 12 Nov 2023 21:27:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44586 "EHLO
+        Sun, 12 Nov 2023 22:15:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233181AbjKMC0O (ORCPT
+        with ESMTP id S229665AbjKMDPu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 12 Nov 2023 21:26:14 -0500
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 821A330F9
-        for <linux-security-module@vger.kernel.org>; Sun, 12 Nov 2023 18:25:06 -0800 (PST)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4STCv440z4zMq2H7;
-        Mon, 13 Nov 2023 02:25:04 +0000 (UTC)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4STCv31cKszMppt7;
-        Mon, 13 Nov 2023 03:25:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1699842304;
-        bh=qU7rpwZb8Bl+xuVDwtq6MKJ75S7Uo4UAc0PUDjw5xlk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HbDL//+3ATCwPmW6FeNdrIH7tZIwaMnw+QS1qdZf+B2mnT/MKQm4aP+mx66UUcjaD
-         hsK1zTShrWzEU7FyzuuXAFeXbZ2X6WXdUpzO09fScu+mFKm7CXVRlh5HLUvFpTFOab
-         J5+cWZjh90MaulzQheCaiQUYvIq2/sNhJR0yOd08=
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Alexander Graf <graf@amazon.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        Forrest Yuan Yu <yuanyu@google.com>,
-        James Gowans <jgowans@amazon.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        John Andersen <john.s.andersen@intel.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Marian Rotariu <marian.c.rotariu@gmail.com>,
-        =?UTF-8?q?Mihai=20Don=C8=9Bu?= <mdontu@bitdefender.com>,
-        =?UTF-8?q?Nicu=C8=99or=20C=C3=AE=C8=9Bu?= <nicu.citu@icloud.com>,
-        Thara Gopinath <tgopinath@microsoft.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Zahra Tarkhani <ztarkhani@microsoft.com>,
-        =?UTF-8?q?=C8=98tefan=20=C8=98icleru?= <ssicleru@bitdefender.com>,
-        dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, qemu-devel@nongnu.org,
-        virtualization@lists.linux-foundation.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: [RFC PATCH v2 19/19] virt: Add Heki KUnit tests
-Date:   Sun, 12 Nov 2023 21:23:26 -0500
-Message-ID: <20231113022326.24388-20-mic@digikod.net>
-In-Reply-To: <20231113022326.24388-1-mic@digikod.net>
-References: <20231113022326.24388-1-mic@digikod.net>
+        Sun, 12 Nov 2023 22:15:50 -0500
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACBE61716;
+        Sun, 12 Nov 2023 19:15:47 -0800 (PST)
+Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-d9abc069c8bso3697911276.3;
+        Sun, 12 Nov 2023 19:15:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699845347; x=1700450147; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T8B96Ni+FGUAk/kFVWQhHFafqodPoSpSscy2GJncHQw=;
+        b=GNSu4R9LZupKLsPOe8kXj0oo23LGLUTiCbVKeUdW1u3Ol1X+tFjhM5PsFH3yCdToUT
+         Kh+5YUr4FWdpGx8ix6Wy6ZV3hqqNbl5RjYs/8mfEghRBjbWntT+ZF4ZqGGJpMXZBCrPB
+         ABfssgLRcjrfKgu5NoJJPI8gdaDMyX1nPT7xkrBGwe/RUMc2YWEQh0cTalo6ksa1L4uX
+         U+xnuzFxuSsfxlSmQWvxj4N8m28X/mwWQyI5e9jm++yJd1+cKYst4fLFCev/P6BLlHFM
+         YGqsvKZHtjoWnS+HTiSVMZp0tu8TcIe/vy9THErRJNkfWTjUFFfgX0nT09p7PU3t2aw6
+         dJFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699845347; x=1700450147;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T8B96Ni+FGUAk/kFVWQhHFafqodPoSpSscy2GJncHQw=;
+        b=hN6cTuTFBGxBC8uqQYuRkfKMWGNsjHbKRM4zAUGtrVw9JvshfnqQowqiyw1Y/1dRlQ
+         YrbOuyVfJ1g0zoJJXYO3AyKJzzvlLcfjOKBTcqbNrLB4Ou/DpWfduXLWZaCrL4fibjcX
+         WSYXXFY88mYpMOFha35csce7ELwdA9Hh+H/bS18OxwdJN5NU+YK3ma33sZGT2tEBjOm0
+         2sLE3ceG6fcdRB6KnNuFP8fcQoTAzMAxyLlht0jJGkFiYO1VeR0HvEztFWMpCugZjVEk
+         ae8fYEPTS/xo3xIHArNk3BdBcIrVXnhRQYl7d1HarPCmNQlUdS/53roPY01N91ABidG1
+         gxyA==
+X-Gm-Message-State: AOJu0Yw1SgD5ZgcJC7elvdkYPagkNeyEJFt/AakO9ZwA2ObCvJFJDc+O
+        6BGkk7LukNUXLSN1QypVCgfRRMVOC3GQP+EIoaA=
+X-Google-Smtp-Source: AGHT+IGgoOn1GD9rsX8lEdOR18h9YH3PIsSRn09mwvNzpVQHVvocjvVSovUR6KBjYyKPtj7t4Wtss/58PVhBz+Dl7N4=
+X-Received: by 2002:a25:5ca:0:b0:da3:9a65:84b1 with SMTP id
+ 193-20020a2505ca000000b00da39a6584b1mr2840571ybf.12.1699845346849; Sun, 12
+ Nov 2023 19:15:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <20231112073424.4216-1-laoar.shao@gmail.com> <188dc90e-864f-4681-88a5-87401c655878@schaufler-ca.com>
+In-Reply-To: <188dc90e-864f-4681-88a5-87401c655878@schaufler-ca.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Mon, 13 Nov 2023 11:15:06 +0800
+Message-ID: <CALOAHbD+_0tHcm72Q6TM=EXDoZFrVWAsi4AC8_xGqK3wGkEy3g@mail.gmail.com>
+Subject: Re: [RFC PATCH -mm 0/4] mm, security, bpf: Fine-grained control over
+ memory policy adjustments with lsm bpf
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        ligang.bdlg@bytedance.com, mhocko@suse.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This adds a new CONFIG_HEKI_TEST option to run tests at boot. Because we
-use some symbols not exported to modules (e.g., kernel_set_to_readonly)
-this could not work as modules.
+On Mon, Nov 13, 2023 at 12:45=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+>
+> On 11/11/2023 11:34 PM, Yafang Shao wrote:
+> > Background
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > In our containerized environment, we've identified unexpected OOM event=
+s
+> > where the OOM-killer terminates tasks despite having ample free memory.
+> > This anomaly is traced back to tasks within a container using mbind(2) =
+to
+> > bind memory to a specific NUMA node. When the allocated memory on this =
+node
+> > is exhausted, the OOM-killer, prioritizing tasks based on oom_score,
+> > indiscriminately kills tasks. This becomes more critical with guarantee=
+d
+> > tasks (oom_score_adj: -998) aggravating the issue.
+>
+> Is there some reason why you can't fix the callers of mbind(2)?
+> This looks like an user space configuration error rather than a
+> system security issue.
 
-To run these tests, we need to boot the kernel with the heki_test=N boot
-argument with N selecting a specific test:
-1. heki_test_cr_disable_smep: Check CR pinning and try to disable SMEP.
-2. heki_test_write_to_const: Check .rodata (const) protection.
-3. heki_test_write_to_ro_after_init: Check __ro_after_init protection.
-4. heki_test_exec: Check non-executable kernel memory.
+It appears my initial description may have caused confusion. In this
+scenario, the caller is an unprivileged user lacking any capabilities.
+While a privileged user, such as root, experiencing this issue might
+indicate a user space configuration error, the concerning aspect is
+the potential for an unprivileged user to disrupt the system easily.
+If this is perceived as a misconfiguration, the question arises: What
+is the correct configuration to prevent an unprivileged user from
+utilizing mbind(2)?"
 
-This way to select tests should not be required when the kernel will
-properly handle the triggered synthetic page faults.  For now, these
-page faults make the kernel loop.
+>
+> >
+> > The selected victim might not have allocated memory on the same NUMA no=
+de,
+> > rendering the killing ineffective. This patch aims to address this by
+> > disabling MPOL_BIND in container environments.
+> >
+> > In the container environment, our aim is to consolidate memory resource
+> > control under the management of kubelet. If users express a preference =
+for
+> > binding their memory to a specific NUMA node, we encourage the adoption=
+ of
+> > a standardized approach. Specifically, we recommend configuring this me=
+mory
+> > policy through kubelet using cpuset.mems in the cpuset controller, rath=
+er
+> > than individual users setting it autonomously. This centralized approac=
+h
+> > ensures that NUMA nodes are globally managed through kubelet, promoting
+> > consistency and facilitating streamlined administration of memory resou=
+rces
+> > across the entire containerized environment.
+>
+> Changing system behavior for a single use case doesn't seem prudent.
+> You're introducing a bunch of kernel code to avoid fixing a broken
+> user space configuration.
 
-All these tests temporarily disable the related kernel self-protections
-and should then failed if Heki doesn't protect the kernel.  They are
-verbose to make it easier to understand what is going on.
+Currently, there is no mechanism in place to proactively prevent an
+unprivileged user from utilizing mbind(2). The approach adopted is to
+monitor mbind(2) through a BPF program and trigger an alert if its
+usage is detected. However, beyond this monitoring, the only recourse
+is to verbally communicate with the user, advising against the use of
+mbind(2). As a result, users will question why mbind(2) isn't outright
+prohibited in the first place.
 
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Wanpeng Li <wanpengli@tencent.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
----
-
-Changes since v1:
-* Move all tests to virt/heki/tests.c
----
- include/linux/heki.h |   1 +
- virt/heki/Kconfig    |  12 +++
- virt/heki/Makefile   |   1 +
- virt/heki/main.c     |   6 +-
- virt/heki/tests.c    | 207 +++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 226 insertions(+), 1 deletion(-)
- create mode 100644 virt/heki/tests.c
-
-diff --git a/include/linux/heki.h b/include/linux/heki.h
-index 306bcec7ae92..9e2cf0051ab0 100644
---- a/include/linux/heki.h
-+++ b/include/linux/heki.h
-@@ -149,6 +149,7 @@ void heki_protect(unsigned long va, unsigned long end);
- void heki_add_pa(struct heki_args *args, phys_addr_t pa,
- 		 unsigned long permissions);
- void heki_apply_permissions(struct heki_args *args);
-+void heki_run_test(void);
- 
- /* Arch-specific functions. */
- void heki_arch_early_init(void);
-diff --git a/virt/heki/Kconfig b/virt/heki/Kconfig
-index 9bde84cd759e..fa814a921bb0 100644
---- a/virt/heki/Kconfig
-+++ b/virt/heki/Kconfig
-@@ -28,3 +28,15 @@ config HYPERVISOR_SUPPORTS_HEKI
- 	  A hypervisor should select this when it can successfully build
- 	  and run with CONFIG_HEKI. That is, it should provide all of the
- 	  hypervisor support required for the Heki feature.
-+
-+config HEKI_TEST
-+	bool "Tests for Heki" if !KUNIT_ALL_TESTS
-+	depends on HEKI && KUNIT=y
-+	default KUNIT_ALL_TESTS
-+	help
-+	  Run Heki tests at runtime according to the heki_test=N boot
-+	  parameter, with N identifying the test to run (between 1 and 4).
-+
-+	  Before launching the init process, the system might not respond
-+	  because of unhandled kernel page fault.  This will be fixed in a
-+	  next patch series.
-diff --git a/virt/heki/Makefile b/virt/heki/Makefile
-index 564f92faa9d8..a66cd0ba140b 100644
---- a/virt/heki/Makefile
-+++ b/virt/heki/Makefile
-@@ -3,3 +3,4 @@
- obj-y += main.o
- obj-y += walk.o
- obj-y += counters.o
-+obj-y += tests.o
-diff --git a/virt/heki/main.c b/virt/heki/main.c
-index 5629334112e7..ce9984231996 100644
---- a/virt/heki/main.c
-+++ b/virt/heki/main.c
-@@ -51,8 +51,10 @@ void heki_late_init(void)
- {
- 	struct heki_hypervisor *hypervisor = heki.hypervisor;
- 
--	if (!heki.counters)
-+	if (!heki.counters) {
-+		heki_run_test();
- 		return;
-+	}
- 
- 	/* Locks control registers so a compromised guest cannot change them. */
- 	if (WARN_ON(hypervisor->lock_crs()))
-@@ -61,6 +63,8 @@ void heki_late_init(void)
- 	pr_warn("Control registers locked\n");
- 
- 	heki_arch_late_init();
-+
-+	heki_run_test();
- }
- 
- /*
-diff --git a/virt/heki/tests.c b/virt/heki/tests.c
-new file mode 100644
-index 000000000000..6e6542b257f1
---- /dev/null
-+++ b/virt/heki/tests.c
-@@ -0,0 +1,207 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Hypervisor Enforced Kernel Integrity (Heki) - Common code
-+ *
-+ * Copyright © 2023 Microsoft Corporation
-+ */
-+
-+#include <linux/kvm_host.h>
-+#include <kunit/test.h>
-+#include <linux/cache.h>
-+#include <linux/heki.h>
-+#include <linux/kernel.h>
-+#include <linux/mm.h>
-+#include <linux/printk.h>
-+#include <linux/set_memory.h>
-+#include <linux/types.h>
-+#include <linux/vmalloc.h>
-+
-+#include "common.h"
-+
-+#ifdef CONFIG_HEKI_TEST
-+
-+/* Heki test data */
-+
-+/* Takes two pages to not change permission of other read-only pages. */
-+const char heki_test_const_buf[PAGE_SIZE * 2] = {};
-+char heki_test_ro_after_init_buf[PAGE_SIZE * 2] __ro_after_init = {};
-+
-+long heki_test_exec_data(long);
-+void _test_exec_data_end(void);
-+
-+/* Used to test ROP execution against the .rodata section. */
-+/* clang-format off */
-+asm(
-+".pushsection .rodata;" // NOT .text section
-+".global heki_test_exec_data;"
-+".type heki_test_exec_data, @function;"
-+"heki_test_exec_data:"
-+ASM_ENDBR
-+"movq %rdi, %rax;"
-+"inc %rax;"
-+ASM_RET
-+".size heki_test_exec_data, .-heki_test_exec_data;"
-+"_test_exec_data_end:"
-+".popsection");
-+/* clang-format on */
-+
-+static void heki_test_cr_disable_smep(struct kunit *test)
-+{
-+	unsigned long cr4;
-+
-+	/* SMEP should be initially enabled. */
-+	KUNIT_ASSERT_TRUE(test, __read_cr4() & X86_CR4_SMEP);
-+
-+	kunit_warn(test,
-+		   "Starting control register pinning tests with SMEP check\n");
-+
-+	/*
-+	 * Trying to disable SMEP, bypassing kernel self-protection by not
-+	 * using cr4_clear_bits(X86_CR4_SMEP).
-+	 */
-+	cr4 = __read_cr4() & ~X86_CR4_SMEP;
-+	asm volatile("mov %0,%%cr4" : "+r"(cr4) : : "memory");
-+
-+	/* SMEP should still be enabled. */
-+	KUNIT_ASSERT_TRUE(test, __read_cr4() & X86_CR4_SMEP);
-+}
-+
-+static inline void print_addr(struct kunit *test, const char *const buf_name,
-+			      void *const buf)
-+{
-+	const pte_t pte = *virt_to_kpte((unsigned long)buf);
-+	const phys_addr_t paddr = slow_virt_to_phys(buf);
-+	bool present = pte_flags(pte) & (_PAGE_PRESENT);
-+	bool accessible = pte_accessible(&init_mm, pte);
-+
-+	kunit_warn(
-+		test,
-+		"%s vaddr:%llx paddr:%llx exec:%d write:%d present:%d accessible:%d\n",
-+		buf_name, (unsigned long long)buf, paddr, !!pte_exec(pte),
-+		!!pte_write(pte), present, accessible);
-+}
-+
-+extern int kernel_set_to_readonly;
-+
-+static void heki_test_write_to_rodata(struct kunit *test,
-+				      const char *const buf_name,
-+				      char *const ro_buf)
-+{
-+	print_addr(test, buf_name, (void *)ro_buf);
-+	KUNIT_EXPECT_EQ(test, 0, *ro_buf);
-+
-+	kunit_warn(
-+		test,
-+		"Bypassing kernel self-protection: mark memory as writable\n");
-+	kernel_set_to_readonly = 0;
-+	/*
-+	 * Removes execute permission that might be set by bugdoor-exec,
-+	 * because change_page_attr_clear() is not use by set_memory_rw().
-+	 * This is required since commit 652c5bf380ad ("x86/mm: Refuse W^X
-+	 * violations").
-+	 */
-+	KUNIT_ASSERT_FALSE(test, set_memory_nx((unsigned long)PTR_ALIGN_DOWN(
-+						       ro_buf, PAGE_SIZE),
-+					       1));
-+	KUNIT_ASSERT_FALSE(test, set_memory_rw((unsigned long)PTR_ALIGN_DOWN(
-+						       ro_buf, PAGE_SIZE),
-+					       1));
-+	kernel_set_to_readonly = 1;
-+
-+	kunit_warn(test, "Trying memory write\n");
-+	*ro_buf = 0x11;
-+	KUNIT_EXPECT_EQ(test, 0, *ro_buf);
-+	kunit_warn(test, "New content: 0x%02x\n", *ro_buf);
-+}
-+
-+static void heki_test_write_to_const(struct kunit *test)
-+{
-+	heki_test_write_to_rodata(test, "const_buf",
-+				  (void *)heki_test_const_buf);
-+}
-+
-+static void heki_test_write_to_ro_after_init(struct kunit *test)
-+{
-+	heki_test_write_to_rodata(test, "ro_after_init_buf",
-+				  (void *)heki_test_ro_after_init_buf);
-+}
-+
-+typedef long test_exec_t(long);
-+
-+static void heki_test_exec(struct kunit *test)
-+{
-+	const size_t exec_size = 7;
-+	unsigned long nx_page_start = (unsigned long)PTR_ALIGN_DOWN(
-+		(const void *const)heki_test_exec_data, PAGE_SIZE);
-+	unsigned long nx_page_end = (unsigned long)PTR_ALIGN(
-+		(const void *const)heki_test_exec_data + exec_size, PAGE_SIZE);
-+	test_exec_t *exec = (test_exec_t *)heki_test_exec_data;
-+	long ret;
-+
-+	/* Starting non-executable memory tests. */
-+	print_addr(test, "test_exec_data", heki_test_exec_data);
-+
-+	kunit_warn(
-+		test,
-+		"Bypassing kernel-self protection: mark memory as executable\n");
-+	kernel_set_to_readonly = 0;
-+	KUNIT_ASSERT_FALSE(test,
-+			   set_memory_rox(nx_page_start,
-+					  PFN_UP(nx_page_end - nx_page_start)));
-+	kernel_set_to_readonly = 1;
-+
-+	kunit_warn(
-+		test,
-+		"Trying to execute data (ROP) in (initially) non-executable memory\n");
-+	ret = exec(3);
-+
-+	/* This should not be reached because of the uncaught page fault. */
-+	KUNIT_EXPECT_EQ(test, 3, ret);
-+	kunit_warn(test, "Result of execution: 3 + 1 = %ld\n", ret);
-+}
-+
-+const struct kunit_case heki_test_cases[] = {
-+	KUNIT_CASE(heki_test_cr_disable_smep),
-+	KUNIT_CASE(heki_test_write_to_const),
-+	KUNIT_CASE(heki_test_write_to_ro_after_init),
-+	KUNIT_CASE(heki_test_exec),
-+	{}
-+};
-+
-+static unsigned long heki_test __ro_after_init;
-+
-+static int __init parse_heki_test_config(char *str)
-+{
-+	if (kstrtoul(str, 10, &heki_test) ||
-+	    heki_test > (ARRAY_SIZE(heki_test_cases) - 1))
-+		pr_warn("Invalid option string for heki_test: '%s'\n", str);
-+	return 1;
-+}
-+
-+__setup("heki_test=", parse_heki_test_config);
-+
-+void heki_run_test(void)
-+{
-+	struct kunit_case heki_test_case[2] = {};
-+	struct kunit_suite heki_test_suite = {
-+		.name = "heki",
-+		.test_cases = heki_test_case,
-+	};
-+	struct kunit_suite *const test_suite = &heki_test_suite;
-+
-+	if (!kunit_enabled() || heki_test == 0 ||
-+	    heki_test >= ARRAY_SIZE(heki_test_cases))
-+		return;
-+
-+	pr_warn("Running test #%lu\n", heki_test);
-+	heki_test_case[0] = heki_test_cases[heki_test - 1];
-+	__kunit_test_suites_init(&test_suite, 1);
-+}
-+
-+#else /* CONFIG_HEKI_TEST */
-+
-+void heki_run_test(void)
-+{
-+}
-+
-+#endif /* CONFIG_HEKI_TEST */
--- 
-2.42.1
-
+--=20
+Regards
+Yafang
