@@ -2,126 +2,161 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 685AFC4332F
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Nov 2023 01:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC7AC07548
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Nov 2023 08:02:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233990AbjKOBxS (ORCPT
+        id S1343492AbjKOICX convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Nov 2023 20:53:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43002 "EHLO
+        Wed, 15 Nov 2023 03:02:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjKOBxS (ORCPT
+        with ESMTP id S229551AbjKOICW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Nov 2023 20:53:18 -0500
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61343D5;
-        Tue, 14 Nov 2023 17:53:15 -0800 (PST)
-Received: by mail-qv1-xf2d.google.com with SMTP id 6a1803df08f44-66d0169cf43so37896516d6.3;
-        Tue, 14 Nov 2023 17:53:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700013194; x=1700617994; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y/BHt234WbDp4zYK97AdGPPmMkFTqbDy1Led9ubCTnY=;
-        b=PZejKxtao+Dtk8ewxGyxJ/luUJPKBPAG76ORXeC3slBBHUbvtyvMUJO17MOACb4Kpb
-         dQuUQDRNa0PHjKvhoVpIdmF1HcMpnphFe7N4FGgUePTAboR87l237v1D6sQfkZ18a4Vb
-         83CZhX9GqQpXH8wRip+5baW5GPwiOs1FN6u/rx7Bp985KQcJ9IcQnL9JgR78lqZSgAQX
-         pMFJ1u+Mba3Ga2VxU6pdXFalJJA9faV1MQcbh23ZHVVy+AktMnkD6Ao0Wygcbu9Lduo6
-         pm2ZWOqlwAouL8DkjJmTafyJ9VGBTeKCMNzXbbZVBbFU/ehsaWAkVs8BfZP7jigNNJA2
-         kvAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700013194; x=1700617994;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y/BHt234WbDp4zYK97AdGPPmMkFTqbDy1Led9ubCTnY=;
-        b=v07wvIn91Sg+SItkh+gchmm41mahawh5m8Q9CLAs6tCbrm6RQrgiFcs3pGw7kRQqZW
-         VJvIjRafdeiYHWQ+SN6MNQ65sslEvl5YPMh1oYYJLiUixxM1SMlQXS8+d4FIwhxNza70
-         frJJVwPzygspRGOcFm+MgMxuZAFT8e6aMNYSzQ2vgeDa9ohZ9Fr2ypkirZxk1vHUQ6Q/
-         G+MB1xy4wfk9vPUTbfjgYt71ssV8ylvmymtMd894YPSOLKHN7yYsK/BiiM71WJi5E8Do
-         LCB+UImuNMbk0nlGRaZ3Px69Bi2lv5NHFTOb8L5bAOd0a1b6Ecdu4pXfV5jtnYQZq7Qb
-         Ksrg==
-X-Gm-Message-State: AOJu0YwDIsxuCuNXwGPulEuGc8BgRUp3wfpjuZQhpA2LiZ08qaeGWbBf
-        U2s7EiiBoAdxm1XNc91BeSQdR2/SNRViMN8xjqE=
-X-Google-Smtp-Source: AGHT+IHo6AZNYLQHGcQHISaJgPr0SREQoncKiE8nFZNQmSoDAPfIMW7+pbh+OvB7/bygy6+qHwvEe1SBIBqyLvMWnuU=
-X-Received: by 2002:a05:6214:f02:b0:670:63cc:210c with SMTP id
- gw2-20020a0562140f0200b0067063cc210cmr6230026qvb.39.1700013194432; Tue, 14
- Nov 2023 17:53:14 -0800 (PST)
-MIME-Version: 1.0
-References: <20231112073424.4216-1-laoar.shao@gmail.com> <188dc90e-864f-4681-88a5-87401c655878@schaufler-ca.com>
- <CALOAHbD+_0tHcm72Q6TM=EXDoZFrVWAsi4AC8_xGqK3wGkEy3g@mail.gmail.com>
- <ZVNIprbQU3NqwPi_@tiehlicka> <CALOAHbDi_8ERHdtPB6sJdv=qewoAfGkheCfriW+QLoN0rLUQAw@mail.gmail.com>
- <b13050b3-54f8-431a-abcf-1323a9791199@schaufler-ca.com>
-In-Reply-To: <b13050b3-54f8-431a-abcf-1323a9791199@schaufler-ca.com>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Wed, 15 Nov 2023 09:52:38 +0800
-Message-ID: <CALOAHbBKCsdmko_ugHZ_z6Zpgo-xJ8j46oPHkHj+gBGsRCR=eA@mail.gmail.com>
-Subject: Re: [RFC PATCH -mm 0/4] mm, security, bpf: Fine-grained control over
- memory policy adjustments with lsm bpf
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        bpf@vger.kernel.org, ligang.bdlg@bytedance.com
+        Wed, 15 Nov 2023 03:02:22 -0500
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED979DF;
+        Wed, 15 Nov 2023 00:02:18 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SVZwC08m1z9ycNc;
+        Wed, 15 Nov 2023 15:45:47 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwCHN2HyelRliayxAA--.29367S2;
+        Wed, 15 Nov 2023 09:02:00 +0100 (CET)
+Message-ID: <379f6a45a3102e8cd1ed992c1895ac9f69ae0595.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 5/5] ramfs: Initialize security of in-memory inodes
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     casey@schaufler-ca.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 15 Nov 2023 09:01:52 +0100
+In-Reply-To: <20230724151341.538889-6-roberto.sassu@huaweicloud.com>
+References: <20230724151341.538889-1-roberto.sassu@huaweicloud.com>
+         <20230724151341.538889-6-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.4-0ubuntu2 
+MIME-Version: 1.0
+X-CM-TRANSID: GxC2BwCHN2HyelRliayxAA--.29367S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr1fCrW5tr43uF4UuF1UAwb_yoW5ArykpF
+        WIqas8Gwn5tF9rWr1fKF4Uu3WSqayrKr4DJws3Zw17AFn7Gw1Utr4Skr13CF1rGr48Gw4F
+        qw4j9ry5Ww1DZFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUglb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+        AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
+        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJw
+        CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVF
+        xhVjvjDU0xZFpf9x07UQzVbUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgACBF1jj5J4hwABsZ
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 15, 2023 at 12:58=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
-a.com> wrote:
->
-> On 11/14/2023 3:59 AM, Yafang Shao wrote:
-> > On Tue, Nov 14, 2023 at 6:15=E2=80=AFPM Michal Hocko <mhocko@suse.com> =
-wrote:
-> >> On Mon 13-11-23 11:15:06, Yafang Shao wrote:
-> >>> On Mon, Nov 13, 2023 at 12:45=E2=80=AFAM Casey Schaufler <casey@schau=
-fler-ca.com> wrote:
-> >>>> On 11/11/2023 11:34 PM, Yafang Shao wrote:
-> >>>>> Background
-> >>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>>>>
-> >>>>> In our containerized environment, we've identified unexpected OOM e=
-vents
-> >>>>> where the OOM-killer terminates tasks despite having ample free mem=
-ory.
-> >>>>> This anomaly is traced back to tasks within a container using mbind=
-(2) to
-> >>>>> bind memory to a specific NUMA node. When the allocated memory on t=
-his node
-> >>>>> is exhausted, the OOM-killer, prioritizing tasks based on oom_score=
-,
-> >>>>> indiscriminately kills tasks. This becomes more critical with guara=
-nteed
-> >>>>> tasks (oom_score_adj: -998) aggravating the issue.
-> >>>> Is there some reason why you can't fix the callers of mbind(2)?
-> >>>> This looks like an user space configuration error rather than a
-> >>>> system security issue.
-> >>> It appears my initial description may have caused confusion. In this
-> >>> scenario, the caller is an unprivileged user lacking any capabilities=
-.
-> >>> While a privileged user, such as root, experiencing this issue might
-> >>> indicate a user space configuration error, the concerning aspect is
-> >>> the potential for an unprivileged user to disrupt the system easily.
-> >>> If this is perceived as a misconfiguration, the question arises: What
-> >>> is the correct configuration to prevent an unprivileged user from
-> >>> utilizing mbind(2)?"
-> >> How is this any different than a non NUMA (mbind) situation?
-> > In a UMA system, each gigabyte of memory carries the same cost.
-> > Conversely, in a NUMA architecture, opting to confine processes within
-> > a specific NUMA node incurs additional costs. In the worst-case
-> > scenario, if all containers opt to bind their memory exclusively to
-> > specific nodes, it will result in significant memory wastage.
->
-> That still sounds like you've misconfigured your containers such
-> that they expect to get more memory than is available, and that
-> they have more control over it than they really do.
+On Mon, 2023-07-24 at 17:13 +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Add a call security_inode_init_security() after ramfs_get_inode(), to let
+> LSMs initialize the inode security field. Skip ramfs_fill_super(), as the
+> initialization is done through the sb_set_mnt_opts hook.
+> 
+> Calling security_inode_init_security() call inside ramfs_get_inode() is
+> not possible since, for CONFIG_SHMEM=n, tmpfs also calls the former after
+> the latter.
+> 
+> Pass NULL as initxattrs() callback to security_inode_init_security(), since
+> the purpose of the call is only to initialize the in-memory inodes.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-And again: What configuration method is suitable to limit user control
-over memory policy adjustments, besides the heavyweight seccomp
-approach?
++ Andrew
 
---
-Regards
-Yafang
+Hi Andrew
+
+I'm proposing an extension to initialize the inode security field at
+inode creation time for filesystems that don't support xattrs (ramfs in
+this case).
+
+The LSM infrastructure already supports setting the inode security
+field, but only at run-time, with the inode_setsecurity hook.
+
+I developed this to do some testing on the Smack LSM, and I thought it
+could be useful anyway.
+
+Casey would need your acked-by, to carry this patch in his repository.
+I'm not completely sure if you are the maintainer, but in the past you
+accepted a patch for ramfs.
+
+If you have time and you could have a look, that would be great!
+
+Thanks
+
+Roberto
+
+> ---
+>  fs/ramfs/inode.c | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+> 
+> diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
+> index fef477c7810..ac90ebd9dbd 100644
+> --- a/fs/ramfs/inode.c
+> +++ b/fs/ramfs/inode.c
+> @@ -102,6 +102,14 @@ ramfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
+>  	int error = -ENOSPC;
+>  
+>  	if (inode) {
+> +		error = security_inode_init_security(inode, dir,
+> +						     &dentry->d_name, NULL,
+> +						     NULL);
+> +		if (error) {
+> +			iput(inode);
+> +			return error;
+> +		}
+> +
+>  		d_instantiate(dentry, inode);
+>  		dget(dentry);	/* Extra count - pin the dentry in core */
+>  		error = 0;
+> @@ -134,6 +142,15 @@ static int ramfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+>  	inode = ramfs_get_inode(dir->i_sb, dir, S_IFLNK|S_IRWXUGO, 0);
+>  	if (inode) {
+>  		int l = strlen(symname)+1;
+> +
+> +		error = security_inode_init_security(inode, dir,
+> +						     &dentry->d_name, NULL,
+> +						     NULL);
+> +		if (error) {
+> +			iput(inode);
+> +			return error;
+> +		}
+> +
+>  		error = page_symlink(inode, symname, l);
+>  		if (!error) {
+>  			d_instantiate(dentry, inode);
+> @@ -149,10 +166,20 @@ static int ramfs_tmpfile(struct mnt_idmap *idmap,
+>  			 struct inode *dir, struct file *file, umode_t mode)
+>  {
+>  	struct inode *inode;
+> +	int error;
+>  
+>  	inode = ramfs_get_inode(dir->i_sb, dir, mode, 0);
+>  	if (!inode)
+>  		return -ENOSPC;
+> +
+> +	error = security_inode_init_security(inode, dir,
+> +					     &file_dentry(file)->d_name, NULL,
+> +					     NULL);
+> +	if (error) {
+> +		iput(inode);
+> +		return error;
+> +	}
+> +
+>  	d_tmpfile(file, inode);
+>  	return finish_open_simple(file, 0);
+>  }
+
