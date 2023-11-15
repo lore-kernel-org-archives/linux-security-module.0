@@ -2,177 +2,126 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5135CC4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Nov 2023 18:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 685AFC4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Nov 2023 01:53:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229569AbjKNS6m (ORCPT
+        id S233990AbjKOBxS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Nov 2023 13:58:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59528 "EHLO
+        Tue, 14 Nov 2023 20:53:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjKNS6l (ORCPT
+        with ESMTP id S229457AbjKOBxS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Nov 2023 13:58:41 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A40FF4;
-        Tue, 14 Nov 2023 10:58:38 -0800 (PST)
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AEIXqVk017685;
-        Tue, 14 Nov 2023 18:58:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=e9myKv7gYQgnWacBTIa2Qmdo52E2fuIFXcT/0aKE0Fw=;
- b=skACyuzpIMG/V3xvhZ0gxlUA5ZrF+DuZwjlf+h4DPKV3Tul76aYzj9+aYQ1z0HF5rSZa
- NC6kWxYlHfrCriAV92RONQncqChp82QBXIc98cWsb7yiP8QO45okKu6ZIuRMVDz029bW
- ipca6ivUpLchkdi/KeM9hTCZ3HxRmnBSxTK46UfQQfbQYChx+hHsRvD/OwCsmRqu2s80
- aq0geQGuAJUhWNApSKrEVbvJZOkE3q3EfwNF4Scc7uv0vxHsFhCYRhifyKkBfEDiDBTu
- uCQ+xOjY65qaNuceliJG4zYN6jN7VCNEuUT41oapfvop/6YzfZHohqzjl7FJQj7bzP8l DQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ucdxth5fh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Nov 2023 18:58:17 +0000
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3AEIhvAL014158;
-        Tue, 14 Nov 2023 18:58:16 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ucdxth5f4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Nov 2023 18:58:16 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3AEGY4hj020108;
-        Tue, 14 Nov 2023 18:58:16 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-        by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3uamxn9wc1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Nov 2023 18:58:16 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-        by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3AEIwFqZ14942856
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Nov 2023 18:58:15 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0142C5805A;
-        Tue, 14 Nov 2023 18:58:15 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ED10058051;
-        Tue, 14 Nov 2023 18:58:13 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 14 Nov 2023 18:58:13 +0000 (GMT)
-Message-ID: <ce2e6de7-4289-442e-8209-fb7c01f51e14@linux.ibm.com>
-Date:   Tue, 14 Nov 2023 13:58:13 -0500
+        Tue, 14 Nov 2023 20:53:18 -0500
+Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61343D5;
+        Tue, 14 Nov 2023 17:53:15 -0800 (PST)
+Received: by mail-qv1-xf2d.google.com with SMTP id 6a1803df08f44-66d0169cf43so37896516d6.3;
+        Tue, 14 Nov 2023 17:53:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700013194; x=1700617994; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y/BHt234WbDp4zYK97AdGPPmMkFTqbDy1Led9ubCTnY=;
+        b=PZejKxtao+Dtk8ewxGyxJ/luUJPKBPAG76ORXeC3slBBHUbvtyvMUJO17MOACb4Kpb
+         dQuUQDRNa0PHjKvhoVpIdmF1HcMpnphFe7N4FGgUePTAboR87l237v1D6sQfkZ18a4Vb
+         83CZhX9GqQpXH8wRip+5baW5GPwiOs1FN6u/rx7Bp985KQcJ9IcQnL9JgR78lqZSgAQX
+         pMFJ1u+Mba3Ga2VxU6pdXFalJJA9faV1MQcbh23ZHVVy+AktMnkD6Ao0Wygcbu9Lduo6
+         pm2ZWOqlwAouL8DkjJmTafyJ9VGBTeKCMNzXbbZVBbFU/ehsaWAkVs8BfZP7jigNNJA2
+         kvAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700013194; x=1700617994;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y/BHt234WbDp4zYK97AdGPPmMkFTqbDy1Led9ubCTnY=;
+        b=v07wvIn91Sg+SItkh+gchmm41mahawh5m8Q9CLAs6tCbrm6RQrgiFcs3pGw7kRQqZW
+         VJvIjRafdeiYHWQ+SN6MNQ65sslEvl5YPMh1oYYJLiUixxM1SMlQXS8+d4FIwhxNza70
+         frJJVwPzygspRGOcFm+MgMxuZAFT8e6aMNYSzQ2vgeDa9ohZ9Fr2ypkirZxk1vHUQ6Q/
+         G+MB1xy4wfk9vPUTbfjgYt71ssV8ylvmymtMd894YPSOLKHN7yYsK/BiiM71WJi5E8Do
+         LCB+UImuNMbk0nlGRaZ3Px69Bi2lv5NHFTOb8L5bAOd0a1b6Ecdu4pXfV5jtnYQZq7Qb
+         Ksrg==
+X-Gm-Message-State: AOJu0YwDIsxuCuNXwGPulEuGc8BgRUp3wfpjuZQhpA2LiZ08qaeGWbBf
+        U2s7EiiBoAdxm1XNc91BeSQdR2/SNRViMN8xjqE=
+X-Google-Smtp-Source: AGHT+IHo6AZNYLQHGcQHISaJgPr0SREQoncKiE8nFZNQmSoDAPfIMW7+pbh+OvB7/bygy6+qHwvEe1SBIBqyLvMWnuU=
+X-Received: by 2002:a05:6214:f02:b0:670:63cc:210c with SMTP id
+ gw2-20020a0562140f0200b0067063cc210cmr6230026qvb.39.1700013194432; Tue, 14
+ Nov 2023 17:53:14 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC V2] IMA Log Snapshotting Design Proposal
-Content-Language: en-US
-To:     Sush Shringarputale <sushring@linux.microsoft.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
-        peterhuewe@gmx.de, Jarkko Sakkinen <jarkko@kernel.org>,
-        jgg@ziepe.ca, Ken Goldman <kgold@linux.ibm.com>, bhe@redhat.com,
-        vgoyal@redhat.com, Dave Young <dyoung@redhat.com>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        jmorris@namei.org, Paul Moore <paul@paul-moore.com>,
-        serge@hallyn.com,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-security-module@vger.kernel.org
-Cc:     Tyler Hicks <tyhicks@linux.microsoft.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-References: <6c0c32d5-e636-2a0e-5bdf-538c904ceea3@linux.microsoft.com>
- <53db2f31-e383-445f-b746-961958a619bd@linux.ibm.com>
- <5dfcb0d6-8cbf-428e-b8c1-30333fc668b5@linux.microsoft.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <5dfcb0d6-8cbf-428e-b8c1-30333fc668b5@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: HtwahexQ60FJmtfXYXLaNtuc8KDvQvev
-X-Proofpoint-ORIG-GUID: QY7C3PjP5IaOZtDqQjqhIzCQXdMkUzZE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-14_19,2023-11-14_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=624
- lowpriorityscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
- suspectscore=0 bulkscore=0 adultscore=0 spamscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311140144
+References: <20231112073424.4216-1-laoar.shao@gmail.com> <188dc90e-864f-4681-88a5-87401c655878@schaufler-ca.com>
+ <CALOAHbD+_0tHcm72Q6TM=EXDoZFrVWAsi4AC8_xGqK3wGkEy3g@mail.gmail.com>
+ <ZVNIprbQU3NqwPi_@tiehlicka> <CALOAHbDi_8ERHdtPB6sJdv=qewoAfGkheCfriW+QLoN0rLUQAw@mail.gmail.com>
+ <b13050b3-54f8-431a-abcf-1323a9791199@schaufler-ca.com>
+In-Reply-To: <b13050b3-54f8-431a-abcf-1323a9791199@schaufler-ca.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Wed, 15 Nov 2023 09:52:38 +0800
+Message-ID: <CALOAHbBKCsdmko_ugHZ_z6Zpgo-xJ8j46oPHkHj+gBGsRCR=eA@mail.gmail.com>
+Subject: Re: [RFC PATCH -mm 0/4] mm, security, bpf: Fine-grained control over
+ memory policy adjustments with lsm bpf
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        bpf@vger.kernel.org, ligang.bdlg@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Nov 15, 2023 at 12:58=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+>
+> On 11/14/2023 3:59 AM, Yafang Shao wrote:
+> > On Tue, Nov 14, 2023 at 6:15=E2=80=AFPM Michal Hocko <mhocko@suse.com> =
+wrote:
+> >> On Mon 13-11-23 11:15:06, Yafang Shao wrote:
+> >>> On Mon, Nov 13, 2023 at 12:45=E2=80=AFAM Casey Schaufler <casey@schau=
+fler-ca.com> wrote:
+> >>>> On 11/11/2023 11:34 PM, Yafang Shao wrote:
+> >>>>> Background
+> >>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>>>
+> >>>>> In our containerized environment, we've identified unexpected OOM e=
+vents
+> >>>>> where the OOM-killer terminates tasks despite having ample free mem=
+ory.
+> >>>>> This anomaly is traced back to tasks within a container using mbind=
+(2) to
+> >>>>> bind memory to a specific NUMA node. When the allocated memory on t=
+his node
+> >>>>> is exhausted, the OOM-killer, prioritizing tasks based on oom_score=
+,
+> >>>>> indiscriminately kills tasks. This becomes more critical with guara=
+nteed
+> >>>>> tasks (oom_score_adj: -998) aggravating the issue.
+> >>>> Is there some reason why you can't fix the callers of mbind(2)?
+> >>>> This looks like an user space configuration error rather than a
+> >>>> system security issue.
+> >>> It appears my initial description may have caused confusion. In this
+> >>> scenario, the caller is an unprivileged user lacking any capabilities=
+.
+> >>> While a privileged user, such as root, experiencing this issue might
+> >>> indicate a user space configuration error, the concerning aspect is
+> >>> the potential for an unprivileged user to disrupt the system easily.
+> >>> If this is perceived as a misconfiguration, the question arises: What
+> >>> is the correct configuration to prevent an unprivileged user from
+> >>> utilizing mbind(2)?"
+> >> How is this any different than a non NUMA (mbind) situation?
+> > In a UMA system, each gigabyte of memory carries the same cost.
+> > Conversely, in a NUMA architecture, opting to confine processes within
+> > a specific NUMA node incurs additional costs. In the worst-case
+> > scenario, if all containers opt to bind their memory exclusively to
+> > specific nodes, it will result in significant memory wastage.
+>
+> That still sounds like you've misconfigured your containers such
+> that they expect to get more memory than is available, and that
+> they have more control over it than they really do.
 
+And again: What configuration method is suitable to limit user control
+over memory policy adjustments, besides the heavyweight seccomp
+approach?
 
-On 11/14/23 13:36, Sush Shringarputale wrote:
-> 
-> 
-> On 11/13/2023 10:59 AM, Stefan Berger wrote:
->>
->>
->> On 10/19/23 14:49, Tushar Sugandhi wrote:
->>> =======================================================================
->>> | Introduction |
->>> =======================================================================
->>> This document provides a detailed overview of the proposed Kernel
->>> feature IMA log snapshotting.  It describes the motivation behind the
->>> proposal, the problem to be solved, a detailed solution design with
->>> examples, and describes the changes to be made in the clients/services
->>> which are part of remote-attestation system.  This is the 2nd version
->>> of the proposal.  The first version is present here[1].
->>>
->>> Table of Contents:
->>> ------------------
->>> A. Motivation and Background
->>> B. Goals and Non-Goals
->>>      B.1 Goals
->>>      B.2 Non-Goals
->>> C. Proposed Solution
->>>      C.1 Solution Summary
->>>      C.2 High-level Work-flow
->>> D. Detailed Design
->>>      D.1 Snapshot Aggregate Event
->>>      D.2 Snapshot Triggering Mechanism
->>>      D.3 Choosing A Persistent Storage Location For Snapshots
->>>      D.4 Remote-Attestation Client/Service-side Changes
->>>          D.4.a Client-side Changes
->>>          D.4.b Service-side Changes
->>> E. Example Walk-through
->>> F. Other Design Considerations
->>> G. References
->>>
->>
->> Userspace applications will have to know
->> a) where are the shard files?
-> We describe the file storage location choices in section D.3, but user
-> applications will have to query the well-known location described there.
->> b) how do I read the shard files while locking out the producer of the 
->> shard files?
->>
->> IMO, this will require a well known config file and a locking method 
->> (flock) so that user space applications can work together in this new 
->> environment. The lock could be defined in the config file or just be 
->> the config file itself.
-> The flock is a good idea for co-ordination between UM clients. While
-> the Kernel cannot enforce any access in this way, any UM process that
-> is planning on triggering the snapshot mechanism should follow that
-> protocol.  We will ensure we document that as the best-practices in
-> the patch series.
-
-It's more than 'best practices'. You need a well-known config file with 
-well-known config options in it.
-
-All clients that were previously just trying to read new bytes from the 
-IMA log cannot do this anymore in the presence of a log shard producer 
-but have to also learn that a new log shard has been produced so they 
-need to figure out the new position in the log where to read from. So 
-maybe a counter in a config file should indicate to the log readers that 
-a new log has been produced -- otherwise they would have to monitor all 
-the log shard files or the log shard file's size.
-
-Iff the log-shard producer were configured to discard leading parts of 
-the log then that should also be noted in a config file so clients, that 
-need to see the beginning of the log, can refuse early on to work on a 
-machine that either is configured this way or where the discarding has 
-already happened.
-
-   Stefan
-
-> - Sush
+--
+Regards
+Yafang
