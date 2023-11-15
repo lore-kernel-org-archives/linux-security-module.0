@@ -2,161 +2,143 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC7AC07548
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Nov 2023 08:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5093CC07548
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Nov 2023 08:45:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343492AbjKOICX convert rfc822-to-8bit (ORCPT
+        id S234688AbjKOIpu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Nov 2023 03:02:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50856 "EHLO
+        Wed, 15 Nov 2023 03:45:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229551AbjKOICW (ORCPT
+        with ESMTP id S234651AbjKOIpt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Nov 2023 03:02:22 -0500
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED979DF;
-        Wed, 15 Nov 2023 00:02:18 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SVZwC08m1z9ycNc;
-        Wed, 15 Nov 2023 15:45:47 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwCHN2HyelRliayxAA--.29367S2;
-        Wed, 15 Nov 2023 09:02:00 +0100 (CET)
-Message-ID: <379f6a45a3102e8cd1ed992c1895ac9f69ae0595.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 5/5] ramfs: Initialize security of in-memory inodes
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     casey@schaufler-ca.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Wed, 15 Nov 2023 09:01:52 +0100
-In-Reply-To: <20230724151341.538889-6-roberto.sassu@huaweicloud.com>
-References: <20230724151341.538889-1-roberto.sassu@huaweicloud.com>
-         <20230724151341.538889-6-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Wed, 15 Nov 2023 03:45:49 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F36C1110;
+        Wed, 15 Nov 2023 00:45:45 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 4584B1F8B6;
+        Wed, 15 Nov 2023 08:45:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1700037944; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2qCPQijTShxgcg0gL+zgK5uAUfEKbh1txCQLcbJEtBw=;
+        b=WL5Q1yW/cBrq7z+9poSYWwAr+D/PwF1yVmcbuSLnr5HoMzIXYgLojKtrZf0Jgou1Vhz89q
+        veqH1++uExZYsr253bu8SjfsO1JO2DcoVcrcE6EXBM3lZg1KB4WXmW63louBZCx2oD1G6r
+        41SjeVe/MKaYK/zLEvr8qtHMyYSTGJk=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2E3A413587;
+        Wed, 15 Nov 2023 08:45:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id OBLLBziFVGUDGQAAMHmgww
+        (envelope-from <mhocko@suse.com>); Wed, 15 Nov 2023 08:45:44 +0000
+Date:   Wed, 15 Nov 2023 09:45:43 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        ligang.bdlg@bytedance.com
+Subject: Re: [RFC PATCH -mm 0/4] mm, security, bpf: Fine-grained control over
+ memory policy adjustments with lsm bpf
+Message-ID: <ZVSFNzf4QCbpLGyF@tiehlicka>
+References: <20231112073424.4216-1-laoar.shao@gmail.com>
+ <188dc90e-864f-4681-88a5-87401c655878@schaufler-ca.com>
+ <CALOAHbD+_0tHcm72Q6TM=EXDoZFrVWAsi4AC8_xGqK3wGkEy3g@mail.gmail.com>
+ <ZVNIprbQU3NqwPi_@tiehlicka>
+ <CALOAHbDi_8ERHdtPB6sJdv=qewoAfGkheCfriW+QLoN0rLUQAw@mail.gmail.com>
+ <b13050b3-54f8-431a-abcf-1323a9791199@schaufler-ca.com>
+ <CALOAHbBKCsdmko_ugHZ_z6Zpgo-xJ8j46oPHkHj+gBGsRCR=eA@mail.gmail.com>
 MIME-Version: 1.0
-X-CM-TRANSID: GxC2BwCHN2HyelRliayxAA--.29367S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWr1fCrW5tr43uF4UuF1UAwb_yoW5ArykpF
-        WIqas8Gwn5tF9rWr1fKF4Uu3WSqayrKr4DJws3Zw17AFn7Gw1Utr4Skr13CF1rGr48Gw4F
-        qw4j9ry5Ww1DZFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUglb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-        AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJw
-        CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVF
-        xhVjvjDU0xZFpf9x07UQzVbUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgACBF1jj5J4hwABsZ
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALOAHbBKCsdmko_ugHZ_z6Zpgo-xJ8j46oPHkHj+gBGsRCR=eA@mail.gmail.com>
+Authentication-Results: smtp-out2.suse.de;
+        none
+X-Spamd-Result: default: False [-5.10 / 50.00];
+         ARC_NA(0.00)[];
+         RCVD_VIA_SMTP_AUTH(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         FREEMAIL_ENVRCPT(0.00)[gmail.com];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         NEURAL_HAM_LONG(-3.00)[-1.000];
+         DKIM_SIGNED(0.00)[suse.com:s=susede1];
+         NEURAL_HAM_SHORT(-1.00)[-1.000];
+         RCPT_COUNT_SEVEN(0.00)[10];
+         FREEMAIL_TO(0.00)[gmail.com];
+         FUZZY_BLOCKED(0.00)[rspamd.com];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         MID_RHS_NOT_FQDN(0.50)[];
+         RCVD_COUNT_TWO(0.00)[2];
+         RCVD_TLS_ALL(0.00)[];
+         SUSPICIOUS_RECIPS(1.50)[]
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2023-07-24 at 17:13 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+On Wed 15-11-23 09:52:38, Yafang Shao wrote:
+> On Wed, Nov 15, 2023 at 12:58 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >
+> > On 11/14/2023 3:59 AM, Yafang Shao wrote:
+> > > On Tue, Nov 14, 2023 at 6:15 PM Michal Hocko <mhocko@suse.com> wrote:
+> > >> On Mon 13-11-23 11:15:06, Yafang Shao wrote:
+> > >>> On Mon, Nov 13, 2023 at 12:45 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > >>>> On 11/11/2023 11:34 PM, Yafang Shao wrote:
+> > >>>>> Background
+> > >>>>> ==========
+> > >>>>>
+> > >>>>> In our containerized environment, we've identified unexpected OOM events
+> > >>>>> where the OOM-killer terminates tasks despite having ample free memory.
+> > >>>>> This anomaly is traced back to tasks within a container using mbind(2) to
+> > >>>>> bind memory to a specific NUMA node. When the allocated memory on this node
+> > >>>>> is exhausted, the OOM-killer, prioritizing tasks based on oom_score,
+> > >>>>> indiscriminately kills tasks. This becomes more critical with guaranteed
+> > >>>>> tasks (oom_score_adj: -998) aggravating the issue.
+> > >>>> Is there some reason why you can't fix the callers of mbind(2)?
+> > >>>> This looks like an user space configuration error rather than a
+> > >>>> system security issue.
+> > >>> It appears my initial description may have caused confusion. In this
+> > >>> scenario, the caller is an unprivileged user lacking any capabilities.
+> > >>> While a privileged user, such as root, experiencing this issue might
+> > >>> indicate a user space configuration error, the concerning aspect is
+> > >>> the potential for an unprivileged user to disrupt the system easily.
+> > >>> If this is perceived as a misconfiguration, the question arises: What
+> > >>> is the correct configuration to prevent an unprivileged user from
+> > >>> utilizing mbind(2)?"
+> > >> How is this any different than a non NUMA (mbind) situation?
+> > > In a UMA system, each gigabyte of memory carries the same cost.
+> > > Conversely, in a NUMA architecture, opting to confine processes within
+> > > a specific NUMA node incurs additional costs. In the worst-case
+> > > scenario, if all containers opt to bind their memory exclusively to
+> > > specific nodes, it will result in significant memory wastage.
+> >
+> > That still sounds like you've misconfigured your containers such
+> > that they expect to get more memory than is available, and that
+> > they have more control over it than they really do.
 > 
-> Add a call security_inode_init_security() after ramfs_get_inode(), to let
-> LSMs initialize the inode security field. Skip ramfs_fill_super(), as the
-> initialization is done through the sb_set_mnt_opts hook.
-> 
-> Calling security_inode_init_security() call inside ramfs_get_inode() is
-> not possible since, for CONFIG_SHMEM=n, tmpfs also calls the former after
-> the latter.
-> 
-> Pass NULL as initxattrs() callback to security_inode_init_security(), since
-> the purpose of the call is only to initialize the in-memory inodes.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> And again: What configuration method is suitable to limit user control
+> over memory policy adjustments, besides the heavyweight seccomp
+> approach?
 
-+ Andrew
-
-Hi Andrew
-
-I'm proposing an extension to initialize the inode security field at
-inode creation time for filesystems that don't support xattrs (ramfs in
-this case).
-
-The LSM infrastructure already supports setting the inode security
-field, but only at run-time, with the inode_setsecurity hook.
-
-I developed this to do some testing on the Smack LSM, and I thought it
-could be useful anyway.
-
-Casey would need your acked-by, to carry this patch in his repository.
-I'm not completely sure if you are the maintainer, but in the past you
-accepted a patch for ramfs.
-
-If you have time and you could have a look, that would be great!
-
-Thanks
-
-Roberto
-
-> ---
->  fs/ramfs/inode.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
-> 
-> diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
-> index fef477c7810..ac90ebd9dbd 100644
-> --- a/fs/ramfs/inode.c
-> +++ b/fs/ramfs/inode.c
-> @@ -102,6 +102,14 @@ ramfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
->  	int error = -ENOSPC;
->  
->  	if (inode) {
-> +		error = security_inode_init_security(inode, dir,
-> +						     &dentry->d_name, NULL,
-> +						     NULL);
-> +		if (error) {
-> +			iput(inode);
-> +			return error;
-> +		}
-> +
->  		d_instantiate(dentry, inode);
->  		dget(dentry);	/* Extra count - pin the dentry in core */
->  		error = 0;
-> @@ -134,6 +142,15 @@ static int ramfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
->  	inode = ramfs_get_inode(dir->i_sb, dir, S_IFLNK|S_IRWXUGO, 0);
->  	if (inode) {
->  		int l = strlen(symname)+1;
-> +
-> +		error = security_inode_init_security(inode, dir,
-> +						     &dentry->d_name, NULL,
-> +						     NULL);
-> +		if (error) {
-> +			iput(inode);
-> +			return error;
-> +		}
-> +
->  		error = page_symlink(inode, symname, l);
->  		if (!error) {
->  			d_instantiate(dentry, inode);
-> @@ -149,10 +166,20 @@ static int ramfs_tmpfile(struct mnt_idmap *idmap,
->  			 struct inode *dir, struct file *file, umode_t mode)
->  {
->  	struct inode *inode;
-> +	int error;
->  
->  	inode = ramfs_get_inode(dir->i_sb, dir, mode, 0);
->  	if (!inode)
->  		return -ENOSPC;
-> +
-> +	error = security_inode_init_security(inode, dir,
-> +					     &file_dentry(file)->d_name, NULL,
-> +					     NULL);
-> +	if (error) {
-> +		iput(inode);
-> +		return error;
-> +	}
-> +
->  	d_tmpfile(file, inode);
->  	return finish_open_simple(file, 0);
->  }
-
+This really depends on the workloads. What is the reason mbind is used
+in the first place? Is it acceptable to partition the system so that
+there is a numa node reserved for NUMA aware workloads? If not, have you
+considered (already proposed numa=off)?
+-- 
+Michal Hocko
+SUSE Labs
