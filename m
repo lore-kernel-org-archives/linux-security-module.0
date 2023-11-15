@@ -2,124 +2,171 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F3E4C2BB3F
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Nov 2023 16:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69891C072A2
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Nov 2023 17:00:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229804AbjKOQss (ORCPT
+        id S232492AbjKORAn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Nov 2023 11:48:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47462 "EHLO
+        Wed, 15 Nov 2023 12:00:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229497AbjKOQss (ORCPT
+        with ESMTP id S232758AbjKORA3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Nov 2023 11:48:48 -0500
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EF25A6
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Nov 2023 08:48:44 -0800 (PST)
-Received: by mail-oi1-x22d.google.com with SMTP id 5614622812f47-3b6f4d8ddccso1579051b6e.0
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Nov 2023 08:48:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1700066923; x=1700671723; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xTCtRmi3R6T0gzFTGbQDmRMBKPICk48rXlPZScrWm7A=;
-        b=ZFK8uaGp/xtCZ8Rv/iu5M9M1xe7v3WtQyEstWb8HE66Pb31osYXOEk/kgJoD4n6Ndf
-         0p/dh0S/vuhSjEljIeYwYjMup+pUD1sskLgZlu++reKD0+st4WeRIQJn5JTEHpwNz/sC
-         iuzaFbZ9NbUyHbhfWYMkeIpoA7Hp2x8jDJb5anG7b72JnkMGCLdXHMCiYUxMkaRUZmKB
-         Meypq/+J+VrpqwynTFpwoFWBUwyIQ433s3CmgxPYDMJ06vjpnk8YX9d/fWPwnpuTQoxC
-         6/JdN49yfWumywTC+Btm+4YT/+I+DgXECxCEh7MOOcZrlKDJe98MNGqMKwYdUBffFCLo
-         yIrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700066923; x=1700671723;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xTCtRmi3R6T0gzFTGbQDmRMBKPICk48rXlPZScrWm7A=;
-        b=qCLDwQN6fRvs6231pgvHbB1DD2WCwtcPwjHXzjz+6Xx6kg62X8ISSJQYZIPiQds1t2
-         b40qxIW6IkkFXg9Ng7Z3V8WBN9wpKcZ0ntErXekEBwX0qyVBCqGRPkZVDtRlgZCa90Pe
-         oaobAJLQ5cW0qhf1wE7h+g9AlT9VJ+7HYR8S0qirDlAfFXoiwSBUoPUhRxsjQpopT6UK
-         6djAppr/Kp8ExVbLlBq0cjNAae5RJSnZz7qj2YdEb45VLaAFL1ZbPEwe6lnrBJTJ35Xn
-         4rDymhDbnVpenx2JCb5Nye9Us5kukUUPdEdid0Fl0MaKeOwh/GkussI5m8ZlKuv+oP2l
-         +quw==
-X-Gm-Message-State: AOJu0YxE2aFPoOlteLpWvMWgXa8/Zj06RCeKu3kNe3jPzHlF76Jw5APb
-        XMRr0UE38Lk0XuyCgD0WNuJ+s/xUqyWVYubQ2g==
-X-Google-Smtp-Source: AGHT+IHCf/xB7WdvUl39gjR3VRAmgBJUxhraD++XcyJzUpJwN1hZgl3CVjBQO4Ng1Pzq3jWxCRDenA==
-X-Received: by 2002:aca:2214:0:b0:3a9:b9eb:998e with SMTP id b20-20020aca2214000000b003a9b9eb998emr11295964oic.51.1700066923448;
-        Wed, 15 Nov 2023 08:48:43 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id rb18-20020a05620a8d1200b0077bc5299c85sm3590668qkn.124.2023.11.15.08.48.42
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Nov 2023 08:48:42 -0800 (PST)
-From:   Paul Moore <paul@paul-moore.com>
-To:     linux-security-module@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: update the LSM entry
-Date:   Wed, 15 Nov 2023 11:48:33 -0500
-Message-ID: <20231115164832.100894-2-paul@paul-moore.com>
-X-Mailer: git-send-email 2.42.1
+        Wed, 15 Nov 2023 12:00:29 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68C1CFA;
+        Wed, 15 Nov 2023 09:00:24 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 74C5B22914;
+        Wed, 15 Nov 2023 17:00:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1700067621; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bzi5q2POrzZglBN2JQhbBgQiExoELJgTIynNQ9Q/jgs=;
+        b=I6Vk5XWUzDNZAfxjslKVM/VVi2h5E73QmYLsb+37VSUQD/IHEbP1zxg2lUQBQgSTIB0DYm
+        ep3CtN9tPb4HyyudoXMqXZ8WCEylJiET54RHr3SekXE+oNsGgY1cvEjYw9URhoDjc9N+++
+        QEYH0+aAzWJ0B0TD3yP4NBDDGZ9ERGc=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 055B613592;
+        Wed, 15 Nov 2023 17:00:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id uARxOiT5VGXBOwAAMHmgww
+        (envelope-from <mhocko@suse.com>); Wed, 15 Nov 2023 17:00:20 +0000
+Date:   Wed, 15 Nov 2023 18:00:20 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        ligang.bdlg@bytedance.com
+Subject: Re: [RFC PATCH -mm 0/4] mm, security, bpf: Fine-grained control over
+ memory policy adjustments with lsm bpf
+Message-ID: <ZVT5JG_osL7yFHHA@tiehlicka>
+References: <20231112073424.4216-1-laoar.shao@gmail.com>
+ <188dc90e-864f-4681-88a5-87401c655878@schaufler-ca.com>
+ <CALOAHbD+_0tHcm72Q6TM=EXDoZFrVWAsi4AC8_xGqK3wGkEy3g@mail.gmail.com>
+ <ZVNIprbQU3NqwPi_@tiehlicka>
+ <CALOAHbDi_8ERHdtPB6sJdv=qewoAfGkheCfriW+QLoN0rLUQAw@mail.gmail.com>
+ <b13050b3-54f8-431a-abcf-1323a9791199@schaufler-ca.com>
+ <CALOAHbBKCsdmko_ugHZ_z6Zpgo-xJ8j46oPHkHj+gBGsRCR=eA@mail.gmail.com>
+ <ZVSFNzf4QCbpLGyF@tiehlicka>
+ <CALOAHbAjHJ_47b15v3d+f3iZZ+vBVsLugKew_t_ZFaJoE2_3uw@mail.gmail.com>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2256; i=paul@paul-moore.com; h=from:subject; bh=x2kNMPfETqnacBId+alqcYSStJDvNTLI9POSEAtMe2Q=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBlVPZhBzZoI4tr0z0NmKJHEGp55rT+GB+FAlN+o NfhWDLSxh+JAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZVT2YQAKCRDqIPLalzeJ c7neD/4te9DsRQaKjTpTSTXupKePc1CRv3BfVBcKchOqI8OSnIqZf8wufKJ2aopromyg1WSy955 LZPyFwNnqFxT9/NvLvTd4yrdoKkUWsJgn8J5jhqiYTHTEcQa6mTj8bR5tBB4WPIxKvB9HWPfvpG GPrQC29DkhQ0miuruNL09u86n3d8UxVxayjfn3VvqlUyBDLjLvmfexs2/t5wNimTrg9TLA6sgjE 4Z/fy/+1tA8qloE+zlSqbi7W1kdyBTMgWoiAkd8HZKnB6r0GjUrGkTl7R7f0pA9sXX7tHhHkDji N3sKkoAyC/H0NMrw4JYzDK0w5XitheLveUKSN8+/JDSqU2FCndh52BABB7GUELgVgbiC0q+rP+I drQnoUnpfvuSI7cK8w4C0p1HWTMZrBYxu0faGzriiq5ss6MZb4lbveWXexvWusoT9Rfur3kmYos wXjxhK9GOPJeMvyDif/mRZJE0l32KyLk1dH+i5+6/PiebhK1nQG97+5JVHLyUZ55SRAcgtNO8yA A+EvZAZ+f0HfafKnaLyiZ6KD9OsZwVnWIz7xgykH2zFwCmEmwcRCKWkMQiC2AIEJWWr2+mqhIiD nnK2/O5lEG9/nRNXS0wLEg/sckU0/goa2YaSUKsy0BHTM2vu34ESfype4fXS5A3PoyJXkyqqzFW rs7rdrRXafNU8uQ==
-X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALOAHbAjHJ_47b15v3d+f3iZZ+vBVsLugKew_t_ZFaJoE2_3uw@mail.gmail.com>
+Authentication-Results: smtp-out1.suse.de;
+        none
+X-Spamd-Result: default: False [-1.10 / 50.00];
+         ARC_NA(0.00)[];
+         RCVD_VIA_SMTP_AUTH(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         FREEMAIL_ENVRCPT(0.00)[gmail.com];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         DKIM_SIGNED(0.00)[suse.com:s=susede1];
+         RCPT_COUNT_SEVEN(0.00)[10];
+         FREEMAIL_TO(0.00)[gmail.com];
+         FUZZY_BLOCKED(0.00)[rspamd.com];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         MID_RHS_NOT_FQDN(0.50)[];
+         RCVD_COUNT_TWO(0.00)[2];
+         RCVD_TLS_ALL(0.00)[];
+         SUSPICIOUS_RECIPS(1.50)[]
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Bring the LSM / "SECURITY SUBSYSTEM" entry up to date with the
-following changes:
+On Wed 15-11-23 17:33:51, Yafang Shao wrote:
+> On Wed, Nov 15, 2023 at 4:45 PM Michal Hocko <mhocko@suse.com> wrote:
+> >
+> > On Wed 15-11-23 09:52:38, Yafang Shao wrote:
+> > > On Wed, Nov 15, 2023 at 12:58 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > >
+> > > > On 11/14/2023 3:59 AM, Yafang Shao wrote:
+> > > > > On Tue, Nov 14, 2023 at 6:15 PM Michal Hocko <mhocko@suse.com> wrote:
+> > > > >> On Mon 13-11-23 11:15:06, Yafang Shao wrote:
+> > > > >>> On Mon, Nov 13, 2023 at 12:45 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > > >>>> On 11/11/2023 11:34 PM, Yafang Shao wrote:
+> > > > >>>>> Background
+> > > > >>>>> ==========
+> > > > >>>>>
+> > > > >>>>> In our containerized environment, we've identified unexpected OOM events
+> > > > >>>>> where the OOM-killer terminates tasks despite having ample free memory.
+> > > > >>>>> This anomaly is traced back to tasks within a container using mbind(2) to
+> > > > >>>>> bind memory to a specific NUMA node. When the allocated memory on this node
+> > > > >>>>> is exhausted, the OOM-killer, prioritizing tasks based on oom_score,
+> > > > >>>>> indiscriminately kills tasks. This becomes more critical with guaranteed
+> > > > >>>>> tasks (oom_score_adj: -998) aggravating the issue.
+> > > > >>>> Is there some reason why you can't fix the callers of mbind(2)?
+> > > > >>>> This looks like an user space configuration error rather than a
+> > > > >>>> system security issue.
+> > > > >>> It appears my initial description may have caused confusion. In this
+> > > > >>> scenario, the caller is an unprivileged user lacking any capabilities.
+> > > > >>> While a privileged user, such as root, experiencing this issue might
+> > > > >>> indicate a user space configuration error, the concerning aspect is
+> > > > >>> the potential for an unprivileged user to disrupt the system easily.
+> > > > >>> If this is perceived as a misconfiguration, the question arises: What
+> > > > >>> is the correct configuration to prevent an unprivileged user from
+> > > > >>> utilizing mbind(2)?"
+> > > > >> How is this any different than a non NUMA (mbind) situation?
+> > > > > In a UMA system, each gigabyte of memory carries the same cost.
+> > > > > Conversely, in a NUMA architecture, opting to confine processes within
+> > > > > a specific NUMA node incurs additional costs. In the worst-case
+> > > > > scenario, if all containers opt to bind their memory exclusively to
+> > > > > specific nodes, it will result in significant memory wastage.
+> > > >
+> > > > That still sounds like you've misconfigured your containers such
+> > > > that they expect to get more memory than is available, and that
+> > > > they have more control over it than they really do.
+> > >
+> > > And again: What configuration method is suitable to limit user control
+> > > over memory policy adjustments, besides the heavyweight seccomp
+> > > approach?
+> >
+> > This really depends on the workloads. What is the reason mbind is used
+> > in the first place?
+> 
+> It can improve their performance.
+> 
+> > Is it acceptable to partition the system so that
+> > there is a numa node reserved for NUMA aware workloads?
+> 
+> As highlighted in the commit log, our preference is to configure this
+> memory policy through kubelet using cpuset.mems in the cpuset
+> controller, rather than allowing individual users to set it
+> independently.
 
-* Remove the "(suggested Cc:)" note on the mailing list.  I don't
-really care if the LSM list is on the To: or Cc: line, I just want
-folks to include it when appropriate.
+OK, I have missed that part.
 
-* Remove the website link.  The website isn't really maintained in
-any meaningful way so we're going to go ahead and remove it so we
-lessen the chance of conflicting or confusing information in the
-future.
+> > If not, have you
+> > considered (already proposed numa=off)?
+> 
+> The challenge at hand isn't solely about whether users should bind to
+> a memory node or the deployment of workloads. What we're genuinely
+> dealing with is the fact that users can bind to a specific node
+> without our explicit agreement or authorization.
 
-* Add our patchwork link.  I'm not sure this is of much use for
-anyone but the maintainer, but there is a provision for including it
-here so we might as well include it.
-
-* Add a bug report URI.  I suspect most everyone knows to send mail
-to the mailing list if they hit a bug, but let's make it official.
-
-* Add a link to the LSM tree process/management documentation.  While
-the doc exists both in the canonical kernel.org location and the
-GitHub mirror, provide a link to the mirror as GitHub does a better
-job rendering the Markdown.
-
-* Aside from changes to the LSM code itself, we also would like to be
-notified when the LSMM call sites are changed so we are adding a
-security_XXX(...) regex to try and catch all of the callers.
-
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- MAINTAINERS | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2482b40fd786..007e43ee3e47 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19507,14 +19507,17 @@ SECURITY SUBSYSTEM
- M:	Paul Moore <paul@paul-moore.com>
- M:	James Morris <jmorris@namei.org>
- M:	"Serge E. Hallyn" <serge@hallyn.com>
--L:	linux-security-module@vger.kernel.org (suggested Cc:)
-+L:	linux-security-module@vger.kernel.org
- S:	Supported
--W:	http://kernsec.org/
-+Q:	https://patchwork.kernel.org/project/linux-security-module/list
-+B:	mailto:linux-security-module@vger.kernel.org
-+P:	https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
- F:	include/uapi/linux/lsm.h
- F:	security/
- F:	tools/testing/selftests/lsm/
- X:	security/selinux/
-+K:	\bsecurity_[a-z_0-9]\+\b
- 
- SELINUX SECURITY MODULE
- M:	Paul Moore <paul@paul-moore.com>
+mbind outside of the cpuset shouldn't be possible (policy_nodemask). So
+if you are configuring cpusets already then mbind should add much to a
+problem. I can see how you can have problems when you do not have any
+NUMA partitioning in place because mixing NUMA aware and unaware
+workloads doesn't really work out well when the memory is short on
+supply.
 -- 
-2.42.1
-
+Michal Hocko
+SUSE Labs
