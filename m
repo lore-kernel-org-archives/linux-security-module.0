@@ -2,181 +2,138 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 093F7C5ACB2
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Nov 2023 02:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5EC7C47071
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Nov 2023 04:33:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344493AbjKPCWy (ORCPT
+        id S234618AbjKPEdy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Nov 2023 21:22:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48098 "EHLO
+        Wed, 15 Nov 2023 23:33:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344481AbjKPCWx (ORCPT
+        with ESMTP id S229786AbjKPEdw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Nov 2023 21:22:53 -0500
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 797FB1A4;
-        Wed, 15 Nov 2023 18:22:49 -0800 (PST)
-Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-db029574f13so288400276.1;
-        Wed, 15 Nov 2023 18:22:49 -0800 (PST)
+        Wed, 15 Nov 2023 23:33:52 -0500
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54EC01A7
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Nov 2023 20:33:47 -0800 (PST)
+Received: by mail-qk1-x734.google.com with SMTP id af79cd13be357-7789923612dso21285085a.0
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Nov 2023 20:33:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700101368; x=1700706168; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MGQ9YKX/G2W66tZSKmmzF1Dhr3FgNuFObNkiMHjizoE=;
-        b=Dvf24VseY2EgDwQ959YKKmpdKjwyWyzdg6qlgbJJYUlHuhLY595+cIg4uSLcbwduDP
-         OA0kcIicEj4a6LCaUo09EUzrBVySGUZ25YKWkgdc+ohlgqLOimQl9i7Z9GGfAXiQjkIf
-         BBaqs2z4vT8ejSFv9erL0ljCey1GnYj9DNZUdvkL0U4YidzZrbHg/1CnuqCiHrOnWMDE
-         /3Ok7XnxMEvA/g98Lo7CTFeXow0nbNPRXKj6rGeV9lihvdsOca7sq4W1uIyEFQUmMjAQ
-         /kpObj85WVZs30zF7Vu2SdUUWq7Yh8Ls6MvdFscLmWgnEbhZU6YJQajrMMdzkGHTqmbg
-         4O7Q==
+        d=paul-moore.com; s=google; t=1700109226; x=1700714026; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HOfDZdWy3FlMMU3byFQ5fyH9fZQUeVFWx7pZHVOBZ9I=;
+        b=cUShdtqX6NpRR3sTAX0J50EPelbnHmQNFwtWvwzNOaB5PsWSbAaumzdhhDAezZ/KVs
+         4uAi6bZhs7kWxiaREbmBkx5XOlv0YLLmHnOuaHpkfianch+ql9QBTSLz8ULbt4MoRQhP
+         HS49Y2z6QZAsdUpvur/XvuVba1Prftyd00XHMiGESmfqTkMiO89y110AJ5j6llyg0rd4
+         YD7CtJVPc4kiEp6m1LVvXvZuFGfh6vW8fiOQfNuQXj/6O7yuLxQdstH2aL6JGF64QybS
+         i3RTojbP3mpDQJCYFP1Xh4eVjB/pRvLS5ma7lWrP4rC9H6MczSvb/71xmqO9qtnNDdKN
+         yiyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700101368; x=1700706168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MGQ9YKX/G2W66tZSKmmzF1Dhr3FgNuFObNkiMHjizoE=;
-        b=UvmebOqI3eKy7IwosHgJCPU7t9S+65/QV4XK1KdS7Nsw0d6uBsBMsUNNmW4HbqFfEF
-         pos8/qUa9xJninAUre0+/c8AaqpfKcQh1lYemIuNtBdTuBwQIldM3ulX3OKD/t+qFocP
-         DxRQz9SUPb/qQTML8+DepNZXfwdYzVuAb4hDBjIDDW0hut7CvoomRFu4yezc0QwneiYo
-         il2L0QugAMvhWUk/lghyFT6m2/FRO6YwiLHE+DdfuC0pzJuGWxB5zNSpxErZMn8V4L5C
-         YLErZGv4A1oXttwWN+AqcOkTYgcOnD7O7Rerlk0oeNeDf0eRBdktGnjwAZEgjcMgCfxH
-         fZtg==
-X-Gm-Message-State: AOJu0Yytg/1mIGc7Zz+STANEDmXR++STN8mivsQEWY4UvxPQGjH9I9Ot
-        gjJb5Xb+kTu2JAYAdlqcY9ySrze/X8DrED8P+KyD/tjcRsc=
-X-Google-Smtp-Source: AGHT+IEgGri604YUX0vfvdcXXXL+exWNnifxZT2c9KihxjTFs8lzjW8zgVjGk9cWEoukuySq6viBH50vd8iYtM7GLAk=
-X-Received: by 2002:a25:e0d5:0:b0:d9a:e6d6:42f8 with SMTP id
- x204-20020a25e0d5000000b00d9ae6d642f8mr15463351ybg.29.1700101368588; Wed, 15
- Nov 2023 18:22:48 -0800 (PST)
-MIME-Version: 1.0
-References: <20231112073424.4216-1-laoar.shao@gmail.com> <188dc90e-864f-4681-88a5-87401c655878@schaufler-ca.com>
- <CALOAHbD+_0tHcm72Q6TM=EXDoZFrVWAsi4AC8_xGqK3wGkEy3g@mail.gmail.com>
- <ZVNIprbQU3NqwPi_@tiehlicka> <CALOAHbDi_8ERHdtPB6sJdv=qewoAfGkheCfriW+QLoN0rLUQAw@mail.gmail.com>
- <b13050b3-54f8-431a-abcf-1323a9791199@schaufler-ca.com> <CALOAHbBKCsdmko_ugHZ_z6Zpgo-xJ8j46oPHkHj+gBGsRCR=eA@mail.gmail.com>
- <ZVSFNzf4QCbpLGyF@tiehlicka> <CALOAHbAjHJ_47b15v3d+f3iZZ+vBVsLugKew_t_ZFaJoE2_3uw@mail.gmail.com>
- <ZVT5JG_osL7yFHHA@tiehlicka>
-In-Reply-To: <ZVT5JG_osL7yFHHA@tiehlicka>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Thu, 16 Nov 2023 10:22:12 +0800
-Message-ID: <CALOAHbAihVjj4dnc_o60ZsUMZ5Pg+neavsvS9XPkgYaPx-=8ag@mail.gmail.com>
-Subject: Re: [RFC PATCH -mm 0/4] mm, security, bpf: Fine-grained control over
- memory policy adjustments with lsm bpf
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        ligang.bdlg@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        d=1e100.net; s=20230601; t=1700109226; x=1700714026;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HOfDZdWy3FlMMU3byFQ5fyH9fZQUeVFWx7pZHVOBZ9I=;
+        b=ccxo2z+RzGT2bwP99TYnDo9/JcN46oAjoVOEEbg5q257cNbywY0UfTwuhAh8tyOvfI
+         mnm55+KvUj+2bE2XQpsUSYA+rMlh5I1rw0hIs1kewhRFE0YBiurSMQ9obVWRbX7WawXT
+         UXuw9D+zXqFuiP5hI/XKsq6oW+RJ5fmmkQZ5wBBMaddVQb4RAk/1N7jNlz9A0EWJNekH
+         rBgfdL5rNJ1uZBU1AT45k9DXZRUzCTmgFIwoq+ANf52Nnhvp1RjVo8MqOiPW30VptzMD
+         Hj43oWoIW3XuqPGuFnaCFbkzXi3Qw4JQRWSFxd7yKe6CjR3x4AYT8JtUckENwebVIpJF
+         IT1g==
+X-Gm-Message-State: AOJu0Yx7lYu0LFxjGT5GKpVfNk+6hcCyE9hRWt4fZ2cPI0We8ok8dOGO
+        gCucCTgxKraVELYYNzXNCa4A
+X-Google-Smtp-Source: AGHT+IER1laoQSGviRJQuTFe6S8/gip4gdebLlsXd5eO0S7LgScOwZM8Bh3pBl2l/YUS5yGMypAquA==
+X-Received: by 2002:a05:620a:201c:b0:778:920a:7a70 with SMTP id c28-20020a05620a201c00b00778920a7a70mr8484989qka.66.1700109226313;
+        Wed, 15 Nov 2023 20:33:46 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id qc3-20020a05620a654300b0076d25b11b62sm4033067qkn.38.2023.11.15.20.33.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Nov 2023 20:33:45 -0800 (PST)
+Date:   Wed, 15 Nov 2023 23:33:45 -0500
+Message-ID: <231ff26ec85f437261753faf03b384e6.paul@paul-moore.com>
+From:   Paul Moore <paul@paul-moore.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
+        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, mic@digikod.net
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: Re: [PATCH v5 10/23] security: Introduce inode_post_setattr hook
+References: <20231107134012.682009-11-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20231107134012.682009-11-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 16, 2023 at 1:00=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrot=
-e:
->
-> On Wed 15-11-23 17:33:51, Yafang Shao wrote:
-> > On Wed, Nov 15, 2023 at 4:45=E2=80=AFPM Michal Hocko <mhocko@suse.com> =
-wrote:
-> > >
-> > > On Wed 15-11-23 09:52:38, Yafang Shao wrote:
-> > > > On Wed, Nov 15, 2023 at 12:58=E2=80=AFAM Casey Schaufler <casey@sch=
-aufler-ca.com> wrote:
-> > > > >
-> > > > > On 11/14/2023 3:59 AM, Yafang Shao wrote:
-> > > > > > On Tue, Nov 14, 2023 at 6:15=E2=80=AFPM Michal Hocko <mhocko@su=
-se.com> wrote:
-> > > > > >> On Mon 13-11-23 11:15:06, Yafang Shao wrote:
-> > > > > >>> On Mon, Nov 13, 2023 at 12:45=E2=80=AFAM Casey Schaufler <cas=
-ey@schaufler-ca.com> wrote:
-> > > > > >>>> On 11/11/2023 11:34 PM, Yafang Shao wrote:
-> > > > > >>>>> Background
-> > > > > >>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > > >>>>>
-> > > > > >>>>> In our containerized environment, we've identified unexpect=
-ed OOM events
-> > > > > >>>>> where the OOM-killer terminates tasks despite having ample =
-free memory.
-> > > > > >>>>> This anomaly is traced back to tasks within a container usi=
-ng mbind(2) to
-> > > > > >>>>> bind memory to a specific NUMA node. When the allocated mem=
-ory on this node
-> > > > > >>>>> is exhausted, the OOM-killer, prioritizing tasks based on o=
-om_score,
-> > > > > >>>>> indiscriminately kills tasks. This becomes more critical wi=
-th guaranteed
-> > > > > >>>>> tasks (oom_score_adj: -998) aggravating the issue.
-> > > > > >>>> Is there some reason why you can't fix the callers of mbind(=
-2)?
-> > > > > >>>> This looks like an user space configuration error rather tha=
-n a
-> > > > > >>>> system security issue.
-> > > > > >>> It appears my initial description may have caused confusion. =
-In this
-> > > > > >>> scenario, the caller is an unprivileged user lacking any capa=
-bilities.
-> > > > > >>> While a privileged user, such as root, experiencing this issu=
-e might
-> > > > > >>> indicate a user space configuration error, the concerning asp=
-ect is
-> > > > > >>> the potential for an unprivileged user to disrupt the system =
-easily.
-> > > > > >>> If this is perceived as a misconfiguration, the question aris=
-es: What
-> > > > > >>> is the correct configuration to prevent an unprivileged user =
-from
-> > > > > >>> utilizing mbind(2)?"
-> > > > > >> How is this any different than a non NUMA (mbind) situation?
-> > > > > > In a UMA system, each gigabyte of memory carries the same cost.
-> > > > > > Conversely, in a NUMA architecture, opting to confine processes=
- within
-> > > > > > a specific NUMA node incurs additional costs. In the worst-case
-> > > > > > scenario, if all containers opt to bind their memory exclusivel=
-y to
-> > > > > > specific nodes, it will result in significant memory wastage.
-> > > > >
-> > > > > That still sounds like you've misconfigured your containers such
-> > > > > that they expect to get more memory than is available, and that
-> > > > > they have more control over it than they really do.
-> > > >
-> > > > And again: What configuration method is suitable to limit user cont=
-rol
-> > > > over memory policy adjustments, besides the heavyweight seccomp
-> > > > approach?
-> > >
-> > > This really depends on the workloads. What is the reason mbind is use=
-d
-> > > in the first place?
-> >
-> > It can improve their performance.
-> >
-> > > Is it acceptable to partition the system so that
-> > > there is a numa node reserved for NUMA aware workloads?
-> >
-> > As highlighted in the commit log, our preference is to configure this
-> > memory policy through kubelet using cpuset.mems in the cpuset
-> > controller, rather than allowing individual users to set it
-> > independently.
->
-> OK, I have missed that part.
->
-> > > If not, have you
-> > > considered (already proposed numa=3Doff)?
-> >
-> > The challenge at hand isn't solely about whether users should bind to
-> > a memory node or the deployment of workloads. What we're genuinely
-> > dealing with is the fact that users can bind to a specific node
-> > without our explicit agreement or authorization.
->
-> mbind outside of the cpuset shouldn't be possible (policy_nodemask). So
-> if you are configuring cpusets already then mbind should add much to a
-> problem. I can see how you can have problems when you do not have any
-> NUMA partitioning in place because mixing NUMA aware and unaware
-> workloads doesn't really work out well when the memory is short on
-> supply.
+On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+> 
+> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+> the inode_post_setattr hook.
+> 
+> At inode_setattr hook, EVM verifies the file's existing HMAC value. At
+> inode_post_setattr, EVM re-calculates the file's HMAC based on the modified
+> file attributes and other file metadata.
+> 
+> Other LSMs could similarly take some action after successful file attribute
+> change.
+> 
+> The new hook cannot return an error and cannot cause the operation to be
+> reverted.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  fs/attr.c                     |  1 +
+>  include/linux/lsm_hook_defs.h |  2 ++
+>  include/linux/security.h      |  7 +++++++
+>  security/security.c           | 16 ++++++++++++++++
+>  4 files changed, 26 insertions(+)
 
-Right, we're trying to move NUMA aware workloads to dedicated servers.
+...
 
---=20
-Regards
-Yafang
+> diff --git a/security/security.c b/security/security.c
+> index 7935d11d58b5..ce3bc7642e18 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2222,6 +2222,22 @@ int security_inode_setattr(struct mnt_idmap *idmap,
+>  }
+>  EXPORT_SYMBOL_GPL(security_inode_setattr);
+>  
+> +/**
+> + * security_inode_post_setattr() - Update the inode after a setattr operation
+> + * @idmap: idmap of the mount
+> + * @dentry: file
+> + * @ia_valid: file attributes set
+> + *
+> + * Update inode security field after successful setting file attributes.
+> + */
+> +void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+> +				 int ia_valid)
+> +{
+> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+> +		return;
+
+I may be missing it, but I don't see the S_PRIVATE flag check in the
+existing IMA or EVM hooks so I'm curious as to why it is added here?
+Please don't misunderstand me, I think it makes sense to return early
+on private dentrys/inodes, but why aren't we doing that now?
+
+> +	call_void_hook(inode_post_setattr, idmap, dentry, ia_valid);
+> +}
+> +
+>  /**
+>   * security_inode_getattr() - Check if getting file attributes is allowed
+>   * @path: file
+> -- 
+> 2.34.1
+
+--
+paul-moore.com
