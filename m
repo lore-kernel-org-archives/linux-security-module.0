@@ -2,171 +2,127 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CBCC5AE4A
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Nov 2023 04:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC11C47071
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Nov 2023 04:37:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344894AbjKPEeP (ORCPT
+        id S234879AbjKPEhF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Nov 2023 23:34:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43636 "EHLO
+        Wed, 15 Nov 2023 23:37:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235696AbjKPEd5 (ORCPT
+        with ESMTP id S230250AbjKPEhE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Nov 2023 23:33:57 -0500
-Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F40F1A5
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Nov 2023 20:33:53 -0800 (PST)
-Received: by mail-qt1-x835.google.com with SMTP id d75a77b69052e-41cbd2cf3bbso13868951cf.0
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Nov 2023 20:33:53 -0800 (PST)
+        Wed, 15 Nov 2023 23:37:04 -0500
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BE6ADA
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Nov 2023 20:37:01 -0800 (PST)
+Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-d9caf5cc948so358462276.0
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Nov 2023 20:37:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1700109232; x=1700714032; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pTk7a67S1QtD8sba7dPNc/tDHo+LguzreZvYAY1S4fY=;
-        b=QNxLd/OQnTNMmenq2+mNq4v5DLEMf5UVSLWa4Rr0TGvf7arRBJRWB8tkqk1zXmO6jS
-         G6NBVvrLQNtS5Wg/KyqNcLQBGZvNNzwaIOLKjZTIrnlVwo4btxdIv8Xm7ZXO0EqKAJX3
-         qZ8Kq5FAoV+Y3Ccnp3Cl9l4dIV2jfSHghxFeJo9XBlmBFQ+/AtTJ4kT6a1MOMsVKJbw3
-         xBhJnJZL4D9VQl+w9Dn/Up7hfA7UGEm4Z2LtMQleLvCb0ncc2rfz47vOIBGtcQhdB1zW
-         8ae9RaG3KxtmP2T/k4mJsi8uIKnNHpPh4s3dFQ7EvPs7SR1gOvldrQ/2Q2BMrJ7Nwr1G
-         Kp5w==
+        d=paul-moore.com; s=google; t=1700109420; x=1700714220; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mcqBDslEmUQAJysV7NyEk8RtIXTzf0hWr6mvwOKWDyA=;
+        b=PXhnFekGIWzVPsypOgHt32CEwNh5r2iv6RfOtMxpdRbv8VoXy3NK1a4aSsScUSFKtP
+         BnEj3tOPXPYcTZDSNMw5qblXqzmtEMr6jeNA/g5XqPDaksYEUA3YQRAqtrbqsjx+Ous7
+         io3/KwBiGyDy6h1aXSKjfPymm/yyXofGDC2LRb6gz6Ac4u+HoA86WZpg/Z8Ao/h+XpR0
+         cwsMaC4BFQQie3paSfZHBm8oN6cj9w8bWjXXO6QWGeGwUJT8pxEiUvb3OqMIEKHjlrx0
+         XLySwmRfVagLPGVhLj+5vrXYIqTxsS3shTayDINVfeZ6rW/Rmq2xk3c2eJXxcBIPxCWI
+         GMlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700109232; x=1700714032;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pTk7a67S1QtD8sba7dPNc/tDHo+LguzreZvYAY1S4fY=;
-        b=gFgjPlzIof4fQyDlsuhbauU5vPnxbzwyPl2gnxyad0D3po9FBmMadXDjVrKB3RkVqM
-         sdxQOHD9Y7uL8kXxJLMR8KlJjgF+HfUzwDCEy0KXj9RQLr0CssR7o73Ivqurh8+N7e1y
-         3ueyCtugmGDkQ8qCjo3RHWp7H8In8PhFcovTWQFLS6mH41EG5ou/+l/tB1ZqpT0SDqug
-         HKs9K7Wzg/n/40QHHOF+lSGnAmHZcN0TRNGfdV/4SAHYGgC8fKWPEEY9Lao6d8O+7PzX
-         Igxop1V/Glm1tGMSpXdJqOd6Ligo9lWC387+42fBOEqROxI5wzxwervT7K1wCQOa7hvg
-         q8FQ==
-X-Gm-Message-State: AOJu0YxKXrRpcaEkYngkTQtxNZpPtkD+TLbfOePWHrBOnhxle2Cp7GM5
-        NiDIlL2tdnopa76P74GfOuB8
-X-Google-Smtp-Source: AGHT+IE6tK6IBkeFsEiWjCzdnINS6WA30ZUhupFJIZkUjsjh41YBZxyWDozBggH4FWZCSzCDyuP/4g==
-X-Received: by 2002:ac8:5706:0:b0:41c:c27e:f8f6 with SMTP id 6-20020ac85706000000b0041cc27ef8f6mr676761qtw.23.1700109232335;
-        Wed, 15 Nov 2023 20:33:52 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id y2-20020ac85242000000b004198f67acbesm4045202qtn.63.2023.11.15.20.33.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Nov 2023 20:33:51 -0800 (PST)
-Date:   Wed, 15 Nov 2023 23:33:51 -0500
-Message-ID: <f529266a02533411e72d706b908924e8.paul@paul-moore.com>
+        d=1e100.net; s=20230601; t=1700109420; x=1700714220;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mcqBDslEmUQAJysV7NyEk8RtIXTzf0hWr6mvwOKWDyA=;
+        b=VYgE9+HPq/C4pCOoaKBavvHI4y/RoO4n14WlJScNayLN7VOtMGl3JcquvGauNMcbdg
+         fJ+FtDmrHRvqsd010jCHwVYXYMa3Js2GAclo3L8JLQfu3x0rmyL4t6kK+hEliNydDxGu
+         PqLtT/q09SbgGuSMKAtDur4bbZB2XRAFtXhxd4ckyICVoS6Im8dRmNZ+bBWDSjOY3e7d
+         rnFAk6pM1ju5Ek4+xmV8OaATtI35BjxYKCRXVTA9qf57Zc+qis7o51bxOoe3DQX9U6iJ
+         89VZ+YzASV9YCLo809nRq5ApPZKBO5CL0k/EVJHUs4poD9KtWB9RE3ZDb+1rTJ0qW5jO
+         qs+Q==
+X-Gm-Message-State: AOJu0Yy+6i3InqrdNOAW5/mQ9GkoVGFPpo1IIW/XcOOCL2gHBbqEzzMT
+        k3jJ1eFSHS8CHfETPGzQl+tzLOQKVYlrFcRnOSBUiebWTdORxS8=
+X-Google-Smtp-Source: AGHT+IFHGfn1tt8Pen1o9yDU00rzkJq2q6Jitvpj8Uxph9rFiHFPc265HGOUzE8IgYE60HDx7MvzmkhZQjHr5wfN7p4=
+X-Received: by 2002:a25:3ca:0:b0:da0:52e4:b5aa with SMTP id
+ 193-20020a2503ca000000b00da052e4b5aamr13876662ybd.8.1700109420481; Wed, 15
+ Nov 2023 20:37:00 -0800 (PST)
+MIME-Version: 1.0
+References: <20231115164832.100894-2-paul@paul-moore.com> <CAHC9VhToYWVTmXmmXMdGE3XZcBV65RrFWvFaYX+nWd-Mr6k=yA@mail.gmail.com>
+In-Reply-To: <CAHC9VhToYWVTmXmmXMdGE3XZcBV65RrFWvFaYX+nWd-Mr6k=yA@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, mic@digikod.net
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v5 22/23] integrity: Move integrity functions to the LSM  infrastructure
-References: <20231107134012.682009-23-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20231107134012.682009-23-roberto.sassu@huaweicloud.com>
+Date:   Wed, 15 Nov 2023 23:36:49 -0500
+Message-ID: <CAHC9VhSjAvDPiUtisP8mNbdPwvi6-8uJUbgoRv0GzYZ5-c_qtg@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: update the LSM entry
+To:     linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
-> 
-> Remove hardcoded calls to integrity functions from the LSM infrastructure
-> and, instead, register them in integrity_lsm_init() with the IMA or EVM
-> LSM ID (the first non-NULL returned by ima_get_lsm_id() and
-> evm_get_lsm_id()).
-> 
-> Also move the global declaration of integrity_inode_get() to
-> security/integrity/integrity.h, so that the function can be still called by
-> IMA.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  include/linux/integrity.h      | 26 --------------------------
->  security/integrity/iint.c      | 30 +++++++++++++++++++++++++++++-
->  security/integrity/integrity.h |  7 +++++++
->  security/security.c            |  9 +--------
->  4 files changed, 37 insertions(+), 35 deletions(-)
+On Wed, Nov 15, 2023 at 12:21=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+> On Wed, Nov 15, 2023 at 11:48=E2=80=AFAM Paul Moore <paul@paul-moore.com>=
+ wrote:
+> >
+> > Bring the LSM / "SECURITY SUBSYSTEM" entry up to date with the
+> > following changes:
+> >
+> > * Remove the "(suggested Cc:)" note on the mailing list.  I don't
+> > really care if the LSM list is on the To: or Cc: line, I just want
+> > folks to include it when appropriate.
+> >
+> > * Remove the website link.  The website isn't really maintained in
+> > any meaningful way so we're going to go ahead and remove it so we
+> > lessen the chance of conflicting or confusing information in the
+> > future.
+> >
+> > * Add our patchwork link.  I'm not sure this is of much use for
+> > anyone but the maintainer, but there is a provision for including it
+> > here so we might as well include it.
+> >
+> > * Add a bug report URI.  I suspect most everyone knows to send mail
+> > to the mailing list if they hit a bug, but let's make it official.
+> >
+> > * Add a link to the LSM tree process/management documentation.  While
+> > the doc exists both in the canonical kernel.org location and the
+> > GitHub mirror, provide a link to the mirror as GitHub does a better
+> > job rendering the Markdown.
+> >
+> > * Aside from changes to the LSM code itself, we also would like to be
+> > notified when the LSMM call sites are changed so we are adding a
+> > security_XXX(...) regex to try and catch all of the callers.
+> >
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > ---
+> >  MAINTAINERS | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 2482b40fd786..007e43ee3e47 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -19507,14 +19507,17 @@ SECURITY SUBSYSTEM
+> >  M:     Paul Moore <paul@paul-moore.com>
+> >  M:     James Morris <jmorris@namei.org>
+> >  M:     "Serge E. Hallyn" <serge@hallyn.com>
+> > -L:     linux-security-module@vger.kernel.org (suggested Cc:)
+> > +L:     linux-security-module@vger.kernel.org
+> >  S:     Supported
+> > -W:     http://kernsec.org/
+> > +Q:     https://patchwork.kernel.org/project/linux-security-module/list
+> > +B:     mailto:linux-security-module@vger.kernel.org
+> > +P:     https://github.com/LinuxSecurityModule/kernel/blob/main/README.=
+md
+> >  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.g=
+it
+>
+> Unfortunately I didn't realize this until the patch hit my inbox, but
+> I should also update the tree location to use https instead of git.
+> I'll fix that when I merge the patch.
 
-...
+Merged into lsm/dev.
 
-> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> index 0b0ac71142e8..882fde2a2607 100644
-> --- a/security/integrity/iint.c
-> +++ b/security/integrity/iint.c
-> @@ -171,7 +171,7 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
->   *
->   * Free the integrity information(iint) associated with an inode.
->   */
-> -void integrity_inode_free(struct inode *inode)
-> +static void integrity_inode_free(struct inode *inode)
->  {
->  	struct integrity_iint_cache *iint;
->  
-> @@ -193,11 +193,39 @@ static void iint_init_once(void *foo)
->  	memset(iint, 0, sizeof(*iint));
->  }
->  
-> +static struct security_hook_list integrity_hooks[] __ro_after_init = {
-> +	LSM_HOOK_INIT(inode_free_security, integrity_inode_free),
-> +#ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
-> +	LSM_HOOK_INIT(kernel_module_request, integrity_kernel_module_request),
-> +#endif
-> +};
-> +
-> +/*
-> + * Perform the initialization of the 'integrity', 'ima' and 'evm' LSMs to
-> + * ensure that the management of integrity metadata is working at the time
-> + * IMA and EVM hooks are registered to the LSM infrastructure, and to keep
-> + * the original ordering of IMA and EVM functions as when they were hardcoded.
-> + */
->  static int __init integrity_lsm_init(void)
->  {
-> +	const struct lsm_id *lsmid;
-> +
->  	iint_cache =
->  	    kmem_cache_create("iint_cache", sizeof(struct integrity_iint_cache),
->  			      0, SLAB_PANIC, iint_init_once);
-> +	/*
-> +	 * Obtain either the IMA or EVM LSM ID to register integrity-specific
-> +	 * hooks under that LSM, since there is no LSM ID assigned to the
-> +	 * 'integrity' LSM.
-> +	 */
-> +	lsmid = ima_get_lsm_id();
-> +	if (!lsmid)
-> +		lsmid = evm_get_lsm_id();
-> +	/* No point in continuing, since both IMA and EVM are disabled. */
-> +	if (!lsmid)
-> +		return 0;
-> +
-> +	security_add_hooks(integrity_hooks, ARRAY_SIZE(integrity_hooks), lsmid);
-
-Ooof.  I understand, or at least I think I understand, why the above
-hack is needed, but I really don't like the idea of @integrity_hooks
-jumping between IMA and EVM depending on how the kernel is configured.
-
-Just to make sure I'm understanding things correctly, the "integrity"
-LSM exists to ensure the proper hook ordering between IMA/EVM, shared
-metadata management for IMA/EVM, and a little bit of a hack to solve
-some kernel module loading issues with signatures.  Is that correct?
-
-I see that patch 23/23 makes some nice improvements to the metadata
-management, moving them into LSM security blobs, but it appears that
-they are still shared, and thus the requirement is still there for
-an "integrity" LSM to manage the shared blobs.
-
-I'd like to hear everyone's honest opinion on this next question: do
-we have any hope of separating IMA and EVM so they are independent
-(ignore the ordering issues for a moment), or are we always going to
-need to have the "integrity" LSM to manage shared resources, hooks,
-etc.?
-
->  	init_ima_lsm();
->  	init_evm_lsm();
->  	return 0;
-
---
+--=20
 paul-moore.com
