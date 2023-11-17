@@ -2,63 +2,62 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0DFC197A0
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Nov 2023 15:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB690C197A0
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Nov 2023 15:49:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231406AbjKQPtt (ORCPT
+        id S231589AbjKQPty (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Nov 2023 10:49:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51552 "EHLO
+        Fri, 17 Nov 2023 10:49:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232615AbjKQPts (ORCPT
+        with ESMTP id S232912AbjKQPtx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Nov 2023 10:49:48 -0500
+        Fri, 17 Nov 2023 10:49:53 -0500
 Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84EF8D73
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Nov 2023 07:49:45 -0800 (PST)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-da03c5ae220so2781074276.1
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Nov 2023 07:49:45 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CBE2D5E
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Nov 2023 07:49:48 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-daa2684f67eso1730361276.0
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Nov 2023 07:49:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1700236184; x=1700840984; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1700236187; x=1700840987; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lVfiNRLLXaCEL+LhQgjG8E5NzPHI4yY2YTNPue/a2KY=;
-        b=wR9E01D4+2exuwxzMGEffYW0Ri95jPmHkaoajXhji7niVneWRk5kMkAvwOWsYQJGEl
-         CdBDXpygfNLiKr9ZRP6vfmPzDAMAEB9Pw2rwh8IrU0aRHtsxXf6PpU+mtC4BlHbscQHH
-         JIn/1Z2VuHH24WQR12KaXSNK1jJUP571ESHJQhM0tLtqEnuidzPTu2aXaWsYhHqtB1rl
-         TX94nAXOlcwrTV2LTSVqzAn6NZw2jDunXhLfzEUyvgCcl+AIBdsKmbBvL5q1Ct1a/6/f
-         Td3unDMnZjuQ85WVZKAjuOLGYvsAxiMHd+QHTIbJ3p+HZOKjttNUf/64g+oOH7i/cDVf
-         BDgw==
+        bh=gUD2X0nvvEDGbnvAFUxCT0dn9azP0EmEwTtnwK9EbZA=;
+        b=rb40egpM6vr1wa2ULlH5lfOwXOA7h/YA/5YzR+b21ixTYu+DzXzDZEoQ98f5I8r3qO
+         3dovVIz6vr3Ch4TLkt9GXGQClsEBOR/Z9Ps0eOlgQ9+GrmEZXnzhluPznF9QcKpEqnPq
+         Eq94HEMd2wSlc7iIebcYnZuY1C3OxKSM9F/ZDrLgwom6fIjujodkgis1DQUwI9/0KjQR
+         n2Gs9qUoM1KFxlnt/zEQZhLpdDpKkl68YiXX3nzDPyrfRdp8KtnxQuyhkYodhOpogc9H
+         tWifWDK0yM8hTbm77JVdAyuHSMjE36iVIhr6gsLseQFDDkwN3/XhA9XlDTe+Xzt0gORU
+         9ZBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700236184; x=1700840984;
+        d=1e100.net; s=20230601; t=1700236187; x=1700840987;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=lVfiNRLLXaCEL+LhQgjG8E5NzPHI4yY2YTNPue/a2KY=;
-        b=D/vypN1hZo6Kx30PMuP0qXmZsMH6pII60yKo1kvZbu1QOvG6ne6JVd5I1zJQdQ1zM9
-         ENmhPQ0ID3Nj39nPllpmy/uEjv1sjO0Ln6AOQ8UZV+LIqcWt6kGtqw1yzPbPFCdQ/ebb
-         zZLWDx6rG+xBUH4M+wy70z56YJWZopngS+cKjUl7SWvYVHKUoNSVGWtOONPrdSXJB/KW
-         fKviLDYVmD6HrASvHXGex10lJ/vX59P3m5HS6jZoDxIWjghI7vUSs+xVkyRYUymDa72l
-         WQJRHelBSeLk3VBEe+aZT/6S6uZyXq/v+O8lejT4Vk0XU32m1KjqhptGQicCB2FT8lNs
-         poiA==
-X-Gm-Message-State: AOJu0YzmhbmPvIKLDjOr+gbSEkxERk+QWFbgG65Gvvp9N0hsjuxqal04
-        rhmQXHl7oJ0hFWpw/LbcbRq57an7zLZFvT6j9qoeTLZrnWiEW+z0fSIFR2aIlgkWa9ta4q0hOdh
-        KDvyzbOBzPphhc+glasCgwNHZFFfyZPxmFPydUHqmz7Vpvdj5MWt9tUXGDxXglNTD28V5kdaDH+
-        xp5olWmg==
-X-Google-Smtp-Source: AGHT+IEI3z/RH1E68bidknSmyhsPGyeGT1Vkbj4du3rsWCUR+flN2mzzjzVW3Y3UGFKrW2SRoAVTYk/mUlA=
+        bh=gUD2X0nvvEDGbnvAFUxCT0dn9azP0EmEwTtnwK9EbZA=;
+        b=ZYz3dhswcSAwpfoRNVnkHK4lUIPHNLP8+w9cckSBno+UsmMwtC94KUcVaH2epLGvqu
+         RbIphY05EQYW6VF1LSoR1S4H66FaLjcWHs7dWQlIvqKX0UGENXMI1qSs1YF7V+P6jTf+
+         rJGpcvctkcYAbV9Ncwfc8ZoQoiFZOEOAVBEZhPeMfpKywea5Wtt5DUxv5g/NiGxt/Gae
+         rTS5Kfq00nr6NG1DqVgNhIrmXnLmu80E+Ryh909pZQypAEyNEPbvpKxw/UGLapNgg3++
+         47e65tpWiYIAe5a7DJbU5Op02H19JB5o4rQVAL57+27146lSVrXsiA+pcXK4pHYW6C2d
+         z0Pg==
+X-Gm-Message-State: AOJu0Yz98hcsYbPy84rlPbmdPc6URA5Nh71UENK2HqI6YwtW36JAZ1Md
+        ePn+aBuNeBuUmR4KTIogIqSLyv2HQVuwBUdtrbLgfH+bRS7z99QQzP8unTxXsMYr+u2Q0uIlvUR
+        DdWBND4Gk13gJZyOwjudeEbInXuwYp9rFKC87y91HjiYrnfMIgPqO/RY76MfvT4ItCWr0w/wQAy
+        rkrKi27w==
+X-Google-Smtp-Source: AGHT+IEoMJQSIFBYsYtsknULEvtZin7eG5XtCpIJtwavDFcIjeEacaz5DtzZcCHfQMRD+iQVH2HkbZKNAa8=
 X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:2ae5:2882:889e:d0cf])
- (user=gnoack job=sendgmr) by 2002:a05:6902:150f:b0:d89:42d7:e72d with SMTP id
- q15-20020a056902150f00b00d8942d7e72dmr188428ybu.3.1700236184430; Fri, 17 Nov
- 2023 07:49:44 -0800 (PST)
-Date:   Fri, 17 Nov 2023 16:49:18 +0100
+ (user=gnoack job=sendgmr) by 2002:a25:e041:0:b0:da0:37e1:558e with SMTP id
+ x62-20020a25e041000000b00da037e1558emr165975ybg.6.1700236187263; Fri, 17 Nov
+ 2023 07:49:47 -0800 (PST)
+Date:   Fri, 17 Nov 2023 16:49:19 +0100
 In-Reply-To: <20231117154920.1706371-1-gnoack@google.com>
-Message-Id: <20231117154920.1706371-6-gnoack@google.com>
+Message-Id: <20231117154920.1706371-7-gnoack@google.com>
 Mime-Version: 1.0
 References: <20231117154920.1706371-1-gnoack@google.com>
 X-Mailer: git-send-email 2.43.0.rc0.421.g78406f8d94-goog
-Subject: [PATCH v5 5/7] selftests/landlock: Test ioctl(2) and ftruncate(2)
- with open(O_PATH)
+Subject: [PATCH v5 6/7] samples/landlock: Add support for LANDLOCK_ACCESS_FS_IOCTL
 From:   "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To:     linux-security-module@vger.kernel.org,
         "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
@@ -76,69 +75,62 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-ioctl(2) and ftruncate(2) operations on files opened with O_PATH
-should always return EBADF, independent of the
-LANDLOCK_ACCESS_FS_TRUNCATE and LANDLOCK_ACCESS_FS_IOCTL access rights
-in that file hierarchy.
+Add ioctl support to the Landlock sample tool.
+
+The ioctl right is grouped with the read-write rights in the sample
+tool, as some ioctl requests provide features that mutate state.
 
 Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
-Suggested-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+Co-developed-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
 ---
- tools/testing/selftests/landlock/fs_test.c | 40 ++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ samples/landlock/sandboxer.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/sel=
-ftests/landlock/fs_test.c
-index 8a244c9cd030..06c47c816c51 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -3812,6 +3812,46 @@ TEST(memfd_ftruncate_and_ioctl)
- 	}
- }
+diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+index 08596c0ef070..d7323e5526be 100644
+--- a/samples/landlock/sandboxer.c
++++ b/samples/landlock/sandboxer.c
+@@ -81,7 +81,8 @@ static int parse_path(char *env_path, const char ***const=
+ path_list)
+ 	LANDLOCK_ACCESS_FS_EXECUTE | \
+ 	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+ 	LANDLOCK_ACCESS_FS_READ_FILE | \
+-	LANDLOCK_ACCESS_FS_TRUNCATE)
++	LANDLOCK_ACCESS_FS_TRUNCATE | \
++	LANDLOCK_ACCESS_FS_IOCTL)
 =20
-+TEST_F_FORK(layout1, o_path_ftruncate_and_ioctl)
-+{
-+	const struct landlock_ruleset_attr attr =3D {
-+		.handled_access_fs =3D ACCESS_ALL,
-+	};
-+	int ruleset_fd, fd;
-+
-+	/*
-+	 * Checks that for files opened with O_PATH, both ioctl(2) and
-+	 * ftruncate(2) yield EBADF, as it is documented in open(2) for the
-+	 * O_PATH flag.
-+	 */
-+	fd =3D open(dir_s1d1, O_PATH | O_CLOEXEC);
-+	ASSERT_LE(0, fd);
-+
-+	EXPECT_EQ(EBADF, test_ftruncate(fd));
-+	EXPECT_EQ(EBADF, test_fs_ioc_getflags_ioctl(fd));
-+
-+	ASSERT_EQ(0, close(fd));
-+
-+	/* Enables Landlock. */
-+	ruleset_fd =3D landlock_create_ruleset(&attr, sizeof(attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+
-+	/*
-+	 * Checks that after enabling Landlock,
-+	 * - the file can still be opened with O_PATH
-+	 * - both ioctl and truncate still yield EBADF (not EACCES).
-+	 */
-+	fd =3D open(dir_s1d1, O_PATH | O_CLOEXEC);
-+	ASSERT_LE(0, fd);
-+
-+	EXPECT_EQ(EBADF, test_ftruncate(fd));
-+	EXPECT_EQ(EBADF, test_fs_ioc_getflags_ioctl(fd));
-+
-+	ASSERT_EQ(0, close(fd));
-+}
-+
- /* clang-format off */
- FIXTURE(ioctl) {};
  /* clang-format on */
+=20
+@@ -199,11 +200,12 @@ static int populate_ruleset_net(const char *const env=
+_var, const int ruleset_fd,
+ 	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
+ 	LANDLOCK_ACCESS_FS_MAKE_SYM | \
+ 	LANDLOCK_ACCESS_FS_REFER | \
+-	LANDLOCK_ACCESS_FS_TRUNCATE)
++	LANDLOCK_ACCESS_FS_TRUNCATE | \
++	LANDLOCK_ACCESS_FS_IOCTL)
+=20
+ /* clang-format on */
+=20
+-#define LANDLOCK_ABI_LAST 4
++#define LANDLOCK_ABI_LAST 5
+=20
+ int main(const int argc, char *const argv[], char *const *const envp)
+ {
+@@ -317,6 +319,11 @@ int main(const int argc, char *const argv[], char *con=
+st *const envp)
+ 		ruleset_attr.handled_access_net &=3D
+ 			~(LANDLOCK_ACCESS_NET_BIND_TCP |
+ 			  LANDLOCK_ACCESS_NET_CONNECT_TCP);
++		__attribute__((fallthrough));
++	case 4:
++		/* Removes LANDLOCK_ACCESS_FS_IOCTL for ABI < 5 */
++		ruleset_attr.handled_access_fs &=3D ~LANDLOCK_ACCESS_FS_IOCTL;
++
+ 		fprintf(stderr,
+ 			"Hint: You should update the running kernel "
+ 			"to leverage Landlock features "
 --=20
 2.43.0.rc1.413.gea7ed67945-goog
 
