@@ -2,160 +2,93 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE001C072A2
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Nov 2023 22:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A1A6C2BB3F
+	for <linux-security-module@archiver.kernel.org>; Sat, 18 Nov 2023 19:20:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346173AbjKQWlu (ORCPT
+        id S229884AbjKRTUo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Nov 2023 17:41:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40590 "EHLO
+        Sat, 18 Nov 2023 14:20:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345242AbjKQWlt (ORCPT
+        with ESMTP id S229723AbjKRTUo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Nov 2023 17:41:49 -0500
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5D8FD194;
-        Fri, 17 Nov 2023 14:41:46 -0800 (PST)
-Received: from [10.137.114.52] (unknown [131.107.159.180])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 2826D20B74C0;
-        Fri, 17 Nov 2023 14:41:45 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2826D20B74C0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1700260905;
-        bh=orjxgtrNLgPOQYG1EeIPZWuhMWqqoJLBesmwg7RvjbE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=iHpPlaOpfAkoYFJ9FqFRdX/pHVe8xCZE8w8oVWmMG88896yM9zTc8B1BuplNYqk5M
-         R6zcotzAuweQaE1G9dRdSGvhJeD85n3dHOhPPX0ExZ1ipbMtlGHLgXBt+31Tx1SNzk
-         lzn994NmMM6WScrqGcblyY3A10vKN0CLyKz6MvXY=
-Message-ID: <9e60ad72-fa7a-4a2f-b980-700e98818537@linux.microsoft.com>
-Date:   Fri, 17 Nov 2023 14:41:44 -0800
+        Sat, 18 Nov 2023 14:20:44 -0500
+Received: from mail-108-mta112.mxroute.com (mail-108-mta112.mxroute.com [136.175.108.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE897194
+        for <linux-security-module@vger.kernel.org>; Sat, 18 Nov 2023 11:20:37 -0800 (PST)
+Received: from filter006.mxroute.com ([136.175.111.2] filter006.mxroute.com)
+ (Authenticated sender: mN4UYu2MZsgR)
+ by mail-108-mta112.mxroute.com (ZoneMTA) with ESMTPSA id 18be3e0b1ff000190b.004
+ for <linux-security-module@vger.kernel.org>
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+ Sat, 18 Nov 2023 19:20:35 +0000
+X-Zone-Loop: a90f65ab4206f32822de1e64f91f40042bc0cb0d184f
+X-Originating-IP: [136.175.111.2]
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kelvie.ca;
+        s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References
+        :MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=cEDhQtXe1+N3fL0aqe3n5kp+RSO1sphZGhU2MGRUZhQ=; b=NUpi+QWVisl+eXv1NY6M7Z57T+
+        zMNiUUdyYm8on+Qt7HSGke2vPsXJBj2+kcyxyhGVk17wRKfgF3Zm31q710SVSXng4Dzgc+JGmlAbw
+        P/JhkaByB/VLtG+9ittKrCTd51/CIVl3g+PRBggOVtOF5nJqRkY9PlPIbqpVGOJsUYpNt+F4osZhM
+        pgl6iUAKYeBiPtHabT1sWO+Tf+lwIfUyoBomie94svizzWM6EOZ63Cm4kUciUU9pE1ZrADqn6gyWO
+        FJqbwbRwkR/DjaQT21UJiFsXra64h6OTbFNHhdgxTdyk+kO9X98N5NS2UHL/79ikMc2bui4lfSVtp
+        GJ9OZxOA==;
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6c3363a2b93so3051046b3a.3;
+        Sat, 18 Nov 2023 11:20:34 -0800 (PST)
+X-Gm-Message-State: AOJu0Yw3zRpZN36fhmZj3dzykIAtTsnnNA+ZTgWH+Lf8veNSrF/LeUhk
+        rMvZEgQxIEKjfK5w93W4w2yVaKZpPQP9pejrEyU=
+X-Google-Smtp-Source: AGHT+IGYdPMZUCm0XogT5wexOPSwLc4gI2Jc3x2hz3qTtLWt14VdLR8V8TpBFzj1JO/7aUn/9BdnWwtCnW7pT+olMag=
+X-Received: by 2002:a05:6a20:2618:b0:187:ed88:e790 with SMTP id
+ i24-20020a056a20261800b00187ed88e790mr2575600pze.44.1700335233445; Sat, 18
+ Nov 2023 11:20:33 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC V2] IMA Log Snapshotting Design Proposal
-To:     Paul Moore <paul@paul-moore.com>,
-        Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
-        peterhuewe@gmx.de, Jarkko Sakkinen <jarkko@kernel.org>,
-        jgg@ziepe.ca, Ken Goldman <kgold@linux.ibm.com>, bhe@redhat.com,
-        vgoyal@redhat.com, Dave Young <dyoung@redhat.com>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        jmorris@namei.org, serge@hallyn.com,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-security-module@vger.kernel.org,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-References: <6c0c32d5-e636-2a0e-5bdf-538c904ceea3@linux.microsoft.com>
- <53db2f31-e383-445f-b746-961958a619bd@linux.ibm.com>
- <5dfcb0d6-8cbf-428e-b8c1-30333fc668b5@linux.microsoft.com>
- <ce2e6de7-4289-442e-8209-fb7c01f51e14@linux.ibm.com>
- <CAHC9VhQ2ZGxAyB0Zy=BQAyJe7ofknaXaAgsgtt5G-ENExdHA=A@mail.gmail.com>
- <1ed2d72c-4cb2-48b3-bb0f-b0877fc1e9ca@linux.ibm.com>
- <CAHC9VhTxQZ5+omZdjwtQwe7MJeAdaLAXP2d5GgyyABLRYkWkGw@mail.gmail.com>
-Content-Language: en-US
-From:   Sush Shringarputale <sushring@linux.microsoft.com>
-In-Reply-To: <CAHC9VhTxQZ5+omZdjwtQwe7MJeAdaLAXP2d5GgyyABLRYkWkGw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20231114022503.6310-1-kelvie@kelvie.ca> <a66a805c-3e1f-4b9a-a38e-aca84b8678a6@infradead.org>
+In-Reply-To: <a66a805c-3e1f-4b9a-a38e-aca84b8678a6@infradead.org>
+From:   Kelvie Wong <kelvie@kelvie.ca>
+Date:   Sat, 18 Nov 2023 11:20:21 -0800
+X-Gmail-Original-Message-ID: <CAK2bC5qHGE1uYuUWMg2L6Zo-vDsHA23nDiaKtEcoX_JVaZNG5g@mail.gmail.com>
+Message-ID: <CAK2bC5qHGE1uYuUWMg2L6Zo-vDsHA23nDiaKtEcoX_JVaZNG5g@mail.gmail.com>
+Subject: Re: [PATCH RFC] Add a lockdown_hibernate parameter
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Authenticated-Id: kelvie@kelvie.ca
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hello,
 
+[sorry for the duplicate, had to re-send this as text/plain]
 
-On 11/16/2023 2:56 PM, Paul Moore wrote:
-> On Thu, Nov 16, 2023 at 5:41 PM Stefan Berger <stefanb@linux.ibm.com> wrote:
->> On 11/16/23 17:07, Paul Moore wrote:
->>> On Tue, Nov 14, 2023 at 1:58 PM Stefan Berger <stefanb@linux.ibm.com> wrote:
->>>> On 11/14/23 13:36, Sush Shringarputale wrote:
->>>>> On 11/13/2023 10:59 AM, Stefan Berger wrote:
->>>>>> On 10/19/23 14:49, Tushar Sugandhi wrote:
->>>>>>> =======================================================================
->>>>>>> | Introduction |
->>>>>>> =======================================================================
->>>>>>> This document provides a detailed overview of the proposed Kernel
->>>>>>> feature IMA log snapshotting.  It describes the motivation behind the
->>>>>>> proposal, the problem to be solved, a detailed solution design with
->>>>>>> examples, and describes the changes to be made in the clients/services
->>>>>>> which are part of remote-attestation system.  This is the 2nd version
->>>>>>> of the proposal.  The first version is present here[1].
->>>>>>>
->>>>>>> Table of Contents:
->>>>>>> ------------------
->>>>>>> A. Motivation and Background
->>>>>>> B. Goals and Non-Goals
->>>>>>>        B.1 Goals
->>>>>>>        B.2 Non-Goals
->>>>>>> C. Proposed Solution
->>>>>>>        C.1 Solution Summary
->>>>>>>        C.2 High-level Work-flow
->>>>>>> D. Detailed Design
->>>>>>>        D.1 Snapshot Aggregate Event
->>>>>>>        D.2 Snapshot Triggering Mechanism
->>>>>>>        D.3 Choosing A Persistent Storage Location For Snapshots
->>>>>>>        D.4 Remote-Attestation Client/Service-side Changes
->>>>>>>            D.4.a Client-side Changes
->>>>>>>            D.4.b Service-side Changes
->>>>>>> E. Example Walk-through
->>>>>>> F. Other Design Considerations
->>>>>>> G. References
->>>>>>>
->>>>>> Userspace applications will have to know
->>>>>> a) where are the shard files?
->>>>> We describe the file storage location choices in section D.3, but user
->>>>> applications will have to query the well-known location described there.
->>>>>> b) how do I read the shard files while locking out the producer of the
->>>>>> shard files?
->>>>>>
->>>>>> IMO, this will require a well known config file and a locking method
->>>>>> (flock) so that user space applications can work together in this new
->>>>>> environment. The lock could be defined in the config file or just be
->>>>>> the config file itself.
->>>>> The flock is a good idea for co-ordination between UM clients. While
->>>>> the Kernel cannot enforce any access in this way, any UM process that
->>>>> is planning on triggering the snapshot mechanism should follow that
->>>>> protocol.  We will ensure we document that as the best-practices in
->>>>> the patch series.
->>>> It's more than 'best practices'. You need a well-known config file with
->>>> well-known config options in it.
->>>>
->>>> All clients that were previously just trying to read new bytes from the
->>>> IMA log cannot do this anymore in the presence of a log shard producer
->>>> but have to also learn that a new log shard has been produced so they
->>>> need to figure out the new position in the log where to read from. So
->>>> maybe a counter in a config file should indicate to the log readers that
->>>> a new log has been produced -- otherwise they would have to monitor all
->>>> the log shard files or the log shard file's size.
->>> If a counter is needed, I would suggest placing it somewhere other
->>> than the config file so that we can enforce limited write access to
->>> the config file.
->>>
->>> Regardless, I imagine there are a few ways one could synchronize
->>> various userspace applications such that they see a consistent view of
->>> the decomposed log state, and the good news is that the approach
->>> described here is opt-in from a userspace perspective.  If the
->> A FUSE filesystem that stitches together the log shards from one or
->> multiple files + IMA log file(s) could make this approach transparent
->> for as long as log shards are not thrown away. Presumably it (or root)
->> could bind-mount its files over the two IMA log files.
->>
->>> userspace does not fully support IMA log snapshotting then it never
->>> needs to trigger it and the system behaves as it does today; on the
->> I don't think individual applications should trigger it , instead some
->> dedicated background process running on a machine would do that every n
->> log entries or so and possibly offer the FUSE filesystem at the same
->> time. In either case, once any application triggers it, all either have
->> to know how to deal with the shards or FUSE would make it completely
->> transparent.
-FUSE would be a reasonable user space co-ordination implementation.  A
-privileged process would trigger the snapshot generation and provide the
-mountpoint to read the full IMA log backed by shards as needed by relying
-parties.
-
-Whether it is a privileged daemon or some other agent that triggers the
-snapshot, it shouldn't impact the Kernel-side implementation.
-
-- Sush
-> Yes, performing a snapshot is a privileged operation which I expect
-> would be done and managed by a dedicated daemon running on the system.
+On Mon, 13 Nov 2023 at 20:01, Randy Dunlap <rdunlap@infradead.org> wrote:
 >
+> [add security & dhowells]
+>
+> On 11/13/23 18:23, Kelvie Wong wrote:
+> > This allows the user to tell the kernel that they know better (namely,
+> > they secured their swap properly), and that it can enable hibernation.
+> >
+> > I've been using this for about a year now, as it doesn't seem like
+> > proper secure hibernation was going to be implemented back then, and
+> > it's now been a year since I've been building my own kernels with this
+> > patch, so getting this upstreamed would save some CO2 from me building
+> > my own kernels every upgrade.
+> >
+> > Some other not-me users have also tested the patch:
+> >
+> > https://community.frame.work/t/guide-fedora-36-hibernation-with-enabled-secure-boot-and-full-disk-encryption-fde-decrypting-over-tpm2/25474/17
+> > <snip>
 
+Any comments on this patch? Or even a pulse (or a "this is a terrible
+idea and it'll never be merged").
+
+Or perhaps a "secure hibernate is on the way so we don't want this".
+
+-- 
+Kelvie
