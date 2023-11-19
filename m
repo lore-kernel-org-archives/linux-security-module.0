@@ -2,93 +2,135 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A1A6C2BB3F
-	for <linux-security-module@archiver.kernel.org>; Sat, 18 Nov 2023 19:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E188C072A2
+	for <linux-security-module@archiver.kernel.org>; Sun, 19 Nov 2023 09:08:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbjKRTUo (ORCPT
+        id S229580AbjKSJIx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 18 Nov 2023 14:20:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49144 "EHLO
+        Sun, 19 Nov 2023 04:08:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229723AbjKRTUo (ORCPT
+        with ESMTP id S229454AbjKSJIw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 18 Nov 2023 14:20:44 -0500
-Received: from mail-108-mta112.mxroute.com (mail-108-mta112.mxroute.com [136.175.108.112])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE897194
-        for <linux-security-module@vger.kernel.org>; Sat, 18 Nov 2023 11:20:37 -0800 (PST)
-Received: from filter006.mxroute.com ([136.175.111.2] filter006.mxroute.com)
- (Authenticated sender: mN4UYu2MZsgR)
- by mail-108-mta112.mxroute.com (ZoneMTA) with ESMTPSA id 18be3e0b1ff000190b.004
- for <linux-security-module@vger.kernel.org>
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
- Sat, 18 Nov 2023 19:20:35 +0000
-X-Zone-Loop: a90f65ab4206f32822de1e64f91f40042bc0cb0d184f
-X-Originating-IP: [136.175.111.2]
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kelvie.ca;
-        s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References
-        :MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=cEDhQtXe1+N3fL0aqe3n5kp+RSO1sphZGhU2MGRUZhQ=; b=NUpi+QWVisl+eXv1NY6M7Z57T+
-        zMNiUUdyYm8on+Qt7HSGke2vPsXJBj2+kcyxyhGVk17wRKfgF3Zm31q710SVSXng4Dzgc+JGmlAbw
-        P/JhkaByB/VLtG+9ittKrCTd51/CIVl3g+PRBggOVtOF5nJqRkY9PlPIbqpVGOJsUYpNt+F4osZhM
-        pgl6iUAKYeBiPtHabT1sWO+Tf+lwIfUyoBomie94svizzWM6EOZ63Cm4kUciUU9pE1ZrADqn6gyWO
-        FJqbwbRwkR/DjaQT21UJiFsXra64h6OTbFNHhdgxTdyk+kO9X98N5NS2UHL/79ikMc2bui4lfSVtp
-        GJ9OZxOA==;
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6c3363a2b93so3051046b3a.3;
-        Sat, 18 Nov 2023 11:20:34 -0800 (PST)
-X-Gm-Message-State: AOJu0Yw3zRpZN36fhmZj3dzykIAtTsnnNA+ZTgWH+Lf8veNSrF/LeUhk
-        rMvZEgQxIEKjfK5w93W4w2yVaKZpPQP9pejrEyU=
-X-Google-Smtp-Source: AGHT+IGYdPMZUCm0XogT5wexOPSwLc4gI2Jc3x2hz3qTtLWt14VdLR8V8TpBFzj1JO/7aUn/9BdnWwtCnW7pT+olMag=
-X-Received: by 2002:a05:6a20:2618:b0:187:ed88:e790 with SMTP id
- i24-20020a056a20261800b00187ed88e790mr2575600pze.44.1700335233445; Sat, 18
- Nov 2023 11:20:33 -0800 (PST)
+        Sun, 19 Nov 2023 04:08:52 -0500
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B2EBF9;
+        Sun, 19 Nov 2023 01:08:48 -0800 (PST)
+Received: from [192.168.192.84] (unknown [50.39.103.33])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 62CC042F25;
+        Sun, 19 Nov 2023 09:08:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1700384926;
+        bh=spW5iaPaEhOOfN+DrnpbEnZueODC//5+6nsWpNvSU4I=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=KlNjyPhGCXe3KvYcvRksZw/14RWD5E7MU0z24U67tNvt/Cm/un9R2hsqRFNxSzc9B
+         X719BGok71uPLJDcp0CTzJHVZop/llcp9QMOMxBOhDrINunUm5vqCg8DmBBFQ8DR2K
+         J8dOFprPBmVbEcGtPGHV7V+/QTnPNdW6DKEOraTXa+x32DHWNWMdli3tJ6zS7SQb7W
+         RIbmYJXUWNR//asfSTf/0O8ci17IpPUTM+ae4YNuj7k3lY6N3cIwxSHvqvvQmTGwxe
+         M61eKrnB9ZS2ULSpTdpPOHpWId8L0sSMvVTIWy/Pv7palpgC+uQ5qN2IXFDkCJuoMW
+         sN3V1qQUDsTfg==
+Message-ID: <9b443e09-82ac-43ae-9082-49e2e4c5021e@canonical.com>
+Date:   Sun, 19 Nov 2023 01:08:34 -0800
 MIME-Version: 1.0
-References: <20231114022503.6310-1-kelvie@kelvie.ca> <a66a805c-3e1f-4b9a-a38e-aca84b8678a6@infradead.org>
-In-Reply-To: <a66a805c-3e1f-4b9a-a38e-aca84b8678a6@infradead.org>
-From:   Kelvie Wong <kelvie@kelvie.ca>
-Date:   Sat, 18 Nov 2023 11:20:21 -0800
-X-Gmail-Original-Message-ID: <CAK2bC5qHGE1uYuUWMg2L6Zo-vDsHA23nDiaKtEcoX_JVaZNG5g@mail.gmail.com>
-Message-ID: <CAK2bC5qHGE1uYuUWMg2L6Zo-vDsHA23nDiaKtEcoX_JVaZNG5g@mail.gmail.com>
-Subject: Re: [PATCH RFC] Add a lockdown_hibernate parameter
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Authenticated-Id: kelvie@kelvie.ca
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] apparmor: Fix some kernel-doc comments
+To:     Yang Li <yang.lee@linux.alibaba.com>, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+References: <20231023005517.115318-1-yang.lee@linux.alibaba.com>
+Content-Language: en-US
+From:   John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20231023005517.115318-1-yang.lee@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+On 10/22/23 17:55, Yang Li wrote:
+> Fix some kernel-doc comments to silence the warnings:
+> security/apparmor/capability.c:66: warning: Function parameter or member 'ad' not described in 'audit_caps'
+> security/apparmor/capability.c:66: warning: Excess function parameter 'as' description in 'audit_caps'
+> security/apparmor/capability.c:154: warning: Function parameter or member 'subj_cred' not described in 'aa_capable'
+> security/apparmor/capability.c:154: warning: Excess function parameter 'subj_cread' description in 'aa_capable'
+> 
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=7035
+> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
 
-[sorry for the duplicate, had to re-send this as text/plain]
+sorry I missed replying to this. It was pulled into apparmor-next and merged upstream during the 6.7 merge window
 
-On Mon, 13 Nov 2023 at 20:01, Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> [add security & dhowells]
->
-> On 11/13/23 18:23, Kelvie Wong wrote:
-> > This allows the user to tell the kernel that they know better (namely,
-> > they secured their swap properly), and that it can enable hibernation.
-> >
-> > I've been using this for about a year now, as it doesn't seem like
-> > proper secure hibernation was going to be implemented back then, and
-> > it's now been a year since I've been building my own kernels with this
-> > patch, so getting this upstreamed would save some CO2 from me building
-> > my own kernels every upgrade.
-> >
-> > Some other not-me users have also tested the patch:
-> >
-> > https://community.frame.work/t/guide-fedora-36-hibernation-with-enabled-secure-boot-and-full-disk-encryption-fde-decrypting-over-tpm2/25474/17
-> > <snip>
+> ---
+>   security/apparmor/capability.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/apparmor/capability.c b/security/apparmor/capability.c
+> index 0b7d2b1086c9..9934df16c843 100644
+> --- a/security/apparmor/capability.c
+> +++ b/security/apparmor/capability.c
+> @@ -51,7 +51,7 @@ static void audit_cb(struct audit_buffer *ab, void *va)
+>   
+>   /**
+>    * audit_caps - audit a capability
+> - * @as: audit data
+> + * @ad: audit data
+>    * @profile: profile being tested for confinement (NOT NULL)
+>    * @cap: capability tested
+>    * @error: error code returned by test
+> @@ -140,7 +140,7 @@ static int profile_capable(struct aa_profile *profile, int cap,
+>   
+>   /**
+>    * aa_capable - test permission to use capability
+> - * @subj_cread: cred we are testing capability against
+> + * @subj_cred: cred we are testing capability against
+>    * @label: label being tested for capability (NOT NULL)
+>    * @cap: capability to be tested
+>    * @opts: CAP_OPT_NOAUDIT bit determines whether audit record is generated
 
-Any comments on this patch? Or even a pulse (or a "this is a terrible
-idea and it'll never be merged").
-
-Or perhaps a "secure hibernate is on the way so we don't want this".
-
--- 
-Kelvie
