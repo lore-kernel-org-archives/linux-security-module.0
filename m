@@ -2,113 +2,154 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C593CC54E76
-	for <linux-security-module@archiver.kernel.org>; Sun, 19 Nov 2023 14:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D58C197A0
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Nov 2023 08:17:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbjKSOys (ORCPT
+        id S232148AbjKTIRC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 19 Nov 2023 09:54:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35816 "EHLO
+        Mon, 20 Nov 2023 03:17:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjKSOyr (ORCPT
+        with ESMTP id S232183AbjKTIRA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 19 Nov 2023 09:54:47 -0500
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBFEAE1;
-        Sun, 19 Nov 2023 06:54:43 -0800 (PST)
-Received: by mail-pj1-x1033.google.com with SMTP id 98e67ed59e1d1-28035cf6a30so2722483a91.3;
-        Sun, 19 Nov 2023 06:54:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700405683; x=1701010483; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UFViZfi+D4ykbhkIT1nTXXcFAxgIUhFWAUIBpe5r3Wc=;
-        b=ZkYRGAZY1eqCGhzjf/MmU0AdLwn1Qe9xCD76KdWY3zEnj2KO6KYSjOkYMtgQWfyk84
-         +g+zHJwGzNUDPjKMYSAG8zO021qd12ZgtRU5Qm7FC1r99+74dckHxwfutRFKEgVqLS2q
-         VjLGJp3kWyzO/X1p4g+xfqBj126TjrGX4SKTV7lQt1khTCiB4MSVrf+APOxS+7Rajnzy
-         9d2Gnz40RhWIEWpjcvqYKT6f1MYr3SGDRUcaMJTg1a/kdVgq8jk0NxhtwmTvAbsNsZ79
-         E52eWzxumClV3RdDXH0eZuXtvnNQ/IqwNWdiCisOyiqG1IHAxuKoW84ZIoYwwi+MG9Re
-         SzgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700405683; x=1701010483;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UFViZfi+D4ykbhkIT1nTXXcFAxgIUhFWAUIBpe5r3Wc=;
-        b=myc+Cbwdg8hBQJ1p6BH0ORXZ8rZfV1NHHL5a50Y1r13kjU8PJ8CXaLPamDBQRnXTw7
-         4uRwVXagJmbHLuPJ7iW0tfNMJgAMETNGuIxKHlbngMTg/d7kZx3/UZhf7l/FXiUpOHgV
-         FfFv6ekPOheDJ7b1OAyFD/3Nki+bzSg8s3NgHw5az7EmsXKi9WyDk+++cBtKdbuO4woH
-         b26S0Tn7g25/7aMVw94IjhUC+KxRi2JCUttHRKoDWeXgSthQNBNvS5zzDPaKgx/sH5Mf
-         JhqAbKK82u6oNKkedI6WiNraDjL0s50+q4eOo/4pd0A2bB4cla3zOyK571x8GHWCQ27N
-         /Puw==
-X-Gm-Message-State: AOJu0Yxv89WAhACP7udQiFSP5OGR8Z7wIJxyWjTaAKJi95kWOFSD+0ea
-        KIqa5nm+Xoph2U6CngJbYZ/R7cUdzLLzFUSYgSE=
-X-Google-Smtp-Source: AGHT+IH+vd8OYZwpc2tfLC50gM6zOidWteKbkUKAokaglhsxOIquzqcPn2ooow/qdYCB+TyXuHNctw6hbmvYNqeRlzU=
-X-Received: by 2002:a17:90a:1690:b0:281:416e:1c3f with SMTP id
- o16-20020a17090a169000b00281416e1c3fmr3470474pja.28.1700405683271; Sun, 19
- Nov 2023 06:54:43 -0800 (PST)
-MIME-Version: 1.0
-References: <20231111125126.11665-1-yjnworkstation@gmail.com>
- <20231111132431.GA3717@1wt.eu> <20231112045217.GA39417@mit.edu> <87fa3d2e-6822-0f24-daec-772dbe717b63@suse.cz>
-In-Reply-To: <87fa3d2e-6822-0f24-daec-772dbe717b63@suse.cz>
-From:   Jasper Niebuhr <yjnworkstation@gmail.com>
-Date:   Sun, 19 Nov 2023 15:54:31 +0100
-Message-ID: <CAMjCObsNOMxe52XT6L4JscX5VBO8xAjqjHy-bzRyoLU54G9gRA@mail.gmail.com>
-Subject: Re: [PATCH] exitz syscall
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-security-module@vger.kernel.org,
-        torvalds@linux-foundation.org
+        Mon, 20 Nov 2023 03:17:00 -0500
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45E9EE3;
+        Mon, 20 Nov 2023 00:16:56 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SYg0Z1Pc1z9v7GV;
+        Mon, 20 Nov 2023 16:00:14 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwDHxV_LFVtlN1ABAQ--.398S2;
+        Mon, 20 Nov 2023 09:16:26 +0100 (CET)
+Message-ID: <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com>
+Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
+ blob  for integrity_iint_cache
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com,
+        tom@talpey.com, jmorris@namei.org, serge@hallyn.com,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, mic@digikod.net
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Mon, 20 Nov 2023 09:16:09 +0100
+In-Reply-To: <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
+References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
+         <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.4-0ubuntu2 
+MIME-Version: 1.0
+X-CM-TRANSID: GxC2BwDHxV_LFVtlN1ABAQ--.398S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF17Kw1kuFWrWr45ur1kGrg_yoWrJr43pF
+        W3Ka47Jr1kXFyI9rn2vF45uFWSgFWSgFWUGwn0kr1kAF98ur1Ygr15CryUuFyUGr98tw10
+        qr1a9ryUZ3Wqy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAHBF1jj5ahSwACsN
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I took some time to consider a few options...
+On Fri, 2023-11-17 at 15:57 -0500, Paul Moore wrote:
+> On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+> > 
+> > Before the security field of kernel objects could be shared among LSMs with
+> > the LSM stacking feature, IMA and EVM had to rely on an alternative storage
+> > of inode metadata. The association between inode metadata and inode is
+> > maintained through an rbtree.
+> > 
+> > Because of this alternative storage mechanism, there was no need to use
+> > disjoint inode metadata, so IMA and EVM today still share them.
+> > 
+> > With the reservation mechanism offered by the LSM infrastructure, the
+> > rbtree is no longer necessary, as each LSM could reserve a space in the
+> > security blob for each inode. However, since IMA and EVM share the
+> > inode metadata, they cannot directly reserve the space for them.
+> > 
+> > Instead, request from the 'integrity' LSM a space in the security blob for
+> > the pointer of inode metadata (integrity_iint_cache structure). The other
+> > reason for keeping the 'integrity' LSM is to preserve the original ordering
+> > of IMA and EVM functions as when they were hardcoded.
+> > 
+> > Prefer reserving space for a pointer to allocating the integrity_iint_cache
+> > structure directly, as IMA would require it only for a subset of inodes.
+> > Always allocating it would cause a waste of memory.
+> > 
+> > Introduce two primitives for getting and setting the pointer of
+> > integrity_iint_cache in the security blob, respectively
+> > integrity_inode_get_iint() and integrity_inode_set_iint(). This would make
+> > the code more understandable, as they directly replace rbtree operations.
+> > 
+> > Locking is not needed, as access to inode metadata is not shared, it is per
+> > inode.
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> > ---
+> >  security/integrity/iint.c      | 71 +++++-----------------------------
+> >  security/integrity/integrity.h | 20 +++++++++-
+> >  2 files changed, 29 insertions(+), 62 deletions(-)
+> > 
+> > diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+> > index 882fde2a2607..a5edd3c70784 100644
+> > --- a/security/integrity/iint.c
+> > +++ b/security/integrity/iint.c
+> > @@ -231,6 +175,10 @@ static int __init integrity_lsm_init(void)
+> >  	return 0;
+> >  }
+> >  
+> > +struct lsm_blob_sizes integrity_blob_sizes __ro_after_init = {
+> > +	.lbs_inode = sizeof(struct integrity_iint_cache *),
+> > +};
+> 
+> I'll admit that I'm likely missing an important detail, but is there
+> a reason why you couldn't stash the integrity_iint_cache struct
+> directly in the inode's security blob instead of the pointer?  For
+> example:
+> 
+>   struct lsm_blob_sizes ... = {
+>     .lbs_inode = sizeof(struct integrity_iint_cache),
+>   };
+> 
+>   struct integrity_iint_cache *integrity_inode_get(inode)
+>   {
+>     if (unlikely(!inode->isecurity))
+>       return NULL;
+>     return inode->i_security + integrity_blob_sizes.lbs_inode;
+>   }
 
-1. MLOCK_ZERO_ON_FREE flag for mlock2:
+It would increase memory occupation. Sometimes the IMA policy
+encompasses a small subset of the inodes. Allocating the full
+integrity_iint_cache would be a waste of memory, I guess?
 
-This would achieve what I was looking for. On the other hand, this
-feature could not be used to just ensure the memory is zeroed before
-reallocation, without locking it to memory. So if you just want a few
-regions to be protected from other processes, this would not be ideal.
-Also the VM_* flags are all used otherwise (except for a random hole
-in the middle).
+On the other hand... (did not think fully about that) if we embed the
+full structure in the security blob, we already have a mutex available
+to use, and we don't need to take the inode lock (?).
 
-2. PR_INIT_ON_FREE option for prctl + some cap against DoS:
+I'm fully convinced that we can improve the implementation
+significantly. I just was really hoping to go step by step and not
+accumulating improvements as dependency for moving IMA and EVM to the
+LSM infrastructure.
 
-This could, more generally, be used to "replace" other ways of
-choosing initialization behavior. Systems could run with zeroing in
-general disabled to improve performance and just use this feature
-whenever needed. However, it seems counterintuitive to me to have a
-prctl option to set properties of a range of memory. Is there a system
-call to set general properties of memory areas?
+Thanks
 
-3. CONFIG_MLOCK_INIT_ON_FREE:
+Roberto
 
-Such a config could be used as an alternative to init_on_free (or its
-DEFAULT_ON config) and would be limited to the much smaller amount of
-mlocked memory. Again, this could not be used if you didn't want to
-lock the pages to memory, but would definitely be one of the easiest
-ways to avoid most of the init_on_free overhead with essentially the
-same security.
-
-4. PR_INIT_MLOCKED_ON_FREE option for prctl:
-
-This would essentially be option 3. but even further limited to only
-the processes that want it and cannot ensure keys are zeroed before an
-exit/crash. This prctl option would take no further options except an
-enable/disable switch. It could be called once, in the beginning, to
-enable the feature. If the process then crashes, any mlocked memory is
-cleared and does not make its way to another process. After any key
-material has been erased, the program could call prctl again to
-disable the feature so no clearing is done when the process exits.
-
-Currently #1, #3 and #4 sound most applicable to me. Options #3 and #4
-are probably a lot cleaner to implement, #1 and #4 should be more
-performant. From your experience, how often would someone want to
-seriously prevent memory from getting to another process without the
-option to mlock it?
-
-Is there any arguments I am missing? What's your opinion on these?
-Which, if any, do you think would work best?
