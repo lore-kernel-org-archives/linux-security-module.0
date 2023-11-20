@@ -2,169 +2,187 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 579F7C2BB3F
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Nov 2023 19:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D65DC2BB3F
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Nov 2023 19:43:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229768AbjKTTn3 (ORCPT
+        id S229853AbjKTTnk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Nov 2023 14:43:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60268 "EHLO
+        Mon, 20 Nov 2023 14:43:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229778AbjKTTn1 (ORCPT
+        with ESMTP id S229937AbjKTTni (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Nov 2023 14:43:27 -0500
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4666FAA;
-        Mon, 20 Nov 2023 11:43:22 -0800 (PST)
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2c875207626so29253871fa.1;
-        Mon, 20 Nov 2023 11:43:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700509400; x=1701114200;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WoDQY8tzkpHkEpiRQUrc2MUWOLDGwsPrZjscsfAC4Bc=;
-        b=CKHLB+rrRCzojZxK4AcIAcau8Paa9nu+nEb0zXnC6qjIp56sKh8Rp2sHcGE+wn25mN
-         BTJMyfzx2bWiDUweOEX2/By00autxZHw1jFN9p06cXMKrvyq184XWHxor5QIclEbQfzt
-         8cSV1VBL3ebMbeKUN1WfdkzfGoOHYJGkgYLyMNhch0E/XbXhJF9pqQK8yhmyO938oF7E
-         sfIAwCqcBgcSgvn3PFEoIxEDTKXNKIISvC6EMnsyQsIKYlAxkv2y6lqbZokKQZwiSyek
-         /lOpQUUYbh3jJotY6Q3m9M3oEiraZKLIvZyX4snSM4YS7fgc3LO8c/pCdBZuqusWc17G
-         ZaRw==
-X-Gm-Message-State: AOJu0YxeNMj+THOLWAeuRjGg/aGXMe9KV/D+1S0m0Ocvr4Mj4uRWSYZ3
-        WsZsF8y26WKDyoVTkbs+ga8=
-X-Google-Smtp-Source: AGHT+IFgP9xwbAn+TkemJm6kqzasJzlvxUci/1NJbwtda3ur0jxfbWqOdV5Xw2lCvTNCnJ7Bf2qfkA==
-X-Received: by 2002:a2e:9015:0:b0:2c8:3613:d071 with SMTP id h21-20020a2e9015000000b002c83613d071mr5751720ljg.36.1700509400076;
-        Mon, 20 Nov 2023 11:43:20 -0800 (PST)
-Received: from localhost ([137.220.119.58])
-        by smtp.gmail.com with ESMTPSA id j33-20020a05600c1c2100b0040772934b12sm19201399wms.7.2023.11.20.11.43.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 11:43:19 -0800 (PST)
-Message-ID: <ea1a678bdbfe5c492aa494d93476bb18e6dfec5e.camel@debian.org>
-Subject: Re: [RFC PATCH 1/2] Modules: Introduce boot-time module signature
- flexibility
-From:   Luca Boccassi <bluca@debian.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Alessandro Carminati <alessandro.carminati@gmail.com>
-Cc:     linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-security-module@vger.kernel.org, jan.setjeeilers@oracle.com,
-        linux-efi@vger.kernel.org, ardb@kernel.org
-Date:   Mon, 20 Nov 2023 19:43:17 +0000
-In-Reply-To: <ZVeyDDLe9B+Aij2O@bombadil.infradead.org>
-References: <20230914112739.112729-1-alessandro.carminati@gmail.com>
-         <20230914112739.112729-2-alessandro.carminati@gmail.com>
-         <ZVZS4hw5dGB4aPz3@bombadil.infradead.org>
-         <CAPp5cGTcRGp3z=xbA1svxLYz1LC74_AQrTPSXNmACPRYrpporg@mail.gmail.com>
-         <ZVeyDDLe9B+Aij2O@bombadil.infradead.org>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-WhGM6ktWMElK5x6aVvyJ"
-User-Agent: Evolution 3.46.4-2 
+        Mon, 20 Nov 2023 14:43:38 -0500
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43790132
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Nov 2023 11:43:34 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SYyc43LlMzMq31f;
+        Mon, 20 Nov 2023 19:43:32 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SYyc34b9jzMpnPj;
+        Mon, 20 Nov 2023 20:43:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1700509412;
+        bh=YClZIIHMyrXFCRMMGiLDrVUNx1LJtpllduk5rgMesRA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tXfUcHq9M2l7cs5ZBcCze2Xloh6889NcwAXiWs4FUWyFD/RE5RER8Ix1MIYT6m++S
+         B+ox84Q8nvHmh4GRSTktDzjVWv/zL7dbO0+4O4CSfW33PCf23Xsg0bHhDeIDcZauGh
+         tiop27YuLWDqV582KE4CQWrsiWtYJ+azmiWYCa3E=
+Date:   Mon, 20 Nov 2023 20:43:30 +0100
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Matt Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 2/7] landlock: Add IOCTL access right
+Message-ID: <20231120.fau2Oi6queij@digikod.net>
+References: <20231117154920.1706371-1-gnoack@google.com>
+ <20231117154920.1706371-3-gnoack@google.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231117154920.1706371-3-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, Nov 17, 2023 at 04:49:15PM +0100, Günther Noack wrote:
+> Introduces the LANDLOCK_ACCESS_FS_IOCTL access right
+> and increments the Landlock ABI version to 5.
+> 
+> Like the truncate right, these rights are associated with a file
+> descriptor at the time of open(2), and get respected even when the
+> file descriptor is used outside of the thread which it was originally
+> opened in.
+> 
+> A newly enabled Landlock policy therefore does not apply to file
+> descriptors which are already open.
+> 
+> If the LANDLOCK_ACCESS_FS_IOCTL right is handled, only a small number
+> of safe IOCTL commands will be permitted on newly opened files.  The
+> permitted IOCTLs can be configured through the ruleset in limited ways
+> now.  (See documentation for details.)
+> 
+> Noteworthy scenarios which require special attention:
+> 
+> TTY devices support IOCTLs like TIOCSTI and TIOCLINUX, which can be
+> used to control shell processes on the same terminal which run at
+> different privilege levels, which may make it possible to escape a
+> sandbox.  Because stdin, stdout and stderr are normally inherited
+> rather than newly opened, IOCTLs are usually permitted on them even
+> after the Landlock policy is enforced.
+> 
+> Some legitimate file system features, like setting up fscrypt, are
+> exposed as IOCTL commands on regular files and directories -- users of
+> Landlock are advised to double check that the sandboxed process does
+> not need to invoke these IOCTLs.
+> 
+> Known limitations:
+> 
+> The LANDLOCK_ACCESS_FS_IOCTL access right is a coarse-grained control
+> over IOCTL commands.  Future work will enable a more fine-grained
+> access control for IOCTLs.
+> 
+> In the meantime, Landlock users may use path-based restrictions in
+> combination with their knowledge about the file system layout to
+> control what IOCTLs can be done.  Mounting file systems with the nodev
+> option can help to distinguish regular files and devices, and give
+> guarantees about the affected files, which Landlock alone can not give
+> yet.
+> 
+> Signed-off-by: Günther Noack <gnoack@google.com>
+> ---
+>  include/uapi/linux/landlock.h                |  58 ++++++-
+>  security/landlock/fs.c                       | 150 ++++++++++++++++++-
+>  security/landlock/fs.h                       |  11 ++
+>  security/landlock/limits.h                   |  15 +-
+>  security/landlock/ruleset.h                  |   2 +-
+>  security/landlock/syscalls.c                 |  10 +-
+>  tools/testing/selftests/landlock/base_test.c |   2 +-
+>  tools/testing/selftests/landlock/fs_test.c   |   5 +-
+>  8 files changed, 233 insertions(+), 20 deletions(-)
+> 
 
---=-WhGM6ktWMElK5x6aVvyJ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index 93c9c6f91556..75e822f878e0 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -18,7 +18,20 @@
+>  #define LANDLOCK_MAX_NUM_LAYERS		16
+>  #define LANDLOCK_MAX_NUM_RULES		U32_MAX
+>  
+> -#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_TRUNCATE
+> +#define LANDLOCK_LAST_PUBLIC_ACCESS_FS	LANDLOCK_ACCESS_FS_IOCTL
+> +#define LANDLOCK_MASK_PUBLIC_ACCESS_FS	((LANDLOCK_LAST_PUBLIC_ACCESS_FS << 1) - 1)
+> +
+> +/*
+> + * These are synthetic access rights, which are only used within the kernel, but
+> + * not exposed to callers in userspace.  The mapping between these access rights
+> + * and IOCTL commands is defined in the required_ioctl_access() helper function.
+> + */
+> +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP1	(LANDLOCK_LAST_PUBLIC_ACCESS_FS << 1)
+> +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP2	(LANDLOCK_LAST_PUBLIC_ACCESS_FS << 2)
+> +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP3	(LANDLOCK_LAST_PUBLIC_ACCESS_FS << 3)
+> +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP4	(LANDLOCK_LAST_PUBLIC_ACCESS_FS << 4)
 
-On Fri, 2023-11-17 at 10:33 -0800, Luis Chamberlain wrote:
-> On Fri, Nov 17, 2023 at 02:56:53PM +0100, Alessandro Carminati wrote:
-> > Il giorno gio 16 nov 2023 alle ore 18:35 Luis Chamberlain
-> > <mcgrof@kernel.org> ha scritto:
-> > >=20
-> > > I see the code which skips module signature verification and the knob=
-s
-> > > but I don't see the code which complete the promise to do the actual
-> > > signature verification post initrd / initramfs state. What gives?
-> >=20
-> > My initial intention wasn't centered around providing an automated solu=
-tion.
->=20
-> It is not even an automated solution, it's *any* solution. So to be
-> clear your patch simply disables module verification, it has no
-> solution.
->=20
-> > Instead, I envisioned a design where users could manually restore modul=
-e
-> > verification during a specific point in their init scripts.
-> >=20
-> > It might be plausible to restore module verification when the rootfs is
-> > remounted. However, this seems limiting rather than advantageous.
->=20
-> The patch as-is describes a lofty world and does nothing other than
-> disables module verification. If a patch disables module verification
-> it should just do that and describe that. Nothing else. The subject
-> of the patch tends to suggest some flexibility it provided but does
-> nothing of being flexible, it outright disables module signature
-> verification. The commit log and the patch subject description are
-> describing something completely different than what the code actually
-> does, and it gives me to the concern, to the point that if you didn't
-> have a few commit logs in the kernel I would have thought your intent
-> was test kernel developers with some AI type of code that does something
-> stupid and very carefully crafted commit log.
->=20
-> Nacked-by: Luis Chamberlain <mcgrof@kernel.org>
->=20
->   Luis
+Please move this LANDLOCK_ACCESS_FS_IOCTL_* block to fs.h
 
-Hi,
+We can still create the public and private masks in limits.h but add a
+static_assert() to make sure there is no overlap.
 
-On top of that, this change would go counter to the security posture
-that is established by the Lockdown LSM, especially when UEFI Secure
-Boot is used. While it would be great if initrds were only ever read-
-only, signed, and verified, the reality is that on all general purpose
-distributions in use today the initrd is writable by root, and the
-kernel command line is also writable by root.
+> +
+> +#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_IOCTL_GROUP4
+>  #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+>  #define LANDLOCK_SHIFT_ACCESS_FS	0
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index c7f1526784fd..5a28ea8e1c3d 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -30,7 +30,7 @@
+>  	LANDLOCK_ACCESS_FS_REFER)
+>  /* clang-format on */
+>  
+> -typedef u16 access_mask_t;
+> +typedef u32 access_mask_t;
+>  /* Makes sure all filesystem access rights can be stored. */
+>  static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
+>  /* Makes sure all network access rights can be stored. */
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index 898358f57fa0..c196cac2a5fb 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -137,7 +137,7 @@ static const struct file_operations ruleset_fops = {
+>  	.write = fop_dummy_write,
+>  };
+>  
+> -#define LANDLOCK_ABI_VERSION 4
+> +#define LANDLOCK_ABI_VERSION 5
+>  
+>  /**
+>   * sys_landlock_create_ruleset - Create a new ruleset
+> @@ -192,8 +192,8 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
+>  		return err;
+>  
+>  	/* Checks content (and 32-bits cast). */
+> -	if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_ACCESS_FS) !=
+> -	    LANDLOCK_MASK_ACCESS_FS)
+> +	if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_PUBLIC_ACCESS_FS) !=
+> +	    LANDLOCK_MASK_PUBLIC_ACCESS_FS)
 
-E.g.: on Debian, one just has to edit /etc/default/grub, run a command
-and at the next reboot arbitrary kernel command line parameters will be
-applied, including this one, and combined with adding an arbitrary
-kernel module to the appropriate path this becomes, de-facto, a uid0-
-to-ring0 privilege escalation avenue, which is something the secure
-boot + shim + lockdown workflow tries very hard to avoid.
+It would now be possible to add LANDLOCK_ACCESS_FS_IOCTL_GROUP* to a
+rule, which is not part of the API/ABI. I've sent a patch with new tests
+to make sure this is covered:
+https://lore.kernel.org/r/20231120193914.441117-2-mic@digikod.net
 
-While there might be room for such features (e.g.:
-https://docs.kernel.org/admin-guide/LSM/LoadPin.html ) in very specific
-and defined environment or use cases, at the very least there needs to
-be:
+I'll push it in my -next branch if everything is OK before pushing your
+next series. Please review it.
 
-- the mechanism to lock it down again very early at boot as indicated
-in the cover letter, which is missing as pointed out by Luis
-- a kconfig governing the availability of the new kernel cmdline
-option, disabled by default
-- ideally a check or hook into the Lockdown LSM, so that it can stop
-the new kernel command line option, if enabled at build time and if
-specified, from actually working when secure boot is enabled, or at the
-very, very minimum taint it
-
-Then users wanting to use such a performance optimization will be able
-to do so in their own special purpose builds, without negatively
-affecting the security story of generalist distributions.
-
---=20
-Kind regards,
-Luca Boccassi
-
---=-WhGM6ktWMElK5x6aVvyJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEErCSqx93EIPGOymuRKGv37813JB4FAmVbttUACgkQKGv37813
-JB5Zyw//Z6kmw2oyyN3baObMYxcX7XlurZnC+rfom0nnnEsICtoxiQb/6o7AOhOh
-5yvG7/I31HacifkXgGRsVc6dowjawZqz5KI92pRrix4tO0O4zmJ43CaKWMvdO0mU
-5i38sc7vrzMKjlKmyqbKNSxmlfpgnbrGi8lMbm/Jh4QIFvUSv94RuNgvdiDW/OP+
-bIrdf55UlS3TdUznrbA8BEAePravcDY8f0KYUIpL2ESau0MWig+n9PUhe5nvsD0E
-j857IH6u9UfEsO6ZbbQnoHnzHxGMJJB3fH5ALOyu5NvDnab5wHtLarSwQneLasUw
-I3bxlUihdwuQIEKTDwNlRFcMwigCh0rww4MeEHUdaleLkHnyxdLWop748L/oBAhI
-60cEb5eUjRomA8K4Eewd0YNgk2ipToHiTiaDW/3coxhCdiLhEOFOAMAGT4Z0wEi1
-Icc/rGOG9lnRDRbjkjBHxFXCZG8rKnfQydnCW1bPQ+ieZ5EnG39DwWbY6cZoUST4
-ggCy063nKyhFu7RYSbXMAbllLkNhOK/LIPOjA08PuZknAQFDryYJh4SyPMK9uVBp
-4431vs3sANoXi9u2rSzwEWJqcBC8CpO8B/94+Gg2bzXFKB0YkOLLqwKWKs377rYT
-FjK8cCylT7OHwAVjMTaMszJViUfABVXg2sPLYaUnQGesRE7U/Yc=
-=50E8
------END PGP SIGNATURE-----
-
---=-WhGM6ktWMElK5x6aVvyJ--
+>  		return -EINVAL;
+>  
