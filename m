@@ -2,187 +2,141 @@ Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F310C54E76
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Nov 2023 21:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FE6C5AE5B
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Nov 2023 21:12:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229561AbjKTVG0 (ORCPT
+        id S231439AbjKTVMt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Nov 2023 16:06:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56532 "EHLO
+        Mon, 20 Nov 2023 16:12:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230357AbjKTVGZ (ORCPT
+        with ESMTP id S230402AbjKTVMt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Nov 2023 16:06:25 -0500
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 266F4A2
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Nov 2023 13:06:21 -0800 (PST)
-Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-daf26d84100so4769312276.3
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Nov 2023 13:06:21 -0800 (PST)
+        Mon, 20 Nov 2023 16:12:49 -0500
+Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73CA2CD
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Nov 2023 13:12:43 -0800 (PST)
+Received: by mail-yb1-xb2d.google.com with SMTP id 3f1490d57ef6-da7ea62e76cso4878594276.3
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Nov 2023 13:12:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1700514380; x=1701119180; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1700514762; x=1701119562; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NG2FEhp12pFkNfvVzutmm+LjhzXXRny+ltBXXG6QNR4=;
-        b=YLhyT6RmzMxgdwWF3OzA1dbTAz8GYwlqdzU9jExIzFo7f7lyo2lc/g5s8M1FPVxNVx
-         9xH5Qe/wVsv58MHQpjcvW3LKQcQ5vIb9Aa73yrI/rkqK7MVSaCFxHqne8L13lT5gfTNd
-         jrz2ZdVN1Qe3itctMb74xkKwKI6nJ4cxYD4hmugMHvP5aWDW4emrejI+By1/ZbG0f7JT
-         cFXvDnsb5rYwIE/fidXu7jWV6ZgD3xHcJYQin5mUIyp4H3oCK5n4tdFaaQXQEZFpoH+G
-         SJuLfuXl8Rod2tCYybo07Z13jXhOFKBICD9TAWYrNxzyLdOcfmQ9oJDeTWht/WBRaKY0
-         ufgA==
+        bh=sqlmM8DM6G+5eGbay1lkfj8kQgtwPw9Yngebn56yPS8=;
+        b=N3DLIT91qWAL2Osha8R+ljRp1/K7nvYIqatKViALNXewTixhSPKrM8uudt/b2tzqXO
+         Uvi99AL4MI3HzHZqMpLZq3e4U50hPuGIg2dLDqwOOqcdLQAAhNaQqmGBf5M4GqNlbAYk
+         38KtRDj6CTbsPF7WxLpjLPF6WHDumtl+M2JUusDCBY+SyMqrSY27UWkAcV76NxurG7LA
+         6nr2x0XtJhpUH6Mypgt6zSVnAO3IXEM13TmxLTN+5efJG+djDGel74K2Kxk8rM5nzN2N
+         Me+1QpTp5d38NwQUnTPQg03WHj29+OsfgpBzYWZ7st5iBa+aDooYwkKHKRjrupzQZKLV
+         T0lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700514380; x=1701119180;
+        d=1e100.net; s=20230601; t=1700514762; x=1701119562;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NG2FEhp12pFkNfvVzutmm+LjhzXXRny+ltBXXG6QNR4=;
-        b=QzE81B1k1HVDtkuP8jYmT8+g6nJqCFF4vxCzGSoHjyZUdOk7KKC3aEiy5AT6EnBvvY
-         ba3Zgp3r9/I+AxQeeeIN4Lr+sQmEBybcegumqmlmxWNmmjtygHZYjFg4GYnuE+3EnKrM
-         8ew8CH3OOW1bBLdx5ITeNbGr2t95qNmcSq0/M7glrm5E2o5pa4SCQR1Isgd13vX8vJjg
-         Q2ondh1kVhkdHVvEr1l5f91/itp9dCQqIQqTLOIyJakZiwBSF8ldSWyMkRxA7c5JDI0Y
-         m1k8v3QuEQHjtKpW7ABWA1na01dH7TBFtCk1SVC5oPq6HxAIrZrasYhw/qRdyRYhNV3J
-         VlaA==
-X-Gm-Message-State: AOJu0YxYIWmxHpznKHP5Gp9lR1fBYtsOB6vmsXJ3jo1Y8FyB8d9Zw2ZE
-        4lNQ6/3sJbuGB6a9UBfZxC4MSwK1eeVoStW8anin
-X-Google-Smtp-Source: AGHT+IH9dEFOAePFkBv2PMwl9MhCUaQv6Ntac6yIXsmvUTEQCyAzM8wMPOVAFCDufYnlm3OoAXU+qg91wHL5Jm2H0Ok=
-X-Received: by 2002:a81:ac17:0:b0:5ca:7629:7a9a with SMTP id
- k23-20020a81ac17000000b005ca76297a9amr4086414ywh.37.1700514380344; Mon, 20
- Nov 2023 13:06:20 -0800 (PST)
+        bh=sqlmM8DM6G+5eGbay1lkfj8kQgtwPw9Yngebn56yPS8=;
+        b=SYjZT8ycvRFBnmC9dM+qfIxSvNf7ClTm5NeDlLhDcUKvpwQ6ieWvKWuSGfxKnEl9ix
+         veLhWBmejXlCdJUO8nR3eDwybMeEU4FRploexxSVo8E/V1UKuBs1e6EW9A1Vwh/pNOSj
+         f7px0SWan91F3mDKy6gztqYOoMkEZW1w3tTZbQV/S6WiSez7F/RIbFLxaEsTzp7rB2yL
+         YCSzsi+uuKJLdOX5LT+1jhS2UdoTU5DX5qX5w73dkNwd/JsVD0x9YCRZvKTnELeAKA3R
+         yn6pYvAGhG7xrsSKE5RuVegsOu0FBG6u55PpL7C4zPgg5rN0h+5Pm+udQXOMr33+fA1H
+         Ztwg==
+X-Gm-Message-State: AOJu0YzR5cfEWaXHb5mkUNWHSRbwracWK2teD/uZeF9ol/E3CT7PDJ/p
+        6eBczIYx0dThgGPAxOxSb/3RqFJkQWzZ6LnUDNxR
+X-Google-Smtp-Source: AGHT+IHmkzLN6Hy1NnfaHz7dCug+kcrwZfp5oehCARoKr0odBnL3RXk+goVDU0SJt1+bJmoJY2sAHzXK22OKdoWv+us=
+X-Received: by 2002:a25:417:0:b0:db0:6cde:3859 with SMTP id
+ 23-20020a250417000000b00db06cde3859mr8659754ybe.41.1700514762565; Mon, 20 Nov
+ 2023 13:12:42 -0800 (PST)
 MIME-Version: 1.0
-References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
- <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com> <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com>
-In-Reply-To: <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com>
+References: <20231114022503.6310-1-kelvie@kelvie.ca> <a66a805c-3e1f-4b9a-a38e-aca84b8678a6@infradead.org>
+In-Reply-To: <a66a805c-3e1f-4b9a-a38e-aca84b8678a6@infradead.org>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 20 Nov 2023 16:06:09 -0500
-Message-ID: <CAHC9VhTTKac1o=RnQadu2xqdeKH8C_F+Wh4sY=HkGbCArwc8JQ@mail.gmail.com>
-Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
- blob for integrity_iint_cache
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, mic@digikod.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Mon, 20 Nov 2023 16:12:31 -0500
+Message-ID: <CAHC9VhR6mr0XRrq=Apy00HD3tdgpKi4RyMr8f5kdx2sjA0sfig@mail.gmail.com>
+Subject: Re: [PATCH RFC] Add a lockdown_hibernate parameter
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Kelvie Wong <kelvie@kelvie.ca>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 20, 2023 at 3:16=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Fri, 2023-11-17 at 15:57 -0500, Paul Moore wrote:
-> > On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
-> > >
-> > > Before the security field of kernel objects could be shared among LSM=
-s with
-> > > the LSM stacking feature, IMA and EVM had to rely on an alternative s=
-torage
-> > > of inode metadata. The association between inode metadata and inode i=
-s
-> > > maintained through an rbtree.
-> > >
-> > > Because of this alternative storage mechanism, there was no need to u=
-se
-> > > disjoint inode metadata, so IMA and EVM today still share them.
-> > >
-> > > With the reservation mechanism offered by the LSM infrastructure, the
-> > > rbtree is no longer necessary, as each LSM could reserve a space in t=
-he
-> > > security blob for each inode. However, since IMA and EVM share the
-> > > inode metadata, they cannot directly reserve the space for them.
-> > >
-> > > Instead, request from the 'integrity' LSM a space in the security blo=
-b for
-> > > the pointer of inode metadata (integrity_iint_cache structure). The o=
-ther
-> > > reason for keeping the 'integrity' LSM is to preserve the original or=
-dering
-> > > of IMA and EVM functions as when they were hardcoded.
-> > >
-> > > Prefer reserving space for a pointer to allocating the integrity_iint=
-_cache
-> > > structure directly, as IMA would require it only for a subset of inod=
-es.
-> > > Always allocating it would cause a waste of memory.
-> > >
-> > > Introduce two primitives for getting and setting the pointer of
-> > > integrity_iint_cache in the security blob, respectively
-> > > integrity_inode_get_iint() and integrity_inode_set_iint(). This would=
- make
-> > > the code more understandable, as they directly replace rbtree operati=
-ons.
-> > >
-> > > Locking is not needed, as access to inode metadata is not shared, it =
-is per
-> > > inode.
-> > >
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > ---
-> > >  security/integrity/iint.c      | 71 +++++---------------------------=
---
-> > >  security/integrity/integrity.h | 20 +++++++++-
-> > >  2 files changed, 29 insertions(+), 62 deletions(-)
-> > >
-> > > diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> > > index 882fde2a2607..a5edd3c70784 100644
-> > > --- a/security/integrity/iint.c
-> > > +++ b/security/integrity/iint.c
-> > > @@ -231,6 +175,10 @@ static int __init integrity_lsm_init(void)
-> > >     return 0;
-> > >  }
-> > >
-> > > +struct lsm_blob_sizes integrity_blob_sizes __ro_after_init =3D {
-> > > +   .lbs_inode =3D sizeof(struct integrity_iint_cache *),
-> > > +};
-> >
-> > I'll admit that I'm likely missing an important detail, but is there
-> > a reason why you couldn't stash the integrity_iint_cache struct
-> > directly in the inode's security blob instead of the pointer?  For
-> > example:
-> >
-> >   struct lsm_blob_sizes ... =3D {
-> >     .lbs_inode =3D sizeof(struct integrity_iint_cache),
-> >   };
-> >
-> >   struct integrity_iint_cache *integrity_inode_get(inode)
-> >   {
-> >     if (unlikely(!inode->isecurity))
-> >       return NULL;
-> >     return inode->i_security + integrity_blob_sizes.lbs_inode;
-> >   }
+On Mon, Nov 13, 2023 at 11:01=E2=80=AFPM Randy Dunlap <rdunlap@infradead.or=
+g> wrote:
 >
-> It would increase memory occupation. Sometimes the IMA policy
-> encompasses a small subset of the inodes. Allocating the full
-> integrity_iint_cache would be a waste of memory, I guess?
+> [add security & dhowells]
+>
+> On 11/13/23 18:23, Kelvie Wong wrote:
+> > This allows the user to tell the kernel that they know better (namely,
+> > they secured their swap properly), and that it can enable hibernation.
+> >
+> > I've been using this for about a year now, as it doesn't seem like
+> > proper secure hibernation was going to be implemented back then, and
+> > it's now been a year since I've been building my own kernels with this
+> > patch, so getting this upstreamed would save some CO2 from me building
+> > my own kernels every upgrade.
+> >
+> > Some other not-me users have also tested the patch:
+> >
+> > https://community.frame.work/t/guide-fedora-36-hibernation-with-enabled=
+-secure-boot-and-full-disk-encryption-fde-decrypting-over-tpm2/25474/17
+> >
+> > Signed-off-by: Kelvie Wong <kelvie@kelvie.ca>
+> > ---
+> >  Documentation/admin-guide/kernel-parameters.txt |  5 +++++
+> >  kernel/power/hibernate.c                        | 10 +++++++++-
+> >  2 files changed, 14 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
+ation/admin-guide/kernel-parameters.txt
+> > index 426fa892d311..54785faba9e0 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -2804,6 +2804,11 @@
+> >                       to extract confidential information from the kern=
+el
+> >                       are also disabled.
+> >
+> > +     lockdown_hibernate      [HIBERNATION]
+> > +                     Enable hibernation even if lockdown is enabled. E=
+nable this only if
+> > +                     your swap is encrypted and secured properly, as a=
+n attacker can
+> > +                     modify the kernel offline during hibernation.
+> > +
+> >       locktorture.nreaders_stress=3D [KNL]
+> >                       Set the number of locking read-acquisition kthrea=
+ds.
+> >                       Defaults to being automatically set based on the
+> > diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+> > index 89c71fce225d..2221c531d54c 100644
+> > --- a/kernel/power/hibernate.c
+> > +++ b/kernel/power/hibernate.c
+> > @@ -36,6 +36,7 @@
+> >  #include "power.h"
+> >
+> >
+> > +static int lockdown_hibernate;
+> >  static int nocompress;
+> >  static int noresume;
+> >  static int nohibernate;
+> > @@ -82,7 +83,7 @@ void hibernate_release(void)
+> >  bool hibernation_available(void)
+> >  {
+> >       return nohibernate =3D=3D 0 &&
+> > -             !security_locked_down(LOCKDOWN_HIBERNATION) &&
+> > +             (lockdown_hibernate || !security_locked_down(LOCKDOWN_HIB=
+ERNATION)) &&
+> >               !secretmem_active() && !cxl_mem_active();
+> >  }
 
-Perhaps, but if it allows us to remove another layer of dynamic memory
-I would argue that it may be worth the cost.  It's also worth
-considering the size of integrity_iint_cache, while it isn't small, it
-isn't exactly huge either.
+I would feel a lot better about this if there was a way to verify that
+the swap was protected as opposed to leaving that as a note in a doc
+that the majority of users will never see, read, or understand.
 
-> On the other hand... (did not think fully about that) if we embed the
-> full structure in the security blob, we already have a mutex available
-> to use, and we don't need to take the inode lock (?).
-
-That would be excellent, getting rid of a layer of locking would be signifi=
-cant.
-
-> I'm fully convinced that we can improve the implementation
-> significantly. I just was really hoping to go step by step and not
-> accumulating improvements as dependency for moving IMA and EVM to the
-> LSM infrastructure.
-
-I understand, and I agree that an iterative approach is a good idea, I
-just want to make sure we keep things tidy from a user perspective,
-i.e. not exposing the "integrity" LSM when it isn't required.
-
---
+--=20
 paul-moore.com
