@@ -1,300 +1,154 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b16obzmp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 499FF92;
-	Mon, 20 Nov 2023 15:37:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700523422; x=1732059422;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Cxz6UjMDz/60vN8qZ38jsSzHRChcXc2xRatWwl7/9MY=;
-  b=b16obzmp8KSHrq+go9FTRnYYTm5l1ZJg5RGO6RvkhmwOtfgaEKbmGgyQ
-   Vv1FyUE9QSdBq9oteEvULQxLk9tvY4NvuwyEQEdfOjrxfd3peAfnskipV
-   GZn8OVjfKVL0IwIwqVRSjGYl6X8ezMvUpfXInQKvuT38LoBstQ6A7WTIU
-   BTX4Ytd1wTBm1VAKbRee7swrjVXdxw6aG5nJJ1nOUtZTSixI7qJ9WmrF/
-   eZg0QYWnoXLKr64HJJ4ZzCB7JqwVFuOyzvg1QhTvRF+0Tpb6vCgW/ba2C
-   VpZUeypXrSsUk2TeARLvanned/qbBr2cvsMZY6yVgclj1t4zRl7W80YkJ
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10900"; a="371067516"
-X-IronPort-AV: E=Sophos;i="6.04,214,1695711600"; 
-   d="scan'208";a="371067516"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2023 15:37:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10900"; a="832440922"
-X-IronPort-AV: E=Sophos;i="6.04,214,1695711600"; 
-   d="scan'208";a="832440922"
-Received: from lkp-server02.sh.intel.com (HELO b8de5498638e) ([10.239.97.151])
-  by fmsmga008.fm.intel.com with ESMTP; 20 Nov 2023 15:36:58 -0800
-Received: from kbuild by b8de5498638e with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1r5Dp1-00074A-1T;
-	Mon, 20 Nov 2023 23:36:55 +0000
-Date: Tue, 21 Nov 2023 07:36:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	linux-security-module <linux-security-module@vger.kernel.org>,
-	bpf <bpf@vger.kernel.org>, KP Singh <kpsingh@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Paul Moore <paul@paul-moore.com>,
-	Kees Cook <keescook@chromium.org>,
-	Casey Schaufler <casey@schaufler-ca.com>, song@kernel.org,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>, renauld@google.com,
-	Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH 4/4] LSM: Add a LSM module which handles dynamically
- appendable LSM hooks.
-Message-ID: <202311210740.Mxc4WM7v-lkp@intel.com>
-References: <34be5cd8-1fdd-4323-82a3-40f2e7d35db3@I-love.SAKURA.ne.jp>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="gE696MN7"
+Received: from sonic316-27.consmr.mail.ne1.yahoo.com (sonic316-27.consmr.mail.ne1.yahoo.com [66.163.187.153])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C16DD8
+	for <linux-security-module@vger.kernel.org>; Mon, 20 Nov 2023 16:51:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1700527863; bh=X6NNrh2o9TkByhBWiubp9qwlQAP2OzbbUw3CuaiiYt4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=gE696MN7CmATorwHr2JjXJaoQNL40hRgJ+cYESBnbzVDtVPmqT3VJc9V2qrJlzMI4lp7zBAPQ5PBVe/UAYPz4HqXD6khLzSwEwLx5eMXMNBUpIGJoWKiznMiTzu7C+UZIgI0CEOqp3HQOhXMnydGk5GmjBfNK+XyGvSUIsNQfOWYdO28Je6bttyedLshlF+6o3qfh8IflG+l6elX5or3Mue5rqMWugAKQBA0RyBtL6St/tV0XTgzEjcy2FRzWhHbD+AAgpkEjiRMo0FR5eFZCYxa7Ve71L+uwLRV31RWgutMHcVWg87MmzfOwrX6Rq+PfsLntxI5RNtF6lu3TxX7gA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1700527863; bh=kmDhWoqSbEAqPNzl2xg7xH/nF3Vp1fYXhkvFIclEdTW=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=gKB5VX19b9sjmgbIYKG13TCGWgcBtI/3SjHk4aGtPuetlKBKyT0qrhsUTA/daOmb5UpBtYklivT6DyKd78c7Ndgdp9S8wu7vLN+poEOcw1gZ4vV9JmyVV0gQf7w/Npi0MLLoU4UrQ7MBnRIPyyHGOIpmGbZ7jPZhdkP3RZldcBGU/p5YpkI+BVdGZZ1K3hPz272zNp/d7+4i6n41pb+7UaqHGJt2zkZE1jbv+++Lcq2mFn51phJ5S2fbrczTWHfaMSq2FHfWCGZRfXdMINfzdu4GeTggcEu3PkAvZNbOsY999JmUwI0UfepDQkI4jkCSONSK+ZrwwgjDkvzFnbR+wg==
+X-YMail-OSG: ylTlCfAVM1mNJDd8QjJ0ZLL.iLXAIZPAxbCtvzHeK8uGpJxFlIS4KnTw4dErzhw
+ fqwYAvTC2PxROLx4IPUjI.lG_3ni32g5.kRQXWgD28KXfH0lxU4PNQySgyZywT9RtshfuWR3HFRP
+ YWCfqhF2lO22bB4buWxosIa3.RJV18t9EyF3kC3b4R5lZYdgAHwqWDhoKzZ_iyUxV09ZjApUuFMG
+ DzNb8mb5_vxaSiyZfJT4.62rHnfMVPjaK82kUNEthikwKQ_lLzGiuoC6p3TXNf6LhVHqlb1tX70A
+ GA7gRZxJ08.sjsA79C5PQK2fPRX8vTejKAwkJdAEgwu6chRf03aOAS9LuPtf8WY9kVD9CChGKSyv
+ lwCDRt2wK.3BzElbggPPGp8jVBMmEYOGlmTjzP7n9YvVCJtKxB3bjmugxkSmJfNIY5l0w8gyWxxt
+ iycZSgqieeQwWd00tLd8m8K0ISiqys_DXcRubnHOVCJT2mPtOfMBl_uI6wwFra9tGPHv9BpW2eZw
+ Ja1TghgzisgEx5sCxwM7O990YaaY0IOKWTPWj9y_mgJGCNzCWxoEaMXhwht4oQ.dxbRFkfansHOk
+ FMiFv2GzRvzj0rW55PKVKGgrQVUk3tLQnSjNXZ74shCGHmLBg6_58K1B9YkQJKg538__08pC9nBs
+ cbMW_k0ZBilAzNjfqcG0mfywGZany6RT8L_R5h99Po4yj4vYTAiGLyeFnej8.J_xECkXaYxkMQgG
+ NM.B3jbJxk9UP7ZCwbKmxF.XVj7QSYVfRDQIQmOyaB2GUqKvrj99uM6ztjsyzmj61ngKDKfswbDl
+ eoniJYtrGwVubTE_HlyenAiks5V2EQio._WN2YNW89824ceg7nMRXz6MOrAFJ.hA7SH2NdjmdX0B
+ PKiOKPrhe7duwWa42yKcwKlVSpuY56jcIQ79R_vvgKYND9FGFnfMsbLJBI_f5rTyL7t3m0B6sY.q
+ DtKSbLRM4ZcpOM9CpvmQP9Am3BgYm4kQYXAOY5NZL3P42Is8r1aEQXI7Wi35GuJck5bUo6uYB4Wf
+ SsL1_.ZX5BkpciZZCAF.LfpFm.xmDRo9T.Ywmjpl57YQllo201amuihrxGHPvxNcX32uu8Cy2A47
+ mR4FaHMNjL8Gf8S0YFXIXa64_fmk4w9IJrMpkVMyW96vffn1s2xTia.uf.XDSxEDEbVCpsO5s8_6
+ 4c.yejFWarQ8Ga3kdYP_8ksYFuEl2THKuE7GEzQydMlBc4vxtZwIfADIqMcWyIENCj0vPJWV6Frx
+ PdaHBsnwzlhjfE12thBW7GT1xUYLq0r3xz0rvyVSQw5fuyjI2jvbErd6sJ8iry2jxpzQ2Q.pgW1I
+ fix5Y2CAAHQjUVBvoTDqHl90oj2mHj36sFL6n.mJue1_yDegNZs452ptcwSowzZEygAs2k9xXiP7
+ .5ufFmeOzMMo2A54yz3wKMHSMEgS82WSNs6AbAvLu2A_WY23BjZ.0UP_rbEOQqRQDpL7VB3UpAxX
+ pwdLS3vLCrjN8cCzG5bT_jgEV3_QJkZtv_bkXnyTzHiMsUskqkeE2XZ6woPjvgfqlg1hWb7ln1p5
+ j2GUVmQ_Gx6XlmuwEXLQsf7AMF73_Ok57brHY3Xt6cOdswIAhSus3OmxEEDGnYL7m9Jo2hSerSk4
+ Epg5WiRmr0HW8znp70EVs3bSazyo1umQQL0XYKjlZO20oXov4NbzcXu3WANxKd8XKpvJ3kjwIRxN
+ tbffOz2PAWhFHfUCLzAP6bEt2p5eRHIyl4AMZiBTpwkSrkH4FXRsh7JYeNa.lUz0is.NEuDCvwGT
+ rWEmyTBz.QuX4zfcb3of9K3MqxtFxnFkhRypxRtIVceGZ.90e2EjhKYAB7NKo2NgTwRCU3CtsdWy
+ VoxOkCKsQmuRVPB2bA_pR0q.uQ0irqnqVaSglF34Rr9gqt6BRG9yfGuGxYgaWi5IOoA_HczUUju3
+ Oic.VSBN6XOTK6i8t64CD4QDJ9NySXsSiigtd7Kup159H_fEpURwt5YWTSr2TlpPaTXm_N4tuKQF
+ CSGbhm2b3MltMqC6NH24K1Uq6oQuWo4RUUTv8IQdh0eT2v2SuDHoU2z6xT84PuYN6go.8Iy0Lqso
+ Sz6z50fJkrFL2Qr4BiwS.wjMRLegBLOMn0k7alzJ42FNFQLQKFiBnvVD0HYJzu6hxV6eRYV5D60T
+ JI6GQcFKuBff9M2of1AmMnF.04IM6QepkjvrV32hzYu_lYhPgey35wRsgGs0qJAGR21OLjpC861w
+ e.TyXO5Z1JN5t98T65VHw3ooV.unQIe.7JCc1He.U_MqFzcAoTS94yyvsV2sNMLduwEM-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 8d70e5ed-64ab-4e7f-8a95-7b16a6fffe37
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 21 Nov 2023 00:51:03 +0000
+Received: by hermes--production-gq1-6775bfb8fc-ljztx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4e636f04e136106655e334c750e19110;
+          Tue, 21 Nov 2023 00:50:58 +0000 (UTC)
+Message-ID: <24a9f95d-6a28-47d3-a0cf-48e1698e2445@schaufler-ca.com>
+Date: Mon, 20 Nov 2023 16:50:56 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <34be5cd8-1fdd-4323-82a3-40f2e7d35db3@I-love.SAKURA.ne.jp>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 25/25] security: Enforce ordering of 'ima' and 'evm'
+ LSMs
+Content-Language: en-US
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+ neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, dhowells@redhat.com,
+ jarkko@kernel.org, stephen.smalley.work@gmail.com, eparis@parisplace.org,
+ mic@digikod.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+ selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20231120173318.1132868-1-roberto.sassu@huaweicloud.com>
+ <20231120173318.1132868-26-roberto.sassu@huaweicloud.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20231120173318.1132868-26-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Hi Tetsuo,
+On 11/20/2023 9:33 AM, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> The ordering of LSM_ORDER_LAST LSMs depends on how they are placed in the
+> .lsm_info.init section of the kernel image.
+>
+> Without making any assumption on the LSM ordering based on how they are
+> compiled, enforce that ordering at LSM infrastructure level.
+>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  security/security.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>
+> diff --git a/security/security.c b/security/security.c
+> index 351a124b771c..b98db79ca500 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -263,6 +263,18 @@ static void __init initialize_lsm(struct lsm_info *lsm)
+>  	}
+>  }
+>  
+> +/* Find an LSM with a given name. */
+> +static struct lsm_info __init *find_lsm(const char *name)
+> +{
+> +	struct lsm_info *lsm;
+> +
+> +	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++)
+> +		if (!strcmp(lsm->name, name))
+> +			return lsm;
+> +
+> +	return NULL;
+> +}
+> +
+>  /*
+>   * Current index to use while initializing the lsm id list.
+>   */
+> @@ -333,10 +345,23 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+>  
+>  	/* LSM_ORDER_LAST is always last. */
+>  	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+> +		/* Do it later, to enforce the expected ordering. */
+> +		if (!strcmp(lsm->name, "ima") || !strcmp(lsm->name, "evm"))
+> +			continue;
+> +
 
-kernel test robot noticed the following build errors:
+Hard coding the ordering of LSMs is incredibly ugly and unlikely to scale.
+Not to mention perplexing the next time someone creates an LSM that "has to be last".
 
-[auto build test ERROR on bpf/master]
-[also build test ERROR on pcmoore-audit/next pcmoore-selinux/next linus/master v6.7-rc2]
-[cannot apply to bpf-next/master next-20231120]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Why isn't LSM_ORDER_LAST sufficient? If it really isn't, how about adding
+and using LSM_ORDER_LAST_I_REALLY_MEAN_IT* ?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tetsuo-Handa/LSM-Auto-undef-LSM_HOOK-macro/20231120-214522
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git master
-patch link:    https://lore.kernel.org/r/34be5cd8-1fdd-4323-82a3-40f2e7d35db3%40I-love.SAKURA.ne.jp
-patch subject: [PATCH 4/4] LSM: Add a LSM module which handles dynamically appendable LSM hooks.
-config: arc-randconfig-002-20231121 (https://download.01.org/0day-ci/archive/20231121/202311210740.Mxc4WM7v-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231121/202311210740.Mxc4WM7v-lkp@intel.com/reproduce)
+Alternatively, a declaration of ordering requirements with regard to other
+LSMs in lsm_info. You probably don't care where ima is relative to Yama,
+but you need to be after SELinux and before evm. lsm_info could have 
+must_precede and must_follow lists. Maybe a must_not_combine list, too,
+although I'm hoping to make that unnecessary. 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202311210740.Mxc4WM7v-lkp@intel.com/
+And you should be using LSM_ID values instead of LSM names.
 
-All error/warnings (new ones prefixed by >>):
+---
+* Naming subject to Paul's sensibilities, of course.
 
->> security/security.c:784:13: warning: no previous prototype for 'security_bprm_check_security' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:114:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     114 | LSM_PLAIN_INT_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
-         | ^~~~~~~~~~~~~~~~~~
->> security/security.c:784:13: warning: no previous prototype for 'security_sb_alloc_security' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:123:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     123 | LSM_PLAIN_INT_HOOK(int, 0, sb_alloc_security, struct super_block *sb)
-         | ^~~~~~~~~~~~~~~~~~
->> security/security.c:799:14: warning: no previous prototype for 'security_sb_free_security' [-Wmissing-prototypes]
-     799 |         void security_##NAME(__VA_ARGS__)                               \
-         |              ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:125:1: note: in expansion of macro 'LSM_PLAIN_VOID_HOOK'
-     125 | LSM_PLAIN_VOID_HOOK(void, LSM_RET_VOID, sb_free_security, struct super_block *sb)
-         | ^~~~~~~~~~~~~~~~~~~
->> security/security.c:799:14: warning: no previous prototype for 'security_sb_free_mnt_opts' [-Wmissing-prototypes]
-     799 |         void security_##NAME(__VA_ARGS__)                               \
-         |              ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:126:1: note: in expansion of macro 'LSM_PLAIN_VOID_HOOK'
-     126 | LSM_PLAIN_VOID_HOOK(void, LSM_RET_VOID, sb_free_mnt_opts, void *mnt_opts)
-         | ^~~~~~~~~~~~~~~~~~~
->> security/security.c:784:13: warning: no previous prototype for 'security_inode_alloc_security' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:174:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     174 | LSM_PLAIN_INT_HOOK(int, 0, inode_alloc_security, struct inode *inode)
-         | ^~~~~~~~~~~~~~~~~~
->> security/security.c:799:14: warning: no previous prototype for 'security_inode_free_security' [-Wmissing-prototypes]
-     799 |         void security_##NAME(__VA_ARGS__)                               \
-         |              ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:175:1: note: in expansion of macro 'LSM_PLAIN_VOID_HOOK'
-     175 | LSM_PLAIN_VOID_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
-         | ^~~~~~~~~~~~~~~~~~~
->> security/security.c:784:13: warning: no previous prototype for 'security_file_alloc_security' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:231:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     231 | LSM_PLAIN_INT_HOOK(int, 0, file_alloc_security, struct file *file)
-         | ^~~~~~~~~~~~~~~~~~
->> security/security.c:799:14: warning: no previous prototype for 'security_file_free_security' [-Wmissing-prototypes]
-     799 |         void security_##NAME(__VA_ARGS__)                               \
-         |              ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:232:1: note: in expansion of macro 'LSM_PLAIN_VOID_HOOK'
-     232 | LSM_PLAIN_VOID_HOOK(void, LSM_RET_VOID, file_free_security, struct file *file)
-         | ^~~~~~~~~~~~~~~~~~~
->> security/security.c:784:13: warning: no previous prototype for 'security_cred_prepare' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:254:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     254 | LSM_PLAIN_INT_HOOK(int, 0, cred_prepare, struct cred *new, const struct cred *old,
-         | ^~~~~~~~~~~~~~~~~~
->> security/security.c:784:13: warning: no previous prototype for 'security_msg_msg_alloc_security' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:300:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     300 | LSM_PLAIN_INT_HOOK(int, 0, msg_msg_alloc_security, struct msg_msg *msg)
-         | ^~~~~~~~~~~~~~~~~~
->> security/security.c:799:14: warning: no previous prototype for 'security_msg_msg_free_security' [-Wmissing-prototypes]
-     799 |         void security_##NAME(__VA_ARGS__)                               \
-         |              ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:301:1: note: in expansion of macro 'LSM_PLAIN_VOID_HOOK'
-     301 | LSM_PLAIN_VOID_HOOK(void, LSM_RET_VOID, msg_msg_free_security, struct msg_msg *msg)
-         | ^~~~~~~~~~~~~~~~~~~
->> security/security.c:784:13: warning: no previous prototype for 'security_msg_queue_alloc_security' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:302:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     302 | LSM_PLAIN_INT_HOOK(int, 0, msg_queue_alloc_security, struct kern_ipc_perm *perm)
-         | ^~~~~~~~~~~~~~~~~~
->> security/security.c:799:14: warning: no previous prototype for 'security_msg_queue_free_security' [-Wmissing-prototypes]
-     799 |         void security_##NAME(__VA_ARGS__)                               \
-         |              ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:303:1: note: in expansion of macro 'LSM_PLAIN_VOID_HOOK'
-     303 | LSM_PLAIN_VOID_HOOK(void, LSM_RET_VOID, msg_queue_free_security,
-         | ^~~~~~~~~~~~~~~~~~~
->> security/security.c:784:13: warning: no previous prototype for 'security_shm_alloc_security' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:311:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     311 | LSM_PLAIN_INT_HOOK(int, 0, shm_alloc_security, struct kern_ipc_perm *perm)
-         | ^~~~~~~~~~~~~~~~~~
->> security/security.c:799:14: warning: no previous prototype for 'security_shm_free_security' [-Wmissing-prototypes]
-     799 |         void security_##NAME(__VA_ARGS__)                               \
-         |              ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:312:1: note: in expansion of macro 'LSM_PLAIN_VOID_HOOK'
-     312 | LSM_PLAIN_VOID_HOOK(void, LSM_RET_VOID, shm_free_security, struct kern_ipc_perm *perm)
-         | ^~~~~~~~~~~~~~~~~~~
->> security/security.c:784:13: warning: no previous prototype for 'security_sem_alloc_security' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:317:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     317 | LSM_PLAIN_INT_HOOK(int, 0, sem_alloc_security, struct kern_ipc_perm *perm)
-         | ^~~~~~~~~~~~~~~~~~
->> security/security.c:799:14: warning: no previous prototype for 'security_sem_free_security' [-Wmissing-prototypes]
-     799 |         void security_##NAME(__VA_ARGS__)                               \
-         |              ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:318:1: note: in expansion of macro 'LSM_PLAIN_VOID_HOOK'
-     318 | LSM_PLAIN_VOID_HOOK(void, LSM_RET_VOID, sem_free_security, struct kern_ipc_perm *perm)
-         | ^~~~~~~~~~~~~~~~~~~
->> security/security.c:799:14: warning: no previous prototype for 'security_sk_getsecid' [-Wmissing-prototypes]
-     799 |         void security_##NAME(__VA_ARGS__)                               \
-         |              ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:381:1: note: in expansion of macro 'LSM_PLAIN_VOID_HOOK'
-     381 | LSM_PLAIN_VOID_HOOK(void, LSM_RET_VOID, sk_getsecid, const struct sock *sk, u32 *secid)
-         | ^~~~~~~~~~~~~~~~~~~
->> security/security.c:784:13: warning: no previous prototype for 'security_xfrm_policy_alloc_security' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:420:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     420 | LSM_PLAIN_INT_HOOK(int, 0, xfrm_policy_alloc_security, struct xfrm_sec_ctx **ctxp,
-         | ^~~~~~~~~~~~~~~~~~
->> security/security.c:784:13: warning: no previous prototype for 'security_xfrm_policy_clone_security' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:422:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     422 | LSM_PLAIN_INT_HOOK(int, 0, xfrm_policy_clone_security, struct xfrm_sec_ctx *old_ctx,
-         | ^~~~~~~~~~~~~~~~~~
-   security/security.c:799:14: warning: no previous prototype for 'security_xfrm_policy_free_security' [-Wmissing-prototypes]
-     799 |         void security_##NAME(__VA_ARGS__)                               \
-         |              ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:424:1: note: in expansion of macro 'LSM_PLAIN_VOID_HOOK'
-     424 | LSM_PLAIN_VOID_HOOK(void, LSM_RET_VOID, xfrm_policy_free_security,
-         | ^~~~~~~~~~~~~~~~~~~
-   security/security.c:784:13: warning: no previous prototype for 'security_xfrm_policy_delete_security' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:426:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     426 | LSM_PLAIN_INT_HOOK(int, 0, xfrm_policy_delete_security, struct xfrm_sec_ctx *ctx)
-         | ^~~~~~~~~~~~~~~~~~
-   security/security.c:799:14: warning: no previous prototype for 'security_xfrm_state_free_security' [-Wmissing-prototypes]
-     799 |         void security_##NAME(__VA_ARGS__)                               \
-         |              ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:431:1: note: in expansion of macro 'LSM_PLAIN_VOID_HOOK'
-     431 | LSM_PLAIN_VOID_HOOK(void, LSM_RET_VOID, xfrm_state_free_security, struct xfrm_state *x)
-         | ^~~~~~~~~~~~~~~~~~~
-   security/security.c:784:13: warning: no previous prototype for 'security_xfrm_state_delete_security' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:432:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     432 | LSM_PLAIN_INT_HOOK(int, 0, xfrm_state_delete_security, struct xfrm_state *x)
-         | ^~~~~~~~~~~~~~~~~~
-   security/security.c:784:13: error: conflicting types for 'security_xfrm_decode_session'; have 'int(struct sk_buff *, u32 *, int)' {aka 'int(struct sk_buff *, unsigned int *, int)'}
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:436:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     436 | LSM_PLAIN_INT_HOOK(int, 0, xfrm_decode_session, struct sk_buff *skb, u32 *secid,
-         | ^~~~~~~~~~~~~~~~~~
-   In file included from include/linux/lsm_hooks.h:28,
-                    from security/security.c:21:
-   include/linux/security.h:1753:5: note: previous declaration of 'security_xfrm_decode_session' with type 'int(struct sk_buff *, u32 *)' {aka 'int(struct sk_buff *, unsigned int *)'}
-    1753 | int security_xfrm_decode_session(struct sk_buff *skb, u32 *secid);
-         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   security/security.c:784:13: warning: no previous prototype for 'security_bpf_map_alloc_security' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:462:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     462 | LSM_PLAIN_INT_HOOK(int, 0, bpf_map_alloc_security, struct bpf_map *map)
-         | ^~~~~~~~~~~~~~~~~~
-   security/security.c:799:14: warning: no previous prototype for 'security_bpf_map_free_security' [-Wmissing-prototypes]
-     799 |         void security_##NAME(__VA_ARGS__)                               \
-         |              ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:463:1: note: in expansion of macro 'LSM_PLAIN_VOID_HOOK'
-     463 | LSM_PLAIN_VOID_HOOK(void, LSM_RET_VOID, bpf_map_free_security, struct bpf_map *map)
-         | ^~~~~~~~~~~~~~~~~~~
-   security/security.c:784:13: warning: no previous prototype for 'security_bpf_prog_alloc_security' [-Wmissing-prototypes]
-     784 |         int security_##NAME(__VA_ARGS__)                                \
-         |             ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:464:1: note: in expansion of macro 'LSM_PLAIN_INT_HOOK'
-     464 | LSM_PLAIN_INT_HOOK(int, 0, bpf_prog_alloc_security, struct bpf_prog_aux *aux)
-         | ^~~~~~~~~~~~~~~~~~
-   security/security.c:799:14: warning: no previous prototype for 'security_bpf_prog_free_security' [-Wmissing-prototypes]
-     799 |         void security_##NAME(__VA_ARGS__)                               \
-         |              ^~~~~~~~~
-   include/linux/lsm_hook_defs.h:465:1: note: in expansion of macro 'LSM_PLAIN_VOID_HOOK'
-     465 | LSM_PLAIN_VOID_HOOK(void, LSM_RET_VOID, bpf_prog_free_security, struct bpf_prog_aux *aux)
-         | ^~~~~~~~~~~~~~~~~~~
-
-
-vim +784 security/security.c
-
-   781	
-   782	#include <linux/lsm_hook_args.h>
-   783	#define LSM_PLAIN_INT_HOOK(RET, DEFAULT, NAME, ...)			\
- > 784		int security_##NAME(__VA_ARGS__)				\
-   785		{								\
-   786			struct security_hook_list *P;				\
-   787										\
-   788			hlist_for_each_entry(P, &security_hook_heads.NAME, list) { \
-   789				int RC = P->hook.NAME(LSM_CALL_ARGS_##NAME);	\
-   790										\
-   791				if (RC != DEFAULT)				\
-   792					return RC;				\
-   793			}							\
-   794			return DEFAULT;						\
-   795		}
-   796	#define LSM_CUSTOM_INT_HOOK(RET, DEFAULT, NAME, ...) DECLARE_LSM_RET_DEFAULT_int(DEFAULT, NAME)
-   797	#define LSM_SPECIAL_INT_HOOK(RET, DEFAULT, NAME, ...) DECLARE_LSM_RET_DEFAULT_int(DEFAULT, NAME)
-   798	#define LSM_PLAIN_VOID_HOOK(RET, DEFAULT, NAME, ...)			\
- > 799		void security_##NAME(__VA_ARGS__)				\
-   800		{								\
-   801			struct security_hook_list *P;				\
-   802										\
-   803			hlist_for_each_entry(P, &security_hook_heads.NAME, list) \
-   804				P->hook.NAME(LSM_CALL_ARGS_##NAME);		\
-   805		}
-   806	#define LSM_CUSTOM_VOID_HOOK(RET, DEFAULT, NAME, ...)
-   807	#define LSM_SPECIAL_VOID_HOOK(RET, DEFAULT, NAME, ...)
-   808	#include <linux/lsm_hook_defs.h>
-   809	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  		if (lsm->order == LSM_ORDER_LAST)
+>  			append_ordered_lsm(lsm, "   last");
+>  	}
+>  
+> +	/* Ensure that the 'ima' and 'evm' LSMs are last and in this order. */
+> +	lsm = find_lsm("ima");
+> +	if (lsm)
+> +		append_ordered_lsm(lsm, "   last");
+> +
+> +	lsm = find_lsm("evm");
+> +	if (lsm)
+> +		append_ordered_lsm(lsm, "   last");
+> +
+>  	/* Disable all LSMs not in the ordered list. */
+>  	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+>  		if (exists_ordered_lsm(lsm))
