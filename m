@@ -1,106 +1,160 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kelvie.ca header.i=@kelvie.ca header.b="oDbnF1ZC"
-Received: from mail-108-mta39.mxroute.com (mail-108-mta39.mxroute.com [136.175.108.39])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1BBDCB
-	for <linux-security-module@vger.kernel.org>; Mon, 20 Nov 2023 19:07:17 -0800 (PST)
-Received: from filter006.mxroute.com ([136.175.111.2] filter006.mxroute.com)
- (Authenticated sender: mN4UYu2MZsgR)
- by mail-108-mta39.mxroute.com (ZoneMTA) with ESMTPSA id 18befd89f01000190b.004
- for <linux-security-module@vger.kernel.org>
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
- Tue, 21 Nov 2023 03:07:13 +0000
-X-Zone-Loop: 6b0209b622b23e3bfbc408d79ab79f1c29bc0cb893af
-X-Originating-IP: [136.175.111.2]
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kelvie.ca;
-	s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:
-	From:In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=yv3ur+VJgPZw5HSVfRVyxfBSzyF5tf8z7FkRU5st0L8=; b=oDbnF1ZC4la1YdwywqU+G9G6Qe
-	88QaVloZ0eYUc3Q8326JwRDRR9L7KpUQDUeJHaBpl6vvrw9TPp9mLGogorfxAA8ocY3E2oYaW9fPM
-	nqi6zTnljzLw/5sdUQRGM4YlPHb3sfFtlco5NTPNlx5uaXx5K+//rWwp2R2EXRRvdJey09ucj6AHv
-	w7AJbKxjX+iQIzgqN2rqYHrSYku+Iuq/ONlfFCv1aQnZUqsfUM+KOlsNCQFN3X+OpRF8tbPgj6O9q
-	n/1zy96mP0v3cVtBYBw62qqaRj2s9V7iOUz4fEjBLC66aeRJ2CoiS+hN3CAC8/yrxY+phHLYLTT81
-	zhqqziwg==;
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2851b271e51so1416788a91.1;
-        Mon, 20 Nov 2023 19:07:11 -0800 (PST)
-X-Gm-Message-State: AOJu0Yx7tyGV0qyJbexqXA/sKLzQoyKaLi1uOh8nh69fys8AIvAxm1vc
-	wIXG1Wj5hPZEIYwEm189QkFjwT3Lf9BYZuF36qQ=
-X-Google-Smtp-Source: AGHT+IHon8FUuNWN6OAvDXiT56AU977GCXjbZnY29yNHWhPtGrU+rTKXg7n8CadQaTmdi00890/QXuJBCYzK0xTkkfk=
-X-Received: by 2002:a17:90a:6881:b0:280:a4a1:5d03 with SMTP id
- a1-20020a17090a688100b00280a4a15d03mr2108500pjd.4.1700536030830; Mon, 20 Nov
- 2023 19:07:10 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A090CC3;
+	Mon, 20 Nov 2023 23:58:43 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4SZGcc6rRPz9y5Z0;
+	Tue, 21 Nov 2023 15:45:04 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwD35HQHY1xldiUUAQ--.11542S2;
+	Tue, 21 Nov 2023 08:58:13 +0100 (CET)
+Message-ID: <884eb5167283c7ce0604b3dae9807d99b661eff8.camel@huaweicloud.com>
+Subject: Re: [PATCH v6 25/25] security: Enforce ordering of 'ima' and 'evm'
+ LSMs
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, viro@zeniv.linux.org.uk, 
+ brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+ neilb@suse.de,  kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ paul@paul-moore.com,  jmorris@namei.org, serge@hallyn.com,
+ zohar@linux.ibm.com,  dmitry.kasatkin@gmail.com, dhowells@redhat.com,
+ jarkko@kernel.org,  stephen.smalley.work@gmail.com, eparis@parisplace.org,
+ mic@digikod.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+	selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Tue, 21 Nov 2023 08:57:56 +0100
+In-Reply-To: <24a9f95d-6a28-47d3-a0cf-48e1698e2445@schaufler-ca.com>
+References: <20231120173318.1132868-1-roberto.sassu@huaweicloud.com>
+	 <20231120173318.1132868-26-roberto.sassu@huaweicloud.com>
+	 <24a9f95d-6a28-47d3-a0cf-48e1698e2445@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231114022503.6310-1-kelvie@kelvie.ca> <a66a805c-3e1f-4b9a-a38e-aca84b8678a6@infradead.org>
- <CAHC9VhR6mr0XRrq=Apy00HD3tdgpKi4RyMr8f5kdx2sjA0sfig@mail.gmail.com>
-In-Reply-To: <CAHC9VhR6mr0XRrq=Apy00HD3tdgpKi4RyMr8f5kdx2sjA0sfig@mail.gmail.com>
-From: Kelvie Wong <kelvie@kelvie.ca>
-Date: Mon, 20 Nov 2023 19:06:59 -0800
-X-Gmail-Original-Message-ID: <CAK2bC5rN_P7WP_E57wJjz+7icVjrwS0e6fqg_5uNaPhy3YR2dQ@mail.gmail.com>
-Message-ID: <CAK2bC5rN_P7WP_E57wJjz+7icVjrwS0e6fqg_5uNaPhy3YR2dQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] Add a lockdown_hibernate parameter
-To: Paul Moore <paul@paul-moore.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-security-module <linux-security-module@vger.kernel.org>, David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Authenticated-Id: kelvie@kelvie.ca
+X-CM-TRANSID:LxC2BwD35HQHY1xldiUUAQ--.11542S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAr1DtFW5WFWfuFW3ZFWrXwb_yoW5CF18pa
+	yqqFWfKF4kAryIgwn3Xay3WF1S93ykCF15Ar9xJw1UJ3yqvr1vkr4xtrWfuFyDJr1DCa4I
+	vr42gw1fGws0yaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAIBF1jj5atPwAAs4
+X-CFilter-Loop: Reflected
 
-On Mon, 20 Nov 2023 at 13:12, Paul Moore <paul@paul-moore.com> wrote:
-> On Mon, Nov 13, 2023 at 11:01=E2=80=AFPM Randy Dunlap <rdunlap@infradead.=
-org> wrote:
-> >
-> > [add security & dhowells]
-> >
-> > On 11/13/23 18:23, Kelvie Wong wrote:
-> > > This allows the user to tell the kernel that they know better (namely=
-,
-> > > they secured their swap properly), and that it can enable hibernation=
+On Mon, 2023-11-20 at 16:50 -0800, Casey Schaufler wrote:
+> On 11/20/2023 9:33 AM, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> >=20
+> > The ordering of LSM_ORDER_LAST LSMs depends on how they are placed in t=
+he
+> > .lsm_info.init section of the kernel image.
+> >=20
+> > Without making any assumption on the LSM ordering based on how they are
+> > compiled, enforce that ordering at LSM infrastructure level.
+> >=20
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  security/security.c | 25 +++++++++++++++++++++++++
+> >  1 file changed, 25 insertions(+)
+> >=20
+> > diff --git a/security/security.c b/security/security.c
+> > index 351a124b771c..b98db79ca500 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -263,6 +263,18 @@ static void __init initialize_lsm(struct lsm_info =
+*lsm)
+> >  	}
+> >  }
+> > =20
+> > +/* Find an LSM with a given name. */
+> > +static struct lsm_info __init *find_lsm(const char *name)
+> > +{
+> > +	struct lsm_info *lsm;
+> > +
+> > +	for (lsm =3D __start_lsm_info; lsm < __end_lsm_info; lsm++)
+> > +		if (!strcmp(lsm->name, name))
+> > +			return lsm;
+> > +
+> > +	return NULL;
+> > +}
+> > +
+> >  /*
+> >   * Current index to use while initializing the lsm id list.
+> >   */
+> > @@ -333,10 +345,23 @@ static void __init ordered_lsm_parse(const char *=
+order, const char *origin)
+> > =20
+> >  	/* LSM_ORDER_LAST is always last. */
+> >  	for (lsm =3D __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+> > +		/* Do it later, to enforce the expected ordering. */
+> > +		if (!strcmp(lsm->name, "ima") || !strcmp(lsm->name, "evm"))
+> > +			continue;
+> > +
+>=20
+> Hard coding the ordering of LSMs is incredibly ugly and unlikely to scale=
 .
-> > >
-> > > I've been using this for about a year now, as it doesn't seem like
-> > > proper secure hibernation was going to be implemented back then, and
-> > > it's now been a year since I've been building my own kernels with thi=
-s
-> > > patch, so getting this upstreamed would save some CO2 from me buildin=
-g
-> > > my own kernels every upgrade.
-> > >
-> > > Some other not-me users have also tested the patch:
-> > >
-> > > https://community.frame.work/t/guide-fedora-36-hibernation-with-enabl=
-ed-secure-boot-and-full-disk-encryption-fde-decrypting-over-tpm2/25474/17
-> > >
-> > > Signed-off-by: Kelvie Wong <kelvie@kelvie.ca>
->
-> I would feel a lot better about this if there was a way to verify that
-> the swap was protected as opposed to leaving that as a note in a doc
-> that the majority of users will never see, read, or understand.
+> Not to mention perplexing the next time someone creates an LSM that "has =
+to be last".
 
-I'd argue that this wouldn't even be necessary if we detect the swap was
-protected -- hibernation should just be enabled in that case without settin=
-g
-any parameters.
+Uhm, yes, not the best solution.
 
-My understanding is that it was disabled waiting for this
-functionality, and it's been
-at least a couple of years now [1], so it looks like it's not such an
-easy problem.
+> Why isn't LSM_ORDER_LAST sufficient? If it really isn't, how about adding
+> and using LSM_ORDER_LAST_I_REALLY_MEAN_IT* ?
 
-Anyway, my argument is that the majority of users will never use this kerne=
-l
-parameter anyway, so I think it's a fair assumption that the power users th=
-at
-*do* use this will educate themselves on why this parameter even exists.
+I don't know if the order at run-time reflects the order in the
+Makefile (EVM is compiled after IMA). If it does, there is no need for
+this patch.
 
-[1] https://lwn.net/Articles/847042/
+> Alternatively, a declaration of ordering requirements with regard to othe=
+r
+> LSMs in lsm_info. You probably don't care where ima is relative to Yama,
+> but you need to be after SELinux and before evm. lsm_info could have=20
+> must_precede and must_follow lists. Maybe a must_not_combine list, too,
+> although I'm hoping to make that unnecessary.=20
 
---=20
-Kelvie
+Uhm, I agree. Will think about how to make it more straightforward.
+
+> And you should be using LSM_ID values instead of LSM names.
+
+Ok.
+
+Thanks
+
+Roberto
+
+> ---
+> * Naming subject to Paul's sensibilities, of course.
+>=20
+> >  		if (lsm->order =3D=3D LSM_ORDER_LAST)
+> >  			append_ordered_lsm(lsm, "   last");
+> >  	}
+> > =20
+> > +	/* Ensure that the 'ima' and 'evm' LSMs are last and in this order. *=
+/
+> > +	lsm =3D find_lsm("ima");
+> > +	if (lsm)
+> > +		append_ordered_lsm(lsm, "   last");
+> > +
+> > +	lsm =3D find_lsm("evm");
+> > +	if (lsm)
+> > +		append_ordered_lsm(lsm, "   last");
+> > +
+> >  	/* Disable all LSMs not in the ordered list. */
+> >  	for (lsm =3D __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+> >  		if (exists_ordered_lsm(lsm))
+
