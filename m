@@ -1,95 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BA2CD63
-	for <linux-security-module@vger.kernel.org>; Tue, 21 Nov 2023 05:03:34 -0800 (PST)
-Received: from fsav414.sakura.ne.jp (fsav414.sakura.ne.jp [133.242.250.113])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 3ALD3V6e011956;
-	Tue, 21 Nov 2023 22:03:31 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav414.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp);
- Tue, 21 Nov 2023 22:03:31 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 3ALD3VRn011949
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 21 Nov 2023 22:03:31 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <7b9e471a-a9df-4ff6-89bf-0fed01fcd5e7@I-love.SAKURA.ne.jp>
-Date: Tue, 21 Nov 2023 22:03:31 +0900
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TQUbB6ek"
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD8FED1
+	for <linux-security-module@vger.kernel.org>; Tue, 21 Nov 2023 15:52:17 -0800 (PST)
+Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-da41acaea52so5791663276.3
+        for <linux-security-module@vger.kernel.org>; Tue, 21 Nov 2023 15:52:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1700610737; x=1701215537; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=erXjJV6zalLjMGClDTXisX88n6EbGy4UAR+wJMjOZdE=;
+        b=TQUbB6ekq5x49Ic4SKrKmp+79a8bFYG1TSlNgK7lTfe7AqpIbuXbXQFK4ty1a0JHMq
+         mQVQn5lw093OZSd8eXS8WuDKwrzxkLTctzxcmz8mcnIDHUZMw/Y3c/3VrZSoDq81SbUG
+         zAWg/9hC78WJlLZxZzxobLSXrJpBTXTarXTATMXGyedeBqQTh+EIdc9IE3KQJf50ZCJ4
+         mVoN0Mw9sfAIwRQ1zXIaMGcRGQglo0mgqVZuEG4mQ7HERK/rd8aRfSVnAi/O6I2CtxyF
+         1bq6CLYwJJgO8ZsBZSfOJAg6XQ2BleR9++FhSNIUWDYltbmpPwC4FY59pXFtXH8d9as9
+         E6TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700610737; x=1701215537;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=erXjJV6zalLjMGClDTXisX88n6EbGy4UAR+wJMjOZdE=;
+        b=VosymBYOO1kT9tqAmgHNQP4OgNuobHooqT43aQBIZxFWd5Wicim/GZRxYVrqsxSDb8
+         zdOsQrSpwOaCYknWRPtneLlqxHppC0sbpjyyjiPIpdcbRDCJ7PSOlWEi1vOY9HFG/X7i
+         IQidskvbLIwJ+CEmyPdOfaQqUmjIMJVUCG7YYt302G8uZhKpjLSUWIhj0P0b8fkbBvt7
+         pDSbmk/JwdS0jEzEc4bATJ0oxCP2yyrmlP5pkykiGSWMLcWuDt9B1FbmcdHzkzP5ASoU
+         MJuo9dAa5lj6H+Es8DkbbpLI9IWRmSYe1Nr6aL5ccsKbVgrz1gUmUeSTSm3hKQ9RAyan
+         s4jQ==
+X-Gm-Message-State: AOJu0YzGUUiH1w1aUDqvHxS6SCbDmUPm3U8kgkjCLRz8wZ793ID/N+ZN
+	LhAxn4ULQHngzsmYoRTH9GJSM5S1/yIFvdEtaoG6AxjW8+wjjdE=
+X-Google-Smtp-Source: AGHT+IFefvbfl7VtV+3wG5n3/9jAN38sXGW+jfAA+aGBZWbqCT8ZlIIsMjq/LUJv0L1htEpeLmLNi+BNckudVJLXbxw=
+X-Received: by 2002:a25:848b:0:b0:d9a:6b48:db71 with SMTP id
+ v11-20020a25848b000000b00d9a6b48db71mr542373ybk.62.1700610736932; Tue, 21 Nov
+ 2023 15:52:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 0/4] LSM: Officially support appending LSM hooks
- after boot.
-Content-Language: en-US
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, KP Singh <kpsingh@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>, song@kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>, renauld@google.com,
-        Paolo Abeni <pabeni@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <93b5e861-c1ec-417c-b21e-56d0c4a3ae79@I-love.SAKURA.ne.jp>
- <CAHC9VhRbak9Mij=uKQ-Drod0tQu1+Z+JaahUzH5uj9JUf7ZTuA@mail.gmail.com>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHC9VhRbak9Mij=uKQ-Drod0tQu1+Z+JaahUzH5uj9JUf7ZTuA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20231120215917.287595-2-paul@paul-moore.com> <ZVyAOvBQJKTkFB53@srcf.ucam.org>
+In-Reply-To: <ZVyAOvBQJKTkFB53@srcf.ucam.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 21 Nov 2023 18:52:06 -0500
+Message-ID: <CAHC9VhRvK4QmgCQqtPJJ0uKdRMNg8Hanm9WowMrYDTPvi6G-OA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: add an entry for the lockdown LSM
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2023/11/21 7:52, Paul Moore wrote:
-> On Mon, Nov 20, 2023 at 8:28 AM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>
->> This functionality will be used by TOMOYO security module.
->>
->> In order to officially use an LSM module, that LSM module has to be
->> built into vmlinux. This limitation has been a big barrier for allowing
->> distribution kernel users to use LSM modules which the organization who
->> builds that distribution kernel cannot afford supporting [1]. Therefore,
->> I've been asking for ability to append LSM hooks from LKM-based LSMs so
->> that distribution kernel users can use LSMs which the organization who
->> builds that distribution kernel cannot afford supporting.
-> 
-> It doesn't really matter for this discussion, but based on my days
-> working for a Linux distro company I would be very surprised if a
-> commercial distro would support a system running unapproved
-> third-party kernel modules.
+On Tue, Nov 21, 2023 at 5:02=E2=80=AFAM Matthew Garrett <mjg59@srcf.ucam.or=
+g> wrote:
+> On Mon, Nov 20, 2023 at 04:59:18PM -0500, Paul Moore wrote:
+> > While lockdown has been present in the kernel for a while, it is
+> > missing a MAINTAINERS entry for some reason.
+> >
+> > Cc: Matthew Garrett <mjg59@srcf.ucam.org>
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+>
+> Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
 
-A commercial distro does not care about problems that are caused by
-using kernel modules that are not included in that distro's kernels.
+Merged into lsm/dev, thanks.
 
-Those who supply kernel modules that are not included in that distro's
-kernels (e.g. antivirus software vendors) care about problems that are
-caused by using such kernel modules.
-
-Kernel modules for hardware devices that are not included in that distro's
-kernels can be appended after boot.
-
-Kernel modules for filesystems that are not included in that distro's
-kernels can be appended after boot.
-
-If a commercial distro does not want to allow use of kernel modules that
-are not included in that distro's kernels, that distro would enforce module
-signature verification rather than disabling loadable module support.
-Keeping loadable module support enabled is a balance that is important for
-getting wider developers/users.
-
-> 
-> We've talked a lot about this core problem and I maintain that it is
-> still a disto problem and not something I'm really concerned about
-> upstream.
-
-LSM modules that are not built into vmlinux currently cannot be appended
-after boot. Such asymmetry is strange and remains a big barrier.
-
-You are not concerned about this asymmetry, but I am very much concerned.
-Please give me feedback on not "I don't need it" but "how we can do it".
-
+--=20
+paul-moore.com
