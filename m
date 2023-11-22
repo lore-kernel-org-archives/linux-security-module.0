@@ -1,161 +1,82 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QYXSA0cT"
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 191BB18D
-	for <linux-security-module@vger.kernel.org>; Wed, 22 Nov 2023 07:57:09 -0800 (PST)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-5cce3010367so2850827b3.0
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Nov 2023 07:57:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ajjMHrnB"
+Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B720193
+	for <linux-security-module@vger.kernel.org>; Wed, 22 Nov 2023 08:08:10 -0800 (PST)
+Received: by mail-qv1-xf2c.google.com with SMTP id 6a1803df08f44-679dc22f2b7so19513046d6.2
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Nov 2023 08:08:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1700668628; x=1701273428; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9z0RK/SpWoz+kpe3t/H/b8d6AuI1LIxn2YVK3cS+5J4=;
-        b=QYXSA0cTP7ijP9ftrekuu2bi6VOdETFjMYEd7juf2HG4O+aTdMp2lApRD3weEsIDIP
-         ZbOA84VJirxkW4sf0kLqnlwgaYWNGnDwlKcVmmeCJtR2MR5brZk6dAb/yH1BDWQdv28c
-         pt3vEnPZXIpVo0PyiROCY4Bx3XPSQvzhygyHBGEIQ7pXcMzhI1w23cbdB30hRdWDl4XV
-         UNRY5zJmNLTLuqAp/X7S/RG+B4LZVjYNHEA6JYv3Jmj6qOoFoGYBVL/v5xcwBlD4kt/D
-         9islFrA4Ju98u4PQTY8GDLVwYj9qAr8TnX6EBcfzDD2nIVMGOQYniGfCa4YrIqE5wxNZ
-         RXfQ==
+        d=paul-moore.com; s=google; t=1700669289; x=1701274089; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VMZcQSe8/fsUp22+IYZRJ6M/E+k7+U8WSOUOy3pE4Es=;
+        b=ajjMHrnBzhAvL/ZaGsPokRv9KOagopSjUE/3U1uUoaZqtT/GbtW2EbxEASzWRNc2jJ
+         7Na+XcSpszOQylzlbJly1Lty82xyG8GFzuIhDHA0SdbktjV7j1eJSbXnsNxUUL/3J2LY
+         98T8WN46Q2EmSBf7ShVc4xCpQEZlm7zuWxwYUL3cSRaldK6fyqavfw6zW6wXhfA/tWPE
+         3rznR8xZbL0a1OwAFEElS9E5f0yU3zFGL36PChnOc/oQ9gdhVQ1yI0WpFWSScvvOWCMX
+         vwufBf/58+WPaR2YdXpMTuNO4VYnbqvZhb64FBQrYKAOEo4Pfm2DMpToW/gvqWoTf5ss
+         34Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700668628; x=1701273428;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9z0RK/SpWoz+kpe3t/H/b8d6AuI1LIxn2YVK3cS+5J4=;
-        b=Cdyt8+WElOm18jW22BuzITpm6v+CIvyhbC66/iNpc5KXK1W/9xjHtaGFKHpnjZY+OZ
-         mB9TcLp/OmB9wufvIfjnF8wiQkVmW0Fh67JhGI4fhV78/3Wx5DLUIKcclJ/ctC28SgK9
-         BA5hekCt11yba+up5nNEkubo1CKErF4xB4h27KshM2FG4ZzhGUKQz5UsclB5VLgSbaWp
-         0+EdC/W3zbPQ5PmPVbR6x6NSlhvkeIglFYEarQ57xqC7kbGAhqQ9r/aOAqKB8PzHRRi5
-         lXXroKgV2wLImd8WwD19bi+l3bj3Ghoc/7Vd1cgkI8/TnEYJ3DocqGE4nFRAwt/T08yN
-         HU7g==
-X-Gm-Message-State: AOJu0YzEt0pqyquhpwrzmFoUhiKTms/016DTO414uFzOvglF7oRaRUxU
-	mngqcr/TRcJGakfDoo6MDgwJCKYQCayFPlUthwrl5nWfwTAwuqvRYw==
-X-Google-Smtp-Source: AGHT+IE7Sq0ixk+Ro5+SCHHAYlwPM997OhYDeJ/ZdAr2Occ4QlfxYQNKuagMLO9THEFK5O2H3/C6jTykXeNuHGstJhw=
-X-Received: by 2002:a25:7743:0:b0:d9a:d184:8304 with SMTP id
- s64-20020a257743000000b00d9ad1848304mr2600130ybc.35.1700668628217; Wed, 22
- Nov 2023 07:57:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1700669289; x=1701274089;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VMZcQSe8/fsUp22+IYZRJ6M/E+k7+U8WSOUOy3pE4Es=;
+        b=db0spx5HSSx0K79BxBuMybciJi9LAvlBaEs2wBOwQmwGU4epIsxChQMFQmZJXuNxH5
+         8K5lCDgj1NB+YGR4etLrRZOEZpB4bfDzUv7HqSyf8/1fYqKvtQ1tHPwj8IwHgV69RpJK
+         ZDoKb1QJj7XAZ6pO9vwBeRPS4s1uu4QFZwvmlAXYekLXM7p2VxJQuvM9UNH4Y86E82g1
+         DArmhA4ScihGgO+5syrCqKl5PPHvtndhmVDtTJ6XbjXU+PvTpIJJLgj1g6ndVJzsWt/1
+         pBAEtaxvAOYAUAETI5zLL0ooclBQM4ID51gkLWAa5qpaGEXHLfUtCCnG6ZLTcr85NF75
+         OMHA==
+X-Gm-Message-State: AOJu0YxQwY2isG1D1mCyqeaP384MkzTGiSS+aT8cOMnCsVQAPd9ebIF3
+	mmWLHTTRqFM1UWZqnb52IF+o3KN68WuIn8VtVQ==
+X-Google-Smtp-Source: AGHT+IHW/7vQCnUAAVsFlAUkh0JbKntVcRCA6aMtcBf3X3ziAQDbOGQAlro5c0zGpCRVTiJ0n+Hmxg==
+X-Received: by 2002:a0c:b69a:0:b0:679:e956:c89c with SMTP id u26-20020a0cb69a000000b00679e956c89cmr3001361qvd.37.1700669289492;
+        Wed, 22 Nov 2023 08:08:09 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id q2-20020a05621419e200b00679d8235a60sm3062338qvc.135.2023.11.22.08.08.09
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Nov 2023 08:08:09 -0800 (PST)
+From: Paul Moore <paul@paul-moore.com>
+To: linux-security-module@vger.kernel.org
+Subject: [PATCH] selftests: remove the LSM_ID_IMA check in lsm/lsm_list_modules_test
+Date: Wed, 22 Nov 2023 11:07:43 -0500
+Message-ID: <20231122160742.109270-2-paul@paul-moore.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231122135242.2779058-1-Ilia.Gavrilov@infotecs.ru>
-In-Reply-To: <20231122135242.2779058-1-Ilia.Gavrilov@infotecs.ru>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 22 Nov 2023 10:56:57 -0500
-Message-ID: <CAHC9VhTiq1xPXXsETNKRBOtfkB5wohVwhBeae+5QW9uV-h5vvg@mail.gmail.com>
-Subject: Re: [PATCH net] calipso: Fix memory leak in netlbl_calipso_add_pass()
-To: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Huw Davies <huw@codeweavers.com>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=914; i=paul@paul-moore.com; h=from:subject; bh=Hvy1u4AdeFJ73BlVWNdC5bujiLNI9i9FD1ZdWnFz7jU=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBlXidOzV5nrgr2Yrzj4BupqC3wR+BsnGQH6hISO 9rwZ6C5vMKJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZV4nTgAKCRDqIPLalzeJ c7PrD/48QF/IGYc7Vl6PjBtvM/iYM0DIQpFvKMNjgFT/eQhLgIDmTT4mbf3b85pvQNgA5EXvqfX GeNEdV/OyIeIlYCArGa2DFGM1sz3r1GHIJmtN1xFbriWP9z+Y7j6UGZVrip6WrhLakO4OK2nZKU Ynn7GPza2xyeW2tllb5DVoazSKUmWOCVLlreRCwcXsGJTjiOd3xQIyS8iRZFbbgYJK9SR7NkQ/g a6ZmjBpA9/UidIeBjSvHf0jFTP+CBr4Df5q5joD+ajSohJCGc800f/Fc2QE6K76Z344r9RMoEdX cOSuJ5SlQfSfGK6y4uJH7fLR6FKv4fqpkbisXYyY0aNwJrS6xL3URj8msseY2AWYuf6E6zPQ7aB XSlK8UsRAbNzDHF4TaeZItDPQeDwAcAqhyCNwbFl/enBofHP6I3/gXyO5nVripJhu9eII7RD161 vMg0sJFFgLe5fYQbemwhCesqZMl6TBcnVxCOhSCj1wds5ZMURK13V/oiToD5MaNrArzLRdh4vp8 jemlEaoYdGUGKoPHqcRHWXi4Fi6Bo8dTbRliRuEEaRDeJX7E5On37biTOaiW8eFjtfbpYkwVPMt fUtUgAs18vYt/0gVN/05J4BQvwaHrzE9xrooaAwcr7CSnINxxPwYr0eCEJcjaoJR9Zz1txBrxs+ zlLALEGzHFXYn/A==
+X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 22, 2023 at 8:55=E2=80=AFAM Gavrilov Ilia <Ilia.Gavrilov@infote=
-cs.ru> wrote:
->
-> If IPv6 support is disabled at boot (ipv6.disable=3D1),
-> the calipso_init() -> netlbl_calipso_ops_register() function isn't called=
-,
-> and the netlbl_calipso_ops_get() function always returns NULL.
-> In this case, the netlbl_calipso_add_pass() function allocates memory
-> for the doi_def variable but doesn't free it with the calipso_doi_free().
+The IMA LSM ID token was removed as IMA isn't yet a proper LSM, but
+we forgot to remove the check from the selftest.
 
-It looks like a better option would be to return an error code in
-netlbl_calipso_add() so we never allocate the memory in the first
-place.
+Reported-by: kernel test robot <yujie.liu@intel.com>
+Closes: https://lore.kernel.org/r/202311221047.a9Dww3vY-lkp@intel.com/
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ tools/testing/selftests/lsm/lsm_list_modules_test.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Untested patch below, copy-n-paste'd so there is likely whitespace
-damage, but you get the idea.
+diff --git a/tools/testing/selftests/lsm/lsm_list_modules_test.c b/tools/testing/selftests/lsm/lsm_list_modules_test.c
+index 445c02f09c74..9df29b1e3497 100644
+--- a/tools/testing/selftests/lsm/lsm_list_modules_test.c
++++ b/tools/testing/selftests/lsm/lsm_list_modules_test.c
+@@ -101,9 +101,6 @@ TEST(correct_lsm_list_modules)
+ 		case LSM_ID_TOMOYO:
+ 			name = "tomoyo";
+ 			break;
+-		case LSM_ID_IMA:
+-			name = "ima";
+-			break;
+ 		case LSM_ID_APPARMOR:
+ 			name = "apparmor";
+ 			break;
+-- 
+2.43.0
 
-diff --git a/net/netlabel/netlabel_calipso.c b/net/netlabel/netlabel_calips=
-o.c
-index f1d5b8465217..26a504dc6e57 100644
---- a/net/netlabel/netlabel_calipso.c
-+++ b/net/netlabel/netlabel_calipso.c
-@@ -54,8 +54,31 @@ static const struct nla_policy
-calipso_genl_policy[NLBL_CALIPSO_A_MAX + 1] =3D {
-       [NLBL_CALIPSO_A_MTYPE] =3D { .type =3D NLA_U32 },
-};
-
-+static const struct netlbl_calipso_ops *calipso_ops;
-+
-+/**
-+ * netlbl_calipso_ops_register - Register the CALIPSO operations
-+ * @ops: ops to register
-+ *
-+ * Description:
-+ * Register the CALIPSO packet engine operations.
-+ *
-+ */
-+const struct netlbl_calipso_ops *
-+netlbl_calipso_ops_register(const struct netlbl_calipso_ops *ops)
-+{
-+       return xchg(&calipso_ops, ops);
-+}
-+EXPORT_SYMBOL(netlbl_calipso_ops_register);
-+
-+static const struct netlbl_calipso_ops *netlbl_calipso_ops_get(void)
-+{
-+       return READ_ONCE(calipso_ops);
-+}
-+
-/* NetLabel Command Handlers
- */
-+
-/**
- * netlbl_calipso_add_pass - Adds a CALIPSO pass DOI definition
- * @info: the Generic NETLINK info block
-@@ -100,10 +123,13 @@ static int netlbl_calipso_add(struct sk_buff
-*skb, struct genl_info *info)
-{
-       int ret_val =3D -EINVAL;
-       struct netlbl_audit audit_info;
-+       const struct netlbl_calipso_ops *ops =3D netlbl_calipso_ops_get();
-
-       if (!info->attrs[NLBL_CALIPSO_A_DOI] ||
-           !info->attrs[NLBL_CALIPSO_A_MTYPE])
-               return -EINVAL;
-+       if (!ops)
-+               return -EOPNOTSUPP;
-
-       netlbl_netlink_auditinfo(&audit_info);
-       switch (nla_get_u32(info->attrs[NLBL_CALIPSO_A_MTYPE])) {
-@@ -363,28 +389,6 @@ int __init netlbl_calipso_genl_init(void)
-       return genl_register_family(&netlbl_calipso_gnl_family);
-}
-
--static const struct netlbl_calipso_ops *calipso_ops;
--
--/**
-- * netlbl_calipso_ops_register - Register the CALIPSO operations
-- * @ops: ops to register
-- *
-- * Description:
-- * Register the CALIPSO packet engine operations.
-- *
-- */
--const struct netlbl_calipso_ops *
--netlbl_calipso_ops_register(const struct netlbl_calipso_ops *ops)
--{
--       return xchg(&calipso_ops, ops);
--}
--EXPORT_SYMBOL(netlbl_calipso_ops_register);
--
--static const struct netlbl_calipso_ops *netlbl_calipso_ops_get(void)
--{
--       return READ_ONCE(calipso_ops);
--}
--
-/**
- * calipso_doi_add - Add a new DOI to the CALIPSO protocol engine
- * @doi_def: the DOI structure
-
---=20
-paul-moore.com
