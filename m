@@ -1,69 +1,165 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TQUbB6ek"
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD8FED1
-	for <linux-security-module@vger.kernel.org>; Tue, 21 Nov 2023 15:52:17 -0800 (PST)
-Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-da41acaea52so5791663276.3
-        for <linux-security-module@vger.kernel.org>; Tue, 21 Nov 2023 15:52:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1700610737; x=1701215537; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=erXjJV6zalLjMGClDTXisX88n6EbGy4UAR+wJMjOZdE=;
-        b=TQUbB6ekq5x49Ic4SKrKmp+79a8bFYG1TSlNgK7lTfe7AqpIbuXbXQFK4ty1a0JHMq
-         mQVQn5lw093OZSd8eXS8WuDKwrzxkLTctzxcmz8mcnIDHUZMw/Y3c/3VrZSoDq81SbUG
-         zAWg/9hC78WJlLZxZzxobLSXrJpBTXTarXTATMXGyedeBqQTh+EIdc9IE3KQJf50ZCJ4
-         mVoN0Mw9sfAIwRQ1zXIaMGcRGQglo0mgqVZuEG4mQ7HERK/rd8aRfSVnAi/O6I2CtxyF
-         1bq6CLYwJJgO8ZsBZSfOJAg6XQ2BleR9++FhSNIUWDYltbmpPwC4FY59pXFtXH8d9as9
-         E6TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700610737; x=1701215537;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=erXjJV6zalLjMGClDTXisX88n6EbGy4UAR+wJMjOZdE=;
-        b=VosymBYOO1kT9tqAmgHNQP4OgNuobHooqT43aQBIZxFWd5Wicim/GZRxYVrqsxSDb8
-         zdOsQrSpwOaCYknWRPtneLlqxHppC0sbpjyyjiPIpdcbRDCJ7PSOlWEi1vOY9HFG/X7i
-         IQidskvbLIwJ+CEmyPdOfaQqUmjIMJVUCG7YYt302G8uZhKpjLSUWIhj0P0b8fkbBvt7
-         pDSbmk/JwdS0jEzEc4bATJ0oxCP2yyrmlP5pkykiGSWMLcWuDt9B1FbmcdHzkzP5ASoU
-         MJuo9dAa5lj6H+Es8DkbbpLI9IWRmSYe1Nr6aL5ccsKbVgrz1gUmUeSTSm3hKQ9RAyan
-         s4jQ==
-X-Gm-Message-State: AOJu0YzGUUiH1w1aUDqvHxS6SCbDmUPm3U8kgkjCLRz8wZ793ID/N+ZN
-	LhAxn4ULQHngzsmYoRTH9GJSM5S1/yIFvdEtaoG6AxjW8+wjjdE=
-X-Google-Smtp-Source: AGHT+IFefvbfl7VtV+3wG5n3/9jAN38sXGW+jfAA+aGBZWbqCT8ZlIIsMjq/LUJv0L1htEpeLmLNi+BNckudVJLXbxw=
-X-Received: by 2002:a25:848b:0:b0:d9a:6b48:db71 with SMTP id
- v11-20020a25848b000000b00d9a6b48db71mr542373ybk.62.1700610736932; Tue, 21 Nov
- 2023 15:52:16 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SgyEA36N"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0ED68197;
+	Tue, 21 Nov 2023 17:01:41 -0800 (PST)
+Received: from [192.168.86.69] (unknown [50.46.228.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id CD13920B74C0;
+	Tue, 21 Nov 2023 17:01:39 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CD13920B74C0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1700614900;
+	bh=HbRh+tVXzcEae7WnOeARgNufEiTgkxOEUKje4fiF4Xo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SgyEA36NCuW4YyxFnAsWvVeUwVMZ9/wxu2D0E0sYCCtrdxSXO4fKREJKsOBj2OKEu
+	 hqvs27EmAJgRNkjdNVJEPEfiMZNsmu3L62+aDttMybQyri98oy4afwhMznyS44Yu8s
+	 /KGxLicwehNTHHKxl/Exl6B5jwA+V69HtmVdvyes=
+Message-ID: <e0cf16b3-514e-45bd-b6f8-7638ed57b00e@linux.microsoft.com>
+Date: Tue, 21 Nov 2023 17:01:38 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231120215917.287595-2-paul@paul-moore.com> <ZVyAOvBQJKTkFB53@srcf.ucam.org>
-In-Reply-To: <ZVyAOvBQJKTkFB53@srcf.ucam.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 21 Nov 2023 18:52:06 -0500
-Message-ID: <CAHC9VhRvK4QmgCQqtPJJ0uKdRMNg8Hanm9WowMrYDTPvi6G-OA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: add an entry for the lockdown LSM
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC V2] IMA Log Snapshotting Design Proposal
+Content-Language: en-US
+To: Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de,
+ Jarkko Sakkinen <jarkko@kernel.org>, jgg@ziepe.ca,
+ Ken Goldman <kgold@linux.ibm.com>, bhe@redhat.com, vgoyal@redhat.com,
+ Dave Young <dyoung@redhat.com>,
+ "kexec@lists.infradead.org" <kexec@lists.infradead.org>, jmorris@namei.org,
+ serge@hallyn.com, James Bottomley <James.Bottomley@hansenpartnership.com>,
+ linux-security-module@vger.kernel.org,
+ Tyler Hicks <tyhicks@linux.microsoft.com>,
+ Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+ Sush Shringarputale <sushring@linux.microsoft.com>
+References: <6c0c32d5-e636-2a0e-5bdf-538c904ceea3@linux.microsoft.com>
+ <8bff2bf1a4629aacec7b6311d77f233cb75b2f8a.camel@linux.ibm.com>
+ <CAHC9VhRm9Tzz3C-VTdXS4s1_-kPQQ6RXMt8JGCS4jorJ0VURyQ@mail.gmail.com>
+From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+In-Reply-To: <CAHC9VhRm9Tzz3C-VTdXS4s1_-kPQQ6RXMt8JGCS4jorJ0VURyQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 21, 2023 at 5:02=E2=80=AFAM Matthew Garrett <mjg59@srcf.ucam.or=
-g> wrote:
-> On Mon, Nov 20, 2023 at 04:59:18PM -0500, Paul Moore wrote:
-> > While lockdown has been present in the kernel for a while, it is
-> > missing a MAINTAINERS entry for some reason.
-> >
-> > Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
->
-> Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
 
-Merged into lsm/dev, thanks.
 
---=20
-paul-moore.com
+On 11/16/23 14:28, Paul Moore wrote:
+> On Tue, Oct 31, 2023 at 3:15 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>> On Thu, 2023-10-19 at 11:49 -0700, Tushar Sugandhi wrote:
+>>
+>> [...]
+>>> -----------------------------------------------------------------------
+>>> | C.1 Solution Summary                                                |
+>>> -----------------------------------------------------------------------
+>>> To achieve the goals described in the section above, we propose the
+>>> following changes to the IMA subsystem.
+>>>
+>>>       a. The IMA log from Kernel memory will be offloaded to some
+>>>          persistent storage disk to keep the system running reliably
+>>>          without facing memory pressure.
+>>>          More details, alternate approaches considered etc. are present
+>>>          in section "D.3 Choices for Storing Snapshots" below.
+>>>
+>>>       b. The IMA log will be divided into multiple chunks (snapshots).
+>>>          Each snapshot would be a delta between the two instances when
+>>>          the log was offloaded from memory to the persistent storage
+>>>          disk.
+>>>
+>>>       c. Some UM process (like a remote-attestation-client) will be
+>>>          responsible for writing the IMA log snapshot to the disk.
+>>>
+>>>       d. The same UM process would be responsible for triggering the IMA
+>>>          log snapshot.
+>>>
+>>>       e. There will be a well-known location for storing the IMA log
+>>>          snapshots on the disk.  It will be non-trivial for UM processes
+>>>          to change that location after booting into the Kernel.
+>>>
+>>>       f. A new event, "snapshot_aggregate", will be computed and measured
+>>>          in the IMA log as part of this feature.  It should help the
+>>>          remote-attestation client/service to benefit from the IMA log
+>>>          snapshot feature.
+>>>          The "snapshot_aggregate" event is described in more details in
+>>>          section "D.1 Snapshot Aggregate Event" below.
+>>>
+>>>       g. If the existing remote-attestation client/services do not change
+>>>          to benefit from this feature or do not trigger the snapshot,
+>>>          the Kernel will continue to have it's current functionality of
+>>>          maintaining an in-memory full IMA log.
+>>>
+>>> Additionally, the remote-attestation client/services need to be updated
+>>> to benefit from the IMA log snapshot feature.  These proposed changes
+>>>
+>>> are described in section "D.4 Remote-Attestation Client/Service Side
+>>> Changes" below, but their implementation is out of scope for this
+>>> proposal.
+>>
+>> As previously said on v1,
+>>     This design seems overly complex and requires synchronization between the
+>>     "snapshot" record and exporting the records from the measurement list. [...]
+>>
+>>     Concerns:
+>>     - Pausing extending the measurement list.
+>>
+>> Nothing has changed in terms of the complexity or in terms of pausing
+>> the measurement list.   Pausing the measurement list is a non starter.
+> 
+> The measurement list would only need to be paused for the amount of
+> time it would require to generate the snapshot_aggregate entry, which
+> should be minimal and only occurs when a privileged userspace requests
+> a snapshot operation.  The snapshot remains opt-in functionality, and
+> even then there is the possibility that the kernel could reject the
+> snapshot request if generating the snapshot_aggregate entry was deemed
+> too costly (as determined by the kernel) at that point in time.
+> 
+Thanks Paul for responding and sharing your thoughts.
+
+
+Hi Mimi,
+To address your concern about pausing the measurements -
+We are not proposing to pause the measurements for the entire duration
+of UM <--> Kernel interaction while taking a snapshot.
+
+We are simply proposing to pause the measurements when we get the TPM
+PCR quotes to add them to "snapshot_aggregate". (which should be a very
+small time window). IMA already has this mechanism when two separate
+modules try to add entry to IMA log - by using
+mutex_lock(&ima_extend_list_mutex); in ima_add_template_entry.
+
+
+We plan to use this existing locking functionality.
+Hope this addresses your concern about pausing extending the measurement
+list.
+
+~Tushar
+
+>> Userspace can already export the IMA measurement list(s) via the
+>> securityfs {ascii,binary}_runtime_measurements file(s) and do whatever
+>> it wants with it.  All that is missing in the kernel is the ability to
+>> trim the measurement list, which doesn't seem all that complicated.
+> 
+>>From my perspective what has been presented is basically just trimming
+> the in-memory measurement log, the additional complexity (which really
+> doesn't look that bad IMO) is there to ensure robustness in the face
+> of an unreliable userspace (processes die, get killed, etc.) and to
+> establish a new, transitive root of trust in the newly trimmed
+> in-memory log.
+> 
+> I suppose one could simplify things greatly by having a design where
+> userspace  captures the measurement log and then writes the number of
+> measurement records to trim from the start of the measurement log to a
+> sysfs file and the kernel acts on that.  You could do this with, or
+> without, the snapshot_aggregate entry concept; in fact that could be
+> something that was controlled by userspace, e.g. write the number of
+> lines and a flag to indicate if a snapshot_aggregate was desired to
+> the sysfs file.  I can't say I've thought it all the way through to
+> make sure there are no gotchas, but I'm guessing that is about as
+> simple as one can get.
+> 
+> If there is something else you had in mind, Mimi, please share the
+> details.  This is a very real problem we are facing and we want to
+> work to get a solution upstream.
+> 
