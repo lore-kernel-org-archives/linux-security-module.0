@@ -1,144 +1,161 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ng0gK+EC"
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E2D9110
-	for <linux-security-module@vger.kernel.org>; Wed, 22 Nov 2023 06:22:33 -0800 (PST)
-Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-db057de2b77so6241519276.3
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Nov 2023 06:22:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QYXSA0cT"
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 191BB18D
+	for <linux-security-module@vger.kernel.org>; Wed, 22 Nov 2023 07:57:09 -0800 (PST)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-5cce3010367so2850827b3.0
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Nov 2023 07:57:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1700662952; x=1701267752; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1700668628; x=1701273428; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4prMfUwibvSrz+SlOVCRM+XxGw8pCCbk8//pMWkdN5o=;
-        b=Ng0gK+ECagWzuchmn/NAAvHkSgf1waCk5bUEG4/eUn9X5ebSJoYTlYG6aDoJSZOiJV
-         JPLoA/RvLAbbgvz7wa2wsj4lXiw0ZVIKagNROvGuXhCW5gSONvo+87gQVrxOSsx01y5p
-         5rqLOSy6jMHP9pnryu3IXomkuHcc70yIVsITHz6WRKh3wuHwYIaiuZzJha/tsbRI0Lu/
-         HB9R991At1eWX4aUyG3mb3oDEDXPt726duSg1Y9krSQigYD8xn3fAVioIBJf6uLmzKRu
-         AphLHHqe/rUAZ/zlbhCtCqSy3c3xo4Afx5INR/GcZhy4wEiBa77rFcpVMw2XExR6n5sA
-         nNzA==
+        bh=9z0RK/SpWoz+kpe3t/H/b8d6AuI1LIxn2YVK3cS+5J4=;
+        b=QYXSA0cTP7ijP9ftrekuu2bi6VOdETFjMYEd7juf2HG4O+aTdMp2lApRD3weEsIDIP
+         ZbOA84VJirxkW4sf0kLqnlwgaYWNGnDwlKcVmmeCJtR2MR5brZk6dAb/yH1BDWQdv28c
+         pt3vEnPZXIpVo0PyiROCY4Bx3XPSQvzhygyHBGEIQ7pXcMzhI1w23cbdB30hRdWDl4XV
+         UNRY5zJmNLTLuqAp/X7S/RG+B4LZVjYNHEA6JYv3Jmj6qOoFoGYBVL/v5xcwBlD4kt/D
+         9islFrA4Ju98u4PQTY8GDLVwYj9qAr8TnX6EBcfzDD2nIVMGOQYniGfCa4YrIqE5wxNZ
+         RXfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700662952; x=1701267752;
+        d=1e100.net; s=20230601; t=1700668628; x=1701273428;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4prMfUwibvSrz+SlOVCRM+XxGw8pCCbk8//pMWkdN5o=;
-        b=vTl24EOOptBEdpwldrRUZ4OV9yuqvIHoNyPH25nKpq6RiPIO7HTM87VY20rS3UA6LS
-         qweuClJIBGskbT6x6lpZw3SIIBJ4yIf3LSZ6JlS7tcft/wenSTSUoKRboyXdT/XJb+yb
-         ONaqA7Jz/Mw0tvHWhF9oRds1uT7JqBLIj4p8WzUehHrZD62gDgACZiM7iMoOFMIF8XZw
-         YBvFW1dd8CdbqRBAX/u3qlem+5fpjbN/4X9Meig39dI48fvkrWbF2qD2pgjzibloRtL8
-         3otHTopcsqQIMIFnJTEyte3ywzlrDWN6wM0lkfZW+Cdc7JBw97tR+u9uuJ4FN08fkCYF
-         Ma9A==
-X-Gm-Message-State: AOJu0YxGZV5VzE/Yuoxrf1DNbw1cNryLsexI6rGub9Ko8w8hZtUDo3YM
-	AhgG23kqh4s6ZeWh/C/Zu1vgQv8nVZXGClMmGr6A
-X-Google-Smtp-Source: AGHT+IEJL/YGcl1HeO8ReXDrsuqtzUGq1wd/C8C6zxLauzMEtqUmjA6ZwzH2itAh+DerMPVQukYfKcnK8Mzm9vv1cIE=
-X-Received: by 2002:a25:e908:0:b0:d9a:ce53:4942 with SMTP id
- n8-20020a25e908000000b00d9ace534942mr2525742ybd.0.1700662952611; Wed, 22 Nov
- 2023 06:22:32 -0800 (PST)
+        bh=9z0RK/SpWoz+kpe3t/H/b8d6AuI1LIxn2YVK3cS+5J4=;
+        b=Cdyt8+WElOm18jW22BuzITpm6v+CIvyhbC66/iNpc5KXK1W/9xjHtaGFKHpnjZY+OZ
+         mB9TcLp/OmB9wufvIfjnF8wiQkVmW0Fh67JhGI4fhV78/3Wx5DLUIKcclJ/ctC28SgK9
+         BA5hekCt11yba+up5nNEkubo1CKErF4xB4h27KshM2FG4ZzhGUKQz5UsclB5VLgSbaWp
+         0+EdC/W3zbPQ5PmPVbR6x6NSlhvkeIglFYEarQ57xqC7kbGAhqQ9r/aOAqKB8PzHRRi5
+         lXXroKgV2wLImd8WwD19bi+l3bj3Ghoc/7Vd1cgkI8/TnEYJ3DocqGE4nFRAwt/T08yN
+         HU7g==
+X-Gm-Message-State: AOJu0YzEt0pqyquhpwrzmFoUhiKTms/016DTO414uFzOvglF7oRaRUxU
+	mngqcr/TRcJGakfDoo6MDgwJCKYQCayFPlUthwrl5nWfwTAwuqvRYw==
+X-Google-Smtp-Source: AGHT+IE7Sq0ixk+Ro5+SCHHAYlwPM997OhYDeJ/ZdAr2Occ4QlfxYQNKuagMLO9THEFK5O2H3/C6jTykXeNuHGstJhw=
+X-Received: by 2002:a25:7743:0:b0:d9a:d184:8304 with SMTP id
+ s64-20020a257743000000b00d9ad1848304mr2600130ybc.35.1700668628217; Wed, 22
+ Nov 2023 07:57:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6c0c32d5-e636-2a0e-5bdf-538c904ceea3@linux.microsoft.com>
- <8bff2bf1a4629aacec7b6311d77f233cb75b2f8a.camel@linux.ibm.com>
- <CAHC9VhRm9Tzz3C-VTdXS4s1_-kPQQ6RXMt8JGCS4jorJ0VURyQ@mail.gmail.com>
- <CAHC9VhSJ7MKNM7nMXR3xE-cNMrYB4AT+B76wzF1cKy2JM9tBrA@mail.gmail.com> <1b6853e8354af7033e6d87e77cfb175526753c38.camel@linux.ibm.com>
-In-Reply-To: <1b6853e8354af7033e6d87e77cfb175526753c38.camel@linux.ibm.com>
+References: <20231122135242.2779058-1-Ilia.Gavrilov@infotecs.ru>
+In-Reply-To: <20231122135242.2779058-1-Ilia.Gavrilov@infotecs.ru>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 22 Nov 2023 09:22:21 -0500
-Message-ID: <CAHC9VhSnDQ-d9dh_icqNyhpT+cTGQOqGh8+cbN3QzF_qPehvaA@mail.gmail.com>
-Subject: Re: [RFC V2] IMA Log Snapshotting Design Proposal
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Tushar Sugandhi <tusharsu@linux.microsoft.com>, linux-integrity@vger.kernel.org, 
-	peterhuewe@gmx.de, Jarkko Sakkinen <jarkko@kernel.org>, jgg@ziepe.ca, 
-	Ken Goldman <kgold@linux.ibm.com>, bhe@redhat.com, vgoyal@redhat.com, 
-	Dave Young <dyoung@redhat.com>, "kexec@lists.infradead.org" <kexec@lists.infradead.org>, jmorris@namei.org, 
-	serge@hallyn.com, James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	linux-security-module@vger.kernel.org, 
-	Tyler Hicks <tyhicks@linux.microsoft.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Sush Shringarputale <sushring@linux.microsoft.com>
+Date: Wed, 22 Nov 2023 10:56:57 -0500
+Message-ID: <CAHC9VhTiq1xPXXsETNKRBOtfkB5wohVwhBeae+5QW9uV-h5vvg@mail.gmail.com>
+Subject: Re: [PATCH net] calipso: Fix memory leak in netlbl_calipso_add_pass()
+To: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Huw Davies <huw@codeweavers.com>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 22, 2023 at 8:18=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wr=
-ote:
-> On Tue, 2023-11-21 at 23:27 -0500, Paul Moore wrote:
-> > On Thu, Nov 16, 2023 at 5:28=E2=80=AFPM Paul Moore <paul@paul-moore.com=
-> wrote:
-> > > On Tue, Oct 31, 2023 at 3:15=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.c=
-om> wrote:
-> >
-> > ...
-> >
-> > > > Userspace can already export the IMA measurement list(s) via the
-> > > > securityfs {ascii,binary}_runtime_measurements file(s) and do whate=
-ver
-> > > > it wants with it.  All that is missing in the kernel is the ability=
- to
-> > > > trim the measurement list, which doesn't seem all that complicated.
-> > >
-> > > From my perspective what has been presented is basically just trimmin=
-g
-> > > the in-memory measurement log, the additional complexity (which reall=
-y
-> > > doesn't look that bad IMO) is there to ensure robustness in the face
-> > > of an unreliable userspace (processes die, get killed, etc.) and to
-> > > establish a new, transitive root of trust in the newly trimmed
-> > > in-memory log.
-> > >
-> > > I suppose one could simplify things greatly by having a design where
-> > > userspace  captures the measurement log and then writes the number of
-> > > measurement records to trim from the start of the measurement log to =
-a
-> > > sysfs file and the kernel acts on that.  You could do this with, or
-> > > without, the snapshot_aggregate entry concept; in fact that could be
-> > > something that was controlled by userspace, e.g. write the number of
-> > > lines and a flag to indicate if a snapshot_aggregate was desired to
-> > > the sysfs file.  I can't say I've thought it all the way through to
-> > > make sure there are no gotchas, but I'm guessing that is about as
-> > > simple as one can get.
+On Wed, Nov 22, 2023 at 8:55=E2=80=AFAM Gavrilov Ilia <Ilia.Gavrilov@infote=
+cs.ru> wrote:
 >
-> > > If there is something else you had in mind, Mimi, please share the
-> > > details.  This is a very real problem we are facing and we want to
-> > > work to get a solution upstream.
-> >
-> > Any thoughts on this Mimi?  We have a real interest in working with
-> > you to solve this problem upstream, but we need more detailed feedback
-> > than "too complicated".  If you don't like the solutions presented
-> > thus far, what type of solution would you like to see?
->
-> Paul, the design copies the measurement list to a temporary "snapshot"
-> file, before trimming the measurement list, which according to the
-> design document locks the existing measurement list.  And further
-> pauses extending the measurement list to calculate the
-> "snapshot_aggregate".
+> If IPv6 support is disabled at boot (ipv6.disable=3D1),
+> the calipso_init() -> netlbl_calipso_ops_register() function isn't called=
+,
+> and the netlbl_calipso_ops_get() function always returns NULL.
+> In this case, the netlbl_calipso_add_pass() function allocates memory
+> for the doi_def variable but doesn't free it with the calipso_doi_free().
 
-I believe the intent is to only pause the measurements while the
-snapshot_aggregate is generated, not for the duration of the entire
-snapshot process.  The purpose of the snapshot_aggregate is to
-establish a new root of trust, similar to the boot_aggregate, to help
-improve attestation performance.
+It looks like a better option would be to return an error code in
+netlbl_calipso_add() so we never allocate the memory in the first
+place.
 
-> Userspace can export the measurement list already, so why this
-> complicated design?
+Untested patch below, copy-n-paste'd so there is likely whitespace
+damage, but you get the idea.
 
-The current code has no provision for trimming the measurement log,
-that's the primary reason.
+diff --git a/net/netlabel/netlabel_calipso.c b/net/netlabel/netlabel_calips=
+o.c
+index f1d5b8465217..26a504dc6e57 100644
+--- a/net/netlabel/netlabel_calipso.c
++++ b/net/netlabel/netlabel_calipso.c
+@@ -54,8 +54,31 @@ static const struct nla_policy
+calipso_genl_policy[NLBL_CALIPSO_A_MAX + 1] =3D {
+       [NLBL_CALIPSO_A_MTYPE] =3D { .type =3D NLA_U32 },
+};
 
-> As I mentioned previously and repeated yesterday, the
-> "snapshot_aggregate" is a new type of critical data and should be
-> upstreamed independently of this patch set that trims the measurement
-> list.  Trimming the measurement list could be based, as you suggested
-> on the number of records to remove, or it could be up to the next/last
-> "snapshot_aggregate" record.
++static const struct netlbl_calipso_ops *calipso_ops;
++
++/**
++ * netlbl_calipso_ops_register - Register the CALIPSO operations
++ * @ops: ops to register
++ *
++ * Description:
++ * Register the CALIPSO packet engine operations.
++ *
++ */
++const struct netlbl_calipso_ops *
++netlbl_calipso_ops_register(const struct netlbl_calipso_ops *ops)
++{
++       return xchg(&calipso_ops, ops);
++}
++EXPORT_SYMBOL(netlbl_calipso_ops_register);
++
++static const struct netlbl_calipso_ops *netlbl_calipso_ops_get(void)
++{
++       return READ_ONCE(calipso_ops);
++}
++
+/* NetLabel Command Handlers
+ */
++
+/**
+ * netlbl_calipso_add_pass - Adds a CALIPSO pass DOI definition
+ * @info: the Generic NETLINK info block
+@@ -100,10 +123,13 @@ static int netlbl_calipso_add(struct sk_buff
+*skb, struct genl_info *info)
+{
+       int ret_val =3D -EINVAL;
+       struct netlbl_audit audit_info;
++       const struct netlbl_calipso_ops *ops =3D netlbl_calipso_ops_get();
 
-Okay, we are starting to get closer, but I'm still missing the part
-where you say "if you do X, Y, and Z, I'll accept and merge the
-solution."  Can you be more explicit about what approach(es) you would
-be willing to accept upstream?
+       if (!info->attrs[NLBL_CALIPSO_A_DOI] ||
+           !info->attrs[NLBL_CALIPSO_A_MTYPE])
+               return -EINVAL;
++       if (!ops)
++               return -EOPNOTSUPP;
+
+       netlbl_netlink_auditinfo(&audit_info);
+       switch (nla_get_u32(info->attrs[NLBL_CALIPSO_A_MTYPE])) {
+@@ -363,28 +389,6 @@ int __init netlbl_calipso_genl_init(void)
+       return genl_register_family(&netlbl_calipso_gnl_family);
+}
+
+-static const struct netlbl_calipso_ops *calipso_ops;
+-
+-/**
+- * netlbl_calipso_ops_register - Register the CALIPSO operations
+- * @ops: ops to register
+- *
+- * Description:
+- * Register the CALIPSO packet engine operations.
+- *
+- */
+-const struct netlbl_calipso_ops *
+-netlbl_calipso_ops_register(const struct netlbl_calipso_ops *ops)
+-{
+-       return xchg(&calipso_ops, ops);
+-}
+-EXPORT_SYMBOL(netlbl_calipso_ops_register);
+-
+-static const struct netlbl_calipso_ops *netlbl_calipso_ops_get(void)
+-{
+-       return READ_ONCE(calipso_ops);
+-}
+-
+/**
+ * calipso_doi_add - Add a new DOI to the CALIPSO protocol engine
+ * @doi_def: the DOI structure
 
 --=20
 paul-moore.com
