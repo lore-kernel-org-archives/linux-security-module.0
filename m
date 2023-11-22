@@ -1,219 +1,144 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QH/5+/7z"
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6021019E;
-	Wed, 22 Nov 2023 06:16:27 -0800 (PST)
-Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-6c4d06b6ddaso5745887b3a.3;
-        Wed, 22 Nov 2023 06:16:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ng0gK+EC"
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E2D9110
+	for <linux-security-module@vger.kernel.org>; Wed, 22 Nov 2023 06:22:33 -0800 (PST)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-db057de2b77so6241519276.3
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Nov 2023 06:22:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700662587; x=1701267387; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1700662952; x=1701267752; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=42bpqVzHBF23qzcSwgVCWgOUmb+BqnKFGPkAIPmzQRk=;
-        b=QH/5+/7z752qsHax/mfWb85MHjlveJJAhG1o9yjGOD8WoO5MEdLkkbZ5b4bhgPq2WG
-         ruYninx1erAlGDpHB/LmLWi9qs9X4tX1hDVL2RKm1ZGaa/D6f5UxZUJtKU+v6ciwW0+Y
-         N4emx6OVXSjrEUIEBUmjyMZghAFklUatKqgZSV1rhL8Mb3wmS0NccRRRZFAvOKF2cZkC
-         6Z4j/wbAviOZwwVUCiglT9KMA35HjOxhjBGpxdO2vNOhbIXk0Rutd0ae4Jmew6tLn2J/
-         WeoGbsL1pCUvyjMLW5tWvoqY/EXmWXt9nZcYE3mZFPGeFWOHSa2glsawrVqsHXbXD7nn
-         3pKA==
+        bh=4prMfUwibvSrz+SlOVCRM+XxGw8pCCbk8//pMWkdN5o=;
+        b=Ng0gK+ECagWzuchmn/NAAvHkSgf1waCk5bUEG4/eUn9X5ebSJoYTlYG6aDoJSZOiJV
+         JPLoA/RvLAbbgvz7wa2wsj4lXiw0ZVIKagNROvGuXhCW5gSONvo+87gQVrxOSsx01y5p
+         5rqLOSy6jMHP9pnryu3IXomkuHcc70yIVsITHz6WRKh3wuHwYIaiuZzJha/tsbRI0Lu/
+         HB9R991At1eWX4aUyG3mb3oDEDXPt726duSg1Y9krSQigYD8xn3fAVioIBJf6uLmzKRu
+         AphLHHqe/rUAZ/zlbhCtCqSy3c3xo4Afx5INR/GcZhy4wEiBa77rFcpVMw2XExR6n5sA
+         nNzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700662587; x=1701267387;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1700662952; x=1701267752;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=42bpqVzHBF23qzcSwgVCWgOUmb+BqnKFGPkAIPmzQRk=;
-        b=Tk7yRFTuX99ahkHFjM2mcuUIqRRhoJZDCerLpZqZssVl9XQLzRMYLghuqxHDyanN2g
-         Fsxo48TU0NAXI8xB4GM7XrXkTRpR9+xw/l6vPfRV5P0sBJGKeP1qAlS120rQNxCe9gi4
-         VL9uLMY8sVl7t1MCCmBL5eeQiL3wSb1Wdc6+uvin9dc4sruk0LoVFZI+0kSMVjv9i6Z7
-         1zJ6COh1n3VJK5PbgYJW9wyePlRmzA2pwY6mpvy50+hagnejow2fdYD4RoKMoJjssUTC
-         UXkyxSr++Qr4L0mls25HC1U68KBp3NdF0OavzDUV66R956nriqZAteWiqi6lylwpHzQ/
-         jrYw==
-X-Gm-Message-State: AOJu0Yy5eBj9hNAMWp0418otTMnOQrmyXtsfyMkizT/kTOMupMLN9sJl
-	5tWYWLxrxY9CorBXOwjLdMss9o7vJFhtFWDp
-X-Google-Smtp-Source: AGHT+IH9TJv1IbJvzrwzu5iTZh4KrlS6UUEMOLV3hX6Kk58543Idex8psVvUw1lHrI+Zle6LTEek0A==
-X-Received: by 2002:a05:6a20:548c:b0:187:ce9f:e1ab with SMTP id i12-20020a056a20548c00b00187ce9fe1abmr2457912pzk.33.1700662586874;
-        Wed, 22 Nov 2023 06:16:26 -0800 (PST)
-Received: from vultr.guest ([2001:19f0:ac01:a71:5400:4ff:fea8:5687])
-        by smtp.gmail.com with ESMTPSA id p18-20020a63fe12000000b0058988954686sm9356260pgh.90.2023.11.22.06.16.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 06:16:26 -0800 (PST)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: akpm@linux-foundation.org,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	omosnace@redhat.com,
-	mhocko@suse.com
-Cc: linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	bpf@vger.kernel.org,
-	ligang.bdlg@bytedance.com,
-	Yafang Shao <laoar.shao@gmail.com>
-Subject: [RFC PATCH v2 6/6] selftests/bpf: Add selftests for set_mempolicy with a lsm prog
-Date: Wed, 22 Nov 2023 14:15:59 +0000
-Message-Id: <20231122141559.4228-7-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20231122141559.4228-1-laoar.shao@gmail.com>
-References: <20231122141559.4228-1-laoar.shao@gmail.com>
+        bh=4prMfUwibvSrz+SlOVCRM+XxGw8pCCbk8//pMWkdN5o=;
+        b=vTl24EOOptBEdpwldrRUZ4OV9yuqvIHoNyPH25nKpq6RiPIO7HTM87VY20rS3UA6LS
+         qweuClJIBGskbT6x6lpZw3SIIBJ4yIf3LSZ6JlS7tcft/wenSTSUoKRboyXdT/XJb+yb
+         ONaqA7Jz/Mw0tvHWhF9oRds1uT7JqBLIj4p8WzUehHrZD62gDgACZiM7iMoOFMIF8XZw
+         YBvFW1dd8CdbqRBAX/u3qlem+5fpjbN/4X9Meig39dI48fvkrWbF2qD2pgjzibloRtL8
+         3otHTopcsqQIMIFnJTEyte3ywzlrDWN6wM0lkfZW+Cdc7JBw97tR+u9uuJ4FN08fkCYF
+         Ma9A==
+X-Gm-Message-State: AOJu0YxGZV5VzE/Yuoxrf1DNbw1cNryLsexI6rGub9Ko8w8hZtUDo3YM
+	AhgG23kqh4s6ZeWh/C/Zu1vgQv8nVZXGClMmGr6A
+X-Google-Smtp-Source: AGHT+IEJL/YGcl1HeO8ReXDrsuqtzUGq1wd/C8C6zxLauzMEtqUmjA6ZwzH2itAh+DerMPVQukYfKcnK8Mzm9vv1cIE=
+X-Received: by 2002:a25:e908:0:b0:d9a:ce53:4942 with SMTP id
+ n8-20020a25e908000000b00d9ace534942mr2525742ybd.0.1700662952611; Wed, 22 Nov
+ 2023 06:22:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <6c0c32d5-e636-2a0e-5bdf-538c904ceea3@linux.microsoft.com>
+ <8bff2bf1a4629aacec7b6311d77f233cb75b2f8a.camel@linux.ibm.com>
+ <CAHC9VhRm9Tzz3C-VTdXS4s1_-kPQQ6RXMt8JGCS4jorJ0VURyQ@mail.gmail.com>
+ <CAHC9VhSJ7MKNM7nMXR3xE-cNMrYB4AT+B76wzF1cKy2JM9tBrA@mail.gmail.com> <1b6853e8354af7033e6d87e77cfb175526753c38.camel@linux.ibm.com>
+In-Reply-To: <1b6853e8354af7033e6d87e77cfb175526753c38.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 22 Nov 2023 09:22:21 -0500
+Message-ID: <CAHC9VhSnDQ-d9dh_icqNyhpT+cTGQOqGh8+cbN3QzF_qPehvaA@mail.gmail.com>
+Subject: Re: [RFC V2] IMA Log Snapshotting Design Proposal
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Tushar Sugandhi <tusharsu@linux.microsoft.com>, linux-integrity@vger.kernel.org, 
+	peterhuewe@gmx.de, Jarkko Sakkinen <jarkko@kernel.org>, jgg@ziepe.ca, 
+	Ken Goldman <kgold@linux.ibm.com>, bhe@redhat.com, vgoyal@redhat.com, 
+	Dave Young <dyoung@redhat.com>, "kexec@lists.infradead.org" <kexec@lists.infradead.org>, jmorris@namei.org, 
+	serge@hallyn.com, James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	linux-security-module@vger.kernel.org, 
+	Tyler Hicks <tyhicks@linux.microsoft.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Sush Shringarputale <sushring@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The result as follows,
-  #261/1   set_mempolicy/MPOL_BIND_with_lsm:OK
-  #261/2   set_mempolicy/MPOL_DEFAULT_with_lsm:OK
-  #261/3   set_mempolicy/MPOL_BIND_without_lsm:OK
-  #261/4   set_mempolicy/MPOL_DEFAULT_without_lsm:OK
-  #261     set_mempolicy:OK
-  Summary: 1/4 PASSED, 0 SKIPPED, 0 FAILED
+On Wed, Nov 22, 2023 at 8:18=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+> On Tue, 2023-11-21 at 23:27 -0500, Paul Moore wrote:
+> > On Thu, Nov 16, 2023 at 5:28=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > > On Tue, Oct 31, 2023 at 3:15=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.c=
+om> wrote:
+> >
+> > ...
+> >
+> > > > Userspace can already export the IMA measurement list(s) via the
+> > > > securityfs {ascii,binary}_runtime_measurements file(s) and do whate=
+ver
+> > > > it wants with it.  All that is missing in the kernel is the ability=
+ to
+> > > > trim the measurement list, which doesn't seem all that complicated.
+> > >
+> > > From my perspective what has been presented is basically just trimmin=
+g
+> > > the in-memory measurement log, the additional complexity (which reall=
+y
+> > > doesn't look that bad IMO) is there to ensure robustness in the face
+> > > of an unreliable userspace (processes die, get killed, etc.) and to
+> > > establish a new, transitive root of trust in the newly trimmed
+> > > in-memory log.
+> > >
+> > > I suppose one could simplify things greatly by having a design where
+> > > userspace  captures the measurement log and then writes the number of
+> > > measurement records to trim from the start of the measurement log to =
+a
+> > > sysfs file and the kernel acts on that.  You could do this with, or
+> > > without, the snapshot_aggregate entry concept; in fact that could be
+> > > something that was controlled by userspace, e.g. write the number of
+> > > lines and a flag to indicate if a snapshot_aggregate was desired to
+> > > the sysfs file.  I can't say I've thought it all the way through to
+> > > make sure there are no gotchas, but I'm guessing that is about as
+> > > simple as one can get.
+>
+> > > If there is something else you had in mind, Mimi, please share the
+> > > details.  This is a very real problem we are facing and we want to
+> > > work to get a solution upstream.
+> >
+> > Any thoughts on this Mimi?  We have a real interest in working with
+> > you to solve this problem upstream, but we need more detailed feedback
+> > than "too complicated".  If you don't like the solutions presented
+> > thus far, what type of solution would you like to see?
+>
+> Paul, the design copies the measurement list to a temporary "snapshot"
+> file, before trimming the measurement list, which according to the
+> design document locks the existing measurement list.  And further
+> pauses extending the measurement list to calculate the
+> "snapshot_aggregate".
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- tools/testing/selftests/bpf/Makefile          |  2 +-
- .../selftests/bpf/prog_tests/set_mempolicy.c  | 79 +++++++++++++++++++
- .../selftests/bpf/progs/test_set_mempolicy.c  | 29 +++++++
- 3 files changed, 109 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/set_mempolicy.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_set_mempolicy.c
+I believe the intent is to only pause the measurements while the
+snapshot_aggregate is generated, not for the duration of the entire
+snapshot process.  The purpose of the snapshot_aggregate is to
+establish a new root of trust, similar to the boot_aggregate, to help
+improve attestation performance.
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 9c27b67bc7b1..3c3c3b7d5dcd 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -35,7 +35,7 @@ CFLAGS += -g $(OPT_FLAGS) -rdynamic					\
- 	  -I$(CURDIR) -I$(INCLUDE_DIR) -I$(GENDIR) -I$(LIBDIR)		\
- 	  -I$(TOOLSINCDIR) -I$(APIDIR) -I$(OUTPUT)
- LDFLAGS += $(SAN_LDFLAGS)
--LDLIBS += -lelf -lz -lrt -lpthread
-+LDLIBS += -lelf -lz -lrt -lpthread -lnuma
- 
- ifneq ($(LLVM),)
- # Silence some warnings when compiled with clang
-diff --git a/tools/testing/selftests/bpf/prog_tests/set_mempolicy.c b/tools/testing/selftests/bpf/prog_tests/set_mempolicy.c
-new file mode 100644
-index 000000000000..0dc3391b29fb
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/set_mempolicy.c
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (C) 2023 Yafang Shao <laoar.shao@gmail.com> */
-+
-+#include <sys/types.h>
-+#include <unistd.h>
-+#include <sys/mman.h>
-+#include <numaif.h>
-+#include <test_progs.h>
-+#include "test_set_mempolicy.skel.h"
-+
-+#define SIZE 4096
-+
-+static void mempolicy_bind(bool success)
-+{
-+	unsigned long mask = 1;
-+	char *addr;
-+	int err;
-+
-+	addr = mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-+	if (!ASSERT_OK_PTR(addr, "mmap"))
-+		return;
-+
-+	err = mbind(addr, SIZE, MPOL_BIND, &mask, sizeof(mask), 0);
-+	if (success)
-+		ASSERT_OK(err, "mbind_success");
-+	else
-+		ASSERT_ERR(err, "mbind_fail");
-+
-+	munmap(addr, SIZE);
-+}
-+
-+static void mempolicy_default(void)
-+{
-+	char *addr;
-+	int err;
-+
-+	addr = mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-+	if (!ASSERT_OK_PTR(addr, "mmap"))
-+		return;
-+
-+	err = mbind(addr, SIZE, MPOL_DEFAULT, NULL, 0, 0);
-+	ASSERT_OK(err, "mbind_success");
-+
-+	munmap(addr, SIZE);
-+}
-+void test_set_mempolicy(void)
-+{
-+	struct test_set_mempolicy *skel;
-+	int err;
-+
-+	skel = test_set_mempolicy__open();
-+	if (!ASSERT_OK_PTR(skel, "open"))
-+		return;
-+
-+	skel->bss->target_pid = getpid();
-+
-+	err = test_set_mempolicy__load(skel);
-+	if (!ASSERT_OK(err, "load"))
-+		goto destroy;
-+
-+	/* Attach LSM prog first */
-+	err = test_set_mempolicy__attach(skel);
-+	if (!ASSERT_OK(err, "attach"))
-+		goto destroy;
-+
-+	/* syscall to adjust memory policy */
-+	if (test__start_subtest("MPOL_BIND_with_lsm"))
-+		mempolicy_bind(false);
-+	if (test__start_subtest("MPOL_DEFAULT_with_lsm"))
-+		mempolicy_default();
-+
-+destroy:
-+	test_set_mempolicy__destroy(skel);
-+
-+	if (test__start_subtest("MPOL_BIND_without_lsm"))
-+		mempolicy_bind(true);
-+	if (test__start_subtest("MPOL_DEFAULT_without_lsm"))
-+		mempolicy_default();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_set_mempolicy.c b/tools/testing/selftests/bpf/progs/test_set_mempolicy.c
-new file mode 100644
-index 000000000000..31eeaa580a17
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_set_mempolicy.c
-@@ -0,0 +1,29 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (C) 2023 Yafang Shao <laoar.shao@gmail.com> */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_core_read.h>
-+
-+int target_pid;
-+
-+static int mem_policy_adjustment(u64 mode)
-+{
-+	struct task_struct *task = bpf_get_current_task_btf();
-+
-+	if (task->pid != target_pid)
-+		return 0;
-+
-+	if (mode != MPOL_BIND)
-+		return 0;
-+	return -1;
-+}
-+
-+SEC("lsm/set_mempolicy")
-+int BPF_PROG(setmempolicy, u64 mode, u16 mode_flags, nodemask_t *nmask, u32 flags)
-+{
-+	return mem_policy_adjustment(mode);
-+}
-+
-+char _license[] SEC("license") = "GPL";
--- 
-2.30.1 (Apple Git-130)
+> Userspace can export the measurement list already, so why this
+> complicated design?
 
+The current code has no provision for trimming the measurement log,
+that's the primary reason.
+
+> As I mentioned previously and repeated yesterday, the
+> "snapshot_aggregate" is a new type of critical data and should be
+> upstreamed independently of this patch set that trims the measurement
+> list.  Trimming the measurement list could be based, as you suggested
+> on the number of records to remove, or it could be up to the next/last
+> "snapshot_aggregate" record.
+
+Okay, we are starting to get closer, but I'm still missing the part
+where you say "if you do X, Y, and Z, I'll accept and merge the
+solution."  Can you be more explicit about what approach(es) you would
+be willing to accept upstream?
+
+--=20
+paul-moore.com
