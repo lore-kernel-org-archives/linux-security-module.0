@@ -1,154 +1,123 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TL3Ys8Lo"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5EA410C;
-	Wed, 22 Nov 2023 05:18:39 -0800 (PST)
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AMD9juj030220;
-	Wed, 22 Nov 2023 13:18:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=IrmURnvMILkV8BBA/aqBOUU/iNdfg2KlHJ+BlsU/afk=;
- b=TL3Ys8Loeb9W4MhwrEPIj63ZA5Q9Qj81qaodH+QWEUdJJZna9/s+IUSKFmPo9uLh/lhc
- IgASGMUGhLyDPhOa/f+78K9q4UMGhStH1SeC3TTbPU71aF14HUTDj8qFUt9WtQTshrwg
- uuKwHQOBKiby3og+5sPJZt+I98vS3ylf0Z3VEsHA/6XvyvZ2axWa2os4e5tHuG1+p7eS
- GwCPgUDTjCz2RDvRP7EqsGXHSRVM3rtHJQBlEwOM/lSMb18WAGUYCMr6XGkh6g37v3po
- qXNcMpGY1z4DmCvpSgz3Dn2jMc/d1Ywn7I1rHlJRWB6enDQT8X6dkTgSpPPeEFZj1mLO cg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uhj9jr9be-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Nov 2023 13:18:20 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3AMDA5EQ030739;
-	Wed, 22 Nov 2023 13:18:20 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uhj9jr9ap-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Nov 2023 13:18:20 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3AMAJnVt001719;
-	Wed, 22 Nov 2023 13:18:18 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3uf93kyup8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Nov 2023 13:18:18 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3AMDIHtR17826350
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 22 Nov 2023 13:18:18 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9AF195805E;
-	Wed, 22 Nov 2023 13:18:17 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E78E358059;
-	Wed, 22 Nov 2023 13:18:15 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.52.147])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 22 Nov 2023 13:18:15 +0000 (GMT)
-Message-ID: <1b6853e8354af7033e6d87e77cfb175526753c38.camel@linux.ibm.com>
-Subject: Re: [RFC V2] IMA Log Snapshotting Design Proposal
-From: Mimi Zohar <zohar@linux.ibm.com>
+	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="OZ2rMpvd"
+X-Greylist: delayed 438 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 22 Nov 2023 06:02:47 PST
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FF42197
+	for <linux-security-module@vger.kernel.org>; Wed, 22 Nov 2023 06:02:47 -0800 (PST)
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+	by mx0.infotecs.ru (Postfix) with ESMTP id A1721114CAA9;
+	Wed, 22 Nov 2023 16:55:24 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru A1721114CAA9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+	t=1700661324; bh=WfKnDkL5/6UmicSAggQzojP2VBLZEawhK5wwMkpVq1E=;
+	h=From:To:CC:Subject:Date:From;
+	b=OZ2rMpvd/GJ73lWv/91VdsU2sZM9EbQqMl2PcXY1yYh7mpWJJ435lqjs2EumtYveD
+	 LOMIL4jCVIm39swBIRBi70L+FUbFbK9kS12PmU2HlwCfeW8Uz0mmlcp1lxxU5FHtqo
+	 iUULdiaJ0jWPW9vQbYt3HhoajFJ+0LGXPjDX+D+I=
+Received: from msk-exch-01.infotecs-nt (msk-exch-01.infotecs-nt [10.0.7.191])
+	by mx0.infotecs-nt (Postfix) with ESMTP id 9EC4031301CF;
+	Wed, 22 Nov 2023 16:55:24 +0300 (MSK)
+From: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
 To: Paul Moore <paul@paul-moore.com>
-Cc: Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de,
-        Jarkko Sakkinen
- <jarkko@kernel.org>, jgg@ziepe.ca,
-        Ken Goldman <kgold@linux.ibm.com>, bhe@redhat.com, vgoyal@redhat.com,
-        Dave Young <dyoung@redhat.com>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        jmorris@namei.org, serge@hallyn.com,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-security-module@vger.kernel.org,
-        Tyler Hicks
- <tyhicks@linux.microsoft.com>,
-        Lakshmi Ramasubramanian
- <nramas@linux.microsoft.com>,
-        Sush Shringarputale
- <sushring@linux.microsoft.com>
-Date: Wed, 22 Nov 2023 08:18:15 -0500
-In-Reply-To: <CAHC9VhSJ7MKNM7nMXR3xE-cNMrYB4AT+B76wzF1cKy2JM9tBrA@mail.gmail.com>
-References: <6c0c32d5-e636-2a0e-5bdf-538c904ceea3@linux.microsoft.com>
-	 <8bff2bf1a4629aacec7b6311d77f233cb75b2f8a.camel@linux.ibm.com>
-	 <CAHC9VhRm9Tzz3C-VTdXS4s1_-kPQQ6RXMt8JGCS4jorJ0VURyQ@mail.gmail.com>
-	 <CAHC9VhSJ7MKNM7nMXR3xE-cNMrYB4AT+B76wzF1cKy2JM9tBrA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Huw Davies <huw@codeweavers.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH net] calipso: Fix memory leak in netlbl_calipso_add_pass()
+Thread-Topic: [PATCH net] calipso: Fix memory leak in
+ netlbl_calipso_add_pass()
+Thread-Index: AQHaHUuKnw2Bkvmb60ybqCKOZMz9OQ==
+Date: Wed, 22 Nov 2023 13:55:24 +0000
+Message-ID: <20231122135242.2779058-1-Ilia.Gavrilov@infotecs.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 0czCmu0bpYYjxWr0WuxlMnhsqfRJCMiO
-X-Proofpoint-GUID: RLicAhrwV9xSmJTXUajhN8W0XzacRsR_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-22_09,2023-11-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- mlxscore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
- phishscore=0 suspectscore=0 bulkscore=0 spamscore=0 malwarescore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311220094
+MIME-Version: 1.0
+X-KLMS-Rule-ID: 5
+X-KLMS-Message-Action: clean
+X-KLMS-AntiSpam-Status: not scanned, disabled by settings
+X-KLMS-AntiSpam-Interceptor-Info: not scanned
+X-KLMS-AntiPhishing: Clean, bases: 2023/11/22 12:40:00
+X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2023/11/22 10:55:00 #22501072
+X-KLMS-AntiVirus-Status: Clean, skipped
 
-On Tue, 2023-11-21 at 23:27 -0500, Paul Moore wrote:
-> On Thu, Nov 16, 2023 at 5:28 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Tue, Oct 31, 2023 at 3:15 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> 
-> ...
-> 
-> > > Userspace can already export the IMA measurement list(s) via the
-> > > securityfs {ascii,binary}_runtime_measurements file(s) and do whatever
-> > > it wants with it.  All that is missing in the kernel is the ability to
-> > > trim the measurement list, which doesn't seem all that complicated.
-> >
-> > From my perspective what has been presented is basically just trimming
-> > the in-memory measurement log, the additional complexity (which really
-> > doesn't look that bad IMO) is there to ensure robustness in the face
-> > of an unreliable userspace (processes die, get killed, etc.) and to
-> > establish a new, transitive root of trust in the newly trimmed
-> > in-memory log.
-> >
-> > I suppose one could simplify things greatly by having a design where
-> > userspace  captures the measurement log and then writes the number of
-> > measurement records to trim from the start of the measurement log to a
-> > sysfs file and the kernel acts on that.  You could do this with, or
-> > without, the snapshot_aggregate entry concept; in fact that could be
-> > something that was controlled by userspace, e.g. write the number of
-> > lines and a flag to indicate if a snapshot_aggregate was desired to
-> > the sysfs file.  I can't say I've thought it all the way through to
-> > make sure there are no gotchas, but I'm guessing that is about as
-> > simple as one can get.
+If IPv6 support is disabled at boot (ipv6.disable=3D1),
+the calipso_init() -> netlbl_calipso_ops_register() function isn't called,
+and the netlbl_calipso_ops_get() function always returns NULL.
+In this case, the netlbl_calipso_add_pass() function allocates memory
+for the doi_def variable but doesn't free it with the calipso_doi_free().
 
-> > If there is something else you had in mind, Mimi, please share the
-> > details.  This is a very real problem we are facing and we want to
-> > work to get a solution upstream.
-> 
-> Any thoughts on this Mimi?  We have a real interest in working with
-> you to solve this problem upstream, but we need more detailed feedback
-> than "too complicated".  If you don't like the solutions presented
-> thus far, what type of solution would you like to see?
+BUG: memory leak
+unreferenced object 0xffff888011d68180 (size 64):
+  comm "syz-executor.1", pid 10746, jiffies 4295410986 (age 17.928s)
+  hex dump (first 32 bytes):
+    00 00 00 00 02 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000730d8770>] kmalloc include/linux/slab.h:552 [inline]
+    [<00000000730d8770>] netlbl_calipso_add_pass net/netlabel/netlabel_cali=
+pso.c:76 [inline]
+    [<00000000730d8770>] netlbl_calipso_add+0x22e/0x4f0 net/netlabel/netlab=
+el_calipso.c:111
+    [<0000000002e662c0>] genl_family_rcv_msg_doit+0x22f/0x330 net/netlink/g=
+enetlink.c:739
+    [<00000000a08d6d74>] genl_family_rcv_msg net/netlink/genetlink.c:783 [i=
+nline]
+    [<00000000a08d6d74>] genl_rcv_msg+0x341/0x5a0 net/netlink/genetlink.c:8=
+00
+    [<0000000098399a97>] netlink_rcv_skb+0x14d/0x440 net/netlink/af_netlink=
+.c:2515
+    [<00000000ff7db83b>] genl_rcv+0x29/0x40 net/netlink/genetlink.c:811
+    [<000000000cf53b8c>] netlink_unicast_kernel net/netlink/af_netlink.c:13=
+13 [inline]
+    [<000000000cf53b8c>] netlink_unicast+0x54b/0x800 net/netlink/af_netlink=
+.c:1339
+    [<00000000d78cd38b>] netlink_sendmsg+0x90a/0xdf0 net/netlink/af_netlink=
+.c:1934
+    [<000000008328a57f>] sock_sendmsg_nosec net/socket.c:651 [inline]
+    [<000000008328a57f>] sock_sendmsg+0x157/0x190 net/socket.c:671
+    [<000000007b65a1b5>] ____sys_sendmsg+0x712/0x870 net/socket.c:2342
+    [<0000000083da800e>] ___sys_sendmsg+0xf8/0x170 net/socket.c:2396
+    [<000000004a9b827f>] __sys_sendmsg+0xea/0x1b0 net/socket.c:2429
+    [<0000000061b64d3a>] do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+    [<00000000a1265347>] entry_SYSCALL_64_after_hwframe+0x61/0xc6
 
-Paul, the design copies the measurement list to a temporary "snapshot"
-file, before trimming the measurement list, which according to the
-design document locks the existing measurement list.  And further
-pauses extending the measurement list to calculate the
-"snapshot_aggregate".
+Found by InfoTeCS on behalf of Linux Verification Center
+(linuxtesting.org) with Syzkaller
 
-Userspace can export the measurement list already, so why this
-complicated design?
+Fixes: cb72d38211ea ("netlabel: Initial support for the CALIPSO netlink pro=
+tocol.")
+Signed-off-by: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
+---
+ net/netlabel/netlabel_calipso.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-As I mentioned previously and repeated yesterday, the
-"snapshot_aggregate" is a new type of critical data and should be
-upstreamed independently of this patch set that trims the measurement
-list.  Trimming the measurement list could be based, as you suggested
-on the number of records to remove, or it could be up to the next/last
-"snapshot_aggregate" record.
-
--- 
-thanks,
-
-Mimi
-
+diff --git a/net/netlabel/netlabel_calipso.c b/net/netlabel/netlabel_calips=
+o.c
+index f1d5b8465217..76ae57c4df90 100644
+--- a/net/netlabel/netlabel_calipso.c
++++ b/net/netlabel/netlabel_calipso.c
+@@ -423,6 +423,8 @@ void calipso_doi_free(struct calipso_doi *doi_def)
+=20
+ 	if (ops)
+ 		ops->doi_free(doi_def);
++	else
++		kfree(doi_def);
+ }
+=20
+ /**
+--=20
+2.39.2
