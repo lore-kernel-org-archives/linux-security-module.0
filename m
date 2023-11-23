@@ -1,199 +1,98 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="IPQY3vK8"
-Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4347DDD;
-	Thu, 23 Nov 2023 01:25:58 -0800 (PST)
-Received: from mx0.infotecs-nt (localhost [127.0.0.1])
-	by mx0.infotecs.ru (Postfix) with ESMTP id 528061186113;
-	Thu, 23 Nov 2023 12:25:55 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru 528061186113
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
-	t=1700731556; bh=lA6R2xYOxsaucfW0fbUZrtsLYzmnyeXkqpK0MlytNN0=;
-	h=From:To:CC:Subject:Date:From;
-	b=IPQY3vK8Xk6pKBcUeVa4PEQ45sGWgcixKAqzzCXFHr9EoPIuFjGtZ4N1lAlQegP6u
-	 lmL5QlhboKHYEC5+4KBuvsHATBL4awEQSHXCFjtUeyuAkYrHDLNT49f6Nl78UN1dpY
-	 wn/eCi0ttJS/lEv/duHH+fkaA70iYADFsGr+u2MI=
-Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
-	by mx0.infotecs-nt (Postfix) with ESMTP id 4F455312FFE4;
-	Thu, 23 Nov 2023 12:25:55 +0300 (MSK)
-From: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
-To: Paul Moore <paul@paul-moore.com>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Huw Davies <huw@codeweavers.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-security-module@vger.kernel.org"
-	<linux-security-module@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH net v2] calipso: Fix memory leak in netlbl_calipso_add_pass()
-Thread-Topic: [PATCH net v2] calipso: Fix memory leak in
- netlbl_calipso_add_pass()
-Thread-Index: AQHaHe8PzUY9PMUIEUGPey0eifO26Q==
-Date: Thu, 23 Nov 2023 09:25:54 +0000
-Message-ID: <20231123092314.91299-1-Ilia.Gavrilov@infotecs.ru>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m7NAxxBZ"
+Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87C7791;
+	Thu, 23 Nov 2023 04:22:11 -0800 (PST)
+Received: by mail-qk1-x732.google.com with SMTP id af79cd13be357-778940531dbso43289785a.0;
+        Thu, 23 Nov 2023 04:22:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700742130; x=1701346930; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w9b7hxZxggUNzWPZcEt2SSt9tvfb5uiUa5fxRekt8xM=;
+        b=m7NAxxBZQdgQaDGWQHbgh+vTzt8lhp2V6ju3wXOJ5gadCmS1MA7iRQfjre5Py+8+qP
+         kZZ0lODUNrcLd03D+JveLu5AOpheqd3pN88MNybXQk9ll8SuLUSD+VpJBq3erjCy3svQ
+         v2Rzg2rG1L9qNGqBWfLP69YqbAApm4GpZ758wrm5NzsTTznHc6Jhh9P96u1vSHP/xtL8
+         3IVGeMwFQlMXXTsUfDIH+R4ByfYTagpeiUqfee1pTZFKfbeC9/IScYTB0oCUNzcu7SyP
+         vMKhuQCZT5JT9Q1s1v8+scvNQSiSqAokohpJezGX9t9eDVPYLjcIdGrn5QcqdwZquYWW
+         BJkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700742130; x=1701346930;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w9b7hxZxggUNzWPZcEt2SSt9tvfb5uiUa5fxRekt8xM=;
+        b=Zh8bPkIuHLB1jWZqOfMltU+FCBV8rXH+kTuD5yEMAoJ667shppJAnXqrXG6DfgFpw8
+         RI3v8qKjLRPd2s++awAQPxgxQ56024Lz2ULlKy5depIqNwva5hl1XcAj3P94PFo/n4NA
+         ikGhu71ZnUs8vhx3sUIPQBI03HSYn83VU1prsygzys729h15ulzqreesY4HVGMY+TDg4
+         F+41+qRfiqG9EQoV71Haq5eUGQC5A2P+wkTAYR/H2WyT2a+Runij4SAhp3AzYecRS4sP
+         jVFbCyQWDv/8BZzW31y7nOU5IrBjXCVuS3u4jMev6gnDq65YJ7ZycigH46u0V17X+b4N
+         d36A==
+X-Gm-Message-State: AOJu0Yyz5sp/WZbcip225al3Bde3HijPxP7sb2j2kyLwKEqeY2dpV6EN
+	tMw/EEYXQ0cCiiDz0xEmzFfPqIpxizPBshMMuw4=
+X-Google-Smtp-Source: AGHT+IGV5ARiTvmQFIAC9uDVavWcbdxbAY4C8q2cxi8gW6E6IUDziRn+hFG4aSjasmgZgK5w/Ye/bBVfOR6njOUoJ4g=
+X-Received: by 2002:ad4:58e5:0:b0:67a:e8c:863b with SMTP id
+ di5-20020ad458e5000000b0067a0e8c863bmr96257qvb.63.1700742130607; Thu, 23 Nov
+ 2023 04:22:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KLMS-Rule-ID: 5
-X-KLMS-Message-Action: clean
-X-KLMS-AntiSpam-Status: not scanned, disabled by settings
-X-KLMS-AntiSpam-Interceptor-Info: not scanned
-X-KLMS-AntiPhishing: Clean, bases: 2023/11/23 07:58:00
-X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2023/11/23 06:11:00 #22507418
-X-KLMS-AntiVirus-Status: Clean, skipped
+References: <20231122141559.4228-1-laoar.shao@gmail.com> <20231122141559.4228-3-laoar.shao@gmail.com>
+ <87il5t7zi3.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87il5t7zi3.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Thu, 23 Nov 2023 20:21:33 +0800
+Message-ID: <CALOAHbDwyFg+SPGACsOoWU9fo48paX4O_vc2OYaDJ2uaq=pQdQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/6] mm: mempolicy: Revise comment regarding
+ mempolicy mode flags
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, omosnace@redhat.com, mhocko@suse.com, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
+	ligang.bdlg@bytedance.com, Eric Dumazet <edumazet@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If IPv6 support is disabled at boot (ipv6.disable=3D1),
-the calipso_init() -> netlbl_calipso_ops_register() function isn't called,
-and the netlbl_calipso_ops_get() function always returns NULL.
-In this case, the netlbl_calipso_add_pass() function allocates memory
-for the doi_def variable but doesn't free it with the calipso_doi_free().
+On Thu, Nov 23, 2023 at 2:32=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
+wrote:
+>
+> Yafang Shao <laoar.shao@gmail.com> writes:
+>
+> > MPOL_F_STATIC_NODES, MPOL_F_RELATIVE_NODES, and MPOL_F_NUMA_BALANCING a=
+re
+> > mode flags applicable to both set_mempolicy(2) and mbind(2) system call=
+s.
+> > It's worth noting that MPOL_F_NUMA_BALANCING was initially introduced i=
+n
+> > commit bda420b98505 ("numa balancing: migrate on fault among multiple b=
+ound
+> > nodes") exclusively for set_mempolicy(2). However, it was later made a
+> > shared flag for both set_mempolicy(2) and mbind(2) following
+> > commit 6d2aec9e123b ("mm/mempolicy: do not allow illegal
+> > MPOL_F_NUMA_BALANCING | MPOL_LOCAL in mbind()").
+> >
+> > This revised version aims to clarify the details regarding the mode fla=
+gs.
+> >
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > Cc: Eric Dumazet <edumazet@google.com>
+> > Cc: "Huang, Ying" <ying.huang@intel.com>
+>
+> Thanks for fixing this.
+>
+> Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+>
+> And, please revise the manpage for mbind() too.  As we have done for
+> set_mempolicy(),
+>
+> https://lore.kernel.org/all/20210120061235.148637-3-ying.huang@intel.com/
 
-BUG: memory leak
-unreferenced object 0xffff888011d68180 (size 64):
-  comm "syz-executor.1", pid 10746, jiffies 4295410986 (age 17.928s)
-  hex dump (first 32 bytes):
-    00 00 00 00 02 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<00000000730d8770>] kmalloc include/linux/slab.h:552 [inline]
-    [<00000000730d8770>] netlbl_calipso_add_pass net/netlabel/netlabel_cali=
-pso.c:76 [inline]
-    [<00000000730d8770>] netlbl_calipso_add+0x22e/0x4f0 net/netlabel/netlab=
-el_calipso.c:111
-    [<0000000002e662c0>] genl_family_rcv_msg_doit+0x22f/0x330 net/netlink/g=
-enetlink.c:739
-    [<00000000a08d6d74>] genl_family_rcv_msg net/netlink/genetlink.c:783 [i=
-nline]
-    [<00000000a08d6d74>] genl_rcv_msg+0x341/0x5a0 net/netlink/genetlink.c:8=
-00
-    [<0000000098399a97>] netlink_rcv_skb+0x14d/0x440 net/netlink/af_netlink=
-.c:2515
-    [<00000000ff7db83b>] genl_rcv+0x29/0x40 net/netlink/genetlink.c:811
-    [<000000000cf53b8c>] netlink_unicast_kernel net/netlink/af_netlink.c:13=
-13 [inline]
-    [<000000000cf53b8c>] netlink_unicast+0x54b/0x800 net/netlink/af_netlink=
-.c:1339
-    [<00000000d78cd38b>] netlink_sendmsg+0x90a/0xdf0 net/netlink/af_netlink=
-.c:1934
-    [<000000008328a57f>] sock_sendmsg_nosec net/socket.c:651 [inline]
-    [<000000008328a57f>] sock_sendmsg+0x157/0x190 net/socket.c:671
-    [<000000007b65a1b5>] ____sys_sendmsg+0x712/0x870 net/socket.c:2342
-    [<0000000083da800e>] ___sys_sendmsg+0xf8/0x170 net/socket.c:2396
-    [<000000004a9b827f>] __sys_sendmsg+0xea/0x1b0 net/socket.c:2429
-    [<0000000061b64d3a>] do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
-    [<00000000a1265347>] entry_SYSCALL_64_after_hwframe+0x61/0xc6
+Thanks for your review. will do it.
 
-Found by InfoTeCS on behalf of Linux Verification Center
-(linuxtesting.org) with Syzkaller
-
-Fixes: cb72d38211ea ("netlabel: Initial support for the CALIPSO netlink pro=
-tocol.")
-Signed-off-by: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
----
-v2:
-  - return the error code in netlbl_calipso_add() if the variable calipso_h=
-ops is NULL
-v1: https://lore.kernel.org/all/20231122135242.2779058-1-Ilia.Gavrilov@info=
-tecs.ru/
-
- net/netlabel/netlabel_calipso.c | 49 +++++++++++++++++----------------
- 1 file changed, 26 insertions(+), 23 deletions(-)
-
-diff --git a/net/netlabel/netlabel_calipso.c b/net/netlabel/netlabel_calips=
-o.c
-index f1d5b8465217..a07c2216d28b 100644
---- a/net/netlabel/netlabel_calipso.c
-+++ b/net/netlabel/netlabel_calipso.c
-@@ -54,6 +54,28 @@ static const struct nla_policy calipso_genl_policy[NLBL_=
-CALIPSO_A_MAX + 1] =3D {
- 	[NLBL_CALIPSO_A_MTYPE] =3D { .type =3D NLA_U32 },
- };
-=20
-+static const struct netlbl_calipso_ops *calipso_ops;
-+
-+/**
-+ * netlbl_calipso_ops_register - Register the CALIPSO operations
-+ * @ops: ops to register
-+ *
-+ * Description:
-+ * Register the CALIPSO packet engine operations.
-+ *
-+ */
-+const struct netlbl_calipso_ops *
-+netlbl_calipso_ops_register(const struct netlbl_calipso_ops *ops)
-+{
-+	return xchg(&calipso_ops, ops);
-+}
-+EXPORT_SYMBOL(netlbl_calipso_ops_register);
-+
-+static const struct netlbl_calipso_ops *netlbl_calipso_ops_get(void)
-+{
-+	return READ_ONCE(calipso_ops);
-+}
-+
- /* NetLabel Command Handlers
-  */
- /**
-@@ -96,15 +118,18 @@ static int netlbl_calipso_add_pass(struct genl_info *i=
-nfo,
-  *
-  */
- static int netlbl_calipso_add(struct sk_buff *skb, struct genl_info *info)
--
- {
- 	int ret_val =3D -EINVAL;
- 	struct netlbl_audit audit_info;
-+	const struct netlbl_calipso_ops *ops =3D netlbl_calipso_ops_get();
-=20
- 	if (!info->attrs[NLBL_CALIPSO_A_DOI] ||
- 	    !info->attrs[NLBL_CALIPSO_A_MTYPE])
- 		return -EINVAL;
-=20
-+	if (!ops)
-+		return -EOPNOTSUPP;
-+
- 	netlbl_netlink_auditinfo(&audit_info);
- 	switch (nla_get_u32(info->attrs[NLBL_CALIPSO_A_MTYPE])) {
- 	case CALIPSO_MAP_PASS:
-@@ -363,28 +388,6 @@ int __init netlbl_calipso_genl_init(void)
- 	return genl_register_family(&netlbl_calipso_gnl_family);
- }
-=20
--static const struct netlbl_calipso_ops *calipso_ops;
--
--/**
-- * netlbl_calipso_ops_register - Register the CALIPSO operations
-- * @ops: ops to register
-- *
-- * Description:
-- * Register the CALIPSO packet engine operations.
-- *
-- */
--const struct netlbl_calipso_ops *
--netlbl_calipso_ops_register(const struct netlbl_calipso_ops *ops)
--{
--	return xchg(&calipso_ops, ops);
--}
--EXPORT_SYMBOL(netlbl_calipso_ops_register);
--
--static const struct netlbl_calipso_ops *netlbl_calipso_ops_get(void)
--{
--	return READ_ONCE(calipso_ops);
--}
--
- /**
-  * calipso_doi_add - Add a new DOI to the CALIPSO protocol engine
-  * @doi_def: the DOI structure
 --=20
-2.39.2
+Regards
+Yafang
