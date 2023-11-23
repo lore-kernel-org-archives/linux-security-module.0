@@ -1,98 +1,147 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0BB3FE3F;
+	Thu, 23 Nov 2023 23:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m7NAxxBZ"
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87C7791;
-	Thu, 23 Nov 2023 04:22:11 -0800 (PST)
-Received: by mail-qk1-x732.google.com with SMTP id af79cd13be357-778940531dbso43289785a.0;
-        Thu, 23 Nov 2023 04:22:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700742130; x=1701346930; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w9b7hxZxggUNzWPZcEt2SSt9tvfb5uiUa5fxRekt8xM=;
-        b=m7NAxxBZQdgQaDGWQHbgh+vTzt8lhp2V6ju3wXOJ5gadCmS1MA7iRQfjre5Py+8+qP
-         kZZ0lODUNrcLd03D+JveLu5AOpheqd3pN88MNybXQk9ll8SuLUSD+VpJBq3erjCy3svQ
-         v2Rzg2rG1L9qNGqBWfLP69YqbAApm4GpZ758wrm5NzsTTznHc6Jhh9P96u1vSHP/xtL8
-         3IVGeMwFQlMXXTsUfDIH+R4ByfYTagpeiUqfee1pTZFKfbeC9/IScYTB0oCUNzcu7SyP
-         vMKhuQCZT5JT9Q1s1v8+scvNQSiSqAokohpJezGX9t9eDVPYLjcIdGrn5QcqdwZquYWW
-         BJkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700742130; x=1701346930;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w9b7hxZxggUNzWPZcEt2SSt9tvfb5uiUa5fxRekt8xM=;
-        b=Zh8bPkIuHLB1jWZqOfMltU+FCBV8rXH+kTuD5yEMAoJ667shppJAnXqrXG6DfgFpw8
-         RI3v8qKjLRPd2s++awAQPxgxQ56024Lz2ULlKy5depIqNwva5hl1XcAj3P94PFo/n4NA
-         ikGhu71ZnUs8vhx3sUIPQBI03HSYn83VU1prsygzys729h15ulzqreesY4HVGMY+TDg4
-         F+41+qRfiqG9EQoV71Haq5eUGQC5A2P+wkTAYR/H2WyT2a+Runij4SAhp3AzYecRS4sP
-         jVFbCyQWDv/8BZzW31y7nOU5IrBjXCVuS3u4jMev6gnDq65YJ7ZycigH46u0V17X+b4N
-         d36A==
-X-Gm-Message-State: AOJu0Yyz5sp/WZbcip225al3Bde3HijPxP7sb2j2kyLwKEqeY2dpV6EN
-	tMw/EEYXQ0cCiiDz0xEmzFfPqIpxizPBshMMuw4=
-X-Google-Smtp-Source: AGHT+IGV5ARiTvmQFIAC9uDVavWcbdxbAY4C8q2cxi8gW6E6IUDziRn+hFG4aSjasmgZgK5w/Ye/bBVfOR6njOUoJ4g=
-X-Received: by 2002:ad4:58e5:0:b0:67a:e8c:863b with SMTP id
- di5-20020ad458e5000000b0067a0e8c863bmr96257qvb.63.1700742130607; Thu, 23 Nov
- 2023 04:22:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iux8csEa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 345EAC433C8;
+	Thu, 23 Nov 2023 23:40:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700782808;
+	bh=igir30jG+cvp7fVhdQ5LA77yamuAtAL/40S8t5CSTO0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iux8csEaIIP5t+/NYUBIhjL0zb+5FDhYTgNBgYQ4kaTYi/VxvlsXFINvtLrSnC7FU
+	 +wq8lMU1W9BVTHlJNS7uV4JUhsmE0aJSnXYXw+rbdajiDT6Y7h99DAqN/kMXHtaCme
+	 zQKM5y9hekMOgXYuqdOomUiHD1hINvM/C2yn/tl+ifpvg+lJr/5W7lj6dW7tIXIWLQ
+	 DDxDZyErhr+3DBMBddu7y9X1MVtKOe5czQAipW8RMdGFZfOMRVp6ly1ki2W8uyYcKU
+	 pWFKGz/p4CZwVSuslBqn+OW0ikW1BoCK5q2c0gCV5eDvnZXn9AxlWjnCVn7t3F9gPq
+	 6KwThDEbRdouw==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	fsverity@lists.linux.dev
+Cc: ebiggers@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	casey@schaufler-ca.com,
+	amir73il@gmail.com,
+	kpsingh@kernel.org,
+	roberto.sassu@huawei.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH v13 bpf-next 0/6] bpf: File verification with LSM and fsverity
+Date: Thu, 23 Nov 2023 15:39:30 -0800
+Message-Id: <20231123233936.3079687-1-song@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231122141559.4228-1-laoar.shao@gmail.com> <20231122141559.4228-3-laoar.shao@gmail.com>
- <87il5t7zi3.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <87il5t7zi3.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Thu, 23 Nov 2023 20:21:33 +0800
-Message-ID: <CALOAHbDwyFg+SPGACsOoWU9fo48paX4O_vc2OYaDJ2uaq=pQdQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/6] mm: mempolicy: Revise comment regarding
- mempolicy mode flags
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, omosnace@redhat.com, mhocko@suse.com, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	ligang.bdlg@bytedance.com, Eric Dumazet <edumazet@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 23, 2023 at 2:32=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
-wrote:
->
-> Yafang Shao <laoar.shao@gmail.com> writes:
->
-> > MPOL_F_STATIC_NODES, MPOL_F_RELATIVE_NODES, and MPOL_F_NUMA_BALANCING a=
-re
-> > mode flags applicable to both set_mempolicy(2) and mbind(2) system call=
-s.
-> > It's worth noting that MPOL_F_NUMA_BALANCING was initially introduced i=
-n
-> > commit bda420b98505 ("numa balancing: migrate on fault among multiple b=
-ound
-> > nodes") exclusively for set_mempolicy(2). However, it was later made a
-> > shared flag for both set_mempolicy(2) and mbind(2) following
-> > commit 6d2aec9e123b ("mm/mempolicy: do not allow illegal
-> > MPOL_F_NUMA_BALANCING | MPOL_LOCAL in mbind()").
-> >
-> > This revised version aims to clarify the details regarding the mode fla=
-gs.
-> >
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > Cc: Eric Dumazet <edumazet@google.com>
-> > Cc: "Huang, Ying" <ying.huang@intel.com>
->
-> Thanks for fixing this.
->
-> Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
->
-> And, please revise the manpage for mbind() too.  As we have done for
-> set_mempolicy(),
->
-> https://lore.kernel.org/all/20210120061235.148637-3-ying.huang@intel.com/
+Changes v12 => v13:
+1. Only keep 4/9 through 9/9 of v12, as the first 3 patches already
+   applied;
+2. Use new macro __bpf_kfunc_[start|end]_defs().
 
-Thanks for your review. will do it.
+Changes v11 => v12:
+1. Fix typo (data_ptr => sig_ptr) in bpf_get_file_xattr().
 
---=20
-Regards
-Yafang
+Changes v10 => v11:
+1. Let __bpf_dynptr_data() return const void *. (Andrii)
+2. Optimize code to reuse output from __bpf_dynptr_size(). (Andrii)
+3. Add __diag_ignore_all("-Wmissing-declarations") for kfunc definition.
+4. Fix an off indentation. (Andrii)
+
+Changes v9 => v10:
+1. Remove WARN_ON_ONCE() from check_reg_const_str. (Alexei)
+
+Changes v8 => v9:
+1. Fix test_progs kfunc_dynptr_param/dynptr_data_null.
+
+Changes v7 => v8:
+1. Do not use bpf_dynptr_slice* in the kernel. Add __bpf_dynptr_data* and
+   use them in ther kernel. (Andrii)
+
+Changes v6 => v7:
+1. Change "__const_str" annotation to "__str". (Alexei, Andrii)
+2. Add KF_TRUSTED_ARGS flag for both new kfuncs. (KP)
+3. Only allow bpf_get_file_xattr() to read xattr with "user." prefix.
+4. Add Acked-by from Eric Biggers.
+
+Changes v5 => v6:
+1. Let fsverity_init_bpf() return void. (Eric Biggers)
+2. Sort things in alphabetic orders. (Eric Biggers)
+
+Changes v4 => v5:
+1. Revise commit logs. (Alexei)
+
+Changes v3 => v4:
+1. Fix error reported by CI.
+2. Update comments of bpf_dynptr_slice* that they may return error pointer.
+
+Changes v2 => v3:
+1. Rebase and resolve conflicts.
+
+Changes v1 => v2:
+1. Let bpf_get_file_xattr() use const string for arg "name". (Alexei)
+2. Add recursion prevention with allowlist. (Alexei)
+3. Let bpf_get_file_xattr() use __vfs_getxattr() to avoid recursion,
+   as vfs_getxattr() calls into other LSM hooks.
+4. Do not use dynptr->data directly, use helper insteadd. (Andrii)
+5. Fixes with bpf_get_fsverity_digest. (Eric Biggers)
+6. Add documentation. (Eric Biggers)
+7. Fix some compile warnings. (kernel test robot)
+
+This set enables file verification with BPF LSM and fsverity.
+
+In this solution, fsverity is used to provide reliable and efficient hash
+of files; and BPF LSM is used to implement signature verification (against
+asymmetric keys), and to enforce access control.
+
+This solution can be used to implement access control in complicated cases.
+For example: only signed python binary and signed python script and access
+special files/devices/ports.
+
+Thanks,
+Song
+
+Song Liu (6):
+  bpf: Add kfunc bpf_get_file_xattr
+  bpf, fsverity: Add kfunc bpf_get_fsverity_digest
+  Documentation/bpf: Add documentation for filesystem kfuncs
+  selftests/bpf: Sort config in alphabetic order
+  selftests/bpf: Add tests for filesystem kfuncs
+  selftests/bpf: Add test that uses fsverity and xattr to sign a file
+
+ Documentation/bpf/fs_kfuncs.rst               |  21 +++
+ Documentation/bpf/index.rst                   |   1 +
+ fs/verity/fsverity_private.h                  |  10 ++
+ fs/verity/init.c                              |   1 +
+ fs/verity/measure.c                           |  84 +++++++++
+ kernel/trace/bpf_trace.c                      |  63 +++++++
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |  10 ++
+ tools/testing/selftests/bpf/config            |   3 +-
+ .../selftests/bpf/prog_tests/fs_kfuncs.c      | 132 ++++++++++++++
+ .../bpf/prog_tests/verify_pkcs7_sig.c         | 163 +++++++++++++++++-
+ .../selftests/bpf/progs/test_fsverity.c       |  46 +++++
+ .../selftests/bpf/progs/test_get_xattr.c      |  37 ++++
+ .../selftests/bpf/progs/test_sig_in_xattr.c   |  82 +++++++++
+ .../bpf/progs/test_verify_pkcs7_sig.c         |   8 +-
+ .../testing/selftests/bpf/verify_sig_setup.sh |  25 +++
+ 15 files changed, 677 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/bpf/fs_kfuncs.rst
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_fsverity.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_get_xattr.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_sig_in_xattr.c
+
+--
+2.34.1
