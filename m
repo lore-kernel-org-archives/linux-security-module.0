@@ -1,21 +1,21 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="VdXGVA+B"
+	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="IPQY3vK8"
 Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEF1AE7;
-	Wed, 22 Nov 2023 23:55:41 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4347DDD;
+	Thu, 23 Nov 2023 01:25:58 -0800 (PST)
 Received: from mx0.infotecs-nt (localhost [127.0.0.1])
-	by mx0.infotecs.ru (Postfix) with ESMTP id A06161183A38;
-	Thu, 23 Nov 2023 10:55:39 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru A06161183A38
+	by mx0.infotecs.ru (Postfix) with ESMTP id 528061186113;
+	Thu, 23 Nov 2023 12:25:55 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru 528061186113
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
-	t=1700726139; bh=aqIsOIcOR88OV8n3BzXeKdgT7SK6zBo4edh5EAZqIR8=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=VdXGVA+BiuT3uKxNtxMrkQA7lYGqD1MHRpZziko5De5IIGC3jmPg6CsuQpFaO6vZ1
-	 SpRjN4QuhhvhygJ0HilkZ5yC02cKtTt2WUBCKVQ6zOgQdw4n+uRMhr3zgtYi411ZJK
-	 PSfxHyv8E1GLEHz1mwMYmX6hPa3vl13hMlsHqHAY=
-Received: from msk-exch-01.infotecs-nt (msk-exch-01.infotecs-nt [10.0.7.191])
-	by mx0.infotecs-nt (Postfix) with ESMTP id 9DBA030A8C4A;
-	Thu, 23 Nov 2023 10:55:39 +0300 (MSK)
+	t=1700731556; bh=lA6R2xYOxsaucfW0fbUZrtsLYzmnyeXkqpK0MlytNN0=;
+	h=From:To:CC:Subject:Date:From;
+	b=IPQY3vK8Xk6pKBcUeVa4PEQ45sGWgcixKAqzzCXFHr9EoPIuFjGtZ4N1lAlQegP6u
+	 lmL5QlhboKHYEC5+4KBuvsHATBL4awEQSHXCFjtUeyuAkYrHDLNT49f6Nl78UN1dpY
+	 wn/eCi0ttJS/lEv/duHH+fkaA70iYADFsGr+u2MI=
+Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
+	by mx0.infotecs-nt (Postfix) with ESMTP id 4F455312FFE4;
+	Thu, 23 Nov 2023 12:25:55 +0300 (MSK)
 From: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
 To: Paul Moore <paul@paul-moore.com>
 CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
@@ -26,23 +26,19 @@ CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
 	<linux-security-module@vger.kernel.org>, "linux-kernel@vger.kernel.org"
 	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
 	<lvc-project@linuxtesting.org>
-Subject: Re: [PATCH net] calipso: Fix memory leak in netlbl_calipso_add_pass()
-Thread-Topic: [PATCH net] calipso: Fix memory leak in
+Subject: [PATCH net v2] calipso: Fix memory leak in netlbl_calipso_add_pass()
+Thread-Topic: [PATCH net v2] calipso: Fix memory leak in
  netlbl_calipso_add_pass()
-Thread-Index: AQHaHeJzdA++O1H3dkiA65HXAmqNZQ==
-Date: Thu, 23 Nov 2023 07:55:39 +0000
-Message-ID: <0a6fff0d-61df-4ac5-ae8e-e2204c60ebb5@infotecs.ru>
-References: <20231122135242.2779058-1-Ilia.Gavrilov@infotecs.ru>
- <CAHC9VhTiq1xPXXsETNKRBOtfkB5wohVwhBeae+5QW9uV-h5vvg@mail.gmail.com>
-In-Reply-To: <CAHC9VhTiq1xPXXsETNKRBOtfkB5wohVwhBeae+5QW9uV-h5vvg@mail.gmail.com>
+Thread-Index: AQHaHe8PzUY9PMUIEUGPey0eifO26Q==
+Date: Thu, 23 Nov 2023 09:25:54 +0000
+Message-ID: <20231123092314.91299-1-Ilia.Gavrilov@infotecs.ru>
 Accept-Language: ru-RU, en-US
-Content-Language: ru-RU
+Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
 x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1A607E215D5A694783D4780659120150@infotecs.ru>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -53,68 +49,151 @@ X-KLMS-Rule-ID: 5
 X-KLMS-Message-Action: clean
 X-KLMS-AntiSpam-Status: not scanned, disabled by settings
 X-KLMS-AntiSpam-Interceptor-Info: not scanned
-X-KLMS-AntiPhishing: Clean, bases: 2023/11/23 06:48:00
+X-KLMS-AntiPhishing: Clean, bases: 2023/11/23 07:58:00
 X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2023/11/23 06:11:00 #22507418
 X-KLMS-AntiVirus-Status: Clean, skipped
 
-T24gMTEvMjIvMjMgMTg6NTYsIFBhdWwgTW9vcmUgd3JvdGU6DQo+IE9uIFdlZCwgTm92IDIyLCAy
-MDIzIGF0IDg6NTXigK9BTSBHYXZyaWxvdiBJbGlhIDxJbGlhLkdhdnJpbG92QGluZm90ZWNzLnJ1
-PiB3cm90ZToNCj4+DQo+PiBJZiBJUHY2IHN1cHBvcnQgaXMgZGlzYWJsZWQgYXQgYm9vdCAoaXB2
-Ni5kaXNhYmxlPTEpLA0KPj4gdGhlIGNhbGlwc29faW5pdCgpIC0+IG5ldGxibF9jYWxpcHNvX29w
-c19yZWdpc3RlcigpIGZ1bmN0aW9uIGlzbid0IGNhbGxlZCwNCj4+IGFuZCB0aGUgbmV0bGJsX2Nh
-bGlwc29fb3BzX2dldCgpIGZ1bmN0aW9uIGFsd2F5cyByZXR1cm5zIE5VTEwuDQo+PiBJbiB0aGlz
-IGNhc2UsIHRoZSBuZXRsYmxfY2FsaXBzb19hZGRfcGFzcygpIGZ1bmN0aW9uIGFsbG9jYXRlcyBt
-ZW1vcnkNCj4+IGZvciB0aGUgZG9pX2RlZiB2YXJpYWJsZSBidXQgZG9lc24ndCBmcmVlIGl0IHdp
-dGggdGhlIGNhbGlwc29fZG9pX2ZyZWUoKS4NCj4gDQo+IEl0IGxvb2tzIGxpa2UgYSBiZXR0ZXIg
-b3B0aW9uIHdvdWxkIGJlIHRvIHJldHVybiBhbiBlcnJvciBjb2RlIGluDQo+IG5ldGxibF9jYWxp
-cHNvX2FkZCgpIHNvIHdlIG5ldmVyIGFsbG9jYXRlIHRoZSBtZW1vcnkgaW4gdGhlIGZpcnN0DQo+
-IHBsYWNlLg0KPiANCj4gVW50ZXN0ZWQgcGF0Y2ggYmVsb3csIGNvcHktbi1wYXN0ZSdkIHNvIHRo
-ZXJlIGlzIGxpa2VseSB3aGl0ZXNwYWNlDQo+IGRhbWFnZSwgYnV0IHlvdSBnZXQgdGhlIGlkZWEu
-DQo+IA0KPiBkaWZmIC0tZ2l0IGEvbmV0L25ldGxhYmVsL25ldGxhYmVsX2NhbGlwc28uYyBiL25l
-dC9uZXRsYWJlbC9uZXRsYWJlbF9jYWxpcHNvLmMNCj4gaW5kZXggZjFkNWI4NDY1MjE3Li4yNmE1
-MDRkYzZlNTcgMTAwNjQ0DQo+IC0tLSBhL25ldC9uZXRsYWJlbC9uZXRsYWJlbF9jYWxpcHNvLmMN
-Cj4gKysrIGIvbmV0L25ldGxhYmVsL25ldGxhYmVsX2NhbGlwc28uYw0KPiBAQCAtNTQsOCArNTQs
-MzEgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBubGFfcG9saWN5DQo+IGNhbGlwc29fZ2VubF9wb2xp
-Y3lbTkxCTF9DQUxJUFNPX0FfTUFYICsgMV0gPSB7DQo+ICAgICAgICAgW05MQkxfQ0FMSVBTT19B
-X01UWVBFXSA9IHsgLnR5cGUgPSBOTEFfVTMyIH0sDQo+IH07DQo+IA0KPiArc3RhdGljIGNvbnN0
-IHN0cnVjdCBuZXRsYmxfY2FsaXBzb19vcHMgKmNhbGlwc29fb3BzOw0KPiArDQo+ICsvKioNCj4g
-KyAqIG5ldGxibF9jYWxpcHNvX29wc19yZWdpc3RlciAtIFJlZ2lzdGVyIHRoZSBDQUxJUFNPIG9w
-ZXJhdGlvbnMNCj4gKyAqIEBvcHM6IG9wcyB0byByZWdpc3Rlcg0KPiArICoNCj4gKyAqIERlc2Ny
-aXB0aW9uOg0KPiArICogUmVnaXN0ZXIgdGhlIENBTElQU08gcGFja2V0IGVuZ2luZSBvcGVyYXRp
-b25zLg0KPiArICoNCj4gKyAqLw0KPiArY29uc3Qgc3RydWN0IG5ldGxibF9jYWxpcHNvX29wcyAq
-DQo+ICtuZXRsYmxfY2FsaXBzb19vcHNfcmVnaXN0ZXIoY29uc3Qgc3RydWN0IG5ldGxibF9jYWxp
-cHNvX29wcyAqb3BzKQ0KPiArew0KPiArICAgICAgIHJldHVybiB4Y2hnKCZjYWxpcHNvX29wcywg
-b3BzKTsNCj4gK30NCj4gK0VYUE9SVF9TWU1CT0wobmV0bGJsX2NhbGlwc29fb3BzX3JlZ2lzdGVy
-KTsNCj4gKw0KPiArc3RhdGljIGNvbnN0IHN0cnVjdCBuZXRsYmxfY2FsaXBzb19vcHMgKm5ldGxi
-bF9jYWxpcHNvX29wc19nZXQodm9pZCkNCj4gK3sNCj4gKyAgICAgICByZXR1cm4gUkVBRF9PTkNF
-KGNhbGlwc29fb3BzKTsNCj4gK30NCj4gKw0KPiAvKiBOZXRMYWJlbCBDb21tYW5kIEhhbmRsZXJz
-DQo+ICAgKi8NCj4gKw0KPiAvKioNCj4gICAqIG5ldGxibF9jYWxpcHNvX2FkZF9wYXNzIC0gQWRk
-cyBhIENBTElQU08gcGFzcyBET0kgZGVmaW5pdGlvbg0KPiAgICogQGluZm86IHRoZSBHZW5lcmlj
-IE5FVExJTksgaW5mbyBibG9jaw0KPiBAQCAtMTAwLDEwICsxMjMsMTMgQEAgc3RhdGljIGludCBu
-ZXRsYmxfY2FsaXBzb19hZGQoc3RydWN0IHNrX2J1ZmYNCj4gKnNrYiwgc3RydWN0IGdlbmxfaW5m
-byAqaW5mbykNCj4gew0KPiAgICAgICAgIGludCByZXRfdmFsID0gLUVJTlZBTDsNCj4gICAgICAg
-ICBzdHJ1Y3QgbmV0bGJsX2F1ZGl0IGF1ZGl0X2luZm87DQo+ICsgICAgICAgY29uc3Qgc3RydWN0
-IG5ldGxibF9jYWxpcHNvX29wcyAqb3BzID0gbmV0bGJsX2NhbGlwc29fb3BzX2dldCgpOw0KPiAN
-Cj4gICAgICAgICBpZiAoIWluZm8tPmF0dHJzW05MQkxfQ0FMSVBTT19BX0RPSV0gfHwNCj4gICAg
-ICAgICAgICAgIWluZm8tPmF0dHJzW05MQkxfQ0FMSVBTT19BX01UWVBFXSkNCj4gICAgICAgICAg
-ICAgICAgIHJldHVybiAtRUlOVkFMOw0KPiArICAgICAgIGlmICghb3BzKQ0KPiArICAgICAgICAg
-ICAgICAgcmV0dXJuIC1FT1BOT1RTVVBQOw0KPiANCj4gICAgICAgICBuZXRsYmxfbmV0bGlua19h
-dWRpdGluZm8oJmF1ZGl0X2luZm8pOw0KPiAgICAgICAgIHN3aXRjaCAobmxhX2dldF91MzIoaW5m
-by0+YXR0cnNbTkxCTF9DQUxJUFNPX0FfTVRZUEVdKSkgew0KPiBAQCAtMzYzLDI4ICszODksNiBA
-QCBpbnQgX19pbml0IG5ldGxibF9jYWxpcHNvX2dlbmxfaW5pdCh2b2lkKQ0KPiAgICAgICAgIHJl
-dHVybiBnZW5sX3JlZ2lzdGVyX2ZhbWlseSgmbmV0bGJsX2NhbGlwc29fZ25sX2ZhbWlseSk7DQo+
-IH0NCj4gDQo+IC1zdGF0aWMgY29uc3Qgc3RydWN0IG5ldGxibF9jYWxpcHNvX29wcyAqY2FsaXBz
-b19vcHM7DQo+IC0NCj4gLS8qKg0KPiAtICogbmV0bGJsX2NhbGlwc29fb3BzX3JlZ2lzdGVyIC0g
-UmVnaXN0ZXIgdGhlIENBTElQU08gb3BlcmF0aW9ucw0KPiAtICogQG9wczogb3BzIHRvIHJlZ2lz
-dGVyDQo+IC0gKg0KPiAtICogRGVzY3JpcHRpb246DQo+IC0gKiBSZWdpc3RlciB0aGUgQ0FMSVBT
-TyBwYWNrZXQgZW5naW5lIG9wZXJhdGlvbnMuDQo+IC0gKg0KPiAtICovDQo+IC1jb25zdCBzdHJ1
-Y3QgbmV0bGJsX2NhbGlwc29fb3BzICoNCj4gLW5ldGxibF9jYWxpcHNvX29wc19yZWdpc3Rlcihj
-b25zdCBzdHJ1Y3QgbmV0bGJsX2NhbGlwc29fb3BzICpvcHMpDQo+IC17DQo+IC0gICAgICAgcmV0
-dXJuIHhjaGcoJmNhbGlwc29fb3BzLCBvcHMpOw0KPiAtfQ0KPiAtRVhQT1JUX1NZTUJPTChuZXRs
-YmxfY2FsaXBzb19vcHNfcmVnaXN0ZXIpOw0KPiAtDQo+IC1zdGF0aWMgY29uc3Qgc3RydWN0IG5l
-dGxibF9jYWxpcHNvX29wcyAqbmV0bGJsX2NhbGlwc29fb3BzX2dldCh2b2lkKQ0KPiAtew0KPiAt
-ICAgICAgIHJldHVybiBSRUFEX09OQ0UoY2FsaXBzb19vcHMpOw0KPiAtfQ0KPiAtDQo+IC8qKg0K
-PiAgICogY2FsaXBzb19kb2lfYWRkIC0gQWRkIGEgbmV3IERPSSB0byB0aGUgQ0FMSVBTTyBwcm90
-b2NvbCBlbmdpbmUNCj4gICAqIEBkb2lfZGVmOiB0aGUgRE9JIHN0cnVjdHVyZQ0KPiANCg0KVGhh
-bmsgeW91IGZvciByZXZpZXcuIEknbGwgdGVzdCBhbmQgc2VuZCB0aGlzIGlkZWEgaW4gdGhlIG5l
-eHQgdmVyc2lvbi4NCg==
+If IPv6 support is disabled at boot (ipv6.disable=3D1),
+the calipso_init() -> netlbl_calipso_ops_register() function isn't called,
+and the netlbl_calipso_ops_get() function always returns NULL.
+In this case, the netlbl_calipso_add_pass() function allocates memory
+for the doi_def variable but doesn't free it with the calipso_doi_free().
+
+BUG: memory leak
+unreferenced object 0xffff888011d68180 (size 64):
+  comm "syz-executor.1", pid 10746, jiffies 4295410986 (age 17.928s)
+  hex dump (first 32 bytes):
+    00 00 00 00 02 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000730d8770>] kmalloc include/linux/slab.h:552 [inline]
+    [<00000000730d8770>] netlbl_calipso_add_pass net/netlabel/netlabel_cali=
+pso.c:76 [inline]
+    [<00000000730d8770>] netlbl_calipso_add+0x22e/0x4f0 net/netlabel/netlab=
+el_calipso.c:111
+    [<0000000002e662c0>] genl_family_rcv_msg_doit+0x22f/0x330 net/netlink/g=
+enetlink.c:739
+    [<00000000a08d6d74>] genl_family_rcv_msg net/netlink/genetlink.c:783 [i=
+nline]
+    [<00000000a08d6d74>] genl_rcv_msg+0x341/0x5a0 net/netlink/genetlink.c:8=
+00
+    [<0000000098399a97>] netlink_rcv_skb+0x14d/0x440 net/netlink/af_netlink=
+.c:2515
+    [<00000000ff7db83b>] genl_rcv+0x29/0x40 net/netlink/genetlink.c:811
+    [<000000000cf53b8c>] netlink_unicast_kernel net/netlink/af_netlink.c:13=
+13 [inline]
+    [<000000000cf53b8c>] netlink_unicast+0x54b/0x800 net/netlink/af_netlink=
+.c:1339
+    [<00000000d78cd38b>] netlink_sendmsg+0x90a/0xdf0 net/netlink/af_netlink=
+.c:1934
+    [<000000008328a57f>] sock_sendmsg_nosec net/socket.c:651 [inline]
+    [<000000008328a57f>] sock_sendmsg+0x157/0x190 net/socket.c:671
+    [<000000007b65a1b5>] ____sys_sendmsg+0x712/0x870 net/socket.c:2342
+    [<0000000083da800e>] ___sys_sendmsg+0xf8/0x170 net/socket.c:2396
+    [<000000004a9b827f>] __sys_sendmsg+0xea/0x1b0 net/socket.c:2429
+    [<0000000061b64d3a>] do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+    [<00000000a1265347>] entry_SYSCALL_64_after_hwframe+0x61/0xc6
+
+Found by InfoTeCS on behalf of Linux Verification Center
+(linuxtesting.org) with Syzkaller
+
+Fixes: cb72d38211ea ("netlabel: Initial support for the CALIPSO netlink pro=
+tocol.")
+Signed-off-by: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
+---
+v2:
+  - return the error code in netlbl_calipso_add() if the variable calipso_h=
+ops is NULL
+v1: https://lore.kernel.org/all/20231122135242.2779058-1-Ilia.Gavrilov@info=
+tecs.ru/
+
+ net/netlabel/netlabel_calipso.c | 49 +++++++++++++++++----------------
+ 1 file changed, 26 insertions(+), 23 deletions(-)
+
+diff --git a/net/netlabel/netlabel_calipso.c b/net/netlabel/netlabel_calips=
+o.c
+index f1d5b8465217..a07c2216d28b 100644
+--- a/net/netlabel/netlabel_calipso.c
++++ b/net/netlabel/netlabel_calipso.c
+@@ -54,6 +54,28 @@ static const struct nla_policy calipso_genl_policy[NLBL_=
+CALIPSO_A_MAX + 1] =3D {
+ 	[NLBL_CALIPSO_A_MTYPE] =3D { .type =3D NLA_U32 },
+ };
+=20
++static const struct netlbl_calipso_ops *calipso_ops;
++
++/**
++ * netlbl_calipso_ops_register - Register the CALIPSO operations
++ * @ops: ops to register
++ *
++ * Description:
++ * Register the CALIPSO packet engine operations.
++ *
++ */
++const struct netlbl_calipso_ops *
++netlbl_calipso_ops_register(const struct netlbl_calipso_ops *ops)
++{
++	return xchg(&calipso_ops, ops);
++}
++EXPORT_SYMBOL(netlbl_calipso_ops_register);
++
++static const struct netlbl_calipso_ops *netlbl_calipso_ops_get(void)
++{
++	return READ_ONCE(calipso_ops);
++}
++
+ /* NetLabel Command Handlers
+  */
+ /**
+@@ -96,15 +118,18 @@ static int netlbl_calipso_add_pass(struct genl_info *i=
+nfo,
+  *
+  */
+ static int netlbl_calipso_add(struct sk_buff *skb, struct genl_info *info)
+-
+ {
+ 	int ret_val =3D -EINVAL;
+ 	struct netlbl_audit audit_info;
++	const struct netlbl_calipso_ops *ops =3D netlbl_calipso_ops_get();
+=20
+ 	if (!info->attrs[NLBL_CALIPSO_A_DOI] ||
+ 	    !info->attrs[NLBL_CALIPSO_A_MTYPE])
+ 		return -EINVAL;
+=20
++	if (!ops)
++		return -EOPNOTSUPP;
++
+ 	netlbl_netlink_auditinfo(&audit_info);
+ 	switch (nla_get_u32(info->attrs[NLBL_CALIPSO_A_MTYPE])) {
+ 	case CALIPSO_MAP_PASS:
+@@ -363,28 +388,6 @@ int __init netlbl_calipso_genl_init(void)
+ 	return genl_register_family(&netlbl_calipso_gnl_family);
+ }
+=20
+-static const struct netlbl_calipso_ops *calipso_ops;
+-
+-/**
+- * netlbl_calipso_ops_register - Register the CALIPSO operations
+- * @ops: ops to register
+- *
+- * Description:
+- * Register the CALIPSO packet engine operations.
+- *
+- */
+-const struct netlbl_calipso_ops *
+-netlbl_calipso_ops_register(const struct netlbl_calipso_ops *ops)
+-{
+-	return xchg(&calipso_ops, ops);
+-}
+-EXPORT_SYMBOL(netlbl_calipso_ops_register);
+-
+-static const struct netlbl_calipso_ops *netlbl_calipso_ops_get(void)
+-{
+-	return READ_ONCE(calipso_ops);
+-}
+-
+ /**
+  * calipso_doi_add - Add a new DOI to the CALIPSO protocol engine
+  * @doi_def: the DOI structure
+--=20
+2.39.2
