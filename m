@@ -1,47 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YpHsX4Ix"
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51773A2;
-	Wed, 22 Nov 2023 22:32:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E54Rc0DF"
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09F50C1;
+	Wed, 22 Nov 2023 22:39:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700721152; x=1732257152;
+  t=1700721590; x=1732257590;
   h=from:to:cc:subject:in-reply-to:references:date:
    message-id:mime-version;
-  bh=rY/TBxnNGUbD9+yFwuL9Z437C7emu75hU1E4ZvjYwlQ=;
-  b=YpHsX4Ixn0piYabmN7Rn/qZSFAUUjG1A8nAiELjZ2PIlpDcvZAnbAO7D
-   xzqc9K4b7Jgsnw7ux12KzWZ5eE5ykreV0qeZDv/A0tTSDY8R2F4U8NBhs
-   wJc/zyLEH/Z8GPcRGIwIigbLpHexKk0WuqZ8BTvdZFPoqGmDa6JCUkhSg
-   lCPDYcNCLztb0qIP6QbtNMXxl3qRKzOmopFjHh+FZmXdG7VFiukWTQHVs
-   Ot36o+Md9tgZzOIqRYI95KYrzWjcTHeuo+t7M7oV94Dagq8SjjM/blsb1
-   fjKVU6hD5isuK/3zS0OkIsqBXPgb20UJdH3ieFKqbruCwmp2cF6BRWmls
+  bh=sNJFJlh3rji6zudwDz3TzUsgtizbU6T+kzRcilJIPLk=;
+  b=E54Rc0DFgbn8lGZBk7GcFCC/uTQwbxLXJZsxCdmW0d8f33+D3X3vtVp6
+   5OAMwdEL4j4DOxKKsqfo3cwilBln7Q/sP8vx/4TwSGBPJgCgjLsnPJ04a
+   hZUDQcGFnq6ZSGaq1AQnyBces4YVadcgmh70jwrCyJYvO8QtoEbQPkJEe
+   YpCZSMll0NfIFAEGq6BNN8VJTACFhjKifRgqEzBlC+TR60SjsGELqTrqT
+   /tE52A0cEk5iq+iYnZRPM9fJhSHdUFIWzp4E0BuOXwyChFxrqaZpTnaP1
+   dNjHuEAt8C1wJUshSz5JGTMuvbPdODTkiAPv56LCh0T7FC4tG9A2JhTRz
    Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="382607301"
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="456542538"
 X-IronPort-AV: E=Sophos;i="6.04,220,1695711600"; 
-   d="scan'208";a="382607301"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 22:32:31 -0800
+   d="scan'208";a="456542538"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 22:39:49 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="858029742"
 X-IronPort-AV: E=Sophos;i="6.04,220,1695711600"; 
-   d="scan'208";a="858029742"
+   d="scan'208";a="8751510"
 Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 22:32:28 -0800
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 22:39:47 -0800
 From: "Huang, Ying" <ying.huang@intel.com>
 To: Yafang Shao <laoar.shao@gmail.com>
 Cc: akpm@linux-foundation.org,  paul@paul-moore.com,  jmorris@namei.org,
   serge@hallyn.com,  omosnace@redhat.com,  mhocko@suse.com,
   linux-mm@kvack.org,  linux-security-module@vger.kernel.org,
-  bpf@vger.kernel.org,  ligang.bdlg@bytedance.com,  Eric Dumazet
- <edumazet@google.com>
-Subject: Re: [RFC PATCH v2 2/6] mm: mempolicy: Revise comment regarding
- mempolicy mode flags
-In-Reply-To: <20231122141559.4228-3-laoar.shao@gmail.com> (Yafang Shao's
-	message of "Wed, 22 Nov 2023 14:15:55 +0000")
+  bpf@vger.kernel.org,  ligang.bdlg@bytedance.com
+Subject: Re: [RFC PATCH v2 1/6] mm, doc: Add doc for MPOL_F_NUMA_BALANCING
+In-Reply-To: <20231122141559.4228-2-laoar.shao@gmail.com> (Yafang Shao's
+	message of "Wed, 22 Nov 2023 14:15:54 +0000")
 References: <20231122141559.4228-1-laoar.shao@gmail.com>
-	<20231122141559.4228-3-laoar.shao@gmail.com>
-Date: Thu, 23 Nov 2023 14:30:28 +0800
-Message-ID: <87il5t7zi3.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<20231122141559.4228-2-laoar.shao@gmail.com>
+Date: Thu, 23 Nov 2023 14:37:45 +0800
+Message-ID: <87edgh7z5y.fsf@yhuang6-desk2.ccr.corp.intel.com>
 User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -53,48 +50,62 @@ Content-Type: text/plain; charset=ascii
 
 Yafang Shao <laoar.shao@gmail.com> writes:
 
-> MPOL_F_STATIC_NODES, MPOL_F_RELATIVE_NODES, and MPOL_F_NUMA_BALANCING are
-> mode flags applicable to both set_mempolicy(2) and mbind(2) system calls.
-> It's worth noting that MPOL_F_NUMA_BALANCING was initially introduced in
-> commit bda420b98505 ("numa balancing: migrate on fault among multiple bound
-> nodes") exclusively for set_mempolicy(2). However, it was later made a
-> shared flag for both set_mempolicy(2) and mbind(2) following
-> commit 6d2aec9e123b ("mm/mempolicy: do not allow illegal
-> MPOL_F_NUMA_BALANCING | MPOL_LOCAL in mbind()").
+> The document on MPOL_F_NUMA_BALANCING was missed in the initial commit
+> The MPOL_F_NUMA_BALANCING document was inadvertently omitted from the
+> initial commit bda420b98505 ("numa balancing: migrate on fault among
+> multiple bound nodes")
 >
-> This revised version aims to clarify the details regarding the mode flags.
+> Let's ensure its inclusion.
 >
 > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> Cc: Eric Dumazet <edumazet@google.com>
 > Cc: "Huang, Ying" <ying.huang@intel.com>
 
-Thanks for fixing this.
+LGTM, Thanks!
 
 Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
 
-And, please revise the manpage for mbind() too.  As we have done for
-set_mempolicy(),
-
-https://lore.kernel.org/all/20210120061235.148637-3-ying.huang@intel.com/
+> ---
+>  .../admin-guide/mm/numa_memory_policy.rst     | 27 +++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/mm/numa_memory_policy.rst b/Documentation/admin-guide/mm/numa_memory_policy.rst
+> index eca38fa81e0f..19071b71979c 100644
+> --- a/Documentation/admin-guide/mm/numa_memory_policy.rst
+> +++ b/Documentation/admin-guide/mm/numa_memory_policy.rst
+> @@ -332,6 +332,33 @@ MPOL_F_RELATIVE_NODES
+>  	MPOL_PREFERRED policies that were created with an empty nodemask
+>  	(local allocation).
+>  
+> +MPOL_F_NUMA_BALANCING (since Linux 5.12)
+> +        When operating in MPOL_BIND mode, enables NUMA balancing for tasks,
+> +        contingent upon kernel support. This feature optimizes page
+> +        placement within the confines of the specified memory binding
+> +        policy. The addition of the MPOL_F_NUMA_BALANCING flag augments the
+> +        control mechanism for NUMA balancing:
+> +
+> +        - The sysctl knob numa_balancing governs global activation or
+> +          deactivation of NUMA balancing.
+> +
+> +        - Even if sysctl numa_balancing is enabled, NUMA balancing remains
+> +          disabled by default for memory areas or applications utilizing
+> +          explicit memory policies.
+> +
+> +        - The MPOL_F_NUMA_BALANCING flag facilitates NUMA balancing
+> +          activation for applications employing explicit memory policies
+> +          (MPOL_BIND).
+> +
+> +        This flags enables various optimizations for page placement through
+> +        NUMA balancing. For instance, when an application's memory is bound
+> +        to multiple nodes (MPOL_BIND), the hint page fault handler attempts
+> +        to migrate accessed pages to reduce cross-node access if the
+> +        accessing node aligns with the policy nodemask.
+> +
+> +        If the flag isn't supported by the kernel, or is used with mode
+> +        other than MPOL_BIND, -1 is returned and errno is set to EINVAL.
+> +
+>  Memory Policy Reference Counting
+>  ================================
 
 --
 Best Regards,
 Huang, Ying
-
-> ---
->  include/uapi/linux/mempolicy.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
-> index a8963f7ef4c2..afed4a45f5b9 100644
-> --- a/include/uapi/linux/mempolicy.h
-> +++ b/include/uapi/linux/mempolicy.h
-> @@ -26,7 +26,7 @@ enum {
->  	MPOL_MAX,	/* always last member of enum */
->  };
->  
-> -/* Flags for set_mempolicy */
-> +/* Flags for set_mempolicy() or mbind() */
->  #define MPOL_F_STATIC_NODES	(1 << 15)
->  #define MPOL_F_RELATIVE_NODES	(1 << 14)
->  #define MPOL_F_NUMA_BALANCING	(1 << 13) /* Optimize with NUMA balancing if possible */
