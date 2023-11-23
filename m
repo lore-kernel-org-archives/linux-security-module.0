@@ -1,111 +1,120 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E54Rc0DF"
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09F50C1;
-	Wed, 22 Nov 2023 22:39:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700721590; x=1732257590;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=sNJFJlh3rji6zudwDz3TzUsgtizbU6T+kzRcilJIPLk=;
-  b=E54Rc0DFgbn8lGZBk7GcFCC/uTQwbxLXJZsxCdmW0d8f33+D3X3vtVp6
-   5OAMwdEL4j4DOxKKsqfo3cwilBln7Q/sP8vx/4TwSGBPJgCgjLsnPJ04a
-   hZUDQcGFnq6ZSGaq1AQnyBces4YVadcgmh70jwrCyJYvO8QtoEbQPkJEe
-   YpCZSMll0NfIFAEGq6BNN8VJTACFhjKifRgqEzBlC+TR60SjsGELqTrqT
-   /tE52A0cEk5iq+iYnZRPM9fJhSHdUFIWzp4E0BuOXwyChFxrqaZpTnaP1
-   dNjHuEAt8C1wJUshSz5JGTMuvbPdODTkiAPv56LCh0T7FC4tG9A2JhTRz
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="456542538"
-X-IronPort-AV: E=Sophos;i="6.04,220,1695711600"; 
-   d="scan'208";a="456542538"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 22:39:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.04,220,1695711600"; 
-   d="scan'208";a="8751510"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 22:39:47 -0800
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org,  paul@paul-moore.com,  jmorris@namei.org,
-  serge@hallyn.com,  omosnace@redhat.com,  mhocko@suse.com,
-  linux-mm@kvack.org,  linux-security-module@vger.kernel.org,
-  bpf@vger.kernel.org,  ligang.bdlg@bytedance.com
-Subject: Re: [RFC PATCH v2 1/6] mm, doc: Add doc for MPOL_F_NUMA_BALANCING
-In-Reply-To: <20231122141559.4228-2-laoar.shao@gmail.com> (Yafang Shao's
-	message of "Wed, 22 Nov 2023 14:15:54 +0000")
-References: <20231122141559.4228-1-laoar.shao@gmail.com>
-	<20231122141559.4228-2-laoar.shao@gmail.com>
-Date: Thu, 23 Nov 2023 14:37:45 +0800
-Message-ID: <87edgh7z5y.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="VdXGVA+B"
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEF1AE7;
+	Wed, 22 Nov 2023 23:55:41 -0800 (PST)
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+	by mx0.infotecs.ru (Postfix) with ESMTP id A06161183A38;
+	Thu, 23 Nov 2023 10:55:39 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru A06161183A38
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+	t=1700726139; bh=aqIsOIcOR88OV8n3BzXeKdgT7SK6zBo4edh5EAZqIR8=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=VdXGVA+BiuT3uKxNtxMrkQA7lYGqD1MHRpZziko5De5IIGC3jmPg6CsuQpFaO6vZ1
+	 SpRjN4QuhhvhygJ0HilkZ5yC02cKtTt2WUBCKVQ6zOgQdw4n+uRMhr3zgtYi411ZJK
+	 PSfxHyv8E1GLEHz1mwMYmX6hPa3vl13hMlsHqHAY=
+Received: from msk-exch-01.infotecs-nt (msk-exch-01.infotecs-nt [10.0.7.191])
+	by mx0.infotecs-nt (Postfix) with ESMTP id 9DBA030A8C4A;
+	Thu, 23 Nov 2023 10:55:39 +0300 (MSK)
+From: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
+To: Paul Moore <paul@paul-moore.com>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Huw Davies <huw@codeweavers.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: Re: [PATCH net] calipso: Fix memory leak in netlbl_calipso_add_pass()
+Thread-Topic: [PATCH net] calipso: Fix memory leak in
+ netlbl_calipso_add_pass()
+Thread-Index: AQHaHeJzdA++O1H3dkiA65HXAmqNZQ==
+Date: Thu, 23 Nov 2023 07:55:39 +0000
+Message-ID: <0a6fff0d-61df-4ac5-ae8e-e2204c60ebb5@infotecs.ru>
+References: <20231122135242.2779058-1-Ilia.Gavrilov@infotecs.ru>
+ <CAHC9VhTiq1xPXXsETNKRBOtfkB5wohVwhBeae+5QW9uV-h5vvg@mail.gmail.com>
+In-Reply-To: <CAHC9VhTiq1xPXXsETNKRBOtfkB5wohVwhBeae+5QW9uV-h5vvg@mail.gmail.com>
+Accept-Language: ru-RU, en-US
+Content-Language: ru-RU
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <1A607E215D5A694783D4780659120150@infotecs.ru>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+X-KLMS-Rule-ID: 5
+X-KLMS-Message-Action: clean
+X-KLMS-AntiSpam-Status: not scanned, disabled by settings
+X-KLMS-AntiSpam-Interceptor-Info: not scanned
+X-KLMS-AntiPhishing: Clean, bases: 2023/11/23 06:48:00
+X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2023/11/23 06:11:00 #22507418
+X-KLMS-AntiVirus-Status: Clean, skipped
 
-Yafang Shao <laoar.shao@gmail.com> writes:
-
-> The document on MPOL_F_NUMA_BALANCING was missed in the initial commit
-> The MPOL_F_NUMA_BALANCING document was inadvertently omitted from the
-> initial commit bda420b98505 ("numa balancing: migrate on fault among
-> multiple bound nodes")
->
-> Let's ensure its inclusion.
->
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> Cc: "Huang, Ying" <ying.huang@intel.com>
-
-LGTM, Thanks!
-
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
-
-> ---
->  .../admin-guide/mm/numa_memory_policy.rst     | 27 +++++++++++++++++++
->  1 file changed, 27 insertions(+)
->
-> diff --git a/Documentation/admin-guide/mm/numa_memory_policy.rst b/Documentation/admin-guide/mm/numa_memory_policy.rst
-> index eca38fa81e0f..19071b71979c 100644
-> --- a/Documentation/admin-guide/mm/numa_memory_policy.rst
-> +++ b/Documentation/admin-guide/mm/numa_memory_policy.rst
-> @@ -332,6 +332,33 @@ MPOL_F_RELATIVE_NODES
->  	MPOL_PREFERRED policies that were created with an empty nodemask
->  	(local allocation).
->  
-> +MPOL_F_NUMA_BALANCING (since Linux 5.12)
-> +        When operating in MPOL_BIND mode, enables NUMA balancing for tasks,
-> +        contingent upon kernel support. This feature optimizes page
-> +        placement within the confines of the specified memory binding
-> +        policy. The addition of the MPOL_F_NUMA_BALANCING flag augments the
-> +        control mechanism for NUMA balancing:
-> +
-> +        - The sysctl knob numa_balancing governs global activation or
-> +          deactivation of NUMA balancing.
-> +
-> +        - Even if sysctl numa_balancing is enabled, NUMA balancing remains
-> +          disabled by default for memory areas or applications utilizing
-> +          explicit memory policies.
-> +
-> +        - The MPOL_F_NUMA_BALANCING flag facilitates NUMA balancing
-> +          activation for applications employing explicit memory policies
-> +          (MPOL_BIND).
-> +
-> +        This flags enables various optimizations for page placement through
-> +        NUMA balancing. For instance, when an application's memory is bound
-> +        to multiple nodes (MPOL_BIND), the hint page fault handler attempts
-> +        to migrate accessed pages to reduce cross-node access if the
-> +        accessing node aligns with the policy nodemask.
-> +
-> +        If the flag isn't supported by the kernel, or is used with mode
-> +        other than MPOL_BIND, -1 is returned and errno is set to EINVAL.
-> +
->  Memory Policy Reference Counting
->  ================================
-
---
-Best Regards,
-Huang, Ying
+T24gMTEvMjIvMjMgMTg6NTYsIFBhdWwgTW9vcmUgd3JvdGU6DQo+IE9uIFdlZCwgTm92IDIyLCAy
+MDIzIGF0IDg6NTXigK9BTSBHYXZyaWxvdiBJbGlhIDxJbGlhLkdhdnJpbG92QGluZm90ZWNzLnJ1
+PiB3cm90ZToNCj4+DQo+PiBJZiBJUHY2IHN1cHBvcnQgaXMgZGlzYWJsZWQgYXQgYm9vdCAoaXB2
+Ni5kaXNhYmxlPTEpLA0KPj4gdGhlIGNhbGlwc29faW5pdCgpIC0+IG5ldGxibF9jYWxpcHNvX29w
+c19yZWdpc3RlcigpIGZ1bmN0aW9uIGlzbid0IGNhbGxlZCwNCj4+IGFuZCB0aGUgbmV0bGJsX2Nh
+bGlwc29fb3BzX2dldCgpIGZ1bmN0aW9uIGFsd2F5cyByZXR1cm5zIE5VTEwuDQo+PiBJbiB0aGlz
+IGNhc2UsIHRoZSBuZXRsYmxfY2FsaXBzb19hZGRfcGFzcygpIGZ1bmN0aW9uIGFsbG9jYXRlcyBt
+ZW1vcnkNCj4+IGZvciB0aGUgZG9pX2RlZiB2YXJpYWJsZSBidXQgZG9lc24ndCBmcmVlIGl0IHdp
+dGggdGhlIGNhbGlwc29fZG9pX2ZyZWUoKS4NCj4gDQo+IEl0IGxvb2tzIGxpa2UgYSBiZXR0ZXIg
+b3B0aW9uIHdvdWxkIGJlIHRvIHJldHVybiBhbiBlcnJvciBjb2RlIGluDQo+IG5ldGxibF9jYWxp
+cHNvX2FkZCgpIHNvIHdlIG5ldmVyIGFsbG9jYXRlIHRoZSBtZW1vcnkgaW4gdGhlIGZpcnN0DQo+
+IHBsYWNlLg0KPiANCj4gVW50ZXN0ZWQgcGF0Y2ggYmVsb3csIGNvcHktbi1wYXN0ZSdkIHNvIHRo
+ZXJlIGlzIGxpa2VseSB3aGl0ZXNwYWNlDQo+IGRhbWFnZSwgYnV0IHlvdSBnZXQgdGhlIGlkZWEu
+DQo+IA0KPiBkaWZmIC0tZ2l0IGEvbmV0L25ldGxhYmVsL25ldGxhYmVsX2NhbGlwc28uYyBiL25l
+dC9uZXRsYWJlbC9uZXRsYWJlbF9jYWxpcHNvLmMNCj4gaW5kZXggZjFkNWI4NDY1MjE3Li4yNmE1
+MDRkYzZlNTcgMTAwNjQ0DQo+IC0tLSBhL25ldC9uZXRsYWJlbC9uZXRsYWJlbF9jYWxpcHNvLmMN
+Cj4gKysrIGIvbmV0L25ldGxhYmVsL25ldGxhYmVsX2NhbGlwc28uYw0KPiBAQCAtNTQsOCArNTQs
+MzEgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBubGFfcG9saWN5DQo+IGNhbGlwc29fZ2VubF9wb2xp
+Y3lbTkxCTF9DQUxJUFNPX0FfTUFYICsgMV0gPSB7DQo+ICAgICAgICAgW05MQkxfQ0FMSVBTT19B
+X01UWVBFXSA9IHsgLnR5cGUgPSBOTEFfVTMyIH0sDQo+IH07DQo+IA0KPiArc3RhdGljIGNvbnN0
+IHN0cnVjdCBuZXRsYmxfY2FsaXBzb19vcHMgKmNhbGlwc29fb3BzOw0KPiArDQo+ICsvKioNCj4g
+KyAqIG5ldGxibF9jYWxpcHNvX29wc19yZWdpc3RlciAtIFJlZ2lzdGVyIHRoZSBDQUxJUFNPIG9w
+ZXJhdGlvbnMNCj4gKyAqIEBvcHM6IG9wcyB0byByZWdpc3Rlcg0KPiArICoNCj4gKyAqIERlc2Ny
+aXB0aW9uOg0KPiArICogUmVnaXN0ZXIgdGhlIENBTElQU08gcGFja2V0IGVuZ2luZSBvcGVyYXRp
+b25zLg0KPiArICoNCj4gKyAqLw0KPiArY29uc3Qgc3RydWN0IG5ldGxibF9jYWxpcHNvX29wcyAq
+DQo+ICtuZXRsYmxfY2FsaXBzb19vcHNfcmVnaXN0ZXIoY29uc3Qgc3RydWN0IG5ldGxibF9jYWxp
+cHNvX29wcyAqb3BzKQ0KPiArew0KPiArICAgICAgIHJldHVybiB4Y2hnKCZjYWxpcHNvX29wcywg
+b3BzKTsNCj4gK30NCj4gK0VYUE9SVF9TWU1CT0wobmV0bGJsX2NhbGlwc29fb3BzX3JlZ2lzdGVy
+KTsNCj4gKw0KPiArc3RhdGljIGNvbnN0IHN0cnVjdCBuZXRsYmxfY2FsaXBzb19vcHMgKm5ldGxi
+bF9jYWxpcHNvX29wc19nZXQodm9pZCkNCj4gK3sNCj4gKyAgICAgICByZXR1cm4gUkVBRF9PTkNF
+KGNhbGlwc29fb3BzKTsNCj4gK30NCj4gKw0KPiAvKiBOZXRMYWJlbCBDb21tYW5kIEhhbmRsZXJz
+DQo+ICAgKi8NCj4gKw0KPiAvKioNCj4gICAqIG5ldGxibF9jYWxpcHNvX2FkZF9wYXNzIC0gQWRk
+cyBhIENBTElQU08gcGFzcyBET0kgZGVmaW5pdGlvbg0KPiAgICogQGluZm86IHRoZSBHZW5lcmlj
+IE5FVExJTksgaW5mbyBibG9jaw0KPiBAQCAtMTAwLDEwICsxMjMsMTMgQEAgc3RhdGljIGludCBu
+ZXRsYmxfY2FsaXBzb19hZGQoc3RydWN0IHNrX2J1ZmYNCj4gKnNrYiwgc3RydWN0IGdlbmxfaW5m
+byAqaW5mbykNCj4gew0KPiAgICAgICAgIGludCByZXRfdmFsID0gLUVJTlZBTDsNCj4gICAgICAg
+ICBzdHJ1Y3QgbmV0bGJsX2F1ZGl0IGF1ZGl0X2luZm87DQo+ICsgICAgICAgY29uc3Qgc3RydWN0
+IG5ldGxibF9jYWxpcHNvX29wcyAqb3BzID0gbmV0bGJsX2NhbGlwc29fb3BzX2dldCgpOw0KPiAN
+Cj4gICAgICAgICBpZiAoIWluZm8tPmF0dHJzW05MQkxfQ0FMSVBTT19BX0RPSV0gfHwNCj4gICAg
+ICAgICAgICAgIWluZm8tPmF0dHJzW05MQkxfQ0FMSVBTT19BX01UWVBFXSkNCj4gICAgICAgICAg
+ICAgICAgIHJldHVybiAtRUlOVkFMOw0KPiArICAgICAgIGlmICghb3BzKQ0KPiArICAgICAgICAg
+ICAgICAgcmV0dXJuIC1FT1BOT1RTVVBQOw0KPiANCj4gICAgICAgICBuZXRsYmxfbmV0bGlua19h
+dWRpdGluZm8oJmF1ZGl0X2luZm8pOw0KPiAgICAgICAgIHN3aXRjaCAobmxhX2dldF91MzIoaW5m
+by0+YXR0cnNbTkxCTF9DQUxJUFNPX0FfTVRZUEVdKSkgew0KPiBAQCAtMzYzLDI4ICszODksNiBA
+QCBpbnQgX19pbml0IG5ldGxibF9jYWxpcHNvX2dlbmxfaW5pdCh2b2lkKQ0KPiAgICAgICAgIHJl
+dHVybiBnZW5sX3JlZ2lzdGVyX2ZhbWlseSgmbmV0bGJsX2NhbGlwc29fZ25sX2ZhbWlseSk7DQo+
+IH0NCj4gDQo+IC1zdGF0aWMgY29uc3Qgc3RydWN0IG5ldGxibF9jYWxpcHNvX29wcyAqY2FsaXBz
+b19vcHM7DQo+IC0NCj4gLS8qKg0KPiAtICogbmV0bGJsX2NhbGlwc29fb3BzX3JlZ2lzdGVyIC0g
+UmVnaXN0ZXIgdGhlIENBTElQU08gb3BlcmF0aW9ucw0KPiAtICogQG9wczogb3BzIHRvIHJlZ2lz
+dGVyDQo+IC0gKg0KPiAtICogRGVzY3JpcHRpb246DQo+IC0gKiBSZWdpc3RlciB0aGUgQ0FMSVBT
+TyBwYWNrZXQgZW5naW5lIG9wZXJhdGlvbnMuDQo+IC0gKg0KPiAtICovDQo+IC1jb25zdCBzdHJ1
+Y3QgbmV0bGJsX2NhbGlwc29fb3BzICoNCj4gLW5ldGxibF9jYWxpcHNvX29wc19yZWdpc3Rlcihj
+b25zdCBzdHJ1Y3QgbmV0bGJsX2NhbGlwc29fb3BzICpvcHMpDQo+IC17DQo+IC0gICAgICAgcmV0
+dXJuIHhjaGcoJmNhbGlwc29fb3BzLCBvcHMpOw0KPiAtfQ0KPiAtRVhQT1JUX1NZTUJPTChuZXRs
+YmxfY2FsaXBzb19vcHNfcmVnaXN0ZXIpOw0KPiAtDQo+IC1zdGF0aWMgY29uc3Qgc3RydWN0IG5l
+dGxibF9jYWxpcHNvX29wcyAqbmV0bGJsX2NhbGlwc29fb3BzX2dldCh2b2lkKQ0KPiAtew0KPiAt
+ICAgICAgIHJldHVybiBSRUFEX09OQ0UoY2FsaXBzb19vcHMpOw0KPiAtfQ0KPiAtDQo+IC8qKg0K
+PiAgICogY2FsaXBzb19kb2lfYWRkIC0gQWRkIGEgbmV3IERPSSB0byB0aGUgQ0FMSVBTTyBwcm90
+b2NvbCBlbmdpbmUNCj4gICAqIEBkb2lfZGVmOiB0aGUgRE9JIHN0cnVjdHVyZQ0KPiANCg0KVGhh
+bmsgeW91IGZvciByZXZpZXcuIEknbGwgdGVzdCBhbmQgc2VuZCB0aGlzIGlkZWEgaW4gdGhlIG5l
+eHQgdmVyc2lvbi4NCg==
