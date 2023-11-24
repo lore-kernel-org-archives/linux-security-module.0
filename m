@@ -1,249 +1,88 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rgUMC3O8"
-Received: from mail-ej1-x649.google.com (mail-ej1-x649.google.com [IPv6:2a00:1450:4864:20::649])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B16C19A5
-	for <linux-security-module@vger.kernel.org>; Fri, 24 Nov 2023 09:30:56 -0800 (PST)
-Received: by mail-ej1-x649.google.com with SMTP id a640c23a62f3a-a00dd93a5f1so158836566b.2
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Nov 2023 09:30:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1700847055; x=1701451855; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UjpIRKfLH4jxjWvtSwMRZAc4j0fbDDTVnVDRRUKAiaw=;
-        b=rgUMC3O8UVczhH3lj47JxOHVRZSE4a6KzUSFZBW55WGUNnw9ElUuWQa17cDZt2yqOe
-         99CUrSfesva4j84mbqwTNRVfHQI2vLc8ReTLXmwVeYhSLqlTyYvRzf5cED3dsv/iArj9
-         NDs2vKdJIsuMCjwCnEj6ag6Hly47wDTPNhtFpWlaTI/WU9IRwEOkw0lW2s7K0xDtG40z
-         3pRFYqMVX/djiR8GLWz1bqMejLDozcE+BTehg1GdOWKzxz464O55kVo8f/8uabS0fsQO
-         yudzlK8H6YxbUUdtcuiBUI97gae9UX1VgGzbaLpHg+B5s/XRV/0ytfKI8wbSH30Gv3qh
-         PRZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700847055; x=1701451855;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UjpIRKfLH4jxjWvtSwMRZAc4j0fbDDTVnVDRRUKAiaw=;
-        b=XpBJP+ozrZd+pYMQ/P3RC3lp+/H5rLcT6+d+ilXmX+8ysZOcNf2RKU3qpTO7sP32m4
-         nmxHDXdSXJaVelV1/maXT6AtecGz/CiLpDWTESMswj63MGipuBSmcS+x7ir2ZL/hGSnx
-         flJd6u/dsrFpY/Q1Hq6N6VDogjf8BEP7ZQEGKnUDtkJsUal6kwVkgOlZaxx2B6soZ3dE
-         0sNeL9TwgSEAhdu4JGKXzmgJn/1loWhBSR83OVOaYzRqoV2UflqG7ilQq9OclUF+YOvi
-         lGuOGCEZXEVXytRbZWBRx+V7LJDZgKlhBi8dYNnyArIx/sKY1lnticvretTKf+m7jwfC
-         0GqA==
-X-Gm-Message-State: AOJu0YwEHG6Vh2I6n8xtwiBRnPRG+gRNIuQVundB930wNIocB+8e1My4
-	4NyEEYnQi/7o1neCeuOvYtko6ZEzm904phgQ8zA3xFkC8SN4s/Ia8OdL/wruuIGeHddqzEzYtky
-	mIIwfSxxfiBsPFQrERMRtkqMdlUWS+V5HjOH6YAD8w0O6UjdpOlvN0L8q8VU8gQDraDyzBfakGP
-	7DTkGVyw==
-X-Google-Smtp-Source: AGHT+IEy5SIFUl2uvvtdFklLTCxu6IqjYuTbBXyqtL81jLUQfBfoGKOg5o8HHluxKV91gZA1yUxWw4eq1B8=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:9429:6eed:3418:ad8a])
- (user=gnoack job=sendgmr) by 2002:a17:907:7719:b0:9fa:e690:ee04 with SMTP id
- kw25-20020a170907771900b009fae690ee04mr34165ejc.11.1700847054827; Fri, 24 Nov
- 2023 09:30:54 -0800 (PST)
-Date: Fri, 24 Nov 2023 18:30:26 +0100
-In-Reply-To: <20231124173026.3257122-1-gnoack@google.com>
-Message-Id: <20231124173026.3257122-10-gnoack@google.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PuirzZON"
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C08B198D;
+	Fri, 24 Nov 2023 13:54:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700862894; x=1732398894;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jGRZBAZBF364mV5fItFOiFIV3VjaPOBDqkOVnrlj6us=;
+  b=PuirzZONBttUV+TIE8CNigyCXNB86iwyH3Cf6FK8HdnKVWP+uq/NF01o
+   vJHvxaUxDKFt/dYKOVNfOcVaxoT8by+RXjWr8Osm4GdHKqzqwQRmxqSTR
+   HvzRKsHxU0xuT11H70pS0c/aRuL1S2eEsUSsbmqdBm4Cyzm5JHPe0RPAf
+   WJaSri7am1LSAfORmhKbM9cjgDSNCKFQ1EScrzi3R+USQdaZ6MF35sGpd
+   d64rCaW5MRrKrAstEGw8U5djjer++S8hQFR1OFn6wER/79oIpEOn8vjNf
+   ZfpHCxtVDpntnkpay9anKjYAIJfOLpN8HJzdZPybW/O5IvrjVzI3L51M5
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10904"; a="391344092"
+X-IronPort-AV: E=Sophos;i="6.04,224,1695711600"; 
+   d="scan'208";a="391344092"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2023 13:54:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10904"; a="802229620"
+X-IronPort-AV: E=Sophos;i="6.04,224,1695711600"; 
+   d="scan'208";a="802229620"
+Received: from lkp-server01.sh.intel.com (HELO d584ee6ebdcc) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 24 Nov 2023 13:54:50 -0800
+Received: from kbuild by d584ee6ebdcc with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1r6e8N-0003Jb-30;
+	Fri, 24 Nov 2023 21:54:47 +0000
+Date: Sat, 25 Nov 2023 05:54:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
+Cc: oe-kbuild-all@lists.linux.dev, ebiggers@kernel.org, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+	brauner@kernel.org, viro@zeniv.linux.org.uk, casey@schaufler-ca.com,
+	amir73il@gmail.com, kpsingh@kernel.org, roberto.sassu@huawei.com,
+	Song Liu <song@kernel.org>
+Subject: Re: [PATCH v13 bpf-next 6/6] selftests/bpf: Add test that uses
+ fsverity and xattr to sign a file
+Message-ID: <202311250314.KGxKh0fm-lkp@intel.com>
+References: <20231123233936.3079687-7-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20231124173026.3257122-1-gnoack@google.com>
-X-Mailer: git-send-email 2.43.0.rc1.413.gea7ed67945-goog
-Subject: [PATCH v6 9/9] landlock: Document IOCTL support
-From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-To: linux-security-module@vger.kernel.org, 
-	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
-Cc: Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, 
-	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231123233936.3079687-7-song@kernel.org>
 
-In the paragraph above the fallback logic, use the shorter phrasing
-from the landlock(7) man page.
+Hi Song,
 
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
----
- Documentation/userspace-api/landlock.rst | 74 +++++++++++++++++++-----
- 1 file changed, 59 insertions(+), 15 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/users=
-pace-api/landlock.rst
-index 2e3822677061..68498ca64dc9 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -75,7 +75,8 @@ to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-             LANDLOCK_ACCESS_FS_MAKE_SYM |
-             LANDLOCK_ACCESS_FS_REFER |
--            LANDLOCK_ACCESS_FS_TRUNCATE,
-+            LANDLOCK_ACCESS_FS_TRUNCATE |
-+            LANDLOCK_ACCESS_FS_IOCTL,
-         .handled_access_net =3D
-             LANDLOCK_ACCESS_NET_BIND_TCP |
-             LANDLOCK_ACCESS_NET_CONNECT_TCP,
-@@ -84,10 +85,10 @@ to be explicit about the denied-by-default access right=
-s.
- Because we may not know on which kernel version an application will be
- executed, it is safer to follow a best-effort security approach.  Indeed, =
-we
- should try to protect users as much as possible whatever the kernel they a=
-re
--using.  To avoid binary enforcement (i.e. either all security features or
--none), we can leverage a dedicated Landlock command to get the current ver=
-sion
--of the Landlock ABI and adapt the handled accesses.  Let's check if we sho=
-uld
--remove access rights which are only supported in higher versions of the AB=
-I.
-+using.
-+
-+To be compatible with older Linux versions, we detect the available Landlo=
-ck ABI
-+version, and only use the available subset of access rights:
-=20
- .. code-block:: c
-=20
-@@ -113,6 +114,10 @@ remove access rights which are only supported in highe=
-r versions of the ABI.
-         ruleset_attr.handled_access_net &=3D
-             ~(LANDLOCK_ACCESS_NET_BIND_TCP |
-               LANDLOCK_ACCESS_NET_CONNECT_TCP);
-+        __attribute__((fallthrough));
-+    case 4:
-+        /* Removes LANDLOCK_ACCESS_FS_IOCTL for ABI < 5 */
-+        ruleset_attr.handled_access_fs &=3D ~LANDLOCK_ACCESS_FS_IOCTL;
-     }
-=20
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -224,6 +229,7 @@ access rights per directory enables to change the locat=
-ion of such directory
- without relying on the destination directory access rights (except those t=
-hat
- are required for this operation, see ``LANDLOCK_ACCESS_FS_REFER``
- documentation).
-+
- Having self-sufficient hierarchies also helps to tighten the required acce=
-ss
- rights to the minimal set of data.  This also helps avoid sinkhole directo=
-ries,
- i.e.  directories where data can be linked to but not linked from.  Howeve=
-r,
-@@ -317,18 +323,24 @@ It should also be noted that truncating files does no=
-t require the
- system call, this can also be done through :manpage:`open(2)` with the fla=
-gs
- ``O_RDONLY | O_TRUNC``.
-=20
--When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE=
-``
--right is associated with the newly created file descriptor and will be use=
-d for
--subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavio=
-r is
--similar to opening a file for reading or writing, where permissions are ch=
-ecked
--during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)=
-` and
-+The truncate right is associated with the opened file (see below).
-+
-+Rights associated with file descriptors
-+---------------------------------------
-+
-+When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE=
-`` and
-+``LANDLOCK_ACCESS_FS_IOCTL`` rights is associated with the newly created f=
-ile
-+descriptor and will be used for subsequent truncation and ioctl attempts u=
-sing
-+:manpage:`ftruncate(2)` and :manpage:`ioctl(2)`.  The behavior is similar =
-to
-+opening a file for reading or writing, where permissions are checked durin=
-g
-+:manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
- :manpage:`write(2)` calls.
-=20
--As a consequence, it is possible to have multiple open file descriptors fo=
-r the
--same file, where one grants the right to truncate the file and the other d=
-oes
--not.  It is also possible to pass such file descriptors between processes,
--keeping their Landlock properties, even when these processes do not have a=
-n
--enforced Landlock ruleset.
-+As a consequence, it is possible to have multiple open file descriptors
-+referring to the same file, where one grants the truncate or ioctl right a=
-nd the
-+other does not.  It is also possible to pass such file descriptors between
-+processes, keeping their Landlock properties, even when these processes do=
- not
-+have an enforced Landlock ruleset.
-=20
- Compatibility
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-@@ -457,6 +469,28 @@ Memory usage
- Kernel memory allocated to create rulesets is accounted and can be restric=
-ted
- by the Documentation/admin-guide/cgroup-v1/memory.rst.
-=20
-+IOCTL support
-+-------------
-+
-+The ``LANDLOCK_ACCESS_FS_IOCTL`` access right restricts the use of
-+:manpage:`ioctl(2)`, but it only applies to newly opened files.  This mean=
-s
-+specifically that pre-existing file descriptors like stdin, stdout and std=
-err
-+are unaffected.
-+
-+Users should be aware that TTY devices have traditionally permitted to con=
-trol
-+other processes on the same TTY through the ``TIOCSTI`` and ``TIOCLINUX`` =
-IOCTL
-+commands.  It is therefore recommended to close inherited TTY file descrip=
-tors,
-+or to reopen them from ``/proc/self/fd/*`` without the
-+``LANDLOCK_ACCESS_FS_IOCTL`` right, if possible.  The :manpage:`isatty(3)`
-+function checks whether a given file descriptor is a TTY.
-+
-+Landlock's IOCTL support is coarse-grained at the moment, but may become m=
-ore
-+fine-grained in the future.  Until then, users are advised to establish th=
-e
-+guarantees that they need through the file hierarchy, by only permitting t=
-he
-+``LANDLOCK_ACCESS_FS_IOCTL`` right on files where it is really harmless.  =
-In
-+cases where you can control the mounts, the ``nodev`` mount option can hel=
-p to
-+rule out that device files can be accessed.
-+
- Previous limitations
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
-@@ -494,6 +528,16 @@ bind and connect actions to only a set of allowed port=
-s thanks to the new
- ``LANDLOCK_ACCESS_NET_BIND_TCP`` and ``LANDLOCK_ACCESS_NET_CONNECT_TCP``
- access rights.
-=20
-+IOCTL (ABI < 5)
-+---------------
-+
-+IOCTL operations could not be denied before the fifth Landlock ABI, so
-+:manpage:`ioctl(2)` is always allowed when using a kernel that only suppor=
-ts an
-+earlier ABI.
-+
-+Starting with the Landlock ABI version 5, it is possible to restrict the u=
-se of
-+:manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL`` access righ=
-t.
-+
- .. _kernel_support:
-=20
- Kernel support
---=20
-2.43.0.rc1.413.gea7ed67945-goog
+[auto build test ERROR on bpf-next/master]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Song-Liu/bpf-Add-kfunc-bpf_get_file_xattr/20231124-074239
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20231123233936.3079687-7-song%40kernel.org
+patch subject: [PATCH v13 bpf-next 6/6] selftests/bpf: Add test that uses fsverity and xattr to sign a file
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231125/202311250314.KGxKh0fm-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202311250314.KGxKh0fm-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> progs/test_sig_in_xattr.c:36:26: error: invalid application of 'sizeof' to an incomplete type 'struct fsverity_digest'
+      36 | char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) + SHA256_DIGEST_SIZE];
+         |                          ^     ~~~~~~~~~~~~~~~~~~~~~~~~
+   progs/test_sig_in_xattr.c:36:40: note: forward declaration of 'struct fsverity_digest'
+      36 | char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) + SHA256_DIGEST_SIZE];
+         |                                        ^
+   1 error generated.
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
