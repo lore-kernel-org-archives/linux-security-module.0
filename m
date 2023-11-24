@@ -1,134 +1,167 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2365331730;
+	Fri, 24 Nov 2023 17:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fH5hb05R"
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B369810CB
-	for <linux-security-module@vger.kernel.org>; Fri, 24 Nov 2023 09:07:14 -0800 (PST)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5ca26c07848so32189347b3.0
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Nov 2023 09:07:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1700845634; x=1701450434; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zDbAHL1WzbpxpVmmBQ1q4f+lIFqPoK269H6Oa6NY9+M=;
-        b=fH5hb05RhUcK/VZfGxorsC3u4fZ11k+gVOXYj9rVTWMk6DFntuUOrv0sY7oyp2GIrl
-         bzUfLgzbz1a4BxEueo7qAOOsmrtVXuwH0KUhgFI8wT3CuCIU2i/KYbcOdiYF23Xqsvwm
-         cBw4uckdPnAp1I5xcAVNzCtK5FnpMdsiemKRdYlvPSXBYRZQ66UvOR0Aq9JETIyWiAVI
-         k72ON/G/qLueajTN/tw3ypnEgCqFygd0C1/nYeO3msoa7F2OPsH7OTw8jvuN+OQM0/WD
-         KZUIHlYckF2wsRR3xcmWMAdD841ZmXV6UCzPnR2R0uNE6GOiGhyceQagxpQWs45XBsdJ
-         zQ6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700845634; x=1701450434;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zDbAHL1WzbpxpVmmBQ1q4f+lIFqPoK269H6Oa6NY9+M=;
-        b=M5mqrE6rSPcLe4F7CcdOVD4HAc6/L4qk2zxuLuK1nKuOgJSsUKU19ZoSTGOcbwYwKh
-         a1AA+IjN01HVwRfTInjPcsSRnAUjfCywA6WMuELafxhIzOwmeYn8tnFTgXUm7gd2P1/B
-         gFVKd71Rh6eh6zqte7qStPOFBju+oMTWY7Dby1NVoWZcp6lZPqkFHg4RNJrgR/qD7ylU
-         AdKDI5mJ6wMRpakLGM0dJi0hm9jmrJwnyErhchy+8M2XGn94Uz0hUJjRLWwOwnBYcvm1
-         TLcjJFlYLh0kzVpVetRjOYjDC7bGVtPrYwG9lrxmpxFQy7c3ZmdRQPRTIacIlxOlint+
-         lxNA==
-X-Gm-Message-State: AOJu0Yxoucb0ixOm3eeequFV0D7Xq0idEGw7/CoyKdPIydqJrl9xSfMC
-	MVJPKAq+hGJu1v220WzL+6WE9Ve8BLM=
-X-Google-Smtp-Source: AGHT+IEi6smLAoM5LsFSTHDUVsdt9l8qmt2YzLQlOJC8syM9mvuhR5uuah8uEnw1ZFKpiILQQz5kcq1gPEY=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:9429:6eed:3418:ad8a])
- (user=gnoack job=sendgmr) by 2002:a05:690c:2f0d:b0:5cb:e3c9:ca22 with SMTP id
- ev13-20020a05690c2f0d00b005cbe3c9ca22mr98129ywb.7.1700845634005; Fri, 24 Nov
- 2023 09:07:14 -0800 (PST)
-Date: Fri, 24 Nov 2023 18:07:05 +0100
-In-Reply-To: <20231120193914.441117-2-mic@digikod.net>
-Message-Id: <ZWDYOThtJcTx_Z7U@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EHfGx7AA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7DA1C433CD;
+	Fri, 24 Nov 2023 17:07:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700845667;
+	bh=cnsIeUB3QWfjt+PPATu/fFPdUe8LeGe+3jxHVgdEdwE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EHfGx7AAatARRcfU+6WWe8TQOVA8irrUSOs22TkTQH/kmu19FcFePN+Ek2j0sZIS8
+	 UUkb1qY599ngUgnlMi22YIwIQB7MFPYXg+Z5XI8MmUQBCS8JwDbUWK0pDhGt5YivMv
+	 Fpap6EqQcQclwIV/3kfssgNkeaiTOZJ20WollKWi8g34UYBH3d5iryBEdDSXlBJqrU
+	 2Ezu5t8Y+m9gXpu3mHB6mlcdS7/BMUUSQErYQYD0/QdulGLVQ0xiC8jefm0q27NLMA
+	 a7cemUXEV1gloCekfJQkstXmDQlqAw/vDfIJJXFWz/vn52MlGnvtBUkY5CXpt5/ZHN
+	 f3tki/A3CGh3A==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2c871890c12so27745121fa.2;
+        Fri, 24 Nov 2023 09:07:47 -0800 (PST)
+X-Gm-Message-State: AOJu0Yw74c+/jlJmLMeJN8W1Wq70mllyO/bJxqemulNFvRjXspz3AY/Z
+	CQJx+s7lBTJIRSfe4rwjkZDvrQUoU8OhozraqGU=
+X-Google-Smtp-Source: AGHT+IEnxzHxnp7pO7/lcj86dKEOjoxyqJGpnUjkhlmbDBvY9baA9RBd0DTJkLfmgVjbeQl4yVF9iIJsodkqcgX+fFg=
+X-Received: by 2002:a2e:93cf:0:b0:2c5:6e01:58b8 with SMTP id
+ p15-20020a2e93cf000000b002c56e0158b8mr2491614ljh.37.1700845666059; Fri, 24
+ Nov 2023 09:07:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20231120193914.441117-1-mic@digikod.net> <20231120193914.441117-2-mic@digikod.net>
-Subject: Re: [PATCH v1 1/2] selftests/landlock: Add tests to check undefined
- rule's access rights
-From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
-To: "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
-Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, James Morris <jmorris@namei.org>, 
-	Paul Moore <paul@paul-moore.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20231123233936.3079687-1-song@kernel.org> <20231123233936.3079687-2-song@kernel.org>
+ <20231124-heilung-wohnumfeld-6b7797c4d41a@brauner>
+In-Reply-To: <20231124-heilung-wohnumfeld-6b7797c4d41a@brauner>
+From: Song Liu <song@kernel.org>
+Date: Fri, 24 Nov 2023 09:07:33 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW7BFzsBv48xgbY4-2xhG1-GazBuQq_pnaUrJqY1q_H27w@mail.gmail.com>
+Message-ID: <CAPhsuW7BFzsBv48xgbY4-2xhG1-GazBuQq_pnaUrJqY1q_H27w@mail.gmail.com>
+Subject: Re: [PATCH v13 bpf-next 1/6] bpf: Add kfunc bpf_get_file_xattr
+To: Christian Brauner <brauner@kernel.org>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev, ebiggers@kernel.org, 
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
+	viro@zeniv.linux.org.uk, casey@schaufler-ca.com, amir73il@gmail.com, 
+	kpsingh@kernel.org, roberto.sassu@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 20, 2023 at 08:39:13PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
-> Extend two tests to make sure that we cannot add a rule with access
-> rights that are undefined:
-> * fs: layout1.file_and_dir_access_rights
-> * net: mini.network_access_rights
->=20
-> The checks test all 64 bits access right values until it overflows.
->=20
-> Replace one ASSERT with EXPECT in layout1.file_and_dir_access_rights .
->=20
-> Cc: G=C3=BCnther Noack <gnoack@google.com>
-> Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> ---
->  tools/testing/selftests/landlock/fs_test.c  | 17 ++++++++++++-----
->  tools/testing/selftests/landlock/net_test.c | 17 ++++++++++-------
->  2 files changed, 22 insertions(+), 12 deletions(-)
->=20
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/s=
-elftests/landlock/fs_test.c
-> index 18e1f86a6234..d77155d75de5 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -548,7 +548,6 @@ TEST_F_FORK(layout1, inval)
->  TEST_F_FORK(layout1, file_and_dir_access_rights)
->  {
->  	__u64 access;
-> -	int err;
->  	struct landlock_path_beneath_attr path_beneath_file =3D {},
->  					  path_beneath_dir =3D {};
->  	struct landlock_ruleset_attr ruleset_attr =3D {
-> @@ -568,11 +567,19 @@ TEST_F_FORK(layout1, file_and_dir_access_rights)
->  		open(dir_s1d2, O_PATH | O_DIRECTORY | O_CLOEXEC);
->  	ASSERT_LE(0, path_beneath_dir.parent_fd);
-> =20
-> -	for (access =3D 1; access <=3D ACCESS_LAST; access <<=3D 1) {
-> +	for (access =3D 1; access > 0; access <<=3D 1) {
-> +		int err;
-> +
->  		path_beneath_dir.allowed_access =3D access;
-> -		ASSERT_EQ(0, landlock_add_rule(ruleset_fd,
-> -					       LANDLOCK_RULE_PATH_BENEATH,
-> -					       &path_beneath_dir, 0));
-> +		err =3D landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
-> +					&path_beneath_dir, 0);
-> +		if (access <=3D ACCESS_LAST) {
-> +			EXPECT_EQ(0, err);
-> +		} else {
-> +			EXPECT_EQ(-1, err);
-> +			EXPECT_EQ(EINVAL, errno);
-> +			continue;
-> +		}
+On Fri, Nov 24, 2023 at 12:44=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
+>
+> On Thu, Nov 23, 2023 at 03:39:31PM -0800, Song Liu wrote:
+> > It is common practice for security solutions to store tags/labels in
+> > xattrs. To implement similar functionalities in BPF LSM, add new kfunc
+> > bpf_get_file_xattr().
+> >
+> > The first use case of bpf_get_file_xattr() is to implement file
+> > verifications with asymmetric keys. Specificially, security application=
+s
+> > could use fsverity for file hashes and use xattr to store file signatur=
+es.
+> > (kfunc for fsverity hash will be added in a separate commit.)
+> >
+> > Currently, only xattrs with "user." prefix can be read with kfunc
+> > bpf_get_file_xattr(). As use cases evolve, we may add a dedicated prefi=
+x
+> > for bpf_get_file_xattr().
+> >
+> > To avoid recursion, bpf_get_file_xattr can be only called from LSM hook=
+s.
+> >
+> > Signed-off-by: Song Liu <song@kernel.org>
+> > ---
+>
+> Looks ok to me. But see below for a question.
+>
+> If you ever allow the retrieval of additional extended attributes
+> through bfs_get_file_xattr() or other bpf interfaces we would like to be
+> Cced, please. The xattr stuff is (/me looks for suitable words)...
+>
+> Over the last months we've moved POSIX_ACL retrieval out of these
+> low-level functions. They now have a dedicated api. The same is going to
+> happen for fscaps as well.
+>
+> But even with these out of the way we would want the bpf helpers to
+> always maintain an allowlist of retrievable attributes.
 
-Style question: why not have two loops next to each other?  You could keep =
-the
-old loop from 1 to ACCESS_LAST and then have a separate one from ACCESS_LAS=
-T+1
-onwards.  Then you would not need to put logic inside the loop; it might re=
-duce
-nesting a bit, and each loop individually might be slightly easier to grasp=
+Agreed. We will be very specific which attributes are available to bpf
+helpers/kfuncs.
+
+>
+> >  kernel/trace/bpf_trace.c | 63 ++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 63 insertions(+)
+> >
+> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> > index f0b8b7c29126..55758a6fbe90 100644
+> > --- a/kernel/trace/bpf_trace.c
+> > +++ b/kernel/trace/bpf_trace.c
+> > @@ -24,6 +24,7 @@
+> >  #include <linux/key.h>
+> >  #include <linux/verification.h>
+> >  #include <linux/namei.h>
+> > +#include <linux/fileattr.h>
+> >
+> >  #include <net/bpf_sk_storage.h>
+> >
+> > @@ -1431,6 +1432,68 @@ static int __init bpf_key_sig_kfuncs_init(void)
+> >  late_initcall(bpf_key_sig_kfuncs_init);
+> >  #endif /* CONFIG_KEYS */
+> >
+> > +/* filesystem kfuncs */
+> > +__bpf_kfunc_start_defs();
+> > +
+> > +/**
+> > + * bpf_get_file_xattr - get xattr of a file
+> > + * @file: file to get xattr from
+> > + * @name__str: name of the xattr
+> > + * @value_ptr: output buffer of the xattr value
+> > + *
+> > + * Get xattr *name__str* of *file* and store the output in *value_ptr*=
 .
+> > + *
+> > + * For security reasons, only *name__str* with prefix "user." is allow=
+ed.
+> > + *
+> > + * Return: 0 on success, a negative value on error.
+> > + */
+> > +__bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name=
+__str,
+> > +                                struct bpf_dynptr_kern *value_ptr)
+> > +{
+> > +     struct dentry *dentry;
+> > +     u32 value_len;
+> > +     void *value;
+> > +
+> > +     if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
+> > +             return -EPERM;
+> > +
+> > +     value_len =3D __bpf_dynptr_size(value_ptr);
+> > +     value =3D __bpf_dynptr_data_rw(value_ptr, value_len);
+> > +     if (!value)
+> > +             return -EINVAL;
+> > +
+> > +     dentry =3D file_dentry(file);
+> > +     return __vfs_getxattr(dentry, dentry->d_inode, name__str, value, =
+value_len);
+>
+> By calling __vfs_getxattr() from bpf_get_file_xattr() you're skipping at
+> least inode_permission() from xattr_permission(). I'm probably just
+> missing or forgot the context. But why is that ok?
 
-I was initially a bit confused why the other landlock_add_rule() call for t=
-he
-directory doesn't need the same change. That is clear to me after looking a=
-t the
-code a few seconds longer, but it might be slightly simpler with two separa=
-te
-loops.
+AFAICT, the XATTR_USER_PREFIX above is equivalent to the prefix
+check in xattr_permission().
 
-But this is a minor nit.
+For inode_permission(), I think it is not required because we already
+have the "struct file" of  the target file. Did I misunderstand something
+here?
 
-Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
+Thanks,
+Song
 
-Thanks!
-=E2=80=94G=C3=BCnther
+> > +}
+> > +
+
+[...]
