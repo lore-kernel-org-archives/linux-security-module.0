@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lzbxQ+3y"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HNr9RKGR"
 Received: from mail-ej1-x64a.google.com (mail-ej1-x64a.google.com [IPv6:2a00:1450:4864:20::64a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB4C81717
-	for <linux-security-module@vger.kernel.org>; Fri, 24 Nov 2023 06:04:09 -0800 (PST)
-Received: by mail-ej1-x64a.google.com with SMTP id a640c23a62f3a-a04b426b3c0so283307966b.0
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Nov 2023 06:04:09 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FA5510E7
+	for <linux-security-module@vger.kernel.org>; Fri, 24 Nov 2023 07:39:19 -0800 (PST)
+Received: by mail-ej1-x64a.google.com with SMTP id a640c23a62f3a-a01991968f5so150307466b.2
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Nov 2023 07:39:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1700834648; x=1701439448; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1700840358; x=1701445158; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fr2IrRVnHygGQwZnPc3Doulu3eD6g2JaFbhbMU861po=;
-        b=lzbxQ+3yS1mjqJs5yqI6zxlLVq+8EQdbSt9ZHnkYGslwJqOLBUK1lJRZVhQSexldFT
-         NS4Gh1VjEz7Klf3XDR1cqlIPQwgCUf/cNUji/hEyvOYwjwSutfa8WpmW+UmMWBoQz90X
-         DDvFKW5detL3IgSNEPV/nzx+yqXePqCAUl+279l57V87VP/iXwvP/nFmdpG4v4h/Os1b
-         x+e04GXs35GIZPYGCyldckT1h1ESByzopOiPa73UOTm41CUxL4zrLnzw5PhTFAAyaHqz
-         z0IcwFtZBSel44X9PuLa40MyHpkXRFA3s9edtgVChhVWIHDuGqN3T/1xcI3VyONGpMki
-         fVgA==
+        bh=+MdY+CEN7lfJq7E8LmxU/yKl+DLnEKriP7xWtMKyRLI=;
+        b=HNr9RKGRXJwapoKyJR+qMqL/0whUhS20vQf6uKw9t+utB0G5kgaa5l47Scy4qh/PHH
+         yBS7QhGgV1oY4JTEDtc9gFktzBn0wVVne+CsT4i+eIR4Jg5FB+pSYGimy8Liatp1V3gB
+         ciYhMYE1smCvV7jNgan/PiJEbMwRij818KjLwGdn5BJWBiflTEyh0U4Oqz9+j4Pd/jo6
+         X3TPEbylCYcSM867ICph6PbYA+bvuT3LUHgcR+t+1nYx5vMg1hc8ZN7XT8sau08OLO0t
+         Q0GJLqLF2ETAyj2V//JJ7MJtkvwR5W0VmEZ1oYsm0RUPpP4ZW1IbT2tQ9A/RaMoBzOFm
+         gTCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700834648; x=1701439448;
+        d=1e100.net; s=20230601; t=1700840358; x=1701445158;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=fr2IrRVnHygGQwZnPc3Doulu3eD6g2JaFbhbMU861po=;
-        b=EhyePdU3oCf23wC351LRTuT7WCVr/G6Hd/W1uI+HGDqPCm1523tvqPmhvM3snKJMMV
-         2iSh7DBiciY2COicS7xyyVB3KaPlJXQ8ijMhbYQunmIK3+Emt3HnVrqw+yJ9UOiVGqA7
-         jWXZN9/I8lgTM+uSuzyV8JvWbGNb16jNlgv9SEX8ik46uyfCLmclOyronIIVsIbp8ZzQ
-         nagVYVf0N0gQuP7SfQDYptlXWCRQMAT/ThyLJm+J0V4CadNRO3nBlKS9hZRLNZlx03Yh
-         xDkDeDhBUXaBYDcL+LpEduK5iZ09oy1OfrfaA9BqH0XCq99KMcQzqu136DJCB7flBY5P
-         lhfg==
-X-Gm-Message-State: AOJu0YwK3UJOJfwuo4bAjxHhTgOv1f5vfsmIE3ch2dq9zH3/+gMj6pBS
-	TDGZ4KK4SxJU/6iAjxaQHKu1rrX040g=
-X-Google-Smtp-Source: AGHT+IF+FqpMCwIlNhqiRw4ZLjdqNBVASa0/H/osupW5IIKccBTleXoXAOYJzPb1nw+LfyirOWjL26tdMbw=
+        bh=+MdY+CEN7lfJq7E8LmxU/yKl+DLnEKriP7xWtMKyRLI=;
+        b=LZWxvXvqmqkSSioo6GLvFWYPAcxB0ypVPMs1NJT/Wq44lJ7h0hYbgpwdJSX1zyFAMR
+         OTho5r13N/FTfefaPcY3+KLnI7vOmbp/uwYrX9vP1TY30EKlqvty52Dh9MIRFJriWlW2
+         2iCX8cagzenM27JQvUEGdxiNPyDyCpwJPhiB4KKxVFIbkz7CukYOE7jcxRNe/mOfDahN
+         5Q7t7ANqsEGLHJEeOR+S7GaurJzii7Iq9mTe3w3b17TZzRBK18OmVO5/9mxnKQ2P45iR
+         0D9+0E8vl/t21EVd9tYEJb0zT6rSs3FGU5i8stTsFpbJWbjIQn8JYslYBEpFTQJSYTrV
+         AhFA==
+X-Gm-Message-State: AOJu0YxERAqn/OrXI6kFLq/XDWQXFxLy0MxNHrDNYe/P6zSk5MmuHrOk
+	f7d2hG6/+MouFqGVMUZLKGVRd5Xg0kM=
+X-Google-Smtp-Source: AGHT+IHnNoF6BgJwUOugkI+xgyGHb4W13m56l8pHQe9JmK/keKOh4nXrtdmg1SmVuxwcdqwLJoPICe66tEw=
 X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:9429:6eed:3418:ad8a])
- (user=gnoack job=sendgmr) by 2002:a17:907:cc97:b0:9fc:b396:1718 with SMTP id
- up23-20020a170907cc9700b009fcb3961718mr61316ejc.0.1700834648250; Fri, 24 Nov
- 2023 06:04:08 -0800 (PST)
-Date: Fri, 24 Nov 2023 15:03:58 +0100
-In-Reply-To: <20231117.aeZ3koh4bu2a@digikod.net>
-Message-Id: <ZWCtTnkL_aYA9cdQ@google.com>
+ (user=gnoack job=sendgmr) by 2002:a05:6402:4402:b0:54a:e7a4:e56 with SMTP id
+ y2-20020a056402440200b0054ae7a40e56mr46013eda.2.1700840357610; Fri, 24 Nov
+ 2023 07:39:17 -0800 (PST)
+Date: Fri, 24 Nov 2023 16:39:02 +0100
+In-Reply-To: <20231120.fau2Oi6queij@digikod.net>
+Message-Id: <ZWDDlvXCdShpFIZ5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -46,7 +46,7 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20231117154920.1706371-1-gnoack@google.com> <20231117154920.1706371-3-gnoack@google.com>
- <20231117.aeZ3koh4bu2a@digikod.net>
+ <20231120.fau2Oi6queij@digikod.net>
 Subject: Re: [PATCH v5 2/7] landlock: Add IOCTL access right
 From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
 To: "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
@@ -58,96 +58,59 @@ Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello!
-
-On Fri, Nov 17, 2023 at 09:45:47PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+On Mon, Nov 20, 2023 at 08:43:30PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
 > On Fri, Nov 17, 2023 at 04:49:15PM +0100, G=C3=BCnther Noack wrote:
-> > +static inline access_mask_t expand_ioctl(const access_mask_t handled,
+> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP1	(LANDLOCK_LAST_PUBLIC_ACCESS_F=
+S << 1)
+> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP2	(LANDLOCK_LAST_PUBLIC_ACCESS_F=
+S << 2)
+> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP3	(LANDLOCK_LAST_PUBLIC_ACCESS_F=
+S << 3)
+> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP4	(LANDLOCK_LAST_PUBLIC_ACCESS_F=
+S << 4)
 >=20
-> Please remove all explicit inlines in the .c files, the compiler should
-> be able to inline them if necessary, or it my not inline them at all
-> anyway.  It would be nice to check the -O2 code to see what GCC or clang
-> do though, and I guess they will inline this kind of pattern.
+> Please move this LANDLOCK_ACCESS_FS_IOCTL_* block to fs.h
+>=20
+> We can still create the public and private masks in limits.h but add a
+> static_assert() to make sure there is no overlap.
 
 Done.
 
 
-> > +					 const access_mask_t access,
-> > +					 const access_mask_t src,
-> > +					 const access_mask_t dst)
-> > +{
-> > +	if (!(handled & LANDLOCK_ACCESS_FS_IOCTL))
-> > +		return 0;
-> > +
-> > +	access_mask_t copy_from =3D (handled & src) ? src :
+> >  	/* Checks content (and 32-bits cast). */
+> > -	if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_ACCESS_FS) !=3D
+> > -	    LANDLOCK_MASK_ACCESS_FS)
+> > +	if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_PUBLIC_ACCESS_FS)=
+ !=3D
+> > +	    LANDLOCK_MASK_PUBLIC_ACCESS_FS)
 >=20
-> Please declare variables at the beginning of blocks.
-
-Done.
-
-
-> > +static inline access_mask_t
-> > +landlock_expand_access_fs(const access_mask_t handled,
-> > +			  const access_mask_t access)
-> > +{
-> > +	return access |
-> > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_WRITE_FILE,
-> > +			    LANDLOCK_ACCESS_FS_IOCTL_GROUP1 |
-> > +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP2 |
-> > +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP4) |
-> > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_READ_FILE,
-> > +			    LANDLOCK_ACCESS_FS_IOCTL_GROUP1 |
-> > +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP2 |
-> > +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP3) |
-> > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_READ_DIR,
-> > +			    LANDLOCK_ACCESS_FS_IOCTL_GROUP1);
-> > +}
+> It would now be possible to add LANDLOCK_ACCESS_FS_IOCTL_GROUP* to a
+> rule, which is not part of the API/ABI. I've sent a patch with new tests
+> to make sure this is covered:
+> https://lore.kernel.org/r/20231120193914.441117-2-mic@digikod.net
 >=20
-> I'd prefer to keep the semantic definition of these groups (i.e.
-> required_ioctl_access) close the definition of access right expantions,
-> and also close to the ioctl_groups veriable. Actually, ioctl_groups
-> might make more sense close to the group definition, and then probably
-> another define... What do you think?
+> I'll push it in my -next branch if everything is OK before pushing your
+> next series. Please review it.
 
-Done, good idea. Thanks for the suggestion!
+Thanks, good catch!
 
-I think this makes sense and the code looks better when the IOCTL-related
-functionality is grouped together at the top of fs.c, including ioctl_group=
-s,
-the LANDLOCK_ACCESS_FS_IOCTL_GROUP1,2,3,4 #defines, the expansion helpers a=
-nd
-the required_ioctl_access helper.
+Looking at add_rule_path_beneath(), it indeed does not look like I have cov=
+ered
+that case in my patch.  I'll put an explicit check for it, like this:
 
+  /*
+   * Checks that allowed_access matches the @ruleset constraints and only
+   * consists of publicly visible access rights (as opposed to synthetic
+   * ones).
+   */
+  mask =3D landlock_get_raw_fs_access_mask(ruleset, 0) &
+         LANDLOCK_MASK_PUBLIC_ACCESS_FS;
+  if ((path_beneath_attr.allowed_access | mask) !=3D mask)
+          return -EINVAL;
 
-> > +	/*
-> > +	 * It is the access rights at the time of opening the file which
-> > +	 * determine whether ioctl can be used on the opened file later.
->=20
-> s/ioctl/IOCTL/g
+I assume that the tests that you added were failing?  Or was there an obscu=
+re
+code path that caught it anyway?
 
-Done.
-
-
-> > +/**
-> > + * landlock_expand_handled_access_fs() - add synthetic IOCTL access ri=
-ghts to an
-> > + * access mask of handled accesses.
-> > + *
-> > + * @handled: The handled accesses of a ruleset that is being created
-> > + *
-> > + * Returns: @handled, with the bits for the synthetic IOCTL access rig=
-hts set,
-> > + * if %LANDLOCK_ACCESS_FS_IOCTL is handled
-> > + */
->=20
-> This doc should be in fs.c
-
-Done, thanks.
-
-(I did not realize that the convention worked this way in the kernel.  This=
- goes
-on my bucket list of things to double check.)
-
-Thanks for the review!
-
+Thanks,
 =E2=80=94G=C3=BCnther
