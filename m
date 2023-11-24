@@ -1,53 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HNr9RKGR"
-Received: from mail-ej1-x64a.google.com (mail-ej1-x64a.google.com [IPv6:2a00:1450:4864:20::64a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FA5510E7
-	for <linux-security-module@vger.kernel.org>; Fri, 24 Nov 2023 07:39:19 -0800 (PST)
-Received: by mail-ej1-x64a.google.com with SMTP id a640c23a62f3a-a01991968f5so150307466b.2
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Nov 2023 07:39:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c8bpFJF/"
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 728181733
+	for <linux-security-module@vger.kernel.org>; Fri, 24 Nov 2023 08:57:43 -0800 (PST)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5cd6fe9a25fso19476607b3.3
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Nov 2023 08:57:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1700840358; x=1701445158; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1700845062; x=1701449862; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+MdY+CEN7lfJq7E8LmxU/yKl+DLnEKriP7xWtMKyRLI=;
-        b=HNr9RKGRXJwapoKyJR+qMqL/0whUhS20vQf6uKw9t+utB0G5kgaa5l47Scy4qh/PHH
-         yBS7QhGgV1oY4JTEDtc9gFktzBn0wVVne+CsT4i+eIR4Jg5FB+pSYGimy8Liatp1V3gB
-         ciYhMYE1smCvV7jNgan/PiJEbMwRij818KjLwGdn5BJWBiflTEyh0U4Oqz9+j4Pd/jo6
-         X3TPEbylCYcSM867ICph6PbYA+bvuT3LUHgcR+t+1nYx5vMg1hc8ZN7XT8sau08OLO0t
-         Q0GJLqLF2ETAyj2V//JJ7MJtkvwR5W0VmEZ1oYsm0RUPpP4ZW1IbT2tQ9A/RaMoBzOFm
-         gTCA==
+        bh=TYTsHHxJlfG14dn+7UEWrCdCwra+hwU+w+BoD3ZTwsk=;
+        b=c8bpFJF/+836jE7LohXY1eFXWDiB21DZWZeK9Di2Q4zCGIMzXlQrErhcGHZc9uaqFt
+         MmqrPqGxuybO9rxse32Wo7AxpPndaWO47DE+oWsH4wdzkrd4iCCYPWXDxSMI8rPap9b8
+         /+Z2ZaItr2LVUDebELgVpV9dS1Yf8vM0hTgr6ZDaYzQgcRejwJhNJRsZ+0EJg7wCVpgu
+         Jr/M5PXYPoMZoa5IvMfMMOkQItSSTuu48LurlgzKZgYIuKVmyny3VvSks3hC5DW+amtg
+         z9kdiFli+6luUir9EYgvAV0BLJQ+xPHvtbzFX5o19n9a78TbwQq5mb8Pek2CqMGCiPj/
+         vzKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700840358; x=1701445158;
+        d=1e100.net; s=20230601; t=1700845062; x=1701449862;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=+MdY+CEN7lfJq7E8LmxU/yKl+DLnEKriP7xWtMKyRLI=;
-        b=LZWxvXvqmqkSSioo6GLvFWYPAcxB0ypVPMs1NJT/Wq44lJ7h0hYbgpwdJSX1zyFAMR
-         OTho5r13N/FTfefaPcY3+KLnI7vOmbp/uwYrX9vP1TY30EKlqvty52Dh9MIRFJriWlW2
-         2iCX8cagzenM27JQvUEGdxiNPyDyCpwJPhiB4KKxVFIbkz7CukYOE7jcxRNe/mOfDahN
-         5Q7t7ANqsEGLHJEeOR+S7GaurJzii7Iq9mTe3w3b17TZzRBK18OmVO5/9mxnKQ2P45iR
-         0D9+0E8vl/t21EVd9tYEJb0zT6rSs3FGU5i8stTsFpbJWbjIQn8JYslYBEpFTQJSYTrV
-         AhFA==
-X-Gm-Message-State: AOJu0YxERAqn/OrXI6kFLq/XDWQXFxLy0MxNHrDNYe/P6zSk5MmuHrOk
-	f7d2hG6/+MouFqGVMUZLKGVRd5Xg0kM=
-X-Google-Smtp-Source: AGHT+IHnNoF6BgJwUOugkI+xgyGHb4W13m56l8pHQe9JmK/keKOh4nXrtdmg1SmVuxwcdqwLJoPICe66tEw=
+        bh=TYTsHHxJlfG14dn+7UEWrCdCwra+hwU+w+BoD3ZTwsk=;
+        b=XTZTAsUaFt25LGiffHrC1WfhAu1E70pL+3u3oqBRmQtLNcP2Se+h5osXZdVkev0+pR
+         xZE7EtoibYyDwuGWpES8oAmXoJtrBU7/Sr56+gzLauikl5Wucwvcca21MND+/+UZA2zx
+         dmAV6R+8et7p9RiM5IGi6cfUJQpubt6benqWd/wwDJIjznCxWyL/GMEy71mWSj+a1QuM
+         WbHgKUw6wn2685aIFlWVY50x1JFJ2UDoCI9tOFLa5m6lWOzMHhpBoEOYMgYwRLXh7iiC
+         VrxjcI0xjXYRqY58ENS83uqR/8OAYPNtTLzkss4EkOYb3WWwvMSgQ+flbAGp+eJoLqy8
+         I2tw==
+X-Gm-Message-State: AOJu0YzQapJiZqAAMW51PpPPlyLEgJe8JMPjhJqtEKeBklOmZvn4qboz
+	rWqycm8VGbZd2logPZK9aPM50/mBQJA=
+X-Google-Smtp-Source: AGHT+IGFAJ4m7iIGrj1H30McVPi7RXdRkuKrD0XqfpaoK4iYzPfQs8iy6yRVVhFO4Ahngifkhppf1AwMqwU=
 X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:9429:6eed:3418:ad8a])
- (user=gnoack job=sendgmr) by 2002:a05:6402:4402:b0:54a:e7a4:e56 with SMTP id
- y2-20020a056402440200b0054ae7a40e56mr46013eda.2.1700840357610; Fri, 24 Nov
- 2023 07:39:17 -0800 (PST)
-Date: Fri, 24 Nov 2023 16:39:02 +0100
-In-Reply-To: <20231120.fau2Oi6queij@digikod.net>
-Message-Id: <ZWDDlvXCdShpFIZ5@google.com>
+ (user=gnoack job=sendgmr) by 2002:a25:6f8b:0:b0:db4:4df:8c0d with SMTP id
+ k133-20020a256f8b000000b00db404df8c0dmr105078ybc.11.1700845062654; Fri, 24
+ Nov 2023 08:57:42 -0800 (PST)
+Date: Fri, 24 Nov 2023 17:57:31 +0100
+In-Reply-To: <20231120.AejoJ2ooja0i@digikod.net>
+Message-Id: <ZWDV-45LBwKvvgx1@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20231117154920.1706371-1-gnoack@google.com> <20231117154920.1706371-3-gnoack@google.com>
- <20231120.fau2Oi6queij@digikod.net>
-Subject: Re: [PATCH v5 2/7] landlock: Add IOCTL access right
+References: <20231117154920.1706371-1-gnoack@google.com> <20231117154920.1706371-4-gnoack@google.com>
+ <20231120.AejoJ2ooja0i@digikod.net>
+Subject: Re: [PATCH v5 3/7] selftests/landlock: Test IOCTL support
 From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
 To: "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
 Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
@@ -58,59 +58,250 @@ Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 20, 2023 at 08:43:30PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Fri, Nov 17, 2023 at 04:49:15PM +0100, G=C3=BCnther Noack wrote:
-> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP1	(LANDLOCK_LAST_PUBLIC_ACCESS_F=
-S << 1)
-> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP2	(LANDLOCK_LAST_PUBLIC_ACCESS_F=
-S << 2)
-> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP3	(LANDLOCK_LAST_PUBLIC_ACCESS_F=
-S << 3)
-> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP4	(LANDLOCK_LAST_PUBLIC_ACCESS_F=
-S << 4)
+Hi!
+
+On Mon, Nov 20, 2023 at 09:41:20PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Fri, Nov 17, 2023 at 04:49:16PM +0100, G=C3=BCnther Noack wrote:
+> > +FIXTURE_VARIANT(ioctl)
+> > +{
+> > +	const __u64 handled;
+> > +	const __u64 permitted;
 >=20
-> Please move this LANDLOCK_ACCESS_FS_IOCTL_* block to fs.h
+> Why not "allowed" like the rule's field? Same for the variant names.
+
+Just for consistency with the ftruncate tests which also named it like that=
+... %-)
+
+Sounds good though, I'll just rename it in both places.
+
+
+> > +	const mode_t open_mode;
+> > +	/*
+> > +	 * These are the expected IOCTL results for a representative IOCTL fr=
+om
+> > +	 * each of the IOCTL groups.  We only distinguish the 0 and EACCES
+> > +	 * results here, and treat other errors as 0.
 >=20
-> We can still create the public and private masks in limits.h but add a
-> static_assert() to make sure there is no overlap.
+> In this case, why not use a boolean instead of a semi-correct error
+> code?
+
+I found it slightly less convoluted.  When we use booleans here, we need to=
+ map
+between error codes and booleans at a different layer.  At the same time, w=
+e
+already have various test_foo_ioctl() and test_foo() functions, and they ar=
+e
+sometimes also used in other contexts like test_fs_ioc_getflags_ioctl().  T=
+hese
+test_foo() helpers generally return error codes so far, and it felt more
+important to stay consistent with that.  If we want to keep that both, the =
+only
+other place to map between booleans and error codes would be with ternary
+operators or such in the EXPECT_EQ clauses, but that also felt like it woul=
+d
+turn unreadable... %-)
+
+I can change it if you feel strongly about it though. Let me know.
+
+> > +	 */
+> > +	const int expected_fioqsize_result; /* G1 */
+> > +	const int expected_fibmap_result; /* G2 */
+> > +	const int expected_fionread_result; /* G3 */
+> > +	const int expected_fs_ioc_zero_range_result; /* G4 */
+> > +	const int expected_fs_ioc_getflags_result; /* other */
+> > +};
+> > +
+> > +/* clang-format off */
+> > +FIXTURE_VARIANT_ADD(ioctl, ioctl_handled_i_permitted_none) {
+>=20
+> You can remove all the variant's "ioctl_" prefixes.
 
 Done.
 
 
-> >  	/* Checks content (and 32-bits cast). */
-> > -	if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_ACCESS_FS) !=3D
-> > -	    LANDLOCK_MASK_ACCESS_FS)
-> > +	if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_PUBLIC_ACCESS_FS)=
- !=3D
-> > +	    LANDLOCK_MASK_PUBLIC_ACCESS_FS)
+> > +	/* clang-format on */
+> > +	.handled =3D LANDLOCK_ACCESS_FS_EXECUTE | LANDLOCK_ACCESS_FS_IOCTL,
+> > +	.permitted =3D LANDLOCK_ACCESS_FS_EXECUTE,
 >=20
-> It would now be possible to add LANDLOCK_ACCESS_FS_IOCTL_GROUP* to a
-> rule, which is not part of the API/ABI. I've sent a patch with new tests
-> to make sure this is covered:
-> https://lore.kernel.org/r/20231120193914.441117-2-mic@digikod.net
+> You could use 0 instead and don't add the related rule in this case.
+
+Done.
+
+
+> Great tests!
+
+Thanks :)
+
+
+> > +static int test_fioqsize_ioctl(int fd)
+> > +{
+> > +	size_t sz;
+> > +
+> > +	if (ioctl(fd, FIOQSIZE, &sz) < 0)
+> > +		return errno;
+> > +	return 0;
+> > +}
+> > +
+> > +static int test_fibmap_ioctl(int fd)
+> > +{
+> > +	int blk =3D 0;
+> > +
+> > +	/*
+> > +	 * We only want to distinguish here whether Landlock already caught i=
+t,
+> > +	 * so we treat anything but EACCESS as success.  (It commonly returns
+> > +	 * EPERM when missing CAP_SYS_RAWIO.)
+> > +	 */
+> > +	if (ioctl(fd, FIBMAP, &blk) < 0 && errno =3D=3D EACCES)
+> > +		return errno;
+> > +	return 0;
+> > +}
+> > +
+> > +static int test_fionread_ioctl(int fd)
+> > +{
+> > +	size_t sz =3D 0;
+> > +
+> > +	if (ioctl(fd, FIONREAD, &sz) < 0 && errno =3D=3D EACCES)
+> > +		return errno;
+> > +	return 0;
+> > +}
+> > +
+> > +#define FS_IOC_ZERO_RANGE _IOW('X', 57, struct space_resv)
+> > +
+> > +static int test_fs_ioc_zero_range_ioctl(int fd)
+> > +{
+> > +	struct space_resv {
+> > +		__s16 l_type;
+> > +		__s16 l_whence;
+> > +		__s64 l_start;
+> > +		__s64 l_len; /* len =3D=3D 0 means until end of file */
+> > +		__s32 l_sysid;
+> > +		__u32 l_pid;
+> > +		__s32 l_pad[4]; /* reserved area */
+> > +	} reservation =3D {};
+> > +	/*
+> > +	 * This can fail for various reasons, but we only want to distinguish
+> > +	 * here whether Landlock already caught it, so we treat anything but
+> > +	 * EACCES as success.
+> > +	 */
+> > +	if (ioctl(fd, FS_IOC_ZERO_RANGE, &reservation) < 0 && errno =3D=3D EA=
+CCES)
 >=20
-> I'll push it in my -next branch if everything is OK before pushing your
-> next series. Please review it.
+> What are the guarantees that an error different than EACCES would not
+> mask EACCES and then make tests pass whereas they should not?
 
-Thanks, good catch!
+It is indeed possible that one of these ioctls legitimately returns EACCES =
+after
+Landlock was letting that ioctl through, and then we could not tell apart
+whether Landlock blocked it or whether the underlying IOCTL command returne=
+d
+that.  I double checked that this is not the case for these specific
+invocations.  But with some other IOCTL commands in these groups, I believe=
+ I
+was getting EACCES sometimes from the IOCTL.  So we only use one representa=
+tive
+IOCTL from each IOCTL group, for which it happened to work.
 
-Looking at add_rule_path_beneath(), it indeed does not look like I have cov=
-ered
-that case in my patch.  I'll put an explicit check for it, like this:
+To convince yourself, you can see in the tests that we have both "success" =
+and
+"blocked" examples in the tests for each of these IOCTL commands, and the
+Landlock rules are the only difference between these examples. Therefore, w=
+e
+know that it is actually Landlock returning the EACCES and not the underlyi=
+ng
+IOCTL.
 
-  /*
-   * Checks that allowed_access matches the @ruleset constraints and only
-   * consists of publicly visible access rights (as opposed to synthetic
-   * ones).
-   */
-  mask =3D landlock_get_raw_fs_access_mask(ruleset, 0) &
-         LANDLOCK_MASK_PUBLIC_ACCESS_FS;
-  if ((path_beneath_attr.allowed_access | mask) !=3D mask)
-          return -EINVAL;
+> > +		return errno;
+> > +	return 0;
+> > +}
+> > +
+> > +TEST_F_FORK(ioctl, handle_dir_access_file)
+> > +{
+> > +	const int flag =3D 0;
+> > +	const struct rule rules[] =3D {
+> > +		{
+> > +			.path =3D dir_s1d1,
+> > +			.access =3D variant->permitted,
+> > +		},
+> > +		{},
+> > +	};
+> > +	int fd, ruleset_fd;
+>=20
+> Please rename fd into something like file_fd.
 
-I assume that the tests that you added were failing?  Or was there an obscu=
-re
-code path that caught it anyway?
+Done.
 
-Thanks,
+
+> > +TEST_F_FORK(ioctl, handle_file_access_file)
+> > +{
+> > +	const char *const path =3D file1_s1d1;
+> > +	const int flag =3D 0;
+> > +	const struct rule rules[] =3D {
+> > +		{
+> > +			.path =3D path,
+> > +			.access =3D variant->permitted,
+> > +		},
+> > +		{},
+> > +	};
+> > +	int fd, ruleset_fd;
+> > +
+> > +	if (variant->permitted & LANDLOCK_ACCESS_FS_READ_DIR) {
+> > +		/* This access right can not be granted on files. */
+> > +		return;
+> > +	}
+>=20
+> You should use SKIP().
+
+Done.
+
+
+> > +	/* Enables Landlock. */
+> > +	ruleset_fd =3D create_ruleset(_metadata, variant->handled, rules);
+> > +	ASSERT_LE(0, ruleset_fd);
+> > +	enforce_ruleset(_metadata, ruleset_fd);
+> > +	ASSERT_EQ(0, close(ruleset_fd));
+> > +
+> > +	fd =3D open(path, variant->open_mode);
+> > +	ASSERT_LE(0, fd);
+> > +
+> > +	/*
+> > +	 * Checks that IOCTL commands in each IOCTL group return the expected
+> > +	 * errors.
+> > +	 */
+> > +	EXPECT_EQ(variant->expected_fioqsize_result, test_fioqsize_ioctl(fd))=
+;
+> > +	EXPECT_EQ(variant->expected_fibmap_result, test_fibmap_ioctl(fd));
+> > +	EXPECT_EQ(variant->expected_fionread_result, test_fionread_ioctl(fd))=
+;
+> > +	EXPECT_EQ(variant->expected_fs_ioc_zero_range_result,
+> > +		  test_fs_ioc_zero_range_ioctl(fd));
+> > +	EXPECT_EQ(variant->expected_fs_ioc_getflags_result,
+> > +		  test_fs_ioc_getflags_ioctl(fd));
+> > +
+> > +	/* Checks that unrestrictable commands are unrestricted. */
+> > +	EXPECT_EQ(0, ioctl(fd, FIOCLEX));
+> > +	EXPECT_EQ(0, ioctl(fd, FIONCLEX));
+> > +	EXPECT_EQ(0, ioctl(fd, FIONBIO, &flag));
+> > +	EXPECT_EQ(0, ioctl(fd, FIOASYNC, &flag));
+> > +
+> > +	ASSERT_EQ(0, close(fd));
+> > +}
+>=20
+> Don't you want to create and use a common helper with most of these
+> TEST_F_FORK blocks? It would highlight what is the same or different,
+> and it would also enables to extend the coverage to other file types
+> (e.g. character device).
+
+I did not find a good way to factor this out, to be honest, and so preferre=
+d to
+keep it unrolled.
+
+I try to follow the rule of not putting too many "if" conditions and logic =
+into
+my tests (it helps to keep the tests straightforward and understandable), a=
+nd I
+find it more straightforward to spell out these few EXPECT_EQs three times =
+than
+introducing a "test_all_ioctl_expectations()" helper function :)
+
 =E2=80=94G=C3=BCnther
