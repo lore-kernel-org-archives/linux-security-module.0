@@ -1,127 +1,93 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="C7fevQaK"
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FFB9F3
-	for <linux-security-module@vger.kernel.org>; Sat, 25 Nov 2023 06:47:26 -0800 (PST)
-Received: by mail-yb1-xb30.google.com with SMTP id 3f1490d57ef6-daf4f0e3a0fso2600101276.1
-        for <linux-security-module@vger.kernel.org>; Sat, 25 Nov 2023 06:47:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1700923645; x=1701528445; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MbBDsUYFRBbpaPGcvLn4ZOnFdI0AYXZ3B/wevF5TUtg=;
-        b=C7fevQaKpfPHGnPqXI6umr9h8FIA2PwoLCLMhZ0keu6Zd9i1n+Pmw1gz9F9QB8Nu1S
-         S2ozkK3ozg1Wlv2yqslIOCPPYu+JZaL7O0gNmJ9bZErzJmwQFHy3fbEZi999H4Cwn9+0
-         z/Bdz2KveDUeVtLEV8yXqQgeq+b8YROpjStqpQGy5h+0MfX38M8hqh8vKto4afKXAFxl
-         8wKVpNFTAUViVGb4t2lRUhl8OsWv9PNIJ3DkCjfByYQgiWNQwzYaXqMPAmcNvSEljNWk
-         nTz5HI5LcumNFtPgU3OTs0m2bKUiuItSHrgcPZLOg5TN/lF5ayaKAonocL5aaBWdVwil
-         Aiow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700923645; x=1701528445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MbBDsUYFRBbpaPGcvLn4ZOnFdI0AYXZ3B/wevF5TUtg=;
-        b=Wvw2gsKuuJLwKmAh1qDePS/RMMaFFa5nwNkLQukIP/eSjaU0mSOsb2n0VHVE8zXXth
-         so03cBneNk9v9//hVKhG/KgywsHhKQPe3ZrTyPMv2sJZs26yqn9oA6jRpRg3gXqVDEzX
-         YvXg2/BcVZznaea+WXWquqsjhBM+gUhBx3BCAqqW5pJUOHk0Lq7YFkWt64rwjNROxJPK
-         A44WKm2YzZUYhyI9EkIrsbwoJOuvVCXxC7QgM5B8LMCA61yDBuM8Sw+zvkaB47gzV7Iw
-         rPSE1FQPGLuCXeq1iPFZkomrAKpPetDXU/4z/xSJssFYNVGGtLhL8Hc2CPwp++R0mQyC
-         XdRQ==
-X-Gm-Message-State: AOJu0YzPVympGOd2BarE8rID1BTGypchhFzhL4DzwOfUg4Qc0J3CPe4z
-	2QG1WBo6q3/RKbp7D9xwPOC7Pj9RTRRYr4jW4+ao
-X-Google-Smtp-Source: AGHT+IEdYo7torc3WD8zzpy2vPVUODcvVvdvOHPOf8VVQ1q+Lx6kGrInycI6vKwkUYmT5ZwmLxh62dX5f0eEi7ztDnA=
-X-Received: by 2002:a25:bf8b:0:b0:daf:76da:fe2b with SMTP id
- l11-20020a25bf8b000000b00daf76dafe2bmr5842914ybk.10.1700923645597; Sat, 25
- Nov 2023 06:47:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Yz13kbqG"
+Received: from sonic315-26.consmr.mail.ne1.yahoo.com (sonic315-26.consmr.mail.ne1.yahoo.com [66.163.190.152])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71C22AA
+	for <linux-security-module@vger.kernel.org>; Sat, 25 Nov 2023 08:51:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1700931094; bh=2lBqQLWpTQe7NqSJl34yMkEV8/1boiKY6Wi6ZQw0KJY=; h=Date:Subject:To:References:Cc:From:In-Reply-To:From:Subject:Reply-To; b=Yz13kbqGSK85gywHQiPODk8Lbc1CFJB3clOT6u7DxRKBRKTpQwRG+faFt57TJ0cy/qD8pZryN/bMsWYCP3kDhw3Uk06pFRb2f4mA9DH8XbPVW/ULiMNEcqQSPdtpSjSjE820HqipsE/P3rfPrQ2jePxDajUKA60sw3J/7LpCdvNMP0rp2wfOOm6JOhwlbtStbCNg62Dei06jXst9EgM0hNMlKkJ/jveshQKvG7iicm+N4UvZMBydK9G6LOIETZ4Q1qbA83+pLTKGUXxSyNpelpEkgshGrNLsk01WoUCYCsg8RVqtKmQj60JcE0jjIjB2G4iYn4Dk3wiWSpLKySHs/g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1700931094; bh=tLf5HneFzVen8rwci0a/PWy0hEsJSXqGi52Gj0CDsbN=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=LmV370p7wnyL+AILsPqN1dARh95oVMLGEldqVwput3KwwuRQMAs4XqgxKk3zWPB6xpO7Vd5oD86HC/wYflt5pUYdd6Jd3pvkOmHMClo6oVgqpX/3LWIF1kGIGAW6bq/Kk7zfoCmGN6/YgZ1D95lhar4aGm396vYUYNyr2GnoB4z7ZWSIQczQRSWcuxaqyeCV5Mq/ua7siC+pJ8XWWtr1ux054xTQ0IVaIi1JUeTITvEjfitr4OQkwSoTMR9jC+2jY2BIJ8uO9sSTG3er7X4qietObD09e4MVyvTmH5/mzHTBN4ytPAKqAnckThbjhe3TE6GMle8prDdXKXel78D7vQ==
+X-YMail-OSG: szdxY6QVM1nJd5l.x.5m16ZZfvMEFdyC479BmtfnP8dJDGFazDPrGC1dKgx2WsT
+ S3sRMxkYVa_SmFUGPizr7yDVHyTSSCgutnGvJnOr56Kk31mw2XAnt..uCfh_bClvRDVa0girizrV
+ rQiCjFqz8GlzPT2OL0YFjRIw5mRckbvCwFoH3gA_WdgCEZg0qppdV02ERHUDtIoc_SRnFF6kBeQE
+ UAhShKbaB0ALyDA5CO7tGor56GH_ElZd84e0SfoQ7poZxIIkogI0E5DN1zNwUXS4IKh0zY28plaU
+ uyEKz_xjJ45LSCJyIJR9kjFvCGunvYtgIXi9G7Iqy22uVLpCreeDAAwiskNH2_dUrsYBxAnLQYVX
+ BMuO9YSzvyZafM1Y_9D7YQVsZD7EOJAQe8oTWBsE9MPH16hVDjYiHVzm2xQf368PfqU4L4joKVUk
+ tQdQTNWxX0oqzZdAfpNNxqcMrHZOffX8q31FC6ChZEy2XVBf_VBtJdqn2nnFX11Ddhab6xrsQn57
+ BFL4XXC228AghM.T9NvhRSXqyf833BqboromORLOWNLdHypiCjbxvZlLVcnokYBXJ9W367J0ctmC
+ _m6sHsLrKcdFOFHsIhXporMUFRfmFzAaZU1Ff31TazTc7CY_yxnKZwMEv7CMxHIkUqdclFqaeGwZ
+ hIkVUCfj8D204J1ytihUWHvoRrEOFmrnRKFuoXc_lGenQB5CmPNNcwtJNUNvTYUdQB6MVbS24t.5
+ TrefUHmF5AkiM9oFgbKGJ046Po9YEsaFuSdZqSv1JMlrkVqTR1Y0FQnjv3w3..l7KTY66ToVK9qa
+ uWHQ5C5mOKGq9npy6mInKhaTyhHNpapUez9wadfOPJ0O53k80bkWH0QewjzuCMtN2cOS0cZ_37ln
+ oZbTx_rSm29E_lqbDcRpkK5QHq7FaucwX.FR8G_jIROKj2mYJ3t9yPXcVkpct_BFCKd8wTZQ6N2M
+ NgHFGE70SWsCXwNyE65rC2d5CRtWGUZ.oW.QkieyXtLha0.iK71_D1qzcNcsx.2wV7fNrMIqf7Cc
+ CjwOK2UUUSrigxEhMSfS2ILNeS00DIXKDH9JSF.yR5YxRk8tEB4dWUEaf4NkayEccQgxrwoXG_sU
+ EaJJIFubF9iOh_IZQePQna30pInq9ngNV6FL1yzVWtN8UeV82yqAeWdcDxJxIM_YavbM_dwEFegx
+ s1xhKeWirXB9uoKrFojH8GKITi2VZcW_jSTsnURQF.BQeRn5teZXSws4FcHr.wwpNCyo815jLyu.
+ fHDThFDQUtlxJiIHcTgDV8vxQfVl5nDFBbAwzp2UbqZsY7a4563ciKL88f5uBuxKXPvV905MyXXo
+ Pu91C2TBOCt6Pp9shGDqL7aR1_srDyWNe_SGk0m7nyL3tnpcThezu..8iTceleCltSEf_mMWJ23E
+ vAsEhRiuN5lZ4ieETaBkHhNtdmMXRFkZymq1JNjT5lRRZ.n0w.7dSv14Yb5T30wlFP6NZ79RLDhv
+ PGPvGekMw9kvJ5.QN_woOin3AoFmW19LEg9V1Q_WlMhL2SMdNVKhmD_DAOA1GDw4TkRHmgxXGTpY
+ khd8Tvmxs6ldP9KYkkzFGaV.R.eo3XphtXCEeeIDhMvKrx5cquZ2CY4mqzvyd9NbNBl4MoLjkSbh
+ nz3GwcuncY7sefRgblCceieKMULwJupSFYwbtkYv9Uq9fOnPNEQGbeM640UBEX2LAZxDsRfqtlMF
+ lZxC4q8asXE512ky1Ze.lfcik0mktaGwIy98fD0PirGP2p0BpLAmO2hpQlS0H7dMzM6AZfWNKyO.
+ 9o8vHDWMAdjwVIOk4uj.ShiXanIJbZ5AxBANVdRapQclow__KkwsL8CL7mqjOoqYKi1pkoSObV9z
+ wBfCcflWTI9SZx95BJVtWmYMNrhjf1xGXWswAYNoUmuQuChNX1kD0lT8VIfLbC.2ZQrZmugW_pnN
+ mm7a2233J3rnNLsPuhFBh_azVcNNlm21w7VbEnB6aFiHCEKATRNM5cOcv0fXvElrnfE3BqjOdD57
+ jQtOu25ah8_U9aHl9otZLjRa0Pv9l5Fao.KMoRdtUxDs78IyWSzSydOIGupZ1VJmqYBwzvGuQM2x
+ csa0KT32qMf.V1l6MkeHlp8bWJI_1EAKsEv.wXwYJlXTMxBI8v2Sym9CkOzYZHDnMqiP9HN1pqtV
+ TfL7sARNTrQYkyKhkYQd_j0K5eV4q7eLWB3vkypWJ8IrbmQkH1anVzaptQfnxvcUxmcicf0fxJY_
+ 0YRt1pOy5Q5jXT7QImir.AdRizxfpQ8lcaoToibc8oRy68RRpEaRz0UjyjvOqipSv1xkjKQzRmzD
+ 5UfRJ
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 70ccaf9c-ee13-4ff1-9424-f7ea2321cafa
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Sat, 25 Nov 2023 16:51:34 +0000
+Received: by hermes--production-gq1-6775bfb8fc-xtljc (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 58a8f4e5c3b7618e91e9a22be7eddaa9;
+          Sat, 25 Nov 2023 16:51:31 +0000 (UTC)
+Message-ID: <9afe7c6e-5753-407a-bdeb-84c0d3735b49@schaufler-ca.com>
+Date: Sat, 25 Nov 2023 08:51:29 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231123092314.91299-1-Ilia.Gavrilov@infotecs.ru>
-In-Reply-To: <20231123092314.91299-1-Ilia.Gavrilov@infotecs.ru>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 25 Nov 2023 09:47:14 -0500
-Message-ID: <CAHC9VhQGX_22WTdZG4+K8WYQK-G21j8NM9Wy0TodgPAZk57TCQ@mail.gmail.com>
-Subject: Re: [PATCH net v2] calipso: Fix memory leak in netlbl_calipso_add_pass()
-To: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Huw Davies <huw@codeweavers.com>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: remove the LSM_ID_IMA check in
+ lsm/lsm_list_modules_test
+Content-Language: en-US
+To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
+References: <20231122160742.109270-2-paul@paul-moore.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20231122160742.109270-2-paul@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Thu, Nov 23, 2023 at 4:25=E2=80=AFAM Gavrilov Ilia <Ilia.Gavrilov@infote=
-cs.ru> wrote:
+On 11/22/2023 8:07 AM, Paul Moore wrote:
+> The IMA LSM ID token was removed as IMA isn't yet a proper LSM, but
+> we forgot to remove the check from the selftest.
 >
-> If IPv6 support is disabled at boot (ipv6.disable=3D1),
-> the calipso_init() -> netlbl_calipso_ops_register() function isn't called=
-,
-> and the netlbl_calipso_ops_get() function always returns NULL.
-> In this case, the netlbl_calipso_add_pass() function allocates memory
-> for the doi_def variable but doesn't free it with the calipso_doi_free().
->
-> BUG: memory leak
-> unreferenced object 0xffff888011d68180 (size 64):
->   comm "syz-executor.1", pid 10746, jiffies 4295410986 (age 17.928s)
->   hex dump (first 32 bytes):
->     00 00 00 00 02 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<00000000730d8770>] kmalloc include/linux/slab.h:552 [inline]
->     [<00000000730d8770>] netlbl_calipso_add_pass net/netlabel/netlabel_ca=
-lipso.c:76 [inline]
->     [<00000000730d8770>] netlbl_calipso_add+0x22e/0x4f0 net/netlabel/netl=
-abel_calipso.c:111
->     [<0000000002e662c0>] genl_family_rcv_msg_doit+0x22f/0x330 net/netlink=
-/genetlink.c:739
->     [<00000000a08d6d74>] genl_family_rcv_msg net/netlink/genetlink.c:783 =
-[inline]
->     [<00000000a08d6d74>] genl_rcv_msg+0x341/0x5a0 net/netlink/genetlink.c=
-:800
->     [<0000000098399a97>] netlink_rcv_skb+0x14d/0x440 net/netlink/af_netli=
-nk.c:2515
->     [<00000000ff7db83b>] genl_rcv+0x29/0x40 net/netlink/genetlink.c:811
->     [<000000000cf53b8c>] netlink_unicast_kernel net/netlink/af_netlink.c:=
-1313 [inline]
->     [<000000000cf53b8c>] netlink_unicast+0x54b/0x800 net/netlink/af_netli=
-nk.c:1339
->     [<00000000d78cd38b>] netlink_sendmsg+0x90a/0xdf0 net/netlink/af_netli=
-nk.c:1934
->     [<000000008328a57f>] sock_sendmsg_nosec net/socket.c:651 [inline]
->     [<000000008328a57f>] sock_sendmsg+0x157/0x190 net/socket.c:671
->     [<000000007b65a1b5>] ____sys_sendmsg+0x712/0x870 net/socket.c:2342
->     [<0000000083da800e>] ___sys_sendmsg+0xf8/0x170 net/socket.c:2396
->     [<000000004a9b827f>] __sys_sendmsg+0xea/0x1b0 net/socket.c:2429
->     [<0000000061b64d3a>] do_syscall_64+0x30/0x40 arch/x86/entry/common.c:=
-46
->     [<00000000a1265347>] entry_SYSCALL_64_after_hwframe+0x61/0xc6
->
-> Found by InfoTeCS on behalf of Linux Verification Center
-> (linuxtesting.org) with Syzkaller
->
-> Fixes: cb72d38211ea ("netlabel: Initial support for the CALIPSO netlink p=
-rotocol.")
-> Signed-off-by: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
+> Reported-by: kernel test robot <yujie.liu@intel.com>
+> Closes: https://lore.kernel.org/r/202311221047.a9Dww3vY-lkp@intel.com/
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+
 > ---
-> v2:
->   - return the error code in netlbl_calipso_add() if the variable calipso=
-_hops is NULL
-> v1: https://lore.kernel.org/all/20231122135242.2779058-1-Ilia.Gavrilov@in=
-fotecs.ru/
+>  tools/testing/selftests/lsm/lsm_list_modules_test.c | 3 ---
+>  1 file changed, 3 deletions(-)
 >
->  net/netlabel/netlabel_calipso.c | 49 +++++++++++++++++----------------
->  1 file changed, 26 insertions(+), 23 deletions(-)
-
-This looks good to me, thanks!
-
-Acked-by: Paul Moore <paul@paul-moore.com>
-
---=20
-paul-moore.com
+> diff --git a/tools/testing/selftests/lsm/lsm_list_modules_test.c b/tools/testing/selftests/lsm/lsm_list_modules_test.c
+> index 445c02f09c74..9df29b1e3497 100644
+> --- a/tools/testing/selftests/lsm/lsm_list_modules_test.c
+> +++ b/tools/testing/selftests/lsm/lsm_list_modules_test.c
+> @@ -101,9 +101,6 @@ TEST(correct_lsm_list_modules)
+>  		case LSM_ID_TOMOYO:
+>  			name = "tomoyo";
+>  			break;
+> -		case LSM_ID_IMA:
+> -			name = "ima";
+> -			break;
+>  		case LSM_ID_APPARMOR:
+>  			name = "apparmor";
+>  			break;
