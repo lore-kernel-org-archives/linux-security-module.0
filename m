@@ -1,49 +1,23 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Yz13kbqG"
-Received: from sonic315-26.consmr.mail.ne1.yahoo.com (sonic315-26.consmr.mail.ne1.yahoo.com [66.163.190.152])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71C22AA
-	for <linux-security-module@vger.kernel.org>; Sat, 25 Nov 2023 08:51:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1700931094; bh=2lBqQLWpTQe7NqSJl34yMkEV8/1boiKY6Wi6ZQw0KJY=; h=Date:Subject:To:References:Cc:From:In-Reply-To:From:Subject:Reply-To; b=Yz13kbqGSK85gywHQiPODk8Lbc1CFJB3clOT6u7DxRKBRKTpQwRG+faFt57TJ0cy/qD8pZryN/bMsWYCP3kDhw3Uk06pFRb2f4mA9DH8XbPVW/ULiMNEcqQSPdtpSjSjE820HqipsE/P3rfPrQ2jePxDajUKA60sw3J/7LpCdvNMP0rp2wfOOm6JOhwlbtStbCNg62Dei06jXst9EgM0hNMlKkJ/jveshQKvG7iicm+N4UvZMBydK9G6LOIETZ4Q1qbA83+pLTKGUXxSyNpelpEkgshGrNLsk01WoUCYCsg8RVqtKmQj60JcE0jjIjB2G4iYn4Dk3wiWSpLKySHs/g==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1700931094; bh=tLf5HneFzVen8rwci0a/PWy0hEsJSXqGi52Gj0CDsbN=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=LmV370p7wnyL+AILsPqN1dARh95oVMLGEldqVwput3KwwuRQMAs4XqgxKk3zWPB6xpO7Vd5oD86HC/wYflt5pUYdd6Jd3pvkOmHMClo6oVgqpX/3LWIF1kGIGAW6bq/Kk7zfoCmGN6/YgZ1D95lhar4aGm396vYUYNyr2GnoB4z7ZWSIQczQRSWcuxaqyeCV5Mq/ua7siC+pJ8XWWtr1ux054xTQ0IVaIi1JUeTITvEjfitr4OQkwSoTMR9jC+2jY2BIJ8uO9sSTG3er7X4qietObD09e4MVyvTmH5/mzHTBN4ytPAKqAnckThbjhe3TE6GMle8prDdXKXel78D7vQ==
-X-YMail-OSG: szdxY6QVM1nJd5l.x.5m16ZZfvMEFdyC479BmtfnP8dJDGFazDPrGC1dKgx2WsT
- S3sRMxkYVa_SmFUGPizr7yDVHyTSSCgutnGvJnOr56Kk31mw2XAnt..uCfh_bClvRDVa0girizrV
- rQiCjFqz8GlzPT2OL0YFjRIw5mRckbvCwFoH3gA_WdgCEZg0qppdV02ERHUDtIoc_SRnFF6kBeQE
- UAhShKbaB0ALyDA5CO7tGor56GH_ElZd84e0SfoQ7poZxIIkogI0E5DN1zNwUXS4IKh0zY28plaU
- uyEKz_xjJ45LSCJyIJR9kjFvCGunvYtgIXi9G7Iqy22uVLpCreeDAAwiskNH2_dUrsYBxAnLQYVX
- BMuO9YSzvyZafM1Y_9D7YQVsZD7EOJAQe8oTWBsE9MPH16hVDjYiHVzm2xQf368PfqU4L4joKVUk
- tQdQTNWxX0oqzZdAfpNNxqcMrHZOffX8q31FC6ChZEy2XVBf_VBtJdqn2nnFX11Ddhab6xrsQn57
- BFL4XXC228AghM.T9NvhRSXqyf833BqboromORLOWNLdHypiCjbxvZlLVcnokYBXJ9W367J0ctmC
- _m6sHsLrKcdFOFHsIhXporMUFRfmFzAaZU1Ff31TazTc7CY_yxnKZwMEv7CMxHIkUqdclFqaeGwZ
- hIkVUCfj8D204J1ytihUWHvoRrEOFmrnRKFuoXc_lGenQB5CmPNNcwtJNUNvTYUdQB6MVbS24t.5
- TrefUHmF5AkiM9oFgbKGJ046Po9YEsaFuSdZqSv1JMlrkVqTR1Y0FQnjv3w3..l7KTY66ToVK9qa
- uWHQ5C5mOKGq9npy6mInKhaTyhHNpapUez9wadfOPJ0O53k80bkWH0QewjzuCMtN2cOS0cZ_37ln
- oZbTx_rSm29E_lqbDcRpkK5QHq7FaucwX.FR8G_jIROKj2mYJ3t9yPXcVkpct_BFCKd8wTZQ6N2M
- NgHFGE70SWsCXwNyE65rC2d5CRtWGUZ.oW.QkieyXtLha0.iK71_D1qzcNcsx.2wV7fNrMIqf7Cc
- CjwOK2UUUSrigxEhMSfS2ILNeS00DIXKDH9JSF.yR5YxRk8tEB4dWUEaf4NkayEccQgxrwoXG_sU
- EaJJIFubF9iOh_IZQePQna30pInq9ngNV6FL1yzVWtN8UeV82yqAeWdcDxJxIM_YavbM_dwEFegx
- s1xhKeWirXB9uoKrFojH8GKITi2VZcW_jSTsnURQF.BQeRn5teZXSws4FcHr.wwpNCyo815jLyu.
- fHDThFDQUtlxJiIHcTgDV8vxQfVl5nDFBbAwzp2UbqZsY7a4563ciKL88f5uBuxKXPvV905MyXXo
- Pu91C2TBOCt6Pp9shGDqL7aR1_srDyWNe_SGk0m7nyL3tnpcThezu..8iTceleCltSEf_mMWJ23E
- vAsEhRiuN5lZ4ieETaBkHhNtdmMXRFkZymq1JNjT5lRRZ.n0w.7dSv14Yb5T30wlFP6NZ79RLDhv
- PGPvGekMw9kvJ5.QN_woOin3AoFmW19LEg9V1Q_WlMhL2SMdNVKhmD_DAOA1GDw4TkRHmgxXGTpY
- khd8Tvmxs6ldP9KYkkzFGaV.R.eo3XphtXCEeeIDhMvKrx5cquZ2CY4mqzvyd9NbNBl4MoLjkSbh
- nz3GwcuncY7sefRgblCceieKMULwJupSFYwbtkYv9Uq9fOnPNEQGbeM640UBEX2LAZxDsRfqtlMF
- lZxC4q8asXE512ky1Ze.lfcik0mktaGwIy98fD0PirGP2p0BpLAmO2hpQlS0H7dMzM6AZfWNKyO.
- 9o8vHDWMAdjwVIOk4uj.ShiXanIJbZ5AxBANVdRapQclow__KkwsL8CL7mqjOoqYKi1pkoSObV9z
- wBfCcflWTI9SZx95BJVtWmYMNrhjf1xGXWswAYNoUmuQuChNX1kD0lT8VIfLbC.2ZQrZmugW_pnN
- mm7a2233J3rnNLsPuhFBh_azVcNNlm21w7VbEnB6aFiHCEKATRNM5cOcv0fXvElrnfE3BqjOdD57
- jQtOu25ah8_U9aHl9otZLjRa0Pv9l5Fao.KMoRdtUxDs78IyWSzSydOIGupZ1VJmqYBwzvGuQM2x
- csa0KT32qMf.V1l6MkeHlp8bWJI_1EAKsEv.wXwYJlXTMxBI8v2Sym9CkOzYZHDnMqiP9HN1pqtV
- TfL7sARNTrQYkyKhkYQd_j0K5eV4q7eLWB3vkypWJ8IrbmQkH1anVzaptQfnxvcUxmcicf0fxJY_
- 0YRt1pOy5Q5jXT7QImir.AdRizxfpQ8lcaoToibc8oRy68RRpEaRz0UjyjvOqipSv1xkjKQzRmzD
- 5UfRJ
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 70ccaf9c-ee13-4ff1-9424-f7ea2321cafa
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Sat, 25 Nov 2023 16:51:34 +0000
-Received: by hermes--production-gq1-6775bfb8fc-xtljc (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 58a8f4e5c3b7618e91e9a22be7eddaa9;
-          Sat, 25 Nov 2023 16:51:31 +0000 (UTC)
-Message-ID: <9afe7c6e-5753-407a-bdeb-84c0d3735b49@schaufler-ca.com>
-Date: Sat, 25 Nov 2023 08:51:29 -0800
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C44DF10D
+	for <linux-security-module@vger.kernel.org>; Sat, 25 Nov 2023 20:37:11 -0800 (PST)
+Received: from fsav313.sakura.ne.jp (fsav313.sakura.ne.jp [153.120.85.144])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 3AQ4b9sD001375;
+	Sun, 26 Nov 2023 13:37:09 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav313.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp);
+ Sun, 26 Nov 2023 13:37:09 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 3AQ4b83E001370
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 26 Nov 2023 13:37:09 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <d759146e-5d74-4782-931b-adda33b125d4@I-love.SAKURA.ne.jp>
+Date: Sun, 26 Nov 2023 13:37:08 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -51,43 +25,62 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: remove the LSM_ID_IMA check in
- lsm/lsm_list_modules_test
+Subject: Re: [RFC PATCH v2 0/4] LSM: Officially support appending LSM hooks
+ after boot.
 Content-Language: en-US
-To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
-References: <20231122160742.109270-2-paul@paul-moore.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20231122160742.109270-2-paul@paul-moore.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, KP Singh <kpsingh@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>, song@kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>, renauld@google.com,
+        Paolo Abeni <pabeni@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <93b5e861-c1ec-417c-b21e-56d0c4a3ae79@I-love.SAKURA.ne.jp>
+ <CAHC9VhRbak9Mij=uKQ-Drod0tQu1+Z+JaahUzH5uj9JUf7ZTuA@mail.gmail.com>
+ <7b9e471a-a9df-4ff6-89bf-0fed01fcd5e7@I-love.SAKURA.ne.jp>
+ <CAHC9VhRy_sZNSRHMJoULFX2vb=opj1s2hEffaVNJyaHycWF+=w@mail.gmail.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhRy_sZNSRHMJoULFX2vb=opj1s2hEffaVNJyaHycWF+=w@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 11/22/2023 8:07 AM, Paul Moore wrote:
-> The IMA LSM ID token was removed as IMA isn't yet a proper LSM, but
-> we forgot to remove the check from the selftest.
->
-> Reported-by: kernel test robot <yujie.liu@intel.com>
-> Closes: https://lore.kernel.org/r/202311221047.a9Dww3vY-lkp@intel.com/
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+On 2023/11/22 13:41, Paul Moore wrote:
+> both of these use cases can be solved today by compiling your own kernel.
 
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+No. Compiling kernels is not a viable option for regular developers/users.
 
-> ---
->  tools/testing/selftests/lsm/lsm_list_modules_test.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/tools/testing/selftests/lsm/lsm_list_modules_test.c b/tools/testing/selftests/lsm/lsm_list_modules_test.c
-> index 445c02f09c74..9df29b1e3497 100644
-> --- a/tools/testing/selftests/lsm/lsm_list_modules_test.c
-> +++ b/tools/testing/selftests/lsm/lsm_list_modules_test.c
-> @@ -101,9 +101,6 @@ TEST(correct_lsm_list_modules)
->  		case LSM_ID_TOMOYO:
->  			name = "tomoyo";
->  			break;
-> -		case LSM_ID_IMA:
-> -			name = "ima";
-> -			break;
->  		case LSM_ID_APPARMOR:
->  			name = "apparmor";
->  			break;
+We (who are kernel developers) tend to think that compiling/replacing a
+kernel as a trivial thing. But majority of Linux users do not think so.
+The kernel is one of most puzzling programs for Linux users, and most of
+Linux users afraid compiling/replacing kernels.
+
+Red Hat's support said that Red Hat does not support a rebuilt RHEL kernel
+even if that kernel is rebuilt using the same kernel source and the same
+kernel config shipped by Red Hat. Let alone kernels which are rebuilt with
+the modified kernel config.
+
+Your "compiling your own kernel" answer is asking me to become a Linux
+distributor and to support the whole rebuilt kernels. That will include
+management of kernel-debuginfo packages needed for analyzing vmcore, and
+also management of userspace packages which depend on the kernel package.
+
+What do you think if you are obligated to support whatever problems just because
+you want to allow users to use your code? I'm sure that you will say "I can't".
+Your answer cannot be satisfied by a kernel developer who can develop/support
+an LSM module but cannot afford supporting problems that are irrelevant to
+that LSM module.
+
+Being able to use whatever functionality (not only LSM modules but also
+device drivers and filesystem drivers) using pre-built distribution kernels
+and pre-built kernel-debuginfo packages is the mandatory baseline.
+
+Of course, the best solution is that whatever LSM modules are built into
+distributor's kernels. But since such solution is impossible
+( https://bugzilla.redhat.com/show_bug.cgi?id=542986 ), the second best
+solution will be that distributor's kernels support only ability to load LSM
+modules which that distributor's kernels cannot afford supporting as loadable
+kernel modules, and somebody else other than distributor provides support for
+LSM modules which that distributor's kernels cannot afford supporting.
+
