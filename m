@@ -1,94 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6462731A7F;
-	Mon, 27 Nov 2023 17:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXuNZeuL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07924C433CC;
-	Mon, 27 Nov 2023 17:16:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701105407;
-	bh=Z3mxDdL+PqtA5yH4uMuYEk7MynKzhH/smSi/F1rtE9U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lXuNZeuLJCg63BOS4ss7Wt8rZEIywAcpSSKZBh5TRbzs5Mr2vZ5doOw2df+2WHN5o
-	 Gzp3PHA+x6DuH02m1C4/wap/6TL9i6k7/sp9h0ihgTftEkk32YTCZt409LvnfCEtUA
-	 itS7AsiywMtafK9vnHIEk5ZaDXe5ii2ROlcb6giBFxiSNBBEHEhqCjt9XD3dyYFib5
-	 Lid/+GSnv83MDpNjmJVG7RiOLtGdgWYen2Uo0a6uk5Z9e9AsxDRYU9a7G3/DFGVrrM
-	 a6Ytwjwhi7VTzBI1pxcsP06QGmQ4vdygE20GOvhhEhbEHbSma1jIMVapdVUqo5P/0L
-	 YxaOYQQh4pz/Q==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-50aab0ca90aso6460337e87.0;
-        Mon, 27 Nov 2023 09:16:46 -0800 (PST)
-X-Gm-Message-State: AOJu0YwvW+Iu1mno0FNmjpDYeCjz1YjrE9oT39Xx/6AkiCLzB8Ecd7bm
-	B1QsveAMuPorljUpS3dEVgYHNDAlSK1i0kDvPt8=
-X-Google-Smtp-Source: AGHT+IE94nVGO+Nt+JsTf2kcz8yM3o+hyvAYX3KAh+Mc2jj7ivqZIujRneJNEfFqdSqJg23Z63EuFI5EGGcU4nJQ2dY=
-X-Received: by 2002:ac2:532f:0:b0:505:6cc7:e0f7 with SMTP id
- f15-20020ac2532f000000b005056cc7e0f7mr8104295lfh.44.1701105405175; Mon, 27
- Nov 2023 09:16:45 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="SnZkSNne"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4BEADD;
+	Mon, 27 Nov 2023 09:59:42 -0800 (PST)
+Received: from fpc.intra.ispras.ru (unknown [10.10.165.13])
+	by mail.ispras.ru (Postfix) with ESMTPSA id AF28940F1DC4;
+	Mon, 27 Nov 2023 17:59:39 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru AF28940F1DC4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1701107979;
+	bh=VEjuqMt0uxDZ/rlzw+yfIoeYXkpeJuWf+25lURwZBP0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SnZkSNnealGn+5XHUqVUlJmqKHhGsMTE58h+5pub1imhyr8jFY+B/zjT9fSErnUZm
+	 bLYSIkojyst3QAX8cbRO1PvdaPeXBv/ce0kWWKTxL1O+Jd/X0IkAfsMHlEEUTeN1vw
+	 XY31yctrPR/4/MhujsIjChH20JmC7kVbwDn0GGzk=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: John Johansen <john.johansen@canonical.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Georgia Garcia <georgia.garcia@canonical.com>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] apparmor: free the allocated pdb objects
+Date: Mon, 27 Nov 2023 20:59:04 +0300
+Message-Id: <20231127175904.156583-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231123233936.3079687-1-song@kernel.org> <20231123233936.3079687-6-song@kernel.org>
- <CAADnVQKHTdGiBFh_sVr+jdsA8di8i4HHivp98QCOnHZGoHAW5Q@mail.gmail.com>
-In-Reply-To: <CAADnVQKHTdGiBFh_sVr+jdsA8di8i4HHivp98QCOnHZGoHAW5Q@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Mon, 27 Nov 2023 09:16:32 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW6GhuX_pprU-182vg6D1hRktd0sMoELCe0_uLNwSdhPqA@mail.gmail.com>
-Message-ID: <CAPhsuW6GhuX_pprU-182vg6D1hRktd0sMoELCe0_uLNwSdhPqA@mail.gmail.com>
-Subject: Re: [PATCH v13 bpf-next 5/6] selftests/bpf: Add tests for filesystem kfuncs
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, fsverity@lists.linux.dev, 
-	Eric Biggers <ebiggers@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Amir Goldstein <amir73il@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 26, 2023 at 6:09=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Thu, Nov 23, 2023 at 3:40=E2=80=AFPM Song Liu <song@kernel.org> wrote:
-> >
-> > +static const char expected_value[] =3D "hello";
-> > +char value[32];
-> > +
-> > +SEC("lsm.s/file_open")
-> > +int BPF_PROG(test_file_open, struct file *f)
-> > +{
-> > +       struct bpf_dynptr value_ptr;
-> > +       __u32 pid;
-> > +       int ret;
-> > +
-> > +       pid =3D bpf_get_current_pid_tgid() >> 32;
-> > +       if (pid !=3D monitored_pid)
-> > +               return 0;
-> > +
-> > +       bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
-> > +
-> > +       ret =3D bpf_get_file_xattr(f, "user.kfuncs", &value_ptr);
-> > +       if (ret !=3D sizeof(expected_value))
-> > +               return 0;
-> > +       if (bpf_strncmp(value, ret, expected_value))
->
-> Hmm. It doesn't work like:
-> if (bpf_strncmp(value, ret, "hello"))
+policy_db objects are allocated with kzalloc() inside aa_alloc_pdb() and
+are not cleared in the corresponding aa_free_pdb() function causing leak:
 
-This also works. I used expected_value because there is a size
-check above. We can also make do something like
+unreferenced object 0xffff88801f0a1400 (size 192):
+  comm "apparmor_parser", pid 1247, jiffies 4295122827 (age 2306.399s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff81ddc612>] __kmem_cache_alloc_node+0x1e2/0x2d0
+    [<ffffffff81c47c55>] kmalloc_trace+0x25/0xc0
+    [<ffffffff83eb9a12>] aa_alloc_pdb+0x82/0x140
+    [<ffffffff83ec4077>] unpack_pdb+0xc7/0x2700
+    [<ffffffff83ec6b10>] unpack_profile+0x450/0x4960
+    [<ffffffff83ecc129>] aa_unpack+0x309/0x15e0
+    [<ffffffff83ebdb23>] aa_replace_profiles+0x213/0x33c0
+    [<ffffffff83e8d341>] policy_update+0x261/0x370
+    [<ffffffff83e8d66e>] profile_replace+0x20e/0x2a0
+    [<ffffffff81eadfaf>] vfs_write+0x2af/0xe00
+    [<ffffffff81eaf4c6>] ksys_write+0x126/0x250
+    [<ffffffff890fa0b6>] do_syscall_64+0x46/0xf0
+    [<ffffffff892000ea>] entry_SYSCALL_64_after_hwframe+0x6e/0x76
 
-if (ret !=3D sizeof("hello"))
-             return 0;
-if (bpf_strncmp(value, ret, "hello"))
-             return 0;
+Free the pdbs inside aa_free_pdb(). While at it, rename the variable
+representing an aa_policydb object to make the function more unified with
+aa_pdb_free_kref() and aa_alloc_pdb().
 
-Both of the two work.
+Found by Linux Verification Center (linuxtesting.org).
 
-Thanks,
-Song
+Fixes: 98b824ff8984 ("apparmor: refcount the pdb")
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+---
+ security/apparmor/policy.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+index ed4c9803c8fa..957654d253dd 100644
+--- a/security/apparmor/policy.c
++++ b/security/apparmor/policy.c
+@@ -99,13 +99,14 @@ const char *const aa_profile_mode_names[] = {
+ };
+ 
+ 
+-static void aa_free_pdb(struct aa_policydb *policy)
++static void aa_free_pdb(struct aa_policydb *pdb)
+ {
+-	if (policy) {
+-		aa_put_dfa(policy->dfa);
+-		if (policy->perms)
+-			kvfree(policy->perms);
+-		aa_free_str_table(&policy->trans);
++	if (pdb) {
++		aa_put_dfa(pdb->dfa);
++		if (pdb->perms)
++			kvfree(pdb->perms);
++		aa_free_str_table(&pdb->trans);
++		kfree(pdb);
+ 	}
+ }
+ 
+-- 
+2.34.1
+
