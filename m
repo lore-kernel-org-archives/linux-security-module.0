@@ -1,88 +1,150 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ed37FxdZ"
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3407111;
-	Sun, 26 Nov 2023 18:09:10 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-40b4746ae3bso1290155e9.0;
-        Sun, 26 Nov 2023 18:09:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701050949; x=1701655749; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hp+jJgrzxsF5GIt+zmavYWarAYFX/wlGlTSYDEYR/Xw=;
-        b=Ed37FxdZtfsuRpkfJrjSsBH7QIFkzdqNyDrukcQyYsoAcHrmVaDTp7Tk4HP71n6uAh
-         YIyMxaCWUOsKdG97gBq6rTycUZPf4QuayiFXd0rLuQDyjjuidYDRWZ4NYM7Lu0TDyo2Q
-         OCz9vZn3P7MbI9bhvjfMXH3XQxlPDIiR0vDdU12AwuIGq4YN5COMvMl3q6HQNdBSbWTr
-         p9Ko26Ck2rNNQK6Im9ktuVqU4WAwAe+RR/qovsCm0Rgt9OxOqomgaWsnd53s1/BunRN8
-         JjRcTNu8sILMowumVEez7iSm4UQiBD483lBHwvby6B6oWFHNVB+XQGcLZSAwfhhy6yFC
-         reig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701050949; x=1701655749;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hp+jJgrzxsF5GIt+zmavYWarAYFX/wlGlTSYDEYR/Xw=;
-        b=oLMta8BZ4BsFv6eTmDRpKmIXU+Y+JVoM+tPbCmO8lhbvTqdwxTG59hJfkDqj/0Z2lR
-         f9rFiuahayy+H7NbLT70uL0bKRLi9EB0i9WqCw9P9X5wKwnpK9bhT7lLg6y7JoQnriRK
-         xiA5BfBCBbq+TA4B5D2U0rQ28ObfrBzSOmEY596g4G9O3VSpPQG2UqhR5EGdJdzYkDr2
-         eCjug1S6v8k+S2jDRfWYzjEMINusCkkAWJXl6Nut8Cbn/ebtvw5Q7gx7nJF5FVZ3f54n
-         G/ii1bk0WYjMvE0OcwLPihENP5R6eiPmMYzwy1K59DfsqewrEInW2wjOLN52gHpDStZu
-         PAtg==
-X-Gm-Message-State: AOJu0YwJBsKU7O+nwsYFhamum2baL7UvqTqndlCWTDXz8K3mz6BAVgA+
-	M+lMaA4L6ogNrQCb+u/y+bFr4A/IdzBXZijXDhE=
-X-Google-Smtp-Source: AGHT+IF+V8Dn2B1tQYO/Rk1PtkKfTrXFcS4SOKAbYP9DCz6k+PF4QmNnszGsyC4SI3u77CVNwk5ab+PikCOyNx1WOKE=
-X-Received: by 2002:adf:ef82:0:b0:32d:b2cf:8ccd with SMTP id
- d2-20020adfef82000000b0032db2cf8ccdmr8050356wro.47.1701050949018; Sun, 26 Nov
- 2023 18:09:09 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A85A138
+	for <linux-security-module@vger.kernel.org>; Mon, 27 Nov 2023 00:04:07 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Sdyfc4W66z6K67Z;
+	Mon, 27 Nov 2023 15:59:36 +0800 (CST)
+Received: from lhrpeml500004.china.huawei.com (unknown [7.191.163.9])
+	by mail.maildlp.com (Postfix) with ESMTPS id BC748140A70;
+	Mon, 27 Nov 2023 16:04:04 +0800 (CST)
+Received: from [10.123.123.126] (10.123.123.126) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 27 Nov 2023 08:04:03 +0000
+Message-ID: <b5b268a8-7da4-34b6-978f-9c7a3dcae73f@huawei.com>
+Date: Mon, 27 Nov 2023 11:04:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231123233936.3079687-1-song@kernel.org> <20231123233936.3079687-6-song@kernel.org>
-In-Reply-To: <20231123233936.3079687-6-song@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sun, 26 Nov 2023 18:08:57 -0800
-Message-ID: <CAADnVQKHTdGiBFh_sVr+jdsA8di8i4HHivp98QCOnHZGoHAW5Q@mail.gmail.com>
-Subject: Re: [PATCH v13 bpf-next 5/6] selftests/bpf: Add tests for filesystem kfuncs
-To: Song Liu <song@kernel.org>
-Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, fsverity@lists.linux.dev, 
-	Eric Biggers <ebiggers@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Amir Goldstein <amir73il@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v1 2/2] selftests/landlock: Add tests to check unhandled
+ rule's access rights
+Content-Language: ru
+To: =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+	=?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>
+CC: James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>, "Serge
+ E . Hallyn" <serge@hallyn.com>, <linux-security-module@vger.kernel.org>,
+	Artem Kuzin <artem.kuzin@huawei.com>
+References: <20231120193914.441117-1-mic@digikod.net>
+ <20231120193914.441117-3-mic@digikod.net>
+From: "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <20231120193914.441117-3-mic@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
 
-On Thu, Nov 23, 2023 at 3:40=E2=80=AFPM Song Liu <song@kernel.org> wrote:
->
-> +static const char expected_value[] =3D "hello";
-> +char value[32];
-> +
-> +SEC("lsm.s/file_open")
-> +int BPF_PROG(test_file_open, struct file *f)
+
+
+11/20/2023 10:39 PM, Mickaël Salaün пишет:
+> Add two tests to make sure that we cannot add a rule to a ruleset if the
+> rule's access rights that are not handled by the ruleset:
+> * fs: layout1.rule_with_unhandled_access
+> * net: mini.rule_with_unhandled_access
+> 
+> Cc: Günther Noack <gnoack@google.com>
+> Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ---
+>   tools/testing/selftests/landlock/fs_test.c  | 35 +++++++++++++++++++++
+>   tools/testing/selftests/landlock/net_test.c | 33 +++++++++++++++++++
+>   2 files changed, 68 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index d77155d75de5..8cabcbe3554e 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -596,6 +596,41 @@ TEST_F_FORK(layout1, file_and_dir_access_rights)
+>   	ASSERT_EQ(0, close(ruleset_fd));
+>   }
+>   
+> +TEST_F_FORK(layout1, rule_with_unhandled_access)
 > +{
-> +       struct bpf_dynptr value_ptr;
-> +       __u32 pid;
-> +       int ret;
+> +	struct landlock_ruleset_attr ruleset_attr = {
+> +		/* First bit */
+> +		.handled_access_fs = LANDLOCK_ACCESS_FS_EXECUTE,
+> +	};
+> +	struct landlock_path_beneath_attr path_beneath = {};
+> +	int ruleset_fd;
+> +	__u64 access;
 > +
-> +       pid =3D bpf_get_current_pid_tgid() >> 32;
-> +       if (pid !=3D monitored_pid)
-> +               return 0;
+> +	ruleset_fd =
+> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+> +	ASSERT_LE(0, ruleset_fd);
 > +
-> +       bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
+> +	path_beneath.parent_fd = open(file1_s1d2, O_PATH | O_CLOEXEC);
+> +	ASSERT_LE(0, path_beneath.parent_fd);
 > +
-> +       ret =3D bpf_get_file_xattr(f, "user.kfuncs", &value_ptr);
-> +       if (ret !=3D sizeof(expected_value))
-> +               return 0;
-> +       if (bpf_strncmp(value, ret, expected_value))
+> +	for (access = 1; access > 0; access <<= 1) {
+> +		int err;
+> +
+> +		path_beneath.allowed_access = access;
+> +		err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
+> +					&path_beneath, 0);
+> +		if (access == ruleset_attr.handled_access_fs) {
+> +			EXPECT_EQ(0, err);
+> +		} else {
+> +			EXPECT_EQ(-1, err);
+> +			EXPECT_EQ(EINVAL, errno);
+> +		}
+> +	}
+> +
+> +	EXPECT_EQ(0, close(path_beneath.parent_fd));
+> +	EXPECT_EQ(0, close(ruleset_fd));
+> +}
+> +
+>   TEST_F_FORK(layout0, unknown_access_rights)
+>   {
+>   	__u64 access_mask;
+> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+> index 9356f5800e31..aec01917abd5 100644
+> --- a/tools/testing/selftests/landlock/net_test.c
+> +++ b/tools/testing/selftests/landlock/net_test.c
+> @@ -1262,6 +1262,39 @@ TEST_F(mini, network_access_rights)
+>   	EXPECT_EQ(0, close(ruleset_fd));
+>   }
+>   
+> +TEST_F(mini, rule_with_unhandled_access)
+> +{
+> +	struct landlock_ruleset_attr ruleset_attr = {
+> +		/* First bit */
+> +		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
+> +	};
+> +	struct landlock_net_port_attr net_port = {
+> +		.port = sock_port_start,
+> +	};
+> +	int ruleset_fd;
+> +	__u64 access;
+> +
+> +	ruleset_fd =
+> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+> +	ASSERT_LE(0, ruleset_fd);
+> +
+> +	for (access = 1; access > 0; access <<= 1) {
+> +		int err;
+> +
+> +		net_port.allowed_access = access;
+> +		err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
+> +					&net_port, 0);
+> +		if (access == ruleset_attr.handled_access_net) {
+> +			EXPECT_EQ(0, err);
+> +		} else {
+> +			EXPECT_EQ(-1, err);
+> +			EXPECT_EQ(EINVAL, errno);
+> +		}
+> +	}
 
-Hmm. It doesn't work like:
-if (bpf_strncmp(value, ret, "hello"))
-
-?
+    We have such kind of check in TEST_f(mini, inval). Can you please 
+explain why we need additional one here?
+> +
+> +	EXPECT_EQ(0, close(ruleset_fd));
+> +}
+> +
+>   /* Checks invalid attribute, out of landlock network access range. */
+>   TEST_F(mini, unknown_access_rights)
+>   {
