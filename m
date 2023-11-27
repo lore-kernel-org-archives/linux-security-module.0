@@ -1,113 +1,90 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="rJ8cBOmh"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 933F52706;
-	Mon, 27 Nov 2023 09:05:26 -0800 (PST)
-Received: from [192.168.4.26] (unknown [47.186.13.91])
-	by linux.microsoft.com (Postfix) with ESMTPSA id D60A120B74C0;
-	Mon, 27 Nov 2023 09:05:23 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D60A120B74C0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1701104726;
-	bh=hQp9k1xmzkhJv53kIi+fGz0Bm7C0uUgSE5lwBZUzRAE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rJ8cBOmhMjU1LJ0/8Jcu8Zs0D7K0IoJJgYpooleweR4JPTx8RVu3i076OKuSc40H8
-	 vQyhttx9sRNbXZhKrbp4uy9amwle/wkhxSgx+XSVVJGrDjkKV6ziAkv22z1oJr2gBV
-	 BrN8A1ek3f3VLgDmEE47gJhsasnKPJeYvbYTTmRg=
-Message-ID: <b1dc0963-ab99-4a79-af19-ef5ed981fa60@linux.microsoft.com>
-Date: Mon, 27 Nov 2023 11:05:23 -0600
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SmVAYnx8"
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53A4710E2
+	for <linux-security-module@vger.kernel.org>; Mon, 27 Nov 2023 09:07:14 -0800 (PST)
+Received: by mail-yb1-xb34.google.com with SMTP id 3f1490d57ef6-daf4f0e3a0fso4243428276.1
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Nov 2023 09:07:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1701104833; x=1701709633; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jVpHcm6eNMtO7gBN1civQcEtrNe2Aaljh7bOFYlkrwU=;
+        b=SmVAYnx8zoCZ2VI5Ti7x+9nfyPaGD1wB8NOe6L7Z4vvNLfIyWx9JccNI8yboPp0nqZ
+         nsWxFjfwpP/1m9zhJzUVbKFywe1ylZkO47FEXrnffux4jY6vftfdkY6G52t9Mbgz+zKf
+         BzMVrUZROWXmgF/AmbOhi3DQzi6txIDJ7oBwYFYUssxViyZDbdhcgJFpYvagxKb2KTtf
+         45EAOqk4KSR+QwXgQJ2HiyrG9M9+3xOahI6NhoMQ0HTbhL7de1VTB6/n0pgqpAUngGm1
+         3YY80hXIpApzcsv4HvX35fJnZrF+7AzmlncDCa0PiTYOjfv+YtHfRuc10LezZTpUZvpz
+         H44Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701104833; x=1701709633;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jVpHcm6eNMtO7gBN1civQcEtrNe2Aaljh7bOFYlkrwU=;
+        b=KAXlg4iDchfQoPUk8AZTQKOlwEgI++cB6hqSUM/as8s8XPpdzRxQ3HusQF+z3b4pne
+         Oh7LfKGuCrrC3HQmfPWO1ydup7fusir3d3qXy7rRBY3tzL461Ac3IqNRz18IomWJI9Jd
+         Y8TKDBBfyHod3Ols5+y4Bl648lOeFz5cO15G2+9bHG5GD4PiF75m1X+qX0rf7iRg3kVw
+         +Ti5wVIf8AHWL2Ol6EFAPNJlNgHyn5mhi8EDTPoY0zYaXkRRmQkTt72X432ENIxyauh5
+         BwHC7islnCSc+tVLegyqiafMyyMUj0Aeo7KmUWIEWWfK69a2yaz6cqGPjcGMGEfZrly9
+         Y/eg==
+X-Gm-Message-State: AOJu0Yzo1MgxhyfK6IrFQRx0rVCtnFHYqbq/ruwFWFFGcqmHuf5SHvXb
+	GgadguIAj6F5Cy2w7or248XU32uQsCD1kRZYW0QPwC4OmOw+2Nw=
+X-Google-Smtp-Source: AGHT+IH2ID4gAteIkSJI7+X55yEB0YPOB3Efis0KpCsyVCs9dt3A0fP/qZxJhsEAB6bIPSYe1pqhSYw+yd4w/Gn0qqs=
+X-Received: by 2002:a25:1541:0:b0:da0:6cf3:c629 with SMTP id
+ 62-20020a251541000000b00da06cf3c629mr9206995ybv.41.1701104833458; Mon, 27 Nov
+ 2023 09:07:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 18/19] heki: x86: Protect guest kernel memory using
- the KVM hypervisor
-Content-Language: en-US
-To: Peter Zijlstra <peterz@infradead.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?=
- =?UTF-8?Q?n?= <mic@digikod.net>
-Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Kees Cook <keescook@chromium.org>,
- Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
- <seanjc@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>,
- Alexander Graf <graf@amazon.com>, Chao Peng <chao.p.peng@linux.intel.com>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- Forrest Yuan Yu <yuanyu@google.com>, James Gowans <jgowans@amazon.com>,
- James Morris <jamorris@linux.microsoft.com>,
- John Andersen <john.s.andersen@intel.com>,
- Marian Rotariu <marian.c.rotariu@gmail.com>,
- =?UTF-8?Q?Mihai_Don=C8=9Bu?= <mdontu@bitdefender.com>,
- =?UTF-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>,
- Thara Gopinath <tgopinath@microsoft.com>,
- Trilok Soni <quic_tsoni@quicinc.com>, Wei Liu <wei.liu@kernel.org>,
- Will Deacon <will@kernel.org>, Yu Zhang <yu.c.zhang@linux.intel.com>,
- Zahra Tarkhani <ztarkhani@microsoft.com>,
- =?UTF-8?Q?=C8=98tefan_=C8=98icleru?= <ssicleru@bitdefender.com>,
- dev@lists.cloudhypervisor.org, kvm@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org,
- x86@kernel.org, xen-devel@lists.xenproject.org
-References: <20231113022326.24388-1-mic@digikod.net>
- <20231113022326.24388-19-mic@digikod.net>
- <20231113085403.GC16138@noisy.programming.kicks-ass.net>
-From: "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-In-Reply-To: <20231113085403.GC16138@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20231122160742.109270-2-paul@paul-moore.com> <9afe7c6e-5753-407a-bdeb-84c0d3735b49@schaufler-ca.com>
+In-Reply-To: <9afe7c6e-5753-407a-bdeb-84c0d3735b49@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 27 Nov 2023 12:07:02 -0500
+Message-ID: <CAHC9VhT20q5Un3=6kfQv-cjK7QOZkg-UcDL9aL+s5a3HF3SK0g@mail.gmail.com>
+Subject: Re: [PATCH] selftests: remove the LSM_ID_IMA check in lsm/lsm_list_modules_test
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Apologies for the late reply. I was on vacation. Please see my response below:
+On Sat, Nov 25, 2023 at 11:51=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+> On 11/22/2023 8:07 AM, Paul Moore wrote:
+> > The IMA LSM ID token was removed as IMA isn't yet a proper LSM, but
+> > we forgot to remove the check from the selftest.
+> >
+> > Reported-by: kernel test robot <yujie.liu@intel.com>
+> > Closes: https://lore.kernel.org/r/202311221047.a9Dww3vY-lkp@intel.com/
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+>
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+>
+> > ---
+> >  tools/testing/selftests/lsm/lsm_list_modules_test.c | 3 ---
+> >  1 file changed, 3 deletions(-)
 
-On 11/13/23 02:54, Peter Zijlstra wrote:
-> On Sun, Nov 12, 2023 at 09:23:25PM -0500, Mickaël Salaün wrote:
->> From: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
->>
->> Implement a hypervisor function, kvm_protect_memory() that calls the
->> KVM_HC_PROTECT_MEMORY hypercall to request the KVM hypervisor to
->> set specified permissions on a list of guest pages.
->>
->> Using the protect_memory() function, set proper EPT permissions for all
->> guest pages.
->>
->> Use the MEM_ATTR_IMMUTABLE property to protect the kernel static
->> sections and the boot-time read-only sections. This enables to make sure
->> a compromised guest will not be able to change its main physical memory
->> page permissions. However, this also disable any feature that may change
->> the kernel's text section (e.g., ftrace, Kprobes), but they can still be
->> used on kernel modules.
->>
->> Module loading/unloading, and eBPF JIT is allowed without restrictions
->> for now, but we'll need a way to authenticate these code changes to
->> really improve the guests' security. We plan to use module signatures,
->> but there is no solution yet to authenticate eBPF programs.
->>
->> Being able to use ftrace and Kprobes in a secure way is a challenge not
->> solved yet. We're looking for ideas to make this work.
->>
->> Likewise, the JUMP_LABEL feature cannot work because the kernel's text
->> section is read-only.
-> 
-> What is the actual problem? As is the kernel text map is already RO and
-> never changed.
+Merged into lsm/dev, thanks.
 
-For the JUMP_LABEL optimization, the text needs to be patched at some point.
-That patching requires a writable mapping of the text page at the time of
-patching.
+> > diff --git a/tools/testing/selftests/lsm/lsm_list_modules_test.c b/tool=
+s/testing/selftests/lsm/lsm_list_modules_test.c
+> > index 445c02f09c74..9df29b1e3497 100644
+> > --- a/tools/testing/selftests/lsm/lsm_list_modules_test.c
+> > +++ b/tools/testing/selftests/lsm/lsm_list_modules_test.c
+> > @@ -101,9 +101,6 @@ TEST(correct_lsm_list_modules)
+> >               case LSM_ID_TOMOYO:
+> >                       name =3D "tomoyo";
+> >                       break;
+> > -             case LSM_ID_IMA:
+> > -                     name =3D "ima";
+> > -                     break;
+> >               case LSM_ID_APPARMOR:
+> >                       name =3D "apparmor";
+> >                       break;
 
-In this Heki feature, we currently lock down the kernel text at the end of
-kernel boot just before kicking off the init process. The lockdown is
-implemented by setting the permissions of a text page to R_X in the extended
-page table and not allowing write permissions in the EPT after that. So, jump label
-patching during kernel boot is not a problem. But doing it after kernel
-boot is a problem.
-
-The lockdown is just for the current Heki implementation. In the future, we plan
-to have a way of authenticating guest requests to change permissions on a text page.
-Once that is in place, permissions on text pages can be changed on the fly to
-support features that depend on text patching - FTrace, KProbes, etc.
-
-Madhavan
+--=20
+paul-moore.com
