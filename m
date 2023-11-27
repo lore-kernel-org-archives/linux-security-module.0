@@ -1,113 +1,189 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A6F31735;
-	Mon, 27 Nov 2023 21:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E6nJAGzz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB329C433CD;
-	Mon, 27 Nov 2023 21:13:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701119591;
-	bh=O7B53ahSsXYZv0/3GtytayozB/LdwWtvoTPV/D9zgKQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=E6nJAGzzU+y1vd2Te3ZQJmiqo+LPPSj9NjgaLfueRXcQ10DmnLOZolPq/Ew9HhxFk
-	 d/fBJcv3pA8khk2kENXTvZsUzrEBCvSeD2OjYxkPRgtUU5cOz7MuxOnJQckSZMN761
-	 fhPBLu/5s78qjmC+n0APxGm6IMeWipjDMJgacsOZMlWdqhdcW8W1E2V5ve+ZMvOp9N
-	 Wx/GNW/1fIXNE15nOd2N/RgKQynU3gh63gEGV3DZM6b+GnQsINK7NMoHUwdKCXWKhx
-	 AuMyKBCa7/psA+u2MoeD931lWCL2KumVQB0O7TDRdGSGGu5RXH/aBniO1VDVfDULYI
-	 hXdz7yi8k4IsA==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-507e85ebf50so6406349e87.1;
-        Mon, 27 Nov 2023 13:13:11 -0800 (PST)
-X-Gm-Message-State: AOJu0YxkddygyDHX5AwR15uHgrlc66Uk9W1tB9pIUJLaI7uagwzAoljB
-	cLxQkKY8BmdfxPQyRpphQhXiP/xzzDFxRpmm59A=
-X-Google-Smtp-Source: AGHT+IHv8e6noXFC9uvnadiggk6Xhu6Uimbht251vU7wvruHM56yuqTGHcwt7VVU19mRALhez0VMAqJmWQOn7BE/rhY=
-X-Received: by 2002:a05:6512:3a82:b0:509:489f:d84e with SMTP id
- q2-20020a0565123a8200b00509489fd84emr12046812lfu.37.1701119589893; Mon, 27
- Nov 2023 13:13:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CXrbAC4a"
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DBCA1735
+	for <linux-security-module@vger.kernel.org>; Mon, 27 Nov 2023 14:16:24 -0800 (PST)
+Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-daf7ed42ea6so4581829276.0
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Nov 2023 14:16:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1701123383; x=1701728183; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rTXtOQ06AyJD+S/3ZuEjq3dS8iIU8CK5Q8QDa1uxM6Y=;
+        b=CXrbAC4aPtlhuP4AYuuVLxsy+Ag7TmGrxs1IZgyBrWZOPgmuw5d9WOC0d/QL5BCT67
+         eU69C+tPT0bwhmEK5gh+zRSefiAb8wD8rmu++Jv6Ay9wpASp9OKgeU3qH3cFAqNJcXUS
+         ZBRJ3t/aFpL6DUmRIIaQOdwjenFr3rSsUhbVRSrNGKu5CeBONqZ8mg0ZbK9FZ/knO/Sw
+         gs2rRBDgeP4hLMe2UX+O8eDAb6vYAcD2+g21Vq9I7flT1TyloQH9/n76GqmElV1mMhGs
+         fCFR7dHJ0Gs5mR1iLXtAkoElqKJipj7TvF2N/r3yuLFCqiYlFXy6mO4JaxZUeM6ljF8s
+         ePww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701123383; x=1701728183;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rTXtOQ06AyJD+S/3ZuEjq3dS8iIU8CK5Q8QDa1uxM6Y=;
+        b=Lh0bWzidpi3a2wKx9BeyYwJb8b46qycZ5K8qWg6X5cImM9UyLrcMompn9wsh/oNOYr
+         T/k3PKaUnKtnMsng+nd9w5u08dvB1kuDyS+IW2ywBM2EDL5qWFvqirF0F45xeJZoNMhl
+         hV968Gwq0ORv9xAFC99pNqzGHUAR2YiRwoZY1ueDPY0Im0Ft3Q05r6PC4IYAQ4L9AnpC
+         Msbvr+CpBcL8mQhlX/v6BqXq1EKGMNFauGw18SEVRvvJcMLBEOmLLiiNxPzQP5h8/5Ny
+         X9uuxNw0eWtb6O9rm+gZxtXguMcVcZu/8lWRKNtSsv9OXU9D6QLBh+1ww4Yptn0ciylo
+         9sQw==
+X-Gm-Message-State: AOJu0YxOe/01JxF0oFfiuTwEf2PRtno5519M9lZ6XUPJ871cZ54pBi13
+	RYbzWZ8goLEFcOoWy3O8osacHOYJT9+U/faZz/5R
+X-Google-Smtp-Source: AGHT+IHT/uujwb4aLiR9oamAow6VMBCwqTDyAseQWPVGHc7HKJrLQ1qRdJzOPHyQiiNjlQfnDWkBV7v9+pDw/Ob1SC0=
+X-Received: by 2002:a25:1541:0:b0:da0:6cf3:c629 with SMTP id
+ 62-20020a251541000000b00da06cf3c629mr9988242ybv.41.1701123383283; Mon, 27 Nov
+ 2023 14:16:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231123233936.3079687-1-song@kernel.org> <20231123233936.3079687-2-song@kernel.org>
- <20231124-heilung-wohnumfeld-6b7797c4d41a@brauner> <CAPhsuW7BFzsBv48xgbY4-2xhG1-GazBuQq_pnaUrJqY1q_H27w@mail.gmail.com>
- <20231127-auffiel-wutentbrannt-7b8b3efb09e4@brauner> <CAPhsuW4qP=VYhQ8BTOA3WFhu2LW+cjQ0YtdAVcj-kY_3r4yjnA@mail.gmail.com>
-In-Reply-To: <CAPhsuW4qP=VYhQ8BTOA3WFhu2LW+cjQ0YtdAVcj-kY_3r4yjnA@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Mon, 27 Nov 2023 13:12:57 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW64QYs3pk7Uva5kWhSm4f+25CektGYn9PB6_G1cLb67RQ@mail.gmail.com>
-Message-ID: <CAPhsuW64QYs3pk7Uva5kWhSm4f+25CektGYn9PB6_G1cLb67RQ@mail.gmail.com>
-Subject: Re: [PATCH v13 bpf-next 1/6] bpf: Add kfunc bpf_get_file_xattr
-To: Christian Brauner <brauner@kernel.org>
-Cc: ast@kernel.org, daniel@iogearbox.net, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	fsverity@lists.linux.dev, ebiggers@kernel.org, andrii@kernel.org, 
-	martin.lau@linux.dev, viro@zeniv.linux.org.uk, casey@schaufler-ca.com, 
-	amir73il@gmail.com, kpsingh@kernel.org, roberto.sassu@huawei.com
+References: <6c0c32d5-e636-2a0e-5bdf-538c904ceea3@linux.microsoft.com>
+ <8bff2bf1a4629aacec7b6311d77f233cb75b2f8a.camel@linux.ibm.com>
+ <CAHC9VhRm9Tzz3C-VTdXS4s1_-kPQQ6RXMt8JGCS4jorJ0VURyQ@mail.gmail.com>
+ <CAHC9VhSJ7MKNM7nMXR3xE-cNMrYB4AT+B76wzF1cKy2JM9tBrA@mail.gmail.com>
+ <1b6853e8354af7033e6d87e77cfb175526753c38.camel@linux.ibm.com>
+ <CAHC9VhSnDQ-d9dh_icqNyhpT+cTGQOqGh8+cbN3QzF_qPehvaA@mail.gmail.com> <28c4136d0fe360a7fcf6a6547120dc244be0edc3.camel@linux.ibm.com>
+In-Reply-To: <28c4136d0fe360a7fcf6a6547120dc244be0edc3.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 27 Nov 2023 17:16:12 -0500
+Message-ID: <CAHC9VhTykrsXTuWfRe3rzg2SMbzynvgwXmxVpN5T0cfY7YrkwA@mail.gmail.com>
+Subject: Re: [RFC V2] IMA Log Snapshotting Design Proposal
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Tushar Sugandhi <tusharsu@linux.microsoft.com>, linux-integrity@vger.kernel.org, 
+	peterhuewe@gmx.de, Jarkko Sakkinen <jarkko@kernel.org>, jgg@ziepe.ca, 
+	Ken Goldman <kgold@linux.ibm.com>, bhe@redhat.com, vgoyal@redhat.com, 
+	Dave Young <dyoung@redhat.com>, "kexec@lists.infradead.org" <kexec@lists.infradead.org>, jmorris@namei.org, 
+	serge@hallyn.com, James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	linux-security-module@vger.kernel.org, 
+	Tyler Hicks <tyhicks@linux.microsoft.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Sush Shringarputale <sushring@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 27, 2023 at 10:05=E2=80=AFAM Song Liu <song@kernel.org> wrote:
->
-> Hi Christian,
->
-> Thanks again for your comments.
->
-> On Mon, Nov 27, 2023 at 2:50=E2=80=AFAM Christian Brauner <brauner@kernel=
-.org> wrote:
-> >
-[...]
-> Going back to xattr_permission itself. AFAICT, it does 3 checks:
->
-> 1. MAY_WRITE check;
-> 2. prefix check;
-> 3. inode_permission().
->
-> We don't need MAY_WRITE check as bpf_get_file_xattr is read only.
-> We have the prefix check embedded in bpf_get_file_xattr():
->
->        if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
->                return -EPERM;
->
-> inode_permission() is a little trickier here, which checks against idmap.
-> However, I don't think the check makes sense in the context of LSM.
-> In this case, we have two processes: one security daemon, which
-> owns the BPF LSM program, and a process being monitored.
-> idmap here, from file_mnt_idmap(file), is the idmap from the being
-> monitored process. However, whether the BPF LSM program have the
-> permission to read the xattr should be determined by the security
-> daemon.
+On Mon, Nov 27, 2023 at 12:08=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> w=
+rote:
+> On Wed, 2023-11-22 at 09:22 -0500, Paul Moore wrote:
 
-Maybe we should check against nop_mnt_idmap? Would something like
-the following make more sense?
+...
 
-Thanks,
-Song
+> > Okay, we are starting to get closer, but I'm still missing the part
+> > where you say "if you do X, Y, and Z, I'll accept and merge the
+> > solution."  Can you be more explicit about what approach(es) you would
+> > be willing to accept upstream?
+>
+> Included with what is wanted/needed is an explanation as to my concerns
+> with the existing proposal.
+>
+> First we need to differentiate between kernel and uhserspace
+> requirements.  (The "snapshotting" design proposal intermixes them.)
+>
+> From the kernel persective, the Log Snapshotting Design proposal "B.1
+> Goals" is very nice, but once the measurement list can be trimmed it is
+> really irrelevant.  Userspace can do whatever it wants with the
+> measurement list records.  So instead of paying lip service to what
+> should be done, just call it as it is - trimming the measurement list.
 
-diff --git i/kernel/trace/bpf_trace.c w/kernel/trace/bpf_trace.c
-index 0019e990408e..62fc51bc57af 100644
---- i/kernel/trace/bpf_trace.c
-+++ w/kernel/trace/bpf_trace.c
-@@ -1453,6 +1453,7 @@ __bpf_kfunc int bpf_get_file_xattr(struct file
-*file, const char *name__str,
-        struct dentry *dentry;
-        u32 value_len;
-        void *value;
-+       int ret;
+Fair enough.  I personally think it is nice to have a brief discussion
+of how userspace might use a kernel feature, but if you prefer to drop
+that part of the design doc I doubt anyone will object very strongly.
 
-        if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
-                return -EPERM;
-@@ -1463,6 +1464,9 @@ __bpf_kfunc int bpf_get_file_xattr(struct file
-*file, const char *name__str,
-                return -EINVAL;
+> -----------------------------------------------------------------------
+> | B.1 Goals                                                           |
+> -----------------------------------------------------------------------
+> To address the issues described in the section above, we propose
+> enhancements to the IMA subsystem to achieve the following goals:
+>
+>   a. Reduce memory pressure on the Kernel caused by larger in-memory
+>      IMA logs.
+>
+>   b. Preserve the system's ability to get remotely attested using the
+>      IMA log, even after implementing the enhancements to reduce memory
+>      pressure caused by the IMA log. IMA's Integrity guarantees should
+>      be maintained.
+>
+>   c. Provide mechanisms from Kernel side to the remote attestation
+>      service to make service-side processing more efficient.
 
-        dentry =3D file_dentry(file);
-+       ret =3D inode_permission(&nop_mnt_idmap, dentry->d_inode, MAY_READ)=
-;
-+       if (ret)
-+               return ret;
-        return __vfs_getxattr(dentry, dentry->d_inode, name__str,
-value, value_len);
- }
+That looks fine to me.
+
+> From the kernel perspective there needs to be a method of trimming N
+> number of records from the head of the measurement list.  In addition
+> to the existing securityfs "runtime measurement list",  defining a new
+> securityfs file containing the current count of in memory measurement
+> records would be beneficial.
+
+I imagine that should be trivial to implement and I can't imagine
+there being any objection to that.
+
+If we are going to have a record count, I imagine it would also be
+helpful to maintain a securityfs file with the total size (in bytes)
+of the in-memory measurement log.  In fact, I suspect this will
+probably be more useful for those who wish to manage the size of the
+measurement log.
+
+> Defining other IMA securityfs files like
+> how many times the measurement list has been trimmed might be
+> beneficial as well.
+
+I have no objection to that.  Would a total record count, i.e. a value
+that doesn't reset on a snapshot event, be more useful here?
+
+> Of course properly document the integrity
+> implications and repercussions of the new Kconfig that allows trimming
+> the measurement list.
+
+Of course.
+
+> Defining a simple "trim" marker measurement record would be a visual
+> indication that the measurement list has been trimmed.  I might even
+> have compared it to the "boot_aggregate".  However, the proposed marker
+> based on TPM PCRs requires pausing extending the measurement list.
+
+...
+
+> Before defining a new critical-data record, we need to decide whether
+> it is really necessary or if it is redundant.  If we define a new
+> "critical-data" record, can it be defined such that it doesn't require
+> pausing extending the measurement list?  For example, a new simple
+> visual critical-data record could contain the number of records (e.g.
+> <securityfs>/ima/runtime_measurements_count) up to that point.
+
+What if the snapshot_aggregate was a hash of the measurement log
+starting with either the boot_aggregate or the latest
+snapshot_aggregate and ending on the record before the new
+snapshot_aggregate?  The performance impact at snapshot time should be
+minimal as the hash can be incrementally updated as new records are
+added to the measurement list.  While the hash wouldn't capture the
+TPM state, it would allow some crude verification when reassembling
+the log.  If one could bear the cost of a TPM signing operation, the
+log digest could be signed by the TPM.
+
+> The new critical-data record and trimming the measurement list should
+> be disjoint features.  If the first record after trimming the
+> measurement list should be the critical-data record, then trim the
+> measurement list up to that point.
+
+I disagree about the snapshot_aggregate record being disjoint from the
+measurement log, but I suspect Tushar and Sush are willing to forgo
+the snapshot_aggregate if that is a blocker from your perspective.
+Once again, the main goal is the ability to manage the size of the
+measurement log; while having a snapshot_aggregate that can be used to
+establish a root of trust similar to the boot_aggregate is nice, it is
+not a MUST have.
+
+> From a userspace perspective, trimming the measurement list is a major
+> change and will break existing attestation requests, unless the change
+> is transparent.  Removing "snapshots"/"shards" will of course break
+> attestation requests.  Refer to Stefan's suggestions:
+> https://lore.kernel.org/linux-integrity/1ed2d72c-4cb2-48b3-bb0f-b0877fc1e=
+9ca@linux.ibm.com/
+
+You will note that Sush and I replied to Stefan two weeks ago.
+
+--=20
+paul-moore.com
