@@ -1,30 +1,28 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2462F6166B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3115661688;
 	Wed, 29 Nov 2023 21:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4BAlXK0"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A015EC433C8;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="co0OX5ej"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C45EEC433CA;
 	Wed, 29 Nov 2023 21:50:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1701294657;
-	bh=e1bNk2Y02IUrvPq3JW/J0kW9YOkEkHQ2aztr89JaGE4=;
-	h=From:Subject:Date:To:Cc:From;
-	b=W4BAlXK08iPXH0COup9QFgLk6G49L7sRK2PXOO21jAo/qR2LGnWJrnXkK8VDY82PV
-	 IGoz3DawT/VmzsKrAVoiNQKe9MISc/2hm0kl3HDLbS1UN57/HT08KwuIqFzf4uMkHx
-	 aZnITikONFuj8yXduittb0f3Agj2gJpYJ8NriikUxNJs6/7pwgUWPiTDGffiDWOneP
-	 y335tOEMg7FQIU5JlNaSXWePyt5cBg6G8TkpHQs1OL++xMhydITncxPBUbsIPWQGQi
-	 DYTR3Md2Nr9P8HglHsiqUUXTCL7giFDx3G8qK2SLXiSUOgDQdDpgluvX9RllvHid6h
-	 zYUGf1GaisjMw==
+	bh=pshpKEfVriw6XfSjr2t+lrLZ+CyfWDF9L4xfhlBHrcs=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=co0OX5ejSAjxdjCRGV053V24U5RgKX2l/Io7Vacy5dpOOz9UAwVIxRY1Pwi9qrSlO
+	 CUYKbNPcHTDCvKK8U1OMeLu9xt27bRtI9bLmGQ0GSjSX3CHoUVVho6/Lw4tNx1uELb
+	 JpZN+Fzg4axO3P5GFGGBXiBFhjM9o8rSxaSd6U8kJChzHLapD8trde+hTp+POUSeZX
+	 wUozMWHsXZFrZA/d5IuJaNirfQnsXY6138dKZvAlo0gNyODwmNAlD6sz3HVDu4UwYc
+	 X92xKVmx6eZa58uxzSUCBQtq1LNL9PeMvCjwR27WqpIOrGQz+NP0uiVzRB7RdLnUR4
+	 WXzv8VJsDIPPg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86865C07CB1;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE91BC46CA3;
 	Wed, 29 Nov 2023 21:50:57 +0000 (UTC)
 From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Subject: [PATCH 00/16] fs: use type-safe uid representation for filesystem
- capabilities
-Date: Wed, 29 Nov 2023 15:50:18 -0600
-Message-Id: <20231129-idmap-fscap-refactor-v1-0-da5a26058a5b@kernel.org>
+Date: Wed, 29 Nov 2023 15:50:22 -0600
+Subject: [PATCH 04/16] capability: use vfsuid_t for vfs_caps rootids
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -33,9 +31,9 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABqyZ2UC/x2NSwrDMAxErxK0rsEf6kWvUrqQXbkRpE6Q2hAwu
- XtFNwNvmMcMUBImhds0QGhn5bUbhMsEdcb+IsdPY4g+Jn8N0fCNm2taLYUa1s8qLqeSQ0OPKTc
- wtaCSK4K9zib377JYudmcj//X/XGeP3LapMJ7AAAA
+Message-Id: <20231129-idmap-fscap-refactor-v1-4-da5a26058a5b@kernel.org>
+References: <20231129-idmap-fscap-refactor-v1-0-da5a26058a5b@kernel.org>
+In-Reply-To: <20231129-idmap-fscap-refactor-v1-0-da5a26058a5b@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>, 
  Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>, 
  James Morris <jmorris@namei.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -45,103 +43,97 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-unionfs@vger.kernel.org, 
  "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3944; i=sforshee@kernel.org;
- h=from:subject:message-id; bh=e1bNk2Y02IUrvPq3JW/J0kW9YOkEkHQ2aztr89JaGE4=; 
- =?utf-8?q?b=3DowEBbQGS/pANAwAKAVMDma7l9DHJAcsmYgBlZ7IvK9HzszM2i/QraAFHa/VAD?=
- =?utf-8?q?mqY0TX3S+lGLdmx_3rXykB2JATMEAAEKAB0WIQSQnt+rKAvnETy4Hc9TA5mu5fQxy?=
- =?utf-8?q?QUCZWeyLwAKCRBTA5mu5fQxybUeB/_9SuaWrirztZmjFyIZj0l9JjtT/BlFqVDMNE?=
- =?utf-8?q?Q9u0K8av0oIJB6M4C+/RxW2HovO6Ze3et6gPlXNVVM+_EyGFKVn7W875FYmmGCEKw?=
- =?utf-8?q?dZ5VTyO8dFom9t8Upy/gl3rgVv3iFFG80ZtQ72B70/tsyKRSYzuyxsdDR_ey1cN6W?=
- =?utf-8?q?7S85ZBKF84pbR/CEiAhHNjFRYjh5iPJbyGtjvx32qKGcgDYtKJYP3csznkYGd+lEb?=
- =?utf-8?q?9aF5T1_dzpudoFlnW4B3oA67kMhTd5ptj+WVZwhfHNdslqbEBFad389VfZho7Y38Q?=
- =?utf-8?q?05t8pxDSg+hFsHv9OvKa?= iAd8bRVxTYQ7QQByaZ4+SebYPCa48r
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2769; i=sforshee@kernel.org;
+ h=from:subject:message-id; bh=pshpKEfVriw6XfSjr2t+lrLZ+CyfWDF9L4xfhlBHrcs=; 
+ =?utf-8?q?b=3DowEBbQGS/pANAwAKAVMDma7l9DHJAcsmYgBlZ7I1iMJZHgv5KLLN6DNVYz1Vf?=
+ =?utf-8?q?vJSI5vw8+yI5Cgd_aAZEAPOJATMEAAEKAB0WIQSQnt+rKAvnETy4Hc9TA5mu5fQxy?=
+ =?utf-8?q?QUCZWeyNQAKCRBTA5mu5fQxyQDFB/_9RqEyCcUph8c316tvppHNjQ/llSAMODIXsN?=
+ =?utf-8?q?mSqJwy2aZcJXvBbUuIv4/NOLvqxn+j55KG7FdjvArP6_c28uf+EKMJh7cJKxKtKEy?=
+ =?utf-8?q?zRdd4va3XJnkesTaNAJHo9zcx5lvZkMOBm6ZCiA29WXKAxqzadC/Vy+98_ztZZA0m?=
+ =?utf-8?q?1c90VhmCi+uMTrJTwT6jdc1a43GfX/jcKBtSS/HL2EyRZdayOURPL8gQVezzv60r8?=
+ =?utf-8?q?766ssp_4TLrCTABo8230NrJ7xA4Kg7tvAs7mtrvnBv2Q08sS71+xjhIXoYLYqGtmT?=
+ =?utf-8?q?+k0Q0p8nB9TlHk06W9aH?= 6B7k5FVQmj3qXUOjyE3FbILXAuBOru
 X-Developer-Key: i=sforshee@kernel.org; a=openpgp;
  fpr=2ABCA7498D83E1D32D51D3B5AB4800A62DB9F73A
 X-Endpoint-Received:
  by B4 Relay for sforshee@kernel.org/default with auth_id=103
 
-This series converts filesystem capabilities from passing around raw
-xattr data to using a kernel-internal representation with type safe
-uids, similar to the conversion done previously for posix ACLs.
-Currently fscaps representations in the kernel have two different
-instances of unclear or confused types:
-
- - fscaps are generally passed around in the raw xattr form, with the
-   rootid sometimes containing the user uid value and at other times
-   containing the filesystem value.
-
- - The existing kernel-internal representation of fscaps,
-   cpu_vfs_cap_data, uses the kuid_t type, but the value stored is
-   actually a vfsuid.
-
-This series eliminates this confusion by converting the xattr data to
-the kernel representation near the userspace and filesystem boundaries,
-using the kernel representation within the vfs and commoncap code. The
-internal representation is renamed to vfs_caps to reflect this broader
-use, and the rootid is changed to a vfsuid_t to correctly identify the
-type of uid which it contains.
-
-New vfs interfaces are added to allow for getting and setting fscaps
-using the kernel representation. This requires the addition of new inode
-operations to allow overlayfs to handle fscaps properly; all other
-filesystems fall back to a generic implementation. The top-level vfs
-xattr interfaces will now reject fscaps xattrs, though the lower-level
-interfaces continue to accept them for reading and writing the raw xattr
-data.
-
-The existing xattr security hooks can continue to be used for fscaps.
-There is some awkwardness here, as EVM requires the on-disk fscaps data
-to compare with any existing on-disk value. Security checks need to
-happen before calling into filesystem inode operations, when the fscaps
-are still in the kernel-internal format, so an extra conversion to the
-on-disk format is necessary for EVM's setxattr checks.
-
-The remainder of the changes are preparatory work and addition of
-helpers for converting between the xattr and kernel fscaps
-representation. 
-
-I have tested this code with xfstests, ltp, libcap2, and libcap-ng with
-no regressions found.
+The rootid is a kuid_t, but it contains an id which maped into a mount
+idmapping, so it is really a vfsuid. This is confusing and creates
+potential for misuse of the value, so change it to vfsuid_t.
 
 Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
 ---
-Seth Forshee (DigitalOcean) (16):
-      mnt_idmapping: split out core vfs[ug]id_t definitions into vfsid.h
-      mnt_idmapping: include cred.h
-      capability: rename cpu_vfs_cap_data to vfs_caps
-      capability: use vfsuid_t for vfs_caps rootids
-      capability: provide helpers for converting between xattrs and vfs_caps
-      capability: provide a helper for converting vfs_caps to xattr for userspace
-      fs: add inode operations to get/set/remove fscaps
-      fs: add vfs_get_fscaps()
-      fs: add vfs_set_fscaps()
-      fs: add vfs_remove_fscaps()
-      ovl: add fscaps handlers
-      ovl: use vfs_{get,set}_fscaps() for copy-up
-      fs: use vfs interfaces for capabilities xattrs
-      commoncap: remove cap_inode_getsecurity()
-      commoncap: use vfs fscaps interfaces for killpriv checks
-      vfs: return -EOPNOTSUPP for fscaps from vfs_*xattr()
+ include/linux/capability.h | 3 ++-
+ kernel/auditsc.c           | 5 +++--
+ security/commoncap.c       | 2 +-
+ 3 files changed, 6 insertions(+), 4 deletions(-)
 
- MAINTAINERS                   |   1 +
- fs/overlayfs/copy_up.c        |  72 +++---
- fs/overlayfs/dir.c            |   3 +
- fs/overlayfs/inode.c          |  84 +++++++
- fs/overlayfs/overlayfs.h      |   6 +
- fs/xattr.c                    | 286 ++++++++++++++++++++++-
- include/linux/capability.h    |  23 +-
- include/linux/fs.h            |  13 ++
- include/linux/mnt_idmapping.h |  67 +-----
- include/linux/security.h      |   5 +-
- include/linux/vfsid.h         |  74 ++++++
- kernel/auditsc.c              |   9 +-
- security/commoncap.c          | 519 ++++++++++++++++++++++--------------------
- 13 files changed, 802 insertions(+), 360 deletions(-)
----
-base-commit: 2cc14f52aeb78ce3f29677c2de1f06c0e91471ab
-change-id: 20230512-idmap-fscap-refactor-63b61fa0a36f
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index c24477e660fc..eb46d346bbbc 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -16,6 +16,7 @@
+ #include <uapi/linux/capability.h>
+ #include <linux/uidgid.h>
+ #include <linux/bits.h>
++#include <linux/vfsid.h>
+ 
+ #define _KERNEL_CAPABILITY_VERSION _LINUX_CAPABILITY_VERSION_3
+ 
+@@ -26,7 +27,7 @@ typedef struct { u64 val; } kernel_cap_t;
+ /* same as vfs_ns_cap_data but in cpu endian and always filled completely */
+ struct vfs_caps {
+ 	__u32 magic_etc;
+-	kuid_t rootid;
++	vfsuid_t rootid;
+ 	kernel_cap_t permitted;
+ 	kernel_cap_t inheritable;
+ };
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 783d0bf69ca5..65691450b080 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -65,6 +65,7 @@
+ #include <uapi/linux/netfilter/nf_tables.h>
+ #include <uapi/linux/openat2.h> // struct open_how
+ #include <uapi/linux/fanotify.h>
++#include <linux/mnt_idmapping.h>
+ 
+ #include "audit.h"
+ 
+@@ -2260,7 +2261,7 @@ static inline int audit_copy_fcaps(struct audit_names *name,
+ 	name->fcap.permitted = caps.permitted;
+ 	name->fcap.inheritable = caps.inheritable;
+ 	name->fcap.fE = !!(caps.magic_etc & VFS_CAP_FLAGS_EFFECTIVE);
+-	name->fcap.rootid = caps.rootid;
++	name->fcap.rootid = AS_KUIDT(caps.rootid);
+ 	name->fcap_ver = (caps.magic_etc & VFS_CAP_REVISION_MASK) >>
+ 				VFS_CAP_REVISION_SHIFT;
+ 
+@@ -2816,7 +2817,7 @@ int __audit_log_bprm_fcaps(struct linux_binprm *bprm,
+ 	ax->fcap.permitted = vcaps.permitted;
+ 	ax->fcap.inheritable = vcaps.inheritable;
+ 	ax->fcap.fE = !!(vcaps.magic_etc & VFS_CAP_FLAGS_EFFECTIVE);
+-	ax->fcap.rootid = vcaps.rootid;
++	ax->fcap.rootid = AS_KUIDT(vcaps.rootid);
+ 	ax->fcap_ver = (vcaps.magic_etc & VFS_CAP_REVISION_MASK) >> VFS_CAP_REVISION_SHIFT;
+ 
+ 	ax->old_pcap.permitted   = old->cap_permitted;
+diff --git a/security/commoncap.c b/security/commoncap.c
+index cf130d81b8b4..3d045d377e5e 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -710,7 +710,7 @@ int get_vfs_caps_from_disk(struct mnt_idmap *idmap,
+ 	cpu_caps->permitted.val &= CAP_VALID_MASK;
+ 	cpu_caps->inheritable.val &= CAP_VALID_MASK;
+ 
+-	cpu_caps->rootid = vfsuid_into_kuid(rootvfsuid);
++	cpu_caps->rootid = rootvfsuid;
+ 
+ 	return 0;
+ }
 
-Best regards,
 -- 
-Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+2.43.0
 
