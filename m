@@ -1,201 +1,77 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ddCZ72ER"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F08A10EB;
-	Tue, 28 Nov 2023 18:07:36 -0800 (PST)
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AT1oZug013562;
-	Wed, 29 Nov 2023 02:07:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=q69/ySyS1Q13h0fb7iRkfeR2Gyxb8mm8SutU+U1NBCo=;
- b=ddCZ72ERO9u5xLUNZ0KgUPvbDS1AItd6s9DmTU0oNUx7yV4s7xh61XT5GLT1xAo7r/7h
- tZedPmFWZZ6ksx3UtGvMfDrNxbMtQmA7Ca/vn2cIBRPsZJCM+D/p1e12FxkH539meNgA
- +tzWNPpqNLz6NviQb2vMZ8QQQwH4MOfWadhiDzNSLFzUzRrUFdBLBBceD2vqNIRmfbS1
- 6ygELXxh97z2qtL0cUczYkgEe9obT5FJndukAf3slKr6QUSiGJnb3tu1N99cx4IIsWcf
- 8g+K29rjjtvEBjCCVC9RUzO593lxWPcoqszilfq7XCyjNFiPc8qegcZ8XNPkXsjeiOc2 xQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3unts31v2x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Nov 2023 02:07:09 +0000
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3AT1pSVM015527;
-	Wed, 29 Nov 2023 02:07:08 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3unts31v2c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Nov 2023 02:07:08 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3AT2590B004934;
-	Wed, 29 Nov 2023 02:07:07 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ukwfk3yhe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Nov 2023 02:07:07 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3AT276NL25363010
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 29 Nov 2023 02:07:06 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B262258045;
-	Wed, 29 Nov 2023 02:07:06 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0636B58050;
-	Wed, 29 Nov 2023 02:07:05 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.89.136])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 29 Nov 2023 02:07:04 +0000 (GMT)
-Message-ID: <d9975a7949ca49f404adc981e942f42b6f19d022.camel@linux.ibm.com>
-Subject: Re: [RFC V2] IMA Log Snapshotting Design Proposal
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de,
-        Jarkko Sakkinen
- <jarkko@kernel.org>, jgg@ziepe.ca,
-        Ken Goldman <kgold@linux.ibm.com>, bhe@redhat.com, vgoyal@redhat.com,
-        Dave Young <dyoung@redhat.com>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        jmorris@namei.org, serge@hallyn.com,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-security-module@vger.kernel.org,
-        Tyler Hicks
- <tyhicks@linux.microsoft.com>,
-        Lakshmi Ramasubramanian
- <nramas@linux.microsoft.com>,
-        Sush Shringarputale
- <sushring@linux.microsoft.com>
-Date: Tue, 28 Nov 2023 21:07:04 -0500
-In-Reply-To: <CAHC9VhRNLzbW++rW3Hep+3yyJZRRvZ4h7LuKcSbRRn-wqh-PAQ@mail.gmail.com>
-References: <6c0c32d5-e636-2a0e-5bdf-538c904ceea3@linux.microsoft.com>
-	 <8bff2bf1a4629aacec7b6311d77f233cb75b2f8a.camel@linux.ibm.com>
-	 <CAHC9VhRm9Tzz3C-VTdXS4s1_-kPQQ6RXMt8JGCS4jorJ0VURyQ@mail.gmail.com>
-	 <CAHC9VhSJ7MKNM7nMXR3xE-cNMrYB4AT+B76wzF1cKy2JM9tBrA@mail.gmail.com>
-	 <1b6853e8354af7033e6d87e77cfb175526753c38.camel@linux.ibm.com>
-	 <CAHC9VhSnDQ-d9dh_icqNyhpT+cTGQOqGh8+cbN3QzF_qPehvaA@mail.gmail.com>
-	 <28c4136d0fe360a7fcf6a6547120dc244be0edc3.camel@linux.ibm.com>
-	 <CAHC9VhTykrsXTuWfRe3rzg2SMbzynvgwXmxVpN5T0cfY7YrkwA@mail.gmail.com>
-	 <d5e2358a0a7aaf4455b1f479483b312e98aa07d5.camel@linux.ibm.com>
-	 <CAHC9VhRNLzbW++rW3Hep+3yyJZRRvZ4h7LuKcSbRRn-wqh-PAQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFhfVJ3l"
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EB05170B;
+	Tue, 28 Nov 2023 22:47:44 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-332c7d4a6a7so4211834f8f.2;
+        Tue, 28 Nov 2023 22:47:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701240462; x=1701845262; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uoQz0W1zrsabXG6C9p+w20DAO2gb0rfGAOA6XEqMdok=;
+        b=mFhfVJ3l1DvSpGqovl2S6YYC9ePV0URA06pTksM9kq4KT90o3XqG7waOL+biIe+d5E
+         E0dDPsqM8cQlvumPzca6R4CILbSD2jUfuOIe06kjMpZ+0ldYWsFGIEAlGWz9ThYuRwhq
+         RDL5njc4yzUFu/b90hb7FmhmovsJZKp/46pFifuJm2E/0UYWFnJzW2/277oFIlQi9f1Z
+         hh+k+d5mBrYinTmevn0ZMZypCIvwXF9OywubQEo5IG0XxOnBl+RzvpNVCVTE8++rF5Le
+         WsahbPA1PSZIDRdFQ9s3LgGu0ll/QzehFsxJmznn8IhmEU8IZka4tf999n5W6s6oOIET
+         GP7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701240462; x=1701845262;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uoQz0W1zrsabXG6C9p+w20DAO2gb0rfGAOA6XEqMdok=;
+        b=sqQ0GtlZ8D02g6F3oABaYPw2DX5Au+Bd2G/FluFiKhisATmNJBJMwdir+QdmO4lBl4
+         pwWT356D+MRga4gHgCFNq5eVnr8xR3Xd1i1OiPPgFCFWh73nHa5dfWnJJWv2cS2BcTEW
+         WKSEu9m1Jd4JjfesDcRom1KJ40t9Xrhi29DX9sw4MreLOVHE5F/HVY2NKZAV+l7UtOGr
+         JJR8+OQsR0IWVA0W+wOQTgQGDOTy8IFYNolyDlXqrnK4MVyk8T/T4p9kShBSQc/iGrAk
+         RaoBnjN+zqBDYNJS85h9ELCU8v074UXLI079cR+d0fiysSVe6R6p7RSGkpRFphdnXc2d
+         ohfg==
+X-Gm-Message-State: AOJu0YxM3/lg3Xf0q7gLc1eJClELRD5uJaodV/npjZ+dNz4jWIrcwLTD
+	5GBb3ApniIxZoMY2h9xEojTDPzcyFo+Swfvu+UNsEKygRdg=
+X-Google-Smtp-Source: AGHT+IFN+lb5qvDxfIaWhrx1aSH/XLg8D+DoimtQZ2lwqG3I1fCwH1BzVpWtfsFQfVvr8RIBHZUK6gYVD0WhHS8je20=
+X-Received: by 2002:a05:6000:225:b0:332:ce72:d589 with SMTP id
+ l5-20020a056000022500b00332ce72d589mr11654697wrz.3.1701240462397; Tue, 28 Nov
+ 2023 22:47:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Oy_5AgL3qk6lrf4NBu9pEZ_-IEp22cBj
-X-Proofpoint-ORIG-GUID: Y_lDUo6oEI5OG36TRnxNJxEgCg-F7XtD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-28_27,2023-11-27_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=986
- lowpriorityscore=0 suspectscore=0 phishscore=0 adultscore=0 spamscore=0
- priorityscore=1501 impostorscore=0 malwarescore=0 mlxscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311290014
+MIME-Version: 1.0
+References: <20231129003656.1165061-1-song@kernel.org> <20231129003656.1165061-7-song@kernel.org>
+In-Reply-To: <20231129003656.1165061-7-song@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 28 Nov 2023 22:47:31 -0800
+Message-ID: <CAADnVQJb3Ur--A8jaiVqpea1kFXMCd46uP+X4ydcOVG3a5Ve3Q@mail.gmail.com>
+Subject: Re: [PATCH v14 bpf-next 6/6] selftests/bpf: Add test that uses
+ fsverity and xattr to sign a file
+To: Song Liu <song@kernel.org>
+Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, fsverity@lists.linux.dev, 
+	Eric Biggers <ebiggers@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Amir Goldstein <amir73il@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Kernel Team <kernel-team@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2023-11-28 at 20:06 -0500, Paul Moore wrote:
-> On Tue, Nov 28, 2023 at 7:09 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > On Mon, 2023-11-27 at 17:16 -0500, Paul Moore wrote:
-> > > On Mon, Nov 27, 2023 at 12:08 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > > > On Wed, 2023-11-22 at 09:22 -0500, Paul Moore wrote:
-> 
-> ...
-> 
-> > > If we are going to have a record count, I imagine it would also be
-> > > helpful to maintain a securityfs file with the total size (in bytes)
-> > > of the in-memory measurement log.  In fact, I suspect this will
-> > > probably be more useful for those who wish to manage the size of the
-> > > measurement log.
-> >
-> > A running number of bytes needed for carrying the measurement list
-> > across kexec already exists.  This value would be affected when the
-> > measurement list is trimmed.
-> 
-> There we go, it should be trivial to export that information via securityfs.
-> 
-> > > > Defining other IMA securityfs files like
-> > > > how many times the measurement list has been trimmed might be
-> > > > beneficial as well.
-> > >
-> > > I have no objection to that.  Would a total record count, i.e. a value
-> > > that doesn't reset on a snapshot event, be more useful here?
-> >
-> > <securityfs>/ima/runtime_measurements_count already exports the total
-> > number of measurement records.
-> 
-> I guess the question is would you want 'runtime_measurements_count' to
-> reflect the current/trimmed log size or would you want it to reflect
-> hthe measurements since the initial cold boot?  Presumably we would
-> want to add another securityfs file to handle the case not covered by
-> 'runtime_measurements_count'.
+On Tue, Nov 28, 2023 at 4:37=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+> +char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) + SHA256_DIGEST_=
+SIZE];
 
-Right.  <securityfs>/ima/runtime_measurements_count is defined as the
-total number of measurements since boot.  When the measurement list is
-carried across kexec, it is the number of measurements since cold boot.
+when vmlinux is built without CONFIG_FS_VERITY the above fails
+in a weird way:
+  CLNG-BPF [test_maps] test_sig_in_xattr.bpf.o
+progs/test_sig_in_xattr.c:36:26: error: invalid application of
+'sizeof' to an incomplete type 'struct fsverity_digest'
+   36 | char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) +
+SHA256_DIGEST_SIZE];
+      |                          ^     ~~~~~~~~~~~~~~~~~~~~~~~~
 
-A new securityfs file should be defined for the current number of in
-kernel memory records.  Unless the measurement list has been trimmed,
-this should be the same as the runtime_measurements_count.
-
-> 
-> > > > Before defining a new critical-data record, we need to decide whether
-> > > > it is really necessary or if it is redundant.  If we define a new
-> > > > "critical-data" record, can it be defined such that it doesn't require
-> > > > pausing extending the measurement list?  For example, a new simple
-> > > > visual critical-data record could contain the number of records (e.g.
-> > > > <securityfs>/ima/runtime_measurements_count) up to that point.
-> > >
-> > > What if the snapshot_aggregate was a hash of the measurement log
-> > > starting with either the boot_aggregate or the latest
-> > > snapshot_aggregate and ending on the record before the new
-> > > snapshot_aggregate?  The performance impact at snapshot time should be
-> > > minimal as the hash can be incrementally updated as new records are
-> > > added to the measurement list.  While the hash wouldn't capture the
-> > > TPM state, it would allow some crude verification when reassembling
-> > > the log.  If one could bear the cost of a TPM signing operation, the
-> > > log digest could be signed by the TPM.
-> >
-> > Other critical data is calculated, before calling
-> > ima_measure_critical_data(), which adds the record to the measurement
-> > list and extends the TPM PCR.
-> >
-> > Signing the hash shouldn't be an issue if it behaves like other
-> > critical data.
-> >
-> > In addition to the hash, consider including other information in the
-> > new critical data record (e.g. total number of measurement records, the
-> > number of measurements included in the hash, the number of times the
-> > measurement list was trimmed, etc).
-> 
-> It would be nice if you could provide an explicit list of what you
-> would want hashed into a snapshot_aggregate record; the above is
-> close, but it is still a little hand-wavy.  I'm just trying to reduce
-> the back-n-forth :)
-
-What is being defined here is the first IMA critical-data record, which
-really requires some thought.  For ease of review, this new critical-
-data record should be a separate patch set from trimming the
-measurement list.
-
-As I'm sure you're aware, SElinux defines two critical-data records.  
-From security/selinux/ima.c:
-
-        ima_measure_critical_data("selinux", "selinux-state",
-                                  state_str, strlen(state_str), false,
-                                  NULL, 0);
-
-        ima_measure_critical_data("selinux", "selinux-policy-hash",
-                                  policy, policy_len, true,
-                                  NULL, 0);
-
--- 
-thanks,
-
-Mimi
-
+Is there a way to somehow print a hint during the build what
+configs users need to enable to pass the build ?
