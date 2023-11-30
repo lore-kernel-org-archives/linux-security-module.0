@@ -1,20 +1,20 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HE5k4DYC"
-Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 457B610CE
-	for <linux-security-module@vger.kernel.org>; Thu, 30 Nov 2023 01:36:29 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Sgrfz4cdpzMq6hm;
-	Thu, 30 Nov 2023 09:36:27 +0000 (UTC)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Sgrfy5Qg1z3f;
-	Thu, 30 Nov 2023 10:36:26 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ru4n/YAB"
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB6C110D0
+	for <linux-security-module@vger.kernel.org>; Thu, 30 Nov 2023 01:36:32 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+	by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Sgrg32D04zMqLLF;
+	Thu, 30 Nov 2023 09:36:31 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Sgrg22QT6zMppBD;
+	Thu, 30 Nov 2023 10:36:30 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1701336987;
-	bh=2vLAw3p61HdIX8Zue22jPa4HyA1Nqm7Ri2MyxWdsa4g=;
+	s=20191114; t=1701336991;
+	bh=Rc1mq7YRDYcefoFHN+Nu/aHCcl2Ks0lLR4m2TUpsvSs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HE5k4DYCieebGpN4PShNQzVbA4sb03Xm15F8dJQ0xNISwWD9zYntQ/3lZ8rOcU6Qa
-	 MG++0xtaNDxLsy8VHirDI8q/Hbd8uGhNcVODkBsEf9i7sR3xhos8dV4Rq8OUrzrrnW
-	 9VhknFWKtpPIsdAAXObZdozy8zdqYTeulnvLCIb8=
+	b=ru4n/YABEc/0H7ta5Wwd9opYn4cM7zp8ZkPy8fGkUhdtMl4tQptzTbxacYAbIfLqi
+	 l2qhwzKphAdmsKsMF/7zxw1YXfnyuCFFcW/IJOi3JNRK3+SknoxaZzEocJ54muae80
+	 3UlgZ64vRPjKX1v505Kkz0/pHZpXX4GaltONITVo=
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
@@ -23,9 +23,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	Paul Moore <paul@paul-moore.com>,
 	"Serge E . Hallyn" <serge@hallyn.com>,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v2 1/2] selftests/landlock: Add tests to check unknown rule's access rights
-Date: Thu, 30 Nov 2023 10:36:15 +0100
-Message-ID: <20231130093616.67340-2-mic@digikod.net>
+Subject: [PATCH v2 2/2] selftests/landlock: Add tests to check unhandled rule's access rights
+Date: Thu, 30 Nov 2023 10:36:16 +0100
+Message-ID: <20231130093616.67340-3-mic@digikod.net>
 In-Reply-To: <20231130093616.67340-1-mic@digikod.net>
 References: <20231130093616.67340-1-mic@digikod.net>
 Precedence: bulk
@@ -38,94 +38,80 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Add two tests to make sure that we cannot add a rule with access
-rights that are unknown:
-* fs: layout0.rule_with_unknown_access
-* net: mini.rule_with_unknown_access
+Add two tests to make sure that we cannot add a rule to a ruleset if the
+rule's access rights that are not handled by the ruleset:
+* fs: layout1.rule_with_unhandled_access
+* net: mini.rule_with_unhandled_access
 
-Rename unknown_access_rights tests to ruleset_with_unknown_access .
-
-Cc: Günther Noack <gnoack@google.com>
 Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Reviewed-by: Günther Noack <gnoack@google.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
 
 Changes since v1:
-* Move checks into their own test/loop as suggested by Günther Noack.
-* Don't change layout1.file_and_dir_access_rights
+* Remove confusing comment.
 ---
- tools/testing/selftests/landlock/fs_test.c  | 29 ++++++++++++++++++++-
- tools/testing/selftests/landlock/net_test.c | 27 ++++++++++++++++++-
- 2 files changed, 54 insertions(+), 2 deletions(-)
+ tools/testing/selftests/landlock/fs_test.c  | 34 +++++++++++++++++++++
+ tools/testing/selftests/landlock/net_test.c | 32 +++++++++++++++++++
+ 2 files changed, 66 insertions(+)
 
 diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 18e1f86a6234..1e6c474e3d08 100644
+index 1e6c474e3d08..a1d17ab527ae 100644
 --- a/tools/testing/selftests/landlock/fs_test.c
 +++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -589,7 +589,7 @@ TEST_F_FORK(layout1, file_and_dir_access_rights)
+@@ -632,6 +632,40 @@ TEST_F_FORK(layout0, rule_with_unknown_access)
  	ASSERT_EQ(0, close(ruleset_fd));
  }
  
--TEST_F_FORK(layout0, unknown_access_rights)
-+TEST_F_FORK(layout0, ruleset_with_unknown_access)
- {
- 	__u64 access_mask;
- 
-@@ -605,6 +605,33 @@ TEST_F_FORK(layout0, unknown_access_rights)
- 	}
- }
- 
-+TEST_F_FORK(layout0, rule_with_unknown_access)
++TEST_F_FORK(layout1, rule_with_unhandled_access)
 +{
-+	__u64 access;
-+	struct landlock_path_beneath_attr path_beneath = {};
-+	const struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_fs = ACCESS_ALL,
++	struct landlock_ruleset_attr ruleset_attr = {
++		.handled_access_fs = LANDLOCK_ACCESS_FS_EXECUTE,
 +	};
-+	const int ruleset_fd =
-+		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
++	struct landlock_path_beneath_attr path_beneath = {};
++	int ruleset_fd;
++	__u64 access;
 +
++	ruleset_fd =
++		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
 +	ASSERT_LE(0, ruleset_fd);
 +
-+	path_beneath.parent_fd =
-+		open(TMP_DIR, O_PATH | O_DIRECTORY | O_CLOEXEC);
++	path_beneath.parent_fd = open(file1_s1d2, O_PATH | O_CLOEXEC);
 +	ASSERT_LE(0, path_beneath.parent_fd);
 +
-+	for (access = 1ULL << 63; access != ACCESS_LAST; access >>= 1) {
++	for (access = 1; access > 0; access <<= 1) {
++		int err;
++
 +		path_beneath.allowed_access = access;
-+		EXPECT_EQ(-1, landlock_add_rule(ruleset_fd,
-+						LANDLOCK_RULE_PATH_BENEATH,
-+						&path_beneath, 0));
-+		EXPECT_EQ(EINVAL, errno);
++		err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
++					&path_beneath, 0);
++		if (access == ruleset_attr.handled_access_fs) {
++			EXPECT_EQ(0, err);
++		} else {
++			EXPECT_EQ(-1, err);
++			EXPECT_EQ(EINVAL, errno);
++		}
 +	}
-+	ASSERT_EQ(0, close(path_beneath.parent_fd));
-+	ASSERT_EQ(0, close(ruleset_fd));
++
++	EXPECT_EQ(0, close(path_beneath.parent_fd));
++	EXPECT_EQ(0, close(ruleset_fd));
 +}
 +
  static void add_path_beneath(struct __test_metadata *const _metadata,
  			     const int ruleset_fd, const __u64 allowed_access,
  			     const char *const path)
 diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
-index 929e21c4db05..83d9abc3ee55 100644
+index 83d9abc3ee55..ea5f727dd257 100644
 --- a/tools/testing/selftests/landlock/net_test.c
 +++ b/tools/testing/selftests/landlock/net_test.c
-@@ -1260,7 +1260,7 @@ TEST_F(mini, network_access_rights)
+@@ -1301,6 +1301,38 @@ TEST_F(mini, rule_with_unknown_access)
+ 	EXPECT_EQ(0, close(ruleset_fd));
  }
  
- /* Checks invalid attribute, out of landlock network access range. */
--TEST_F(mini, unknown_access_rights)
-+TEST_F(mini, ruleset_with_unknown_access)
- {
- 	__u64 access_mask;
- 
-@@ -1276,6 +1276,31 @@ TEST_F(mini, unknown_access_rights)
- 	}
- }
- 
-+TEST_F(mini, rule_with_unknown_access)
++TEST_F(mini, rule_with_unhandled_access)
 +{
-+	const struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_net = ACCESS_ALL,
++	struct landlock_ruleset_attr ruleset_attr = {
++		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
 +	};
 +	struct landlock_net_port_attr net_port = {
 +		.port = sock_port_start,
@@ -137,13 +123,20 @@ index 929e21c4db05..83d9abc3ee55 100644
 +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
 +	ASSERT_LE(0, ruleset_fd);
 +
-+	for (access = 1ULL << 63; access != ACCESS_LAST; access >>= 1) {
++	for (access = 1; access > 0; access <<= 1) {
++		int err;
++
 +		net_port.allowed_access = access;
-+		EXPECT_EQ(-1,
-+			  landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-+					    &net_port, 0));
-+		EXPECT_EQ(EINVAL, errno);
++		err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
++					&net_port, 0);
++		if (access == ruleset_attr.handled_access_net) {
++			EXPECT_EQ(0, err);
++		} else {
++			EXPECT_EQ(-1, err);
++			EXPECT_EQ(EINVAL, errno);
++		}
 +	}
++
 +	EXPECT_EQ(0, close(ruleset_fd));
 +}
 +
