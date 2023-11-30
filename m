@@ -1,88 +1,93 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e3Kh6aLw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E275D66;
-	Wed, 29 Nov 2023 20:03:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701317024; x=1732853024;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cR5Izo2xklzJNmbee5XWcMhiPrBrVwOZxtcbWhIh74g=;
-  b=e3Kh6aLwCSnLADR8vg/1UJGnTqY67GLjGFBU2BF1n67eJGnUZom6zAqh
-   4JSjz291qBhfuWhxYPHMlCVdtxEfW7SNLN1pPWMiuNxt0DFcgjqG3KdV3
-   cwSen/6zfqpr22tX252uWltWSEbNAK7cEAc0IOBdauPFImhHICzv8S+WT
-   FhpeDF3yq9uwDmdLedAxvdKhI7O3/uO/X/KfVyf2D/kEb+RoKYpUZQj3K
-   cfIFddN9TcCTXhtlxWAsjZgWyIlrlD///fnTVqmDLdQn2ZyytWeFyqDBt
-   PuiobjTBRvwN51S3DWhJzCC1XGIm/izj0lQVduyrXDiDTQvmSdFHw1sMX
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="14819195"
-X-IronPort-AV: E=Sophos;i="6.04,237,1695711600"; 
-   d="scan'208";a="14819195"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2023 20:03:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="1016502568"
-X-IronPort-AV: E=Sophos;i="6.04,237,1695711600"; 
-   d="scan'208";a="1016502568"
-Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by fmsmga006.fm.intel.com with ESMTP; 29 Nov 2023 20:03:06 -0800
-Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1r8YGW-0001KE-26;
-	Thu, 30 Nov 2023 04:03:04 +0000
-Date: Thu, 30 Nov 2023 12:02:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
-Cc: oe-kbuild-all@lists.linux.dev, ebiggers@kernel.org, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
-	brauner@kernel.org, viro@zeniv.linux.org.uk, casey@schaufler-ca.com,
-	amir73il@gmail.com, kpsingh@kernel.org, roberto.sassu@huawei.com,
-	kernel-team@meta.com, Song Liu <song@kernel.org>
-Subject: Re: [PATCH v14 bpf-next 6/6] selftests/bpf: Add test that uses
- fsverity and xattr to sign a file
-Message-ID: <202311301002.mGJ2mc2v-lkp@intel.com>
-References: <20231129003656.1165061-7-song@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SwX80EGM"
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A56AA1717;
+	Wed, 29 Nov 2023 21:32:31 -0800 (PST)
+Received: by mail-yb1-xb33.google.com with SMTP id 3f1490d57ef6-db510605572so509812276.0;
+        Wed, 29 Nov 2023 21:32:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701322351; x=1701927151; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KzcdX3G/l13x66KSxdI5x0zUnfQyH8pp0lMS/qUmaXQ=;
+        b=SwX80EGM9VR/C+ZWnvk63cKDDCO2oEhhLFv89BFqpLCpMWwVa4PBzL0Khgq45K5sKQ
+         jyuhyUpWFJLx8X3PwFG33JsQlVc24aLLViY9L4SRsZnTJ0i10BTj5lLs/k0JTVJlpKB2
+         POaZzyKllavchO3mzEEX2UEDsHTFKnsQNyc+Vv0pQsJuoBpAoirwcwUQNm1VTbebKTvX
+         Y3mFQhFFj1LupcZxxF+D+sFDhHTzbRV6w/3tQSwXraQBzryt59lhXWZ206Pib/V5ELBC
+         Fjo+OkW6qJEqaAUQDtHqaUhNLLZ2IM6wkll493yiIYKgBftH95FcFWeZUtklXCd6ez9p
+         HX3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701322351; x=1701927151;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KzcdX3G/l13x66KSxdI5x0zUnfQyH8pp0lMS/qUmaXQ=;
+        b=JG0FrqQytwJ/b1OvwBcDtN+L6yuDp+nj3W/mdATgg830wx4xEdRAFck5h12MDPB0mB
+         LUZ2y6d2US/ogj9YoB8IDepKIdmVD82AtGHl+MxEgHEcgYjvyH/Jtlu5eA/WfMyGpmlq
+         Jpt978hgQqjlCKitAZGE62HX5wYW4yX4koVZSRFc5OnE7gJ6CRAmd4hqTszAnmc4e9sM
+         R00HpqbkYSdnSGotbCgsV0MjKbXM4jKEpD5kflJG5FpZOxZZtZDlmaCypBzgd+Qitdt4
+         xoE04Nk+aq0zb1fTob8olEWFmoPPYTlLm3xLYBh0ZTxCjSlLD5VfE9ZCFJcbOvf/4wG4
+         Te3A==
+X-Gm-Message-State: AOJu0YzJfC60q6xeONg7ChPz3yk6Z5xQmDXA+JUZhua2Hcii/tub12n+
+	RIwLVET6lB5p2soHWFreHGRm4yvHhZxbGsAXWFY=
+X-Google-Smtp-Source: AGHT+IFhpfUEWzyOk2tHJj3SJo7J92Bms3ThL3HO7eHzD0VJ4uYO4OZtZXkKFhIM0XiJOdYC4nQOD8G+OZ+NRh38lOo=
+X-Received: by 2002:a25:fb10:0:b0:da1:b041:70ac with SMTP id
+ j16-20020a25fb10000000b00da1b04170acmr19113357ybe.10.1701322350801; Wed, 29
+ Nov 2023 21:32:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231129003656.1165061-7-song@kernel.org>
+References: <20231129-idmap-fscap-refactor-v1-0-da5a26058a5b@kernel.org> <20231129-idmap-fscap-refactor-v1-7-da5a26058a5b@kernel.org>
+In-Reply-To: <20231129-idmap-fscap-refactor-v1-7-da5a26058a5b@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 30 Nov 2023 07:32:19 +0200
+Message-ID: <CAOQ4uxiz+ng5qEY4qkE_q8Gv3jrd6b7mZnppkDoJthhD+Ud4Ow@mail.gmail.com>
+Subject: Re: [PATCH 07/16] fs: add inode operations to get/set/remove fscaps
+To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>, 
+	Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>, 
+	James Morris <jmorris@namei.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	audit@vger.kernel.org, linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Song,
+On Wed, Nov 29, 2023 at 11:51=E2=80=AFPM Seth Forshee (DigitalOcean)
+<sforshee@kernel.org> wrote:
+>
+> Add inode operations for getting, setting and removing filesystem
+> capabilities rather than passing around raw xattr data. This provides
+> better type safety for ids contained within xattrs.
+>
+> Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> ---
+>  include/linux/fs.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 98b7a7a8c42e..a0a77f67b999 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2002,6 +2002,11 @@ struct inode_operations {
+>                                      int);
+>         int (*set_acl)(struct mnt_idmap *, struct dentry *,
+>                        struct posix_acl *, int);
+> +       int (*get_fscaps)(struct mnt_idmap *, struct dentry *,
+> +                         struct vfs_caps *);
+> +       int (*set_fscaps)(struct mnt_idmap *, struct dentry *,
+> +                         const struct vfs_caps *, int flags);
+> +       int (*remove_fscaps)(struct mnt_idmap *, struct dentry *);
+>         int (*fileattr_set)(struct mnt_idmap *idmap,
+>                             struct dentry *dentry, struct fileattr *fa);
+>         int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
+>
 
-kernel test robot noticed the following build errors:
+Please document in Documentation/filesystems/{vfs,locking}.rst
 
-[auto build test ERROR on bpf-next/master]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Song-Liu/bpf-Add-kfunc-bpf_get_file_xattr/20231129-084133
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20231129003656.1165061-7-song%40kernel.org
-patch subject: [PATCH v14 bpf-next 6/6] selftests/bpf: Add test that uses fsverity and xattr to sign a file
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231130/202311301002.mGJ2mc2v-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202311301002.mGJ2mc2v-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> progs/test_sig_in_xattr.c:36:26: error: invalid application of 'sizeof' to an incomplete type 'struct fsverity_digest'
-      36 | char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) + SHA256_DIGEST_SIZE];
-         |                          ^     ~~~~~~~~~~~~~~~~~~~~~~~~
-   progs/test_sig_in_xattr.c:36:40: note: forward declaration of 'struct fsverity_digest'
-      36 | char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) + SHA256_DIGEST_SIZE];
-         |                                        ^
-   1 error generated.
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Amir.
