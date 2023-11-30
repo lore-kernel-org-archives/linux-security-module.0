@@ -1,293 +1,124 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73EA810D1
-	for <linux-security-module@vger.kernel.org>; Thu, 30 Nov 2023 10:52:52 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5531C10E5
+	for <linux-security-module@vger.kernel.org>; Thu, 30 Nov 2023 10:52:58 -0800 (PST)
 Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AUEfCsE026626
-	for <linux-security-module@vger.kernel.org>; Thu, 30 Nov 2023 10:52:52 -0800
+	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AUEfCsQ026626
+	for <linux-security-module@vger.kernel.org>; Thu, 30 Nov 2023 10:52:58 -0800
 Received: from mail.thefacebook.com ([163.114.132.120])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3upeus6ky0-2
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3upeus6ky0-14
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-security-module@vger.kernel.org>; Thu, 30 Nov 2023 10:52:51 -0800
+	for <linux-security-module@vger.kernel.org>; Thu, 30 Nov 2023 10:52:57 -0800
 Received: from twshared15991.38.frc1.facebook.com (2620:10d:c085:108::8) by
  mail.thefacebook.com (2620:10d:c085:11d::8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.34; Thu, 30 Nov 2023 10:52:44 -0800
+ 15.1.2507.34; Thu, 30 Nov 2023 10:52:45 -0800
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-	id BDD663C60289A; Thu, 30 Nov 2023 10:52:29 -0800 (PST)
+	id A0BAB3C6028E4; Thu, 30 Nov 2023 10:52:40 -0800 (PST)
 From: Andrii Nakryiko <andrii@kernel.org>
 To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <paul@paul-moore.com>,
         <brauner@kernel.org>
 CC: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
         <keescook@chromium.org>, <kernel-team@meta.com>, <sargun@sargun.me>
-Subject: [PATCH v12 bpf-next 00/17] BPF token and BPF FS-based delegation
-Date: Thu, 30 Nov 2023 10:52:12 -0800
-Message-ID: <20231130185229.2688956-1-andrii@kernel.org>
+Subject: [PATCH v12 bpf-next 05/17] bpf: add BPF token support to BPF_BTF_LOAD command
+Date: Thu, 30 Nov 2023 10:52:17 -0800
+Message-ID: <20231130185229.2688956-6-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: foOz1SEGJe1DjxfxO6GS42WqvZz470rR
-X-Proofpoint-ORIG-GUID: foOz1SEGJe1DjxfxO6GS42WqvZz470rR
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+In-Reply-To: <20231130185229.2688956-1-andrii@kernel.org>
+References: <20231130185229.2688956-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: uH7yTJ5wDw3qGEJtkE9FM7c2p7-zv67A
+X-Proofpoint-ORIG-GUID: uH7yTJ5wDw3qGEJtkE9FM7c2p7-zv67A
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2023-11-30_18,2023-11-30_01,2023-05-22_02
 
-This patch set introduces an ability to delegate a subset of BPF subsystem
-functionality from privileged system-wide daemon (e.g., systemd or any other
-container manager) through special mount options for userns-bound BPF FS to
-a *trusted* unprivileged application. Trust is the key here. This
-functionality is not about allowing unconditional unprivileged BPF usage.
-Establishing trust, though, is completely up to the discretion of respective
-privileged application that would create and mount a BPF FS instance with
-delegation enabled, as different production setups can and do achieve it
-through a combination of different means (signing, LSM, code reviews, etc),
-and it's undesirable and infeasible for kernel to enforce any particular way
-of validating trustworthiness of particular process.
+Accept BPF token FD in BPF_BTF_LOAD command to allow BTF data loading
+through delegated BPF token. BTF loading is a pretty straightforward
+operation, so as long as BPF token is created with allow_cmds granting
+BPF_BTF_LOAD command, kernel proceeds to parsing BTF data and creating
+BTF object.
 
-The main motivation for this work is a desire to enable containerized BPF
-applications to be used together with user namespaces. This is currently
-impossible, as CAP_BPF, required for BPF subsystem usage, cannot be namespa=
-ced
-or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to BPF
-helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safely r=
-ead
-arbitrary memory, and it's impossible to ensure that they only read memory =
-of
-processes belonging to any given namespace. This means that it's impossible=
- to
-have a mechanically verifiable namespace-aware CAP_BPF capability, and as s=
-uch
-another mechanism to allow safe usage of BPF functionality is necessary.BPF=
- FS
-delegation mount options and BPF token derived from such BPF FS instance is
-such a mechanism. Kernel makes no assumption about what "trusted" constitut=
-es
-in any particular case, and it's up to specific privileged applications and
-their surrounding infrastructure to decide that. What kernel provides is a =
-set
-of APIs to setup and mount special BPF FS instanecs and derive BPF tokens f=
-rom
-it. BPF FS and BPF token are both bound to its owning userns and in such a =
-way
-are constrained inside intended container. Users can then pass BPF token FD=
- to
-privileged bpf() syscall commands, like BPF map creation and BPF program
-loading, to perform such operations without having init userns privileged.
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ include/uapi/linux/bpf.h       |  1 +
+ kernel/bpf/syscall.c           | 20 ++++++++++++++++++--
+ tools/include/uapi/linux/bpf.h |  1 +
+ 3 files changed, 20 insertions(+), 2 deletions(-)
 
-This version incorporates feedback and suggestions ([3]) received on v3 of
-this patch set, and instead of allowing to create BPF tokens directly assum=
-ing
-capable(CAP_SYS_ADMIN), we instead enhance BPF FS to accept a few new
-delegation mount options. If these options are used and BPF FS itself is
-properly created, set up, and mounted inside the user namespaced container,
-user application is able to derive a BPF token object from BPF FS instance,
-and pass that token to bpf() syscall. As explained in patch #3, BPF token
-itself doesn't grant access to BPF functionality, but instead allows kernel=
- to
-do namespaced capabilities checks (ns_capable() vs capable()) for CAP_BPF,
-CAP_PERFMON, CAP_NET_ADMIN, and CAP_SYS_ADMIN, as applicable. So it forms o=
-ne
-half of a puzzle and allows container managers and sys admins to have safe =
-and
-flexible configuration options: determining which containers get delegation=
- of
-BPF functionality through BPF FS, and then which applications within such
-containers are allowed to perform bpf() commands, based on namespaces
-capabilities.
-
-Previous attempt at addressing this very same problem ([0]) attempted to
-utilize authoritative LSM approach, but was conclusively rejected by upstre=
-am
-LSM maintainers. BPF token concept is not changing anything about LSM
-approach, but can be combined with LSM hooks for very fine-grained security
-policy. Some ideas about making BPF token more convenient to use with LSM (=
-in
-particular custom BPF LSM programs) was briefly described in recent LSF/MM/=
-BPF
-2023 presentation ([1]). E.g., an ability to specify user-provided data
-(context), which in combination with BPF LSM would allow implementing a very
-dynamic and fine-granular custom security policies on top of BPF token. In =
-the
-interest of minimizing API surface area and discussions this was relegated =
-to
-follow up patches, as it's not essential to the fundamental concept of
-delegatable BPF token.
-
-It should be noted that BPF token is conceptually quite similar to the idea=
- of
-/dev/bpf device file, proposed by Song a while ago ([2]). The biggest
-difference is the idea of using virtual anon_inode file to hold BPF token a=
-nd
-allowing multiple independent instances of them, each (potentially) with its
-own set of restrictions. And also, crucially, BPF token approach is not usi=
-ng
-any special stateful task-scoped flags. Instead, bpf() syscall accepts
-token_fd parameters explicitly for each relevant BPF command. This addresses
-main concerns brought up during the /dev/bpf discussion, and fits better wi=
-th
-overall BPF subsystem design.
-
-This patch set adds a basic minimum of functionality to make BPF token idea
-useful and to discuss API and functionality. Currently only low-level libbpf
-APIs support creating and passing BPF token around, allowing to test kernel
-functionality, but for the most part is not sufficient for real-world
-applications, which typically use high-level libbpf APIs based on `struct
-bpf_object` type. This was done with the intent to limit the size of patch =
-set
-and concentrate on mostly kernel-side changes. All the necessary plumbing f=
-or
-libbpf will be sent as a separate follow up patch set kernel support makes =
-it
-upstream.
-
-Another part that should happen once kernel-side BPF token is established, =
-is
-a set of conventions between applications (e.g., systemd), tools (e.g.,
-bpftool), and libraries (e.g., libbpf) on exposing delegatable BPF FS
-instance(s) at well-defined locations to allow applications take advantage =
-of
-this in automatic fashion without explicit code changes on BPF application's
-side. But I'd like to postpone this discussion to after BPF token concept
-lands.
-
-  [0] https://lore.kernel.org/bpf/20230412043300.360803-1-andrii@kernel.org/
-  [1] http://vger.kernel.org/bpfconf2023_material/Trusted_unprivileged_BPF_=
-LSFMM2023.pdf
-  [2] https://lore.kernel.org/bpf/20190627201923.2589391-2-songliubraving@f=
-b.com/
-  [3] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef785e@=
-brauner/
-
-v11->v12:
-  - enforce exact userns match in bpf_token_capable() and
-    bpf_token_allow_cmd() checks, for added strictness (Christian);
-v10->v11:
-  - fix BPF FS root check to disallow using bind-mounted subdirectory of BPF
-    FS instance (Christian);
-  - further restrict BPF_TOKEN_CREATE command to be executed from inside
-    exactly the same user namespace as the one used to create BPF FS instan=
-ce
-    (Christian);
-v9->v10:
-  - slight adjustments in LSM parts (Paul);
-  - setting delegate_xxx  options require capable(CAP_SYS_ADMIN) (Christian=
-);
-  - simplify BPF_TOKEN_CREATE UAPI by accepting BPF FS FD directly (Christi=
-an);
-v8->v9:
-  - fix issue in selftests due to sys/mount.h header (Jiri);
-  - fix warning in doc comments in LSM hooks (kernel test robot);
-v7->v8:
-  - add bpf_token_allow_cmd and bpf_token_capable hooks (Paul);
-  - inline bpf_token_alloc() into bpf_token_create() to prevent accidental
-    divergence with security_bpf_token_create() hook (Paul);
-v6->v7:
-  - separate patches to refactor bpf_prog_alloc/bpf_map_alloc LSM hooks, as
-    discussed with Paul, and now they also accept struct bpf_token;
-  - added bpf_token_create/bpf_token_free to allow LSMs (SELinux,
-    specifically) to set up security LSM blob (Paul);
-  - last patch also wires bpf_security_struct setup by SELinux, similar to =
-how
-    it's done for BPF map/prog, though I'm not sure if that's enough, so wo=
-rst
-    case it's easy to drop this patch if more full fledged SELinux
-    implementation will be done separately;
-  - small fixes for issues caught by code reviews (Jiri, Hou);
-  - fix for test_maps test that doesn't use LIBBPF_OPTS() macro (CI);
-v5->v6:
-  - fix possible use of uninitialized variable in selftests (CI);
-  - don't use anon_inode, instead create one from BPF FS instance (Christia=
-n);
-  - don't store bpf_token inside struct bpf_map, instead pass it explicitly=
- to
-    map_check_btf(). We do store bpf_token inside prog->aux, because it's u=
-sed
-    during verification and even can be checked during attach time for some
-    program types;
-  - LSM hooks are left intact pending the conclusion of discussion with Paul
-    Moore; I'd prefer to do LSM-related changes as a follow up patch set
-    anyways;
-v4->v5:
-  - add pre-patch unifying CAP_NET_ADMIN handling inside kernel/bpf/syscall=
-.c
-    (Paul Moore);
-  - fix build warnings and errors in selftests and kernel, detected by CI a=
-nd
-    kernel test robot;
-v3->v4:
-  - add delegation mount options to BPF FS;
-  - BPF token is derived from the instance of BPF FS and associates itself
-    with BPF FS' owning userns;
-  - BPF token doesn't grant BPF functionality directly, it just turns
-    capable() checks into ns_capable() checks within BPF FS' owning user;
-  - BPF token cannot be pinned;
-v2->v3:
-  - make BPF_TOKEN_CREATE pin created BPF token in BPF FS, and disallow
-    BPF_OBJ_PIN for BPF token;
-v1->v2:
-  - fix build failures on Kconfig with CONFIG_BPF_SYSCALL unset;
-  - drop BPF_F_TOKEN_UNKNOWN_* flags and simplify UAPI (Stanislav).
-
-Andrii Nakryiko (17):
-  bpf: align CAP_NET_ADMIN checks with bpf_capable() approach
-  bpf: add BPF token delegation mount options to BPF FS
-  bpf: introduce BPF token object
-  bpf: add BPF token support to BPF_MAP_CREATE command
-  bpf: add BPF token support to BPF_BTF_LOAD command
-  bpf: add BPF token support to BPF_PROG_LOAD command
-  bpf: take into account BPF token when fetching helper protos
-  bpf: consistently use BPF token throughout BPF verifier logic
-  bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free LSM hooks
-  bpf,lsm: refactor bpf_map_alloc/bpf_map_free LSM hooks
-  bpf,lsm: add BPF token LSM hooks
-  libbpf: add bpf_token_create() API
-  libbpf: add BPF token support to bpf_map_create() API
-  libbpf: add BPF token support to bpf_btf_load() API
-  libbpf: add BPF token support to bpf_prog_load() API
-  selftests/bpf: add BPF token-enabled tests
-  bpf,selinux: allocate bpf_security_struct per BPF token
-
- drivers/media/rc/bpf-lirc.c                   |   2 +-
- include/linux/bpf.h                           |  83 ++-
- include/linux/filter.h                        |   2 +-
- include/linux/lsm_hook_defs.h                 |  15 +-
- include/linux/security.h                      |  43 +-
- include/uapi/linux/bpf.h                      |  42 ++
- kernel/bpf/Makefile                           |   2 +-
- kernel/bpf/arraymap.c                         |   2 +-
- kernel/bpf/bpf_lsm.c                          |  15 +-
- kernel/bpf/cgroup.c                           |   6 +-
- kernel/bpf/core.c                             |   3 +-
- kernel/bpf/helpers.c                          |   6 +-
- kernel/bpf/inode.c                            | 101 ++-
- kernel/bpf/syscall.c                          | 215 ++++--
- kernel/bpf/token.c                            | 263 +++++++
- kernel/bpf/verifier.c                         |  13 +-
- kernel/trace/bpf_trace.c                      |   2 +-
- net/core/filter.c                             |  36 +-
- net/ipv4/bpf_tcp_ca.c                         |   2 +-
- net/netfilter/nf_bpf_link.c                   |   2 +-
- security/security.c                           | 101 ++-
- security/selinux/hooks.c                      |  47 +-
- tools/include/uapi/linux/bpf.h                |  42 ++
- tools/lib/bpf/bpf.c                           |  28 +-
- tools/lib/bpf/bpf.h                           |  35 +-
- tools/lib/bpf/libbpf.map                      |   1 +
- .../selftests/bpf/prog_tests/libbpf_probes.c  |   4 +
- .../selftests/bpf/prog_tests/libbpf_str.c     |   6 +
- .../testing/selftests/bpf/prog_tests/token.c  | 672 ++++++++++++++++++
- 29 files changed, 1624 insertions(+), 167 deletions(-)
- create mode 100644 kernel/bpf/token.c
- create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
-
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index 0bba3392b17a..9f9989e0d062 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -1616,6 +1616,7 @@ union bpf_attr {
+ 		 * truncated), or smaller (if log buffer wasn't filled completely).
+ 		 */
+ 		__u32		btf_log_true_size;
++		__u32		btf_token_fd;
+ 	};
+=20
+ 	struct {
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index e004786290dc..a31b19c9a3c8 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -4752,15 +4752,31 @@ static int bpf_obj_get_info_by_fd(const union bpf=
+_attr *attr,
+ 	return err;
+ }
+=20
+-#define BPF_BTF_LOAD_LAST_FIELD btf_log_true_size
++#define BPF_BTF_LOAD_LAST_FIELD btf_token_fd
+=20
+ static int bpf_btf_load(const union bpf_attr *attr, bpfptr_t uattr, __u3=
+2 uattr_size)
+ {
++	struct bpf_token *token =3D NULL;
++
+ 	if (CHECK_ATTR(BPF_BTF_LOAD))
+ 		return -EINVAL;
+=20
+-	if (!bpf_capable())
++	if (attr->btf_token_fd) {
++		token =3D bpf_token_get_from_fd(attr->btf_token_fd);
++		if (IS_ERR(token))
++			return PTR_ERR(token);
++		if (!bpf_token_allow_cmd(token, BPF_BTF_LOAD)) {
++			bpf_token_put(token);
++			token =3D NULL;
++		}
++	}
++
++	if (!bpf_token_capable(token, CAP_BPF)) {
++		bpf_token_put(token);
+ 		return -EPERM;
++	}
++
++	bpf_token_put(token);
+=20
+ 	return btf_new_fd(attr, uattr, uattr_size);
+ }
+diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bp=
+f.h
+index 0bba3392b17a..9f9989e0d062 100644
+--- a/tools/include/uapi/linux/bpf.h
++++ b/tools/include/uapi/linux/bpf.h
+@@ -1616,6 +1616,7 @@ union bpf_attr {
+ 		 * truncated), or smaller (if log buffer wasn't filled completely).
+ 		 */
+ 		__u32		btf_log_true_size;
++		__u32		btf_token_fd;
+ 	};
+=20
+ 	struct {
 --=20
 2.34.1
 
