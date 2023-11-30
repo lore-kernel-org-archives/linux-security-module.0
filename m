@@ -1,46 +1,45 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC7A3B1BE;
-	Wed, 29 Nov 2023 23:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rYezgH8X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 673AAC433C8;
-	Wed, 29 Nov 2023 23:45:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701301505;
-	bh=QWH6A5tUBIHMiyZDMSFODo9q0lhRIXs/OYgNZmAhGkY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rYezgH8Xvb3XWH+WqcnOtVe64c3yeGOXARezYucxvnzFqm19R7SqpChGwHHvf8Q/l
-	 mF2vuiwp7zb95Xtrkn4KlfIpOXD2eMnOzN+3YpqLGwBoShW95Lro7rL+AbcU6T2J3m
-	 oXdRm3f0sCr1Yq8Y/SEUlml0ZNGqN+ms2aH25sYZKVLzivtZ97twukzqSpapfs5PhF
-	 I93MWqECMuLOINpvO2q8PRSgBWYMXoMv30AX9zv1dDBU5C1cDF5qIjEBOB50zGvU53
-	 Fgs8oQlgLQxUKpTzd/5JtPUmdxl0wvIRrTgSuQ78RwW8IRdUDFozcDugJp65+8AWq6
-	 41YGPk5v9O0DA==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	fsverity@lists.linux.dev
-Cc: ebiggers@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	brauner@kernel.org,
-	viro@zeniv.linux.org.uk,
-	casey@schaufler-ca.com,
-	amir73il@gmail.com,
-	kpsingh@kernel.org,
-	roberto.sassu@huawei.com,
-	kernel-team@meta.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v15 bpf-next 6/6] selftests/bpf: Add test that uses fsverity and xattr to sign a file
-Date: Wed, 29 Nov 2023 15:44:17 -0800
-Message-Id: <20231129234417.856536-7-song@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231129234417.856536-1-song@kernel.org>
-References: <20231129234417.856536-1-song@kernel.org>
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="SNlQhdaR"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37A81BC;
+	Wed, 29 Nov 2023 16:37:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1701304640; x=1732840640;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=gZHtxMLuq2rTH5TQ4Whbm6hr8hi2bU/215bnbJKdOTo=;
+  b=SNlQhdaRCh9tMWNatxvpPK6iyuIXqVlqYtTwrW4gmC/10NXaWYghZtcc
+   2aJcTh0c4dQox6s/5yp/mZlNnnUorsEvCC4shbqUhZShrpFgANiBrPT08
+   xSC1JNER7CAihcYvf0pvkyYpx2GIQXE93f/MSqOmSoNtJHc4ImG4CZtBd
+   M=;
+X-IronPort-AV: E=Sophos;i="6.04,237,1695686400"; 
+   d="scan'208";a="365700991"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-iad-1a-m6i4x-9fe6ad2f.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2023 00:37:19 +0000
+Received: from smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev (iad7-ws-svc-p70-lb3-vlan3.iad.amazon.com [10.32.235.38])
+	by email-inbound-relay-iad-1a-m6i4x-9fe6ad2f.us-east-1.amazon.com (Postfix) with ESMTPS id 72524803F3;
+	Thu, 30 Nov 2023 00:37:18 +0000 (UTC)
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.38.20:44372]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.54.99:2525] with esmtp (Farcaster)
+ id 28d82deb-a504-4c09-95be-bbb50a6ee114; Thu, 30 Nov 2023 00:37:17 +0000 (UTC)
+X-Farcaster-Flow-ID: 28d82deb-a504-4c09-95be-bbb50a6ee114
+Received: from EX19D010UWA004.ant.amazon.com (10.13.138.204) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.39; Thu, 30 Nov 2023 00:37:17 +0000
+Received: from dev-dsk-kamatam-2b-b66a5860.us-west-2.amazon.com (10.169.6.191)
+ by EX19D010UWA004.ant.amazon.com (10.13.138.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.39; Thu, 30 Nov 2023 00:37:17 +0000
+From: Munehisa Kamata <kamatam@amazon.com>
+To: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>, "Munehisa
+ Kamata" <kamatam@amazon.com>
+Subject: [PATCH] proc: Update inode upon changing task security attribute
+Date: Thu, 30 Nov 2023 00:37:04 +0000
+Message-ID: <20231130003704.31928-1-kamatam@amazon.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -48,399 +47,105 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D044UWB003.ant.amazon.com (10.13.139.168) To
+ EX19D010UWA004.ant.amazon.com (10.13.138.204)
 
-This selftests shows a proof of concept method to use BPF LSM to enforce
-file signature. This test is added to verify_pkcs7_sig, so that some
-existing logic can be reused.
+I'm not clear whether VFS is a better (or worse) place[1] to fix the
+problem described below and would like to hear opinion.
 
-This file signature method uses fsverity, which provides reliable and
-efficient hash (known as digest) of the file. The file digest is signed
-with asymmetic key, and the signature is stored in xattr. At the run time,
-BPF LSM reads file digest and the signature, and then checks them against
-the public key.
+If the /proc/[pid] directory is bind-mounted on a system with Smack
+enabled, and if the task updates its current security attribute, the task
+may lose access to files in its own /proc/[pid] through the mountpoint.
 
-Note that this solution does NOT require FS_VERITY_BUILTIN_SIGNATURES.
-fsverity is only used to provide file digest. The signature verification
-and access control is all implemented in BPF LSM.
+ $ sudo capsh --drop=cap_mac_override --
+ # mkdir -p dir
+ # mount --bind /proc/$$ dir
+ # echo AAA > /proc/$$/task/current		# assuming built-in echo
+ # cat /proc/$$/task/current			# revalidate
+ AAA
+ # echo BBB > dir/attr/current
+ # cat dir/attr/current
+ cat: dir/attr/current: Permission denied
+ # ls dir/
+ ls: cannot access dir/: Permission denied
+ # cat /proc/$$/attr/current			# revalidate
+ BBB
+ # cat dir/attr/current
+ BBB
+ # echo CCC > /proc/$$/attr/current
+ # cat dir/attr/current
+ cat: dir/attr/current: Permission denied
 
-Signed-off-by: Song Liu <song@kernel.org>
+This happens because path lookup doesn't revalidate the dentry of the
+/proc/[pid] when traversing the filesystem boundary, so the inode security
+blob of the /proc/[pid] doesn't get updated with the new task security
+attribute. Then, this may lead security modules to deny an access to the
+directory. Looking at the code[2] and the /proc/pid/attr/current entry in
+proc man page, seems like the same could happen with SELinux. Though, I
+didn't find relevant reports.
+
+The steps above are quite artificial. I actually encountered such an
+unexpected denial of access with an in-house application sandbox
+framework; each app has its own dedicated filesystem tree where the
+process's /proc/[pid] is bind-mounted to and the app enters into via
+chroot.
+
+With this patch, writing to /proc/[pid]/attr/current (and its per-security
+module variant) updates the inode security blob of /proc/[pid] or
+/proc/[pid]/task/[tid] (when pid != tid) with the new attribute.
+
+[1] https://lkml.kernel.org/linux-fsdevel/4A2D15AF.8090000@sun.com/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/security/selinux/hooks.c#n4220
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Munehisa Kamata <kamatam@amazon.com>
 ---
- tools/testing/selftests/bpf/bpf_kfuncs.h      |   7 +
- .../bpf/prog_tests/verify_pkcs7_sig.c         | 165 +++++++++++++++++-
- .../selftests/bpf/progs/test_sig_in_xattr.c   |  83 +++++++++
- .../bpf/progs/test_verify_pkcs7_sig.c         |   8 +-
- .../testing/selftests/bpf/verify_sig_setup.sh |  25 +++
- 5 files changed, 280 insertions(+), 8 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/progs/test_sig_in_xattr.c
+ fs/proc/base.c | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/selftests/bpf/bpf_kfuncs.h
-index c2c084a44eae..b4e78c1eb37b 100644
---- a/tools/testing/selftests/bpf/bpf_kfuncs.h
-+++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
-@@ -58,4 +58,11 @@ void *bpf_rdonly_cast(void *obj, __u32 btf_id) __ksym;
- extern int bpf_get_file_xattr(struct file *file, const char *name,
- 			      struct bpf_dynptr *value_ptr) __ksym;
- extern int bpf_get_fsverity_digest(struct file *file, struct bpf_dynptr *digest_ptr) __ksym;
-+
-+extern struct bpf_key *bpf_lookup_user_key(__u32 serial, __u64 flags) __ksym;
-+extern struct bpf_key *bpf_lookup_system_key(__u64 id) __ksym;
-+extern void bpf_key_put(struct bpf_key *key) __ksym;
-+extern int bpf_verify_pkcs7_signature(struct bpf_dynptr *data_ptr,
-+				      struct bpf_dynptr *sig_ptr,
-+				      struct bpf_key *trusted_keyring) __ksym;
- #endif
-diff --git a/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c b/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c
-index dd7f2bc70048..6c90372b772d 100644
---- a/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c
-+++ b/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c
-@@ -16,9 +16,12 @@
- #include <sys/wait.h>
- #include <sys/mman.h>
- #include <linux/keyctl.h>
-+#include <sys/xattr.h>
-+#include <linux/fsverity.h>
- #include <test_progs.h>
- 
- #include "test_verify_pkcs7_sig.skel.h"
-+#include "test_sig_in_xattr.skel.h"
- 
- #define MAX_DATA_SIZE (1024 * 1024)
- #define MAX_SIG_SIZE 1024
-@@ -26,6 +29,10 @@
- #define VERIFY_USE_SECONDARY_KEYRING (1UL)
- #define VERIFY_USE_PLATFORM_KEYRING  (2UL)
- 
-+#ifndef SHA256_DIGEST_SIZE
-+#define SHA256_DIGEST_SIZE      32
-+#endif
-+
- /* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
- #define MODULE_SIG_STRING "~Module signature appended~\n"
- 
-@@ -254,7 +261,7 @@ static int populate_data_item_mod(struct data *data_item)
- 	return ret;
- }
- 
--void test_verify_pkcs7_sig(void)
-+static void test_verify_pkcs7_sig_from_map(void)
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index dd31e3b6bf77..bdb7bea53475 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -2741,6 +2741,7 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
  {
- 	libbpf_print_fn_t old_print_cb;
- 	char tmp_dir_template[] = "/tmp/verify_sigXXXXXX";
-@@ -400,3 +407,159 @@ void test_verify_pkcs7_sig(void)
- 	skel->bss->monitored_pid = 0;
- 	test_verify_pkcs7_sig__destroy(skel);
- }
+ 	struct inode * inode = file_inode(file);
+ 	struct task_struct *task;
++	const char *name = file->f_path.dentry->d_name.name;
+ 	void *page;
+ 	int rv;
+ 
+@@ -2784,10 +2785,26 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+ 	if (rv < 0)
+ 		goto out_free;
+ 
+-	rv = security_setprocattr(PROC_I(inode)->op.lsm,
+-				  file->f_path.dentry->d_name.name, page,
+-				  count);
++	rv = security_setprocattr(PROC_I(inode)->op.lsm, name, page, count);
+ 	mutex_unlock(&current->signal->cred_guard_mutex);
 +
-+static int get_signature_size(const char *sig_path)
-+{
-+	struct stat st;
++	/*
++	 *  Update the inode security blob in advance if the task's security
++	 *  attribute was updated
++	 */
++	if (rv > 0 && !strcmp(name, "current")) {
++		struct pid *pid;
++		struct proc_inode *cur, *ei;
 +
-+	if (stat(sig_path, &st) == -1)
-+		return -1;
-+
-+	return st.st_size;
-+}
-+
-+static int add_signature_to_xattr(const char *data_path, const char *sig_path)
-+{
-+	char sig[MAX_SIG_SIZE] = {0};
-+	int fd, size, ret;
-+
-+	if (sig_path) {
-+		fd = open(sig_path, O_RDONLY);
-+		if (fd < 0)
-+			return -1;
-+
-+		size = read(fd, sig, MAX_SIG_SIZE);
-+		close(fd);
-+		if (size <= 0)
-+			return -1;
-+	} else {
-+		/* no sig_path, just write 32 bytes of zeros */
-+		size = 32;
-+	}
-+	ret = setxattr(data_path, "user.sig", sig, size, 0);
-+	if (!ASSERT_OK(ret, "setxattr"))
-+		return -1;
-+
-+	return 0;
-+}
-+
-+static int test_open_file(struct test_sig_in_xattr *skel, char *data_path,
-+			  pid_t pid, bool should_success, char *name)
-+{
-+	int ret;
-+
-+	skel->bss->monitored_pid = pid;
-+	ret = open(data_path, O_RDONLY);
-+	close(ret);
-+	skel->bss->monitored_pid = 0;
-+
-+	if (should_success) {
-+		if (!ASSERT_GE(ret, 0, name))
-+			return -1;
-+	} else {
-+		if (!ASSERT_LT(ret, 0, name))
-+			return -1;
-+	}
-+	return 0;
-+}
-+
-+static void test_pkcs7_sig_fsverity(void)
-+{
-+	char data_path[PATH_MAX];
-+	char sig_path[PATH_MAX];
-+	char tmp_dir_template[] = "/tmp/verify_sigXXXXXX";
-+	char *tmp_dir;
-+	struct test_sig_in_xattr *skel = NULL;
-+	pid_t pid;
-+	int ret;
-+
-+	tmp_dir = mkdtemp(tmp_dir_template);
-+	if (!ASSERT_OK_PTR(tmp_dir, "mkdtemp"))
-+		return;
-+
-+	snprintf(data_path, PATH_MAX, "%s/data-file", tmp_dir);
-+	snprintf(sig_path, PATH_MAX, "%s/sig-file", tmp_dir);
-+
-+	ret = _run_setup_process(tmp_dir, "setup");
-+	if (!ASSERT_OK(ret, "_run_setup_process"))
-+		goto out;
-+
-+	ret = _run_setup_process(tmp_dir, "fsverity-create-sign");
-+
-+	if (ret) {
-+		printf("%s: SKIP: fsverity [sign|enable] doesn't work.\n"
-+		       "To run this test, try enable CONFIG_FS_VERITY and enable FSVerity for the filesystem.\n",
-+		       __func__);
-+		test__skip();
-+		goto out;
++		rcu_read_lock();
++		pid = get_task_pid(current, PIDTYPE_PID);
++		hlist_for_each_entry(cur, &pid->inodes, sibling_inodes)
++			ei = cur;
++		put_pid(pid);
++		pid_update_inode(current, &ei->vfs_inode);
++		rcu_read_unlock();
 +	}
 +
-+	skel = test_sig_in_xattr__open();
-+	if (!ASSERT_OK_PTR(skel, "test_sig_in_xattr__open"))
-+		goto out;
-+	ret = get_signature_size(sig_path);
-+	if (!ASSERT_GT(ret, 0, "get_signaure_size"))
-+		goto out;
-+	skel->bss->sig_size = ret;
-+	skel->bss->user_keyring_serial = syscall(__NR_request_key, "keyring",
-+						 "ebpf_testing_keyring", NULL,
-+						 KEY_SPEC_SESSION_KEYRING);
-+	memcpy(skel->bss->digest, "FSVerity", 8);
-+
-+	ret = test_sig_in_xattr__load(skel);
-+	if (!ASSERT_OK(ret, "test_sig_in_xattr__load"))
-+		goto out;
-+
-+	ret = test_sig_in_xattr__attach(skel);
-+	if (!ASSERT_OK(ret, "test_sig_in_xattr__attach"))
-+		goto out;
-+
-+	pid = getpid();
-+
-+	/* Case 1: fsverity is not enabled, open should succeed */
-+	if (test_open_file(skel, data_path, pid, true, "open_1"))
-+		goto out;
-+
-+	/* Case 2: fsverity is enabled, xattr is missing, open should
-+	 * fail
-+	 */
-+	ret = _run_setup_process(tmp_dir, "fsverity-enable");
-+	if (!ASSERT_OK(ret, "fsverity-enable"))
-+		goto out;
-+	if (test_open_file(skel, data_path, pid, false, "open_2"))
-+		goto out;
-+
-+	/* Case 3: fsverity is enabled, xattr has valid signature, open
-+	 * should succeed
-+	 */
-+	ret = add_signature_to_xattr(data_path, sig_path);
-+	if (!ASSERT_OK(ret, "add_signature_to_xattr_1"))
-+		goto out;
-+
-+	if (test_open_file(skel, data_path, pid, true, "open_3"))
-+		goto out;
-+
-+	/* Case 4: fsverity is enabled, xattr has invalid signature, open
-+	 * should fail
-+	 */
-+	ret = add_signature_to_xattr(data_path, NULL);
-+	if (!ASSERT_OK(ret, "add_signature_to_xattr_2"))
-+		goto out;
-+	test_open_file(skel, data_path, pid, false, "open_4");
-+
-+out:
-+	_run_setup_process(tmp_dir, "cleanup");
-+	if (!skel)
-+		return;
-+
-+	skel->bss->monitored_pid = 0;
-+	test_sig_in_xattr__destroy(skel);
-+}
-+
-+void test_verify_pkcs7_sig(void)
-+{
-+	if (test__start_subtest("pkcs7_sig_from_map"))
-+		test_verify_pkcs7_sig_from_map();
-+	if (test__start_subtest("pkcs7_sig_fsverity"))
-+		test_pkcs7_sig_fsverity();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_sig_in_xattr.c b/tools/testing/selftests/bpf/progs/test_sig_in_xattr.c
-new file mode 100644
-index 000000000000..2f0eb1334d65
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_sig_in_xattr.c
-@@ -0,0 +1,83 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
-+
-+#include "vmlinux.h"
-+#include <errno.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include "bpf_kfuncs.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+#ifndef SHA256_DIGEST_SIZE
-+#define SHA256_DIGEST_SIZE      32
-+#endif
-+
-+#define MAX_SIG_SIZE 1024
-+
-+/* By default, "fsverity sign" signs a file with fsverity_formatted_digest
-+ * of the file. fsverity_formatted_digest on the kernel side is only used
-+ * with CONFIG_FS_VERITY_BUILTIN_SIGNATURES. However, BPF LSM doesn't not
-+ * require CONFIG_FS_VERITY_BUILTIN_SIGNATURES, so vmlinux.h may not have
-+ * fsverity_formatted_digest. In this test, we intentionally avoid using
-+ * fsverity_formatted_digest.
-+ *
-+ * Luckily, fsverity_formatted_digest is simply 8-byte magic followed by
-+ * fsverity_digest. We use a char array of size fsverity_formatted_digest
-+ * plus SHA256_DIGEST_SIZE. The magic part of it is filled by user space,
-+ * and the rest of it is filled by bpf_get_fsverity_digest.
-+ *
-+ * Note that, generating signatures based on fsverity_formatted_digest is
-+ * the design choice of this selftest (and "fsverity sign"). With BPF
-+ * LSM, we have the flexibility to generate signature based on other data
-+ * sets, for example, fsverity_digest or only the digest[] part of it.
-+ */
-+#define MAGIC_SIZE 8
-+#define SIZEOF_STRUCT_FSVERITY_DIGEST 4  /* sizeof(struct fsverity_digest) */
-+char digest[MAGIC_SIZE + SIZEOF_STRUCT_FSVERITY_DIGEST + SHA256_DIGEST_SIZE];
-+
-+__u32 monitored_pid;
-+char sig[MAX_SIG_SIZE];
-+__u32 sig_size;
-+__u32 user_keyring_serial;
-+
-+SEC("lsm.s/file_open")
-+int BPF_PROG(test_file_open, struct file *f)
-+{
-+	struct bpf_dynptr digest_ptr, sig_ptr;
-+	struct bpf_key *trusted_keyring;
-+	__u32 pid;
-+	int ret;
-+
-+	pid = bpf_get_current_pid_tgid() >> 32;
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	/* digest_ptr points to fsverity_digest */
-+	bpf_dynptr_from_mem(digest + MAGIC_SIZE, sizeof(digest) - MAGIC_SIZE, 0, &digest_ptr);
-+
-+	ret = bpf_get_fsverity_digest(f, &digest_ptr);
-+	/* No verity, allow access */
-+	if (ret < 0)
-+		return 0;
-+
-+	/* Move digest_ptr to fsverity_formatted_digest */
-+	bpf_dynptr_from_mem(digest, sizeof(digest), 0, &digest_ptr);
-+
-+	/* Read signature from xattr */
-+	bpf_dynptr_from_mem(sig, sizeof(sig), 0, &sig_ptr);
-+	ret = bpf_get_file_xattr(f, "user.sig", &sig_ptr);
-+	/* No signature, reject access */
-+	if (ret < 0)
-+		return -EPERM;
-+
-+	trusted_keyring = bpf_lookup_user_key(user_keyring_serial, 0);
-+	if (!trusted_keyring)
-+		return -ENOENT;
-+
-+	/* Verify signature */
-+	ret = bpf_verify_pkcs7_signature(&digest_ptr, &sig_ptr, trusted_keyring);
-+
-+	bpf_key_put(trusted_keyring);
-+	return ret;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c b/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
-index 7748cc23de8a..f42e9f3831a1 100644
---- a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
-+++ b/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
-@@ -10,17 +10,11 @@
- #include <errno.h>
- #include <bpf/bpf_helpers.h>
- #include <bpf/bpf_tracing.h>
-+#include "bpf_kfuncs.h"
- 
- #define MAX_DATA_SIZE (1024 * 1024)
- #define MAX_SIG_SIZE 1024
- 
--extern struct bpf_key *bpf_lookup_user_key(__u32 serial, __u64 flags) __ksym;
--extern struct bpf_key *bpf_lookup_system_key(__u64 id) __ksym;
--extern void bpf_key_put(struct bpf_key *key) __ksym;
--extern int bpf_verify_pkcs7_signature(struct bpf_dynptr *data_ptr,
--				      struct bpf_dynptr *sig_ptr,
--				      struct bpf_key *trusted_keyring) __ksym;
--
- __u32 monitored_pid;
- __u32 user_keyring_serial;
- __u64 system_keyring_id;
-diff --git a/tools/testing/selftests/bpf/verify_sig_setup.sh b/tools/testing/selftests/bpf/verify_sig_setup.sh
-index ba08922b4a27..f2cac42298ba 100755
---- a/tools/testing/selftests/bpf/verify_sig_setup.sh
-+++ b/tools/testing/selftests/bpf/verify_sig_setup.sh
-@@ -60,6 +60,27 @@ cleanup() {
- 	rm -rf ${tmp_dir}
- }
- 
-+fsverity_create_sign_file() {
-+	local tmp_dir="$1"
-+
-+	data_file=${tmp_dir}/data-file
-+	sig_file=${tmp_dir}/sig-file
-+	dd if=/dev/urandom of=$data_file bs=1 count=12345 2> /dev/null
-+	fsverity sign --key ${tmp_dir}/signing_key.pem $data_file $sig_file
-+
-+	# We do not want to enable fsverity on $data_file yet. Try whether
-+	# the file system support fsverity on a different file.
-+	touch ${tmp_dir}/tmp-file
-+	fsverity enable ${tmp_dir}/tmp-file
-+}
-+
-+fsverity_enable_file() {
-+	local tmp_dir="$1"
-+
-+	data_file=${tmp_dir}/data-file
-+	fsverity enable $data_file
-+}
-+
- catch()
- {
- 	local exit_code="$1"
-@@ -86,6 +107,10 @@ main()
- 		setup "${tmp_dir}"
- 	elif [[ "${action}" == "cleanup" ]]; then
- 		cleanup "${tmp_dir}"
-+	elif [[ "${action}" == "fsverity-create-sign" ]]; then
-+		fsverity_create_sign_file "${tmp_dir}"
-+	elif [[ "${action}" == "fsverity-enable" ]]; then
-+		fsverity_enable_file "${tmp_dir}"
- 	else
- 		echo "Unknown action: ${action}"
- 		exit 1
+ out_free:
+ 	kfree(page);
+ out:
 -- 
-2.34.1
+2.40.1
 
