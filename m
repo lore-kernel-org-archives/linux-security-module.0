@@ -1,206 +1,352 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VClaQUPo"
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A952D10EA;
-	Thu, 30 Nov 2023 10:35:59 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-a1882023bbfso140719566b.3;
-        Thu, 30 Nov 2023 10:35:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701369358; x=1701974158; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j0ZuOjmtVHlX0ubp6onvOS4SnKgdwsygvRAPYLPj5Bk=;
-        b=VClaQUPoMm3HrD4O9OjZ+GMdSY65hI0RPDnB5/uv2AJdZ/K6dEpNsbvDkEnJwrdMzx
-         R/ZwthoENl1ma5LsRAxS1WZqN3PO1VsQjMJv6PWlXaln02sFFxSE+TYg12k4vbCW5QfL
-         VVbfwRBaJ6BNkH6rEz52xtxgrFeFQ9JE+CaVBhG8JLJXDGmUL4fASFTh/WzPvnns9SQw
-         dRRlEpGVQYwFawRsaXAlZzkXmkxfUfwzRjwPfp307i/6ucwYwrHFBFt6iFyA+uyA2yTN
-         y6LmeJkY8e/tKMFw9BzC8t9ULdg3/KzmFobXz/IwUqcr3gU65Ad//sSN/dva0awB0b8T
-         wuTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701369358; x=1701974158;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j0ZuOjmtVHlX0ubp6onvOS4SnKgdwsygvRAPYLPj5Bk=;
-        b=J8T3Nf9BrFM18dYiBj8jwGnX8Det9o5kFjeF3Qib14gPowNq7lOE5TdjwGVqpalh48
-         Ip1DB0R4ZaIyV3DJeCHQyeBHPuceoHuqwXRnIZszQZaCNQX2tWrOqhqCG8trZs/8M00x
-         gnbKqb2Myj5PfgpMXEb3EPHRRUthtkQRdukB7FtRY2PgMqFoCSJGTq+lNro160cM2Fq9
-         EUYscLLmdT54vDv1kWPY5BpwXoSkTqdjq8p1bcGRDcQAl00b21NManBgVNXXaG8wdnFu
-         GQm4AdDC1mFdJN8qz9cct1ZLRoAXDJrMv5gK11cpYecGpKt/eM4rkIjB5nBlt2LbzSzE
-         q7Mg==
-X-Gm-Message-State: AOJu0Yyn4vnnqDZcny2qgTENq8G9lhqHC8jG0kxX78Lvw4W4+VwMSXoN
-	lLbVO9kk0s3QPGIJQCZnEQZQ07ESZGEGqBUI1kD+xUOy
-X-Google-Smtp-Source: AGHT+IGIBH8l0IRBM5I7fwjL4au6/JL5XgUgQma4YCeHzWocvzxDOGysPlgCPKQFgWRiAKTrYRHY2EhCVQJG+08hf58=
-X-Received: by 2002:a50:aad8:0:b0:54b:10a8:ad6f with SMTP id
- r24-20020a50aad8000000b0054b10a8ad6fmr1119edc.40.1701367070000; Thu, 30 Nov
- 2023 09:57:50 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8421310E3
+	for <linux-security-module@vger.kernel.org>; Thu, 30 Nov 2023 10:52:47 -0800 (PST)
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AUIpbPf031280
+	for <linux-security-module@vger.kernel.org>; Thu, 30 Nov 2023 10:52:46 -0800
+Received: from maileast.thefacebook.com ([163.114.130.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3uphtvwe4f-3
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-security-module@vger.kernel.org>; Thu, 30 Nov 2023 10:52:46 -0800
+Received: from twshared15232.14.prn3.facebook.com (2620:10d:c0a8:1c::1b) by
+ mail.thefacebook.com (2620:10d:c0a8:82::b) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.34; Thu, 30 Nov 2023 10:52:44 -0800
+Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
+	id 532CF3C6028D1; Thu, 30 Nov 2023 10:52:38 -0800 (PST)
+From: Andrii Nakryiko <andrii@kernel.org>
+To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <paul@paul-moore.com>,
+        <brauner@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+        <keescook@chromium.org>, <kernel-team@meta.com>, <sargun@sargun.me>
+Subject: [PATCH v12 bpf-next 04/17] bpf: add BPF token support to BPF_MAP_CREATE command
+Date: Thu, 30 Nov 2023 10:52:16 -0800
+Message-ID: <20231130185229.2688956-5-andrii@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231130185229.2688956-1-andrii@kernel.org>
+References: <20231130185229.2688956-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231127190409.2344550-1-andrii@kernel.org> <20231127190409.2344550-4-andrii@kernel.org>
- <CAEf4BzauJjmqMdgqBrsvmXjATj4s6Om94BV471LwwdmJpx3PjQ@mail.gmail.com> <20231130-katzen-anhand-7ad530f187da@brauner>
-In-Reply-To: <20231130-katzen-anhand-7ad530f187da@brauner>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 30 Nov 2023 09:57:37 -0800
-Message-ID: <CAEf4BzZA2or352VkAaBsr+fsWAGO1Cs_gonH7Ffm5emXGE+2Ug@mail.gmail.com>
-Subject: Re: [PATCH v11 bpf-next 03/17] bpf: introduce BPF token object
-To: Christian Brauner <brauner@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	paul@paul-moore.com, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keescook@chromium.org, 
-	kernel-team@meta.com, sargun@sargun.me
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: 9vWG_vHGxHrGVQQtoPI7jWyKSavkJymK
+X-Proofpoint-GUID: 9vWG_vHGxHrGVQQtoPI7jWyKSavkJymK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-30_18,2023-11-30_01,2023-05-22_02
 
-On Thu, Nov 30, 2023 at 6:27=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Tue, Nov 28, 2023 at 04:05:36PM -0800, Andrii Nakryiko wrote:
-> > On Mon, Nov 27, 2023 at 11:06=E2=80=AFAM Andrii Nakryiko <andrii@kernel=
-.org> wrote:
-> > >
-> > > Add new kind of BPF kernel object, BPF token. BPF token is meant to
-> > > allow delegating privileged BPF functionality, like loading a BPF
-> > > program or creating a BPF map, from privileged process to a *trusted*
-> > > unprivileged process, all while having a good amount of control over =
-which
-> > > privileged operations could be performed using provided BPF token.
-> > >
-> > > This is achieved through mounting BPF FS instance with extra delegati=
-on
-> > > mount options, which determine what operations are delegatable, and a=
-lso
-> > > constraining it to the owning user namespace (as mentioned in the
-> > > previous patch).
-> > >
-> > > BPF token itself is just a derivative from BPF FS and can be created
-> > > through a new bpf() syscall command, BPF_TOKEN_CREATE, which accepts =
-BPF
-> > > FS FD, which can be attained through open() API by opening BPF FS mou=
-nt
-> > > point. Currently, BPF token "inherits" delegated command, map types,
-> > > prog type, and attach type bit sets from BPF FS as is. In the future,
-> > > having an BPF token as a separate object with its own FD, we can allo=
-w
-> > > to further restrict BPF token's allowable set of things either at the
-> > > creation time or after the fact, allowing the process to guard itself
-> > > further from unintentionally trying to load undesired kind of BPF
-> > > programs. But for now we keep things simple and just copy bit sets as=
- is.
-> > >
-> > > When BPF token is created from BPF FS mount, we take reference to the
-> > > BPF super block's owning user namespace, and then use that namespace =
-for
-> > > checking all the {CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, CAP_SYS_ADMIN}
-> > > capabilities that are normally only checked against init userns (usin=
-g
-> > > capable()), but now we check them using ns_capable() instead (if BPF
-> > > token is provided). See bpf_token_capable() for details.
-> > >
-> > > Such setup means that BPF token in itself is not sufficient to grant =
-BPF
-> > > functionality. User namespaced process has to *also* have necessary
-> > > combination of capabilities inside that user namespace. So while
-> > > previously CAP_BPF was useless when granted within user namespace, no=
-w
-> > > it gains a meaning and allows container managers and sys admins to ha=
-ve
-> > > a flexible control over which processes can and need to use BPF
-> > > functionality within the user namespace (i.e., container in practice)=
-.
-> > > And BPF FS delegation mount options and derived BPF tokens serve as
-> > > a per-container "flag" to grant overall ability to use bpf() (plus fu=
-rther
-> > > restrict on which parts of bpf() syscalls are treated as namespaced).
-> > >
-> > > Note also, BPF_TOKEN_CREATE command itself requires ns_capable(CAP_BP=
-F)
-> > > within the BPF FS owning user namespace, rounding up the ns_capable()
-> > > story of BPF token.
-> > >
-> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > ---
-> > >  include/linux/bpf.h            |  41 +++++++
-> > >  include/uapi/linux/bpf.h       |  37 ++++++
-> > >  kernel/bpf/Makefile            |   2 +-
-> > >  kernel/bpf/inode.c             |  17 ++-
-> > >  kernel/bpf/syscall.c           |  17 +++
-> > >  kernel/bpf/token.c             | 209 +++++++++++++++++++++++++++++++=
-++
-> > >  tools/include/uapi/linux/bpf.h |  37 ++++++
-> > >  7 files changed, 350 insertions(+), 10 deletions(-)
-> > >  create mode 100644 kernel/bpf/token.c
-> > >
-> >
-> > [...]
-> >
-> > > +int bpf_token_create(union bpf_attr *attr)
-> > > +{
-> > > +       struct bpf_mount_opts *mnt_opts;
-> > > +       struct bpf_token *token =3D NULL;
-> > > +       struct user_namespace *userns;
-> > > +       struct inode *inode;
-> > > +       struct file *file;
-> > > +       struct path path;
-> > > +       struct fd f;
-> > > +       umode_t mode;
-> > > +       int err, fd;
-> > > +
-> > > +       f =3D fdget(attr->token_create.bpffs_fd);
-> > > +       if (!f.file)
-> > > +               return -EBADF;
-> > > +
-> > > +       path =3D f.file->f_path;
-> > > +       path_get(&path);
-> > > +       fdput(f);
-> > > +
-> > > +       if (path.dentry !=3D path.mnt->mnt_sb->s_root) {
-> > > +               err =3D -EINVAL;
-> > > +               goto out_path;
-> > > +       }
-> > > +       if (path.mnt->mnt_sb->s_op !=3D &bpf_super_ops) {
-> > > +               err =3D -EINVAL;
-> > > +               goto out_path;
-> > > +       }
-> > > +       err =3D path_permission(&path, MAY_ACCESS);
-> > > +       if (err)
-> > > +               goto out_path;
-> > > +
-> > > +       userns =3D path.dentry->d_sb->s_user_ns;
-> > > +       /*
-> > > +        * Enforce that creators of BPF tokens are in the same user
-> > > +        * namespace as the BPF FS instance. This makes reasoning abo=
-ut
-> > > +        * permissions a lot easier and we can always relax this late=
-r.
-> > > +        */
-> > > +       if (current_user_ns() !=3D userns) {
-> > > +               err =3D -EPERM;
-> > > +               goto out_path;
-> > > +       }
-> >
-> > Hey Christian,
-> >
-> > I've added stricter userns check as discussed on previous revision,
-> > and a few lines above fixed BPF FS root check (path.dentry !=3D
-> > path.mnt->mnt_sb->s_root). Hopefully that addresses the remaining
-> > concerns you've had.
-> >
-> > I'd appreciate it if you could take another look to double check if
-> > I'm not messing anything up, and if it all looks good, can I please
-> > get an ack from you? Thank you!
->
-> Please enforce that in order to use a token the caller must be in the
-> same user namespace as the token as well. IOW, we don't want to yet make
-> it possible to use a token created in an ancestor user namespace to load
-> or attach bpf programs in a descendant user namespace. Let's be as
-> restrictive as we can: tokens are only valid within the user namespace
-> they were created in.
+Allow providing token_fd for BPF_MAP_CREATE command to allow controlled
+BPF map creation from unprivileged process through delegated BPF token.
 
-Ok, I will add the check to bpf_token_allow_cmd() and bpf_token_capable().
+Wire through a set of allowed BPF map types to BPF token, derived from
+BPF FS at BPF token creation time. This, in combination with allowed_cmds
+allows to create a narrowly-focused BPF token (controlled by privileged
+agent) with a restrictive set of BPF maps that application can attempt
+to create.
 
-Thanks a lot for the reviews!
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ include/linux/bpf.h                           |  2 +
+ include/uapi/linux/bpf.h                      |  2 +
+ kernel/bpf/inode.c                            |  3 +-
+ kernel/bpf/syscall.c                          | 52 ++++++++++++++-----
+ kernel/bpf/token.c                            | 16 ++++++
+ tools/include/uapi/linux/bpf.h                |  2 +
+ .../selftests/bpf/prog_tests/libbpf_probes.c  |  2 +
+ .../selftests/bpf/prog_tests/libbpf_str.c     |  3 ++
+ 8 files changed, 67 insertions(+), 15 deletions(-)
+
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 467d33cb6d8f..9521266f470f 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -1589,6 +1589,7 @@ struct bpf_token {
+ 	atomic64_t refcnt;
+ 	struct user_namespace *userns;
+ 	u64 allowed_cmds;
++	u64 allowed_maps;
+ };
+=20
+ struct bpf_struct_ops_value;
+@@ -2225,6 +2226,7 @@ int bpf_token_create(union bpf_attr *attr);
+ struct bpf_token *bpf_token_get_from_fd(u32 ufd);
+=20
+ bool bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd cmd=
+);
++bool bpf_token_allow_map_type(const struct bpf_token *token, enum bpf_ma=
+p_type type);
+=20
+ int bpf_obj_pin_user(u32 ufd, int path_fd, const char __user *pathname);
+ int bpf_obj_get_user(int path_fd, const char __user *pathname, int flags=
+);
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index d4a567e5bc3c..0bba3392b17a 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -983,6 +983,7 @@ enum bpf_map_type {
+ 	BPF_MAP_TYPE_BLOOM_FILTER,
+ 	BPF_MAP_TYPE_USER_RINGBUF,
+ 	BPF_MAP_TYPE_CGRP_STORAGE,
++	__MAX_BPF_MAP_TYPE
+ };
+=20
+ /* Note that tracing related programs such as
+@@ -1433,6 +1434,7 @@ union bpf_attr {
+ 		 * to using 5 hash functions).
+ 		 */
+ 		__u64	map_extra;
++		__u32	map_token_fd;
+ 	};
+=20
+ 	struct { /* anonymous struct used by BPF_MAP_*_ELEM commands */
+diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+index 6ce3f9696e72..9c7865d1c53d 100644
+--- a/kernel/bpf/inode.c
++++ b/kernel/bpf/inode.c
+@@ -613,7 +613,8 @@ static int bpf_show_options(struct seq_file *m, struc=
+t dentry *root)
+ 	else if (opts->delegate_cmds)
+ 		seq_printf(m, ",delegate_cmds=3D0x%llx", opts->delegate_cmds);
+=20
+-	if (opts->delegate_maps =3D=3D ~0ULL)
++	mask =3D (1ULL << __MAX_BPF_MAP_TYPE) - 1;
++	if ((opts->delegate_maps & mask) =3D=3D mask)
+ 		seq_printf(m, ",delegate_maps=3Dany");
+ 	else if (opts->delegate_maps)
+ 		seq_printf(m, ",delegate_maps=3D0x%llx", opts->delegate_maps);
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 5102a9f88270..e004786290dc 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -984,8 +984,8 @@ int map_check_no_btf(const struct bpf_map *map,
+ 	return -ENOTSUPP;
+ }
+=20
+-static int map_check_btf(struct bpf_map *map, const struct btf *btf,
+-			 u32 btf_key_id, u32 btf_value_id)
++static int map_check_btf(struct bpf_map *map, struct bpf_token *token,
++			 const struct btf *btf, u32 btf_key_id, u32 btf_value_id)
+ {
+ 	const struct btf_type *key_type, *value_type;
+ 	u32 key_size, value_size;
+@@ -1013,7 +1013,7 @@ static int map_check_btf(struct bpf_map *map, const=
+ struct btf *btf,
+ 	if (!IS_ERR_OR_NULL(map->record)) {
+ 		int i;
+=20
+-		if (!bpf_capable()) {
++		if (!bpf_token_capable(token, CAP_BPF)) {
+ 			ret =3D -EPERM;
+ 			goto free_map_tab;
+ 		}
+@@ -1101,11 +1101,12 @@ static bool bpf_net_capable(void)
+ 	return capable(CAP_NET_ADMIN) || capable(CAP_SYS_ADMIN);
+ }
+=20
+-#define BPF_MAP_CREATE_LAST_FIELD map_extra
++#define BPF_MAP_CREATE_LAST_FIELD map_token_fd
+ /* called via syscall */
+ static int map_create(union bpf_attr *attr)
+ {
+ 	const struct bpf_map_ops *ops;
++	struct bpf_token *token =3D NULL;
+ 	int numa_node =3D bpf_map_attr_numa_node(attr);
+ 	u32 map_type =3D attr->map_type;
+ 	struct bpf_map *map;
+@@ -1156,14 +1157,32 @@ static int map_create(union bpf_attr *attr)
+ 	if (!ops->map_mem_usage)
+ 		return -EINVAL;
+=20
++	if (attr->map_token_fd) {
++		token =3D bpf_token_get_from_fd(attr->map_token_fd);
++		if (IS_ERR(token))
++			return PTR_ERR(token);
++
++		/* if current token doesn't grant map creation permissions,
++		 * then we can't use this token, so ignore it and rely on
++		 * system-wide capabilities checks
++		 */
++		if (!bpf_token_allow_cmd(token, BPF_MAP_CREATE) ||
++		    !bpf_token_allow_map_type(token, attr->map_type)) {
++			bpf_token_put(token);
++			token =3D NULL;
++		}
++	}
++
++	err =3D -EPERM;
++
+ 	/* Intent here is for unprivileged_bpf_disabled to block BPF map
+ 	 * creation for unprivileged users; other actions depend
+ 	 * on fd availability and access to bpffs, so are dependent on
+ 	 * object creation success. Even with unprivileged BPF disabled,
+ 	 * capability checks are still carried out.
+ 	 */
+-	if (sysctl_unprivileged_bpf_disabled && !bpf_capable())
+-		return -EPERM;
++	if (sysctl_unprivileged_bpf_disabled && !bpf_token_capable(token, CAP_B=
+PF))
++		goto put_token;
+=20
+ 	/* check privileged map type permissions */
+ 	switch (map_type) {
+@@ -1196,25 +1215,27 @@ static int map_create(union bpf_attr *attr)
+ 	case BPF_MAP_TYPE_LRU_PERCPU_HASH:
+ 	case BPF_MAP_TYPE_STRUCT_OPS:
+ 	case BPF_MAP_TYPE_CPUMAP:
+-		if (!bpf_capable())
+-			return -EPERM;
++		if (!bpf_token_capable(token, CAP_BPF))
++			goto put_token;
+ 		break;
+ 	case BPF_MAP_TYPE_SOCKMAP:
+ 	case BPF_MAP_TYPE_SOCKHASH:
+ 	case BPF_MAP_TYPE_DEVMAP:
+ 	case BPF_MAP_TYPE_DEVMAP_HASH:
+ 	case BPF_MAP_TYPE_XSKMAP:
+-		if (!bpf_net_capable())
+-			return -EPERM;
++		if (!bpf_token_capable(token, CAP_NET_ADMIN))
++			goto put_token;
+ 		break;
+ 	default:
+ 		WARN(1, "unsupported map type %d", map_type);
+-		return -EPERM;
++		goto put_token;
+ 	}
+=20
+ 	map =3D ops->map_alloc(attr);
+-	if (IS_ERR(map))
+-		return PTR_ERR(map);
++	if (IS_ERR(map)) {
++		err =3D PTR_ERR(map);
++		goto put_token;
++	}
+ 	map->ops =3D ops;
+ 	map->map_type =3D map_type;
+=20
+@@ -1251,7 +1272,7 @@ static int map_create(union bpf_attr *attr)
+ 		map->btf =3D btf;
+=20
+ 		if (attr->btf_value_type_id) {
+-			err =3D map_check_btf(map, btf, attr->btf_key_type_id,
++			err =3D map_check_btf(map, token, btf, attr->btf_key_type_id,
+ 					    attr->btf_value_type_id);
+ 			if (err)
+ 				goto free_map;
+@@ -1272,6 +1293,7 @@ static int map_create(union bpf_attr *attr)
+ 		goto free_map_sec;
+=20
+ 	bpf_map_save_memcg(map);
++	bpf_token_put(token);
+=20
+ 	err =3D bpf_map_new_fd(map, f_flags);
+ 	if (err < 0) {
+@@ -1292,6 +1314,8 @@ static int map_create(union bpf_attr *attr)
+ free_map:
+ 	btf_put(map->btf);
+ 	map->ops->map_free(map);
++put_token:
++	bpf_token_put(token);
+ 	return err;
+ }
+=20
+diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
+index e18aaecc67e9..06c34dae658e 100644
+--- a/kernel/bpf/token.c
++++ b/kernel/bpf/token.c
+@@ -72,6 +72,13 @@ static void bpf_token_show_fdinfo(struct seq_file *m, =
+struct file *filp)
+ 		seq_printf(m, "allowed_cmds:\tany\n");
+ 	else
+ 		seq_printf(m, "allowed_cmds:\t0x%llx\n", token->allowed_cmds);
++
++	BUILD_BUG_ON(__MAX_BPF_MAP_TYPE >=3D 64);
++	mask =3D (1ULL << __MAX_BPF_MAP_TYPE) - 1;
++	if ((token->allowed_maps & mask) =3D=3D mask)
++		seq_printf(m, "allowed_maps:\tany\n");
++	else
++		seq_printf(m, "allowed_maps:\t0x%llx\n", token->allowed_maps);
+ }
+=20
+ #define BPF_TOKEN_INODE_NAME "bpf-token"
+@@ -161,6 +168,7 @@ int bpf_token_create(union bpf_attr *attr)
+=20
+ 	mnt_opts =3D path.dentry->d_sb->s_fs_info;
+ 	token->allowed_cmds =3D mnt_opts->delegate_cmds;
++	token->allowed_maps =3D mnt_opts->delegate_maps;
+=20
+ 	fd =3D get_unused_fd_flags(O_CLOEXEC);
+ 	if (fd < 0) {
+@@ -212,3 +220,11 @@ bool bpf_token_allow_cmd(const struct bpf_token *tok=
+en, enum bpf_cmd cmd)
+=20
+ 	return token->allowed_cmds & (1ULL << cmd);
+ }
++
++bool bpf_token_allow_map_type(const struct bpf_token *token, enum bpf_ma=
+p_type type)
++{
++	if (!token || type >=3D __MAX_BPF_MAP_TYPE)
++		return false;
++
++	return token->allowed_maps & (1ULL << type);
++}
+diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bp=
+f.h
+index d4a567e5bc3c..0bba3392b17a 100644
+--- a/tools/include/uapi/linux/bpf.h
++++ b/tools/include/uapi/linux/bpf.h
+@@ -983,6 +983,7 @@ enum bpf_map_type {
+ 	BPF_MAP_TYPE_BLOOM_FILTER,
+ 	BPF_MAP_TYPE_USER_RINGBUF,
+ 	BPF_MAP_TYPE_CGRP_STORAGE,
++	__MAX_BPF_MAP_TYPE
+ };
+=20
+ /* Note that tracing related programs such as
+@@ -1433,6 +1434,7 @@ union bpf_attr {
+ 		 * to using 5 hash functions).
+ 		 */
+ 		__u64	map_extra;
++		__u32	map_token_fd;
+ 	};
+=20
+ 	struct { /* anonymous struct used by BPF_MAP_*_ELEM commands */
+diff --git a/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c b/too=
+ls/testing/selftests/bpf/prog_tests/libbpf_probes.c
+index 9f766ddd946a..573249a2814d 100644
+--- a/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c
++++ b/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c
+@@ -68,6 +68,8 @@ void test_libbpf_probe_map_types(void)
+=20
+ 		if (map_type =3D=3D BPF_MAP_TYPE_UNSPEC)
+ 			continue;
++		if (strcmp(map_type_name, "__MAX_BPF_MAP_TYPE") =3D=3D 0)
++			continue;
+=20
+ 		if (!test__start_subtest(map_type_name))
+ 			continue;
+diff --git a/tools/testing/selftests/bpf/prog_tests/libbpf_str.c b/tools/=
+testing/selftests/bpf/prog_tests/libbpf_str.c
+index c440ea3311ed..2a0633f43c73 100644
+--- a/tools/testing/selftests/bpf/prog_tests/libbpf_str.c
++++ b/tools/testing/selftests/bpf/prog_tests/libbpf_str.c
+@@ -132,6 +132,9 @@ static void test_libbpf_bpf_map_type_str(void)
+ 		const char *map_type_str;
+ 		char buf[256];
+=20
++		if (map_type =3D=3D __MAX_BPF_MAP_TYPE)
++			continue;
++
+ 		map_type_name =3D btf__str_by_offset(btf, e->name_off);
+ 		map_type_str =3D libbpf_bpf_map_type_str(map_type);
+ 		ASSERT_OK_PTR(map_type_str, map_type_name);
+--=20
+2.34.1
+
