@@ -1,112 +1,675 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Q8uwrgZS"
-Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5C5510DA
-	for <linux-security-module@vger.kernel.org>; Fri,  1 Dec 2023 10:55:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1701456899; bh=e1c5H6gQ9lDwVbTGoBiWnnHvVQC0hMQZF4WAzuShOY4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Q8uwrgZSIiTj/GnbpzgGOT5uJKwzSSxQNWUTboIPGtBPnrZVPQ8rg8dle1np6pzFvGPeqvMTrAzCotdq6AXl2wB92GkwNNy/LJfzNqhkte2fChlMEF8G18LzrHyfRb7JHFKoyz3RbaupSaTxel+rB5/ppuRapa7wNRgXM9HtxgR7gtd1rekCWuheruh1GBk5qbHBaR87rCQHYAkH5xpe6fP5ql8MBjNITMzd4bjmPzau0MUgA4/Zzc3Ssl7EFUU2bvSVEpxZGJ64eiSYSfMPrDA1Rg8UBWFJa47KPh54op/v3p4zY4zbQWSIz57VcmTypuaCYI/T+jPq6+SGyRWOOg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1701456899; bh=VGgq8ROJyVarPFZTyr/AaJIbB1K5YpSR5K9JojLZtvr=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=NO6uIAnDa0lugLaUXY1M6sUjST/EEyJ4PgNGXwI328OuDs4rA8nUjIPnXNQ7lgXRvLC4fkPwVsc24YPIXGOOfPf+bJqcV4drwIiHlxbGNEpBl0GOaiDQLPYv20G7tD1i38Z6rQCcqUdQuvjnsU2S+E10mMGq3jAyNN6h69RPMfjQKOj+Ezn6X0wlToIu5TutS2soGzeBbPcuHAIgYKKkdC3ZoLpaXYtcWeVLlkOWl15QT0Gj9rmlxWA0YwBGj2qP1KEYp8572wCEAFNVIy4g3N8JJkQ6Bbja6X+Ac1t6ASVCJjS9SoXWKLjyWi3EUQ4U7CUR5/42md1FRgeSuWfRLg==
-X-YMail-OSG: _feEPkkVM1nVTU50MPOVJ73Gnma0deiW437hg6rFj_57AKjMX7rH13qcJzcOyNI
- fZ_5MvBMsaLjOErJKvZcRRg8s_VLV0iCiwA8k_NFM0rsWk02.PYhpL6APjeBLWcBk8UE2b86FM3L
- aL_qGbXvaGkqobOhoQdMVs3EW7u7hBMW4BBlIplIR10SrI3fmB4v6MHcZa_3T7JSp1afVHS52gve
- m.ZnSuzSuI7sCqA6qCw.OAEKwweq3DM4Wf.TtC6aZFIUFrDq6dGLj1H6cDk5Om13p8JXlh86rk4V
- GlYFkiSMAT072JOyjGXeNTmb7DqkXsggw1de7eFeghygG3rJkvL9ELuiZ0vc5j4j6JOPV.PTzp9z
- t_s7Kf37Mxtsn2AfeVNhY3qjF8fnE6Gqgp1.AqA5.duAvrWZ1HbPWlq7h_pTFB3pWaQQTyhKuWoZ
- TI0YjcOuFPBY0eT_KrJkntBNj2oQUyO.x8ZRozgs4VUug6ng2DrjN8dLlSbWkE1CjH45VF5puTVg
- srEsk1y.8i._GkTNt2QJuErmlKKCpZ1jK.EnpnYOwE7_4kyM3bsqEaMPy6DWm8dZWtQqzN.XZJLZ
- gUgeAlAEO._6LtRkYUJqKzknmfOyqs8BucRUg4F3AXE6lHNdE_cE2u6ALMKxs2WGftHJ94T3jPRD
- 7duZWF6V0G7ObYuQyDEy2unZcdBJf0nqRJi9_E42jA.7osqFSAUqdOjqkDtGhhvHxq29fVRm_dGN
- 4pzXC0z4ydEnkR99ENQQyRByizan.w9MvR4IJpExbTVb0z9LaBS_79HXD9pnz.N6ILams2rHuzZa
- EERTwYAIERuX3cVOgspWhMtkkUJRKaIMzQ.1AvKaw.dOsHB70jVJ7I2TK10KixF7He6jZO2DEOYD
- 3q8tY3wJiJTHn_nwwO4k3wSjjczu_ZvC73V7t9HHlASf5TxfRcaHHhDgvRGjh3ZY1X9oNNp7GqGQ
- 9X2.Vx7Gec7xwdxD_xtqX9LBGUWs6lE0W1s0DlqTpiGY8JIcwDZLfxwFunT6pR43BG2XliQWOT7h
- _Ink6KXO6cMHvE_lQTBezen3k.ouK2K6vFgMxnHWbLzGwe08P0hB0ZSZ5rifXsTJvT3ryFImp_y8
- .WgdU_9QBMtXnOCR8zEu8MThpJxpyfQXKsV.yIgKAk1JOM_myGH.gns5y59l17k.iAumyqX0jHoq
- cbJvvd7yP.8zBh2nOM4hzbyDxJhPl.Het7_iL57uk5WViG8azcOR7oHIS3nAO0P3O27U2tBXuVrE
- rA6CpM6GH49EGvcY59kXM8jb.hBCmu0haimLa5vUiFq7RwU6V1_HIncN78iENnWxiqfPtSRylghn
- 70JNAzaeJXmOBwBJrsS9b4WvqM84CsQGvAcnrnMpaze8n6g9h3v_ciJnTZc_afdBAclpLLn68a4o
- by5fwgPP_m09uwE_vrw8pYlS6rqahtIQoLRE7aRShrd0Bp6HdqBv5TPnO4xf3ELpWhJqPGgjxkEf
- W0TIx0QZhvOoFpm7Q75GQ1o0NDEIomQ1drERpDZrnP9wyYxHfFcVLJB40INuQnm28fHXhx8qq8Hm
- RljS_vVQxAdwLq.d3QYZHzNs3FKEVTEFJATfNe8xjZipd9_TnIW_g4GALqLTTX._.6GLSPgSHOLk
- 0WxffKLXVORp59vnFozukBAZejXiMLim3Tkghj1G7iqW_dNRlMGbfXe1phlXUkghRU3VYiMXMMIW
- f4x_1c2kxyyIgX9VfADmEg_LCsYMRLVHh.vSc7kBmjlSwV.Rt35sKLXdPJ37bLVN8cxkQd7fWQc2
- AyLccHVy97S8pGacyEzFtV_SrR8iaOI1cblR8M9zMlg5Qv9bacEi1a1xa.Fs7uGuk6qjglYiT7mt
- 8DcCQNrD9cPPVNx7oP8T6JJQqEWt8ONImNZPPkZxbOm.OaEJmFntjXilaxuNjzXrHNE4fSdze720
- enP_bp3S0BYP_wvbjdarBIhVKvh2_ma6oJoZZAO.yS5ap9XlR3gwi6LROoXch.01v9HiGm633hCw
- 0Rbtbwmp2u6gXTQwAVaS7LZ3_X1uHj.jgnzX9JD_kfwohR_sMV6rcJyRjGbUBGayNbfxzN5dBkh4
- WM6NKAE9FCUY294JuTs2ldOs2nAm1qhYQCz4Kpe587f4ChLNYS_sssW2mqoreMvjpESbGHVfSMmi
- sK5GlwFH2fsE1za2AyaclrHPvAyodvWir3nu758PnH5GJOrMPL8bAdqVPH2cfNOBEJvkip_ptEUH
- riVHrC5zoV4rtwwEdC3OYwIYbnrDJEOnZBrS4U3K7rviz5l3vwlpiUd1gZJ4-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 314df4d2-9588-42e4-9861-1d5e2ca2691f
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Fri, 1 Dec 2023 18:54:59 +0000
-Received: by hermes--production-gq1-5cf8f76c44-z2sg6 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 74d77983c061dd50f267fe5c917be7ff;
-          Fri, 01 Dec 2023 18:54:57 +0000 (UTC)
-Message-ID: <660e8516-ec1b-41b4-9e04-2b9fabbe59ca@schaufler-ca.com>
-Date: Fri, 1 Dec 2023 10:54:54 -0800
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bJCT61a8"
+Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2E4710F3
+	for <linux-security-module@vger.kernel.org>; Fri,  1 Dec 2023 11:51:29 -0800 (PST)
+Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-1efabc436e4so534100fac.1
+        for <linux-security-module@vger.kernel.org>; Fri, 01 Dec 2023 11:51:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1701460289; x=1702065089; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AWkyQKSMPXuhnwWM9KIIG/qJZSF1nHdtj4fWIP4r6L8=;
+        b=bJCT61a8oZrOLDE0M3mZvGdg7c9lxuBKzrrCsHlilXV8U5w/gEZUqXM4OAQUPpjSKb
+         eIgDOXjyeT4AHGb32sbLNxzlclJbu6WohrlmmqAfSQUxAU5ATkV3vYRaGVrbQdrieUnk
+         cl1rVxhgWdr+kz66STv4WJrBw6Y/weFHm46yM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701460289; x=1702065089;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AWkyQKSMPXuhnwWM9KIIG/qJZSF1nHdtj4fWIP4r6L8=;
+        b=K0p+1CdgNi+Qk8l5Z8+gvtMzUDlF18Hlsp6zPJQbTjNBCTTFR+mNpdno6UY2nca4Ig
+         yzClNf1HDzxhrsIHD13XPJxkiCcVef/2qg1+kJqylagLI8RpXnZk4k6lRUyKOIh01Z+v
+         XcAK9FXSBRSDeVDhh4SEQXclSZ11IsUOnIPxM7RJikiwM6xwHGPThjoL1fqEmx53upx9
+         NY4J8OEnrgmJG8nH1MiOO8hI4snIAYqkBtcxrxYD6Q2JIeVv9eGj/V/j95YzdJ90YNDO
+         s7tKegpNmUp2HPQPi4S+HdYwIsDnVmT+96AQ/G588dqq5C2Aua3DHoTMYu0J9qYaIMV4
+         3IhA==
+X-Gm-Message-State: AOJu0YzjnKMg086dBEewDBcHvWE6gc+a5nXPWTOLfDd7NICgse+/sWU5
+	DAkxJuW1wx9foFVNzNgIAQ8bOz+acKE30OXk36pZaQ==
+X-Google-Smtp-Source: AGHT+IHJiyDN53r3/TNMLrZy2j+9uLs1bznR9uq79i4PsvefjrqudynVH1dJZXLK0ZgEPzOWqcnvPX/c0GMoPFnMIn0=
+X-Received: by 2002:a05:6871:8782:b0:1fa:fa0a:bb40 with SMTP id
+ td2-20020a056871878200b001fafa0abb40mr37594oab.18.1701460288757; Fri, 01 Dec
+ 2023 11:51:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
- blob for integrity_iint_cache
-Content-Language: en-US
-To: "Dr. Greg" <greg@enjellic.com>,
- Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
- neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
- jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
- dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
- stephen.smalley.work@gmail.com, eparis@parisplace.org, mic@digikod.net,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
- selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
- <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
- <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com>
- <CAHC9VhTTKac1o=RnQadu2xqdeKH8C_F+Wh4sY=HkGbCArwc8JQ@mail.gmail.com>
- <b6c51351be3913be197492469a13980ab379e412.camel@huaweicloud.com>
- <CAHC9VhSAryQSeFy0ZMexOiwBG-YdVGRzvh58=heH916DftcmWA@mail.gmail.com>
- <90eb8e9d-c63e-42d6-b951-f856f31590db@huaweicloud.com>
- <20231201010549.GA8923@wind.enjellic.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20231201010549.GA8923@wind.enjellic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20231201143042.3276833-1-gnoack@google.com> <20231201143042.3276833-5-gnoack@google.com>
+In-Reply-To: <20231201143042.3276833-5-gnoack@google.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Fri, 1 Dec 2023 11:51:16 -0800
+Message-ID: <CABi2SkXvTdrygc4rNmKBSRT5DRv_FeoX+y26JruBbeX_MwwLTQ@mail.gmail.com>
+Subject: Re: [PATCH v7 4/9] landlock: Add IOCTL access right
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/30/2023 5:05 PM, Dr. Greg wrote:
-> A suggestion has been made in this thread that there needs to be broad
-> thinking on this issue, and by extension, other tough problems.  On
-> that note, we would be interested in any thoughts regarding the notion
-> of a long term solution for this issue being the migration of EVM to a
-> BPF based implementation?
+On Fri, Dec 1, 2023 at 6:40=E2=80=AFAM G=C3=BCnther Noack <gnoack@google.co=
+m> wrote:
 >
-> There appears to be consensus that the BPF LSM will always go last, a
-> BPF implementation would seem to address the EVM ordering issue.
+> Introduces the LANDLOCK_ACCESS_FS_IOCTL access right
+> and increments the Landlock ABI version to 5.
 >
-> In a larger context, there have been suggestions in other LSM threads
-> that BPF is the future for doing LSM's.  Coincident with that has come
-> some disagreement about whether or not BPF embodies sufficient
-> functionality for this role.
+> Like the truncate right, these rights are associated with a file
+> descriptor at the time of open(2), and get respected even when the
+> file descriptor is used outside of the thread which it was originally
+> opened in.
 >
-> The EVM codebase is reasonably modest with a very limited footprint of
-> hooks that it handles.  A BPF implementation on this scale would seem
-> to go a long ways in placing BPF sufficiency concerns to rest.
+> A newly enabled Landlock policy therefore does not apply to file
+> descriptors which are already open.
 >
-> Thoughts/issues?
+> If the LANDLOCK_ACCESS_FS_IOCTL right is handled, only a small number
+> of safe IOCTL commands will be permitted on newly opened files.  The
+> permitted IOCTLs can be configured through the ruleset in limited ways
+> now.  (See documentation for details.)
+>
+> Noteworthy scenarios which require special attention:
+>
+> TTY devices support IOCTLs like TIOCSTI and TIOCLINUX, which can be
+> used to control shell processes on the same terminal which run at
+> different privilege levels, which may make it possible to escape a
+> sandbox.  Because stdin, stdout and stderr are normally inherited
+> rather than newly opened, IOCTLs are usually permitted on them even
+> after the Landlock policy is enforced.
+>
+> Some legitimate file system features, like setting up fscrypt, are
+> exposed as IOCTL commands on regular files and directories -- users of
+> Landlock are advised to double check that the sandboxed process does
+> not need to invoke these IOCTLs.
+>
+> Known limitations:
+>
+> The LANDLOCK_ACCESS_FS_IOCTL access right is a coarse-grained control
+> over IOCTL commands.  Future work will enable a more fine-grained
+> access control for IOCTLs.
+>
+> In the meantime, Landlock users may use path-based restrictions in
+> combination with their knowledge about the file system layout to
+> control what IOCTLs can be done.  Mounting file systems with the nodev
+> option can help to distinguish regular files and devices, and give
+> guarantees about the affected files, which Landlock alone can not give
+> yet.
+>
+> Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+> ---
+>  include/uapi/linux/landlock.h                |  58 +++++-
+>  security/landlock/fs.c                       | 176 ++++++++++++++++++-
+>  security/landlock/fs.h                       |   2 +
+>  security/landlock/limits.h                   |   5 +-
+>  security/landlock/ruleset.h                  |   2 +-
+>  security/landlock/syscalls.c                 |  19 +-
+>  tools/testing/selftests/landlock/base_test.c |   2 +-
+>  tools/testing/selftests/landlock/fs_test.c   |   5 +-
+>  8 files changed, 247 insertions(+), 22 deletions(-)
+>
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.=
+h
+> index 25c8d7677539..578f268b084b 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -128,7 +128,7 @@ struct landlock_net_port_attr {
+>   * files and directories.  Files or directories opened before the sandbo=
+xing
+>   * are not subject to these restrictions.
+>   *
+> - * A file can only receive these access rights:
+> + * The following access rights apply only to files:
+>   *
+>   * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
+>   * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access. Note=
+ that
+> @@ -138,12 +138,13 @@ struct landlock_net_port_attr {
+>   * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
+>   * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file with :manpage:`trunca=
+te(2)`,
+>   *   :manpage:`ftruncate(2)`, :manpage:`creat(2)`, or :manpage:`open(2)`=
+ with
+> - *   ``O_TRUNC``. Whether an opened file can be truncated with
+> - *   :manpage:`ftruncate(2)` is determined during :manpage:`open(2)`, in=
+ the
+> - *   same way as read and write permissions are checked during
+> - *   :manpage:`open(2)` using %LANDLOCK_ACCESS_FS_READ_FILE and
+> - *   %LANDLOCK_ACCESS_FS_WRITE_FILE. This access right is available sinc=
+e the
+> - *   third version of the Landlock ABI.
+> + *   ``O_TRUNC``.  This access right is available since the third versio=
+n of the
+> + *   Landlock ABI.
+> + *
+> + * Whether an opened file can be truncated with :manpage:`ftruncate(2)` =
+or used
+> + * with `ioctl(2)` is determined during :manpage:`open(2)`, in the same =
+way as
+> + * read and write permissions are checked during :manpage:`open(2)` usin=
+g
+> + * %LANDLOCK_ACCESS_FS_READ_FILE and %LANDLOCK_ACCESS_FS_WRITE_FILE.
+>   *
+>   * A directory can receive access rights related to files or directories=
+.  The
+>   * following access right is applied to the directory itself, and the
+> @@ -198,13 +199,53 @@ struct landlock_net_port_attr {
+>   *   If multiple requirements are not met, the ``EACCES`` error code tak=
+es
+>   *   precedence over ``EXDEV``.
+>   *
+> + * The following access right applies both to files and directories:
+> + *
+> + * - %LANDLOCK_ACCESS_FS_IOCTL: Invoke :manpage:`ioctl(2)` commands on a=
+n opened
+> + *   file or directory.
+> + *
+> + *   This access right applies to all :manpage:`ioctl(2)` commands, exce=
+pt of
+> + *   ``FIOCLEX``, ``FIONCLEX``, ``FIONBIO`` and ``FIOASYNC``.  These com=
+mands
+> + *   continue to be invokable independent of the %LANDLOCK_ACCESS_FS_IOC=
+TL
+> + *   access right.
+> + *
+> + *   When certain other access rights are handled in the ruleset, in add=
+ition to
+> + *   %LANDLOCK_ACCESS_FS_IOCTL, granting these access rights will unlock=
+ access
+> + *   to additional groups of IOCTL commands, on the affected files:
+> + *
+> + *   * %LANDLOCK_ACCESS_FS_READ_FILE unlocks access to ``FIOQSIZE``,
+> + *     ``FS_IOC_FIEMAP``, ``FIBMAP``, ``FIGETBSZ``, ``FIONREAD``,
+> + *     ``FIDEDUPRANGE``.
+> + *
+> + *   * %LANDLOCK_ACCESS_FS_WRITE_FILE unlocks access to ``FIOQSIZE``,
+> + *     ``FS_IOC_FIEMAP``, ``FIBMAP``, ``FIGETBSZ``, ``FICLONE``,
+> + *     ``FICLONERANGE``, ``FS_IOC_RESVSP``, ``FS_IOC_RESVSP64``,
+> + *     ``FS_IOC_UNRESVSP``, ``FS_IOC_UNRESVSP64``, ``FS_IOC_ZERO_RANGE``=
+.
+> + *
+> + *   * %LANDLOCK_ACCESS_FS_READ_DIR unlocks access to ``FIOQSIZE``,
+> + *     ``FS_IOC_FIEMAP``, ``FIBMAP``, ``FIGETBSZ``.
+> + *
+> + *   When these access rights are handled in the ruleset, the availabili=
+ty of
+> + *   the affected IOCTL commands is not governed by %LANDLOCK_ACCESS_FS_=
+IOCTL
+> + *   any more, but by the respective access right.
+> + *
+> + *   All other IOCTL commands are not handled specially, and are governe=
+d by
+> + *   %LANDLOCK_ACCESS_FS_IOCTL.  This includes %FS_IOC_GETFLAGS and
+> + *   %FS_IOC_SETFLAGS for manipulating inode flags (:manpage:`ioctl_ifla=
+gs(2)`),
+> + *   %FS_IOC_FSFETXATTR and %FS_IOC_FSSETXATTR for manipulating extended
+> + *   attributes, as well as %FIFREEZE and %FITHAW for freezing and thawi=
+ng file
+> + *   systems.
+> + *
+> + *   This access right is available since the fifth version of the Landl=
+ock
+> + *   ABI.
+> + *
+>   * .. warning::
+>   *
+>   *   It is currently not possible to restrict some file-related actions
+>   *   accessible through these syscall families: :manpage:`chdir(2)`,
+>   *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
+>   *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
+> - *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
+> + *   :manpage:`fcntl(2)`, :manpage:`access(2)`.
+>   *   Future Landlock evolutions will enable to restrict them.
+>   */
+>  /* clang-format off */
+> @@ -223,6 +264,7 @@ struct landlock_net_port_attr {
+>  #define LANDLOCK_ACCESS_FS_MAKE_SYM                    (1ULL << 12)
+>  #define LANDLOCK_ACCESS_FS_REFER                       (1ULL << 13)
+>  #define LANDLOCK_ACCESS_FS_TRUNCATE                    (1ULL << 14)
+> +#define LANDLOCK_ACCESS_FS_IOCTL                       (1ULL << 15)
+>  /* clang-format on */
+>
+>  /**
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 9ba989ef46a5..81ce41e9e6db 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -7,12 +7,14 @@
+>   * Copyright =C2=A9 2021-2022 Microsoft Corporation
+>   */
+>
+> +#include <asm/ioctls.h>
+>  #include <linux/atomic.h>
+>  #include <linux/bitops.h>
+>  #include <linux/bits.h>
+>  #include <linux/compiler_types.h>
+>  #include <linux/dcache.h>
+>  #include <linux/err.h>
+> +#include <linux/falloc.h>
+>  #include <linux/fs.h>
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+> @@ -28,6 +30,7 @@
+>  #include <linux/types.h>
+>  #include <linux/wait_bit.h>
+>  #include <linux/workqueue.h>
+> +#include <uapi/linux/fiemap.h>
+>  #include <uapi/linux/landlock.h>
+>
+>  #include "common.h"
+> @@ -83,6 +86,145 @@ static const struct landlock_object_underops landlock=
+_fs_underops =3D {
+>         .release =3D release_inode
+>  };
+>
+> +/* IOCTL helpers */
+> +
+> +/*
+> + * These are synthetic access rights, which are only used within the ker=
+nel, but
+> + * not exposed to callers in userspace.  The mapping between these acces=
+s rights
+> + * and IOCTL commands is defined in the required_ioctl_access() helper f=
+unction.
+> + */
+> +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP1 (LANDLOCK_LAST_PUBLIC_ACCESS_FS =
+<< 1)
+> +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP2 (LANDLOCK_LAST_PUBLIC_ACCESS_FS =
+<< 2)
+> +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP3 (LANDLOCK_LAST_PUBLIC_ACCESS_FS =
+<< 3)
+> +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP4 (LANDLOCK_LAST_PUBLIC_ACCESS_FS =
+<< 4)
+> +
+> +/* ioctl_groups - all synthetic access rights for IOCTL command groups *=
+/
+> +/* clang-format off */
+> +#define IOCTL_GROUPS (                   \
+> +       LANDLOCK_ACCESS_FS_IOCTL_GROUP1 | \
+> +       LANDLOCK_ACCESS_FS_IOCTL_GROUP2 | \
+> +       LANDLOCK_ACCESS_FS_IOCTL_GROUP3 | \
+> +       LANDLOCK_ACCESS_FS_IOCTL_GROUP4)
+> +/* clang-format on */
+> +
+> +static_assert((IOCTL_GROUPS & LANDLOCK_MASK_ACCESS_FS) =3D=3D IOCTL_GROU=
+PS);
+> +
+> +/**
+> + * required_ioctl_access(): Determine required IOCTL access rights.
+> + *
+> + * @cmd: The IOCTL command that is supposed to be run.
+> + *
+> + * Returns: The access rights that must be granted on an opened file in =
+order to
+> + * use the given @cmd.
+> + */
+> +static access_mask_t required_ioctl_access(unsigned int cmd)
+> +{
+> +       switch (cmd) {
+> +       case FIOCLEX:
+> +       case FIONCLEX:
+> +       case FIONBIO:
+> +       case FIOASYNC:
+> +               /*
+> +                * FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC manipulate the=
+ FD's
+> +                * close-on-exec and the file's buffered-IO and async fla=
+gs.
+> +                * These operations are also available through fcntl(2),
+> +                * and are unconditionally permitted in Landlock.
+> +                */
+> +               return 0;
+> +       case FIOQSIZE:
+> +               return LANDLOCK_ACCESS_FS_IOCTL_GROUP1;
+> +       case FS_IOC_FIEMAP:
+> +       case FIBMAP:
+> +       case FIGETBSZ:
+> +               return LANDLOCK_ACCESS_FS_IOCTL_GROUP2;
+> +       case FIONREAD:
+> +       case FIDEDUPERANGE:
+> +               return LANDLOCK_ACCESS_FS_IOCTL_GROUP3;
+> +       case FICLONE:
+> +       case FICLONERANGE:
+> +       case FS_IOC_RESVSP:
+> +       case FS_IOC_RESVSP64:
+> +       case FS_IOC_UNRESVSP:
+> +       case FS_IOC_UNRESVSP64:
+> +       case FS_IOC_ZERO_RANGE:
+> +               return LANDLOCK_ACCESS_FS_IOCTL_GROUP4;
+> +       default:
+> +               /*
+> +                * Other commands are guarded by the catch-all access rig=
+ht.
+> +                */
+> +               return LANDLOCK_ACCESS_FS_IOCTL;
+> +       }
+> +}
+> +
+> +/**
+> + * expand_ioctl() - Return the dst flags from either the src flag or the
+> + * %LANDLOCK_ACCESS_FS_IOCTL flag, depending on whether the
+> + * %LANDLOCK_ACCESS_FS_IOCTL and src access rights are handled or not.
+> + *
+> + * @handled: Handled access rights.
+> + * @access: The access mask to copy values from.
+> + * @src: A single access right to copy from in @access.
+> + * @dst: One or more access rights to copy to.
+> + *
+> + * Returns: @dst, or 0.
+> + */
+> +static access_mask_t expand_ioctl(const access_mask_t handled,
+> +                                 const access_mask_t access,
+> +                                 const access_mask_t src,
+> +                                 const access_mask_t dst)
+> +{
+> +       access_mask_t copy_from;
+> +
+> +       if (!(handled & LANDLOCK_ACCESS_FS_IOCTL))
+> +               return 0;
+> +
+> +       copy_from =3D (handled & src) ? src : LANDLOCK_ACCESS_FS_IOCTL;
+> +       if (access & copy_from)
+> +               return dst;
+> +
+> +       return 0;
+> +}
+> +
+> +/**
+> + * landlock_expand_access_fs() - Returns @access with the synthetic IOCT=
+L group
+> + * flags enabled if necessary.
+> + *
+> + * @handled: Handled FS access rights.
+> + * @access: FS access rights to expand.
+> + *
+> + * Returns: @access expanded by the necessary flags for the synthetic IO=
+CTL
+> + * access rights.
+> + */
+> +static access_mask_t landlock_expand_access_fs(const access_mask_t handl=
+ed,
+> +                                              const access_mask_t access=
+)
+> +{
+> +       return access |
+> +              expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_WRITE_FIL=
+E,
+> +                           LANDLOCK_ACCESS_FS_IOCTL_GROUP1 |
+> +                                   LANDLOCK_ACCESS_FS_IOCTL_GROUP2 |
+> +                                   LANDLOCK_ACCESS_FS_IOCTL_GROUP4) |
+> +              expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_READ_FILE=
+,
+> +                           LANDLOCK_ACCESS_FS_IOCTL_GROUP1 |
+> +                                   LANDLOCK_ACCESS_FS_IOCTL_GROUP2 |
+> +                                   LANDLOCK_ACCESS_FS_IOCTL_GROUP3) |
+> +              expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_READ_DIR,
+> +                           LANDLOCK_ACCESS_FS_IOCTL_GROUP1);
+> +}
+> +
+> +/**
+> + * landlock_expand_handled_access_fs() - add synthetic IOCTL access righ=
+ts to an
+> + * access mask of handled accesses.
+> + *
+> + * @handled: The handled accesses of a ruleset that is being created.
+> + *
+> + * Returns: @handled, with the bits for the synthetic IOCTL access right=
+s set,
+> + * if %LANDLOCK_ACCESS_FS_IOCTL is handled.
+> + */
+> +access_mask_t landlock_expand_handled_access_fs(const access_mask_t hand=
+led)
+> +{
+> +       return landlock_expand_access_fs(handled, handled);
+> +}
+> +
+>  /* Ruleset management */
+>
+>  static struct landlock_object *get_inode_object(struct inode *const inod=
+e)
+> @@ -147,7 +289,8 @@ static struct landlock_object *get_inode_object(struc=
+t inode *const inode)
+>         LANDLOCK_ACCESS_FS_EXECUTE | \
+>         LANDLOCK_ACCESS_FS_WRITE_FILE | \
+>         LANDLOCK_ACCESS_FS_READ_FILE | \
+> -       LANDLOCK_ACCESS_FS_TRUNCATE)
+> +       LANDLOCK_ACCESS_FS_TRUNCATE | \
+> +       LANDLOCK_ACCESS_FS_IOCTL)
+>  /* clang-format on */
+>
+>  /*
+> @@ -157,6 +300,7 @@ int landlock_append_fs_rule(struct landlock_ruleset *=
+const ruleset,
+>                             const struct path *const path,
+>                             access_mask_t access_rights)
+>  {
+> +       access_mask_t handled;
+>         int err;
+>         struct landlock_id id =3D {
+>                 .type =3D LANDLOCK_KEY_INODE,
+> @@ -169,9 +313,11 @@ int landlock_append_fs_rule(struct landlock_ruleset =
+*const ruleset,
+>         if (WARN_ON_ONCE(ruleset->num_layers !=3D 1))
+>                 return -EINVAL;
+>
+> +       handled =3D landlock_get_fs_access_mask(ruleset, 0);
+> +       /* Expands the synthetic IOCTL groups. */
+> +       access_rights |=3D landlock_expand_access_fs(handled, access_righ=
+ts);
+>         /* Transforms relative access rights to absolute ones. */
+> -       access_rights |=3D LANDLOCK_MASK_ACCESS_FS &
+> -                        ~landlock_get_fs_access_mask(ruleset, 0);
+> +       access_rights |=3D LANDLOCK_MASK_ACCESS_FS & ~handled;
+>         id.key.object =3D get_inode_object(d_backing_inode(path->dentry))=
+;
+>         if (IS_ERR(id.key.object))
+>                 return PTR_ERR(id.key.object);
+> @@ -1123,7 +1269,9 @@ static int hook_file_open(struct file *const file)
+>  {
+>         layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {};
+>         access_mask_t open_access_request, full_access_request, allowed_a=
+ccess;
+> -       const access_mask_t optional_access =3D LANDLOCK_ACCESS_FS_TRUNCA=
+TE;
+> +       const access_mask_t optional_access =3D LANDLOCK_ACCESS_FS_TRUNCA=
+TE |
+> +                                             LANDLOCK_ACCESS_FS_IOCTL |
+> +                                             IOCTL_GROUPS;
+>         const struct landlock_ruleset *const dom =3D get_current_fs_domai=
+n();
+>
+>         if (!dom)
+> @@ -1196,6 +1344,25 @@ static int hook_file_truncate(struct file *const f=
+ile)
+>         return -EACCES;
+>  }
+>
+> +static int hook_file_ioctl(struct file *file, unsigned int cmd,
+> +                          unsigned long arg)
+> +{
+> +       const access_mask_t required_access =3D required_ioctl_access(cmd=
+);
+> +       const access_mask_t allowed_access =3D
+> +               landlock_file(file)->allowed_access;
+> +
+> +       /*
+> +        * It is the access rights at the time of opening the file which
+> +        * determine whether IOCTL can be used on the opened file later.
+> +        *
+> +        * The access right is attached to the opened file in hook_file_o=
+pen().
+> +        */
+> +       if ((allowed_access & required_access) =3D=3D required_access)
+> +               return 0;
+> +
+> +       return -EACCES;
+> +}
+> +
+>  static struct security_hook_list landlock_hooks[] __ro_after_init =3D {
+>         LSM_HOOK_INIT(inode_free_security, hook_inode_free_security),
+>
+> @@ -1218,6 +1385,7 @@ static struct security_hook_list landlock_hooks[] _=
+_ro_after_init =3D {
+>         LSM_HOOK_INIT(file_alloc_security, hook_file_alloc_security),
+>         LSM_HOOK_INIT(file_open, hook_file_open),
+>         LSM_HOOK_INIT(file_truncate, hook_file_truncate),
+> +       LSM_HOOK_INIT(file_ioctl, hook_file_ioctl),
+>  };
+>
+>  __init void landlock_add_fs_hooks(void)
+> diff --git a/security/landlock/fs.h b/security/landlock/fs.h
+> index 488e4813680a..c88fe7bda37b 100644
+> --- a/security/landlock/fs.h
+> +++ b/security/landlock/fs.h
+> @@ -92,4 +92,6 @@ int landlock_append_fs_rule(struct landlock_ruleset *co=
+nst ruleset,
+>                             const struct path *const path,
+>                             access_mask_t access_hierarchy);
+>
+> +access_mask_t landlock_expand_handled_access_fs(const access_mask_t hand=
+led);
+> +
+>  #endif /* _SECURITY_LANDLOCK_FS_H */
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index 93c9c6f91556..63b5aa0bd8fa 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -18,7 +18,10 @@
+>  #define LANDLOCK_MAX_NUM_LAYERS                16
+>  #define LANDLOCK_MAX_NUM_RULES         U32_MAX
+>
+> -#define LANDLOCK_LAST_ACCESS_FS                LANDLOCK_ACCESS_FS_TRUNCA=
+TE
+> +#define LANDLOCK_LAST_PUBLIC_ACCESS_FS LANDLOCK_ACCESS_FS_IOCTL
 
-Converting EVM to BPF looks like a 5 to 10 year process. Creating a
-EVM design description to work from, building all the support functions
-required, then getting sufficient reviews and testing isn't going to be
-a walk in the park. That leaves out the issue of distribution of the
-EVM-BPF programs. Consider how the rush to convert kernel internals to
-Rust is progressing. EVM isn't huge, but it isn't trivial, either. Tetsuo
-had a good hard look at converting TOMOYO to BPF, and concluded that it
-wasn't practical. TOMOYO is considerably less complicated than EVM.
+iiuc, for the next feature, it only needs to update
+LANDLOCK_LAST_PUBLIC_ACCESS_FS to the new LANDLOCK_ACCESS_FS_ABC here.
+and keep below the same, right ?
 
+> +#define LANDLOCK_MASK_PUBLIC_ACCESS_FS ((LANDLOCK_LAST_PUBLIC_ACCESS_FS =
+<< 1) - 1)
+> +
+> +#define LANDLOCK_LAST_ACCESS_FS                (LANDLOCK_LAST_PUBLIC_ACC=
+ESS_FS << 4)
+maybe add a comment why "<<4" is used ?
+
+>  #define LANDLOCK_MASK_ACCESS_FS                ((LANDLOCK_LAST_ACCESS_FS=
+ << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_FS         __const_hweight64(LANDLOCK_MASK_A=
+CCESS_FS)
+>  #define LANDLOCK_SHIFT_ACCESS_FS       0
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index c7f1526784fd..5a28ea8e1c3d 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -30,7 +30,7 @@
+>         LANDLOCK_ACCESS_FS_REFER)
+>  /* clang-format on */
+>
+> -typedef u16 access_mask_t;
+> +typedef u32 access_mask_t;
+>  /* Makes sure all filesystem access rights can be stored. */
+>  static_assert(BITS_PER_TYPE(access_mask_t) >=3D LANDLOCK_NUM_ACCESS_FS);
+>  /* Makes sure all network access rights can be stored. */
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index 898358f57fa0..f0bc50003b46 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -137,7 +137,7 @@ static const struct file_operations ruleset_fops =3D =
+{
+>         .write =3D fop_dummy_write,
+>  };
+>
+> -#define LANDLOCK_ABI_VERSION 4
+> +#define LANDLOCK_ABI_VERSION 5
+>
+>  /**
+>   * sys_landlock_create_ruleset - Create a new ruleset
+> @@ -192,8 +192,8 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
+>                 return err;
+>
+>         /* Checks content (and 32-bits cast). */
+> -       if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_ACCESS_FS) !=
+=3D
+> -           LANDLOCK_MASK_ACCESS_FS)
+> +       if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_PUBLIC_ACCESS=
+_FS) !=3D
+> +           LANDLOCK_MASK_PUBLIC_ACCESS_FS)
+>                 return -EINVAL;
+>
+>         /* Checks network content (and 32-bits cast). */
+> @@ -201,6 +201,10 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
+>             LANDLOCK_MASK_ACCESS_NET)
+>                 return -EINVAL;
+>
+> +       /* Expands synthetic IOCTL groups. */
+> +       ruleset_attr.handled_access_fs =3D landlock_expand_handled_access=
+_fs(
+> +               ruleset_attr.handled_access_fs);
+> +
+>         /* Checks arguments and transforms to kernel struct. */
+>         ruleset =3D landlock_create_ruleset(ruleset_attr.handled_access_f=
+s,
+>                                           ruleset_attr.handled_access_net=
+);
+> @@ -309,8 +313,13 @@ static int add_rule_path_beneath(struct landlock_rul=
+eset *const ruleset,
+>         if (!path_beneath_attr.allowed_access)
+>                 return -ENOMSG;
+>
+> -       /* Checks that allowed_access matches the @ruleset constraints. *=
+/
+> -       mask =3D landlock_get_raw_fs_access_mask(ruleset, 0);
+> +       /*
+> +        * Checks that allowed_access matches the @ruleset constraints an=
+d only
+> +        * consists of publicly visible access rights (as opposed to synt=
+hetic
+> +        * ones).
+> +        */
+> +       mask =3D landlock_get_raw_fs_access_mask(ruleset, 0) &
+> +              LANDLOCK_MASK_PUBLIC_ACCESS_FS;
+>         if ((path_beneath_attr.allowed_access | mask) !=3D mask)
+>                 return -EINVAL;
+>
+> diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing=
+/selftests/landlock/base_test.c
+> index 646f778dfb1e..d292b419ccba 100644
+> --- a/tools/testing/selftests/landlock/base_test.c
+> +++ b/tools/testing/selftests/landlock/base_test.c
+> @@ -75,7 +75,7 @@ TEST(abi_version)
+>         const struct landlock_ruleset_attr ruleset_attr =3D {
+>                 .handled_access_fs =3D LANDLOCK_ACCESS_FS_READ_FILE,
+>         };
+> -       ASSERT_EQ(4, landlock_create_ruleset(NULL, 0,
+> +       ASSERT_EQ(5, landlock_create_ruleset(NULL, 0,
+>                                              LANDLOCK_CREATE_RULESET_VERS=
+ION));
+>
+>         ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/s=
+elftests/landlock/fs_test.c
+> index 50818904397c..192608c3e840 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -525,9 +525,10 @@ TEST_F_FORK(layout1, inval)
+>         LANDLOCK_ACCESS_FS_EXECUTE | \
+>         LANDLOCK_ACCESS_FS_WRITE_FILE | \
+>         LANDLOCK_ACCESS_FS_READ_FILE | \
+> -       LANDLOCK_ACCESS_FS_TRUNCATE)
+> +       LANDLOCK_ACCESS_FS_TRUNCATE | \
+> +       LANDLOCK_ACCESS_FS_IOCTL)
+>
+> -#define ACCESS_LAST LANDLOCK_ACCESS_FS_TRUNCATE
+> +#define ACCESS_LAST LANDLOCK_ACCESS_FS_IOCTL
+>
+>  #define ACCESS_ALL ( \
+>         ACCESS_FILE | \
+> --
+> 2.43.0.rc2.451.g8631bc7472-goog
+>
+>
