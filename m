@@ -1,202 +1,95 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="aUPQnb3x"
-Received: from sonic312-30.consmr.mail.ne1.yahoo.com (sonic312-30.consmr.mail.ne1.yahoo.com [66.163.191.211])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6FB2E6
-	for <linux-security-module@vger.kernel.org>; Fri,  1 Dec 2023 13:42:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1701466963; bh=ZLkjqmVhdO5Cg0IsMDIVtCQlW2qVvQloo+ShABLQ+KM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=aUPQnb3xnUemWAJItZvgPzgKOKZfdj0UlmSjlnADV+md+T125X0G5SWMF3QGCfKdJCWyOCfq1rf1RdoA5es44NenYCySE0gJ3ct/4rFlL03NO9E4qyu0wY//6OjhWzE1QI6A/OYFAf6SofTTOLdKac3TknYSbG+5tJEMWtdZmFe7F9f/0Avk0gSm91LonDl0N9ieWX7GnylJNyDAKoTrvVJQmWo04kUwqN9/1wNWk+/KXQUsi8e7/QPLtDd4PLqS0VMGt+Bl45YEIdTPZwJVnUjzqymth5Rjob3PdJETHv/SXjdEqTbehjM44XlYxuqsMWVmdUEXIZ0o6c8SZhAavg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1701466963; bh=Ns45J0CgHMthmJs3WjRgUMqSLeHGAZjpR6rcxpR8Q8l=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=NwUpUA2tZTjfzb5h2J7hknjM9btHiRcWoq4Uu0S/ytfe/Codn+57JUqhyEXwwaHz+3AB7QnHs7TRlIVnaEyfBCrKFVK1qALFEob8CEHqRUnvIT3clquQityEXkuXpGcZq5uJuK5x8rb8qwQWlAuzA0oLxpQPeJ5dcoLd7pvmefFVK81ZWVcDdxhMwv3w65pnHNenCrPgsfXU7J0A+K8agXuiata1MuGqLErvoJiJuswF48ANKVnB2qkpc0NAu5ZNgYOv3j/WGddJJtJoQFsXAeb3SaFmAP37V2SDP7GCkt+YNOa6rawduynX9/LR8ejAfZDIaCu/txfWORUCougBXw==
-X-YMail-OSG: ClAPQioVM1lLSr2zj4_ga4wHfUXJBMw5jbkOCVWS3mKr8FGyy9NbsR.4O8Pzpwk
- YhvzNSCq2qiObz8ER5I5AZ0P3a2CWSFAVzYmF0DHiI7k7oCzLUyHutqtfGKSwj5WQGmQhIxijfQj
- wwaZDQECUpw6ZjqAps3JwPOKFQT8HFRE4sr8Z6WAKClLDlhwgGzsBYgsTlINj4CsULhhOdiR0kpj
- qmXlwzghZ4dbDtVo3LikCBeBdtYO50vtYAs6B9HXA7I3Nus8Hw1eyt3yHs_3DqlFlI.PUhdx71wt
- och.J_Xk5MQmpMpTYBq0O3DDOLyQl7W7q80oLiS100hTWCKUd8sLwFkhHaZGiSU1hk95R.dt0Ci_
- 1PQoV2MSOSnhrJUvREkEwwJb5o0eZ2jCRcAUbxdRqxsusPm4TdMc_MeYb0QNii0B_iFqri9CF9op
- JOmiu6M.s7JNaeYKb2u.md7MFtebg_5s69Fh6C8eB_ufe890hW4LHNa7_QGjyPTQ9T_Mcfh.ZPv8
- xcMgR2cc3oR.hE02hiSZ85Mwol2.BlLDRARdM5RsFks3ijKCyi.8W3cidMyiZtLEABxAjSg3R1Fr
- LS.MDQpZ7iYmAx3CDdCqi_Sv.mAku4ATFnk7vo_XM48tL4vGP9naBBudkh1NBADq.zjUn7umfVq6
- UDH3FfEsLt6ANFc4LbF1MvBEy.K1ubpkfNkama5gmp9YmS1.b9NHqQUKIQGqezLiYxxLiRH3MHlj
- 07cs6IubMVhuHOY3KnnM2Vnk3Ew_PI44hqNTsFXT5MVY0aikx7Ru6BQXAXPgPkpON7obyvKA5IFr
- ri1ShuvPKnw4W2cZlID7rnqvwSmOXTLChSibAVgpakOeT6OPcjhHBZQDvPWd6wJE3Qtxq5ylaoLr
- 6FWqgQr59SOy65xMWdUwZOTfHRB5PUUHYtGrb89uTnwfu9J0poZitlO.fJKReYkpH18XhXz8YsXE
- pD.vnbqrpJuVR4cgzHsOq0QJSEcMFrA49geaYIkgmn9U._NaOoptI3feOaZWkmIpOXOc5UhuwpG4
- P2MT7Yc8GRlRNU5d7gYHp6HBdVdz.E4aPZhRsWpwivf9Q6v22J9sPjGh0SOVxiS_97HC0xYyoky_
- qzya7s5ShU_acSqQnwUXl4lPxv_WptoawgCukj0JjPg7jWd4KUYfmzFjzFSPoj9hVB37V7kMm4d9
- ZgzhgLjecEK7g25s8c5np5LnXPyX2lJcLTGaMa951VH1kiW.7EewUggPcAwlh1BEdQr6NH2.V.V6
- Tx5vcLAI.cK1yPN7l0VOuWfYxur1FjC3OavrHfb0sACsDPdngkpyGf_HUJU8rjhsQRBdeGFfmxoE
- vgqQ._dUKaW4ckzupoq4ghgKfx7NXDGOEC60CYaxiL9TJy4ahk5ZoHYU1lJ6WTNHpUK0i_FesGiI
- DIl1defuGtMpPpm9.dOHuC3XQjHZN4Rj7B1NzIkXh1DkpdO06jACKfRDkWVPeVFVxWjQL78knFPa
- iJRE6PEAC0meAE_xiY7y_xCPzsuMfHRpwyggWdtUFnDzpZTaIQbqCTmA7sadrrXkwNt2lOM5ZpxN
- Ed8UGfKDD8SmledFMx1s9wid14rbcyksKoJDQRT2APoK7.kwDixowTNmJw1pYXO4bgCacuUhDf9_
- jIMDdVHL.venxuGNXkIzlk0Bjf0NhjWDW6v_HxgFCq7Qv4D47UECVvRPdDaaCgSip71La1j8XtuG
- QKB__SBOQcCEVhwIiggLDDhqueIqcneSG2.CbBiYZ.Hnn_U1DrWHFBJ5Rmqq8uMNTXGrcv_Ein77
- VEcMBzHUr2yOONvZHiKpgGLt37zxmJQfc564Vwl_i_ZefMENZxcsz3pGT8b4fjMMo5t6L7AFwbpI
- 04h43whJCSZZ2HEVZA13uApufFs6lya.KoYZjgspxeYp_83DifdlCsRtoHG.KAYldhVBGHEUVtMP
- ILnMV.p.P89Wgljwli3hPnUk850_oX2X.EGPq7qxRzudlbx1mCDTzJIhu6NVSm5IjwMj2XvdjiCu
- Ib87f4D_GHOhIeOrL4mRJavj6CEv_KET9CC_XxrQ0myHBC4QUuL9Q8N5Yh3MHT9q5j6aUyGu2elw
- q4LuExRp_.zQElGQYEOuu7wzpr7J3Kf5ACHhWdsmNZv8bma8Oh7tto.ru4vg6_h9AkHsrZ7aZjrX
- Asp.zfIIwkhlz_q882iFPRN3xj73688alEN_S21gtWNCklsyivj9bAXOyLf9F5M7_IQ29yEa.E3S
- Vtt7nvUzZmPZBGp.pYzHZKxnFOWpV7L20.gxjZSqmH.BPd2g9f_fy_15LGo4WnapwcMkyZ2EDo91
- 2cf5PxDcE3ABXm64-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 4b09c470-a981-4550-be61-6815eaa4f41b
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Fri, 1 Dec 2023 21:42:43 +0000
-Received: by hermes--production-gq1-5cf8f76c44-ghgt9 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 40dfce3d67f8b553f0416cb733b4b4d5;
-          Fri, 01 Dec 2023 21:42:39 +0000 (UTC)
-Message-ID: <e12eddba-6ae4-4942-a705-b33dbe724884@schaufler-ca.com>
-Date: Fri, 1 Dec 2023 13:42:36 -0800
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id A186B9A;
+	Fri,  1 Dec 2023 15:54:50 -0800 (PST)
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 3B1NrZqS019545;
+	Fri, 1 Dec 2023 17:53:35 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 3B1NrW9C019544;
+	Fri, 1 Dec 2023 17:53:32 -0600
+Date: Fri, 1 Dec 2023 17:53:32 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org, mic@digikod.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed blob for integrity_iint_cache
+Message-ID: <20231201235332.GA19345@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com> <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com> <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com> <CAHC9VhTTKac1o=RnQadu2xqdeKH8C_F+Wh4sY=HkGbCArwc8JQ@mail.gmail.com> <b6c51351be3913be197492469a13980ab379e412.camel@huaweicloud.com> <CAHC9VhSAryQSeFy0ZMexOiwBG-YdVGRzvh58=heH916DftcmWA@mail.gmail.com> <90eb8e9d-c63e-42d6-b951-f856f31590db@huaweicloud.com> <20231201010549.GA8923@wind.enjellic.com> <660e8516-ec1b-41b4-9e04-2b9fabbe59ca@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Fw: [PATCH] proc: Update inode upon changing task security
- attribute
-Content-Language: en-US
-To: Munehisa Kamata <kamatam@amazon.com>, adobriyan@gmail.com
-Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
- linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <5f8b18b0-0744-4cf5-9ec5-b0bb0451dd18@p183>
- <20231201205940.23095-1-kamatam@amazon.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20231201205940.23095-1-kamatam@amazon.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <660e8516-ec1b-41b4-9e04-2b9fabbe59ca@schaufler-ca.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 01 Dec 2023 17:53:35 -0600 (CST)
 
-On 12/1/2023 12:59 PM, Munehisa Kamata wrote:
-> Hi Alexey,
->
-> On Fri, 2023-12-01 09:30:00 +0000, Alexey Dobriyan wrote:
->> On Wed, Nov 29, 2023 at 05:11:22PM -0800, Andrew Morton wrote:
->>> fyi...
->>>
->>> (yuk!)
->>>
->>>
->>>
->>> Begin forwarded message:
->>>
->>> Date: Thu, 30 Nov 2023 00:37:04 +0000
->>> From: Munehisa Kamata <kamatam@amazon.com>
->>> To: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
->>> Cc: <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>, "Munehisa Kamata" <kamatam@amazon.com>
->>> Subject: [PATCH] proc: Update inode upon changing task security attribute
->>>
->>>
->>> I'm not clear whether VFS is a better (or worse) place[1] to fix the
->>> problem described below and would like to hear opinion.
->>>
->>> If the /proc/[pid] directory is bind-mounted on a system with Smack
->>> enabled, and if the task updates its current security attribute, the task
->>> may lose access to files in its own /proc/[pid] through the mountpoint.
->>>
->>>  $ sudo capsh --drop=cap_mac_override --
->>>  # mkdir -p dir
->>>  # mount --bind /proc/$$ dir
->>>  # echo AAA > /proc/$$/task/current		# assuming built-in echo
->>>  # cat /proc/$$/task/current			# revalidate
->>>  AAA
->>>  # echo BBB > dir/attr/current
->>>  # cat dir/attr/current
->>>  cat: dir/attr/current: Permission denied
->>>  # ls dir/
->>>  ls: cannot access dir/: Permission denied
->>>  # cat /proc/$$/attr/current			# revalidate
->>>  BBB
->>>  # cat dir/attr/current
->>>  BBB
->>>  # echo CCC > /proc/$$/attr/current
->>>  # cat dir/attr/current
->>>  cat: dir/attr/current: Permission denied
->>>
->>> This happens because path lookup doesn't revalidate the dentry of the
->>> /proc/[pid] when traversing the filesystem boundary, so the inode security
->>> blob of the /proc/[pid] doesn't get updated with the new task security
->>> attribute. Then, this may lead security modules to deny an access to the
->>> directory. Looking at the code[2] and the /proc/pid/attr/current entry in
->>> proc man page, seems like the same could happen with SELinux. Though, I
->>> didn't find relevant reports.
->>>
->>> The steps above are quite artificial. I actually encountered such an
->>> unexpected denial of access with an in-house application sandbox
->>> framework; each app has its own dedicated filesystem tree where the
->>> process's /proc/[pid] is bind-mounted to and the app enters into via
->>> chroot.
->>>
->>> With this patch, writing to /proc/[pid]/attr/current (and its per-security
->>> module variant) updates the inode security blob of /proc/[pid] or
->>> /proc/[pid]/task/[tid] (when pid != tid) with the new attribute.
->>>
->>> [1] https://lkml.kernel.org/linux-fsdevel/4A2D15AF.8090000@sun.com/
->>> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/security/selinux/hooks.c#n4220
->>>
->>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
->>> Signed-off-by: Munehisa Kamata <kamatam@amazon.com>
->>> ---
->>>  fs/proc/base.c | 23 ++++++++++++++++++++---
->>>  1 file changed, 20 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/fs/proc/base.c b/fs/proc/base.c
->>> index dd31e3b6bf77..bdb7bea53475 100644
->>> --- a/fs/proc/base.c
->>> +++ b/fs/proc/base.c
->>> @@ -2741,6 +2741,7 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
->>>  {
->>>  	struct inode * inode = file_inode(file);
->>>  	struct task_struct *task;
->>> +	const char *name = file->f_path.dentry->d_name.name;
->>>  	void *page;
->>>  	int rv;
->>>  
->>> @@ -2784,10 +2785,26 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
->>>  	if (rv < 0)
->>>  		goto out_free;
->>>  
->>> -	rv = security_setprocattr(PROC_I(inode)->op.lsm,
->>> -				  file->f_path.dentry->d_name.name, page,
->>> -				  count);
->>> +	rv = security_setprocattr(PROC_I(inode)->op.lsm, name, page, count);
->>>  	mutex_unlock(&current->signal->cred_guard_mutex);
->>> +
->>> +	/*
->>> +	 *  Update the inode security blob in advance if the task's security
->>> +	 *  attribute was updated
->>> +	 */
->>> +	if (rv > 0 && !strcmp(name, "current")) {
->>> +		struct pid *pid;
->>> +		struct proc_inode *cur, *ei;
->>> +
->>> +		rcu_read_lock();
->>> +		pid = get_task_pid(current, PIDTYPE_PID);
->>> +		hlist_for_each_entry(cur, &pid->inodes, sibling_inodes)
->>> +			ei = cur;
->> Should this "break;"? Why is only the last inode in the list updated?
->> Should it be the first? All of them?
-> If it picks up the first node, it may end up updating /proc/[pid]/task/[tid]
-> rather than /proc/[pid] (when pid == tid) and the task may be denied access
-> to its own /proc/[pid] afterward.
->
-> I think updating all of them won't hurt. But, as long as /proc/[pid] is
-> accessible, the rest of the inodes should be updated upon path lookup via
-> revalidation as usual.
->
-> When pid != tid, it only updates /proc/[pid]/task/[tid] and the thread may
-> lose an access to /proc/[pid], but I think it's okay as it's a matter of
-> security policy enforced by security modules. Casey, do you have any
-> comments here?
+On Fri, Dec 01, 2023 at 10:54:54AM -0800, Casey Schaufler wrote:
 
-I do not.
+Good evening Casey, thanks for taking the time to respond.
 
->
->
-> Regards,
-> Munehisa
->
->  
->>> +		put_pid(pid);
->>> +		pid_update_inode(current, &ei->vfs_inode);
->>> +		rcu_read_unlock();
->>> +	}
+> On 11/30/2023 5:05 PM, Dr. Greg wrote:
+> > A suggestion has been made in this thread that there needs to be broad
+> > thinking on this issue, and by extension, other tough problems.  On
+> > that note, we would be interested in any thoughts regarding the notion
+> > of a long term solution for this issue being the migration of EVM to a
+> > BPF based implementation?
+> >
+> > There appears to be consensus that the BPF LSM will always go last, a
+> > BPF implementation would seem to address the EVM ordering issue.
+> >
+> > In a larger context, there have been suggestions in other LSM threads
+> > that BPF is the future for doing LSM's.  Coincident with that has come
+> > some disagreement about whether or not BPF embodies sufficient
+> > functionality for this role.
+> >
+> > The EVM codebase is reasonably modest with a very limited footprint of
+> > hooks that it handles.  A BPF implementation on this scale would seem
+> > to go a long ways in placing BPF sufficiency concerns to rest.
+> >
+> > Thoughts/issues?
+
+> Converting EVM to BPF looks like a 5 to 10 year process. Creating a
+> EVM design description to work from, building all the support functions
+> required, then getting sufficient reviews and testing isn't going to be
+> a walk in the park. That leaves out the issue of distribution of the
+> EVM-BPF programs. Consider how the rush to convert kernel internals to
+> Rust is progressing. EVM isn't huge, but it isn't trivial, either. Tetsuo
+> had a good hard look at converting TOMOYO to BPF, and concluded that it
+> wasn't practical. TOMOYO is considerably less complicated than EVM.
+
+Interesting, thanks for the reflections.
+
+On a functional line basis, EVM is 14% of the TOMOYO codebase, not
+counting the IMA code.
+
+Given your observations, one would than presume around a decade of
+development effort to deliver a full featured LSM, ie. SELINUX, SMACK,
+APPARMOR, TOMOYO in BPF form.
+
+Very useful information, we can now return the thread to what appears
+is going to be the vexing implementation of:
+
+lsm_set_order(LSM_ORDER_FU_I_REALLY_AM_GOING_TO_BE_THE_LAST_ONE_TO_RUN);
+
+:-)
+
+Have a good weekend.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
