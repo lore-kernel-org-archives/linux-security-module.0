@@ -1,46 +1,46 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ba4EDtYP"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DcmB5OHL"
 Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C38B21711
-	for <linux-security-module@vger.kernel.org>; Fri,  1 Dec 2023 06:31:11 -0800 (PST)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5d3cdd6f132so21296817b3.2
-        for <linux-security-module@vger.kernel.org>; Fri, 01 Dec 2023 06:31:11 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7978810FF
+	for <linux-security-module@vger.kernel.org>; Fri,  1 Dec 2023 06:31:14 -0800 (PST)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5d6b751dabcso4499667b3.1
+        for <linux-security-module@vger.kernel.org>; Fri, 01 Dec 2023 06:31:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1701441071; x=1702045871; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1701441073; x=1702045873; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nHv5r2nFt7uEKH+N98ywQLZZENznpsQB4F5i/duIh6c=;
-        b=ba4EDtYPPdx/BuF8gWor9ccjAPt/2Vz9H4oELoFCrbKA2CER4teWp5NSMQw0TGZ3Nl
-         gm9Hg5NyWp/WXikCZjmwK+XVOWQiEmKFnLNBPotjGUE4XCeYC3anykbwpVmbgD5G2aGy
-         cG3vuI+IEnXVEBVzljfXO+OQ1j00bHAj6fFhzOuA8JgEec0cpKI5hqqAM8MpWF/PHmCP
-         a5ix3T23NHY9TNA4Mfab0FMOC6uK04Ei2UgpHqL3pOetoxVDsVqx/Ogyh4miiNd+OjQz
-         z1bL51EW9Ej7s8Q7fPwSYE3JlEl5RZ0c3b6tQOwjsQfQ1jQrIqSmpmsQu90XV1n+suNp
-         9LWw==
+        bh=VkNlUMO5Ik4WbvbLPS9U3iApO7fh78ZIJCMph1nfz+s=;
+        b=DcmB5OHLWPE7kkUegGQ5GG18BvTq+0D9gpHG48/KTlmHSks0b6DMYwZkdp2curLB8i
+         5/VR2+sQcay4uuiBUXo407meaLX0E9sS87+xcfwXAfwRdn54bZib0461c5ZmWY3OZOvh
+         LHi9RDUEkOS8bzSEm5tlvr0Ggql0YJwHMsu/QtVS+7BfxTGVLLe9Eq4aQfimoU8Jg7pY
+         5xxplczoqNVW34iQpeGEJoYmSD7JAu23f2nBf2VFEXwjx5mEdrKHTMjqct30FgJArInM
+         2J5bgfbSXuwD+MCtrXibbE5pF+mAyk7pwcJ7U2xGEG8tdHF8yi/TG+9wLpYKnE02Avss
+         7zZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701441071; x=1702045871;
+        d=1e100.net; s=20230601; t=1701441073; x=1702045873;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=nHv5r2nFt7uEKH+N98ywQLZZENznpsQB4F5i/duIh6c=;
-        b=wQB2xZGnI10EZH95zG8ic4FAxesKldeHxfd/VoA5cn7bVdKwqljnLDN1cW3OCrs+NZ
-         CfNctluJQYcWWq8frIf0KtF+nMUE/L64qc1x4LQkLPt6NgzBfb6VR/4hj+9gTmr1CreY
-         XQAZ8ilUJz3omdbCCwVoZY2Ug/mCNZssEXtuVghCA301kjKjqO20OSRcykIDjGW0Dv4M
-         gaCVCZ4GgVEF7I7ZWs8Wo9CG9v8jZtixyOpf4hzAOd6uuJbumcXEmPG9dQODhoaiI8gJ
-         x9PGRbZl+lG9v5nzKTwnA218rxfu7vwYUITBH8cirtRwDHTkUIOOaNoPoOx/AQm0Ucdl
-         HGSw==
-X-Gm-Message-State: AOJu0YyNd+81+/tVb0tBGq2umP2/0aIytEL0DPxPUCCoYCDUUEqZ7O3N
-	xry8N3i3+FCyU+pdnLR3JKWv2AsdsVyKFhbZh1F4Ltex+831YmXZrhdz2byRTX2ww3MHtxnwoPR
-	ZKJmEK2QM5G8QNtfSHobbe0r0jASk7euwz37UAbpecuQizXfe4LqE7BOcSe6nNCJ0UO5d6MCMPl
-	YQZ2QUNA==
-X-Google-Smtp-Source: AGHT+IG70Okx0fgLGQVBf3UwIVnERJsYKXlyRatTnCbnk8ydms/45EhWSgMq4Tjfv6xcLw790Q4GdI18Hi8=
+        bh=VkNlUMO5Ik4WbvbLPS9U3iApO7fh78ZIJCMph1nfz+s=;
+        b=bVToUeyl78Dcao6DMTos0fcYJH3DZqu6b4HYBTavDfH1qOdYU64Kk+wvR6sBOnUixS
+         +5EdV+X8nyONYWDGuZCF3IL7GZopbE03WuLn5dj5Ooq9fPZ7s2mNqxLMY+3mh9S2fRwT
+         wLRqiXeH0eJa7TSOIrex90M9lhWURVdOHBbF+hPJ9ZiQtW3c7JouRWMAe0wSlmMynzEr
+         Ysu+q4ph1UKu0ybr+esTNSqMLxTbTU5/RLByCHf1i/ek1W9Mtz+1LoSLOHjDPGg/QgY/
+         2Dh/6vorWuKda0O9QjAjAVR1E6zqGrDdzdfFn4nPUCo1fLawLa7qS/+C2QgOQq1ZwAIr
+         XuAA==
+X-Gm-Message-State: AOJu0YzamJTKEjGh+j9niG6TX+1OGjwju0QxOhbFg6UqWTbfO3VyLt9X
+	VGT/uGQS9xIIOiYtfkkODApeWLtuGwcgH9ntQhYGz/SNhjvr3Cac4smlZuKH5uf0vewfx9E9PDy
+	nW33nYqXc4q+yGLNqA0N+ltoSvPCRC4Zf9JgI4hjeqEtHRE2Ahqoey8/0X4IPc3ke4ngIE7Rfh/
+	O/m0phkw==
+X-Google-Smtp-Source: AGHT+IHu4Z2z3LDzaR4GGkCmm/8dZHd2xrfJ/ey5Js8Bac6wpmEnjrLEJn/48ib5Il7Mc5gbiA1k55ZCgEU=
 X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:fab0:4182:b9df:bfec])
- (user=gnoack job=sendgmr) by 2002:a81:ae21:0:b0:5d4:ce2:e90b with SMTP id
- m33-20020a81ae21000000b005d40ce2e90bmr78578ywh.7.1701441070943; Fri, 01 Dec
- 2023 06:31:10 -0800 (PST)
-Date: Fri,  1 Dec 2023 15:30:41 +0100
+ (user=gnoack job=sendgmr) by 2002:a81:ff08:0:b0:5cb:66c:99a8 with SMTP id
+ k8-20020a81ff08000000b005cb066c99a8mr871089ywn.1.1701441073595; Fri, 01 Dec
+ 2023 06:31:13 -0800 (PST)
+Date: Fri,  1 Dec 2023 15:30:42 +0100
 In-Reply-To: <20231201143042.3276833-1-gnoack@google.com>
-Message-Id: <20231201143042.3276833-9-gnoack@google.com>
+Message-Id: <20231201143042.3276833-10-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20231201143042.3276833-1-gnoack@google.com>
 X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
-Subject: [PATCH v7 8/9] samples/landlock: Add support for LANDLOCK_ACCESS_FS_IOCTL
+Subject: [PATCH v7 9/9] landlock: Document IOCTL support
 From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To: linux-security-module@vger.kernel.org, 
 	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
@@ -61,60 +61,189 @@ Cc: Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Add ioctl support to the Landlock sample tool.
-
-The ioctl right is grouped with the read-write rights in the sample
-tool, as some ioctl requests provide features that mutate state.
+In the paragraph above the fallback logic, use the shorter phrasing
+from the landlock(7) man page.
 
 Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
- samples/landlock/sandboxer.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ Documentation/userspace-api/landlock.rst | 74 +++++++++++++++++++-----
+ 1 file changed, 59 insertions(+), 15 deletions(-)
 
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index 08596c0ef070..d7323e5526be 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -81,7 +81,8 @@ static int parse_path(char *env_path, const char ***const=
- path_list)
- 	LANDLOCK_ACCESS_FS_EXECUTE | \
- 	LANDLOCK_ACCESS_FS_WRITE_FILE | \
- 	LANDLOCK_ACCESS_FS_READ_FILE | \
--	LANDLOCK_ACCESS_FS_TRUNCATE)
-+	LANDLOCK_ACCESS_FS_TRUNCATE | \
-+	LANDLOCK_ACCESS_FS_IOCTL)
-=20
- /* clang-format on */
-=20
-@@ -199,11 +200,12 @@ static int populate_ruleset_net(const char *const env=
-_var, const int ruleset_fd,
- 	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
- 	LANDLOCK_ACCESS_FS_MAKE_SYM | \
- 	LANDLOCK_ACCESS_FS_REFER | \
--	LANDLOCK_ACCESS_FS_TRUNCATE)
-+	LANDLOCK_ACCESS_FS_TRUNCATE | \
-+	LANDLOCK_ACCESS_FS_IOCTL)
-=20
- /* clang-format on */
-=20
--#define LANDLOCK_ABI_LAST 4
-+#define LANDLOCK_ABI_LAST 5
-=20
- int main(const int argc, char *const argv[], char *const *const envp)
- {
-@@ -317,6 +319,11 @@ int main(const int argc, char *const argv[], char *con=
-st *const envp)
- 		ruleset_attr.handled_access_net &=3D
- 			~(LANDLOCK_ACCESS_NET_BIND_TCP |
- 			  LANDLOCK_ACCESS_NET_CONNECT_TCP);
-+		__attribute__((fallthrough));
-+	case 4:
-+		/* Removes LANDLOCK_ACCESS_FS_IOCTL for ABI < 5 */
-+		ruleset_attr.handled_access_fs &=3D ~LANDLOCK_ACCESS_FS_IOCTL;
+diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/users=
+pace-api/landlock.rst
+index 2e3822677061..68498ca64dc9 100644
+--- a/Documentation/userspace-api/landlock.rst
++++ b/Documentation/userspace-api/landlock.rst
+@@ -75,7 +75,8 @@ to be explicit about the denied-by-default access rights.
+             LANDLOCK_ACCESS_FS_MAKE_BLOCK |
+             LANDLOCK_ACCESS_FS_MAKE_SYM |
+             LANDLOCK_ACCESS_FS_REFER |
+-            LANDLOCK_ACCESS_FS_TRUNCATE,
++            LANDLOCK_ACCESS_FS_TRUNCATE |
++            LANDLOCK_ACCESS_FS_IOCTL,
+         .handled_access_net =3D
+             LANDLOCK_ACCESS_NET_BIND_TCP |
+             LANDLOCK_ACCESS_NET_CONNECT_TCP,
+@@ -84,10 +85,10 @@ to be explicit about the denied-by-default access right=
+s.
+ Because we may not know on which kernel version an application will be
+ executed, it is safer to follow a best-effort security approach.  Indeed, =
+we
+ should try to protect users as much as possible whatever the kernel they a=
+re
+-using.  To avoid binary enforcement (i.e. either all security features or
+-none), we can leverage a dedicated Landlock command to get the current ver=
+sion
+-of the Landlock ABI and adapt the handled accesses.  Let's check if we sho=
+uld
+-remove access rights which are only supported in higher versions of the AB=
+I.
++using.
 +
- 		fprintf(stderr,
- 			"Hint: You should update the running kernel "
- 			"to leverage Landlock features "
++To be compatible with older Linux versions, we detect the available Landlo=
+ck ABI
++version, and only use the available subset of access rights:
+=20
+ .. code-block:: c
+=20
+@@ -113,6 +114,10 @@ remove access rights which are only supported in highe=
+r versions of the ABI.
+         ruleset_attr.handled_access_net &=3D
+             ~(LANDLOCK_ACCESS_NET_BIND_TCP |
+               LANDLOCK_ACCESS_NET_CONNECT_TCP);
++        __attribute__((fallthrough));
++    case 4:
++        /* Removes LANDLOCK_ACCESS_FS_IOCTL for ABI < 5 */
++        ruleset_attr.handled_access_fs &=3D ~LANDLOCK_ACCESS_FS_IOCTL;
+     }
+=20
+ This enables to create an inclusive ruleset that will contain our rules.
+@@ -224,6 +229,7 @@ access rights per directory enables to change the locat=
+ion of such directory
+ without relying on the destination directory access rights (except those t=
+hat
+ are required for this operation, see ``LANDLOCK_ACCESS_FS_REFER``
+ documentation).
++
+ Having self-sufficient hierarchies also helps to tighten the required acce=
+ss
+ rights to the minimal set of data.  This also helps avoid sinkhole directo=
+ries,
+ i.e.  directories where data can be linked to but not linked from.  Howeve=
+r,
+@@ -317,18 +323,24 @@ It should also be noted that truncating files does no=
+t require the
+ system call, this can also be done through :manpage:`open(2)` with the fla=
+gs
+ ``O_RDONLY | O_TRUNC``.
+=20
+-When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE=
+``
+-right is associated with the newly created file descriptor and will be use=
+d for
+-subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavio=
+r is
+-similar to opening a file for reading or writing, where permissions are ch=
+ecked
+-during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)=
+` and
++The truncate right is associated with the opened file (see below).
++
++Rights associated with file descriptors
++---------------------------------------
++
++When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE=
+`` and
++``LANDLOCK_ACCESS_FS_IOCTL`` rights is associated with the newly created f=
+ile
++descriptor and will be used for subsequent truncation and ioctl attempts u=
+sing
++:manpage:`ftruncate(2)` and :manpage:`ioctl(2)`.  The behavior is similar =
+to
++opening a file for reading or writing, where permissions are checked durin=
+g
++:manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
+ :manpage:`write(2)` calls.
+=20
+-As a consequence, it is possible to have multiple open file descriptors fo=
+r the
+-same file, where one grants the right to truncate the file and the other d=
+oes
+-not.  It is also possible to pass such file descriptors between processes,
+-keeping their Landlock properties, even when these processes do not have a=
+n
+-enforced Landlock ruleset.
++As a consequence, it is possible to have multiple open file descriptors
++referring to the same file, where one grants the truncate or ioctl right a=
+nd the
++other does not.  It is also possible to pass such file descriptors between
++processes, keeping their Landlock properties, even when these processes do=
+ not
++have an enforced Landlock ruleset.
+=20
+ Compatibility
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+@@ -457,6 +469,28 @@ Memory usage
+ Kernel memory allocated to create rulesets is accounted and can be restric=
+ted
+ by the Documentation/admin-guide/cgroup-v1/memory.rst.
+=20
++IOCTL support
++-------------
++
++The ``LANDLOCK_ACCESS_FS_IOCTL`` access right restricts the use of
++:manpage:`ioctl(2)`, but it only applies to newly opened files.  This mean=
+s
++specifically that pre-existing file descriptors like stdin, stdout and std=
+err
++are unaffected.
++
++Users should be aware that TTY devices have traditionally permitted to con=
+trol
++other processes on the same TTY through the ``TIOCSTI`` and ``TIOCLINUX`` =
+IOCTL
++commands.  It is therefore recommended to close inherited TTY file descrip=
+tors,
++or to reopen them from ``/proc/self/fd/*`` without the
++``LANDLOCK_ACCESS_FS_IOCTL`` right, if possible.  The :manpage:`isatty(3)`
++function checks whether a given file descriptor is a TTY.
++
++Landlock's IOCTL support is coarse-grained at the moment, but may become m=
+ore
++fine-grained in the future.  Until then, users are advised to establish th=
+e
++guarantees that they need through the file hierarchy, by only permitting t=
+he
++``LANDLOCK_ACCESS_FS_IOCTL`` right on files where it is really harmless.  =
+In
++cases where you can control the mounts, the ``nodev`` mount option can hel=
+p to
++rule out that device files can be accessed.
++
+ Previous limitations
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+@@ -494,6 +528,16 @@ bind and connect actions to only a set of allowed port=
+s thanks to the new
+ ``LANDLOCK_ACCESS_NET_BIND_TCP`` and ``LANDLOCK_ACCESS_NET_CONNECT_TCP``
+ access rights.
+=20
++IOCTL (ABI < 5)
++---------------
++
++IOCTL operations could not be denied before the fifth Landlock ABI, so
++:manpage:`ioctl(2)` is always allowed when using a kernel that only suppor=
+ts an
++earlier ABI.
++
++Starting with the Landlock ABI version 5, it is possible to restrict the u=
+se of
++:manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL`` access righ=
+t.
++
+ .. _kernel_support:
+=20
+ Kernel support
 --=20
 2.43.0.rc2.451.g8631bc7472-goog
 
