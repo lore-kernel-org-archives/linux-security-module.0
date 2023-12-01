@@ -1,217 +1,170 @@
-X-Greylist: delayed 1748 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 30 Nov 2023 17:36:20 PST
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 68973D50;
-	Thu, 30 Nov 2023 17:36:20 -0800 (PST)
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 3B115q1E009250;
-	Thu, 30 Nov 2023 19:05:52 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 3B115nMV009249;
-	Thu, 30 Nov 2023 19:05:49 -0600
-Date: Thu, 30 Nov 2023 19:05:49 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
-        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, mic@digikod.net, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed blob for integrity_iint_cache
-Message-ID: <20231201010549.GA8923@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com> <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com> <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com> <CAHC9VhTTKac1o=RnQadu2xqdeKH8C_F+Wh4sY=HkGbCArwc8JQ@mail.gmail.com> <b6c51351be3913be197492469a13980ab379e412.camel@huaweicloud.com> <CAHC9VhSAryQSeFy0ZMexOiwBG-YdVGRzvh58=heH916DftcmWA@mail.gmail.com> <90eb8e9d-c63e-42d6-b951-f856f31590db@huaweicloud.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kKbEz3nq"
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD97E2D5F;
+	Fri,  1 Dec 2023 01:30:05 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-a00a9c6f1e9so278274466b.3;
+        Fri, 01 Dec 2023 01:30:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701423003; x=1702027803; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=B8xnc2cYH1N/JbEUok7VoTehJ7xqwxQ03AUqlJhtUkY=;
+        b=kKbEz3nqfrHBIfjNqAnUy98vvlSzCVpJUUReOOawN6g4f2c5V7qgkZxd4bbunP1H/y
+         HNpf0LkdpVHKNW0cMbnQWqYKIpzHpd/BQwOGZhgjFEFaXBEflgusBKAC8MAntTYcolCU
+         nsOYgkh01MyH41aqRvXl+FEGsKdFayozMyjbjv4uPcGLypH+CBRP+qdBl2oK/rnEmyJu
+         7unqB0rwUx8J9oQGaqLGC9FllPy47ixtel0JOFH+RyyoET9hCRzEio2LPK/Nr4yzo1t3
+         nTNropPkHLM5mkoAYcvYAXIq18zbSnj/xv2K4lfmXx7Dtikk2efTFphCJnlGu6p/bBkI
+         SD8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701423003; x=1702027803;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B8xnc2cYH1N/JbEUok7VoTehJ7xqwxQ03AUqlJhtUkY=;
+        b=LcyZeVbeax5oa/sG9xQGCNMan6OcC9Rh1e/36u0iP1bWd0l0c65i9J6AwAzw/0qhOd
+         +q44A3tyfDVPYaeIWtzXmwbOG2NKhR5nx6kG7akrfkDrGS9WLPNfVkkV9u8w9i9Q1B9c
+         tRI7cB87NB2tAvjsBdXoZ6vAyMKy1b+VADY2m2KyTc4lqkBjhFDbYn2tj65dVvBVg6zl
+         HE/Z7yfHDMGQ7UPe+yQdivd8lvAJmMK7OB84CI2d6KwcxRQN7S+cjHrxy/e3aTTSbknn
+         hQMPaTHV3GCxynGXAbdVWkI25aNYlK7OJKaH1fmH8aK2Cs+5z+RKhXetI6I88earsV/8
+         n3pA==
+X-Gm-Message-State: AOJu0YwdCucc0b7JCmmDiPJYcG5NK5l0AgX+24DfeJVdWhK8IFTQtm7C
+	GN/2/cCbvAUZCKvgTbrAMQ==
+X-Google-Smtp-Source: AGHT+IHnyvw0kIxQW2ATN4u42QCXl1IjGzB4Pt+AK928Vspqpnw+0+DThCOR/32sTM3lOrfx+ZuKzw==
+X-Received: by 2002:a17:906:6b82:b0:a04:4b57:8f27 with SMTP id l2-20020a1709066b8200b00a044b578f27mr469296ejr.60.1701423002927;
+        Fri, 01 Dec 2023 01:30:02 -0800 (PST)
+Received: from p183 ([46.53.250.155])
+        by smtp.gmail.com with ESMTPSA id g18-20020a1709067c5200b009fada3e836asm1667459ejp.53.2023.12.01.01.30.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Dec 2023 01:30:02 -0800 (PST)
+Date: Fri, 1 Dec 2023 12:30:00 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Munehisa Kamata <kamatam@amazon.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: Fw: [PATCH] proc: Update inode upon changing task security
+ attribute
+Message-ID: <5f8b18b0-0744-4cf5-9ec5-b0bb0451dd18@p183>
+References: <20231129171122.0171313079ea3afa84762d90@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <90eb8e9d-c63e-42d6-b951-f856f31590db@huaweicloud.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 30 Nov 2023 19:05:52 -0600 (CST)
+In-Reply-To: <20231129171122.0171313079ea3afa84762d90@linux-foundation.org>
 
-On Wed, Nov 29, 2023 at 07:46:43PM +0100, Roberto Sassu wrote:
-
-Good evening, I hope the week has gone well for everyone.
-
-> On 11/29/2023 6:22 PM, Paul Moore wrote:
-> >On Wed, Nov 29, 2023 at 7:28???AM Roberto Sassu
-> ><roberto.sassu@huaweicloud.com> wrote:
-> >>
-> >>On Mon, 2023-11-20 at 16:06 -0500, Paul Moore wrote:
-> >>>On Mon, Nov 20, 2023 at 3:16???AM Roberto Sassu
-> >>><roberto.sassu@huaweicloud.com> wrote:
-> >>>>On Fri, 2023-11-17 at 15:57 -0500, Paul Moore wrote:
-> >>>>>On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
-> >>>>>>
-> >>>>>>Before the security field of kernel objects could be shared among 
-> >>>>>>LSMs with
-> >>>>>>the LSM stacking feature, IMA and EVM had to rely on an alternative 
-> >>>>>>storage
-> >>>>>>of inode metadata. The association between inode metadata and inode is
-> >>>>>>maintained through an rbtree.
-> >>>>>>
-> >>>>>>Because of this alternative storage mechanism, there was no need to 
-> >>>>>>use
-> >>>>>>disjoint inode metadata, so IMA and EVM today still share them.
-> >>>>>>
-> >>>>>>With the reservation mechanism offered by the LSM infrastructure, the
-> >>>>>>rbtree is no longer necessary, as each LSM could reserve a space in 
-> >>>>>>the
-> >>>>>>security blob for each inode. However, since IMA and EVM share the
-> >>>>>>inode metadata, they cannot directly reserve the space for them.
-> >>>>>>
-> >>>>>>Instead, request from the 'integrity' LSM a space in the security 
-> >>>>>>blob for
-> >>>>>>the pointer of inode metadata (integrity_iint_cache structure). The 
-> >>>>>>other
-> >>>>>>reason for keeping the 'integrity' LSM is to preserve the original 
-> >>>>>>ordering
-> >>>>>>of IMA and EVM functions as when they were hardcoded.
-> >>>>>>
-> >>>>>>Prefer reserving space for a pointer to allocating the 
-> >>>>>>integrity_iint_cache
-> >>>>>>structure directly, as IMA would require it only for a subset of 
-> >>>>>>inodes.
-> >>>>>>Always allocating it would cause a waste of memory.
-> >>>>>>
-> >>>>>>Introduce two primitives for getting and setting the pointer of
-> >>>>>>integrity_iint_cache in the security blob, respectively
-> >>>>>>integrity_inode_get_iint() and integrity_inode_set_iint(). This would 
-> >>>>>>make
-> >>>>>>the code more understandable, as they directly replace rbtree 
-> >>>>>>operations.
-> >>>>>>
-> >>>>>>Locking is not needed, as access to inode metadata is not shared, it 
-> >>>>>>is per
-> >>>>>>inode.
-> >>>>>>
-> >>>>>>Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> >>>>>>Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> >>>>>>Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> >>>>>>---
-> >>>>>>  security/integrity/iint.c      | 71 
-> >>>>>>  +++++-----------------------------
-> >>>>>>  security/integrity/integrity.h | 20 +++++++++-
-> >>>>>>  2 files changed, 29 insertions(+), 62 deletions(-)
-> >>>>>>
-> >>>>>>diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> >>>>>>index 882fde2a2607..a5edd3c70784 100644
-> >>>>>>--- a/security/integrity/iint.c
-> >>>>>>+++ b/security/integrity/iint.c
-> >>>>>>@@ -231,6 +175,10 @@ static int __init integrity_lsm_init(void)
-> >>>>>>     return 0;
-> >>>>>>  }
-> >>>>>>
-> >>>>>>+struct lsm_blob_sizes integrity_blob_sizes __ro_after_init = {
-> >>>>>>+   .lbs_inode = sizeof(struct integrity_iint_cache *),
-> >>>>>>+};
-> >>>>>
-> >>>>>I'll admit that I'm likely missing an important detail, but is there
-> >>>>>a reason why you couldn't stash the integrity_iint_cache struct
-> >>>>>directly in the inode's security blob instead of the pointer?  For
-> >>>>>example:
-> >>>>>
-> >>>>>   struct lsm_blob_sizes ... = {
-> >>>>>     .lbs_inode = sizeof(struct integrity_iint_cache),
-> >>>>>   };
-> >>>>>
-> >>>>>   struct integrity_iint_cache *integrity_inode_get(inode)
-> >>>>>   {
-> >>>>>     if (unlikely(!inode->isecurity))
-> >>>>>       return NULL;
-> >>>>>     return inode->i_security + integrity_blob_sizes.lbs_inode;
-> >>>>>   }
-> >>>>
-> >>>>It would increase memory occupation. Sometimes the IMA policy
-> >>>>encompasses a small subset of the inodes. Allocating the full
-> >>>>integrity_iint_cache would be a waste of memory, I guess?
-> >>>
-> >>>Perhaps, but if it allows us to remove another layer of dynamic memory
-> >>>I would argue that it may be worth the cost.  It's also worth
-> >>>considering the size of integrity_iint_cache, while it isn't small, it
-> >>>isn't exactly huge either.
-> >>>
-> >>>>On the other hand... (did not think fully about that) if we embed the
-> >>>>full structure in the security blob, we already have a mutex available
-> >>>>to use, and we don't need to take the inode lock (?).
-> >>>
-> >>>That would be excellent, getting rid of a layer of locking would be 
-> >>>significant.
-> >>>
-> >>>>I'm fully convinced that we can improve the implementation
-> >>>>significantly. I just was really hoping to go step by step and not
-> >>>>accumulating improvements as dependency for moving IMA and EVM to the
-> >>>>LSM infrastructure.
-> >>>
-> >>>I understand, and I agree that an iterative approach is a good idea, I
-> >>>just want to make sure we keep things tidy from a user perspective,
-> >>>i.e. not exposing the "integrity" LSM when it isn't required.
-> >>
-> >>Ok, I went back to it again.
-> >>
-> >>I think trying to separate integrity metadata is premature now, too
-> >>many things at the same time.
-> >
-> >I'm not bothered by the size of the patchset, it is more important
-> >that we do The Right Thing.  I would like to hear in more detail why
-> >you don't think this will work, I'm not interested in hearing about
-> >difficult it may be, I'm interested in hearing about what challenges
-> >we need to solve to do this properly.
+On Wed, Nov 29, 2023 at 05:11:22PM -0800, Andrew Morton wrote:
 > 
-> The right thing in my opinion is to achieve the goal with the minimal 
-> set of changes, in the most intuitive way.
+> fyi...
 > 
-> Until now, there was no solution that could achieve the primary goal of 
-> this patch set (moving IMA and EVM to the LSM infrastructure) and, at 
-> the same time, achieve the additional goal you set of removing the 
-> 'integrity' LSM.
+> (yuk!)
 > 
-> If you see the diff, the changes compared to v5 that was already 
-> accepted by Mimi are very straightforward. If the assumption I made that 
-> in the end the 'ima' LSM could take over the role of the 'integrity' 
-> LSM, that for me is the preferable option.
 > 
-> Given that the patch set is not doing any design change, but merely 
-> moving calls and storing pointers elsewhere, that leaves us with the 
-> option of thinking better what to do next, including like you suggested 
-> to make IMA and EVM use disjoint metadata.
-
-A suggestion has been made in this thread that there needs to be broad
-thinking on this issue, and by extension, other tough problems.  On
-that note, we would be interested in any thoughts regarding the notion
-of a long term solution for this issue being the migration of EVM to a
-BPF based implementation?
-
-There appears to be consensus that the BPF LSM will always go last, a
-BPF implementation would seem to address the EVM ordering issue.
-
-In a larger context, there have been suggestions in other LSM threads
-that BPF is the future for doing LSM's.  Coincident with that has come
-some disagreement about whether or not BPF embodies sufficient
-functionality for this role.
-
-The EVM codebase is reasonably modest with a very limited footprint of
-hooks that it handles.  A BPF implementation on this scale would seem
-to go a long ways in placing BPF sufficiency concerns to rest.
-
-Thoughts/issues?
-
-> Thanks
 > 
-> Roberto
+> Begin forwarded message:
+> 
+> Date: Thu, 30 Nov 2023 00:37:04 +0000
+> From: Munehisa Kamata <kamatam@amazon.com>
+> To: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+> Cc: <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>, "Munehisa Kamata" <kamatam@amazon.com>
+> Subject: [PATCH] proc: Update inode upon changing task security attribute
+> 
+> 
+> I'm not clear whether VFS is a better (or worse) place[1] to fix the
+> problem described below and would like to hear opinion.
+> 
+> If the /proc/[pid] directory is bind-mounted on a system with Smack
+> enabled, and if the task updates its current security attribute, the task
+> may lose access to files in its own /proc/[pid] through the mountpoint.
+> 
+>  $ sudo capsh --drop=cap_mac_override --
+>  # mkdir -p dir
+>  # mount --bind /proc/$$ dir
+>  # echo AAA > /proc/$$/task/current		# assuming built-in echo
+>  # cat /proc/$$/task/current			# revalidate
+>  AAA
+>  # echo BBB > dir/attr/current
+>  # cat dir/attr/current
+>  cat: dir/attr/current: Permission denied
+>  # ls dir/
+>  ls: cannot access dir/: Permission denied
+>  # cat /proc/$$/attr/current			# revalidate
+>  BBB
+>  # cat dir/attr/current
+>  BBB
+>  # echo CCC > /proc/$$/attr/current
+>  # cat dir/attr/current
+>  cat: dir/attr/current: Permission denied
+> 
+> This happens because path lookup doesn't revalidate the dentry of the
+> /proc/[pid] when traversing the filesystem boundary, so the inode security
+> blob of the /proc/[pid] doesn't get updated with the new task security
+> attribute. Then, this may lead security modules to deny an access to the
+> directory. Looking at the code[2] and the /proc/pid/attr/current entry in
+> proc man page, seems like the same could happen with SELinux. Though, I
+> didn't find relevant reports.
+> 
+> The steps above are quite artificial. I actually encountered such an
+> unexpected denial of access with an in-house application sandbox
+> framework; each app has its own dedicated filesystem tree where the
+> process's /proc/[pid] is bind-mounted to and the app enters into via
+> chroot.
+> 
+> With this patch, writing to /proc/[pid]/attr/current (and its per-security
+> module variant) updates the inode security blob of /proc/[pid] or
+> /proc/[pid]/task/[tid] (when pid != tid) with the new attribute.
+> 
+> [1] https://lkml.kernel.org/linux-fsdevel/4A2D15AF.8090000@sun.com/
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/security/selinux/hooks.c#n4220
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Munehisa Kamata <kamatam@amazon.com>
+> ---
+>  fs/proc/base.c | 23 ++++++++++++++++++++---
+>  1 file changed, 20 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index dd31e3b6bf77..bdb7bea53475 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -2741,6 +2741,7 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+>  {
+>  	struct inode * inode = file_inode(file);
+>  	struct task_struct *task;
+> +	const char *name = file->f_path.dentry->d_name.name;
+>  	void *page;
+>  	int rv;
+>  
+> @@ -2784,10 +2785,26 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+>  	if (rv < 0)
+>  		goto out_free;
+>  
+> -	rv = security_setprocattr(PROC_I(inode)->op.lsm,
+> -				  file->f_path.dentry->d_name.name, page,
+> -				  count);
+> +	rv = security_setprocattr(PROC_I(inode)->op.lsm, name, page, count);
+>  	mutex_unlock(&current->signal->cred_guard_mutex);
+> +
+> +	/*
+> +	 *  Update the inode security blob in advance if the task's security
+> +	 *  attribute was updated
+> +	 */
+> +	if (rv > 0 && !strcmp(name, "current")) {
+> +		struct pid *pid;
+> +		struct proc_inode *cur, *ei;
+> +
+> +		rcu_read_lock();
+> +		pid = get_task_pid(current, PIDTYPE_PID);
+> +		hlist_for_each_entry(cur, &pid->inodes, sibling_inodes)
+> +			ei = cur;
 
-Have a good weekend.
+Should this "break;"? Why is only the last inode in the list updated?
+Should it be the first? All of them?
 
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
+> +		put_pid(pid);
+> +		pid_update_inode(current, &ei->vfs_inode);
+> +		rcu_read_unlock();
+> +	}
