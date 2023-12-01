@@ -1,170 +1,163 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kKbEz3nq"
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD97E2D5F;
-	Fri,  1 Dec 2023 01:30:05 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-a00a9c6f1e9so278274466b.3;
-        Fri, 01 Dec 2023 01:30:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jx/VPp5a"
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11DC113E;
+	Fri,  1 Dec 2023 01:47:07 -0800 (PST)
+Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1d04c097e34so2721295ad.0;
+        Fri, 01 Dec 2023 01:47:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701423003; x=1702027803; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B8xnc2cYH1N/JbEUok7VoTehJ7xqwxQ03AUqlJhtUkY=;
-        b=kKbEz3nqfrHBIfjNqAnUy98vvlSzCVpJUUReOOawN6g4f2c5V7qgkZxd4bbunP1H/y
-         HNpf0LkdpVHKNW0cMbnQWqYKIpzHpd/BQwOGZhgjFEFaXBEflgusBKAC8MAntTYcolCU
-         nsOYgkh01MyH41aqRvXl+FEGsKdFayozMyjbjv4uPcGLypH+CBRP+qdBl2oK/rnEmyJu
-         7unqB0rwUx8J9oQGaqLGC9FllPy47ixtel0JOFH+RyyoET9hCRzEio2LPK/Nr4yzo1t3
-         nTNropPkHLM5mkoAYcvYAXIq18zbSnj/xv2K4lfmXx7Dtikk2efTFphCJnlGu6p/bBkI
-         SD8w==
+        d=gmail.com; s=20230601; t=1701424026; x=1702028826; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MSQwZzhnajRqkX+xa7n/aRnDDu+LcQrNX6wmLbUqn44=;
+        b=Jx/VPp5as8p7jfndZ1ntJXI8DVhs/Nar9iA710vRvi64Lve5VsKR+AlHog5Sv2q5dz
+         uwp203cNSxBRln5Y5kPA/RUVw5/MfljEp73DD/hecDKdjJtR5SM2F1iGfACAO0JO2ebO
+         toFTOjK72fe8VJYuftGmTlVpJMeP0w9RjiBUpq3fPKdMcB50Tt7oFr7pHOjmWW+W6NAt
+         5RtWuL6RUCIgfcRfemroCDw6PqpWh4SuHnl1yMWRcYmu7ws+HuDf8Gch2JIC/lIINpJj
+         KX1ERlAvIITPuzEMGLdtmuqMUrNRVBmLae6uuN4uSQelunPDja6c03f10qES2Zq5nVOb
+         /Nxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701423003; x=1702027803;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B8xnc2cYH1N/JbEUok7VoTehJ7xqwxQ03AUqlJhtUkY=;
-        b=LcyZeVbeax5oa/sG9xQGCNMan6OcC9Rh1e/36u0iP1bWd0l0c65i9J6AwAzw/0qhOd
-         +q44A3tyfDVPYaeIWtzXmwbOG2NKhR5nx6kG7akrfkDrGS9WLPNfVkkV9u8w9i9Q1B9c
-         tRI7cB87NB2tAvjsBdXoZ6vAyMKy1b+VADY2m2KyTc4lqkBjhFDbYn2tj65dVvBVg6zl
-         HE/Z7yfHDMGQ7UPe+yQdivd8lvAJmMK7OB84CI2d6KwcxRQN7S+cjHrxy/e3aTTSbknn
-         hQMPaTHV3GCxynGXAbdVWkI25aNYlK7OJKaH1fmH8aK2Cs+5z+RKhXetI6I88earsV/8
-         n3pA==
-X-Gm-Message-State: AOJu0YwdCucc0b7JCmmDiPJYcG5NK5l0AgX+24DfeJVdWhK8IFTQtm7C
-	GN/2/cCbvAUZCKvgTbrAMQ==
-X-Google-Smtp-Source: AGHT+IHnyvw0kIxQW2ATN4u42QCXl1IjGzB4Pt+AK928Vspqpnw+0+DThCOR/32sTM3lOrfx+ZuKzw==
-X-Received: by 2002:a17:906:6b82:b0:a04:4b57:8f27 with SMTP id l2-20020a1709066b8200b00a044b578f27mr469296ejr.60.1701423002927;
-        Fri, 01 Dec 2023 01:30:02 -0800 (PST)
-Received: from p183 ([46.53.250.155])
-        by smtp.gmail.com with ESMTPSA id g18-20020a1709067c5200b009fada3e836asm1667459ejp.53.2023.12.01.01.30.01
+        d=1e100.net; s=20230601; t=1701424026; x=1702028826;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MSQwZzhnajRqkX+xa7n/aRnDDu+LcQrNX6wmLbUqn44=;
+        b=g5v1PbyEdP+XSJgbM1oh2yyVC2ePIYRDgh4jlAV1gLzFWRf7K08y2R9wcV1yHAOe4L
+         CQ8fVBAQKLy43RK/t8Zb5Hj+fusRwezThNKhZc4Ee333CXs9N/+7pmuKkAUYhu5IZhb9
+         v8bVmpkFfxsY8Y7dTiH+Xf2Agf7XK0q1m+tKsg/WbToBjSpF5Egu/VZ5hiagk/Pnoz1F
+         vp9mp5XONBISn1P/QJV8NznNBiE68DuM6HscF8sa1uPBaNWsZn7QYM5OxgiOv+1JQBP3
+         aEEaVW7scXFmn4Z9jwB4Y9GEBeVJVl0uiOCpuRz+/V7HMLsUI5IJiI7zY18TchUZE9dv
+         01bg==
+X-Gm-Message-State: AOJu0YzcggN2bKIHBwryQi0uv92X83fOZ/CwWKY505jt4A2RYkOmJQG8
+	RPZ/8+FDU+8sg8NeEH3xNWw=
+X-Google-Smtp-Source: AGHT+IGmotwUO4OKYMRU7spFszJBT86c3qy/herBn8J5gOFNgpuPDtjJOMaHjQCwebSs4WVxmj2u7w==
+X-Received: by 2002:a17:902:8485:b0:1cf:fb96:9692 with SMTP id c5-20020a170902848500b001cffb969692mr13632650plo.12.1701424026350;
+        Fri, 01 Dec 2023 01:47:06 -0800 (PST)
+Received: from vultr.guest ([149.28.194.201])
+        by smtp.gmail.com with ESMTPSA id e6-20020a170902b78600b001bdd7579b5dsm2875534pls.240.2023.12.01.01.47.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Dec 2023 01:30:02 -0800 (PST)
-Date: Fri, 1 Dec 2023 12:30:00 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Munehisa Kamata <kamatam@amazon.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: Fw: [PATCH] proc: Update inode upon changing task security
- attribute
-Message-ID: <5f8b18b0-0744-4cf5-9ec5-b0bb0451dd18@p183>
-References: <20231129171122.0171313079ea3afa84762d90@linux-foundation.org>
+        Fri, 01 Dec 2023 01:47:05 -0800 (PST)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: akpm@linux-foundation.org,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	omosnace@redhat.com,
+	mhocko@suse.com,
+	ying.huang@intel.com
+Cc: linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	bpf@vger.kernel.org,
+	ligang.bdlg@bytedance.com,
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v3 0/7] mm, security, bpf: Fine-grained control over memory policy adjustments with lsm bpf
+Date: Fri,  1 Dec 2023 09:46:29 +0000
+Message-Id: <20231201094636.19770-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231129171122.0171313079ea3afa84762d90@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 29, 2023 at 05:11:22PM -0800, Andrew Morton wrote:
-> 
-> fyi...
-> 
-> (yuk!)
-> 
-> 
-> 
-> Begin forwarded message:
-> 
-> Date: Thu, 30 Nov 2023 00:37:04 +0000
-> From: Munehisa Kamata <kamatam@amazon.com>
-> To: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-> Cc: <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>, "Munehisa Kamata" <kamatam@amazon.com>
-> Subject: [PATCH] proc: Update inode upon changing task security attribute
-> 
-> 
-> I'm not clear whether VFS is a better (or worse) place[1] to fix the
-> problem described below and would like to hear opinion.
-> 
-> If the /proc/[pid] directory is bind-mounted on a system with Smack
-> enabled, and if the task updates its current security attribute, the task
-> may lose access to files in its own /proc/[pid] through the mountpoint.
-> 
->  $ sudo capsh --drop=cap_mac_override --
->  # mkdir -p dir
->  # mount --bind /proc/$$ dir
->  # echo AAA > /proc/$$/task/current		# assuming built-in echo
->  # cat /proc/$$/task/current			# revalidate
->  AAA
->  # echo BBB > dir/attr/current
->  # cat dir/attr/current
->  cat: dir/attr/current: Permission denied
->  # ls dir/
->  ls: cannot access dir/: Permission denied
->  # cat /proc/$$/attr/current			# revalidate
->  BBB
->  # cat dir/attr/current
->  BBB
->  # echo CCC > /proc/$$/attr/current
->  # cat dir/attr/current
->  cat: dir/attr/current: Permission denied
-> 
-> This happens because path lookup doesn't revalidate the dentry of the
-> /proc/[pid] when traversing the filesystem boundary, so the inode security
-> blob of the /proc/[pid] doesn't get updated with the new task security
-> attribute. Then, this may lead security modules to deny an access to the
-> directory. Looking at the code[2] and the /proc/pid/attr/current entry in
-> proc man page, seems like the same could happen with SELinux. Though, I
-> didn't find relevant reports.
-> 
-> The steps above are quite artificial. I actually encountered such an
-> unexpected denial of access with an in-house application sandbox
-> framework; each app has its own dedicated filesystem tree where the
-> process's /proc/[pid] is bind-mounted to and the app enters into via
-> chroot.
-> 
-> With this patch, writing to /proc/[pid]/attr/current (and its per-security
-> module variant) updates the inode security blob of /proc/[pid] or
-> /proc/[pid]/task/[tid] (when pid != tid) with the new attribute.
-> 
-> [1] https://lkml.kernel.org/linux-fsdevel/4A2D15AF.8090000@sun.com/
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/security/selinux/hooks.c#n4220
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Munehisa Kamata <kamatam@amazon.com>
-> ---
->  fs/proc/base.c | 23 ++++++++++++++++++++---
->  1 file changed, 20 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index dd31e3b6bf77..bdb7bea53475 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -2741,6 +2741,7 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
->  {
->  	struct inode * inode = file_inode(file);
->  	struct task_struct *task;
-> +	const char *name = file->f_path.dentry->d_name.name;
->  	void *page;
->  	int rv;
->  
-> @@ -2784,10 +2785,26 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
->  	if (rv < 0)
->  		goto out_free;
->  
-> -	rv = security_setprocattr(PROC_I(inode)->op.lsm,
-> -				  file->f_path.dentry->d_name.name, page,
-> -				  count);
-> +	rv = security_setprocattr(PROC_I(inode)->op.lsm, name, page, count);
->  	mutex_unlock(&current->signal->cred_guard_mutex);
-> +
-> +	/*
-> +	 *  Update the inode security blob in advance if the task's security
-> +	 *  attribute was updated
-> +	 */
-> +	if (rv > 0 && !strcmp(name, "current")) {
-> +		struct pid *pid;
-> +		struct proc_inode *cur, *ei;
-> +
-> +		rcu_read_lock();
-> +		pid = get_task_pid(current, PIDTYPE_PID);
-> +		hlist_for_each_entry(cur, &pid->inodes, sibling_inodes)
-> +			ei = cur;
+Background
+==========
 
-Should this "break;"? Why is only the last inode in the list updated?
-Should it be the first? All of them?
+In our containerized environment, we've identified unexpected OOM events
+where the OOM-killer terminates tasks despite having ample free memory.
+This anomaly is traced back to tasks within a container using mbind(2) to
+bind memory to a specific NUMA node. When the allocated memory on this node
+is exhausted, the OOM-killer, prioritizing tasks based on oom_score,
+indiscriminately kills tasks. 
 
-> +		put_pid(pid);
-> +		pid_update_inode(current, &ei->vfs_inode);
-> +		rcu_read_unlock();
-> +	}
+The Challenge 
+=============
+In a containerized environment, independent memory binding by a user can
+lead to unexpected system issues or disrupt tasks being run by other users
+on the same server. If a user genuinely requires memory binding, we will
+allocate dedicated servers to them by leveraging kubelet deployment.
+
+Currently, users possess the ability to autonomously bind their memory to
+specific nodes without explicit agreement or authorization from our end.
+It's imperative that we establish a method to prevent this behavior.
+
+Proposed Solution
+=================
+
+- Capability
+  Currently, any task can perform MPOL_BIND without specific capabilities.
+  Enforcing CAP_SYS_RESOURCE or CAP_SYS_NICE could be an option, but this
+  may have unintended consequences. Capabilities, being broad, might grant
+  unnecessary privileges. We should explore alternatives to prevent
+  unexpected side effects.
+
+- LSM 
+  Introduce LSM hooks for syscalls such as mbind(2) and set_mempolicy(2)
+  to disable MPOL_BIND. This approach is more flexibility and allows for
+  fine-grained control without unintended consequences. A sample LSM BPF
+  program is included, demonstrating practical implementation in a
+  production environment.
+
+- seccomp
+  seccomp is relatively heavyweight, making it less suitable for
+  enabling in our production environment:
+  - Both kubelet and containers need adaptation to support it.
+  - Dynamically altering security policies for individual containers
+    without interrupting their operations isn't straightforward.
+
+Future Considerations
+=====================
+
+In addition, there's room for enhancement in the OOM-killer for cases
+involving CONSTRAINT_MEMORY_POLICY. It would be more beneficial to
+prioritize selecting a victim that has allocated memory on the same NUMA
+node. My exploration on the lore led me to a proposal[0] related to this
+matter, although consensus seems elusive at this point. Nevertheless,
+delving into this specific topic is beyond the scope of the current
+patchset.
+
+[0]. https://lore.kernel.org/lkml/20220512044634.63586-1-ligang.bdlg@bytedance.com/
+
+Changes:
+- RCC v2 -> v3:
+  - Add MPOL_F_NUMA_BALANCING man-page (Ying)
+  - Fix bpf selftests error reported by bot+bpf-ci
+- RFC v1 -> RFC v2: https://lwn.net/Articles/952339/
+  - Refine the commit log to avoid misleading
+  - Use one common lsm hook instead and add comment for it
+  - Add selinux implementation
+  - Other improments in mempolicy
+- RFC v1: https://lwn.net/Articles/951188/
+
+Yafang Shao (6):
+  mm, doc: Add doc for MPOL_F_NUMA_BALANCING
+  mm: mempolicy: Revise comment regarding mempolicy mode flags
+  mm, security: Fix missed security_task_movememory()
+  mm, security: Add lsm hook for memory policy adjustment
+  security: selinux: Implement set_mempolicy hook
+  selftests/bpf: Add selftests for set_mempolicy with a lsm prog
+
+ .../admin-guide/mm/numa_memory_policy.rst     | 27 +++++++
+ include/linux/lsm_hook_defs.h                 |  3 +
+ include/linux/security.h                      |  9 +++
+ include/uapi/linux/mempolicy.h                |  2 +-
+ mm/mempolicy.c                                | 22 ++++-
+ security/security.c                           | 13 +++
+ security/selinux/hooks.c                      |  8 ++
+ security/selinux/include/classmap.h           |  2 +-
+ .../selftests/bpf/prog_tests/set_mempolicy.c  | 81 +++++++++++++++++++
+ .../selftests/bpf/progs/test_set_mempolicy.c  | 28 +++++++
+ 10 files changed, 192 insertions(+), 3 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/set_mempolicy.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_set_mempolicy.c
+
+NOT kernel:
+
+Yafang Shao (1):
+NOT kernel/man2/mbind.2: Add mode flag MPOL_F_NUMA_BALANCING
+
+-- 
+2.30.1 (Apple Git-130)
+
