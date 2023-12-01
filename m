@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WJ06Gg5Y"
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F40D310F9;
-	Fri,  1 Dec 2023 01:47:12 -0800 (PST)
-Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-6cd97c135e8so1753573b3a.0;
-        Fri, 01 Dec 2023 01:47:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jevcNiOX"
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C3BCB2;
+	Fri,  1 Dec 2023 01:47:15 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1d04c097e34so2722175ad.0;
+        Fri, 01 Dec 2023 01:47:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701424032; x=1702028832; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1701424035; x=1702028835; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Hrd8Q/aZ94cCzu/B8oHzIUPKN1cXCmsoH2G1FVF6YII=;
-        b=WJ06Gg5Y2l0Kve01pUObWIYRfzTPMdp0PZNSOMDGHrWbopIJpkaoyJbGoHGI1vqxhr
-         NsRC4eE8mV4Yyy1+ruwfc5mTiI3hu1s/XzDXNE1GjHKnB5T3k7K+BjmWzz1r/UvQUbqq
-         VoMp0P/AaOEB9+D8/81Gp5PqQvAknnqvz/4f8ubAeZ9D6I/PVtgR0DQeFKign+pUoryQ
-         WsLWl1tPt7UAyxb7w2V+jNWROQt18MStBUCvbzE/naGvBjyNyFTEKbMSnLZMbuWA5FHq
-         /CU37492EsQi9UKUz6Id5AF+wZpTnz6cb/V447UuUdmz4KY6XByRq0Oow7viuGfss5jh
-         0+tA==
+        bh=KGCoJREXvSOAbrJphjZNhFQw16aaUKi1TbhunSAnqyc=;
+        b=jevcNiOX5rWmIDl+8uMuo+yG4NYe/rMus/ep5qXtgrdUG0yttLDgrqujwCGAXzQtXN
+         E7PuvKlQ2GlfLwWwww8Wk4tb4Cge0ZViU0Ve757wdiUVSPKC1VmWOKkwZtYCfixTquCc
+         RTc4r68B4uNM+RG9c/T8CcG/o2Cy+h4AGUMt+/SJbMCE2nvEhbU+y+vbKSKeLGXeBqKf
+         OcWyNu567IYnig9/7peTQG4Op1Vx2Mh4QfZIyswWhldVHXtYyuCjVubRonGLTaOkSgJ+
+         oV/cenrMFuuf2KTCAIgUsLNoLHHx2oTTcIR8I5nXx0k6dH1wLVq1C4El0w0C9vKbfspc
+         FmcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701424032; x=1702028832;
+        d=1e100.net; s=20230601; t=1701424035; x=1702028835;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Hrd8Q/aZ94cCzu/B8oHzIUPKN1cXCmsoH2G1FVF6YII=;
-        b=M5JSXQGW9rae2V2Sp3ukwlQ0AB6CmTOPjZ/ng2fcHQC1WNjn7n/fjRhGyDCXLr1bs2
-         zB/dBPtXbhJp1uDYXQNX1Sr8RGSY+P4BzO7ApniYn3XTtqo8naSHLOAKj60JDk9zrdk7
-         dN9X90vvh6+l/UdiH3t4A1tC/HeHJ+uWtib5neg5+fuslJoJMGv7ZIR9E0Qp+xQGZq8v
-         wbL9RfqiIJ6yhaPjHGrEMO5dDhP8XChqAjCfB8pbJLYQjAlICooweNIKkoFl3UDpd/cQ
-         A47hqAosdGhriDJLAL9dK+nIo+/m7HBPIo45kzgqi2LG3ulVno9ta90l/PDLnYsWoy21
-         A2Lg==
-X-Gm-Message-State: AOJu0YxDs7nARNnlXLUgOZMHg3JGjcB0eHdmxD/WuBcfMG0mhp69nSfN
-	MUcoyhEZBcpZwht/a4xDAfI=
-X-Google-Smtp-Source: AGHT+IGTfBMOdaKabUHzgD6/ex7gttFCAVl5dyu04ZCxUj3YMK/ifw1iGQwqNjXNRb2rj7NPqQSuqQ==
-X-Received: by 2002:a05:6a21:6215:b0:16c:b5ce:50f with SMTP id wm21-20020a056a21621500b0016cb5ce050fmr19689003pzb.32.1701424032510;
-        Fri, 01 Dec 2023 01:47:12 -0800 (PST)
+        bh=KGCoJREXvSOAbrJphjZNhFQw16aaUKi1TbhunSAnqyc=;
+        b=Bcdjro5rgR2SX6Ns0XEoxHSgzEDLZv51VM6Rr9iIlGA5Q640J2z0ELZnQ9JmlvVY4b
+         aEz5HV2BzM0ydosnYCfoYA3rbRhFvMuxiNT/pROfXgdF5rRiQF+z4LYIhErckasexd79
+         AMwM6N2ElR1Hhd/Dqi0Y5DonkXm2HS+gyjZuDgg//LEYHQ72eZeTBVaWxyfQV2lHabSf
+         v5UQQb+obCOGp+/UUF2tHznkQFcJVBs3ueNDPzWN12HX7wkB3bIyyVrxqE792plqZ3sq
+         7wX6pPqiOLuoOFTwq/QtIDJdCs9YkLQp23+Npz0U7IZAU4DpEI2puffQRaQLZGtGItj6
+         Il0Q==
+X-Gm-Message-State: AOJu0YxhscufmD5AurqfWYvQ2STEOJSXikf8/RvM6n5/dWb7kEFcKSNj
+	D7+F26malxAUg4GqMJRsr9Q=
+X-Google-Smtp-Source: AGHT+IGzXU9LrPgZca13IbQFWnu/fiFk9usQfcwA1GinqIP6YmUaY32WZLHTprYh2c8I8vSS8VEDvA==
+X-Received: by 2002:a17:902:f805:b0:1cf:5806:564f with SMTP id ix5-20020a170902f80500b001cf5806564fmr27316532plb.10.1701424034967;
+        Fri, 01 Dec 2023 01:47:14 -0800 (PST)
 Received: from vultr.guest ([149.28.194.201])
-        by smtp.gmail.com with ESMTPSA id e6-20020a170902b78600b001bdd7579b5dsm2875534pls.240.2023.12.01.01.47.11
+        by smtp.gmail.com with ESMTPSA id e6-20020a170902b78600b001bdd7579b5dsm2875534pls.240.2023.12.01.01.47.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Dec 2023 01:47:12 -0800 (PST)
+        Fri, 01 Dec 2023 01:47:14 -0800 (PST)
 From: Yafang Shao <laoar.shao@gmail.com>
 To: akpm@linux-foundation.org,
 	paul@paul-moore.com,
@@ -50,10 +50,12 @@ Cc: linux-mm@kvack.org,
 	linux-security-module@vger.kernel.org,
 	bpf@vger.kernel.org,
 	ligang.bdlg@bytedance.com,
-	Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v3 5/7] security: selinux: Implement set_mempolicy hook
-Date: Fri,  1 Dec 2023 09:46:34 +0000
-Message-Id: <20231201094636.19770-6-laoar.shao@gmail.com>
+	Yafang Shao <laoar.shao@gmail.com>,
+	Alejandro Colomar <alx.manpages@gmail.com>,
+	Michael Kerrisk <mtk.manpages@gmail.com>
+Subject: [PATCH v3 7/7] NOT kernel/man2/mbind.2: Add mode flag MPOL_F_NUMA_BALANCING
+Date: Fri,  1 Dec 2023 09:46:36 +0000
+Message-Id: <20231201094636.19770-8-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <20231201094636.19770-1-laoar.shao@gmail.com>
 References: <20231201094636.19770-1-laoar.shao@gmail.com>
@@ -65,55 +67,55 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a SELinux access control for the newly introduced set_mempolicy lsm
-hook. A new permission "setmempolicy" is defined under the "process" class
-for it.
+In Linux Kernel 5.12, a new mode flag, MPOL_F_NUMA_BALANCING, was
+added to set_mempolicy() to optimize the page placement among the
+NUMA nodes with the NUMA balancing mechanism even if the memory of
+the applications is bound with MPOL_BIND.
+
+In Linux Kernel 5.15, this mode flag was extended to mbind(2). Let's
+also add man-page for mbind(2). It is copied from set_mempoicy(2)
+man-page with subtle modifications.
+
+Related kernel commits:
+bda420b985054a3badafef23807c4b4fa38a3dff
+6d2aec9e123bb9c49cb5c7fc654f25f81e688e8c
 
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Cc: "Huang, Ying" <ying.huang@intel.com>
+Cc: Alejandro Colomar <alx.manpages@gmail.com>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
 ---
- security/selinux/hooks.c            | 8 ++++++++
- security/selinux/include/classmap.h | 2 +-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ man2/mbind.2 | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index feda711c6b7b..1528d4dcfa03 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -4238,6 +4238,13 @@ static int selinux_userns_create(const struct cred *cred)
- 			USER_NAMESPACE__CREATE, NULL);
- }
- 
-+static int selinux_set_mempolicy(unsigned long mode, unsigned short mode_flags,
-+				 nodemask_t *nmask, unsigned int flags)
-+{
-+	return avc_has_perm(current_sid(), task_sid_obj(current), SECCLASS_PROCESS,
-+			    PROCESS__SETMEMPOLICY, NULL);
-+}
-+
- /* Returns error only if unable to parse addresses */
- static int selinux_parse_skb_ipv4(struct sk_buff *skb,
- 			struct common_audit_data *ad, u8 *proto)
-@@ -7072,6 +7079,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(task_kill, selinux_task_kill),
- 	LSM_HOOK_INIT(task_to_inode, selinux_task_to_inode),
- 	LSM_HOOK_INIT(userns_create, selinux_userns_create),
-+	LSM_HOOK_INIT(set_mempolicy, selinux_set_mempolicy),
- 
- 	LSM_HOOK_INIT(ipc_permission, selinux_ipc_permission),
- 	LSM_HOOK_INIT(ipc_getsecid, selinux_ipc_getsecid),
-diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-index a3c380775d41..c280d92a409f 100644
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -51,7 +51,7 @@ const struct security_class_mapping secclass_map[] = {
- 	    "getattr", "setexec", "setfscreate", "noatsecure", "siginh",
- 	    "setrlimit", "rlimitinh", "dyntransition", "setcurrent",
- 	    "execmem", "execstack", "execheap", "setkeycreate",
--	    "setsockcreate", "getrlimit", NULL } },
-+	    "setsockcreate", "getrlimit", "setmempolicy", NULL } },
- 	{ "process2",
- 	  { "nnp_transition", "nosuid_transition", NULL } },
- 	{ "system",
+diff --git a/man2/mbind.2 b/man2/mbind.2
+index ba1b81ae9..dac784389 100644
+--- a/man2/mbind.2
++++ b/man2/mbind.2
+@@ -142,6 +142,23 @@ The supported
+ .I "mode flags"
+ are:
+ .TP
++.BR MPOL_F_NUMA_BALANCING " (since Linux 5.15)"
++.\" commit bda420b985054a3badafef23807c4b4fa38a3dff
++.\" commit 6d2aec9e123bb9c49cb5c7fc654f25f81e688e8c
++When
++.I mode
++is
++.BR MPOL_BIND ,
++enable the kernel NUMA balancing for the task if it is supported by the kernel.
++If the flag isn't supported by the kernel, or is used with
++.I mode
++other than
++.BR MPOL_BIND ,
++\-1 is returned and
++.I errno
++is set to
++.BR EINVAL .
++.TP
+ .BR MPOL_F_STATIC_NODES " (since Linux-2.6.26)"
+ A nonempty
+ .I nodemask
 -- 
-2.30.1 (Apple Git-130)
+2.39.3
 
