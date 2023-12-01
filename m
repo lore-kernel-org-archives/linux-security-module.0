@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C3bbmM7R"
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90E1E193;
-	Fri,  1 Dec 2023 01:47:09 -0800 (PST)
-Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1d0538d9bbcso2892895ad.3;
-        Fri, 01 Dec 2023 01:47:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="foRr5VBt"
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33BDC13E;
+	Fri,  1 Dec 2023 01:47:14 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1cfc2d03b3aso2866525ad.1;
+        Fri, 01 Dec 2023 01:47:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701424029; x=1702028829; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1701424033; x=1702028833; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7q7TZ/hQmcOsL5S8ofmt3CfzAuJJI0PuQ5alBSABkro=;
-        b=C3bbmM7RpyPc2vlkLSFBX5I/GjTcyQFwtDmE/1BodRnCa5YUF5OLWekXOoSxeH42+i
-         PTzU/ZcPmYal047RbTBR5Qk9Xh4oK+yN9B9hhqM4rxI6GQjiMytdzvySR6a4SE2vEOFW
-         Y+ACmfJefsuXmJe3knfWe+F54foYRl/MMTHMTTyxlNqAZscEfndscp2zqQ/dGX6f7Sft
-         T++ueKeGe2Z2eqK2EVuu2ze9a0s//BitfkbmmaDTVQMrk7iiJY92pp9BVaMtz+n+cPks
-         GPfY5HJ5vPnvhKZn6fqK42TJRxUygZw0ggLzjSdkor37ihHfUA2886oIPUHGlmLxLFaL
-         TUig==
+        bh=Bc/JnQzKFnW7sQYk0Nc9Zpaw4UcMe6UJECHeJqeWNU0=;
+        b=foRr5VBt8ndzC5REdlLq+fFwHZVIhFhP31Emy2Xk2OSyuy/ZO8Gg4/jOKN/nMlaQH3
+         Wycopa7TZa6Ee12xfkgkl3vLD4EhphwOTxlZSaGHLG0a2W7oPMeBZ9dUaGxVvP0dgW1x
+         NebgW4Qp7se1tSaz0DxfCDm7sAqodUoBS0QG3a0F7aocMPYuWWkZhf6AjYzxw99caOKu
+         jXq2CgNiFP4miT+oGmM7bTxX4azdc/ux2pZoLAYcoRv6RWy791IT+O65hRxlBBHUCzZd
+         0Yag61wSNzQ9Sg2yngL6FOcgJ2ss1YSs/84XqcgLYS7G75UfxDlzGjy2UXXurqUT0Oxd
+         lZ6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701424029; x=1702028829;
+        d=1e100.net; s=20230601; t=1701424033; x=1702028833;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7q7TZ/hQmcOsL5S8ofmt3CfzAuJJI0PuQ5alBSABkro=;
-        b=dNxq6+IJoesuvUMTXCdvkh8umtqIHullmkyOkpo7blDP1bL8fnwepjAVnv+IGdXPb1
-         H7uwZEVmpmKNUcTZ/r2EwCwAfkZPZLwEPSlvAFGje7RPkw2+LJAgbe1w8svM/D2H2m2S
-         x8xuSRfsJspFN1gYGvxKIBNBHzTDy7I1xeOfB0cfj59wkSf+yi/r1RmK1R3MHZ8T0w+O
-         8F8ycNOdEKE56zviyeSl7rk3XQWZWR8l/mMPxjkQZLXyTTv4U8/r000j73HgXMF2o7oC
-         4IKbgc4KdhJPIQ3u2W+y5+JEnLExHC2M/WsbSanf2xpdQqJH8uGDzfw359px3QpUEB+v
-         e3sg==
-X-Gm-Message-State: AOJu0Yz3Zf7q+5bIoTo8re2iF/0ky7BO621RItdhBq/eKZHyWes6vS93
-	ugsoo2035+HKjvbejB44XUU=
-X-Google-Smtp-Source: AGHT+IHY7BXr2lrItoDjy9fRRvCLOX0ey7rYRvBq4aXsP/3tg6wFqHDYposNzHDwQ5WVCd/30HQ5Hg==
-X-Received: by 2002:a17:902:c944:b0:1cf:a2e7:f843 with SMTP id i4-20020a170902c94400b001cfa2e7f843mr32499685pla.23.1701424028951;
-        Fri, 01 Dec 2023 01:47:08 -0800 (PST)
+        bh=Bc/JnQzKFnW7sQYk0Nc9Zpaw4UcMe6UJECHeJqeWNU0=;
+        b=eF11fMaVNjtSwLWKZCMMuIXnLXEms1n2GWGLkkN1Q7gVXyb8wrMwpf7iJVf1y/8T4/
+         JAFMtktJfBGLychCbzBUkiraNvRYqZ0+15umiS3j9Sns+MknKJx/fdXe0yQXR7N8psiL
+         oP2/1zsbOooJ/7Cp8J6IfXhtCkYU7YMSNd2g+TwULbqEc0lIhybXv389FhVcilhlrMt+
+         vqlMiqYCnrPcS0Am2TAvqEDCvn2lnH4C4Sm6fyG60eG2noklsXWx78ssG4r8Jq1qsFO4
+         bKJSCbYsjl2G1SAYdI9kZpR0I0QqtS68DLIpY+HXi5JZQ95awKv4pdjsBNHaOJdq5/Ni
+         UTYQ==
+X-Gm-Message-State: AOJu0Yz2Qd+ZMOYMvucO3gTyTeFBK6ZiSfwFU3ed0u9EIoEVr58KkFEm
+	MDecKJGJ98Jt7HipC7dGS6U=
+X-Google-Smtp-Source: AGHT+IHzDiK6o6MOlN3a1X1HHIiCln1ILc6SVwnXbjY0NMbXK8wHeCruOVe9g11XZtiAGRL7ZsnvhA==
+X-Received: by 2002:a17:902:e88b:b0:1cf:d404:5e7c with SMTP id w11-20020a170902e88b00b001cfd4045e7cmr20071237plg.42.1701424033643;
+        Fri, 01 Dec 2023 01:47:13 -0800 (PST)
 Received: from vultr.guest ([149.28.194.201])
-        by smtp.gmail.com with ESMTPSA id e6-20020a170902b78600b001bdd7579b5dsm2875534pls.240.2023.12.01.01.47.07
+        by smtp.gmail.com with ESMTPSA id e6-20020a170902b78600b001bdd7579b5dsm2875534pls.240.2023.12.01.01.47.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Dec 2023 01:47:08 -0800 (PST)
+        Fri, 01 Dec 2023 01:47:13 -0800 (PST)
 From: Yafang Shao <laoar.shao@gmail.com>
 To: akpm@linux-foundation.org,
 	paul@paul-moore.com,
@@ -50,11 +50,10 @@ Cc: linux-mm@kvack.org,
 	linux-security-module@vger.kernel.org,
 	bpf@vger.kernel.org,
 	ligang.bdlg@bytedance.com,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: [PATCH v3 2/7] mm: mempolicy: Revise comment regarding mempolicy mode flags
-Date: Fri,  1 Dec 2023 09:46:31 +0000
-Message-Id: <20231201094636.19770-3-laoar.shao@gmail.com>
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v3 6/7] selftests/bpf: Add selftests for set_mempolicy with a lsm prog
+Date: Fri,  1 Dec 2023 09:46:35 +0000
+Message-Id: <20231201094636.19770-7-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <20231201094636.19770-1-laoar.shao@gmail.com>
 References: <20231201094636.19770-1-laoar.shao@gmail.com>
@@ -66,37 +65,143 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-MPOL_F_STATIC_NODES, MPOL_F_RELATIVE_NODES, and MPOL_F_NUMA_BALANCING are
-mode flags applicable to both set_mempolicy(2) and mbind(2) system calls.
-It's worth noting that MPOL_F_NUMA_BALANCING was initially introduced in
-commit bda420b98505 ("numa balancing: migrate on fault among multiple bound
-nodes") exclusively for set_mempolicy(2). However, it was later made a
-shared flag for both set_mempolicy(2) and mbind(2) following
-commit 6d2aec9e123b ("mm/mempolicy: do not allow illegal
-MPOL_F_NUMA_BALANCING | MPOL_LOCAL in mbind()").
-
-This revised version aims to clarify the details regarding the mode flags.
+The result as follows,
+  #261/1   set_mempolicy/MPOL_BIND_with_lsm:OK
+  #261/2   set_mempolicy/MPOL_DEFAULT_with_lsm:OK
+  #261/3   set_mempolicy/MPOL_BIND_without_lsm:OK
+  #261/4   set_mempolicy/MPOL_DEFAULT_without_lsm:OK
+  #261     set_mempolicy:OK
+  Summary: 1/4 PASSED, 0 SKIPPED, 0 FAILED
 
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
-Cc: Eric Dumazet <edumazet@google.com>
 ---
- include/uapi/linux/mempolicy.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../selftests/bpf/prog_tests/set_mempolicy.c  | 81 +++++++++++++++++++
+ .../selftests/bpf/progs/test_set_mempolicy.c  | 28 +++++++
+ 2 files changed, 109 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/set_mempolicy.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_set_mempolicy.c
 
-diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
-index a8963f7ef4c2..afed4a45f5b9 100644
---- a/include/uapi/linux/mempolicy.h
-+++ b/include/uapi/linux/mempolicy.h
-@@ -26,7 +26,7 @@ enum {
- 	MPOL_MAX,	/* always last member of enum */
- };
- 
--/* Flags for set_mempolicy */
-+/* Flags for set_mempolicy() or mbind() */
- #define MPOL_F_STATIC_NODES	(1 << 15)
- #define MPOL_F_RELATIVE_NODES	(1 << 14)
- #define MPOL_F_NUMA_BALANCING	(1 << 13) /* Optimize with NUMA balancing if possible */
+diff --git a/tools/testing/selftests/bpf/prog_tests/set_mempolicy.c b/tools/testing/selftests/bpf/prog_tests/set_mempolicy.c
+new file mode 100644
+index 000000000000..6d115ecedb10
+--- /dev/null
++++ b/tools/testing/selftests/bpf/prog_tests/set_mempolicy.c
+@@ -0,0 +1,81 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (C) 2023 Yafang Shao <laoar.shao@gmail.com> */
++
++#include <unistd.h>
++#include <sys/types.h>
++#include <sys/mman.h>
++#include <linux/mempolicy.h>
++#include <test_progs.h>
++#include "test_set_mempolicy.skel.h"
++
++#define SIZE 4096
++
++static void mempolicy_bind(bool success)
++{
++	unsigned long mask = 1;
++	char *addr;
++	int err;
++
++	addr = mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
++	if (!ASSERT_OK_PTR(addr, "mmap"))
++		return;
++
++	/* -lnuma is required by mbind(2), so use __NR_mbind to avoid the dependency. */
++	err = syscall(__NR_mbind, addr, SIZE, MPOL_BIND, &mask, sizeof(mask), 0);
++	if (success)
++		ASSERT_OK(err, "mbind_success");
++	else
++		ASSERT_ERR(err, "mbind_fail");
++
++	munmap(addr, SIZE);
++}
++
++static void mempolicy_default(void)
++{
++	char *addr;
++	int err;
++
++	addr = mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
++	if (!ASSERT_OK_PTR(addr, "mmap"))
++		return;
++
++	err = syscall(__NR_mbind, addr, SIZE, MPOL_DEFAULT, NULL, 0, 0);
++	ASSERT_OK(err, "mbind_success");
++
++	munmap(addr, SIZE);
++}
++
++void test_set_mempolicy(void)
++{
++	struct test_set_mempolicy *skel;
++	int err;
++
++	skel = test_set_mempolicy__open();
++	if (!ASSERT_OK_PTR(skel, "open"))
++		return;
++
++	skel->bss->target_pid = getpid();
++
++	err = test_set_mempolicy__load(skel);
++	if (!ASSERT_OK(err, "load"))
++		goto destroy;
++
++	/* Attach LSM prog first */
++	err = test_set_mempolicy__attach(skel);
++	if (!ASSERT_OK(err, "attach"))
++		goto destroy;
++
++	/* syscall to adjust memory policy */
++	if (test__start_subtest("MPOL_BIND_with_lsm"))
++		mempolicy_bind(false);
++	if (test__start_subtest("MPOL_DEFAULT_with_lsm"))
++		mempolicy_default();
++
++destroy:
++	test_set_mempolicy__destroy(skel);
++
++	if (test__start_subtest("MPOL_BIND_without_lsm"))
++		mempolicy_bind(true);
++	if (test__start_subtest("MPOL_DEFAULT_without_lsm"))
++		mempolicy_default();
++}
+diff --git a/tools/testing/selftests/bpf/progs/test_set_mempolicy.c b/tools/testing/selftests/bpf/progs/test_set_mempolicy.c
+new file mode 100644
+index 000000000000..b5356d5fcb8b
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/test_set_mempolicy.c
+@@ -0,0 +1,28 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (C) 2023 Yafang Shao <laoar.shao@gmail.com> */
++
++#include "vmlinux.h"
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++
++int target_pid;
++
++static int mem_policy_adjustment(u64 mode)
++{
++	struct task_struct *task = bpf_get_current_task_btf();
++
++	if (task->pid != target_pid)
++		return 0;
++
++	if (mode != MPOL_BIND)
++		return 0;
++	return -1;
++}
++
++SEC("lsm/set_mempolicy")
++int BPF_PROG(setmempolicy, u64 mode, u16 mode_flags, nodemask_t *nmask, u32 flags)
++{
++	return mem_policy_adjustment(mode);
++}
++
++char _license[] SEC("license") = "GPL";
 -- 
 2.30.1 (Apple Git-130)
 
