@@ -1,88 +1,66 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SWcMTMpF"
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 042ADFC;
-	Sat,  2 Dec 2023 18:58:25 -0800 (PST)
-Received: by mail-qt1-x82d.google.com with SMTP id d75a77b69052e-423e8145018so26275781cf.1;
-        Sat, 02 Dec 2023 18:58:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701572304; x=1702177104; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K5PSqWkt2q0NsH/cezKyOksOI/ZTMxsuCeNKgtqCwp4=;
-        b=SWcMTMpF4DAbotdE8b5BikvrvBbNEpPNSxRrcrsKEekNzkeZD59KNgz9GH2F5cziGb
-         8B7U+pL9brjPgQXIf475eXYPbBzsXlMJe2rAA51BP6b4CNlH+PIBGmbMjSVNuXRikDDC
-         JtotzRwtp6XXnUOZa/GXofQBZrgGDR/SrWwicZ9XJZR+HtsIhpIRscpKFk4lN71WNvRJ
-         H9jfrUg4K+i9hHxUmPcUYnYf0w0OU6HzuvIqCddLldYr5bYaYfvHibvI3yrFagCV83O2
-         /FUnAK8vpdNg8uKNuWqSWlPJ1Q6FA5vLSj3aU3E+Of2tEWm4VAsmHKkKlI4B6X+bEDRI
-         KGFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701572304; x=1702177104;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K5PSqWkt2q0NsH/cezKyOksOI/ZTMxsuCeNKgtqCwp4=;
-        b=JIS/4VUes6zXQW02mTEjXBMJQpxi1ZG6MqWTJVCvjVarxzdGHw33qnOX2lqNmKrrfj
-         /7FgJpbKexptEhenZ469BWgzQe6FKMk4S84Znwu92nXyKoc6y98esHta0Q7knxzHvYCK
-         DcygvqDY4C+99xzO1UevdP/cFtIAnAS5tTQ0Llq5nckqwEODUWmEGbAI1re0OCTyopmc
-         mrSLsBKtAQtGBD+n3QjB1E/PuVSvewZMaOjd7tWroBc04BLYJv+HALUrgF6mitOCmeLR
-         LFFw3uF+i2343K3UzmgGg22F437i1kuR4+hIzSM7PhXwzSIyRVFibo4vhRoENg3Yzs4U
-         12PQ==
-X-Gm-Message-State: AOJu0YyipjGTGjuWITuwLSoZpkwWd3uwbw773WG5dxWLtO0W/MqMbd00
-	n+Qbeh9lff/m2djFPYNsJwPhJFPAhLTgseOgF7E=
-X-Google-Smtp-Source: AGHT+IGpy+kyg7zdSUt8ZIPTYQVME98QFsfW9NcfwJPt7t+dpmTY/f9S3nLmw5jJawR9RxGQzVUJoIJXqhlpvLHOotE=
-X-Received: by 2002:ac8:6b0c:0:b0:423:9cca:66af with SMTP id
- w12-20020ac86b0c000000b004239cca66afmr25529314qts.63.1701572304083; Sat, 02
- Dec 2023 18:58:24 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iLtAl8R/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19951102
+	for <linux-security-module@vger.kernel.org>; Sun,  3 Dec 2023 05:45:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1701611145;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kfhCG1IvV1CGYP/X56tZVstBaEZXadDb3GV0BKEnzfc=;
+	b=iLtAl8R/bQbd3tDLao8x7gQcPWoHZh+TOPyrc7Ip7juK4Qyqfhvvp+CJbxYL5JkiJHrwf0
+	HgerrpbyeFVMqprwJxvURr/OnqfcAjjOTHaLvCdNw/dJUMkgVGISpv4H7jK1sDs1H3mAX9
+	GtZRlErygj5G7lNTGjczPukR9kEBs54=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-459-XBxcx_AAOeKs96EAlSyfxQ-1; Sun, 03 Dec 2023 08:45:41 -0500
+X-MC-Unique: XBxcx_AAOeKs96EAlSyfxQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 508D8185A781;
+	Sun,  3 Dec 2023 13:45:41 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.3])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 0E1DD2166B26;
+	Sun,  3 Dec 2023 13:45:35 +0000 (UTC)
+Date: Sun, 3 Dec 2023 21:45:30 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org, joshi.k@samsung.com,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH v2 1/3] io_uring: split out cmd api into a separate header
+Message-ID: <ZWyGepj+F8JgGjmh@fedora>
+References: <cover.1701391955.git.asml.silence@gmail.com>
+ <7ec50bae6e21f371d3850796e716917fc141225a.1701391955.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231201094636.19770-1-laoar.shao@gmail.com> <20231201094636.19770-4-laoar.shao@gmail.com>
- <20231201205039.GB109168@mail.hallyn.com>
-In-Reply-To: <20231201205039.GB109168@mail.hallyn.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Sun, 3 Dec 2023 10:57:47 +0800
-Message-ID: <CALOAHbDYg=Oi9BEiAiGaG+Qj3WQ27Ef4=Ox8i6vHwucGFpmARw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/7] mm, security: Fix missed security_task_movememory()
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org, 
-	omosnace@redhat.com, mhocko@suse.com, ying.huang@intel.com, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	bpf@vger.kernel.org, ligang.bdlg@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7ec50bae6e21f371d3850796e716917fc141225a.1701391955.git.asml.silence@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-On Sat, Dec 2, 2023 at 4:50=E2=80=AFAM Serge E. Hallyn <serge@hallyn.com> w=
-rote:
->
-> On Fri, Dec 01, 2023 at 09:46:32AM +0000, Yafang Shao wrote:
-> > Considering that MPOL_F_NUMA_BALANCING or  mbind(2) using either
-> > MPOL_MF_MOVE or MPOL_MF_MOVE_ALL are capable of memory movement, it's
-> > essential to include security_task_movememory() to cover this
-> > functionality as well. It was identified during a code review.
->
-> Hm - this doesn't have any bad side effects for you when using selinux?
-> The selinux_task_movememory() hook checks for PROCESS__SETSCHED privs.
-> The two existing security_task_movememory() calls are in cases where we
-> expect the caller to be affecting another task identified by pid, so
-> that makes sense.  Is an MPOL_MV_MOVE to move your own pages actually
-> analogous to that?
->
-> Much like the concern you mentioned in your intro about requiring
-> CAP_SYS_NICE and thereby expanding its use, it seems that here you
-> will be regressing some mbind users unless the granting of PROCESS__SETSC=
-HED
-> is widened.
+On Fri, Dec 01, 2023 at 12:57:35AM +0000, Pavel Begunkov wrote:
+> linux/io_uring.h is slowly becoming a rubbish bin where we put
+> anything exposed to other subsystems. For instance, the task exit
+> hooks and io_uring cmd infra are completely orthogonal and don't need
+> each other's definitions. Start cleaning it up by splitting out all
+> command bits into a new header file.
+> 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 
-Ah, it appears that this change might lead to regression. I overlooked
-its association with the PROCESS__SETSCHED privilege. I'll exclude
-this patch from the upcoming version.
-Thanks for your review.
+Looks fine,
 
---=20
-Regards
-Yafang
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+
+Thanks,
+Ming
+
