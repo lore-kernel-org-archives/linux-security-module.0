@@ -1,284 +1,120 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mRF4r2OC"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CEDAC4;
-	Mon,  4 Dec 2023 07:03:51 -0800 (PST)
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4Exrmi003821;
-	Mon, 4 Dec 2023 15:02:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=1M+Lb7RENQgWWhXI/S8gGx7CVn38cCrH9gi8fM6ANxk=;
- b=mRF4r2OCNy2A3Q36eSmIFv+fGgfC9k6w0Z53J0FiB9WvOJvflQA/5EGTKe8kqv16IyN7
- 9SsQL8wx670mRgkFNiNW3bFss2Zy0ZRV5QVvk7XkcE5K7zOCcfeOcUpD/VsDvWjP1lk1
- u48AIIdoUJbJ56R9xW+Y87T9IFnMHdCii/WvWwPugqFpqW9SjgG+fPzn/WDboDhea2TR
- bE87HNx6QaFADbj1UD8YgNnOjcJCUPMn3+Sk9HeChQAWkooBJXsv52i/82IHm6KVIRq5
- UINrSGEXdlxYeUZVSjA0MXaEfHX8t1hvyZAASEI4ScB+sZqcxofgtFXoxrRcfglCqSoE OA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ush1602tm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Dec 2023 15:02:03 +0000
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3B4F0Nt2005079;
-	Mon, 4 Dec 2023 15:02:03 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ush1602sh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Dec 2023 15:02:03 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4EJf6O017843;
-	Mon, 4 Dec 2023 15:02:01 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3urv8awk6g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Dec 2023 15:02:01 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3B4F20MM31392126
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 4 Dec 2023 15:02:01 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D247D58055;
-	Mon,  4 Dec 2023 15:02:00 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 59CD85803F;
-	Mon,  4 Dec 2023 15:01:58 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.81.193])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  4 Dec 2023 15:01:58 +0000 (GMT)
-Message-ID: <99c92965c2b2c49253967d56f2a4e5f1d2c881f2.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
- blob for integrity_iint_cache
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Paul Moore
-	 <paul@paul-moore.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com,
-        jlayton@kernel.org, neilb@suse.de, kolga@netapp.com,
-        Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org,
-        serge@hallyn.com, dmitry.kasatkin@gmail.com, dhowells@redhat.com,
-        jarkko@kernel.org, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, casey@schaufler-ca.com, mic@digikod.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu
- <roberto.sassu@huawei.com>
-Date: Mon, 04 Dec 2023 10:01:57 -0500
-In-Reply-To: <5f441267b6468b98e51a08d247a7ae066a60ff0c.camel@huaweicloud.com>
-References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
-	 <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
-	 <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com>
-	 <CAHC9VhTTKac1o=RnQadu2xqdeKH8C_F+Wh4sY=HkGbCArwc8JQ@mail.gmail.com>
-	 <b6c51351be3913be197492469a13980ab379e412.camel@huaweicloud.com>
-	 <CAHC9VhSAryQSeFy0ZMexOiwBG-YdVGRzvh58=heH916DftcmWA@mail.gmail.com>
-	 <90eb8e9d-c63e-42d6-b951-f856f31590db@huaweicloud.com>
-	 <CAHC9VhROnfBoaOy2MurdSpcE_poo_6Qy9d2U3g6m2NRRHaqz4Q@mail.gmail.com>
-	 <5f441267b6468b98e51a08d247a7ae066a60ff0c.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="jZskYT+X"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46324AA;
+	Mon,  4 Dec 2023 10:19:59 -0800 (PST)
+Received: from localhost.ispras.ru (unknown [10.10.165.9])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 176CB40F1DE9;
+	Mon,  4 Dec 2023 18:19:56 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 176CB40F1DE9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1701713996;
+	bh=hapnOCz7N50/xiqT9sjD7kWuwPtxGk7RX/cUkNtJPic=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jZskYT+XqqFEn/TsdlSKf3xUncApwt4Zq8OjXuB0tBwvGcf1MxQmyjrTqUzDMRZ40
+	 6xmsz1HQ0CoIP3gR/z1wJ2rMDw8vEgBhnAQxdCLWHlmbPyIsOBNiFTovZFO4Rzo1Il
+	 YvPUUuQxfL48lJHbirWNnjJYn7slbaSTlj+lYkr4=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: John Johansen <john.johansen@canonical.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] apparmor: fix possible memory leak in unpack_trans_table
+Date: Mon,  4 Dec 2023 21:19:44 +0300
+Message-ID: <20231204181945.5903-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: WLTcmefykaHbDOEIiLJwsS3WymVSyxpp
-X-Proofpoint-GUID: xRtCrWQrHAe-uEV4KEeAH2kUbps7vgkn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-04_13,2023-12-04_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- spamscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0 mlxlogscore=999
- malwarescore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2312040112
 
-On Mon, 2023-12-04 at 14:26 +0100, Roberto Sassu wrote:
-> On Thu, 2023-11-30 at 11:34 -0500, Paul Moore wrote:
-> > On Wed, Nov 29, 2023 at 1:47 PM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > On 11/29/2023 6:22 PM, Paul Moore wrote:
-> > > > On Wed, Nov 29, 2023 at 7:28 AM Roberto Sassu
-> > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > 
-> > > > > On Mon, 2023-11-20 at 16:06 -0500, Paul Moore wrote:
-> > > > > > On Mon, Nov 20, 2023 at 3:16 AM Roberto Sassu
-> > > > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > > > On Fri, 2023-11-17 at 15:57 -0500, Paul Moore wrote:
-> > > > > > > > On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
-> > > > > > > > > 
-> > > > > > > > > Before the security field of kernel objects could be shared among LSMs with
-> > > > > > > > > the LSM stacking feature, IMA and EVM had to rely on an alternative storage
-> > > > > > > > > of inode metadata. The association between inode metadata and inode is
-> > > > > > > > > maintained through an rbtree.
-> > > > > > > > > 
-> > > > > > > > > Because of this alternative storage mechanism, there was no need to use
-> > > > > > > > > disjoint inode metadata, so IMA and EVM today still share them.
-> > > > > > > > > 
-> > > > > > > > > With the reservation mechanism offered by the LSM infrastructure, the
-> > > > > > > > > rbtree is no longer necessary, as each LSM could reserve a space in the
-> > > > > > > > > security blob for each inode. However, since IMA and EVM share the
-> > > > > > > > > inode metadata, they cannot directly reserve the space for them.
-> > > > > > > > > 
-> > > > > > > > > Instead, request from the 'integrity' LSM a space in the security blob for
-> > > > > > > > > the pointer of inode metadata (integrity_iint_cache structure). The other
-> > > > > > > > > reason for keeping the 'integrity' LSM is to preserve the original ordering
-> > > > > > > > > of IMA and EVM functions as when they were hardcoded.
-> > > > > > > > > 
-> > > > > > > > > Prefer reserving space for a pointer to allocating the integrity_iint_cache
-> > > > > > > > > structure directly, as IMA would require it only for a subset of inodes.
-> > > > > > > > > Always allocating it would cause a waste of memory.
-> > > > > > > > > 
-> > > > > > > > > Introduce two primitives for getting and setting the pointer of
-> > > > > > > > > integrity_iint_cache in the security blob, respectively
-> > > > > > > > > integrity_inode_get_iint() and integrity_inode_set_iint(). This would make
-> > > > > > > > > the code more understandable, as they directly replace rbtree operations.
-> > > > > > > > > 
-> > > > > > > > > Locking is not needed, as access to inode metadata is not shared, it is per
-> > > > > > > > > inode.
-> > > > > > > > > 
-> > > > > > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > > > > > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > > > > > > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > > > > > > > ---
-> > > > > > > > >   security/integrity/iint.c      | 71 +++++-----------------------------
-> > > > > > > > >   security/integrity/integrity.h | 20 +++++++++-
-> > > > > > > > >   2 files changed, 29 insertions(+), 62 deletions(-)
-> > > > > > > > > 
-> > > > > > > > > diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> > > > > > > > > index 882fde2a2607..a5edd3c70784 100644
-> > > > > > > > > --- a/security/integrity/iint.c
-> > > > > > > > > +++ b/security/integrity/iint.c
-> > > > > > > > > @@ -231,6 +175,10 @@ static int __init integrity_lsm_init(void)
-> > > > > > > > >      return 0;
-> > > > > > > > >   }
-> > > > > > > > > 
-> > > > > > > > > +struct lsm_blob_sizes integrity_blob_sizes __ro_after_init = {
-> > > > > > > > > +   .lbs_inode = sizeof(struct integrity_iint_cache *),
-> > > > > > > > > +};
-> > > > > > > > 
-> > > > > > > > I'll admit that I'm likely missing an important detail, but is there
-> > > > > > > > a reason why you couldn't stash the integrity_iint_cache struct
-> > > > > > > > directly in the inode's security blob instead of the pointer?  For
-> > > > > > > > example:
-> > > > > > > > 
-> > > > > > > >    struct lsm_blob_sizes ... = {
-> > > > > > > >      .lbs_inode = sizeof(struct integrity_iint_cache),
-> > > > > > > >    };
-> > > > > > > > 
-> > > > > > > >    struct integrity_iint_cache *integrity_inode_get(inode)
-> > > > > > > >    {
-> > > > > > > >      if (unlikely(!inode->isecurity))
-> > > > > > > >        return NULL;
-> > > > > > > >      return inode->i_security + integrity_blob_sizes.lbs_inode;
-> > > > > > > >    }
-> > > > > > > 
-> > > > > > > It would increase memory occupation. Sometimes the IMA policy
-> > > > > > > encompasses a small subset of the inodes. Allocating the full
-> > > > > > > integrity_iint_cache would be a waste of memory, I guess?
-> > > > > > 
-> > > > > > Perhaps, but if it allows us to remove another layer of dynamic memory
-> > > > > > I would argue that it may be worth the cost.  It's also worth
-> > > > > > considering the size of integrity_iint_cache, while it isn't small, it
-> > > > > > isn't exactly huge either.
-> > > > > > 
-> > > > > > > On the other hand... (did not think fully about that) if we embed the
-> > > > > > > full structure in the security blob, we already have a mutex available
-> > > > > > > to use, and we don't need to take the inode lock (?).
-> > > > > > 
-> > > > > > That would be excellent, getting rid of a layer of locking would be significant.
-> > > > > > 
-> > > > > > > I'm fully convinced that we can improve the implementation
-> > > > > > > significantly. I just was really hoping to go step by step and not
-> > > > > > > accumulating improvements as dependency for moving IMA and EVM to the
-> > > > > > > LSM infrastructure.
-> > > > > > 
-> > > > > > I understand, and I agree that an iterative approach is a good idea, I
-> > > > > > just want to make sure we keep things tidy from a user perspective,
-> > > > > > i.e. not exposing the "integrity" LSM when it isn't required.
-> > > > > 
-> > > > > Ok, I went back to it again.
-> > > > > 
-> > > > > I think trying to separate integrity metadata is premature now, too
-> > > > > many things at the same time.
-> > > > 
-> > > > I'm not bothered by the size of the patchset, it is more important
-> > > > that we do The Right Thing.  I would like to hear in more detail why
-> > > > you don't think this will work, I'm not interested in hearing about
-> > > > difficult it may be, I'm interested in hearing about what challenges
-> > > > we need to solve to do this properly.
-> > > 
-> > > The right thing in my opinion is to achieve the goal with the minimal
-> > > set of changes, in the most intuitive way.
-> > 
-> > Once again, I want to stress that I don't care about the size of the
-> > change, the number of patches in a patchset, etc.  While it's always
-> > nice to be able to minimize the number of changes in a patch/patchset,
-> > that is secondary to making sure we are doing the right thing over the
-> > long term.  This is especially important when we are talking about
-> > things that are user visible.
-> > 
-> > > Until now, there was no solution that could achieve the primary goal of
-> > > this patch set (moving IMA and EVM to the LSM infrastructure) and, at
-> > > the same time, achieve the additional goal you set of removing the
-> > > 'integrity' LSM.
-> > 
-> > We need to stop thinking about the "integrity" code as a LSM, it isn't
-> > a LSM.  It's a vestigial implementation detail that was necessary back
-> > when there could only be one LSM active at a time and there was a
-> > desire to have IMA/EVM active in conjunction with one of the LSMs,
-> > i.e. Smack, SELinux, etc.
-> > 
-> > IMA and EVM are (or will be) LSMs, "integrity" is not.  I recognize
-> > that eliminating the need for the "integrity" code is a relatively new
-> > addition to this effort, but that is only because I didn't properly
-> > understand the relationship between IMA, EVM, and the "integrity" code
-> > until recently.  The elimination of the shared "integrity" code is
-> > consistent with promoting IMA and EVM as full LSMs, if there is core
-> > functionality that cannot be split up into the IMA and/or EVM LSMs
-> > then we need to look at how to support that without exposing that
-> > implementation detail/hack to userspace.  Maybe that means direct
-> > calls between IMA and EVM, maybe that means preserving some of the
-> > common integrity code hidden from userspace, maybe that means adding
-> > functionality to the LSM layer, maybe that means something else?
-> > Let's think on this to come up with something that we can all accept
-> > as a long term solution instead of just doing the quick and easy
-> > option.
-> 
-> If the result of this patch set should be that IMA and EVM become
-> proper LSMs without the shared integrity layer, instead of collapsing
-> all changes in this patch set, I think we should first verify if IMA
-> and EVM can be really independent. Once we guarantee that, we can
-> proceed making the proper LSMs.
-> 
-> These are the changes I have in mind:
-> 
-> 1) Fix evm_verifyxattr(), and make it work without integrity_iint_cache
-> 2) Remove the integrity_iint_cache parameter from evm_verifyxattr(),
->    since the other callers are not going to use it
-> 3) Create an internal function with the original parameters to be used
->    by IMA
-> 4) Introduce evm_post_path_mknod(), which similarly to
->    ima_post_path_mknod(), sets IMA_NEW_FILE for new files
-> 5) Add hardcoded call to evm_post_path_mknod() after
->    ima_post_path_mknod() in security.c
-> 
-> If we think that this is good enough, we proceed with the move of IMA
-> and EVM functions to the LSM infrastructure (patches v7 19-21).
-> 
-> The next patches are going to be similar to patches v6 22-23, but
-> unlike those, their goal would be simply to split metadata, not to make
-> IMA and EVM independent, which at this point has been addressed
-> separately in the prerequisite patches.
-> 
-> The final patch is to remove the 'integrity' LSM and the integrity
-> metadata management code, which now is not used anymore.
-> 
-> Would that work?
+If we fail to unpack the transition table then the table elements which
+have been already allocated are not freed on error path.
 
-Sounds good to me.
+unreferenced object 0xffff88802539e000 (size 128):
+  comm "apparmor_parser", pid 903, jiffies 4294914938 (age 35.085s)
+  hex dump (first 32 bytes):
+    20 73 6f 6d 65 20 6e 61 73 74 79 20 73 74 72 69   some nasty stri
+    6e 67 20 73 6f 6d 65 20 6e 61 73 74 79 20 73 74  ng some nasty st
+  backtrace:
+    [<ffffffff81ddb312>] __kmem_cache_alloc_node+0x1e2/0x2d0
+    [<ffffffff81c47194>] __kmalloc_node_track_caller+0x54/0x170
+    [<ffffffff81c225b9>] kmemdup+0x29/0x60
+    [<ffffffff83e1ee65>] aa_unpack_strdup+0xe5/0x1b0
+    [<ffffffff83e20808>] unpack_pdb+0xeb8/0x2700
+    [<ffffffff83e23567>] unpack_profile+0x1507/0x4a30
+    [<ffffffff83e27bfa>] aa_unpack+0x36a/0x1560
+    [<ffffffff83e194c3>] aa_replace_profiles+0x213/0x33c0
+    [<ffffffff83de9461>] policy_update+0x261/0x370
+    [<ffffffff83de978e>] profile_replace+0x20e/0x2a0
+    [<ffffffff81eac8bf>] vfs_write+0x2af/0xe00
+    [<ffffffff81eaddd6>] ksys_write+0x126/0x250
+    [<ffffffff88f34fb6>] do_syscall_64+0x46/0xf0
+    [<ffffffff890000ea>] entry_SYSCALL_64_after_hwframe+0x6e/0x76
 
-Mimi
+Call aa_free_str_table() on error path as was done before the blamed
+commit. It implements all necessary checks, frees str_table if it is
+available and nullifies the pointers.
+
+Found by Linux Verification Center (linuxtesting.org).
+
+Fixes: a0792e2ceddc ("apparmor: make transition table unpack generic so it can be reused")
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+---
+ security/apparmor/lib.c           | 1 +
+ security/apparmor/policy_unpack.c | 7 +++----
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
+index 4c198d273f09..cd569fbbfe36 100644
+--- a/security/apparmor/lib.c
++++ b/security/apparmor/lib.c
+@@ -41,6 +41,7 @@ void aa_free_str_table(struct aa_str_table *t)
+ 			kfree_sensitive(t->table[i]);
+ 		kfree_sensitive(t->table);
+ 		t->table = NULL;
++		t->size = 0;
+ 	}
+ }
+ 
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index fc21952aca6b..887010692538 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -478,6 +478,8 @@ static bool unpack_trans_table(struct aa_ext *e, struct aa_str_table *strs)
+ 		if (!table)
+ 			goto fail;
+ 
++		strs->table = table;
++		strs->size = size;
+ 		for (i = 0; i < size; i++) {
+ 			char *str;
+ 			int c, j, pos, size2 = aa_unpack_strdup(e, &str, NULL);
+@@ -520,14 +522,11 @@ static bool unpack_trans_table(struct aa_ext *e, struct aa_str_table *strs)
+ 			goto fail;
+ 		if (!aa_unpack_nameX(e, AA_STRUCTEND, NULL))
+ 			goto fail;
+-
+-		strs->table = table;
+-		strs->size = size;
+ 	}
+ 	return true;
+ 
+ fail:
+-	kfree_sensitive(table);
++	aa_free_str_table(strs);
+ 	e->pos = saved_pos;
+ 	return false;
+ }
+-- 
+2.43.0
 
