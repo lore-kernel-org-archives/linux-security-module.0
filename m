@@ -1,79 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D676A3308E
-	for <linux-security-module@vger.kernel.org>; Mon,  4 Dec 2023 19:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fxL8hfcj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27B65C433C7;
-	Mon,  4 Dec 2023 19:54:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1701719675;
-	bh=79u88kj0IH2fqDMmfbowSP2A7IK26YpGFzlDmV3B8uM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fxL8hfcjUVcVn0G4ahmmdQzvaG07Sb2V1KX/iHtWLP1y6q1szy36MbB5RuQBvcd1O
-	 ugR93TLbO2IoBvc5fMOELAqjhIngHdAWfnuTsD6LRN2BJYkvPWAZK7nP995lnW34bg
-	 m9Xhko5H87BBe8CuynWGLMmgeh3Sw3ROQgCm7ndk=
-Date: Mon, 4 Dec 2023 11:54:34 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: York Jasper Niebuhr <yjnworkstation@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rppt@kernel.org,
- linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] mm: init_mlocked_on_free
-Message-Id: <20231204115434.65f04d1de5041038ab5e2b8d@linux-foundation.org>
-In-Reply-To: <20231202134218.151074-1-yjnworkstation@gmail.com>
-References: <20231202134218.151074-1-yjnworkstation@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g5NTyIbk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 473729C
+	for <linux-security-module@vger.kernel.org>; Mon,  4 Dec 2023 20:14:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1701749677;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wCXWaTK2cT20XJ2gH5tKnNoHz1rvmd5jnRMvdwguqmM=;
+	b=g5NTyIbkCmRfGKTZAb6jboDO85HY0LiF3H/ay9JQX0b7erAAUCCpqRaAREFBud30bE57r3
+	CMguK2AI6Nnd6ASER4YGKWvEilGOenetAJlf5uRZfZJUX/2dyHFbKT7RhSJHqYkcSDscym
+	2l01mLiuS2/2J9Qd9d2m0BD1sdlCaCk=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-86-TNjQEJEQNHGBd5ntzJrjVA-1; Mon,
+ 04 Dec 2023 23:14:33 -0500
+X-MC-Unique: TNjQEJEQNHGBd5ntzJrjVA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E15F73C0BE2E;
+	Tue,  5 Dec 2023 04:14:32 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.8])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 2104C2166B27;
+	Tue,  5 Dec 2023 04:14:26 +0000 (UTC)
+Date: Tue, 5 Dec 2023 12:14:22 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Keith Busch <kbusch@kernel.org>
+Cc: Jeff Moyer <jmoyer@redhat.com>, Keith Busch <kbusch@meta.com>,
+	linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
+	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+	asml.silence@gmail.com, linux-security-module@vger.kernel.org,
+	Kanchan Joshi <joshi.k@samsung.com>
+Subject: Re: [PATCH 1/2] iouring: one capable call per iouring instance
+Message-ID: <ZW6jjiq9wXHm5d10@fedora>
+References: <20231204175342.3418422-1-kbusch@meta.com>
+ <x49zfypstdx.fsf@segfault.usersys.redhat.com>
+ <ZW4hM0H6pjbCpIg9@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZW4hM0H6pjbCpIg9@kbusch-mbp>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-On Sat,  2 Dec 2023 14:42:18 +0100 York Jasper Niebuhr <yjnworkstation@gmail.com> wrote:
-
-> Adds the "PG_ofinit" page flag to specify if a page should be zeroed on
-> free.
-
-That's a problem - unused page flags are few, and are a treasured
-resource.  Matthew Wilcox is a suitable reviewer, but you didn't cc the
-linux-mm mailing list.
-
-Please address this concern in future changelogs.
-
-> Implements the "init_mlocked_on_free" boot option. When this boot option
-> is set, any mlock'ed pages are zeroed on munmap, exit or exec. If the
-> pages are munlock'ed beforehand, no initialization will take place. This
-> boot option is meant to combat the performance hit of "init_on_free" as
-> reported in commit 6471384af2a6 ("mm: security: introduce
-> init_on_alloc=1 and init_on_free=1 boot options"). With
-> "init_mlocked_on_free", only relevant data will be freed while
-> everything else is left untouched by the kernel.
-
-It would be helpful to provide a full description of the performance
-benefits right here in the changelog, please.  Including example
-quantitative testing results.  See if you can persuade us to consume
-another page flag.  
-
-Also, can we avoid using a page flag?   Can this be done on a per-vma
-basis rather than per-page?
-
-> Optimally, userspace programs will clear any key material or other
-> confidential memory before exit and munlock the according memory
-> regions. If a program crashes, however, userspace key managers will not
-> be able to zero this data. If this happens, the memory will not be
-> explicitly munlock'ed before exit either, so the kernel will zero the
-> data and prevent data leaks. If the program finishes properly, no pages
-> will be initialized again, as they were already munlock'ed.
+On Mon, Dec 04, 2023 at 11:57:55AM -0700, Keith Busch wrote:
+> On Mon, Dec 04, 2023 at 01:40:58PM -0500, Jeff Moyer wrote:
+> > I added a CC: linux-security-module@vger
+> > Keith Busch <kbusch@meta.com> writes:
+> > > From: Keith Busch <kbusch@kernel.org>
+> > >
+> > > The uring_cmd operation is often used for privileged actions, so drivers
+> > > subscribing to this interface check capable() for each command. The
+> > > capable() function is not fast path friendly for many kernel configs,
+> > > and this can really harm performance. Stash the capable sys admin
+> > > attribute in the io_uring context and set a new issue_flag for the
+> > > uring_cmd interface.
+> > 
+> > I have a few questions.  What privileged actions are performance
+> > sensitive? I would hope that anything requiring privileges would not
+> > be in a fast path (but clearly that's not the case).
 > 
-> In general, leaving memory mlock'ed until unmap, exit or exec can be used
-> to specify exactly what memory should be initialized on free.
-> 
-> CONFIG_INIT_MLOCKED_ON_FREE_DEFAULT_ON can be set to enable
-> "init_mlocked_on_free" by default.
-> 
+> Protocol specifics that don't have a generic equivalent. For example,
+> NVMe FDP is reachable only through the uring_cmd and ioctl interfaces,
+> but you use it like normal reads and writes so has to be as fast as the
+> generic interfaces.
 
-Please address the above and send us a v2?
+But normal read/write pt command doesn't require ADMIN any more since 
+commit 855b7717f44b ("nvme: fine-granular CAP_SYS_ADMIN for nvme io commands"),
+why do you have to pay the cost of checking capable(CAP_SYS_ADMIN)?
+
+
+Thanks, 
+Ming
+
