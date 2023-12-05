@@ -1,77 +1,95 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA2357866;
-	Tue,  5 Dec 2023 11:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CDF5F1D8;
+	Tue,  5 Dec 2023 15:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3r7E0Ft"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 414B1C433C8;
-	Tue,  5 Dec 2023 11:50:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOllAY9q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1299C433C7;
+	Tue,  5 Dec 2023 15:45:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701777034;
-	bh=1vi7lpWvyIlRPEOS8id0JlbcXrkUDYmCKkyVbkLEO/o=;
+	s=k20201202; t=1701791113;
+	bh=0Y2l+6X6yAzUwntjk32nri6/kEK8xQ9ERpsa5g3ublU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m3r7E0Ft/sNzRLXx9KPMN7wMK8H8PLP4BMf4GbJ85C0HONRDECADPNUDARiPaxc9J
-	 9xmUAysv2FKUw4XeM/ClU/Y8ooaDZxUFAnzPn8c/w1s/gbXMDZmWWnIeP824av6jyb
-	 AwW5ZLSKUow+R8KxgaBbbmYTJw8Vp9gLcJYg/v6I9XmArk3eooyu7Wn0B7lIKw33GM
-	 shZiD1i8sf8dLaSUExtpjIcrnSrIrrl17uN7+qP40f+Y0Hr+vaJVqKjzWb7hg0FtHW
-	 3mr1JsR2rqGHtfmtEjLIlAh4vKrVsYfBiHy6mCQkU2iKv0h0TPLsax/oq/DdQSjB8I
-	 1mys7ZBCphkmQ==
-Date: Tue, 5 Dec 2023 12:50:28 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Cc: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
-	Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH 07/16] fs: add inode operations to get/set/remove fscaps
-Message-ID: <20231205-frettchen-weltoffen-16e63df530a7@brauner>
-References: <20231129-idmap-fscap-refactor-v1-0-da5a26058a5b@kernel.org>
- <20231129-idmap-fscap-refactor-v1-7-da5a26058a5b@kernel.org>
- <20231201-drohnen-ausverkauf-61e5c94364ca@brauner>
- <ZWoaGU6xpF3S793+@do-x1extreme>
+	b=IOllAY9qdJbBqLupXffhTZZMX0SZMUbRY4e1fkbgI0Lqyup8GE3P0tsEEJub86t+g
+	 PBuu/6EZewsAPPHzyVcGD8DaHwTuFGZ2QZp2n2Jzq7I81MWQEx5xRRIn19prZvlwAM
+	 42VHYYq0j8LAIJOMVfyWRiKhsWXqhWvAcg5cVMzMLrDCNmMb3vk7KM9eRXf4AWiE4d
+	 r3tOk8SPsXnwd9iJYHFbNtGXFJm3GP8VgHu7pM90Kv/ZJwepcWpaFvPT09Jn4yjpIK
+	 PCq3FaR/lepelX2IJx3ADAbvd3f2y3TYKn6Oqx8OD+vw6T2pXUXeyXQL646dMpnCU5
+	 1oIhkddlEmJhg==
+Date: Tue, 5 Dec 2023 08:45:10 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jeff Moyer <jmoyer@redhat.com>, Keith Busch <kbusch@meta.com>,
+	linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
+	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+	asml.silence@gmail.com, linux-security-module@vger.kernel.org,
+	Kanchan Joshi <joshi.k@samsung.com>
+Subject: Re: [PATCH 1/2] iouring: one capable call per iouring instance
+Message-ID: <ZW9FhsBXdPlN6qrU@kbusch-mbp>
+References: <20231204175342.3418422-1-kbusch@meta.com>
+ <x49zfypstdx.fsf@segfault.usersys.redhat.com>
+ <ZW4hM0H6pjbCpIg9@kbusch-mbp>
+ <ZW6jjiq9wXHm5d10@fedora>
+ <ZW6nmR2ytIBApXE0@kbusch-mbp>
+ <ZW60WPf/hmAUoxPv@fedora>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZWoaGU6xpF3S793+@do-x1extreme>
+In-Reply-To: <ZW60WPf/hmAUoxPv@fedora>
 
-On Fri, Dec 01, 2023 at 11:38:33AM -0600, Seth Forshee (DigitalOcean) wrote:
-> On Fri, Dec 01, 2023 at 06:02:55PM +0100, Christian Brauner wrote:
-> > On Wed, Nov 29, 2023 at 03:50:25PM -0600, Seth Forshee (DigitalOcean) wrote:
-> > > Add inode operations for getting, setting and removing filesystem
-> > > capabilities rather than passing around raw xattr data. This provides
-> > > better type safety for ids contained within xattrs.
-> > > 
-> > > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-> > > ---
-> > >  include/linux/fs.h | 5 +++++
-> > >  1 file changed, 5 insertions(+)
-> > > 
-> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > > index 98b7a7a8c42e..a0a77f67b999 100644
-> > > --- a/include/linux/fs.h
-> > > +++ b/include/linux/fs.h
-> > > @@ -2002,6 +2002,11 @@ struct inode_operations {
-> > >  				     int);
-> > >  	int (*set_acl)(struct mnt_idmap *, struct dentry *,
-> > >  		       struct posix_acl *, int);
-> > > +	int (*get_fscaps)(struct mnt_idmap *, struct dentry *,
-> > > +			  struct vfs_caps *);
-> > > +	int (*set_fscaps)(struct mnt_idmap *, struct dentry *,
-> > > +			  const struct vfs_caps *, int flags);
+On Tue, Dec 05, 2023 at 01:25:44PM +0800, Ming Lei wrote:
+> On Mon, Dec 04, 2023 at 09:31:21PM -0700, Keith Busch wrote:
+> > Good question. The "capable" check had always been first so even with
+> > the relaxed permissions, it was still paying the price. I have changed
+> > that order in commit staged here (not yet upstream):
 > > 
-> > If it's really a flags argument, then unsigned int, please,
+> >   http://git.infradead.org/nvme.git/commitdiff/7be866b1cf0bf1dfa74480fe8097daeceda68622
 > 
-> This is the flags for setxattr, which is an int everywhere. Or almost
+> With this change, I guess you shouldn't see the following big gap, right?
 
-Ah right. Ugh, we should clean that up but not necessarily in this
-series.
+Correct.
+ 
+> > Before: 970k IOPs
+> > After: 1750k IOPs
+ 
+> > Note that only prevents the costly capable() check if the inexpensive
+> > checks could make a determination. That's still not solving the problem
+> > long term since we aim for forward compatibility where we have no idea
+> > which opcodes, admin identifications, or vendor specifics could be
+> > deemed "safe" for non-root users in the future, so those conditions
+> > would always fall back to the more expensive check that this patch was
+> > trying to mitigate for admin processes.
+> 
+> Not sure I get the idea, it is related with nvme's permission model for
+> user pt command, and:
+> 
+> 1) it should be always checked in entry of nvme user pt command
+> 
+> 2) only the following two types of commands require ADMIN, per commit
+> 855b7717f44b ("nvme: fine-granular CAP_SYS_ADMIN for nvme io commands")
+> 
+>     - any admin-cmd is not allowed
+>     - vendor-specific and fabric commmand are not allowed
+> 
+> Can you provide more details why the expensive check can't be avoided for
+> fast read/write user IO commands?
+
+It's not necessarily about the read/write passthrough commands. It's for
+commands we don't know about today. Do we want to revisit this problem
+every time spec provides another operation? Are vendor unique solutions
+not allowed to get high IOPs access?
+
+Secondly, some people have rediscovered you can abuse this interface to
+corrupt kernel memory, so there are considerations to restricting this
+to CAP_SYS_ADMIN anyway, so there's no cheap check available today if we
+have to go that route.
+
+Lastly (and least important), there are a lot of checks happening in the
+"quick" path that I am trying to replace with a single check. While each
+invidividual check isn't too bad, they start to add up.
