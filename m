@@ -1,38 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641913C082;
-	Tue,  5 Dec 2023 09:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA2357866;
+	Tue,  5 Dec 2023 11:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m36ly+os"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2024C433C8;
-	Tue,  5 Dec 2023 09:13:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3r7E0Ft"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 414B1C433C8;
+	Tue,  5 Dec 2023 11:50:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701767630;
-	bh=eJuwNnWu6g9nwVGxomFxgvI4Y9eQAK/z4W+ooWCv1FE=;
+	s=k20201202; t=1701777034;
+	bh=1vi7lpWvyIlRPEOS8id0JlbcXrkUDYmCKkyVbkLEO/o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m36ly+ost0Hm+D/k5ncdMp8hmQgNKenkoAe71TF6RTqgotjTcUC5UzKJXJeZL3Ax0
-	 gpVQIbuRYeoZadwQlhqTJrH5gg3k++yN2ywrfF5nCx0CoGWHXG8jKbyf5XIbsAT5Zx
-	 7Ql3YmJDP0CVimx4ekDg6+9eFXLkdhRXKUADGe31bBi2JGsMu4MW/eYQWM2oax5nvA
-	 Yf722/uyY0IXfaL4jk7x3HmqUET3+0hzxdfuUtTe6MKuEflBJeDoQRQCMkVGnfpUxH
-	 h6qJpM90+KYs5saftdxzo8mwZk/4QW7nXl5kPjeSyvXBH5tj0TiDlRIigkBDkZEbWf
-	 ZeoVpSURE7zXA==
-Date: Tue, 5 Dec 2023 09:13:44 +0000
-From: Simon Horman <horms@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, paul@paul-moore.com, brauner@kernel.org,
+	b=m3r7E0Ft/sNzRLXx9KPMN7wMK8H8PLP4BMf4GbJ85C0HONRDECADPNUDARiPaxc9J
+	 9xmUAysv2FKUw4XeM/ClU/Y8ooaDZxUFAnzPn8c/w1s/gbXMDZmWWnIeP824av6jyb
+	 AwW5ZLSKUow+R8KxgaBbbmYTJw8Vp9gLcJYg/v6I9XmArk3eooyu7Wn0B7lIKw33GM
+	 shZiD1i8sf8dLaSUExtpjIcrnSrIrrl17uN7+qP40f+Y0Hr+vaJVqKjzWb7hg0FtHW
+	 3mr1JsR2rqGHtfmtEjLIlAh4vKrVsYfBiHy6mCQkU2iKv0h0TPLsax/oq/DdQSjB8I
+	 1mys7ZBCphkmQ==
+Date: Tue, 5 Dec 2023 12:50:28 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
+Cc: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
+	Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, keescook@chromium.org,
-	kernel-team@meta.com, sargun@sargun.me
-Subject: Re: [PATCH v11 bpf-next 02/17] bpf: add BPF token delegation mount
- options to BPF FS
-Message-ID: <20231205091344.GR50400@kernel.org>
-References: <20231127190409.2344550-1-andrii@kernel.org>
- <20231127190409.2344550-3-andrii@kernel.org>
- <20231130163655.GC32077@kernel.org>
- <CAEf4BzZ0JWFrS_DLk_YOGNqyh39kqFcCNbd_D6mCM6d0mzxO_Q@mail.gmail.com>
- <CAEf4BzbN2xovoTyQeK1sHZdB-YMeiC=U7oOmUcpcb5_ZHEcFgA@mail.gmail.com>
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH 07/16] fs: add inode operations to get/set/remove fscaps
+Message-ID: <20231205-frettchen-weltoffen-16e63df530a7@brauner>
+References: <20231129-idmap-fscap-refactor-v1-0-da5a26058a5b@kernel.org>
+ <20231129-idmap-fscap-refactor-v1-7-da5a26058a5b@kernel.org>
+ <20231201-drohnen-ausverkauf-61e5c94364ca@brauner>
+ <ZWoaGU6xpF3S793+@do-x1extreme>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -41,51 +42,36 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzbN2xovoTyQeK1sHZdB-YMeiC=U7oOmUcpcb5_ZHEcFgA@mail.gmail.com>
+In-Reply-To: <ZWoaGU6xpF3S793+@do-x1extreme>
 
-On Thu, Nov 30, 2023 at 10:13:41AM -0800, Andrii Nakryiko wrote:
-> On Thu, Nov 30, 2023 at 10:03 AM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Thu, Nov 30, 2023 at 8:37 AM Simon Horman <horms@kernel.org> wrote:
-> > >
-> > > On Mon, Nov 27, 2023 at 11:03:54AM -0800, Andrii Nakryiko wrote:
-> > >
-> > > ...
-> > >
-> > > > @@ -764,7 +817,10 @@ static int bpf_get_tree(struct fs_context *fc)
-> > > >
-> > > >  static void bpf_free_fc(struct fs_context *fc)
-> > > >  {
-> > > > -     kfree(fc->fs_private);
-> > > > +     struct bpf_mount_opts *opts = fc->s_fs_info;
-> > > > +
-> > > > +     if (opts)
-> > > > +             kfree(opts);
-> > > >  }
-> > >
-> > > Hi Andrii,
-> > >
-> > > as it looks like there will be a v12, I have a minor nit to report: There
-> > > is no need to check if opts is non-NULL because kfree() is basically a
-> > > no-op if it's argument is NULL.
-> > >
-> > > So perhaps this can become (completely untested!):
-> > >
-> > > static void bpf_free_fc(struct fs_context *fc)
-> > > {
-> > >         kfree(fc->s_fs_info);
-> > > }
-> > >
-> >
-> > sure, I can drop the check, I wasn't sure if it's canonical or not to
-> > check the argument for NULL before calling kfree(). For user-space
-> > it's definitely quite expected to not have to check for null before
-> > calling free().
+On Fri, Dec 01, 2023 at 11:38:33AM -0600, Seth Forshee (DigitalOcean) wrote:
+> On Fri, Dec 01, 2023 at 06:02:55PM +0100, Christian Brauner wrote:
+> > On Wed, Nov 29, 2023 at 03:50:25PM -0600, Seth Forshee (DigitalOcean) wrote:
+> > > Add inode operations for getting, setting and removing filesystem
+> > > capabilities rather than passing around raw xattr data. This provides
+> > > better type safety for ids contained within xattrs.
+> > > 
+> > > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> > > ---
+> > >  include/linux/fs.h | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > index 98b7a7a8c42e..a0a77f67b999 100644
+> > > --- a/include/linux/fs.h
+> > > +++ b/include/linux/fs.h
+> > > @@ -2002,6 +2002,11 @@ struct inode_operations {
+> > >  				     int);
+> > >  	int (*set_acl)(struct mnt_idmap *, struct dentry *,
+> > >  		       struct posix_acl *, int);
+> > > +	int (*get_fscaps)(struct mnt_idmap *, struct dentry *,
+> > > +			  struct vfs_caps *);
+> > > +	int (*set_fscaps)(struct mnt_idmap *, struct dentry *,
+> > > +			  const struct vfs_caps *, int flags);
+> > 
+> > If it's really a flags argument, then unsigned int, please,
 > 
-> Heh, turns out I already simplified this, but it's in the next patch.
-> I'll move it into patch #2, though, where it actually belongs.
+> This is the flags for setxattr, which is an int everywhere. Or almost
 
-Thanks. I do believe that for kernel code not checking for NULL here
-is preferred.
+Ah right. Ugh, we should clean that up but not necessarily in this
+series.
