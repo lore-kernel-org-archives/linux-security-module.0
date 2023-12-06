@@ -1,138 +1,162 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="h5nzkQNQ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4CD6ED47;
-	Wed,  6 Dec 2023 08:41:18 -0800 (PST)
-Received: from [192.168.4.26] (unknown [47.186.13.91])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 9333C20B74C0;
-	Wed,  6 Dec 2023 08:41:15 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9333C20B74C0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1701880877;
-	bh=kHlojawRkHSQzesoLwKgfjTuxP60iVUKEMogJbbgpvk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h5nzkQNQJ8Hkz9bfJUOKRk94jCH5u+61xKvm7uHbxDDbh9IZdWwgEbKwTn78PkoLZ
-	 V/SvaTVRXbbegDsONVIBC1/e+Ph1euNy4EsDx3Olm8uf4UsqwQwJOXfeBOjvjh60yW
-	 V40mz9ekf0xV/7t/xQurUWeNCSJJTn4OO98i49pg=
-Message-ID: <db9c5049-70b5-4261-b7e8-cd371c50aaea@linux.microsoft.com>
-Date: Wed, 6 Dec 2023 10:41:14 -0600
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BD61D69;
+	Wed,  6 Dec 2023 08:50:41 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Sljj71151zB0LnM;
+	Thu,  7 Dec 2023 00:36:43 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id AF6CE140801;
+	Thu,  7 Dec 2023 00:50:32 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwD3MnNLpnBlbvgJAg--.48489S2;
+	Wed, 06 Dec 2023 17:50:32 +0100 (CET)
+Message-ID: <795534ce04428d5cf6d64b8d6fc567a6d444ab5a.camel@huaweicloud.com>
+Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
+ blob for integrity_iint_cache
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, 
+ jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, 
+ tom@talpey.com, jmorris@namei.org, serge@hallyn.com,
+ dmitry.kasatkin@gmail.com,  dhowells@redhat.com, jarkko@kernel.org,
+ stephen.smalley.work@gmail.com,  eparis@parisplace.org,
+ casey@schaufler-ca.com, mic@digikod.net,  linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-nfs@vger.kernel.org,
+ linux-security-module@vger.kernel.org,  linux-integrity@vger.kernel.org,
+ keyrings@vger.kernel.org,  selinux@vger.kernel.org, Roberto Sassu
+ <roberto.sassu@huawei.com>
+Date: Wed, 06 Dec 2023 17:50:16 +0100
+In-Reply-To: <7aefd87764ba8962de85250ff92b82800550401b.camel@linux.ibm.com>
+References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
+	 <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
+	 <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com>
+	 <CAHC9VhTTKac1o=RnQadu2xqdeKH8C_F+Wh4sY=HkGbCArwc8JQ@mail.gmail.com>
+	 <b6c51351be3913be197492469a13980ab379e412.camel@huaweicloud.com>
+	 <CAHC9VhSAryQSeFy0ZMexOiwBG-YdVGRzvh58=heH916DftcmWA@mail.gmail.com>
+	 <90eb8e9d-c63e-42d6-b951-f856f31590db@huaweicloud.com>
+	 <CAHC9VhROnfBoaOy2MurdSpcE_poo_6Qy9d2U3g6m2NRRHaqz4Q@mail.gmail.com>
+	 <5f441267b6468b98e51a08d247a7ae066a60ff0c.camel@huaweicloud.com>
+	 <d608edb80efe03b62698ab33cbee1eea856a0422.camel@huaweicloud.com>
+	 <7aefd87764ba8962de85250ff92b82800550401b.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 17/19] heki: x86: Update permissions counters
- during text patching
-Content-Language: en-US
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "peterz@infradead.org" <peterz@infradead.org>
-Cc: "ssicleru@bitdefender.com" <ssicleru@bitdefender.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>, "mic@digikod.net"
- <mic@digikod.net>, "marian.c.rotariu@gmail.com"
- <marian.c.rotariu@gmail.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "virtualization@lists.linux-foundation.org"
- <virtualization@lists.linux-foundation.org>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "tgopinath@microsoft.com" <tgopinath@microsoft.com>,
- "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>,
- "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "jgowans@amazon.com" <jgowans@amazon.com>,
- "ztarkhani@microsoft.com" <ztarkhani@microsoft.com>,
- "mdontu@bitdefender.com" <mdontu@bitdefender.com>,
- "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
- "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
- "jamorris@linux.microsoft.com" <jamorris@linux.microsoft.com>,
- "seanjc@google.com" <seanjc@google.com>,
- "vkuznets@redhat.com" <vkuznets@redhat.com>,
- "Andersen, John S" <john.s.andersen@intel.com>,
- "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
- "nicu.citu@icloud.com" <nicu.citu@icloud.com>,
- "keescook@chromium.org" <keescook@chromium.org>,
- "Graf, Alexander" <graf@amazon.com>,
- "wanpengli@tencent.com" <wanpengli@tencent.com>,
- "dev@lists.cloudhypervisor.org" <dev@lists.cloudhypervisor.org>,
- "will@kernel.org" <will@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
- "hpa@zytor.com" <hpa@zytor.com>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>,
- "yuanyu@google.com" <yuanyu@google.com>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
- "quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-References: <20231113022326.24388-1-mic@digikod.net>
- <20231113022326.24388-18-mic@digikod.net>
- <20231113081929.GA16138@noisy.programming.kicks-ass.net>
- <a52d8885-43cc-4a4e-bb47-9a800070779e@linux.microsoft.com>
- <20231127200841.GZ3818@noisy.programming.kicks-ass.net>
- <ea63ae4e-e8ea-4fbf-9383-499e14de2f5e@linux.microsoft.com>
- <4103d68b07bb382e434cdaf19ab1986f9079b0bb.camel@intel.com>
-From: "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-In-Reply-To: <4103d68b07bb382e434cdaf19ab1986f9079b0bb.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwD3MnNLpnBlbvgJAg--.48489S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF17AF18XF48Cw4rZr4UXFb_yoW5AFykpF
+	y7KFWDJw4DAryjkrsayF45ZF40yrWSqFZ8Gr1Fkrn5Ar98Xr10qrWSyry5uFy3GrsYgay2
+	vr4YkrnrZF1DZ3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+	AIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280
+	aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQZ2-UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj5dSJwACsX
+
+On Wed, 2023-12-06 at 11:11 -0500, Mimi Zohar wrote:
+> On Wed, 2023-12-06 at 14:10 +0100, Roberto Sassu wrote:
+> > On Mon, 2023-12-04 at 14:26 +0100, Roberto Sassu wrote:
+>=20
+> ...
+> > > If the result of this patch set should be that IMA and EVM become
+> > > proper LSMs without the shared integrity layer, instead of collapsing
+> > > all changes in this patch set, I think we should first verify if IMA
+> > > and EVM can be really independent. Once we guarantee that, we can
+> > > proceed making the proper LSMs.
+> > >=20
+> > > These are the changes I have in mind:
+> > >=20
+> > > 1) Fix evm_verifyxattr(), and make it work without integrity_iint_cac=
+he
+> > > 2) Remove the integrity_iint_cache parameter from evm_verifyxattr(),
+> > >    since the other callers are not going to use it
+> >=20
+> > Ehm, I checked better.
+> >=20
+> > integrity_inode_get() is public too (although it is not exported). So,
+> > a caller (not IMA) could do:
+> >=20
+> > iint =3D integrity_inode_get(inode);
+> > status =3D evm_verifyxattr(..., iint);
+> >=20
+> > However, it should not call integrity_inode_free(), which is also in
+> > include/linux/integrity.h, since this is going to be called by
+> > security_inode_free() (currently).
+
+Oh, I needed to add a check for the iint here:
 
 
+void integrity_inode_free(struct inode *inode)
+{
+	struct integrity_iint_cache *iint;
 
-On 11/30/23 18:45, Edgecombe, Rick P wrote:
-> On Wed, 2023-11-29 at 15:07 -0600, Madhavan T. Venkataraman wrote:
->> Threat Model
->> ------------
->>
->> In the threat model in Heki, the attacker is a user space attacker
->> who exploits
->> a kernel vulnerability to gain more privileges or bypass the kernel's
->> access
->> control and self-protection mechanisms. 
->>
->> In the context of the guest page table, one of the things that the
->> threat model translates
->> to is a hacker gaining access to a guest page with RWX permissions.
->> E.g., by adding execute
->> permissions to a writable page or by adding write permissions to an
->> executable page.
->>
->> Today, the permissions for a guest page in the extended page table
->> are RWX by
->> default. So, if a hacker manages to establish RWX for a page in the
->> guest page
->> table, then that is all he needs to do some damage.
-> 
-> I had a few random comments from watching the plumbers talk online:
-> 
-> Is there really a big difference between a page that is RWX, and a RW
-> page that is about to become RX? I realize that there is an addition of
-> timing, but when executable code is getting loaded it can be written to
-> then and later executed. I think that gap could be addressed in two
-> different ways, both pretty difficult:
->  1. Verifying the loaded code before it gets marked 
->     executable. This is difficult because the kernel does lots of 
->     tweaks on the code it is loading (alternatives, etc). It can't 
->     just check a signature.
->  2. Loading the code in a protected environment. In this model the 
->     (for example) module signature would be checked, then the code 
->     would be loaded in some sort of protected environment. This way 
->     integrity of the loaded code would be enforced. But extracting 
->     module loading into a separate domain would be difficult. 
->     Various scattered features all have their hands in the loading.
-> 
-> Secondly, I wonder if another way to look at the memory parts of HEKI
-> could be that this is a way to protect certain page table bits from
-> stay writes. The RWX bits in the EPT are not directly writable, so more
-> steps are needed to change things than just a stray write (instead the
-> helpers involved in the operations need to be called). If that is a
-> fair way of looking at it, then I wonder how HEKI compares to a
-> solution like this security-wise:
-> https://lore.kernel.org/lkml/20210830235927.6443-1-rick.p.edgecombe@intel.com/
-> 
-> Functional-wise it had the benefit of working on bare metal and
-> supporting the normal kernel features.
+	if (!IS_IMA(inode))
+		return;
 
-Thanks for the comments. I will think about what you have said and will respond
-soon.
+	iint =3D integrity_iint_find(inode);
+	if (!iint)                          <=3D=3D=3D this
+		return;
 
-Madhavan
+	integrity_inode_set_iint(inode, NULL);
+
+	iint_free(iint);
+}
+
+> Calling integrity_inode_free() directly would release the iint early. =
+=20
+> As a result, IMA would then need to re-allocate it on next access.=20
+> Other than impacting IMA's performance, is this a problem?
+
+Uhm, I think the iint could be freed while IMA is using it, for example
+in process_measurement().
+
+Roberto
+
+> > > 3) Create an internal function with the original parameters to be use=
+d
+> > >    by IMA
+> > > 4) Introduce evm_post_path_mknod(), which similarly to
+> > >    ima_post_path_mknod(), sets IMA_NEW_FILE for new files
+> >=20
+> > I just realized that also this is changing the current behavior.
+> >=20
+> > IMA would clear IMA_NEW_FILE in ima_check_last_writer(), while EVM
+> > wouldn't (unless we implement the file_release hook in EVM too).
+>=20
+> True
+>=20
+> Mimi
+>=20
+> > > 5) Add hardcoded call to evm_post_path_mknod() after
+> > >    ima_post_path_mknod() in security.c
+> > >=20
+> > > If we think that this is good enough, we proceed with the move of IMA
+> > > and EVM functions to the LSM infrastructure (patches v7 19-21).
+> > >=20
+> > > The next patches are going to be similar to patches v6 22-23, but
+> > > unlike those, their goal would be simply to split metadata, not to ma=
+ke
+> > > IMA and EVM independent, which at this point has been addressed
+> > > separately in the prerequisite patches.
+> > >=20
+> > > The final patch is to remove the 'integrity' LSM and the integrity
+> > > metadata management code, which now is not used anymore.
+> > >=20
+> > > Would that work?
+> >=20
+> > We are not making much progress, I'm going to follow any recommendation
+> > that would move this forward.
+>=20
+
