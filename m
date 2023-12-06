@@ -1,76 +1,91 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="n+Xws8bf"
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66DA4135
-	for <linux-security-module@vger.kernel.org>; Wed,  6 Dec 2023 12:24:58 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-a1e2ded3d9fso20637066b.0
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Dec 2023 12:24:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="A0FaZ5VP"
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3274310C7
+	for <linux-security-module@vger.kernel.org>; Wed,  6 Dec 2023 13:52:54 -0800 (PST)
+Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-db54ec0c7b8so323495276.0
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Dec 2023 13:52:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1701894297; x=1702499097; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EspDDl8Dq3tngLpXRmIDltEe/7IquwN2W8jv0OkYqQc=;
-        b=n+Xws8bfaFffRdiIHUc1+D0MYHAfuuVka6vpar78H+cYAdwJfBqtI3qKryginhK0Fv
-         UdW9+/2ETk7/jgwGR5p+Qdsq1LXIQmvSN6g3ee5rrpjh2uSoX/oSb0LOZ3D4fqqdfAWq
-         QyEozzZKNTsoXSkN0tr2ASoceIOyDeL90Up5M=
+        d=paul-moore.com; s=google; t=1701899573; x=1702504373; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ad4QKqllEurVWf/Pv2WnyL7sj04ktRUEA1KwimHLGBw=;
+        b=A0FaZ5VPghmIMOFtE7VI5ktxGozz3Olwlubi9g38u8YjHjJ4FQqmsMbHx5O5owP402
+         MCvGx1UDIadD/hB9HuYVtFRO/iIwo0dNq0lSiw4mz8KYluLoEdNgvKuQQgFIuh8Nv1eB
+         kYposvN9K5OwVDmbRa3Gv9n912+wMYAeAfqA632ImawSese1WvEBzRAEmcBfENMmAHDE
+         LJudlvpdo32+Q65nFFXz1GnhCjH075c+xgvoc/efJW9ZJesqy2nIpO9HcSJ8dBAPDRyQ
+         yZGac/GZ9q3ZVNEXO8rmyC7iA0zgf+Vwi80FNnTTU73Q8ksqhIGRg/Y6vOxjZt64WSWi
+         yKYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701894297; x=1702499097;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EspDDl8Dq3tngLpXRmIDltEe/7IquwN2W8jv0OkYqQc=;
-        b=ekr+s3PtNYj2VNpi0+4vdS+KY8PyWsYnQuc5icC8eZqT1vA17k4XvognHD8zaSJpkp
-         6/PYPtjWPxrh2anjDlA/WVLWonK0BhW0Ckk+FDIWziglCk9zXLb6L0THRaOg4hG23bst
-         qNSdpObzHGkAUnXrPSfEAg4/9zP8DYoApev6Se9S71QJlGTuHTM8mgcWP0LgKnazO1M2
-         46xmkx5OAXyk67QD8nfjJUt5buFH2N5P7wZxjcuA/gBnZE5pPH4K8SHuORboigI277J3
-         7ykO8lh6fYzTxHoPjRnavSVRgsOWsxaHbT9Esllq1+WkSCHal4Qsv5y/SXoBMCDaaQeh
-         jgYQ==
-X-Gm-Message-State: AOJu0YzHev3Skozb+myGL0Uh2K3zRS7PnlKs5U2aZU2OFtW8p+lgqKjR
-	pYxl8mY57wT9J0Dhm5QF0CsGFnY+mef951a3JCWcPg==
-X-Google-Smtp-Source: AGHT+IH+iwdb52KbnDIVMtSgM8sHUxJ0VwQ8KVpecHhoi9seb1w9sznIUZPT9Vqahu6bTmOPlo2a3KD/zljbOdj7EXQ=
-X-Received: by 2002:a17:906:3648:b0:a18:ad93:460d with SMTP id
- r8-20020a170906364800b00a18ad93460dmr816177ejb.69.1701894296772; Wed, 06 Dec
- 2023 12:24:56 -0800 (PST)
+        d=1e100.net; s=20230601; t=1701899573; x=1702504373;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ad4QKqllEurVWf/Pv2WnyL7sj04ktRUEA1KwimHLGBw=;
+        b=mPlklv0sNDF4yqL3QEQL36QeJGbgnck9s0n90YyZkBM+B7UwU3EcHR0TBZ+nr+xee/
+         R2ndifyPgnSl6m8cHXxO8aTizzF9OsKd3JGONXCSTQ5Dk0iMOMcdP3Sd9EAt7CcpaSKu
+         qjuIsjJBIJuEw2pejIVq/3x0vhZ4l7tFA6RRq01Vplp1TlTLo9DbzS8y73BXq62sNemJ
+         tHbALg/Pu5oAtNo7za+VG3askejxI3KQUuKrTx9QFDhrm1rYqL8fmzAYUStpvQkPEknI
+         nh00FqBhPMprML30HDNgDfCNzB2nF+/mO3mxniWPRMfYzkVSkkoQ524SPF7PF8oPfk+s
+         7vnw==
+X-Gm-Message-State: AOJu0Ywet/XPjtRt4RCawtwHHWsWasuX8BKNav0LNCJ+uLrJS2Y2jGws
+	fHyl0N+QD+9YeZhU4jlcdnaSVHVLvIs/7Ab8gwgu
+X-Google-Smtp-Source: AGHT+IEj7nPBQx69pTJuIU/DScLOgVaCvMx3IAuTkYQQJ5vMAh2Hehp1yFZ/6ct0anbgpUrLprVHp8nDNRkJVZqoN6c=
+X-Received: by 2002:a25:ab66:0:b0:db7:98ba:2468 with SMTP id
+ u93-20020a25ab66000000b00db798ba2468mr1505130ybi.28.1701899573074; Wed, 06
+ Dec 2023 13:52:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231128160337.29094-1-mszeredi@redhat.com> <20231128160337.29094-4-mszeredi@redhat.com>
- <20231206195807.GA209606@mail.hallyn.com>
-In-Reply-To: <20231206195807.GA209606@mail.hallyn.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 6 Dec 2023 21:24:45 +0100
-Message-ID: <CAJfpegs-uUEwKrEcmRE4WkzWet_A1f9mnM7UtFqM=szEUi+-1g@mail.gmail.com>
-Subject: Re: [PATCH 3/4] listmount: small changes in semantics
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, Christian Brauner <christian@brauner.io>, linux-api@vger.kernel.org, 
-	linux-man@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Karel Zak <kzak@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>
+References: <20231206060629.2827226-1-david@fromorbit.com> <20231206060629.2827226-6-david@fromorbit.com>
+In-Reply-To: <20231206060629.2827226-6-david@fromorbit.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 6 Dec 2023 16:52:42 -0500
+Message-ID: <CAHC9VhTP3hRAkmp7wOKGrEzY5OXXJpnuofTG_+KdXDku18vkeA@mail.gmail.com>
+Subject: Re: [PATCH 05/11] selinux: use dlist for isec inode list
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-cachefs@redhat.com, dhowells@redhat.com, gfs2@lists.linux.dev, 
+	dm-devel@lists.linux.dev, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 6 Dec 2023 at 20:58, Serge E. Hallyn <serge@hallyn.com> wrote:
+On Wed, Dec 6, 2023 at 1:07=E2=80=AFAM Dave Chinner <david@fromorbit.com> w=
+rote:
 >
-> On Tue, Nov 28, 2023 at 05:03:34PM +0100, Miklos Szeredi wrote:
-
-> > -     if (!is_path_reachable(m, mnt->mnt_root, &rootmnt))
-> > -             return capable(CAP_SYS_ADMIN) ? 0 : -EPERM;
-> > +     if (!capable(CAP_SYS_ADMIN) &&
+> From: Dave Chinner <dchinner@redhat.com>
 >
-> Was there a reason to do the capable check first?  In general,
-> checking capable() when not needed is frowned upon, as it will
-> set the PF_SUPERPRIV flag.
+> Because it's a horrible point of lock contention under heavily
+> concurrent directory traversals...
 >
+>   - 12.14% d_instantiate
+>      - 12.06% security_d_instantiate
+>         - 12.13% selinux_d_instantiate
+>            - 12.16% inode_doinit_with_dentry
+>               - 15.45% _raw_spin_lock
+>                  - do_raw_spin_lock
+>                       14.68% __pv_queued_spin_lock_slowpath
+>
+>
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> ---
+>  include/linux/dlock-list.h        |  9 ++++
+>  security/selinux/hooks.c          | 72 +++++++++++++++----------------
+>  security/selinux/include/objsec.h |  6 +--
+>  3 files changed, 47 insertions(+), 40 deletions(-)
 
-I synchronized the permission checking with statmount() without
-thinking about the order.   I guess we can change the order back in
-both syscalls?
+In the cover letter you talk about testing, but I didn't see any
+mention of testing with SELinux enabled.  Given the lock contention
+stats in the description above I'm going to assume you did test this
+and pass along my ACK, but if you haven't tested the changes below
+please do before sending this anywhere important.
 
-I also don't understand the reason behind the using the _noaudit()
-variant.  Christian?
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-Thanks,
-Miklos
+--=20
+paul-moore.com
