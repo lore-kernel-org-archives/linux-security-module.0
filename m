@@ -1,86 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44913D98C;
-	Wed,  6 Dec 2023 15:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FDA182C3;
+	Wed,  6 Dec 2023 15:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GTmU6kHK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77FA1C433C7;
-	Wed,  6 Dec 2023 15:31:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sA6PY1R4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEF43C433C8;
+	Wed,  6 Dec 2023 15:55:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701876718;
-	bh=hAqLNmw1CUfJ61iCun+b5KBpjW9OiI64D5DKsIg/2B0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GTmU6kHKUVBNZbTEGud+JA0mzs+8si27WjOy2KPVoJWYTiTW5RXUCHFEIQAHHJWDU
-	 mHpbhVvMzsIpqDSzpqQtFtkUMzTi0vC779plDPuAH1lKgmZz2YjLPpgBlD5omS40K4
-	 JzrDMkx0k5XlPQHgDoRuXUPPcDke/D6VK5oaeRo7kAjKf/CddpHGC4RzFR009LXE4j
-	 TtQBOapJ4WWYkuAyGMSE2nAV35S2ABsD4qhxJXKiptIGjBsd2lGFQLiP/dfs1Z4WHO
-	 UFTph6l6OdP14Clz5qFzU3DSWlqGMOXbU8aTDEgvEAGzneuXxMuVAaBB3iqj/1+yZf
-	 dlflsS7oX59oQ==
-Date: Wed, 6 Dec 2023 08:31:54 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jeff Moyer <jmoyer@redhat.com>, Keith Busch <kbusch@meta.com>,
-	linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
-	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-	asml.silence@gmail.com, linux-security-module@vger.kernel.org,
-	Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH 1/2] iouring: one capable call per iouring instance
-Message-ID: <ZXCT6mpt2Tq0k-Nw@kbusch-mbp>
-References: <20231204175342.3418422-1-kbusch@meta.com>
- <x49zfypstdx.fsf@segfault.usersys.redhat.com>
- <ZW4hM0H6pjbCpIg9@kbusch-mbp>
- <ZW6jjiq9wXHm5d10@fedora>
- <ZW6nmR2ytIBApXE0@kbusch-mbp>
- <ZW60WPf/hmAUoxPv@fedora>
- <ZW9FhsBXdPlN6qrU@kbusch-mbp>
- <ZW/loVJu0+11+boh@fedora>
+	s=k20201202; t=1701878131;
+	bh=r2YsCivF9Cppc6KHcqLTRG8cjx3g+qvqtil1NCQPhe0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sA6PY1R4681rZkqWfjHhdZMPOuaiWPF6f/HLgLGjwLeQz0L5N/LbBO43INJJZf5fc
+	 5IZLRnhfCTWKeD9DfWDyaJxx5y28Az6yuJADfKoinB1Z+3mxbsdFwr/ztyACUMjQV9
+	 NwGA2FOBpB6lBQsORWZWyunUhxbOkLnO/hqC15BkU2vR/FJY5j2p9oBiMlFU1w3l8P
+	 ITmidrFnBHENjrNCb+gexXwcwFadXG+Vc0pSFAgDuIcOiBNQslRmUxxxKOwMwbOM7r
+	 jSQ9LdSQv177zffhkv9wfpSzuY0JDIVaYXtD/alQIXIwydtxPMlUfMKkNglDS6P+rc
+	 fgrWXGoAaz8BQ==
+Date: Wed, 6 Dec 2023 07:55:29 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Huw Davies
+ <huw@codeweavers.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
+ <lvc-project@linuxtesting.org>
+Subject: Re: [PATCH net v2] calipso: Fix memory leak in
+ netlbl_calipso_add_pass()
+Message-ID: <20231206075529.769270f2@kernel.org>
+In-Reply-To: <CAHC9VhTEREuTymgMW8zmQcRZCOpW8M0MZPcKto17ve5Aw1_2gg@mail.gmail.com>
+References: <20231123092314.91299-1-Ilia.Gavrilov@infotecs.ru>
+	<CAHC9VhQGX_22WTdZG4+K8WYQK-G21j8NM9Wy0TodgPAZk57TCQ@mail.gmail.com>
+	<CAHC9VhTEREuTymgMW8zmQcRZCOpW8M0MZPcKto17ve5Aw1_2gg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZW/loVJu0+11+boh@fedora>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 06, 2023 at 11:08:17AM +0800, Ming Lei wrote:
-> On Tue, Dec 05, 2023 at 08:45:10AM -0700, Keith Busch wrote:
-> > 
-> > It's not necessarily about the read/write passthrough commands. It's for
-> > commands we don't know about today. Do we want to revisit this problem
-> > every time spec provides another operation? Are vendor unique solutions
-> > not allowed to get high IOPs access?
-> 
-> Except for read/write, what other commands are performance sensitive?
+On Tue, 5 Dec 2023 16:31:20 -0500 Paul Moore wrote:
+> A quick follow-up to see if this patch was picked up by the networking
+> folks?  I didn't get a patchwork notification, and I don't see it in
+> Linus' tree, but perhaps I missed something?
 
-It varies by command set, but this question is irrelevant. I'm not
-interested in gatekeeping the fast path.
- 
-> > Secondly, some people have rediscovered you can abuse this interface to
-> > corrupt kernel memory, so there are considerations to restricting this
-> 
-> Just wondering why ADMIN won't corrupt kernel memory, and only normal
-> user can, looks it is kernel bug instead of permission related issue.
-
-Admin can corrupt memory as easily as a normal user through this
-interface. We just don't want such capabilities to be available to
-regular users.
-
-And it's a user bug: user told the kernel to map buffer of size X, but
-the device transfers size Y into it. Kernel can't do anything about that
-(other than remove the interface, but such an action will break many
-existing users) because we fundamentally do not know the true transfer
-size of a random command. Many NVMe commands don't explicitly encode
-transfer lengths, so disagreement between host and device on implicit
-lengths risk corruption. It's a protocol "feature".
-
-> > to CAP_SYS_ADMIN anyway, so there's no cheap check available today if we
-> > have to go that route.
-> 
-> If capable(CAP_SYS_ADMIN) is really slow, I am wondering why not
-> optimize it in task_struct?
-
-That's an interesting point to look into. I was hoping to not touch such
-a common struct, but I'm open to all options.
+Oops. Feel free to take it via your tree.
