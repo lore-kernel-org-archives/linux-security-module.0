@@ -1,204 +1,359 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ETQLi58W"
-Received: from sonic312-30.consmr.mail.ne1.yahoo.com (sonic312-30.consmr.mail.ne1.yahoo.com [66.163.191.211])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C92E188
-	for <linux-security-module@vger.kernel.org>; Tue,  5 Dec 2023 14:32:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1701815527; bh=XhsIfB1syxa6PM3j3PvDpSoB8J8/0UqgOB0nBoiXEoY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ETQLi58WDZ4kd8rl8HdbzCtuNnvQzFROLstfBhAHVKkXJFBtCpQQbzQV6RjRvepz357ZmneW+P/6qqLk0mJnknsETkWuiT/No1LYlFvCX0tjMVMfn7o9NCgGI75VZXxin1fJtAq+6Ox22b7GThgX1MTypWqK6vMiIennOFTKoTijerJ16J5FpmAQtKCXT7RZ131AoCA59R1XxAmN1hXpOAXRUxMB1kqi4z9Ymdon+1xO5ay8j9mTERU725nCq98E+mcsJ53AytwJ/39udaXSNjNHDFblr1LsgwLRaoJGrizwmmh0MeE4Vbu9n2xxWKejLMnP77KIEKZMS0/1lmRZGQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1701815527; bh=U14nZyyRsvQPXBuc8aqLVh+tpfrcdXDtBFsJFKkQzNC=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=chv3ZWLtt9GkhazRytTQN9wZEJ8tcpSAbM/CnW1OSJsYkOtsDS8WwtB0GEHlifOxp1wPscht3P7RH13QVsK37ZhmHsZpBZXM2PiT4Y8r0M8Qy1CovmvgdrWz5hZRE3ZkJhW50132827LucqzLl9F3K6fXLAILpPhViboKlsIagXJB64WbhEsOJbUElvOrNnMV2/HngUgCZF58Fd51iB8j0NI0GPIDtZ7xUBPcmB1dv9Nwz0g8buiJiIpwOC3yYmn5zEMp4Lg8lLQ+25P7UUTzu6FFtpzh9YYH325+SBw8zZd8efhzduEYmSVR0FeK5WIWQf0s6ywQFIC1dByXZaYYg==
-X-YMail-OSG: 7w.fOQoVM1n15WecGNKV.T8H7x76FCH8dWCyop1OgbQhzPoOgxdZH6LNQZ.qT6Z
- GH5lOVmtwu8FhfOcUJbZgF8auqSGZdC1LjE42IsjimcRfnG8kGZ0uJ8CWcXUgGaPFDrw4nS2InGf
- gE.oHvdLl_yOV.TYdB7MycOKjX0crN0DpdEpe9XV8ZscI2sIitrwDnl5R4semiGisKH8BUxZmxxz
- ZDyEDsK54km5gPgz3bYoLqiHIZ9zfCZ9v_aexa.v2v0eiwD1WztygXD7wYPDyi41Ed6P.n7nqrBv
- JVRatP5adQ.cNVYW0q3S7omlROU484NEymp80S6.93fVXoPxuq3DyfbyPuogydohHBpRFa0gyIYS
- corea_fJWn1Z1TaYGw66wkxZ92Ys0WBNi62QT5Y8MALMr0YZRb5h5p6mPOHgl9mbXo02pe_jJsqu
- _gIRU.3dkN6LYqW4DY2VkPPQZdgT52BYs7l4kmHhnM33ZxijcFOL6AoFNvlPQsS6qdZtDo3aUnvR
- 3_9qVp7xyvRxGJ7EhFayJNa0hzpN4kVT8wP3vhtOqAxnaEEF_UeNdUcFd.ZziLt2nj6Vi_AMSOG1
- rZ206WcDAOLTqfgsUVmVG10hnERj1c3wt48mZ2pXPTLBMFM5kaAx_Ky88LGd1qV5t1XZrHfm1Z7b
- v4YaeLdr_hAYb5I2I5FNl7Nfw_jIGwgLw.NV95IIkrcSXerhor7rrcezf7ocKqC3grp.GNTTUJhL
- 6FPhs9CMWBun7R8d3aU3TpTCbh97TdyCqSoVCxXbdWLWT7WQAYyosxCkmek_h5GvzpNUe3b__6mQ
- 6R_VYyuRguqf1juTnD277x3Fvey.7kTW.LRpq_jvxxwAWDc8WA4QO7PcFfsQnmbpVz8D10rDH5E9
- s6aA719fk8WlvJXewoMwZEHw0ca0aaJ1vWF1XPy8j_x6yeag0OCKrG9JyFJhAQ9D_CmYkqITXyMj
- WfYhhZxmrisP6o6CzkhuEh_s7vzS871yXgwkceZEfjos0HALwlGqejCytTlZ9HqlUfmWLY7_FmS7
- zFx6ky4lYGlPbhaul4CyrZcaIoMLOBliEKP2LMRLslJpLK3HsqH4x9t.Q.Aj2cuqCkY9Pykl7bpZ
- Z6yWMU7EwL33RLzNacFcNgUmxwDmqwmypVgqRz0UXxr52v4ehc76uhF0RtaFqW0LUc.Y.yXaONys
- EdW0VUgHeusNbu1tC8dYdXxcoSRzOCyVYpguDc20haeVv4zPZ9G8oPjRPDmUNHgRhnkfC1zgMUI9
- xrqAVEGUfKTXuT17xleVoeXJFS5z95haNZ_LkV02jt7OCEnpyP.SH5qbIFA4.CL8184Sij68JHQc
- 8HyDKmeZ2227ZEHCOZJ09aedHeAnxqMzI1dRRWhsV5asaZfrz8PcmGLv6E2FnZ8wP_qGEEE9wxaS
- OmiKUvGMxBB_6O5t2.sBRg5QQhCHR0Zkauf9iU5dWZU9Y9VrwuYDLYaOjBFI1z6WLNgIK8HI4BsB
- pYKBFnO5FwNcR3GOudS8XfRiCLUeypRize0Lh.OMDnR7s5VXQwOc.VEz0oF_hXIbpFs8sZSbFwcI
- U7cKNuSpkxxoJPQEGgJ9FowZZWaVevX1xid3j0HrJ3V489uBADOTdNw1ohKCkLdM9TnGr5v7DQop
- dWaGAvxlUMLcK0lUX4lsa6qRoiyFqxrpG9OKrHB_GjMSmrqoLa9.F9kId2o.fsp6017UJ6ieN644
- xKzvTws63qnfPYExQRYjhmuZgpVn8mFICLi58YoAyCv97sQyLYwCbMNXlgOpfn5zMoWQhTUvTxBl
- YoVVKMLtjSFwbY1SteRRyF_vBhiePjLl2L7Q4VZ_dm9ROYcEavq_g68dHRcxvI2GxbmnIjNyFLvB
- iU1h0rzCooJWmibM4RxdixSCeIguJRpGXPCT5FTtaFD0usUXdRs1Hpmqa3JBkOAU9qG8ajS3P9AA
- IFikdTPIkrXnJPrB4SLRUQA6fqHO1_J_Em78Agi8XHEx7Th4i_Bax.YVHfUvfc98pYGj3qMjumQz
- eQCqK8yFrE3xc2o20TPvLIuTLmhkChM.j8kgFdWgiJn.5NzRZYUIHS_1MmWDEdvh2jRrR73L0PJ2
- tz.NOyd0R_BWwi_LEx6_gCydCW7SpsPImezqcTykNWAV60M61ZRO6UegMWB6pvipYf9vg9rYep2v
- tTTsi.2XsLx0H_QrH7_VHE_CpBbyUSOIDM7PVMeiJwzAlIaCpq3x7ttCrvSsEFR9gdkcu_NZQ8rm
- WBdfj1wgXwHeIausfyecFJQxo0l7aFFHqJCxh.SrHMUbWrzbQahi7L8LLg29GH3gEGs7UuN8fM8z
- mxBFRZQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: b737f352-c4b9-4bfa-9ab9-25385c038a20
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Tue, 5 Dec 2023 22:32:07 +0000
-Received: by hermes--production-gq1-64499dfdcc-m6m9b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4145692701c3bdb59d62294ad06b16f1;
-          Tue, 05 Dec 2023 22:32:01 +0000 (UTC)
-Message-ID: <fa0b7051-6eee-4b4a-8e0d-ce0160ef4e5a@schaufler-ca.com>
-Date: Tue, 5 Dec 2023 14:31:59 -0800
+	dkim=pass (1024-bit key) header.d=stgraber.org header.i=@stgraber.org header.b="NtSWf8FC"
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FAF71B6
+	for <linux-security-module@vger.kernel.org>; Tue,  5 Dec 2023 18:18:17 -0800 (PST)
+Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2ca09601127so34278671fa.1
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Dec 2023 18:18:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=stgraber.org; s=google; t=1701829096; x=1702433896; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ILoS/WrORO+k4c54D4qrsiyw7xzH+3UvNRBbMK2xOP8=;
+        b=NtSWf8FCL6kGgJU1hZOOjieKCqib0IL7gcWTzLwzJ3NOGF7MeD6IjxsnCGidMesYqx
+         2EpPs/WM49LI44/w84zVQov6zBJ+daUqUW1P6szl8Rkr775DD/XR2ddgoIegALKeJaB0
+         OF1xVpeQjv6WY5Gm+xynqi2jRiJCQ6+ubfedM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701829096; x=1702433896;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ILoS/WrORO+k4c54D4qrsiyw7xzH+3UvNRBbMK2xOP8=;
+        b=nUO7I98xeLAQ9+kdODCR9f9JiCPA52+lyIHNs8W+l0QZTDFlUqWQbsX318RPGkcFDc
+         G90BTgdil2k4PqvsJD20zCYSXQHRAHlH2X7XlAexDo1LAwjEwQNxAZUZBq4PSMBfb8Ql
+         l+oNkF01c9/DqFejaeLEUPM1yvP1UjcoD8QFvLGRcoJ47Vyzflxab0L6m54738G1xeg+
+         qs7lLGrjZTDztJWGLQZeAONjjCmGuH934fXX6aR2WdM6bgTx058Z4m2MXuBBYTK/3dh2
+         O2KHNaY1cBmlWOhFNEoZXJ+2FCbpfCqfJNd5GU7SFtStI7aCvjk1Pih4Mk75Wj0IVyf4
+         oW3g==
+X-Gm-Message-State: AOJu0YwrvzpBrgZTnT+7l+gUmQyvwzdBAotUDN1cw0nEDZ2pM2ynmXEh
+	4kzfSnBlm6E00E5xctgSKWkGwlwLhw3g/9qWHcYeOw==
+X-Google-Smtp-Source: AGHT+IG4OlCdXHKgKUivbyBOZWRGKxeps1HY4ID6RkDmpQQNVPOmcFDBisDwb3XZtxZMy/qTcFmW98T6oRbVrXf1WeM=
+X-Received: by 2002:a2e:7009:0:b0:2ca:19f9:fa5c with SMTP id
+ l9-20020a2e7009000000b002ca19f9fa5cmr91106ljc.46.1701829095262; Tue, 05 Dec
+ 2023 18:18:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Fw: [PATCH] proc: Update inode upon changing task security
- attribute
-Content-Language: en-US
-To: Paul Moore <paul@paul-moore.com>, Munehisa Kamata <kamatam@amazon.com>
-Cc: adobriyan@gmail.com, akpm@linux-foundation.org,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <5f8b18b0-0744-4cf5-9ec5-b0bb0451dd18@p183>
- <20231201205940.23095-1-kamatam@amazon.com>
- <CAHC9VhSyaFE7-u470TrnHP7o2hT8600zC+Od=M0KkrP46j7-Qw@mail.gmail.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhSyaFE7-u470TrnHP7o2hT8600zC+Od=M0KkrP46j7-Qw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.21943 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <CA+enf=sWQ+-YP+uj9XfN_ykDsK=CYFFa35aPpeuS9B6qyLkjtg@mail.gmail.com>
+ <582eb2e9-ce80-4f96-a4bc-bef1a508e0ab@canonical.com> <CA+enf=u0UmgjKrd98EYkxFu7FYV8dR1SBYJn_1b0Naq=3twbbQ@mail.gmail.com>
+ <fa2124b9-18c1-49b0-b390-398c2dde3fcf@canonical.com> <68c166b8-5b4d-4612-8042-1dee3334385b@leemhuis.info>
+ <CA+enf=u5RhfTXR-xSGXeGZ+NcV7iu4NughBZRFq-kwRuV3A5eA@mail.gmail.com> <3d17c8c3-6558-4847-b123-4dbe1a1b0763@canonical.com>
+In-Reply-To: <3d17c8c3-6558-4847-b123-4dbe1a1b0763@canonical.com>
+From: =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@stgraber.org>
+Date: Tue, 5 Dec 2023 21:18:04 -0500
+Message-ID: <CA+enf=uzHAK3KEisZS3QfuUOMG_ZiFwyJGfP+5cyWB0-mdDQOg@mail.gmail.com>
+Subject: Re: Apparmor move_mount mediation breaks mount tool in containers
+To: John Johansen <john.johansen@canonical.com>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>, Christian Brauner <brauner@kernel.org>, 
+	Sasha Levin <sashal@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Mihalicyn <alexander@mihalicyn.com>, "paul@paul-moore.com" <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/5/2023 2:21 PM, Paul Moore wrote:
-> On Fri, Dec 1, 2023 at 4:00 PM Munehisa Kamata <kamatam@amazon.com> wrote:
->> On Fri, 2023-12-01 09:30:00 +0000, Alexey Dobriyan wrote:
->>> On Wed, Nov 29, 2023 at 05:11:22PM -0800, Andrew Morton wrote:
->>>> fyi...
->>>>
->>>> (yuk!)
->>>>
->>>> Begin forwarded message:
->>>> Date: Thu, 30 Nov 2023 00:37:04 +0000
->>>> From: Munehisa Kamata <kamatam@amazon.com>
->>>> Subject: [PATCH] proc: Update inode upon changing task security attribute
->>>>
->>>> I'm not clear whether VFS is a better (or worse) place[1] to fix the
->>>> problem described below and would like to hear opinion.
->>>>
->>>> If the /proc/[pid] directory is bind-mounted on a system with Smack
->>>> enabled, and if the task updates its current security attribute, the task
->>>> may lose access to files in its own /proc/[pid] through the mountpoint.
->>>>
->>>>  $ sudo capsh --drop=cap_mac_override --
->>>>  # mkdir -p dir
->>>>  # mount --bind /proc/$$ dir
->>>>  # echo AAA > /proc/$$/task/current         # assuming built-in echo
->>>>  # cat /proc/$$/task/current                        # revalidate
->>>>  AAA
->>>>  # echo BBB > dir/attr/current
->>>>  # cat dir/attr/current
->>>>  cat: dir/attr/current: Permission denied
->>>>  # ls dir/
->>>>  ls: cannot access dir/: Permission denied
->>>>  # cat /proc/$$/attr/current                        # revalidate
->>>>  BBB
->>>>  # cat dir/attr/current
->>>>  BBB
->>>>  # echo CCC > /proc/$$/attr/current
->>>>  # cat dir/attr/current
->>>>  cat: dir/attr/current: Permission denied
->>>>
->>>> This happens because path lookup doesn't revalidate the dentry of the
->>>> /proc/[pid] when traversing the filesystem boundary, so the inode security
->>>> blob of the /proc/[pid] doesn't get updated with the new task security
->>>> attribute. Then, this may lead security modules to deny an access to the
->>>> directory. Looking at the code[2] and the /proc/pid/attr/current entry in
->>>> proc man page, seems like the same could happen with SELinux. Though, I
->>>> didn't find relevant reports.
->>>>
->>>> The steps above are quite artificial. I actually encountered such an
->>>> unexpected denial of access with an in-house application sandbox
->>>> framework; each app has its own dedicated filesystem tree where the
->>>> process's /proc/[pid] is bind-mounted to and the app enters into via
->>>> chroot.
->>>>
->>>> With this patch, writing to /proc/[pid]/attr/current (and its per-security
->>>> module variant) updates the inode security blob of /proc/[pid] or
->>>> /proc/[pid]/task/[tid] (when pid != tid) with the new attribute.
->>>>
->>>> [1] https://lkml.kernel.org/linux-fsdevel/4A2D15AF.8090000@sun.com/
->>>> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/security/selinux/hooks.c#n4220
->>>>
->>>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
->>>> Signed-off-by: Munehisa Kamata <kamatam@amazon.com>
->>>> ---
->>>>  fs/proc/base.c | 23 ++++++++++++++++++++---
->>>>  1 file changed, 20 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/fs/proc/base.c b/fs/proc/base.c
->>>> index dd31e3b6bf77..bdb7bea53475 100644
->>>> --- a/fs/proc/base.c
->>>> +++ b/fs/proc/base.c
->>>> @@ -2741,6 +2741,7 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
->>>>  {
->>>>     struct inode * inode = file_inode(file);
->>>>     struct task_struct *task;
->>>> +   const char *name = file->f_path.dentry->d_name.name;
->>>>     void *page;
->>>>     int rv;
->>>>
->>>> @@ -2784,10 +2785,26 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
->>>>     if (rv < 0)
->>>>             goto out_free;
->>>>
->>>> -   rv = security_setprocattr(PROC_I(inode)->op.lsm,
->>>> -                             file->f_path.dentry->d_name.name, page,
->>>> -                             count);
->>>> +   rv = security_setprocattr(PROC_I(inode)->op.lsm, name, page, count);
->>>>     mutex_unlock(&current->signal->cred_guard_mutex);
->>>> +
->>>> +   /*
->>>> +    *  Update the inode security blob in advance if the task's security
->>>> +    *  attribute was updated
->>>> +    */
->>>> +   if (rv > 0 && !strcmp(name, "current")) {
->>>> +           struct pid *pid;
->>>> +           struct proc_inode *cur, *ei;
->>>> +
->>>> +           rcu_read_lock();
->>>> +           pid = get_task_pid(current, PIDTYPE_PID);
->>>> +           hlist_for_each_entry(cur, &pid->inodes, sibling_inodes)
->>>> +                   ei = cur;
->>> Should this "break;"? Why is only the last inode in the list updated?
->>> Should it be the first? All of them?
->> If it picks up the first node, it may end up updating /proc/[pid]/task/[tid]
->> rather than /proc/[pid] (when pid == tid) and the task may be denied access
->> to its own /proc/[pid] afterward.
->>
->> I think updating all of them won't hurt. But, as long as /proc/[pid] is
->> accessible, the rest of the inodes should be updated upon path lookup via
->> revalidation as usual.
->>
->> When pid != tid, it only updates /proc/[pid]/task/[tid] and the thread may
->> lose an access to /proc/[pid], but I think it's okay as it's a matter of
->> security policy enforced by security modules. Casey, do you have any
->> comments here?
->>
->>>> +           put_pid(pid);
->>>> +           pid_update_inode(current, &ei->vfs_inode);
->>>> +           rcu_read_unlock();
->>>> +   }
-> I think my thoughts are neatly summarized by Andrew's "yuk!" comment
-> at the top.  However, before we go too much further on this, can we
-> get clarification that Casey was able to reproduce this on a stock
-> upstream kernel?  Last I read in the other thread Casey wasn't seeing
-> this problem on Linux v6.5.
-
-I was able to recreate the problem once given corrected instructions,
-which have to be followed exactly. 
-
-> However, for the moment I'm going to assume this is a real problem, is
-> there some reason why the existing pid_revalidate() code is not being
-> called in the bind mount case?  From what I can see in the original
-> problem report, the path walk seems to work okay when the file is
-> accessed directly from /proc, but fails when done on the bind mount.
-> Is there some problem with revalidating dentrys on bind mounts?
+On Tue, Dec 5, 2023 at 2:55=E2=80=AFPM John Johansen
+<john.johansen@canonical.com> wrote:
 >
+> On 12/4/23 22:57, St=C3=A9phane Graber wrote:
+> > On Mon, Dec 4, 2023 at 9:20=E2=80=AFAM Linux regression tracking (Thors=
+ten
+> > Leemhuis) <regressions@leemhuis.info> wrote:
+> >>
+> >> On 04.12.23 14:14, John Johansen wrote:
+> >>> On 12/3/23 17:34, St=C3=A9phane Graber wrote:
+> >>
+> >> Side note: St=C3=A9phane, thx for CCing the regressions list.
+> >>
+> >>>> On Sun, Dec 3, 2023 at 8:21=E2=80=AFPM John Johansen
+> >>>> <john.johansen@canonical.com> wrote:
+> >>>>> On 12/2/23 17:20, St=C3=A9phane Graber wrote:
+> >>>>>>
+> >>>>>> Upstream commit 157a3537d6bc28ceb9a11fc8cb67f2152d860146 which jus=
+t
+> >>>>>> landed in 6.6.3 stable as 96af45154a0be30485ad07f70f852b1456cb13d7=
+ is
+> >>>>>> blocking new mounts for all LXC, LXD and Incus users (at least) on
+> >>>>>> distributions using the newer version of util-linux.
+> >>>>>>
+> >>>>>> That's because for a simple mount like "mount -t tmpfs tmpfs /tmp"=
+,
+> >>>>>> the new mount command now performs:
+> >>>>>> ```
+> >>>>>> fsconfig(3, FSCONFIG_SET_STRING, "source", "tmpfs", 0) =3D 0
+> >>>>>> fsconfig(3, FSCONFIG_CMD_CREATE, NULL, NULL, 0) =3D 0
+> >>>>>> fsmount(3, FSMOUNT_CLOEXEC, 0)          =3D 4
+> >>>>>> statx(4, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_MNT_ID,
+> >>>>>> {stx_mask=3DSTATX_BASIC_STATS|STATX_MNT_ID,
+> >>>>>> stx_attributes=3DSTATX_ATTR_MOUNT_ROOT, stx_mode=3DS_IFDIR|S_ISVTX=
+|0777,
+> >>>>>> stx_size=3D40, ...}) =3D 0
+> >>>>>> move_mount(4, "", AT_FDCWD, "/tmp", MOVE_MOUNT_F_EMPTY_PATH) =3D 0
+> >>>>>> ```
+> >>>>>>
+> >>>>>> That last call to "move_mount" is incorrectly interpreted by AppAr=
+mor
+> >>>>>> as an attempt to move-mount "/" to "/mnt" rather than as a new mou=
+nt
+> >>>>>> being created, this therefore results in:
+> >>>>>> ```
+> >>>>>> Dec 03 01:05:03 kernel-test kernel: audit: type=3D1400
+> >>>>>> audit(1701565503.599:34): apparmor=3D"DENIED" operation=3D"mount"
+> >>>>>> class=3D"mount" info=3D"failed perms check" error=3D-13
+> >>>>>> profile=3D"incus-a_</var/lib/incus>" name=3D"/tmp/" pid=3D2190 com=
+m=3D"mount"
+> >>>>>> srcname=3D"/" flags=3D"rw, move"
+> >>>>>> ```
+> >>>>>>
+> >>>>>> Note that the flags here show "move", the fstype isn't even set an=
+d
+> >>>>>> the source path at srcname incorrectly shows "/".
+> >>>>>>
+> >>>>>> This operation therefore trips any container manager which has an
+> >>>>>> apparmor security policy preventing arbitrary move-mount (as those
+> >>>>>> could be used to bypass other apparmor path based policies).
+> >>>>>>
+> >>>>>>
+> >>>>>> The way I see it, the current mediation support effectively breaks=
+ any
+> >>>>>> attempt at mediating mounts in a useful way in apparmor as it's no=
+w
+> >>>>>> impossible to mediate new mounts based on their fstype or even
+> >>>>>> distinguish them from a move-mount operation.
+> >>>>>>
+> >>>>> Indeed it is a far from good solution. It is a stop gap.
+> >>>>>>
+> >>>>>> I don't know if this warrants pulling the mediation patch out of
+> >>>>>> stable (and out of linus' tree), obviously doing that would
+> >>>>>> reintroduce that hole in mount coverage, but at the same time, the
+> >>>>>> current coverage is broken enough that our only alternative is to
+> >>>>>> effectively allow all mounts, making the current mediation useless=
+.
+> >>>>>
+> >>>>> pulling it effectively means ALL applications by-pass mediation, th=
+e
+> >>>>> alternative is to block all applications from using the move_mount
+> >>>>> system call as part of mediation. Which might have been acceptable
+> >>>>> as a stop gap when the syscall first landed but not now.
+> >>>>
+> >>>> Pulling it from the stable branch may still make sense, you now have
+> >>>> folks who are updating to get actual bugfixes and end up with broken
+> >>>> containers, that doesn't exactly seem like a good outcome...
+> >>>
+> >>> I will defer such a decision to the maintainers the stable trees. I
+> >>> can see arguments either way.
+> >>
+> >> FWIW, Greg usually does not revert a backported change if the change
+> >> causes the same problem to happen with mainline, as then it should be
+> >> fixed there as well. Which is normally the right thing to do, as Linus
+> >> wants people to be able to upgrade to new kernels without having them =
+to
+> >> upgrade anything else (firmware, anything in userland incl. apparmor
+> >> policies).
+> >>
+> >> So normally this whole issue afaics would be "157a3537d6bc28 needs to =
+be
+> >> fixed in mainline (if nothing else helps with a revert), and that fix
+> >> then needs to be backported to the various stable trees".
+> >>
+> >> It obviously is more complicated because that commit apparently fixes =
+a
+> >> security vulnerability. But even under such circumstances Linus afaik
+> >> wants us to do everything possible to avoid breaking peoples workflows=
+.
+> >> Which is why I wonder if there is a more elegant solution here
+> >> somewhere. I doubt that the answer is yes, but I'll ask the following
+> >> anyway: Would a kernel config option that distros could set when they
+> >> updated their Apparmor policies help here? Or something in sysfs?
+> >>
+> >> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' ha=
+t)
+> >
+> > So there are a few different scenarios here:
+> >
+> > 1) Distribution shipping application specific profiles that were
+> > developed back when the new VFS mount API wasn't around, those
+> > profiles allow the specific mount calls made by the application. The
+> > application has since moved on to using the VFS mount API and thanks
+> > to the lack of apparmor coverage, things have kept on working fine.
+> > Now when the distro pulls this bugfix, the application will now fail
+> > to perform the mount. Apparmor returns EACCESS which doesn't cause a
+> > fallback to the old mount API but instead a straight up error returned
+> > to the user. ENOSYS would usually be handled properly.
+> >
+> I am not opposed to conditionally returning ENOSYS. I also have no doubt
+> that doing so would break fewer applications, it will still break some.
+> As I said I will look into doing that
+
+Thanks, that would certainly be a much better stop gap measure until
+such time as the mount API can properly be mediated by AppArmor.
+
+> > 2) All the container managers out there which use AppArmor as a safety
+> > net to block mostly misbehaving or misconfigured software. Those
+> > policies are not meant to be water tight to begin with (and due to the
+> > nature of containers, they really can't be). But they do catch a lot
+> > and while not an actual security barrier, they certainly prevent a lot
+> > of accidents. Unfortunately with the new mediation in place, the only
+> > real way to operate moving forward is to not mediate mounts at all as
+> > mediation of the new VFS API leads to just about everything getting
+> > denied and apparmor doesn't provide a way to separately mediate the
+> > old and new mount APIs.
+> >
+> atm no, I am working on a conditional for detached mounts. I am not
+> convinced we should completely separate move_mount() mediation for
+> attached mounts.
+>
+> But to use any of that you will need a new apparmor userspace to
+> support it. LXD is using the mounts as a behavioral/advisory catch, so
+> allowing an unmediated move_mount() is not the end of the world. Apparmor
+> still needs to be able to mediate mounts for applications that aren't
+> containers and do need a tighter barrier.
+>
+> The reality with the new mount api is that atm we can only mediate
+> move_mount(), but the new mount api does add a twist with the whole
+> detached mounts. The only way to support that on older releases is
+> using a very generic mount rule.
+>
+> New userspaces can pick up more. Leaving move_mount() unmediated even
+> for older releases really isn't an appealing option. New kernels
+> get pulled back and used on old releases all the time.
+>
+> > 3) A system where apparmor is used to effectively prevent any mounting
+> > whatsoever, where the policy is now being bypassed by simply using the
+> > new VFS API. Such a system would also need to not be using Seccomp in
+> > combination with Apparmor as blocking the new VFS API syscalls would
+> > avoid the issue.
+> >
+> sure
+>
+> >
+> > I suspect 3) is what John is hinting at in this thread. I could
+> > certainly see this bug be used to bypass the snapd mount restrictions
+> > for example, though snapd also generates seccomp policies, so just
+> > blocking the new VFS API would be a much simpler fix there.
+> >
+> I am concerned about more than the snapd case, yes snapd could and
+> should use seccomp, but apparmor should be able to stand on its own
+> for other cases.
+>
+> > I have no idea how common 1) is, but it looks like we're about to find
+> > out soon and that has potential for some very "interesting" bug
+> > reports as mount related errors are usually not the easiest to
+> > understand and LSMs make them so much worse.
+> >
+> unfortunately that is always the case when fixing a mediation regression.
+> This one sat way too long that doesn't mean it shouldn't get fixed.
+>
+> Overall though, I think lxd/incus is probably the major one. Most people
+> are running targeted policies and have left most of the stuff doing
+> mounts unconfined.
+
+We did some research with Aleksa last night and that does seem to be
+true for the profiles we could find.
+
+However there is a bit of a catch that Docker, Kubernetes, ... pretty
+much all the application container options do support using AppArmor
+but don't provide advanced profiles, instead they put the burden on
+the user to attach profiles to specific containers.
+
+I have no idea how many people actually do that and since they are
+individually crafted profiles by those users, we have no idea what may
+be in there and whether they got broken by this change.
+
+> > As for 2), as it stands, we're going to have to effectively turn off
+> > any of the mount related safety nets we had in place in LXC, Incus and
+> > likely most other container runtimes out there to handle this. The
+> > usual issue with doing that kind of heavy hammer change is that once
+> > it's done, it will take a long time to undo it. That is, once AppArmor
+> > is actually capable of mediating the way it's supposed to, a lot of
+> > the profiles will have been changed to just blanket allow all mounts
+> > and they're only ever going to be changed once we're confident that
+> > the vast majority of our users are running a kernel with the fixed
+> > logic.
+> >
+> I am well aware of it. I fall on the side of leaving this completely
+> unmediated is slightly worse, but I can understand why someone
+> would choose to leave this unmediated.
+>
+> > I guess some of that could be handled better if there was a way to
+> > detect the current broken mediation of the new mount API and then
+> > later again, detect that the kernel now has working mediation,
+> > allowing for those container managers to generate accurate profile
+> > rather than have to go for the "safest" option (as far as keeping
+> > users running) and just keep allowing everything.
+> >
+> > John, is there any such detection mechanism currently present that
+> > could be used by userspace to better handle this situation?
+> >
+> sadly not for the move_mount() patch, it is however a one line patch
+>
+> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorf=
+s.c
+> index 7465c39ad1bc..6cd52767cfeb 100644
+> --- a/security/apparmor/apparmorfs.c
+> +++ b/security/apparmor/apparmorfs.c
+> @@ -2373,6 +2373,7 @@ static struct aa_sfs_entry aa_sfs_entry_policy[] =
+=3D {
+>
+>   static struct aa_sfs_entry aa_sfs_entry_mount[] =3D {
+>         AA_SFS_FILE_STRING("mask", "mount umount pivot_root"),
+> +       AA_SFS_FILE_STRING(move_mount, "detached"),
+>         { }
+>   };
+>
+> or similar. That I could send out today.
+
+I think that'd be useful to have as something that can be used to
+detect this behavior from userspace and have the affected code turn
+off mount mediation if that's the case.
+
+> it would surfaced the via the regular securityfs/apparmor interface as
+> /sys/kernel/security/apparmor/features/mount/move_mount
+
+> I could also get you a simple conditional patch around returning ENOSYS
+> to start testing, so that we could potentially try sending a final versio=
+n
+> of that patch up next week.
+
+That'd be good. I feel that if this change had come with the ENOSYS
+behavior, I wouldn't have noticed it at all.
+With the new mount API being still pretty fresh, I'm not aware of any
+userspace which today relies exclusively on it, so having it be
+effectively disabled until such time as you can mediate it properly
+shouldn't really break anyone (always hard to know, but sure would
+break a lot less cases than the current change).
+
+One catch though from my testing with seccomp, to make this work, you
+need to have fsmount return ENOSYS, if you only have move_mount return
+ENOSYS, it's too late and libmount just returns the failure to the
+user rather than go down the old mount API code path.
+
+> > Overall, this still feels very rushed and broken to me. I understand
+> > that being able to trivially bypass AppArmor mount rules isn't great,
+> > but shipping code that makes the vast majority of said rules useless
+> > doesn't really feel like such an improvement. It's effectively turning
+> > what was a reasonably flexible policy engine around mount calls, into
+> > a binary switch to either allow everything or block everything.
+> >
+> I get what you are saying. The other side of the coin is oh look apparmor
+> isn't mediating mount if I just do this ...
+
+Sure, but I suspect we could have avoided a bunch of pain if we had a
+chat around this change, had an opportunity to test it ahead of time.
+At the very least, we'd have had the flag file introduced from the
+start and hopefully some better handling like some kind of ENOSYS
+option.
+
+> > We at the very least need a way to check whether we're dealing with
+> > this known broken state so that any change that's made to userspace
+> > can be made condition on this, ensuring that once mediation actually
+> > works as intended, those policies also go back to the way they're
+> > supposed to be.
+> >
+> agreed. That really should have been part of the patch to begin with.
+
+St=C3=A9phane
