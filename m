@@ -1,52 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="vueYdWwm"
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02158D69
-	for <linux-security-module@vger.kernel.org>; Tue,  5 Dec 2023 22:06:37 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1cfb30ce241so46211905ad.0
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Dec 2023 22:06:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="OkeXp78t"
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73636D73
+	for <linux-security-module@vger.kernel.org>; Tue,  5 Dec 2023 22:06:38 -0800 (PST)
+Received: by mail-pg1-x52f.google.com with SMTP id 41be03b00d2f7-5c66bbb3d77so2105875a12.0
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Dec 2023 22:06:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1701842797; x=1702447597; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1701842798; x=1702447598; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=k4fn8znMBnHx32svyrnbDfUnHhzlVQ7G5pzlVkycieA=;
-        b=vueYdWwmYeDx3LEn4Nye1xXvMy+5G/E9jQShJCw83qUlCniD1y2t9oPEohyUqOoltY
-         BjztqHStsw58EMoS2Fzudh7ZaOmxKl+XuDLNgEERc24vCJmuRpwn4ATB7dw2ZJa2gU7V
-         GbtC74J7H1chY2cXaAU40V1cAXazNakqkxvvq3ZuFN2OpBuW+MBVe46LKfN7qnsZQKZr
-         h5YOvGSFHgiVt6fK7J+ktLmvqMMG8QFe32Ok1HGAFWKmqrGJN+5gcFJkJVGNqHR68nP1
-         fK/GzXz9L8qquvU9zCn4hnzaF09K7Ci+9Qh5nsk3oJMkO1gWs8LmURpMWBFBCX9xMGI/
-         /fkQ==
+        bh=5fxgjHIY+i+wILRYpSYSEatYEwrJqDdx6PzPhkDcv2Y=;
+        b=OkeXp78tTzQtRq/qF05WM5DAndaCDB8vhHKZDY0XNgg5ts5hL63JNgkkGzvDYoU598
+         +3f3XDOyYR3xtGk2x8Uo9q8hEk0xSVZ2RCpPCylqNbpaWV8x0C/MKx2BNOhTx8Defkzu
+         LBxuKcz2ucwJ8N39FMlxiLJCGjqx4V0EcqQ6VFLWFKJFodaUUU0ay9THUBRWyAtcXz3D
+         /nWPrTWAxSQByn9g2DU/P7+3BATGMUXWDrnetwZcEVSIcnFH3B0EyBNJefdx4snPcBzo
+         u2z3AOvWP5I9NzS1qDxExZIevQB2Td+6o8sYj0OGzaBpOgeCI4Zm8q+H1HFahj4TTHne
+         0Zcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701842797; x=1702447597;
+        d=1e100.net; s=20230601; t=1701842798; x=1702447598;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=k4fn8znMBnHx32svyrnbDfUnHhzlVQ7G5pzlVkycieA=;
-        b=nXwH51AhnBLzcXrdh2wbdV86NOrzSRCs5hQMw4W21qJ9N9WIyypFFuch4Z3LKjHhWM
-         FYZxU/Q35ZwlkSNn6PVNMtKDezG2Q47mySRftIwviNwmlsA3DqQgW+lNnFfySp1REuU8
-         xoWfjzdRtn417eXO1IeV53PxJ2c8ql5cnRqv74pO2f9kyyyivKQFkIpyBAcm3Yy9+Qri
-         fogFa4H0yOZUCO2OzXWAVBmD5FhryOxP9498+Ci4sEDdvIBHKrGDmY1btObJuU8BjMrY
-         dBADKawYTEO2EYxPiEFn/cZM7R6WRbt1Fr4N4/uuxmbILFNP7usNOcxF/i2nBNVQYQkR
-         Hv1A==
-X-Gm-Message-State: AOJu0YzjXjOcPYkgluQj7Fx5tEkuz3Scy4AdlWNUpFAlZ26rrONzLVtk
-	NoqpvXNFwdYahgIqed8YctAB4w==
-X-Google-Smtp-Source: AGHT+IHh3TFL/DzofTOA4bttY6oq6gSidAZO08x8CTr+BDDGslel3+9RSP1rqlq7aRu9sSclIqBRzA==
-X-Received: by 2002:a17:902:7795:b0:1d0:5806:f45d with SMTP id o21-20020a170902779500b001d05806f45dmr351927pll.42.1701842796981;
-        Tue, 05 Dec 2023 22:06:36 -0800 (PST)
+        bh=5fxgjHIY+i+wILRYpSYSEatYEwrJqDdx6PzPhkDcv2Y=;
+        b=c+ImmspbiNElVqdDVkgJVBRwc3X+lxqxJjMJ27RfWwxgYFcUTdXhX/qf/lnE/C3wAN
+         DXqHedh8vPmUC4+tE374Z96bekfCMeaNs6VnqFfyGEmPFpJSpidLY1P4VFa/YethuJl4
+         iFD2nhbEG2Xn08sOPh94PAEg/OB/LB9aKQvNN3KZBn1igd2LErN3sgQav13cNn1kcC1A
+         0wpD1i1ss7kJsmcxsSW7pADKq3atziin4jC6JSFtvDG73BgovObPjtkGvDueb6oDPmuh
+         /3zE0SwvM34F7Kneda7f47PG3C9DDfGzR0CuHbYJjvO0YZwPBuct0FIMR0ABELC9W/ZD
+         WdwA==
+X-Gm-Message-State: AOJu0YyXUMVLjfubusYxtHkZ4fFJS7sXVcCtIUl6A6oLpoSRk2eiHlV0
+	LLg9PEoGTBF3Tv9hY0s2gcioNA==
+X-Google-Smtp-Source: AGHT+IFaRusOCnlTqKyhQX2TmiINjReQS73wsX4XhW7l8zr6yWbnE5nsO3OQlJ5zjUwEdtZUgvxNGw==
+X-Received: by 2002:a05:6a20:a426:b0:18f:97c:823e with SMTP id z38-20020a056a20a42600b0018f097c823emr186921pzk.72.1701842797795;
+        Tue, 05 Dec 2023 22:06:37 -0800 (PST)
 Received: from dread.disaster.area (pa49-180-125-5.pa.nsw.optusnet.com.au. [49.180.125.5])
-        by smtp.gmail.com with ESMTPSA id k10-20020a170902c40a00b001d087f68ef8sm2308763plk.37.2023.12.05.22.06.34
+        by smtp.gmail.com with ESMTPSA id 13-20020a17090a08cd00b002868f5c2847sm2240355pjn.7.2023.12.05.22.06.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 05 Dec 2023 22:06:34 -0800 (PST)
 Received: from [192.168.253.23] (helo=devoid.disaster.area)
 	by dread.disaster.area with esmtp (Exim 4.96)
 	(envelope-from <dave@fromorbit.com>)
-	id 1rAl3I-004VPF-1Q;
-	Wed, 06 Dec 2023 17:06:32 +1100
+	id 1rAl3H-004VOm-3D;
+	Wed, 06 Dec 2023 17:06:31 +1100
 Received: from dave by devoid.disaster.area with local (Exim 4.97-RC0)
 	(envelope-from <dave@devoid.disaster.area>)
-	id 1rAl3H-0000000BrVp-49wq;
-	Wed, 06 Dec 2023 17:06:32 +1100
+	id 1rAl3H-0000000BrVG-2K9L;
+	Wed, 06 Dec 2023 17:06:31 +1100
 From: Dave Chinner <david@fromorbit.com>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-block@vger.kernel.org,
@@ -57,9 +57,9 @@ Cc: linux-block@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	selinux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 11/11] hlist-bl: introduced nested locking for dm-snap
-Date: Wed,  6 Dec 2023 17:05:40 +1100
-Message-ID: <20231206060629.2827226-12-david@fromorbit.com>
+Subject: [PATCH 04/11] lib/dlock-list: Make sibling CPUs share the same linked list
+Date: Wed,  6 Dec 2023 17:05:33 +1100
+Message-ID: <20231206060629.2827226-5-david@fromorbit.com>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20231206060629.2827226-1-david@fromorbit.com>
 References: <20231206060629.2827226-1-david@fromorbit.com>
@@ -71,131 +71,164 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Dave Chinner <dchinner@redhat.com>
+From: Waiman Long <longman@redhat.com>
 
-Testing with lockdep enabled threw this warning from generic/081 in
-fstests:
+The dlock list needs one list for each of the CPUs available. However,
+for sibling CPUs, they are sharing the L2 and probably L1 caches
+too. As a result, there is not much to gain in term of avoiding
+cacheline contention while increasing the cacheline footprint of the
+L1/L2 caches as separate lists may need to be in the cache.
 
-[ 2369.724151] ============================================
-[ 2369.725805] WARNING: possible recursive locking detected
-[ 2369.727125] 6.7.0-rc2-dgc+ #1952 Not tainted
-[ 2369.728647] --------------------------------------------
-[ 2369.730197] systemd-udevd/389493 is trying to acquire lock:
-[ 2369.732378] ffff888116a1a320 (&(et->table + i)->lock){+.+.}-{2:2}, at: snapshot_map+0x13e/0x7f0
-[ 2369.736197]
-               but task is already holding lock:
-[ 2369.738657] ffff8881098a4fd0 (&(et->table + i)->lock){+.+.}-{2:2}, at: snapshot_map+0x136/0x7f0
-[ 2369.742118]
-               other info that might help us debug this:
-[ 2369.744403]  Possible unsafe locking scenario:
+This patch makes all the sibling CPUs share the same list, thus
+reducing the number of lists that need to be maintained in each
+dlock list without having any noticeable impact on performance. It
+also improves dlock list iteration performance as fewer lists need
+to be iterated.
 
-[ 2369.746814]        CPU0
-[ 2369.747675]        ----
-[ 2369.748496]   lock(&(et->table + i)->lock);
-[ 2369.749877]   lock(&(et->table + i)->lock);
-[ 2369.751241]
-                *** DEADLOCK ***
-
-[ 2369.753173]  May be due to missing lock nesting notation
-
-[ 2369.754963] 4 locks held by systemd-udevd/389493:
-[ 2369.756124]  #0: ffff88811b3a1f48 (mapping.invalidate_lock#2){++++}-{3:3}, at: page_cache_ra_unbounded+0x69/0x190
-[ 2369.758516]  #1: ffff888121ceff10 (&md->io_barrier){.+.+}-{0:0}, at: dm_get_live_table+0x52/0xd0
-[ 2369.760888]  #2: ffff888110240078 (&s->lock#2){++++}-{3:3}, at: snapshot_map+0x12e/0x7f0
-[ 2369.763254]  #3: ffff8881098a4fd0 (&(et->table + i)->lock){+.+.}-{2:2}, at: snapshot_map+0x136/0x7f0
-[ 2369.765896]
-               stack backtrace:
-[ 2369.767429] CPU: 3 PID: 389493 Comm: systemd-udevd Not tainted 6.7.0-rc2-dgc+ #1952
-[ 2369.770203] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[ 2369.773771] Call Trace:
-[ 2369.774657]  <TASK>
-[ 2369.775494]  dump_stack_lvl+0x5c/0xc0
-[ 2369.776765]  dump_stack+0x10/0x20
-[ 2369.778031]  print_deadlock_bug+0x220/0x2f0
-[ 2369.779568]  __lock_acquire+0x1255/0x2180
-[ 2369.781013]  lock_acquire+0xb9/0x2c0
-[ 2369.782456]  ? snapshot_map+0x13e/0x7f0
-[ 2369.783927]  ? snapshot_map+0x136/0x7f0
-[ 2369.785240]  _raw_spin_lock+0x34/0x70
-[ 2369.786413]  ? snapshot_map+0x13e/0x7f0
-[ 2369.787482]  snapshot_map+0x13e/0x7f0
-[ 2369.788462]  ? lockdep_init_map_type+0x75/0x250
-[ 2369.789650]  __map_bio+0x1d7/0x200
-[ 2369.790364]  dm_submit_bio+0x17d/0x570
-[ 2369.791387]  __submit_bio+0x4a/0x80
-[ 2369.792215]  submit_bio_noacct_nocheck+0x108/0x350
-[ 2369.793357]  submit_bio_noacct+0x115/0x450
-[ 2369.794334]  submit_bio+0x43/0x60
-[ 2369.795112]  mpage_readahead+0xf1/0x130
-[ 2369.796037]  ? blkdev_write_begin+0x30/0x30
-[ 2369.797007]  blkdev_readahead+0x15/0x20
-[ 2369.797893]  read_pages+0x5c/0x230
-[ 2369.798703]  page_cache_ra_unbounded+0x143/0x190
-[ 2369.799810]  force_page_cache_ra+0x9a/0xc0
-[ 2369.800754]  page_cache_sync_ra+0x2e/0x50
-[ 2369.801704]  filemap_get_pages+0x112/0x630
-[ 2369.802696]  ? __lock_acquire+0x413/0x2180
-[ 2369.803663]  filemap_read+0xfc/0x3a0
-[ 2369.804527]  ? __might_sleep+0x42/0x70
-[ 2369.805443]  blkdev_read_iter+0x6d/0x150
-[ 2369.806370]  vfs_read+0x1a6/0x2d0
-[ 2369.807148]  ksys_read+0x71/0xf0
-[ 2369.807936]  __x64_sys_read+0x19/0x20
-[ 2369.808810]  do_syscall_64+0x3c/0xe0
-[ 2369.809746]  entry_SYSCALL_64_after_hwframe+0x63/0x6b
-[ 2369.810914] RIP: 0033:0x7f9f14dbb03d
-
-Turns out that dm-snap holds two hash-bl locks at the same time,
-so we need nesting semantics to ensure lockdep understands what is
-going on.
-
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- drivers/md/dm-snap.c    |  2 +-
- include/linux/list_bl.h | 10 ++++++++++
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ lib/dlock-list.c | 74 ++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 59 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index bf7a574499a3..cd97d5cb295d 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -645,7 +645,7 @@ static void dm_exception_table_lock_init(struct dm_snapshot *s, chunk_t chunk,
- static void dm_exception_table_lock(struct dm_exception_table_lock *lock)
+diff --git a/lib/dlock-list.c b/lib/dlock-list.c
+index f64ea4cc5e79..e2860944ec9f 100644
+--- a/lib/dlock-list.c
++++ b/lib/dlock-list.c
+@@ -25,31 +25,65 @@
+  * The distributed and locked list is a distributed set of lists each of
+  * which is protected by its own spinlock, but acts like a single
+  * consolidated list to the callers. For scaling purpose, the number of
+- * lists used is equal to the number of possible CPUs in the system to
+- * minimize contention.
++ * lists used is equal to the number of possible cores in the system to
++ * minimize contention. All threads of the same CPU core will share the
++ * same list.
+  *
+- * However, it is possible that individual CPU numbers may be equal to
+- * or greater than the number of possible CPUs when there are holes in
+- * the CPU number list. As a result, we need to map the CPU number to a
+- * list index.
++ * We need to map each CPU number to a list index.
+  */
+ static DEFINE_PER_CPU_READ_MOSTLY(int, cpu2idx);
++static int nr_dlock_lists __read_mostly;
+ 
+ /*
+- * Initialize cpu2idx mapping table
++ * Initialize cpu2idx mapping table & nr_dlock_lists.
+  *
+  * It is possible that a dlock-list can be allocated before the cpu2idx is
+  * initialized. In this case, all the cpus are mapped to the first entry
+  * before initialization.
+  *
++ * All the sibling CPUs of a sibling group will map to the same dlock list so
++ * as to reduce the number of dlock lists to be maintained while minimizing
++ * cacheline contention.
++ *
++ * As the sibling masks are set up in the core initcall phase, this function
++ * has to be done in the postcore phase to get the right data.
+  */
+ static int __init cpu2idx_init(void)
  {
- 	hlist_bl_lock(lock->complete_slot);
--	hlist_bl_lock(lock->pending_slot);
-+	hlist_bl_lock_nested(lock->pending_slot, SINGLE_DEPTH_NESTING);
- }
+ 	int idx, cpu;
++	struct cpumask *sibling_mask;
++	static struct cpumask mask __initdata;
  
- static void dm_exception_table_unlock(struct dm_exception_table_lock *lock)
-diff --git a/include/linux/list_bl.h b/include/linux/list_bl.h
-index 990ad8e24e0b..0e3e60c10563 100644
---- a/include/linux/list_bl.h
-+++ b/include/linux/list_bl.h
-@@ -83,6 +83,11 @@ static inline void hlist_bl_lock(struct hlist_bl_head *b)
- 	spin_lock(&b->lock);
- }
- 
-+static inline void hlist_bl_lock_nested(struct hlist_bl_head *b, int subclass)
-+{
-+	spin_lock_nested(&b->lock, subclass);
-+}
++	cpumask_clear(&mask);
+ 	idx = 0;
+-	for_each_possible_cpu(cpu)
+-		per_cpu(cpu2idx, cpu) = idx++;
++	for_each_possible_cpu(cpu) {
++		int scpu;
 +
- static inline void hlist_bl_unlock(struct hlist_bl_head *b)
- {
- 	spin_unlock(&b->lock);
-@@ -125,6 +130,11 @@ static inline void hlist_bl_lock(struct hlist_bl_head *b)
- 	bit_spin_lock(0, (unsigned long *)b);
- }
- 
-+static inline void hlist_bl_lock_nested(struct hlist_bl_head *b, int subclass)
-+{
-+	hlist_bl_lock(b);
-+}
++		if (cpumask_test_cpu(cpu, &mask))
++			continue;
++		per_cpu(cpu2idx, cpu) = idx;
++		cpumask_set_cpu(cpu, &mask);
 +
- static inline void hlist_bl_unlock(struct hlist_bl_head *b)
++		sibling_mask = topology_sibling_cpumask(cpu);
++		if (sibling_mask) {
++			for_each_cpu(scpu, sibling_mask) {
++				per_cpu(cpu2idx, scpu) = idx;
++				cpumask_set_cpu(scpu, &mask);
++			}
++		}
++		idx++;
++	}
++
++	/*
++	 * nr_dlock_lists can only be set after cpu2idx is properly
++	 * initialized.
++	 */
++	smp_mb();
++	nr_dlock_lists = idx;
++	WARN_ON(nr_dlock_lists > nr_cpu_ids);
++
++	pr_info("dlock-list: %d head entries per dlock list.\n",
++		nr_dlock_lists);
+ 	return 0;
+ }
+ postcore_initcall(cpu2idx_init);
+@@ -67,19 +101,23 @@ postcore_initcall(cpu2idx_init);
+  *
+  * Dynamically allocated locks need to have their own special lock class
+  * to avoid lockdep warning.
++ *
++ * Since nr_dlock_lists will always be <= nr_cpu_ids, having more lists
++ * than necessary allocated is not a problem other than some wasted memory.
++ * The extra lists will not be ever used as all the cpu2idx entries will be
++ * 0 before initialization.
+  */
+ int __alloc_dlock_list_heads(struct dlock_list_heads *dlist,
+ 			     struct lock_class_key *key)
  {
- 	__bit_spin_unlock(0, (unsigned long *)b);
+-	int idx;
++	int idx, cnt = nr_dlock_lists ? nr_dlock_lists : nr_cpu_ids;
+ 
+-	dlist->heads = kcalloc(nr_cpu_ids, sizeof(struct dlock_list_head),
+-			       GFP_KERNEL);
++	dlist->heads = kcalloc(cnt, sizeof(struct dlock_list_head), GFP_KERNEL);
+ 
+ 	if (!dlist->heads)
+ 		return -ENOMEM;
+ 
+-	for (idx = 0; idx < nr_cpu_ids; idx++) {
++	for (idx = 0; idx < cnt; idx++) {
+ 		struct dlock_list_head *head = &dlist->heads[idx];
+ 
+ 		INIT_LIST_HEAD(&head->list);
+@@ -117,7 +155,10 @@ bool dlock_lists_empty(struct dlock_list_heads *dlist)
+ {
+ 	int idx;
+ 
+-	for (idx = 0; idx < nr_cpu_ids; idx++)
++	/* Shouldn't be called before nr_dlock_lists is initialized */
++	WARN_ON_ONCE(!nr_dlock_lists);
++
++	for (idx = 0; idx < nr_dlock_lists; idx++)
+ 		if (!list_empty(&dlist->heads[idx].list))
+ 			return false;
+ 	return true;
+@@ -199,6 +240,9 @@ struct dlock_list_node *__dlock_list_next_list(struct dlock_list_iter *iter)
+ 	struct dlock_list_node *next;
+ 	struct dlock_list_head *head;
+ 
++	/* Shouldn't be called before nr_dlock_lists is initialized */
++	WARN_ON_ONCE(!nr_dlock_lists);
++
+ restart:
+ 	if (iter->entry) {
+ 		spin_unlock(&iter->entry->lock);
+@@ -209,7 +253,7 @@ struct dlock_list_node *__dlock_list_next_list(struct dlock_list_iter *iter)
+ 	/*
+ 	 * Try next list
+ 	 */
+-	if (++iter->index >= nr_cpu_ids)
++	if (++iter->index >= nr_dlock_lists)
+ 		return NULL;	/* All the entries iterated */
+ 
+ 	if (list_empty(&iter->head[iter->index].list))
 -- 
 2.42.0
 
