@@ -1,27 +1,27 @@
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C26A10EB
-	for <linux-security-module@vger.kernel.org>; Thu,  7 Dec 2023 10:54:55 -0800 (PST)
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B7GchSj030251
-	for <linux-security-module@vger.kernel.org>; Thu, 7 Dec 2023 10:54:55 -0800
-Received: from mail.thefacebook.com ([163.114.132.120])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3uu2jgxsn1-2
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A24191703
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Dec 2023 10:54:57 -0800 (PST)
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B7EK3gH022459
+	for <linux-security-module@vger.kernel.org>; Thu, 7 Dec 2023 10:54:56 -0800
+Received: from maileast.thefacebook.com ([163.114.130.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3uufqaj8gf-6
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-security-module@vger.kernel.org>; Thu, 07 Dec 2023 10:54:54 -0800
-Received: from twshared44805.48.prn1.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c085:11d::8) with Microsoft SMTP Server
+	for <linux-security-module@vger.kernel.org>; Thu, 07 Dec 2023 10:54:56 -0800
+Received: from twshared2123.40.prn1.facebook.com (2620:10d:c0a8:1c::1b) by
+ mail.thefacebook.com (2620:10d:c0a8:82::b) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.34; Thu, 7 Dec 2023 10:54:53 -0800
+ 15.1.2507.34; Thu, 7 Dec 2023 10:54:52 -0800
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-	id 10D613CC1C9CB; Thu,  7 Dec 2023 10:54:45 -0800 (PST)
+	id 2764E3CC1CA12; Thu,  7 Dec 2023 10:54:48 -0800 (PST)
 From: Andrii Nakryiko <andrii@kernel.org>
 To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <paul@paul-moore.com>,
         <brauner@kernel.org>
 CC: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
         <keescook@chromium.org>, <kernel-team@meta.com>, <sargun@sargun.me>
-Subject: [PATCH bpf-next 1/8] bpf: fail BPF_TOKEN_CREATE if no delegation option was set on BPF FS
-Date: Thu, 7 Dec 2023 10:54:36 -0800
-Message-ID: <20231207185443.2297160-2-andrii@kernel.org>
+Subject: [PATCH bpf-next 2/8] libbpf: split feature detectors definitions from cached results
+Date: Thu, 7 Dec 2023 10:54:37 -0800
+Message-ID: <20231207185443.2297160-3-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231207185443.2297160-1-andrii@kernel.org>
 References: <20231207185443.2297160-1-andrii@kernel.org>
@@ -34,56 +34,81 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: wNZIB1vnzcpVqvmbqshw-h7KX5CvQtrE
-X-Proofpoint-ORIG-GUID: wNZIB1vnzcpVqvmbqshw-h7KX5CvQtrE
+X-Proofpoint-GUID: vNbon6DKzK1Oa2OWWnlYCe33tep48LPb
+X-Proofpoint-ORIG-GUID: vNbon6DKzK1Oa2OWWnlYCe33tep48LPb
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2023-12-07_15,2023-12-07_01,2023-05-22_02
 
-It's quite confusing in practice when it's possible to successfully
-create a BPF token from BPF FS that didn't have any of delegate_xxx
-mount options set up. While it's not wrong, it's actually more
-meaningful to reject BPF_TOKEN_CREATE with specific error code (-ENOENT)
-to let user-space know that no token delegation is setup up.
-
-So, instead of creating empty BPF token that will be always ignored
-because it doesn't have any of the allow_xxx bits set, reject it with
--ENOENT. If we ever need empty BPF token to be possible, we can support
-that with extra flag passed into BPF_TOKEN_CREATE.
+Split a list of supported feature detectors with their corresponding
+callbacks from actual cached supported/missing values. This will allow
+to have more flexible per-token or per-object feature detectors in
+subsequent refactorings.
 
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- kernel/bpf/token.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ tools/lib/bpf/libbpf.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
-index 17212efcde60..a86fccd57e2d 100644
---- a/kernel/bpf/token.c
-+++ b/kernel/bpf/token.c
-@@ -152,6 +152,15 @@ int bpf_token_create(union bpf_attr *attr)
- 		goto out_path;
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index ea9b8158c20d..a6b8d6f70918 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -4988,12 +4988,17 @@ enum kern_feature_result {
+ 	FEAT_MISSING =3D 2,
+ };
+=20
++struct kern_feature_cache {
++	enum kern_feature_result res[__FEAT_CNT];
++};
++
+ typedef int (*feature_probe_fn)(void);
+=20
++static struct kern_feature_cache feature_cache;
++
+ static struct kern_feature_desc {
+ 	const char *desc;
+ 	feature_probe_fn probe;
+-	enum kern_feature_result res;
+ } feature_probes[__FEAT_CNT] =3D {
+ 	[FEAT_PROG_NAME] =3D {
+ 		"BPF program name", probe_kern_prog_name,
+@@ -5061,6 +5066,7 @@ static struct kern_feature_desc {
+ bool kernel_supports(const struct bpf_object *obj, enum kern_feature_id =
+feat_id)
+ {
+ 	struct kern_feature_desc *feat =3D &feature_probes[feat_id];
++	struct kern_feature_cache *cache =3D &feature_cache;
+ 	int ret;
+=20
+ 	if (obj && obj->gen_loader)
+@@ -5069,19 +5075,19 @@ bool kernel_supports(const struct bpf_object *obj=
+, enum kern_feature_id feat_id)
+ 		 */
+ 		return true;
+=20
+-	if (READ_ONCE(feat->res) =3D=3D FEAT_UNKNOWN) {
++	if (READ_ONCE(cache->res[feat_id]) =3D=3D FEAT_UNKNOWN) {
+ 		ret =3D feat->probe();
+ 		if (ret > 0) {
+-			WRITE_ONCE(feat->res, FEAT_SUPPORTED);
++			WRITE_ONCE(cache->res[feat_id], FEAT_SUPPORTED);
+ 		} else if (ret =3D=3D 0) {
+-			WRITE_ONCE(feat->res, FEAT_MISSING);
++			WRITE_ONCE(cache->res[feat_id], FEAT_MISSING);
+ 		} else {
+ 			pr_warn("Detection of kernel %s support failed: %d\n", feat->desc, re=
+t);
+-			WRITE_ONCE(feat->res, FEAT_MISSING);
++			WRITE_ONCE(cache->res[feat_id], FEAT_MISSING);
+ 		}
  	}
 =20
-+	mnt_opts =3D path.dentry->d_sb->s_fs_info;
-+	if (mnt_opts->delegate_cmds =3D=3D 0 &&
-+	    mnt_opts->delegate_maps =3D=3D 0 &&
-+	    mnt_opts->delegate_progs =3D=3D 0 &&
-+	    mnt_opts->delegate_attachs =3D=3D 0) {
-+		err =3D -ENOENT; /* no BPF token delegation is set up */
-+		goto out_path;
-+	}
-+
- 	mode =3D S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
- 	inode =3D bpf_get_inode(path.mnt->mnt_sb, NULL, mode);
- 	if (IS_ERR(inode)) {
-@@ -181,7 +190,6 @@ int bpf_token_create(union bpf_attr *attr)
- 	/* remember bpffs owning userns for future ns_capable() checks */
- 	token->userns =3D get_user_ns(userns);
+-	return READ_ONCE(feat->res) =3D=3D FEAT_SUPPORTED;
++	return READ_ONCE(cache->res[feat_id]) =3D=3D FEAT_SUPPORTED;
+ }
 =20
--	mnt_opts =3D path.dentry->d_sb->s_fs_info;
- 	token->allowed_cmds =3D mnt_opts->delegate_cmds;
- 	token->allowed_maps =3D mnt_opts->delegate_maps;
- 	token->allowed_progs =3D mnt_opts->delegate_progs;
+ static bool map_is_reuse_compat(const struct bpf_map *map, int map_fd)
 --=20
 2.34.1
 
