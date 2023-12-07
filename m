@@ -1,60 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="sz34+fma"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25BFB10EB;
-	Wed,  6 Dec 2023 22:49:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=HiucoW+8Qq+OeGHdkctb71sJtz0w/36Ur4eVZYT+4P8=; b=sz34+fmatIf4sQJKuz9hINZ+wK
-	Ml8GARBI7U2S82llMyj6nKnhgN6JS0a+NHihfwUeHWmuBvEUSpF4Qn+NwaXoZS1vL5A3fFn/NrqVe
-	TJIDO+8XXB+whFkoqiZqL73hpiH2NOg1PvNWaPvAwNBkf8qM3AbYZG9t4bLphAUehRqBoU8W6x/EY
-	ZLaPJFCenV3O7pb51r73svqe+JQjqOb+C5L5skHhISACaK+4PFPweYQSi6B1nOagTGVG6IMB43fF5
-	EmLeBpxT0rcfo0Apwf+NlpqSD7VNssQv6w6qHM53RxZlbZL94bOge/FHZBFvhaqedJwZMwNIGzfgB
-	rGuyIp0Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rB8CE-0087sO-2z;
-	Thu, 07 Dec 2023 06:49:19 +0000
-Date: Thu, 7 Dec 2023 06:49:18 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-cachefs@redhat.com, dhowells@redhat.com, gfs2@lists.linux.dev,
-	dm-devel@lists.linux.dev, linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/11] lib/dlock-list: Make sibling CPUs share the same
- linked list
-Message-ID: <20231207064918.GZ1674809@ZenIV>
-References: <20231206060629.2827226-1-david@fromorbit.com>
- <20231206060629.2827226-5-david@fromorbit.com>
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88261FA
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Dec 2023 01:25:54 -0800 (PST)
+Received: from fsav411.sakura.ne.jp (fsav411.sakura.ne.jp [133.242.250.110])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 3B79PpUX093932;
+	Thu, 7 Dec 2023 18:25:51 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav411.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp);
+ Thu, 07 Dec 2023 18:25:51 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 3B79PpuO093926
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 7 Dec 2023 18:25:51 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <1d8193cc-c87e-41b0-83d3-cba4306291bc@I-love.SAKURA.ne.jp>
+Date: Thu, 7 Dec 2023 18:25:50 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231206060629.2827226-5-david@fromorbit.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: BPF LSM prevent program unload
+Content-Language: en-US
+To: Yafang Shao <laoar.shao@gmail.com>,
+        Frederick Lawler
+ <fred@cloudflare.com>,
+        Paul Moore <paul@paul-moore.com>, jmorris@namei.org,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc: kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
+        bpf@vger.kernel.org, kernel-team@cloudflare.com,
+        linux-security-module@vger.kernel.org
+References: <ZW+KYViDT3HWtKI1@CMGLRV3>
+ <CALOAHbANu2tq73bBRrGBAGq9ioTixqKgzpMyOPS3NMPXMg+pwA@mail.gmail.com>
+ <ZXCNC8nJZryEy+VR@CMGLRV3>
+ <CALOAHbAfixyvA5HpOXgqS32G-5p4Z=OXRso7_isz2fNKk76mmg@mail.gmail.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CALOAHbAfixyvA5HpOXgqS32G-5p4Z=OXRso7_isz2fNKk76mmg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 06, 2023 at 05:05:33PM +1100, Dave Chinner wrote:
-> From: Waiman Long <longman@redhat.com>
-> 
-> The dlock list needs one list for each of the CPUs available. However,
-> for sibling CPUs, they are sharing the L2 and probably L1 caches
-> too. As a result, there is not much to gain in term of avoiding
-> cacheline contention while increasing the cacheline footprint of the
-> L1/L2 caches as separate lists may need to be in the cache.
-> 
-> This patch makes all the sibling CPUs share the same list, thus
-> reducing the number of lists that need to be maintained in each
-> dlock list without having any noticeable impact on performance. It
-> also improves dlock list iteration performance as fewer lists need
-> to be iterated.
+On 2023/12/07 11:28, Yafang Shao wrote:
+>>>> Moving individual pins or moving the mount entirely with mount --move
+>>>> do not perform any clean up operations. Lastly, bpftool doesn't currently
+>>>> have the ability to unload LSM's AFAIK.
+>>>>
+>>>> The few ideas I have floating around are:
+>>>>
+>>>> 1. Leverage some LSM hooks (BPF or otherwise) to restrict on the functions
+>>>>    security_sb_umount(), security_path_unlink(), security_inode_unlink().
+>>>>
+>>>>    Both security_path_unlink() and security_inode_unlink() handle the
+>>>>    unlink/remove case, but not the umount case.
 
-Probably a dumb question, but... "available" != "possible"; the code
-actually goes for the latter, which avoids nasty questions about
-CPU hotplug interations.  Is the sibling relation on CPUs unchanging
-on CPU hotplug?
+That is what I thought at
+https://lkml.kernel.org/r/c588ca5d-c343-4ea2-a1f1-4efe67ebb8e3@I-love.SAKURA.ne.jp ,
+though I didn't try it because the conclusion was that trying to re-implement TOMOYO
+LSM module using BPF is not realistic.
+
+While hooking security_sb_umount() from LSM modules will be possible,
+unconditionally rejecting umount operation might confuse userspace programs
+(e.g. retry until umount operation succeeds). Therefore, maybe introducing a
+kernel thread who holds a refcount using a file descriptor ownded by that
+kernel thread is better than trying to manage individual mount namepsaces
+and inodes... Letting a kernel code to intentionally leak that refcount
+instead of storing into somewhere might be possible, but that is considered
+as a kernel bug.
+
