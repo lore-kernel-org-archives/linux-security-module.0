@@ -1,34 +1,89 @@
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73B8E170C;
-	Thu,  7 Dec 2023 09:48:58 -0800 (PST)
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 1A0D5227A87; Thu,  7 Dec 2023 18:48:54 +0100 (CET)
-Date: Thu, 7 Dec 2023 18:48:53 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Keith Busch <kbusch@kernel.org>, Jeff Moyer <jmoyer@redhat.com>,
-	Keith Busch <kbusch@meta.com>, linux-nvme@lists.infradead.org,
-	io-uring@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
-	sagi@grimberg.me, asml.silence@gmail.com,
-	linux-security-module@vger.kernel.org,
-	Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH 1/2] iouring: one capable call per iouring instance
-Message-ID: <20231207174853.GA31395@lst.de>
-References: <20231204175342.3418422-1-kbusch@meta.com> <x49zfypstdx.fsf@segfault.usersys.redhat.com> <ZW4hM0H6pjbCpIg9@kbusch-mbp> <ZW6jjiq9wXHm5d10@fedora> <ZW6nmR2ytIBApXE0@kbusch-mbp> <ZW60WPf/hmAUoxPv@fedora> <ZW9FhsBXdPlN6qrU@kbusch-mbp> <ZW/loVJu0+11+boh@fedora> <ZXCT6mpt2Tq0k-Nw@kbusch-mbp> <ZXEeei6eoDW87xcN@fedora>
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C26A10EB
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Dec 2023 10:54:55 -0800 (PST)
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B7GchSj030251
+	for <linux-security-module@vger.kernel.org>; Thu, 7 Dec 2023 10:54:55 -0800
+Received: from mail.thefacebook.com ([163.114.132.120])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3uu2jgxsn1-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-security-module@vger.kernel.org>; Thu, 07 Dec 2023 10:54:54 -0800
+Received: from twshared44805.48.prn1.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:11d::8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.34; Thu, 7 Dec 2023 10:54:53 -0800
+Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
+	id 10D613CC1C9CB; Thu,  7 Dec 2023 10:54:45 -0800 (PST)
+From: Andrii Nakryiko <andrii@kernel.org>
+To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <paul@paul-moore.com>,
+        <brauner@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+        <keescook@chromium.org>, <kernel-team@meta.com>, <sargun@sargun.me>
+Subject: [PATCH bpf-next 1/8] bpf: fail BPF_TOKEN_CREATE if no delegation option was set on BPF FS
+Date: Thu, 7 Dec 2023 10:54:36 -0800
+Message-ID: <20231207185443.2297160-2-andrii@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231207185443.2297160-1-andrii@kernel.org>
+References: <20231207185443.2297160-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZXEeei6eoDW87xcN@fedora>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: wNZIB1vnzcpVqvmbqshw-h7KX5CvQtrE
+X-Proofpoint-ORIG-GUID: wNZIB1vnzcpVqvmbqshw-h7KX5CvQtrE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-07_15,2023-12-07_01,2023-05-22_02
 
-On Thu, Dec 07, 2023 at 09:23:06AM +0800, Ming Lei wrote:
-> Got it, thanks for the explanation, and looks one big defect of
-> NVMe protocol or the device implementation.
+It's quite confusing in practice when it's possible to successfully
+create a BPF token from BPF FS that didn't have any of delegate_xxx
+mount options set up. While it's not wrong, it's actually more
+meaningful to reject BPF_TOKEN_CREATE with specific error code (-ENOENT)
+to let user-space know that no token delegation is setup up.
 
-It is.  And NVMe has plenty more problems like that and people keep
-adding this kind of crap even today :(
+So, instead of creating empty BPF token that will be always ignored
+because it doesn't have any of the allow_xxx bits set, reject it with
+-ENOENT. If we ever need empty BPF token to be possible, we can support
+that with extra flag passed into BPF_TOKEN_CREATE.
+
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ kernel/bpf/token.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
+index 17212efcde60..a86fccd57e2d 100644
+--- a/kernel/bpf/token.c
++++ b/kernel/bpf/token.c
+@@ -152,6 +152,15 @@ int bpf_token_create(union bpf_attr *attr)
+ 		goto out_path;
+ 	}
+=20
++	mnt_opts =3D path.dentry->d_sb->s_fs_info;
++	if (mnt_opts->delegate_cmds =3D=3D 0 &&
++	    mnt_opts->delegate_maps =3D=3D 0 &&
++	    mnt_opts->delegate_progs =3D=3D 0 &&
++	    mnt_opts->delegate_attachs =3D=3D 0) {
++		err =3D -ENOENT; /* no BPF token delegation is set up */
++		goto out_path;
++	}
++
+ 	mode =3D S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
+ 	inode =3D bpf_get_inode(path.mnt->mnt_sb, NULL, mode);
+ 	if (IS_ERR(inode)) {
+@@ -181,7 +190,6 @@ int bpf_token_create(union bpf_attr *attr)
+ 	/* remember bpffs owning userns for future ns_capable() checks */
+ 	token->userns =3D get_user_ns(userns);
+=20
+-	mnt_opts =3D path.dentry->d_sb->s_fs_info;
+ 	token->allowed_cmds =3D mnt_opts->delegate_cmds;
+ 	token->allowed_maps =3D mnt_opts->delegate_maps;
+ 	token->allowed_progs =3D mnt_opts->delegate_progs;
+--=20
+2.34.1
+
