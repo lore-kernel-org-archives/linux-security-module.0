@@ -1,27 +1,27 @@
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB5A1170C
-	for <linux-security-module@vger.kernel.org>; Thu,  7 Dec 2023 14:28:11 -0800 (PST)
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B7GeMWI030180
-	for <linux-security-module@vger.kernel.org>; Thu, 7 Dec 2023 14:28:11 -0800
-Received: from maileast.thefacebook.com ([163.114.130.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3uu2jh0b7y-3
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95D0B1719
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Dec 2023 14:28:21 -0800 (PST)
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B7GsOs9024915
+	for <linux-security-module@vger.kernel.org>; Thu, 7 Dec 2023 14:28:21 -0800
+Received: from mail.thefacebook.com ([163.114.132.120])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3uu4htqkav-12
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-security-module@vger.kernel.org>; Thu, 07 Dec 2023 14:28:10 -0800
-Received: from twshared4634.37.frc1.facebook.com (2620:10d:c0a8:1b::30) by
- mail.thefacebook.com (2620:10d:c0a8:82::b) with Microsoft SMTP Server
+	for <linux-security-module@vger.kernel.org>; Thu, 07 Dec 2023 14:28:21 -0800
+Received: from twshared51573.38.frc1.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:21d::8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.34; Thu, 7 Dec 2023 14:28:07 -0800
+ 15.1.2507.34; Thu, 7 Dec 2023 14:28:10 -0800
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-	id B9B4A3CC5459E; Thu,  7 Dec 2023 14:28:01 -0800 (PST)
+	id 9EF3F3CC5457C; Thu,  7 Dec 2023 14:27:57 -0800 (PST)
 From: Andrii Nakryiko <andrii@kernel.org>
 To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <paul@paul-moore.com>,
         <brauner@kernel.org>
 CC: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
         <keescook@chromium.org>, <kernel-team@meta.com>, <sargun@sargun.me>
-Subject: [PATCH RFC bpf-next 3/3] selftests/bpf: utilize string values for delegate_xxx mount options
-Date: Thu, 7 Dec 2023 14:27:55 -0800
-Message-ID: <20231207222755.3920286-4-andrii@kernel.org>
+Subject: [PATCH RFC bpf-next 1/3] bpf: add mapper macro for bpf_cmd enum
+Date: Thu, 7 Dec 2023 14:27:53 -0800
+Message-ID: <20231207222755.3920286-2-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231207222755.3920286-1-andrii@kernel.org>
 References: <20231207222755.3920286-1-andrii@kernel.org>
@@ -34,151 +34,218 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: xClB-G2ZLoAposMu4TsWoBQQpXdl4yiF
-X-Proofpoint-ORIG-GUID: xClB-G2ZLoAposMu4TsWoBQQpXdl4yiF
+X-Proofpoint-GUID: tT4sfyql_PifCJmoAW44x-kY1j2mD4f1
+X-Proofpoint-ORIG-GUID: tT4sfyql_PifCJmoAW44x-kY1j2mD4f1
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2023-12-07_17,2023-12-07_01,2023-05-22_02
 
-Use both hex-based and string-based way to specify delegate mount
-options for BPF FS.
+Use similar approach to enum bpf_func_id and generate enumerators using
+a macro with macro callback. This approach allows to generate derivative
+tables for string-based lookups and whatnot. In this particular case,
+this mapper macro will be used for parsing BPF FS delegate_cmds mount
+option and their human-readable output format in mount info.
+
+Validated no regressions using before/after BTF through
+`bpftool btf dump <file> format c` command.
 
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- .../testing/selftests/bpf/prog_tests/token.c  | 43 +++++++++++--------
- 1 file changed, 26 insertions(+), 17 deletions(-)
+ include/uapi/linux/bpf.h       | 81 ++++++++++++++++++----------------
+ tools/include/uapi/linux/bpf.h | 81 ++++++++++++++++++----------------
+ 2 files changed, 86 insertions(+), 76 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/token.c b/tools/testi=
-ng/selftests/bpf/prog_tests/token.c
-index dc03790c6272..ec59c81c54b5 100644
---- a/tools/testing/selftests/bpf/prog_tests/token.c
-+++ b/tools/testing/selftests/bpf/prog_tests/token.c
-@@ -55,14 +55,22 @@ static int restore_priv_caps(__u64 old_caps)
- 	return cap_enable_effective(old_caps, NULL);
- }
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index e0545201b55f..d05ea24ace3f 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -893,47 +893,52 @@ union bpf_iter_link_info {
+  *	to the object have been closed and no references remain pinned to the
+  *	filesystem or attached (for example, bound to a program or device).
+  */
++#define __BPF_CMD_MAPPER(FN, ctx...)					\
++	FN(BPF_MAP_CREATE, 0)						\
++	FN(BPF_MAP_LOOKUP_ELEM, 1)					\
++	FN(BPF_MAP_UPDATE_ELEM, 2)					\
++	FN(BPF_MAP_DELETE_ELEM, 3)					\
++	FN(BPF_MAP_GET_NEXT_KEY, 4)					\
++	FN(BPF_PROG_LOAD, 5)						\
++	FN(BPF_OBJ_PIN, 6)						\
++	FN(BPF_OBJ_GET, 7)						\
++	FN(BPF_PROG_ATTACH, 8)						\
++	FN(BPF_PROG_DETACH, 9)						\
++	FN(BPF_PROG_TEST_RUN, 10)					\
++	FN(BPF_PROG_RUN, 10) /* alias for BPF_PROG_TEST_RUN */		\
++	FN(BPF_PROG_GET_NEXT_ID, 11)					\
++	FN(BPF_MAP_GET_NEXT_ID, 12)					\
++	FN(BPF_PROG_GET_FD_BY_ID, 13)					\
++	FN(BPF_MAP_GET_FD_BY_ID, 14)					\
++	FN(BPF_OBJ_GET_INFO_BY_FD, 15)					\
++	FN(BPF_PROG_QUERY, 16)						\
++	FN(BPF_RAW_TRACEPOINT_OPEN, 17)					\
++	FN(BPF_BTF_LOAD, 18)						\
++	FN(BPF_BTF_GET_FD_BY_ID, 19)					\
++	FN(BPF_TASK_FD_QUERY, 20)					\
++	FN(BPF_MAP_LOOKUP_AND_DELETE_ELEM, 21)				\
++	FN(BPF_MAP_FREEZE, 22)						\
++	FN(BPF_BTF_GET_NEXT_ID, 23)					\
++	FN(BPF_MAP_LOOKUP_BATCH, 24)					\
++	FN(BPF_MAP_LOOKUP_AND_DELETE_BATCH, 25)				\
++	FN(BPF_MAP_UPDATE_BATCH, 26)					\
++	FN(BPF_MAP_DELETE_BATCH, 27)					\
++	FN(BPF_LINK_CREATE, 28)						\
++	FN(BPF_LINK_UPDATE, 29)						\
++	FN(BPF_LINK_GET_FD_BY_ID, 30)					\
++	FN(BPF_LINK_GET_NEXT_ID, 31)					\
++	FN(BPF_ENABLE_STATS, 32)					\
++	FN(BPF_ITER_CREATE, 33)						\
++	FN(BPF_LINK_DETACH, 34)						\
++	FN(BPF_PROG_BIND_MAP, 35)					\
++	FN(BPF_TOKEN_CREATE, 36)					\
++	/* */
++#define __BPF_CMD_FN(x, y) x =3D y,
+ enum bpf_cmd {
+-	BPF_MAP_CREATE,
+-	BPF_MAP_LOOKUP_ELEM,
+-	BPF_MAP_UPDATE_ELEM,
+-	BPF_MAP_DELETE_ELEM,
+-	BPF_MAP_GET_NEXT_KEY,
+-	BPF_PROG_LOAD,
+-	BPF_OBJ_PIN,
+-	BPF_OBJ_GET,
+-	BPF_PROG_ATTACH,
+-	BPF_PROG_DETACH,
+-	BPF_PROG_TEST_RUN,
+-	BPF_PROG_RUN =3D BPF_PROG_TEST_RUN,
+-	BPF_PROG_GET_NEXT_ID,
+-	BPF_MAP_GET_NEXT_ID,
+-	BPF_PROG_GET_FD_BY_ID,
+-	BPF_MAP_GET_FD_BY_ID,
+-	BPF_OBJ_GET_INFO_BY_FD,
+-	BPF_PROG_QUERY,
+-	BPF_RAW_TRACEPOINT_OPEN,
+-	BPF_BTF_LOAD,
+-	BPF_BTF_GET_FD_BY_ID,
+-	BPF_TASK_FD_QUERY,
+-	BPF_MAP_LOOKUP_AND_DELETE_ELEM,
+-	BPF_MAP_FREEZE,
+-	BPF_BTF_GET_NEXT_ID,
+-	BPF_MAP_LOOKUP_BATCH,
+-	BPF_MAP_LOOKUP_AND_DELETE_BATCH,
+-	BPF_MAP_UPDATE_BATCH,
+-	BPF_MAP_DELETE_BATCH,
+-	BPF_LINK_CREATE,
+-	BPF_LINK_UPDATE,
+-	BPF_LINK_GET_FD_BY_ID,
+-	BPF_LINK_GET_NEXT_ID,
+-	BPF_ENABLE_STATS,
+-	BPF_ITER_CREATE,
+-	BPF_LINK_DETACH,
+-	BPF_PROG_BIND_MAP,
+-	BPF_TOKEN_CREATE,
++	__BPF_CMD_MAPPER(__BPF_CMD_FN)
+ 	__MAX_BPF_CMD,
+ };
++#undef __BPF_CMD_FN
 =20
--static int set_delegate_mask(int fs_fd, const char *key, __u64 mask)
-+static int set_delegate_mask(int fs_fd, const char *key, __u64 mask, con=
-st char *mask_str)
- {
- 	char buf[32];
- 	int err;
+ enum bpf_map_type {
+ 	BPF_MAP_TYPE_UNSPEC,
+diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bp=
+f.h
+index e0545201b55f..d05ea24ace3f 100644
+--- a/tools/include/uapi/linux/bpf.h
++++ b/tools/include/uapi/linux/bpf.h
+@@ -893,47 +893,52 @@ union bpf_iter_link_info {
+  *	to the object have been closed and no references remain pinned to the
+  *	filesystem or attached (for example, bound to a program or device).
+  */
++#define __BPF_CMD_MAPPER(FN, ctx...)					\
++	FN(BPF_MAP_CREATE, 0)						\
++	FN(BPF_MAP_LOOKUP_ELEM, 1)					\
++	FN(BPF_MAP_UPDATE_ELEM, 2)					\
++	FN(BPF_MAP_DELETE_ELEM, 3)					\
++	FN(BPF_MAP_GET_NEXT_KEY, 4)					\
++	FN(BPF_PROG_LOAD, 5)						\
++	FN(BPF_OBJ_PIN, 6)						\
++	FN(BPF_OBJ_GET, 7)						\
++	FN(BPF_PROG_ATTACH, 8)						\
++	FN(BPF_PROG_DETACH, 9)						\
++	FN(BPF_PROG_TEST_RUN, 10)					\
++	FN(BPF_PROG_RUN, 10) /* alias for BPF_PROG_TEST_RUN */		\
++	FN(BPF_PROG_GET_NEXT_ID, 11)					\
++	FN(BPF_MAP_GET_NEXT_ID, 12)					\
++	FN(BPF_PROG_GET_FD_BY_ID, 13)					\
++	FN(BPF_MAP_GET_FD_BY_ID, 14)					\
++	FN(BPF_OBJ_GET_INFO_BY_FD, 15)					\
++	FN(BPF_PROG_QUERY, 16)						\
++	FN(BPF_RAW_TRACEPOINT_OPEN, 17)					\
++	FN(BPF_BTF_LOAD, 18)						\
++	FN(BPF_BTF_GET_FD_BY_ID, 19)					\
++	FN(BPF_TASK_FD_QUERY, 20)					\
++	FN(BPF_MAP_LOOKUP_AND_DELETE_ELEM, 21)				\
++	FN(BPF_MAP_FREEZE, 22)						\
++	FN(BPF_BTF_GET_NEXT_ID, 23)					\
++	FN(BPF_MAP_LOOKUP_BATCH, 24)					\
++	FN(BPF_MAP_LOOKUP_AND_DELETE_BATCH, 25)				\
++	FN(BPF_MAP_UPDATE_BATCH, 26)					\
++	FN(BPF_MAP_DELETE_BATCH, 27)					\
++	FN(BPF_LINK_CREATE, 28)						\
++	FN(BPF_LINK_UPDATE, 29)						\
++	FN(BPF_LINK_GET_FD_BY_ID, 30)					\
++	FN(BPF_LINK_GET_NEXT_ID, 31)					\
++	FN(BPF_ENABLE_STATS, 32)					\
++	FN(BPF_ITER_CREATE, 33)						\
++	FN(BPF_LINK_DETACH, 34)						\
++	FN(BPF_PROG_BIND_MAP, 35)					\
++	FN(BPF_TOKEN_CREATE, 36)					\
++	/* */
++#define __BPF_CMD_FN(x, y) x =3D y,
+ enum bpf_cmd {
+-	BPF_MAP_CREATE,
+-	BPF_MAP_LOOKUP_ELEM,
+-	BPF_MAP_UPDATE_ELEM,
+-	BPF_MAP_DELETE_ELEM,
+-	BPF_MAP_GET_NEXT_KEY,
+-	BPF_PROG_LOAD,
+-	BPF_OBJ_PIN,
+-	BPF_OBJ_GET,
+-	BPF_PROG_ATTACH,
+-	BPF_PROG_DETACH,
+-	BPF_PROG_TEST_RUN,
+-	BPF_PROG_RUN =3D BPF_PROG_TEST_RUN,
+-	BPF_PROG_GET_NEXT_ID,
+-	BPF_MAP_GET_NEXT_ID,
+-	BPF_PROG_GET_FD_BY_ID,
+-	BPF_MAP_GET_FD_BY_ID,
+-	BPF_OBJ_GET_INFO_BY_FD,
+-	BPF_PROG_QUERY,
+-	BPF_RAW_TRACEPOINT_OPEN,
+-	BPF_BTF_LOAD,
+-	BPF_BTF_GET_FD_BY_ID,
+-	BPF_TASK_FD_QUERY,
+-	BPF_MAP_LOOKUP_AND_DELETE_ELEM,
+-	BPF_MAP_FREEZE,
+-	BPF_BTF_GET_NEXT_ID,
+-	BPF_MAP_LOOKUP_BATCH,
+-	BPF_MAP_LOOKUP_AND_DELETE_BATCH,
+-	BPF_MAP_UPDATE_BATCH,
+-	BPF_MAP_DELETE_BATCH,
+-	BPF_LINK_CREATE,
+-	BPF_LINK_UPDATE,
+-	BPF_LINK_GET_FD_BY_ID,
+-	BPF_LINK_GET_NEXT_ID,
+-	BPF_ENABLE_STATS,
+-	BPF_ITER_CREATE,
+-	BPF_LINK_DETACH,
+-	BPF_PROG_BIND_MAP,
+-	BPF_TOKEN_CREATE,
++	__BPF_CMD_MAPPER(__BPF_CMD_FN)
+ 	__MAX_BPF_CMD,
+ };
++#undef __BPF_CMD_FN
 =20
--	snprintf(buf, sizeof(buf), "0x%llx", (unsigned long long)mask);
-+	if (!mask_str) {
-+		if (mask =3D=3D ~0ULL) {
-+			mask_str =3D "any";
-+		} else {
-+			snprintf(buf, sizeof(buf), "0x%llx", (unsigned long long)mask);
-+			mask_str =3D buf;
-+		}
-+	}
-+
- 	err =3D sys_fsconfig(fs_fd, FSCONFIG_SET_STRING, key,
--			   mask =3D=3D ~0ULL ? "any" : buf, 0);
-+			   mask_str, 0);
- 	if (err < 0)
- 		err =3D -errno;
- 	return err;
-@@ -72,6 +80,7 @@ static int set_delegate_mask(int fs_fd, const char *key=
-, __u64 mask)
-=20
- struct bpffs_opts {
- 	__u64 cmds;
-+	const char *cmds_str;
- 	__u64 maps;
- 	__u64 progs;
- 	__u64 attachs;
-@@ -93,16 +102,16 @@ static int materialize_bpffs_fd(int fs_fd, struct bp=
-ffs_opts *opts)
- 	int mnt_fd, err;
-=20
- 	/* set up token delegation mount options */
--	err =3D set_delegate_mask(fs_fd, "delegate_cmds", opts->cmds);
-+	err =3D set_delegate_mask(fs_fd, "delegate_cmds", opts->cmds, opts->cmd=
-s_str);
- 	if (!ASSERT_OK(err, "fs_cfg_cmds"))
- 		return err;
--	err =3D set_delegate_mask(fs_fd, "delegate_maps", opts->maps);
-+	err =3D set_delegate_mask(fs_fd, "delegate_maps", opts->maps, NULL);
- 	if (!ASSERT_OK(err, "fs_cfg_maps"))
- 		return err;
--	err =3D set_delegate_mask(fs_fd, "delegate_progs", opts->progs);
-+	err =3D set_delegate_mask(fs_fd, "delegate_progs", opts->progs, NULL);
- 	if (!ASSERT_OK(err, "fs_cfg_progs"))
- 		return err;
--	err =3D set_delegate_mask(fs_fd, "delegate_attachs", opts->attachs);
-+	err =3D set_delegate_mask(fs_fd, "delegate_attachs", opts->attachs, NUL=
-L);
- 	if (!ASSERT_OK(err, "fs_cfg_attachs"))
- 		return err;
-=20
-@@ -284,13 +293,13 @@ static void child(int sock_fd, struct bpffs_opts *o=
-pts, child_callback_fn callba
- 	}
-=20
- 	/* ensure unprivileged child cannot set delegation options */
--	err =3D set_delegate_mask(fs_fd, "delegate_cmds", 0x1);
-+	err =3D set_delegate_mask(fs_fd, "delegate_cmds", 0x1, NULL);
- 	ASSERT_EQ(err, -EPERM, "delegate_cmd_eperm");
--	err =3D set_delegate_mask(fs_fd, "delegate_maps", 0x1);
-+	err =3D set_delegate_mask(fs_fd, "delegate_maps", 0x1, NULL);
- 	ASSERT_EQ(err, -EPERM, "delegate_maps_eperm");
--	err =3D set_delegate_mask(fs_fd, "delegate_progs", 0x1);
-+	err =3D set_delegate_mask(fs_fd, "delegate_progs", 0x1, NULL);
- 	ASSERT_EQ(err, -EPERM, "delegate_progs_eperm");
--	err =3D set_delegate_mask(fs_fd, "delegate_attachs", 0x1);
-+	err =3D set_delegate_mask(fs_fd, "delegate_attachs", 0x1, NULL);
- 	ASSERT_EQ(err, -EPERM, "delegate_attachs_eperm");
-=20
- 	/* pass BPF FS context object to parent */
-@@ -314,22 +323,22 @@ static void child(int sock_fd, struct bpffs_opts *o=
-pts, child_callback_fn callba
- 	}
-=20
- 	/* ensure unprivileged child cannot reconfigure to set delegation optio=
-ns */
--	err =3D set_delegate_mask(fs_fd, "delegate_cmds", ~0ULL);
-+	err =3D set_delegate_mask(fs_fd, "delegate_cmds", 0, "any");
- 	if (!ASSERT_EQ(err, -EPERM, "delegate_cmd_eperm_reconfig")) {
- 		err =3D -EINVAL;
- 		goto cleanup;
- 	}
--	err =3D set_delegate_mask(fs_fd, "delegate_maps", ~0ULL);
-+	err =3D set_delegate_mask(fs_fd, "delegate_maps", 0, "any");
- 	if (!ASSERT_EQ(err, -EPERM, "delegate_maps_eperm_reconfig")) {
- 		err =3D -EINVAL;
- 		goto cleanup;
- 	}
--	err =3D set_delegate_mask(fs_fd, "delegate_progs", ~0ULL);
-+	err =3D set_delegate_mask(fs_fd, "delegate_progs", 0, "any");
- 	if (!ASSERT_EQ(err, -EPERM, "delegate_progs_eperm_reconfig")) {
- 		err =3D -EINVAL;
- 		goto cleanup;
- 	}
--	err =3D set_delegate_mask(fs_fd, "delegate_attachs", ~0ULL);
-+	err =3D set_delegate_mask(fs_fd, "delegate_attachs", 0, "any");
- 	if (!ASSERT_EQ(err, -EPERM, "delegate_attachs_eperm_reconfig")) {
- 		err =3D -EINVAL;
- 		goto cleanup;
-@@ -647,7 +656,7 @@ void test_token(void)
- {
- 	if (test__start_subtest("map_token")) {
- 		struct bpffs_opts opts =3D {
--			.cmds =3D 1ULL << BPF_MAP_CREATE,
-+			.cmds_str =3D "BPF_MAP_CREATE",
- 			.maps =3D 1ULL << BPF_MAP_TYPE_STACK,
- 		};
-=20
-@@ -662,7 +671,7 @@ void test_token(void)
- 	}
- 	if (test__start_subtest("prog_token")) {
- 		struct bpffs_opts opts =3D {
--			.cmds =3D 1ULL << BPF_PROG_LOAD,
-+			.cmds_str =3D "BPF_PROG_LOAD",
- 			.progs =3D 1ULL << BPF_PROG_TYPE_XDP,
- 			.attachs =3D 1ULL << BPF_XDP,
- 		};
+ enum bpf_map_type {
+ 	BPF_MAP_TYPE_UNSPEC,
 --=20
 2.34.1
 
