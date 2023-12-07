@@ -1,131 +1,45 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80114437A;
-	Thu,  7 Dec 2023 15:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwBLlw5e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25A55C433CB;
-	Thu,  7 Dec 2023 15:38:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701963494;
-	bh=wvVN+1YIFHu6pwuC8my2GQeLCZBlFO2tSFyxQF8MEoA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BwBLlw5eO1GwXbEIAOPxS00/C0TZYafXou2wc/4do1UG3aFN+nnzSSA5mXnu5gzKN
-	 ++ArkvzxIsTVYgdlDD09GaZYkw39DyQv1MnL2HE5ZYiAz9G4nwmeRvLiEHI6TF6Xyj
-	 F7Bc/ntE8UuQznRkoo3k4paYxXtP+YekIgDKu2H+MKFd34HqpLv5BmOkBcd98Pbz5/
-	 z2/qkCKtoad7MxiAD6wrFdoxf4fJlbly5v09CObEup7PTOfw1PGFtZ+H3Nt1pTXmNL
-	 dE6ZRSVjo/L+4RdBt852KgFxEL0soBCSeoF9rDgb0+BD0qvXdOf108VvM3RvpnF5ep
-	 bJkkQ5ND3sEBQ==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ca0d14976aso11119651fa.2;
-        Thu, 07 Dec 2023 07:38:14 -0800 (PST)
-X-Gm-Message-State: AOJu0YxqTAcfQiOF++ADXxtRp33L6X1oImJKGUwdKA6Z/W8STMjfgRgT
-	mCOZh+pmvmsUEA1DR3zatZUwizz9hSeCalHRIy8=
-X-Google-Smtp-Source: AGHT+IFvQXuCu2DYdb90avyxL8P6qli6omWybxLqio1Iex9LuiGceMcEqs0UsqxMj6ERwpyXfaCn99dgbPE4v3Fpqtg=
-X-Received: by 2002:a2e:9686:0:b0:2ca:c76:c021 with SMTP id
- q6-20020a2e9686000000b002ca0c76c021mr1610161lji.68.1701963492420; Thu, 07 Dec
- 2023 07:38:12 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="puHq3JkW"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [IPv6:2001:41d0:1004:224b::bd])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B049E0
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Dec 2023 09:08:42 -0800 (PST)
+Date: Thu, 7 Dec 2023 12:08:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1701968920;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eUd3xjH2HF2EejUSWZhUOf3yJDKcu6pMWysVFu8RiZs=;
+	b=puHq3JkWtcBQNKbK5bAHnkin2RfTU367Wzc1OrpC+avd7p55JGJwuTXnTu5dsJFxD5ldDx
+	K6V9iF4AyslZAbVyNff4Y9Nf/U8Xw1NCt8ZIJEwr0O1wLkJaGCgAZIMJd7Ef0iHSMKdh2l
+	jxh5eUm5lg2fT0kvqSeerFEajefqv9k=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-cachefs@redhat.com, dhowells@redhat.com, gfs2@lists.linux.dev,
+	dm-devel@lists.linux.dev, linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/11] vfs: inode cache scalability improvements
+Message-ID: <20231207170835.yjpfpjy5or6bfkva@moria.home.lan>
+References: <20231206060629.2827226-1-david@fromorbit.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231206125433.18420-1-tzimmermann@suse.de> <20231206125433.18420-4-tzimmermann@suse.de>
-In-Reply-To: <20231206125433.18420-4-tzimmermann@suse.de>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 7 Dec 2023 16:38:01 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXE7JtotB=V7hrkbseDUwkwgUdkd5ownrsAdhayEqpy4sA@mail.gmail.com>
-Message-ID: <CAMj1kXE7JtotB=V7hrkbseDUwkwgUdkd5ownrsAdhayEqpy4sA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arch/x86: Do not include <asm/bootparam.h> in several
- header files
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	bhelgaas@google.com, arnd@arndb.de, zohar@linux.ibm.com, 
-	dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, javierm@redhat.com, linux-arch@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231206060629.2827226-1-david@fromorbit.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 6 Dec 2023 at 13:54, Thomas Zimmermann <tzimmermann@suse.de> wrote:
->
-> Remove the include statement for <asm/bootparam.h> from several header
-> files that don't require it. Limits the exposure of the boot parameters
-> within the Linux kernel code.
->
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+On Wed, Dec 06, 2023 at 05:05:29PM +1100, Dave Chinner wrote:
+...o
+> Git tree containing this series can be pulled from:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs.git vfs-scale
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+For the series:
 
-> ---
->  arch/x86/include/asm/kexec.h       | 1 -
->  arch/x86/include/asm/mem_encrypt.h | 2 +-
->  arch/x86/include/asm/sev.h         | 3 ++-
->  arch/x86/include/asm/x86_init.h    | 2 --
->  4 files changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
-> index c9f6a6c5de3c..91ca9a9ee3a2 100644
-> --- a/arch/x86/include/asm/kexec.h
-> +++ b/arch/x86/include/asm/kexec.h
-> @@ -25,7 +25,6 @@
->
->  #include <asm/page.h>
->  #include <asm/ptrace.h>
-> -#include <asm/bootparam.h>
->
->  struct kimage;
->
-> diff --git a/arch/x86/include/asm/mem_encrypt.h b/arch/x86/include/asm/mem_encrypt.h
-> index 359ada486fa9..c1a8a3408c18 100644
-> --- a/arch/x86/include/asm/mem_encrypt.h
-> +++ b/arch/x86/include/asm/mem_encrypt.h
-> @@ -15,7 +15,7 @@
->  #include <linux/init.h>
->  #include <linux/cc_platform.h>
->
-> -#include <asm/bootparam.h>
-> +struct boot_params;
->
->  #ifdef CONFIG_X86_MEM_ENCRYPT
->  void __init mem_encrypt_init(void);
-> diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-> index 5b4a1ce3d368..8dad8b1613bf 100644
-> --- a/arch/x86/include/asm/sev.h
-> +++ b/arch/x86/include/asm/sev.h
-> @@ -13,7 +13,6 @@
->
->  #include <asm/insn.h>
->  #include <asm/sev-common.h>
-> -#include <asm/bootparam.h>
->  #include <asm/coco.h>
->
->  #define GHCB_PROTOCOL_MIN      1ULL
-> @@ -22,6 +21,8 @@
->
->  #define        VMGEXIT()                       { asm volatile("rep; vmmcall\n\r"); }
->
-> +struct boot_params;
-> +
->  enum es_result {
->         ES_OK,                  /* All good */
->         ES_UNSUPPORTED,         /* Requested operation not supported */
-> diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-> index c878616a18b8..f062715578a0 100644
-> --- a/arch/x86/include/asm/x86_init.h
-> +++ b/arch/x86/include/asm/x86_init.h
-> @@ -2,8 +2,6 @@
->  #ifndef _ASM_X86_PLATFORM_H
->  #define _ASM_X86_PLATFORM_H
->
-> -#include <asm/bootparam.h>
-> -
->  struct ghcb;
->  struct mpc_bus;
->  struct mpc_cpu;
-> --
-> 2.43.0
->
+Tested-by: Kent Overstreet <kent.overstreet@linux.dev>
