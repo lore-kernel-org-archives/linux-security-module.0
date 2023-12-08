@@ -1,320 +1,197 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hClVuVGf"
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BC841724
-	for <linux-security-module@vger.kernel.org>; Fri,  8 Dec 2023 07:51:53 -0800 (PST)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5d340a9cf07so27631847b3.3
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Dec 2023 07:51:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1702050713; x=1702655513; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mju3ViF0d/Jk5ieUylmRq+FCfb/T1IaKWcGes5aRqrg=;
-        b=hClVuVGfdMr5wkmZn0X4IU5Ym4fDxgEo5MgxpHddwJ9K5yfmeS61BJ7jHgSQG4NF+v
-         f5wMVulB9R0CFIchJGPrYdBlI9jPjDr5CnV5cn4BQEOujA7xHKfAOhecsMT7Z+y/oYJl
-         j1MH+oKSsG47B2yJJGnwwxklOuTDzHuCf8qDcjEmmunPVjzhr6eHmFPTka1JM2Uy83mq
-         oq/S1iA9f3czBRBump4De8+EowfOFhiakt6Nu1i+O0n0jvCBPkH5V3jC1cq3Q7jSFLlx
-         uQ6udW9iohe2bf0o4v9r5BU/v0qUpZrK7KaWLfpXuLBNZbj54s+H+z/XCU50+zCXSUhC
-         xm2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702050713; x=1702655513;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mju3ViF0d/Jk5ieUylmRq+FCfb/T1IaKWcGes5aRqrg=;
-        b=Pw0NabDMS9HRLeRTCh/nS69PBtj4YbtHyP//a+jnpZ/+HZ3QON9Snf1iF3y8r7/fVj
-         l+wgX8eZvntR3fenxyptnETYlutYql0Bt8Uv7FmiXzua49dLaEQpmtt9RvWv4CPWIIng
-         +6jgixTBImqyN0tDDmX7YNcXfqyRZwJpb0Lq+hk5n5iSzDgIdALAZYamKcjCVlth4LtV
-         NAUDdi7NZcHYH+TasquxOcm11G3THI+qmxHF+x2TrWgh9i1dGcjxiQGWGQfsC/FnO5Sw
-         Qn5VglONy1NRWgJuGwGtU4qMKn5wVkhjGQD9AhLkUvjLBe5wpN9S0yyosBli/gZ98jMV
-         Ff/g==
-X-Gm-Message-State: AOJu0YxN+YfbE5BUU3PF1zE3o9epV5zomFRgV9XJkyo2apB4BHLGOMTI
-	rsWIN37gFYviE4TEeNnjqp7WXFmgVXbOwLkvt1g0UkTcB0IHns81M/oQHIIYLDfoY665ELsSvMH
-	wS3cPj0AFkse+2+xUNYvtkrVvbZABOhXSe/N7s2o1PGVhcv+v2B+R0pNXU8QC5xTZvMXt/WjUbj
-	XiX4I8YA==
-X-Google-Smtp-Source: AGHT+IF08Rhtqy3Dy8W8OMYKeuBaF2V/tUXkUmZOLclD76Htb9sZGykZKBCDCf47NU7fqO4KDAlQIZtzMwE=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:d80e:bfc8:2891:24c1])
- (user=gnoack job=sendgmr) by 2002:a05:690c:b9d:b0:5a8:33ab:d545 with SMTP id
- ck29-20020a05690c0b9d00b005a833abd545mr2810ywb.2.1702050712043; Fri, 08 Dec
- 2023 07:51:52 -0800 (PST)
-Date: Fri,  8 Dec 2023 16:51:21 +0100
-In-Reply-To: <20231208155121.1943775-1-gnoack@google.com>
-Message-Id: <20231208155121.1943775-10-gnoack@google.com>
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E73DE11D;
+	Fri,  8 Dec 2023 09:25:17 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SmyJN1wc0z9yskh;
+	Sat,  9 Dec 2023 01:08:04 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id E5EDD14090E;
+	Sat,  9 Dec 2023 01:25:04 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDnInNoUXNlUnQqAg--.64290S2;
+	Fri, 08 Dec 2023 18:25:04 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: miklos@szeredi.hu,
+	amir73il@gmail.com
+Cc: linux-unionfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zohar@linux.ibm.com,
+	paul@paul-moore.com,
+	stefanb@linux.ibm.com,
+	jlayton@kernel.org,
+	brauner@kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [RFC][PATCH] overlayfs: Redirect xattr ops on security.evm to security.evm_overlayfs
+Date: Fri,  8 Dec 2023 18:23:08 +0100
+Message-Id: <20231208172308.2876481-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20231208155121.1943775-1-gnoack@google.com>
-X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
-Subject: [PATCH v8 9/9] landlock: Document IOCTL support
-From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-To: linux-security-module@vger.kernel.org, 
-	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
-Cc: Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, 
-	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwDnInNoUXNlUnQqAg--.64290S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3WryxZFWxAw4DAF4xurW8Xrb_yoW7Zw1DpF
+	Wqya4DKr4rXFy7Wws5Aanruw109w4Fk3WUJ3y5Wwn5AF9xW3Za9FyftryYkFyUJr18ZFy5
+	tayjqw13K3s8Ww7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
+	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
+	uYvjxUsrcTDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj5dj+AABs8
 
-In the paragraph above the fallback logic, use the shorter phrasing
-from the landlock(7) man page.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+EVM updates the HMAC in security.evm whenever there is a setxattr or
+removexattr operation on one of its protected xattrs (e.g. security.ima).
+
+Unfortunately, since overlayfs redirects those xattrs operations on the
+lower filesystem, the EVM HMAC cannot be calculated reliably, since lower
+inode attributes on which the HMAC is calculated are different from upper
+inode attributes (for example i_generation and s_uuid).
+
+Although maybe it is possible to align such attributes between the lower
+and the upper inode, another idea is to map security.evm to another name
+(security.evm_overlayfs) during an xattr operation, so that it does not
+collide with security.evm set by the lower filesystem.
+
+Whenever overlayfs wants to set security.evm, it is actually setting
+security.evm_overlayfs calculated with the upper inode attributes. The
+lower filesystem continues to update security.evm.
+
+This seems to make things working again, and even allowing IMA appraisal
+to succeed on both the lower and the upper inode.
+
+Example:
+
+# mount -t overlay overlay \
+    -o lowerdir=data,upperdir=root/data,workdir=root/data_work mnt
+
+# echo "appraise fsname=overlay" > /sys/kernel/security/ima/policy
+# echo "appraise fsuid=<lower fs UUID>" > /sys/kernel/security/ima/policy
+
+# cd mnt
+# echo test > test-file
+evm: security.ima: (34) [0404f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93...]
+evm: hmac_misc: (24) [1300000000000000cd9e816c0000000000000000a4810000]
+evm: uuid: [28b23254946744c0b6ba34b12e85a26f]
+evm: digest: [b186cc901ead302572c6b271db85e4e5cd41c6ce]
+evm: security.ima: (34) [0404f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93...]
+evm: hmac_misc: (24) [1300000000000000000000000000000000000000a4810000]
+evm: uuid: [589286d4df13456ea82a9aca97660302]
+evm: digest: [b90586afd1703a6cbf290d9150465f8bdd48fb8a]
+
+The first 4 lines show the HMAC calculation on the lower inode (ext4), the
+remaining 4 the HMAC calculation on the upper inode (overlay).
+
+Now, after mapping security.evm to security.evm_overlayfs, this is the
+result of the getfattr command on overlayfs:
+
+# getfattr -m - -d -e hex test-file
+# file: test-file
+security.evm=0x02b90586afd1703a6cbf290d9150465f8bdd48fb8a
+security.ima=0x0404f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93...
+
+Instead, this is the result of the getfattr command on the lower fs:
+
+# getfattr -m - -d -e hex ../root/data/test-file
+# file: ../root/data/test-file
+security.evm=0x02b186cc901ead302572c6b271db85e4e5cd41c6ce
+security.evm_overlayfs=0x02b90586afd1703a6cbf290d9150465f8bdd48fb8a
+security.ima=0x0404f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93...
+
+Both HMACs are stored on the lower inode.
+
+Trying IMA appraisal, the result is that both the access from overlayfs and
+from the lower fs succeed. From overlayfs:
+
+# cat test-file
+evm: security.ima: (34) [0404f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93...]
+evm: hmac_misc: (24) [1300000000000000000000000000000000000000a4810000]
+evm: uuid: [589286d4df13456ea82a9aca97660302]
+evm: digest: [b90586afd1703a6cbf290d9150465f8bdd48fb8a]
+test
+
+From the lower fs:
+
+# cat ../root/data/test-file
+evm: security.ima: (34) [0404f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93...]
+evm: hmac_misc: (24) [1300000000000000cd9e816c0000000000000000a4810000]
+evm: uuid: [28b23254946744c0b6ba34b12e85a26f]
+evm: digest: [b186cc901ead302572c6b271db85e4e5cd41c6ce]
+test
+
+security.evm_overlayfs is hidden from listxattr in overlayfs.
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- Documentation/userspace-api/landlock.rst | 119 ++++++++++++++++++++---
- 1 file changed, 104 insertions(+), 15 deletions(-)
+ fs/overlayfs/xattrs.c      | 9 +++++++++
+ include/uapi/linux/xattr.h | 4 ++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/users=
-pace-api/landlock.rst
-index 2e3822677061..8398851964e6 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -75,7 +75,8 @@ to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-             LANDLOCK_ACCESS_FS_MAKE_SYM |
-             LANDLOCK_ACCESS_FS_REFER |
--            LANDLOCK_ACCESS_FS_TRUNCATE,
-+            LANDLOCK_ACCESS_FS_TRUNCATE |
-+            LANDLOCK_ACCESS_FS_IOCTL,
-         .handled_access_net =3D
-             LANDLOCK_ACCESS_NET_BIND_TCP |
-             LANDLOCK_ACCESS_NET_CONNECT_TCP,
-@@ -84,10 +85,10 @@ to be explicit about the denied-by-default access right=
-s.
- Because we may not know on which kernel version an application will be
- executed, it is safer to follow a best-effort security approach.  Indeed, =
-we
- should try to protect users as much as possible whatever the kernel they a=
-re
--using.  To avoid binary enforcement (i.e. either all security features or
--none), we can leverage a dedicated Landlock command to get the current ver=
-sion
--of the Landlock ABI and adapt the handled accesses.  Let's check if we sho=
-uld
--remove access rights which are only supported in higher versions of the AB=
-I.
-+using.
+diff --git a/fs/overlayfs/xattrs.c b/fs/overlayfs/xattrs.c
+index 383978e4663c..1141d2fa01db 100644
+--- a/fs/overlayfs/xattrs.c
++++ b/fs/overlayfs/xattrs.c
+@@ -65,6 +65,9 @@ static int ovl_xattr_set(struct dentry *dentry, struct inode *inode, const char
+ 		goto out;
+ 
+ 	old_cred = ovl_override_creds(dentry->d_sb);
++	if (!strcmp(name, XATTR_NAME_EVM))
++		name = XATTR_NAME_EVM_OVERLAYFS;
 +
-+To be compatible with older Linux versions, we detect the available Landlo=
-ck ABI
-+version, and only use the available subset of access rights:
-=20
- .. code-block:: c
-=20
-@@ -113,6 +114,10 @@ remove access rights which are only supported in highe=
-r versions of the ABI.
-         ruleset_attr.handled_access_net &=3D
-             ~(LANDLOCK_ACCESS_NET_BIND_TCP |
-               LANDLOCK_ACCESS_NET_CONNECT_TCP);
-+        __attribute__((fallthrough));
-+    case 4:
-+        /* Removes LANDLOCK_ACCESS_FS_IOCTL for ABI < 5 */
-+        ruleset_attr.handled_access_fs &=3D ~LANDLOCK_ACCESS_FS_IOCTL;
-     }
-=20
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -224,6 +229,7 @@ access rights per directory enables to change the locat=
-ion of such directory
- without relying on the destination directory access rights (except those t=
-hat
- are required for this operation, see ``LANDLOCK_ACCESS_FS_REFER``
- documentation).
+ 	if (value) {
+ 		err = ovl_do_setxattr(ofs, realdentry, name, value, size,
+ 				      flags);
+@@ -88,6 +91,9 @@ static int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char
+ 	const struct cred *old_cred;
+ 	struct path realpath;
+ 
++	if (!strcmp(name, XATTR_NAME_EVM))
++		name = XATTR_NAME_EVM_OVERLAYFS;
 +
- Having self-sufficient hierarchies also helps to tighten the required acce=
-ss
- rights to the minimal set of data.  This also helps avoid sinkhole directo=
-ries,
- i.e.  directories where data can be linked to but not linked from.  Howeve=
-r,
-@@ -317,18 +323,69 @@ It should also be noted that truncating files does no=
-t require the
- system call, this can also be done through :manpage:`open(2)` with the fla=
-gs
- ``O_RDONLY | O_TRUNC``.
-=20
--When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE=
-``
--right is associated with the newly created file descriptor and will be use=
-d for
--subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavio=
-r is
--similar to opening a file for reading or writing, where permissions are ch=
-ecked
--during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)=
-` and
-+The truncate right is associated with the opened file (see below).
+ 	ovl_i_path_real(inode, &realpath);
+ 	old_cred = ovl_override_creds(dentry->d_sb);
+ 	res = vfs_getxattr(mnt_idmap(realpath.mnt), realpath.dentry, name, value, size);
+@@ -101,6 +107,9 @@ static bool ovl_can_list(struct super_block *sb, const char *s)
+ 	if (ovl_is_private_xattr(sb, s))
+ 		return false;
+ 
++	if (!strcmp(s, XATTR_NAME_EVM_OVERLAYFS))
++		return false;
 +
-+Rights associated with file descriptors
-+---------------------------------------
+ 	/* List all non-trusted xattrs */
+ 	if (strncmp(s, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN) != 0)
+ 		return true;
+diff --git a/include/uapi/linux/xattr.h b/include/uapi/linux/xattr.h
+index 9463db2dfa9d..93930300f69e 100644
+--- a/include/uapi/linux/xattr.h
++++ b/include/uapi/linux/xattr.h
+@@ -51,6 +51,10 @@
+ #define XATTR_EVM_SUFFIX "evm"
+ #define XATTR_NAME_EVM XATTR_SECURITY_PREFIX XATTR_EVM_SUFFIX
+ 
++#define XATTR_EVM_OVERLAYFS_SUFFIX "evm_overlayfs"
++#define XATTR_NAME_EVM_OVERLAYFS \
++	XATTR_SECURITY_PREFIX XATTR_EVM_OVERLAYFS_SUFFIX
 +
-+When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE=
-`` and
-+``LANDLOCK_ACCESS_FS_IOCTL`` rights is associated with the newly created f=
-ile
-+descriptor and will be used for subsequent truncation and ioctl attempts u=
-sing
-+:manpage:`ftruncate(2)` and :manpage:`ioctl(2)`.  The behavior is similar =
-to
-+opening a file for reading or writing, where permissions are checked durin=
-g
-+:manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
- :manpage:`write(2)` calls.
-=20
--As a consequence, it is possible to have multiple open file descriptors fo=
-r the
--same file, where one grants the right to truncate the file and the other d=
-oes
--not.  It is also possible to pass such file descriptors between processes,
--keeping their Landlock properties, even when these processes do not have a=
-n
--enforced Landlock ruleset.
-+As a consequence, it is possible that a process has multiple open file
-+descriptors referring to the same file, but Landlock enforces different th=
-ings
-+when operating with these file descriptors.  This can happen when a Landlo=
-ck
-+ruleset gets enforced and the process keeps file descriptors which were op=
-ened
-+both before and after the enforcement.  It is also possible to pass such f=
-ile
-+descriptors between processes, keeping their Landlock properties, even whe=
-n some
-+of the involved processes do not have an enforced Landlock ruleset.
-+
-+Restricting IOCTL commands
-+--------------------------
-+
-+When the ``LANDLOCK_ACCESS_FS_IOCTL`` access right is handled, Landlock wi=
-ll
-+restrict the invocation of IOCTL commands.  However, to *permit* these IOC=
-TL
-+commands again, some of these IOCTL commands are then granted through othe=
-r,
-+preexisting access rights.
-+
-+For example, consider a program which handles ``LANDLOCK_ACCESS_FS_IOCTL``=
- and
-+``LANDLOCK_ACCESS_FS_READ_FILE``.  The program *permits*
-+``LANDLOCK_ACCESS_FS_READ_FILE`` on a file ``foo.log``.
-+
-+By virtue of granting this access on the ``foo.log`` file, it is now possi=
-ble to
-+use common and harmless IOCTL commands which are useful when reading files=
-, such
-+as ``FIONREAD``.
-+
-+On the other hand, if the program permits ``LANDLOCK_ACCESS_FS_IOCTL`` on
-+another file, ``FIONREAD`` will not work on that file when it is opened.  =
-As
-+soon as ``LANDLOCK_ACCESS_FS_READ_FILE`` is *handled* in the ruleset, the =
-IOCTL
-+commands affected by it can not be reenabled though ``LANDLOCK_ACCESS_FS_I=
-OCTL``
-+any more, but are then governed by ``LANDLOCK_ACCESS_FS_READ_FILE``.
-+
-+The following table illustrates how IOCTL attempts for ``FIONREAD`` are
-+filtered, depending on how a Landlock ruleset handles and permits the
-+``LANDLOCK_ACCESS_FS_IOCTL`` and ``LANDLOCK_ACCESS_FS_READ_FILE`` access r=
-ights:
-+
-++------------------------+-------------+-------------------+--------------=
------+
-+|                        | ``IOCTL``   | ``IOCTL`` handled | ``IOCTL`` han=
-dled |
-+|                        | not handled | and permitted     | and not permi=
-tted |
-++------------------------+-------------+-------------------+--------------=
------+
-+| ``READ_FILE`` not      | allow       | allow             | deny         =
-     |
-+| handled                |             |                   |              =
-     |
-++------------------------+             +-------------------+--------------=
------+
-+| ``READ_FILE`` handled  |             | allow                            =
-     |
-+| and permitted          |             |                                  =
-     |
-++------------------------+             +-------------------+--------------=
------+
-+| ``READ_FILE`` handled  |             | deny                             =
-     |
-+| and not permitted      |             |                                  =
-     |
-++------------------------+-------------+-------------------+--------------=
------+
-+
-+The full list of IOCTL commands and the access rights which affect them is
-+documented below.
-=20
- Compatibility
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-@@ -457,6 +514,28 @@ Memory usage
- Kernel memory allocated to create rulesets is accounted and can be restric=
-ted
- by the Documentation/admin-guide/cgroup-v1/memory.rst.
-=20
-+IOCTL support
-+-------------
-+
-+The ``LANDLOCK_ACCESS_FS_IOCTL`` access right restricts the use of
-+:manpage:`ioctl(2)`, but it only applies to newly opened files.  This mean=
-s
-+specifically that pre-existing file descriptors like stdin, stdout and std=
-err
-+are unaffected.
-+
-+Users should be aware that TTY devices have traditionally permitted to con=
-trol
-+other processes on the same TTY through the ``TIOCSTI`` and ``TIOCLINUX`` =
-IOCTL
-+commands.  It is therefore recommended to close inherited TTY file descrip=
-tors,
-+or to reopen them from ``/proc/self/fd/*`` without the
-+``LANDLOCK_ACCESS_FS_IOCTL`` right, if possible.  The :manpage:`isatty(3)`
-+function checks whether a given file descriptor is a TTY.
-+
-+Landlock's IOCTL support is coarse-grained at the moment, but may become m=
-ore
-+fine-grained in the future.  Until then, users are advised to establish th=
-e
-+guarantees that they need through the file hierarchy, by only permitting t=
-he
-+``LANDLOCK_ACCESS_FS_IOCTL`` right on files where it is really harmless.  =
-In
-+cases where you can control the mounts, the ``nodev`` mount option can hel=
-p to
-+rule out that device files can be accessed.
-+
- Previous limitations
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
-@@ -494,6 +573,16 @@ bind and connect actions to only a set of allowed port=
-s thanks to the new
- ``LANDLOCK_ACCESS_NET_BIND_TCP`` and ``LANDLOCK_ACCESS_NET_CONNECT_TCP``
- access rights.
-=20
-+IOCTL (ABI < 5)
-+---------------
-+
-+IOCTL operations could not be denied before the fifth Landlock ABI, so
-+:manpage:`ioctl(2)` is always allowed when using a kernel that only suppor=
-ts an
-+earlier ABI.
-+
-+Starting with the Landlock ABI version 5, it is possible to restrict the u=
-se of
-+:manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL`` access righ=
-t.
-+
- .. _kernel_support:
-=20
- Kernel support
---=20
-2.43.0.472.g3155946c3a-goog
+ #define XATTR_IMA_SUFFIX "ima"
+ #define XATTR_NAME_IMA XATTR_SECURITY_PREFIX XATTR_IMA_SUFFIX
+ 
+-- 
+2.34.1
 
