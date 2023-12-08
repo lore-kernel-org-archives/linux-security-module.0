@@ -1,95 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bm9iP9vn"
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81E35171D
-	for <linux-security-module@vger.kernel.org>; Fri,  8 Dec 2023 14:43:42 -0800 (PST)
-Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-db549f869a3so2940883276.1
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Dec 2023 14:43:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1702075421; x=1702680221; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9YtvPSFjodu+ZgraE7QhIaNyDdff0Uneik8gDZ6S5Lo=;
-        b=bm9iP9vnIfZm1eOEoqYXZl63iLPc2k72WSKL9MJwsjpZ1os51/QbXbMJ9cadWxz6Am
-         CckXn5glIT76wVA3ifXSky61kMGMk4Ex31pBnwtCy5BQd+VFi9xAtQGAfBtekIQTuHyz
-         4LjyzcIirIf0FT2kbD9P7IIchieiptLuiYrXtenofP8hSvCrYI0jFhi9mDkWC6JHn/lE
-         XKP6iVoDAkeRU5MBxityrE3op7pv/Xjz1m8Pm3CnGD2ThGMHZzyKTpDSdwJAF/J9ubco
-         SuX+fZFm7hnlCZ98mOXoVC2b0LU8YCCD71qjPzYGlnA8d27KbNSxoHhSvMH+m6QO4QQK
-         H4lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702075421; x=1702680221;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9YtvPSFjodu+ZgraE7QhIaNyDdff0Uneik8gDZ6S5Lo=;
-        b=SyBOyf3ZCujLxQxIdV+zhbi8SB29Qut+BP//drAY9jOpNkGWFbiv4ME2n7sc+5xPPK
-         f5n/VeJKeArMqhMFfn8QU28ctYEKxbMk3g0UGJ/kT2PauK2vouy6/NRcE6d7QBo2omh4
-         JgHyjpGrSNzGqXHRTHFaineWErN9UaDTk285t6Sy7a8ODp5qRAVUgYLW6ZG2kf/XT17/
-         S2QhbDmnHChUpME8edJXzzcGbZOIXBlfAZIiHZuBTRJArB2R5Xyvlnilp3u8EGnFq/tR
-         Is6J3Rk8JvpGGifhLvxb6iY1ltYPGIm1lmEC3m3owvbw5hK12PndJAM6XT2T44wasgi+
-         KNfg==
-X-Gm-Message-State: AOJu0YyGs9Uru0dAIraG2X064fIVkGHEdzW92Yb6/udfotBBZj9k1O4S
-	7/tc16XZrTS2ZSABpkHd6Lcte8S5OIQ60iy7+JHT
-X-Google-Smtp-Source: AGHT+IF9tjmLAyUmVUsZYC10muP3I76/RHeidBltFtIH7wYUsGHZIib9uJNx8Z3A7Unf+g5whxu1AgvucF0VPR71ABA=
-X-Received: by 2002:a05:6902:150:b0:db7:dacf:ed8b with SMTP id
- p16-20020a056902015000b00db7dacfed8bmr673305ybh.108.1702075421706; Fri, 08
- Dec 2023 14:43:41 -0800 (PST)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4040910D0
+	for <linux-security-module@vger.kernel.org>; Fri,  8 Dec 2023 14:56:38 -0800 (PST)
+Received: from fsav313.sakura.ne.jp (fsav313.sakura.ne.jp [153.120.85.144])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 3B8MuZPn002426;
+	Sat, 9 Dec 2023 07:56:36 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav313.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp);
+ Sat, 09 Dec 2023 07:56:35 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 3B8MuZ6w002422
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 9 Dec 2023 07:56:35 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <24a2a004-705c-468d-88a8-ed743f09c46d@I-love.SAKURA.ne.jp>
+Date: Sat, 9 Dec 2023 07:56:33 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhSyaFE7-u470TrnHP7o2hT8600zC+Od=M0KkrP46j7-Qw@mail.gmail.com>
- <20231208021433.1662438-1-kamatam@amazon.com>
-In-Reply-To: <20231208021433.1662438-1-kamatam@amazon.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 8 Dec 2023 17:43:30 -0500
-Message-ID: <CAHC9VhRRdaUWYP3S91D6MrD8xBMR+zYB3SpGKV+60YkmLwr7Sg@mail.gmail.com>
-Subject: Re: Fw: [PATCH] proc: Update inode upon changing task security attribute
-To: Munehisa Kamata <kamatam@amazon.com>
-Cc: adobriyan@gmail.com, akpm@linux-foundation.org, casey@schaufler-ca.com, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 5/5] security: Add CONFIG_SECURITY_HOOK_LIKELY
+Content-Language: en-US
+To: Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>,
+        KP Singh <kpsingh@kernel.org>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        casey@schaufler-ca.com, song@kernel.org, daniel@iogearbox.net,
+        ast@kernel.org, renauld@google.com, pabeni@redhat.com
+References: <20231110222038.1450156-1-kpsingh@kernel.org>
+ <20231110222038.1450156-6-kpsingh@kernel.org> <202312080934.6D172E5@keescook>
+ <CAHC9VhTOze46yxPUURQ+4F1XiSEVhrTsZvYfVAZGLgXj0F9jOA@mail.gmail.com>
+ <CAHC9VhRguzX9gfuxW3oC0pOpttJ+xE6Q84Y70njjchJGawpXdg@mail.gmail.com>
+ <202312081019.C174F3DDE5@keescook>
+ <CAHC9VhRNSonUXwneN1j0gpO-ky_YOzWsiJo_g+b0P86c9Am8WQ@mail.gmail.com>
+ <202312081302.323CBB189@keescook>
+ <CAHC9VhQ2VxM=WWL_jpoELu=dHuiF3Pk=bxNrpfctc7Q0K2DUfA@mail.gmail.com>
+ <202312081352.6587C77@keescook>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <202312081352.6587C77@keescook>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 7, 2023 at 9:14=E2=80=AFPM Munehisa Kamata <kamatam@amazon.com>=
- wrote:
-> On Tue, 2023-12-05 14:21:51 -0800, Paul Moore wrote:
+On 2023/12/09 7:05, Kees Cook wrote:
+> Okay, I understand now. Sorry for frustrating you! By "way forward",
+> I meant I didn't understand how to address what looked like conflicting
+> feedback. I think my confusion was over separating the goal ("this
+> feature should be automatically enabled when it is known to be useful")
+> from an interpretation of earlier feedback as "I don't want a CONFIG [that
+> leaves this up to the user]", when what you really wanted understood was
+> "I don't want a CONFIG *ever*, regardless of whether it picks the correct
+> setting automatically".
 
-...
+Is it possible to change the direction from "call all individual callbacks from security/security.c"
+to "call next callback at end of current callback if current callback succeeded and next callback is
+defined, and security/security.c calls only the first callback"
+( https://lkml.kernel.org/r/38b318a5-0a16-4cc2-878e-4efa632236f3@I-love.SAKURA.ne.jp ),
+something like
 
-> > I think my thoughts are neatly summarized by Andrew's "yuk!" comment
-> > at the top.  However, before we go too much further on this, can we
-> > get clarification that Casey was able to reproduce this on a stock
-> > upstream kernel?  Last I read in the other thread Casey wasn't seeing
-> > this problem on Linux v6.5.
-> >
-> > However, for the moment I'm going to assume this is a real problem, is
-> > there some reason why the existing pid_revalidate() code is not being
-> > called in the bind mount case?  From what I can see in the original
-> > problem report, the path walk seems to work okay when the file is
-> > accessed directly from /proc, but fails when done on the bind mount.
-> > Is there some problem with revalidating dentrys on bind mounts?
->
-> Hi Paul,
->
-> https://lkml.kernel.org/linux-fsdevel/20090608201745.GO8633@ZenIV.linux.o=
-rg.uk/
->
-> After reading this thread, I have doubt about solving this in VFS.
-> Honestly, however, I'm not sure if it's entirely relevant today.
+static int module_specific_some_ops(args) {
+	if (logic_for_this_module(arg)) {
+		return -EPERM;
+	}
+	return 0;
+}
 
-Have you tried simply mounting proc a second time instead of using a bind m=
-ount?
+static int autogenerated_some_ops(args) {
+	int ret = module_specific_some_ops(args);
+	if (ret == 0) {
+		ret = static_call(next_registered_hook)(args);
+	}
+	return ret;
+}
 
- % mount -t proc non /new/location/for/proc
+and let LSM_HOOK_INIT() macro generate autogenerated_some_ops() part ?
 
-I ask because from your description it appears that proc does the
-right thing with respect to revalidation, it only becomes an issue
-when accessing proc through a bind mount.  Or did I misunderstand the
-problem?
-
---
-paul-moore.com
