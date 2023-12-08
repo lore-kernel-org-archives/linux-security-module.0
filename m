@@ -1,105 +1,360 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NPY8g95W"
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC0441732
-	for <linux-security-module@vger.kernel.org>; Fri,  8 Dec 2023 07:32:53 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-54dccf89cfdso2603690a12.0
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Dec 2023 07:32:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r9i1atS3"
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB3EF10EB
+	for <linux-security-module@vger.kernel.org>; Fri,  8 Dec 2023 07:51:27 -0800 (PST)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5d749e4fa3dso27570817b3.1
+        for <linux-security-module@vger.kernel.org>; Fri, 08 Dec 2023 07:51:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1702049572; x=1702654372; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7e0LAup17g0NCNSVw+obiVHzl5PDTKf4AJltQUn8U4o=;
-        b=NPY8g95WN9BlEcRj5JDTMwLBX2abMfE99p+H714Iasd7RV77rw8WZNb3b9TRUmdATX
-         AzEUlRxOoH3D2G8jADFTlnpJvyNK3KD1+AYgtifZm2ASFQPUFWooYVacDNmpOgkp3rgK
-         bpwt8K2ebcJwk1rZzc0snHPfwCjdyArB1tGsRrl4kk1JtENsO0yO9z3Cu2El1DQAaK2r
-         EFd3Rr/Smb1dtAcemJo5p8+FFPNLZSrJXg5rPO0DpQwVh9zRI8f5mDgNxrEQpD0t57YL
-         BRLSaLBok1HJ+4p1vaqrzx6fupPb7GAJV0kRrpwEOdh2274IJevMuYfjg55ryzofmW4t
-         jqlw==
+        d=google.com; s=20230601; t=1702050687; x=1702655487; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:mime-version
+         :message-id:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ek4iMLWDzL7LoVtnCxavodpFayCowS6V3LxbhgEzngA=;
+        b=r9i1atS3BSzpt/n8lAyaZQrcWlFgf/MjxNqfCNKtiXtyypMyqHdbxA39QOqJqF/AFd
+         S3OJj9+x2uwXJ5yBb5Y+S4wFSjKAa7U8jrqC5WV/rno72r9SM/ofb/FVIleur1etKI9a
+         N8brs4fsHarFxBGuVayfxdkw/g+436+lG9GqLTTbG0sk+maTv8kDLjF0A72YBqQGUDUE
+         s7tnIdSrPuJ1zz41qxjoiAnkBBALAMBroU+1mJmxj+QiR5MhiFdZnx3sd/rDaQU05N7S
+         20c6QJj6NanW8x7XIJ+RgGTzJ9AQKGF7H/TsBsoBTT4Cn7emFTmC6RQ0ADdH6UKbyQvV
+         w7Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702049572; x=1702654372;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7e0LAup17g0NCNSVw+obiVHzl5PDTKf4AJltQUn8U4o=;
-        b=eFnzybgWtyd3kcUuvE2WIufKHbImrEZZT7SvvyghdMS92w1LcnsMJ9MhNSW+NA0plg
-         Jb/RvjBd3azwANekIJaBjm8UD7crR2HKMUXR6o+wWO5TlsdESVeQNydL5ATScaFkuhoG
-         BZTMF6RD228C2esk4wd/+Q1rd92th0pvWIxQpLHhztTwe5mXPzoeyGoHIBzLB+UZCzzE
-         lNa3Dll+U3tnO407pbjCDNYhk3hpGvCtRpSxbo5iXdRnUtSKXDy/jHUbQ3nifXU27Cfy
-         Xsvnm3WmJ+Rc77XGHLa8M1Lo97r9txNqyTvPamgYfAAjP08DWKEySMchaD27r8eiurnM
-         3Wrg==
-X-Gm-Message-State: AOJu0YzMddd3QtNckh3nffkqYqqyIL4gKdy3L3gMXKWAYn1dE/pBGQia
-	QAaKQhtMXN7XmrfyZ/Qk51InKQ==
-X-Google-Smtp-Source: AGHT+IEOJXwDu0ftXR4iOSS0n4hmovnrh3fbopcKujhlKJmV/fxmLyIilVbCbW7y01z4IzCvMLtudQ==
-X-Received: by 2002:a17:906:1b17:b0:a1d:20:836d with SMTP id o23-20020a1709061b1700b00a1d0020836dmr67512ejg.149.1702049572244;
-        Fri, 08 Dec 2023 07:32:52 -0800 (PST)
-Received: from google.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
-        by smtp.gmail.com with ESMTPSA id s18-20020a17090699d200b00a0c3b122a1esm1127367ejn.63.2023.12.08.07.32.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Dec 2023 07:32:51 -0800 (PST)
-Date: Fri, 8 Dec 2023 15:32:48 +0000
-From: Matt Bobrowski <mattbobrowski@google.com>
-To: kpsingh@kernel.org, ast@kernel.org, andrii@kernel.org
-Cc: revest@chromium.org, jackmanb@chromium.org, yonghong.song@linux.dev,
-	bpf@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH bpf-next] bpf: add small subset of SECURITY_PATH hooks to BPF
- sleepable_lsm_hooks list
-Message-ID: <ZXM3IHHXpNY9y82a@google.com>
+        d=1e100.net; s=20230601; t=1702050687; x=1702655487;
+        h=content-transfer-encoding:cc:to:from:subject:mime-version
+         :message-id:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ek4iMLWDzL7LoVtnCxavodpFayCowS6V3LxbhgEzngA=;
+        b=tuNBF1ZXPpb3kShPsXWJdK6uRLe7qvD/T0O9/GXBrzHiSB2gau5mjJ15ghJRIPzpca
+         d0RzEmOBpIQLCRDV3U5hHaThmWBvcCTzclXhP7368ySvQtRTV04pQrN2RgV+jZuWmomS
+         PHWKyUVNhOBm/+eEMemYVOqTdqMOK/iW+97GaoX+FdeFpHHUST0e7MNtVKkrBV2s6eMd
+         aUWQ5wNQwxN0sTX2mcGXv10PHYb0iL7JruKs1xv9Eh2lcYvpQrpsMKnY5kcvgI9DisAR
+         P4w0kv3KyOrxLtv3+xIUmE8Mr/IGftLoWwiorRF5jx5xzGvN/PBA9IH3j07oAhFOqAHJ
+         Tf9w==
+X-Gm-Message-State: AOJu0Yx9s5CKxnm7oGKqNLfPHx+Sd34fNzy0b6Hf0UgBpTbfVEfKkoUE
+	MvH9sfmPZn/CJUDxvaiWJ66byNR5qOjTDDGHb1oUfliJjJ0S1UUbgbfydq6Z0GZQ9HnTZAWPa4j
+	1sf7IAjdSPQ2ec72oTZuhe2fwQoPEEJ7L+Z2HISkKAzx0zSFctvmXpv2gnxlnuvzCAIGOQmeSvp
+	X+5l2mcw==
+X-Google-Smtp-Source: AGHT+IF8aR6QmzbJzNsUAkek5pspKQqf/3NnWjMB12JKyovCq9Yc+l+6KkVLim17yptnf6nD/mr1rlzbbvk=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:d80e:bfc8:2891:24c1])
+ (user=gnoack job=sendgmr) by 2002:a05:690c:e18:b0:5d4:1846:3124 with SMTP id
+ cp24-20020a05690c0e1800b005d418463124mr2045ywb.10.1702050686445; Fri, 08 Dec
+ 2023 07:51:26 -0800 (PST)
+Date: Fri,  8 Dec 2023 16:51:12 +0100
+Message-Id: <20231208155121.1943775-1-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
+Subject: [PATCH v8 0/9] Landlock: IOCTL support
+From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+To: linux-security-module@vger.kernel.org, 
+	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
+Cc: Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, 
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-security_path_* based LSM hooks appear to be generally missing from
-the sleepable_lsm_hooks list. Initially add a small subset of them to
-the preexisting sleepable_lsm_hooks list so that sleepable BPF helpers
-like bpf_d_path() can be used from sleepable BPF LSM based programs.
+Hello!
 
-The security_path_* hooks added in this patch are similar to the
-security_inode_* counterparts that already exist in the
-sleepable_lsm_hooks list, and are called in roughly similar points and
-contexts. Presumably, making them OK to be also annotated as
-sleepable.
+These patches add simple ioctl(2) support to Landlock.
 
-Building a kernel with DEBUG_ATOMIC_SLEEP options enabled and running
-reasonable workloads stimulating activity that would be intercepted by
-such security hooks didn't show any splats.
+Objective
+~~~~~~~~~
 
-Notably, I haven't added all the security_path_* LSM hooks that are
-available as I don't need them at this point in time.
+Make ioctl(2) requests restrictable with Landlock,
+in a way that is useful for real-world applications.
 
-Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
+Proposed approach
+~~~~~~~~~~~~~~~~~
+
+Introduce the LANDLOCK_ACCESS_FS_IOCTL right, which restricts the use
+of ioctl(2) on file descriptors.
+
+We attach IOCTL access rights to opened file descriptors, as we
+already do for LANDLOCK_ACCESS_FS_TRUNCATE.
+
+If LANDLOCK_ACCESS_FS_IOCTL is handled (restricted in the ruleset),
+the LANDLOCK_ACCESS_FS_IOCTL access right governs the use of all IOCTL
+commands.
+
+We make an exception for the common and known-harmless IOCTL commands
+FIOCLEX, FIONCLEX, FIONBIO and FIONREAD.  These IOCTL commands are
+always permitted.  Their functionality is already available through
+fcntl(2).
+
+If additionally(!), the access rights LANDLOCK_ACCESS_FS_READ_FILE,
+LANDLOCK_ACCESS_FS_WRITE_FILE or LANDLOCK_ACCESS_FS_READ_DIR are
+handled, these access rights also unlock some IOCTL commands which are
+considered safe for use with files opened in these ways.
+
+As soon as these access rights are handled, the affected IOCTL
+commands can not be permitted through LANDLOCK_ACCESS_FS_IOCTL any
+more, but only be permitted through the respective more specific
+access rights.  A full list of these access rights is listed below in
+this cover letter and in the documentation.
+
+I believe that this approach works for the majority of use cases, and
+offers a good trade-off between Landlock API and implementation
+complexity and flexibility when the feature is used.
+
+Current limitations
+~~~~~~~~~~~~~~~~~~~
+
+With this patch set, ioctl(2) requests can *not* be filtered based on
+file type, device number (dev_t) or on the ioctl(2) request number.
+
+On the initial RFC patch set [1], we have reached consensus to start
+with this simpler coarse-grained approach, and build additional IOCTL
+restriction capabilities on top in subsequent steps.
+
+[1] https://lore.kernel.org/linux-security-module/d4f1395c-d2d4-1860-3a02-2=
+a0c023dd761@digikod.net/
+
+Notable implications of this approach
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Existing inherited file descriptors stay unaffected
+  when a program enables Landlock.
+
+  This means in particular that in common scenarios,
+  the terminal's IOCTLs (ioctl_tty(2)) continue to work.
+
+* ioctl(2) continues to be available for file descriptors acquired
+  through means other than open(2).  Example: Network sockets,
+  memfd_create(2), file descriptors that are already open before the
+  Landlock ruleset is enabled.
+
+Examples
+~~~~~~~~
+
+Starting a sandboxed shell from $HOME with samples/landlock/sandboxer:
+
+  LL_FS_RO=3D/ LL_FS_RW=3D. ./sandboxer /bin/bash
+
+The LANDLOCK_ACCESS_FS_IOCTL right is part of the "read-write" rights
+here, so we expect that newly opened files outside of $HOME don't work
+with most IOCTL commands.
+
+  * "stty" works: It probes terminal properties
+
+  * "stty </dev/tty" fails: /dev/tty can be reopened, but the IOCTL is
+    denied.
+
+  * "eject" fails: ioctls to use CD-ROM drive are denied.
+
+  * "ls /dev" works: It uses ioctl to get the terminal size for
+    columnar layout
+
+  * The text editors "vim" and "mg" work.  (GNU Emacs fails because it
+    attempts to reopen /dev/tty.)
+
+IOCTL groups
+~~~~~~~~~~~~
+
+To decide which IOCTL commands should be blanket-permitted we went
+through the list of IOCTL commands mentioned in fs/ioctl.c and looked
+at them individually to understand what they are about.  The following
+list is for reference.
+
+We should always allow the following IOCTL commands, which are also
+available through fcntl(2) with the F_SETFD and F_SETFL commands:
+
+ * FIOCLEX, FIONCLEX - these work on the file descriptor and
+   manipulate the close-on-exec flag
+ * FIONBIO, FIOASYNC - these work on the struct file and enable
+   nonblocking-IO and async flags
+
+The following command is guarded and enabled by either of
+LANDLOCK_ACCESS_FS_WRITE_FILE, LANDLOCK_ACCESS_FS_READ_FILE or
+LANDLOCK_ACCESS_FS_READ_DIR (G2), once one of them is handled
+(otherwise by LANDLOCK_ACCESS_FS_IOCTL):
+
+ * FIOQSIZE - get the size of the opened file
+
+The following commands are guarded and enabled by either of
+LANDLOCK_ACCESS_FS_WRITE_FILE or LANDLOCK_ACCESS_FS_READ_FILE (G2),
+once one of them is handled (otherwise by LANDLOCK_ACCESS_FS_IOCTL):
+
+These are commands that read file system internals:
+
+ * FS_IOC_FIEMAP - get information about file extent mapping
+   (c.f. https://www.kernel.org/doc/Documentation/filesystems/fiemap.txt)
+ * FIBMAP - get a file's file system block number
+ * FIGETBSZ - get file system blocksize
+
+The following commands are guarded and enabled by
+LANDLOCK_ACCESS_FS_READ_FILE (G3), if it is handled (otherwise by
+LANDLOCK_ACCESS_FS_IOCTL):
+
+ * FIONREAD - get the number of bytes available for reading (the
+   implementation is defined per file type)
+ * FIDEDUPRANGE - manipulating shared physical storage between files.
+
+The following commands are guarded and enabled by
+LANDLOCK_ACCESS_FS_WRITE_FILE (G4), if it is handled (otherwise by
+LANDLOCK_ACCESS_FS_IOCTL):
+
+ * FICLONE, FICLONERANGE - making files share physical storage between
+   multiple files.  These only work on some file systems, by design.
+ * FS_IOC_RESVSP, FS_IOC_RESVSP64, FS_IOC_UNRESVSP, FS_IOC_UNRESVSP64,
+   FS_IOC_ZERO_RANGE: Backwards compatibility with legacy XFS
+   preallocation syscalls which predate fallocate(2).
+
+The following commands are also mentioned in fs/ioctl.c, but are not
+handled specially and are managed by LANDLOCK_ACCESS_FS_IOCTL together
+with all other remaining IOCTL commands:
+
+ * FIFREEZE, FITHAW - work on superblock(!) to freeze/thaw the file
+   system. Requires CAP_SYS_ADMIN.
+ * Accessing file attributes:
+   * FS_IOC_GETFLAGS, FS_IOC_SETFLAGS - manipulate inode flags (ioctl_iflag=
+s(2))
+   * FS_IOC_FSGETXATTR, FS_IOC_FSSETXATTR - more attributes
+
+Related Work
+~~~~~~~~~~~~
+
+OpenBSD's pledge(2) [2] restricts ioctl(2) independent of the file
+descriptor which is used.  The implementers maintain multiple
+allow-lists of predefined ioctl(2) operations required for different
+application domains such as "audio", "bpf", "tty" and "inet".
+
+OpenBSD does not guarantee ABI backwards compatibility to the same
+extent as Linux does, so it's easier for them to update these lists in
+later versions.  It might not be a feasible approach for Linux though.
+
+[2] https://man.openbsd.org/OpenBSD-7.3/pledge.2
+
+Changes
+~~~~~~~
+
+V8:
+ * Documentation changes
+   * userspace-api/landlock.rst:
+     * Add an extra paragraph about how the IOCTL right combines
+       when used with other access rights.
+     * Explain better the circumstances under which passing of
+       file descriptors between different Landlock domains can happen
+   * limits.h: Add comment to explain public vs internal FS access rights
+   * Add a paragraph in the commit to explain better why the IOCTL
+     right works as it does
+
+V7:
+ * in =E2=80=9Clandlock: Add IOCTL access right=E2=80=9D:
+   * Make IOCTL_GROUPS a #define so that static_assert works even on
+     old compilers (bug reported by Intel about PowerPC GCC9 config)
+   * Adapt indentation of IOCTL_GROUPS definition
+   * Add missing dots in kernel-doc comments.
+ * in =E2=80=9Clandlock: Remove remaining "inline" modifiers in .c files=E2=
+=80=9D:
+   * explain reasoning in commit message
+
+V6:
+ * Implementation:
+   * Check that only publicly visible access rights can be used when adding=
+ a
+     rule (rather than the synthetic ones).  Thanks Micka=C3=ABl for spotti=
+ng that!
+   * Move all functionality related to IOCTL groups and synthetic access ri=
+ghts
+     into the same place at the top of fs.c
+   * Move kernel doc to the .c file in one instance
+   * Smaller code style issues (upcase IOCTL, vardecl at block start)
+   * Remove inline modifier from functions in .c files
+ * Tests:
+   * use SKIP
+   * Rename 'fd' to dir_fd and file_fd where appropriate
+   * Remove duplicate "ioctl" mentions from test names
+   * Rename "permitted" to "allowed", in ioctl and ftruncate tests
+   * Do not add rules if access is 0, in test helper
+
+V5:
+ * Implementation:
+   * move IOCTL group expansion logic into fs.c (implementation suggested b=
+y
+     mic)
+   * rename IOCTL_CMD_G* constants to LANDLOCK_ACCESS_FS_IOCTL_GROUP*
+   * fs.c: create ioctl_groups constant
+   * add "const" to some variables
+ * Formatting and docstring fixes (including wrong kernel-doc format)
+ * samples/landlock: fix ABI version and fallback attribute (mic)
+ * Documentation
+   * move header documentation changes into the implementation commit
+   * spell out how FIFREEZE, FITHAW and attribute-manipulation ioctls from
+     fs/ioctl.c are handled
+   * change ABI 4 to ABI 5 in some missing places
+  =20
+V4:
+ * use "synthetic" IOCTL access rights, as previously discussed
+ * testing changes
+   * use a large fixture-based test, for more exhaustive coverage,
+     and replace some of the earlier tests with it
+ * rebased on mic-next
+
+V3:
+ * always permit the IOCTL commands FIOCLEX, FIONCLEX, FIONBIO, FIOASYNC an=
+d
+   FIONREAD, independent of LANDLOCK_ACCESS_FS_IOCTL
+ * increment ABI version in the same commit where the feature is introduced
+ * testing changes
+   * use FIOQSIZE instead of TTY IOCTL commands
+     (FIOQSIZE works with regular files, directories and memfds)
+   * run the memfd test with both Landlock enabled and disabled
+   * add a test for the always-permitted IOCTL commands
+
+V2:
+ * rebased on mic-next
+ * added documentation
+ * exercise ioctl(2) in the memfd test
+ * test: Use layout0 for the test
+
 ---
- kernel/bpf/bpf_lsm.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
 
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index 7d2f96413a57..63b4dc495125 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -304,6 +304,18 @@ BTF_ID(func, bpf_lsm_kernel_module_request)
- BTF_ID(func, bpf_lsm_kernel_read_file)
- BTF_ID(func, bpf_lsm_kernfs_init_security)
- 
-+#ifdef CONFIG_SECURITY_PATH
-+BTF_ID(func, bpf_lsm_path_unlink)
-+BTF_ID(func, bpf_lsm_path_mkdir)
-+BTF_ID(func, bpf_lsm_path_rmdir)
-+BTF_ID(func, bpf_lsm_path_truncate)
-+BTF_ID(func, bpf_lsm_path_symlink)
-+BTF_ID(func, bpf_lsm_path_link)
-+BTF_ID(func, bpf_lsm_path_rename)
-+BTF_ID(func, bpf_lsm_path_chmod)
-+BTF_ID(func, bpf_lsm_path_chown)
-+#endif /* CONFIG_SECURITY_PATH */
-+
- #ifdef CONFIG_KEYS
- BTF_ID(func, bpf_lsm_key_free)
- #endif /* CONFIG_KEYS */
--- 
+V1: https://lore.kernel.org/linux-security-module/20230502171755.9788-1-gno=
+ack3000@gmail.com/
+V2: https://lore.kernel.org/linux-security-module/20230623144329.136541-1-g=
+noack@google.com/
+V3: https://lore.kernel.org/linux-security-module/20230814172816.3907299-1-=
+gnoack@google.com/
+V4: https://lore.kernel.org/linux-security-module/20231103155717.78042-1-gn=
+oack@google.com/
+V5: https://lore.kernel.org/linux-security-module/20231117154920.1706371-1-=
+gnoack@google.com/
+V6: https://lore.kernel.org/linux-security-module/20231124173026.3257122-1-=
+gnoack@google.com/
+V7: https://lore.kernel.org/linux-security-module/20231201143042.3276833-1-=
+gnoack@google.com/
+
+G=C3=BCnther Noack (9):
+  landlock: Remove remaining "inline" modifiers in .c files
+  selftests/landlock: Rename "permitted" to "allowed" in ftruncate tests
+  landlock: Optimize the number of calls to get_access_mask slightly
+  landlock: Add IOCTL access right
+  selftests/landlock: Test IOCTL support
+  selftests/landlock: Test IOCTL with memfds
+  selftests/landlock: Test ioctl(2) and ftruncate(2) with open(O_PATH)
+  samples/landlock: Add support for LANDLOCK_ACCESS_FS_IOCTL
+  landlock: Document IOCTL support
+
+ Documentation/userspace-api/landlock.rst     | 119 ++++-
+ include/uapi/linux/landlock.h                |  58 +-
+ samples/landlock/sandboxer.c                 |  13 +-
+ security/landlock/fs.c                       | 202 ++++++-
+ security/landlock/fs.h                       |   2 +
+ security/landlock/limits.h                   |  11 +-
+ security/landlock/ruleset.c                  |   7 +-
+ security/landlock/ruleset.h                  |   2 +-
+ security/landlock/syscalls.c                 |  19 +-
+ tools/testing/selftests/landlock/base_test.c |   2 +-
+ tools/testing/selftests/landlock/fs_test.c   | 523 ++++++++++++++++++-
+ 11 files changed, 884 insertions(+), 74 deletions(-)
+
+
+base-commit: 413e638fb4dfee94933e28fd9a6a8ed294447279
+--=20
 2.43.0.472.g3155946c3a-goog
 
-/M
