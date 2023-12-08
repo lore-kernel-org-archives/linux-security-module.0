@@ -1,207 +1,104 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YuolUJgw"
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EC381730;
-	Fri,  8 Dec 2023 01:06:49 -0800 (PST)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1d0538d9bbcso16774275ad.3;
-        Fri, 08 Dec 2023 01:06:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hsf9QDnZ"
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48080173C
+	for <linux-security-module@vger.kernel.org>; Fri,  8 Dec 2023 02:20:54 -0800 (PST)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5caf86963ecso23226197b3.3
+        for <linux-security-module@vger.kernel.org>; Fri, 08 Dec 2023 02:20:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702026409; x=1702631209; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1702030853; x=1702635653; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nU9j6PmyAYnwHf3ycIBsVG8xT88NU3yJVsd2qrFmMpI=;
-        b=YuolUJgwG50jo9OqMQw63g7B8R2HuRF9bkS8yrqdR3r+y9XYXVcykhZHb/eheWpW+5
-         51ORqVWaUt8h/T+dQauHPO8CVlA475Hkte78hL9RnWmD9I1gSHSIim9iEdUgM/DLR3ip
-         LvWXq7UApSxUqUc3gyydx+gvxM4bbGDSLQejH+CQTewaShPqlN4ra00TSr6HA3bTT3UM
-         2brwTfSQO6XQyUu0V+GSjz1r3ytSf6h/W4N/i9kA2TEltYqvZ2SdEwU7SCXKAkIejKn2
-         Ldps65E94dX0QzL09aDgPCQLNbUY5AfZTA4hPoe8v6UlBPjuBrGBg+YVDa5tzZN/NSOq
-         92wQ==
+        bh=ySaFJ2QFmUuvPKAGDmyec7fNSS8cS31F+E74vXYhN7o=;
+        b=Hsf9QDnZNtsMD6pnQdNBDizK3m7D9IhO2uCvJ7FVERE3l3AT7B2htznIgn19FbhPBh
+         otGweY69GKwQWT0Ux7zVYV5C67otVq0JV3StN8d0Vcea/9SmIydeKZUcSWdP4oMVEP7x
+         XnA9J15QPbNgBjZg8nzgArU1sHXzqV8NSPi7ODixelFzKSO/UXXlmltzoDxvhUuHNJWN
+         yAOyzMV69qvga0PtFSbUzGDZZswRZbFd7q+Wo1o6NpJ0Tn8tSWDtDmUrepjtpOS9ASqy
+         2FdaTEJrpgaocja2bYln2YUCd1Yep1x3mo2L1t+l2G/A7kHINXYqKUlPG0/7LUO4ER00
+         wVPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702026409; x=1702631209;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nU9j6PmyAYnwHf3ycIBsVG8xT88NU3yJVsd2qrFmMpI=;
-        b=EUYbm46bn416fjsDy1KRuElMAcVrm6wjbLAPhy4kDQUb8g1XZqYCUYdiOQatC9tmIX
-         cNbMIWR3VezkoPr6tdPm2QYSmysSWm8rMKP3rppgirXr9iPSYDByHIimD2OCah2agrcK
-         mooV1URIpk2qLwu9eWvwpMwgK1oweLlc/9OY4UaBRdFw9S25394/dH7cGGEblpDdOYuy
-         3LQawL3BskA5vwW1S5T9vPvjnkzMp2UAfmp3CsvQIMSd9asZARUIHv2nEDyhGa4IkWgI
-         Ug991jbWX4OaNwgUrC/cm6vGRYfw623nj4hk/+g9joSLtO4NCHuI/J+q+fXJL5yNjrSx
-         +ieQ==
-X-Gm-Message-State: AOJu0YzY85AFveseQWnSd95yzc9OeJlZJqEcGtUJeb6irqDMzn8l5f/8
-	I4bX64YMs++jOPilnfc8UUg=
-X-Google-Smtp-Source: AGHT+IFStUfBJJa8ImSvTVzgn8M/BHq8OdIdJjzD8odHwdrF3muYRwZVDrOvFB6m8GWXoMywE/1+TQ==
-X-Received: by 2002:a17:903:1d1:b0:1d0:bcb2:b914 with SMTP id e17-20020a17090301d100b001d0bcb2b914mr4703824plh.129.1702026408724;
-        Fri, 08 Dec 2023 01:06:48 -0800 (PST)
-Received: from vultr.guest ([2001:19f0:ac00:4055:5400:4ff:fead:3bd0])
-        by smtp.gmail.com with ESMTPSA id 21-20020a170902ee5500b001d057080022sm1188173plo.20.2023.12.08.01.06.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Dec 2023 01:06:48 -0800 (PST)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: akpm@linux-foundation.org,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	omosnace@redhat.com,
-	mhocko@suse.com,
-	ying.huang@intel.com
-Cc: linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	bpf@vger.kernel.org,
-	ligang.bdlg@bytedance.com,
-	Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v4 5/5] selftests/bpf: Add selftests for set_mempolicy with a lsm prog
-Date: Fri,  8 Dec 2023 09:06:22 +0000
-Message-Id: <20231208090622.4309-6-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20231208090622.4309-1-laoar.shao@gmail.com>
-References: <20231208090622.4309-1-laoar.shao@gmail.com>
+        d=1e100.net; s=20230601; t=1702030853; x=1702635653;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ySaFJ2QFmUuvPKAGDmyec7fNSS8cS31F+E74vXYhN7o=;
+        b=tSwCkCOpg6Se/P6sVXQm3qLz90qk0n3SxLuC4XRUsXtnb33l4OfOVo3oMXXLBg3DLP
+         2Y51ScsiMwV0pOnBi0KIdy1v0Ofn8bY38EeVmSS6dSEjTibjkg5l+dx9FmAi//9e/8mI
+         Vk6UDrMMQ1HsaeHaSqqQJSNOS4LpxKysH8hLGn0QttyhgB6MSTKAmkXOQBiksiOlN0RZ
+         Fm/tHcKYmgd3/9MgLaY9GsySUA/So08E6Y4Zwl6LYqxIe6eGp8r/Rt8Y0MfkxvfffvL/
+         9AwkYjPj8WmKlhLK5sLz/8fMx25uN/yJOZwAouFqkvoTtaMvZLdtU3OgbeVYyIItc6tL
+         LoXg==
+X-Gm-Message-State: AOJu0YxX+pwLyVeo9kY4PQP1maVG+7lYc6YxWPa/Y4OGsfhbIqRItNSF
+	9/Buc22dwFFDyPDwKpN8z4B4PgtNFgA=
+X-Google-Smtp-Source: AGHT+IEIBJSHoHcB6uCL6FpS7AscAT4qpHma+cr8VFsmorCTLSRFzVjs6l0QTo9cfENLMZ1tCqAXOBRYhn0=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:d80e:bfc8:2891:24c1])
+ (user=gnoack job=sendgmr) by 2002:a25:d096:0:b0:db5:3e28:4893 with SMTP id
+ h144-20020a25d096000000b00db53e284893mr46663ybg.12.1702030853455; Fri, 08 Dec
+ 2023 02:20:53 -0800 (PST)
+Date: Fri, 8 Dec 2023 11:20:44 +0100
+In-Reply-To: <CABi2SkXvTdrygc4rNmKBSRT5DRv_FeoX+y26JruBbeX_MwwLTQ@mail.gmail.com>
+Message-Id: <ZXLt_GB-3ngyMM2O@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20231201143042.3276833-1-gnoack@google.com> <20231201143042.3276833-5-gnoack@google.com>
+ <CABi2SkXvTdrygc4rNmKBSRT5DRv_FeoX+y26JruBbeX_MwwLTQ@mail.gmail.com>
+Subject: Re: [PATCH v7 4/9] landlock: Add IOCTL access right
+From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: linux-security-module@vger.kernel.org, 
+	"=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-The result as follows,
-  #263/1   set_mempolicy/MPOL_BIND_without_lsm:OK
-  #263/2   set_mempolicy/MPOL_DEFAULT_without_lsm:OK
-  #263/3   set_mempolicy/MPOL_BIND_with_lsm:OK
-  #263/4   set_mempolicy/MPOL_DEFAULT_with_lsm:OK
-  #263     set_mempolicy:OK
-  Summary: 1/4 PASSED, 0 SKIPPED, 0 FAILED
+Hello Jeff!
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- .../selftests/bpf/prog_tests/set_mempolicy.c       | 81 ++++++++++++++++++++++
- .../selftests/bpf/progs/test_set_mempolicy.c       | 28 ++++++++
- 2 files changed, 109 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/set_mempolicy.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_set_mempolicy.c
+On Fri, Dec 01, 2023 at 11:51:16AM -0800, Jeff Xu wrote:
+> On Fri, Dec 1, 2023 at 6:40=E2=80=AFAM G=C3=BCnther Noack <gnoack@google.=
+com> wrote:
+> > --- a/security/landlock/limits.h
+> > +++ b/security/landlock/limits.h
+> > @@ -18,7 +18,10 @@
+> >  #define LANDLOCK_MAX_NUM_LAYERS                16
+> >  #define LANDLOCK_MAX_NUM_RULES         U32_MAX
+> >
+> > -#define LANDLOCK_LAST_ACCESS_FS                LANDLOCK_ACCESS_FS_TRUN=
+CATE
+> > +#define LANDLOCK_LAST_PUBLIC_ACCESS_FS LANDLOCK_ACCESS_FS_IOCTL
+>=20
+> iiuc, for the next feature, it only needs to update
+> LANDLOCK_LAST_PUBLIC_ACCESS_FS to the new LANDLOCK_ACCESS_FS_ABC here.
+> and keep below the same, right ?
+>=20
+> > +#define LANDLOCK_MASK_PUBLIC_ACCESS_FS ((LANDLOCK_LAST_PUBLIC_ACCESS_F=
+S << 1) - 1)
+> > +
+> > +#define LANDLOCK_LAST_ACCESS_FS                (LANDLOCK_LAST_PUBLIC_A=
+CCESS_FS << 4)
+> maybe add a comment why "<<4" is used ?
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/set_mempolicy.c b/tools/testing/selftests/bpf/prog_tests/set_mempolicy.c
-new file mode 100644
-index 0000000..736b5e3
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/set_mempolicy.c
-@@ -0,0 +1,81 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (C) 2023 Yafang Shao <laoar.shao@gmail.com> */
-+
-+#include <unistd.h>
-+#include <sys/types.h>
-+#include <sys/mman.h>
-+#include <linux/mempolicy.h>
-+#include <test_progs.h>
-+#include "test_set_mempolicy.skel.h"
-+
-+#define SIZE 4096
-+
-+static void mempolicy_bind(bool success)
-+{
-+	unsigned long mask = 1;
-+	char *addr;
-+	int err;
-+
-+	addr = mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-+	if (!ASSERT_OK_PTR(addr, "mmap"))
-+		return;
-+
-+	/* -lnuma is required by mbind(2), so use __NR_mbind to avoid the dependency. */
-+	err = syscall(__NR_mbind, addr, SIZE, MPOL_BIND, &mask, sizeof(mask), 0);
-+	if (success)
-+		ASSERT_OK(err, "mbind_success");
-+	else
-+		ASSERT_ERR(err, "mbind_fail");
-+
-+	munmap(addr, SIZE);
-+}
-+
-+static void mempolicy_default(void)
-+{
-+	char *addr;
-+	int err;
-+
-+	addr = mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-+	if (!ASSERT_OK_PTR(addr, "mmap"))
-+		return;
-+
-+	err = syscall(__NR_mbind, addr, SIZE, MPOL_DEFAULT, NULL, 0, 0);
-+	ASSERT_OK(err, "mbind_success");
-+
-+	munmap(addr, SIZE);
-+}
-+
-+void test_set_mempolicy(void)
-+{
-+	struct test_set_mempolicy *skel;
-+	int err;
-+
-+	skel = test_set_mempolicy__open();
-+	if (!ASSERT_OK_PTR(skel, "open"))
-+		return;
-+
-+	skel->bss->target_pid = getpid();
-+
-+	err = test_set_mempolicy__load(skel);
-+	if (!ASSERT_OK(err, "load"))
-+		goto destroy;
-+
-+	if (test__start_subtest("MPOL_BIND_without_lsm"))
-+		mempolicy_bind(true);
-+	if (test__start_subtest("MPOL_DEFAULT_without_lsm"))
-+		mempolicy_default();
-+
-+	/* Attach LSM prog first */
-+	err = test_set_mempolicy__attach(skel);
-+	if (!ASSERT_OK(err, "attach"))
-+		goto destroy;
-+
-+	/* syscall to adjust memory policy */
-+	if (test__start_subtest("MPOL_BIND_with_lsm"))
-+		mempolicy_bind(false);
-+	if (test__start_subtest("MPOL_DEFAULT_with_lsm"))
-+		mempolicy_default();
-+
-+destroy:
-+	test_set_mempolicy__destroy(skel);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_set_mempolicy.c b/tools/testing/selftests/bpf/progs/test_set_mempolicy.c
-new file mode 100644
-index 0000000..b5356d5
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_set_mempolicy.c
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (C) 2023 Yafang Shao <laoar.shao@gmail.com> */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+int target_pid;
-+
-+static int mem_policy_adjustment(u64 mode)
-+{
-+	struct task_struct *task = bpf_get_current_task_btf();
-+
-+	if (task->pid != target_pid)
-+		return 0;
-+
-+	if (mode != MPOL_BIND)
-+		return 0;
-+	return -1;
-+}
-+
-+SEC("lsm/set_mempolicy")
-+int BPF_PROG(setmempolicy, u64 mode, u16 mode_flags, nodemask_t *nmask, u32 flags)
-+{
-+	return mem_policy_adjustment(mode);
-+}
-+
-+char _license[] SEC("license") = "GPL";
--- 
-1.8.3.1
+I'll add a comment to the section explaining it:
 
+  For file system access rights, Landlock distinguishes between the publicl=
+y
+  visible access rights (1 to LANDLOCK_LAST_PUBLIC_ACCESS_FS) and the priva=
+te
+  ones which are not exposed to userspace (LANDLOCK_LAST_PUBLIC_ACCESS_FS +=
+ 1 to
+  LANDLOCK_LAST_ACCESS_FS).  The private access rights are defined in fs.c.
+
+This should clarify both questions, I hope.
+
+You are correct -- the private access rights in fs.c are defined relative t=
+o the
+last public access right.
+
+=E2=80=94G=C3=BCnther
