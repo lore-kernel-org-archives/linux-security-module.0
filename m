@@ -1,38 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1888840E4;
-	Fri,  8 Dec 2023 13:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3D41CA81;
+	Fri,  8 Dec 2023 13:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FRvRDROr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CA9CC433C8;
-	Fri,  8 Dec 2023 13:07:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rYftDdRO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F08B5C433C8;
+	Fri,  8 Dec 2023 13:41:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702040846;
-	bh=SoM8x/tugHwn+Aw7Ckn647a6hBilbt2LIQ8QfTxIMGc=;
+	s=k20201202; t=1702042886;
+	bh=iw7AZIJ/HJKYatG6312tRTjIKLjBbSHjSe1T5NGECQM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FRvRDROrDplmOc4J0deSnjRWLLGfPdUoC08OtmjKBBVaNKm0FrU1Hh9dIrDNqAOBe
-	 HnJU5tzwbP6vUsjWqwsqT9n2TghaBXk+yI/DSTHRoUh6J8TebGKZtlkVhUHGrHJSej
-	 rMTfRzUZEeBvSvaA7cfzvYU+HN/EZ8U4j954fnUHh/LDvlF8pBANHxXqlvMMzuMc17
-	 zrtOIeKzKW1hQzXtc9yYZgh6PVKPNMal3ObYBYFJdytUt9sOv28+B2W3BiLnqdSsoI
-	 vjr5ZVsZS6uvDgNIyMbSXGXaOcujepTCT/JCGYOo2bFRvtQn55qgPf29L7eJ0bkNia
-	 bT1Vn3kR//EOQ==
-Date: Fri, 8 Dec 2023 14:07:20 +0100
+	b=rYftDdROJXoaI/Jn/GPYBGoyH3/829Gl5qFur6JUJ6zdo7RBLZMSUj/cMVWFEnj7H
+	 7IbDdS0VB7rHXQbYOgM4QI9jkA8l/6jBuS2HQbMUr2WmnCW8nKRkfoO4stnhJBe9j4
+	 6mlrkQ3ANYZPzqmTqc51l08PUKVxzzmGoVS3Y+NdCkb9t/CZcfcnGy5tZfv5+K0z4O
+	 rvY2YHR94O9KbAJFRPi1IsVV+3G742E29qDf1bzZYy1ZI1DBusScIUddmgmEa0tWsc
+	 oo529eVoDA3yWzE8AyALmhgtisod0H3BCsmZgU1fK0Kzju3giOUt8hn0IToE0ZYXMS
+	 zE9oj2/YDZ9pA==
+Date: Fri, 8 Dec 2023 14:41:21 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Christian Brauner <christian@brauner.io>, linux-api@vger.kernel.org,
-	linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
-	Karel Zak <kzak@redhat.com>, linux-fsdevel@vger.kernel.org,
-	Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 3/4] listmount: small changes in semantics
-Message-ID: <20231208-umtreiben-imposant-0b89b4dd2f80@brauner>
-References: <20231128160337.29094-1-mszeredi@redhat.com>
- <20231128160337.29094-4-mszeredi@redhat.com>
- <20231206195807.GA209606@mail.hallyn.com>
- <CAJfpegs-uUEwKrEcmRE4WkzWet_A1f9mnM7UtFqM=szEUi+-1g@mail.gmail.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, keescook@chromium.org,
+	kernel-team@meta.com, sargun@sargun.me
+Subject: Re: [PATCH v12 bpf-next 03/17] bpf: introduce BPF token object
+Message-ID: <20231208-besessen-vibrieren-4e963e3ca3ba@brauner>
+References: <20231130185229.2688956-1-andrii@kernel.org>
+ <20231130185229.2688956-4-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -41,43 +36,55 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJfpegs-uUEwKrEcmRE4WkzWet_A1f9mnM7UtFqM=szEUi+-1g@mail.gmail.com>
+In-Reply-To: <20231130185229.2688956-4-andrii@kernel.org>
 
-On Wed, Dec 06, 2023 at 09:24:45PM +0100, Miklos Szeredi wrote:
-> On Wed, 6 Dec 2023 at 20:58, Serge E. Hallyn <serge@hallyn.com> wrote:
-> >
-> > On Tue, Nov 28, 2023 at 05:03:34PM +0100, Miklos Szeredi wrote:
+On Thu, Nov 30, 2023 at 10:52:15AM -0800, Andrii Nakryiko wrote:
+> Add new kind of BPF kernel object, BPF token. BPF token is meant to
+> allow delegating privileged BPF functionality, like loading a BPF
+> program or creating a BPF map, from privileged process to a *trusted*
+> unprivileged process, all while having a good amount of control over which
+> privileged operations could be performed using provided BPF token.
 > 
-> > > -     if (!is_path_reachable(m, mnt->mnt_root, &rootmnt))
-> > > -             return capable(CAP_SYS_ADMIN) ? 0 : -EPERM;
-> > > +     if (!capable(CAP_SYS_ADMIN) &&
-> >
-> > Was there a reason to do the capable check first?  In general,
-> > checking capable() when not needed is frowned upon, as it will
-> > set the PF_SUPERPRIV flag.
-> >
+> This is achieved through mounting BPF FS instance with extra delegation
+> mount options, which determine what operations are delegatable, and also
+> constraining it to the owning user namespace (as mentioned in the
+> previous patch).
 > 
-> I synchronized the permission checking with statmount() without
-> thinking about the order.   I guess we can change the order back in
-> both syscalls?
+> BPF token itself is just a derivative from BPF FS and can be created
+> through a new bpf() syscall command, BPF_TOKEN_CREATE, which accepts BPF
+> FS FD, which can be attained through open() API by opening BPF FS mount
+> point. Currently, BPF token "inherits" delegated command, map types,
+> prog type, and attach type bit sets from BPF FS as is. In the future,
+> having an BPF token as a separate object with its own FD, we can allow
+> to further restrict BPF token's allowable set of things either at the
+> creation time or after the fact, allowing the process to guard itself
+> further from unintentionally trying to load undesired kind of BPF
+> programs. But for now we keep things simple and just copy bit sets as is.
+> 
+> When BPF token is created from BPF FS mount, we take reference to the
+> BPF super block's owning user namespace, and then use that namespace for
+> checking all the {CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, CAP_SYS_ADMIN}
+> capabilities that are normally only checked against init userns (using
+> capable()), but now we check them using ns_capable() instead (if BPF
+> token is provided). See bpf_token_capable() for details.
+> 
+> Such setup means that BPF token in itself is not sufficient to grant BPF
+> functionality. User namespaced process has to *also* have necessary
+> combination of capabilities inside that user namespace. So while
+> previously CAP_BPF was useless when granted within user namespace, now
+> it gains a meaning and allows container managers and sys admins to have
+> a flexible control over which processes can and need to use BPF
+> functionality within the user namespace (i.e., container in practice).
+> And BPF FS delegation mount options and derived BPF tokens serve as
+> a per-container "flag" to grant overall ability to use bpf() (plus further
+> restrict on which parts of bpf() syscalls are treated as namespaced).
+> 
+> Note also, BPF_TOKEN_CREATE command itself requires ns_capable(CAP_BPF)
+> within the BPF FS owning user namespace, rounding up the ns_capable()
+> story of BPF token.
+> 
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
 
-I can just change the order. It's mostly a question of what is more
-expensive. If there's such unpleasant side-effects... then sure I'll
-reorder.
-
-> I also don't understand the reason behind the using the _noaudit()
-> variant.  Christian?
-
-The reasoning is similar to the change in commit e7eda157c407 ("fs:
-don't audit the capability check in simple_xattr_list()").
-
-    "The check being unconditional may lead to unwanted denials reported by
-    LSMs when a process has the capability granted by DAC, but denied by an
-    LSM. In the case of SELinux such denials are a problem, since they can't
-    be effectively filtered out via the policy and when not silenced, they
-    produce noise that may hide a true problem or an attack."
-
-So for system calls like listmount() that we can expect to be called a
-lot of times (findmnt etc at some point) this would needlessly spam
-dmesg without any value. We can always change that to an explicit
-capable() later.
+Same concerns as in the other mail. For the bpf_token_create() code,
+Acked-by: Christian Brauner <brauner@kernel.org>
