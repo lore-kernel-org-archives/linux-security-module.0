@@ -1,189 +1,164 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VsOG9GQy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F63171C
-	for <linux-security-module@vger.kernel.org>; Fri,  8 Dec 2023 04:27:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702038432;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MVkISSEH+FBdQzDw8GhWybc3B9G1vZlEpKHv0PrW/Q0=;
-	b=VsOG9GQyyw+yGSlHE/4NZfMwFuvNA0FcYUCn7YOq5CQQBBfseLd+c0VxMJfm8bgm34DYHk
-	IKFYIAyYlmarSRmLUP4BhR9PCtSS+LxWan2RGVEpmDtVykZ8EODawYICY2hbfz0oTHr6yU
-	zzHvewegYlTFXYI6Q0o+lDIn7weeksY=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-167-EY4e9PFrOZ-gtcH4PrhyCw-1; Fri, 08 Dec 2023 07:27:11 -0500
-X-MC-Unique: EY4e9PFrOZ-gtcH4PrhyCw-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-54d8783972dso1057548a12.2
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Dec 2023 04:27:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702038430; x=1702643230;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b199UgcL"
+Received: from mail-ej1-x649.google.com (mail-ej1-x649.google.com [IPv6:2a00:1450:4864:20::649])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A97191998
+	for <linux-security-module@vger.kernel.org>; Fri,  8 Dec 2023 04:48:01 -0800 (PST)
+Received: by mail-ej1-x649.google.com with SMTP id a640c23a62f3a-9fd0a58549bso234000366b.0
+        for <linux-security-module@vger.kernel.org>; Fri, 08 Dec 2023 04:48:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1702039680; x=1702644480; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MVkISSEH+FBdQzDw8GhWybc3B9G1vZlEpKHv0PrW/Q0=;
-        b=wnUtSwP2dLb/sVIg4dcNkkACQQFuwlpzkjii7lkE8QYYQl0zGwhcXAEbbNtfT3v8It
-         bs2HSWTm8MHU2CIEXoOtYP+yNqxHRHEJF5DCj5gTQWU4mECaaqD4y6ebU7WUofGyEZ/f
-         ldGdSLozt7n1BbV8hAZg7N/2EPveRdY7xaBpocTkViaFKoXjMu59weh2yuuUvPg3CZNh
-         jg3fyg8DOMfGvTGAnnsSIEegppMPBJudjGikN68O4hDx/R9igCCgISeSWeJKAM+B/Gcz
-         VdF40Ew2nYEb4u/ZUTSImniWMJ2X3UipKuvlwKU/c2gC3oXnMtElEV/omL61Vz1TD0X0
-         8+Xw==
-X-Gm-Message-State: AOJu0YyIklqFbfbJqU8frDw9JZMoU2MpMizJ0tD6HOx13iIXLEU79eWi
-	qa/NkZN9TcAGXDuTYAumIf8y9XbY3GRQTHuadE1o1+Em+qvXAeWgMLE+q+yOSDfXWBABlcSZXIh
-	hwLndbuWQjG9xsC6bwCNHDRyQokMiKsZ6mZuk
-X-Received: by 2002:a50:9fa9:0:b0:54d:8e9e:c835 with SMTP id c38-20020a509fa9000000b0054d8e9ec835mr12163edf.78.1702038430263;
-        Fri, 08 Dec 2023 04:27:10 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEMFEvK3hIa6NTwh4M4b1Lj05T78HNsQaqmShsFPjb+rBrGd/VH7pLicv91797yDItcZw6KJw==
-X-Received: by 2002:a50:9fa9:0:b0:54d:8e9e:c835 with SMTP id c38-20020a509fa9000000b0054d8e9ec835mr12148edf.78.1702038429859;
-        Fri, 08 Dec 2023 04:27:09 -0800 (PST)
-Received: from redhat.com ([2a02:14f:1f0:7466:b10d:58c8:869f:7e91])
-        by smtp.gmail.com with ESMTPSA id n17-20020a509351000000b0054c5b5c0893sm792181eda.71.2023.12.08.04.27.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Dec 2023 04:27:09 -0800 (PST)
-Date: Fri, 8 Dec 2023 07:26:59 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Maxime Coquelin <maxime.coquelin@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>,
-	Casey Schaufler <casey@schaufler-ca.com>, jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com, jmorris@namei.org, serge@hallyn.com,
-	stephen.smalley.work@gmail.com, eparis@parisplace.org,
-	xieyongji@bytedance.com, virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org, david.marchand@redhat.com, lulu@redhat.com
-Subject: Re: [PATCH v4 4/4] vduse: Add LSM hooks to check Virtio device type
-Message-ID: <20231208072649-mutt-send-email-mst@kernel.org>
-References: <20231020155819.24000-5-maxime.coquelin@redhat.com>
- <2b8269b7c58ebf9b260b4e2a0676bc22.paul@paul-moore.com>
- <8ec2ae21-603d-4ce1-944b-09e042751806@redhat.com>
- <20231208060249-mutt-send-email-mst@kernel.org>
- <a5faf263-d998-4845-952f-9c8dc1d4609f@redhat.com>
+        bh=l+kObd+JIGY2cM/glk/Q9xku9Pg0BTFZYmGYboEHbqo=;
+        b=b199UgcLzy4cOonkTSI7UfElaAj1dTAbXCGT15gahTmP4S7GQ1LFDCFk7QmbtqY5LO
+         O9I0ZekF4tRV3wlPUU4hkxwAIXw1ZoO2cxB+ZnpFo969gz19YvgC9NG6IiJJKn/pQ5hK
+         5b/ohu47gpq0RwcJKl9DgQGO4ms27U2Ttx8AX9vWdeKHKISZEhH/BgwpPS3ryWuQXWTD
+         O5iwRwpRVR2IvQpketEIHPQ3wrjK/avM6AoUn/ZR+423dNML6mNQGytQ81kgWRzQAcZk
+         f/nJJwDyx3VALejAU11rkfqex7+XaD9SD5jTdjaGX8ga2+388kTP/bdJcmASTUnVbv3P
+         JpDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702039680; x=1702644480;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=l+kObd+JIGY2cM/glk/Q9xku9Pg0BTFZYmGYboEHbqo=;
+        b=NkIitaLiDVXfBdqGukmP4vFtBLMWaWc5ggkiGFbE1Y2sJ3rEF9MUoZL6bRPFMYpO2B
+         4YwYl+8hh2POuHt3NvyXwBslAc7R4JJpITFzPku1u/3/0lhQphsBBlNJFsjhXTt2YjQF
+         E2ecQ8fy3IKMq1bkEGrJixlXrEsZPAh+LnQ4kNWviljSHiga8TeV0jdrL4fiLChce2W+
+         TOi2S+AIFp3CtNg7rFri+usumci163tAaUhxjYVRPhladWjt/qehf3Vbj2ywFQ+SkAam
+         iicMAaYj9gnr1ekt9j5t3EZeTwNN7ghVlUpUeYk8Qnk7rRfEkenSMejjkh6uNM/bYy25
+         mK+w==
+X-Gm-Message-State: AOJu0Yxyd2LcMvLfpIwJ4U5EBrAvw2UppUS9CnnTZxxqZXl0aLfuFV1G
+	rQnu6U9n/zbnoor0bo7+QO6sQiNGmvs=
+X-Google-Smtp-Source: AGHT+IFDOcr7bui5v8HTFE7vcdjUHf6o95K/2qxy45eb27If/ShRl0g/wHckFIuhMOF8E3rjyRhHDJTcSGI=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:d80e:bfc8:2891:24c1])
+ (user=gnoack job=sendgmr) by 2002:a17:906:690:b0:a1f:70a6:dbb2 with SMTP id
+ u16-20020a170906069000b00a1f70a6dbb2mr4282ejb.4.1702039680062; Fri, 08 Dec
+ 2023 04:48:00 -0800 (PST)
+Date: Fri, 8 Dec 2023 13:47:50 +0100
+In-Reply-To: <CABi2SkULCFBK0eBZen6Z7YSLnm_EcZqbmPN2fQ64bBbmX77uRw@mail.gmail.com>
+Message-Id: <ZXMQdqeGH6i5aJd8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <a5faf263-d998-4845-952f-9c8dc1d4609f@redhat.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+References: <20231201143042.3276833-1-gnoack@google.com> <20231201143042.3276833-10-gnoack@google.com>
+ <CABi2SkULCFBK0eBZen6Z7YSLnm_EcZqbmPN2fQ64bBbmX77uRw@mail.gmail.com>
+Subject: Re: [PATCH v7 9/9] landlock: Document IOCTL support
+From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: linux-security-module@vger.kernel.org, 
+	"=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 08, 2023 at 01:23:00PM +0100, Maxime Coquelin wrote:
-> 
-> 
-> On 12/8/23 12:05, Michael S. Tsirkin wrote:
-> > On Fri, Dec 08, 2023 at 12:01:15PM +0100, Maxime Coquelin wrote:
-> > > Hello Paul,
-> > > 
-> > > On 11/8/23 03:31, Paul Moore wrote:
-> > > > On Oct 20, 2023 "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> > > > > 
-> > > > > This patch introduces LSM hooks for devices creation,
-> > > > > destruction and opening operations, checking the
-> > > > > application is allowed to perform these operations for
-> > > > > the Virtio device type.
-> > > > > 
-> > > > > Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-> > > > > ---
-> > > > >    drivers/vdpa/vdpa_user/vduse_dev.c  | 12 +++++++
-> > > > >    include/linux/lsm_hook_defs.h       |  4 +++
-> > > > >    include/linux/security.h            | 15 ++++++++
-> > > > >    security/security.c                 | 42 ++++++++++++++++++++++
-> > > > >    security/selinux/hooks.c            | 55 +++++++++++++++++++++++++++++
-> > > > >    security/selinux/include/classmap.h |  2 ++
-> > > > >    6 files changed, 130 insertions(+)
-> > > > 
-> > > > My apologies for the late reply, I've been trying to work my way through
-> > > > the review backlog but it has been taking longer than expected; comments
-> > > > below ...
-> > > 
-> > > No worries, I have also been busy these days.
-> > > 
-> > > > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > > > > index 2aa0e219d721..65d9262a37f7 100644
-> > > > > --- a/security/selinux/hooks.c
-> > > > > +++ b/security/selinux/hooks.c
-> > > > > @@ -21,6 +21,7 @@
-> > > > >     *  Copyright (C) 2016 Mellanox Technologies
-> > > > >     */
-> > > > > +#include "av_permissions.h"
-> > > > >    #include <linux/init.h>
-> > > > >    #include <linux/kd.h>
-> > > > >    #include <linux/kernel.h>
-> > > > > @@ -92,6 +93,7 @@
-> > > > >    #include <linux/fsnotify.h>
-> > > > >    #include <linux/fanotify.h>
-> > > > >    #include <linux/io_uring.h>
-> > > > > +#include <uapi/linux/virtio_ids.h>
-> > > > >    #include "avc.h"
-> > > > >    #include "objsec.h"
-> > > > > @@ -6950,6 +6952,56 @@ static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
-> > > > >    }
-> > > > >    #endif /* CONFIG_IO_URING */
-> > > > > +static int vduse_check_device_type(u32 sid, u32 device_id)
-> > > > > +{
-> > > > > +	u32 requested;
-> > > > > +
-> > > > > +	if (device_id == VIRTIO_ID_NET)
-> > > > > +		requested = VDUSE__NET;
-> > > > > +	else if (device_id == VIRTIO_ID_BLOCK)
-> > > > > +		requested = VDUSE__BLOCK;
-> > > > > +	else
-> > > > > +		return -EINVAL;
-> > > > > +
-> > > > > +	return avc_has_perm(sid, sid, SECCLASS_VDUSE, requested, NULL);
-> > > > > +}
-> > > > > +
-> > > > > +static int selinux_vduse_dev_create(u32 device_id)
-> > > > > +{
-> > > > > +	u32 sid = current_sid();
-> > > > > +	int ret;
-> > > > > +
-> > > > > +	ret = avc_has_perm(sid, sid, SECCLASS_VDUSE, VDUSE__DEVCREATE, NULL);
-> > > > > +	if (ret)
-> > > > > +		return ret;
-> > > > > +
-> > > > > +	return vduse_check_device_type(sid, device_id);
-> > > > > +}
-> > > > 
-> > > > I see there has been some discussion about the need for a dedicated
-> > > > create hook as opposed to using the existing ioctl controls.  I think
-> > > > one important point that has been missing from the discussion is the
-> > > > idea of labeling the newly created device.  Unfortunately prior to a
-> > > > few minutes ago I hadn't ever looked at VDUSE so please correct me if
-> > > > I get some things wrong :)
-> > > > 
-> > > >   From what I can see userspace creates a new VDUSE device with
-> > > > ioctl(VDUSE_CREATE_DEV), which trigger the creation of a new
-> > > > /dev/vduse/XXX device which will be labeled according to the udev
-> > > > and SELinux configuration, likely with a generic udev label.  My
-> > > > question is if we want to be able to uniquely label each VDUSE
-> > > > device based on the process that initiates the device creation
-> > > > with the call to ioctl()?  If that is the case, we would need a
-> > > > create hook not only to control the creation of the device, but to
-> > > > record the triggering process' label in the new device; this label
-> > > > would then be used in subsequent VDUSE open and destroy operations.
-> > > > The normal device file I/O operations would still be subject to the
-> > > > standard SELinux file I/O permissions using the device file label
-> > > > assigned by systemd/udev when the device was created.
-> > > 
-> > > I don't think we need a unique label for VDUSE devices, but maybe
-> > > Michael thinks otherwise?
-> > 
-> > I don't know.
-> > All this is consumed by libvirt, you need to ask these guys.
-> 
-> I think it is not consumed by libvirt, at least not in the usecases I
-> have in mind. For networking devices, it will be consumed by OVS.
-> 
-> Maxime
+Hello Jeff!
 
-OK, ovs then :)
+On Fri, Dec 01, 2023 at 11:55:03AM -0800, Jeff Xu wrote:
+> On Fri, Dec 1, 2023 at 6:41=E2=80=AFAM G=C3=BCnther Noack <gnoack@google.=
+com> wrote:
+> > +Rights associated with file descriptors
+> > +---------------------------------------
+> > +
+> > +When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUN=
+CATE`` and
+> > +``LANDLOCK_ACCESS_FS_IOCTL`` rights is associated with the newly creat=
+ed file
+> > +descriptor and will be used for subsequent truncation and ioctl attemp=
+ts using
+> > +:manpage:`ftruncate(2)` and :manpage:`ioctl(2)`.  The behavior is simi=
+lar to
+> > +opening a file for reading or writing, where permissions are checked d=
+uring
+> > +:manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` a=
+nd
+> >  :manpage:`write(2)` calls.
+> >
+> > -As a consequence, it is possible to have multiple open file descriptor=
+s for the
+> > -same file, where one grants the right to truncate the file and the oth=
+er does
+> > -not.  It is also possible to pass such file descriptors between proces=
+ses,
+> > -keeping their Landlock properties, even when these processes do not ha=
+ve an
+> > -enforced Landlock ruleset.
+> > +As a consequence, it is possible to have multiple open file descriptor=
+s
+> > +referring to the same file, where one grants the truncate or ioctl rig=
+ht and the
+> > +other does not.  It is also possible to pass such file descriptors bet=
+ween
+> > +processes, keeping their Landlock properties, even when these processe=
+s do not
+> > +have an enforced Landlock ruleset.
+> >
+> I understand the "passing fd between process ", but not the " multiple
+> open fds referring to the same file, with different permission", are
+> those fds all opened within the same domain ?
+>=20
+> Can we have a pseudocode to help understanding ?
 
--- 
-MST
+It's a little bit expanding the scope here, as the documentation existed al=
+redy
+prior to the patch set, but it's a fair comment that this paragraph is not =
+clear
+enough.  I tried to rephrase it.  Maybe this is better:
 
+  As a consequence, it is possible that a process has multiple open file
+  descriptors referring to the same file, but Landlock enforces different t=
+hings
+  when operating with these file descriptors.  This can happen when a Landl=
+ock
+  ruleset gets enforced and the process keeps file descriptors which were o=
+pened
+  both before and after the enforcement.  It is also possible to pass such =
+file
+  descriptors between processes, keeping their Landlock properties, even wh=
+en
+  some of the involved processes do not have an enforced Landlock ruleset.
+
+Some example code to clarify:
+
+One way that this can happen is:
+
+  (1) fd1 =3D open("foobar.txt", O_RDWR)
+  (2) enforce_landlock(forbid all ioctls)
+  (3) fd2 =3D open("foobar.txt", O_RDWR)
+
+  =3D=3D> You now have fd1 and fd2 referring to the same file on disk,
+      but you can only do ioctls on it through fd1, but not through fd2.
+
+Or, using SCM_RIGHTS (unix(7)):
+
+  (1) Process 1: Listen on Unix socket
+  (2) Process 2: Enforce Landlock so that ioctls are forbidden
+  (3) Process 2: fd =3D open("foobar.txt", O_RDWR)
+  (4) Process 2: send fd to Process 1
+  (5) Process 1: receive fd
+
+  =3D=3D> Process 1 can not do ioctls on the received fd,
+      as configured by the Landlock policy enforced in Process 2
+
+Or, simply by inheriting file descriptors through execve:
+
+  (1) Parent process/main thread: Spawn thread t
+    (t.1) Enforce Landlock so that ioctls are forbidden
+          (This policy is local to the thread)
+    (t.2) fd =3D open("foobar.txt", O_RDWR)
+  (2) Parent process/main thread: join (exit) thread t
+  (3) Parent process/main thread: execve and inherit fd!
+
+  =3D=3D> The child process can not use ioctls with the inherited fd,
+      as configured by the Landlock policy before
+
+The same is also possible with the truncation right.
+
+=E2=80=94G=C3=BCnther
