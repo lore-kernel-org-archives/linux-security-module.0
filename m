@@ -1,119 +1,405 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="I2VUz/Sw"
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B6291723;
-	Fri,  8 Dec 2023 17:11:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1702084264; x=1733620264;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=68RgYT2Q6oe2CyzNj6cVl218qzpdZJW9YHDhZxnIURQ=;
-  b=I2VUz/SwAWzvz5T3g5rYhC9pZ5sDvq9oqq05q7JFJydNTncKjwmuMorU
-   1RI3yR4BKBsVPATaf7gSX/NbwscAdF0u/7+oPsVqLlv+EeGmdYTZ9J3Ag
-   YbpSLZkhj08q1KHxAZbCOBSPlWon6ZToTMRtzvf/viwBBplAcQ7sRCSJr
-   8=;
-X-IronPort-AV: E=Sophos;i="6.04,262,1695686400"; 
-   d="scan'208";a="381761548"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO email-inbound-relay-iad-1d-m6i4x-b404fda3.us-east-1.amazon.com) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2023 01:11:03 +0000
-Received: from smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev (iad7-ws-svc-p70-lb3-vlan3.iad.amazon.com [10.32.235.38])
-	by email-inbound-relay-iad-1d-m6i4x-b404fda3.us-east-1.amazon.com (Postfix) with ESMTPS id 675188068A;
-	Sat,  9 Dec 2023 01:11:00 +0000 (UTC)
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:52528]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.60.107:2525] with esmtp (Farcaster)
- id 8b02ef78-1627-4a11-b65e-f3abc98ba89e; Sat, 9 Dec 2023 01:10:59 +0000 (UTC)
-X-Farcaster-Flow-ID: 8b02ef78-1627-4a11-b65e-f3abc98ba89e
-Received: from EX19D010UWA004.ant.amazon.com (10.13.138.204) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Sat, 9 Dec 2023 01:10:53 +0000
-Received: from dev-dsk-kamatam-2b-b66a5860.us-west-2.amazon.com (10.169.6.191)
- by EX19D010UWA004.ant.amazon.com (10.13.138.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Sat, 9 Dec 2023 01:10:53 +0000
-From: Munehisa Kamata <kamatam@amazon.com>
-To: <casey@schaufler-ca.com>, <paul@paul-moore.com>
-CC: <adobriyan@gmail.com>, <akpm@linux-foundation.org>, <kamatam@amazon.com>,
-	<linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: Fw: [PATCH] proc: Update inode upon changing task security attribute
-Date: Sat, 9 Dec 2023 01:10:42 +0000
-Message-ID: <20231209011042.29059-1-kamatam@amazon.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <7ba17c0d-49c6-4322-b196-3ecb7a371c62@schaufler-ca.com>
-References: <7ba17c0d-49c6-4322-b196-3ecb7a371c62@schaufler-ca.com>
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 279661AD
+	for <linux-security-module@vger.kernel.org>; Sat,  9 Dec 2023 00:29:00 -0800 (PST)
+Received: from fsav411.sakura.ne.jp (fsav411.sakura.ne.jp [133.242.250.110])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 3B98SBW9009671;
+	Sat, 9 Dec 2023 17:28:11 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav411.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp);
+ Sat, 09 Dec 2023 17:28:11 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 3B98S66N009631
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 9 Dec 2023 17:28:06 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <09e4992c-9def-41b5-a806-2978b3ae35c6@I-love.SAKURA.ne.jp>
+Date: Sat, 9 Dec 2023 17:28:04 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D032UWB002.ant.amazon.com (10.13.139.190) To
- EX19D010UWA004.ant.amazon.com (10.13.138.204)
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-security-module <linux-security-module@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, KP Singh <kpsingh@kernel.org>,
+        Paul Moore <paul@paul-moore.com>, Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc: song@kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>, renauld@google.com,
+        Paolo Abeni <pabeni@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [RFC PATCH v3] LSM: Officially support appending LSM hooks after
+ boot.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, 2023-12-09 00:24:42 +0000, Casey Schaufler wrote:
->
-> On 12/8/2023 3:32 PM, Paul Moore wrote:
-> > On Fri, Dec 8, 2023 at 6:21 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> On 12/8/2023 2:43 PM, Paul Moore wrote:
-> >>> On Thu, Dec 7, 2023 at 9:14 PM Munehisa Kamata <kamatam@amazon.com> wrote:
-> >>>> On Tue, 2023-12-05 14:21:51 -0800, Paul Moore wrote:
-> >>> ..
-> >>>
-> >>>>> I think my thoughts are neatly summarized by Andrew's "yuk!" comment
-> >>>>> at the top.  However, before we go too much further on this, can we
-> >>>>> get clarification that Casey was able to reproduce this on a stock
-> >>>>> upstream kernel?  Last I read in the other thread Casey wasn't seeing
-> >>>>> this problem on Linux v6.5.
-> >>>>>
-> >>>>> However, for the moment I'm going to assume this is a real problem, is
-> >>>>> there some reason why the existing pid_revalidate() code is not being
-> >>>>> called in the bind mount case?  From what I can see in the original
-> >>>>> problem report, the path walk seems to work okay when the file is
-> >>>>> accessed directly from /proc, but fails when done on the bind mount.
-> >>>>> Is there some problem with revalidating dentrys on bind mounts?
-> >>>> Hi Paul,
-> >>>>
-> >>>> https://lkml.kernel.org/linux-fsdevel/20090608201745.GO8633@ZenIV.linux.org.uk/
-> >>>>
-> >>>> After reading this thread, I have doubt about solving this in VFS.
-> >>>> Honestly, however, I'm not sure if it's entirely relevant today.
-> >>> Have you tried simply mounting proc a second time instead of using a bind mount?
-> >>>
-> >>>  % mount -t proc non /new/location/for/proc
-> >>>
-> >>> I ask because from your description it appears that proc does the
-> >>> right thing with respect to revalidation, it only becomes an issue
-> >>> when accessing proc through a bind mount.  Or did I misunderstand the
-> >>> problem?
-> >> It's not hard to make the problem go away by performing some simple
-> >> action. I was unable to reproduce the problem initially because I
-> >> checked the Smack label on the bind mounted proc entry before doing
-> >> the cat of it. The problem shows up if nothing happens to update the
-> >> inode.
-> > A good point.
-> >
-> > I'm kinda thinking we just leave things as-is, especially since the
-> > proposed fix isn't something anyone is really excited about.
-> 
-> "We have to compromise the performance of our sandboxing tool because of
-> a kernel bug that's known and for which a fix is available."
-> 
-> If this were just a curiosity that wasn't affecting real development I
-> might agree. But we've got a real world problem, and I don't see ignoring
-> it as a good approach. I can't see maintainers of other LSMs thinking so
-> if this were interfering with their users.
+Commit 20510f2f4e2d ("security: Convert LSM into a static interface") has
+unexported register_security()/unregister_security(), with the reasoning
+that the ability to unload an LSM module is not required by in-tree users
+and potentially complicates the overall security architecture.
+
+After that commit, many LSM modules have been proposed and some of them
+have succeeded in becoming in-tree users. Also, Linux distributors started
+enabling some of in-tree LSM modules in their distribution kernels.
+
+But due to that commit, currently in order to officially use an LSM
+module, that LSM module has to be built into vmlinux. And this limitation
+has been a big barrier for allowing distribution kernel users to use LSM
+modules which the organization who builds that distribution kernel cannot
+afford supporting.
+
+Therefore, as one of in-tree users, I've been asking for ability to append
+LSM hooks from LKM-based LSMs (i.e. re-export register_security()) so that
+distribution kernel users can use LSMs which the organization who builds
+that distribution kernel cannot afford supporting.
+
+Paul Moore believes that we don't need to support appending LSM hooks from
+LKM-based LSMs because anyone who wants to use an LSM module can recompile
+distributor kernels with that LSM enabled. But recompiling kernels is not
+a viable option for regular developers/users [1]; the burden of
+distributing rebuilt kernels is not acceptable for individual LSM authors
+and majority of Linux users, and the risk of replacing known distributor's
+prebuilt kernels with unknown individual's rebuilt kernels is not
+acceptable for majority of distributor kernel users. If Endpoint Detection
+and Response software (including Antivirus software) could not be used
+without replacing distributor's prebuilt kernels, Linux would not have been
+chosen as a platform. Being able to use whatever functionality using
+prebuilt distribution kernel packages and prebuilt kernel-debuginfo
+packages is the mandatory baseline. Therefore, in order to unofficially use
+LSMs which are not built into vmlinux, I've been maintaining AKARI (which
+is a pure LKM version of TOMOYO) as an LKM-based LSM which can run on
+kernels between 2.6.0 and 6.6.
+
+I was planning to propose ability to append LSM hooks from LKM-based LSMs
+(i.e. re-export register_security()) so that distribution kernel users can
+use LSMs which the organization who builds that distribution kernel cannot
+afford supporting, after Casey Schaufler finishes his work for making it
+possible to enable arbitrary LSM combinations. But before Casey's work
+finishes, KP Singh started proposing "Reduce overhead of LSMs with static
+calls" which will make AKARI more difficult to run because it removes
+security_hook_heads. Therefore, reviving ability to officially append LSM
+hooks from LKM-based LSMs became an urgent matter.
+
+KP Singh suggested me to try eBPF programs because BPF LSM is enabled in
+distributor's prebuilt kernels. But the result was that eBPF is too
+restricted to emulate TOMOYO. Therefore, I still need ability to append
+LSM hooks from LKM-based LSMs.
+
+Since it seems that nobody has objection on not using an LSM module which
+calls LSM hooks in the LKM-based LSMs [2], this version directly appended
+the linked list into individual callbacks. KP Singh's "Reduce overhead of
+LSMs with static calls" proposal will replace security_hook_heads with
+array of static call slots, and mod_security_hook_heads will remain
+untouched.
+
+This patch implements only ability to add LSM modules after boot, for
+as far as we know, we haven't heard of requests for reviving the ability
+to remove LSM modules after boot.
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Link: https://lkml.kernel.org/r/d759146e-5d74-4782-931b-adda33b125d4@I-love.SAKURA.ne.jp [1]
+Link: https://lkml.kernel.org/r/93b5e861-c1ec-417c-b21e-56d0c4a3ae79@I-love.SAKURA.ne.jp [2]
+---
+ include/linux/lsm_hooks.h |   9 +++
+ security/security.c       | 134 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 143 insertions(+)
+
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index dcb5e5b5eb13..de83740f81a5 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -97,6 +97,7 @@ static inline struct xattr *lsm_get_xattr_slot(struct xattr *xattrs,
+  * care of the common case and reduces the amount of
+  * text involved.
+  */
++#ifndef MODULE
+ #define LSM_HOOK_INIT(HEAD, HOOK) \
+ 	{ .head = &security_hook_heads.HEAD, .hook = { .HEAD = HOOK } }
  
-We do bind mount to make information exposed to the sandboxed task as little
-as possible. We also create a separate PID namespace for each sandbox, but
-still want to bind mount even with it to hide system-wide and pid 1
-information from the task. 
-
-So, yeah, I see this as a real problem for our use case and want to seek an
-opinion about a possibly better fix.
-
-
-Thanks,
-Munehisa 
+@@ -105,6 +106,14 @@ extern char *lsm_names;
+ 
+ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ 				const char *lsm);
++#else
++#define LSM_HOOK_INIT(HEAD, HOOK) \
++	{ .head = &mod_security_hook_heads.HEAD, .hook = { .HEAD = HOOK } }
++
++extern struct security_hook_heads mod_security_hook_heads;
++extern int mod_security_add_hooks(struct security_hook_list *hooks, int count, const char *lsm);
++#endif
++
+ 
+ #define LSM_FLAG_LEGACY_MAJOR	BIT(0)
+ #define LSM_FLAG_EXCLUSIVE	BIT(1)
+diff --git a/security/security.c b/security/security.c
+index dcb3e7014f9b..bd033cd5e89a 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -74,6 +74,9 @@ const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX + 1] = {
+ };
+ 
+ struct security_hook_heads security_hook_heads __ro_after_init;
++static DEFINE_STATIC_KEY_FALSE_RO(mod_security_enabled);
++struct security_hook_heads mod_security_hook_heads;
++EXPORT_SYMBOL_GPL(mod_security_hook_heads);
+ static BLOCKING_NOTIFIER_HEAD(blocking_lsm_notifier_chain);
+ 
+ static struct kmem_cache *lsm_file_cache;
+@@ -407,6 +410,10 @@ int __init early_security_init(void)
+ #define LSM_HOOK(RET, DEFAULT, NAME, ...) \
+ 	INIT_HLIST_HEAD(&security_hook_heads.NAME);
+ #include "linux/lsm_hook_defs.h"
++#undef LSM_HOOK
++#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
++	INIT_HLIST_HEAD(&mod_security_hook_heads.NAME);
++#include "linux/lsm_hook_defs.h"
+ #undef LSM_HOOK
+ 
+ 	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
+@@ -465,6 +472,13 @@ static int __init choose_lsm_order(char *str)
+ }
+ __setup("lsm=", choose_lsm_order);
+ 
++static int __init enable_mod_security(char *str)
++{
++	static_branch_enable(&mod_security_enabled);
++	return 1;
++}
++__setup("lsm.modular", enable_mod_security);
++
+ /* Enable LSM order debugging. */
+ static int __init enable_debug(char *str)
+ {
+@@ -537,6 +551,23 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+ 	}
+ }
+ 
++int mod_security_add_hooks(struct security_hook_list *hooks, int count, const char *lsm)
++{
++	int i;
++
++	if (!static_branch_unlikely(&mod_security_enabled)) {
++		pr_info("Modular LSM support is not enabled.\n");
++		return -EINVAL;
++	}
++	pr_info("Registering modular LSM: %s\n", lsm);
++	for (i = 0; i < count; i++) {
++		hooks[i].lsm = lsm;
++		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
++	}
++	return 0;
++}
++EXPORT_SYMBOL_GPL(mod_security_add_hooks);
++
+ int call_blocking_lsm_notifier(enum lsm_event event, void *data)
+ {
+ 	return blocking_notifier_call_chain(&blocking_lsm_notifier_chain,
+@@ -769,6 +800,10 @@ static int lsm_superblock_alloc(struct super_block *sb)
+ 								\
+ 		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) \
+ 			P->hook.FUNC(__VA_ARGS__);		\
++		if (static_branch_unlikely(&mod_security_enabled)) {			\
++			hlist_for_each_entry(P, &mod_security_hook_heads.FUNC, list) \
++				P->hook.FUNC(__VA_ARGS__);	\
++		}						\
+ 	} while (0)
+ 
+ #define call_int_hook(FUNC, IRC, ...) ({			\
+@@ -781,6 +816,13 @@ static int lsm_superblock_alloc(struct super_block *sb)
+ 			if (RC != 0)				\
+ 				break;				\
+ 		}						\
++		if (static_branch_unlikely(&mod_security_enabled)) {			\
++			hlist_for_each_entry(P, &mod_security_hook_heads.FUNC, list) { \
++				RC = P->hook.FUNC(__VA_ARGS__);	\
++				if (RC != 0)			\
++					break;			\
++			}					\
++		}						\
+ 	} while (0);						\
+ 	RC;							\
+ })
+@@ -1038,6 +1080,15 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
+ 			break;
+ 		}
+ 	}
++	if (static_branch_unlikely(&mod_security_enabled) && cap_sys_admin) {
++		hlist_for_each_entry(hp, &mod_security_hook_heads.vm_enough_memory, list) {
++			rc = hp->hook.vm_enough_memory(mm, pages);
++			if (rc <= 0) {
++				cap_sys_admin = 0;
++				break;
++			}
++		}
++	}
+ 	return __vm_enough_memory(mm, pages, cap_sys_admin);
+ }
+ 
+@@ -1196,6 +1247,15 @@ int security_fs_context_parse_param(struct fs_context *fc,
+ 		else if (trc != -ENOPARAM)
+ 			return trc;
+ 	}
++	if (static_branch_unlikely(&mod_security_enabled)) {
++		hlist_for_each_entry(hp, &mod_security_hook_heads.fs_context_parse_param, list) {
++			trc = hp->hook.fs_context_parse_param(fc, param);
++			if (trc == 0)
++				rc = 0;
++			else if (trc != -ENOPARAM)
++				return trc;
++		}
++	}
+ 	return rc;
+ }
+ 
+@@ -1566,6 +1626,14 @@ int security_dentry_init_security(struct dentry *dentry, int mode,
+ 		if (rc != LSM_RET_DEFAULT(dentry_init_security))
+ 			return rc;
+ 	}
++	if (static_branch_unlikely(&mod_security_enabled)) {
++		hlist_for_each_entry(hp, &mod_security_hook_heads.dentry_init_security, list) {
++			rc = hp->hook.dentry_init_security(dentry, mode, name,
++							   xattr_name, ctx, ctxlen);
++			if (rc != LSM_RET_DEFAULT(dentry_init_security))
++				return rc;
++		}
++	}
+ 	return LSM_RET_DEFAULT(dentry_init_security);
+ }
+ EXPORT_SYMBOL(security_dentry_init_security);
+@@ -1656,6 +1724,14 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 		 * the remaining LSMs.
+ 		 */
+ 	}
++	if (static_branch_unlikely(&mod_security_enabled)) {
++		hlist_for_each_entry(hp, &mod_security_hook_heads.inode_init_security, list) {
++			ret = hp->hook.inode_init_security(inode, dir, qstr, new_xattrs,
++							   &xattr_count);
++			if (ret && ret != -EOPNOTSUPP)
++				goto out;
++		}
++	}
+ 
+ 	/* If initxattrs() is NULL, xattr_count is zero, skip the call. */
+ 	if (!xattr_count)
+@@ -2419,6 +2495,13 @@ int security_inode_getsecurity(struct mnt_idmap *idmap,
+ 		if (rc != LSM_RET_DEFAULT(inode_getsecurity))
+ 			return rc;
+ 	}
++	if (static_branch_unlikely(&mod_security_enabled)) {
++		hlist_for_each_entry(hp, &mod_security_hook_heads.inode_getsecurity, list) {
++			rc = hp->hook.inode_getsecurity(idmap, inode, name, buffer, alloc);
++			if (rc != LSM_RET_DEFAULT(inode_getsecurity))
++				return rc;
++		}
++	}
+ 	return LSM_RET_DEFAULT(inode_getsecurity);
+ }
+ 
+@@ -2454,6 +2537,13 @@ int security_inode_setsecurity(struct inode *inode, const char *name,
+ 		if (rc != LSM_RET_DEFAULT(inode_setsecurity))
+ 			return rc;
+ 	}
++	if (static_branch_unlikely(&mod_security_enabled)) {
++		hlist_for_each_entry(hp, &mod_security_hook_heads.inode_setsecurity, list) {
++			rc = hp->hook.inode_setsecurity(inode, name, value, size, flags);
++			if (rc != LSM_RET_DEFAULT(inode_setsecurity))
++				return rc;
++		}
++	}
+ 	return LSM_RET_DEFAULT(inode_setsecurity);
+ }
+ 
+@@ -2538,6 +2628,13 @@ int security_inode_copy_up_xattr(const char *name)
+ 		if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
+ 			return rc;
+ 	}
++	if (static_branch_unlikely(&mod_security_enabled)) {
++		hlist_for_each_entry(hp, &mod_security_hook_heads.inode_copy_up_xattr, list) {
++			rc = hp->hook.inode_copy_up_xattr(name);
++			if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
++				return rc;
++		}
++	}
+ 
+ 	return LSM_RET_DEFAULT(inode_copy_up_xattr);
+ }
+@@ -3424,6 +3521,16 @@ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+ 				break;
+ 		}
+ 	}
++	if (static_branch_unlikely(&mod_security_enabled)) {
++		hlist_for_each_entry(hp, &mod_security_hook_heads.task_prctl, list) {
++			thisrc = hp->hook.task_prctl(option, arg2, arg3, arg4, arg5);
++			if (thisrc != LSM_RET_DEFAULT(task_prctl)) {
++				rc = thisrc;
++				if (thisrc != 0)
++					break;
++			}
++		}
++	}
+ 	return rc;
+ }
+ 
+@@ -3821,6 +3928,13 @@ int security_getprocattr(struct task_struct *p, const char *lsm,
+ 			continue;
+ 		return hp->hook.getprocattr(p, name, value);
+ 	}
++	if (static_branch_unlikely(&mod_security_enabled)) {
++		hlist_for_each_entry(hp, &mod_security_hook_heads.getprocattr, list) {
++			if (lsm != NULL && strcmp(lsm, hp->lsm))
++				continue;
++			return hp->hook.getprocattr(p, name, value);
++		}
++	}
+ 	return LSM_RET_DEFAULT(getprocattr);
+ }
+ 
+@@ -3846,6 +3960,13 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
+ 			continue;
+ 		return hp->hook.setprocattr(name, value, size);
+ 	}
++	if (static_branch_unlikely(&mod_security_enabled)) {
++		hlist_for_each_entry(hp, &mod_security_hook_heads.setprocattr, list) {
++			if (lsm != NULL && strcmp(lsm, hp->lsm))
++				continue;
++			return hp->hook.setprocattr(name, value, size);
++		}
++	}
+ 	return LSM_RET_DEFAULT(setprocattr);
+ }
+ 
+@@ -3908,6 +4029,13 @@ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+ 		if (rc != LSM_RET_DEFAULT(secid_to_secctx))
+ 			return rc;
+ 	}
++	if (static_branch_unlikely(&mod_security_enabled)) {
++		hlist_for_each_entry(hp, &mod_security_hook_heads.secid_to_secctx, list) {
++			rc = hp->hook.secid_to_secctx(secid, secdata, seclen);
++			if (rc != LSM_RET_DEFAULT(secid_to_secctx))
++				return rc;
++		}
++	}
+ 
+ 	return LSM_RET_DEFAULT(secid_to_secctx);
+ }
+@@ -4964,6 +5092,12 @@ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
+ 		rc = hp->hook.xfrm_state_pol_flow_match(x, xp, flic);
+ 		break;
+ 	}
++	if (static_branch_unlikely(&mod_security_enabled)) {
++		hlist_for_each_entry(hp, &mod_security_hook_heads.xfrm_state_pol_flow_match, list) {
++			rc = hp->hook.xfrm_state_pol_flow_match(x, xp, flic);
++			break;
++		}
++	}
+ 	return rc;
+ }
+ 
+-- 
+2.34.1
