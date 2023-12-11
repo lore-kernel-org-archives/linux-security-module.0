@@ -1,32 +1,31 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="lAidl2HS"
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [IPv6:2001:1600:4:17::190c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2605FD8
-	for <linux-security-module@vger.kernel.org>; Sun, 10 Dec 2023 23:04:41 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SpXmk4s0kzMq9TL;
-	Mon, 11 Dec 2023 07:04:38 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SpXmj2wh3zMpnPr;
-	Mon, 11 Dec 2023 08:04:37 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="gk4xaNgp"
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8C33D7
+	for <linux-security-module@vger.kernel.org>; Sun, 10 Dec 2023 23:18:06 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SpY4D4fW9zMq67b;
+	Mon, 11 Dec 2023 07:18:04 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SpY4C3gyDzMpp9q;
+	Mon, 11 Dec 2023 08:18:03 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1702278278;
-	bh=VfO/3wUPN3SBgSAAY/K0DV4zNFRwxiPQOTaNWLy5Msg=;
+	s=20191114; t=1702279084;
+	bh=jach5OSwRgP7alXIIYVWdrqLwIsTOCyrWlKh+LHiLdU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lAidl2HSgcLC7E9vU2ut3JWLpH/Jmqw0WRuH4UOHO9Foa+/JixZ/+gAqW5UuTEiF+
-	 i9ADvSxF6FUBLNCkrW2qOPveWIFC3l98XJn+CQHJBi7fvzs6IMIibHjrFwPmjPDL4D
-	 QHk5xVqfmi01cZizHTwo9YiJcq22fqTVmBDHkXIA=
-Date: Mon, 11 Dec 2023 08:04:33 +0100
+	b=gk4xaNgp+/WQqXEwzv8p6qwsHmqd3W5k9HTLAvzxkPQFj8RGxCzcfjVmSCyMftT9+
+	 dq8F6Ilh3C6HcTDVTnBsUUfV/pfUK/dDUmDJim4skSC8/RFExMdDQjEMJ6NMjTLokw
+	 OgckqamvPcy9yUDXDOsa0cjdNxHUkWv/yak3F++8=
+Date: Mon, 11 Dec 2023 08:17:57 +0100
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v8 9/9] landlock: Document IOCTL support
-Message-ID: <20231211.ieZahkeiph1o@digikod.net>
-References: <20231208155121.1943775-1-gnoack@google.com>
- <20231208155121.1943775-10-gnoack@google.com>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc: James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] selftests/landlock: Add tests to check unknown
+ rule's access rights
+Message-ID: <20231211.aiJeiKaizai9@digikod.net>
+References: <20231130093616.67340-1-mic@digikod.net>
+ <20231130093616.67340-2-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -36,62 +35,125 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231208155121.1943775-10-gnoack@google.com>
+In-Reply-To: <20231130093616.67340-2-mic@digikod.net>
 X-Infomaniak-Routing: alpha
 
-On Fri, Dec 08, 2023 at 04:51:21PM +0100, Günther Noack wrote:
-> In the paragraph above the fallback logic, use the shorter phrasing
-> from the landlock(7) man page.
+Günther, are you OK with this update?
+
+On Thu, Nov 30, 2023 at 10:36:15AM +0100, Mickaël Salaün wrote:
+> Add two tests to make sure that we cannot add a rule with access
+> rights that are unknown:
+> * fs: layout0.rule_with_unknown_access
+> * net: mini.rule_with_unknown_access
 > 
-> Signed-off-by: Günther Noack <gnoack@google.com>
+> Rename unknown_access_rights tests to ruleset_with_unknown_access .
+> 
+> Cc: Günther Noack <gnoack@google.com>
+> Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
 > ---
->  Documentation/userspace-api/landlock.rst | 119 ++++++++++++++++++++---
->  1 file changed, 104 insertions(+), 15 deletions(-)
 > 
-
-> +Restricting IOCTL commands
-> +--------------------------
+> Changes since v1:
+> * Move checks into their own test/loop as suggested by Günther Noack.
+> * Don't change layout1.file_and_dir_access_rights
+> ---
+>  tools/testing/selftests/landlock/fs_test.c  | 29 ++++++++++++++++++++-
+>  tools/testing/selftests/landlock/net_test.c | 27 ++++++++++++++++++-
+>  2 files changed, 54 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index 18e1f86a6234..1e6c474e3d08 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -589,7 +589,7 @@ TEST_F_FORK(layout1, file_and_dir_access_rights)
+>  	ASSERT_EQ(0, close(ruleset_fd));
+>  }
+>  
+> -TEST_F_FORK(layout0, unknown_access_rights)
+> +TEST_F_FORK(layout0, ruleset_with_unknown_access)
+>  {
+>  	__u64 access_mask;
+>  
+> @@ -605,6 +605,33 @@ TEST_F_FORK(layout0, unknown_access_rights)
+>  	}
+>  }
+>  
+> +TEST_F_FORK(layout0, rule_with_unknown_access)
+> +{
+> +	__u64 access;
+> +	struct landlock_path_beneath_attr path_beneath = {};
+> +	const struct landlock_ruleset_attr ruleset_attr = {
+> +		.handled_access_fs = ACCESS_ALL,
+> +	};
+> +	const int ruleset_fd =
+> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
 > +
-> +When the ``LANDLOCK_ACCESS_FS_IOCTL`` access right is handled, Landlock will
-> +restrict the invocation of IOCTL commands.  However, to *permit* these IOCTL
-> +commands again, some of these IOCTL commands are then granted through other,
-> +preexisting access rights.
+> +	ASSERT_LE(0, ruleset_fd);
 > +
-> +For example, consider a program which handles ``LANDLOCK_ACCESS_FS_IOCTL`` and
-> +``LANDLOCK_ACCESS_FS_READ_FILE``.  The program *permits*
-> +``LANDLOCK_ACCESS_FS_READ_FILE`` on a file ``foo.log``.
+> +	path_beneath.parent_fd =
+> +		open(TMP_DIR, O_PATH | O_DIRECTORY | O_CLOEXEC);
+> +	ASSERT_LE(0, path_beneath.parent_fd);
 > +
-> +By virtue of granting this access on the ``foo.log`` file, it is now possible to
-> +use common and harmless IOCTL commands which are useful when reading files, such
-> +as ``FIONREAD``.
+> +	for (access = 1ULL << 63; access != ACCESS_LAST; access >>= 1) {
+> +		path_beneath.allowed_access = access;
+> +		EXPECT_EQ(-1, landlock_add_rule(ruleset_fd,
+> +						LANDLOCK_RULE_PATH_BENEATH,
+> +						&path_beneath, 0));
+> +		EXPECT_EQ(EINVAL, errno);
+> +	}
+> +	ASSERT_EQ(0, close(path_beneath.parent_fd));
+> +	ASSERT_EQ(0, close(ruleset_fd));
+> +}
 > +
-> +On the other hand, if the program permits ``LANDLOCK_ACCESS_FS_IOCTL`` on
-> +another file, ``FIONREAD`` will not work on that file when it is opened.  As
-> +soon as ``LANDLOCK_ACCESS_FS_READ_FILE`` is *handled* in the ruleset, the IOCTL
-> +commands affected by it can not be reenabled though ``LANDLOCK_ACCESS_FS_IOCTL``
-> +any more, but are then governed by ``LANDLOCK_ACCESS_FS_READ_FILE``.
+>  static void add_path_beneath(struct __test_metadata *const _metadata,
+>  			     const int ruleset_fd, const __u64 allowed_access,
+>  			     const char *const path)
+> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+> index 929e21c4db05..83d9abc3ee55 100644
+> --- a/tools/testing/selftests/landlock/net_test.c
+> +++ b/tools/testing/selftests/landlock/net_test.c
+> @@ -1260,7 +1260,7 @@ TEST_F(mini, network_access_rights)
+>  }
+>  
+>  /* Checks invalid attribute, out of landlock network access range. */
+> -TEST_F(mini, unknown_access_rights)
+> +TEST_F(mini, ruleset_with_unknown_access)
+>  {
+>  	__u64 access_mask;
+>  
+> @@ -1276,6 +1276,31 @@ TEST_F(mini, unknown_access_rights)
+>  	}
+>  }
+>  
+> +TEST_F(mini, rule_with_unknown_access)
+> +{
+> +	const struct landlock_ruleset_attr ruleset_attr = {
+> +		.handled_access_net = ACCESS_ALL,
+> +	};
+> +	struct landlock_net_port_attr net_port = {
+> +		.port = sock_port_start,
+> +	};
+> +	int ruleset_fd;
+> +	__u64 access;
 > +
-> +The following table illustrates how IOCTL attempts for ``FIONREAD`` are
-> +filtered, depending on how a Landlock ruleset handles and permits the
-> +``LANDLOCK_ACCESS_FS_IOCTL`` and ``LANDLOCK_ACCESS_FS_READ_FILE`` access rights:
+> +	ruleset_fd =
+> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+> +	ASSERT_LE(0, ruleset_fd);
 > +
-> ++------------------------+-------------+-------------------+-------------------+
-> +|                        | ``IOCTL``   | ``IOCTL`` handled | ``IOCTL`` handled |
-> +|                        | not handled | and permitted     | and not permitted |
-> ++------------------------+-------------+-------------------+-------------------+
-> +| ``READ_FILE`` not      | allow       | allow             | deny              |
-> +| handled                |             |                   |                   |
-> ++------------------------+             +-------------------+-------------------+
-> +| ``READ_FILE`` handled  |             | allow                                 |
-> +| and permitted          |             |                                       |
-> ++------------------------+             +-------------------+-------------------+
-> +| ``READ_FILE`` handled  |             | deny                                  |
-> +| and not permitted      |             |                                       |
-> ++------------------------+-------------+-------------------+-------------------+
-
-Great! Could you please format this table with the flat-table syntax?
-See https://docs.kernel.org/doc-guide/sphinx.html#tables
-
+> +	for (access = 1ULL << 63; access != ACCESS_LAST; access >>= 1) {
+> +		net_port.allowed_access = access;
+> +		EXPECT_EQ(-1,
+> +			  landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
+> +					    &net_port, 0));
+> +		EXPECT_EQ(EINVAL, errno);
+> +	}
+> +	EXPECT_EQ(0, close(ruleset_fd));
+> +}
 > +
-> +The full list of IOCTL commands and the access rights which affect them is
-> +documented below.
+>  TEST_F(mini, inval)
+>  {
+>  	const struct landlock_ruleset_attr ruleset_attr = {
+> -- 
+> 2.42.1
+> 
+> 
