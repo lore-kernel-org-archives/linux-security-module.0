@@ -1,125 +1,119 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BFD5CF;
-	Mon, 11 Dec 2023 11:49:39 -0800 (PST)
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 6497A31B; Mon, 11 Dec 2023 13:49:37 -0600 (CST)
-Date: Mon, 11 Dec 2023 13:49:37 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Munehisa Kamata <kamatam@amazon.com>
-Cc: serge@hallyn.com, adobriyan@gmail.com, akpm@linux-foundation.org,
-	casey@schaufler-ca.com, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, paul@paul-moore.com
-Subject: Re: Fw: [PATCH] proc: Update inode upon changing task security
- attribute
-Message-ID: <20231211194937.GA323128@mail.hallyn.com>
-References: <20231210144530.GB295678@mail.hallyn.com>
- <20231211192723.28230-1-kamatam@amazon.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JYnUv+TR"
+Received: from mail-oo1-xc32.google.com (mail-oo1-xc32.google.com [IPv6:2607:f8b0:4864:20::c32])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35BC8D6;
+	Mon, 11 Dec 2023 13:33:37 -0800 (PST)
+Received: by mail-oo1-xc32.google.com with SMTP id 006d021491bc7-5906e03a7a4so2661915eaf.1;
+        Mon, 11 Dec 2023 13:33:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702330416; x=1702935216; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jKM/X76sUs3s0gGEkUY9mrz+OPg2ZYPbaL3FbG9ujmI=;
+        b=JYnUv+TR70APYMOVv8QSPp0ZWRaGLDWKjnWSUiBiNZIIUvZU1tPg5F1h+bDxotvhKl
+         uKIRN9nKOdG9tIItVMl4npUGRKOGx2SoMqguANqrnvtW9H1Ym+zlRU+WZzMWJHyEqd7Q
+         hzl1lgMUc9ZvwybTObl8Lg/nqioRftgOG08CveOI6IKSJ1jcqMGuXo8xGt+V4D7aj4hN
+         0LTf4IP6b7bgvI2e7ARsI7PHvzGt8h06MX64z3lChCgbs6nRIybTRCWKisRanMDi1EPl
+         IzFvMg9GfiUlhgH5HUnjVjoc7Y/b6gOQ5PCSUJ3bi7jakM/yTiBuHPBJlS31lj0tqQnc
+         3/Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702330416; x=1702935216;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jKM/X76sUs3s0gGEkUY9mrz+OPg2ZYPbaL3FbG9ujmI=;
+        b=Mpf/HRpj/2vFjm/j3+vkPfNZ8yBIuwqB0ob47pLGrBxG1O26IupYz2KsS5wo6WFI0E
+         qhTMnlLha/IpiDL19O97f4HkTJaEYbWbq3BJIlU5omGEM5bUKEMDBxPSXoPhqinyWNEk
+         uf85x1M/yGNP2PMBDuQvcFelbkNb0qNaUvHatIEnAxgvTnMUqA+f4vAV8IftkHIPcfg9
+         GG2RcZ4Oo1sD+Ph1fIqDp2C9XH3O10TP+qTPEgCpwxjPgnG/kXS7UzqeVi1K50ZnXwKn
+         L9MOISUV6FZW39ssqb1S2YG8D2Tr5ZwhPFWcGxiSOKVYQaCo1sIoAh7Dww2/Jj7QuEFF
+         04sg==
+X-Gm-Message-State: AOJu0YxbB3rJvj9APIG54OsXRNsHu5NMiyv32KzPQL6CH+fnedE0jDuj
+	GgWBn83+do94B2KDU3QGOaPRxzGl4DOxgA==
+X-Google-Smtp-Source: AGHT+IFULeijIew/pOCajz3OFJ27BkgEyQjFEb195ivlpAtXn4Np/awRRKGokZc02T+ECqtfD6ok6Q==
+X-Received: by 2002:a05:6358:f0a:b0:170:17eb:14b2 with SMTP id b10-20020a0563580f0a00b0017017eb14b2mr2601871rwj.34.1702330416380;
+        Mon, 11 Dec 2023 13:33:36 -0800 (PST)
+Received: from localhost ([98.97.32.4])
+        by smtp.gmail.com with ESMTPSA id h17-20020aa786d1000000b006ce7ed5ba42sm6934868pfo.171.2023.12.11.13.33.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Dec 2023 13:33:35 -0800 (PST)
+Date: Mon, 11 Dec 2023 13:33:34 -0800
+From: John Fastabend <john.fastabend@gmail.com>
+To: Andrii Nakryiko <andrii@kernel.org>, 
+ bpf@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ paul@paul-moore.com, 
+ brauner@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, 
+ keescook@chromium.org, 
+ kernel-team@meta.com, 
+ sargun@sargun.me
+Message-ID: <6577802ea99b2_edaa208b7@john.notmuch>
+In-Reply-To: <20231207185443.2297160-2-andrii@kernel.org>
+References: <20231207185443.2297160-1-andrii@kernel.org>
+ <20231207185443.2297160-2-andrii@kernel.org>
+Subject: RE: [PATCH bpf-next 1/8] bpf: fail BPF_TOKEN_CREATE if no delegation
+ option was set on BPF FS
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231211192723.28230-1-kamatam@amazon.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 11, 2023 at 07:27:23PM +0000, Munehisa Kamata wrote:
-> On Sun, 2023-12-10 06:45:30 -0800, "Serge E. Hallyn" wrote:
-> >
-> > On Sat, Dec 09, 2023 at 01:10:42AM +0000, Munehisa Kamata wrote:
-> > > On Sat, 2023-12-09 00:24:42 +0000, Casey Schaufler wrote:
-> > > >
-> > > > On 12/8/2023 3:32 PM, Paul Moore wrote:
-> > > > > On Fri, Dec 8, 2023 at 6:21 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > > >> On 12/8/2023 2:43 PM, Paul Moore wrote:
-> > > > >>> On Thu, Dec 7, 2023 at 9:14 PM Munehisa Kamata <kamatam@amazon.com> wrote:
-> > > > >>>> On Tue, 2023-12-05 14:21:51 -0800, Paul Moore wrote:
-> > > > >>> ..
-> > > > >>>
-> > > > >>>>> I think my thoughts are neatly summarized by Andrew's "yuk!" comment
-> > > > >>>>> at the top.  However, before we go too much further on this, can we
-> > > > >>>>> get clarification that Casey was able to reproduce this on a stock
-> > > > >>>>> upstream kernel?  Last I read in the other thread Casey wasn't seeing
-> > > > >>>>> this problem on Linux v6.5.
-> > > > >>>>>
-> > > > >>>>> However, for the moment I'm going to assume this is a real problem, is
-> > > > >>>>> there some reason why the existing pid_revalidate() code is not being
-> > > > >>>>> called in the bind mount case?  From what I can see in the original
-> > > > >>>>> problem report, the path walk seems to work okay when the file is
-> > > > >>>>> accessed directly from /proc, but fails when done on the bind mount.
-> > > > >>>>> Is there some problem with revalidating dentrys on bind mounts?
-> > > > >>>> Hi Paul,
-> > > > >>>>
-> > > > >>>> https://lkml.kernel.org/linux-fsdevel/20090608201745.GO8633@ZenIV.linux.org.uk/
-> > > > >>>>
-> > > > >>>> After reading this thread, I have doubt about solving this in VFS.
-> > > > >>>> Honestly, however, I'm not sure if it's entirely relevant today.
-> > > > >>> Have you tried simply mounting proc a second time instead of using a bind mount?
-> > > > >>>
-> > > > >>>  % mount -t proc non /new/location/for/proc
-> > > > >>>
-> > > > >>> I ask because from your description it appears that proc does the
-> > > > >>> right thing with respect to revalidation, it only becomes an issue
-> > > > >>> when accessing proc through a bind mount.  Or did I misunderstand the
-> > > > >>> problem?
-> > > > >> It's not hard to make the problem go away by performing some simple
-> > > > >> action. I was unable to reproduce the problem initially because I
-> > > > >> checked the Smack label on the bind mounted proc entry before doing
-> > > > >> the cat of it. The problem shows up if nothing happens to update the
-> > > > >> inode.
-> > > > > A good point.
-> > > > >
-> > > > > I'm kinda thinking we just leave things as-is, especially since the
-> > > > > proposed fix isn't something anyone is really excited about.
-> > > > 
-> > > > "We have to compromise the performance of our sandboxing tool because of
-> > > > a kernel bug that's known and for which a fix is available."
-> > > > 
-> > > > If this were just a curiosity that wasn't affecting real development I
-> > > > might agree. But we've got a real world problem, and I don't see ignoring
-> > > > it as a good approach. I can't see maintainers of other LSMs thinking so
-> > > > if this were interfering with their users.
-> > >  
-> > > We do bind mount to make information exposed to the sandboxed task as little
-> > > as possible. We also create a separate PID namespace for each sandbox, but
-> > 
-> > If not exposing information is the main motivation, then could you simply do:
-> > 
-> > mount -t proc proc dir
-> > mount --bind dir/$$ dir
-> > 
-> > ?
+Andrii Nakryiko wrote:
+> It's quite confusing in practice when it's possible to successfully
+> create a BPF token from BPF FS that didn't have any of delegate_xxx
+> mount options set up. While it's not wrong, it's actually more
+> meaningful to reject BPF_TOKEN_CREATE with specific error code (-ENOENT)
+> to let user-space know that no token delegation is setup up.
 > 
-> Hi Serge,
+> So, instead of creating empty BPF token that will be always ignored
+> because it doesn't have any of the allow_xxx bits set, reject it with
+> -ENOENT. If we ever need empty BPF token to be possible, we can support
+> that with extra flag passed into BPF_TOKEN_CREATE.
 > 
-> It doesn't work.
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
+>  kernel/bpf/token.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 > 
->  [root@ip-10-0-32-198 ec2-user]# mount -t proc proc dir
->  [root@ip-10-0-32-198 ec2-user]# echo AAA > dir/$$/attr/current
->  [root@ip-10-0-32-198 ec2-user]# chsmack dir/$$
->  dir/11222 access="AAA"
->  [root@ip-10-0-32-198 ec2-user]# mount --bind dir/$$ dir
->  [root@ip-10-0-32-198 ec2-user]# echo BBB > dir/attr/current
->  [root@ip-10-0-32-198 ec2-user]# echo CCC > dir/attr/current
->  bash: dir/attr/current: Permission denied
->  [root@ip-10-0-32-198 ec2-user]# ls dir
->  ls: cannot access dir: Permission denied
->  [root@ip-10-0-32-198 ec2-user]# 
+> diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
+> index 17212efcde60..a86fccd57e2d 100644
+> --- a/kernel/bpf/token.c
+> +++ b/kernel/bpf/token.c
+> @@ -152,6 +152,15 @@ int bpf_token_create(union bpf_attr *attr)
+>  		goto out_path;
+>  	}
 >  
-> It would not revalidate dir/$$ anyway, so this result wasn't surprising to
-> me. Maybe I'm missing something?
+> +	mnt_opts = path.dentry->d_sb->s_fs_info;
+> +	if (mnt_opts->delegate_cmds == 0 &&
+> +	    mnt_opts->delegate_maps == 0 &&
+> +	    mnt_opts->delegate_progs == 0 &&
+> +	    mnt_opts->delegate_attachs == 0) {
+> +		err = -ENOENT; /* no BPF token delegation is set up */
+> +		goto out_path;
+> +	}
+> +
+>  	mode = S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
+>  	inode = bpf_get_inode(path.mnt->mnt_sb, NULL, mode);
+>  	if (IS_ERR(inode)) {
+> @@ -181,7 +190,6 @@ int bpf_token_create(union bpf_attr *attr)
+>  	/* remember bpffs owning userns for future ns_capable() checks */
+>  	token->userns = get_user_ns(userns);
+>  
+> -	mnt_opts = path.dentry->d_sb->s_fs_info;
+>  	token->allowed_cmds = mnt_opts->delegate_cmds;
+>  	token->allowed_maps = mnt_opts->delegate_maps;
+>  	token->allowed_progs = mnt_opts->delegate_progs;
+> -- 
+> 2.34.1
+> 
+> 
 
-I see.  Yeah, that's an ugly wart.
-
-> > > still want to bind mount even with it to hide system-wide and pid 1
-> > > information from the task. 
-> > > 
-> > > So, yeah, I see this as a real problem for our use case and want to seek an
-> > > opinion about a possibly better fix.
-> > > 
-> > > 
-> > > Thanks,
-> > > Munehisa 
-> > 
+Acked-by: John Fastabend <john.fastabend@gmail.com>
