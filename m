@@ -1,111 +1,135 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHyipAmk"
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03FA8D0;
-	Mon, 11 Dec 2023 10:21:44 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-54c79968ffbso6439119a12.3;
-        Mon, 11 Dec 2023 10:21:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ejaujRnG"
+Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3752BB4;
+	Mon, 11 Dec 2023 10:24:18 -0800 (PST)
+Received: by mail-qk1-x733.google.com with SMTP id af79cd13be357-77f408d123bso151098985a.0;
+        Mon, 11 Dec 2023 10:24:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702318902; x=1702923702; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1702319057; x=1702923857; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S8bLjO7K4G9LwVc+suoyv5eMJDKm4Mkz7jpCSdJ5wh8=;
-        b=jHyipAmkY/kn5trO+saAyARj0i+BEJWziUqjmA9B+/mlxQ36evs8qe/DG+ecT7D9Pz
-         5kqGQi1zzMbkY94YzYALeDfQAyrzXQDo0agm+0lFivrwxVRjh1e4CFVi4deBJyWy2DSJ
-         GhZCN/NIwJWegsN85obQQwcbeidSAXEw/BulBTm21qtMlkafKPzAS32jNc0K7EJ4tb9X
-         clPj3jD4hWFThwKzkidR/ylsADMd0a9xt8OPcDYt4HsJcekbW7fnutfU5BWbIpx2p094
-         Ig113TOlR+xYUQNd52jtsc/Bt5iw7sLO1b2iMVrGJbihCi2ugfFLtG9crK3f30iQDdQt
-         c9ag==
+        bh=yTZUGzqXgAgDzLk+TnvpFqLchf/LU4PPH7EmQyI17uI=;
+        b=ejaujRnGTm2d7WqGQiQipLhCyW1d9eNLZsXY4CJTCUU7mdPsH172Q8g5NCPKEUU27V
+         hn5ySNYRY+4Y6QROhzkKvUhppVhgWg1VY9p91hl/7giD7sHUndh4tMsJwa1UYGg4lF3y
+         0rreL6dlru1W9+4ILhe5wtgyeU7wGldEeqmocCEpz9kYxYmMFNnJglNhrheH1/SAHRFO
+         8BdI2wTpwfEeAIHCHfBnpPO4LzNi3dkWKYcPSTfN1xE2JA4WERhQwiiYfXQxuTxyISN/
+         YePKuWsymbM5gXOj6UwVhDMS6Q0pCf3+dOXIpFtPKLOOJdgm12ATE2qrtQzflIgC2SEn
+         JbYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702318902; x=1702923702;
+        d=1e100.net; s=20230601; t=1702319057; x=1702923857;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=S8bLjO7K4G9LwVc+suoyv5eMJDKm4Mkz7jpCSdJ5wh8=;
-        b=lA8MXM3drlh2iMnwXAe2k4lqYx607eRnAaDJ88Phs0BHokbhs/Ph/17F0hGqoW+XeQ
-         sUZDRSKbz0ffkShzyfW+h2VPcdfKVjDeN/NVKaAIDPls5p44F3AoHHPGNzcsi5xs8+vU
-         os77hsQNQxEboB75NBh7Ovo+SF7FrKwR42whCLiDYd+p7qkZoaJxqRd6QrG5a/bVJCgV
-         ABZ3LE/YaSAwoZiGfdI9s2pmgBZ/RTjl2BaTwJhmFSKDECeiuWjQ2Iojp5aXghiuFkV+
-         bTijYUQfWoz6cyRtElyqTZu9AOxU3RNoq3LZB2lZarU1xDyVUdGlWEZfGW8Yy6F1Y3xe
-         YgBw==
-X-Gm-Message-State: AOJu0YyGgm2p9tdgkJckRXFyBbygBlWHSZtgLhhrzToIWJtRyyBDHYZM
-	dQBqd9oEngBkD5QzmQfHkKWVPbLoB9GXkWCTdRo=
-X-Google-Smtp-Source: AGHT+IFFFWuVbwGAUmFUT+L86RPREMleBSyswysjsUAVTpMMIf6RbbNcDNlCO5wk1T7fwdwOJB8vkx4MCNW1c8ICSzE=
-X-Received: by 2002:a17:906:5307:b0:a1f:9320:9fce with SMTP id
- h7-20020a170906530700b00a1f93209fcemr1347510ejo.83.1702318902502; Mon, 11 Dec
- 2023 10:21:42 -0800 (PST)
+        bh=yTZUGzqXgAgDzLk+TnvpFqLchf/LU4PPH7EmQyI17uI=;
+        b=XC/+UMv6fn1WAKxfICHZ/ZFMamU8M3XdjH9Zj+i9s8ZJ+ZAJPgbH36swnUdzNt1sgs
+         FEVhHnnhhriv6KVxtZOZj5TBso3CgxvpXXqP+Vi+26De9mIISsTf+YZ1hP7Y55iNUzLZ
+         xS7brQ7syrmidYLLYa2g4NZvSGUHkOqlxfAST3FerT1sKUdMMOjQCIRQzHxRE5L24AmX
+         saoNCsfLxzTgxYq167rmeoBOJaGSweYKpCGxwhh15tpuhi/X6Oqb4cP7NDU8EbGaacEx
+         D9NJfmW7XiUcHJXm93Lhh0nUAvA5JkXmF9ihIRAiMwKZVyCanlV2mxSzbOBEDA/06yfs
+         WQ1Q==
+X-Gm-Message-State: AOJu0YxpWa8NwAGGXATGYjAleAtzHesAkm10YsrF+TqTur58HhVLHnFg
+	dTF2awdFhe9IaYBquJcYrKorRU9Xyt3YrnzChOY=
+X-Google-Smtp-Source: AGHT+IFU3yIeqVdLEfnUPGvzBPNX6v7stlvCzAenXor4lYkbdAwus2+6wWBqX1pZ2IoqaIniDz+cjPu8ZN6fR7ozR/o=
+X-Received: by 2002:ad4:4528:0:b0:67a:259d:8ce0 with SMTP id
+ l8-20020ad44528000000b0067a259d8ce0mr2984856qvu.17.1702319057240; Mon, 11 Dec
+ 2023 10:24:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231207185443.2297160-1-andrii@kernel.org> <ce4bd46009b9b0b8fb2dbec83eaa3e4c476bb050.camel@gmail.com>
-In-Reply-To: <ce4bd46009b9b0b8fb2dbec83eaa3e4c476bb050.camel@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 11 Dec 2023 10:21:30 -0800
-Message-ID: <CAEf4BzbKJDkFbKo0UVGctZ8in9eD+abgncTXHFh2oZg1Gn21QA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/8] BPF token support in libbpf's BPF object
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	paul@paul-moore.com, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keescook@chromium.org, 
-	kernel-team@meta.com, sargun@sargun.me
+References: <20231208172308.2876481-1-roberto.sassu@huaweicloud.com>
+ <CAOQ4uxivpZ+u0A5kE962XST37-ey2Tv9EtddnZQhk3ohRkcQTw@mail.gmail.com>
+ <20231208-tauziehen-zerfetzt-026e7ee800a0@brauner> <c95b24f27021052209ec6911d2b7e7b20e410f43.camel@huaweicloud.com>
+ <ZXcsdf6BzszwZc9h@do-x1extreme> <6e05677355d6d134dddd11da56709b424b631079.camel@huaweicloud.com>
+ <ZXdDvgbjSNo78zM2@do-x1extreme>
+In-Reply-To: <ZXdDvgbjSNo78zM2@do-x1extreme>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 11 Dec 2023 20:24:05 +0200
+Message-ID: <CAOQ4uxhquVynV-=f54a7m-Bu2+dQcYxsUo1j2RBqUxCsLARCXg@mail.gmail.com>
+Subject: Re: [RFC][PATCH] overlayfs: Redirect xattr ops on security.evm to security.evm_overlayfs
+To: Seth Forshee <sforshee@kernel.org>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, Christian Brauner <brauner@kernel.org>, miklos@szeredi.hu, 
+	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	zohar@linux.ibm.com, paul@paul-moore.com, stefanb@linux.ibm.com, 
+	jlayton@kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Roberto Sassu <roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Dec 10, 2023 at 7:30=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.com=
-> wrote:
+On Mon, Dec 11, 2023 at 7:15=E2=80=AFPM Seth Forshee <sforshee@kernel.org> =
+wrote:
 >
-> On Thu, 2023-12-07 at 10:54 -0800, Andrii Nakryiko wrote:
-> > Add fuller support for BPF token in high-level BPF object APIs. This is=
- the
-> > most frequently used way to work with BPF using libbpf, so supporting B=
-PF
-> > token there is critical.
+> On Mon, Dec 11, 2023 at 04:41:46PM +0100, Roberto Sassu wrote:
+> > On Mon, 2023-12-11 at 09:36 -0600, Seth Forshee wrote:
+> > > On Mon, Dec 11, 2023 at 03:56:06PM +0100, Roberto Sassu wrote:
+> > > > Ok, I will try.
+> > > >
+> > > > I explain first how EVM works in general, and then why EVM does not
+> > > > work with overlayfs.
+> > > >
+> > > > EVM gets called before there is a set/removexattr operation, and af=
+ter,
+> > > > if that operation is successful. Before the set/removexattr operati=
+on
+> > > > EVM calculates the HMAC on current inode metadata (i_ino, i_generat=
+ion,
+> > > > i_uid, i_gid, i_mode, POSIX ACLs, protected xattrs). Finally, it
+> > > > compares the calculated HMAC with the one in security.evm.
+> > > >
+> > > > If the verification and the set/removexattr operation are successfu=
+l,
+> > > > EVM calculates again the HMAC (in the post hooks) based on the upda=
+ted
+> > > > inode metadata, and sets security.evm with the new HMAC.
+> > > >
+> > > > The problem is the combination of: overlayfs inodes have different
+> > > > metadata than the lower/upper inodes; overlayfs calls the VFS to
+> > > > set/remove xattrs.
+> > >
+> > > I don't know all of the inner workings of overlayfs in detail, but is=
+ it
+> > > not true that whatever metadata an overlayfs mount presents for a giv=
+en
+> > > inode is stored in the lower and/or upper filesystem inodes? If the
+> > > metadata for those inodes is verified with EVM, why is it also necess=
+ary
+> > > to verify the metadata at the overlayfs level? If some overlayfs
+> > > metadata is currently omitted from the checks on the lower/upper inod=
+es,
+> > > is there any reason EVM couldn't start including that its checksums?
 > >
-> > Patch #1 is improving kernel-side BPF_TOKEN_CREATE behavior by rejectin=
-g to
-> > create "empty" BPF token with no delegation. This seems like saner beha=
-vior
-> > which also makes libbpf's caching better overall. If we ever want to cr=
-eate
-> > BPF token with no delegate_xxx options set on BPF FS, we can use a new =
-flag to
-> > enable that.
+> > Currently, the metadata where there is a misalignment are:
+> > i_generation, s_uuid, (i_ino?). Maybe there is more?
 > >
-> > Patches #2-#5 refactor libbpf internals, mostly feature detection code,=
- to
-> > prepare it from BPF token FD.
-> >
-> > Patch #6 adds options to pass BPF token into BPF object open options. I=
-t also
-> > adds implicit BPF token creation logic to BPF object load step, even wi=
-thout
-> > any explicit involvement of the user. If the environment is setup prope=
-rly,
-> > BPF token will be created transparently and used implicitly. This allow=
-s for
-> > all existing application to gain BPF token support by just linking with
-> > latest version of libbpf library. No source code modifications are requ=
-ired.
-> > All that under assumption that privileged container management agent pr=
-operly
-> > set up default BPF FS instance at /sys/bpf/fs to allow BPF token creati=
-on.
-> >
-> > Patches #7-#8 adds more selftests, validating BPF object APIs work as e=
-xpected
-> > under unprivileged user namespaced conditions in the presence of BPF to=
-ken.
+> > If metadata are aligned, there is no need to store two separate HMACs.
 >
-> fwiw, I've read through this patch-set and have not noticed any issues,
-> all seems good to me. Not sure if that worth much as I'm not terribly
-> familiar with code base yet.
+> I can only think of three possible sources for the metadata overlayfs
+> presents:
+>
+>  1. It comes directly from the underlying filesystems
+>  2. overlayfs synthesizes if from the underlying filesystem data
+>  3. It's purely generated at runtime
+>
+> Are there others?
 
-Every extra pair of eyes is worth it :) Not finding anything obviously
-broken is still a good result, thanks!
+3.b. purely generated and persisted in overlay private xattr
+
+but IIRC only s_uuid fits in that category
 
 >
-> [...]
+> 1 and 2 should be covered by EVM on the underlying filesystems. If 3 is
+> happening then it seems like hashing that data is just confirming that
+> overlayfs consistently generates the same values for that data, and
+> verifying code behavior doesn't seem in-scope for EVM.
+
+I agree.
+I don't think that IMA/EVM has a reason to assets overlayfs specific
+metadata.
+
+Thanks,
+Amir.
