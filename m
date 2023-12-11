@@ -1,103 +1,172 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE96A1D6AE;
-	Mon, 11 Dec 2023 10:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXHIOlGf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A977DC433CA;
-	Mon, 11 Dec 2023 10:03:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702289041;
-	bh=r68d1duxP7xVgr46w0Z1vpdCRfKjkuAvt5GXFsR/z7g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MXHIOlGf4lSZ5mNEGbLKruvFEoWXfev6kp70IJ8A50CBg2/uFwlVM54P2u24CC/4t
-	 zsS1WNETrapEIZi6N9I+3eFv9yMl7QJxo5YH0l09GHpIfYRyrTVnhgZh8WvJPcMj7u
-	 f8Mfw5jYavhVKx3zCf6gRr60WQvRXH3eEWQV8UeFbelkKP/GMfc04atjd7uSdQ1j/Y
-	 r69o1IHF82uCwzNY7qV2FrFWov1LYnQPLX5HpJTJlDNELxBxv8+Ei8QGGa5eMyrbGF
-	 RzgoNJAfoX2FAhlbINZ2BVDYwuUhE456a7wSH0FUpwB/3ZQ2wW6d3chMn3ycfnCrzq
-	 5RY7x/2a89xpw==
-Date: Mon, 11 Dec 2023 11:03:55 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, paul@paul-moore.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, keescook@chromium.org,
-	kernel-team@meta.com, sargun@sargun.me
-Subject: Re: [PATCH v12 bpf-next 03/17] bpf: introduce BPF token object
-Message-ID: <20231211-wahnwitzig-entzogen-2b720296349c@brauner>
-References: <20231130185229.2688956-1-andrii@kernel.org>
- <20231130185229.2688956-4-andrii@kernel.org>
- <20231208-besessen-vibrieren-4e963e3ca3ba@brauner>
- <CAEf4BzbRKxBCzKbOWg0sWMzWurF5RvF5OwizXi7tSC2vM4Zi_w@mail.gmail.com>
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 533528E;
+	Mon, 11 Dec 2023 06:56:33 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Spkx31B9fz9xrpQ;
+	Mon, 11 Dec 2023 22:42:31 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 2D5B1140429;
+	Mon, 11 Dec 2023 22:56:24 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwA3c3MKI3dlUupYAg--.22303S2;
+	Mon, 11 Dec 2023 15:56:23 +0100 (CET)
+Message-ID: <c95b24f27021052209ec6911d2b7e7b20e410f43.camel@huaweicloud.com>
+Subject: Re: [RFC][PATCH] overlayfs: Redirect xattr ops on security.evm to
+ security.evm_overlayfs
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Christian Brauner <brauner@kernel.org>, Amir Goldstein
+ <amir73il@gmail.com>,  Seth Forshee <sforshee@kernel.org>
+Cc: miklos@szeredi.hu, linux-unionfs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, zohar@linux.ibm.com, paul@paul-moore.com, 
+ stefanb@linux.ibm.com, jlayton@kernel.org, linux-integrity@vger.kernel.org,
+  linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Roberto Sassu <roberto.sassu@huawei.com>
+Date: Mon, 11 Dec 2023 15:56:06 +0100
+In-Reply-To: <20231208-tauziehen-zerfetzt-026e7ee800a0@brauner>
+References: <20231208172308.2876481-1-roberto.sassu@huaweicloud.com>
+	 <CAOQ4uxivpZ+u0A5kE962XST37-ey2Tv9EtddnZQhk3ohRkcQTw@mail.gmail.com>
+	 <20231208-tauziehen-zerfetzt-026e7ee800a0@brauner>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzbRKxBCzKbOWg0sWMzWurF5RvF5OwizXi7tSC2vM4Zi_w@mail.gmail.com>
+X-CM-TRANSID:LxC2BwA3c3MKI3dlUupYAg--.22303S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF4DXryktF4rGF1ftw1DZFb_yoWrZFW3pF
+	WYka4UKrs8Jr17uwnavF47Xa40y3yrJa1UXwn8Jrn5AFWDXF1IgrWxt3WUuasrXF1kX34j
+	q3yjk34fZ3s8Z3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrR6zUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAIBF1jj5N17wAAs2
 
-On Fri, Dec 08, 2023 at 02:39:56PM -0800, Andrii Nakryiko wrote:
-> On Fri, Dec 8, 2023 at 5:41 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Thu, Nov 30, 2023 at 10:52:15AM -0800, Andrii Nakryiko wrote:
-> > > Add new kind of BPF kernel object, BPF token. BPF token is meant to
-> > > allow delegating privileged BPF functionality, like loading a BPF
-> > > program or creating a BPF map, from privileged process to a *trusted*
-> > > unprivileged process, all while having a good amount of control over which
-> > > privileged operations could be performed using provided BPF token.
-> > >
-> > > This is achieved through mounting BPF FS instance with extra delegation
-> > > mount options, which determine what operations are delegatable, and also
-> > > constraining it to the owning user namespace (as mentioned in the
-> > > previous patch).
-> > >
-> > > BPF token itself is just a derivative from BPF FS and can be created
-> > > through a new bpf() syscall command, BPF_TOKEN_CREATE, which accepts BPF
-> > > FS FD, which can be attained through open() API by opening BPF FS mount
-> > > point. Currently, BPF token "inherits" delegated command, map types,
-> > > prog type, and attach type bit sets from BPF FS as is. In the future,
-> > > having an BPF token as a separate object with its own FD, we can allow
-> > > to further restrict BPF token's allowable set of things either at the
-> > > creation time or after the fact, allowing the process to guard itself
-> > > further from unintentionally trying to load undesired kind of BPF
-> > > programs. But for now we keep things simple and just copy bit sets as is.
-> > >
-> > > When BPF token is created from BPF FS mount, we take reference to the
-> > > BPF super block's owning user namespace, and then use that namespace for
-> > > checking all the {CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, CAP_SYS_ADMIN}
-> > > capabilities that are normally only checked against init userns (using
-> > > capable()), but now we check them using ns_capable() instead (if BPF
-> > > token is provided). See bpf_token_capable() for details.
-> > >
-> > > Such setup means that BPF token in itself is not sufficient to grant BPF
-> > > functionality. User namespaced process has to *also* have necessary
-> > > combination of capabilities inside that user namespace. So while
-> > > previously CAP_BPF was useless when granted within user namespace, now
-> > > it gains a meaning and allows container managers and sys admins to have
-> > > a flexible control over which processes can and need to use BPF
-> > > functionality within the user namespace (i.e., container in practice).
-> > > And BPF FS delegation mount options and derived BPF tokens serve as
-> > > a per-container "flag" to grant overall ability to use bpf() (plus further
-> > > restrict on which parts of bpf() syscalls are treated as namespaced).
-> > >
-> > > Note also, BPF_TOKEN_CREATE command itself requires ns_capable(CAP_BPF)
-> > > within the BPF FS owning user namespace, rounding up the ns_capable()
-> > > story of BPF token.
-> > >
-> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > ---
-> >
-> > Same concerns as in the other mail. For the bpf_token_create() code,
-> > Acked-by: Christian Brauner <brauner@kernel.org>
-> 
-> This patch set has landed in bpf-next and there are a bunch of other
-> patches after it, so I presume it will be a bit problematic to add ack
-> after the fact. But thanks for taking another look and acking!
+On Fri, 2023-12-08 at 23:01 +0100, Christian Brauner wrote:
+> On Fri, Dec 08, 2023 at 11:55:19PM +0200, Amir Goldstein wrote:
+> > On Fri, Dec 8, 2023 at 7:25=E2=80=AFPM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > >=20
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > >=20
+> > > EVM updates the HMAC in security.evm whenever there is a setxattr or
+> > > removexattr operation on one of its protected xattrs (e.g. security.i=
+ma).
+> > >=20
+> > > Unfortunately, since overlayfs redirects those xattrs operations on t=
+he
+> > > lower filesystem, the EVM HMAC cannot be calculated reliably, since l=
+ower
+> > > inode attributes on which the HMAC is calculated are different from u=
+pper
+> > > inode attributes (for example i_generation and s_uuid).
+> > >=20
+> > > Although maybe it is possible to align such attributes between the lo=
+wer
+> > > and the upper inode, another idea is to map security.evm to another n=
+ame
+> > > (security.evm_overlayfs)
+> >=20
+> > If we were to accept this solution, this will need to be trusted.overla=
+y.evm
+> > to properly support private overlay xattr escaping.
+> >=20
+> > > during an xattr operation, so that it does not
+> > > collide with security.evm set by the lower filesystem.
+> >=20
+> > You are using wrong terminology and it is very confusing to me.
+>=20
+> Same.
 
-Yeah, I don't mind. :)
+Argh, sorry...
+
+> > see the overlay mount command has lowerdir=3D and upperdir=3D.
+> > Seems that you are using lower filesystem to refer to the upper fs
+> > and upper filesystem to refer to overlayfs.
+> >=20
+> > >=20
+> > > Whenever overlayfs wants to set security.evm, it is actually setting
+> > > security.evm_overlayfs calculated with the upper inode attributes. Th=
+e
+> > > lower filesystem continues to update security.evm.
+> > >=20
+> >=20
+> > I understand why that works, but I am having a hard time swallowing
+> > the solution, mainly because I feel that there are other issues on the
+> > intersection of overlayfs and IMA and I don't feel confident that this
+> > addresses them all.
+
+This solution is specifically for the collisions on HMACs, nothing
+else. Does not interfere/solve any other problem.
+
+> > If you want to try to convince me, please try to write a complete
+> > model of how IMA/EVM works with overlayfs, using the section
+> > "Permission model" in Documentation/filesystems/overlayfs.rst
+> > as a reference.
+
+Ok, I will try.
+
+I explain first how EVM works in general, and then why EVM does not
+work with overlayfs.
+
+EVM gets called before there is a set/removexattr operation, and after,
+if that operation is successful. Before the set/removexattr operation
+EVM calculates the HMAC on current inode metadata (i_ino, i_generation,
+i_uid, i_gid, i_mode, POSIX ACLs, protected xattrs). Finally, it
+compares the calculated HMAC with the one in security.evm.
+
+If the verification and the set/removexattr operation are successful,
+EVM calculates again the HMAC (in the post hooks) based on the updated
+inode metadata, and sets security.evm with the new HMAC.
+
+The problem is the combination of: overlayfs inodes have different
+metadata than the lower/upper inodes; overlayfs calls the VFS to
+set/remove xattrs.
+
+The first problem basically means the HMAC on lower/upper inodes and
+overlayfs ones is different.
+
+The second problem is that one security.evm is not enough. We need two,
+to store the two different HMACs. And we need both at the same time,
+since when overlayfs is mounted the lower/upper directories can be
+still accessible.
+
+In the example I described, IMA tries to update security.ima, but this
+causes EVM to attempt updating security.evm twice (once after the upper
+filesystem performed the setxattr requested by overlayfs, another after
+overlayfs performed the setxattr requested by IMA; the latter fails
+since EVM does not allow the VFS to directly update the HMAC).
+
+Remapping security.evm to security.evm_overlayfs (now
+trusted.overlay.evm) allows us to store both HMACs separately and to
+know which one to use.
+
+I just realized that the new xattr name should be public, because EVM
+rejects HMAC updates, so we should reject HMAC updates based on the new
+xattr name too.
+
+> I want us to go the other way. Make the overlayfs layer completely
+> irrelevant for EVM and IMA. See a related discussion here:
+
+Not sure it is possible, as long as overlayfs uses VFS xattr calls.
+
+> Subject: Re: [PATCH 09/16] fs: add vfs_set_fscaps()
+> https://lore.kernel.org/r/ZXHZ8uNEg1IK5WMW@do-x1extreme
+
+I will also read this patch, in case I missed something.
+
+Thanks
+
+Roberto
+
