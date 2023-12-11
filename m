@@ -1,87 +1,134 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EiZO2+tg"
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95C05DB;
-	Mon, 11 Dec 2023 13:44:12 -0800 (PST)
-Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-6ce9e897aeaso4261615b3a.2;
-        Mon, 11 Dec 2023 13:44:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BiM3KdWY"
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B93CB8;
+	Mon, 11 Dec 2023 14:50:22 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-54f4f7d082cso5136357a12.0;
+        Mon, 11 Dec 2023 14:50:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702331052; x=1702935852; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1702335021; x=1702939821; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=N7imiHd03OeHfJqIYuOPkDI+twRgYtwGYnCJrI3xJS8=;
-        b=EiZO2+tgoXFuj04IBU4brCZTyaGhsHBb3IkKe4ItBRxunGYynvMp2iq6pq35D/FuJB
-         o93CLmDsCmBpi1kAenvoVtR/VBauS3L4VynD49HldaxtwU+x28D7CsQw0B6CV9tYT/Ez
-         85ucDr5UM9+xJnI5tvV+elVu/JGBWX0DgfT7V3Pvy1im8ykbP9auv9/gzAaR71S0JOr7
-         S2Utf7lZdrrWRSvoou2utoNqDJyFJ0pUu9qiYYonHyF0EHyJDFCkPb7xPJsBGosS/XsK
-         qQhd4/pClvsfxQK5DY5knjMtnWA6Fp+Fg/xhi29aKuY+kGDXhmuskLeX+bX7l+iRwMtC
-         gnpA==
+        bh=Y2M/QtM4srk5RtLbPaKHdlp0MRAZCUQFxeHkHv+g5gA=;
+        b=BiM3KdWYfmckd/UVNUdRdZJYUdL+2s2+pvVIdd6TbMMJ9SIamRQWqCWLfMcJQGmTpd
+         VgvOu7mZvuKiRVPuteRc4RhQol3mGBxXtY6bvB5zkBHwl12RNvFHBzGrdmWbN7Cun8f+
+         PRC/xn571c7NMe1opK3bxE1TlZKxNs977oU5r63B6zb4/htBG2kzcP9MI98AFtztyzZv
+         68wuQ43KZSNYP+pLln+UWEj8impAsNfee6l6lt9LmOpAU8LcTOQQDUAEIrm3HLmB8ZVM
+         MsiUXyfJ5pN/H75Kqh+7qS5/QXL5Z5KDXekRocLXgblwcFbyqwGOBFSwQFPsriUc9OJ3
+         pJdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702331052; x=1702935852;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=N7imiHd03OeHfJqIYuOPkDI+twRgYtwGYnCJrI3xJS8=;
-        b=O6evDE4wnuNYwDP6/vZ8YO9Xv8a9Mgkkq6aymD5e7141DTlQX7/mnwZgWI8+kRyMUv
-         poU12iljOYkCSE2DZNbGjQ1gMpcD67K3G61E2BP0GhYLhIwf4Kq6RZcVc2qbaI/0HJWZ
-         iHTUehw4k4PV4hCqWmy4cRGb6lDQQQ321XF4MjQN5I8pqjDOrUXn/DaIv5Sfrikta5XG
-         NxSdVjG0zUT+wT+E4i1/oa2w3DmqPpKu8mh7MXnAcnYn+QAT7f4Hqt1WeCpZTbYWQrd3
-         1BupUpbH3g8+ceqEur10oGnL0B1zx7q6AY/6DvXJDLK+gxNAtOnjts6qhsNXfbEEIvCT
-         2Hmw==
-X-Gm-Message-State: AOJu0Ywn4SuigVJihsaugvoIax9eIg2+mITIt6tbJ6YFRXjr4sUclK1w
-	vgr8kXMeqUV31PaVAaPBcMc=
-X-Google-Smtp-Source: AGHT+IFbVv36A2VqNl+2IvsIVy/Yz+3YEOynOdb/vNyi2F2LF05fq0tsf0OjqKG98n3VcV01c4DgpA==
-X-Received: by 2002:a05:6a20:3942:b0:18f:d416:55fd with SMTP id r2-20020a056a20394200b0018fd41655fdmr6605835pzg.100.1702331052027;
-        Mon, 11 Dec 2023 13:44:12 -0800 (PST)
-Received: from localhost ([98.97.32.4])
-        by smtp.gmail.com with ESMTPSA id v188-20020a632fc5000000b005c66a7d70fdsm6664319pgv.61.2023.12.11.13.44.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Dec 2023 13:44:11 -0800 (PST)
-Date: Mon, 11 Dec 2023 13:44:10 -0800
-From: John Fastabend <john.fastabend@gmail.com>
-To: Andrii Nakryiko <andrii@kernel.org>, 
- bpf@vger.kernel.org, 
- netdev@vger.kernel.org, 
- paul@paul-moore.com, 
- brauner@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, 
- linux-security-module@vger.kernel.org, 
- keescook@chromium.org, 
- kernel-team@meta.com, 
- sargun@sargun.me
-Message-ID: <657782aa61b9e_edaa2082b@john.notmuch>
-In-Reply-To: <20231207185443.2297160-6-andrii@kernel.org>
-References: <20231207185443.2297160-1-andrii@kernel.org>
- <20231207185443.2297160-6-andrii@kernel.org>
-Subject: RE: [PATCH bpf-next 5/8] libbpf: wire up token_fd into feature
- probing logic
+        d=1e100.net; s=20230601; t=1702335021; x=1702939821;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y2M/QtM4srk5RtLbPaKHdlp0MRAZCUQFxeHkHv+g5gA=;
+        b=v/LFq/i7W8tBJ2C+ZSEjDpnbMJ1SDEO4xndC3In3HTsrkfzIN0GDpf72GbJjb/XPyq
+         2AAEpLAXuGPRiQCCJQIOXLJX6/LuN6Hs7qHPnoi5YoBMZ6adWCkIE2oB/56sRM/0XTMT
+         Tn25IcCbkIjjV7vYMpXgQ08NiSRCCsvXZznbbQgx47q+qit8noU09u5umiv2/kq/rj5A
+         baHwB2gffT2eELovYuGqUhp3NwUCtyGb0MTHYgTHeOYbru7oxA0afz/FyG2nQriRyz2Q
+         Uo636qV2D3V56TJEksbPXDqZaG+Eupj1QR4foTn19YC8L2bpKS5y+4vaFdKB50aCOZr9
+         hZdg==
+X-Gm-Message-State: AOJu0YwsefTaQoiwEMmATA/4XyLY49BoohiEXeOvBLtm7/hHTpeqqRwc
+	mUTTFF3ywxhypiiobuLVJtnICkGOER3ZBCh6FsI=
+X-Google-Smtp-Source: AGHT+IEl7LLXN0ptIhesaEPKAxJzCshfTvbMLJ0xi6Dkzcss2G7d2XM76ZzbLJvOATg2ZmA/J2KgZLy6deCMQm8GDk4=
+X-Received: by 2002:a17:906:69d5:b0:a19:a19b:78a4 with SMTP id
+ g21-20020a17090669d500b00a19a19b78a4mr2636059ejs.103.1702335020465; Mon, 11
+ Dec 2023 14:50:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20231207185443.2297160-1-andrii@kernel.org> <20231207185443.2297160-4-andrii@kernel.org>
+ <657781ec1712_edaa208f5@john.notmuch>
+In-Reply-To: <657781ec1712_edaa208f5@john.notmuch>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 11 Dec 2023 14:50:08 -0800
+Message-ID: <CAEf4BzYmZjBd5ps-iKjyxLvQ=iD3z092+M_deV5ze0eJXGoFsg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 3/8] libbpf: further decouple feature checking
+ logic from bpf_object
+To: John Fastabend <john.fastabend@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	paul@paul-moore.com, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, keescook@chromium.org, 
+	kernel-team@meta.com, sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Andrii Nakryiko wrote:
-> Adjust feature probing callbacks to take into account optional token_fd.
-> In unprivileged contexts, some feature detectors would fail to detect
-> kernel support just because BPF program, BPF map, or BTF object can't be
-> loaded due to privileged nature of those operations. So when BPF object
-> is loaded with BPF token, this token should be used for feature probing.
-> 
-> This patch is setting support for this scenario, but we don't yet pass
-> non-zero token FD. This will be added in the next patch.
-> 
-> We also switched BPF cookie detector from using kprobe program to
-> tracepoint one, as tracepoint is somewhat less dangerous BPF program
-> type and has higher likelihood of being allowed through BPF token in the
-> future. This change has no effect on detection behavior.
-> 
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> ---
+On Mon, Dec 11, 2023 at 1:41=E2=80=AFPM John Fastabend <john.fastabend@gmai=
+l.com> wrote:
+>
+> Andrii Nakryiko wrote:
+> > Add feat_supported() helper that accepts feature cache instead of
+> > bpf_object. This allows low-level code in bpf.c to not know or care
+> > about higher-level concept of bpf_object, yet it will be able to utiliz=
+e
+> > custom feature checking in cases where BPF token might influence the
+> > outcome.
+> >
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
+>
+> ...
+>
+> > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> > index a6b8d6f70918..af5e777efcbd 100644
+> > --- a/tools/lib/bpf/libbpf.c
+> > +++ b/tools/lib/bpf/libbpf.c
+> > @@ -637,6 +637,7 @@ struct elf_state {
+> >  };
+> >
+> >  struct usdt_manager;
+> > +struct kern_feature_cache;
+> >
+> >  struct bpf_object {
+> >       char name[BPF_OBJ_NAME_LEN];
+> > @@ -5063,17 +5064,14 @@ static struct kern_feature_desc {
+> >       },
+> >  };
+> >
+> > -bool kernel_supports(const struct bpf_object *obj, enum kern_feature_i=
+d feat_id)
+> > +bool feat_supported(struct kern_feature_cache *cache, enum kern_featur=
+e_id feat_id)
+> >  {
+> >       struct kern_feature_desc *feat =3D &feature_probes[feat_id];
+> > -     struct kern_feature_cache *cache =3D &feature_cache;
+> >       int ret;
+> >
+> > -     if (obj && obj->gen_loader)
+> > -             /* To generate loader program assume the latest kernel
+> > -              * to avoid doing extra prog_load, map_create syscalls.
+> > -              */
+> > -             return true;
+> > +     /* assume global feature cache, unless custom one is provided */
+> > +     if (!cache)
+> > +             cache =3D &feature_cache;
+>
+> Why expose a custom cache at all? Where would that be used? I guess we ar=
+e
+> looking at libbpf_internal APIs so maybe not a big deal.
 
-Acked-by: John Fastabend <john.fastabend@gmail.com>
+bpf_object with token_fd set will have to use a separate non-global
+feature cache. Couple that with me moving this code into a separate
+features.c file in one of the next patches, we need to have some
+internal interface to make this happen.
+
+Also, bpf.c is also using feature detectors, but today they all use
+unprivileged program types, so I didn't add custom feature_cache there
+just yet. But if in the future we have more complicated feature
+detectors that will rely on privileged programs/maps, we'd need to
+pass custom feature_cache from bpf.c as well.
+
+>
+> >
+> >       if (READ_ONCE(cache->res[feat_id]) =3D=3D FEAT_UNKNOWN) {
+> >               ret =3D feat->probe();
+> > @@ -5090,6 +5088,17 @@ bool kernel_supports(const struct bpf_object *ob=
+j, enum kern_feature_id feat_id)
+> >       return READ_ONCE(cache->res[feat_id]) =3D=3D FEAT_SUPPORTED;
+> >  }
+>
+> Acked-by: John Fastabend <john.fastabend@gmail.com>
