@@ -1,168 +1,153 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tpkr1hxc"
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8865DAC;
-	Mon, 11 Dec 2023 10:31:45 -0800 (PST)
-Received: by mail-qv1-xf2a.google.com with SMTP id 6a1803df08f44-67a89dc1ef1so31219316d6.3;
-        Mon, 11 Dec 2023 10:31:45 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="SpUL3WxR"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC6DE9F;
+	Mon, 11 Dec 2023 11:27:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702319504; x=1702924304; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fTW8PXqixb5wSH5WvPY2gNC1fyQ7CohqHF+38plcVqE=;
-        b=Tpkr1hxcOOXTCrewysaLPE4YOBt4UeOLlr71vma+brDelC4ls5AkIPV/E6A9X4qcsu
-         DvpzmPoTv31nYsdygOhooQGUNZLDmnnHhc37b3RRpRBVyHBeoW18NaLP95hpXeXGb4tO
-         gI5CSzdmXMsvNuXUK5wbmeZkAUyBa7/eIdfUcvtMF82xqIIkgzvCF7TMZfB8CUAonsxl
-         t5uc1OML0QrZcVQTtA5+sgIbE3zbyoBTHg+jA6ng6oJ5MPFpR9MKC1Ex77MsRckZgTDR
-         8eVQ3ybP39VWXGOH/s0JE9XGYHc+wdEH2MfFWT994YGITqkBccd5eCM6GReAaqXCAwu6
-         RuCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702319504; x=1702924304;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fTW8PXqixb5wSH5WvPY2gNC1fyQ7CohqHF+38plcVqE=;
-        b=tcvJQgLEZKeZHjX2Y8jlnvl5uIakKTooncjBZFOKn30TjM2r5Bg2R9cLstHjb5zI1n
-         lEQDOmgjZbuq4lgF+SAyC88zoSaONDK+bElbGEP/n7RaE4SYQh4hfMwuFRMVYLceyE4G
-         o5rIywfGxgBEJNHXoT2w1YWEfm5F7C4mwJ279TJH+042EQl3WiClQHadFRwwH2PbHq4Q
-         A5EXn9JnphO4q8wNR8J0y/IbPpblDNyC46PAPBSzoHdeYU5Mu6vdctIoF1ngiSz1qn0f
-         PnDbu8hQa/i9k0TOBgYORZw3x/He8z1Mc/n4g9uUu2gYUmis+V8Sk6bCAFjJCxxI+1p4
-         qwHA==
-X-Gm-Message-State: AOJu0Yx6DkaxbvOwPF9gxdMf1CcYOSE072hUNjWmsCq3X/WByaZbSux6
-	FcNa+A6YJ4T59mdZQrkKkabdneMB4okCsuQbA9I=
-X-Google-Smtp-Source: AGHT+IESLxkN3UOj4BAZ/9t1FY45KlxzL7wvht1++ac8e3nzghJbM1myeGPn9aNJSkj5V2NV5DFzNES2c2VpziT/xAg=
-X-Received: by 2002:a05:6214:154c:b0:67a:dc5a:4fb8 with SMTP id
- t12-20020a056214154c00b0067adc5a4fb8mr6393575qvw.17.1702319504602; Mon, 11
- Dec 2023 10:31:44 -0800 (PST)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1702322858; x=1733858858;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=H67yLPzbUzKkxNmLTlc0D2fbLm38haawLELTNmdVRqA=;
+  b=SpUL3WxRtRmpYc82iBHpLqyIX4PhggRgjtTVI0BWtAYKgRxCTrCplsbT
+   zy8jZLzA1d3hXxyM6HkVBvlmgvjWZ3PUvkuESbe+zqDIh8bPIa6TQUmbQ
+   vknko3Z/Dx+dF9w/dTjGf0zhoMIPspa3zMQKzHRt+kowkvo8aGlFNhO3F
+   w=;
+X-IronPort-AV: E=Sophos;i="6.04,268,1695686400"; 
+   d="scan'208";a="367832945"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-pdx-2c-m6i4x-5eae960a.us-west-2.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2023 19:27:36 +0000
+Received: from smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev (pdx2-ws-svc-p26-lb5-vlan2.pdx.amazon.com [10.39.38.66])
+	by email-inbound-relay-pdx-2c-m6i4x-5eae960a.us-west-2.amazon.com (Postfix) with ESMTPS id 56C0B40D4B;
+	Mon, 11 Dec 2023 19:27:34 +0000 (UTC)
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:31063]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.46.235:2525] with esmtp (Farcaster)
+ id 6d89d48b-7d1b-4732-8426-8adeb261d061; Mon, 11 Dec 2023 19:27:33 +0000 (UTC)
+X-Farcaster-Flow-ID: 6d89d48b-7d1b-4732-8426-8adeb261d061
+Received: from EX19D010UWA004.ant.amazon.com (10.13.138.204) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Mon, 11 Dec 2023 19:27:33 +0000
+Received: from dev-dsk-kamatam-2b-b66a5860.us-west-2.amazon.com (10.169.6.191)
+ by EX19D010UWA004.ant.amazon.com (10.13.138.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Mon, 11 Dec 2023 19:27:33 +0000
+From: Munehisa Kamata <kamatam@amazon.com>
+To: <serge@hallyn.com>
+CC: <adobriyan@gmail.com>, <akpm@linux-foundation.org>,
+	<casey@schaufler-ca.com>, <kamatam@amazon.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<paul@paul-moore.com>
+Subject: Re: Fw: [PATCH] proc: Update inode upon changing task security attribute
+Date: Mon, 11 Dec 2023 19:27:23 +0000
+Message-ID: <20231211192723.28230-1-kamatam@amazon.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20231210144530.GB295678@mail.hallyn.com>
+References: <20231210144530.GB295678@mail.hallyn.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231208172308.2876481-1-roberto.sassu@huaweicloud.com>
- <CAOQ4uxivpZ+u0A5kE962XST37-ey2Tv9EtddnZQhk3ohRkcQTw@mail.gmail.com>
- <20231208-tauziehen-zerfetzt-026e7ee800a0@brauner> <c95b24f27021052209ec6911d2b7e7b20e410f43.camel@huaweicloud.com>
-In-Reply-To: <c95b24f27021052209ec6911d2b7e7b20e410f43.camel@huaweicloud.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 11 Dec 2023 20:31:33 +0200
-Message-ID: <CAOQ4uxgvKb520_Nbp+Y7KDq3_7t1tx65w5pOP8y6or1prESv+Q@mail.gmail.com>
-Subject: Re: [RFC][PATCH] overlayfs: Redirect xattr ops on security.evm to security.evm_overlayfs
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Christian Brauner <brauner@kernel.org>, Seth Forshee <sforshee@kernel.org>, miklos@szeredi.hu, 
-	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	zohar@linux.ibm.com, paul@paul-moore.com, stefanb@linux.ibm.com, 
-	jlayton@kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Roberto Sassu <roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D040UWA002.ant.amazon.com (10.13.139.113) To
+ EX19D010UWA004.ant.amazon.com (10.13.138.204)
 
-On Mon, Dec 11, 2023 at 4:56=E2=80=AFPM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
+On Sun, 2023-12-10 06:45:30 -0800, "Serge E. Hallyn" wrote:
 >
-> On Fri, 2023-12-08 at 23:01 +0100, Christian Brauner wrote:
-> > On Fri, Dec 08, 2023 at 11:55:19PM +0200, Amir Goldstein wrote:
-> > > On Fri, Dec 8, 2023 at 7:25=E2=80=AFPM Roberto Sassu
-> > > <roberto.sassu@huaweicloud.com> wrote:
-> > > >
-> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > >
-> > > > EVM updates the HMAC in security.evm whenever there is a setxattr o=
-r
-> > > > removexattr operation on one of its protected xattrs (e.g. security=
-.ima).
-> > > >
-> > > > Unfortunately, since overlayfs redirects those xattrs operations on=
- the
-> > > > lower filesystem, the EVM HMAC cannot be calculated reliably, since=
- lower
-> > > > inode attributes on which the HMAC is calculated are different from=
- upper
-> > > > inode attributes (for example i_generation and s_uuid).
-> > > >
-> > > > Although maybe it is possible to align such attributes between the =
-lower
-> > > > and the upper inode, another idea is to map security.evm to another=
- name
-> > > > (security.evm_overlayfs)
+> On Sat, Dec 09, 2023 at 01:10:42AM +0000, Munehisa Kamata wrote:
+> > On Sat, 2023-12-09 00:24:42 +0000, Casey Schaufler wrote:
 > > >
-> > > If we were to accept this solution, this will need to be trusted.over=
-lay.evm
-> > > to properly support private overlay xattr escaping.
-> > >
-> > > > during an xattr operation, so that it does not
-> > > > collide with security.evm set by the lower filesystem.
-> > >
-> > > You are using wrong terminology and it is very confusing to me.
-> >
-> > Same.
->
-> Argh, sorry...
->
-> > > see the overlay mount command has lowerdir=3D and upperdir=3D.
-> > > Seems that you are using lower filesystem to refer to the upper fs
-> > > and upper filesystem to refer to overlayfs.
-> > >
+> > > On 12/8/2023 3:32 PM, Paul Moore wrote:
+> > > > On Fri, Dec 8, 2023 at 6:21 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > >> On 12/8/2023 2:43 PM, Paul Moore wrote:
+> > > >>> On Thu, Dec 7, 2023 at 9:14 PM Munehisa Kamata <kamatam@amazon.com> wrote:
+> > > >>>> On Tue, 2023-12-05 14:21:51 -0800, Paul Moore wrote:
+> > > >>> ..
+> > > >>>
+> > > >>>>> I think my thoughts are neatly summarized by Andrew's "yuk!" comment
+> > > >>>>> at the top.  However, before we go too much further on this, can we
+> > > >>>>> get clarification that Casey was able to reproduce this on a stock
+> > > >>>>> upstream kernel?  Last I read in the other thread Casey wasn't seeing
+> > > >>>>> this problem on Linux v6.5.
+> > > >>>>>
+> > > >>>>> However, for the moment I'm going to assume this is a real problem, is
+> > > >>>>> there some reason why the existing pid_revalidate() code is not being
+> > > >>>>> called in the bind mount case?  From what I can see in the original
+> > > >>>>> problem report, the path walk seems to work okay when the file is
+> > > >>>>> accessed directly from /proc, but fails when done on the bind mount.
+> > > >>>>> Is there some problem with revalidating dentrys on bind mounts?
+> > > >>>> Hi Paul,
+> > > >>>>
+> > > >>>> https://lkml.kernel.org/linux-fsdevel/20090608201745.GO8633@ZenIV.linux.org.uk/
+> > > >>>>
+> > > >>>> After reading this thread, I have doubt about solving this in VFS.
+> > > >>>> Honestly, however, I'm not sure if it's entirely relevant today.
+> > > >>> Have you tried simply mounting proc a second time instead of using a bind mount?
+> > > >>>
+> > > >>>  % mount -t proc non /new/location/for/proc
+> > > >>>
+> > > >>> I ask because from your description it appears that proc does the
+> > > >>> right thing with respect to revalidation, it only becomes an issue
+> > > >>> when accessing proc through a bind mount.  Or did I misunderstand the
+> > > >>> problem?
+> > > >> It's not hard to make the problem go away by performing some simple
+> > > >> action. I was unable to reproduce the problem initially because I
+> > > >> checked the Smack label on the bind mounted proc entry before doing
+> > > >> the cat of it. The problem shows up if nothing happens to update the
+> > > >> inode.
+> > > > A good point.
 > > > >
-> > > > Whenever overlayfs wants to set security.evm, it is actually settin=
-g
-> > > > security.evm_overlayfs calculated with the upper inode attributes. =
-The
-> > > > lower filesystem continues to update security.evm.
-> > > >
-> > >
-> > > I understand why that works, but I am having a hard time swallowing
-> > > the solution, mainly because I feel that there are other issues on th=
-e
-> > > intersection of overlayfs and IMA and I don't feel confident that thi=
-s
-> > > addresses them all.
->
-> This solution is specifically for the collisions on HMACs, nothing
-> else. Does not interfere/solve any other problem.
->
-> > > If you want to try to convince me, please try to write a complete
-> > > model of how IMA/EVM works with overlayfs, using the section
-> > > "Permission model" in Documentation/filesystems/overlayfs.rst
-> > > as a reference.
->
-> Ok, I will try.
->
-> I explain first how EVM works in general, and then why EVM does not
-> work with overlayfs.
->
+> > > > I'm kinda thinking we just leave things as-is, especially since the
+> > > > proposed fix isn't something anyone is really excited about.
+> > > 
+> > > "We have to compromise the performance of our sandboxing tool because of
+> > > a kernel bug that's known and for which a fix is available."
+> > > 
+> > > If this were just a curiosity that wasn't affecting real development I
+> > > might agree. But we've got a real world problem, and I don't see ignoring
+> > > it as a good approach. I can't see maintainers of other LSMs thinking so
+> > > if this were interfering with their users.
+> >  
+> > We do bind mount to make information exposed to the sandboxed task as little
+> > as possible. We also create a separate PID namespace for each sandbox, but
+> 
+> If not exposing information is the main motivation, then could you simply do:
+> 
+> mount -t proc proc dir
+> mount --bind dir/$$ dir
+> 
+> ?
 
-I understand both of those things.
+Hi Serge,
 
-What I don't understand is WHY EVM needs to work on overlayfs?
-What is the use case?
-What is the threat model?
+It doesn't work.
 
-The purpose of IMA/EVM as far as I understand it is to detect and
-protect against tampering with data/metadata offline. Right?
+ [root@ip-10-0-32-198 ec2-user]# mount -t proc proc dir
+ [root@ip-10-0-32-198 ec2-user]# echo AAA > dir/$$/attr/current
+ [root@ip-10-0-32-198 ec2-user]# chsmack dir/$$
+ dir/11222 access="AAA"
+ [root@ip-10-0-32-198 ec2-user]# mount --bind dir/$$ dir
+ [root@ip-10-0-32-198 ec2-user]# echo BBB > dir/attr/current
+ [root@ip-10-0-32-198 ec2-user]# echo CCC > dir/attr/current
+ bash: dir/attr/current: Permission denied
+ [root@ip-10-0-32-198 ec2-user]# ls dir
+ ls: cannot access dir: Permission denied
+ [root@ip-10-0-32-198 ec2-user]# 
+ 
+It would not revalidate dir/$$ anyway, so this result wasn't surprising to
+me. Maybe I'm missing something?
 
-As Seth correctly wrote, overlayfs is just the composition of existing
-underlying layers.
 
-Noone can tamper with overlayfs without tampering with the underlying
-layers.
-
-The correct solution to your problem, and I have tried to say this many
-times, in to completely opt-out of IMA/EVM for overlayfs.
-
-EVM should not store those versions of HMAC for overlayfs and for
-the underlying layers, it should ONLY store a single version for the
-underlying layer.
-
-Because write() in overlayfs always follows by write() to upper layer
-and setxattr() in overlayfs always follows by setxattr() to upper layer
-IMO write() and setxattr() on overlayfs should by ignored by IMA/EVM
-and only write()/setxattr() on underlying fs should be acted by IMA/EVM
-which AFAIK, happens anyway.
-
-Please let me know if I am missing something,
-
-Thanks,
-Amir.
+> > still want to bind mount even with it to hide system-wide and pid 1
+> > information from the task. 
+> > 
+> > So, yeah, I see this as a real problem for our use case and want to seek an
+> > opinion about a possibly better fix.
+> > 
+> > 
+> > Thanks,
+> > Munehisa 
+> 
