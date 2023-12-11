@@ -1,175 +1,103 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE96A1D6AE;
+	Mon, 11 Dec 2023 10:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2nMdDstZ"
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58183A0
-	for <linux-security-module@vger.kernel.org>; Mon, 11 Dec 2023 00:56:28 -0800 (PST)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5d340a9cf07so50953177b3.3
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Dec 2023 00:56:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1702284987; x=1702889787; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eFvh0JnUT2IS+ugo/F08Vggb9r+uE9aR69m3LDFSrao=;
-        b=2nMdDstZKOqp2bWUBV/eNzx4cW1L3lXF95jbPPTuQXIKZ3QtGsMa5rhRlRokHGRprE
-         rMNQpX5QGyLDgvnzqiqbbNmWcTPPjW8qx3vq3FLquf6AYF1RC9dZ61Z4/N3fFjqo2GFz
-         vADBya55kX0NS+ag/K3RlpbmYr7xBeBx2zZwQTfaChqEOsvO7mn8B7meS48dXsxMRAKT
-         HejoEniugohMsKoc7dZH53QAc15HgpFG118thv7zubHV0K4xSdEF5qtoEkdAp4A12nBx
-         tw72vdhYVQa4NwDLsxWDTKTrw5Ii2a9aTf69IkhWLY3YH6Vj86A9Z/srFtKcVuGkVhXh
-         A5vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702284987; x=1702889787;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eFvh0JnUT2IS+ugo/F08Vggb9r+uE9aR69m3LDFSrao=;
-        b=lq5l4Dq0zEiM2dM40cf3CgQc0msznwfoTUkGVoBhcRm24fnX7lPBy24Ou0xazSFHnG
-         pJkEwzMxTRIIBClt7ruk/AA7t4BHvQXtYs52TjfvTFiN1VZ/mSYnniIUMCFvuy++RYDo
-         jwQN/PS7T2ERtrQZCAS8AGFVYpBGbcG4+6F8FAqJ1pbU+QJs6mfQAdv2zEuW7xG1gcXI
-         PjPdqygKoOrYzpP7AnyxGqvq9LY6TJmfNQdvTmxYcAsUkt/05Sz0JcRA72t3x2jX/lXS
-         PGBofrFNyULab/flgqs+WJbOAnpgX+ec1k+NtEPrXkigSJNibRVujP4LiH8MOyTIPVB2
-         Y0zg==
-X-Gm-Message-State: AOJu0Yyl0YVY0Nk0Lr7RbSYk92S+O2uRM8F7Tp/RDtVnKSBd5RfhNBxu
-	HXcmxL3We+bfDU6liPqHMKOJKEaq0F0=
-X-Google-Smtp-Source: AGHT+IFjDo1hWQu6AHW9LfwE0fS46hWH/RWIWIvz6jLWC8ExNKNougbI0BXGuAf8tanP0ambOS3QlbXqHA8=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:8dfb:6b15:9b0:522a])
- (user=gnoack job=sendgmr) by 2002:a25:9705:0:b0:db5:45eb:75b0 with SMTP id
- d5-20020a259705000000b00db545eb75b0mr26205ybo.6.1702284987551; Mon, 11 Dec
- 2023 00:56:27 -0800 (PST)
-Date: Mon, 11 Dec 2023 09:56:20 +0100
-In-Reply-To: <20231130093616.67340-3-mic@digikod.net>
-Message-Id: <ZXbOtBS958m8OCiI@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXHIOlGf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A977DC433CA;
+	Mon, 11 Dec 2023 10:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702289041;
+	bh=r68d1duxP7xVgr46w0Z1vpdCRfKjkuAvt5GXFsR/z7g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MXHIOlGf4lSZ5mNEGbLKruvFEoWXfev6kp70IJ8A50CBg2/uFwlVM54P2u24CC/4t
+	 zsS1WNETrapEIZi6N9I+3eFv9yMl7QJxo5YH0l09GHpIfYRyrTVnhgZh8WvJPcMj7u
+	 f8Mfw5jYavhVKx3zCf6gRr60WQvRXH3eEWQV8UeFbelkKP/GMfc04atjd7uSdQ1j/Y
+	 r69o1IHF82uCwzNY7qV2FrFWov1LYnQPLX5HpJTJlDNELxBxv8+Ei8QGGa5eMyrbGF
+	 RzgoNJAfoX2FAhlbINZ2BVDYwuUhE456a7wSH0FUpwB/3ZQ2wW6d3chMn3ycfnCrzq
+	 5RY7x/2a89xpw==
+Date: Mon, 11 Dec 2023 11:03:55 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, paul@paul-moore.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, keescook@chromium.org,
+	kernel-team@meta.com, sargun@sargun.me
+Subject: Re: [PATCH v12 bpf-next 03/17] bpf: introduce BPF token object
+Message-ID: <20231211-wahnwitzig-entzogen-2b720296349c@brauner>
+References: <20231130185229.2688956-1-andrii@kernel.org>
+ <20231130185229.2688956-4-andrii@kernel.org>
+ <20231208-besessen-vibrieren-4e963e3ca3ba@brauner>
+ <CAEf4BzbRKxBCzKbOWg0sWMzWurF5RvF5OwizXi7tSC2vM4Zi_w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20231130093616.67340-1-mic@digikod.net> <20231130093616.67340-3-mic@digikod.net>
-Subject: Re: [PATCH v2 2/2] selftests/landlock: Add tests to check unhandled
- rule's access rights
-From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
-To: "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
-Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, James Morris <jmorris@namei.org>, 
-	Paul Moore <paul@paul-moore.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzbRKxBCzKbOWg0sWMzWurF5RvF5OwizXi7tSC2vM4Zi_w@mail.gmail.com>
 
-On Thu, Nov 30, 2023 at 10:36:16AM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
-> Add two tests to make sure that we cannot add a rule to a ruleset if the
-> rule's access rights that are not handled by the ruleset:
-> * fs: layout1.rule_with_unhandled_access
-> * net: mini.rule_with_unhandled_access
->=20
-> Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> ---
->=20
-> Changes since v1:
-> * Remove confusing comment.
-> ---
->  tools/testing/selftests/landlock/fs_test.c  | 34 +++++++++++++++++++++
->  tools/testing/selftests/landlock/net_test.c | 32 +++++++++++++++++++
->  2 files changed, 66 insertions(+)
->=20
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/s=
-elftests/landlock/fs_test.c
-> index 1e6c474e3d08..a1d17ab527ae 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -632,6 +632,40 @@ TEST_F_FORK(layout0, rule_with_unknown_access)
->  	ASSERT_EQ(0, close(ruleset_fd));
->  }
-> =20
-> +TEST_F_FORK(layout1, rule_with_unhandled_access)
-> +{
-> +	struct landlock_ruleset_attr ruleset_attr =3D {
-> +		.handled_access_fs =3D LANDLOCK_ACCESS_FS_EXECUTE,
-> +	};
-> +	struct landlock_path_beneath_attr path_beneath =3D {};
-> +	int ruleset_fd;
-> +	__u64 access;
-> +
-> +	ruleset_fd =3D
-> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-> +	ASSERT_LE(0, ruleset_fd);
-> +
-> +	path_beneath.parent_fd =3D open(file1_s1d2, O_PATH | O_CLOEXEC);
-> +	ASSERT_LE(0, path_beneath.parent_fd);
-> +
-> +	for (access =3D 1; access > 0; access <<=3D 1) {
-> +		int err;
-> +
-> +		path_beneath.allowed_access =3D access;
-> +		err =3D landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
-> +					&path_beneath, 0);
-> +		if (access =3D=3D ruleset_attr.handled_access_fs) {
-> +			EXPECT_EQ(0, err);
-> +		} else {
-> +			EXPECT_EQ(-1, err);
-> +			EXPECT_EQ(EINVAL, errno);
-> +		}
-> +	}
-> +
-> +	EXPECT_EQ(0, close(path_beneath.parent_fd));
-> +	EXPECT_EQ(0, close(ruleset_fd));
-> +}
-> +
->  static void add_path_beneath(struct __test_metadata *const _metadata,
->  			     const int ruleset_fd, const __u64 allowed_access,
->  			     const char *const path)
-> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/=
-selftests/landlock/net_test.c
-> index 83d9abc3ee55..ea5f727dd257 100644
-> --- a/tools/testing/selftests/landlock/net_test.c
-> +++ b/tools/testing/selftests/landlock/net_test.c
-> @@ -1301,6 +1301,38 @@ TEST_F(mini, rule_with_unknown_access)
->  	EXPECT_EQ(0, close(ruleset_fd));
->  }
-> =20
-> +TEST_F(mini, rule_with_unhandled_access)
-> +{
-> +	struct landlock_ruleset_attr ruleset_attr =3D {
-> +		.handled_access_net =3D LANDLOCK_ACCESS_NET_BIND_TCP,
-> +	};
-> +	struct landlock_net_port_attr net_port =3D {
-> +		.port =3D sock_port_start,
-> +	};
-> +	int ruleset_fd;
-> +	__u64 access;
-> +
-> +	ruleset_fd =3D
-> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-> +	ASSERT_LE(0, ruleset_fd);
-> +
-> +	for (access =3D 1; access > 0; access <<=3D 1) {
-> +		int err;
-> +
-> +		net_port.allowed_access =3D access;
-> +		err =3D landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-> +					&net_port, 0);
-> +		if (access =3D=3D ruleset_attr.handled_access_net) {
-> +			EXPECT_EQ(0, err);
-> +		} else {
-> +			EXPECT_EQ(-1, err);
-> +			EXPECT_EQ(EINVAL, errno);
-> +		}
-> +	}
-> +
-> +	EXPECT_EQ(0, close(ruleset_fd));
-> +}
-> +
->  TEST_F(mini, inval)
->  {
->  	const struct landlock_ruleset_attr ruleset_attr =3D {
-> --=20
-> 2.42.1
->=20
+On Fri, Dec 08, 2023 at 02:39:56PM -0800, Andrii Nakryiko wrote:
+> On Fri, Dec 8, 2023 at 5:41 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Thu, Nov 30, 2023 at 10:52:15AM -0800, Andrii Nakryiko wrote:
+> > > Add new kind of BPF kernel object, BPF token. BPF token is meant to
+> > > allow delegating privileged BPF functionality, like loading a BPF
+> > > program or creating a BPF map, from privileged process to a *trusted*
+> > > unprivileged process, all while having a good amount of control over which
+> > > privileged operations could be performed using provided BPF token.
+> > >
+> > > This is achieved through mounting BPF FS instance with extra delegation
+> > > mount options, which determine what operations are delegatable, and also
+> > > constraining it to the owning user namespace (as mentioned in the
+> > > previous patch).
+> > >
+> > > BPF token itself is just a derivative from BPF FS and can be created
+> > > through a new bpf() syscall command, BPF_TOKEN_CREATE, which accepts BPF
+> > > FS FD, which can be attained through open() API by opening BPF FS mount
+> > > point. Currently, BPF token "inherits" delegated command, map types,
+> > > prog type, and attach type bit sets from BPF FS as is. In the future,
+> > > having an BPF token as a separate object with its own FD, we can allow
+> > > to further restrict BPF token's allowable set of things either at the
+> > > creation time or after the fact, allowing the process to guard itself
+> > > further from unintentionally trying to load undesired kind of BPF
+> > > programs. But for now we keep things simple and just copy bit sets as is.
+> > >
+> > > When BPF token is created from BPF FS mount, we take reference to the
+> > > BPF super block's owning user namespace, and then use that namespace for
+> > > checking all the {CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, CAP_SYS_ADMIN}
+> > > capabilities that are normally only checked against init userns (using
+> > > capable()), but now we check them using ns_capable() instead (if BPF
+> > > token is provided). See bpf_token_capable() for details.
+> > >
+> > > Such setup means that BPF token in itself is not sufficient to grant BPF
+> > > functionality. User namespaced process has to *also* have necessary
+> > > combination of capabilities inside that user namespace. So while
+> > > previously CAP_BPF was useless when granted within user namespace, now
+> > > it gains a meaning and allows container managers and sys admins to have
+> > > a flexible control over which processes can and need to use BPF
+> > > functionality within the user namespace (i.e., container in practice).
+> > > And BPF FS delegation mount options and derived BPF tokens serve as
+> > > a per-container "flag" to grant overall ability to use bpf() (plus further
+> > > restrict on which parts of bpf() syscalls are treated as namespaced).
+> > >
+> > > Note also, BPF_TOKEN_CREATE command itself requires ns_capable(CAP_BPF)
+> > > within the BPF FS owning user namespace, rounding up the ns_capable()
+> > > story of BPF token.
+> > >
+> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > ---
+> >
+> > Same concerns as in the other mail. For the bpf_token_create() code,
+> > Acked-by: Christian Brauner <brauner@kernel.org>
+> 
+> This patch set has landed in bpf-next and there are a bunch of other
+> patches after it, so I presume it will be a bit problematic to add ack
+> after the fact. But thanks for taking another look and acking!
 
-Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
-
-Looks good!
-
-=E2=80=94G=C3=BCnther
+Yeah, I don't mind. :)
