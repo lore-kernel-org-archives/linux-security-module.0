@@ -1,164 +1,357 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="olmgMnxD";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="mslN4W/9"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04379A7;
-	Tue, 12 Dec 2023 13:05:36 -0800 (PST)
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BCJs8j9008179;
-	Tue, 12 Dec 2023 21:05:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2023-11-20;
- bh=U1HMoberY6FH0ObbCdOvvPMxwZLKtwNfx0lXRnzxJWY=;
- b=olmgMnxD4Xx5TtOHbVvhZOLnf4/GtVyj3mQB/b2P7N2fkoGqJtHMq2CfHzz3T+qVfvWU
- E9mfGzEHef8IF/c+CaIDRkLNSBiMVC61J7SQMLJZXSs1rCqElvxx7j4WU5npDp4xNcjU
- 8hITVltygP45hF+vUNX85jhi/SKaZlvIXBK+dqicQihUhOQJw5ZVM5vjFfptJxInNvZC
- gVp+PqJl3dloksh3OWZLQ/vjnSaI9upCb/HM5bC6cFRK23OuWLbR6jwxUlobeKL5/Wld
- b1XH2I5dFb0E72xM7NGqp35HfUUQCl8u9QysFMe2+NKKBeWMcsjfOXnS2UtPqrlPbBFm GQ== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ux5df3dx7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Dec 2023 21:05:27 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3BCKHMEJ003095;
-	Tue, 12 Dec 2023 21:05:25 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2100.outbound.protection.outlook.com [104.47.70.100])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3uvep77953-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Dec 2023 21:05:25 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OHU3fmVQWM6KUR/kTZQAPAfozm0ByuIpRjeqfvKOnHJkIOJNikYoWch6NM8vBYkJS41vfXcrm9INZAj8RGSAQqbQTomwyOQidhLuOWcJr/wJqkhKXsjGbHNJyELnMOt9ZUIoBxuUumWc3EmA09DnfHQkUmyJPG/MdVmXc5akGlBku8g1vfLOi+pUIdigJ0boUARM61sKEXwCThxicdKFnUU4LMQWRxOkJyQuLY0td6Nc5Gooaind41YE+h2g2NjvdWnDcTJd+CHYXMS8+Hmmr8UZ+iI8yePc2g5bPPi/4vtfciA0Z4fVgbLCAf1lfRtd5ofq4pcB1C3XdRJTwRUz5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U1HMoberY6FH0ObbCdOvvPMxwZLKtwNfx0lXRnzxJWY=;
- b=Gl4T/uuLvjTj5txGx7FNcaKsD/mZnMs/jhUzddT5pqgeM8kwuxz8smuvbuWYRHrGedO7gBE2KtG1/32NtMHcjPJbd5HGJVGCqpBxjJAJXmWsGRJqQhXJLqltzFe32XXAf7LbJSFoQWXYwEC0oSLnjGpILazMTf0Z3bB+KZlOKb7uhHOIQfDr+A0wfxf2krW9VZUdwdy1Qvz0rulUMH+jBqwtOgpncI/qwLVbttSKb8t6dHW3BcAmjmzblUtvFVbstu4MQNNQpneqVNR8eId1RhJBoF0Gs6fy4VSYeRGYQd0mS75VpY/RUWp6aHXvMb9D/uinlaVg4Vk4p4WHqHHOqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U1HMoberY6FH0ObbCdOvvPMxwZLKtwNfx0lXRnzxJWY=;
- b=mslN4W/99JU/Yht4G37+qRFkFNmpmcecUmyV/xmmZCV5SWroUq79FMNPpZsLJ642F/7WkY/jCBQJBbcfP07qOwuCN5ytSQksXZaTYaU06s7Ugd077lqWLmAfzEtrVC+Q1dg0ux8Qa4GzptLQACPhYzu9mmJp9iQtijps11Qz2q0=
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by BN0PR10MB5240.namprd10.prod.outlook.com (2603:10b6:408:12f::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.26; Tue, 12 Dec
- 2023 21:05:23 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::2db3:4f1b:bbc2:86c7]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::2db3:4f1b:bbc2:86c7%7]) with mapi id 15.20.7068.033; Tue, 12 Dec 2023
- 21:05:23 +0000
-From: Eric Snowberg <eric.snowberg@oracle.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-CC: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        linux-security-module
-	<linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: Add Eric Snowberg as a reviewer to IMA
-Thread-Topic: [PATCH] MAINTAINERS: Add Eric Snowberg as a reviewer to IMA
-Thread-Index: AQHaLRAR6OJNT75upk24TqFHu5ABZbCmI6SA
-Date: Tue, 12 Dec 2023 21:05:22 +0000
-Message-ID: <E039FE80-E7E7-4626-A2CA-B5B473E428DF@oracle.com>
-References: <20231212152937.928126-1-zohar@linux.ibm.com>
-In-Reply-To: <20231212152937.928126-1-zohar@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3731.700.6)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH2PR10MB4150:EE_|BN0PR10MB5240:EE_
-x-ms-office365-filtering-correlation-id: 7f0e4c97-b98d-4896-3b7d-08dbfb560e63
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- Ds5O7KBI2PgirWkp2Z1Oe241eX0UC7jF4jDzmwWbodAqEfgsQbypMImvG0+2VzmDAf/PL8GIJPJMk0ZABCXKuWpk1b0N68E07uHFiGh9bHM6B1FCDpH4kaJuVsiBH4SPOi9ZQsCFGzv1I+I2JQojWEktbUZntZPuMSmTbYIOXBRz9eUHXFYx6KkSNdK8JLR/sybJaTWyKizMFsP3LpD6sPhygRIY38r7BKp7Tof8JSnt1fgbtoRxGFEJIYitMLZUBEN/GQVOHAvmRRFNNd5tt8UlHpkDTy0vSfg5rutLznclRd5DofA3MbsDvRwVsjBjgt3IenZDvsncK6x+qdO6h37WuuZjCQU+BUY94/3gAMnO7Xo8PqQpKeSrt3Jn9EPcfgZfpOOzhTRNI7LKW49BH4uSUpYXxNfhMra5oI/fb8TkEsX1Kfn3Grf87G5U9a9FN+jZc4F2b77nmXTp2pGCirJ5dbJ1s5csYuG8LHgatKfjO0fBeX6fRiHLGaTh1Ok/A2w7nOiVOXarR8YRbTDtV8gjma8l0cgMOUZ0FJ+kDUhvBh+LdG6UdFQWTFButx/RrgHmPQ+jI35YLLD6/ZrPW5svUbsVdDQ1NRYQnouADe6JEceIP11DyCo4Zf9CO0x2ZuUWNdEIPkxFn8iVe/IDvQ==
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(136003)(39860400002)(376002)(366004)(346002)(230922051799003)(451199024)(186009)(1800799012)(64100799003)(33656002)(38100700002)(5660300002)(122000001)(4744005)(2906002)(86362001)(41300700001)(2616005)(478600001)(38070700009)(6486002)(6916009)(54906003)(64756008)(66446008)(316002)(66556008)(66476007)(66946007)(76116006)(91956017)(26005)(71200400001)(6506007)(53546011)(36756003)(6512007)(4326008)(8676002)(8936002)(44832011)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?r6M5Tc/nf3f0a8h2y8WlB4O6V/8IKbOiOKnl1j+Ct74fATOc8oSQpeZM67SE?=
- =?us-ascii?Q?ZyfRTjxtGp6XV8jfLSdEAd/++zajIJaAR38dIRMmflHjOl+xGp8Ol23Fa9W3?=
- =?us-ascii?Q?AAf+M8I8NSU9w/2F0fqjz2rwL1+82tHUyV9Pd+ZuWg5Ft76zCdZbr5Gfgqrw?=
- =?us-ascii?Q?VUkaLU+TeicKWu5Sb7V6nezcFirORiCzwYohFZnJXm9IgQJeyH4kqFf33BPC?=
- =?us-ascii?Q?9bSmJh5f+fx/xz9qTVy13ReTG+fRkCYFu3Uo1XnObvPX9zrNGD3iMyWbFNaA?=
- =?us-ascii?Q?mK6sLst1sQkgpK0IOBTY6wZPj9Uq8UIIrSayMmHguTu/VvI0wo09f0YH5ZiL?=
- =?us-ascii?Q?MddVr5GBT/9Y4h2obCjImK004wpw8Mew/BvigJfa499pGekyqwgRzZuSzwGs?=
- =?us-ascii?Q?OBz8Kbj1nmF3JwzG3VxlQEt1CVp/jtmSK7sBsJoVuG0HqHGxiyajq7iTofVK?=
- =?us-ascii?Q?e74oBEAuj9xIWXmJwS7mRAeccuDE/d6UfFxgEi8QVb9FjNR9xWtU0JbNaVa3?=
- =?us-ascii?Q?exxRCFeMS1VwALmUeBrGyH44FKdkV2LeuSG36oAElg4tH4/v+X46FpwZN3Cv?=
- =?us-ascii?Q?3FquPwY1AKRKBdut1BAXWGZg1E5Cx+mbDxdqcJ3smU8CS0BkwNuEoC/SpVHX?=
- =?us-ascii?Q?/8EN847Qc3EXFPxKLFCYObd5Qyw3crSKcZ3iFzxzB5trvpc85n9kIzgyRXhp?=
- =?us-ascii?Q?HW+qV6onor9eKckerXrZES+gkc9trUYb94OQFr4UeZ5rUf3+HGk4h1IGJZIi?=
- =?us-ascii?Q?5WWMBTX6JG8/95Q5WJdPtTlZw96z2m2ROc/SEMvhAPesXDXh6b/GCcz4ciKP?=
- =?us-ascii?Q?kz4nEl8/JbtcyOG6sntDEkiBZ+1Nwyn8hkRSkN39TxJrh0hDCMefdbN+seK9?=
- =?us-ascii?Q?s2SKhTYpm124OLYXVNRkiJd/B24iCjwL9jBmHJqZAjy0+w8LlZyoMikJA+Su?=
- =?us-ascii?Q?QY3nGvXhuLAI/UWb37TkiuIZfls4UnPafobZLarbPefCvYIu/Q0CedX3BPic?=
- =?us-ascii?Q?Gm7SOQpZf6uJ9QbztbygiiLwnTzcMxci5rOjObz+oQb5VfQ2q2zwGSeA9/FM?=
- =?us-ascii?Q?wNgEq97dTbBBj8TQI/ZJgvyi/LVDfCCIMt+0Hmlo4UrsJp6CQeEdGJ11ctb5?=
- =?us-ascii?Q?Go7bvjqujLquf8r3XbqrL/1osw6x2GkpxQOsH+/UuakNGf1I8vTwCUHtOY/O?=
- =?us-ascii?Q?FuPMVzPmmf/6Sz8JpVtdhzxUMSH51jJCX28Gu4pbqoxq0vCprhMkfXBOoN9H?=
- =?us-ascii?Q?yfy5NCUi0Bg5afC6KZ1gdaS7bmUucUAW+Y0asRUzj0u5xjxITwdutFMjCTc/?=
- =?us-ascii?Q?a7Df/FVlRrS9pgJ8o1KIk96g5Zu+9gRe0VJiiIaZBWgklJIQC7lWoJI19lew?=
- =?us-ascii?Q?gfEb2DJj+MlpFSvOLM0LpZwVlhpxEfVUbxpWp/X08gZN85GLsu/E8EQ/X7bH?=
- =?us-ascii?Q?YNatkgvlqVCwq7z7p7xL0WF5bWAEJCLQ+wfQFVEsYTUWasOiFQ/NxzVNFW+T?=
- =?us-ascii?Q?uj9+gFZvzo+mAVL+18jMuR6pRZjNe9dLY5c8K2h7fh4MiV4rMZkthvXHwn27?=
- =?us-ascii?Q?HT56NApMbrHSTXr1Myr6JLzYx4YrSyUS7s5IESm0mtyPl5UXK1SbWFBnUaa4?=
- =?us-ascii?Q?/Q=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <384A50C8F9A0984B8684BF62A1BF7D50@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="QQnwWaO8"
+Received: from sonic312-30.consmr.mail.ne1.yahoo.com (sonic312-30.consmr.mail.ne1.yahoo.com [66.163.191.211])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B1A1AD
+	for <linux-security-module@vger.kernel.org>; Tue, 12 Dec 2023 14:55:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702421739; bh=UyvNy/1r7rKshBkXFGtwCWlk0Hq4SWkz0HZPRlMSG2g=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=QQnwWaO8gTdjDwIBh9Gslbm5SNC+pUsqtzGBtJFsgtTcHfZmOCQtJeyhmisXlrVCGJ3DvTKjQsRUbbvAq0IV4iejurvxD760a/3uA69KOHYCPC3HNeD4nDIHo4h1KquJ/valMko9Ya+/Ry5ENCG9bPWs9nA2iK1cjtA/OEgAHBgHpTGA4LMg8Ua+HG11dGeSXsuQodj4v03U7gROLzNAVQYsta4vTyoZZIOeKyoSedS2J4+CwR+wIsFKu0jcRUZo87vmWZ9LlPKyZpdkpqnlUms+NvsHP33G/WybBhmYoLSnOEO4cKNJGnHs4FCECdUVjRhKQdwjWWTwUGhojFeoSA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702421739; bh=QKVjAmdal/b3W99XCqH5xDUTKf9snk38fsEDnGje/5Y=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=AdPXxj7VMd39lRl11aRO+DFWwQRpHeomlR2H/CYBuHPxv6Ar/R9lAguN/74XL+O+UWI34IQ3c3nZLP0BP3uWp9ffJESzA71TBdnMG+w3OJjOQTliU4e+8v9VbeEFLGnoIl7hpAUHwDGGItd8DrwgQ8zd2hJ/Geo/F95KMyjj8TQ++AQRI1Ha1uWy9jNvivbjqNPqtZCHjGQt/YNfgEdTLEoZkagzc8e+kwqtcjcaomaCurAmKCAAK4pnRFA3LgYsWunNUXxbuF8rfmVv7Fm6iH9YTopRu1uv+cBgnxabN3NWxa475iAivb48EZa+PXd1u9bGYr6SPZcYX2j1jcSuow==
+X-YMail-OSG: BrJmdSEVM1ll_DS2dIlDHLvHCo0H3W5whJBSlX.zKariIaX6jRqpUcaMLQ1Frnj
+ BmRH.DxlqfLfuDQmCiY5lP5BxDOHxXoY.Wj0wrtag65dNf7iJjOXufrjOWxCvZxtZZHgZ98raVh6
+ nRn3PjA6ZTyAXaoVgDQnMn2ob5Z46J2RfKx6fq2b2R4u34bKLT0lYPRC5_952dLbpwuHGG7ndPU2
+ R2FX.a8YjV7MtiYfqqf1ugx0Qa2vMBwd9KTA6TdDSHBtNpvgoiHREsO0ylnRLbMjjRz50sjLN5mI
+ HJlBpnBOvNI8NLZBFU56Upvyvb2ruJZLbdZNgIMMNeDXTcz01PIdRpY5v3stFIoff9qcpIFimcg_
+ 0nkqCgfK0TCzuWuIuodk3fWJ7E_bymQ93_l4o_k40vsS27Gvt16eTeOdPK7OQvYUvW5ToJfcff4v
+ b42X8tUP.j0Zu8.RBZz_e.4U.lf5cVvqusb9b_YLOsLuGd0JgVbYMpSUwdq9yvB4ez5iliiJuRL0
+ d5EHn10vD8PaT8VBGFBb.nuklDsgv4vtzNDAEnlTicAtG71EhJgfnAjQ0axV3xH1dxf7iYmIgbXH
+ J_FnnRNQPMJypbrpAknmWxvPQAmdXSgDwxCDLHA8JUHe3oyEG.ChYTMNuXXUTIfUuUiayrD5y8YO
+ VifzZAO8dq0LLMvn7JgaJTaBDHaipxZk46OEyMqjNmtl2WgjkmfvSg6eYGU.eAGfvQHxM8wrOvyl
+ XxI4FV7Es0AX4CHofkJuIfCB6mvPhdBKrrKDysTbL8YSLj8_bUgIjxDOyC2dzR7J8IX7iuSAOrSY
+ ww7xO2cGjAGQPgtKIuveQ3STDdNH3eSNp0q.0x._LB7wiRfF.uWEvwZfprzgHvcpJb3T7KHITKby
+ akWc6o6pT7MC7333NnP8bIaMuilm5_o65dabWEX_y6LtiLaIiSFLDJ4mgSnwGu17MFim0f3GyAYn
+ sCqW32OTfGiu3bJI3m2QvOnD9YP.yK2Hg61V1rTpjaJEVmcxO3UfY9VHSfm6mUcGs6YA8oQoKq.w
+ OsQOC3V4oelhBNc6S3lgqkgqCZLVROEkez7SUzsqJ31hsExoqZcMXLfFE2uDC_xuw_soRZ4WGj6v
+ EqW6ZKDaRHtN9cruULUpeIt8cWld801U84MCpX8bfkfE24iABQ.mFp3noGVozR4NjEo2b3i1E59d
+ Ra_8zlhfEqNM0.MhC62xxHeX7xLn1FswWvTGPGcG2dwU1W7i6A7XE5o9Vs5FkO0eow44Rn00oK0n
+ CdTmfQyCbucLblQlQdVYmMW9rANCFRZKrOXNFEgkdPkftaqxWp8h2MuqR1ujZFLLdjUceueQJAjF
+ 3.u7gXDpSgVksb4DaujhZ7WQ1flgaGzyMY.yma7J7S1xEEuOONdtTBVnIWLheSIAzW2qgCsb74KQ
+ pU2jBsdb4zznnbN3ecOqqiIOnzDLyUthP3xIubFEiobCVlYtY6zI9xqezbzifst9u62W4Z.BCoC8
+ OuwSRDf3UPv2RTctxp.k8KrgSSGApbQ791NmiRxTTIqehWAS3lI99RL4c_M_epZ75hPpnLDzTZDC
+ SyOsoN8C4KQWpj3n8lJymgPu5M0Er6oE_GT9IwPnBTCxCq38mXtOcRotbstCcuiLA24ORjZOR.DY
+ I4ejr_J5ATAaWODUnkmSQIbnrUay78Omk91JRBsfW8hBfvtuvZ05SzXIx8w0UHjoD0UCnJrArVU2
+ MdIGbCJGf9QyeQBNv5hY3rxh5D72_i1iH0kqd1g7FHvCFODW.UkKfDn1Z9Xo1qweuaRs6g1DD5c6
+ P7GfLUPW3Q20jepJUvP9I3VeDiEHDOJ3tWshyzRU9wIiGyUUInRVX0YOwzGcTrz06BNLNVZLu.wg
+ w._dRMjRanEbeA_mHEPlM3H02tCe4W1ts47MdjPUqw7n4nb38W6704CHpWG0Jh116hz373pWXL10
+ kheJjIQf9NykxvgXq_iWOU17TLv4SaWCR87dHqFCZS8iZe6Y.vR0qM5T9uAKpB.ywvPB7BUkuf7M
+ ZPLlsRUir3soWqwnyRXlKKDCcMPX_oK4SEVaZnsyH4S_GwXPmr3JAxC_u0tbEkeYo8e9uoa9sThr
+ CqAJZ_qykz1NybhcD0KF3.pl5AVj6qYJECY4VcxXcEhJiHzYHz2NP3WezHjtCG99LLOKw29VReGd
+ 6v3M9AJT_.mwMRnSmGPw4UMafJ1gEJVRezoXr5CX_JAkz9eVoX3UyZCxaQp3nb8XN8CObrTLE5i.
+ R0kzagfieVrlpGs5E0nVkGelbETPrscraCxWm7NBo41NQKS2tAh0rlX9e1aAbiIPbsMbha9DEF1r
+ YiTKtcR0hAvo-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 37c829e1-9f20-4ed1-86a1-d10dc92b524a
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Tue, 12 Dec 2023 22:55:39 +0000
+Received: by hermes--production-gq1-64499dfdcc-fxj72 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7fc3c2d3c0f3eb597f2f21d521e36336;
+          Tue, 12 Dec 2023 22:55:34 +0000 (UTC)
+Message-ID: <f7bd9ef6-cfa1-4b7e-a9f9-0b6015ac394f@schaufler-ca.com>
+Date: Tue, 12 Dec 2023 14:55:33 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	A5L4erMp9qFfkJrOzTtpuL2zRefAtBO/ILlGQBZnm5wI4+wp0HM0pN8HGLvtAzHKJPuSaKOiH7IIqgN3UJrLcTjPzw6O7sGiHCqnpR95gXpmA1h738C7JW/V9tJQ0qgayikrgf1brmO8Tim6Env/R3viU7SfISFw9TzZZ8uk7y7hbY0BaCn5PZubib79gs2ezFjIUsHh9I0HHbxtdf3piRc3meaIR7weO4iX3Dx2RbejjW9VX520DDe66ex3VSoM0SBVCNkzBQ+VdMc0hX9AaXxMQEwCNih0KK+H4eSp6QexHJf7Nocpta3J2hiOc9La9AOy5ZMeVzYCGqb1QM94jT4t2ci5ROrh3LeKK1KbxvE2UrjYQ89Y5VWMUcaBdKjUFzbPl0Phw4LgtKE5i+cU6ag4eaLlj9g0a1hG6tHlqExCpezn+FxPZ//xJnvGrhEQV5lHR9GSjKTxSnWfTvgZshkCOASYo31dfSs4jGMoXZG3lyDvv90kyeSck++0S+cAWk8gUpdOZLcwIZD4DXWvR3/2oQmU2F1sCBI9IdCngrKilApBNJTaaDf8UfxZqx+8UoTWbdnMNkbVaHg3ijus1PUWwngcX0LESGUPaMaqHbs=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f0e4c97-b98d-4896-3b7d-08dbfb560e63
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2023 21:05:22.9681
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xnj/JZE1fQR7K/6bEUxmX1SIeYkgsA5J76hQ7WcWSEF9YvyzXky8db638Qpg9+jjhCYA9UQphWuh6IsiPVlbv1zOWuyHZWbWYptgrJ/g8zI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB5240
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-12_12,2023-12-12_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 spamscore=0
- malwarescore=0 mlxscore=0 mlxlogscore=999 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2312120163
-X-Proofpoint-GUID: AZZTAtRec_kJR1gPFdaZ3qvU10e46R5o
-X-Proofpoint-ORIG-GUID: AZZTAtRec_kJR1gPFdaZ3qvU10e46R5o
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/4] vduse: Add LSM hook to check Virtio device type
+Content-Language: en-US
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>, jasowang@redhat.com,
+ xuanzhuo@linux.alibaba.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, stephen.smalley.work@gmail.com, eparis@parisplace.org,
+ xieyongji@bytedance.com, virtualization@lists.linux-foundation.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ selinux@vger.kernel.org, david.marchand@redhat.com, lulu@redhat.com,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20231212131712.1816324-1-maxime.coquelin@redhat.com>
+ <20231212131712.1816324-5-maxime.coquelin@redhat.com>
+ <c58da5f5-131f-425e-b008-260506d1bc0d@schaufler-ca.com>
+ <20231212124518-mutt-send-email-mst@kernel.org>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20231212124518-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21952 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+
+On 12/12/2023 9:59 AM, Michael S. Tsirkin wrote:
+> On Tue, Dec 12, 2023 at 08:33:39AM -0800, Casey Schaufler wrote:
+>> On 12/12/2023 5:17 AM, Maxime Coquelin wrote:
+>>> This patch introduces a LSM hook for devices creation,
+>>> destruction (ioctl()) and opening (open()) operations,
+>>> checking the application is allowed to perform these
+>>> operations for the Virtio device type.
+>> My earlier comments on a vduse specific LSM hook still hold.
+>> I would much prefer to see a device permissions hook(s) that
+>> are useful for devices in general. Not just vduse devices.
+>> I know that there are already some very special purpose LSM
+>> hooks, but the experience with maintaining them is why I don't
+>> want more of them. 
+> What exactly does this mean?
+
+You have proposed an LSM hook that is only useful for vduse.
+You want to implement a set of controls that only apply to vduse.
+I can't help but think that if someone (i.e. you) wants to control
+device creation for vduse that there could well be a use case for
+control over device creation for some other set of devices. It is
+quite possible that someone out there is desperately trying to
+solve the same problem you have, but with a different device.
+
+I have no desire to have to deal with
+	security_vduse_perm_check()
+	security_odddev_perm_check()
+	...
+	security_evendev_perm_check()
+
+when we should be able to have
+	security_device_perm_check()
+
+that can service them all.
 
 
+>  Devices like tap etc? How do we
+> find them all though?
 
-> On Dec 12, 2023, at 8:29 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
->=20
-> Digital signature based IMA-appraisal relies heavily on kernel keyrings.
-> Eric Snowberg has been involved in adding the machine keyring to allow
-> the system owner to add their own keys.  With this addition,
-> IMA-appraisal usage can be extended to allow loading local and 3rd party
-> software keys onto the IMA keyring.
->=20
-> Add Eric as a reviewer.
->=20
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+I'm not suggesting you find them all. I'm suggesting that you provide
+an interface that someone could use if they wanted to. I think you
+will be surprised how many will appear (with complaints about the
+interface you propose, of course) if you implement a generally useful
+LSM hook.
 
-Acked-by: Eric Snowberg <eric.snowberg@oracle.com <mailto:eric.snowberg@ora=
-cle.com>>
-
-
+>
+>>> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+>>> ---
+>>>  MAINTAINERS                         |  1 +
+>>>  drivers/vdpa/vdpa_user/vduse_dev.c  | 13 ++++++++++++
+>>>  include/linux/lsm_hook_defs.h       |  2 ++
+>>>  include/linux/security.h            |  6 ++++++
+>>>  include/linux/vduse.h               | 14 +++++++++++++
+>>>  security/security.c                 | 15 ++++++++++++++
+>>>  security/selinux/hooks.c            | 32 +++++++++++++++++++++++++++++
+>>>  security/selinux/include/classmap.h |  2 ++
+>>>  8 files changed, 85 insertions(+)
+>>>  create mode 100644 include/linux/vduse.h
+>>>
+>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>> index a0fb0df07b43..4e83b14358d2 100644
+>>> --- a/MAINTAINERS
+>>> +++ b/MAINTAINERS
+>>> @@ -23040,6 +23040,7 @@ F:	drivers/net/virtio_net.c
+>>>  F:	drivers/vdpa/
+>>>  F:	drivers/virtio/
+>>>  F:	include/linux/vdpa.h
+>>> +F:	include/linux/vduse.h
+>>>  F:	include/linux/virtio*.h
+>>>  F:	include/linux/vringh.h
+>>>  F:	include/uapi/linux/virtio_*.h
+>>> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
+>>> index fa62825be378..59ab7eb62e20 100644
+>>> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+>>> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+>>> @@ -8,6 +8,7 @@
+>>>   *
+>>>   */
+>>>  
+>>> +#include "linux/security.h"
+>>>  #include <linux/init.h>
+>>>  #include <linux/module.h>
+>>>  #include <linux/cdev.h>
+>>> @@ -30,6 +31,7 @@
+>>>  #include <uapi/linux/virtio_blk.h>
+>>>  #include <uapi/linux/virtio_ring.h>
+>>>  #include <linux/mod_devicetable.h>
+>>> +#include <linux/vduse.h>
+>>>  
+>>>  #include "iova_domain.h"
+>>>  
+>>> @@ -1442,6 +1444,10 @@ static int vduse_dev_open(struct inode *inode, struct file *file)
+>>>  	if (dev->connected)
+>>>  		goto unlock;
+>>>  
+>>> +	ret = -EPERM;
+>>> +	if (security_vduse_perm_check(VDUSE_PERM_OPEN, dev->device_id))
+>>> +		goto unlock;
+>>> +
+>>>  	ret = 0;
+>>>  	dev->connected = true;
+>>>  	file->private_data = dev;
+>>> @@ -1664,6 +1670,9 @@ static int vduse_destroy_dev(char *name)
+>>>  	if (!dev)
+>>>  		return -EINVAL;
+>>>  
+>>> +	if (security_vduse_perm_check(VDUSE_PERM_DESTROY, dev->device_id))
+>>> +		return -EPERM;
+>>> +
+>>>  	mutex_lock(&dev->lock);
+>>>  	if (dev->vdev || dev->connected) {
+>>>  		mutex_unlock(&dev->lock);
+>>> @@ -1828,6 +1837,10 @@ static int vduse_create_dev(struct vduse_dev_config *config,
+>>>  	int ret;
+>>>  	struct vduse_dev *dev;
+>>>  
+>>> +	ret = -EPERM;
+>>> +	if (security_vduse_perm_check(VDUSE_PERM_CREATE, config->device_id))
+>>> +		goto err;
+>>> +
+>>>  	ret = -EEXIST;
+>>>  	if (vduse_find_dev(config->name))
+>>>  		goto err;
+>>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+>>> index ff217a5ce552..3930ab2ae974 100644
+>>> --- a/include/linux/lsm_hook_defs.h
+>>> +++ b/include/linux/lsm_hook_defs.h
+>>> @@ -419,3 +419,5 @@ LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
+>>>  LSM_HOOK(int, 0, uring_sqpoll, void)
+>>>  LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
+>>>  #endif /* CONFIG_IO_URING */
+>>> +
+>>> +LSM_HOOK(int, 0, vduse_perm_check, enum vduse_op_perm op_perm, u32 device_id)
+>>> diff --git a/include/linux/security.h b/include/linux/security.h
+>>> index 1d1df326c881..2a2054172394 100644
+>>> --- a/include/linux/security.h
+>>> +++ b/include/linux/security.h
+>>> @@ -32,6 +32,7 @@
+>>>  #include <linux/string.h>
+>>>  #include <linux/mm.h>
+>>>  #include <linux/sockptr.h>
+>>> +#include <linux/vduse.h>
+>>>  
+>>>  struct linux_binprm;
+>>>  struct cred;
+>>> @@ -484,6 +485,7 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
+>>>  int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
+>>>  int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
+>>>  int security_locked_down(enum lockdown_reason what);
+>>> +int security_vduse_perm_check(enum vduse_op_perm op_perm, u32 device_id);
+>>>  #else /* CONFIG_SECURITY */
+>>>  
+>>>  static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
+>>> @@ -1395,6 +1397,10 @@ static inline int security_locked_down(enum lockdown_reason what)
+>>>  {
+>>>  	return 0;
+>>>  }
+>>> +static inline int security_vduse_perm_check(enum vduse_op_perm op_perm, u32 device_id)
+>>> +{
+>>> +	return 0;
+>>> +}
+>>>  #endif	/* CONFIG_SECURITY */
+>>>  
+>>>  #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
+>>> diff --git a/include/linux/vduse.h b/include/linux/vduse.h
+>>> new file mode 100644
+>>> index 000000000000..7a20dcc43997
+>>> --- /dev/null
+>>> +++ b/include/linux/vduse.h
+>>> @@ -0,0 +1,14 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +#ifndef _LINUX_VDUSE_H
+>>> +#define _LINUX_VDUSE_H
+>>> +
+>>> +/*
+>>> + * The permission required for a VDUSE device operation.
+>>> + */
+>>> +enum vduse_op_perm {
+>>> +	VDUSE_PERM_CREATE,
+>>> +	VDUSE_PERM_DESTROY,
+>>> +	VDUSE_PERM_OPEN,
+>>> +};
+>>> +
+>>> +#endif /* _LINUX_VDUSE_H */
+>>> diff --git a/security/security.c b/security/security.c
+>>> index dcb3e7014f9b..150abf85f97d 100644
+>>> --- a/security/security.c
+>>> +++ b/security/security.c
+>>> @@ -5337,3 +5337,18 @@ int security_uring_cmd(struct io_uring_cmd *ioucmd)
+>>>  	return call_int_hook(uring_cmd, 0, ioucmd);
+>>>  }
+>>>  #endif /* CONFIG_IO_URING */
+>>> +
+>>> +/**
+>>> + * security_vduse_perm_check() - Check if a VDUSE device type operation is allowed
+>>> + * @op_perm: the operation type
+>>> + * @device_id: the Virtio device ID
+>>> + *
+>>> + * Check whether the Virtio device creation is allowed
+>>> + *
+>>> + * Return: Returns 0 if permission is granted.
+>>> + */
+>>> +int security_vduse_perm_check(enum vduse_op_perm op_perm, u32 device_id)
+>>> +{
+>>> +	return call_int_hook(vduse_perm_check, 0, op_perm, device_id);
+>>> +}
+>>> +EXPORT_SYMBOL(security_vduse_perm_check);
+>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>>> index feda711c6b7b..18845e4f682f 100644
+>>> --- a/security/selinux/hooks.c
+>>> +++ b/security/selinux/hooks.c
+>>> @@ -21,6 +21,8 @@
+>>>   *  Copyright (C) 2016 Mellanox Technologies
+>>>   */
+>>>  
+>>> +#include "av_permissions.h"
+>>> +#include "linux/vduse.h"
+>>>  #include <linux/init.h>
+>>>  #include <linux/kd.h>
+>>>  #include <linux/kernel.h>
+>>> @@ -92,6 +94,7 @@
+>>>  #include <linux/fsnotify.h>
+>>>  #include <linux/fanotify.h>
+>>>  #include <linux/io_uring.h>
+>>> +#include <uapi/linux/virtio_ids.h>
+>>>  
+>>>  #include "avc.h"
+>>>  #include "objsec.h"
+>>> @@ -6950,6 +6953,34 @@ static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
+>>>  }
+>>>  #endif /* CONFIG_IO_URING */
+>>>  
+>>> +static int selinux_vduse_perm_check(enum vduse_op_perm op_perm, u32 device_id)
+>>> +{
+>>> +	u32 requested_op, requested_type, sid = current_sid();
+>>> +	int ret;
+>>> +
+>>> +	if (op_perm == VDUSE_PERM_CREATE)
+>>> +		requested_op = VDUSE__CREATE;
+>>> +	else if (op_perm == VDUSE__DESTROY)
+>>> +		requested_op = VDUSE__DESTROY;
+>>> +	else if (op_perm == VDUSE_PERM_OPEN)
+>>> +		requested_op = VDUSE__OPEN;
+>>> +	else
+>>> +		return -EINVAL;
+>>> +
+>>> +	ret = avc_has_perm(sid, sid, SECCLASS_VDUSE, requested_op, NULL);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	if (device_id == VIRTIO_ID_NET)
+>>> +		requested_type = VDUSE__NET;
+>>> +	else if (device_id == VIRTIO_ID_BLOCK)
+>>> +		requested_type = VDUSE__BLOCK;
+>>> +	else
+>>> +		return -EINVAL;
+>>> +
+>>> +	return avc_has_perm(sid, sid, SECCLASS_VDUSE, requested_type, NULL);
+>>> +}
+>>> +
+>>>  /*
+>>>   * IMPORTANT NOTE: When adding new hooks, please be careful to keep this order:
+>>>   * 1. any hooks that don't belong to (2.) or (3.) below,
+>>> @@ -7243,6 +7274,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+>>>  #ifdef CONFIG_PERF_EVENTS
+>>>  	LSM_HOOK_INIT(perf_event_alloc, selinux_perf_event_alloc),
+>>>  #endif
+>>> +	LSM_HOOK_INIT(vduse_perm_check, selinux_vduse_perm_check),
+>>>  };
+>>>  
+>>>  static __init int selinux_init(void)
+>>> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+>>> index a3c380775d41..b0a358cbac1c 100644
+>>> --- a/security/selinux/include/classmap.h
+>>> +++ b/security/selinux/include/classmap.h
+>>> @@ -256,6 +256,8 @@ const struct security_class_mapping secclass_map[] = {
+>>>  	  { "override_creds", "sqpoll", "cmd", NULL } },
+>>>  	{ "user_namespace",
+>>>  	  { "create", NULL } },
+>>> +	{ "vduse",
+>>> +	  { "create", "destroy", "open", "net", "block", NULL} },
+>>>  	{ NULL }
+>>>    };
+>>>  
+>
