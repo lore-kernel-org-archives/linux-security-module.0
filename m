@@ -1,307 +1,191 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e5H4Vu9M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6903AD60
-	for <linux-security-module@vger.kernel.org>; Tue, 12 Dec 2023 05:17:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702387059;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I+u1S2AY/jEGnaBOw0WBoMATED3t5u4RyQxPWcyrfwg=;
-	b=e5H4Vu9MpT/2Jf/cpYIyJGtoraIKyt4tY86NPA//uj5XS0t3dlI3WvRx9IZHqTViys1Mlh
-	YE7GxqzsFj+zfNvN5hWPdM/KOaMi4ZW6VHkuHPuqqWfzz5biq/X/Ocw3s8zks1pisQDtvL
-	dWZU9qrmjcW3E7KHVM31CHllaMvtn1g=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-673-4GXjYFpzO-GvKEOSKHlLSA-1; Tue, 12 Dec 2023 08:17:34 -0500
-X-MC-Unique: 4GXjYFpzO-GvKEOSKHlLSA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 576E984A298;
-	Tue, 12 Dec 2023 13:17:33 +0000 (UTC)
-Received: from max-p1.redhat.com (unknown [10.39.208.4])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 39C001121312;
-	Tue, 12 Dec 2023 13:17:30 +0000 (UTC)
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	stephen.smalley.work@gmail.com,
-	eparis@parisplace.org,
-	xieyongji@bytedance.com,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org,
-	david.marchand@redhat.com,
-	lulu@redhat.com,
-	casey@schaufler-ca.com
-Cc: Maxime Coquelin <maxime.coquelin@redhat.com>
-Subject: [PATCH v5 4/4] vduse: Add LSM hook to check Virtio device type
-Date: Tue, 12 Dec 2023 14:17:12 +0100
-Message-ID: <20231212131712.1816324-5-maxime.coquelin@redhat.com>
-In-Reply-To: <20231212131712.1816324-1-maxime.coquelin@redhat.com>
-References: <20231212131712.1816324-1-maxime.coquelin@redhat.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OV56CZjg"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F6671706;
+	Tue, 12 Dec 2023 07:28:01 -0800 (PST)
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BCEPYIZ011633;
+	Tue, 12 Dec 2023 15:27:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=6P7xoDilkGWxN+TMBgFKeNe23iVMd0E0n5jMfKeLyZ8=;
+ b=OV56CZjglftKG6V7ahCTVFWHhElDr6KcbAmFGf7w59eNeb4ceFY2JCoKLFvQF0bBqput
+ wKnE9OBn9kOaoROu+0umf5gw2yg77PO+15Pq9nxuTguVpYv9lwy2ixw8pvJRJqx6HYWR
+ 4wHJZq1YQ95Lm6LAxtRsAmCTv4QT8mD3CSScuLUoOkHq7Fmd7Al6/1rp84fKKSEXOQ4l
+ /J+JZqWohbY3/a/ljaGyL3X4mC/oYsxFnr8kIrlKM6Gnft+W2uaiF6WwYIA2apHbEExc
+ KB7w7V4z1EmLN0pcVs0oSwl4HMh6YJWyDKe7vtxJ/OtpM6Tp54W48XjOQnOku75Zk+ZQ Og== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uxnjysg3q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Dec 2023 15:27:09 +0000
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3BCEtncS031530;
+	Tue, 12 Dec 2023 15:27:09 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uxnjysg30-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Dec 2023 15:27:09 +0000
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3BCETZqH012585;
+	Tue, 12 Dec 2023 15:27:08 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3uw3jnsw2s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Dec 2023 15:27:08 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3BCFR7DA20382378
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 12 Dec 2023 15:27:07 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A3AAA58054;
+	Tue, 12 Dec 2023 15:27:07 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 19F845805C;
+	Tue, 12 Dec 2023 15:27:06 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.159.221])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 12 Dec 2023 15:27:05 +0000 (GMT)
+Message-ID: <a9297cc1bf23e34aba3c7597681e9e71a03b37f9.camel@linux.ibm.com>
+Subject: Re: [RFC][PATCH] overlayfs: Redirect xattr ops on security.evm to
+ security.evm_overlayfs
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        Amir Goldstein
+	 <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+        Seth Forshee
+ <sforshee@kernel.org>, miklos@szeredi.hu,
+        linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, stefanb@linux.ibm.com, jlayton@kernel.org,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Eric Snowberg
+ <eric.snowberg@oracle.com>
+Date: Tue, 12 Dec 2023 10:27:05 -0500
+In-Reply-To: <59bf3530-2a6e-4caa-ac42-4d0dab9a71d1@huaweicloud.com>
+References: <20231208172308.2876481-1-roberto.sassu@huaweicloud.com>
+	 <CAOQ4uxivpZ+u0A5kE962XST37-ey2Tv9EtddnZQhk3ohRkcQTw@mail.gmail.com>
+	 <20231208-tauziehen-zerfetzt-026e7ee800a0@brauner>
+	 <c95b24f27021052209ec6911d2b7e7b20e410f43.camel@huaweicloud.com>
+	 <20231211-fortziehen-basen-b8c0639044b8@brauner>
+	 <019f134a-6ab4-48ca-991c-5a5c94e042ea@huaweicloud.com>
+	 <CAOQ4uxgpNt7qKEF_NEJPsKU7-XhM7N_3eP68FrOpMpcRcHt4rQ@mail.gmail.com>
+	 <59bf3530-2a6e-4caa-ac42-4d0dab9a71d1@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: uRXCe-o40XxvGBalIy-o0TY5V_4UqA_Z
+X-Proofpoint-ORIG-GUID: 7CpOlOBGa5y5k0JZ0iJRCU9QbIPHGwGo
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-12_08,2023-12-12_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
+ malwarescore=0 mlxlogscore=999 lowpriorityscore=0 bulkscore=0 phishscore=0
+ mlxscore=0 adultscore=0 priorityscore=1501 spamscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
+ definitions=main-2312120117
 
-This patch introduces a LSM hook for devices creation,
-destruction (ioctl()) and opening (open()) operations,
-checking the application is allowed to perform these
-operations for the Virtio device type.
+On Tue, 2023-12-12 at 14:13 +0100, Roberto Sassu wrote:
+> On 12.12.23 11:44, Amir Goldstein wrote:
+> > On Tue, Dec 12, 2023 at 12:25 PM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> >>
+> >> On 11.12.23 19:01, Christian Brauner wrote:
+> >>>> The second problem is that one security.evm is not enough. We need two,
+> >>>> to store the two different HMACs. And we need both at the same time,
+> >>>> since when overlayfs is mounted the lower/upper directories can be
+> >>>> still accessible.
+> >>>
+> >>> "Changes to the underlying filesystems while part of a mounted overlay
+> >>> filesystem are not allowed. If the underlying filesystem is changed, the
+> >>> behavior of the overlay is undefined, though it will not result in a
+> >>> crash or deadlock."
+> >>>
+> >>> https://docs.kernel.org/filesystems/overlayfs.html#changes-to-underlying-filesystems
+> >>>
+> >>> So I don't know why this would be a problem.
+> >>
+> >> + Eric Snowberg
+> >>
+> >> Ok, that would reduce the surface of attack. However, when looking at:
+> >>
+> >>        ovl: Always reevaluate the file signature for IMA
+> >>
+> >>        Commit db1d1e8b9867 ("IMA: use vfs_getattr_nosec to get the
+> >> i_version")
+> >>        partially closed an IMA integrity issue when directly modifying a file
+> >>        on the lower filesystem.  If the overlay file is first opened by a
+> >> user
+> >>        and later the lower backing file is modified by root, but the extended
+> >>        attribute is NOT updated, the signature validation succeeds with
+> >> the old
+> >>        original signature.
+> >>
+> >> Ok, so if the behavior of overlayfs is undefined if the lower backing
+> >> file is modified by root, do we need to reevaluate? Or instead would be
+> >> better to forbid the write from IMA (legitimate, I think, since the
+> >> behavior is documented)? I just saw that we have d_real_inode(), we can
+> >> use it to determine if the write should be denied.
+> >>
+> > 
+> > There may be several possible legitimate actions in this case, but the
+> > overall concept IMO should be the same as I said about EVM -
+> > overlayfs does not need an IMA signature of its own, because it
+> > can use the IMA signature of the underlying file.
+> > 
+> > Whether overlayfs reads a file from lower fs or upper fs, it does not
+> > matter, the only thing that matters is that the underlying file content
+> > is attested when needed.
+> > 
+> > The only incident that requires special attention is copy-up.
+> > This is what the security hooks security_inode_copy_up() and
+> > security_inode_copy_up_xattr() are for.
+> > 
+> > When a file starts in state "lower" and has security.ima,evm xattrs
+> > then before a user changes the file, it is copied up to upper fs
+> > and suppose that security.ima,evm xattrs are copied as is?
 
-Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
----
- MAINTAINERS                         |  1 +
- drivers/vdpa/vdpa_user/vduse_dev.c  | 13 ++++++++++++
- include/linux/lsm_hook_defs.h       |  2 ++
- include/linux/security.h            |  6 ++++++
- include/linux/vduse.h               | 14 +++++++++++++
- security/security.c                 | 15 ++++++++++++++
- security/selinux/hooks.c            | 32 +++++++++++++++++++++++++++++
- security/selinux/include/classmap.h |  2 ++
- 8 files changed, 85 insertions(+)
- create mode 100644 include/linux/vduse.h
+For IMA copying up security.ima is fine.  Other than EVM portable
+signatures, security.evm contains filesystem specific metadata. 
+Copying security.evm up only works if the metadata is the same on both
+filesystems.  Currently the i_generation and i_sb->s_uuid are
+different.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a0fb0df07b43..4e83b14358d2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23040,6 +23040,7 @@ F:	drivers/net/virtio_net.c
- F:	drivers/vdpa/
- F:	drivers/virtio/
- F:	include/linux/vdpa.h
-+F:	include/linux/vduse.h
- F:	include/linux/virtio*.h
- F:	include/linux/vringh.h
- F:	include/uapi/linux/virtio_*.h
-diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-index fa62825be378..59ab7eb62e20 100644
---- a/drivers/vdpa/vdpa_user/vduse_dev.c
-+++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-@@ -8,6 +8,7 @@
-  *
-  */
- 
-+#include "linux/security.h"
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/cdev.h>
-@@ -30,6 +31,7 @@
- #include <uapi/linux/virtio_blk.h>
- #include <uapi/linux/virtio_ring.h>
- #include <linux/mod_devicetable.h>
-+#include <linux/vduse.h>
- 
- #include "iova_domain.h"
- 
-@@ -1442,6 +1444,10 @@ static int vduse_dev_open(struct inode *inode, struct file *file)
- 	if (dev->connected)
- 		goto unlock;
- 
-+	ret = -EPERM;
-+	if (security_vduse_perm_check(VDUSE_PERM_OPEN, dev->device_id))
-+		goto unlock;
-+
- 	ret = 0;
- 	dev->connected = true;
- 	file->private_data = dev;
-@@ -1664,6 +1670,9 @@ static int vduse_destroy_dev(char *name)
- 	if (!dev)
- 		return -EINVAL;
- 
-+	if (security_vduse_perm_check(VDUSE_PERM_DESTROY, dev->device_id))
-+		return -EPERM;
-+
- 	mutex_lock(&dev->lock);
- 	if (dev->vdev || dev->connected) {
- 		mutex_unlock(&dev->lock);
-@@ -1828,6 +1837,10 @@ static int vduse_create_dev(struct vduse_dev_config *config,
- 	int ret;
- 	struct vduse_dev *dev;
- 
-+	ret = -EPERM;
-+	if (security_vduse_perm_check(VDUSE_PERM_CREATE, config->device_id))
-+		goto err;
-+
- 	ret = -EEXIST;
- 	if (vduse_find_dev(config->name))
- 		goto err;
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index ff217a5ce552..3930ab2ae974 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -419,3 +419,5 @@ LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
- LSM_HOOK(int, 0, uring_sqpoll, void)
- LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
- #endif /* CONFIG_IO_URING */
-+
-+LSM_HOOK(int, 0, vduse_perm_check, enum vduse_op_perm op_perm, u32 device_id)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 1d1df326c881..2a2054172394 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -32,6 +32,7 @@
- #include <linux/string.h>
- #include <linux/mm.h>
- #include <linux/sockptr.h>
-+#include <linux/vduse.h>
- 
- struct linux_binprm;
- struct cred;
-@@ -484,6 +485,7 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
- int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
- int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
- int security_locked_down(enum lockdown_reason what);
-+int security_vduse_perm_check(enum vduse_op_perm op_perm, u32 device_id);
- #else /* CONFIG_SECURITY */
- 
- static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
-@@ -1395,6 +1397,10 @@ static inline int security_locked_down(enum lockdown_reason what)
- {
- 	return 0;
- }
-+static inline int security_vduse_perm_check(enum vduse_op_perm op_perm, u32 device_id)
-+{
-+	return 0;
-+}
- #endif	/* CONFIG_SECURITY */
- 
- #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
-diff --git a/include/linux/vduse.h b/include/linux/vduse.h
-new file mode 100644
-index 000000000000..7a20dcc43997
---- /dev/null
-+++ b/include/linux/vduse.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_VDUSE_H
-+#define _LINUX_VDUSE_H
-+
-+/*
-+ * The permission required for a VDUSE device operation.
-+ */
-+enum vduse_op_perm {
-+	VDUSE_PERM_CREATE,
-+	VDUSE_PERM_DESTROY,
-+	VDUSE_PERM_OPEN,
-+};
-+
-+#endif /* _LINUX_VDUSE_H */
-diff --git a/security/security.c b/security/security.c
-index dcb3e7014f9b..150abf85f97d 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -5337,3 +5337,18 @@ int security_uring_cmd(struct io_uring_cmd *ioucmd)
- 	return call_int_hook(uring_cmd, 0, ioucmd);
- }
- #endif /* CONFIG_IO_URING */
-+
-+/**
-+ * security_vduse_perm_check() - Check if a VDUSE device type operation is allowed
-+ * @op_perm: the operation type
-+ * @device_id: the Virtio device ID
-+ *
-+ * Check whether the Virtio device creation is allowed
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
-+int security_vduse_perm_check(enum vduse_op_perm op_perm, u32 device_id)
-+{
-+	return call_int_hook(vduse_perm_check, 0, op_perm, device_id);
-+}
-+EXPORT_SYMBOL(security_vduse_perm_check);
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index feda711c6b7b..18845e4f682f 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -21,6 +21,8 @@
-  *  Copyright (C) 2016 Mellanox Technologies
-  */
- 
-+#include "av_permissions.h"
-+#include "linux/vduse.h"
- #include <linux/init.h>
- #include <linux/kd.h>
- #include <linux/kernel.h>
-@@ -92,6 +94,7 @@
- #include <linux/fsnotify.h>
- #include <linux/fanotify.h>
- #include <linux/io_uring.h>
-+#include <uapi/linux/virtio_ids.h>
- 
- #include "avc.h"
- #include "objsec.h"
-@@ -6950,6 +6953,34 @@ static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
- }
- #endif /* CONFIG_IO_URING */
- 
-+static int selinux_vduse_perm_check(enum vduse_op_perm op_perm, u32 device_id)
-+{
-+	u32 requested_op, requested_type, sid = current_sid();
-+	int ret;
-+
-+	if (op_perm == VDUSE_PERM_CREATE)
-+		requested_op = VDUSE__CREATE;
-+	else if (op_perm == VDUSE__DESTROY)
-+		requested_op = VDUSE__DESTROY;
-+	else if (op_perm == VDUSE_PERM_OPEN)
-+		requested_op = VDUSE__OPEN;
-+	else
-+		return -EINVAL;
-+
-+	ret = avc_has_perm(sid, sid, SECCLASS_VDUSE, requested_op, NULL);
-+	if (ret)
-+		return ret;
-+
-+	if (device_id == VIRTIO_ID_NET)
-+		requested_type = VDUSE__NET;
-+	else if (device_id == VIRTIO_ID_BLOCK)
-+		requested_type = VDUSE__BLOCK;
-+	else
-+		return -EINVAL;
-+
-+	return avc_has_perm(sid, sid, SECCLASS_VDUSE, requested_type, NULL);
-+}
-+
- /*
-  * IMPORTANT NOTE: When adding new hooks, please be careful to keep this order:
-  * 1. any hooks that don't belong to (2.) or (3.) below,
-@@ -7243,6 +7274,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- #ifdef CONFIG_PERF_EVENTS
- 	LSM_HOOK_INIT(perf_event_alloc, selinux_perf_event_alloc),
- #endif
-+	LSM_HOOK_INIT(vduse_perm_check, selinux_vduse_perm_check),
- };
- 
- static __init int selinux_init(void)
-diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-index a3c380775d41..b0a358cbac1c 100644
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -256,6 +256,8 @@ const struct security_class_mapping secclass_map[] = {
- 	  { "override_creds", "sqpoll", "cmd", NULL } },
- 	{ "user_namespace",
- 	  { "create", NULL } },
-+	{ "vduse",
-+	  { "create", "destroy", "open", "net", "block", NULL} },
- 	{ NULL }
-   };
- 
--- 
-2.43.0
+> > When later the overlayfs file content is read from the upper copy
+> > the security.ima signature should be enough to attest that file content
+> > was not tampered with between going from "lower" to "upper".
+> > 
+> > security.evm may need to be fixed on copy up, but that should be
+> > easy to do with the security_inode_copy_up_xattr() hook. No?
+
+Writing security.evm requires the existing security.evm to be valid. 
+After each security xattr in the protected list is modified,
+security.evm HMAC needs to be updated.  Perhaps calculating and writing
+security.evm could be triggered by security_inode_copy_up_xattr(). 
+Just copying a non-portable EVM signature wouldn't work, or for that
+matter copying an EVM HMAC with different filesystem metadata.
+
+> It is not yet clear to me. EVM will be seeing the creation of a new 
+> file, and for new files setting xattrs is already allowed.
+> 
+> Maybe the security_inode_copy_up*() would be useful for IMA/EVM to 
+> authorize writes by overlayfs, which would be otherwise denied to the 
+> others (according to my solution).
+> 
+> Still, would like to hear Mimi's opinion.
+
+Thanks Roberto for all your work and analysis.  I'm still looking at
+security_inode_copy_up_xattr().
+
+Mimi
 
