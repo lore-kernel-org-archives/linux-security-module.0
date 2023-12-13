@@ -1,48 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Q2GcCXjA"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ZWwZgfYX"
 Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 553A010A
-	for <linux-security-module@vger.kernel.org>; Wed, 13 Dec 2023 10:08:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702490930; bh=Nwz1uIbomBE991r6kFnI9Xx0i9y6GbKeBjvJtumt8iE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Q2GcCXjATEzjSTSYXHKbXeurOv5yespsSz0ml7JCsSLZqxVHAfvFb/s9tzIt1evnQhz4XLu9bqJKAIA0uPqHtwBjEm4XnLk+vTgaltgUQOZV9b1W/MFTK19WwGySEVVSWxIinyGwjgcfn6rt6N1Prk04cDhYw59eTJ+j6WHqWYBW89gv9guNPRowISjp1KdTZK0yQQSOaN/ST6QuKOTUrS+dNe9wV9evHwRGEg8E3f/cnG21gzKQW1iFofjp2sNHQcon30MXNzf0cSDA0rRHmMleNNc8aVqghAMr5Wu1H7beuwg8EOVCRgGJTca1PQes/0qpj5l4+dRgEZVJr8Dd4w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702490930; bh=+/TJOZ6srOEMVvhuufXWRh0/msMyFtSymbS2RoNkwdQ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jb4TkrgIre+9ji4ewfMOvSl6OLiXVlIvDGCY4riHNE4MLKe9WNidkohEECUqi1Rj+Qb7ja4JfB+hQ40ROlFPoA8fvGkDMunhCHbDlqECIZqe8GSDuIRk7aiiUJr2lt24Ildhu6cfPmlG0xQaFKoBMU3d1eMhl4YbkeyYMarx51p/X154GQeYIUS0UYFGJ+itQukr9ZuIj9wSZwquwUhkkX57Z9zxapwJlT+CIq8zumYoL2AVtUI3C1OzYhHb+LO0BJUpi3iWPmjDvOtpwb+3RD3MejxooCgKRi5LKD51T+cIJGSdIazwoWLEXkSYTvyEk50NXe1ZWWeUO/rQULHZCg==
-X-YMail-OSG: ZY4uPfkVM1nL9XI0hibln_9cRAXR4K6ZlsvOdVR.ZIvGnWPklpsBsrntt6L3vuB
- 8VdYwHE9wV80Ll.nAtMpE0Dt8RTxtsJz3u1gWV4nsZUCwDRbJ8VkqeK9UWIeymWBXAu21aTTGAJG
- HT9hrQzNG4o0l0UTVb.HTb0EwxJ4ZoiWPfp.f9sXgrqtH_HPR.gPo8EQhfUG.moEDU299IyzYYt7
- H2VJ4gba07t4nhBg0hwMpeCMVVdYbSiF.b5JQtZ341VBE3Z_RClBvv03hzVGL5RPVg28ocD1tWZW
- qV8QkvM_DGUEgGH_7Ru7FhHBx6iH3dMwRvMjgsT12JGT5Liqqn2OkcxAOYm9eZ3ICnq4iC2WNqBE
- hjX1EwtFmRbH4wjQ7dtex2xphhuRPR8DrwR2167If94s7MNdj7LDf0.H3FXWsVdWHkKf.Gv0vYWu
- xhBt1kDDUTKBzbW0AAU4BylURMOtonvV1VLwhckz7CgtpkZ.7vdoMoCweN2aGa5lXotaRyseo8lC
- EdfNFXhOSOuckRGSrm6L9QixTrvg.48xgMjI1T_csZMPenPYNwuMI_TOZNvDCFzPjQ4vEl76fYuB
- CAgxOAvU80M8uHZQnLrXsGiLBUaANszyXIhM5zAlHQPVG8IBAJkKmqSR5Riy41WNhLHrMx1AxhaX
- c3WAjD.XYT_2sOD6re0MlrPH_3bI01ZyQFUtulQHTy2u7.odLifj3hGDEbJU.5Z._j7_qV9Nz6eF
- ijaFLsqsGe7Kwr0gXj1X20O1o5bkWa7rvy7rd9LFu2L_mrWOzJ.Mf6YQMdN5Tex7wFvZplvRQGTZ
- d7hRb9arVcB.ijSL4IIGKv5UBUmqej2Iz.LmKZFGPDMMcqRRK_Z8a01tIDb0ZHeDR4jTjtin.xqH
- zh_3sjv4rQ.rLL65jKk5YpQyZDSVRedQ8wrpFPuuQuFddHIunKuZoIHNTYHmDDnffbHzMgfzE6p2
- 0csSu.Y_21KcZjcvn9ECmQgvLobMz3Vud_qM_6s0yeOaw4nhTx9oy6UvZyRB.IG8aMuypMWYgVcs
- N13p6zGyc1pQK8XkxkXktpfNMU2.T6pu7bjZAIdFSXRAb3UFmmonKUr2PNf1I76HPdEKP.oRMCwC
- 7_kaH1kaQwi2d.P1uP0hoAAERtrJ_O6XN.85qafgWLRls_CRTlzNKNlzBRIE.GvDvFRe_njUnjAJ
- pof3DD3hOddOtKXQ721C59YmpyIetqf7dtAKPVAXhx6_dMur6n.PdX0AQzxFDlALEpKFdMIuIXsB
- 70lDIeAeUc.FDPFUL3F8tTR6EeYSEkVzhU3O0uBm1JFolTLTa16FiY87G70txBJjXU0HZidBxBht
- fzSugNDamX5gnlKPmb6zJeNBJWStv.j0GMv64EluNPOCWeVcH3cVTHAT1dFrDB7oXblC3Rum8j4v
- s7uHPuWZVY5OIehsAUS1Mrwj1xjXM.uTX8klNWSSxeJn.4pJgNHCrdw2xp5fhN2jrWMTNTxGCVVB
- YSyNVzm4wtWxaPLpUIclAPQ_Hur5.u3GQFVi9p4pKKM.8F12uF_sn166dxANn5LSuyF7LaCBEgPZ
- nuFUb5a0XV5QzqAt29KHaKpzJaHr54l5N2_V_7ZPiXVOnr5BzGOGGi.EwGm4.V.UKEFkC.an4kpS
- EwODjE3lu19jis0IwGrSZpQ_XP_H2oBdKNc1.XyNjfkKPduWiJOSGiixgDWenRKYnamM8kShG6YS
- qJvWikUacPnSTDzcwrUZaapwLMSlSBAXcQ6zXPwO1zrl7fjGsJga3hQMCh9HTvGNRmTuEr6LNeY_
- IO_eMH4VxsDi42uBI1W.33c6A4Kj1ZlwEfTC0V3yQeEKpYI4PNtMI3bI66EgCiawKiIffAXwauNe
- gV8B1JA9dIA6O9aSaWqCP9U9bnNn4JN1bKtAqdxn95NMCSPOeXSOofRUOsISQkz9ad_g3.tBd0V.
- 0JMpxvAN1olw2ZGSJWD4dVLRA2whVdwpIIxRisbaRSPB5bLiD2YtFx68SxJKwh8m8mf8ujQh5Y19
- HW0..VY6s2cZSXBnXqIRLzXcdZHD1vT_gGAG5h9ZadaHnCUMcRhVNjerK_UP7kIDDeruOMTHFNKO
- 17_iZeBREEot_D7mQh9g4RlApRvP6J0._dhqqVyBD4IjGrRsF0RqQe63FOe4dl1cOaME5zwmdNvd
- LF6_A9TI9WOEHe7Tp_96mVtICBAGWoIOCVf3QqJ1qhrL50oadzN.9BMhtjt0WfskACGhiyemIPKc
- 9qYreb0Lox2deMagqPuimHpY.9QOIyLBhw6nh1VyM_8MLPcf2OszolI2.YWdN
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 217C2E8
+	for <linux-security-module@vger.kernel.org>; Wed, 13 Dec 2023 10:35:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702492538; bh=F3ILWaOaE11kj+zcXUvpO5EwRjGJ4Usw8j8ahHmYLUY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ZWwZgfYXkQXbT09bjrTknAWAv/k3iM5fPucWDr/qy9GA9x072SlO9AgLHSABDrBYEJ3XZApfg1aUxQ4lJfz5mNh/gNhlIKjLSztXjVZ34Ze5Qbv1duijPs96ps3fpcBMfBdF73GN5HgApFSrPGelpCUvYTDCm+eroD41srtF5ggH19q1ydidWWfn9J/kWcQpqYuXxRxkX+bvSnIwzM4ZpOxHRo16z3dO40phkcU5pSvr3TtEpJ0x7vRyMs813ADfkGRZZSvAWn/l+hwTnDSi5Bva9dpF+FL+A6F//G1sIglp5DN3YC3uJIWJ+1gnVHNoAg90Pep5WkPWr6q5+TOv0g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702492538; bh=xg0ZjtPFZLPYvyzFgM5qVRSflwUEjxT6NS85SeeSLeL=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=NjtkJiddK7tyPBbrQ90uhs0BcDcUIgo1UygXJubUub1KXWiz78cCFUh8IlW7AM8Axjc2cj9b5Fr2UagulgGnUM5TqGfYFcw/ALioL//6kmT2gnxfpqjpSO0eiZMf1VKrCfqB64OZo7tea5Se37rnODLSUJP+zcmL5L3YtXFqEIgqJAVRQfQrQ9AosK/XXsEGJ2DjifFUHIa8mkDq/X7C8jPZjZYaBB7PV4louDrKk7okZnI570WbsceZS0VypFgQLwM11plxU8rCjfiedifUz8bcQbuQiodOBDWzw2CIaQL6esYRLxoc+RwUgoIXGurxHfmncpLa/Lqe3zue53Rang==
+X-YMail-OSG: 0r7oZOMVM1mSnzVHyXN8KIPqZIWnhysu5pcAtwcdDMquDNlK3GDwerbatD01YMU
+ FQz_7VQQkw7Fdfg6XzIGuwcR5rj0Gj4AG5aJj0WSQ8xPmOnX12Xn_yLD3RiR.Sxkd3_UFDptgccb
+ IhtbmFr0sygB2UW9BClSqTLZVgmMml_G2pmAIQmwQZeepexLcwiksTE6yJQ2DnwOiKYsG758Xtlc
+ kLsPQr8RI5jUu1n32RQQXYB1M3BdUWKk.KwaDz.I_TTGXCMYjvu9C585hCNwX4M5vL778OpCuufB
+ KNawAgCSSB7skbil1dO.94mV9cGZPaqLH3PctDBFolW4FRkmfSvgNpvYXQHHb3JYlcyPnr7YGn1i
+ c1isqZ8ZqgEvEChlyWrv.O51ZqGL5Ur9Ot9r_oKwrGPuG7I4voZNtAg_zCEPl0rhPFK7WgZR0Yfc
+ 44XaiTKM8181UydLuIWhOCtKw3xk71GuIaW._1ts0VrvPymX4VIuAtuUK83rK2FkEKF_w7Szf_VK
+ gBVSks.icaMy5uqUk2jWuoqGxkvX_MHZtTJRjujPz6oGHxgQiMpWZLoWDdiDKT0cwpKL2.WrKeDx
+ e5at0giascb6dnCC91vK5dYF7aLN9110PclMzy2ybBiu7x19ST8Zu88f_JhqvfR_iRXr_s740Q9k
+ LUse0gB7FlF8r3riHUt0s0aXINsl3nKMLAYKzDeHOXApZ2ZkuZwwB.pTJoiSKmMMEH1QPMX3kzeH
+ JPjDtbehhSu._9YSWlcPKgTlwbGA3I.4shL5ZoN2IAbh261TRFl6gs0e4rfT4203i5YU8JMsiv1I
+ tqcaOiS._Qe9r70EB04Eqa.EC61zFNOgz_OyhjQnBDrVgHGJF5KVgx43g90jYmKTlOuMNJJPLCzm
+ Z9jNzK5fOhf6N8xY5DZg3WLPqVP.qmv_H6DIkf0TLTnVFd2F3gpchJkJQ9wfOBAzr_Y4.U35P84b
+ w3KVDN5KFnCS_hLxUzekc1Fdg8IWfwCtdcMHBw_wTepcJ1RM0.ddc9QUFFP3Bhn0qQ7anS9XQZfE
+ T564JdTbfg8iZPmpv81k9ofQt29tbrIOJ3LqLzcH7HbYQc9Q1ABswM_y_uFozI8DsKRPjkJNIRkw
+ KZgCwy13KwAmwJt1xbJTCNsUieIZxdeEmkGrmPhKqjvU7WVfKatpW21AK0PfcF_asdGCYLzXXPAG
+ vO9i20qVsE584voPV1NLnCuaeeE4RSGJ9IPQvlnwCcjXAb8jRlnFfhDZ8Hi5WVYqGlCt9EvsFq.j
+ tEXY4GOEaumeLGVPVtJ9jIMYUQLyk1vNDZTPN4CyJJR6mxJW7c72o2x71qSWeDWc5nQveELTsjwL
+ 6dg9gk1iWCwh1ZGwQs4ugI.Egnj_Hnqd7qbojHOaQlhrCh7eWxQLit49cGN999ayKD9GWnOiySIN
+ .jA99IeegktY5zvne4D0W1qLfhdKvZ1ftwYL9_rs_2f9pVr4aEq3KNPSv.IoHT.4BBHk1p9tDM5k
+ 09l9vQLSoTY7cF611YPUmS5fvKYVoxSkdiRDw.887_eVO.rUu5RKEZeTcgh5FH8XRxv_pZjSuKav
+ 0ZkDh3fPQYu7IHf_ObRRBJ3POuGwIXJeIgSfG_0nl_lixqz.rmqKWNhbGXldkk9xPBI1av9q53ct
+ Do5FUD9N2PSYklV3dVM94PKS7n7FgeckvoAgTGBF4vc08fEVqkezv0roAmdCNWgah2oIr0IRgtAb
+ AKmW3FECgrP9fnlaTn9bG3HwOFxlqCtYpePCz1i.63RG_cvDgAhP32DTMXBtG4NHeKgXAznw7oOq
+ AjsIgaDJpGd22yDf742PsiOQIQQaQdfiYSb.YJKiUMLrmowiZxmyQSbBAPX.u1p15MI9TaSLBXCs
+ JBSQ6Ku8JQgM5zEA4wQAwB2A_8VyDtw2X4ewFAPFESi2_sHt.rXIfDG8_lx3oPsVuOrvphq7JmCj
+ UQubrD89QTXxyXv79t0HnnS7P7Bl_JeYKzgcT1iSdz43kqJmzNioULUOXjnJZMLB88_ZMxP1A975
+ m0Kx649e.dq5al7AzI1whA9AD6z_8FTl2bNiJMLN_tZeOj_toAWlKtHIFFgX9lkFDAgdVrPL1rK1
+ eN4FA4pU48r7ohh2_J6g3VbFbH1A451jMcivQ_IZM9En8bdupipXGImX2MbdSrYZT815iwlXILdv
+ v6SA64kRIFbzja_WRRh3V7Lgtgrw2FqjQqPURretjaAx0BDE.TDDV_Y5by5JtWYJa35l9a4rgrIs
+ YyJfH7jjB2wuMN8KYs4WGjUv.GI0CmtWI_MwzeMjot.VhfCtqikivJRCzSfsJYU5SOw--
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 0351f85c-4cc1-41cd-b475-55877dfed226
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 13 Dec 2023 18:08:50 +0000
-Received: by hermes--production-gq1-6949d6d8f9-k52jv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 83a3aff6f9fe93ecbddc221ed9cc56f5;
-          Wed, 13 Dec 2023 18:08:48 +0000 (UTC)
-Message-ID: <9dc633d8-65a7-4b97-ab98-a21ada1d4ea5@schaufler-ca.com>
-Date: Wed, 13 Dec 2023 10:08:48 -0800
+X-Sonic-ID: 5bf1e823-cd45-4553-87a4-d657d3be01a9
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 13 Dec 2023 18:35:38 +0000
+Received: by hermes--production-gq1-6949d6d8f9-hnk4w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 566ac33d3e608f8110bfa5f0010a199d;
+          Wed, 13 Dec 2023 18:35:32 +0000 (UTC)
+Message-ID: <6df822d8-8413-413e-8ecd-cac1cfae4a3b@schaufler-ca.com>
+Date: Wed, 13 Dec 2023 10:35:31 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,102 +50,178 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
- blob for integrity_iint_cache
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
- Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
- neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
- jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
- dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
- stephen.smalley.work@gmail.com, eparis@parisplace.org, mic@digikod.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
- selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
- <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
- <7c226242-2eda-41cd-9be8-c2c010f3fc49@huaweicloud.com>
+Subject: Re: [RFC PATCH v3 3/3] devguard: added device guard for mknod in
+ non-initial userns
 Content-Language: en-US
+To: =?UTF-8?Q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>,
+ Christian Brauner <brauner@kernel.org>,
+ Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+ Alexei Starovoitov <ast@kernel.org>, Paul Moore <paul@paul-moore.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Quentin Monnet <quentin@isovalent.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Miklos Szeredi
+ <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
+ "Serge E. Hallyn" <serge@hallyn.com>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, gyroidos@aisec.fraunhofer.de,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
+ <20231213143813.6818-4-michael.weiss@aisec.fraunhofer.de>
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <7c226242-2eda-41cd-9be8-c2c010f3fc49@huaweicloud.com>
+In-Reply-To: <20231213143813.6818-4-michael.weiss@aisec.fraunhofer.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Mailer: WebService/1.1.21952 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 12/13/2023 2:45 AM, Roberto Sassu wrote:
-> On 17.11.23 21:57, Paul Moore wrote:
->> On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
->>>
->>> ...
->>>
->>> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
->>> index 882fde2a2607..a5edd3c70784 100644
->>> --- a/security/integrity/iint.c
->>> +++ b/security/integrity/iint.c
->>> @@ -231,6 +175,10 @@ static int __init integrity_lsm_init(void)
->>>       return 0;
->>>   }
->>>   +struct lsm_blob_sizes integrity_blob_sizes __ro_after_init = {
->>> +    .lbs_inode = sizeof(struct integrity_iint_cache *),
->>> +};
->>
->> I'll admit that I'm likely missing an important detail, but is there
->> a reason why you couldn't stash the integrity_iint_cache struct
->> directly in the inode's security blob instead of the pointer?  For
->> example:
->>
->>    struct lsm_blob_sizes ... = {
->>      .lbs_inode = sizeof(struct integrity_iint_cache),
->>    };
->>
->>    struct integrity_iint_cache *integrity_inode_get(inode)
->>    {
->>      if (unlikely(!inode->isecurity))
->>        return NULL;
+On 12/13/2023 6:38 AM, Michael Weiß wrote:
+> devguard is a simple LSM to allow CAP_MKNOD in non-initial user
+> namespace in cooperation of an attached cgroup device program. We
+> just need to implement the security_inode_mknod() hook for this.
+> In the hook, we check if the current task is guarded by a device
+> cgroup using the lately introduced cgroup_bpf_current_enabled()
+> helper. If so, we strip out SB_I_NODEV from the super block.
 >
-> Ok, this caught my attention...
+> Access decisions to those device nodes are then guarded by existing
+> device cgroups mechanism.
 >
-> I see that selinux_inode() has it, but smack_inode() doesn't.
+> Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
+> ---
+>  security/Kconfig             | 11 +++++----
+>  security/Makefile            |  1 +
+>  security/devguard/Kconfig    | 12 ++++++++++
+>  security/devguard/Makefile   |  2 ++
+>  security/devguard/devguard.c | 44 ++++++++++++++++++++++++++++++++++++
+>  5 files changed, 65 insertions(+), 5 deletions(-)
+>  create mode 100644 security/devguard/Kconfig
+>  create mode 100644 security/devguard/Makefile
+>  create mode 100644 security/devguard/devguard.c
 >
-> Some Smack code assumes that the inode security blob is always non-NULL:
->
-> static void init_inode_smack(struct inode *inode, struct smack_known
-> *skp)
-> {
->     struct inode_smack *isp = smack_inode(inode);
->
->     isp->smk_inode = skp;
->     isp->smk_flags = 0;
-> }
->
->
-> Is that intended? Should I add the check?
+> diff --git a/security/Kconfig b/security/Kconfig
+> index 52c9af08ad35..7ec4017745d4 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -194,6 +194,7 @@ source "security/yama/Kconfig"
+>  source "security/safesetid/Kconfig"
+>  source "security/lockdown/Kconfig"
+>  source "security/landlock/Kconfig"
+> +source "security/devguard/Kconfig"
+>  
+>  source "security/integrity/Kconfig"
+>  
+> @@ -233,11 +234,11 @@ endchoice
+>  
+>  config LSM
+>  	string "Ordered list of enabled LSMs"
+> -	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
+> -	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
+> -	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
+> -	default "landlock,lockdown,yama,loadpin,safesetid,bpf" if DEFAULT_SECURITY_DAC
+> -	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf"
+> +	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf,devguard" if DEFAULT_SECURITY_SMACK
+> +	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf,devguard" if DEFAULT_SECURITY_APPARMOR
+> +	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf,devguard" if DEFAULT_SECURITY_TOMOYO
+> +	default "landlock,lockdown,yama,loadpin,safesetid,bpf,devguard" if DEFAULT_SECURITY_DAC
+> +	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf,devguard"
+>  	help
+>  	  A comma-separated list of LSMs, in initialization order.
+>  	  Any LSMs left off this list, except for those with order
+> diff --git a/security/Makefile b/security/Makefile
+> index 18121f8f85cd..82a0d8cab3c3 100644
+> --- a/security/Makefile
+> +++ b/security/Makefile
+> @@ -24,6 +24,7 @@ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+>  obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
+>  obj-$(CONFIG_BPF_LSM)			+= bpf/
+>  obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
+> +obj-$(CONFIG_SECURITY_DEVGUARD)		+= devguard/
+>  
+>  # Object integrity file lists
+>  obj-$(CONFIG_INTEGRITY)			+= integrity/
+> diff --git a/security/devguard/Kconfig b/security/devguard/Kconfig
+> new file mode 100644
+> index 000000000000..592684615a8f
+> --- /dev/null
+> +++ b/security/devguard/Kconfig
+> @@ -0,0 +1,12 @@
+> +config SECURITY_DEVGUARD
+> +	bool "Devguard for device node creation"
+> +	depends on SECURITY
+> +	depends on CGROUP_BPF
+> +	default n
+> +	help
+> +	  This enables devguard, an LSM that allows to guard device node
+> +	  creation in non-initial user namespace. It may allow mknod
+> +	  in cooperation of an attached cgroup device program.
+> +	  This security module stacks with other LSMs.
+> +
+> +	  If you are unsure how to answer this question, answer N.
+> diff --git a/security/devguard/Makefile b/security/devguard/Makefile
+> new file mode 100644
+> index 000000000000..fdaff8dc2fea
+> --- /dev/null
+> +++ b/security/devguard/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +obj-$(CONFIG_SECURITY_DEVGUARD) += devguard.o
+> diff --git a/security/devguard/devguard.c b/security/devguard/devguard.c
+> new file mode 100644
+> index 000000000000..3a0c9c27a691
+> --- /dev/null
+> +++ b/security/devguard/devguard.c
+> @@ -0,0 +1,44 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Device guard security module
+> + *
+> + * Simple in-kernel LSM to allow cap_mknod in non-initial
+> + * user namespace if current task is guarded by device cgroup.
+> + *
+> + * Copyright (C) 2023 Fraunhofer AISEC. All rights reserved.
+> + *
+> + * Authors: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
+> + */
+> +
+> +#include <linux/bpf-cgroup.h>
+> +#include <linux/lsm_hooks.h>
+> +
+> +static int devguard_inode_mknod(struct inode *dir, struct dentry *dentry,
+> +				umode_t mode, dev_t dev)
+> +{
+> +	if (dentry->d_sb->s_iflags & ~SB_I_NODEV)
+> +		return 0;
+> +
+> +	// strip SB_I_NODEV on super block if device cgroup is active
 
-Unless there's a case where inodes are created without calling
-security_inode_alloc() there should never be an inode without a
-security blob by the time you get to the Smack hook. That said,
-people seem inclined to take all sorts of shortcuts and create
-various "inodes" that aren't really inodes. I also see that SELinux
-doesn't check the blob for cred or file structures. And that I
-wrote the code in both cases.
+Please use block style comments. We don't use // comments here.
 
-Based on lack of bug reports for Smack on inodes and SELinux on
-creds or files, It appears that the check is unnecessary. On the
-other hand, it sure looks like good error detection hygiene. I
-would be inclined to include the check in new code, but not get
-in a panic about existing code.
+	/*
+	 * Strip SB_I_NODEV on super block if device cgroup is active
+	 */
 
->
-> Thanks
->
-> Roberto
->
->>      return inode->i_security + integrity_blob_sizes.lbs_inode;
->>    }
->>
->> -- 
->> paul-moore.com
->
->
+> +	if (cgroup_bpf_current_enabled(CGROUP_DEVICE))
+> +		dentry->d_sb->s_iflags &= ~SB_I_NODEV;
+> +
+> +	return 0;
+> +}
+> +
+> +static struct security_hook_list devguard_hooks[] __ro_after_init = {
+> +	LSM_HOOK_INIT(inode_mknod, devguard_inode_mknod),
+> +};
+> +
+> +static int __init devguard_init(void)
+> +{
+> +	security_add_hooks(devguard_hooks, ARRAY_SIZE(devguard_hooks),
+> +			   "devguard");
+> +	pr_info("devguard: initialized\n");
+> +	return 0;
+> +}
+> +
+> +DEFINE_LSM(devguard) = {
+> +	.name = "devguard",
+> +	.init = devguard_init,
+> +};
