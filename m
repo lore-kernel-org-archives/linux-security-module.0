@@ -1,87 +1,167 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3z9119O"
-Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA561AB;
-	Tue, 12 Dec 2023 19:08:37 -0800 (PST)
-Received: by mail-qv1-xf2e.google.com with SMTP id 6a1803df08f44-67ef933fcd6so931986d6.3;
-        Tue, 12 Dec 2023 19:08:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702436917; x=1703041717; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WT5xUh4doWq/ianBipKMlatMlg97Is+7s6m8E9vVkss=;
-        b=Z3z9119OrLHnULsvmtKASozsLbYk+UznIe7/Dxeo74Rrc0PQ9HincTBzbUflE2T1i2
-         OC3S/VbKvK4EbcAm10kmkx6TdzbsVTS3bGQKoMfvnVD6Ms1u8xublE4H5Xs9CM8oJWn0
-         gugK+ZSHmOiN9ar7HJ/Luix6ExTdMtQLBF1OL2LfW421XdwTS+b3vj8/0BtAK4/Ubjoi
-         56TELiSHr27BCnp6Yjnzs4a9rgaBhGPhqkQHFLit0E2W/iRbQsdUunxik7LhDlYGh/Rq
-         DvyV3x89OTXylZ3KeN/dxMnMsnL2S8hcASV9ZmFBM2r5aO/HtlWIN0bnL1qF+QQzBR/j
-         WlXA==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GoNV0KMp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1390BE
+	for <linux-security-module@vger.kernel.org>; Tue, 12 Dec 2023 20:52:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1702443177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gAdbgfQ0YuZV7i44ECJUKgzL+mbD9IwwoDZYX761XnQ=;
+	b=GoNV0KMpRHy+SCOj1IMdR7Lerz/2Gp+/peU6oBqm3pOlKzxlvJvQ6T3wzgCK7C0E701CPV
+	2iOUoKY+JZ44mqzReYTQzgUpNUbZvWWQ3sHep7dxp5dWqEyghrlkdl359jJkc3RnSux57d
+	jepQCs9BploiuYepGVvJwXrRkI62eO8=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-544-i7j7AsXCOjOdGF3-vsjk2w-1; Tue, 12 Dec 2023 23:52:51 -0500
+X-MC-Unique: i7j7AsXCOjOdGF3-vsjk2w-1
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-58d0c968357so8062624eaf.1
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Dec 2023 20:52:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702436917; x=1703041717;
+        d=1e100.net; s=20230601; t=1702443171; x=1703047971;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WT5xUh4doWq/ianBipKMlatMlg97Is+7s6m8E9vVkss=;
-        b=mmYLbRuS43X5ErQ86mqgkZLHukHLNA7iam+RCulAXgGuzItY1idaujOGnK79KxTF24
-         Jpz2ITmQbEjPhBCTUdWGxLGjclhBqi2p3sslfrZqPc4PKQLCvAPkmlN4jcS5oN1SThX1
-         uANVjOpazNd57cOhARJNlSH+dkawPb0hBd/kC2/uPkDDtoO63Wyb3bY007e274dBtoj+
-         bjbrvaWDyBEPn+WC1fWyRGtI0nsdCpM/XJ8QzxPHcRySdBtj6CgtdK+n3eTYIS3R28bS
-         OWC9XtIx/T6owdeHVExc21TpNrGbVoI6Fuxo88PsOPSd+JZopQ0aM2rxINDxSZ++v5IW
-         rL1g==
-X-Gm-Message-State: AOJu0YyFlS4+i8fTr+QBYKJFXYydX3zhMEnaqxHFHSXMJ8Oc25hKGLJK
-	ri9mrm8gRiENAu6dixtX1rnVcV9P9cjdHU9SLTY=
-X-Google-Smtp-Source: AGHT+IHrOzvh+dce4+YrqB4Uzeg9y9N2MCzEqNN4IWhwg3YUrYMtjn2CHqv/9CqUghgXh3xMcDzGX7LJewoSfGkAMyE=
-X-Received: by 2002:a05:6214:1fd9:b0:67e:b878:8e48 with SMTP id
- jh25-20020a0562141fd900b0067eb8788e48mr7556838qvb.39.1702436917085; Tue, 12
- Dec 2023 19:08:37 -0800 (PST)
+        bh=gAdbgfQ0YuZV7i44ECJUKgzL+mbD9IwwoDZYX761XnQ=;
+        b=CHm2kZE8d4ulgeoCeI5MaNqETJwUdqSDUCajDhDPPgPA8AFyj0tplW4z7HZvRY2xOG
+         QEyZOcVEpS2Z1zyFyijK+DAh4woouePitKe/xSBVRQs7eg6fS9wpVI1jcZ22WLvigzo5
+         9Y/GWHaxQaU/0M7K7Ulp8/kWQoLYMVW6u+xh66iWjxpAyh2vX3oUC14+8QTiceGqjrDC
+         Rxe+TgdFCiB79cEgJR4T3TpRw2hI37cZ+YxmJ43bw3KWk8MpFr9zOZ0AAnTCqQNgGm+j
+         XkZCm17VKto0lpcOO/pFCQLdXZvI0cQ8rV7EYqMYcuCgF4PzHxRzVtvhHLC3yTOdTU84
+         RhDQ==
+X-Gm-Message-State: AOJu0YwvhGbZIaY2pTZ1cC5EKPTvcFJ2E/4P4ElN3x0otmR5FExH+bkG
+	ggv5QjCrieP3tET+xrc499mnpsxAbI0fm3NG55w5ZbPXcadnhIF8ZAF6jqJJLhtUek1kKS0R6Re
+	yYeekFTJ7RETCZ9byCRcJWA079Ytm4Dl74MLcH0ZRFbvOJbx2jiqU
+X-Received: by 2002:a05:6358:d3a0:b0:170:678:cb49 with SMTP id mp32-20020a056358d3a000b001700678cb49mr8194755rwb.26.1702443171189;
+        Tue, 12 Dec 2023 20:52:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE0buKfWzxWPThUdmlqXSXHZqhajudkEjo3BQXuLk358qKXlhNq9vU1NFeJV5laPGU8AcCftT6g3/50CeQJ8Do=
+X-Received: by 2002:a05:6358:d3a0:b0:170:678:cb49 with SMTP id
+ mp32-20020a056358d3a000b001700678cb49mr8194734rwb.26.1702443170887; Tue, 12
+ Dec 2023 20:52:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231208090622.4309-1-laoar.shao@gmail.com> <20231208090622.4309-6-laoar.shao@gmail.com>
- <CACYkzJ7Eg=bG5Vr8eiXyLq+hto2KpnzhgRrw3eiJiqeJSs4w_w@mail.gmail.com>
-In-Reply-To: <CACYkzJ7Eg=bG5Vr8eiXyLq+hto2KpnzhgRrw3eiJiqeJSs4w_w@mail.gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Wed, 13 Dec 2023 11:08:00 +0800
-Message-ID: <CALOAHbCfrvLhbJAMKip+G2hxhiyYB5b3we+ovKjWhovggJ2deQ@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] selftests/bpf: Add selftests for set_mempolicy
- with a lsm prog
-To: KP Singh <kpsingh@kernel.org>
-Cc: akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, omosnace@redhat.com, mhocko@suse.com, ying.huang@intel.com, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	bpf@vger.kernel.org, ligang.bdlg@bytedance.com
+References: <20231212131712.1816324-1-maxime.coquelin@redhat.com> <20231212131712.1816324-3-maxime.coquelin@redhat.com>
+In-Reply-To: <20231212131712.1816324-3-maxime.coquelin@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 13 Dec 2023 12:52:39 +0800
+Message-ID: <CACGkMEthp13a20TGashiFNDovK+b10mgfdX8L=3Xv05g5-eo0w@mail.gmail.com>
+Subject: Re: [PATCH v5 2/4] vduse: Temporarily disable control queue features
+To: Maxime Coquelin <maxime.coquelin@redhat.com>
+Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com, 
+	eparis@parisplace.org, xieyongji@bytedance.com, 
+	virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	david.marchand@redhat.com, lulu@redhat.com, casey@schaufler-ca.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 13, 2023 at 3:22=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote=
-:
+On Tue, Dec 12, 2023 at 9:17=E2=80=AFPM Maxime Coquelin
+<maxime.coquelin@redhat.com> wrote:
 >
-> On Fri, Dec 8, 2023 at 10:06=E2=80=AFAM Yafang Shao <laoar.shao@gmail.com=
-> wrote:
-> >
-> > The result as follows,
-> >   #263/1   set_mempolicy/MPOL_BIND_without_lsm:OK
-> >   #263/2   set_mempolicy/MPOL_DEFAULT_without_lsm:OK
-> >   #263/3   set_mempolicy/MPOL_BIND_with_lsm:OK
-> >   #263/4   set_mempolicy/MPOL_DEFAULT_with_lsm:OK
-> >   #263     set_mempolicy:OK
-> >   Summary: 1/4 PASSED, 0 SKIPPED, 0 FAILED
+> Virtio-net driver control queue implementation is not safe
+> when used with VDUSE. If the VDUSE application does not
+> reply to control queue messages, it currently ends up
+> hanging the kernel thread sending this command.
 >
-> Please write a commit description on what the test actually does. I
+> Some work is on-going to make the control queue
+> implementation robust with VDUSE. Until it is completed,
+> let's disable control virtqueue and features that depend on
+> it.
+>
+> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
-will do it.
+I wonder if it's better to fail instead of a mask as a start.
 
-> even think of something simple that mentions a BPF LSM program that
-> denies all mbind with the mode MPOL_BIND and checks whether the
-> corresponding syscall is denied when the program is loaded.
+Thanks
 
-It does. Additionally, it verifies whether the mbind syscall is denied
-with different modes, such as MPOL_DEFAULT."
+> ---
+>  drivers/vdpa/vdpa_user/vduse_dev.c | 37 ++++++++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>
+> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/=
+vduse_dev.c
+> index 0486ff672408..fe4b5c8203fd 100644
+> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> @@ -28,6 +28,7 @@
+>  #include <uapi/linux/virtio_config.h>
+>  #include <uapi/linux/virtio_ids.h>
+>  #include <uapi/linux/virtio_blk.h>
+> +#include <uapi/linux/virtio_ring.h>
+>  #include <linux/mod_devicetable.h>
+>
+>  #include "iova_domain.h"
+> @@ -46,6 +47,30 @@
+>
+>  #define IRQ_UNBOUND -1
+>
+> +#define VDUSE_NET_VALID_FEATURES_MASK           \
+> +       (BIT_ULL(VIRTIO_NET_F_CSUM) |           \
+> +        BIT_ULL(VIRTIO_NET_F_GUEST_CSUM) |     \
+> +        BIT_ULL(VIRTIO_NET_F_MTU) |            \
+> +        BIT_ULL(VIRTIO_NET_F_MAC) |            \
+> +        BIT_ULL(VIRTIO_NET_F_GUEST_TSO4) |     \
+> +        BIT_ULL(VIRTIO_NET_F_GUEST_TSO6) |     \
+> +        BIT_ULL(VIRTIO_NET_F_GUEST_ECN) |      \
+> +        BIT_ULL(VIRTIO_NET_F_GUEST_UFO) |      \
+> +        BIT_ULL(VIRTIO_NET_F_HOST_TSO4) |      \
+> +        BIT_ULL(VIRTIO_NET_F_HOST_TSO6) |      \
+> +        BIT_ULL(VIRTIO_NET_F_HOST_ECN) |       \
+> +        BIT_ULL(VIRTIO_NET_F_HOST_UFO) |       \
+> +        BIT_ULL(VIRTIO_NET_F_MRG_RXBUF) |      \
+> +        BIT_ULL(VIRTIO_NET_F_STATUS) |         \
+> +        BIT_ULL(VIRTIO_NET_F_HOST_USO) |       \
+> +        BIT_ULL(VIRTIO_F_ANY_LAYOUT) |         \
+> +        BIT_ULL(VIRTIO_RING_F_INDIRECT_DESC) | \
+> +        BIT_ULL(VIRTIO_RING_F_EVENT_IDX) |          \
+> +        BIT_ULL(VIRTIO_F_VERSION_1) |          \
+> +        BIT_ULL(VIRTIO_F_ACCESS_PLATFORM) |     \
+> +        BIT_ULL(VIRTIO_F_RING_PACKED) |        \
+> +        BIT_ULL(VIRTIO_F_IN_ORDER))
+> +
+>  struct vduse_virtqueue {
+>         u16 index;
+>         u16 num_max;
+> @@ -1782,6 +1807,16 @@ static struct attribute *vduse_dev_attrs[] =3D {
+>
+>  ATTRIBUTE_GROUPS(vduse_dev);
+>
+> +static void vduse_dev_features_filter(struct vduse_dev_config *config)
+> +{
+> +       /*
+> +        * Temporarily filter out virtio-net's control virtqueue and feat=
+ures
+> +        * that depend on it while CVQ is being made more robust for VDUS=
+E.
+> +        */
+> +       if (config->device_id =3D=3D VIRTIO_ID_NET)
+> +               config->features &=3D VDUSE_NET_VALID_FEATURES_MASK;
+> +}
+> +
+>  static int vduse_create_dev(struct vduse_dev_config *config,
+>                             void *config_buf, u64 api_version)
+>  {
+> @@ -1797,6 +1832,8 @@ static int vduse_create_dev(struct vduse_dev_config=
+ *config,
+>         if (!dev)
+>                 goto err;
+>
+> +       vduse_dev_features_filter(config);
+> +
+>         dev->api_version =3D api_version;
+>         dev->device_features =3D config->features;
+>         dev->device_id =3D config->device_id;
+> --
+> 2.43.0
+>
 
---=20
-Regards
-Yafang
