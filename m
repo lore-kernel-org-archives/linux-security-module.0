@@ -1,61 +1,119 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PD81Z9+H"
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD99083;
-	Wed, 13 Dec 2023 08:22:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zh20bVNgEauOmKOMVTT+oQhslL42e63cd3mafc5QuMg=; b=PD81Z9+Hz5q5itQ3DmYt+lymtK
-	rbAWH1HZLxLHUKVZEBh1CUDT1Gcq2raouKY3J6f0oeH7MF1Qf8jNPcX/QD3F1eFfA9LYtxKJd5XWM
-	NYaKwqm3OkJb3wbVkc1KlSShBk3kmXX51ppvBALlC/6FF9RmPt7z14e8kNIq+p9OjLeoJ8incaTEl
-	KOTQkgC3JC43xmofru4rI8AJ9KtlWAwIWUWqXJukMc/XBEEbnP2/cKKLw2+8MxRihfAv2AEGd9O8h
-	qbjPKxgqUiDMxuGernieuindthAfSXsJbsHcHuxrI0NOKrda94Ap5leFuQ+F1PdOn+bvhlsLYOakq
-	VQ/4sHXg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1rDRzx-002B4P-Kt; Wed, 13 Dec 2023 16:22:13 +0000
-Date: Wed, 13 Dec 2023 16:22:13 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Maria Yu <quic_aiquny@quicinc.com>
-Cc: ebiederm@xmission.com, kernel@quicinc.com, quic_pkondeti@quicinc.com,
-	keescook@chromium.or, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	oleg@redhat.com, dhowells@redhat.com, jarkko@kernel.org,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] kernel: Introduce a write lock/unlock wrapper for
- tasklist_lock
-Message-ID: <ZXnaNSrtaWbS2ivU@casper.infradead.org>
-References: <20231213101745.4526-1-quic_aiquny@quicinc.com>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="A1inhCL9"
+X-Greylist: delayed 566 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 13 Dec 2023 09:09:05 PST
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2042F2
+	for <linux-security-module@vger.kernel.org>; Wed, 13 Dec 2023 09:09:05 -0800 (PST)
+Message-ID: <6960ef41-fe22-4297-adc7-c85264288b6d@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1702486777;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p4lJ6fuy6gVgOBLJgySJCzr4DpnAgH48SfeJ2oQaas8=;
+	b=A1inhCL90hXyszEVY0knTkLQ/A4/3UIByKIh3eamKJfjCkdCG6PcVsh9j0f3y2gNyDIzPQ
+	SwWY3FuNgxxpjGm06LZu4YviM+nKHDMxGRJfSDmQJDzw2qqwM9l3oYy4MNIt3X4z9mgpEj
+	8QxbZSU2G6ruY81+VFFeNt4dzBwTc6w=
+Date: Wed, 13 Dec 2023 08:59:26 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231213101745.4526-1-quic_aiquny@quicinc.com>
+Subject: Re: [RFC PATCH v3 1/3] bpf: cgroup: Introduce helper
+ cgroup_bpf_current_enabled()
+Content-Language: en-GB
+To: =?UTF-8?Q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>,
+ Christian Brauner <brauner@kernel.org>,
+ Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+ Alexei Starovoitov <ast@kernel.org>, Paul Moore <paul@paul-moore.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Quentin Monnet <quentin@isovalent.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Miklos Szeredi
+ <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
+ "Serge E. Hallyn" <serge@hallyn.com>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, gyroidos@aisec.fraunhofer.de,
+ Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
+ <20231213143813.6818-2-michael.weiss@aisec.fraunhofer.de>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20231213143813.6818-2-michael.weiss@aisec.fraunhofer.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Dec 13, 2023 at 06:17:45PM +0800, Maria Yu wrote:
-> +static inline void write_lock_tasklist_lock(void)
+
+On 12/13/23 6:38 AM, Michael Weiß wrote:
+> This helper can be used to check if a cgroup-bpf specific program is
+> active for the current task.
+>
+> Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
+> Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> ---
+>   include/linux/bpf-cgroup.h |  2 ++
+>   kernel/bpf/cgroup.c        | 14 ++++++++++++++
+>   2 files changed, 16 insertions(+)
+>
+> diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
+> index a789266feac3..7cb49bde09ff 100644
+> --- a/include/linux/bpf-cgroup.h
+> +++ b/include/linux/bpf-cgroup.h
+> @@ -191,6 +191,8 @@ static inline bool cgroup_bpf_sock_enabled(struct sock *sk,
+>   	return array != &bpf_empty_prog_array.hdr;
+>   }
+>   
+> +bool cgroup_bpf_current_enabled(enum cgroup_bpf_attach_type type);
+> +
+>   /* Wrappers for __cgroup_bpf_run_filter_skb() guarded by cgroup_bpf_enabled. */
+>   #define BPF_CGROUP_RUN_PROG_INET_INGRESS(sk, skb)			      \
+>   ({									      \
+> diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+> index 491d20038cbe..9007165abe8c 100644
+> --- a/kernel/bpf/cgroup.c
+> +++ b/kernel/bpf/cgroup.c
+> @@ -24,6 +24,20 @@
+>   DEFINE_STATIC_KEY_ARRAY_FALSE(cgroup_bpf_enabled_key, MAX_CGROUP_BPF_ATTACH_TYPE);
+>   EXPORT_SYMBOL(cgroup_bpf_enabled_key);
+>   
+> +bool cgroup_bpf_current_enabled(enum cgroup_bpf_attach_type type)
 > +{
-> +	while (1) {
-> +		local_irq_disable();
-> +		if (write_trylock(&tasklist_lock))
-> +			break;
-> +		local_irq_enable();
-> +		cpu_relax();
+> +	struct cgroup *cgrp;
+> +	struct bpf_prog_array *array;
+> +
+> +	rcu_read_lock();
+> +	cgrp = task_dfl_cgroup(current);
+> +	rcu_read_unlock();
+> +
+> +	array = rcu_access_pointer(cgrp->bpf.effective[type]);
 
-This is a bad implementation though.  You don't set the _QW_WAITING flag
-so readers don't know that there's a pending writer.  Also, I've seen
-cpu_relax() pessimise CPU behaviour; putting it into a low-power mode
-that takes a while to wake up from.
+This seems wrong here. The cgrp could become invalid once leaving
+rcu critical section.
 
-I think the right way to fix this is to pass a boolean flag to
-queued_write_lock_slowpath() to let it know whether it can re-enable
-interrupts while checking whether _QW_WAITING is set.
+> +	return array != &bpf_empty_prog_array.hdr;
 
+I guess you need include 'array' usage as well in the rcu cs.
+So overall should look like:
+
+	rcu_read_lock();
+	cgrp = task_dfl_cgroup(current);
+	array = rcu_access_pointer(cgrp->bpf.effective[type]);
+	bpf_prog_exists = array != &bpf_empty_prog_array.hdr;
+	rcu_read_unlock();
+
+	return bpf_prog_exists;
+
+> +}
+> +EXPORT_SYMBOL(cgroup_bpf_current_enabled);
+> +
+>   /* __always_inline is necessary to prevent indirect call through run_prog
+>    * function pointer.
+>    */
