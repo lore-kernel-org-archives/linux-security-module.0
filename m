@@ -1,62 +1,87 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E032alIf"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA889CD
-	for <linux-security-module@vger.kernel.org>; Tue, 12 Dec 2023 17:44:06 -0800 (PST)
-Message-ID: <b683d150-5fa0-4bec-af07-c709ee4781d6@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1702431476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QR2VSsFCexoYoHMfOMQBYvflj8tNx0RG9xJyXqIMWgg=;
-	b=E032alIfX9+oqA1vQ8NPUQP8BXQQdd4z0effO2ed7bpJU4KR6h1Dx+vF0XiNgeJUw+F0Au
-	4rHGpNUz8ct/ep1PdVyRqCFl8WZ0jZHxHFhqCGit52bEPaixmZGbpz6zzQTVAaCL62FMeI
-	qjw1ZHb0Vek67tpczRcmr59hXttBQvo=
-Date: Tue, 12 Dec 2023 17:37:47 -0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3z9119O"
+Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA561AB;
+	Tue, 12 Dec 2023 19:08:37 -0800 (PST)
+Received: by mail-qv1-xf2e.google.com with SMTP id 6a1803df08f44-67ef933fcd6so931986d6.3;
+        Tue, 12 Dec 2023 19:08:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702436917; x=1703041717; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WT5xUh4doWq/ianBipKMlatMlg97Is+7s6m8E9vVkss=;
+        b=Z3z9119OrLHnULsvmtKASozsLbYk+UznIe7/Dxeo74Rrc0PQ9HincTBzbUflE2T1i2
+         OC3S/VbKvK4EbcAm10kmkx6TdzbsVTS3bGQKoMfvnVD6Ms1u8xublE4H5Xs9CM8oJWn0
+         gugK+ZSHmOiN9ar7HJ/Luix6ExTdMtQLBF1OL2LfW421XdwTS+b3vj8/0BtAK4/Ubjoi
+         56TELiSHr27BCnp6Yjnzs4a9rgaBhGPhqkQHFLit0E2W/iRbQsdUunxik7LhDlYGh/Rq
+         DvyV3x89OTXylZ3KeN/dxMnMsnL2S8hcASV9ZmFBM2r5aO/HtlWIN0bnL1qF+QQzBR/j
+         WlXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702436917; x=1703041717;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WT5xUh4doWq/ianBipKMlatMlg97Is+7s6m8E9vVkss=;
+        b=mmYLbRuS43X5ErQ86mqgkZLHukHLNA7iam+RCulAXgGuzItY1idaujOGnK79KxTF24
+         Jpz2ITmQbEjPhBCTUdWGxLGjclhBqi2p3sslfrZqPc4PKQLCvAPkmlN4jcS5oN1SThX1
+         uANVjOpazNd57cOhARJNlSH+dkawPb0hBd/kC2/uPkDDtoO63Wyb3bY007e274dBtoj+
+         bjbrvaWDyBEPn+WC1fWyRGtI0nsdCpM/XJ8QzxPHcRySdBtj6CgtdK+n3eTYIS3R28bS
+         OWC9XtIx/T6owdeHVExc21TpNrGbVoI6Fuxo88PsOPSd+JZopQ0aM2rxINDxSZ++v5IW
+         rL1g==
+X-Gm-Message-State: AOJu0YyFlS4+i8fTr+QBYKJFXYydX3zhMEnaqxHFHSXMJ8Oc25hKGLJK
+	ri9mrm8gRiENAu6dixtX1rnVcV9P9cjdHU9SLTY=
+X-Google-Smtp-Source: AGHT+IHrOzvh+dce4+YrqB4Uzeg9y9N2MCzEqNN4IWhwg3YUrYMtjn2CHqv/9CqUghgXh3xMcDzGX7LJewoSfGkAMyE=
+X-Received: by 2002:a05:6214:1fd9:b0:67e:b878:8e48 with SMTP id
+ jh25-20020a0562141fd900b0067eb8788e48mr7556838qvb.39.1702436917085; Tue, 12
+ Dec 2023 19:08:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH RFC bpf-next 1/3] bpf: add mapper macro for bpf_cmd enum
-Content-Language: en-US
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Daniel Borkmann <daniel@iogearbox.net>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
- Network Development <netdev@vger.kernel.org>,
- Paul Moore <paul@paul-moore.com>, Christian Brauner <brauner@kernel.org>,
- Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
- LSM List <linux-security-module@vger.kernel.org>,
- Kees Cook <keescook@chromium.org>, Kernel Team <kernel-team@meta.com>,
- Sargun Dhillon <sargun@sargun.me>, Martin KaFai Lau <martin.lau@kernel.org>
-References: <20231207222755.3920286-1-andrii@kernel.org>
- <20231207222755.3920286-2-andrii@kernel.org>
- <CAADnVQK6WWcgKtPNQrGe9dM7x1iMOyL943PVrJjT6ueBDFRyQw@mail.gmail.com>
- <CAEf4BzYHHdQsaGBFXnY8omP4hv_tUjqxHWTNoEugi3acrE5q=A@mail.gmail.com>
- <CAADnVQLoZpugU6gexuD4ru6VCZ8iQMoLWLByjHA6hush5hUwug@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <CAADnVQLoZpugU6gexuD4ru6VCZ8iQMoLWLByjHA6hush5hUwug@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20231208090622.4309-1-laoar.shao@gmail.com> <20231208090622.4309-6-laoar.shao@gmail.com>
+ <CACYkzJ7Eg=bG5Vr8eiXyLq+hto2KpnzhgRrw3eiJiqeJSs4w_w@mail.gmail.com>
+In-Reply-To: <CACYkzJ7Eg=bG5Vr8eiXyLq+hto2KpnzhgRrw3eiJiqeJSs4w_w@mail.gmail.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Wed, 13 Dec 2023 11:08:00 +0800
+Message-ID: <CALOAHbCfrvLhbJAMKip+G2hxhiyYB5b3we+ovKjWhovggJ2deQ@mail.gmail.com>
+Subject: Re: [PATCH v4 5/5] selftests/bpf: Add selftests for set_mempolicy
+ with a lsm prog
+To: KP Singh <kpsingh@kernel.org>
+Cc: akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, omosnace@redhat.com, mhocko@suse.com, ying.huang@intel.com, 
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	bpf@vger.kernel.org, ligang.bdlg@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/11/23 8:06 PM, Alexei Starovoitov wrote:
-> On Mon, Dec 11, 2023 at 8:01 PM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
->>
->>
->>> While I can preemptively answer that in the case vmlinux BTF
->>> is not available it's fine not to parse names and rely on hex.
->>
->> It's fine, I can do optional BTF-based parsing, if that's what you prefer.
-> 
-> I prefer to keep uapi/bpf.h as-is and use BTF.
-> But I'd like to hear what Daniel's and Martin's preferences are.
+On Wed, Dec 13, 2023 at 3:22=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote=
+:
+>
+> On Fri, Dec 8, 2023 at 10:06=E2=80=AFAM Yafang Shao <laoar.shao@gmail.com=
+> wrote:
+> >
+> > The result as follows,
+> >   #263/1   set_mempolicy/MPOL_BIND_without_lsm:OK
+> >   #263/2   set_mempolicy/MPOL_DEFAULT_without_lsm:OK
+> >   #263/3   set_mempolicy/MPOL_BIND_with_lsm:OK
+> >   #263/4   set_mempolicy/MPOL_DEFAULT_with_lsm:OK
+> >   #263     set_mempolicy:OK
+> >   Summary: 1/4 PASSED, 0 SKIPPED, 0 FAILED
+>
+> Please write a commit description on what the test actually does. I
 
-I think user will find it useful to have a more readable uapi header file. It 
-would be nice to keep the current uapi/bpf.h form if there is another solution.
+will do it.
+
+> even think of something simple that mentions a BPF LSM program that
+> denies all mbind with the mode MPOL_BIND and checks whether the
+> corresponding syscall is denied when the program is loaded.
+
+It does. Additionally, it verifies whether the mbind syscall is denied
+with different modes, such as MPOL_DEFAULT."
+
+--=20
+Regards
+Yafang
