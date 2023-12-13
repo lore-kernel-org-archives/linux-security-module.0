@@ -1,91 +1,151 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJS5ypMO"
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CB68EA;
-	Wed, 13 Dec 2023 09:26:43 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-5522bfba795so949933a12.2;
-        Wed, 13 Dec 2023 09:26:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702488401; x=1703093201; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ld0B1jUksqKbXhxjO1khXY1xboG0f1gEIjrhs47Odww=;
-        b=AJS5ypMOACfR4rCU2mIwsYA9weMkiRJNDHDZ2agym4gKmtL7qjOOAAceCWYnSgrjWq
-         dJpl69dR5ueH4Ts/PXfAyJe1eWf1oKs3SI2zIFwPKlAvNaHoJAB07EkOOtm4kXxd15DZ
-         s7vLz3Gr3qfm9s9U+H9UOIyVUCTLzDNHFTQ/9j5NVuRR8+La5VG+BKLoAwdO3ZG0eV8B
-         BnRZHPmkWdcVcqyi2FkxgDW83XE4Znt2STctg/p7Ic+heCRECjVL7td+HOWi4keQHDIb
-         B8l+fUL2rz3suoDXEJaUsg43AOSOVmPuhfLuLnAn5ztxW/zv4ZbhBFXPF1RwoOJvKm/3
-         9DFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702488401; x=1703093201;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ld0B1jUksqKbXhxjO1khXY1xboG0f1gEIjrhs47Odww=;
-        b=MCEqX0VJXsrn0cCZeEzBMcfvmKOI+QJ8r8H8m1D8xcO/yPIGH7fFSBpf+sWlbfoj/T
-         JxUZH3ucT54MnRqEanyU2CfVeBh+BqiLZWKZWk6VPRQIhdSn2rzorMpAL5BXgTF9xDm3
-         +2Jp0JK9SH0yi1ccoCkw/F+/XghYn1zKBPybZnke8a9biXDyjcysAgtWURt+T5gb1065
-         O9RVRFXOhh1hFdeMgxbPffFZj9kv5uPcrwHL7VM9GxoHExKciv/fviKb1RvQFCIkQy82
-         1FI2w13FnQ6PBRK8c041O1h+s36RQbENDxQI7sqhf+T7kBi4NI+v6libOozCQ/exXlez
-         Eykg==
-X-Gm-Message-State: AOJu0YwgoUPP2yqBDWrJPiFnAe4zW+ydVQYxLbQfU83s+yATSlZNkVxO
-	IK6VTzZvUDOPv0WPbBT3Wuy7I2UAWMpyG4JshbA=
-X-Google-Smtp-Source: AGHT+IGq3M67HTy5rdu/IY9FndPLLuQSSg3Da+u605aRWD46UDNw8xTFi6K5KvxhiaDW/EPwyxFOBFO3ccwL+SRBrZo=
-X-Received: by 2002:a17:906:9d12:b0:9e5:2c72:9409 with SMTP id
- fn18-20020a1709069d1200b009e52c729409mr3534316ejc.43.1702488401076; Wed, 13
- Dec 2023 09:26:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Q2GcCXjA"
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 553A010A
+	for <linux-security-module@vger.kernel.org>; Wed, 13 Dec 2023 10:08:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702490930; bh=Nwz1uIbomBE991r6kFnI9Xx0i9y6GbKeBjvJtumt8iE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Q2GcCXjATEzjSTSYXHKbXeurOv5yespsSz0ml7JCsSLZqxVHAfvFb/s9tzIt1evnQhz4XLu9bqJKAIA0uPqHtwBjEm4XnLk+vTgaltgUQOZV9b1W/MFTK19WwGySEVVSWxIinyGwjgcfn6rt6N1Prk04cDhYw59eTJ+j6WHqWYBW89gv9guNPRowISjp1KdTZK0yQQSOaN/ST6QuKOTUrS+dNe9wV9evHwRGEg8E3f/cnG21gzKQW1iFofjp2sNHQcon30MXNzf0cSDA0rRHmMleNNc8aVqghAMr5Wu1H7beuwg8EOVCRgGJTca1PQes/0qpj5l4+dRgEZVJr8Dd4w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702490930; bh=+/TJOZ6srOEMVvhuufXWRh0/msMyFtSymbS2RoNkwdQ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jb4TkrgIre+9ji4ewfMOvSl6OLiXVlIvDGCY4riHNE4MLKe9WNidkohEECUqi1Rj+Qb7ja4JfB+hQ40ROlFPoA8fvGkDMunhCHbDlqECIZqe8GSDuIRk7aiiUJr2lt24Ildhu6cfPmlG0xQaFKoBMU3d1eMhl4YbkeyYMarx51p/X154GQeYIUS0UYFGJ+itQukr9ZuIj9wSZwquwUhkkX57Z9zxapwJlT+CIq8zumYoL2AVtUI3C1OzYhHb+LO0BJUpi3iWPmjDvOtpwb+3RD3MejxooCgKRi5LKD51T+cIJGSdIazwoWLEXkSYTvyEk50NXe1ZWWeUO/rQULHZCg==
+X-YMail-OSG: ZY4uPfkVM1nL9XI0hibln_9cRAXR4K6ZlsvOdVR.ZIvGnWPklpsBsrntt6L3vuB
+ 8VdYwHE9wV80Ll.nAtMpE0Dt8RTxtsJz3u1gWV4nsZUCwDRbJ8VkqeK9UWIeymWBXAu21aTTGAJG
+ HT9hrQzNG4o0l0UTVb.HTb0EwxJ4ZoiWPfp.f9sXgrqtH_HPR.gPo8EQhfUG.moEDU299IyzYYt7
+ H2VJ4gba07t4nhBg0hwMpeCMVVdYbSiF.b5JQtZ341VBE3Z_RClBvv03hzVGL5RPVg28ocD1tWZW
+ qV8QkvM_DGUEgGH_7Ru7FhHBx6iH3dMwRvMjgsT12JGT5Liqqn2OkcxAOYm9eZ3ICnq4iC2WNqBE
+ hjX1EwtFmRbH4wjQ7dtex2xphhuRPR8DrwR2167If94s7MNdj7LDf0.H3FXWsVdWHkKf.Gv0vYWu
+ xhBt1kDDUTKBzbW0AAU4BylURMOtonvV1VLwhckz7CgtpkZ.7vdoMoCweN2aGa5lXotaRyseo8lC
+ EdfNFXhOSOuckRGSrm6L9QixTrvg.48xgMjI1T_csZMPenPYNwuMI_TOZNvDCFzPjQ4vEl76fYuB
+ CAgxOAvU80M8uHZQnLrXsGiLBUaANszyXIhM5zAlHQPVG8IBAJkKmqSR5Riy41WNhLHrMx1AxhaX
+ c3WAjD.XYT_2sOD6re0MlrPH_3bI01ZyQFUtulQHTy2u7.odLifj3hGDEbJU.5Z._j7_qV9Nz6eF
+ ijaFLsqsGe7Kwr0gXj1X20O1o5bkWa7rvy7rd9LFu2L_mrWOzJ.Mf6YQMdN5Tex7wFvZplvRQGTZ
+ d7hRb9arVcB.ijSL4IIGKv5UBUmqej2Iz.LmKZFGPDMMcqRRK_Z8a01tIDb0ZHeDR4jTjtin.xqH
+ zh_3sjv4rQ.rLL65jKk5YpQyZDSVRedQ8wrpFPuuQuFddHIunKuZoIHNTYHmDDnffbHzMgfzE6p2
+ 0csSu.Y_21KcZjcvn9ECmQgvLobMz3Vud_qM_6s0yeOaw4nhTx9oy6UvZyRB.IG8aMuypMWYgVcs
+ N13p6zGyc1pQK8XkxkXktpfNMU2.T6pu7bjZAIdFSXRAb3UFmmonKUr2PNf1I76HPdEKP.oRMCwC
+ 7_kaH1kaQwi2d.P1uP0hoAAERtrJ_O6XN.85qafgWLRls_CRTlzNKNlzBRIE.GvDvFRe_njUnjAJ
+ pof3DD3hOddOtKXQ721C59YmpyIetqf7dtAKPVAXhx6_dMur6n.PdX0AQzxFDlALEpKFdMIuIXsB
+ 70lDIeAeUc.FDPFUL3F8tTR6EeYSEkVzhU3O0uBm1JFolTLTa16FiY87G70txBJjXU0HZidBxBht
+ fzSugNDamX5gnlKPmb6zJeNBJWStv.j0GMv64EluNPOCWeVcH3cVTHAT1dFrDB7oXblC3Rum8j4v
+ s7uHPuWZVY5OIehsAUS1Mrwj1xjXM.uTX8klNWSSxeJn.4pJgNHCrdw2xp5fhN2jrWMTNTxGCVVB
+ YSyNVzm4wtWxaPLpUIclAPQ_Hur5.u3GQFVi9p4pKKM.8F12uF_sn166dxANn5LSuyF7LaCBEgPZ
+ nuFUb5a0XV5QzqAt29KHaKpzJaHr54l5N2_V_7ZPiXVOnr5BzGOGGi.EwGm4.V.UKEFkC.an4kpS
+ EwODjE3lu19jis0IwGrSZpQ_XP_H2oBdKNc1.XyNjfkKPduWiJOSGiixgDWenRKYnamM8kShG6YS
+ qJvWikUacPnSTDzcwrUZaapwLMSlSBAXcQ6zXPwO1zrl7fjGsJga3hQMCh9HTvGNRmTuEr6LNeY_
+ IO_eMH4VxsDi42uBI1W.33c6A4Kj1ZlwEfTC0V3yQeEKpYI4PNtMI3bI66EgCiawKiIffAXwauNe
+ gV8B1JA9dIA6O9aSaWqCP9U9bnNn4JN1bKtAqdxn95NMCSPOeXSOofRUOsISQkz9ad_g3.tBd0V.
+ 0JMpxvAN1olw2ZGSJWD4dVLRA2whVdwpIIxRisbaRSPB5bLiD2YtFx68SxJKwh8m8mf8ujQh5Y19
+ HW0..VY6s2cZSXBnXqIRLzXcdZHD1vT_gGAG5h9ZadaHnCUMcRhVNjerK_UP7kIDDeruOMTHFNKO
+ 17_iZeBREEot_D7mQh9g4RlApRvP6J0._dhqqVyBD4IjGrRsF0RqQe63FOe4dl1cOaME5zwmdNvd
+ LF6_A9TI9WOEHe7Tp_96mVtICBAGWoIOCVf3QqJ1qhrL50oadzN.9BMhtjt0WfskACGhiyemIPKc
+ 9qYreb0Lox2deMagqPuimHpY.9QOIyLBhw6nh1VyM_8MLPcf2OszolI2.YWdN
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 0351f85c-4cc1-41cd-b475-55877dfed226
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 13 Dec 2023 18:08:50 +0000
+Received: by hermes--production-gq1-6949d6d8f9-k52jv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 83a3aff6f9fe93ecbddc221ed9cc56f5;
+          Wed, 13 Dec 2023 18:08:48 +0000 (UTC)
+Message-ID: <9dc633d8-65a7-4b97-ab98-a21ada1d4ea5@schaufler-ca.com>
+Date: Wed, 13 Dec 2023 10:08:48 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231207222755.3920286-1-andrii@kernel.org> <20231207222755.3920286-2-andrii@kernel.org>
- <CAADnVQK6WWcgKtPNQrGe9dM7x1iMOyL943PVrJjT6ueBDFRyQw@mail.gmail.com>
- <CAEf4BzYHHdQsaGBFXnY8omP4hv_tUjqxHWTNoEugi3acrE5q=A@mail.gmail.com>
- <CAADnVQLoZpugU6gexuD4ru6VCZ8iQMoLWLByjHA6hush5hUwug@mail.gmail.com> <b683d150-5fa0-4bec-af07-c709ee4781d6@linux.dev>
-In-Reply-To: <b683d150-5fa0-4bec-af07-c709ee4781d6@linux.dev>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 13 Dec 2023 09:26:28 -0800
-Message-ID: <CAEf4BzZyOCmo1CFMGQG5TRWetMqWNbwsgB0CNNpeB_6aB9jxzA@mail.gmail.com>
-Subject: Re: [PATCH RFC bpf-next 1/3] bpf: add mapper macro for bpf_cmd enum
-To: Martin KaFai Lau <martin.lau@linux.dev>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	Christian Brauner <brauner@kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Kernel Team <kernel-team@meta.com>, Sargun Dhillon <sargun@sargun.me>, 
-	Martin KaFai Lau <martin.lau@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
+ blob for integrity_iint_cache
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+ Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+ neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+ dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
+ stephen.smalley.work@gmail.com, eparis@parisplace.org, mic@digikod.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+ selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
+ <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
+ <7c226242-2eda-41cd-9be8-c2c010f3fc49@huaweicloud.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <7c226242-2eda-41cd-9be8-c2c010f3fc49@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.21952 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, Dec 12, 2023 at 5:37=E2=80=AFPM Martin KaFai Lau <martin.lau@linux.=
-dev> wrote:
+On 12/13/2023 2:45 AM, Roberto Sassu wrote:
+> On 17.11.23 21:57, Paul Moore wrote:
+>> On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+>>>
+>>> ...
+>>>
+>>> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+>>> index 882fde2a2607..a5edd3c70784 100644
+>>> --- a/security/integrity/iint.c
+>>> +++ b/security/integrity/iint.c
+>>> @@ -231,6 +175,10 @@ static int __init integrity_lsm_init(void)
+>>>       return 0;
+>>>   }
+>>>   +struct lsm_blob_sizes integrity_blob_sizes __ro_after_init = {
+>>> +    .lbs_inode = sizeof(struct integrity_iint_cache *),
+>>> +};
+>>
+>> I'll admit that I'm likely missing an important detail, but is there
+>> a reason why you couldn't stash the integrity_iint_cache struct
+>> directly in the inode's security blob instead of the pointer?  For
+>> example:
+>>
+>>    struct lsm_blob_sizes ... = {
+>>      .lbs_inode = sizeof(struct integrity_iint_cache),
+>>    };
+>>
+>>    struct integrity_iint_cache *integrity_inode_get(inode)
+>>    {
+>>      if (unlikely(!inode->isecurity))
+>>        return NULL;
 >
-> On 12/11/23 8:06 PM, Alexei Starovoitov wrote:
-> > On Mon, Dec 11, 2023 at 8:01=E2=80=AFPM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> >>
-> >>
-> >>> While I can preemptively answer that in the case vmlinux BTF
-> >>> is not available it's fine not to parse names and rely on hex.
-> >>
-> >> It's fine, I can do optional BTF-based parsing, if that's what you pre=
-fer.
-> >
-> > I prefer to keep uapi/bpf.h as-is and use BTF.
-> > But I'd like to hear what Daniel's and Martin's preferences are.
+> Ok, this caught my attention...
 >
-> I think user will find it useful to have a more readable uapi header file=
-. It
+> I see that selinux_inode() has it, but smack_inode() doesn't.
+>
+> Some Smack code assumes that the inode security blob is always non-NULL:
+>
+> static void init_inode_smack(struct inode *inode, struct smack_known
+> *skp)
+> {
+>     struct inode_smack *isp = smack_inode(inode);
+>
+>     isp->smk_inode = skp;
+>     isp->smk_flags = 0;
+> }
+>
+>
+> Is that intended? Should I add the check?
 
-I'd say having numeric values make it more readable, but that's a
-separate discussion. I purposefully kept full BPF_-prefixed names
-intact for readability, as opposed to what we do for enum bpf_func_id.
+Unless there's a case where inodes are created without calling
+security_inode_alloc() there should never be an inode without a
+security blob by the time you get to the Smack hook. That said,
+people seem inclined to take all sorts of shortcuts and create
+various "inodes" that aren't really inodes. I also see that SELinux
+doesn't check the blob for cred or file structures. And that I
+wrote the code in both cases.
 
-> would be nice to keep the current uapi/bpf.h form if there is another sol=
-ution.
+Based on lack of bug reports for Smack on inodes and SELinux on
+creds or files, It appears that the check is unnecessary. On the
+other hand, it sure looks like good error detection hygiene. I
+would be inclined to include the check in new code, but not get
+in a panic about existing code.
 
-Ok, I'll use BTF, no problem.
+>
+> Thanks
+>
+> Roberto
+>
+>>      return inode->i_security + integrity_blob_sizes.lbs_inode;
+>>    }
+>>
+>> -- 
+>> paul-moore.com
+>
+>
