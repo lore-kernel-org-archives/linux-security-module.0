@@ -1,119 +1,91 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="A1inhCL9"
-X-Greylist: delayed 566 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 13 Dec 2023 09:09:05 PST
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2042F2
-	for <linux-security-module@vger.kernel.org>; Wed, 13 Dec 2023 09:09:05 -0800 (PST)
-Message-ID: <6960ef41-fe22-4297-adc7-c85264288b6d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1702486777;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p4lJ6fuy6gVgOBLJgySJCzr4DpnAgH48SfeJ2oQaas8=;
-	b=A1inhCL90hXyszEVY0knTkLQ/A4/3UIByKIh3eamKJfjCkdCG6PcVsh9j0f3y2gNyDIzPQ
-	SwWY3FuNgxxpjGm06LZu4YviM+nKHDMxGRJfSDmQJDzw2qqwM9l3oYy4MNIt3X4z9mgpEj
-	8QxbZSU2G6ruY81+VFFeNt4dzBwTc6w=
-Date: Wed, 13 Dec 2023 08:59:26 -0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJS5ypMO"
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CB68EA;
+	Wed, 13 Dec 2023 09:26:43 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-5522bfba795so949933a12.2;
+        Wed, 13 Dec 2023 09:26:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702488401; x=1703093201; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ld0B1jUksqKbXhxjO1khXY1xboG0f1gEIjrhs47Odww=;
+        b=AJS5ypMOACfR4rCU2mIwsYA9weMkiRJNDHDZ2agym4gKmtL7qjOOAAceCWYnSgrjWq
+         dJpl69dR5ueH4Ts/PXfAyJe1eWf1oKs3SI2zIFwPKlAvNaHoJAB07EkOOtm4kXxd15DZ
+         s7vLz3Gr3qfm9s9U+H9UOIyVUCTLzDNHFTQ/9j5NVuRR8+La5VG+BKLoAwdO3ZG0eV8B
+         BnRZHPmkWdcVcqyi2FkxgDW83XE4Znt2STctg/p7Ic+heCRECjVL7td+HOWi4keQHDIb
+         B8l+fUL2rz3suoDXEJaUsg43AOSOVmPuhfLuLnAn5ztxW/zv4ZbhBFXPF1RwoOJvKm/3
+         9DFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702488401; x=1703093201;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ld0B1jUksqKbXhxjO1khXY1xboG0f1gEIjrhs47Odww=;
+        b=MCEqX0VJXsrn0cCZeEzBMcfvmKOI+QJ8r8H8m1D8xcO/yPIGH7fFSBpf+sWlbfoj/T
+         JxUZH3ucT54MnRqEanyU2CfVeBh+BqiLZWKZWk6VPRQIhdSn2rzorMpAL5BXgTF9xDm3
+         +2Jp0JK9SH0yi1ccoCkw/F+/XghYn1zKBPybZnke8a9biXDyjcysAgtWURt+T5gb1065
+         O9RVRFXOhh1hFdeMgxbPffFZj9kv5uPcrwHL7VM9GxoHExKciv/fviKb1RvQFCIkQy82
+         1FI2w13FnQ6PBRK8c041O1h+s36RQbENDxQI7sqhf+T7kBi4NI+v6libOozCQ/exXlez
+         Eykg==
+X-Gm-Message-State: AOJu0YwgoUPP2yqBDWrJPiFnAe4zW+ydVQYxLbQfU83s+yATSlZNkVxO
+	IK6VTzZvUDOPv0WPbBT3Wuy7I2UAWMpyG4JshbA=
+X-Google-Smtp-Source: AGHT+IGq3M67HTy5rdu/IY9FndPLLuQSSg3Da+u605aRWD46UDNw8xTFi6K5KvxhiaDW/EPwyxFOBFO3ccwL+SRBrZo=
+X-Received: by 2002:a17:906:9d12:b0:9e5:2c72:9409 with SMTP id
+ fn18-20020a1709069d1200b009e52c729409mr3534316ejc.43.1702488401076; Wed, 13
+ Dec 2023 09:26:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC PATCH v3 1/3] bpf: cgroup: Introduce helper
- cgroup_bpf_current_enabled()
-Content-Language: en-GB
-To: =?UTF-8?Q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>,
- Christian Brauner <brauner@kernel.org>,
- Alexander Mikhalitsyn <alexander@mihalicyn.com>,
- Alexei Starovoitov <ast@kernel.org>, Paul Moore <paul@paul-moore.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Quentin Monnet <quentin@isovalent.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Miklos Szeredi
- <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
- "Serge E. Hallyn" <serge@hallyn.com>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-security-module@vger.kernel.org, gyroidos@aisec.fraunhofer.de,
- Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
- <20231213143813.6818-2-michael.weiss@aisec.fraunhofer.de>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20231213143813.6818-2-michael.weiss@aisec.fraunhofer.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20231207222755.3920286-1-andrii@kernel.org> <20231207222755.3920286-2-andrii@kernel.org>
+ <CAADnVQK6WWcgKtPNQrGe9dM7x1iMOyL943PVrJjT6ueBDFRyQw@mail.gmail.com>
+ <CAEf4BzYHHdQsaGBFXnY8omP4hv_tUjqxHWTNoEugi3acrE5q=A@mail.gmail.com>
+ <CAADnVQLoZpugU6gexuD4ru6VCZ8iQMoLWLByjHA6hush5hUwug@mail.gmail.com> <b683d150-5fa0-4bec-af07-c709ee4781d6@linux.dev>
+In-Reply-To: <b683d150-5fa0-4bec-af07-c709ee4781d6@linux.dev>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 13 Dec 2023 09:26:28 -0800
+Message-ID: <CAEf4BzZyOCmo1CFMGQG5TRWetMqWNbwsgB0CNNpeB_6aB9jxzA@mail.gmail.com>
+Subject: Re: [PATCH RFC bpf-next 1/3] bpf: add mapper macro for bpf_cmd enum
+To: Martin KaFai Lau <martin.lau@linux.dev>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Network Development <netdev@vger.kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	Christian Brauner <brauner@kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Kernel Team <kernel-team@meta.com>, Sargun Dhillon <sargun@sargun.me>, 
+	Martin KaFai Lau <martin.lau@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 12/13/23 6:38 AM, Michael Weiß wrote:
-> This helper can be used to check if a cgroup-bpf specific program is
-> active for the current task.
+On Tue, Dec 12, 2023 at 5:37=E2=80=AFPM Martin KaFai Lau <martin.lau@linux.=
+dev> wrote:
 >
-> Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
-> Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-> ---
->   include/linux/bpf-cgroup.h |  2 ++
->   kernel/bpf/cgroup.c        | 14 ++++++++++++++
->   2 files changed, 16 insertions(+)
+> On 12/11/23 8:06 PM, Alexei Starovoitov wrote:
+> > On Mon, Dec 11, 2023 at 8:01=E2=80=AFPM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
+> >>
+> >>
+> >>> While I can preemptively answer that in the case vmlinux BTF
+> >>> is not available it's fine not to parse names and rely on hex.
+> >>
+> >> It's fine, I can do optional BTF-based parsing, if that's what you pre=
+fer.
+> >
+> > I prefer to keep uapi/bpf.h as-is and use BTF.
+> > But I'd like to hear what Daniel's and Martin's preferences are.
 >
-> diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
-> index a789266feac3..7cb49bde09ff 100644
-> --- a/include/linux/bpf-cgroup.h
-> +++ b/include/linux/bpf-cgroup.h
-> @@ -191,6 +191,8 @@ static inline bool cgroup_bpf_sock_enabled(struct sock *sk,
->   	return array != &bpf_empty_prog_array.hdr;
->   }
->   
-> +bool cgroup_bpf_current_enabled(enum cgroup_bpf_attach_type type);
-> +
->   /* Wrappers for __cgroup_bpf_run_filter_skb() guarded by cgroup_bpf_enabled. */
->   #define BPF_CGROUP_RUN_PROG_INET_INGRESS(sk, skb)			      \
->   ({									      \
-> diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-> index 491d20038cbe..9007165abe8c 100644
-> --- a/kernel/bpf/cgroup.c
-> +++ b/kernel/bpf/cgroup.c
-> @@ -24,6 +24,20 @@
->   DEFINE_STATIC_KEY_ARRAY_FALSE(cgroup_bpf_enabled_key, MAX_CGROUP_BPF_ATTACH_TYPE);
->   EXPORT_SYMBOL(cgroup_bpf_enabled_key);
->   
-> +bool cgroup_bpf_current_enabled(enum cgroup_bpf_attach_type type)
-> +{
-> +	struct cgroup *cgrp;
-> +	struct bpf_prog_array *array;
-> +
-> +	rcu_read_lock();
-> +	cgrp = task_dfl_cgroup(current);
-> +	rcu_read_unlock();
-> +
-> +	array = rcu_access_pointer(cgrp->bpf.effective[type]);
+> I think user will find it useful to have a more readable uapi header file=
+. It
 
-This seems wrong here. The cgrp could become invalid once leaving
-rcu critical section.
+I'd say having numeric values make it more readable, but that's a
+separate discussion. I purposefully kept full BPF_-prefixed names
+intact for readability, as opposed to what we do for enum bpf_func_id.
 
-> +	return array != &bpf_empty_prog_array.hdr;
+> would be nice to keep the current uapi/bpf.h form if there is another sol=
+ution.
 
-I guess you need include 'array' usage as well in the rcu cs.
-So overall should look like:
-
-	rcu_read_lock();
-	cgrp = task_dfl_cgroup(current);
-	array = rcu_access_pointer(cgrp->bpf.effective[type]);
-	bpf_prog_exists = array != &bpf_empty_prog_array.hdr;
-	rcu_read_unlock();
-
-	return bpf_prog_exists;
-
-> +}
-> +EXPORT_SYMBOL(cgroup_bpf_current_enabled);
-> +
->   /* __always_inline is necessary to prevent indirect call through run_prog
->    * function pointer.
->    */
+Ok, I'll use BTF, no problem.
