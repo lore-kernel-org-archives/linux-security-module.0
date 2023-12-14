@@ -1,258 +1,331 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TClWSD6Q"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC083115;
-	Thu, 14 Dec 2023 08:10:13 -0800 (PST)
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BEFW6Fa010339;
-	Thu, 14 Dec 2023 16:09:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=65zoArfKlAIKj+jHAyVvOkf//7nWNHHCKZamla+kz0Y=;
- b=TClWSD6Qx0RGjGrbdNeLoCsTdrhG4E5pK6b975v+r8iHZ7BuVhFIam8BVLKja0EV8RdM
- O7PZ9S3ZQP/dPbFUzi6qSNo2rmQR8LR16aCFphHL5Mamla5kShsoyD6dry7ewjqVxhbk
- Dn/k1z70RerMnxPIs9QNmHLw3PrM8w8TtKhCZnmFoqjwA/7Bk8hoVAw1w/O+kX8jwTcX
- xO73n+FvpGh/SSbRrI/a2lhJ4xL+uGBWxLSaxnV9+JGQDQoNbuPRAa3zB7nNNcxmF4nI
- 2LOc7RttJcPjZV2PnGX75MKJQ4ilfQFpWGJy6r7Hi1E7cHaef0gt4h/n64nXq1CAh/gZ UA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3v04ea94sk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Dec 2023 16:09:48 +0000
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3BEFWCPH010489;
-	Thu, 14 Dec 2023 16:09:47 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3v04ea94s3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Dec 2023 16:09:47 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3BEEFE4g013874;
-	Thu, 14 Dec 2023 16:09:46 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3uw592h39a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Dec 2023 16:09:46 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3BEG9jV618612888
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 14 Dec 2023 16:09:45 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4CF5458068;
-	Thu, 14 Dec 2023 16:09:45 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7297B58065;
-	Thu, 14 Dec 2023 16:09:42 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.watson.ibm.com (unknown [9.31.99.90])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 14 Dec 2023 16:09:42 +0000 (GMT)
-Message-ID: <579803fe4750b2ac1cbf31f4d38929c9ec901a41.camel@linux.ibm.com>
-Subject: Re: [RFC][PATCH] overlayfs: Redirect xattr ops on security.evm to
- security.evm_overlayfs
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Amir Goldstein <amir73il@gmail.com>,
-        Roberto Sassu
-	 <roberto.sassu@huaweicloud.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-        Seth Forshee
- <sforshee@kernel.org>, miklos@szeredi.hu,
-        linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, stefanb@linux.ibm.com, jlayton@kernel.org,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Snowberg
- <eric.snowberg@oracle.com>
-Date: Thu, 14 Dec 2023 11:09:41 -0500
-In-Reply-To: <CAOQ4uxhwHgj-bE7N5SNcRZfnVHn9yCdY_=LFuOxEBkVBbrZKiw@mail.gmail.com>
-References: <20231208172308.2876481-1-roberto.sassu@huaweicloud.com>
-	 <CAOQ4uxivpZ+u0A5kE962XST37-ey2Tv9EtddnZQhk3ohRkcQTw@mail.gmail.com>
-	 <20231208-tauziehen-zerfetzt-026e7ee800a0@brauner>
-	 <c95b24f27021052209ec6911d2b7e7b20e410f43.camel@huaweicloud.com>
-	 <20231211-fortziehen-basen-b8c0639044b8@brauner>
-	 <019f134a-6ab4-48ca-991c-5a5c94e042ea@huaweicloud.com>
-	 <CAOQ4uxgpNt7qKEF_NEJPsKU7-XhM7N_3eP68FrOpMpcRcHt4rQ@mail.gmail.com>
-	 <59bf3530-2a6e-4caa-ac42-4d0dab9a71d1@huaweicloud.com>
-	 <a9297cc1bf23e34aba3c7597681e9e71a03b37f9.camel@linux.ibm.com>
-	 <d6b43b5780770637a724d129c22d5212860f494a.camel@huaweicloud.com>
-	 <CAOQ4uxhwHgj-bE7N5SNcRZfnVHn9yCdY_=LFuOxEBkVBbrZKiw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: xcpWVQEhxlE-8galbqQJSAxdGFwLi2Nv
-X-Proofpoint-ORIG-GUID: EUrIUsu8j469rbUs2Joh63Hlbwdqbz-X
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24654A0;
+	Thu, 14 Dec 2023 09:09:21 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4Srdg21Bjjz9xvP9;
+	Fri, 15 Dec 2023 00:51:58 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id AC45F140661;
+	Fri, 15 Dec 2023 01:09:12 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwBXlHSpNntl4xuLAg--.58219S2;
+	Thu, 14 Dec 2023 18:09:12 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	chuck.lever@oracle.com,
+	jlayton@kernel.org,
+	neilb@suse.de,
+	kolga@netapp.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	dhowells@redhat.com,
+	jarkko@kernel.org,
+	stephen.smalley.work@gmail.com,
+	eparis@parisplace.org,
+	casey@schaufler-ca.com,
+	shuah@kernel.org,
+	mic@digikod.net
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	selinux@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v8 00/24] security: Move IMA and EVM to the LSM infrastructure
+Date: Thu, 14 Dec 2023 18:08:10 +0100
+Message-Id: <20231214170834.3324559-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-14_11,2023-12-14_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- spamscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 lowpriorityscore=0
- priorityscore=1501 impostorscore=0 clxscore=1015 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2312140114
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwBXlHSpNntl4xuLAg--.58219S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfGw48tF1DGFyUCrWkWryUWrg_yoW8Jr4xGo
+	WIg397XFn8KF13A3yF9F1xCFWxuaySgrWfZr90vw45G3ZFq3WUG34fW3W5XFW5Xr4fWwnr
+	GwnrAasYqFWUt3Wfn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUY87kC6x804xWl14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK
+	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
+	AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF
+	7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28I
+	cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
+	IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI
+	42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42
+	IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2
+	z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1c4S7UUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgALBF1jj5OoDAABsK
 
-On Thu, 2023-12-14 at 17:09 +0200, Amir Goldstein wrote:
-> On Thu, Dec 14, 2023 at 3:43 PM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> >
-> > On Tue, 2023-12-12 at 10:27 -0500, Mimi Zohar wrote:
-> > > On Tue, 2023-12-12 at 14:13 +0100, Roberto Sassu wrote:
-> > > > On 12.12.23 11:44, Amir Goldstein wrote:
-> > > > > On Tue, Dec 12, 2023 at 12:25 PM Roberto Sassu
-> > > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > >
-> > > > > > On 11.12.23 19:01, Christian Brauner wrote:
-> > > > > > > > The second problem is that one security.evm is not enough. We need two,
-> > > > > > > > to store the two different HMACs. And we need both at the same time,
-> > > > > > > > since when overlayfs is mounted the lower/upper directories can be
-> > > > > > > > still accessible.
-> > > > > > >
-> > > > > > > "Changes to the underlying filesystems while part of a mounted overlay
-> > > > > > > filesystem are not allowed. If the underlying filesystem is changed, the
-> > > > > > > behavior of the overlay is undefined, though it will not result in a
-> > > > > > > crash or deadlock."
-> > > > > > >
-> > > > > > > https://docs.kernel.org/filesystems/overlayfs.html#changes-to-underlying-filesystems
-> > > > > > >
-> > > > > > > So I don't know why this would be a problem.
-> > > > > >
-> > > > > > + Eric Snowberg
-> > > > > >
-> > > > > > Ok, that would reduce the surface of attack. However, when looking at:
-> > > > > >
-> > > > > >        ovl: Always reevaluate the file signature for IMA
-> > > > > >
-> > > > > >        Commit db1d1e8b9867 ("IMA: use vfs_getattr_nosec to get the
-> > > > > > i_version")
-> > > > > >        partially closed an IMA integrity issue when directly modifying a file
-> > > > > >        on the lower filesystem.  If the overlay file is first opened by a
-> > > > > > user
-> > > > > >        and later the lower backing file is modified by root, but the extended
-> > > > > >        attribute is NOT updated, the signature validation succeeds with
-> > > > > > the old
-> > > > > >        original signature.
-> > > > > >
-> > > > > > Ok, so if the behavior of overlayfs is undefined if the lower backing
-> > > > > > file is modified by root, do we need to reevaluate? Or instead would be
-> > > > > > better to forbid the write from IMA (legitimate, I think, since the
-> > > > > > behavior is documented)? I just saw that we have d_real_inode(), we can
-> > > > > > use it to determine if the write should be denied.
-> > > > > >
-> > > > >
-> > > > > There may be several possible legitimate actions in this case, but the
-> > > > > overall concept IMO should be the same as I said about EVM -
-> > > > > overlayfs does not need an IMA signature of its own, because it
-> > > > > can use the IMA signature of the underlying file.
-> > > > >
-> > > > > Whether overlayfs reads a file from lower fs or upper fs, it does not
-> > > > > matter, the only thing that matters is that the underlying file content
-> > > > > is attested when needed.
-> > > > >
-> > > > > The only incident that requires special attention is copy-up.
-> > > > > This is what the security hooks security_inode_copy_up() and
-> > > > > security_inode_copy_up_xattr() are for.
-> > > > >
-> > > > > When a file starts in state "lower" and has security.ima,evm xattrs
-> > > > > then before a user changes the file, it is copied up to upper fs
-> > > > > and suppose that security.ima,evm xattrs are copied as is?
-> > >
-> > > For IMA copying up security.ima is fine.  Other than EVM portable
-> > > signatures, security.evm contains filesystem specific metadata.
-> > > Copying security.evm up only works if the metadata is the same on both
-> > > filesystems.  Currently the i_generation and i_sb->s_uuid are
-> > > different.
-> > >
-> > > > > When later the overlayfs file content is read from the upper copy
-> > > > > the security.ima signature should be enough to attest that file content
-> > > > > was not tampered with between going from "lower" to "upper".
-> > > > >
-> > > > > security.evm may need to be fixed on copy up, but that should be
-> > > > > easy to do with the security_inode_copy_up_xattr() hook. No?
-> > >
-> > > Writing security.evm requires the existing security.evm to be valid.
-> > > After each security xattr in the protected list is modified,
-> > > security.evm HMAC needs to be updated.  Perhaps calculating and writing
-> > > security.evm could be triggered by security_inode_copy_up_xattr().
-> > > Just copying a non-portable EVM signature wouldn't work, or for that
-> > > matter copying an EVM HMAC with different filesystem metadata.
-> >
-> > There is another problem, when delayed copy is used. The content comes
-> > from one source, metadata from another.
-> >
-> > I initially created test-file-lower on the lower directory
-> > (overlayfs/data), before mounting overlayfs. After mount on
-> > overlayfs/mnt:
-> >
-> > # getfattr -m - -e hex -d overlayfs/mnt/test-file-lower
-> > # file: overlayfs/mnt/test-file-lower
-> > security.evm=0x02c86ec91a4c0cf024537fd24347b780b90973402e
-> > security.ima=0x0404f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2
-> > security.selinux=0x73797374656d5f753a6f626a6563745f723a756e6c6162656c65645f743a733000
-> >
-> > # chcon -t unconfined_t overlayfs/mnt/test-file-lower
-> >
-> > After this, IMA creates an empty file in the upper directory
-> > (overlayfs/root/data), and writes security.ima at file close.
-> > Unfortunately, this is what is presented from overlayfs, which is not
-> > in sync with the content.
-> >
-> > # getfattr -m - -e hex -d overlayfs/mnt/test-file-lower
-> > # file: overlayfs/mnt/test-file-lower
-> > security.evm=0x021d71e7df78c36745e3b651ce29cb9f47dc301248
-> > security.ima=0x04048855508aade16ec573d21e6a485dfd0a7624085c1a14b5ecdd6485de0c6839a4
-> > security.selinux=0x73797374656d5f753a6f626a6563745f723a756e636f6e66696e65645f743a733000
-> >
-> > # sha256sum overlayfs/mnt/test-file-lower
-> > f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2  overlayfs/mnt/test-file-lower
-> >
-> > # sha256sum overlayfs/root/data/test-file-lower
-> > 8855508aade16ec573d21e6a485dfd0a7624085c1a14b5ecdd6485de0c6839a4  overlayfs/root/data/test-file-lower (upperdir)
-> >
-> > We would need to use the lower security.ima until the copy is made, but
-> > at the same time we need to keep the upper valid (with all xattrs) so
-> > that IMA can update the next time overlayfs requests that.
-> >
-> 
-> Yap.
-> 
-> As Seth wrote, overlayfs is a combination of upper and lower.
-> The information that IMA needs should be accessible from either lower
-> or upper, but sometimes we will need to make the right choice.
-> 
-> The case of security.ima is similar to that of st_blocks -
-> it is a data-related metadata, so it needs to be taken from the lowerdata inode
-> (not even the lower inode). See example of getting STATX_BLOCKS
-> in ovl_getattr().
-> 
-> I would accept a patch that special cases security.ima in ovl_xattr_get()
-> and gets it from ovl_i_path_lowerdata(), which would need to be
-> factored out of ovl_path_lowerdata().
-> 
-> I would also accept filtering out security.{ima,evm} from
-> 
-> But I would only accept it if I know that IMA is not trying to write the
-> security.ima xattr when closing an overlayfs file, only when closing the
-> real underlying upper file.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-I don't see how that would be possible.  As far as I'm aware, the
-correlation is between the overlay and the underlying lower/uppper
-file, not the other way around.  How could a close on the underlying
-file trigger IMA on an overlay file?
+IMA and EVM are not effectively LSMs, especially due to the fact that in
+the past they could not provide a security blob while there is another LSM
+active.
 
-> 
-> I would also expect IMA to filter out security.{ima,evm} xattrs in
-> security_inode_copy_up_xattr() (i.e. return 1).
-> and most importantly, a documentation of the model of IMA/EVM
-> and overlayfs.
+That changed in the recent years, the LSM stacking feature now makes it
+possible to stack together multiple LSMs, and allows them to provide a
+security blob for most kernel objects. While the LSM stacking feature has
+some limitations being worked out, it is already suitable to make IMA and
+EVM as LSMs.
 
-Ok.
+The main purpose of this patch set is to remove IMA and EVM function calls,
+hardcoded in the LSM infrastructure and other places in the kernel, and to
+register them as LSM hook implementations, so that those functions are
+called by the LSM infrastructure like other regular LSMs.
 
-Mimi
+This patch set introduces two new LSMs 'ima' and 'evm', so that functions
+can be registered to their respective LSM, and removes the 'integrity' LSM.
+integrity_kernel_module_request() was moved to IMA, since it was related to
+appraisal. integrity_inode_free() was replaced with
+ima_inode_free_security() (EVM does not need to free memory).
+
+In order to make 'ima' and 'evm' independent LSMs, it was necessary to
+split integrity metadata used by both IMA and EVM, and to let them manage
+their own. The special case of the IMA_NEW_FILE flag, managed by IMA and
+used by EVM, was handled by introducing a new flag in EVM, EVM_NEW_FILE,
+managed by two additional LSM hooks, evm_post_path_mknod() and
+evm_file_free(), equivalent to their counterparts ima_post_path_mknod() and
+ima_file_free().
+
+In addition to splitting metadata, it was decided to embed the full
+structure into the inode security blob, rather than using a cache of
+objects and allocating them on demand. This opens for new possibilities,
+such as improving locking in IMA.
+
+Another follow-up change was removing the iint parameter from
+evm_verifyxattr(), that IMA used to pass integrity metadata to EVM. After
+splitting metadata, and aligning EVM_NEW_FILE with IMA_NEW_FILE, this
+parameter was not necessary anymore.
+
+The last part was to ensure that the order of IMA and EVM functions is
+respected after they become LSMs. Since the order of lsm_info structures in
+the .lsm_info.init section depends on the order object files containing
+those structures are passed to the linker of the kernel image, and since
+IMA is before EVM in the Makefile, that is sufficient to assert that IMA
+functions are executed before EVM ones.
+
+The patch set is organized as follows.
+
+Patches 1-9 make IMA and EVM functions suitable to be registered to the LSM
+infrastructure, by aligning function parameters.
+
+Patches 10-18 add new LSM hooks in the same places where IMA and EVM
+functions are called, if there is no LSM hook already.
+
+Patches 19-21 introduce the new standalone LSMs 'ima' and 'evm', and move
+hardcoded calls to IMA, EVM and integrity functions to those LSMs.
+
+Patches 22-23 remove the dependency on the 'integrity' LSM by splitting
+integrity metadata, so that the 'ima' and 'evm' LSMs can use their own.
+They also duplicate iint_lockdep_annotate() in ima_main.c, since the mutex
+field was moved from integrity_iint_cache to ima_iint_cache.
+
+Patch 24 finally removes the 'integrity' LSM, since 'ima' and 'evm' are now
+self-contained and independent. 
+
+The patch set applies on top of lsm/dev, commit 80b4ff1d2c9b ("selftests:
+remove the LSM_ID_IMA check in lsm/lsm_list_modules_test"). The 
+linux-integrity/next-integrity-testing at commit f17167bea279 ("ima: Remove
+EXPERIMENTAL from Kconfig") was merged.
+
+Changelog:
+
+v7:
+ - Use return instead of goto in __vfs_removexattr_locked() (suggested by
+   Casey)
+ - Clarify in security/integrity/Makefile that the order of 'ima' and 'evm'
+   LSMs depends on the order in which IMA and EVM are compiled
+ - Move integrity_iint_cache flags to ima.h and evm.h in security/ and
+   duplicate IMA_NEW_FILE to EVM_NEW_FILE
+ - Rename evm_inode_get_iint() to evm_iint_inode() and ima_inode_get_iint()
+   to ima_iint_inode(), check if inode->i_security is NULL, and just return
+   the pointer from the inode security blob
+ - Restore the non-NULL checks after ima_iint_inode() and evm_iint_inode()
+   (suggested by Casey)
+ - Introduce evm_file_free() to clear EVM_NEW_FILE
+ - Remove comment about LSM_ORDER_LAST not guaranteeing the order of 'ima'
+   and 'evm' LSMs
+ - Lock iint->mutex before reading IMA_COLLECTED flag in __ima_inode_hash()
+   and restored ima_policy_flag check
+ - Remove patch about the hardcoded ordering of 'ima' and 'evm' LSMs in
+   security.c
+ - Add missing ima_inode_free_security() to free iint->ima_hash
+ - Add the cases for LSM_ID_IMA and LSM_ID_EVM in lsm_list_modules_test.c
+ - Mention about the change in IMA and EVM post functions for private
+   inodes
+
+v6:
+ - See v7
+
+v5:
+ - Rename security_file_pre_free() to security_file_release() and the LSM
+   hook file_pre_free_security to file_release (suggested by Paul)
+ - Move integrity_kernel_module_request() to ima_main.c (renamed to
+   ima_kernel_module_request())
+ - Split the integrity_iint_cache structure into ima_iint_cache and
+   evm_iint_cache, so that IMA and EVM can use disjoint metadata and
+   reserve space with the LSM infrastructure
+ - Reserve space for the entire ima_iint_cache and evm_iint_cache
+   structures, not just the pointer (suggested by Paul)
+ - Introduce ima_inode_get_iint() and evm_inode_get_iint() to retrieve
+   respectively the ima_iint_cache and evm_iint_cache structure from the
+   security blob
+ - Remove the various non-NULL checks for the ima_iint_cache and
+   evm_iint_cache structures, since the LSM infrastructure ensure that they
+   always exist
+ - Remove the iint parameter from evm_verifyxattr() since IMA and EVM
+   use disjoint integrity metaddata
+ - Introduce the evm_post_path_mknod() to set the IMA_NEW_FILE flag
+ - Register the inode_alloc_security LSM hook in IMA and EVM to
+   initialize the respective integrity metadata structures
+ - Remove the 'integrity' LSM completely and instead make 'ima' and 'evm'
+   proper standalone LSMs
+ - Add the inode parameter to ima_get_verity_digest(), since the inode
+   field is not present in ima_iint_cache
+ - Move iint_lockdep_annotate() to ima_main.c (renamed to
+   ima_iint_lockdep_annotate())
+ - Remove ima_get_lsm_id() and evm_get_lsm_id(), since IMA and EVM directly
+   register the needed LSM hooks
+ - Enforce 'ima' and 'evm' LSM ordering at LSM infrastructure level
+
+v4:
+ - Improve short and long description of
+   security_inode_post_create_tmpfile(), security_inode_post_set_acl(),
+   security_inode_post_remove_acl() and security_file_post_open()
+   (suggested by Mimi)
+ - Improve commit message of 'ima: Move to LSM infrastructure' (suggested
+   by Mimi)
+
+v3:
+ - Drop 'ima: Align ima_post_path_mknod() definition with LSM
+   infrastructure' and 'ima: Align ima_post_create_tmpfile() definition
+   with LSM infrastructure', define the new LSM hooks with the same
+   IMA parameters instead (suggested by Mimi)
+ - Do IS_PRIVATE() check in security_path_post_mknod() and
+   security_inode_post_create_tmpfile() on the new inode rather than the
+   parent directory (in the post method it is available)
+ - Don't export ima_file_check() (suggested by Stefan)
+ - Remove redundant check of file mode in ima_post_path_mknod() (suggested
+   by Mimi)
+ - Mention that ima_post_path_mknod() is now conditionally invoked when
+   CONFIG_SECURITY_PATH=y (suggested by Mimi)
+ - Mention when a LSM hook will be introduced in the IMA/EVM alignment
+   patches (suggested by Mimi)
+ - Simplify the commit messages when introducing a new LSM hook
+ - Still keep the 'extern' in the function declaration, until the
+   declaration is removed (suggested by Mimi)
+ - Improve documentation of security_file_pre_free()
+ - Register 'ima' and 'evm' as standalone LSMs (suggested by Paul)
+ - Initialize the 'ima' and 'evm' LSMs from 'integrity', to keep the
+   original ordering of IMA and EVM functions as when they were hardcoded
+ - Return the IMA and EVM LSM IDs to 'integrity' for registration of the
+   integrity-specific hooks
+ - Reserve an xattr slot from the 'evm' LSM instead of 'integrity'
+ - Pass the LSM ID to init_ima_appraise_lsm()
+
+v2:
+ - Add description for newly introduced LSM hooks (suggested by Casey)
+ - Clarify in the description of security_file_pre_free() that actions can
+   be performed while the file is still open
+
+v1:
+ - Drop 'evm: Complete description of evm_inode_setattr()', 'fs: Fix
+   description of vfs_tmpfile()' and 'security: Introduce LSM_ORDER_LAST',
+   they were sent separately (suggested by Christian Brauner)
+ - Replace dentry with file descriptor parameter for
+   security_inode_post_create_tmpfile()
+ - Introduce mode_stripped and pass it as mode argument to
+   security_path_mknod() and security_path_post_mknod()
+ - Use goto in do_mknodat() and __vfs_removexattr_locked() (suggested by
+   Mimi)
+ - Replace __lsm_ro_after_init with __ro_after_init
+ - Modify short description of security_inode_post_create_tmpfile() and
+   security_inode_post_set_acl() (suggested by Stefan)
+ - Move security_inode_post_setattr() just after security_inode_setattr()
+   (suggested by Mimi)
+ - Modify short description of security_key_post_create_or_update()
+   (suggested by Mimi)
+ - Add back exported functions ima_file_check() and
+   evm_inode_init_security() respectively to ima.h and evm.h (reported by
+   kernel robot)
+ - Remove extern from prototype declarations and fix style issues
+ - Remove unnecessary include of linux/lsm_hooks.h in ima_main.c and
+   ima_appraise.c
+
+Roberto Sassu (24):
+  ima: Align ima_inode_post_setattr() definition with LSM infrastructure
+  ima: Align ima_file_mprotect() definition with LSM infrastructure
+  ima: Align ima_inode_setxattr() definition with LSM infrastructure
+  ima: Align ima_inode_removexattr() definition with LSM infrastructure
+  ima: Align ima_post_read_file() definition with LSM infrastructure
+  evm: Align evm_inode_post_setattr() definition with LSM infrastructure
+  evm: Align evm_inode_setxattr() definition with LSM infrastructure
+  evm: Align evm_inode_post_setxattr() definition with LSM
+    infrastructure
+  security: Align inode_setattr hook definition with EVM
+  security: Introduce inode_post_setattr hook
+  security: Introduce inode_post_removexattr hook
+  security: Introduce file_post_open hook
+  security: Introduce file_release hook
+  security: Introduce path_post_mknod hook
+  security: Introduce inode_post_create_tmpfile hook
+  security: Introduce inode_post_set_acl hook
+  security: Introduce inode_post_remove_acl hook
+  security: Introduce key_post_create_or_update hook
+  ima: Move to LSM infrastructure
+  ima: Move IMA-Appraisal to LSM infrastructure
+  evm: Move to LSM infrastructure
+  evm: Make it independent from 'integrity' LSM
+  ima: Make it independent from 'integrity' LSM
+  integrity: Remove LSM
+
+ fs/attr.c                                     |   5 +-
+ fs/file_table.c                               |   3 +-
+ fs/namei.c                                    |  12 +-
+ fs/nfsd/vfs.c                                 |   3 +-
+ fs/open.c                                     |   1 -
+ fs/posix_acl.c                                |   5 +-
+ fs/xattr.c                                    |   9 +-
+ include/linux/evm.h                           | 111 +-------
+ include/linux/fs.h                            |   2 -
+ include/linux/ima.h                           | 142 ----------
+ include/linux/integrity.h                     |  27 --
+ include/linux/lsm_hook_defs.h                 |  20 +-
+ include/linux/security.h                      |  59 ++++
+ include/uapi/linux/lsm.h                      |   2 +
+ security/integrity/Makefile                   |   1 +
+ security/integrity/digsig_asymmetric.c        |  23 --
+ security/integrity/evm/evm.h                  |  19 ++
+ security/integrity/evm/evm_crypto.c           |   4 +-
+ security/integrity/evm/evm_main.c             | 195 ++++++++++---
+ security/integrity/iint.c                     | 197 +------------
+ security/integrity/ima/ima.h                  | 120 +++++++-
+ security/integrity/ima/ima_api.c              |  15 +-
+ security/integrity/ima/ima_appraise.c         |  64 +++--
+ security/integrity/ima/ima_init.c             |   2 +-
+ security/integrity/ima/ima_main.c             | 201 +++++++++++---
+ security/integrity/ima/ima_policy.c           |   2 +-
+ security/integrity/integrity.h                |  80 +-----
+ security/keys/key.c                           |  10 +-
+ security/security.c                           | 261 +++++++++++-------
+ security/selinux/hooks.c                      |   3 +-
+ security/smack/smack_lsm.c                    |   4 +-
+ .../selftests/lsm/lsm_list_modules_test.c     |   6 +
+ 32 files changed, 783 insertions(+), 825 deletions(-)
+
+-- 
+2.34.1
 
