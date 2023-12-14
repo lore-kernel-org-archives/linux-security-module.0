@@ -1,307 +1,164 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="gYI5ZOAS"
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751A4E0
-	for <linux-security-module@vger.kernel.org>; Thu, 14 Dec 2023 02:14:12 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SrSr25YnhzMpnhP;
-	Thu, 14 Dec 2023 10:14:10 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SrSr16ggszMppRm;
-	Thu, 14 Dec 2023 11:14:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1702548850;
-	bh=bWbKinlIygs69dJQ7/qr2QWlAqI8sDyZwNvzhZi/3SE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gYI5ZOASCdWCNf7u8DjUO0rNf1JGX5D6Cl9u5oKS+wswU4P6lPr2Wr+i4t/XjIeYk
-	 fC8wrLnADI72uD57RIAqg77e2HWzEOep8EM9MCe1qmdP2aLVF3sFksd8Suv1iv+PqE
-	 095vkYrcwbXtl7xRJ3BzZ+Rj3HLZ6kEjty3jUUAA=
-Date: Thu, 14 Dec 2023 11:14:09 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v8 4/9] landlock: Add IOCTL access right
-Message-ID: <20231214.Iev8oopu8iel@digikod.net>
-References: <20231208155121.1943775-1-gnoack@google.com>
- <20231208155121.1943775-5-gnoack@google.com>
- <20231214.feeZ6Hahwaem@digikod.net>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="elxbenkZ"
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FA80115;
+	Thu, 14 Dec 2023 04:51:42 -0800 (PST)
+Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1d34a6b3566so11717285ad.2;
+        Thu, 14 Dec 2023 04:51:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702558301; x=1703163101; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oj0iJvkscsu8K8KTKJIWnYWXUHTwTNv0Yge5CoUg6vU=;
+        b=elxbenkZ39V/BVDtXBENcOxvQ7Qg24U/Zr4DJvk33OoIVYepvdqJT/vN69rqxM3pbN
+         nfwQtUf714P27+SAuCLmPrZJXLqAj6/kV/hPgQ94QioKv5FI5U5/MFtwd1j9jjEEolx6
+         V4eL+yKfVh7tt4mQY1LWNjFRwJi/h3naTn4/SDZpEm3/CNR4a/xB/PIk/I+gynyedrap
+         c4biU+vK6opQk6j/ehQJLuFFmmAhVGTY7G/9qTlWMQDDMWMeb2E8UcNVqDwbmtTlzm/Z
+         DQKDNsXSN0afV0ASGQShQsfmvIkMGIhiIB/IpPVHuderUqQfszka2sNCePOSdfPmBRcm
+         Dp9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702558301; x=1703163101;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oj0iJvkscsu8K8KTKJIWnYWXUHTwTNv0Yge5CoUg6vU=;
+        b=GiFcedw0MAiR4k1s9oA6wdLphdR0GzuTIifEXRorlTiGOe+xYgFwJIgwCCGwqt3YTL
+         uZwpny8BWeS7MRfAPbgACsWneMFKGWgprxL4EvdGuCRhSmyE3YLmcvvyLM8Fr2VC/npk
+         xCQpSm6GXifW8tQT238w/uWnzQFotd+irlAPhWY+naoeE5cBsTeRcER2CT2YacXqCJGk
+         xXoKqia4r/G7vGlfcb4d3BQUcZCrcyA0YBsfa2PBxO+Z1F4FTWNHBUf7jgZiwRVaS6nm
+         ZdyswrHteI/8O1UPgD1n0bcauALxJPkb2wBgQs2GnwvcwU7iPy3qoMQHxb2Fj89y1tDT
+         K4UQ==
+X-Gm-Message-State: AOJu0YzlLPp+JtLbjqJ+QPNDT+5sBZMH0BAnJqEAc4nuiFliciQrdFq9
+	xD3PruoAgwm4JKyeFt0/ZJg=
+X-Google-Smtp-Source: AGHT+IFs2hng0mwsEvoC+hm8RAbM12yZWcwi7bTtTSObTgxyW6oPlqzYS1I/1EkUf9p4JKo1OFsXzQ==
+X-Received: by 2002:a17:902:7004:b0:1d0:6ffd:ae23 with SMTP id y4-20020a170902700400b001d06ffdae23mr4335630plk.138.1702558301453;
+        Thu, 14 Dec 2023 04:51:41 -0800 (PST)
+Received: from vultr.guest ([149.28.194.201])
+        by smtp.gmail.com with ESMTPSA id jj17-20020a170903049100b001d36b2e3dddsm1184528plb.192.2023.12.14.04.51.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Dec 2023 04:51:40 -0800 (PST)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: akpm@linux-foundation.org,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	omosnace@redhat.com,
+	casey@schaufler-ca.com,
+	kpsingh@kernel.org,
+	mhocko@suse.com,
+	ying.huang@intel.com
+Cc: linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	bpf@vger.kernel.org,
+	ligang.bdlg@bytedance.com,
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v5 bpf-next 0/5] mm, security, bpf: Fine-grained control over memory policy adjustments with lsm bpf
+Date: Thu, 14 Dec 2023 12:50:28 +0000
+Message-Id: <20231214125033.4158-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231214.feeZ6Hahwaem@digikod.net>
-X-Infomaniak-Routing: alpha
 
-On Thu, Dec 14, 2023 at 10:26:49AM +0100, Mickaël Salaün wrote:
-> On Fri, Dec 08, 2023 at 04:51:16PM +0100, Günther Noack wrote:
-> > Introduces the LANDLOCK_ACCESS_FS_IOCTL access right
-> > and increments the Landlock ABI version to 5.
-> > 
-> > Like the truncate right, these rights are associated with a file
-> > descriptor at the time of open(2), and get respected even when the
-> > file descriptor is used outside of the thread which it was originally
-> > opened in.
-> > 
-> > A newly enabled Landlock policy therefore does not apply to file
-> > descriptors which are already open.
-> > 
-> > If the LANDLOCK_ACCESS_FS_IOCTL right is handled, only a small number
-> > of safe IOCTL commands will be permitted on newly opened files.  The
-> > permitted IOCTLs can be configured through the ruleset in limited ways
-> > now.  (See documentation for details.)
-> > 
-> > Specifically, when LANDLOCK_ACCESS_FS_IOCTL is handled, granting this
-> > right on a file or directory will *not* permit to do all IOCTL
-> > commands, but only influence the IOCTL commands which are not already
-> > handled through other access rights.  The intent is to keep the groups
-> > of IOCTL commands more fine-grained.
-> > 
-> > Noteworthy scenarios which require special attention:
-> > 
-> > TTY devices support IOCTLs like TIOCSTI and TIOCLINUX, which can be
-> > used to control shell processes on the same terminal which run at
-> > different privilege levels, which may make it possible to escape a
-> > sandbox.  Because stdin, stdout and stderr are normally inherited
-> > rather than newly opened, IOCTLs are usually permitted on them even
-> > after the Landlock policy is enforced.
-> > 
-> > Some legitimate file system features, like setting up fscrypt, are
-> > exposed as IOCTL commands on regular files and directories -- users of
-> > Landlock are advised to double check that the sandboxed process does
-> > not need to invoke these IOCTLs.
-> > 
-> > Known limitations:
-> > 
-> > The LANDLOCK_ACCESS_FS_IOCTL access right is a coarse-grained control
-> > over IOCTL commands.  Future work will enable a more fine-grained
-> > access control for IOCTLs.
-> > 
-> > In the meantime, Landlock users may use path-based restrictions in
-> > combination with their knowledge about the file system layout to
-> > control what IOCTLs can be done.  Mounting file systems with the nodev
-> > option can help to distinguish regular files and devices, and give
-> > guarantees about the affected files, which Landlock alone can not give
-> > yet.
-> > 
-> > Signed-off-by: Günther Noack <gnoack@google.com>
-> > ---
-> >  include/uapi/linux/landlock.h                |  58 +++++-
-> >  security/landlock/fs.c                       | 176 ++++++++++++++++++-
-> >  security/landlock/fs.h                       |   2 +
-> >  security/landlock/limits.h                   |  11 +-
-> >  security/landlock/ruleset.h                  |   2 +-
-> >  security/landlock/syscalls.c                 |  19 +-
-> >  tools/testing/selftests/landlock/base_test.c |   2 +-
-> >  tools/testing/selftests/landlock/fs_test.c   |   5 +-
-> >  8 files changed, 253 insertions(+), 22 deletions(-)
-> > 
-> 
-> > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > index 9ba989ef46a5..81ce41e9e6db 100644
-> > --- a/security/landlock/fs.c
-> > +++ b/security/landlock/fs.c
-> > @@ -7,12 +7,14 @@
-> >   * Copyright © 2021-2022 Microsoft Corporation
-> >   */
-> >  
-> > +#include <asm/ioctls.h>
-> >  #include <linux/atomic.h>
-> >  #include <linux/bitops.h>
-> >  #include <linux/bits.h>
-> >  #include <linux/compiler_types.h>
-> >  #include <linux/dcache.h>
-> >  #include <linux/err.h>
-> > +#include <linux/falloc.h>
-> >  #include <linux/fs.h>
-> >  #include <linux/init.h>
-> >  #include <linux/kernel.h>
-> > @@ -28,6 +30,7 @@
-> >  #include <linux/types.h>
-> >  #include <linux/wait_bit.h>
-> >  #include <linux/workqueue.h>
-> > +#include <uapi/linux/fiemap.h>
-> >  #include <uapi/linux/landlock.h>
-> >  
-> >  #include "common.h"
-> > @@ -83,6 +86,145 @@ static const struct landlock_object_underops landlock_fs_underops = {
-> >  	.release = release_inode
-> >  };
-> >  
-> > +/* IOCTL helpers */
-> > +
-> > +/*
-> > + * These are synthetic access rights, which are only used within the kernel, but
-> > + * not exposed to callers in userspace.  The mapping between these access rights
-> > + * and IOCTL commands is defined in the required_ioctl_access() helper function.
-> > + */
-> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP1 (LANDLOCK_LAST_PUBLIC_ACCESS_FS << 1)
-> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP2 (LANDLOCK_LAST_PUBLIC_ACCESS_FS << 2)
-> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP3 (LANDLOCK_LAST_PUBLIC_ACCESS_FS << 3)
-> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP4 (LANDLOCK_LAST_PUBLIC_ACCESS_FS << 4)
-> > +
-> > +/* ioctl_groups - all synthetic access rights for IOCTL command groups */
-> > +/* clang-format off */
-> > +#define IOCTL_GROUPS (			  \
-> > +	LANDLOCK_ACCESS_FS_IOCTL_GROUP1 | \
-> > +	LANDLOCK_ACCESS_FS_IOCTL_GROUP2 | \
-> > +	LANDLOCK_ACCESS_FS_IOCTL_GROUP3 | \
-> > +	LANDLOCK_ACCESS_FS_IOCTL_GROUP4)
-> > +/* clang-format on */
-> > +
-> > +static_assert((IOCTL_GROUPS & LANDLOCK_MASK_ACCESS_FS) == IOCTL_GROUPS);
-> > +
-> > +/**
-> > + * required_ioctl_access(): Determine required IOCTL access rights.
-> > + *
-> > + * @cmd: The IOCTL command that is supposed to be run.
-> > + *
-> > + * Returns: The access rights that must be granted on an opened file in order to
-> > + * use the given @cmd.
-> > + */
-> > +static access_mask_t required_ioctl_access(unsigned int cmd)
+Background
+==========
 
-Please use a verb for functions, something like
-get_required_ioctl_access().
+In our containerized environment, we've identified unexpected OOM events
+where the OOM-killer terminates tasks despite having ample free memory.
+This anomaly is traced back to tasks within a container using mbind(2) to
+bind memory to a specific NUMA node. When the allocated memory on this node
+is exhausted, the OOM-killer, prioritizing tasks based on oom_score,
+indiscriminately kills tasks. 
 
-> 
-> You can add __attribute_const__ after "static", and also constify cmd.
-> 
-> > +{
-> > +	switch (cmd) {
-> > +	case FIOCLEX:
-> > +	case FIONCLEX:
-> > +	case FIONBIO:
-> > +	case FIOASYNC:
-> > +		/*
-> > +		 * FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC manipulate the FD's
-> > +		 * close-on-exec and the file's buffered-IO and async flags.
-> > +		 * These operations are also available through fcntl(2),
-> > +		 * and are unconditionally permitted in Landlock.
-> > +		 */
-> > +		return 0;
-> > +	case FIOQSIZE:
-> > +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP1;
-> > +	case FS_IOC_FIEMAP:
-> > +	case FIBMAP:
-> > +	case FIGETBSZ:
-> > +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP2;
-> > +	case FIONREAD:
-> > +	case FIDEDUPERANGE:
-> > +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP3;
-> > +	case FICLONE:
-> > +	case FICLONERANGE:
-> > +	case FS_IOC_RESVSP:
-> > +	case FS_IOC_RESVSP64:
-> > +	case FS_IOC_UNRESVSP:
-> > +	case FS_IOC_UNRESVSP64:
-> > +	case FS_IOC_ZERO_RANGE:
-> > +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP4;
-> > +	default:
-> > +		/*
-> > +		 * Other commands are guarded by the catch-all access right.
-> > +		 */
-> > +		return LANDLOCK_ACCESS_FS_IOCTL;
-> > +	}
-> > +}
-> > +
-> > +/**
-> > + * expand_ioctl() - Return the dst flags from either the src flag or the
-> > + * %LANDLOCK_ACCESS_FS_IOCTL flag, depending on whether the
-> > + * %LANDLOCK_ACCESS_FS_IOCTL and src access rights are handled or not.
-> > + *
-> > + * @handled: Handled access rights.
-> > + * @access: The access mask to copy values from.
-> > + * @src: A single access right to copy from in @access.
-> > + * @dst: One or more access rights to copy to.
-> > + *
-> > + * Returns: @dst, or 0.
-> > + */
-> > +static access_mask_t expand_ioctl(const access_mask_t handled,
-> 
-> static __attribute_const__
-> 
-> > +				  const access_mask_t access,
-> > +				  const access_mask_t src,
-> > +				  const access_mask_t dst)
-> > +{
-> > +	access_mask_t copy_from;
-> > +
-> > +	if (!(handled & LANDLOCK_ACCESS_FS_IOCTL))
-> > +		return 0;
-> > +
-> > +	copy_from = (handled & src) ? src : LANDLOCK_ACCESS_FS_IOCTL;
-> > +	if (access & copy_from)
-> > +		return dst;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/**
-> > + * landlock_expand_access_fs() - Returns @access with the synthetic IOCTL group
-> > + * flags enabled if necessary.
-> > + *
-> > + * @handled: Handled FS access rights.
-> > + * @access: FS access rights to expand.
-> > + *
-> > + * Returns: @access expanded by the necessary flags for the synthetic IOCTL
-> > + * access rights.
-> > + */
-> > +static access_mask_t landlock_expand_access_fs(const access_mask_t handled,
-> 
-> static __attribute_const__
-> 
-> > +					       const access_mask_t access)
-> > +{
-> > +	return access |
-> > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_WRITE_FILE,
-> > +			    LANDLOCK_ACCESS_FS_IOCTL_GROUP1 |
-> > +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP2 |
-> > +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP4) |
-> > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_READ_FILE,
-> > +			    LANDLOCK_ACCESS_FS_IOCTL_GROUP1 |
-> > +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP2 |
-> > +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP3) |
-> > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_READ_DIR,
-> > +			    LANDLOCK_ACCESS_FS_IOCTL_GROUP1);
-> > +}
-> > +
-> > +/**
-> > + * landlock_expand_handled_access_fs() - add synthetic IOCTL access rights to an
-> > + * access mask of handled accesses.
-> > + *
-> > + * @handled: The handled accesses of a ruleset that is being created.
-> > + *
-> > + * Returns: @handled, with the bits for the synthetic IOCTL access rights set,
-> > + * if %LANDLOCK_ACCESS_FS_IOCTL is handled.
-> > + */
-> > +access_mask_t landlock_expand_handled_access_fs(const access_mask_t handled)
-> 
-> __attribute_const__ access_mask_t
-> 
-> > +{
-> > +	return landlock_expand_access_fs(handled, handled);
-> > +}
-> > +
-> 
-> > diff --git a/security/landlock/fs.h b/security/landlock/fs.h
-> > index 488e4813680a..c88fe7bda37b 100644
-> > --- a/security/landlock/fs.h
-> > +++ b/security/landlock/fs.h
-> > @@ -92,4 +92,6 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
-> >  			    const struct path *const path,
-> >  			    access_mask_t access_hierarchy);
-> >  
-> > +access_mask_t landlock_expand_handled_access_fs(const access_mask_t handled);
-> 
-> __attribute_const__ access_mask_t
-> 
-> > +
-> >  #endif /* _SECURITY_LANDLOCK_FS_H */
+The Challenge 
+=============
+
+In a containerized environment, independent memory binding by a user can
+lead to unexpected system issues or disrupt tasks being run by other users
+on the same server. If a user genuinely requires memory binding, we will
+allocate dedicated servers to them by leveraging kubelet deployment.
+
+Currently, users possess the ability to autonomously bind their memory to
+specific nodes without explicit agreement or authorization from our end.
+It's imperative that we establish a method to prevent this behavior.
+
+Proposed Solution
+=================
+
+- Capability
+  Currently, any task can perform MPOL_BIND without specific capabilities.
+  Enforcing CAP_SYS_RESOURCE or CAP_SYS_NICE could be an option, but this
+  may have unintended consequences. Capabilities, being broad, might grant
+  unnecessary privileges. We should explore alternatives to prevent
+  unexpected side effects.
+
+- LSM 
+  Introduce LSM hooks for syscalls such as mbind(2) and set_mempolicy(2)
+  to disable MPOL_BIND. This approach is more flexibility and allows for
+  fine-grained control without unintended consequences. A sample LSM BPF
+  program is included, demonstrating practical implementation in a
+  production environment.
+
+- seccomp
+  seccomp is relatively heavyweight, making it less suitable for
+  enabling in our production environment:
+  - Both kubelet and containers need adaptation to support it.
+  - Dynamically altering security policies for individual containers
+    without interrupting their operations isn't straightforward.
+
+Future Considerations
+=====================
+
+In addition, there's room for enhancement in the OOM-killer for cases
+involving CONSTRAINT_MEMORY_POLICY. It would be more beneficial to
+prioritize selecting a victim that has allocated memory on the same NUMA
+node. My exploration on the lore led me to a proposal[0] related to this
+matter, although consensus seems elusive at this point. Nevertheless,
+delving into this specific topic is beyond the scope of the current
+patchset.
+
+[0]. https://lore.kernel.org/lkml/20220512044634.63586-1-ligang.bdlg@bytedance.com/
+
+Changes:
+- v4 -> v5:
+  - Revise the commit log in patch #5. (KP)
+- v3 -> v4: https://lwn.net/Articles/954126/
+  - Drop the changes around security_task_movememory (Serge) 
+- RCC v2 -> v3: https://lwn.net/Articles/953526/
+  - Add MPOL_F_NUMA_BALANCING man-page (Ying)
+  - Fix bpf selftests error reported by bot+bpf-ci
+- RFC v1 -> RFC v2: https://lwn.net/Articles/952339/
+  - Refine the commit log to avoid misleading
+  - Use one common lsm hook instead and add comment for it
+  - Add selinux implementation
+  - Other improments in mempolicy
+- RFC v1: https://lwn.net/Articles/951188/
+
+Yafang Shao (5):
+  mm, doc: Add doc for MPOL_F_NUMA_BALANCING
+  mm: mempolicy: Revise comment regarding mempolicy mode flags
+  mm, security: Add lsm hook for memory policy adjustment
+  security: selinux: Implement set_mempolicy hook
+  selftests/bpf: Add selftests for set_mempolicy with a lsm prog
+
+ .../admin-guide/mm/numa_memory_policy.rst          | 27 +++++++
+ include/linux/lsm_hook_defs.h                      |  3 +
+ include/linux/security.h                           |  9 +++
+ include/uapi/linux/mempolicy.h                     |  2 +-
+ mm/mempolicy.c                                     |  8 +++
+ security/security.c                                | 13 ++++
+ security/selinux/hooks.c                           |  8 +++
+ security/selinux/include/classmap.h                |  2 +-
+ .../selftests/bpf/prog_tests/set_mempolicy.c       | 84 ++++++++++++++++++++++
+ .../selftests/bpf/progs/test_set_mempolicy.c       | 28 ++++++++
+ 10 files changed, 182 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/set_mempolicy.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_set_mempolicy.c
+
+-- 
+1.8.3.1
+
