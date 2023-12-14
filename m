@@ -1,213 +1,336 @@
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 769E698
-	for <linux-security-module@vger.kernel.org>; Thu, 14 Dec 2023 00:15:23 -0800 (PST)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-6ceb34b96fbso4813803b3a.2
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Dec 2023 00:15:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702541723; x=1703146523;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q2ulKuoq72Pn9SlOBn9i6jG9e0gOWsCcYWgayS3GhB8=;
-        b=p4pvQRhNqNm5Va3jQwQd3lGv1DgCSIjofrtYUcxJWdfErhtDExZLXrMPGcM9+bDBDr
-         wslXqRDiTvUJnZUM0gUo+YIagCfDiOViP2OSE0rHbZkTORCRbPuU+JXo3FjZxC5OXcMp
-         Fy4aZMxU4dLfdtXcGmfWj/axCrn/WPqy9rwoybBAIkmADwCq9UEtT7Yqp8cvkPVTtcW3
-         Rd4oOJQmfrbMu8mdCYvDmQW+CfC7ywWjEUeILXU9qG/009wHYbedMi9EW8tAweB2xbha
-         jx2gUOLZzKPUVRZ/Yg3BpNuwn3hTh5z49RrPQRdIYotQIdt5TJXMO+Y2ge1GjESd3Vaa
-         5Vgw==
-X-Gm-Message-State: AOJu0Yz0NbLNZKc4c1jH6lbBIiTeYO+wKf6nzIvsuDtObEc/+c/O86R5
-	42mywabXwIz5pCwSSm8xvgGCzB1P6XdksdwtvFHdqdyGs2+V
-X-Google-Smtp-Source: AGHT+IHBg4dPtwn9W8uzlpptHAWD1jYrfuInfghlYHkLpixrN5bFQzkTbGLocMIaQXdmh//ZxuxC7PIugRHa6+pddmRsu+qKuOgI
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=aisec.fraunhofer.de header.i=@aisec.fraunhofer.de header.b="xfVEIhmL";
+	dkim=pass (1024-bit key) header.d=fraunhofer.onmicrosoft.com header.i=@fraunhofer.onmicrosoft.com header.b="WgQLjUZh"
+Received: from mail-edgeka24.fraunhofer.de (mail-edgeka24.fraunhofer.de [IPv6:2a03:db80:4420:b000::25:24])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55D3A98;
+	Thu, 14 Dec 2023 00:17:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=aisec.fraunhofer.de; i=@aisec.fraunhofer.de;
+  q=dns/txt; s=emailbd1; t=1702541857; x=1734077857;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=2TzibBNMVQWZGdWR1I69nuSRW/dTW1UOOt05xOW6sS8=;
+  b=xfVEIhmLmWXTcgbUtE9DuKEE3T3SUwW9PW427+XP84sPRUz1r/dCKhYH
+   cfZnvPnZsTfkRpdz7sPd8RnRKM0u4BB8SnrtFFQ5gMgz8jGKX+RUCI1FN
+   1WKZkMO+R6Yvo1MvrhkT9nqIY/4ZD2Vb2tMI+0L6Hip6/NWKglhcbSN1M
+   KzNJGjjm46pQFxUh5oB5/brDs3fEg4aP1BXAbxFJ3BG95NF6wCJ23ZbpA
+   3Mm1y/v6u5O8R2Trn/6ZISD5wHSnaxf5YF320ed9kIBqTVkHDoZ4//+bI
+   PXuvmfBv3I74pIfZiAJKow/Il3Q3nA/DavinE4Xu1XGVEKwcQNFr+yo/H
+   w==;
+X-CSE-ConnectionGUID: 8yORDYimTFOu54eblQIMbA==
+X-CSE-MsgGUID: wBFREO/PRW2i/zzle4cE4w==
+Authentication-Results: mail-edgeka24.fraunhofer.de; dkim=pass (signature verified) header.i=@fraunhofer.onmicrosoft.com
+X-IPAS-Result: =?us-ascii?q?A2GDAwA9uXpl/x0BYJlaHAEBAQEBAQcBARIBAQQEAQFAg?=
+ =?us-ascii?q?U+COYJZhFORNi0DmCWEBCqCUQNWDwEBAQEBAQEBAQcBAUQEAQEDBIR/AocxJ?=
+ =?us-ascii?q?zgTAQIBAwEBAQEDAgMBAQEBAQEBAQYBAQYBAQEBAQEGBgKBGYUvOQ2DeYEeA?=
+ =?us-ascii?q?QEBAQEBAQEBAQEBHQI1UwEBAQECASMECwENAQE3AQQLCxgCAiYCAjIlBgENB?=
+ =?us-ascii?q?QIBAYJ8gisDDiOuSXp/M4EBggkBAQawIxiBIYEfCQkBgRAug2eENAGFZoQ6g?=
+ =?us-ascii?q?k+BPA6BBoFvPoRYg0aCaINmhTYHMoIhgygpg3aNaFsiBUFwGwMHA38PKwcEM?=
+ =?us-ascii?q?BsHBgkUGBUjBlAEKCEJExJAgV+BUgp+Pw8OEYI+IgIHNjYZSIJaFQw0BEZ1E?=
+ =?us-ascii?q?CoEFBeBEgRqGxIeNxESFw0DCHQdAjI8AwUDBDMKEg0LIQVWA0IGSQsDAhoFA?=
+ =?us-ascii?q?wMEgTMFDR4CEBoGDCcDAxJJAhAUAzsDAwYDCjEDMFVEDFADaR8yCTwPDBsCG?=
+ =?us-ascii?q?x4NJyMCLEIDEQUQAhYDJBYENhEJCygDLwY4AhMMBgYJXiYHDwkEJwMIBAMrK?=
+ =?us-ascii?q?QMjexEDBAwDGQcKBAc6AxkrHUACAQttPTUGAwsbRAInpjYBATwtJSUdPW8OQ?=
+ =?us-ascii?q?5ZMAa8MB4IzgV+hFQYPBC+XMZJXLodKkE0gqBICBAIEBQIOCIF6gX8zPoM2U?=
+ =?us-ascii?q?hkPjiA4g0CPPAE9dQI5AgcBCgEBAwmCOYgpAQE?=
+IronPort-PHdr: A9a23:bl398Rz/77KWjuHXCzKPy1BlVkEcU8jcIFtMudIu3qhVe+G4/524Y
+ RKMrf44llLNVJXW57Vehu7fo63sCgliqZrUvmoLbZpMUBEIk4MRmQkhC9SCEkr1MLjhaClpV
+ N8XT1Jh8nqnNlIPXcjkbkDUonq84CRXHRP6NAFvIf/yFJKXhMOyhIXQs52GTR9PgWiRaK9/f
+ i6rpwfcvdVEpIZ5Ma8+x17ojiljfOJKyGV0YG6Chxuuw+aV0dtd/j5LuvUnpf4FdJ6/UrQzT
+ bVeAzljCG0z6MDxnDXoTQaE5Sh5MC0ckk95PSzo7wihD5v6kyHLm+pC+XGZB5ztRLMraT+Iw
+ bZqRz7mtQ08LScp+k/Q358V7upR9S2unjh9/rzUJ7rFOfR/ILHMV/IabDRBQdlIZzVPGYCYT
+ K0GXtIbP+hln7OthRwztkPlCzONH+PMxTlDg1/P16YQ1PQxFy7l4go6Etkyr13YgMuuPphVT
+ eaplpvYwAfpLLAJ32769K2WdApwoKvde5lpW+TgzwoIFDyUj1vN8oP1Ew2Xyrk2k2GUtfM9S
+ s+OtFIesh1xhDHowZgJlsqKhKYH61zgzHRAwKAWfYjrAF4+YMSjFoNXrT3fLYZtX8c+Fnlho
+ z1polVnkZuyfSxPxZgoyh3WMaDBfZKB/xTjU+icO3F0iSEtdLG+gkOq+FO7gq3nV8ay2UpXt
+ CcNjNTWt34M2hCSosiKQ/dw5AGgjB6BzQnO7OFDL00u063dLp8q2LkrkZQP90/EG0fL
+X-Talos-CUID: 9a23:MbWkCGHs43nMDOY/qmI35WkuNvEkd0Hz62qNf0KyDV9Ibbe8HAo=
+X-Talos-MUID: 9a23:z/U4QAa5qg/MGuBTqBXCvhxFc/9S3P6vT1IflZhasOTYKnkl
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.04,274,1695679200"; 
+   d="scan'208";a="5367391"
+Received: from mail-mtaka29.fraunhofer.de ([153.96.1.29])
+  by mail-edgeka24.fraunhofer.de with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2023 09:17:33 +0100
+X-CSE-ConnectionGUID: LBPPLmh/QiG9xCsQHUyFuA==
+X-CSE-MsgGUID: gtCCguTuQ3qCMUVE0mNwmg==
+IronPort-SDR: 657aba1b_M8XkSO/kr84WEcS8ZOpLP8Lxngi/jkushjhHVn5qsGC1IGl
+ 3uUOLkhqzMLsGdKMxcK4YDg/uYGK5cxQtpvrFuA==
+X-IPAS-Result: =?us-ascii?q?A0AlBQA9uXpl/3+zYZlaHAEBAQEBAQcBARIBAQQEAQFAC?=
+ =?us-ascii?q?RyBKoFnUgc+gQ+BBYRSg00BAYUthkUBgiEDOAGXbIQuglEDVg8BAwEBAQEBB?=
+ =?us-ascii?q?wEBRAQBAYUGAocuAic4EwECAQECAQEBAQMCAwEBAQEBAQEBBgEBBQEBAQIBA?=
+ =?us-ascii?q?QYEgQoThWgNhkUBAQEBAgESEQQLAQ0BARQjAQQLCxgCAiYCAjIHHgYBDQUCA?=
+ =?us-ascii?q?QEegl6CKwMOIwIBAaJaAYFAAoooen8zgQGCCQEBBgQEsBsYgSGBHwkJAYEQL?=
+ =?us-ascii?q?oNnhDQBhWaEOoJPgTwOgQaBbz6IHoJog2aFNgcygiGDKCmDdo1oWyIFQXAbA?=
+ =?us-ascii?q?wcDfw8rBwQwGwcGCRQYFSMGUAQoIQkTEkCBX4FSCn4/Dw4Rgj4iAgc2NhlIg?=
+ =?us-ascii?q?loVDDQERnUQKgQUF4ESBGobEh43ERIXDQMIdB0CMjwDBQMEMwoSDQshBVYDQ?=
+ =?us-ascii?q?gZJCwMCGgUDAwSBMwUNHgIQGgYMJwMDEkkCEBQDOwMDBgMKMQMwVUQMUANpH?=
+ =?us-ascii?q?xYcCTwPDBsCGx4NJyMCLEIDEQUQAhYDJBYENhEJCygDLwY4AhMMBgYJXiYHD?=
+ =?us-ascii?q?wkEJwMIBAMrKQMjexEDBAwDGQcKBAc6AxkrHUACAQttPTUGAwsbRAInpjYBA?=
+ =?us-ascii?q?TwtJSUdPW8OQ5ZMAa8MB4IzgV+hFQYPBC+XMZJXLodKkE0gqBICBAIEBQIOA?=
+ =?us-ascii?q?QEGgXolgVkzPoM2TwMZD44gOINAjzwBPUIzAjkCBwEKAQEDCYI5iCgBAQ?=
+IronPort-PHdr: A9a23:LLa89h3nIplS9YObsmDO5gUyDhhOgF2JFhBAs8lvgudUaa3m5JTrZ
+ hGBtr1m2UXEWYzL5v4DkefSurDtVT9lg96N5X4YeYFKVxgLhN9QmAolAcWfDlb8IuKsZCs/T
+ 4xZAURo+3ywLU9PQoPwfVTPpH214zMIXxL5MAt+POPuHYDOys+w0rPXmdXTNitSgz/vTbpuI
+ UeNsA/Tu8IK065vMb04xRaMg1caUONQ2W5uORevjg7xtOKR2bMmzSlKoPMm8ZxwFIDBOokoR
+ rxRCjsrdls44sHmrzDvZguC7XhPNwdemBodMjbhwRLjBcb9uQrwh8d95wjCPvenVrk3RgSpx
+ Yl6SRDJhhotDCQg4Gv5jZkj6cATqkeeqCVbwbPmYMauZPdwf/3PbPk7RUMfXtlOThxYDJi/S
+ 6gpBrs5J+RWkrnH93lJkADmXgeWJfjv6TBOjXrW5Kcx+eMxAQfp/zImBd8FjGv9oPnrb60tF
+ vyz0PP63TjxRbAVhjGk75TtLBY78PDWDJRbaOD/+E9sMAD631Se9NfqLx+r1PhQiEiS4LB5C
+ P2CqlEbkhhtoh6mgcBzr5WKxYAx2HHI0Rwo+YYTBoXtGwZrJN++F51IsDuGcpF7Wd4mXzRws
+ T0hmdXu2La+dSkOjZE7zj32Ma3BfZKB/xTjU+icO3F0iSEtdLG+gkOq+FO7gq3nV8ay2UpXt
+ CcNjNTWt34M2hCSosiKQ/dw5AGgjB6BzQnO7OFDL00u063dLp8q2LkrkZQP90/EG0fL
+IronPort-Data: A9a23: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
+ NvIgJ19f3XN3Nc8mQRDiw==
+IronPort-HdrOrdr: A9a23:/yjOmKzSKtNmq6Ar1M6jKrPwJL1zdoMgy1knxilNoH1uH/Bw8v
+ rE9sjzuiWE6wr5J0tQ/OxoVJPufZq+z+8W3WByB9eftWDd0QOVxepZjLcKrQePJ8VlntQw6U
+ 5oSdkbNOHN
+X-Talos-CUID: 9a23:SAD8DG9bXotisDQaLvWVv2o+IvgBd32a9Xb/cl+TEl9Jday7VHbFrQ==
+X-Talos-MUID: 9a23:WYS0nAoYyRqm4NVkmMoezz5+H+xn/pizMRsUurA7heTcMApvPjjI2Q==
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.04,274,1695679200"; 
+   d="scan'208";a="885786"
+Received: from 153-97-179-127.vm.c.fraunhofer.de (HELO smtp.exch.fraunhofer.de) ([153.97.179.127])
+  by mail-mtaKA29.fraunhofer.de with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2023 09:17:30 +0100
+Received: from XCH-HYBRID-04.ads.fraunhofer.de (10.225.9.46) by
+ XCH-HYBRID-03.ads.fraunhofer.de (10.225.9.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Thu, 14 Dec 2023 09:17:30 +0100
+Received: from DEU01-FR2-obe.outbound.protection.outlook.com (104.47.11.169)
+ by XCH-HYBRID-04.ads.fraunhofer.de (10.225.9.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28 via Frontend Transport; Thu, 14 Dec 2023 09:17:30 +0100
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=d2L54OBpo6ODku6UM5lawVQsB0IY/iPVA0szrs83UGigyk5hFA1v4je8aBziRiN9WEZuZgfTGRA2JcEuz+9yP9AMAl3cJVzoxzfpenXV4SlefTdry6+YqnUT4MlbuQ9AInm/ABlZvgn0Y1jjCOpZWg7UfCft2KNBUvhlbMGcwxgqo66Ty3bjh7fuybCA8XUH+BP0EKbPc4sY87iVa+Y+tIcmE63v+2hJZYVSc5B2CWzj49QBHjF68KKx3KDhha/kZpTm5DxOtC2k213ebCb9L8iI7Ec/GpJ1s7FdB1ACzzapUWCc3fl44TWu9ttX7j3v82cu9U/LCxYcvFLc2xZEEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YVLEkq39dcIbYEhWI0kR9sakwXcBFyigIfUBSrqxbFo=;
+ b=BXNb/u+p6ydfdwEsEo46AsmgATTkKP3Nz+ZNwhnuBpc929DNwtgDf6Tb+1Pf/ERG2vhIARJrjNOQrNCKhIQsOXV01duw2ESlUVe4qVYlhxVjsBG+/m2xZmRtxjvtioR9ZcS3ewwtUD5MBAzlCME523WSU8vE5u/R6kjNpO63TxNZJ4bzRAYpRl+AXrQsAFZN35X903odAW/4KSjgwaAjMd4GVn3oTgPWijExRLiziWgOc9fqcBBtpjpfEBFX30caDlaizf74UHX8UGlsrF0noHewEiXMMfxctl1KB7YeqehPXCQF+h/wQts9fXP5EMmYPRfxNSCTQAYDKP7AfPYAKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aisec.fraunhofer.de; dmarc=pass action=none
+ header.from=aisec.fraunhofer.de; dkim=pass header.d=aisec.fraunhofer.de;
+ arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fraunhofer.onmicrosoft.com; s=selector2-fraunhofer-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YVLEkq39dcIbYEhWI0kR9sakwXcBFyigIfUBSrqxbFo=;
+ b=WgQLjUZh/S8efi6zyBIhA6hwwqXqfskLKNa9PrjfUXR8J/Us03fRIshKgncmHQbcBoxxnGKVnrecTwAdDv3bW/tnt2ZxeZB++7n1otM6nr9i29NCqBFYn+OkW9if53gxDVjt5SHag2q5wEIWTQqthNa/o7Mt++jLzIdLQ9QhNK0=
+Received: from BEZP281MB2791.DEUP281.PROD.OUTLOOK.COM (2603:10a6:b10:50::14)
+ by FR6P281MB3791.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:bc::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.28; Thu, 14 Dec
+ 2023 08:17:29 +0000
+Received: from BEZP281MB2791.DEUP281.PROD.OUTLOOK.COM
+ ([fe80::d273:9b9b:dadf:e573]) by BEZP281MB2791.DEUP281.PROD.OUTLOOK.COM
+ ([fe80::d273:9b9b:dadf:e573%3]) with mapi id 15.20.7091.028; Thu, 14 Dec 2023
+ 08:17:29 +0000
+Message-ID: <3e085cef-e74d-417b-ab9b-b8795fa5e5c3@aisec.fraunhofer.de>
+Date: Thu, 14 Dec 2023 09:17:08 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 1/3] bpf: cgroup: Introduce helper
+ cgroup_bpf_current_enabled()
+To: Yonghong Song <yonghong.song@linux.dev>, Christian Brauner
+	<brauner@kernel.org>, Alexander Mikhalitsyn <alexander@mihalicyn.com>, Alexei
+ Starovoitov <ast@kernel.org>, Paul Moore <paul@paul-moore.com>
+CC: Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
+	<andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu
+	<song@kernel.org>, Yonghong Song <yhs@fb.com>, John Fastabend
+	<john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
+	<sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Quentin Monnet <quentin@isovalent.com>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein
+	<amir73il@gmail.com>, "Serge E. Hallyn" <serge@hallyn.com>,
+	<bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<gyroidos@aisec.fraunhofer.de>, Alexander Mikhalitsyn
+	<aleksandr.mikhalitsyn@canonical.com>
+References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
+ <20231213143813.6818-2-michael.weiss@aisec.fraunhofer.de>
+ <6960ef41-fe22-4297-adc7-c85264288b6d@linux.dev>
+Content-Language: en-US
+From: =?UTF-8?Q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
+In-Reply-To: <6960ef41-fe22-4297-adc7-c85264288b6d@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR0P281CA0266.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b5::11) To BEZP281MB2791.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:50::14)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6a00:1412:b0:6cd:f50c:32ac with SMTP id
- l18-20020a056a00141200b006cdf50c32acmr1180836pfu.6.1702541722858; Thu, 14 Dec
- 2023 00:15:22 -0800 (PST)
-Date: Thu, 14 Dec 2023 00:15:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009b39bc060c73e209@google.com>
-Subject: [syzbot] [net?] KASAN: slab-out-of-bounds Read in dns_resolver_preparse
-From: syzbot <syzbot+94bbb75204a05da3d89f@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dhowells@redhat.com, edumazet@google.com, 
-	jarkko@kernel.org, jmorris@namei.org, keyrings@vger.kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, paul@paul-moore.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BEZP281MB2791:EE_|FR6P281MB3791:EE_
+X-MS-Office365-Filtering-Correlation-Id: 891c47af-c38f-4229-bb26-08dbfc7d1d2b
+X-LD-Processed: f930300c-c97d-4019-be03-add650a171c4,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: KMjhVp0TXSxGGtEMHzXfgo02xLkZFLsAmoseEtBaJ90bQxzM+iummudYTjJeawKDTQY8bZIDpsARqZR+cyh8LbDERuqvkCXE/Yyq/soa9EvtMNJo7QHVUJ08s1P65EFMFCJnTJxdVCj72lVo7JmPeUNWwWdW1zBy9XCUkakoOqF0dMMRsHbrBUBwmDsjvPRx7Sjrjn3iNjYmU4WM8Dmp3WOXyehbcrs0BwWp3GKk2q1zx1a8xuZaFpYJ0HbaTemqSdmSfjUc2w7TNSG+2svnLJiEquOh0DZbYHkadTHH9EpbyepzL0oZvnh0zFNMPgNH8T+PqgOqhvxs0QL0LE3zm+Svz+rIX+tZExRxV/VRJK0SC/sE1JUKxltIsfYISH6Ti3NA14fg9jTjx5XzrnbJIa0y/jvTkERaPSt+F715dpbVvBWGCvHAY/dyLz5kjTYrMC1WKNkVRThu2kClkWuqBNKHfmxxEt21zNcJKCMLSpk5C8ZVIgRhs+gqZIMWQspFhNPdGhuHJpXSN9J6VG3tI6P9fFOfTchGx4/2wNvw3l4npEzvNRBs3S6KIvikgwxRntjNJB2sN4GKvijdyUwsE5p3BIRXD+GM3q84mA4jINn6r4QxuQO8t4rQeqB6tfdogAoVW3MW4EWOsqUP2g8pO3QUgXY8YbUPzRELkcENtoKcMdtNMkbwxxKz+Kz0fNS59vH84GkvEFuj+ws38s66VA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BEZP281MB2791.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(136003)(376002)(346002)(39860400002)(396003)(366004)(230922051799003)(64100799003)(451199024)(1800799012)(186009)(41300700001)(7416002)(5660300002)(2906002)(8676002)(4326008)(8936002)(2616005)(83380400001)(53546011)(6512007)(6666004)(6506007)(86362001)(31686004)(31696002)(82960400001)(38100700002)(66946007)(110136005)(6486002)(478600001)(54906003)(316002)(66556008)(66476007)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?clRWQ3dsOXlzZFF2dnNyTC9ZOGNlVm4xZVlyZWh3cmVWMm5FTWF6NU1NUjVh?=
+ =?utf-8?B?bW95eURKWmpGbE55RGYxRzhIK0hQUmp0TzF5QmdBVjU3dm1zRjJ6anI2MGJu?=
+ =?utf-8?B?aVZPQy9yMmlaYzBUNFZPVTdVc3EyakxZUFY3MTlMUjh0dFBVSy9CYlRtSXRI?=
+ =?utf-8?B?cFk1V2RXOTg0Nms2eVZYRFFJeEZpTnlCOVR0aGJ1cTdEdkVoeVNrbnhET0kr?=
+ =?utf-8?B?c0VOcmk4VkNDR1JCalZoc0llakQyK1p1dlJFYmcrMllsVXlBaWVNTGwveVNv?=
+ =?utf-8?B?T3I1aTk1NVIrTWg3RE1kdFNMeWdZbmVUL200WFZWS2Zab254d2VPZUpObi9P?=
+ =?utf-8?B?OWJQdlhiZUoxUkEvcHM2ZkJCSi8zbm8rREFLUWpWc2JoYVRGeTRNWU02a281?=
+ =?utf-8?B?U2NTazdOd0ZnNnBmczNLZC9mOGlYNWprbEpmYTNUbEx1UW1lMm1tcU1GMGZn?=
+ =?utf-8?B?N05oMktGNEdBUUN6aWtuVDlWajlHOXo3bzVBYmNsMEZwRzQyRmxqNWJSYnZU?=
+ =?utf-8?B?THdLZU1idmcrSHB5WFFoQ2lUcit6NDZzTDMvR3N6cEI3UUtuZzV6TTJWKzQx?=
+ =?utf-8?B?Qi9yNnZxSFgwQ0dtQWRJaVFrVjhsNURLdlhtejIzVU9wajZGeCttVUZ4cHR2?=
+ =?utf-8?B?NFU5eGVIZ2Z4cnFkRWRsZW4rOWJhSXg5eFNlN2cyNUlhdFcwODdKZlFRcGJJ?=
+ =?utf-8?B?NU9KTVZTaHFEa1ZPYW4zVlhzTk9RWUozY1JaT3EvR0lib1hXd280a0ViVndI?=
+ =?utf-8?B?U0lwbTV4MnkvS2owbm1UdkJlMUwrQUFWalV6d3lZQTRtaDFxVllJd3kvYjN2?=
+ =?utf-8?B?NmsrWm1ycXRISE9RNDNER2p4VmhkYldsN2plZ0tpUElURmhzRmMzZCtNUzNM?=
+ =?utf-8?B?dlBHK29hZVB5UGQ0aUZDUFh5NGFxaXhkRlF1NnhhNUpSdjAzNis0WlkvbVE2?=
+ =?utf-8?B?eWRPK21XOEY1TFd5bFdwTmZkejBnTS8zV3hVdDNFa1Q0L3h5aTZTa0NuRFk5?=
+ =?utf-8?B?M2JEb0VqUk9saVFJZXc2d2NWVk05TnRKcks2enFDbzVyaEZNOTMzU2wzUE0v?=
+ =?utf-8?B?d2tjZGdQaTZ1aXdhQWt0Z3phUzJNOFcyMExVakx6S2lvbWk0S0JGUGVsOWRV?=
+ =?utf-8?B?VGZOU2p1czROV1djRllWSnZKQnpPVXhwZVlMYWNKdm9YcDR5RUI2cm9mVlhF?=
+ =?utf-8?B?eXZKMXZ2R2F4RUg3WEdybVFaM1B3SGhUcktMWjBIMUhmNkFwTFJiMWVnWW1h?=
+ =?utf-8?B?R0s1WGJlYmlIK2RKajBvSGc4RXFjamNaOGtDclpLWW9UVzEyeWR3NlVTa1Ex?=
+ =?utf-8?B?blA4RXRNUUsva2lhMjk4TUtKT1Faa0Iyd1grbnJwb2kvYlZyWnY1NEhCTEVz?=
+ =?utf-8?B?a1FYWjZJNFd3dVlSejZMRGlOWHBVSnovTHl2YVJlOFRGUWlONGZ3L3F3YnJC?=
+ =?utf-8?B?bmxrNWQ1VUV6RWlwcURJUkwvQ0o4QkhNNWkrVFdzMS9IbHlHVXNOSWk1c01V?=
+ =?utf-8?B?THU0VjVZSGhqeVFJeEhhZHphL3FrRHdXb3B6K1dXYitvTXZaekFMQi9lU3NC?=
+ =?utf-8?B?SjdnMjdZY1pLd1Z0STN5dU93SGNMV3VYVnQ1eUUxeFpGNTBwR0lTa3kxTmYx?=
+ =?utf-8?B?elVySVhZdkVkMi9TVDBqUExJcE5GVjB1cW96cE5Xd2c4c0wyRFlGMm5pSU9L?=
+ =?utf-8?B?Qnc0YmRaV0F3VDZNMEpwZzVtRjVlMlBQeUE5RkZVMDBiQWtrQnVXcjhTQm51?=
+ =?utf-8?B?TGo1MHM5QitjSzJWZ3Q2WFZmSkdHNE5iMEdnN3Nodm5PeDc3V0s3RmVISW14?=
+ =?utf-8?B?Z3RrdGV3a0dzbS9YRUFId010b2V3UXRoLzNzeGhBNldscjEvY1RIMDRFV3Vz?=
+ =?utf-8?B?SWdlOTJzbDFKUGlTT0x2aC9OTVdPb01jdWpISmUxOHNXeW03RHluaWU2YkN4?=
+ =?utf-8?B?T3RBUm1pOFBxR3owb2ZwMFduL3VpWjRieDR2cEpnYXpkNXF1L0preHVZL2pQ?=
+ =?utf-8?B?M0FTaFF4MzdxTy8zTGRtQ1Z1dm14ZmhabjRmbmFVbVJQNTRKc1l2NUtvcTM1?=
+ =?utf-8?B?Nkd2UnVyMmVZbWVxbDZOQ3BJeVRDZW5MSjA1bGhxRVU5UzRNa1FHVG9FVmxD?=
+ =?utf-8?B?RW5TeU01MDhvakRKTmJiZVY1K2ZUZU41U1lpSnBlZDNoV1p5TWRCekpjNHpk?=
+ =?utf-8?B?WHBvMkU4c3A5NUNJNHFJU2lpR3dOOUg4NTJRTW52L1NwQyt4LzdSMzZFY2E3?=
+ =?utf-8?Q?+mf5DYYEK7nGJxbYv1gnMcO0CcfQALHEaPTjCzpZr8=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 891c47af-c38f-4229-bb26-08dbfc7d1d2b
+X-MS-Exchange-CrossTenant-AuthSource: BEZP281MB2791.DEUP281.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Dec 2023 08:17:29.5055
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f930300c-c97d-4019-be03-add650a171c4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mAhp9/D4On5aWOiXC4l/ybHkXidHy6yQIEhFQbUDbL2uomBcpZi+TQ1eGv7Oi1SmPika4HamBhgN2cueSKUHveM9ELgwF6ljP9ublZGyEo6+JQyjA6qJHeonB1kPY4Em
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR6P281MB3791
+X-OriginatorOrg: aisec.fraunhofer.de
 
-Hello,
+On 13.12.23 17:59, Yonghong Song wrote:
+> 
+> On 12/13/23 6:38 AM, Michael Weiß wrote:
+>> This helper can be used to check if a cgroup-bpf specific program is
+>> active for the current task.
+>>
+>> Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
+>> Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+>> ---
+>>   include/linux/bpf-cgroup.h |  2 ++
+>>   kernel/bpf/cgroup.c        | 14 ++++++++++++++
+>>   2 files changed, 16 insertions(+)
+>>
+>> diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
+>> index a789266feac3..7cb49bde09ff 100644
+>> --- a/include/linux/bpf-cgroup.h
+>> +++ b/include/linux/bpf-cgroup.h
+>> @@ -191,6 +191,8 @@ static inline bool cgroup_bpf_sock_enabled(struct sock *sk,
+>>   	return array != &bpf_empty_prog_array.hdr;
+>>   }
+>>   
+>> +bool cgroup_bpf_current_enabled(enum cgroup_bpf_attach_type type);
+>> +
+>>   /* Wrappers for __cgroup_bpf_run_filter_skb() guarded by cgroup_bpf_enabled. */
+>>   #define BPF_CGROUP_RUN_PROG_INET_INGRESS(sk, skb)			      \
+>>   ({									      \
+>> diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+>> index 491d20038cbe..9007165abe8c 100644
+>> --- a/kernel/bpf/cgroup.c
+>> +++ b/kernel/bpf/cgroup.c
+>> @@ -24,6 +24,20 @@
+>>   DEFINE_STATIC_KEY_ARRAY_FALSE(cgroup_bpf_enabled_key, MAX_CGROUP_BPF_ATTACH_TYPE);
+>>   EXPORT_SYMBOL(cgroup_bpf_enabled_key);
+>>   
+>> +bool cgroup_bpf_current_enabled(enum cgroup_bpf_attach_type type)
+>> +{
+>> +	struct cgroup *cgrp;
+>> +	struct bpf_prog_array *array;
+>> +
+>> +	rcu_read_lock();
+>> +	cgrp = task_dfl_cgroup(current);
+>> +	rcu_read_unlock();
+>> +
+>> +	array = rcu_access_pointer(cgrp->bpf.effective[type]);
+> 
+> This seems wrong here. The cgrp could become invalid once leaving
+> rcu critical section.
 
-syzbot found the following issue on:
+You are right, maybe we where to opportunistic here. We just wanted
+to hold the lock as short as possible.
 
-HEAD commit:    48e8992e33ab Add linux-next specific files for 20231213
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=155c1ac1e80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=978b8aaa2e92a8f
-dashboard link: https://syzkaller.appspot.com/bug?extid=94bbb75204a05da3d89f
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e0a966e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1555a15ce80000
+> 
+>> +	return array != &bpf_empty_prog_array.hdr;
+> 
+> I guess you need include 'array' usage as well in the rcu cs.
+> So overall should look like:
+> 
+> 	rcu_read_lock();
+> 	cgrp = task_dfl_cgroup(current);
+> 	array = rcu_access_pointer(cgrp->bpf.effective[type]);
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ade5327f8151/disk-48e8992e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/16bff810e759/vmlinux-48e8992e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/14c4448589de/bzImage-48e8992e.xz
+Looks reasonable, but that we are in the cs now I would change this to
+rcu_dereference() then.
 
-The issue was bisected to:
-
-commit b946001d3bb1202e90093cf5e72dbcb20e2689a0
-Author: David Howells <dhowells@redhat.com>
-Date:   Sat Dec 9 00:41:55 2023 +0000
-
-    keys, dns: Allow key types (eg. DNS) to be reclaimed immediately on expiry
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10c349c1e80000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=12c349c1e80000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c349c1e80000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+94bbb75204a05da3d89f@syzkaller.appspotmail.com
-Fixes: b946001d3bb1 ("keys, dns: Allow key types (eg. DNS) to be reclaimed immediately on expiry")
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in dns_resolver_preparse+0xc9f/0xd60 net/dns_resolver/dns_key.c:127
-Read of size 1 at addr ffff888028894084 by task syz-executor265/5069
-
-CPU: 0 PID: 5069 Comm: syz-executor265 Not tainted 6.7.0-rc5-next-20231213-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/10/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:488
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- dns_resolver_preparse+0xc9f/0xd60 net/dns_resolver/dns_key.c:127
- __key_create_or_update+0x453/0xdf0 security/keys/key.c:842
- key_create_or_update+0x42/0x50 security/keys/key.c:1007
- __do_sys_add_key+0x29c/0x450 security/keys/keyctl.c:134
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x40/0x110 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x62/0x6a
-RIP: 0033:0x7fd37f34f2e9
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff2f4f3198 EFLAGS: 00000246 ORIG_RAX: 00000000000000f8
-RAX: ffffffffffffffda RBX: 00007fff2f4f3368 RCX: 00007fd37f34f2e9
-RDX: 0000000020000080 RSI: 0000000000000000 RDI: 00000000200003c0
-RBP: 00007fd37f3c2610 R08: 0000000002853c32 R09: 00007fff2f4f3368
-R10: 0000000000000004 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff2f4f3358 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-Allocated by task 5069:
- kasan_save_stack+0x33/0x50 mm/kasan/common.c:47
- kasan_set_track+0x24/0x30 mm/kasan/common.c:61
- ____kasan_kmalloc mm/kasan/common.c:375 [inline]
- __kasan_kmalloc+0xa2/0xb0 mm/kasan/common.c:384
- kasan_kmalloc include/linux/kasan.h:198 [inline]
- __do_kmalloc_node mm/slub.c:3985 [inline]
- __kmalloc_node+0x226/0x480 mm/slub.c:3992
- kmalloc_node include/linux/slab.h:610 [inline]
- kvmalloc_node+0x99/0x1a0 mm/util.c:617
- kvmalloc include/linux/slab.h:728 [inline]
- __do_sys_add_key+0x1f8/0x450 security/keys/keyctl.c:116
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x40/0x110 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x62/0x6a
-
-The buggy address belongs to the object at ffff888028894080
- which belongs to the cache kmalloc-8 of size 8
-The buggy address is located 0 bytes to the right of
- allocated 4-byte region [ffff888028894080, ffff888028894084)
-
-The buggy address belongs to the physical page:
-page:ffffea0000a22500 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x28894
-anon flags: 0xfff00000000800(slab|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xffffffff()
-raw: 00fff00000000800 ffff888013041280 0000000000000000 dead000000000001
-raw: 0000000000000000 0000000080800080 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY), pid 1, tgid 1 (swapper/0), ts 27978623390, free_ts 27978121808
- set_page_owner include/linux/page_owner.h:31 [inline]
- post_alloc_hook+0x2d0/0x350 mm/page_alloc.c:1540
- prep_new_page mm/page_alloc.c:1547 [inline]
- get_page_from_freelist+0xa19/0x3740 mm/page_alloc.c:3355
- __alloc_pages+0x22e/0x2410 mm/page_alloc.c:4611
- alloc_pages_mpol+0x258/0x5f0 mm/mempolicy.c:2133
- alloc_slab_page mm/slub.c:2191 [inline]
- allocate_slab mm/slub.c:2358 [inline]
- new_slab+0x283/0x3c0 mm/slub.c:2411
- ___slab_alloc+0x4ab/0x1990 mm/slub.c:3544
- __slab_alloc.constprop.0+0x56/0xa0 mm/slub.c:3629
- __slab_alloc_node mm/slub.c:3682 [inline]
- slab_alloc_node mm/slub.c:3854 [inline]
- __do_kmalloc_node mm/slub.c:3984 [inline]
- __kmalloc_node_track_caller+0x367/0x470 mm/slub.c:4005
- kstrdup+0x3c/0x70 mm/util.c:62
- kstrdup_const+0x5f/0x70 mm/util.c:85
- kvasprintf_const+0x10b/0x190 lib/kasprintf.c:48
- kobject_set_name_vargs+0x5a/0x130 lib/kobject.c:272
- kobject_add_varg lib/kobject.c:366 [inline]
- kobject_init_and_add+0xe8/0x190 lib/kobject.c:455
- locate_module_kobject+0xef/0x190 kernel/params.c:781
- kernel_add_sysfs_param kernel/params.c:808 [inline]
- param_sysfs_builtin kernel/params.c:856 [inline]
- param_sysfs_builtin_init+0x25f/0x450 kernel/params.c:990
- do_one_initcall+0x128/0x680 init/main.c:1236
-page last free pid 3062 tgid 3062 stack trace:
- reset_page_owner include/linux/page_owner.h:24 [inline]
- free_pages_prepare mm/page_alloc.c:1140 [inline]
- free_unref_page_prepare+0x51f/0xb10 mm/page_alloc.c:2390
- free_unref_page+0x33/0x3b0 mm/page_alloc.c:2530
- mm_free_pgd kernel/fork.c:799 [inline]
- __mmdrop+0xd5/0x470 kernel/fork.c:915
- mmdrop include/linux/sched/mm.h:54 [inline]
- __mmput+0x40a/0x4d0 kernel/fork.c:1352
- mmput+0x62/0x70 kernel/fork.c:1363
- free_bprm+0x143/0x3e0 fs/exec.c:1490
- kernel_execve+0x3e6/0x4e0 fs/exec.c:2036
- call_usermodehelper_exec_async+0x252/0x4c0 kernel/umh.c:110
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:242
-
-Memory state around the buggy address:
- ffff888028893f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff888028894000: 07 fc fc fc 07 fc fc fc fa fc fc fc 05 fc fc fc
->ffff888028894080: 04 fc fc fc fb fc fc fc fb fc fc fc 06 fc fc fc
-                   ^
- ffff888028894100: 06 fc fc fc fb fc fc fc 00 fc fc fc 00 fc fc fc
- ffff888028894180: fb fc fc fc 04 fc fc fc 04 fc fc fc fb fc fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 	bpf_prog_exists = array != &bpf_empty_prog_array.hdr;
+> 	rcu_read_unlock();
+> 
+> 	return bpf_prog_exists;
+> 
+>> +}
+>> +EXPORT_SYMBOL(cgroup_bpf_current_enabled);
+>> +
+>>   /* __always_inline is necessary to prevent indirect call through run_prog
+>>    * function pointer.
+>>    */
