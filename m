@@ -1,221 +1,374 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EB3A123;
-	Thu, 14 Dec 2023 05:43:04 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SrY512nMhz9xHMk;
-	Thu, 14 Dec 2023 21:25:41 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 230CB140380;
-	Thu, 14 Dec 2023 21:43:01 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAH9XRXBntlq8WIAg--.2939S2;
-	Thu, 14 Dec 2023 14:43:00 +0100 (CET)
-Message-ID: <d6b43b5780770637a724d129c22d5212860f494a.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH] overlayfs: Redirect xattr ops on security.evm to
- security.evm_overlayfs
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Seth Forshee
- <sforshee@kernel.org>,  miklos@szeredi.hu, linux-unionfs@vger.kernel.org,
- linux-kernel@vger.kernel.org,  paul@paul-moore.com, stefanb@linux.ibm.com,
- jlayton@kernel.org,  linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
- Roberto Sassu <roberto.sassu@huawei.com>, Eric Snowberg
- <eric.snowberg@oracle.com>
-Date: Thu, 14 Dec 2023 14:42:44 +0100
-In-Reply-To: <a9297cc1bf23e34aba3c7597681e9e71a03b37f9.camel@linux.ibm.com>
-References: <20231208172308.2876481-1-roberto.sassu@huaweicloud.com>
-	 <CAOQ4uxivpZ+u0A5kE962XST37-ey2Tv9EtddnZQhk3ohRkcQTw@mail.gmail.com>
-	 <20231208-tauziehen-zerfetzt-026e7ee800a0@brauner>
-	 <c95b24f27021052209ec6911d2b7e7b20e410f43.camel@huaweicloud.com>
-	 <20231211-fortziehen-basen-b8c0639044b8@brauner>
-	 <019f134a-6ab4-48ca-991c-5a5c94e042ea@huaweicloud.com>
-	 <CAOQ4uxgpNt7qKEF_NEJPsKU7-XhM7N_3eP68FrOpMpcRcHt4rQ@mail.gmail.com>
-	 <59bf3530-2a6e-4caa-ac42-4d0dab9a71d1@huaweicloud.com>
-	 <a9297cc1bf23e34aba3c7597681e9e71a03b37f9.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="hbq4MCtK"
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4AAEB2
+	for <linux-security-module@vger.kernel.org>; Thu, 14 Dec 2023 06:28:12 -0800 (PST)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SrZT63j9nzMqBWD;
+	Thu, 14 Dec 2023 14:28:10 +0000 (UTC)
+Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4SrZT559h7zMpnPd;
+	Thu, 14 Dec 2023 15:28:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1702564090;
+	bh=82evosFO/Xi7OiC9ma0hpV5Yg6BWn9RVh6qCnNCX4Qk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hbq4MCtKtXGbiZFNbT72iCmuhv1JAIwqCQOSrNSAjlJfl8SYjhG+fx4B/C7agsh22
+	 4y6Oa6exzCSTCuYUCgXrbxuwuPHcXfvlne0eq2OQfO4U184tHtuUhiL/mSfOLLBAiZ
+	 vTTR2iB1nodbsfKAaVNQq43lA4hvKg8yk5qYGZi8=
+Date: Thu, 14 Dec 2023 15:28:10 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Christian Brauner <brauner@kernel.org>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v8 4/9] landlock: Add IOCTL access right
+Message-ID: <20231214.aeC5Wax8phe1@digikod.net>
+References: <20231208155121.1943775-1-gnoack@google.com>
+ <20231208155121.1943775-5-gnoack@google.com>
+ <20231214.feeZ6Hahwaem@digikod.net>
+ <20231214.Iev8oopu8iel@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwAH9XRXBntlq8WIAg--.2939S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKw18tF1fWry8JFWkGF4xXrb_yoWxGr1kpr
-	W5KFy5KFn8JF17Jw4ay3W7WaySvrW5GF1UWwn8Xw1DCFyq9FnIkrWayr45CFy7JF18Xw40
-	ya1Iy3srZr98Z37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgALBF1jj5OlhwABsM
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231214.Iev8oopu8iel@digikod.net>
+X-Infomaniak-Routing: alpha
 
-On Tue, 2023-12-12 at 10:27 -0500, Mimi Zohar wrote:
-> On Tue, 2023-12-12 at 14:13 +0100, Roberto Sassu wrote:
-> > On 12.12.23 11:44, Amir Goldstein wrote:
-> > > On Tue, Dec 12, 2023 at 12:25=E2=80=AFPM Roberto Sassu
-> > > <roberto.sassu@huaweicloud.com> wrote:
-> > > >=20
-> > > > On 11.12.23 19:01, Christian Brauner wrote:
-> > > > > > The second problem is that one security.evm is not enough. We n=
-eed two,
-> > > > > > to store the two different HMACs. And we need both at the same =
-time,
-> > > > > > since when overlayfs is mounted the lower/upper directories can=
- be
-> > > > > > still accessible.
-> > > > >=20
-> > > > > "Changes to the underlying filesystems while part of a mounted ov=
-erlay
-> > > > > filesystem are not allowed. If the underlying filesystem is chang=
-ed, the
-> > > > > behavior of the overlay is undefined, though it will not result i=
-n a
-> > > > > crash or deadlock."
-> > > > >=20
-> > > > > https://docs.kernel.org/filesystems/overlayfs.html#changes-to-und=
-erlying-filesystems
-> > > > >=20
-> > > > > So I don't know why this would be a problem.
-> > > >=20
-> > > > + Eric Snowberg
-> > > >=20
-> > > > Ok, that would reduce the surface of attack. However, when looking =
-at:
-> > > >=20
-> > > >        ovl: Always reevaluate the file signature for IMA
-> > > >=20
-> > > >        Commit db1d1e8b9867 ("IMA: use vfs_getattr_nosec to get the
-> > > > i_version")
-> > > >        partially closed an IMA integrity issue when directly modify=
-ing a file
-> > > >        on the lower filesystem.  If the overlay file is first opene=
-d by a
-> > > > user
-> > > >        and later the lower backing file is modified by root, but th=
-e extended
-> > > >        attribute is NOT updated, the signature validation succeeds =
-with
-> > > > the old
-> > > >        original signature.
-> > > >=20
-> > > > Ok, so if the behavior of overlayfs is undefined if the lower backi=
-ng
-> > > > file is modified by root, do we need to reevaluate? Or instead woul=
-d be
-> > > > better to forbid the write from IMA (legitimate, I think, since the
-> > > > behavior is documented)? I just saw that we have d_real_inode(), we=
- can
-> > > > use it to determine if the write should be denied.
-> > > >=20
-> > >=20
-> > > There may be several possible legitimate actions in this case, but th=
-e
-> > > overall concept IMO should be the same as I said about EVM -
-> > > overlayfs does not need an IMA signature of its own, because it
-> > > can use the IMA signature of the underlying file.
-> > >=20
-> > > Whether overlayfs reads a file from lower fs or upper fs, it does not
-> > > matter, the only thing that matters is that the underlying file conte=
-nt
-> > > is attested when needed.
-> > >=20
-> > > The only incident that requires special attention is copy-up.
-> > > This is what the security hooks security_inode_copy_up() and
-> > > security_inode_copy_up_xattr() are for.
-> > >=20
-> > > When a file starts in state "lower" and has security.ima,evm xattrs
-> > > then before a user changes the file, it is copied up to upper fs
-> > > and suppose that security.ima,evm xattrs are copied as is?
->=20
-> For IMA copying up security.ima is fine.  Other than EVM portable
-> signatures, security.evm contains filesystem specific metadata.=20
-> Copying security.evm up only works if the metadata is the same on both
-> filesystems.  Currently the i_generation and i_sb->s_uuid are
-> different.
->=20
-> > > When later the overlayfs file content is read from the upper copy
-> > > the security.ima signature should be enough to attest that file conte=
-nt
-> > > was not tampered with between going from "lower" to "upper".
-> > >=20
-> > > security.evm may need to be fixed on copy up, but that should be
-> > > easy to do with the security_inode_copy_up_xattr() hook. No?
->=20
-> Writing security.evm requires the existing security.evm to be valid.=20
-> After each security xattr in the protected list is modified,
-> security.evm HMAC needs to be updated.  Perhaps calculating and writing
-> security.evm could be triggered by security_inode_copy_up_xattr().=20
-> Just copying a non-portable EVM signature wouldn't work, or for that
-> matter copying an EVM HMAC with different filesystem metadata.
+Christian, what do you think about the following IOCTL groups?
 
-There is another problem, when delayed copy is used. The content comes
-from one source, metadata from another.
+On Thu, Dec 14, 2023 at 11:14:10AM +0100, Mickaël Salaün wrote:
+> On Thu, Dec 14, 2023 at 10:26:49AM +0100, Mickaël Salaün wrote:
+> > On Fri, Dec 08, 2023 at 04:51:16PM +0100, Günther Noack wrote:
+> > > Introduces the LANDLOCK_ACCESS_FS_IOCTL access right
+> > > and increments the Landlock ABI version to 5.
+> > > 
+> > > Like the truncate right, these rights are associated with a file
+> > > descriptor at the time of open(2), and get respected even when the
+> > > file descriptor is used outside of the thread which it was originally
+> > > opened in.
+> > > 
+> > > A newly enabled Landlock policy therefore does not apply to file
+> > > descriptors which are already open.
+> > > 
+> > > If the LANDLOCK_ACCESS_FS_IOCTL right is handled, only a small number
+> > > of safe IOCTL commands will be permitted on newly opened files.  The
+> > > permitted IOCTLs can be configured through the ruleset in limited ways
+> > > now.  (See documentation for details.)
+> > > 
+> > > Specifically, when LANDLOCK_ACCESS_FS_IOCTL is handled, granting this
+> > > right on a file or directory will *not* permit to do all IOCTL
+> > > commands, but only influence the IOCTL commands which are not already
+> > > handled through other access rights.  The intent is to keep the groups
+> > > of IOCTL commands more fine-grained.
+> > > 
+> > > Noteworthy scenarios which require special attention:
+> > > 
+> > > TTY devices support IOCTLs like TIOCSTI and TIOCLINUX, which can be
+> > > used to control shell processes on the same terminal which run at
+> > > different privilege levels, which may make it possible to escape a
+> > > sandbox.  Because stdin, stdout and stderr are normally inherited
+> > > rather than newly opened, IOCTLs are usually permitted on them even
+> > > after the Landlock policy is enforced.
+> > > 
+> > > Some legitimate file system features, like setting up fscrypt, are
+> > > exposed as IOCTL commands on regular files and directories -- users of
+> > > Landlock are advised to double check that the sandboxed process does
+> > > not need to invoke these IOCTLs.
+> > > 
+> > > Known limitations:
+> > > 
+> > > The LANDLOCK_ACCESS_FS_IOCTL access right is a coarse-grained control
+> > > over IOCTL commands.  Future work will enable a more fine-grained
+> > > access control for IOCTLs.
+> > > 
+> > > In the meantime, Landlock users may use path-based restrictions in
+> > > combination with their knowledge about the file system layout to
+> > > control what IOCTLs can be done.  Mounting file systems with the nodev
+> > > option can help to distinguish regular files and devices, and give
+> > > guarantees about the affected files, which Landlock alone can not give
+> > > yet.
+> > > 
+> > > Signed-off-by: Günther Noack <gnoack@google.com>
+> > > ---
+> > >  include/uapi/linux/landlock.h                |  58 +++++-
+> > >  security/landlock/fs.c                       | 176 ++++++++++++++++++-
+> > >  security/landlock/fs.h                       |   2 +
+> > >  security/landlock/limits.h                   |  11 +-
+> > >  security/landlock/ruleset.h                  |   2 +-
+> > >  security/landlock/syscalls.c                 |  19 +-
+> > >  tools/testing/selftests/landlock/base_test.c |   2 +-
+> > >  tools/testing/selftests/landlock/fs_test.c   |   5 +-
+> > >  8 files changed, 253 insertions(+), 22 deletions(-)
+> > > 
+> > 
+> > > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> > > index 9ba989ef46a5..81ce41e9e6db 100644
+> > > --- a/security/landlock/fs.c
+> > > +++ b/security/landlock/fs.c
+> > > @@ -7,12 +7,14 @@
+> > >   * Copyright © 2021-2022 Microsoft Corporation
+> > >   */
+> > >  
+> > > +#include <asm/ioctls.h>
+> > >  #include <linux/atomic.h>
+> > >  #include <linux/bitops.h>
+> > >  #include <linux/bits.h>
+> > >  #include <linux/compiler_types.h>
+> > >  #include <linux/dcache.h>
+> > >  #include <linux/err.h>
+> > > +#include <linux/falloc.h>
+> > >  #include <linux/fs.h>
+> > >  #include <linux/init.h>
+> > >  #include <linux/kernel.h>
+> > > @@ -28,6 +30,7 @@
+> > >  #include <linux/types.h>
+> > >  #include <linux/wait_bit.h>
+> > >  #include <linux/workqueue.h>
+> > > +#include <uapi/linux/fiemap.h>
+> > >  #include <uapi/linux/landlock.h>
+> > >  
+> > >  #include "common.h"
+> > > @@ -83,6 +86,145 @@ static const struct landlock_object_underops landlock_fs_underops = {
+> > >  	.release = release_inode
+> > >  };
+> > >  
+> > > +/* IOCTL helpers */
+> > > +
+> > > +/*
+> > > + * These are synthetic access rights, which are only used within the kernel, but
+> > > + * not exposed to callers in userspace.  The mapping between these access rights
+> > > + * and IOCTL commands is defined in the required_ioctl_access() helper function.
+> > > + */
+> > > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP1 (LANDLOCK_LAST_PUBLIC_ACCESS_FS << 1)
+> > > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP2 (LANDLOCK_LAST_PUBLIC_ACCESS_FS << 2)
+> > > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP3 (LANDLOCK_LAST_PUBLIC_ACCESS_FS << 3)
+> > > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP4 (LANDLOCK_LAST_PUBLIC_ACCESS_FS << 4)
+> > > +
+> > > +/* ioctl_groups - all synthetic access rights for IOCTL command groups */
+> > > +/* clang-format off */
+> > > +#define IOCTL_GROUPS (			  \
+> > > +	LANDLOCK_ACCESS_FS_IOCTL_GROUP1 | \
+> > > +	LANDLOCK_ACCESS_FS_IOCTL_GROUP2 | \
+> > > +	LANDLOCK_ACCESS_FS_IOCTL_GROUP3 | \
+> > > +	LANDLOCK_ACCESS_FS_IOCTL_GROUP4)
+> > > +/* clang-format on */
+> > > +
+> > > +static_assert((IOCTL_GROUPS & LANDLOCK_MASK_ACCESS_FS) == IOCTL_GROUPS);
+> > > +
+> > > +/**
+> > > + * required_ioctl_access(): Determine required IOCTL access rights.
+> > > + *
+> > > + * @cmd: The IOCTL command that is supposed to be run.
+> > > + *
+> > > + * Returns: The access rights that must be granted on an opened file in order to
+> > > + * use the given @cmd.
+> > > + */
+> > > +static access_mask_t required_ioctl_access(unsigned int cmd)
+> 
+> Please use a verb for functions, something like
+> get_required_ioctl_access().
+> 
+> > 
+> > You can add __attribute_const__ after "static", and also constify cmd.
+> > 
+> > > +{
+> > > +	switch (cmd) {
+> > > +	case FIOCLEX:
+> > > +	case FIONCLEX:
+> > > +	case FIONBIO:
+> > > +	case FIOASYNC:
+> > > +		/*
+> > > +		 * FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC manipulate the FD's
+> > > +		 * close-on-exec and the file's buffered-IO and async flags.
+> > > +		 * These operations are also available through fcntl(2),
+> > > +		 * and are unconditionally permitted in Landlock.
+> > > +		 */
+> > > +		return 0;
 
-I initially created test-file-lower on the lower directory
-(overlayfs/data), before mounting overlayfs. After mount on
-overlayfs/mnt:
+Could you please add comments for the following IOCTL commands
+explaining why they make sense for the related file/dir read/write
+mapping? We discussed about that in the ML but it would be much easier
+to put that doc here for future changes, and for reviewers to understand
+the rationale. Some of this doc is already in the cover letter.
 
-# getfattr -m - -e hex -d overlayfs/mnt/test-file-lower=20
-# file: overlayfs/mnt/test-file-lower
-security.evm=3D0x02c86ec91a4c0cf024537fd24347b780b90973402e
-security.ima=3D0x0404f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52=
-e6ccc26fd2
-security.selinux=3D0x73797374656d5f753a6f626a6563745f723a756e6c6162656c6564=
-5f743a733000
+To make this easier to follow, what about renaming the IOCTL groups to
+something like this:
+* LANDLOCK_ACCESS_FS_IOCTL_GROUP1:
+  LANDLOCK_ACCESS_FS_IOCTL_GET_SIZE
+* LANDLOCK_ACCESS_FS_IOCTL_GROUP2:
+  LANDLOCK_ACCESS_FS_IOCTL_GET_INNER
+* LANDLOCK_ACCESS_FS_IOCTL_GROUP3:
+  LANDLOCK_ACCESS_FS_IOCTL_READ_FILE
+* LANDLOCK_ACCESS_FS_IOCTL_GROUP4:
+  LANDLOCK_ACCESS_FS_IOCTL_WRITE_FILE
 
-# chcon -t unconfined_t overlayfs/mnt/test-file-lower
+> > > +	case FIOQSIZE:
+> > > +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP1;
+> > > +	case FS_IOC_FIEMAP:
+> > > +	case FIBMAP:
+> > > +	case FIGETBSZ:
 
-After this, IMA creates an empty file in the upper directory
-(overlayfs/root/data), and writes security.ima at file close.
-Unfortunately, this is what is presented from overlayfs, which is not
-in sync with the content.
+Does it make sense to not include FIGETBSZ in
+LANDLOCK_ACCESS_FS_IOCTL_GROUP1? I think it's OK like this as previously
+explained but I'd like to get confirmation:
+https://lore.kernel.org/r/20230904.aiWae8eineo4@digikod.net
 
-# getfattr -m - -e hex -d overlayfs/mnt/test-file-lower=20
-# file: overlayfs/mnt/test-file-lower
-security.evm=3D0x021d71e7df78c36745e3b651ce29cb9f47dc301248
-security.ima=3D0x04048855508aade16ec573d21e6a485dfd0a7624085c1a14b5ecdd6485=
-de0c6839a4
-security.selinux=3D0x73797374656d5f753a6f626a6563745f723a756e636f6e66696e65=
-645f743a733000
+> > > +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP2;
+> > > +	case FIONREAD:
+> > > +	case FIDEDUPERANGE:
+> > > +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP3;
+> > > +	case FICLONE:
+> > > +	case FICLONERANGE:
 
-# sha256sum overlayfs/mnt/test-file-lower
-f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2  overlayfs=
-/mnt/test-file-lower
+The FICLONE* commands seems to already check read/write permissions with
+generic_file_rw_checks(). Always allowing them should then be OK (and
+the current tests should still pass), but we can still keep them here to
+make the required access right explicit and test with and without
+Landlock restrictions to make sure this is consistent with the VFS
+access checks. See
+https://lore.kernel.org/r/20230904.aiWae8eineo4@digikod.net
+If this is correct, a new test should check that Landlock restrictions
+are the same as the VFS checks and then don't impact such IOCTLs.
 
-# sha256sum overlayfs/root/data/test-file-lower=20
-8855508aade16ec573d21e6a485dfd0a7624085c1a14b5ecdd6485de0c6839a4  overlayfs=
-/root/data/test-file-lower (upperdir)
+> > > +	case FS_IOC_RESVSP:
+> > > +	case FS_IOC_RESVSP64:
+> > > +	case FS_IOC_UNRESVSP:
+> > > +	case FS_IOC_UNRESVSP64:
+> > > +	case FS_IOC_ZERO_RANGE:
+> > > +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP4;
+> > > +	default:
+> > > +		/*
+> > > +		 * Other commands are guarded by the catch-all access right.
+> > > +		 */
+> > > +		return LANDLOCK_ACCESS_FS_IOCTL;
+> > > +	}
+> > > +}
 
-We would need to use the lower security.ima until the copy is made, but
-at the same time we need to keep the upper valid (with all xattrs) so
-that IMA can update the next time overlayfs requests that.
+We previously talked about allowing all IOCTLs on unix sockets and named
+pipes: https://lore.kernel.org/r/ZP7lxmXklksadvz+@google.com
 
-Roberto
+I think the remaining issue with this grouping is that if the VFS
+implementation returns -ENOIOCTLCMD, then the IOCTL command can be
+forwarded to the device driver (for character or block devices).
+For instance, FIONREAD on a character device could translate to unknown
+action (on this device), which should then be considered dangerous and
+denied unless explicitly allowed with LANDLOCK_ACCESS_FS_IOCTL (but not
+any IOCTL_GROUP*).
 
-> > It is not yet clear to me. EVM will be seeing the creation of a new=20
-> > file, and for new files setting xattrs is already allowed.
-> >=20
-> > Maybe the security_inode_copy_up*() would be useful for IMA/EVM to=20
-> > authorize writes by overlayfs, which would be otherwise denied to the=
-=20
-> > others (according to my solution).
-> >=20
-> > Still, would like to hear Mimi's opinion.
->=20
-> Thanks Roberto for all your work and analysis.  I'm still looking at
-> security_inode_copy_up_xattr().
->=20
-> Mimi
->=20
+For instance, FIONREAD on /dev/null should return -ENOTTY, which should
+then also be the case if LANDLOCK_ACCESS_FS_IOCTL is allowed (even if
+LANDLOCK_ACCESS_FS_READ_FILE is denied). This is also the case for
+file_ioctl()'s commands.
 
+One solution to implement this logic would be to add an additional check
+in hook_file_ioctl() for specific file types (!S_ISREG or socket or pipe
+exceptions) and IOCTL commands.
+
+Christian, is it correct to say that device drivers are not "required"
+to follow the same semantic as the VFS's IOCTLs and that (for whatever
+reason) collisions may occur? I guess this is not the case for
+filesystems, which should implement similar semantic for the same
+IOCTLs.
+
+> > > +
+> > > +/**
+> > > + * expand_ioctl() - Return the dst flags from either the src flag or the
+> > > + * %LANDLOCK_ACCESS_FS_IOCTL flag, depending on whether the
+> > > + * %LANDLOCK_ACCESS_FS_IOCTL and src access rights are handled or not.
+> > > + *
+> > > + * @handled: Handled access rights.
+> > > + * @access: The access mask to copy values from.
+> > > + * @src: A single access right to copy from in @access.
+> > > + * @dst: One or more access rights to copy to.
+> > > + *
+> > > + * Returns: @dst, or 0.
+> > > + */
+> > > +static access_mask_t expand_ioctl(const access_mask_t handled,
+> > 
+> > static __attribute_const__
+> > 
+> > > +				  const access_mask_t access,
+> > > +				  const access_mask_t src,
+> > > +				  const access_mask_t dst)
+> > > +{
+> > > +	access_mask_t copy_from;
+> > > +
+> > > +	if (!(handled & LANDLOCK_ACCESS_FS_IOCTL))
+> > > +		return 0;
+> > > +
+> > > +	copy_from = (handled & src) ? src : LANDLOCK_ACCESS_FS_IOCTL;
+> > > +	if (access & copy_from)
+> > > +		return dst;
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +/**
+> > > + * landlock_expand_access_fs() - Returns @access with the synthetic IOCTL group
+> > > + * flags enabled if necessary.
+> > > + *
+> > > + * @handled: Handled FS access rights.
+> > > + * @access: FS access rights to expand.
+> > > + *
+> > > + * Returns: @access expanded by the necessary flags for the synthetic IOCTL
+> > > + * access rights.
+> > > + */
+> > > +static access_mask_t landlock_expand_access_fs(const access_mask_t handled,
+> > 
+> > static __attribute_const__
+> > 
+> > > +					       const access_mask_t access)
+> > > +{
+> > > +	return access |
+> > > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_WRITE_FILE,
+> > > +			    LANDLOCK_ACCESS_FS_IOCTL_GROUP1 |
+> > > +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP2 |
+> > > +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP4) |
+> > > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_READ_FILE,
+> > > +			    LANDLOCK_ACCESS_FS_IOCTL_GROUP1 |
+> > > +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP2 |
+> > > +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP3) |
+> > > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_READ_DIR,
+> > > +			    LANDLOCK_ACCESS_FS_IOCTL_GROUP1);
+> > > +}
+> > > +
+> > > +/**
+> > > + * landlock_expand_handled_access_fs() - add synthetic IOCTL access rights to an
+> > > + * access mask of handled accesses.
+> > > + *
+> > > + * @handled: The handled accesses of a ruleset that is being created.
+> > > + *
+> > > + * Returns: @handled, with the bits for the synthetic IOCTL access rights set,
+> > > + * if %LANDLOCK_ACCESS_FS_IOCTL is handled.
+> > > + */
+> > > +access_mask_t landlock_expand_handled_access_fs(const access_mask_t handled)
+> > 
+> > __attribute_const__ access_mask_t
+> > 
+> > > +{
+> > > +	return landlock_expand_access_fs(handled, handled);
+> > > +}
+> > > +
+> > 
+> > > diff --git a/security/landlock/fs.h b/security/landlock/fs.h
+> > > index 488e4813680a..c88fe7bda37b 100644
+> > > --- a/security/landlock/fs.h
+> > > +++ b/security/landlock/fs.h
+> > > @@ -92,4 +92,6 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+> > >  			    const struct path *const path,
+> > >  			    access_mask_t access_hierarchy);
+> > >  
+> > > +access_mask_t landlock_expand_handled_access_fs(const access_mask_t handled);
+> > 
+> > __attribute_const__ access_mask_t
+> > 
+> > > +
+> > >  #endif /* _SECURITY_LANDLOCK_FS_H */
