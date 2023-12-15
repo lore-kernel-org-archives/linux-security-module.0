@@ -1,51 +1,51 @@
-Received: from sonic315-27.consmr.mail.ne1.yahoo.com (sonic315-27.consmr.mail.ne1.yahoo.com [66.163.190.153])
+Received: from sonic316-27.consmr.mail.ne1.yahoo.com (sonic316-27.consmr.mail.ne1.yahoo.com [66.163.187.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0986518EC1
-	for <linux-security-module@vger.kernel.org>; Fri, 15 Dec 2023 22:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EC718EAF
+	for <linux-security-module@vger.kernel.org>; Fri, 15 Dec 2023 22:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Ztiz8+Pv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702680128; bh=ZI3o3PMEzb9gnitNsbuB3iBlot4aiealGMA8AVY8gd4=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=Ztiz8+PvN+jZx4/zNPAG3bcpLK+DYIGrzdgqvTcx9ps7HPagfCTJbk35iW7G6kgl9YJ7iD4JJQex0NJwW0I9jxXGP+wy7WltuZ8w/HIsgH/LR2+PZg90vbck3NA1KcXpGEG0rc+pxy4NDjOk53xrUtuiEi5NzDmItNDBcZe7DhNdPZvEKo6xIIQJZW4a2X/E4aQmlbuEQvbvVMpBMtRmiYe30hAvdiPkEiZAw5A1sVry+IaeFhUYTa5prJDqQehz4s3Lo9NDBjZp6Nn+AQyS9udvh8ulC6ObdC7f3XVDcEfgDR7Q1gJUWUoR53LXaXPeWxHU4yHyXVBdF2Vnh46YmQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702680128; bh=6ZYf5huaZmC9UCs9n/eiabsPtkOvK63TXZvyZflzODb=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=WfNrh7/wdS0hnDSscJ3M6HNOCYETyZ4YVq6LuCht7eRVKiihfnUpa6qCD2g9MMJplOKHHKSHy1JtfW3wFq2rTorIlZ3PBWvzzzt50yVtxKdJ6D+ea1Rh4TdYqzifxl+aQWc0wcettM4IrSGm7F/2HDsBtiJ/kNSq1TQqNKL+FtBocRebBGttFZ3qbZxH/rT3Rj7Jy1Scn4xHOn5JqwS9x5REhY3BMu0d6NuJg4kELUbnidnWlDwgoFCYDH+RtEQjwR96HGwTB1HoWFdrQAI+MnrjO2Of/RommYQEEH0hMEg5Dber3kgQiBW00X5YiV6uqBqfj9iok6RDvufV5YjqbA==
-X-YMail-OSG: sVzvT_YVM1nT2E2zuucRPLt_6v38mKH.6L16gk4SfdU7K03jPqXodH6Cii2vDHz
- kmdMC5Vrn.lhaWfP6ZukFVn1bU.c31n6AQw.vRypoQrzxbOQRnupGbHTDGRWqcu56V3ezjbHw7Qo
- TKC0mcDpDWVvTZdFnt51w94XIr.O9rK1fj6k5VLRa.faP6X4fsSD9StpxJ1tybq2qVqKae5zjNxS
- iXPX_LMUjr1vXAumcSDw3JH6xSWiRctahDp6O0QlWFBPHrwW2vySLeAJAhDs.WCw0erLwfDVdDfO
- CocLyy.cCEeFSjTfUMmJZbbdo3yUppM6xN6z2B_v0NVr0QTKEIzqHrJAu0gfaqqm4GWmSQhhzNaM
- i0S5XKnvKwSjkjaRz46rS8zkEzu6lGIYbJfzGnZXZMNGbCV37vMM6Lp5M3aoGwecVK5K7TmioDpL
- lRfOdJDs0Ar52r._b9PpE0E6xRBgfZPZbykEJx5OEEVtgmhBhmkOqVu3TH6Bc6TR9zkcR58cUGDu
- 31ujZHQUnDy.zttBys2HcyzXJTpzYU8MFLkzm7ArVNYOKwl8m.czF3INKgPrWD0S9Ez8VsHvFp.m
- rqO6rjLsJI6Cy.ZGdP9FCh_u9Ib3WBx7EJ8kSfOyO3T7tUEYugwOgFgtoH7mCm9md1agNqxbBvTm
- EpGBao5xJPtPWDlkyTZ3kzXskDBdYQc4oDYWz2nFpnCAoVMZ6Fbt8b1oKP5EoSpLSWhD4laX.rVK
- 1QxlORlM_HMHq7hSYs8_GmFdgouWyeeiMOFvFoQ_LvH2zj5Dcq0zWBhM0rBQdyraXuSsWJfzw4Xw
- AUqWfTmueDaolIFAz8vEhgXj0fXINeQvamPa09X6CVnd1iP4Sl00sGckLuXf6p.mI_dPgxA_9ZhW
- oLgmt52wf_VDnUg5BTNVHUEvjPbjTpslA6qPkcy_uZ3AVA6AN8prodsyf..imriaz5tabvvpGuoo
- t5uehv8O7o0QsBBD0bVz.V.agEfKYw9lt9r35OlVLZPh63IMOfC4v8I6dFQfHe_cYjKs0MjcstZN
- GlcbNXxguzwuqnXf1Yg2n1FcXedIW54SjkVKOk45uX3rzPAgkLCNxe5zTnqVaoN40HI8hCzS.Yf.
- 3ZfLyedzvdfxSKaMQGlx8MA0LQgp4.oPRxIQKlNP_YvAW4AMi8VlQqLluaHhYSff08.gDLwKW81s
- TiyMUgYzp1e67ouzToRrTyhWM91oYd8KQK6tIXNrWeUU39lAzCVy6h7.rv9yJVAEC6QOT3bZcJ5a
- 2yrnPAMtZwJoVJ.lyT3jEHiLxk3wLUFSbucJ7xRGe1FZ4ZwIRe8n2z4UCAflVeo.IixCpHSuKvxJ
- er3lPHdGthLxpx0WGNn_yHeUuwwwycugYINk038qV4dkcSxxwuuOwV2M2WFoVpIMOHmde6kyTK1M
- hAgyUDYd4qVuZK07wHUEWp_EMeOGfbAGztOMNq8e._jWq5pjMExiNFtTYRPOJNcMX_mcd1wS0kkh
- aixWX21YHLnUhsQwu1qnwTE4g561MjHOGTHMOXtgONGmV1o_TW6PodCFYPj9La5rRB9G8R0qepSp
- qI8iWNkowDHnl560qib7Il9aKHehcI49bwgY0omWbZTJiHANkz7RwEjywIj1Wk22F9Hk8aVbQsfA
- h.CUbNA4dK8fCUHjSH0eYrJHZz.FXfstkRxpAYRxd8O45rieF3TtmfB.HL8Wx3R0Va0v2xkFcTmB
- DXuZTJnjaOQb9S3qp9BE7S7_knMcDHH7CXlrZaOWrFFXyJGQOiEmA5m5Fcuieyc6u_04BleZVqRI
- KZAqqOEwoTLCorG1KljQ8K9pJ___7uZMN3jaVXvpUjVnGH0FnK.V1qMrVKD24LfbzQ6z3WoZOpvI
- NPzVJspsYY27CIFyhkK0jsuKZ6a1IQ7.Y0BWf1CNt9DvMpEpbcowmtQtqDuvMLD132co54u27hiu
- exAt3SzUyoDTDeKeVMlDKcoSfMx5vc5d2nvFQUxIFTC.zWD1KRbQePXn79aMIukqFxtXruB.Bt04
- .RgMfLlarCgEHiK_AwbpAFfqzR._hXfPSeetQgZndXEL73_EpZi.iMEcLVugyA3GJF2Oxm7Cnxxz
- 58kmA4D1lH22.VSB7WEyJ5lkLjyWZJkDeAkA3co.uSR_N8yfbwCAQTROPvlu6099Mrbyej8czJ3Q
- dSV.VZ9TEFLg728FsdmttKByY2ostFvG0W_kbsu8O94bvPzpYW6NLs0sejUEcmWjQc4LFsT8nm2a
- lwcPRMIHJDiKkb94UgGBeYriETfcakAZ3PS9VQ7HaS0fUQxyxNYHUrSKzLei1q4zHZhf1o4bInIo
- 0m9MmQRbxm8osGYTU19aawRgdBMDJ
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="LNfEV2M2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702680221; bh=NuchN7LWq+7dR5oCIrU3dqcwUFeyKlFDBPhpyQdG6gM=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=LNfEV2M2x3AhAouQU996hBof6gSHadROPBvcNl6jSwDmqAgwTMwKD51vgsF3tpnzeTm+NiJwX/pZbQCcpNRi4pytUnEs3pnEuWOddteKmTIczsgLzw/TQtG7os7uP6FC4B5blWE8IzKkzy7mEd2zUpn3CmqVIAphpBOZ5l3MVhsvozJgFMYnsHkYygvFzVuIoSngaYEKafP2aH3sytyfNZcFFshLn8ZywnEPZ15Lcu8BhBzDrnBzjWEk8JIXhRmMtYjB4SGA51x0BeLDpv53vsZ1O89754S/bP7ztoIK0u2YEyCGvkevLq/9sMoln7NbqRgqTUPAUqkkbgJLshFjUA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702680221; bh=99tChxCy/47LiTe3kp/zL7x3mbeHpcRS7ymKZm7mlez=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=SVuu7mux7yxU2IT5thac09F0yiwx1pPPATUntIUmqOMbjwSiHKk+uXqDt98LtxdtxkjlBKi2RNx2NTl5fLbWrANZn4vQWR0LxEm80RelLHrMjR2bcBg+6Em4zrMGcMhJ90HHTWFA7usHWTKOnXjI5ehjG0wQfwqZ5NXTGPw5gY4TGlJNPlmEpv8HPBfYhsRv5wNMvxjcPIwqs8j7BdGflombzlpoOVILzyvBrVxNFhj/+GwpDXBv0oIr3YcHqbT3ieUcpzOZyJP5iiDfzCMrmqmci0soihPeFmS4xaWucwKE72uYf/cNsDSEn8zAV0YvkoaQBfXE/UNI8WGvxaVCDw==
+X-YMail-OSG: 6F_hx6sVM1l2Sp7xn_RpIj6KUhGj.KY8cx1OV5K6jzcSd0YKqE2AcPtu773ohVu
+ oMgpvLNX9lt3nkZbLC7NvmkeYu8iVqFjVP.2IYvwsR3aJ7pJk0D06xvdtu0US6Kn2Ih22QBILbAM
+ zDyzValcq7lQ4o3TxYcYEGwd5miELrMFhhpxLNfrQnlcQXz7J48tHUb1VvO300oFaNxOw.HGXr7d
+ uFeaKRSqlFty2JXns.wFWUEoQcShd0sGXlPZCIseoXFzjy5nX0UemQIojiALs7B_uIPBqQRT1kwG
+ F6Kf1mcCfWL1z3N1CsGfC8b.s8WsJA.YrIKiU3aFcWc8LTLER18gSPoMlrn.aUMwREqFoJ.14PYL
+ I1Fi6HbpfdtsFFxqR.8BIgMfjqOkyQMba6YJ7mcBHFQUXLAzuV88EHTR9AWKsLQExpqJV_QUJeuG
+ 1V4T_EbuE2KzxLidclOISihL8PWmFdWXL4fqvtmSz45GgVJMm7jvCNw8J318TfwExMlpDM76RK_z
+ 64kwfl2RZAUbIYjDCpcN2_jsv6tNBwwomrz6.fAYCjm4dL2jp6nHfOreqib6hMJfr1xQQlj8zAGn
+ neEvsjJDkpIoKE8BYDOsWR6pTiM6Py_csfMVsPZF0dpSn3II4mBLPeWFVT94dDYmzgn4rOlYlN78
+ 2Nn9nahaRnQH3jjNHfF9BegGYhh0dAQLJImQw9pU21MzOVp.fOWdKHeZ.95t7C.TB8_mo.z.02U5
+ G1cd_VWlXzjTdCzKh3Dql0KITOmUMaxSojJbyYhHHp42X0HQIc0.cgPdRSuRrspM2nUbSUpisXMM
+ _akftguzIff5aI0W2JXeX_Lzxp0q4j945ZGpvBQdUhebIqTbo_gp_j0eKJk0e7oNBy5e14idix7N
+ nV2v9AQhIKRVFmWo9X5DLFBy6GjBCOhHiOGbnRYEzHk1QVERGlP53kg0FyXoZPLYf_On8AT5MZCp
+ bU9XwAwE69L280c5s4fBdGyRqTjlUSlQo3Cx6EBmpgVl7CdZeO.8939Y8KdoCQtOJWkiPZXXMRFY
+ WyV1b59VABlD5eMwTUd8AnGsXDENVk6G4NZ1RHwux4uv3fMlQcu2yCwAUTdedm1YTen8GsojzpPr
+ BVRxPEna6QX139rnhZEbsP2NjDWO0pIU0SqMw0axLNYCDdLYa0f1uYkMSSMyRhVlrJJfBvv0ceAl
+ SJmKwG_r7_CBmicBThuFRzQHvd_COHURz2rXOELXxrNvDt7F3b7ohjOeOU2arMAI92h0y_yXKVRP
+ n7cVN04VqPQYoZONLAYYYI7ZktrxxSymIZ6sdsWDX4bKSzAlm3lRKon8zz5aiSg.ieYwWTQYz.ik
+ XYDPYT5lgCGIq8CtYHjsuc.VN52gzeqkdPKPePj.SD1ujM1sV.jNGKvOmXF7ELJKa1xifemUvoow
+ O9vjmrj.ShX7kmMKksLx2QE2FRZOEJs2EyB5Scnhdvfcef5eE71A5YhB10SUdZW5jI.CzRDgkajZ
+ 6csbnhkpT_AErsApe6vZ8cf7CrPofh7HYTHxIGCT5czkflxIAgDZQ7LpywlQcbzhfTMmjFX6MKMm
+ S4P9TcL1VGEWA33361AlmuzEz4h4phtplgi3YaWCxnWIw0W69tf0WnV8w_BIBgywxcdPduO9ZUJu
+ oM2QPNX8Ku93wKFP04GcbJY1iXlVLuSvRJv9BzVvOxVsO7ju8Q01HiZVJh37WiXdoE9M5iR6HRak
+ slutT817fDY.E6yzw4kHeekra.f92TxN8VAvHd2qw2rbuyPTGlq2Yj1PzlwaBqx8oynG5GMdZPH3
+ .QXbyqMMBpXEuXDJiqTNPqxtpixsYpaPm0O7Qc7O2lOBueox9yUshrOQFLMlWD.UfwOGTCcxmYc4
+ lnpZnol7IYTloIWsBpYyELb3wJuVLdo1x4FcqZ69.WnHwkka2yCG3bnnReshabgKfBVAlL8saI6o
+ r8FwQl4c_7BP7chJGs3RPs8grYHGVUZm3P1RZTkT3THF9O2WqQlGezYKyldaZMBEe2OuGiXdXxdv
+ QPZTWgWVetcH7Za5agtYwtWQqG5BjtlkCme2o6xoYkFnlX3ulIPnvySznHP9291ZR9Q5NqhOmy7L
+ Sld9r6xx07lHOIPiFda4Ivpkg0VYYI.V9xZ1xvRQ5OLx8QASs0ac6J7WfnZCURHFPkcp3bCLuawC
+ Yd3.o9I6ZlpTCJKVXjctsRG_BcK06Zt4.Ip330f7Cc6rzWDrHX.t_Z7BM53YN4lxHx9TJQqXki3W
+ qfQLw5zbM68oa7NHc2KrbrFhJ856Hla1.XR06SlGXUD9I2BmBLEFOv_IkHuW0hOja21XY39_KTTS
+ bXSehd6gwn.2qrOVgXKLDejkZXys-
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: d15b9472-9cd2-4430-a308-5ac4cfafeb7a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Fri, 15 Dec 2023 22:42:08 +0000
-Received: by hermes--production-gq1-6949d6d8f9-bvfr7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7cf3dab1b010cdb86f7a13f4b7451804;
-          Fri, 15 Dec 2023 22:42:04 +0000 (UTC)
+X-Sonic-ID: 869ce3e1-48f0-48d5-8d86-93a5ceaf74f1
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 15 Dec 2023 22:43:41 +0000
+Received: by hermes--production-gq1-6949d6d8f9-k52jv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ca4128361bb8b08e481604451b6f4d3b;
+          Fri, 15 Dec 2023 22:43:39 +0000 (UTC)
 From: Casey Schaufler <casey@schaufler-ca.com>
 To: casey@schaufler-ca.com,
 	paul@paul-moore.com,
@@ -58,9 +58,9 @@ Cc: jmorris@namei.org,
 	stephen.smalley.work@gmail.com,
 	linux-kernel@vger.kernel.org,
 	mic@digikod.net
-Subject: [PATCH v39 32/42] LSM: Identify which LSM handles the context string
-Date: Fri, 15 Dec 2023 14:16:26 -0800
-Message-ID: <20231215221636.105680-33-casey@schaufler-ca.com>
+Subject: [PATCH v39 34/42] LSM: Add mount opts blob size tracking
+Date: Fri, 15 Dec 2023 14:16:28 -0800
+Message-ID: <20231215221636.105680-35-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20231215221636.105680-1-casey@schaufler-ca.com>
 References: <20231215221636.105680-1-casey@schaufler-ca.com>
@@ -72,32 +72,72 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The security_secctx_to_secid() call can only interpret the
-context string for a single LSM. Use the first LSM that supplies a hook.
+Add mount option data to the blob size accounting in anticipation
+of using a shared mnt_opts blob.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- security/security.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ include/linux/lsm_hooks.h  | 1 +
+ security/security.c        | 2 ++
+ security/selinux/hooks.c   | 1 +
+ security/smack/smack_lsm.c | 1 +
+ 4 files changed, 5 insertions(+)
 
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 4deb1a4d2d1a..59085248809a 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -81,6 +81,7 @@ struct lsm_blob_sizes {
+ 	int	lbs_msg_msg;
+ 	int	lbs_task;
+ 	int	lbs_xattr_count; /* number of xattr slots in new_xattrs array */
++	int	lbs_mnt_opts;
+ 	bool	lbs_secmark;	/* expressed desire for secmark use */
+ };
+ 
 diff --git a/security/security.c b/security/security.c
-index 8469816c0472..8576121fadb9 100644
+index 8576121fadb9..fd429f67d2da 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -4248,8 +4248,13 @@ EXPORT_SYMBOL(security_lsmblob_to_secctx);
-  */
- int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
- {
-+	struct security_hook_list *hp;
-+
- 	*secid = 0;
--	return call_int_hook(secctx_to_secid, 0, secdata, seclen, secid);
-+	hlist_for_each_entry(hp, &security_hook_heads.secctx_to_secid, list)
-+		return hp->hook.secctx_to_secid(secdata, seclen, secid);
-+
-+	return LSM_RET_DEFAULT(secctx_to_secid);
- }
- EXPORT_SYMBOL(security_secctx_to_secid);
+@@ -232,6 +232,7 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+ 	lsm_set_blob_size(&needed->lbs_task, &blob_sizes.lbs_task);
+ 	lsm_set_blob_size(&needed->lbs_xattr_count,
+ 			  &blob_sizes.lbs_xattr_count);
++	lsm_set_blob_size(&needed->lbs_mnt_opts, &blob_sizes.lbs_mnt_opts);
+ 	if (needed->lbs_secmark) {
+ 		if (!blob_sizes.lbs_secmark)
+ 			blob_sizes.lbs_secmark = true;
+@@ -453,6 +454,7 @@ static void __init ordered_lsm_init(void)
+ 	init_debug("superblock blob size = %d\n", blob_sizes.lbs_superblock);
+ 	init_debug("task blob size       = %d\n", blob_sizes.lbs_task);
+ 	init_debug("xattr slots          = %d\n", blob_sizes.lbs_xattr_count);
++	init_debug("mnt_opts blob size   = %d\n", blob_sizes.lbs_mnt_opts);
+ 
+ 	/*
+ 	 * Create any kmem_caches needed for blobs
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 3e590f632f59..e0f6f2093708 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6970,6 +6970,7 @@ struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
+ 	.lbs_sock = sizeof(struct sk_security_struct),
+ 	.lbs_superblock = sizeof(struct superblock_security_struct),
+ 	.lbs_xattr_count = SELINUX_INODE_INIT_XATTRS,
++	.lbs_mnt_opts = sizeof(struct selinux_mnt_opts),
+ 	.lbs_secmark = true,
+ };
+ 
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index c93e81facf1b..573d5bffb9e1 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -5064,6 +5064,7 @@ struct lsm_blob_sizes smack_blob_sizes __ro_after_init = {
+ 	.lbs_sock = sizeof(struct socket_smack),
+ 	.lbs_superblock = sizeof(struct superblock_smack),
+ 	.lbs_xattr_count = SMACK_INODE_INIT_XATTRS,
++	.lbs_mnt_opts = sizeof(struct smack_mnt_opts),
+ 	.lbs_secmark = true,
+ };
  
 -- 
 2.41.0
