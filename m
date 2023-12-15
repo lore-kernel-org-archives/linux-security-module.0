@@ -1,51 +1,51 @@
-Received: from sonic315-27.consmr.mail.ne1.yahoo.com (sonic315-27.consmr.mail.ne1.yahoo.com [66.163.190.153])
+Received: from sonic312-30.consmr.mail.ne1.yahoo.com (sonic312-30.consmr.mail.ne1.yahoo.com [66.163.191.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9120018EA2
-	for <linux-security-module@vger.kernel.org>; Fri, 15 Dec 2023 22:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA21118EA2
+	for <linux-security-module@vger.kernel.org>; Fri, 15 Dec 2023 22:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="lgAPuz89"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702679179; bh=rEz0OJc8nFf9kWkBCfqRtfoAcWA/jm97QnB3Ho7hKzw=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=lgAPuz89S1/R/+ijaVL4CdZPKAN9+bbK75NMb80OdMRDs6lbBSiAra68+4OHq0ZeVYVs162JRpSVll23PqcN97Xyu075mSW5GgIhcUDtsFpJumns83VwCOkqj3o5E48y/UezGP5WogwlNnoWZf18bexm4vIv9WbvLYWsGVaeB32CcE7WtoJlaxo1CGsD1DPFQhVK0hS8MADFSnjp7vHrK55pIbGFKk4G+0tfe5PGvQUi3dFELMICUFDjc96/qA/W79kRylaveGiw5YXspKA9hHkS/QFGoZcfWDLnt1atezAibFHCvfLb+111/fQfEZHA5zjvd92D3InLIOxyyjnLnQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702679179; bh=smnZW4VeD6pHtPVZifDGQCxn0DmciFPSthPYcomNrfa=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=B6nQqUDv3WrMQDocvRJ1+CFVK10n1SA/0348TLIDnLztx+4J1AzbG2ugd8K1KeqzYjvmLd3W2cL5CNXTX/LouTICtgFo7SsaErF6rPmKQUPWKjzyv7SZsy45tyGFJ8j2XvsRU+n/EnFm51sh3qjVM/MrxrbETO6xsyMztYXRPd1iuBzbkID9lMXWyY4vmUN6K4Zuh3xnLl0Ns3XxfX96TwxsryAd42IpPGE434TLc5JeqHgJ8r9voEgp+ovREcRHwTBftFZxmUR0uqSW0JRfRVU/YDvIdeER8pmCtFBxkPzVflDZKfBIPyodmN7q817aqUToHGQaAtYo4wgw9GpcgQ==
-X-YMail-OSG: p.dJWzcVM1lYfQW_x5Xn0e67PlR.G1L6XH3ostQy4WcPfZBRFNM4TIxpYKjRcXz
- Vy3ayZju0.Qk8o5.QWydogqavZjOpse3PSvjb.K1cvza1Tv0lBPpzxL2iG3tJXa2mc5kehJR5ZSG
- 76Xviodp4Gk7XXn5DeFMC0KZ11UwsF6TM.TLNlDmAc.DxbtaI_YTwyyA3hdtfeDf_99PpyHiuePT
- r1JssMgLr8uVyd4Pm42BM_NZiOVsB5nQNbTnPvKobhSjwb37gglmHZs7g1XLrov3u4M_0a67iSlC
- qqnNGNp8KWKZyc5adezmWvgKCCKKxrHw8XniHZhIP.Rj9OPM_tE.Ty5Ot.z1NJMKqCPxAKrji1fj
- lJbS5A_JjtNhGDG0BQuBwLs7G6I4TH7PJdY98rzhG9CTl_hqI4abzbHjw1P4spxTn4MiB0Tp.5SD
- Ja_asG0uyFY72Zg0T4qorKgoQ4dRhbbRo_9G4WFGWf.Ki6VjrHQXge1JBd_N993dti8YLSOZDfUV
- ekpX9yZDCaB6I8ZZo09xhcmFwICal5SGbZttH0qrdXHoBmG8yehriVUfmVvxrwa7AnnM532ljWdD
- A2s6iSfW1vOJhx22g2MMvDWxfUo4BIKHzWa_tNr6ZPmcpCkqPekuUOK3KzjtjbK67elVbz9mRR1x
- d9tQT41Rgv1j65sfyKlXL84M8hNoo7by1IHratjaPBO7EQsN_DU_V4yRhqaZ4yPInGLdDqgl5bbs
- OPkNTTtSYuxO_KqAvliD82f6AIeIzwabAejcJk8d7ckJDZ8ZBCtXMywVgaamtmBfO_RpeZrxQ7Id
- bmtoAILn6PJYseKjFG5jzEQf2CCNfFRHNaD3O09AYZYtPjCfvZ0JA2vQ7ba_e0AZuqIwFrvma6nj
- IPmV_XQwDGscjix72KIbbG_xjFohLY3iXqmheZKYCD.hiJy_8WY_puMtlzYMihG.coXbHzxnGora
- rBq_d.lBRbNuRT5h6V31hzvf0BOpN0U8ovAbokE493sasd6Q62fFOdEXqLX3vE2max2xUy.ucetq
- 3bkNFVjmGtTQbUQ3VN.zUxMKGyxxndnaHrFg1t2CpZQ457xpc_mtDxCqczcJQV65nZjbALhyjG3a
- 9qtterWsOuSZPpwRviET9Uivd7UZOLmjvq5krSJkId1D7GrzENxuw46acI47Y4G8Ri78C4ljn7Jv
- 4nM_KTzhwuXLR3uAb6MSxySHL9u1uvGin3CZMJSVY8JLoOdns.0U.EyyEXzsI3elAujJTea6pJFX
- 2iTaA6ZBPP6vnjOKSNC9DJz_T8Z0fWPi7yXawLTMkfXru6OKVm6mspjiL8qwQBJ1rc0JV1Gq6UDF
- .aAEWaBLLvSESDxDKnUszsXuT4j0QLQ5yigNtDLB2fQ63aN6nJwFx5UbCLhrOumYGk19PojbAT5b
- O..kan4SIeWcowvv6bKQOTfaTbFa5eD15PHtgi1EbSKVWQuDydUZFa6vNeTa.FzYZDG6_acY77J9
- Ce9OeSV06mo5n8rQD0iRiASvzxNVv47X3_sMF_a65TmUNTh1cX5jSrrz6qoPTizjb52rY68RR_Wz
- kReDZttV_3O1h1X7InI.vSBtqsWnenryfXCeUk7Z7sMLTo4Aa4cl7MGdDNRh0QZ8HA0wc9jcQVTn
- Getc9TnIciE_CH29P55_l9LnWeKE1FrBL.lR_QYEBTevgwMqW0KaXojH5ib302J4PedEgvUA8rt3
- KvEsK893TX6jrtl6Ls7XpAQsr0B8cZU6Q.DE55azP05ZK3Z355onPR8L_u9HZNn7PXd3YWj3xr42
- htWK3HC7CtsjSCZf9sx6FGH5n1TcqAVFBtjr_dVfcnukQnn5xK23tA0WlpwI_aaBkKSO5_tCWAGa
- weVMUhUXYn0P2QdFjlL9uMScvgyGGajtWS.PeNorqG1pKYADOwt_EmjvZiFcBF6b1452v5uNNhUn
- yBbl1hVIXdXF4VA1X1hdxmmwUJEQVXGBKCNZ8DOM5NoX8_3YEL1XAc.fS71lwNAcbLXCSKBTSnV0
- gSsyRsUaMENhLk7Nea73PsQ2NwS6lvDVamqVi1HvzznYeu0Z.cMqPTFebFYV.eETBhUCQCgpJMkw
- gR.dvfJRU4ucf3Ouvbc64W5Eq9Ab5wARK7imUAAwfacG7OfCD06XLNL0UyObWIBc2QoHp2PwUFgt
- xz7YOejldqFrOB4ylpVvovniIJz3AAMWiP3U6.ZwWp.EputK1LQl3Z8FFM5h.NFA0l8PUz00.i55
- LtTaxO1nLp7lZOJryhKUV52RPpA2f_5p4HGV52mm3aRkTXufGLCjurmnxwfOyGwJON.aqVqFSfcX
- qeAZgrDs9qZ.XPZBks68VCBOK
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="S635WZGu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702679272; bh=0xhRzVzL77uFNzvgfzEeytBOt25I4y9r8KJQkUff9Rs=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=S635WZGutjA0fM2+I03Er0WW8GqRslS3Adtw9IpI5pzCgaG/nAaCLUxdRNo3rwsiIncPW+CY2JDvqjnUMFrJp8JlnRoFF+M9veeHePdJy1qLpOTEYkKr4OQvJFZMJc+T4KkTVOxvQdMUQKo2HzVqv5OyrwhvUDG7GmmWlkpmB95hnhVe9oWwhh0WvitkNo6yWIbI5uLVC5HOTsANUzpBWRoue4KHBhSOPc9NPuCdfZD9O5sXVloKw2VdruNBbw8hfJ5lo+CIjGS+BqZWfWG1O5rdf9bfnJmwI2tK0OL5iclHvbPfUUxZozXzoSeI8AZpzy46A2X6CrsRkDQC9jg8ng==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702679272; bh=SKPWV8ey4mzCkDWp91daijRkgT1+ie4X/UBDMuLVczs=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=qmbyDRsoe1Qbqqe+yzwBv2k9CgcuybdGc0UaLTk8hcAd0IU1ZWU6XiwQo7jrj5HzHlRpGBdLjDmGk25ci5S5CXpgifMjS83oqKPujJPPMBFMe09zXkVS2jCJqlh2ykkgOvUHGwtDFDf63J9a07Ud+dCrkkvGmpUr7vS++1iDzXGVFpjPQAVtrKDawiOk/PTSqmMFukzgY20KekfXOpNHJSRzKjZhBPonvq6B/etQOJiy6Htd5MsSofsZzLxdbEbAHmGC3abfSf19mgrAwB1meDzdrUAfyO+nK0h4ThkjL9VOHJOJp+DfLprOaRLC1tKnY2zhAMrIKobQOBoVvFdKiA==
+X-YMail-OSG: PH3FmKYVM1mF1hVCKF_PWKmGU_PfyDwYDJXKUjaH8c4Vj7Nhx2WLQdueqNQekjR
+ sVa4xzp0IAusanfXXF..oX0721SXKzbwUErhB.sLx9qhTXUWhVlFsPpqWSibdhSQ3_IHqx5gBbJU
+ NmCGS2eaeCszcB6aTPsRqvwtixdkBd6BSv1EPnGF84QMyuUnUxezUC_94bf0RkK_h6iclc8EstUw
+ w5uA9_4N55f02pHmv2uyVi1811C6YcU1UPfPliB.W78rI.c2ZwbkfFLbv.qLxd5ddpymnwvCCV5g
+ 7xlGGA6e7E5pT7AWuldFeS12bFkqAOQSB_sP0Z0oS2TT7TvmtOCy4KNVIp1D6JoGLzYexo58NMFy
+ zPiGY7DsCxngv6BvE75zZvzzOspqBY9nnN29JrlwHq3c0I6._88UO69XrFHDATli51fVErGivI0e
+ UNA_tAezv2fd7chQIE60ziTlcGukSy885Bd7cG35TRbrzC7i1K8pEMKmD74.KRvmw4w2i8ZcHCpm
+ p.22P60V21V0VO_M_gDZm7aM8fdzfTKklaMQKJLuhondiSBofDBr3LrDm4Gn27ATQu_MPEXMdUQc
+ G0M7v5KuC0VLYxaU6ImlEfZlzL40C8iYcSg5McmfMtaNl7hmmkHxwDHTTv41WTooiOnS4I_Ne.IS
+ X7mANDAaC4OWlS73r7cbheiGkJgwGTWeWeMeNrwDDdj9VxX8UYNJ0QY8tc8p.CDztmGFTaTXtYcZ
+ 7ctlp7UGLWZlc7_5_TZjGnLCFgnXj1MVbcGuQRWlO70DRqH.PQZATH2GP4.TiN8fnci0ZdXoYYdt
+ IQC8w.bhK.5fy9PSTlpK4IeN4nfh3HNhPo4B3gC7qw1LL2pAjHOwMtbEWI6ONQHYLhk4GDsfNmv0
+ XxsgFWAWRIXjXo4VtFm7q0qDA.EISbuP3_s2s4xR5slgY7wqjhGWdiLxp_azck8NPq8snXWGH_tN
+ lbHGtyieJMn3Ne0Not3esxuTd_RY5fksMzEaUw1K9M2LhL3us08XvNV4wNZZxXfvGTun3JT6waWM
+ DxW7R2oGTO_q771VuPQFkPBtSs9SsOpEJRk0jG54cdaiq9awAQW92toAf29GI0GMYm0lo3VbEC80
+ ADdY1TlaUgH4UP_5VVLLTNmnkgtV5aH8OPTfL6lACk3djtFwm9dlA7MCNS6XNxowtO4n9fKqly4.
+ Gqjs_Yw1FE_Y66Tcq.WCVUfHzYmZnZUnF6v5TAoenoKD_O3H6QHNHyhuNS18EB2IMS_vDlEyhRv4
+ zliHrvN.mmRbYDfWDVNdYZgd5YY937lPGF9A9d2CZhpiVVYr.zd7bsawJK1E.hIxypSJmaqGFIss
+ KE70ImlB9.Ihoz8Wau3VRvrYaITtxV4hGkuAKmUL01JHGwIQ_X685FP.grKzj3ZUv5_GDHgE92iK
+ Oxk8wV9GJ1OuXGu2lcNg7u54gc_PGVaV7O6JAkR_4HzK6ydQrOz1VlIgf_Y7xl2ZjixDrbbVhYCB
+ Ed0DsC1c54td2EFkvqkvKEjsM2oQd0.ojgGGS9byBEMvXMak93UuPooFubYChKErA5e2tZIlySAw
+ GglXMss.qW.vxMy7bzBUCcrW5AMdzfMkbrZQPy4NpioRu9OnbFXdbNV70dvyNrw6bmA0yxMurKPS
+ nUO3bXEB39topgQLWBS_RP_3lgdg30TNRXWqszdnL3I9jOuozvJc434Ea8INgg8cpEAuFlQ0VtYz
+ 6Rig2OnEPfHcffHkFpSuxwYA5U1Nc8O9wYQhC6VZV7MaxOFuoJswbtVVf79YVa4mFHUXNmJHUn65
+ ryOcm1n7GwhyEME9NlKHDQs97q_m8nzgGx5W7k_8kKNoZVUf3dNRyBzaiDk7z_FZ8MTqgAdK2Q4h
+ cCarmDg0ufu2eGWryHd.gKFbTA7WaiV3O0yeiHfBxYvy3ymMgFvx0U8jwUYoykcKsGrMLuNINqQ.
+ NRe5XBn1D.7fVL7r0eiArBPwGgTLNqq8vCOLfMjX00yBmL3ee9_kJGw.oU3zjez_UGEWCmLPGGxX
+ bBxOfpuCix1t_PBTMXsxLsy2FGSLrtgoHhbXw68eRybUiKBgNMHISXJhKvNflfF.BAHw.bNeywWN
+ PtKv8Ui67c4DcGTNZeqpclcnN7fduBzFZwDpkStEwM0vskibOVRWp4RyKdBaKA2xt52jCWdcRy7E
+ Z6gb_DiZi54519rHI1HOi9ObwU7i6ZHjTRSFF8JcLg1SxYzQkbJxU1EFwT.j5TmPDwWbl18hxlmE
+ F7rm4lZXO9kY.AQYZeTm9W4qQMvUQPxxlETkJxsyrT5JhIxW.qh4.hOtRH3UjP0NgpgG.vDCh.VT
+ kDLhQm_.uoOr2Kmz2fDVsQYWxOsUy
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: f742a184-4405-4544-a521-c51fc18dd0d3
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Fri, 15 Dec 2023 22:26:19 +0000
-Received: by hermes--production-gq1-6949d6d8f9-pmzmd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 82d6a093b466d43a3aa36e3491ebb0ec;
-          Fri, 15 Dec 2023 22:26:13 +0000 (UTC)
+X-Sonic-ID: b4d1f540-b7f0-435b-8a33-53babebcef2a
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Fri, 15 Dec 2023 22:27:52 +0000
+Received: by hermes--production-gq1-6949d6d8f9-ghhkt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b2d8de7c709cc71c362074832ee86fab;
+          Fri, 15 Dec 2023 22:27:49 +0000 (UTC)
 From: Casey Schaufler <casey@schaufler-ca.com>
 To: casey@schaufler-ca.com,
 	paul@paul-moore.com,
@@ -58,9 +58,9 @@ Cc: jmorris@namei.org,
 	stephen.smalley.work@gmail.com,
 	linux-kernel@vger.kernel.org,
 	mic@digikod.net
-Subject: [PATCH v39 12/42] Audit: use an lsmblob in audit_names
-Date: Fri, 15 Dec 2023 14:16:06 -0800
-Message-ID: <20231215221636.105680-13-casey@schaufler-ca.com>
+Subject: [PATCH v39 14/42] Audit: Change context data from secid to lsmblob
+Date: Fri, 15 Dec 2023 14:16:08 -0800
+Message-ID: <20231215221636.105680-15-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20231215221636.105680-1-casey@schaufler-ca.com>
 References: <20231215221636.105680-1-casey@schaufler-ca.com>
@@ -72,90 +72,152 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace the osid field in the audit_names structure with a
-lsmblob structure. This accommodates the use of an lsmblob in
-security_audit_rule_match() and security_inode_getsecid().
+Change the LSM data stored in the audit transactions from a secid
+to an LSM blob. This is done in struct audit_context and struct
+audit_aux_data_pids. Several cases of scaffolding can be removed.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- kernel/audit.h   |  2 +-
- kernel/auditsc.c | 20 +++++---------------
- 2 files changed, 6 insertions(+), 16 deletions(-)
+ kernel/audit.h       |  2 +-
+ kernel/auditfilter.c |  1 -
+ kernel/auditsc.c     | 31 ++++++++++++-------------------
+ 3 files changed, 13 insertions(+), 21 deletions(-)
 
 diff --git a/kernel/audit.h b/kernel/audit.h
-index b1f2de4d4f1e..6c664aed8f89 100644
+index 6c664aed8f89..b413c0420c6f 100644
 --- a/kernel/audit.h
 +++ b/kernel/audit.h
-@@ -82,7 +82,7 @@ struct audit_names {
- 	kuid_t			uid;
- 	kgid_t			gid;
- 	dev_t			rdev;
--	u32			osid;
-+	struct lsmblob		oblob;
- 	struct audit_cap_data	fcap;
- 	unsigned int		fcap_ver;
- 	unsigned char		type;		/* record type */
+@@ -144,7 +144,7 @@ struct audit_context {
+ 	kuid_t		    target_auid;
+ 	kuid_t		    target_uid;
+ 	unsigned int	    target_sessionid;
+-	u32		    target_sid;
++	struct lsmblob	    target_blob;
+ 	char		    target_comm[TASK_COMM_LEN];
+ 
+ 	struct audit_tree_refs *trees, *first_trees;
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index d0df226bdc51..24cb8259e5b1 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -1369,7 +1369,6 @@ int audit_filter(int msgtype, unsigned int listtype)
+ 			case AUDIT_SUBJ_SEN:
+ 			case AUDIT_SUBJ_CLR:
+ 				if (f->lsm_rule) {
+-					/* stacking scaffolding */
+ 					security_current_getlsmblob_subj(&blob);
+ 					result = security_audit_rule_match(
+ 						   &blob, f->type, f->op,
 diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index b15e44e56409..aaea62822505 100644
+index aaea62822505..bfe2ee3ccbe6 100644
 --- a/kernel/auditsc.c
 +++ b/kernel/auditsc.c
-@@ -698,19 +698,15 @@ static int audit_filter_rules(struct task_struct *tsk,
- 			if (f->lsm_rule) {
- 				/* Find files that match */
- 				if (name) {
--					/* stacking scaffolding */
--					blob.scaffold.secid = name->osid;
- 					result = security_audit_rule_match(
--								&blob,
-+								&name->oblob,
- 								f->type,
- 								f->op,
- 								f->lsm_rule);
- 				} else if (ctx) {
- 					list_for_each_entry(n, &ctx->names_list, list) {
--						/* stacking scaffolding */
--						blob.scaffold.secid = n->osid;
- 						if (security_audit_rule_match(
--								&blob,
-+								&n->oblob,
- 								f->type,
- 								f->op,
- 								f->lsm_rule)) {
-@@ -1562,13 +1558,11 @@ static void audit_log_name(struct audit_context *context, struct audit_names *n,
- 				 from_kgid(&init_user_ns, n->gid),
- 				 MAJOR(n->rdev),
- 				 MINOR(n->rdev));
--	if (n->osid != 0) {
-+	if (lsmblob_is_set(&n->oblob)) {
- 		char *ctx = NULL;
- 		u32 len;
+@@ -100,7 +100,7 @@ struct audit_aux_data_pids {
+ 	kuid_t			target_auid[AUDIT_AUX_PIDS];
+ 	kuid_t			target_uid[AUDIT_AUX_PIDS];
+ 	unsigned int		target_sessionid[AUDIT_AUX_PIDS];
+-	u32			target_sid[AUDIT_AUX_PIDS];
++	struct lsmblob		target_blob[AUDIT_AUX_PIDS];
+ 	char 			target_comm[AUDIT_AUX_PIDS][TASK_COMM_LEN];
+ 	int			pid_count;
+ };
+@@ -1019,7 +1019,7 @@ static void audit_reset_context(struct audit_context *ctx)
+ 	ctx->target_pid = 0;
+ 	ctx->target_auid = ctx->target_uid = KUIDT_INIT(0);
+ 	ctx->target_sessionid = 0;
+-	ctx->target_sid = 0;
++	lsmblob_init(&ctx->target_blob);
+ 	ctx->target_comm[0] = '\0';
+ 	unroll_tree_refs(ctx, NULL, 0);
+ 	WARN_ON(!list_empty(&ctx->killed_trees));
+@@ -1093,8 +1093,9 @@ static inline void audit_free_context(struct audit_context *context)
+ }
  
--		if (security_secid_to_secctx(
--			n->osid, &ctx, &len)) {
--			audit_log_format(ab, " osid=%u", n->osid);
-+		if (security_lsmblob_to_secctx(&n->oblob, &ctx, &len)) {
- 			if (call_panic)
- 				*call_panic = 2;
- 		} else {
-@@ -2276,17 +2270,13 @@ static void audit_copy_inode(struct audit_names *name,
- 			     const struct dentry *dentry,
- 			     struct inode *inode, unsigned int flags)
+ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
+-				 kuid_t auid, kuid_t uid, unsigned int sessionid,
+-				 u32 sid, char *comm)
++				 kuid_t auid, kuid_t uid,
++				 unsigned int sessionid, struct lsmblob *blob,
++				 char *comm)
  {
+ 	struct audit_buffer *ab;
+ 	char *ctx = NULL;
+@@ -1108,8 +1109,8 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
+ 	audit_log_format(ab, "opid=%d oauid=%d ouid=%d oses=%d", pid,
+ 			 from_kuid(&init_user_ns, auid),
+ 			 from_kuid(&init_user_ns, uid), sessionid);
+-	if (sid) {
+-		if (security_secid_to_secctx(sid, &ctx, &len)) {
++	if (lsmblob_is_set(blob)) {
++		if (security_lsmblob_to_secctx(blob, &ctx, &len)) {
+ 			audit_log_format(ab, " obj=(none)");
+ 			rc = 1;
+ 		} else {
+@@ -1778,7 +1779,7 @@ static void audit_log_exit(void)
+ 						  axs->target_auid[i],
+ 						  axs->target_uid[i],
+ 						  axs->target_sessionid[i],
+-						  axs->target_sid[i],
++						  &axs->target_blob[i],
+ 						  axs->target_comm[i]))
+ 				call_panic = 1;
+ 	}
+@@ -1787,7 +1788,7 @@ static void audit_log_exit(void)
+ 	    audit_log_pid_context(context, context->target_pid,
+ 				  context->target_auid, context->target_uid,
+ 				  context->target_sessionid,
+-				  context->target_sid, context->target_comm))
++				  &context->target_blob, context->target_comm))
+ 			call_panic = 1;
+ 
+ 	if (context->pwd.dentry && context->pwd.mnt) {
+@@ -2722,15 +2723,12 @@ int __audit_sockaddr(int len, void *a)
+ void __audit_ptrace(struct task_struct *t)
+ {
+ 	struct audit_context *context = audit_context();
 -	struct lsmblob blob;
--
- 	name->ino   = inode->i_ino;
- 	name->dev   = inode->i_sb->s_dev;
- 	name->mode  = inode->i_mode;
- 	name->uid   = inode->i_uid;
- 	name->gid   = inode->i_gid;
- 	name->rdev  = inode->i_rdev;
--	security_inode_getlsmblob(inode, &blob);
+ 
+ 	context->target_pid = task_tgid_nr(t);
+ 	context->target_auid = audit_get_loginuid(t);
+ 	context->target_uid = task_uid(t);
+ 	context->target_sessionid = audit_get_sessionid(t);
+-	security_task_getlsmblob_obj(t, &blob);
 -	/* stacking scaffolding */
--	name->osid = blob.scaffold.secid;
-+	security_inode_getlsmblob(inode, &name->oblob);
- 	if (flags & AUDIT_INODE_NOEVAL) {
- 		name->fcap_ver = -1;
- 		return;
+-	context->target_sid = blob.scaffold.secid;
++	security_task_getlsmblob_obj(t, &context->target_blob);
+ 	memcpy(context->target_comm, t->comm, TASK_COMM_LEN);
+ }
+ 
+@@ -2746,7 +2744,6 @@ int audit_signal_info_syscall(struct task_struct *t)
+ 	struct audit_aux_data_pids *axp;
+ 	struct audit_context *ctx = audit_context();
+ 	kuid_t t_uid = task_uid(t);
+-	struct lsmblob blob;
+ 
+ 	if (!audit_signals || audit_dummy_context())
+ 		return 0;
+@@ -2758,9 +2755,7 @@ int audit_signal_info_syscall(struct task_struct *t)
+ 		ctx->target_auid = audit_get_loginuid(t);
+ 		ctx->target_uid = t_uid;
+ 		ctx->target_sessionid = audit_get_sessionid(t);
+-		security_task_getlsmblob_obj(t, &blob);
+-		/* stacking scaffolding */
+-		ctx->target_sid = blob.scaffold.secid;
++		security_task_getlsmblob_obj(t, &ctx->target_blob);
+ 		memcpy(ctx->target_comm, t->comm, TASK_COMM_LEN);
+ 		return 0;
+ 	}
+@@ -2781,9 +2776,7 @@ int audit_signal_info_syscall(struct task_struct *t)
+ 	axp->target_auid[axp->pid_count] = audit_get_loginuid(t);
+ 	axp->target_uid[axp->pid_count] = t_uid;
+ 	axp->target_sessionid[axp->pid_count] = audit_get_sessionid(t);
+-	security_task_getlsmblob_obj(t, &blob);
+-	/* stacking scaffolding */
+-	axp->target_sid[axp->pid_count] = blob.scaffold.secid;
++	security_task_getlsmblob_obj(t, &axp->target_blob[axp->pid_count]);
+ 	memcpy(axp->target_comm[axp->pid_count], t->comm, TASK_COMM_LEN);
+ 	axp->pid_count++;
+ 
 -- 
 2.41.0
 
