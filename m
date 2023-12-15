@@ -1,51 +1,51 @@
-Received: from sonic315-27.consmr.mail.ne1.yahoo.com (sonic315-27.consmr.mail.ne1.yahoo.com [66.163.190.153])
+Received: from sonic306-28.consmr.mail.ne1.yahoo.com (sonic306-28.consmr.mail.ne1.yahoo.com [66.163.189.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA97818EC1
-	for <linux-security-module@vger.kernel.org>; Fri, 15 Dec 2023 22:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4C118EBF
+	for <linux-security-module@vger.kernel.org>; Fri, 15 Dec 2023 22:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="O6zwzudR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702680033; bh=o5IMFBUGP2UovHyCSNRiU+4kZ3jQYyLWEB5ADn6j2oU=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=O6zwzudRZVUq8/FVNESHRKoaMDlJ5scqxAv5JDviYB9mNlB/tPsF1kXlZ4Q5jGlhnqKfzbx4yEPSls7cv+tLceDr526M8rBDCa95/Omwc9A+ULU00lkuuW12xcAtti/B5hr8dw3ytH5MJBEIBI81PD7JYRSbd0gotwlNgCuVzcuDYHy6rOu7x896Ndynp8067dT+bmTstNVBk8X24e/khYoj5H3YoDshmE6IXXdA7vfyrxgVcxARqy0QQ5Dbh78/UPvqaXaYQNi8E8WG9Jef7JU4wjvorp3W3nQeE1t4Z8AaDEUZaBExYfKDxX5yDQe3cqDxFPM2czNYxKCN1iEIJw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702680033; bh=+bUJYUNOXUuVi58l0WjnoNkLHMIXQZXrNStlx5iarTM=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=d//Xed7AmTwqwyuD7jNF6GcThSFms6MTymep/x8SPkwM3Y9fjyXzpjB7/l3fAi/QahahcQ7KFoX0nUY2rAaRJ2HWN8uNsAVr/6VpJfXy4qeyk6AuGrVjNJd+lHcMJ9GgIUKtsMziWo7gZxRuJRnuArKIZg2Xqnp6Jn4s80H/ASJzZXfCeOW0FW19jvtMMDRLKxA+/bbwapn1ME7Ukym/5KxBQkj6AyxpV1nwIAg3MoEAkLphLemPDx4VlcSfGbSJl05IoW1yDrFUpxOkMGvpaw/4UxupyxlZVc5tRVQ0mHrSoDnomf6Up8bYoxrMLZETpV0lS9xpjvTTOOqNl0uNYg==
-X-YMail-OSG: LuT8lnAVM1nEZoptBRpIACvIfKhJTin.P1ZwBGe1zPGEiYD2ZOPaST8XiPvbDGO
- SeNN7zoADgVlrgQ7rX_CtmqcNy.KSk6oRPLw6KWCgL8LLag5_GLx8uwE.L1SJJpXjLM98lFwRXOh
- goJlGpjCeYzAGQRLIYcTJgcSJdh6at1ppH5sJOFwyLdxojbO5UlhbQbAsdz9WIBmUO9v2nzqcvvg
- sYr_MA8VoO0YJAp_i9z5zXrGLU57inhSFNPjH2s7RP3tPCkm7mmliycSaESsPvZWtt3ztrptg0CC
- xexglxtCMzJXkM_FueiZlE3F6T4E_w9eBxefPHYeIGgIoCrLdYKVmuJ0_GCl4O7F8vc6ABX157Y1
- wZkq27JpSDToc975D7J.kGwiGPkxEyq1kLoPkt.wNGwh4n.dL3mMimy5dEx366FkYBVHjN1wSQAm
- eTlQ1g7Gxq0Ukvt7N5JecI5E63tuRiBcy9b_9lqXfxdYHwxkTE7_SS7X1DE9yuTKRepnPqiXSN4O
- PGhaok2r8.69P8OuKrfVoVpw3ejK3yW0lqrub0PZDolg03VTYzTTQlbCB7_cYRovWP0Ukk52Jna2
- lqCrpDJr2DA0P9aSEHAwtbOGQW7b.DGrHa1ut0yboWqCcOyBdgbE1av_Kfsv2AASH8kUP1_lGRDb
- znDVYUojshoN4WAWSC1dJsymGJDplft5FbPxSHAmu6Zzs3NexiRnlKNtQaLcXrzrYKIusLKtodas
- xIaOzg5KVcUP6Py1vrZcZqGpD9i5Kbi.RNpvmT1LLI0WY41aDuYp3ajB4vaSZIw7daDxYbNThV89
- 8dzdO65TA8PuqXujqt3zt3BmRQn1rclBiJZzsjEuzP1I9j52R9c_OO1ZMPbxXUp9kuSm26D1LIJ5
- gqYYWKENac_EpEBkOaEN38fTYk6L4F3sPK96_YMIdJfOBDRf3ickRGaooyXmpSJngyhjcPlmjliB
- 4Ia65ahXfqd_5jckbC.Eigw7bX.gABeJ9F3gsikF9BtkAQ6CII45EXBC7iRe_rlJc5QeadCFdLxi
- LvRhcPi9ETznW1zzpCfxanWsqieDX5yFKn_GHkPrOTXrH_KNcH_3mra5VRGAGNQKgHkyHaVtGGO1
- 1LztTlKM_Ict0GflBH5BGEzY4h9U57IMAcsAGIb5Il93tb8G7UANbjU_.yN8Luz6VuU1QedBWvoC
- SR6sDNtygO6acb98fKyh4i09IG00iSD8PEsovZWtXKGe0a.DYguT9RBg3AsciM33JKdxI9m8MyNF
- p.UffrTm9sBs2ylITeSnjEunW1butr581m1uC.5ZMqktR5PfDOhHbBrrAhju0Z9FYxcgqlrcrXw9
- FWK2NhUPbLHXFHXr93Ij4BZ73wbJ..J.A6JPhJJYrvjoI2Ns32hgWJGbs1_HyTPfSlUcRm7tQdFz
- czfFXgMbtd7op4V.FrBXiPxrJTp_yE8vvVL2dPDlEPPMAZeiYXLEB3_Aa89tvsxucWgRaARwRXRc
- pEWayQqQ78CuOPXVG293pB5a.eSDjt8_XedP39.tjb9mCCcSGxM07FCTsGf3RYZw._PoELXUAULk
- _pzZxrIIvFzX_vYV589y_W9wtOJ_bFjqN0fstBYfXZk8uCYpkln1VBvQuq0zhWIW3pLCzMjtgV4X
- YelQzxnzNjRtz_W4VjEoCHm3jvxlubLgIxVbuf.Yt8gMsSYqAz0MQrMTSfeKL.seoZOxqC1PC.n9
- 81yghYGThpPCYxsNjemYZgRk_3HbRjdl8gLYNoUY2Pdrm61gPu9eAbD42WpCKNoW4EhIx74Lk1BU
- 5o93mZurnOSCZGP_H6YFcJpSKH3_7Iomv4I3R5aEV4Ub0RXT..unGjLdJyZXUNbIWQ2Bc.9ves4D
- 5.5D08dgK75eH36un9tizKfJqBabHaeX6RBX0.OHYd_p6GQ4Up_by1DStQDpONE0UH.bu3uND8rp
- PmRFgDPdr85_p0E7d5DQTafpmH4iIMcXvLVi0L8sRl6gdFUX5FkMPLtDmeCTI5KS1aWHDIpiUfnr
- S20i00gvy_.C2wUQhZpWk4ZGjYJe2PWvVnaDCTusl1YAMf4eXuiueiFiBi8vkoE2zsaiF_ehTbo4
- evnLUIT93KR3JJE.jpkajBON416r4AlTIWo2MzOhTh6PhFW3Nu4IJA6mXSjv6KPTpykUNKcLbtn8
- 41c4HYm7bpJ1T7Bc9FYNRvtbjqCD6hTGllRwBMZVTlaMziUsyq1LwahHCfh2MQ7cigAt_iGW.nLL
- X42_NASxM7T2eBQtHQRIzkiobOZQqUZMoOLgpoiLui0swU3kqkpQl9EyCji5KZfEkgsovv8O.C2I
- _ukiPRJx4Z334LuV1mX49pEETWSm.
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="XQMWrGxr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702680127; bh=ZEHXiJrgb1zdL6EoMkNwkV2keMKbDFlpdJJZebncUCo=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=XQMWrGxrG4L3NnnVe7i8hL42HSG2x92vGiuBrb5h7861cSnJSJj6UZSocWY/Zy844umtGZqOq21NiipRm7bD/zU9DUQp1llTHQaDlosGo47pgHDGysBwpgmYkrDiVl5n4ZcX5z40y4UNTe/9mqYp/vE/ap5aAazMH0UKQ/+dnhC94W/nkCZJZOu2kxf5NlTY9IsQtkIb45A4AKd7kQqwz4xH0JaAqLgbIhUl6o5x1wmC4CvUcQWdYZRSpIYIb+OC5ZTmmclWfpc8uQN5KuTAU20+F/0RSfYHsshI4KY5QbAX7sLxlprv1t6/DJuKp2E84GQOojt+JHuhj1CL9BQYGg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702680127; bh=s9OinXN4BNWiWYh6Ku+HYSjEK5Odfe0nhz7SEss2thB=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=R0sXa90XNC82x534Q3cB14JE14NEArCzJICwgqtC6E1SVuOSKCiMfjl+ss0VDC929LyM/Z9lHZmoYuO6PbDbqICckBAQOs356v6waZAurZCXB+8ls4W43axMACW1KwDbjn/T6uB1dqfP64nqSjLSm/5SormCnQBaajTUCqyiKLk6WULS+6fGPbkOW4Qfksg0IK1zEY6m24+Jk4JDL4JQNy3GhwC061Ipbsjsuwh+fPBnv68Vxsqm+HuEsEa0VjLqj25sA/ftOjpnyI6gu2lEL+KwBITbz+MOh7KfyCLK/JBi/YjqTC17F9r0AebxTLdVffSYiqhyVHmYjggVINOIsg==
+X-YMail-OSG: 4BWwR2EVM1n6hAHa6QGlI.yY8SH2x_io_qTXv0EuYNulesBo29F8UhoKLmK6sOe
+ 7b4yXWzQUh8sei9zAmlZizdpVrv7o4Cg2Mi9gYbeG9KhZyi05Xx89X8klJOBvjYcnQLyxad3nESb
+ sUpiwS_jEst2OAP4gG730TJPdTl_KTqNux_1pvskC2qxgwDknZOLemxJSZb80OGP8RVtmGh9QFMi
+ WOUEH7iIapC8SCKyqhjIuJP3CF6gsyyresT00MwXe64_9LVotZRCciyi9eGyPHzqTDIyzACONkDY
+ y6O7cm7epddA21bePLsVutH89mSCF28Nuc1lPokhhYlwmIT4FVPzWeXO4jteItGUKradKT.LOscz
+ JZBtP1OWInVb1Cy16R8hNXi6BXXuBs8kstyrwl7w8CZT7AuEcmwMzyoA0bGIoHX4nnM.ear5DqX6
+ ..EFjD5jkUjdCvFPU5HgLBTfxz1ruMSe2MiHKP4VrEH6tUWOdieOag3Ew1roLvU9.FaSRVVpuXu.
+ N1LfiDaTeBJK_pJT7Wqxvq7X3D4ASs4WKp4azhXKB4oY.XSz3nrEV40ncgHkl9hPf.9UNxsuKLVY
+ ZPTRHoDtFRWGf4XgQPZfGNZPK64l322Im7OiU4xfjHkCdbunyvlsuJuWrfxqEs5mrS0oTrMN9lGk
+ NWybrMaS7kqzA2xn9JWc9HQHwBb8s0h3APCC0DTN9KkOlQMZrtf8nS9BcdSDMYDHUE_KsyLocwlA
+ hFCpx.rdLAyFspNJD_8FhyDtDwYG1AL9aLyalw6UuevWQAs9M41Cb3VOO_ftvdlrjsmtYk2FiRhC
+ ZMUixPTnbFvZQhk.qI_uUoHh2J2fEDro2Mf1_3.E9_gy89UxvlFghhUWmrHsnlK9kzuc0rrMzfpm
+ DvJgK5eW0YnbX6JJaheIfsHOVY7wTryI4LjUjzJWxgtpiL0GfQ4.0181CV8MzrY8aaAjoQBtzml5
+ itiVeDYRT1KV4_7Fz0WA7mmjnGNSyWM.0PkqZ08mqr1yquN9AvUwIpFIx6YRHi5kz6hqwJuOxSHc
+ v9dIUfVpzmnbLQe0cQ06rH9rlAqNJmfAlWlJiAw3XlkTOq7G_oJ2ZUbJ1j6ewIjXijap5A2Clnk4
+ Xh7vEuEWD79rgIWuZj31cuv3OSVFKvfws2vYi5msF0h8EiRJup.fbqo8ZvoNlvAyKyaZBuaeHAJm
+ _NGrC6ehPPDmtMjhTrfk.R44CW.nOdZFAohAVS9PkVIekuAyrBo3MACrZ4OVQcVN_yfyneVD8TbD
+ Ie0_1vNC.Xr92BS2t070ntUnfq5gRk08eOlWtGb.bQv.v3z8D1h4fEX2YGAxKdaXxfKtVhCFM53D
+ JDm102kBNAFCzupinn_49rH5KKfKLI71nMhOv0tb_gqRF7iQwGpHfW.7vTF9p647y1q6oyExKUPr
+ BxR0lwaXnmPom6.cqLPV97SGDb2fE76pBpUCRAIgcTO3aOzyrlcADP8oQvPvu_Hf0FUNv5q99Cc3
+ JAZE2LuPPUXUEgvvI1jR47W_ShHN92GTqT_4GRWIkiWnkjUnxT2Y_gfYUIP8h6N2w9Zcws2ScEZE
+ vaHdrCDFiIPmlST1p48Rw1nWr9r0A_9AioRPSNn9ISV0LnzjHWgIkSIEj8on9IqBCu34DjB82Zla
+ 3hMgh8RbmPCFICJJMadhtTdUEbFjJjILdzyhKVSPRgxQsF4MpiogIFBAHSHEhJa24ah5aKdggqkc
+ r5JShu6IjWYBBQzSljNkgzaX4DeZQQnyvnCiF9K1tYauH3ZCOG2wuSY7v.GuC0yXzolVN4OSar4K
+ J4hHXwWFAwE9nHrRqmiCM41CqiY26fWvirjiuDTbMO6C4DpSK96w35egSxPM3lzkMS5K3bNgvU_s
+ lN9W2IF7l9qoBlXYjtMxlEtvGEzpWW8nVzol.ifaGDk.KJgCF2QKqlewTVLLgX.lVMajsXrD7B1O
+ N8kwf7b.Ekr9KHYxmavVPnSmwHkZ8jKvM7dBUzxssB78V7UZJoDoxExcls3HT9ES6A7kX._yJGfb
+ Ov_Yf0NkpFrRbjlEdk5pHy_opS4EfZ.vKEQPgdwXih_6WUvdkhRRYHPwl0BHdX4nD9.VxO4htO1z
+ UBHmKoAqdNZQ3giK05rHc.WEtJKXzIsEx97ZyNoLeH8KINMGXOcktjnYQU8i0TmF7XCcjyrF6v95
+ .RKla44Hse6Euwd2aPeYDcpu_6bcVl4AdVfln0ssz4obkvM6cBCUvFdjp02xw3kpdt3SqC6V0.nV
+ G0lH.L40i9H.BZYPLvKGWdKPRH.zvuzDfknHfhimnyfaIc06kTh_kBRyDFMd.4rWhnlx6d1ERzNL
+ z4boCUtjlfXAjS2R56UsyG.v._0w-
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 88385606-f443-4ae1-a189-0fcb3bac267e
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Fri, 15 Dec 2023 22:40:33 +0000
-Received: by hermes--production-gq1-6949d6d8f9-k52jv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 154018758a06b94c4980c22812ec859e;
-          Fri, 15 Dec 2023 22:40:29 +0000 (UTC)
+X-Sonic-ID: e8cd937a-6ca5-488c-acac-5073aa4e5ddd
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Fri, 15 Dec 2023 22:42:07 +0000
+Received: by hermes--production-gq1-6949d6d8f9-bvfr7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7cf3dab1b010cdb86f7a13f4b7451804;
+          Fri, 15 Dec 2023 22:42:05 +0000 (UTC)
 From: Casey Schaufler <casey@schaufler-ca.com>
 To: casey@schaufler-ca.com,
 	paul@paul-moore.com,
@@ -58,9 +58,9 @@ Cc: jmorris@namei.org,
 	stephen.smalley.work@gmail.com,
 	linux-kernel@vger.kernel.org,
 	mic@digikod.net
-Subject: [PATCH v39 30/42] LSM: Single calls in socket_getpeersec hooks
-Date: Fri, 15 Dec 2023 14:16:24 -0800
-Message-ID: <20231215221636.105680-31-casey@schaufler-ca.com>
+Subject: [PATCH v39 33/42] AppArmor: Remove the exclusive flag
+Date: Fri, 15 Dec 2023 14:16:27 -0800
+Message-ID: <20231215221636.105680-34-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20231215221636.105680-1-casey@schaufler-ca.com>
 References: <20231215221636.105680-1-casey@schaufler-ca.com>
@@ -72,55 +72,66 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-security_socket_getpeersec_stream() and security_socket_getpeersec_dgram()
-can only provide a single security context or secid to their callers.
-Open code these two hooks to return the first hook provided. Because
-only one "major" LSM is allowed there will only be one hook in the list,
-with the excepton being BPF. BPF is not expected to be using these
-interfaces.
+With the inclusion of the interface LSM process attribute
+mechanism AppArmor no longer needs to be treated as an
+"exclusive" security module. Remove the flag that indicates
+it is exclusive. Remove the stub getpeersec_dgram AppArmor
+hook as it has no effect in the single LSM case and
+interferes in the multiple LSM case.
 
+Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+Acked-by: John Johansen <john.johansen@canonical.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- security/security.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ security/apparmor/lsm.c | 20 +-------------------
+ 1 file changed, 1 insertion(+), 19 deletions(-)
 
-diff --git a/security/security.c b/security/security.c
-index f2ef6032a925..3f0a4c5094a5 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -4686,8 +4686,14 @@ EXPORT_SYMBOL(security_sock_rcv_skb);
- int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
- 				      sockptr_t optlen, unsigned int len)
- {
--	return call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
--			     optval, optlen, len);
-+	struct security_hook_list *hp;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.socket_getpeersec_stream,
-+			     list)
-+		return hp->hook.socket_getpeersec_stream(sock, optval, optlen,
-+							 len);
-+
-+	return -ENOPROTOOPT;
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index ab9b0b37f1f7..d47816e91bd3 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1385,22 +1385,6 @@ static int apparmor_socket_getpeersec_stream(struct socket *sock,
+ 	return error;
  }
  
+-/**
+- * apparmor_socket_getpeersec_dgram - get security label of packet
+- * @sock: the peer socket
+- * @skb: packet data
+- * @secid: pointer to where to put the secid of the packet
+- *
+- * Sets the netlabel socket state on sk from parent
+- */
+-static int apparmor_socket_getpeersec_dgram(struct socket *sock,
+-					    struct sk_buff *skb, u32 *secid)
+-
+-{
+-	/* TODO: requires secid support */
+-	return -ENOPROTOOPT;
+-}
+-
  /**
-@@ -4707,8 +4713,13 @@ int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
- int security_socket_getpeersec_dgram(struct socket *sock,
- 				     struct sk_buff *skb, u32 *secid)
- {
--	return call_int_hook(socket_getpeersec_dgram, -ENOPROTOOPT, sock,
--			     skb, secid);
-+	struct security_hook_list *hp;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.socket_getpeersec_dgram,
-+			     list)
-+		return hp->hook.socket_getpeersec_dgram(sock, skb, secid);
-+
-+	return -ENOPROTOOPT;
- }
- EXPORT_SYMBOL(security_socket_getpeersec_dgram);
+  * apparmor_sock_graft - Initialize newly created socket
+  * @sk: child sock
+@@ -1510,8 +1494,6 @@ static struct security_hook_list apparmor_hooks[] __ro_after_init = {
+ #endif
+ 	LSM_HOOK_INIT(socket_getpeersec_stream,
+ 		      apparmor_socket_getpeersec_stream),
+-	LSM_HOOK_INIT(socket_getpeersec_dgram,
+-		      apparmor_socket_getpeersec_dgram),
+ 	LSM_HOOK_INIT(sock_graft, apparmor_sock_graft),
+ #ifdef CONFIG_NETWORK_SECMARK
+ 	LSM_HOOK_INIT(inet_conn_request, apparmor_inet_conn_request),
+@@ -2296,7 +2278,7 @@ static int __init apparmor_init(void)
  
+ DEFINE_LSM(apparmor) = {
+ 	.name = "apparmor",
+-	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
++	.flags = LSM_FLAG_LEGACY_MAJOR,
+ 	.enabled = &apparmor_enabled,
+ 	.blobs = &apparmor_blob_sizes,
+ 	.init = apparmor_init,
 -- 
 2.41.0
 
