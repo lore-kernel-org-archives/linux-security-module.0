@@ -1,87 +1,112 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D3C13FEA;
-	Sat, 16 Dec 2023 04:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 37D7A928; Fri, 15 Dec 2023 22:11:16 -0600 (CST)
-Date: Fri, 15 Dec 2023 22:11:16 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: "T. Williams" <tdwilliamsiv@gmail.com>
-Cc: jmorris@namei.org, serge@hallyn.com, Paul Moore <paul@paul-moore.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fixing userspace memory dereference in security.c
-Message-ID: <20231216041116.GA78578@mail.hallyn.com>
-References: <CADN=F_ke996vNXDNz6vZ_As0Ms5Q2X7aT3t-SSGRiqdeKd6gCQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A669F14287;
+	Sat, 16 Dec 2023 10:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S3X/v+6K"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4152C433C7;
+	Sat, 16 Dec 2023 10:38:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702723122;
+	bh=D4jAbfqZArxfJjDljoJoonG0UlpZxX4g3d5+ilJMaQo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S3X/v+6K+FRfwo2BlGXpMpfZww0L9/InYuqR/nqaBL9hbh8pIl3a2F7YWwiKCaC9P
+	 fxFQeMx+EMwc3U2x/55T1e79WEragUkGFW96TOtEA9y8qA2cDBw0YctFC8onK4LB2G
+	 EPOTQ/vDxL1MGIno1ifAhz43qDTy0QqlBjDqxhAG7gG24FpwUtBdOykFjvnX9YYuVp
+	 eyc51QN0q2GDGjj5Ke5ZspJveY4lq44a3j8EkvwKCk0dKRFYYU4JCdvGW7DAcgCmaW
+	 1zh+P/hwb9vvZ3Nyu0xDX31g3YIlGAr4Z4ZyDFkrPIZS0gBzYtN/UdnDS7qBzYxFdk
+	 dPjH+WQGosV2Q==
+Date: Sat, 16 Dec 2023 11:38:33 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Michael =?utf-8?B?V2Vpw58=?= <michael.weiss@aisec.fraunhofer.de>,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Quentin Monnet <quentin@isovalent.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+	LSM List <linux-security-module@vger.kernel.org>,
+	gyroidos@aisec.fraunhofer.de
+Subject: Re: [RFC PATCH v3 3/3] devguard: added device guard for mknod in
+ non-initial userns
+Message-ID: <20231216-vorrecht-anrief-b096fa50b3f7@brauner>
+References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
+ <20231213143813.6818-4-michael.weiss@aisec.fraunhofer.de>
+ <20231215-golfanlage-beirren-f304f9dafaca@brauner>
+ <61b39199-022d-4fd8-a7bf-158ee37b3c08@aisec.fraunhofer.de>
+ <20231215-kubikmeter-aufsagen-62bf8d4e3d75@brauner>
+ <CAADnVQKeUmV88OfQOfiX04HjKbXq7Wfcv+N3O=5kdL4vic6qrw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CADN=F_ke996vNXDNz6vZ_As0Ms5Q2X7aT3t-SSGRiqdeKd6gCQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQKeUmV88OfQOfiX04HjKbXq7Wfcv+N3O=5kdL4vic6qrw@mail.gmail.com>
 
-On Wed, Oct 06, 2021 at 07:03:56PM -0400, T. Williams wrote:
->  security/security.c | 2 ++
->  1 file changed, 2 insertions(+)
+On Fri, Dec 15, 2023 at 10:08:08AM -0800, Alexei Starovoitov wrote:
+> On Fri, Dec 15, 2023 at 6:15 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Fri, Dec 15, 2023 at 02:26:53PM +0100, Michael Weiß wrote:
+> > > On 15.12.23 13:31, Christian Brauner wrote:
+> > > > On Wed, Dec 13, 2023 at 03:38:13PM +0100, Michael Weiß wrote:
+> > > >> devguard is a simple LSM to allow CAP_MKNOD in non-initial user
+> > > >> namespace in cooperation of an attached cgroup device program. We
+> > > >> just need to implement the security_inode_mknod() hook for this.
+> > > >> In the hook, we check if the current task is guarded by a device
+> > > >> cgroup using the lately introduced cgroup_bpf_current_enabled()
+> > > >> helper. If so, we strip out SB_I_NODEV from the super block.
+> > > >>
+> > > >> Access decisions to those device nodes are then guarded by existing
+> > > >> device cgroups mechanism.
+> > > >>
+> > > >> Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
+> > > >> ---
+> > > >
+> > > > I think you misunderstood me... My point was that I believe you don't
+> > > > need an additional LSM at all and no additional LSM hook. But I might be
+> > > > wrong. Only a POC would show.
+> > >
+> > > Yeah sorry, I got your point now.
+> >
+> > I think I might have had a misconception about how this works.
+> > A bpf LSM program can't easily alter a kernel object such as struct
+> > super_block I've been told.
 > 
-> diff --git a/security/security.c b/security/security.c
-> index 9ffa9e9c5c55..7c41b5d732ab 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1737,6 +1737,8 @@ int security_kernel_read_file(struct file *file, enum
-> kernel_read_file_id id,
->         int ret;
+> Right. bpf cannot change arbitrary kernel objects,
+> but we can add a kfunc that will change a specific bit in a specific
+> data structure.
+> Adding a new lsm hook that does:
+>     rc = call_int_hook(sb_device_access, 0, sb);
+>     switch (rc) {
+>     case 0: do X
+>     case 1: do Y
 > 
->         ret = call_int_hook(kernel_read_file, 0, file, id, contents);
-> +       if (ret > 0)
-> +               return -EINVAL;
->         if (ret)
->                 return ret;
->         return ima_read_file(file, id, contents);
-> -- 
-> 2.25.1
-> 
-> This commit is to fix a userspace address dereference found by
-> syzkaller.
-> The crash is triggered by passing a file descriptor to an incorrectly
-> formed kernel module to finit_module.
-> 
-> Kernel/module.c:4175 : Within the finit_module, info.len is set to the
-> return value from kernel_read_file_from_fd. This value is then
-> dereferenced by memcmp within module_sig_check from inside load_module.
-> The value is 0xb000000 so the kernel dereferences user memory and kernel
-> panics.
+> is the same thing, but uglier, since return code will be used
+> to do this action.
+> The 'do X' can be one kfunc
+> and 'do Y' can be another.
+> If later we find out that 'do X' is not a good idea we can remove
+> that kfunc.
 
-Hi,
-
-thanks for sending this.  For some reason, I can't seem to find this
-message-id in lore.kernel.org to see if there were ever any replies.
-
-There is indeed a problem, although I think a more concise explanation
-is:
-
-1. security_kernel_read_file() returns any non-zero return value to mean
-permission denied
-2. kernel_read_file() returns > 0 meaning number of bytes read
-3. hen kernel_read_file() gets any non-zero rv from security_kernel_read_file(),
-it returns that value unchanged.
-
-Since kernel_read_file() is the only caller of security_kernel_read_file(),
-I think your patch is good, except you should also change the comment above
-it to read
-
- * Return: Returns 0 if permission is granted, < 0 on error.
-
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
-
-I think the reason it's not been a practical problem is because while
-security_kernel_read_file() will honor a >0 error from an LSM, no
-LSM implementation of that hook does that.  (Only loadpin and selinux
-implement it)
-
--serge
+The reason I moved the SB_I_MANAGED_DEVICES here is that I want a single
+central place where that is done for any possible LSM that wants to
+implement device management. So we don't have to go chasing where that
+bit is set for each LSM. I also don't want to have LSMs raise bits in
+sb->s_iflags directly as that's VFS property.
