@@ -1,177 +1,153 @@
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402D376082
-	for <linux-security-module@vger.kernel.org>; Mon, 18 Dec 2023 23:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D618768E7
+	for <linux-security-module@vger.kernel.org>; Mon, 18 Dec 2023 23:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="F95aym8v"
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dbd4a10735eso717486276.1
-        for <linux-security-module@vger.kernel.org>; Mon, 18 Dec 2023 15:06:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FwwqWwR+"
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dbccfd048d4so2745302276.3
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Dec 2023 15:20:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1702940798; x=1703545598; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1702941602; x=1703546402; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3ISbTIIGiRfCmq/xufZ2VhS6krg/p4Uisq2A0AgAr0o=;
-        b=F95aym8v+e/B7FHOGKUzdNBrNJ4LU0XQODj6QLv6aSqDo1YrmjywRZfTWtthIi/ZnJ
-         jl7fUBacAyUKKNaR90UvTFVrgI6O+zFHCl+UshXYXmm2XAoZM6c2YTDYOaHG+yHBmNQm
-         pc3gkptqarYRjJZ0xul48F98hspNKqpHejgIx2CBCyDfIzV3oP+bB3Fi4ucGqdc+pJf3
-         Z+kZW/W5fxp5zHLSN/YcyXQXqBkvKzK4Fcc35XGLiF7tRat+DrACuduTn0O6ZtRmbs87
-         akAL6FDi5+Z8/ghkg8TMsod+4G5PwvaH1cokErMCuDQhoUYJQ0fjhAYtgDEGIpQ7ZcB5
-         oGyw==
+        bh=ES2XANow3c4WFr3ElQ4CWmF6s3T3M4Np9YPYPvh1hCs=;
+        b=FwwqWwR+X0cRcfH1xnsGrnEuXjU+ihHmv5ZogitjV/KS9qSKRCIEw2k3VvcaP1FNsk
+         5qBUSpDGjnhde7h2X6X5BbR31cHKDGvfZiTarcbc/wkzk1tWxQgIqbNa4oRt3YQJFYmT
+         vqzqY/QyzcyFfRPSstoiXiokVYOQr/hs5c1fE7fUnL+LEN0Jtd7a+4nCz9L0naztfvSA
+         Bjpo5Iny6Qy7956S+FtAVEas/PYKK6JTFdJhK5mzXNy2IZUwF6V6VeLf5tLZN/D0OkJC
+         QfZ/a2gD/zzG2007MIfj0Aa2f0l1aBJF/invxb0mg8jvwPuticXMtKPv8lLLCsLqHtRl
+         EepA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702940798; x=1703545598;
+        d=1e100.net; s=20230601; t=1702941602; x=1703546402;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3ISbTIIGiRfCmq/xufZ2VhS6krg/p4Uisq2A0AgAr0o=;
-        b=LNIyNlV/HD/cY8fVCDqNo/FjAFahyV1iFoGrGXys4Sn+EJNUUOWc4fD2Foy4H+gOJ3
-         lbPt1o/2YNdoa7piewRxZ4IYjutbUkPKk7l+Q3m/xXMyFheuP9rPg0tZQzd1KAbi7TUD
-         qYU+tDEh4xJyU6eFCxaKNX0sp4qNysyx1HRBN+u2gotK7PS4VkFRERwti7C6+Gy1eDv1
-         O2UrIG5KqbjRuT0M8Akq8mh0yhEvQw45SgGGpWfh0PdGsL4W6fY6WGXw/OGLx/BIus6C
-         idxfMjHNHU05sztKDNc3TEhy9LEqalOhZ3+AbvU8xEk7T5/9u7jOUIyEuScSY7RITX7d
-         zkHA==
-X-Gm-Message-State: AOJu0YxyIhiBJXNoJ/0k7lEijtynQltCAKpDtusYOt9niC/JN5JU3n0Z
-	71dKi3OntFoH+nUvk7FXkEA9Cqpl2gbDOV30CJQYTmo9Yq5FjfVzWA==
-X-Google-Smtp-Source: AGHT+IF9tvbbBtBESqqHaSUt2obipOpR1nDsNFSA0VBd9FiKyVi8ta2GbNjZyjCOzpO6p39Z4BPWa3ZnsyADLzk/ssU=
-X-Received: by 2002:a5b:5cf:0:b0:db5:4532:8ea6 with SMTP id
- w15-20020a5b05cf000000b00db545328ea6mr10626822ybp.51.1702940798137; Mon, 18
- Dec 2023 15:06:38 -0800 (PST)
+        bh=ES2XANow3c4WFr3ElQ4CWmF6s3T3M4Np9YPYPvh1hCs=;
+        b=O9j7eOxM4QQMmRa60rGksyjTIVXJ9MKSJNatrzxSf9fEcRjmNyhv0OIvEEbYjyJ4j8
+         OGI6Rlk2QVsbs6elLD5uWEv0pVmfe1eFEmkvZoUA7BX14vWDzTBlavaYcS/wJZepdJRq
+         GQKT5BHOndc5vLOaRN80BQdsLjMQLRmNhPtsmcw8bkTI24M/JD2ydfmmFmCeV9f03gjY
+         MkvcQaFkrq3RwgMK/m0O238IvchzT6npnQPRXQgeqIE79K5SwftjzvrfCwuCE5nbNO9/
+         Dr22ujiy9syLXy82uS3nebvC5PSoZDqUnP/lAytcWCMgE/qdri9vvVJogpJcbDY0iEX3
+         9leQ==
+X-Gm-Message-State: AOJu0YwMCHHNZ8dFow+0sgMsDXvTfK95FY8Oj/xsQqS6WwueKDmD8DFi
+	ea7xjC+QI6dFMcbuJjCwqkZqpE6LERwXaEW++DUcYl0iIFytdPs=
+X-Google-Smtp-Source: AGHT+IGaOKY2VunMABSbe2HaT0zbdWVLY+2e0+B87FL6/BRvm07tXEU9RjPz2vEIJSGb6hdjk1jvH4lrchey9F4KY2U=
+X-Received: by 2002:a05:6902:278a:b0:dbc:f900:a343 with SMTP id
+ eb10-20020a056902278a00b00dbcf900a343mr3094031ybb.54.1702941601894; Mon, 18
+ Dec 2023 15:20:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CADN=F_ke996vNXDNz6vZ_As0Ms5Q2X7aT3t-SSGRiqdeKd6gCQ@mail.gmail.com>
- <20231216041116.GA78578@mail.hallyn.com>
-In-Reply-To: <20231216041116.GA78578@mail.hallyn.com>
+References: <09e4992c-9def-41b5-a806-2978b3ae35c6@I-love.SAKURA.ne.jp>
+In-Reply-To: <09e4992c-9def-41b5-a806-2978b3ae35c6@I-love.SAKURA.ne.jp>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 18 Dec 2023 18:06:27 -0500
-Message-ID: <CAHC9VhRmaT=gYM1qNaZ2D=9mz7vyhZLxU32gx11SpS2dNj_w5Q@mail.gmail.com>
-Subject: Re: [PATCH] fixing userspace memory dereference in security.c
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: "T. Williams" <tdwilliamsiv@gmail.com>, jmorris@namei.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 18 Dec 2023 18:19:50 -0500
+Message-ID: <CAHC9VhR_27_LtskFF_0Bzb_9R5r0NRvdW0z0bd9iU8JBOe+HPA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3] LSM: Officially support appending LSM hooks after boot.
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	KP Singh <kpsingh@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>, song@kernel.org, 
+	Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, renauld@google.com, 
+	Paolo Abeni <pabeni@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 15, 2023 at 11:11=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com>=
- wrote:
-> On Wed, Oct 06, 2021 at 07:03:56PM -0400, T. Williams wrote:
-> >  security/security.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/security/security.c b/security/security.c
-> > index 9ffa9e9c5c55..7c41b5d732ab 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -1737,6 +1737,8 @@ int security_kernel_read_file(struct file *file, =
-enum
-> > kernel_read_file_id id,
-> >         int ret;
-> >
-> >         ret =3D call_int_hook(kernel_read_file, 0, file, id, contents);
-> > +       if (ret > 0)
-> > +               return -EINVAL;
-> >         if (ret)
-> >                 return ret;
-> >         return ima_read_file(file, id, contents);
-> > --
-> > 2.25.1
-> >
-> > This commit is to fix a userspace address dereference found by
-> > syzkaller.
-> > The crash is triggered by passing a file descriptor to an incorrectly
-> > formed kernel module to finit_module.
-> >
-> > Kernel/module.c:4175 : Within the finit_module, info.len is set to the
-> > return value from kernel_read_file_from_fd. This value is then
-> > dereferenced by memcmp within module_sig_check from inside load_module.
-> > The value is 0xb000000 so the kernel dereferences user memory and kerne=
-l
-> > panics.
+On Sat, Dec 9, 2023 at 3:28=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
 >
-> Hi,
+> Commit 20510f2f4e2d ("security: Convert LSM into a static interface") has
+> unexported register_security()/unregister_security(), with the reasoning
+> that the ability to unload an LSM module is not required by in-tree users
+> and potentially complicates the overall security architecture.
 >
-> thanks for sending this.  For some reason, I can't seem to find this
-> message-id in lore.kernel.org to see if there were ever any replies.
+> After that commit, many LSM modules have been proposed and some of them
+> have succeeded in becoming in-tree users. Also, Linux distributors starte=
+d
+> enabling some of in-tree LSM modules in their distribution kernels.
+>
+> But due to that commit, currently in order to officially use an LSM
+> module, that LSM module has to be built into vmlinux. And this limitation
+> has been a big barrier for allowing distribution kernel users to use LSM
+> modules which the organization who builds that distribution kernel cannot
+> afford supporting.
+>
+> Therefore, as one of in-tree users, I've been asking for ability to appen=
+d
+> LSM hooks from LKM-based LSMs (i.e. re-export register_security()) so tha=
+t
+> distribution kernel users can use LSMs which the organization who builds
+> that distribution kernel cannot afford supporting.
+>
+> Paul Moore believes that we don't need to support appending LSM hooks fro=
+m
+> LKM-based LSMs because anyone who wants to use an LSM module can recompil=
+e
+> distributor kernels with that LSM enabled. But recompiling kernels is not
+> a viable option for regular developers/users [1]; the burden of
+> distributing rebuilt kernels is not acceptable for individual LSM authors
+> and majority of Linux users, and the risk of replacing known distributor'=
+s
+> prebuilt kernels with unknown individual's rebuilt kernels is not
+> acceptable for majority of distributor kernel users. If Endpoint Detectio=
+n
+> and Response software (including Antivirus software) could not be used
+> without replacing distributor's prebuilt kernels, Linux would not have be=
+en
+> chosen as a platform. Being able to use whatever functionality using
+> prebuilt distribution kernel packages and prebuilt kernel-debuginfo
+> packages is the mandatory baseline. Therefore, in order to unofficially u=
+se
+> LSMs which are not built into vmlinux, I've been maintaining AKARI (which
+> is a pure LKM version of TOMOYO) as an LKM-based LSM which can run on
+> kernels between 2.6.0 and 6.6.
+>
+> I was planning to propose ability to append LSM hooks from LKM-based LSMs
+> (i.e. re-export register_security()) so that distribution kernel users ca=
+n
+> use LSMs which the organization who builds that distribution kernel canno=
+t
+> afford supporting, after Casey Schaufler finishes his work for making it
+> possible to enable arbitrary LSM combinations. But before Casey's work
+> finishes, KP Singh started proposing "Reduce overhead of LSMs with static
+> calls" which will make AKARI more difficult to run because it removes
+> security_hook_heads. Therefore, reviving ability to officially append LSM
+> hooks from LKM-based LSMs became an urgent matter.
+>
+> KP Singh suggested me to try eBPF programs because BPF LSM is enabled in
+> distributor's prebuilt kernels. But the result was that eBPF is too
+> restricted to emulate TOMOYO. Therefore, I still need ability to append
+> LSM hooks from LKM-based LSMs.
+>
+> Since it seems that nobody has objection on not using an LSM module which
+> calls LSM hooks in the LKM-based LSMs [2], this version directly appended
+> the linked list into individual callbacks. KP Singh's "Reduce overhead of
+> LSMs with static calls" proposal will replace security_hook_heads with
+> array of static call slots, and mod_security_hook_heads will remain
+> untouched.
+>
+> This patch implements only ability to add LSM modules after boot, for
+> as far as we know, we haven't heard of requests for reviving the ability
+> to remove LSM modules after boot.
+>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Link: https://lkml.kernel.org/r/d759146e-5d74-4782-931b-adda33b125d4@I-lo=
+ve.SAKURA.ne.jp [1]
+> Link: https://lkml.kernel.org/r/93b5e861-c1ec-417c-b21e-56d0c4a3ae79@I-lo=
+ve.SAKURA.ne.jp [2]
+> ---
+>  include/linux/lsm_hooks.h |   9 +++
+>  security/security.c       | 134 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 143 insertions(+)
 
-I'm not sure where the original email/patch was sent, but I don't seem
-to have a copy in my inbox either.  Odd.
-
-> There is indeed a problem, although I think a more concise explanation
-> is:
->
-> 1. security_kernel_read_file() returns any non-zero return value to mean
-> permission denied
-> 2. kernel_read_file() returns > 0 meaning number of bytes read
-> 3. hen kernel_read_file() gets any non-zero rv from security_kernel_read_=
-file(),
-> it returns that value unchanged.
->
-> Since kernel_read_file() is the only caller of security_kernel_read_file(=
-),
-> I think your patch is good, except you should also change the comment abo=
-ve
-> it to read
->
->  * Return: Returns 0 if permission is granted, < 0 on error.
->
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
->
-> I think the reason it's not been a practical problem is because while
-> security_kernel_read_file() will honor a >0 error from an LSM, no
-> LSM implementation of that hook does that.  (Only loadpin and selinux
-> implement it)
-
-The SELinux implementation should only ever return 0 or a negative
-value, and based on a quick look at Loadpin I would say the same
-applies there as well.  This patch doesn't address the IMA hook, but
-according to the comments in the IMA code, it too should only return 0
-or a negative value.  While it is theoretically possible that
-security_kernel_read_file() could return a positive value, I'm missing
-where/how that might happen.  Help?
-
-That said, I agree with Serge that this is worth fixing, and in
-addition to the comment suggestion from Serge, I would ask that you
-fix the IMA hook too.  I would expect the patch to look something like
-this:
-
-diff --git a/security/security.c b/security/security.c
-index dcb3e7014f9b..dd8bdda166f3 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -3043,7 +3043,7 @@ int security_kernel_module_request(char *kmod_name)
- *
- * Read a file specified by userspace.
- *
-- * Return: Returns 0 if permission is granted.
-+ * Return: Returns 0 if permission is granted, negative values on failure.
- */
-int security_kernel_read_file(struct file *file, enum kernel_read_file_id i=
-d,
-                             bool contents)
-@@ -3052,8 +3052,15 @@ int security_kernel_read_file(struct file *file, enu=
-m ker
-nel_read_file_id id,
-
-       ret =3D call_int_hook(kernel_read_file, 0, file, id, contents);
-       if (ret)
-+               goto out;
-+       ret =3D ima_read_file(file, id, contents);
-+
-+out:
-+       if (ret > 0)
-+               return -EINVAL;
-+       if (ret < 0)
-               return ret;
--       return ima_read_file(file, id, contents);
-+       return 0;
-}
-EXPORT_SYMBOL_GPL(security_kernel_read_file);
+My objections presented in the v2 revision of this patchset remain.
 
 --=20
 paul-moore.com
