@@ -1,153 +1,172 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D618768E7
-	for <linux-security-module@vger.kernel.org>; Mon, 18 Dec 2023 23:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0127FB
+	for <linux-security-module@vger.kernel.org>; Tue, 19 Dec 2023 00:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FwwqWwR+"
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dbccfd048d4so2745302276.3
-        for <linux-security-module@vger.kernel.org>; Mon, 18 Dec 2023 15:20:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LqEnhT3+"
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dbcfd61bd0fso2713858276.1
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Dec 2023 16:45:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1702941602; x=1703546402; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1702946745; x=1703551545; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ES2XANow3c4WFr3ElQ4CWmF6s3T3M4Np9YPYPvh1hCs=;
-        b=FwwqWwR+X0cRcfH1xnsGrnEuXjU+ihHmv5ZogitjV/KS9qSKRCIEw2k3VvcaP1FNsk
-         5qBUSpDGjnhde7h2X6X5BbR31cHKDGvfZiTarcbc/wkzk1tWxQgIqbNa4oRt3YQJFYmT
-         vqzqY/QyzcyFfRPSstoiXiokVYOQr/hs5c1fE7fUnL+LEN0Jtd7a+4nCz9L0naztfvSA
-         Bjpo5Iny6Qy7956S+FtAVEas/PYKK6JTFdJhK5mzXNy2IZUwF6V6VeLf5tLZN/D0OkJC
-         QfZ/a2gD/zzG2007MIfj0Aa2f0l1aBJF/invxb0mg8jvwPuticXMtKPv8lLLCsLqHtRl
-         EepA==
+        bh=oasQpdQEdRdV5iTLy9b03b575xEh8lY+6DBy55U7VgY=;
+        b=LqEnhT3+a+75yoCOyPmBl41RJ7jwkObERW3lG2ZIL08Wx4+TSQANXr31ju52BBmUJ1
+         A71eYmv3PanU7wvWn1wzpVsVHVI22JetZL1N1VCudBPOvlda1UHAU4d4cCMjEBs8ihnv
+         JixbhPjvThzyKSCjWlKTqc208dPSldcx5ZAyOoKgNu6emMoZKC9FAeoxj/6vg4Yzhkc1
+         DBDjlMv+QXWQTuD5fXRI8RUM4UWU3F7mwKt0kH/RG/dbRGRWxHDDBm0BkBli7tg/d3Qd
+         y2QuyDvbOi/3tg1Wc/rCEhok/Xy+hUVcuMrL1N5O+y2TO63kGVqSRD4qkf3WT5fiedVf
+         EafQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702941602; x=1703546402;
+        d=1e100.net; s=20230601; t=1702946745; x=1703551545;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ES2XANow3c4WFr3ElQ4CWmF6s3T3M4Np9YPYPvh1hCs=;
-        b=O9j7eOxM4QQMmRa60rGksyjTIVXJ9MKSJNatrzxSf9fEcRjmNyhv0OIvEEbYjyJ4j8
-         OGI6Rlk2QVsbs6elLD5uWEv0pVmfe1eFEmkvZoUA7BX14vWDzTBlavaYcS/wJZepdJRq
-         GQKT5BHOndc5vLOaRN80BQdsLjMQLRmNhPtsmcw8bkTI24M/JD2ydfmmFmCeV9f03gjY
-         MkvcQaFkrq3RwgMK/m0O238IvchzT6npnQPRXQgeqIE79K5SwftjzvrfCwuCE5nbNO9/
-         Dr22ujiy9syLXy82uS3nebvC5PSoZDqUnP/lAytcWCMgE/qdri9vvVJogpJcbDY0iEX3
-         9leQ==
-X-Gm-Message-State: AOJu0YwMCHHNZ8dFow+0sgMsDXvTfK95FY8Oj/xsQqS6WwueKDmD8DFi
-	ea7xjC+QI6dFMcbuJjCwqkZqpE6LERwXaEW++DUcYl0iIFytdPs=
-X-Google-Smtp-Source: AGHT+IGaOKY2VunMABSbe2HaT0zbdWVLY+2e0+B87FL6/BRvm07tXEU9RjPz2vEIJSGb6hdjk1jvH4lrchey9F4KY2U=
-X-Received: by 2002:a05:6902:278a:b0:dbc:f900:a343 with SMTP id
- eb10-20020a056902278a00b00dbcf900a343mr3094031ybb.54.1702941601894; Mon, 18
- Dec 2023 15:20:01 -0800 (PST)
+        bh=oasQpdQEdRdV5iTLy9b03b575xEh8lY+6DBy55U7VgY=;
+        b=sSnpTTmyqaid/FAZ1T0X+aCuDuJLjVn0N/Mtwy/a0DcHP+PQhNfkmnwXgpYFaHoDFl
+         7+Epvg0G5Rh/NwqL2HYiAvWYWIZNnPpU89A2UmCSfr2v6lxYlK9h2zIOqTp81g0V0N9T
+         7tzV9NgkGMFT3BgXY/X9zPyfLlhzQw2aFvKC/okenb744oC74YcUNaJcmqxJCz/6uCOx
+         xlAw3bRzOFJBuDfH9I8K+ISIbI+6wI48J3zoKJWdAf2QlmritWi5meAu+yWs+Esj/icU
+         iPjMqkGAyRIynlGYO70wh1QiHRucvKxr54NQfuEBvIKARET8PdUDBYERKsUa7mi/BKq7
+         gizQ==
+X-Gm-Message-State: AOJu0Yy3QLTVNGvGIZ1eKxjSpdo6wt/ehqLVlhLiFoTwTrgps2NAxWuE
+	0koyRLoFYYeziYTunJ3qoJBXUQZNUzGUm3G1AEZx3P0LKLnX
+X-Google-Smtp-Source: AGHT+IHFtpoGslhpNZUWQ9Yvh/0J3BP+vucf5ghv5vQv8fV6Ebtbue95F9C+pqRj+w9X/e1PwDGZwltTgDSmFXCRZ9M=
+X-Received: by 2002:a25:d785:0:b0:dbc:f85e:eb39 with SMTP id
+ o127-20020a25d785000000b00dbcf85eeb39mr196775ybg.3.1702946745056; Mon, 18 Dec
+ 2023 16:45:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <09e4992c-9def-41b5-a806-2978b3ae35c6@I-love.SAKURA.ne.jp>
-In-Reply-To: <09e4992c-9def-41b5-a806-2978b3ae35c6@I-love.SAKURA.ne.jp>
+References: <20231215110639.45522-1-david@sigma-star.at>
+In-Reply-To: <20231215110639.45522-1-david@sigma-star.at>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 18 Dec 2023 18:19:50 -0500
-Message-ID: <CAHC9VhR_27_LtskFF_0Bzb_9R5r0NRvdW0z0bd9iU8JBOe+HPA@mail.gmail.com>
-Subject: Re: [RFC PATCH v3] LSM: Officially support appending LSM hooks after boot.
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, song@kernel.org, 
-	Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, renauld@google.com, 
-	Paolo Abeni <pabeni@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 18 Dec 2023 19:45:34 -0500
+Message-ID: <CAHC9VhSRjwN=a9=V--m46_xh4fQNwZ9781YBCDpAmAV1mofhQg@mail.gmail.com>
+Subject: Re: [PATCH v5 0/6] DCP as trusted keys backend
+To: David Gstir <david@sigma-star.at>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>
+Cc: James Bottomley <jejb@linux.ibm.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, Shawn Guo <shawnguo@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	NXP Linux Team <linux-imx@nxp.com>, Ahmad Fatoum <a.fatoum@pengutronix.de>, 
+	sigma star Kernel Team <upstream+dcp@sigma-star.at>, Li Yang <leoyang.li@nxp.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+	Tejun Heo <tj@kernel.org>, "Steven Rostedt (Google)" <rostedt@goodmis.org>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 9, 2023 at 3:28=E2=80=AFAM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
+On Fri, Dec 15, 2023 at 6:07=E2=80=AFAM David Gstir <david@sigma-star.at> w=
+rote:
 >
-> Commit 20510f2f4e2d ("security: Convert LSM into a static interface") has
-> unexported register_security()/unregister_security(), with the reasoning
-> that the ability to unload an LSM module is not required by in-tree users
-> and potentially complicates the overall security architecture.
+> This is a revival of the previous patch set submitted by Richard Weinberg=
+er:
+> https://lore.kernel.org/linux-integrity/20210614201620.30451-1-richard@no=
+d.at/
 >
-> After that commit, many LSM modules have been proposed and some of them
-> have succeeded in becoming in-tree users. Also, Linux distributors starte=
-d
-> enabling some of in-tree LSM modules in their distribution kernels.
+> v4 is here:
+> https://lore.kernel.org/keyrings/20231024162024.51260-1-david@sigma-star.=
+at/
 >
-> But due to that commit, currently in order to officially use an LSM
-> module, that LSM module has to be built into vmlinux. And this limitation
-> has been a big barrier for allowing distribution kernel users to use LSM
-> modules which the organization who builds that distribution kernel cannot
-> afford supporting.
+> v4 -> v5:
+> - Make Kconfig for trust source check scalable as suggested by Jarkko Sak=
+kinen
+> - Add Acked-By from Herbert Xu to patch #1 - thanks!
+> v3 -> v4:
+> - Split changes on MAINTAINERS and documentation into dedicated patches
+> - Use more concise wording in commit messages as suggested by Jarkko Sakk=
+inen
+> v2 -> v3:
+> - Addressed review comments from Jarkko Sakkinen
+> v1 -> v2:
+> - Revive and rebase to latest version
+> - Include review comments from Ahmad Fatoum
 >
-> Therefore, as one of in-tree users, I've been asking for ability to appen=
-d
-> LSM hooks from LKM-based LSMs (i.e. re-export register_security()) so tha=
-t
-> distribution kernel users can use LSMs which the organization who builds
-> that distribution kernel cannot afford supporting.
+> The Data CoProcessor (DCP) is an IP core built into many NXP SoCs such
+> as i.mx6ull.
 >
-> Paul Moore believes that we don't need to support appending LSM hooks fro=
-m
-> LKM-based LSMs because anyone who wants to use an LSM module can recompil=
-e
-> distributor kernels with that LSM enabled. But recompiling kernels is not
-> a viable option for regular developers/users [1]; the burden of
-> distributing rebuilt kernels is not acceptable for individual LSM authors
-> and majority of Linux users, and the risk of replacing known distributor'=
-s
-> prebuilt kernels with unknown individual's rebuilt kernels is not
-> acceptable for majority of distributor kernel users. If Endpoint Detectio=
-n
-> and Response software (including Antivirus software) could not be used
-> without replacing distributor's prebuilt kernels, Linux would not have be=
-en
-> chosen as a platform. Being able to use whatever functionality using
-> prebuilt distribution kernel packages and prebuilt kernel-debuginfo
-> packages is the mandatory baseline. Therefore, in order to unofficially u=
-se
-> LSMs which are not built into vmlinux, I've been maintaining AKARI (which
-> is a pure LKM version of TOMOYO) as an LKM-based LSM which can run on
-> kernels between 2.6.0 and 6.6.
+> Similar to the CAAM engine used in more powerful SoCs, DCP can AES-
+> encrypt/decrypt user data using a unique, never-disclosed,
+> device-specific key. Unlike CAAM though, it cannot directly wrap and
+> unwrap blobs in hardware. As DCP offers only the bare minimum feature
+> set and a blob mechanism needs aid from software. A blob in this case
+> is a piece of sensitive data (e.g. a key) that is encrypted and
+> authenticated using the device-specific key so that unwrapping can only
+> be done on the hardware where the blob was wrapped.
 >
-> I was planning to propose ability to append LSM hooks from LKM-based LSMs
-> (i.e. re-export register_security()) so that distribution kernel users ca=
-n
-> use LSMs which the organization who builds that distribution kernel canno=
-t
-> afford supporting, after Casey Schaufler finishes his work for making it
-> possible to enable arbitrary LSM combinations. But before Casey's work
-> finishes, KP Singh started proposing "Reduce overhead of LSMs with static
-> calls" which will make AKARI more difficult to run because it removes
-> security_hook_heads. Therefore, reviving ability to officially append LSM
-> hooks from LKM-based LSMs became an urgent matter.
+> This patch series adds a DCP based, trusted-key backend and is similar
+> in spirit to the one by Ahmad Fatoum [0] that does the same for CAAM.
+> It is of interest for similar use cases as the CAAM patch set, but for
+> lower end devices, where CAAM is not available.
 >
-> KP Singh suggested me to try eBPF programs because BPF LSM is enabled in
-> distributor's prebuilt kernels. But the result was that eBPF is too
-> restricted to emulate TOMOYO. Therefore, I still need ability to append
-> LSM hooks from LKM-based LSMs.
+> Because constructing and parsing the blob has to happen in software,
+> we needed to decide on a blob format and chose the following:
 >
-> Since it seems that nobody has objection on not using an LSM module which
-> calls LSM hooks in the LKM-based LSMs [2], this version directly appended
-> the linked list into individual callbacks. KP Singh's "Reduce overhead of
-> LSMs with static calls" proposal will replace security_hook_heads with
-> array of static call slots, and mod_security_hook_heads will remain
-> untouched.
+> struct dcp_blob_fmt {
+>         __u8 fmt_version;
+>         __u8 blob_key[AES_KEYSIZE_128];
+>         __u8 nonce[AES_KEYSIZE_128];
+>         __le32 payload_len;
+>         __u8 payload[];
+> } __packed;
 >
-> This patch implements only ability to add LSM modules after boot, for
-> as far as we know, we haven't heard of requests for reviving the ability
-> to remove LSM modules after boot.
+> The `fmt_version` is currently 1.
 >
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Link: https://lkml.kernel.org/r/d759146e-5d74-4782-931b-adda33b125d4@I-lo=
-ve.SAKURA.ne.jp [1]
-> Link: https://lkml.kernel.org/r/93b5e861-c1ec-417c-b21e-56d0c4a3ae79@I-lo=
-ve.SAKURA.ne.jp [2]
-> ---
->  include/linux/lsm_hooks.h |   9 +++
->  security/security.c       | 134 ++++++++++++++++++++++++++++++++++++++
->  2 files changed, 143 insertions(+)
+> The encrypted key is stored in the payload area. It is AES-128-GCM
+> encrypted using `blob_key` and `nonce`, GCM auth tag is attached at
+> the end of the payload (`payload_len` does not include the size of
+> the auth tag).
+>
+> The `blob_key` itself is encrypted in AES-128-ECB mode by DCP using
+> the OTP or UNIQUE device key. A new `blob_key` and `nonce` are generated
+> randomly, when sealing/exporting the DCP blob.
+>
+> This patchset was tested with dm-crypt on an i.MX6ULL board.
+>
+> [0] https://lore.kernel.org/keyrings/20220513145705.2080323-1-a.fatoum@pe=
+ngutronix.de/
+>
+> David Gstir (6):
+>   crypto: mxs-dcp: Add support for hardware-bound keys
+>   KEYS: trusted: improve scalability of trust source config
+>   KEYS: trusted: Introduce NXP DCP-backed trusted keys
+>   MAINTAINERS: add entry for DCP-based trusted keys
+>   docs: document DCP-backed trusted keys kernel params
+>   docs: trusted-encrypted: add DCP as new trust source
+>
+>  .../admin-guide/kernel-parameters.txt         |  13 +
+>  .../security/keys/trusted-encrypted.rst       |  85 +++++
+>  MAINTAINERS                                   |   9 +
+>  drivers/crypto/mxs-dcp.c                      | 104 +++++-
+>  include/keys/trusted_dcp.h                    |  11 +
+>  include/soc/fsl/dcp.h                         |  17 +
+>  security/keys/trusted-keys/Kconfig            |  18 +-
+>  security/keys/trusted-keys/Makefile           |   2 +
+>  security/keys/trusted-keys/trusted_core.c     |   6 +-
+>  security/keys/trusted-keys/trusted_dcp.c      | 311 ++++++++++++++++++
+>  10 files changed, 562 insertions(+), 14 deletions(-)
+>  create mode 100644 include/keys/trusted_dcp.h
+>  create mode 100644 include/soc/fsl/dcp.h
+>  create mode 100644 security/keys/trusted-keys/trusted_dcp.c
 
-My objections presented in the v2 revision of this patchset remain.
+Jarkko, Mimi, David - if this patchset isn't already in your review
+queue, can you take a look at it from a security/keys perspective?
+
+Thanks.
 
 --=20
 paul-moore.com
