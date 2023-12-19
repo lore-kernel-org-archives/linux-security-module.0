@@ -1,172 +1,250 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0127FB
-	for <linux-security-module@vger.kernel.org>; Tue, 19 Dec 2023 00:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B1F134AE
+	for <linux-security-module@vger.kernel.org>; Tue, 19 Dec 2023 09:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--alpic.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LqEnhT3+"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dbcfd61bd0fso2713858276.1
-        for <linux-security-module@vger.kernel.org>; Mon, 18 Dec 2023 16:45:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oyDaiWY3"
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-33349915d3cso2904069f8f.3
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Dec 2023 01:09:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1702946745; x=1703551545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oasQpdQEdRdV5iTLy9b03b575xEh8lY+6DBy55U7VgY=;
-        b=LqEnhT3+a+75yoCOyPmBl41RJ7jwkObERW3lG2ZIL08Wx4+TSQANXr31ju52BBmUJ1
-         A71eYmv3PanU7wvWn1wzpVsVHVI22JetZL1N1VCudBPOvlda1UHAU4d4cCMjEBs8ihnv
-         JixbhPjvThzyKSCjWlKTqc208dPSldcx5ZAyOoKgNu6emMoZKC9FAeoxj/6vg4Yzhkc1
-         DBDjlMv+QXWQTuD5fXRI8RUM4UWU3F7mwKt0kH/RG/dbRGRWxHDDBm0BkBli7tg/d3Qd
-         y2QuyDvbOi/3tg1Wc/rCEhok/Xy+hUVcuMrL1N5O+y2TO63kGVqSRD4qkf3WT5fiedVf
-         EafQ==
+        d=google.com; s=20230601; t=1702976953; x=1703581753; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KCOKKTCrhMmhELn2KaA9tA7ePXojaySJZUnrODbepzU=;
+        b=oyDaiWY3JkcRZh6LwIo30LyVDU+PLZk3j9VwX2NoD3ufljIaS4xdNasuPMf//+fewn
+         tOV3im96Zm83Rtb9CZMS/vyL79KtLuxt0d2bx1UMK+ik2yMGQvYhwJfpqKQHq7QRZvfA
+         y2JsFKQcaIZGn8SlHx6eesE5jlQd74wU6b2vwRS/iCZivwVvEpfzk+eWDQXx6EyYtKg7
+         DhK9ie6CJM4eZnI0jKJT4d+f2gvjfYM35XUZnxqNmWq7WCahHu7dYlO2UX8dYFMg3KQC
+         nU316h2F9RNkCHYoaMHAlH0/AQqVGmfTo4+WlfLuUABKHu+0m2qHEUOrjJAZ2uxsMLpI
+         Pitg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702946745; x=1703551545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oasQpdQEdRdV5iTLy9b03b575xEh8lY+6DBy55U7VgY=;
-        b=sSnpTTmyqaid/FAZ1T0X+aCuDuJLjVn0N/Mtwy/a0DcHP+PQhNfkmnwXgpYFaHoDFl
-         7+Epvg0G5Rh/NwqL2HYiAvWYWIZNnPpU89A2UmCSfr2v6lxYlK9h2zIOqTp81g0V0N9T
-         7tzV9NgkGMFT3BgXY/X9zPyfLlhzQw2aFvKC/okenb744oC74YcUNaJcmqxJCz/6uCOx
-         xlAw3bRzOFJBuDfH9I8K+ISIbI+6wI48J3zoKJWdAf2QlmritWi5meAu+yWs+Esj/icU
-         iPjMqkGAyRIynlGYO70wh1QiHRucvKxr54NQfuEBvIKARET8PdUDBYERKsUa7mi/BKq7
-         gizQ==
-X-Gm-Message-State: AOJu0Yy3QLTVNGvGIZ1eKxjSpdo6wt/ehqLVlhLiFoTwTrgps2NAxWuE
-	0koyRLoFYYeziYTunJ3qoJBXUQZNUzGUm3G1AEZx3P0LKLnX
-X-Google-Smtp-Source: AGHT+IHFtpoGslhpNZUWQ9Yvh/0J3BP+vucf5ghv5vQv8fV6Ebtbue95F9C+pqRj+w9X/e1PwDGZwltTgDSmFXCRZ9M=
-X-Received: by 2002:a25:d785:0:b0:dbc:f85e:eb39 with SMTP id
- o127-20020a25d785000000b00dbcf85eeb39mr196775ybg.3.1702946745056; Mon, 18 Dec
- 2023 16:45:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1702976953; x=1703581753;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KCOKKTCrhMmhELn2KaA9tA7ePXojaySJZUnrODbepzU=;
+        b=OaDg+RGFNflI1a6fa4lqFd6sFU8M+co1r+AxcSnaee2KPuXczoNOZzhDCGxPVJ3KZj
+         oW2BnHC350xiIePhp3RyJTF91cTKd5XmCJaPepvIPL2Ns5GqUcGB9TNhd8FZoV0hcnEk
+         q8KLLn+0U+DzeRAr63dYFytYc2YXYMsLRqgFP2JbWDJ2UOJ3D8L67IKc4484uRcLL8yb
+         bzm4wkGiYrk6jOUalC/Jx+6BMzeamg/MVids4FFxQOToILi8rjIqeNOcweJqSzv8TmMl
+         IM4sHNV9P2UqUJ4QMCJuxdInzcQo5Ln+qT422lctjtYTQShbq0XoRO46uJkLHo6F8fNF
+         oirw==
+X-Gm-Message-State: AOJu0Yyc317WodY9FURd0hRWrl1FUj8NOXK8XHNp0HIHPYMxonMZB06I
+	tWbl42UEXuYXYJt2b03EaAvXVuoduA==
+X-Google-Smtp-Source: AGHT+IEMgpUJJImbF9sB0A1C2/ml9W2nIwssmwxL5xAbJRxOKk/6C14WdhWsYo1M1JBwCQapz4Lay/+LIA==
+X-Received: from alpic.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:1bf2])
+ (user=alpic job=sendgmr) by 2002:a5d:64a5:0:b0:336:60b6:28a2 with SMTP id
+ m5-20020a5d64a5000000b0033660b628a2mr25056wrp.1.1702976952862; Tue, 19 Dec
+ 2023 01:09:12 -0800 (PST)
+Date: Tue, 19 Dec 2023 10:09:09 +0100
+In-Reply-To: <20230906102557.3432236-1-alpic@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20231215110639.45522-1-david@sigma-star.at>
-In-Reply-To: <20231215110639.45522-1-david@sigma-star.at>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 18 Dec 2023 19:45:34 -0500
-Message-ID: <CAHC9VhSRjwN=a9=V--m46_xh4fQNwZ9781YBCDpAmAV1mofhQg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/6] DCP as trusted keys backend
-To: David Gstir <david@sigma-star.at>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>
-Cc: James Bottomley <jejb@linux.ibm.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, Shawn Guo <shawnguo@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	NXP Linux Team <linux-imx@nxp.com>, Ahmad Fatoum <a.fatoum@pengutronix.de>, 
-	sigma star Kernel Team <upstream+dcp@sigma-star.at>, Li Yang <leoyang.li@nxp.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	Tejun Heo <tj@kernel.org>, "Steven Rostedt (Google)" <rostedt@goodmis.org>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-security-module@vger.kernel.org
+Mime-Version: 1.0
+References: <20230906102557.3432236-1-alpic@google.com>
+X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
+Message-ID: <20231219090909.2827497-1-alpic@google.com>
+Subject: [PATCH] security: new security_file_ioctl_compat() hook
+From: Alfred Piccioni <alpic@google.com>
+To: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Eric Paris <eparis@parisplace.org>
+Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	stable@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alfred Piccioni <alpic@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 15, 2023 at 6:07=E2=80=AFAM David Gstir <david@sigma-star.at> w=
-rote:
->
-> This is a revival of the previous patch set submitted by Richard Weinberg=
-er:
-> https://lore.kernel.org/linux-integrity/20210614201620.30451-1-richard@no=
-d.at/
->
-> v4 is here:
-> https://lore.kernel.org/keyrings/20231024162024.51260-1-david@sigma-star.=
-at/
->
-> v4 -> v5:
-> - Make Kconfig for trust source check scalable as suggested by Jarkko Sak=
-kinen
-> - Add Acked-By from Herbert Xu to patch #1 - thanks!
-> v3 -> v4:
-> - Split changes on MAINTAINERS and documentation into dedicated patches
-> - Use more concise wording in commit messages as suggested by Jarkko Sakk=
-inen
-> v2 -> v3:
-> - Addressed review comments from Jarkko Sakkinen
-> v1 -> v2:
-> - Revive and rebase to latest version
-> - Include review comments from Ahmad Fatoum
->
-> The Data CoProcessor (DCP) is an IP core built into many NXP SoCs such
-> as i.mx6ull.
->
-> Similar to the CAAM engine used in more powerful SoCs, DCP can AES-
-> encrypt/decrypt user data using a unique, never-disclosed,
-> device-specific key. Unlike CAAM though, it cannot directly wrap and
-> unwrap blobs in hardware. As DCP offers only the bare minimum feature
-> set and a blob mechanism needs aid from software. A blob in this case
-> is a piece of sensitive data (e.g. a key) that is encrypted and
-> authenticated using the device-specific key so that unwrapping can only
-> be done on the hardware where the blob was wrapped.
->
-> This patch series adds a DCP based, trusted-key backend and is similar
-> in spirit to the one by Ahmad Fatoum [0] that does the same for CAAM.
-> It is of interest for similar use cases as the CAAM patch set, but for
-> lower end devices, where CAAM is not available.
->
-> Because constructing and parsing the blob has to happen in software,
-> we needed to decide on a blob format and chose the following:
->
-> struct dcp_blob_fmt {
->         __u8 fmt_version;
->         __u8 blob_key[AES_KEYSIZE_128];
->         __u8 nonce[AES_KEYSIZE_128];
->         __le32 payload_len;
->         __u8 payload[];
-> } __packed;
->
-> The `fmt_version` is currently 1.
->
-> The encrypted key is stored in the payload area. It is AES-128-GCM
-> encrypted using `blob_key` and `nonce`, GCM auth tag is attached at
-> the end of the payload (`payload_len` does not include the size of
-> the auth tag).
->
-> The `blob_key` itself is encrypted in AES-128-ECB mode by DCP using
-> the OTP or UNIQUE device key. A new `blob_key` and `nonce` are generated
-> randomly, when sealing/exporting the DCP blob.
->
-> This patchset was tested with dm-crypt on an i.MX6ULL board.
->
-> [0] https://lore.kernel.org/keyrings/20220513145705.2080323-1-a.fatoum@pe=
-ngutronix.de/
->
-> David Gstir (6):
->   crypto: mxs-dcp: Add support for hardware-bound keys
->   KEYS: trusted: improve scalability of trust source config
->   KEYS: trusted: Introduce NXP DCP-backed trusted keys
->   MAINTAINERS: add entry for DCP-based trusted keys
->   docs: document DCP-backed trusted keys kernel params
->   docs: trusted-encrypted: add DCP as new trust source
->
->  .../admin-guide/kernel-parameters.txt         |  13 +
->  .../security/keys/trusted-encrypted.rst       |  85 +++++
->  MAINTAINERS                                   |   9 +
->  drivers/crypto/mxs-dcp.c                      | 104 +++++-
->  include/keys/trusted_dcp.h                    |  11 +
->  include/soc/fsl/dcp.h                         |  17 +
->  security/keys/trusted-keys/Kconfig            |  18 +-
->  security/keys/trusted-keys/Makefile           |   2 +
->  security/keys/trusted-keys/trusted_core.c     |   6 +-
->  security/keys/trusted-keys/trusted_dcp.c      | 311 ++++++++++++++++++
->  10 files changed, 562 insertions(+), 14 deletions(-)
->  create mode 100644 include/keys/trusted_dcp.h
->  create mode 100644 include/soc/fsl/dcp.h
->  create mode 100644 security/keys/trusted-keys/trusted_dcp.c
+Some ioctl commands do not require ioctl permission, but are routed to
+other permissions such as FILE_GETATTR or FILE_SETATTR. This routing is
+done by comparing the ioctl cmd to a set of 64-bit flags (FS_IOC_*).
 
-Jarkko, Mimi, David - if this patchset isn't already in your review
-queue, can you take a look at it from a security/keys perspective?
+However, if a 32-bit process is running on a 64-bit kernel, it emits
+32-bit flags (FS_IOC32_*) for certain ioctl operations. These flags are
+being checked erroneously, which leads to these ioctl operations being
+routed to the ioctl permission, rather than the correct file
+permissions.
 
-Thanks.
+This was also noted in a RED-PEN finding from a while back -
+"/* RED-PEN how should LSM module know it's handling 32bit? */".
 
---=20
-paul-moore.com
+This patch introduces a new hook, security_file_ioctl_compat, that is
+called from the compat ioctl syscall. All current LSMs have been changed
+to support this hook.
+
+Reviewing the three places where we are currently using
+security_file_ioctl, it appears that only SELinux needs a dedicated
+compat change; TOMOYO and SMACK appear to be functional without any
+change.
+
+Fixes: 0b24dcb7f2f7 ("Revert "selinux: simplify ioctl checking"")
+Signed-off-by: Alfred Piccioni <alpic@google.com>
+Cc: stable@vger.kernel.org
+---
+ fs/ioctl.c                    |  3 +--
+ include/linux/lsm_hook_defs.h |  2 ++
+ include/linux/security.h      |  7 +++++++
+ security/security.c           | 17 +++++++++++++++++
+ security/selinux/hooks.c      | 28 ++++++++++++++++++++++++++++
+ security/smack/smack_lsm.c    |  1 +
+ security/tomoyo/tomoyo.c      |  1 +
+ 7 files changed, 57 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index f5fd99d6b0d4..76cf22ac97d7 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -920,8 +920,7 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
+ 	if (!f.file)
+ 		return -EBADF;
+ 
+-	/* RED-PEN how should LSM module know it's handling 32bit? */
+-	error = security_file_ioctl(f.file, cmd, arg);
++	error = security_file_ioctl_compat(f.file, cmd, arg);
+ 	if (error)
+ 		goto out;
+ 
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index ac962c4cb44b..626aa8cf930d 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -171,6 +171,8 @@ LSM_HOOK(int, 0, file_alloc_security, struct file *file)
+ LSM_HOOK(void, LSM_RET_VOID, file_free_security, struct file *file)
+ LSM_HOOK(int, 0, file_ioctl, struct file *file, unsigned int cmd,
+ 	 unsigned long arg)
++LSM_HOOK(int, 0, file_ioctl_compat, struct file *file, unsigned int cmd,
++	 unsigned long arg)
+ LSM_HOOK(int, 0, mmap_addr, unsigned long addr)
+ LSM_HOOK(int, 0, mmap_file, struct file *file, unsigned long reqprot,
+ 	 unsigned long prot, unsigned long flags)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 5f16eecde00b..22a82b7c59f1 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -389,6 +389,7 @@ int security_file_permission(struct file *file, int mask);
+ int security_file_alloc(struct file *file);
+ void security_file_free(struct file *file);
+ int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
++int security_file_ioctl_compat(struct file *file, unsigned int cmd, unsigned long arg);
+ int security_mmap_file(struct file *file, unsigned long prot,
+ 			unsigned long flags);
+ int security_mmap_addr(unsigned long addr);
+@@ -987,6 +988,12 @@ static inline int security_file_ioctl(struct file *file, unsigned int cmd,
+ 	return 0;
+ }
+ 
++static inline int security_file_ioctl_compat(struct file *file, unsigned int cmd,
++				      unsigned long arg)
++{
++	return 0;
++}
++
+ static inline int security_mmap_file(struct file *file, unsigned long prot,
+ 				     unsigned long flags)
+ {
+diff --git a/security/security.c b/security/security.c
+index 23b129d482a7..5c16ffc99b1e 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2648,6 +2648,23 @@ int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ }
+ EXPORT_SYMBOL_GPL(security_file_ioctl);
+ 
++/**
++ * security_file_ioctl_compat() - Check if an ioctl is allowed in 32-bit compat mode
++ * @file: associated file
++ * @cmd: ioctl cmd
++ * @arg: ioctl arguments
++ *
++ * Compat version of security_file_ioctl() that correctly handles 32-bit processes
++ * running on 64-bit kernels.
++ *
++ * Return: Returns 0 if permission is granted.
++ */
++int security_file_ioctl_compat(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	return call_int_hook(file_ioctl_compat, 0, file, cmd, arg);
++}
++EXPORT_SYMBOL_GPL(security_file_ioctl_compat);
++
+ static inline unsigned long mmap_prot(struct file *file, unsigned long prot)
+ {
+ 	/*
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 2aa0e219d721..c617ae21dba8 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3731,6 +3731,33 @@ static int selinux_file_ioctl(struct file *file, unsigned int cmd,
+ 	return error;
+ }
+ 
++static int selinux_file_ioctl_compat(struct file *file, unsigned int cmd,
++			      unsigned long arg)
++{
++	/*
++	 * If we are in a 64-bit kernel running 32-bit userspace, we need to make
++	 * sure we don't compare 32-bit flags to 64-bit flags.
++	 */
++	switch (cmd) {
++	case FS_IOC32_GETFLAGS:
++		cmd = FS_IOC_GETFLAGS;
++		break;
++	case FS_IOC32_SETFLAGS:
++		cmd = FS_IOC_SETFLAGS;
++		break;
++	case FS_IOC32_GETVERSION:
++		cmd = FS_IOC_GETVERSION;
++		break;
++	case FS_IOC32_SETVERSION:
++		cmd = FS_IOC_SETVERSION;
++		break;
++	default:
++		break;
++	}
++
++	return selinux_file_ioctl(file, cmd, arg);
++}
++
+ static int default_noexec __ro_after_init;
+ 
+ static int file_map_prot_check(struct file *file, unsigned long prot, int shared)
+@@ -7036,6 +7063,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(file_permission, selinux_file_permission),
+ 	LSM_HOOK_INIT(file_alloc_security, selinux_file_alloc_security),
+ 	LSM_HOOK_INIT(file_ioctl, selinux_file_ioctl),
++	LSM_HOOK_INIT(file_ioctl_compat, selinux_file_ioctl_compat),
+ 	LSM_HOOK_INIT(mmap_file, selinux_mmap_file),
+ 	LSM_HOOK_INIT(mmap_addr, selinux_mmap_addr),
+ 	LSM_HOOK_INIT(file_mprotect, selinux_file_mprotect),
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 65130a791f57..1f1ea8529421 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4973,6 +4973,7 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
+ 
+ 	LSM_HOOK_INIT(file_alloc_security, smack_file_alloc_security),
+ 	LSM_HOOK_INIT(file_ioctl, smack_file_ioctl),
++	LSM_HOOK_INIT(file_ioctl_compat, smack_file_ioctl),
+ 	LSM_HOOK_INIT(file_lock, smack_file_lock),
+ 	LSM_HOOK_INIT(file_fcntl, smack_file_fcntl),
+ 	LSM_HOOK_INIT(mmap_file, smack_mmap_file),
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 25006fddc964..298d182759c2 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -568,6 +568,7 @@ static struct security_hook_list tomoyo_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(path_rename, tomoyo_path_rename),
+ 	LSM_HOOK_INIT(inode_getattr, tomoyo_inode_getattr),
+ 	LSM_HOOK_INIT(file_ioctl, tomoyo_file_ioctl),
++	LSM_HOOK_INIT(file_ioctl_compat, tomoyo_file_ioctl),
+ 	LSM_HOOK_INIT(path_chmod, tomoyo_path_chmod),
+ 	LSM_HOOK_INIT(path_chown, tomoyo_path_chown),
+ 	LSM_HOOK_INIT(path_chroot, tomoyo_path_chroot),
+
+base-commit: 196e95aa8305aecafc4e1857b7d3eff200d953b6
+-- 
+2.43.0.472.g3155946c3a-goog
+
