@@ -1,185 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADAC18023;
-	Tue, 19 Dec 2023 11:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7217F199AD;
+	Tue, 19 Dec 2023 13:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZ5wW2eq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FEDCC43397;
-	Tue, 19 Dec 2023 11:38:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6D0Qy0h"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62D88C433C8;
+	Tue, 19 Dec 2023 13:43:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702985937;
-	bh=z/k+YLVG8n9w0gU6sDLuJgWPnnGVRssnALfrFYt48Kc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YZ5wW2eq3iLNVR0D3INYFDiHoOy9u7hHTIJmjfZrOmN9uEHlkSe2+p1LY8oA6Uqc6
-	 o5VzCD0CAEUBSZX5jaeRxTi5InLpxumraBNOcnXdpYcCmIgQhPonNmzT7snKzERGqd
-	 zXQcfBxETiC4pkV1PQZtn8g0yu7/g/wQxuvUn5kEjX/SZ57kCv2F9jYZTXCk3hJCF1
-	 ArW8C+v3dmdH8zKR2xalj8md0QUM4CNJ58TnTYVq9vpI6ZDXlVXiI9XFFYvVPkZRmO
-	 ySmRvSCKaphWrtDvYj4JXREjfOyKuw8GYmjokI38G2QdDaMQwV7V+r1gD6t2hGcj2/
-	 WB8ZmBIkPNq5g==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2cc7b4709edso12475221fa.0;
-        Tue, 19 Dec 2023 03:38:57 -0800 (PST)
-X-Gm-Message-State: AOJu0YybCozzdw1vas2RZEgUc3jQQxA72MjecCrfqmbovMfxNWkvZiu3
-	2mvMT+9Cr8J5l1hmGIJ89djinZdKkNVJ5DSL/LQ=
-X-Google-Smtp-Source: AGHT+IGy+6E+Sn9s6ye17sM7ASYkS54eKGlyAxWBRLZL4jRxMOyZr0iV3s8QFFjT31FJTJwCyWvX4/ab2jc+J0WE6aE=
-X-Received: by 2002:a2e:8897:0:b0:2cc:7013:4b40 with SMTP id
- k23-20020a2e8897000000b002cc70134b40mr1369809lji.68.1702985935277; Tue, 19
- Dec 2023 03:38:55 -0800 (PST)
+	s=k20201202; t=1702993442;
+	bh=85MC7cgpkPCUWh0/C8WDuOGLM+4AcByal2VMdxrQAf4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g6D0Qy0hJsH5qNmaB5hjpTpOng9pk2ajAjDXQIE1fZrJ61OPW3n3K6uK4Ie9Zst+P
+	 BaIDxQtmvsIaDm7M90FXjJaXBDBw3MXjONSNwJTMB1qwT2Ccc/6VqWNS19KaDI7fjm
+	 Kzpsb+yO2mvUrJtvf0Wwce68JIliTG5gNGF+UyBY0Uloi+pJhOXDxOQwNXu5PaU8aL
+	 KpnA5Gh0VS4WoakXZxKYH+HBv5aIxU4kIU9lLXkp9saf9D+e2agt2Att0iwqd92bMS
+	 NXDVXq2mO9S8g8NSi6tLYNuPfIfmFKPMQtA9UbdqecqsPHvg9GAFNiOLd05Oh+sreB
+	 92hv7+lSTSQOQ==
+Date: Tue, 19 Dec 2023 14:43:53 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc: Michael =?utf-8?B?V2Vpw58=?= <michael.weiss@aisec.fraunhofer.de>,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Quentin Monnet <quentin@isovalent.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, gyroidos@aisec.fraunhofer.de
+Subject: Re: [RFC PATCH v3 3/3] devguard: added device guard for mknod in
+ non-initial userns
+Message-ID: <20231219-gebaggert-felgen-279a8e8716a8@brauner>
+References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
+ <20231213143813.6818-4-michael.weiss@aisec.fraunhofer.de>
+ <20231215-golfanlage-beirren-f304f9dafaca@brauner>
+ <61b39199-022d-4fd8-a7bf-158ee37b3c08@aisec.fraunhofer.de>
+ <20231215-kubikmeter-aufsagen-62bf8d4e3d75@brauner>
+ <20231215-eiern-drucken-69cf4780d942@brauner>
+ <20231218170916.cd319dbcf83f2dd7da24e48f@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231215122614.5481-1-tzimmermann@suse.de> <20231215122614.5481-3-tzimmermann@suse.de>
-In-Reply-To: <20231215122614.5481-3-tzimmermann@suse.de>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 19 Dec 2023 12:38:44 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHrn-PxpMGnR4VoHv7kHvQYyf8SS9i1irm9Gi_uBseciw@mail.gmail.com>
-Message-ID: <CAMj1kXHrn-PxpMGnR4VoHv7kHvQYyf8SS9i1irm9Gi_uBseciw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] arch/x86: Add <asm/ima-efi.h> for arch_ima_efi_boot_mode
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	bhelgaas@google.com, arnd@arndb.de, zohar@linux.ibm.com, 
-	dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, javierm@redhat.com, linux-arch@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20231218170916.cd319dbcf83f2dd7da24e48f@canonical.com>
 
-Hi Thomas,
+> The only thing that is not clear to me about the sb_device_access hook is, what we can check inside it practically?
+> Yes, we have an access to struct super_block, but at this point this structure is not filled with anything useful. We only
+> can determine a filesystem type and that's all. It means that we can use this hook as a flag that says "ok, we do care about device permissions,
+> kernel, please do not set SB_I_NODEV for us". Am I correct?
 
-On Fri, 15 Dec 2023 at 13:26, Thomas Zimmermann <tzimmermann@suse.de> wrote:
->
-> The header file <asm/efi.h> contains the macro arch_ima_efi_boot_mode,
-> which expands to use struct boot_params from <asm/bootparams.h>. Many
-> drivers include <linux/efi.h>, but do not use boot parameters. Changes
-> to bootparam.h or its included headers can easily trigger large,
-> unnessary rebuilds of the kernel.
->
-> Moving x86's arch_ima_efi_boot_mode to <asm/ima-efi.h> and including
-> <asm/setup.h> separates that dependency from the rest of the EFI
-> interfaces. The only user is in ima_efi.c. As the file already declares
-> a default value for arch_ima_efi_boot_mode, move this define into
-> asm-generic for all other architectures.
->
-> With arch_ima_efi_boot_mode removed from efi.h, <asm/bootparam.h> can
-> later be removed from further x86 header files.
->
+What the the LSM needs to definitely know is what filesystem type and
+what user namespace are relevant. Because this whole thing is mostly
+interesting for the != init_user_ns case here.
 
-Apologies if I missed this in v1 but is the new asm-generic header
-really necessary? Could we instead turn arch_ima_efi_boot_mode into a
-function that is a static inline { return unset; } by default, but can
-be emitted out of line in one of the x86/platform/efi.c source files,
-where referring to boot_params is fine?
+And both things are already present at that point in time (Technically,
+kernfs stuff can be a bit different but kernfs stuff does have
+SB_I_NODEV unconditionally so it really doesn't matter.).The thing is
+though that you want device access settled as soon as possible when the
+superblock isn't yet exposed anywhere. And for that alloc_super() is
+pretty convenient. Then you don't have to put much thought into it.
 
-
-
-
-
-> v2:
->         * remove extra declaration of boot_params (Ard)
->
-
-Please don't put the revision log here, but below the --- so that 'git
-am' will ignore it.
-
-
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
->  arch/x86/include/asm/efi.h       |  3 ---
->  arch/x86/include/asm/ima-efi.h   | 11 +++++++++++
->  include/asm-generic/Kbuild       |  1 +
->  include/asm-generic/ima-efi.h    | 16 ++++++++++++++++
->  security/integrity/ima/ima_efi.c |  5 +----
->  5 files changed, 29 insertions(+), 7 deletions(-)
->  create mode 100644 arch/x86/include/asm/ima-efi.h
->  create mode 100644 include/asm-generic/ima-efi.h
->
-> diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-> index c4555b269a1b..99f31176c892 100644
-> --- a/arch/x86/include/asm/efi.h
-> +++ b/arch/x86/include/asm/efi.h
-> @@ -418,9 +418,6 @@ extern int __init efi_memmap_split_count(efi_memory_desc_t *md,
->  extern void __init efi_memmap_insert(struct efi_memory_map *old_memmap,
->                                      void *buf, struct efi_mem_range *mem);
->
-> -#define arch_ima_efi_boot_mode \
-> -       ({ extern struct boot_params boot_params; boot_params.secure_boot; })
-> -
->  #ifdef CONFIG_EFI_RUNTIME_MAP
->  int efi_get_runtime_map_size(void);
->  int efi_get_runtime_map_desc_size(void);
-> diff --git a/arch/x86/include/asm/ima-efi.h b/arch/x86/include/asm/ima-efi.h
-> new file mode 100644
-> index 000000000000..b4d904e66b39
-> --- /dev/null
-> +++ b/arch/x86/include/asm/ima-efi.h
-> @@ -0,0 +1,11 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_X86_IMA_EFI_H
-> +#define _ASM_X86_IMA_EFI_H
-> +
-> +#include <asm/setup.h>
-> +
-> +#define arch_ima_efi_boot_mode boot_params.secure_boot
-> +
-> +#include <asm-generic/ima-efi.h>
-> +
-> +#endif /* _ASM_X86_IMA_EFI_H */
-> diff --git a/include/asm-generic/Kbuild b/include/asm-generic/Kbuild
-> index def242528b1d..4fd16e71e8cd 100644
-> --- a/include/asm-generic/Kbuild
-> +++ b/include/asm-generic/Kbuild
-> @@ -26,6 +26,7 @@ mandatory-y += ftrace.h
->  mandatory-y += futex.h
->  mandatory-y += hardirq.h
->  mandatory-y += hw_irq.h
-> +mandatory-y += ima-efi.h
->  mandatory-y += io.h
->  mandatory-y += irq.h
->  mandatory-y += irq_regs.h
-> diff --git a/include/asm-generic/ima-efi.h b/include/asm-generic/ima-efi.h
-> new file mode 100644
-> index 000000000000..f87f5edef440
-> --- /dev/null
-> +++ b/include/asm-generic/ima-efi.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +
-> +#ifndef __ASM_GENERIC_IMA_EFI_H_
-> +#define __ASM_GENERIC_IMA_EFI_H_
-> +
-> +#include <linux/efi.h>
-> +
-> +/*
-> + * Only include this header file from your architecture's <asm/ima-efi.h>.
-> + */
-> +
-> +#ifndef arch_ima_efi_boot_mode
-> +#define arch_ima_efi_boot_mode efi_secureboot_mode_unset
-> +#endif
-> +
-> +#endif /* __ASM_GENERIC_FB_H_ */
-> diff --git a/security/integrity/ima/ima_efi.c b/security/integrity/ima/ima_efi.c
-> index 138029bfcce1..56bbee271cec 100644
-> --- a/security/integrity/ima/ima_efi.c
-> +++ b/security/integrity/ima/ima_efi.c
-> @@ -6,10 +6,7 @@
->  #include <linux/module.h>
->  #include <linux/ima.h>
->  #include <asm/efi.h>
-> -
-> -#ifndef arch_ima_efi_boot_mode
-> -#define arch_ima_efi_boot_mode efi_secureboot_mode_unset
-> -#endif
-> +#include <asm/ima-efi.h>
->
->  static enum efi_secureboot_mode get_sb_mode(void)
->  {
-> --
-> 2.43.0
->
->
+But we can always move the hook to another place. It's also feasible to
+do this in vfs_get_tree() for example and provide the fs_context but
+again. I don't see why we need to do this now.
