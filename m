@@ -1,57 +1,16 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FB54A9BC;
-	Wed, 20 Dec 2023 22:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UX0vSB4S"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BKLRUcY004658;
-	Wed, 20 Dec 2023 22:13:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=Lme9PvKXLllsH+Mh5EhYOYKBv8+v9jzfCVw+p6oPtF8=;
- b=UX0vSB4SqHpjxVnbfc6C1k+QMHyj/FPDdaZHVuhBjySSqCl+CV0R8qcm+e/WU+l6Syg4
- OBz4uR9gQkhjjnJI4ST4DaCVbNHbMvHX5epourH7DnBE81J8xOyXI6yXRfmic1cKsEyY
- csO3ENneNcjmroDhuzj/MVFlu9WnE+JeczAlCYPshnQ/iGJaqJYn/qFq8a9/JtDliflT
- xXf731CgorhxcCmJYxHcQs84zdS7311yPGeFZOZL9i32i08FhauoVG+mBqi7tqy4drjM
- ZvW4NHyDuGuR5V5vkQPFieqLWv0kz0Ib6BR3YDBAfQebq7BCHz++Iw2D928I7o+ZAonv ew== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3v42q73crh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Dec 2023 22:13:52 +0000
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3BKLbqu1021251;
-	Wed, 20 Dec 2023 22:13:51 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3v42q73cr9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Dec 2023 22:13:51 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3BKLNtYv012418;
-	Wed, 20 Dec 2023 22:13:51 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3v1rx20stm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Dec 2023 22:13:50 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3BKMDoNK22610544
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 20 Dec 2023 22:13:50 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3474058055;
-	Wed, 20 Dec 2023 22:13:50 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 96D585804B;
-	Wed, 20 Dec 2023 22:13:48 +0000 (GMT)
-Received: from [9.67.17.94] (unknown [9.67.17.94])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 20 Dec 2023 22:13:48 +0000 (GMT)
-Message-ID: <1c370ecf-272a-4052-8f06-4fcfd9bf08b5@linux.ibm.com>
-Date: Wed, 20 Dec 2023 17:13:47 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754974AF64;
+	Wed, 20 Dec 2023 22:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 727DA2F4;
+	Wed, 20 Dec 2023 14:32:02 -0800 (PST)
+Received: from [10.57.4.161] (unknown [10.57.4.161])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 79D0A3F738;
+	Wed, 20 Dec 2023 14:31:16 -0800 (PST)
+Message-ID: <3717b995-5209-4db8-be77-c6303bb1c0db@arm.com>
+Date: Wed, 20 Dec 2023 22:31:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -59,59 +18,119 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC V2] IMA Log Snapshotting Design Proposal
-To: Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>
-Cc: Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de,
-        Jarkko Sakkinen <jarkko@kernel.org>, jgg@ziepe.ca, bhe@redhat.com,
-        vgoyal@redhat.com, Dave Young <dyoung@redhat.com>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        jmorris@namei.org, serge@hallyn.com,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-security-module@vger.kernel.org,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Sush Shringarputale <sushring@linux.microsoft.com>
-References: <6c0c32d5-e636-2a0e-5bdf-538c904ceea3@linux.microsoft.com>
- <8bff2bf1a4629aacec7b6311d77f233cb75b2f8a.camel@linux.ibm.com>
- <CAHC9VhRm9Tzz3C-VTdXS4s1_-kPQQ6RXMt8JGCS4jorJ0VURyQ@mail.gmail.com>
- <CAHC9VhSJ7MKNM7nMXR3xE-cNMrYB4AT+B76wzF1cKy2JM9tBrA@mail.gmail.com>
- <1b6853e8354af7033e6d87e77cfb175526753c38.camel@linux.ibm.com>
- <CAHC9VhSnDQ-d9dh_icqNyhpT+cTGQOqGh8+cbN3QzF_qPehvaA@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/3] lsm: consolidate buffer size handling into
+ lsm_fill_user_ctx()
+To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
+Cc: selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>,
+ John Johansen <john.johansen@canonical.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?=
+ =?UTF-8?Q?n?= <mic@digikod.net>, Mark Brown <broonie@kernel.org>
+References: <20231024213525.361332-4-paul@paul-moore.com>
+ <20231024213525.361332-7-paul@paul-moore.com>
 Content-Language: en-US
-From: Ken Goldman <kgold@linux.ibm.com>
-In-Reply-To: <CAHC9VhSnDQ-d9dh_icqNyhpT+cTGQOqGh8+cbN3QzF_qPehvaA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: jdm9hFg47T3cry3by7vWsYkIffxDdom2
-X-Proofpoint-ORIG-GUID: JoqsYci3m-cIbuNnF9sp5yvfTxOvXDiv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-20_13,2023-12-20_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=909 bulkscore=0
- malwarescore=0 clxscore=1011 adultscore=0 mlxscore=0 priorityscore=1501
- spamscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2312200158
+From: Aishwarya TCV <aishwarya.tcv@arm.com>
+In-Reply-To: <20231024213525.361332-7-paul@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-I'm still struggling with the "new root of trust" concept.
 
-Something - a user space agent, a third party, etc. - has to
-retain the entire log from event 0, because a new verifier
-needs all measurements.
 
-Therefore, the snapshot aggregate seems redundant.  It has to
-be verified to match the snapshotted events.
+On 24/10/2023 22:35, Paul Moore wrote:
+> While we have a lsm_fill_user_ctx() helper function designed to make
+> life easier for LSMs which return lsm_ctx structs to userspace, we
+> didn't include all of the buffer length safety checks and buffer
+> padding adjustments in the helper.  This led to code duplication
+> across the different LSMs and the possibility for mistakes across the
+> different LSM subsystems.  In order to reduce code duplication and
+> decrease the chances of silly mistakes, we're consolidating all of
+> this code into the lsm_fill_user_ctx() helper.
+> 
+> The buffer padding is also modified from a fixed 8-byte alignment to
+> an alignment that matches the word length of the machine
+> (BITS_PER_LONG / 8).
+> 
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+>  include/linux/security.h   |  9 ++++---
+>  security/apparmor/lsm.c    | 15 +++--------
+>  security/security.c        | 55 +++++++++++++++++++++-----------------
+>  security/selinux/hooks.c   | 42 +++++++++++++++--------------
+>  security/smack/smack_lsm.c | 23 +++++-----------
+>  5 files changed, 67 insertions(+), 77 deletions(-)
+> 
 
-A redundancy is an attack surface.  A badly written verifier
-might not do that verification, and this permits snapshotted
-events to be forged. No aggregate means the verifier can't
-make a mistake.
+Hi Paul,
 
-On 11/22/2023 9:22 AM, Paul Moore wrote:
-> I believe the intent is to only pause the measurements while the
-> snapshot_aggregate is generated, not for the duration of the entire
-> snapshot process.  The purpose of the snapshot_aggregate is to
-> establish a new root of trust, similar to the boot_aggregate, to help
-> improve attestation performance.
+While building the kernel against next-master for arch arm64
+> security/security.c:810:2: warning: ‘memcpy’ offset 32 is out of the bounds [0, 0] [-Warray-bounds]
+warning is observed. On some other architectures like i386 and x86_64,
+an error is observed. > arch/x86/include/asm/string_32.h:150:25: error:
+‘__builtin_memcpy’ offset 32 is out of the bounds [0, 0]
+[-Werror=array-bounds]
+
+The links of the logs is listed below:
+https://storage.kernelci.org/next/master/next-20231220/arm64/defconfig/gcc-10/logs/build-warnings.log
+https://storage.kernelci.org/next/master/next-20231220/i386/i386_defconfig/gcc-10/logs/build-errors.log
+
+The logs of all the architecture built against next-master can be found
+here (select the 'All' category in the table to view):
+https://linux.kernelci.org/build/next/branch/master/kernel/next-20231220/
+
+
+Find this issue filed at KSPP/linux here:
+https://github.com/KSPP/linux/issues/347
+
+
+A bisect done by building kernel against next-master for arch arm64
+(full log below) identified this patch as introducing the failure.
+
+git bisect log:
+git bisect start
+# good: [b85ea95d086471afb4ad062012a4d73cd328fa86] Linux 6.7-rc1
+git bisect good b85ea95d086471afb4ad062012a4d73cd328fa86
+# bad: [5ba73bec5e7b0494da7fdca3e003d8b97fa932cd] Add linux-next
+specific files for 20231114
+git bisect bad 5ba73bec5e7b0494da7fdca3e003d8b97fa932cd
+# good: [a15c6466b909f03889150df57b227702a7bd6bd5] Merge branch
+'for-next' of
+git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git
+git bisect good a15c6466b909f03889150df57b227702a7bd6bd5
+# good: [6a8b8b208098a27488a3649966d64894da948a02] Merge branch
+'for-next' of
+git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git
+git bisect good 6a8b8b208098a27488a3649966d64894da948a02
+# bad: [81105901f053f9684a111c0569eb35474b2a86f9] Merge branch 'next' of
+git://git.kernel.org/pub/scm/linux/kernel/git/coresight/linux.git
+git bisect bad 81105901f053f9684a111c0569eb35474b2a86f9
+# bad: [585a8722efb6f823e961f16bd9be818f994d4804] Merge branch
+'rcu/next' of
+git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+git bisect bad 585a8722efb6f823e961f16bd9be818f994d4804
+# good: [c867caae623b3dd488a849df5538e79a59b0a47f] Merge branch into
+tip/master: 'x86/percpu'
+git bisect good c867caae623b3dd488a849df5538e79a59b0a47f
+# bad: [381a25d3e3d440ccc05de8ddd56a055423ac9fe5] Merge branch 'next' of
+git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+git bisect bad 381a25d3e3d440ccc05de8ddd56a055423ac9fe5
+# good: [762c934317e6f4b576eb4aa75e5facf4968a4a8f] SELinux: Add selfattr
+hooks
+git bisect good 762c934317e6f4b576eb4aa75e5facf4968a4a8f
+# good: [fdcf699b60712ecd6e41d9fc09137279257a4bf8] lsm: correct error
+codes in security_getselfattr()
+git bisect good fdcf699b60712ecd6e41d9fc09137279257a4bf8
+# bad: [9ba8802c8b66fbde2ee32ab4c44cd418f9444486] lsm: convert
+security_setselfattr() to use memdup_user()
+git bisect bad 9ba8802c8b66fbde2ee32ab4c44cd418f9444486
+# bad: [41793202292fd2acf99fdc09eff8323cc27c80eb] lsm: align based on
+pointer length in lsm_fill_user_ctx()
+git bisect bad 41793202292fd2acf99fdc09eff8323cc27c80eb
+# bad: [d7cf3412a9f6c547e5ee443fa7644e08898aa3e2] lsm: consolidate
+buffer size handling into lsm_fill_user_ctx()
+git bisect bad d7cf3412a9f6c547e5ee443fa7644e08898aa3e2
+# first bad commit: [d7cf3412a9f6c547e5ee443fa7644e08898aa3e2] lsm:
+consolidate buffer size handling into lsm_fill_user_ctx()
+
+Thanks,
+Aishwarya
+
+
+
