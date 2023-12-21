@@ -1,90 +1,104 @@
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62D6539E5
-	for <linux-security-module@vger.kernel.org>; Thu, 21 Dec 2023 15:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6427264A98
+	for <linux-security-module@vger.kernel.org>; Thu, 21 Dec 2023 18:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YH3IlKNK"
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dbd73cc1e52so856019276.0
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Dec 2023 07:20:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1703172045; x=1703776845; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BqMpSSIZ78PXpXDobSVHHnmSfZfFYRwg43+u7EmiBX0=;
-        b=YH3IlKNKGkWLdzfUeUi2NIzrBdzNip8TzdVNLlPlV5BC2uYLva+1BWbl5GbNvuSFZf
-         Fw1hiQpGpXXZIu0SQJRCTumG4BotIpjCGVM8PpbTDyBUQDoA76atDjqGZvosCuv/FBJW
-         26ox3BATE4uMKgxjHJRHmxICPzeuUtsCL/POtJcK2N8jUmCQheUVT86Efok38+ybE0pS
-         7UeujZxui1rdp/f2lp/r+7xIRYf0rhT4zUCWjV1G5WHKg6/J9bWmR5aQ5n1ENJcWQyaA
-         tTt0IyBHuR3maGLK79yytAwOmlTUr152sYIJU/bJM5PsRkUNUNVUcmVTiIAbkbYgra7m
-         IcDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703172045; x=1703776845;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BqMpSSIZ78PXpXDobSVHHnmSfZfFYRwg43+u7EmiBX0=;
-        b=SRGO7rkmTkIR+CXR273+s/IwuhltxrYnQlL+cmJmLfF+T5Yxr0FKk+TW/i+8yG/abk
-         qHBJPbGWVxGoIVoZkTppFWdFoa9NzIsQ+tSylCsSqf2T5G3/yVVwskCKzJrNtNTkyWyZ
-         XhOMT5z6fMg/PetexWq3KjFTETvvCuBReS4lhKUTLH9iIyoB/BTQFM5pH3aYz7s8KMJ+
-         54IWtjuyEPvw8HhBr4dsysrLPhSftGI6ESKxXGvK8//Kc3mDe17UBu6WZeb2hmIIaYPi
-         ppllJBRDh89eiuTZiosMNAokXYBQzmLqHoUN42TvwLNl4FkFVGbmaOGtnIt8Gk+s32sr
-         IG+g==
-X-Gm-Message-State: AOJu0Yw86RAvh3KK+izljRtVYm6bJc+jW7FYAdaQ1KG9ku1HCxNI2egv
-	hbudaXrmvjrapmrWHYJeF5elwAELBoNeOc0//bIU
-X-Google-Smtp-Source: AGHT+IECyGfKtslmyZL3ZJ/ubxm255SRJ+QgrThanH21ILGaTj05vwz/qfSPuEJZJ+XbLMcVwPXfR4sOLgCkslWNLGY=
-X-Received: by 2002:a25:b307:0:b0:dbd:45b4:cc40 with SMTP id
- l7-20020a25b307000000b00dbd45b4cc40mr1146208ybj.129.1703172044794; Thu, 21
- Dec 2023 07:20:44 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Jz8p7OLm"
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+	by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SwzsQ3Q0nzMqGk7;
+	Thu, 21 Dec 2023 18:46:02 +0000 (UTC)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SwzsP3FQGzMpnPr;
+	Thu, 21 Dec 2023 19:46:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1703184362;
+	bh=deZ4ghKKW+5Po8LBWBxHHxYPzl2S7/Qg+OvXDshhnrM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jz8p7OLmX78jTpuk4kL02zFarFURPfJdjmw6+227t89uuSC68b28T/PC/SkASES5u
+	 ckyTHkqqxniGinRQFpTFRYcLcqT9KoaXxnRqoFX1DR45RdqCqjlda9qA/c1f5TelyL
+	 djbtHsneUnctKlH+l2sewJbAGYIsN/7/Nz9my3pY=
+Date: Thu, 21 Dec 2023 19:45:58 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@google.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Shervin Oloumi <enlightened@google.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 4/7] landlock: Log domain creation and enforcement
+Message-ID: <20231221.doe8Aebae8vi@digikod.net>
+References: <20230921061641.273654-1-mic@digikod.net>
+ <20230921061641.273654-5-mic@digikod.net>
+ <CAHC9VhQ3fqq6bP=eco1hk=AoMa=5QNyXHCzNw5RZt92y9Z7T2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231024213525.361332-4-paul@paul-moore.com> <20231024213525.361332-7-paul@paul-moore.com>
- <3717b995-5209-4db8-be77-c6303bb1c0db@arm.com> <CAHC9VhSABo8PO0q0EUSw7uh+r8CjPFTwK6DJk8Vs4oDcckPwHg@mail.gmail.com>
- <bbfee04e-d5a7-4537-a9ab-467eecb00940@sirena.org.uk>
-In-Reply-To: <bbfee04e-d5a7-4537-a9ab-467eecb00940@sirena.org.uk>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 21 Dec 2023 10:21:04 -0500
-Message-ID: <CAHC9VhSZ6SQ=2tspLk+kFhXKPoOcAcGzkVrWVneT5_cXBUyrUQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] lsm: consolidate buffer size handling into lsm_fill_user_ctx()
-To: Mark Brown <broonie@kernel.org>, Aishwarya TCV <aishwarya.tcv@arm.com>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhQ3fqq6bP=eco1hk=AoMa=5QNyXHCzNw5RZt92y9Z7T2g@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Dec 21, 2023 at 8:01=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
-te:
-> On Wed, Dec 20, 2023 at 08:40:24PM -0500, Paul Moore wrote:
-> > Looking at the lsm_ctx definition in include/uapi/linux/lsm.h I see
-> > the following:
->
-> >   struct lsm_ctx {
-> >     __u64 id;       /* offset:  0 */
-> >     __u64 flags;    /* offset:  8 */
-> >     __u64 len;      /* offset: 16 */
-> >     __u64 ctx_len;  /* offset: 24 */
-> >     __u8 ctx[];     /* offset: 32 */
-> >   };
->
-> > and given that the offending line of code is trying to do a memcpy
-> > into the ctx field, an offset of 32 looks correct to me.
->
-> > Suggestions on how to annotate the struct, or the code doing the
-> > memcpy() are welcome.
->
-> You're looking for a __counted_by() annotation here I think.
+On Wed, Dec 20, 2023 at 04:22:22PM -0500, Paul Moore wrote:
+> On Thu, Sep 21, 2023 at 2:17 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > Add audit support for domain creation, i.e. task self-restriction.
+> >
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > ---
+> >  security/landlock/audit.c    | 24 ++++++++++++++++++++++++
+> >  security/landlock/audit.h    |  8 ++++++++
+> >  security/landlock/syscalls.c |  4 ++++
+> >  3 files changed, 36 insertions(+)
+> >
+> > diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+> > index f58bd529784a..d9589d07e126 100644
+> > --- a/security/landlock/audit.c
+> > +++ b/security/landlock/audit.c
+> > @@ -84,6 +84,30 @@ void landlock_log_create_ruleset(struct landlock_ruleset *const ruleset)
+> >         audit_log_end(ab);
+> >  }
+> >
+> > +void landlock_log_restrict_self(struct landlock_ruleset *const domain,
+> > +                               struct landlock_ruleset *const ruleset)
+> > +{
+> > +       struct audit_buffer *ab;
+> > +
+> > +       WARN_ON_ONCE(domain->id);
+> > +       WARN_ON_ONCE(!ruleset->id);
+> > +
+> > +       ab = audit_log_start(audit_context(), GFP_ATOMIC, AUDIT_LANDLOCK);
+> > +       if (!ab)
+> > +               /* audit_log_lost() call */
+> > +               return;
+> > +
+> > +       domain->hierarchy->id =
+> > +               atomic64_inc_return(&ruleset_and_domain_counter);
+> > +       log_task(ab);
+> > +       audit_log_format(ab, " op=restrict-self domain=%llu ruleset=%llu",
+> > +                        domain->hierarchy->id, ruleset->id);
+> 
+> If domain creation and self restriction are the same, I would suggest
+> going with "op=create-domain" so it better matches "op=release-domain"
+> in patch 3/7.
 
-Can you verify and submit a patch for that?  I'm asking because my
-build/toolchain configuration never produced these warnings/errors
-during my testing.
+OK, I'll do something more consistent.
 
---=20
-paul-moore.com
+> 
+> Also see my previous comment about consistency between AUDIT_LANDLOCK records.
+> 
+> > +       audit_log_format(
+> > +               ab, " parent=%llu",
+> > +               domain->hierarchy->parent ? domain->hierarchy->parent->id : 0);
+> > +       audit_log_end(ab);
+> > +}
+> 
+> --
+> paul-moore.com
+> 
