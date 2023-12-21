@@ -1,25 +1,25 @@
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6427264A98
-	for <linux-security-module@vger.kernel.org>; Thu, 21 Dec 2023 18:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA851F601
+	for <linux-security-module@vger.kernel.org>; Thu, 21 Dec 2023 18:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Jz8p7OLm"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="gbsSrKQa"
 Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-	by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SwzsQ3Q0nzMqGk7;
-	Thu, 21 Dec 2023 18:46:02 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SwzsP3FQGzMpnPr;
-	Thu, 21 Dec 2023 19:46:01 +0100 (CET)
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SwzvM3WT2zMpvn6;
+	Thu, 21 Dec 2023 18:47:43 +0000 (UTC)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SwzvL5s6czMpnPc;
+	Thu, 21 Dec 2023 19:47:42 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1703184362;
-	bh=deZ4ghKKW+5Po8LBWBxHHxYPzl2S7/Qg+OvXDshhnrM=;
+	s=20191114; t=1703184463;
+	bh=ihKZ9/9Nu3FIEKBVZmn+cxwP3cY4ydFvIOriawEZ2hU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jz8p7OLmX78jTpuk4kL02zFarFURPfJdjmw6+227t89uuSC68b28T/PC/SkASES5u
-	 ckyTHkqqxniGinRQFpTFRYcLcqT9KoaXxnRqoFX1DR45RdqCqjlda9qA/c1f5TelyL
-	 djbtHsneUnctKlH+l2sewJbAGYIsN/7/Nz9my3pY=
-Date: Thu, 21 Dec 2023 19:45:58 +0100
+	b=gbsSrKQanKGS3Ae+aAOHcqWLg0yMM0rw7tT7KBVY5SgpIATiyZEcunKvxxOZRvjr3
+	 HUTtTk3stKPVbVsKxw+85VKhKCEfRj/1AmIw0d4ucDykcothCQlU0z0j3OdMYWbAYP
+	 5hYxetvpLbFWyuHxO4wToNrwvu14YRJe8UdWl840=
+Date: Thu, 21 Dec 2023 19:47:40 +0100
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Paul Moore <paul@paul-moore.com>
 Cc: Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>, 
@@ -28,11 +28,11 @@ Cc: Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
 	Jorge Lucangeli Obes <jorgelo@google.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
 	Shervin Oloumi <enlightened@google.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 4/7] landlock: Log domain creation and enforcement
-Message-ID: <20231221.doe8Aebae8vi@digikod.net>
+Subject: Re: [RFC PATCH v1 5/7] landlock: Log file-related requests
+Message-ID: <20231221.inae1eThoeva@digikod.net>
 References: <20230921061641.273654-1-mic@digikod.net>
- <20230921061641.273654-5-mic@digikod.net>
- <CAHC9VhQ3fqq6bP=eco1hk=AoMa=5QNyXHCzNw5RZt92y9Z7T2g@mail.gmail.com>
+ <20230921061641.273654-6-mic@digikod.net>
+ <CAHC9VhQJPXJQCmXPUxOE3wXArUcgfDi98FO=VhRBgBgdueyAOQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,62 +42,87 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhQ3fqq6bP=eco1hk=AoMa=5QNyXHCzNw5RZt92y9Z7T2g@mail.gmail.com>
+In-Reply-To: <CAHC9VhQJPXJQCmXPUxOE3wXArUcgfDi98FO=VhRBgBgdueyAOQ@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Wed, Dec 20, 2023 at 04:22:22PM -0500, Paul Moore wrote:
+On Wed, Dec 20, 2023 at 04:22:33PM -0500, Paul Moore wrote:
 > On Thu, Sep 21, 2023 at 2:17 AM Mickaël Salaün <mic@digikod.net> wrote:
 > >
-> > Add audit support for domain creation, i.e. task self-restriction.
+> > Add audit support for mkdir, mknod, symlink, unlink, rmdir, truncate,
+> > and open requests.
 > >
 > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
 > > ---
-> >  security/landlock/audit.c    | 24 ++++++++++++++++++++++++
-> >  security/landlock/audit.h    |  8 ++++++++
-> >  security/landlock/syscalls.c |  4 ++++
-> >  3 files changed, 36 insertions(+)
+> >  security/landlock/audit.c | 114 ++++++++++++++++++++++++++++++++++++++
+> >  security/landlock/audit.h |  32 +++++++++++
+> >  security/landlock/fs.c    |  62 ++++++++++++++++++---
+> >  3 files changed, 199 insertions(+), 9 deletions(-)
 > >
 > > diff --git a/security/landlock/audit.c b/security/landlock/audit.c
-> > index f58bd529784a..d9589d07e126 100644
+> > index d9589d07e126..148fc0fafef4 100644
 > > --- a/security/landlock/audit.c
 > > +++ b/security/landlock/audit.c
-> > @@ -84,6 +84,30 @@ void landlock_log_create_ruleset(struct landlock_ruleset *const ruleset)
-> >         audit_log_end(ab);
-> >  }
+> > @@ -14,6 +14,25 @@
 > >
-> > +void landlock_log_restrict_self(struct landlock_ruleset *const domain,
-> > +                               struct landlock_ruleset *const ruleset)
+> >  atomic64_t ruleset_and_domain_counter = ATOMIC64_INIT(0);
+> >
+> > +static const char *op_to_string(enum landlock_operation operation)
+> > +{
+> > +       const char *const desc[] = {
+> > +               [0] = "",
+> > +               [LANDLOCK_OP_MKDIR] = "mkdir",
+> > +               [LANDLOCK_OP_MKNOD] = "mknod",
+> > +               [LANDLOCK_OP_SYMLINK] = "symlink",
+> > +               [LANDLOCK_OP_UNLINK] = "unlink",
+> > +               [LANDLOCK_OP_RMDIR] = "rmdir",
+> > +               [LANDLOCK_OP_TRUNCATE] = "truncate",
+> > +               [LANDLOCK_OP_OPEN] = "open",
+> > +       };
+> 
+> If you're going to be using a single AUDIT_LANDLOCK record type, do
+> you want to somehow encode that the above are access/permission
+> requests in the "op=" field name?
+
+I'll use several audit record types, one for a denial and others for the
+related kernel objects. See my other reply.
+
+> 
+> > +static void
+> > +log_request(const int error, struct landlock_request *const request,
+> > +           const struct landlock_ruleset *const domain,
+> > +           const access_mask_t access_request,
+> > +           const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
 > > +{
 > > +       struct audit_buffer *ab;
 > > +
-> > +       WARN_ON_ONCE(domain->id);
-> > +       WARN_ON_ONCE(!ruleset->id);
-> > +
-> > +       ab = audit_log_start(audit_context(), GFP_ATOMIC, AUDIT_LANDLOCK);
-> > +       if (!ab)
-> > +               /* audit_log_lost() call */
+> > +       if (WARN_ON_ONCE(!error))
+> > +               return;
+> > +       if (WARN_ON_ONCE(!request))
+> > +               return;
+> > +       if (WARN_ON_ONCE(!domain || !domain->hierarchy))
 > > +               return;
 > > +
-> > +       domain->hierarchy->id =
-> > +               atomic64_inc_return(&ruleset_and_domain_counter);
+> > +       /* Uses GFP_ATOMIC to not sleep. */
+> > +       ab = audit_log_start(audit_context(), GFP_ATOMIC | __GFP_NOWARN,
+> > +                            AUDIT_LANDLOCK);
+> > +       if (!ab)
+> > +               return;
+> > +
+> > +       update_request(request, domain, access_request, layer_masks);
+> > +
 > > +       log_task(ab);
-> > +       audit_log_format(ab, " op=restrict-self domain=%llu ruleset=%llu",
-> > +                        domain->hierarchy->id, ruleset->id);
-> 
-> If domain creation and self restriction are the same, I would suggest
-> going with "op=create-domain" so it better matches "op=release-domain"
-> in patch 3/7.
-
-OK, I'll do something more consistent.
-
-> 
-> Also see my previous comment about consistency between AUDIT_LANDLOCK records.
-> 
-> > +       audit_log_format(
-> > +               ab, " parent=%llu",
-> > +               domain->hierarchy->parent ? domain->hierarchy->parent->id : 0);
+> > +       audit_log_format(ab, " domain=%llu op=%s errno=%d missing-fs-accesses=",
+> > +                        request->youngest_domain,
+> > +                        op_to_string(request->operation), -error);
+> > +       log_accesses(ab, request->missing_access);
+> > +       audit_log_lsm_data(ab, &request->audit);
 > > +       audit_log_end(ab);
 > > +}
+> 
+> See my previous comments about record format consistency.
+
+right
+
 > 
 > --
 > paul-moore.com
