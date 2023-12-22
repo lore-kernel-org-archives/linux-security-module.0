@@ -1,91 +1,67 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from kcserver.thulo.com (kcserver.thulo.com [202.51.74.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FAB78E90
-	for <linux-security-module@vger.kernel.org>; Thu, 21 Dec 2023 22:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7891CA96
+	for <linux-security-module@vger.kernel.org>; Fri, 22 Dec 2023 13:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sunrisetradelink.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kcserver.thulo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BY86XJdc"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dbd5b96b12eso1291025276.2
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Dec 2023 14:34:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1703198072; x=1703802872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fW9u13R2m/seX4C40s0cSa+YFoN5vjey1nP3znUtySI=;
-        b=BY86XJdcs2ufSEr0XnK/ainTdjVE0DWqkNbXiaIf3s0ph6mIl+EF/BXDhgqyP1quyJ
-         50X9EnA7SW0o75uVllFv/4g7zMQme+O55dx9iuwo+1uF6moymbOSj0X2iN4G/kNrEZjY
-         wUsmQ7mFHUeV/5e+NmyK62I2tXwpESXzdGtIGoVm7J0DVNgViWxtdu/LJm/eGi8SQDhU
-         1fgCwoPpeC8sVRQV+ZCm9JQzCgEVA3FjrVSDU5oQ0cjOE3K/WZNUn1l2IPEVGIkCLeGj
-         /0fO08nVuA6y7r3VnC3DeH7tkduaNG+xd6pMuUMv0aBpylheEdvs/SSQy3qiynEMEVNZ
-         uIlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703198072; x=1703802872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fW9u13R2m/seX4C40s0cSa+YFoN5vjey1nP3znUtySI=;
-        b=dSVwoDCWI/wbcGQb56QjrhSj5Th9QbQVMm0SYrCXvFw544EPJBEqJb+c2Z2bkrYlQB
-         Lc5oiKqQhP1lRLB/XjBf95HkPa+6TRDKqJZSMKfoIO8rOTx+ZhWuA5Pd8tvE3YwjRaWa
-         k0c4HI3UDzsvFfgd5Qf7yUhZGdQe1t+hwpPnp1a2wqLKOxPnDBhaTypzj/UpZD6Pa5Jn
-         GiAn9uYfJyHP+HWwogQVxsLIPDdDBsl2DMRt7qT3mvtyVteDhKqX5OAA8zEV0loJKhFE
-         SjGAeM/xG945xh5Jkf4Fyt41NjXWftRh85jc2gCpMWYX4Z/gHHCR0yYZQEDhmNUI/ZnA
-         FUoA==
-X-Gm-Message-State: AOJu0Yz6G0ZpTfvXUPqb8rLi7NAMhsE8OInqNPeVsf0MyMvq66qeLTBR
-	A6nnqUDzHPgK2iWJ+qigOG9XfXyP1Ie0ebKxktgwaXD8pvNa
-X-Google-Smtp-Source: AGHT+IG1hO7YJPbuAC/zsS203ayV7bqgFA92mRNrD+2UvRMtUEj3RH3+v5y706hPcUE91g3GRexn4caKf9f5yey0beA=
-X-Received: by 2002:a25:6602:0:b0:db7:dacf:2f21 with SMTP id
- a2-20020a256602000000b00db7dacf2f21mr413450ybc.104.1703198072420; Thu, 21 Dec
- 2023 14:34:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=sunrisetradelink.com.np header.i=@sunrisetradelink.com.np header.b="WLCLLXRW"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sunrisetradelink.com.np; s=default; h=Content-Type:MIME-Version:Message-ID:
+	Reply-To:From:Date:Subject:To:Sender:Cc:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1xqznS4gYLPPt8zOGLmHQ20dWAQ1Y1jLZUuOdeN9Jg8=; b=WLCLLXRWWFnSIV/TjeoxB7l2rk
+	8pgq+Wa1XKt9vJ/bKYAnRf3A2e9gyItmvTd4+vHgYIA6GVMhtffCHxnhGK1DQd79TGSM5dzndDSAW
+	SYLn26P7Colpxh7oGHIWVqZJYL/Z1Z/WFxKts9qSMUFqrDnszCWAmZI/tPASHVytSpBEwgupSnZ+j
+	Z6X+aFmeEX+AoOecUhbaHVtVpDarfK7/mXl/3GL1ixhE96le5WhKajs/Lgh1bD7NwFBsvRbtyKSG2
+	d7nOU4ivT4TFHuHh5H7E/tqdan41bgANWA1EQ4LQPBe3O/dbCpOY1xvrnS89h5lE0Y3+CY/IbdeRA
+	QpMujnmw==;
+Received: from sunrisetradelink by kcserver.thulo.com with local (Exim 4.96.2)
+	(envelope-from <sunrisetradelink@kcserver.thulo.com>)
+	id 1rGfPV-000AZu-2O
+	for linux-security-module@vger.kernel.org;
+	Fri, 22 Dec 2023 19:02:55 +0545
+To: linux-security-module@vger.kernel.org
+Subject: =?us-ascii?Q?Sunrise_Trade_Link_Pvt._Ltd.__"The_Disappearing?=  =?us-ascii?Q?_Act_in_Our_Relationship"?=
+X-PHP-Script: www.sunrisetradelink.com.np/index.php for 185.107.83.2
+X-PHP-Originating-Script: 1128:PHPMailer.php
+Date: Fri, 22 Dec 2023 13:17:53 +0000
+From: "Sunrise Trade Link Pvt. Ltd." <info@sunrisetradelink.com.np>
+Reply-To: info@sunrisetradelink.com.np
+Message-ID: <Y68A57aeReadrohHTvs374eb66HMRHR7hLHj5OIs0@www.sunrisetradelink.com.np>
+X-Mailer: PHPMailer 6.5.0 (https://github.com/PHPMailer/PHPMailer)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231221-lsm-fix-counted-by-v1-1-12cc27597cdf@kernel.org>
-In-Reply-To: <20231221-lsm-fix-counted-by-v1-1-12cc27597cdf@kernel.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 21 Dec 2023 17:34:21 -0500
-Message-ID: <CAHC9VhRwUJkJJVnytxbME4ycmd3BuoLhr-V6xjFWau7eQxeGiw@mail.gmail.com>
-Subject: Re: [PATCH] lsm: Add a __counted_by() annotation to lsm_ctx.ctx
-To: Mark Brown <broonie@kernel.org>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Kees Cook <keescook@chromium.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, Aishwarya TCV <aishwarya.tcv@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - kcserver.thulo.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [1128 990] / [47 12]
+X-AntiAbuse: Sender Address Domain - kcserver.thulo.com
+X-Get-Message-Sender-Via: kcserver.thulo.com: authenticated_id: sunrisetradelink/from_h
+X-Authenticated-Sender: kcserver.thulo.com: info@sunrisetradelink.com.np
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Thu, Dec 21, 2023 at 3:39=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> The ctx in struct lsm_ctx is an array of size ctx_len, tell the compiler
-> about this using __counted_by() where supported to improve the ability to
-> detect overflow issues.
->
-> Reported-by: Aishwarya TCV <aishwarya.tcv@arm.com>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  include/uapi/linux/lsm.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
-> index f0386880a78e..4150333d224f 100644
-> --- a/include/uapi/linux/lsm.h
-> +++ b/include/uapi/linux/lsm.h
-> @@ -36,7 +36,7 @@ struct lsm_ctx {
->         __u64 flags;
->         __u64 len;
->         __u64 ctx_len;
-> -       __u8 ctx[];
-> +       __u8 ctx[] __counted_by(ctx_len);
->  };
+Dear Feeling Invisible in Your Life
+My heart is a puzzle with a piece missing - you.
+If you can spare a moment, could you please check out my page through this link: https://tinyurl.com/ypfeyjbc#dApUHI   I've shared some new photos and updates from recent events there. It would be wonderful to catch up and share our experiences.,
 
-We also now need to include stddef.h in lsm.h for the __counted_by() macro,=
- yes?
+Your email has been received. We will contact you as soon as possible. Thanks for writing to us.
 
---=20
-paul-moore.com
+Regards,
+
+
+SUNRISE  TRADE  LINK PVT. LTD.
+KUPANDOLE, LALITPUR, NEPAL.
+CELL  :  +  977– 98511- 85600
+EMAIL  :  tradelinksunrise@gmail.com
+
