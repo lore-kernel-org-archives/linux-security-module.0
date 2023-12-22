@@ -1,98 +1,247 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F4423740;
-	Fri, 22 Dec 2023 14:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4905B2FC38
+	for <linux-security-module@vger.kernel.org>; Fri, 22 Dec 2023 22:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BmE7+o7x"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDC2BC433C7;
-	Fri, 22 Dec 2023 14:54:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1703256882;
-	bh=Tf6r9+dOJakriookGkExO9gdNVREb4CJwWTm93Lq6B8=;
-	h=From:Date:Subject:To:Cc:From;
-	b=BmE7+o7xibvyL1cPsn3sUQEc2K7uvqtKiHB8ZEUmzHqC1V0M3gJGUhBUv9/gUtDAa
-	 OhikQutGcBJikPIH1PWNSh3W0fe8nusKNfELhZPkRhR0SdCH9ctEuUp+BoaJaZ90/b
-	 cUcea556r653aV87getayQiU2dP26arQlVz3xukFLSdbyCnm6gY1oHKlSl7kr3zJv5
-	 EtPpqvTJAYYukwNFSortNLXTXOwbStMINfpR+GFzMpLPtei7rVqiimH0W9RxgHL61h
-	 yTSp/aOiBCEi1nBaU67U5VSg5cVEE3KjOzzwcvPq9xXWuOQaV2v0bV5U6QqOcZOGCt
-	 yWl9+6/K/FTeA==
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 22 Dec 2023 14:54:37 +0000
-Subject: [PATCH v2] lsm: Add a __counted_by() annotation to lsm_ctx.ctx
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="K+5VMif8"
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dbd71f33cd3so2182491276.3
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Dec 2023 14:42:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1703284966; x=1703889766; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KRfe3st5Sq+6jYTfqEvbxYNV9ZVvDUCiVKsaDs8UPZg=;
+        b=K+5VMif8LmUVhet8VzLt6mVJhCBoGNnaoIxsrljT0Q6T54IoHW10u3wR8DIt+fNPPt
+         NKR1RUPxXYfmD/clpgWa8hnxPL62rcosSc9OOokVxveCfThOff6TZprb7Qk8YZodK/p6
+         xbrwGTHsCD1Mdgg5rYTNCL4VNu3U5izRw0XfgfCxwIVAMt82oQs7Y2yVEsIpynbXk/Vi
+         vwMorZ8tdjGvE0tBbHLg2LI3FbqaCSXRa9LG0WdJX9ePxgT781gQlGXXwQOl9N/Ohw3g
+         1pEbcRryz0EbMLiyIAMH7Oj2QbqKuIS7JHi9d1MG41SvoitLmS8TRFo6j5YbkzjT12vX
+         252A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703284966; x=1703889766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KRfe3st5Sq+6jYTfqEvbxYNV9ZVvDUCiVKsaDs8UPZg=;
+        b=rz5fuMuTKnA4Qup11IBHtZ8p0eJb4TAiijjPpCaE3V7/w2etzDleGRtBBIgpD+xDgU
+         oHSWYOpkzjntkIO1VJdaBM9xLI6r5cvrA07eHOnaMlM5CuP8xSWiWGO6d+nV0b++lG25
+         neyPMioDni27k77DvVINKjI5LpfPwz3pekADVosUzFc1Q/XG0uM5V9m42T37GFfSeUH9
+         F++ud8vT6uWvzlk5kUW5MolToWBaEJcuAVo/sQ+kJ/7lv/eZ1uPamY35tj9BZe1T71Tk
+         n35xzJqrcl4BMF7Owr9N9eZHzPZiq09q6psi/Ay2i6kFho92IoQVvIvvAw9hcE4Lu7cH
+         u/fQ==
+X-Gm-Message-State: AOJu0Yzxi1KHxFqLwJ1ZUNHz64JVMG8T5HI8QqdQMbYXwn2qqJtBNy5W
+	kDhU87sm2IXpzAY4oactXZUz7DqIgCQKiqVrCUa01pID1PUp
+X-Google-Smtp-Source: AGHT+IHhe8gtJ2Jy890CtHKaIWwDsBVan3b58VTz5sDuWmxN3cj/Uo7ROSdRdcB3Nvh6s8vP9wSpox+867vdOU3UAHQ=
+X-Received: by 2002:a25:dccc:0:b0:db7:dacf:2f3a with SMTP id
+ y195-20020a25dccc000000b00db7dacf2f3amr1626639ybe.129.1703284966179; Fri, 22
+ Dec 2023 14:42:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231222-lsm-fix-counted-by-v2-1-f1237a095bdc@kernel.org>
-X-B4-Tracking: v=1; b=H4sIACyjhWUC/32NTQ7CIBCFr9LM2jEyRrGuvIfpAmFoiRUaqMSm4
- e5iD2De6nt5Pyskjo4TXJsVImeXXPAVaNeAHpTvGZ2pDHSgoyASOKYXWvdBHd5+ZoOPBW1rzYU
- k01kpqMUpck1so/eu8uDSHOKyfWTxc//OZYFVpDXJUyu1sbcnR8/jPsQeulLKF+dZ4DO1AAAA
-To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
- "Serge E. Hallyn" <serge@hallyn.com>, Kees Cook <keescook@chromium.org>, 
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org, Aishwarya TCV <aishwarya.tcv@arm.com>, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.13-dev-5c066
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1237; i=broonie@kernel.org;
- h=from:subject:message-id; bh=Tf6r9+dOJakriookGkExO9gdNVREb4CJwWTm93Lq6B8=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlhaMv/ELUVrM0GuXyutYsNbqAiTiWGM2DJYFEcwQ8
- cfgmv++JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZYWjLwAKCRAk1otyXVSH0LQZB/
- sEPxe44AsrwfISPQhOJQqpoDU08dBpuIpRT3OXE0oJFqhXeSccZBba0BM3U10GzFS2UK9FLlGjoIbh
- FKz6IXXIKUgZu+z8XyyDQk9Z73+Feex94HtfaQL4qpgAIwELqP6ff0jScbiK6E6swF9JDo28aqjLjh
- v2S/sBBc+OEu8iLFA9V5eT+Qi6I1XfJhYxH8+/ZrdJ6d3CDSjSJ4FvNc9E0L0UQB7neJf8TcjqvnOr
- Cmv/ebG5qqNhnkW46R5Mafbeb+pWTWJg4uRrXH9DlRag5nIAtGanyCy+cocIk9DMx0/MhhFOWJr/3h
- c/VbPTFugX9+OqPEOcoHnwf8rRbqn/
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20230921061641.273654-1-mic@digikod.net> <20230921061641.273654-4-mic@digikod.net>
+ <CAHC9VhQTvFp+i=j7t+55EnG44xg=Pmvkh=Oq=e7ddJWDZXLeSA@mail.gmail.com> <20231221.eij3poa3Se4b@digikod.net>
+In-Reply-To: <20231221.eij3poa3Se4b@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 22 Dec 2023 17:42:35 -0500
+Message-ID: <CAHC9VhRiUOe9enkCOko0mGehxt+2tbJNGoJm=jmauhZSPFvzRg@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 3/7] landlock: Log ruleset creation and release
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Shervin Oloumi <enlightened@google.com>, 
+	audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The ctx in struct lsm_ctx is an array of size ctx_len, tell the compiler
-about this using __counted_by() where supported to improve the ability to
-detect overflow issues.
+On Thu, Dec 21, 2023 at 1:45=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+> On Wed, Dec 20, 2023 at 04:22:15PM -0500, Paul Moore wrote:
+> > On Thu, Sep 21, 2023 at 2:17=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
+> > >
+> > > Add audit support for ruleset/domain creation and release ...
 
-Reported-by: Aishwarya TCV <aishwarya.tcv@arm.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
-Changes in v2:
-- Add explicit stddef.h inclusion in case __counted_by() definition
-  isn't otherwise pulled in.
-- Link to v1: https://lore.kernel.org/r/20231221-lsm-fix-counted-by-v1-1-12cc27597cdf@kernel.org
----
- include/uapi/linux/lsm.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+...
 
-diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
-index f0386880a78e..f8aef9ade549 100644
---- a/include/uapi/linux/lsm.h
-+++ b/include/uapi/linux/lsm.h
-@@ -9,6 +9,7 @@
- #ifndef _UAPI_LINUX_LSM_H
- #define _UAPI_LINUX_LSM_H
- 
-+#include <linux/stddef.h>
- #include <linux/types.h>
- #include <linux/unistd.h>
- 
-@@ -36,7 +37,7 @@ struct lsm_ctx {
- 	__u64 flags;
- 	__u64 len;
- 	__u64 ctx_len;
--	__u8 ctx[];
-+	__u8 ctx[] __counted_by(ctx_len);
- };
- 
- /*
+> > > +/* Inspired by dump_common_audit_data(). */
+> > > +static void log_task(struct audit_buffer *const ab)
+> > > +{
+> > > +       /* 16 bytes (TASK_COMM_LEN) */
+> > > +       char comm[sizeof(current->comm)];
+> > > +
+> > > +       /*
+> > > +        * Uses task_pid_nr() instead of task_tgid_nr() because of ho=
+w
+> > > +        * credentials and Landlock work.
+> > > +        */
+> > > +       audit_log_format(ab, "tid=3D%d comm=3D", task_pid_nr(current)=
+);
+> > > +       audit_log_untrustedstring(ab,
+> > > +                                 memcpy(comm, current->comm, sizeof(=
+comm)));
+> > > +}
+> >
+> > Depending on how log_task() is used, it may be redundant with respect
+> > to the existing SYSCALL record.  Yes, there is already redundancy with
+> > the AVC record, but that is a legacy problem and not something we can
+> > easily fix, but given that the Landlock records are new we have an
+> > opportunity to do things properly :)
+>
+> Indeed, it would make it simpler too. I wasn't sure how standalone a
+> record should be, but I guess there tools should be able to look for a
+> set of related records (e.g. event with a SYSCALL record matching a PID
+> and a LANDLOCK record).
 
----
-base-commit: ec4e9d630a64df500641892f4e259e8149594a99
-change-id: 20231221-lsm-fix-counted-by-f9fd827e26aa
+I believe ausearch will output the entire event when it matches on a
+field in one of the event's records.
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+> > > +void landlock_log_create_ruleset(struct landlock_ruleset *const rule=
+set)
+> > > +{
+> > > +       struct audit_buffer *ab;
+> > > +
+> > > +       WARN_ON_ONCE(ruleset->id);
+> > > +
+> > > +       ab =3D audit_log_start(audit_context(), GFP_ATOMIC, AUDIT_LAN=
+DLOCK);
+> > > +       if (!ab)
+> > > +               /* audit_log_lost() call */
+> > > +               return;
+> > > +
+> > > +       ruleset->id =3D atomic64_inc_return(&ruleset_and_domain_count=
+er);
+> > > +       log_task(ab);
+> > > +       audit_log_format(ab,
+> > > +                        " op=3Dcreate-ruleset ruleset=3D%llu handled=
+_access_fs=3D",
+> > > +                        ruleset->id);
+> >
+> > "handled_access_fs" seems a bit long for a field name, is there any
+> > reason why it couldn't simply be "access_fs" or something similar?
+>
+> "handled_access_fs" is from the landlock_create_ruleset(2) API, so I'd
+> like to use the same name.
 
+Okay, that's a reasonable reason.
+
+> However, because the types of handled access
+> rights for a ruleset will expand (e.g. we now have a
+> handled_access_net), I'm wondering if it would be better to keep this
+> (growing) one-line record or if we should use several records for a
+> ruleset creation (i.e. one line per type of handled access righs).
+
+I think it would be better to have a single record for rulesets rather
+than multiple records all dealing with rulesets.
+
+> > > +               id =3D ruleset->hierarchy->id;
+> > > +               WARN_ON_ONCE(ruleset->id);
+> > > +       } else {
+> > > +               name =3D "ruleset";
+> > > +               id =3D ruleset->id;
+> > > +       }
+> > > +       WARN_ON_ONCE(!id);
+> > > +
+> > > +       /*
+> > > +        * Because this might be called by kernel threads, logging
+> > > +        * related task information with log_task() would be useless.
+> > > +        */
+> > > +       audit_log_format(ab, "op=3Drelease-%s %s=3D%llu", name, name,=
+ id);
+> >
+> > This starts to get a little tricky.  The general guidance is that for
+> > a given audit record type, e.g. AUDIT_LANDLOCK, there should be no
+> > change in presence or ordering of fields, yet in
+> > landlock_log_create_ruleset() we log the permission information and
+> > here in landlock_log_release_ruleset() we do not.  The easy fix is to
+> > record the permission information here as well, or simply use a
+> > "handled_access_fs=3D?" placeholder.  Something to keep in mind as you
+> > move forward.
+>
+> OK, I used different "op" to specify the related fields, but I should
+> use a dedicated record type when it makes sense instead. My reasoning
+> was that it would be easier to filter on one or two record types, but
+> I like the fixed set of fields per record type.
+>
+> I plan to add a few record types, something like that:
+>
+> For a ruleset creation event, several grouped records:
+> - AUDIT_LANDLOCK_RULESET: "id=3D[new ruleset ID] op=3Dcreate"
+> - AUDIT_LANDLOCK_ACCESS: "type=3D[fs or net] rights=3D[bitmask]"
+
+I'm guessing that LANDLOCK_RULESET would be for policy changes, and
+LANDLOCK_ACCESS would be for individual access grants or denials?  If
+so, that looks reasonable.
+
+> For rule addition, several records per landlock_add_rule(2) call.
+> Example with a path_beneath rule:
+> - AUDIT_LANDLOCK_RULESET: "id=3D[ruleset ID] op=3Dadd_rule"
+> - AUDIT_LANDLOCK_PATH: "scope=3Dbeneath path=3D[file path] dev=3D ino=3D"
+> - AUDIT_LANDLOCK_ACCESS: "type=3Dfs rights=3D[bitmask]"
+
+I worry that LANDLOCK_PATH is too much of a duplicate for the existing
+PATH record.  Assuming the "scope=3D" field is important, could it live
+in the LANDLOCK_ACCESS record and then you could do away with the
+dedicated LANDLOCK_PATH record?  Oh, wait ... this is to record the
+policy, not a individual access request, gotcha.  If that is the case
+and RULESET, PATH, ACCESS are all used simply to record the policy
+information I might suggest creation of an AUDIT_LANDLOCK_POLICY
+record that captures all of the above.  If you think that is too
+cumbersome, then perhaps you can do the object/access-specific record
+type, e.g. AUDIT_LANDLOCK_POLICY_FS and AUDIT_LANDLOCK_POLICY_NET.
+
+You also shouldn't reuse the "type=3D" field.  Steve gets grumpy when
+people reuse field names for different things.  You can find a
+reasonably complete list of fields here:
+https://github.com/linux-audit/audit-documentation/blob/main/specs/fields/f=
+ield-dictionary.csv
+
+> For domain creation/restriction:
+> - AUDIT_LANDLOCK_DOMAIN: "id=3D[new domain ID] op=3Dcreate"
+> - AUDIT_LANDLOCK_RULESET: "id=3D[ruleset ID] op=3Duse"
+
+I imagine you could capture this in the policy record type?
+
+> For ruleset release:
+> - AUDIT_LANDLOCK_RULESET: "id=3D[ruleset ID] op=3Drelease"
+>
+> For domain release:
+> - AUDIT_LANDLOCK_DOMAIN: "id=3D[domain ID] op=3Drelease"
+
+Same with the above two.
+
+> For denied FS access:
+> - AUDIT_LANDLOCK_DENIAL: "id=3D[domain ID] op=3Dmkdir"
+> - AUDIT_LANDLOCK_PATH: "scope=3Dexact path=3D[file path] dev=3D ino=3D"
+
+I would use a single record type, i.e. AUDIT_LANDLOCK_ACCESS, to
+capture both access granted and denied events.  I'd also omit the
+dedicated LANDLOCK_PATH record here in favor of the generic PATH
+record (see my comments above).
+
+> For denied net access:
+> - AUDIT_LANDLOCK_DENIAL: "id=3D[domain ID] op=3Dconnect"
+> - AUDIT_LANDLOCK_PORT: "port=3D"
+
+I would look at the SOCKADDR record type instead of introducing a new
+LANDLOCK_PORT type.
+
+> I guess it will still be OK to expand a record type with new appended
+> fields right? For instance, could we append a "flags" field to a
+> AUDIT_LANDLOCK_RULESET record (because it may not make sense to create a
+> dedicated record type for that)?
+
+Of course, one can always add fields to an existing record type with
+the understanding that they MUST be added to the end.
+
+--=20
+paul-moore.com
