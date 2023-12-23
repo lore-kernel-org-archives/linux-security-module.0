@@ -1,36 +1,36 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE811D53B
-	for <linux-security-module@vger.kernel.org>; Sat, 23 Dec 2023 23:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BE91D53B
+	for <linux-security-module@vger.kernel.org>; Sat, 23 Dec 2023 23:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q7Km+/y6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MwF6EdS0"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1703373441;
+	s=mimecast20190719; t=1703374480;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=o5kJX399iwNjwlLHQiY6ThZdX3WxwjfQ9r5nK7p8QGk=;
-	b=Q7Km+/y6rHRxNdHQ0lusC4iuScREbnIL59X2dyunFuESe7oc9419lO2Lt4KD4qWlXaSDvW
-	mwI+GnA+e9u/1HDz8aD2lE2hhEtZnTHRZXNtK1RGhotM6gGZTJYguN2JjkQoHvaWcLSiFI
-	52yP8Cm4jeCewPTpx4OIql0MXdz8cwI=
+	bh=R6MwvTNgc3edtUi1oD2vuk843ZSwVQ67y6EiHuffl3Q=;
+	b=MwF6EdS0hS4wunnFxNqxu0gyUxu8YlRDon1INDTj5Wkf2UOc6SJEidd+nv75tuDmSZFzrg
+	fyy2Cj924d0igY/THvYoG9I0JaCcTtvvSEh8shpy1e91zW3JJR7exTVhN2w3kEWJ24XM4e
+	4FcIcrBICNfdzlAHrZSjjTpOfwQOFhQ=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-13-B4D-A7G2P4GM5Zyues5RUA-1; Sat, 23 Dec 2023 18:17:16 -0500
-X-MC-Unique: B4D-A7G2P4GM5Zyues5RUA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+ us-mta-646-9lITgyanOQahtKf1ir0iaA-1; Sat, 23 Dec 2023 18:34:34 -0500
+X-MC-Unique: 9lITgyanOQahtKf1ir0iaA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0F2FE807F6E;
-	Sat, 23 Dec 2023 23:17:16 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F06B9807F54;
+	Sat, 23 Dec 2023 23:34:33 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.39.195.169])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id ACD151C060AF;
-	Sat, 23 Dec 2023 23:17:13 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 0546951D5;
+	Sat, 23 Dec 2023 23:34:31 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
 	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
 	Kingdom.
@@ -53,14 +53,14 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2591732.1703373433.1@warthog.procyon.org.uk>
+Content-ID: <2592300.1703374471.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 23 Dec 2023 23:17:13 +0000
-Message-ID: <2591733.1703373433@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+Date: Sat, 23 Dec 2023 23:34:31 +0000
+Message-ID: <2592301.1703374471@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
 #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t
+t master
 
 diff --git a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
 index 2a6d363763a2..f18ca02aa95a 100644
