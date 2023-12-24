@@ -1,240 +1,104 @@
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20282D523
-	for <linux-security-module@vger.kernel.org>; Sun, 24 Dec 2023 19:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1209DDB6
+	for <linux-security-module@vger.kernel.org>; Sun, 24 Dec 2023 19:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="WdpqF/FF"
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3bb7344a0e1so2689449b6e.0
-        for <linux-security-module@vger.kernel.org>; Sun, 24 Dec 2023 11:44:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SRl0W3cY"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5e75005bd0cso30951917b3.1
+        for <linux-security-module@vger.kernel.org>; Sun, 24 Dec 2023 11:58:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1703447097; x=1704051897; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1703447916; x=1704052716; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=boZ0uwY/zF6oiDhDnHlBkkvbQGja5+tZWoWqWwoQ9bk=;
-        b=WdpqF/FFE+eiL9ECBGtIw9C+F1KiPfWam6qQYVUQOl84lzYOQNS39kNml5eRNHTXtK
-         Pctu9NiMbbWBH2C6jzX5OHkMbQY3fsmGijhfqyNrSm3JSHBuqZHi1J3NQTG6+8R0zQTg
-         ptsFeIj9dh9oCX+YvbEx7jdYlTpLq6eHdpLAZRFKf3RZOasRFpjWx7YNcxge5BCrGDMR
-         iMXnXwX3rERxG2xpPHuKX+lBZQPVKUra5CMSlIlwA1xf9f2LrAH1/6dlIkcd32PgySd7
-         J+eqPxkInZAYM6lY6MmGJhs6igPvn2RFjCBcEmw/mKjTjFR9QgiAbCtRwDmot13SyVAS
-         gVnQ==
+        bh=tmcVQPwGjjUY9XTbKfzg3lbGQPvGiD0vLAjWo8rnhBQ=;
+        b=SRl0W3cYZDpisUjwm9Cdsa5lL22PatpdQ1lwN4L8rsdgijB8cm/dJRZMmfCaBe+N9P
+         oJIkvul5DqxNyOHh9ak3C12NnVpe7xqUrtAWeWN1G4GVCcW8uraoy9vcSpfH8HcLycGO
+         gLqltSTLnvE3R/U8J4VpmmOXa3x15YDr/Y9XQn4q2ykOv7K/tZjbkM0dqLe2MzPYquq2
+         bBhrArobc+R0uTCOry+7ysLAccGJy0lwsjX4/TxqepAwvBGNbViV2a3kamrLsIcJR1B2
+         IoiMRK3DY3reIO+GfvglV0armuw8uFdrfvOL4H4sM9kS5PQ7kvp9Q6FBjlQPubHhF/Aa
+         vTUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703447097; x=1704051897;
+        d=1e100.net; s=20230601; t=1703447916; x=1704052716;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=boZ0uwY/zF6oiDhDnHlBkkvbQGja5+tZWoWqWwoQ9bk=;
-        b=BMxvMSAeGNKIzFWZ501VU2Rw+1RtY0bOCbaRbFUO0xJihGDASj2AeWv0BrDopo1/d5
-         UpoGF7sgAInfxOX8eVoZvepB6KZm4xUsl5denx/+WvPTd5baYi+MnWB7uyU9W5LK5bSp
-         ZtyR1swbd4tiQ3o/jnZoZ/BLKlyYjhjDTyMugq5xePjIfiVLElgrZNSk2Ew63flJ8aL6
-         PJ/eak1krB4JQIvTfLwPtTg25Vl3EyToPD0/LrCwK5NWdEOY+pD6WCfLlCIxqljPYkCo
-         qUO/E89KkvIkYuGiVZUBMIN6lNXDj3lGGPqW1hvMvm2GrFbw2saCthpOy20WQe8JpRh2
-         GXuQ==
-X-Gm-Message-State: AOJu0YyNV6n6DC+expvLi7+xlY+R2i/QguQqs/jV3PFra5J3zsRmbk9Q
-	6htutnjxZRSqAG8tQSBHnSbfWHQsAT9kMdgpJDQEcBF9aBQT
-X-Google-Smtp-Source: AGHT+IGETYfxawX0HFXMVp+6t2ErU493rO1FtJFm80zYN2C9Rdc/T7NbMEoVOIgu/80q/4IgixKMSLJqZ1pExaurGLI=
-X-Received: by 2002:a05:6808:13d0:b0:3b8:b063:9b66 with SMTP id
- d16-20020a05680813d000b003b8b0639b66mr6047506oiw.88.1703447097154; Sun, 24
- Dec 2023 11:44:57 -0800 (PST)
+        bh=tmcVQPwGjjUY9XTbKfzg3lbGQPvGiD0vLAjWo8rnhBQ=;
+        b=UVewYb9qC76ay07o/ddJddi7AcOXWZghlJTOMMu4Pgv427bXQoLI7G0emeCDQ0egd6
+         x4pqZSd1p2o3LemhR71PkKImR/A60RdE44WkCxrI22v9WEAR2PD+2VtXjCUV5fJEpSkF
+         /1Uu7UWV8ky3kUciWozaDKAE1xYZ/Wzt5vu6KdTxnLHCV2p9oAyQm2D24pPhIeDCd7Kl
+         9G4xIX/MQENgIj34InJMQFh3ziQdP3v7H8HZW0eqrTIt/tl+IZ/F4O/ORwVmsqzKnKnG
+         1c2bwoYlmoca7KzW9g05dlge9FQ9eEtMfcIabHxYikCEmbGzH2rDS4CbkkZLrNzhUbA9
+         bkNQ==
+X-Gm-Message-State: AOJu0Yzym/hpLWNKMNLaVxSBOnV3guXpPTZVqtmitFU0a+olkIABbKHM
+	24MUwLkLwssZty5aY0qnO2ZKqAHvA/79VUw7hPHhyMXzOVOt
+X-Google-Smtp-Source: AGHT+IGy44q+tnMyqe0jXQ+RNpAK+IeAmGOXK3azlBtSANBmgv2b8x5gogyq35v8wuusXib7Qm+Qw0By+70l3jFZxQ8=
+X-Received: by 2002:a0d:df91:0:b0:5e5:7254:2c2d with SMTP id
+ i139-20020a0ddf91000000b005e572542c2dmr3160011ywe.53.1703447916657; Sun, 24
+ Dec 2023 11:58:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231214125033.4158-1-laoar.shao@gmail.com> <CAHC9VhTs_5-SFq2M+w4SE7gMd3cHXP2P3y71O4H_q7XGUtvVUg@mail.gmail.com>
- <CALOAHbDEoZ_gPNg-ABE0-Qc0uPqwHJBLRpqSjFd7fH6r+oH23A@mail.gmail.com>
-In-Reply-To: <CALOAHbDEoZ_gPNg-ABE0-Qc0uPqwHJBLRpqSjFd7fH6r+oH23A@mail.gmail.com>
+References: <20230906102557.3432236-1-alpic@google.com> <20231219090909.2827497-1-alpic@google.com>
+ <CAHC9VhTpc7SD0t-5AJ49+b-FMTx1svDBQcR7j6c1rmREUNW7gg@mail.gmail.com> <57ce7089-37c7-44c5-a9da-5a6f02794c42@I-love.SAKURA.ne.jp>
+In-Reply-To: <57ce7089-37c7-44c5-a9da-5a6f02794c42@I-love.SAKURA.ne.jp>
 From: Paul Moore <paul@paul-moore.com>
-Date: Sun, 24 Dec 2023 14:44:46 -0500
-Message-ID: <CAHC9VhQkRPMO2Xpg0gYdpOPZTDrp1xKwU=idt9EQJg7Zi7XjqQ@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 0/5] mm, security, bpf: Fine-grained control
- over memory policy adjustments with lsm bpf
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>, "luto@amacapital.net" <luto@amacapital.net>, wad@chromium.org, 
-	akpm@linux-foundation.org, jmorris@namei.org, serge@hallyn.com, 
-	omosnace@redhat.com, casey@schaufler-ca.com, kpsingh@kernel.org, 
-	mhocko@suse.com, ying.huang@intel.com, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	ligang.bdlg@bytedance.com
+Date: Sun, 24 Dec 2023 14:58:25 -0500
+Message-ID: <CAHC9VhQoEVvGXzH6HjnTsQVa1=ZJ0cOpk6pEgPeYdLKJpmsUbA@mail.gmail.com>
+Subject: Re: [PATCH] security: new security_file_ioctl_compat() hook
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Alfred Piccioni <alpic@google.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Eric Paris <eparis@parisplace.org>, linux-security-module@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Casey Schaufler <casey@schaufler-ca.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 23, 2023 at 10:35=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com>=
- wrote:
-> On Sat, Dec 23, 2023 at 8:16=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Thu, Dec 14, 2023 at 7:51=E2=80=AFAM Yafang Shao <laoar.shao@gmail.c=
-om> wrote:
-> > >
-> > > Background
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >
-> > > In our containerized environment, we've identified unexpected OOM eve=
-nts
-> > > where the OOM-killer terminates tasks despite having ample free memor=
-y.
-> > > This anomaly is traced back to tasks within a container using mbind(2=
-) to
-> > > bind memory to a specific NUMA node. When the allocated memory on thi=
-s node
-> > > is exhausted, the OOM-killer, prioritizing tasks based on oom_score,
-> > > indiscriminately kills tasks.
-> > >
-> > > The Challenge
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >
-> > > In a containerized environment, independent memory binding by a user =
-can
-> > > lead to unexpected system issues or disrupt tasks being run by other =
-users
-> > > on the same server. If a user genuinely requires memory binding, we w=
-ill
-> > > allocate dedicated servers to them by leveraging kubelet deployment.
-> > >
-> > > Currently, users possess the ability to autonomously bind their memor=
-y to
-> > > specific nodes without explicit agreement or authorization from our e=
-nd.
-> > > It's imperative that we establish a method to prevent this behavior.
-> > >
-> > > Proposed Solution
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >
-> > > - Capability
-> > >   Currently, any task can perform MPOL_BIND without specific capabili=
-ties.
-> > >   Enforcing CAP_SYS_RESOURCE or CAP_SYS_NICE could be an option, but =
-this
-> > >   may have unintended consequences. Capabilities, being broad, might =
-grant
-> > >   unnecessary privileges. We should explore alternatives to prevent
-> > >   unexpected side effects.
-> > >
-> > > - LSM
-> > >   Introduce LSM hooks for syscalls such as mbind(2) and set_mempolicy=
-(2)
-> > >   to disable MPOL_BIND. This approach is more flexibility and allows =
-for
-> > >   fine-grained control without unintended consequences. A sample LSM =
-BPF
-> > >   program is included, demonstrating practical implementation in a
-> > >   production environment.
-> > >
-> > > - seccomp
-> > >   seccomp is relatively heavyweight, making it less suitable for
-> > >   enabling in our production environment:
-> > >   - Both kubelet and containers need adaptation to support it.
-> > >   - Dynamically altering security policies for individual containers
-> > >     without interrupting their operations isn't straightforward.
-> > >
-> > > Future Considerations
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >
-> > > In addition, there's room for enhancement in the OOM-killer for cases
-> > > involving CONSTRAINT_MEMORY_POLICY. It would be more beneficial to
-> > > prioritize selecting a victim that has allocated memory on the same N=
-UMA
-> > > node. My exploration on the lore led me to a proposal[0] related to t=
-his
-> > > matter, although consensus seems elusive at this point. Nevertheless,
-> > > delving into this specific topic is beyond the scope of the current
-> > > patchset.
-> > >
-> > > [0]. https://lore.kernel.org/lkml/20220512044634.63586-1-ligang.bdlg@=
-bytedance.com/
-> > >
-> > > Changes:
-> > > - v4 -> v5:
-> > >   - Revise the commit log in patch #5. (KP)
-> > > - v3 -> v4: https://lwn.net/Articles/954126/
-> > >   - Drop the changes around security_task_movememory (Serge)
-> > > - RCC v2 -> v3: https://lwn.net/Articles/953526/
-> > >   - Add MPOL_F_NUMA_BALANCING man-page (Ying)
-> > >   - Fix bpf selftests error reported by bot+bpf-ci
-> > > - RFC v1 -> RFC v2: https://lwn.net/Articles/952339/
-> > >   - Refine the commit log to avoid misleading
-> > >   - Use one common lsm hook instead and add comment for it
-> > >   - Add selinux implementation
-> > >   - Other improments in mempolicy
-> > > - RFC v1: https://lwn.net/Articles/951188/
-> > >
-> > > Yafang Shao (5):
-> > >   mm, doc: Add doc for MPOL_F_NUMA_BALANCING
-> > >   mm: mempolicy: Revise comment regarding mempolicy mode flags
-> > >   mm, security: Add lsm hook for memory policy adjustment
-> > >   security: selinux: Implement set_mempolicy hook
-> > >   selftests/bpf: Add selftests for set_mempolicy with a lsm prog
-> > >
-> > >  .../admin-guide/mm/numa_memory_policy.rst          | 27 +++++++
-> > >  include/linux/lsm_hook_defs.h                      |  3 +
-> > >  include/linux/security.h                           |  9 +++
-> > >  include/uapi/linux/mempolicy.h                     |  2 +-
-> > >  mm/mempolicy.c                                     |  8 +++
-> > >  security/security.c                                | 13 ++++
-> > >  security/selinux/hooks.c                           |  8 +++
-> > >  security/selinux/include/classmap.h                |  2 +-
-> > >  .../selftests/bpf/prog_tests/set_mempolicy.c       | 84 ++++++++++++=
-++++++++++
-> > >  .../selftests/bpf/progs/test_set_mempolicy.c       | 28 ++++++++
-> > >  10 files changed, 182 insertions(+), 2 deletions(-)
-> > >  create mode 100644 tools/testing/selftests/bpf/prog_tests/set_mempol=
-icy.c
-> > >  create mode 100644 tools/testing/selftests/bpf/progs/test_set_mempol=
-icy.c
+On Sat, Dec 23, 2023 at 5:49=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2023/12/23 10:23, Paul Moore wrote:
+> >> -       /* RED-PEN how should LSM module know it's handling 32bit? */
+> >> -       error =3D security_file_ioctl(f.file, cmd, arg);
+> >> +       error =3D security_file_ioctl_compat(f.file, cmd, arg);
+> >>         if (error)
+> >>                 goto out;
 > >
-> > In your original patchset there was a lot of good discussion about
-> > ways to solve, or mitigate, this problem using existing mechanisms;
-> > while you disputed many (all?) of those suggestions, I felt that they
-> > still had merit over your objections.
+> > This is interesting ... if you look at the normal ioctl() syscall
+> > definition in the kernel you see 'ioctl(unsigned int fd, unsigned int
+> > cmd, unsigned long arg)' and if you look at the compat definition you
+> > see 'ioctl(unsigned int fd, unsigned int cmd, compat_ulong_t arg)'.  I
+> > was expecting the second parameter, @cmd, to be a long type in the
+> > normal definition, but it is an int type in both cases.  It looks like
+> > it has been that way long enough that it is correct, but I'm a little
+> > lost ...
 >
-> JFYI. The initial patchset presents three suggestions:
-> - Disabling CONFIG_NUMA, proposed by Michal:
->   By default, tasks on a server allocate memory from their local
-> memory node initially. Disabling CONFIG_NUMA could potentially lead to
-> a performance hit.
->
-> - Adjusting NUMA workload configuration, also from Michal:
->   This adjustment has been successfully implemented on some dedicated
-> clusters, as mentioned in the commit log. However, applying this
-> change universally across a large fleet of servers might result in
-> significant wastage of physical memory.
->
-> - Implementing seccomp, suggested by Ondrej and Casey:
->   As indicated in the commit log, altering the security policy
-> dynamically without interrupting a running container isn't
-> straightforward. Implementing seccomp requires the introduction of an
-> eBPF-based seccomp, which constitutes a substantial change.
->   [ The seccomp maintainer has been added to this mail thread for
-> further discussion. ]
+> Since @arg might be a pointer to some struct, @arg needs to use a long ty=
+pe.
+> But @cmd can remain 32bits for both 32bits/64bits kernels because @cmd is=
+ not
+> a pointer, can't it?
 
-The seccomp filter runs cBFF (classic BPF) and not eBPF; there are a
-number of sandboxing tools designed to make this easier to use,
-including systemd, and if you need to augment your existing
-application there are libraries available to make this easier.
+I'm not worried about @arg, I'm worried about @cmd, the second
+parameter to the syscall.  I was looking at the manpage and it is
+specified as an unsigned long, which would be a size mismatch on a
+64-bit system, although now that I'm reading further into the manpage
+I see that the command is specified as a 32-bit value so an int
+shouldn't be a problem.  I'm guessing the unsigned long type persists
+from the days before 64-bit systems.
 
-> > I also don't believe the
-> > SELinux implementation of the set_mempolicy hook fits with the
-> > existing SELinux philosophy of access control via type enforcement;
-> > outside of some checks on executable memory and low memory ranges,
-> > SELinux doesn't currently enforce policy on memory ranges like this,
-> > SELinux focuses more on tasks being able to access data/resources on
-> > the system.
-> >
-> > My current opinion is that you should pursue some of the mitigations
-> > that have already been mentioned, including seccomp and/or a better
-> > NUMA workload configuration.  I would also encourage you to pursue the
-> > OOM improvement you briefly described.  All of those seem like better
-> > options than this new LSM/SELinux hook.
+> > I agree that it looks like Smack and TOMOYO should be fine, but I
+> > would like to hear from Casey and Tetsuo to confirm.
 >
-> Using the OOM solution should not be our primary approach. Whenever
-> possible, we should prioritize alternative solutions to prevent
-> encountering the OOM situation.
+> Fine for TOMOYO part, for TOMOYO treats @cmd as an integer.
 
-It's a good thing that there exist other options.
+Great, thank you.
 
 --=20
 paul-moore.com
