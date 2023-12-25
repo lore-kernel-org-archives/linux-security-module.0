@@ -1,276 +1,424 @@
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613634A17;
-	Mon, 25 Dec 2023 03:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9A215AF;
+	Mon, 25 Dec 2023 08:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PnkuOBkl"
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-67f85d29d14so27793096d6.1;
-        Sun, 24 Dec 2023 19:12:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703473976; x=1704078776; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=stc1KaRMKqDMQyE8dlkS4piT7lRpW1LtMhsAboA4VmI=;
-        b=PnkuOBkl8ql2qpvv0BCn/JuYIyYuwSTm7A0dY+eM/asGtgrkuE/iJQYvIYBWgLFkST
-         NE9KIBBs+P2Lhtpp86IuUvLekmFSBbRbz/9YOJEdyJdx/TbXBDCucGAdUVD1eWu0kdNN
-         uyPxU8xGn4zFpEU2XVPwPV6zWJzYUGf8O4C4lzAcVOY6PGXfoOOJ4TcQFjHXzQo1TtxG
-         AfCLxtdNWV5IvqVWsvcraxf8jtwdcTpn/xkNhZwLBxXIpRm1dx6j2Rw+RCKLt4Gy3yiX
-         mVxDIvKRR3+bnL+Fh7IFZ6PnhAWTdJ+zSl7n6fxFky4LxCpFnUBp7tmKv+8AN08TiiWf
-         6zGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703473976; x=1704078776;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=stc1KaRMKqDMQyE8dlkS4piT7lRpW1LtMhsAboA4VmI=;
-        b=Fe7W2Y8xQc1K1DYV0dGvg1b4HPR9YQTU7JIP9WT4yFDpXf6TBSdWxwYVoo9WXZM4Td
-         eB2ZrYhMyyndUQVoCQRqKZ2HOV86tPkuMNWzhtAAN16Q4mRv6MAYq3z+q+fdepMcg/Y+
-         DD4YiFds7xLLv5QfWDPvk+0uT4nLQDrU74vAYkGYjhFGiH/qe4JJhJB/OCg+6AcJ4xtR
-         Vq2yjxZlwgxabFm2yXglALJCBApvHYLw/Rcy3na/+ft/QaiiR/WyM2dNssn1lK8w5CsE
-         xRbFqsO4XfRZguSL593AHwxF5P6/4yNR93pW4N6wlev0wE+/+t9gqKPdMNOW/Mcq1RmD
-         WVnw==
-X-Gm-Message-State: AOJu0Yy4F/9nxaMVs3QkPp86jPRDWzaF0juOhOmA2w3Dis986o1sS73x
-	9pxfWDyB3iYwrPThGX1AhKw0Z/IOu0R8tgx6bBc=
-X-Google-Smtp-Source: AGHT+IH0MaXg/bxmj+IKekD2gC/g6X7v02PuvSaBpohWy8f6AdLoMmwb9hBQJLS6ZVnYEpAnNiREy667re5oC73QVBQ=
-X-Received: by 2002:a05:6214:140c:b0:67f:ae1d:9187 with SMTP id
- pr12-20020a056214140c00b0067fae1d9187mr3853691qvb.69.1703473976160; Sun, 24
- Dec 2023 19:12:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JIdlPwI7"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BP7PswC026840;
+	Mon, 25 Dec 2023 08:20:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version:content-type; s=
+	qcppdkim1; bh=Ib1d+QhymcafLXYKFPOeKHZFLKskwCb8h78crXgt5AU=; b=JI
+	dlPwI70DK1Yo6A2RGJ1BCautpiw7LRtm9Ir2mrw0hHJXw8z6gNVRMATLugwud9Af
+	VgT7VeGEBBBbuZUSkTSYi6sNtGI57on2BipCgywMnCVtxFYcqio5zxss/V9P3PK4
+	w0YyWktxts25BwzWP14kKEfHTSvWgajb4LQxHMxonBGvAxMLHzKkKkuhiv294y3H
+	+C5cslTWegd6hAtuUJDWC7ZBnBDZGLg70BnNCn3zX3nhDt6qwUcYPQlnrlgcHjA5
+	xU1oEi5AGzEHwUFr7/BLzakfGYPKi3NI2zY1mfkcuYi4FuKzW84bKL4nsoor/GP2
+	7spO+ep05ALouIG1p2Kg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3v5n8p3ej3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Dec 2023 08:20:09 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3BP8K8c2029560
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Dec 2023 08:20:08 GMT
+Received: from aiquny2-gv.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Mon, 25 Dec 2023 00:19:50 -0800
+From: Maria Yu <quic_aiquny@quicinc.com>
+To: <ebiederm@xmission.com>
+CC: Maria Yu <quic_aiquny@quicinc.com>, <kernel@quicinc.com>,
+        <quic_pkondeti@quicinc.com>, <keescook@chromium.or>,
+        <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <oleg@redhat.com>,
+        <dhowells@redhat.com>, <jarkko@kernel.org>, <paul@paul-moore.com>,
+        <jmorris@namei.org>, <serge@hallyn.com>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: [PATCH] kernel: Introduce a write lock/unlock wrapper for tasklist_lock
+Date: Mon, 25 Dec 2023 16:19:32 +0800
+Message-ID: <20231225081932.17752-1-quic_aiquny@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231214125033.4158-1-laoar.shao@gmail.com> <CAHC9VhTs_5-SFq2M+w4SE7gMd3cHXP2P3y71O4H_q7XGUtvVUg@mail.gmail.com>
- <CALOAHbDEoZ_gPNg-ABE0-Qc0uPqwHJBLRpqSjFd7fH6r+oH23A@mail.gmail.com> <CAHC9VhQkRPMO2Xpg0gYdpOPZTDrp1xKwU=idt9EQJg7Zi7XjqQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhQkRPMO2Xpg0gYdpOPZTDrp1xKwU=idt9EQJg7Zi7XjqQ@mail.gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Mon, 25 Dec 2023 11:12:19 +0800
-Message-ID: <CALOAHbA-aW5gHXuf4MZVDXqD89Ri=9Ff7wcnV5wnBe=+pjkLrQ@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 0/5] mm, security, bpf: Fine-grained control
- over memory policy adjustments with lsm bpf
-To: Paul Moore <paul@paul-moore.com>
-Cc: Kees Cook <keescook@chromium.org>, "luto@amacapital.net" <luto@amacapital.net>, wad@chromium.org, 
-	akpm@linux-foundation.org, jmorris@namei.org, serge@hallyn.com, 
-	omosnace@redhat.com, casey@schaufler-ca.com, kpsingh@kernel.org, 
-	mhocko@suse.com, ying.huang@intel.com, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	ligang.bdlg@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: n0YfGfImLx5wFdAAsqQ4foe6wCCgJkUt
+X-Proofpoint-ORIG-GUID: n0YfGfImLx5wFdAAsqQ4foe6wCCgJkUt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-09_02,2023-12-07_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=322
+ impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501
+ spamscore=0 mlxscore=0 suspectscore=0 adultscore=0 phishscore=0
+ bulkscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2311290000 definitions=main-2312250062
 
-On Mon, Dec 25, 2023 at 3:44=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Sat, Dec 23, 2023 at 10:35=E2=80=AFPM Yafang Shao <laoar.shao@gmail.co=
-m> wrote:
-> > On Sat, Dec 23, 2023 at 8:16=E2=80=AFAM Paul Moore <paul@paul-moore.com=
-> wrote:
-> > > On Thu, Dec 14, 2023 at 7:51=E2=80=AFAM Yafang Shao <laoar.shao@gmail=
-.com> wrote:
-> > > >
-> > > > Background
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > >
-> > > > In our containerized environment, we've identified unexpected OOM e=
-vents
-> > > > where the OOM-killer terminates tasks despite having ample free mem=
-ory.
-> > > > This anomaly is traced back to tasks within a container using mbind=
-(2) to
-> > > > bind memory to a specific NUMA node. When the allocated memory on t=
-his node
-> > > > is exhausted, the OOM-killer, prioritizing tasks based on oom_score=
-,
-> > > > indiscriminately kills tasks.
-> > > >
-> > > > The Challenge
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > >
-> > > > In a containerized environment, independent memory binding by a use=
-r can
-> > > > lead to unexpected system issues or disrupt tasks being run by othe=
-r users
-> > > > on the same server. If a user genuinely requires memory binding, we=
- will
-> > > > allocate dedicated servers to them by leveraging kubelet deployment=
-.
-> > > >
-> > > > Currently, users possess the ability to autonomously bind their mem=
-ory to
-> > > > specific nodes without explicit agreement or authorization from our=
- end.
-> > > > It's imperative that we establish a method to prevent this behavior=
-.
-> > > >
-> > > > Proposed Solution
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > >
-> > > > - Capability
-> > > >   Currently, any task can perform MPOL_BIND without specific capabi=
-lities.
-> > > >   Enforcing CAP_SYS_RESOURCE or CAP_SYS_NICE could be an option, bu=
-t this
-> > > >   may have unintended consequences. Capabilities, being broad, migh=
-t grant
-> > > >   unnecessary privileges. We should explore alternatives to prevent
-> > > >   unexpected side effects.
-> > > >
-> > > > - LSM
-> > > >   Introduce LSM hooks for syscalls such as mbind(2) and set_mempoli=
-cy(2)
-> > > >   to disable MPOL_BIND. This approach is more flexibility and allow=
-s for
-> > > >   fine-grained control without unintended consequences. A sample LS=
-M BPF
-> > > >   program is included, demonstrating practical implementation in a
-> > > >   production environment.
-> > > >
-> > > > - seccomp
-> > > >   seccomp is relatively heavyweight, making it less suitable for
-> > > >   enabling in our production environment:
-> > > >   - Both kubelet and containers need adaptation to support it.
-> > > >   - Dynamically altering security policies for individual container=
-s
-> > > >     without interrupting their operations isn't straightforward.
-> > > >
-> > > > Future Considerations
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > >
-> > > > In addition, there's room for enhancement in the OOM-killer for cas=
-es
-> > > > involving CONSTRAINT_MEMORY_POLICY. It would be more beneficial to
-> > > > prioritize selecting a victim that has allocated memory on the same=
- NUMA
-> > > > node. My exploration on the lore led me to a proposal[0] related to=
- this
-> > > > matter, although consensus seems elusive at this point. Nevertheles=
-s,
-> > > > delving into this specific topic is beyond the scope of the current
-> > > > patchset.
-> > > >
-> > > > [0]. https://lore.kernel.org/lkml/20220512044634.63586-1-ligang.bdl=
-g@bytedance.com/
-> > > >
-> > > > Changes:
-> > > > - v4 -> v5:
-> > > >   - Revise the commit log in patch #5. (KP)
-> > > > - v3 -> v4: https://lwn.net/Articles/954126/
-> > > >   - Drop the changes around security_task_movememory (Serge)
-> > > > - RCC v2 -> v3: https://lwn.net/Articles/953526/
-> > > >   - Add MPOL_F_NUMA_BALANCING man-page (Ying)
-> > > >   - Fix bpf selftests error reported by bot+bpf-ci
-> > > > - RFC v1 -> RFC v2: https://lwn.net/Articles/952339/
-> > > >   - Refine the commit log to avoid misleading
-> > > >   - Use one common lsm hook instead and add comment for it
-> > > >   - Add selinux implementation
-> > > >   - Other improments in mempolicy
-> > > > - RFC v1: https://lwn.net/Articles/951188/
-> > > >
-> > > > Yafang Shao (5):
-> > > >   mm, doc: Add doc for MPOL_F_NUMA_BALANCING
-> > > >   mm: mempolicy: Revise comment regarding mempolicy mode flags
-> > > >   mm, security: Add lsm hook for memory policy adjustment
-> > > >   security: selinux: Implement set_mempolicy hook
-> > > >   selftests/bpf: Add selftests for set_mempolicy with a lsm prog
-> > > >
-> > > >  .../admin-guide/mm/numa_memory_policy.rst          | 27 +++++++
-> > > >  include/linux/lsm_hook_defs.h                      |  3 +
-> > > >  include/linux/security.h                           |  9 +++
-> > > >  include/uapi/linux/mempolicy.h                     |  2 +-
-> > > >  mm/mempolicy.c                                     |  8 +++
-> > > >  security/security.c                                | 13 ++++
-> > > >  security/selinux/hooks.c                           |  8 +++
-> > > >  security/selinux/include/classmap.h                |  2 +-
-> > > >  .../selftests/bpf/prog_tests/set_mempolicy.c       | 84 ++++++++++=
-++++++++++++
-> > > >  .../selftests/bpf/progs/test_set_mempolicy.c       | 28 ++++++++
-> > > >  10 files changed, 182 insertions(+), 2 deletions(-)
-> > > >  create mode 100644 tools/testing/selftests/bpf/prog_tests/set_memp=
-olicy.c
-> > > >  create mode 100644 tools/testing/selftests/bpf/progs/test_set_memp=
-olicy.c
-> > >
-> > > In your original patchset there was a lot of good discussion about
-> > > ways to solve, or mitigate, this problem using existing mechanisms;
-> > > while you disputed many (all?) of those suggestions, I felt that they
-> > > still had merit over your objections.
-> >
-> > JFYI. The initial patchset presents three suggestions:
-> > - Disabling CONFIG_NUMA, proposed by Michal:
-> >   By default, tasks on a server allocate memory from their local
-> > memory node initially. Disabling CONFIG_NUMA could potentially lead to
-> > a performance hit.
-> >
-> > - Adjusting NUMA workload configuration, also from Michal:
-> >   This adjustment has been successfully implemented on some dedicated
-> > clusters, as mentioned in the commit log. However, applying this
-> > change universally across a large fleet of servers might result in
-> > significant wastage of physical memory.
-> >
-> > - Implementing seccomp, suggested by Ondrej and Casey:
-> >   As indicated in the commit log, altering the security policy
-> > dynamically without interrupting a running container isn't
-> > straightforward. Implementing seccomp requires the introduction of an
-> > eBPF-based seccomp, which constitutes a substantial change.
-> >   [ The seccomp maintainer has been added to this mail thread for
-> > further discussion. ]
->
-> The seccomp filter runs cBFF (classic BPF) and not eBPF; there are a
-> number of sandboxing tools designed to make this easier to use,
-> including systemd, and if you need to augment your existing
-> application there are libraries available to make this easier.
+As a rwlock for tasklist_lock, there are multiple scenarios to acquire
+read lock which write lock needed to be waiting for.
+In freeze_process/thaw_processes it can take about 200+ms for holding read
+lock of tasklist_lock by walking and freezing/thawing tasks in commercial
+devices. And write_lock_irq will have preempt disabled and local irq
+disabled to spin until the tasklist_lock can be acquired. This leading to
+a bad responsive performance of current system.
+Take an example:
+1. cpu0 is holding read lock of tasklist_lock to thaw_processes.
+2. cpu1 is waiting write lock of tasklist_lock to exec a new thread with
+   preempt_disabled and local irq disabled.
+3. cpu2 is waiting write lock of tasklist_lock to do_exit with
+   preempt_disabled and local irq disabled.
+4. cpu3 is waiting write lock of tasklist_lock to do_exit with
+   preempt_disabled and local irq disabled.
+So introduce a write lock/unlock wrapper for tasklist_lock specificly.
+The current taskslist_lock writers all have write_lock_irq to hold
+tasklist_lock, and write_unlock_irq to release tasklist_lock, that means
+the writers are not suitable or workable to wait on tasklist_lock in irq
+disabled scenarios. So the write lock/unlock wrapper here only follow the
+current design of directly use local_irq_disable and local_irq_enable,
+and not take already irq disabled writer callers into account.
+Use write_trylock in the loop and enabled irq for cpu to repsond if lock
+cannot be taken.
 
-Let's delve into how cBPF-based seccomp operates with runc [0] - our
-application:
+Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
+---
+ fs/exec.c                  | 10 +++++-----
+ include/linux/sched/task.h | 29 +++++++++++++++++++++++++++++
+ kernel/exit.c              | 16 ++++++++--------
+ kernel/fork.c              |  6 +++---
+ kernel/ptrace.c            | 12 ++++++------
+ kernel/sys.c               |  8 ++++----
+ security/keys/keyctl.c     |  4 ++--
+ 7 files changed, 57 insertions(+), 28 deletions(-)
 
-1. Create a seccomp filter in /path/to/seccomp/profile.json.
-2. Initiate a container with this filter rule using
-    docker run --rm \
-             -it \
-             --security-opt seccomp=3D/path/to/seccomp/profile.json \
-             hello-world
+diff --git a/fs/exec.c b/fs/exec.c
+index 4aa19b24f281..030eef6852eb 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1086,7 +1086,7 @@ static int de_thread(struct task_struct *tsk)
+ 
+ 		for (;;) {
+ 			cgroup_threadgroup_change_begin(tsk);
+-			write_lock_irq(&tasklist_lock);
++			write_lock_tasklist_lock();
+ 			/*
+ 			 * Do this under tasklist_lock to ensure that
+ 			 * exit_notify() can't miss ->group_exec_task
+@@ -1095,7 +1095,7 @@ static int de_thread(struct task_struct *tsk)
+ 			if (likely(leader->exit_state))
+ 				break;
+ 			__set_current_state(TASK_KILLABLE);
+-			write_unlock_irq(&tasklist_lock);
++			write_unlock_tasklist_lock();
+ 			cgroup_threadgroup_change_end(tsk);
+ 			schedule();
+ 			if (__fatal_signal_pending(tsk))
+@@ -1150,7 +1150,7 @@ static int de_thread(struct task_struct *tsk)
+ 		 */
+ 		if (unlikely(leader->ptrace))
+ 			__wake_up_parent(leader, leader->parent);
+-		write_unlock_irq(&tasklist_lock);
++		write_unlock_tasklist_lock();
+ 		cgroup_threadgroup_change_end(tsk);
+ 
+ 		release_task(leader);
+@@ -1198,13 +1198,13 @@ static int unshare_sighand(struct task_struct *me)
+ 
+ 		refcount_set(&newsighand->count, 1);
+ 
+-		write_lock_irq(&tasklist_lock);
++		write_lock_tasklist_lock();
+ 		spin_lock(&oldsighand->siglock);
+ 		memcpy(newsighand->action, oldsighand->action,
+ 		       sizeof(newsighand->action));
+ 		rcu_assign_pointer(me->sighand, newsighand);
+ 		spin_unlock(&oldsighand->siglock);
+-		write_unlock_irq(&tasklist_lock);
++		write_unlock_tasklist_lock();
+ 
+ 		__cleanup_sighand(oldsighand);
+ 	}
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index a23af225c898..6f69d9a3c868 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -50,6 +50,35 @@ struct kernel_clone_args {
+  * a separate lock).
+  */
+ extern rwlock_t tasklist_lock;
++
++/*
++ * Tasklist_lock is a special lock, it takes a good amount of time of
++ * taskslist_lock readers to finish, and the pure write_irq_lock api
++ * will do local_irq_disable at the very first, and put the current cpu
++ * waiting for the lock while is non-responsive for interrupts.
++ *
++ * The current taskslist_lock writers all have write_lock_irq to hold
++ * tasklist_lock, and write_unlock_irq to release tasklist_lock, that
++ * means the writers are not suitable or workable to wait on
++ * tasklist_lock in irq disabled scenarios. So the write lock/unlock
++ * wrapper here only follow the current design of directly use
++ * local_irq_disable and local_irq_enable.
++ */
++static inline void write_lock_tasklist_lock(void)
++{
++	while (1) {
++		local_irq_disable();
++		if (write_trylock(&tasklist_lock))
++			break;
++		local_irq_enable();
++		cpu_relax();
++	}
++}
++static inline void write_unlock_tasklist_lock(void)
++{
++	write_unlock_irq(&tasklist_lock);
++}
++
+ extern spinlock_t mmlist_lock;
+ 
+ extern union thread_union init_thread_union;
+diff --git a/kernel/exit.c b/kernel/exit.c
+index ee9f43bed49a..18b00f477079 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -251,7 +251,7 @@ void release_task(struct task_struct *p)
+ 
+ 	cgroup_release(p);
+ 
+-	write_lock_irq(&tasklist_lock);
++	write_lock_tasklist_lock();
+ 	ptrace_release_task(p);
+ 	thread_pid = get_pid(p->thread_pid);
+ 	__exit_signal(p);
+@@ -275,7 +275,7 @@ void release_task(struct task_struct *p)
+ 			leader->exit_state = EXIT_DEAD;
+ 	}
+ 
+-	write_unlock_irq(&tasklist_lock);
++	write_unlock_tasklist_lock();
+ 	seccomp_filter_release(p);
+ 	proc_flush_pid(thread_pid);
+ 	put_pid(thread_pid);
+@@ -598,7 +598,7 @@ static struct task_struct *find_child_reaper(struct task_struct *father,
+ 		return reaper;
+ 	}
+ 
+-	write_unlock_irq(&tasklist_lock);
++	write_unlock_tasklist_lock();
+ 
+ 	list_for_each_entry_safe(p, n, dead, ptrace_entry) {
+ 		list_del_init(&p->ptrace_entry);
+@@ -606,7 +606,7 @@ static struct task_struct *find_child_reaper(struct task_struct *father,
+ 	}
+ 
+ 	zap_pid_ns_processes(pid_ns);
+-	write_lock_irq(&tasklist_lock);
++	write_lock_tasklist_lock();
+ 
+ 	return father;
+ }
+@@ -730,7 +730,7 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
+ 	struct task_struct *p, *n;
+ 	LIST_HEAD(dead);
+ 
+-	write_lock_irq(&tasklist_lock);
++	write_lock_tasklist_lock();
+ 	forget_original_parent(tsk, &dead);
+ 
+ 	if (group_dead)
+@@ -758,7 +758,7 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
+ 	/* mt-exec, de_thread() is waiting for group leader */
+ 	if (unlikely(tsk->signal->notify_count < 0))
+ 		wake_up_process(tsk->signal->group_exec_task);
+-	write_unlock_irq(&tasklist_lock);
++	write_unlock_tasklist_lock();
+ 
+ 	list_for_each_entry_safe(p, n, &dead, ptrace_entry) {
+ 		list_del_init(&p->ptrace_entry);
+@@ -1172,7 +1172,7 @@ static int wait_task_zombie(struct wait_opts *wo, struct task_struct *p)
+ 	wo->wo_stat = status;
+ 
+ 	if (state == EXIT_TRACE) {
+-		write_lock_irq(&tasklist_lock);
++		write_lock_tasklist_lock();
+ 		/* We dropped tasklist, ptracer could die and untrace */
+ 		ptrace_unlink(p);
+ 
+@@ -1181,7 +1181,7 @@ static int wait_task_zombie(struct wait_opts *wo, struct task_struct *p)
+ 		if (do_notify_parent(p, p->exit_signal))
+ 			state = EXIT_DEAD;
+ 		p->exit_state = state;
+-		write_unlock_irq(&tasklist_lock);
++		write_unlock_tasklist_lock();
+ 	}
+ 	if (state == EXIT_DEAD)
+ 		release_task(p);
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 10917c3e1f03..06c4b4ab9102 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2623,7 +2623,7 @@ __latent_entropy struct task_struct *copy_process(
+ 	 * Make it visible to the rest of the system, but dont wake it up yet.
+ 	 * Need tasklist lock for parent etc handling!
+ 	 */
+-	write_lock_irq(&tasklist_lock);
++	write_lock_tasklist_lock();
+ 
+ 	/* CLONE_PARENT re-uses the old parent */
+ 	if (clone_flags & (CLONE_PARENT|CLONE_THREAD)) {
+@@ -2714,7 +2714,7 @@ __latent_entropy struct task_struct *copy_process(
+ 	hlist_del_init(&delayed.node);
+ 	spin_unlock(&current->sighand->siglock);
+ 	syscall_tracepoint_update(p);
+-	write_unlock_irq(&tasklist_lock);
++	write_unlock_tasklist_lock();
+ 
+ 	if (pidfile)
+ 		fd_install(pidfd, pidfile);
+@@ -2735,7 +2735,7 @@ __latent_entropy struct task_struct *copy_process(
+ bad_fork_cancel_cgroup:
+ 	sched_core_free(p);
+ 	spin_unlock(&current->sighand->siglock);
+-	write_unlock_irq(&tasklist_lock);
++	write_unlock_tasklist_lock();
+ 	cgroup_cancel_fork(p, args);
+ bad_fork_put_pidfd:
+ 	if (clone_flags & CLONE_PIDFD) {
+diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+index d8b5e13a2229..a8d7e2d06f3e 100644
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -435,7 +435,7 @@ static int ptrace_attach(struct task_struct *task, long request,
+ 	if (retval)
+ 		goto unlock_creds;
+ 
+-	write_lock_irq(&tasklist_lock);
++	write_lock_tasklist_lock();
+ 	retval = -EPERM;
+ 	if (unlikely(task->exit_state))
+ 		goto unlock_tasklist;
+@@ -479,7 +479,7 @@ static int ptrace_attach(struct task_struct *task, long request,
+ 
+ 	retval = 0;
+ unlock_tasklist:
+-	write_unlock_irq(&tasklist_lock);
++	write_unlock_tasklist_lock();
+ unlock_creds:
+ 	mutex_unlock(&task->signal->cred_guard_mutex);
+ out:
+@@ -508,7 +508,7 @@ static int ptrace_traceme(void)
+ {
+ 	int ret = -EPERM;
+ 
+-	write_lock_irq(&tasklist_lock);
++	write_lock_tasklist_lock();
+ 	/* Are we already being traced? */
+ 	if (!current->ptrace) {
+ 		ret = security_ptrace_traceme(current->parent);
+@@ -522,7 +522,7 @@ static int ptrace_traceme(void)
+ 			ptrace_link(current, current->real_parent);
+ 		}
+ 	}
+-	write_unlock_irq(&tasklist_lock);
++	write_unlock_tasklist_lock();
+ 
+ 	return ret;
+ }
+@@ -588,7 +588,7 @@ static int ptrace_detach(struct task_struct *child, unsigned int data)
+ 	/* Architecture-specific hardware disable .. */
+ 	ptrace_disable(child);
+ 
+-	write_lock_irq(&tasklist_lock);
++	write_lock_tasklist_lock();
+ 	/*
+ 	 * We rely on ptrace_freeze_traced(). It can't be killed and
+ 	 * untraced by another thread, it can't be a zombie.
+@@ -600,7 +600,7 @@ static int ptrace_detach(struct task_struct *child, unsigned int data)
+ 	 */
+ 	child->exit_code = data;
+ 	__ptrace_detach(current, child);
+-	write_unlock_irq(&tasklist_lock);
++	write_unlock_tasklist_lock();
+ 
+ 	proc_ptrace_connector(child, PTRACE_DETACH);
+ 
+diff --git a/kernel/sys.c b/kernel/sys.c
+index e219fcfa112d..0b1647d3ed32 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -1088,7 +1088,7 @@ SYSCALL_DEFINE2(setpgid, pid_t, pid, pid_t, pgid)
+ 	/* From this point forward we keep holding onto the tasklist lock
+ 	 * so that our parent does not change from under us. -DaveM
+ 	 */
+-	write_lock_irq(&tasklist_lock);
++	write_lock_tasklist_lock();
+ 
+ 	err = -ESRCH;
+ 	p = find_task_by_vpid(pid);
+@@ -1136,7 +1136,7 @@ SYSCALL_DEFINE2(setpgid, pid_t, pid, pid_t, pgid)
+ 	err = 0;
+ out:
+ 	/* All paths lead to here, thus we are safe. -DaveM */
+-	write_unlock_irq(&tasklist_lock);
++	write_unlock_tasklist_lock();
+ 	rcu_read_unlock();
+ 	return err;
+ }
+@@ -1229,7 +1229,7 @@ int ksys_setsid(void)
+ 	pid_t session = pid_vnr(sid);
+ 	int err = -EPERM;
+ 
+-	write_lock_irq(&tasklist_lock);
++	write_lock_tasklist_lock();
+ 	/* Fail if I am already a session leader */
+ 	if (group_leader->signal->leader)
+ 		goto out;
+@@ -1247,7 +1247,7 @@ int ksys_setsid(void)
+ 
+ 	err = session;
+ out:
+-	write_unlock_irq(&tasklist_lock);
++	write_unlock_tasklist_lock();
+ 	if (err > 0) {
+ 		proc_sid_connector(group_leader);
+ 		sched_autogroup_create_attach(group_leader);
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 19be69fa4d05..dd8aed20486a 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -1652,7 +1652,7 @@ long keyctl_session_to_parent(void)
+ 
+ 	me = current;
+ 	rcu_read_lock();
+-	write_lock_irq(&tasklist_lock);
++	write_lock_tasklist_lock();
+ 
+ 	ret = -EPERM;
+ 	oldwork = NULL;
+@@ -1702,7 +1702,7 @@ long keyctl_session_to_parent(void)
+ 	if (!ret)
+ 		newwork = NULL;
+ unlock:
+-	write_unlock_irq(&tasklist_lock);
++	write_unlock_tasklist_lock();
+ 	rcu_read_unlock();
+ 	if (oldwork)
+ 		put_cred(container_of(oldwork, struct cred, rcu));
 
-However, modifying or removing the seccomp filter mandates stopping
-the running container and repeating the aforementioned steps. This
-interruption isn't desirable for us.
+base-commit: 88035e5694a86a7167d490bb95e9df97a9bb162b
+-- 
+2.17.1
 
-The inability to dynamically alter the seccomp filter with cBPF arises
-from the kernel lacking a method to unload the seccomp once attached
-to a task. In other words, cBPF-based seccomp cannot dynamically
-attach and detach from tasks. Please correct me if my understanding is
-incorrect.
-
-[0]. https://docs.docker.com/engine/security/seccomp/
-
->
-> > > I also don't believe the
-> > > SELinux implementation of the set_mempolicy hook fits with the
-> > > existing SELinux philosophy of access control via type enforcement;
-> > > outside of some checks on executable memory and low memory ranges,
-> > > SELinux doesn't currently enforce policy on memory ranges like this,
-> > > SELinux focuses more on tasks being able to access data/resources on
-> > > the system.
-> > >
-> > > My current opinion is that you should pursue some of the mitigations
-> > > that have already been mentioned, including seccomp and/or a better
-> > > NUMA workload configuration.  I would also encourage you to pursue th=
-e
-> > > OOM improvement you briefly described.  All of those seem like better
-> > > options than this new LSM/SELinux hook.
-> >
-> > Using the OOM solution should not be our primary approach. Whenever
-> > possible, we should prioritize alternative solutions to prevent
-> > encountering the OOM situation.
->
-> It's a good thing that there exist other options.
-
-Absolutely, let's explore alternative options beforehand.
-
---=20
-Regards
-Yafang
