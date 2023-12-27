@@ -1,105 +1,92 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3676522C
-	for <linux-security-module@vger.kernel.org>; Wed, 27 Dec 2023 04:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46ED85662;
+	Wed, 27 Dec 2023 04:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bbncCEl8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1703652123;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OFJIO0ZcDJiyym1avHSfZOIU1zn9ynuH2Tm3h86pSaQ=;
-	b=bbncCEl8w8ZPBIA3vs2AegNx8KWWuqURT/QtPIrUMtd6RHCjWdG6cASfn+uFoNQYWfrI/E
-	d2IapRPKuETxr9SEMeZ2VqJ9gHMOJuYPZtJGS/64LCp7SzDtPue2vgJuPKGyJsUwM76Yk7
-	wAoDEa6B0jYiA0wXhsJeKkcmbuhZgTc=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-529-iNbUvzvqO3m-ZoC8hh6Z4w-1; Tue, 26 Dec 2023 23:42:01 -0500
-X-MC-Unique: iNbUvzvqO3m-ZoC8hh6Z4w-1
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-6d9b4573b21so416974b3a.2
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Dec 2023 20:42:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703652120; x=1704256920;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OFJIO0ZcDJiyym1avHSfZOIU1zn9ynuH2Tm3h86pSaQ=;
-        b=Mye4dvr67GOrGTdWzlkOzaEEGzM6wy9Rn8cLTlFC7mtVEDIOnD4UWofylSGWiTMKmL
-         R3zK4hsK5g8vqawoJgN+mkx4L8YxwfXtcAjWE5YawsPI+oNB7DkK/H8/VCVC2/o59j9y
-         DzAgwG+syqP0yEpcRLj6ZFAzcvLpinuMnJYNzszjgxN5/DgDjTYErgNZStd6JXVUK6jk
-         vYYezY0jJoqFCoprnQ9CqQ1YP6Q9kYPqWNHFGm2uupMEeTfxKqLRk2viU3OLwF0p1FiL
-         gvDIotBEsnU8na5CqlB9K1fJrGIQYjlLZQXsN/H2p2WAZ9B2VvlssDFY4HAG2q4Hl2CR
-         cXxg==
-X-Gm-Message-State: AOJu0YwK2jpu4xGDRmdggsbwfYCVdH5+AOHXArR/DjeGt7MgikeAFxZu
-	J4RdURIdIFw19AwbF2m4GLTBfK45KIi/vWTqXAD+IJEtJYxL9wYNq01ZgCPTii8FvFsNgSzpWwN
-	RtxbNHPe/7OZNb/hcXMPeQAI7LzKiJ5v9ItdnXBIfiRmZ
-X-Received: by 2002:a62:ed06:0:b0:6d9:663a:aba1 with SMTP id u6-20020a62ed06000000b006d9663aaba1mr2684492pfh.43.1703652119950;
-        Tue, 26 Dec 2023 20:41:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFFUn/n35P5dU+QxbjFP+WACwyOuzLleZSPM/s0XIzuDegsw8h3wgv062OsIuQ8szsc1mlo5g==
-X-Received: by 2002:a62:ed06:0:b0:6d9:663a:aba1 with SMTP id u6-20020a62ed06000000b006d9663aaba1mr2684488pfh.43.1703652119543;
-        Tue, 26 Dec 2023 20:41:59 -0800 (PST)
-Received: from localhost ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id a8-20020a656548000000b005cdf90c21ecsm6929316pgw.67.2023.12.26.20.41.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Dec 2023 20:41:59 -0800 (PST)
-From: Coiby Xu <coxu@redhat.com>
-To: linux-integrity@vger.kernel.org
-Cc: itrymybest80@protonmail.com,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] integrity: don't throw an error immediately when failed to add a cert to the .machine keyring
-Date: Wed, 27 Dec 2023 12:41:56 +0800
-Message-ID: <20231227044156.166009-1-coxu@redhat.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1s3NJMh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28843C433C8;
+	Wed, 27 Dec 2023 04:43:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703652206;
+	bh=q9xaXdvN3BYNJgeWAI7noIC+KES6Pzsqpe3mtN3BIDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b1s3NJMh2hEIWh/xlnYXyLkkAcUimXVOAgMNmiJK0beYwm6lcizuvIYfp0GwexhMB
+	 1J/ifsOVm7ZNEAajqiZtj9DaymllGHduLSd/nMrEVmgopmYzr/CKMMX/kez1ShgYHC
+	 Uj+of1xNLDPzkvCG64VTyO5/clMWJ0cYtJTsoj+kyS9hgvcGilTze+skX0W7JrRNvn
+	 YF8gD0kJF/5RkUfrrAWkCXQ1uoYQedHz6X9f/D1TpdCN+hiTgFvEV/Z0Gqm0TCpJPX
+	 4FkW4NMRUYsEOqoPa/DZW5bizcq8O0W8pwgZ6jUza/SPc1ITq8t8HQcQEqYrHI+tLm
+	 NXQV8uwwgc+tQ==
+Date: Tue, 26 Dec 2023 22:43:22 -0600
+From: Eric Biggers <ebiggers@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Alfred Piccioni <alpic@google.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Eric Paris <eparis@parisplace.org>,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] security: new security_file_ioctl_compat() hook
+Message-ID: <20231227044322.GB4240@quark.localdomain>
+References: <20230906102557.3432236-1-alpic@google.com>
+ <20231219090909.2827497-1-alpic@google.com>
+ <CAHC9VhRDPv4-gNNiFMNtP_vL8UM66RQX0vxB0WkNw3Rn_Lcfmg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="US-ASCII"; x-default=true
+In-Reply-To: <CAHC9VhRDPv4-gNNiFMNtP_vL8UM66RQX0vxB0WkNw3Rn_Lcfmg@mail.gmail.com>
 
-Currently when the kernel fails to add a cert to the .machine keyring,
-it will throw an error immediately in the function integrity_add_key.
+On Sun, Dec 24, 2023 at 03:53:16PM -0500, Paul Moore wrote:
+> On Tue, Dec 19, 2023 at 4:09 AM Alfred Piccioni <alpic@google.com> wrote:
+> >
+> > Some ioctl commands do not require ioctl permission, but are routed to
+> > other permissions such as FILE_GETATTR or FILE_SETATTR. This routing is
+> > done by comparing the ioctl cmd to a set of 64-bit flags (FS_IOC_*).
+> >
+> > However, if a 32-bit process is running on a 64-bit kernel, it emits
+> > 32-bit flags (FS_IOC32_*) for certain ioctl operations. These flags are
+> > being checked erroneously, which leads to these ioctl operations being
+> > routed to the ioctl permission, rather than the correct file
+> > permissions.
+> >
+> > This was also noted in a RED-PEN finding from a while back -
+> > "/* RED-PEN how should LSM module know it's handling 32bit? */".
+> >
+> > This patch introduces a new hook, security_file_ioctl_compat, that is
+> > called from the compat ioctl syscall. All current LSMs have been changed
+> > to support this hook.
+> >
+> > Reviewing the three places where we are currently using
+> > security_file_ioctl, it appears that only SELinux needs a dedicated
+> > compat change; TOMOYO and SMACK appear to be functional without any
+> > change.
+> >
+> > Fixes: 0b24dcb7f2f7 ("Revert "selinux: simplify ioctl checking"")
+> > Signed-off-by: Alfred Piccioni <alpic@google.com>
+> > Cc: stable@vger.kernel.org
+> > ---
+> >  fs/ioctl.c                    |  3 +--
+> >  include/linux/lsm_hook_defs.h |  2 ++
+> >  include/linux/security.h      |  7 +++++++
+> >  security/security.c           | 17 +++++++++++++++++
+> >  security/selinux/hooks.c      | 28 ++++++++++++++++++++++++++++
+> >  security/smack/smack_lsm.c    |  1 +
+> >  security/tomoyo/tomoyo.c      |  1 +
+> >  7 files changed, 57 insertions(+), 2 deletions(-)
+> 
+> I made some minor style tweaks around line length and alignment, but
+> otherwise this looked good to me.  Thanks all!
+> 
 
-Since the kernel will try adding to the .platform keyring next or throw
-an error (in the caller of integrity_add_key i.e. add_to_machine_keyring),
-so there is no need to throw an error immediately in integrity_add_key.
+Reviewed-by: Eric Biggers <ebiggers@google.com>
 
-Reported-by: itrymybest80@protonmail.com
-Closes: https://bugzilla.redhat.com/show_bug.cgi?id=2239331
-Signed-off-by: Coiby Xu <coxu@redhat.com>
----
- security/integrity/digsig.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+(I reviewed the version in branch "next" of
+https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git)
 
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index df387de29bfa..45c3e5dda355 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -179,7 +179,8 @@ static int __init integrity_add_key(const unsigned int id, const void *data,
- 				   KEY_ALLOC_NOT_IN_QUOTA);
- 	if (IS_ERR(key)) {
- 		rc = PTR_ERR(key);
--		pr_err("Problem loading X.509 certificate %d\n", rc);
-+		if (id != INTEGRITY_KEYRING_MACHINE)
-+			pr_err("Problem loading X.509 certificate %d\n", rc);
- 	} else {
- 		pr_notice("Loaded X.509 cert '%s'\n",
- 			  key_ref_to_ptr(key)->description);
--- 
-2.43.0
-
+- Eric
