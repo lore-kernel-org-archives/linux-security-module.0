@@ -1,22 +1,38 @@
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 09B8B10F2;
-	Thu, 28 Dec 2023 03:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [219.141.250.2])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 568476019ED87;
-	Thu, 28 Dec 2023 11:08:55 +0800 (CST)
-X-MD-Sfrom: zeming@nfschina.com
-X-MD-SrcIP: 219.141.250.2
-From: Li zeming <zeming@nfschina.com>
-To: serge@hallyn.com
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li zeming <zeming@nfschina.com>
-Subject: [PATCH] =?UTF-8?q?kernel:=20capability:=20Remove=20unnecessary=20?= =?UTF-8?q?=E2=80=980=E2=80=99=20values=20from=20ret?=
-Date: Thu, 28 Dec 2023 11:08:54 +0800
-Message-Id: <20231228030854.11689-1-zeming@nfschina.com>
-X-Mailer: git-send-email 2.18.2
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FAC6FBE;
+	Thu, 28 Dec 2023 11:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="aL0LjljP"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+	by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4T164805BbzMpr0x;
+	Thu, 28 Dec 2023 11:39:36 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4T16472wZjzMppB5;
+	Thu, 28 Dec 2023 12:39:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1703763575;
+	bh=HFUa+gi6H03BBjcBoQQZYSYsAH4d4PrSY7gBDXIdSxw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=aL0LjljPs1ZmEelw3LKIuJ4a56TODbjHwEsslr1ax65dsQEyfy3Nj0ZePlhmm7f4h
+	 kYyEqYaFZpl0HYakOinZKl4eKlaWokxqT8f4+8dwve7gNEpFWSwHQDDkrxeR/yURiZ
+	 MRnX+Wpl4Iaf5B7pEoVJbTgj/3hgJTbpykm1GlLM=
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Eric Paris <eparis@parisplace.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Alexey Kodanev <alexey.kodanev@oracle.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH] selinux: Fix error priority for bind with AF_UNSPEC on AF_INET6 socket
+Date: Thu, 28 Dec 2023 12:39:17 +0100
+Message-ID: <20231228113917.62089-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -25,28 +41,42 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-The ret variable is assigned when it does not need to be defined, as it
-has already been assigned before use.
+The IPv6 network stack first checks the sockaddr length (-EINVAL error)
+before checking the family (-EAFNOSUPPORT error).
 
-Signed-off-by: Li zeming <zeming@nfschina.com>
+This was discovered thanks to commit a549d055a22e ("selftests/landlock:
+Add network tests").
+
+Cc: Alexey Kodanev <alexey.kodanev@oracle.com>
+Cc: Eric Paris <eparis@parisplace.org>
+Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Closes: https://lore.kernel.org/r/0584f91c-537c-4188-9e4f-04f192565667@collabora.com
+Fixes: 0f8db8cc73df ("selinux: add AF_UNSPEC and INADDR_ANY checks to selinux_socket_bind()")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
- kernel/capability.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/selinux/hooks.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/kernel/capability.c b/kernel/capability.c
-index dac4df77e376e..ed8a983e21da4 100644
---- a/kernel/capability.c
-+++ b/kernel/capability.c
-@@ -140,7 +140,7 @@ static inline int cap_get_target_pid(pid_t pid, kernel_cap_t *pEp,
-  */
- SYSCALL_DEFINE2(capget, cap_user_header_t, header, cap_user_data_t, dataptr)
- {
--	int ret = 0;
-+	int ret;
- 	pid_t pid;
- 	unsigned tocopy;
- 	kernel_cap_t pE, pI, pP;
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index feda711c6b7b..9fc55973d765 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4667,6 +4667,10 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
+ 				return -EINVAL;
+ 			addr4 = (struct sockaddr_in *)address;
+ 			if (family_sa == AF_UNSPEC) {
++				if (sock->sk->__sk_common.skc_family ==
++					    AF_INET6 &&
++				    addrlen < SIN6_LEN_RFC2133)
++					return -EINVAL;
+ 				/* see __inet_bind(), we only want to allow
+ 				 * AF_UNSPEC if the address is INADDR_ANY
+ 				 */
 -- 
-2.18.2
+2.43.0
 
