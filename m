@@ -1,114 +1,189 @@
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140B1F4FF;
-	Thu, 28 Dec 2023 16:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9EB107BC;
+	Thu, 28 Dec 2023 22:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="VuJ44Hnw"
-Received: from localhost.ispras.ru (unknown [10.10.165.11])
-	by mail.ispras.ru (Postfix) with ESMTPSA id F145540F1DDC;
-	Thu, 28 Dec 2023 16:08:46 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru F145540F1DDC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1703779727;
-	bh=m4hFkJIkWHBWbWm2n+Iu2CM6Wn9OdNelwblHQ1ILrho=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VuJ44HnwE6nm2O4dqq4rP2phEMfTG7UJlJM90gH9y5L22OIfWbxHl9kBRmqKq0zh3
-	 NPRxeHT7cD17WGEy5G8/3V4q+38wtK6AMFKBXRyFeg01p1s08Y+PqLEim1zaQzhvwI
-	 jl7wvqWcGf52+xg07lFFYRzaiLnWA2AlNn71ROEc=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: John Johansen <john.johansen@canonical.com>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] apparmor: avoid crash when parsed profile name is empty
-Date: Thu, 28 Dec 2023 19:07:43 +0300
-Message-ID: <20231228160744.1301-1-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KHXXKQZp"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=kQ+uKuyxhmcjSMG7LN+mZVJSxMAB8MaVFuhiW7JiPfc=; b=KHXXKQZpOt9etWodUQCdGaQE2b
+	9KJWxMzCTUUh3sxe3Y75CnkuzFp+l8AW3f2sSmKRCwanS720bp2Un6aHnAfX/z9/JtIRsMh/ypcC5
+	HGPs9M3qxsME+51W0rachnSOIb1ljosSCeax34cSZhyDvMN9xXfGsgmfoJ07Tp04fdpCh7WOs94G3
+	lDJy6Gv/cJRx890dse2nws3lBy7fN4fiz2GxWU+PvZ9Z1byTi2FrmfL2YqA9W/iWUnz91UC/s61J2
+	rSp8EQVu0uwUogN9IGCIUxZNxIetjAEg0lVuPElVdTrxavbxOqCYBBf5UhihqmCqxUVyPc7jTGZDF
+	27uLB1Mg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rIyjT-005dpL-R0; Thu, 28 Dec 2023 22:20:03 +0000
+Date: Thu, 28 Dec 2023 22:20:03 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Maria Yu <quic_aiquny@quicinc.com>, kernel@quicinc.com,
+	quic_pkondeti@quicinc.com, keescook@chromium.or,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, oleg@redhat.com,
+	dhowells@redhat.com, jarkko@kernel.org, paul@paul-moore.com,
+	jmorris@namei.org, serge@hallyn.com, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] kernel: Introduce a write lock/unlock wrapper for
+ tasklist_lock
+Message-ID: <ZY30k7OCtxrdR9oP@casper.infradead.org>
+References: <20231213101745.4526-1-quic_aiquny@quicinc.com>
+ <ZXnaNSrtaWbS2ivU@casper.infradead.org>
+ <87o7eu7ybq.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87o7eu7ybq.fsf@email.froward.int.ebiederm.org>
 
-When processing a packed profile in unpack_profile() described like
+On Wed, Dec 13, 2023 at 12:27:05PM -0600, Eric W. Biederman wrote:
+> Matthew Wilcox <willy@infradead.org> writes:
+> > I think the right way to fix this is to pass a boolean flag to
+> > queued_write_lock_slowpath() to let it know whether it can re-enable
+> > interrupts while checking whether _QW_WAITING is set.
+> 
+> Yes.  It seems to make sense to distinguish between write_lock_irq and
+> write_lock_irqsave and fix this for all of write_lock_irq.
 
- "profile :ns::samba-dcerpcd /usr/lib*/samba/{,samba/}samba-dcerpcd {...}"
+I wasn't planning on doing anything here, but Hillf kind of pushed me into
+it.  I think it needs to be something like this.  Compile tested only.
+If it ends up getting used,
 
-a string ":samba-dcerpcd" is unpacked as a fully-qualified name and then
-passed to aa_splitn_fqname().
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-aa_splitn_fqname() treats ":samba-dcerpcd" as only containing a namespace.
-Thus it returns NULL for tmpname, meanwhile tmpns is non-NULL. Later
-aa_alloc_profile() crashes as the new profile name is NULL now.
-
-general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 6 PID: 1657 Comm: apparmor_parser Not tainted 6.7.0-rc2-dirty #16
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.2-3-gd478f380-rebuilt.opensuse.org 04/01/2014
-RIP: 0010:strlen+0x1e/0xa0
-Call Trace:
- <TASK>
- ? strlen+0x1e/0xa0
- aa_policy_init+0x1bb/0x230
- aa_alloc_profile+0xb1/0x480
- unpack_profile+0x3bc/0x4960
- aa_unpack+0x309/0x15e0
- aa_replace_profiles+0x213/0x33c0
- policy_update+0x261/0x370
- profile_replace+0x20e/0x2a0
- vfs_write+0x2af/0xe00
- ksys_write+0x126/0x250
- do_syscall_64+0x46/0xf0
- entry_SYSCALL_64_after_hwframe+0x6e/0x76
- </TASK>
----[ end trace 0000000000000000 ]---
-RIP: 0010:strlen+0x1e/0xa0
-
-It seems such behaviour of aa_splitn_fqname() is expected and checked in
-other places where it is called (e.g. aa_remove_profiles). Well, there
-is an explicit comment "a ns name without a following profile is allowed"
-inside.
-
-AFAICS, nothing can prevent unpacked "name" to be in form like
-":samba-dcerpcd" - it is passed from userspace.
-
-Deny the whole profile set replacement in such case and inform user with
-EPROTO and an explaining message.
-
-Found by Linux Verification Center (linuxtesting.org).
-
-Fixes: 04dc715e24d0 ("apparmor: audit policy ns specified in policy load")
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
- security/apparmor/policy_unpack.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index e0af1e9f40ee..70d448048773 100644
---- a/security/apparmor/policy_unpack.c
-+++ b/security/apparmor/policy_unpack.c
-@@ -835,6 +835,10 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
+diff --git a/include/asm-generic/qrwlock.h b/include/asm-generic/qrwlock.h
+index 75b8f4601b28..1152e080c719 100644
+--- a/include/asm-generic/qrwlock.h
++++ b/include/asm-generic/qrwlock.h
+@@ -33,8 +33,8 @@
+ /*
+  * External function declarations
+  */
+-extern void queued_read_lock_slowpath(struct qrwlock *lock);
+-extern void queued_write_lock_slowpath(struct qrwlock *lock);
++void queued_read_lock_slowpath(struct qrwlock *lock);
++void queued_write_lock_slowpath(struct qrwlock *lock, bool irq);
  
- 	tmpname = aa_splitn_fqname(name, strlen(name), &tmpns, &ns_len);
- 	if (tmpns) {
-+		if (!tmpname) {
-+			info = "empty profile name";
-+			goto fail;
-+		}
- 		*ns_name = kstrndup(tmpns, ns_len, GFP_KERNEL);
- 		if (!*ns_name) {
- 			info = "out of memory";
--- 
-2.43.0
-
+ /**
+  * queued_read_trylock - try to acquire read lock of a queued rwlock
+@@ -98,7 +98,21 @@ static inline void queued_write_lock(struct qrwlock *lock)
+ 	if (likely(atomic_try_cmpxchg_acquire(&lock->cnts, &cnts, _QW_LOCKED)))
+ 		return;
+ 
+-	queued_write_lock_slowpath(lock);
++	queued_write_lock_slowpath(lock, false);
++}
++
++/**
++ * queued_write_lock_irq - acquire write lock of a queued rwlock
++ * @lock : Pointer to queued rwlock structure
++ */
++static inline void queued_write_lock_irq(struct qrwlock *lock)
++{
++	int cnts = 0;
++	/* Optimize for the unfair lock case where the fair flag is 0. */
++	if (likely(atomic_try_cmpxchg_acquire(&lock->cnts, &cnts, _QW_LOCKED)))
++		return;
++
++	queued_write_lock_slowpath(lock, true);
+ }
+ 
+ /**
+@@ -138,6 +152,7 @@ static inline int queued_rwlock_is_contended(struct qrwlock *lock)
+  */
+ #define arch_read_lock(l)		queued_read_lock(l)
+ #define arch_write_lock(l)		queued_write_lock(l)
++#define arch_write_lock_irq(l)		queued_write_lock_irq(l)
+ #define arch_read_trylock(l)		queued_read_trylock(l)
+ #define arch_write_trylock(l)		queued_write_trylock(l)
+ #define arch_read_unlock(l)		queued_read_unlock(l)
+diff --git a/include/linux/rwlock.h b/include/linux/rwlock.h
+index c0ef596f340b..897010b6ba0a 100644
+--- a/include/linux/rwlock.h
++++ b/include/linux/rwlock.h
+@@ -33,6 +33,7 @@ do {								\
+  extern int do_raw_read_trylock(rwlock_t *lock);
+  extern void do_raw_read_unlock(rwlock_t *lock) __releases(lock);
+  extern void do_raw_write_lock(rwlock_t *lock) __acquires(lock);
++ extern void do_raw_write_lock_irq(rwlock_t *lock) __acquires(lock);
+  extern int do_raw_write_trylock(rwlock_t *lock);
+  extern void do_raw_write_unlock(rwlock_t *lock) __releases(lock);
+ #else
+@@ -40,6 +41,7 @@ do {								\
+ # define do_raw_read_trylock(rwlock)	arch_read_trylock(&(rwlock)->raw_lock)
+ # define do_raw_read_unlock(rwlock)	do {arch_read_unlock(&(rwlock)->raw_lock); __release(lock); } while (0)
+ # define do_raw_write_lock(rwlock)	do {__acquire(lock); arch_write_lock(&(rwlock)->raw_lock); } while (0)
++# define do_raw_write_lock_irq(rwlock)	do {__acquire(lock); arch_write_lock_irq(&(rwlock)->raw_lock); } while (0)
+ # define do_raw_write_trylock(rwlock)	arch_write_trylock(&(rwlock)->raw_lock)
+ # define do_raw_write_unlock(rwlock)	do {arch_write_unlock(&(rwlock)->raw_lock); __release(lock); } while (0)
+ #endif
+diff --git a/include/linux/rwlock_api_smp.h b/include/linux/rwlock_api_smp.h
+index dceb0a59b692..6257976dfb72 100644
+--- a/include/linux/rwlock_api_smp.h
++++ b/include/linux/rwlock_api_smp.h
+@@ -193,7 +193,7 @@ static inline void __raw_write_lock_irq(rwlock_t *lock)
+ 	local_irq_disable();
+ 	preempt_disable();
+ 	rwlock_acquire(&lock->dep_map, 0, 0, _RET_IP_);
+-	LOCK_CONTENDED(lock, do_raw_write_trylock, do_raw_write_lock);
++	LOCK_CONTENDED(lock, do_raw_write_trylock, do_raw_write_lock_irq);
+ }
+ 
+ static inline void __raw_write_lock_bh(rwlock_t *lock)
+diff --git a/kernel/locking/qrwlock.c b/kernel/locking/qrwlock.c
+index d2ef312a8611..6c644a71b01d 100644
+--- a/kernel/locking/qrwlock.c
++++ b/kernel/locking/qrwlock.c
+@@ -61,9 +61,10 @@ EXPORT_SYMBOL(queued_read_lock_slowpath);
+ 
+ /**
+  * queued_write_lock_slowpath - acquire write lock of a queued rwlock
+- * @lock : Pointer to queued rwlock structure
++ * @lock: Pointer to queued rwlock structure
++ * @irq: True if we can enable interrupts while spinning
+  */
+-void __lockfunc queued_write_lock_slowpath(struct qrwlock *lock)
++void __lockfunc queued_write_lock_slowpath(struct qrwlock *lock, bool irq)
+ {
+ 	int cnts;
+ 
+@@ -82,7 +83,11 @@ void __lockfunc queued_write_lock_slowpath(struct qrwlock *lock)
+ 
+ 	/* When no more readers or writers, set the locked flag */
+ 	do {
++		if (irq)
++			local_irq_enable();
+ 		cnts = atomic_cond_read_relaxed(&lock->cnts, VAL == _QW_WAITING);
++		if (irq)
++			local_irq_disable();
+ 	} while (!atomic_try_cmpxchg_acquire(&lock->cnts, &cnts, _QW_LOCKED));
+ unlock:
+ 	arch_spin_unlock(&lock->wait_lock);
+diff --git a/kernel/locking/spinlock_debug.c b/kernel/locking/spinlock_debug.c
+index 87b03d2e41db..bf94551d7435 100644
+--- a/kernel/locking/spinlock_debug.c
++++ b/kernel/locking/spinlock_debug.c
+@@ -212,6 +212,13 @@ void do_raw_write_lock(rwlock_t *lock)
+ 	debug_write_lock_after(lock);
+ }
+ 
++void do_raw_write_lock_irq(rwlock_t *lock)
++{
++	debug_write_lock_before(lock);
++	arch_write_lock_irq(&lock->raw_lock);
++	debug_write_lock_after(lock);
++}
++
+ int do_raw_write_trylock(rwlock_t *lock)
+ {
+ 	int ret = arch_write_trylock(&lock->raw_lock);
