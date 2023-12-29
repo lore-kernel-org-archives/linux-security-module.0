@@ -1,189 +1,129 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9EB107BC;
-	Thu, 28 Dec 2023 22:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAFF63A
+	for <linux-security-module@vger.kernel.org>; Fri, 29 Dec 2023 00:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KHXXKQZp"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=kQ+uKuyxhmcjSMG7LN+mZVJSxMAB8MaVFuhiW7JiPfc=; b=KHXXKQZpOt9etWodUQCdGaQE2b
-	9KJWxMzCTUUh3sxe3Y75CnkuzFp+l8AW3f2sSmKRCwanS720bp2Un6aHnAfX/z9/JtIRsMh/ypcC5
-	HGPs9M3qxsME+51W0rachnSOIb1ljosSCeax34cSZhyDvMN9xXfGsgmfoJ07Tp04fdpCh7WOs94G3
-	lDJy6Gv/cJRx890dse2nws3lBy7fN4fiz2GxWU+PvZ9Z1byTi2FrmfL2YqA9W/iWUnz91UC/s61J2
-	rSp8EQVu0uwUogN9IGCIUxZNxIetjAEg0lVuPElVdTrxavbxOqCYBBf5UhihqmCqxUVyPc7jTGZDF
-	27uLB1Mg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1rIyjT-005dpL-R0; Thu, 28 Dec 2023 22:20:03 +0000
-Date: Thu, 28 Dec 2023 22:20:03 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Maria Yu <quic_aiquny@quicinc.com>, kernel@quicinc.com,
-	quic_pkondeti@quicinc.com, keescook@chromium.or,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, oleg@redhat.com,
-	dhowells@redhat.com, jarkko@kernel.org, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] kernel: Introduce a write lock/unlock wrapper for
- tasklist_lock
-Message-ID: <ZY30k7OCtxrdR9oP@casper.infradead.org>
-References: <20231213101745.4526-1-quic_aiquny@quicinc.com>
- <ZXnaNSrtaWbS2ivU@casper.infradead.org>
- <87o7eu7ybq.fsf@email.froward.int.ebiederm.org>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Yfi1kRUR"
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dbdbfaab70eso4298081276.3
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Dec 2023 16:19:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1703809158; x=1704413958; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0cEo2Ugvy631qhTrMS3RccK1Y17x2v86Km3ZLje/SNw=;
+        b=Yfi1kRURXi8ETveb77Eusm4amY8G/5PM0cWvryS80m9ym8IeTfqxT20nzo3NS+jvhB
+         0Va484Fs6Yx0XeY+cxAFVWBcT0wxAQ6yk4At6rveggdzNPvr5PlC9oTS+onpXjd/hdnT
+         rtlmkCFmgRJXWOfqUFVb/Qe5wtulXwYCdESGCk+uLAmLQi9YdcoV8RCqxIzoWnXVBmxe
+         MsTxS7N4eX7e5oTNo+/Ukv3PtjOu/19bcEN1cvLLCUNrTtjzM/3PNn5Ln+zHZDdMig7C
+         w+7/IVEvtw/73oVTMXGtbv5jYIbsWJBXimKaVHN4gsVu/m8gLmnhis0zRR/WqZ0btfhM
+         ApXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703809158; x=1704413958;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0cEo2Ugvy631qhTrMS3RccK1Y17x2v86Km3ZLje/SNw=;
+        b=hzb5kuNHkiygllNf6e753PapmYsDJgrHWCqkss1GHbVxYuBbErm4dQ7KRsG3CPUFQH
+         okzBWy7b2DyWmLDlYi28F3vHE9agr7VtqucXYdW16WbvlHM6IKx1vO8BUTUhGRhELHtE
+         MnN+LWUm2QKLrnT+8S8vxmXL+ucsyp0BGHdLz8/82IqzhYSovWZfPW5oQ7FpUXuBF7bt
+         dUFls2ez+aJxdvtgOI5JGW2trwSTHe/0yCJzoHo0CnZqxtFt4Fk35PFHW9iAJ/wBT15S
+         cXJfPiSb7k+kNmCJmErA4FP4oLE00hDI7NVnW9vxvIq2KZ5KajrwLwVzrdkcFyuLqKIy
+         Ujeg==
+X-Gm-Message-State: AOJu0YyCliY9JqciphfmaYuVNjSI69XwTYNDt8g9m/1oVLBCB9wmz3xo
+	6Zps45y+KAeZgfHnkDnUW0JoieX/ZXR2rddtG8XNWrgO8gvc
+X-Google-Smtp-Source: AGHT+IEp/1iCFuxTXErlQvBv5mX2X2yrx3CHtCqbu/F/FozWARWZG3sopFSp6JAiHGlzpZbIaWtLRfQYnp3EODGrMz0=
+X-Received: by 2002:a25:2d0a:0:b0:dbd:45b5:7037 with SMTP id
+ t10-20020a252d0a000000b00dbd45b57037mr5269538ybt.105.1703809158617; Thu, 28
+ Dec 2023 16:19:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o7eu7ybq.fsf@email.froward.int.ebiederm.org>
+References: <20231228113917.62089-1-mic@digikod.net>
+In-Reply-To: <20231228113917.62089-1-mic@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 28 Dec 2023 19:19:07 -0500
+Message-ID: <CAHC9VhQMbHLYkhs-k9YEjeAFH7_JOk3RUKAa7jD7HP0NW1cBdA@mail.gmail.com>
+Subject: Re: [PATCH] selinux: Fix error priority for bind with AF_UNSPEC on
+ AF_INET6 socket
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Eric Paris <eparis@parisplace.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Alexey Kodanev <alexey.kodanev@oracle.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-security-module@vger.kernel.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 13, 2023 at 12:27:05PM -0600, Eric W. Biederman wrote:
-> Matthew Wilcox <willy@infradead.org> writes:
-> > I think the right way to fix this is to pass a boolean flag to
-> > queued_write_lock_slowpath() to let it know whether it can re-enable
-> > interrupts while checking whether _QW_WAITING is set.
-> 
-> Yes.  It seems to make sense to distinguish between write_lock_irq and
-> write_lock_irqsave and fix this for all of write_lock_irq.
+On Thu, Dec 28, 2023 at 6:39=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+>
+> The IPv6 network stack first checks the sockaddr length (-EINVAL error)
+> before checking the family (-EAFNOSUPPORT error).
+>
+> This was discovered thanks to commit a549d055a22e ("selftests/landlock:
+> Add network tests").
+>
+> Cc: Alexey Kodanev <alexey.kodanev@oracle.com>
+> Cc: Eric Paris <eparis@parisplace.org>
+> Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> Closes: https://lore.kernel.org/r/0584f91c-537c-4188-9e4f-04f192565667@co=
+llabora.com
+> Fixes: 0f8db8cc73df ("selinux: add AF_UNSPEC and INADDR_ANY checks to sel=
+inux_socket_bind()")
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> ---
+>  security/selinux/hooks.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index feda711c6b7b..9fc55973d765 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -4667,6 +4667,10 @@ static int selinux_socket_bind(struct socket *sock=
+, struct sockaddr *address, in
+>                                 return -EINVAL;
+>                         addr4 =3D (struct sockaddr_in *)address;
+>                         if (family_sa =3D=3D AF_UNSPEC) {
+> +                               if (sock->sk->__sk_common.skc_family =3D=
+=3D
+> +                                           AF_INET6 &&
+> +                                   addrlen < SIN6_LEN_RFC2133)
+> +                                       return -EINVAL;
 
-I wasn't planning on doing anything here, but Hillf kind of pushed me into
-it.  I think it needs to be something like this.  Compile tested only.
-If it ends up getting used,
+Please use sock->sk_family to simplify the conditional above, or
+better yet, use the local variable @family as it is set to the sock's
+address family near the top of selinux_socket_bind() ... although, as
+I'm looking at the existing code, is this patch necessary?
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+At the top of the AF_UNSPEC/AF_INET case there is an address length check:
 
-diff --git a/include/asm-generic/qrwlock.h b/include/asm-generic/qrwlock.h
-index 75b8f4601b28..1152e080c719 100644
---- a/include/asm-generic/qrwlock.h
-+++ b/include/asm-generic/qrwlock.h
-@@ -33,8 +33,8 @@
- /*
-  * External function declarations
-  */
--extern void queued_read_lock_slowpath(struct qrwlock *lock);
--extern void queued_write_lock_slowpath(struct qrwlock *lock);
-+void queued_read_lock_slowpath(struct qrwlock *lock);
-+void queued_write_lock_slowpath(struct qrwlock *lock, bool irq);
- 
- /**
-  * queued_read_trylock - try to acquire read lock of a queued rwlock
-@@ -98,7 +98,21 @@ static inline void queued_write_lock(struct qrwlock *lock)
- 	if (likely(atomic_try_cmpxchg_acquire(&lock->cnts, &cnts, _QW_LOCKED)))
- 		return;
- 
--	queued_write_lock_slowpath(lock);
-+	queued_write_lock_slowpath(lock, false);
-+}
-+
-+/**
-+ * queued_write_lock_irq - acquire write lock of a queued rwlock
-+ * @lock : Pointer to queued rwlock structure
-+ */
-+static inline void queued_write_lock_irq(struct qrwlock *lock)
-+{
-+	int cnts = 0;
-+	/* Optimize for the unfair lock case where the fair flag is 0. */
-+	if (likely(atomic_try_cmpxchg_acquire(&lock->cnts, &cnts, _QW_LOCKED)))
-+		return;
-+
-+	queued_write_lock_slowpath(lock, true);
- }
- 
- /**
-@@ -138,6 +152,7 @@ static inline int queued_rwlock_is_contended(struct qrwlock *lock)
-  */
- #define arch_read_lock(l)		queued_read_lock(l)
- #define arch_write_lock(l)		queued_write_lock(l)
-+#define arch_write_lock_irq(l)		queued_write_lock_irq(l)
- #define arch_read_trylock(l)		queued_read_trylock(l)
- #define arch_write_trylock(l)		queued_write_trylock(l)
- #define arch_read_unlock(l)		queued_read_unlock(l)
-diff --git a/include/linux/rwlock.h b/include/linux/rwlock.h
-index c0ef596f340b..897010b6ba0a 100644
---- a/include/linux/rwlock.h
-+++ b/include/linux/rwlock.h
-@@ -33,6 +33,7 @@ do {								\
-  extern int do_raw_read_trylock(rwlock_t *lock);
-  extern void do_raw_read_unlock(rwlock_t *lock) __releases(lock);
-  extern void do_raw_write_lock(rwlock_t *lock) __acquires(lock);
-+ extern void do_raw_write_lock_irq(rwlock_t *lock) __acquires(lock);
-  extern int do_raw_write_trylock(rwlock_t *lock);
-  extern void do_raw_write_unlock(rwlock_t *lock) __releases(lock);
- #else
-@@ -40,6 +41,7 @@ do {								\
- # define do_raw_read_trylock(rwlock)	arch_read_trylock(&(rwlock)->raw_lock)
- # define do_raw_read_unlock(rwlock)	do {arch_read_unlock(&(rwlock)->raw_lock); __release(lock); } while (0)
- # define do_raw_write_lock(rwlock)	do {__acquire(lock); arch_write_lock(&(rwlock)->raw_lock); } while (0)
-+# define do_raw_write_lock_irq(rwlock)	do {__acquire(lock); arch_write_lock_irq(&(rwlock)->raw_lock); } while (0)
- # define do_raw_write_trylock(rwlock)	arch_write_trylock(&(rwlock)->raw_lock)
- # define do_raw_write_unlock(rwlock)	do {arch_write_unlock(&(rwlock)->raw_lock); __release(lock); } while (0)
- #endif
-diff --git a/include/linux/rwlock_api_smp.h b/include/linux/rwlock_api_smp.h
-index dceb0a59b692..6257976dfb72 100644
---- a/include/linux/rwlock_api_smp.h
-+++ b/include/linux/rwlock_api_smp.h
-@@ -193,7 +193,7 @@ static inline void __raw_write_lock_irq(rwlock_t *lock)
- 	local_irq_disable();
- 	preempt_disable();
- 	rwlock_acquire(&lock->dep_map, 0, 0, _RET_IP_);
--	LOCK_CONTENDED(lock, do_raw_write_trylock, do_raw_write_lock);
-+	LOCK_CONTENDED(lock, do_raw_write_trylock, do_raw_write_lock_irq);
- }
- 
- static inline void __raw_write_lock_bh(rwlock_t *lock)
-diff --git a/kernel/locking/qrwlock.c b/kernel/locking/qrwlock.c
-index d2ef312a8611..6c644a71b01d 100644
---- a/kernel/locking/qrwlock.c
-+++ b/kernel/locking/qrwlock.c
-@@ -61,9 +61,10 @@ EXPORT_SYMBOL(queued_read_lock_slowpath);
- 
- /**
-  * queued_write_lock_slowpath - acquire write lock of a queued rwlock
-- * @lock : Pointer to queued rwlock structure
-+ * @lock: Pointer to queued rwlock structure
-+ * @irq: True if we can enable interrupts while spinning
-  */
--void __lockfunc queued_write_lock_slowpath(struct qrwlock *lock)
-+void __lockfunc queued_write_lock_slowpath(struct qrwlock *lock, bool irq)
- {
- 	int cnts;
- 
-@@ -82,7 +83,11 @@ void __lockfunc queued_write_lock_slowpath(struct qrwlock *lock)
- 
- 	/* When no more readers or writers, set the locked flag */
- 	do {
-+		if (irq)
-+			local_irq_enable();
- 		cnts = atomic_cond_read_relaxed(&lock->cnts, VAL == _QW_WAITING);
-+		if (irq)
-+			local_irq_disable();
- 	} while (!atomic_try_cmpxchg_acquire(&lock->cnts, &cnts, _QW_LOCKED));
- unlock:
- 	arch_spin_unlock(&lock->wait_lock);
-diff --git a/kernel/locking/spinlock_debug.c b/kernel/locking/spinlock_debug.c
-index 87b03d2e41db..bf94551d7435 100644
---- a/kernel/locking/spinlock_debug.c
-+++ b/kernel/locking/spinlock_debug.c
-@@ -212,6 +212,13 @@ void do_raw_write_lock(rwlock_t *lock)
- 	debug_write_lock_after(lock);
- }
- 
-+void do_raw_write_lock_irq(rwlock_t *lock)
-+{
-+	debug_write_lock_before(lock);
-+	arch_write_lock_irq(&lock->raw_lock);
-+	debug_write_lock_after(lock);
-+}
-+
- int do_raw_write_trylock(rwlock_t *lock)
- {
- 	int ret = arch_write_trylock(&lock->raw_lock);
+  if (addrlen < sizeof(struct sockaddr_in))
+    return -EINVAL;
+
+... which I believe should be performing the required sockaddr length
+check (and it is checking for IPv4 address lengths not IPv6 as in the
+patch).  I see that we have a similar check for AF_INET6, so we should
+be covered there as well.
+
+I'm probably still in a bit of a holiday fog, can you help me see what
+I'm missing here?
+
+>                                 /* see __inet_bind(), we only want to all=
+ow
+>                                  * AF_UNSPEC if the address is INADDR_ANY
+>                                  */
+> --
+> 2.43.0
+
+--=20
+paul-moore.com
