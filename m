@@ -1,297 +1,134 @@
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E5712E40
-	for <linux-security-module@vger.kernel.org>; Fri, 29 Dec 2023 17:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773221429B
+	for <linux-security-module@vger.kernel.org>; Fri, 29 Dec 2023 21:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="zqv3s5U2"
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-	by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4T1t4653dHzMpxkL;
-	Fri, 29 Dec 2023 17:42:14 +0000 (UTC)
-Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4T1t452rQczMpnPq;
-	Fri, 29 Dec 2023 18:42:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1703871734;
-	bh=yxUY4HvifwhIdQDXg0BhIWNVhCeEvKiRMKXW9dHUAkk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=zqv3s5U2HPz37FjM7fzezy6GWh/AQT6c6R25U+YkBFAHGq1Pao+byQ3p6+HTADsJd
-	 mQBqjyvSepPqq67JXLV4uDF/HAdupaGSaJYukGJ9mjtu3vly2Gyg4PUT2zVCJphvsw
-	 +4agC2B9d83cbjy36nWJPi0Z7n2g4Re4viJoFu7U=
-Date: Fri, 29 Dec 2023 18:42:06 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@google.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Shervin Oloumi <enlightened@google.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 3/7] landlock: Log ruleset creation and release
-Message-ID: <20231229.aex0ijae2The@digikod.net>
-References: <20230921061641.273654-1-mic@digikod.net>
- <20230921061641.273654-4-mic@digikod.net>
- <CAHC9VhQTvFp+i=j7t+55EnG44xg=Pmvkh=Oq=e7ddJWDZXLeSA@mail.gmail.com>
- <20231221.eij3poa3Se4b@digikod.net>
- <CAHC9VhRiUOe9enkCOko0mGehxt+2tbJNGoJm=jmauhZSPFvzRg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fTZbI8j/"
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dbe344a6cf4so1966703276.0
+        for <linux-security-module@vger.kernel.org>; Fri, 29 Dec 2023 13:41:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1703886101; x=1704490901; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=da9LGeyuvTZGILTbTs18YHdm2o/r2BCEHsPfsaIYle8=;
+        b=fTZbI8j/IwqmO12QKy+ohJJzmK80phWuVl+OO9nIJp4H4Lbk4VWZI86YYOYMAzbhBO
+         k+0v7yqCkBIj1p/H42cAyy+bLQEYHnyLzWz8zsb7IPlwFTv9glXYGXBofzLhj5aI3DZG
+         1wonxch+QbxFj71Z4uv620LbRfCHJBAD6OmzBZgylKrGhhyQ2SLx5WzuqfeIxrnIPLbF
+         wVKG2IbfOgl4Cr/HxQPjqaHxzwamW6lkDafVIAbk/wacPcVQFkSKFM/2xL/MSgSBwzIl
+         dikbkrqQVV7z+W+8/ogbeha3tiVTYU4f467yxa/NpFduyqYmpIp/Y3yLnrHuQe7o4O2O
+         Abrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703886101; x=1704490901;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=da9LGeyuvTZGILTbTs18YHdm2o/r2BCEHsPfsaIYle8=;
+        b=M2c7hwPeS75gkHB43d8KanS6qMEi0tdjkJ24gTq9YZsjo+79xJ9MiVD+E2VBGf1p01
+         yyNP+Foi8Lhc4VVP3BFTD7d/e+g+tWcVrEr6Q9ENy53pxSag5hAcYMGBdqqKKX/0vMo0
+         iO98bcLHrDE1El4rtaSKsLiwctSCzm24urPttgPY260M3SHSSCtiWIqFLbzjP/2Vo7km
+         BguAtbpRvvW2lzdM77tdjbJ2cxe12VS2TyvZN39EAg9q6gzf3Uwgw4k72pg1AhqPB6p4
+         gFkqyRlrOl9ZSIr9pCjGTWvDCe0hMo93Pbq0AXUDahIy7SzV5s6rylAgE4AuBtVrDa/T
+         NlVQ==
+X-Gm-Message-State: AOJu0Yz+xUoqoahAWTlL0lykaBX4BZDIhM+TQX7wz7uxd2aTcgYIgV2C
+	G8P6qKn5+7n3XRiYrOiqjsX4xW+e47E9g9R99zgt0YXqKAC6
+X-Google-Smtp-Source: AGHT+IG40QhkJB2MDQvx8W4bpKyDJtlQbBUDvyWAIZcCsg/w1+WXXeJSaR1uUj7T7Vz2iAnBIyhxdVpgURwUsxzF2/8=
+X-Received: by 2002:a25:aba4:0:b0:dbc:dfa4:b96b with SMTP id
+ v33-20020a25aba4000000b00dbcdfa4b96bmr6835344ybi.93.1703886101421; Fri, 29
+ Dec 2023 13:41:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRiUOe9enkCOko0mGehxt+2tbJNGoJm=jmauhZSPFvzRg@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+References: <20231228113917.62089-1-mic@digikod.net> <CAHC9VhQMbHLYkhs-k9YEjeAFH7_JOk3RUKAa7jD7HP0NW1cBdA@mail.gmail.com>
+ <20231229.Phaengue0aib@digikod.net>
+In-Reply-To: <20231229.Phaengue0aib@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 29 Dec 2023 16:41:30 -0500
+Message-ID: <CAHC9VhQcBEmF_pL9pk0O84aWyrZxSX9y1i0i=c+a3dQQawgEMA@mail.gmail.com>
+Subject: Re: [PATCH] selinux: Fix error priority for bind with AF_UNSPEC on
+ AF_INET6 socket
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Eric Paris <eparis@parisplace.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-security-module@vger.kernel.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 22, 2023 at 05:42:35PM -0500, Paul Moore wrote:
-> On Thu, Dec 21, 2023 at 1:45 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > On Wed, Dec 20, 2023 at 04:22:15PM -0500, Paul Moore wrote:
-> > > On Thu, Sep 21, 2023 at 2:17 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > >
-> > > > Add audit support for ruleset/domain creation and release ...
-> 
-> ...
-> 
-> > > > +/* Inspired by dump_common_audit_data(). */
-> > > > +static void log_task(struct audit_buffer *const ab)
-> > > > +{
-> > > > +       /* 16 bytes (TASK_COMM_LEN) */
-> > > > +       char comm[sizeof(current->comm)];
-> > > > +
-> > > > +       /*
-> > > > +        * Uses task_pid_nr() instead of task_tgid_nr() because of how
-> > > > +        * credentials and Landlock work.
-> > > > +        */
-> > > > +       audit_log_format(ab, "tid=%d comm=", task_pid_nr(current));
-> > > > +       audit_log_untrustedstring(ab,
-> > > > +                                 memcpy(comm, current->comm, sizeof(comm)));
-> > > > +}
+On Fri, Dec 29, 2023 at 12:19=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
+>
+> (Removing Alexey Kodanev because the related address is no longer
+> valid.)
+>
+> On Thu, Dec 28, 2023 at 07:19:07PM -0500, Paul Moore wrote:
+> > On Thu, Dec 28, 2023 at 6:39=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
 > > >
-> > > Depending on how log_task() is used, it may be redundant with respect
-> > > to the existing SYSCALL record.  Yes, there is already redundancy with
-> > > the AVC record, but that is a legacy problem and not something we can
-> > > easily fix, but given that the Landlock records are new we have an
-> > > opportunity to do things properly :)
-> >
-> > Indeed, it would make it simpler too. I wasn't sure how standalone a
-> > record should be, but I guess there tools should be able to look for a
-> > set of related records (e.g. event with a SYSCALL record matching a PID
-> > and a LANDLOCK record).
-> 
-> I believe ausearch will output the entire event when it matches on a
-> field in one of the event's records.
-
-Right, and the man page talks about that.
-
-> 
-> > > > +void landlock_log_create_ruleset(struct landlock_ruleset *const ruleset)
-> > > > +{
-> > > > +       struct audit_buffer *ab;
-> > > > +
-> > > > +       WARN_ON_ONCE(ruleset->id);
-> > > > +
-> > > > +       ab = audit_log_start(audit_context(), GFP_ATOMIC, AUDIT_LANDLOCK);
-> > > > +       if (!ab)
-> > > > +               /* audit_log_lost() call */
-> > > > +               return;
-> > > > +
-> > > > +       ruleset->id = atomic64_inc_return(&ruleset_and_domain_counter);
-> > > > +       log_task(ab);
-> > > > +       audit_log_format(ab,
-> > > > +                        " op=create-ruleset ruleset=%llu handled_access_fs=",
-> > > > +                        ruleset->id);
+> > > The IPv6 network stack first checks the sockaddr length (-EINVAL erro=
+r)
+> > > before checking the family (-EAFNOSUPPORT error).
 > > >
-> > > "handled_access_fs" seems a bit long for a field name, is there any
-> > > reason why it couldn't simply be "access_fs" or something similar?
-> >
-> > "handled_access_fs" is from the landlock_create_ruleset(2) API, so I'd
-> > like to use the same name.
-> 
-> Okay, that's a reasonable reason.
-> 
-> > However, because the types of handled access
-> > rights for a ruleset will expand (e.g. we now have a
-> > handled_access_net), I'm wondering if it would be better to keep this
-> > (growing) one-line record or if we should use several records for a
-> > ruleset creation (i.e. one line per type of handled access righs).
-> 
-> I think it would be better to have a single record for rulesets rather
-> than multiple records all dealing with rulesets.
-
-I guess you mean to not create multiple record types specific to ruleset
-creation. Reusing existing record types (e.g. path) should be OK even
-for a ruleset creation. However, as proposed below, we might still want
-a LANDLOCK_ACCESS record type (that can be reused for denied accesses).
-
-> 
-> > > > +               id = ruleset->hierarchy->id;
-> > > > +               WARN_ON_ONCE(ruleset->id);
-> > > > +       } else {
-> > > > +               name = "ruleset";
-> > > > +               id = ruleset->id;
-> > > > +       }
-> > > > +       WARN_ON_ONCE(!id);
-> > > > +
-> > > > +       /*
-> > > > +        * Because this might be called by kernel threads, logging
-> > > > +        * related task information with log_task() would be useless.
-> > > > +        */
-> > > > +       audit_log_format(ab, "op=release-%s %s=%llu", name, name, id);
+> > > This was discovered thanks to commit a549d055a22e ("selftests/landloc=
+k:
+> > > Add network tests").
 > > >
-> > > This starts to get a little tricky.  The general guidance is that for
-> > > a given audit record type, e.g. AUDIT_LANDLOCK, there should be no
-> > > change in presence or ordering of fields, yet in
-> > > landlock_log_create_ruleset() we log the permission information and
-> > > here in landlock_log_release_ruleset() we do not.  The easy fix is to
-> > > record the permission information here as well, or simply use a
-> > > "handled_access_fs=?" placeholder.  Something to keep in mind as you
-> > > move forward.
+> > > Cc: Alexey Kodanev <alexey.kodanev@oracle.com>
+> > > Cc: Eric Paris <eparis@parisplace.org>
+> > > Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> > > Cc: Paul Moore <paul@paul-moore.com>
+> > > Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > > Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> > > Closes: https://lore.kernel.org/r/0584f91c-537c-4188-9e4f-04f19256566=
+7@collabora.com
+> > > Fixes: 0f8db8cc73df ("selinux: add AF_UNSPEC and INADDR_ANY checks to=
+ selinux_socket_bind()")
+> > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > > ---
+> > >  security/selinux/hooks.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > >
+> > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > > index feda711c6b7b..9fc55973d765 100644
+> > > --- a/security/selinux/hooks.c
+> > > +++ b/security/selinux/hooks.c
+> > > @@ -4667,6 +4667,10 @@ static int selinux_socket_bind(struct socket *=
+sock, struct sockaddr *address, in
+> > >                                 return -EINVAL;
+> > >                         addr4 =3D (struct sockaddr_in *)address;
+> > >                         if (family_sa =3D=3D AF_UNSPEC) {
+> > > +                               if (sock->sk->__sk_common.skc_family =
+=3D=3D
+> > > +                                           AF_INET6 &&
+> > > +                                   addrlen < SIN6_LEN_RFC2133)
+> > > +                                       return -EINVAL;
 > >
-> > OK, I used different "op" to specify the related fields, but I should
-> > use a dedicated record type when it makes sense instead. My reasoning
-> > was that it would be easier to filter on one or two record types, but
-> > I like the fixed set of fields per record type.
+> > Please use sock->sk_family to simplify the conditional above, or
+> > better yet, use the local variable @family as it is set to the sock's
+> > address family near the top of selinux_socket_bind()
+>
+> Correct, I'll send a v2 with that.
+>
+> > ... although, as
+> > I'm looking at the existing code, is this patch necessary?
 > >
-> > I plan to add a few record types, something like that:
+> > At the top of the AF_UNSPEC/AF_INET case there is an address length che=
+ck:
 > >
-> > For a ruleset creation event, several grouped records:
-> > - AUDIT_LANDLOCK_RULESET: "id=[new ruleset ID] op=create"
-> > - AUDIT_LANDLOCK_ACCESS: "type=[fs or net] rights=[bitmask]"
-> 
-> I'm guessing that LANDLOCK_RULESET would be for policy changes, and
-> LANDLOCK_ACCESS would be for individual access grants or denials?  If
-> so, that looks reasonable.
+> >   if (addrlen < sizeof(struct sockaddr_in))
+> >     return -EINVAL;
+>
+> This code is correct but not enough in the case of an IPv6 socket.
 
-I was thinking about using LANDLOCK_ACCESS for both ruleset creation and
-denied accesses. That would mkae a ruleset creation event easier to
-parse and more flexible. Does that look good?
+Okay, I see now.  Let me follow-up in your v2, we may want to fix this
+another way.
 
-Otherwise, we can use this instead:
-
-- AUDIT_LANDLOCK_RULESET: "ruleset=[new ruleset ID]
-  handled_access_fs=[bitmask] handled_access_net=[bitmask]"
-
-> 
-> > For rule addition, several records per landlock_add_rule(2) call.
-> > Example with a path_beneath rule:
-> > - AUDIT_LANDLOCK_RULESET: "id=[ruleset ID] op=add_rule"
-> > - AUDIT_LANDLOCK_PATH: "scope=beneath path=[file path] dev= ino="
-> > - AUDIT_LANDLOCK_ACCESS: "type=fs rights=[bitmask]"
-> 
-> I worry that LANDLOCK_PATH is too much of a duplicate for the existing
-> PATH record.  Assuming the "scope=" field is important, could it live
-> in the LANDLOCK_ACCESS record and then you could do away with the
-> dedicated LANDLOCK_PATH record?  Oh, wait ... this is to record the
-> policy, not a individual access request, gotcha.  If that is the case
-> and RULESET, PATH, ACCESS are all used simply to record the policy
-> information I might suggest creation of an AUDIT_LANDLOCK_POLICY
-> record that captures all of the above.  If you think that is too
-> cumbersome, then perhaps you can do the object/access-specific record
-> type, e.g. AUDIT_LANDLOCK_POLICY_FS and AUDIT_LANDLOCK_POLICY_NET.
-
-OK, what about this records for *one* rule addition event?
-
-- AUDIT_LANDLOCK_RULE: "ruleset=[ruleset ID] rule_type=path_beneath
-  allowed_access=[bitmask]"
-- AUDIT_PATH: "path=[file path] dev= ino= ..."
-
-However, because struct landlock_path_beneath_attr can evolve and get
-new fields which might be differents than the landlock_net_port_attr's
-ones, wouldn't it be wiser to use a dedicated AUDIT_LANDLOCK_RULE_FS or
-AUDIT_LANDLOCK_RULE_PATH_BENEATH record type? These names are getting a
-bit long though, but types match the UAPI.
-
-> 
-> You also shouldn't reuse the "type=" field.  Steve gets grumpy when
-> people reuse field names for different things.  You can find a
-> reasonably complete list of fields here:
-> https://github.com/linux-audit/audit-documentation/blob/main/specs/fields/field-dictionary.csv
-
-OK
-
-> 
-> > For domain creation/restriction:
-> > - AUDIT_LANDLOCK_DOMAIN: "id=[new domain ID] op=create"
-> > - AUDIT_LANDLOCK_RULESET: "id=[ruleset ID] op=use"
-> 
-> I imagine you could capture this in the policy record type?
-
-What about this?
-
-- AUDIT_LANDLOCK_RESTRICT: "ruleset=[ruleset ID] domain=[new domain ID]
-  restrict_type=self"
-
-> 
-> > For ruleset release:
-> > - AUDIT_LANDLOCK_RULESET: "id=[ruleset ID] op=release"
-> >
-> > For domain release:
-> > - AUDIT_LANDLOCK_DOMAIN: "id=[domain ID] op=release"
-> 
-> Same with the above two.
-
-- AUDIT_LANDLOCK_RELEASE: "id=[ruleset or domain ID]
-  release_type=[ruleset or domain]"
-
-The issue with this record is that the "id" field is not the same as for
-AUDIT_LANDLOCK_{RESTRICT,RULE}... To have "domain" or "ruleset" fields,
-a dedicated record type would be cleaner:
-AUDIT_LANDLOCK_RELEASE_{RULESET,DOMAIN}.
-
-> 
-> > For denied FS access:
-> > - AUDIT_LANDLOCK_DENIAL: "id=[domain ID] op=mkdir"
-> > - AUDIT_LANDLOCK_PATH: "scope=exact path=[file path] dev= ino="
-> 
-> I would use a single record type, i.e. AUDIT_LANDLOCK_ACCESS, to
-> capture both access granted and denied events.  I'd also omit the
-> dedicated LANDLOCK_PATH record here in favor of the generic PATH
-> record (see my comments above).
-
-Makes sense for the generic PATH record. We would get this:
-
-- AUDIT_LANDLOCK_ACCESS: "domain=[domain ID] op=mkdir result=denied"
-- AUDIT_PATH: "path=[file path] dev= ino= ..."
-
-> 
-> > For denied net access:
-> > - AUDIT_LANDLOCK_DENIAL: "id=[domain ID] op=connect"
-> > - AUDIT_LANDLOCK_PORT: "port="
-> 
-> I would look at the SOCKADDR record type instead of introducing a new
-> LANDLOCK_PORT type.
-
-Good, this is already filled so I don't have to do anything except the
-AUDIT_LANDLOCK_ACCESS record.
-
-However, I'm wondering if it would be OK to create a synthetic sockaddr
-struct to generate a sockaddr audit record when adding a new net_port
-rule. In this case, we'd have to fill the fill the source and
-destination addresses with fake values (zeros?) and the source and
-destination ports with the rule's port. The pros is that it would not
-add a new record type but the cons is that it will probably not work
-with future net_port rule properties. It would also be inconsistent with
-AUDIT_LANDLOCK_ACCESS.
-
-What about this instead?
-
-- AUDIT_LANDLOCK_RULE: "ruleset=[ruleset ID] rule_type=net_port
-  allowed_access=[bitmask]"
-- AUDIT_LANDLOCK_PORT: "port=[port number]"
-
-> 
-> > I guess it will still be OK to expand a record type with new appended
-> > fields right? For instance, could we append a "flags" field to a
-> > AUDIT_LANDLOCK_RULESET record (because it may not make sense to create a
-> > dedicated record type for that)?
-> 
-> Of course, one can always add fields to an existing record type with
-> the understanding that they MUST be added to the end.
-> 
-> -- 
-> paul-moore.com
-> 
+--=20
+paul-moore.com
