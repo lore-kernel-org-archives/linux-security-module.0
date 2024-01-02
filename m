@@ -1,162 +1,247 @@
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DACF14A9E
-	for <linux-security-module@vger.kernel.org>; Fri, 29 Dec 2023 22:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F13CA3C;
+	Tue,  2 Jan 2024 02:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aP1vJwDI"
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3bbbc6b4ed1so2709762b6e.2
-        for <linux-security-module@vger.kernel.org>; Fri, 29 Dec 2023 14:31:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1703889080; x=1704493880; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cKuwmPo0DfBIWzAt1z512mSnZOucjghMMfliRHXEH1s=;
-        b=aP1vJwDInt8gYlakcnK3OUNMmlxanL3bkhPp6jxwrknpA+SzJhpVBN16YEnkIXBHzf
-         hXG7BxmOtAHopuef1ni8nAUK1jiJ1LnjDdPIjblVpVfke+zbKsA873ZbiOBpLkS3CEYT
-         B4fRjJ8/nKwl5nP6HDh75QwiUY5ax09NGBiazXHLZisO+hDDxPvRybbWXxsuE7oNVx58
-         2FJM/9D8VCvpG52TUKFfhWt3fNOtMrC1ZMxSPrm2Dq/xIO7v6uj9qftLfLlsi1IdvGca
-         cnfI1f0pMrLLbbyUenmd8nIuJb8WH3JoXeLCWHSLSoEIGxrCW3kYLS78cPR94IXXYhop
-         ml0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703889080; x=1704493880;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cKuwmPo0DfBIWzAt1z512mSnZOucjghMMfliRHXEH1s=;
-        b=gp8GSdeZ4eexXjBNfEc8pD0vLtDW/52utQCMYoY6K4MRORcNqwGaffv5yjWL3wbdbP
-         +1npWyb9uC76P4L+bkKE8GQlc98n/aQVG3uiNflrqCNrsOgIBxtwkjQp1D5XpDZip7A/
-         i4Feu57yetyzH0VaTRzA2DA/lAtIhNNfSVSxsxfhwaW+xvEuvsRraRahwf+HT62o6F8O
-         JZbqyLUPKKPr9+P7Thl/zdxLzK5fRrxIU+WfQGhjOD10btY1g8JI6MRnJGKMUVtTHXHS
-         scf4mjTaP+HsxzLpb6CJsKawVNgO47Ni7zbFVGN67R1O1BRyYuuW2RaxPXGCJ12tbZfH
-         RRzg==
-X-Gm-Message-State: AOJu0YxwgJVeDiyNW3XLbmKfWF+WGwIF8YbYkR33fWLwOIFE4/qtowcd
-	L4PDGlMMpFt4f7u3wTZZWmb+d8WWpv5VMJ9Scel6JAnSuq/v
-X-Google-Smtp-Source: AGHT+IH12p3W0EY0p2NLPuPUYmviE7rijb7+Yqlz23Ciy+fi2PqGwDl7fAvtLAZVWy+vn0LPl9k2jB9xmjX76ZOvJYg=
-X-Received: by 2002:a05:6808:1206:b0:3bb:e0d4:9f29 with SMTP id
- a6-20020a056808120600b003bbe0d49f29mr1864931oil.44.1703889079797; Fri, 29 Dec
- 2023 14:31:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lhzNXiWf"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4021N2Zd007630;
+	Tue, 2 Jan 2024 02:19:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=ZGxsmnDMc0vbTKGtH4YJqhEz5lvxf1xws5Jq2QyBRnw=; b=lh
+	zNXiWfi4qdUlLMM8qujDNCv3SGLhdKdgXAzAJfMrG0SI7M8XCH//UqLWTandHt2q
+	bgPEyGWMR/G0QK6VZJYEPcGVJFfg9ugTOr9vW1r0fkGVSdKzGtwl9b6BI+TJgYfe
+	DofAcrV1KZzdmNUxV1HluuccluCzXdOn0iLmfV9L0VQkMc9xTwHlmA8+sOnYd8DF
+	rJNci9xBGIHcq5nXTf9qYIz7VngxX0c7RmvwXW42OeKLHDpLRs6bSzuUCEyCbSWo
+	yAD6q4L4qm20jorNHKvbVqzRz+GCsljj5UCdcfkb0MQSkRy0+GJd1tALIArNauQn
+	GCeXUKnVIEEE3/Nr/SBw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3vaa7cbx2u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jan 2024 02:19:59 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4022JwdX031534
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Jan 2024 02:19:58 GMT
+Received: from [10.239.132.150] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 1 Jan
+ 2024 18:19:50 -0800
+Message-ID: <cd0f6613-9aa9-4698-bebe-0f61286d7552@quicinc.com>
+Date: Tue, 2 Jan 2024 10:19:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
- <20231213143813.6818-4-michael.weiss@aisec.fraunhofer.de> <20231215-golfanlage-beirren-f304f9dafaca@brauner>
- <61b39199-022d-4fd8-a7bf-158ee37b3c08@aisec.fraunhofer.de>
- <20231215-kubikmeter-aufsagen-62bf8d4e3d75@brauner> <CAADnVQKeUmV88OfQOfiX04HjKbXq7Wfcv+N3O=5kdL4vic6qrw@mail.gmail.com>
- <20231216-vorrecht-anrief-b096fa50b3f7@brauner> <CAADnVQK7MDUZTUxcqCH=unrrGExCjaagfJFqFPhVSLUisJVk_Q@mail.gmail.com>
- <20231218-chipsatz-abfangen-d62626dfb9e2@brauner> <CAHC9VhSZDMWJ_kh+RaB6dsPLQjkrjDY4bVkqsFDG3JtjinT_bQ@mail.gmail.com>
- <f38ceaaf-916a-4e44-9312-344ed1b4c9c4@aisec.fraunhofer.de>
-In-Reply-To: <f38ceaaf-916a-4e44-9312-344ed1b4c9c4@aisec.fraunhofer.de>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 29 Dec 2023 17:31:08 -0500
-Message-ID: <CAHC9VhT3dbFc4DWc8WFRavWY1M+_+DzPbHuQ=PumROsx0rY2vA@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 3/3] devguard: added device guard for mknod in
- non-initial userns
-To: =?UTF-8?Q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
-Cc: Christian Brauner <brauner@kernel.org>, Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Quentin Monnet <quentin@isovalent.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, gyroidos@aisec.fraunhofer.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kernel: Introduce a write lock/unlock wrapper for
+ tasklist_lock
+Content-Language: en-US
+To: Matthew Wilcox <willy@infradead.org>,
+        "Eric W. Biederman"
+	<ebiederm@xmission.com>,
+        Hillf Danton <hdanton@sina.com>
+CC: <kernel@quicinc.com>, <quic_pkondeti@quicinc.com>, <keescook@chromium.or>,
+        <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <oleg@redhat.com>,
+        <dhowells@redhat.com>, <jarkko@kernel.org>, <paul@paul-moore.com>,
+        <jmorris@namei.org>, <serge@hallyn.com>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+References: <20231213101745.4526-1-quic_aiquny@quicinc.com>
+ <ZXnaNSrtaWbS2ivU@casper.infradead.org>
+ <87o7eu7ybq.fsf@email.froward.int.ebiederm.org>
+ <ZY30k7OCtxrdR9oP@casper.infradead.org>
+From: "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>
+In-Reply-To: <ZY30k7OCtxrdR9oP@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ieBhQjEar3H5w9T9G5k9p8BSV-vJJDVH
+X-Proofpoint-ORIG-GUID: ieBhQjEar3H5w9T9G5k9p8BSV-vJJDVH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-09_02,2023-12-07_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
+ spamscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 adultscore=0 bulkscore=0 mlxscore=0 mlxlogscore=518
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2311290000 definitions=main-2401020017
 
-On Wed, Dec 27, 2023 at 9:31=E2=80=AFAM Michael Wei=C3=9F
-<michael.weiss@aisec.fraunhofer.de> wrote:
-> Hi Paul, what would you think about if we do it as shown in the
-> patch below (untested)?
->
-> I have adapted Christians patch slightly in a way that we do let
-> all LSMs agree on if device access management should be done or not.
-> Similar to the security_task_prctl() hook.
 
-I think it's worth taking a minute to talk about this proposed change
-and the existing security_task_prctl() hook, as there is an important
-difference between the two which is the source of my concern.
 
-If you look at the prctl() syscall implementation, right at the top of
-the function you see the LSM hook:
-
-  SYSCALL_DEFINE(prctl, ...)
-  {
-    ...
-
-    error =3D security_task_prctl(...);
-    if (error !=3D -ENOSYS)
-      return error;
-
-    error =3D 0;
-
-    ....
-  }
-
-While it is true that the LSM hook returns a "special" value, -ENOSYS,
-from a practical perspective this is not significantly different from
-the much more common zero value used to indicate no restriction from
-the LSM layer.  However, the more important thing to note is that the
-return value from security_task_prctl() does not influence any other
-access controls in the caller outside of those implemented inside the
-LSM; in fact the error code is reset to zero immediately after the LSM
-hook.
-
-More on this below ...
-
-> diff --git a/fs/super.c b/fs/super.c
-> index 076392396e72..6510168d51ce 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -325,7 +325,7 @@ static struct super_block *alloc_super(struct file_sy=
-stem_type *type, int flags,
->  {
->         struct super_block *s =3D kzalloc(sizeof(struct super_block),  GF=
-P_USER);
->         static const struct super_operations default_op;
-> -       int i;
-> +       int i, err;
->
->         if (!s)
->                 return NULL;
-> @@ -362,8 +362,16 @@ static struct super_block *alloc_super(struct file_s=
-ystem_type *type, int flags,
->         }
->         s->s_bdi =3D &noop_backing_dev_info;
->         s->s_flags =3D flags;
-> -       if (s->s_user_ns !=3D &init_user_ns)
+On 12/29/2023 6:20 AM, Matthew Wilcox wrote:
+> On Wed, Dec 13, 2023 at 12:27:05PM -0600, Eric W. Biederman wrote:
+>> Matthew Wilcox <willy@infradead.org> writes:
+>>> I think the right way to fix this is to pass a boolean flag to
+>>> queued_write_lock_slowpath() to let it know whether it can re-enable
+>>> interrupts while checking whether _QW_WAITING is set.
+>>
+>> Yes.  It seems to make sense to distinguish between write_lock_irq and
+>> write_lock_irqsave and fix this for all of write_lock_irq.
+> 
+> I wasn't planning on doing anything here, but Hillf kind of pushed me into
+> it.  I think it needs to be something like this.  Compile tested only.
+> If it ends up getting used,
+Happy new year!
+Thx Metthew for chiming into this. I think more thoughts will gain more 
+perfect designs.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> 
+> diff --git a/include/asm-generic/qrwlock.h b/include/asm-generic/qrwlock.h
+> index 75b8f4601b28..1152e080c719 100644
+> --- a/include/asm-generic/qrwlock.h
+> +++ b/include/asm-generic/qrwlock.h
+> @@ -33,8 +33,8 @@
+>   /*
+>    * External function declarations
+>    */
+> -extern void queued_read_lock_slowpath(struct qrwlock *lock);
+> -extern void queued_write_lock_slowpath(struct qrwlock *lock);
+> +void queued_read_lock_slowpath(struct qrwlock *lock);
+> +void queued_write_lock_slowpath(struct qrwlock *lock, bool irq);
+>   
+>   /**
+>    * queued_read_trylock - try to acquire read lock of a queued rwlock
+> @@ -98,7 +98,21 @@ static inline void queued_write_lock(struct qrwlock *lock)
+>   	if (likely(atomic_try_cmpxchg_acquire(&lock->cnts, &cnts, _QW_LOCKED)))
+>   		return;
+>   
+> -	queued_write_lock_slowpath(lock);
+> +	queued_write_lock_slowpath(lock, false);
+> +}
 > +
-> +       err =3D security_sb_device_access(s);
-> +       if (err < 0 && err !=3D -EOPNOTSUPP)
-> +               goto fail;
+> +/**
+> + * queued_write_lock_irq - acquire write lock of a queued rwlock
+> + * @lock : Pointer to queued rwlock structure
+> + */
+> +static inline void queued_write_lock_irq(struct qrwlock *lock)
+> +{
+> +	int cnts = 0;
+> +	/* Optimize for the unfair lock case where the fair flag is 0. */
+> +	if (likely(atomic_try_cmpxchg_acquire(&lock->cnts, &cnts, _QW_LOCKED)))
+> +		return;
 > +
-> +       if (err && s->s_user_ns !=3D &init_user_ns)
->                 s->s_iflags |=3D SB_I_NODEV;
-> +       else
-> +               s->s_iflags |=3D SB_I_MANAGED_DEVICES;
+> +	queued_write_lock_slowpath(lock, true);
+>   }
+>   
+>   /**
+> @@ -138,6 +152,7 @@ static inline int queued_rwlock_is_contended(struct qrwlock *lock)
+>    */
+>   #define arch_read_lock(l)		queued_read_lock(l)
+>   #define arch_write_lock(l)		queued_write_lock(l)
+> +#define arch_write_lock_irq(l)		queued_write_lock_irq(l)
+>   #define arch_read_trylock(l)		queued_read_trylock(l)
+>   #define arch_write_trylock(l)		queued_write_trylock(l)
+>   #define arch_read_unlock(l)		queued_read_unlock(l)
+> diff --git a/include/linux/rwlock.h b/include/linux/rwlock.h
+> index c0ef596f340b..897010b6ba0a 100644
+> --- a/include/linux/rwlock.h
+> +++ b/include/linux/rwlock.h
+> @@ -33,6 +33,7 @@ do {								\
+>    extern int do_raw_read_trylock(rwlock_t *lock);
+>    extern void do_raw_read_unlock(rwlock_t *lock) __releases(lock);
+>    extern void do_raw_write_lock(rwlock_t *lock) __acquires(lock);
+> + extern void do_raw_write_lock_irq(rwlock_t *lock) __acquires(lock);
+>    extern int do_raw_write_trylock(rwlock_t *lock);
+>    extern void do_raw_write_unlock(rwlock_t *lock) __releases(lock);
+>   #else
+> @@ -40,6 +41,7 @@ do {								\
+>   # define do_raw_read_trylock(rwlock)	arch_read_trylock(&(rwlock)->raw_lock)
+>   # define do_raw_read_unlock(rwlock)	do {arch_read_unlock(&(rwlock)->raw_lock); __release(lock); } while (0)
+>   # define do_raw_write_lock(rwlock)	do {__acquire(lock); arch_write_lock(&(rwlock)->raw_lock); } while (0)
+> +# define do_raw_write_lock_irq(rwlock)	do {__acquire(lock); arch_write_lock_irq(&(rwlock)->raw_lock); } while (0)
+>   # define do_raw_write_trylock(rwlock)	arch_write_trylock(&(rwlock)->raw_lock)
+>   # define do_raw_write_unlock(rwlock)	do {arch_write_unlock(&(rwlock)->raw_lock); __release(lock); } while (0)
+>   #endif
+> diff --git a/include/linux/rwlock_api_smp.h b/include/linux/rwlock_api_smp.h
+> index dceb0a59b692..6257976dfb72 100644
+> --- a/include/linux/rwlock_api_smp.h
+> +++ b/include/linux/rwlock_api_smp.h
+> @@ -193,7 +193,7 @@ static inline void __raw_write_lock_irq(rwlock_t *lock)
+>   	local_irq_disable();
+>   	preempt_disable();
+>   	rwlock_acquire(&lock->dep_map, 0, 0, _RET_IP_);
+> -	LOCK_CONTENDED(lock, do_raw_write_trylock, do_raw_write_lock);
+> +	LOCK_CONTENDED(lock, do_raw_write_trylock, do_raw_write_lock_irq);
+>   }
+>   
+>   static inline void __raw_write_lock_bh(rwlock_t *lock)
+> diff --git a/kernel/locking/qrwlock.c b/kernel/locking/qrwlock.c
+> index d2ef312a8611..6c644a71b01d 100644
+> --- a/kernel/locking/qrwlock.c
+> +++ b/kernel/locking/qrwlock.c
+> @@ -61,9 +61,10 @@ EXPORT_SYMBOL(queued_read_lock_slowpath);
+>   
+>   /**
+>    * queued_write_lock_slowpath - acquire write lock of a queued rwlock
+> - * @lock : Pointer to queued rwlock structure
+> + * @lock: Pointer to queued rwlock structure
+> + * @irq: True if we can enable interrupts while spinning
+>    */
+> -void __lockfunc queued_write_lock_slowpath(struct qrwlock *lock)
+> +void __lockfunc queued_write_lock_slowpath(struct qrwlock *lock, bool irq)
+>   {
+>   	int cnts;
+>   
+> @@ -82,7 +83,11 @@ void __lockfunc queued_write_lock_slowpath(struct qrwlock *lock)
+>   
+Also a new state showed up after the current design:
+1. locked flag with _QW_WAITING, while irq enabled.
+2. And this state will be only in interrupt context.
+3. lock->wait_lock is hold by the write waiter.
+So per my understanding, a different behavior also needed to be done in 
+queued_write_lock_slowpath:
+   when (unlikely(in_interrupt())) , get the lock directly.
+So needed to be done in release path. This is to address Hillf's concern 
+on possibility of deadlock.
 
-This is my concern, depending on what the LSM hook returns, the
-superblock's flags are set differently, affecting much more than just
-a LSM-based security mechanism.
+Add Hillf here to merge thread. I am going to have a tested patch V2 
+accordingly.
+Feel free to let me know your thoughts prior on that.
+>   	/* When no more readers or writers, set the locked flag */
+>   	do {
+> +		if (irq)
+> +			local_irq_enable();
+I think write_lock_irqsave also needs to be take account. So 
+loal_irq_save(flags) should be take into account here.
+>   		cnts = atomic_cond_read_relaxed(&lock->cnts, VAL == _QW_WAITING);
+> +		if (irq)
+> +			local_irq_disable();
+ditto.
+>   	} while (!atomic_try_cmpxchg_acquire(&lock->cnts, &cnts, _QW_LOCKED));
+>   unlock:
+>   	arch_spin_unlock(&lock->wait_lock);
+> diff --git a/kernel/locking/spinlock_debug.c b/kernel/locking/spinlock_debug.c
+> index 87b03d2e41db..bf94551d7435 100644
+> --- a/kernel/locking/spinlock_debug.c
+> +++ b/kernel/locking/spinlock_debug.c
+> @@ -212,6 +212,13 @@ void do_raw_write_lock(rwlock_t *lock)
+>   	debug_write_lock_after(lock);
+>   }
+>   
+> +void do_raw_write_lock_irq(rwlock_t *lock)
+> +{
+> +	debug_write_lock_before(lock);
+> +	arch_write_lock_irq(&lock->raw_lock);
+> +	debug_write_lock_after(lock);
+> +}
+> +
+>   int do_raw_write_trylock(rwlock_t *lock)
+>   {
+>   	int ret = arch_write_trylock(&lock->raw_lock);
 
-LSMs should not be able to undermine, shortcut, or otherwise bypass
-access controls built into other parts of the kernel.  In other words,
-a LSM should only ever be able to deny an operation, it should not be
-able to permit an operation that otherwise would have been denied.
-
->         INIT_HLIST_NODE(&s->s_instances);
->         INIT_HLIST_BL_HEAD(&s->s_roots);
->         mutex_init(&s->s_sync_lock);
-
---=20
-paul-moore.com
+-- 
+Thx and BRs,
+Aiqun(Maria) Yu
