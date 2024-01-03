@@ -1,22 +1,22 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF20E1A28A;
-	Wed,  3 Jan 2024 14:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14B21A59D;
+	Wed,  3 Jan 2024 14:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rKTr7qNL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35CE6C433C7;
-	Wed,  3 Jan 2024 14:04:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSmEjkNY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EEBAC433C8;
+	Wed,  3 Jan 2024 14:09:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704290699;
-	bh=RYNKFXB1pA6ACfuaqdpya+quA/X8Ww41O670fD+ZNNg=;
+	s=k20201202; t=1704290973;
+	bh=2RyW2FyfKqulF+XdUN4uGTLJOz6xINLjJ7oev9I+OEk=;
 	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=rKTr7qNLBKgIMnnNZD5kydCgVoB0ShDhCqxZzuZqnQaHxHN+3n8eAD5Q1loCLVjJR
-	 uU1d0eneow4rgu1o41DaW+lS1T3SB/GWC+sAZEwEzhpsz6huPi7L5ffd+A/Osns3xs
-	 7guQ8ydipmDJb1pAO2A/VCrWuk4yQep6SMzb5AfD3U77wP7mA/+hlmJnmLhgOvoAC0
-	 COBE5pracc5vYmGzZV2GMs3Sos2+unnWsqjHeTlXI//wPfvHXLMVJNxASe2Dt+0fkt
-	 aYVcIIjciGqJKBRkXKDfoRcP2UEytgT1ESXUAN6VvIJUMkEXdR8r+HD0owcPqTQJdy
-	 NYdIoSbmFVuKw==
+	b=mSmEjkNYQ8CS09mi8y/qhZLxPZMtfNSZ2VFKWuyZ53RrzjtIRxhSrId+JK8i68urZ
+	 wU3ZoD7C5xB6QBWh7+WRtnxeofc3GLV2e+++LETAFdtSjp3HKtPXl+Rqe7RaDv+oQJ
+	 dYMU7QopRYMKdUOkB7UW0mwkFnp2/SqEz4rOIwvkfpzFVkB5kEXC9xv342UWMWZkAs
+	 KI+26TwS8cazaUw/SWjBL6rn5ioc5d+GcCp2QAQeADgK6KjEyIlISItSt/qq7iFq2S
+	 CdSJS+eK9y6boKhL8keuxnVGA9ke3BtdLnK1yjJ5o7wDdmdN5Rn3gnNoV6knkJw6Mq
+	 goyBIPEPlP3TQ==
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -25,148 +25,55 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Jan 2024 16:04:54 +0200
-Message-Id: <CY54MOETXVFI.1102C6BQTO36@suppilovahvero>
-Cc: <kernel@quicinc.com>, <quic_pkondeti@quicinc.com>,
- <keescook@chromium.or>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
- <oleg@redhat.com>, <dhowells@redhat.com>, <paul@paul-moore.com>,
- <jmorris@namei.org>, <serge@hallyn.com>, <linux-mm@kvack.org>,
- <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH] kernel: Introduce a write lock/unlock wrapper for
- tasklist_lock
+Date: Wed, 03 Jan 2024 16:09:29 +0200
+Message-Id: <CY54Q6U6UMKM.2H5N3BACDBGU0@suppilovahvero>
+Cc: <itrymybest80@protonmail.com>, "Mimi Zohar" <zohar@linux.ibm.com>,
+ "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "open list:SECURITY SUBSYSTEM"
+ <linux-security-module@vger.kernel.org>, "open list"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] integrity: don't throw an error immediately when failed
+ to add a cert to the .machine keyring
 From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Maria Yu" <quic_aiquny@quicinc.com>, <ebiederm@xmission.com>
+To: "Coiby Xu" <coxu@redhat.com>, <linux-integrity@vger.kernel.org>
 X-Mailer: aerc 0.15.2
-References: <20231225081932.17752-1-quic_aiquny@quicinc.com>
-In-Reply-To: <20231225081932.17752-1-quic_aiquny@quicinc.com>
+References: <20231227044156.166009-1-coxu@redhat.com>
+In-Reply-To: <20231227044156.166009-1-coxu@redhat.com>
 
-On Mon Dec 25, 2023 at 10:19 AM EET, Maria Yu wrote:
-> As a rwlock for tasklist_lock, there are multiple scenarios to acquire
-> read lock which write lock needed to be waiting for.
-> In freeze_process/thaw_processes it can take about 200+ms for holding rea=
-d
-> lock of tasklist_lock by walking and freezing/thawing tasks in commercial
-> devices. And write_lock_irq will have preempt disabled and local irq
-> disabled to spin until the tasklist_lock can be acquired. This leading to
-> a bad responsive performance of current system.
-> Take an example:
-> 1. cpu0 is holding read lock of tasklist_lock to thaw_processes.
-> 2. cpu1 is waiting write lock of tasklist_lock to exec a new thread with
->    preempt_disabled and local irq disabled.
-> 3. cpu2 is waiting write lock of tasklist_lock to do_exit with
->    preempt_disabled and local irq disabled.
-> 4. cpu3 is waiting write lock of tasklist_lock to do_exit with
->    preempt_disabled and local irq disabled.
-> So introduce a write lock/unlock wrapper for tasklist_lock specificly.
-> The current taskslist_lock writers all have write_lock_irq to hold
-> tasklist_lock, and write_unlock_irq to release tasklist_lock, that means
-> the writers are not suitable or workable to wait on tasklist_lock in irq
-> disabled scenarios. So the write lock/unlock wrapper here only follow the
-> current design of directly use local_irq_disable and local_irq_enable,
-> and not take already irq disabled writer callers into account.
-> Use write_trylock in the loop and enabled irq for cpu to repsond if lock
-> cannot be taken.
+On Wed Dec 27, 2023 at 6:41 AM EET, Coiby Xu wrote:
+> Currently when the kernel fails to add a cert to the .machine keyring,
+> it will throw an error immediately in the function integrity_add_key.
 >
-> Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
+> Since the kernel will try adding to the .platform keyring next or throw
+> an error (in the caller of integrity_add_key i.e. add_to_machine_keyring)=
+,
+> so there is no need to throw an error immediately in integrity_add_key.
+>
+> Reported-by: itrymybest80@protonmail.com
+
+Missing "Firstname Lastname".
+
+> Closes: https://bugzilla.redhat.com/show_bug.cgi?id=3D2239331
+> Signed-off-by: Coiby Xu <coxu@redhat.com>
 > ---
->  fs/exec.c                  | 10 +++++-----
->  include/linux/sched/task.h | 29 +++++++++++++++++++++++++++++
->  kernel/exit.c              | 16 ++++++++--------
->  kernel/fork.c              |  6 +++---
->  kernel/ptrace.c            | 12 ++++++------
->  kernel/sys.c               |  8 ++++----
->  security/keys/keyctl.c     |  4 ++--
->  7 files changed, 57 insertions(+), 28 deletions(-)
+>  security/integrity/digsig.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 4aa19b24f281..030eef6852eb 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1086,7 +1086,7 @@ static int de_thread(struct task_struct *tsk)
-> =20
->  		for (;;) {
->  			cgroup_threadgroup_change_begin(tsk);
-> -			write_lock_irq(&tasklist_lock);
-> +			write_lock_tasklist_lock();
->  			/*
->  			 * Do this under tasklist_lock to ensure that
->  			 * exit_notify() can't miss ->group_exec_task
-> @@ -1095,7 +1095,7 @@ static int de_thread(struct task_struct *tsk)
->  			if (likely(leader->exit_state))
->  				break;
->  			__set_current_state(TASK_KILLABLE);
-> -			write_unlock_irq(&tasklist_lock);
-> +			write_unlock_tasklist_lock();
->  			cgroup_threadgroup_change_end(tsk);
->  			schedule();
->  			if (__fatal_signal_pending(tsk))
-> @@ -1150,7 +1150,7 @@ static int de_thread(struct task_struct *tsk)
->  		 */
->  		if (unlikely(leader->ptrace))
->  			__wake_up_parent(leader, leader->parent);
-> -		write_unlock_irq(&tasklist_lock);
-> +		write_unlock_tasklist_lock();
->  		cgroup_threadgroup_change_end(tsk);
-> =20
->  		release_task(leader);
-> @@ -1198,13 +1198,13 @@ static int unshare_sighand(struct task_struct *me=
-)
-> =20
->  		refcount_set(&newsighand->count, 1);
-> =20
-> -		write_lock_irq(&tasklist_lock);
-> +		write_lock_tasklist_lock();
->  		spin_lock(&oldsighand->siglock);
->  		memcpy(newsighand->action, oldsighand->action,
->  		       sizeof(newsighand->action));
->  		rcu_assign_pointer(me->sighand, newsighand);
->  		spin_unlock(&oldsighand->siglock);
-> -		write_unlock_irq(&tasklist_lock);
-> +		write_unlock_tasklist_lock();
-> =20
->  		__cleanup_sighand(oldsighand);
->  	}
-> diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-> index a23af225c898..6f69d9a3c868 100644
-> --- a/include/linux/sched/task.h
-> +++ b/include/linux/sched/task.h
-> @@ -50,6 +50,35 @@ struct kernel_clone_args {
->   * a separate lock).
->   */
->  extern rwlock_t tasklist_lock;
-> +
-> +/*
-> + * Tasklist_lock is a special lock, it takes a good amount of time of
-> + * taskslist_lock readers to finish, and the pure write_irq_lock api
-> + * will do local_irq_disable at the very first, and put the current cpu
-> + * waiting for the lock while is non-responsive for interrupts.
-> + *
-> + * The current taskslist_lock writers all have write_lock_irq to hold
-> + * tasklist_lock, and write_unlock_irq to release tasklist_lock, that
-> + * means the writers are not suitable or workable to wait on
-> + * tasklist_lock in irq disabled scenarios. So the write lock/unlock
-> + * wrapper here only follow the current design of directly use
-> + * local_irq_disable and local_irq_enable.
-> + */
-> +static inline void write_lock_tasklist_lock(void)
-> +{
-> +	while (1) {
-> +		local_irq_disable();
-> +		if (write_trylock(&tasklist_lock))
-> +			break;
-> +		local_irq_enable();
-> +		cpu_relax();
-> +	}
-
-Maybe:
-
-	local_irq_disable();
-	while (!write_trylock(&tasklist_lock)) {
-		local_irq_enable();
-		cpu_relax();
-		local_irq_disable();
-	}
+> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> index df387de29bfa..45c3e5dda355 100644
+> --- a/security/integrity/digsig.c
+> +++ b/security/integrity/digsig.c
+> @@ -179,7 +179,8 @@ static int __init integrity_add_key(const unsigned in=
+t id, const void *data,
+>  				   KEY_ALLOC_NOT_IN_QUOTA);
+>  	if (IS_ERR(key)) {
+>  		rc =3D PTR_ERR(key);
+> -		pr_err("Problem loading X.509 certificate %d\n", rc);
+> +		if (id !=3D INTEGRITY_KEYRING_MACHINE)
+> +			pr_err("Problem loading X.509 certificate %d\n", rc);
+>  	} else {
+>  		pr_notice("Loaded X.509 cert '%s'\n",
+>  			  key_ref_to_ptr(key)->description);
 
 BR, Jarkko
