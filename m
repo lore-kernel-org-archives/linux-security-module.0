@@ -1,31 +1,31 @@
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6C31DA53
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Jan 2024 22:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794E11DA44
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jan 2024 22:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 403GiJDY027429
-	for <linux-security-module@vger.kernel.org>; Wed, 3 Jan 2024 14:23:41 -0800
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 403MFFq5001650
+	for <linux-security-module@vger.kernel.org>; Wed, 3 Jan 2024 14:23:43 -0800
 Received: from maileast.thefacebook.com ([163.114.130.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3vcxn2ppcw-4
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3vdg7401jh-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-security-module@vger.kernel.org>; Wed, 03 Jan 2024 14:23:41 -0800
-Received: from twshared10507.42.prn1.facebook.com (2620:10d:c0a8:1c::11) by
+	for <linux-security-module@vger.kernel.org>; Wed, 03 Jan 2024 14:23:42 -0800
+Received: from twshared10507.42.prn1.facebook.com (2620:10d:c0a8:1b::30) by
  mail.thefacebook.com (2620:10d:c0a8:83::8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.2507.34; Wed, 3 Jan 2024 14:23:37 -0800
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-	id 513B03DF9EB53; Wed,  3 Jan 2024 14:21:15 -0800 (PST)
+	id B9C493DF9EBA8; Wed,  3 Jan 2024 14:21:25 -0800 (PST)
 From: Andrii Nakryiko <andrii@kernel.org>
 To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <paul@paul-moore.com>,
         <brauner@kernel.org>, <torvalds@linuxfoundation.org>
 CC: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
         <kernel-team@meta.com>
-Subject: [PATCH bpf-next 17/29] bpf,selinux: allocate bpf_security_struct per BPF token
-Date: Wed, 3 Jan 2024 14:20:22 -0800
-Message-ID: <20240103222034.2582628-18-andrii@kernel.org>
+Subject: [PATCH bpf-next 22/29] libbpf: further decouple feature checking logic from bpf_object
+Date: Wed, 3 Jan 2024 14:20:27 -0800
+Message-ID: <20240103222034.2582628-23-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240103222034.2582628-1-andrii@kernel.org>
 References: <20240103222034.2582628-1-andrii@kernel.org>
@@ -38,75 +38,126 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: dxlr_0CJ3hEotQP3-F2wxylnzV2SQg8Z
-X-Proofpoint-GUID: dxlr_0CJ3hEotQP3-F2wxylnzV2SQg8Z
+X-Proofpoint-ORIG-GUID: z9i4_73ckrFmkfAgEZ05VZhrHHvujxA2
+X-Proofpoint-GUID: z9i4_73ckrFmkfAgEZ05VZhrHHvujxA2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-01-03_08,2024-01-03_01,2023-05-22_02
 
-Utilize newly added bpf_token_create/bpf_token_free LSM hooks to
-allocate struct bpf_security_struct for each BPF token object in
-SELinux. This just follows similar pattern for BPF prog and map.
+Add feat_supported() helper that accepts feature cache instead of
+bpf_object. This allows low-level code in bpf.c to not know or care
+about higher-level concept of bpf_object, yet it will be able to utilize
+custom feature checking in cases where BPF token might influence the
+outcome.
 
+Acked-by: John Fastabend <john.fastabend@gmail.com>
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- security/selinux/hooks.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ tools/lib/bpf/bpf.c             |  6 +++---
+ tools/lib/bpf/libbpf.c          | 22 +++++++++++++++-------
+ tools/lib/bpf/libbpf_internal.h |  5 ++++-
+ 3 files changed, 22 insertions(+), 11 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index c4ba3f0fcb97..30d8078b1ca1 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6822,6 +6822,29 @@ static void selinux_bpf_prog_free(struct bpf_prog =
-*prog)
- 	prog->aux->security =3D NULL;
- 	kfree(bpfsec);
+diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+index d69137459abf..10bf11a758bf 100644
+--- a/tools/lib/bpf/bpf.c
++++ b/tools/lib/bpf/bpf.c
+@@ -146,7 +146,7 @@ int bump_rlimit_memlock(void)
+ 	struct rlimit rlim;
+=20
+ 	/* if kernel supports memcg-based accounting, skip bumping RLIMIT_MEMLO=
+CK */
+-	if (memlock_bumped || kernel_supports(NULL, FEAT_MEMCG_ACCOUNT))
++	if (memlock_bumped || feat_supported(NULL, FEAT_MEMCG_ACCOUNT))
+ 		return 0;
+=20
+ 	memlock_bumped =3D true;
+@@ -181,7 +181,7 @@ int bpf_map_create(enum bpf_map_type map_type,
+ 		return libbpf_err(-EINVAL);
+=20
+ 	attr.map_type =3D map_type;
+-	if (map_name && kernel_supports(NULL, FEAT_PROG_NAME))
++	if (map_name && feat_supported(NULL, FEAT_PROG_NAME))
+ 		libbpf_strlcpy(attr.map_name, map_name, sizeof(attr.map_name));
+ 	attr.key_size =3D key_size;
+ 	attr.value_size =3D value_size;
+@@ -265,7 +265,7 @@ int bpf_prog_load(enum bpf_prog_type prog_type,
+ 	attr.kern_version =3D OPTS_GET(opts, kern_version, 0);
+ 	attr.prog_token_fd =3D OPTS_GET(opts, token_fd, 0);
+=20
+-	if (prog_name && kernel_supports(NULL, FEAT_PROG_NAME))
++	if (prog_name && feat_supported(NULL, FEAT_PROG_NAME))
+ 		libbpf_strlcpy(attr.prog_name, prog_name, sizeof(attr.prog_name));
+ 	attr.license =3D ptr_to_u64(license);
+=20
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 95a7d459b842..aea40c42b90e 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -5076,17 +5076,14 @@ static struct kern_feature_desc {
+ 	},
+ };
+=20
+-bool kernel_supports(const struct bpf_object *obj, enum kern_feature_id =
+feat_id)
++bool feat_supported(struct kern_feature_cache *cache, enum kern_feature_=
+id feat_id)
+ {
+ 	struct kern_feature_desc *feat =3D &feature_probes[feat_id];
+-	struct kern_feature_cache *cache =3D &feature_cache;
+ 	int ret;
+=20
+-	if (obj && obj->gen_loader)
+-		/* To generate loader program assume the latest kernel
+-		 * to avoid doing extra prog_load, map_create syscalls.
+-		 */
+-		return true;
++	/* assume global feature cache, unless custom one is provided */
++	if (!cache)
++		cache =3D &feature_cache;
+=20
+ 	if (READ_ONCE(cache->res[feat_id]) =3D=3D FEAT_UNKNOWN) {
+ 		ret =3D feat->probe();
+@@ -5103,6 +5100,17 @@ bool kernel_supports(const struct bpf_object *obj,=
+ enum kern_feature_id feat_id)
+ 	return READ_ONCE(cache->res[feat_id]) =3D=3D FEAT_SUPPORTED;
  }
-+
-+static int selinux_bpf_token_create(struct bpf_token *token, union bpf_a=
-ttr *attr,
-+				    struct path *path)
+=20
++bool kernel_supports(const struct bpf_object *obj, enum kern_feature_id =
+feat_id)
 +{
-+	struct bpf_security_struct *bpfsec;
++	if (obj && obj->gen_loader)
++		/* To generate loader program assume the latest kernel
++		 * to avoid doing extra prog_load, map_create syscalls.
++		 */
++		return true;
 +
-+	bpfsec =3D kzalloc(sizeof(*bpfsec), GFP_KERNEL);
-+	if (!bpfsec)
-+		return -ENOMEM;
-+
-+	bpfsec->sid =3D current_sid();
-+	token->security =3D bpfsec;
-+
-+	return 0;
++	return feat_supported(NULL, feat_id);
 +}
 +
-+static void selinux_bpf_token_free(struct bpf_token *token)
-+{
-+	struct bpf_security_struct *bpfsec =3D token->security;
+ static bool map_is_reuse_compat(const struct bpf_map *map, int map_fd)
+ {
+ 	struct bpf_map_info map_info;
+diff --git a/tools/lib/bpf/libbpf_internal.h b/tools/lib/bpf/libbpf_inter=
+nal.h
+index b5d334754e5d..754a432335e4 100644
+--- a/tools/lib/bpf/libbpf_internal.h
++++ b/tools/lib/bpf/libbpf_internal.h
+@@ -360,8 +360,11 @@ enum kern_feature_id {
+ 	__FEAT_CNT,
+ };
+=20
+-int probe_memcg_account(void);
++struct kern_feature_cache;
++bool feat_supported(struct kern_feature_cache *cache, enum kern_feature_=
+id feat_id);
+ bool kernel_supports(const struct bpf_object *obj, enum kern_feature_id =
+feat_id);
 +
-+	token->security =3D NULL;
-+	kfree(bpfsec);
-+}
- #endif
++int probe_memcg_account(void);
+ int bump_rlimit_memlock(void);
 =20
- struct lsm_blob_sizes selinux_blob_sizes __ro_after_init =3D {
-@@ -7177,6 +7200,7 @@ static struct security_hook_list selinux_hooks[] __=
-ro_after_init =3D {
- 	LSM_HOOK_INIT(bpf_prog, selinux_bpf_prog),
- 	LSM_HOOK_INIT(bpf_map_free, selinux_bpf_map_free),
- 	LSM_HOOK_INIT(bpf_prog_free, selinux_bpf_prog_free),
-+	LSM_HOOK_INIT(bpf_token_free, selinux_bpf_token_free),
- #endif
-=20
- #ifdef CONFIG_PERF_EVENTS
-@@ -7235,6 +7259,7 @@ static struct security_hook_list selinux_hooks[] __=
-ro_after_init =3D {
- #ifdef CONFIG_BPF_SYSCALL
- 	LSM_HOOK_INIT(bpf_map_create, selinux_bpf_map_create),
- 	LSM_HOOK_INIT(bpf_prog_load, selinux_bpf_prog_load),
-+	LSM_HOOK_INIT(bpf_token_create, selinux_bpf_token_create),
- #endif
- #ifdef CONFIG_PERF_EVENTS
- 	LSM_HOOK_INIT(perf_event_alloc, selinux_perf_event_alloc),
+ int parse_cpu_mask_str(const char *s, bool **mask, int *mask_sz);
 --=20
 2.34.1
 
