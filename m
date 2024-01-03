@@ -1,31 +1,31 @@
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794E11DA44
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Jan 2024 22:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B370C200D2
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jan 2024 22:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 403MFFq5001650
-	for <linux-security-module@vger.kernel.org>; Wed, 3 Jan 2024 14:23:43 -0800
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 403GkdPv023083
+	for <linux-security-module@vger.kernel.org>; Wed, 3 Jan 2024 14:23:45 -0800
 Received: from maileast.thefacebook.com ([163.114.130.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3vdg7401jh-1
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3vcvqhf413-12
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-security-module@vger.kernel.org>; Wed, 03 Jan 2024 14:23:42 -0800
-Received: from twshared10507.42.prn1.facebook.com (2620:10d:c0a8:1b::30) by
- mail.thefacebook.com (2620:10d:c0a8:83::8) with Microsoft SMTP Server
+	for <linux-security-module@vger.kernel.org>; Wed, 03 Jan 2024 14:23:45 -0800
+Received: from twshared10507.42.prn1.facebook.com (2620:10d:c0a8:1b::2d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::b) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.2507.34; Wed, 3 Jan 2024 14:23:37 -0800
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-	id B9C493DF9EBA8; Wed,  3 Jan 2024 14:21:25 -0800 (PST)
+	id 6E0A93DF9EB8B; Wed,  3 Jan 2024 14:21:19 -0800 (PST)
 From: Andrii Nakryiko <andrii@kernel.org>
 To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <paul@paul-moore.com>,
         <brauner@kernel.org>, <torvalds@linuxfoundation.org>
 CC: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
         <kernel-team@meta.com>
-Subject: [PATCH bpf-next 22/29] libbpf: further decouple feature checking logic from bpf_object
-Date: Wed, 3 Jan 2024 14:20:27 -0800
-Message-ID: <20240103222034.2582628-23-andrii@kernel.org>
+Subject: [PATCH bpf-next 19/29] bpf: support symbolic BPF FS delegation mount options
+Date: Wed, 3 Jan 2024 14:20:24 -0800
+Message-ID: <20240103222034.2582628-20-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240103222034.2582628-1-andrii@kernel.org>
 References: <20240103222034.2582628-1-andrii@kernel.org>
@@ -38,126 +38,346 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: z9i4_73ckrFmkfAgEZ05VZhrHHvujxA2
-X-Proofpoint-GUID: z9i4_73ckrFmkfAgEZ05VZhrHHvujxA2
+X-Proofpoint-GUID: -GuEoaA9bjQNzpk07qEulj06ubpmt4YV
+X-Proofpoint-ORIG-GUID: -GuEoaA9bjQNzpk07qEulj06ubpmt4YV
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-01-03_08,2024-01-03_01,2023-05-22_02
 
-Add feat_supported() helper that accepts feature cache instead of
-bpf_object. This allows low-level code in bpf.c to not know or care
-about higher-level concept of bpf_object, yet it will be able to utilize
-custom feature checking in cases where BPF token might influence the
-outcome.
+Besides already supported special "any" value and hex bit mask, support
+string-based parsing of delegation masks based on exact enumerator
+names. Utilize BTF information of `enum bpf_cmd`, `enum bpf_map_type`,
+`enum bpf_prog_type`, and `enum bpf_attach_type` types to find supported
+symbolic names (ignoring __MAX_xxx guard values and stripping repetitive
+prefixes like BPF_ for cmd and attach types, BPF_MAP_TYPE_ for maps, and
+BPF_PROG_TYPE_ for prog types). The case doesn't matter, but it is
+normalized to lower case in mount option output. So "PROG_LOAD",
+"prog_load", and "MAP_create" are all valid values to specify for
+delegate_cmds options, "array" is among supported for map types, etc.
+
+Besides supporting string values, we also support multiple values
+specified at the same time, using colon (':') separator.
+
+There are corresponding changes on bpf_show_options side to use known
+values to print them in human-readable format, falling back to hex mask
+printing, if there are any unrecognized bits. This shouldn't be
+necessary when enum BTF information is present, but in general we should
+always be able to fall back to this even if kernel was built without BTF.
+As mentioned, emitted symbolic names are normalized to be all lower case.
+
+Example below shows various ways to specify delegate_cmds options
+through mount command and how mount options are printed back:
+
+12/14 14:39:07.604
+vmuser@archvm:~/local/linux/tools/testing/selftests/bpf
+$ mount | rg token
+
+  $ sudo mkdir -p /sys/fs/bpf/token
+  $ sudo mount -t bpf bpffs /sys/fs/bpf/token \
+               -o delegate_cmds=3Dprog_load:MAP_CREATE \
+               -o delegate_progs=3Dkprobe \
+               -o delegate_attachs=3Dxdp
+  $ mount | grep token
+  bpffs on /sys/fs/bpf/token type bpf (rw,relatime,delegate_cmds=3Dmap_cr=
+eate:prog_load,delegate_progs=3Dkprobe,delegate_attachs=3Dxdp)
 
 Acked-by: John Fastabend <john.fastabend@gmail.com>
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- tools/lib/bpf/bpf.c             |  6 +++---
- tools/lib/bpf/libbpf.c          | 22 +++++++++++++++-------
- tools/lib/bpf/libbpf_internal.h |  5 ++++-
- 3 files changed, 22 insertions(+), 11 deletions(-)
+ kernel/bpf/inode.c | 249 ++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 211 insertions(+), 38 deletions(-)
 
-diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-index d69137459abf..10bf11a758bf 100644
---- a/tools/lib/bpf/bpf.c
-+++ b/tools/lib/bpf/bpf.c
-@@ -146,7 +146,7 @@ int bump_rlimit_memlock(void)
- 	struct rlimit rlim;
-=20
- 	/* if kernel supports memcg-based accounting, skip bumping RLIMIT_MEMLO=
-CK */
--	if (memlock_bumped || kernel_supports(NULL, FEAT_MEMCG_ACCOUNT))
-+	if (memlock_bumped || feat_supported(NULL, FEAT_MEMCG_ACCOUNT))
- 		return 0;
-=20
- 	memlock_bumped =3D true;
-@@ -181,7 +181,7 @@ int bpf_map_create(enum bpf_map_type map_type,
- 		return libbpf_err(-EINVAL);
-=20
- 	attr.map_type =3D map_type;
--	if (map_name && kernel_supports(NULL, FEAT_PROG_NAME))
-+	if (map_name && feat_supported(NULL, FEAT_PROG_NAME))
- 		libbpf_strlcpy(attr.map_name, map_name, sizeof(attr.map_name));
- 	attr.key_size =3D key_size;
- 	attr.value_size =3D value_size;
-@@ -265,7 +265,7 @@ int bpf_prog_load(enum bpf_prog_type prog_type,
- 	attr.kern_version =3D OPTS_GET(opts, kern_version, 0);
- 	attr.prog_token_fd =3D OPTS_GET(opts, token_fd, 0);
-=20
--	if (prog_name && kernel_supports(NULL, FEAT_PROG_NAME))
-+	if (prog_name && feat_supported(NULL, FEAT_PROG_NAME))
- 		libbpf_strlcpy(attr.prog_name, prog_name, sizeof(attr.prog_name));
- 	attr.license =3D ptr_to_u64(license);
-=20
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 95a7d459b842..aea40c42b90e 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -5076,17 +5076,14 @@ static struct kern_feature_desc {
- 	},
- };
-=20
--bool kernel_supports(const struct bpf_object *obj, enum kern_feature_id =
-feat_id)
-+bool feat_supported(struct kern_feature_cache *cache, enum kern_feature_=
-id feat_id)
- {
- 	struct kern_feature_desc *feat =3D &feature_probes[feat_id];
--	struct kern_feature_cache *cache =3D &feature_cache;
- 	int ret;
-=20
--	if (obj && obj->gen_loader)
--		/* To generate loader program assume the latest kernel
--		 * to avoid doing extra prog_load, map_create syscalls.
--		 */
--		return true;
-+	/* assume global feature cache, unless custom one is provided */
-+	if (!cache)
-+		cache =3D &feature_cache;
-=20
- 	if (READ_ONCE(cache->res[feat_id]) =3D=3D FEAT_UNKNOWN) {
- 		ret =3D feat->probe();
-@@ -5103,6 +5100,17 @@ bool kernel_supports(const struct bpf_object *obj,=
- enum kern_feature_id feat_id)
- 	return READ_ONCE(cache->res[feat_id]) =3D=3D FEAT_SUPPORTED;
+diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+index 5fb10da5717f..af5d2ffadd70 100644
+--- a/kernel/bpf/inode.c
++++ b/kernel/bpf/inode.c
+@@ -595,6 +595,136 @@ struct bpf_prog *bpf_prog_get_type_path(const char =
+*name, enum bpf_prog_type typ
  }
+ EXPORT_SYMBOL(bpf_prog_get_type_path);
 =20
-+bool kernel_supports(const struct bpf_object *obj, enum kern_feature_id =
-feat_id)
-+{
-+	if (obj && obj->gen_loader)
-+		/* To generate loader program assume the latest kernel
-+		 * to avoid doing extra prog_load, map_create syscalls.
-+		 */
-+		return true;
++struct bpffs_btf_enums {
++	const struct btf *btf;
++	const struct btf_type *cmd_t;
++	const struct btf_type *map_t;
++	const struct btf_type *prog_t;
++	const struct btf_type *attach_t;
++};
 +
-+	return feat_supported(NULL, feat_id);
++static int find_bpffs_btf_enums(struct bpffs_btf_enums *info)
++{
++	const struct btf *btf;
++	const struct btf_type *t;
++	const char *name;
++	int i, n;
++
++	memset(info, 0, sizeof(*info));
++
++	btf =3D bpf_get_btf_vmlinux();
++	if (IS_ERR(btf))
++		return PTR_ERR(btf);
++	if (!btf)
++		return -ENOENT;
++
++	info->btf =3D btf;
++
++	for (i =3D 1, n =3D btf_nr_types(btf); i < n; i++) {
++		t =3D btf_type_by_id(btf, i);
++		if (!btf_type_is_enum(t))
++			continue;
++
++		name =3D btf_name_by_offset(btf, t->name_off);
++		if (!name)
++			continue;
++
++		if (strcmp(name, "bpf_cmd") =3D=3D 0)
++			info->cmd_t =3D t;
++		else if (strcmp(name, "bpf_map_type") =3D=3D 0)
++			info->map_t =3D t;
++		else if (strcmp(name, "bpf_prog_type") =3D=3D 0)
++			info->prog_t =3D t;
++		else if (strcmp(name, "bpf_attach_type") =3D=3D 0)
++			info->attach_t =3D t;
++		else
++			continue;
++
++		if (info->cmd_t && info->map_t && info->prog_t && info->attach_t)
++			return 0;
++	}
++
++	return -ESRCH;
 +}
 +
- static bool map_is_reuse_compat(const struct bpf_map *map, int map_fd)
- {
- 	struct bpf_map_info map_info;
-diff --git a/tools/lib/bpf/libbpf_internal.h b/tools/lib/bpf/libbpf_inter=
-nal.h
-index b5d334754e5d..754a432335e4 100644
---- a/tools/lib/bpf/libbpf_internal.h
-+++ b/tools/lib/bpf/libbpf_internal.h
-@@ -360,8 +360,11 @@ enum kern_feature_id {
- 	__FEAT_CNT,
- };
-=20
--int probe_memcg_account(void);
-+struct kern_feature_cache;
-+bool feat_supported(struct kern_feature_cache *cache, enum kern_feature_=
-id feat_id);
- bool kernel_supports(const struct bpf_object *obj, enum kern_feature_id =
-feat_id);
++static bool find_btf_enum_const(const struct btf *btf, const struct btf_=
+type *enum_t,
++				const char *prefix, const char *str, int *value)
++{
++	const struct btf_enum *e;
++	const char *name;
++	int i, n, pfx_len =3D strlen(prefix);
 +
-+int probe_memcg_account(void);
- int bump_rlimit_memlock(void);
++	*value =3D 0;
++
++	if (!btf || !enum_t)
++		return false;
++
++	for (i =3D 0, n =3D btf_vlen(enum_t); i < n; i++) {
++		e =3D &btf_enum(enum_t)[i];
++
++		name =3D btf_name_by_offset(btf, e->name_off);
++		if (!name || strncasecmp(name, prefix, pfx_len) !=3D 0)
++			continue;
++
++		/* match symbolic name case insensitive and ignoring prefix */
++		if (strcasecmp(name + pfx_len, str) =3D=3D 0) {
++			*value =3D e->val;
++			return true;
++		}
++	}
++
++	return false;
++}
++
++static void seq_print_delegate_opts(struct seq_file *m,
++				    const char *opt_name,
++				    const struct btf *btf,
++				    const struct btf_type *enum_t,
++				    const char *prefix,
++				    u64 delegate_msk, u64 any_msk)
++{
++	const struct btf_enum *e;
++	bool first =3D true;
++	const char *name;
++	u64 msk;
++	int i, n, pfx_len =3D strlen(prefix);
++
++	delegate_msk &=3D any_msk; /* clear unknown bits */
++
++	if (delegate_msk =3D=3D 0)
++		return;
++
++	seq_printf(m, ",%s", opt_name);
++	if (delegate_msk =3D=3D any_msk) {
++		seq_printf(m, "=3Dany");
++		return;
++	}
++
++	if (btf && enum_t) {
++		for (i =3D 0, n =3D btf_vlen(enum_t); i < n; i++) {
++			e =3D &btf_enum(enum_t)[i];
++			name =3D btf_name_by_offset(btf, e->name_off);
++			if (!name || strncasecmp(name, prefix, pfx_len) !=3D 0)
++				continue;
++			msk =3D 1ULL << e->val;
++			if (delegate_msk & msk) {
++				/* emit lower-case name without prefix */
++				seq_printf(m, "%c", first ? '=3D' : ':');
++				name +=3D pfx_len;
++				while (*name) {
++					seq_printf(m, "%c", tolower(*name));
++					name++;
++				}
++
++				delegate_msk &=3D ~msk;
++				first =3D false;
++			}
++		}
++	}
++	if (delegate_msk)
++		seq_printf(m, "%c0x%llx", first ? '=3D' : ':', delegate_msk);
++}
++
+ /*
+  * Display the mount options in /proc/mounts.
+  */
+@@ -614,29 +744,34 @@ static int bpf_show_options(struct seq_file *m, str=
+uct dentry *root)
+ 	if (mode !=3D S_IRWXUGO)
+ 		seq_printf(m, ",mode=3D%o", mode);
 =20
- int parse_cpu_mask_str(const char *s, bool **mask, int *mask_sz);
+-	mask =3D (1ULL << __MAX_BPF_CMD) - 1;
+-	if ((opts->delegate_cmds & mask) =3D=3D mask)
+-		seq_printf(m, ",delegate_cmds=3Dany");
+-	else if (opts->delegate_cmds)
+-		seq_printf(m, ",delegate_cmds=3D0x%llx", opts->delegate_cmds);
+-
+-	mask =3D (1ULL << __MAX_BPF_MAP_TYPE) - 1;
+-	if ((opts->delegate_maps & mask) =3D=3D mask)
+-		seq_printf(m, ",delegate_maps=3Dany");
+-	else if (opts->delegate_maps)
+-		seq_printf(m, ",delegate_maps=3D0x%llx", opts->delegate_maps);
+-
+-	mask =3D (1ULL << __MAX_BPF_PROG_TYPE) - 1;
+-	if ((opts->delegate_progs & mask) =3D=3D mask)
+-		seq_printf(m, ",delegate_progs=3Dany");
+-	else if (opts->delegate_progs)
+-		seq_printf(m, ",delegate_progs=3D0x%llx", opts->delegate_progs);
+-
+-	mask =3D (1ULL << __MAX_BPF_ATTACH_TYPE) - 1;
+-	if ((opts->delegate_attachs & mask) =3D=3D mask)
+-		seq_printf(m, ",delegate_attachs=3Dany");
+-	else if (opts->delegate_attachs)
+-		seq_printf(m, ",delegate_attachs=3D0x%llx", opts->delegate_attachs);
++	if (opts->delegate_cmds || opts->delegate_maps ||
++	    opts->delegate_progs || opts->delegate_attachs) {
++		struct bpffs_btf_enums info;
++
++		/* ignore errors, fallback to hex */
++		(void)find_bpffs_btf_enums(&info);
++
++		mask =3D (1ULL << __MAX_BPF_CMD) - 1;
++		seq_print_delegate_opts(m, "delegate_cmds",
++					info.btf, info.cmd_t, "BPF_",
++					opts->delegate_cmds, mask);
++
++		mask =3D (1ULL << __MAX_BPF_MAP_TYPE) - 1;
++		seq_print_delegate_opts(m, "delegate_maps",
++					info.btf, info.map_t, "BPF_MAP_TYPE_",
++					opts->delegate_maps, mask);
++
++		mask =3D (1ULL << __MAX_BPF_PROG_TYPE) - 1;
++		seq_print_delegate_opts(m, "delegate_progs",
++					info.btf, info.prog_t, "BPF_PROG_TYPE_",
++					opts->delegate_progs, mask);
++
++		mask =3D (1ULL << __MAX_BPF_ATTACH_TYPE) - 1;
++		seq_print_delegate_opts(m, "delegate_attachs",
++					info.btf, info.attach_t, "BPF_",
++					opts->delegate_attachs, mask);
++	}
++
+ 	return 0;
+ }
+=20
+@@ -686,7 +821,6 @@ static int bpf_parse_param(struct fs_context *fc, str=
+uct fs_parameter *param)
+ 	kuid_t uid;
+ 	kgid_t gid;
+ 	int opt, err;
+-	u64 msk;
+=20
+ 	opt =3D fs_parse(fc, bpf_fs_parameters, param, &result);
+ 	if (opt < 0) {
+@@ -741,24 +875,63 @@ static int bpf_parse_param(struct fs_context *fc, s=
+truct fs_parameter *param)
+ 	case OPT_DELEGATE_CMDS:
+ 	case OPT_DELEGATE_MAPS:
+ 	case OPT_DELEGATE_PROGS:
+-	case OPT_DELEGATE_ATTACHS:
+-		if (strcmp(param->string, "any") =3D=3D 0) {
+-			msk =3D ~0ULL;
+-		} else {
+-			err =3D kstrtou64(param->string, 0, &msk);
+-			if (err)
+-				return err;
++	case OPT_DELEGATE_ATTACHS: {
++		struct bpffs_btf_enums info;
++		const struct btf_type *enum_t;
++		const char *enum_pfx;
++		u64 *delegate_msk, msk =3D 0;
++		char *p;
++		int val;
++
++		/* ignore errors, fallback to hex */
++		(void)find_bpffs_btf_enums(&info);
++
++		switch (opt) {
++		case OPT_DELEGATE_CMDS:
++			delegate_msk =3D &opts->delegate_cmds;
++			enum_t =3D info.cmd_t;
++			enum_pfx =3D "BPF_";
++			break;
++		case OPT_DELEGATE_MAPS:
++			delegate_msk =3D &opts->delegate_maps;
++			enum_t =3D info.map_t;
++			enum_pfx =3D "BPF_MAP_TYPE_";
++			break;
++		case OPT_DELEGATE_PROGS:
++			delegate_msk =3D &opts->delegate_progs;
++			enum_t =3D info.prog_t;
++			enum_pfx =3D "BPF_PROG_TYPE_";
++			break;
++		case OPT_DELEGATE_ATTACHS:
++			delegate_msk =3D &opts->delegate_attachs;
++			enum_t =3D info.attach_t;
++			enum_pfx =3D "BPF_";
++			break;
++		default:
++			return -EINVAL;
+ 		}
++
++		while ((p =3D strsep(&param->string, ":"))) {
++			if (strcmp(p, "any") =3D=3D 0) {
++				msk |=3D ~0ULL;
++			} else if (find_btf_enum_const(info.btf, enum_t, enum_pfx, p, &val)) =
+{
++				msk |=3D 1ULL << val;
++			} else {
++				err =3D kstrtou64(p, 0, &msk);
++				if (err)
++					return err;
++			}
++		}
++
+ 		/* Setting delegation mount options requires privileges */
+ 		if (msk && !capable(CAP_SYS_ADMIN))
+ 			return -EPERM;
+-		switch (opt) {
+-		case OPT_DELEGATE_CMDS: opts->delegate_cmds |=3D msk; break;
+-		case OPT_DELEGATE_MAPS: opts->delegate_maps |=3D msk; break;
+-		case OPT_DELEGATE_PROGS: opts->delegate_progs |=3D msk; break;
+-		case OPT_DELEGATE_ATTACHS: opts->delegate_attachs |=3D msk; break;
+-		default: return -EINVAL;
+-		}
++
++		*delegate_msk |=3D msk;
++		break;
++	}
++	default:
++		/* ignore unknown mount options */
+ 		break;
+ 	}
+=20
 --=20
 2.34.1
 
