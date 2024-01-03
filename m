@@ -1,31 +1,31 @@
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D72D21346
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Jan 2024 22:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BB621355
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jan 2024 22:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
 Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 403LQ0do024548
-	for <linux-security-module@vger.kernel.org>; Wed, 3 Jan 2024 14:24:04 -0800
+	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 403LQ0dq024548
+	for <linux-security-module@vger.kernel.org>; Wed, 3 Jan 2024 14:24:05 -0800
 Received: from maileast.thefacebook.com ([163.114.130.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3vdffy8b5n-14
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3vdffy8b5n-16
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-security-module@vger.kernel.org>; Wed, 03 Jan 2024 14:24:03 -0800
-Received: from twshared38604.02.prn6.facebook.com (2620:10d:c0a8:1c::1b) by
+	for <linux-security-module@vger.kernel.org>; Wed, 03 Jan 2024 14:24:04 -0800
+Received: from twshared38604.02.prn6.facebook.com (2620:10d:c0a8:1b::2d) by
  mail.thefacebook.com (2620:10d:c0a8:83::8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.2507.34; Wed, 3 Jan 2024 14:23:42 -0800
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-	id 5D94C3DF9EB5A; Wed,  3 Jan 2024 14:21:17 -0800 (PST)
+	id 60B4F3DF9EB08; Wed,  3 Jan 2024 14:21:04 -0800 (PST)
 From: Andrii Nakryiko <andrii@kernel.org>
 To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <paul@paul-moore.com>,
         <brauner@kernel.org>, <torvalds@linuxfoundation.org>
 CC: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
         <kernel-team@meta.com>
-Subject: [PATCH bpf-next 18/29] bpf: fail BPF_TOKEN_CREATE if no delegation option was set on BPF FS
-Date: Wed, 3 Jan 2024 14:20:23 -0800
-Message-ID: <20240103222034.2582628-19-andrii@kernel.org>
+Subject: [PATCH bpf-next 13/29] libbpf: add BPF token support to bpf_map_create() API
+Date: Wed, 3 Jan 2024 14:20:18 -0800
+Message-ID: <20240103222034.2582628-14-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240103222034.2582628-1-andrii@kernel.org>
 References: <20240103222034.2582628-1-andrii@kernel.org>
@@ -38,58 +38,60 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 3qijBThyqXkmR5ss4rKeNXQQkXUIrVa-
-X-Proofpoint-GUID: 3qijBThyqXkmR5ss4rKeNXQQkXUIrVa-
+X-Proofpoint-ORIG-GUID: nH_E2F6AwUwabPOg8HJdDbWTNQ3DuvYz
+X-Proofpoint-GUID: nH_E2F6AwUwabPOg8HJdDbWTNQ3DuvYz
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-01-03_08,2024-01-03_01,2023-05-22_02
 
-It's quite confusing in practice when it's possible to successfully
-create a BPF token from BPF FS that didn't have any of delegate_xxx
-mount options set up. While it's not wrong, it's actually more
-meaningful to reject BPF_TOKEN_CREATE with specific error code (-ENOENT)
-to let user-space know that no token delegation is setup up.
+Add ability to provide token_fd for BPF_MAP_CREATE command through
+bpf_map_create() API.
 
-So, instead of creating empty BPF token that will be always ignored
-because it doesn't have any of the allow_xxx bits set, reject it with
--ENOENT. If we ever need empty BPF token to be possible, we can support
-that with extra flag passed into BPF_TOKEN_CREATE.
-
-Acked-by: Christian Brauner <brauner@kernel.org>
-Acked-by: John Fastabend <john.fastabend@gmail.com>
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- kernel/bpf/token.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ tools/lib/bpf/bpf.c | 4 +++-
+ tools/lib/bpf/bpf.h | 5 ++++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
-index 17212efcde60..a86fccd57e2d 100644
---- a/kernel/bpf/token.c
-+++ b/kernel/bpf/token.c
-@@ -152,6 +152,15 @@ int bpf_token_create(union bpf_attr *attr)
- 		goto out_path;
- 	}
+diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+index d4019928a864..1653b64b7015 100644
+--- a/tools/lib/bpf/bpf.c
++++ b/tools/lib/bpf/bpf.c
+@@ -169,7 +169,7 @@ int bpf_map_create(enum bpf_map_type map_type,
+ 		   __u32 max_entries,
+ 		   const struct bpf_map_create_opts *opts)
+ {
+-	const size_t attr_sz =3D offsetofend(union bpf_attr, map_extra);
++	const size_t attr_sz =3D offsetofend(union bpf_attr, map_token_fd);
+ 	union bpf_attr attr;
+ 	int fd;
 =20
-+	mnt_opts =3D path.dentry->d_sb->s_fs_info;
-+	if (mnt_opts->delegate_cmds =3D=3D 0 &&
-+	    mnt_opts->delegate_maps =3D=3D 0 &&
-+	    mnt_opts->delegate_progs =3D=3D 0 &&
-+	    mnt_opts->delegate_attachs =3D=3D 0) {
-+		err =3D -ENOENT; /* no BPF token delegation is set up */
-+		goto out_path;
-+	}
+@@ -198,6 +198,8 @@ int bpf_map_create(enum bpf_map_type map_type,
+ 	attr.numa_node =3D OPTS_GET(opts, numa_node, 0);
+ 	attr.map_ifindex =3D OPTS_GET(opts, map_ifindex, 0);
+=20
++	attr.map_token_fd =3D OPTS_GET(opts, token_fd, 0);
 +
- 	mode =3D S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
- 	inode =3D bpf_get_inode(path.mnt->mnt_sb, NULL, mode);
- 	if (IS_ERR(inode)) {
-@@ -181,7 +190,6 @@ int bpf_token_create(union bpf_attr *attr)
- 	/* remember bpffs owning userns for future ns_capable() checks */
- 	token->userns =3D get_user_ns(userns);
+ 	fd =3D sys_bpf_fd(BPF_MAP_CREATE, &attr, attr_sz);
+ 	return libbpf_err_errno(fd);
+ }
+diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
+index e49254c9f68f..ae2136f596b4 100644
+--- a/tools/lib/bpf/bpf.h
++++ b/tools/lib/bpf/bpf.h
+@@ -51,8 +51,11 @@ struct bpf_map_create_opts {
 =20
--	mnt_opts =3D path.dentry->d_sb->s_fs_info;
- 	token->allowed_cmds =3D mnt_opts->delegate_cmds;
- 	token->allowed_maps =3D mnt_opts->delegate_maps;
- 	token->allowed_progs =3D mnt_opts->delegate_progs;
+ 	__u32 numa_node;
+ 	__u32 map_ifindex;
++
++	__u32 token_fd;
++	size_t :0;
+ };
+-#define bpf_map_create_opts__last_field map_ifindex
++#define bpf_map_create_opts__last_field token_fd
+=20
+ LIBBPF_API int bpf_map_create(enum bpf_map_type map_type,
+ 			      const char *map_name,
 --=20
 2.34.1
 
