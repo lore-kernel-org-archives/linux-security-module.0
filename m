@@ -1,79 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14B21A59D;
-	Wed,  3 Jan 2024 14:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5D84429
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jan 2024 16:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSmEjkNY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EEBAC433C8;
-	Wed,  3 Jan 2024 14:09:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704290973;
-	bh=2RyW2FyfKqulF+XdUN4uGTLJOz6xINLjJ7oev9I+OEk=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=mSmEjkNYQ8CS09mi8y/qhZLxPZMtfNSZ2VFKWuyZ53RrzjtIRxhSrId+JK8i68urZ
-	 wU3ZoD7C5xB6QBWh7+WRtnxeofc3GLV2e+++LETAFdtSjp3HKtPXl+Rqe7RaDv+oQJ
-	 dYMU7QopRYMKdUOkB7UW0mwkFnp2/SqEz4rOIwvkfpzFVkB5kEXC9xv342UWMWZkAs
-	 KI+26TwS8cazaUw/SWjBL6rn5ioc5d+GcCp2QAQeADgK6KjEyIlISItSt/qq7iFq2S
-	 CdSJS+eK9y6boKhL8keuxnVGA9ke3BtdLnK1yjJ5o7wDdmdN5Rn3gnNoV6knkJw6Mq
-	 goyBIPEPlP3TQ==
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="CqA9Wj2M"
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4T4wKd71NvzMq5G2;
+	Wed,  3 Jan 2024 16:34:29 +0000 (UTC)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4T4wKc6gBYzMpp3b;
+	Wed,  3 Jan 2024 17:34:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1704299669;
+	bh=EjKR+ktAGKzbgbl+7KSmOTO+aAwSZnEnzxyF/DB0Yf8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CqA9Wj2M3KLn6rdmnOeY/v0/pX4SZdgRP4ItoN01aWulf4gYdzbz48tA63Ifp4jCi
+	 IwFPfHBj/1Tr/ARY35qP+sQsBHT8lyUFkHJKkFz2nkC5Eo9JQN+9YXO4wujRs3Fjmf
+	 G6QVDHpG38VinzMGdbEqeZeANe9l2tjWjG8LRgcg=
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Eric Paris <eparis@parisplace.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v3] selinux: Fix error priority for bind with AF_UNSPEC on PF_INET6 socket
+Date: Wed,  3 Jan 2024 17:34:15 +0100
+Message-ID: <20240103163415.304358-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Jan 2024 16:09:29 +0200
-Message-Id: <CY54Q6U6UMKM.2H5N3BACDBGU0@suppilovahvero>
-Cc: <itrymybest80@protonmail.com>, "Mimi Zohar" <zohar@linux.ibm.com>,
- "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "open list:SECURITY SUBSYSTEM"
- <linux-security-module@vger.kernel.org>, "open list"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] integrity: don't throw an error immediately when failed
- to add a cert to the .machine keyring
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Coiby Xu" <coxu@redhat.com>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.15.2
-References: <20231227044156.166009-1-coxu@redhat.com>
-In-Reply-To: <20231227044156.166009-1-coxu@redhat.com>
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Wed Dec 27, 2023 at 6:41 AM EET, Coiby Xu wrote:
-> Currently when the kernel fails to add a cert to the .machine keyring,
-> it will throw an error immediately in the function integrity_add_key.
->
-> Since the kernel will try adding to the .platform keyring next or throw
-> an error (in the caller of integrity_add_key i.e. add_to_machine_keyring)=
-,
-> so there is no need to throw an error immediately in integrity_add_key.
->
-> Reported-by: itrymybest80@protonmail.com
+The IPv6 network stack first checks the sockaddr length (-EINVAL error)
+before checking the family (-EAFNOSUPPORT error).
 
-Missing "Firstname Lastname".
+This was discovered thanks to commit a549d055a22e ("selftests/landlock:
+Add network tests").
 
-> Closes: https://bugzilla.redhat.com/show_bug.cgi?id=3D2239331
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
-> ---
->  security/integrity/digsig.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-> index df387de29bfa..45c3e5dda355 100644
-> --- a/security/integrity/digsig.c
-> +++ b/security/integrity/digsig.c
-> @@ -179,7 +179,8 @@ static int __init integrity_add_key(const unsigned in=
-t id, const void *data,
->  				   KEY_ALLOC_NOT_IN_QUOTA);
->  	if (IS_ERR(key)) {
->  		rc =3D PTR_ERR(key);
-> -		pr_err("Problem loading X.509 certificate %d\n", rc);
-> +		if (id !=3D INTEGRITY_KEYRING_MACHINE)
-> +			pr_err("Problem loading X.509 certificate %d\n", rc);
->  	} else {
->  		pr_notice("Loaded X.509 cert '%s'\n",
->  			  key_ref_to_ptr(key)->description);
+Cc: Eric Paris <eparis@parisplace.org>
+Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Closes: https://lore.kernel.org/r/0584f91c-537c-4188-9e4f-04f192565667@collabora.com
+Fixes: 0f8db8cc73df ("selinux: add AF_UNSPEC and INADDR_ANY checks to selinux_socket_bind()")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
 
-BR, Jarkko
+Changes since v2:
+https://lore.kernel.org/r/20231229171922.106190-1-mic@digikod.net
+* Add !PF_INET6 check and comments (suggested by Paul).
+* s/AF_INET/PF_INET/g (cosmetic change).
+
+Changes since v1:
+https://lore.kernel.org/r/20231228113917.62089-1-mic@digikod.net
+* Use the "family" variable (suggested by Paul).
+---
+ security/selinux/hooks.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index feda711c6b7b..8b1429eb2db5 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4667,6 +4667,13 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
+ 				return -EINVAL;
+ 			addr4 = (struct sockaddr_in *)address;
+ 			if (family_sa == AF_UNSPEC) {
++				if (family == PF_INET6) {
++					/* Length check from inet6_bind_sk() */
++					if (addrlen < SIN6_LEN_RFC2133)
++						return -EINVAL;
++					/* Family check from __inet6_bind() */
++					goto err_af;
++				}
+ 				/* see __inet_bind(), we only want to allow
+ 				 * AF_UNSPEC if the address is INADDR_ANY
+ 				 */
+-- 
+2.43.0
+
