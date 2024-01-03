@@ -1,31 +1,31 @@
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068422209B
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Jan 2024 22:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17DF2231D
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jan 2024 22:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 403GiJDh027429
-	for <linux-security-module@vger.kernel.org>; Wed, 3 Jan 2024 14:24:09 -0800
-Received: from maileast.thefacebook.com ([163.114.130.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3vcxn2ppcw-13
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 403GiMJv020349
+	for <linux-security-module@vger.kernel.org>; Wed, 3 Jan 2024 14:24:37 -0800
+Received: from mail.thefacebook.com ([163.114.132.120])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3vda7m2yym-4
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-security-module@vger.kernel.org>; Wed, 03 Jan 2024 14:24:07 -0800
-Received: from twshared44805.48.prn1.facebook.com (2620:10d:c0a8:1b::30) by
- mail.thefacebook.com (2620:10d:c0a8:83::8) with Microsoft SMTP Server
+	for <linux-security-module@vger.kernel.org>; Wed, 03 Jan 2024 14:24:37 -0800
+Received: from twshared24631.38.frc1.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:11d::8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.34; Wed, 3 Jan 2024 14:23:45 -0800
+ 15.1.2507.34; Wed, 3 Jan 2024 14:24:36 -0800
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-	id 869C33DF9EB96; Wed,  3 Jan 2024 14:21:21 -0800 (PST)
+	id 263ED3DF9EC0F; Wed,  3 Jan 2024 14:21:40 -0800 (PST)
 From: Andrii Nakryiko <andrii@kernel.org>
 To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <paul@paul-moore.com>,
         <brauner@kernel.org>, <torvalds@linuxfoundation.org>
 CC: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
         <kernel-team@meta.com>
-Subject: [PATCH bpf-next 20/29] selftests/bpf: utilize string values for delegate_xxx mount options
-Date: Wed, 3 Jan 2024 14:20:25 -0800
-Message-ID: <20240103222034.2582628-21-andrii@kernel.org>
+Subject: [PATCH bpf-next 28/29] libbpf: support BPF token path setting through LIBBPF_BPF_TOKEN_PATH envvar
+Date: Wed, 3 Jan 2024 14:20:33 -0800
+Message-ID: <20240103222034.2582628-29-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240103222034.2582628-1-andrii@kernel.org>
 References: <20240103222034.2582628-1-andrii@kernel.org>
@@ -38,162 +38,63 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: hAt-PICTWgOHHULxMdFAp9EuudlLbfW5
-X-Proofpoint-GUID: hAt-PICTWgOHHULxMdFAp9EuudlLbfW5
+X-Proofpoint-GUID: -uQPj61-CyPa5-QfXc4j802tIt3w5f9B
+X-Proofpoint-ORIG-GUID: -uQPj61-CyPa5-QfXc4j802tIt3w5f9B
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-01-03_08,2024-01-03_01,2023-05-22_02
 
-Use both hex-based and string-based way to specify delegate mount
-options for BPF FS.
+To allow external admin authority to override default BPF FS location
+(/sys/fs/bpf) for implicit BPF token creation, teach libbpf to recognize
+LIBBPF_BPF_TOKEN_PATH envvar. If it is specified and user application
+didn't explicitly specify bpf_token_path option, it will be treated
+exactly like bpf_token_path option, overriding default /sys/fs/bpf
+location and making BPF token mandatory.
 
-Acked-by: John Fastabend <john.fastabend@gmail.com>
+Suggested-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- .../testing/selftests/bpf/prog_tests/token.c  | 52 ++++++++++++-------
- 1 file changed, 32 insertions(+), 20 deletions(-)
+ tools/lib/bpf/libbpf.c | 6 ++++++
+ tools/lib/bpf/libbpf.h | 8 ++++++++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/token.c b/tools/testi=
-ng/selftests/bpf/prog_tests/token.c
-index 5394a0c880a9..185ed2f79315 100644
---- a/tools/testing/selftests/bpf/prog_tests/token.c
-+++ b/tools/testing/selftests/bpf/prog_tests/token.c
-@@ -55,14 +55,22 @@ static int restore_priv_caps(__u64 old_caps)
- 	return cap_enable_effective(old_caps, NULL);
- }
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 69d87d743557..85d6ac99ce01 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -7172,6 +7172,12 @@ static struct bpf_object *bpf_object_open(const ch=
+ar *path, const void *obj_buf,
+ 		return ERR_PTR(-EINVAL);
 =20
--static int set_delegate_mask(int fs_fd, const char *key, __u64 mask)
-+static int set_delegate_mask(int fs_fd, const char *key, __u64 mask, con=
-st char *mask_str)
- {
- 	char buf[32];
- 	int err;
+ 	token_path =3D OPTS_GET(opts, bpf_token_path, NULL);
++	/* if user didn't specify bpf_token_path explicitly, check if
++	 * LIBBPF_BPF_TOKEN_PATH envvar was set and treat it as bpf_token_path
++	 * option
++	 */
++	if (!token_path)
++		token_path =3D getenv("LIBBPF_BPF_TOKEN_PATH");
+ 	if (token_path && strlen(token_path) >=3D PATH_MAX)
+ 		return ERR_PTR(-ENAMETOOLONG);
 =20
--	snprintf(buf, sizeof(buf), "0x%llx", (unsigned long long)mask);
-+	if (!mask_str) {
-+		if (mask =3D=3D ~0ULL) {
-+			mask_str =3D "any";
-+		} else {
-+			snprintf(buf, sizeof(buf), "0x%llx", (unsigned long long)mask);
-+			mask_str =3D buf;
-+		}
-+	}
-+
- 	err =3D sys_fsconfig(fs_fd, FSCONFIG_SET_STRING, key,
--			   mask =3D=3D ~0ULL ? "any" : buf, 0);
-+			   mask_str, 0);
- 	if (err < 0)
- 		err =3D -errno;
- 	return err;
-@@ -75,6 +83,10 @@ struct bpffs_opts {
- 	__u64 maps;
- 	__u64 progs;
- 	__u64 attachs;
-+	const char *cmds_str;
-+	const char *maps_str;
-+	const char *progs_str;
-+	const char *attachs_str;
- };
-=20
- static int create_bpffs_fd(void)
-@@ -93,16 +105,16 @@ static int materialize_bpffs_fd(int fs_fd, struct bp=
-ffs_opts *opts)
- 	int mnt_fd, err;
-=20
- 	/* set up token delegation mount options */
--	err =3D set_delegate_mask(fs_fd, "delegate_cmds", opts->cmds);
-+	err =3D set_delegate_mask(fs_fd, "delegate_cmds", opts->cmds, opts->cmd=
-s_str);
- 	if (!ASSERT_OK(err, "fs_cfg_cmds"))
- 		return err;
--	err =3D set_delegate_mask(fs_fd, "delegate_maps", opts->maps);
-+	err =3D set_delegate_mask(fs_fd, "delegate_maps", opts->maps, opts->map=
-s_str);
- 	if (!ASSERT_OK(err, "fs_cfg_maps"))
- 		return err;
--	err =3D set_delegate_mask(fs_fd, "delegate_progs", opts->progs);
-+	err =3D set_delegate_mask(fs_fd, "delegate_progs", opts->progs, opts->p=
-rogs_str);
- 	if (!ASSERT_OK(err, "fs_cfg_progs"))
- 		return err;
--	err =3D set_delegate_mask(fs_fd, "delegate_attachs", opts->attachs);
-+	err =3D set_delegate_mask(fs_fd, "delegate_attachs", opts->attachs, opt=
-s->attachs_str);
- 	if (!ASSERT_OK(err, "fs_cfg_attachs"))
- 		return err;
-=20
-@@ -284,13 +296,13 @@ static void child(int sock_fd, struct bpffs_opts *o=
-pts, child_callback_fn callba
- 	}
-=20
- 	/* ensure unprivileged child cannot set delegation options */
--	err =3D set_delegate_mask(fs_fd, "delegate_cmds", 0x1);
-+	err =3D set_delegate_mask(fs_fd, "delegate_cmds", 0x1, NULL);
- 	ASSERT_EQ(err, -EPERM, "delegate_cmd_eperm");
--	err =3D set_delegate_mask(fs_fd, "delegate_maps", 0x1);
-+	err =3D set_delegate_mask(fs_fd, "delegate_maps", 0x1, NULL);
- 	ASSERT_EQ(err, -EPERM, "delegate_maps_eperm");
--	err =3D set_delegate_mask(fs_fd, "delegate_progs", 0x1);
-+	err =3D set_delegate_mask(fs_fd, "delegate_progs", 0x1, NULL);
- 	ASSERT_EQ(err, -EPERM, "delegate_progs_eperm");
--	err =3D set_delegate_mask(fs_fd, "delegate_attachs", 0x1);
-+	err =3D set_delegate_mask(fs_fd, "delegate_attachs", 0x1, NULL);
- 	ASSERT_EQ(err, -EPERM, "delegate_attachs_eperm");
-=20
- 	/* pass BPF FS context object to parent */
-@@ -314,22 +326,22 @@ static void child(int sock_fd, struct bpffs_opts *o=
-pts, child_callback_fn callba
- 	}
-=20
- 	/* ensure unprivileged child cannot reconfigure to set delegation optio=
-ns */
--	err =3D set_delegate_mask(fs_fd, "delegate_cmds", ~0ULL);
-+	err =3D set_delegate_mask(fs_fd, "delegate_cmds", 0, "any");
- 	if (!ASSERT_EQ(err, -EPERM, "delegate_cmd_eperm_reconfig")) {
- 		err =3D -EINVAL;
- 		goto cleanup;
- 	}
--	err =3D set_delegate_mask(fs_fd, "delegate_maps", ~0ULL);
-+	err =3D set_delegate_mask(fs_fd, "delegate_maps", 0, "any");
- 	if (!ASSERT_EQ(err, -EPERM, "delegate_maps_eperm_reconfig")) {
- 		err =3D -EINVAL;
- 		goto cleanup;
- 	}
--	err =3D set_delegate_mask(fs_fd, "delegate_progs", ~0ULL);
-+	err =3D set_delegate_mask(fs_fd, "delegate_progs", 0, "any");
- 	if (!ASSERT_EQ(err, -EPERM, "delegate_progs_eperm_reconfig")) {
- 		err =3D -EINVAL;
- 		goto cleanup;
- 	}
--	err =3D set_delegate_mask(fs_fd, "delegate_attachs", ~0ULL);
-+	err =3D set_delegate_mask(fs_fd, "delegate_attachs", 0, "any");
- 	if (!ASSERT_EQ(err, -EPERM, "delegate_attachs_eperm_reconfig")) {
- 		err =3D -EINVAL;
- 		goto cleanup;
-@@ -658,8 +670,8 @@ void test_token(void)
- {
- 	if (test__start_subtest("map_token")) {
- 		struct bpffs_opts opts =3D {
--			.cmds =3D 1ULL << BPF_MAP_CREATE,
--			.maps =3D 1ULL << BPF_MAP_TYPE_STACK,
-+			.cmds_str =3D "map_create",
-+			.maps_str =3D "stack",
- 		};
-=20
- 		subtest_userns(&opts, userns_map_create);
-@@ -673,9 +685,9 @@ void test_token(void)
- 	}
- 	if (test__start_subtest("prog_token")) {
- 		struct bpffs_opts opts =3D {
--			.cmds =3D 1ULL << BPF_PROG_LOAD,
--			.progs =3D 1ULL << BPF_PROG_TYPE_XDP,
--			.attachs =3D 1ULL << BPF_XDP,
-+			.cmds_str =3D "PROG_LOAD",
-+			.progs_str =3D "XDP",
-+			.attachs_str =3D "xdp",
- 		};
-=20
- 		subtest_userns(&opts, userns_prog_load);
+diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
+index 535ae15ed493..5723cbbfcc41 100644
+--- a/tools/lib/bpf/libbpf.h
++++ b/tools/lib/bpf/libbpf.h
+@@ -183,6 +183,14 @@ struct bpf_object_open_opts {
+ 	 * that accept BPF token (e.g., map creation, BTF and program loads,
+ 	 * etc) automatically within instantiated BPF object.
+ 	 *
++	 * If bpf_token_path is not specified, libbpf will consult
++	 * LIBBPF_BPF_TOKEN_PATH environment variable. If set, it will be
++	 * taken as a value of bpf_token_path option and will force libbpf to
++	 * either create BPF token from provided custom BPF FS path, or will
++	 * disable implicit BPF token creation, if envvar value is an empty
++	 * string. bpf_token_path overrides LIBBPF_BPF_TOKEN_PATH, if both are
++	 * set at the same time.
++	 *
+ 	 * Setting bpf_token_path option to empty string disables libbpf's
+ 	 * automatic attempt to create BPF token from default BPF FS mount
+ 	 * point (/sys/fs/bpf), in case this default behavior is undesirable.
 --=20
 2.34.1
 
