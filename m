@@ -1,311 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AD425565;
-	Thu,  4 Jan 2024 16:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C360D28E28
+	for <linux-security-module@vger.kernel.org>; Thu,  4 Jan 2024 19:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LNNVouCQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6836C433B6;
-	Thu,  4 Jan 2024 16:51:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704387084;
-	bh=/O08vCHajpvw1Rc518HR1WgtRPRPdQ2wO5g9HKaqQZg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LNNVouCQ7kkf1s4M4e+Ug9Gu5ulcmaGMNzB3FPvPs+R7/eBI7ut7UbP+fYvmuHINk
-	 EN3jJMkyo81ljMJs4GGkOLrbrz1ypSHfmnwoEOL+Hkfq5P5+QvVEbYIKu6QxOOCeR/
-	 Pzyk62YvjYc5gEiS2z9bAjN4WZnV1fSzmH4xThSAnnkW+InBrMaAKhcN/jEHaL3AdO
-	 4TJViPAQT+J9T0l4korFIqiUujj9K7kZxD7u+bL2Eq/utH9LFU9UIfwCbJbp1p3Pjb
-	 IMEOHifN2Ch05EV+y7cfS+TdxJZxHggX0wdX/LeTQBzOBkBZjX5WYoArY1NdZPT06T
-	 zfbyAgnqnmlAA==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-50ea226bda8so737687e87.2;
-        Thu, 04 Jan 2024 08:51:24 -0800 (PST)
-X-Gm-Message-State: AOJu0YwW1tFcuOQC3/1aZ7ZyECZoINPApDWrrD8C+IbVNDjzDsFCe7b9
-	rpVJAwslEUUSh4Br8m7tG02FFb50painN/e3A1A=
-X-Google-Smtp-Source: AGHT+IHRR7/L+jg0JGpYQggGGUYhoDQhuYPy2emnnzvE1eZlb+I0OuUWy5vnZch8St2OV9Ll01H5JKblC8uJ2O1XJbE=
-X-Received: by 2002:a05:6512:2251:b0:50e:74c1:6e65 with SMTP id
- i17-20020a056512225100b0050e74c16e65mr566380lfu.81.1704387082580; Thu, 04 Jan
- 2024 08:51:22 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="S9PehNeE"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-50e7c6f0487so869280e87.3
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Jan 2024 11:04:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1704395080; x=1704999880; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xABQKYwqb6Tn050lqN4gkUa6ogl98DT9i/4GjNnCoY0=;
+        b=S9PehNeEr+4blxt6e8NKLyPCSA2MX+RY9rcAoM3px4mPQPOO+kRd3glFZgMH+UW4r7
+         MZ9qeyyNPJiGMZHOYIR/4hJ/a7FeOvgqlL0xGVzFT9nNcQCiezvfZfYVNzLd/fLUqawB
+         Pap8dX9qdHLkAx09xHOOuRMXM5t3EdOsWhD7Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704395080; x=1704999880;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xABQKYwqb6Tn050lqN4gkUa6ogl98DT9i/4GjNnCoY0=;
+        b=rNk1SxHhIzlIHFvOSFxMX0nZGvsGbxFtzWC/4nLS854HD3DNAuas0fCVcZMNrTGBsB
+         rh+LFW1lS+1SiOlrtsTjWCtIaJmxSEOBTWaYnsXTcs2SQLST8mbjRN3TA+IGH+BfMxXX
+         MoOKEky9W4rQSv7AKGE8Sd0q01cVY7mgW793ucCpVFopVv79LqNw9Im3wM6DYdgFetbq
+         Y18qNjLeBDzxeg7OOMwSmu+Q06xhb+bYnWwdI6cC/7Sxacy2sKwnkQMxX3W4FgaZ7BNs
+         9P4+XtWO8srOo7haYM02/qnVw7wm+N5TrKqp+VepVvn6jUjGduSy6R2VSgFwb6CsMAjt
+         xggQ==
+X-Gm-Message-State: AOJu0YylY3TKKXFzTBc7lX8tGxYUegvJdHQ3/nmRpAquzO/2czCpYS5U
+	3MV9mGDR/FjWgVCPXxTCGzzXe2hf6zGKPy0/FcGuohoRZdXJnDi1
+X-Google-Smtp-Source: AGHT+IGV9ioxQHlGG86hFjfrbp2ZuOKzSoBBNGYNZE89mvmvscBms4esA4SFO7yD4BAcV/rutQgU1Q==
+X-Received: by 2002:a05:6512:1083:b0:50e:644a:dc63 with SMTP id j3-20020a056512108300b0050e644adc63mr433122lfg.5.1704395080652;
+        Thu, 04 Jan 2024 11:04:40 -0800 (PST)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id e17-20020a170906505100b00a26ade46618sm13240402ejk.99.2024.01.04.11.04.40
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jan 2024 11:04:40 -0800 (PST)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5571dd9f570so164897a12.1
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Jan 2024 11:04:40 -0800 (PST)
+X-Received: by 2002:a17:906:18:b0:a28:f456:42a2 with SMTP id
+ 24-20020a170906001800b00a28f45642a2mr318777eja.44.1704395079598; Thu, 04 Jan
+ 2024 11:04:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240104095421.12772-1-tzimmermann@suse.de> <20240104095421.12772-5-tzimmermann@suse.de>
-In-Reply-To: <20240104095421.12772-5-tzimmermann@suse.de>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 4 Jan 2024 17:51:11 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHEJubE42e6cUiEUv=Z66d9Gqw0EM7Wts9hrHzf8ZDsGQ@mail.gmail.com>
-Message-ID: <CAMj1kXHEJubE42e6cUiEUv=Z66d9Gqw0EM7Wts9hrHzf8ZDsGQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] arch/x86: Do not include <asm/bootparam.h> in
- several files
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	bhelgaas@google.com, arnd@arndb.de, zohar@linux.ibm.com, 
-	dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, javierm@redhat.com, linux-arch@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
+References: <20240103222034.2582628-1-andrii@kernel.org> <20240103222034.2582628-14-andrii@kernel.org>
+In-Reply-To: <20240103222034.2582628-14-andrii@kernel.org>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Thu, 4 Jan 2024 11:04:22 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whDxm+nqu0=7TNJ9XJq=hNuO5QsV7+=PTYt+Ykvz51yQg@mail.gmail.com>
+Message-ID: <CAHk-=whDxm+nqu0=7TNJ9XJq=hNuO5QsV7+=PTYt+Ykvz51yQg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 13/29] libbpf: add BPF token support to
+ bpf_map_create() API
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com, 
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 4 Jan 2024 at 10:54, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+On Wed, 3 Jan 2024 at 14:24, Andrii Nakryiko <andrii@kernel.org> wrote:
 >
-> Remove the include statement for <asm/bootparam.h> from several files
-> that don't require it. Limits the exposure of the boot parameters
-> within the Linux kernel code.
->
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Acked-by: Ard Biesheuvel <ardb@kernel.org>
->
-> ---
->
-> v3:
->         * revert of e820/types.h required
-> v2:
->         * clean up misc.h and e820/types.h
->         * include bootparam.h in several source files
-> ---
->  arch/x86/boot/compressed/acpi.c       | 2 ++
->  arch/x86/boot/compressed/cmdline.c    | 2 ++
->  arch/x86/boot/compressed/efi.c        | 2 ++
->  arch/x86/boot/compressed/misc.h       | 3 ++-
->  arch/x86/boot/compressed/pgtable_64.c | 1 +
->  arch/x86/boot/compressed/sev.c        | 1 +
->  arch/x86/include/asm/kexec.h          | 1 -
->  arch/x86/include/asm/mem_encrypt.h    | 2 +-
->  arch/x86/include/asm/sev.h            | 3 ++-
->  arch/x86/include/asm/x86_init.h       | 2 --
->  arch/x86/kernel/crash.c               | 1 +
->  arch/x86/kernel/sev-shared.c          | 2 ++
->  arch/x86/platform/pvh/enlighten.c     | 1 +
->  arch/x86/xen/enlighten_pvh.c          | 1 +
->  arch/x86/xen/vga.c                    | 1 -
->  15 files changed, 18 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-> index 18d15d1ce87d..f196b1d1ddf8 100644
-> --- a/arch/x86/boot/compressed/acpi.c
-> +++ b/arch/x86/boot/compressed/acpi.c
-> @@ -5,6 +5,8 @@
->  #include "../string.h"
->  #include "efi.h"
->
-> +#include <asm/bootparam.h>
-> +
->  #include <linux/numa.h>
->
->  /*
-> diff --git a/arch/x86/boot/compressed/cmdline.c b/arch/x86/boot/compressed/cmdline.c
-> index c1bb180973ea..e162d7f59cc5 100644
-> --- a/arch/x86/boot/compressed/cmdline.c
-> +++ b/arch/x86/boot/compressed/cmdline.c
-> @@ -1,6 +1,8 @@
->  // SPDX-License-Identifier: GPL-2.0
->  #include "misc.h"
->
-> +#include <asm/bootparam.h>
-> +
->  static unsigned long fs;
->  static inline void set_fs(unsigned long seg)
->  {
-> diff --git a/arch/x86/boot/compressed/efi.c b/arch/x86/boot/compressed/efi.c
-> index 6edd034b0b30..f2e50f9758e6 100644
-> --- a/arch/x86/boot/compressed/efi.c
-> +++ b/arch/x86/boot/compressed/efi.c
-> @@ -7,6 +7,8 @@
->
->  #include "misc.h"
->
-> +#include <asm/bootparam.h>
-> +
->  /**
->   * efi_get_type - Given a pointer to boot_params, determine the type of EFI environment.
->   *
-> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
-> index c0d502bd8716..01c89c410efd 100644
-> --- a/arch/x86/boot/compressed/misc.h
-> +++ b/arch/x86/boot/compressed/misc.h
-> @@ -33,7 +33,6 @@
->  #include <linux/elf.h>
->  #include <asm/page.h>
->  #include <asm/boot.h>
-> -#include <asm/bootparam.h>
->  #include <asm/desc_defs.h>
->
->  #include "tdx.h"
-> @@ -53,6 +52,8 @@
->  #define memptr unsigned
->  #endif
->
-> +struct boot_param;
-> +
+> Add ability to provide token_fd for BPF_MAP_CREATE command through
+> bpf_map_create() API.
 
-Typo?
+I'll try to look through the series later, but this email was marked
+as spam for me.
 
-Interestingly, it still builds fine for me without any warnings.
+And it seems to be due to all your emails failing DMARC, even though
+the others came through:
 
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 
->  /* boot/compressed/vmlinux start and end markers */
->  extern char _head[], _end[];
->
-> diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
-> index 51f957b24ba7..c882e1f67af0 100644
-> --- a/arch/x86/boot/compressed/pgtable_64.c
-> +++ b/arch/x86/boot/compressed/pgtable_64.c
-> @@ -1,5 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
->  #include "misc.h"
-> +#include <asm/bootparam.h>
->  #include <asm/e820/types.h>
->  #include <asm/processor.h>
->  #include "pgtable.h"
-> diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
-> index 454acd7a2daf..13beae767e48 100644
-> --- a/arch/x86/boot/compressed/sev.c
-> +++ b/arch/x86/boot/compressed/sev.c
-> @@ -12,6 +12,7 @@
->   */
->  #include "misc.h"
->
-> +#include <asm/bootparam.h>
->  #include <asm/pgtable_types.h>
->  #include <asm/sev.h>
->  #include <asm/trapnr.h>
-> diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
-> index c9f6a6c5de3c..91ca9a9ee3a2 100644
-> --- a/arch/x86/include/asm/kexec.h
-> +++ b/arch/x86/include/asm/kexec.h
-> @@ -25,7 +25,6 @@
->
->  #include <asm/page.h>
->  #include <asm/ptrace.h>
-> -#include <asm/bootparam.h>
->
->  struct kimage;
->
-> diff --git a/arch/x86/include/asm/mem_encrypt.h b/arch/x86/include/asm/mem_encrypt.h
-> index 359ada486fa9..c1a8a3408c18 100644
-> --- a/arch/x86/include/asm/mem_encrypt.h
-> +++ b/arch/x86/include/asm/mem_encrypt.h
-> @@ -15,7 +15,7 @@
->  #include <linux/init.h>
->  #include <linux/cc_platform.h>
->
-> -#include <asm/bootparam.h>
-> +struct boot_params;
->
+there's no DKIM signature at all, looks like you never went through
+the kernel.org smtp servers.
 
-Unfortunately, the SEV/SNP code is a bit of a kludge given that it
-declares routines in headers under arch/x86/include/asm, and defines
-them in two different places (the decompressor and the kernel proper).
-
-So while I feel that we should avoid relying on incomplete struct
-definitions, this one (and the one below) seems fine to me for now.
-If/when someone gets around to cleaning up the SEV/SNP header files,
-to split the init code from the more widely used mm types etc, we can
-revisit this.
-
-
->  #ifdef CONFIG_X86_MEM_ENCRYPT
->  void __init mem_encrypt_init(void);
-> diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-> index 5b4a1ce3d368..8dad8b1613bf 100644
-> --- a/arch/x86/include/asm/sev.h
-> +++ b/arch/x86/include/asm/sev.h
-> @@ -13,7 +13,6 @@
->
->  #include <asm/insn.h>
->  #include <asm/sev-common.h>
-> -#include <asm/bootparam.h>
->  #include <asm/coco.h>
->
->  #define GHCB_PROTOCOL_MIN      1ULL
-> @@ -22,6 +21,8 @@
->
->  #define        VMGEXIT()                       { asm volatile("rep; vmmcall\n\r"); }
->
-> +struct boot_params;
-> +
->  enum es_result {
->         ES_OK,                  /* All good */
->         ES_UNSUPPORTED,         /* Requested operation not supported */
-> diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-> index c878616a18b8..f062715578a0 100644
-> --- a/arch/x86/include/asm/x86_init.h
-> +++ b/arch/x86/include/asm/x86_init.h
-> @@ -2,8 +2,6 @@
->  #ifndef _ASM_X86_PLATFORM_H
->  #define _ASM_X86_PLATFORM_H
->
-> -#include <asm/bootparam.h>
-> -
->  struct ghcb;
->  struct mpc_bus;
->  struct mpc_cpu;
-> diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-> index c92d88680dbf..564cff7ed33a 100644
-> --- a/arch/x86/kernel/crash.c
-> +++ b/arch/x86/kernel/crash.c
-> @@ -26,6 +26,7 @@
->  #include <linux/vmalloc.h>
->  #include <linux/memblock.h>
->
-> +#include <asm/bootparam.h>
->  #include <asm/processor.h>
->  #include <asm/hardirq.h>
->  #include <asm/nmi.h>
-> diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/kernel/sev-shared.c
-> index ccb0915e84e1..4962ec42dc68 100644
-> --- a/arch/x86/kernel/sev-shared.c
-> +++ b/arch/x86/kernel/sev-shared.c
-> @@ -9,6 +9,8 @@
->   * and is included directly into both code-bases.
->   */
->
-> +#include <asm/setup_data.h>
-> +
->  #ifndef __BOOT_COMPRESSED
->  #define error(v)       pr_err(v)
->  #define has_cpuflag(f) boot_cpu_has(f)
-> diff --git a/arch/x86/platform/pvh/enlighten.c b/arch/x86/platform/pvh/enlighten.c
-> index 00a92cb2c814..944e0290f2c0 100644
-> --- a/arch/x86/platform/pvh/enlighten.c
-> +++ b/arch/x86/platform/pvh/enlighten.c
-> @@ -3,6 +3,7 @@
->
->  #include <xen/hvc-console.h>
->
-> +#include <asm/bootparam.h>
->  #include <asm/io_apic.h>
->  #include <asm/hypervisor.h>
->  #include <asm/e820/api.h>
-> diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
-> index ada3868c02c2..9e9db601bd52 100644
-> --- a/arch/x86/xen/enlighten_pvh.c
-> +++ b/arch/x86/xen/enlighten_pvh.c
-> @@ -4,6 +4,7 @@
->
->  #include <xen/hvc-console.h>
->
-> +#include <asm/bootparam.h>
->  #include <asm/io_apic.h>
->  #include <asm/hypervisor.h>
->  #include <asm/e820/api.h>
-> diff --git a/arch/x86/xen/vga.c b/arch/x86/xen/vga.c
-> index d97adab8420f..f7547807b0bd 100644
-> --- a/arch/x86/xen/vga.c
-> +++ b/arch/x86/xen/vga.c
-> @@ -2,7 +2,6 @@
->  #include <linux/screen_info.h>
->  #include <linux/init.h>
->
-> -#include <asm/bootparam.h>
->  #include <asm/setup.h>
->
->  #include <xen/interface/xen.h>
-> --
-> 2.43.0
->
->
+             Linus
