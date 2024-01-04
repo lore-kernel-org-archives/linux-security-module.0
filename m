@@ -1,106 +1,114 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FE01EA74;
-	Thu,  4 Jan 2024 11:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A730F249E4
+	for <linux-security-module@vger.kernel.org>; Thu,  4 Jan 2024 15:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LRXyB32K"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1704368409;
-	bh=6gm0MtDf0rBmmCKqW7YquHOvdQEOxHYKjl8+HI/3+Wg=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=LRXyB32KwiwH05gIgQ/c3xxhwVUR3lWL1QF+YJLK+RTVyYSvhp9mB4l3XZOivNy4l
-	 7wp10LXZWg4qJVdA8mb76ASbOdkKjwJO/WjS7fGrQtdf9rqOqV/DlIiYMP+gOVvtDX
-	 hlTKspcs3h7J3azJ/t/Nay/8g6Rv2vUDc8492gtJpOO1zmgStOAzyO02ubnndr9+C9
-	 L+ebxjbx0a6BJf/5jqqm0PIYh0I1aXz2Znjqnw38ycqMTgAnp0NHkI9pwNX9uqTKSj
-	 f8dTTMO97tI57JXZePupIzJQg017G2a24b5/Wb6WA0slcIGPk1VHVVvW+ZITe8MuEY
-	 KXXPP0oFy/VNA==
-Received: from [100.96.234.34] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2F52A3782002;
-	Thu,  4 Jan 2024 11:40:05 +0000 (UTC)
-Message-ID: <d4a31d87-0fa3-4ae7-a1be-37d3ad060603@collabora.com>
-Date: Thu, 4 Jan 2024 16:40:08 +0500
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="P2WvEIgS"
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dbd715ed145so548399276.1
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Jan 2024 07:54:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1704383698; x=1704988498; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZLqJo44VuyUw8MJch6t3PsF5TyAUQI8Tm5Zx7iuRPos=;
+        b=P2WvEIgS5ZYA51KjWYF1mXbpummCO3ePiPEFnrNdmKgkHCN2jcbD76LAgEVU5hJthj
+         7A6HXmfgldVZBV8eK61IhrD6FiSOL09UPBmRwIzQyguLrsIzjisttxRx6m5S/faDQE4U
+         aLR5qHW3U0l2lyHRDqf25DoU04EIBQKljU8516m2Ll0j8dS+i0txZIs8cJjUdOAJvqJc
+         mTsyEr1znIlM1zNiYpxv5e8bV7s9H3WkkeY3zYlYn+b0eC1jmix5VoqIU6gt/F+do0LF
+         /uv7Lw5iw7nzIQya54ca9ggRBA7a+h2NgbKPiY2Ct8mXC2LY5EOqjIwHCjqTEpJcYCog
+         BMIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704383698; x=1704988498;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZLqJo44VuyUw8MJch6t3PsF5TyAUQI8Tm5Zx7iuRPos=;
+        b=BwksScJMxilrYMT4LtNlc8Ie26zKQuNu0eRp9YzqYFCWqw7zn4gbFEQFx4/chWMo8u
+         erA0dl0Ucjfm4sjv96yoN81JPy9WA0RpbOyFAUscKbXRhmp7/Im31WewfBHCeqZhhaqd
+         m0qkodJ6l3foAr5Z3OyEiXgP+MynITbIEA0Q+LEysjIpdCYiF/ubzB0GKzXeeTV81/5Z
+         I1QBMDpzFgghRsiDBZcXX6COvghxDn4hqmqnLGA50GeMMgDqZpl1l58T+S558s6i2kIj
+         9jKrSOIIfiTugzxHnlUuwBwGfO4rLwQuNW75goRqS1kf4brjaW31th4IBJX3p8AtAqqM
+         Hitw==
+X-Gm-Message-State: AOJu0Yzy0dvs6/jD8EEYgf+9y/HBsz3fZCZU16NOHbMQ7zUwPtGc9qnn
+	Be1c9Lenw4EGM6mMDFw1rieZTVZR0EUnYIUkbvsm5X33DopvWc1A9pL/8bs=
+X-Google-Smtp-Source: AGHT+IFy2mnx3oXos2pR13M1nFq0SGOOGRWe/9M47++wXkY5A4g9tH+dFdPm3+T8rBq35nuH8KZ3eS74dp1pysSFLAs=
+X-Received: by 2002:a25:ad95:0:b0:d9a:4b0f:402b with SMTP id
+ z21-20020a25ad95000000b00d9a4b0f402bmr741926ybi.38.1704383698532; Thu, 04 Jan
+ 2024 07:54:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
- linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v3] selinux: Fix error priority for bind with AF_UNSPEC on
- PF_INET6 socket
-Content-Language: en-US
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- Eric Paris <eparis@parisplace.org>, Paul Moore <paul@paul-moore.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>
-References: <20240103163415.304358-1-mic@digikod.net>
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240103163415.304358-1-mic@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20230710102319.19716-1-greg@enjellic.com> <20230710102319.19716-3-greg@enjellic.com>
+ <ZNKN+ZK6Lfbjb4GZ@jerom> <20230811202254.GA9401@wind.enjellic.com>
+In-Reply-To: <20230811202254.GA9401@wind.enjellic.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 4 Jan 2024 10:54:47 -0500
+Message-ID: <CAHC9VhSBnKor21HKiLuvn1kPmtHzNZW2j6FfEQ+cab5R1=_Bdw@mail.gmail.com>
+Subject: Re: [PATCH 02/13] Add TSEM specific documentation.
+To: "Dr. Greg" <greg@enjellic.com>
+Cc: Serge Hallyn <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, corbet@lwn.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 1/3/24 9:34 PM, Mickaël Salaün wrote:
-> The IPv6 network stack first checks the sockaddr length (-EINVAL error)
-> before checking the family (-EAFNOSUPPORT error).
-> 
-> This was discovered thanks to commit a549d055a22e ("selftests/landlock:
-> Add network tests").
-> 
-> Cc: Eric Paris <eparis@parisplace.org>
-> Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-> Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> Closes: https://lore.kernel.org/r/0584f91c-537c-4188-9e4f-04f192565667@collabora.com
-> Fixes: 0f8db8cc73df ("selinux: add AF_UNSPEC and INADDR_ANY checks to selinux_socket_bind()")
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Thank you Mickaël for the patch. Tested patch on v6.7-rc8.
+On Fri, Aug 11, 2023 at 4:24=E2=80=AFPM Dr. Greg <greg@enjellic.com> wrote:
+> On Tue, Aug 08, 2023 at 01:48:25PM -0500, Serge Hallyn wrote:
+> > On Mon, Jul 10, 2023 at 05:23:08AM -0500, Dr. Greg wrote:
 
-Tested-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+...
 
-> ---
-> 
-> Changes since v2:
-> https://lore.kernel.org/r/20231229171922.106190-1-mic@digikod.net
-> * Add !PF_INET6 check and comments (suggested by Paul).
-> * s/AF_INET/PF_INET/g (cosmetic change).
-> 
-> Changes since v1:
-> https://lore.kernel.org/r/20231228113917.62089-1-mic@digikod.net
-> * Use the "family" variable (suggested by Paul).
-> ---
->  security/selinux/hooks.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index feda711c6b7b..8b1429eb2db5 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -4667,6 +4667,13 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
->  				return -EINVAL;
->  			addr4 = (struct sockaddr_in *)address;
->  			if (family_sa == AF_UNSPEC) {
-> +				if (family == PF_INET6) {
-> +					/* Length check from inet6_bind_sk() */
-> +					if (addrlen < SIN6_LEN_RFC2133)
-> +						return -EINVAL;
-> +					/* Family check from __inet6_bind() */
-> +					goto err_af;
-> +				}
->  				/* see __inet_bind(), we only want to allow
->  				 * AF_UNSPEC if the address is INADDR_ANY
->  				 */
+> > > +of a model.  This allows a TMA to attest to the trust/security statu=
+s
+> > > +of a platform or workload by signing this singular value and
+> > > +presenting it to a verifying party.
+> > > +
+> > > +In TSEM nomenclature, this singular value is referred to as the
+> > > +'state' of the model.  The attestation model is to use trust
+> > > +orchestrators to generate the state value of a workload by unit
+> > > +testing.  This state value can be packaged with a utility or contain=
+er
+> > > +to represent a summary trust characteristic that can be attested by =
+a
+> > > +TMA, eliminating the need for a verifying partner to review and veri=
+fy
+> > > +an event log.
+> > > +
+> > > +TMA's implement this architecture by maintaining a single instance
+> > > +vector of the set of security state coefficients that have been
+> > > +generated.  A state measurement is generated by sorting the vector i=
+n
+> > > +big-endian hash format and then generating a standard measurement
+> > > +digest over this new vector.
+>
+> > Are you saying the TMA will keep every meaningful measurement for
+> > the duration of the workload, so that it can always sort them?
+>
+> Correct, every unique security state coefficient.
+>
+> The approach isn't unique and without precedent.  Roberto Sassu is
+> using a similar strategy in order generate a time/order independent
+> PCR value for unlocking TPM sealed keys by parsing RPM and .deb
+> distribution manifests.
+>
+> Paul Moore, in his comments in February to the V1 series, even
+> seriously questioned why we would expose the classic linear extension
+> measurement from a TMA.
 
--- 
-BR,
-Muhammad Usama Anjum
+To put my comment from the first revision into the proper context, and
+with my understanding that TSEM's security model does not consider
+event ordering/timing, I questioned what TSEM would expose an ordered
+list of events to userspace in addition to its unordered, sorted list.
+Either ordering is important to the security model, in which case you
+expose the ordered list, or it isn't, in which case you expose the
+list in whatever form is most convenient for the tooling/model; it
+makes little sense to me to expose both.
+
+--=20
+paul-moore.com
