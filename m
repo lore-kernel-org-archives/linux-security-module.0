@@ -1,73 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448753175C;
-	Fri,  5 Jan 2024 16:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8D035EE5
+	for <linux-security-module@vger.kernel.org>; Fri,  5 Jan 2024 18:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iAy6+IeL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0C24C433C8;
-	Fri,  5 Jan 2024 16:02:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704470562;
-	bh=BdEJRBnD80tANcDQefdrJ/s2N4HzXSkvbigcwSBiBKg=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=iAy6+IeLThkJwLyZHHNs88zPMTckABq2hifD8khVykX80K6XyPT13D/QgxlfdRn6M
-	 zzwQeR+x9T9Hr4yzLYVDJcMHXdqmzWNGCILpKcP5x/qRqI8DKTEYW33PSh/K+nAQzB
-	 lNagiAmHsPhJKUNj5L7BKQ0kfV3P0HS/PA8JkDLAIe+ScWv+x/tpWfzKZTj2hSDCga
-	 aFRREN0R3IKEF7dBxGppBTUT18io7YS33AE7x0u0nCxFKfQ0kghpBF7LYXHt2xUFPQ
-	 wdwRAyBsM/2rKnnstJE8wi3LHzptDIq4+EDfkcUzq//jkrB/IRbv8YE5IFh7Us/h4Q
-	 DmcTFt9u8UuFw==
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="NRsoFtNP"
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+	by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4T6BPx5Y7nzMpnh2;
+	Fri,  5 Jan 2024 18:12:37 +0000 (UTC)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4T6BPw3F4SzMpnPr;
+	Fri,  5 Jan 2024 19:12:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1704478357;
+	bh=7CcqvU+dm80k4/4DXMGXtl1qlVFCE19rwLyaDkrOPGw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NRsoFtNP0tf+eAvgWVGPBL9wvlbAzS0BsOsJG6+txPx08INeRo0k/42aig9fnmPAr
+	 xx/z5B17Ep+nb3jljzUgdjgXyk6h2ho/sIJNFwq6gGk8Mv2L+Jrn0K4DOdDdieACd7
+	 bz5uzcdlc9xJJfygY0VJw6bL9xVNBJLJ4qqVVU+w=
+Date: Fri, 5 Jan 2024 19:12:35 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@google.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Shervin Oloumi <enlightened@google.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: Re: [RFC PATCH v1 3/7] landlock: Log ruleset creation and release
+Message-ID: <20240105.aiquux9Oox7l@digikod.net>
+References: <20230921061641.273654-1-mic@digikod.net>
+ <20230921061641.273654-4-mic@digikod.net>
+ <CAHC9VhQTvFp+i=j7t+55EnG44xg=Pmvkh=Oq=e7ddJWDZXLeSA@mail.gmail.com>
+ <20231221.eij3poa3Se4b@digikod.net>
+ <CAHC9VhRiUOe9enkCOko0mGehxt+2tbJNGoJm=jmauhZSPFvzRg@mail.gmail.com>
+ <20231229.aex0ijae2The@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 05 Jan 2024 18:02:38 +0200
-Message-Id: <CY6WDWW69XDP.2E8GFRMXYTB22@suppilovahvero>
-Cc: <linux-integrity@vger.kernel.org>, <itrymybest80@protonmail.com>, "Mimi
- Zohar" <zohar@linux.ibm.com>, "Dmitry Kasatkin"
- <dmitry.kasatkin@gmail.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "open
- list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, "open
- list" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] integrity: don't throw an error immediately when failed
- to add a cert to the .machine keyring
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Coiby Xu" <coxu@redhat.com>
-X-Mailer: aerc 0.15.2
-References: <20231227044156.166009-1-coxu@redhat.com>
- <CY54Q6U6UMKM.2H5N3BACDBGU0@suppilovahvero>
- <43dozoqfip7m6nglbwzwyzykx23fpzbp7d42pcqzudnzlfvfkb@yjvuo5a6suvv>
-In-Reply-To: <43dozoqfip7m6nglbwzwyzykx23fpzbp7d42pcqzudnzlfvfkb@yjvuo5a6suvv>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231229.aex0ijae2The@digikod.net>
+X-Infomaniak-Routing: alpha
 
-On Fri Jan 5, 2024 at 3:20 PM EET, Coiby Xu wrote:
-> On Wed, Jan 03, 2024 at 04:09:29PM +0200, Jarkko Sakkinen wrote:
-> >On Wed Dec 27, 2023 at 6:41 AM EET, Coiby Xu wrote:
-> >> Currently when the kernel fails to add a cert to the .machine keyring,
-> >> it will throw an error immediately in the function integrity_add_key.
-> >>
-> >> Since the kernel will try adding to the .platform keyring next or thro=
-w
-> >> an error (in the caller of integrity_add_key i.e. add_to_machine_keyri=
-ng),
-> >> so there is no need to throw an error immediately in integrity_add_key=
-.
-> >>
-> >> Reported-by: itrymybest80@protonmail.com
-> >
-> >Missing "Firstname Lastname".
->
-> Thanks for raising this concern! I've asked the reporter if he/she can
-> share his/her name.
+On Fri, Dec 29, 2023 at 06:42:10PM +0100, Mickaël Salaün wrote:
+> On Fri, Dec 22, 2023 at 05:42:35PM -0500, Paul Moore wrote:
+> > On Thu, Dec 21, 2023 at 1:45 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > On Wed, Dec 20, 2023 at 04:22:15PM -0500, Paul Moore wrote:
+> > > > On Thu, Sep 21, 2023 at 2:17 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > >
+> > > > > Add audit support for ruleset/domain creation and release ...
+> > 
+> > ...
 
-Also, it is lacking fixes tag.
+> > > For rule addition, several records per landlock_add_rule(2) call.
+> > > Example with a path_beneath rule:
+> > > - AUDIT_LANDLOCK_RULESET: "id=[ruleset ID] op=add_rule"
+> > > - AUDIT_LANDLOCK_PATH: "scope=beneath path=[file path] dev= ino="
+> > > - AUDIT_LANDLOCK_ACCESS: "type=fs rights=[bitmask]"
+> > 
+> > I worry that LANDLOCK_PATH is too much of a duplicate for the existing
+> > PATH record.  Assuming the "scope=" field is important, could it live
+> > in the LANDLOCK_ACCESS record and then you could do away with the
+> > dedicated LANDLOCK_PATH record?  Oh, wait ... this is to record the
+> > policy, not a individual access request, gotcha.  If that is the case
+> > and RULESET, PATH, ACCESS are all used simply to record the policy
+> > information I might suggest creation of an AUDIT_LANDLOCK_POLICY
+> > record that captures all of the above.  If you think that is too
+> > cumbersome, then perhaps you can do the object/access-specific record
+> > type, e.g. AUDIT_LANDLOCK_POLICY_FS and AUDIT_LANDLOCK_POLICY_NET.
+> 
+> OK, what about this records for *one* rule addition event?
+> 
+> - AUDIT_LANDLOCK_RULE: "ruleset=[ruleset ID] rule_type=path_beneath
+>   allowed_access=[bitmask]"
+> - AUDIT_PATH: "path=[file path] dev= ino= ..."
+> 
+> However, because struct landlock_path_beneath_attr can evolve and get
+> new fields which might be differents than the landlock_net_port_attr's
+> ones, wouldn't it be wiser to use a dedicated AUDIT_LANDLOCK_RULE_FS or
+> AUDIT_LANDLOCK_RULE_PATH_BENEATH record type? These names are getting a
+> bit long though, but types match the UAPI.
 
-Fixes tag is mandatory, name part would be super nice to have :-) Since
-this categories as a bug fix, getting them in is 1st priority and that
-thus does not absolutely block applying the change. Thanks for going
-trouble trying to query it, however.
+Hmm, AUDIT_PATH is used when a syscall's argument is a path, but in the
+case of Landlock, the arguments are file descriptors.
 
-BR, Jarkko
+I can still export audit_copy_inode() to create a synthetic audit_names
+struct, and export/call audit_log_name() to create an AUDIT_PATH entry
+but I'm not sure it is the best approach. What would you prefer?
+Should I use AUDIT_TYPE_NORMAL or create a new one?
+
+[...]
+
+> > > For denied FS access:
+> > > - AUDIT_LANDLOCK_DENIAL: "id=[domain ID] op=mkdir"
+> > > - AUDIT_LANDLOCK_PATH: "scope=exact path=[file path] dev= ino="
+> > 
+> > I would use a single record type, i.e. AUDIT_LANDLOCK_ACCESS, to
+> > capture both access granted and denied events.  I'd also omit the
+> > dedicated LANDLOCK_PATH record here in favor of the generic PATH
+> > record (see my comments above).
+> 
+> Makes sense for the generic PATH record. We would get this:
+> 
+> - AUDIT_LANDLOCK_ACCESS: "domain=[domain ID] op=mkdir result=denied"
+> - AUDIT_PATH: "path=[file path] dev= ino= ..."
