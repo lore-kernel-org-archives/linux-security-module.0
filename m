@@ -1,112 +1,118 @@
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8D035EE5
-	for <linux-security-module@vger.kernel.org>; Fri,  5 Jan 2024 18:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2463608B
+	for <linux-security-module@vger.kernel.org>; Fri,  5 Jan 2024 20:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="NRsoFtNP"
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-	by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4T6BPx5Y7nzMpnh2;
-	Fri,  5 Jan 2024 18:12:37 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4T6BPw3F4SzMpnPr;
-	Fri,  5 Jan 2024 19:12:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1704478357;
-	bh=7CcqvU+dm80k4/4DXMGXtl1qlVFCE19rwLyaDkrOPGw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NRsoFtNP0tf+eAvgWVGPBL9wvlbAzS0BsOsJG6+txPx08INeRo0k/42aig9fnmPAr
-	 xx/z5B17Ep+nb3jljzUgdjgXyk6h2ho/sIJNFwq6gGk8Mv2L+Jrn0K4DOdDdieACd7
-	 bz5uzcdlc9xJJfygY0VJw6bL9xVNBJLJ4qqVVU+w=
-Date: Fri, 5 Jan 2024 19:12:35 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@google.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Shervin Oloumi <enlightened@google.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: Re: [RFC PATCH v1 3/7] landlock: Log ruleset creation and release
-Message-ID: <20240105.aiquux9Oox7l@digikod.net>
-References: <20230921061641.273654-1-mic@digikod.net>
- <20230921061641.273654-4-mic@digikod.net>
- <CAHC9VhQTvFp+i=j7t+55EnG44xg=Pmvkh=Oq=e7ddJWDZXLeSA@mail.gmail.com>
- <20231221.eij3poa3Se4b@digikod.net>
- <CAHC9VhRiUOe9enkCOko0mGehxt+2tbJNGoJm=jmauhZSPFvzRg@mail.gmail.com>
- <20231229.aex0ijae2The@digikod.net>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Fu1qBJqI"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-50e6ee8e911so2243956e87.1
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Jan 2024 12:26:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1704486360; x=1705091160; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jlHlTQ7UwNnsRaaZVTPe3koXZRT/RuAbWyf3puCIBE4=;
+        b=Fu1qBJqIWxxcyDLUZHseQ4WL035I81YDj3pn4RYWS9nLOvCf/jU1OCWf1Rka9AZP+T
+         yj/5OBHTzEmbAVaqc0LUlgwfz7gzOUzUSIg2MniCFPbjoMLdB1tz4K7rkGztgO4dgBQn
+         3bIun3N9s3c2Drt49Phvx14aix5mVT8Eoy9zQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704486360; x=1705091160;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jlHlTQ7UwNnsRaaZVTPe3koXZRT/RuAbWyf3puCIBE4=;
+        b=tWk3JluOeVpXQsox0/4IECT8lD1bFDh/OqQyuBOTvw/ICvaPfbPhmrN6m6VjBJtPRJ
+         TWZ6/J/VlrYUwJMOoU3tqgxdJ4/Ncf9Xyzicx5XvrQoEv0gJ0i1oS95aF5tO7HevbdK6
+         IG+qL9PrzJx9kSm+H+agmG0lWaLLicuaIQxoCX4HWlR/jp60F6l5uom2nJE6rYhCYFLa
+         +6Y6guPixV3pC37yCyo2xQFkynpVMWhomGjg9LtpEpSJdZjtMGajyxyE8Yq18pDH6nGa
+         lEZzwwtjbbBxGIHHBtv/G7poevdl2FyHRFET2VXh9F85TQ8cq4VmK/yoWKpBmxPxTYcq
+         MnTQ==
+X-Gm-Message-State: AOJu0YxldvpkgVHC/Csc1A8AkMjowtWDUXtwF2T8Nggd6lY9WDOjn8VX
+	LD54SOsATa46VdvCnnoo8BB3e7AQmr673eX7ueZgWhziKsEX3K3D
+X-Google-Smtp-Source: AGHT+IGm1KyqiJJ2iT2FmlAGNMGJvoOIp8bB33MRTqAmw+3+EirITi46yqYqU4Y6YZiEHn527598cQ==
+X-Received: by 2002:ac2:5d49:0:b0:50e:7bd0:1c93 with SMTP id w9-20020ac25d49000000b0050e7bd01c93mr1024766lfd.61.1704486359936;
+        Fri, 05 Jan 2024 12:25:59 -0800 (PST)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id k5-20020a056402340500b00553a86b7821sm1309421edc.74.2024.01.05.12.25.59
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jan 2024 12:25:59 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a28d25253d2so209362366b.0
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Jan 2024 12:25:59 -0800 (PST)
+X-Received: by 2002:a17:906:25d4:b0:a27:9365:ef73 with SMTP id
+ n20-20020a17090625d400b00a279365ef73mr1360283ejb.38.1704486358728; Fri, 05
+ Jan 2024 12:25:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231229.aex0ijae2The@digikod.net>
-X-Infomaniak-Routing: alpha
+References: <20240103222034.2582628-1-andrii@kernel.org> <20240103222034.2582628-4-andrii@kernel.org>
+In-Reply-To: <20240103222034.2582628-4-andrii@kernel.org>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Fri, 5 Jan 2024 12:25:42 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi7=fQCgjnex_+KwNiAKuZYS=QOzfD_dSWys0SMmbYOtQ@mail.gmail.com>
+Message-ID: <CAHk-=wi7=fQCgjnex_+KwNiAKuZYS=QOzfD_dSWys0SMmbYOtQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 03/29] bpf: introduce BPF token object
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com, 
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Dec 29, 2023 at 06:42:10PM +0100, Mickaël Salaün wrote:
-> On Fri, Dec 22, 2023 at 05:42:35PM -0500, Paul Moore wrote:
-> > On Thu, Dec 21, 2023 at 1:45 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > On Wed, Dec 20, 2023 at 04:22:15PM -0500, Paul Moore wrote:
-> > > > On Thu, Sep 21, 2023 at 2:17 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > >
-> > > > > Add audit support for ruleset/domain creation and release ...
-> > 
-> > ...
+I'm still looking through the patches, but in the early parts I do
+note this oddity:
 
-> > > For rule addition, several records per landlock_add_rule(2) call.
-> > > Example with a path_beneath rule:
-> > > - AUDIT_LANDLOCK_RULESET: "id=[ruleset ID] op=add_rule"
-> > > - AUDIT_LANDLOCK_PATH: "scope=beneath path=[file path] dev= ino="
-> > > - AUDIT_LANDLOCK_ACCESS: "type=fs rights=[bitmask]"
-> > 
-> > I worry that LANDLOCK_PATH is too much of a duplicate for the existing
-> > PATH record.  Assuming the "scope=" field is important, could it live
-> > in the LANDLOCK_ACCESS record and then you could do away with the
-> > dedicated LANDLOCK_PATH record?  Oh, wait ... this is to record the
-> > policy, not a individual access request, gotcha.  If that is the case
-> > and RULESET, PATH, ACCESS are all used simply to record the policy
-> > information I might suggest creation of an AUDIT_LANDLOCK_POLICY
-> > record that captures all of the above.  If you think that is too
-> > cumbersome, then perhaps you can do the object/access-specific record
-> > type, e.g. AUDIT_LANDLOCK_POLICY_FS and AUDIT_LANDLOCK_POLICY_NET.
-> 
-> OK, what about this records for *one* rule addition event?
-> 
-> - AUDIT_LANDLOCK_RULE: "ruleset=[ruleset ID] rule_type=path_beneath
->   allowed_access=[bitmask]"
-> - AUDIT_PATH: "path=[file path] dev= ino= ..."
-> 
-> However, because struct landlock_path_beneath_attr can evolve and get
-> new fields which might be differents than the landlock_net_port_attr's
-> ones, wouldn't it be wiser to use a dedicated AUDIT_LANDLOCK_RULE_FS or
-> AUDIT_LANDLOCK_RULE_PATH_BENEATH record type? These names are getting a
-> bit long though, but types match the UAPI.
+On Wed, 3 Jan 2024 at 14:21, Andrii Nakryiko <andrii@kernel.org> wrote:
+>
+> +struct bpf_token {
+> +       struct work_struct work;
+> +       atomic64_t refcnt;
+> +       struct user_namespace *userns;
+> +       u64 allowed_cmds;
+> +};
 
-Hmm, AUDIT_PATH is used when a syscall's argument is a path, but in the
-case of Landlock, the arguments are file descriptors.
+Ok, not huge, and makes sense, although I wonder if that
 
-I can still export audit_copy_inode() to create a synthetic audit_names
-struct, and export/call audit_log_name() to create an AUDIT_PATH entry
-but I'm not sure it is the best approach. What would you prefer?
-Should I use AUDIT_TYPE_NORMAL or create a new one?
+        atomic64_t refcnt;
 
-[...]
+should just be 'atomic_long_t' since presumably on 32-bit
+architectures you can't create enough references for a 64-bit atomic
+to make much sense.
 
-> > > For denied FS access:
-> > > - AUDIT_LANDLOCK_DENIAL: "id=[domain ID] op=mkdir"
-> > > - AUDIT_LANDLOCK_PATH: "scope=exact path=[file path] dev= ino="
-> > 
-> > I would use a single record type, i.e. AUDIT_LANDLOCK_ACCESS, to
-> > capture both access granted and denied events.  I'd also omit the
-> > dedicated LANDLOCK_PATH record here in favor of the generic PATH
-> > record (see my comments above).
-> 
-> Makes sense for the generic PATH record. We would get this:
-> 
-> - AUDIT_LANDLOCK_ACCESS: "domain=[domain ID] op=mkdir result=denied"
-> - AUDIT_PATH: "path=[file path] dev= ino= ..."
+Or are there references to tokens that might not use any memory?
+
+Not a big deal, but 'atomic64_t' is very expensive on 32-bit
+architectures, and doesn't seem to make much sense unless you really
+specifically need 64 bits for some reason.
+
+But regardless, this is odd:
+
+> diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
+> +
+> +static void bpf_token_free(struct bpf_token *token)
+> +{
+> +       put_user_ns(token->userns);
+> +       kvfree(token);
+> +}
+
+> +int bpf_token_create(union bpf_attr *attr)
+> +{
+> ....
+> +       token = kvzalloc(sizeof(*token), GFP_USER);
+
+Ok, so the kvzalloc() and kvfree() certainly line up, but why use them at all?
+
+kvmalloc() and friends are for "use kmalloc, and fall back on vmalloc
+for big allocations when that fails".
+
+For just a structure, a plain 'kzalloc()/kfree()' pair would seem to
+make much more sense.
+
+Neither of these issues are at all important, but I mention them
+because they made me go "What?" when reading through the patches.
+
+                  Linus
