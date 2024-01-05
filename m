@@ -1,128 +1,83 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE144403;
-	Fri,  5 Jan 2024 03:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 4053sAja017839;
-	Thu, 4 Jan 2024 21:54:10 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 4053s9ak017838;
-	Thu, 4 Jan 2024 21:54:09 -0600
-Date: Thu, 4 Jan 2024 21:54:09 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Serge Hallyn <serge@hallyn.com>, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net
-Subject: Re: [PATCH 02/13] Add TSEM specific documentation.
-Message-ID: <20240105035409.GA17707@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20230710102319.19716-1-greg@enjellic.com> <20230710102319.19716-3-greg@enjellic.com> <ZNKN+ZK6Lfbjb4GZ@jerom> <20230811202254.GA9401@wind.enjellic.com> <CAHC9VhSBnKor21HKiLuvn1kPmtHzNZW2j6FfEQ+cab5R1=_Bdw@mail.gmail.com>
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B728824B32
+	for <linux-security-module@vger.kernel.org>; Fri,  5 Jan 2024 09:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="kQrNI5KY"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+	by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4T5z0z2MBtzMpwnM;
+	Fri,  5 Jan 2024 09:38:43 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4T5z0y1y26z3d;
+	Fri,  5 Jan 2024 10:38:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1704447523;
+	bh=DDe5tqsqiBbWb5qjK0hmTzVhkloPXm7e2F0d9Jw9xMY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kQrNI5KY1Q65uBgSH20N98QKLgikY8rtEADRN7QZZZYS3GSW1UarBj10Tu0ECGxo0
+	 DD//AwIuK53SWSTSqk4N80aJNA5tzUZw9CdVxJBYavoGu9qn8/poavkN6KuXIMWHYS
+	 +GYts/JI7sC2Uv3EvJjc2hTNEBIF3LMJpkTfiwBc=
+Date: Fri, 5 Jan 2024 10:38:37 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v8 3/9] landlock: Optimize the number of calls to
+ get_access_mask slightly
+Message-ID: <20240105.He4eiLae7phu@digikod.net>
+References: <20231208155121.1943775-1-gnoack@google.com>
+ <20231208155121.1943775-4-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhSBnKor21HKiLuvn1kPmtHzNZW2j6FfEQ+cab5R1=_Bdw@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 04 Jan 2024 21:54:10 -0600 (CST)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231208155121.1943775-4-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Jan 04, 2024 at 10:54:47AM -0500, Paul Moore wrote:
-> On Fri, Aug 11, 2023 at 4:24???PM Dr. Greg <greg@enjellic.com> wrote:
-> > On Tue, Aug 08, 2023 at 01:48:25PM -0500, Serge Hallyn wrote:
-> > > On Mon, Jul 10, 2023 at 05:23:08AM -0500, Dr. Greg wrote:
+I'll send these first three patches for the next merge window (next
+week). You can remove them in the next series.
+
+Thanks!
+
+On Fri, Dec 08, 2023 at 04:51:15PM +0100, Günther Noack wrote:
+> This call is now going through a function pointer,
+> and it is not as obvious any more that it will be inlined.
 > 
-> ...
+> Signed-off-by: Günther Noack <gnoack@google.com>
+> ---
+>  security/landlock/ruleset.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> > > > +of a model.  This allows a TMA to attest to the trust/security status
-> > > > +of a platform or workload by signing this singular value and
-> > > > +presenting it to a verifying party.
-> > > > +
-> > > > +In TSEM nomenclature, this singular value is referred to as the
-> > > > +'state' of the model.  The attestation model is to use trust
-> > > > +orchestrators to generate the state value of a workload by unit
-> > > > +testing.  This state value can be packaged with a utility or container
-> > > > +to represent a summary trust characteristic that can be attested by a
-> > > > +TMA, eliminating the need for a verifying partner to review and verify
-> > > > +an event log.
-> > > > +
-> > > > +TMA's implement this architecture by maintaining a single instance
-> > > > +vector of the set of security state coefficients that have been
-> > > > +generated.  A state measurement is generated by sorting the vector in
-> > > > +big-endian hash format and then generating a standard measurement
-> > > > +digest over this new vector.
-> >
-> > > Are you saying the TMA will keep every meaningful measurement for
-> > > the duration of the workload, so that it can always sort them?
-> >
-> > Correct, every unique security state coefficient.
-> >
-> > The approach isn't unique and without precedent.  Roberto Sassu is
-> > using a similar strategy in order generate a time/order independent
-> > PCR value for unlocking TPM sealed keys by parsing RPM and .deb
-> > distribution manifests.
-> >
-> > Paul Moore, in his comments in February to the V1 series, even
-> > seriously questioned why we would expose the classic linear extension
-> > measurement from a TMA.
-
-> To put my comment from the first revision into the proper context,
-> and with my understanding that TSEM's security model does not
-> consider event ordering/timing, I questioned what TSEM would expose
->					       ^^^^ why??
-> an ordered list of events to userspace in addition to its unordered,
-> sorted list.
->
-> Either ordering is important to the security model, in which case you
-> expose the ordered list, or it isn't, in which case you expose the
-> list in whatever form is most convenient for the tooling/model; it
-> makes little sense to me to expose both.
-
-As a generic clarification in furtherance of getting everyone on the
-same page with respect to the focus of our work.
-
-TSEM is about providing generic infrastructure for security modeling
-and anomaly detection that acts at the most precise level of security
-instrumentation that is available.
-
-Secondary to that pursuit, TSEM offers security architects the ability
-to choose from either a time dependent or a time independent appraisal
-of a security modeling namespace.
-
-The TSEM 'trajectory' file is always time ordered with respect to the
-first unique occurrence of a security event.  In the V3 release, these
-trajectory entries include a nanosecond timestamp reference, relative
-to boot, of when the event occurred.
-
-The 'measurement' pseudo-file allows a relying party to verify that
-the trajectory list, as presented, is order/time consistent, if that
-is what they choose to evaluate.
-
-The 'state' pseudo-file allows a relying party to make a decision on
-whether or not the security status of the system is idempotent, from
-an event perspective, with a known reference state.
-
-It addresses, among other issues, the problem that IMA is currently
-facing with the fact that handling and examining unconstrained event
-logs can be problematic from a number of perspectives.
-
-Alternately, now in V3, a security model implementator can specify
-that a security event stream from a modeling namespace be
-asynchronously exported in its entirety and dealt with in whatever
-fashion an external evaluator desires.
-
-So TSEM doesn't implement or advocate a security model as much as it
-implements security infrastructure.
-
-> paul-moore.com
-
-Have a good weekend.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index 789c81b26a50..e0a5fbf9201a 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
+> @@ -723,11 +723,12 @@ landlock_init_layer_masks(const struct landlock_ruleset *const domain,
+>  	/* Saves all handled accesses per layer. */
+>  	for (layer_level = 0; layer_level < domain->num_layers; layer_level++) {
+>  		const unsigned long access_req = access_request;
+> +		const access_mask_t access_mask =
+> +			get_access_mask(domain, layer_level);
+>  		unsigned long access_bit;
+>  
+>  		for_each_set_bit(access_bit, &access_req, num_access) {
+> -			if (BIT_ULL(access_bit) &
+> -			    get_access_mask(domain, layer_level)) {
+> +			if (BIT_ULL(access_bit) & access_mask) {
+>  				(*layer_masks)[access_bit] |=
+>  					BIT_ULL(layer_level);
+>  				handled_accesses |= BIT_ULL(access_bit);
+> -- 
+> 2.43.0.472.g3155946c3a-goog
+> 
+> 
