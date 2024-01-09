@@ -1,153 +1,117 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877A117C3;
-	Tue,  9 Jan 2024 00:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF315320C
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Jan 2024 00:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxAZKkcw"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-557c188f313so2012569a12.1;
-        Mon, 08 Jan 2024 16:07:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704758858; x=1705363658; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aUySmjIsH1ToYk/DO1r1tgP06Oaww11ce8VZTbFo34Q=;
-        b=JxAZKkcwILY3AJzl/3O74LqvYqcA3605+7i85FDgSdbHXDPX8Q7DGbMnEtsFygQr0W
-         lhZd/OIKH180diPa38Adngf29bNKeP54hiRFMMItFcTqIC5CvXFaQCPJ21C63NeCUPDL
-         i6NwOYR2z+im/IrN84IjGnja58XSGltMLAM8mXlOCBAQ5RjQUfgxE2CHMaKzTW2RfCch
-         7570sgE8sSsJq2VJVoIxE5c4RXv+1YQpR/xTFOTj9NZRNxxe73WOfFAPq0XPTe3VCuMP
-         2xgCMeCM/IuDtl9cg0Jt732znlswtrZtWBEQ+00MQZQ5rLkhVUgFHEimI78AiwWJ0YSZ
-         mhmA==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ak+XmUIe"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1704759877;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wBgrmkRdNGMcly6vlN7IHOo4uqMRRCrvatkr8PlQXzA=;
+	b=Ak+XmUIefHSyqmX8dBh2Oeusw9olcX/jqrdvzo9iaH1+AtVxNAxgaP4QO5aDJnOYX+6mmq
+	yP9b8vyweBlWnNDlzpa5s533HU9aL4h/ee4A0t+L25IjJWQDZGfzomxeCH2UVVGUgh+RJ4
+	cEFIhj0ZMIC3KmmU54c72x6tND3LOKI=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-528-4XFYRMVDOXWgmQI1QwwePw-1; Mon, 08 Jan 2024 19:24:33 -0500
+X-MC-Unique: 4XFYRMVDOXWgmQI1QwwePw-1
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-6d9bd4fa279so1321377b3a.0
+        for <linux-security-module@vger.kernel.org>; Mon, 08 Jan 2024 16:24:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704758858; x=1705363658;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1704759872; x=1705364672;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aUySmjIsH1ToYk/DO1r1tgP06Oaww11ce8VZTbFo34Q=;
-        b=h8p/FwGs9KNRieDqZkm0ZTzSdZDdMIuFD+Y3OEnwcr5ElFW4OH8VyTkl8CCOv0J/cg
-         0SSY/YVZCTuBOyKMRrKf7etdL6zKWYT9Qc052AbDABMdwkeIw41dgVjkKFpuKk6kv071
-         nn/jLuOoep6segcUi+5k0vNZGK+dvIpPHJvITw7lRZH5kubdwzf7ObMtQ2r9l4gsEDhk
-         lP2glSMsW3QekoOK+1Sx3L1wUfnePlTyUx/yAhe4lSNNLlGFJ8SfT+4oGrV7ixiwZtc6
-         b8ugdWchX4xf7256g9kRIfdkOjennCZpmy1i4WSqWCintNnWAA1kRMf4/CxH4ZXZd4Mi
-         ONZQ==
-X-Gm-Message-State: AOJu0YzKErUQdczPI6uDXTJ1xby8KBRPbMTQ01fQQIm+6d5b/CK8y6c2
-	Yvma4lVrbbjzzKykP/S/KfDZdGfSYmxi10BTwX0=
-X-Google-Smtp-Source: AGHT+IEhZMahxE6XL79rn3qxvkTP/cFMykC14+MaP32XhB7A8NjWjyqurv88RNsV1NJ2Mo9tkD/G+zsebjNktJlHXRw=
-X-Received: by 2002:a50:a6dd:0:b0:557:e3f:2cec with SMTP id
- f29-20020a50a6dd000000b005570e3f2cecmr525326edc.13.1704758857611; Mon, 08 Jan
- 2024 16:07:37 -0800 (PST)
+        bh=wBgrmkRdNGMcly6vlN7IHOo4uqMRRCrvatkr8PlQXzA=;
+        b=oqYW4iZki72piOY1Bzv+7xxZYTiVaka6vPAiaV4CXt5wsECJk/pdLiS8Bfa8ZQine9
+         Td7yhHXrtVXqowDxJv+mcvBFTbc6MX4U4/oNwipw52Ca53qlRzKwxuIjqrkPN4sbDcQC
+         KvnF2lpdfJlnJM30+fFcnxzgk8Ur6/zkZ2mYeshPQtGgRvz7m+IWv+slNe36J8zSmgAo
+         EpYR97ZHaG2ofiZiG8He0mAA8MkYHuK+tXs0XpgoZItsd6VdqNhFJ3GkmPoI8MY8jTgG
+         Io+teUFsIZd2yQhzQjLkVFPUiUZnRia9sDA+TPyOYTEksRg73hFZnVEuXAd3MAZke11M
+         hsjw==
+X-Gm-Message-State: AOJu0YyASOlPNk+8Xf5RhOly3zQYzbOBJD8hC3G1yZLxOWlG4IkbVscx
+	NMSkYVDOZ93x3/imqMZaEOhfPQggBtQwCPx0Zo1ThDJ0nes5LpC4cUH0RJyYqjp+xnW3uc9IcsQ
+	mXD+Q8sFMOPN5xfCwakbVI7vDdKTGxQXvAA072F8qfSZI
+X-Received: by 2002:a05:6a20:1044:b0:195:192c:e5a5 with SMTP id gt4-20020a056a20104400b00195192ce5a5mr1584016pzc.56.1704759872388;
+        Mon, 08 Jan 2024 16:24:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFAYwqOIUUbzS4Z6Wh9myf9nF6QYMlenNKzdIdCeZBN2nChQ2/gE/uHykLmJ60rmWnGCpKmUA==
+X-Received: by 2002:a05:6a20:1044:b0:195:192c:e5a5 with SMTP id gt4-20020a056a20104400b00195192ce5a5mr1584007pzc.56.1704759871993;
+        Mon, 08 Jan 2024 16:24:31 -0800 (PST)
+Received: from localhost ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id jg11-20020a17090326cb00b001d403f114d2sm459444plb.303.2024.01.08.16.24.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jan 2024 16:24:31 -0800 (PST)
+From: Coiby Xu <coxu@redhat.com>
+To: linux-integrity@vger.kernel.org
+Cc: itrymybest80@protonmail.com,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] integrity: eliminate unnecessary "Problem loading X.509 certificate" msg
+Date: Tue,  9 Jan 2024 08:24:28 +0800
+Message-ID: <20240109002429.1129950-1-coxu@redhat.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20231227044156.166009-1-coxu@redhat.com>
+References: <20231227044156.166009-1-coxu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240103222034.2582628-1-andrii@kernel.org> <20240103222034.2582628-4-andrii@kernel.org>
- <CAHk-=wgmjr4nhxGheec1OwuYRk02d0+quUAViVk1v+w=Kvg15w@mail.gmail.com> <CAHC9VhQg7mYnQw-o1TYon_bdtk_CMzJaf6u5FTPosniG-UXK1w@mail.gmail.com>
-In-Reply-To: <CAHC9VhQg7mYnQw-o1TYon_bdtk_CMzJaf6u5FTPosniG-UXK1w@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 8 Jan 2024 16:07:25 -0800
-Message-ID: <CAEf4BzYMrvtTjkBUWOk1TKi8qiBbwv1xv=eJeF3j3QrY1M=h3g@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 03/29] bpf: introduce BPF token object
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>, Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, 
-	netdev@vger.kernel.org, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"; x-default=true
 
-On Mon, Jan 8, 2024 at 8:45=E2=80=AFAM Paul Moore <paul@paul-moore.com> wro=
-te:
->
-> On Fri, Jan 5, 2024 at 4:45=E2=80=AFPM Linus Torvalds
-> <torvalds@linuxfoundation.org> wrote:
-> > On Wed, 3 Jan 2024 at 14:21, Andrii Nakryiko <andrii@kernel.org> wrote:
-> > >
-> > > +bool bpf_token_capable(const struct bpf_token *token, int cap)
-> > > +{
-> > > +       /* BPF token allows ns_capable() level of capabilities, but o=
-nly if
-> > > +        * token's userns is *exactly* the same as current user's use=
-rns
-> > > +        */
-> > > +       if (token && current_user_ns() =3D=3D token->userns) {
-> > > +               if (ns_capable(token->userns, cap))
-> > > +                       return true;
-> > > +               if (cap !=3D CAP_SYS_ADMIN && ns_capable(token->usern=
-s, CAP_SYS_ADMIN))
-> > > +                       return true;
-> > > +       }
-> > > +       /* otherwise fallback to capable() checks */
-> > > +       return capable(cap) || (cap !=3D CAP_SYS_ADMIN && capable(CAP=
-_SYS_ADMIN));
-> > > +}
-> >
-> > This *feels* like it should be written as
-> >
-> >     bool bpf_token_capable(const struct bpf_token *token, int cap)
-> >     {
-> >         struct user_namespace *ns =3D &init_ns;
-> >
-> >         /* BPF token allows ns_capable() level of capabilities, but onl=
-y if
-> >          * token's userns is *exactly* the same as current user's usern=
-s
-> >          */
-> >         if (token && current_user_ns() =3D=3D token->userns)
-> >                 ns =3D token->userns;
-> >         return ns_capable(ns, cap) ||
-> >                 (cap !=3D CAP_SYS_ADMIN && capable(CAP_SYS_ADMIN));
-> >     }
-> >
-> > And yes, I realize that the function will end up later growing a
-> >
-> >         security_bpf_token_capable(token, cap)
-> >
-> > test inside that 'if (token ..)' statement, and this would change the
-> > order of that test so that the LSM hook would now be done before the
-> > capability checks are done, but that all still seems just more of an
-> > argument for the simplification.
->
-> I have no problem with rewriting things, my only ask is that we stick
-> with the idea of doing the capability checks before the LSM hook.  The
-> DAC-before-MAC (capability-before-LSM) pattern is one we try to stick
-> to most everywhere in the kernel and deviating from it here could
-> potentially result in some odd/unexpected behavior from a user
-> perspective.
+Currently when the kernel fails to add a cert to the .machine keyring,
+it will throw an error immediately in the function integrity_add_key.
 
-Makes sense, Paul. With the suggested rewrite we'll get an LSM call
-before we get to ns_capable() (which we avoid doing in BPF code base,
-generally speaking, after someone called this out earlier). Hmm...
+Since the kernel will try adding to the .platform keyring next or throw
+an error (in the caller of integrity_add_key i.e. add_to_machine_keyring),
+so there is no need to throw an error immediately in integrity_add_key.
 
-I guess it will be better to keep this logic as is then, I believe it
-was more of a subjective stylistical nit from Linus, so it probably is
-ok to keep existing code.
+Reported-by: itrymybest80@protonmail.com
+Closes: https://bugzilla.redhat.com/show_bug.cgi?id=2239331
+Fixes: d19967764ba8 ("integrity: Introduce a Linux keyring called machine")
+Reviewed-by: Eric Snowberg <eric.snowberg@oracle.com>
+Signed-off-by: Coiby Xu <coxu@redhat.com>
+---
+v2
+ - improve patch subject [Mimi]
+ - add Fixes tag [Jarkko]
+ - add Reviewed-by tag from Eric
+---
+ security/integrity/digsig.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Alternatively we could do something like:
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index df387de29bfa..45c3e5dda355 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -179,7 +179,8 @@ static int __init integrity_add_key(const unsigned int id, const void *data,
+ 				   KEY_ALLOC_NOT_IN_QUOTA);
+ 	if (IS_ERR(key)) {
+ 		rc = PTR_ERR(key);
+-		pr_err("Problem loading X.509 certificate %d\n", rc);
++		if (id != INTEGRITY_KEYRING_MACHINE)
++			pr_err("Problem loading X.509 certificate %d\n", rc);
+ 	} else {
+ 		pr_notice("Loaded X.509 cert '%s'\n",
+ 			  key_ref_to_ptr(key)->description);
+-- 
+2.43.0
 
-struct user_namespace *ns =3D &init_ns;
-
-if (token && current_user_ns() =3D=3D token->userns)
-    ns =3D token->user_ns;
-else
-    token =3D NULL;
-
-if (ns_capable(ns, cap) || (cap !=3D CAP_SYS_ADMIN && ns_capable(ns,
-CAP_SYS_ADMIN)) {
-    if (token)
-        return security_bpf_token_capable(token, cap) =3D=3D 0;
-    return true;
-}
-return false;
-
-Or something along those lines? I don't particularly care (though the
-latter seems a bit more ceremonious), so please let me know the
-preference, if any.
-
-
->
-> --
-> paul-moore.com
