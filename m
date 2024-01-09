@@ -1,46 +1,31 @@
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239F323D5
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Jan 2024 01:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66D01E520
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Jan 2024 09:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="AUhvoM9d"
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3bbd1f9e0b8so2033044b6e.0
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Jan 2024 17:11:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1704762706; x=1705367506; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IsIIeiWxjTUdMcHV5vV+/YzIyJnR5hFwWxYyoonKcCU=;
-        b=AUhvoM9dwgXbb0ZeRvY+H6v+hkDrSiM1Oy1zOQhwqUX7gvGoMAONc7HeWZMoPhZ1b6
-         xi0EjVru8670Jh52R6ajHDxSxf8zvswx5U2qfl/XDl0Ul1mzqPJqZL6mnE5AkogGU5yd
-         LSH9QDabP8d3FMLJ2j9NgU6jzHjuIHJvPAxTs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704762706; x=1705367506;
-        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IsIIeiWxjTUdMcHV5vV+/YzIyJnR5hFwWxYyoonKcCU=;
-        b=VDB9Aw2/Oev28OC7rPU/bNmuMQ1V/slOJUjdM2526xBliKMumWHwbPybY03l2RXNfd
-         plqUHn9RWTcfKW6oavqmpQEPzzBENGsz9ZdsK0ZqdB+UKKW1JBgM9viVkNPBAVQYqqjn
-         fzjMI93peNcFXL8+9DSyuDluYvYuIdTK+1VAtJz9tLjoKGQgCRYDY/4Wr5Vs8VjgSxBQ
-         a40VvirBkQwPqKeO1GaN9o7z5t/qrE8kkmUZCLKHkpm+5i2zhDFpmmSMrVEN37RrIubD
-         gKJrtmRz7hyyBHgJ57M5TMGYI2FS+cWogTGx6xRzqJW7eVZBPD9xvB4JeIDgIR8FquxI
-         WeEQ==
-X-Gm-Message-State: AOJu0YzNgcQ+0FjwhYa9XBOTpMuLhvFFhfyAGTEq3ePGd3YOFJcUaEUC
-	OLk5ydgfYONzkVsUlCrRRN72rfOMAL5P
-X-Google-Smtp-Source: AGHT+IFp601e9v6sUKl9/2ND9JThoIRoU+j/yd3/0RtNpZw3IDBI2NyMyJx0iC0xylM7wHbbiLgKeQ==
-X-Received: by 2002:a05:6871:7588:b0:204:4926:1824 with SMTP id nz8-20020a056871758800b0020449261824mr4588588oac.80.1704762706071;
-        Mon, 08 Jan 2024 17:11:46 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d10-20020a056a00198a00b006db00cb78a8sm478738pfl.179.2024.01.08.17.11.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jan 2024 17:11:44 -0800 (PST)
-Message-ID: <688dc165-5fee-488f-bdf9-a855d2fac71d@broadcom.com>
-Date: Mon, 8 Jan 2024 17:11:41 -0800
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="jHnQe4Wx"
+Received: from [192.168.192.85] (unknown [50.39.103.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id DC1EB3F6E0;
+	Tue,  9 Jan 2024 09:48:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1704793729;
+	bh=wKcTA+JfKnm5+S5arxIAKtKFGQurDYm8od3AChi9/6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=jHnQe4Wx+zeauOXnhdMYdsDa8IRs+afmjiKJJAZ/Pai04PEpnE3wzAgE+quVJic1M
+	 yUdK8veslUKLnh9d1plb1mG1fKRNbZWiYPHfIjbK+Zqmx+NMrzwf4IUMN631TN1N3a
+	 0IJ/LfzfoWRDg7hYAUG0nqwCQL7HdvTwvo57uvVGPXb4GqdJcXSmzhieNq1G4OwyH+
+	 jC5y2GIWJSCz3oHhuprQPalCjmyVpIBH4m7Tni/fi0svblVHxzJ6jc3pv0Hze4Fucx
+	 nwaxSWOrdlxoUFoBugBBEp/BYViBjEaC3gbz4fMTLyiUGGa0sXD5b5G0to7EdfKG6a
+	 C9fJ+ob9ik3tQ==
+Message-ID: <de306707-7406-4f5a-8827-ea6ed2cc68bc@canonical.com>
+Date: Tue, 9 Jan 2024 01:48:46 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -48,258 +33,113 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] wire up syscalls for statmount/listmount
-To: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
- linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
- Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
- David Howells <dhowells@redhat.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <christian@brauner.io>,
- Amir Goldstein <amir73il@gmail.com>, Matthew House
- <mattlloydhouse@gmail.com>, Florian Weimer <fweimer@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>
-References: <20231025140205.3586473-1-mszeredi@redhat.com>
- <20231025140205.3586473-7-mszeredi@redhat.com>
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAyxcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFrZXktdXNhZ2UtbWFz
- a0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2RpbmdAcGdwLmNvbXBn
- cG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29tLmNvbQUbAwAAAAMW
- AgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagBQJk1oG9BQkj4mj6AAoJEIEx
- tcQpvGag13gH/2VKD6nojbJ9TBHLl+lFPIlOBZJ7UeNN8Cqhi9eOuH97r4Qw6pCnUOeoMlBH
- C6Dx8AcEU+OH4ToJ9LoaKIByWtK8nShayHqDc/vVoLasTwvivMAkdhhq6EpjG3WxDfOn8s5b
- Z/omGt/D/O8tg1gWqUziaBCX+JNvrV3aHVfbDKjk7KRfvhj74WMadtH1EOoVef0eB7Osb0GH
- 1nbrPZncuC4nqzuayPf0zbzDuV1HpCIiH692Rki4wo/72z7mMJPM9bNsUw1FTM4ALWlhdVgT
- gvolQPmfBPttY44KRBhR3Ipt8r/dMOlshaIW730PU9uoTkORrfGxreOUD3XT4g8omuvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20231025140205.3586473-7-mszeredi@redhat.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000008a6bb5060e78ff6e"
-
---0000000000008a6bb5060e78ff6e
+Subject: Re: [PATCH] apparmor: Fix memory leak in unpack_profile()
 Content-Language: en-US
+To: Gaosheng Cui <cuigaosheng1@huawei.com>, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com, georgia.garcia@canonical.com
+Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
+References: <20240105020126.315700-1-cuigaosheng1@huawei.com>
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20240105020126.315700-1-cuigaosheng1@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hello,
-
-On 10/25/23 07:02, Miklos Szeredi wrote:
-> Wire up all archs.
+On 1/4/24 18:01, Gaosheng Cui wrote:
+> The aa_put_pdb(rules->file) should be called when rules->file is
+> reassigned, otherwise there may be a memory leak.
 > 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> This was found via kmemleak:
+> 
+> unreferenced object 0xffff986c17056600 (size 192):
+>    comm "apparmor_parser", pid 875, jiffies 4294893488
+>    hex dump (first 32 bytes):
+>      00 00 00 00 00 00 00 00 00 89 14 04 6c 98 ff ff  ............l...
+>      00 00 8c 11 6c 98 ff ff bc 0c 00 00 00 00 00 00  ....l...........
+>    backtrace (crc e28c80c4):
+>      [<ffffffffba25087f>] kmemleak_alloc+0x4f/0x90
+>      [<ffffffffb95ecd42>] kmalloc_trace+0x2d2/0x340
+>      [<ffffffffb98a7b3d>] aa_alloc_pdb+0x4d/0x90
+>      [<ffffffffb98ab3b8>] unpack_pdb+0x48/0x660
+>      [<ffffffffb98ac073>] unpack_profile+0x693/0x1090
+>      [<ffffffffb98acf5a>] aa_unpack+0x10a/0x6e0
+>      [<ffffffffb98a93e3>] aa_replace_profiles+0xa3/0x1210
+>      [<ffffffffb989a183>] policy_update+0x163/0x2a0
+>      [<ffffffffb989a381>] profile_replace+0xb1/0x130
+>      [<ffffffffb966cb64>] vfs_write+0xd4/0x3d0
+>      [<ffffffffb966d05b>] ksys_write+0x6b/0xf0
+>      [<ffffffffb966d10e>] __x64_sys_write+0x1e/0x30
+>      [<ffffffffba242316>] do_syscall_64+0x76/0x120
+>      [<ffffffffba4000e5>] entry_SYSCALL_64_after_hwframe+0x6c/0x74
+> 
+> So add aa_put_pdb(rules->file) to fix it when rules->file is reassigned.
+> 
+> Fixes: 98b824ff8984 ("apparmor: refcount the pdb")
+> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+
+yep, thanks. I have pulled this into the apparmor tree
+
+Acked-by: John Johansen <john.johansen@canonical.com>
+
 > ---
->   arch/alpha/kernel/syscalls/syscall.tbl      | 3 +++
->   arch/arm/tools/syscall.tbl                  | 3 +++
->   arch/arm64/include/asm/unistd32.h           | 4 ++++
->   arch/ia64/kernel/syscalls/syscall.tbl       | 3 +++
->   arch/m68k/kernel/syscalls/syscall.tbl       | 3 +++
->   arch/microblaze/kernel/syscalls/syscall.tbl | 3 +++
->   arch/mips/kernel/syscalls/syscall_n32.tbl   | 3 +++
->   arch/mips/kernel/syscalls/syscall_n64.tbl   | 3 +++
->   arch/mips/kernel/syscalls/syscall_o32.tbl   | 3 +++
->   arch/parisc/kernel/syscalls/syscall.tbl     | 3 +++
->   arch/powerpc/kernel/syscalls/syscall.tbl    | 3 +++
->   arch/s390/kernel/syscalls/syscall.tbl       | 3 +++
->   arch/sh/kernel/syscalls/syscall.tbl         | 3 +++
->   arch/sparc/kernel/syscalls/syscall.tbl      | 3 +++
->   arch/x86/entry/syscalls/syscall_32.tbl      | 3 +++
->   arch/x86/entry/syscalls/syscall_64.tbl      | 2 ++
->   arch/xtensa/kernel/syscalls/syscall.tbl     | 3 +++
->   include/uapi/asm-generic/unistd.h           | 8 +++++++-
->   18 files changed, 58 insertions(+), 1 deletion(-)
+>   security/apparmor/policy_unpack.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+> index 47ec097d6741..16afe992a724 100644
+> --- a/security/apparmor/policy_unpack.c
+> +++ b/security/apparmor/policy_unpack.c
+> @@ -1022,8 +1022,10 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
+>   		}
+>   	} else if (rules->policy->dfa &&
+>   		   rules->policy->start[AA_CLASS_FILE]) {
+> +		aa_put_pdb(rules->file);
+>   		rules->file = aa_get_pdb(rules->policy);
+>   	} else {
+> +		aa_put_pdb(rules->file);
+>   		rules->file = aa_get_pdb(nullpdb);
+>   	}
+>   	error = -EPROTO;
 
-FWIW, this broke the compat build on ARM64:
-
-./arch/arm64/include/asm/unistd32.h:922:24: error: array index in 
-initializer exceeds array bounds
-   922 | #define __NR_statmount 457
-       |                        ^~~
-arch/arm64/kernel/sys32.c:130:34: note: in definition of macro '__SYSCALL'
-   130 | #define __SYSCALL(nr, sym)      [nr] = __arm64_##sym,
-       |                                  ^~
-./arch/arm64/include/asm/unistd32.h:923:11: note: in expansion of macro 
-'__NR_statmount'
-   923 | __SYSCALL(__NR_statmount, sys_statmount)
-       |           ^~~~~~~~~~~~~~
-./arch/arm64/include/asm/unistd32.h:922:24: note: (near initialization 
-for 'compat_sys_call_table')
-   922 | #define __NR_statmount 457
-       |                        ^~~
-arch/arm64/kernel/sys32.c:130:34: note: in definition of macro '__SYSCALL'
-   130 | #define __SYSCALL(nr, sym)      [nr] = __arm64_##sym,
-       |                                  ^~
-./arch/arm64/include/asm/unistd32.h:923:11: note: in expansion of macro 
-'__NR_statmount'
-   923 | __SYSCALL(__NR_statmount, sys_statmount)
-       |           ^~~~~~~~~~~~~~
-arch/arm64/kernel/sys32.c:130:40: warning: excess elements in array 
-initializer
-   130 | #define __SYSCALL(nr, sym)      [nr] = __arm64_##sym,
-       |                                        ^~~~~~~~
-./arch/arm64/include/asm/unistd32.h:923:1: note: in expansion of macro 
-'__SYSCALL'
-   923 | __SYSCALL(__NR_statmount, sys_statmount)
-       | ^~~~~~~~~
-arch/arm64/kernel/sys32.c:130:40: note: (near initialization for 
-'compat_sys_call_table')
-   130 | #define __SYSCALL(nr, sym)      [nr] = __arm64_##sym,
-       |                                        ^~~~~~~~
-./arch/arm64/include/asm/unistd32.h:923:1: note: in expansion of macro 
-'__SYSCALL'
-   923 | __SYSCALL(__NR_statmount, sys_statmount)
-       | ^~~~~~~~~
-./arch/arm64/include/asm/unistd32.h:924:24: error: array index in 
-initializer exceeds array bounds
-   924 | #define __NR_listmount 458
-       |                        ^~~
-arch/arm64/kernel/sys32.c:130:34: note: in definition of macro '__SYSCALL'
-   130 | #define __SYSCALL(nr, sym)      [nr] = __arm64_##sym,
-       |                                  ^~
-./arch/arm64/include/asm/unistd32.h:925:11: note: in expansion of macro 
-'__NR_listmount'
-   925 | __SYSCALL(__NR_listmount, sys_listmount)
-       |           ^~~~~~~~~~~~~~
-./arch/arm64/include/asm/unistd32.h:924:24: note: (near initialization 
-for 'compat_sys_call_table')
-   924 | #define __NR_listmount 458
-       |                        ^~~
-arch/arm64/kernel/sys32.c:130:34: note: in definition of macro '__SYSCALL'
-   130 | #define __SYSCALL(nr, sym)      [nr] = __arm64_##sym,
-       |                                  ^~
-./arch/arm64/include/asm/unistd32.h:925:11: note: in expansion of macro 
-'__NR_listmount'
-   925 | __SYSCALL(__NR_listmount, sys_listmount)
-       |           ^~~~~~~~~~~~~~
-arch/arm64/kernel/sys32.c:130:40: warning: excess elements in array 
-initializer
-   130 | #define __SYSCALL(nr, sym)      [nr] = __arm64_##sym,
-       |                                        ^~~~~~~~
-./arch/arm64/include/asm/unistd32.h:925:1: note: in expansion of macro 
-'__SYSCALL'
-   925 | __SYSCALL(__NR_listmount, sys_listmount)
-       | ^~~~~~~~~
-arch/arm64/kernel/sys32.c:130:40: note: (near initialization for 
-'compat_sys_call_table')
-   130 | #define __SYSCALL(nr, sym)      [nr] = __arm64_##sym,
-       |                                        ^~~~~~~~
-./arch/arm64/include/asm/unistd32.h:925:1: note: in expansion of macro 
-'__SYSCALL'
-   925 | __SYSCALL(__NR_listmount, sys_listmount)
-       | ^~~~~~~~~
-host-make[5]: *** [scripts/Makefile.build:243: 
-arch/arm64/kernel/sys32.o] Error 1
-host-make[4]: *** [scripts/Makefile.build:480: arch/arm64/kernel] Error 2
-host-make[3]: *** [scripts/Makefile.build:480: arch/arm64] Error 2
-host-make[3]: *** Waiting for unfinished jobs....
-
-Sent out a fix for that:
-
-https://lore.kernel.org/all/20240109010906.429652-1-florian.fainelli@broadcom.com/
--- 
-Florian
-
-
---0000000000008a6bb5060e78ff6e
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
-9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
-AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
-UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
-KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
-nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
-Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
-BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
-KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
-kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
-2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
-3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
-NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
-AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
-LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
-/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIAM5yt5UQxTGAlYb
-ALe+2QjojUUx8TX7a0W9AzAP3q12MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-AQkFMQ8XDTI0MDEwOTAxMTE0NlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
-AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
-MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQD3P7pTnbQypk3ax2nFb81LsOPYmshSqY9f
-eqblQ7fb68ZorSAYloqoBA20GbwWFB5S+98VKNpkrLeAWcgAc/WlHoOoZnJHPXERrF+hj5TNUMLf
-T7RuexW7Ijp4qh1+M9CEgafaspP2Hqx157if+HsrHUErY+TnH7w2YUDcuPuSzXSLfKf6+J7yDVEZ
-Xc1HnG2QyG9fwu0e++oi3Dl8hnbqt0+bDXVNBNANkH0zpxPXvMkw4p9Xr47NYC3vTwNCmkzyA9c/
-Xck8I1QXORtFUFz5KyvELqt519UMsVZPoJrBkkDJRQbA5stVdDejLulrd4LKnazVLEejb7eDsFA9
-LTbx
---0000000000008a6bb5060e78ff6e--
