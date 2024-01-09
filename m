@@ -1,91 +1,55 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCCD3D56E
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Jan 2024 21:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134503DB8F;
+	Tue,  9 Jan 2024 21:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UWlSS6Yx"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a27733ae1dfso387868766b.3
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Jan 2024 13:08:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1704834497; x=1705439297; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=n5OP/fkUpA71bK1KZM2DjGPMtohQ3KQSJyVNV5c2Cc4=;
-        b=UWlSS6Yxl1p5721X8eP93FRoIWlkp5L5CYtgFZoMHT9P/aOafWpLOMJqTd3ZY/NPzb
-         V5+jTMqeNMgWvAJY6xBtCQzMkFnwm6Snt3CIXGH0qewqwbODL5LYrCogFBOafLxsw4pF
-         W5rriunfCkUIz9wnz98DglfZih3Jz3LN08K0I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704834497; x=1705439297;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n5OP/fkUpA71bK1KZM2DjGPMtohQ3KQSJyVNV5c2Cc4=;
-        b=w90pvcBglpDWkdA2tuBrQuxPEqjbwYcKhAH6puPm3eAViEVB1YEoVVrkfM5wiiSJO3
-         F52/X1OTz43dc55n0Nqb8D40Zv+xwD2Wo+rv0hA0e5vVKep7Hf23BwNzGZ2TibQ8U4LY
-         RDhyVSDMTp9U+BxhGyOn9J7iabKUxKDcjX4phhKQ/eKkUVPO1da8Nm3Cp0omW1YbuYvB
-         CfUX/x97/TF3ierRaf4D+SF4X3MXqVTMnYbjZaChr1Foik9wiEa85jLHWlWpPFDxOca8
-         mNYMKx8EAo5ytm/IYuPGVmGrHBKxsyQHCvF3HwfUnUszY0VteKFD8nrr+bI/tI89wKj3
-         6beg==
-X-Gm-Message-State: AOJu0YztC08+yaSmLfa6VR9Y/U3/319nt9hRGZRWmin+tRdV5L6vOPFe
-	EdOwU6YOf7LXlOxLGTJp96PUlwTx7xKssYZJ20qe5z/t/rzUjtj7
-X-Google-Smtp-Source: AGHT+IEhSvpD8lCL4RNCrM6tmPAi76Q2O92UZ/V6D2E7XC9HiXjUPY78kqL43zveqCiDnLxGYj27YQ==
-X-Received: by 2002:a17:907:6d15:b0:a28:b554:f400 with SMTP id sa21-20020a1709076d1500b00a28b554f400mr29594ejc.143.1704834497175;
-        Tue, 09 Jan 2024 13:08:17 -0800 (PST)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id g17-20020a170906595100b00a2a4086c6b0sm1403881ejr.82.2024.01.09.13.08.16
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jan 2024 13:08:16 -0800 (PST)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-554fe147ddeso3973876a12.3
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Jan 2024 13:08:16 -0800 (PST)
-X-Received: by 2002:a17:906:f599:b0:a27:a00a:bd8a with SMTP id
- cm25-20020a170906f59900b00a27a00abd8amr37454ejd.151.1704834496115; Tue, 09
- Jan 2024 13:08:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9lkYyb5"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DDF51C433C7;
+	Tue,  9 Jan 2024 21:40:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704836403;
+	bh=kvsBYNbFTCF3Dytux3XmCSv2ryK9gn9krpSU9O4MDlI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=u9lkYyb5O/WE2pJ8VL3uMYw0xKfHWrGs2zsk/I0su0JVM6ZaRrLBwR6nwvEwLcpRX
+	 1ekuqbfmS+quxwq0Ls8xWRgOnYeU+5eiRHZ/Kc9vkvZp+/7qEd4IPwQvfEeIk1vefA
+	 O7K2tbqwQyDzL1RqfYHXD2YqCo3WKK0AYYFB6u0XTqUMCMfop6uMPnb8hna2pn3J5q
+	 woSTsKhtemuw1nQfj4GjxzeHij7b3D0+KuekzzaEZ8SkkUJOvaYW8mv1F+xdI4rYa7
+	 sRS3bkR9nNAjHiicm0kghnOrVjBeOwWGSpcu4VBdauQSqZmlsFpIqgQcMbhDWMVKRj
+	 xRJq0v3l3meZQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BA8BBD8C97D;
+	Tue,  9 Jan 2024 21:40:03 +0000 (UTC)
+Subject: Re: [GIT PULL] selinux/selinux-pr-20240105
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <7502247c0a4439b9bcf2c2ae315f2433@paul-moore.com>
+References: <7502247c0a4439b9bcf2c2ae315f2433@paul-moore.com>
+X-PR-Tracked-List-Id: <selinux.vger.kernel.org>
+X-PR-Tracked-Message-Id: <7502247c0a4439b9bcf2c2ae315f2433@paul-moore.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20240105
+X-PR-Tracked-Commit-Id: bbf5a1d0e5d0fb3bdf90205aa872636122692a50
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 9f9310bf87348e36a98ffa09c4e285908c14f592
+Message-Id: <170483640372.1854.8716271357643713939.pr-tracker-bot@kernel.org>
+Date: Tue, 09 Jan 2024 21:40:03 +0000
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <3f5a7bc467d221543444a268dd1a1fe0@paul-moore.com>
-In-Reply-To: <3f5a7bc467d221543444a268dd1a1fe0@paul-moore.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 9 Jan 2024 13:07:59 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whb9anXdo4odpP-ybYbmQs0UaPp1fmDjsWFiGxV5aOmig@mail.gmail.com>
-Message-ID: <CAHk-=whb9anXdo4odpP-ybYbmQs0UaPp1fmDjsWFiGxV5aOmig@mail.gmail.com>
-Subject: Re: [GIT PULL] lsm/lsm-pr-20240105
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 5 Jan 2024 at 15:21, Paul Moore <paul@paul-moore.com> wrote:
->
->             The hightlights of the LSM pull
-> request are below, but before we get to that I want to mention that I
-> expect you will hit merge conflicts in the arch-specific syscall
-> tables as well as in the doc userspace-api documentation index.  Some
-> of these conflicts exist in your tree now (syscall tables), with some
-> others likely depending on what is submitted from linux-next and the
-> order in which you merge things.  All of the conflicts that I've seen
-> have been rather trivial and easily resolved, but I wanted to give you
-> a heads-up; if you want me to resolve any of these let me know.
+The pull request you sent on Fri, 05 Jan 2024 18:21:08 -0500:
 
-The tooling header file updates by the LSM tree were particularly annoying.
+> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20240105
 
-Not because the conflicts were hard per se, but because you had done
-the header files wrong in the first place.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/9f9310bf87348e36a98ffa09c4e285908c14f592
 
-Your version of the tooling header files just didn't match the real
-ones, as you had added your new system calls at the end mindlessly,
-without noticing that others had *not* done so, so all your tooling
-header system call number additions were just the wrong numbers
-entirely.
+Thank you!
 
-I fixed it up, but it added an extra layer of "this is just annoying".
-You'd have been better off not touching the tooling headers at all,
-rather than touch them incorrectly.
-
-            Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
