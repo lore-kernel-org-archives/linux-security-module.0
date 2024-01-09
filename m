@@ -1,212 +1,108 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B4A39FC1;
-	Tue,  9 Jan 2024 14:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBFD38DF8;
+	Tue,  9 Jan 2024 17:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Od8BLm4R"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27460C43390;
-	Tue,  9 Jan 2024 14:52:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pBXR0hDI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFD56C433F1;
+	Tue,  9 Jan 2024 17:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704811977;
-	bh=S90JwoGqrhYDr8dwbZL7cRnsaQPQaOCVstXRiwl3lH0=;
+	s=k20201202; t=1704823097;
+	bh=jPQukDAtVbClY9EBeS+NqfHyLacDsIvaawr24NohtKA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Od8BLm4R6W2jaUoX63vvjEQdd5HSaJQykSfDxxa4o9KF7rkujYCjG1DEPqEWOa3PQ
-	 WvXLBQ3Q+XRSYjupjqUO8q+s12ZVEiCyBFG7Wxma+imeDJXpJl7L1tAEF2ARwYRrx+
-	 thD58aL1NcZ6aesFheGbOpaM9OjWsHBL0byZCcgp7JmJmZs+Sj26kBB6udH6KVvNkt
-	 IcHgh59sAIyBOCUGPEzAI1ju7R1HjDdaP3gWZZBMG3UJyczkByLJskjvX3uMaVlwbF
-	 Y1WSEXB0kOWp2WhLvRszFRhlN6pTCIPf6oncI5yetluqQZk5B4SRZ95622fZqrJWD0
-	 i6VGl+IHiCuGQ==
-Date: Tue, 9 Jan 2024 15:52:52 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH bpf-next 03/29] bpf: introduce BPF token object
-Message-ID: <20240109-tausend-tropenhelm-2a9914326249@brauner>
-References: <20240103222034.2582628-1-andrii@kernel.org>
- <20240103222034.2582628-4-andrii@kernel.org>
- <CAHk-=wgmjr4nhxGheec1OwuYRk02d0+quUAViVk1v+w=Kvg15w@mail.gmail.com>
- <CAEf4Bzb6jnJL98SLPJB7Vjxo_O33W8HjJuAsyP3+6xigZtsTkA@mail.gmail.com>
- <20240108-gasheizung-umstand-a36d89ed36b7@brauner>
- <CAEf4Bzb+7NzYs5ScggtgAJ6A5-oU5GymvdoEbpfNVOG-XmWZig@mail.gmail.com>
+	b=pBXR0hDIxuyEvjXNm0ZHkn82qvWJPxEeg8vRLhUWpcgwAjyw9QDysog3LK2PVQult
+	 9Go+Fi125jYvZDB64hW3vCXxDEcn1/BK+pt5NqtqqQKLTdqo9bY948RcuvcxU2solW
+	 4vKCSzlftGX3C8MVRS35uscVo5/xKVpYDqx9lrU9Apjy76V+ddXDE8gB+2mmN0AuZf
+	 oPcWHesQh5ieuYvzxayCuvHpRXx3KbE78X0kmN1z43HIDK8fHuuSm5D93GP6NTB/A2
+	 otf9gtIxEuJz5XBV4wxvbQ8xXHf1BOfBSoPrqMAdPLvPhwTHpw3vbnYVN41E5sHJLi
+	 jqPfsfuLkmYcA==
+Date: Tue, 9 Jan 2024 10:58:14 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, ardb@kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	bhelgaas@google.com, arnd@arndb.de, zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, javierm@redhat.com, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev, linux-arch@vger.kernel.org,
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] arch/x86: Move internal setup_data structures
+ into setup_data.h
+Message-ID: <20240109175814.GA5981@dev-arch.thelio-3990X>
+References: <20240108095903.8427-3-tzimmermann@suse.de>
+ <202401090800.UOBEKB3W-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4Bzb+7NzYs5ScggtgAJ6A5-oU5GymvdoEbpfNVOG-XmWZig@mail.gmail.com>
+In-Reply-To: <202401090800.UOBEKB3W-lkp@intel.com>
 
-On Mon, Jan 08, 2024 at 03:58:47PM -0800, Andrii Nakryiko wrote:
-> On Mon, Jan 8, 2024 at 4:02 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Fri, Jan 05, 2024 at 02:18:40PM -0800, Andrii Nakryiko wrote:
-> > > On Fri, Jan 5, 2024 at 1:45 PM Linus Torvalds
-> > > <torvalds@linuxfoundation.org> wrote:
-> > > >
-> > > > Ok, I've gone through the whole series now, and I don't find anything
-> > > > objectionable.
-> > >
-> > > That's great, thanks for reviewing!
-> > >
-> > > >
-> > > > Which may only mean that I didn't notice something, of course, but at
-> > > > least there's nothing I'd consider obvious.
-> > > >
-> > > > I keep coming back to this 03/29 patch, because it's kind of the heart
-> > > > of it, and I have one more small nit, but it's also purely stylistic:
-> > > >
-> > > > On Wed, 3 Jan 2024 at 14:21, Andrii Nakryiko <andrii@kernel.org> wrote:
-> > > > >
-> > > > > +bool bpf_token_capable(const struct bpf_token *token, int cap)
-> > > > > +{
-> > > > > +       /* BPF token allows ns_capable() level of capabilities, but only if
-> > > > > +        * token's userns is *exactly* the same as current user's userns
-> > > > > +        */
-> > > > > +       if (token && current_user_ns() == token->userns) {
-> > > > > +               if (ns_capable(token->userns, cap))
-> > > > > +                       return true;
-> > > > > +               if (cap != CAP_SYS_ADMIN && ns_capable(token->userns, CAP_SYS_ADMIN))
-> > > > > +                       return true;
-> > > > > +       }
-> > > > > +       /* otherwise fallback to capable() checks */
-> > > > > +       return capable(cap) || (cap != CAP_SYS_ADMIN && capable(CAP_SYS_ADMIN));
-> > > > > +}
-> > > >
-> > > > This *feels* like it should be written as
-> > > >
-> > > >     bool bpf_token_capable(const struct bpf_token *token, int cap)
-> > > >     {
-> > > >         struct user_namespace *ns = &init_ns;
-> > > >
-> > > >         /* BPF token allows ns_capable() level of capabilities, but only if
-> > > >          * token's userns is *exactly* the same as current user's userns
-> > > >          */
-> > > >         if (token && current_user_ns() == token->userns)
-> > > >                 ns = token->userns;
-> > > >         return ns_capable(ns, cap) ||
-> > > >                 (cap != CAP_SYS_ADMIN && capable(CAP_SYS_ADMIN));
-> > > >     }
-> > > >
-> > > > And yes, I realize that the function will end up later growing a
-> > > >
-> > > >         security_bpf_token_capable(token, cap)
-> > > >
-> > > > test inside that 'if (token ..)' statement, and this would change the
-> > > > order of that test so that the LSM hook would now be done before the
-> > > > capability checks are done, but that all still seems just more of an
-> > > > argument for the simplification.
-> > > >
-> > > > So the end result would be something like
-> > > >
-> > > >     bool bpf_token_capable(const struct bpf_token *token, int cap)
-> > > >     {
-> > > >         struct user_namespace *ns = &init_ns;
-> > > >
-> > > >         if (token && current_user_ns() == token->userns) {
-> > > >                 if (security_bpf_token_capable(token, cap) < 0)
-> > > >                         return false;
-> > > >                 ns = token->userns;
-> > > >         }
-> > > >         return ns_capable(ns, cap) ||
-> > > >                 (cap != CAP_SYS_ADMIN && capable(CAP_SYS_ADMIN));
-> > > >     }
-> > >
-> > > Yep, it makes sense to use ns_capable with init_ns. I'll change those
-> > > two patches to end up with something like what you suggested here.
-> > >
-> > > >
-> > > > although I feel that with that LSM hook, maybe this all should return
-> > > > the error code (zero or negative), not a bool for success?
-> > > >
-> > > > Also, should "current_user_ns() != token->userns" perhaps be an error
-> > > > condition, rather than a "fall back to init_ns" condition?
-> > > >
-> > > > Again, none of this is a big deal. I do think you're dropping the LSM
-> > > > error code on the floor, and are duplicating the "ns_capable()" vs
-> > > > "capable()" logic as-is, but none of this is a deal breaker, just more
-> > > > of my commentary on the patch and about the logic here.
-> > > >
-> > > > And yeah, I don't exactly love how you say "ok, if there's a token and
-> > > > it doesn't match, I'll not use it" rather than "if the token namespace
-> > > > doesn't match, it's an error", but maybe there's some usability issue
-> > > > here?
-> > >
-> > > Yes, usability was the primary concern. The overall idea with BPF
-> >
-> > NAK on not restricting this to not erroring out on current_user_ns()
-> > != token->user_ns. I've said this multiple times before.
+On Tue, Jan 09, 2024 at 08:28:59AM +0800, kernel test robot wrote:
+> Hi Thomas,
 > 
-> I do restrict token usage to *exact* userns in which the token was
-> created. See bpf_token_capable()'s
+> kernel test robot noticed the following build warnings:
 > 
-> if (token && current_user_ns() == token->userns) { ... }
+> [auto build test WARNING on tip/x86/core]
+> [also build test WARNING on efi/next tip/master tip/auto-latest linus/master v6.7 next-20240108]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
 > 
-> and in bpf_token_allow_cmd():
+> url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Zimmermann/arch-x86-Move-UAPI-setup-structures-into-setup_data-h/20240108-180158
+> base:   tip/x86/core
+> patch link:    https://lore.kernel.org/r/20240108095903.8427-3-tzimmermann%40suse.de
+> patch subject: [PATCH v4 2/4] arch/x86: Move internal setup_data structures into setup_data.h
+> config: x86_64-rhel-8.3-bpf (https://download.01.org/0day-ci/archive/20240109/202401090800.UOBEKB3W-lkp@intel.com/config)
+> compiler: ClangBuiltLinux clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240109/202401090800.UOBEKB3W-lkp@intel.com/reproduce)
 > 
-> if (!token || current_user_ns() != token->userns)
->     return false;
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202401090800.UOBEKB3W-lkp@intel.com/
 > 
-> So I followed what you asked in [1] (just like I said I will in [2]),
-> unless I made some stupid mistake which I cannot even see.
+> All warnings (new ones prefixed by >>):
 > 
-> 
-> What we are discussing here is a different question. It's the
-> difference between erroring out (that is, failing whatever BPF
-> operation was attempted with such token, i.e., program loading or map
-> creation) vs ignoring the token altogether and just using
-> init_ns-based capable() checks. And the latter is vastly more user
+>    In file included from arch/x86/realmode/rm/wakemain.c:3:
+>    In file included from arch/x86/boot/boot.h:24:
+>    In file included from arch/x86/include/asm/setup.h:10:
+>    In file included from arch/x86/include/asm/page_types.h:7:
+>    In file included from include/linux/mem_encrypt.h:17:
+>    In file included from arch/x86/include/asm/mem_encrypt.h:18:
+>    In file included from arch/x86/include/uapi/asm/bootparam.h:5:
+> >> arch/x86/include/asm/setup_data.h:10:20: warning: field 'data' with variable sized type 'struct setup_data' not at the end of a struct or class is a GNU extension [-Wgnu-variable-sized-type-not-at-end]
+>       10 |         struct setup_data data;
+>          |                           ^
+>    1 warning generated.
 
-Look at this:
+I think this warning is expected. This structure is now included in the
+realmode part of arch/x86, which has its own set of build flags,
+including -Wall, which includes -Wgnu on clang. The kernel obviously
+uses GNU extensions and states this clearly with '-std=gnu11', so
+-Wno-gnu is unconditionally added to KBUILD_CFLAGS for clang. It seems
+that same treatment is needed for REALMODE_CFLAGS, which also matches
+arch/x86/boot/compressed/Makefile, see commit 6c3b56b19730 ("x86/boot:
+Disable Clang warnings about GNU extensions"):
 
-+bool bpf_token_capable(const struct bpf_token *token, int cap)
-+{
-+       /* BPF token allows ns_capable() level of capabilities, but only if
-+        * token's userns is *exactly* the same as current user's userns
-+        */
-+       if (token && current_user_ns() == token->userns) {
-+               if (ns_capable(token->userns, cap))
-+                       return true;
-+               if (cap != CAP_SYS_ADMIN && ns_capable(token->userns, CAP_SYS_ADMIN))
-+                       return true;
-+       }
-+       /* otherwise fallback to capable() checks */
-+       return capable(cap) || (cap != CAP_SYS_ADMIN && capable(CAP_SYS_ADMIN));
-+}
-
-How on earth is it possible that the calling task is in a user namespace
-aka current_user_ns() == token->userns while at the same time being
-capable in the initial user namespace? When you enter an
-unprivileged user namespace you lose all capabilities against your
-ancestor user namespace and you can't reenter your ancestor user
-namespace.
-
-IOW, if current_user_ns() == token->userns and token->userns !=
-init_user_ns, then current_user_ns() != init_user_ns. And therefore that
-thing is essentially always false for all interesting cases, no?
-
-Aside from that it would be semantically completely unclean. The user
-has specified a token and permission checking should be based on that
-token and not magically fallback to a capable check in the inital user
-namespace even if that worked.
-
-Because the only scenario where that is maybe useful is if an
-unprivileged container has dropped _both_ CAP_BPF and CAP_SYS_ADMIN from
-the user namespace of the container.
-
-First of, why? What thread model do you have then? Second, if you do
-stupid stuff like that then you don't get bpf in the container via bpf
-tokens. Period.
-
-Restrict the meaning and validity of a bpf token to the user namespace
-and do not include escape hatches such as this. Especially not in this
-initial version, please.
-
-I'm not trying to be difficult but it's clear that the implications of
-user namespaces aren't well understood here. And historicaly they are
-exploit facilitators as much as exploit preventers.
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 1a068de12a56..24076db59783 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -53,6 +53,9 @@ REALMODE_CFLAGS += -fno-stack-protector
+ REALMODE_CFLAGS += -Wno-address-of-packed-member
+ REALMODE_CFLAGS += $(cc_stack_align4)
+ REALMODE_CFLAGS += $(CLANG_FLAGS)
++ifdef CONFIG_CC_IS_CLANG
++REALMODE_CFLAGS += -Wno-gnu
++endif
+ export REALMODE_CFLAGS
+ 
+ # BITS is used as extension for files which are available in a 32 bit
