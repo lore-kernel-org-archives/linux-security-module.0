@@ -1,533 +1,478 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2053.outbound.protection.outlook.com [40.107.94.53])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2085.outbound.protection.outlook.com [40.107.220.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEF84779D;
-	Wed, 10 Jan 2024 11:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E6E46BA6;
+	Wed, 10 Jan 2024 11:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="u1B7C+NU"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zOL0+dXM"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=N1yQz8C5o70ngS533PKxBMim7nYWY3qJHDwDubzAS0yirbGJ9iUQChJdHEMDSAnBjkcp4qVi4GkSVxdYOMHvuUd5xrGCelUgwXesw77lOLtQOnuRXDQ9DmLpQ400rWm5htLll9dF31j/X5XEnt3KYarw5N2TOhWNPkmVdx7rc8s7qlFeoEQnV45e2PMrajItiUlk7OBIQGK+uIUh3alzqIk4ukE4NM40+l/ubwUeBoRwgUpGGy/Ngpi0PNwOj1zRkSSc97PR5/A7mZNdeJ+/WCU8B061oTGWpRPRTd3xDWMBggvXAq40LXU8I8wgiOJAApi201DI6JSzogr45Ho7/A==
+ b=hDbyLqhfeRlUe6XVMn/NkOR6gBX0701nVfEP2gCrD+PEJWFAwICwJ4UOzofOY8hLthSfbjwZovDmz4olk3sTtNKXE4VG0sG1WofYaRPr3dyrtLN5xKi1AKTdC7/Toioo4cYSLYJq8Q7S6aj0lIlY4NahQ4O/h1Z5pwOypgAfHKExGMXGYmdWMc7Si8JSSn8IkGgxNPqZYLTcoccHAJgIv96BJqU8XZIvJZgw8v1r9ZJdXEGURsbydcVb3j8jpI5Rjc9BfN1tV07xT2Eyjs0JBxk5kbZO5zI/OEhDtoaL67CrSJ7V/HFZHc/xFGEK144QRhm0qV1Vvin3UaWWr7jmxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nnHbpm8zMw5OXqK2gaBWogCXjikCwWL0RuBOsVuOaNQ=;
- b=l4GU1I/aZsPt0dXmVSqEXLXFgulid+TyidyeRdj02xeoO9MkuDp26PsBHMuySJ5weF6MfPHWZT4jr8JUZv+QUM50y2V1g9I4gPikD87bs8vF+FalEv1NeK5YsZI3yfWaZ0yIBTF+NGjSsnAp+B0uQpm9RFaDy2X9HeFMESxTwF97KOJjzJwZ+YV3t7TRa75XPwUN41Yhm+rTuDo9dQVavyt1+PuY7L81cAzDRC/Djy16uMT5hwFMrO7/BmXNiEBHR8uZTNsIqJZkwRJdq1X8zAsM8g6Ozz9wNLA/Wn0hADu1sjErUVGsCJuEFYLOjjlDP9kAsd2AGv6lkE9xN9PHkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+ bh=s7YHBUwUNfex96uK8+Htccp+8JTFV7ES+6ywHgrEbLU=;
+ b=XNyTdpZNBWNEP6ntWudjMq3A/5Ua9gJEWF65dn9FJccj59YmpEiSefgIo4WT3lM9aM31C13cGYXHpLYk2Zh0xyY/txz46Td/TMpb5RLUByGozXesBTlpqnS7bx2BKs6EXZqcEsIfZS8srGG7q9WVXsKhwKb6locW0BSCP0C5ss65EI9g1qnxBqElVkKa+dZSkUf644M1QCF5kWDRBXSjwOUYSGBluNH/kqBWLkgbpYxI1jqG+jwO82T0TkW9Vsuu2IHVrFMMivTzRgnWEUg7NGaDXeSELt5mxNMGDGhlzNEpTVMGW3WWIuBXzlLX/PPwnRxRUUv6d+Z97fuCYAKdzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=canonical.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nnHbpm8zMw5OXqK2gaBWogCXjikCwWL0RuBOsVuOaNQ=;
- b=u1B7C+NUehyjfxTG6h8rYR+19blxvYkoTIjRdaWSzltcYlJEmbhTP4WzMC56jeV7Gt2/jmAKCxRWsYZLyrVyWGPtItNjmXY8x/WYdjgUT9c+VL4o+RzgvSBK0JhbwSoeOoZkVOFh7wqEx6Cn7wxQHibmruYuyEmaPJ5k718aVIg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
- MN2PR12MB4286.namprd12.prod.outlook.com (2603:10b6:208:199::22) with
+ bh=s7YHBUwUNfex96uK8+Htccp+8JTFV7ES+6ywHgrEbLU=;
+ b=zOL0+dXMa9JQOTo89SOHJUGMg8qETbaMIxkIVsv8H5B2NgjkN/jbbly9Ae6KKlWJ5x3ErZeWOWYldlJKtkqCEIATvOZUTEZFg2xoZuLGQ3FByzUHTbdJbipVOlcPAQMyaf73q/9uG2V+rUuQwUjgGPToaFoMYcnZm/4LEn8BWwA=
+Received: from CH0P223CA0006.NAMP223.PROD.OUTLOOK.COM (2603:10b6:610:116::24)
+ by SJ0PR12MB6879.namprd12.prod.outlook.com (2603:10b6:a03:484::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.17; Wed, 10 Jan
- 2024 11:11:29 +0000
-Received: from DS0PR12MB6608.namprd12.prod.outlook.com
- ([fe80::6205:5d13:e769:5b0d]) by DS0PR12MB6608.namprd12.prod.outlook.com
- ([fe80::6205:5d13:e769:5b0d%7]) with mapi id 15.20.7159.020; Wed, 10 Jan 2024
- 11:11:29 +0000
-Message-ID: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com>
-Date: Wed, 10 Jan 2024 16:41:18 +0530
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- "Shukla, Santosh" <Santosh.Shukla@amd.com>,
- "Narayan, Ananth" <Ananth.Narayan@amd.com>,
- raghavendra.kodsarathimmappa@amd.com, koverstreet@google.com,
- paulmck@kernel.org, boqun.feng@gmail.com, vinicius.gomes@intel.com,
- mjguzik@gmail.com
+ 2024 11:18:59 +0000
+Received: from DS2PEPF00003441.namprd04.prod.outlook.com
+ (2603:10b6:610:116:cafe::9b) by CH0P223CA0006.outlook.office365.com
+ (2603:10b6:610:116::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.18 via Frontend
+ Transport; Wed, 10 Jan 2024 11:18:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS2PEPF00003441.mail.protection.outlook.com (10.167.17.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7181.14 via Frontend Transport; Wed, 10 Jan 2024 11:18:58 +0000
+Received: from BLR-L-NUPADHYA.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.34; Wed, 10 Jan
+ 2024 05:18:53 -0600
 From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Subject: [RFC 0/9] Nginx refcount scalability issue with Apparmor enabled and
- potential solutions
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0072.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:23::17) To DS0PR12MB6608.namprd12.prod.outlook.com
- (2603:10b6:8:d0::10)
+To: <john.johansen@canonical.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<serge@hallyn.com>
+CC: <linux-security-module@vger.kernel.org>, <apparmor@lists.ubuntu.com>,
+	<linux-kernel@vger.kernel.org>, <gautham.shenoy@amd.com>,
+	<Santosh.Shukla@amd.com>, <Ananth.Narayan@amd.com>,
+	<raghavendra.kodsarathimmappa@amd.com>, <paulmck@kernel.org>,
+	<boqun.feng@gmail.com>, <vinicius.gomes@intel.com>, <mjguzik@gmail.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Subject: [RFC 1/9] doc: Add document for apparmor refcount management
+Date: Wed, 10 Jan 2024 16:48:48 +0530
+Message-ID: <20240110111856.87370-1-Neeraj.Upadhyay@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com>
+References: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|MN2PR12MB4286:EE_
-X-MS-Office365-Filtering-Correlation-Id: 59b65378-c3ba-4b51-d919-08dc11cce4cd
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003441:EE_|SJ0PR12MB6879:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2c29807f-f19b-45f3-2362-08dc11cdf0e8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	6VyberkCST42xBVcptfNwNFpRtOfhRSeJNMnUotUOOb54dd9gm9O75U/4hhMulr72VDDNX/LHnHLYX+mSXMwN6peLeZl7pT/nQ5nTvbHeT+dSGxGQKctVPuGFKWbMHju60HVzTTScBvQ4KiF4JatkDBQiwwxGxYwCR5ls2ZIe+vn/fD/2DTXCfj63HtGH3C827y329Gwwkcbrvu0p/wMiYUkUvz4RuOleZuZMZaDNsVzQIdmdUVUl3XWpjbIHDhYGfybdvSkHU89T1/CZZUJvDSZFzq6/AwyToCld1h2C10RvcDZcesVIf1S7U993L9041laWQc+HmsExT2/l5G48cvOZBWdZLCVuPJXb0pV2pbNyngQdCnzzRRoF2FYxhzevR1947HeVCXSlocbeQk0rLLL2xJ9Krim8u+UqP2L9f8yTB/PecUcMzQH+rBtVO6juwDEkQWrp/tTl/dljHkQyNgPJRLe/avw0xNC4cgDM1t6A36w4R6Mibyuwel/VKBc1APXinTe0dU30z2/vwZlUWf9Ra3AJeiKHBgqoHcq5HF+Nty+JL8G+9e1Ouw5JQfJUKbKkh/BZ919/fefrwN61GKvyPxzM4bf1Xwd7j73kedjA3di5dxz5LG7J5rAe0Ix3unFMyDEC/Vn/6UFywnRDw==
+	Pt9XogawPvuDSR1f8royO+72RqIzILzn6oll2yXTs7GukYn6PNH4NW9x9DlzjRC8i8UJQBWQpdUTe+TfJEhfsJIRAmEmMwfiLBSTOhw+giR4h6VMGMUO0KgRyqFBR/09XiyUnsKeGejWdcsfFBldzMhjuVYL872HXhA+DvSGvDfJTywguxEchemd6sTKvucVTYk1T+H57Sr/cO7xuWtdmPtWXiLcNVVOaAOiqNGYU8HvI3WPmlaLnpqkOsAy0ovmluvb9H9ae3NvRRtyfpFCBb/zRpOzoMoEMe26zrmktgUn2xiYWfRdXNnfYWGczJmJZP4k2arYQA42GsnKBWYj+wnaznvBPpLajVNY3gsQBsKVlL2ysO3r9Q238VcnKtRW7QHOhremE1AiOvFJlY8EVPP59PIDj3KLixepqEaleszeJ+NpGB9wJhq7IQHBfaNXWOHgP/rR/CvhK/IYVHcKzs6TF30CBtwLz0osZvoi6D41wPdfkGl7aCYS/ohgzo5f5ItIN7kpOyjRPXIkZmb46Uxzj8J/awKhcNNskFVME4q3c9rf3WcG8lQ+8j1SwPBPtTd4bNzpHVTJ7pkyDpeE2YUjhtBXmFVf/KnuGXA0daRStKkoFAa65MNZxg5uvYEa2NU3FloaFHpmlcRYWwOHzSrHlqsfVQFOpDdsJlvFhafHI+a1x2z7F5J6Ti4pJvPSjRDDSEw+5M2rfsDZ6b99MrrqNrjDoI6ni7D6Yz8HV3we0uGaG+jQuQwWB3tPqA1UnO5P5Mjf7+2bcKvozk+XtQ==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(396003)(366004)(39860400002)(136003)(346002)(230922051799003)(186009)(64100799003)(1800799012)(451199024)(478600001)(38100700002)(6506007)(316002)(54906003)(66476007)(6486002)(31686004)(31696002)(86362001)(2616005)(6666004)(26005)(83380400001)(66556008)(66946007)(6512007)(8936002)(8676002)(5660300002)(7416002)(30864003)(36756003)(4326008)(41300700001)(2906002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OFNxNVRFN3NKQTJLRHNpUFN3S3hRamhNSkplTEJzcHFZYzFNZ1NTU3M4aEtF?=
- =?utf-8?B?WXY5STRIQ0xVdnFyOFBRVGVUbStWd0VidTJpcHBOMWJjNURpYzFuYWZMSXpp?=
- =?utf-8?B?dFh1WnA4eTlZUEJ6blVhZHZVQWNoUVVXZDZORkxyRzVmZ1RtZjdvZjJzYmVI?=
- =?utf-8?B?SytVb0phbjlPQzF1eTB5YU5JcEpieEErbUNzRkJCY0pLTkFtQmdYaktrZEJw?=
- =?utf-8?B?VHM4Z05oWGx1UDVxUUtESGVKc01SQStJN0cyS0x0L2hENTdlYkNZbzBrSW9u?=
- =?utf-8?B?SW0xMStWc3dxRm9ZT1paN3JDTTd0ODUyUjJFZ0o2TXpFdWhvV3Y0aEMxNjc4?=
- =?utf-8?B?N295NHl4RzN6Mk5obGNJQm1OY2lQZW5pNG1rN2Mvcm42WnhoM3BNVXIwY3BJ?=
- =?utf-8?B?T203eDcva1JWMmVOalZoSDY3YXdoN0lrK3dMYlcxbGY1VjJlVEsrRUtVN2VJ?=
- =?utf-8?B?WmhTdVhCb1l4eHdvYU0rWU43OUtLYlA5cEpDVkMzbVpxWkcvTDh2SVRXNmJJ?=
- =?utf-8?B?Tlp5YnB6OWcxNGhwTlQ0VnJnVUlHcnFNSDV5bjVQakp0NTI0bWtrKzBPN1Yr?=
- =?utf-8?B?aFNtYU9WN2JYbkdMTEZKYU4rTDRVTXJmYTBZM09ieUJXU0tRbERiejF6RzhE?=
- =?utf-8?B?c1BaNTZmakQ4cmp1ZmI0UjJjODhla1I0TkEzeXN0VnZDb20rNk5IcXF5YjBC?=
- =?utf-8?B?OFliczE2K0RpN0M0Z0N3SUQxaGJ1R2duOTBTVC90MnQ5VGN0aEZZWWUzRVUr?=
- =?utf-8?B?L3RRWGlNNjArTlVaYnk1bXNZSDJ5bC9oREJtN25oVlVqUVdnZW9WYW0ySGd2?=
- =?utf-8?B?ZVVDVVZkRlUxWkpEc2FaRHRKQndRTW9yS2RPd0FhQVBSVTl4dWdVOFpEKzVk?=
- =?utf-8?B?NHoxZGJFRmx1V3YxNkExS3RXOWlBRnZpVlE2L211K1dHMHBnaTVsc3lyZkdV?=
- =?utf-8?B?K3BhbTFiQTloemVsQkZYWm12WVBPTWovKzJJRFRrOWJiclp2QzEvWVpBRVUr?=
- =?utf-8?B?THNtMFRXOXlYaVNEOTFpT0RtbUorUGlPelQ2aXp5dGhyZUVGc01XSTN6SzVv?=
- =?utf-8?B?Qllwbk1EOGdYREVqSmlJKys4QXNXK3NIakl4Y09Hb1FCVGEwa05ETXh0c1pz?=
- =?utf-8?B?b01yU3Fnak9KeEFNaEhHVExHQU0wd2F3VkJ0VTBBOHJvb1RHUDR3c3R0Q2dK?=
- =?utf-8?B?M2JHNXJZd1N3WVYrcXN5RFJjdDJyYXNTNjMwMld3cmVZOHBSN005VXpWMVFl?=
- =?utf-8?B?ZDBoNFJVKzVRLzZjdnY2bk1WbEtmWGJMeEptTVJlSEJGKzBKYksyaFhhQTVF?=
- =?utf-8?B?ektEKytDcks4aUtRTk9wN3ZxSXNHUzN1TlVTSHN2NUJoVjlmR2R1WlI0Nm9x?=
- =?utf-8?B?SEg5dm5Jby9KWWtjZTZsb3dmcS9ZRG8rY24zNUFIU05nRktGYWVEUDZnUXVo?=
- =?utf-8?B?UjU4elBTWko4UzVHK1BDWVlkSGF2b1BRbk5vN0xPVkQxbTFQTGl4N0RCLzQ1?=
- =?utf-8?B?QlliT0c4S0o2YWc3STB2RlFRMHZMVHZ3dUJhUkpoZ3Z5bHZoTkZCMmZhc3Vk?=
- =?utf-8?B?U0pVZE00ekl1MmpYZWlsZmRzcHg5Q0VZR1VwMHBSVnFOTmxLdVd4cWpzRDdG?=
- =?utf-8?B?WHk4d0ZQNmFCT09mUDVQeVd1ZGlvTjlQYktwMnkvN1dzWDRXbUc0SXM3bllp?=
- =?utf-8?B?UVRDcHRLbkZWamt2UEZ0TDZtMGhuNzJ1THl6MFVFdE5vYklmeG1Qdmt1bE9m?=
- =?utf-8?B?dWpiM0FiemNnQ0QwbVNqS1ZlUDc5dWxKV0d5OXdZczIza3h6R1MyaWljUnBT?=
- =?utf-8?B?SExCY2VMRWsxYlZIZ3QwNDY2TzdudzM3TXIvbWd1T0V0a3llaWY3YWNzcWh3?=
- =?utf-8?B?SmRDWHRLM2FCa0xpUC9CTEt2ZkU0YitFSjNJZld3WGUyUmhFbm9qcDBSNDli?=
- =?utf-8?B?YmhPUC80WldWRFk1ZEtNTHVWYUpXajRJMm1iSzNzMU11TW5MNlBjQzM2akFn?=
- =?utf-8?B?VkR0RzFLMUkwUlk3czBIODI4VmVBWUJudCsrNXdBaFFjUHF4Ulg5WlJ2WXk1?=
- =?utf-8?B?OFBvbHhSYmtkV2ZCS1NaNFRIWXZTNHRickVkdS9kZ1lGSVpHK3pDa3dqbE9V?=
- =?utf-8?Q?i5D4EH4MvWDVKCZ7fJBSZVxLz?=
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(136003)(396003)(376002)(346002)(230922051799003)(64100799003)(82310400011)(451199024)(1800799012)(186009)(36840700001)(40470700004)(46966006)(30864003)(7416002)(2906002)(5660300002)(41300700001)(83380400001)(40480700001)(2616005)(40460700003)(26005)(1076003)(426003)(336012)(16526019)(47076005)(478600001)(966005)(7696005)(6666004)(81166007)(356005)(86362001)(36860700001)(82740400003)(36756003)(70206006)(110136005)(8936002)(8676002)(70586007)(54906003)(316002)(4326008)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 59b65378-c3ba-4b51-d919-08dc11cce4cd
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2024 11:11:29.0895
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2024 11:18:58.6855
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c29807f-f19b-45f3-2362-08dc11cdf0e8
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NK3eyHUU0UoP2lMqrywow7iBwRRIwJQ1R0LQOrIoIQCvfoAlSuWOIEy/G/gA2+rbhDq0+gjgtpdO4vJlTpl0ug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4286
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003441.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6879
+
+Add a document to describe refcount management of AppArmor
+kernel objects.
+
+Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+---
+ .../admin-guide/LSM/ApparmorRefcount.rst      | 351 ++++++++++++++++++
+ Documentation/admin-guide/LSM/index.rst       |   1 +
+ 2 files changed, 352 insertions(+)
+ create mode 100644 Documentation/admin-guide/LSM/ApparmorRefcount.rst
+
+diff --git a/Documentation/admin-guide/LSM/ApparmorRefcount.rst b/Documentation/admin-guide/LSM/ApparmorRefcount.rst
+new file mode 100644
+index 000000000000..8132f1b661bb
+--- /dev/null
++++ b/Documentation/admin-guide/LSM/ApparmorRefcount.rst
+@@ -0,0 +1,351 @@
++============================
++AppArmor Refcount Management
++============================
++
++Introduction
++============
++
++AppArmor task confinement is based on task profiles. Task profiles
++specify the access rules - list of files which the task is allowed
++to open/read/write, socket bind, mount, signal, ptrace and other
++capabilities of the task.
++
++A sample raw task profile (typically present in /etc/apparmor.d/)
++would look like this:
++
++::
++
++    1. profile test_app /usr/bin/test_app {
++    2.    @{sys}/devices/**                 r,
++    3.    /var/log/testapp/access.log       w,
++    4.    /var/log/testapp/error.log        w,
++    5.
++    6.    /lib/ld-*.so*                     mrix,
++    7.
++    8.    ^hat {
++    9.        /dev/pts/*     rw,
++    10.    }
++    11.
++    12.    change_profile -> restricted_access_profile,
++    13.
++    14.    /usr/*bash cx -> local_profile,
++    15.
++    16.    profile local_profile {
++    17.        ...
++    18.    }
++    19. }
++
++
++Above example shows a sample profile. A quick description of
++each line is given below:
++
++1  Defines a profile with name ``test_app`` and attachment specification
++   ``/usr/bin/test_app``. The attachment specification is used for
++   associating the application with a profile, during launch.
++
++2,3, 4
++   Specifies read and write access to various paths.
++
++6  Read access for the so and inherit profile transition specification.
++
++8  Hat profile. Used for running a portion of the program with different
++   permissions, compared to the other portions of the program. For example,
++   to run unauthenticated traffic and authenticated traffic in separate
++   profiles in OpenSSH; running user supplied CGI scripts in separate
++   profile in Apache.
++
++12 Change profile rules, to switch child process to a profile, different
++   from the parent process, on exec.
++
++14 Profile transition for processes started from the current procees. For
++   example, transition to a different profile for ``ls``, which is invoked
++   from a shell program.
++
++
++Objects and their Refcount Management
++=====================================
++
++There are various object resources within AppArmor
++
++- Namespaces
++
++  There is a root namespace associated for apparmorfs. This is the default
++  namespace, to which all profiles are associated with.
++
++  Profiles can be associated with a different namespaces (for chroot,
++  containers env).
++
++  Namespaces are represented using ``struct aa_ns``. Some of the relevant
++  fields are::
++
++      struct aa_policy base
++      struct aa_profile *unconfined
++      struct list_head sub_ns
++      struct aa_ns *parent
++
++  ``struct aa_policy`` contains a list of profiles associated with this ns.
++
++  ``unconfined`` profile manages refcount for this namespace. It is also
++  used as the default profile for tasks in this namespace and a proxy label,
++  when profiles are removed.
++
++  ``sub_ns`` is the list of child namespaces.
++
++  ``parent`` Parent namespace, for this namespace.
++
++  A parent and its child sub namespaces keep reference to each other::
++
++    +---------------------+
++    |                     |
++    |      root_ns        |
++    |                     |
++    +---------------------+
++            ^  /  \    ^
++           /  /    \    \
++   parent /  /      \    \ parent
++         /  / sub_ns \    \
++        /  /          \    \
++       /  /            \    \
++      /  v              v    \
++   +-----------+    +-----------+
++   |           |    |           |
++   |    ns1    |    |    ns2    |
++   |           |    |           |
++   +-----------+    +-----------+
++
++  Here, ``root_ns`` is the root apparmor namespace. It maintains a
++  reference to all child namespace which are present in ``->sub_ns``.
++  The child namespaces ``ns1``, ``ns2`` keep a reference to their
++  ``parent``, which is the ``root_ns``.
++
++
++- Profiles
++
++  Profiles are represented as ``struct aa_profile``
++
++  Some of the fields of interest are::
++
++      struct aa_policy base
++      struct aa_profile __rcu *parent
++      struct aa_ns *ns
++      struct aa_loaddata *rawdata
++      struct aa_label label
++
++   ``base`` - Maintains the list of child subprofiles - hats
++
++   ``parent`` - If subprofile, pointer to the parent profile
++
++   ``ns`` - Parent namespace
++
++   ``rawdata`` - Used for matching profile data, for profile updates
++
++   ``label`` - Refcount object
++
++  A profile keeps a reference to the namespace it is associated with.
++  In addition, there is a reference kept for all profiles in
++  ``base.profiles`` of a namespace::
++
++      +-----------------------------+
++      |                             |
++      |      root_ns                |
++      |                             |
++      +-----------------------------+
++                ^  /       ^   |
++               /  /     ns |   |
++       parent /  /         |   |
++             /  / sub_ns   |   |base.profiles
++            /  /           |   |
++           /  /            |   |
++          /  v             |   v
++       +-----------+    +-----------+
++       |           |    |           |
++       |    ns1    |    |     A     |
++       |           |    |           |
++       +-----------+    +-----------+
++      base     |    ^
++      .profiles|    | parent
++               v    |
++       +-----------+
++       |           |
++       |    P      |
++       |           |
++       +-----------+
++
++  For subprofiles, a refcount is kept for the ``->parent`` profile.
++  For each child in ``->base.profiles``, a refcount is kept::
++
++            +--------------+
++            |              |
++            |    root_ns   |
++            |              |
++            +-------^------+
++       base.    |   |
++       profiles v   |ns
++             +---------------+
++             |               |
++            ^|      A        |^
++   parent  / |               | \parent
++          /  +---------------+  \
++         /    /  base.profiles\  \
++        /    /                 v  \
++     +------v-+               +----\---+
++     |        |               |        |
++     |  B     |               |    C   |
++     |        |               |        |
++     +--------+               +--------+
++
++
++- Labels
++
++  Label manages refcount for the ``aa_profile`` objects. It is
++  represented as ``struct aa_label``. Some of the fields are::
++
++      struct kref count
++      struct aa_proxy *proxy
++      long flags
++      int size
++      struct aa_profile *vec[]
++
++  ``count`` - Refcounting for the enclosing object.
++  ``proxy`` - Redirection of stale profiles
++  ``flags`` - state (STALE), type (NS, PROFILE)
++  ``vec``   - if ``size`` > 1, for compound labels (for stacked profiles)
++
++
++  For compound/stack labels, there is a reference kept, for all
++  the stack profiles::
++
++   +--------+     +---------+      +-------+
++   |   A    |     |   B     |      |  C    |
++   |        |     |         |      |       |
++   +-----^--+     +---------+      +-------+
++      ^  \            ^           ^
++       \  \           |           |
++        \  \  +---------------+   |
++         \  \ |    A//&:ns1:B |   |
++          \  \|               |   |
++           \  +---------------+   |
++            \                     |
++             \                    |
++              \ +-------------------+
++               \|A//&:ns1:B//&:ns2:C|
++                |                   |
++                +-------------------+
++
++- Proxy
++
++  A proxy is associated with a label, and is used for redirecting
++  running tasks to new profile on profile change. Proxies are
++  represented as ``struct aa_proxy``::
++
++    struct aa_label __rcu *label
++
++  ``label`` - Redirect to the latest profile label.
++
++  While a label is not stale, its proxy points to the same label.
++  On profile updates, the proxy, the label is marked as stale,
++  and label is redirected to the new profile label::
++
++   +------------+          +-----------+
++   |            |          |           |
++   |   old      | -------->|    P1     |
++   |            | <--------|           |
++   +------------+          +-----------+
++
++
++   +------------+         +------------+
++   |            |         |            |
++   |    old     |-------->|    P1      |
++   |            |         |            |
++   +------------+         +--^---------+
++                             |  |
++   +------------+            |  |
++   |            |-----------/   |
++   |    new     |<-------------/
++   |            |
++   +------------+
++
++Lifecycle of the Apparmor Kernel Objects
++========================================
++
++#. Init
++
++  #. During AppArmor init, root ns (RNS:1) and its unconfined
++     profile are created (RNS:1). If initialization completes
++     successfully, the ``root_ns`` initial ref is never destroyed
++     (?).
++
++  #. Usespace init scripts load the current set of defined profiles
++     into kernel, typically through ``apparmor_parser`` command.
++
++     The loaded profiles have an initial refcount (P1:1 , P2:1).
++     A profile P1, which is in default namespace keeps a reference
++     to root ns (RNS:2). If a profile P2 is in a different namespace,
++     NS1, that namespace object is allocated (NS1:1) and the namespace
++     is added to ``sub_ns`` of ``root_ns`` (NS1:2). The child namespace
++     NS1 keeps a reference to parent ``root_ns`` (RNS:3). P2 keeps a
++     reference to NS1 (NS1:2). The root ns keeps a reference to P1 in
++     ``->profiles`` list (P1:2). NS1 keeps a reference to P2 in its
++     ``->profiles`` list (P2:2). In addition, label proxies keep
++     reference to P1 and P2 (P1:3, P2:3).
++
++#. Runtime
++
++  #. As part of the bprm cred updates (``apparmor_bprm_creds_for_exec()``),
++     the current task T1 is attached to a profile (P1), based on the best
++     attachment match rule. T1 keeps a refcount for P1, while the current
++     ``cred`` is active (P1:4).
++
++  #. If P1 is replaced with a new profile P3, P1 is removed from the root
++     ns profiles list (P1:3), proxy is redirected to P3 (P1:2), and the
++     initial label is released (P1:1) and P1's label is marked stale.
++
++  #. Any T1 accesses, which have a apparmor hook, would reference the
++     current task's cred label::
++
++         __begin_current_label_crit_section()
++             struct aa_label *label = cred_label(cred);
++
++             if (label_is_stale(label))
++                 label = aa_get_newest_label(label);
++
++             return label;
++
++         aa_get_newest_label(struct aa_label __rcu **l)
++             return aa_get_label_rcu(&l->proxy->label);
++
++         aa_get_label_rcu(struct aa_label __rcu **l)
++             rcu_read_lock();
++             do {
++                c = rcu_dereference(*l);
++             } while (c && !kref_get_unless_zero(&c->count));
++             rcu_read_unlock();
++
++  #. On task exit and cref freeing, the last reference for P1 is
++     released (P1:0).
++
++#. Release
++
++  Below is the set of release operations, based on the label's
++  parent object type.
++
++  #. If ns is not assigned (early init error exit), do not wait for
++     RCU grace period. Otherwise use ``call_rcu()``
++
++  #. If label is associated with a namespace (unconfined label)
++      #. Drop Parent ns reference.
++
++  #. If label is associated with a profile
++      #. Drop parent profile reference.
++      #. Drop ns reference.
++
++  #. Drop all vector profile references for stacked profiles.
++
++
++Links
++=====
++
++Userspace tool - https://gitlab.com/apparmor/apparmor
++    Profile syntax      - parser/apparmor.d.pod
++    Sample change hats  - changehat/
++    Other documentation - libraries/libapparmor/doc
+diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
+index a6ba95fbaa9f..c608db9e7107 100644
+--- a/Documentation/admin-guide/LSM/index.rst
++++ b/Documentation/admin-guide/LSM/index.rst
+@@ -41,6 +41,7 @@ subdirectories.
+    :maxdepth: 1
+ 
+    apparmor
++   ApparmorRefcount
+    LoadPin
+    SELinux
+    Smack
+-- 
+2.34.1
 
-Problem Statement
-=================
-
-Nginx performance testing with Apparmor enabled (with nginx
-running in unconfined profile), on kernel versions 6.1 and 6.5
-show significant drop in throughput scalability, when Nginx
-workers are scaled to higher number of CPUs across various
-L3 cache domains.
-
-Below is one sample data on the throughput scalability loss,
-based on results on AMD Zen4 system with 96 CPUs with SMT
-core count 2; so, overall, 192 CPUs:
-
-Config      Cache Domains     apparmor=off        apparmor=on
-                             scaling eff (%)      scaling eff (%)
-8C16T          1                  100%             100%
-16C32T         2                   95%              94%
-24C48T         3                   94%              93%
-48C96T         6                   92%              88%
-96C192T        12                  85%              68%
-
-If we look at above data, there is a significant drop in
-scaling efficiency, when we move to 96 CPUs/192 SMT threads.
-
-Perf tool shows most of the contention coming from below
-6.56%     nginx  [kernel.vmlinux]      [k] apparmor_current_getsecid_subj 
-6.22%     nginx  [kernel.vmlinux]      [k] apparmor_file_open
-
-The majority of the CPU cycles is found to be due to memory contention
-in atomic_fetch_add and atomic_fetch_sub operations from kref_get() and
-kref_put() operations on label.
-
-Commit 2516fde1fa00 ("apparmor: Optimize retrieving current task secid"),
-from 6.7 alleviates the issue to an extent, but not completely:
-
-Config      Cache Domains     apparmor=on        apparmor=on (patched)
-                             scaling eff (%)      scaling eff (%)
-8C16T          1                  100%             100%
-16C32T         2                   97%              93%
-24C48T         3                   94%              92%
-48C96T         6                   88%              88%
-96C192T        12                  65%              79%
-
-This adverse impact gets more pronounced when we move to >192 CPUs.
-The memory contention and impact increases with high frequency label
-update operations and labels are marked stale more frequently.
-
-
-Label Refcount Management
-=========================
-
-Apparmor uses label objects (struct aa_label) to manage refcounts for
-below set of objects:
-
-- Applicable profiles
-- Namespaces (unconfined profile)
-- Other non-profile references
-
-These label references are acquired on various apparmor lsm hooks,
-on operations such as file open, task kill operations, socket bind,
-and other file, socket, misc operations which use current task's cred,
-when the label for the current cred, has been marked stale. This is
-done to check these operations against the set of allowed operations
-for the task performing them.
-
-Use Percpu refcount for ref management?
-=======================================
-
-The ref put operations (percpu_ref_put()) in percpu refcount,
-in active mode, do not check whether ref count has dropped to
-0. The users of the percpu_ref need to explicitly invoke
-a percpu_ref_kill() operation, to drop the initial reference,
-at shutdown paths. After the percpu_ref_kill() operation, ref
-switches to atomic mode and any new percpu_ref_put() operation
-checks for the drop to 0 case and invokes the release operation
-on that label.
-
-Labels are marked stale is situations like profile removal,
-profile updates. For a namespace, the unconfined label reference
-is dropped when the namespace is destroyed. These points
-are potential shutdown points for labels. However, killing
-the percpu ref from these points has few issues:
-
-- The label could still be referenced by tasks, which are
-  still holding the reference to the now stale label.
-  Killing the label ref while these operations are in progress
-  will make all subsequent ref-put operations on the stale label
-  to be atomic, which would still result in memory contention.
-  Also, any new reference to the stale label, which is acquired
-  with the elevated refcount will have atomic op contention.
-
-- The label is marked stale using a non-atomic write operation.
-  It is possible that new operations do not observe this flag
-  and still reference it for quite some time.
-
-- Explicitly tracking the shutdown points might not be maintainable
-  at a per label granularity, as there can be various paths where
-  label reference could get dropped, such as, before the label has
-  gone live - object initialization error paths. Also, tracking
-  the shutdown points for labels which reference other labels -
-  subprofiles, merged labels requires careful analysis, and adds
-  heavy burden on ensuring the memory contention is not introduced
-  by these ref kill points.
-
-
-Proposed Solution
-=================
-
-One potential solution to the refcount scalability problem is to
-convert the label refcount to a percpu refcount, and manage
-the initial reference from kworker context. The kworker
-keeps an extra reference to the label and periodically scans
-labels and release them if their refcount drops to 0.
-
-Below is the sequence of operations, which shows the refcount
-management with this approach:
-
-1. During label initialization, the percpu ref is initialized in
-   atomic mode. This is done to ensure that, for cases where the
-   label hasn't gone live (->ns isn't assigned), mostly during
-   initialization error paths.
-
-2. Labels are switched to percpu mode at various points -
-   when a label is added to labelset tree, when a unconfined profile
-   has been assigned a namespace.
-
-3. As part of the initial prototype, only the in tree labels
-   are managed by the kworker. These labels are added to a lockless
-   list. The unconfined labels invoke a percpu_ref_kill() operation
-   when the namespace is destroyed.
-
-4. The kworker does a periodic scan of all the labels in the
-   llist. It does below sequence of operations:
-
-   a. Enqueue a dummy node to mark the start of scan. This dummy
-      node is used as start point of scan and ensures that we
-      there is no additional synchronization required with new
-      label node additions to the llist. Any new labels will
-      be processed in next run of the kworker.
-
-                      SCAN START PTR
-                          |
-                          v
-      +----------+     +------+    +------+    +------+
-      |          |     |      |    |      |    |      |
-      |   head   ------> dummy|--->|label |--->| label|--->NULL
-      |          |     | node |    |      |    |      |
-      +----------+     +------+    +------+    +------+
-
-
-      New label addition:
-
-                            SCAN START PTR
-                                 |
-                                 v
-      +----------+  +------+  +------+    +------+    +------+
-      |          |  |      |  |      |    |      |    |      |
-      |   head   |--> label|--> dummy|--->|label |--->| label|--->NULL
-      |          |  |      |  | node |    |      |    |      |
-      +----------+  +------+  +------+    +------+    +------+
-
-    b. Traverse through the llist, starting from dummy->next.
-       If the node is a dummy node, mark it free.
-       If the node is a label node, do,
-
-       i) Switch the label ref to atomic mode. The ref switch wait
-          for the existing percpu_ref_get() and percpu_ref_put()
-          operations to complete, by waiting for a RCU grace period.
-
-          Once the switch is complete, from this point onwards, any
-          percpu_ref_get(), percpu_ref_put() operations use
-          atomic operations.
-
-      ii) Drop the initial reference, which was taken while adding
-          the label node to the llist.
-
-     iii) Use a percpu_ref_tryget() increment operation on the
-          ref, to see if we dropped the last ref count. if we
-          dropped the last count, we remove the node from the llist.
-
-          All of these operations are done inside a RCU critical
-          section, to avoid race with the release operations,
-          which can potentially trigger, as soon as we drop
-          the initial ref count.
-
-      iv) If we didn't drop the last ref, switch back the counter
-          to percpu mode.
-
-Using this approach, to move the atomic refcount manipulation out of the
-contended paths, there is a significant scalability improvement seen on
-nginx test, and scalability efficiency is close to apparmor-off case.
-
-Config      Cache Domains     apparmor=on (percpuref)
-                               scaling eff (%)
-8C16T          1                  100%
-16C32T         2                   96%
-24C48T         3                   94%
-48C96T         6                   93%
-96C192T        12                  90%
-
-Limitations
-===========
-
-1. Switching to percpu refcount increases memory size overhead, as
-   percpu memory is allocated for all labels.
-
-2. Deferring labels reclaim could potentially result in memory
-   pressure, when there are high frequency of label update operations.
-
-3. Percpu refcount uses call_rcu_hurry() to complete switch operations.
-   These can impact energy efficiency, due to back to back hurry
-   callbacks. Using deferrable workqueue partly mitigates this.
-   However, deferring kworker can delay reclaims.
-
-4. Back to back label switches can delay other percpu users, as
-   there is a single global switch spinlock used by percpu refcount
-   lib.
-
-5. Long running kworker can delay other use cases like system suspend.
-   This is mitigated using freezable workqueue and litming node
-   scans to a max count.
-
-6. There is a window where label operates is atomic mode, when its
-   counter is being checked for zero. This can potentially result
-   in high memory contention, during this window which spans RCU
-   grace period (plus callback execution). For example, when
-   scanning label corresponding to unconfined profile, all
-   applications which use unconfined profile would be using
-   atomic ref increment and decrement operations.
-
-   There are a few apparoaches which were tried to mitigate this issue:
-
-   a. At a lower time interval, check if scanned label's counter
-      has changed since the start of label scan. If there is a change
-      in count, terminate the switch to atomic mode. Below shows the
-      apparoch using rcuwait.
-
-      static void aa_label_switch_atomic_confirm(struct percpu_ref *label_ref)
-      {
-         WRITE_ONCE(aa_atomic_switch_complete, true);
-         rcuwait_wake_up(&aa_reclaim_rcuwait);
-      }
-
-      rcuwait_init(&aa_reclaim_rcuwait);
-      percpu_ref_switch_to_atomic(&label->count, aa_label_switch_atomic_confirm);
-
-      atomic_count = percpu_ref_count_read(&label->count);
-      do {
-        rcuwait_wait_event_timeout(&aa_reclaim_rcuwait,
-                           (switch_complete = READ_ONCE(aa_atomic_switch_complete)),
-                           TASK_IDLE,
-                           msecs_to_jiffies(5));
-        if (percpu_ref_count_read(&label->count) != atomic_count)
-                break;
-       } while (!READ_ONCE(switch_complete));
-
-       However, this approach does not work, as percpu refcount lib does not
-       allow termination of an ongoing switch operation. Also, the counter
-       can return to the original value with set of get() and put() operations
-       before we check the current value.
-
-   b. Approaches to notify the reclaim kworker from ref get and put operations
-      can potentially disturb cache line state between the various CPU
-      contexts, which are referncing the label, and can potentially impact
-      scalability again.
-
-   c. Swith the label to an immortal percpu ref, while the scan operates
-      on the current counter. 
-
-      Below is the sequence of operations to do this:
-
-      1. Ensure that both immortal ref and label ref are in percpu mode.
-         Reinit the immortal ref in percpu mode.
-
-         Swap percpu and atomic counters of label refcount and immortal ref
-	                          percpu-ref
-      	                  +-------------------+                
-      +-------+           |  percpu-ctr-addr1 |                
-      | label | --------->|-------------------|    +----------------+ 
-      +-------+           |   data            |--->| Atomic counter1| 
-                          +-------------------+    +----------------+ 
-      +-------+           +-------------------+                
-      |ImmLbl |---------->|  percpu-ctr-addr2 |    +----------------+
-      +-------+           |-------------------|--->| Atomic counter2|
-                          |    data           |    +----------------+
-                          +-------------------+                
-
-          label ->percpu-ctr-addr  = percpu-ctr-addr2
-          ImmLbl ->percpu-ctr-addr = percpu-ctr-addr1
-          label ->data->count      = Atomic counter2
-          ImmLbl ->data->count     = Atomic counter1
-  
-  
-      2. Check the counters collected in immortal label, by switch it
-         to atomic mode.
-
-      3. If the count is 0, do,
-         a. Switch immortal counter to percpu again, giving it an
-            initial count of 1.
-         b. Swap the label and immortal counters again. The immortal
-            ref now has the counter values from new percpu ref get
-            and get operations on the label ref, from the point
-            when we did the initial swap operation.
-         c. Transfer the percpu counts in immortal ref to atomic
-            counter of label percpu refcount.
-         d. Kill immortal ref, for reinit on next iteration.
-         e. Switch label percpu ref to atomic mode.
-         f. If the counter is 1, drop the initial ref.
-
-       4. If the count is not 0, re-swap the counters.
-          a. Switch immortal counter to percpu again, giving it an
-             initial count of 1.
-          b. Swap the label and immortal counters again. The immortal
-             ref now has the counter values from new percpu ref get
-             and get operations on the label ref, from the point
-             when we did the initial swap operation.
-          c. Transfer the percpu counts in immortal ref to atomic
-             counter of label percpu refcount.
-          d. Kill immortal ref, for reinit on next iteration.
-
-
-          Using this approach, we ensure that, label ref users do not switch
-          to atomic mode, while there are active references on the label.
-          However, this approach requires multiple percpu ref mode switches
-          and adds high overhead and complexity to the scanning code.
-
-Extended/Future Work
-====================
-
-1. Look for ways to fix the limitations, as described in the "Limitations"
-   section.
-
-2. Generalize the approach to percpu rcuref, which is used for contexts
-   where release path uses RCU grace period for release operations. Patch
-   7 creates an initial prototype for this.
-
-3. Explore hazard pointers for scalable refcounting of labels.
-
-Highly appreciate any feedback/suggestions on the design approach.
-
-The patches of this patchset introduce following changes:
-
-1.      Documentation of Apparmor Refcount management.
-
-2.      Switch labels to percpu refcount in atomic mode.
-
-        Use percpu refcount for apparmor labels. Initial patch to init
-        the percpu ref in atomic mode, to evaluate the potential
-        impact of percpuref on top of kref based implementation.
-
-3.      Switch unconfined namespaces refcount to percpu mode.
-
-        Switch unconfined ns labels to percpu mode, and kill the
-        initial refcount from namespace destroy path.
-
-4.      Add infrastructure to reclaim percpu labels.
-
-        Add a label reclaim infrastructure for labels which are
-        in percpu mode, for managing their inital refcount.
-
-5.      Switch intree labels to percpu mode.
-
-        Use label reclaim infrastruture to manage intree labels.
-
-6.      Initial prototype for optimizing ref switch.
-
-        Prototype for reducing the time window when a label
-        scan switches the label ref to atomic mode.
-
-7.      percpu-rcuref: Add basic infrastructure.
-
-        Prototype for Percpu refcounts for objects, which protect
-        their object reclaims using RCU grace period.
-
-8.      Switch labels to percpu rcurefcount in unmanaged mode.
-
-        Use percpu rcuref for labels. Start with unmanaged/atomic
-        mode.
-
-9.      Switch unconfined and in tree labels to managed ref mode.
-
-        Use percpu mode with manager worker for unconfined and intree
-        labels.
-
-
-------------------------------------------------------------------------
-
- b/Documentation/admin-guide/LSM/ApparmorRefcount.rst |  351 ++++++++++++++++++++++++++++++++++++++++++++++++++
- b/Documentation/admin-guide/LSM/index.rst            |    1
- b/Documentation/admin-guide/kernel-parameters.txt    |    8 +
- b/include/linux/percpu-rcurefcount.h                 |  115 ++++++++++++++++
- b/include/linux/percpu-refcount.h                    |    2
- b/lib/Makefile                                       |    2
- b/lib/percpu-rcurefcount.c                           |  336 +++++++++++++++++++++++++++++++++++++++++++++++
- b/lib/percpu-refcount.c                              |   93 +++++++++++++
- b/security/apparmor/include/label.h                  |   16 +-
- b/security/apparmor/include/policy.h                 |    8 -
- b/security/apparmor/include/policy_ns.h              |   24 +++
- b/security/apparmor/label.c                          |   11 +
- b/security/apparmor/lsm.c                            |  145 ++++++++++++++++++++
- b/security/apparmor/policy_ns.c                      |    6
- include/linux/percpu-refcount.h                      |    2
- lib/percpu-refcount.c                                |   93 -------------
- security/apparmor/include/label.h                    |   17 +-
- security/apparmor/include/policy.h                   |   56 +++----
- security/apparmor/include/policy_ns.h                |   24 ---
- security/apparmor/label.c                            |   11 -
- security/apparmor/lsm.c                              |  325 ++++++++++++----------------------------------
- security/apparmor/policy_ns.c                        |    8 -
- 22 files changed, 1237 insertions(+), 417 deletions(-)
-
-base-commit: ab27740f7665
