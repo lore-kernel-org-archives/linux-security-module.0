@@ -1,92 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20F4495CC;
-	Wed, 10 Jan 2024 13:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F2E4B5A6
+	for <linux-security-module@vger.kernel.org>; Wed, 10 Jan 2024 14:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1jPPPfb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14496C433C7;
-	Wed, 10 Jan 2024 13:48:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704894507;
-	bh=Mpj9MmpWsZ0QXa3z+JG9y8iO9570kyRUme6G8UyY3ns=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V1jPPPfbtZjWicjR/pXvV3fvfEd+WTpUYKesK1ver/unl0yUXsY4TkjQIutQjBRsP
-	 rP/Oz0q/0h14UEjOgFaxFG624+eWlJ/AO+ivv3TYC1sZnL+hL4/+Alo/46tP000hXg
-	 zplNZ64lLrfkj8J9hOzdzzP2smKm7MeEZ/IYISeNp94tvvX509RdtM1WHeyhjMm5jx
-	 6PVp6J9lR2f0adpYnosG4kNDW+C6yKAzSmFoUpH39oONuTUSb402zXo2PYbzqdDyDw
-	 8BKfIvBQaR2VfeSzJy9k28uur98lcaUtFQRjhOYk1Xziu9Q+q1jecwOjEuD67FrH9y
-	 AnuUlci6GEj1Q==
-Date: Wed, 10 Jan 2024 13:48:20 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: akpm@linux-foundation.org, llvm@lists.linux.dev,
-	patches@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	kvm@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-efi@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-	linux-arch@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-mm@kvack.org, bridge@lists.linux.dev, netdev@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 2/3] arch and include: Update LLVM Phabricator links
-Message-ID: <20240110-apostle-trident-533d4c2c9c97@spud>
-References: <20240109-update-llvm-links-v1-0-eb09b59db071@kernel.org>
- <20240109-update-llvm-links-v1-2-eb09b59db071@kernel.org>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Mi1xbVek"
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dbdbfaab70eso3220761276.3
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Jan 2024 06:28:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1704896923; x=1705501723; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cPwzpR2AcrYAGatwXlQ0YDaFgczFIL3y2D+qE8YbV0w=;
+        b=Mi1xbVekrbIqkESDDIcR0yo3+LvKji6PQW+2nTxCoBVfvxRLigY5rUEgjebppT0l+m
+         +gl39OiAusnT2addvR/xhEbpf82cflxyDRRGvVmn8EE5EJjq/OC4Bu2Pnd33eDB+SRuv
+         DRx9uzmb5lVnUrGhNCHKW9buY3hysEjmJY4QCDb+nF2jKSSX94bgZz7KixLf5ZILB0Rw
+         3oWDBtHvFxKVazdRA9YOPP0Fqqpoly9x8qYw4TgkIzig8SQa3iTruBpe94UulD/yS9+T
+         IQUN0avibsiQ17ZHVpumCA7/bETU8eiJkleaqdhPOA3PeZYA5JDOqCW+RIeBuTkOoi7N
+         enFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704896923; x=1705501723;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cPwzpR2AcrYAGatwXlQ0YDaFgczFIL3y2D+qE8YbV0w=;
+        b=jfXf/9Z7QJkxzBgJxrO6tto/WQsFF2AFQ2YTgWLVcis2dWrObDHx93OjBPP4m0lp4B
+         QsFefhRzMJRJhLhwbKJmqzD+ANdvSoyLN0zViBRWyOb9Yu1ZdavWqLHBq8dajcCyezcQ
+         IvLz3lWSStcFhkrSwTCd0TRnAM/rG+8Z/FPeBhXkTbCuI3kaTfhQQEons010GQLJ59NV
+         czLnbuYm1hkpgkXnZSZOsTAXgb0dLi/ZjBb5GUZOzY673/iCWSgUODAc1J0bPxM3ERXY
+         LoCMj/sFSA/pUhqZ7PZfocTu6W38gwITjIegbWNJBfNne7I1ugWodZxLhxnDwi9nHcOh
+         2IYg==
+X-Gm-Message-State: AOJu0YyzlrHMvimMaYXCmqq4rJwjJhX0kUmt4Kth48kWa7Tp0PWSaCyS
+	tXISyr59G6oAQkMuNbiyTEfRT1EM/fnSqzbLRBsagDaMVHCO
+X-Google-Smtp-Source: AGHT+IGOY1jw6Oyln37Za+55Yv2izoyd+kANAVjkzS8Je05FLGpelRQHOO8M8YM0AqtJiWBdw31dKZAffDFBfTCQZ3M=
+X-Received: by 2002:a25:9288:0:b0:dbd:f4e7:5311 with SMTP id
+ y8-20020a259288000000b00dbdf4e75311mr733836ybl.0.1704896922860; Wed, 10 Jan
+ 2024 06:28:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="p6SYI+U6gP5vpK1M"
-Content-Disposition: inline
-In-Reply-To: <20240109-update-llvm-links-v1-2-eb09b59db071@kernel.org>
-
-
---p6SYI+U6gP5vpK1M
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20231214125033.4158-1-laoar.shao@gmail.com> <CAHC9VhTs_5-SFq2M+w4SE7gMd3cHXP2P3y71O4H_q7XGUtvVUg@mail.gmail.com>
+ <CALOAHbDEoZ_gPNg-ABE0-Qc0uPqwHJBLRpqSjFd7fH6r+oH23A@mail.gmail.com>
+ <CAHC9VhQkRPMO2Xpg0gYdpOPZTDrp1xKwU=idt9EQJg7Zi7XjqQ@mail.gmail.com>
+ <CALOAHbA-aW5gHXuf4MZVDXqD89Ri=9Ff7wcnV5wnBe=+pjkLrQ@mail.gmail.com> <CALOAHbCqMZE2F9E+KdLtF=hw9_hEkhjAsHaCHaRwKYWU3wyDyA@mail.gmail.com>
+In-Reply-To: <CALOAHbCqMZE2F9E+KdLtF=hw9_hEkhjAsHaCHaRwKYWU3wyDyA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 10 Jan 2024 09:28:31 -0500
+Message-ID: <CAHC9VhREmXPg2TgDcK+moeJv3AvDR1wKiKNEex0AX6cQAzhVjg@mail.gmail.com>
+Subject: Re: [PATCH v5 bpf-next 0/5] mm, security, bpf: Fine-grained control
+ over memory policy adjustments with lsm bpf
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: Kees Cook <keescook@chromium.org>, "luto@amacapital.net" <luto@amacapital.net>, wad@chromium.org, 
+	akpm@linux-foundation.org, jmorris@namei.org, serge@hallyn.com, 
+	omosnace@redhat.com, casey@schaufler-ca.com, kpsingh@kernel.org, 
+	mhocko@suse.com, ying.huang@intel.com, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
+	ligang.bdlg@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 09, 2024 at 03:16:30PM -0700, Nathan Chancellor wrote:
-> reviews.llvm.org was LLVM's Phabricator instances for code review. It
-> has been abandoned in favor of GitHub pull requests. While the majority
-> of links in the kernel sources still work because of the work Fangrui
-> has done turning the dynamic Phabricator instance into a static archive,
-> there are some issues with that work, so preemptively convert all the
-> links in the kernel sources to point to the commit on GitHub.
->=20
-> Most of the commits have the corresponding differential review link in
-> the commit message itself so there should not be any loss of fidelity in
-> the relevant information.
->=20
-> Link: https://discourse.llvm.org/t/update-on-github-pull-requests/71540/1=
-72
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
+On Wed, Jan 10, 2024 at 1:07=E2=80=AFAM Yafang Shao <laoar.shao@gmail.com> =
+wrote:
+> Paul,
+>
+> Do you have any additional comments or further suggestions?
 
->  arch/riscv/Kconfig              | 2 +-
->  arch/riscv/include/asm/ftrace.h | 2 +-
+No, I'm still comfortable with my original comments and stand by them.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
-Cheers,
-Conor.
-
---p6SYI+U6gP5vpK1M
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZZ6gJAAKCRB4tDGHoIJi
-0mIlAQCj5ZP6QEhEswWYjX38obn/p3pF8mt+Ve+vlBnVEhAW8QD8ClRvKxDiajR5
-Zp8ES/FLDyH/QJ5QjGuYLP5PATLeFAY=
-=SqXc
------END PGP SIGNATURE-----
-
---p6SYI+U6gP5vpK1M--
+--=20
+paul-moore.com
