@@ -1,141 +1,92 @@
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2046.outbound.protection.outlook.com [40.107.95.46])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19AF48799;
-	Wed, 10 Jan 2024 11:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20F4495CC;
+	Wed, 10 Jan 2024 13:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jPcYROyM"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LfnBEcCW0cE2Lr/3NdRIu/jHTnxB9iGT+CJTu9iiUIT4QP7fiQmiV3E6XhhBoeIJQcjb9rNQlhVTmS5yi9iePam1al9px91cap9ma5Hyq42QeguFJHJ56Uk7YyrVxwNDIe3MLdtPgPLX6kt71hSa78GqFhQLv6u7fBx3PRYqA0m1aiMpktd9MseYEpVgymvs8sa2kZDvZ9WIrBfZtXJW3t9IHLskXBqnzkd5jqTEE8q7LrbbcHKP0gYa0oJWpQVi3uZ2yabE2q6VZXEBOBE4h/8jUZFY6/+im3Eo4q1lJxjZWnfOYEKOmrhrSeIHlco7l/WGbxuDEF8LK4d9vAKYLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iG00rFkrp4XVcLDSfHHaNLmmoNhFzMJPg4tqE6Nr/SY=;
- b=hTCV3aLzh+U64ZwkXQcGNA/UiLGYIkv8HW0rsMTobD8vmDOK34VzEr6Vr+Pne7mHG/xNDVh/1uZraRY3fuc4NAX6XTatbmPcyailxsQnBK9Fdo/7t4At0TYkR6x/6Vj7evA+lkPFmMfAsnzV73e9Q63Lw+DsVznLsyaMwXu0vDRWSz8m7n/samsei9XuMjJ4mm4HIEsvi+3+kYRk4Aujx26uXo8lY7d1HuEg3MAP5X/mK/JP3LhKuNC+xsgA5u/URHgR0LGBUd/XLyw87g7UxWklRNsUX/vWcLKBE2gqB1epd/ZQuFs3U3ttvI7H6cFYWhUQynJLviw3+m7/jo0c/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=canonical.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iG00rFkrp4XVcLDSfHHaNLmmoNhFzMJPg4tqE6Nr/SY=;
- b=jPcYROyM5jTE0Ev2/0Py96L2Zh/r3EGZ8DF3REsAZEDwB87I8amJylLo/dO10oKIdBEIpM++9zUiT0DHGV9TobdCkY0obkVwI4eVHGzS1uVGbXHSn+za73ikmQEn/VTwxLi7KTMgb2DnIu7EM8bovvxF6pEZvmMyu8sK8Xk0m2k=
-Received: from CYXPR03CA0041.namprd03.prod.outlook.com (2603:10b6:930:d2::12)
- by CO6PR12MB5491.namprd12.prod.outlook.com (2603:10b6:303:13b::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.18; Wed, 10 Jan
- 2024 11:24:49 +0000
-Received: from CY4PEPF0000EE35.namprd05.prod.outlook.com
- (2603:10b6:930:d2:cafe::2) by CYXPR03CA0041.outlook.office365.com
- (2603:10b6:930:d2::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.18 via Frontend
- Transport; Wed, 10 Jan 2024 11:24:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EE35.mail.protection.outlook.com (10.167.242.41) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7181.13 via Frontend Transport; Wed, 10 Jan 2024 11:24:48 +0000
-Received: from BLR-L-NUPADHYA.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.34; Wed, 10 Jan
- 2024 05:24:43 -0600
-From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-To: <john.johansen@canonical.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-	<serge@hallyn.com>
-CC: <linux-security-module@vger.kernel.org>, <apparmor@lists.ubuntu.com>,
-	<linux-kernel@vger.kernel.org>, <gautham.shenoy@amd.com>,
-	<Santosh.Shukla@amd.com>, <Ananth.Narayan@amd.com>,
-	<raghavendra.kodsarathimmappa@amd.com>, <paulmck@kernel.org>,
-	<boqun.feng@gmail.com>, <vinicius.gomes@intel.com>, <mjguzik@gmail.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Subject: [RFC 9/9] apparmor: Switch unconfined and in tree labels to managed ref mode
-Date: Wed, 10 Jan 2024 16:48:56 +0530
-Message-ID: <20240110111856.87370-9-Neeraj.Upadhyay@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com>
-References: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1jPPPfb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14496C433C7;
+	Wed, 10 Jan 2024 13:48:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704894507;
+	bh=Mpj9MmpWsZ0QXa3z+JG9y8iO9570kyRUme6G8UyY3ns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V1jPPPfbtZjWicjR/pXvV3fvfEd+WTpUYKesK1ver/unl0yUXsY4TkjQIutQjBRsP
+	 rP/Oz0q/0h14UEjOgFaxFG624+eWlJ/AO+ivv3TYC1sZnL+hL4/+Alo/46tP000hXg
+	 zplNZ64lLrfkj8J9hOzdzzP2smKm7MeEZ/IYISeNp94tvvX509RdtM1WHeyhjMm5jx
+	 6PVp6J9lR2f0adpYnosG4kNDW+C6yKAzSmFoUpH39oONuTUSb402zXo2PYbzqdDyDw
+	 8BKfIvBQaR2VfeSzJy9k28uur98lcaUtFQRjhOYk1Xziu9Q+q1jecwOjEuD67FrH9y
+	 AnuUlci6GEj1Q==
+Date: Wed, 10 Jan 2024 13:48:20 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: akpm@linux-foundation.org, llvm@lists.linux.dev,
+	patches@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	kvm@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-efi@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+	linux-arch@vger.kernel.org, kasan-dev@googlegroups.com,
+	linux-mm@kvack.org, bridge@lists.linux.dev, netdev@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 2/3] arch and include: Update LLVM Phabricator links
+Message-ID: <20240110-apostle-trident-533d4c2c9c97@spud>
+References: <20240109-update-llvm-links-v1-0-eb09b59db071@kernel.org>
+ <20240109-update-llvm-links-v1-2-eb09b59db071@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE35:EE_|CO6PR12MB5491:EE_
-X-MS-Office365-Filtering-Correlation-Id: fecc1373-b57e-461b-f40c-08dc11cec1ab
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	5zbHXc+tv80xpbAOC64vONBJ710EUW5JEZAjpDTqsbtvuiJKvJNgoU/6N6JPKdoAOC5l6ZdsgiB8jZ/obK/dnPFjN+1+tslz1RK2nFKOO6cS3X7fZGNZkY9hmmPkX8/w80xEXXilhG36njcngsnNQDK35Bk3AnMFj84/BvCK8kL7JRpoSOxQPhHSQSjgCfkOIuIVRMzlfOOO7N7dOExEmA+2VyEtaHPlpF4XOpsM0of+fhoGQN/UtnKob3TudpKehFUKc2E/FjVPr+7wyAwCrfphu4LDWG7c8S4U7xSGIBsT+izBUl3GdHB9KA8E8YEgsx49XL+xp6j5TNd0JXdQ1SveJJIGuQjVlQhidst8u0gQJdL0+NXngyXg14pHdz/4WhtMsjW7KO9SK50zX0c9w1m0kkaQxebROVZ/+YwezTW68rWqfw/s2Qt4PAhxiH8xVOTZfbxk+J+S5UqXOb+rkmocqZbYAIxxEJo+t0CC/ggOPSEo6XACeUN/6DvrNdwKzfPcY1It8psYWMKNbaYfh46SRIAXxSi8/YBWJyKg1dqElAZNZi3BEaezhxkEtX5pxFl8/pmA2w96+mlfT9KIw1bT1Zm/kXr8JfxXyN2Ua9cBfAgUx4qrjV4Mt5Yk8wvJaEQXi0z4XoD/44TPn0mz+sHQf8k0mTUm5AqLgAIJyiATAltO7AK2r4giCz3UVDUtzmuGxCKlYyzKGIiUhnGFIuXIxeMzqQ5730ZBMQPQbvyllgjYt/o8jJagLaiJcjtPM/sJfAqOyV/K4OS2WNeTvA==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(346002)(39860400002)(396003)(136003)(376002)(230922051799003)(64100799003)(1800799012)(82310400011)(186009)(451199024)(40470700004)(46966006)(36840700001)(2616005)(1076003)(26005)(336012)(7696005)(478600001)(16526019)(426003)(6666004)(36860700001)(83380400001)(47076005)(5660300002)(2906002)(7416002)(41300700001)(4326008)(70586007)(70206006)(110136005)(8676002)(8936002)(54906003)(316002)(81166007)(356005)(86362001)(82740400003)(36756003)(40460700003)(40480700001)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2024 11:24:48.9037
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fecc1373-b57e-461b-f40c-08dc11cec1ab
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE35.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR12MB5491
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="p6SYI+U6gP5vpK1M"
+Content-Disposition: inline
+In-Reply-To: <20240109-update-llvm-links-v1-2-eb09b59db071@kernel.org>
 
-Switch unconfined and in-tree labels to percpu managed
-mode of percpu rcuref. This helps avoid memory contention
-in ref get and put operations.
 
-Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
----
- security/apparmor/label.c     | 1 +
- security/apparmor/policy_ns.c | 2 ++
- 2 files changed, 3 insertions(+)
+--p6SYI+U6gP5vpK1M
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/security/apparmor/label.c b/security/apparmor/label.c
-index f28dec1c3e70..57fcd5b3e48a 100644
---- a/security/apparmor/label.c
-+++ b/security/apparmor/label.c
-@@ -710,6 +710,7 @@ static struct aa_label *__label_insert(struct aa_labelset *ls,
- 	rb_link_node(&label->node, parent, new);
- 	rb_insert_color(&label->node, &ls->root);
- 	label->flags |= FLAG_IN_TREE;
-+	percpu_rcuref_manage(&label->count);
- 
- 	return aa_get_label(label);
- }
-diff --git a/security/apparmor/policy_ns.c b/security/apparmor/policy_ns.c
-index 1f02cfe1d974..ff261b119c53 100644
---- a/security/apparmor/policy_ns.c
-+++ b/security/apparmor/policy_ns.c
-@@ -124,6 +124,7 @@ static struct aa_ns *alloc_ns(const char *prefix, const char *name)
- 		goto fail_unconfined;
- 	/* ns and ns->unconfined share ns->unconfined refcount */
- 	ns->unconfined->ns = ns;
-+	percpu_rcuref_manage(&ns->unconfined->label.count);
- 
- 	atomic_set(&ns->uniq_null, 0);
- 
-@@ -377,6 +378,7 @@ int __init aa_alloc_root_ns(void)
- 	}
- 	kernel_t = &kernel_p->label;
- 	root_ns->unconfined->ns = aa_get_ns(root_ns);
-+	percpu_rcuref_manage(&root_ns->unconfined->label.count);
- 
- 	return 0;
- }
--- 
-2.34.1
+On Tue, Jan 09, 2024 at 03:16:30PM -0700, Nathan Chancellor wrote:
+> reviews.llvm.org was LLVM's Phabricator instances for code review. It
+> has been abandoned in favor of GitHub pull requests. While the majority
+> of links in the kernel sources still work because of the work Fangrui
+> has done turning the dynamic Phabricator instance into a static archive,
+> there are some issues with that work, so preemptively convert all the
+> links in the kernel sources to point to the commit on GitHub.
+>=20
+> Most of the commits have the corresponding differential review link in
+> the commit message itself so there should not be any loss of fidelity in
+> the relevant information.
+>=20
+> Link: https://discourse.llvm.org/t/update-on-github-pull-requests/71540/1=
+72
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> ---
 
+>  arch/riscv/Kconfig              | 2 +-
+>  arch/riscv/include/asm/ftrace.h | 2 +-
+
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
+Conor.
+
+--p6SYI+U6gP5vpK1M
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZZ6gJAAKCRB4tDGHoIJi
+0mIlAQCj5ZP6QEhEswWYjX38obn/p3pF8mt+Ve+vlBnVEhAW8QD8ClRvKxDiajR5
+Zp8ES/FLDyH/QJ5QjGuYLP5PATLeFAY=
+=SqXc
+-----END PGP SIGNATURE-----
+
+--p6SYI+U6gP5vpK1M--
