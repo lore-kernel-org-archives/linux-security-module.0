@@ -1,111 +1,116 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B274EB42
-	for <linux-security-module@vger.kernel.org>; Wed, 10 Jan 2024 19:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A1B4E1C6
+	for <linux-security-module@vger.kernel.org>; Wed, 10 Jan 2024 20:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fT5Mq6ZE"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dbed71baa91so3300543276.0
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Jan 2024 11:54:41 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RL6wQiBB"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-50e7c6f0487so4789242e87.3
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Jan 2024 12:22:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1704916480; x=1705521280; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3/hfrnVExDYqMdaTvnynkIXfxZrxfgxNKbtbeKbU3kM=;
-        b=fT5Mq6ZEvZz3g1c0g6hl115h6xwHXmlj2XF4oViJMCd5RqCeDWWzElaBxHEaRVCCTs
-         kcV4A+Sudpq8E9effGebMYeVZjuS6DcRIMFrf8yWL1Kyz3s3gYumDoQzI5OwlOLkzwWB
-         NaHPGbJqARi0mYfkt85JWxba83fF8+y1D2GsqbrAOqQZu1EbidIPEGGL1ZsDACCRb5QB
-         +q3N7F+Rm87giNpxHEX6EcI1/Azkb0P9Xb15qAaYFSbj2dg7TRDG/vgPZV8meUHZm68X
-         mQtShDsaDvSScjQ7phHdtTidMAOkFZMP8oxOvS/LJ13pgjAK6zzMwp7BcB7fhl1ed70r
-         Vn1Q==
+        d=linux-foundation.org; s=google; t=1704918148; x=1705522948; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bes0cWsXMkLGrxq87eLM1Od+X4PFPpWEGIfhViy0gH8=;
+        b=RL6wQiBBjOoSKlQJRQYMVprP1HIzz9NuXeyd0kxjuIxtvADKW5gsdtNLfH04ddTQQK
+         wFiK/xGpwpjQT8bP5xb6mPIWFu6IMDW+hKysZCYHAdD7vyAz5dvVK2C3zdowBdnXZ+9/
+         U3AX5fDm5Ck3FbeQCl4TE/iTkTGSZNKZxImKQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704916480; x=1705521280;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3/hfrnVExDYqMdaTvnynkIXfxZrxfgxNKbtbeKbU3kM=;
-        b=kqOoTLCfhS/yEoV3DGpwd/qGO8gFBkkORsXnM2hximu55WCF1a0RVDk6q+reKyhq/A
-         uxOR22Pr7zqcNlKUxcxu0gSYiIA5bzloTZMEkYJvNLxiBGyFTIWOpYrmAP6AdFBD/ETe
-         H0fa/ONcEyPpOiBPC3fm2ujdj25H6a3XzZWME5/2dvUBZRH0Vpal/NKDfy7ijHVfdElV
-         marEBtysCTKoSiQrXunnWDlOUojPtf/aI4+PN0hV1FpuZm8b+1K0NsTz8gdON3rQGj90
-         MwCf9lDs3UYIEd78kZ8nXBf3PF8BJm8CqYt98xvT2g6GdmHibu5C/jW4R6NDhTRPz++w
-         kAFg==
-X-Gm-Message-State: AOJu0Yylv3sFZU+u7is8AVYyzpR5WHaCfAg9k2IoGmRRAM3mDb9Pgx7a
-	cuBsZ7Rs34fQxG7lZoap2WrGlZS/Q+huhQvhBueG3U05/MJR
-X-Google-Smtp-Source: AGHT+IGvZCI+F+FwpL/ZIhlX7CQPQ5vAvxAFE+gVVi4dDNySfAgDpRAdF8JtZ8KeMWQg+aT7Kmy/w22fIW/M4+oIgyE=
-X-Received: by 2002:a25:738f:0:b0:dbd:98c4:9358 with SMTP id
- o137-20020a25738f000000b00dbd98c49358mr110765ybc.91.1704916480297; Wed, 10
- Jan 2024 11:54:40 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704918148; x=1705522948;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bes0cWsXMkLGrxq87eLM1Od+X4PFPpWEGIfhViy0gH8=;
+        b=B3hTvyc4vIxkMClCOCcHa8MqsYERUCMBmdYqgGgRvEzyZw4CneWvNAaChh6efA1p6o
+         gFRDyt/xotZdbOXv8wYNeKDkI5t33N+D8ORLhLG4/O0N8YGcPyp5fQU7VdZ5w+bbYb/q
+         2OHkMSMQBTFCn6v4QJ1fEAhRTQ73SKUbBA+Wck6MJEUrhouxQHuCfGP8QUXCPjsQTqg1
+         WjKCLb0jrAQ2GL6EOUqPWc3TSUQAcMHOPFs2mWjvaTzJQx8+VtXPp1yHH7kH7s01fvJ5
+         iELkyOfMLC+kIROmDwkSKSZjVvRGC3uLxDQCd0GJ4D8UjTdaiocPEQPxjUVV5j5Irn/W
+         JoEw==
+X-Gm-Message-State: AOJu0YzCi5RGW0g0UBQDMT09p5X9X9IuJKi+N1GbYhref9Lf1ZgJULsI
+	WJ9VET59eNa3p0eDmCuvNbw7LHScuO565CC3AiQAR7TFEdiVUTub
+X-Google-Smtp-Source: AGHT+IHgKtPZa9aS3hH74hikR59Rn/kKdy3eEaqXQlnmOnfslfE/dE11hYDZkVgvB1dQGx2e+fHbFA==
+X-Received: by 2002:ac2:5186:0:b0:50e:b945:fc98 with SMTP id u6-20020ac25186000000b0050eb945fc98mr405734lfi.170.1704918148204;
+        Wed, 10 Jan 2024 12:22:28 -0800 (PST)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id b16-20020a056512305000b0050ea1f2baeasm745422lfb.20.2024.01.10.12.22.27
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jan 2024 12:22:27 -0800 (PST)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-50ea98440a7so4601515e87.1
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Jan 2024 12:22:27 -0800 (PST)
+X-Received: by 2002:a05:6512:3713:b0:50e:67f6:18d7 with SMTP id
+ z19-20020a056512371300b0050e67f618d7mr402078lfr.156.1704918147014; Wed, 10
+ Jan 2024 12:22:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3f5a7bc467d221543444a268dd1a1fe0@paul-moore.com> <CAHk-=whb9anXdo4odpP-ybYbmQs0UaPp1fmDjsWFiGxV5aOmig@mail.gmail.com>
-In-Reply-To: <CAHk-=whb9anXdo4odpP-ybYbmQs0UaPp1fmDjsWFiGxV5aOmig@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 10 Jan 2024 14:54:29 -0500
-Message-ID: <CAHC9VhRxG2jYayjpC=bLuBpfZsXnfYj_GoDBeK527sZWRe0ZrQ@mail.gmail.com>
+References: <3f5a7bc467d221543444a268dd1a1fe0@paul-moore.com>
+ <CAHk-=whb9anXdo4odpP-ybYbmQs0UaPp1fmDjsWFiGxV5aOmig@mail.gmail.com> <CAHC9VhRxG2jYayjpC=bLuBpfZsXnfYj_GoDBeK527sZWRe0ZrQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhRxG2jYayjpC=bLuBpfZsXnfYj_GoDBeK527sZWRe0ZrQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 10 Jan 2024 12:22:10 -0800
+X-Gmail-Original-Message-ID: <CAHk-=winAVoX=u+uX1Cdf0ekmFHETumRr60rvC_z6jbno0ApPg@mail.gmail.com>
+Message-ID: <CAHk-=winAVoX=u+uX1Cdf0ekmFHETumRr60rvC_z6jbno0ApPg@mail.gmail.com>
 Subject: Re: [GIT PULL] lsm/lsm-pr-20240105
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Paul Moore <paul@paul-moore.com>
 Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 9, 2024 at 4:08=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Fri, 5 Jan 2024 at 15:21, Paul Moore <paul@paul-moore.com> wrote:
-> >
-> >             The hightlights of the LSM pull
-> > request are below, but before we get to that I want to mention that I
-> > expect you will hit merge conflicts in the arch-specific syscall
-> > tables as well as in the doc userspace-api documentation index.  Some
-> > of these conflicts exist in your tree now (syscall tables), with some
-> > others likely depending on what is submitted from linux-next and the
-> > order in which you merge things.  All of the conflicts that I've seen
-> > have been rather trivial and easily resolved, but I wanted to give you
-> > a heads-up; if you want me to resolve any of these let me know.
+On Wed, 10 Jan 2024 at 11:54, Paul Moore <paul@paul-moore.com> wrote:
 >
-> The tooling header file updates by the LSM tree were particularly annoyin=
-g.
->
-> Not because the conflicts were hard per se, but because you had done
-> the header files wrong in the first place.
->
-> Your version of the tooling header files just didn't match the real
-> ones, as you had added your new system calls at the end mindlessly,
-> without noticing that others had *not* done so, so all your tooling
-> header system call number additions were just the wrong numbers
-> entirely.
->
-> I fixed it up, but it added an extra layer of "this is just annoying".
-> You'd have been better off not touching the tooling headers at all,
-> rather than touch them incorrectly.
+> Thanks for pulling the changes, I'm sorry the syscall table entries
+> for the LSM syscalls were not how you want to see them, but I'm more
+> than a little confused as to what exactly we did wrong here.
 
-Thanks for pulling the changes, I'm sorry the syscall table entries
-for the LSM syscalls were not how you want to see them, but I'm more
-than a little confused as to what exactly we did wrong here.  A more
-detailed explanation would be helpful; if there is a doc somewhere
-that explains the process, feel free to just drop a pointer.
+Look at commit 5f42375904b0 ("LSM: wireup Linux Security Module
+syscalls") and notice for example this:
 
-I did provide a note in the pull request that based on linux-next
-there were likely to be some conflicts in the syscall tables, but that
-was evidently not sufficient, or we just added the syscall tables the
-wrong way.  Your reply makes me believe we added the syscalls to the
-arch tables the wrong way, but looking at your merge commit and the
-files themselves (no helpful comments) I don't see anything obvious.
-Quickly scanning the kernel docs doesn't reveal anything related
-either, although I might be missing it.  The patches also didn't get
-any comments regarding the syscall tables during review, and aside
-from the numbering conflicts in linux-next, there were no comments
-along the lines of "you need to do it this way" there either.
+  --- a/arch/x86/entry/syscalls/syscall_64.tbl
+  +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+  @@ -378,6 +378,9 @@
+   454    common  futex_wake              sys_futex_wake
+   455    common  futex_wait              sys_futex_wait
+   456    common  futex_requeue           sys_futex_requeue
+  +457    common  lsm_get_self_attr       sys_lsm_get_self_attr
+  +458    common  lsm_set_self_attr       sys_lsm_set_self_attr
+  +459    common  lsm_list_modules        sys_lsm_list_modules
 
-I want to do things The Right Way the next time around, but I need
-some help to understand what that is ... ?
+Ok, fine - you added your new system calls to the end of the table.
+Sure, I ended up having to fix them up because the "end of the table"
+was different by the time I merged your tree, but that wasn't the
+problem.
 
---=20
-paul-moore.com
+The problem is here - in the same commit:
+
+  --- a/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
+  +++ b/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
+  @@ -375,6 +375,9 @@
+   451    common  cachestat               sys_cachestat
+   452    common  fchmodat2               sys_fchmodat2
+   453    64      map_shadow_stack        sys_map_shadow_stack
+  +454    common  lsm_get_self_attr       sys_lsm_get_self_attr
+  +455    common  lsm_set_self_attr       sys_lsm_set_self_attr
+  +456    common  lsm_list_modules        sys_lsm_list_modules
+
+note how you updated the tools copy WITH THE WRONG NUMBERS!
+
+You just added them at the end of the table again, and just
+incremented the numbers, but that was complete nonsense, because the
+numbers didn't actually match the real system call numbers, because
+that tools table hadn't been updated for new system calls - because it
+hadn't needed them.
+
+Yeah, our tooling header duplication is annoying, but the old
+situation where the tooling just used various kernel headers directly
+and would randomly break when kernel changes were made was even worse.
+
+End result: avoid touching the tooling headers - and if you have to,
+you need to *think* about it.
+
+           Linus
