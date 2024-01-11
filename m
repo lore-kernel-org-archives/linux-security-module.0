@@ -1,40 +1,39 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F94B1426C;
-	Thu, 11 Jan 2024 10:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2343014F81
+	for <linux-security-module@vger.kernel.org>; Thu, 11 Jan 2024 11:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUhIsvrg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E1BAC433F1;
-	Thu, 11 Jan 2024 10:38:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704969504;
-	bh=9EOmjQDZJMOYZwBf+zTXWPSyzLoE/NShKnrhD8OO7DE=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="cKmWR6dd"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4T9hqx0cJqzMq1bb;
+	Thu, 11 Jan 2024 11:13:49 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4T9hqv3yjdzr0;
+	Thu, 11 Jan 2024 12:13:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1704971628;
+	bh=+Dx1y3NlPG0Oz8roNtugh3aPtZh2p+5yMmqeI1QIBEo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tUhIsvrg5aXxGvXXwrEA9wo6mFfRrfgoUpw+tzGcgBNt28jf9FKh6y1+hW3Y6xD0w
-	 Rq/9cm6LgR4AM5v2qhxHvAYPkHhkfWca1isGUKc+YlGUXwk7YektpOONrnG/syt6GH
-	 SNg8pweDObB/uZVA9kpCQXqpV6C2Uqyp+FLHz0NSOyr2PgTFWIUB560TX//8TohfhU
-	 0UwApFT9GpRjvtwKiN61o3zwxpyAa3FokRCFfinHwgEbxnb9aYwVHYkrIUEHep9y4m
-	 7d2NRotXBA3bHHWIAvO7y7aAyrmL1JMos7o5GhawxHDwkm42WyFkEJkmzYvVPfGboK
-	 3dZiQddmHgwKA==
-Date: Thu, 11 Jan 2024 11:38:19 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH bpf-next 03/29] bpf: introduce BPF token object
-Message-ID: <20240111-amten-stiefel-043027f9520f@brauner>
-References: <20240103222034.2582628-1-andrii@kernel.org>
- <20240103222034.2582628-4-andrii@kernel.org>
- <CAHk-=wgmjr4nhxGheec1OwuYRk02d0+quUAViVk1v+w=Kvg15w@mail.gmail.com>
- <CAEf4Bzb6jnJL98SLPJB7Vjxo_O33W8HjJuAsyP3+6xigZtsTkA@mail.gmail.com>
- <20240108-gasheizung-umstand-a36d89ed36b7@brauner>
- <CAEf4Bzb+7NzYs5ScggtgAJ6A5-oU5GymvdoEbpfNVOG-XmWZig@mail.gmail.com>
- <20240109-tausend-tropenhelm-2a9914326249@brauner>
- <CAEf4BzaAoXYb=qnj6rvDw8VewhvYNrs5oxe=q7VBe0jjWXivhg@mail.gmail.com>
- <20240110-nervt-monopol-6d307e2518f4@brauner>
- <CAEf4BzYOU5ZVqnTDTEmrHL-+tYY76kz4LO_0XauWibnhtzCFXg@mail.gmail.com>
+	b=cKmWR6dd9MEc0f1sWvXvwPne86uMgX6Rg0KeJVVsscclRS1cSJCPmDmTNkT/1XtcZ
+	 M9CkaQ17CndY2CFXQa2yAo/NkWO74ADRLKDwND8coyTVI9ArZiO6sunp1VX8yJVUIp
+	 eaoribqixdWDGKshebZ45tTsKaao8crTDJDZXE9U=
+Date: Thu, 11 Jan 2024 12:13:46 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Huyadi <hu.yadi@h3c.com>
+Cc: "jmorris@namei.org" <jmorris@namei.org>, 
+	"serge@hallyn.com" <serge@hallyn.com>, "shuah@kernel.org" <shuah@kernel.org>, 
+	"mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>, "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "514118380@qq.com" <514118380@qq.com>
+Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjJdIHNlbGZ0ZXN0cy9tb3ZlX21v?=
+ =?utf-8?Q?unt=5Fset=5Fgroup=3AMake?= tests build with old libc
+Message-ID: <20240111.aeth4shoo0Oo@digikod.net>
+References: <20240110072901.5873-1-hu.yadi@h3c.com>
+ <20240110.Yap9Aw9aeghu@digikod.net>
+ <6c398076d4624691a97766bad168d975@h3c.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -43,131 +42,79 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAEf4BzYOU5ZVqnTDTEmrHL-+tYY76kz4LO_0XauWibnhtzCFXg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6c398076d4624691a97766bad168d975@h3c.com>
+X-Infomaniak-Routing: alpha
 
-> > The current check is inconsisent. It special-cases init_user_ns. The
-> > correct thing to do for what you're intending imho is:
+On Thu, Jan 11, 2024 at 02:25:03AM +0000, Huyadi wrote:
+> 
+> >On Wed, Jan 10, 2024 at 03:29:01PM +0800, Hu Yadi wrote:
+> >> From: "Hu.Yadi" <hu.yadi@h3c.com>
+> >> 
+> >> Replace SYS_<syscall> with __NR_<syscall>.  Using the __NR_<syscall> 
+> >> notation, provided by UAPI, is useful to build tests on systems 
+> >> without the SYS_<syscall> definitions.
 > >
-> > bool bpf_token_capable(const struct bpf_token *token, int cap)
-> > {
-> >         struct user_namespace *userns = &init_user_ns;
-> >
-> >         if (token)
-> >                 userns = token->userns;
-> >         if (ns_capable(userns, cap))
-> >                 return true;
-> >         return cap != CAP_SYS_ADMIN && ns_capable(userns, CAP_SYS_ADMIN))
-> >
-> > }
+> >This looks a lot like that...
+> >https://git.kernel.org/stable/c/87129ef13603ae46c82bcd09eed948acf0506dbb
 > 
-> Unfortunately the above becomes significantly more hairy when LSM
-> (security_bpf_token_capable) gets involved, while preserving the rule
-> "if token doesn't give rights, fall back to init userns checks".
+> Yes, I picked up comments from above commit in order for consistent,
+> I would send v3 patch if it is inappropriate. 
 
-Why? Please explain your reasoning in detail.
+This is not an issue at all to use the same wording if it makes sense.
+Actually, the description of v3 is less explanatory.  It might just be
+appropriate to reference past similar work. That would justify your
+work, add a precedent, and if there is any issue we could fix both
+changes.
 
-> 
-> I'm happy to accommodate any implementation of bpf_token_capable() as
-> long as it behaves as discussed above and also satisfies Paul's
-> requirement that capability checks should happen before LSM checks.
-> 
-> >
-> > Because any caller located in an ancestor user namespace of
-> > token->user_ns will be privileged wrt to the token's userns as long as
-> > they have that capability in their user namespace.
-> 
-> And with `current_user_ns() == token->userns` check we won't be using
-> token->userns while the caller is in ancestor user namespace, we'll
-> use capable() check, which will succeed only in init user_ns, assuming
-> corresponding CAP_xxx is actually set.
+You can append this to the commit message (with the v2 description):
 
-Why? This isn't how any of our ns_capable() logic works.
+Similar changes: commit 87129ef13603 ("selftests/landlock: Make tests
+build with old libc")
 
-This basically argues that anyone in an ancestor user namespace is not
-allowed to operate on any of their descendant child namespaces unless
-they are in the init_user_ns.
-
-But that's nonsense as I'm trying to tell you. Any process in an
-ancestor user namespace that is privileged over the child namespace can
-just setns() into it and then pass that bpf_token_capable() check by
-supplying the token.
-
-At this point just do it properly and allow callers that are privileged
-in the token user namespace to load bpf programs. It also means you get
-user namespace nesting done properly.
+Acked-by: Mickaël Salaün <mic@digikod.net>
 
 > 
-> >
-> > For example, if the caller is in the init_user_ns and permissions
-> > for CAP_WHATEVER is checked for in token->user_ns and the caller has
-> > CAP_WHATEVER in init_user_ns then they also have it in all
-> > descendant user namespaces.
-> 
-> Right, so if they didn't use a token they would still pass
-> capable(CAP_WHATEVER), right?
-
-Yes, I'm trying to accomodate your request but making it work
-consistently.
-
-> 
-> >
-> > The original intention had been to align with what we require during
-> > token creation meaning that once a token has been created interacting
-> > with this token is specifically confined to caller's located in the
-> > token's user namespace.
-> >
-> > If that's not the case then it doesn't make sense to not allow
-> > permission checking based on regular capability semantics. IOW, why
-> > special case init_user_ns if you're breaking the confinement restriction
-> > anyway.
-> 
-> I'm sorry, perhaps I'm dense, but with `current_user_ns() ==
-> token->userns` check I think we do fulfill the intention to not allow
-> using a token in a userns different from the one in which it was
-> created. If that condition isn't satisfied, the token is immediately
-
-My request originally was about never being able to interact with a
-token outside of that userns. This is different as you provide an escape
-hatch to init_user_ns. But if you need that and ignore the token then
-please do it properly. That's what I'm trying to tell you. See below.
-
-> ignored. So you can't use a token from another userns for anything,
-> it's just not there, effectively.
-> 
-> And as I tried to explain above, I do think that ignoring the token
-> instead of erroring out early is what we want to provide good
-> user-space ecosystem integration of BPF token.
-
-There is no erroring out early in. It's:
-
-(1) Has a token been provided and is the caller capable wrt to the
-    namespace of the token? Any caller in an ancestor user namespace
-    that has the capability in that user namespace is capable wrt to
-    that token. That __includes__ a callers in the init_user_ns. IOW,
-    you don't need to fallback to any special checking for init_user_ns.
-    It is literally covered in the if (token) branch with the added
-    consistency that a process in an ancestor user namespace is
-    privileged wrt to that token as well.
-
-(2) No token has been provided. Then do what we always did and perform
-    the capability checks based on the initial user namespace.
-
-The only thing that you then still need is add that token_capable() hook
-in there:
-
-bool bpf_token_capable(const struct bpf_token *token, int cap)
-{
-	bool has_cap;
-        struct user_namespace *userns = &init_user_ns;
-
-        if (token)
-                userns = token->userns;
-        if (ns_capable(userns, cap))
-                return true;
-        if (cap != CAP_SYS_ADMIN && ns_capable(userns, CAP_SYS_ADMIN))
-		return token ? security_bpf_token_capable(token, cap) == 0 : true;
-	return false;
-}
-
-Or write it however you like. I think this is way more consistent and
-gives you a more flexible permission model.
+> >> 
+> >> Replace SYS_move_mount with __NR_move_mount
+> >> 
+> >> Signed-off-by: Hu.Yadi <hu.yadi@h3c.com> Suggested-by:Jiao 
+> >> <jiaoxupo@h3c.com> Reviewed-by:Berlin <berlin@h3c.com>
+> >> ---
+> >> Changes v1 -> v2:
+> >>  - Fix mail of Suggested-by and Reviewed-by
+> >> 
+> >>  .../move_mount_set_group/move_mount_set_group_test.c          | 4 ++--
+> >>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >> 
+> >> diff --git 
+> >> a/tools/testing/selftests/move_mount_set_group/move_mount_set_group_te
+> >> st.c 
+> >> b/tools/testing/selftests/move_mount_set_group/move_mount_set_group_te
+> >> st.c index 50ed5d475dd1..bcf51d785a37 100644
+> >> --- 
+> >> a/tools/testing/selftests/move_mount_set_group/move_mount_set_group_te
+> >> st.c
+> >> +++ b/tools/testing/selftests/move_mount_set_group/move_mount_set_grou
+> >> +++ p_test.c
+> >> @@ -218,7 +218,7 @@ static bool move_mount_set_group_supported(void)
+> >>  	if (mount(NULL, SET_GROUP_FROM, NULL, MS_SHARED, 0))
+> >>  		return -1;
+> >>  
+> >> -	ret = syscall(SYS_move_mount, AT_FDCWD, SET_GROUP_FROM,
+> >> +	ret = syscall(__NR_move_mount, AT_FDCWD, SET_GROUP_FROM,
+> >>  		      AT_FDCWD, SET_GROUP_TO, MOVE_MOUNT_SET_GROUP);
+> >>  	umount2("/tmp", MNT_DETACH);
+> >>  
+> >> @@ -363,7 +363,7 @@ TEST_F(move_mount_set_group, complex_sharing_copying)
+> >>  		       CLONE_VM | CLONE_FILES); ASSERT_GT(pid, 0);
+> >>  	ASSERT_EQ(wait_for_pid(pid), 0);
+> >>  
+> >> -	ASSERT_EQ(syscall(SYS_move_mount, ca_from.mntfd, "",
+> >> +	ASSERT_EQ(syscall(__NR_move_mount, ca_from.mntfd, "",
+> >>  			  ca_to.mntfd, "", MOVE_MOUNT_SET_GROUP
+> >>  			  | MOVE_MOUNT_F_EMPTY_PATH | MOVE_MOUNT_T_EMPTY_PATH),
+> >>  		  0);
+> >> --
+> >> 2.23.0
+> >>  
