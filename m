@@ -1,146 +1,68 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E261C2D;
-	Thu, 11 Jan 2024 05:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MlbJ7gVK"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1d3aa0321b5so42266075ad.2;
-        Wed, 10 Jan 2024 21:12:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704949933; x=1705554733; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=2l0kiaEAsSw9ODRekY3zuDQ0GMRAZXXqaNoDjFgDs0c=;
-        b=MlbJ7gVKWszfmi/ii5XnMINDrbxZ4kqKoDf1XHSQjDjNXHcRirtwT2mEa3qMdO4fRc
-         Ig8qHWQ7d0hO/PTqtONFwsEjy0AzT3DF054VcthXSj4LszNWtmUQB3gRfzakUYcv4FIV
-         kQzT8dKe8e4kNEOwE+6WWNGNZL80DZokESPSHMA8EWHxqclkQaPTYNcKp8VngSGK5CTR
-         E9TlXcmgoD3wQnabrBaBG3BEKh6iX0aTikUsXyK7+mY/Wf1mFjUtHyXndD6ZOubstLHD
-         CrQA/hbu0239RBfFzvEf+i5dLsjdYgr1/634UiPOVmKdnkzsr/J78uyKuDzh4ZlGNhvk
-         wAWA==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA53EADC
+	for <linux-security-module@vger.kernel.org>; Thu, 11 Jan 2024 06:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7bef67c486aso141551939f.2
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Jan 2024 22:44:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704949933; x=1705554733;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2l0kiaEAsSw9ODRekY3zuDQ0GMRAZXXqaNoDjFgDs0c=;
-        b=SNz8PIFSEoPnVDhVQOBXDGWIUta5zrW+bgUOTX9yEuMrRAFDHikrudBhPFU74rPZkX
-         TAPWHv9xeCgZ9mM/x2ujPGsBlKbUf5DMk/dVMP/oWF2pu3qNYzX7R2eBsmnULbc1ynhn
-         OK1Uxl4ZRkhxom4u5nNcDWCcUVHe6kqlDZvA4tHUaWvJ3lp+7MPHmwCQX4TgNLlgYnMO
-         0SvcVkR5+WQBcmUxKgrrLE1oO+AQxZ5VjERb/Ng2+FOYrjcOHxAnQ4WOHrfNbJrV/fkD
-         Vn2lpE3wOIxVHv+J5a6lhcBzrO6QijmSRc5KxPFZ5rF1qH7GBDA8qTpYrB72MLmQXniI
-         BihQ==
-X-Gm-Message-State: AOJu0Yyz5y1W/hQhdTAQLeWTzU7lZR0QznVXRgmHt2ZtcQsd749TemhN
-	ZK/9hyLFHr/7eMrMpMuc/Vw7kLXJR1I=
-X-Google-Smtp-Source: AGHT+IEmA4D6EGKYwpbjX3inQ+AsOd64f+rSHmOkf5Vjb+hs2vNWFJSl/Vr+gAk9Qn3jPoA0eSbjNw==
-X-Received: by 2002:a17:902:e850:b0:1d5:2353:a9ae with SMTP id t16-20020a170902e85000b001d52353a9aemr879124plg.13.1704949933479;
-        Wed, 10 Jan 2024 21:12:13 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id jh18-20020a170903329200b001d4593a2e8fsm224069plb.83.2024.01.10.21.12.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jan 2024 21:12:12 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <28c6b616-84d7-4f7e-bf82-eb32e53e631b@roeck-us.net>
-Date: Wed, 10 Jan 2024 21:12:10 -0800
+        d=1e100.net; s=20230601; t=1704955444; x=1705560244;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Go7MHHguEsXDJaMiDiMFUZrkJPCJjs8e6jnOcbKt05k=;
+        b=kJ3JpstrbvuHWuafHABe3+IYEDVyk+IjRRDlO5rpa25h/dHzX8cVY4sZa0DuPbt0/f
+         gi8mS1Re7EzM+0uOY/1lejLVyQwhLkkqYN65GTT3mm69cKby+cA+Vuf8MlQaK3DAluD6
+         /zLumldpW6+hijIM0TY15dk1VpEXNvwLuWJy7i1Db/EiMSSN5J3RIG6IhLIT2+xPCwoW
+         LlIKZJUmzU3E9eyp+1kE9X1Ty8ej/0JH/cAv3PcDkZmnIUTTj7BvCaulGV5EXG/Mf3yB
+         eHYNyFZfXSB5mg6pZiwK7L/jziWRE2Fo0SMd8R78Gtzhw5BdJjFwVc9sJTKioM+10CfI
+         hvew==
+X-Gm-Message-State: AOJu0YxU3v2k7I2kBUYLDGZHAIeM4OdwUIIaNHx0N7Z3Ww4ovzY/QGrG
+	kInzYJr7zMMbOU4m4rch8vunR5d+AUr8KLiLHY6nHUTm9O9Y
+X-Google-Smtp-Source: AGHT+IHkD2jmO/TL/yOssuiaFNilDxssd908YaoSm12wBNANAvPSwd623sCODi3g2j4cDI1dKtqu1f3WEK5dMfbA4SkkLKacv/vM
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] add listmount(2) syscall
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
- linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
- Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
- David Howells <dhowells@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <christian@brauner.io>, Amir Goldstein
- <amir73il@gmail.com>, Matthew House <mattlloydhouse@gmail.com>,
- Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>
-References: <20231025140205.3586473-1-mszeredi@redhat.com>
- <20231025140205.3586473-6-mszeredi@redhat.com>
- <75b87a85-7d2c-4078-91e3-024ea36cfb42@roeck-us.net>
- <CAHk-=wjdW-4s6Kpa4izJ2D=yPdCje6Ta=eQxxQG6e2SkP42vnw@mail.gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CAHk-=wjdW-4s6Kpa4izJ2D=yPdCje6Ta=eQxxQG6e2SkP42vnw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:210:b0:46e:50ab:6a4e with SMTP id
+ e16-20020a056638021000b0046e50ab6a4emr31005jaq.3.1704955444335; Wed, 10 Jan
+ 2024 22:44:04 -0800 (PST)
+Date: Wed, 10 Jan 2024 22:44:04 -0800
+In-Reply-To: <000000000000fcfb4a05ffe48213@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009e1b00060ea5df51@google.com>
+Subject: Re: [syzbot] [hfs] general protection fault in tomoyo_check_acl (3)
+From: syzbot <syzbot+28aaddd5a3221d7fd709@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, jmorris@namei.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	penguin-kernel@I-love.SAKURA.ne.jp, penguin-kernel@i-love.sakura.ne.jp, 
+	serge@hallyn.com, syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp, 
+	tomoyo-dev-en-owner@lists.osdn.me, tomoyo-dev-en@lists.osdn.me
+Content-Type: text/plain; charset="UTF-8"
 
-On 1/10/24 16:32, Linus Torvalds wrote:
-> On Wed, 10 Jan 2024 at 14:23, Guenter Roeck <linux@roeck-us.net> wrote:
->>
->> with this patch in the tree, all sh4 builds fail with ICE.
->>
->> during RTL pass: final
->> In file included from fs/namespace.c:11:
->> fs/namespace.c: In function '__se_sys_listmount':
->> include/linux/syscalls.h:258:9: internal compiler error: in change_address_1, at emit-rtl.c:2275
-> 
-> We do have those very ugly SYSCALL_DEFINEx() macros, but I'm not
-> seeing _anything_ that would be odd about the listmount case.
-> 
-> And the "__se_sys" thing in particular is just a fairly trivial wrapper.
-> 
-> It does use that asmlinkage_protect() thing, and it is unquestionably
-> horrendously ugly (staring too long at <linux/syscalls.h> has been
-> known to cause madness and despair), but we do that for *every* single
-> system call and I don't see why the new listmount entry would be
-> different.
-> 
+syzbot suspects this issue was fixed by commit:
 
-I don't have much of a clue either, but here is a hint: The problem is
-only seen if CONFIG_MMU=n. I tested with all configurations in
-arch/sh/configs.
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-Guenter
+    fs: Block writes to mounted block devices
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15135c0be80000
+start commit:   a901a3568fd2 Merge tag 'iomap-6.5-merge-1' of git://git.ke..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7406f415f386e786
+dashboard link: https://syzkaller.appspot.com/bug?extid=28aaddd5a3221d7fd709
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17b5bb80a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10193ee7280000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
