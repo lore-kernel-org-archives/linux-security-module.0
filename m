@@ -1,130 +1,100 @@
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4196E7E4
-	for <linux-security-module@vger.kernel.org>; Thu, 11 Jan 2024 00:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iLYMN66F"
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6db0fdd2b8fso1386046b3a.2
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Jan 2024 16:46:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1704933967; x=1705538767; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gueNhZrbsNiJzCN2gb4yLrjECQBWf6cwwXnoTcfXIT4=;
-        b=iLYMN66FKBdyLftqxvShVV6YPPjxaiH0A4bEAzAFXUh07Rtw7cg392gFExYv4aTjPp
-         8ZhTs0xsPpn6Xt3z7ZSCx9+l33aZXrNwfon+LzcPDHf5jEjnvZK8v7t2AiI8yLH+ugI3
-         SAixjT3vhp/BZBahYdq2dQahnHiGSuF9qMJow=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704933967; x=1705538767;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gueNhZrbsNiJzCN2gb4yLrjECQBWf6cwwXnoTcfXIT4=;
-        b=JuH4kln7+jpuuwWxO38IpgwFn/bYYJpnygO0ZSyNU5mTP/JYCQ5m9zeRrgBry7UWGm
-         fdqKdqUfPzqD869eGCst1AzS9z2FJRBQ8yMU/iDQjRlgVw3JVGhMbCt2MY4gctAuHnJ3
-         cBmbpHoZxyww7joveZGdo+Fh34mid/SBRxjcMvmgY6tU/JrAYLEyFcoLhWWbaLehfWrq
-         /3iROrxmcYt5txQMl31HZ5GlZ+77H/icp0+DfX2EALhSv1p70bYPW8/2P3gXCas5OzQ0
-         4BpxH4tLiCtton4ikGHBAxLjJZSi50l7V3//a6yFGJA1HgZcquMC2gUMYhbvc82Kodnm
-         BfmQ==
-X-Gm-Message-State: AOJu0YwdxTVBsEMdBW8/y2n9VVcj9z7MxbRE9gJMYqpX5z/199EAG2iD
-	eRhvu/umR5kBDPKWOEBJMvIlO9SDjZsW
-X-Google-Smtp-Source: AGHT+IGkiZ1hknB2+0UC/gxIH8jrVZxWAA/1vUWxP929828CA6Qm4M9e8Oxn46aJ8qOxkFFVf4GTPg==
-X-Received: by 2002:aa7:90d3:0:b0:6d9:a64c:c5d1 with SMTP id k19-20020aa790d3000000b006d9a64cc5d1mr504196pfk.26.1704933967538;
-        Wed, 10 Jan 2024 16:46:07 -0800 (PST)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id y2-20020a62b502000000b006dac91d6da5sm4071344pfe.68.2024.01.10.16.46.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jan 2024 16:46:06 -0800 (PST)
-Date: Wed, 10 Jan 2024 16:46:06 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: akpm@linux-foundation.org, llvm@lists.linux.dev,
-	patches@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	kvm@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-efi@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-	linux-arch@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-mm@kvack.org, bridge@lists.linux.dev, netdev@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, mykolal@fb.com,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH 0/3] Update LLVM Phabricator and Bugzilla links
-Message-ID: <202401101645.ED161519BA@keescook>
-References: <20240109-update-llvm-links-v1-0-eb09b59db071@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412F81C16;
+	Thu, 11 Jan 2024 02:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
+Received: from mail.maildlp.com ([172.25.15.154])
+	by h3cspam02-ex.h3c.com with ESMTP id 40B2P3Oi095226;
+	Thu, 11 Jan 2024 10:25:03 +0800 (GMT-8)
+	(envelope-from hu.yadi@h3c.com)
+Received: from DAG6EX01-IMDC.srv.huawei-3com.com (unknown [10.62.14.10])
+	by mail.maildlp.com (Postfix) with ESMTP id 559F822D4780;
+	Thu, 11 Jan 2024 10:29:23 +0800 (CST)
+Received: from DAG6EX02-IMDC.srv.huawei-3com.com (10.62.14.11) by
+ DAG6EX01-IMDC.srv.huawei-3com.com (10.62.14.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.27; Thu, 11 Jan 2024 10:25:04 +0800
+Received: from DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4])
+ by DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4%16]) with
+ mapi id 15.02.1258.027; Thu, 11 Jan 2024 10:25:03 +0800
+From: Huyadi <hu.yadi@h3c.com>
+To: =?utf-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+CC: "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com"
+	<serge@hallyn.com>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>,
+        "514118380@qq.com" <514118380@qq.com>
+Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjJdIHNlbGZ0ZXN0cy9tb3ZlX21vdW50X3NldF9n?=
+ =?utf-8?Q?roup:Make_tests_build_with_old_libc?=
+Thread-Topic: [PATCH v2] selftests/move_mount_set_group:Make tests build with
+ old libc
+Thread-Index: AQHaQ5cFEyIWLbXjpU+9djDN1vXVNrDSzHOAgAEVTtA=
+Date: Thu, 11 Jan 2024 02:25:03 +0000
+Message-ID: <6c398076d4624691a97766bad168d975@h3c.com>
+References: <20240110072901.5873-1-hu.yadi@h3c.com>
+ <20240110.Yap9Aw9aeghu@digikod.net>
+In-Reply-To: <20240110.Yap9Aw9aeghu@digikod.net>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-sender-location: DAG2
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240109-update-llvm-links-v1-0-eb09b59db071@kernel.org>
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:h3cspam02-ex.h3c.com 40B2P3Oi095226
 
-On Tue, Jan 09, 2024 at 03:16:28PM -0700, Nathan Chancellor wrote:
-> This series updates all instances of LLVM Phabricator and Bugzilla links
-> to point to GitHub commits directly and LLVM's Bugzilla to GitHub issue
-> shortlinks respectively.
-> 
-> I split up the Phabricator patch into BPF selftests and the rest of the
-> kernel in case the BPF folks want to take it separately from the rest of
-> the series, there are obviously no dependency issues in that case. The
-> Bugzilla change was mechanical enough and should have no conflicts.
-> 
-> I am aiming this at Andrew and CC'ing other lists, in case maintainers
-> want to chime in, but I think this is pretty uncontroversial (famous
-> last words...).
-> 
-> ---
-> Nathan Chancellor (3):
->       selftests/bpf: Update LLVM Phabricator links
->       arch and include: Update LLVM Phabricator links
->       treewide: Update LLVM Bugzilla links
-> 
->  arch/arm64/Kconfig                                 |  4 +--
->  arch/powerpc/Makefile                              |  4 +--
->  arch/powerpc/kvm/book3s_hv_nested.c                |  2 +-
->  arch/riscv/Kconfig                                 |  2 +-
->  arch/riscv/include/asm/ftrace.h                    |  2 +-
->  arch/s390/include/asm/ftrace.h                     |  2 +-
->  arch/x86/power/Makefile                            |  2 +-
->  crypto/blake2b_generic.c                           |  2 +-
->  drivers/firmware/efi/libstub/Makefile              |  2 +-
->  drivers/gpu/drm/amd/amdgpu/sdma_v4_4_2.c           |  2 +-
->  drivers/media/test-drivers/vicodec/codec-fwht.c    |  2 +-
->  drivers/regulator/Kconfig                          |  2 +-
->  include/asm-generic/vmlinux.lds.h                  |  2 +-
->  include/linux/compiler-clang.h                     |  2 +-
->  lib/Kconfig.kasan                                  |  2 +-
->  lib/raid6/Makefile                                 |  2 +-
->  lib/stackinit_kunit.c                              |  2 +-
->  mm/slab_common.c                                   |  2 +-
->  net/bridge/br_multicast.c                          |  2 +-
->  security/Kconfig                                   |  2 +-
->  tools/testing/selftests/bpf/README.rst             | 32 +++++++++++-----------
->  tools/testing/selftests/bpf/prog_tests/xdpwall.c   |  2 +-
->  .../selftests/bpf/progs/test_core_reloc_type_id.c  |  2 +-
->  23 files changed, 40 insertions(+), 40 deletions(-)
-> ---
-> base-commit: 0dd3ee31125508cd67f7e7172247f05b7fd1753a
-> change-id: 20240109-update-llvm-links-d03f9d649e1e
-> 
-> Best regards,
-> -- 
-> Nathan Chancellor <nathan@kernel.org>
-> 
-
-Excellent! Thanks for doing this. I spot checked a handful I was
-familiar with and everything looks good to me.
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--- 
-Kees Cook
+DQo+T24gV2VkLCBKYW4gMTAsIDIwMjQgYXQgMDM6Mjk6MDFQTSArMDgwMCwgSHUgWWFkaSB3cm90
+ZToNCj4+IEZyb206ICJIdS5ZYWRpIiA8aHUueWFkaUBoM2MuY29tPg0KPj4gDQo+PiBSZXBsYWNl
+IFNZU188c3lzY2FsbD4gd2l0aCBfX05SXzxzeXNjYWxsPi4gIFVzaW5nIHRoZSBfX05SXzxzeXNj
+YWxsPiANCj4+IG5vdGF0aW9uLCBwcm92aWRlZCBieSBVQVBJLCBpcyB1c2VmdWwgdG8gYnVpbGQg
+dGVzdHMgb24gc3lzdGVtcyANCj4+IHdpdGhvdXQgdGhlIFNZU188c3lzY2FsbD4gZGVmaW5pdGlv
+bnMuDQo+DQo+VGhpcyBsb29rcyBhIGxvdCBsaWtlIHRoYXQuLi4NCj5odHRwczovL2dpdC5rZXJu
+ZWwub3JnL3N0YWJsZS9jLzg3MTI5ZWYxMzYwM2FlNDZjODJiY2QwOWVlZDk0OGFjZjA1MDZkYmIN
+Cg0KWWVzLCBJIHBpY2tlZCB1cCBjb21tZW50cyBmcm9tIGFib3ZlIGNvbW1pdCBpbiBvcmRlciBm
+b3IgY29uc2lzdGVudCwNCkkgd291bGQgc2VuZCB2MyBwYXRjaCBpZiBpdCBpcyBpbmFwcHJvcHJp
+YXRlLiANCg0KPj4gDQo+PiBSZXBsYWNlIFNZU19tb3ZlX21vdW50IHdpdGggX19OUl9tb3ZlX21v
+dW50DQo+PiANCj4+IFNpZ25lZC1vZmYtYnk6IEh1LllhZGkgPGh1LnlhZGlAaDNjLmNvbT4gU3Vn
+Z2VzdGVkLWJ5OkppYW8gDQo+PiA8amlhb3h1cG9AaDNjLmNvbT4gUmV2aWV3ZWQtYnk6QmVybGlu
+IDxiZXJsaW5AaDNjLmNvbT4NCj4+IC0tLQ0KPj4gQ2hhbmdlcyB2MSAtPiB2MjoNCj4+ICAtIEZp
+eCBtYWlsIG9mIFN1Z2dlc3RlZC1ieSBhbmQgUmV2aWV3ZWQtYnkNCj4+IA0KPj4gIC4uLi9tb3Zl
+X21vdW50X3NldF9ncm91cC9tb3ZlX21vdW50X3NldF9ncm91cF90ZXN0LmMgICAgICAgICAgfCA0
+ICsrLS0NCj4+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygt
+KQ0KPj4gDQo+PiBkaWZmIC0tZ2l0IA0KPj4gYS90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9tb3Zl
+X21vdW50X3NldF9ncm91cC9tb3ZlX21vdW50X3NldF9ncm91cF90ZQ0KPj4gc3QuYyANCj4+IGIv
+dG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvbW92ZV9tb3VudF9zZXRfZ3JvdXAvbW92ZV9tb3VudF9z
+ZXRfZ3JvdXBfdGUNCj4+IHN0LmMgaW5kZXggNTBlZDVkNDc1ZGQxLi5iY2Y1MWQ3ODVhMzcgMTAw
+NjQ0DQo+PiAtLS0gDQo+PiBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL21vdmVfbW91bnRfc2V0
+X2dyb3VwL21vdmVfbW91bnRfc2V0X2dyb3VwX3RlDQo+PiBzdC5jDQo+PiArKysgYi90b29scy90
+ZXN0aW5nL3NlbGZ0ZXN0cy9tb3ZlX21vdW50X3NldF9ncm91cC9tb3ZlX21vdW50X3NldF9ncm91
+DQo+PiArKysgcF90ZXN0LmMNCj4+IEBAIC0yMTgsNyArMjE4LDcgQEAgc3RhdGljIGJvb2wgbW92
+ZV9tb3VudF9zZXRfZ3JvdXBfc3VwcG9ydGVkKHZvaWQpDQo+PiAgCWlmIChtb3VudChOVUxMLCBT
+RVRfR1JPVVBfRlJPTSwgTlVMTCwgTVNfU0hBUkVELCAwKSkNCj4+ICAJCXJldHVybiAtMTsNCj4+
+ICANCj4+IC0JcmV0ID0gc3lzY2FsbChTWVNfbW92ZV9tb3VudCwgQVRfRkRDV0QsIFNFVF9HUk9V
+UF9GUk9NLA0KPj4gKwlyZXQgPSBzeXNjYWxsKF9fTlJfbW92ZV9tb3VudCwgQVRfRkRDV0QsIFNF
+VF9HUk9VUF9GUk9NLA0KPj4gIAkJICAgICAgQVRfRkRDV0QsIFNFVF9HUk9VUF9UTywgTU9WRV9N
+T1VOVF9TRVRfR1JPVVApOw0KPj4gIAl1bW91bnQyKCIvdG1wIiwgTU5UX0RFVEFDSCk7DQo+PiAg
+DQo+PiBAQCAtMzYzLDcgKzM2Myw3IEBAIFRFU1RfRihtb3ZlX21vdW50X3NldF9ncm91cCwgY29t
+cGxleF9zaGFyaW5nX2NvcHlpbmcpDQo+PiAgCQkgICAgICAgQ0xPTkVfVk0gfCBDTE9ORV9GSUxF
+Uyk7IEFTU0VSVF9HVChwaWQsIDApOw0KPj4gIAlBU1NFUlRfRVEod2FpdF9mb3JfcGlkKHBpZCks
+IDApOw0KPj4gIA0KPj4gLQlBU1NFUlRfRVEoc3lzY2FsbChTWVNfbW92ZV9tb3VudCwgY2FfZnJv
+bS5tbnRmZCwgIiIsDQo+PiArCUFTU0VSVF9FUShzeXNjYWxsKF9fTlJfbW92ZV9tb3VudCwgY2Ff
+ZnJvbS5tbnRmZCwgIiIsDQo+PiAgCQkJICBjYV90by5tbnRmZCwgIiIsIE1PVkVfTU9VTlRfU0VU
+X0dST1VQDQo+PiAgCQkJICB8IE1PVkVfTU9VTlRfRl9FTVBUWV9QQVRIIHwgTU9WRV9NT1VOVF9U
+X0VNUFRZX1BBVEgpLA0KPj4gIAkJICAwKTsNCj4+IC0tDQo+PiAyLjIzLjANCj4+ICANCg==
