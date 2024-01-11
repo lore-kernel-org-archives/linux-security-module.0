@@ -1,272 +1,173 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D57CFC1D;
-	Thu, 11 Jan 2024 09:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F94B1426C;
+	Thu, 11 Jan 2024 10:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zhmeMRoN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fOhSEC/z";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="n5vdaQLj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qnePHNC/"
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 660AF221F5;
-	Thu, 11 Jan 2024 09:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1704966630; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Mj6jPnJr85UCQs+wlaxAUOi0bHdTY1sfEBADyVhRcZI=;
-	b=zhmeMRoN+n/KzlejibfCEME/2lrVb18mU1wOreFQPpkxsKMeS3y0WT4Wo5dzDQyxUfWz4c
-	9E+dAQ9rBbIK+d/1vHtIDsOx6XUpq24BC/y2Zyogxz2Ng69Fum5NY4r60VGfxA0WdzeS1S
-	aRuAbjGxgmJzy1cAo6Y2o3QXrPSPvvY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1704966630;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Mj6jPnJr85UCQs+wlaxAUOi0bHdTY1sfEBADyVhRcZI=;
-	b=fOhSEC/z/SqIdNetNERk0GhrG0fzuxSOxzLovsgNkD9TjAXb8K+/s4XahRwf7UiYcsVZ04
-	RJcqZaeDpbesRLBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1704966553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Mj6jPnJr85UCQs+wlaxAUOi0bHdTY1sfEBADyVhRcZI=;
-	b=n5vdaQLjj+6fLo0adhHGyS21wSr8rPUdrR19FmWjovQpKM71P17fOnwyytaI/W/ie9jgrI
-	dSfurJx/gj1tbF41THcarSXDQXOVdvxaNSmn66NpLwHDkVRCMh4iNHdmPmHawJ8L0NfnFA
-	ROH0aFqC2sbHtWhapAaSgtWhUXQHxIo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1704966553;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Mj6jPnJr85UCQs+wlaxAUOi0bHdTY1sfEBADyVhRcZI=;
-	b=qnePHNC/5FfnR9YWBa4FSXDzCNAykQbW/tRjdriaeYynjX0ycqXBjzubGSY2iyp9cr5Xy7
-	olABhQ+wJlcdafDQ==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 72342138E5;
-	Thu, 11 Jan 2024 09:49:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id 26zDGpm5n2WQMgAAn2gu4w
-	(envelope-from <tzimmermann@suse.de>); Thu, 11 Jan 2024 09:49:13 +0000
-Message-ID: <1fd1a3ca-edeb-4bf6-a12d-a8087a180d36@suse.de>
-Date: Thu, 11 Jan 2024 10:50:43 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUhIsvrg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E1BAC433F1;
+	Thu, 11 Jan 2024 10:38:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704969504;
+	bh=9EOmjQDZJMOYZwBf+zTXWPSyzLoE/NShKnrhD8OO7DE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tUhIsvrg5aXxGvXXwrEA9wo6mFfRrfgoUpw+tzGcgBNt28jf9FKh6y1+hW3Y6xD0w
+	 Rq/9cm6LgR4AM5v2qhxHvAYPkHhkfWca1isGUKc+YlGUXwk7YektpOONrnG/syt6GH
+	 SNg8pweDObB/uZVA9kpCQXqpV6C2Uqyp+FLHz0NSOyr2PgTFWIUB560TX//8TohfhU
+	 0UwApFT9GpRjvtwKiN61o3zwxpyAa3FokRCFfinHwgEbxnb9aYwVHYkrIUEHep9y4m
+	 7d2NRotXBA3bHHWIAvO7y7aAyrmL1JMos7o5GhawxHDwkm42WyFkEJkmzYvVPfGboK
+	 3dZiQddmHgwKA==
+Date: Thu, 11 Jan 2024 11:38:19 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Linus Torvalds <torvalds@linuxfoundation.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH bpf-next 03/29] bpf: introduce BPF token object
+Message-ID: <20240111-amten-stiefel-043027f9520f@brauner>
+References: <20240103222034.2582628-1-andrii@kernel.org>
+ <20240103222034.2582628-4-andrii@kernel.org>
+ <CAHk-=wgmjr4nhxGheec1OwuYRk02d0+quUAViVk1v+w=Kvg15w@mail.gmail.com>
+ <CAEf4Bzb6jnJL98SLPJB7Vjxo_O33W8HjJuAsyP3+6xigZtsTkA@mail.gmail.com>
+ <20240108-gasheizung-umstand-a36d89ed36b7@brauner>
+ <CAEf4Bzb+7NzYs5ScggtgAJ6A5-oU5GymvdoEbpfNVOG-XmWZig@mail.gmail.com>
+ <20240109-tausend-tropenhelm-2a9914326249@brauner>
+ <CAEf4BzaAoXYb=qnj6rvDw8VewhvYNrs5oxe=q7VBe0jjWXivhg@mail.gmail.com>
+ <20240110-nervt-monopol-6d307e2518f4@brauner>
+ <CAEf4BzYOU5ZVqnTDTEmrHL-+tYY76kz4LO_0XauWibnhtzCFXg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] arch/x86: Move internal setup_data structures into
- setup_data.h
-Content-Language: en-US
-To: Nathan Chancellor <nathan@kernel.org>, kernel test robot <lkp@intel.com>
-Cc: ardb@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- bhelgaas@google.com, arnd@arndb.de, zohar@linux.ibm.com,
- dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, javierm@redhat.com, llvm@lists.linux.dev,
- oe-kbuild-all@lists.linux.dev, linux-arch@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org
-References: <20240108095903.8427-3-tzimmermann@suse.de>
- <202401090800.UOBEKB3W-lkp@intel.com>
- <20240109175814.GA5981@dev-arch.thelio-3990X>
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20240109175814.GA5981@dev-arch.thelio-3990X>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------ZmdV1Iv0xYAmP5whbMR1P70e"
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -3.79
-X-Spamd-Result: default: False [-3.79 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 XM_UA_NO_VERSION(0.01)[];
-	 TO_DN_SOME(0.00)[];
-	 HAS_ATTACHMENT(0.00)[];
-	 MIME_BASE64_TEXT_BOGUS(1.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 MIME_BASE64_TEXT(0.10)[];
-	 SIGNED_PGP(-2.00)[];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+,1:+,2:+,3:~];
-	 BAYES_HAM(-3.00)[100.00%];
-	 MID_RHS_MATCH_FROM(0.00)[];
-	 ARC_NA(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[25];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,git-scm.com:url];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FREEMAIL_CC(0.00)[kernel.org,linutronix.de,redhat.com,alien8.de,linux.intel.com,zytor.com,google.com,arndb.de,linux.ibm.com,gmail.com,paul-moore.com,namei.org,hallyn.com,lists.linux.dev,vger.kernel.org];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzYOU5ZVqnTDTEmrHL-+tYY76kz4LO_0XauWibnhtzCFXg@mail.gmail.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------ZmdV1Iv0xYAmP5whbMR1P70e
-Content-Type: multipart/mixed; boundary="------------j6Cwys0LP2kdoAZ1E9hEPCWY";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Nathan Chancellor <nathan@kernel.org>, kernel test robot <lkp@intel.com>
-Cc: ardb@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- bhelgaas@google.com, arnd@arndb.de, zohar@linux.ibm.com,
- dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, javierm@redhat.com, llvm@lists.linux.dev,
- oe-kbuild-all@lists.linux.dev, linux-arch@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Message-ID: <1fd1a3ca-edeb-4bf6-a12d-a8087a180d36@suse.de>
-Subject: Re: [PATCH v4 2/4] arch/x86: Move internal setup_data structures into
- setup_data.h
-References: <20240108095903.8427-3-tzimmermann@suse.de>
- <202401090800.UOBEKB3W-lkp@intel.com>
- <20240109175814.GA5981@dev-arch.thelio-3990X>
-In-Reply-To: <20240109175814.GA5981@dev-arch.thelio-3990X>
+> > The current check is inconsisent. It special-cases init_user_ns. The
+> > correct thing to do for what you're intending imho is:
+> >
+> > bool bpf_token_capable(const struct bpf_token *token, int cap)
+> > {
+> >         struct user_namespace *userns = &init_user_ns;
+> >
+> >         if (token)
+> >                 userns = token->userns;
+> >         if (ns_capable(userns, cap))
+> >                 return true;
+> >         return cap != CAP_SYS_ADMIN && ns_capable(userns, CAP_SYS_ADMIN))
+> >
+> > }
+> 
+> Unfortunately the above becomes significantly more hairy when LSM
+> (security_bpf_token_capable) gets involved, while preserving the rule
+> "if token doesn't give rights, fall back to init userns checks".
 
---------------j6Cwys0LP2kdoAZ1E9hEPCWY
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Why? Please explain your reasoning in detail.
 
-SGkNCg0KQW0gMDkuMDEuMjQgdW0gMTg6NTggc2NocmllYiBOYXRoYW4gQ2hhbmNlbGxvcjoN
-Cj4gT24gVHVlLCBKYW4gMDksIDIwMjQgYXQgMDg6Mjg6NTlBTSArMDgwMCwga2VybmVsIHRl
-c3Qgcm9ib3Qgd3JvdGU6DQo+PiBIaSBUaG9tYXMsDQo+Pg0KPj4ga2VybmVsIHRlc3Qgcm9i
-b3Qgbm90aWNlZCB0aGUgZm9sbG93aW5nIGJ1aWxkIHdhcm5pbmdzOg0KPj4NCj4+IFthdXRv
-IGJ1aWxkIHRlc3QgV0FSTklORyBvbiB0aXAveDg2L2NvcmVdDQo+PiBbYWxzbyBidWlsZCB0
-ZXN0IFdBUk5JTkcgb24gZWZpL25leHQgdGlwL21hc3RlciB0aXAvYXV0by1sYXRlc3QgbGlu
-dXMvbWFzdGVyIHY2LjcgbmV4dC0yMDI0MDEwOF0NCj4+IFtJZiB5b3VyIHBhdGNoIGlzIGFw
-cGxpZWQgdG8gdGhlIHdyb25nIGdpdCB0cmVlLCBraW5kbHkgZHJvcCB1cyBhIG5vdGUuDQo+
-PiBBbmQgd2hlbiBzdWJtaXR0aW5nIHBhdGNoLCB3ZSBzdWdnZXN0IHRvIHVzZSAnLS1iYXNl
-JyBhcyBkb2N1bWVudGVkIGluDQo+PiBodHRwczovL2dpdC1zY20uY29tL2RvY3MvZ2l0LWZv
-cm1hdC1wYXRjaCNfYmFzZV90cmVlX2luZm9ybWF0aW9uXQ0KPj4NCj4+IHVybDogICAgaHR0
-cHM6Ly9naXRodWIuY29tL2ludGVsLWxhYi1sa3AvbGludXgvY29tbWl0cy9UaG9tYXMtWmlt
-bWVybWFubi9hcmNoLXg4Ni1Nb3ZlLVVBUEktc2V0dXAtc3RydWN0dXJlcy1pbnRvLXNldHVw
-X2RhdGEtaC8yMDI0MDEwOC0xODAxNTgNCj4+IGJhc2U6ICAgdGlwL3g4Ni9jb3JlDQo+PiBw
-YXRjaCBsaW5rOiAgICBodHRwczovL2xvcmUua2VybmVsLm9yZy9yLzIwMjQwMTA4MDk1OTAz
-Ljg0MjctMy10emltbWVybWFubiU0MHN1c2UuZGUNCj4+IHBhdGNoIHN1YmplY3Q6IFtQQVRD
-SCB2NCAyLzRdIGFyY2gveDg2OiBNb3ZlIGludGVybmFsIHNldHVwX2RhdGEgc3RydWN0dXJl
-cyBpbnRvIHNldHVwX2RhdGEuaA0KPj4gY29uZmlnOiB4ODZfNjQtcmhlbC04LjMtYnBmICho
-dHRwczovL2Rvd25sb2FkLjAxLm9yZy8wZGF5LWNpL2FyY2hpdmUvMjAyNDAxMDkvMjAyNDAx
-MDkwODAwLlVPQkVLQjNXLWxrcEBpbnRlbC5jb20vY29uZmlnKQ0KPj4gY29tcGlsZXI6IENs
-YW5nQnVpbHRMaW51eCBjbGFuZyB2ZXJzaW9uIDE3LjAuNiAoaHR0cHM6Ly9naXRodWIuY29t
-L2xsdm0vbGx2bS1wcm9qZWN0IDYwMDk3MDhiNDM2NzE3MWNjZGJmNGI1OTA1Y2I2YTgwMzc1
-M2ZlMTgpDQo+PiByZXByb2R1Y2UgKHRoaXMgaXMgYSBXPTEgYnVpbGQpOiAoaHR0cHM6Ly9k
-b3dubG9hZC4wMS5vcmcvMGRheS1jaS9hcmNoaXZlLzIwMjQwMTA5LzIwMjQwMTA5MDgwMC5V
-T0JFS0IzVy1sa3BAaW50ZWwuY29tL3JlcHJvZHVjZSkNCj4+DQo+PiBJZiB5b3UgZml4IHRo
-ZSBpc3N1ZSBpbiBhIHNlcGFyYXRlIHBhdGNoL2NvbW1pdCAoaS5lLiBub3QganVzdCBhIG5l
-dyB2ZXJzaW9uIG9mDQo+PiB0aGUgc2FtZSBwYXRjaC9jb21taXQpLCBraW5kbHkgYWRkIGZv
-bGxvd2luZyB0YWdzDQo+PiB8IFJlcG9ydGVkLWJ5OiBrZXJuZWwgdGVzdCByb2JvdCA8bGtw
-QGludGVsLmNvbT4NCj4+IHwgQ2xvc2VzOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9vZS1r
-YnVpbGQtYWxsLzIwMjQwMTA5MDgwMC5VT0JFS0IzVy1sa3BAaW50ZWwuY29tLw0KPj4NCj4+
-IEFsbCB3YXJuaW5ncyAobmV3IG9uZXMgcHJlZml4ZWQgYnkgPj4pOg0KPj4NCj4+ICAgICBJ
-biBmaWxlIGluY2x1ZGVkIGZyb20gYXJjaC94ODYvcmVhbG1vZGUvcm0vd2FrZW1haW4uYzoz
-Og0KPj4gICAgIEluIGZpbGUgaW5jbHVkZWQgZnJvbSBhcmNoL3g4Ni9ib290L2Jvb3QuaDoy
-NDoNCj4+ICAgICBJbiBmaWxlIGluY2x1ZGVkIGZyb20gYXJjaC94ODYvaW5jbHVkZS9hc20v
-c2V0dXAuaDoxMDoNCj4+ICAgICBJbiBmaWxlIGluY2x1ZGVkIGZyb20gYXJjaC94ODYvaW5j
-bHVkZS9hc20vcGFnZV90eXBlcy5oOjc6DQo+PiAgICAgSW4gZmlsZSBpbmNsdWRlZCBmcm9t
-IGluY2x1ZGUvbGludXgvbWVtX2VuY3J5cHQuaDoxNzoNCj4+ICAgICBJbiBmaWxlIGluY2x1
-ZGVkIGZyb20gYXJjaC94ODYvaW5jbHVkZS9hc20vbWVtX2VuY3J5cHQuaDoxODoNCj4+ICAg
-ICBJbiBmaWxlIGluY2x1ZGVkIGZyb20gYXJjaC94ODYvaW5jbHVkZS91YXBpL2FzbS9ib290
-cGFyYW0uaDo1Og0KPj4+PiBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9zZXR1cF9kYXRhLmg6MTA6
-MjA6IHdhcm5pbmc6IGZpZWxkICdkYXRhJyB3aXRoIHZhcmlhYmxlIHNpemVkIHR5cGUgJ3N0
-cnVjdCBzZXR1cF9kYXRhJyBub3QgYXQgdGhlIGVuZCBvZiBhIHN0cnVjdCBvciBjbGFzcyBp
-cyBhIEdOVSBleHRlbnNpb24gWy1XZ251LXZhcmlhYmxlLXNpemVkLXR5cGUtbm90LWF0LWVu
-ZF0NCj4+ICAgICAgICAxMCB8ICAgICAgICAgc3RydWN0IHNldHVwX2RhdGEgZGF0YTsNCj4+
-ICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgXg0KPj4gICAgIDEgd2Fy
-bmluZyBnZW5lcmF0ZWQuDQo+IA0KPiBJIHRoaW5rIHRoaXMgd2FybmluZyBpcyBleHBlY3Rl
-ZC4gVGhpcyBzdHJ1Y3R1cmUgaXMgbm93IGluY2x1ZGVkIGluIHRoZQ0KPiByZWFsbW9kZSBw
-YXJ0IG9mIGFyY2gveDg2LCB3aGljaCBoYXMgaXRzIG93biBzZXQgb2YgYnVpbGQgZmxhZ3Ms
-DQo+IGluY2x1ZGluZyAtV2FsbCwgd2hpY2ggaW5jbHVkZXMgLVdnbnUgb24gY2xhbmcuIFRo
-ZSBrZXJuZWwgb2J2aW91c2x5DQo+IHVzZXMgR05VIGV4dGVuc2lvbnMgYW5kIHN0YXRlcyB0
-aGlzIGNsZWFybHkgd2l0aCAnLXN0ZD1nbnUxMScsIHNvDQo+IC1Xbm8tZ251IGlzIHVuY29u
-ZGl0aW9uYWxseSBhZGRlZCB0byBLQlVJTERfQ0ZMQUdTIGZvciBjbGFuZy4gSXQgc2VlbXMN
-Cj4gdGhhdCBzYW1lIHRyZWF0bWVudCBpcyBuZWVkZWQgZm9yIFJFQUxNT0RFX0NGTEFHUywg
-d2hpY2ggYWxzbyBtYXRjaGVzDQo+IGFyY2gveDg2L2Jvb3QvY29tcHJlc3NlZC9NYWtlZmls
-ZSwgc2VlIGNvbW1pdCA2YzNiNTZiMTk3MzAgKCJ4ODYvYm9vdDoNCj4gRGlzYWJsZSBDbGFu
-ZyB3YXJuaW5ncyBhYm91dCBHTlUgZXh0ZW5zaW9ucyIpOg0KPiANCj4gZGlmZiAtLWdpdCBh
-L2FyY2gveDg2L01ha2VmaWxlIGIvYXJjaC94ODYvTWFrZWZpbGUNCj4gaW5kZXggMWEwNjhk
-ZTEyYTU2Li4yNDA3NmRiNTk3ODMgMTAwNjQ0DQo+IC0tLSBhL2FyY2gveDg2L01ha2VmaWxl
-DQo+ICsrKyBiL2FyY2gveDg2L01ha2VmaWxlDQo+IEBAIC01Myw2ICs1Myw5IEBAIFJFQUxN
-T0RFX0NGTEFHUyArPSAtZm5vLXN0YWNrLXByb3RlY3Rvcg0KPiAgIFJFQUxNT0RFX0NGTEFH
-UyArPSAtV25vLWFkZHJlc3Mtb2YtcGFja2VkLW1lbWJlcg0KPiAgIFJFQUxNT0RFX0NGTEFH
-UyArPSAkKGNjX3N0YWNrX2FsaWduNCkNCj4gICBSRUFMTU9ERV9DRkxBR1MgKz0gJChDTEFO
-R19GTEFHUykNCj4gK2lmZGVmIENPTkZJR19DQ19JU19DTEFORw0KPiArUkVBTE1PREVfQ0ZM
-QUdTICs9IC1Xbm8tZ251DQo+ICtlbmRpZg0KDQpUaGFua3MuIFNoYWxsIEkgaW5jbHVkZSB0
-aGlzIGNoYW5nZSBpbiB0aGUgcGF0Y2hzZXQ/DQoNCkJlc3QgcmVnYXJkcw0KVGhvbWFzDQoN
-Cj4gICBleHBvcnQgUkVBTE1PREVfQ0ZMQUdTDQo+ICAgDQo+ICAgIyBCSVRTIGlzIHVzZWQg
-YXMgZXh0ZW5zaW9uIGZvciBmaWxlcyB3aGljaCBhcmUgYXZhaWxhYmxlIGluIGEgMzIgYml0
-DQoNCi0tIA0KVGhvbWFzIFppbW1lcm1hbm4NCkdyYXBoaWNzIERyaXZlciBEZXZlbG9wZXIN
-ClNVU0UgU29mdHdhcmUgU29sdXRpb25zIEdlcm1hbnkgR21iSA0KRnJhbmtlbnN0cmFzc2Ug
-MTQ2LCA5MDQ2MSBOdWVybmJlcmcsIEdlcm1hbnkNCkdGOiBJdm8gVG90ZXYsIEFuZHJldyBN
-eWVycywgQW5kcmV3IE1jRG9uYWxkLCBCb3VkaWVuIE1vZXJtYW4NCkhSQiAzNjgwOSAoQUcg
-TnVlcm5iZXJnKQ0K
+> 
+> I'm happy to accommodate any implementation of bpf_token_capable() as
+> long as it behaves as discussed above and also satisfies Paul's
+> requirement that capability checks should happen before LSM checks.
+> 
+> >
+> > Because any caller located in an ancestor user namespace of
+> > token->user_ns will be privileged wrt to the token's userns as long as
+> > they have that capability in their user namespace.
+> 
+> And with `current_user_ns() == token->userns` check we won't be using
+> token->userns while the caller is in ancestor user namespace, we'll
+> use capable() check, which will succeed only in init user_ns, assuming
+> corresponding CAP_xxx is actually set.
 
---------------j6Cwys0LP2kdoAZ1E9hEPCWY--
+Why? This isn't how any of our ns_capable() logic works.
 
---------------ZmdV1Iv0xYAmP5whbMR1P70e
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+This basically argues that anyone in an ancestor user namespace is not
+allowed to operate on any of their descendant child namespaces unless
+they are in the init_user_ns.
 
------BEGIN PGP SIGNATURE-----
+But that's nonsense as I'm trying to tell you. Any process in an
+ancestor user namespace that is privileged over the child namespace can
+just setns() into it and then pass that bpf_token_capable() check by
+supplying the token.
 
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmWfufMFAwAAAAAACgkQlh/E3EQov+Ah
-zhAAgyKH/nDt76sEkM59OsOGhqE1rWXhDW6k9pJxX4JG5gER9op5czApHYzb1zUp2UgAaYVcfaW2
-NkJkxGoBI8jwYQSQDcP/m3mFd86Rs06oHKUNNIn8OEIgJG6lSlHce59oeBblILCQLWjA6+swV3Zn
-AuWwLX1h8VfIlseUmxeAUBI6VUlD/1zUcBm69IjDWLMi1Ia2cDsHsh0m8/BSchwBSog3tv82bKnO
-x/VzuoxSh/3tzuzoeqx04oV3T7qMRn47MsgZf6WA6z/k5WnGBgWnrdQSdlAPCUrYJnhV2pEX8Qr9
-U4g5IEDlQLSj4RayC+znUBcPvd9eiRURqLfviKsjbgd71lrEXtMin2AuocfSRK0JzqOSP1poK/Cu
-KLu5UmOP5iLRw/Zm+QYB0/i8N9lKd8rOc9VyjwpMQefl1SHWTRTIKPoEMgMLgQFC2Sqt3zIoizLk
-USSsHL9Iqq4+sdJWDpyNEB0xo+Zb3efRBeesZWhaEflKzeEua3sOsiidqoCuhrAkIe7ll1PZJ2NX
-uM/jTMxH9Jzd02WzSQzwjPz+iz59J7i6RkpmKSiH1RrT3RjD7vhiksnkbjKandI95ZCTugAxxqMg
-vQJf2cdStHZ1LQ3in/QCL4RcYBrMTqQT8K4ospjOi+7x4k8SbsvLdmOVVmrM+jHbl1m1HlsfdhzT
-YnA=
-=4q+T
------END PGP SIGNATURE-----
+At this point just do it properly and allow callers that are privileged
+in the token user namespace to load bpf programs. It also means you get
+user namespace nesting done properly.
 
---------------ZmdV1Iv0xYAmP5whbMR1P70e--
+> 
+> >
+> > For example, if the caller is in the init_user_ns and permissions
+> > for CAP_WHATEVER is checked for in token->user_ns and the caller has
+> > CAP_WHATEVER in init_user_ns then they also have it in all
+> > descendant user namespaces.
+> 
+> Right, so if they didn't use a token they would still pass
+> capable(CAP_WHATEVER), right?
+
+Yes, I'm trying to accomodate your request but making it work
+consistently.
+
+> 
+> >
+> > The original intention had been to align with what we require during
+> > token creation meaning that once a token has been created interacting
+> > with this token is specifically confined to caller's located in the
+> > token's user namespace.
+> >
+> > If that's not the case then it doesn't make sense to not allow
+> > permission checking based on regular capability semantics. IOW, why
+> > special case init_user_ns if you're breaking the confinement restriction
+> > anyway.
+> 
+> I'm sorry, perhaps I'm dense, but with `current_user_ns() ==
+> token->userns` check I think we do fulfill the intention to not allow
+> using a token in a userns different from the one in which it was
+> created. If that condition isn't satisfied, the token is immediately
+
+My request originally was about never being able to interact with a
+token outside of that userns. This is different as you provide an escape
+hatch to init_user_ns. But if you need that and ignore the token then
+please do it properly. That's what I'm trying to tell you. See below.
+
+> ignored. So you can't use a token from another userns for anything,
+> it's just not there, effectively.
+> 
+> And as I tried to explain above, I do think that ignoring the token
+> instead of erroring out early is what we want to provide good
+> user-space ecosystem integration of BPF token.
+
+There is no erroring out early in. It's:
+
+(1) Has a token been provided and is the caller capable wrt to the
+    namespace of the token? Any caller in an ancestor user namespace
+    that has the capability in that user namespace is capable wrt to
+    that token. That __includes__ a callers in the init_user_ns. IOW,
+    you don't need to fallback to any special checking for init_user_ns.
+    It is literally covered in the if (token) branch with the added
+    consistency that a process in an ancestor user namespace is
+    privileged wrt to that token as well.
+
+(2) No token has been provided. Then do what we always did and perform
+    the capability checks based on the initial user namespace.
+
+The only thing that you then still need is add that token_capable() hook
+in there:
+
+bool bpf_token_capable(const struct bpf_token *token, int cap)
+{
+	bool has_cap;
+        struct user_namespace *userns = &init_user_ns;
+
+        if (token)
+                userns = token->userns;
+        if (ns_capable(userns, cap))
+                return true;
+        if (cap != CAP_SYS_ADMIN && ns_capable(userns, CAP_SYS_ADMIN))
+		return token ? security_bpf_token_capable(token, cap) == 0 : true;
+	return false;
+}
+
+Or write it however you like. I think this is way more consistent and
+gives you a more flexible permission model.
