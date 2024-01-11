@@ -1,68 +1,150 @@
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA53EADC
-	for <linux-security-module@vger.kernel.org>; Thu, 11 Jan 2024 06:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7bef67c486aso141551939f.2
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Jan 2024 22:44:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704955444; x=1705560244;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Go7MHHguEsXDJaMiDiMFUZrkJPCJjs8e6jnOcbKt05k=;
-        b=kJ3JpstrbvuHWuafHABe3+IYEDVyk+IjRRDlO5rpa25h/dHzX8cVY4sZa0DuPbt0/f
-         gi8mS1Re7EzM+0uOY/1lejLVyQwhLkkqYN65GTT3mm69cKby+cA+Vuf8MlQaK3DAluD6
-         /zLumldpW6+hijIM0TY15dk1VpEXNvwLuWJy7i1Db/EiMSSN5J3RIG6IhLIT2+xPCwoW
-         LlIKZJUmzU3E9eyp+1kE9X1Ty8ej/0JH/cAv3PcDkZmnIUTTj7BvCaulGV5EXG/Mf3yB
-         eHYNyFZfXSB5mg6pZiwK7L/jziWRE2Fo0SMd8R78Gtzhw5BdJjFwVc9sJTKioM+10CfI
-         hvew==
-X-Gm-Message-State: AOJu0YxU3v2k7I2kBUYLDGZHAIeM4OdwUIIaNHx0N7Z3Ww4ovzY/QGrG
-	kInzYJr7zMMbOU4m4rch8vunR5d+AUr8KLiLHY6nHUTm9O9Y
-X-Google-Smtp-Source: AGHT+IHkD2jmO/TL/yOssuiaFNilDxssd908YaoSm12wBNANAvPSwd623sCODi3g2j4cDI1dKtqu1f3WEK5dMfbA4SkkLKacv/vM
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54EE12E5B;
+	Thu, 11 Jan 2024 09:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="O10PnA5U";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pljCv8lT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DLTsdr/R";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WuJXopWp"
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3131F1FB93;
+	Thu, 11 Jan 2024 09:20:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704964819; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BG4l8S4qH/pdeuy9YBJx2ULMPOYWxsdX/Qk0+ysAZFY=;
+	b=O10PnA5UoDnOwrvEgUiBBGbjS+bH1vG6SKp0R3FZcMaujzsxWrk45be2UkruykpAlnhyOy
+	FOaiwp6HZgi3uYtfDOLkbCoANBBR/+YbtzDErp3ml2BVwd9dXeleOBm+3rXE0ULg6aED7W
+	MSvN9buA+HtrWQcYmiF8/xqvGtxzKXI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704964819;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BG4l8S4qH/pdeuy9YBJx2ULMPOYWxsdX/Qk0+ysAZFY=;
+	b=pljCv8lTzcTysH3Vk9QOXeS8pQ3SnFj5qeWlQy5YCu2XcNGgrg89pD66/zdUmbvKWr8CYa
+	DbWBrnhydgmghuCw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704964893; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BG4l8S4qH/pdeuy9YBJx2ULMPOYWxsdX/Qk0+ysAZFY=;
+	b=DLTsdr/RtTsy+HmSVVU6QgVHFa5zgKnnyU2o/LfFTxcurlifeV4zMlzHfliRCMxeRLb5+X
+	v3ZzsydYyNEEGv2MVD38rzrXRcEEHN9QIZmMwc2AKBPTPV5DNRftTdXJgA4BCDGp++k3cx
+	Lgi0B9tr+ZweoiGogwMKVf4tJFwBnhM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704964893;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BG4l8S4qH/pdeuy9YBJx2ULMPOYWxsdX/Qk0+ysAZFY=;
+	b=WuJXopWpzXx8vtgBM4F+8BniNJcfaY4lMF9y3pOMnN4OhcKu0RBp5dbv4YJFHUnWkhc+yC
+	lWcvAQ2muGx7sHBQ==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 21930138E5;
+	Thu, 11 Jan 2024 09:20:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id jqgrCNGyn2X8KwAAn2gu4w
+	(envelope-from <jack@suse.cz>); Thu, 11 Jan 2024 09:20:17 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5FD84A0807; Thu, 11 Jan 2024 10:21:47 +0100 (CET)
+Date: Thu, 11 Jan 2024 10:21:47 +0100
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+28aaddd5a3221d7fd709@syzkaller.appspotmail.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, jmorris@namei.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, paul@paul-moore.com,
+	penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
+	syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
+	tomoyo-dev-en-owner@lists.osdn.me, tomoyo-dev-en@lists.osdn.me
+Subject: Re: [syzbot] [hfs] general protection fault in tomoyo_check_acl (3)
+Message-ID: <20240111092147.ywwuk4vopsml3plk@quack3>
+References: <000000000000fcfb4a05ffe48213@google.com>
+ <0000000000009e1b00060ea5df51@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:210:b0:46e:50ab:6a4e with SMTP id
- e16-20020a056638021000b0046e50ab6a4emr31005jaq.3.1704955444335; Wed, 10 Jan
- 2024 22:44:04 -0800 (PST)
-Date: Wed, 10 Jan 2024 22:44:04 -0800
-In-Reply-To: <000000000000fcfb4a05ffe48213@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009e1b00060ea5df51@google.com>
-Subject: Re: [syzbot] [hfs] general protection fault in tomoyo_check_acl (3)
-From: syzbot <syzbot+28aaddd5a3221d7fd709@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, jmorris@namei.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	penguin-kernel@I-love.SAKURA.ne.jp, penguin-kernel@i-love.sakura.ne.jp, 
-	serge@hallyn.com, syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp, 
-	tomoyo-dev-en-owner@lists.osdn.me, tomoyo-dev-en@lists.osdn.me
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000009e1b00060ea5df51@google.com>
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="DLTsdr/R";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WuJXopWp
+X-Spamd-Result: default: False [2.66 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=7406f415f386e786];
+	 TAGGED_RCPT(0.00)[28aaddd5a3221d7fd709];
+	 MIME_GOOD(-0.10)[text/plain];
+	 BAYES_HAM(-0.03)[56.17%];
+	 R_RATELIMIT(0.00)[to_ip_from(RLfgkate9mdgitaydm133m7cj1)];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_TWELVE(0.00)[15];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email,syzkaller.appspot.com:url];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: 2.66
+X-Rspamd-Queue-Id: 3131F1FB93
+X-Spam-Level: **
+X-Spam-Flag: NO
+X-Spamd-Bar: ++
 
-syzbot suspects this issue was fixed by commit:
+On Wed 10-01-24 22:44:04, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
+> 
+> commit 6f861765464f43a71462d52026fbddfc858239a5
+> Author: Jan Kara <jack@suse.cz>
+> Date:   Wed Nov 1 17:43:10 2023 +0000
+> 
+>     fs: Block writes to mounted block devices
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15135c0be80000
+> start commit:   a901a3568fd2 Merge tag 'iomap-6.5-merge-1' of git://git.ke..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=7406f415f386e786
+> dashboard link: https://syzkaller.appspot.com/bug?extid=28aaddd5a3221d7fd709
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17b5bb80a80000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10193ee7280000
+> 
+> If the result looks correct, please mark the issue as fixed by replying with: 
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
-
-    fs: Block writes to mounted block devices
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15135c0be80000
-start commit:   a901a3568fd2 Merge tag 'iomap-6.5-merge-1' of git://git.ke..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7406f415f386e786
-dashboard link: https://syzkaller.appspot.com/bug?extid=28aaddd5a3221d7fd709
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17b5bb80a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10193ee7280000
-
-If the result looks correct, please mark the issue as fixed by replying with:
+Makes some sense since fs cannot be corrupted by anybody while it is
+mounted. I just don't see how the reproducer would be corrupting the
+image... Still probably:
 
 #syz fix: fs: Block writes to mounted block devices
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+and we'll see if syzbot can find new ways to tickle some similar problem.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
