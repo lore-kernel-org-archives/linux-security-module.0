@@ -1,280 +1,163 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFF4812;
-	Fri, 12 Jan 2024 07:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0yYy0kr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45B75C43394;
-	Fri, 12 Jan 2024 07:58:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705046317;
-	bh=Uglla99ShZFkkZxMOw+1oo+SNUsVn5iSreLOyPhroTE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V0yYy0kr0A76VaCGj7yqY7nDzqXvfaO9Co/TJkUAVvHyLlocSL0r/TTZk7ji/vnnM
-	 qXvxBG+CkVOTSf6B5x9Y2wwyiPGNo3zbjlTRA3bE/rxQ4SPgdDudOo0mOnne8a8DIu
-	 UTsDGOExHq067/44ew38TbIcX1bSgkzDhW/HNnWaZDBieo1n0L1HOi6PXebyJcGHNf
-	 fSfWhniFb0+jiLWAnW+x6pTmEDJhQgj5CGyZILbSduuWg7oyrn8g9XRIQ2qaHTe5oV
-	 YdT3si4gAzQ1sOqDJ+eJa2T8G0ItogB2EHdH2ZBElSD6sdb5VyEBBsa17Hwp+X0d/V
-	 0g054ct6biFYQ==
-Date: Fri, 12 Jan 2024 08:58:32 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH bpf-next 03/29] bpf: introduce BPF token object
-Message-ID: <20240112-unpraktisch-kuraufenthalt-4fef655deab2@brauner>
-References: <CAHk-=wgmjr4nhxGheec1OwuYRk02d0+quUAViVk1v+w=Kvg15w@mail.gmail.com>
- <CAEf4Bzb6jnJL98SLPJB7Vjxo_O33W8HjJuAsyP3+6xigZtsTkA@mail.gmail.com>
- <20240108-gasheizung-umstand-a36d89ed36b7@brauner>
- <CAEf4Bzb+7NzYs5ScggtgAJ6A5-oU5GymvdoEbpfNVOG-XmWZig@mail.gmail.com>
- <20240109-tausend-tropenhelm-2a9914326249@brauner>
- <CAEf4BzaAoXYb=qnj6rvDw8VewhvYNrs5oxe=q7VBe0jjWXivhg@mail.gmail.com>
- <20240110-nervt-monopol-6d307e2518f4@brauner>
- <CAEf4BzYOU5ZVqnTDTEmrHL-+tYY76kz4LO_0XauWibnhtzCFXg@mail.gmail.com>
- <20240111-amten-stiefel-043027f9520f@brauner>
- <CAEf4BzYcec97posh6N3LM8tJLsxrSLiFYq9csRWcy8=VnTJ23A@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB59DF64;
+	Fri, 12 Jan 2024 08:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4TBDYz4xpgz9xHdl;
+	Fri, 12 Jan 2024 16:03:35 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id D2B3114051C;
+	Fri, 12 Jan 2024 16:18:05 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwDHsia29aBlE1hkAA--.28S2;
+	Fri, 12 Jan 2024 09:18:05 +0100 (CET)
+Message-ID: <c1ab0a9160d9220fac6e9c8c2bfa9ea493a08699.camel@huaweicloud.com>
+Subject: Re: [PATCH v3 5/5] ramfs: Initialize security of in-memory inodes
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: casey@schaufler-ca.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ Roberto Sassu <roberto.sassu@huawei.com>, Hugh Dickins <hughd@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Date: Fri, 12 Jan 2024 09:17:54 +0100
+In-Reply-To: <20231116090125.187209-6-roberto.sassu@huaweicloud.com>
+References: <20231116090125.187209-1-roberto.sassu@huaweicloud.com>
+	 <20231116090125.187209-6-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzYcec97posh6N3LM8tJLsxrSLiFYq9csRWcy8=VnTJ23A@mail.gmail.com>
+X-CM-TRANSID:GxC2BwDHsia29aBlE1hkAA--.28S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZr43AF4xJw1fGr4UJF13urg_yoW5WFyDpr
+	WIqasxGwnYqF97Wr1ftF4Uuw1SqayrKw4UGws7uw17A3Z3Xw1Dtr1fKr13CF1rGrW8Gw4I
+	qa1j9r15u3WUArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUgmb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+	AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
+	cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
+	IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
+	KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABF1jj5h55QAAsw
 
-On Thu, Jan 11, 2024 at 09:41:25AM -0800, Andrii Nakryiko wrote:
-> On Thu, Jan 11, 2024 at 2:38 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > > > The current check is inconsisent. It special-cases init_user_ns. The
-> > > > correct thing to do for what you're intending imho is:
-> > > >
-> > > > bool bpf_token_capable(const struct bpf_token *token, int cap)
-> > > > {
-> > > >         struct user_namespace *userns = &init_user_ns;
-> > > >
-> > > >         if (token)
-> > > >                 userns = token->userns;
-> > > >         if (ns_capable(userns, cap))
-> > > >                 return true;
-> > > >         return cap != CAP_SYS_ADMIN && ns_capable(userns, CAP_SYS_ADMIN))
-> > > >
-> > > > }
-> > >
-> > > Unfortunately the above becomes significantly more hairy when LSM
-> > > (security_bpf_token_capable) gets involved, while preserving the rule
-> > > "if token doesn't give rights, fall back to init userns checks".
-> >
-> > Why? Please explain your reasoning in detail.
-> 
-> Why which part? About LSM interaction making this much hairier? Then see below.
-> 
-> But if your "why?" is about "pretend no token, if token doesn't give
-> rights", then that's what I tried to explain in my last email(s). It
-> significantly alters (for the worse) user-space integration story
-> (providing a token can be a regression, so now it's not safe to
-> opportunistically try to create and use BPF token; on the other hand,
-> automatically retrying inside libbpf makes for confusing user
-> experience and inefficiencies). Please let me know which parts are not
-> clear.
-> 
-> >
-> > >
-> > > I'm happy to accommodate any implementation of bpf_token_capable() as
-> > > long as it behaves as discussed above and also satisfies Paul's
-> > > requirement that capability checks should happen before LSM checks.
-> > >
-> > > >
-> > > > Because any caller located in an ancestor user namespace of
-> > > > token->user_ns will be privileged wrt to the token's userns as long as
-> > > > they have that capability in their user namespace.
-> > >
-> > > And with `current_user_ns() == token->userns` check we won't be using
-> > > token->userns while the caller is in ancestor user namespace, we'll
-> > > use capable() check, which will succeed only in init user_ns, assuming
-> > > corresponding CAP_xxx is actually set.
-> >
-> > Why? This isn't how any of our ns_capable() logic works.
-> >
-> > This basically argues that anyone in an ancestor user namespace is not
-> > allowed to operate on any of their descendant child namespaces unless
-> > they are in the init_user_ns.
-> >
-> > But that's nonsense as I'm trying to tell you. Any process in an
-> > ancestor user namespace that is privileged over the child namespace can
-> > just setns() into it and then pass that bpf_token_capable() check by
-> > supplying the token.
-> >
-> > At this point just do it properly and allow callers that are privileged
-> > in the token user namespace to load bpf programs. It also means you get
-> > user namespace nesting done properly.
-> 
-> Ok, I see. This `current_user_ns() == token->userns` check prevents
-> this part of cap_capable() to ever be exercised:
-> 
->  if ((ns->parent == cred->user_ns) && uid_eq(ns->owner, cred->euid))
->     return 0;
-> 
-> Got it. I'm all for not adding any unnecessary restrictions.
-> 
-> >
-> > >
-> > > >
-> > > > For example, if the caller is in the init_user_ns and permissions
-> > > > for CAP_WHATEVER is checked for in token->user_ns and the caller has
-> > > > CAP_WHATEVER in init_user_ns then they also have it in all
-> > > > descendant user namespaces.
-> > >
-> > > Right, so if they didn't use a token they would still pass
-> > > capable(CAP_WHATEVER), right?
-> >
-> > Yes, I'm trying to accomodate your request but making it work
-> > consistently.
-> >
-> > >
-> > > >
-> > > > The original intention had been to align with what we require during
-> > > > token creation meaning that once a token has been created interacting
-> > > > with this token is specifically confined to caller's located in the
-> > > > token's user namespace.
-> > > >
-> > > > If that's not the case then it doesn't make sense to not allow
-> > > > permission checking based on regular capability semantics. IOW, why
-> > > > special case init_user_ns if you're breaking the confinement restriction
-> > > > anyway.
-> > >
-> > > I'm sorry, perhaps I'm dense, but with `current_user_ns() ==
-> > > token->userns` check I think we do fulfill the intention to not allow
-> > > using a token in a userns different from the one in which it was
-> > > created. If that condition isn't satisfied, the token is immediately
-> >
-> > My request originally was about never being able to interact with a
-> > token outside of that userns. This is different as you provide an escape
-> > hatch to init_user_ns. But if you need that and ignore the token then
-> > please do it properly. That's what I'm trying to tell you. See below.
-> 
-> Yes, I do need that. Thanks for providing the full code implementation
-> (including LSM), it's much easier this way to converge. Let's see
-> below.
-> 
-> >
-> > > ignored. So you can't use a token from another userns for anything,
-> > > it's just not there, effectively.
-> > >
-> > > And as I tried to explain above, I do think that ignoring the token
-> > > instead of erroring out early is what we want to provide good
-> > > user-space ecosystem integration of BPF token.
-> >
-> > There is no erroring out early in. It's:
-> >
-> > (1) Has a token been provided and is the caller capable wrt to the
-> >     namespace of the token? Any caller in an ancestor user namespace
-> >     that has the capability in that user namespace is capable wrt to
-> >     that token. That __includes__ a callers in the init_user_ns. IOW,
-> >     you don't need to fallback to any special checking for init_user_ns.
-> >     It is literally covered in the if (token) branch with the added
-> >     consistency that a process in an ancestor user namespace is
-> >     privileged wrt to that token as well.
-> >
-> > (2) No token has been provided. Then do what we always did and perform
-> >     the capability checks based on the initial user namespace.
-> >
-> > The only thing that you then still need is add that token_capable() hook
-> > in there:
-> >
-> > bool bpf_token_capable(const struct bpf_token *token, int cap)
-> > {
-> >         bool has_cap;
-> >         struct user_namespace *userns = &init_user_ns;
-> >
-> >         if (token)
-> >                 userns = token->userns;
-> >         if (ns_capable(userns, cap))
-> 
-> Here, we still need to check security_bpf_token_capable(token, cap)
-> result (and only if token != NULL). And if LSM returns < 0, then drop
-> the token and do the original init userns check.
-> 
-> And I just realized that my original implementation has the same
-> problem. In my current implementation if we have a token we will
-> terminate at LSM call, regardless if LSM allows or disallows the
-> token. But that's inconsistent behavior and shouldn't be like that.
-> 
-> I will add new tests that validate LSM interactions in the next revision.
-> 
-> >                 return true;
-> >         if (cap != CAP_SYS_ADMIN && ns_capable(userns, CAP_SYS_ADMIN))
-> >                 return token ? security_bpf_token_capable(token, cap) == 0 : true;
-> 
-> here as well, even if we have a token which passes ns_capable() check,
-> but LSM rejects this token, we still need to forget about the token
-> and do capable() checks in init userns.
-> 
-> >         return false;
-> > }
-> >
-> > Or write it however you like. I think this is way more consistent and
-> > gives you a more flexible permission model.
-> 
-> Yes, I like it, thanks. Taking into account fixed LSM interactions,
-> here's what I came up with. Yell if you can spot anything wrong (or
-> just hate the style). I did have a version without extra function,
-> just setting the token to NULL and "goto again" approach, but I think
-> it's way less readable and harder to follow. So this is my version
-> right now:
-> 
-> static bool bpf_ns_capable(struct user_namespace *ns, int cap)
-> {
->         return ns_capable(ns, cap) || (cap != CAP_SYS_ADMIN &&
-> ns_capable(ns, CAP_SYS_ADMIN));
-> }
-> 
-> static bool token_capable(const struct bpf_token *token, int cap)
-> {
->         struct user_namespace *userns;
-> 
->         userns = token ? token->userns : &init_user_ns;
->         if (!bpf_ns_capable(userns, cap))
->                 return false;
->         if (token && security_bpf_token_capable(token, cap) < 0)
->                 return false;
->         return true;
-> }
-> 
-> bool bpf_token_capable(const struct bpf_token *token, int cap)
-> {
->         /* BPF token allows ns_capable() level of capabilities, but if it
->          * doesn't grant required capabilities, ignore token and fallback to
->          * init userns-based checks
->          */
->         if (token && token_capable(token, cap))
->                 return true;
->         return token_capable(NULL, cap);
-> }
+On Thu, 2023-11-16 at 10:01 +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> Add a call security_inode_init_security() after ramfs_get_inode(), to let
+> LSMs initialize the inode security field. Skip ramfs_fill_super(), as the
+> initialization is done through the sb_set_mnt_opts hook.
+>=20
+> Calling security_inode_init_security() call inside ramfs_get_inode() is
+> not possible since, for CONFIG_SHMEM=3Dn, tmpfs also calls the former aft=
+er
+> the latter.
+>=20
+> Pass NULL as initxattrs() callback to security_inode_init_security(), sin=
+ce
+> the purpose of the call is only to initialize the in-memory inodes.
 
-My point is that the capable logic will walk upwards the user namespace
-hierarchy from the token->userns until the user namespace of the caller
-and terminate when it reached the init_user_ns.
+Hugh, Andrew, is the patch fine for you? Casey would make a PR for the
+patch set.
 
-A caller is located in some namespace at the point where they call this
-function. They provided a token. The caller isn't capable in the
-namespace of the token so the function falls back to init_user_ns. Two
-interesting cases:
+Thanks
 
-(1) The caller wasn't in an ancestor userns of the token. If that's the
-    case then it follows that the caller also wasn't in the init_user_ns
-    because the init_user_ns is a descendant of all other user
-    namespaces. So falling back will fail.
+Roberto
 
-(2) The caller was in the same or an ancestor user namespace of the
-    token but didn't have the capability in that user namespace:
-    
-     (i) They were in a non-init_user_ns. Therefore they can't be
-         privileged in init_user_ns.
-    (ii) They were in init_user_ns. Therefore, they lacked privileges in
-         the init_user_ns.
-    
-In both cases your fallback will do nothing iiuc.
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  fs/ramfs/inode.c | 32 +++++++++++++++++++++++++++++++-
+>  1 file changed, 31 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
+> index 4ac05a9e25bc..8006faaaf0ec 100644
+> --- a/fs/ramfs/inode.c
+> +++ b/fs/ramfs/inode.c
+> @@ -102,11 +102,20 @@ ramfs_mknod(struct mnt_idmap *idmap, struct inode *=
+dir,
+>  	int error =3D -ENOSPC;
+> =20
+>  	if (inode) {
+> +		error =3D security_inode_init_security(inode, dir,
+> +						     &dentry->d_name, NULL,
+> +						     NULL);
+> +		if (error) {
+> +			iput(inode);
+> +			goto out;
+> +		}
+> +
+>  		d_instantiate(dentry, inode);
+>  		dget(dentry);	/* Extra count - pin the dentry in core */
+>  		error =3D 0;
+>  		inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+>  	}
+> +out:
+>  	return error;
+>  }
+> =20
+> @@ -134,6 +143,15 @@ static int ramfs_symlink(struct mnt_idmap *idmap, st=
+ruct inode *dir,
+>  	inode =3D ramfs_get_inode(dir->i_sb, dir, S_IFLNK|S_IRWXUGO, 0);
+>  	if (inode) {
+>  		int l =3D strlen(symname)+1;
+> +
+> +		error =3D security_inode_init_security(inode, dir,
+> +						     &dentry->d_name, NULL,
+> +						     NULL);
+> +		if (error) {
+> +			iput(inode);
+> +			goto out;
+> +		}
+> +
+>  		error =3D page_symlink(inode, symname, l);
+>  		if (!error) {
+>  			d_instantiate(dentry, inode);
+> @@ -143,6 +161,7 @@ static int ramfs_symlink(struct mnt_idmap *idmap, str=
+uct inode *dir,
+>  		} else
+>  			iput(inode);
+>  	}
+> +out:
+>  	return error;
+>  }
+> =20
+> @@ -150,12 +169,23 @@ static int ramfs_tmpfile(struct mnt_idmap *idmap,
+>  			 struct inode *dir, struct file *file, umode_t mode)
+>  {
+>  	struct inode *inode;
+> +	int error;
+> =20
+>  	inode =3D ramfs_get_inode(dir->i_sb, dir, mode, 0);
+>  	if (!inode)
+>  		return -ENOSPC;
+> +
+> +	error =3D security_inode_init_security(inode, dir,
+> +					     &file_dentry(file)->d_name, NULL,
+> +					     NULL);
+> +	if (error) {
+> +		iput(inode);
+> +		goto out;
+> +	}
+> +
+>  	d_tmpfile(file, inode);
+> -	return finish_open_simple(file, 0);
+> +out:
+> +	return finish_open_simple(file, error);
+>  }
+> =20
+>  static const struct inode_operations ramfs_dir_inode_operations =3D {
+
