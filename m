@@ -1,143 +1,130 @@
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC6858222
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Jan 2024 10:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2036756B9F
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Jan 2024 11:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="B5Q4g6J+"
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-	by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TBJ9H14c2zMrVlh;
-	Fri, 12 Jan 2024 10:45:55 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4TBJ9F6wTHzMpnPg;
-	Fri, 12 Jan 2024 11:45:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1705056355;
-	bh=0Xtl3exMkr4Vgw7Wdk8vaxK8FVOPw6r5Xm7224/uacI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B5Q4g6J+O2tyneb1iQmU5aC28ekvXJiODUBdbxXp+reDFQO06bkLNdDqy1wvR8lKA
-	 1rp03Ctp7sl++jxkF95VZibIwOecuro7KatD9sJFp3vjMqfmAJKLNu5sfw2rZ9T7im
-	 gdFDZizKF9Xmyeah3V0Utlwp7/5nodNRDU0gk5bI=
-Date: Fri, 12 Jan 2024 11:45:52 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Hu Yadi <hu.yadi@h3c.com>
-Cc: jmorris@namei.org, serge@hallyn.com, shuah@kernel.org, 
-	mathieu.desnoyers@efficios.com, linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 514118380@qq.com, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [PATCH v3] selftests/landlock:Fix two build issues
-Message-ID: <20240112.mixei4sei0Pi@digikod.net>
-References: <20240112071245.669-1-hu.yadi@h3c.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U4j10oEg"
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-557c1386095so3125754a12.0
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Jan 2024 03:51:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1705060284; x=1705665084; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TseN7g0pet1ldc9EaSw/07BQWZW3q4sMA7PLy/XrEm8=;
+        b=U4j10oEgcHFn0lyZMEmeL20YefRlbjUM2x4rBT8pcYugtyA3mzRpA/v+kfr+JRfJLW
+         /wS5t7fmpN/BMn9L+kpXKIMxBNvMz9dR/cYDd4NAqCkQsBAyaJ9QDOGJnzGbz5C6XzAu
+         uJ7EO8NKaYMpZtzUoQp0njmUZPpQqSkVSXx9+F1J5IqXsp5HTh7VTYoKaOBIajyHZqjv
+         P9qjV9PuvtpU6cXAhiyO7DIvN1tb3Z1jXdhIBKULWZ2RQCR2neorznn0QSvyJvOUR+CY
+         /aEpVnJSdCc4GnmlbYqMNcRPiZyigsuV7Zo5PPhnixw0mFMI4bnyDq6hJG3JUbW/3BBX
+         kMiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705060284; x=1705665084;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TseN7g0pet1ldc9EaSw/07BQWZW3q4sMA7PLy/XrEm8=;
+        b=YeHWsRY/rMPqBKAMedPPZAJPbxVd6w90Uyt9CkySGaRhlv5BnYts0VfszFOV1dqtkN
+         76W+aFUwNdw0mvMLbIBGks2U8BZQglhEruSCgQ6yBdUbRAYa18EJN7NpAU0jsiQvQJJL
+         ueltROZOyT0WZx0vfPEALt7lFNRmzqe+YAbIFfGSlDaf6v8zMJbDv0mNHXNyM3sGp+Uv
+         VxdPnsFLPyBrp0/vdVkKEGOHt0XUWl5JCkAEtigNSmRAk2V+Oz2lSZrwVaS8YHIDUuY9
+         EhM1ecbA51rHpXJN16alI/TkqDzpIwQ2Ry9es2RtJcCSLAD0pFOW+nrWUSCMR9khBexL
+         q+yA==
+X-Gm-Message-State: AOJu0YzJm1Jm86mJ5ITfMMdGllspA9d1V7gESx3gteJ8FhKoz7fv/HFf
+	5kM8K8TtPY2omPRr7M9dFAMXXxwKNJiPh4f9Rw==
+X-Google-Smtp-Source: AGHT+IGJL2SaCk2QjBRCsoSYHX2UQTRhX4DBdCLMxRbXWvgRFMUVsv+HVG57IL0psmcycFS8gkca5EOLTfk=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:6695:c73f:f8c1:abaa])
+ (user=gnoack job=sendgmr) by 2002:aa7:d413:0:b0:558:cce3:4dde with SMTP id
+ z19-20020aa7d413000000b00558cce34ddemr5104edq.7.1705060284350; Fri, 12 Jan
+ 2024 03:51:24 -0800 (PST)
+Date: Fri, 12 Jan 2024 12:51:14 +0100
+In-Reply-To: <20231213.java5eeb4Nee@digikod.net>
+Message-Id: <ZaEnsqnybWKgXg4N@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240112071245.669-1-hu.yadi@h3c.com>
-X-Infomaniak-Routing: alpha
+Mime-Version: 1.0
+References: <20231208155121.1943775-1-gnoack@google.com> <20231208155121.1943775-10-gnoack@google.com>
+ <20231213.java5eeb4Nee@digikod.net>
+Subject: Re: [PATCH v8 9/9] landlock: Document IOCTL support
+From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
+To: "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 12, 2024 at 03:12:45PM +0800, Hu Yadi wrote:
-> From: "Hu.Yadi" <hu.yadi@h3c.com>
-> 
-> Two issues comes up while building selftest/landlock on my side
-> (gcc 7.3/glibc-2.28/kernel-4.19)
-> 
-> the first one is as to gettid
-> 
-> net_test.c: In function ‘set_service’:
-> net_test.c:91:45: warning: implicit declaration of function ‘gettid’; [-Wimplicit-function-declaration]
->     "_selftests-landlock-net-tid%d-index%d", gettid(),
->                                              ^~~~~~
->                                              getgid
-> net_test.c:(.text+0x4e0): undefined reference to `gettid'
-> 
-> the second is compiler error
-> gcc -Wall -O2 -isystem   fs_test.c -lcap -o selftests/landlock/fs_test
-> fs_test.c:4575:9: error: initializer element is not constant
->   .mnt = mnt_tmp,
->          ^~~~~~~
-> 
-> this patch is to fix them
-> 
-> Signed-off-by: Hu.Yadi <hu.yadi@h3c.com>
-> Suggested-by: Jiao <jiaoxupo@h3c.com>
-> Reviewed-by: Berlin <berlin@h3c.com>
-> ---
-> Changes v3 -> v2:
->  - add helper of gettid instead of __NR_gettid
->  - add gcc/glibc version info in comments
-> Changes v1 -> v2:
->  - fix whitespace error
->  - replace SYS_gettid with _NR_gettid
-> 
->  tools/testing/selftests/landlock/fs_test.c  | 5 ++++-
->  tools/testing/selftests/landlock/net_test.c | 9 +++++++++
->  2 files changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index 18e1f86a6234..a992cf7c0ad1 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -4572,7 +4572,10 @@ FIXTURE_VARIANT(layout3_fs)
->  /* clang-format off */
->  FIXTURE_VARIANT_ADD(layout3_fs, tmpfs) {
->  	/* clang-format on */
-> -	.mnt = mnt_tmp,
-> +	.mnt = {
-> +		.type = "tmpfs",
-> +		.data = "size=4m,mode=700",
+On Wed, Dec 13, 2023 at 12:25:15PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Fri, Dec 08, 2023 at 04:51:21PM +0100, G=C3=BCnther Noack wrote:
+> >  Documentation/userspace-api/landlock.rst | 119 ++++++++++++++++++++---
+> >  1 file changed, 104 insertions(+), 15 deletions(-)
+> >=20
+>=20
+> > +Restricting IOCTL commands
+> > +--------------------------
+> > +
+> > +When the ``LANDLOCK_ACCESS_FS_IOCTL`` access right is handled, Landloc=
+k will
+>=20
+> I only use "right" (instead of "access right") when LANDLOCK_ACCESS_*
+> precede to avoid repetition.
 
-OK, C doesn't play nice with constants. A better approach would be to
-define MNT_TMP_DATA, and use it with this fixture variant and the
-mnt_tmp variable.  No need for a MNT_TMP_TYPE though.  While you're at
-it, you can also make the mnt_tmp variable static const.
+Done.
 
-You can create two patches from this one. This first hunk with:
+> > +restrict the invocation of IOCTL commands.  However, to *permit* these=
+ IOCTL
+>=20
+> This patch introduces the "permit*" wording instead of the currently
+> used "allowed", which is inconsistent.
 
-Fixes: 04f9070e99a4 ("selftests/landlock: Add tests for pseudo filesystems")
+Done.
 
-> +	},
->  	.file_path = file1_s1d1,
->  };
->  
-> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
-> index 929e21c4db05..12a6744568e2 100644
-> --- a/tools/testing/selftests/landlock/net_test.c
-> +++ b/tools/testing/selftests/landlock/net_test.c
-> @@ -21,6 +21,15 @@
->  
->  #include "common.h"
 
-...and this second hunk for another patch with:
+> > ++------------------------+-------------+-------------------+----------=
+---------+
+> > +|                        | ``IOCTL``   | ``IOCTL`` handled | ``IOCTL``=
+ handled |
+>=20
+> I was a bit confused at first read, wondering why IOCTL was quoted, then
+> I realized that it was in fact LANDLOCK_ACCESS_FS_IOCTL. Maybe using the
+> "FS_" prefix would avoid this kind of misreading (same for READ_FILE)?
 
-Fixes: a549d055a22e ("selftests/landlock: Add network tests")
-Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Done.
 
->  
-> +#ifndef gettid
-> +static pid_t gettid(void)
-> +{
-> +        return syscall(__NR_gettid);
-> +}
-> +
 
-Please remove this newline.
+> > +|                        | not handled | and permitted     | and not p=
+ermitted |
+> > ++------------------------+-------------+-------------------+----------=
+---------+
+> > +| ``READ_FILE`` not      | allow       | allow             | deny     =
+         |
+> > +| handled                |             |                   |          =
+         |
+> > ++------------------------+             +-------------------+----------=
+---------+
+> > +| ``READ_FILE`` handled  |             | allow                        =
+         |
+> > +| and permitted          |             |                              =
+         |
+> > ++------------------------+             +-------------------+----------=
+---------+
+> > +| ``READ_FILE`` handled  |             | deny                         =
+         |
+> > +| and not permitted      |             |                              =
+         |
+>=20
+> If it makes the raw text easier to read, it should be OK to extend this
+> table to 100 columns (I guess checkpatch.pl will not complain).
 
-> +#endif
+I got it down to 72 columns and it still reads reasonably well.
+(Emacs has support for editing ASCII tables. :))
 
-You can move this gettid hunk to common.h, under the
-landlock_restrict_self block.
-
-> +
-> +
->  const short sock_port_start = (1 << 10);
->  
->  static const char loopback_ipv4[] = "127.0.0.1";
-> -- 
-> 2.23.0
-> 
+=E2=80=94G=C3=BCnther
