@@ -1,111 +1,130 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743BF22626;
-	Fri, 12 Jan 2024 17:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E194D17C82
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Jan 2024 17:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c/6K2Dib"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48D4DC43330;
-	Fri, 12 Jan 2024 17:29:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705080547;
-	bh=jssAwbuPxvN7TZtNLg2pY60C9/BU5tslVku5TmAKZdw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=c/6K2Dib9ffLTtP8V3/i61Poz6aqFNtuEEiSH0No09eQkAnvZjXt3iRP+NM8lpPGf
-	 rfNOdrI5hPYSrKpRznCK4RiWlk1LTqHjExhvF6deHyxnrKjrTthONGs8tQN09BJyf+
-	 ZNGF3PNfHa6Te4/El8O2JyvHYWpOjCcA40X44RODeJz3hvWAishkave2Lcm354ZJc2
-	 mys6CNHCSLP8C9gXnK28wYuqNQA0WLGIbfTwVqJZuQnYdLrK4TWSLuE/PlqXv1o0oU
-	 8tdoLtWgTzcqN2SvAVAkkn1JH7Uv1B7TActqvkq91t/8/IVXMpok59UqhgkZGnQnRI
-	 waDPJr64KryrA==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-50e7dd8bce8so7970180e87.1;
-        Fri, 12 Jan 2024 09:29:07 -0800 (PST)
-X-Gm-Message-State: AOJu0YxRpTl3mvhOMIuewhyMF3yah9db0Z7hRUc/woI05YEWclUkEUzL
-	kmQQFgj+KrydHIDBxj8sIN133EXjWUnpIhRSdtY=
-X-Google-Smtp-Source: AGHT+IHv4U6Bv1CLMGqgczNTVhhcMsKubjnAMrFM7bbub8DgPF2lBHnCeeFTbjYR9e4eTnYIRgHyWdZc6b2WsJsdG64=
-X-Received: by 2002:a05:6512:39d2:b0:50e:7b01:70df with SMTP id
- k18-20020a05651239d200b0050e7b0170dfmr1134504lfu.72.1705080545496; Fri, 12
- Jan 2024 09:29:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="irTNUOwF"
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dbe9c7932b3so10929905276.2
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Jan 2024 09:31:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1705080707; x=1705685507; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1/xDksuN+LvJ10/jI/Zyo8K2rdrsP5fjP/70uJdQbj4=;
+        b=irTNUOwFMchl96hCZqdBmo/Vwo8bXGwiPov/lA0Xu57XlLdeJKYXlaoC02sZc0iFHH
+         +luGZwCTx4zuBpNrcJgy0XT8Gyxi9BywRIPmvBUnUXu2Eh0dYBtfTKV3E9NVcgo5Qr+6
+         W2INk7J85C0rb2XmV2Y/LPiYWm/pZqqY0RI9yTarpu3S/WIroeh0cpmd9oamg1ldybN1
+         Mf4UNid0lILQ16Wy/OQC9yDb3RhV6Ip/jYWtF6gac8vJGidYsYzG2G+kmzfgIvwQUlUb
+         hGtmkgY9NaNyPQYkXiQ4qA4aceoEYNjxJRP5CgY8xdUFTVokK6Ybfd/1Ds9mvB7yf5o7
+         ul1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705080707; x=1705685507;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1/xDksuN+LvJ10/jI/Zyo8K2rdrsP5fjP/70uJdQbj4=;
+        b=A64N3Xl9hCgyCUaDxBzot6rjzhn3lT6KlXlHyaZ+FcBo24Wm1B0k1nqaW71JGZ4Ei0
+         5+E6TIifr1xF5loelRTw5RHxjiyRSO/4GbAcOdFJ5UtwJlIdJQ+uxoIp3eqkvA/Iu2ld
+         VSkBP90UtnTvVZuzFZ+bWM2UAWP9Ub0qvQbMzdAs8DePsFqyHLg5EZcA2Wdvw910MOkF
+         VHiql3HeFcEFZ3EYbmtXLHEV8jE4u8XGJcolXT2HPN5YAAAM21eiTH7xFhUQYomevDjl
+         2tiQo7kvY4Uykqg5ENUa8fCHbghvY4lXJJOLVQzpMwR37aVy9Fcsz/D8nnEvWiZkzT7G
+         zMdA==
+X-Gm-Message-State: AOJu0YzzyA3Be3svBVSCBLOedaUo3IsgcJay2hmxprlCU2IuXFeT81iN
+	4znY07/n/Cv18o6Ii4ah3+6cyVCMfaGeyBeibQ==
+X-Google-Smtp-Source: AGHT+IEQaz/Dkuk1zJCcZSVyvpbCs7ezLbQi0Lj526Y6e7IqtqBjWNMfte+WVeYQfNmmLbqzUOlV+NFFBGc=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:6695:c73f:f8c1:abaa])
+ (user=gnoack job=sendgmr) by 2002:a05:6902:4cb:b0:dbe:fe5f:8a19 with SMTP id
+ v11-20020a05690204cb00b00dbefe5f8a19mr507882ybs.1.1705080707026; Fri, 12 Jan
+ 2024 09:31:47 -0800 (PST)
+Date: Fri, 12 Jan 2024 18:31:37 +0100
+In-Reply-To: <11cdac1e-e96c-405f-63e8-35b0e2926337@arm.com>
+Message-Id: <ZaF3eWlwAPQcFpoG@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240112095000.8952-1-tzimmermann@suse.de>
-In-Reply-To: <20240112095000.8952-1-tzimmermann@suse.de>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 12 Jan 2024 18:28:53 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGxNTvCca+9TfUfvp06ppyD9XiyO59khYXg88VkyFm1rw@mail.gmail.com>
-Message-ID: <CAMj1kXGxNTvCca+9TfUfvp06ppyD9XiyO59khYXg88VkyFm1rw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] arch/x86: Remove unnecessary dependencies on bootparam.h
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: nathan@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	bhelgaas@google.com, arnd@arndb.de, zohar@linux.ibm.com, 
-	dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, javierm@redhat.com, linux-arch@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20231208155121.1943775-1-gnoack@google.com> <20231208155121.1943775-6-gnoack@google.com>
+ <11cdac1e-e96c-405f-63e8-35b0e2926337@arm.com>
+Subject: Re: [PATCH v8 5/9] selftests/landlock: Test IOCTL support
+From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
+To: Aishwarya TCV <aishwarya.tcv@arm.com>
+Cc: linux-security-module@vger.kernel.org, 
+	"=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 12 Jan 2024 at 10:50, Thomas Zimmermann <tzimmermann@suse.de> wrote:
->
-> Reduce build time in some cases by removing unnecessary include statements
-> for <asm/bootparam.h>. Reorganize some header files accordingly.
->
-> While working on the kernel's boot-up graphics, I noticed that touching
-> include/linux/screen_info.h triggers a complete rebuild of the kernel
-> on x86. It turns out that the architecture's PCI and EFI headers include
-> <asm/bootparam.h>, which depends on <linux/screen_info.h>. But none of
-> the drivers have any business with boot parameters or the screen_info
-> state.
->
-> The patchset moves code from bootparam.h and efi.h into separate header
-> files and removes obsolete include statements on x86. I did
->
->   make allmodconfig
->   make -j28
->   touch include/linux/screen_info.h
->   time make -j28
->
-> to measure the time it takes to rebuild. Results without the patchset
-> are around 20 minutes.
->
->   real    20m46,705s
->   user    354m29,166s
->   sys     28m27,359s
->
-> And with the patchset applied it goes down to less than one minute.
->
->   real    0m56,643s
->   user    4m0,661s
->   sys     0m32,956s
->
-> The test system is an Intel i5-13500.
->
-> v5:
->         * silence clang warnings for real-mode code (Nathan)
->         * revert boot/compressed/misc.h (kernel test robot)
-> v4:
->         * fix fwd declaration in compressed/misc.h (Ard)
-> v3:
->         * keep setup_header in bootparam.h (Ard)
->         * implement arch_ima_efi_boot_mode() in source file (Ard)
-> v2:
->         * only keep struct boot_params in bootparam.h (Ard)
->         * simplify arch_ima_efi_boot_mode define (Ard)
->         * updated cover letter
->
-> Thomas Zimmermann (4):
->   arch/x86: Move UAPI setup structures into setup_data.h
->   arch/x86: Move internal setup_data structures into setup_data.h
->   arch/x86: Implement arch_ima_efi_boot_mode() in source file
->   arch/x86: Do not include <asm/bootparam.h> in several files
->
+Hello Aishwarya!
 
-This looks ok to me, thanks for sticking with it.
+Thanks for the bug report!
 
-For the series,
+I tried this with the aarch64-linux-gnu-gcc-13 cross compiler on Debian, on
+next-20231215, but I can not reproduce it.
 
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+On Fri, Dec 15, 2023 at 12:52:19PM +0000, Aishwarya TCV wrote:
+> On 08/12/2023 15:51, G=C3=BCnther Noack wrote:
+> > Exercises Landlock's IOCTL feature in different combinations of
+> > handling and permitting the rights LANDLOCK_ACCESS_FS_IOCTL,
+> > LANDLOCK_ACCESS_FS_READ_FILE, LANDLOCK_ACCESS_FS_WRITE_FILE and
+> > LANDLOCK_ACCESS_FS_READ_DIR, and in different combinations of using
+> > files and directories.
+> >=20
+> > Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+> > ---
+> >  tools/testing/selftests/landlock/fs_test.c | 431 ++++++++++++++++++++-
+>=20
+> Hi G=C3=BCnther,
+>=20
+> When building kselftest against next-master the below build error is
+> observed. A bisect (full log
+> below) identified this patch as introducing the failure.
+>=20
+> Full log from a failure:
+> https://storage.kernelci.org/next/master/next-20231215/arm64/defconfig+ks=
+elftest/gcc-10/logs/kselftest.log
+>=20
+> -----
+> make[4]: Entering directory
+> '/tmp/kci/linux/tools/testing/selftests/landlock'
+> aarch64-linux-gnu-gcc -Wall -O2 -isystem
+> /tmp/kci/linux/build/usr/include     base_test.c -lcap -o
+> /tmp/kci/linux/build/kselftest/landlock/base_test
+> aarch64-linux-gnu-gcc -Wall -O2 -isystem
+> /tmp/kci/linux/build/usr/include     fs_test.c -lcap -o
+> /tmp/kci/linux/build/kselftest/landlock/fs_test
+> In file included from /tmp/kci/linux/build/usr/include/linux/fs.h:19,
+>                  from fs_test.c:12:
+> /usr/include/aarch64-linux-gnu/sys/mount.h:35:3: error: expected
+
+The IOCTL patch set has introduced an "#include <linux/fs.h>" at the top of
+selftests/landlock/fs_test.c (that file includes some IOCTL command numbers=
+),
+but that should in my mind normally be safe to include?
+
+I'm surprised that according to the log, fs.h line 19 is including sys/moun=
+t.h
+instead of linux/mount.h...?  This line says =E2=80=9C#include <linux/mount=
+.h>=E2=80=9D?
+
+> identifier before numeric constant
+>    35 |   MS_RDONLY =3D 1,  /* Mount read-only.  */
+>       |   ^~~~~~~~~
+> In file included from common.h:19,
+>                  from fs_test.c:27:
+
+If you have more leads or more concrete reproduction steps, I'd be interest=
+ed to
+know.  Otherwise, I'd have to just hope that it'll work better on the next
+attempt...?
+
+Thanks,
+=E2=80=94G=C3=BCnther
