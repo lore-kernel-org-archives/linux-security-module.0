@@ -1,92 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A531F16410;
-	Fri, 12 Jan 2024 19:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7698A210EA;
+	Sat, 13 Jan 2024 12:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KHKInoTS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9672C433F1;
-	Fri, 12 Jan 2024 19:16:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705087019;
-	bh=CUEpNXtIj3y2YghfDHeACDupq7CbR+GCqp5Oj2Kn0Tg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KHKInoTSQcHD/QPi8oCP9sqJFNb7MY1iMt8aZaXwcUcKrLOtwHGWP8gCe0B6ZnvI5
-	 p6MdbRI9WZ0EU4zg5Fps+KrDi4bWz/M1gLkYOp4e3Ou5332D4FtGstAYgjfggYC3Hn
-	 qKud3prvJVCuRV8TMO1O0Xu15U1tv4jPFBAypq6CiqOyaDbLoxQAUjNILDEY+mXrFl
-	 MuXzPvQJ4I6W6RsYMs3zVBvutQsNfobH8N2gH3tB/2TsuIaFesy5VWXuUHRGZIe0ia
-	 SqVad8c3bOIpOYFW43f/bdYNExJOcGoM3xcVXbd7m3kJq4+xYkR3eNjojJAL6WTxOC
-	 mhpS2qzgklhQw==
-Date: Fri, 12 Jan 2024 20:16:53 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH bpf-next 03/29] bpf: introduce BPF token object
-Message-ID: <20240112-hetzt-gepard-5110cf759a34@brauner>
-References: <20240108-gasheizung-umstand-a36d89ed36b7@brauner>
- <CAEf4Bzb+7NzYs5ScggtgAJ6A5-oU5GymvdoEbpfNVOG-XmWZig@mail.gmail.com>
- <20240109-tausend-tropenhelm-2a9914326249@brauner>
- <CAEf4BzaAoXYb=qnj6rvDw8VewhvYNrs5oxe=q7VBe0jjWXivhg@mail.gmail.com>
- <20240110-nervt-monopol-6d307e2518f4@brauner>
- <CAEf4BzYOU5ZVqnTDTEmrHL-+tYY76kz4LO_0XauWibnhtzCFXg@mail.gmail.com>
- <20240111-amten-stiefel-043027f9520f@brauner>
- <CAEf4BzYcec97posh6N3LM8tJLsxrSLiFYq9csRWcy8=VnTJ23A@mail.gmail.com>
- <20240112-unpraktisch-kuraufenthalt-4fef655deab2@brauner>
- <CAEf4Bza7UKjv1Hh_kcyBVJw22LDv4ZNA5uV7+WBdnhsM9O7uGQ@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="PD2gf3WV"
+Received: from localhost.ispras.ru (unknown [10.10.165.8])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 3F10640F1DE8;
+	Sat, 13 Jan 2024 12:16:10 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 3F10640F1DE8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1705148170;
+	bh=pztDEiVv/JTrPlxIE4dKwnm5K1/LAKTBaRFR2rt1P68=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PD2gf3WVCf/07T/Z491LAw57ctIf56C9+WM0RlTGAYEnWpvdlI52uNZdowMqYpF+n
+	 Ap2+RNSpVAs3c5VW816FiB55bbq/rB9psKG6oAzQBiXb/3E20pPBlBUmCwe8DozDdq
+	 yzTDNvkIfUI57Sf9QtSFykO6VuMlUmFhJ7JhSjG0=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: John Johansen <john.johansen@canonical.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	lvc-project@linuxtesting.org
+Subject: [PATCH 0/2] apparmor: fix namespace check in serialized stream headers from the same policy load
+Date: Sat, 13 Jan 2024 15:15:50 +0300
+Message-ID: <20240113121556.12948-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAEf4Bza7UKjv1Hh_kcyBVJw22LDv4ZNA5uV7+WBdnhsM9O7uGQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-> > My point is that the capable logic will walk upwards the user namespace
-> > hierarchy from the token->userns until the user namespace of the caller
-> > and terminate when it reached the init_user_ns.
-> >
-> > A caller is located in some namespace at the point where they call this
-> > function. They provided a token. The caller isn't capable in the
-> > namespace of the token so the function falls back to init_user_ns. Two
-> > interesting cases:
-> >
-> > (1) The caller wasn't in an ancestor userns of the token. If that's the
-> >     case then it follows that the caller also wasn't in the init_user_ns
-> >     because the init_user_ns is a descendant of all other user
-> >     namespaces. So falling back will fail.
-> 
-> agreed
-> 
-> >
-> > (2) The caller was in the same or an ancestor user namespace of the
-> >     token but didn't have the capability in that user namespace:
-> >
-> >      (i) They were in a non-init_user_ns. Therefore they can't be
-> >          privileged in init_user_ns.
-> >     (ii) They were in init_user_ns. Therefore, they lacked privileges in
-> >          the init_user_ns.
-> >
-> > In both cases your fallback will do nothing iiuc.
-> 
-> agreed as well
-> 
-> And I agree in general that there isn't a *practically useful* case
-> where this would matter much. But there is still (at least one) case
-> where there could be a regression: if token is created in
-> init_user_ns, caller has CAP_BPF in init_user_ns, caller passes that
-> token to BPF_PROG_LOAD, and LSM policy rejects that token in
-> security_bpf_token_capable(). Without the above implementation such
-> operation will be rejected, even though if there was no token passed
-> it would succeed. With my implementation above it will succeed as
-> expected.
+This series is intended to fix the supposedly invalid behaviour of
+verify_header() function when checking unpacked profiles namespace
+declarations.
 
-If that's the case then prevent the creation of tokens in the
-init_user_ns and be done with it. If you fallback anyway then this is
-the correct solution.
+Consider having a profiles file called 'testfile' with contents as
+ profile :ns1:profile1 ... {}
+ profile :ns2:profile2 ... {}
 
-Make this change, please. I'm not willing to support this weird fallback
-stuff which is even hard to reason about.
+then packing it in a binary format and trying a load-replace operation
+ $ apparmor_parser -Q -W -T testfile
+ $ apparmor_parser -r -B /var/cache/apparmor/ac27e0ee.0/testfile
+
+Per dmesg output this leads the profiles to be loaded into the same
+namespace (trimmed for more convenient display):
+ [  414.616098] audit: apparmor="STATUS" operation="profile_load" name="profile1" comm="apparmor_parser" ns="ns2"
+ [  414.619304] audit: apparmor="STATUS" operation="profile_load" name="profile2" comm="apparmor_parser" ns="ns2"
+
+while the string "ns1" unpacked inside verify_header() is leaked:
+
+unreferenced object 0xffff888012ff9b18 (size 8):
+  comm "apparmor_parser", pid 1198, jiffies 4295081077 (age 164.892s)
+  hex dump (first 8 bytes):
+    6e 73 31 00 80 88 ff ff                          ns1.....
+  backtrace:
+    [<ffffffff81ddb4b2>] __kmem_cache_alloc_node+0x1e2/0x2d0
+    [<ffffffff81c47034>] __kmalloc_node_track_caller+0x54/0x170
+    [<ffffffff81c224dc>] kstrdup+0x3c/0x70
+    [<ffffffff83e2e4ef>] aa_unpack+0xb5f/0x1540
+    [<ffffffff83e1e9c6>] aa_replace_profiles+0x1f6/0x4040
+    [<ffffffff83def008>] policy_update+0x238/0x350
+    [<ffffffff83def33e>] profile_replace+0x20e/0x2a0
+    [<ffffffff81ead03f>] vfs_write+0x2af/0xe00
+    [<ffffffff81eae556>] ksys_write+0x126/0x250
+    [<ffffffff88f54426>] do_syscall_64+0x46/0xf0
+    [<ffffffff890000ea>] entry_SYSCALL_64_after_hwframe+0x6e/0x76
+
+With the following patches this situation is detected and the whole
+profiles load set is denied because of the mixed namespaces.
+
+Note that the following multiple profiles load will also fail after these
+patches - quite similar to the namespace check inside aa_replace_profiles().
+  profile profile1 ... {}
+  profile :ns:profile2 ... {}
+
+This behaviour may directly affect userspace part of AppArmor, though I've
+not been able to find any valid use case when e.g. the user writes
+  profile profile1 ... {}
+  profile :ns:profile2 ... {}
+and expects `profile1` to be associated with `ns`. I think it's actually
+an invalid expectation so such profiles set should be also denied with a
+'mixed namespaces' explaining message.
+
+There is no difference in AppArmor regression tests with and without the
+changes.
