@@ -1,197 +1,111 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45B5EC5;
-	Sun, 14 Jan 2024 02:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E0D1845;
+	Sun, 14 Jan 2024 06:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ibhJtwSv"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-558ac3407eeso3253754a12.0;
-        Sat, 13 Jan 2024 18:29:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LiyISdCs"
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5986f790b64so3432280eaf.3;
+        Sat, 13 Jan 2024 22:49:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705199386; x=1705804186; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I3fARAzcnsKw1zp+nPDE2Vm6kb/M9mvQuBFNlLqeo4I=;
-        b=ibhJtwSvmV43kkGWJ4ow4iV1WC4KATxkpa4nWXd0I5cXn5KlN+pkNuZyE3Wi5CAnMr
-         TRaz9W1xg5WPYFw+EYLpvkv+sYf3r6ANATLh8JT5cRteYGIw98aYKnfwLu9MDxM9J7UE
-         SRvW4tOFPq4vwVpyUfoaxtcrz2CpQOlf+CuJpaBQ2gk+X//5EFSLMowVQvmH3j+9ky43
-         ZUfJDoS/5zfwt5U94C1JnhOcQzlmsibEArIRmZkKTIUjLmdF+DFkLIFcFh+IotGRcm2S
-         v0QoQ2qCTm7+/vZSid7y7LK4t0MsaGyZLSdiuYjZVHH32bEnmHOonSv06xGLFomavisI
-         oqpg==
+        d=gmail.com; s=20230601; t=1705214947; x=1705819747; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KXgb9X1CWd/PEEQiac+jZy6kkV3an6+pNU+vSf7jMVI=;
+        b=LiyISdCs3fD+7m62L5S5+fbs0UPIU25tvZgvcIRFlMQot8KJAeeiCI4vFGwREbT/Ch
+         odMftOR4WszV41tu6ULVVg8ZhxvDaBM70j8u+SmafTSfqUoJJ4eza4cTcII1IbdlkVex
+         ns+w9wxNij+MMg/82A+zEFS09L6o4hIiFKmb4PRI374DuLlWz55OseUJMYJT9XhcBxvZ
+         UM5sCfUMSHcX2m3bBhjbdjAvGmqMjozqo8Y4ZwFzQuBd5Tf+ZJsLTwq9U35IKTKNfaQC
+         P2zbEgOA5KEifZz3nmPWFbUH/t06WdXRIsZ7CUvj/ODzsESMaBRsWfRR/77YQ9VkkkG1
+         QnLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705199386; x=1705804186;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I3fARAzcnsKw1zp+nPDE2Vm6kb/M9mvQuBFNlLqeo4I=;
-        b=pXYZXePBBx+XdMUKvOZl+aFCcpSMrHknw5Q4ktuoJyvhxvP/BGx8L4yAkGQig1juTV
-         h43yRHPmp6KWTxLJjQiYFdUFeWW8KGV3OgoRC2AOK3Nh8TLa56XuIwvz0kHd6lzaf7aE
-         1cF5isYaVFZIwe3HvKnyKp4/DowMROyP0gB0iavg+0McB3wlfyTJCbJuF5LBQgzdziVj
-         Tgo4coZTf3cXJF/PB7She8+ZegehRlF+elrYTnoYPqvbJeaqleV3Tckv9f+S6B001c6Q
-         FptNbGLhyrbuMbvVrlQ64y4vFaiwn1UCoezsJWbl48dJwxlJgb8DQkL1WvKBK7a/7ZIO
-         QOTA==
-X-Gm-Message-State: AOJu0Yzq/R6pq5bH3hkqWI6W507DvIN1uopLTACbROKqfYPdNA2NSlr8
-	ifHLCz/QAdFK+zCjVBS4B+G9BuhXAdbogi2MN/k=
-X-Google-Smtp-Source: AGHT+IFCDIfvD0HN4wikAJNiO2vqoISd72Bbbprs1WrY6i2Ofc9cafxJ7YNh9sieOjT0eNnHtgcpprpcGuqHyTq/uiI=
-X-Received: by 2002:a05:6402:c84:b0:558:ab9:b8f8 with SMTP id
- cm4-20020a0564020c8400b005580ab9b8f8mr1608768edb.71.1705199385619; Sat, 13
- Jan 2024 18:29:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1705214947; x=1705819747;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KXgb9X1CWd/PEEQiac+jZy6kkV3an6+pNU+vSf7jMVI=;
+        b=gzqbGqYnG1QkISJD0H0EQf4qPGfO9zYcaVhABCYs87AXj5uVY+9YZS2ZD32mb/EeF9
+         yS5lFoUiNoZq/ulvLotdfd4Kjb+NhtkjjWT/Bdj1+VGmYWRMgcicjlrqsU3bv1Jbe+x6
+         K+1z1q07PoIx+QLBaMJGIcitWjG+/h79+j+eRWr+kJua+GhIfv7Rmc1HW5qkv1PergTu
+         hFkf5roGsFuLFor4k4BG4Q36d2dNoTpi3gtlEO7w3JchVfvrdwuH+ZPB91tUgAzaSxGM
+         TYaZJilzbCQZIUcNatfZw/LXdzDjttAEfhfj07s49JwnsjdoN9FcZKFN6J3R+MWP2U/C
+         m8HA==
+X-Gm-Message-State: AOJu0YxKoAgfmWNnRCJgyFTrKG4dx6Z0FrYMWxvQp/W0p6mg/wrOr3gC
+	SdhMJu2DPzs/a2g2XEJ8lZs=
+X-Google-Smtp-Source: AGHT+IF+BhC+uyf16yTJ+jUA9mpcMjuWd8QqAGGlDxYx1+oguvtkEI4G6Be+ISFZ+jyWpVAJfh2wPQ==
+X-Received: by 2002:a05:6358:9fb0:b0:175:a9ce:e69c with SMTP id fy48-20020a0563589fb000b00175a9cee69cmr16814rwb.44.1705214947397;
+        Sat, 13 Jan 2024 22:49:07 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:d314:4131:10f8:370e])
+        by smtp.gmail.com with ESMTPSA id sn15-20020a17090b2e8f00b0028bd303dc58sm7292213pjb.11.2024.01.13.22.49.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Jan 2024 22:49:06 -0800 (PST)
+Date: Sat, 13 Jan 2024 22:49:01 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: torvalds@linux-foundation.org, keescook@chromium.org,
+	gregkh@linuxfoundation.org, pbonzini@redhat.com,
+	masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
+	nicolas@fjasle.eu, catalin.marinas@arm.com, will@kernel.org,
+	vkoul@kernel.org, trix@redhat.com, ojeda@kernel.org,
+	mingo@redhat.com, longman@redhat.com, boqun.feng@gmail.com,
+	dennis@kernel.org, tj@kernel.org, cl@linux.com, acme@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, namhyung@kernel.org, irogers@google.com,
+	adrian.hunter@intel.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, paulmck@kernel.org,
+	frederic@kernel.org, quic_neeraju@quicinc.com,
+	joel@joelfernandes.org, josh@joshtriplett.org,
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+	rientjes@google.com, vbabka@suse.cz, roman.gushchin@linux.dev,
+	42.hyeyoo@gmail.com, apw@canonical.com, joe@perches.com,
+	dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
+	john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+	llvm@lists.linux.dev, linux-perf-users@vger.kernel.org,
+	rcu@vger.kernel.org, linux-security-module@vger.kernel.org,
+	tglx@linutronix.de, ravi.bangoria@amd.com, error27@gmail.com,
+	luc.vanoostenryck@gmail.com
+Subject: Re: [PATCH v3 03/57] locking: Introduce __cleanup() based
+ infrastructure
+Message-ID: <ZaOD3UWFppRDJ6bs@google.com>
+References: <20230612090713.652690195@infradead.org>
+ <20230612093537.614161713@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240108-gasheizung-umstand-a36d89ed36b7@brauner>
- <CAEf4Bzb+7NzYs5ScggtgAJ6A5-oU5GymvdoEbpfNVOG-XmWZig@mail.gmail.com>
- <20240109-tausend-tropenhelm-2a9914326249@brauner> <CAEf4BzaAoXYb=qnj6rvDw8VewhvYNrs5oxe=q7VBe0jjWXivhg@mail.gmail.com>
- <20240110-nervt-monopol-6d307e2518f4@brauner> <CAEf4BzYOU5ZVqnTDTEmrHL-+tYY76kz4LO_0XauWibnhtzCFXg@mail.gmail.com>
- <20240111-amten-stiefel-043027f9520f@brauner> <CAEf4BzYcec97posh6N3LM8tJLsxrSLiFYq9csRWcy8=VnTJ23A@mail.gmail.com>
- <20240112-unpraktisch-kuraufenthalt-4fef655deab2@brauner> <CAEf4Bza7UKjv1Hh_kcyBVJw22LDv4ZNA5uV7+WBdnhsM9O7uGQ@mail.gmail.com>
- <20240112-hetzt-gepard-5110cf759a34@brauner>
-In-Reply-To: <20240112-hetzt-gepard-5110cf759a34@brauner>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Sat, 13 Jan 2024 18:29:33 -0800
-Message-ID: <CAEf4BzYNRNbaNNGRSUCaY3OQrzXPAdR6gGB0PmXhwsn8rUAs0Q@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 03/29] bpf: introduce BPF token object
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>, Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, 
-	netdev@vger.kernel.org, paul@paul-moore.com, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230612093537.614161713@infradead.org>
 
-On Fri, Jan 12, 2024 at 11:17=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> > > My point is that the capable logic will walk upwards the user namespa=
-ce
-> > > hierarchy from the token->userns until the user namespace of the call=
-er
-> > > and terminate when it reached the init_user_ns.
-> > >
-> > > A caller is located in some namespace at the point where they call th=
-is
-> > > function. They provided a token. The caller isn't capable in the
-> > > namespace of the token so the function falls back to init_user_ns. Tw=
-o
-> > > interesting cases:
-> > >
-> > > (1) The caller wasn't in an ancestor userns of the token. If that's t=
-he
-> > >     case then it follows that the caller also wasn't in the init_user=
-_ns
-> > >     because the init_user_ns is a descendant of all other user
-> > >     namespaces. So falling back will fail.
-> >
-> > agreed
-> >
-> > >
-> > > (2) The caller was in the same or an ancestor user namespace of the
-> > >     token but didn't have the capability in that user namespace:
-> > >
-> > >      (i) They were in a non-init_user_ns. Therefore they can't be
-> > >          privileged in init_user_ns.
-> > >     (ii) They were in init_user_ns. Therefore, they lacked privileges=
- in
-> > >          the init_user_ns.
-> > >
-> > > In both cases your fallback will do nothing iiuc.
-> >
-> > agreed as well
-> >
-> > And I agree in general that there isn't a *practically useful* case
-> > where this would matter much. But there is still (at least one) case
-> > where there could be a regression: if token is created in
-> > init_user_ns, caller has CAP_BPF in init_user_ns, caller passes that
-> > token to BPF_PROG_LOAD, and LSM policy rejects that token in
-> > security_bpf_token_capable(). Without the above implementation such
-> > operation will be rejected, even though if there was no token passed
-> > it would succeed. With my implementation above it will succeed as
-> > expected.
->
-> If that's the case then prevent the creation of tokens in the
-> init_user_ns and be done with it. If you fallback anyway then this is
-> the correct solution.
->
-> Make this change, please. I'm not willing to support this weird fallback
-> stuff which is even hard to reason about.
+Hi Peter,
 
-Alright, added an extra check. Ok, so in summary I have the changes
-below compared to v1 (plus a few extra LSM-related test cases added):
+On Mon, Jun 12, 2023 at 11:07:16AM +0200, Peter Zijlstra wrote:
+>  
+> +DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T))
+> +DEFINE_FREE(mutex, struct mutex *, if (_T) mutex_unlock(_T))
 
-diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
-index a86fccd57e2d..7d04378560fd 100644
---- a/kernel/bpf/token.c
-+++ b/kernel/bpf/token.c
-@@ -9,18 +9,22 @@
- #include <linux/user_namespace.h>
- #include <linux/security.h>
+I got excited with the ability to have mutexes released automatically,
+however the code I work with typically uses mutex_lock_interruptible()
+and friends, where resource acquisition may fail. Additionally, the
+return values are integers and not pointers, which makes them unsuitable
+for something like
 
-+static bool bpf_ns_capable(struct user_namespace *ns, int cap)
-+{
-+       return ns_capable(ns, cap) || (cap !=3D CAP_SYS_ADMIN &&
-ns_capable(ns, CAP_SYS_ADMIN));
-+}
-+
- bool bpf_token_capable(const struct bpf_token *token, int cap)
- {
--       /* BPF token allows ns_capable() level of capabilities, but only if
--        * token's userns is *exactly* the same as current user's userns
--        */
--       if (token && current_user_ns() =3D=3D token->userns) {
--               if (ns_capable(token->userns, cap) ||
--                   (cap !=3D CAP_SYS_ADMIN && ns_capable(token->userns,
-CAP_SYS_ADMIN)))
--                       return security_bpf_token_capable(token, cap) =3D=
-=3D 0;
--       }
--       /* otherwise fallback to capable() checks */
--       return capable(cap) || (cap !=3D CAP_SYS_ADMIN && capable(CAP_SYS_A=
-DMIN));
-+       struct user_namespace *userns;
-+
-+       /* BPF token allows ns_capable() level of capabilities */
-+       userns =3D token ? token->userns : &init_user_ns;
-+       if (!bpf_ns_capable(userns, cap))
-+               return false;
-+       if (token && security_bpf_token_capable(token, cap) < 0)
-+               return false;
-+       return true;
- }
+	struct mutex *guard __free(mutex) = mutex_lock_interruptible(...);
 
- void bpf_token_inc(struct bpf_token *token)
-@@ -32,7 +36,7 @@ static void bpf_token_free(struct bpf_token *token)
- {
-        security_bpf_token_free(token);
-        put_user_ns(token->userns);
--       kvfree(token);
-+       kfree(token);
- }
+I guess we could make wrappers around mutex_lock...() family to return
+either the mutex or ERR_PTR-encoded error, but that feels quite ugly.
 
- static void bpf_token_put_deferred(struct work_struct *work)
-@@ -152,6 +156,12 @@ int bpf_token_create(union bpf_attr *attr)
-                goto out_path;
-        }
+Do you have any suggestions here?
 
-+       /* Creating BPF token in init_user_ns doesn't make much sense. */
-+       if (current_user_ns() =3D=3D &init_user_ns) {
-+               err =3D -EOPNOTSUPP;
-+               goto out_path;
-+       }
-+
-        mnt_opts =3D path.dentry->d_sb->s_fs_info;
-        if (mnt_opts->delegate_cmds =3D=3D 0 &&
-            mnt_opts->delegate_maps =3D=3D 0 &&
-@@ -179,7 +189,7 @@ int bpf_token_create(union bpf_attr *attr)
-                goto out_path;
-        }
+Thanks.
 
--       token =3D kvzalloc(sizeof(*token), GFP_USER);
-+       token =3D kzalloc(sizeof(*token), GFP_USER);
-        if (!token) {
-                err =3D -ENOMEM;
-                goto out_file;
+-- 
+Dmitry
