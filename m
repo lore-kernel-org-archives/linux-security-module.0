@@ -1,98 +1,75 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E90186A;
-	Mon, 15 Jan 2024 03:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B295223A2;
+	Mon, 15 Jan 2024 04:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DMSAOjlS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1705290461; x=1736826461;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cpCFBsSH/4SlXTqGSHw0GnglPpDmXBuS/gJX+HbsERc=;
-  b=DMSAOjlSb0sI+XfQbFXvPU/HrLAXXadm2Cqc8+ajdhe+y8UYLQ/rShcS
-   oiOjy3poAkkkwd91rDwu0Yu9//TJ6fUGWj1k2wRj74GOjW1LZgb38sR7j
-   iVm48M04iGO35A/LIUXggMGET3ImZ1ra/KSCA5cRG93IVykzPsG2Idnz+
-   MlWiWSk5o99+S9cP5OhMCqRW2qQGvczAknM+Tfw1dKfG3Gtvq4FnwR13R
-   UqPkqaARrveXh4Zb7RIERUGXSslwnzi2OYkJfvoilz34mwVfK8/DOlS5o
-   DFWPa0ilcm42F0bX47F1kb/bwMLim8AiMyDyNqVvG1CXURe00WMBBG//s
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10953"; a="6284464"
-X-IronPort-AV: E=Sophos;i="6.04,195,1695711600"; 
-   d="scan'208";a="6284464"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jan 2024 19:47:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10953"; a="776608748"
-X-IronPort-AV: E=Sophos;i="6.04,195,1695711600"; 
-   d="scan'208";a="776608748"
-Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 14 Jan 2024 19:47:36 -0800
-Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rPDwZ-000C5o-0T;
-	Mon, 15 Jan 2024 03:47:26 +0000
-Date: Mon, 15 Jan 2024 11:46:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hu Yadi <hu.yadi@h3c.com>, jmorris@namei.org, serge@hallyn.com,
-	shuah@kernel.org, mathieu.desnoyers@efficios.com, mic@digikod.net
-Cc: oe-kbuild-all@lists.linux.dev, linux-api@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, 514118380@qq.com,
-	"Hu.Yadi" <hu.yadi@h3c.com>
-Subject: Re: [PATCH v3] selftests/landlock:Fix two build issues
-Message-ID: <202401151147.T1s11iHJ-lkp@intel.com>
-References: <20240112071245.669-1-hu.yadi@h3c.com>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X7lgAjgo"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=6XW9jqaIh1AQzD94ZZd4+VKcTSdu8kLFek2bVy3e7es=; b=X7lgAjgo2UkCI6NdpJtV3OUDpW
+	2PKdoPGhk8T9JjakgBG17xMArruV5r5ilz+KhQCSj0MGSz8QVFjAMrdbjF67W6pyKYyBXFnrGxjS0
+	9ecOLWG6PSod9bz8a13Lcz83W9OgMysBmflYpfmCRcfmN0xR/xYKYfqjnAjZLNuRlGVWUUzWdYm7c
+	yLv4iCE6GFS1xUszSgcslfeM+hYXnTKpCVQaU3xTF+Uqocn0wdwfCr10L8SYnBOygPnKGJSYLrH5+
+	qihKvCmehPE3yieaTexIbNAg9LputiJkcMMgvRQ+Xisa/1hmItUXmp3JCcmzh0ARyeH2/THCjzHed
+	TTg/HB/w==;
+Received: from [50.53.46.231] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+	id 1rPEjA-007ktb-05;
+	Mon, 15 Jan 2024 04:37:36 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	John Johansen <john.johansen@canonical.com>,
+	John Johansen <john@apparmor.net>,
+	apparmor@lists.ubuntu.com,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH] apparmor: lsm: fix kernel-doc typo
+Date: Sun, 14 Jan 2024 20:37:35 -0800
+Message-ID: <20240115043735.7751-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240112071245.669-1-hu.yadi@h3c.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Hu,
+Correct a kernel-doc function parameter name to resolve two
+kernel-doc warnings:
 
-kernel test robot noticed the following build errors:
+lsm.c:1136: warning: Function parameter or struct member 'protocol' not described in 'apparmor_socket_post_create'
+lsm.c:1136: warning: Excess function parameter 'ptotocol' description in 'apparmor_socket_post_create'
 
-[auto build test ERROR on shuah-kselftest/next]
-[also build test ERROR on shuah-kselftest/fixes linus/master v6.7 next-20240112]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: John Johansen <john.johansen@canonical.com>
+Cc: John Johansen <john@apparmor.net>
+Cc: apparmor@lists.ubuntu.com
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+---
+ security/apparmor/lsm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hu-Yadi/selftests-landlock-Fix-two-build-issues/20240112-151805
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
-patch link:    https://lore.kernel.org/r/20240112071245.669-1-hu.yadi%40h3c.com
-patch subject: [PATCH v3] selftests/landlock:Fix two build issues
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240115/202401151147.T1s11iHJ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202401151147.T1s11iHJ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> net_test.c:25:14: error: static declaration of 'gettid' follows non-static declaration
-      25 | static pid_t gettid(void)
-         |              ^~~~~~
-   In file included from /usr/include/unistd.h:1218,
-                    from /usr/include/x86_64-linux-gnu/bits/sigstksz.h:24,
-                    from /usr/include/signal.h:328,
-                    from /usr/include/x86_64-linux-gnu/sys/wait.h:36,
-                    from common.h:16,
-                    from net_test.c:22:
-   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h:34:16: note: previous declaration of 'gettid' with type '__pid_t(void)' {aka 'int(void)'}
-      34 | extern __pid_t gettid (void) __THROW;
-         |                ^~~~~~
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff -- a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1122,7 +1122,7 @@ static int apparmor_socket_create(int fa
+  * @sock: socket that is being setup
+  * @family: family of socket being created
+  * @type: type of the socket
+- * @ptotocol: protocol of the socket
++ * @protocol: protocol of the socket
+  * @kern: socket is a special kernel socket
+  *
+  * Note:
