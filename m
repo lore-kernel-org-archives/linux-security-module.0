@@ -1,102 +1,131 @@
-Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC2463AD;
-	Mon, 15 Jan 2024 10:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
-Received: from mail.maildlp.com ([172.25.15.154])
-	by h3cspam02-ex.h3c.com with ESMTP id 40FAfUqO038155;
-	Mon, 15 Jan 2024 18:41:30 +0800 (GMT-8)
-	(envelope-from hu.yadi@h3c.com)
-Received: from DAG6EX13-BJD.srv.huawei-3com.com (unknown [10.153.34.15])
-	by mail.maildlp.com (Postfix) with ESMTP id 88C4C2004DB6;
-	Mon, 15 Jan 2024 18:45:58 +0800 (CST)
-Received: from DAG6EX02-IMDC.srv.huawei-3com.com (10.62.14.11) by
- DAG6EX13-BJD.srv.huawei-3com.com (10.153.34.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.27; Mon, 15 Jan 2024 18:41:32 +0800
-Received: from DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4])
- by DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4%16]) with
- mapi id 15.02.1258.027; Mon, 15 Jan 2024 18:41:32 +0800
-From: Huyadi <hu.yadi@h3c.com>
-To: "'kernel test robot'" <lkp@intel.com>,
-        "jmorris@namei.org"
-	<jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "mathieu.desnoyers@efficios.com"
-	<mathieu.desnoyers@efficios.com>,
-        "mic@digikod.net" <mic@digikod.net>
-CC: "oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-	<linux-security-module@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>,
-        "514118380@qq.com" <514118380@qq.com>
-Subject: =?gb2312?B?u9i4tDogW1BBVENIIHYzXSBzZWxmdGVzdHMvbGFuZGxvY2s6Rml4IHR3byBi?=
- =?gb2312?Q?uild_issues?=
-Thread-Topic: [PATCH v3] selftests/landlock:Fix two build issues
-Thread-Index: AQHaRScQ690ykYEnskymgvTI87URSbDZuk8AgAD5tWA=
-Date: Mon, 15 Jan 2024 10:41:32 +0000
-Message-ID: <44bf55ff3e3649c88c5b1daf843a86b5@h3c.com>
-References: <20240112071245.669-1-hu.yadi@h3c.com>
- <202401151147.T1s11iHJ-lkp@intel.com>
-In-Reply-To: <202401151147.T1s11iHJ-lkp@intel.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-sender-location: DAG2
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BBB18E00;
+	Mon, 15 Jan 2024 10:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4IVxdbM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEC42C43142;
+	Mon, 15 Jan 2024 10:55:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705316150;
+	bh=rfREZzmiD9nPW8TbesDDnUUTWye4kt++Bv0KP8PLvFk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=A4IVxdbM5n6+Wri6LKPCFt4boNRWCZk+x+FvjGA0rMzBKnTq0PG2P4HgdoibE34JU
+	 7I+sl3ic4kVgy6alkJ1V+WOxCGZ2ZCdHvSZazXxPfmb5arAkTMCAyiEierrpoLCjzM
+	 Ygj8ldj/YeV7xxWj3T+cJucDy6g0wviAclEb83PQYKh4IA3J10TosGkmbLnZg7vRG5
+	 klaKs9ycUq3mSQ8r8jOJecX0Mq/uJGiy1/elHSc22WoW1AxZktex9NE9JrxYS5mS2+
+	 cE8gPHQUwUZeynpCd6W3njl/YBfE5cxvvdBerqY16hvAfFGT43Lf9OM8ZBsaDE8gEI
+	 oLYOyEDKggW0A==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-50eaaf2c7deso9635020e87.2;
+        Mon, 15 Jan 2024 02:55:49 -0800 (PST)
+X-Gm-Message-State: AOJu0YxdnEmOWayncYpTcwpapO5T9U7QvQyR1lgCXFPUaZhDDk0Xgoa4
+	sLHZZC3R7KyEeShjc05qn4OEMu7gpa2F7aSXYxA=
+X-Google-Smtp-Source: AGHT+IHjiob4d9Y9lHe/Mg25bV/9NI9KuHdlICb0KG40svce27wXXneGwYvZf40noCzmA0/mYLev+nDZBuyx7BNLBuM=
+X-Received: by 2002:a05:6512:130c:b0:50e:df4f:44d7 with SMTP id
+ x12-20020a056512130c00b0050edf4f44d7mr2867593lfu.90.1705316148087; Mon, 15
+ Jan 2024 02:55:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:h3cspam02-ex.h3c.com 40FAfUqO038155
+References: <20240112095000.8952-1-tzimmermann@suse.de> <CAMj1kXGxNTvCca+9TfUfvp06ppyD9XiyO59khYXg88VkyFm1rw@mail.gmail.com>
+ <3e2f70ab-c4de-4fae-9365-4f6f77c847c5@suse.de>
+In-Reply-To: <3e2f70ab-c4de-4fae-9365-4f6f77c847c5@suse.de>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 15 Jan 2024 11:55:36 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGECo1E1U8jjrzvA=ZJe80DVOi3v5CvxkhXbnBQKVMT8Q@mail.gmail.com>
+Message-ID: <CAMj1kXGECo1E1U8jjrzvA=ZJe80DVOi3v5CvxkhXbnBQKVMT8Q@mail.gmail.com>
+Subject: Re: [PATCH v5 0/4] arch/x86: Remove unnecessary dependencies on bootparam.h
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: nathan@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	bhelgaas@google.com, arnd@arndb.de, zohar@linux.ibm.com, 
+	dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, javierm@redhat.com, linux-arch@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-DQo+SGkgSHUsDQo+DQo+a2VybmVsIHRlc3Qgcm9ib3Qgbm90aWNlZCB0aGUgZm9sbG93aW5nIGJ1
-aWxkIGVycm9yczoNCj4NCj4gW2F1dG8gYnVpbGQgdGVzdCBFUlJPUiBvbiBzaHVhaC1rc2VsZnRl
-c3QvbmV4dF0gW2Fsc28gYnVpbGQgdGVzdCBFUlJPUiBvbiBzaHVhaC1rc2VsZnRlc3QvZml4ZXMg
-bGludXMvbWFzdGVyIHY2LjcgbmV4dC0yMDI0MDExMl0gW0lmIHlvdXIgcGF0Y2ggaXMgYXBwbGll
-ZCB0byB0aGUgd3JvbmcgZ2l0IHRyZWUsIGtpbmRseSBkcm9wIHVzIGEgbm90ZS4NCj5BbmQgd2hl
-biBzdWJtaXR0aW5nIHBhdGNoLCB3ZSBzdWdnZXN0IHRvIHVzZSAnLS1iYXNlJyBhcyBkb2N1bWVu
-dGVkIGluIGh0dHBzOi8vZ2l0LXNjbS5jb20vZG9jcy9naXQtZm9ybWF0LXBhdGNoI19iYXNlX3Ry
-ZWVfaW5mb3JtYXRpb25dDQoNCj51cmw6ICAgIGh0dHBzOi8vZ2l0aHViLmNvbS9pbnRlbC1sYWIt
-bGtwL2xpbnV4L2NvbW1pdHMvSHUtWWFkaS9zZWxmdGVzdHMtbGFuZGxvY2stRml4LXR3by1idWls
-ZC1pc3N1ZXMvMjAyNDAxMTItMTUxODA1DQo+YmFzZTogICBodHRwczovL2dpdC5rZXJuZWwub3Jn
-L3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9zaHVhaC9saW51eC1rc2VsZnRlc3QuZ2l0IG5leHQN
-Cj5wYXRjaCBsaW5rOiAgICBodHRwczovL2xvcmUua2VybmVsLm9yZy9yLzIwMjQwMTEyMDcxMjQ1
-LjY2OS0xLWh1LnlhZGklNDBoM2MuY29tDQo+cGF0Y2ggc3ViamVjdDogW1BBVENIIHYzXSBzZWxm
-dGVzdHMvbGFuZGxvY2s6Rml4IHR3byBidWlsZCBpc3N1ZXMNCj5jb21waWxlcjogZ2NjLTEyIChE
-ZWJpYW4gMTIuMi4wLTE0KSAxMi4yLjAgcmVwcm9kdWNlICh0aGlzIGlzIGEgVz0xIGJ1aWxkKTog
-KGh0dHBzOi8vZG93bmxvYWQuMDEub3JnLzBkYXktY2kvYXJjaGl2ZS8yMDI0MDExNS8yMDI0MDEx
-NTExNDcuVDFzMTFpSEotbGtwQGludGVsLmNvbS9yZXByb2R1Y2UpDQo+DQo+SWYgeW91IGZpeCB0
-aGUgaXNzdWUgaW4gYSBzZXBhcmF0ZSBwYXRjaC9jb21taXQgKGkuZS4gbm90IGp1c3QgYSBuZXcg
-dmVyc2lvbiBvZiB0aGUgc2FtZSBwYXRjaC9jb21taXQpLCBraW5kbHkgYWRkIGZvbGxvd2luZyB0
-YWdzDQo+fCBSZXBvcnRlZC1ieToga2VybmVsIHRlc3Qgcm9ib3QgPGxrcEBpbnRlbC5jb20+DQo+
-fCBDbG9zZXM6IA0KPnwgaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvb2Uta2J1aWxkLWFsbC8yMDI0
-MDExNTExNDcuVDFzMTFpSEotbGtwQGludGVsLg0KPnwgY29tLw0KPg0KPkFsbCBlcnJvcnMgKG5l
-dyBvbmVzIHByZWZpeGVkIGJ5ID4+KToNCj4NCg0KRml4IGl0LCBhbmQgc2VuZCBwYXRjaCBWNCBz
-b29uLg0KDQo+Pj4gbmV0X3Rlc3QuYzoyNToxNDogZXJyb3I6IHN0YXRpYyBkZWNsYXJhdGlvbiBv
-ZiAnZ2V0dGlkJyBmb2xsb3dzIA0KPj4+IG5vbi1zdGF0aWMgZGVjbGFyYXRpb24NCj4gICAgICAy
-NSB8IHN0YXRpYyBwaWRfdCBnZXR0aWQodm9pZCkNCj4gICAgICAgICB8ICAgICAgICAgICAgICBe
-fn5+fn4NCj4gICBJbiBmaWxlIGluY2x1ZGVkIGZyb20gL3Vzci9pbmNsdWRlL3VuaXN0ZC5oOjEy
-MTgsDQo+ICAgICAgICAgICAgICAgICAgICBmcm9tIC91c3IvaW5jbHVkZS94ODZfNjQtbGludXgt
-Z251L2JpdHMvc2lnc3Rrc3ouaDoyNCwNCj4gICAgICAgICAgICAgICAgICAgIGZyb20gL3Vzci9p
-bmNsdWRlL3NpZ25hbC5oOjMyOCwNCj4gICAgICAgICAgICAgICAgICAgIGZyb20gL3Vzci9pbmNs
-dWRlL3g4Nl82NC1saW51eC1nbnUvc3lzL3dhaXQuaDozNiwNCj4gICAgICAgICAgICAgICAgICAg
-IGZyb20gY29tbW9uLmg6MTYsDQo+ICAgICAgICAgICAgICAgICAgICBmcm9tIG5ldF90ZXN0LmM6
-MjI6DQo+ICAgL3Vzci9pbmNsdWRlL3g4Nl82NC1saW51eC1nbnUvYml0cy91bmlzdGRfZXh0Lmg6
-MzQ6MTY6IG5vdGU6IHByZXZpb3VzIGRlY2xhcmF0aW9uIG9mICdnZXR0aWQnIHdpdGggdHlwZSAn
-X19waWRfdCh2b2lkKScge2FrYSAnaW50KHZvaWQpJ30NCj4gICAgICAzNCB8IGV4dGVybiBfX3Bp
-ZF90IGdldHRpZCAodm9pZCkgX19USFJPVzsNCj4gICAgICAgICB8ICAgICAgICAgICAgICAgIF5+
-fn5+fg0KPg0KPi0tDQo+MC1EQVkgQ0kgS2VybmVsIFRlc3QgU2VydmljZQ0KaHR0cHM6Ly9naXRo
-dWIuY29tL2ludGVsL2xrcC10ZXN0cy93aWtpDQo=
+On Mon, 15 Jan 2024 at 08:58, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>
+> Hi
+>
+> Am 12.01.24 um 18:28 schrieb Ard Biesheuvel:
+> > On Fri, 12 Jan 2024 at 10:50, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+> >>
+> >> Reduce build time in some cases by removing unnecessary include statements
+> >> for <asm/bootparam.h>. Reorganize some header files accordingly.
+> >>
+> >> While working on the kernel's boot-up graphics, I noticed that touching
+> >> include/linux/screen_info.h triggers a complete rebuild of the kernel
+> >> on x86. It turns out that the architecture's PCI and EFI headers include
+> >> <asm/bootparam.h>, which depends on <linux/screen_info.h>. But none of
+> >> the drivers have any business with boot parameters or the screen_info
+> >> state.
+> >>
+> >> The patchset moves code from bootparam.h and efi.h into separate header
+> >> files and removes obsolete include statements on x86. I did
+> >>
+> >>    make allmodconfig
+> >>    make -j28
+> >>    touch include/linux/screen_info.h
+> >>    time make -j28
+> >>
+> >> to measure the time it takes to rebuild. Results without the patchset
+> >> are around 20 minutes.
+> >>
+> >>    real    20m46,705s
+> >>    user    354m29,166s
+> >>    sys     28m27,359s
+> >>
+> >> And with the patchset applied it goes down to less than one minute.
+> >>
+> >>    real    0m56,643s
+> >>    user    4m0,661s
+> >>    sys     0m32,956s
+> >>
+> >> The test system is an Intel i5-13500.
+> >>
+> >> v5:
+> >>          * silence clang warnings for real-mode code (Nathan)
+> >>          * revert boot/compressed/misc.h (kernel test robot)
+> >> v4:
+> >>          * fix fwd declaration in compressed/misc.h (Ard)
+> >> v3:
+> >>          * keep setup_header in bootparam.h (Ard)
+> >>          * implement arch_ima_efi_boot_mode() in source file (Ard)
+> >> v2:
+> >>          * only keep struct boot_params in bootparam.h (Ard)
+> >>          * simplify arch_ima_efi_boot_mode define (Ard)
+> >>          * updated cover letter
+> >>
+> >> Thomas Zimmermann (4):
+> >>    arch/x86: Move UAPI setup structures into setup_data.h
+> >>    arch/x86: Move internal setup_data structures into setup_data.h
+> >>    arch/x86: Implement arch_ima_efi_boot_mode() in source file
+> >>    arch/x86: Do not include <asm/bootparam.h> in several files
+> >>
+> >
+> > This looks ok to me, thanks for sticking with it.
+> >
+> > For the series,
+> >
+> > Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+>
+> Thank you so much. Can this series go through the x86 tree?
+>
+
+Yes, this should be taken through the -tip tree. But I am not a -tip maintainer.
+
+But please be aware that we are in the middle of the merge window
+right now, and I suspect that the -tip maintainers may have some
+feedback of their own. So give it at least a week or so, and ping this
+thread again to ask how to proceed.
+
+Also, please trim the cc list a bit when you do - this is mostly a x86
+specific reshuffle of headers so no need to keep all the other
+subsystem maintainers on cc while we finish up the discussion.
