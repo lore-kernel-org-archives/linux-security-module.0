@@ -1,65 +1,101 @@
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CC51802B;
-	Mon, 15 Jan 2024 19:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="iW/4ukvU"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+vVnPmy/TAg8RPrrTtiwJI/BlzjY8BbZQ3ahxzEpH8M=; b=iW/4ukvUNBqGT8LfQP2tycMtqI
-	BPW2dlI9CdPZy72wJf/8UZ+1/R24ZAwpAi/VgT8F1wC7kKQmkEdOX3/TU2BYtD8oEr3YBhMFe4ZsS
-	7ZzBNCSODKnPOXk44h037pmUtdgkrRnLrDUm6zrXVaOUK5xjvc9JLfiBYXzusi7P5H1hXYoIWo6Ao
-	9/CxiPBJmjxZ4lZ57EaY25Z5fYYStj1mN0EYL4bkkiTrFXH1Ok3ci9KI4jeT5wNnhuT2ws10yOPnz
-	jIFbtYvzQJk5T0aebG4O1f1pyY30J6uJH/m5PbG1WE5sd6EJbSQ0INiqZwyVZfXTLvA7kEUi7CR0e
-	agzrQ35g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rPSQO-003JhU-0B;
-	Mon, 15 Jan 2024 19:15:08 +0000
-Date: Mon, 15 Jan 2024 19:15:08 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
-	neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org,
-	stephen.smalley.work@gmail.com, eparis@parisplace.org,
-	casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v9 13/25] security: Introduce file_release hook
-Message-ID: <20240115191508.GG1674809@ZenIV>
-References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
- <20240115181809.885385-14-roberto.sassu@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763DB6FB2;
+	Tue, 16 Jan 2024 03:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
+Received: from mail.maildlp.com ([172.25.15.154])
+	by h3cspam02-ex.h3c.com with ESMTP id 40G3FFeF057282;
+	Tue, 16 Jan 2024 11:15:15 +0800 (GMT-8)
+	(envelope-from hu.yadi@h3c.com)
+Received: from DAG6EX10-BJD.srv.huawei-3com.com (unknown [10.153.34.12])
+	by mail.maildlp.com (Postfix) with ESMTP id 021222004BB6;
+	Tue, 16 Jan 2024 11:19:43 +0800 (CST)
+Received: from DAG6EX02-IMDC.srv.huawei-3com.com (10.62.14.11) by
+ DAG6EX10-BJD.srv.huawei-3com.com (10.153.34.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.27; Tue, 16 Jan 2024 11:15:16 +0800
+Received: from DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4])
+ by DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4%16]) with
+ mapi id 15.02.1258.027; Tue, 16 Jan 2024 11:15:16 +0800
+From: Huyadi <hu.yadi@h3c.com>
+To: =?utf-8?B?J0fDvG50aGVyIE5vYWNrJw==?= <gnoack@google.com>
+CC: "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com"
+	<serge@hallyn.com>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "mic@digikod.net" <mic@digikod.net>,
+        "amir73il@gmail.com"
+	<amir73il@gmail.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "avagin@google.com" <avagin@google.com>,
+        "linux-api@vger.kernel.org"
+	<linux-api@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>,
+        "514118380@qq.com" <514118380@qq.com>
+Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0hdIHNlbGZ0ZXN0cy9maWxlc3lzdGVtczpmaXggYnVp?=
+ =?utf-8?Q?ld_error_in_overlayfs?=
+Thread-Topic: [PATCH] selftests/filesystems:fix build error in overlayfs
+Thread-Index: AQHaRSsZ3C6Kdahh1UyDYHPgqAANTbDabSyAgAFbR1A=
+Date: Tue, 16 Jan 2024 03:15:15 +0000
+Message-ID: <f25be6663bcc4608adf630509f045a76@h3c.com>
+References: <20240112074059.29673-1-hu.yadi@h3c.com>
+ <ZaVAjQmio26WloSk@google.com>
+In-Reply-To: <ZaVAjQmio26WloSk@google.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-sender-location: DAG2
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240115181809.885385-14-roberto.sassu@huaweicloud.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:h3cspam02-ex.h3c.com 40G3FFeF057282
 
-On Mon, Jan 15, 2024 at 07:17:57PM +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> the file_release hook.
-> 
-> IMA calculates at file close the new digest of the file content and writes
-> it to security.ima, so that appraisal at next file access succeeds.
-> 
-> An LSM could implement an exclusive access scheme for files, only allowing
-> access to files that have no references.
-
-Elaborate that last part, please.
+DQoNCg0KPk9uIEZyaSwgSmFuIDEyLCAyMDI0IGF0IDAzOjQwOjU5UE0gKzA4MDAsIEh1IFlhZGkg
+d3JvdGU6DQo+PiBPbmUgYnVpbGQgaXNzdWUgY29tZXMgdXAgZHVlIHRvIGJvdGggbW91bnQuaCBp
+bmNsdWRlZCBkZXZfaW5fbWFwcy5jDQo+PiANCj4+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBkZXZf
+aW5fbWFwcy5jOjEwOg0KPj4gL3Vzci9pbmNsdWRlL3N5cy9tb3VudC5oOjM1OjM6IGVycm9yOiBl
+eHBlY3RlZCBpZGVudGlmaWVyIGJlZm9yZSBudW1lcmljIGNvbnN0YW50DQo+PiAgICAzNSB8ICAg
+TVNfUkRPTkxZID0gMSwgIC8qIE1vdW50IHJlYWQtb25seS4gICovDQo+PiAgICAgICB8ICAgXn5+
+fn5+fn5+DQo+PiBJbiBmaWxlIGluY2x1ZGVkIGZyb20gZGV2X2luX21hcHMuYzoxMzoNCj4+IA0K
+Pj4gUmVtb3ZlIG9uZSBvZiB0aGVtIHRvIHNvbHZlIGNvbmZsaWN0LCBhbm90aGVyIGVycm9yIGNv
+bWVzIHVwOg0KPj4gDQo+PiBkZXZfaW5fbWFwcy5jOjE3MDo2OiBlcnJvcjogaW1wbGljaXQgZGVj
+bGFyYXRpb24gb2YgZnVuY3Rpb24g4oCYbW91bnTigJkgWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rp
+b24tZGVjbGFyYXRpb25dDQo+PiAgIDE3MCB8ICBpZiAobW91bnQoTlVMTCwgIi8iLCBOVUxMLCBN
+U19TTEFWRSB8IE1TX1JFQywgTlVMTCkgPT0gLTEpIHsNCj4+ICAgICAgIHwgICAgICBefn5+fg0K
+Pj4gY2MxOiBhbGwgd2FybmluZ3MgYmVpbmcgdHJlYXRlZCBhcyBlcnJvcnMNCj4+IA0KPj4gYW5k
+IHRoZW4gLCBhZGQgc3lzX21vdW50IGRlZmluaXRpb24gdG8gc29sdmUgaXQgQWZ0ZXIgYm90aCBh
+Ym92ZSwgDQo+PiBkZXZfaW5fbWFwcy5jIGNhbiBiZSBidWlsdCBjb3JyZWN0bHkgb24gbXkgbWFj
+aGUoZ2NjIA0KPj4gMTAuMixnbGliYy0yLjMyLGtlcm5lbC01LjEwKQ0KPg0KPlRoaXMgaXMgYXBw
+YXJlbnRseSB0aGUgc2FtZSBlcnJvciBhcyBpbg0KPmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2Fs
+bC8xMWNkYWMxZS1lOTZjLTQwNWYtNjNlOC0zNWIwZTI5MjYzMzdAYXJtLmNvbS8NCj4NCj5JJ20g
+Z2V0dGluZyB0aGUgaW1wcmVzc2lvbiB0aGF0IHdlIGFyZSBmaXhpbmcgdGhlIGlzc3VlIGF0IHRo
+ZSB3cm9uZyBsYXllciBoZXJlPw0KPkFmdGVyIGFsbCwgdGhlIG1vdW50KCkgc3lzY2FsbCBpcyBz
+dXBwb3NlZCB0byBiZSB1c2VkIHdpdGggPHN5cy9tb3VudC5oPiBhY2NvcmRpbmcgdG8gdGhlIG1v
+dW50KDIpIG1hbiBwYWdlPyAgSXQgZmVlbHMgYSBiaXQgbGlrZSBjaGVhdGluZyB0byByZXNvcnQg
+dG8NCj5zeXNfbW91bnQoKSBpbnN0ZWFkLi4uPw0KDQpIZWFkZXJzIGNvbmZsaWN0IGlzIGtub3du
+IGlzc3VlIGR1ZSB0byBodHRwczovL3NvdXJjZXdhcmUub3JnL2dsaWJjL3dpa2kvU3luY2hyb25p
+emluZ19IZWFkZXJzDQo8bGludXgvbW91bnQuaD4gYW5kIDxzeXMvbW91bnQuaD4gKE5vdGU6IG5v
+IHdvcmthcm91bmQpDQpTbywgaXQgaXMgaW5jb3JyZWN0IHRvIHVzZSBib3RoIHRoZW0uDQoNCj4N
+Cj5EbyB5b3UgaGF2ZSBhbnkgZGVlcGVyIHRob3VnaHRzIG9uIHdoYXQgY291bGQgYmUgdGhlIHVu
+ZGVybHlpbmcgaXNzdWUgaGVyZT8NCj5XaXRoIG15IG5ld2VyIEdDQyB0b29sY2hhaW5zLCBJIGhh
+dmUgYmVlbiB1bmFibGUgdG8gcmVwcm9kdWNlIHRoaXMuDQo+DQpnY2MgdmVyc2lvbiAxMC4yLjEg
+MjAyMDA4MjUgKEFsaWJhYmEgMTAuMi4xLTMuNSAyLjMyKSAoR0NDKQ0KbGRkIChHTlUgbGliYykg
+Mi4zMg0Ka2VybmVsIDUuMTAuMTM0LTE2LjEuYWw4Lng4Nl82NA0KIkFsaWJhYmEgQ2xvdWQgTGlu
+dXggMyh0aGUgbW9zdCBiaWdnZXN0IHB1YmxpYyBjbG91ZCBwcm92aWRlcidzIE9TKQ0KDQoNCj5U
+aGFua3MsDQoNCg==
