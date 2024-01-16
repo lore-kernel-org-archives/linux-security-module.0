@@ -1,101 +1,178 @@
-Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763DB6FB2;
-	Tue, 16 Jan 2024 03:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
-Received: from mail.maildlp.com ([172.25.15.154])
-	by h3cspam02-ex.h3c.com with ESMTP id 40G3FFeF057282;
-	Tue, 16 Jan 2024 11:15:15 +0800 (GMT-8)
-	(envelope-from hu.yadi@h3c.com)
-Received: from DAG6EX10-BJD.srv.huawei-3com.com (unknown [10.153.34.12])
-	by mail.maildlp.com (Postfix) with ESMTP id 021222004BB6;
-	Tue, 16 Jan 2024 11:19:43 +0800 (CST)
-Received: from DAG6EX02-IMDC.srv.huawei-3com.com (10.62.14.11) by
- DAG6EX10-BJD.srv.huawei-3com.com (10.153.34.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.27; Tue, 16 Jan 2024 11:15:16 +0800
-Received: from DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4])
- by DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4%16]) with
- mapi id 15.02.1258.027; Tue, 16 Jan 2024 11:15:16 +0800
-From: Huyadi <hu.yadi@h3c.com>
-To: =?utf-8?B?J0fDvG50aGVyIE5vYWNrJw==?= <gnoack@google.com>
-CC: "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com"
-	<serge@hallyn.com>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "mic@digikod.net" <mic@digikod.net>,
-        "amir73il@gmail.com"
-	<amir73il@gmail.com>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "avagin@google.com" <avagin@google.com>,
-        "linux-api@vger.kernel.org"
-	<linux-api@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-	<linux-security-module@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>,
-        "514118380@qq.com" <514118380@qq.com>
-Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0hdIHNlbGZ0ZXN0cy9maWxlc3lzdGVtczpmaXggYnVp?=
- =?utf-8?Q?ld_error_in_overlayfs?=
-Thread-Topic: [PATCH] selftests/filesystems:fix build error in overlayfs
-Thread-Index: AQHaRSsZ3C6Kdahh1UyDYHPgqAANTbDabSyAgAFbR1A=
-Date: Tue, 16 Jan 2024 03:15:15 +0000
-Message-ID: <f25be6663bcc4608adf630509f045a76@h3c.com>
-References: <20240112074059.29673-1-hu.yadi@h3c.com>
- <ZaVAjQmio26WloSk@google.com>
-In-Reply-To: <ZaVAjQmio26WloSk@google.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-sender-location: DAG2
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DB412B82;
+	Tue, 16 Jan 2024 08:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4TDhrd4R7nz9xyNh;
+	Tue, 16 Jan 2024 16:24:49 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 0C1231409EB;
+	Tue, 16 Jan 2024 16:39:28 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwA3cCS4QKZlq8CkAA--.3812S2;
+	Tue, 16 Jan 2024 09:39:27 +0100 (CET)
+Message-ID: <909a681238012328b0ab5499a5b66bef95247a89.camel@huaweicloud.com>
+Subject: Re: [PATCH v3 5/5] ramfs: Initialize security of in-memory inodes
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Hugh Dickins <hughd@google.com>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ Roberto Sassu <roberto.sassu@huawei.com>, casey@schaufler-ca.com,
+ paul@paul-moore.com, jmorris@namei.org,  serge@hallyn.com
+Date: Tue, 16 Jan 2024 09:39:16 +0100
+In-Reply-To: <c1ab0a9160d9220fac6e9c8c2bfa9ea493a08699.camel@huaweicloud.com>
+References: <20231116090125.187209-1-roberto.sassu@huaweicloud.com>
+	 <20231116090125.187209-6-roberto.sassu@huaweicloud.com>
+	 <c1ab0a9160d9220fac6e9c8c2bfa9ea493a08699.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:h3cspam02-ex.h3c.com 40G3FFeF057282
+X-CM-TRANSID:GxC2BwA3cCS4QKZlq8CkAA--.3812S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZr4fKFW8tr1DCFW7Wr4UArb_yoW5ZFWDpr
+	Z2q3Z8G3ZYqFyxGr1SqF4Duw1SqayrKr4DC3yxXw17A3Z7Cr1DtF1fKr13uF1rCrW8Cw1F
+	qF4j9r15uw1UArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUgGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+	AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
+	cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJw
+	CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
+	WIevJa73UjIFyTuYvjxUrR6zUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAEBF1jj5iWVQAAsr
 
-DQoNCg0KPk9uIEZyaSwgSmFuIDEyLCAyMDI0IGF0IDAzOjQwOjU5UE0gKzA4MDAsIEh1IFlhZGkg
-d3JvdGU6DQo+PiBPbmUgYnVpbGQgaXNzdWUgY29tZXMgdXAgZHVlIHRvIGJvdGggbW91bnQuaCBp
-bmNsdWRlZCBkZXZfaW5fbWFwcy5jDQo+PiANCj4+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBkZXZf
-aW5fbWFwcy5jOjEwOg0KPj4gL3Vzci9pbmNsdWRlL3N5cy9tb3VudC5oOjM1OjM6IGVycm9yOiBl
-eHBlY3RlZCBpZGVudGlmaWVyIGJlZm9yZSBudW1lcmljIGNvbnN0YW50DQo+PiAgICAzNSB8ICAg
-TVNfUkRPTkxZID0gMSwgIC8qIE1vdW50IHJlYWQtb25seS4gICovDQo+PiAgICAgICB8ICAgXn5+
-fn5+fn5+DQo+PiBJbiBmaWxlIGluY2x1ZGVkIGZyb20gZGV2X2luX21hcHMuYzoxMzoNCj4+IA0K
-Pj4gUmVtb3ZlIG9uZSBvZiB0aGVtIHRvIHNvbHZlIGNvbmZsaWN0LCBhbm90aGVyIGVycm9yIGNv
-bWVzIHVwOg0KPj4gDQo+PiBkZXZfaW5fbWFwcy5jOjE3MDo2OiBlcnJvcjogaW1wbGljaXQgZGVj
-bGFyYXRpb24gb2YgZnVuY3Rpb24g4oCYbW91bnTigJkgWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rp
-b24tZGVjbGFyYXRpb25dDQo+PiAgIDE3MCB8ICBpZiAobW91bnQoTlVMTCwgIi8iLCBOVUxMLCBN
-U19TTEFWRSB8IE1TX1JFQywgTlVMTCkgPT0gLTEpIHsNCj4+ICAgICAgIHwgICAgICBefn5+fg0K
-Pj4gY2MxOiBhbGwgd2FybmluZ3MgYmVpbmcgdHJlYXRlZCBhcyBlcnJvcnMNCj4+IA0KPj4gYW5k
-IHRoZW4gLCBhZGQgc3lzX21vdW50IGRlZmluaXRpb24gdG8gc29sdmUgaXQgQWZ0ZXIgYm90aCBh
-Ym92ZSwgDQo+PiBkZXZfaW5fbWFwcy5jIGNhbiBiZSBidWlsdCBjb3JyZWN0bHkgb24gbXkgbWFj
-aGUoZ2NjIA0KPj4gMTAuMixnbGliYy0yLjMyLGtlcm5lbC01LjEwKQ0KPg0KPlRoaXMgaXMgYXBw
-YXJlbnRseSB0aGUgc2FtZSBlcnJvciBhcyBpbg0KPmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2Fs
-bC8xMWNkYWMxZS1lOTZjLTQwNWYtNjNlOC0zNWIwZTI5MjYzMzdAYXJtLmNvbS8NCj4NCj5JJ20g
-Z2V0dGluZyB0aGUgaW1wcmVzc2lvbiB0aGF0IHdlIGFyZSBmaXhpbmcgdGhlIGlzc3VlIGF0IHRo
-ZSB3cm9uZyBsYXllciBoZXJlPw0KPkFmdGVyIGFsbCwgdGhlIG1vdW50KCkgc3lzY2FsbCBpcyBz
-dXBwb3NlZCB0byBiZSB1c2VkIHdpdGggPHN5cy9tb3VudC5oPiBhY2NvcmRpbmcgdG8gdGhlIG1v
-dW50KDIpIG1hbiBwYWdlPyAgSXQgZmVlbHMgYSBiaXQgbGlrZSBjaGVhdGluZyB0byByZXNvcnQg
-dG8NCj5zeXNfbW91bnQoKSBpbnN0ZWFkLi4uPw0KDQpIZWFkZXJzIGNvbmZsaWN0IGlzIGtub3du
-IGlzc3VlIGR1ZSB0byBodHRwczovL3NvdXJjZXdhcmUub3JnL2dsaWJjL3dpa2kvU3luY2hyb25p
-emluZ19IZWFkZXJzDQo8bGludXgvbW91bnQuaD4gYW5kIDxzeXMvbW91bnQuaD4gKE5vdGU6IG5v
-IHdvcmthcm91bmQpDQpTbywgaXQgaXMgaW5jb3JyZWN0IHRvIHVzZSBib3RoIHRoZW0uDQoNCj4N
-Cj5EbyB5b3UgaGF2ZSBhbnkgZGVlcGVyIHRob3VnaHRzIG9uIHdoYXQgY291bGQgYmUgdGhlIHVu
-ZGVybHlpbmcgaXNzdWUgaGVyZT8NCj5XaXRoIG15IG5ld2VyIEdDQyB0b29sY2hhaW5zLCBJIGhh
-dmUgYmVlbiB1bmFibGUgdG8gcmVwcm9kdWNlIHRoaXMuDQo+DQpnY2MgdmVyc2lvbiAxMC4yLjEg
-MjAyMDA4MjUgKEFsaWJhYmEgMTAuMi4xLTMuNSAyLjMyKSAoR0NDKQ0KbGRkIChHTlUgbGliYykg
-Mi4zMg0Ka2VybmVsIDUuMTAuMTM0LTE2LjEuYWw4Lng4Nl82NA0KIkFsaWJhYmEgQ2xvdWQgTGlu
-dXggMyh0aGUgbW9zdCBiaWdnZXN0IHB1YmxpYyBjbG91ZCBwcm92aWRlcidzIE9TKQ0KDQoNCj5U
-aGFua3MsDQoNCg==
+On Fri, 2024-01-12 at 09:17 +0100, Roberto Sassu wrote:
+> On Thu, 2023-11-16 at 10:01 +0100, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> >=20
+> > Add a call security_inode_init_security() after ramfs_get_inode(), to l=
+et
+> > LSMs initialize the inode security field. Skip ramfs_fill_super(), as t=
+he
+> > initialization is done through the sb_set_mnt_opts hook.
+> >=20
+> > Calling security_inode_init_security() call inside ramfs_get_inode() is
+> > not possible since, for CONFIG_SHMEM=3Dn, tmpfs also calls the former a=
+fter
+> > the latter.
+> >=20
+> > Pass NULL as initxattrs() callback to security_inode_init_security(), s=
+ince
+> > the purpose of the call is only to initialize the in-memory inodes.
+>=20
+> Hugh, Andrew, is the patch fine for you? Casey would make a PR for the
+> patch set.
+
+(I guess putting the people of interest in To instead of CC could
+help...)
+
+Friendly ping... it would be awesome if you could Ack this patch so
+that Casey can still ask Linus to pull.
+
+Thanks
+
+Roberto
+
+> Thanks
+>=20
+> Roberto
+>=20
+> > Cc: Hugh Dickins <hughd@google.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  fs/ramfs/inode.c | 32 +++++++++++++++++++++++++++++++-
+> >  1 file changed, 31 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
+> > index 4ac05a9e25bc..8006faaaf0ec 100644
+> > --- a/fs/ramfs/inode.c
+> > +++ b/fs/ramfs/inode.c
+> > @@ -102,11 +102,20 @@ ramfs_mknod(struct mnt_idmap *idmap, struct inode=
+ *dir,
+> >  	int error =3D -ENOSPC;
+> > =20
+> >  	if (inode) {
+> > +		error =3D security_inode_init_security(inode, dir,
+> > +						     &dentry->d_name, NULL,
+> > +						     NULL);
+> > +		if (error) {
+> > +			iput(inode);
+> > +			goto out;
+> > +		}
+> > +
+> >  		d_instantiate(dentry, inode);
+> >  		dget(dentry);	/* Extra count - pin the dentry in core */
+> >  		error =3D 0;
+> >  		inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+> >  	}
+> > +out:
+> >  	return error;
+> >  }
+> > =20
+> > @@ -134,6 +143,15 @@ static int ramfs_symlink(struct mnt_idmap *idmap, =
+struct inode *dir,
+> >  	inode =3D ramfs_get_inode(dir->i_sb, dir, S_IFLNK|S_IRWXUGO, 0);
+> >  	if (inode) {
+> >  		int l =3D strlen(symname)+1;
+> > +
+> > +		error =3D security_inode_init_security(inode, dir,
+> > +						     &dentry->d_name, NULL,
+> > +						     NULL);
+> > +		if (error) {
+> > +			iput(inode);
+> > +			goto out;
+> > +		}
+> > +
+> >  		error =3D page_symlink(inode, symname, l);
+> >  		if (!error) {
+> >  			d_instantiate(dentry, inode);
+> > @@ -143,6 +161,7 @@ static int ramfs_symlink(struct mnt_idmap *idmap, s=
+truct inode *dir,
+> >  		} else
+> >  			iput(inode);
+> >  	}
+> > +out:
+> >  	return error;
+> >  }
+> > =20
+> > @@ -150,12 +169,23 @@ static int ramfs_tmpfile(struct mnt_idmap *idmap,
+> >  			 struct inode *dir, struct file *file, umode_t mode)
+> >  {
+> >  	struct inode *inode;
+> > +	int error;
+> > =20
+> >  	inode =3D ramfs_get_inode(dir->i_sb, dir, mode, 0);
+> >  	if (!inode)
+> >  		return -ENOSPC;
+> > +
+> > +	error =3D security_inode_init_security(inode, dir,
+> > +					     &file_dentry(file)->d_name, NULL,
+> > +					     NULL);
+> > +	if (error) {
+> > +		iput(inode);
+> > +		goto out;
+> > +	}
+> > +
+> >  	d_tmpfile(file, inode);
+> > -	return finish_open_simple(file, 0);
+> > +out:
+> > +	return finish_open_simple(file, error);
+> >  }
+> > =20
+> >  static const struct inode_operations ramfs_dir_inode_operations =3D {
+>=20
+
