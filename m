@@ -1,174 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic302-27.consmr.mail.ne1.yahoo.com (sonic302-27.consmr.mail.ne1.yahoo.com [66.163.186.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C451CA83;
-	Tue, 16 Jan 2024 16:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05A91CA82
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Jan 2024 16:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qo/1JOmo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85C53C433F1;
-	Tue, 16 Jan 2024 16:37:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705423065;
-	bh=jre5ipGlkss5zAu1aIdBqL+hSwB+mdQlTFI/dlhzA6c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qo/1JOmobPmFtak/7HKTx0XejNptaXUIipjwln1OdfT3drLtS0ju3ZCDZ8sbscoY3
-	 4w4l/W4KVXVwszFTlZlVW6GiSdpXfV8m2kdN2LXG/LWTRktlE1nXOiKWKVMehdMgq/
-	 YSCXgjMlSkfUewRXwJhrywSfxDJPTmgTlXrgty2B2R4paYEzJt9t8abuG6BVMWRbcQ
-	 VahL2b5MDPJ3rrb6XOVsaS6+Lz6ihmZIC0J83Hxq6cSQwnTmonnERgAypkCcgBWhY+
-	 YG408WTKIX6WfbU2m4LVeQyQnNixVSn84OGSHw8OczrSxWtNm28O0rPGIy/gdCxoq1
-	 hwfo9TCSBIXqg==
-Date: Tue, 16 Jan 2024 17:37:39 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH bpf-next 03/29] bpf: introduce BPF token object
-Message-ID: <20240116-gradmesser-labeln-9a1d9918c92e@brauner>
-References: <20240109-tausend-tropenhelm-2a9914326249@brauner>
- <CAEf4BzaAoXYb=qnj6rvDw8VewhvYNrs5oxe=q7VBe0jjWXivhg@mail.gmail.com>
- <20240110-nervt-monopol-6d307e2518f4@brauner>
- <CAEf4BzYOU5ZVqnTDTEmrHL-+tYY76kz4LO_0XauWibnhtzCFXg@mail.gmail.com>
- <20240111-amten-stiefel-043027f9520f@brauner>
- <CAEf4BzYcec97posh6N3LM8tJLsxrSLiFYq9csRWcy8=VnTJ23A@mail.gmail.com>
- <20240112-unpraktisch-kuraufenthalt-4fef655deab2@brauner>
- <CAEf4Bza7UKjv1Hh_kcyBVJw22LDv4ZNA5uV7+WBdnhsM9O7uGQ@mail.gmail.com>
- <20240112-hetzt-gepard-5110cf759a34@brauner>
- <CAEf4BzYNRNbaNNGRSUCaY3OQrzXPAdR6gGB0PmXhwsn8rUAs0Q@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="A7u7ADJq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1705423879; bh=3SJp5s3Z+exCH+4UfHcT4UCsjWtziANQFAalTNp3V4c=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=A7u7ADJqhucDT/inj+zEnSMaejTIONrsEM1yaVmWrmsNg+aNwf2yDcsjf0DHwehiGogDbZlGAA1PU97UbzGCBUOmEDpzwgLtf5a4QhXNiUvCvbanOiJ1ol3UXeP0ITEmwrQPyUr58NPzGMBh+ySGQWZIGaqM/lJm8g50+tEuznMw3u58zCylW9KD7uHlXfCt98KpVJR4H3DXY7mYfUFE2dBJasazPAsGPfVhh8pNVfSw8RaWpNvu9SxPGg4X9uHMDlZO2DQJsk0RintUKlP7vFyv7IYJXaoq8ZlP7X3dDzFukyGLkbMBY71ByEc8vizGgpVmAUVUD0YKQ4hMNIgSQA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1705423879; bh=6g1/Z5dhwtw34v2/raI1RfnLcnZRJC7llHW1yzDrq7O=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=HHPu3liBO2n+pM1rPTxEPcgtbTjb14gZHzeduQaiNR7QcXvwLrW+t19dNENBguBJWqkIMOEDCoE9WqWAMVYDjb1dEdqVYWZTgB6LHvkbPVwrMxmKuILTs9DNUuu2xEWZxtN/gFLh/PSJU1Iw1RMmfGK08EflKNKlFlpewDbFgZ17NRY1vaPebOtf11My02lwuMj+e+XKX56Pihp9FQuwaR9UfNUCBwpOWW4/4uSlYnEzEWwrDU/CB0VZp1VPhD2jzfR6stYT1bix9ZBwFO8CUBin9Jahhp+0jgZoyxe3rX6hL9OVFM4w+rr3Xye+D63bIGmPVfd6afBBGg+xop8G9g==
+X-YMail-OSG: A5CgyOEVM1k7T20.uer7oRuubZ6Y.egXrwI9sExA1NznFEIXkWCZcUCJBQRI5z0
+ dUVoM9vL8JUmxqY.WM2kmbbrxV.NfunHNLhqt27_Td7Qp8mDDtF8yKJtMEwlwRlQqFtI0uc6UNuy
+ v_t3cIW12YNMGiUmM6FM4nPaT9nu2e6onqnHWVYEP7jb61S0dwwoMh__F8x2QCcICqwKrK6hMHU_
+ pqxG7IcbsGCV0pbHfJO00Y8.sGYefulMmQgbRxUbeZvdZ6BpGK6hqnLVM1wdlTUaMdsYfOGgdIIK
+ IUearccrrWHBGkDy3PmPk8lzrQhbRNQ1LiuIKGfgD6B1ywCC2nTjtE6HrQjoIfTB8acmrUDOowAo
+ BmigJ1K9guUkP55v9SyMzPXid.6ClEW.cVDO8SBwoc1fLktaQhOEt95B.o00s35aPT6juJVzHPbw
+ lY1dHEVUmWNd5YynMOegvFdy1Z2oO1BSMEDt1NrLGPBUY1mbUA4H55YgUYT_5cWSL9UXu7ApG_NQ
+ 74s40GkbeWfg1w2cBEPnfkaysIBp96g.o4Is_0HnhHo6ABa7j0VZUxSVKN7XOQ5DcNwfIRsveNif
+ 5sHuJIOJBI2dnzkuw1HloeLo1jRayxwz3me4iqG_8kSJOBDug9WqGgR_ItxTwaaf7l91eq6a7.JP
+ Oz66mhWnRGJjQpmcZeHcaurCHDLhfiXw8eq2tHNBCod9.2LNVd9wPKMSb1xktR4bqElOr2syyum2
+ 7LeMoURNNR7lPicU5dXVjnvE0lMHs.pbHx10gQNWgkhOL_ooOFif23zY52KjLihVBfohWM3IyiwN
+ N.h3r1huoQ_60cNOv3A8OSSYgeNeKX_Jsa1LEQw4aZKZAQbEuYmJuzTwT6G6FiPcYT7k8ODiPyZ6
+ 5uytBjv3N4S5fFaqaDtF6KZ1wUsPGJuefm62Fde3xRnjK1q0fyAZ3bqi08cm32JsMg.h_fGSIUdB
+ 6aIAjWdqU1W4HFqTQ.lHZC2SSdWvUMfQ.97VPLKZmc1chzt8NmnLud2oh4rdQ7MGE1ynInKRZdTs
+ cPH6m8O7vLOyaPUfZoZOgZi5kmvj0WW7OBGHR5AKh8KtUnTyGCPz8FDRRjexQ_y33Nh4fGagXtfG
+ YLCjiXLVC7rBZiw0.jqkV3Anp7Exz6SsyRvEBuraPG6StqmvWItzASprjkpeERwr431mfouJ2QRo
+ NEHC_oLtPECK9h6ORbFRW7Bn1aDwDQKW_6DzKKC72GtjxqQSQhrPqx1bULiTykszuG2tRsjyDbZI
+ GFIFhYPq9gQLI0HQsToaiZ.aGz8hRFRImH4_UBqEdAk.cbTASyHqPHVdHcRtTKaF0i7RKOrpFFRD
+ DCieCh7SftO0cdeDtn4qS1T_jaOPDAelXyJThAcR1wJV948czh6gM586k1N8IGG4ce2vb5TWgmC9
+ x8J.b4.k9ZakLNmtAM_oC7P5UI9iWQOa2RMfW6YQhldAiMki.6cZw6HcfOsoxUqIB4wahHwyF.Oz
+ H3Gs1wqS.aQXtEdgQYKQTTn63BrWPjIH4VY3a9CfgoCyYmMatopckhvT4SUFtiyHHbnzV5b8Rj1U
+ jxO5FhDkUsZKkp_HQIIK_0iNBx_7iSBTjt4xz6I6IP9gvW8S_VxfRPlJ.pC0UdbabMngDaiCgcTZ
+ FjmkuXQtO3yqbDd4emfoZxh6uO3XQtSRMHe2a0xBQtyzobBh3Be3n0IvlF7HhnfJm7Rb4PpLNmaO
+ yrSEZ7RIqnQOGZSt.lP0DnTI0jpc4vMNEsaWCvK73hMiQjva_ajuJaDhXYATCWd_wQYn3in9en8C
+ LAuiLXdQDl2Q1jjGMcf2nt5vObnJnzirYjod8N2IYulsifjIU0wgapS4JTDLIqDraLMyXG7sP3xq
+ vYCeABKYECZJkxZ1kspcltO0yfr.E0f5zAHLuajake8Hj9k300IvFqAJhL_IqnfyDnXEUAt39QME
+ qbdxglOjBmjP2OC.yivvwfak_unL4S6GUKypZOtfifFzTXH8Rmn63WTf64F39y45aCUdy9QVF4r5
+ 3xq.HH0id_rBFNbce9gsI6P8Sz0IWxV6C.iA_OLzb3p0E2FA5Y6AZFFmdacSnrfStmeVX1NUeuHp
+ meURET0zgC18FcL7e7_b7AoBWmElfXF7Pg7maB9re_.PPQp15DeeDq1HR7q6fcs4VOFkIQbnq2va
+ Rg1VWn9PiQrAiarWNFi0yClhqn_tw8kWJ5QaIMOeovQ8Ut.Itbsg.PbSbKaa0zFJHTjaD3hKaYE_
+ zDfVfk0qF2Ns_9Le9GQ75eJD3ybiOYwPFOwK2.5Ap.5BLgwkZjhJHJLGXSE4a
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 15ae8b31-4e9c-4be6-9dc6-e6e06b3d0f25
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Tue, 16 Jan 2024 16:51:19 +0000
+Received: by hermes--production-gq1-78d49cd6df-mvdth (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 44515f8eb2e2b5946457ba67dd58da86;
+          Tue, 16 Jan 2024 16:51:14 +0000 (UTC)
+Message-ID: <00b7ff22-f213-471a-a604-658a9af80d59@schaufler-ca.com>
+Date: Tue, 16 Jan 2024 08:51:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzYNRNbaNNGRSUCaY3OQrzXPAdR6gGB0PmXhwsn8rUAs0Q@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 13/25] security: Introduce file_release hook
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+ Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+ neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+ dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com,
+ eparis@parisplace.org, shuah@kernel.org, mic@digikod.net,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+ selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
+ <20240115181809.885385-14-roberto.sassu@huaweicloud.com>
+ <20240115191508.GG1674809@ZenIV>
+ <3b440f064a1ae04d69f7e85f4077f8406c0eac67.camel@huaweicloud.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <3b440f064a1ae04d69f7e85f4077f8406c0eac67.camel@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22010 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Sat, Jan 13, 2024 at 06:29:33PM -0800, Andrii Nakryiko wrote:
-> On Fri, Jan 12, 2024 at 11:17 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > > > My point is that the capable logic will walk upwards the user namespace
-> > > > hierarchy from the token->userns until the user namespace of the caller
-> > > > and terminate when it reached the init_user_ns.
-> > > >
-> > > > A caller is located in some namespace at the point where they call this
-> > > > function. They provided a token. The caller isn't capable in the
-> > > > namespace of the token so the function falls back to init_user_ns. Two
-> > > > interesting cases:
-> > > >
-> > > > (1) The caller wasn't in an ancestor userns of the token. If that's the
-> > > >     case then it follows that the caller also wasn't in the init_user_ns
-> > > >     because the init_user_ns is a descendant of all other user
-> > > >     namespaces. So falling back will fail.
-> > >
-> > > agreed
-> > >
-> > > >
-> > > > (2) The caller was in the same or an ancestor user namespace of the
-> > > >     token but didn't have the capability in that user namespace:
-> > > >
-> > > >      (i) They were in a non-init_user_ns. Therefore they can't be
-> > > >          privileged in init_user_ns.
-> > > >     (ii) They were in init_user_ns. Therefore, they lacked privileges in
-> > > >          the init_user_ns.
-> > > >
-> > > > In both cases your fallback will do nothing iiuc.
-> > >
-> > > agreed as well
-> > >
-> > > And I agree in general that there isn't a *practically useful* case
-> > > where this would matter much. But there is still (at least one) case
-> > > where there could be a regression: if token is created in
-> > > init_user_ns, caller has CAP_BPF in init_user_ns, caller passes that
-> > > token to BPF_PROG_LOAD, and LSM policy rejects that token in
-> > > security_bpf_token_capable(). Without the above implementation such
-> > > operation will be rejected, even though if there was no token passed
-> > > it would succeed. With my implementation above it will succeed as
-> > > expected.
-> >
-> > If that's the case then prevent the creation of tokens in the
-> > init_user_ns and be done with it. If you fallback anyway then this is
-> > the correct solution.
-> >
-> > Make this change, please. I'm not willing to support this weird fallback
-> > stuff which is even hard to reason about.
-> 
-> Alright, added an extra check. Ok, so in summary I have the changes
-> below compared to v1 (plus a few extra LSM-related test cases added):
-> 
-> diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
-> index a86fccd57e2d..7d04378560fd 100644
-> --- a/kernel/bpf/token.c
-> +++ b/kernel/bpf/token.c
-> @@ -9,18 +9,22 @@
->  #include <linux/user_namespace.h>
->  #include <linux/security.h>
-> 
-> +static bool bpf_ns_capable(struct user_namespace *ns, int cap)
-> +{
-> +       return ns_capable(ns, cap) || (cap != CAP_SYS_ADMIN &&
-> ns_capable(ns, CAP_SYS_ADMIN));
-> +}
-> +
->  bool bpf_token_capable(const struct bpf_token *token, int cap)
->  {
-> -       /* BPF token allows ns_capable() level of capabilities, but only if
-> -        * token's userns is *exactly* the same as current user's userns
-> -        */
-> -       if (token && current_user_ns() == token->userns) {
-> -               if (ns_capable(token->userns, cap) ||
-> -                   (cap != CAP_SYS_ADMIN && ns_capable(token->userns,
-> CAP_SYS_ADMIN)))
-> -                       return security_bpf_token_capable(token, cap) == 0;
-> -       }
-> -       /* otherwise fallback to capable() checks */
-> -       return capable(cap) || (cap != CAP_SYS_ADMIN && capable(CAP_SYS_ADMIN));
-> +       struct user_namespace *userns;
-> +
-> +       /* BPF token allows ns_capable() level of capabilities */
-> +       userns = token ? token->userns : &init_user_ns;
-> +       if (!bpf_ns_capable(userns, cap))
-> +               return false;
-> +       if (token && security_bpf_token_capable(token, cap) < 0)
-> +               return false;
-> +       return true;
->  }
-> 
->  void bpf_token_inc(struct bpf_token *token)
-> @@ -32,7 +36,7 @@ static void bpf_token_free(struct bpf_token *token)
->  {
->         security_bpf_token_free(token);
->         put_user_ns(token->userns);
-> -       kvfree(token);
-> +       kfree(token);
->  }
-> 
->  static void bpf_token_put_deferred(struct work_struct *work)
-> @@ -152,6 +156,12 @@ int bpf_token_create(union bpf_attr *attr)
->                 goto out_path;
->         }
-> 
-> +       /* Creating BPF token in init_user_ns doesn't make much sense. */
-> +       if (current_user_ns() == &init_user_ns) {
-> +               err = -EOPNOTSUPP;
-> +               goto out_path;
-> +       }
-> +
->         mnt_opts = path.dentry->d_sb->s_fs_info;
->         if (mnt_opts->delegate_cmds == 0 &&
->             mnt_opts->delegate_maps == 0 &&
-> @@ -179,7 +189,7 @@ int bpf_token_create(union bpf_attr *attr)
->                 goto out_path;
->         }
-> 
-> -       token = kvzalloc(sizeof(*token), GFP_USER);
-> +       token = kzalloc(sizeof(*token), GFP_USER);
->         if (!token) {
->                 err = -ENOMEM;
->                 goto out_file;
+On 1/16/2024 12:47 AM, Roberto Sassu wrote:
+> On Mon, 2024-01-15 at 19:15 +0000, Al Viro wrote:
+>> On Mon, Jan 15, 2024 at 07:17:57PM +0100, Roberto Sassu wrote:
+>>> From: Roberto Sassu <roberto.sassu@huawei.com>
+>>>
+>>> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+>>> the file_release hook.
+>>>
+>>> IMA calculates at file close the new digest of the file content and writes
+>>> it to security.ima, so that appraisal at next file access succeeds.
+>>>
+>>> An LSM could implement an exclusive access scheme for files, only allowing
+>>> access to files that have no references.
+>> Elaborate that last part, please.
+> Apologies, I didn't understand that either. Casey?
 
-Thank you! Looks good,
+Just a hypothetical notion that if an LSM wanted to implement an
+exclusive access scheme it might find the proposed hook helpful.
+I don't have any plan to create such a scheme, nor do I think that
+a file_release hook would be the only thing you'd need.
 
-Acked-by: Christian Brauner <brauner@kernel.org>
+>
+> Thanks
+>
+> Roberto
+>
