@@ -1,127 +1,433 @@
-Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A6F1FAF;
-	Thu, 18 Jan 2024 02:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.123.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4795241EC
+	for <linux-security-module@vger.kernel.org>; Thu, 18 Jan 2024 11:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705543478; cv=none; b=ZCZCCXDXi4O8uxWUnV4Dm9p5jPgMeE5FM/Mad6ST0NUlIyKe2CScOE1NlWXdBr4nWULtGajNRP1DZWDgIjV6EApNiZaqIHVDj8XzCnC4MRxhCVcSWWdQJFrP2DApq/5GwYCVaZhCp1XjJGZtKoq5H9M2pQGwphbHGwsL/cDIA+0=
+	t=1705578762; cv=none; b=sL+oauhj/6Diebb0q+CaotBYbpvAU4aSIzT3wfxtWHr37+jv2vmxe1LldyMRL/Kgk4JloXCPohZtnFDqVuPtl1hZYpMP3wi+poSyj6vx8siW2EQTBjM3o/kkJDEvD3HG5m8e9PFdGg3yMvI1akhDFQ5OoZmE9u3MZAx8keqgAPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705543478; c=relaxed/simple;
-	bh=tHPwGIdFqi94LdAZOqJ7np7r/3FQCZ+fdVeRXwSazeE=;
-	h=Received:Received:Received:Received:From:To:CC:Subject:
-	 Thread-Topic:Thread-Index:Date:Message-ID:References:In-Reply-To:
-	 Accept-Language:Content-Language:X-MS-Has-Attach:
-	 X-MS-TNEF-Correlator:x-originating-ip:x-sender-location:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version:X-DNSRBL:
-	 X-SPAM-SOURCE-CHECK:X-MAIL; b=E18hjj8g8o4ZBBrpNbdeyz10s0kmZTf8KwOfS9Ery9/x8eUYSnGvVNPL50x2lVa5p097WCa6+VdwApcehwbvnpLevusfXbnSIrYf0WvFMX5MG2qPwpP+WNRHJajMqJ1mEAL78QxIwu1MDoA93BMVq/nYKmCGxr3a6KUDfsLkFTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com; spf=pass smtp.mailfrom=h3c.com; arc=none smtp.client-ip=60.191.123.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
-Received: from mail.maildlp.com ([172.25.15.154])
-	by h3cspam02-ex.h3c.com with ESMTP id 40I235rx063437;
-	Thu, 18 Jan 2024 10:03:06 +0800 (GMT-8)
-	(envelope-from hu.yadi@h3c.com)
-Received: from DAG6EX02-IMDC.srv.huawei-3com.com (unknown [10.62.14.11])
-	by mail.maildlp.com (Postfix) with ESMTP id D29152004BB7;
-	Thu, 18 Jan 2024 10:07:35 +0800 (CST)
-Received: from DAG6EX02-IMDC.srv.huawei-3com.com (10.62.14.11) by
- DAG6EX02-IMDC.srv.huawei-3com.com (10.62.14.11) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.27; Thu, 18 Jan 2024 10:03:04 +0800
-Received: from DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4])
- by DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4%16]) with
- mapi id 15.02.1258.027; Thu, 18 Jan 2024 10:03:04 +0800
-From: Huyadi <hu.yadi@h3c.com>
-To: =?utf-8?B?J01pY2thw6tsIFNhbGHDvG4n?= <mic@digikod.net>,
-        "'Christian
- Brauner'" <brauner@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        Shuah Khan <skhan@linuxfoundation.org>
-CC: "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com"
-	<serge@hallyn.com>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-	<linux-security-module@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>,
-        "514118380@qq.com" <514118380@qq.com>,
-        Christian Brauner <brauner@kernel.org>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>
-Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjRdIHNlbGZ0ZXN0cy9tb3ZlX21vdW50X3NldF9n?=
- =?utf-8?Q?roup:Make_tests_build_with_old_libc?=
-Thread-Topic: [PATCH v4] selftests/move_mount_set_group:Make tests build with
- old libc
-Thread-Index: AQHaRII9d44IpKHVmkiSX1xdCq/Vx7DUFK8AgArGFwA=
-Date: Thu, 18 Jan 2024 02:03:04 +0000
-Message-ID: <b7872e67938f4022ad0537bc617403ed@h3c.com>
-References: <20240111113229.10820-1-hu.yadi@h3c.com>
- <20240111.mee0ohZie5he@digikod.net>
-In-Reply-To: <20240111.mee0ohZie5he@digikod.net>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-sender-location: DAG2
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1705578762; c=relaxed/simple;
+	bh=Jc+AgFkDOJ2nln/Hh25Tk4HHGUIAlDv8VMLb9QLdsWE=;
+	h=Received:Received:DKIM-Signature:From:To:Cc:Subject:Date:
+	 Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Infomaniak-Routing; b=pvM26JsYBVfNzxLCPRE/ZF2IqN4XhAQsuO4UALHAtZSDh8FDQLgFb27Q2XASUEeZ+OwYOX2LrELNY4qCkSmtJBF5+EY+8N4egaHBzdQONnabDcSENxCIB++yhcVa7dsSWg5vec/tbrc4FDjA16JSON2cmKrYOR9dlTSvRj9bHfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=jNB7agFo; arc=none smtp.client-ip=45.157.188.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="jNB7agFo"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TG11336d3zMs8Kp;
+	Thu, 18 Jan 2024 11:36:39 +0000 (UTC)
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4TG1115qn1zSM;
+	Thu, 18 Jan 2024 12:36:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1705577799;
+	bh=Jc+AgFkDOJ2nln/Hh25Tk4HHGUIAlDv8VMLb9QLdsWE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jNB7agForkvhkU0+GplxJkKhxpqdCFnsU9JeGB5ScFRtw5Z0lghO8aP74XLHrmMvO
+	 K/N8Ceb6J57d4/LfGmWkOyAJ+0OEFBV2AZt15rD41Wy5z24CYdWbpsXuL5ZJC7pKOX
+	 kI8Fys2BAetr6aTG+of6paiHfjzbRoXtb8gRr+wQ=
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	James Morris <jmorris@namei.org>,
+	Jeff Xu <jeffxu@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	kunit-dev@googlegroups.com,
+	linux-kselftest@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v1] landlock: Add support for KUnit tests
+Date: Thu, 18 Jan 2024 12:36:32 +0100
+Message-ID: <20240118113632.1948478-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:h3cspam02-ex.h3c.com 40I235rx063437
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-DQo+T24gVGh1LCBKYW4gMTEsIDIwMjQgYXQgMDc6MzI6MjlQTSArMDgwMCwgSHUgWWFkaSB3cm90
-ZToNCj4+IEZyb206ICJIdS5ZYWRpIiA8aHUueWFkaUBoM2MuY29tPg0KPj4gDQo+PiBSZXBsYWNl
-IFNZU188c3lzY2FsbD4gd2l0aCBfX05SXzxzeXNjYWxsPi4gIFVzaW5nIHRoZSBfX05SXzxzeXNj
-YWxsPiANCj4+IG5vdGF0aW9uLCBwcm92aWRlZCBieSBVQVBJLCBpcyB1c2VmdWwgdG8gYnVpbGQg
-dGVzdHMgb24gc3lzdGVtcyANCj4+IHdpdGhvdXQgdGhlIFNZU188c3lzY2FsbD4gZGVmaW5pdGlv
-bnMuDQo+PiANCj4+IFJlcGxhY2UgU1lTX21vdmVfbW91bnQgd2l0aCBfX05SX21vdmVfbW91bnQN
-Cj4+IA0KPj4gU2ltaWxhciBjaGFuZ2VzOiBjb21taXQgODcxMjllZjEzNjAzICgic2VsZnRlc3Rz
-L2xhbmRsb2NrOiBNYWtlIHRlc3RzIA0KPj4gYnVpbGQgd2l0aCBvbGQgbGliYyIpDQo+PiANCj4+
-IEFja2VkLWJ5OiBNaWNrYcOrbCBTYWxhw7xuIDxtaWNAZGlnaWtvZC5uZXQ+DQo+DQo+U29ycnks
-IGl0IHNob3VsZCBoYXZlIGJlZW4gUmV2aWV3ZWQtYnk6IE1pY2thw6tsIFNhbGHDvG4gPG1pY0Bk
-aWdpa29kLm5ldD4NCj4NCj5BbHNvLCB0aGlzIGlzIG1haW50YWluZWQgYnkgdGhlIFZGUyBtYWlu
-dGFpbmVycy4gSSBDQ2VkIHRocmVlIHJlbGV2YW50IGFkZHJlc3Nlcy4NCg0KDQpBbnkgcHJvZ2Vz
-c3MgYWJvdXQgdGhpcyBwYXRjaCA/IA0KVGhhbmtzDQoNCj4NCj4+IFNpZ25lZC1vZmYtYnk6IEh1
-LllhZGkgPGh1LnlhZGlAaDNjLmNvbT4NCj4+IFN1Z2dlc3RlZC1ieTogSmlhbyA8amlhb3h1cG9A
-aDNjLmNvbT4NCj4+IFJldmlld2VkLWJ5OiBCZXJsaW4gPGJlcmxpbkBoM2MuY29tPg0KPj4gLS0t
-DQo+PiBDaGFuZ2VzIHY0IC0+IHYzOg0KPj4gIC0gQWRqdXN0IGNvbW1lbnRzIGZvciBjb25zaXN0
-ZW50DQo+PiAgLSBBZGQgQWNrZWQtYnkNCj4+IENoYW5nZXMgdjIgLT4gdjM6DQo+PiAgLSBBZGp1
-c3QgY29tbWVudHMNCj4+IENoYW5nZXMgdjEgLT4gdjI6DQo+PiAgLSBGaXggbWFpbCBvZiBTdWdn
-ZXN0ZWQtYnkgYW5kIFJldmlld2VkLWJ5DQo+PiANCj4+ICAuLi4vbW92ZV9tb3VudF9zZXRfZ3Jv
-dXAvbW92ZV9tb3VudF9zZXRfZ3JvdXBfdGVzdC5jICAgICAgICAgIHwgNCArKy0tDQo+PiAgMSBm
-aWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4+IA0KPj4gZGlm
-ZiAtLWdpdCANCj4+IGEvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvbW92ZV9tb3VudF9zZXRfZ3Jv
-dXAvbW92ZV9tb3VudF9zZXRfZ3JvdXBfdGUNCj4+IHN0LmMgDQo+PiBiL3Rvb2xzL3Rlc3Rpbmcv
-c2VsZnRlc3RzL21vdmVfbW91bnRfc2V0X2dyb3VwL21vdmVfbW91bnRfc2V0X2dyb3VwX3RlDQo+
-PiBzdC5jIGluZGV4IDUwZWQ1ZDQ3NWRkMS4uYmNmNTFkNzg1YTM3IDEwMDY0NA0KPj4gLS0tIA0K
-Pj4gYS90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9tb3ZlX21vdW50X3NldF9ncm91cC9tb3ZlX21v
-dW50X3NldF9ncm91cF90ZQ0KPj4gc3QuYw0KPj4gKysrIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVz
-dHMvbW92ZV9tb3VudF9zZXRfZ3JvdXAvbW92ZV9tb3VudF9zZXRfZ3JvdQ0KPj4gKysrIHBfdGVz
-dC5jDQo+PiBAQCAtMjE4LDcgKzIxOCw3IEBAIHN0YXRpYyBib29sIG1vdmVfbW91bnRfc2V0X2dy
-b3VwX3N1cHBvcnRlZCh2b2lkKQ0KPj4gIAlpZiAobW91bnQoTlVMTCwgU0VUX0dST1VQX0ZST00s
-IE5VTEwsIE1TX1NIQVJFRCwgMCkpDQo+PiAgCQlyZXR1cm4gLTE7DQo+PiAgDQo+PiAtCXJldCA9
-IHN5c2NhbGwoU1lTX21vdmVfbW91bnQsIEFUX0ZEQ1dELCBTRVRfR1JPVVBfRlJPTSwNCj4+ICsJ
-cmV0ID0gc3lzY2FsbChfX05SX21vdmVfbW91bnQsIEFUX0ZEQ1dELCBTRVRfR1JPVVBfRlJPTSwN
-Cj4+ICAJCSAgICAgIEFUX0ZEQ1dELCBTRVRfR1JPVVBfVE8sIE1PVkVfTU9VTlRfU0VUX0dST1VQ
-KTsNCj4+ICAJdW1vdW50MigiL3RtcCIsIE1OVF9ERVRBQ0gpOw0KPj4gIA0KPj4gQEAgLTM2Myw3
-ICszNjMsNyBAQCBURVNUX0YobW92ZV9tb3VudF9zZXRfZ3JvdXAsIGNvbXBsZXhfc2hhcmluZ19j
-b3B5aW5nKQ0KPj4gIAkJICAgICAgIENMT05FX1ZNIHwgQ0xPTkVfRklMRVMpOyBBU1NFUlRfR1Qo
-cGlkLCAwKTsNCj4+ICAJQVNTRVJUX0VRKHdhaXRfZm9yX3BpZChwaWQpLCAwKTsNCj4+ICANCj4+
-IC0JQVNTRVJUX0VRKHN5c2NhbGwoU1lTX21vdmVfbW91bnQsIGNhX2Zyb20ubW50ZmQsICIiLA0K
-Pj4gKwlBU1NFUlRfRVEoc3lzY2FsbChfX05SX21vdmVfbW91bnQsIGNhX2Zyb20ubW50ZmQsICIi
-LA0KPj4gIAkJCSAgY2FfdG8ubW50ZmQsICIiLCBNT1ZFX01PVU5UX1NFVF9HUk9VUA0KPj4gIAkJ
-CSAgfCBNT1ZFX01PVU5UX0ZfRU1QVFlfUEFUSCB8IE1PVkVfTU9VTlRfVF9FTVBUWV9QQVRIKSwN
-Cj4+ICAJCSAgMCk7DQo+PiAtLQ0KPj4gMi4yMy4wDQo+PiANCj4+ICANCg==
+Add the SECURITY_LANDLOCK_KUNIT_TEST option to enable KUnit tests for
+Landlock.  The minimal required configuration is listed in the
+security/landlock/.kunitconfig file.
+
+Add an initial landlock_fs KUnit test suite with 7 test cases for
+filesystem helpers.  These are related to the LANDLOCK_ACCESS_FS_REFER
+right.
+
+There is one KUnit test case per:
+* mutated state (e.g. test_scope_to_request_*) or,
+* shared state between tests (e.g. test_is_eaccess_*).
+
+Add macros to improve readability of tests (i.e. one per line).  Test
+cases are collocated with the tested functions to help maintenance and
+improve documentation.  This is why SECURITY_LANDLOCK_KUNIT_TEST cannot
+be set as module.
+
+This is a nice complement to Landlock's user space kselftests.  We
+expect new Landlock features to come with KUnit tests as well.
+
+Thanks to UML support, we can run all KUnit tests for Landlock with:
+./tools/testing/kunit/kunit.py run --kunitconfig security/landlock
+
+[00:00:00] ======================= landlock_fs  =======================
+[00:00:00] [PASSED] test_no_more_access
+[00:00:00] [PASSED] test_scope_to_request_with_exec_none
+[00:00:00] [PASSED] test_scope_to_request_with_exec_some
+[00:00:00] [PASSED] test_scope_to_request_without_access
+[00:00:00] [PASSED] test_is_eacces_with_none
+[00:00:00] [PASSED] test_is_eacces_with_refer
+[00:00:00] [PASSED] test_is_eacces_with_write
+[00:00:00] =================== [PASSED] landlock_fs ===================
+[00:00:00] ============================================================
+[00:00:00] Testing complete. Ran 7 tests: passed: 7
+
+Cc: Günther Noack <gnoack@google.com>
+Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ security/landlock/.kunitconfig               |   4 +
+ security/landlock/Kconfig                    |  15 ++
+ security/landlock/common.h                   |   2 +
+ security/landlock/fs.c                       | 234 +++++++++++++++++++
+ tools/testing/kunit/configs/all_tests.config |   1 +
+ 5 files changed, 256 insertions(+)
+ create mode 100644 security/landlock/.kunitconfig
+
+diff --git a/security/landlock/.kunitconfig b/security/landlock/.kunitconfig
+new file mode 100644
+index 000000000000..03e119466604
+--- /dev/null
++++ b/security/landlock/.kunitconfig
+@@ -0,0 +1,4 @@
++CONFIG_KUNIT=y
++CONFIG_SECURITY=y
++CONFIG_SECURITY_LANDLOCK=y
++CONFIG_SECURITY_LANDLOCK_KUNIT_TEST=y
+diff --git a/security/landlock/Kconfig b/security/landlock/Kconfig
+index c4bf0d5eff39..3f1493402052 100644
+--- a/security/landlock/Kconfig
++++ b/security/landlock/Kconfig
+@@ -20,3 +20,18 @@ config SECURITY_LANDLOCK
+ 	  If you are unsure how to answer this question, answer N.  Otherwise,
+ 	  you should also prepend "landlock," to the content of CONFIG_LSM to
+ 	  enable Landlock at boot time.
++
++config SECURITY_LANDLOCK_KUNIT_TEST
++	bool "KUnit tests for Landlock" if !KUNIT_ALL_TESTS
++	depends on KUNIT=y
++	depends on SECURITY_LANDLOCK
++	default KUNIT_ALL_TESTS
++	help
++	  Build KUnit tests for Landlock.
++
++	  See the KUnit documentation in Documentation/dev-tools/kunit
++
++	  Run all KUnit tests for Landlock with:
++	  ./tools/testing/kunit/kunit.py run --kunitconfig security/landlock
++
++	  If you are unsure how to answer this question, answer N.
+diff --git a/security/landlock/common.h b/security/landlock/common.h
+index 5dc0fe15707d..0eb1d34c2eae 100644
+--- a/security/landlock/common.h
++++ b/security/landlock/common.h
+@@ -17,4 +17,6 @@
+ 
+ #define pr_fmt(fmt) LANDLOCK_NAME ": " fmt
+ 
++#define BIT_INDEX(bit) HWEIGHT(bit - 1)
++
+ #endif /* _SECURITY_LANDLOCK_COMMON_H */
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 9ba989ef46a5..a2fdbd560105 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -7,6 +7,7 @@
+  * Copyright © 2021-2022 Microsoft Corporation
+  */
+ 
++#include <kunit/test.h>
+ #include <linux/atomic.h>
+ #include <linux/bitops.h>
+ #include <linux/bits.h>
+@@ -311,6 +312,119 @@ static bool no_more_access(
+ 	return true;
+ }
+ 
++#define NMA_TRUE(...) KUNIT_EXPECT_TRUE(test, no_more_access(__VA_ARGS__))
++#define NMA_FALSE(...) KUNIT_EXPECT_FALSE(test, no_more_access(__VA_ARGS__))
++
++#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
++
++static void test_no_more_access(struct kunit *const test)
++{
++	const layer_mask_t rx0[LANDLOCK_NUM_ACCESS_FS] = {
++		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] = BIT_ULL(0),
++		[BIT_INDEX(LANDLOCK_ACCESS_FS_READ_FILE)] = BIT_ULL(0),
++	};
++	const layer_mask_t mx0[LANDLOCK_NUM_ACCESS_FS] = {
++		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] = BIT_ULL(0),
++		[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_REG)] = BIT_ULL(0),
++	};
++	const layer_mask_t x0[LANDLOCK_NUM_ACCESS_FS] = {
++		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] = BIT_ULL(0),
++	};
++	const layer_mask_t x1[LANDLOCK_NUM_ACCESS_FS] = {
++		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] = BIT_ULL(1),
++	};
++	const layer_mask_t x01[LANDLOCK_NUM_ACCESS_FS] = {
++		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] = BIT_ULL(0) |
++							  BIT_ULL(1),
++	};
++	const layer_mask_t allows_all[LANDLOCK_NUM_ACCESS_FS] = {};
++
++	/* Checks without restriction. */
++	NMA_TRUE(&x0, &allows_all, false, &allows_all, NULL, false);
++	NMA_TRUE(&allows_all, &x0, false, &allows_all, NULL, false);
++	NMA_FALSE(&x0, &x0, false, &allows_all, NULL, false);
++
++	/*
++	 * Checks that we can only refer a file if no more access could be
++	 * inherited.
++	 */
++	NMA_TRUE(&x0, &x0, false, &rx0, NULL, false);
++	NMA_TRUE(&rx0, &rx0, false, &rx0, NULL, false);
++	NMA_FALSE(&rx0, &rx0, false, &x0, NULL, false);
++	NMA_FALSE(&rx0, &rx0, false, &x1, NULL, false);
++
++	/* Checks allowed referring with different nested domains. */
++	NMA_TRUE(&x0, &x1, false, &x0, NULL, false);
++	NMA_TRUE(&x1, &x0, false, &x0, NULL, false);
++	NMA_TRUE(&x0, &x01, false, &x0, NULL, false);
++	NMA_TRUE(&x0, &x01, false, &rx0, NULL, false);
++	NMA_TRUE(&x01, &x0, false, &x0, NULL, false);
++	NMA_TRUE(&x01, &x0, false, &rx0, NULL, false);
++	NMA_FALSE(&x01, &x01, false, &x0, NULL, false);
++
++	/* Checks that file access rights are also enforced for a directory. */
++	NMA_FALSE(&rx0, &rx0, true, &x0, NULL, false);
++
++	/* Checks that directory access rights don't impact file referring... */
++	NMA_TRUE(&mx0, &mx0, false, &x0, NULL, false);
++	/* ...but only directory referring. */
++	NMA_FALSE(&mx0, &mx0, true, &x0, NULL, false);
++
++	/* Checks directory exchange. */
++	NMA_TRUE(&mx0, &mx0, true, &mx0, &mx0, true);
++	NMA_TRUE(&mx0, &mx0, true, &mx0, &x0, true);
++	NMA_FALSE(&mx0, &mx0, true, &x0, &mx0, true);
++	NMA_FALSE(&mx0, &mx0, true, &x0, &x0, true);
++	NMA_FALSE(&mx0, &mx0, true, &x1, &x1, true);
++
++	/* Checks file exchange with directory access rights... */
++	NMA_TRUE(&mx0, &mx0, false, &mx0, &mx0, false);
++	NMA_TRUE(&mx0, &mx0, false, &mx0, &x0, false);
++	NMA_TRUE(&mx0, &mx0, false, &x0, &mx0, false);
++	NMA_TRUE(&mx0, &mx0, false, &x0, &x0, false);
++	/* ...and with file access rights. */
++	NMA_TRUE(&rx0, &rx0, false, &rx0, &rx0, false);
++	NMA_TRUE(&rx0, &rx0, false, &rx0, &x0, false);
++	NMA_FALSE(&rx0, &rx0, false, &x0, &rx0, false);
++	NMA_FALSE(&rx0, &rx0, false, &x0, &x0, false);
++	NMA_FALSE(&rx0, &rx0, false, &x1, &x1, false);
++
++	/*
++	 * Allowing the following requests should not be a security risk
++	 * because domain 0 denies execute access, and domain 1 is always
++	 * nested with domain 0.  However, adding an exception for this case
++	 * would mean to check all nested domains to make sure none can get
++	 * more privileges (e.g. processes only sandboxed by domain 0).
++	 * Moreover, this behavior (i.e. composition of N domains) could then
++	 * be inconsistent compared to domain 1's ruleset alone (e.g. it might
++	 * be denied to link/rename with domain 1's ruleset, whereas it would
++	 * be allowed if nested on top of domain 0).  Another drawback would be
++	 * to create a cover channel that could enable sandboxed processes to
++	 * infer most of the filesystem restrictions from their domain.  To
++	 * make it simple, efficient, safe, and more consistent, this case is
++	 * always denied.
++	 */
++	NMA_FALSE(&x1, &x1, false, &x0, NULL, false);
++	NMA_FALSE(&x1, &x1, false, &rx0, NULL, false);
++	NMA_FALSE(&x1, &x1, true, &x0, NULL, false);
++	NMA_FALSE(&x1, &x1, true, &rx0, NULL, false);
++
++	/* Checks the same case of exclusive domains with a file... */
++	NMA_TRUE(&x1, &x1, false, &x01, NULL, false);
++	NMA_FALSE(&x1, &x1, false, &x01, &x0, false);
++	NMA_FALSE(&x1, &x1, false, &x01, &x01, false);
++	NMA_FALSE(&x1, &x1, false, &x0, &x0, false);
++	/* ...and with a directory. */
++	NMA_FALSE(&x1, &x1, false, &x0, &x0, true);
++	NMA_FALSE(&x1, &x1, true, &x0, &x0, false);
++	NMA_FALSE(&x1, &x1, true, &x0, &x0, true);
++}
++
++#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
++
++#undef NMA_TRUE
++#undef NMA_FALSE
++
+ /*
+  * Removes @layer_masks accesses that are not requested.
+  *
+@@ -331,6 +445,57 @@ scope_to_request(const access_mask_t access_request,
+ 	return !memchr_inv(layer_masks, 0, sizeof(*layer_masks));
+ }
+ 
++#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
++
++static void test_scope_to_request_with_exec_none(struct kunit *const test)
++{
++	/* Allows everything. */
++	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
++
++	/* Checks and scopes with execute. */
++	KUNIT_EXPECT_TRUE(test, scope_to_request(LANDLOCK_ACCESS_FS_EXECUTE,
++						 &layer_masks));
++	KUNIT_EXPECT_EQ(test, 0,
++			layer_masks[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)]);
++	KUNIT_EXPECT_EQ(test, 0,
++			layer_masks[BIT_INDEX(LANDLOCK_ACCESS_FS_WRITE_FILE)]);
++}
++
++static void test_scope_to_request_with_exec_some(struct kunit *const test)
++{
++	/* Denies execute and write. */
++	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {
++		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] = BIT_ULL(0),
++		[BIT_INDEX(LANDLOCK_ACCESS_FS_WRITE_FILE)] = BIT_ULL(1),
++	};
++
++	/* Checks and scopes with execute. */
++	KUNIT_EXPECT_FALSE(test, scope_to_request(LANDLOCK_ACCESS_FS_EXECUTE,
++						  &layer_masks));
++	KUNIT_EXPECT_EQ(test, BIT_ULL(0),
++			layer_masks[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)]);
++	KUNIT_EXPECT_EQ(test, 0,
++			layer_masks[BIT_INDEX(LANDLOCK_ACCESS_FS_WRITE_FILE)]);
++}
++
++static void test_scope_to_request_without_access(struct kunit *const test)
++{
++	/* Denies execute and write. */
++	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {
++		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] = BIT_ULL(0),
++		[BIT_INDEX(LANDLOCK_ACCESS_FS_WRITE_FILE)] = BIT_ULL(1),
++	};
++
++	/* Checks and scopes without access request. */
++	KUNIT_EXPECT_TRUE(test, scope_to_request(0, &layer_masks));
++	KUNIT_EXPECT_EQ(test, 0,
++			layer_masks[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)]);
++	KUNIT_EXPECT_EQ(test, 0,
++			layer_masks[BIT_INDEX(LANDLOCK_ACCESS_FS_WRITE_FILE)]);
++}
++
++#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
++
+ /*
+  * Returns true if there is at least one access right different than
+  * LANDLOCK_ACCESS_FS_REFER.
+@@ -354,6 +519,51 @@ is_eacces(const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS],
+ 	return false;
+ }
+ 
++#define IE_TRUE(...) KUNIT_EXPECT_TRUE(test, is_eacces(__VA_ARGS__))
++#define IE_FALSE(...) KUNIT_EXPECT_FALSE(test, is_eacces(__VA_ARGS__))
++
++#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
++
++static void test_is_eacces_with_none(struct kunit *const test)
++{
++	const layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
++
++	IE_FALSE(&layer_masks, 0);
++	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_REFER);
++	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_EXECUTE);
++	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_WRITE_FILE);
++}
++
++static void test_is_eacces_with_refer(struct kunit *const test)
++{
++	const layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {
++		[BIT_INDEX(LANDLOCK_ACCESS_FS_REFER)] = BIT_ULL(0),
++	};
++
++	IE_FALSE(&layer_masks, 0);
++	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_REFER);
++	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_EXECUTE);
++	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_WRITE_FILE);
++}
++
++static void test_is_eacces_with_write(struct kunit *const test)
++{
++	const layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {
++		[BIT_INDEX(LANDLOCK_ACCESS_FS_WRITE_FILE)] = BIT_ULL(0),
++	};
++
++	IE_FALSE(&layer_masks, 0);
++	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_REFER);
++	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_EXECUTE);
++
++	IE_TRUE(&layer_masks, LANDLOCK_ACCESS_FS_WRITE_FILE);
++}
++
++#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
++
++#undef IE_TRUE
++#undef IE_FALSE
++
+ /**
+  * is_access_to_paths_allowed - Check accesses for requests with a common path
+  *
+@@ -1225,3 +1435,27 @@ __init void landlock_add_fs_hooks(void)
+ 	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
+ 			   LANDLOCK_NAME);
+ }
++
++#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
++
++/* clang-format off */
++static struct kunit_case test_cases[] = {
++	KUNIT_CASE(test_no_more_access),
++	KUNIT_CASE(test_scope_to_request_with_exec_none),
++	KUNIT_CASE(test_scope_to_request_with_exec_some),
++	KUNIT_CASE(test_scope_to_request_without_access),
++	KUNIT_CASE(test_is_eacces_with_none),
++	KUNIT_CASE(test_is_eacces_with_refer),
++	KUNIT_CASE(test_is_eacces_with_write),
++	{}
++};
++/* clang-format on */
++
++static struct kunit_suite test_suite = {
++	.name = "landlock_fs",
++	.test_cases = test_cases,
++};
++
++kunit_test_suite(test_suite);
++
++#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
+diff --git a/tools/testing/kunit/configs/all_tests.config b/tools/testing/kunit/configs/all_tests.config
+index 3bf506d4a63c..1b8f1abfedf0 100644
+--- a/tools/testing/kunit/configs/all_tests.config
++++ b/tools/testing/kunit/configs/all_tests.config
+@@ -37,6 +37,7 @@ CONFIG_REGMAP_BUILD=y
+ 
+ CONFIG_SECURITY=y
+ CONFIG_SECURITY_APPARMOR=y
++CONFIG_SECURITY_LANDLOCK=y
+ 
+ CONFIG_SOUND=y
+ CONFIG_SND=y
+
+base-commit: 0daaa610c8e033cdfb420db728c2b40eb3a75134
+-- 
+2.43.0
+
