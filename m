@@ -1,88 +1,169 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B768288D5;
-	Thu, 18 Jan 2024 14:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8853D1EA66;
+	Thu, 18 Jan 2024 23:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705588696; cv=none; b=mqzfjaqRjKPJUSXcQqW6Dqz2LVgnjdowwEGpJKN6J61zIe7WFYhfU6b5t5J2RDZXMLleA6w9gKIFa7UTwm8NVuxGEHkNNDjXBko0+9v3Bg3lb89VZEJa4fYJvnDQp3onJx2BJE4S+EszPc6eT5H1iHLO44lTCZqOMnflHcIxkKI=
+	t=1705621944; cv=none; b=n2K93M4mf3mZBdnthJ+gjT3OZUJgLiucSKHsW/rio1LeaHziNUBuVg5noirSp9cxiHi6NYPf2MmyRTXzM5hqPjX1+TuqUzmbpHyhixkG50LmmoCijyev96C3NJR6VSg4OCj1F0mifXYZEwnyhK62wzFnTDbpo1kILsU7Jp2DcqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705588696; c=relaxed/simple;
-	bh=guptyyOQalkFrWPUTJrIlKr56a+E4jq1Is5W6DKtQj4=;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
-	 X-Developer-Signature:X-Developer-Key:Content-Transfer-Encoding;
-	b=cBrbqdODX3uZiczHu7TfcpKojvQ7rlqpLWdNCu72Rjx4PwWc+8NSQ0mwl/GOuVJmy48ffxIgvTQpbvOmZovaO9a6DXN5nbg5jmsDkrHThMrjBL4jeqT/btG4tcZItOwPvipixt4ZfBHv4+47E6h29iGcZ/AH+kF/plpb8cxbYC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzXAhM7+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1705621944; c=relaxed/simple;
+	bh=5Y49qao2TEBYAh3zbMzGnVU3z2Sn+Hk/yl0ojczX4nc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=fYbrlixegMw2nG2XHvvSb6lOAnFq7lKfCyNQHyabKRrkayf08w+XZ14FuVcPVih8M7pAX4y478Z3DJg4KQs2V7ctpaBsD8vNs2BJD1JyGRVAUeQpVxBGxQBmjML9tOAcQ4Ghio/9u33t3ZcW3nffmfmjet5IaWzEzeP/9Nc60kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Tr2hSSgB; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzXAhM7+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F3AFC433F1;
-	Thu, 18 Jan 2024 14:38:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705588696;
-	bh=guptyyOQalkFrWPUTJrIlKr56a+E4jq1Is5W6DKtQj4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mzXAhM7+fcWvAQk9/kZpGzqcaTe1J2wHXx6K79E0F57Wn+xXIeVBoCK0WvgD883Lk
-	 Xdf3d1R0d6midMySgh1kU2uf77Iec4SM376aV4i3IskZIc92os1NbBFJLDSD5TCij/
-	 M7YCdPEA9nQiR197ZQlgBgcRlG/CLGHFLXsiykQ98msZ98A9jYkjc5EosO1V34Ur2B
-	 gT0hUut7FfWOkSJBGoLzQrQkvW69QVQNCph6K56szy5dGeWzVE61cPHsmcb7TPEmjq
-	 ViIJOnDwlbzPqtBzER104irvthKCHU9B0j36PcvBpid1tFWsALOibairaydiQ840Mx
-	 zj4AYXaH5jnCw==
-From: Christian Brauner <brauner@kernel.org>
-To: Hu Yadi <hu.yadi@h3c.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-api@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	514118380@qq.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	shuah@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	mic@digikod.net
-Subject: Re: [PATCH v4] selftests/move_mount_set_group:Make tests build with old libc
-Date: Thu, 18 Jan 2024 15:37:56 +0100
-Message-ID: <20240118-sezieren-neurologie-6690110057ca@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240111113229.10820-1-hu.yadi@h3c.com>
-References: <20240111113229.10820-1-hu.yadi@h3c.com>
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Tr2hSSgB"
+Received: from [192.168.192.85] (unknown [50.39.103.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 13DC44025B;
+	Thu, 18 Jan 2024 23:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1705621933;
+	bh=eG7DznVqyLsKmJ1D8OEmMt/Nkq0A9HA7Gw76/3J1s0g=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type;
+	b=Tr2hSSgBRd4hD6N14xAY4OfELMPYusV1I1ZHGqFxfnbqQ+C/l86HygiGpy5h+ngqT
+	 hDb9LnGAUki12eYI1pXQIXu4GQaZN5o2Y7tcPDi+gV0W32Jlo9LfYdWtb6bTvAYgJH
+	 S9PY4CxHgQ7FJX+M7up6ZVfGqSbXhqpadnp6su+Kua7X5RcC1ChQ8PoUQZ6C8mEIBj
+	 oWh8MET0dm2+5W4X+D594VKWvTSsV93AhJkHW4bHDquTdhSbQzojIcxWflww4PCMDD
+	 LBQlgea7OUPpjSB+MCEAShMT5Idx5u9kAYpIjrSP5c72wEy4AMrYXta8UHQvB8r8QI
+	 qJPAW9D3MFJUw==
+Message-ID: <9fd4ffcb-3f88-4c4c-b580-86895396e933@canonical.com>
+Date: Thu, 18 Jan 2024 15:52:03 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1169; i=brauner@kernel.org; h=from:subject:message-id; bh=guptyyOQalkFrWPUTJrIlKr56a+E4jq1Is5W6DKtQj4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSuNL/gYT4jbaGy/4JkroyimR9NvAQn5yqVywfzKjXEO ClZcFd0lLIwiHExyIopsji0m4TLLeep2GyUqQEzh5UJZAgDF6cATGTbBkaG3cbOjneu/Zs677DJ lPNla3//9xYuXh3vkzPXZrfEvLqTrYwMB+NmyzJamd05erEv82GNfvZ/C8ksyVPePndiZnyaWBz LBwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: John Johansen <john.johansen@canonical.com>
+Subject: [GIT PULL] AppArmor updates for 6.8
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKLM <linux-kernel@vger.kernel.org>,
+ "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Content-Language: en-US
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 11 Jan 2024 19:32:29 +0800, Hu Yadi wrote:
-> Replace SYS_<syscall> with __NR_<syscall>.  Using the __NR_<syscall>
-> notation, provided by UAPI, is useful to build tests on systems without
-> the SYS_<syscall> definitions.
-> 
-> Replace SYS_move_mount with __NR_move_mount
-> 
-> Similar changes: commit 87129ef13603 ("selftests/landlock: Make tests build with old libc")
-> 
-> [...]
+Hi Linus,
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Please pull the following apparmor for patches for the 6.8 merge
+window.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+This PR adds a single feature, switch the hash used to check policy
+from sha1 to sha256
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+There are fixes for two memory leaks, and refcount bug and a potential
+crash when a profile name is empty. Along with a couple minor code
+cleanups.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+These patches have been in linux-next and been tested while in there,
+and have also had a merge and regression test against your current
+tree as of this morning.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+thanks
+- john
 
-[1/1] selftests/move_mount_set_group:Make tests build with old libc
-      https://git.kernel.org/vfs/vfs/c/0778b0a1a8d2
+
+The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
+
+   Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
+
+are available in the Git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2024-01-18
+
+for you to fetch changes up to 8ead196be219adade3bd0d4115cc9b8506643121:
+
+   apparmor: Fix memory leak in unpack_profile() (2024-01-09 01:45:25 -0800)
+
+----------------------------------------------------------------
++ Features
+   - switch policy hash fro sha1 to sha256
+
++ Bug Fixes
+   - Fix refcount leak in task_kill
+   - Fix leak of pdb objects and trans_table
+   - avoid crash when parse profile name is empty
+
++ Cleanups
+   - add static to stack_msg and nulldfa
+   - more kernel-doc cleanups
+
+----------------------------------------------------------------
+Dimitri John Ledkov (1):
+       apparmor: switch SECURITY_APPARMOR_HASH from sha1 to sha256
+
+Fedor Pchelkin (3):
+       apparmor: free the allocated pdb objects
+       apparmor: fix possible memory leak in unpack_trans_table
+       apparmor: avoid crash when parsed profile name is empty
+
+Gaosheng Cui (1):
+       apparmor: Fix memory leak in unpack_profile()
+
+John Johansen (5):
+       apparmor: declare stack_msg as static
+       apparmor: declare nulldfa as static
+       apparmor: add missing params to aa_may_ptrace kernel-doc comments
+       apparmor: cleanup network hook comments
+       apparmor: Fix ref count leak in task_kill
+
+  security/apparmor/Kconfig         | 12 ++++----
+  security/apparmor/apparmorfs.c    | 16 +++++-----
+  security/apparmor/crypto.c        |  6 ++--
+  security/apparmor/domain.c        |  2 +-
+  security/apparmor/lib.c           |  1 +
+  security/apparmor/lsm.c           | 63 +++++++++++----------------------------
+  security/apparmor/policy.c        | 13 ++++----
+  security/apparmor/policy_unpack.c | 13 +++++---
+  security/apparmor/task.c          |  2 ++
+  9 files changed, 54 insertions(+), 74 deletions(-)
+
