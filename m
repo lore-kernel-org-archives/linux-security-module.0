@@ -1,267 +1,478 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D604437;
-	Fri, 19 Jan 2024 05:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80134F1F8
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Jan 2024 12:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705640411; cv=none; b=ML6fx77jcaHaiFM1yrkRyU+HPChkesu0pmQR3PcXSAb3oCxeSQUsXj2i7v8lcrRkm4rBFzf0deCBKR4mAp0WXBXWgmBqWmymQE2fitvvVeVBHEnSZAl13Q66GfNOACV+hJHtD+SI96a9fjuNlIZW45bYVVXaCsI2iPXJ3psOG2k=
+	t=1705667120; cv=none; b=A6YB2lbQpOLicZ3IpQs4OUgoyjmDpuQmCu2cgnhBY88Xg0RcGBFxL/ii9iTHQbwwS2ikGgHv52f9ByG4lu/yKaUwMx3ymERixpW0bQUTRGg7JedkLQmC9q1ChkHHIy4oWRv+K+cye95gFZv7IGEobMPARBvOIsv1JRJ+SC7aqTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705640411; c=relaxed/simple;
-	bh=C4RhHeULk+I5NuNj4XQUNI6+B2dUFighZsq5y+l1vTo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BPaNtvpAzonM9Fvcqbe0SiwjWf1mA1lcl8RQ5gk9Q3VfRYtWnjz/OBrw5Snpr54s+AwLkpcs1XVFLvxadk+WL2EnL7iG38BQWwpLlY0W1dugcAotGIcSy7KSjT4ShlLRbSh6X5i3G8jZs0A6k8eUjnyNg+GAS8Q1c4hQkhblXIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UsNryi8i; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1705667120; c=relaxed/simple;
+	bh=ZS0ZTPOjGc6lI63HpJAJlldEv1yKly/eF/9Lh48ayGg=;
+	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
+	 To:Cc:Content-Type; b=SSfyXXSm0N3JN1CrXfkPs3IuG9cTxs1kPZRwKNlbAcf/vUMUEit7ZlMki+WA5hbJYAlAV4fNpCjfSrl7rE1OoHNGIE737K9p6MRWtT8GEqHg8nkBtj4MnFzyYwg/7Ijk7WBj5ZpMUbCm1go+1+i/aY2TMUMLTlbEAOIOo9Xxhtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nRIJi05e; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsNryi8i"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE8F4C433C7;
-	Fri, 19 Jan 2024 05:00:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705640411;
-	bh=C4RhHeULk+I5NuNj4XQUNI6+B2dUFighZsq5y+l1vTo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=UsNryi8iHY9rS+JHT6S0MMCN0GSQD78nRyrNCw3tCebx/x4tsjDJryV9giG/E+IEt
-	 O2lW0tudpxXPkyws+M0JWHd83A6PwhKNhwDnSEMbS4sG5Uj8PDbNFstY/I9NrtrKkE
-	 uwbpE1C7iaU8tzKfVUWy0mDuYvmRIAhxQUIzcl1ae65uomzDM00m+756hu1cKvs+Si
-	 qyMAZAleR5gtcXiC7Ur7mJvKVNwxqhUuzduJXD+I+Opq8nYnKvVfh9dr8dZ6bxXHlW
-	 pcrdXoCEBzOnejpJkoOpY494BxOoSi14YkfS0N5iVoOQxnXURnZZZj0NmFtf08JWpD
-	 tSN0f9fvQ+Lpg==
-From: Andrii Nakryiko <andrii@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	paul@paul-moore.com,
-	brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [GIT PULL] BPF token for v6.8
-Date: Thu, 18 Jan 2024 21:00:00 -0800
-Message-Id: <20240119050000.3362312-1-andrii@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nRIJi05e"
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a2b762cfdafso41465766b.1
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Jan 2024 04:25:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1705667116; x=1706271916; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rR3njcONhtC8J922vl6MVAIIW2xC/rVokflXfUhJWc0=;
+        b=nRIJi05e360/9AGvLSolLDAl1/24P6LobIFPE8TmTyE3g7yxMVFd8p6QrdJpJhltfb
+         puZ0tvvTAs7lnt2oJnAjRdMFAwEcZoRz3t2vXDOQYEEMHUIyNu2AZOn5cpvDiICIottT
+         BSFZJ+NrrUItWfwWBWbBv/FhVSc53oxX728skFHcwFqa53bPN1iey0DmJJ4zFt04hIqo
+         yUO/8AKhF6c+ZdbOzJdeBJd+F9obSQY7t+Bzwr/lb2v9Aq4AscdWaoTvE7zA5ek4SlTa
+         uE63G/TQgI4QztS61HD7qR0lDS3vwUHsD9Yj+39RfJMYv/d/REjVKfdHYxpUuwmQcqdH
+         VNSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705667116; x=1706271916;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rR3njcONhtC8J922vl6MVAIIW2xC/rVokflXfUhJWc0=;
+        b=J/UImDtrLn/TEAz0ryO06L1aPK/ZLLhLWnxzVm9Q2MRcRmgQiLrnwIEBnTh48iS6EW
+         UHFkkfbqLMnWzNL5mY9NzDF6eO6RDVAmmuzMn8VsGkcBJ9y/f5U8WMKStaoRA+NqS0aL
+         HQzPN2Gw1SWn1mlPxuHHRqShmWyIunAn71SMOW06Dp94His+D1JI7jh4r02PJ5ybiuAA
+         s64V8ZTpU6oTGUaZ4HikEyHHOHm8HPRWPrELbxRx7ci/U5jqCYRVjiBQvLIFTXG/wVGk
+         hlOQBTRX24ecGXSHSeMfGG2VBiBjmBoF9U+vJcGVqAbShuA9vlNbHSO9vEiNO6FVoE3o
+         zvNg==
+X-Gm-Message-State: AOJu0Yzvhl3mBN2GBa5X02QsgMlpEmIRnnxpf/WefNwKgh6bU5dg2ioz
+	tFsbkrHZISkINjwJNTgGYbrPzDpU22sowkwSBTj0Pqa+7C8c6JAdoMn3XINveqSM3/UWxZcvJlR
+	Qew==
+X-Google-Smtp-Source: AGHT+IHVIT55Mt5VgtIJNsN64bdg7wrUhBEIuOEoxI+kZxG2c4JHW1zm9YIhS9sfxBy1EYcyi85eGaPLzCU=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:7db4:85cd:a87c:3b15])
+ (user=gnoack job=sendgmr) by 2002:a17:906:588:b0:a2c:4f84:13ab with SMTP id
+ 8-20020a170906058800b00a2c4f8413abmr6665ejn.7.1705667115922; Fri, 19 Jan 2024
+ 04:25:15 -0800 (PST)
+Date: Fri, 19 Jan 2024 13:25:06 +0100
+In-Reply-To: <20240118113632.1948478-1-mic@digikod.net>
+Message-Id: <Zapp7vIrAaNmCsS7@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240118113632.1948478-1-mic@digikod.net>
+Subject: Re: [PATCH v1] landlock: Add support for KUnit tests
+From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
+To: "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
+Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, James Morris <jmorris@namei.org>, 
+	Jeff Xu <jeffxu@google.com>, Paul Moore <paul@paul-moore.com>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, kunit-dev@googlegroups.com, 
+	linux-kselftest@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Thank you, this is really nice!
 
-This is BPF token patches freshly rebased onto latest bpf/master with feedback
-received on last revision addressed and changes applied to appropriate patches.
-Plus a few more selftests are added around LSM and BPF token interactions.
+Only tiny style nitpicks here.
 
-This time I'm sending them as a dedicated PR. Please let me know if you are OK
-pull them directly now, or whether I should target it for the next merge
-window. If the latter is decided, would it be OK to land these patches into
-bpf-next tree and then include them in a usual bpf-next PR batch? Keeping
-these patches conflict-free for entire next dev cycle might be challenging,
-given somewhat wide kernel and libbpf changes. Thanks!
+Reviewed-by: G=EF=BF=BDnther Noack <gnoack@google.com>
 
-The following changes since commit 736b5545d39ca59d4332a60e56cc8a1a5e264a8e:
+On Thu, Jan 18, 2024 at 12:36:32PM +0100, Micka=EF=BF=BDl Sala=EF=BF=BDn wr=
+ote:
+> Add the SECURITY_LANDLOCK_KUNIT_TEST option to enable KUnit tests for
+> Landlock.  The minimal required configuration is listed in the
+> security/landlock/.kunitconfig file.
+>=20
+> Add an initial landlock_fs KUnit test suite with 7 test cases for
+> filesystem helpers.  These are related to the LANDLOCK_ACCESS_FS_REFER
+> right.
+>=20
+> There is one KUnit test case per:
+> * mutated state (e.g. test_scope_to_request_*) or,
+> * shared state between tests (e.g. test_is_eaccess_*).
+>=20
+> Add macros to improve readability of tests (i.e. one per line).  Test
+> cases are collocated with the tested functions to help maintenance and
+> improve documentation.  This is why SECURITY_LANDLOCK_KUNIT_TEST cannot
+> be set as module.
+>=20
+> This is a nice complement to Landlock's user space kselftests.  We
+> expect new Landlock features to come with KUnit tests as well.
+>=20
+> Thanks to UML support, we can run all KUnit tests for Landlock with:
+> ./tools/testing/kunit/kunit.py run --kunitconfig security/landlock
+>=20
+> [00:00:00] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D landlock_fs  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> [00:00:00] [PASSED] test_no_more_access
+> [00:00:00] [PASSED] test_scope_to_request_with_exec_none
+> [00:00:00] [PASSED] test_scope_to_request_with_exec_some
+> [00:00:00] [PASSED] test_scope_to_request_without_access
+> [00:00:00] [PASSED] test_is_eacces_with_none
+> [00:00:00] [PASSED] test_is_eacces_with_refer
+> [00:00:00] [PASSED] test_is_eacces_with_write
+> [00:00:00] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PAS=
+SED] landlock_fs =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [00:00:00] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [00:00:00] Testing complete. Ran 7 tests: passed: 7
+>=20
+> Cc: G=EF=BF=BDnther Noack <gnoack@google.com>
+> Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> Signed-off-by: Micka=EF=BF=BDl Sala=EF=BF=BDn <mic@digikod.net>
+> ---
+>  security/landlock/.kunitconfig               |   4 +
+>  security/landlock/Kconfig                    |  15 ++
+>  security/landlock/common.h                   |   2 +
+>  security/landlock/fs.c                       | 234 +++++++++++++++++++
+>  tools/testing/kunit/configs/all_tests.config |   1 +
+>  5 files changed, 256 insertions(+)
+>  create mode 100644 security/landlock/.kunitconfig
+>=20
+> diff --git a/security/landlock/.kunitconfig b/security/landlock/.kunitcon=
+fig
+> new file mode 100644
+> index 000000000000..03e119466604
+> --- /dev/null
+> +++ b/security/landlock/.kunitconfig
+> @@ -0,0 +1,4 @@
+> +CONFIG_KUNIT=3Dy
+> +CONFIG_SECURITY=3Dy
+> +CONFIG_SECURITY_LANDLOCK=3Dy
+> +CONFIG_SECURITY_LANDLOCK_KUNIT_TEST=3Dy
+> diff --git a/security/landlock/Kconfig b/security/landlock/Kconfig
+> index c4bf0d5eff39..3f1493402052 100644
+> --- a/security/landlock/Kconfig
+> +++ b/security/landlock/Kconfig
+> @@ -20,3 +20,18 @@ config SECURITY_LANDLOCK
+>  	  If you are unsure how to answer this question, answer N.  Otherwise,
+>  	  you should also prepend "landlock," to the content of CONFIG_LSM to
+>  	  enable Landlock at boot time.
+> +
+> +config SECURITY_LANDLOCK_KUNIT_TEST
+> +	bool "KUnit tests for Landlock" if !KUNIT_ALL_TESTS
+> +	depends on KUNIT=3Dy
+> +	depends on SECURITY_LANDLOCK
+> +	default KUNIT_ALL_TESTS
+> +	help
+> +	  Build KUnit tests for Landlock.
+> +
+> +	  See the KUnit documentation in Documentation/dev-tools/kunit
+> +
+> +	  Run all KUnit tests for Landlock with:
+> +	  ./tools/testing/kunit/kunit.py run --kunitconfig security/landlock
+> +
+> +	  If you are unsure how to answer this question, answer N.
+> diff --git a/security/landlock/common.h b/security/landlock/common.h
+> index 5dc0fe15707d..0eb1d34c2eae 100644
+> --- a/security/landlock/common.h
+> +++ b/security/landlock/common.h
+> @@ -17,4 +17,6 @@
+> =20
+>  #define pr_fmt(fmt) LANDLOCK_NAME ": " fmt
+> =20
+> +#define BIT_INDEX(bit) HWEIGHT(bit - 1)
+> +
+>  #endif /* _SECURITY_LANDLOCK_COMMON_H */
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 9ba989ef46a5..a2fdbd560105 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -7,6 +7,7 @@
+>   * Copyright =EF=BF=BD 2021-2022 Microsoft Corporation
+>   */
+> =20
+> +#include <kunit/test.h>
+>  #include <linux/atomic.h>
+>  #include <linux/bitops.h>
+>  #include <linux/bits.h>
+> @@ -311,6 +312,119 @@ static bool no_more_access(
+>  	return true;
+>  }
+> =20
+> +#define NMA_TRUE(...) KUNIT_EXPECT_TRUE(test, no_more_access(__VA_ARGS__=
+))
+> +#define NMA_FALSE(...) KUNIT_EXPECT_FALSE(test, no_more_access(__VA_ARGS=
+__))
+> +
+> +#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
+> +
+> +static void test_no_more_access(struct kunit *const test)
+> +{
+> +	const layer_mask_t rx0[LANDLOCK_NUM_ACCESS_FS] =3D {
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] =3D BIT_ULL(0),
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_READ_FILE)] =3D BIT_ULL(0),
+> +	};
+> +	const layer_mask_t mx0[LANDLOCK_NUM_ACCESS_FS] =3D {
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] =3D BIT_ULL(0),
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_REG)] =3D BIT_ULL(0),
+> +	};
+> +	const layer_mask_t x0[LANDLOCK_NUM_ACCESS_FS] =3D {
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] =3D BIT_ULL(0),
+> +	};
+> +	const layer_mask_t x1[LANDLOCK_NUM_ACCESS_FS] =3D {
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] =3D BIT_ULL(1),
+> +	};
+> +	const layer_mask_t x01[LANDLOCK_NUM_ACCESS_FS] =3D {
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] =3D BIT_ULL(0) |
+> +							  BIT_ULL(1),
+> +	};
+> +	const layer_mask_t allows_all[LANDLOCK_NUM_ACCESS_FS] =3D {};
+> +
+> +	/* Checks without restriction. */
+> +	NMA_TRUE(&x0, &allows_all, false, &allows_all, NULL, false);
+> +	NMA_TRUE(&allows_all, &x0, false, &allows_all, NULL, false);
+> +	NMA_FALSE(&x0, &x0, false, &allows_all, NULL, false);
+> +
+> +	/*
+> +	 * Checks that we can only refer a file if no more access could be
+> +	 * inherited.
+> +	 */
+> +	NMA_TRUE(&x0, &x0, false, &rx0, NULL, false);
+> +	NMA_TRUE(&rx0, &rx0, false, &rx0, NULL, false);
+> +	NMA_FALSE(&rx0, &rx0, false, &x0, NULL, false);
+> +	NMA_FALSE(&rx0, &rx0, false, &x1, NULL, false);
+> +
+> +	/* Checks allowed referring with different nested domains. */
+> +	NMA_TRUE(&x0, &x1, false, &x0, NULL, false);
+> +	NMA_TRUE(&x1, &x0, false, &x0, NULL, false);
+> +	NMA_TRUE(&x0, &x01, false, &x0, NULL, false);
+> +	NMA_TRUE(&x0, &x01, false, &rx0, NULL, false);
+> +	NMA_TRUE(&x01, &x0, false, &x0, NULL, false);
+> +	NMA_TRUE(&x01, &x0, false, &rx0, NULL, false);
+> +	NMA_FALSE(&x01, &x01, false, &x0, NULL, false);
+> +
+> +	/* Checks that file access rights are also enforced for a directory. */
+> +	NMA_FALSE(&rx0, &rx0, true, &x0, NULL, false);
+> +
+> +	/* Checks that directory access rights don't impact file referring... *=
+/
+> +	NMA_TRUE(&mx0, &mx0, false, &x0, NULL, false);
+> +	/* ...but only directory referring. */
+> +	NMA_FALSE(&mx0, &mx0, true, &x0, NULL, false);
+> +
+> +	/* Checks directory exchange. */
+> +	NMA_TRUE(&mx0, &mx0, true, &mx0, &mx0, true);
+> +	NMA_TRUE(&mx0, &mx0, true, &mx0, &x0, true);
+> +	NMA_FALSE(&mx0, &mx0, true, &x0, &mx0, true);
+> +	NMA_FALSE(&mx0, &mx0, true, &x0, &x0, true);
+> +	NMA_FALSE(&mx0, &mx0, true, &x1, &x1, true);
+> +
+> +	/* Checks file exchange with directory access rights... */
+> +	NMA_TRUE(&mx0, &mx0, false, &mx0, &mx0, false);
+> +	NMA_TRUE(&mx0, &mx0, false, &mx0, &x0, false);
+> +	NMA_TRUE(&mx0, &mx0, false, &x0, &mx0, false);
+> +	NMA_TRUE(&mx0, &mx0, false, &x0, &x0, false);
+> +	/* ...and with file access rights. */
+> +	NMA_TRUE(&rx0, &rx0, false, &rx0, &rx0, false);
+> +	NMA_TRUE(&rx0, &rx0, false, &rx0, &x0, false);
+> +	NMA_FALSE(&rx0, &rx0, false, &x0, &rx0, false);
+> +	NMA_FALSE(&rx0, &rx0, false, &x0, &x0, false);
+> +	NMA_FALSE(&rx0, &rx0, false, &x1, &x1, false);
+> +
+> +	/*
+> +	 * Allowing the following requests should not be a security risk
+> +	 * because domain 0 denies execute access, and domain 1 is always
+> +	 * nested with domain 0.  However, adding an exception for this case
+> +	 * would mean to check all nested domains to make sure none can get
+> +	 * more privileges (e.g. processes only sandboxed by domain 0).
+> +	 * Moreover, this behavior (i.e. composition of N domains) could then
+> +	 * be inconsistent compared to domain 1's ruleset alone (e.g. it might
+> +	 * be denied to link/rename with domain 1's ruleset, whereas it would
+> +	 * be allowed if nested on top of domain 0).  Another drawback would be
+> +	 * to create a cover channel that could enable sandboxed processes to
+> +	 * infer most of the filesystem restrictions from their domain.  To
+> +	 * make it simple, efficient, safe, and more consistent, this case is
+> +	 * always denied.
+> +	 */
+> +	NMA_FALSE(&x1, &x1, false, &x0, NULL, false);
+> +	NMA_FALSE(&x1, &x1, false, &rx0, NULL, false);
+> +	NMA_FALSE(&x1, &x1, true, &x0, NULL, false);
+> +	NMA_FALSE(&x1, &x1, true, &rx0, NULL, false);
+> +
+> +	/* Checks the same case of exclusive domains with a file... */
+> +	NMA_TRUE(&x1, &x1, false, &x01, NULL, false);
+> +	NMA_FALSE(&x1, &x1, false, &x01, &x0, false);
+> +	NMA_FALSE(&x1, &x1, false, &x01, &x01, false);
+> +	NMA_FALSE(&x1, &x1, false, &x0, &x0, false);
+> +	/* ...and with a directory. */
+> +	NMA_FALSE(&x1, &x1, false, &x0, &x0, true);
+> +	NMA_FALSE(&x1, &x1, true, &x0, &x0, false);
+> +	NMA_FALSE(&x1, &x1, true, &x0, &x0, true);
+> +}
+> +
+> +#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
+> +
+> +#undef NMA_TRUE
+> +#undef NMA_FALSE
+> +
+>  /*
+>   * Removes @layer_masks accesses that are not requested.
+>   *
+> @@ -331,6 +445,57 @@ scope_to_request(const access_mask_t access_request,
+>  	return !memchr_inv(layer_masks, 0, sizeof(*layer_masks));
+>  }
+> =20
+> +#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
+> +
+> +static void test_scope_to_request_with_exec_none(struct kunit *const tes=
+t)
+> +{
+> +	/* Allows everything. */
+> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {};
+> +
+> +	/* Checks and scopes with execute. */
+> +	KUNIT_EXPECT_TRUE(test, scope_to_request(LANDLOCK_ACCESS_FS_EXECUTE,
+> +						 &layer_masks));
+> +	KUNIT_EXPECT_EQ(test, 0,
+> +			layer_masks[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)]);
+> +	KUNIT_EXPECT_EQ(test, 0,
+> +			layer_masks[BIT_INDEX(LANDLOCK_ACCESS_FS_WRITE_FILE)]);
+> +}
+> +
+> +static void test_scope_to_request_with_exec_some(struct kunit *const tes=
+t)
+> +{
+> +	/* Denies execute and write. */
+> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] =3D BIT_ULL(0),
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_WRITE_FILE)] =3D BIT_ULL(1),
+> +	};
+> +
+> +	/* Checks and scopes with execute. */
+> +	KUNIT_EXPECT_FALSE(test, scope_to_request(LANDLOCK_ACCESS_FS_EXECUTE,
+> +						  &layer_masks));
+> +	KUNIT_EXPECT_EQ(test, BIT_ULL(0),
+> +			layer_masks[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)]);
+> +	KUNIT_EXPECT_EQ(test, 0,
+> +			layer_masks[BIT_INDEX(LANDLOCK_ACCESS_FS_WRITE_FILE)]);
+> +}
+> +
+> +static void test_scope_to_request_without_access(struct kunit *const tes=
+t)
+> +{
+> +	/* Denies execute and write. */
+> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] =3D BIT_ULL(0),
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_WRITE_FILE)] =3D BIT_ULL(1),
+> +	};
+> +
+> +	/* Checks and scopes without access request. */
+> +	KUNIT_EXPECT_TRUE(test, scope_to_request(0, &layer_masks));
+> +	KUNIT_EXPECT_EQ(test, 0,
+> +			layer_masks[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)]);
+> +	KUNIT_EXPECT_EQ(test, 0,
+> +			layer_masks[BIT_INDEX(LANDLOCK_ACCESS_FS_WRITE_FILE)]);
+> +}
+> +
+> +#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
+> +
+>  /*
+>   * Returns true if there is at least one access right different than
+>   * LANDLOCK_ACCESS_FS_REFER.
+> @@ -354,6 +519,51 @@ is_eacces(const layer_mask_t (*const layer_masks)[LA=
+NDLOCK_NUM_ACCESS_FS],
+>  	return false;
+>  }
+> =20
+> +#define IE_TRUE(...) KUNIT_EXPECT_TRUE(test, is_eacces(__VA_ARGS__))
+> +#define IE_FALSE(...) KUNIT_EXPECT_FALSE(test, is_eacces(__VA_ARGS__))
 
-  Merge tag 'net-6.8-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-01-18 17:33:50 -0800)
+is_eacces() only has one argument anyway, so __VA_ARGS__ is not as useful a=
+s it
+was in the other case, IMHO.  But works either way.
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git tags/for-linus
-
-for you to fetch changes up to df4ffe6e674b8421230276238a0107966b85e044:
-
-  selftests/bpf: incorporate LSM policy to token-based tests (2024-01-18 20:39:48 -0800)
-
-----------------------------------------------------------------
-BPF token
-
-This PR is a combination of three BPF token-related patch sets ([0],
-[1], [2]) with fixes ([3]) to kernel-side token_fd passing APIs incorporated
-into relevant patches, bpf_token_capable() changes requested by
-Christian Brauner, and necessary libbpf and BPF selftests side adjustments.
-
-This patch set introduces an ability to delegate a subset of BPF subsystem
-functionality from privileged system-wide daemon (e.g., systemd or any other
-container manager) through special mount options for userns-bound BPF FS to
-a *trusted* unprivileged application. Trust is the key here. This
-functionality is not about allowing unconditional unprivileged BPF usage.
-Establishing trust, though, is completely up to the discretion of respective
-privileged application that would create and mount a BPF FS instance with
-delegation enabled, as different production setups can and do achieve it
-through a combination of different means (signing, LSM, code reviews, etc),
-and it's undesirable and infeasible for kernel to enforce any particular way
-of validating trustworthiness of particular process.
-
-The main motivation for this work is a desire to enable containerized BPF
-applications to be used together with user namespaces. This is currently
-impossible, as CAP_BPF, required for BPF subsystem usage, cannot be namespaced
-or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to BPF
-helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safely read
-arbitrary memory, and it's impossible to ensure that they only read memory of
-processes belonging to any given namespace. This means that it's impossible to
-have a mechanically verifiable namespace-aware CAP_BPF capability, and as such
-another mechanism to allow safe usage of BPF functionality is necessary.
-
-BPF FS delegation mount options and BPF token derived from such BPF FS instance
-is such a mechanism. Kernel makes no assumption about what "trusted"
-constitutes in any particular case, and it's up to specific privileged
-applications and their surrounding infrastructure to decide that. What kernel
-provides is a set of APIs to setup and mount special BPF FS instance and
-derive BPF tokens from it. BPF FS and BPF token are both bound to its owning
-userns and in such a way are constrained inside intended container. Users can
-then pass BPF token FD to privileged bpf() syscall commands, like BPF map
-creation and BPF program loading, to perform such operations without having
-init userns privileges.
-
-This version incorporates feedback and suggestions ([4]) received on earlier
-iterations of BPF token approach, and instead of allowing to create BPF tokens
-directly assuming capable(CAP_SYS_ADMIN), we instead enhance BPF FS to accept
-a few new delegation mount options. If these options are used and BPF FS itself
-is properly created, set up, and mounted inside the user namespaced container,
-user application is able to derive a BPF token object from BPF FS instance, and
-pass that token to bpf() syscall. As explained in patch #3, BPF token itself
-doesn't grant access to BPF functionality, but instead allows kernel to do
-namespaced capabilities checks (ns_capable() vs capable()) for CAP_BPF,
-CAP_PERFMON, CAP_NET_ADMIN, and CAP_SYS_ADMIN, as applicable. So it forms one
-half of a puzzle and allows container managers and sys admins to have safe and
-flexible configuration options: determining which containers get delegation of
-BPF functionality through BPF FS, and then which applications within such
-containers are allowed to perform bpf() commands, based on namespaces
-capabilities.
-
-Previous attempt at addressing this very same problem ([5]) attempted to
-utilize authoritative LSM approach, but was conclusively rejected by upstream
-LSM maintainers. BPF token concept is not changing anything about LSM
-approach, but can be combined with LSM hooks for very fine-grained security
-policy. Some ideas about making BPF token more convenient to use with LSM (in
-particular custom BPF LSM programs) was briefly described in recent LSF/MM/BPF
-2023 presentation ([6]). E.g., an ability to specify user-provided data
-(context), which in combination with BPF LSM would allow implementing a very
-dynamic and fine-granular custom security policies on top of BPF token. In the
-interest of minimizing API surface area and discussions this was relegated to
-follow up patches, as it's not essential to the fundamental concept of
-delegatable BPF token.
-
-It should be noted that BPF token is conceptually quite similar to the idea of
-/dev/bpf device file, proposed by Song a while ago ([7]). The biggest
-difference is the idea of using virtual anon_inode file to hold BPF token and
-allowing multiple independent instances of them, each (potentially) with its
-own set of restrictions. And also, crucially, BPF token approach is not using
-any special stateful task-scoped flags. Instead, bpf() syscall accepts
-token_fd parameters explicitly for each relevant BPF command. This addresses
-main concerns brought up during the /dev/bpf discussion, and fits better with
-overall BPF subsystem design.
-
-Second part of this patch set adds full support for BPF token in libbpf's BPF
-object high-level API. Good chunk of the changes rework libbpf feature
-detection internals, which are the most affected by BPF token presence.
-
-Besides internal refactorings, libbpf allows to pass location of BPF FS from
-which BPF token should be created by libbpf. This can be done explicitly though
-a new bpf_object_open_opts.bpf_token_path field. But we also add implicit BPF
-token creation logic to BPF object load step, even without any explicit
-involvement of the user. If the environment is setup properly, BPF token will
-be created transparently and used implicitly. This allows for all existing
-application to gain BPF token support by just linking with latest version of
-libbpf library. No source code modifications are required.  All that under
-assumption that privileged container management agent properly set up default
-BPF FS instance at /sys/bpf/fs to allow BPF token creation.
-
-libbpf adds support to override default BPF FS location for BPF token creation
-through LIBBPF_BPF_TOKEN_PATH envvar knowledge. This allows admins or container
-managers to mount BPF token-enabled BPF FS at non-standard location without the
-need to coordinate with applications.  LIBBPF_BPF_TOKEN_PATH can also be used
-to disable BPF token implicit creation by setting it to an empty value.
-
-  [0] https://patchwork.kernel.org/project/netdevbpf/list/?series=805707&state=*
-  [1] https://patchwork.kernel.org/project/netdevbpf/list/?series=810260&state=*
-  [2] https://patchwork.kernel.org/project/netdevbpf/list/?series=809800&state=*
-  [3] https://patchwork.kernel.org/project/netdevbpf/patch/20231219053150.336991-1-andrii@kernel.org/
-  [4] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef785e@brauner/
-  [5] https://lore.kernel.org/bpf/20230412043300.360803-1-andrii@kernel.org/
-  [6] http://vger.kernel.org/bpfconf2023_material/Trusted_unprivileged_BPF_LSFMM2023.pdf
-  [7] https://lore.kernel.org/bpf/20190627201923.2589391-2-songliubraving@fb.com/
-
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-
-----------------------------------------------------------------
-Andrii Nakryiko (30):
-      bpf: align CAP_NET_ADMIN checks with bpf_capable() approach
-      bpf: add BPF token delegation mount options to BPF FS
-      bpf: introduce BPF token object
-      bpf: add BPF token support to BPF_MAP_CREATE command
-      bpf: add BPF token support to BPF_BTF_LOAD command
-      bpf: add BPF token support to BPF_PROG_LOAD command
-      bpf: take into account BPF token when fetching helper protos
-      bpf: consistently use BPF token throughout BPF verifier logic
-      bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free LSM hooks
-      bpf,lsm: refactor bpf_map_alloc/bpf_map_free LSM hooks
-      bpf,lsm: add BPF token LSM hooks
-      libbpf: add bpf_token_create() API
-      libbpf: add BPF token support to bpf_map_create() API
-      libbpf: add BPF token support to bpf_btf_load() API
-      libbpf: add BPF token support to bpf_prog_load() API
-      selftests/bpf: add BPF token-enabled tests
-      bpf,selinux: allocate bpf_security_struct per BPF token
-      bpf: fail BPF_TOKEN_CREATE if no delegation option was set on BPF FS
-      bpf: support symbolic BPF FS delegation mount options
-      selftests/bpf: utilize string values for delegate_xxx mount options
-      libbpf: split feature detectors definitions from cached results
-      libbpf: further decouple feature checking logic from bpf_object
-      libbpf: move feature detection code into its own file
-      libbpf: wire up token_fd into feature probing logic
-      libbpf: wire up BPF token support at BPF object level
-      selftests/bpf: add BPF object loading tests with explicit token passing
-      selftests/bpf: add tests for BPF object load with implicit token
-      libbpf: support BPF token path setting through LIBBPF_BPF_TOKEN_PATH envvar
-      selftests/bpf: add tests for LIBBPF_BPF_TOKEN_PATH envvar
-      selftests/bpf: incorporate LSM policy to token-based tests
-
- drivers/media/rc/bpf-lirc.c                        |    2 +-
- include/linux/bpf.h                                |   85 +-
- include/linux/filter.h                             |    2 +-
- include/linux/lsm_hook_defs.h                      |   15 +-
- include/linux/security.h                           |   43 +-
- include/uapi/linux/bpf.h                           |   54 +
- kernel/bpf/Makefile                                |    2 +-
- kernel/bpf/arraymap.c                              |    2 +-
- kernel/bpf/bpf_lsm.c                               |   15 +-
- kernel/bpf/cgroup.c                                |    6 +-
- kernel/bpf/core.c                                  |    3 +-
- kernel/bpf/helpers.c                               |    6 +-
- kernel/bpf/inode.c                                 |  276 ++++-
- kernel/bpf/syscall.c                               |  228 +++--
- kernel/bpf/token.c                                 |  278 ++++++
- kernel/bpf/verifier.c                              |   13 +-
- kernel/trace/bpf_trace.c                           |    2 +-
- net/core/filter.c                                  |   36 +-
- net/ipv4/bpf_tcp_ca.c                              |    2 +-
- net/netfilter/nf_bpf_link.c                        |    2 +-
- security/security.c                                |  101 +-
- security/selinux/hooks.c                           |   47 +-
- tools/include/uapi/linux/bpf.h                     |   54 +
- tools/lib/bpf/Build                                |    2 +-
- tools/lib/bpf/bpf.c                                |   41 +-
- tools/lib/bpf/bpf.h                                |   37 +-
- tools/lib/bpf/btf.c                                |   10 +-
- tools/lib/bpf/elf.c                                |    2 -
- tools/lib/bpf/features.c                           |  503 ++++++++++
- tools/lib/bpf/libbpf.c                             |  557 ++---------
- tools/lib/bpf/libbpf.h                             |   21 +-
- tools/lib/bpf/libbpf.map                           |    1 +
- tools/lib/bpf/libbpf_internal.h                    |   36 +-
- tools/lib/bpf/libbpf_probes.c                      |   11 +-
- tools/lib/bpf/str_error.h                          |    3 +
- .../selftests/bpf/prog_tests/libbpf_probes.c       |    4 +
- .../testing/selftests/bpf/prog_tests/libbpf_str.c  |    6 +
- tools/testing/selftests/bpf/prog_tests/token.c     | 1052 ++++++++++++++++++++
- tools/testing/selftests/bpf/progs/priv_map.c       |   13 +
- tools/testing/selftests/bpf/progs/priv_prog.c      |   13 +
- tools/testing/selftests/bpf/progs/token_lsm.c      |   32 +
- 41 files changed, 2977 insertions(+), 641 deletions(-)
- create mode 100644 kernel/bpf/token.c
- create mode 100644 tools/lib/bpf/features.c
- create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
- create mode 100644 tools/testing/selftests/bpf/progs/priv_map.c
- create mode 100644 tools/testing/selftests/bpf/progs/priv_prog.c
- create mode 100644 tools/testing/selftests/bpf/progs/token_lsm.c
+> +
+> +#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
+> +
+> +static void test_is_eacces_with_none(struct kunit *const test)
+> +{
+> +	const layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {};
+> +
+> +	IE_FALSE(&layer_masks, 0);
+> +	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_REFER);
+> +	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_EXECUTE);
+> +	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_WRITE_FILE);
+> +}
+> +
+> +static void test_is_eacces_with_refer(struct kunit *const test)
+> +{
+> +	const layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_REFER)] =3D BIT_ULL(0),
+> +	};
+> +
+> +	IE_FALSE(&layer_masks, 0);
+> +	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_REFER);
+> +	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_EXECUTE);
+> +	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_WRITE_FILE);
+> +}
+> +
+> +static void test_is_eacces_with_write(struct kunit *const test)
+> +{
+> +	const layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_WRITE_FILE)] =3D BIT_ULL(0),
+> +	};
+> +
+> +	IE_FALSE(&layer_masks, 0);
+> +	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_REFER);
+> +	IE_FALSE(&layer_masks, LANDLOCK_ACCESS_FS_EXECUTE);
+> +
+> +	IE_TRUE(&layer_masks, LANDLOCK_ACCESS_FS_WRITE_FILE);
+> +}
+> +
+> +#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
+> +
+> +#undef IE_TRUE
+> +#undef IE_FALSE
+> +
+>  /**
+>   * is_access_to_paths_allowed - Check accesses for requests with a commo=
+n path
+>   *
+> @@ -1225,3 +1435,27 @@ __init void landlock_add_fs_hooks(void)
+>  	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
+>  			   LANDLOCK_NAME);
+>  }
+> +
+> +#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
+> +
+> +/* clang-format off */
+> +static struct kunit_case test_cases[] =3D {
+> +	KUNIT_CASE(test_no_more_access),
+> +	KUNIT_CASE(test_scope_to_request_with_exec_none),
+> +	KUNIT_CASE(test_scope_to_request_with_exec_some),
+> +	KUNIT_CASE(test_scope_to_request_without_access),
+> +	KUNIT_CASE(test_is_eacces_with_none),
+> +	KUNIT_CASE(test_is_eacces_with_refer),
+> +	KUNIT_CASE(test_is_eacces_with_write),
+> +	{}
+> +};
+> +/* clang-format on */
+> +
+> +static struct kunit_suite test_suite =3D {
+> +	.name =3D "landlock_fs",
+> +	.test_cases =3D test_cases,
+> +};
+> +
+> +kunit_test_suite(test_suite);
+> +
+> +#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
+> diff --git a/tools/testing/kunit/configs/all_tests.config b/tools/testing=
+/kunit/configs/all_tests.config
+> index 3bf506d4a63c..1b8f1abfedf0 100644
+> --- a/tools/testing/kunit/configs/all_tests.config
+> +++ b/tools/testing/kunit/configs/all_tests.config
+> @@ -37,6 +37,7 @@ CONFIG_REGMAP_BUILD=3Dy
+> =20
+>  CONFIG_SECURITY=3Dy
+>  CONFIG_SECURITY_APPARMOR=3Dy
+> +CONFIG_SECURITY_LANDLOCK=3Dy
+> =20
+>  CONFIG_SOUND=3Dy
+>  CONFIG_SND=3Dy
+>=20
+> base-commit: 0daaa610c8e033cdfb420db728c2b40eb3a75134
+> --=20
+> 2.43.0
+>=20
