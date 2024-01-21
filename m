@@ -1,140 +1,96 @@
-Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A88CFBFC;
-	Sun, 21 Jan 2024 11:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.123.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DD1374EB
+	for <linux-security-module@vger.kernel.org>; Sun, 21 Jan 2024 19:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705835022; cv=none; b=bBQ2CFv9+vBcNuGq37VZ0nm/LFTQ1GqckyagjXNA9DBuBhh2w5Af1cnam/qG2XuT/LrtUWOuy9V8CyaxCXRIYOtIcC7Q4ETglVmw2YQCPWX/OO0R6nIVkxQDAtTMoWTjnYzK05ZV8t2iZXnT5+55S+xBFz6x71iW+/6htxQzIok=
+	t=1705865272; cv=none; b=h6o2z72kYPHRFRc/s+l73GgTZsvwh9fzwLMcSqWid4l6v7TIRSQ3UFj6GZv1CQYp117NAkdFGOSKvXXOTqupQnM2WrwVu3MsnpuZOrKz7YolGJ0V2cCX1H8YDJk96OiCE+o49AYWRIEJFt95ponHIohEXfa4amDaDwjFRmSZNYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705835022; c=relaxed/simple;
-	bh=bwH0/B8eYrOSIj4xed+TVE18YuK3niXz1ojq9e0EIcY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=KlorpCkeO/zqRtsbDoc2HVBqW/QqywKak8aDCpIrG4DjAjJ8UHhyqZgk5p+sCo18BC3SybdRO3yEFlpyKi0kbzrCS/CSyQBJZfWjbqyvAYjHxMcDNTJ9J0pRQ+4eyiGKNJ7GcseOtVhccFtKrsMIfmYDYHikQPe/1hVwXqWjHNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com; spf=pass smtp.mailfrom=h3c.com; arc=none smtp.client-ip=60.191.123.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
-Received: from mail.maildlp.com ([172.25.15.154])
-	by h3cspam02-ex.h3c.com with ESMTP id 40LB27dr021839;
-	Sun, 21 Jan 2024 19:02:07 +0800 (GMT-8)
-	(envelope-from hu.yadi@h3c.com)
-Received: from DAG6EX12-BJD.srv.huawei-3com.com (unknown [10.153.34.14])
-	by mail.maildlp.com (Postfix) with ESMTP id 605412004BA4;
-	Sun, 21 Jan 2024 19:06:44 +0800 (CST)
-Received: from DAG6EX02-IMDC.srv.huawei-3com.com (10.62.14.11) by
- DAG6EX12-BJD.srv.huawei-3com.com (10.153.34.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.27; Sun, 21 Jan 2024 19:02:09 +0800
-Received: from DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4])
- by DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4%16]) with
- mapi id 15.02.1258.027; Sun, 21 Jan 2024 19:02:09 +0800
-From: Huyadi <hu.yadi@h3c.com>
-To: =?utf-8?B?J01pY2thw6tsIFNhbGHDvG4n?= <mic@digikod.net>
-CC: "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com"
-	<serge@hallyn.com>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "amir73il@gmail.com" <amir73il@gmail.com>,
-        "brauner@kernel.org"
-	<brauner@kernel.org>,
-        "avagin@google.com" <avagin@google.com>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-	<linux-security-module@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>,
-        "514118380@qq.com" <514118380@qq.com>,
-        "konstantin.meskhidze@huawei.com" <konstantin.meskhidze@huawei.com>
-Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjRdIHNlbGZ0ZXN0cy9sYW5kbG9jazpGaXggdHdv?=
- =?utf-8?Q?_build_issues?=
-Thread-Topic: [PATCH v4] selftests/landlock:Fix two build issues
-Thread-Index: AQHaR51Te/ejhd6BskWKYK0XmAmChrDgkaUAgAOROrA=
-Date: Sun, 21 Jan 2024 11:02:09 +0000
-Message-ID: <798652cb83554c1e8674cc98f45393ed@h3c.com>
-References: <20240115102409.19799-1-hu.yadi@h3c.com>
- <20240119.Ugaehae2ze5b@digikod.net>
-In-Reply-To: <20240119.Ugaehae2ze5b@digikod.net>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-sender-location: DAG2
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1705865272; c=relaxed/simple;
+	bh=2FpoKLKzqH8UC9hSwhA9E7HCkyq8gOsBF8dHu25KccI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lCJkKcmTmUK4/PDGRZgBfR5KCg/vd74aGsiZaVgTInWywSk11lfoDDDNPM6uKccGo0RzJjAFdmSjf387NoRTMs/nRS42ufpIBZcRxJXdh12J7maqHKSau80h5d7Y5w3HX6zvZ1aoFVFGW7FK4AH3z8lbLZSqCuu8hzX27aqnkPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=F/hAcnGv; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="F/hAcnGv"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-50e72e3d435so2157988e87.2
+        for <linux-security-module@vger.kernel.org>; Sun, 21 Jan 2024 11:27:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1705865268; x=1706470068; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ilsHoBAFLGrxDRmI028SujMWUyj+V2X5SyCrYhyT90=;
+        b=F/hAcnGvmBQnAx1/D6OxmhcgXlAbilsW4q88/wMPdERBDF7V0wSHXqi52ZsKD24J+a
+         sCZ0Px5W3PnPDjZvG0Iw0MFF9WKreKCMmdO615ffAzGtDItyA8LRT8rghXSPaPCLMbO6
+         2+N81X2lBfDYk0gc847hkQ92ebxOZpYIKiouI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705865268; x=1706470068;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7ilsHoBAFLGrxDRmI028SujMWUyj+V2X5SyCrYhyT90=;
+        b=bE6AH3k5wxFs36Yb3OQxO/aagMhkbpTmHSmaBwWYwdvA9TSoWppDruWpsvUcDfkQDH
+         aKZVZPcNBYT5E3SOZ4hFs44rKs+rG3+ukKh7haFsWsKXCwyr1amO56r7XAFGRvJR8Fui
+         pcvBAegquiX4pH5EKbHx4iq1O/UhYD3SJlzC1ZN414HX710laoiE/mC8+gi6apfbgYoJ
+         ExE1rGkvRk5JEqVBWZUIUlsPpZ7qDj3onJ3gyHLL0J/qZEuUX2cqMjoSPJv7YDlgmIt3
+         UOt/tYWs90dUoyX1zgGJPJ+ASKrFPuUtpjVe1gDOmNmjeXCcH3TDw7XAXA8Hol7pjdMz
+         He9A==
+X-Gm-Message-State: AOJu0Yz5W0q1rKKcvQ8cGqgmDPK/nznLOJ2D93Kzn7mjwxvOnoDz6tzW
+	OxwAdUf/1Wg2eHF6XQFANBrYx7ZWlggde7N37+s4nKyfcgkVa6vhZ1lijwNMHoLDxneN7cJTJF3
+	WOq2oTw==
+X-Google-Smtp-Source: AGHT+IFq9MYejiwRkZk9bkvhrXYmfKTBqb/0fNyNfGSnwN4VfXLEjXRzQtqTh2kQF64y6fXtLqXzhw==
+X-Received: by 2002:a05:6512:15a9:b0:50e:74c1:6e6f with SMTP id bp41-20020a05651215a900b0050e74c16e6fmr845923lfb.93.1705865268358;
+        Sun, 21 Jan 2024 11:27:48 -0800 (PST)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id af1-20020a170906998100b00a2c6aa5e374sm12624200ejc.12.2024.01.21.11.27.47
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Jan 2024 11:27:47 -0800 (PST)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-55a684acf92so2390548a12.0
+        for <linux-security-module@vger.kernel.org>; Sun, 21 Jan 2024 11:27:47 -0800 (PST)
+X-Received: by 2002:a05:6402:26d3:b0:55c:29c1:4186 with SMTP id
+ x19-20020a05640226d300b0055c29c14186mr493069edd.26.1705865267510; Sun, 21 Jan
+ 2024 11:27:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:h3cspam02-ex.h3c.com 40LB27dr021839
+References: <20240119050000.3362312-1-andrii@kernel.org>
+In-Reply-To: <20240119050000.3362312-1-andrii@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 21 Jan 2024 11:27:31 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg3BUNT1nmisracRWni9LzRYxeanj8sePCjya0HTEnCCQ@mail.gmail.com>
+Message-ID: <CAHk-=wg3BUNT1nmisracRWni9LzRYxeanj8sePCjya0HTEnCCQ@mail.gmail.com>
+Subject: Re: [GIT PULL] BPF token for v6.8
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com, 
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-PiBPbiBNb24sIEphbiAxNSwgMjAyNCBhdCAwNjoyNDowOVBNICswODAwLCBIdSBZYWRpIHdyb3Rl
-Og0KPj4gIEZyb206ICJIdS5ZYWRpIiA8aHUueWFkaUBoM2MuY29tPg0KPj4gDQo+PiBUd28gaXNz
-dWVzIGNvbWVzIHVwIHdoaWxlIGJ1aWxkaW5nIHNlbGZ0ZXN0L2xhbmRsb2NrIG9uIG15IHNpZGUg
-KGdjYyANCj4+IDcuMy9nbGliYy0yLjI4L2tlcm5lbC00LjE5KQ0KPj4gDQo+PiB0aGUgZmlyc3Qg
-b25lIGlzIGFzIHRvIGdldHRpZA0KPj4gDQo+PiBuZXRfdGVzdC5jOiBJbiBmdW5jdGlvbiDigJhz
-ZXRfc2VydmljZeKAmToNCj4+IG5ldF90ZXN0LmM6OTE6NDU6IHdhcm5pbmc6IGltcGxpY2l0IGRl
-Y2xhcmF0aW9uIG9mIGZ1bmN0aW9uIOKAmGdldHRpZOKAmTsgWy1XaW1wbGljaXQtZnVuY3Rpb24t
-ZGVjbGFyYXRpb25dDQo+PiAgICAgIl9zZWxmdGVzdHMtbGFuZGxvY2stbmV0LXRpZCVkLWluZGV4
-JWQiLCBnZXR0aWQoKSwNCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIF5+fn5+fg0KPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgZ2V0Z2lkDQo+PiBuZXRfdGVzdC5jOigudGV4dCsweDRlMCk6IHVuZGVmaW5lZCByZWZl
-cmVuY2UgdG8gYGdldHRpZCcNCj4+IA0KPj4gdGhlIHNlY29uZCBpcyBjb21waWxlciBlcnJvcg0K
-Pj4gZ2NjIC1XYWxsIC1PMiAtaXN5c3RlbSAgIGZzX3Rlc3QuYyAtbGNhcCAtbyBzZWxmdGVzdHMv
-bGFuZGxvY2svZnNfdGVzdA0KPj4gZnNfdGVzdC5jOjQ1NzU6OTogZXJyb3I6IGluaXRpYWxpemVy
-IGVsZW1lbnQgaXMgbm90IGNvbnN0YW50DQo+PiAgIC5tbnQgPSBtbnRfdG1wLA0KPj4gICAgICAg
-ICAgXn5+fn5+fg0KPj4gDQo+PiBGaXhlczogMDRmOTA3MGU5OWE0ICgic2VsZnRlc3RzL2xhbmRs
-b2NrOiBBZGQgdGVzdHMgZm9yIHBzZXVkbyANCj4+IGZpbGVzeXN0ZW1zIikNCj4+IEZpeGVzOiBh
-NTQ5ZDA1NWEyMmUgKCJzZWxmdGVzdHMvbGFuZGxvY2s6IEFkZCBuZXR3b3JrIHRlc3RzIikNCj4N
-Cj5Db3VsZCB5b3UgcGxlYXNlIGNyZWF0ZSB0d28gcGF0Y2hlcyBhcyByZXF1ZXN0ZWQgZm9yIHYz
-LCBvbmUgcGVyIGZpeD8NCj5UaGlzIGlzIHVzZWZ1bCBiZWNhdXNlIGl0IGVuYWJsZXMgdG8gYmFj
-a3BvcnQgdGhlc2UgZml4ZXMgd2hlbiBhcHByb3ByaWF0ZS4NCg0KT0ssIEknbGwgcmVzZW5kIGl0
-IGJ5IHR3byBwYXRjaGVzIHdpdGggeW91ciB3YXJtbHkgaW5zdHJ1Y3Rpb24uDQpUaGFua3MgYWdh
-aW4uDQoNCj4+IA0KPj4gdGhpcyBwYXRjaCBpcyB0byBmaXggdGhlbQ0KPj4gDQo+PiBTaWduZWQt
-b2ZmLWJ5OiBIdS5ZYWRpIDxodS55YWRpQGgzYy5jb20+DQo+PiBTdWdnZXN0ZWQtYnk6IEppYW8g
-PGppYW94dXBvQGgzYy5jb20+DQo+PiBSZXZpZXdlZC1ieTogQmVybGluIDxiZXJsaW5AaDNjLmNv
-bT4NCj4+IC0tLQ0KPj4gQ2hhbmdlcyB2NCAtPiB2MzoNCj4+ICAgZml4IGdldHRpZCBlcnJvciBm
-cm9tIGtlcm5lbCB0ZXN0IHJvYm90DQo+PiAgIA0KPj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcv
-b2Uta2J1aWxkLWFsbC8yMDI0MDExNTExNDcuVDFzMTFpSEotbGtwQGludGVsLg0KPj4gY29tLw0K
-Pj4gQ2hhbmdlcyB2MyAtPiB2MjoNCj4+ICAtIGFkZCBoZWxwZXIgb2YgZ2V0dGlkIGluc3RlYWQg
-b2YgX19OUl9nZXR0aWQNCj4+ICAtIGFkZCBnY2MvZ2xpYmMgdmVyc2lvbiBpbmZvIGluIGNvbW1l
-bnRzIENoYW5nZXMgdjEgLT4gdjI6DQo+PiAgLSBmaXggd2hpdGVzcGFjZSBlcnJvcg0KPj4gIC0g
-cmVwbGFjZSBTWVNfZ2V0dGlkIHdpdGggX05SX2dldHRpZA0KPj4gDQo+PiAgdG9vbHMvdGVzdGlu
-Zy9zZWxmdGVzdHMvbGFuZGxvY2svZnNfdGVzdC5jICB8IDUgKysrKy0gIA0KPj4gdG9vbHMvdGVz
-dGluZy9zZWxmdGVzdHMvbGFuZGxvY2svbmV0X3Rlc3QuYyB8IDcgKysrKysrLQ0KPj4gIDIgZmls
-ZXMgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4+IA0KPj4gZGlm
-ZiAtLWdpdCBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2xhbmRsb2NrL2ZzX3Rlc3QuYyANCj4+
-IGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvbGFuZGxvY2svZnNfdGVzdC5jDQo+PiBpbmRleCAx
-OGUxZjg2YTYyMzQuLmE5OTJjZjdjMGFkMSAxMDA2NDQNCj4+IC0tLSBhL3Rvb2xzL3Rlc3Rpbmcv
-c2VsZnRlc3RzL2xhbmRsb2NrL2ZzX3Rlc3QuYw0KPj4gKysrIGIvdG9vbHMvdGVzdGluZy9zZWxm
-dGVzdHMvbGFuZGxvY2svZnNfdGVzdC5jDQo+PiBAQCAtNDU3Miw3ICs0NTcyLDEwIEBAIEZJWFRV
-UkVfVkFSSUFOVChsYXlvdXQzX2ZzKQ0KPj4gIC8qIGNsYW5nLWZvcm1hdCBvZmYgKi8NCj4+ICBG
-SVhUVVJFX1ZBUklBTlRfQUREKGxheW91dDNfZnMsIHRtcGZzKSB7DQo+PiAgCS8qIGNsYW5nLWZv
-cm1hdCBvbiAqLw0KPj4gLQkubW50ID0gbW50X3RtcCwNCj4+ICsJLm1udCA9IHsNCj4+ICsJCS50
-eXBlID0gInRtcGZzIiwNCj4+ICsJCS5kYXRhID0gInNpemU9NG0sbW9kZT03MDAiLA0KPj4gKwl9
-LA0KPg0KPkkgcmVxdWVzdGVkIHNvbWUgY2hhbmdlcyBoZXJlLg0KPg0KPj4gIAkuZmlsZV9wYXRo
-ID0gZmlsZTFfczFkMSwNCj4+ICB9Ow0KPj4gDQo+PiBkaWZmIC0tZ2l0IGEvdG9vbHMvdGVzdGlu
-Zy9zZWxmdGVzdHMvbGFuZGxvY2svbmV0X3Rlc3QuYyANCj4+IGIvdG9vbHMvdGVzdGluZy9zZWxm
-dGVzdHMvbGFuZGxvY2svbmV0X3Rlc3QuYw0KPj4gaW5kZXggOTI5ZTIxYzRkYjA1Li5kNTBmMjky
-MGVkODIgMTAwNjQ0DQo+PiAtLS0gYS90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9sYW5kbG9jay9u
-ZXRfdGVzdC5jDQo+PiArKysgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9sYW5kbG9jay9uZXRf
-dGVzdC5jDQo+IEBAIC0yMSw2ICsyMSwxMSBAQA0KPg0KPldlIHNob3VsZCBpbmNsdWRlIHN5cy9z
-eXNjYWxsLmgNCj4NCj4+IA0KPj4gICNpbmNsdWRlICJjb21tb24uaCINCj4+IA0KPj4gK3N0YXRp
-YyBwaWRfdCBsYW5kbG9ja19nZXR0aWQodm9pZCkNCj4NCj5QbGVhc2UgcmVuYW1lIHRvIHN5c19n
-ZXR0aWQoKS4NCj4NCj4+ICt7DQo+PiArICAgICAgICByZXR1cm4gc3lzY2FsbChfX05SX2dldHRp
-ZCk7DQo+PiArfQ0KPj4gKw0KPj4gIGNvbnN0IHNob3J0IHNvY2tfcG9ydF9zdGFydCA9ICgxIDw8
-IDEwKTsNCj4+IA0KPj4gIHN0YXRpYyBjb25zdCBjaGFyIGxvb3BiYWNrX2lwdjRbXSA9ICIxMjcu
-MC4wLjEiOyBAQCAtODgsNyArOTMsNyBAQCANCj4+IHN0YXRpYyBpbnQgc2V0X3NlcnZpY2Uoc3Ry
-dWN0IHNlcnZpY2VfZml4dHVyZSAqY29uc3Qgc3J2LA0KPj4gIAljYXNlIEFGX1VOSVg6DQo+PiAg
-CQlzcnYtPnVuaXhfYWRkci5zdW5fZmFtaWx5ID0gcHJvdC5kb21haW47DQo+PiAgCQlzcHJpbnRm
-KHNydi0+dW5peF9hZGRyLnN1bl9wYXRoLA0KPj4gLQkJCSJfc2VsZnRlc3RzLWxhbmRsb2NrLW5l
-dC10aWQlZC1pbmRleCVkIiwgZ2V0dGlkKCksDQo+PiArCQkJIl9zZWxmdGVzdHMtbGFuZGxvY2st
-bmV0LXRpZCVkLWluZGV4JWQiLCBsYW5kbG9ja19nZXR0aWQoKSwNCj4+ICAJCQlpbmRleCk7DQo+
-PiAgCQlzcnYtPnVuaXhfYWRkcl9sZW4gPSBTVU5fTEVOKCZzcnYtPnVuaXhfYWRkcik7DQo+PiAg
-CQlzcnYtPnVuaXhfYWRkci5zdW5fcGF0aFswXSA9ICdcMCc7DQo+PiAtLQ0KPj4gMi4yMy4wDQo+
-Pg0K
+On Thu, 18 Jan 2024 at 21:00, Andrii Nakryiko <andrii@kernel.org> wrote:
+>
+> This time I'm sending them as a dedicated PR. Please let me know if you are OK
+> pull them directly now, or whether I should target it for the next merge
+> window. If the latter is decided, would it be OK to land these patches into
+> bpf-next tree and then include them in a usual bpf-next PR batch?
+
+So I was keeping this pending while I dealt with all the other pulls
+(and dealt with the weather-related fallout here too, of course).
+
+I've now looked through this again, and I'm ok with it, but notice
+that it has been rebased in the last couple of days, which doesn't
+make me all that happy doing a last-minute pull in this merge window.
+
+End result: I think this might as well go through the bpf-next tree
+and come next merge window through the usual channels.
+
+I think Christian's concerns were sorted out too, but in case I'm
+mistaken, just holler.
+
+                  Linus
