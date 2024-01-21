@@ -1,63 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEB11E4BE;
-	Fri, 19 Jan 2024 21:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A88CFBFC;
+	Sun, 21 Jan 2024 11:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.123.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705699639; cv=none; b=IjVhyzQaunQww0frpzM53612jBY0JlopyN6uVkucDuH0Iuj/TOO+DXIZvvTZqam5EGeYy1DevhWg/2s2nWgPSoweUhnXIWPFmDtTjUwcJnA2SEQn9HAAcbt7ZvlpSkPBhYkGJCeB/9O7l/vgv6U1mUfqV9Qlkk0YoPkRw1a+mQA=
+	t=1705835022; cv=none; b=bBQ2CFv9+vBcNuGq37VZ0nm/LFTQ1GqckyagjXNA9DBuBhh2w5Af1cnam/qG2XuT/LrtUWOuy9V8CyaxCXRIYOtIcC7Q4ETglVmw2YQCPWX/OO0R6nIVkxQDAtTMoWTjnYzK05ZV8t2iZXnT5+55S+xBFz6x71iW+/6htxQzIok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705699639; c=relaxed/simple;
-	bh=QsovPZjIu89HKIkqNuPdbPiqFPhiANcaJdE/6rFxvaY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=OefcFXJVva0mMuc8ag2H/VwMuUKH9lIZLAPxaFhe+s70fedJFkOjd5uiKEiZbhgRdoPkZ3270lnagXhO/1Zd3v11dSaLM8mVFmFoG+wwccpqNRhntr3/YmdvoSuIpRssN9/UNOi12JfU4eND8d6D1x5KY7npA1WJ3Z04EkQLjDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qmv9uNRo; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qmv9uNRo"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D8E56C433C7;
-	Fri, 19 Jan 2024 21:27:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705699638;
-	bh=QsovPZjIu89HKIkqNuPdbPiqFPhiANcaJdE/6rFxvaY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Qmv9uNRo5IEVAoxoRhbilnnqLJwahqPAusLbixLFXQo2Kt5cuyFOFD/JdmVitZZOG
-	 /6d1tufM34gG0CKIElmi/053z2/c2ZcQKPL1ZKY4vmqU4sfhvx1u8n8LiDjFTPlyQu
-	 V4VaXx0sLEuZN7Cfw6wAnBhkwdiiZ5bfgXRF6/kzjS8zjb7RJPqnYic2ukQMp6o5ZX
-	 f3mcKiYQ5wz5KuxnPTKFDgU7Rfwx/Z3/gWmHXS+0m+i80LhifssOULq3OlYlywp4Cj
-	 jpqzjf3hTb+pLqN3/VW6+nSxSI52iIUoqjEyHH+cx7AoJ74fqLLXWQYzXQs0GZmoqI
-	 sBLBSfWJVJMfw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C960DD8C96C;
-	Fri, 19 Jan 2024 21:27:18 +0000 (UTC)
-Subject: Re: [GIT PULL] AppArmor updates for 6.8
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <9fd4ffcb-3f88-4c4c-b580-86895396e933@canonical.com>
-References: <9fd4ffcb-3f88-4c4c-b580-86895396e933@canonical.com>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <9fd4ffcb-3f88-4c4c-b580-86895396e933@canonical.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2024-01-18
-X-PR-Tracked-Commit-Id: 8ead196be219adade3bd0d4115cc9b8506643121
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 237c31cb5d83b3f77715f6d6a185f46a5ee4ec88
-Message-Id: <170569963880.21908.9009512679223737044.pr-tracker-bot@kernel.org>
-Date: Fri, 19 Jan 2024 21:27:18 +0000
-To: John Johansen <john.johansen@canonical.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKLM <linux-kernel@vger.kernel.org>, "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+	s=arc-20240116; t=1705835022; c=relaxed/simple;
+	bh=bwH0/B8eYrOSIj4xed+TVE18YuK3niXz1ojq9e0EIcY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=KlorpCkeO/zqRtsbDoc2HVBqW/QqywKak8aDCpIrG4DjAjJ8UHhyqZgk5p+sCo18BC3SybdRO3yEFlpyKi0kbzrCS/CSyQBJZfWjbqyvAYjHxMcDNTJ9J0pRQ+4eyiGKNJ7GcseOtVhccFtKrsMIfmYDYHikQPe/1hVwXqWjHNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com; spf=pass smtp.mailfrom=h3c.com; arc=none smtp.client-ip=60.191.123.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
+Received: from mail.maildlp.com ([172.25.15.154])
+	by h3cspam02-ex.h3c.com with ESMTP id 40LB27dr021839;
+	Sun, 21 Jan 2024 19:02:07 +0800 (GMT-8)
+	(envelope-from hu.yadi@h3c.com)
+Received: from DAG6EX12-BJD.srv.huawei-3com.com (unknown [10.153.34.14])
+	by mail.maildlp.com (Postfix) with ESMTP id 605412004BA4;
+	Sun, 21 Jan 2024 19:06:44 +0800 (CST)
+Received: from DAG6EX02-IMDC.srv.huawei-3com.com (10.62.14.11) by
+ DAG6EX12-BJD.srv.huawei-3com.com (10.153.34.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.27; Sun, 21 Jan 2024 19:02:09 +0800
+Received: from DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4])
+ by DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4%16]) with
+ mapi id 15.02.1258.027; Sun, 21 Jan 2024 19:02:09 +0800
+From: Huyadi <hu.yadi@h3c.com>
+To: =?utf-8?B?J01pY2thw6tsIFNhbGHDvG4n?= <mic@digikod.net>
+CC: "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com"
+	<serge@hallyn.com>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "amir73il@gmail.com" <amir73il@gmail.com>,
+        "brauner@kernel.org"
+	<brauner@kernel.org>,
+        "avagin@google.com" <avagin@google.com>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>,
+        "514118380@qq.com" <514118380@qq.com>,
+        "konstantin.meskhidze@huawei.com" <konstantin.meskhidze@huawei.com>
+Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjRdIHNlbGZ0ZXN0cy9sYW5kbG9jazpGaXggdHdv?=
+ =?utf-8?Q?_build_issues?=
+Thread-Topic: [PATCH v4] selftests/landlock:Fix two build issues
+Thread-Index: AQHaR51Te/ejhd6BskWKYK0XmAmChrDgkaUAgAOROrA=
+Date: Sun, 21 Jan 2024 11:02:09 +0000
+Message-ID: <798652cb83554c1e8674cc98f45393ed@h3c.com>
+References: <20240115102409.19799-1-hu.yadi@h3c.com>
+ <20240119.Ugaehae2ze5b@digikod.net>
+In-Reply-To: <20240119.Ugaehae2ze5b@digikod.net>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-sender-location: DAG2
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:h3cspam02-ex.h3c.com 40LB27dr021839
 
-The pull request you sent on Thu, 18 Jan 2024 15:52:03 -0800:
-
-> git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2024-01-18
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/237c31cb5d83b3f77715f6d6a185f46a5ee4ec88
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+PiBPbiBNb24sIEphbiAxNSwgMjAyNCBhdCAwNjoyNDowOVBNICswODAwLCBIdSBZYWRpIHdyb3Rl
+Og0KPj4gIEZyb206ICJIdS5ZYWRpIiA8aHUueWFkaUBoM2MuY29tPg0KPj4gDQo+PiBUd28gaXNz
+dWVzIGNvbWVzIHVwIHdoaWxlIGJ1aWxkaW5nIHNlbGZ0ZXN0L2xhbmRsb2NrIG9uIG15IHNpZGUg
+KGdjYyANCj4+IDcuMy9nbGliYy0yLjI4L2tlcm5lbC00LjE5KQ0KPj4gDQo+PiB0aGUgZmlyc3Qg
+b25lIGlzIGFzIHRvIGdldHRpZA0KPj4gDQo+PiBuZXRfdGVzdC5jOiBJbiBmdW5jdGlvbiDigJhz
+ZXRfc2VydmljZeKAmToNCj4+IG5ldF90ZXN0LmM6OTE6NDU6IHdhcm5pbmc6IGltcGxpY2l0IGRl
+Y2xhcmF0aW9uIG9mIGZ1bmN0aW9uIOKAmGdldHRpZOKAmTsgWy1XaW1wbGljaXQtZnVuY3Rpb24t
+ZGVjbGFyYXRpb25dDQo+PiAgICAgIl9zZWxmdGVzdHMtbGFuZGxvY2stbmV0LXRpZCVkLWluZGV4
+JWQiLCBnZXR0aWQoKSwNCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIF5+fn5+fg0KPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgZ2V0Z2lkDQo+PiBuZXRfdGVzdC5jOigudGV4dCsweDRlMCk6IHVuZGVmaW5lZCByZWZl
+cmVuY2UgdG8gYGdldHRpZCcNCj4+IA0KPj4gdGhlIHNlY29uZCBpcyBjb21waWxlciBlcnJvcg0K
+Pj4gZ2NjIC1XYWxsIC1PMiAtaXN5c3RlbSAgIGZzX3Rlc3QuYyAtbGNhcCAtbyBzZWxmdGVzdHMv
+bGFuZGxvY2svZnNfdGVzdA0KPj4gZnNfdGVzdC5jOjQ1NzU6OTogZXJyb3I6IGluaXRpYWxpemVy
+IGVsZW1lbnQgaXMgbm90IGNvbnN0YW50DQo+PiAgIC5tbnQgPSBtbnRfdG1wLA0KPj4gICAgICAg
+ICAgXn5+fn5+fg0KPj4gDQo+PiBGaXhlczogMDRmOTA3MGU5OWE0ICgic2VsZnRlc3RzL2xhbmRs
+b2NrOiBBZGQgdGVzdHMgZm9yIHBzZXVkbyANCj4+IGZpbGVzeXN0ZW1zIikNCj4+IEZpeGVzOiBh
+NTQ5ZDA1NWEyMmUgKCJzZWxmdGVzdHMvbGFuZGxvY2s6IEFkZCBuZXR3b3JrIHRlc3RzIikNCj4N
+Cj5Db3VsZCB5b3UgcGxlYXNlIGNyZWF0ZSB0d28gcGF0Y2hlcyBhcyByZXF1ZXN0ZWQgZm9yIHYz
+LCBvbmUgcGVyIGZpeD8NCj5UaGlzIGlzIHVzZWZ1bCBiZWNhdXNlIGl0IGVuYWJsZXMgdG8gYmFj
+a3BvcnQgdGhlc2UgZml4ZXMgd2hlbiBhcHByb3ByaWF0ZS4NCg0KT0ssIEknbGwgcmVzZW5kIGl0
+IGJ5IHR3byBwYXRjaGVzIHdpdGggeW91ciB3YXJtbHkgaW5zdHJ1Y3Rpb24uDQpUaGFua3MgYWdh
+aW4uDQoNCj4+IA0KPj4gdGhpcyBwYXRjaCBpcyB0byBmaXggdGhlbQ0KPj4gDQo+PiBTaWduZWQt
+b2ZmLWJ5OiBIdS5ZYWRpIDxodS55YWRpQGgzYy5jb20+DQo+PiBTdWdnZXN0ZWQtYnk6IEppYW8g
+PGppYW94dXBvQGgzYy5jb20+DQo+PiBSZXZpZXdlZC1ieTogQmVybGluIDxiZXJsaW5AaDNjLmNv
+bT4NCj4+IC0tLQ0KPj4gQ2hhbmdlcyB2NCAtPiB2MzoNCj4+ICAgZml4IGdldHRpZCBlcnJvciBm
+cm9tIGtlcm5lbCB0ZXN0IHJvYm90DQo+PiAgIA0KPj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcv
+b2Uta2J1aWxkLWFsbC8yMDI0MDExNTExNDcuVDFzMTFpSEotbGtwQGludGVsLg0KPj4gY29tLw0K
+Pj4gQ2hhbmdlcyB2MyAtPiB2MjoNCj4+ICAtIGFkZCBoZWxwZXIgb2YgZ2V0dGlkIGluc3RlYWQg
+b2YgX19OUl9nZXR0aWQNCj4+ICAtIGFkZCBnY2MvZ2xpYmMgdmVyc2lvbiBpbmZvIGluIGNvbW1l
+bnRzIENoYW5nZXMgdjEgLT4gdjI6DQo+PiAgLSBmaXggd2hpdGVzcGFjZSBlcnJvcg0KPj4gIC0g
+cmVwbGFjZSBTWVNfZ2V0dGlkIHdpdGggX05SX2dldHRpZA0KPj4gDQo+PiAgdG9vbHMvdGVzdGlu
+Zy9zZWxmdGVzdHMvbGFuZGxvY2svZnNfdGVzdC5jICB8IDUgKysrKy0gIA0KPj4gdG9vbHMvdGVz
+dGluZy9zZWxmdGVzdHMvbGFuZGxvY2svbmV0X3Rlc3QuYyB8IDcgKysrKysrLQ0KPj4gIDIgZmls
+ZXMgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4+IA0KPj4gZGlm
+ZiAtLWdpdCBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2xhbmRsb2NrL2ZzX3Rlc3QuYyANCj4+
+IGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvbGFuZGxvY2svZnNfdGVzdC5jDQo+PiBpbmRleCAx
+OGUxZjg2YTYyMzQuLmE5OTJjZjdjMGFkMSAxMDA2NDQNCj4+IC0tLSBhL3Rvb2xzL3Rlc3Rpbmcv
+c2VsZnRlc3RzL2xhbmRsb2NrL2ZzX3Rlc3QuYw0KPj4gKysrIGIvdG9vbHMvdGVzdGluZy9zZWxm
+dGVzdHMvbGFuZGxvY2svZnNfdGVzdC5jDQo+PiBAQCAtNDU3Miw3ICs0NTcyLDEwIEBAIEZJWFRV
+UkVfVkFSSUFOVChsYXlvdXQzX2ZzKQ0KPj4gIC8qIGNsYW5nLWZvcm1hdCBvZmYgKi8NCj4+ICBG
+SVhUVVJFX1ZBUklBTlRfQUREKGxheW91dDNfZnMsIHRtcGZzKSB7DQo+PiAgCS8qIGNsYW5nLWZv
+cm1hdCBvbiAqLw0KPj4gLQkubW50ID0gbW50X3RtcCwNCj4+ICsJLm1udCA9IHsNCj4+ICsJCS50
+eXBlID0gInRtcGZzIiwNCj4+ICsJCS5kYXRhID0gInNpemU9NG0sbW9kZT03MDAiLA0KPj4gKwl9
+LA0KPg0KPkkgcmVxdWVzdGVkIHNvbWUgY2hhbmdlcyBoZXJlLg0KPg0KPj4gIAkuZmlsZV9wYXRo
+ID0gZmlsZTFfczFkMSwNCj4+ICB9Ow0KPj4gDQo+PiBkaWZmIC0tZ2l0IGEvdG9vbHMvdGVzdGlu
+Zy9zZWxmdGVzdHMvbGFuZGxvY2svbmV0X3Rlc3QuYyANCj4+IGIvdG9vbHMvdGVzdGluZy9zZWxm
+dGVzdHMvbGFuZGxvY2svbmV0X3Rlc3QuYw0KPj4gaW5kZXggOTI5ZTIxYzRkYjA1Li5kNTBmMjky
+MGVkODIgMTAwNjQ0DQo+PiAtLS0gYS90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9sYW5kbG9jay9u
+ZXRfdGVzdC5jDQo+PiArKysgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9sYW5kbG9jay9uZXRf
+dGVzdC5jDQo+IEBAIC0yMSw2ICsyMSwxMSBAQA0KPg0KPldlIHNob3VsZCBpbmNsdWRlIHN5cy9z
+eXNjYWxsLmgNCj4NCj4+IA0KPj4gICNpbmNsdWRlICJjb21tb24uaCINCj4+IA0KPj4gK3N0YXRp
+YyBwaWRfdCBsYW5kbG9ja19nZXR0aWQodm9pZCkNCj4NCj5QbGVhc2UgcmVuYW1lIHRvIHN5c19n
+ZXR0aWQoKS4NCj4NCj4+ICt7DQo+PiArICAgICAgICByZXR1cm4gc3lzY2FsbChfX05SX2dldHRp
+ZCk7DQo+PiArfQ0KPj4gKw0KPj4gIGNvbnN0IHNob3J0IHNvY2tfcG9ydF9zdGFydCA9ICgxIDw8
+IDEwKTsNCj4+IA0KPj4gIHN0YXRpYyBjb25zdCBjaGFyIGxvb3BiYWNrX2lwdjRbXSA9ICIxMjcu
+MC4wLjEiOyBAQCAtODgsNyArOTMsNyBAQCANCj4+IHN0YXRpYyBpbnQgc2V0X3NlcnZpY2Uoc3Ry
+dWN0IHNlcnZpY2VfZml4dHVyZSAqY29uc3Qgc3J2LA0KPj4gIAljYXNlIEFGX1VOSVg6DQo+PiAg
+CQlzcnYtPnVuaXhfYWRkci5zdW5fZmFtaWx5ID0gcHJvdC5kb21haW47DQo+PiAgCQlzcHJpbnRm
+KHNydi0+dW5peF9hZGRyLnN1bl9wYXRoLA0KPj4gLQkJCSJfc2VsZnRlc3RzLWxhbmRsb2NrLW5l
+dC10aWQlZC1pbmRleCVkIiwgZ2V0dGlkKCksDQo+PiArCQkJIl9zZWxmdGVzdHMtbGFuZGxvY2st
+bmV0LXRpZCVkLWluZGV4JWQiLCBsYW5kbG9ja19nZXR0aWQoKSwNCj4+ICAJCQlpbmRleCk7DQo+
+PiAgCQlzcnYtPnVuaXhfYWRkcl9sZW4gPSBTVU5fTEVOKCZzcnYtPnVuaXhfYWRkcik7DQo+PiAg
+CQlzcnYtPnVuaXhfYWRkci5zdW5fcGF0aFswXSA9ICdcMCc7DQo+PiAtLQ0KPj4gMi4yMy4wDQo+
+Pg0K
