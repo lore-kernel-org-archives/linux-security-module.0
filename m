@@ -1,108 +1,72 @@
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FADD374FA;
-	Sun, 21 Jan 2024 19:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FE554BD5;
+	Mon, 22 Jan 2024 15:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705865811; cv=none; b=lD+A1OsgyNAkr+D18oWw0cxxoY0lOrYnXGCkkXIv1NxoKuPRRivYMPNsKpO0Thx+WNGP92A3+y2DrQElC5o2VPy5VGwHFL1+N3vpjmJGyWwbbERb16ZdeuvAvz50s1XySByTSgHErFyo5GMKZ0Gu9uL+5ev8V57ctOVLbGBu+kI=
+	t=1705936528; cv=none; b=fIYr2UZdNKki2dJuqcC7W9nB2Kf57VIQO5jDwPbjfKJAaho0MbY4Jjatcreb7qUyN85ewp8YX7DhDtBTqfAHB62KOXl6iPhwON/QNOBFqahN5Yqt69DmibpJUfFkVGnUCm8pOkcuyN63/4TTIZFviO3uU0yBBcEh8wCHA8vvN+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705865811; c=relaxed/simple;
-	bh=4hiZpI+icBUVDpLbFrS9OTX9iRY/GXVx9pFghTt39N8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=leVnmM5yaakkzrEio/J6A6jI20nXe/ewJiW1hYtR4dQ892+Ia87RNDz6Ik9wqh/d6a54/2dYvuho7CI/nYYtQnLGY7pDB8rSYA1gRK5tM3/YoI5zO4LiobgkuUnDJrcT6kLu0sV9WXLQ4Th9hv3Sh76hDAn3UZJI80C89qLEywM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dASLluEm; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1705936528; c=relaxed/simple;
+	bh=Wq+J/bSX6S28UFYnl8/zjpUJ5WTGG8m/F/NgLIhrORM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fg1UclE0O61jHwineY0Djj7sI3ocb0MWiMOXkKQu02epjOvqN3xTe2T6c+g0XzgT7GXj13r8cEMYufjLtXskgw5D4gb4/uZcalSRqR7RVxerXGPBkHK/wtWwNmMRgDpYJYk18OBLOVQL26rML+qawMQxeaF3PvP/bygAmL0a3KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDGgh7M9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dASLluEm"
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-599903c5618so23010eaf.3;
-        Sun, 21 Jan 2024 11:36:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705865809; x=1706470609; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S9mrkCTZLpLTIVgbodq3Q2yrWiCs3Y0QddwuBNQZBFk=;
-        b=dASLluEmHz8dxnwJJ6038dimIoR+yKBfdr1vetvmcywAtbCwXt71l7y8W2v93cK/N7
-         sWcV1EZY0Zx0B7B4P27UD/tzysKs/QtNCm0m9LeWjDBdcBphQby5he2GSK8J6poKzqLr
-         QyNihb999wYyNxaYJNhbmZBFkegMLmJGIGi6HymU2F6ju4IFXqXC/LUptsjJhaCfGXcI
-         fZagwv5X9fZSeJagXtaRcjLf31noTLFAuEGtROL5GtY3C125y99+ID/74BKp/W6HuO7l
-         3Z1qGnh5YC8SQslkO0ENfsYKXZJg/1eUDZAzYJkrwPo3V3FFZfBei3wWgaJDirWg7AM+
-         um2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705865809; x=1706470609;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S9mrkCTZLpLTIVgbodq3Q2yrWiCs3Y0QddwuBNQZBFk=;
-        b=vPAAYdJtkuCQwN3JmYpyj9pSjfzOBEWT/PMwvCCj3WEUVrP0eDF5UQeetY8M3BKJMb
-         JYre4E/KobMCtg94cMI9ALpSmd/aUvUcn0xzM/nz8YVA1eJeaCIR0Q0BLz/ueMafz57Z
-         i9KMv5e6ndqqO1HGxgq9A6a3VrcKm3qDekp9yLVOGJfDHOGaHWVaeuo2/zLQZK9pV2Y6
-         PggYUABNCQjoOWSWukRDL3ph/kXRP9twRembhEH4ysxlhCQtldHivtaixJJijVMdxAOX
-         q8lXURTJCLIHYrnZKtgcpWKT/wMk0l0mi1hqMQ80/oHmCF4SCjMG6aap0cSAbylS3Ava
-         8aMg==
-X-Gm-Message-State: AOJu0YzxJDML535Om4WNfjfrbFEL8VhAVhBtWYUkXm2uY6svhs89Cf8t
-	b5tTSXI0Z0N1Rd0y/nneL9OO5O1WrglHkYLxMedsmBwh5fh0iM9CLi4MDhcv/IUnYGaaJ7PuPXB
-	lpXf2QwJCKyXHYP0ngQFQRtqtCr8=
-X-Google-Smtp-Source: AGHT+IFHv3E1uLwSsI4rohW7rEz+xLP0rfk9sXAsk3whE30cLxW9a2uBMCxCxEMiXjlbr3MXh4ro5os96q60sPf58GY=
-X-Received: by 2002:a05:6358:63a4:b0:176:4c81:bc0c with SMTP id
- k36-20020a05635863a400b001764c81bc0cmr620221rwh.48.1705865808940; Sun, 21 Jan
- 2024 11:36:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDGgh7M9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C408AC43390;
+	Mon, 22 Jan 2024 15:15:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705936527;
+	bh=Wq+J/bSX6S28UFYnl8/zjpUJ5WTGG8m/F/NgLIhrORM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aDGgh7M9VTpABRqrW07YcjUA+clfyADYBM0PPIjRinJwyELMHMNhWC7PwmRhPzSpD
+	 R8t8QUFvSqFc8f8bmM9t79CL3oKD8aXAz0pWKQ4y4L7fFgGy46WKzHs53tOL9l+apU
+	 r2Kuo/mJ0B+NjdNQmwviSA/pomikSrKwoQMALB50hCUI0H11TtjHs7V5WndvVIfgy/
+	 pwqc1h/FLvc/DAfImse7gvq7xd6N6gTqqFE6gxCw902gpDmzF5YnviiayAODkSPVQv
+	 axHy1pMubcW1CrbOtwTDCkYc8rsV5p5IS7I21/euVnIK0r89QoW3tYnoUvH51llLz5
+	 NSO8/5HObyBUA==
+Date: Mon, 22 Jan 2024 16:15:22 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: IORING_OP_FIXED_FD_INSTALL and audit/LSM interactions
+Message-ID: <20240122-desaster-weiten-967544d0d5a1@brauner>
+References: <CAHC9VhRBkW4bH0K_-PeQ5HA=5yMHSimFboiQgG9iDcwYVZcSFQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240119050000.3362312-1-andrii@kernel.org> <CAHk-=wg3BUNT1nmisracRWni9LzRYxeanj8sePCjya0HTEnCCQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wg3BUNT1nmisracRWni9LzRYxeanj8sePCjya0HTEnCCQ@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Sun, 21 Jan 2024 11:36:36 -0800
-Message-ID: <CAEf4BzYTZ0KZYc+zgwSdm6h9i0nQAfM_ne8cdMoPJ36c3yNC1A@mail.gmail.com>
-Subject: Re: [GIT PULL] BPF token for v6.8
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	paul@paul-moore.com, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRBkW4bH0K_-PeQ5HA=5yMHSimFboiQgG9iDcwYVZcSFQ@mail.gmail.com>
 
-On Sun, Jan 21, 2024 at 11:27=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, 18 Jan 2024 at 21:00, Andrii Nakryiko <andrii@kernel.org> wrote:
-> >
-> > This time I'm sending them as a dedicated PR. Please let me know if you=
- are OK
-> > pull them directly now, or whether I should target it for the next merg=
-e
-> > window. If the latter is decided, would it be OK to land these patches =
-into
-> > bpf-next tree and then include them in a usual bpf-next PR batch?
->
-> So I was keeping this pending while I dealt with all the other pulls
-> (and dealt with the weather-related fallout here too, of course).
->
-> I've now looked through this again, and I'm ok with it, but notice
-> that it has been rebased in the last couple of days, which doesn't
-> make me all that happy doing a last-minute pull in this merge window.
+On Fri, Jan 19, 2024 at 11:33:37AM -0500, Paul Moore wrote:
+> Hello all,
+> 
+> I just noticed the recent addition of IORING_OP_FIXED_FD_INSTALL and I
+> see that it is currently written to skip the io_uring auditing.
+> Assuming I'm understanding the patch correctly, and I'll admit that
+> I've only looked at it for a short time today, my gut feeling is that
+> we want to audit the FIXED_FD_INSTALL opcode as it could make a
+> previously io_uring-only fd generally accessible to userspace.
+> 
+> I'm also trying to determine how worried we should be about
+> io_install_fixed_fd() potentially happening with the current task's
+> credentials overridden by the io_uring's personality.  Given that this
+> io_uring operation inserts a fd into the current process, I believe
+> that we should be checking to see if the current task's credentials,
+> and not the io_uring's credentials/personality, are allowed to receive
+> the fd in receive_fd()/security_file_receive().  I don't see an
+> obvious way to filter/block credential overrides on a per-opcode
+> basis, but if we don't want to add a mask for io_kiocb::flags in
+> io_issue_defs (or something similar), perhaps we can forcibly mask out
+> REQ_F_CREDS in io_install_fixed_fd_prep()?  I'm very interested to
+> hear what others think about this.
 
-Yes, I understand. BPF token patches change common (internal) parts of
-libbpf, and so there were conflicts with other libbpf-side changes in
-the bpf tree.
-
->
-> End result: I think this might as well go through the bpf-next tree
-> and come next merge window through the usual channels.
-
-Sounds good, I'll route it through bpf-next, then. Thanks!
-
->
-> I think Christian's concerns were sorted out too, but in case I'm
-> mistaken, just holler.
-
-I believe they were, yes.
-
->
->                   Linus
+Right, completely forgot about the creds support in io_uring. Just
+disallow this together with FIXED_FD_INSTALL. That's also the gist of
+the rest of this thread iiuc.
