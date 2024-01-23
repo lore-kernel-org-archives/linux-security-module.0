@@ -1,58 +1,58 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE46C6ADE
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Jan 2024 22:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35C354663
+	for <linux-security-module@vger.kernel.org>; Tue, 23 Jan 2024 22:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706049619; cv=none; b=e8jmV5ghyCjupGPe+uGWAvhwXAOqoy1JnnbWhYsRQurO9Le50Xs00+8u2w3GpcqJ26JoNInTIsMBeKvEE7gHeydCKJYqWSm9IWe9xLivUEioWK5jZdO5xaPnhUSuWY9SZeiSJA7urL2BBASwNUMn9RKD1od7Nqqrqr13aB6p4io=
+	t=1706049790; cv=none; b=Kc2jYyr5DC6FE6eY8yk4CemSAVFoJznbEbhL54WtK/d9/p+9XGey4Q1AP6VCXAn1Se9ebQMj8gSYgMfWN+5/R9fTw41vvS5f3BzTqQwKjGckK2QsE+mYR7eaR0BQCUGC3dFyhMafknaAQVEuHcoFI2W+LThtnPWmMwR/kDK5g3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706049619; c=relaxed/simple;
-	bh=dDmiAyTd6I1WoQ1JHmDV+Aim3uCnxncV333lDUyp4KM=;
+	s=arc-20240116; t=1706049790; c=relaxed/simple;
+	bh=iUB518ugqYlOim7h2XTpdjWYCOECHt/eRE1y528tlvM=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=DAsJNqpndmbt/zNmBsSu7D/FGzgSf1c+8WPLT6YztnOuE7O3je9QbPq5scGnQHeK4nnQgN+5UlzAAMGxspxyfIArG0ChXME3m/UpDqKuh/wm/EdXL1NBSAruiaTysBC1oggeWdiATPPhOEslvWCoKtV0ahprWgj0TGZUbVLKeA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ejpJjxYP; arc=none smtp.client-ip=209.85.215.181
+	 In-Reply-To:Content-Type; b=PkFQRMCEFDQecHDvxPrtm4ln778SHDRETD36zDPw7ohzv1UlcIOLDffelkBXF6ngp5s5Xt5/i9WZK/hJptGZ02V+qbLIvHhlpXjLnFkKQnYHCTJlnzr0vRufroBlMddODBkmqd05aPdKpXVfbHK1omE+9JgycU9ZAF65FIEHlWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=OyayA4OU; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ejpJjxYP"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-58962bf3f89so735861a12.0
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Jan 2024 14:40:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="OyayA4OU"
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-5cfcf509fbdso413574a12.1
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Jan 2024 14:43:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1706049617; x=1706654417; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1706049788; x=1706654588; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:references:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=uK4AqgzTPBnmXYr2iScowkm9axVe1AfckM6HmRvPGe8=;
-        b=ejpJjxYPS88nedXdRnZ4fAoA4+A7Itj4vdNj863LG5jTJHBN47MlwbW1bYVYRkA+cS
-         jxxtayRJ+1YmZ4NumPpFbvymix2b8ITEcJs6b3TO4uPTGPADe8b56MH/Np5oKU3UG7hi
-         4vDDoIyKDmOQ0nQj+4Zyv5H5l9cVPwmWmlmxkPcTxMKMpcS3/7GDN5GRWa5qCA1Muis2
-         /HxROM+P7dWBBE6J+CCenAfphCPEMd4Cc2rtdhWMRrzDZa40eyeRW4vSuPrpmtp7KuyR
-         pHoxNkRGHlffin++9vQZox1ASri5qP0VscQlFECzAPMIOCwKynhFPngBWrSgZBV5Oikq
-         qr0Q==
+        bh=kZ8DnQ4tf3hf+QSmZ07ypiykiybqiKeAhzaeUG2T/BE=;
+        b=OyayA4OUUErOfmoY6F6nkS8fF5qIQseI98oCEN98cvP2MSf4cnpjVkbs3mmw+8MZEm
+         EZj5JLHseYFStJCZWmxk7FOGXt6FkoRMlMsxHpUPmAxktDp/pyPkYL4iTudcAwFvyYMx
+         8SXHXFUpO8WKVHqFe0r+dyvje04yG21ACwTVmZ7JoE22Pof3cdlKeETBlSruJGfadNoD
+         lttYHG2sFs0/aNXgRi80iSw0N1MmepGnxz2/7txrYbxxXo4RDAnNLXaGaifgtQT3hh5h
+         knhU+3D1rhkAnxDDTlzYZJJ4g5+FuLkA91NIo04BHa1hCsB/aF9JfplO0K6kV4br252F
+         iWBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706049617; x=1706654417;
+        d=1e100.net; s=20230601; t=1706049788; x=1706654588;
         h=content-transfer-encoding:in-reply-to:references:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uK4AqgzTPBnmXYr2iScowkm9axVe1AfckM6HmRvPGe8=;
-        b=pygDpst0vLTNngB0qiI1diO2lMFmi+A9668al/S8gxg2jlwo8kaX3EhcLcS/333QSi
-         uGv+MeePlme+JcMHkxxy8aHfkYL/dq5qaYFK2svA0DUZFH5YjYzvlGGdJgSxn74vOTOz
-         wstaap9Zv/RbORfXor8cOH371VEfPt81ozTNsDgZkGSdUmNEyGgtrHxx69BASV1n8ths
-         B54nkakb72dpsQgQ56i6e0AF5k28y4Y7/MMtK6n4833JDr1kzjvbC3ja2pXxKRsFKAz6
-         Sh0OEIha5uUtibGh/Sjl3VGKlh5Q23U74fgiMhSy+N+F6nEkVb2QsSRNmRP8NjNyZWVq
-         jSSw==
-X-Gm-Message-State: AOJu0Yx6f8GnASLpBsHMgyB5fNuZqLZ3SM4nJaptfqExs/CXEDFgM8XV
-	nOAEMv8SmvcnSfNui86v2HZSIIrps9k0N+I98asBj9wO/6QLRzsvh/87Ht1Y03o=
-X-Google-Smtp-Source: AGHT+IEHrhNprAGub+wfj4V1kCK8kl1gmykQV7Hc5rqYq2gCCzlHqlLOCPh2W3ZGllBpORaFaqkJ5g==
-X-Received: by 2002:a17:90a:88f:b0:290:239b:8f8e with SMTP id v15-20020a17090a088f00b00290239b8f8emr9500004pjc.4.1706049617331;
-        Tue, 23 Jan 2024 14:40:17 -0800 (PST)
+        bh=kZ8DnQ4tf3hf+QSmZ07ypiykiybqiKeAhzaeUG2T/BE=;
+        b=UuPRjUsB2q3keMC6tpz8U++gA4m3YU91vsY2BZ+wCreqURQn9//156vkqlYShSgCU0
+         NzJE/B+/cdJxvG3BCTeaWuoKQp/+RzgXJ/Hoe0stsO0F9w0mJJC5FiQWGqMol662qSdv
+         +runeg7qbcLVifRNy7SeXt+YV/hZg2CBQYWZ3AjBxcm8A5TfHIEfTQeO9Y+4Sp4kKwK7
+         /e1IX+80GFm67tascSM/OE1gG3COpjJbuCztGd7qSXispkoTnhQDM6scka6FMYL0lIuB
+         xVlOXilXPT45AnGFDxSt1oyTkDQMdjNYoBjNDYYi8lXCamOgwaOD877KYu8nzU/l76b/
+         IGSQ==
+X-Gm-Message-State: AOJu0Yw6ZDMdHH55V8hsaardnq/FO72CRgPHeEnZqjnBdMQ4u610uiHg
+	v34r+wb3B/yGiZJGrUpiJm7K6K8Lpty6HKwQyZ6hRpCKc7Ki0BxqaRCuNTO0hzM=
+X-Google-Smtp-Source: AGHT+IFCEjc9dpcI4WGNlaoVDX/WSUtSwSFot6/0SHia4xao8n+OpxbkMVyGTUvjhQlO5dGDI8NvHQ==
+X-Received: by 2002:a17:90a:7897:b0:290:8cb7:fa28 with SMTP id x23-20020a17090a789700b002908cb7fa28mr710655pjk.1.1706049788176;
+        Tue, 23 Jan 2024 14:43:08 -0800 (PST)
 Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id qc12-20020a17090b288c00b00290a26531f5sm4882355pjb.7.2024.01.23.14.40.16
+        by smtp.gmail.com with ESMTPSA id u11-20020a170903308b00b001d76e9ce688sm1606911plc.114.2024.01.23.14.43.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jan 2024 14:40:16 -0800 (PST)
-Message-ID: <e785d5df-9873-46ab-8b8a-7135da6ed273@kernel.dk>
-Date: Tue, 23 Jan 2024 15:40:15 -0700
+        Tue, 23 Jan 2024 14:43:07 -0800 (PST)
+Message-ID: <cff4ba69-cc21-4af9-8a44-503649677b9c@kernel.dk>
+Date: Tue, 23 Jan 2024 15:43:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -69,46 +69,57 @@ To: io-uring@vger.kernel.org, linux-security-module@vger.kernel.org,
  Paul Moore <paul@paul-moore.com>
 References: <20240123215501.289566-2-paul@paul-moore.com>
  <170604930501.2065523.10114697425588415558.b4-ty@kernel.dk>
-In-Reply-To: <170604930501.2065523.10114697425588415558.b4-ty@kernel.dk>
+ <e785d5df-9873-46ab-8b8a-7135da6ed273@kernel.dk>
+In-Reply-To: <e785d5df-9873-46ab-8b8a-7135da6ed273@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 1/23/24 3:35 PM, Jens Axboe wrote:
-> 
-> On Tue, 23 Jan 2024 16:55:02 -0500, Paul Moore wrote:
->> We need to correct some aspects of the IORING_OP_FIXED_FD_INSTALL
->> command to take into account the security implications of making an
->> io_uring-private file descriptor generally accessible to a userspace
->> task.
+On 1/23/24 3:40 PM, Jens Axboe wrote:
+> On 1/23/24 3:35 PM, Jens Axboe wrote:
 >>
->> The first change in this patch is to enable auditing of the FD_INSTALL
->> operation as installing a file descriptor into a task's file descriptor
->> table is a security relevant operation and something that admins/users
->> may want to audit.
+>> On Tue, 23 Jan 2024 16:55:02 -0500, Paul Moore wrote:
+>>> We need to correct some aspects of the IORING_OP_FIXED_FD_INSTALL
+>>> command to take into account the security implications of making an
+>>> io_uring-private file descriptor generally accessible to a userspace
+>>> task.
+>>>
+>>> The first change in this patch is to enable auditing of the FD_INSTALL
+>>> operation as installing a file descriptor into a task's file descriptor
+>>> table is a security relevant operation and something that admins/users
+>>> may want to audit.
+>>>
+>>> [...]
 >>
->> [...]
+>> Applied, thanks!
+>>
+>> [1/1] io_uring: enable audit and restrict cred override for IORING_OP_FIXED_FD_INSTALL
+>>       commit: 16bae3e1377846734ec6b87eee459c0f3551692c
 > 
-> Applied, thanks!
+> So after doing that and writing the test case and testing it, it dawned
+> on me that we should potentially allow the current task creds. And to
+> make matters worse, this is indeed what happens if eg the application
+> would submit this with IOSQE_ASYNC or if it was part of a linked series
+> and we marked it async.
 > 
-> [1/1] io_uring: enable audit and restrict cred override for IORING_OP_FIXED_FD_INSTALL
->       commit: 16bae3e1377846734ec6b87eee459c0f3551692c
+> While I originally reasoned for why this is fine as it'd be silly to
+> register your current creds and then proceed to pass in that personality,
+> I do think that we should probably handle that case and clearly separate
+> the case of "we assigned creds from the submitting task because we're
+> handing it to a thread" vs "the submitting task asked for other creds
+> that were previously registered".
+> 
+> I'll take a look and see what works the best here.
 
-So after doing that and writing the test case and testing it, it dawned
-on me that we should potentially allow the current task creds. And to
-make matters worse, this is indeed what happens if eg the application
-would submit this with IOSQE_ASYNC or if it was part of a linked series
-and we marked it async.
+Actually, a quick look and it's fine, the usual async offload will do
+the right thing. So let's just keep it as-is, I don't think there's any
+point to complicating this for some theoretically-valid-but-obscure use
+case!
 
-While I originally reasoned for why this is fine as it'd be silly to
-register your current creds and then proceed to pass in that personality,
-I do think that we should probably handle that case and clearly separate
-the case of "we assigned creds from the submitting task because we're
-handing it to a thread" vs "the submitting task asked for other creds
-that were previously registered".
+FWIW, the test case is here, and I'll augment it now to add IOSQE_ASYNC
+as well just to cover all the bases.
 
-I'll take a look and see what works the best here.
+https://git.kernel.dk/cgit/liburing/commit/?id=bc576ca398661b266d3e4a4f5db3a9cf7f33fe62
 
 -- 
 Jens Axboe
-
 
