@@ -1,52 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE193D967;
-	Mon, 22 Jan 2024 15:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9743A51C32
+	for <linux-security-module@vger.kernel.org>; Tue, 23 Jan 2024 06:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705937155; cv=none; b=uIaebfcqVnUqgNyzZWUVz+kJE7veAlC+TNTx7vaH/OCJDasKSRUokXfUc67/Z6HDy5j8vSjAOTnzR0z9CAC0k+oSManKYP8DORzogAlUn4gBZ9EYNtTdUzgDmDzfdItE9T+Dcc4T8WOc9tDJb78nQEiQ+7voURuli5pgtg+4B44=
+	t=1705990647; cv=none; b=CY8MyohKGA0EbQsgAI+rPwHxo0JewbeMqVqgjh2UUD0WDtJiaft6tyjxiv4WqErA9HuvACSeP3leuX0u5IpRgw8qX7vmBhsU+/y36In4ifKE06f9X7q/KinoD1JmV5g1DqKURWikzuWx1g3UvzLhAPAB1tzzGRYFmoO826BpFjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705937155; c=relaxed/simple;
-	bh=C8wjqeeCf8FT+5eE7w6W/zlZBQKoCYKXMmOWmrJ3NT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Za5U2UMA0Ft0K2VvppoSxpa2er4YX6weGiuEifgskX0LZkRK1ND2ajmEsDMVPF91c/C0jdrwsX9fz/7QEtsDE7ZQN6zkIFHVcu/Q6ZcTiA1AeZP6738CLIadvRxDscN+EedOxd+9EyU9kI7TNYgqPt/ah3sXPLP/GMWaqqKTcBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgcnszHe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1705990647; c=relaxed/simple;
+	bh=zyiBIARi2gCAD88pf7LI0gLxnA/Auw7ibrs2/QGivLs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QbkYEsc0LpOIKr22PSLgaYUnA66NChLk6/zkc0xDyaDgvS2x707imH78Q8Uop2vFpwWFpXPUePwosGhrPCGM0dVK6fUHW/3NKZInuTfm4gUKoxgQtUDUunXtBmiXKuh2l/Mz+/VuKEqHVYW5uKY9lfnI9JyQ1WORVKxYJitghEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fUCNlY8p; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgcnszHe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21EA2C43394;
-	Mon, 22 Jan 2024 15:25:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705937155;
-	bh=C8wjqeeCf8FT+5eE7w6W/zlZBQKoCYKXMmOWmrJ3NT4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WgcnszHeIqZfVOkJTdGhrZ7/tCMb25qdwQFCYDCEa/sEgaws0v8FTqKz2nKPQOUd6
-	 PGORtsH0d/ZsIzYx7vSzFBeSEdrfDinh2l7txWv3km6m3y0iYtSpVy2vSAAIBKxUvU
-	 4pD0IdNdk6HiiJqt98eu4rTmBoHUkFrA+4274wjBGjdbDtXg7O6VW4pWjYs6qnEgT0
-	 qfZikyI4j59EMdJU07N86K2DfF6zXXAp7X+9XXDsAumJEi2akp6B/WeeDykW2KsIhP
-	 HjXwiBLG2cxwgneXwJQYrlUHJzOHEqSu95AODncSvsmza5XCBkjTYmXyq93ELvHzpu
-	 GPgZ3I06bCMYw==
-Date: Mon, 22 Jan 2024 16:25:50 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, 
-	netdev@vger.kernel.org, paul@paul-moore.com, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [GIT PULL] BPF token for v6.8
-Message-ID: <20240122-scheu-amtlich-2ecfb8501f84@brauner>
-References: <20240119050000.3362312-1-andrii@kernel.org>
- <CAHk-=wg3BUNT1nmisracRWni9LzRYxeanj8sePCjya0HTEnCCQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fUCNlY8p"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2cdeb808f28so38130601fa.1
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Jan 2024 22:17:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1705990643; x=1706595443; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zyiBIARi2gCAD88pf7LI0gLxnA/Auw7ibrs2/QGivLs=;
+        b=fUCNlY8pl5j3AE3+LM5LHvYy/m238Xt4aoTFaPttg1gWu+rvF/b/2FRevWUUW2TeLB
+         /KHywthbQHi3Lmm6ae7XIiyDGrm6PXWqUep/QVvCK8w9VZR0eGSRzuaehVjWCuMLjO1g
+         3z51SDJCiOLiWqTKV4Y3sNlpGT0ofGeSYz043SfYt3/vbGsDpUexhARFJVH9Kn3ZGoAp
+         9pZ1Bv5sEKy3S8+GcSfLHqmxTYWojNio9lj9kfqh1s4uCrYIc/ng/gi8Mlp9TH2jfk2p
+         qJf+xKgHMI/ViiZ98bvUJD2WC/bvieyGNxFGowciVxwguiQnYXILkL1jFXtqX+wOuRIy
+         3JRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705990643; x=1706595443;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zyiBIARi2gCAD88pf7LI0gLxnA/Auw7ibrs2/QGivLs=;
+        b=pZPFG1X6Sjlfc58/qW9X3YY6J1HRoNJK//K1zBuIe1LdML08k120FcdVgxkAEw4+5o
+         +rRbvBikNvrJDTQlfwA57MTxPz/MNbKERmSsJxeffJdXnpDbLTvvb1vZaENFPpj/Teyi
+         S1bbgFCI0lNRbD9L+ikiIzxItvD768yuPjQxNdWMeraptTD+mDeyer12pPEkzgdUrn/O
+         QEHAkQ6HmZjhpewAGsJlnTxqcILjlCS02gjMG31WrUKtYw8wbCAOYg80LmiduNORkAMK
+         uzZHJAXzH09un4ebHM8eFgla3ksaV1zWFBp+CyfsL3RilsdrX/gU50jPn5XU/5HROmbu
+         n2rw==
+X-Gm-Message-State: AOJu0YzCHdE8Hu/IVsTsglK+MUDv22g3KyL5vW20HqhLsv1KKRxqWTeK
+	GfzAs7Sn2lDvAkvsKNBv5BTLvXIsDEvh+PthkAo1fkkDmkV43UhiYjKd1Jrf17yxPSvBn16BQzP
+	V22MG1k3Ds5a+VyVEjZ1yoN5MK4J5FO8ZW/4=
+X-Google-Smtp-Source: AGHT+IHZbUYq5QBxBHBz4DwOzI7V16ATmmA8XyYoc0dqQXnXLXIM4iqegvEYh1nysac8tlMwkZnbgX0FvbxY9bBbv8Q=
+X-Received: by 2002:a05:651c:152:b0:2cd:191a:c1bf with SMTP id
+ c18-20020a05651c015200b002cd191ac1bfmr3956083ljd.14.1705990643288; Mon, 22
+ Jan 2024 22:17:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wg3BUNT1nmisracRWni9LzRYxeanj8sePCjya0HTEnCCQ@mail.gmail.com>
+References: <20230902004841.614102-1-shaw.leon@gmail.com> <0e81fdc2-9c4b-4147-91cd-22fa263b0a3b@canonical.com>
+In-Reply-To: <0e81fdc2-9c4b-4147-91cd-22fa263b0a3b@canonical.com>
+From: Xiao Liang <shaw.leon@gmail.com>
+Date: Tue, 23 Jan 2024 14:16:44 +0800
+Message-ID: <CABAhCOQDQV_LHXv5-aosJu9+sP6wE9kDgYB8n-hYB=XKS0B_fg@mail.gmail.com>
+Subject: Re: [PATCH] apparmor: Fix null pointer deref when receiving skb
+ during sock creation
+To: John Johansen <john.johansen@canonical.com>
+Cc: linux-security-module@vger.kernel.org, Matthew Garrett <mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> I think Christian's concerns were sorted out too, but in case I'm
-> mistaken, just holler.
+On Mon, Oct 16, 2023 at 11:36=E2=80=AFAM John Johansen
+<john.johansen@canonical.com> wrote:
+>
+> On 9/1/23 17:48, Xiao Liang wrote:
+> > The panic below is observed when receiving ICMP packets with secmark se=
+t
+> > while an ICMP raw socket is being created. SK_CTX(sk)->label is updated
+> > in apparmor_socket_post_create(), but the packet is delivered to the
+> > socket before that, causing the null pointer dereference.
+> > Drop the packet if label context is not set.
+>
+> not sure how I dropped this one, thanks for the patch. I have pulled it i=
+nto the apparmor tree
+>
 
-Yes, I think everything is covered. Thanks for checking!
+I haven't seen this patch in the tree yet. May I know the status?
