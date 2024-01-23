@@ -1,85 +1,107 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9743A51C32
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Jan 2024 06:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6903611E;
+	Tue, 23 Jan 2024 06:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.123.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705990647; cv=none; b=CY8MyohKGA0EbQsgAI+rPwHxo0JewbeMqVqgjh2UUD0WDtJiaft6tyjxiv4WqErA9HuvACSeP3leuX0u5IpRgw8qX7vmBhsU+/y36In4ifKE06f9X7q/KinoD1JmV5g1DqKURWikzuWx1g3UvzLhAPAB1tzzGRYFmoO826BpFjo=
+	t=1705991560; cv=none; b=bE1pqiFFozB5an/pcdhiPkrO3w+epYLnAtx8HyzMJv9cM3OgOc92/NYOpNagraaYd1uqiDIMg5B3RnJu3Dyg3ezIr8iamtGtEPeGh79A4AOak0g7eEGY9/Uv++GeflwkpeAga4g9qjp7fG0s83k0ApwQCmidPb3YAdBKTB9kfUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705990647; c=relaxed/simple;
-	bh=zyiBIARi2gCAD88pf7LI0gLxnA/Auw7ibrs2/QGivLs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QbkYEsc0LpOIKr22PSLgaYUnA66NChLk6/zkc0xDyaDgvS2x707imH78Q8Uop2vFpwWFpXPUePwosGhrPCGM0dVK6fUHW/3NKZInuTfm4gUKoxgQtUDUunXtBmiXKuh2l/Mz+/VuKEqHVYW5uKY9lfnI9JyQ1WORVKxYJitghEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fUCNlY8p; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fUCNlY8p"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2cdeb808f28so38130601fa.1
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Jan 2024 22:17:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705990643; x=1706595443; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zyiBIARi2gCAD88pf7LI0gLxnA/Auw7ibrs2/QGivLs=;
-        b=fUCNlY8pl5j3AE3+LM5LHvYy/m238Xt4aoTFaPttg1gWu+rvF/b/2FRevWUUW2TeLB
-         /KHywthbQHi3Lmm6ae7XIiyDGrm6PXWqUep/QVvCK8w9VZR0eGSRzuaehVjWCuMLjO1g
-         3z51SDJCiOLiWqTKV4Y3sNlpGT0ofGeSYz043SfYt3/vbGsDpUexhARFJVH9Kn3ZGoAp
-         9pZ1Bv5sEKy3S8+GcSfLHqmxTYWojNio9lj9kfqh1s4uCrYIc/ng/gi8Mlp9TH2jfk2p
-         qJf+xKgHMI/ViiZ98bvUJD2WC/bvieyGNxFGowciVxwguiQnYXILkL1jFXtqX+wOuRIy
-         3JRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705990643; x=1706595443;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zyiBIARi2gCAD88pf7LI0gLxnA/Auw7ibrs2/QGivLs=;
-        b=pZPFG1X6Sjlfc58/qW9X3YY6J1HRoNJK//K1zBuIe1LdML08k120FcdVgxkAEw4+5o
-         +rRbvBikNvrJDTQlfwA57MTxPz/MNbKERmSsJxeffJdXnpDbLTvvb1vZaENFPpj/Teyi
-         S1bbgFCI0lNRbD9L+ikiIzxItvD768yuPjQxNdWMeraptTD+mDeyer12pPEkzgdUrn/O
-         QEHAkQ6HmZjhpewAGsJlnTxqcILjlCS02gjMG31WrUKtYw8wbCAOYg80LmiduNORkAMK
-         uzZHJAXzH09un4ebHM8eFgla3ksaV1zWFBp+CyfsL3RilsdrX/gU50jPn5XU/5HROmbu
-         n2rw==
-X-Gm-Message-State: AOJu0YzCHdE8Hu/IVsTsglK+MUDv22g3KyL5vW20HqhLsv1KKRxqWTeK
-	GfzAs7Sn2lDvAkvsKNBv5BTLvXIsDEvh+PthkAo1fkkDmkV43UhiYjKd1Jrf17yxPSvBn16BQzP
-	V22MG1k3Ds5a+VyVEjZ1yoN5MK4J5FO8ZW/4=
-X-Google-Smtp-Source: AGHT+IHZbUYq5QBxBHBz4DwOzI7V16ATmmA8XyYoc0dqQXnXLXIM4iqegvEYh1nysac8tlMwkZnbgX0FvbxY9bBbv8Q=
-X-Received: by 2002:a05:651c:152:b0:2cd:191a:c1bf with SMTP id
- c18-20020a05651c015200b002cd191ac1bfmr3956083ljd.14.1705990643288; Mon, 22
- Jan 2024 22:17:23 -0800 (PST)
+	s=arc-20240116; t=1705991560; c=relaxed/simple;
+	bh=UB0JVtkwXrMLRZTn2mIH3m4UcL4y+gCZIzpUMshRf5g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Zmx3OA8iX0w4zqORFkLw7TFyhyT9fRZc8RtdaCiUCk0uoIpiU9m4D3hV6HJjxo12IrG5KWS6MpNnlyY73NQRRXvBDbjCD9XY4hgHB4cg3Yc3TmuwkJM38P6ZUwthxeoRz9Gktf1DSyHfCoOArgbgF+HZdIjHhqXiScz1/ZLkYr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com; spf=pass smtp.mailfrom=h3c.com; arc=none smtp.client-ip=60.191.123.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
+Received: from mail.maildlp.com ([172.25.15.154])
+	by h3cspam02-ex.h3c.com with ESMTP id 40N6TIvp065821;
+	Tue, 23 Jan 2024 14:29:18 +0800 (GMT-8)
+	(envelope-from hu.yadi@h3c.com)
+Received: from DAG6EX02-IMDC.srv.huawei-3com.com (unknown [10.62.14.11])
+	by mail.maildlp.com (Postfix) with ESMTP id 44C142004BC2;
+	Tue, 23 Jan 2024 14:33:57 +0800 (CST)
+Received: from localhost.localdomain (10.99.206.12) by
+ DAG6EX02-IMDC.srv.huawei-3com.com (10.62.14.11) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1258.27; Tue, 23 Jan 2024 14:29:20 +0800
+From: Hu Yadi <hu.yadi@h3c.com>
+To: <jmorris@namei.org>, <serge@hallyn.com>, <shuah@kernel.org>,
+        <mathieu.desnoyers@efficios.com>, <mic@digikod.net>,
+        <amir73il@gmail.com>, <brauner@kernel.org>, <avagin@google.com>
+CC: <linux-api@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <514118380@qq.com>,
+        <konstantin.meskhidze@huawei.com>, "Hu.Yadi"
+	<hu.yadi@h3c.com>
+Subject: [PATCH] selftests/landlock:Fix net_test build issues with old libc
+Date: Tue, 23 Jan 2024 14:26:21 +0800
+Message-ID: <20240123062621.25082-1-hu.yadi@h3c.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230902004841.614102-1-shaw.leon@gmail.com> <0e81fdc2-9c4b-4147-91cd-22fa263b0a3b@canonical.com>
-In-Reply-To: <0e81fdc2-9c4b-4147-91cd-22fa263b0a3b@canonical.com>
-From: Xiao Liang <shaw.leon@gmail.com>
-Date: Tue, 23 Jan 2024 14:16:44 +0800
-Message-ID: <CABAhCOQDQV_LHXv5-aosJu9+sP6wE9kDgYB8n-hYB=XKS0B_fg@mail.gmail.com>
-Subject: Re: [PATCH] apparmor: Fix null pointer deref when receiving skb
- during sock creation
-To: John Johansen <john.johansen@canonical.com>
-Cc: linux-security-module@vger.kernel.org, Matthew Garrett <mjg59@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BJSMTP01-EX.srv.huawei-3com.com (10.63.20.132) To
+ DAG6EX02-IMDC.srv.huawei-3com.com (10.62.14.11)
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:h3cspam02-ex.h3c.com 40N6TIvp065821
 
-On Mon, Oct 16, 2023 at 11:36=E2=80=AFAM John Johansen
-<john.johansen@canonical.com> wrote:
->
-> On 9/1/23 17:48, Xiao Liang wrote:
-> > The panic below is observed when receiving ICMP packets with secmark se=
-t
-> > while an ICMP raw socket is being created. SK_CTX(sk)->label is updated
-> > in apparmor_socket_post_create(), but the packet is delivered to the
-> > socket before that, causing the null pointer dereference.
-> > Drop the packet if label context is not set.
->
-> not sure how I dropped this one, thanks for the patch. I have pulled it i=
-nto the apparmor tree
->
+From: "Hu.Yadi" <hu.yadi@h3c.com>
 
-I haven't seen this patch in the tree yet. May I know the status?
+Fixes: a549d055a22e ("selftests/landlock: Add network tests")
+
+one issues comes up while building selftest/landlock/net_test on my side
+(gcc 7.3/glibc-2.28/kernel-4.19)
+
+net_test.c: In function ‘set_service’:
+net_test.c:91:45: warning: implicit declaration of function ‘gettid’; [-Wimplicit-function-declaration]
+    "_selftests-landlock-net-tid%d-index%d", gettid(),
+                                             ^~~~~~
+                                             getgid
+net_test.c:(.text+0x4e0): undefined reference to `gettid'
+
+Signed-off-by: Hu Yadi <hu.yadi@h3c.com>
+Suggested-by: Jiao <jiaoxupo@h3c.com>
+Reviewed-by: Berlin <berlin@h3c.com>
+---
+ tools/testing/selftests/landlock/net_test.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+index 929e21c4db05..6cc1bb1a9166 100644
+--- a/tools/testing/selftests/landlock/net_test.c
++++ b/tools/testing/selftests/landlock/net_test.c
+@@ -18,9 +18,15 @@
+ #include <sys/prctl.h>
+ #include <sys/socket.h>
+ #include <sys/un.h>
+-
++#include <sys/syscall.h>
+ #include "common.h"
+
++
++static pid_t sys_gettid(void)
++{
++	return syscall(__NR_gettid);
++}
++
+ const short sock_port_start = (1 << 10);
+
+ static const char loopback_ipv4[] = "127.0.0.1";
+@@ -88,7 +94,7 @@ static int set_service(struct service_fixture *const srv,
+ 	case AF_UNIX:
+ 		srv->unix_addr.sun_family = prot.domain;
+ 		sprintf(srv->unix_addr.sun_path,
+-			"_selftests-landlock-net-tid%d-index%d", gettid(),
++			"_selftests-landlock-net-tid%d-index%d", sys_gettid(),
+ 			index);
+ 		srv->unix_addr_len = SUN_LEN(&srv->unix_addr);
+ 		srv->unix_addr.sun_path[0] = '\0';
+--
+2.23.0
+
