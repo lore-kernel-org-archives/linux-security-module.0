@@ -1,143 +1,123 @@
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8598487B9
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Jan 2024 21:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123C14E1BC
+	for <linux-security-module@vger.kernel.org>; Tue, 23 Jan 2024 22:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706047040; cv=none; b=VczvIo5IMpnqjmATehdynw1QlZAi6ig/XzmvCki1riilH5Lr7RIDGR9r7+8JmYIGWMkORqfzDBhPyUSYwsUJbU9GqCB1Ww2heA/9Hh/akFCKKiQKY5ecJJFfXC8VPdWACG6GHcCLCNZBD4S1+NSuSw8DFZS9Q6tSoSErXYNzhsM=
+	t=1706047938; cv=none; b=qpvfpz50Kf5TjXHVj0CFPfGkYyYT/mLtpEv4YwqQkoXD9wbicnF9yQMHYtid/iQLYfYDNmfpulsT9crGrIDVLE4OgaoLrXkJeDHRd7hqC0mpYaQJGLlfyZ1EToBDArMwMgkHVrgc7wzkgy16LOp0zGpMXlc0Vzl5klT0Af2vRUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706047040; c=relaxed/simple;
-	bh=cszWx0o2HPusfqkpOfHXrdNctgQuMhLZAjzKhBheWSo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rrBS7vI6xFSRcYiMUZFILJTpqhImWkN/9KGF6T64ZBMPPdgdUF+1DPHTdZpwx2uInxAAxMdV3J7xt3E0n7eKGCv2tbehMxgURxlM/+gUWPqCyBUx2fpZldaPMFSK1N0q2lyftX+AAGA4xr402a7W5yoLoNPntoIWbC1cYou050k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Fx6/qw+d; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1706047938; c=relaxed/simple;
+	bh=Moy+hnHnq3f85k/cPBzerP9U753OoKO9eNgn+ielp08=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KsviIz3UHstJENh0AuI7LAns+UbdzI5N/f4hsvivJznLooo9nbW//6x7SuyjZNv7ccYtyPbjATjz01xH4z3j/mVwmLHrzxwJf2dLrNkMM8YsaCtlzyNMzrmsumnX10KCLwIZLBhmhmWYE6Y/IYzaNN3cQ5eBDhazf3vGTHFfT5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yI61+eRd; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Fx6/qw+d"
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dc22ade26d8so3697485276.1
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Jan 2024 13:57:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yI61+eRd"
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-290327b310eso658137a91.1
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Jan 2024 14:12:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1706047038; x=1706651838; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TxtwJgE4RYnu6on0jd5HbEaZUzse4dI8DHc5hHUQCOU=;
-        b=Fx6/qw+dQx4nPboaufNv8bXvEiz6Ms6TKgpOm2Iy/XB94eqAfPHoUVp6EaQ/B92X7p
-         qnqoyhpvCH0zoogw8T1US3AWnw/ED0tRx48Cy4s6Zk9W/l+ay7BYDD16rCSSxYxxXG52
-         zktIQTlZfP8aFWB01/4mEXpbv5rk2HeDdB/UINFpRkdtZMjQnmF2K4KQnBem+idyyCeo
-         ktruxnsNj/56/kA1hVwJibqN6JfMUK66EksIo3gLt6vFtCvwAntoVUmeM9rdHd6roOsj
-         YSgGL91suC46Pjs4QDCc2ZRs6lwtxnb5hvg5R13hcx/rCREY2kBfYNOi3Aq0RBgYJTwf
-         Rrjg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1706047936; x=1706652736; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rq0z14Ii88qAlUObbDzs0mcPd0Y0cMCwmMHUzqVF6YQ=;
+        b=yI61+eRdtbTK04lwamCvLU3WAffYQcTAcZUAslfOIwbbuALsPHqS/VlMGuZRb0noxd
+         JrrnXEExDkyuEvYxTkP7OUyjwpG2vJqJuJ/hERahMCn1IJjhe4dLzUxVqD4c9qaWBf6y
+         La3yNZMe7TJ0W/f9HSGNWHTXi6EjII/fyaBlmG7UkgT1buHZtoZxQE73dktGlgvFuWrx
+         Wc+OH3/uw/JdAFSM+0lgRHK8Ao/5VMCo0gtUR22OkBoLtyd3wapsYjk1ETqUCRPsKAbM
+         TiwkrGtSRgXBkH2JRj2ATpGC6HERbV5NlQ7N7y2tW6NsNzzZqYYExE6dLH3Copc6zoou
+         Rp1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706047038; x=1706651838;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TxtwJgE4RYnu6on0jd5HbEaZUzse4dI8DHc5hHUQCOU=;
-        b=urENUFPLhJJXKYAFBN8JaURZz3oM7LxDevJzAUuog5GOEtuxJcJ0v0VqXX3uaOJThX
-         QxZaf6b4lU7wMSYZlvnaZskWyWVdj+06Itr6ocdfSRvXZsutBkFqY2hGkb6QS6v/B56q
-         1TGPHimX0Qom3S7fFhtSwvXFBMEMGk3sm0ft1mKWhY0PZ/NLAZjlPBPsGgvC4WQhi4tA
-         bL3nVsmboPSXe9FXeOZsgd1Z9r/K7OBQNrgBZ36crAe1SB8YHBK87Ddm1YosDPuRMGkR
-         Kk1zubEIy2BkMnBJHf9AGpbXBONUNdAigmxHhyp19QnTCAPjMqsQq1+u7FRS1VnOTi1d
-         +y5Q==
-X-Gm-Message-State: AOJu0YyL+h680Qlu6M72dJ/IZubxt3h5vfy09l3p7qD48We93qV7a0w3
-	pkuvZ+0nHG9c8KCOqMGqtos5ddG8T7VT/bH4oLhFZ0RyY3xkDmKYtPdC5yg+/xxefS/7OfQ/i2l
-	AGwNL+I0tYjkxHEaUgr/y1sbolBAu/YR5Jzxkl5phxeP9OCeyBw==
-X-Google-Smtp-Source: AGHT+IFi5/1dep4Gc28z4r+BSC3PuU3HsK/J59bSjesypTnCZF5lXu98VGDHSmsvxVeW948WwwG5Y4WrdFcAJIF6Sj8=
-X-Received: by 2002:a25:aa71:0:b0:dbd:4c39:30bf with SMTP id
- s104-20020a25aa71000000b00dbd4c3930bfmr4353836ybi.98.1706047037953; Tue, 23
- Jan 2024 13:57:17 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706047936; x=1706652736;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rq0z14Ii88qAlUObbDzs0mcPd0Y0cMCwmMHUzqVF6YQ=;
+        b=ZVY87N5rlVF4oag9MR+0k+sm6RIkqN5QdqsR98MnHJXJ5RnHBj7D/EjwqRmY8Om3NQ
+         Cjh6RIl5Q7b5dlJDp5EMMYA72On0Sa03eJ3u5E+33hRfBB1B/Jn95f9vQuloMuUZNXC/
+         /puUgv8hebKZoyFhPopkhhdOxjRJPWKW6uc6RveB1ZhJbjkt5lS6M/uBQmQq8rYIMK/4
+         T4ZTmAqJHITOQSfZMmOWaIS1JXRIGCpiBlI0grnJG9WII5IOmjbWdmXOK8n0a9JSnvIi
+         A/ALsoT3gWhagYoDuskmVvBReZZILbwomtPvSaxhlihDTkO4zTyxhis0U30eWzamBDlS
+         /BaA==
+X-Gm-Message-State: AOJu0Yys1/6vAysEtZnCm9MampJ6CNjr68NBg57Ss1/qAtIfgcBgV4fz
+	esNDJzx0FENh+ggfrMAHAOHUVE6TqPFWLD/dVRBfvcnskucxjpt63j77MoeMVsUYYMhzxQgiy3s
+	pcDA=
+X-Google-Smtp-Source: AGHT+IEuEdQyZz6k3HPaHTpiIwi8nPgiYt0chQK1YArsjluKjpj9i+5ue9+w7Lo1EGbrtjNIIuyRfA==
+X-Received: by 2002:a17:90a:c915:b0:290:1f0f:fc89 with SMTP id v21-20020a17090ac91500b002901f0ffc89mr689048pjt.0.1706047936404;
+        Tue, 23 Jan 2024 14:12:16 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id ee6-20020a17090afc4600b0028e17b2f27esm12468545pjb.13.2024.01.23.14.12.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jan 2024 14:12:15 -0800 (PST)
+Message-ID: <dbd1bfa4-7583-4be9-ba00-cde4f340a509@kernel.dk>
+Date: Tue, 23 Jan 2024 15:12:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: enable audit and restrict cred override for
+ IORING_OP_FIXED_FD_INSTALL
+Content-Language: en-US
+To: Paul Moore <paul@paul-moore.com>, io-uring@vger.kernel.org,
+ linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+ audit@vger.kernel.org
 References: <20240123215501.289566-2-paul@paul-moore.com>
-In-Reply-To: <20240123215501.289566-2-paul@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 23 Jan 2024 16:57:06 -0500
-Message-ID: <CAHC9VhRMsUkNHpc45H4PVnrGj77RDR_BLR9nN89Nh725ke1ECg@mail.gmail.com>
-Subject: Re: [PATCH] io_uring: enable audit and restrict cred override for IORING_OP_FIXED_FD_INSTALL
-To: io-uring@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, audit@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ <CAHC9VhRMsUkNHpc45H4PVnrGj77RDR_BLR9nN89Nh725ke1ECg@mail.gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAHC9VhRMsUkNHpc45H4PVnrGj77RDR_BLR9nN89Nh725ke1ECg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jan 23, 2024 at 4:55=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> We need to correct some aspects of the IORING_OP_FIXED_FD_INSTALL
-> command to take into account the security implications of making an
-> io_uring-private file descriptor generally accessible to a userspace
-> task.
->
-> The first change in this patch is to enable auditing of the FD_INSTALL
-> operation as installing a file descriptor into a task's file descriptor
-> table is a security relevant operation and something that admins/users
-> may want to audit.
->
-> The second change is to disable the io_uring credential override
-> functionality, also known as io_uring "personalities", in the
-> FD_INSTALL command.  The credential override in FD_INSTALL is
-> particularly problematic as it affects the credentials used in the
-> security_file_receive() LSM hook.  If a task were to request a
-> credential override via REQ_F_CREDS on a FD_INSTALL operation, the LSM
-> would incorrectly check to see if the overridden credentials of the
-> io_uring were able to "receive" the file as opposed to the task's
-> credentials.  After discussions upstream, it's difficult to imagine a
-> use case where we would want to allow a credential override on a
-> FD_INSTALL operation so we are simply going to block REQ_F_CREDS on
-> IORING_OP_FIXED_FD_INSTALL operations.
->
-> Fixes: dc18b89ab113 ("io_uring/openclose: add support for IORING_OP_FIXED=
-_FD_INSTALL")
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  io_uring/opdef.c     | 1 -
->  io_uring/openclose.c | 4 ++++
->  2 files changed, 4 insertions(+), 1 deletion(-)
+On 1/23/24 2:57 PM, Paul Moore wrote:
+> On Tue, Jan 23, 2024 at 4:55?PM Paul Moore <paul@paul-moore.com> wrote:
+>>
+>> We need to correct some aspects of the IORING_OP_FIXED_FD_INSTALL
+>> command to take into account the security implications of making an
+>> io_uring-private file descriptor generally accessible to a userspace
+>> task.
+>>
+>> The first change in this patch is to enable auditing of the FD_INSTALL
+>> operation as installing a file descriptor into a task's file descriptor
+>> table is a security relevant operation and something that admins/users
+>> may want to audit.
+>>
+>> The second change is to disable the io_uring credential override
+>> functionality, also known as io_uring "personalities", in the
+>> FD_INSTALL command.  The credential override in FD_INSTALL is
+>> particularly problematic as it affects the credentials used in the
+>> security_file_receive() LSM hook.  If a task were to request a
+>> credential override via REQ_F_CREDS on a FD_INSTALL operation, the LSM
+>> would incorrectly check to see if the overridden credentials of the
+>> io_uring were able to "receive" the file as opposed to the task's
+>> credentials.  After discussions upstream, it's difficult to imagine a
+>> use case where we would want to allow a credential override on a
+>> FD_INSTALL operation so we are simply going to block REQ_F_CREDS on
+>> IORING_OP_FIXED_FD_INSTALL operations.
+>>
+>> Fixes: dc18b89ab113 ("io_uring/openclose: add support for IORING_OP_FIXED_FD_INSTALL")
+>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+>> ---
+>>  io_uring/opdef.c     | 1 -
+>>  io_uring/openclose.c | 4 ++++
+>>  2 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> Not having an IORING_OP_FIXED_FD_INSTALL test handy I only did some
+> basic sanity tests before posting, I would appreciate it if the
+> io_uring folks could run this through whatever FD_INSTALL tests you
+> have.
 
-Not having an IORING_OP_FIXED_FD_INSTALL test handy I only did some
-basic sanity tests before posting, I would appreciate it if the
-io_uring folks could run this through whatever FD_INSTALL tests you
-have.
+You bet, I'm going to augment the existing test case with one that
+passes in creds as well just to verify that part fails as it should as
+well.
 
-> diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-> index 6705634e5f52..b1ee3a9c3807 100644
-> --- a/io_uring/opdef.c
-> +++ b/io_uring/opdef.c
-> @@ -471,7 +471,6 @@ const struct io_issue_def io_issue_defs[] =3D {
->         },
->         [IORING_OP_FIXED_FD_INSTALL] =3D {
->                 .needs_file             =3D 1,
-> -               .audit_skip             =3D 1,
->                 .prep                   =3D io_install_fixed_fd_prep,
->                 .issue                  =3D io_install_fixed_fd,
->         },
-> diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-> index 0fe0dd305546..e3357dfa14ca 100644
-> --- a/io_uring/openclose.c
-> +++ b/io_uring/openclose.c
-> @@ -277,6 +277,10 @@ int io_install_fixed_fd_prep(struct io_kiocb *req, c=
-onst struct io_uring_sqe *sq
->         if (flags & ~IORING_FIXED_FD_NO_CLOEXEC)
->                 return -EINVAL;
->
-> +       /* ensure the task's creds are used when installing/receiving fds=
- */
-> +       if (req->flags & REQ_F_CREDS)
-> +               return -EPERM;
-> +
->         /* default to O_CLOEXEC, disable if IORING_FIXED_FD_NO_CLOEXEC is=
- set */
->         ifi =3D io_kiocb_to_cmd(req, struct io_fixed_install);
->         ifi->o_flags =3D O_CLOEXEC;
-> --
-> 2.43.0
+But looking at the patch, this will surely work.
 
---=20
-paul-moore.com
+-- 
+Jens Axboe
+
