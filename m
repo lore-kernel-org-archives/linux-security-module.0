@@ -1,156 +1,90 @@
-Received: from sonic306-28.consmr.mail.ne1.yahoo.com (sonic306-28.consmr.mail.ne1.yahoo.com [66.163.189.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00206402.pphosted.com (mx0a-00206402.pphosted.com [148.163.148.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF44F1E4AB
-	for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 22:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFFC7F
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Jan 2024 00:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706135479; cv=none; b=iOKpTU16P4nEYH/ko52McqVWm9WOk/v2/vVb7v8DXENxnUaZ9DQl2O9woWJ0dwYPOlhNhceOvwRfv7QY9uLBG5l8dsxG/y5dBicGtMR9gEuLaPCej46r7+czoyFYT9a1ToC95TJEp+VTBHn82Hmsx4MUJ1N1pMcz5i1kpc0mYDs=
+	t=1706141297; cv=none; b=Bwz1d1V5vipHn/oKt2gIYoq5mCfiWKWpEWrzBK11laSJzMmlD1JCx/qObSJWUtedkVdFSy8pzkHbAvZaiWbYqnMohBidWOaS5U53JVWJZAcouL4ceKqgLUT82fRjqK0Yg6J4RNZLLE+Ig3jDFfNZ1rT/H+jrUTCDBFQQlfLxBbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706135479; c=relaxed/simple;
-	bh=ncNSKEB8i9H7xvUfioYYp/VoOJk3T8giU+CM5F/GyMc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MUl4n+MNsVXanLxXH9JMFjyXFcQq28ZAsfrsieFM3TB430/tPEaYljD0p9TVQ7S2WSgPEBiXdLVrU2Imhvsrhksw3uhMCusjD32bKo6ryLbjLaAjsGlRJQaqv2EbUPYJK4RSozN/G2Kn/uP6jDEjPyZnoylJUNsmFleczc6y3w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=WfdW4f/5; arc=none smtp.client-ip=66.163.189.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1706141297; c=relaxed/simple;
+	bh=obpX7lAVvPIt0JqJcEimGeThHjCjr1ohRGnXcRFcfWI=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=CuBZ/8+RS2YQ8krGpj5MEmCdb6l2pYS7WhCP7uqXMXP2YTyYEJ3iHC/A0qum9ohFJjQ2VWrQolFkWoJKF9Lr18lGqj7GYka8FMXfQR//QEE5VMvL2xExj9EzNrJSE3a/8GtFt8TI57T/XtSja0n+6T4bu8w3v9z9ZRCKkwE4Y8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com; spf=pass smtp.mailfrom=crowdstrike.com; dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b=n/kz1L0z; arc=none smtp.client-ip=148.163.148.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crowdstrike.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="WfdW4f/5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1706135476; bh=K0ouN+nLZSPECn+2C3BZ1Yg4vdvedoKbDa2WyhtFY38=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=WfdW4f/5Ih/OSgNo+DyKRspxX32wxUbEljnupK8L/tmlybaoOAp0hA5BufPxvbdes56X+izqlCnHdW+P3y+bfGoR6u7tO21KUi/GBYsvNFgGHIXbF2PBOWaK1z1NxDQoUKiCu0QmC1iOeFnzfcyaJuqa/+RDXyIFXSk0i04hjrOzDTdLV7vbamwHt9OMzA2IJ802n7AYRotDMpDQyWz3GOsznBIjC2MvSAO8ZhpnxXql2hQzvuQ+RfEsqhqlm/CRUJSLnfin/GaElX3Nq2Y+vc4Bcqx5c2MLQgQKq47twjcLQnMzRuDw/LGXQGId1FvyDEhqizhsDFbc1N0LFyoZow==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1706135476; bh=DcO2p7KfHcK7ga62DQFXNKrpo3809blgw1ZKffA497L=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=s2dUkVw9XFE2zhyd5fnK79XZj3QxHpsFex4MxhxZdwR92qYGAH4KmHO3xQWZW7lJuIRb0QIdeWeQ79fsLs6U+fvC1FLG47xOqubEKWjFVTPJHS5NvRnfVRMT8YfTjveldnU/TkGS0C3rYMRw71hTC+dYDgzZR4uzECnS/giJSHP4mTC8wGsDw+uKvBg94PU/tKALGvhd1qXl9v2GukIN4vTg/SHFZnKz9iK1H/e/bUfsP+gsM6Ow9LLs1U+Eq1hVlzvaaUjh/spiY3OrrJF1W3isL4A3bCxpdId7Jp1J0YL+FFa5e9eHSP9jgLyhVGa628Gcg+n+ZPMM+mFIRu6PkA==
-X-YMail-OSG: _3ClCVQVM1nWjuWf0B1d1_7qd1yx.3LKY4eSTxK6sKU3EbThvP0op9nLFX7YuaN
- T.1lTdGHyckk.kOm5AhIIVYx4MOVZG4baoEa40ChtfXX1GyGRYesodCnDx_tAV3wsWMu3bmK1Q7T
- meelx_kuN2GYpQ0z7i1T5ZptDdDNYZR_O8nUDT9uXONtZCYwiamPUCwNqc762uPYXYfE6a_nfj_R
- folpvzxtBD7u_GLuPGaLVY4nVmgn4u666D2gxPd.U6f5j63pMagy4CnpO4inedzIOsTttuTuYNsn
- vJLx1wa6UMxA1Zxl0xD6Zj_6Rq7RUQTBJGduc3jcphVlln4YXsfeLp8RWC_k1ySMzzpa2TUMN9Fd
- .22MZ6VUrhfsnT4ixKU0_wrIbiSzTPUaMBZWn1026Lk2Rn7k5KltOJwtuTGuVQtJ_NNuKFtFFu4a
- FvQTrWthk4ylfectSnRIFLX2U62QO6za0TsNWdUPtM4UEagbGXxYhWFybMq2zTsxJEFUpbCG5yJv
- D.BjBYbRLyBwfwxS7ABNPf7W5MM1.wrc2hsgwrjGPV7WpV3S_fHbyRGUNLo8CO5nMSubI0fCriTj
- QZ6FNjnmZN4zz0OHVI_PJFO8fE4DHz7sSfqX2XHzew7WQZegSyGOFtVbAk.AgsDMHO3NzdgzdZ.4
- kklzmTD0ePmMQGCjPan8n5aCGBPkS.GAoGSFqXMizceOhByv1ryKwiQ179BBmcFfYG9tDUKomxJm
- MWmWqzvGaiSlDjDYOkDbUzVF9lapfRuZ.RdICj7hs0BKHfJeDcED8W4f54zUsc8BTD_eIm8vqBe5
- KTQAkqKXsV_EAAGCNlj4596jUOxTQRJmHvA7cN5hkwK7MAe8onOu5k6L3dMwxZ3ixJU3kwxaOoIj
- .htFiTdpPLAvjuxwzlfAUaZUVy5rMF3DVODJreUNzAI7cW49slkuSKGdad0LQBDscl6fDQRyVhb5
- 85IAUR158zrgOQcIlORln69bZIT5SX5ukwhRFyQPzTRNdNVoCsB.owHZxyMwQuRtkKnIaGCeNu.B
- rUHSrCvXmfQWWP72pyx4R1UvlxJj.H_s0jS2oLEzlypq6ks.FiNdLbAaRYY4K838f_eJOgWmX9Ir
- 6CFblf6oT0jSycR4OPz3ovAxUbMoAwjxJI06oPkVZ21A4Y56NRecNe77DF0ASHzt8KOksuTmPxH1
- 9MugJrorMO5LOozLfA6K.kf8BAcXIrlWavV0UeL5FxJoiN6BkrzAMWrUXIVjLQBP_f7N4Sm.b4P9
- tejJgAeuvL0JO7xgKgr7c.N9WPZWt5J3UAnmmV3KNh8iiQ.qt2.bsyL3iZNWtfOFA_3xJOz_P7Gf
- QU_NpTviRNGk_2mJ.MzZaCjpm9NvSVvCo1pO64bco6t59QS3UXOmLq_s.V0wvNYCwFopREdB1Jex
- V4ZwgYWXzteF4j7sIK1ENL0XThjeKljleuJX4LoWwWgAhfj_s4Jd4Kehj1lxSB0hZ_0zcRWk2cyZ
- _Il8EZe87Ne0d5ih4I9_c3AVwut24wjDMza6upIeCd5Dk4lIaHCr.4lOV7pDKJfmHnHmn.x1pKi1
- gs2y7PwJHX.tqV103afr.o8U4VDj0.1FGX9ChNAAm.eLRqIvEOColYnwNaHCsUtIPI9OiD3gUXrg
- rNZopcvJHQClxrnfVdxLEpnvx4Z7aY1ISUKe_yrJZRsOnoLkNh90AMEd48BTVMk3USFmwb3pnJbB
- fcHa6DzxUZoVvnlRF2vkYbwv61Vm9VWVr8dn6fYl.cxhhF37NaqXAkJk3E0gTDKBT9RpTPYoQ2ii
- zVcA61E7BQ8ZIfasw2LNxEmv.7Iu42zBgTAKy8KB5Tq2JpA9pQjS9c8VAFge9PnIPJzSvg.LMGst
- _DXFcszFGFSQ2D6I9sdorn1OnihUwJwdMepU7PNNPTtZaZekK3axqwdR_Ey6PisBzRCeDSH1mwou
- xD6fGJr7qmkaCQ_kMvWcOhRRPc6RAWiHjl1KBCFH9JwWMs4FqZSA9YXjkGOfd9MurPMvyl626rMf
- vpDCjQ7I2UXNqeLuBPSexLOvAkvwANRLj2E5FDHZFf50p9ZEYnrqHbeU1q.k6eW5z6oC.1osuLLU
- eZMEQivgAMgBDmovxK6n__iYK_gTrHFC9XFBZCvE7rLz_uEkh2PEBnGpODOuVjKL7h5tqFmg3Ims
- En.j7nuZzWuhp.ZfX6n7rKGGcRjjsFMN.Qcf0z6u60t6VmArRP95OI8xjh3AcPGRKiJsXJ18QFYI
- VPGPUh_Zoz7CN.mVfi.N2Ypl1r944dD4HTJTQjglGohEOxPx29mK2gndUyoo0XNVzCrzyu.j9hDg
- 8vd3DRzie_Qgq
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: b3c06742-66d1-4933-9b7c-458d5954b9e7
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Wed, 24 Jan 2024 22:31:16 +0000
-Received: by hermes--production-gq1-78d49cd6df-mnx8f (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5c48bb728c9087adeaa06b5a440f689f;
-          Wed, 24 Jan 2024 22:31:12 +0000 (UTC)
-Message-ID: <53897379-0c7a-4da7-870c-1eb7e822a129@schaufler-ca.com>
-Date: Wed, 24 Jan 2024 14:31:10 -0800
+	dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b="n/kz1L0z"
+Received: from pps.filterd (m0354652.ppops.net [127.0.0.1])
+	by mx0a-00206402.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40OKrTEG009106
+	for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 23:46:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crowdstrike.com;
+	 h=from:to:subject:date:message-id:content-type:content-id
+	:content-transfer-encoding:mime-version; s=default; bh=obpX7lAVv
+	PIt0JqJcEimGeThHjCjr1ohRGnXcRFcfWI=; b=n/kz1L0zDu2v9Ty198lFx5jPD
+	Y1CtIM8S3poO+fMnQBW0BvqxSDKK96bKFkePnBxClgu0bEEXfTcV8yTMB+Uh5e3A
+	4i1RL9NI29FFKIFXShwK9P+yKA7fZ93VjNM5mh2wwRFyh8nHVeEW2aAlUnMceeez
+	og4xwhjXqo02d/HiRDuGDTpgBgDqc5W7FCazPqhuJcw2vGGHKivWffNkUA2AfDhd
+	c4qK3sPqOyTwmcpNYQthkxU2OMcamjariABltNNNij3UobT9+fekEGx2VnbvCKfx
+	dil/0JAzY4fyFH/2WGQPmRo8VIwWkZ9dW56nSWeb1AcDcFmtRx1i7YqsADlbg==
+Received: from 04wpexch09.crowdstrike.sys (dragosx.crowdstrike.com [208.42.231.60] (may be forged))
+	by mx0a-00206402.pphosted.com (PPS) with ESMTPS id 3vtmfs3hvg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 23:46:13 +0000 (GMT)
+Received: from 04WPEXCH10.crowdstrike.sys (10.100.11.114) by
+ 04WPEXCH09.crowdstrike.sys (10.100.11.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.27; Wed, 24 Jan 2024 23:46:12 +0000
+Received: from 04WPEXCH10.crowdstrike.sys ([fe80::e1dd:44ef:2c43:70a]) by
+ 04WPEXCH10.crowdstrike.sys ([fe80::e1dd:44ef:2c43:70a%18]) with mapi id
+ 15.02.1258.027; Wed, 24 Jan 2024 23:46:12 +0000
+From: Ben Smith <ben.smith@crowdstrike.com>
+To: "linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>
+Subject: security_file_free contract/expectations
+Thread-Topic: security_file_free contract/expectations
+Thread-Index: AQHaTx+CJtwzlPzBJkmVkqGorohTxQ==
+Date: Wed, 24 Jan 2024 23:46:11 +0000
+Message-ID: <CF22CFC7-11A8-4BE5-BA61-04A55FDEA1DB@contoso.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-disclaimer: USA
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E75323AD4F45B646B3477B07E116FD02@crowdstrike.sys>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] Smack transmute fixes
-Content-Language: en-US
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20231116090125.187209-1-roberto.sassu@huaweicloud.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20231116090125.187209-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22046 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-Proofpoint-GUID: prCtjp1Bb1BjHu8blBbLgoP7LqgI9nib
+X-Proofpoint-ORIG-GUID: prCtjp1Bb1BjHu8blBbLgoP7LqgI9nib
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-24_12,2024-01-24_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ priorityscore=1501 malwarescore=0 adultscore=0 suspectscore=0
+ clxscore=1011 impostorscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0
+ mlxlogscore=657 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2401190000 definitions=main-2401240172
 
-On 11/16/2023 1:01 AM, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->
-> The first two patches are obvious fixes, the first restricts setting the
-> SMACK64TRANSMUTE xattr only for directories, and the second makes it
-> possible to set SMACK64TRANSMUTE if the filesystem does not support xattrs
-> (e.g. ramfs).
->
-> The remaining fixes are optional, and only required if we want filesystems
-> without xattr support behave like those with xattr support. Since we have
-> the inode_setsecurity and inode_getsecurity hooks to make the first group
-> work, it seems useful to fix inode creation too (SELinux should be fine).
->
-> The third patch is merely a code move out of the 'if (xattr)' condition.
-> The fourth updates the security field of the in-memory inode directly in
-> smack_inode_init_security() and marks the inode as instantiated,
-
-I have taken patches 1-4 in smack-next. I'm still waiting on a convincing
-approval for patch 5.
-
-
->  and the
-> fifth adds a security_inode_init_security() call in ramfs to initialize the
-> security field of the in-memory inodes (needed to test transmuting
-> directories).
->
-> Both the Smack (on xfs) and IMA test suite succeed with all patches
-> applied. Tests were not executed on v3 (trivial changes).
->
-> By executing the tests in a ramfs, the results are:
->
-> Without the patches:
-> 86 Passed, 9 Failed, 90% Success rate
->
-> With the patches:
-> 93 Passed, 2 Failed, 97% Success rate
->
-> The remaining two failures are:
-> 2151  ioctl(4, BTRFS_IOC_CLONE or FICLONE, 3) = -1 EOPNOTSUPP (Operation not supported)
-> 2152  lsetxattr("./targets/proc-attr-Snap", "security.SMACK64EXEC", "Pop", 3, 0) = -1 EOPNOTSUPP (Operation not supported)
->
-> The first one is likely due ramfs lack of support for ioctl() while the
-> second could be fixed by handling SMACK64EXEC in smack_inode_setsecurity().
->
-> The patch set applies on top of lsm/dev, commit e246777e2a03 ("MAINTAINERS:
-> update the LSM entry").
->
-> The ramfs patch potentially could be useful to correctly initialize the
-> label of new inodes in the initramfs, assuming that it will be fully
-> labeled with support for xattrs in the cpio image:
->
-> https://lore.kernel.org/linux-integrity/20190523121803.21638-1-roberto.sassu@huawei.com/
->
-> Ramfs inode labels will be set from xattrs with the inode_setsecurity hook.
->
-> Changelog
->
-> v2:
-> - Replace return with goto in the ramfs patch, for better maintainability
->   (suggested by Andrew Morton)
->
-> v1:
-> - Rebase on top of latest lsm/next
-> - Remove -EOPNOTSUPP check in patch 5 (cannot happen)
->
-> Roberto Sassu (5):
->   smack: Set SMACK64TRANSMUTE only for dirs in smack_inode_setxattr()
->   smack: Handle SMACK64TRANSMUTE in smack_inode_setsecurity()
->   smack: Always determine inode labels in smack_inode_init_security()
->   smack: Initialize the in-memory inode in smack_inode_init_security()
->   ramfs: Initialize security of in-memory inodes
->
->  fs/ramfs/inode.c           | 32 ++++++++++++-
->  security/smack/smack_lsm.c | 95 ++++++++++++++++++++++----------------
->  2 files changed, 86 insertions(+), 41 deletions(-)
->
+SGksIEknbSBsb29raW5nIGF0IGEga2VybmVsIHBhbmljIGFuZCBJJ20gdHJ5aW5nIHRvIGZpZ3Vy
+ZSBvdXQgd2hldGhlciB0aGUgY29kZSBpbiBxdWVzdGlvbiBpcyBkb2luZyBzb21ldGhpbmcgdGhh
+dCBicmVha3MgdGhlIGNvbnRyYWN0IGZvciB0aGUgc2VjdXJpdHlfZmlsZV9mcmVlIGhvb2suIEkn
+bSBzcGVjaWZpY2FsbHkgd29uZGVyaW5nIHdoZXRoZXIgaXQncyBleHBlY3RlZC9zYWZlIGZvciBj
+b2RlIGNhbGxlZCBmcm9tIHNlY3VyaXR5X2ZpbGVfZnJlZSB0byBvcGVuIGFuZCByZWFkIGZyb20g
+YSBmaWxlLiBJbiB0aGUgY2FzZSBJJ20gbG9va2luZyBhdCB3aGF0IGhhcHBlbnMgaXM6DQoNCi0g
+UHJvY2VzcyBleGl0DQotIGV4aXRfZnMoKSBzZXRzIGN1cnJlbnQtPmZzIHRvIE5VTEwNCi0gZXhp
+dF90YXNrX3dvcmsoKSBjYWxscyBfX2ZwdXQoKSBvbiBmaWxlcyB3aGljaCB3ZXJlIGNsb3NlZCBp
+biBleGl0X2ZpbGVzKCkNCi0gX19mcHV0KCkgY2FsbHMgc2VjdXJpdHlfZmlsZV9mcmVlKCkNCi0g
+c2VjdXJpdHlfZmlsZV9mcmVlKCkgdGhlbiByZWFkcyB0aGUgZmlsZSB0aGF0IHdhcyBqdXN0IGNs
+b3NlZCBpbiBvcmRlciB0byBnYXRoZXIgaW5mb3JtYXRpb24gYWJvdXQgaXQuDQotIGEgZmlsZXN5
+c3RlbSBkcml2ZXIgKEkndmUgc2VlbiB0aGlzIHdpdGggdHdvIG91dC1vZi10cmVlIGZpbGVzeXN0
+ZW1zKSB0aGVuIGFjY2Vzc2VzIGN1cnJlbnQtPmZzIGFuZCBwYW5pY3MuDQoNClNvIEknbSB3b25k
+ZXJpbmcgaWYgdGhlIGV4cGVjdGF0aW9uIGhlcmUgaXMgdGhhdCBmaWxlc3lzdGVtIGNvZGUgc2hv
+dWxkIE5VTEwgY2hlY2sgY3VycmVudC0+ZnMgYmVmb3JlIHVzaW5nIGl0IG9yIHRoYXQgYW4gTFNN
+IHNob3VsZG4ndCB0cnkgdG8gcmVhZCBhIGZpbGUgZnJvbSBzZWN1cml0eV9maWxlX2ZyZWUoKS4N
+Cg0KDQo=
