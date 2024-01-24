@@ -1,130 +1,108 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D4755766
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Jan 2024 23:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E1115BE;
+	Wed, 24 Jan 2024 01:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.123.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706054311; cv=none; b=AZa7fx0Qp308rKNEXljAmyWul88w8miCynnpsk5KMNPd/R6guXoiQ7VD4q1ztPXqW3Q+EciGNAT9eT/Lw5ReL/EHdWrjTqfp2bcH4g3ZobZnr4C8rnsRk7uEtZmlpnGtVTo/hTkPEdr6vh4hJOX6oXQ6dAisbkf6pLGFWBr6CLE=
+	t=1706061367; cv=none; b=NiasLuxjxWwnJkYNDFHTesRiIZ+meof3RlQ8RSJ7jGTLro1Z6QdbRK00bue2mzAcz8qh1ER2sXmxcVY6KqL97aYrEEZ2Zs5AKjfK9eKGwIBlCRJE8VJAOJ1OP7VTovXHTpeo2ofCY5AIgu4u3yBI8M3t489lPpG7fNLR9DYtYIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706054311; c=relaxed/simple;
-	bh=IynX6u4mvBalm/RbV4Poaqp1DBQ8ctKBACbRd1Iv/o0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PRxet9Brs1xbDi5BErCHtr9ZgqSxk/rv++e48maHg6Z0dN0RRCcfYjUFCA/Vf9d81TAiuw42C+R6khMpmR4LASB7GGRBRgw3m0biiB9c8zM+u3c0FEBkvhwZEQX36x64uSTCb2IekTnUBrbMKPp4zszGDsbG+1cReD8NcqB1PCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PWva0+iS; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PWva0+iS"
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dc372245aefso1254454276.2
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Jan 2024 15:58:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1706054309; x=1706659109; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cL6AxRz6Xtq0xrIYdJsZbYeq0wCWJbZQUMTqfFz90ow=;
-        b=PWva0+iSu4xAerRswmveUqTSosX8M1kkN3MR0vF9ZOsDezNAf/IeKNZu9tf8/09PH8
-         JnDsVqPc6p1fE6kKe0IgXuL9s/rr2D3oNNkP5w7KZ21PbjOBZYehqwbJ8YkZfbiDvtA7
-         0nxKM4HkeGmJ8ttd6q6RTYGq870qZYKp6NmFzQc/kCHJb1uR68B7UB97kZyP/2xhC3N6
-         Ar5a/LcJ+yhyZu8nEU4DW5efxHrO8e7eaWSdnRMMaihXrN3xdh9DjtrGxgwOtwVmimwK
-         b5bZXeZRTjq4HXBOs0XzIuglm7zoxtG2KadDH4sgudjRBX48/PNwCmWiyN0lKcV6BEfl
-         bt1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706054309; x=1706659109;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cL6AxRz6Xtq0xrIYdJsZbYeq0wCWJbZQUMTqfFz90ow=;
-        b=Bxs05xnvFK1GNDkIYm5158Z2gJ6Ie4A1YvnXoRbPW5vnWKs/8gXzsoADnCQBLDzfJM
-         jJE+32TLlUjzJTqTJeosl9Fw6IyI32FkiYWttHVy5jFOnYuqpnnYdvxovivoFHYoc1b5
-         aPNMgK7jK8SrQETkdUt7AwU352m6UOKPfKSxM5wBX2YIqYnJpDRs+L7G4MCUIgD7r4As
-         rYBFNwLAjJvdw13k5Goq50D+aMG+yR03/0Qk9+NdpLazBaZH8itW+R9i/ZJIFK3gJWQr
-         vXZLJZ18eyxv/1w3ntWPSBHVYchldOA3MkWS5V5hY4jRGsNEb6wahgSGD8kJrAJK+M93
-         +Ckg==
-X-Gm-Message-State: AOJu0YzSte+taeGV7hmFYZIlI2TUAROkCZiUfPlFb/HOr1qowbfVtOmX
-	aaJ8KikMfVVVqHHfsSOungSTYPpvdhPFdwkUWBRN8EtB73rvYF8JwPaeAyPdnOFKEheIFlXjoP7
-	xMjdOqtp3yvGOrlqZFgkFViRqfvYyfP+vq56v
-X-Google-Smtp-Source: AGHT+IEaVh9ckNB9SI9jCXziUhbBHVpZnwT8uzibvDSWQZxDfVcAHLY6UJiD5wdYwnlOMVQdxM0ncF0PvMW/HeoXf3o=
-X-Received: by 2002:a25:e0c3:0:b0:dc2:65ff:7948 with SMTP id
- x186-20020a25e0c3000000b00dc265ff7948mr19443ybg.0.1706054309145; Tue, 23 Jan
- 2024 15:58:29 -0800 (PST)
+	s=arc-20240116; t=1706061367; c=relaxed/simple;
+	bh=KzfL/eA5X9Q8Ecu3aHYbw/T9JAuqCN1j0cbZS03ao4c=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CyqB0neKcUozh7oAt2ioQyza2P/p9Gc2K/MFNj90kk3XfevvOZ5SXLVNskMvH+V/hG3161c6Ut/tGJeifLEjsrXqOpHq6pd1yZT9OROajzuwwvADiand9eIomqk+wAC6srC2hxp8Dhi1F3XMv1HTCECKPCfkyoTSSF9EW1C4bN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com; spf=pass smtp.mailfrom=h3c.com; arc=none smtp.client-ip=60.191.123.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
+Received: from mail.maildlp.com ([172.25.15.154])
+	by h3cspam02-ex.h3c.com with ESMTP id 40O1sptq034324;
+	Wed, 24 Jan 2024 09:54:51 +0800 (GMT-8)
+	(envelope-from hu.yadi@h3c.com)
+Received: from DAG6EX09-BJD.srv.huawei-3com.com (unknown [10.153.34.11])
+	by mail.maildlp.com (Postfix) with ESMTP id 2F6EB2004BC6;
+	Wed, 24 Jan 2024 09:59:30 +0800 (CST)
+Received: from DAG6EX02-IMDC.srv.huawei-3com.com (10.62.14.11) by
+ DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.27; Wed, 24 Jan 2024 09:54:52 +0800
+Received: from DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4])
+ by DAG6EX02-IMDC.srv.huawei-3com.com ([fe80::4c21:7c89:4f9d:e4c4%16]) with
+ mapi id 15.02.1258.027; Wed, 24 Jan 2024 09:54:52 +0800
+From: Huyadi <hu.yadi@h3c.com>
+To: =?utf-8?B?J01pY2thw6tsIFNhbGHDvG4n?= <mic@digikod.net>
+CC: "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com"
+	<serge@hallyn.com>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "amir73il@gmail.com" <amir73il@gmail.com>,
+        "brauner@kernel.org"
+	<brauner@kernel.org>,
+        "avagin@google.com" <avagin@google.com>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>,
+        "514118380@qq.com" <514118380@qq.com>,
+        "konstantin.meskhidze@huawei.com" <konstantin.meskhidze@huawei.com>
+Subject: =?utf-8?B?5Zue5aSNOiDlm57lpI06IFtQQVRDSCB2NF0gc2VsZnRlc3RzL2xhbmRsb2Nr?=
+ =?utf-8?Q?:Fix_two_build_issues?=
+Thread-Topic: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjRdIHNlbGZ0ZXN0cy9sYW5kbG9jazpGaXggdHdv?=
+ =?utf-8?Q?_build_issues?=
+Thread-Index: AQHaR51Te/ejhd6BskWKYK0XmAmChrDgkaUAgAbFurD//7YlAIABM8jQ
+Date: Wed, 24 Jan 2024 01:54:52 +0000
+Message-ID: <381b0dd202074938b527c5b27c86c34f@h3c.com>
+References: <20240115102409.19799-1-hu.yadi@h3c.com>
+ <20240119.Ugaehae2ze5b@digikod.net>
+ <adec399e50c74b30b59480d92c431241@h3c.com>
+ <20240123.deeT9hegh4vo@digikod.net>
+In-Reply-To: <20240123.deeT9hegh4vo@digikod.net>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-sender-location: DAG2
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240123215501.289566-2-paul@paul-moore.com> <170604930501.2065523.10114697425588415558.b4-ty@kernel.dk>
- <e785d5df-9873-46ab-8b8a-7135da6ed273@kernel.dk> <cff4ba69-cc21-4af9-8a44-503649677b9c@kernel.dk>
-In-Reply-To: <cff4ba69-cc21-4af9-8a44-503649677b9c@kernel.dk>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 23 Jan 2024 18:58:18 -0500
-Message-ID: <CAHC9VhTrH4+bVnQnzmmn4eJ4bMt=6wJSg7_DJ_Bo-K5AC3nBfA@mail.gmail.com>
-Subject: Re: [PATCH] io_uring: enable audit and restrict cred override for IORING_OP_FIXED_FD_INSTALL
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, audit@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:h3cspam02-ex.h3c.com 40O1sptq034324
 
-On Tue, Jan 23, 2024 at 5:43=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
-> On 1/23/24 3:40 PM, Jens Axboe wrote:
-> > On 1/23/24 3:35 PM, Jens Axboe wrote:
-> >>
-> >> On Tue, 23 Jan 2024 16:55:02 -0500, Paul Moore wrote:
-> >>> We need to correct some aspects of the IORING_OP_FIXED_FD_INSTALL
-> >>> command to take into account the security implications of making an
-> >>> io_uring-private file descriptor generally accessible to a userspace
-> >>> task.
-> >>>
-> >>> The first change in this patch is to enable auditing of the FD_INSTAL=
-L
-> >>> operation as installing a file descriptor into a task's file descript=
-or
-> >>> table is a security relevant operation and something that admins/user=
-s
-> >>> may want to audit.
-> >>>
-> >>> [...]
-> >>
-> >> Applied, thanks!
-> >>
-> >> [1/1] io_uring: enable audit and restrict cred override for IORING_OP_=
-FIXED_FD_INSTALL
-> >>       commit: 16bae3e1377846734ec6b87eee459c0f3551692c
-> >
-> > So after doing that and writing the test case and testing it, it dawned
-> > on me that we should potentially allow the current task creds. And to
-> > make matters worse, this is indeed what happens if eg the application
-> > would submit this with IOSQE_ASYNC or if it was part of a linked series
-> > and we marked it async.
-> >
-> > While I originally reasoned for why this is fine as it'd be silly to
-> > register your current creds and then proceed to pass in that personalit=
-y,
-> > I do think that we should probably handle that case and clearly separat=
-e
-> > the case of "we assigned creds from the submitting task because we're
-> > handing it to a thread" vs "the submitting task asked for other creds
-> > that were previously registered".
-> >
-> > I'll take a look and see what works the best here.
->
-> Actually, a quick look and it's fine, the usual async offload will do
-> the right thing. So let's just keep it as-is, I don't think there's any
-> point to complicating this for some theoretically-valid-but-obscure use
-> case!
-
-Perhaps the one case where REQ_F_CREDS is our friend for FD_INSTALL ;)
-
-> FWIW, the test case is here, and I'll augment it now to add IOSQE_ASYNC
-> as well just to cover all the bases.
->
-> https://git.kernel.dk/cgit/liburing/commit/?id=3Dbc576ca398661b266d3e4a4f=
-5db3a9cf7f33fe62
-
-Great, thanks!
-
---=20
-paul-moore.com
+DQo+T24gVHVlLCBKYW4gMjMsIDIwMjQgYXQgMTI6MDQ6MTdQTSArMDAwMCwgSHV5YWRpIHdyb3Rl
+Og0KPj4gDQo+PiA+PiBDaGFuZ2VzIHYzIC0+IHYyOg0KPj4gPj4gIC0gYWRkIGhlbHBlciBvZiBn
+ZXR0aWQgaW5zdGVhZCBvZiBfX05SX2dldHRpZA0KPj4gPj4gIC0gYWRkIGdjYy9nbGliYyB2ZXJz
+aW9uIGluZm8gaW4gY29tbWVudHMgQ2hhbmdlcyB2MSAtPiB2MjoNCj4+ID4+ICAtIGZpeCB3aGl0
+ZXNwYWNlIGVycm9yDQo+PiA+PiAgLSByZXBsYWNlIFNZU19nZXR0aWQgd2l0aCBfTlJfZ2V0dGlk
+DQo+PiA+PiANCj4+ID4+ICB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9sYW5kbG9jay9mc190ZXN0
+LmMgIHwgNSArKysrLSANCj4+ID4+IHRvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2xhbmRsb2NrL25l
+dF90ZXN0LmMgfCA3ICsrKysrKy0NCj4+ID4+ICAyIGZpbGVzIGNoYW5nZWQsIDEwIGluc2VydGlv
+bnMoKyksIDIgZGVsZXRpb25zKC0pDQo+PiA+PiANCj4+ID4+IGRpZmYgLS1naXQgYS90b29scy90
+ZXN0aW5nL3NlbGZ0ZXN0cy9sYW5kbG9jay9mc190ZXN0LmMNCj4+ID4+IGIvdG9vbHMvdGVzdGlu
+Zy9zZWxmdGVzdHMvbGFuZGxvY2svZnNfdGVzdC5jDQo+PiA+PiBpbmRleCAxOGUxZjg2YTYyMzQu
+LmE5OTJjZjdjMGFkMSAxMDA2NDQNCj4+ID4+IC0tLSBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3Rz
+L2xhbmRsb2NrL2ZzX3Rlc3QuYw0KPj4gPj4gKysrIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMv
+bGFuZGxvY2svZnNfdGVzdC5jDQo+PiA+PiBAQCAtNDU3Miw3ICs0NTcyLDEwIEBAIEZJWFRVUkVf
+VkFSSUFOVChsYXlvdXQzX2ZzKQ0KPj4gPj4gIC8qIGNsYW5nLWZvcm1hdCBvZmYgKi8NCj4+ID4+
+ICBGSVhUVVJFX1ZBUklBTlRfQUREKGxheW91dDNfZnMsIHRtcGZzKSB7DQo+PiA+PiAgCS8qIGNs
+YW5nLWZvcm1hdCBvbiAqLw0KPj4gPj4gLQkubW50ID0gbW50X3RtcCwNCj4+ID4+ICsJLm1udCA9
+IHsNCj4+ID4+ICsJCS50eXBlID0gInRtcGZzIiwNCj4+ID4+ICsJCS5kYXRhID0gInNpemU9NG0s
+bW9kZT03MDAiLA0KPj4gPj4gKwl9LA0KPj4gPg0KPj4gPkkgcmVxdWVzdGVkIHNvbWUgY2hhbmdl
+cyBoZXJlLg0KPj4gPg0KPj4gDQo+PiBDb3VsZCB5b3UgZ2l2ZSBtZSBzb21lIGluc3BpcmF0aW9u
+IGhvdyB0byBmaXggaXQ/IA0KPj4gaXQgbG9va3MgZmluZSB0byBtZSB0byBhc3NpZ24gdmFsdWUg
+YXMgYWJvdmUsIHdoaWNoIGNvbnNpc3RlbnQgd2l0aCBvdGhlciBwc2V1ZG8gRlMgdGVzdHMuDQo+
+PiBUaGFua3MgaW4gYWR2YW5jZS4NCj4NCj5KdXN0IGFkZCBhbmQgdXNlIHRoaXMgZm9yIHRoZSB0
+d28gdG1wZnMgZGF0YToNCj4jZGVmaW5lIE1OVF9UTVBfREFUQSAic2l6ZT00bSxtb2RlPTcwMCIN
+Cj4NCj5Zb3UgY2FuIGFsc28gbWFrZSB0aGUgbW50X3RtcCB2YXJpYWJsZSBzdGF0aWMgY29uc3Qu
+DQoNCg0Kc3RhdGljIGNvbnN0IGlzIG5vdCB1c2VmdWwgZm9yIHRoZSBjYXNlLCB0aGUgZXJyb3Qg
+c3RpbGwsIGFuZCBJJ2xsIHVzZSBtYWNybyBkZWZpbml0aW9uIHRvIHNvbHZlIGl0Lg0KdGhhbmtz
+IHlvdXIgd2FybWx5IGluc3RydWN0aW9uLEknbGwgc2VuZCBuZXh0IHZlcnNpb24gLCBwbGVhc2Ug
+aGVscCB0byByZXZpZXcgaXQuDQoNCg0KPiANCj4gPj4gIAkuZmlsZV9wYXRoID0gZmlsZTFfczFk
+MSwNCj4gPj4gIH07DQo+ID4+IA0KPiAgICANCg==
