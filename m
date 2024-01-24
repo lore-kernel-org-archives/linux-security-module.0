@@ -1,116 +1,189 @@
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C28133426
-	for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 20:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026C21350C0;
+	Wed, 24 Jan 2024 20:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706127308; cv=none; b=CY8rpEvpLMYk83bLLZxK1PMPMLYbifeRnQGnYnre8Iik5gz3RTJU0tyAZGva6/tqqWbXmdg5xGNHa6ayBMk8luBdQH334kQuLD4OkadDJCmwqJH/dXJsbn+EQCEjCjGMrGx84iHdjNqOSTjYTmDh4PHxQHPUG+TwZPMJxOKc5xo=
+	t=1706128844; cv=none; b=pgaKbbz4Kl/Rl4gd2WYRZpXsK7IYhQVg+iNb5xwgqt/tsqAa9ecGO7bIK8kf28j6qHkQm5bbFD4TFRvhZIrrcJvMHMxtMrXwzvCihGNllX5l1FQJoAxrKmL1cW6oDxeCzjP9XWEB664h2sYEWnUpdHAEcQLwlD9ryEl3UspGQ4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706127308; c=relaxed/simple;
-	bh=qgrbcEGeImcGchUMQ4e+5muNpBrHulW7Z5vgrHJx0zg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FB1ykevGlMyuo/yoEkbCTHGyf3p1KKLxFf5tzr+Spp6mSQsPKw3lGHsFprHYabYXsf54qQe3H0zRsTGx9dBVj2uR+GlPweXhog5igN7Lgq4v9UPyXAhVLW8YK8VtYqpPLIZBbU7gFMDsmc3ncTr1ylYRgYlAcxxi6e0GcacNRD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FjdZxPgE; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1706128844; c=relaxed/simple;
+	bh=hzJ3DJETdoxLp+P5+lRmaPth2GPIg7sSosK0rWcLIBc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=O4okdkvhdfINZUnIIThq+31MPeRTpz6DDJj1BS+ZXej/C+pu2ZS/0OrM0lF6QI9pi1RsWm1pEEOjhePqyGb+ptKqhyXHwr7dNDmPJBDmDr+Dnz2ey16XAhnZU1yLoYhlYxXdxEweTiCzK6T4vksVRDUYy7KikHrMes0aW8H2fpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=F9a4qluB; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FjdZxPgE"
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6dd853c1f80so24052b3a.1
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 12:15:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1706127307; x=1706732107; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Id1qRAoiWWWvqW/dbMxgihjX2oP7pYm4HN95FDf9D2k=;
-        b=FjdZxPgEPFJ7RZPevFfZMqlA39csXfimhSPZQ4YAeqPrvpm2BqaZwenAm9q2f4mUdg
-         npyuAQXuqOVIG7NcZsvhQiNKew4Es2e5VY/PLFmf0upAjXxp3tZ0XSnDfjSjitmiv8YY
-         duHl/LQqbBkKZWaSpBI+f5TEG86YrB7hPmwRg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706127307; x=1706732107;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Id1qRAoiWWWvqW/dbMxgihjX2oP7pYm4HN95FDf9D2k=;
-        b=WgXeSBxhOGex9OOrjTPihdgYotnvYl+2V71ZskKhazlKgCFEtz1rAWEiZzL2SZGKGY
-         ks5WX7b9VArpOagTmVevFDJKOg6CGbyVqgydd7u3m2riCeRYQ6C8TUiFQXH/aN1ip4pa
-         reRi6iq3R8WvPSBxl+IyR2dSF+Yl6dbwjIjQS1RZYQTNeC6ZPWvkkqhlUAFAIOYJFEFA
-         rDnbffV1xYXy4qdtodHnGXvKkKxoF/2vl5L23MLxQDCVewr+NZXpOapoy4dyq2ef1GQl
-         n68WbxGFa+oozAvQt4rJjSMfexU8Qn3KFMIvejswnQCOWBjgB0OeOAOUmHqBKSz2+g8a
-         ylDA==
-X-Gm-Message-State: AOJu0Yz9AQX5Hw/SuEvB3hkLAo+hCxAyP82wLFuJYqrAuiVUkwCyvreK
-	3DT2CkaeL+PKfnVFwiuhv49CZQGKhjLmlktMrSRJPcCBHiu5GjDnBWOVgvZh9w==
-X-Google-Smtp-Source: AGHT+IHQpUi+5B9WnuXhSmDXus8mitL4WXU/2ZY6llD9ZE0jvrWSufppkdsO/vLRfpghtMHGOwhO/A==
-X-Received: by 2002:a05:6a00:9297:b0:6db:9c1:7164 with SMTP id jw23-20020a056a00929700b006db09c17164mr66699pfb.15.1706127306883;
-        Wed, 24 Jan 2024 12:15:06 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id fb18-20020a056a002d9200b006ddc2ac59cesm546649pfb.12.2024.01.24.12.15.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jan 2024 12:15:06 -0800 (PST)
-Date: Wed, 24 Jan 2024 12:15:05 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Jann Horn <jannh@google.com>
-Cc: Josh Triplett <josh@joshtriplett.org>,
-	Kevin Locke <kevin@kevinlocke.name>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] exec: Check __FMODE_EXEC instead of in_execve for LSMs
-Message-ID: <202401241206.031E2C75B@keescook>
-References: <20240124192228.work.788-kees@kernel.org>
- <CAG48ez017tTwxXbxdZ4joVDv5i8FLWEjk=K_z1Vf=pf0v1=cTg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="F9a4qluB"
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40OKEpge004717;
+	Wed, 24 Jan 2024 20:40:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=6ioIDZv1sGQ7eAng1/+ztxX4+K6ABsfVJQdOjSPqPFo=;
+ b=F9a4qluBDv2erKGNQNRZJw4hIXP1QtO//8d/Yd4gluJUQ0rDFJyx5WUAvMS6jWosfzzF
+ yB68HafEw0Ts9JF9oJQq7bY/UViDjmSMc57K4nPThh5/TafTMaFOqJT54uR1uvHgKJTs
+ xJhubGYuCgIKIq23s0Xw5Eb8xN0uUQ/9KEx6pqqjkluv3dihkevONG2OGrz3ogM9mAFu
+ bZmLjwwyOf0shFnTd98uLFjJA3HtIjnVkb17LsueGFyrszO+dBQSSY0W/P+ikkA7lMA2
+ jnGH+eGqOd3r2cR1via/p1Yv7ztNKeH0UaYkaQT1E4bPtjJKHeq9pPKOGpRrbms5N1bv vg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vu7uckhg3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Jan 2024 20:40:22 +0000
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 40OKUf7g023282;
+	Wed, 24 Jan 2024 20:40:21 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vu7uckhfq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Jan 2024 20:40:21 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 40OIq5BR026879;
+	Wed, 24 Jan 2024 20:40:20 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3vrrgtgk61-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Jan 2024 20:40:20 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 40OKeJvM36766408
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 24 Jan 2024 20:40:19 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6D61158057;
+	Wed, 24 Jan 2024 20:40:19 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 08C0B58059;
+	Wed, 24 Jan 2024 20:40:18 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.watson.ibm.com (unknown [9.31.99.90])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 24 Jan 2024 20:40:17 +0000 (GMT)
+Message-ID: <49c48e3e96bf0f5ebef14e7328cc8a6ca6380e08.camel@linux.ibm.com>
+Subject: Re: [PATCH] KEYS: encrypted: Add check for strsep
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: "Verma, Vishal L" <vishal.l.verma@intel.com>,
+        "paul@paul-moore.com"
+	 <paul@paul-moore.com>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "dhowells@redhat.com"
+	 <dhowells@redhat.com>,
+        "yaelt@google.com" <yaelt@google.com>,
+        "serge@hallyn.com"
+	 <serge@hallyn.com>,
+        "nichen@iscas.ac.cn" <nichen@iscas.ac.cn>,
+        "sumit.garg@linaro.org"
+	 <sumit.garg@linaro.org>,
+        "jmorris@namei.org" <jmorris@namei.org>
+Cc: "Jiang, Dave" <dave.jiang@intel.com>,
+        "linux-integrity@vger.kernel.org"
+ <linux-integrity@vger.kernel.org>,
+        "linux-cxl@vger.kernel.org"
+ <linux-cxl@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>,
+        "Williams, Dan J"
+ <dan.j.williams@intel.com>,
+        "keyrings@vger.kernel.org"
+ <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>,
+        "nvdimm@lists.linux.dev"
+ <nvdimm@lists.linux.dev>
+Date: Wed, 24 Jan 2024 15:40:17 -0500
+In-Reply-To: <e3b1a5e532ed86e674385abc4812c5a774f851d4.camel@intel.com>
+References: <20231108073627.1063464-1-nichen@iscas.ac.cn>
+	 <4d3465b48b9c5a87deb385b15bf5125fc1704019.camel@intel.com>
+	 <e3275c0cfe21d75e0d71ea3fc24a31252efc9ad6.camel@linux.ibm.com>
+	 <e3b1a5e532ed86e674385abc4812c5a774f851d4.camel@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez017tTwxXbxdZ4joVDv5i8FLWEjk=K_z1Vf=pf0v1=cTg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: BIDnxhlJRef7AywAZbikE-sp1Jompx04
+X-Proofpoint-ORIG-GUID: zbbsiYWRF0oFrQlVwoiL0Xu2qIxYjd_6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-24_09,2024-01-24_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ bulkscore=0 adultscore=0 malwarescore=0 impostorscore=0 lowpriorityscore=0
+ clxscore=1015 priorityscore=1501 phishscore=0 spamscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
+ definitions=main-2401240149
 
-On Wed, Jan 24, 2024 at 08:58:55PM +0100, Jann Horn wrote:
-> On Wed, Jan 24, 2024 at 8:22 PM Kees Cook <keescook@chromium.org> wrote:
-> > After commit 978ffcbf00d8 ("execve: open the executable file before
-> > doing anything else"), current->in_execve was no longer in sync with the
-> > open(). This broke AppArmor and TOMOYO which depend on this flag to
-> > distinguish "open" operations from being "exec" operations.
-> >
-> > Instead of moving around in_execve, switch to using __FMODE_EXEC, which
-> > is where the "is this an exec?" intent is stored. Note that TOMOYO still
-> > uses in_execve around cred handling.
-> 
-> I think this is wrong. When CONFIG_USELIB is enabled, the uselib()
-> syscall will open a file with __FMODE_EXEC but without going through
-> execve(). From what I can tell, there are no bprm hooks on this path.
+On Wed, 2024-01-24 at 20:10 +0000, Verma, Vishal L wrote:
+> On Wed, 2024-01-24 at 14:15 -0500, Mimi Zohar wrote:
+> > On Wed, 2024-01-24 at 18:21 +0000, Verma, Vishal L wrote:
+> > > On Wed, 2023-11-08 at 07:36 +0000, Chen Ni wrote:
+> > > > Add check for strsep() in order to transfer the error.
+> > > > 
+> > > > Fixes: cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-
+> > > > provided decrypted data")
+> > > > Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> > > > ---
+> > > >  security/keys/encrypted-keys/encrypted.c | 4 ++++
+> > > >  1 file changed, 4 insertions(+)
+> > > > 
+> > > > diff --git a/security/keys/encrypted-keys/encrypted.c
+> > > > b/security/keys/encrypted-keys/encrypted.c
+> > > > index 8af2136069d2..76f55dd13cb8 100644
+> > > > --- a/security/keys/encrypted-keys/encrypted.c
+> > > > +++ b/security/keys/encrypted-keys/encrypted.c
+> > > > @@ -237,6 +237,10 @@ static int datablob_parse(char *datablob, const
+> > > > char **format,
+> > > >  			break;
+> > > >  		}
+> > > >  		*decrypted_data = strsep(&datablob, " \t");
+> > > > +		if (!*decrypted_data) {
+> > > > +			pr_info("encrypted_key: decrypted_data is
+> > > > missing\n");
+> > > > +			break;
+> > > > +		}
+> > > 
+> > > Hello,
+> > > 
+> > > This patch seems to break keyring usage in CXL and NVDIMM, with the
+> > > "decrypted_data is missing" error path being hit. Reverting this commit
+> > > fixes the tests. I'm not sure if there are valid scenarios where this is
+> > > expected to be empty?
+> > > 
+> > > Here's an strace snippet of where the error occurs:
+> > > 
+> > >    keyctl(KEYCTL_SEARCH, KEY_SPEC_USER_KEYRING, "user", "nvdimm-master", 0) = 76300785
+> > >    openat(AT_FDCWD, "/sys/devices/platform/cxl_acpi.0/root0/nvdimm-bridge0/ndbus0/nmem0/state", O_RDONLY|O_CLOEXEC) = 3
+> > >    read(3, "idle\n", 1024)                 = 5
+> > >    close(3)                                = 0
+> > >    keyctl(KEYCTL_SEARCH, KEY_SPEC_USER_KEYRING, "encrypted", "nvdimm:0", 0) = -1 ENOKEY (Required key not available)
+> > >    uname({sysname="Linux", nodename="fedora", ...}) = 0
+> > >    newfstatat(AT_FDCWD, "/etc/ndctl/keys/nvdimm_0_fedora.blob", 0x7fff23fbc210, 0) = -1 ENOENT (No such file or directory)
+> > >    add_key("encrypted", "nvdimm:0", "new enc32 user:nvdimm-master 32", 31, KEY_SPEC_USER_KEYRING) = -1 EINVAL (Invalid argument)
+> > 
+> > 
+> > Indeed!  The user-provided decrypted data should be optional.   The change needs
+> > to be reverted.
+> > 
+> Ah, thanks for confirming! Would you like me to send a revert patch or
+> will you do it?
 
-Hrm, that's true.
+Revert "KEYS: encrypted: Add check for strsep"
+    
+This reverts commit b4af096b5df5dd131ab796c79cedc7069d8f4882.
+    
+New encrypted keys are created either from kernel-generated random
+numbers or user-provided decrypted data.  Revert the change requiring
+user-provided decrypted data.
 
-We've been trying to remove uselib for at least 10 years[1]. :(
 
-> I don't know if it _matters_ much, given that it'll only let you
-> read/execute stuff from files with valid ELF headers, but still.
+Can I add your Reported-by?
 
-Hmpf, and frustratingly Ubuntu (and Debian) still builds with
-CONFIG_USELIB, even though it was reported[2] to them almost 4 years ago.
+Mimi
 
--Kees
 
-[1] https://lore.kernel.org/lkml/20140221181103.GA5773@jtriplet-mobl1/
-[2] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1879454
 
--- 
-Kees Cook
+
