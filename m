@@ -1,163 +1,156 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from sonic306-28.consmr.mail.ne1.yahoo.com (sonic306-28.consmr.mail.ne1.yahoo.com [66.163.189.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D966D1353FC
-	for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 21:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF44F1E4AB
+	for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 22:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706133033; cv=none; b=uByYe8SxaLXfDtoZ2LVG6fSqi/0t4l175pxD3jMDjcoro15zoxqemagTaVqeLbe5f+o7uSA0QvD6ggwGqLDLrm4xSME73FaghF+ULBwmfZYosu5XCpgjRduszH1LDmeEXzCxwdB4lFY/5yj7Ra9mSp7TsjKK+HtQ6wXWS14aCYA=
+	t=1706135479; cv=none; b=iOKpTU16P4nEYH/ko52McqVWm9WOk/v2/vVb7v8DXENxnUaZ9DQl2O9woWJ0dwYPOlhNhceOvwRfv7QY9uLBG5l8dsxG/y5dBicGtMR9gEuLaPCej46r7+czoyFYT9a1ToC95TJEp+VTBHn82Hmsx4MUJ1N1pMcz5i1kpc0mYDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706133033; c=relaxed/simple;
-	bh=SNtidvVWr3ZZm0wIjg04hCXZO3neNf7MHZC1Z9rW0HE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lP3xWjVA1DHMrXJ/KgwDMvOA5M+eIZaiTLQsvSCXXxCpe0d32kfAzd/0z0noTgL9ig12nYdpSz+f9g+bM9jSPpeOvKY/4FuXRKgx+JzeNSGrddpJWLAXp0k6nzfdJqign2MjJV51Ybu53NcBHMNv3qYoiFkqsj5R4wE7dt8ezdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WJtreffx; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1706135479; c=relaxed/simple;
+	bh=ncNSKEB8i9H7xvUfioYYp/VoOJk3T8giU+CM5F/GyMc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MUl4n+MNsVXanLxXH9JMFjyXFcQq28ZAsfrsieFM3TB430/tPEaYljD0p9TVQ7S2WSgPEBiXdLVrU2Imhvsrhksw3uhMCusjD32bKo6ryLbjLaAjsGlRJQaqv2EbUPYJK4RSozN/G2Kn/uP6jDEjPyZnoylJUNsmFleczc6y3w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=WfdW4f/5; arc=none smtp.client-ip=66.163.189.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WJtreffx"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1d730b6943bso21903835ad.2
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 13:50:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1706133031; x=1706737831; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aKbTsnLJkm2iKuMS9jJ6ekbfLtHs2opAYqk/RqQaX2k=;
-        b=WJtreffxv2wnpnJN18ddmiRCAwxPEraYOayWdQsD4h31yIxDxwhAlcfDv77CcWsG57
-         6w0we8RZsPbaxhDbKN9W7as0PnRPME3TUpic853CnEmY4yCT6aIOCq/ZaHFgSfjspwjM
-         ZKJ3NU1rYre6ruPLqZ5vaY23oEcBAGbnDJM8Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706133031; x=1706737831;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aKbTsnLJkm2iKuMS9jJ6ekbfLtHs2opAYqk/RqQaX2k=;
-        b=th/JTU6i/pSSqmK6mvLBpdAxk0ooY+0OOBELX8rjnRkV/yDJuGVMUnMMVz/yR6d1Wq
-         JKRinu5MrvgAd6Ac7LaSrv1Sc+6p+nEUdzvhWcnUPOHzVFIvnIpe+cM8752Zy2pVOwNm
-         iga53dXBK4zU5LFLsC9tnCzqpowR+AHMezyZBHD1TEEwi44GkEdj6lJDP8qkw1aUk4jb
-         7DURt1uMPg0LLDeN8tPuNsXEXCM3TaN1nPghndRoYcFtTnvbiR49YyQtzh/3gjup0pqr
-         PU+LT/Oq087wKayZcK6IRKSTc5P5pEt7tShXeBqYlM/9P5uGT/HtufTP0QfQO7kzwlfR
-         P04Q==
-X-Gm-Message-State: AOJu0YxoWLEY4y7ZDx00to99eXOKSF/hxxd/8rGJvdPJXuF9JNFOd+vU
-	5izrRU9qmDs2+HP7jU+hwRRUHsgmHv4AIrdAsHglghBUMglD2tbhtQSvlJFhBw==
-X-Google-Smtp-Source: AGHT+IETCk9PNhDkJerT9hVfN75xLknukOIbsiWCq7ni0ocP8Kl19XxlMkq1LihioaB/wGqFl79jjw==
-X-Received: by 2002:a17:902:ce83:b0:1d4:bba1:bc61 with SMTP id f3-20020a170902ce8300b001d4bba1bc61mr22180plg.119.1706133031248;
-        Wed, 24 Jan 2024 13:50:31 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id jl16-20020a170903135000b001d75cf0e039sm4692075plb.18.2024.01.24.13.50.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jan 2024 13:50:30 -0800 (PST)
-Date: Wed, 24 Jan 2024 13:50:30 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Jann Horn <jannh@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Kevin Locke <kevin@kevinlocke.name>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] exec: Check __FMODE_EXEC instead of in_execve for LSMs
-Message-ID: <202401241348.1A2860EB58@keescook>
-References: <20240124192228.work.788-kees@kernel.org>
- <CAG48ez017tTwxXbxdZ4joVDv5i8FLWEjk=K_z1Vf=pf0v1=cTg@mail.gmail.com>
- <202401241206.031E2C75B@keescook>
- <CAHk-=wiUwRG7LuR=z5sbkFVGQh+7qVB6_1NM0Ny9SVNL1Un4Sw@mail.gmail.com>
- <202401241310.0A158998@keescook>
- <CAG48ez1tcxtEwWgxSUqLDcYbrkY=UM3hz22A0BTvTYq4BGpM8A@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="WfdW4f/5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1706135476; bh=K0ouN+nLZSPECn+2C3BZ1Yg4vdvedoKbDa2WyhtFY38=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=WfdW4f/5Ih/OSgNo+DyKRspxX32wxUbEljnupK8L/tmlybaoOAp0hA5BufPxvbdes56X+izqlCnHdW+P3y+bfGoR6u7tO21KUi/GBYsvNFgGHIXbF2PBOWaK1z1NxDQoUKiCu0QmC1iOeFnzfcyaJuqa/+RDXyIFXSk0i04hjrOzDTdLV7vbamwHt9OMzA2IJ802n7AYRotDMpDQyWz3GOsznBIjC2MvSAO8ZhpnxXql2hQzvuQ+RfEsqhqlm/CRUJSLnfin/GaElX3Nq2Y+vc4Bcqx5c2MLQgQKq47twjcLQnMzRuDw/LGXQGId1FvyDEhqizhsDFbc1N0LFyoZow==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1706135476; bh=DcO2p7KfHcK7ga62DQFXNKrpo3809blgw1ZKffA497L=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=s2dUkVw9XFE2zhyd5fnK79XZj3QxHpsFex4MxhxZdwR92qYGAH4KmHO3xQWZW7lJuIRb0QIdeWeQ79fsLs6U+fvC1FLG47xOqubEKWjFVTPJHS5NvRnfVRMT8YfTjveldnU/TkGS0C3rYMRw71hTC+dYDgzZR4uzECnS/giJSHP4mTC8wGsDw+uKvBg94PU/tKALGvhd1qXl9v2GukIN4vTg/SHFZnKz9iK1H/e/bUfsP+gsM6Ow9LLs1U+Eq1hVlzvaaUjh/spiY3OrrJF1W3isL4A3bCxpdId7Jp1J0YL+FFa5e9eHSP9jgLyhVGa628Gcg+n+ZPMM+mFIRu6PkA==
+X-YMail-OSG: _3ClCVQVM1nWjuWf0B1d1_7qd1yx.3LKY4eSTxK6sKU3EbThvP0op9nLFX7YuaN
+ T.1lTdGHyckk.kOm5AhIIVYx4MOVZG4baoEa40ChtfXX1GyGRYesodCnDx_tAV3wsWMu3bmK1Q7T
+ meelx_kuN2GYpQ0z7i1T5ZptDdDNYZR_O8nUDT9uXONtZCYwiamPUCwNqc762uPYXYfE6a_nfj_R
+ folpvzxtBD7u_GLuPGaLVY4nVmgn4u666D2gxPd.U6f5j63pMagy4CnpO4inedzIOsTttuTuYNsn
+ vJLx1wa6UMxA1Zxl0xD6Zj_6Rq7RUQTBJGduc3jcphVlln4YXsfeLp8RWC_k1ySMzzpa2TUMN9Fd
+ .22MZ6VUrhfsnT4ixKU0_wrIbiSzTPUaMBZWn1026Lk2Rn7k5KltOJwtuTGuVQtJ_NNuKFtFFu4a
+ FvQTrWthk4ylfectSnRIFLX2U62QO6za0TsNWdUPtM4UEagbGXxYhWFybMq2zTsxJEFUpbCG5yJv
+ D.BjBYbRLyBwfwxS7ABNPf7W5MM1.wrc2hsgwrjGPV7WpV3S_fHbyRGUNLo8CO5nMSubI0fCriTj
+ QZ6FNjnmZN4zz0OHVI_PJFO8fE4DHz7sSfqX2XHzew7WQZegSyGOFtVbAk.AgsDMHO3NzdgzdZ.4
+ kklzmTD0ePmMQGCjPan8n5aCGBPkS.GAoGSFqXMizceOhByv1ryKwiQ179BBmcFfYG9tDUKomxJm
+ MWmWqzvGaiSlDjDYOkDbUzVF9lapfRuZ.RdICj7hs0BKHfJeDcED8W4f54zUsc8BTD_eIm8vqBe5
+ KTQAkqKXsV_EAAGCNlj4596jUOxTQRJmHvA7cN5hkwK7MAe8onOu5k6L3dMwxZ3ixJU3kwxaOoIj
+ .htFiTdpPLAvjuxwzlfAUaZUVy5rMF3DVODJreUNzAI7cW49slkuSKGdad0LQBDscl6fDQRyVhb5
+ 85IAUR158zrgOQcIlORln69bZIT5SX5ukwhRFyQPzTRNdNVoCsB.owHZxyMwQuRtkKnIaGCeNu.B
+ rUHSrCvXmfQWWP72pyx4R1UvlxJj.H_s0jS2oLEzlypq6ks.FiNdLbAaRYY4K838f_eJOgWmX9Ir
+ 6CFblf6oT0jSycR4OPz3ovAxUbMoAwjxJI06oPkVZ21A4Y56NRecNe77DF0ASHzt8KOksuTmPxH1
+ 9MugJrorMO5LOozLfA6K.kf8BAcXIrlWavV0UeL5FxJoiN6BkrzAMWrUXIVjLQBP_f7N4Sm.b4P9
+ tejJgAeuvL0JO7xgKgr7c.N9WPZWt5J3UAnmmV3KNh8iiQ.qt2.bsyL3iZNWtfOFA_3xJOz_P7Gf
+ QU_NpTviRNGk_2mJ.MzZaCjpm9NvSVvCo1pO64bco6t59QS3UXOmLq_s.V0wvNYCwFopREdB1Jex
+ V4ZwgYWXzteF4j7sIK1ENL0XThjeKljleuJX4LoWwWgAhfj_s4Jd4Kehj1lxSB0hZ_0zcRWk2cyZ
+ _Il8EZe87Ne0d5ih4I9_c3AVwut24wjDMza6upIeCd5Dk4lIaHCr.4lOV7pDKJfmHnHmn.x1pKi1
+ gs2y7PwJHX.tqV103afr.o8U4VDj0.1FGX9ChNAAm.eLRqIvEOColYnwNaHCsUtIPI9OiD3gUXrg
+ rNZopcvJHQClxrnfVdxLEpnvx4Z7aY1ISUKe_yrJZRsOnoLkNh90AMEd48BTVMk3USFmwb3pnJbB
+ fcHa6DzxUZoVvnlRF2vkYbwv61Vm9VWVr8dn6fYl.cxhhF37NaqXAkJk3E0gTDKBT9RpTPYoQ2ii
+ zVcA61E7BQ8ZIfasw2LNxEmv.7Iu42zBgTAKy8KB5Tq2JpA9pQjS9c8VAFge9PnIPJzSvg.LMGst
+ _DXFcszFGFSQ2D6I9sdorn1OnihUwJwdMepU7PNNPTtZaZekK3axqwdR_Ey6PisBzRCeDSH1mwou
+ xD6fGJr7qmkaCQ_kMvWcOhRRPc6RAWiHjl1KBCFH9JwWMs4FqZSA9YXjkGOfd9MurPMvyl626rMf
+ vpDCjQ7I2UXNqeLuBPSexLOvAkvwANRLj2E5FDHZFf50p9ZEYnrqHbeU1q.k6eW5z6oC.1osuLLU
+ eZMEQivgAMgBDmovxK6n__iYK_gTrHFC9XFBZCvE7rLz_uEkh2PEBnGpODOuVjKL7h5tqFmg3Ims
+ En.j7nuZzWuhp.ZfX6n7rKGGcRjjsFMN.Qcf0z6u60t6VmArRP95OI8xjh3AcPGRKiJsXJ18QFYI
+ VPGPUh_Zoz7CN.mVfi.N2Ypl1r944dD4HTJTQjglGohEOxPx29mK2gndUyoo0XNVzCrzyu.j9hDg
+ 8vd3DRzie_Qgq
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: b3c06742-66d1-4933-9b7c-458d5954b9e7
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Wed, 24 Jan 2024 22:31:16 +0000
+Received: by hermes--production-gq1-78d49cd6df-mnx8f (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5c48bb728c9087adeaa06b5a440f689f;
+          Wed, 24 Jan 2024 22:31:12 +0000 (UTC)
+Message-ID: <53897379-0c7a-4da7-870c-1eb7e822a129@schaufler-ca.com>
+Date: Wed, 24 Jan 2024 14:31:10 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez1tcxtEwWgxSUqLDcYbrkY=UM3hz22A0BTvTYq4BGpM8A@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] Smack transmute fixes
+Content-Language: en-US
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20231116090125.187209-1-roberto.sassu@huaweicloud.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20231116090125.187209-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22046 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Wed, Jan 24, 2024 at 10:40:49PM +0100, Jann Horn wrote:
-> On Wed, Jan 24, 2024 at 10:32 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Wed, Jan 24, 2024 at 12:47:34PM -0800, Linus Torvalds wrote:
-> > > On Wed, 24 Jan 2024 at 12:15, Kees Cook <keescook@chromium.org> wrote:
-> > > >
-> > > > Hmpf, and frustratingly Ubuntu (and Debian) still builds with
-> > > > CONFIG_USELIB, even though it was reported[2] to them almost 4 years ago.
-> >
-> > For completeness, Fedora hasn't had CONFIG_USELIB for a while now.
-> >
-> > > Well, we could just remove the __FMODE_EXEC from uselib.
-> > >
-> > > It's kind of wrong anyway.
-> >
-> > Yeah.
-> >
-> > > So I think just removing __FMODE_EXEC would just do the
-> > > RightThing(tm), and changes nothing for any sane situation.
-> >
-> > Agreed about these:
-> >
-> > - fs/fcntl.c is just doing a bitfield sanity check.
-> >
-> > - nfs_open_permission_mask(), as you say, is only checking for
-> >   unreadable case.
-> >
-> > - fsnotify would also see uselib() as a read, but afaict,
-> >   that's what it would see for an mmap(), so this should
-> >   be functionally safe.
-> >
-> > This one, though, I need some more time to examine:
-> >
-> > - AppArmor, TOMOYO, and LandLock will see uselib() as an
-> >   open-for-read, so that might still be a problem? As you
-> >   say, it's more of a mmap() call, but that would mean
-> >   adding something a call like security_mmap_file() into
-> >   uselib()...
-> >
-> > The issue isn't an insane "support uselib() under AppArmor" case, but
-> > rather "Can uselib() be used to bypass exec/mmap checks?"
-> >
-> > This totally untested patch might give appropriate coverage:
-> >
-> > diff --git a/fs/exec.c b/fs/exec.c
-> > index d179abb78a1c..0c9265312c8d 100644
-> > --- a/fs/exec.c
-> > +++ b/fs/exec.c
-> > @@ -143,6 +143,10 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
-> >         if (IS_ERR(file))
-> >                 goto out;
-> >
-> > +       error = security_mmap_file(file, PROT_READ | PROT_EXEC, MAP_FIXED | MAP_SHARED);
-> > +       if (error)
-> > +               goto exit;
-> 
-> Call path from here is:
-> 
-> sys_uselib -> load_elf_library -> elf_load -> elf_map -> vm_mmap ->
-> vm_mmap_pgoff
-> 
-> Call path for normal mmap is:
-> 
-> sys_mmap_pgoff -> ksys_mmap_pgoff -> vm_mmap_pgoff
-> 
-> So I think the call paths converge before any real security checks
-> happen, and the check you're suggesting should be superfluous. (There
-> is some weird audit call in ksys_mmap_pgoff() but that's just to
-> record the FD number, so I guess that doesn't matter.)
+On 11/16/2023 1:01 AM, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> The first two patches are obvious fixes, the first restricts setting the
+> SMACK64TRANSMUTE xattr only for directories, and the second makes it
+> possible to set SMACK64TRANSMUTE if the filesystem does not support xattrs
+> (e.g. ramfs).
+>
+> The remaining fixes are optional, and only required if we want filesystems
+> without xattr support behave like those with xattr support. Since we have
+> the inode_setsecurity and inode_getsecurity hooks to make the first group
+> work, it seems useful to fix inode creation too (SELinux should be fine).
+>
+> The third patch is merely a code move out of the 'if (xattr)' condition.
+> The fourth updates the security field of the in-memory inode directly in
+> smack_inode_init_security() and marks the inode as instantiated,
 
-Yeah, I was just noticing this. I was over thinking. :) It does look
-like all that is needed is to remove __FMODE_EXEC.
+I have taken patches 1-4 in smack-next. I'm still waiting on a convincing
+approval for patch 5.
 
--- 
-Kees Cook
+
+>  and the
+> fifth adds a security_inode_init_security() call in ramfs to initialize the
+> security field of the in-memory inodes (needed to test transmuting
+> directories).
+>
+> Both the Smack (on xfs) and IMA test suite succeed with all patches
+> applied. Tests were not executed on v3 (trivial changes).
+>
+> By executing the tests in a ramfs, the results are:
+>
+> Without the patches:
+> 86 Passed, 9 Failed, 90% Success rate
+>
+> With the patches:
+> 93 Passed, 2 Failed, 97% Success rate
+>
+> The remaining two failures are:
+> 2151  ioctl(4, BTRFS_IOC_CLONE or FICLONE, 3) = -1 EOPNOTSUPP (Operation not supported)
+> 2152  lsetxattr("./targets/proc-attr-Snap", "security.SMACK64EXEC", "Pop", 3, 0) = -1 EOPNOTSUPP (Operation not supported)
+>
+> The first one is likely due ramfs lack of support for ioctl() while the
+> second could be fixed by handling SMACK64EXEC in smack_inode_setsecurity().
+>
+> The patch set applies on top of lsm/dev, commit e246777e2a03 ("MAINTAINERS:
+> update the LSM entry").
+>
+> The ramfs patch potentially could be useful to correctly initialize the
+> label of new inodes in the initramfs, assuming that it will be fully
+> labeled with support for xattrs in the cpio image:
+>
+> https://lore.kernel.org/linux-integrity/20190523121803.21638-1-roberto.sassu@huawei.com/
+>
+> Ramfs inode labels will be set from xattrs with the inode_setsecurity hook.
+>
+> Changelog
+>
+> v2:
+> - Replace return with goto in the ramfs patch, for better maintainability
+>   (suggested by Andrew Morton)
+>
+> v1:
+> - Rebase on top of latest lsm/next
+> - Remove -EOPNOTSUPP check in patch 5 (cannot happen)
+>
+> Roberto Sassu (5):
+>   smack: Set SMACK64TRANSMUTE only for dirs in smack_inode_setxattr()
+>   smack: Handle SMACK64TRANSMUTE in smack_inode_setsecurity()
+>   smack: Always determine inode labels in smack_inode_init_security()
+>   smack: Initialize the in-memory inode in smack_inode_init_security()
+>   ramfs: Initialize security of in-memory inodes
+>
+>  fs/ramfs/inode.c           | 32 ++++++++++++-
+>  security/smack/smack_lsm.c | 95 ++++++++++++++++++++++----------------
+>  2 files changed, 86 insertions(+), 41 deletions(-)
+>
