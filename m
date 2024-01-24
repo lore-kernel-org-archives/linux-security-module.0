@@ -1,189 +1,137 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026C21350C0;
-	Wed, 24 Jan 2024 20:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A9D7E760
+	for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 20:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706128844; cv=none; b=pgaKbbz4Kl/Rl4gd2WYRZpXsK7IYhQVg+iNb5xwgqt/tsqAa9ecGO7bIK8kf28j6qHkQm5bbFD4TFRvhZIrrcJvMHMxtMrXwzvCihGNllX5l1FQJoAxrKmL1cW6oDxeCzjP9XWEB664h2sYEWnUpdHAEcQLwlD9ryEl3UspGQ4M=
+	t=1706129275; cv=none; b=csnb1PxLPpgS7KjxXuf1xPpqjSl4dp+pLM5HbtyCwcWNtxlMC1wJaLTzBwSvzRBKyBDu3bP1dT14HWsU5fA4NmcDHbsIl01sC6eRcXjDyL5VaISNIcAnixhtSPQkOzbhcTveFVHk6QnAwEKCT5WII4TY7BSjPvK23yRbjOSTnyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706128844; c=relaxed/simple;
-	bh=hzJ3DJETdoxLp+P5+lRmaPth2GPIg7sSosK0rWcLIBc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=O4okdkvhdfINZUnIIThq+31MPeRTpz6DDJj1BS+ZXej/C+pu2ZS/0OrM0lF6QI9pi1RsWm1pEEOjhePqyGb+ptKqhyXHwr7dNDmPJBDmDr+Dnz2ey16XAhnZU1yLoYhlYxXdxEweTiCzK6T4vksVRDUYy7KikHrMes0aW8H2fpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=F9a4qluB; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1706129275; c=relaxed/simple;
+	bh=7cPnVJTTwAqS5m/D9fwBaWJXEtqGZq8IcE/AOficsKI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cHjp0uo+y9ZYA3IRZTzjVDINz8nN27fWenDhfVUNqClCKRjXc9hLvx0tiDAfn4FTz4zUPK2wPi2g31sRkd8qBYJYbpKdvq/jgIBGpSXJ8jnEIi4tNzIb3np2azQpnJTsTq/Vdrq+qgPwHrNBqrOKexprxyQ5cKNm2SyfyUAGd0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SUN/4OWl; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="F9a4qluB"
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40OKEpge004717;
-	Wed, 24 Jan 2024 20:40:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=6ioIDZv1sGQ7eAng1/+ztxX4+K6ABsfVJQdOjSPqPFo=;
- b=F9a4qluBDv2erKGNQNRZJw4hIXP1QtO//8d/Yd4gluJUQ0rDFJyx5WUAvMS6jWosfzzF
- yB68HafEw0Ts9JF9oJQq7bY/UViDjmSMc57K4nPThh5/TafTMaFOqJT54uR1uvHgKJTs
- xJhubGYuCgIKIq23s0Xw5Eb8xN0uUQ/9KEx6pqqjkluv3dihkevONG2OGrz3ogM9mAFu
- bZmLjwwyOf0shFnTd98uLFjJA3HtIjnVkb17LsueGFyrszO+dBQSSY0W/P+ikkA7lMA2
- jnGH+eGqOd3r2cR1via/p1Yv7ztNKeH0UaYkaQT1E4bPtjJKHeq9pPKOGpRrbms5N1bv vg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vu7uckhg3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jan 2024 20:40:22 +0000
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 40OKUf7g023282;
-	Wed, 24 Jan 2024 20:40:21 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vu7uckhfq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jan 2024 20:40:21 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 40OIq5BR026879;
-	Wed, 24 Jan 2024 20:40:20 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3vrrgtgk61-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jan 2024 20:40:20 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 40OKeJvM36766408
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Jan 2024 20:40:19 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6D61158057;
-	Wed, 24 Jan 2024 20:40:19 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 08C0B58059;
-	Wed, 24 Jan 2024 20:40:18 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.watson.ibm.com (unknown [9.31.99.90])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 24 Jan 2024 20:40:17 +0000 (GMT)
-Message-ID: <49c48e3e96bf0f5ebef14e7328cc8a6ca6380e08.camel@linux.ibm.com>
-Subject: Re: [PATCH] KEYS: encrypted: Add check for strsep
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: "Verma, Vishal L" <vishal.l.verma@intel.com>,
-        "paul@paul-moore.com"
-	 <paul@paul-moore.com>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "dhowells@redhat.com"
-	 <dhowells@redhat.com>,
-        "yaelt@google.com" <yaelt@google.com>,
-        "serge@hallyn.com"
-	 <serge@hallyn.com>,
-        "nichen@iscas.ac.cn" <nichen@iscas.ac.cn>,
-        "sumit.garg@linaro.org"
-	 <sumit.garg@linaro.org>,
-        "jmorris@namei.org" <jmorris@namei.org>
-Cc: "Jiang, Dave" <dave.jiang@intel.com>,
-        "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>,
-        "linux-cxl@vger.kernel.org"
- <linux-cxl@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>,
-        "Williams, Dan J"
- <dan.j.williams@intel.com>,
-        "keyrings@vger.kernel.org"
- <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>,
-        "nvdimm@lists.linux.dev"
- <nvdimm@lists.linux.dev>
-Date: Wed, 24 Jan 2024 15:40:17 -0500
-In-Reply-To: <e3b1a5e532ed86e674385abc4812c5a774f851d4.camel@intel.com>
-References: <20231108073627.1063464-1-nichen@iscas.ac.cn>
-	 <4d3465b48b9c5a87deb385b15bf5125fc1704019.camel@intel.com>
-	 <e3275c0cfe21d75e0d71ea3fc24a31252efc9ad6.camel@linux.ibm.com>
-	 <e3b1a5e532ed86e674385abc4812c5a774f851d4.camel@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SUN/4OWl"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-55790581457so8014834a12.3
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 12:47:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1706129272; x=1706734072; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rk3ry+wMmO/dN2zz3UHRD0lGEi4syprX1/TUT7irM/o=;
+        b=SUN/4OWlUYlWYLYZ9vbkg5QVEfIKK10dzzJsUhdZABaaW07g7ypcreDM0HZaUbSZtz
+         uePKNHCfIGZZv4XghoLpwqRuzGTGtVoQ71CibzvWq48US7+YmzOTcBhIWQlD9ob/cmDH
+         xvAuO9AXRQA+x/eNm+B5rN94wMKl2VCvxzj1g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706129272; x=1706734072;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rk3ry+wMmO/dN2zz3UHRD0lGEi4syprX1/TUT7irM/o=;
+        b=i6trkqyXn9iKsnkHhjhmHrG2lR6VEo3hMK0Hh8uaJUFoj1BX5kMN6da/eJQJQ201mo
+         LOy/VjYHM4/8rTh5eJTbIpU/GMJ/EkAY9zH7KIKkp+jZT+oEHvqEz8rMOUIyokN61gcQ
+         oveBuQsp3sA6Y56pDjYBEONuKYekQfBbY+grSs4cjdBEFZIO5RE6qktx+iZQfLJaQqA9
+         fZdS4VGN0QH4YfbH3S+Gutmukux08uExlh7P9fZ/2l5Y9vhftRgiGxeESS4pElu1EQwf
+         51+a4/dvLkOzsnHCQ4/6npqsVsznP2JMWkpWdYYxhstcm73cS7AFUo7MV8hyjFKT8iPp
+         zu4g==
+X-Gm-Message-State: AOJu0YxCLeIbInU2whYoyC8DyIV2QFUvD1/nb4rVQuUvsW5PBABu+EIt
+	jL10tmk+EGTgXO4l5Vlct98lxHaWU2Y4oBk2iCmOqUhNbSv7iVQyDNZDc/QPj60C5TekSr7pDX+
+	JaPh+yw==
+X-Google-Smtp-Source: AGHT+IEEMFby+b2UNlRrOkq6fwEVYHJPMBN9Yy/9IAXcWNAu5IgiFY1nim0RWrG2dsLrNw+I7p169g==
+X-Received: by 2002:a05:6402:693:b0:559:d0ef:616b with SMTP id f19-20020a056402069300b00559d0ef616bmr14625edy.42.1706129271872;
+        Wed, 24 Jan 2024 12:47:51 -0800 (PST)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com. [209.85.128.49])
+        by smtp.gmail.com with ESMTPSA id fg7-20020a056402548700b005593c83bdafsm12991382edb.45.2024.01.24.12.47.51
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jan 2024 12:47:51 -0800 (PST)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40e76626170so65472815e9.2
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 12:47:51 -0800 (PST)
+X-Received: by 2002:a05:600c:4ec9:b0:40e:a3aa:a463 with SMTP id
+ g9-20020a05600c4ec900b0040ea3aaa463mr1545745wmq.20.1706129271244; Wed, 24 Jan
+ 2024 12:47:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: BIDnxhlJRef7AywAZbikE-sp1Jompx04
-X-Proofpoint-ORIG-GUID: zbbsiYWRF0oFrQlVwoiL0Xu2qIxYjd_6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-24_09,2024-01-24_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- bulkscore=0 adultscore=0 malwarescore=0 impostorscore=0 lowpriorityscore=0
- clxscore=1015 priorityscore=1501 phishscore=0 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2401240149
+MIME-Version: 1.0
+References: <20240124192228.work.788-kees@kernel.org> <CAG48ez017tTwxXbxdZ4joVDv5i8FLWEjk=K_z1Vf=pf0v1=cTg@mail.gmail.com>
+ <202401241206.031E2C75B@keescook>
+In-Reply-To: <202401241206.031E2C75B@keescook>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 24 Jan 2024 12:47:34 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiUwRG7LuR=z5sbkFVGQh+7qVB6_1NM0Ny9SVNL1Un4Sw@mail.gmail.com>
+Message-ID: <CAHk-=wiUwRG7LuR=z5sbkFVGQh+7qVB6_1NM0Ny9SVNL1Un4Sw@mail.gmail.com>
+Subject: Re: [PATCH] exec: Check __FMODE_EXEC instead of in_execve for LSMs
+To: Kees Cook <keescook@chromium.org>
+Cc: Jann Horn <jannh@google.com>, Josh Triplett <josh@joshtriplett.org>, 
+	Kevin Locke <kevin@kevinlocke.name>, John Johansen <john.johansen@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Kentaro Takeda <takedakn@nttdata.co.jp>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Eric Biederman <ebiederm@xmission.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 2024-01-24 at 20:10 +0000, Verma, Vishal L wrote:
-> On Wed, 2024-01-24 at 14:15 -0500, Mimi Zohar wrote:
-> > On Wed, 2024-01-24 at 18:21 +0000, Verma, Vishal L wrote:
-> > > On Wed, 2023-11-08 at 07:36 +0000, Chen Ni wrote:
-> > > > Add check for strsep() in order to transfer the error.
-> > > > 
-> > > > Fixes: cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-
-> > > > provided decrypted data")
-> > > > Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> > > > ---
-> > > >  security/keys/encrypted-keys/encrypted.c | 4 ++++
-> > > >  1 file changed, 4 insertions(+)
-> > > > 
-> > > > diff --git a/security/keys/encrypted-keys/encrypted.c
-> > > > b/security/keys/encrypted-keys/encrypted.c
-> > > > index 8af2136069d2..76f55dd13cb8 100644
-> > > > --- a/security/keys/encrypted-keys/encrypted.c
-> > > > +++ b/security/keys/encrypted-keys/encrypted.c
-> > > > @@ -237,6 +237,10 @@ static int datablob_parse(char *datablob, const
-> > > > char **format,
-> > > >  			break;
-> > > >  		}
-> > > >  		*decrypted_data = strsep(&datablob, " \t");
-> > > > +		if (!*decrypted_data) {
-> > > > +			pr_info("encrypted_key: decrypted_data is
-> > > > missing\n");
-> > > > +			break;
-> > > > +		}
-> > > 
-> > > Hello,
-> > > 
-> > > This patch seems to break keyring usage in CXL and NVDIMM, with the
-> > > "decrypted_data is missing" error path being hit. Reverting this commit
-> > > fixes the tests. I'm not sure if there are valid scenarios where this is
-> > > expected to be empty?
-> > > 
-> > > Here's an strace snippet of where the error occurs:
-> > > 
-> > >    keyctl(KEYCTL_SEARCH, KEY_SPEC_USER_KEYRING, "user", "nvdimm-master", 0) = 76300785
-> > >    openat(AT_FDCWD, "/sys/devices/platform/cxl_acpi.0/root0/nvdimm-bridge0/ndbus0/nmem0/state", O_RDONLY|O_CLOEXEC) = 3
-> > >    read(3, "idle\n", 1024)                 = 5
-> > >    close(3)                                = 0
-> > >    keyctl(KEYCTL_SEARCH, KEY_SPEC_USER_KEYRING, "encrypted", "nvdimm:0", 0) = -1 ENOKEY (Required key not available)
-> > >    uname({sysname="Linux", nodename="fedora", ...}) = 0
-> > >    newfstatat(AT_FDCWD, "/etc/ndctl/keys/nvdimm_0_fedora.blob", 0x7fff23fbc210, 0) = -1 ENOENT (No such file or directory)
-> > >    add_key("encrypted", "nvdimm:0", "new enc32 user:nvdimm-master 32", 31, KEY_SPEC_USER_KEYRING) = -1 EINVAL (Invalid argument)
-> > 
-> > 
-> > Indeed!  The user-provided decrypted data should be optional.   The change needs
-> > to be reverted.
-> > 
-> Ah, thanks for confirming! Would you like me to send a revert patch or
-> will you do it?
+On Wed, 24 Jan 2024 at 12:15, Kees Cook <keescook@chromium.org> wrote:
+>
+> Hmpf, and frustratingly Ubuntu (and Debian) still builds with
+> CONFIG_USELIB, even though it was reported[2] to them almost 4 years ago.
 
-Revert "KEYS: encrypted: Add check for strsep"
-    
-This reverts commit b4af096b5df5dd131ab796c79cedc7069d8f4882.
-    
-New encrypted keys are created either from kernel-generated random
-numbers or user-provided decrypted data.  Revert the change requiring
-user-provided decrypted data.
+Well, we could just remove the __FMODE_EXEC from uselib.
 
+It's kind of wrong anyway.
 
-Can I add your Reported-by?
+Unlike a real execve(), where the target executable actually takes
+control and you can't actually control it (except with ptrace, of
+course), 'uselib()' really is just a wrapper around a special mmap.
 
-Mimi
+And you can see it in the "acc_mode" flags: uselib already requires
+MAY_READ for that reason. So you cannot uselib() a non-readable file,
+unlike execve().
 
+So I think just removing __FMODE_EXEC would just do the
+RightThing(tm), and changes nothing for any sane situation.
 
+In fact, I don't think __FMODE_EXEC really ever did anything for the
+uselib() case, so removing it *really* shouldn't matter, and only fix
+the new AppArmor / Tomoyo use.
 
+Of course, as you say, not having CONFIG_USELIB enabled at all is the
+_truly_ sane thing, but the only thing that used the FMODE_EXEC bit
+were landlock and some special-case nfs stuff.
 
+And at least the nfs stuff was about "don't require read permissions
+for exec", which was already wrong for the uselib() case as per above.
+
+So I think the simple oneliner is literally just
+
+  --- a/fs/exec.c
+  +++ b/fs/exec.c
+  @@ -128,7 +128,7 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
+        struct filename *tmp = getname(library);
+        int error = PTR_ERR(tmp);
+        static const struct open_flags uselib_flags = {
+  -             .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
+  +             .open_flag = O_LARGEFILE | O_RDONLY,
+                .acc_mode = MAY_READ | MAY_EXEC,
+                .intent = LOOKUP_OPEN,
+                .lookup_flags = LOOKUP_FOLLOW,
+
+but I obviously have nothing that uses uselib(). I don't see how it
+really *could* break anything, though, exactly because of that
+
+                .acc_mode = MAY_READ | MAY_EXEC,
+
+that means that the *regular* permission checks already require the
+file to be readable. Never mind any LSM checks that might be confused.
+
+           Linus
