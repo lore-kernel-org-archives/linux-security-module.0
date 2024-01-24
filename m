@@ -1,142 +1,223 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41D87E583
-	for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 17:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321347E796
+	for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 17:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706116280; cv=none; b=VYeA5aoIOexq4noBEN2ZGkA0+TgGS7ussBmf3/FhR/G6miU6HUijOLH76pki54+pp0COOMAnvW2F04lAfbYlP4/2ZhtkWXIojysn9GeaxLtiP366tOkNh0DOQZU+raAjWHI0H338UNMbrBnnrq+9GtDAOaSScaruVjqVYXXcz6c=
+	t=1706116542; cv=none; b=Kmm44MNu3vNI5AFG4PX+14TWwi4JjhQonIkEy6CUe6477V8ro66kkupdJR0BvvJTZIUI2dZ5LOmewar0paO9ezdxQrI+X2yPQCT8fjJFkxZHFzreIQnQDdJFhE2y9DFMlqBL1nrI46XGiZCjnIHdjNnVbbvXR18UnnYMtsqdPT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706116280; c=relaxed/simple;
-	bh=Kl/HAVfdMhADs0Tsv5S4YUd1uTXeFaa2nCYlPTrHhvs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dIvyXNTTWshZPZOuy7REdoa0eKlzaZn7dh3WzRN9EEdcvyjDDACC0WOPxFQGWQUSX5yhlkNCLcm36cMH0o5F7fQTEbv4izanOzJUdb+/Tj14IEOA2wnL96JFtmIHklZFth1RCpv7dA9uBUwOmPaIA7Y5++3CKTM94JPpi5Z1BE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JNcinWZC; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1706116542; c=relaxed/simple;
+	bh=81mkfaPIV3l+5W5/Io29q5qBbGLhqIevhvpzE2K69N4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ldD3YosIEuvdNifxBG0BICbALLemre+r1dcwWp37lwPrSU8VgwTlzY4mcd5vdpjtSxV7H4ypZmYb4EjI18AP/1v2lp/xPF/dshUhD8V6z2F+KJwUrx6QRbDzF7O0zvC/N+8X+U5cZm916DEQemgmUxCQbcAkMeYI9F7HHab3/Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VnfCx64F; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JNcinWZC"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a3129939d67so74973366b.2
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 09:11:18 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VnfCx64F"
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-361a1665897so31541555ab.2
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 09:15:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1706116277; x=1706721077; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9RzKprHyYfiPaLEeOIvMtbDAp0S6N60JXbJyiLEkNDw=;
-        b=JNcinWZCDRQmg0eD0Wsa2vTLfEUk5U5b0m8rGQ/dFnAd8k1f77zKjx1BCz3jsOrRE6
-         IS1EwfIK2aFhce3YxMMy3mztI8kcCF+GJIrcLDU2XB0n2iWjStO2rfO7XemJmu/MXsQi
-         buR04ph/1VVMRmNmO43TH2gHz13ZsCwUMKEbk=
+        d=chromium.org; s=google; t=1706116540; x=1706721340; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AtjqtWQJSzRmjQ40qBkgrmDmBtAr9tkAVMLkDK2JZy0=;
+        b=VnfCx64F72OBNkIfdUDDoV6Myo2Tdnhkw6ubhRLjupN8T8W/X8gQuAJNzqmUKeRJxj
+         iNv8zR3hOgnwtmWu6Ln+UpXmSS3qzllCzZlr+nihoCel2GOEhd+l+8kawKYrvFljxgh0
+         nx78CSWFegodh+BpvFR1sFHSAi0iD8rw66Ncg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706116277; x=1706721077;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9RzKprHyYfiPaLEeOIvMtbDAp0S6N60JXbJyiLEkNDw=;
-        b=PWycitpLV6g2sIbdIbTrmR3T8GEXydWQGy7b5ntcha+1euKRnBWfZxplG4uXg5XAX1
-         cpUT5SF+KWpwhtQ5HC2d9iYDCfFsD/Aw4RxWjRk/6rkvX4MWA7SlA96ubqx90XV8UZzG
-         SzeXUMvfYs5/iJuBM/cg88xn0UaJ0qCSc+qz/y3PmAm3oH3LVA7qQ4Pv1QqCY5yPq2Lg
-         RqKn593d09Y0qjhnMYdqmaXbcT/iGCFQNwqYqO2kVAoFgyVEFOcnqRpjCj6Vlrh3wn2u
-         QcC8sTUxlqs96FBFyVOhwFRIDKbdBJKf6n2UMnj85cpW9mK2AEWMTKJpLvOa+mdWfmWf
-         2Trw==
-X-Gm-Message-State: AOJu0YyELeZmNFjzysna96StgqT1zK5FLas2p2j1Zy3XnRrOfCSJLWgg
-	vqxjoK/0n9nE91PjC5rqhD7wl/mFxwCZpNK/5AQymry+JuOWMkZOd6NsyayUsxI2yMBl8D1FgHI
-	YCdKxaA==
-X-Google-Smtp-Source: AGHT+IF5o76JS2m8BQxGCiLb6UgYT2HedDealwW6M7zot+LbUmbT17R2yHE6eeG/QJv4mmNnB860WA==
-X-Received: by 2002:a17:906:40da:b0:a31:3f4f:bea7 with SMTP id a26-20020a17090640da00b00a313f4fbea7mr445088ejk.39.1706116276738;
-        Wed, 24 Jan 2024 09:11:16 -0800 (PST)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id vu2-20020a170907a64200b00a313ba55c35sm80160ejc.98.2024.01.24.09.11.15
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jan 2024 09:11:15 -0800 (PST)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-55a6833c21eso4396989a12.2
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Jan 2024 09:11:15 -0800 (PST)
-X-Received: by 2002:a05:6402:440d:b0:55c:8a2e:df41 with SMTP id
- y13-20020a056402440d00b0055c8a2edf41mr1934309eda.84.1706116275091; Wed, 24
- Jan 2024 09:11:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706116540; x=1706721340;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AtjqtWQJSzRmjQ40qBkgrmDmBtAr9tkAVMLkDK2JZy0=;
+        b=t5tK/mKIm2+el3vQ9YkW/9RvGrbHuTJ5H2RVf1h/zyfu0aqLHwbmKP0n8D6ZtaZvj7
+         ZoXs2ZFadB01ekMuLob563wE7IrbpnQ+FyjI+ntw1uawnvcmhesQWu97eTvRN7GnQu0Q
+         fHkQplIvv5ww5SNt6qVWj5zgNJMJt5Q8rlpJ7Vyd0rrJqHJDCkcxFUmQJKrwm76m0wMl
+         yHn+IZ2n50z1FKmN1y9cIjpk3Qx4wqdbypgQtKFc0ZQbRwU9wSANYCmuxIB65o2Jjv7F
+         GUUzEoewAd5GiFNK3WY+m5AOLQlc0Ehbp8EzvkbUXEa1blTHoPgsvQK4IEP5CgyOdQdt
+         +q+g==
+X-Gm-Message-State: AOJu0YyFz6w7rcn8UMyP1u1s9re/iPkHeardd1LxYI2kw+mU14OUyen5
+	Ol8y9GVHzbx7gJWwY27mRUJ90ccQQv88Dv40Vr6v/5yIej6W607mo4hlqDyjIw==
+X-Google-Smtp-Source: AGHT+IEumDQJqaq75I9i1VHN14DXtK52FPlkPRPNODL5r/5aNFoRHKNDUtbUXZxMuQxI43sueBUEvA==
+X-Received: by 2002:a92:c9c6:0:b0:361:a5a6:aa7b with SMTP id k6-20020a92c9c6000000b00361a5a6aa7bmr1577157ilq.38.1706116540247;
+        Wed, 24 Jan 2024 09:15:40 -0800 (PST)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id i15-20020a63cd0f000000b005ce6b79ab6asm12175650pgg.82.2024.01.24.09.15.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jan 2024 09:15:39 -0800 (PST)
+Date: Wed, 24 Jan 2024 09:15:38 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Kevin Locke <kevin@kevinlocke.name>,
+	John Johansen <john.johansen@canonical.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [6.8-rc1 Regression] Unable to exec apparmor_parser from
+ virt-aa-helper
+Message-ID: <202401240910.E0449F0F@keescook>
+References: <ZbE4qn9_h14OqADK@kevinlocke.name>
+ <202401240832.02940B1A@keescook>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZbE4qn9_h14OqADK@kevinlocke.name> <202401240832.02940B1A@keescook>
- <CAHk-=wgJmDuYOQ+m_urRzrTTrQoobCJXnSYMovpwKckGgTyMxA@mail.gmail.com> <CAHk-=wijSFE6+vjv7vCrhFJw=y36RY6zApCA07uD1jMpmmFBfA@mail.gmail.com>
-In-Reply-To: <CAHk-=wijSFE6+vjv7vCrhFJw=y36RY6zApCA07uD1jMpmmFBfA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 24 Jan 2024 09:10:58 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiZj-C-ZjiJdhyCDGK07WXfeROj1ACaSy7OrxtpqQVe-g@mail.gmail.com>
-Message-ID: <CAHk-=wiZj-C-ZjiJdhyCDGK07WXfeROj1ACaSy7OrxtpqQVe-g@mail.gmail.com>
-Subject: Re: [6.8-rc1 Regression] Unable to exec apparmor_parser from virt-aa-helper
-To: Kees Cook <keescook@chromium.org>
-Cc: Kevin Locke <kevin@kevinlocke.name>, John Johansen <john.johansen@canonical.com>, 
-	Josh Triplett <josh@joshtriplett.org>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: multipart/mixed; boundary="00000000000085dd51060fb42625"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202401240832.02940B1A@keescook>
 
---00000000000085dd51060fb42625
-Content-Type: text/plain; charset="UTF-8"
+On Wed, Jan 24, 2024 at 08:35:29AM -0800, Kees Cook wrote:
+> On Wed, Jan 24, 2024 at 09:19:54AM -0700, Kevin Locke wrote:
+> > Hello Linux developers,
+> > 
+> > Using AppArmor 3.0.12 and libvirt 10.0.0 (from Debian packages) with
+> > Linux 6.8-rc1 (unpatched), I'm unable to start KVM domains due to
+> > AppArmor errors. Everything works fine on Linux 6.7.  After attempting
+> > to start a domain, syslog contains:
+> > 
+> > libvirtd[38705]: internal error: Child process (LIBVIRT_LOG_OUTPUTS=3:stderr /usr/lib/libvirt/virt-aa-helper -c -u libvirt-4fad83ef-4285-4cf5-953c-5c13d943c1fb) unexpected exit status 1: virt-aa-helper: error: apparmor_parser exited with error
+> > libvirtd[38705]: internal error: cannot load AppArmor profile 'libvirt-4fad83ef-4285-4cf5-953c-5c13d943c1fb'
+> > 
+> > dmesg contains the additional message:
+> > 
+> > audit: type=1400 audit(1706112657.438:74): apparmor="DENIED" operation="open" class="file" profile="virt-aa-helper" name="/usr/sbin/apparmor_parser" pid=6333 comm="virt-aa-helper" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+> 
+> Oh, yikes. This means the LSM lost the knowledge that this open is an
+> _exec_, not a _read_.
+> 
+> I will starting looking at this. John might be able to point me in the
+> right direction more quickly, though.
 
-On Wed, 24 Jan 2024 at 08:54, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Hmm. That whole thing is disgusting. I think it should have checked
-> FMODE_EXEC, and I have no idea why it doesn't.
+Here's a possible patch for in_execve. Can you test this? I'm going to
+also examine switching to FMODE_EXEC ... I think I know why this wasn't
+done in the past, but I have to check the history...
 
-Maybe because FMODE_EXEC gets set for uselib() calls too? I dunno. I
-think it would be even better if we had the 'intent' flags from
-'struct open_flags' available, but they aren't there in the
-file_open() security chain.
 
-Anyway, moving current->in_execve earlier looks fairly trivial, but I
-worry about the randomness. I'd be *so*( much happier if this crazy
-flag went away, and it got changed to look at the open intent instead.
+diff --git a/fs/exec.c b/fs/exec.c
+index 39d773021fff..ddd0fa2e84a7 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1505,7 +1505,7 @@ static int prepare_bprm_creds(struct linux_binprm *bprm)
+ /* Matches do_open_execat() */
+ static void do_close_execat(struct file *file)
+ {
+-	if (!file)
++	if (IS_ERR_OR_NULL(file))
+ 		return;
+ 	allow_write_access(file);
+ 	fput(file);
+@@ -1530,23 +1530,30 @@ static void free_bprm(struct linux_binprm *bprm)
+ 		kfree(bprm->interp);
+ 	kfree(bprm->fdpath);
+ 	kfree(bprm);
++	current->in_execve = 0;
+ }
+ 
+ static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int flags)
+ {
+-	struct linux_binprm *bprm;
+-	struct file *file;
++	struct linux_binprm *bprm = NULL;
++	struct file *file = NULL;
+ 	int retval = -ENOMEM;
+ 
++	/*
++	 * Mark this "open" as an exec attempt for the LSMs. We reset
++	 * it in bprm_free() (and our common error path below).
++	 */
++	current->in_execve = 1;
++
+ 	file = do_open_execat(fd, filename, flags);
+-	if (IS_ERR(file))
+-		return ERR_CAST(file);
++	if (IS_ERR(file)) {
++		retval = PTR_ERR(file);
++		goto out_cleanup;
++	}
+ 
+ 	bprm = kzalloc(sizeof(*bprm), GFP_KERNEL);
+-	if (!bprm) {
+-		do_close_execat(file);
+-		return ERR_PTR(-ENOMEM);
+-	}
++	if (!bprm)
++		goto out_cleanup;
+ 
+ 	bprm->file = file;
+ 
+@@ -1559,7 +1566,7 @@ static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int fl
+ 			bprm->fdpath = kasprintf(GFP_KERNEL, "/dev/fd/%d/%s",
+ 						  fd, filename->name);
+ 		if (!bprm->fdpath)
+-			goto out_free;
++			goto out_cleanup;
+ 
+ 		/*
+ 		 * Record that a name derived from an O_CLOEXEC fd will be
+@@ -1581,8 +1588,11 @@ static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int fl
+ 	if (!retval)
+ 		return bprm;
+ 
+-out_free:
+-	free_bprm(bprm);
++out_cleanup:
++	if (bprm)
++		free_bprm(bprm);
++	do_close_execat(file);
++	current->in_execve = 0;
+ 	return ERR_PTR(retval);
+ }
+ 
+@@ -1633,6 +1643,7 @@ static void check_unsafe_exec(struct linux_binprm *bprm)
+ 	}
+ 	rcu_read_unlock();
+ 
++	/* "users" and "in_exec" locked for copy_fs() */
+ 	if (p->fs->users > n_fs)
+ 		bprm->unsafe |= LSM_UNSAFE_SHARE;
+ 	else
+@@ -1863,7 +1874,6 @@ static int bprm_execve(struct linux_binprm *bprm)
+ 	 * where setuid-ness is evaluated.
+ 	 */
+ 	check_unsafe_exec(bprm);
+-	current->in_execve = 1;
+ 	sched_mm_cid_before_execve(current);
+ 
+ 	sched_exec();
+@@ -1880,7 +1890,6 @@ static int bprm_execve(struct linux_binprm *bprm)
+ 	sched_mm_cid_after_execve(current);
+ 	/* execve succeeded */
+ 	current->fs->in_exec = 0;
+-	current->in_execve = 0;
+ 	rseq_execve(current);
+ 	user_events_execve(current);
+ 	acct_update_integrals(current);
+@@ -1899,7 +1908,6 @@ static int bprm_execve(struct linux_binprm *bprm)
+ 
+ 	sched_mm_cid_after_execve(current);
+ 	current->fs->in_exec = 0;
+-	current->in_execve = 0;
+ 
+ 	return retval;
+ }
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 47ff3b35352e..0d944e92a43f 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1748,6 +1748,7 @@ static int copy_fs(unsigned long clone_flags, struct task_struct *tsk)
+ 	if (clone_flags & CLONE_FS) {
+ 		/* tsk->fs is already what we want */
+ 		spin_lock(&fs->lock);
++		/* "users" and "in_exec" locked for check_unsafe_exec() */
+ 		if (fs->in_exec) {
+ 			spin_unlock(&fs->lock);
+ 			return -EAGAIN;
 
-Attached patch is ENTIRELY UNTESTED. And disgusting.
-
-I went back and looked. This whole disgusting thing goes back to 2009
-and commit f9ce1f1cda8b ("Add in_execve flag into task_struct").
-
-              Linus
-
---00000000000085dd51060fb42625
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lrs1gcul0>
-X-Attachment-Id: f_lrs1gcul0
-
-IGZzL2V4ZWMuYyB8IDcgKysrKy0tLQogMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwg
-MyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9mcy9leGVjLmMgYi9mcy9leGVjLmMKaW5kZXgg
-OGNkZDViMmRkMDljLi5mYzFkNmJlZmU4MzAgMTAwNjQ0Ci0tLSBhL2ZzL2V4ZWMuYworKysgYi9m
-cy9leGVjLmMKQEAgLTE4NDMsNyArMTg0Myw2IEBAIHN0YXRpYyBpbnQgYnBybV9leGVjdmUoc3Ry
-dWN0IGxpbnV4X2JpbnBybSAqYnBybSkKIAkgKiB3aGVyZSBzZXR1aWQtbmVzcyBpcyBldmFsdWF0
-ZWQuCiAJICovCiAJY2hlY2tfdW5zYWZlX2V4ZWMoYnBybSk7Ci0JY3VycmVudC0+aW5fZXhlY3Zl
-ID0gMTsKIAlzY2hlZF9tbV9jaWRfYmVmb3JlX2V4ZWN2ZShjdXJyZW50KTsKIAogCXNjaGVkX2V4
-ZWMoKTsKQEAgLTE4NjAsNyArMTg1OSw2IEBAIHN0YXRpYyBpbnQgYnBybV9leGVjdmUoc3RydWN0
-IGxpbnV4X2JpbnBybSAqYnBybSkKIAlzY2hlZF9tbV9jaWRfYWZ0ZXJfZXhlY3ZlKGN1cnJlbnQp
-OwogCS8qIGV4ZWN2ZSBzdWNjZWVkZWQgKi8KIAljdXJyZW50LT5mcy0+aW5fZXhlYyA9IDA7Ci0J
-Y3VycmVudC0+aW5fZXhlY3ZlID0gMDsKIAlyc2VxX2V4ZWN2ZShjdXJyZW50KTsKIAl1c2VyX2V2
-ZW50c19leGVjdmUoY3VycmVudCk7CiAJYWNjdF91cGRhdGVfaW50ZWdyYWxzKGN1cnJlbnQpOwpA
-QCAtMTg3OSw3ICsxODc3LDYgQEAgc3RhdGljIGludCBicHJtX2V4ZWN2ZShzdHJ1Y3QgbGludXhf
-YmlucHJtICpicHJtKQogCiAJc2NoZWRfbW1fY2lkX2FmdGVyX2V4ZWN2ZShjdXJyZW50KTsKIAlj
-dXJyZW50LT5mcy0+aW5fZXhlYyA9IDA7Ci0JY3VycmVudC0+aW5fZXhlY3ZlID0gMDsKIAogCXJl
-dHVybiByZXR2YWw7CiB9CkBAIC0xOTEwLDYgKzE5MDcsNyBAQCBzdGF0aWMgaW50IGRvX2V4ZWN2
-ZWF0X2NvbW1vbihpbnQgZmQsIHN0cnVjdCBmaWxlbmFtZSAqZmlsZW5hbWUsCiAJLyogV2UncmUg
-YmVsb3cgdGhlIGxpbWl0IChzdGlsbCBvciBhZ2FpbiksIHNvIHdlIGRvbid0IHdhbnQgdG8gbWFr
-ZQogCSAqIGZ1cnRoZXIgZXhlY3ZlKCkgY2FsbHMgZmFpbC4gKi8KIAljdXJyZW50LT5mbGFncyAm
-PSB+UEZfTlBST0NfRVhDRUVERUQ7CisJY3VycmVudC0+aW5fZXhlY3ZlID0gMTsKIAogCWJwcm0g
-PSBhbGxvY19icHJtKGZkLCBmaWxlbmFtZSwgZmxhZ3MpOwogCWlmIChJU19FUlIoYnBybSkpIHsK
-QEAgLTE5NjUsNiArMTk2Myw3IEBAIHN0YXRpYyBpbnQgZG9fZXhlY3ZlYXRfY29tbW9uKGludCBm
-ZCwgc3RydWN0IGZpbGVuYW1lICpmaWxlbmFtZSwKIAlmcmVlX2Jwcm0oYnBybSk7CiAKIG91dF9y
-ZXQ6CisJY3VycmVudC0+aW5fZXhlY3ZlID0gMDsKIAlwdXRuYW1lKGZpbGVuYW1lKTsKIAlyZXR1
-cm4gcmV0dmFsOwogfQpAQCAtMTk4NSw2ICsxOTg0LDcgQEAgaW50IGtlcm5lbF9leGVjdmUoY29u
-c3QgY2hhciAqa2VybmVsX2ZpbGVuYW1lLAogCWlmIChJU19FUlIoZmlsZW5hbWUpKQogCQlyZXR1
-cm4gUFRSX0VSUihmaWxlbmFtZSk7CiAKKwljdXJyZW50LT5pbl9leGVjdmUgPSAxOwogCWJwcm0g
-PSBhbGxvY19icHJtKGZkLCBmaWxlbmFtZSwgMCk7CiAJaWYgKElTX0VSUihicHJtKSkgewogCQly
-ZXR2YWwgPSBQVFJfRVJSKGJwcm0pOwpAQCAtMjAyNCw2ICsyMDI0LDcgQEAgaW50IGtlcm5lbF9l
-eGVjdmUoY29uc3QgY2hhciAqa2VybmVsX2ZpbGVuYW1lLAogb3V0X2ZyZWU6CiAJZnJlZV9icHJt
-KGJwcm0pOwogb3V0X3JldDoKKwljdXJyZW50LT5pbl9leGVjdmUgPSAwOwogCXB1dG5hbWUoZmls
-ZW5hbWUpOwogCXJldHVybiByZXR2YWw7CiB9Cg==
---00000000000085dd51060fb42625--
+-- 
+Kees Cook
