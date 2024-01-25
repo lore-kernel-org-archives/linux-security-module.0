@@ -1,98 +1,162 @@
-Received: from sonic312-31.consmr.mail.ne1.yahoo.com (sonic312-31.consmr.mail.ne1.yahoo.com [66.163.191.212])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA011369
-	for <linux-security-module@vger.kernel.org>; Thu, 25 Jan 2024 01:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457B01FAD;
+	Thu, 25 Jan 2024 08:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706145307; cv=none; b=VO62W4mPSQCSRR1L+5s5MWjyyXN7+RyKk+hZkxwiMDkXLX0OLSMgwfacgV2UQny3nTxqbPU0SJQSk0uLXzfAPMFauhRUXGbGOYDUyEavlXH8V5eyEzORamP0owxuPyb1CUx3ksIRX3P5VcE4pqz3lzaEgPPDUTEtw01WZGbgkbI=
+	t=1706172303; cv=none; b=isOspVrZ7rnO5EF6cauVWKePIbuqN4TFuf1A6F2zw+EHfHlZ6iqKM0qMWkdfoMZeQb2N/tG3+fj4ZECH7vGE4rJFzoOVOun/FQNFTA4NghsjGi35lNsCjtsLHUMx2JHecTh0puKYKPPeRfsRmAGgOETtwyrfgZN8fflkRnSsJYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706145307; c=relaxed/simple;
-	bh=wikpua9tnvQx5HZsUmTe6XmiQkP1+aTddBoA7rPVPCY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=KsNd6cT2J2k9CVHXB0yBuKHWCnvxVwI0K8lkWb3r5OdCLgYPeDi7H5K7oXtJcqbV8ye00+nAttd1y6yRrZIQ4dcNPcqSRxSyhSwyAq+SAIueLiOhPJ2INpApHUgXjorVaCB070oMmzqW1/kZk/xUEZYQ9ZJ8isClih3Kplg5lSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=uR6sezdc; arc=none smtp.client-ip=66.163.191.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="uR6sezdc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1706145304; bh=PtuUn5V7snXYcDLaa+iG6DbfuhXMtHzyR4Ccl4T1X3s=; h=Date:Subject:To:References:Cc:From:In-Reply-To:From:Subject:Reply-To; b=uR6sezdcdF5UjMppufeiCItGa/Xxalj0wG2HWLODCFxpZNnQr+jyurOIyXyrbzCl6/ZZHLCIZT9DFdR4vrAF1Wqn1VSbWp3JV+nM+vRW/oG3FeDZCv0kVVYcT36UqpiBB7I0yB0aOl97IBdWjFL7s5kCZCknerYRWVjfP0xd9EH5aqblDuSww5JtLp69DFyb0lnqOW6kNsgdUq/AmmMXuB9WSrjZ0kvCcQLfLkgwA0Zvlsyz1qhJMF3qtq+JeEp8dY1zuylYnwNXoEcfzvTTtX2ZPG9C/tMuaJi0CAACxHRhKWbCtagImiNn/qnVm3LuEUkU/XgiweIewiujKtR+qg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1706145304; bh=tb8OABz1D44gIrRFqyElxf3kgSC83bdW9lKpnxObElt=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Vp7SySBKm34I5pudoF9I1qk10o+1y+kGslSmRRNeVyfcVrwQ/8mkiPxyhhK2QljxSWvZnze5kCFev0ubxUH50XUVUXr2pKpI//FKimw+8BGtpWgWn+dyKeoHFNcwoNv6hXc5k11FcUjWAinEwj678ymiikEfFXfUWXIE2t4aVSubMTQU3flhfrjtcn0PWNZz1PgcfAh+2v4mawSeEoIyCQEbsQdgsdNkeq6YD1z1XEg+ER9MJo5wHjT6fVVRCR7Bj5W357X+p76vJz53hfj1wi9w46rG2h/7ppydjwvoz90/BAnH6I474IBg8kJJN6SBLJY8bbz+KwzJluBPc93Hhg==
-X-YMail-OSG: ofNf.YwVM1nx10tEGYa.IpnQKyAUleOcZ6iQP98eSS_AbYs_gB3opqL1TDHvOFl
- OobvoXuupWjNY0HNO7OI62TYH.jIrqf2xbxFNJ9NgMj4P7iS6RREjbV1RyFid9nsIu476lzMFRYG
- WX12I.l7TgLwIXK2KNpc.VGMpt2WjksdJpcPbzWneGcPwB9ce4p8ROQBSCZwIfbM5l4P.n4vxCLN
- JZCjEZFbZ5X7rMmD8l1KePShxQPTiyMKbbQR4lh54in7tgkeHWp.kfGVMGHIvZRsbfiYKoQ2BpJf
- CBipQu28Dm9UlsCVvpZnGbKrQI7eR8k2_2xxF2VY4GibVqw2du7yLVdi_jjN1RfhmpKN5IjChEXS
- a0ntTw2JJZgqrZH_QUi3tWKGJ7axPeik8VTlhN0c1bdAosA03n1b1oENg_B5uO7oTYEDxybKVA3O
- YAOE8fDrws4.u2jeLAC.ug6ycZGtP4QO91AqZ9XxIVLHAx1xmCxBUdFMKIu8JFI6rF1OyzIspcR0
- a2PSJnlO1u5N.ULIzGrLMsCzXjDl4Vhiv9VtDUf1lWqil6dDiAY3JNV5ID5v47DIKQ81lvj4SHCw
- fYkUYy7G3fQEyALRh0x65lq9VEybdFQctwYoglQp3sKtUl6u75xwfW5lW9J_dzgQbU6k537oq8vI
- Xpq6KixleU_TMlyrFXQgLfiMqFLZwyvkDRkKRHELeX.rQbf24e2aX_H81BsXbn9gd9_uXrdnRPR_
- XixC8eTbAHD03cS8zSPyHF1bLE1q55OSZC2.XL9yh9mk0SVmN.ap0.73jOTQQkBBFbxeFDxkfa1a
- vMQjP1pUBvNDDpbml_XiNv6jnPW6ib69aBFHrdRcL4whJF6Xsdq4QkM_FsDj9R4R7AfB6umKlxjH
- URUCv6sF.7Zpwp4f748AFnoIViaLjGJzvdFVqQ1NnW2d0k51ym.TI70R2_ohHW4pHdP72XHyzcEr
- 6VVj2y4oISAlig7C69x_56i5R6Smclpx8AmzTnwl0qoprlDjmv64pZdS2HNLg5LqKhayWRB4pYwW
- zRz0mZxhLWSvVhc65.QXTUKB9j5ascGW1TyvtLIWuQtmpQK0zMbK8n7XnEw9Eo1uFAhrWt00bE.K
- YrVjxAz1VEOkBGUdTu8Yavn7ZxS.QbjlhVfMlZZvHkyJoN0H0fsUmv6hj_tsAfrjZCDGVb8TAMo9
- 93Vg0yk.M7FKBOB2Ko7aEXzY9lJWBTPvP_9NqpMUGcELoS.5cfF1CPppWQApITKaPeLsc7xRRpp2
- M3GwbSf29mLwbcV9PLSM7HN4Sj_ijYD9kNaCwHYNhLIFp4.oTE18qetxfBImxRvmX97jk8YKHJjZ
- _wcBRBxdOyMXgsEo9Hff26WY3KraXjOxKiS7AoLi7DDWfY94Zum7suyc0Nda5NYwXrSsAgKWgK_I
- ya7JSGYccLBmxO_Kd_EryYHKq2KKOgAglD7eHCchHNKrgFR38Umz0lroc4R4r9fIf0Flkd9VA4BY
- cNsqnmTdqBhvupHhCrUqqq1NRCZD_KlOJbug2N0kT1ao9SVBJF90YaQs1Y_aOoAXDfNg2e7.XNBx
- DBXGYdwzrYG6fmg6Z6N6j_LG8fdjtZz3QHsDwLJ.JhA0lQD0XItmTNPUR3YsqdhY8ghlKFzNwwOv
- Cxcr5BfWzwKUbTvrn5ExdO8fK_l0vK.Og0tNTlxDFeFiIUutLNHwoBfmR1tntz9vWCsSP_682bVv
- t9sHaFINPcAE7LT4X3aJGVumnU0_eDAobvXqnrnFBJmPFcFD8xczh43aFXuoFFRww_vfamXaB9N3
- q0QqqxKFaHYJp.7ZDO5LpgjOkdIjitV1529udF6fLssd0NIWdmmCWY0tSQ2C6bcQBpYdBHti7IA4
- i63HRLuDV4tropmH89XjsgsFDpYIv3KbdWrFy3etPGIfgUxlSmI9hJBi_t5Baq7wRUTlKhY1S5F_
- d4__QZkiqL7s37s8UBfF6aSc7BvGQ1heqL8YymbYZIgfF2pMDw6rLmLHDfF.NpJ_zvOXj8nZFyKM
- IJ_VaXJmp49aOUGpiEu_hn4CZzyGV5Q7QUjUoRl3Wm5CNGiJuEXyRJuR8FSaPWcOCrWoDKw4RiBs
- dlVBMnqa5a1XAw6N.hg9EjDH.TF2Ks1Rm3jxAvgVe707GicVkByfOSHx9RL9.WPxZ7._Pc8OXeT8
- Udw870pUdTpicXLIQe.ptw8QXwYO2OWqPWREtSdycWm.xkr3RV7DFHOtXLsplyGXTWw.De4BxNcg
- LwKDNOr0AN_.AC9O.fK9IkHQljL0u_5FoN90sE8C1KiJvTqJplqUrZ1YP85Iz_Cp2pi_hqDpTzIS
- G9jn_oI3UdA--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 2910d37d-05d4-426f-8e93-5d461a1c1273
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Thu, 25 Jan 2024 01:15:04 +0000
-Received: by hermes--production-gq1-78d49cd6df-c95sd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d0bee4d79f5822db3c7bd2b623d9e3d3;
-          Thu, 25 Jan 2024 01:14:58 +0000 (UTC)
-Message-ID: <ba29cf58-82ee-41ac-805a-82b8ae35b799@schaufler-ca.com>
-Date: Wed, 24 Jan 2024 17:14:56 -0800
+	s=arc-20240116; t=1706172303; c=relaxed/simple;
+	bh=e1lLytdE3esV+q2A+H5apNBmQXAGgQaQISQJyeKhApA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fJnNLNBvuEMbNg+Shu8gwjWq0sjofmjuGfSYX45+L+VrEHpvajmRTP3eZ5Tl3QhZNWTr7bwK9nN2+6gWe1ZqEtu/n5HyN7UufCm8OfEosGDwYI+n+MHMLfxHIXaQfb/CAk4t10e3BvcYquIyo2MKtGj5hQ9eeHqHa1mtCHqGeGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4TLDSC0ZCRz9v7cf;
+	Thu, 25 Jan 2024 16:26:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id D3AB614073E;
+	Thu, 25 Jan 2024 16:44:44 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDXzhdzH7Jlaks4AQ--.36602S2;
+	Thu, 25 Jan 2024 09:44:44 +0100 (CET)
+Message-ID: <765e8c790f8521556dc6ce577529f71820494b8a.camel@huaweicloud.com>
+Subject: Re: [PATCH v3 0/5] Smack transmute fixes
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com, 
+ jmorris@namei.org, serge@hallyn.com, Hugh Dickins <hughd@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Roberto Sassu <roberto.sassu@huawei.com>
+Date: Thu, 25 Jan 2024 09:44:32 +0100
+In-Reply-To: <53897379-0c7a-4da7-870c-1eb7e822a129@schaufler-ca.com>
+References: <20231116090125.187209-1-roberto.sassu@huaweicloud.com>
+	 <53897379-0c7a-4da7-870c-1eb7e822a129@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: security_file_free contract/expectations
-Content-Language: en-US
-To: Ben Smith <ben.smith@crowdstrike.com>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>
-References: <CF22CFC7-11A8-4BE5-BA61-04A55FDEA1DB@contoso.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CF22CFC7-11A8-4BE5-BA61-04A55FDEA1DB@contoso.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22046 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-CM-TRANSID:LxC2BwDXzhdzH7Jlaks4AQ--.36602S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF1ftFyrCry3Xr1Duw4rZrb_yoW5uFy3pF
+	Zava4akr4ktF97Cr1Sgws8WF4SkayfCrWUJrsxJrn7AF1DAF1Fvr4xt3W5Ca4kXr43CryS
+	qw47Zr9xWrn8ArDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUgGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+	AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
+	cVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJw
+	CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
+	WIevJa73UjIFyTuYvjxUOyCJDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQANBF1jj5jsBQAAsI
 
-On 1/24/2024 3:46 PM, Ben Smith wrote:
-> Hi, I'm looking at a kernel panic and I'm trying to figure out whether the code in question is doing something that breaks the contract for the security_file_free hook. I'm specifically wondering whether it's expected/safe for code called from security_file_free to open and read from a file. In the case I'm looking at what happens is:
+On Wed, 2024-01-24 at 14:31 -0800, Casey Schaufler wrote:
+> On 11/16/2023 1:01 AM, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> >=20
+> > The first two patches are obvious fixes, the first restricts setting th=
+e
+> > SMACK64TRANSMUTE xattr only for directories, and the second makes it
+> > possible to set SMACK64TRANSMUTE if the filesystem does not support xat=
+trs
+> > (e.g. ramfs).
+> >=20
+> > The remaining fixes are optional, and only required if we want filesyst=
+ems
+> > without xattr support behave like those with xattr support. Since we ha=
+ve
+> > the inode_setsecurity and inode_getsecurity hooks to make the first gro=
+up
+> > work, it seems useful to fix inode creation too (SELinux should be fine=
+).
+> >=20
+> > The third patch is merely a code move out of the 'if (xattr)' condition=
+.
+> > The fourth updates the security field of the in-memory inode directly i=
+n
+> > smack_inode_init_security() and marks the inode as instantiated,
+>=20
+> I have taken patches 1-4 in smack-next. I'm still waiting on a convincing
+> approval for patch 5.
 
-The only action that should take place in a _file_free() hook is to manage
-resources used by the LSM. That could involve a kfree() of the module's
-blob, or some other memory management operation.  Trying to access a file
-from this hook is a bad idea.
+Thanks Casey. I also hope to receive an Ack from the maintainers.
 
->
-> - Process exit
-> - exit_fs() sets current->fs to NULL
-> - exit_task_work() calls __fput() on files which were closed in exit_files()
-> - __fput() calls security_file_free()
-> - security_file_free() then reads the file that was just closed in order to gather information about it.
-> - a filesystem driver (I've seen this with two out-of-tree filesystems) then accesses current->fs and panics.
->
-> So I'm wondering if the expectation here is that filesystem code should NULL check current->fs before using it or that an LSM shouldn't try to read a file from security_file_free().
->
->
+Roberto
+
+
+> >  and the
+> > fifth adds a security_inode_init_security() call in ramfs to initialize=
+ the
+> > security field of the in-memory inodes (needed to test transmuting
+> > directories).
+> >=20
+> > Both the Smack (on xfs) and IMA test suite succeed with all patches
+> > applied. Tests were not executed on v3 (trivial changes).
+> >=20
+> > By executing the tests in a ramfs, the results are:
+> >=20
+> > Without the patches:
+> > 86 Passed, 9 Failed, 90% Success rate
+> >=20
+> > With the patches:
+> > 93 Passed, 2 Failed, 97% Success rate
+> >=20
+> > The remaining two failures are:
+> > 2151  ioctl(4, BTRFS_IOC_CLONE or FICLONE, 3) =3D -1 EOPNOTSUPP (Operat=
+ion not supported)
+> > 2152  lsetxattr("./targets/proc-attr-Snap", "security.SMACK64EXEC", "Po=
+p", 3, 0) =3D -1 EOPNOTSUPP (Operation not supported)
+> >=20
+> > The first one is likely due ramfs lack of support for ioctl() while the
+> > second could be fixed by handling SMACK64EXEC in smack_inode_setsecurit=
+y().
+> >=20
+> > The patch set applies on top of lsm/dev, commit e246777e2a03 ("MAINTAIN=
+ERS:
+> > update the LSM entry").
+> >=20
+> > The ramfs patch potentially could be useful to correctly initialize the
+> > label of new inodes in the initramfs, assuming that it will be fully
+> > labeled with support for xattrs in the cpio image:
+> >=20
+> > https://lore.kernel.org/linux-integrity/20190523121803.21638-1-roberto.=
+sassu@huawei.com/
+> >=20
+> > Ramfs inode labels will be set from xattrs with the inode_setsecurity h=
+ook.
+> >=20
+> > Changelog
+> >=20
+> > v2:
+> > - Replace return with goto in the ramfs patch, for better maintainabili=
+ty
+> >   (suggested by Andrew Morton)
+> >=20
+> > v1:
+> > - Rebase on top of latest lsm/next
+> > - Remove -EOPNOTSUPP check in patch 5 (cannot happen)
+> >=20
+> > Roberto Sassu (5):
+> >   smack: Set SMACK64TRANSMUTE only for dirs in smack_inode_setxattr()
+> >   smack: Handle SMACK64TRANSMUTE in smack_inode_setsecurity()
+> >   smack: Always determine inode labels in smack_inode_init_security()
+> >   smack: Initialize the in-memory inode in smack_inode_init_security()
+> >   ramfs: Initialize security of in-memory inodes
+> >=20
+> >  fs/ramfs/inode.c           | 32 ++++++++++++-
+> >  security/smack/smack_lsm.c | 95 ++++++++++++++++++++++----------------
+> >  2 files changed, 86 insertions(+), 41 deletions(-)
+> >=20
+
