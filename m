@@ -1,101 +1,223 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7941B948
-	for <linux-security-module@vger.kernel.org>; Thu, 25 Jan 2024 08:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968C95EE63;
+	Thu, 25 Jan 2024 14:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706172448; cv=none; b=HnAVtezH5M8Cpaqxn9Of6m7/liIlFnFeMJ3dTW92c7++Fr2MDDPGICFOIQnE8Cf3C3FG4FFcPMZEKJSEgHTL7jEpY93SarOiYg/hZe/vSSuv9whjI52bYS5Y3vIuxLJOO/PvcK8BpWOhourt8QBd9moE4SYax0wXIiF1QQ7WK1Q=
+	t=1706192278; cv=none; b=a4YL7/vDBGxPgsDZdME+Q0eznLo1axqF4woDMRaAlHiiUIOz51RUffELswexnK7noAjm5s0rzM850oVKWgCKV2pB+f45lROiaTRzgbMPckWK0v70Ur5M/i+4yEzcLScN0B622Rr0m08fbD+i6BtyrTuuFWjm1emuzyuj/V6OIgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706172448; c=relaxed/simple;
-	bh=97fmu8uM4Ty1rc2l8b3DVOy35gTo7K25GpxTW3YyFUs=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ac/tREBIPPv7OtK7pVOG4fLGHZBfVFweAVbSB1n9EM5XNs+G9VA4wBaTrq/IMrGl371md9mjTvyZfs2OcrIxF+2PWW4Z90Vqp2/mjo7tN9O8qAfqSYDjb7dWlHVLCizQr8UzZ9+vCxxGvuhae2PVByBDu3V0rAjxeMgp2Oe3/7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4TLDW663WDz9xtV9
-	for <linux-security-module@vger.kernel.org>; Thu, 25 Jan 2024 16:28:50 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id DB9611404DB
-	for <linux-security-module@vger.kernel.org>; Thu, 25 Jan 2024 16:47:22 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwCnURoWILJlWlM4AQ--.34858S2;
-	Thu, 25 Jan 2024 09:47:22 +0100 (CET)
-Message-ID: <41a855ac576119ec9cb614cfaeb68c0fe8c5ffc0.camel@huaweicloud.com>
-Subject: Re: security_file_free contract/expectations
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, Ben Smith
-	 <ben.smith@crowdstrike.com>, "linux-security-module@vger.kernel.org"
-	 <linux-security-module@vger.kernel.org>
-Date: Thu, 25 Jan 2024 09:47:16 +0100
-In-Reply-To: <ba29cf58-82ee-41ac-805a-82b8ae35b799@schaufler-ca.com>
-References: <CF22CFC7-11A8-4BE5-BA61-04A55FDEA1DB@contoso.com>
-	 <ba29cf58-82ee-41ac-805a-82b8ae35b799@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1706192278; c=relaxed/simple;
+	bh=Td6MCQnzeN60nn9Rv1sdiDHqQG+WQ8QJwULnAd3LQfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DFgzWqtuwJ1Dj+e7lNwcvo6J5LcMT9Rd7lF44jPtkjAWTH6XqJ1ZJtZmqGioQwS2b9kdINdJDoor/4pmwwKFQr3+Te4GiwUshnXOYefBubtVNo1rSxmD5lDJzKLf2drMlt8p+Oabhs5xtj6C9gxDVJgZu6Vety8ZnOjAhK1k8Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=none smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 40PEGgch062962;
+	Thu, 25 Jan 2024 23:16:42 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
+ Thu, 25 Jan 2024 23:16:42 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 40PEGfdi062958
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 25 Jan 2024 23:16:41 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <a9210754-2f94-4075-872f-8f6a18f4af07@I-love.SAKURA.ne.jp>
+Date: Thu, 25 Jan 2024 23:16:42 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwCnURoWILJlWlM4AQ--.34858S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr1DXF17Xr15AFW3Kr1fCrg_yoW8Xw1fpF
-	WFka1UGr1DtF18GrnFyanrGFyYkrW3KF1YgF9Yvw45Cr15Wr9avr4SkFy5uFWUKFs5Aw10
-	qrZFgr9rCas8AFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUgmb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-	AY17CE14v26r1Y6r17MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-	cVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVW3JVWrJr1lIx
-	AIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
-	KfnxnUUI43ZEXa7IU1wL05UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQANBF1jj5jsCwABsH
+User-Agent: Mozilla Thunderbird
+Subject: Re: [6.8-rc1 Regression] Unable to exec apparmor_parser from
+ virt-aa-helper
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>
+Cc: Kevin Locke <kevin@kevinlocke.name>,
+        Josh Triplett
+ <josh@joshtriplett.org>,
+        Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Kentaro Takeda <takedakn@nttdata.co.jp>
+References: <ZbE4qn9_h14OqADK@kevinlocke.name>
+ <202401240832.02940B1A@keescook>
+ <CAHk-=wgJmDuYOQ+m_urRzrTTrQoobCJXnSYMovpwKckGgTyMxA@mail.gmail.com>
+ <CAHk-=wijSFE6+vjv7vCrhFJw=y36RY6zApCA07uD1jMpmmFBfA@mail.gmail.com>
+ <CAHk-=wiZj-C-ZjiJdhyCDGK07WXfeROj1ACaSy7OrxtpqQVe-g@mail.gmail.com>
+ <202401240916.044E6A6A7A@keescook>
+ <CAHk-=whq+Kn-_LTvu8naGqtN5iK0c48L1mroyoGYuq_DgFEC7g@mail.gmail.com>
+ <CAHk-=whDAUMSPhDhMUeHNKGd-ZX8ixNeEz7FLfQasAGvi_knDg@mail.gmail.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHk-=whDAUMSPhDhMUeHNKGd-ZX8ixNeEz7FLfQasAGvi_knDg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2024-01-24 at 17:14 -0800, Casey Schaufler wrote:
-> On 1/24/2024 3:46 PM, Ben Smith wrote:
-> > Hi, I'm looking at a kernel panic and I'm trying to figure out whether =
-the code in question is doing something that breaks the contract for the se=
-curity_file_free hook. I'm specifically wondering whether it's expected/saf=
-e for code called from security_file_free to open and read from a file. In =
-the case I'm looking at what happens is:
->=20
-> The only action that should take place in a _file_free() hook is to manag=
-e
-> resources used by the LSM. That could involve a kfree() of the module's
-> blob, or some other memory management operation.  Trying to access a file
-> from this hook is a bad idea.
+On 2024/01/25 3:27, Linus Torvalds wrote:
+> The whole cred use of current->in_execve in tomoyo should
+> *also* be fixed, but I didn't even try to follow what it actually
+> wanted.
 
-I'm introducing a new LSM called file_release, that can be suitable for
-reading the file (actually IMA will use this functionality).
+Due to TOMOYO's unique domain transition (transits to new domain before
+execve() succeeds and returns to old domain if execve() failed), TOMOYO
+depends on a tricky ordering shown below.
 
-https://lore.kernel.org/linux-integrity/20240115181809.885385-14-roberto.sa=
-ssu@huaweicloud.com/
+----------
+// a caller tries execve().
+sys_execve() {
+  do_execve() {
+    do_execveat_common() {
+      bprm_execve() {
+        prepare_bprm_creds() {
+          prepare_exec_creds() {
+            prepare_creds() {
+              security_prepare_creds() {
+                tomoyo_cred_prepare() {
+                  if (s->old_domain_info && !current->in_execve) { // false because s->old_domain_info == NULL.
+                    s->domain_info = s->old_domain_info;
+                    s->old_domain_info = NULL; 
+                  }
+                }
+              }
+            }
+          }
+        }
+        current->in_execve = 1;
+        do_open_execat() {
+          (...snipped...)
+          security_file_open() {
+            tomoyo_file_open() // Not checked because current->in_execve == 1.
+          }
+          (...snipped...)
+        }
+        exec_binprm() {
+          search_binary_handler() {
+            security_bprm_check() {
+              tomoyo_bprm_check_security() {
+                if (!s->old_domain_info) { // true because s->old_domain_info == NULL.
+                  tomoyo_find_next_domain() {
+                    // Checks execute permission here.
+                    s->old_domain_info = s->domain_info; // Remember old domain.
+                    s->domain_info = domain; // Transit to new domain.
+                  }
+                }
+              }
+            }
+            fmt->load_binary() { // e.g. load_script() in fs/binfmt_script.c
+              open_exec() {
+                // Not checked because current->in_execve == 1.
+              }
+            }
+          }
+          search_binary_handler() {
+            security_bprm_check() {
+              tomoyo_bprm_check_security() {
+                if (!s->old_domain_info) { // false because s->old_domain_info != NULL.
+                } else {
+                  // Checks read permission here.
+                }
+              }
+            }
+          }
+          // An error happens after s->domain_info was updated.
+        }
+        current->in_execve = 0;
+        // No chance to restore s->domain_info.
+      }
+    }
+  }
+  // returning an error code to the caller.
+}
+// the caller retries execve().
+sys_execve() {
+  do_execve() {
+    do_execveat_common() {
+      bprm_execve() {
+        prepare_bprm_creds() {
+          prepare_exec_creds() {
+            prepare_creds() {
+              security_prepare_creds() {
+                tomoyo_cred_prepare() {
+                  if (s->old_domain_info && !current->in_execve) { // true because s->old_domain_info != NULL && current->in_execve == 0.
+                    s->domain_info = s->old_domain_info; // Transit to old domain.
+                    s->old_domain_info = NULL;
+                  }
+                }
+              }
+            }
+          }
+        }
+        current->in_execve = 1;
+        do_open_execat() {
+          (...snipped...)
+          security_file_open() {
+            tomoyo_file_open() // Not checked because current->in_execve == 1.
+          }
+          (...snipped...)
+        }
+        exec_binprm() {
+          search_binary_handler() {
+            security_bprm_check() {
+              tomoyo_bprm_check_security() {
+                if (!s->old_domain_info) { // true because s->old_domain_info == NULL.
+                  tomoyo_find_next_domain() {
+                    // Checks execute permission here.
+                    s->old_domain_info = s->domain_info; // Remember old domain.
+                    s->domain_info = domain; // Transit to new domain.
+                  }
+                }
+              }
+            }
+            fmt->load_binary() { // e.g. load_script() in fs/binfmt_script.c
+              open_exec() {
+                // Not checked because current->in_execve == 1.
+              }
+            }
+          }
+          search_binary_handler() {
+            security_bprm_check() {
+              tomoyo_bprm_check_security() {
+                if (!s->old_domain_info) { // false because s->old_domain_info != NULL.
+                } else {
+                  // Checks read permission here.
+                }
+              }
+            }
+          }
+          fmt->load_binary() { // e.g. load_elf_binary() in fs/binfmt_elf.c
+            begin_new_exec() {
+              security_bprm_committed_creds() {
+                tomoyo_bprm_committed_creds() {
+                  s->old_domain_info = NULL; // Forget old domain.
+                }
+              }
+            }
+          }
+        }
+        current->in_execve = 0;
+      }
+    }
+  }
+}
+----------
 
-Roberto
+Commit 978ffcbf00d8 ("execve: open the executable file before doing anything else")
+broke the ordering and commit 4759ff71f23e ("exec: Check __FMODE_EXEC instead of
+in_execve for LSMs") and commit 3eab830189d9 ("uselib: remove use of __FMODE_EXEC")
+fixed the regression.
 
-> >=20
-> > - Process exit
-> > - exit_fs() sets current->fs to NULL
-> > - exit_task_work() calls __fput() on files which were closed in exit_fi=
-les()
-> > - __fput() calls security_file_free()
-> > - security_file_free() then reads the file that was just closed in orde=
-r to gather information about it.
-> > - a filesystem driver (I've seen this with two out-of-tree filesystems)=
- then accesses current->fs and panics.
-> >=20
-> > So I'm wondering if the expectation here is that filesystem code should=
- NULL check current->fs before using it or that an LSM shouldn't try to rea=
-d a file from security_file_free().
-> >=20
-> >=20
+But current->in_execve remains required unless an LSM callback that is called when
+an execve() request failed which existed as security_bprm_free() until Linux 2.6.28
+revives...
 
