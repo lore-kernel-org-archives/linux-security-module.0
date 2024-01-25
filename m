@@ -1,145 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic312-31.consmr.mail.ne1.yahoo.com (sonic312-31.consmr.mail.ne1.yahoo.com [66.163.191.212])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC327F;
-	Thu, 25 Jan 2024 00:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA011369
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Jan 2024 01:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706141435; cv=none; b=sNcWajb/00H4FJ+vghEu6lfiMuX757VkVEu51GgMAEo1G3koGM8V/prAwseCz5UwqtnxFDhlAzqzyrcvIqJ3EKxXsV9U3E/NHdnmok2xfqwtiy0u4MHK+rTdy5mR0/1Ph6NkLsKIAqqvGSXWkIzObFheAKx/u3heFOI07sRA5Vs=
+	t=1706145307; cv=none; b=VO62W4mPSQCSRR1L+5s5MWjyyXN7+RyKk+hZkxwiMDkXLX0OLSMgwfacgV2UQny3nTxqbPU0SJQSk0uLXzfAPMFauhRUXGbGOYDUyEavlXH8V5eyEzORamP0owxuPyb1CUx3ksIRX3P5VcE4pqz3lzaEgPPDUTEtw01WZGbgkbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706141435; c=relaxed/simple;
-	bh=KfsJCFihgat+fHBz9kmkoUU7Cl7fXKrRxZVnIx/ceUM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=V885/MZQTtm8VLCKEIIPHODHxP3RF93DOxNxDm7bvAwn8yvfmbCjuCNpmTXnhRLgoP9ToJxGz3ZvddprmN8NufBRAgvF19xO5WIVzUWDbWBmEbjPQNZXcQhAmc8eUlCbJN2bFXM33d2xPmUXda+YPpfYspzrgI8iBCcVqk4OcAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cuOvSBm7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706145307; c=relaxed/simple;
+	bh=wikpua9tnvQx5HZsUmTe6XmiQkP1+aTddBoA7rPVPCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=KsNd6cT2J2k9CVHXB0yBuKHWCnvxVwI0K8lkWb3r5OdCLgYPeDi7H5K7oXtJcqbV8ye00+nAttd1y6yRrZIQ4dcNPcqSRxSyhSwyAq+SAIueLiOhPJ2INpApHUgXjorVaCB070oMmzqW1/kZk/xUEZYQ9ZJ8isClih3Kplg5lSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=uR6sezdc; arc=none smtp.client-ip=66.163.191.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuOvSBm7"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2468BC433C7;
-	Thu, 25 Jan 2024 00:10:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706141435;
-	bh=KfsJCFihgat+fHBz9kmkoUU7Cl7fXKrRxZVnIx/ceUM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=cuOvSBm72sNf61zmLyzqiaquPTNavPhdhg/1Rft9wR1qb1Nd4+4Y8xafn3FLHYnh5
-	 yIz1w1Jl/cS2gn0I65yCCqSRY4P3UBG7sS5jMR6V4O3dJ1Vy4Bld8fGvVAY8EjX9CM
-	 kF2+RuXUEIfyu286h3uoLzel6Nw+QRR9UQTWAOdsCW+73BHzx2lnXqd3KqRhECtdP/
-	 xdi3sbrUDxNfMoZnDtfJjnhSY9yV8UtBwF2nXZpjPXjO4lNXiPO4NiQmrH27aHlxyZ
-	 omuEEWxJnP9RqvsmMyqDYZGAVPycfdsg7L6KA6M95Q9SBNCQ6w4/f5nYn73c2IrQ11
-	 TgHhp7PB8VCVQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0266AD8C966;
-	Thu, 25 Jan 2024 00:10:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="uR6sezdc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1706145304; bh=PtuUn5V7snXYcDLaa+iG6DbfuhXMtHzyR4Ccl4T1X3s=; h=Date:Subject:To:References:Cc:From:In-Reply-To:From:Subject:Reply-To; b=uR6sezdcdF5UjMppufeiCItGa/Xxalj0wG2HWLODCFxpZNnQr+jyurOIyXyrbzCl6/ZZHLCIZT9DFdR4vrAF1Wqn1VSbWp3JV+nM+vRW/oG3FeDZCv0kVVYcT36UqpiBB7I0yB0aOl97IBdWjFL7s5kCZCknerYRWVjfP0xd9EH5aqblDuSww5JtLp69DFyb0lnqOW6kNsgdUq/AmmMXuB9WSrjZ0kvCcQLfLkgwA0Zvlsyz1qhJMF3qtq+JeEp8dY1zuylYnwNXoEcfzvTTtX2ZPG9C/tMuaJi0CAACxHRhKWbCtagImiNn/qnVm3LuEUkU/XgiweIewiujKtR+qg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1706145304; bh=tb8OABz1D44gIrRFqyElxf3kgSC83bdW9lKpnxObElt=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Vp7SySBKm34I5pudoF9I1qk10o+1y+kGslSmRRNeVyfcVrwQ/8mkiPxyhhK2QljxSWvZnze5kCFev0ubxUH50XUVUXr2pKpI//FKimw+8BGtpWgWn+dyKeoHFNcwoNv6hXc5k11FcUjWAinEwj678ymiikEfFXfUWXIE2t4aVSubMTQU3flhfrjtcn0PWNZz1PgcfAh+2v4mawSeEoIyCQEbsQdgsdNkeq6YD1z1XEg+ER9MJo5wHjT6fVVRCR7Bj5W357X+p76vJz53hfj1wi9w46rG2h/7ppydjwvoz90/BAnH6I474IBg8kJJN6SBLJY8bbz+KwzJluBPc93Hhg==
+X-YMail-OSG: ofNf.YwVM1nx10tEGYa.IpnQKyAUleOcZ6iQP98eSS_AbYs_gB3opqL1TDHvOFl
+ OobvoXuupWjNY0HNO7OI62TYH.jIrqf2xbxFNJ9NgMj4P7iS6RREjbV1RyFid9nsIu476lzMFRYG
+ WX12I.l7TgLwIXK2KNpc.VGMpt2WjksdJpcPbzWneGcPwB9ce4p8ROQBSCZwIfbM5l4P.n4vxCLN
+ JZCjEZFbZ5X7rMmD8l1KePShxQPTiyMKbbQR4lh54in7tgkeHWp.kfGVMGHIvZRsbfiYKoQ2BpJf
+ CBipQu28Dm9UlsCVvpZnGbKrQI7eR8k2_2xxF2VY4GibVqw2du7yLVdi_jjN1RfhmpKN5IjChEXS
+ a0ntTw2JJZgqrZH_QUi3tWKGJ7axPeik8VTlhN0c1bdAosA03n1b1oENg_B5uO7oTYEDxybKVA3O
+ YAOE8fDrws4.u2jeLAC.ug6ycZGtP4QO91AqZ9XxIVLHAx1xmCxBUdFMKIu8JFI6rF1OyzIspcR0
+ a2PSJnlO1u5N.ULIzGrLMsCzXjDl4Vhiv9VtDUf1lWqil6dDiAY3JNV5ID5v47DIKQ81lvj4SHCw
+ fYkUYy7G3fQEyALRh0x65lq9VEybdFQctwYoglQp3sKtUl6u75xwfW5lW9J_dzgQbU6k537oq8vI
+ Xpq6KixleU_TMlyrFXQgLfiMqFLZwyvkDRkKRHELeX.rQbf24e2aX_H81BsXbn9gd9_uXrdnRPR_
+ XixC8eTbAHD03cS8zSPyHF1bLE1q55OSZC2.XL9yh9mk0SVmN.ap0.73jOTQQkBBFbxeFDxkfa1a
+ vMQjP1pUBvNDDpbml_XiNv6jnPW6ib69aBFHrdRcL4whJF6Xsdq4QkM_FsDj9R4R7AfB6umKlxjH
+ URUCv6sF.7Zpwp4f748AFnoIViaLjGJzvdFVqQ1NnW2d0k51ym.TI70R2_ohHW4pHdP72XHyzcEr
+ 6VVj2y4oISAlig7C69x_56i5R6Smclpx8AmzTnwl0qoprlDjmv64pZdS2HNLg5LqKhayWRB4pYwW
+ zRz0mZxhLWSvVhc65.QXTUKB9j5ascGW1TyvtLIWuQtmpQK0zMbK8n7XnEw9Eo1uFAhrWt00bE.K
+ YrVjxAz1VEOkBGUdTu8Yavn7ZxS.QbjlhVfMlZZvHkyJoN0H0fsUmv6hj_tsAfrjZCDGVb8TAMo9
+ 93Vg0yk.M7FKBOB2Ko7aEXzY9lJWBTPvP_9NqpMUGcELoS.5cfF1CPppWQApITKaPeLsc7xRRpp2
+ M3GwbSf29mLwbcV9PLSM7HN4Sj_ijYD9kNaCwHYNhLIFp4.oTE18qetxfBImxRvmX97jk8YKHJjZ
+ _wcBRBxdOyMXgsEo9Hff26WY3KraXjOxKiS7AoLi7DDWfY94Zum7suyc0Nda5NYwXrSsAgKWgK_I
+ ya7JSGYccLBmxO_Kd_EryYHKq2KKOgAglD7eHCchHNKrgFR38Umz0lroc4R4r9fIf0Flkd9VA4BY
+ cNsqnmTdqBhvupHhCrUqqq1NRCZD_KlOJbug2N0kT1ao9SVBJF90YaQs1Y_aOoAXDfNg2e7.XNBx
+ DBXGYdwzrYG6fmg6Z6N6j_LG8fdjtZz3QHsDwLJ.JhA0lQD0XItmTNPUR3YsqdhY8ghlKFzNwwOv
+ Cxcr5BfWzwKUbTvrn5ExdO8fK_l0vK.Og0tNTlxDFeFiIUutLNHwoBfmR1tntz9vWCsSP_682bVv
+ t9sHaFINPcAE7LT4X3aJGVumnU0_eDAobvXqnrnFBJmPFcFD8xczh43aFXuoFFRww_vfamXaB9N3
+ q0QqqxKFaHYJp.7ZDO5LpgjOkdIjitV1529udF6fLssd0NIWdmmCWY0tSQ2C6bcQBpYdBHti7IA4
+ i63HRLuDV4tropmH89XjsgsFDpYIv3KbdWrFy3etPGIfgUxlSmI9hJBi_t5Baq7wRUTlKhY1S5F_
+ d4__QZkiqL7s37s8UBfF6aSc7BvGQ1heqL8YymbYZIgfF2pMDw6rLmLHDfF.NpJ_zvOXj8nZFyKM
+ IJ_VaXJmp49aOUGpiEu_hn4CZzyGV5Q7QUjUoRl3Wm5CNGiJuEXyRJuR8FSaPWcOCrWoDKw4RiBs
+ dlVBMnqa5a1XAw6N.hg9EjDH.TF2Ks1Rm3jxAvgVe707GicVkByfOSHx9RL9.WPxZ7._Pc8OXeT8
+ Udw870pUdTpicXLIQe.ptw8QXwYO2OWqPWREtSdycWm.xkr3RV7DFHOtXLsplyGXTWw.De4BxNcg
+ LwKDNOr0AN_.AC9O.fK9IkHQljL0u_5FoN90sE8C1KiJvTqJplqUrZ1YP85Iz_Cp2pi_hqDpTzIS
+ G9jn_oI3UdA--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 2910d37d-05d4-426f-8e93-5d461a1c1273
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Thu, 25 Jan 2024 01:15:04 +0000
+Received: by hermes--production-gq1-78d49cd6df-c95sd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d0bee4d79f5822db3c7bd2b623d9e3d3;
+          Thu, 25 Jan 2024 01:14:58 +0000 (UTC)
+Message-ID: <ba29cf58-82ee-41ac-805a-82b8ae35b799@schaufler-ca.com>
+Date: Wed, 24 Jan 2024 17:14:56 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 bpf-next 00/30] BPF token
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <170614143500.20623.3003025793272945482.git-patchwork-notify@kernel.org>
-Date: Thu, 25 Jan 2024 00:10:35 +0000
-References: <20240124022127.2379740-1-andrii@kernel.org>
-In-Reply-To: <20240124022127.2379740-1-andrii@kernel.org>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com,
- brauner@kernel.org, torvalds@linux-foundation.org,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
- kernel-team@meta.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: security_file_free contract/expectations
+Content-Language: en-US
+To: Ben Smith <ben.smith@crowdstrike.com>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>
+References: <CF22CFC7-11A8-4BE5-BA61-04A55FDEA1DB@contoso.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CF22CFC7-11A8-4BE5-BA61-04A55FDEA1DB@contoso.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22046 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Hello:
+On 1/24/2024 3:46 PM, Ben Smith wrote:
+> Hi, I'm looking at a kernel panic and I'm trying to figure out whether the code in question is doing something that breaks the contract for the security_file_free hook. I'm specifically wondering whether it's expected/safe for code called from security_file_free to open and read from a file. In the case I'm looking at what happens is:
 
-This series was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+The only action that should take place in a _file_free() hook is to manage
+resources used by the LSM. That could involve a kfree() of the module's
+blob, or some other memory management operation.  Trying to access a file
+from this hook is a bad idea.
 
-On Tue, 23 Jan 2024 18:20:57 -0800 you wrote:
-> This patch set is a combination of three BPF token-related patch sets ([0],
-> [1], [2]) with fixes ([3]) to kernel-side token_fd passing APIs incorporated
-> into relevant patches, bpf_token_capable() changes requested by
-> Christian Brauner, and necessary libbpf and BPF selftests side adjustments.
-> 
-> This patch set introduces an ability to delegate a subset of BPF subsystem
-> functionality from privileged system-wide daemon (e.g., systemd or any other
-> container manager) through special mount options for userns-bound BPF FS to
-> a *trusted* unprivileged application. Trust is the key here. This
-> functionality is not about allowing unconditional unprivileged BPF usage.
-> Establishing trust, though, is completely up to the discretion of respective
-> privileged application that would create and mount a BPF FS instance with
-> delegation enabled, as different production setups can and do achieve it
-> through a combination of different means (signing, LSM, code reviews, etc),
-> and it's undesirable and infeasible for kernel to enforce any particular way
-> of validating trustworthiness of particular process.
-> 
-> [...]
-
-Here is the summary with links:
-  - [v2,bpf-next,01/30] bpf: align CAP_NET_ADMIN checks with bpf_capable() approach
-    https://git.kernel.org/bpf/bpf-next/c/1310957bfe65
-  - [v2,bpf-next,02/30] bpf: add BPF token delegation mount options to BPF FS
-    https://git.kernel.org/bpf/bpf-next/c/e43831fe57bb
-  - [v2,bpf-next,03/30] bpf: introduce BPF token object
-    https://git.kernel.org/bpf/bpf-next/c/5263a65a6ac2
-  - [v2,bpf-next,04/30] bpf: add BPF token support to BPF_MAP_CREATE command
-    https://git.kernel.org/bpf/bpf-next/c/18c9f8248366
-  - [v2,bpf-next,05/30] bpf: add BPF token support to BPF_BTF_LOAD command
-    https://git.kernel.org/bpf/bpf-next/c/6f19475e52cc
-  - [v2,bpf-next,06/30] bpf: add BPF token support to BPF_PROG_LOAD command
-    https://git.kernel.org/bpf/bpf-next/c/5880ef9dc52a
-  - [v2,bpf-next,07/30] bpf: take into account BPF token when fetching helper protos
-    https://git.kernel.org/bpf/bpf-next/c/b1099b53eee6
-  - [v2,bpf-next,08/30] bpf: consistently use BPF token throughout BPF verifier logic
-    https://git.kernel.org/bpf/bpf-next/c/3f042d22873b
-  - [v2,bpf-next,09/30] bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free LSM hooks
-    https://git.kernel.org/bpf/bpf-next/c/d2fd2efe9797
-  - [v2,bpf-next,10/30] bpf,lsm: refactor bpf_map_alloc/bpf_map_free LSM hooks
-    https://git.kernel.org/bpf/bpf-next/c/a60dd8f5232a
-  - [v2,bpf-next,11/30] bpf,lsm: add BPF token LSM hooks
-    https://git.kernel.org/bpf/bpf-next/c/736762bc089d
-  - [v2,bpf-next,12/30] libbpf: add bpf_token_create() API
-    https://git.kernel.org/bpf/bpf-next/c/aa6385965f34
-  - [v2,bpf-next,13/30] libbpf: add BPF token support to bpf_map_create() API
-    https://git.kernel.org/bpf/bpf-next/c/8b7971beaa5f
-  - [v2,bpf-next,14/30] libbpf: add BPF token support to bpf_btf_load() API
-    https://git.kernel.org/bpf/bpf-next/c/3f06a307a8ae
-  - [v2,bpf-next,15/30] libbpf: add BPF token support to bpf_prog_load() API
-    https://git.kernel.org/bpf/bpf-next/c/34ace19d6c52
-  - [v2,bpf-next,16/30] selftests/bpf: add BPF token-enabled tests
-    https://git.kernel.org/bpf/bpf-next/c/3d8da8a12fcd
-  - [v2,bpf-next,17/30] bpf,selinux: allocate bpf_security_struct per BPF token
-    https://git.kernel.org/bpf/bpf-next/c/f78006420686
-  - [v2,bpf-next,18/30] bpf: fail BPF_TOKEN_CREATE if no delegation option was set on BPF FS
-    https://git.kernel.org/bpf/bpf-next/c/ef4fc8918e7a
-  - [v2,bpf-next,19/30] bpf: support symbolic BPF FS delegation mount options
-    https://git.kernel.org/bpf/bpf-next/c/e45dac29dc87
-  - [v2,bpf-next,20/30] selftests/bpf: utilize string values for delegate_xxx mount options
-    https://git.kernel.org/bpf/bpf-next/c/9d4ebc33d665
-  - [v2,bpf-next,21/30] libbpf: split feature detectors definitions from cached results
-    https://git.kernel.org/bpf/bpf-next/c/05d51b9f2c99
-  - [v2,bpf-next,22/30] libbpf: further decouple feature checking logic from bpf_object
-    https://git.kernel.org/bpf/bpf-next/c/0c2bd7588e5d
-  - [v2,bpf-next,23/30] libbpf: move feature detection code into its own file
-    https://git.kernel.org/bpf/bpf-next/c/df7f8d83b298
-  - [v2,bpf-next,24/30] libbpf: wire up token_fd into feature probing logic
-    https://git.kernel.org/bpf/bpf-next/c/5955455b74bd
-  - [v2,bpf-next,25/30] libbpf: wire up BPF token support at BPF object level
-    https://git.kernel.org/bpf/bpf-next/c/4ba1dbeb6982
-  - [v2,bpf-next,26/30] selftests/bpf: add BPF object loading tests with explicit token passing
-    https://git.kernel.org/bpf/bpf-next/c/b2f72bbb2857
-  - [v2,bpf-next,27/30] selftests/bpf: add tests for BPF object load with implicit token
-    https://git.kernel.org/bpf/bpf-next/c/d4e4ea903a04
-  - [v2,bpf-next,28/30] libbpf: support BPF token path setting through LIBBPF_BPF_TOKEN_PATH envvar
-    https://git.kernel.org/bpf/bpf-next/c/e296ff93f7e9
-  - [v2,bpf-next,29/30] selftests/bpf: add tests for LIBBPF_BPF_TOKEN_PATH envvar
-    https://git.kernel.org/bpf/bpf-next/c/d168bbfbf776
-  - [v2,bpf-next,30/30] selftests/bpf: incorporate LSM policy to token-based tests
-    https://git.kernel.org/bpf/bpf-next/c/6b9a115dbde0
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+>
+> - Process exit
+> - exit_fs() sets current->fs to NULL
+> - exit_task_work() calls __fput() on files which were closed in exit_files()
+> - __fput() calls security_file_free()
+> - security_file_free() then reads the file that was just closed in order to gather information about it.
+> - a filesystem driver (I've seen this with two out-of-tree filesystems) then accesses current->fs and panics.
+>
+> So I'm wondering if the expectation here is that filesystem code should NULL check current->fs before using it or that an LSM shouldn't try to read a file from security_file_free().
+>
+>
