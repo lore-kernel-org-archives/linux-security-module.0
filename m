@@ -1,104 +1,102 @@
-Received: from mx0b-00206402.pphosted.com (mx0b-00206402.pphosted.com [148.163.152.16])
+Received: from mx0a-00206402.pphosted.com (mx0a-00206402.pphosted.com [148.163.148.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2990D130E26
-	for <linux-security-module@vger.kernel.org>; Thu, 25 Jan 2024 16:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.152.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E677E13A245
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Jan 2024 16:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706200580; cv=none; b=V+e5uOJBJ/gA9FrZgUTB7FiS9nNVyuANusgvuWx6bSV7606drjH1Z3vvtiDw1Og7IM0sW06Xn77MibkHuEIKRBDjZ+bfeNpJ/T4RGffEejtWNE/to2WkR5/dMCOSbOZpAC4xpgWuqYFBXCEJuAnxpBm/Ijq0jRsgxVHEg80ZDlY=
+	t=1706201020; cv=none; b=nYZDz23Vs173hovhoUZtDH6IvBCFgfckEXJ57ERVNoI8TPPIjhZYvYiyqI49G5FX9o/rQ3iIBUVIcWwOQEkNtw7JJRPJ9hdLk7Zg3GmFcQ4uHoSR8E3rR5p54ldWPIV4gwCJQjwYBRz3HMYtqoBCn61qrYX/XDDGJq08ngUrKFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706200580; c=relaxed/simple;
-	bh=gj9QyVwLACPKUapJSB0hQ3GEdA6HJuWrtLZLV4WRNcs=;
+	s=arc-20240116; t=1706201020; c=relaxed/simple;
+	bh=X+r/q3tFBJg2vcJqBzYYFRiiLkmwUengnwCl0Fpo6CI=;
 	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=hWwfmWD/8FarGDcmG+NMO111CbHr61ZIdx24mbtY8uHUt46pN/AnWT2V5zru+xw3z1hSx2C4eGToVCO9ZIgTCv9VXfweIn2pWpkrh80P5NEvFqNHgqRwAM52153pGcugdtQwxMrxc7c/vS2Co5x6wC69ej1nKUj3XoZE8TDE3XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com; spf=pass smtp.mailfrom=crowdstrike.com; dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b=wunyVlqM; arc=none smtp.client-ip=148.163.152.16
+	 Content-Type:MIME-Version; b=cRv/6CfC7H4fiZp5irEvTtZCBseFft9NZviyjklW1A0kVGWPKDkDCfa2gTFP8Z0RLHUdiSGWN4mify5Mq1bHbM0KehaxTUuTlJa/pK28jQ3YKsC8uqAU6egkOHxAl9+qX0rplbiHZ97cJk/M7fgQcF8yhtNKECrCwH0PsaLATTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com; spf=pass smtp.mailfrom=crowdstrike.com; dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b=EWjDTVrE; arc=none smtp.client-ip=148.163.148.77
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crowdstrike.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b="wunyVlqM"
-Received: from pps.filterd (m0354654.ppops.net [127.0.0.1])
-	by mx0b-00206402.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40PB4ukP024441;
-	Thu, 25 Jan 2024 16:36:15 GMT
+	dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b="EWjDTVrE"
+Received: from pps.filterd (m0354651.ppops.net [127.0.0.1])
+	by mx0a-00206402.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40P6Wg40025319;
+	Thu, 25 Jan 2024 16:43:29 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crowdstrike.com;
 	 h=from:to:subject:date:message-id:references:in-reply-to
-	:content-type:mime-version; s=default; bh=/f/OxV1EUemcYTr/SSdou4
-	uIaSmZQLHC13MwLnXWydY=; b=wunyVlqM9Ci7cMddM6kvdQfkZDFQ3o9W3hHB+5
-	mTG/3d5uqquJkCIIBm0lziwPkmlgt51KcjRwgnENj92ff1T5Wi7rTKy/TUS5ZNWv
-	mWVGEOnn7tvTHSZBHVRthOHs07DINTnFnj7gAibkZaI/AzNfltGu5c9uocnHVXSU
-	nBG/uWEbxSw6DqWNUEKgnRqy8agSokfRWb5I65GxDXpziARBDZPiklZ8z/0tLqdC
-	zgXnZVOxExBosdsxds8Q45S3XJH9arcWw/a5I0UWzikEgVMAPqSn97sHzc5TLoAN
-	lU1fGqTJDLw7ZgdFhaWxstdSIs+piSW4a328wkCkUHO3f7kg==
+	:content-type:mime-version; s=default; bh=Ge8IV08osH0ypHo0MgOJkj
+	h8ZapN3uR6xiIKaL1wDkU=; b=EWjDTVrEGYRPXJ2TD1yY4m3U8Kypy5aYn4ptX4
+	v5FfGL+aiiYYdO+UBPgqjZDo1tHd9MFoU08xS19uSRGRzyLiTKyPKe0metQLctNr
+	lHe2/A83+4OjmI/3x8IgdwLCeRawa4HOXeAZq6BuMwkUu/QDZ12fM3mm32WlqzvX
+	y9PIyp1hkxT9HsIh03fNgmlbnuqGXofIebP2pGtBvOjsc1JAq5dz1QE1FyYVbMhp
+	3HV9mi8MkaJBWvJz4TIF+ahBqYidPTIdKn48owszpW/qRd8cUda0PCj3r+O40Umx
+	kDQBPNkcK6/beunCSMzpalz5RlxliPu3PcLlySZJZFuMmjoA==
 Received: from 04wpexch09.crowdstrike.sys (dragosx.crowdstrike.com [208.42.231.60] (may be forged))
-	by mx0b-00206402.pphosted.com (PPS) with ESMTPS id 3vtmgbwvwq-5
+	by mx0a-00206402.pphosted.com (PPS) with ESMTPS id 3vujfahe89-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jan 2024 16:36:15 +0000 (GMT)
+	Thu, 25 Jan 2024 16:43:28 +0000 (GMT)
 Received: from 04WPEXCH10.crowdstrike.sys (10.100.11.114) by
  04WPEXCH09.crowdstrike.sys (10.100.11.113) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.27; Thu, 25 Jan 2024 16:36:14 +0000
+ 15.2.1258.27; Thu, 25 Jan 2024 16:43:27 +0000
 Received: from 04WPEXCH10.crowdstrike.sys ([fe80::e1dd:44ef:2c43:70a]) by
  04WPEXCH10.crowdstrike.sys ([fe80::e1dd:44ef:2c43:70a%18]) with mapi id
- 15.02.1258.027; Thu, 25 Jan 2024 16:36:14 +0000
+ 15.02.1258.027; Thu, 25 Jan 2024 16:43:27 +0000
 From: Ben Smith <ben.smith@crowdstrike.com>
-To: Casey Schaufler <casey@schaufler-ca.com>,
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        Casey Schaufler
+	<casey@schaufler-ca.com>,
         "linux-security-module@vger.kernel.org"
 	<linux-security-module@vger.kernel.org>
 Subject: Re: [External] Re: security_file_free contract/expectations
 Thread-Topic: [External] Re: security_file_free contract/expectations
-Thread-Index: AQHaTx+CJtwzlPzBJkmVkqGorohTxbDpuZEAgAB7S4A=
-Date: Thu, 25 Jan 2024 16:36:14 +0000
-Message-ID: <7AB8E172-B359-4A3E-80E3-CCF225FECACB@crowdstrike.com>
+Thread-Index: AQHaTx+CJtwzlPzBJkmVkqGorohTxbDpuZEAgAB+YQD///7uAA==
+Date: Thu, 25 Jan 2024 16:43:27 +0000
+Message-ID: <035B34CB-2511-415B-BDC7-71306FE7C9AE@crowdstrike.com>
 References: <CF22CFC7-11A8-4BE5-BA61-04A55FDEA1DB@contoso.com>
  <ba29cf58-82ee-41ac-805a-82b8ae35b799@schaufler-ca.com>
-In-Reply-To: <ba29cf58-82ee-41ac-805a-82b8ae35b799@schaufler-ca.com>
+ <41a855ac576119ec9cb614cfaeb68c0fe8c5ffc0.camel@huaweicloud.com>
+In-Reply-To: <41a855ac576119ec9cb614cfaeb68c0fe8c5ffc0.camel@huaweicloud.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: yes
 X-MS-TNEF-Correlator: 
 x-disclaimer: USA
 Content-Type: multipart/signed; protocol="application/pkcs7-signature";
-	micalg=sha256; boundary="B_3789016573_478913554"
+	micalg=sha256; boundary="B_3789017006_1934067362"
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-ORIG-GUID: QkMZdUEWXM3FLTeSXsMnFoeFuGoJN3Kn
-X-Proofpoint-GUID: QkMZdUEWXM3FLTeSXsMnFoeFuGoJN3Kn
+X-Proofpoint-ORIG-GUID: K7FGjy61guYX8Vn0I0u0ydamXbTso5d_
+X-Proofpoint-GUID: K7FGjy61guYX8Vn0I0u0ydamXbTso5d_
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-01-25_10,2024-01-25_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=798
- priorityscore=1501 phishscore=0 adultscore=0 impostorscore=0 spamscore=0
- malwarescore=0 clxscore=1011 mlxscore=0 suspectscore=0 lowpriorityscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2401190000 definitions=main-2401250117
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ suspectscore=0 phishscore=0 malwarescore=0 bulkscore=0 mlxlogscore=754
+ lowpriorityscore=0 adultscore=0 clxscore=1011 spamscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2401190000 definitions=main-2401250118
 
---B_3789016573_478913554
+--B_3789017006_1934067362
 Content-type: text/plain;
 	charset="UTF-8"
 Content-transfer-encoding: quoted-printable
 
-Hi Casey,
-Thanks for the clarification, that's very helpful.
 
-=EF=BB=BFOn 1/24/24, 5:15 PM, "Casey Schaufler" <casey@schaufler-ca.com <mailto:c=
-asey@schaufler-ca.com>> wrote:
+=EF=BB=BFOn 1/25/24, 12:47 AM, "Roberto Sassu" <roberto.sassu@huaweicloud.com <ma=
+ilto:roberto.sassu@huaweicloud.com>> wrote:
 
-> The only action that should take place in a _file_free() hook is to manag=
-e
-> resources used by the LSM. That could involve a kfree() of the module's
-> blob, or some other memory management operation. Trying to access a file
-> from this hook is a bad idea.
+> I'm introducing a new LSM called file_release, that can be suitable for
+> reading the file (actually IMA will use this functionality).
 
-Yes, based on where it's called in do_exit(), makes sense. It didn't seem r=
-easonable to me that a process=20
-should do anything complicated after several fields of the task struct have=
- been freed.
+Good to know, Roberto, that looks like just what we need, maybe we can swit=
+ch to that on newer kernels.
 
 
---B_3789016573_478913554
+
+
+--B_3789017006_1934067362
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -177,13 +175,13 @@ kI2zZ5tvSAgVVs+/8St8Xpp26VmQxXyDNRFlUTGCAlIwggJOAgEBMIG7MIGlMQswCQYDVQQG
 EwJVUzEWMBQGA1UEChMNRW50cnVzdCwgSW5jLjE5MDcGA1UECxMwd3d3LmVudHJ1c3QubmV0
 L0NQUyBpcyBpbmNvcnBvcmF0ZWQgYnkgcmVmZXJlbmNlMR8wHQYDVQQLExYoYykgMjAxMCBF
 bnRydXN0LCBJbmMuMSIwIAYDVQQDExlFbnRydXN0IENsYXNzIDIgQ2xpZW50IENBAhEAtK6a
-bGdPAPEAAAAATD0tHTANBglghkgBZQMEAgEFAKBpMC8GCSqGSIb3DQEJBDEiBCDTYKb6QLdG
-k2n/UHVGD8I+JeUSbelKs0/mcc/Z5GulVjAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwG
-CSqGSIb3DQEJBTEPFw0yNDAxMjUxNjM2MTNaMA0GCSqGSIb3DQEBAQUABIIBAJKa03G144On
-WowyHDJhyopAUyOB+5JV4IMf+wJrI5JTfATtYq2iu0KbGjGhSYWGbXuMsyW97kKaLkHV6x/M
-1euIDA8cYDMTv7eYFA9uUp1c1QNeywXh4IV8IRzDuGVNVvBEQSl5CSk9Tdpo6RTxCRYvGLau
-LCeyglkOLQy3sWoeBvSxsLnG8ruMJW4HOOT2pVD7BSD33fN4CCBbs8QNgo5gTr+fneGuPhTq
-s/DbHAIUZLflqCFBx3OHQy7Qz6lLKSEp6utHfKrN/yOoMStdVkvdDTpcGSjl3AY5SnYQMlcN
-EJ6so/88McwwiB9ZBulEFKSFAEIlpb/xp1Gj1EBmnbM=
+bGdPAPEAAAAATD0tHTANBglghkgBZQMEAgEFAKBpMC8GCSqGSIb3DQEJBDEiBCBErExEYe96
+vrn1OR2z7WSvustUzZWEQ1szCLrLS+CH+jAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwG
+CSqGSIb3DQEJBTEPFw0yNDAxMjUxNjQzMjZaMA0GCSqGSIb3DQEBAQUABIIBAHihl52hB65b
+x+3IypDfB6bAjvlk5nt03G0/nn6bfMpv1/cUcJtJ0626m6A2hgYKkuzIT5ivt7Jy1hPnYGQO
+LuiWN2sp67zvIfXx6sROvS8IoQvdKJz0LtYnw0u3ygT2JN600wIZ5y8d8299XRVmJLZ0bArL
++MwhSALYjiE7Qyq6bwKA5RS994MQvANRClRD3OoLCG9RKw5+C0U/6T0B/zKyoZ/fQ2fAkI8p
+LnbRt8uTJs6FFq/wFy5SMcVpZNdQGHJj00O28K3n7ywF1XQSbHZ39x3DXND1WQ29gBhFQFX5
+7C8bVwQ62bK7oEmwOggvyWeflojTEi3KPBezbyolFsI=
 
---B_3789016573_478913554--
+--B_3789017006_1934067362--
