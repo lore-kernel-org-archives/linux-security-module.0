@@ -1,159 +1,119 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95523208BE
-	for <linux-security-module@vger.kernel.org>; Fri, 26 Jan 2024 18:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A483733CEA
+	for <linux-security-module@vger.kernel.org>; Fri, 26 Jan 2024 22:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706294739; cv=none; b=dKaBs+KiFuhWaVkCR51ka9OgHxCmNuD2TUUB4rdvb2lE6/ybibDLFcVmknxPjnRezcCPVLbpf1BqevHy7odbOyIXxqiQhm/H6E63YtXII8k37cdo2UuOg31jaPugnVj4PCGdPe/GRVP1ISZWNvdB/MWHgkrtiHE4IdQKy1ZQzLo=
+	t=1706307543; cv=none; b=BzPrZNbbU8PqeK1fDvmUDBECoJEpAbNytPoR5Kxs9LIoI6PaLJ/sIovI0oGiWCOsWIAyQCZyvHcZZkYnHErx1yO5uCTYGW75qRy4Z819Pam/6enOR4Qg+zjohT0xq1MuIaMcF5bgdOh5P7z7x0tlBsiYl2jxABrYKDwdh9YpDKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706294739; c=relaxed/simple;
-	bh=iugxUc//VB+4fCt5nF+twx71qeqd8rZVc3h9NZ/wDR0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mUaVSnFKDf/4HIjm4ovUpferTmFCFtUkpgZYYqNSwL4iNYhoLtvvMM9gk/N1Uy9ULbotZ2lDZt4C1z1QKqPm3M6mJtNoi2gAr6NQtGNzR4JDpiuPthDAKVMWz83BpNFx2E7g9mmmH3upiBW6mxJifei7evkV5CJOWc9tQzIZqo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cSfShswL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1706307543; c=relaxed/simple;
+	bh=qpzQw5s6Dqxh+Qc3y41Tq123yZfxoXEp3OvaOWhv/ek=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=VaRPDAdcAjvDq05uduElT1c74ztZDOAK+tc7gyaRubw/dgRJfDI4XGBhKSLvLvGoypLbuLFJWdUgxuSv8b6x1inZkmdpfdRxP5Pk2tdbAt2SXR1I7arw9tCSurvxkRNH+4DCmn/KgG6VIv5LzgP08We97b2xa7lO21R18HG851k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=WgzItryM; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cSfShswL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1706294736;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=zPwOkU9NQD3w9RIGp6Z8HeMeeH68hR451yY+m+zjj+c=;
-	b=cSfShswLRtGyd0T5zw3CoXFXo5ZrrBo1R9MkJ9LbBbGJKwYiGlbOnkFu3gdd0bvyW6qt4/
-	zrQg9vMCkYKVWgm209Jf9CZRq4KB3w7vqzD+CJr80Cql0XxqwKsF3EbzUVXA9F0ZcwVc6f
-	+hYmm7EAyYkIaEfD5PfrT4U8MWSG1sU=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-147-PvU1tW6lOFSw0Q0LhwLlBg-1; Fri, 26 Jan 2024 13:45:34 -0500
-X-MC-Unique: PvU1tW6lOFSw0Q0LhwLlBg-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-339250f6515so381381f8f.2
-        for <linux-security-module@vger.kernel.org>; Fri, 26 Jan 2024 10:45:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="WgzItryM"
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-783ced0216aso44437885a.1
+        for <linux-security-module@vger.kernel.org>; Fri, 26 Jan 2024 14:19:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1706307540; x=1706912340; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bp1h2UkOsHruZ6BwuUmNXr6zMZJ5tkOoiZnpdhJ7b4I=;
+        b=WgzItryMpIwDRwVR/AioiJ+wyB812W6Ts9lA3VMu/+IGmFuJWP4jylc2OcIyZ580dv
+         8kaiHGyYZSgKLbn04NUX2VIGmEJjfjJhgLNXfW+3leHezMH7c0XvmO50uscd1rdiXkxW
+         sjjtHpp0HdVuqQCKBbJC348cFTc0hq09pbcU7MyrH4WPZ319wDn4pSFwyLHhtLOmG9A0
+         PzFDvjknZG0Ifv6ZfX1AFsMkqH8DJiudvwwmjm5z4VVTFKdo9+whR/+CU8EnLirJX0Az
+         nwAVsL2C0PME88RelFM6c4JeGjhXsdANG84m4uNzvXWIleQvZ2XS2cx5NFNXlxcdEe/M
+         FzTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706294733; x=1706899533;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zPwOkU9NQD3w9RIGp6Z8HeMeeH68hR451yY+m+zjj+c=;
-        b=VTcVe+6JMUzcA0x4JA2hORg5HBzTtiohNJX61rDXeKQAFBTNeynDqf08NdUWALTULS
-         LUxdcQOui2QOPQl5IRmEfekD7ELXCQJ9cvjOSJVLqDXy8f3JApHkFW/BpAaLvymG10TO
-         Yb3w3wvta2qhLMXcKNpuPf7nU7FBTp0KSfv5JleDxa8AbUxgl2+5w8A5yDj7i2aI1QeY
-         dw9VDGMOLhWlN0wIjDaFuwLQjYGuzq2JGeNE8ttNbFZ5G9LBQPt48Pv+Ma/zfXgh60m4
-         2pIPQ5uJkvJx9aPaFWnaHGMd59g3HEEDuulWObU31nd1lMZO+YtEh6hfdhdPm/O8lPbT
-         HAvQ==
-X-Gm-Message-State: AOJu0YyR2IF0yjhso6XS7hJI6y+XP6zRplTLmj2BlPdWXofNGbNxXYhQ
-	bXKQkYLxkZEqq8TUog0UJ/Jz5S/kS6cGiZjNhpR2+Bc9wqptADI1PniaHFbTOlWrmHS0NMydj+3
-	GjThoqG/PJkO/kfel7WQjtKIOPDwxhe/aPnmrK5K/PGSxHgwTWtvrwQfN7L2kb086Mh6ZKCQyTg
-	==
-X-Received: by 2002:a7b:c414:0:b0:40e:c2da:1b2b with SMTP id k20-20020a7bc414000000b0040ec2da1b2bmr169545wmi.179.1706294733787;
-        Fri, 26 Jan 2024 10:45:33 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHtAsQqCCgt5cm+lp5q9fntCHG7c+2YFRMsZAKoY9e7KI2Wbom7URjQJ8wprLCN//3XcOVbeg==
-X-Received: by 2002:a7b:c414:0:b0:40e:c2da:1b2b with SMTP id k20-20020a7bc414000000b0040ec2da1b2bmr169542wmi.179.1706294733475;
-        Fri, 26 Jan 2024 10:45:33 -0800 (PST)
-Received: from localhost.localdomain ([2a02:8308:b104:2c00:7718:da55:8b6:8dcc])
-        by smtp.gmail.com with ESMTPSA id l1-20020a05600c4f0100b0040e549c77a1sm6607265wmq.32.2024.01.26.10.45.32
+        d=1e100.net; s=20230601; t=1706307540; x=1706912340;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bp1h2UkOsHruZ6BwuUmNXr6zMZJ5tkOoiZnpdhJ7b4I=;
+        b=bwbHLK1xjgvxeGD8xXxqUs7t/EsVm5Tu24hhOGuiop3c86OcdjbqL+7HsWZmjaw8jP
+         7BEH5vuX7mPnlGBXnvxI0B9repa5YiSsa9xLat0VqnqK1vhnSSjVBX1P/hdHbyyoiZFl
+         qtwU5T/Iz7bAT9NnSVBn5yq56StTNqkdODtiLYe3A+RmQ14LKvDew9P93uiwYgijC1w3
+         Ft6LM4eYMWW+lw0pME3h37EUMbJft9sTZWV1n+u4MXEDD4/NOx0pgDUy5uoxgCKN7eI/
+         rYzVFqjLfBq9XhZyk9nMTjLoV8OSLMmYPStS3RgK9XFixFTrNpD2TV5SIJUWBwz8N6J0
+         1jwg==
+X-Gm-Message-State: AOJu0YzuJpd6PLoUj45pr4TKH+KDQ91HQ8KRKzagKj9XC+e7nayNIjE8
+	/Hi7/y/uroSzz2V3xxqKOhUy9aCXKVo+sXM6ISqOdnvIKShMzY8iXVYBCev5v8MG5E3J6kXy1uk
+	=
+X-Google-Smtp-Source: AGHT+IFgBnXc0hgyvmYRe2ni5uzRKRcYJb9teEW+YwzPApVx696blu9ZWpPZsfHPxIfO9nBt6nBsWQ==
+X-Received: by 2002:ae9:e513:0:b0:783:25ef:818e with SMTP id w19-20020ae9e513000000b0078325ef818emr460280qkf.116.1706307540461;
+        Fri, 26 Jan 2024 14:19:00 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id f15-20020a05620a20cf00b007832b17f3eesm929603qka.41.2024.01.26.14.19.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jan 2024 10:45:32 -0800 (PST)
-From: Ondrej Mosnacek <omosnace@redhat.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: [PATCH] lsm: fix default return value of the socket_getpeersec_* hooks
-Date: Fri, 26 Jan 2024 19:45:31 +0100
-Message-ID: <20240126184531.1167999-1-omosnace@redhat.com>
-X-Mailer: git-send-email 2.43.0
+        Fri, 26 Jan 2024 14:19:00 -0800 (PST)
+Date: Fri, 26 Jan 2024 17:18:59 -0500
+Message-ID: <b3e1fdd22be4d2abbaccba73f6dc3e38@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="US-ASCII"; x-default=true
+From: Paul Moore <paul@paul-moore.com>
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH] security: fix the logic in security_inode_getsecctx()
+References: <20240126104403.1040692-1-omosnace@redhat.com>
+In-Reply-To: <20240126104403.1040692-1-omosnace@redhat.com>
 
-For these hooks the true "neutral" value is -EOPNOTSUPP, which is
-currently what is returned when no LSM provides this hook and what LSMs
-return when there is no security context set on the socket. Correct the
-value in <linux/lsm_hooks.h> and adjust the dispatch functions in
-security/security.c to avoid issues when the BPF LSM is enabled.
+On Jan 26, 2024 Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> 
+> The inode_getsecctx LSM hook has previously been corrected to have
+> -EOPNOTSUPP instead of 0 as the default return value to fix BPF LSM
+> behavior. However, the call_int_hook()-generated loop in
+> security_inode_getsecctx() was left treating 0 as the neutral value, so
+> after an LSM returns 0, the loop continues to try other LSMs, and if one
+> of them returns a non-zero value, the function immediately returns with
+> said value. So in a situation where SELinux and the BPF LSMs registered
+> this hook, -EOPNOTSUPP would be incorrectly returned whenever SELinux
+> returned 0.
+> 
+> Fix this by open-coding the call_int_hook() loop and making it use the
+> correct LSM_RET_DEFAULT() value as the neutral one, similar to what
+> other hooks do.
+> 
+> Reported-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Link: https://lore.kernel.org/selinux/CAEjxPJ4ev-pasUwGx48fDhnmjBnq_Wh90jYPwRQRAqXxmOKD4Q@mail.gmail.com/
+> Fixes: b36995b8609a ("lsm: fix default return value for inode_getsecctx")
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> Link: https://bugzilla.redhat.com/show_bug.cgi?id=2257983
+> ---
+> 
+> I ran 'tools/nfs.sh' on the patch and even though it fixes the most
+> serious issue that Stephen reported, some of the tests are still
+> failing under NFS (but I will presume that these are pre-existing issues
+> not caused by the patch).
+> 
+> I can also see an opportunity to clean up the hook implementations in
+> security/security.c - I plan to have a go at it and send it as a
+> separate patch later.
+> 
+>  security/security.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
 
-Fixes: 98e828a0650f ("security: Refactor declaration of LSM hooks")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- include/linux/lsm_hook_defs.h |  4 ++--
- security/security.c           | 31 +++++++++++++++++++++++++++----
- 2 files changed, 29 insertions(+), 6 deletions(-)
+Merged, with the RHBZ link tag, into lsm/stable-6.8.  I've also added a
+stable tag/Cc should this should get picked up by the stable folks to
+fix the breakage in the recent stable kernel releases.
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 185924c56378..76458b6d53da 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -315,9 +315,9 @@ LSM_HOOK(int, 0, socket_getsockopt, struct socket *sock, int level, int optname)
- LSM_HOOK(int, 0, socket_setsockopt, struct socket *sock, int level, int optname)
- LSM_HOOK(int, 0, socket_shutdown, struct socket *sock, int how)
- LSM_HOOK(int, 0, socket_sock_rcv_skb, struct sock *sk, struct sk_buff *skb)
--LSM_HOOK(int, 0, socket_getpeersec_stream, struct socket *sock,
-+LSM_HOOK(int, -ENOPROTOOPT, socket_getpeersec_stream, struct socket *sock,
- 	 sockptr_t optval, sockptr_t optlen, unsigned int len)
--LSM_HOOK(int, 0, socket_getpeersec_dgram, struct socket *sock,
-+LSM_HOOK(int, -ENOPROTOOPT, socket_getpeersec_dgram, struct socket *sock,
- 	 struct sk_buff *skb, u32 *secid)
- LSM_HOOK(int, 0, sk_alloc_security, struct sock *sk, int family, gfp_t priority)
- LSM_HOOK(void, LSM_RET_VOID, sk_free_security, struct sock *sk)
-diff --git a/security/security.c b/security/security.c
-index 6196ccaba433..3aaad75c9ce8 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -4624,8 +4624,20 @@ EXPORT_SYMBOL(security_sock_rcv_skb);
- int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
- 				      sockptr_t optlen, unsigned int len)
- {
--	return call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
--			     optval, optlen, len);
-+	struct security_hook_list *hp;
-+	int rc;
-+
-+	/*
-+	 * Only one module will provide a security context.
-+	 */
-+	hlist_for_each_entry(hp, &security_hook_heads.socket_getpeersec_stream,
-+			     list) {
-+		rc = hp->hook.socket_getpeersec_stream(sock, optval, optlen,
-+						       len);
-+		if (rc != LSM_RET_DEFAULT(socket_getpeersec_stream))
-+			return rc;
-+	}
-+	return LSM_RET_DEFAULT(socket_getpeersec_stream);
- }
- 
- /**
-@@ -4645,8 +4657,19 @@ int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
- int security_socket_getpeersec_dgram(struct socket *sock,
- 				     struct sk_buff *skb, u32 *secid)
- {
--	return call_int_hook(socket_getpeersec_dgram, -ENOPROTOOPT, sock,
--			     skb, secid);
-+	struct security_hook_list *hp;
-+	int rc;
-+
-+	/*
-+	 * Only one module will provide a security context.
-+	 */
-+	hlist_for_each_entry(hp, &security_hook_heads.socket_getpeersec_dgram,
-+			     list) {
-+		rc = hp->hook.socket_getpeersec_dgram(sock, skb, secid);
-+		if (rc != LSM_RET_DEFAULT(socket_getpeersec_dgram))
-+			return rc;
-+	}
-+	return LSM_RET_DEFAULT(socket_getpeersec_dgram);
- }
- EXPORT_SYMBOL(security_socket_getpeersec_dgram);
- 
--- 
-2.43.0
+Assuming no problems are uncovered over the weekend and early next week,
+I'll send this to Linus next week.
 
+Thanks everyone!
+
+--
+paul-moore.com
