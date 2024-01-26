@@ -1,163 +1,159 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F0821376
-	for <linux-security-module@vger.kernel.org>; Fri, 26 Jan 2024 17:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95523208BE
+	for <linux-security-module@vger.kernel.org>; Fri, 26 Jan 2024 18:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706289362; cv=none; b=mzQhZHTncs0Lh4B58+XLnyDMXcMOYjm76NE8FJTDeIErYT1OCkoQyQVO34MKTUFkYPQ5t7CKO94tG9+Dwf5IgEa0hwtOSZVeuXjwMCaqR3fYLXHF+f1nj5xpshl8CX4qctYMMHwsg3ou46o5OpPn6J4REa82RAD3z7OczwCbu6s=
+	t=1706294739; cv=none; b=dKaBs+KiFuhWaVkCR51ka9OgHxCmNuD2TUUB4rdvb2lE6/ybibDLFcVmknxPjnRezcCPVLbpf1BqevHy7odbOyIXxqiQhm/H6E63YtXII8k37cdo2UuOg31jaPugnVj4PCGdPe/GRVP1ISZWNvdB/MWHgkrtiHE4IdQKy1ZQzLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706289362; c=relaxed/simple;
-	bh=VWYPT8g6Jd85tJW5Xy4JfiFcSB9nSNuj8foib8RsdEQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RjAMzNTkS2rZ8gSBAlApThWGIGPYhwTPx1zd3/xdPswPqI2Iv2Mah14f9JXqfHpBsbTgBgN/8avbClk3z88gu4eIavg8v9MDlN4Bz8lEFC7QE9PBQ7vU2sDtedfovzzVMJYvdm2SsY77X3WmDMNVK43cRz7pzOHEMliMyn0KDOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CP7ssFwt; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1706294739; c=relaxed/simple;
+	bh=iugxUc//VB+4fCt5nF+twx71qeqd8rZVc3h9NZ/wDR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mUaVSnFKDf/4HIjm4ovUpferTmFCFtUkpgZYYqNSwL4iNYhoLtvvMM9gk/N1Uy9ULbotZ2lDZt4C1z1QKqPm3M6mJtNoi2gAr6NQtGNzR4JDpiuPthDAKVMWz83BpNFx2E7g9mmmH3upiBW6mxJifei7evkV5CJOWc9tQzIZqo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cSfShswL; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CP7ssFwt"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cSfShswL"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1706289359;
+	s=mimecast20190719; t=1706294736;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zgot8gnXgaT/PXNWyINqw6zO/OV0dslkn5Z+0ObOBdo=;
-	b=CP7ssFwtfgHVzq1A1+hLNDJTyqV7Xv5uvIkJl76rUJtybksvZYmI0srEdKnmztjK73jn9E
-	/Pk0iIWuRgfLV0tr90GVVBGZ2xCft0jm8WgjzAJdoL0H5qz88Eg6DV5+mYvuzTziXGc606
-	+rOG2XkzBSdKFZyGFtMQkh+7PWkoprc=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zPwOkU9NQD3w9RIGp6Z8HeMeeH68hR451yY+m+zjj+c=;
+	b=cSfShswLRtGyd0T5zw3CoXFXo5ZrrBo1R9MkJ9LbBbGJKwYiGlbOnkFu3gdd0bvyW6qt4/
+	zrQg9vMCkYKVWgm209Jf9CZRq4KB3w7vqzD+CJr80Cql0XxqwKsF3EbzUVXA9F0ZcwVc6f
+	+hYmm7EAyYkIaEfD5PfrT4U8MWSG1sU=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-369-x6JMVyx3PmerU_F8YHdo2Q-1; Fri, 26 Jan 2024 12:15:58 -0500
-X-MC-Unique: x6JMVyx3PmerU_F8YHdo2Q-1
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-290f607c1dfso508828a91.3
-        for <linux-security-module@vger.kernel.org>; Fri, 26 Jan 2024 09:15:57 -0800 (PST)
+ us-mta-147-PvU1tW6lOFSw0Q0LhwLlBg-1; Fri, 26 Jan 2024 13:45:34 -0500
+X-MC-Unique: PvU1tW6lOFSw0Q0LhwLlBg-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-339250f6515so381381f8f.2
+        for <linux-security-module@vger.kernel.org>; Fri, 26 Jan 2024 10:45:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706289357; x=1706894157;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zgot8gnXgaT/PXNWyINqw6zO/OV0dslkn5Z+0ObOBdo=;
-        b=pvBCHgJ3b8V4FVIvinTiZuKwRHtbMihc1U0o4e6ggsIV5eJeUfZUsQMMShN9Z+FE5E
-         DucvzIBeWz9XXNAYH1k7SVyl/Y5XLyP5fms2W5cM9y+6ledN/JOSf9Glb8j4sGzyUQH3
-         vugb4x1bjL30g7qo9OBpMqJyVedgqfB9+gua2JF3wiQLbw73nOs9dB1XTFrOzFMHGKgK
-         zy2KfU9fI/oAE4RlyHZH4dNweaKTdxCMn7/VJVjpk3EI+RAXOUg+8VDnzLEQlPv41tOv
-         4PsjxJpqbjsb9AHCbM7sijlw2luUH53oHLfNHRCAFr73bs7TpkIS9UuS3o0Z+f8HvG4k
-         GDng==
-X-Gm-Message-State: AOJu0YzIKW9vmOb0UyM2HE5yFSEuzM+4f9QS6BY6B1hrI6KNPtC6HclZ
-	m/FL//cETNN/HoDEfZLEa9cKIHa8w+GRD8MG5Ql6FgY9L6naaB9DL0jAgqNuLib7+gqQxU5Jrxd
-	g9atS77riBUJMnOH/BlJkwQbDercNP+G/YG3B+U3LeFR3M9651IikCn+uE/HzAo+5S/Qtp4txdo
-	hdsValRLhG3nhY/BZFvENFRBRKfO4Vy//oGJ+LZ8y6A7lbd+fTpEOwtzXY
-X-Received: by 2002:a17:90a:4089:b0:28b:9749:c5a4 with SMTP id l9-20020a17090a408900b0028b9749c5a4mr165972pjg.80.1706289356822;
-        Fri, 26 Jan 2024 09:15:56 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHewnI20Y5l1grIbvylQlE/FM5X1udcmBREJcp3l0x2EQqa4JWvew4t1fEOb0ARNHWpUO2FXI+0lWH2O5j/HGo=
-X-Received: by 2002:a17:90a:4089:b0:28b:9749:c5a4 with SMTP id
- l9-20020a17090a408900b0028b9749c5a4mr165963pjg.80.1706289356585; Fri, 26 Jan
- 2024 09:15:56 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706294733; x=1706899533;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zPwOkU9NQD3w9RIGp6Z8HeMeeH68hR451yY+m+zjj+c=;
+        b=VTcVe+6JMUzcA0x4JA2hORg5HBzTtiohNJX61rDXeKQAFBTNeynDqf08NdUWALTULS
+         LUxdcQOui2QOPQl5IRmEfekD7ELXCQJ9cvjOSJVLqDXy8f3JApHkFW/BpAaLvymG10TO
+         Yb3w3wvta2qhLMXcKNpuPf7nU7FBTp0KSfv5JleDxa8AbUxgl2+5w8A5yDj7i2aI1QeY
+         dw9VDGMOLhWlN0wIjDaFuwLQjYGuzq2JGeNE8ttNbFZ5G9LBQPt48Pv+Ma/zfXgh60m4
+         2pIPQ5uJkvJx9aPaFWnaHGMd59g3HEEDuulWObU31nd1lMZO+YtEh6hfdhdPm/O8lPbT
+         HAvQ==
+X-Gm-Message-State: AOJu0YyR2IF0yjhso6XS7hJI6y+XP6zRplTLmj2BlPdWXofNGbNxXYhQ
+	bXKQkYLxkZEqq8TUog0UJ/Jz5S/kS6cGiZjNhpR2+Bc9wqptADI1PniaHFbTOlWrmHS0NMydj+3
+	GjThoqG/PJkO/kfel7WQjtKIOPDwxhe/aPnmrK5K/PGSxHgwTWtvrwQfN7L2kb086Mh6ZKCQyTg
+	==
+X-Received: by 2002:a7b:c414:0:b0:40e:c2da:1b2b with SMTP id k20-20020a7bc414000000b0040ec2da1b2bmr169545wmi.179.1706294733787;
+        Fri, 26 Jan 2024 10:45:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHtAsQqCCgt5cm+lp5q9fntCHG7c+2YFRMsZAKoY9e7KI2Wbom7URjQJ8wprLCN//3XcOVbeg==
+X-Received: by 2002:a7b:c414:0:b0:40e:c2da:1b2b with SMTP id k20-20020a7bc414000000b0040ec2da1b2bmr169542wmi.179.1706294733475;
+        Fri, 26 Jan 2024 10:45:33 -0800 (PST)
+Received: from localhost.localdomain ([2a02:8308:b104:2c00:7718:da55:8b6:8dcc])
+        by smtp.gmail.com with ESMTPSA id l1-20020a05600c4f0100b0040e549c77a1sm6607265wmq.32.2024.01.26.10.45.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jan 2024 10:45:32 -0800 (PST)
+From: Ondrej Mosnacek <omosnace@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [PATCH] lsm: fix default return value of the socket_getpeersec_* hooks
+Date: Fri, 26 Jan 2024 19:45:31 +0100
+Message-ID: <20240126184531.1167999-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240126104403.1040692-1-omosnace@redhat.com> <CAEjxPJ7Sya+__8z5TQ78C_crqZoHuTrnqjaCzCtz9YVR24KNtw@mail.gmail.com>
- <CAEjxPJ6Y4RazpOHabcv12HgMRHCqVe+k8v7f5tQ8fVT9f4QqnQ@mail.gmail.com>
-In-Reply-To: <CAEjxPJ6Y4RazpOHabcv12HgMRHCqVe+k8v7f5tQ8fVT9f4QqnQ@mail.gmail.com>
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Fri, 26 Jan 2024 18:15:45 +0100
-Message-ID: <CAFqZXNvbm9OHvaY5rmO8fxxHCT5T+ne1kj1XiT3yTRMiff5d2A@mail.gmail.com>
-Subject: Re: [PATCH] security: fix the logic in security_inode_getsecctx()
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
 X-Mimecast-Spam-Score: 0
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"; x-default=true
 
-On Fri, Jan 26, 2024 at 5:04=E2=80=AFPM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
->
-> On Fri, Jan 26, 2024 at 10:03=E2=80=AFAM Stephen Smalley
-> <stephen.smalley.work@gmail.com> wrote:
-> >
-> > On Fri, Jan 26, 2024 at 5:44=E2=80=AFAM Ondrej Mosnacek <omosnace@redha=
-t.com> wrote:
-> > >
-> > > The inode_getsecctx LSM hook has previously been corrected to have
-> > > -EOPNOTSUPP instead of 0 as the default return value to fix BPF LSM
-> > > behavior. However, the call_int_hook()-generated loop in
-> > > security_inode_getsecctx() was left treating 0 as the neutral value, =
-so
-> > > after an LSM returns 0, the loop continues to try other LSMs, and if =
-one
-> > > of them returns a non-zero value, the function immediately returns wi=
-th
-> > > said value. So in a situation where SELinux and the BPF LSMs register=
-ed
-> > > this hook, -EOPNOTSUPP would be incorrectly returned whenever SELinux
-> > > returned 0.
-> > >
-> > > Fix this by open-coding the call_int_hook() loop and making it use th=
-e
-> > > correct LSM_RET_DEFAULT() value as the neutral one, similar to what
-> > > other hooks do.
-> > >
-> > > Reported-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > > Link: https://lore.kernel.org/selinux/CAEjxPJ4ev-pasUwGx48fDhnmjBnq_W=
-h90jYPwRQRAqXxmOKD4Q@mail.gmail.com/
-> > > Fixes: b36995b8609a ("lsm: fix default return value for inode_getsecc=
-tx")
-> > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > > ---
-> > >
-> > > I ran 'tools/nfs.sh' on the patch and even though it fixes the most
-> > > serious issue that Stephen reported, some of the tests are still
-> > > failing under NFS (but I will presume that these are pre-existing iss=
-ues
-> > > not caused by the patch).
-> >
-> > Do you have a list of the failing tests? For me, it was hanging on
-> > unix_socket and thus not getting to many of the tests. I would like to
-> > triage the still-failing ones to confirm that they are in fact
-> > known/expected failures for NFS.
->
-> Applying your patch and removing unix_socket from the tests to be run
-> (since it hangs), I get the following failures:
-> mac_admin/test            (Wstat: 0 Tests: 8 Failed: 2)
->   Failed tests:  5-6
-> filesystem/ext4/test      (Wstat: 512 (exited 2) Tests: 76 Failed: 2)
->   Failed tests:  1, 64
->   Non-zero exit status: 2
-> filesystem/xfs/test       (Wstat: 512 (exited 2) Tests: 76 Failed: 2)
->   Failed tests:  1, 64
->   Non-zero exit status: 2
-> filesystem/jfs/test       (Wstat: 512 (exited 2) Tests: 83 Failed: 2)
->   Failed tests:  1, 71
->   Non-zero exit status: 2
-> filesystem/vfat/test      (Wstat: 512 (exited 2) Tests: 52 Failed: 2)
->   Failed tests:  1, 46
->   Non-zero exit status: 2
-> fs_filesystem/ext4/test   (Wstat: 512 (exited 2) Tests: 75 Failed: 2)
->   Failed tests:  1, 63
->   Non-zero exit status: 2
-> fs_filesystem/xfs/test    (Wstat: 512 (exited 2) Tests: 75 Failed: 2)
->   Failed tests:  1, 63
->   Non-zero exit status: 2
-> fs_filesystem/jfs/test    (Wstat: 512 (exited 2) Tests: 82 Failed: 2)
->   Failed tests:  1, 70
->   Non-zero exit status: 2
-> fs_filesystem/vfat/test   (Wstat: 512 (exited 2) Tests: 51 Failed: 2)
->   Failed tests:  1, 45
->   Non-zero exit status: 2
-> Files=3D77, Tests=3D1256, 308 wallclock secs ( 0.30 usr  0.10 sys +  6.84
-> cusr 21.78 csys =3D 29.02 CPU)
+For these hooks the true "neutral" value is -EOPNOTSUPP, which is
+currently what is returned when no LSM provides this hook and what LSMs
+return when there is no security context set on the socket. Correct the
+value in <linux/lsm_hooks.h> and adjust the dispatch functions in
+security/security.c to avoid issues when the BPF LSM is enabled.
 
-I got the same ones (I, too, removed unix_socket to allow the rest to run).
+Fixes: 98e828a0650f ("security: Refactor declaration of LSM hooks")
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+---
+ include/linux/lsm_hook_defs.h |  4 ++--
+ security/security.c           | 31 +++++++++++++++++++++++++++----
+ 2 files changed, 29 insertions(+), 6 deletions(-)
 
---=20
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 185924c56378..76458b6d53da 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -315,9 +315,9 @@ LSM_HOOK(int, 0, socket_getsockopt, struct socket *sock, int level, int optname)
+ LSM_HOOK(int, 0, socket_setsockopt, struct socket *sock, int level, int optname)
+ LSM_HOOK(int, 0, socket_shutdown, struct socket *sock, int how)
+ LSM_HOOK(int, 0, socket_sock_rcv_skb, struct sock *sk, struct sk_buff *skb)
+-LSM_HOOK(int, 0, socket_getpeersec_stream, struct socket *sock,
++LSM_HOOK(int, -ENOPROTOOPT, socket_getpeersec_stream, struct socket *sock,
+ 	 sockptr_t optval, sockptr_t optlen, unsigned int len)
+-LSM_HOOK(int, 0, socket_getpeersec_dgram, struct socket *sock,
++LSM_HOOK(int, -ENOPROTOOPT, socket_getpeersec_dgram, struct socket *sock,
+ 	 struct sk_buff *skb, u32 *secid)
+ LSM_HOOK(int, 0, sk_alloc_security, struct sock *sk, int family, gfp_t priority)
+ LSM_HOOK(void, LSM_RET_VOID, sk_free_security, struct sock *sk)
+diff --git a/security/security.c b/security/security.c
+index 6196ccaba433..3aaad75c9ce8 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -4624,8 +4624,20 @@ EXPORT_SYMBOL(security_sock_rcv_skb);
+ int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
+ 				      sockptr_t optlen, unsigned int len)
+ {
+-	return call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
+-			     optval, optlen, len);
++	struct security_hook_list *hp;
++	int rc;
++
++	/*
++	 * Only one module will provide a security context.
++	 */
++	hlist_for_each_entry(hp, &security_hook_heads.socket_getpeersec_stream,
++			     list) {
++		rc = hp->hook.socket_getpeersec_stream(sock, optval, optlen,
++						       len);
++		if (rc != LSM_RET_DEFAULT(socket_getpeersec_stream))
++			return rc;
++	}
++	return LSM_RET_DEFAULT(socket_getpeersec_stream);
+ }
+ 
+ /**
+@@ -4645,8 +4657,19 @@ int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
+ int security_socket_getpeersec_dgram(struct socket *sock,
+ 				     struct sk_buff *skb, u32 *secid)
+ {
+-	return call_int_hook(socket_getpeersec_dgram, -ENOPROTOOPT, sock,
+-			     skb, secid);
++	struct security_hook_list *hp;
++	int rc;
++
++	/*
++	 * Only one module will provide a security context.
++	 */
++	hlist_for_each_entry(hp, &security_hook_heads.socket_getpeersec_dgram,
++			     list) {
++		rc = hp->hook.socket_getpeersec_dgram(sock, skb, secid);
++		if (rc != LSM_RET_DEFAULT(socket_getpeersec_dgram))
++			return rc;
++	}
++	return LSM_RET_DEFAULT(socket_getpeersec_dgram);
+ }
+ EXPORT_SYMBOL(security_socket_getpeersec_dgram);
+ 
+-- 
+2.43.0
 
