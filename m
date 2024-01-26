@@ -1,145 +1,190 @@
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from sonic312-30.consmr.mail.ne1.yahoo.com (sonic312-30.consmr.mail.ne1.yahoo.com [66.163.191.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CD21D527;
-	Fri, 26 Jan 2024 16:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905E81D53E
+	for <linux-security-module@vger.kernel.org>; Fri, 26 Jan 2024 16:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706285089; cv=none; b=o+6ZmSfVFdnhmkk1fpN1Ndf/hiofl/r6NAlNKHLe0cH3gnqfsaJmUI+mNHfkjCM5K/xaVhU+VW+FI2DwmCBFe3p5+nYyJV5rAC/6BcSdttWiC6HMLVjbZdeHzlnAXrOrB76CEEEtxNdVHta6VPfBb5SUA/tFFqKqOXpubk/psBY=
+	t=1706286479; cv=none; b=s8pirF7dNkrmDEoe8qCYFkYDkFskuhjWLWZ86y2lb2pcb8RHcKzmHoA2/8EHQmmPjgqMQIVFtnV8gu2LLKmcaBHfH5raNg+q7FNG+dgdrFou0MdTpc9tXPA1JA9/30RCJTlnjWd066JB0pcJ7ObZwpBdIgJK9HvkgfObhlDJu0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706285089; c=relaxed/simple;
-	bh=J+Y0fLcOWOyaWRlvn/lG7habSZgfrNyVoIBHk8KbHTc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JzKl9dSMUOwOk+SVYca3Wut9vj+ltivvQB0wMUDXNczFHugLOBixbdDFnNKBroLQGhEycp/iWxbGY6+ot7g4dLo6nOFq/ZKTnQXSRvYq6nxF2YyjFobRY18lRi3chH4XXMjHfklRQZSGOSQ4KsT9Q3MAMoE3Z2o0/M5dB+I07FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F4vZmO9Z; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1706286479; c=relaxed/simple;
+	bh=uBpXVHuCOFTsx+vuJnujVz8qUj6Zs+G5qH6j2qFn8xY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pljXaXJxYvp75ryo1DOOvuuJYquqBgcB6aTY5PVm+2tCDxlOHUXk1g8rO5ct8og+ok4oI8Lz3nyIrp4+9cj4vqAEKdNa8LuwbzUbXBNlgsQBdBTW+aRfsXLuMHR5tXGHAMH41E7oJBaTMcglimFxMbOKQnhr4S3yRUw5IJmbEY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=hP/cKyvo; arc=none smtp.client-ip=66.163.191.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F4vZmO9Z"
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6ddc162d8d5so416978b3a.1;
-        Fri, 26 Jan 2024 08:04:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706285087; x=1706889887; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o6U+b91wnnsjOo0a0kxHUFOdXkPqnUtagff0CUdvN+4=;
-        b=F4vZmO9ZMuEtpX1U+288bEp1yt/NZxyK8ICGnyU0lHgCZx2BKcxCS86cSM4Hcy7xFH
-         BEbINrxsVzrbyXUOuxKrgsvzVxAW/m697tQed+TzsQU5H1uKxC6ZLYr5i9Gk3JQPPt9T
-         7AWy+05tqnDGmN52PhIyUEMqMsvIQjXWrob4PvM7BPvNLPOgoP6nUFjR1YVzsEiIzbET
-         OU/HrAFJT8c7Vt9QA7kqDNa1V7+/doGUKaKPdtLgYeJZ/8XFfC7/bPkyQLhzWcxtMF+9
-         539h3Jqbrm/35/Nx05MvGWj39iJDBsVgy4KvlNLlv3JnyH/LLvh+JBbqcHZXRdYbx0c6
-         UnfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706285087; x=1706889887;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o6U+b91wnnsjOo0a0kxHUFOdXkPqnUtagff0CUdvN+4=;
-        b=bEqwmJ+tJMmaDR5qUIY1GPhg9KLbBGbO/RjoXHWtUV9Ws0VcBPDGNBeRcBhvB2enrJ
-         MnHcnSKr4qj7/Co/MyNswi5nc1b90c7FO7pl+Mx+WPdLSdrekA9S8PfEmhT1f89tYPUG
-         NG0l8SDV0zTcEF/z1p3yOXOmerjuz3OtP+7EXvzAubbkf8Yju0DmBEDJXFiPQPvpDUXL
-         Y/3KgN6PIKUAHl5/3+ur9HwVbwdQ3Q56m+auOIoLAz4C81qAGLr0LfX5wFUiOkDPJ/Ll
-         6XCcDaCwC7jS62bev9ovafb4qENZvuGkmiRWoKrl9Jjc8wkPxlyxjNDkh89eggRKWsJs
-         t/mw==
-X-Gm-Message-State: AOJu0YwgcIg/dn/KE6xSPIoG+VikzACKnAiHYBgOA3Jir9Ud2ZvELThF
-	SSdMoSlbu3npeEUVCQgcRzdKU33Rdt8D5cwBJwwW/diM/pSSqx7q4exjumAtFHcNd3A+pl2Nld0
-	qdbEzgWBdyxm3uo+6Egj4pg5FQt6QmKqYubo=
-X-Google-Smtp-Source: AGHT+IFBdbbPVDtSsTpUmdPeYRFkWeSxgHdKZfordltZg8DG0StWmNQFEFnjPQOsTlNFkq5Qs9fERkAeehpDEYptah0=
-X-Received: by 2002:a05:6a00:9095:b0:6db:bd8f:c05d with SMTP id
- jo21-20020a056a00909500b006dbbd8fc05dmr19253pfb.8.1706285087321; Fri, 26 Jan
- 2024 08:04:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="hP/cKyvo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1706286476; bh=XMhKS36C0L92F8+OoWMyMKliBsxEpHaehMkZb2PI+Wk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=hP/cKyvopJwxqZz3BiXCj4EXifRT0hIliYSDx62coH4msYxXmwANna7NqAucJnEkrV5+Bm40ldw12FXTi0TFmKiNEf0kq3XKIZG3wLoYpRbMkx+SeK56NGKt9vrSvd7g2AFA6coZNDoXnTIfSSnWeYuCg17ECEX+1i/ij1fuQO5rxs7kpiNa26IPSkPAdwHSrGnbRCkupe7NsUNZ3PSIjQhqfxXFY/S4lj0+SmfmPgh/Wsqr46f9jD7Urhjw1UlkgJEnJkPw2gKUa5sjO79a8JpW653kZ8Dc+4D8+9BmzLaJ16NV5x4g9Y+989BQv/D7AJZyb5hz9oSf4mgUCbYjgg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1706286476; bh=BFQEzvhm2ZG89LYwQdhIe5gmMlctkLYmDwUlROlddAu=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=tEEOOqx9ZIqszqNfZ8v/On7TyHYcxgyIL7wZucQz3nvgbY0TF5RfAQSMuF9j1/cDnHhz307RrxuBON0hrD/9M8Nm891pv4iUsrmZ2WHl1jPdHN33S6PwbqGrKSnTj9Ob0Nntl2rnJ/K+MsVVZBrzfAuWXl98VB2NBAXuSVNYHG9ev6+Bm9j7f7m/Et8K1Ic/MUc8IcHwb9J2B8d2Bs9LNQmF05r1vwJikfrNrbqAAH3/txnBwPXgNua8oR+bGGZBwOotTGtQj73ufbbuy2Vfs+KovBx20RtgcdvuBoQq8AXD//U/Cd6e2HaJT69jrZ8qZ6/nZtROae5dCiNKZmB3wQ==
+X-YMail-OSG: fTa_7uQVM1lQBhQnbc0PVJRbVTiZkHa4dy3sF2XzfBEJ_MJcDILO5G_D78cfM_D
+ cUZ5vH19rx4At58PnzYcV7lSoTzv7j71T_VTEb0.Y1twM4iPsb8tHefhl.BAE.15tquAB1rEd6rA
+ hRt3XHK1wioA5aAArkbCP6aP0Igp1ynO.ezl5UXWsfonuUtPJ35D6VdXRfzofcNxqXatRXY0acy3
+ bAwz3GyZ42xapOAaTKypv4aytYB9F_yaZNjckmRWTlAy1bgmzemfPJtvBGMVJt8hodzKJXq97WeC
+ 8gg9_6ABz_noAlgj8kiJFKm8tJHxBsIVEtmNQYSJtnoexNaZTgLKdfnyAOwvAxgNvE0J0m4Y1Qys
+ GkvT5SP4n.Ifs2IeE57dHg_AV_2nzHh08TUU30lqrFoIp5MOdGj__xR6YmuHhrUrMr67hqcuzJKY
+ YyuQXqFMeb0cRSUmi2Q9HvBJiH03vF901CWdCLOVoup3vvCICq1cv.hvkpNOa4ir02hx7nzKsEcd
+ iGXG7aYrUPD4RdwDJ9eUBlK_tbt2UvJl2zR0pIRNV1BTwGAll.SvY96N93HkOR5rNRECmOVVwZtS
+ TKRxICCwElHSvp4t.zw_LcH0KzLsbly_8uT73VZOXFAnj4aE552Leoo.uP8MVM31GwjBXZOW.Ivg
+ c3GUhAqXyGo4h8jVIQLG_m_56U0b.Jb_LcwiTK3oI4xsSDrWSBFXguJS5hQmgK18r.NZXRJKuoMN
+ C90LDaFFikCiQw6ACElXwQTnNZv5jkPSm4KG2STaqGYSbQK7vr0HTieRmAMUlrcgNC843VnywMnc
+ _um5Q3TFSw59Evpx.BOKthsqmAjzwcE_9YRTY.ffs8eDGgmsOzOKyegRejSdPzfGGQY.Vl7dMePK
+ kvU9Z6odnyo8MJb.q2jwS4Cg7gV8j4j4kRazoBy51ul7eycPTpyRdFm6qEot2XPDCvqYpux3qvtt
+ qDMY.FN7SFTVohPKBpInUnR7X4A8Y8yiFOBDwKt269JH7bHq.5PHvFGGkpAiKW1xO5ri0DJ6sflQ
+ GPwrPSCF.ay59UM5.F_R.0vnv7yHwfMNOgywucOPt5R2YQvO84nWIGq0j7fCMahfjTSDzuo90GSj
+ qT2RQnpfBIa0Unt1hWKIUtFZqS.lsrGLOoqeeabTDzLXxzeKzWaxjYaSN0pFRf7uHVM_0egM0Ybm
+ NEz.JiHNRy7ftN3qNKEd95tyKOA_K5Bgmkt3tCk2HPn0oXFGz7fxh7nGEBkY4e3X5OAA7eaQubGN
+ G5wCzcvAxmCMLic8aT4z2gbqLUhxwT_hp7Nb31zX2BOIih74IuhowhfXIPrT66gC8tbU3aqqOLcJ
+ iJ5pws7Z8D9Sory08MrsUykt709oNyOPTpLEWKX283xBUmsWbbiHVOhVfVsdk1fZcg4pTMOr3lZq
+ N5ClZUlErnSg3alPTwNZlRg_TfCOyVceW7CNZCxUOBboKzRrtKf0fHVIMwZUwQh3qkxnwnCzptIQ
+ d9bh.i3vN0QowOKVLg_rS8gOP5VSe2fu6LuQs3iNu5SI2cfPQDtqaz3CPusXMHmO8_SvoIS9rddB
+ 6THHRmmrFd_ZP1cjxQUz1eKFUDkL.qY7Z1lKMw0mXQXFcgA2JigNwKyOb5Ysw2VBmShNw.dE9JGJ
+ MJWzS1NMgd1C3h31.iSxE6lsfQmJLA4ueRZJRs9xQCEMFlF4NOT8e5rTnC_fqaOtoVAirwzfdtD8
+ h2.4j1HYUfm6RL1yaGDw4PF1lu4OqdoDDEKrkah5.I5esLnFpNJYJPqHdpMaSd4U4EQTasV.HqrP
+ ePksn7PO9hf1R7XSQlo3biX4_qcrrTe1T01zWraA9CcVTfhB._aHuqb7EZw9ngMVRKjgxXSEk7Cy
+ 92E0GxKAaeHkJd_Ljxc9B8kaNRt9HEz_Ldj27klPjaLoR3PGq0jl1nbuVZV2JGx5tNloFhDimd8z
+ kya.WWYXhV3GZhnWgfhZF6Sd9BlrVg7OzCfzHpOhGg6HF6Ft954cBAftnJlXaP7VR8RDqjgmzLZ9
+ 6ERWPZjrYbFv1qIwIUR53LH1xSTPfv6zj5xW2ksrZ2q.L3OmS3ontH0gOCr7Gr8V6dPkbDPbNBjE
+ vBus.b.vBxwufFbH6pb7P2llacLlY_iU3j0KNv1K_IEZnjGVPLUcp0xBtshrXL3KRSe1XpDJeWqU
+ QHcf_.OExekHdbg_SYNp79aRproab.eejtZ9PsVGCDlJ5lwlz.WX5rDaC3lXbHIGsx6qflGD2fHG
+ MP5hCld4tSIpelS6kXSYBi_aPha6DImGPBgvxBvh9N_3KlnMa.vQwaRWUg78jLt0AoE_6fn3nNi5
+ lIbA2x51oP1BCVg--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: c0453977-bfae-499e-9c43-dba4ff19f1bf
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Fri, 26 Jan 2024 16:27:56 +0000
+Received: by hermes--production-gq1-78d49cd6df-qtpm7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d3f639f8be7ee05d06416705f1454521;
+          Fri, 26 Jan 2024 16:27:55 +0000 (UTC)
+Message-ID: <cb451085-50e3-4e76-a03f-5bdff55c7e47@schaufler-ca.com>
+Date: Fri, 26 Jan 2024 08:27:54 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240126104403.1040692-1-omosnace@redhat.com> <CAEjxPJ7Sya+__8z5TQ78C_crqZoHuTrnqjaCzCtz9YVR24KNtw@mail.gmail.com>
-In-Reply-To: <CAEjxPJ7Sya+__8z5TQ78C_crqZoHuTrnqjaCzCtz9YVR24KNtw@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Fri, 26 Jan 2024 11:04:36 -0500
-Message-ID: <CAEjxPJ6Y4RazpOHabcv12HgMRHCqVe+k8v7f5tQ8fVT9f4QqnQ@mail.gmail.com>
-Subject: Re: [PATCH] security: fix the logic in security_inode_getsecctx()
-To: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] ramfs: Initialize security of in-memory inodes
+Content-Language: en-US
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ Roberto Sassu <roberto.sassu@huawei.com>, Hugh Dickins <hughd@google.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20231116090125.187209-1-roberto.sassu@huaweicloud.com>
+ <20231116090125.187209-6-roberto.sassu@huaweicloud.com>
+ <20240125170858.1ce723a57c7fd2b9bfb5d28d@linux-foundation.org>
+ <3e1ebbbeea1db01183bac0a7d0fa9063cb862f81.camel@huaweicloud.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <3e1ebbbeea1db01183bac0a7d0fa9063cb862f81.camel@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22046 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, Jan 26, 2024 at 10:03=E2=80=AFAM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
+On 1/25/2024 11:53 PM, Roberto Sassu wrote:
+> On Thu, 2024-01-25 at 17:08 -0800, Andrew Morton wrote:
+>> On Thu, 16 Nov 2023 10:01:25 +0100 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+>>
+>>> From: Roberto Sassu <roberto.sassu@huawei.com>
+>>>
+>>> Add a call security_inode_init_security() after ramfs_get_inode(), to let
+>>> LSMs initialize the inode security field. Skip ramfs_fill_super(), as the
+>>> initialization is done through the sb_set_mnt_opts hook.
+>>>
+>>> Calling security_inode_init_security() call inside ramfs_get_inode() is
+>>> not possible since, for CONFIG_SHMEM=n, tmpfs also calls the former after
+>>> the latter.
+>>>
+>>> Pass NULL as initxattrs() callback to security_inode_init_security(), since
+>>> the purpose of the call is only to initialize the in-memory inodes.
+>>>
+>> fwiw,
+>>
+>> Acked-by: Andrew Morton <akpm@linux-foundation.org>
+>>
+>> Please include this in the relevant security tree.
+
+I will take this in the Smack tree. Thank you.
+
+> Thanks a lot!
 >
-> On Fri, Jan 26, 2024 at 5:44=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.=
-com> wrote:
-> >
-> > The inode_getsecctx LSM hook has previously been corrected to have
-> > -EOPNOTSUPP instead of 0 as the default return value to fix BPF LSM
-> > behavior. However, the call_int_hook()-generated loop in
-> > security_inode_getsecctx() was left treating 0 as the neutral value, so
-> > after an LSM returns 0, the loop continues to try other LSMs, and if on=
-e
-> > of them returns a non-zero value, the function immediately returns with
-> > said value. So in a situation where SELinux and the BPF LSMs registered
-> > this hook, -EOPNOTSUPP would be incorrectly returned whenever SELinux
-> > returned 0.
-> >
-> > Fix this by open-coding the call_int_hook() loop and making it use the
-> > correct LSM_RET_DEFAULT() value as the neutral one, similar to what
-> > other hooks do.
-> >
-> > Reported-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > Link: https://lore.kernel.org/selinux/CAEjxPJ4ev-pasUwGx48fDhnmjBnq_Wh9=
-0jYPwRQRAqXxmOKD4Q@mail.gmail.com/
-> > Fixes: b36995b8609a ("lsm: fix default return value for inode_getsecctx=
-")
-> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > ---
-> >
-> > I ran 'tools/nfs.sh' on the patch and even though it fixes the most
-> > serious issue that Stephen reported, some of the tests are still
-> > failing under NFS (but I will presume that these are pre-existing issue=
-s
-> > not caused by the patch).
+> Roberto
 >
-> Do you have a list of the failing tests? For me, it was hanging on
-> unix_socket and thus not getting to many of the tests. I would like to
-> triage the still-failing ones to confirm that they are in fact
-> known/expected failures for NFS.
-
-Applying your patch and removing unix_socket from the tests to be run
-(since it hangs), I get the following failures:
-mac_admin/test            (Wstat: 0 Tests: 8 Failed: 2)
-  Failed tests:  5-6
-filesystem/ext4/test      (Wstat: 512 (exited 2) Tests: 76 Failed: 2)
-  Failed tests:  1, 64
-  Non-zero exit status: 2
-filesystem/xfs/test       (Wstat: 512 (exited 2) Tests: 76 Failed: 2)
-  Failed tests:  1, 64
-  Non-zero exit status: 2
-filesystem/jfs/test       (Wstat: 512 (exited 2) Tests: 83 Failed: 2)
-  Failed tests:  1, 71
-  Non-zero exit status: 2
-filesystem/vfat/test      (Wstat: 512 (exited 2) Tests: 52 Failed: 2)
-  Failed tests:  1, 46
-  Non-zero exit status: 2
-fs_filesystem/ext4/test   (Wstat: 512 (exited 2) Tests: 75 Failed: 2)
-  Failed tests:  1, 63
-  Non-zero exit status: 2
-fs_filesystem/xfs/test    (Wstat: 512 (exited 2) Tests: 75 Failed: 2)
-  Failed tests:  1, 63
-  Non-zero exit status: 2
-fs_filesystem/jfs/test    (Wstat: 512 (exited 2) Tests: 82 Failed: 2)
-  Failed tests:  1, 70
-  Non-zero exit status: 2
-fs_filesystem/vfat/test   (Wstat: 512 (exited 2) Tests: 51 Failed: 2)
-  Failed tests:  1, 45
-  Non-zero exit status: 2
-Files=3D77, Tests=3D1256, 308 wallclock secs ( 0.30 usr  0.10 sys +  6.84
-cusr 21.78 csys =3D 29.02 CPU)
-
-mac_admin one is unsurprising for NFS. Will look at the others but
-suspect those too are just quirks with performing tests of other
-filesystems over NFS. Should be able to modify the test scripts to
-skip all of these on NFS and thereby allow clean runs. unix_socket
-hang though bears investigation, because I think that used to work.
+>>> diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
+>>> index 4ac05a9e25bc..8006faaaf0ec 100644
+>>> --- a/fs/ramfs/inode.c
+>>> +++ b/fs/ramfs/inode.c
+>>> @@ -102,11 +102,20 @@ ramfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
+>>>  	int error = -ENOSPC;
+>>>  
+>>>  	if (inode) {
+>>> +		error = security_inode_init_security(inode, dir,
+>>> +						     &dentry->d_name, NULL,
+>>> +						     NULL);
+>>> +		if (error) {
+>>> +			iput(inode);
+>>> +			goto out;
+>>> +		}
+>>> +
+>>>  		d_instantiate(dentry, inode);
+>>>  		dget(dentry);	/* Extra count - pin the dentry in core */
+>>>  		error = 0;
+>>>  		inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+>>>  	}
+>>> +out:
+>>>  	return error;
+>>>  }
+>>>  
+>>> @@ -134,6 +143,15 @@ static int ramfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+>>>  	inode = ramfs_get_inode(dir->i_sb, dir, S_IFLNK|S_IRWXUGO, 0);
+>>>  	if (inode) {
+>>>  		int l = strlen(symname)+1;
+>>> +
+>>> +		error = security_inode_init_security(inode, dir,
+>>> +						     &dentry->d_name, NULL,
+>>> +						     NULL);
+>>> +		if (error) {
+>>> +			iput(inode);
+>>> +			goto out;
+>>> +		}
+>>> +
+>>>  		error = page_symlink(inode, symname, l);
+>>>  		if (!error) {
+>>>  			d_instantiate(dentry, inode);
+>>> @@ -143,6 +161,7 @@ static int ramfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+>>>  		} else
+>>>  			iput(inode);
+>>>  	}
+>>> +out:
+>>>  	return error;
+>>>  }
+>>>  
+>>> @@ -150,12 +169,23 @@ static int ramfs_tmpfile(struct mnt_idmap *idmap,
+>>>  			 struct inode *dir, struct file *file, umode_t mode)
+>>>  {
+>>>  	struct inode *inode;
+>>> +	int error;
+>>>  
+>>>  	inode = ramfs_get_inode(dir->i_sb, dir, mode, 0);
+>>>  	if (!inode)
+>>>  		return -ENOSPC;
+>>> +
+>>> +	error = security_inode_init_security(inode, dir,
+>>> +					     &file_dentry(file)->d_name, NULL,
+>>> +					     NULL);
+>>> +	if (error) {
+>>> +		iput(inode);
+>>> +		goto out;
+>>> +	}
+>>> +
+>>>  	d_tmpfile(file, inode);
+>>> -	return finish_open_simple(file, 0);
+>>> +out:
+>>> +	return finish_open_simple(file, error);
+>>>  }
+>>>  
+>>>  static const struct inode_operations ramfs_dir_inode_operations = {
+>>> -- 
+>>> 2.34.1
+>
