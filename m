@@ -1,177 +1,138 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7991911702;
-	Fri, 26 Jan 2024 07:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8753F1426F
+	for <linux-security-module@vger.kernel.org>; Fri, 26 Jan 2024 10:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706255635; cv=none; b=bT2HHyM4Cqx7QomrBXJYrD1Wv4yryuufRzTW4Bv8k1FbmebgWxMrY0bUMX3+lBnyQZYm45aFLZFn9HSqel3WcJFkqDDvO72O1+/h61hBT7E1ufAFgYsWiWoFw0EafhvdB3W+raXwG3zrsnvbpsMRu48hZeE9yAlOxJPLMnZjtvg=
+	t=1706265863; cv=none; b=GCEqsm1S3/X1G41Ig8Lzbkgla7OQ1+TTc2yTwcUqgSrOM98NQqlmYwF7jbUKsnDcDSgBCpAnybTw1DUtaQIvh26pzo96EnLPq64i5aj6cFcbM2fAgaKITQycYZ9LIldFE8yp5/kwLK+f8wknCv+LvHuDy0DlGkPTvO5d4cW3nks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706255635; c=relaxed/simple;
-	bh=HwCuA5QJ87i2SeLnr2LrU9plUlNo/os+AAfWy2cvjUw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AZkeHjPGFI/aJ9ZLfEQYnM3n7jqdYOPQQCK/X4UwDuBoh67o8wW9+XpJBfQJSdMWjxGrzJsm5ani9woeNZcuyOGzyyQxgfIZSlkByoUgtS7+cy41P0xG8znjfFrP5oT6+mqM0PC3dGC5F4X7Q27eaChgbhW3JnaQzb7gR+ESLZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4TLqLz39jGz9yJjM;
-	Fri, 26 Jan 2024 15:38:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 0BC9D14066A;
-	Fri, 26 Jan 2024 15:53:38 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwCXjhf6ZLNl_+hHAQ--.46242S2;
-	Fri, 26 Jan 2024 08:53:37 +0100 (CET)
-Message-ID: <3e1ebbbeea1db01183bac0a7d0fa9063cb862f81.camel@huaweicloud.com>
-Subject: Re: [PATCH v3 5/5] ramfs: Initialize security of in-memory inodes
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: casey@schaufler-ca.com, paul@paul-moore.com, jmorris@namei.org, 
- serge@hallyn.com, linux-kernel@vger.kernel.org, 
- linux-security-module@vger.kernel.org, Roberto Sassu
- <roberto.sassu@huawei.com>,  Hugh Dickins <hughd@google.com>
-Date: Fri, 26 Jan 2024 08:53:27 +0100
-In-Reply-To: <20240125170858.1ce723a57c7fd2b9bfb5d28d@linux-foundation.org>
-References: <20231116090125.187209-1-roberto.sassu@huaweicloud.com>
-	 <20231116090125.187209-6-roberto.sassu@huaweicloud.com>
-	 <20240125170858.1ce723a57c7fd2b9bfb5d28d@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1706265863; c=relaxed/simple;
+	bh=KDwKvxjFBtCGcBHvMr/jFLU0CTemadUlZgy031SYquI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HcBH8el8vrkTUf8FuO3h6GohGxMLEOmxjR6PKWROVsXQYlqARMiEKb51u9NaaHiEkoenDGVD9E1IcSCblLg2d4Hel9thd/2h/NEWAZLtCuSkJGU9Ki5w2JflDw60SHxbYfKVd2iFTOE8MG4a4FhPYE5FvGWaO56rYJ5kNGWpI8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BldUMdts; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BldUMdts"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1706265851;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fEWqYXcFpyH0h2J3JzWjNyw0EkIiJEepfjoSL7blk4o=;
+	b=BldUMdtsqHXCNHjv/Dox+rUpc14Llx82Ma9SMJUm0KjMOgHfvPP+CNmcZh0KxdLBX5Sg2/
+	cMfAq7e6+PlhXdRj81aItJ76aMO72uDET0i9euCZsoLcwk2VuvzCookBG31l9WXtziSvdG
+	DdJvTS3eHPDc9hjwbHCYpsne3o0eibE=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-484-KYKcGl-tO86i_Q0oZRLu3Q-1; Fri, 26 Jan 2024 05:44:10 -0500
+X-MC-Unique: KYKcGl-tO86i_Q0oZRLu3Q-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-5101e826a3dso190166e87.3
+        for <linux-security-module@vger.kernel.org>; Fri, 26 Jan 2024 02:44:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706265849; x=1706870649;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fEWqYXcFpyH0h2J3JzWjNyw0EkIiJEepfjoSL7blk4o=;
+        b=GFpYk6+5X5mw7Bn3Rn+0L3pn/5VnfuNLE7+lbRJDak7mbWVD+1fFmXww225NT0C8io
+         zMDLwaM4JYU8zBNgOPfEXBLmjkQ89Gcs392rUHzrFEWCjDUdWWLJgjl3mQKtFOEaW4Ds
+         DdbhouwdK0Cpf/mtGiz40U566uhV4XaAmL7VRLsu6T9KzdLmxfhGxwWSWHL1Q08hIee7
+         SuCL3zKZRAOBTtpTW05sW+upCNwFoO32B4APmJ8lXNLsAXPogl4HxUNY2xXIG0hy4cfO
+         SnNH3yM034QG3XyZ7qEJ+eg3RQG2sGnT0WmWXIfrrNB+P3N8whnJPNfitGcyfglqXMZ7
+         TEpQ==
+X-Gm-Message-State: AOJu0YweDmJnCZ1VSr6GFpbJhCZkqPnOp+9suozUC6U9OU439FQCF3aL
+	FOWfI7AeGjD+rYsw9LpvfV5vIKAR46/HVNjWiffhhKCiNSQAOhkTKpSDrfTPbaZbhXZmimNOECL
+	mQwQ3FwtsEQ9itfvTjKHb19+eqRBjx14E8JPFtG7+kOh7840ugb5dNdUNeg7gSxwufSMz04zbPA
+	==
+X-Received: by 2002:ac2:4564:0:b0:510:1023:784d with SMTP id k4-20020ac24564000000b005101023784dmr574329lfm.81.1706265847910;
+        Fri, 26 Jan 2024 02:44:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFLz0ct9zFeeITjNYcc+4b79PuevNDGcLbg6XkBVWisv//4gW2d8624fgOAcbVF9MSADDq+dA==
+X-Received: by 2002:ac2:4564:0:b0:510:1023:784d with SMTP id k4-20020ac24564000000b005101023784dmr574307lfm.81.1706265846018;
+        Fri, 26 Jan 2024 02:44:06 -0800 (PST)
+Received: from localhost.localdomain ([2a02:8308:b104:2c00:7718:da55:8b6:8dcc])
+        by smtp.gmail.com with ESMTPSA id d19-20020ac24c93000000b0051025dcd3e0sm139616lfl.69.2024.01.26.02.44.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jan 2024 02:44:05 -0800 (PST)
+From: Ondrej Mosnacek <omosnace@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [PATCH] security: fix the logic in security_inode_getsecctx()
+Date: Fri, 26 Jan 2024 11:44:03 +0100
+Message-ID: <20240126104403.1040692-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwCXjhf6ZLNl_+hHAQ--.46242S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWw4xZr1kAF4rZw18KF1UAwb_yoW5WFy8pr
-	W0q3WDG3ZYqFy7Wr10qF4Duw1SqayfKr4DCw4kX3WxA3Z7Cr1ktF1rKr13CF1rCrW8Cw4F
-	qw4j9r13uw1UJrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUgmb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-	AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-	cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
-	IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
-	KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAOBF1jj5T2HAAAsH
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"; x-default=true
 
-On Thu, 2024-01-25 at 17:08 -0800, Andrew Morton wrote:
-> On Thu, 16 Nov 2023 10:01:25 +0100 Roberto Sassu <roberto.sassu@huaweiclo=
-ud.com> wrote:
->=20
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > Add a call security_inode_init_security() after ramfs_get_inode(), to l=
-et
-> > LSMs initialize the inode security field. Skip ramfs_fill_super(), as t=
-he
-> > initialization is done through the sb_set_mnt_opts hook.
-> >=20
-> > Calling security_inode_init_security() call inside ramfs_get_inode() is
-> > not possible since, for CONFIG_SHMEM=3Dn, tmpfs also calls the former a=
-fter
-> > the latter.
-> >=20
-> > Pass NULL as initxattrs() callback to security_inode_init_security(), s=
-ince
-> > the purpose of the call is only to initialize the in-memory inodes.
-> >=20
->=20
-> fwiw,
->=20
-> Acked-by: Andrew Morton <akpm@linux-foundation.org>
->=20
-> Please include this in the relevant security tree.
+The inode_getsecctx LSM hook has previously been corrected to have
+-EOPNOTSUPP instead of 0 as the default return value to fix BPF LSM
+behavior. However, the call_int_hook()-generated loop in
+security_inode_getsecctx() was left treating 0 as the neutral value, so
+after an LSM returns 0, the loop continues to try other LSMs, and if one
+of them returns a non-zero value, the function immediately returns with
+said value. So in a situation where SELinux and the BPF LSMs registered
+this hook, -EOPNOTSUPP would be incorrectly returned whenever SELinux
+returned 0.
 
-Thanks a lot!
+Fix this by open-coding the call_int_hook() loop and making it use the
+correct LSM_RET_DEFAULT() value as the neutral one, similar to what
+other hooks do.
 
-Roberto
+Reported-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+Link: https://lore.kernel.org/selinux/CAEjxPJ4ev-pasUwGx48fDhnmjBnq_Wh90jYPwRQRAqXxmOKD4Q@mail.gmail.com/
+Fixes: b36995b8609a ("lsm: fix default return value for inode_getsecctx")
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+---
 
-> > diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
-> > index 4ac05a9e25bc..8006faaaf0ec 100644
-> > --- a/fs/ramfs/inode.c
-> > +++ b/fs/ramfs/inode.c
-> > @@ -102,11 +102,20 @@ ramfs_mknod(struct mnt_idmap *idmap, struct inode=
- *dir,
-> >  	int error =3D -ENOSPC;
-> > =20
-> >  	if (inode) {
-> > +		error =3D security_inode_init_security(inode, dir,
-> > +						     &dentry->d_name, NULL,
-> > +						     NULL);
-> > +		if (error) {
-> > +			iput(inode);
-> > +			goto out;
-> > +		}
-> > +
-> >  		d_instantiate(dentry, inode);
-> >  		dget(dentry);	/* Extra count - pin the dentry in core */
-> >  		error =3D 0;
-> >  		inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
-> >  	}
-> > +out:
-> >  	return error;
-> >  }
-> > =20
-> > @@ -134,6 +143,15 @@ static int ramfs_symlink(struct mnt_idmap *idmap, =
-struct inode *dir,
-> >  	inode =3D ramfs_get_inode(dir->i_sb, dir, S_IFLNK|S_IRWXUGO, 0);
-> >  	if (inode) {
-> >  		int l =3D strlen(symname)+1;
-> > +
-> > +		error =3D security_inode_init_security(inode, dir,
-> > +						     &dentry->d_name, NULL,
-> > +						     NULL);
-> > +		if (error) {
-> > +			iput(inode);
-> > +			goto out;
-> > +		}
-> > +
-> >  		error =3D page_symlink(inode, symname, l);
-> >  		if (!error) {
-> >  			d_instantiate(dentry, inode);
-> > @@ -143,6 +161,7 @@ static int ramfs_symlink(struct mnt_idmap *idmap, s=
-truct inode *dir,
-> >  		} else
-> >  			iput(inode);
-> >  	}
-> > +out:
-> >  	return error;
-> >  }
-> > =20
-> > @@ -150,12 +169,23 @@ static int ramfs_tmpfile(struct mnt_idmap *idmap,
-> >  			 struct inode *dir, struct file *file, umode_t mode)
-> >  {
-> >  	struct inode *inode;
-> > +	int error;
-> > =20
-> >  	inode =3D ramfs_get_inode(dir->i_sb, dir, mode, 0);
-> >  	if (!inode)
-> >  		return -ENOSPC;
-> > +
-> > +	error =3D security_inode_init_security(inode, dir,
-> > +					     &file_dentry(file)->d_name, NULL,
-> > +					     NULL);
-> > +	if (error) {
-> > +		iput(inode);
-> > +		goto out;
-> > +	}
-> > +
-> >  	d_tmpfile(file, inode);
-> > -	return finish_open_simple(file, 0);
-> > +out:
-> > +	return finish_open_simple(file, error);
-> >  }
-> > =20
-> >  static const struct inode_operations ramfs_dir_inode_operations =3D {
-> > --=20
-> > 2.34.1
+I ran 'tools/nfs.sh' on the patch and even though it fixes the most
+serious issue that Stephen reported, some of the tests are still
+failing under NFS (but I will presume that these are pre-existing issues
+not caused by the patch).
+
+I can also see an opportunity to clean up the hook implementations in
+security/security.c - I plan to have a go at it and send it as a
+separate patch later.
+
+ security/security.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/security/security.c b/security/security.c
+index 0144a98d3712..6196ccaba433 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -4255,7 +4255,19 @@ EXPORT_SYMBOL(security_inode_setsecctx);
+  */
+ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
+ {
+-	return call_int_hook(inode_getsecctx, -EOPNOTSUPP, inode, ctx, ctxlen);
++	struct security_hook_list *hp;
++	int rc;
++
++	/*
++	 * Only one module will provide a security context.
++	 */
++	hlist_for_each_entry(hp, &security_hook_heads.inode_getsecctx, list) {
++		rc = hp->hook.inode_getsecctx(inode, ctx, ctxlen);
++		if (rc != LSM_RET_DEFAULT(inode_getsecctx))
++			return rc;
++	}
++
++	return LSM_RET_DEFAULT(inode_getsecctx);
+ }
+ EXPORT_SYMBOL(security_inode_getsecctx);
+ 
+-- 
+2.43.0
 
