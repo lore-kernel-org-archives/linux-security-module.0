@@ -1,40 +1,35 @@
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D291DDC9
-	for <linux-security-module@vger.kernel.org>; Sat, 27 Jan 2024 08:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8ABB1F5F3;
+	Sat, 27 Jan 2024 11:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706343614; cv=none; b=niIYK4YRKYniM/xRPYr+4W89nJz3TzA6LBqUTaI+SMZnZD34TW4Z90cj+p/f50Timf9dZFkd89fxgWS3iMEnYFq/dyJhCHogVrV6ajfBN3/p0ilON9nH2UOMSwmQUIbVtLC7QWnHKyv75cXta1Ho6qD/YlowvdMgjk9AsTlPhE4=
+	t=1706353311; cv=none; b=leHmj0JlsLIvssn/Uir6ReB6AJry/yfYUvFXi8tUehTlNDJT+Hjr7PJ3OdwwI/Y0Qg4KtiTCzdN8jPudME9E9eGce/YBe3AjkiDuS5AC4ytVql3VoL2/e99kKPaA85XgXhbiqlkWkEvfJUjesCIOK//BWBQwQijb+xJUoEQzvs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706343614; c=relaxed/simple;
-	bh=zs0QGfyL+yDxx/iRGljoqUutTPIjUmYRAXEfkRW276o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KgGOcwgGI8utvCzcNpVfdLKdvsDDpSD1HLWD3WW1rNTkAFime9UB1/0mSpSR5dierEn+5GBY8MYfRNyHoFxFSiD+E+5fO6vPI5jkJ1KVaE+ygSA2oS3mXOh7Gd6SVefTucaCiaqgh3Py8TBIAhTSn0Z0vNI70yFED1GDFNHlhuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=vY5gHKuF; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="vY5gHKuF"
-Received: from [192.168.192.85] (unknown [50.39.103.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 70EB03FE92;
-	Sat, 27 Jan 2024 08:20:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1706343608;
-	bh=9oONYmhZzfQ1UsyP0GXkQvcgtIOyzC9ac4hc3Bvwm+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=vY5gHKuFnLJcS/5riF+Vh9zA/kezld2ho6q8hMbGvaEotq1YN8DM3eV4i0Uh1HGFP
-	 RAnvITrqCqID/aS7Xej0LxX0CdN76csgObiK/v6Ng1Dan1RbKArHvYaZgan+Q9B/QC
-	 z+gASPmv3GzwBQs9PZGpccJ2V7ULd6oxk1QpN/vHJHWcXrwWd1F323Xy+bUNuPWHwo
-	 6xA0lQPVcrLaq4W+mcwo1rsg/FneCrJSFIAA8RQABrH+oYfxCI1fqtDUQTLhbvQ7yF
-	 QAOjXVBY33NPDlLTpcfEQNpLBM7ofGizO/wcSal8ZzDt7bvdpF+97Y4D65d1sTHWwk
-	 JjqSISwGijtYQ==
-Message-ID: <a651b115-1fa8-4de8-a05f-e1c2b3423816@canonical.com>
-Date: Sat, 27 Jan 2024 00:20:04 -0800
+	s=arc-20240116; t=1706353311; c=relaxed/simple;
+	bh=nwJoZTMjRp6iFY9PYP+mBLktnn7ncOnrJvkM3yvzPYA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LmubbrbWnNBvgCAxrG2/Ow8GJ5ySd9wd6bZow+DutBI9FZbus/xMYA67K4FnkZT6OLQPedSvkU+2sD0+XeoZ2arZtF3mIURNXbrqECIwmAKLQ6Y/ieHifsODgVT4Of24p6zS7DXXuLHz8XiAK+UDyWLtclwVd+qMAScENKwSkvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=none smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav119.sakura.ne.jp (fsav119.sakura.ne.jp [27.133.134.246])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 40RB0ZbX048405;
+	Sat, 27 Jan 2024 20:00:35 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav119.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp);
+ Sat, 27 Jan 2024 20:00:35 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 40RB0Z1N048400
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 27 Jan 2024 20:00:35 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <0d820f39-2b9e-4294-801b-4fe30c71f497@I-love.SAKURA.ne.jp>
+Date: Sat, 27 Jan 2024 20:00:35 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,79 +37,225 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: Fix null pointer deref when receiving skb
- during sock creation
+Subject: Re: [6.8-rc1 Regression] Unable to exec apparmor_parser from
+ virt-aa-helper
 Content-Language: en-US
-To: Xiao Liang <shaw.leon@gmail.com>
-Cc: linux-security-module@vger.kernel.org, Matthew Garrett <mjg59@google.com>
-References: <20230902004841.614102-1-shaw.leon@gmail.com>
- <0e81fdc2-9c4b-4147-91cd-22fa263b0a3b@canonical.com>
- <CABAhCOQDQV_LHXv5-aosJu9+sP6wE9kDgYB8n-hYB=XKS0B_fg@mail.gmail.com>
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <CABAhCOQDQV_LHXv5-aosJu9+sP6wE9kDgYB8n-hYB=XKS0B_fg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        John Johansen <john.johansen@canonical.com>
+Cc: Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>,
+        Kevin Locke <kevin@kevinlocke.name>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Kentaro Takeda <takedakn@nttdata.co.jp>
+References: <ZbE4qn9_h14OqADK@kevinlocke.name>
+ <202401240832.02940B1A@keescook>
+ <CAHk-=wgJmDuYOQ+m_urRzrTTrQoobCJXnSYMovpwKckGgTyMxA@mail.gmail.com>
+ <CAHk-=wijSFE6+vjv7vCrhFJw=y36RY6zApCA07uD1jMpmmFBfA@mail.gmail.com>
+ <CAHk-=wiZj-C-ZjiJdhyCDGK07WXfeROj1ACaSy7OrxtpqQVe-g@mail.gmail.com>
+ <202401240916.044E6A6A7A@keescook>
+ <CAHk-=whq+Kn-_LTvu8naGqtN5iK0c48L1mroyoGYuq_DgFEC7g@mail.gmail.com>
+ <CAHk-=whDAUMSPhDhMUeHNKGd-ZX8ixNeEz7FLfQasAGvi_knDg@mail.gmail.com>
+ <a9210754-2f94-4075-872f-8f6a18f4af07@I-love.SAKURA.ne.jp>
+ <CAHk-=wjF=zwZ88vRZe-AvexnmP1OCpKZSp_2aCfTpGeH1vLMkA@mail.gmail.com>
+ <b5a12ecd-468d-4b50-9f8c-17ae2a2560b4@I-love.SAKURA.ne.jp>
+In-Reply-To: <b5a12ecd-468d-4b50-9f8c-17ae2a2560b4@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 1/22/24 22:16, Xiao Liang wrote:
-> On Mon, Oct 16, 2023 at 11:36 AM John Johansen
-> <john.johansen@canonical.com> wrote:
->>
->> On 9/1/23 17:48, Xiao Liang wrote:
->>> The panic below is observed when receiving ICMP packets with secmark set
->>> while an ICMP raw socket is being created. SK_CTX(sk)->label is updated
->>> in apparmor_socket_post_create(), but the packet is delivered to the
->>> socket before that, causing the null pointer dereference.
->>> Drop the packet if label context is not set.
->>
->> not sure how I dropped this one, thanks for the patch. I have pulled it into the apparmor tree
->>
-> 
-> I haven't seen this patch in the tree yet. May I know the status?
+On 2024/01/27 16:04, Tetsuo Handa wrote:
+> If we can accept revival of security_bprm_free(), we can "get rid of current->in_execve flag"
+> and "stop saving things across two *independent* execve() calls".
 
-sorry, this did get pulled in, but for some reason, didn't get promoted into apparmor-next
+Oops, I found a bug in TOMOYO (and possibly in AppArmor as well).
+TOMOYO has to continue depending on current->in_execve flag even if
+security_bprm_free() is revived.
 
-I will try to send it up for -rc3
+v6.7 and current linux.git check the following permissions.
+
+----------------------------------------
+<kernel> /usr/lib/systemd/systemd /etc/mail/make /usr/bin/grep
+    0: file getattr /etc/ld.so.cache
+    1: file getattr /etc/mail/sendmail.cf
+    2: file getattr /usr/lib/locale/locale-archive
+    3: file getattr /usr/lib64/gconv/gconv-modules.cache
+    4: file getattr /usr/lib64/libc-2.17.so
+    5: file getattr /usr/lib64/libpcre.so.1.2.0
+    6: file getattr /usr/lib64/libpthread-2.17.so
+    7: file getattr pipe:[24810]
+    8: file ioctl   /etc/mail/sendmail.cf 0x5401
+    9: file ioctl   pipe:[24810] 0x5401
+   10: file read    /etc/ld.so.cache
+   11: file read    /etc/mail/sendmail.cf
+   12: file read    /usr/lib/locale/locale-archive
+   13: file read    /usr/lib64/gconv/gconv-modules.cache
+   14: file read    /usr/lib64/libc-2.17.so
+   15: file read    /usr/lib64/libpcre.so.1.2.0
+   16: file read    /usr/lib64/libpthread-2.17.so
+   17: misc env     LANG
+   18: misc env     OLDPWD
+   19: misc env     PATH
+   20: misc env     PWD
+   21: misc env     SENDMAIL_OPTS
+   22: misc env     SHLVL
+   23: misc env     _
+   24: use_group    0
+----------------------------------------
+
+But due to "if (f->f_flags & __FMODE_EXEC)" test in current linux.git (or
+"if (current->in_execve)" test until v6.7), currently permission for the ELF
+loader file (i.e. /lib64/ld-linux-x86-64.so.2 shown below) is not checked.
+
+$ ldd /usr/bin/grep
+        linux-vdso.so.1 =>  (0x00007ffc079ac000)
+        libpcre.so.1 => /lib64/libpcre.so.1 (0x00007fdcfb000000)
+        libc.so.6 => /lib64/libc.so.6 (0x00007fdcfac00000)
+        libpthread.so.0 => /lib64/libpthread.so.0 (0x00007fdcfa800000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007fdcfb400000)
+
+If I make below change
+
+----------------------------------------
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 04a92c3d65d4..34739e4ba5a4 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -329,8 +329,8 @@ static int tomoyo_file_open(struct file *f)
+ {
+        /* Don't check read permission here if called from execve(). */
+        /* Illogically, FMODE_EXEC is in f_flags, not f_mode. */
+-       if (f->f_flags & __FMODE_EXEC)
+-               return 0;
++       //if (f->f_flags & __FMODE_EXEC)
++       //      return 0;
+        return tomoyo_check_open_permission(tomoyo_domain(), &f->f_path,
+                                            f->f_flags);
+ }
+----------------------------------------
+
+permission for the ELF loader file is checked, but causes the caller to
+require read permission for /usr/bin/grep in addition to execute permission.
+
+----------------------------------------
+<kernel> /usr/lib/systemd/systemd /etc/mail/make /usr/bin/grep
+    0: file getattr /etc/ld.so.cache
+    1: file getattr /etc/mail/sendmail.cf
+    2: file getattr /usr/lib/locale/locale-archive
+    3: file getattr /usr/lib64/gconv/gconv-modules.cache
+    4: file getattr /usr/lib64/libc-2.17.so
+    5: file getattr /usr/lib64/libpcre.so.1.2.0
+    6: file getattr /usr/lib64/libpthread-2.17.so
+    7: file getattr pipe:[22370]
+    8: file ioctl   /etc/mail/sendmail.cf 0x5401
+    9: file ioctl   pipe:[22370] 0x5401
+   10: file read    /etc/ld.so.cache
+   11: file read    /etc/mail/sendmail.cf
+   12: file read    /usr/lib/locale/locale-archive
+   13: file read    /usr/lib64/gconv/gconv-modules.cache
+   14: file read    /usr/lib64/ld-2.17.so
+   15: file read    /usr/lib64/libc-2.17.so
+   16: file read    /usr/lib64/libpcre.so.1.2.0
+   17: file read    /usr/lib64/libpthread-2.17.so
+   18: misc env     LANG
+   19: misc env     OLDPWD
+   20: misc env     PATH
+   21: misc env     PWD
+   22: misc env     SENDMAIL_OPTS
+   23: misc env     SHLVL
+   24: misc env     _
+   25: use_group    0
+----------------------------------------
+
+To make it possible to check permission for the ELF loader file without requiring
+the caller of execve() read permission of a program specified in execve() request,
+I need to
+
+----------------------------------------
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 04a92c3d65d4..942c08a36027 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -104,11 +104,6 @@ static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
+                tomoyo_read_unlock(idx);
+                return err;
+        }
+-       /*
+-        * Read permission is checked against interpreters using next domain.
+-        */
+-       return tomoyo_check_open_permission(s->domain_info,
+-                                           &bprm->file->f_path, O_RDONLY);
+ }
+
+ /**
+@@ -327,9 +322,13 @@ static int tomoyo_file_fcntl(struct file *file, unsigned int cmd,
+  */
+ static int tomoyo_file_open(struct file *f)
+ {
+-       /* Don't check read permission here if called from execve(). */
+-       /* Illogically, FMODE_EXEC is in f_flags, not f_mode. */
+-       if (f->f_flags & __FMODE_EXEC)
++       /*
++        * Don't check read permission here if called from execve() for
++        * the first time of that execve() request, for execute permission
++        * will be checked at tomoyo_bprm_check_security() with argv/envp
++        * taken into account.
++        */
++       if (current->in_execve && !tomoyo_task(current)->old_domain_info)
+                return 0;
+        return tomoyo_check_open_permission(tomoyo_domain(), &f->f_path,
+                                            f->f_flags);
+----------------------------------------
+
+in addition to moving around in_execve and reviving security_bprm_free().
+
+
+
+Apparmor uses similar approach, which is based on an assumption that
+permission check is done by bprm hooks.
+
+----------------------------------------
+static int apparmor_file_open(struct file *file)
+{
+        struct aa_file_ctx *fctx = file_ctx(file);
+        struct aa_label *label;
+        int error = 0;
+
+        if (!path_mediated_fs(file->f_path.dentry))
+                return 0;
+
+        /* If in exec, permission is handled by bprm hooks.
+         * Cache permissions granted by the previous exec check, with
+         * implicit read and executable mmap which are required to
+         * actually execute the image.
+         *
+         * Illogically, FMODE_EXEC is in f_flags, not f_mode.
+         */
+        if (file->f_flags & __FMODE_EXEC) {
+                fctx->allow = MAY_EXEC | MAY_READ | AA_EXEC_MMAP;
+                return 0;
+        }
+---------------------------------------
+
+https://lkml.kernel.org/r/4bb5dd09-9e09-477b-9ea8-d7b9d2fb4760@canonical.com :
+> apparmor the hint should be to avoid doing permission work again that we
+> are doing in exec. That it regressed anything more than performance here
+> is a bug, that will get fixed.
+
+But I can't find apparmor_bprm_check_security() callback.
+
+AppArmor uses apparmor_bprm_creds_for_exec() callback, but
+security_bprm_creds_for_exec() is called for only once for each execve() request.
+That is, apparmor_bprm_creds_for_exec() is not suitable for checking permission
+for interpreter or ELF loader, is it?
+
+https://lkml.kernel.org/r/ff9a525e-8c39-4590-9ace-57f4426cbe74@canonical.com :
+> that this even tripped a regression is a bug that I am going to
+> have to chase down. The file check at this point should just be
+> redundant. 
+
+Then, how does AppArmor check permissions for files opened for interpreter or
+ELF loader? AppArmor does not check permissions for files opened for interpreter
+and ELF loader (i.e. accepting any malicious binary file being specified)?
 
