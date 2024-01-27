@@ -1,35 +1,40 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94D11429C;
-	Sat, 27 Jan 2024 07:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D291DDC9
+	for <linux-security-module@vger.kernel.org>; Sat, 27 Jan 2024 08:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706339110; cv=none; b=GmKhLnfuv+2jdEXyrU0prPF829TgdzTmb/QiZpg5x7uI0FeaW9gkCDgUGKGbMM7pYEBca+MpNtHjPB8vaAO/qI8Znq5INT6C2BfetH0orAtySuhLsz6BQ5jJXyKsqMXPur31+G7YwjixlEdlkYISE7Xowk+0ji3rFPQLtDPaUpY=
+	t=1706343614; cv=none; b=niIYK4YRKYniM/xRPYr+4W89nJz3TzA6LBqUTaI+SMZnZD34TW4Z90cj+p/f50Timf9dZFkd89fxgWS3iMEnYFq/dyJhCHogVrV6ajfBN3/p0ilON9nH2UOMSwmQUIbVtLC7QWnHKyv75cXta1Ho6qD/YlowvdMgjk9AsTlPhE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706339110; c=relaxed/simple;
-	bh=0y5myr6aRHgZi0oZL3kW0LCbHr9GKeNw5wu5sr2tcKs=;
+	s=arc-20240116; t=1706343614; c=relaxed/simple;
+	bh=zs0QGfyL+yDxx/iRGljoqUutTPIjUmYRAXEfkRW276o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cFd7OSY7jwXlaBhw3bVoI57Rmem0Au7USZ5KeCsaRn/f451xKbxj2++QkkK1Y5XMmcaEz2UDcSCUGN11LikgqVNiDyeIOmOLDS/TDo19zJUe5IMDAmCATZ7oqPYmrR5A+pGoqPb+wJ/CK2huO7RtwutdtNjc/mnsseQM09zcdQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=none smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav415.sakura.ne.jp (fsav415.sakura.ne.jp [133.242.250.114])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 40R741nS081315;
-	Sat, 27 Jan 2024 16:04:02 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav415.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp);
- Sat, 27 Jan 2024 16:04:01 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 40R741hA081308
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 27 Jan 2024 16:04:01 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <b5a12ecd-468d-4b50-9f8c-17ae2a2560b4@I-love.SAKURA.ne.jp>
-Date: Sat, 27 Jan 2024 16:04:01 +0900
+	 In-Reply-To:Content-Type; b=KgGOcwgGI8utvCzcNpVfdLKdvsDDpSD1HLWD3WW1rNTkAFime9UB1/0mSpSR5dierEn+5GBY8MYfRNyHoFxFSiD+E+5fO6vPI5jkJ1KVaE+ygSA2oS3mXOh7Gd6SVefTucaCiaqgh3Py8TBIAhTSn0Z0vNI70yFED1GDFNHlhuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=vY5gHKuF; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="vY5gHKuF"
+Received: from [192.168.192.85] (unknown [50.39.103.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 70EB03FE92;
+	Sat, 27 Jan 2024 08:20:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1706343608;
+	bh=9oONYmhZzfQ1UsyP0GXkQvcgtIOyzC9ac4hc3Bvwm+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=vY5gHKuFnLJcS/5riF+Vh9zA/kezld2ho6q8hMbGvaEotq1YN8DM3eV4i0Uh1HGFP
+	 RAnvITrqCqID/aS7Xej0LxX0CdN76csgObiK/v6Ng1Dan1RbKArHvYaZgan+Q9B/QC
+	 z+gASPmv3GzwBQs9PZGpccJ2V7ULd6oxk1QpN/vHJHWcXrwWd1F323Xy+bUNuPWHwo
+	 6xA0lQPVcrLaq4W+mcwo1rsg/FneCrJSFIAA8RQABrH+oYfxCI1fqtDUQTLhbvQ7yF
+	 QAOjXVBY33NPDlLTpcfEQNpLBM7ofGizO/wcSal8ZzDt7bvdpF+97Y4D65d1sTHWwk
+	 JjqSISwGijtYQ==
+Message-ID: <a651b115-1fa8-4de8-a05f-e1c2b3423816@canonical.com>
+Date: Sat, 27 Jan 2024 00:20:04 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -37,105 +42,79 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [6.8-rc1 Regression] Unable to exec apparmor_parser from
- virt-aa-helper
+Subject: Re: [PATCH] apparmor: Fix null pointer deref when receiving skb
+ during sock creation
 Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore
- <paul@paul-moore.com>, Kevin Locke <kevin@kevinlocke.name>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Kentaro Takeda <takedakn@nttdata.co.jp>
-References: <ZbE4qn9_h14OqADK@kevinlocke.name>
- <202401240832.02940B1A@keescook>
- <CAHk-=wgJmDuYOQ+m_urRzrTTrQoobCJXnSYMovpwKckGgTyMxA@mail.gmail.com>
- <CAHk-=wijSFE6+vjv7vCrhFJw=y36RY6zApCA07uD1jMpmmFBfA@mail.gmail.com>
- <CAHk-=wiZj-C-ZjiJdhyCDGK07WXfeROj1ACaSy7OrxtpqQVe-g@mail.gmail.com>
- <202401240916.044E6A6A7A@keescook>
- <CAHk-=whq+Kn-_LTvu8naGqtN5iK0c48L1mroyoGYuq_DgFEC7g@mail.gmail.com>
- <CAHk-=whDAUMSPhDhMUeHNKGd-ZX8ixNeEz7FLfQasAGvi_knDg@mail.gmail.com>
- <a9210754-2f94-4075-872f-8f6a18f4af07@I-love.SAKURA.ne.jp>
- <CAHk-=wjF=zwZ88vRZe-AvexnmP1OCpKZSp_2aCfTpGeH1vLMkA@mail.gmail.com>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHk-=wjF=zwZ88vRZe-AvexnmP1OCpKZSp_2aCfTpGeH1vLMkA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Xiao Liang <shaw.leon@gmail.com>
+Cc: linux-security-module@vger.kernel.org, Matthew Garrett <mjg59@google.com>
+References: <20230902004841.614102-1-shaw.leon@gmail.com>
+ <0e81fdc2-9c4b-4147-91cd-22fa263b0a3b@canonical.com>
+ <CABAhCOQDQV_LHXv5-aosJu9+sP6wE9kDgYB8n-hYB=XKS0B_fg@mail.gmail.com>
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <CABAhCOQDQV_LHXv5-aosJu9+sP6wE9kDgYB8n-hYB=XKS0B_fg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2024/01/26 2:17, Linus Torvalds wrote:
-> On Thu, 25 Jan 2024 at 06:17, Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+On 1/22/24 22:16, Xiao Liang wrote:
+> On Mon, Oct 16, 2023 at 11:36 AM John Johansen
+> <john.johansen@canonical.com> wrote:
 >>
->> On 2024/01/25 3:27, Linus Torvalds wrote:
->>> The whole cred use of current->in_execve in tomoyo should
->>> *also* be fixed, but I didn't even try to follow what it actually
->>> wanted.
+>> On 9/1/23 17:48, Xiao Liang wrote:
+>>> The panic below is observed when receiving ICMP packets with secmark set
+>>> while an ICMP raw socket is being created. SK_CTX(sk)->label is updated
+>>> in apparmor_socket_post_create(), but the packet is delivered to the
+>>> socket before that, causing the null pointer dereference.
+>>> Drop the packet if label context is not set.
 >>
->> Due to TOMOYO's unique domain transition (transits to new domain before
->> execve() succeeds and returns to old domain if execve() failed), TOMOYO
->> depends on a tricky ordering shown below.
+>> not sure how I dropped this one, thanks for the patch. I have pulled it into the apparmor tree
+>>
 > 
-> Ok, that doesn't really clarify anything for me.
-> 
-> I'm less interested in what the call paths are, and more like "_Why_
-> is all this needed for tomoyo?"
-> 
-> Why doesn't tomoyo just install the new cred at "commit_creds()" time?
-> 
-> (The security hooks that surround that  are
-> "->bprm_committing_creds()" and "->bprm_committed_creds()")
+> I haven't seen this patch in the tree yet. May I know the status?
 
-DAC checks permission for any files accessed by a new program passed to execve()
-until the point of no return of execve() using the credentials of current program.
-But TOMOYO checks permission for any files accessed by a new program passed to execve()
-using a domain for that new program than a domain for current program.
+sorry, this did get pulled in, but for some reason, didn't get promoted into apparmor-next
 
-This is because TOMOYO considers that if a new program passed to execve() requires some
-file, permissions for accessing that file should be checked using the security context
-for that new program.
-
-Let's consider executing a shell script named /tmp/foo.sh from /bin/bash .
-
-  [user@host ~]$ cat /tmp/foo.sh
-  #!/bin/sh
-  echo hello
-  [user@host ~]$ chmod 755 /tmp/foo.sh
-  [user@host ~]$ exec /tmp/foo.sh
-
-DAC checks permissions for /tmp/foo.sh and /bin/sh using the credentials of /bin/bash
-process, and checks permissions for shared libraries needed by /bin/sh using the new
-credentials of /tmp/foo.sh process.
-
-TOMOYO checks permissions for /tmp/foo.sh using the domain for /bin/bash process, and
-checks permissions for /bin/sh and permissions for shared libraries needed by /bin/sh
-using the domain for /tmp/foo.sh process. TOMOYO treats "/tmp/foo.sh needs to load /bin/sh"
-and "/tmp/foo.sh needs to load shared libraries needed by /bin/sh" in the same manner, by
-checking "open for read" permission.
-
-Since the COW cred mechanism introduced in Linux 2.6.29 cannot support such model,
-TOMOYO uses "struct task_struct"->security and does not use "struct cred"->security.
-
-> 
-> IOW, the whole "save things across two *independent* execve() calls"
-> seems crazy.
-> 
-> Very strange and confusing.
-> 
->                     Linus
-
-Since curity_bprm_free() callback was removed in Linux 2.6.29 because COW cred mechanism
-does not need it, currently I have to use such a crazy hack.
-
-Revival of security_task_alloc()/security_task_free()/security_bprm_free() was proposed
-in 2011 at https://lkml.kernel.org/r/201104202119.FAI21341.HtOJFSOVLFMOFQ@I-love.SAKURA.ne.jp
-and https://lkml.kernel.org/r/201104202120.FEJ57865.MFSOFFHVOOJLQt@I-love.SAKURA.ne.jp .
-
-security_task_alloc()/security_task_free() has been revived, but security_bprm_free() is not
-revived yet.
-
-If we can accept revival of security_bprm_free(), we can "get rid of current->in_execve flag"
-and "stop saving things across two *independent* execve() calls".
+I will try to send it up for -rc3
 
