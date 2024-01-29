@@ -1,189 +1,161 @@
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1593F9F3;
-	Mon, 29 Jan 2024 18:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4864D4C619;
+	Mon, 29 Jan 2024 19:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706552132; cv=none; b=sv9cPvlGA6AWOVsYKwvps2AeY9IoXMP3HuNtrhVlgaD74VE/psn8aHQq1CuvMWnCDZe9DiwDKUJG8TinrYNaUtXHerjM5oMRuJ4Ngl4q/Yc0J34hYo2z1gJs4tcZQG7G7F9TMjVoH9A4cZqEUPXxQprtIXokcMwO1+gHnzN+dvU=
+	t=1706557743; cv=none; b=uIgIxCEphLw4M/mhVIUGa9zT40MuUtn1hO4D/S+LMx0xZim05+zNpXJ0ps+HHUPlQbtI6aYFMp3KzCvJl5I/zxbVBfVbEkTkZJVNIEXsaZydMteH7+MAxKDgrg8ncXbqHTiBNT+rcrJYMfNlikjeTIKc2bA3x7iAwZuJ6Tmw2PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706552132; c=relaxed/simple;
-	bh=Am5aEz8EwJQXXuKnZa+C00jQvnC7PmkUOWBDLEGjGEk=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=Oj/xb+nYadSqdAADwogVPI9b2tOBXmG9sOeVa8Kz10Hd8Lvn2m0L5XxU5P8kF/7U9dGyg+0iJtxqJZ7YVh5mGNkZFUtFrbVeWFywz1JowRmYZXp6RUKee74k9GAAnfrmIKwDdCzpYyDuhDH5zPr701aAjKH+T+45mjorlUPDDbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:45144)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1rUWAI-00ET44-Sf; Mon, 29 Jan 2024 11:15:26 -0700
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:35054 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1rUWAH-00Edcf-6p; Mon, 29 Jan 2024 11:15:26 -0700
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,  Kees Cook
- <keescook@chromium.org>,  Christian Brauner <brauner@kernel.org>,  Jan
- Kara <jack@suse.cz>,  Paul Moore <paul@paul-moore.com>,  James Morris
- <jmorris@namei.org>,  "Serge E. Hallyn" <serge@hallyn.com>,
-  linux-security-module@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  LKML <linux-kernel@vger.kernel.org>
-References: <e938c37b-d615-4be4-a2da-02b904b7072f@I-love.SAKURA.ne.jp>
-	<613a54d2-9508-4f87-a163-a25a77a101cd@I-love.SAKURA.ne.jp>
-	<87frygbx04.fsf@email.froward.int.ebiederm.org>
-	<dbf0ef61-355b-4dcb-8e51-9298cf847367@I-love.SAKURA.ne.jp>
-Date: Mon, 29 Jan 2024 12:15:02 -0600
-In-Reply-To: <dbf0ef61-355b-4dcb-8e51-9298cf847367@I-love.SAKURA.ne.jp>
-	(Tetsuo Handa's message of "Mon, 29 Jan 2024 13:46:28 +0900")
-Message-ID: <8734ug9fbt.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1706557743; c=relaxed/simple;
+	bh=q1oYyTaOnEtBkdZ+ft0P/dxRbRChijF1B2H/lU2dKMQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QkgjLJjONo/Gj+RmxR1rlXynN94L09+HqWcXul0jTBLp0D+XHgLzOFyY/zNHDNylzFEFAZstBTIxvHGbyvDjk4Sx9NNuDwuxssEPR+9C44ZRWTykyB/AOBbjLTIEJH1Zpu6Pcj3cO0nYJJBpi1KF2OyctSlBDNzQmmdECAfq4C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NnEzSJ0E; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NnEzSJ0E"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6ddcfbc5a5fso2634363b3a.2;
+        Mon, 29 Jan 2024 11:49:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706557741; x=1707162541; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cJgZbrEe+QtSC3vgR2KYz6DDRm1jP2+EWwN55TIH0Nc=;
+        b=NnEzSJ0EY6iu//FoyC/WQyuBTnLFq/MbqN3JUzPTN4WXW/m8trz4BzBsZzMlTQa/Y7
+         i+t+FhxkGSQXB6KUfajyoPy9LlmX+urfiwVXwrrPhuCUNLoy2gfM0IwhB1XIet120eGq
+         aRI8qHy1La+toxKGc+ku0iuR2MKI+VXMr7coMoZSoejpnu0QqyF8pLkjcwW24USUSglM
+         ezT5g0+pG7bpY9ve8Y10Gcl2VyLpYL5hyRtjujhIM6tGOnUCO06hADJHUSyVyTvKeKC4
+         zzMDeQ4y16cJAVrTUgFQL7ampc24llNYFNnEHuPoE0pyLYmzAsle5r9S0dn0wTKyAQYp
+         2SZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706557741; x=1707162541;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cJgZbrEe+QtSC3vgR2KYz6DDRm1jP2+EWwN55TIH0Nc=;
+        b=Yu02b4b4h9hsmlxBoW+S7e+WTCKCZWdcjoJ24miTN3xrXOcb5rBhtM0GSzCXmHlexx
+         +Ec87rlfk4rnBOT7OMPu/vOz9zTQW1uLaZZETQ9RKOnNnEB0tRKwRUlBUSuteAfRL7a6
+         UatK6w11bBMkm4V0ovs7LuTSF419GZt8JA4/Cn6r2rpualc/Hd5jvttW9MgCrTEVRiQe
+         LO4Y05J1T59VJQ0VTCLRUs3r5gM7jMN1iI5BI6RFXl8TYD109mDLBJ6Hl6ApPhEH2iBt
+         jeJLS9US6VJqtYuK72gTqics/8XwAUfC4wrL0fMRLE8IHxfhESYoPEvJGPEQZ7/FOLcB
+         4tdg==
+X-Gm-Message-State: AOJu0YyqrB8pfMfCJaOAbcSYI+vwhVOINnOTSPiQTXcdWsRtQvtSvxrh
+	NZB4zkctz0lG7YwvZMWNv8te0Fwr+xQWk3tjyfdNVCWZYxI67wU2xiRgpaqLr9a+IO9/4cN5W7m
+	6LmVfHRQ52/QXCGUBEQ0b4t9+ZCapnnLk
+X-Google-Smtp-Source: AGHT+IFAP4kJ/kDxq0wCXcFiUzEiKxfCFhGf1tPQypkXEYmAgsXy8pTLNOu3n6rwCV0M5CK7/Zf4mQBvuQOKdQKXUtw=
+X-Received: by 2002:a05:6a00:dc:b0:6d9:f6a7:24de with SMTP id
+ e28-20020a056a0000dc00b006d9f6a724demr4435882pfj.17.1706557741387; Mon, 29
+ Jan 2024 11:49:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1rUWAH-00Edcf-6p;;;mid=<8734ug9fbt.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX18wl42UHne2LVIOqfwPN0l+F1RkALgM9RU=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: **
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4995]
-	*  0.5 XMGappySubj_01 Very gappy subject
-	*  0.7 XMSubLong Long Subject
-	*  1.5 XMNoVowels Alpha-numberic number with no vowels
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.0 T_TooManySym_02 5+ unique symbols in subject
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-	*  0.0 T_TooManySym_03 6+ unique symbols in subject
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 728 ms - load_scoreonly_sql: 0.12 (0.0%),
-	signal_user_changed: 12 (1.7%), b_tie_ro: 10 (1.4%), parse: 1.48
-	(0.2%), extract_message_metadata: 15 (2.0%), get_uri_detail_list: 2.6
-	(0.4%), tests_pri_-2000: 5 (0.7%), tests_pri_-1000: 2.9 (0.4%),
-	tests_pri_-950: 1.34 (0.2%), tests_pri_-900: 1.07 (0.1%),
-	tests_pri_-90: 202 (27.8%), check_bayes: 197 (27.0%), b_tokenize: 10
-	(1.4%), b_tok_get_all: 8 (1.1%), b_comp_prob: 3.5 (0.5%),
-	b_tok_touch_all: 171 (23.5%), b_finish: 0.88 (0.1%), tests_pri_0: 467
-	(64.2%), check_dkim_signature: 0.82 (0.1%), check_dkim_adsp: 3.8
-	(0.5%), poll_dns_idle: 0.37 (0.1%), tests_pri_10: 2.4 (0.3%),
-	tests_pri_500: 13 (1.8%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/3] LSM: add security_bprm_aborting_creds() hook
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+References: <20240126104403.1040692-1-omosnace@redhat.com> <CAEjxPJ7Sya+__8z5TQ78C_crqZoHuTrnqjaCzCtz9YVR24KNtw@mail.gmail.com>
+ <CAEjxPJ6Y4RazpOHabcv12HgMRHCqVe+k8v7f5tQ8fVT9f4QqnQ@mail.gmail.com> <CAFqZXNvbm9OHvaY5rmO8fxxHCT5T+ne1kj1XiT3yTRMiff5d2A@mail.gmail.com>
+In-Reply-To: <CAFqZXNvbm9OHvaY5rmO8fxxHCT5T+ne1kj1XiT3yTRMiff5d2A@mail.gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Mon, 29 Jan 2024 14:48:49 -0500
+Message-ID: <CAEjxPJ7NeopFG+mgBfxNa0bBxgrEB7DzfG_NFdLDicS++fGe1A@mail.gmail.com>
+Subject: Re: [PATCH] security: fix the logic in security_inode_getsecctx()
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
-
-> On 2024/01/29 13:10, Eric W. Biederman wrote:
->>> @@ -1519,6 +1519,7 @@ static void free_bprm(struct linux_binprm *bprm)
->>>  	}
->>>  	free_arg_pages(bprm);
->>>  	if (bprm->cred) {
->>> +		security_bprm_aborting_creds(bprm);
->>>  		mutex_unlock(&current->signal->cred_guard_mutex);
->>>  		abort_creds(bprm->cred);
->> 
->> Why isn't abort_creds calling security_free_cred enough here?
+On Fri, Jan 26, 2024 at 12:15=E2=80=AFPM Ondrej Mosnacek <omosnace@redhat.c=
+om> wrote:
 >
-> Because security_cred_free() from put_cred_rcu() is called from RCU callback
-> rather than from current thread doing execve().
-> TOMOYO wants to restore attributes of current thread doing execve().
-
+> On Fri, Jan 26, 2024 at 5:04=E2=80=AFPM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+> >
+> > On Fri, Jan 26, 2024 at 10:03=E2=80=AFAM Stephen Smalley
+> > <stephen.smalley.work@gmail.com> wrote:
+> > >
+> > > On Fri, Jan 26, 2024 at 5:44=E2=80=AFAM Ondrej Mosnacek <omosnace@red=
+hat.com> wrote:
+> > > >
+> > > > The inode_getsecctx LSM hook has previously been corrected to have
+> > > > -EOPNOTSUPP instead of 0 as the default return value to fix BPF LSM
+> > > > behavior. However, the call_int_hook()-generated loop in
+> > > > security_inode_getsecctx() was left treating 0 as the neutral value=
+, so
+> > > > after an LSM returns 0, the loop continues to try other LSMs, and i=
+f one
+> > > > of them returns a non-zero value, the function immediately returns =
+with
+> > > > said value. So in a situation where SELinux and the BPF LSMs regist=
+ered
+> > > > this hook, -EOPNOTSUPP would be incorrectly returned whenever SELin=
+ux
+> > > > returned 0.
+> > > >
+> > > > Fix this by open-coding the call_int_hook() loop and making it use =
+the
+> > > > correct LSM_RET_DEFAULT() value as the neutral one, similar to what
+> > > > other hooks do.
+> > > >
+> > > > Reported-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > > > Link: https://lore.kernel.org/selinux/CAEjxPJ4ev-pasUwGx48fDhnmjBnq=
+_Wh90jYPwRQRAqXxmOKD4Q@mail.gmail.com/
+> > > > Fixes: b36995b8609a ("lsm: fix default return value for inode_getse=
+cctx")
+> > > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > > > ---
+> > > >
+> > > > I ran 'tools/nfs.sh' on the patch and even though it fixes the most
+> > > > serious issue that Stephen reported, some of the tests are still
+> > > > failing under NFS (but I will presume that these are pre-existing i=
+ssues
+> > > > not caused by the patch).
+> > >
+> > > Do you have a list of the failing tests? For me, it was hanging on
+> > > unix_socket and thus not getting to many of the tests. I would like t=
+o
+> > > triage the still-failing ones to confirm that they are in fact
+> > > known/expected failures for NFS.
+> >
+> > Applying your patch and removing unix_socket from the tests to be run
+> > (since it hangs), I get the following failures:
+> > mac_admin/test            (Wstat: 0 Tests: 8 Failed: 2)
+> >   Failed tests:  5-6
+> > filesystem/ext4/test      (Wstat: 512 (exited 2) Tests: 76 Failed: 2)
+> >   Failed tests:  1, 64
+> >   Non-zero exit status: 2
+> > filesystem/xfs/test       (Wstat: 512 (exited 2) Tests: 76 Failed: 2)
+> >   Failed tests:  1, 64
+> >   Non-zero exit status: 2
+> > filesystem/jfs/test       (Wstat: 512 (exited 2) Tests: 83 Failed: 2)
+> >   Failed tests:  1, 71
+> >   Non-zero exit status: 2
+> > filesystem/vfat/test      (Wstat: 512 (exited 2) Tests: 52 Failed: 2)
+> >   Failed tests:  1, 46
+> >   Non-zero exit status: 2
+> > fs_filesystem/ext4/test   (Wstat: 512 (exited 2) Tests: 75 Failed: 2)
+> >   Failed tests:  1, 63
+> >   Non-zero exit status: 2
+> > fs_filesystem/xfs/test    (Wstat: 512 (exited 2) Tests: 75 Failed: 2)
+> >   Failed tests:  1, 63
+> >   Non-zero exit status: 2
+> > fs_filesystem/jfs/test    (Wstat: 512 (exited 2) Tests: 82 Failed: 2)
+> >   Failed tests:  1, 70
+> >   Non-zero exit status: 2
+> > fs_filesystem/vfat/test   (Wstat: 512 (exited 2) Tests: 51 Failed: 2)
+> >   Failed tests:  1, 45
+> >   Non-zero exit status: 2
+> > Files=3D77, Tests=3D1256, 308 wallclock secs ( 0.30 usr  0.10 sys +  6.=
+84
+> > cusr 21.78 csys =3D 29.02 CPU)
 >
->> The fact that somewhere Tomoyo is modifying a credential that the rest
->> of the kernel sees as read-only, and making it impossible to just
->> restore that credential is very concerning from a maintenance
->> perspective.
->
-> TOMOYO does not use "struct cred"->security.
-> TOMOYO uses only "struct task_struct"->security.
->
->   struct lsm_blob_sizes tomoyo_blob_sizes __ro_after_init = {
->       .lbs_task = sizeof(struct tomoyo_task),
->   };
->
-> TOMOYO uses security_task_alloc() for allocating "struct task_struct"->security,
-> security_task_free() for releasing "struct task_struct"->security,
-> security_bprm_check() for updating "struct task_struct"->security,
-> security_bprm_committed_creds() for erasing old "struct task_struct"->security,
-> security_bprm_aborting_creds() for restoring old "struct task_struct"->security.
->
-> Commit a6f76f23d297 ("CRED: Make execve() take advantage of copy-on-write
-> credentials") made TOMOYO impossible to do above. current->in_execve flag was a
-> hack for emulating security_bprm_aborting_creds() using security_prepare_creds().
->
->> Can't Tomoyo simply allow reading of files that have __FMODE_EXEC
->> set when allow_execve is set, without needing to perform a domain
->> transition, and later back out that domain transition?
->
-> No. That does not match TOMOYO's design.
->
-> allow_execve keyword does not imply "allow opening that file for non-execve() purpose".
+> I got the same ones (I, too, removed unix_socket to allow the rest to run=
+).
 
-Huh?  I was proposing using the allow_execve credential to allow opening
-and reading the file for execve purpose.  So you don't need to perform
-a domain transition early.
-
-> Also, performing a domain transition before execve() reaches point of no return is
-> the TOMOYO's design, but COW credentials does not allow such behavior.
-
-My question is simple.  Why can't TOMOYO use the changing of credentials
-in task->cred to perform the domain transition?  Why can't TOMOYO work
-with the code in execve?
-
-I don't see anything that fundamentally requires you to have the domain
-transition early.  All I have seen so far is an assertion that you
-are using task->security.  Is there anything except for the reading
-of the executable that having the domain transition early allows?
-
-My primary concern with TOMOYO being the odd man out, and using hooks
-for purposes arbitrary purposes instead of purposes they are logically
-designed to be used for?
-
-If you aren't going to change your design your new hook should be:
-	security_execve_revert(current);
-Or maybe:
-	security_execve_abort(current);
-
-At least then it is based upon the reality that you plan to revert
-changes to current->security.  Saying anything about creds or bprm when
-you don't touch them, makes no sense at all.  Causing people to
-completely misunderstand what is going on, and making it more likely
-they will change the code in ways that will break TOMOYO.
-
-
-What I understand from the documentation you provided about TOMOYO is:
-- TOMOYO provides the domain transition early so that the executable
-  can be read.
-- TOMOYO did that because it could not detect reliably when a file
-  was opened for execve and read for execve.
-
-Am I wrong in my understanding?
-
-If that understanding is correct, now that (file->f_mode & __FMODE_EXEC)
-is a reliable indication of a file used exclusively for exec then it
-should be possible to take advantage of the new information and get
-TOMOYO and the rest of the execve playing nicely with each other without
-having to add new hooks.
-
-
-If the maintenance concerns are not enough please consider the situation
-from an attack surface concern.  Any hacked together poorly maintained
-surface is ripe bugs, and the exploitation of those bugs.  Sometimes
-those bugs will break you in obvious ways, other times those bugs
-will break you in overlooked and exploitable ways.
-
-Eric
+unix_socket test is failing because type_transition rule is not being
+applied to newly created server socket, leading to a denial when the
+client tries to connect. I believe that once worked; will see if I can
+find the last working kernel.
