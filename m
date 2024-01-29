@@ -1,112 +1,152 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9096E28DB3;
-	Sun, 28 Jan 2024 14:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0374C11737;
+	Mon, 29 Jan 2024 04:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706451485; cv=none; b=P/PzXR1WOyUM6tgST4UCYpxe0AupRi8RzJoKGzSzh2qc/2Pz35Hm0VdFrLeu21eHIOMRNL3QB1Eve2f555neyPPNqD9rlUp6+WL4wbqvX9fUVupB7r1X+IUCC0xEN5AX73XS2rdqeOT7tbzV+GXqSx1QUx72P/urispYDjGwiNY=
+	t=1706501463; cv=none; b=b3sa1sy/pbzSbxOzlgBIlCSTdttTnUSxARZu8xMewQMbCnTAOgmk4vJY6pDQ0f4i1Btk4cftPdPLF9sRYqxRpV5R/jqtudcjqFHD4KLVtnbQWgEbT5tNBcWBx3/PJspUmYfveHzy6fNLMfueszYCShXHPmfy1+FsmnD7xbXMyAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706451485; c=relaxed/simple;
-	bh=qpIaIii+FVz8FWE3By1Sq0aq8rDyLNTqxfwl0gu5I68=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kowG2kDhIFKQN9aAgp+8yghf27C+qfh2Z25xbUzboH88lLr5V7IzGX+hY9N6xEK7o1Ysh5Z8pjzzp302AsnHsbtxpo6r113qkvBj12TSaUOMVrZ9E2ezyk0b9kiT7lqRYK+2cf0cOGepvfUym2bT1XNF2ueg8pPS32m02EKC0hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=none smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav312.sakura.ne.jp (fsav312.sakura.ne.jp [153.120.85.143])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 40SEHX5K025050;
-	Sun, 28 Jan 2024 23:17:33 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav312.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav312.sakura.ne.jp);
- Sun, 28 Jan 2024 23:17:33 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav312.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 40SEGAAY024134
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 28 Jan 2024 23:17:33 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <a8e4f641-0f3d-49fe-a87c-eba9cfbe8099@I-love.SAKURA.ne.jp>
-Date: Sun, 28 Jan 2024 23:17:32 +0900
+	s=arc-20240116; t=1706501463; c=relaxed/simple;
+	bh=gFyTubGzeynFIHyzwqQ79bgdGLJ3Vo4vTFTq75BZOVU=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=iHDBsGXacWGmPfInzf7gQ3ptZ0tj3+3kb7ji1c5UfvVeUNoBG2stAQR7CMaI4nrxx0eGPfvrdQPjPIOBKuDPaaTHtkLNguli1bR1/DaSpOr7jX9xVMgWyulrXFu5Mf0ZRCxCHEJJMP/zsEizy4ntfEavWelXOr7TgGyPFYFG8MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:43946)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1rUIyy-00DJEa-8E; Sun, 28 Jan 2024 21:10:52 -0700
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:51358 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1rUIyx-006FYI-AA; Sun, 28 Jan 2024 21:10:51 -0700
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,  Kees Cook
+ <keescook@chromium.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Paul
+ Moore <paul@paul-moore.com>,  James Morris <jmorris@namei.org>,  "Serge E.
+ Hallyn" <serge@hallyn.com>,  <linux-security-module@vger.kernel.org>
+ <linux-security-module@vger.kernel.org>,  <linux-fsdevel@vger.kernel.org>
+ <linux-fsdevel@vger.kernel.org>,  LKML <linux-kernel@vger.kernel.org>
+References: <e938c37b-d615-4be4-a2da-02b904b7072f@I-love.SAKURA.ne.jp>
+	<613a54d2-9508-4f87-a163-a25a77a101cd@I-love.SAKURA.ne.jp>
+Date: Sun, 28 Jan 2024 22:10:19 -0600
+In-Reply-To: <613a54d2-9508-4f87-a163-a25a77a101cd@I-love.SAKURA.ne.jp>
+	(Tetsuo Handa's message of "Sun, 28 Jan 2024 23:16:41 +0900")
+Message-ID: <87frygbx04.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH 3/3] fs/exec: remove current->in_execve flag
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <e938c37b-d615-4be4-a2da-02b904b7072f@I-love.SAKURA.ne.jp>
-In-Reply-To: <e938c37b-d615-4be4-a2da-02b904b7072f@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1rUIyx-006FYI-AA;;;mid=<87frygbx04.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX18UA/hqWrZfwwrfC68Hn14pOeoqB042ceA=
+X-SA-Exim-Connect-IP: 68.227.168.167
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: ***
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4940]
+	*  0.7 XMSubLong Long Subject
+	*  0.5 XMGappySubj_01 Very gappy subject
+	*  1.5 XMNoVowels Alpha-numberic number with no vowels
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	*  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+	*  0.0 T_TooManySym_03 6+ unique symbols in subject
+	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
+	*  0.0 T_TooManySym_02 5+ unique symbols in subject
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ***;Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 342 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 3.9 (1.1%), b_tie_ro: 2.7 (0.8%), parse: 0.62
+	(0.2%), extract_message_metadata: 9 (2.6%), get_uri_detail_list: 1.10
+	(0.3%), tests_pri_-2000: 2.9 (0.9%), tests_pri_-1000: 1.98 (0.6%),
+	tests_pri_-950: 0.89 (0.3%), tests_pri_-900: 0.87 (0.3%),
+	tests_pri_-90: 57 (16.6%), check_bayes: 56 (16.4%), b_tokenize: 6
+	(1.7%), b_tok_get_all: 8 (2.3%), b_comp_prob: 1.59 (0.5%),
+	b_tok_touch_all: 38 (11.2%), b_finish: 0.58 (0.2%), tests_pri_0: 254
+	(74.3%), check_dkim_signature: 0.42 (0.1%), check_dkim_adsp: 1.89
+	(0.6%), poll_dns_idle: 0.35 (0.1%), tests_pri_10: 1.52 (0.4%),
+	tests_pri_500: 7 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/3] LSM: add security_bprm_aborting_creds() hook
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 
-Addition of security_bprm_aborting_creds() hook made it possible to remove
-this flag.
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- fs/exec.c             | 3 ---
- include/linux/sched.h | 3 ---
- 2 files changed, 6 deletions(-)
+> A regression caused by commit 978ffcbf00d8 ("execve: open the executable
+> file before doing anything else") has been fixed by commit 4759ff71f23e
+> ("exec: Check __FMODE_EXEC instead of in_execve for LSMs") and commit
+> 3eab830189d9 ("uselib: remove use of __FMODE_EXEC"). While fixing this
+> regression, Linus commented that we want to remove current->in_execve flag.
+>
+> The current->in_execve flag was introduced by commit f9ce1f1cda8b ("Add
+> in_execve flag into task_struct.") when TOMOYO LSM was merged, and the
+> reason was explained in commit f7433243770c ("LSM adapter functions.").
+>
+> In short, TOMOYO's design is not compatible with COW credential model
+> introduced in Linux 2.6.29, and the current->in_execve flag was added for
+> emulating security_bprm_free() hook which has been removed by introduction
+> of COW credential model.
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 9d198cd9a75c..f93cfc957e25 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1865,7 +1865,6 @@ static int bprm_execve(struct linux_binprm *bprm)
- 	 * where setuid-ness is evaluated.
- 	 */
- 	check_unsafe_exec(bprm);
--	current->in_execve = 1;
- 	sched_mm_cid_before_execve(current);
- 
- 	sched_exec();
-@@ -1882,7 +1881,6 @@ static int bprm_execve(struct linux_binprm *bprm)
- 	sched_mm_cid_after_execve(current);
- 	/* execve succeeded */
- 	current->fs->in_exec = 0;
--	current->in_execve = 0;
- 	rseq_execve(current);
- 	user_events_execve(current);
- 	acct_update_integrals(current);
-@@ -1901,7 +1899,6 @@ static int bprm_execve(struct linux_binprm *bprm)
- 
- 	sched_mm_cid_after_execve(current);
- 	current->fs->in_exec = 0;
--	current->in_execve = 0;
- 
- 	return retval;
- }
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index ffe8f618ab86..66ada87249b1 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -919,9 +919,6 @@ struct task_struct {
- #ifdef CONFIG_RT_MUTEXES
- 	unsigned			sched_rt_mutex:1;
- #endif
--
--	/* Bit to tell TOMOYO we're in execve(): */
--	unsigned			in_execve:1;
- 	unsigned			in_iowait:1;
- #ifndef TIF_RESTORE_SIGMASK
- 	unsigned			restore_sigmask:1;
--- 
-2.18.4
+How is it not compatible?  Especially how is TOMOYO's design not
+compatible with how things are today?
+
+The discussion talks about not allowing reading of executables by programs
+that can exec them.
+
+At this point with __FMODE_EXEC being placed on the files for exec,
+and with only execve using that mode all of your considerations should
+be resolved.
+
+So it appears to me that Tomoyo is currently compatible with COW
+credentials even if it was not historically.
+
+As such can we get a cleanup to actually make Tomoyo compatible.
+Otherwise because Tomoyo is the only use of whatever you are doing
+it will continue to be very easy to break Tomoyo.
+
+The fact that somewhere Tomoyo is modifying a credential that the rest
+of the kernel sees as read-only, and making it impossible to just
+restore that credential is very concerning from a maintenance
+perspective.
+
+Can't Tomoyo simply allow reading of files that have __FMODE_EXEC
+set when allow_execve is set, without needing to perform a domain
+transition, and later back out that domain transition?
 
 
+>  include/linux/security.h      |  5 +++++
+>  security/security.c           | 14 ++++++++++++++
+>  4 files changed, 21 insertions(+)
+>
+> diff --git a/fs/exec.c b/fs/exec.c
+> index af4fbb61cd53..9d198cd9a75c 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1519,6 +1519,7 @@ static void free_bprm(struct linux_binprm *bprm)
+>  	}
+>  	free_arg_pages(bprm);
+>  	if (bprm->cred) {
+> +		security_bprm_aborting_creds(bprm);
+>  		mutex_unlock(&current->signal->cred_guard_mutex);
+>  		abort_creds(bprm->cred);
+
+Why isn't abort_creds calling security_free_cred enough here?
+>  	}
+
+Eric
