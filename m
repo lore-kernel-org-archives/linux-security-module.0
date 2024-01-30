@@ -1,166 +1,127 @@
-Received: from sonic315-26.consmr.mail.ne1.yahoo.com (sonic315-26.consmr.mail.ne1.yahoo.com [66.163.190.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F8E36102
-	for <linux-security-module@vger.kernel.org>; Tue, 30 Jan 2024 16:47:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3992512836C;
+	Tue, 30 Jan 2024 17:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706633231; cv=none; b=dhIqx5o3fqca+6BMfxmnk540Dh4+V66VaffnLPEdFNr5EV2V/Xcsd7JH3mEnDIUyTHNR/99hVkAZtSYIJgIPRR84Vbavuhg0Ugj8EylFH+FnL8rUM1T68jnhJFMUANXrZn+Dqbgy/QSnMndFCmXoBRqOgAvxUyF+xgDU98hbZtU=
+	t=1706635173; cv=none; b=SQlx9ARxMTm7Ano0jF8EgKHpE7MlUo0PE8K7JMfEXUfoysPhrKKvcusU8ryTT8vy5SfAsiRYAYdUQZM74LQif+jPWGXSK4dWzNrAH9ufQQqjVh/G4e/BGU15IdU/tB+eRzACduUntZ4yLNQ3ZVhsLCF3fOjsoreY1vL7rJ2Ql20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706633231; c=relaxed/simple;
-	bh=lLr81H+NuSvnDI8oRAA4GRSbzO3mvbG1F7z2dI922sk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NMPsdHpNzKnhubwkvh1MR7+JMFk7HoOOWmZcTdBiHL9sa7d+QCYZVNTny4K4yJCrRKE/ODyxHueXyQb+B1cHR0h70d5HGjRxrtzPGJJ789IczDtkk+cqU8REPs4m7QOMhBYFgKba+iPNvoUhF6kzI/Iq0YjcaWlcJj71X+YbRrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=FCsoqOMM; arc=none smtp.client-ip=66.163.190.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1706635173; c=relaxed/simple;
+	bh=V7diJ4YqO6S1GcyDtkgjCTNRmeE4ZsUI1fbKWHRDOzA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=GsKXGFy8KbrAmRtdHGQO3PA+pCfji268zombttv58rYNpl9ptuhjF3uDr6OFft8YxtnNEnwyNOGNmbwTCzeWibMZwGxyU84KMtfQRmPSCjFgMCqL0pgrsoS7urQfYSqwUgnrXuXSnciwSEph4opzuit0n6Ehf+6767xw2BRB91k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TV1DFHzY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FCsoqOMM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1706633229; bh=gpPSWSOFq6bu5/dlrDxM7ncCEhgoHbFH1Ln7IunTTyA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=FCsoqOMMkUZnSC1ATIdbIISncVO3QDtocTjyZ0bfLWVYqe6xg7pLVxvxgimatPmFfVp02P1ECPatK/ZbEhcL3MacpGL29YDvZnJ98vvssoM29JzMixv1e+Vxm6BDC3qTPLklusA2FA66ps695mxKNjyqjyEmeeUPjsR4rMxR7Rn1CpouoZZ9voVeMUEofVSIymvpAhswaCDoiU2x3CdXBgMIzxHKu/BlmDQhZGg5MQ2Tjaf35fUM+Eir9RzoLw7fKzc49aj3KMfJgT38CgOhrQncmJyplJaY3xXIuFnUlwC5kQJ1PzeADzw2QCIiRv9/gtyiY2uCW5Y3YyLnJfFbxA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1706633229; bh=eX4JtgM5JWpldXRyOBupGn7sL0xwi2NuoZkkvBSB9U4=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=aOBVLTUK5ajiuayMDOGm727iFxDZb/O8Oj/B3iSM2dzjAkDmGJLABb7KhYpjVomnd+Ov6oNocBrX5y3wpvr322meNXMGTBGl+fsdyYuUO9N1uswOmO7tLN0UmzHk720We3ZRa6xanbfENHz0SJB1ixDU4AWwXt6FNk+nEFks+t8C8CuaBcA/HeaNC3H9hhvkQn/eaABvYwSfN5ClHW4eR8EucUo182d7Muot6X7pvRdYv+DmIBkP1A4daajbk5hxssVNofHGpBypJ8iXd/8HmGk/r0rH2XC6bL1y1zTqBADMnYOlU/w/z+HH1xiSEQR2/81fUZyh/PE0vGILD4x/QA==
-X-YMail-OSG: Yqq8uEYVM1m5kcYOle84ZITnAPJ7NUGa4zm2QzVsyq.Va879lljOV7L4j8YVwmo
- V1M9DHDWnS3GD5uxUi_8q2UZSguM8uQN5FjrjC5iut0PWsgAxz5KbVT1MoAGqMsnpKZEhNdE2xK3
- kHk3DifW85Cu9SoDNScU2Tcs2Z6zVhL5tHU1q4Lh3vi8flqup2jNg1Fe5sh6bG3kzz3TiGxD.NT3
- HA76Drhx96Z0dajved_HxtSImLiUfaZLz.BN904mOh0.FYGl6v9ogR6.ISJs9E_ebULI4bhq6ZyW
- cZn6jiJ739Q8oUttnx_jClQgZXvlH9ifHJRu0063MtG9qKnksVBL6BzeTHAJmdzsVIQtZLRgnruY
- zkNh3xYvi_TV50iGC3d6xA1V_rtmYXIHF9CK2BskG3pqr3Qolz3bLV1aKghaRNxDhr.wNx9rB3z_
- ZEjcbpW7rvavjeahooyuiXxAKm1RDGn1NY_dVi1vtBoqX0NZJt5cooyDp_JP9MaU5Il6Q1ZjMDbp
- _Kk8KPs6CVIdLfNeZn0jWdD2IOlecFXpgS56007FSsmblCAnZ6HYo_04kSTEW.4DJIo6ompmn8Bp
- NJ0iKk6OeuVAY8owasiEM1kYsSsMGZFoQKAGbs_ZpRW7qxKUynTZLi5FqJouoyWSJ9IPJz5SbCbM
- 90y4Om8BP5XgjfVJ59C61jLouZfatwS9ShkaelnfEORnnpj.fe6BJHMEOmVIdhU9h4LkJffvFlc4
- Ka_HrkXHhep7piuwqBCkKQpL2vYPTCKtTMvOcW.3AqD44l9wl0Zd1sb2x2wlClCAk0QJUcxzz_Fg
- cmSuuO.dFAuADDGjrua1mNMpwBtgrpDHJ9YUoKJ9iN3cq1W27n.IUIl7DrMX8nlTkibyh51zvD.f
- kO1f5BlgNQQmZ1rny0vlexiLbSa84W3pEhzxbAl2Ol4Wjh4qyX28REwRbfkqPkGHXWaqKw9xaSnp
- jMQcMPCGZPNglIwiI1rQxLpi_J8TlMJZhPjsHSmIRa5HRzsrsb6Cr4tXUVQULCKlmbTae022RvpP
- r8C3KH5FNyh6nd.PUSjzIarha.BhxohWHJwz9AXQUIMSwxnhRMvSOTAK6PWEhdWKJVpyLo4PBzsj
- V.FlNvHXx_nhagKrx.4gLvqJdtFuLmpr7LWvR7dhkr4vbCtsyi5dwDOj_QJShl0a8iOFQ6OrpxbQ
- jGwdhEGRxS6AHuYB37D.QgdOx7UPPdlPFZd9hjPdMJdkH6Ptd0vTr7lE_9PRMviSid6qU.lJ4ofJ
- fbsVq06iAg2Qdq5A8wbwceK0.u1ay.Zupo9Ich23zl4eX27G0xG5QmFd0unMubOsBF55oIIN0EuI
- UIgFJlfDfziihGAW9aTFWIORDWa8tmVHKlDYfe1kleF0PQo2Qg6EdccAEZXdkYV9NRP1Ff6EkOzj
- aXvU0U5w_FSdrnUetdmS11hrLLs3Qi6ctXB_0kIHpqAiEydMT1tPJaIX2WDP0A.P26gSb0.7yTEE
- S3w2HjjYdu438tA5ls5B9w6LV08hia57cVzRfyC0FATzNTEtRUvaGTfAjkfGwJFWuf1qWS4DQVbV
- usFLhPRFgMsqZFznL3RODcrs.Qh6YYFFonzI7svTeDVKAMkIHT1LXoSE6wwLIlT7PNCEO6ZDT3vY
- duI8NTPCSGXs0I5Ib3Iet6k3z3swRRxi_Lv9P7sgcNw_w6aZiPD4t8Okkhr8USomOO4n4Qy.qnxB
- aUhpInd9S7bAQwC7YreUH08vL_G0zTWlG1lqtfXD2P8CnA7sf.s0m90mH7HMDBCUUPMaPUOH3S_W
- WHfCZHKmgwP3xWEt05yQkQzC3m.b5QxikYq42Szq.iJ_aGwAXOVWTLHvCkLKn23hF0K8eHxFCoYS
- xAIBzT5HtMrNGYxueoi9tn4RHMZwl6LZhPkkdApy6sJuHE3I.IQPIS2wbERIeXdV93CS5a16HRuX
- xuhgptVpmLpbxPeCHh_pKGlmymF1VSGf66.0pd.k83dz158KUZoAAPLaBmLegtdMYJ.ucXml4Sr6
- OEb9c5pqMRon5EE0puLpjSlWpwZazny4L0Iu.kdV5E6nL8NBrArgkI.LSCO0pSHFjqW3VR8p2Nfy
- SCBK2X5cjk4VdvzupwIwF66qssBLq0YbhIIQUMIcq1RhoT6.KOrofZEtv0vfdMdm_RGFzPDvzLtB
- TkTXIxbkiXf0NJmGYmuZoqwwYn9fsCOVz_H.u0PFHzGhNGH2B9sPRZoL9mYFF1v18Cwh3foGQgEm
- Tntd8ab2XNsBcNS9ZUBX_wiRYF4aXn7NUOLnOARULk6Jjv5QaINpSPsFhMklH4DmK67N3B3bZq1O
- cMNTMyE_5L7re
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 33dffb39-f133-44bf-be3b-105dca8934a2
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Tue, 30 Jan 2024 16:47:09 +0000
-Received: by hermes--production-gq1-5c57879fdf-kht2b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID c169c4cb38a1477ddc28aec5ee2d666d;
-          Tue, 30 Jan 2024 16:47:08 +0000 (UTC)
-Message-ID: <21d56533-84bc-4be5-af05-a40072fc9e8e@schaufler-ca.com>
-Date: Tue, 30 Jan 2024 08:47:06 -0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TV1DFHzY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 709EFC433C7;
+	Tue, 30 Jan 2024 17:19:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706635172;
+	bh=V7diJ4YqO6S1GcyDtkgjCTNRmeE4ZsUI1fbKWHRDOzA=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=TV1DFHzYDZhW59OLkmEAT5zHp3Om+RiE56/Rs+zzt2cYC51I696Ozv4XqGyYhfvLs
+	 DiMhVVHFj37CPiUvZdXlMkSTNCyTF43+XZPTAny/wk4lgvcxXTU8ynkhZy5m7EqyYa
+	 LTJrrhFygZkqmEFYNAQ7/MAYdFxl29FT5xcXmYYPZ9P2JQRNHgqpd9kp1C+N4smMr9
+	 r5ontZ1b86UZ82H6/KIlrEPWd0eieYpSNHwHLZnKHA9YCpp+usbxb7LfQsqwyDs9zb
+	 Ahk84q+dt3xhTMzPIzA+m+C65eIWL/j+4uwnP4s+wpzO3N82ossDdMVCL2hnK/Xv+u
+	 Qmzjuli3IDvew==
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] security: use default hook return value in
- call_int_hook()
-Content-Language: en-US
-To: Ondrej Mosnacek <omosnace@redhat.com>, Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>,
- linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240130125659.1709410-1-omosnace@redhat.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240130125659.1709410-1-omosnace@redhat.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22046 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Date: Tue, 30 Jan 2024 19:19:27 +0200
+Message-Id: <CYS7OCDQ54WZ.3RS9IWCQG4Y5L@suppilovahvero>
+Cc: "Jiang, Dave" <dave.jiang@intel.com>, "linux-integrity@vger.kernel.org"
+ <linux-integrity@vger.kernel.org>, "linux-cxl@vger.kernel.org"
+ <linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "Williams, Dan J"
+ <dan.j.williams@intel.com>, "keyrings@vger.kernel.org"
+ <keyrings@vger.kernel.org>, "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, "nvdimm@lists.linux.dev"
+ <nvdimm@lists.linux.dev>
+Subject: Re: [PATCH] KEYS: encrypted: Add check for strsep
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Verma, Vishal L" <vishal.l.verma@intel.com>, "zohar@linux.ibm.com"
+ <zohar@linux.ibm.com>, "paul@paul-moore.com" <paul@paul-moore.com>,
+ "dhowells@redhat.com" <dhowells@redhat.com>, "yaelt@google.com"
+ <yaelt@google.com>, "serge@hallyn.com" <serge@hallyn.com>,
+ "nichen@iscas.ac.cn" <nichen@iscas.ac.cn>, "sumit.garg@linaro.org"
+ <sumit.garg@linaro.org>, "jmorris@namei.org" <jmorris@namei.org>
+X-Mailer: aerc 0.15.2
+References: <20231108073627.1063464-1-nichen@iscas.ac.cn>
+ <4d3465b48b9c5a87deb385b15bf5125fc1704019.camel@intel.com>
+In-Reply-To: <4d3465b48b9c5a87deb385b15bf5125fc1704019.camel@intel.com>
 
-On 1/30/2024 4:56 AM, Ondrej Mosnacek wrote:
-> Change the definition of call_int_hook() to treat LSM_RET_DEFAULT(...)
-> as the "continue" value instead of 0. To further simplify this macro,
-> also drop the IRC argument and replace it with LSM_RET_DEFAULT(...).
+On Wed Jan 24, 2024 at 8:21 PM EET, Verma, Vishal L wrote:
+> On Wed, 2023-11-08 at 07:36 +0000, Chen Ni wrote:
+> > Add check for strsep() in order to transfer the error.
+> >=20
+> > Fixes: cd3bc044af48 ("KEYS: encrypted: Instantiate key with user-
+> > provided decrypted data")
+> > Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> > ---
+> > =C2=A0security/keys/encrypted-keys/encrypted.c | 4 ++++
+> > =C2=A01 file changed, 4 insertions(+)
+> >=20
+> > diff --git a/security/keys/encrypted-keys/encrypted.c
+> > b/security/keys/encrypted-keys/encrypted.c
+> > index 8af2136069d2..76f55dd13cb8 100644
+> > --- a/security/keys/encrypted-keys/encrypted.c
+> > +++ b/security/keys/encrypted-keys/encrypted.c
+> > @@ -237,6 +237,10 @@ static int datablob_parse(char *datablob, const
+> > char **format,
+> > =C2=A0			break;
+> > =C2=A0		}
+> > =C2=A0		*decrypted_data =3D strsep(&datablob, " \t");
+> > +		if (!*decrypted_data) {
+> > +			pr_info("encrypted_key: decrypted_data is
+> > missing\n");
+> > +			break;
+> > +		}
 >
-> After this the macro can be used in a couple more hooks, where similar
-> logic is currently open-coded. At the same time, some other existing
-> call_int_hook() users now need to be open-coded, but overall it's still
-> a net simplification.
+> Hello,
 >
-> There should be no functional change resulting from this patch.
+> This patch seems to break keyring usage in CXL and NVDIMM, with the
+> "decrypted_data is missing" error path being hit. Reverting this commit
+> fixes the tests. I'm not sure if there are valid scenarios where this is
+> expected to be empty?
 >
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-
-Minor comment below, otherwise
-
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-
-> ---
->  security/security.c | 525 +++++++++++++++++++-------------------------
->  1 file changed, 221 insertions(+), 304 deletions(-)
+> Here's an strace snippet of where the error occurs:
 >
-> diff --git a/security/security.c b/security/security.c
-> index cedd6c150bdd..11012dcfd68e 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -855,14 +855,14 @@ out:
->  			P->hook.FUNC(__VA_ARGS__);		\
->  	} while (0)
->  
-> -#define call_int_hook(FUNC, IRC, ...) ({			\
-> -	int RC = IRC;						\
-> +#define call_int_hook(FUNC, ...) ({				\
-> +	int RC = LSM_RET_DEFAULT(FUNC);				\
->  	do {							\
->  		struct security_hook_list *P;			\
->  								\
->  		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
->  			RC = P->hook.FUNC(__VA_ARGS__);		\
-> -			if (RC != 0)				\
-> +			if (RC != LSM_RET_DEFAULT(FUNC))	\
->  				break;				\
->  		}						\
->  	} while (0);						\
-> @@ -881,7 +881,7 @@ out:
->   */
->  ...
-> @@ -2629,21 +2603,15 @@ EXPORT_SYMBOL(security_inode_copy_up);
->   */
->  int security_inode_copy_up_xattr(const char *name)
->  {
-> -	struct security_hook_list *hp;
-> -	int rc;
-> -
->  	/*
->  	 * The implementation can return 0 (accept the xattr), 1 (discard the
->  	 * xattr), -EOPNOTSUPP if it does not know anything about the xattr or
->  	 * any other error code in case of an error.
->  	 */
-> -	hlist_for_each_entry(hp,
-> -			     &security_hook_heads.inode_copy_up_xattr, list) {
-> -		rc = hp->hook.inode_copy_up_xattr(name);
-> -		if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
-> -			return rc;
-> -	}
-> +	int rc = call_int_hook(inode_copy_up_xattr, name);
+>    keyctl(KEYCTL_SEARCH, KEY_SPEC_USER_KEYRING, "user", "nvdimm-master", =
+0) =3D 76300785
+>    openat(AT_FDCWD, "/sys/devices/platform/cxl_acpi.0/root0/nvdimm-bridge=
+0/ndbus0/nmem0/state", O_RDONLY|O_CLOEXEC) =3D 3
+>    read(3, "idle\n", 1024)                 =3D 5
+>    close(3)                                =3D 0
+>    keyctl(KEYCTL_SEARCH, KEY_SPEC_USER_KEYRING, "encrypted", "nvdimm:0", =
+0) =3D -1 ENOKEY (Required key not available)
+>    uname({sysname=3D"Linux", nodename=3D"fedora", ...}) =3D 0
+>    newfstatat(AT_FDCWD, "/etc/ndctl/keys/nvdimm_0_fedora.blob", 0x7fff23f=
+bc210, 0) =3D -1 ENOENT (No such file or directory)
+>    add_key("encrypted", "nvdimm:0", "new enc32 user:nvdimm-master 32", 31=
+, KEY_SPEC_USER_KEYRING) =3D -1 EINVAL (Invalid argument)
+>   =20
 
-I think this is the only place call_int_hook() is used in a
-declaration. Maybe break it up into:
+I think removing the klog message does not make sense meaning
+that the recent revert was wrong action taken.
 
-	int rc;
+Instead necessary actions to retain backwards compatibility
+must be taken, meaning that the branch should set "ret =3D 0;".
 
-	rc = call_int_hook(inode_copy_up_xattr, name);
+Motivation to keep it is dead obvious: your examples show that
+it can reveal potentially incorrect behaviour in user space
+software packages. It is info-level to mark that it can be
+also false positive. I.e. the revert commit takes away
+functionality that previously caused kernel masking a
+potential bug.
 
-Not a big deal, I won't fuss over it, but it might make the next mass
-overhaul a touch simpler. Even more trivial: use ret instead of rc.
+Please revert the revert.
 
->  
-> +	if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
-> +		return rc;
->  	return evm_inode_copy_up_xattr(name);
->  }
->  EXPORT_SYMBOL(security_inode_copy_up_xattr);
-> @@ -2661,7 +2629,7 @@ EXPORT_SYMBOL(security_inode_copy_up_xattr);
->  
+BR, Jarkko
 
