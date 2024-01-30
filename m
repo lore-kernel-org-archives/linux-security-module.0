@@ -1,197 +1,127 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C2D41C93
-	for <linux-security-module@vger.kernel.org>; Tue, 30 Jan 2024 08:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502F76A03A;
+	Tue, 30 Jan 2024 10:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706603412; cv=none; b=NedSRgsYCm4/rD9H4Nrvq8BU6esszyds5cSiKmjPqYEy93YVaHKhIwr87fq5b7UX+zrI8BCuLqH8PnBe5bBi632+Oi25aeTm7viyr0m0tS2f0bLWfkKZGpsxxH0dQT8my4jNFwb08RuX6FqxNpBE03uY2HdlzdL7p7HBJ6BkfLY=
+	t=1706611443; cv=none; b=fZ/tbsvnVyqqwtqemq4VirWeP+Vg6fonAKXpffylNMaS8umUJvaNHDWtcaQLn4x/u4HmU63YGuFMDe4biFl3/GCmnwreChrgYtL7lZ1CjmpittEBTGX5OoY25KVqyOQG4Hjdt7LxjEy70uPMHS2L2H/PFwWtv1GB2bwdi7nznIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706603412; c=relaxed/simple;
-	bh=LjR7Gsvrzq5Ewv00+x+riEY8MqHMvSKxj0MF/dqkZ+w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iMC4saAPgb2h+rF6SUiPsr+4uJ/ZbngtJ1iVPQO4cEiEnc0fRPjsrzuWs8LI4NC4Sp0lV7W20QepF8SsQGeGtxz4RgEwq+gbOTszdGKcuwA/29pdecWhQGTOYyoZseHVBhMilCGKRtZPy3aD3C9IyFuHUf5S0c8F2EjiyY3t9x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TBM8Y3P4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TBM8Y3P4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1706603408;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F7lkwTI3A7BzKPumUSTsEz3dMOctiT2kqnU7YgTQgYo=;
-	b=TBM8Y3P44MDfHD4I2oRrDMBIHdB/YWKy7LxZPliI2Gk1NReqMidEAyDLmm+nBL6MMsuZU6
-	mxx+lJprDwiAg/aNZryIEEvSdvtELsG0pt3PcpI7fAFTyUWhowHT6fihumxheLomMG1X0c
-	deyrWB6f1/NoUfvYkdQuKTr858EbSTw=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-196-EHFrl0cOOcWIe4tHu6_FHQ-1; Tue, 30 Jan 2024 03:30:06 -0500
-X-MC-Unique: EHFrl0cOOcWIe4tHu6_FHQ-1
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-6de0fc90a93so1411502b3a.3
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Jan 2024 00:30:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706603405; x=1707208205;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F7lkwTI3A7BzKPumUSTsEz3dMOctiT2kqnU7YgTQgYo=;
-        b=JTf2q/LItsHtzqc3UzWj9vX/S/17dI52I3XTrwZLaByaJLYjuTRwHM/6fk7pnQx9TU
-         gpg2ACacmwwHgeu9d5dOxm7iFoSdOC7baeGXCILnHZBffdLXdLdEO6PCmdEDN8Z1TsX2
-         IQa0CPMPZsDjB7OqIKYd94xrFIPN3eL/nshD3xXpmm9wIam6rO1qZW5rc3Ctl6qcNCoz
-         XAVBohBgWdSVPZIjBmshrY76Hd62uidIGYjvJxTl9szvjoEKW2/aG3vA7h0donoHQnAX
-         LE71FY8+0VmjHSI14LD2i0kiK263KW7bgGM+gg3Fg5DQA9Xj+eXlL5nwZOCwL3OxY2q5
-         EKZw==
-X-Gm-Message-State: AOJu0Yy+hGj5xSVxhXPkycqddS9dYOKp2vlwh9g1ekA9YLsGuGKsCgnU
-	BzmkMEh3IeM1RDH7VDgMFTWelKKY3qy+LsxrH5JuZVPVDgaVG+kqcy/8bi67PjJUsNiu7ZQNGf/
-	QmqgQRiR0S8AgxNoPS+q0mGAuIBtHfHR01OTQxYUOei0ZkQA94R3Jp3UR9yzfim9HHjyeCNOI/w
-	3aXQsWgYmPNrsewY0z0Rv32bnZIPtesiTeViMjfCqscU3BNkJa
-X-Received: by 2002:a05:6a00:22cb:b0:6dd:6caa:aecc with SMTP id f11-20020a056a0022cb00b006dd6caaaeccmr4469305pfj.31.1706603405380;
-        Tue, 30 Jan 2024 00:30:05 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEuvPhuqZi4o89CCeq59rapmp0fwpuiDh1GF6Cc1xFBi0IyyXGeloh0xS0UmqPHuvbEOaCUEZ2l/af9qQ6fMFQ=
-X-Received: by 2002:a05:6a00:22cb:b0:6dd:6caa:aecc with SMTP id
- f11-20020a056a0022cb00b006dd6caaaeccmr4469294pfj.31.1706603405053; Tue, 30
- Jan 2024 00:30:05 -0800 (PST)
+	s=arc-20240116; t=1706611443; c=relaxed/simple;
+	bh=LR4Tqdwk6o5B3sBkOoFmCKb782ENpektt/aVbGbwqOo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DDn/6LwfTwhrFKK1uwtfht69SiPaiy3g/s33mIwJ1PewMkFcyZzhzNiaVcgAVQraEtRp/1OQymndMaPwkSLDYDDd5XOvnJ3Bs+9UOrLtUh6RhY5Quecwg8114MsitkpcfmlzIdRee/1sGrYuf/bnHP2BYz7nrBXwph91ekj6H8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 40UAh0Lq008630;
+	Tue, 30 Jan 2024 19:43:00 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
+ Tue, 30 Jan 2024 19:43:00 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 40UAh0YY008627
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 30 Jan 2024 19:43:00 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <56432241-1947-4701-a3d1-febd57fb3096@I-love.SAKURA.ne.jp>
+Date: Tue, 30 Jan 2024 19:42:59 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240126184531.1167999-1-omosnace@redhat.com> <CAHC9VhRy2uYmfoWYx57P6dRcZsJHmgCmdixi56hUoO=YvOqa5A@mail.gmail.com>
- <6e98ef30-ba98-4e99-bb03-9878c50e957b@schaufler-ca.com> <CAHC9VhRv260QHLe4RWYCD62DRv5-b7o-Davn_A9J_ZHJhMiJag@mail.gmail.com>
-In-Reply-To: <CAHC9VhRv260QHLe4RWYCD62DRv5-b7o-Davn_A9J_ZHJhMiJag@mail.gmail.com>
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Tue, 30 Jan 2024 09:29:53 +0100
-Message-ID: <CAFqZXNtLPM7vWDM5CMeG9r+8kB=HcaFfh0ZCqAQy0jfBnE_XDg@mail.gmail.com>
-Subject: Re: [PATCH] lsm: fix default return value of the socket_getpeersec_* hooks
-To: Paul Moore <paul@paul-moore.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] LSM: add security_bprm_aborting_creds() hook
+Content-Language: en-US
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <e938c37b-d615-4be4-a2da-02b904b7072f@I-love.SAKURA.ne.jp>
+ <613a54d2-9508-4f87-a163-a25a77a101cd@I-love.SAKURA.ne.jp>
+ <87frygbx04.fsf@email.froward.int.ebiederm.org>
+ <dbf0ef61-355b-4dcb-8e51-9298cf847367@I-love.SAKURA.ne.jp>
+ <8734ug9fbt.fsf@email.froward.int.ebiederm.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <8734ug9fbt.fsf@email.froward.int.ebiederm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jan 30, 2024 at 4:01=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Mon, Jan 29, 2024 at 6:25=E2=80=AFPM Casey Schaufler <casey@schaufler-=
-ca.com> wrote:
-> >
-> > On 1/29/2024 3:02 PM, Paul Moore wrote:
-> > > On Fri, Jan 26, 2024 at 1:45=E2=80=AFPM Ondrej Mosnacek <omosnace@red=
-hat.com> wrote:
-> > >> For these hooks the true "neutral" value is -EOPNOTSUPP, which is
-> > >> currently what is returned when no LSM provides this hook and what L=
-SMs
-> > >> return when there is no security context set on the socket. Correct =
-the
-> > >> value in <linux/lsm_hooks.h> and adjust the dispatch functions in
-> > >> security/security.c to avoid issues when the BPF LSM is enabled.
-> > >>
-> > >> Fixes: 98e828a0650f ("security: Refactor declaration of LSM hooks")
-> > >> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > >> ---
-> > >>  include/linux/lsm_hook_defs.h |  4 ++--
-> > >>  security/security.c           | 31 +++++++++++++++++++++++++++----
-> > >>  2 files changed, 29 insertions(+), 6 deletions(-)
-> > >>
-> > >> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_=
-defs.h
-> > >> index 185924c56378..76458b6d53da 100644
-> > >> --- a/include/linux/lsm_hook_defs.h
-> > >> +++ b/include/linux/lsm_hook_defs.h
-> > >> @@ -315,9 +315,9 @@ LSM_HOOK(int, 0, socket_getsockopt, struct socke=
-t *sock, int level, int optname)
-> > >>  LSM_HOOK(int, 0, socket_setsockopt, struct socket *sock, int level,=
- int optname)
-> > >>  LSM_HOOK(int, 0, socket_shutdown, struct socket *sock, int how)
-> > >>  LSM_HOOK(int, 0, socket_sock_rcv_skb, struct sock *sk, struct sk_bu=
-ff *skb)
-> > >> -LSM_HOOK(int, 0, socket_getpeersec_stream, struct socket *sock,
-> > >> +LSM_HOOK(int, -ENOPROTOOPT, socket_getpeersec_stream, struct socket=
- *sock,
-> > >>          sockptr_t optval, sockptr_t optlen, unsigned int len)
-> > >> -LSM_HOOK(int, 0, socket_getpeersec_dgram, struct socket *sock,
-> > >> +LSM_HOOK(int, -ENOPROTOOPT, socket_getpeersec_dgram, struct socket =
-*sock,
-> > >>          struct sk_buff *skb, u32 *secid)
-> > >>  LSM_HOOK(int, 0, sk_alloc_security, struct sock *sk, int family, gf=
-p_t priority)
-> > >>  LSM_HOOK(void, LSM_RET_VOID, sk_free_security, struct sock *sk)
-> > >> diff --git a/security/security.c b/security/security.c
-> > >> index 6196ccaba433..3aaad75c9ce8 100644
-> > >> --- a/security/security.c
-> > >> +++ b/security/security.c
-> > >> @@ -4624,8 +4624,20 @@ EXPORT_SYMBOL(security_sock_rcv_skb);
-> > >>  int security_socket_getpeersec_stream(struct socket *sock, sockptr_=
-t optval,
-> > >>                                       sockptr_t optlen, unsigned int=
- len)
-> > >>  {
-> > >> -       return call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT,=
- sock,
-> > >> -                            optval, optlen, len);
-> > >> +       struct security_hook_list *hp;
-> > >> +       int rc;
-> > >> +
-> > >> +       /*
-> > >> +        * Only one module will provide a security context.
-> > >> +        */
-> > >> +       hlist_for_each_entry(hp, &security_hook_heads.socket_getpeer=
-sec_stream,
-> > >> +                            list) {
-> > >> +               rc =3D hp->hook.socket_getpeersec_stream(sock, optva=
-l, optlen,
-> > >> +                                                      len);
-> > >> +               if (rc !=3D LSM_RET_DEFAULT(socket_getpeersec_stream=
-))
-> > >> +                       return rc;
-> > >> +       }
-> > >> +       return LSM_RET_DEFAULT(socket_getpeersec_stream);
-> > >>  }
-> > >
-> > > I'm beginning to wonder if we shouldn't update call_int_hook() so tha=
-t
-> > > it works for LSM_RET_DEFAULT() instead of assuming a zero/0 return
-> > > value.  Thoughts?
-> >
-> > call_int_hook() was intended to address the "normal" case, where all
-> > hooks registered would be called and the first error, if any, would
-> > result in an immediate failure return. Hooks that behaved in any other
-> > manner were expected to be open coded. The point of using the macros
-> > was to reduce so much code duplication. I really don't want to see
-> > call_int_hook() evolve into something hard to work with, or that has
-> > non-obvious side effects. I think we could probably integrate
-> > LSM_RET_DEFAULT() safely, but I'm wary of hiding these abnormal cases
-> > in the macro.
->
-> Yes, I'm not talking about modifying call_int_hook() to handle
-> something like security_vm_enough_memory_mm(), I'm just talking about
-> updating it use LSM_RET_DEFAULT() instead of zero.
->
-> While we are at it, we should probably get rid of the second parameter
-> too, @IRC, and just use the assigned LSM_RET_DEFAULT().  That always
-> struck me as a bug waiting to happen if/when those two fell out of
-> sync.
+On 2024/01/30 3:15, Eric W. Biederman wrote:
+> If you aren't going to change your design your new hook should be:
+> 	security_execve_revert(current);
+> Or maybe:
+> 	security_execve_abort(current);
+> 
+> At least then it is based upon the reality that you plan to revert
+> changes to current->security.  Saying anything about creds or bprm when
+> you don't touch them, makes no sense at all.  Causing people to
+> completely misunderstand what is going on, and making it more likely
+> they will change the code in ways that will break TOMOYO.
 
-You're reading my mind :) I already started writing a patch that does
-exactly that after I posted the security_inode_getsecctx() patch.
-While working on it I gradually found two more pre-existing issues, so
-I wanted to post fixes for them before the refactor for better
-backportability. I should be able to post the patch today.
+Fine for me. The current argument is redundant, for nobody will try to
+call security_execve_abort() on a remote thread.
 
-BTW, the IRC param removal means that a few of the existing
-call_int_hook() calls have to be open-coded, but even then the patch
-removes more LoC than it adds, so I think it's worth it.
+> 
+> 
+> What I understand from the documentation you provided about TOMOYO is:
+> - TOMOYO provides the domain transition early so that the executable
+>   can be read.
+> - TOMOYO did that because it could not detect reliably when a file
+>   was opened for execve and read for execve.
+> 
+> Am I wrong in my understanding?
+> 
+> If that understanding is correct, now that (file->f_mode & __FMODE_EXEC)
+> is a reliable indication of a file used exclusively for exec then it
+> should be possible to take advantage of the new information and get
+> TOMOYO and the rest of the execve playing nicely with each other without
+> having to add new hooks.
 
---=20
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+current->in_execve flag has two purposes: "whether to check permission" and
+"what domain is used for checking permission (if need to check permission)".
+
+One is to distinguish "open from execve()" and "open from uselib()".
+This was replaced by the (file->f_mode & __FMODE_EXEC) change, for
+__FMODE_EXEC was now removed from uselib(). But this is after all about
+"whether to check permission".
+
+The other is to emulate security_execve_abort(). security_execve_abort() is
+needed because TOMOYO checks permission for opening interpreter file from
+execve() using a domain which the current thread will belong to if execve()
+succeeds (whereas DAC checks permission for opening interpreter file from
+execve() using credentials which the current thread is currently using).
+This is about "what domain is used for checking permission".
+
+Since security_file_open() hook cannot see bprm->cred, TOMOYO cannot know
+"what domain is used for checking permission" from security_file_open().
+TOMOYO can know only "whether to check permission" from security_file_open().
+
+Since TOMOYO cannot pass bprm->cred to security_file_open() hook using
+override_creds()/revert_creds(), TOMOYO is passing "what domain is used for
+checking permission" to security_file_open() via "struct task_struct"->security.
+"struct task_struct"->security is updated _before_ security_file_open() for the
+interpreter file is called.
+
+Since security_execve_abort() was missing, when execve() failed, TOMOYO had
+to keep the domain which the current thread would belong to if execve() succeeded.
+The kept domain is cleared when TOMOYO finds that previous execve() was finished
+(indicated by current->in_execve == 0) or when TOMOYO finds that new execve() is
+in progress (indicated by current->in_execve == 0 when security_cred_prepare() is
+called).
+
+It is not possible to extract "what domain is used for checking permission" from
+"whether file->f_mode includes __FMODE_EXEC". Talking about the
+(file->f_mode & __FMODE_EXEC) change (i.e. "whether to check permission") is
+pointless when talking about "what domain is used for checking permission".
 
