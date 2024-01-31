@@ -1,146 +1,313 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD35712BE8D;
-	Wed, 31 Jan 2024 16:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.55.52.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08D611CBA
+	for <linux-security-module@vger.kernel.org>; Wed, 31 Jan 2024 16:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706719708; cv=none; b=MEyEW5RzzUSNt3cS/pnUxbgdD/oL90k1YUKKYtjNkpxJrNv9eaQG7nLx4loGf/EV1dXRUDTbUhseNL+GjCUbrDh2LzU71WExl64mxq6rGxrtFfx29Drl4x5/uTgUMvxsaP41S9iUVjJc7VqRS1NopMZD2grZ4vpndgMlOiatF+k=
+	t=1706719987; cv=none; b=tJse1BDGa46XdcBGqCE1K+BiAkR3nHJ0l0Ms6ecRYcvZ4MPl+XKQxEVaKEZ5joFqE8YETjCoa4IEKfrcr1mJRrm2+Rq4SUwPp308Ke40UnPZeRcIRiqXxU3j4z3Isk0RuuYDRPiTvuM+RqlfBvcOEYdlosAUzFO4yRmk7FZMUwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706719708; c=relaxed/simple;
-	bh=O+Ckqld21NseZzB5lCAj+EQ7OHd0wXrB13RwGOqBfic=;
+	s=arc-20240116; t=1706719987; c=relaxed/simple;
+	bh=cAy3A/nsuuQmXt1F/QnEsLCzrcAleYAuTwhVe0jYTuE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ycu0Tm1JuV6Qf8vAZ/C9Mpj2AKWGBlTN0jIj/rTD9WgFF1Qh3H0HK+mjc/wd/vGHLVvroCoqy/PUHfPiiXj01Ej4j8TtkGKKjRgeefw47aJUX2mIuLwasSW/8J7ZzdhnrZXE7O2jm69XbpXsh4WPoWTvTN8yksgnJhAh2b2vSBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dem+Ob8S; arc=none smtp.client-ip=192.55.52.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=VFUyPBuGLrM60Q32GE1ilx2vSacRfEifvC2vnySkSDilIHC+tnJBVZuPBeUjP5cpBrzbkcbXslPGYz82Etir8h0XJ/0MBK6uTAv2tJrolQmoBVH/2uUMiPXSBvt4gC9O5FrlgiKOc0/nyoD+Mn1YijhjIYgiMdOhHdpjnhGMrgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=xkmBRb90; arc=none smtp.client-ip=84.16.66.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dem+Ob8S"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1706719706; x=1738255706;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=O+Ckqld21NseZzB5lCAj+EQ7OHd0wXrB13RwGOqBfic=;
-  b=dem+Ob8SxoCZs9nxa764/1aU9lSlw21ry8yb7Xf+cAXYtAgqB8gwrk9L
-   FPDktsiihAGsoirO2gmnk24DHLGte9g0yZGeW4rFjhFzyAqU5xz/yLlWU
-   rwkeItK9dyMAopb5Z98R/PpGEb02Nz6n8LIk0+jawne8QdaWD8EbSS+SD
-   YD7DxtRLhXqci2pJDWjKr/Sge7AeHKoKnAWWlbVnXRwP7+FNJrAbZHKr/
-   Bjr2Ca6o0nNgyRE4yrzMU1GG2kiD9ih5mkJeDi2o1fxMlqOrJ7I5kXdDM
-   0NOa4fC1W3pAqtkL77dktN8jxGmrcRoL24rEfWnOOoJm7cncyxZcQ/wIy
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10969"; a="403275510"
-X-IronPort-AV: E=Sophos;i="6.05,231,1701158400"; 
-   d="scan'208";a="403275510"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2024 08:48:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10969"; a="788635713"
-X-IronPort-AV: E=Sophos;i="6.05,231,1701158400"; 
-   d="scan'208";a="788635713"
-Received: from lkp-server02.sh.intel.com (HELO 59f4f4cd5935) ([10.239.97.151])
-  by orsmga002.jf.intel.com with ESMTP; 31 Jan 2024 08:48:21 -0800
-Received: from kbuild by 59f4f4cd5935 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rVDl5-0001mG-0n;
-	Wed, 31 Jan 2024 16:48:19 +0000
-Date: Thu, 1 Feb 2024 00:47:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-	roberto.sassu@huawei.com, amir73il@gmail.com, miklos@szeredi.hu,
-	Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH 1/5] security: allow finer granularity in permitting
- copy-up of security xattrs
-Message-ID: <202402010014.MArAf4UB-lkp@intel.com>
-References: <20240130214620.3155380-2-stefanb@linux.ibm.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="xkmBRb90"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TQ7Pt6YVKzMq4cK;
+	Wed, 31 Jan 2024 17:52:50 +0100 (CET)
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4TQ7Pt1rbHzNB5;
+	Wed, 31 Jan 2024 17:52:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1706719970;
+	bh=cAy3A/nsuuQmXt1F/QnEsLCzrcAleYAuTwhVe0jYTuE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xkmBRb90keH2gNRfB2o09PxLk6r/tMEAt3ern2tjLF+l0dZqeBgZpdxLTk/qQCkzk
+	 abSekSnoGMq737oElJhD3QTl7BdyKTP8vPe+mUucWYEDGp09wq6fRwp0iorlHnmWAm
+	 Mzbd97t0e5WwGlvQBghVQyZQI5B49iX3uxkh8N94=
+Date: Wed, 31 Jan 2024 17:52:49 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Christian Brauner <brauner@kernel.org>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>
+Subject: Re: Re: [PATCH v8 4/9] landlock: Add IOCTL access right
+Message-ID: <20240131.IsheajooXee5@digikod.net>
+References: <20231208155121.1943775-1-gnoack@google.com>
+ <20231208155121.1943775-5-gnoack@google.com>
+ <20231214.feeZ6Hahwaem@digikod.net>
+ <20231214.Iev8oopu8iel@digikod.net>
+ <20231214.aeC5Wax8phe1@digikod.net>
+ <Zbk8RZCQ4M2i7BQn@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240130214620.3155380-2-stefanb@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zbk8RZCQ4M2i7BQn@google.com>
+X-Infomaniak-Routing: alpha
 
-Hi Stefan,
+On Tue, Jan 30, 2024 at 07:13:25PM +0100, Günther Noack wrote:
+> Hello!
+> 
+> On Thu, Dec 14, 2023 at 03:28:10PM +0100, Mickaël Salaün wrote:
+> > Christian, what do you think about the following IOCTL groups?
+> > 
+> > On Thu, Dec 14, 2023 at 11:14:10AM +0100, Mickaël Salaün wrote:
+> > > On Thu, Dec 14, 2023 at 10:26:49AM +0100, Mickaël Salaün wrote:
+> > > > On Fri, Dec 08, 2023 at 04:51:16PM +0100, Günther Noack wrote:
 
-kernel test robot noticed the following build errors:
+> > > > > +	switch (cmd) {
+> > > > > +	case FIOCLEX:
+> > > > > +	case FIONCLEX:
+> > > > > +	case FIONBIO:
+> > > > > +	case FIOASYNC:
+> > > > > +		/*
+> > > > > +		 * FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC manipulate the FD's
+> > > > > +		 * close-on-exec and the file's buffered-IO and async flags.
+> > > > > +		 * These operations are also available through fcntl(2),
+> > > > > +		 * and are unconditionally permitted in Landlock.
+> > > > > +		 */
+> > > > > +		return 0;
+> > 
+> > Could you please add comments for the following IOCTL commands
+> > explaining why they make sense for the related file/dir read/write
+> > mapping? We discussed about that in the ML but it would be much easier
+> > to put that doc here for future changes, and for reviewers to understand
+> > the rationale. Some of this doc is already in the cover letter.
+> 
+> Done, I'm adding documentation inline here.
+> 
+> > 
+> > To make this easier to follow, what about renaming the IOCTL groups to
+> > something like this:
+> > * LANDLOCK_ACCESS_FS_IOCTL_GROUP1:
+> >   LANDLOCK_ACCESS_FS_IOCTL_GET_SIZE
 
-[auto build test ERROR on zohar-integrity/next-integrity]
-[also build test ERROR on pcmoore-selinux/next linus/master v6.8-rc2 next-20240131]
-[cannot apply to mszeredi-vfs/overlayfs-next mszeredi-vfs/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Well, this looks better:
+LANDLOCK_ACCESS_FS_IOCTL_RW
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Stefan-Berger/security-allow-finer-granularity-in-permitting-copy-up-of-security-xattrs/20240131-054854
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-patch link:    https://lore.kernel.org/r/20240130214620.3155380-2-stefanb%40linux.ibm.com
-patch subject: [PATCH 1/5] security: allow finer granularity in permitting copy-up of security xattrs
-config: i386-buildonly-randconfig-002-20240131 (https://download.01.org/0day-ci/archive/20240201/202402010014.MArAf4UB-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240201/202402010014.MArAf4UB-lkp@intel.com/reproduce)
+We could think that it includes LANDLOCK_ACCESS_FS_MAKE_* though (which
+is not the case), but it looks like the least worst...  These synthetic
+access rights are not public anyway.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202402010014.MArAf4UB-lkp@intel.com/
+> > * LANDLOCK_ACCESS_FS_IOCTL_GROUP2:
+> >   LANDLOCK_ACCESS_FS_IOCTL_GET_INNER
 
-All errors (new ones prefixed by >>):
+LANDLOCK_ACCESS_FS_IOCTL_RW_FILE
 
->> security/security.c:2627:38: error: too many arguments to function call, expected single argument 'name', have 2 arguments
-    2627 |         return evm_inode_copy_up_xattr(src, name);
-         |                ~~~~~~~~~~~~~~~~~~~~~~~      ^~~~
-   include/linux/evm.h:121:20: note: 'evm_inode_copy_up_xattr' declared here
-     121 | static inline int  evm_inode_copy_up_xattr(const char *name)
-         |                    ^                       ~~~~~~~~~~~~~~~~
-   1 error generated.
+> > * LANDLOCK_ACCESS_FS_IOCTL_GROUP3:
+> >   LANDLOCK_ACCESS_FS_IOCTL_READ_FILE
 
+LANDLOCK_ACCESS_FS_IOCTL_R_FILE
 
-vim +/name +2627 security/security.c
+> > * LANDLOCK_ACCESS_FS_IOCTL_GROUP4:
+> >   LANDLOCK_ACCESS_FS_IOCTL_WRITE_FILE
 
-  2596	
-  2597	/**
-  2598	 * security_inode_copy_up_xattr() - Filter xattrs in an overlayfs copy-up op
-  2599	 * @src: union dentry of copy-up file
-  2600	 * @name: xattr name
-  2601	 *
-  2602	 * Filter the xattrs being copied up when a unioned file is copied up from a
-  2603	 * lower layer to the union/overlay layer.   The caller is responsible for
-  2604	 * reading and writing the xattrs, this hook is merely a filter.
-  2605	 *
-  2606	 * Return: Returns 0 to accept the xattr, 1 to discard the xattr, -EOPNOTSUPP
-  2607	 *         if the security module does not know about attribute, or a negative
-  2608	 *         error code to abort the copy up.
-  2609	 */
-  2610	int security_inode_copy_up_xattr(struct dentry *src, const char *name)
-  2611	{
-  2612		struct security_hook_list *hp;
-  2613		int rc;
-  2614	
-  2615		/*
-  2616		 * The implementation can return 0 (accept the xattr), 1 (discard the
-  2617		 * xattr), -EOPNOTSUPP if it does not know anything about the xattr or
-  2618		 * any other error code in case of an error.
-  2619		 */
-  2620		hlist_for_each_entry(hp,
-  2621				     &security_hook_heads.inode_copy_up_xattr, list) {
-  2622			rc = hp->hook.inode_copy_up_xattr(src, name);
-  2623			if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
-  2624				return rc;
-  2625		}
-  2626	
-> 2627		return evm_inode_copy_up_xattr(src, name);
-  2628	}
-  2629	EXPORT_SYMBOL(security_inode_copy_up_xattr);
-  2630	
+LANDLOCK_ACCESS_FS_IOCTL_W_FILE
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> Agreed that better names are in order here.
+> I renamed them as you suggested.
+> 
+> In principle, it would have been nice to name them after the access rights which
+> enable them, but LANDLOCK_ACCESS_FS_IOCTL_READ_DIR_OR_READ_FILE_OR_WRITE_FILE is
+> a bit too long for my taste. o_O
+> 
+> 
+> > > > > +	case FIOQSIZE:
+> > > > > +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP1;
+> > > > > +	case FS_IOC_FIEMAP:
+> > > > > +	case FIBMAP:
+> > > > > +	case FIGETBSZ:
+> > 
+> > Does it make sense to not include FIGETBSZ in
+> > LANDLOCK_ACCESS_FS_IOCTL_GROUP1? I think it's OK like this as previously
+
+I guess I meant "Does it make sense *to include* FIGETBSZ in
+LANDLOCK_ACCESS_FS_IOCTL_GROUP1?" Which means to allow it for the
+write_file, read_file and read_dir access rights:
+LANDLOCK_ACCESS_FS_IOCTL_RW.
+
+> > explained but I'd like to get confirmation:
+> > https://lore.kernel.org/r/20230904.aiWae8eineo4@digikod.net
+> 
+> It seems that the more standardized way to get file system block sizes is to use
+> POSIX' statvfs(3) interface, whose functionality is provided through the
+> statfs(2) syscall.  These functions have the usual path-based and fd-based
+> variants.  Landlock does not currently restrict statfs(2) at all, but there is
+> an existing LSM security hook for it.
+> 
+> We should probably introduce an access right to restrict statfs(2) in the
+> future, because this otherwise lets callers probe for the existence of files.  I
+> filed https://github.com/landlock-lsm/linux/issues/18 for it.
+
+According to the struct statfs fields, most of them seems to be useful
+for file writes (e.g. f_bsize) and file creations (e.g. f_ffree) but
+potentially for file read too (e.g. f_bsize). I'm not sure how statfs is
+used in practice though.
+
+> 
+> I am not sure how to group this best.  It seems like a very harmless thing to
+> allow.  (What is to be learned from the filesystem blocksize anyway?)  If we are
+> unsure about it, we could do the following though:
+
+I agree that it seems to be harmless.
+
+When we'll be able to control statfs(2), following the same logic,
+LANDLOCK_ACCESS_FS_IOCTL_RW should allows to use it.  To said it another
+way, implementing the statfs LSM hook doesn't seem to be useful once we
+get the ability to restrict path walks:
+https://github.com/landlock-lsm/linux/issues/9
+Until then, there are other ways to probe for file existence anyway.
+
+> 
+>  - disallow FIGETBSZ unless LANDLOCK_ACCESS_FS_IOCTL ("misc") is granted
+>  - allow FIGETBSZ together with a future access right which controls statfs(2)
+> 
+> In that case, the use of FIGETBSZ would be nicely separable from regular read
+> access for files, and it would be associated with the same right.
+
+If this FIGETBSZ is legitimately used by applications to optimize their
+FS interactions, then we should not mask it under FS_IOCTL because this
+would result of applications allowing FS_IOCTL everywhere, which is not
+what we want.
+
+> 
+> (We could also potentially group FS_IOC_FIEMAP and FIBMAP in the same way.
+> These ones give information about file extents and a file's block numbers.  (You
+> can check whether your file is stored in a continuous area on disk.))
+> 
+> This would simplify the story somewhat for the IOCTLs that we need to
+> immediately give access to.
+> 
+> What do you think?
+
+It would help to trace a lot of generic applications and see which IOCTL
+command are used in practice, we might discover new ones.
+
+> 
+> 
+> > > > > +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP2;
+> > > > > +	case FIONREAD:
+> > > > > +	case FIDEDUPERANGE:
+> > > > > +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP3;
+> > > > > +	case FICLONE:
+> > > > > +	case FICLONERANGE:
+> > 
+> > The FICLONE* commands seems to already check read/write permissions with
+> > generic_file_rw_checks(). Always allowing them should then be OK (and
+> > the current tests should still pass), but we can still keep them here to
+> > make the required access right explicit and test with and without
+> > Landlock restrictions to make sure this is consistent with the VFS
+> > access checks. See
+> > https://lore.kernel.org/r/20230904.aiWae8eineo4@digikod.net
+> > If this is correct, a new test should check that Landlock restrictions
+> > are the same as the VFS checks and then don't impact such IOCTLs.
+> 
+> Noted.  I'll look into it.
+> 
+> (My understanding of FICLONE, FIDEDUPRANGE and FICLONERANGE is that they let
+> files share the same underlying storage, on a per-range basis ("reflink").  The
+> IOCTL man pages for these do not explain that as explicitly, but the key point
+> is that the two resulting files still behave like a regular copy, because this
+> feature exists on COW file systems only.  So that reinforces the approach of
+> using READ_FILE and WRITE_FILE access rights for these IOCTL commands (because
+> it behaves just as if we had called read() on one file and written the results
+> to the other file with write()).)
+> 
+> 
+> > > > > +	case FS_IOC_RESVSP:
+> > > > > +	case FS_IOC_RESVSP64:
+> > > > > +	case FS_IOC_UNRESVSP:
+> > > > > +	case FS_IOC_UNRESVSP64:
+> > > > > +	case FS_IOC_ZERO_RANGE:
+> > > > > +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP4;
+> > > > > +	default:
+> > > > > +		/*
+> > > > > +		 * Other commands are guarded by the catch-all access right.
+> > > > > +		 */
+> > > > > +		return LANDLOCK_ACCESS_FS_IOCTL;
+> > > > > +	}
+> > > > > +}
+> 
+> > We previously talked about allowing all IOCTLs on unix sockets and named
+> > pipes: https://lore.kernel.org/r/ZP7lxmXklksadvz+@google.com
+> 
+> Thanks for the reminder, I missed that.  Putting it on the TODO list.
+> 
+> 
+> > I think the remaining issue with this grouping is that if the VFS
+> > implementation returns -ENOIOCTLCMD, then the IOCTL command can be
+> > forwarded to the device driver (for character or block devices).
+> > For instance, FIONREAD on a character device could translate to unknown
+> > action (on this device), which should then be considered dangerous and
+> > denied unless explicitly allowed with LANDLOCK_ACCESS_FS_IOCTL (but not
+> > any IOCTL_GROUP*).
+> >
+> > For instance, FIONREAD on /dev/null should return -ENOTTY, which should
+> > then also be the case if LANDLOCK_ACCESS_FS_IOCTL is allowed (even if
+> > LANDLOCK_ACCESS_FS_READ_FILE is denied). This is also the case for
+> > file_ioctl()'s commands.
+> > 
+> > One solution to implement this logic would be to add an additional check
+> > in hook_file_ioctl() for specific file types (!S_ISREG or socket or pipe
+> > exceptions) and IOCTL commands.
+> 
+> In my view this seems OK, because we are primarily protecting access to
+> resources (files), and only secondarily reducing the exposed kernel attack
+> surface.
+
+Correct, but of course block and character devices need to be handled.
+seccomp-bpf is the main tool to protect the kernel in this case.
+
+> 
+> I agree there is a certain risk associated with calling ioctl(fd, FIONREAD, ...)
+> on a buggy device driver.  But then again, that risk is comparable to the risk
+> of calling read(fd, &buf, buflen) on the same buggy device driver.  So the
+> LANDLOCK_ACCESS_FS_READ_FILE right grants access to both.  Users who are
+> concerned about the security of specific device drivers can enforce a policy
+> where only the necessary device files can be opened.
+
+I'm thinking about the case where the FIONREAD value is used by a device
+with a completely different semantic. This should be a bad practice but
+this could happen, right Christian?
+
+> 
+> Does that make sense?
+> 
+> (Otherwise, if it makes you feel better, we can also change it so that these
+> IOCTL commands require LANDLOCK_ACCESS_FS_IOCTL if they are used on non-S_ISREG
+> files.  But it would complicate the IOCTL logic a bit, which we are exposing to
+> users.)
+
+I think I'd prefer this approach. I'm not sure how special files (but
+still S_ISREG) are handled though, nor if this could be an issue.
+
+> 
+> 
+> > Christian, is it correct to say that device drivers are not "required"
+> > to follow the same semantic as the VFS's IOCTLs and that (for whatever
+> > reason) collisions may occur? I guess this is not the case for
+> > filesystems, which should implement similar semantic for the same
+> > IOCTLs.
+> 
+> Christian, friendly ping! :)  Do you have opinions on this?
+> 
+> If the Landlock LSM makes decisions based on the IOCTL command numbers, do we
+> have to assume that underlying device drivers might expose different
+> functionality under the same IOCTL command numbers?
+> 
+> Thanks,
+> —Günther
+> 
