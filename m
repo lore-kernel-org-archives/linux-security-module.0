@@ -1,418 +1,132 @@
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A292A4A29
-	for <linux-security-module@vger.kernel.org>; Wed, 31 Jan 2024 00:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14266AC0;
+	Wed, 31 Jan 2024 02:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706661224; cv=none; b=fkqwFozG6GPd8Fe3POeKLDIEyn63dTQyJX9KXSYlZ/BIX0OAQ1ElC1ncfBQzBlHBkaE8g/UhqcXcOHmLarJblk+TGxu+SHc2arWpM0ESJZjrIn83WtXKgX26Ju3ahaqs6A/akksjQTGJVcPwxH/0hqXPv2EERK8iwbTONCDTFTU=
+	t=1706667093; cv=none; b=VFuTfm1XanTSpr1eIdjRMzFhCiml9Rjq6o/MeQ4o+dZJr4YJ2VNdwZlJLAuOqBQPqZGSpqayV12IPJ0JgKdxhZj5bBh6ILCeL1iG6dfGSMWUnGfE2deaJvXo5hSJv4bpBlF4I+wzznjhrVn97XegmOyCpluYM6eXP3c8qnbjkFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706661224; c=relaxed/simple;
-	bh=MlpMpe17byQnY8jNRMvtq9V+mEdIvFpK1rIwcJjPiJk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pXZG+0dClClSb6DHToDZxlr20hMhBQBk5YEa1sl51neJmdRs/GuHLqoMJ3/QM53c8xLGW0tNNV3O2rHaNGDUw4knuCjQ5xjSufpSx8FL6BtO7iMfykcSeSIMuxUeez35PGynaIwKztepOe3gL2As0PjL1VKsG49mYndQHneFMXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=d6DJuzUM; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1706667093; c=relaxed/simple;
+	bh=5V+1lVSFCwl0HqD4XTm+JK1RWoUpkuJT6j5pOs1vZ4k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=albxGSOxOYxFRKgvLmMZxLinmFkUwjRkZmwk4ojRQH7lOasHzTw/JDQ39jJ4ktalcZB/PD4VWNp7hSuyRb4w4C0ed+1ZiOwOTXcs8nG/8pE3Rwh0kTa8TRaaYDo3v/pPuPu4vR49ft2cS7gdvZcs774r0691unANYz5pUTdW1E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UA044uZA; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="d6DJuzUM"
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dc6431e6cc5so3504413276.1
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Jan 2024 16:33:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1706661219; x=1707266019; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lB8vimWsQhN1yyZIs5jadtiNV7hhN6/jhd9OTslaDm4=;
-        b=d6DJuzUM3zEaeFG5l7AM4HoW4KGiYX1BxEZsSPtcWtujojbNw82753M+pmlYoHGV3x
-         NOJb80GQJjvjUWb04vgYSkPFoqWC2qR8aXKsk9uPeWJKGcLH/FqvP+r5YLZU2xoTV8qq
-         kppfu2BB/ahiEZEPFelTKbfWR/i6dqgIYjQRzOpT/+ZpOyWNKPTPSDNR+QW6rcnm9aGe
-         HKO5AJrqxrsKvajmIaa+7NcgEFtqKv+fm/Ajupj8GzUYHjmC8IG2OghSWVZTM4kUQ0EH
-         wu/T6ekcCiIMuDQsHjgi8aeRlel+GdWBHpZcGsz/v4z6R8+0kZ3eJjg3E055W0QRhM2Y
-         H6xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706661219; x=1707266019;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lB8vimWsQhN1yyZIs5jadtiNV7hhN6/jhd9OTslaDm4=;
-        b=GWGS19Wwze9H6tjQ0pp10xpbES9EVGUPL8tPoKJkDL7uuYm3SRzW84YTHhHGD/5Uj/
-         Su3i4cZ4CA/d8qvxwbBEfaehsHAumlXgpXgynGVZdzccLzhTKKoewNLqId9oT6dzUTYG
-         dIIj8YBxXCNGqi2NFLjsxlRB2AFk4H0mpVFLjXs3qIdu1/Nr69NvXt+dpYHHuojKl8Ck
-         FSz5YE1TceH6vZ2ZlbI2PCxPdbMa5r8HinmdZ5Bt6I4rRlqSDaidTGipFf/nfn3awJ94
-         1IuBGuP/llGTQ7YxpUiqBqJBuDtDMY08BIiO6CgkvYiepII4oArrKmDtwYlIkJtCZbo6
-         /utg==
-X-Gm-Message-State: AOJu0Yxd1FBCQ1n2zID7PbIZ0SKcDJtPgVYh3nWzA76AkIDD98aZgCuu
-	FktW9ko9JYFOFWAdmcqDdtcNvmWWnV6fmgP7MMdoxMUzHYM2JubPC0bp9PV/n2L69dDsF7iqQuv
-	sRq31nvP9P9iKFtYzG/0nLlHJe9iLL9uOEBFE
-X-Google-Smtp-Source: AGHT+IE7nf3qdroHgyYSp4bah/urChGJ62mYghWOusTIACxAYytGtfpYBkxIjGm0CJZCeFD2y+xAbrWW4AeU1HQBCt0=
-X-Received: by 2002:a25:6b0a:0:b0:dc2:2b1e:4b99 with SMTP id
- g10-20020a256b0a000000b00dc22b1e4b99mr219191ybc.42.1706661219295; Tue, 30 Jan
- 2024 16:33:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UA044uZA"
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40UNr8SG014227;
+	Wed, 31 Jan 2024 02:11:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=titW6woM4Us3aYaR4S1UO/MqF5zLOoOIb81u5xnqcLA=;
+ b=UA044uZAKJwp402Sybb0iOQkotJv4O2uAg4KnLxRPItk8jnFjMeqB4YX2xuQTvHupzOq
+ B5nekJ8yzW/ZYaPhr8Ea9i7EISbJHjd6CKZf0JIYNS36FbRSYRJ0oiKWNli8fObXb+QD
+ s7d6WZzm0tkJ6d0qq0MlPuqeTDzrbQhm41K63bVdJXnAhtRkB1sgz6LG9p9CX+dw5sqn
+ P5tE3gJX2oEYxlynUgwRgvYtjKDi7lQ6YY8LX+xx3rxNiBWb8V4GLPVtZimKON9FaYKY
+ bXBKp7sq8swv/Gz/QG8v5y7O+sRCLe/wd2u/IEuxNltjThvkO2XkUrWIML02PsY7T5AC YA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vyb5x2df3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jan 2024 02:11:18 +0000
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 40V1xgus014362;
+	Wed, 31 Jan 2024 02:11:18 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vyb5x2da0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jan 2024 02:11:17 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 40V20Hcb008234;
+	Wed, 31 Jan 2024 02:10:49 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3vwdnm2ggp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jan 2024 02:10:49 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 40V2AmYS5440320
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 31 Jan 2024 02:10:48 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A483958052;
+	Wed, 31 Jan 2024 02:10:48 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C15A158056;
+	Wed, 31 Jan 2024 02:10:47 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 31 Jan 2024 02:10:47 +0000 (GMT)
+Message-ID: <38230b4c-54ae-45ed-a6fb-34e63501e5b1@linux.ibm.com>
+Date: Tue, 30 Jan 2024 21:10:47 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240129133058.1627971-1-omosnace@redhat.com> <CAHC9VhSzdvJ2DAgV75Tdxk+tOLuhY-vM+BTT--Mfn6xoxVKbxQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhSzdvJ2DAgV75Tdxk+tOLuhY-vM+BTT--Mfn6xoxVKbxQ@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 30 Jan 2024 19:33:28 -0500
-Message-ID: <CAHC9VhQRSWMRAg=y5cUx9+XLG4A2_+WSqJN1RgQQ8bF=VDwnWw@mail.gmail.com>
-Subject: Re: [PATCH] security: fix no-op hook logic in security_inode_{set,remove}xattr()
-To: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000ba8f630610330757"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] evm: Use the real inode's metadata to calculate
+ metadata hash
+To: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, zohar@linux.ibm.com, roberto.sassu@huawei.com,
+        amir73il@gmail.com, miklos@szeredi.hu
+References: <20240130214620.3155380-1-stefanb@linux.ibm.com>
+ <20240130214620.3155380-5-stefanb@linux.ibm.com>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20240130214620.3155380-5-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Zc1qrXxFCD3ijIZFAPrQM6sGqbDaSGHp
+X-Proofpoint-ORIG-GUID: zaUA5QI1SqCbCcF4YyZKcyyHfxVKhZXa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-30_14,2024-01-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 priorityscore=1501 phishscore=0 impostorscore=0 mlxscore=0
+ adultscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2401310017
 
---000000000000ba8f630610330757
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 30, 2024 at 7:09=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Mon, Jan 29, 2024 at 8:31=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.=
-com> wrote:
-> >
-> > These two hooks currently work like this:
-> > 1. If no LSM registers the hook, cap_inode_{set,remove}xattr() is
-> >    called.
-> > 2. If an LSM hook call returns 0, the loop continues to call further
-> >    LSMs (and only stops on an error return value).
-> > 3. The "default" return value is 0, so e.g. the default BPF LSM hook
-> >    just returns 0.
-> >
-> > This works if BPF LSM is enabled along with SELinux or SMACK (or not
-> > enabled at all), but if it's the only LSM implementing the hook, then
-> > the cap_inode_{set,remove}xattr() is erroneously skipped.
-> >
-> > Fix this by using 1 as the default return value and make the loop
-> > recognize it as a no-op return value (i.e. if an LSM returns this value
-> > it is treated as if it wasn't called at all). The final logic is simila=
-r
-> > to that of security_fs_context_parse_param().
-> >
-> > Fixes: 98e828a0650f ("security: Refactor declaration of LSM hooks")
-> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > ---
-> >  include/linux/lsm_hook_defs.h |  4 ++--
-> >  security/security.c           | 45 +++++++++++++++++++++++++----------
-> >  2 files changed, 35 insertions(+), 14 deletions(-)
->
-> Thanks for working on this Ondrej, I've got a couple of thoughts on
-> the approach taken here, but we definitely need to fix this.
->
-> My first thought is that we really should move the
-> cap_inode_setxattr() and cap_inode_removexattr() calls in security.c
-> over to using the LSM hook infrastructure just as we do with other
-> capability hooks in commoncap.c:
->
->   LSM_HOOK_INIT(inode_setxattr, cap_inode_setxattr);
->   LSM_HOOK_INIT(inode_removexattr, cap_inode_removexattr);
->
-> ... of course we will need to adjust cap_inode_setxattr to take (and
-> ignore the idmap) parameter, but that is easy enough.  It looks like
-> cap_inode_removexattr() can be used as-is.  Modifications to the only
-> two LSMs, SELinux and Smack, which explicitly call out to these
-> capability hooks looks rather straightforward as well.  Doing this
-> should simplify the LSM hooks significantly, and lower the chance of a
-> future LSM mistakenly not doing the required capability calls.  There
-> should also be a slight performance bump for the few (one? two?)
-> people running both SELinux and Smack in a production environment.
->
-> My second thought is that we *really* need to add to the function
-> header block comment/description for both these hooks.  Of course the
-> details here will change depending on the bits above about the
-> capability hooks, but if we need any special handling like you're
-> proposing here we really should document it in the hook's header
-> block.
 
-A completely untested, other than compiling security/, patch is below
-demonstrating what I was thinking.  I've also attached the same patch
-in case anyone wants to actually try it out as the cut-n-paste version
-below is surely whitespace damaged.  I will warn you that this was
-hastily thrown together so it is very likely I screwed something up :)
+On 1/30/24 16:46, Stefan Berger wrote:
+> Changes to the file attribute (mode bits, uid, gid) on the lower layer
+> are not take into account when d_backing_inode() is used when a file is
+> accessed on the overlay layer and this file has not yet been copied up.
+> This is because d_backing_inode() does not return the real inode of the
+> lower layer but instead returns the backing inode which holds old file
+> attributes. When the old file attributes are used for calculating the
+> metadata hash then the expected hash is calculated and the file then
+> mistakenly passes signature verification. Therefore, use d_real_inode()
+> which returns the inode of the lower layer for as long as the file has
+> not been copied up and returns the upper layer's inode otherwise.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>   security/integrity/evm/evm_crypto.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> index b1ffd4cc0b44..2e48fe54e899 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -223,7 +223,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+>   				 size_t req_xattr_value_len,
+>   				 uint8_t type, struct evm_digest *data)
+>   {
+> -	struct inode *inode = d_backing_inode(dentry);
+> +	struct inode *inode = d_real_inode(dentry);
+>   	struct xattr_list *xattr;
+>   	struct shash_desc *desc;
+>   	size_t xattr_size = 0;
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index d0eb20f90b26..2d3c0af33b65 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -156,7 +156,8 @@ extern int cap_capset(struct cred *new, const
-struct cred *old,
-        const kernel_cap_t *inheritable,
-        const kernel_cap_t *permitted);
- extern int cap_bprm_creds_from_file(struct linux_binprm *bprm, const
-struct file *file);
--int cap_inode_setxattr(struct dentry *dentry, const char *name,
-+int cap_inode_setxattr(struct mnt_idmap *idmap,
-+        struct dentry *dentry, const char *name,
-         const void *value, size_t size, int flags);
- int cap_inode_removexattr(struct mnt_idmap *idmap,
-    struct dentry *dentry, const char *name);
-@@ -888,7 +889,7 @@ static inline int security_inode_setxattr(struct
-mnt_idmap *idmap,
-  struct dentry *dentry, const char *name, const void *value,
-  size_t size, int flags)
- {
-- return cap_inode_setxattr(dentry, name, value, size, flags);
-+ return cap_inode_setxattr(idmap, dentry, name, value, size, flags);
- }
-
- static inline int security_inode_set_acl(struct mnt_idmap *idmap,
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 162d96b3a676..34caf0e19b2f 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -975,6 +975,7 @@ int cap_bprm_creds_from_file(struct linux_binprm
-*bprm, const struct file *file)
-
- /**
-  * cap_inode_setxattr - Determine whether an xattr may be altered
-+ * @idmap: idmap of the mount
-  * @dentry: The inode/dentry being altered
-  * @name: The name of the xattr to be changed
-  * @value: The value that the xattr will be changed to
-@@ -987,7 +988,8 @@ int cap_bprm_creds_from_file(struct linux_binprm
-*bprm, const struct file *file)
-  * This is used to make sure security xattrs don't get updated or set by t=
-hose
-  * who aren't privileged to do so.
-  */
--int cap_inode_setxattr(struct dentry *dentry, const char *name,
-+int cap_inode_setxattr(struct mnt_idmap *idmap,
-+        struct dentry *dentry, const char *name,
-         const void *value, size_t size, int flags)
- {
-  struct user_namespace *user_ns =3D dentry->d_sb->s_user_ns;
-@@ -1457,6 +1459,8 @@ static struct security_hook_list
-capability_hooks[] __ro_after_init =3D {
-  LSM_HOOK_INIT(inode_need_killpriv, cap_inode_need_killpriv),
-  LSM_HOOK_INIT(inode_killpriv, cap_inode_killpriv),
-  LSM_HOOK_INIT(inode_getsecurity, cap_inode_getsecurity),
-+ LSM_HOOK_INIT(inode_setxattr, cap_inode_setxattr),
-+ LSM_HOOK_INIT(inode_removexattr, cap_inode_removexattr),
-  LSM_HOOK_INIT(mmap_addr, cap_mmap_addr),
-  LSM_HOOK_INIT(mmap_file, cap_mmap_file),
-  LSM_HOOK_INIT(task_fix_setuid, cap_task_fix_setuid),
-diff --git a/security/security.c b/security/security.c
-index 3aaad75c9ce8..6425d177b301 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2258,15 +2258,9 @@ int security_inode_setxattr(struct mnt_idmap *idmap,
-
-  if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-  return 0;
-- /*
-- * SELinux and Smack integrate the cap call,
-- * so assume that all LSMs supplying this call do so.
-- */
-- ret =3D call_int_hook(inode_setxattr, 1, idmap, dentry, name, value,
--     size, flags);
-
-- if (ret =3D=3D 1)
-- ret =3D cap_inode_setxattr(dentry, name, value, size, flags);
-+ ret =3D call_int_hook(inode_setxattr, 0, idmap, dentry, name, value,
-+     size, flags);
-  if (ret)
-  return ret;
-  ret =3D ima_inode_setxattr(dentry, name, value, size);
-@@ -2421,13 +2415,8 @@ int security_inode_removexattr(struct mnt_idmap *idm=
-ap,
-
-  if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-  return 0;
-- /*
-- * SELinux and Smack integrate the cap call,
-- * so assume that all LSMs supplying this call do so.
-- */
-- ret =3D call_int_hook(inode_removexattr, 1, idmap, dentry, name);
-- if (ret =3D=3D 1)
-- ret =3D cap_inode_removexattr(idmap, dentry, name);
-+
-+ ret =3D call_int_hook(inode_removexattr, 0, idmap, dentry, name);
-  if (ret)
-  return ret;
-  ret =3D ima_inode_removexattr(dentry, name);
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index a6bf90ace84c..49cb331a0d84 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3193,10 +3193,6 @@ static int selinux_inode_setxattr(struct
-mnt_idmap *idmap,
-  int rc =3D 0;
-
-  if (strcmp(name, XATTR_NAME_SELINUX)) {
-- rc =3D cap_inode_setxattr(dentry, name, value, size, flags);
-- if (rc)
-- return rc;
--
-  /* Not an attribute we recognize, so just check the
-     ordinary setattr permission. */
-  return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
-@@ -3350,10 +3346,6 @@ static int selinux_inode_removexattr(struct
-mnt_idmap *idmap,
-       struct dentry *dentry, const char *name)
- {
-  if (strcmp(name, XATTR_NAME_SELINUX)) {
-- int rc =3D cap_inode_removexattr(idmap, dentry, name);
-- if (rc)
-- return rc;
--
-  /* Not an attribute we recognize, so just check the
-     ordinary setattr permission. */
-  return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 0fdbf04cc258..34b74e442412 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1317,8 +1317,7 @@ static int smack_inode_setxattr(struct mnt_idmap *idm=
-ap,
-  if (size !=3D TRANS_TRUE_SIZE ||
-      strncmp(value, TRANS_TRUE, TRANS_TRUE_SIZE) !=3D 0)
-  rc =3D -EINVAL;
-- } else
-- rc =3D cap_inode_setxattr(dentry, name, value, size, flags);
-+ }
-
-  if (check_priv && !smack_privileged(CAP_MAC_ADMIN))
-  rc =3D -EPERM;
-@@ -1426,12 +1425,8 @@ static int smack_inode_removexattr(struct
-mnt_idmap *idmap,
-      strcmp(name, XATTR_NAME_SMACKTRANSMUTE) =3D=3D 0 ||
-      strcmp(name, XATTR_NAME_SMACKMMAP) =3D=3D 0) {
-  if (!smack_privileged(CAP_MAC_ADMIN))
-- rc =3D -EPERM;
-- } else
-- rc =3D cap_inode_removexattr(idmap, dentry, name);
--
-- if (rc !=3D 0)
-- return rc;
-+ return -EPERM;
-+ }
-
-  smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
-  smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
-
---=20
-paul-moore.com
-
---000000000000ba8f630610330757
-Content-Type: text/x-patch; charset="US-ASCII"; name="01-XXX-lsm-inode_cap_fixes.patch"
-Content-Disposition: attachment; filename="01-XXX-lsm-inode_cap_fixes.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_ls11x5d30>
-X-Attachment-Id: f_ls11x5d30
-
-bHNtLHNlbGludXgsc21hY2s6IGZpeC9jbGVhbnVwIHNlY3VyaXR5X2lub2RlX3tzZXQscmVtb3Zl
-fXhhdHRyKCkKCkZyb206IFBhdWwgTW9vcmUgPHBhdWxAcGF1bC1tb29yZS5jb20+CgpYWFggd3Jp
-dGUgYSBwcm9wZXIgY29tbWl0IGRlc2NyaXB0aW9uCgpTaWduZWQtb2ZmLWJ5OiBQYXVsIE1vb3Jl
-IDxwYXVsQHBhdWwtbW9vcmUuY29tPgotLS0KIGluY2x1ZGUvbGludXgvc2VjdXJpdHkuaCAgIHwg
-ICAgNSArKystLQogc2VjdXJpdHkvY29tbW9uY2FwLmMgICAgICAgfCAgICA2ICsrKysrLQogc2Vj
-dXJpdHkvc2VjdXJpdHkuYyAgICAgICAgfCAgIDE5ICsrKystLS0tLS0tLS0tLS0tLS0KIHNlY3Vy
-aXR5L3NlbGludXgvaG9va3MuYyAgIHwgICAgOCAtLS0tLS0tLQogc2VjdXJpdHkvc21hY2svc21h
-Y2tfbHNtLmMgfCAgIDExICsrKy0tLS0tLS0tCiA1IGZpbGVzIGNoYW5nZWQsIDE1IGluc2VydGlv
-bnMoKyksIDM0IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvc2VjdXJp
-dHkuaCBiL2luY2x1ZGUvbGludXgvc2VjdXJpdHkuaAppbmRleCBkMGViMjBmOTBiMjYuLjJkM2Mw
-YWYzM2I2NSAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9zZWN1cml0eS5oCisrKyBiL2luY2x1
-ZGUvbGludXgvc2VjdXJpdHkuaApAQCAtMTU2LDcgKzE1Niw4IEBAIGV4dGVybiBpbnQgY2FwX2Nh
-cHNldChzdHJ1Y3QgY3JlZCAqbmV3LCBjb25zdCBzdHJ1Y3QgY3JlZCAqb2xkLAogCQkgICAgICBj
-b25zdCBrZXJuZWxfY2FwX3QgKmluaGVyaXRhYmxlLAogCQkgICAgICBjb25zdCBrZXJuZWxfY2Fw
-X3QgKnBlcm1pdHRlZCk7CiBleHRlcm4gaW50IGNhcF9icHJtX2NyZWRzX2Zyb21fZmlsZShzdHJ1
-Y3QgbGludXhfYmlucHJtICpicHJtLCBjb25zdCBzdHJ1Y3QgZmlsZSAqZmlsZSk7Ci1pbnQgY2Fw
-X2lub2RlX3NldHhhdHRyKHN0cnVjdCBkZW50cnkgKmRlbnRyeSwgY29uc3QgY2hhciAqbmFtZSwK
-K2ludCBjYXBfaW5vZGVfc2V0eGF0dHIoc3RydWN0IG1udF9pZG1hcCAqaWRtYXAsCisJCSAgICAg
-ICBzdHJ1Y3QgZGVudHJ5ICpkZW50cnksIGNvbnN0IGNoYXIgKm5hbWUsCiAJCSAgICAgICBjb25z
-dCB2b2lkICp2YWx1ZSwgc2l6ZV90IHNpemUsIGludCBmbGFncyk7CiBpbnQgY2FwX2lub2RlX3Jl
-bW92ZXhhdHRyKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFwLAogCQkJICBzdHJ1Y3QgZGVudHJ5ICpk
-ZW50cnksIGNvbnN0IGNoYXIgKm5hbWUpOwpAQCAtODg4LDcgKzg4OSw3IEBAIHN0YXRpYyBpbmxp
-bmUgaW50IHNlY3VyaXR5X2lub2RlX3NldHhhdHRyKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFwLAog
-CQlzdHJ1Y3QgZGVudHJ5ICpkZW50cnksIGNvbnN0IGNoYXIgKm5hbWUsIGNvbnN0IHZvaWQgKnZh
-bHVlLAogCQlzaXplX3Qgc2l6ZSwgaW50IGZsYWdzKQogewotCXJldHVybiBjYXBfaW5vZGVfc2V0
-eGF0dHIoZGVudHJ5LCBuYW1lLCB2YWx1ZSwgc2l6ZSwgZmxhZ3MpOworCXJldHVybiBjYXBfaW5v
-ZGVfc2V0eGF0dHIoaWRtYXAsIGRlbnRyeSwgbmFtZSwgdmFsdWUsIHNpemUsIGZsYWdzKTsKIH0K
-IAogc3RhdGljIGlubGluZSBpbnQgc2VjdXJpdHlfaW5vZGVfc2V0X2FjbChzdHJ1Y3QgbW50X2lk
-bWFwICppZG1hcCwKZGlmZiAtLWdpdCBhL3NlY3VyaXR5L2NvbW1vbmNhcC5jIGIvc2VjdXJpdHkv
-Y29tbW9uY2FwLmMKaW5kZXggMTYyZDk2YjNhNjc2Li4zNGNhZjBlMTliMmYgMTAwNjQ0Ci0tLSBh
-L3NlY3VyaXR5L2NvbW1vbmNhcC5jCisrKyBiL3NlY3VyaXR5L2NvbW1vbmNhcC5jCkBAIC05NzUs
-NiArOTc1LDcgQEAgaW50IGNhcF9icHJtX2NyZWRzX2Zyb21fZmlsZShzdHJ1Y3QgbGludXhfYmlu
-cHJtICpicHJtLCBjb25zdCBzdHJ1Y3QgZmlsZSAqZmlsZSkKIAogLyoqCiAgKiBjYXBfaW5vZGVf
-c2V0eGF0dHIgLSBEZXRlcm1pbmUgd2hldGhlciBhbiB4YXR0ciBtYXkgYmUgYWx0ZXJlZAorICog
-QGlkbWFwOiBpZG1hcCBvZiB0aGUgbW91bnQKICAqIEBkZW50cnk6IFRoZSBpbm9kZS9kZW50cnkg
-YmVpbmcgYWx0ZXJlZAogICogQG5hbWU6IFRoZSBuYW1lIG9mIHRoZSB4YXR0ciB0byBiZSBjaGFu
-Z2VkCiAgKiBAdmFsdWU6IFRoZSB2YWx1ZSB0aGF0IHRoZSB4YXR0ciB3aWxsIGJlIGNoYW5nZWQg
-dG8KQEAgLTk4Nyw3ICs5ODgsOCBAQCBpbnQgY2FwX2Jwcm1fY3JlZHNfZnJvbV9maWxlKHN0cnVj
-dCBsaW51eF9iaW5wcm0gKmJwcm0sIGNvbnN0IHN0cnVjdCBmaWxlICpmaWxlKQogICogVGhpcyBp
-cyB1c2VkIHRvIG1ha2Ugc3VyZSBzZWN1cml0eSB4YXR0cnMgZG9uJ3QgZ2V0IHVwZGF0ZWQgb3Ig
-c2V0IGJ5IHRob3NlCiAgKiB3aG8gYXJlbid0IHByaXZpbGVnZWQgdG8gZG8gc28uCiAgKi8KLWlu
-dCBjYXBfaW5vZGVfc2V0eGF0dHIoc3RydWN0IGRlbnRyeSAqZGVudHJ5LCBjb25zdCBjaGFyICpu
-YW1lLAoraW50IGNhcF9pbm9kZV9zZXR4YXR0cihzdHJ1Y3QgbW50X2lkbWFwICppZG1hcCwKKwkJ
-ICAgICAgIHN0cnVjdCBkZW50cnkgKmRlbnRyeSwgY29uc3QgY2hhciAqbmFtZSwKIAkJICAgICAg
-IGNvbnN0IHZvaWQgKnZhbHVlLCBzaXplX3Qgc2l6ZSwgaW50IGZsYWdzKQogewogCXN0cnVjdCB1
-c2VyX25hbWVzcGFjZSAqdXNlcl9ucyA9IGRlbnRyeS0+ZF9zYi0+c191c2VyX25zOwpAQCAtMTQ1
-Nyw2ICsxNDU5LDggQEAgc3RhdGljIHN0cnVjdCBzZWN1cml0eV9ob29rX2xpc3QgY2FwYWJpbGl0
-eV9ob29rc1tdIF9fcm9fYWZ0ZXJfaW5pdCA9IHsKIAlMU01fSE9PS19JTklUKGlub2RlX25lZWRf
-a2lsbHByaXYsIGNhcF9pbm9kZV9uZWVkX2tpbGxwcml2KSwKIAlMU01fSE9PS19JTklUKGlub2Rl
-X2tpbGxwcml2LCBjYXBfaW5vZGVfa2lsbHByaXYpLAogCUxTTV9IT09LX0lOSVQoaW5vZGVfZ2V0
-c2VjdXJpdHksIGNhcF9pbm9kZV9nZXRzZWN1cml0eSksCisJTFNNX0hPT0tfSU5JVChpbm9kZV9z
-ZXR4YXR0ciwgY2FwX2lub2RlX3NldHhhdHRyKSwKKwlMU01fSE9PS19JTklUKGlub2RlX3JlbW92
-ZXhhdHRyLCBjYXBfaW5vZGVfcmVtb3ZleGF0dHIpLAogCUxTTV9IT09LX0lOSVQobW1hcF9hZGRy
-LCBjYXBfbW1hcF9hZGRyKSwKIAlMU01fSE9PS19JTklUKG1tYXBfZmlsZSwgY2FwX21tYXBfZmls
-ZSksCiAJTFNNX0hPT0tfSU5JVCh0YXNrX2ZpeF9zZXR1aWQsIGNhcF90YXNrX2ZpeF9zZXR1aWQp
-LApkaWZmIC0tZ2l0IGEvc2VjdXJpdHkvc2VjdXJpdHkuYyBiL3NlY3VyaXR5L3NlY3VyaXR5LmMK
-aW5kZXggM2FhYWQ3NWM5Y2U4Li42NDI1ZDE3N2IzMDEgMTAwNjQ0Ci0tLSBhL3NlY3VyaXR5L3Nl
-Y3VyaXR5LmMKKysrIGIvc2VjdXJpdHkvc2VjdXJpdHkuYwpAQCAtMjI1OCwxNSArMjI1OCw5IEBA
-IGludCBzZWN1cml0eV9pbm9kZV9zZXR4YXR0cihzdHJ1Y3QgbW50X2lkbWFwICppZG1hcCwKIAog
-CWlmICh1bmxpa2VseShJU19QUklWQVRFKGRfYmFja2luZ19pbm9kZShkZW50cnkpKSkpCiAJCXJl
-dHVybiAwOwotCS8qCi0JICogU0VMaW51eCBhbmQgU21hY2sgaW50ZWdyYXRlIHRoZSBjYXAgY2Fs
-bCwKLQkgKiBzbyBhc3N1bWUgdGhhdCBhbGwgTFNNcyBzdXBwbHlpbmcgdGhpcyBjYWxsIGRvIHNv
-LgotCSAqLwotCXJldCA9IGNhbGxfaW50X2hvb2soaW5vZGVfc2V0eGF0dHIsIDEsIGlkbWFwLCBk
-ZW50cnksIG5hbWUsIHZhbHVlLAotCQkJICAgIHNpemUsIGZsYWdzKTsKIAotCWlmIChyZXQgPT0g
-MSkKLQkJcmV0ID0gY2FwX2lub2RlX3NldHhhdHRyKGRlbnRyeSwgbmFtZSwgdmFsdWUsIHNpemUs
-IGZsYWdzKTsKKwlyZXQgPSBjYWxsX2ludF9ob29rKGlub2RlX3NldHhhdHRyLCAwLCBpZG1hcCwg
-ZGVudHJ5LCBuYW1lLCB2YWx1ZSwKKwkJCSAgICBzaXplLCBmbGFncyk7CiAJaWYgKHJldCkKIAkJ
-cmV0dXJuIHJldDsKIAlyZXQgPSBpbWFfaW5vZGVfc2V0eGF0dHIoZGVudHJ5LCBuYW1lLCB2YWx1
-ZSwgc2l6ZSk7CkBAIC0yNDIxLDEzICsyNDE1LDggQEAgaW50IHNlY3VyaXR5X2lub2RlX3JlbW92
-ZXhhdHRyKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFwLAogCiAJaWYgKHVubGlrZWx5KElTX1BSSVZB
-VEUoZF9iYWNraW5nX2lub2RlKGRlbnRyeSkpKSkKIAkJcmV0dXJuIDA7Ci0JLyoKLQkgKiBTRUxp
-bnV4IGFuZCBTbWFjayBpbnRlZ3JhdGUgdGhlIGNhcCBjYWxsLAotCSAqIHNvIGFzc3VtZSB0aGF0
-IGFsbCBMU01zIHN1cHBseWluZyB0aGlzIGNhbGwgZG8gc28uCi0JICovCi0JcmV0ID0gY2FsbF9p
-bnRfaG9vayhpbm9kZV9yZW1vdmV4YXR0ciwgMSwgaWRtYXAsIGRlbnRyeSwgbmFtZSk7Ci0JaWYg
-KHJldCA9PSAxKQotCQlyZXQgPSBjYXBfaW5vZGVfcmVtb3ZleGF0dHIoaWRtYXAsIGRlbnRyeSwg
-bmFtZSk7CisKKwlyZXQgPSBjYWxsX2ludF9ob29rKGlub2RlX3JlbW92ZXhhdHRyLCAwLCBpZG1h
-cCwgZGVudHJ5LCBuYW1lKTsKIAlpZiAocmV0KQogCQlyZXR1cm4gcmV0OwogCXJldCA9IGltYV9p
-bm9kZV9yZW1vdmV4YXR0cihkZW50cnksIG5hbWUpOwpkaWZmIC0tZ2l0IGEvc2VjdXJpdHkvc2Vs
-aW51eC9ob29rcy5jIGIvc2VjdXJpdHkvc2VsaW51eC9ob29rcy5jCmluZGV4IGE2YmY5MGFjZTg0
-Yy4uNDljYjMzMWEwZDg0IDEwMDY0NAotLS0gYS9zZWN1cml0eS9zZWxpbnV4L2hvb2tzLmMKKysr
-IGIvc2VjdXJpdHkvc2VsaW51eC9ob29rcy5jCkBAIC0zMTkzLDEwICszMTkzLDYgQEAgc3RhdGlj
-IGludCBzZWxpbnV4X2lub2RlX3NldHhhdHRyKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFwLAogCWlu
-dCByYyA9IDA7CiAKIAlpZiAoc3RyY21wKG5hbWUsIFhBVFRSX05BTUVfU0VMSU5VWCkpIHsKLQkJ
-cmMgPSBjYXBfaW5vZGVfc2V0eGF0dHIoZGVudHJ5LCBuYW1lLCB2YWx1ZSwgc2l6ZSwgZmxhZ3Mp
-OwotCQlpZiAocmMpCi0JCQlyZXR1cm4gcmM7Ci0KIAkJLyogTm90IGFuIGF0dHJpYnV0ZSB3ZSBy
-ZWNvZ25pemUsIHNvIGp1c3QgY2hlY2sgdGhlCiAJCSAgIG9yZGluYXJ5IHNldGF0dHIgcGVybWlz
-c2lvbi4gKi8KIAkJcmV0dXJuIGRlbnRyeV9oYXNfcGVybShjdXJyZW50X2NyZWQoKSwgZGVudHJ5
-LCBGSUxFX19TRVRBVFRSKTsKQEAgLTMzNTAsMTAgKzMzNDYsNiBAQCBzdGF0aWMgaW50IHNlbGlu
-dXhfaW5vZGVfcmVtb3ZleGF0dHIoc3RydWN0IG1udF9pZG1hcCAqaWRtYXAsCiAJCQkJICAgICBz
-dHJ1Y3QgZGVudHJ5ICpkZW50cnksIGNvbnN0IGNoYXIgKm5hbWUpCiB7CiAJaWYgKHN0cmNtcChu
-YW1lLCBYQVRUUl9OQU1FX1NFTElOVVgpKSB7Ci0JCWludCByYyA9IGNhcF9pbm9kZV9yZW1vdmV4
-YXR0cihpZG1hcCwgZGVudHJ5LCBuYW1lKTsKLQkJaWYgKHJjKQotCQkJcmV0dXJuIHJjOwotCiAJ
-CS8qIE5vdCBhbiBhdHRyaWJ1dGUgd2UgcmVjb2duaXplLCBzbyBqdXN0IGNoZWNrIHRoZQogCQkg
-ICBvcmRpbmFyeSBzZXRhdHRyIHBlcm1pc3Npb24uICovCiAJCXJldHVybiBkZW50cnlfaGFzX3Bl
-cm0oY3VycmVudF9jcmVkKCksIGRlbnRyeSwgRklMRV9fU0VUQVRUUik7CmRpZmYgLS1naXQgYS9z
-ZWN1cml0eS9zbWFjay9zbWFja19sc20uYyBiL3NlY3VyaXR5L3NtYWNrL3NtYWNrX2xzbS5jCmlu
-ZGV4IDBmZGJmMDRjYzI1OC4uMzRiNzRlNDQyNDEyIDEwMDY0NAotLS0gYS9zZWN1cml0eS9zbWFj
-ay9zbWFja19sc20uYworKysgYi9zZWN1cml0eS9zbWFjay9zbWFja19sc20uYwpAQCAtMTMxNyw4
-ICsxMzE3LDcgQEAgc3RhdGljIGludCBzbWFja19pbm9kZV9zZXR4YXR0cihzdHJ1Y3QgbW50X2lk
-bWFwICppZG1hcCwKIAkJaWYgKHNpemUgIT0gVFJBTlNfVFJVRV9TSVpFIHx8CiAJCSAgICBzdHJu
-Y21wKHZhbHVlLCBUUkFOU19UUlVFLCBUUkFOU19UUlVFX1NJWkUpICE9IDApCiAJCQlyYyA9IC1F
-SU5WQUw7Ci0JfSBlbHNlCi0JCXJjID0gY2FwX2lub2RlX3NldHhhdHRyKGRlbnRyeSwgbmFtZSwg
-dmFsdWUsIHNpemUsIGZsYWdzKTsKKwl9CiAKIAlpZiAoY2hlY2tfcHJpdiAmJiAhc21hY2tfcHJp
-dmlsZWdlZChDQVBfTUFDX0FETUlOKSkKIAkJcmMgPSAtRVBFUk07CkBAIC0xNDI2LDEyICsxNDI1
-LDggQEAgc3RhdGljIGludCBzbWFja19pbm9kZV9yZW1vdmV4YXR0cihzdHJ1Y3QgbW50X2lkbWFw
-ICppZG1hcCwKIAkgICAgc3RyY21wKG5hbWUsIFhBVFRSX05BTUVfU01BQ0tUUkFOU01VVEUpID09
-IDAgfHwKIAkgICAgc3RyY21wKG5hbWUsIFhBVFRSX05BTUVfU01BQ0tNTUFQKSA9PSAwKSB7CiAJ
-CWlmICghc21hY2tfcHJpdmlsZWdlZChDQVBfTUFDX0FETUlOKSkKLQkJCXJjID0gLUVQRVJNOwot
-CX0gZWxzZQotCQlyYyA9IGNhcF9pbm9kZV9yZW1vdmV4YXR0cihpZG1hcCwgZGVudHJ5LCBuYW1l
-KTsKLQotCWlmIChyYyAhPSAwKQotCQlyZXR1cm4gcmM7CisJCQlyZXR1cm4gLUVQRVJNOworCX0K
-IAogCXNta19hZF9pbml0KCZhZCwgX19mdW5jX18sIExTTV9BVURJVF9EQVRBX0RFTlRSWSk7CiAJ
-c21rX2FkX3NldGZpZWxkX3VfZnNfcGF0aF9kZW50cnkoJmFkLCBkZW50cnkpOwo=
---000000000000ba8f630610330757--
+We need this patch when NOT activating CONFIG_OVERLAY_FS_METACOPY but 
+when setting CONFIG_OVERLAY_FS_METACOPY=y it has to be reverted...  I am 
+not sure what the solution is.
