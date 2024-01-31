@@ -1,156 +1,103 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855E22134F;
-	Wed, 31 Jan 2024 19:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE783A8C2
+	for <linux-security-module@vger.kernel.org>; Wed, 31 Jan 2024 23:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706728074; cv=none; b=dNA2JtKB8jR3OuBtYsACTOaHZY/2mGvmZE4C+fLTJs04Ui48m4UdYw4Y0b3GgHFp/2mFyLQzAZwoT52yObLU0e365AUUmH7I06XxNX3gC7FLhfEhOTgvhgllpHXc8yDkXJyH65gm/WllFDyykH4kFuEYidNxirnrvR0eogbrBIk=
+	t=1706744779; cv=none; b=MBfCiB1TQi4joks1zryoB+AwXBOwMkfuWy3Z+Uoh/dps6RrksWJiVGinHbFOhnzWa2rxu4wnToIcAMeH0EffRxiRzOI+PxKnBxfxEYPRNqR+U7FCqqZ+V3uU9L0658bfdhp6Z5xYUYA/kkG4y6FQT/vTl8zJTr9F6xi0u2bOpMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706728074; c=relaxed/simple;
-	bh=I5iZ2/I8gzIg+8tRfuEXRpjnuxIQ5+cTB3h6UO2d6VQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=btOWits9msV0dpIg4NPTeqCEfYE9jn1uasyQdQNwZKPrTL7oAnNQvZkjGeZ1+Rtks/rNUnSWceEoxR8UNJ6Spbqu82Aczw7rLL/ZaT8HYBqgByYK36dK6EGuTmxYC+Fe1Lgy7Wlue4y4AdbjBZulGElKwRu2zPPImrs6NEXv5ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lB2qbcdc; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1706744779; c=relaxed/simple;
+	bh=hTDaYZJrU10SSTugPzsW6XZg1W6hwvEaLg7CFxa9ytM=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=Bc4SF0LiTniC3mvjo6pZOyNW/LYCMVlssX5yxH9mjUAEKMNGr9oDFb3TFJCpSKVq0pkcWAmyS3Vg2YZ4LogE04V6YkOlVFbStWI0VC4w8QFz5GdGBnU7WUdK4Q4srjHHlnaFftr06ImHjt28P8z1xLdxt2ZKMD1w3J/5TbJvSm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TJ/o3Tgv; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lB2qbcdc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1706728073; x=1738264073;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=I5iZ2/I8gzIg+8tRfuEXRpjnuxIQ5+cTB3h6UO2d6VQ=;
-  b=lB2qbcdcfIHgqNPNoGW/8PFsUyijQxAGHX4o7lOvSvYXyLLebLptdeij
-   2hF2qGfJFnDKrI5P0pwmodqVyRPeCexLiyZALrfkZTS5BBkKIup9xkz0y
-   vU5acM46/0HvmYJC5pWDefBjbQ56HGQFh5swmzDtesvijco4z2+uOJjrL
-   Cd05lYAP0ufV0JGz4AcWhTnRRWFoAty+ib9GkXp8Ro8EQrCe3qfj1tr1w
-   GGZyfg/DWvRdYkfzRmkoDt9D18Tnaarq1r1nGlvD/Il5EarwEDeAGlMXU
-   bDcpFfFuBPm6vxgOY1WAo2eSO9btkmt48zRil9ys59s9d77SzvNs6JBQ/
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10969"; a="17081541"
-X-IronPort-AV: E=Sophos;i="6.05,233,1701158400"; 
-   d="scan'208";a="17081541"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2024 11:07:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10969"; a="878873430"
-X-IronPort-AV: E=Sophos;i="6.05,233,1701158400"; 
-   d="scan'208";a="878873430"
-Received: from lkp-server02.sh.intel.com (HELO 59f4f4cd5935) ([10.239.97.151])
-  by FMSMGA003.fm.intel.com with ESMTP; 31 Jan 2024 11:07:48 -0800
-Received: from kbuild by 59f4f4cd5935 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rVFw1-0001vE-35;
-	Wed, 31 Jan 2024 19:07:45 +0000
-Date: Thu, 1 Feb 2024 03:06:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	zohar@linux.ibm.com, roberto.sassu@huawei.com, amir73il@gmail.com,
-	miklos@szeredi.hu, Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH 1/5] security: allow finer granularity in permitting
- copy-up of security xattrs
-Message-ID: <202402010225.BXp3LrvU-lkp@intel.com>
-References: <20240130214620.3155380-2-stefanb@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TJ/o3Tgv"
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-46b165745deso185593137.0
+        for <linux-security-module@vger.kernel.org>; Wed, 31 Jan 2024 15:46:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1706744776; x=1707349576; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wjS2NBBVk3rrsqe7JY+MoxAFjS7cR/H8vNXo8eECAdI=;
+        b=TJ/o3TgvNLw+wSxoJlLQ9T9k7AZw+yKSgUI65EJpCrUgzM0wWYf5S+8mUdMoWpQ7FN
+         YyO0TT/PtuXzbGxDSrOLdpFfcn/tmD3vfeMVFmMVfhht4Tq8DpgjH3XRftA+dJSC4okL
+         6PLWwCwrX451RGedKziE3anPFAyoqEqV3msIOo/JpUiuM/bsyEXM0BbPM7vXFTRW7J48
+         +BQhsB5qXCqWcO7pJv/+2f5c4yO+uoUpOdayO6qZ5YVviYL7ydcbapQ6VXOQeAoQDpJi
+         IHJRAkyqjNF79KR7KP5inwl1TOO5VP3hWq7IMtEp1/z2MJtczx+0xNN0XnEzbz+U0T9F
+         8CQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706744776; x=1707349576;
+        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wjS2NBBVk3rrsqe7JY+MoxAFjS7cR/H8vNXo8eECAdI=;
+        b=B8gvupbVT+XWtPOffNWVXVBdfXl1afl5IFJWJuRDmkfkSUCT85AmpQATCDQsm2tEJ+
+         4nE4PsqPZSKuiElK8H82HNOYVyjVmZ0i5cq2o7B1fHNehf564FDAy0xcDPD9o44WTB5R
+         BtnaL8+SkgNNDbqBdAkv4RZ69UnNkbOX06Zu36m4NW9YC+RZlCgkcXYJqb1i3bgofyGO
+         JeMw88km7lBcNYg6VN4+D6U6XCPKT1x1/D0zxYZ9ojmkyK5csFXwz5U+tjeAZA8v8f/A
+         GtQFhr6VGA5CEPIbJWaFSbWgZXG20mhdRgVC4M3aJsxTTeIQ/VLioIOg3+Ai83Kmf8lB
+         JDfg==
+X-Gm-Message-State: AOJu0YyatdB+xWcfpGEdrF8qASV8qDAxNBlcDY8GdNzFop461aarnthm
+	qXh/Km5/dQ1SW7F3orknpT6maK0XrS5oYKnmRBaJauu0xOoygGcByc876mpJlA==
+X-Google-Smtp-Source: AGHT+IGL8wTif13k+ed9Fv3XbFrArv/wu1eXBE9mOS/Gx3ijLXNOBKQFQxPkb0FLFyDGzaheN//xDw==
+X-Received: by 2002:a67:f316:0:b0:46c:a3fc:e899 with SMTP id p22-20020a67f316000000b0046ca3fce899mr2879922vsf.26.1706744776340;
+        Wed, 31 Jan 2024 15:46:16 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCVhaFwtu9H5XhEll3EcwxPmJW2p+Yal/8RNJ863SUTIl1qflt+90wQRNbgKUrV4XGilm576/M2kWHyuHjfecd6xn2b7NKBVD5EAEbj0
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id na2-20020a0562142d4200b0068c717f758asm698418qvb.11.2024.01.31.15.46.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jan 2024 15:46:15 -0800 (PST)
+Date: Wed, 31 Jan 2024 18:46:15 -0500
+Message-ID: <8b9583bc21af9323bf40a53b7f62c5c9@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] lsm/lsm-pr-20240131
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240130214620.3155380-2-stefanb@linux.ibm.com>
 
-Hi Stefan,
+Hi Linus,
 
-kernel test robot noticed the following build errors:
+Two small patches to fix some problems relating to LSM hook return values
+and how the individual LSMs interact.  I expect you'll probably see
+another pull request similar to this in the next week (two?), to address
+some remaining issues, but these two patches were ready and I wanted to
+get them into your tree sooner rather than later.  Please merge.
 
-[auto build test ERROR on zohar-integrity/next-integrity]
-[also build test ERROR on pcmoore-selinux/next linus/master v6.8-rc2 next-20240131]
-[cannot apply to mszeredi-vfs/overlayfs-next mszeredi-vfs/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks,
+-Paul
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Stefan-Berger/security-allow-finer-granularity-in-permitting-copy-up-of-security-xattrs/20240131-054854
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-patch link:    https://lore.kernel.org/r/20240130214620.3155380-2-stefanb%40linux.ibm.com
-patch subject: [PATCH 1/5] security: allow finer granularity in permitting copy-up of security xattrs
-config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20240201/202402010225.BXp3LrvU-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240201/202402010225.BXp3LrvU-lkp@intel.com/reproduce)
+--
+The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202402010225.BXp3LrvU-lkp@intel.com/
+  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
 
-All errors (new ones prefixed by >>):
+are available in the Git repository at:
 
-   security/security.c: In function 'security_inode_copy_up_xattr':
->> security/security.c:2627:40: error: passing argument 1 of 'evm_inode_copy_up_xattr' from incompatible pointer type [-Werror=incompatible-pointer-types]
-    2627 |         return evm_inode_copy_up_xattr(src, name);
-         |                                        ^~~
-         |                                        |
-         |                                        struct dentry *
-   In file included from security/security.c:24:
-   include/linux/evm.h:121:56: note: expected 'const char *' but argument is of type 'struct dentry *'
-     121 | static inline int  evm_inode_copy_up_xattr(const char *name)
-         |                                            ~~~~~~~~~~~~^~~~
->> security/security.c:2627:16: error: too many arguments to function 'evm_inode_copy_up_xattr'
-    2627 |         return evm_inode_copy_up_xattr(src, name);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~
-   In file included from security/security.c:24:
-   include/linux/evm.h:121:20: note: declared here
-     121 | static inline int  evm_inode_copy_up_xattr(const char *name)
-         |                    ^~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+    tags/lsm-pr-20240131
 
+for you to fetch changes up to 5a287d3d2b9de2b3e747132c615599907ba5c3c1:
 
-vim +/evm_inode_copy_up_xattr +2627 security/security.c
+  lsm: fix default return value of the socket_getpeersec_*() hooks
+    (2024-01-30 17:01:54 -0500)
 
-  2596	
-  2597	/**
-  2598	 * security_inode_copy_up_xattr() - Filter xattrs in an overlayfs copy-up op
-  2599	 * @src: union dentry of copy-up file
-  2600	 * @name: xattr name
-  2601	 *
-  2602	 * Filter the xattrs being copied up when a unioned file is copied up from a
-  2603	 * lower layer to the union/overlay layer.   The caller is responsible for
-  2604	 * reading and writing the xattrs, this hook is merely a filter.
-  2605	 *
-  2606	 * Return: Returns 0 to accept the xattr, 1 to discard the xattr, -EOPNOTSUPP
-  2607	 *         if the security module does not know about attribute, or a negative
-  2608	 *         error code to abort the copy up.
-  2609	 */
-  2610	int security_inode_copy_up_xattr(struct dentry *src, const char *name)
-  2611	{
-  2612		struct security_hook_list *hp;
-  2613		int rc;
-  2614	
-  2615		/*
-  2616		 * The implementation can return 0 (accept the xattr), 1 (discard the
-  2617		 * xattr), -EOPNOTSUPP if it does not know anything about the xattr or
-  2618		 * any other error code in case of an error.
-  2619		 */
-  2620		hlist_for_each_entry(hp,
-  2621				     &security_hook_heads.inode_copy_up_xattr, list) {
-  2622			rc = hp->hook.inode_copy_up_xattr(src, name);
-  2623			if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
-  2624				return rc;
-  2625		}
-  2626	
-> 2627		return evm_inode_copy_up_xattr(src, name);
-  2628	}
-  2629	EXPORT_SYMBOL(security_inode_copy_up_xattr);
-  2630	
+----------------------------------------------------------------
+lsm/stable-6.8 PR 20240131
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+----------------------------------------------------------------
+Ondrej Mosnacek (2):
+      lsm: fix the logic in security_inode_getsecctx()
+      lsm: fix default return value of the socket_getpeersec_*() hooks
+
+ include/linux/lsm_hook_defs.h |  4 ++--
+ security/security.c           | 45 +++++++++++++++++++++++++++++++++-----
+ 2 files changed, 42 insertions(+), 7 deletions(-)
+
+--
+paul-moore.com
