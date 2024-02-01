@@ -1,120 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECEC39AE1;
-	Thu,  1 Feb 2024 21:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8DC47F52
+	for <linux-security-module@vger.kernel.org>; Thu,  1 Feb 2024 23:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706823836; cv=none; b=WCYJJGOB6I6BOkmoszg43TNb0w20gYig+NAQxI+dtWSwPqQ9j9yuwS9Xo1dDLWO/MJhQWEaPpGAhL12aayflAS9iZ+TbjrkZQ9EXkXjCMFZk+lYJLulRQSn2AkJEHYrBOkMeFzeTxOYvZO/iEyM7bvmT2f2ywyp63cfJqbdYgvA=
+	t=1706831571; cv=none; b=or6U0zOA8gyv5UxDjzXmZVxtvq2zEdY09zL/6NBukBo/b20OiUe/O5GrfXcx3uOvKqdhFKCpZikjenp7Ags1nPfZApkhPYvYt+X01kMbhB1UwbiXUcAx73oYD4HaqKBMT5JqfP9DXAim1G+AxmiG/lR4ZG5W6uARcSihuw+/eTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706823836; c=relaxed/simple;
-	bh=GT8n6a2f4TX/O/sQ4NGGpwa4SOMqPEMREuy8nUejw3c=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=F/yXFhFNF75YnK4+4FmnyCEYYJKSkWiWPvXam4yh0c/1DEYOZiI/K4rGYSASZeDnU6ltiJ3KZdmx8p33pW8Bcplkhn5fDmv2buyYkVf7FnJFSvKJAR8KVHBO1u4hTLJcBL0Ywi9skJ9BV7GT2rKD3ER42Y8QucJ0iw+di1H2KUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XhtMoYbN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706831571; c=relaxed/simple;
+	bh=K26+ljmstsTXJaJziijgy2UvetOVAHHAEAHWgTsCUX0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DJIes0mE3sNrVppr2RacShYmBxQOk+V4dTmx6P2Cz6c+ZzvsS+KzW+KHiCMacv5Md9Q7sBhRX7hpkpX3w5dR7frg7gZcT8tdmH1S++b3m1O6Szp3vLahUNE4u3mOEMCekIhs8/byQR3RntyZsU2h/poUJaXXTYmGalKo8TEMOso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JuWScAjO; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhtMoYbN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86B2AC433C7;
-	Thu,  1 Feb 2024 21:43:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706823835;
-	bh=GT8n6a2f4TX/O/sQ4NGGpwa4SOMqPEMREuy8nUejw3c=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=XhtMoYbNwDCzRUCqrtK+w7v8BEbqeYGjmEXsEbnqvihKmxLVgklML6CPzmqrRwXUy
-	 3L1RfVauMzWWwh2GGz/TSUmH1n3UfiUTCQ2qIWQorkYyh08iCSKdKWOB0vOF2IyMos
-	 o3fA3gU5yoQrJ8pbqk3wsaOum4okHy/Ia8SvdDhFCV1EBXy5sUGUMx4reQp6L9oHES
-	 iLDBLEfwAKFOvrPxfrLkhyaICfRArVmvKwfxaFVRF/sLjRUB6XMrIxlMm5nZ+tZk64
-	 4A/MWNkX2Hf9aWob7U1JXz4IvR56NM4w3r30F78OOMWH6XKn22DOZ4MFJ5aldKw8Me
-	 OQtiBwvO35Rxg==
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JuWScAjO"
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dc6af9a988eso1370349276.0
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Feb 2024 15:52:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1706831569; x=1707436369; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZutApDQyHqWHXOheSHjZFiqHN5iJQZ+ZDThq7vbOdtU=;
+        b=JuWScAjO7seZd0lYVhu8/VBS9ayfN0BgKHdvuJKSr4LHND4xlma3T+dTiFVQOhhxNt
+         YjW8PZTq10g8I2sCm1yObR8nX6bXmrMFunG6+9+elUWyOZ70DU7V5Ocnd5HPIdotL2qA
+         Slv18+Pq3bwcInPVAozJStixyDOm/cm1SUStJo7RoAEh8lgCkj9O+BtLx2z5lp7ymep6
+         FQrAHKe0f09G9yzvYJXIsIkz1RiZwmMIIuvrKUFkLHK9RbQUgCvfvFVK9sFn1PXc3ck6
+         eKSIccN722UuVd+EWW02zo4TnA6yY3U7PO0bjJLx6mcnXF4WiikHGEkgexAqUMGRZX/l
+         Vbug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706831569; x=1707436369;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZutApDQyHqWHXOheSHjZFiqHN5iJQZ+ZDThq7vbOdtU=;
+        b=ADVusflNX3H0LjZSwjjS+RiQE2KQCZmnlZiut22RYBqEEgREJ54zJKpSSePmgJAMk4
+         UcnARe72AOsa8FOmFbNMK0p/nGplTo0g64GScQvlyAU43qccJnFA1LIYkU9bF9SxyCWI
+         zUsr9eP0Toz1Cxnb1Ipylkso5y3KYKw0M/rYHczMHtRgRJ7BpQxD6zNAo6i+9E2aa2V4
+         d+HChrpc5rh/1KSmBTSM6utIslNbYXihaDcwvPuW41f/07gRQF32APrRKrtA8pSTKkrn
+         9B85Gat1/hRE7A1wpQcnH5rk7FDypNySTezebnlT5yg19dhHCAZTa6GuwpKHONcsq84q
+         ru6Q==
+X-Gm-Message-State: AOJu0YzA/9gWgfIO+p9CSRuqfRfdgBxyxOT4IsacPpZszL2rMqv52U6f
+	2AtIhpdvCCOguMB9OsBuksGNwhmRuOUggE16AVgIPVMGcJaV4N58N/bbmRMiMwH/BYeDmnOtgXm
+	tJ5rHX0ZkICMq/tqsmtRdXfHxUOBYxGDri7AqbLqQsZ7oxyk=
+X-Google-Smtp-Source: AGHT+IFwyMjMA6Kd/s870YFazzZNwFzIhi3jMlai3uZhLkWNcs0/1NiL7U0BcuJQVYXiGxoUBz/PMlE1yRX55NsEmyU=
+X-Received: by 2002:a25:41d0:0:b0:dc2:5573:42df with SMTP id
+ o199-20020a2541d0000000b00dc2557342dfmr6590927yba.25.1706831569046; Thu, 01
+ Feb 2024 15:52:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20240129133058.1627971-1-omosnace@redhat.com> <CAHC9VhSzdvJ2DAgV75Tdxk+tOLuhY-vM+BTT--Mfn6xoxVKbxQ@mail.gmail.com>
+ <CAHC9VhQRSWMRAg=y5cUx9+XLG4A2_+WSqJN1RgQQ8bF=VDwnWw@mail.gmail.com> <CAHC9VhRa5q3fvWUD-Dh-d5Udq18XqFwR4AGUzSow6Ur+_TmFrQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhRa5q3fvWUD-Dh-d5Udq18XqFwR4AGUzSow6Ur+_TmFrQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 1 Feb 2024 18:52:38 -0500
+Message-ID: <CAHC9VhSyNPd4rK+oZE6cDwZTCb3Km_eu-+K8s+X73BJwt8ynuA@mail.gmail.com>
+Subject: Re: [PATCH] security: fix no-op hook logic in security_inode_{set,remove}xattr()
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 01 Feb 2024 23:43:50 +0200
-Message-Id: <CYU2JV57VXA9.3C5QTG4LX50TD@suppilovahvero>
-Cc: "Jiang, Dave" <dave.jiang@intel.com>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "linux-cxl@vger.kernel.org"
- <linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "keyrings@vger.kernel.org"
- <keyrings@vger.kernel.org>, "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, "nvdimm@lists.linux.dev"
- <nvdimm@lists.linux.dev>
-Subject: Re: [PATCH] KEYS: encrypted: Add check for strsep
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Dan Williams" <dan.j.williams@intel.com>, "Verma, Vishal L"
- <vishal.l.verma@intel.com>, "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
- "paul@paul-moore.com" <paul@paul-moore.com>, "dhowells@redhat.com"
- <dhowells@redhat.com>, "yaelt@google.com" <yaelt@google.com>,
- "serge@hallyn.com" <serge@hallyn.com>, "nichen@iscas.ac.cn"
- <nichen@iscas.ac.cn>, "sumit.garg@linaro.org" <sumit.garg@linaro.org>,
- "jmorris@namei.org" <jmorris@namei.org>
-X-Mailer: aerc 0.15.2
-References: <20231108073627.1063464-1-nichen@iscas.ac.cn>
- <4d3465b48b9c5a87deb385b15bf5125fc1704019.camel@intel.com>
- <e3275c0cfe21d75e0d71ea3fc24a31252efc9ad6.camel@linux.ibm.com>
- <e3b1a5e532ed86e674385abc4812c5a774f851d4.camel@intel.com>
- <49c48e3e96bf0f5ebef14e7328cc8a6ca6380e08.camel@linux.ibm.com>
- <50c2fa781e3266ee8151afdef5a8659d63ca952e.camel@intel.com>
- <CYS7QMYS8XAJ.2QPI3MS5KXK8E@suppilovahvero>
- <CYS7WMFLXNE1.35OBTKTONKNX3@suppilovahvero>
- <65b93f2b3099b_5cc6f29453@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-In-Reply-To: <65b93f2b3099b_5cc6f29453@dwillia2-mobl3.amr.corp.intel.com.notmuch>
 
-On Tue Jan 30, 2024 at 8:25 PM EET, Dan Williams wrote:
-> Jarkko Sakkinen wrote:
-> > On Tue Jan 30, 2024 at 7:22 PM EET, Jarkko Sakkinen wrote:
-> > > On Wed Jan 24, 2024 at 11:10 PM EET, Verma, Vishal L wrote:
-> > > > On Wed, 2024-01-24 at 15:40 -0500, Mimi Zohar wrote:
-> > > > > On Wed, 2024-01-24 at 20:10 +0000, Verma, Vishal L wrote:
-> > > > > > >=20
-> > > > > > Ah, thanks for confirming! Would you like me to send a revert p=
-atch or
-> > > > > > will you do it?
-> > > > >=20
-> > > > > Revert "KEYS: encrypted: Add check for strsep"
-> > > > > =C2=A0=C2=A0=C2=A0=20
-> > > > > This reverts commit b4af096b5df5dd131ab796c79cedc7069d8f4882.
-> > > > > =C2=A0=C2=A0=C2=A0=20
-> > > > > New encrypted keys are created either from kernel-generated rando=
-m
-> > > > > numbers or user-provided decrypted data.=C2=A0 Revert the change =
-requiring
-> > > > > user-provided decrypted data.
-> > > > >=20
-> > > > >=20
-> > > > > Can I add your Reported-by?
-> > > >
-> > > > Yes that works, Thank you.
-> > >
-> > > This went totally wrong IMHO.
-> > >
-> > > Priority should be to locate and fix the bug not revert useful stuff
-> > > when a bug is found that has limited scope.
-> >=20
-> > By guidelines here the commit is also a bug fix and reverting
-> > such commit means seeding a bug to the mainline. Also the klog
-> > message alone is a bug fix here. So also by book it really has
-> > to come back as it was already commit because we cannot
-> > knowingly mount bugs to the mainline, right?
+On Tue, Jan 30, 2024 at 9:19=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
 >
-> No, the commit broke userspace. The rule is do not cause regressions
-> even if userspace is abusing the ABI in an undesirable way. Even the
-> new pr_info() is a log spamming behavior change, a pr_debug() might be
-> suitable, but otherwise a logic change here needs a clear description
-> about what is broken about the old userspace behavior and why the kernel
-> can not possibly safely handle it.
+> I'll come back to this tomorrow with some fresh eyes.
 
-The rationale literally gives empirical proof that the log message
-is useful by measure. It would be useless if log level is decreased
-to debug, as then sysadmin's won't take notice. I don't really know
-what is the definition of "spam" here but at least for me actually
-useful log message are not in that category.
+My apologies, "tomorrow" turned into "the day after tomorrow" (as it
+often does) ...
 
-Issue was legit but git revert is objectively an incorrect way to
-address the bug.
+I've been struggling with the idea that there are individual LSMs
+still calling into the capability hooks instead of leveraging the LSM
+stacking infrastructure, and the "magic" involved to make it all work.
+While your patch looks like it should restore proper behavior - that's
+good! - I keep thinking that we can, and should, do better.
 
-BR, Jarkko
+The only thing that I coming up with is to create two new LSM hooks,
+in addition to the existing 'inode_setxattr' hook.  The new LSM hooks
+would be 'inode_setxattr_owned' and 'inode_setxattr_cap'.  The _owned
+hook would simply check the xattr name and return a positive value if
+the LSM "owned" the xattr, e.g. XATTR_NAME_SELINUX for SELinux, and
+zero otherwise.  The _cap hook would only be used by the capabilities
+code (or something similar), and would match up with
+cap_inode_setxattr().  With these two new hooks I think we could do
+something like this:
+
+int security_inode_setxattr(...)
+{
+  owned =3D false
+  hook_loop(inode_setxattr_owned) {
+    trc =3D hook->inode_setxattr_owned(name);
+    if (trc > 0) {
+      owned =3D true;
+      break;
+    }
+  }
+  if (owned) {
+    hook_loop(inode_setxattr) {
+      /* run the existing inode_setxattr hooks, e.g. SELinux and Smack */
+    }
+  } else {
+    hook_loop(inode_setxattr_cap) {
+      /* run the capability setxattr hooks, e.g. commoncap.c */
+    }
+  }
+}
+
+... with security_inode_removexattr() following a similar pattern.
+
+I will admit that there is some duplication in having to check the
+xattr twice (once in _owned, again in inode_setxattr), and the
+multiple hook approach is less than ideal, but this seems much less
+fragile to me.
+
+Thoughts?
+
+--=20
+paul-moore.com
