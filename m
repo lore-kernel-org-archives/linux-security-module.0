@@ -1,114 +1,223 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1577EFBE7
-	for <linux-security-module@vger.kernel.org>; Thu,  1 Feb 2024 10:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E13A15CD72;
+	Thu,  1 Feb 2024 12:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706784239; cv=none; b=VvqVU5LUfXvpZN5CEr+fX7Ciw/LeqzB3rwM45zi9JoNb7JDXFMvkb4pMQPJKSencMIdIqrYho4/P2vI6fHDZQIWbzKKJArDgfmeknzlH6pmU687x+xwmhmmS4yd/VWae1jO2KLA1iwAHTcUs4dbUxXjMjRnxB84BbOK/v4M9ELM=
+	t=1706789473; cv=none; b=arld/fkXYjiOXN76/nAarJuTYJEeeUj7ZI/vaxYOBiwow8jlzw+AIvPA8cvxp9eKJ11cI7J4pv4t2ipi3+ioDa0NeFbONytF6Jdgov50Tco/3li7y+8ka3dykNJeWV/mWJZu5Kynp+vEnBaVoM52k905CQAYLc5muEwcDE5IrJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706784239; c=relaxed/simple;
-	bh=9vJydgfn4ebhmREjnCt1JSAWwvosN2fee922Ag4aRf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Tr7rGBi8qV+drPKqA9Dk12JFNOnnGm00E5u7dGDCmnSiDL3UOgKlJ38Jx2QLOCTB1Gjj68PuXLOUF49GCUsfQM5fOkTgIXJlU8Iuo+7Eusajh3qe65JRc9SpBj4bF9WK0UtutrnEjkJznc/n5BULpTADd3nQu2DR1gy89ZXpe44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qqSu8mra; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1706789473; c=relaxed/simple;
+	bh=BKkgs5o3flr8DLm3fRhM8fmYE/Cis38Wwzz6W7RuFKw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kQc1Cl8peuMxRtkKyFUhdH1v0izQUoFTvvb22onni9iF+X3We1+srX33Ibb8pxoA5cYbYbWtOTV4uZde84E04jR9b+CEU8JBTJ7dzMfzZZL0op1oz6r/Dtszt4JD9sMK1hzG4CoeSj+uVHCqqsXzt9PYUkXf9Dc8DsXwGXq1sU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFXudBYv; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qqSu8mra"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a363961b96aso91750766b.3
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Feb 2024 02:43:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFXudBYv"
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-783def87c8cso55057885a.0;
+        Thu, 01 Feb 2024 04:11:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1706784236; x=1707389036; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2B+7wJNwOqpjQdydmRfyH7YbnYTArb4cNoMr6jOkh4s=;
-        b=qqSu8mravSwL/9FnkWBj++CB1DFK1b8z3rumBDQdguhTTMzc6L+wiIBPXf0PxuubNY
-         EpZKEb260BwtFEw2IsDKHt0qyN4o35pn3RZ8B017znRaKyGUkBC125JcCpUI8lnLP93d
-         3ew1imSvvmg1oRZtK5LXNwzvfmsM2K2Y0BlnltUwp6v230IK10qmgWqWcm0pZGTtBFp7
-         VFbxsiNaGMyyWlYuCrz8B+6ptUkYQ/tLRogUbqJh5snbJ6EmrF10c6WORQOLZh9ca6Nw
-         10th+E6kWatXKDXCtpZTFM7jS/iWIjKWfDSAKGDMUinKCLRGq5tKZRZUO/htQv8HpXmC
-         YWTQ==
+        d=gmail.com; s=20230601; t=1706789470; x=1707394270; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ot6Gz4jMBpIlofVX53+ZXvqyeKrVY8kBh2nwQY9He9E=;
+        b=eFXudBYvX2tcpFNSUP2cazwHp3jOYG+ZdrYS4wh6m4wsR9ORg/zK6R8NgJZgfvZi1T
+         nyfqbPCzN9fkLyU8bMzkVy31OkediJZszk7kXAuT406rhbbh1zpGPe98+5ae5ahD8vVL
+         qfGMWolbvoe3gjpGTwVbuX3ZcizxmHruR0WfML2yQmdYjB+LMYraAFHkSfBHEjbwLnPV
+         7Wg86Bgd96eMPozWFgCm/ZIRHptY52G5akn/QfxXQjI7++M7MsK6eyXZaDsM+SgXEfhS
+         5m8CmMc7i08QrSftbwfz0rnJmZzODWPrw/S9AiAQL3hQoBXmjGAKs168Du0mudibfb/Z
+         rjBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706784236; x=1707389036;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2B+7wJNwOqpjQdydmRfyH7YbnYTArb4cNoMr6jOkh4s=;
-        b=UK5tiu+s1H9hUB0O8ma+BzJBOslAorL/W8J6leYr7av6sNs4fJaiim3F6DZFQ9IsBI
-         NEyU+aBcAz5wDUPRpdB5er4W8R7Xd89ik4jfj6aKa7GdY1sqhyivDV6nyGZdtRa9ZaG9
-         w46cq5KZoS0otECJr19St/XTxhvBWAJcRUqzsYBYEx9dS2TTvJrLoI3M/z90Ybr01ia8
-         04GnmJJpWnPOCcC5ark5SNfwU136c+HjBeFecONEW2kFbcp+QKZiCiZ6547JIZErDD/z
-         fw4F5zw0iZvQPwhiuLkDOX9R93SbY6eLyMasysCkdtH+Re/fZJasU5IZC9cieOG9RjhV
-         0FUg==
-X-Gm-Message-State: AOJu0Ywhs9mLE0wQ9927klFXEiRat4+mYCrStRl5xNIemx7FRzMfS10i
-	giScXQMIRI3qI0bWnrPUu12fsXasWql0py/84JgnH7Y2y8bhvqmH63RvlLrAdA==
-X-Google-Smtp-Source: AGHT+IFo3EMpbGupVGDtQbW/y4AXVidbTW6W9uQKD2ILk5KcdH4PtCmdtaN87Mbu7EUsiLI0MXAcLw==
-X-Received: by 2002:a17:906:b346:b0:a35:2c1c:52ef with SMTP id cd6-20020a170906b34600b00a352c1c52efmr3763973ejb.15.1706784236096;
-        Thu, 01 Feb 2024 02:43:56 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCVS+mYwR1ynA7a+OWsin2g3QW3RJK9DBlPpO5T7u36hhsGLfGvjKW6daUd0aSDuAn3jzNRaqtWwbjt3Uhtn7oBpq7SsE7x4Mq+gBJe1bWB9iSGcBvmvtq7ptIDhtH+ZRTOTOiyy6IQ0PoA6bIJYEM/e6fRBPdA1S4ZO2RXb9jMzpJuIdBuFNQM3nRzRqEmcrLs8NSlT+djXTUcjy5Dj87esFUMs8mNZF648XncBsNa7qa5ysFSLW0T7Ajw/glWvSlKmolHKZVmr9E6jizY7wfQp
-Received: from google.com (229.112.91.34.bc.googleusercontent.com. [34.91.112.229])
-        by smtp.gmail.com with ESMTPSA id vx11-20020a170907a78b00b00a36a94e16fesm715595ejc.159.2024.02.01.02.43.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Feb 2024 02:43:55 -0800 (PST)
-Date: Thu, 1 Feb 2024 10:43:52 +0000
-From: Matt Bobrowski <mattbobrowski@google.com>
-To: kpsingh@kernel.org, ast@kernel.org, andrii@kernel.org
-Cc: revest@chromium.org, jackmanb@chromium.org, yonghong.song@linux.dev,
-	gnoack@google.com, bpf@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH bpf-next] bpf: add security_file_mprotect() to
- sleepable_lsm_hooks BTF set
-Message-ID: <Zbt16HS-9x8YPZNz@google.com>
+        d=1e100.net; s=20230601; t=1706789470; x=1707394270;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ot6Gz4jMBpIlofVX53+ZXvqyeKrVY8kBh2nwQY9He9E=;
+        b=sdGWcerYoFYS8Cqm3NwrAYdEL1C0O96QDLUFKVuuCONIQtNcYcABvs79vZkyG/fjgw
+         7/RNiGpPPCMsTbod8KZXB64lghwg4q2nqv1upZqJdtgBbzyu5wLJ1rzSC4EhXVDks2BF
+         5Td8hqKnhIb0WOUcLzVRewVu7DIvqe6+ckQLPn9h6AkOvCrEtb5OlFL3NFAeCnsEkqgw
+         Jq0BbtszAcqcq1Cnd9tlQmrKBzoXJj3bDVSr4Wlxfi/QVxBD5eVjXjqdcjx9L7nDhxIG
+         4XwXjsLcImtWB8doG501l9ehlBEgFxVbRiW4qFg+gZRNKryBiHqFdCnQvgpT5Ols5jmq
+         ZdhQ==
+X-Gm-Message-State: AOJu0YzReK1Okx2/fFKR/eysnm32REusatw7doCDXJrEEh4S8Ws13aOs
+	UPOoSvUKpXiac8giCMMmn+h8RTeRVQ+5+srroe4QdB4eQ35WsELrZiZ3nIj76eJvUjYa0AhcA+p
+	0D5hn1NtFGdoAIrSs0XVQ567nOq0=
+X-Google-Smtp-Source: AGHT+IHz6LtCx2w85BoWFdo+DeI9pIZ3+8vPu7taC1c5PJhh8sKbBeBLxRBVp/IF+mUCKoIMsRCelHFrrApZQHhaDAc=
+X-Received: by 2002:a05:6214:d6a:b0:686:abad:6f13 with SMTP id
+ 10-20020a0562140d6a00b00686abad6f13mr4705853qvs.7.1706789470211; Thu, 01 Feb
+ 2024 04:11:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240130214620.3155380-1-stefanb@linux.ibm.com>
+ <20240130214620.3155380-5-stefanb@linux.ibm.com> <38230b4c-54ae-45ed-a6fb-34e63501e5b1@linux.ibm.com>
+ <CAOQ4uxiYARZBSgzb4_W-RKvB1XLSF3GUBqeLw2kH+eVeZ_8ARQ@mail.gmail.com>
+ <c018b014-9ba8-4395-86dc-b61346ab20a8@linux.ibm.com> <CAOQ4uxi6Te8izWpXROthknRaXrVA9jho5nbc+mkuQDrcTLY44Q@mail.gmail.com>
+ <CAOQ4uxigdNeE+2nfr4VxS9piQf5hez=ryT0a-jzW+tW0BT-zuw@mail.gmail.com> <492ea12a-d79d-47da-9bbe-a7f33051bd3f@linux.ibm.com>
+In-Reply-To: <492ea12a-d79d-47da-9bbe-a7f33051bd3f@linux.ibm.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 1 Feb 2024 14:10:58 +0200
+Message-ID: <CAOQ4uxgiO1RbsmqOu4F4Foy-MBPecnEXO7BvgDGz-Lzb1Eysog@mail.gmail.com>
+Subject: Re: [PATCH 4/5] evm: Use the real inode's metadata to calculate
+ metadata hash
+To: Stefan Berger <stefanb@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, 
+	roberto.sassu@huawei.com, miklos@szeredi.hu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-security_file_mprotect() is missing from the sleepable_lsm_hooks BTF
-set. Add it so that operations performed by a BPF program which may
-result in the thread being put to sleep are permitted.
+On Wed, Jan 31, 2024 at 7:46=E2=80=AFPM Stefan Berger <stefanb@linux.ibm.co=
+m> wrote:
+>
+>
+>
+> On 1/31/24 12:23, Amir Goldstein wrote:
+> > On Wed, Jan 31, 2024 at 5:54=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
+com> wrote:
+> >>
+> >> On Wed, Jan 31, 2024 at 4:40=E2=80=AFPM Stefan Berger <stefanb@linux.i=
+bm.com> wrote:
+> >>>
+> >>>
+> >>>
+> >>> On 1/31/24 08:16, Amir Goldstein wrote:
+> >>>> On Wed, Jan 31, 2024 at 4:11=E2=80=AFAM Stefan Berger <stefanb@linux=
+.ibm.com> wrote:
+> >>>>>
+> >>>>>
+> >>>>>
+> >>>>> On 1/30/24 16:46, Stefan Berger wrote:
+> >>>>>> Changes to the file attribute (mode bits, uid, gid) on the lower l=
+ayer
+> >>>>>> are not take into account when d_backing_inode() is used when a fi=
+le is
+> >>>>>> accessed on the overlay layer and this file has not yet been copie=
+d up.
+> >>>>>> This is because d_backing_inode() does not return the real inode o=
+f the
+> >>>>>> lower layer but instead returns the backing inode which holds old =
+file
+> >>>>>> attributes. When the old file attributes are used for calculating =
+the
+> >>>>>> metadata hash then the expected hash is calculated and the file th=
+en
+> >>>>>> mistakenly passes signature verification. Therefore, use d_real_in=
+ode()
+> >>>>>> which returns the inode of the lower layer for as long as the file=
+ has
+> >>>>>> not been copied up and returns the upper layer's inode otherwise.
+> >>>>>>
+> >>>>>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> >>>>>> ---
+> >>>>>>     security/integrity/evm/evm_crypto.c | 2 +-
+> >>>>>>     1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>>>
+> >>>>>> diff --git a/security/integrity/evm/evm_crypto.c b/security/integr=
+ity/evm/evm_crypto.c
+> >>>>>> index b1ffd4cc0b44..2e48fe54e899 100644
+> >>>>>> --- a/security/integrity/evm/evm_crypto.c
+> >>>>>> +++ b/security/integrity/evm/evm_crypto.c
+> >>>>>> @@ -223,7 +223,7 @@ static int evm_calc_hmac_or_hash(struct dentry=
+ *dentry,
+> >>>>>>                                  size_t req_xattr_value_len,
+> >>>>>>                                  uint8_t type, struct evm_digest *=
+data)
+> >>>>>>     {
+> >>>>>> -     struct inode *inode =3D d_backing_inode(dentry);
+> >>>>>> +     struct inode *inode =3D d_real_inode(dentry);
+> >>>>>>         struct xattr_list *xattr;
+> >>>>>>         struct shash_desc *desc;
+> >>>>>>         size_t xattr_size =3D 0;
+> >>>>>
+> >>>>> We need this patch when NOT activating CONFIG_OVERLAY_FS_METACOPY b=
+ut
+> >>>>> when setting CONFIG_OVERLAY_FS_METACOPY=3Dy it has to be reverted..=
+.  I am
+> >>>>> not sure what the solution is.
+> >>>>
+> >>>> I think d_real_inode() does not work correctly for all its current u=
+sers for
+> >>>> a metacopy file.
+> >>>>
+> >>>> I think the solution is to change d_real_inode() to return the data =
+inode
+> >>>> and add another helper to get the metadata inode if needed.
+> >>>> I will post some patches for it.
+> >>>
+> >>> I thought that we may have to go through vfs_getattr() but even bette=
+r
+> >>> if we don't because we don't have the file *file anywhere 'near'.
+> >>>
+> >>>>
+> >>>> However, I must say that I do not know if evm_calc_hmac_or_hash()
+> >>>> needs the lower data inode, the upper metadata inode or both.
+> >>>
+> >>> What it needs are data structures with mode bits, uid, and gid that s=
+tat
+> >>> in userspace would show.
+> >>>
+> >>>
+> >>
+> >> With or without metacopy enabled, an overlay inode st_uid st_gid st_mo=
+de
+> >> are always taken from the upper most inode which is what d_real_inode(=
+)
+> >> currently returns, so I do not understand what the problem is.
+> >>
+> >
+> > No, I was wrong. It is the other way around.
+> > d_real_inode() always returns the real data inode and you need the
+> > upper most real inode.
+> >
+> > You can try this:
+> >
+> >   -     struct inode *inode =3D d_backing_inode(dentry);
+> > +     struct inode *inode =3D d_inode(d_real(dentry, false));
+> >
+> > With the changes in:
+> >
+> > https://github.com/amir73il/linux/commits/overlayfs-devel/
+> >
+> > Not thoroughly tested...
+>
+> The change + 3 topmost patches cherry-picked is unfortunately are
+> crashing for me.
+>
 
-Building a kernel with the DEBUG_ATOMIC_SLEEP confiuration option
-enabled and running reasonable workloads stimulating a BPF program
-attached to security_file_mprotect() which could end up performing an
-operation that could sleep resulted in no splats.
+I will look into it.
+But anyway, the patch I suggested above is not enough exactly because
+of the reason I told you earlier.
 
-Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
----
- kernel/bpf/bpf_lsm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Mimi's fix ("ima: detect changes to the backing overlay file") detects
+a change in d_real_inode(file_dentry(file)) in order to invalidate the
+IMA cache.
 
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index 68240c3c6e7d..da52c955f3ca 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -277,10 +277,13 @@ BTF_ID(func, bpf_lsm_bprm_creds_from_file)
- BTF_ID(func, bpf_lsm_capget)
- BTF_ID(func, bpf_lsm_capset)
- BTF_ID(func, bpf_lsm_cred_prepare)
-+
- BTF_ID(func, bpf_lsm_file_ioctl)
- BTF_ID(func, bpf_lsm_file_lock)
- BTF_ID(func, bpf_lsm_file_open)
- BTF_ID(func, bpf_lsm_file_receive)
-+BTF_ID(func, bpf_lsm_mmap_file)
-+BTF_ID(func, bpf_lsm_file_mprotect)
- 
- BTF_ID(func, bpf_lsm_inode_create)
- BTF_ID(func, bpf_lsm_inode_free_security)
-@@ -316,7 +319,6 @@ BTF_ID(func, bpf_lsm_path_chown)
- BTF_ID(func, bpf_lsm_key_free)
- #endif /* CONFIG_KEYS */
- 
--BTF_ID(func, bpf_lsm_mmap_file)
- BTF_ID(func, bpf_lsm_netlink_send)
- BTF_ID(func, bpf_lsm_path_notify)
- BTF_ID(func, bpf_lsm_release_secctx)
--- 
-2.43.0.429.g432eaa2c6b-goog
+Your change also invalidates EVM cache on a change in
+d_real_inode(file_dentry(file)) and that makes sense.
 
-/M
+But on "meta copy up" for example on chmod(), an upper inode with no data
+is created (a metacopy) and all the attributes and xattr are copied
+from lower inode.
+The data remains in the lower inode.
+
+At this point , the IMA cache and the EVM cache refer to two different inod=
+es
+so you cannot share the same logic with IMA cache invalidation.
+
+My patches are meant to provide you with a helper e.g. d_real_meta_inode()
+that you could use to get the upper inode in the case of a metacopy, but
+IMA would still need to use the d_real_data_inode().
+
+Is that explanation clear? Is it clear why I said that the problem is more
+complicated?
+
+Thanks,
+Amir.
