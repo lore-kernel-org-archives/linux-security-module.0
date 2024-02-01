@@ -1,97 +1,158 @@
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E35C5B69B;
-	Thu,  1 Feb 2024 14:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C8F6215A;
+	Thu,  1 Feb 2024 15:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706797537; cv=none; b=qGMtbYcuLbX6sd0qlD4tprmyXg6UUr94e6uaxdECILVr5gHDtwAl+PYWY8h9zufcheVSDwmsHvSE7vdqstEsUldRladlvhv9cX3YEznAFvoqE40atoO2M0x1jcxckayehTYyEL1bhrVPH1TzD3z6Up1lS/rBBCDiwXvjKnXkAtk=
+	t=1706802103; cv=none; b=aCeA7ouYoBBvPIEl7BBMBVI4TPM9ibL8wX7uHJq7386ZRURiKE66qhXjY11M1m30TpN2zYlyiJdt7UoUxrZUpN9xOXFPVko7TRuysSu+C9/LAAUtCjj638QbgEcItefvVII4WyEHebek1bIfBmsU7OJl5ZHzk1HjBtGPWpqxt0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706797537; c=relaxed/simple;
-	bh=sF+G8ac5rJ6GBWZ7UGnOBa+TCEI+k8Sh7jK8bcRdt4A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lr24SnGcDCo2tBCZ2DuD+TUIcT1xLMgyl4oLwGnEq4kvk+hudFBthSHzV6Oq30qKbU+U4LtrbqL3BF+5evF8LzACDb+0KynhAgyGdDYE/imwfA6KcOb31D7udZKIF0nNVYeK9kIhlBWRV/6uMNBMXNWmR7YdG4G+kuFLXYnqej8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=Y12xKooR; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+	s=arc-20240116; t=1706802103; c=relaxed/simple;
+	bh=MgEx7ikC/L4/Xtdmd2xJp/5oDdEwDQ4koi6z3CAZUC0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PDfhCp+71d/WsUff0fMo0tRIe3g6yuZWPeXRaDiHzQ25WXgoNjWPNNMRNkxAu1Zu6Rd37FGK80Q6Rut/Xi2+zh0m929f445AetBxjWD0HufMzFA/Ph4bD7GkprOfyMK/2t/0N22zj+yfYxMV0xisoHEuYrLFNaR+qhFrEpZkPqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=b+LHouYw; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="Y12xKooR"
-Received: from localhost.localdomain (unknown [46.242.8.170])
-	by mail.ispras.ru (Postfix) with ESMTPSA id A966D40737B5;
-	Thu,  1 Feb 2024 14:25:23 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru A966D40737B5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1706797524;
-	bh=EfXwutwttYNswqPhr1DI1HL9a39mqxWde2M9ylas6wE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Y12xKooRC1gohuym47VGPE7BZOR5fJOk4yOt3snNMmweJ0+EwkyTkgaBaAM0zbVUo
-	 rLyykzqzbSrlb1JoW8+DDaVSYeUbNS4SNvfleXDxv2muqqTC7dVUMG7kTMChJqX1ox
-	 8GUdYYj5E4KwthHbuLZW0+lOAcl2V95PFhXRu+Ko=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: John Johansen <john.johansen@canonical.com>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	William Hua <william.hua@canonical.com>,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	stable@vger.kernel.org
-Subject: [PATCH] apparmor: use kvfree_sensitive to free data->data
-Date: Thu,  1 Feb 2024 17:24:48 +0300
-Message-ID: <20240201142450.30510-1-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="b+LHouYw"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 411FSWak015663;
+	Thu, 1 Feb 2024 15:41:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=Xp4rZMTnVnBxefF1gjpPyi1EmVRo9E8xKDqZHXLJzqY=;
+ b=b+LHouYwHS0fb9Q7EGgDXLfIpOkgJExmtVSDjpPdoBu5mqRrA5T1NryEWAK83tW4m1cL
+ 6Rctj3Y1jcuIlzPfYH3n/gMNjjgX+XeQYm+RvrHZOuTGR55Jw2q701K1Sr526hJWWIKB
+ Hxrm1IgrUCMqOoXeFShNCwrSIJAP/iviO86P1Q3DCPfHLNDKwuoYLD8uH7qXmZhJbvAM
+ +KL6yy1ntEycSPKk+0af4F9ybcSa9XghWsHMXOZCl3htOsirS3Ii04j+O70x6L3U0C6d
+ Wtnaw7xYhV0EgiehsMa7fxZByajmQOUFfGaVFyv7nHaWuJ2yF5/9Mct+XYUSI8V4W0Hf mg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w0dyq8hwm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Feb 2024 15:41:18 +0000
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 411FSdip016911;
+	Thu, 1 Feb 2024 15:41:18 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w0dyq8hw1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Feb 2024 15:41:18 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 411DOgaN008242;
+	Thu, 1 Feb 2024 15:41:17 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3vwdnmcwhu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Feb 2024 15:41:17 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 411FfG0o15598114
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 1 Feb 2024 15:41:17 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A9D535805A;
+	Thu,  1 Feb 2024 15:41:16 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0AAC158051;
+	Thu,  1 Feb 2024 15:41:16 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  1 Feb 2024 15:41:15 +0000 (GMT)
+Message-ID: <093ffc74-c5f5-49e7-8be9-77158336c878@linux.ibm.com>
+Date: Thu, 1 Feb 2024 10:41:15 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] security: allow finer granularity in permitting
+ copy-up of security xattrs
+Content-Language: en-US
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        zohar@linux.ibm.com, roberto.sassu@huawei.com, miklos@szeredi.hu,
+        Christian Brauner <brauner@kernel.org>
+References: <20240130214620.3155380-1-stefanb@linux.ibm.com>
+ <20240130214620.3155380-2-stefanb@linux.ibm.com>
+ <CAOQ4uxjgdvGU0WE+92ByQE26Jp0j16AgfyCjNyEp7=86akOSsA@mail.gmail.com>
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <CAOQ4uxjgdvGU0WE+92ByQE26Jp0j16AgfyCjNyEp7=86akOSsA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: mCEDx2t6kjyYzg4wr37jSslbfkLndMPF
+X-Proofpoint-GUID: U6FrtjlUTDFwrRHkX7hlF_HbsAvcq00R
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-01_03,2024-01-31_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=582
+ priorityscore=1501 mlxscore=0 impostorscore=0 lowpriorityscore=0
+ clxscore=1015 spamscore=0 adultscore=0 phishscore=0 malwarescore=0
+ bulkscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402010123
 
-Inside unpack_profile() data->data is allocated using kvmemdup() so it
-should be freed with the corresponding kvfree_sensitive().
 
-Also add missing data->data release for rhashtable insertion failure path
-in unpack_profile().
 
-Found by Linux Verification Center (linuxtesting.org).
+On 1/31/24 08:25, Amir Goldstein wrote:
+> On Tue, Jan 30, 2024 at 11:46 PM Stefan Berger <stefanb@linux.ibm.com> wrote:
+>>
+>> Copying up xattrs is solely based on the security xattr name. For finer
+>> granularity add a dentry parameter to the security_inode_copy_up_xattr
+>> hook definition, allowing decisions to be based on the xattr content as
+>> well.
+>>
+>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>> ---
+>>   fs/overlayfs/copy_up.c            | 2 +-
+>>   include/linux/evm.h               | 2 +-
+>>   include/linux/lsm_hook_defs.h     | 3 ++-
+>>   include/linux/security.h          | 4 ++--
+>>   security/integrity/evm/evm_main.c | 2 +-
+>>   security/security.c               | 7 ++++---
+>>   security/selinux/hooks.c          | 2 +-
+>>   security/smack/smack_lsm.c        | 2 +-
+>>   8 files changed, 13 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+>> index b8e25ca51016..bd9ddcefb7a7 100644
+>> --- a/fs/overlayfs/copy_up.c
+>> +++ b/fs/overlayfs/copy_up.c
+>> @@ -114,7 +114,7 @@ int ovl_copy_xattr(struct super_block *sb, const struct path *oldpath, struct de
+>>                  if (ovl_is_private_xattr(sb, name))
+>>                          continue;
+>>
+>> -               error = security_inode_copy_up_xattr(name);
+>> +               error = security_inode_copy_up_xattr(old, name);
+> 
+> What do you think about:
+> 
+>                       error = security_inode_copy_up_xattr(name, NULL, 0);
 
-Fixes: e025be0f26d5 ("apparmor: support querying extended trusted helper extra data")
-Cc: stable@vger.kernel.org
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
- security/apparmor/policy.c        | 2 +-
- security/apparmor/policy_unpack.c | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+We need 'old'.
+> 
+> and then later...
+> 
+>                       error = security_inode_copy_up_xattr(name, value, size);
 
-diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-index 957654d253dd..14df15e35695 100644
---- a/security/apparmor/policy.c
-+++ b/security/apparmor/policy.c
-@@ -225,7 +225,7 @@ static void aa_free_data(void *ptr, void *arg)
- {
- 	struct aa_data *data = ptr;
- 
--	kfree_sensitive(data->data);
-+	kvfree_sensitive(data->data, data->size);
- 	kfree_sensitive(data->key);
- 	kfree_sensitive(data);
- }
-diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index 5e578ef0ddff..75452acd0e35 100644
---- a/security/apparmor/policy_unpack.c
-+++ b/security/apparmor/policy_unpack.c
-@@ -1071,6 +1071,7 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
- 
- 			if (rhashtable_insert_fast(profile->data, &data->head,
- 						   profile->data->p)) {
-+				kvfree_sensitive(data->data, data->size);
- 				kfree_sensitive(data->key);
- 				kfree_sensitive(data);
- 				info = "failed to insert data to table";
--- 
-2.43.0
+Are these parameter used to first query for the necessary size of the 
+buffer and then provide the buffer to fill it? Or should the function 
+rather take an existing buffer and realloc it if necessary and place the 
+value of the xattr into it? Unfortunately this function currently 
+returns '1' for 'discard', so returning the size of the xattr value from 
+it maybe not ideal but it would require maybe yet another parameter that 
+indicates what the size of the xattr value is.
 
+    Stefan
+
+> 
+> I am asking because overlayfs uses mnt_idmap(path->mnt) and you
+> have used nop_mnt_idmap inside evm hook.
+> this does not look right to me?
+> 
+> Thanks,
+> Amir.
