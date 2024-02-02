@@ -1,357 +1,132 @@
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AD277620;
-	Fri,  2 Feb 2024 09:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C1A60270;
+	Fri,  2 Feb 2024 11:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706865888; cv=none; b=ZYbp2QgnQZUz+7brjUDBiKivMBzpNa/8BjfqRCdgzN5oyLnxqzBtSuirSfv9jB/6ZjsLcsNrph9W+l/NSCPn7kNp9juRaBUB19vEdyML4hkvXNCAdncyrMUXYJB/sNu77jvWs22yh5EEo8HkycCGyPhVho2U3gKlBaLjaDoarpo=
+	t=1706875112; cv=none; b=hqqWfho23h2rjymnFK3FY0IfJ1oCQE45j7aXRYwK8lEShTbCAJcJJ77CnfKpjTAZ7EiG2CFTltRiY94QZpLJvzvfQfKien8FniKyCnG80Bd5X9BgEMFYZYPhEMfS49TDJRRXbjMhIXik+xq7BnumDF5hhWVJRRGHhaBDHqydTyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706865888; c=relaxed/simple;
-	bh=+zPRx5GnVsdneG6x2OLDEMhNye8NXSB/IlDh18S93kw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pVX1GsWanupJzbMmvpeELqEtDwY8p+WHnRL39URngDT3TOU70pj9+60ORFpq0FcY6Wj3XH958gY84FJpynlmMZBDCZOO7nVdwjBMBZQtLnJxGmy2tgDrCi/nxUS9+26bhPTbF4Pgj0s7kcibD7HMEDrFOAp4Qg+R215o/0VH0KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b4KTOP1V; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1706875112; c=relaxed/simple;
+	bh=28eVMR5VejBPzOZM439WvuKU/7CA3CIN97T0u0bI17c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mlpvtMMdLGc5/GLuDCCnSAUN9e+JTiHOJpYFanZdiuGH+eZ6z04qHhAHc2c5eBDYsPfb3C6wQyBqhNOb+IxyemWkvZp1etdk/FHKxlFZ9lwuchIWNr+r7cyOAP8zzyKGmO+xFE4Npr9QKjtV816UiRbZdu8QfBGJKv5/LyfdBg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iu0aN8r/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4KTOP1V"
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6869e87c8d8so8326156d6.2;
-        Fri, 02 Feb 2024 01:24:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706865885; x=1707470685; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1jZ7LJ0w9u7x0tImGNxxD5E2uy3UdmNQbHbFvKlgQBE=;
-        b=b4KTOP1Vu2qoEzBGRlX+5mGIjCThwrOeOVZxisya+ixpWkDMmfj0AAW7iW/xV4LlhS
-         bGjhz+Vc3Tf3QGENi5nvNLd2wJUQNoXr8u4A5UrOEPK4GAD1j98aLOOIKIz/92/5i9sR
-         XAPSGyK75S9J6sU2bWtH1yt2SHViz27DshdGdOqhPoH7DX3JgaQCyFSLuxWMAhSrNpZG
-         aUKIT/hSaJFZvIYg9jJN7H0ER7qaxBQcNKM/txOFrsYUFxqYzx0nleucieu3kNMsCCPk
-         sZFme8Ek8vmrR0qU8q9dQr79+zeVrvnMJU9NDGWHgfFsJJ3k5SlmmRuy4nzrZS0GsYS5
-         90Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706865885; x=1707470685;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1jZ7LJ0w9u7x0tImGNxxD5E2uy3UdmNQbHbFvKlgQBE=;
-        b=wgiC+/F95hLL6vzgBeAarOVZTk5cnE0tZNwnmTG1BlYKhsEZP0BvbHMmQDY8zpad4W
-         Wz+Z0TfwXxOdB6vYB5oBYT5ipCQwNZNhGbT6N/am8yCjI0IYXGUKQNEsOnqqmTgdQ6uV
-         yu3B5e4Sesm4Sja3xpb6DMrUBsmTQsJS7KazPtpDyoFGifrqbePnFfUTIyEUPHGk5xFh
-         WS0Ec8VKPwdsimu4HlFIVbR3ZVs8qNtoSnj5XV+fQQKP7p4JMbt+OUjQYzav8/aRJmB1
-         Zbz6j60sV7y2Yqzc1hk27jIzbynmrV5oWSbMTtz9vHKkFZGQE0nN0XAnPy28AUvfTYTy
-         RrLA==
-X-Gm-Message-State: AOJu0Yyd3t7LQzAREZe8D90sngdSlOuhWwg8C93j4qP/+euTInG+0owh
-	Xtp1CAlH8rCD1J1fE0bEBTpgPIAc+g1nzptzEZDncZFwzXMCS4k0xA9A0VnLiqbzY5LLvJlA2Sr
-	PkLnVF3DA//haYLX7k7hdikMLrBXIDZVsP40=
-X-Google-Smtp-Source: AGHT+IEwA4CgDbG8YXcc8Jam/z+5xFg9sXc6x9vrGJG3s7TemCWJ73riLlZiqpBVJFzETzpu4gPfm/XM+qqIBfi8ClU=
-X-Received: by 2002:a05:6214:1252:b0:681:7948:220d with SMTP id
- r18-20020a056214125200b006817948220dmr8109610qvv.61.1706865885495; Fri, 02
- Feb 2024 01:24:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iu0aN8r/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3135C433F1;
+	Fri,  2 Feb 2024 11:58:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706875111;
+	bh=28eVMR5VejBPzOZM439WvuKU/7CA3CIN97T0u0bI17c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Iu0aN8r/nNwsnPMpARRPy4agLoGLztKstfqsKYfTb+5rlNKthcKgU9oh3zHdJFQsx
+	 cikBsWOOM+4KuaRpCGiYjlCBXnByOz9bDZuR/d9wlewsI8SvaZ2XDA+kaxDWj4D9JW
+	 bk5ddYM+MFp5tlhdtrUogWa6gcTsK3wbI2GuChVUK6twv15cfUqZprysCBjFYM3k1J
+	 FoaF71I0zDXKVdAB7gjyVp8+Z7zlIlt9cfshpah8KRWfm93dEWPRAXdOyGLmbBuxD3
+	 tOoP+Jhjk0KipFO4LQeGDldHsb2PiNSsd6Gvg8y1xyr7rH8ZvKNaVluwMNKgI178kF
+	 ll1WNINh93u1w==
+Date: Fri, 2 Feb 2024 12:58:25 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, 
+	roberto.sassu@huawei.com, miklos@szeredi.hu
+Subject: Re: [PATCH 1/5] security: allow finer granularity in permitting
+ copy-up of security xattrs
+Message-ID: <20240202-quatsch-hochachtung-c3a41dd551a7@brauner>
+References: <20240130214620.3155380-1-stefanb@linux.ibm.com>
+ <20240130214620.3155380-2-stefanb@linux.ibm.com>
+ <CAOQ4uxjgdvGU0WE+92ByQE26Jp0j16AgfyCjNyEp7=86akOSsA@mail.gmail.com>
+ <20240131-lacht-elend-536d94682370@brauner>
+ <05fe58a1-9b2c-4c1f-80a6-4cb5094a2126@linux.ibm.com>
+ <20240201-zierpflanzen-allgegenwart-5eb1fa243a61@brauner>
+ <CAOQ4uxgfkdX+3VR9sA7SeB7f3BW89iAwF2-JRCcJNsurtune_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240130214620.3155380-1-stefanb@linux.ibm.com>
- <20240130214620.3155380-5-stefanb@linux.ibm.com> <38230b4c-54ae-45ed-a6fb-34e63501e5b1@linux.ibm.com>
- <CAOQ4uxiYARZBSgzb4_W-RKvB1XLSF3GUBqeLw2kH+eVeZ_8ARQ@mail.gmail.com>
- <c018b014-9ba8-4395-86dc-b61346ab20a8@linux.ibm.com> <CAOQ4uxi6Te8izWpXROthknRaXrVA9jho5nbc+mkuQDrcTLY44Q@mail.gmail.com>
- <CAOQ4uxigdNeE+2nfr4VxS9piQf5hez=ryT0a-jzW+tW0BT-zuw@mail.gmail.com>
- <492ea12a-d79d-47da-9bbe-a7f33051bd3f@linux.ibm.com> <CAOQ4uxgiO1RbsmqOu4F4Foy-MBPecnEXO7BvgDGz-Lzb1Eysog@mail.gmail.com>
- <4c584bfb-d282-4584-bb20-18c26b1033c0@linux.ibm.com> <CAOQ4uxjftr7GGx6tuW_yB_MTaVB57m6p_d=UHhN3Z23YVXY0QQ@mail.gmail.com>
- <11abffea-15c5-4d13-9d0f-edbc54b09bf3@linux.ibm.com>
-In-Reply-To: <11abffea-15c5-4d13-9d0f-edbc54b09bf3@linux.ibm.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 2 Feb 2024 11:24:33 +0200
-Message-ID: <CAOQ4uxjZ6p9+H54G0LNTUnU56WRaoLtWOUj2nOaKJ4JvBGqLVg@mail.gmail.com>
-Subject: Re: [PATCH 4/5] evm: Use the real inode's metadata to calculate
- metadata hash
-To: Stefan Berger <stefanb@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, 
-	roberto.sassu@huawei.com, miklos@szeredi.hu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgfkdX+3VR9sA7SeB7f3BW89iAwF2-JRCcJNsurtune_g@mail.gmail.com>
 
-On Thu, Feb 1, 2024 at 10:35=E2=80=AFPM Stefan Berger <stefanb@linux.ibm.co=
-m> wrote:
->
->
->
-> On 2/1/24 09:11, Amir Goldstein wrote:
-> > On Thu, Feb 1, 2024 at 3:37=E2=80=AFPM Stefan Berger <stefanb@linux.ibm=
-.com> wrote:
-> >>
-> >>
-> >>
-> >> On 2/1/24 07:10, Amir Goldstein wrote:
-> >>> On Wed, Jan 31, 2024 at 7:46=E2=80=AFPM Stefan Berger <stefanb@linux.=
-ibm.com> wrote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 1/31/24 12:23, Amir Goldstein wrote:
-> >>>>> On Wed, Jan 31, 2024 at 5:54=E2=80=AFPM Amir Goldstein <amir73il@gm=
-ail.com> wrote:
-> >>>>>>
-> >>>>>> On Wed, Jan 31, 2024 at 4:40=E2=80=AFPM Stefan Berger <stefanb@lin=
-ux.ibm.com> wrote:
-> >>>>>>>
-> >>>>>>>
-> >>>>>>>
-> >>>>>>> On 1/31/24 08:16, Amir Goldstein wrote:
-> >>>>>>>> On Wed, Jan 31, 2024 at 4:11=E2=80=AFAM Stefan Berger <stefanb@l=
-inux.ibm.com> wrote:
-> >>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> On 1/30/24 16:46, Stefan Berger wrote:
-> >>>>>>>>>> Changes to the file attribute (mode bits, uid, gid) on the low=
-er layer
-> >>>>>>>>>> are not take into account when d_backing_inode() is used when =
-a file is
-> >>>>>>>>>> accessed on the overlay layer and this file has not yet been c=
-opied up.
-> >>>>>>>>>> This is because d_backing_inode() does not return the real ino=
-de of the
-> >>>>>>>>>> lower layer but instead returns the backing inode which holds =
-old file
-> >>>>>>>>>> attributes. When the old file attributes are used for calculat=
-ing the
-> >>>>>>>>>> metadata hash then the expected hash is calculated and the fil=
-e then
-> >>>>>>>>>> mistakenly passes signature verification. Therefore, use d_rea=
-l_inode()
-> >>>>>>>>>> which returns the inode of the lower layer for as long as the =
-file has
-> >>>>>>>>>> not been copied up and returns the upper layer's inode otherwi=
-se.
-> >>>>>>>>>>
-> >>>>>>>>>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> >>>>>>>>>> ---
-> >>>>>>>>>>       security/integrity/evm/evm_crypto.c | 2 +-
-> >>>>>>>>>>       1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>>>>>>>
-> >>>>>>>>>> diff --git a/security/integrity/evm/evm_crypto.c b/security/in=
-tegrity/evm/evm_crypto.c
-> >>>>>>>>>> index b1ffd4cc0b44..2e48fe54e899 100644
-> >>>>>>>>>> --- a/security/integrity/evm/evm_crypto.c
-> >>>>>>>>>> +++ b/security/integrity/evm/evm_crypto.c
-> >>>>>>>>>> @@ -223,7 +223,7 @@ static int evm_calc_hmac_or_hash(struct de=
-ntry *dentry,
-> >>>>>>>>>>                                    size_t req_xattr_value_len,
-> >>>>>>>>>>                                    uint8_t type, struct evm_di=
-gest *data)
-> >>>>>>>>>>       {
-> >>>>>>>>>> -     struct inode *inode =3D d_backing_inode(dentry);
-> >>>>>>>>>> +     struct inode *inode =3D d_real_inode(dentry);
-> >>>>>>>>>>           struct xattr_list *xattr;
-> >>>>>>>>>>           struct shash_desc *desc;
-> >>>>>>>>>>           size_t xattr_size =3D 0;
-> >>>>>>>>>
-> >>>>>>>>> We need this patch when NOT activating CONFIG_OVERLAY_FS_METACO=
-PY but
-> >>>>>>>>> when setting CONFIG_OVERLAY_FS_METACOPY=3Dy it has to be revert=
-ed...  I am
-> >>>>>>>>> not sure what the solution is.
-> >>>>>>>>
-> >>>>>>>> I think d_real_inode() does not work correctly for all its curre=
-nt users for
-> >>>>>>>> a metacopy file.
-> >>>>>>>>
-> >>>>>>>> I think the solution is to change d_real_inode() to return the d=
-ata inode
-> >>>>>>>> and add another helper to get the metadata inode if needed.
-> >>>>>>>> I will post some patches for it.
-> >>>>>>>
-> >>>>>>> I thought that we may have to go through vfs_getattr() but even b=
-etter
-> >>>>>>> if we don't because we don't have the file *file anywhere 'near'.
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>> However, I must say that I do not know if evm_calc_hmac_or_hash(=
-)
-> >>>>>>>> needs the lower data inode, the upper metadata inode or both.
-> >>>>>>>
-> >>>>>>> What it needs are data structures with mode bits, uid, and gid th=
-at stat
-> >>>>>>> in userspace would show.
-> >>>>>>>
-> >>>>>>>
-> >>>>>>
-> >>>>>> With or without metacopy enabled, an overlay inode st_uid st_gid s=
-t_mode
-> >>>>>> are always taken from the upper most inode which is what d_real_in=
-ode()
-> >>>>>> currently returns, so I do not understand what the problem is.
-> >>>>>>
-> >>>>>
-> >>>>> No, I was wrong. It is the other way around.
-> >>>>> d_real_inode() always returns the real data inode and you need the
-> >>>>> upper most real inode.
-> >>>>>
-> >>>>> You can try this:
-> >>>>>
-> >>>>>     -     struct inode *inode =3D d_backing_inode(dentry);
-> >>>>> +     struct inode *inode =3D d_inode(d_real(dentry, false));
-> >>>>>
-> >>>>> With the changes in:
-> >>>>>
-> >>>>> https://github.com/amir73il/linux/commits/overlayfs-devel/
-> >>>>>
-> >>>>> Not thoroughly tested...
-> >>>>
-> >>>> The change + 3 topmost patches cherry-picked is unfortunately are
-> >>>> crashing for me.
-> >>>>
-> >>>
-> >>> I will look into it.
-> >>> But anyway, the patch I suggested above is not enough exactly because
-> >>> of the reason I told you earlier.
-> >>>
-> >>> Mimi's fix ("ima: detect changes to the backing overlay file") detect=
-s
-> >>> a change in d_real_inode(file_dentry(file)) in order to invalidate th=
-e
-> >>> IMA cache.
-> >>>
-> >>> Your change also invalidates EVM cache on a change in
-> >>> d_real_inode(file_dentry(file)) and that makes sense.
-> >>>
-> >>> But on "meta copy up" for example on chmod(), an upper inode with no =
-data
-> >>> is created (a metacopy) and all the attributes and xattr are copied
-> >>> from lower inode.
-> >>> The data remains in the lower inode.
-> >>>
-> >>> At this point , the IMA cache and the EVM cache refer to two differen=
-t inodes
-> >>
-> >> You mean they refer to different inodes because IMA cares about file
-> >> content ("data remains in the lower inode:) and EVM cares about the
-> >> metadata ("an upper inode with no data is created")? If so, I agree
+On Thu, Feb 01, 2024 at 04:18:32PM +0200, Amir Goldstein wrote:
+> On Thu, Feb 1, 2024 at 3:35 PM Christian Brauner <brauner@kernel.org> wrote:
 > >
-> > Correct.
+> > On Wed, Jan 31, 2024 at 09:56:25AM -0500, Stefan Berger wrote:
+> > >
+> > >
+> > > On 1/31/24 09:25, Christian Brauner wrote:
+> > > > On Wed, Jan 31, 2024 at 03:25:29PM +0200, Amir Goldstein wrote:
+> > > > > On Tue, Jan 30, 2024 at 11:46 PM Stefan Berger <stefanb@linux.ibm.com> wrote:
+> > > > > >
+> > > > > > Copying up xattrs is solely based on the security xattr name. For finer
+> > > > > > granularity add a dentry parameter to the security_inode_copy_up_xattr
+> > > > > > hook definition, allowing decisions to be based on the xattr content as
+> > > > > > well.
+> > > > > >
+> > > > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > > > > ---
+> > > > > >   fs/overlayfs/copy_up.c            | 2 +-
+> > > > > >   include/linux/evm.h               | 2 +-
+> > > > > >   include/linux/lsm_hook_defs.h     | 3 ++-
+> > > > > >   include/linux/security.h          | 4 ++--
+> > > > > >   security/integrity/evm/evm_main.c | 2 +-
+> > > > > >   security/security.c               | 7 ++++---
+> > > > > >   security/selinux/hooks.c          | 2 +-
+> > > > > >   security/smack/smack_lsm.c        | 2 +-
+> > > > > >   8 files changed, 13 insertions(+), 11 deletions(-)
+> > > > > >
+> > > > > > diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+> > > > > > index b8e25ca51016..bd9ddcefb7a7 100644
+> > > > > > --- a/fs/overlayfs/copy_up.c
+> > > > > > +++ b/fs/overlayfs/copy_up.c
+> > > > > > @@ -114,7 +114,7 @@ int ovl_copy_xattr(struct super_block *sb, const struct path *oldpath, struct de
+> > > > > >                  if (ovl_is_private_xattr(sb, name))
+> > > > > >                          continue;
+> > > > > >
+> > > > > > -               error = security_inode_copy_up_xattr(name);
+> > > > > > +               error = security_inode_copy_up_xattr(old, name);
+> > > > >
+> > > > > What do you think about:
+> > > > >
+> > > > >                       error = security_inode_copy_up_xattr(name, NULL, 0);
+> > > > >
+> > > > > and then later...
+> > > > >
+> > > > >                       error = security_inode_copy_up_xattr(name, value, size);
+> > > > >
+> > > > > I am asking because overlayfs uses mnt_idmap(path->mnt) and you
+> > > > > have used nop_mnt_idmap inside evm hook.
+> > > > > this does not look right to me?
+> > > >
+> > > > So it's relevant if they interact with xattrs that care about the
+> > > > idmapping and that's POSIX ACLs and fscaps. And only if they perform
+> > > > permission checks such as posix_acl_update_mode() or something. IOW, it
+> > > > depends on what exactly EVM is doing.
+> > >
+> > > In 2/5 we are reading the value of security.evm to look at its contents.
 > >
-> >> since the following line after copy-up with meatacopy enabled shows th=
-e
-> >> proper GID is in the backing inode not the one return from
-> >> d_real_inode(). If we knew that a meta copy has been done we could cal=
-l
-> >> d_backing_inode() in this case for access to mode bits, uid, and gid.
-> >>
-> >
-> > You should be able to use
-> > d_real_meta_inode(dentry) !=3D d_real_inode(dentry) to figure that out.
-> >
-> >> +       printk(KERN_INFO "real: GID: %d  backing: GID: %d\n",
-> >> +              from_kgid(&init_user_ns, d_real_inode(dentry)->i_gid),
-> >> +              from_kgid(&init_user_ns, d_backing_inode(dentry)->i_gid=
-));
-> >> +
-> >>
-> >>   > so you cannot share the same logic with IMA cache invalidation.
-> >>
-> >> I thought we we would have to share the same logic since IMA and EVM
-> >> would have to refer to the same inode also since IMA and EVM are
-> >> strongly connected. So the file_inode(file), which is typically used f=
-or
-> >> finding the iint, should be the same 'high level' inode for both EVM a=
-nd
-> >> IMA I thought. A different inode could then be used for file data and
-> >> metadata.
-> >>
-> >>>
-> >>> My patches are meant to provide you with a helper e.g. d_real_meta_in=
-ode()
-> >>
-> >> The patch providing this isn't there yet in overlayfs-devel, right?
-> >
-> > It's there just not spelled out with these helper names:
-> >
-> > d_real_meta_inode(d) :=3D d_inode(d_real(dentry, false))
-> > d_real_data_inode(d) :=3D d_inode(d_real(dentry, true))
-> > d_real_inode(d) :=3D d_real_data_inode(d)
-> >
-> > I think this use case is pretty specific to EVM, so I don't think
-> > I will actually define these d_real_*_inode() helpers.
-> >
-> >>
-> >>> that you could use to get the upper inode in the case of a metacopy, =
-but
-> >>> IMA would still need to use the d_real_data_inode().
-> >>
-> >> That would be fine since we are only changing EVM code in this case.
-> >
-> > Yes, using those overlayfs APIs requires understanding of what they mea=
-n
-> > and knowing how to test the affected use cases.
-> > This is not something very common for other subsystem developers.
-> >
-> >>>
-> >>> Is that explanation clear? Is it clear why I said that the problem is=
- more
-> >>> complicated?
-> >>
-> >> I think I understand it.
-> >>
-> >
-> > I think I am also starting to understand the expectation from IMA/EVM
-> > over overlayfs ;)
-> >
-> > Anyway, let me see if I can fix the problem in my WIP branch.
->
-> The good news is that with your two patches applied :
->
-> 3b0ed3977dd2 (HEAD) fs: make file_dentry() a simple accessor
-> b5ccc40f3d50 fs: remove the inode argument to ->d_real() method
+> > I'm not sure what this is supposed to be telling me in relation to the
+> > original question though. :) security.evm doesn't store any {g,u}id
+> > information afaict. IOW, it shouldn't matter?
+> 
+> But it does. in evm_calc_hmac_or_hash() => hmac_add_misc():
+> 
+>         hmac_misc.uid = from_kuid(&init_user_ns, inode->i_uid);
+>         hmac_misc.gid = from_kgid(&init_user_ns, inode->i_gid);
+> 
+> I guess as far as EVM is concerned, it should always be interested in the
+> absolute uig/gid values of the inode.
 
-Doh! good catch!
-This first fix commit was buggy.
-
-Pushed a new fixed version:
-
-* 4d76c382bf12 - (github/overlayfs-devel) fs: remove the inode
-argument to ->d_real() method
-* 2cadd1b25485 - fs: make file_dentry() a simple accessor
-* 1c5e7db8e1b2 - (github/ovl-fixes) remap_range: merge
-do_clone_file_range() into vfs_clone_file_range()
-
->
-> and your suggested change to this patch :
->
-> -       struct inode *inode =3D d_real_inode(dentry);
-> +       struct inode *inode =3D d_inode(d_real(dentry, false));;
->
-
-In the new version I change the API to use an enum instead of bool, e.g.:
-
-       struct inode *inode =3D d_inode(d_real(dentry, D_REAL_METADATA));
-
-This catches in build time and in run time, callers that were not converted
-to the new API.
-
-> The test cases are now passing with and without metacopy enabled. Yay!
-
-Too soon to be happy.
-I guess you are missing a test for the following case:
-1. file was meta copied up (change is detected)
-2. the lower file that contains the data is being changed (change is
-not detected)
-
-At #2 the change is not detected, because the inode version of the
-lower inode is not checked.
-
-I think the only way for you to cover this case is to store versions of bot=
-h
-real data and real metadata inodes...
-
-Let me know if this version work for you and I will added you Tested-by
-when I post it.
-
-Thanks,
-Amir.
+There we go, thanks Amir. Yes, these EVM values can't be relative to any
+idmappings. If inode->i_uid has kuid 100000 and 100000 maps to zero in
+the caller's user namespace then you'd be storing hmac_misc.{g,u}id
+zero. That would be problematic as it would give the impression that
+real root caused that hmac to be written. So this really needs to store
+100000 to make it clear that this was an unprivileged user that created
+these values.
