@@ -1,148 +1,120 @@
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F3DBE5C
-	for <linux-security-module@vger.kernel.org>; Fri,  2 Feb 2024 02:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7609DDF4C
+	for <linux-security-module@vger.kernel.org>; Fri,  2 Feb 2024 03:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706842249; cv=none; b=J46wo9uLqTSxrEAreUKTLIMIIv0me8raWIqIiQWMy7b4hSV7T9DNZCp6o66AGzhHpJ2zpXTDSYnpNzouAQ1pI1FOcRXqRy7ir/kaPIuqrjQyZgu7eb7+6DQRk2lH9ABSCNBJcdKg/gEO52+bgFrC3ZgrMkvu3yw6ATcMn4khKAk=
+	t=1706845521; cv=none; b=G/qPOJDB4QHKiJnVnpG4ZhE7ivrCdSYcEAmamsjKOUslccizqQt9g1R9UsOgr1bI3c+EMQg8hqBy3ADI17PPKAhUbyu8g9mGyymggGOXs0sXE/gMAzmLzOlirnDRAwjmA2OH269RX9E2gZqhHUtcDI4rRtoQITlkErpa7lHt2ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706842249; c=relaxed/simple;
-	bh=BBczSnSvmRMNE9RXn4zXZYd5DCduKaY1tzfn/e/tSqY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JjFMIVkqWkMLeOHWjrWJtry0voViFJ869ktwVOn+iT1/jSdtRvRAAk9ngE6nyip5CMvTFqFYvbZCLUJek1TvYsAloViNOh6igUWKXlKBovfHRvmy4IkSCEIeyugpLEEzUYYgokzmqQUvNpA6Ci4s4WIJLy8BlFCr4M2W5ODDdNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=M6gPBM+H; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1706845521; c=relaxed/simple;
+	bh=+sLC3/sMdldqreq8t261If0XmChHH3bybwx3J4jsT04=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fSB2iHUOcCfEpoIlb2NJWDdG6cLxRJxEI7j1yCL9RFVe/2eVKvGzXW/L837x0kC9d+7QA7oyzysoLaSkdone9UM34Hp0R4800GbK3nmeGoBxx5zyxvQxKqIQuMg2pbZO/MtPJTQzsDtFDzk8js3igr2Qgpvf9vVx+gUENjpeyHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wkJwZkbb; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="M6gPBM+H"
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dc23bf7e5aaso1679776276.0
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Feb 2024 18:50:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1706842246; x=1707447046; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zWD+cRf26gUxdoUczPHqIEoaH880ytNGYXoUS2sodZs=;
-        b=M6gPBM+HzXkQkUk+sGfiSniomhhR8HQglvQGlhZebEzSTS6xkZkwPQpgmdkXwc2LeB
-         OFAD5lj7UY1JrCwuelhpfmw+zpjaCl3qkk6WiTLZsVsIHywhMrNzmunP1WRfALJ6GC1U
-         5hWzJwv6u36GdiNyt1spHKsRBuSKwylRDr9xChMJghKgRFu5FfO+nYwM7OWUrsl4euze
-         zQKEmd/iEteZ664HF5bS/AxJEGGz5bWqShRwLG1jvRzB2T7GS/ir3ABo/z9E3ZcODjLX
-         0P1FpFPOQg9xEy5gzROEgo5n0CyBe2IYvuXYHrcgXlQ9S8bRuAePU2gPZNqmkeOl6bNj
-         czDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706842246; x=1707447046;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zWD+cRf26gUxdoUczPHqIEoaH880ytNGYXoUS2sodZs=;
-        b=fKypaWbmFKGGjruOhx5g2ZtG8j52W6drbZCClv1lB6R2IVm+g9IVJDiuZfEfi3hNhi
-         Ov4rhF5Tsu+T74Vh57LRGjskpSiJvIrGwqhxpalm3vK6gPmcIwtqEMe/KhCRn3ZssMz6
-         KoQqWVrU7kYrYqzLwNTQlyFHyjv/D0/nWF2RtjoNY+u1JnfOIxzfX/GZMohwIIs/Rc8C
-         aKCqV3/efGByEXIXXr3TGzeEVMEDVHqMqRjIVUWHRTDexdftDi6+pl7e+GUbr2CNoCxc
-         h+zTgIn9bc9iNuUm3+MMow0D6QKWspiZIbXW9A8+d4qVQx4IwrB+7LMvkYWxtgCCQGHp
-         jHtw==
-X-Gm-Message-State: AOJu0YyKg/bP4PXL19wlawBxWIAgm7ZaYahAeNXXhhsIgmbLKdO7J2Kh
-	KrPnhuCUShWtzKV7eln2WJ9J2Yum4l/Uo3yLcZGnCKKE9TcNus+r8L58kLfGM4LRPstoNfnTbzB
-	kPUhP/JEQh3bnsYmNKbTo82KTwbwRxzaAP5FQ
-X-Google-Smtp-Source: AGHT+IHxT07F5IDoqnhbZAtp2BV2w8zWgefrW2z5PLxz9TfOx3FeJZV9tcS1vQ46fTVgHpakkEDRBKzXz9CXfw/9aLU=
-X-Received: by 2002:a25:2786:0:b0:dc6:bb4c:9386 with SMTP id
- n128-20020a252786000000b00dc6bb4c9386mr6298275ybn.49.1706842246664; Thu, 01
- Feb 2024 18:50:46 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wkJwZkbb"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1706845516;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FhDGektx+3oTkSzeRUpmjCM+yvBN/m1UWuemA9fuCj0=;
+	b=wkJwZkbb8FTbQTYUmMCc+6wPEba6MbtYyoGnztwdtyD8u/BcuMHY2UAmU4/DrWiR/yr6Ik
+	SJLMf1jvr6mRpoFs2k8hZtGv2LX/KGDpgHacW78RxbLQRk1H2juR0LGq5v83zJAEyQrS/M
+	6LiXrWwld7xmuiMo19amcNbhO01whQo=
+From: George Guo <dongtai.guo@linux.dev>
+To: Paul Moore <paul@paul-moore.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: George Guo <guodongtai@kylinos.cn>,
+	netdev@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] Modify macro NETLBL_CATMAP_MAPTYPE to define a type using typedef
+Date: Fri,  2 Feb 2024 11:44:48 +0800
+Message-Id: <20240202034448.717589-1-dongtai.guo@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240129133058.1627971-1-omosnace@redhat.com> <CAHC9VhSzdvJ2DAgV75Tdxk+tOLuhY-vM+BTT--Mfn6xoxVKbxQ@mail.gmail.com>
- <CAHC9VhQRSWMRAg=y5cUx9+XLG4A2_+WSqJN1RgQQ8bF=VDwnWw@mail.gmail.com>
- <CAHC9VhRa5q3fvWUD-Dh-d5Udq18XqFwR4AGUzSow6Ur+_TmFrQ@mail.gmail.com>
- <CAHC9VhSyNPd4rK+oZE6cDwZTCb3Km_eu-+K8s+X73BJwt8ynuA@mail.gmail.com> <0e5dd86d-bdc4-4ef0-a9bd-d883227102ca@schaufler-ca.com>
-In-Reply-To: <0e5dd86d-bdc4-4ef0-a9bd-d883227102ca@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 1 Feb 2024 21:50:35 -0500
-Message-ID: <CAHC9VhR1aLrXdwTR-qMLD+o51d3UDx49aPTb2aNnw7T6sBuX1A@mail.gmail.com>
-Subject: Re: [PATCH] security: fix no-op hook logic in security_inode_{set,remove}xattr()
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Ondrej Mosnacek <omosnace@redhat.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Feb 1, 2024 at 7:11=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
-> On 2/1/2024 3:52 PM, Paul Moore wrote:
-> > On Tue, Jan 30, 2024 at 9:19=E2=80=AFPM Paul Moore <paul@paul-moore.com=
-> wrote:
-> >> I'll come back to this tomorrow with some fresh eyes.
-> > My apologies, "tomorrow" turned into "the day after tomorrow" (as it
-> > often does) ...
-> >
-> > I've been struggling with the idea that there are individual LSMs
-> > still calling into the capability hooks instead of leveraging the LSM
-> > stacking infrastructure, and the "magic" involved to make it all work.
-> > While your patch looks like it should restore proper behavior - that's
-> > good! - I keep thinking that we can, and should, do better.
->
-> Apology for attaching a patch rather than inlining it.
-> I've attached patch #38 from the current stacking set.
-> It addresses the issue.
+From: George Guo <guodongtai@kylinos.cn>
 
-Archive link:
-https://lore.kernel.org/linux-security-module/20231215221636.105680-39-case=
-y@schaufler-ca.com/
+Modify NETLBL_CATMAP_MAPTYPE to netlbl_catmap_map_t, which is more 
+readable.
 
-It still relies on checking for special return values, which I'm
-starting to sour on as it has been the source of problems in the past.
-At some point in the future (likely distant future) I want to spend a
-day to see what sort of changes it would take to convert all of the
-LSM hooks that return an int value into a 0-on-success,
-negative-errno-otherwise format where the negative error codes have no
-special meaning to the LSM layer ... and if that would even be
-desirable in each case.
+Signed-off-by: George Guo <guodongtai@kylinos.cn>
+---
+ include/net/netlabel.h       | 8 ++++----
+ net/netlabel/netlabel_kapi.c | 8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-> > The only thing that I coming up with is to create two new LSM hooks,
-> > in addition to the existing 'inode_setxattr' hook.  The new LSM hooks
-> > would be 'inode_setxattr_owned' and 'inode_setxattr_cap'.  The _owned
-> > hook would simply check the xattr name and return a positive value if
-> > the LSM "owned" the xattr, e.g. XATTR_NAME_SELINUX for SELinux, and
-> > zero otherwise.  The _cap hook would only be used by the capabilities
-> > code (or something similar), and would match up with
-> > cap_inode_setxattr().  With these two new hooks I think we could do
-> > something like this:
-> >
-> > int security_inode_setxattr(...)
-> > {
-> >   owned =3D false
-> >   hook_loop(inode_setxattr_owned) {
-> >     trc =3D hook->inode_setxattr_owned(name);
-> >     if (trc > 0) {
-> >       owned =3D true;
-> >       break;
-> >     }
-> >   }
-> >   if (owned) {
-> >     hook_loop(inode_setxattr) {
-> >       /* run the existing inode_setxattr hooks, e.g. SELinux and Smack =
-*/
-> >     }
-> >   } else {
-> >     hook_loop(inode_setxattr_cap) {
-> >       /* run the capability setxattr hooks, e.g. commoncap.c */
-> >     }
-> >   }
-> > }
-> >
-> > .. with security_inode_removexattr() following a similar pattern.
-> >
-> > I will admit that there is some duplication in having to check the
-> > xattr twice (once in _owned, again in inode_setxattr), and the
-> > multiple hook approach is less than ideal, but this seems much less
-> > fragile to me.
-> >
-> > Thoughts?
-> >
+diff --git a/include/net/netlabel.h b/include/net/netlabel.h
+index 43ae50337685..9f8387fc7e27 100644
+--- a/include/net/netlabel.h
++++ b/include/net/netlabel.h
+@@ -145,15 +145,15 @@ struct netlbl_lsm_cache {
+  * processing.
+  *
+  */
+-#define NETLBL_CATMAP_MAPTYPE           u64
++typedef u64 netlbl_catmap_map_t;
+ #define NETLBL_CATMAP_MAPCNT            4
+-#define NETLBL_CATMAP_MAPSIZE           (sizeof(NETLBL_CATMAP_MAPTYPE) * 8)
++#define NETLBL_CATMAP_MAPSIZE           (sizeof(netlbl_catmap_map_t) * 8)
+ #define NETLBL_CATMAP_SIZE              (NETLBL_CATMAP_MAPSIZE * \
+ 					 NETLBL_CATMAP_MAPCNT)
+-#define NETLBL_CATMAP_BIT               (NETLBL_CATMAP_MAPTYPE)0x01
++#define NETLBL_CATMAP_BIT               ((netlbl_catmap_map_t)0x01)
+ struct netlbl_lsm_catmap {
+ 	u32 startbit;
+-	NETLBL_CATMAP_MAPTYPE bitmap[NETLBL_CATMAP_MAPCNT];
++	netlbl_catmap_map_t bitmap[NETLBL_CATMAP_MAPCNT];
+ 	struct netlbl_lsm_catmap *next;
+ };
+ 
+diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+index 27511c90a26f..a8fa336be1cd 100644
+--- a/net/netlabel/netlabel_kapi.c
++++ b/net/netlabel/netlabel_kapi.c
+@@ -610,7 +610,7 @@ int netlbl_catmap_walk(struct netlbl_lsm_catmap *catmap, u32 offset)
+ 	struct netlbl_lsm_catmap *iter;
+ 	u32 idx;
+ 	u32 bit;
+-	NETLBL_CATMAP_MAPTYPE bitmap;
++	netlbl_catmap_map_t bitmap;
+ 
+ 	iter = _netlbl_catmap_getnode(&catmap, offset, _CM_F_WALK, 0);
+ 	if (iter == NULL)
+@@ -666,8 +666,8 @@ int netlbl_catmap_walkrng(struct netlbl_lsm_catmap *catmap, u32 offset)
+ 	struct netlbl_lsm_catmap *prev = NULL;
+ 	u32 idx;
+ 	u32 bit;
+-	NETLBL_CATMAP_MAPTYPE bitmask;
+-	NETLBL_CATMAP_MAPTYPE bitmap;
++	netlbl_catmap_map_t bitmask;
++	netlbl_catmap_map_t bitmap;
+ 
+ 	iter = _netlbl_catmap_getnode(&catmap, offset, _CM_F_WALK, 0);
+ 	if (iter == NULL)
+@@ -857,7 +857,7 @@ int netlbl_catmap_setlong(struct netlbl_lsm_catmap **catmap,
+ 
+ 	offset -= iter->startbit;
+ 	idx = offset / NETLBL_CATMAP_MAPSIZE;
+-	iter->bitmap[idx] |= (NETLBL_CATMAP_MAPTYPE)bitmap
++	iter->bitmap[idx] |= (netlbl_catmap_map_t)bitmap
+ 			     << (offset % NETLBL_CATMAP_MAPSIZE);
+ 
+ 	return 0;
+-- 
+2.34.1
 
---=20
-paul-moore.com
