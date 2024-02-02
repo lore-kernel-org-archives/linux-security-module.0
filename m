@@ -1,143 +1,117 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3CF148304
-	for <linux-security-module@vger.kernel.org>; Fri,  2 Feb 2024 16:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061C912C7EE
+	for <linux-security-module@vger.kernel.org>; Fri,  2 Feb 2024 18:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706891481; cv=none; b=o++BvGcDbzvthKIQ3RhnQVcqZKeX0oFAOu37pCnLfQgRNeLjKr2RfaXokyL0KN1XHbjDrwxsfu4yX/zrSp2sD1W/V9RGnkS4fPKpWfFZR3M7EX0iYHG2o9dcc1K+I2CRSYn/nhalN4P7XGrznhLGdm7Hb4KU/86PPAEw2VA3q0Y=
+	t=1706899921; cv=none; b=GoLjaS56vt1ay/GXDGtYjWWGzvnIkBxmM8J1Mf8XjF6LfNkk7ib8ZYKbZWasuTa0iBD/9SKC/kfbPlyNaws3JHWgn7tRhYm8/aQgxeAQl/oIoNaxRaiMa4BHbho9X8OFi4hgD0Q2RFWaQmEzoLjAfWFLUbIX9IMnoWnSRA1meCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706891481; c=relaxed/simple;
-	bh=L5XX9q9Bgwmes5VChQaRo0wPdr/Y43FELw3URgsUbfY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IE4zUmql6awEdLEXlvSDnjRf/kkhXRPHll3xhUicUrkX3IzaP+aTklZkoDSydnxah7vjMARFKqkoPrhCU0t4EATDGfWbl3L9yuy7i5f2c+g4C4sEiL2RIi/MHb9zKWFgLK1u1dUtyHV2VVBcVgmv4yqxu3tzoVUhBTxzVqlSq84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YhKbHfXm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+	s=arc-20240116; t=1706899921; c=relaxed/simple;
+	bh=AW0oiHNRWLwkj7DtXqlQs47sAiZxxTl/D0PavmFNNso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GvARSToDZaV6xr1xntEvnVGeGzjyLzphJIfKtfqW7quhjtEgKlU7gqb3X6D6MbR0vXphY6vBV42PYlWyNC18KSHwTUgWDYunJgkcWqxwYj8Jg+QrkVyBTS5A4RQVy1L8Q5BIXDgL7Lepszc20CaPAq3Yw5ma+AJMMBqPtCCc50A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=redhat.com; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YhKbHfXm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1706891479;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mk0HlDLODgfQxPi8eQL+hYbTQD1mb0Iz4J6bjfS5DyY=;
-	b=YhKbHfXmzGj7isFQvV3S5OhJiyXyAyAfWktIK0DFKo3Uo7h3XPNjgeSII9naWZd2tQHOhQ
-	OunlJV2iaav+9ynLclsRHAPdnTLkk4ixPon+BxnRz5nIsTUpeuf4SjCaGC0+rtQWPTfAMK
-	bOwlLs/KOXCtekVHi/KzXyGJxjFAK68=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-672-ymxwvo5TN7CcTqyXiq-FcQ-1; Fri, 02 Feb 2024 11:31:18 -0500
-X-MC-Unique: ymxwvo5TN7CcTqyXiq-FcQ-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-6ddddbf239aso1905332b3a.3
-        for <linux-security-module@vger.kernel.org>; Fri, 02 Feb 2024 08:31:17 -0800 (PST)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-603c5d7997aso22516847b3.1
+        for <linux-security-module@vger.kernel.org>; Fri, 02 Feb 2024 10:51:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706891477; x=1707496277;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mk0HlDLODgfQxPi8eQL+hYbTQD1mb0Iz4J6bjfS5DyY=;
-        b=VOHruJjiy43jQz2r3ZqG1ZCGwxI54AYwbJcU5pSHFllnkmzST/QKrWHLXr4duyYc1U
-         LROtHSbFpnIZ7DunctcK/Ncrpg6p1DpkFRIpH6YH5azT8ba8JEQi6OCXf3uqhyAWBwCz
-         xDz6mCljAJ+JLdssqRFmg1J0ChAxtMv5Q2+NcoydQ+41TI0CrjtBYQvhFLfQemqT+sz8
-         4psmj+15PieqVzP/XE3G9ICTYIF4EnE4b40dzWjJf+57Ef9avIqHQMG/Kmc0TAMsGojD
-         YS9yraTGNtWVOhKhUJJq/cMpGxBf/9+DMvxlutwAkpOnsfA5NZgQXmP6bBLa0xsN6Ddx
-         bbsQ==
-X-Gm-Message-State: AOJu0YyoCxlxPfLc0HjrazNmSmoVvkwysqbzKvcgjwW9cRZLCMdZA/Lg
-	TUS4G0vA7/rRMw7hda/MxCOHu1aPtEPTlt5JFuI44+5mNUhK4YVKp/Cg0m6aAoAUsaAAI1rYUoh
-	PxiSVhCnWGekYHaVbIVc+veT8aAqgXWKFoHWAu/Lf5i718oUQ2ZnGM85uegRy7yuYN1IEnT2EXX
-	jXc/nONJo1ONsjc3yupvin8h/C6Rfg9xp7k7ZgeoV/BWymdfBw
-X-Received: by 2002:a05:6a00:4c93:b0:6df:e035:5549 with SMTP id eb19-20020a056a004c9300b006dfe0355549mr9341742pfb.15.1706891476159;
-        Fri, 02 Feb 2024 08:31:16 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFgHoeBG2Xdr20yw3gJ0WYTkapLgzV5sN33Vdcc74VwBIGKGFLCt2pM0mIE0OOYW6PvCilVy3VKGPphO9s59cw=
-X-Received: by 2002:a05:6a00:4c93:b0:6df:e035:5549 with SMTP id
- eb19-20020a056a004c9300b006dfe0355549mr9341683pfb.15.1706891475565; Fri, 02
- Feb 2024 08:31:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706899917; x=1707504717;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ph1IYkDrzTvpiJ6XKsi8PGQTmUGSqWuwAi9y4521vtI=;
+        b=iReKpBAcBWwVu27lPxCofJiF44YvhQJxl6b+f/7zTGQrOked9feQ0sxvdzd+ak+4Fy
+         BFIj092qTN+6wx3M+3VjFN6UuZdHs0fFgDwxvLyKk5qq4m0Et0K1opWyaBe+c3U8n1z0
+         WBS5pDgpH79SrT9AD13HCsBIIHWPTuX5hQDuLpD6ceGpSWUb0mowGfmOARb/33aKTt8b
+         Zvd5ysOLuczLkbaxwSg1gOTT3iLz8UiVPXabA+qws1Yq/LKZ+Mz3TjOoXe5jmnkuZawE
+         cnJt5uBqPZxQ5tKJ+Ketlj43JBKZ3iGKsZlY7K7caRhQ5eew20QctC4suBOycKfagerk
+         rfZw==
+X-Gm-Message-State: AOJu0YzRhvGmMXoXY6P57UgTRZDGgz5VbmEg+SKeITaV02SoOiTkzckI
+	f9JdTYFap0fp5HCIAlWhjp2OxwIB1DEHugEeNESF7dll/iA1TGUI/vWlA/RSsw==
+X-Google-Smtp-Source: AGHT+IHzSoy9sIqCe1trQy3sTBHypeAjU5TzDYa4rgE3LRbYzokk0H0wQROhLE8FkkUDyWBrdMh9UA==
+X-Received: by 2002:a81:ac67:0:b0:5ff:76c5:f638 with SMTP id z39-20020a81ac67000000b005ff76c5f638mr3220501ywj.21.1706899917047;
+        Fri, 02 Feb 2024 10:51:57 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCU5x0xesXnhPy9m+vbgtSeOvE2jww0i9Tjwtxsc+mWeiLpLHghmb3RgoPY4YlidsLDnh9x3De8P3Dt9d1SJ7zGdzjLP/BsqZYFGfpX1puybWRRjrAAqPrg6Ktc8pax+N869iCi2gOcJbZZaWcQSktZSCeyT40FCSqnrcPP3UwjwDlVFLZoMx8qVs2n3M7YiWUkTgPNrsW2NRUz+4Zo6ugS/86mC8XQAAWeTDT30JbBuV1XpdNX6nasJOGugz/oIEXSbcc560klHxu8kvj/237+hpVYVAeZAK9DwJZWTY0Tjhca9jtDd8n/nQxV302xWv0NqEu1BA4vMtf6AnIObINSGPRgeKt4GPfSHZxE4BMcZr6ONdXo9a2X1LVp17xYh7WlvWMXkIoRv7dYsAL3mW1QhG7rG1PVX33RFouQqbcgRQGIZ3FOUR0iO+rJU1ytJnDXNxfAEgAJfYvyWTd/N/s5vToYaZSWrWvg8t0HVG3/vcmIwTys+Rw7VuwvRAkdhSN2dhSyqk54dvFfYaKBoy2VbmNiA9bbraj9ohjRfLOxXqCPhCU7j6S9XCfmrOZOScFaQLApOiuY/h1xNV0lnsal7Tv+3
+Received: from localhost (pool-68-160-141-91.bstnma.fios.verizon.net. [68.160.141.91])
+        by smtp.gmail.com with ESMTPSA id gd19-20020a05622a5c1300b0042992b06012sm1080669qtb.2.2024.02.02.10.51.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Feb 2024 10:51:56 -0800 (PST)
+Date: Fri, 2 Feb 2024 13:51:55 -0500
+From: Mike Snitzer <snitzer@kernel.org>
+To: Fan Wu <wufan@linux.microsoft.com>
+Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+	serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
+	axboe@kernel.dk, agk@redhat.com, eparis@redhat.com,
+	paul@paul-moore.com, linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev, audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v12 12/20] dm verity: set DM_TARGET_SINGLETON feature
+ flag
+Message-ID: <Zb05y2cl3T9rxRJZ@redhat.com>
+References: <1706654228-17180-1-git-send-email-wufan@linux.microsoft.com>
+ <1706654228-17180-13-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFqZXNu2V-zV2UHk5006mw8mjURdFmD-74edBeo-7ZX5LJNXag@mail.gmail.com>
- <41edca542d56692f4097f54b49a5543a81dea8ae.camel@kernel.org>
-In-Reply-To: <41edca542d56692f4097f54b49a5543a81dea8ae.camel@kernel.org>
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Fri, 2 Feb 2024 17:31:04 +0100
-Message-ID: <CAFqZXNv0e9JTd6EtB4F50WkZzNjY7--Rv6U1185dw0gS_UYf9A@mail.gmail.com>
-Subject: Re: Calls to vfs_setlease() from NFSD code cause unnecessary
- CAP_LEASE security checks
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-nfs <linux-nfs@vger.kernel.org>, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>, 
-	Linux Security Module list <linux-security-module@vger.kernel.org>, 
-	SElinux list <selinux@vger.kernel.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1706654228-17180-13-git-send-email-wufan@linux.microsoft.com>
 
-On Fri, Feb 2, 2024 at 5:08=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
-te:
->
-> On Fri, 2024-02-02 at 16:31 +0100, Ondrej Mosnacek wrote:
-> > Hello,
-> >
-> > In [1] a user reports seeing SELinux denials from NFSD when it writes
-> > into /proc/fs/nfsd/threads with the following kernel backtrace:
-> >  =3D> trace_event_raw_event_selinux_audited
-> >  =3D> avc_audit_post_callback
-> >  =3D> common_lsm_audit
-> >  =3D> slow_avc_audit
-> >  =3D> cred_has_capability.isra.0
-> >  =3D> security_capable
-> >  =3D> capable
-> >  =3D> generic_setlease
-> >  =3D> destroy_unhashed_deleg
-> >  =3D> __destroy_client
-> >  =3D> nfs4_state_shutdown_net
-> >  =3D> nfsd_shutdown_net
-> >  =3D> nfsd_last_thread
-> >  =3D> nfsd_svc
-> >  =3D> write_threads
-> >  =3D> nfsctl_transaction_write
-> >  =3D> vfs_write
-> >  =3D> ksys_write
-> >  =3D> do_syscall_64
-> >  =3D> entry_SYSCALL_64_after_hwframe
-> >
-> > It seems to me that the security checks in generic_setlease() should
-> > be skipped (at least) when called through this codepath, since the
-> > userspace process merely writes into /proc/fs/nfsd/threads and it's
-> > just the kernel's internal code that releases the lease as a side
-> > effect. For example, for vfs_write() there is kernel_write(), which
-> > provides a no-security-check equivalent. Should there be something
-> > similar for vfs_setlease() that could be utilized for this purpose?
-> >
-> > [1] https://bugzilla.redhat.com/show_bug.cgi?id=3D2248830
-> >
->
-> Thanks for the bug report!
->
-> Am I correct that we only want to do this check when someone from
-> userland tries to set a lease via fcntl? The rest of the callers are all
-> in-kernel callers and I don't think we need to check for any of them. It
-> may be simpler to just push this check into the appropriate callers of
-> generic_setlease instead.
->
-> Hmm now that I look too...it looks like we aren't checking CAP_LEASE on
-> filesystems that have their own ->setlease operation. I'll have a look
-> at that soon too.
+On Tue, Jan 30 2024 at  5:37P -0500,
+Fan Wu <wufan@linux.microsoft.com> wrote:
 
-I did briefly check this while analyzing the issue and all of the
-setlease fops implementations seemed to be either simple_nosetlease()
-or some wrappers around generic_setlease(), which should both be OK.
-But it can't hurt to double-check :)
+> The device-mapper has a flag to mark targets as singleton, which is a
+> required flag for immutable targets. Without this flag, multiple
+> dm-verity targets can be added to a mapped device, which has no
+> practical use cases and will let dm_table_get_immutable_target return
+> NULL. This patch adds the missing flag, restricting only one
+> dm-verity target per mapped device.
+> 
+> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+> 
+> ---
+> v1-v10:
+>   + Not present
+> 
+> v11:
+>   + Introduced
+> 
+> v12:
+>   + No changes
+> ---
+>  drivers/md/dm-verity-target.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+> index 14e58ae70521..66a850c02be4 100644
+> --- a/drivers/md/dm-verity-target.c
+> +++ b/drivers/md/dm-verity-target.c
+> @@ -1507,7 +1507,7 @@ int dm_verity_get_root_digest(struct dm_target *ti, u8 **root_digest, unsigned i
+>  
+>  static struct target_type verity_target = {
+>  	.name		= "verity",
+> -	.features	= DM_TARGET_IMMUTABLE,
+> +	.features	= DM_TARGET_SINGLETON | DM_TARGET_IMMUTABLE,
+>  	.version	= {1, 9, 0},
+>  	.module		= THIS_MODULE,
+>  	.ctr		= verity_ctr,
+> -- 
+> 2.43.0
+> 
+> 
 
---=20
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+It is true this change will cause dm_table_get_immutable_target() to
+not return NULL, but: I'm curious how that is meaningful in the
+context of dm-verity? (given the only caller of
+dm_table_get_immutable_target() is request-based DM code in DM core.)
 
+Thanks,
+Mike
