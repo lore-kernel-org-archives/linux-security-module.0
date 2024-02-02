@@ -1,112 +1,143 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1451468F0
-	for <linux-security-module@vger.kernel.org>; Fri,  2 Feb 2024 15:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0149C144612;
+	Fri,  2 Feb 2024 15:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706887929; cv=none; b=R6esXzFHTkx8RcKoK4IWLD1yyy2NPjR2Je7YHmQiWvL0wl4Vz+LK9kKZ0aC9IHXJnR6sGujn32jJLIPa5+7DxDTNCwc9HvOyTTG6ftXX+iRzP46Y7GshNZXiX3fccFMSOgLUnL++6BGp5BtpnuWZHpbwsnUAVBD4CR2kUPRitEM=
+	t=1706889114; cv=none; b=Y8SEhgHrj1UrG+QlKQPsWMkOiBV4/ocAuQNiOgSti97ynJUAu7Btpk6MAehpJLw8PERvbBsVmQWIvQFpeTv3o2BZZF+vaUG2UqsEOB5gDwain9hwhT6XZj8mZqijHOUvCNr8LFC9VSwygZZC54z82lxgEa+qDEqMd6AdqKdG3Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706887929; c=relaxed/simple;
-	bh=LB2tM7M/vojvvD9pvT8qCxaHqoBfTDEqvLcRwrwirJ4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=JqT9hhq3SolIU4+IKaS3pORqHm19pyz9pyIVR4oolMjDjeaiyuf6KA3fL1aUD+H06N2fox8SOpJdAcOcSLPLhTBHAs/6a+iiWoDRctBMgcXp7YB68ZZ8iVhauGpZuBnWBzzjTkKH6+gBYhrZIrvpCuCN52IE8qItv1d+1PK70H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BHremUk/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1706889114; c=relaxed/simple;
+	bh=u62/JTjk2+l4AbxTmlSugZv8zdrDij9jIcMxmTQ3Cs0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s2Q6guC8vIEkYqeMEyWut46sbPFT9eSx9eRsQHf4VO0RxHym8d2d3c5/0/L+FwVAdpr3RBobOoQtBfLRP2LOBA+t88B7xiQgRE9GX4gWc1DxRge7tOOrMGZ5qKEiphm4oivIZXY8lnahJw465wTVusnIBb18KvDsZW2F4ZvUPfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OyUR9OT4; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BHremUk/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1706887926;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=IM5ZcaZa7yAGe/RxsbA0xm4coNhAXOwcBQuiu+U+L9A=;
-	b=BHremUk/pC1rgp7l97kqqOvvgd9VtYx8AWzbGE1FkEB9PkJI+hSzUX2XrUt/nFSIZ0D+1g
-	XyfWTkqxEeopVLZHszwcCPl8AktYzFel/nSSlbLnxqEtGBoficbrBjMf6syMAUQwsgEtJg
-	rg8cKZebEK0iVNUPTCI2yy/VsaiWcZw=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-574-oFB8n_fQNluhL1tLmubGkg-1; Fri, 02 Feb 2024 10:32:04 -0500
-X-MC-Unique: oFB8n_fQNluhL1tLmubGkg-1
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2964d402267so391685a91.2
-        for <linux-security-module@vger.kernel.org>; Fri, 02 Feb 2024 07:32:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OyUR9OT4"
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-68c2f4c3282so10906286d6.3;
+        Fri, 02 Feb 2024 07:51:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706889112; x=1707493912; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kjFTQhfyX4OpZ75eLCQsarAtUBHRYbyc/PAd9P4Y7CI=;
+        b=OyUR9OT4w/TuRR1vUjSDfsYrkjacCh4Ud6K0piDSkhqBNlFzC9/C305eNPm2L74WFr
+         6SlIXyp4t3psK6lvgUXsyY1JMpG64+cnQ+3Nct72E3dnNIcD8vl7ruLdG/Y245kjXIJQ
+         yx6DtRAxGrZqzA9KYgbkIHrPKyXTO5K5vpr8S1D7a1MXAKxGFnSkdFOlVQTuuJG0cuGP
+         08ftPKmUj7YzQbbi+vOIlQYVTn0MdWvSwnfvIFqIDA+st/2LXLsh//LyetxCcIxGFFBo
+         YmIt9Rd0kJf0emsuARKy+yXAB6Ny5LlLmJgpTOxZ3JFR2EwFVufVKl6USPkc9qBM+JEy
+         MZjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706887924; x=1707492724;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IM5ZcaZa7yAGe/RxsbA0xm4coNhAXOwcBQuiu+U+L9A=;
-        b=gdiSVBmuisEXJVPQkqLOFm/2VzK/I0vTHO6vQJtNN2yeAPmj5Wm8Ew64WvAMlS8aFI
-         ujQwe6hLrtmRP8w23ArEmU7nsHzN/5ppR0oUfeVZrVN5t6ERgpEN+P6Hclyt13Nskmg4
-         jBBVRy1S6Yemv/4tuB+3ejlS/HExa/8w0/7LaebvdnCaGiQqrpM+1Kec7Ioh2/w3aU3M
-         Y9omaZ6fIfmvfQi+zq2gtTXrHwG/2d4VnLuhgsuLDhTk3NZKxZZG5dQhiHPXFxguW3KL
-         kfhqd7UAZiWULa850PVfW8k0G8drFnaznsVP9w/AFcXzfQCMPpb9Mo44vHj8Zim5UoMW
-         2gHQ==
-X-Gm-Message-State: AOJu0Yyo2nN5Upko6QiUvCtB2yDYGgxkLDSbdAStvwD9JnU9RZTxq6tN
-	l+UahwOA3dUB/k7oshccbgVKgz9ds85r2L8QbsfyB4rM4hKlLWWwx0VISm5uMEoOnvPxMuzz6jo
-	094PN8x+hqnwlt/AqWIocs4lgR92clVqyZTAwOancUS7OqSD1X2pB4IgdbeaOeUkKgIL+WhlHef
-	oAWQXApQwGYLxQozIRwUbBbsETJSMarp3szH1rSnHr4iRpGsGj
-X-Received: by 2002:a17:90a:744e:b0:295:e24b:62e with SMTP id o14-20020a17090a744e00b00295e24b062emr7819859pjk.6.1706887923772;
-        Fri, 02 Feb 2024 07:32:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF03sJR3jRWqPFscANuSc2fRI9wXu+W40DwRQn5GP605LFjRa33EKNRS0ysXmGh0QHmT1WpDp6Hp9YV+m8zQC4=
-X-Received: by 2002:a17:90a:744e:b0:295:e24b:62e with SMTP id
- o14-20020a17090a744e00b00295e24b062emr7819845pjk.6.1706887923501; Fri, 02 Feb
- 2024 07:32:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706889112; x=1707493912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kjFTQhfyX4OpZ75eLCQsarAtUBHRYbyc/PAd9P4Y7CI=;
+        b=oJsYihtzb7pXIOmtByWhk9KbWnlVwtdX163r66UXoaxvHYw9zd0xhL12EdZ9tPvTVN
+         NtlQK/7emL5r6g2gpKCP1/SB0bSfdvx/cEi5ENyhlzCISMROxcyn5kuXWT4YYUQkg/gd
+         HMz/8uK8JRKHlVwn0tPUouzI4Y8M4arlOwMf1XFaY+RR2qzU+IS/Cp85jAtTzfohdmD0
+         ExYCWJnFUvlzqozIqT1k1TYKlJzENA5XcEp2HGLx5/9dlHcK4R345h7HJGRS7TdbWiso
+         wslbMvc/pz8poUAXu7tQgsXdcYgMkj7OzV3fCvbIn6POE2K6sfptJiOiP3zDCS34uoDY
+         gylw==
+X-Gm-Message-State: AOJu0YxhnIYk07XkjbQWBS7kRpvyE4LI/Jrg9s8iWxXzW6qGw9uT9P6N
+	dXQE4rVqa31UUYaWt3AlIt9WNTc+FZUewqAzPwEin4VagMiymCtq1sAMFxRwb4vqxtAuRSHrHJw
+	4ZGbRGYq8wlY/4WifnPA+63C5jolWskOeT4Y=
+X-Google-Smtp-Source: AGHT+IFUNcvFrtEeCkHxcUTQW9b1GdgYlbqRIehUQEHcaweXXXIXkS8cwExw7eL3LP5nnH+WGue4GtsNcAbNqRGPja0=
+X-Received: by 2002:a0c:f1cd:0:b0:68c:8ac3:2acb with SMTP id
+ u13-20020a0cf1cd000000b0068c8ac32acbmr842609qvl.41.1706889111860; Fri, 02 Feb
+ 2024 07:51:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Fri, 2 Feb 2024 16:31:51 +0100
-Message-ID: <CAFqZXNu2V-zV2UHk5006mw8mjURdFmD-74edBeo-7ZX5LJNXag@mail.gmail.com>
-Subject: Calls to vfs_setlease() from NFSD code cause unnecessary CAP_LEASE
- security checks
-To: linux-nfs <linux-nfs@vger.kernel.org>, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>, 
-	Linux Security Module list <linux-security-module@vger.kernel.org>, 
-	SElinux list <selinux@vger.kernel.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+References: <20240130214620.3155380-1-stefanb@linux.ibm.com>
+ <20240130214620.3155380-5-stefanb@linux.ibm.com> <38230b4c-54ae-45ed-a6fb-34e63501e5b1@linux.ibm.com>
+ <CAOQ4uxiYARZBSgzb4_W-RKvB1XLSF3GUBqeLw2kH+eVeZ_8ARQ@mail.gmail.com>
+ <c018b014-9ba8-4395-86dc-b61346ab20a8@linux.ibm.com> <CAOQ4uxi6Te8izWpXROthknRaXrVA9jho5nbc+mkuQDrcTLY44Q@mail.gmail.com>
+ <CAOQ4uxigdNeE+2nfr4VxS9piQf5hez=ryT0a-jzW+tW0BT-zuw@mail.gmail.com>
+ <492ea12a-d79d-47da-9bbe-a7f33051bd3f@linux.ibm.com> <CAOQ4uxgiO1RbsmqOu4F4Foy-MBPecnEXO7BvgDGz-Lzb1Eysog@mail.gmail.com>
+ <4c584bfb-d282-4584-bb20-18c26b1033c0@linux.ibm.com> <CAOQ4uxjftr7GGx6tuW_yB_MTaVB57m6p_d=UHhN3Z23YVXY0QQ@mail.gmail.com>
+ <11abffea-15c5-4d13-9d0f-edbc54b09bf3@linux.ibm.com> <CAOQ4uxjZ6p9+H54G0LNTUnU56WRaoLtWOUj2nOaKJ4JvBGqLVg@mail.gmail.com>
+ <427ce381-73fa-48f9-8e18-77e23813b918@linux.ibm.com>
+In-Reply-To: <427ce381-73fa-48f9-8e18-77e23813b918@linux.ibm.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 2 Feb 2024 17:51:40 +0200
+Message-ID: <CAOQ4uxggqa7j0NS1MN3KSvF_qG1FMVmFxacEYSTx+LuvuosJ5g@mail.gmail.com>
+Subject: Re: [PATCH 4/5] evm: Use the real inode's metadata to calculate
+ metadata hash
+To: Stefan Berger <stefanb@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, 
+	roberto.sassu@huawei.com, miklos@szeredi.hu
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Feb 2, 2024 at 4:59=E2=80=AFPM Stefan Berger <stefanb@linux.ibm.com=
+> wrote:
+>
+>
+>
+> On 2/2/24 04:24, Amir Goldstein wrote:
+> > On Thu, Feb 1, 2024 at 10:35=E2=80=AFPM Stefan Berger <stefanb@linux.ib=
+m.com> wrote:
+>
+> >
+> >>
+> >> and your suggested change to this patch :
+> >>
+> >> -       struct inode *inode =3D d_real_inode(dentry);
+> >> +       struct inode *inode =3D d_inode(d_real(dentry, false));;
+> >>
+> >
+> > In the new version I change the API to use an enum instead of bool, e.g=
+.:
+> >
+> >         struct inode *inode =3D d_inode(d_real(dentry, D_REAL_METADATA)=
+);
+>
+> Thanks. I will use it.
+>
+> >
+> > This catches in build time and in run time, callers that were not conve=
+rted
+> > to the new API.
+> >
+> >> The test cases are now passing with and without metacopy enabled. Yay!
+> >
+> > Too soon to be happy.
+> > I guess you are missing a test for the following case:
+> > 1. file was meta copied up (change is detected)
+> > 2. the lower file that contains the data is being changed (change is
+> > not detected)
+>
+> Right. Though it seems there's something wrong with overlayfs as well
+> after appending a byte to the file on the lower.
+>
+> -rwxr-xr-x    1 0        0               25 Feb  2 14:55
+> /ext4.mount/lower/test_rsa_portable2
+> -rwxr-xr-x    1 0        0               24 Feb  2 14:55
+> /ext4.mount/overlay/test_rsa_portable2
+> bb16aa5350bcc8863da1a873c846fec9281842d9
+> /ext4.mount/lower/test_rsa_portable2
+> bb16aa5350bcc8863da1a873c846fec9281842d9
+> /ext4.mount/overlay/test_rsa_portable2
+>
+> We have a hash collision on a file with 24 bytes and the underlying one
+> with 25 byte. (-;  :-)
 
-In [1] a user reports seeing SELinux denials from NFSD when it writes
-into /proc/fs/nfsd/threads with the following kernel backtrace:
- => trace_event_raw_event_selinux_audited
- => avc_audit_post_callback
- => common_lsm_audit
- => slow_avc_audit
- => cred_has_capability.isra.0
- => security_capable
- => capable
- => generic_setlease
- => destroy_unhashed_deleg
- => __destroy_client
- => nfs4_state_shutdown_net
- => nfsd_shutdown_net
- => nfsd_last_thread
- => nfsd_svc
- => write_threads
- => nfsctl_transaction_write
- => vfs_write
- => ksys_write
- => do_syscall_64
- => entry_SYSCALL_64_after_hwframe
+https://docs.kernel.org/filesystems/overlayfs.html#changes-to-underlying-fi=
+lesystems
 
-It seems to me that the security checks in generic_setlease() should
-be skipped (at least) when called through this codepath, since the
-userspace process merely writes into /proc/fs/nfsd/threads and it's
-just the kernel's internal code that releases the lease as a side
-effect. For example, for vfs_write() there is kernel_write(), which
-provides a no-security-check equivalent. Should there be something
-similar for vfs_setlease() that could be utilized for this purpose?
+If you modify the lower file underneath overlayfs, you get no
+guarantee from overlayfs about expected results.
 
-[1] https://bugzilla.redhat.com/show_bug.cgi?id=2248830
+This makes your work more challenging.
 
--- 
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
-
+Thanks,
+Amir.
