@@ -1,32 +1,34 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85594F9D7;
-	Sat,  3 Feb 2024 03:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2FE5D8F1;
+	Sat,  3 Feb 2024 10:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706932616; cv=none; b=GTRhB69qjA7JAhShsrlvg157pXbr4NwEKNkj8MgLXIdXMEyqx907g8kZm+pr36LcPRlbkAncIBzLMtvhNntdFRjxXqffiz7VUCbBMOWcHJSDSluwV34GVHpd68f34wcyE62oGanO/ujG6ldhGjNHll6lfRdK92Gf2LJXRZs/elo=
+	t=1706957607; cv=none; b=lPkRsmc+eiYtm4ujj9ucxmNKfKY+FTYV9Tt4HbPaMl8elqGDQpvDYJsTurwWEx4D3wAEQ4VzdCtJ6VgC9eek5iJRvn6dbfkiQb+IL9+C1/c4sI+1ndIMv/JKULYMFmhAImkERs2ifKrZAbBV2dbVqeP1Z9+hEwnJOfl4MOw5QoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706932616; c=relaxed/simple;
-	bh=ZxPkhkdkh/qzOmQ6tzCINtYqo1Amarn570/0hPuCEws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aZcddcnhpE5NA4Y65si7OfagtKnE3N3L6G4Yry+aC88qjaiY4u+P+vI1W2+UpNPpPxPo0OoSEGj2entHjZ+wsfXeJBQhBPxmhVum0BjvrQSi/bXTRL7Ff2gV6VQTmt3yfwMhNhNQESEVhCBgTWRlwvwLc+JyDZno4Tkv0Z9jRyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=m/clajfx; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="m/clajfx"
-Received: from [10.137.106.151] (unknown [131.107.8.87])
-	by linux.microsoft.com (Postfix) with ESMTPSA id E44F1206FD0D;
-	Fri,  2 Feb 2024 19:56:53 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E44F1206FD0D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1706932614;
-	bh=0jiNLQIjYZrK1snHh4U7Lo4wv1LyM7JCqFc7TqpIT2U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=m/clajfxDfxFvAcTDd46NYouM6uhFugKVWR8uHm4sE6EFTynnuvqsAFU7GTarPWIH
-	 y7EQZ7z1rcxftAwNX6cuTOp1ixL13ykPZ5kzqZcWa3CA9w9UEpQl0TTQWWnYBc/fAu
-	 sCvZECuOFeoyIVWglZe2vjeuBACkQz0fknf7owY4=
-Message-ID: <dd6f4726-692b-4537-8bb4-a0466f24d713@linux.microsoft.com>
-Date: Fri, 2 Feb 2024 19:56:53 -0800
+	s=arc-20240116; t=1706957607; c=relaxed/simple;
+	bh=bYPPmEH/ZMR+9q1jnQ+YjKiGGYzTeBfqCwewqyVwsz4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=szuqljZN0nfTW+TrGrPPJ3oE4p/iaNcj4ZRKi/3wGd+0sWyXlQphATg/RKsHmfzmOfsahYP94dYee+GJ7V4dI4iSXBlLSvVmlBzNo0u70ORrYR4SW9b7GOdeOG4ZG17ebUB35h1aGJz3yIJp8873wA7fCS8FiRw1EDNI7TmIXyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav111.sakura.ne.jp (fsav111.sakura.ne.jp [27.133.134.238])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 413AqOuS052401;
+	Sat, 3 Feb 2024 19:52:24 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav111.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp);
+ Sat, 03 Feb 2024 19:52:24 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 413AqOqv052397
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 3 Feb 2024 19:52:24 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <8fafb8e1-b6be-4d08-945f-b464e3a396c8@I-love.SAKURA.ne.jp>
+Date: Sat, 3 Feb 2024 19:52:24 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -34,91 +36,39 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v12 12/20] dm verity: set DM_TARGET_SINGLETON feature
- flag
-To: Mike Snitzer <snitzer@kernel.org>
-Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
- tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com,
- eparis@redhat.com, paul@paul-moore.com, linux-doc@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
- dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1706654228-17180-1-git-send-email-wufan@linux.microsoft.com>
- <1706654228-17180-13-git-send-email-wufan@linux.microsoft.com>
- <Zb05y2cl3T9rxRJZ@redhat.com>
 Content-Language: en-US
-From: Fan Wu <wufan@linux.microsoft.com>
-In-Reply-To: <Zb05y2cl3T9rxRJZ@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH v2 0/3] fs/exec: remove current->in_execve flag
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+This is a follow up series for removing current->in_execve flag.
 
+https://lkml.kernel.org/r/b5a12ecd-468d-4b50-9f8c-17ae2a2560b4@I-love.SAKURA.ne.jp
 
-On 2/2/2024 10:51 AM, Mike Snitzer wrote:
-> On Tue, Jan 30 2024 at  5:37P -0500,
-> Fan Wu <wufan@linux.microsoft.com> wrote:
-> 
->> The device-mapper has a flag to mark targets as singleton, which is a
->> required flag for immutable targets. Without this flag, multiple
->> dm-verity targets can be added to a mapped device, which has no
->> practical use cases and will let dm_table_get_immutable_target return
->> NULL. This patch adds the missing flag, restricting only one
->> dm-verity target per mapped device.
->>
->> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
->>
->> ---
->> v1-v10:
->>    + Not present
->>
->> v11:
->>    + Introduced
->>
->> v12:
->>    + No changes
->> ---
->>   drivers/md/dm-verity-target.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
->> index 14e58ae70521..66a850c02be4 100644
->> --- a/drivers/md/dm-verity-target.c
->> +++ b/drivers/md/dm-verity-target.c
->> @@ -1507,7 +1507,7 @@ int dm_verity_get_root_digest(struct dm_target *ti, u8 **root_digest, unsigned i
->>   
->>   static struct target_type verity_target = {
->>   	.name		= "verity",
->> -	.features	= DM_TARGET_IMMUTABLE,
->> +	.features	= DM_TARGET_SINGLETON | DM_TARGET_IMMUTABLE,
->>   	.version	= {1, 9, 0},
->>   	.module		= THIS_MODULE,
->>   	.ctr		= verity_ctr,
->> -- 
->> 2.43.0
->>
->>
-> 
-> It is true this change will cause dm_table_get_immutable_target() to
-> not return NULL, but: I'm curious how that is meaningful in the
-> context of dm-verity? (given the only caller of
-> dm_table_get_immutable_target() is request-based DM code in DM core.)
-> 
-> Thanks,
-> Mike
+[PATCH v2 1/3] LSM: add security_execve_abort() hook
+[PATCH v2 2/3] tomoyo: replace current->in_execve flag with security_execve_abort() hook
+[PATCH v2 3/3] fs/exec: remove current->in_execve flag
 
-Sorry for the confusion. The reference of 
-dm_table_get_immutable_target() is only to justify an immutable target 
-should also be a 
-singleton(https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/md/dm-table.c#n982). 
-It is not directly related to dm-verity.
+ fs/exec.c                     |    4 +---
+ include/linux/lsm_hook_defs.h |    1 +
+ include/linux/sched.h         |    3 ---
+ include/linux/security.h      |    5 +++++
+ security/security.c           |   11 +++++++++++
+ security/tomoyo/tomoyo.c      |   22 ++++++----------------
+ 6 files changed, 24 insertions(+), 22 deletions(-)
 
-In the context of dm-verity. I found although veritysetup does ensure 
-the dm-verity target as a singleton, users can still use dmsetup to 
-configure multiple dm-verity targets within a single map table. This 
-leads to a situation where only the first target can be accessed. 
-Therefore to prevent this and similar misuse, I propose introducing 
-DM_TARGET_SINGLETON to allow the kernel to enforce dm-verity targets as 
-singletons.
+Changes in v2:
 
-Thanks,
-Fan
+  Replace security_bprm_aborting_creds(const struct linux_binprm *bprm) with
+  security_execve_abort(void), suggested by Eric W. Biederman.
