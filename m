@@ -1,112 +1,167 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEBF482FF;
-	Sat,  3 Feb 2024 10:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8988813AE8
+	for <linux-security-module@vger.kernel.org>; Sat,  3 Feb 2024 22:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706957645; cv=none; b=X9gh7kl8ATI+1tyyBkFkm8c+/hu9IXw7cfH2/6v9ih6c3Ymu+SGfYco/mBu2ntzh6n5mMY6oYkv9twZ79BI/ZdD75rGDxvD5r+xCyZetam/icgNZUeX6/cnRbLtPYuka5A0SvjAH2EdmMTZTmt8RKRRESH+9aq+46o39bdadB2E=
+	t=1706999113; cv=none; b=Hnd48heOP7+dMUSl98SG4+1ke/1PgdhF9+ly4YCJh9T+3wDFzaYoELq3u7Jaoh5AAtJV+nXWdze5XqI/ft3v7U+Rpz8TF9fspJOb+lr6XGEUCv843CMgAoeAVytErXqGMherAA20nt1jUZ/jldmuqFZhGZ/mb64E0h8GU7pcxto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706957645; c=relaxed/simple;
-	bh=F+69FTeIjzSdatJi0VG2CjE/hSQPwZ6HCaeuaIWBHzw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ANW0UvDLbWFxqo8uZAAYCKtkmlZkTZ05dJbyugP3uDD/hxs0XP77Pkk/FYHC9sMtpAVHim60Wc6cYX0xVTxwsHCK16Whhtb7WQwF6Nyp0mX6YwMLFRGsTBN6fH1gXcWOEa1/SgtY27dwhl80kwVk77Y3DrEzmVTLHRt14IXVuG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav311.sakura.ne.jp (fsav311.sakura.ne.jp [153.120.85.142])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 413Arep7052729;
-	Sat, 3 Feb 2024 19:53:40 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav311.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav311.sakura.ne.jp);
- Sat, 03 Feb 2024 19:53:40 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav311.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 413AqOr0052397
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 3 Feb 2024 19:53:39 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <c62a36de-716e-439d-80a2-57e6a3c22db0@I-love.SAKURA.ne.jp>
-Date: Sat, 3 Feb 2024 19:53:39 +0900
+	s=arc-20240116; t=1706999113; c=relaxed/simple;
+	bh=Akk3yfd0skBsyfpDvBuTijI4DTSE1uDMrPs5axVSpcY=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=gT/ORA4/D+F1WJMsUomt/mqLae2r4PYfkV6H1UyQ6lGbYkEIj6Sf6bf+iuJ5N6/k+8MdihodBxHzzkuTlqAGkH0LJwLk4FlriZVUw4EcZbwv3Pa+c43M7AYGa/VsnaWcLyePN5aFzydQEUwaGWT3z6TB/LkIeWphz/O12IAFs5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=UslhFOVg; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="UslhFOVg"
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-785738e94b9so17173885a.0
+        for <linux-security-module@vger.kernel.org>; Sat, 03 Feb 2024 14:25:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1706999109; x=1707603909; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DnWesDs8xRNqrKgsSJ7fCUj/XnlBG4IvaiEQPBxCK/I=;
+        b=UslhFOVg8WFUzqld2FRyTxItmLSnj0ByEQAtAEokRfNrtL65h4jolouj4Q0KaXgy7I
+         dwWBbtq75NLmwEzjqHnxX6ovf74HGb/+eQ1u5u3cDuR962nRMBIQAHO2pklMJs5VEtFF
+         J2KCZKGZqiH1GAnqMx/jR6Kw1zADG154LUO/sPqRF9z5CqmPx0YjEUQsIW35qgmWb16q
+         3UaVjFXAR/V/Ibmrl6bz95E4lv1HC+gW2jdbko6h6uNedJrm2Y8zlf0v1gBV7qgbdbqz
+         HidKBzGH5j3uX3pnyQRpaiw5EN+leF/d42mepu7qrwQGlfYFPxBsNV0AKjK0W8M46hI/
+         AMkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706999109; x=1707603909;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DnWesDs8xRNqrKgsSJ7fCUj/XnlBG4IvaiEQPBxCK/I=;
+        b=rhBT0uByhlTS77t77cuP8H9HeL5dkNKPDftTb2r1D8dvHPjpBpDS/ziQED921ERFNg
+         zgyQHVhAXqZKP2aAMjwMVi9oRXU+UMOs2Ey0vm4zo+Jwp7DC5pY3kiOxeg7U005czsvx
+         Uyhsn0klj6IPyjhHdpwqX5Y/muJ9/KPdfu2+1XsGONdRKhwJJkM34TnnKejdLVQDe+o4
+         3kC+TKkaBDndWA+vNkcjzRlGsrDUXi2xqoWk66N1Wr8C1tT5QXPSZbc95XNEYeDT5TkU
+         kDs1FWShjWDDxCyI+l/HRmcqo+Ob+AGBSVBW0B2wmGl0kHZs/vOjRcxfXJB2NYeJ0fIr
+         W6Kw==
+X-Gm-Message-State: AOJu0YybaJWfAtrcAsZfM7IrRTR3FALypG8WBtswBbCQrwA/QmXvD+kv
+	GJZqfBCk7AeQNbBMhzQ3bRC33NrWZUS7yENG3VEcUDgXZdjvptsjjnxun7Xdbg==
+X-Google-Smtp-Source: AGHT+IFtZe+Q8W1ePYytw7UeC4Jf2MOnkQ6RcSuccAbbwyK+ZuVbp0rOxBJSIWscsGRZX7r4oaJh+g==
+X-Received: by 2002:a05:620a:2e3:b0:783:b038:d1a1 with SMTP id a3-20020a05620a02e300b00783b038d1a1mr9095773qko.39.1706999109324;
+        Sat, 03 Feb 2024 14:25:09 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCVwYaZbKyqip0VIR8GONQxXUcX8op8aMPNo2Ap1p+jdcI0F9O4QdFtfkXUh2izlay/UPxQX4uTdUnml1eWFaVIu3sl4cZN0o9MEZYPtDzuPUBt8ISFeQUgk//7oOgSqTo+LWz7pHI783WZUe7avWlFl2g4RV0ALfs6fSYnt9PmcP3V5e5UUC9OHfUN1hGOhFCEIHdwZdid79pfUdFyuN0HQ1asimEWyLDwYPGdfmyK0n3vX204PQ6L6I7qS+XYcc2+4FDbFfrLjHojE/EkYwAYSDsPcTayfqX5R0GGth4PTwEABerphUsn9JY6Cz1DdD0rhuTOjEi/XLpHp1AvDca0BRlY13p7V9uUBl5XxTmPDaaLTbmdbuj1e2I3b+GHRn4+Guw1TVTp0wlUYUAdXRnJPf1jp9/Mte8sgyYSGDJVgBLodRU8oGcMpA5MLWsHMPY5+8w5xv6eKGe3vsfBvHJH92nrGbL7ODZl7dWe1CNUDc7uQPTJqnToEqjD5Yl1fzWFBuCEy7dobme80FhUuQ9F8QqZX8GC19w5DGqXnrHRf6FF81Ob58I7Z4V+OoQ0FbylAMRBpa+pH
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id g4-20020a37e204000000b00783f534706esm1734412qki.61.2024.02.03.14.25.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 03 Feb 2024 14:25:08 -0800 (PST)
+Date: Sat, 03 Feb 2024 17:25:08 -0500
+Message-ID: <b9ca171301d5abeb78922dd79d65136a@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2 3/3] fs/exec: remove current->in_execve flag
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <8fafb8e1-b6be-4d08-945f-b464e3a396c8@I-love.SAKURA.ne.jp>
-In-Reply-To: <8fafb8e1-b6be-4d08-945f-b464e3a396c8@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
+Content-Transfer-Encoding: 8bit
+From: Paul Moore <paul@paul-moore.com>
+To: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, eparis@redhat.com
+Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org, Fan Wu <wufan@linux.microsoft.com>
+Subject: Re: [PATCH RFC v12 5/20] initramfs|security: Add security hook to  initramfs unpack
+References: <1706654228-17180-6-git-send-email-wufan@linux.microsoft.com>
+In-Reply-To: <1706654228-17180-6-git-send-email-wufan@linux.microsoft.com>
 
-Addition of security_execve_abort() hook made it possible to remove
-this flag.
+On Jan 30, 2024 Fan Wu <wufan@linux.microsoft.com> wrote:
+> 
+> This patch introduces a new hook to notify security system that the
+> content of initramfs has been unpacked into the rootfs.
+> 
+> Upon receiving this notification, the security system can activate
+> a policy to allow only files that originated from the initramfs to
+> execute or load into kernel during the early stages of booting.
+> 
+> This approach is crucial for minimizing the attack surface by
+> ensuring that only trusted files from the initramfs are operational
+> in the critical boot phase.
+> 
+> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+> ---
+> v1-v11:
+>   + Not present
+> 
+> v12:
+>   + Introduced
+> ---
+>  include/linux/lsm_hook_defs.h |  4 ++++
+>  include/linux/security.h      | 10 ++++++++++
+>  init/initramfs.c              |  3 +++
+>  security/security.c           | 12 ++++++++++++
+>  4 files changed, 29 insertions(+)
+> 
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 185924c56378..b247388786a9 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -425,3 +425,7 @@ LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
+>  LSM_HOOK(int, 0, uring_sqpoll, void)
+>  LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
+>  #endif /* CONFIG_IO_URING */
+> +
+> +#ifdef CONFIG_BLK_DEV_INITRD
+> +LSM_HOOK(void, LSM_RET_VOID, unpack_initramfs_security, void)
+> +#endif /* CONFIG_BLK_DEV_INITRD */
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- fs/exec.c             | 3 ---
- include/linux/sched.h | 3 ---
- 2 files changed, 6 deletions(-)
+Let's just call it "unpack_initramfs", the "_security" part is somewhat
+implied since we are talking about a LSM hook ;)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index d6d35a06fd08..c197573b2940 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1865,7 +1865,6 @@ static int bprm_execve(struct linux_binprm *bprm)
- 	 * where setuid-ness is evaluated.
- 	 */
- 	check_unsafe_exec(bprm);
--	current->in_execve = 1;
- 	sched_mm_cid_before_execve(current);
- 
- 	sched_exec();
-@@ -1882,7 +1881,6 @@ static int bprm_execve(struct linux_binprm *bprm)
- 	sched_mm_cid_after_execve(current);
- 	/* execve succeeded */
- 	current->fs->in_exec = 0;
--	current->in_execve = 0;
- 	rseq_execve(current);
- 	user_events_execve(current);
- 	acct_update_integrals(current);
-@@ -1901,7 +1899,6 @@ static int bprm_execve(struct linux_binprm *bprm)
- 
- 	sched_mm_cid_after_execve(current);
- 	current->fs->in_exec = 0;
--	current->in_execve = 0;
- 
- 	return retval;
- }
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index ffe8f618ab86..66ada87249b1 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -919,9 +919,6 @@ struct task_struct {
- #ifdef CONFIG_RT_MUTEXES
- 	unsigned			sched_rt_mutex:1;
- #endif
--
--	/* Bit to tell TOMOYO we're in execve(): */
--	unsigned			in_execve:1;
- 	unsigned			in_iowait:1;
- #ifndef TIF_RESTORE_SIGMASK
- 	unsigned			restore_sigmask:1;
--- 
-2.18.4
+> diff --git a/init/initramfs.c b/init/initramfs.c
+> index 76deb48c38cb..075a5794cde5 100644
+> --- a/init/initramfs.c
+> +++ b/init/initramfs.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/init_syscalls.h>
+>  #include <linux/task_work.h>
+>  #include <linux/umh.h>
+> +#include <linux/security.h>
+>  
+>  static __initdata bool csum_present;
+>  static __initdata u32 io_csum;
+> @@ -720,6 +721,8 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
+>  #endif
+>  	}
+>  
+> +	security_unpack_initramfs();
 
+Given the caller, what do you think of changing the hook name to
+"security_initramfs_populated()"?  I think this not only matches up
+better with the caller, "do_populate_rootfs()", but since in using the
+past tense we help indicate that this hook happens *after* the rootfs
+is populated with the initramfs data.
 
+>  done:
+>  	/*
+>  	 * If the initrd region is overlapped with crashkernel reserved region,
+> diff --git a/security/security.c b/security/security.c
+> index ddf2e69cf8f2..2a527d4c69bc 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -5581,3 +5581,15 @@ int security_uring_cmd(struct io_uring_cmd *ioucmd)
+>  	return call_int_hook(uring_cmd, 0, ioucmd);
+>  }
+>  #endif /* CONFIG_IO_URING */
+> +
+> +#ifdef CONFIG_BLK_DEV_INITRD
+> +/**
+> + * security_unpack_initramfs() - Notify LSM that initramfs has been loaded
+> + *
+> + * Tells the LSM the initramfs has been unpacked into the rootfs.
+> + */
+> +void security_unpack_initramfs(void)
+> +{
+> +	call_void_hook(unpack_initramfs_security);
+> +}
+> +#endif /* CONFIG_BLK_DEV_INITRD */
+> -- 
+> 2.43.0
+
+--
+paul-moore.com
