@@ -1,59 +1,59 @@
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8988813AE8
-	for <linux-security-module@vger.kernel.org>; Sat,  3 Feb 2024 22:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14DF13AE9
+	for <linux-security-module@vger.kernel.org>; Sat,  3 Feb 2024 22:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706999113; cv=none; b=Hnd48heOP7+dMUSl98SG4+1ke/1PgdhF9+ly4YCJh9T+3wDFzaYoELq3u7Jaoh5AAtJV+nXWdze5XqI/ft3v7U+Rpz8TF9fspJOb+lr6XGEUCv843CMgAoeAVytErXqGMherAA20nt1jUZ/jldmuqFZhGZ/mb64E0h8GU7pcxto=
+	t=1706999115; cv=none; b=nmhg9eb9nHm+woC3eC280aFTiymLBsX8vgezTyf+EGxMeAqlKMshI+HolAPYZAy1Hnk38YY59NvYfx/IlFWZ414nm/68c9Rg2l4oEJPZa3rXBRA9hvNEsCk0pjR0kjtJ3ijIeEqpI24eFyMyZ/hA6WsfmFoc9trNNcFXF+CD8E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706999113; c=relaxed/simple;
-	bh=Akk3yfd0skBsyfpDvBuTijI4DTSE1uDMrPs5axVSpcY=;
+	s=arc-20240116; t=1706999115; c=relaxed/simple;
+	bh=TG3+0EGUR9bt602rI+2HsmhmcTLyo9r4S+xTet7lKAc=;
 	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=gT/ORA4/D+F1WJMsUomt/mqLae2r4PYfkV6H1UyQ6lGbYkEIj6Sf6bf+iuJ5N6/k+8MdihodBxHzzkuTlqAGkH0LJwLk4FlriZVUw4EcZbwv3Pa+c43M7AYGa/VsnaWcLyePN5aFzydQEUwaGWT3z6TB/LkIeWphz/O12IAFs5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=UslhFOVg; arc=none smtp.client-ip=209.85.222.178
+	 From:To:Cc:Subject:References:In-Reply-To; b=c52tEUuyX6W/71fLqqoAJLak71SZVjApOPY0qOypuIJWCRpcjMoNaeQvTQMT5P4QVhSeDZjvY4ULMA5eFTlRrQjB6Wxz+g2sKlPXrbCdUvyzSukUR4i7ZAzNfDVhdT85NBo1WDBYGKCbhVI1mptJsMfmvzB00G36aqU8TxLazK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FEg1YU/K; arc=none smtp.client-ip=209.85.219.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="UslhFOVg"
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-785738e94b9so17173885a.0
-        for <linux-security-module@vger.kernel.org>; Sat, 03 Feb 2024 14:25:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FEg1YU/K"
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-68c3a14c6e7so15720716d6.1
+        for <linux-security-module@vger.kernel.org>; Sat, 03 Feb 2024 14:25:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1706999109; x=1707603909; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1706999111; x=1707603911; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=DnWesDs8xRNqrKgsSJ7fCUj/XnlBG4IvaiEQPBxCK/I=;
-        b=UslhFOVg8WFUzqld2FRyTxItmLSnj0ByEQAtAEokRfNrtL65h4jolouj4Q0KaXgy7I
-         dwWBbtq75NLmwEzjqHnxX6ovf74HGb/+eQ1u5u3cDuR962nRMBIQAHO2pklMJs5VEtFF
-         J2KCZKGZqiH1GAnqMx/jR6Kw1zADG154LUO/sPqRF9z5CqmPx0YjEUQsIW35qgmWb16q
-         3UaVjFXAR/V/Ibmrl6bz95E4lv1HC+gW2jdbko6h6uNedJrm2Y8zlf0v1gBV7qgbdbqz
-         HidKBzGH5j3uX3pnyQRpaiw5EN+leF/d42mepu7qrwQGlfYFPxBsNV0AKjK0W8M46hI/
-         AMkw==
+        bh=sSRaH1fgvDWzg8gAGfI9lRaHi1xVIBmOW3KgqeIEJWQ=;
+        b=FEg1YU/KHoKkwFw6L9WNlMEUNpemgVoQwBpPNqtCQ1GOQwGRUVd83XiruWL+RvVojD
+         a4dAH3wEAhlvWjFa31PxPWDsZYwsfCg/putLqmcq6oFdV3INKK9gvadiv82Kx3KY31iH
+         R6+XmKfJKbD4HTfBqYAm2V9rPWbCyI4H84FWhL9ptihIq9KmAZJvzp3RuXHvOqwo/djd
+         XBFIVhfrXY1gtSmo0lvdXAuPN0CPDqETp5eZR4q0IQ5YTIrhYmEnIbxs8JfO+IiRM286
+         1GoAw5SWO8PnfQEXqeeRuaSTkl+xIt2u2lMG/SZNdBUYCWE7dU8xqffXX+F1wududjW4
+         0m+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706999109; x=1707603909;
+        d=1e100.net; s=20230601; t=1706999111; x=1707603911;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=DnWesDs8xRNqrKgsSJ7fCUj/XnlBG4IvaiEQPBxCK/I=;
-        b=rhBT0uByhlTS77t77cuP8H9HeL5dkNKPDftTb2r1D8dvHPjpBpDS/ziQED921ERFNg
-         zgyQHVhAXqZKP2aAMjwMVi9oRXU+UMOs2Ey0vm4zo+Jwp7DC5pY3kiOxeg7U005czsvx
-         Uyhsn0klj6IPyjhHdpwqX5Y/muJ9/KPdfu2+1XsGONdRKhwJJkM34TnnKejdLVQDe+o4
-         3kC+TKkaBDndWA+vNkcjzRlGsrDUXi2xqoWk66N1Wr8C1tT5QXPSZbc95XNEYeDT5TkU
-         kDs1FWShjWDDxCyI+l/HRmcqo+Ob+AGBSVBW0B2wmGl0kHZs/vOjRcxfXJB2NYeJ0fIr
-         W6Kw==
-X-Gm-Message-State: AOJu0YybaJWfAtrcAsZfM7IrRTR3FALypG8WBtswBbCQrwA/QmXvD+kv
-	GJZqfBCk7AeQNbBMhzQ3bRC33NrWZUS7yENG3VEcUDgXZdjvptsjjnxun7Xdbg==
-X-Google-Smtp-Source: AGHT+IFtZe+Q8W1ePYytw7UeC4Jf2MOnkQ6RcSuccAbbwyK+ZuVbp0rOxBJSIWscsGRZX7r4oaJh+g==
-X-Received: by 2002:a05:620a:2e3:b0:783:b038:d1a1 with SMTP id a3-20020a05620a02e300b00783b038d1a1mr9095773qko.39.1706999109324;
-        Sat, 03 Feb 2024 14:25:09 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCVwYaZbKyqip0VIR8GONQxXUcX8op8aMPNo2Ap1p+jdcI0F9O4QdFtfkXUh2izlay/UPxQX4uTdUnml1eWFaVIu3sl4cZN0o9MEZYPtDzuPUBt8ISFeQUgk//7oOgSqTo+LWz7pHI783WZUe7avWlFl2g4RV0ALfs6fSYnt9PmcP3V5e5UUC9OHfUN1hGOhFCEIHdwZdid79pfUdFyuN0HQ1asimEWyLDwYPGdfmyK0n3vX204PQ6L6I7qS+XYcc2+4FDbFfrLjHojE/EkYwAYSDsPcTayfqX5R0GGth4PTwEABerphUsn9JY6Cz1DdD0rhuTOjEi/XLpHp1AvDca0BRlY13p7V9uUBl5XxTmPDaaLTbmdbuj1e2I3b+GHRn4+Guw1TVTp0wlUYUAdXRnJPf1jp9/Mte8sgyYSGDJVgBLodRU8oGcMpA5MLWsHMPY5+8w5xv6eKGe3vsfBvHJH92nrGbL7ODZl7dWe1CNUDc7uQPTJqnToEqjD5Yl1fzWFBuCEy7dobme80FhUuQ9F8QqZX8GC19w5DGqXnrHRf6FF81Ob58I7Z4V+OoQ0FbylAMRBpa+pH
+        bh=sSRaH1fgvDWzg8gAGfI9lRaHi1xVIBmOW3KgqeIEJWQ=;
+        b=mRRUG/sZhUw2I0i4tlXllJPj5+FLm/RudKIv56CoiRZMIqsv0RimLUYL5X3P8dYMUF
+         v9uE/BAra/yTUmf9hnoV646dipBynoYp9iYWcT5NczLW9BcqaxhzWY7Ggmw0nT0qoQmv
+         42ncWw91knIl1FBo2vE0oWJNw5QqOSmBbCQfgtkeuSMYPWljPlpYygOycsvy/khzHAKJ
+         Ic8tbFOK3nmnPMtgY/LLcGEDdbZHF6w7D/hT1esv3SkMXuMdrPCSQ6yXW0M45Epvb1Ss
+         8wt3A4jn/hruDdQqezK7JGwYiSG7Ok9ckz3S3QT9LnRW1Ug2hzQAmEouzmqQSU3NWHa+
+         dQfg==
+X-Gm-Message-State: AOJu0Yy6uMTpJWEj0jtdMa48Bzi0Kp+mavgfkPzlZ26iktqMWJnoeCJg
+	p2j6Rfoiqj2JNHD4QPp/wNLAA6iL35wcxj2q+vrE7/3eU2xp5sht2SX3FFCgUQ==
+X-Google-Smtp-Source: AGHT+IG3EYhsNVPBU6KUcsUBSOQZNgKpw+Vbn9C8kTOZ2rew1NJBeQEAn2o9I3Z39lXFU9xFt+w5vw==
+X-Received: by 2002:a05:6214:246b:b0:68c:7faa:b256 with SMTP id im11-20020a056214246b00b0068c7faab256mr2977855qvb.54.1706999111497;
+        Sat, 03 Feb 2024 14:25:11 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCWJSkgONFuvS33JOo7SgHBJCl+YTDRQpn2fDGiqnCeMDJb05PrWc0j1lbEa88WjF0wk/V3HTr/tA/zLb+NU9Cu//2wkmDRvpvTn0QJLWq8aiOqRyJ2K6BinavcCOK9suVGRki6Ikkq09RW/Sq87IRue3GOQ3e+Q4bsLzWAObDVzhXdNMxzQ9cHt2Y1sKPYHIZRFOWGBU2FmwE38lkXuDp4zCB0K9EiRRCxMcVUkJWRvTTlzwQaJ9U0UnaINRI34+9Ul7fXRwrqEko1h4YAJnl6W0Zhd1RBiapwr53PyKauqBAhrM0AI5PCdstCXGcQGoLKr7ZhCM16Nd8aytLhNgunOBxL1zYMyE9ZuFgvIlSl+6PI7SfWMYgfZkinZeBCUeB8VV31vMjKU0mvQO04fmSC/d900C0wIv5H9kQpC312TyYPlA6+9c++DRYvqTQQo0a5EVe+iDIksVhrACG7X6szUn+6c0KfEQAEWylHaMTAyLHHavIFDd1Jcl+2eVkSfM00gB6l45Z9ixVBD+SyPEMlCj2AjLiVWzMfEWNCCcw1JQqybylZKYc4Q5q4aZxt7ktVMSkGFhxNmRZt5TKeUPN0xnUYBxBbz4UUyFxCtjNdlG+Q8262ydgPT
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id g4-20020a37e204000000b00783f534706esm1734412qki.61.2024.02.03.14.25.08
+        by smtp.gmail.com with ESMTPSA id nf8-20020a0562143b8800b0068c3b1bcf6bsm2177452qvb.95.2024.02.03.14.25.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Feb 2024 14:25:08 -0800 (PST)
-Date: Sat, 03 Feb 2024 17:25:08 -0500
-Message-ID: <b9ca171301d5abeb78922dd79d65136a@paul-moore.com>
+        Sat, 03 Feb 2024 14:25:10 -0800 (PST)
+Date: Sat, 03 Feb 2024 17:25:10 -0500
+Message-ID: <737a8ea0323b3db38044813041215bac@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -65,103 +65,227 @@ Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 From: Paul Moore <paul@paul-moore.com>
 To: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, eparis@redhat.com
-Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org, Fan Wu <wufan@linux.microsoft.com>
-Subject: Re: [PATCH RFC v12 5/20] initramfs|security: Add security hook to  initramfs unpack
-References: <1706654228-17180-6-git-send-email-wufan@linux.microsoft.com>
-In-Reply-To: <1706654228-17180-6-git-send-email-wufan@linux.microsoft.com>
+Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>, Fan Wu <wufan@linux.microsoft.com>
+Subject: Re: [PATCH RFC v12 8/20] ipe: add userspace interface
+References: <1706654228-17180-9-git-send-email-wufan@linux.microsoft.com>
+In-Reply-To: <1706654228-17180-9-git-send-email-wufan@linux.microsoft.com>
 
 On Jan 30, 2024 Fan Wu <wufan@linux.microsoft.com> wrote:
 > 
-> This patch introduces a new hook to notify security system that the
-> content of initramfs has been unpacked into the rootfs.
+> As is typical with LSMs, IPE uses securityfs as its interface with
+> userspace. for a complete list of the interfaces and the respective
+> inputs/outputs, please see the documentation under
+> admin-guide/LSM/ipe.rst
 > 
-> Upon receiving this notification, the security system can activate
-> a policy to allow only files that originated from the initramfs to
-> execute or load into kernel during the early stages of booting.
-> 
-> This approach is crucial for minimizing the attack surface by
-> ensuring that only trusted files from the initramfs are operational
-> in the critical boot phase.
-> 
+> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 > ---
-> v1-v11:
->   + Not present
+> v2:
+>   + Split evaluation loop, access control hooks,
+>     and evaluation loop from policy parser and userspace
+>     interface to pass mailing list character limit
+> 
+> v3:
+>   + Move policy load and activation audit event to 03/12
+>   + Fix a potential panic when a policy failed to load.
+>   + use pr_warn for a failure to parse instead of an
+>     audit record
+>   + Remove comments from headers
+>   + Add lockdep assertions to ipe_update_active_policy and
+>     ipe_activate_policy
+>   + Fix up warnings with checkpatch --strict
+>   + Use file_ns_capable for CAP_MAC_ADMIN for securityfs
+>     nodes.
+>   + Use memdup_user instead of kzalloc+simple_write_to_buffer.
+>   + Remove strict_parse command line parameter, as it is added
+>     by the sysctl command line.
+>   + Prefix extern variables with ipe_
+> 
+> v4:
+>   + Remove securityfs to reverse-dependency
+>   + Add SHA1 reverse dependency.
+>   + Add versioning scheme for IPE properties, and associated
+>     interface to query the versioning scheme.
+>   + Cause a parser to always return an error on unknown syntax.
+>   + Remove strict_parse option
+>   + Change active_policy interface from sysctl, to securityfs,
+>     and change scheme.
+> 
+> v5:
+>   + Cause an error if a default action is not defined for each
+>     operation.
+>   + Minor function renames
+> 
+> v6:
+>   + No changes
+> 
+> v7:
+>   + Propagating changes to support the new ipe_context structure in the
+>     evaluation loop.
+> 
+>   + Further split the parser and userspace interface changes into
+>     separate commits.
+> 
+>   + "raw" was renamed to "pkcs7" and made read only
+>   + "raw"'s write functionality (update a policy) moved to "update"
+>   + introduced "version", "policy_name" nodes.
+>   + "content" renamed to "policy"
+>   + changes to allow the compiled-in policy to be treated
+>     identical to deployed-after-the-fact policies.
+> 
+> v8:
+>   + Prevent securityfs initialization if the LSM is disabled
+> 
+> v9:
+>   + Switch to securityfs_recursive_remove for policy folder deletion
+> 
+> v10:
+>   + Simplify and correct concurrency
+>   + Fix typos
+> 
+> v11:
+>   + Correct code comments
 > 
 > v12:
->   + Introduced
+>   + Correct locking and remove redundant code
 > ---
->  include/linux/lsm_hook_defs.h |  4 ++++
->  include/linux/security.h      | 10 ++++++++++
->  init/initramfs.c              |  3 +++
->  security/security.c           | 12 ++++++++++++
->  4 files changed, 29 insertions(+)
-> 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 185924c56378..b247388786a9 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -425,3 +425,7 @@ LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
->  LSM_HOOK(int, 0, uring_sqpoll, void)
->  LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
->  #endif /* CONFIG_IO_URING */
-> +
-> +#ifdef CONFIG_BLK_DEV_INITRD
-> +LSM_HOOK(void, LSM_RET_VOID, unpack_initramfs_security, void)
-> +#endif /* CONFIG_BLK_DEV_INITRD */
+>  security/ipe/Makefile    |   2 +
+>  security/ipe/fs.c        | 101 +++++++++
+>  security/ipe/fs.h        |  16 ++
+>  security/ipe/ipe.c       |   3 +
+>  security/ipe/ipe.h       |   2 +
+>  security/ipe/policy.c    | 123 ++++++++++
+>  security/ipe/policy.h    |   9 +
+>  security/ipe/policy_fs.c | 469 +++++++++++++++++++++++++++++++++++++++
+>  8 files changed, 725 insertions(+)
+>  create mode 100644 security/ipe/fs.c
+>  create mode 100644 security/ipe/fs.h
+>  create mode 100644 security/ipe/policy_fs.c
 
-Let's just call it "unpack_initramfs", the "_security" part is somewhat
-implied since we are talking about a LSM hook ;)
+...
 
-> diff --git a/init/initramfs.c b/init/initramfs.c
-> index 76deb48c38cb..075a5794cde5 100644
-> --- a/init/initramfs.c
-> +++ b/init/initramfs.c
-> @@ -18,6 +18,7 @@
->  #include <linux/init_syscalls.h>
->  #include <linux/task_work.h>
->  #include <linux/umh.h>
-> +#include <linux/security.h>
->  
->  static __initdata bool csum_present;
->  static __initdata u32 io_csum;
-> @@ -720,6 +721,8 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
->  #endif
->  	}
->  
-> +	security_unpack_initramfs();
-
-Given the caller, what do you think of changing the hook name to
-"security_initramfs_populated()"?  I think this not only matches up
-better with the caller, "do_populate_rootfs()", but since in using the
-past tense we help indicate that this hook happens *after* the rootfs
-is populated with the initramfs data.
-
->  done:
->  	/*
->  	 * If the initrd region is overlapped with crashkernel reserved region,
-> diff --git a/security/security.c b/security/security.c
-> index ddf2e69cf8f2..2a527d4c69bc 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -5581,3 +5581,15 @@ int security_uring_cmd(struct io_uring_cmd *ioucmd)
->  	return call_int_hook(uring_cmd, 0, ioucmd);
+> diff --git a/security/ipe/policy.c b/security/ipe/policy.c
+> index f22a576a6d68..61fea3e38e11 100644
+> --- a/security/ipe/policy.c
+> +++ b/security/ipe/policy.c
+> @@ -43,6 +71,68 @@ static int set_pkcs7_data(void *ctx, const void *data, size_t len,
+>  	return 0;
 >  }
->  #endif /* CONFIG_IO_URING */
-> +
-> +#ifdef CONFIG_BLK_DEV_INITRD
+>  
 > +/**
-> + * security_unpack_initramfs() - Notify LSM that initramfs has been loaded
+> + * ipe_update_policy - parse a new policy and replace old with it.
+> + * @root: Supplies a pointer to the securityfs inode saved the policy.
+> + * @text: Supplies a pointer to the plain text policy.
+> + * @textlen: Supplies the length of @text.
+> + * @pkcs7: Supplies a pointer to a buffer containing a pkcs7 message.
+> + * @pkcs7len: Supplies the length of @pkcs7len.
 > + *
-> + * Tells the LSM the initramfs has been unpacked into the rootfs.
+> + * @text/@textlen is mutually exclusive with @pkcs7/@pkcs7len - see
+> + * ipe_new_policy.
+> + *
+> + * Context: Requires root->i_rwsem to be held.
+> + * Return:
+> + * * !IS_ERR	- The existing policy saved in the inode before update
+> + * * -ENOENT	- Policy doesn't exist
+> + * * -EINVAL	- New policy is invalid
 > + */
-> +void security_unpack_initramfs(void)
+> +struct ipe_policy *ipe_update_policy(struct inode *root,
+> +				     const char *text, size_t textlen,
+> +				     const char *pkcs7, size_t pkcs7len)
 > +{
-> +	call_void_hook(unpack_initramfs_security);
+> +	int rc = 0;
+> +	struct ipe_policy *old, *ap, *new = NULL;
+> +
+> +	old = (struct ipe_policy *)root->i_private;
+> +	if (!old)
+> +		return ERR_PTR(-ENOENT);
+> +
+> +	new = ipe_new_policy(text, textlen, pkcs7, pkcs7len);
+> +	if (IS_ERR(new))
+> +		return new;
+> +
+> +	if (strcmp(new->parsed->name, old->parsed->name)) {
+> +		rc = -EINVAL;
+> +		goto err;
+> +	}
+> +
+> +	if (ver_to_u64(old) > ver_to_u64(new)) {
+> +		rc = -EINVAL;
+> +		goto err;
+> +	}
+> +
+> +	root->i_private = new;
+> +	swap(new->policyfs, old->policyfs);
+
+Should the swap() take place with @ipe_policy_lock held?
+
+> +	mutex_lock(&ipe_policy_lock);
+> +	ap = rcu_dereference_protected(ipe_active_policy,
+> +				       lockdep_is_held(&ipe_policy_lock));
+> +	if (old == ap) {
+> +		rcu_assign_pointer(ipe_active_policy, new);
+> +		mutex_unlock(&ipe_policy_lock);
+> +		synchronize_rcu();
+
+I'm guessing you are forcing a synchronize_rcu() here because you are
+free()'ing @old in the caller, yes?  Looking at the code, I only see
+one caller, update_policy().  With only one caller, why not free @old
+directly in ipe_update_policy()?  Do you see others callers that would
+do something different?
+
+> +	} else {
+> +		mutex_unlock(&ipe_policy_lock);
+> +	}
+> +
+> +	return old;
+> +err:
+> +	ipe_free_policy(new);
+> +	return ERR_PTR(rc);
 > +}
-> +#endif /* CONFIG_BLK_DEV_INITRD */
-> -- 
-> 2.43.0
+> +
+>  /**
+>   * ipe_new_policy - Allocate and parse an ipe_policy structure.
+>   *
+> @@ -99,3 +189,36 @@ struct ipe_policy *ipe_new_policy(const char *text, size_t textlen,
+>  	ipe_free_policy(new);
+>  	return ERR_PTR(rc);
+>  }
+> +
+> +/**
+> + * ipe_set_active_pol - Make @p the active policy.
+> + * @p: Supplies a pointer to the policy to make active.
+> + *
+> + * Context: Requires root->i_rwsem, which i_private has the policy, to be held.
+> + * Return:
+> + * * !IS_ERR	- Success
+> + * * -EINVAL	- New active policy version is invalid
+> + */
+> +int ipe_set_active_pol(const struct ipe_policy *p)
+> +{
+> +	struct ipe_policy *ap = NULL;
+> +
+> +	mutex_lock(&ipe_policy_lock);
+> +
+> +	ap = rcu_dereference_protected(ipe_active_policy,
+> +				       lockdep_is_held(&ipe_policy_lock));
+> +	if (ap == p) {
+> +		mutex_unlock(&ipe_policy_lock);
+> +		return 0;
+> +	}
+> +	if (ap && ver_to_u64(ap) > ver_to_u64(p)) {
+> +		mutex_unlock(&ipe_policy_lock);
+> +		return -EINVAL;
+> +	}
+> +
+> +	rcu_assign_pointer(ipe_active_policy, p);
+> +	mutex_unlock(&ipe_policy_lock);
+> +	synchronize_rcu();
+
+Why do you need the synchronize_rcu() call here?
+
+> +	return 0;
+> +}
+
 
 --
 paul-moore.com
