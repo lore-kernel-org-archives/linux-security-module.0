@@ -1,59 +1,59 @@
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FE5168C4
-	for <linux-security-module@vger.kernel.org>; Sat,  3 Feb 2024 22:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2487C17552
+	for <linux-security-module@vger.kernel.org>; Sat,  3 Feb 2024 22:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706999114; cv=none; b=dwIPMxVFPQ1fNE8AQmcBtJZ9iary6FCPsTP/RholiDhiAkFPXV7/vzWu4gMWIcefP76PXc76ApFTTHrvKYMpT0KbvNFyc/+jaHGU8PEK0U0GUggburm9UDs6DbDR0yWtHglPPFEYN1ugWN4hMlmObZfg25VPY0DjgS6S3/dKzLA=
+	t=1706999118; cv=none; b=YoyeO2ZaJoaOae4QNMZ2xbYoUsuLDOQOGjqDzeHqJ6VtDbQERCSxzY3yt6mr0Qz21eRcNFtd1L7zX9X0fqafSsfu3Q6JoQpSQGHSxEcJSE6YDRtP3CmY1t6dfGnIpL+1zUQTCSFdyQInBgt8z/8c3AAc6GfqxayRN2zTZpQA8nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706999114; c=relaxed/simple;
-	bh=MKmLXZMrJ1wiSwqJ1VzXPKnFW9BC0ErTaacJqGnGYMM=;
+	s=arc-20240116; t=1706999118; c=relaxed/simple;
+	bh=3ztzxjwdFWo2aRQAJna3nsAel/RLxGtTJmcBQeDLi5E=;
 	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=EWiut43TDR8CsQKUyRDuzfJbHtfMs7jWQ0NueuSMEHrA3RWY0pKH+qZ+4U+tWsaBfFN43ncIAQXkYOV7GHHTodJTMbE8J5B+auVaiEhlqQGeCt5NEoP9CZ0yv8r2TontH8RZGHOEvLwePjkhLz9eqhj2FAgeDqdm2/oES+Kgf18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SFDtr5q9; arc=none smtp.client-ip=209.85.219.53
+	 From:To:Cc:Subject:References:In-Reply-To; b=fubSwHLKwG2jeG9p/KWYSr+f19z2nxDWieVJnkXf03/amYwDK/pys8fw+CgbFHIZzQ8clBLLCAmITtqud7wE34Zxy7clUEyyeGi64jLExWTsAQWeIZ8TOFxGf1dan5rHc5sks3T2bFAGqWMRdzXxm0a2UFycwVw5uKcxHU5mQ5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PFIFmNHR; arc=none smtp.client-ip=209.85.219.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SFDtr5q9"
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-68c9b74433cso855466d6.1
-        for <linux-security-module@vger.kernel.org>; Sat, 03 Feb 2024 14:25:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PFIFmNHR"
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6869233d472so17813166d6.2
+        for <linux-security-module@vger.kernel.org>; Sat, 03 Feb 2024 14:25:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1706999110; x=1707603910; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1706999112; x=1707603912; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=HxqeVTrlhX3yEoHrEHTleq0PuEMSnGt11wiOYIkzcNw=;
-        b=SFDtr5q9F700354KpAFL4Ej/gfeL4lMT5NuGcbjVdU+qtZjCVvMWzTkqd20hbOH2Em
-         i9D/CBTHXLSw7ElYkiPGPBAf7oR2HdyfGVts+GL+cPSPFNzpP7fYuBY/Bz9Dv0919LV9
-         Sd0OPo+dtcTaEug0ac8LlwCY8R+2WnHz1X4vpEde6wYFaLvMIe5kQ0ZTqUGafEqqNcVP
-         tico4tTHFvrPCqZ228GUTYiDFno1rI3U845EJ4Q799/iW4enaqjNKRKhRzlNZmCN7Xdw
-         mNnHeBBY9Hc4tqhzmjtygKnGf4OCYTff5CQsFjRfR67TIJ4Yj066zpLBUk9GdQ3Q6i0D
-         XSmg==
+        bh=36T6G7nLsBOPlZbJneB+42xI8//a+iMUkv+sIps39Ns=;
+        b=PFIFmNHRQVsDOjgxOw0eRqS8/JR/KcuKUN59gY0xApdxCIJ/wN4Ea2yMOKWJ3BuYD7
+         j17VpHt5yf0r/PeySeisaMbFebOs3SWYOBCOBMg9ASR/NmJ1UxYVgALyb31SYuwG7UL0
+         3l64WaUKXMA45+vFyeSXYwYmYCZAEAUmF9ExEozoNFTFtAUAK3qo2+BtusRmKCDGTab7
+         4RUp1tzq9ZMFfDKonCgdQARMf8LUuwfpXUz8ouqhmje9Ai4qve/F9QFzgWMbiSQ8TR1X
+         MOhhIypa5RbYfCqI09yyOPKmlTjLobjNSbqQXGxEkfrmSoyvgu/e2Lk7WpmrJezysMpz
+         tp4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706999110; x=1707603910;
+        d=1e100.net; s=20230601; t=1706999112; x=1707603912;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HxqeVTrlhX3yEoHrEHTleq0PuEMSnGt11wiOYIkzcNw=;
-        b=L/EwVhCWDcA/Bkga61Vr04LRTitDzc629A1UYXd2zvcRLHPDMuPNj+SZ1cl47AD40z
-         MLOxEQk8UvSFE11LAyCDe4APCL7tELx9mTWvoqeHReC6bqdai/Y9e6HOO29Emf3VJOZ1
-         D/sW3+bujIlfKQ8ZI2dhcDaePATK8+xqxIKIvtvlcThV1j1MtQsIOpm8EbxctSF/j82p
-         FI/J8YcptW0nE/CPqdxbRxvYJgTe8e25PM1GpWGck/epCsNSuUzPfHi7JdrUQyo6p5qi
-         dZ/kPoK56+rJVH1b4MaAWpotd/w+ETZKMMbtBjnRhiZarE1X1bGRTUBLmv71m5hFzL+4
-         brcA==
-X-Gm-Message-State: AOJu0YwFV/v6Wtkwhr5KbRPIrhL0W1yjYADNyxEnafLHVdqnhzGqJrDv
-	aClMFkWURJ6zTDdtzuhK0BZEpcEbVXe4ax3a9n4i8g3obiIf5XgxkKg3JSLozQ==
-X-Google-Smtp-Source: AGHT+IEx4K2dPSOjAx9Hgsk0nrPlx89yHukHJP8vzYQLg/LIr1zgwxkCRVUHmmp8Wn0+Im7mUNWYnw==
-X-Received: by 2002:a05:6214:2622:b0:68c:5c39:5f15 with SMTP id gv2-20020a056214262200b0068c5c395f15mr3714534qvb.34.1706999110377;
-        Sat, 03 Feb 2024 14:25:10 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCV6ig5NUZB5VduOEkXT+5VnRcIvatsV7bvjQtvLQp1QM74Ps13S8xj4uVXHbq7WSITZ+gVG/XPnU2S3jYRSnj+t6j9cIL8rTKGPXDFgo11YiFfzu1gf13qCsKzUQBu3WspNEIRQKrFlHnIQ6MJ/tXJruD2eovRyL1jkY4gY21BDbnOR82Hnm/yZRw+TUDjrFvOyNru33dWonqvhViSBUTOdl9va6907AcodbMJeu68vq+TJ7X8E2Xu6OoM2QD2RbrRI1DMjI1hIIu9/1ZwaPCtWQkqsk/CUlrCS3zfrKa8T0yC4KRXgP3OO1PfC2Hjc+wD8cCcDkGrE9jyinNwSIVdy1iIO5zkTM+5qbyG15+xncFigOtnCSge1w8zvlTfTsHRnKiLApmREocrcI+fDKAHX4RmNAIzad2+iidNITgkyecLr1Vud7M7eIJOScxBGHX7zPQaE+sBAiOqFXufcJL5npOs0w+LPOU+WfcuzwAPc4fC9jvAwpCdv/5vBl8ZxsysMkgEtu1jwF2GXWOkkYOU5eXNnrzHxEW/8s2H9pRUHm4PA9ZjPo/VfdZck+gycrtWIpSb24+tvomFrD3bOefs4qfXyzk+zv5U6v9bXK7g05s2fqiC2YEFv
+        bh=36T6G7nLsBOPlZbJneB+42xI8//a+iMUkv+sIps39Ns=;
+        b=i1x4LokzsEf8Nqb3G9rtaH3azIr4iHGvNiK8/OpcTI+5uJKCwHnuhpw8vJ+HmSLcp4
+         1IkyHTCi8zLyq5IzXeyxn+Dlny4ZAo2VMNXcTQtuhflCRF3khYwHPAENcIodA3PjOV6Q
+         25gc7LllJlh3NG8mm7x5wnOUe/dg0ANBR5WQQVmCxmu47B3ZmFN8he90QmhN18+8ZZQU
+         CxxmGc0ICwLWra7y1377+W5npnfH2NHoOuDJb6wMKSs0sq2u+CQqOmwM0qbMLcjcpqfV
+         qG0uzDHi2Z+M5zMY35LfgnhfHd2AV0OQ557VBU4a3+PHqUWiSdGW4LEal5ka48EZC73c
+         B3zw==
+X-Gm-Message-State: AOJu0Yy+anpfL2J9qOMU+IDXCHKgQs8cBCOB7abW9GGK2fqGUeHsA3+m
+	jL7T9gWrQOkU4xz6bm1GtNBgCBtFSZjudlgjG2Rw9zrMfX4lnOA8o/f7V70vXg==
+X-Google-Smtp-Source: AGHT+IEv2CnIOKuawGLYE6rFGzRj31eo5OuqlybxY/nrKh3BNB267rYsEu0rttRMA+E0ociy47JtyQ==
+X-Received: by 2002:a05:6214:21ef:b0:686:a11d:5ce9 with SMTP id p15-20020a05621421ef00b00686a11d5ce9mr3312489qvj.15.1706999112535;
+        Sat, 03 Feb 2024 14:25:12 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCWAk0yDn7F4VJHF5IfNpmK+ESq2SxZxJ5XrPfe7jcavhA0CIEVgQZ1s4GE7ad9cEUM/aJkj+pwp8sjzsU6Pq8ZDZIN7WpJRlbM5+NZuiSq9PxoDERFGH6fU8qohxz7P0HwfM1Dz2qGLyBaLd0c6n3waGIFyQuKIx989ydja5+AlQUZjkDIWZW8CoyEzW1NQB5QKyaeFU+M8D4xr+/tpsfGx3ToJHCF56auQ937tsQ3b3zlYSOYJdpQvv4UU72xM3Hi+nFCQhBGmNeyJ0eQ2p4MC0RfRjkb/kAdoimJ8lC95Ze1Wo9eBNB1AC9gAW3bE46iXWvNAIw0Jm6j/GDdabUZey0C0pDhgSMpwup+tREvmwDFRflsp3jfVJR2U8Ef5bg9l/dLlKEhOHD8Hi/Q/kvDthXFVTyhL1EphyK64A3E8F+xFRiwf7lyDY82Xcl5V/9zobljW3JexJM3V9qtKYoEoA7OqeL3sKFprsgQlNTtPnXiogFrxoDav4lizdx9BRVaUZERhg35z9OCMoQja3gVuhT4gYjkqFlBK2rr7dhfFJzuQBUrIf7rz8IJ1AqYCGBgFgum+xiufoBJSiGBWU7CgMhTrtdSpb8Jo8x1LyhS9cnJSjOV2E+JB
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id u14-20020a0cf88e000000b006848cc2817esm2185250qvn.33.2024.02.03.14.25.09
+        by smtp.gmail.com with ESMTPSA id nh17-20020a056214391100b0068509353fb6sm2169488qvb.133.2024.02.03.14.25.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Feb 2024 14:25:09 -0800 (PST)
-Date: Sat, 03 Feb 2024 17:25:09 -0500
-Message-ID: <44f88fef412127a795f4219ad9f9c6b8@paul-moore.com>
+        Sat, 03 Feb 2024 14:25:12 -0800 (PST)
+Date: Sat, 03 Feb 2024 17:25:11 -0500
+Message-ID: <16ecd49f9528749e288c8a4cc73c4425@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -65,466 +65,308 @@ Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 From: Paul Moore <paul@paul-moore.com>
 To: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, eparis@redhat.com
-Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org, Fan Wu <wufan@linux.microsoft.com>, Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH RFC v12 6/20] ipe: introduce 'boot_verified' as a trust  provider
-References: <1706654228-17180-7-git-send-email-wufan@linux.microsoft.com>
-In-Reply-To: <1706654228-17180-7-git-send-email-wufan@linux.microsoft.com>
+Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>, Fan Wu <wufan@linux.microsoft.com>
+Subject: Re: [PATCH RFC v12 9/20] uapi|audit|ipe: add ipe auditing support
+References: <1706654228-17180-10-git-send-email-wufan@linux.microsoft.com>
+In-Reply-To: <1706654228-17180-10-git-send-email-wufan@linux.microsoft.com>
 
 On Jan 30, 2024 Fan Wu <wufan@linux.microsoft.com> wrote:
 > 
-> IPE is designed to provide system level trust guarantees, this usually
-> implies that trust starts from bootup with a hardware root of trust,
-> which validates the bootloader. After this, the bootloader verifies
-> the kernel and the initramfs.
+> Users of IPE require a way to identify when and why an operation fails,
+> allowing them to both respond to violations of policy and be notified
+> of potentially malicious actions on their systems with respect to IPE
+> itself.
 > 
-> As there's no currently supported integrity method for initramfs, and
-> it's typically already verified by the bootloader. This patch introduces
-> a new IPE property `boot_verified` which allows author of IPE policy to
-> indicate trust for files from initramfs.
+> This patch introduces 3 new audit events.
 > 
-> The implementation of this feature utilizes the newly added
-> `unpack_initramfs` hook. This hook marks the superblock of the rootfs
-> after the initramfs has been unpacked into it.
+> AUDIT_IPE_ACCESS(1420) indicates the result of an IPE policy evaluation
+> of a resource.
+> AUDIT_IPE_CONFIG_CHANGE(1421) indicates the current active IPE policy
+> has been changed to another loaded policy.
+> AUDIT_IPE_POLICY_LOAD(1422) indicates a new IPE policy has been loaded
+> into the kernel.
 > 
-> Since the rootfs is never unmounted during system operation, it is
-> advised to switch to a different policy that doesn't rely on the
-> `boot_verified` property after the real rootfs is in charge.
-> This ensures that the trust policies remain relevant and effective
-> throughout the system's operation.
-
-To be clear, most (all?) init systems cleanup the initial rootfs and
-mount another filesystem on top of it during the boot process, correct?
-That should probably be mentioned in the commit description, perhaps
-with references to the pivot_root(2) and switch_root(8) docs.
-
-While I don't disagree with your recommendation above, I do believe
-it is unnecessarily scary sounding.
-
+> This patch also adds support for success auditing, allowing users to
+> identify why an allow decision was made for a resource. However, it is
+> recommended to use this option with caution, as it is quite noisy.
+> 
+> Here are some examples of the new audit record types:
+> 
+> AUDIT_IPE_ACCESS(1420):
+> 
+>     audit: AUDIT1420 ipe_op=EXECUTE ipe_hook=BPRM_CHECK enforcing=1
+>       pid=297 comm="sh" path="/root/vol/bin/hello" dev="tmpfs"
+>       ino=3897 rule="op=EXECUTE boot_verified=TRUE action=ALLOW"
+> 
+>     audit: AUDIT1420 ipe_op=EXECUTE ipe_hook=BPRM_CHECK enforcing=1
+>       pid=299 comm="sh" path="/mnt/ipe/bin/hello" dev="dm-0"
+>       ino=2 rule="DEFAULT action=DENY"
+> 
+>     audit: AUDIT1420 ipe_op=EXECUTE ipe_hook=BPRM_CHECK enforcing=1
+>      pid=300 path="/tmp/tmpdp2h1lub/deny/bin/hello" dev="tmpfs"
+>       ino=131 rule="DEFAULT action=DENY"
+> 
+> The above three records were generated when the active IPE policy only
+> allows binaries from the initramfs to run. The three identical `hello`
+> binary were placed at different locations, only the first hello from
+> the rootfs(initramfs) was allowed.
+> 
+> Field ipe_op followed by the IPE operation name associated with the log.
+> 
+> Field ipe_hook followed by the name of the LSM hook that triggered the IPE
+> event.
+> 
+> Field enforcing followed by the enforcement state of IPE. (it will be
+> introduced in the next commit)
+> 
+> Field pid followed by the pid of the process that triggered the IPE
+> event.
+> 
+> Field comm followed by the command line program name of the process that
+> triggered the IPE event.
+> 
+> Field path followed by the file's path name.
+> 
+> Field dev followed by the device name as found in /dev where the file is
+> from.
+> Note that for device mappers it will use the name `dm-X` instead of
+> the name in /dev/mapper.
+> For a file in a temp file system, which is not from a device, it will use
+> `tmpfs` for the field.
+> The implementation of this part is following another existing use case
+> LSM_AUDIT_DATA_INODE in security/lsm_audit.c
+> 
+> Field ino followed by the file's inode number.
+> 
+> Field rule followed by the IPE rule made the access decision. The whole
+> rule must be audited because the decision is based on the combination of
+> all property conditions in the rule.
+> 
+> Along with the syscall audit event, user can know why a blocked
+> happened. For example:
+> 
+>     audit: AUDIT1420 ipe_op=EXECUTE ipe_hook=BPRM_CHECK enforcing=1
+>       pid=2138 comm="bash" path="/mnt/ipe/bin/hello" dev="dm-0"
+>       ino=2 rule="DEFAULT action=DENY"
+>     audit[1956]: SYSCALL arch=c000003e syscall=59
+>       success=no exit=-13 a0=556790138df0 a1=556790135390 a2=5567901338b0
+>       a3=ab2a41a67f4f1f4e items=1 ppid=147 pid=1956 auid=4294967295 uid=0
+>       gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0
+>       ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
+> 
+> The above two records showed bash used execve to run "hello" and got
+> blocked by IPE. Note that the IPE records are always prior to a SYSCALL
+> record.
+> 
+> AUDIT_IPE_CONFIG_CHANGE(1421):
+> 
+>     audit: AUDIT1421
+>       old_active_pol_name="Allow_All" old_active_pol_version=0.0.0
+>       old_policy_digest=sha256:E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649
+>       new_active_pol_name="boot_verified" new_active_pol_version=0.0.0
+>       new_policy_digest=sha256:820EEA5B40CA42B51F68962354BA083122A20BB846F
+>       auid=4294967295 ses=4294967295 lsm=ipe res=1
+> 
+> The above record showed the current IPE active policy switch from
+> `Allow_All` to `boot_verified` along with the version and the hash
+> digest of the two policies. Note IPE can only have one policy active
+> at a time, all access decision evaluation is based on the current active
+> policy.
+> The normal procedure to deploy a policy is loading the policy to deploy
+> into the kernel first, then switch the active policy to it.
+> 
+> AUDIT_IPE_POLICY_LOAD(1422):
+> 
+>     audit: AUDIT1422 policy_name="boot_verified" policy_version=0.0.0
+>       policy_digest=sha256:820EEA5B40CA42B51F68962354BA083122A20BB846F2676
+>       auid=4294967295 ses=4294967295 lsm=ipe res=1
+> 
+> The above record showed a new policy has been loaded into the kernel
+> with the policy name, policy version and policy hash.
+> 
 > Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 > ---
 > v2:
->   +No Changes
+>   + Split evaluation loop, access control hooks,
+>     and evaluation loop from policy parser and userspace
+>     interface to pass mailing list character limit
 > 
 > v3:
->   + Remove useless caching system
->   + Move ipe_load_properties to this match
->   + Minor changes from checkpatch --strict warnings
+>   + Move ipe_load_properties to patch 04.
+>   + Remove useless 0-initializations
+>   + Prefix extern variables with ipe_
+>   + Remove kernel module parameters, as these are
+>     exposed through sysctls.
+>   + Add more prose to the IPE base config option
+>     help text.
+>   + Use GFP_KERNEL for audit_log_start.
+>   + Remove unnecessary caching system.
+>   + Remove comments from headers
+>   + Use rcu_access_pointer for rcu-pointer null check
+>   + Remove usage of reqprot; use prot only.
+>   + Move policy load and activation audit event to 03/12
 > 
 > v4:
->   + Remove comments from headers that was missed previously.
->   + Grammatical corrections.
+>   + Remove sysctls in favor of securityfs nodes
+>   + Re-add kernel module parameters, as these are now
+>     exposed through securityfs.
+>   + Refactor property audit loop to a separate function.
 > 
 > v5:
->   + No significant changes
+>   + fix minor grammatical errors
+>   + do not group rule by curly-brace in audit record,
+>     reconstruct the exact rule.
 > 
 > v6:
 >   + No changes
 > 
 > v7:
->   + Reword and refactor patch 04/12 to [09/16], based on changes in
-> the underlying system.
->   + Add common audit function for boolean values
->   + Use common audit function as implementation.
+>   + Further split lsm creation, the audit system, the evaluation loop,
+>     and access control hooks into separate patches.
+>   + Further split audit system patch into two separate patches; one
+>     for include/uapi, and the usage of the new defines.
+>   + Split out the permissive functionality into another separate patch,
+>     for easier review.
+>   + Correct misuse of audit_log_n_untrusted string to audit_log_format
+>   + Use get_task_comm instead of comm directly.
+>   + Quote certain audit values
+>   + Remove unnecessary help text on choice options - these were
+>     previously indented at the wrong level
+>   + Correct a stale string constant (ctx_ns_enforce to ctx_enforce)
 > 
 > v8:
->   + No changes
+> 
+>   + Change dependency for CONFIG_AUDIT to CONFIG_AUDITSYSCALL
+>   + Drop ctx_* prefix
+>   + Reuse, where appropriate, the audit fields from the field
+>     dictionary. This transforms:
+>       ctx_pathname  -> path
+>       ctx_ino       -> ino
+>       ctx_dev       -> dev
+> 
+>   + Add audit records and event examples to commit description.
+>   + Remove new_audit_ctx, replace with audit_log_start. All data that
+>     would provided by new_audit_ctx is already present in the syscall
+>     audit record, that is always emitted on these actions. The audit
+>     records should be correlated as such.
+>   + Change audit types:
+>     + AUDIT_TRUST_RESULT                -> AUDIT_IPE_ACCESS
+>       +  This prevents overloading of the AVC type.
+>     + AUDIT_TRUST_POLICY_ACTIVATE       -> AUDIT_MAC_CONFIG_CHANGE
+>     + AUDIT_TRUST_POLICY_LOAD           -> AUDIT_MAC_POLICY_LOAD
+>       + There were no significant difference in meaning between
+>         these types.
+> 
+>   + Remove enforcing parameter passed from the context structure
+>     for AUDIT_IPE_ACCESS.
+>     +  This field can be inferred from the SYSCALL audit event,
+>        based on the success field.
+> 
+>   + Remove all fields already captured in the syscall record. "hook",
+>     an IPE specific field, can be determined via the syscall field in
+>     the syscall record itself, so it has been removed.
+>       + ino, path, and dev in IPE's record refer to the subject of the
+>         syscall, while the syscall record refers to the calling process.
+> 
+>   + remove IPE prefix from policy load/policy activation events
+>   + fix a bug wherein a policy change audit record was not fired when
+>     updating a policy
 > 
 > v9:
->   + No changes
+>   + Merge the AUDIT_IPE_ACCESS definition with the audit support commit
+>   + Change the audit format of policy load and switch
+>   + Remove the ipe audit kernel switch
 > 
 > v10:
->   + Replace struct file with struct super_block
+>   + Create AUDIT_IPE_CONFIG_CHANGE and AUDIT_IPE_POLICY_LOAD
+>   + Change field names per upstream feedback
 > 
 > v11:
->   + Fix code style issues
+>   + Fix style issues
 > 
 > v12:
->   + Switch to use unpack_initramfs hook and security blob
+>   + Add ipe_op, ipe_hook, and enforcing fields to AUDIT_IPE_ACCESS
 > ---
->  security/ipe/eval.c          | 68 +++++++++++++++++++++++++++++++++++-
->  security/ipe/eval.h          |  9 +++++
->  security/ipe/hooks.c         |  8 +++++
->  security/ipe/hooks.h         |  4 +++
->  security/ipe/ipe.c           | 14 ++++++++
->  security/ipe/ipe.h           |  3 ++
->  security/ipe/policy.h        |  2 ++
->  security/ipe/policy_parser.c | 37 +++++++++++++++++++-
->  8 files changed, 143 insertions(+), 2 deletions(-)
+>  include/uapi/linux/audit.h |   3 +
+>  security/ipe/Kconfig       |   2 +-
+>  security/ipe/Makefile      |   1 +
+>  security/ipe/audit.c       | 212 +++++++++++++++++++++++++++++++++++++
+>  security/ipe/audit.h       |  18 ++++
+>  security/ipe/eval.c        |  44 ++++++--
+>  security/ipe/eval.h        |  13 ++-
+>  security/ipe/fs.c          |  70 ++++++++++++
+>  security/ipe/hooks.c       |  10 +-
+>  security/ipe/hooks.h       |  11 ++
+>  security/ipe/policy.c      |   5 +
+>  11 files changed, 372 insertions(+), 17 deletions(-)
+>  create mode 100644 security/ipe/audit.c
+>  create mode 100644 security/ipe/audit.h
 
-More comments below, but one thing I wanted to mention at the top is
-that I believe there is too much conditional compilation depending on
-the state of CONFIG_BLK_DEV_INITRD.  While there is noting wrong about
-this from a correctness perspective, I believe the reality is that
-the vast majority of systems these days are built with this enabled,
-and having all these pre-processor checks adds to the complexity of
-the code.  Additional comments about this below ...
+...
 
-> diff --git a/security/ipe/eval.c b/security/ipe/eval.c
-> index 4f425afffcad..546bbc52a071 100644
-> --- a/security/ipe/eval.c
-> +++ b/security/ipe/eval.c
-> @@ -16,6 +16,24 @@
->  
->  struct ipe_policy __rcu *ipe_active_policy;
->  
-> +#define FILE_SUPERBLOCK(f) ((f)->f_path.mnt->mnt_sb)
-> +
-> +#ifdef CONFIG_BLK_DEV_INITRD
-> +/**
-> + * build_ipe_sb_ctx - Build from_initramfs field of an evaluation context.
-> + * @ctx: Supplies a pointer to the context to be populated.
-> + * @file: Supplies the file struct of the file triggered IPE event.
+> diff --git a/security/ipe/audit.c b/security/ipe/audit.c
+> new file mode 100644
+> index 000000000000..79b7af25085c
+> --- /dev/null
+> +++ b/security/ipe/audit.c
+> @@ -0,0 +1,212 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) Microsoft Corporation. All rights reserved.
 > + */
-> +static void build_ipe_sb_ctx(struct ipe_eval_ctx *ctx, const struct file *const file)
-> +{
-> +	ctx->from_initramfs = ipe_sb(FILE_SUPERBLOCK(file))->is_initramfs;
-> +}
-> +#else
-> +static void build_ipe_sb_ctx(struct ipe_eval_ctx *ctx, const struct file *const file)
-> +{
-> +}
-> +#endif /* CONFIG_BLK_DEV_INITRD */
-
-If you move the @file NULL check into build_ipe_sb_ctx() you can save
-a comparison in the !CONFIG_BLK_DEV_INITRD case:
-
-#ifdef CONFIG_BLK_DEV_INITRD
-void build(...)
-{
-  if (file)
-    ctx->initramfs = ipe_sb(file);
-  else
-    ctx->initramfs = false;
-}
-#else
-void build(...)
-{
-  ctx->initramfs = false;
-}
-#endif
-
-NOTE: see my comment below about always enabling the initramfs boolean
-in @ipe_eval_ctx and other structs.
-
->  /**
->   * build_eval_ctx - Build an evaluation context.
->   * @ctx: Supplies a pointer to the context to be populated.
-> @@ -28,8 +46,49 @@ void build_eval_ctx(struct ipe_eval_ctx *ctx,
->  {
->  	ctx->file = file;
->  	ctx->op = op;
 > +
-> +	if (file)
-> +		build_ipe_sb_ctx(ctx, file);
-> +}
-
-See my comment above regarding the @file NULL check.
-
-> +#ifdef CONFIG_BLK_DEV_INITRD
-> +/**
-> + * evaluate_boot_verified_true - Evaluate @ctx for the boot verified property.
-> + * @ctx: Supplies a pointer to the context being evaluated.
-> + *
-> + * Return:
-> + * * true	- The current @ctx match the @p
-> + * * false	- The current @ctx doesn't match the @p
-> + */
-> +static bool evaluate_boot_verified_true(const struct ipe_eval_ctx *const ctx)
-> +{
-> +	return ctx->from_initramfs;
->  }
->  
-> +/**
-> + * evaluate_boot_verified_false - Evaluate @ctx for the boot verified property.
-> + * @ctx: Supplies a pointer to the context being evaluated.
-> + *
-> + * Return:
-> + * * true	- The current @ctx match the @p
-> + * * false	- The current @ctx doesn't match the @p
-> + */
-> +static bool evaluate_boot_verified_false(const struct ipe_eval_ctx *const ctx)
-> +{
-> +	return !evaluate_boot_verified_true(ctx);
-> +}
-> +#else
-> +static bool evaluate_boot_verified_true(const struct ipe_eval_ctx *const ctx)
-> +{
-> +	return false;
-> +}
+> +#include <linux/slab.h>
+> +#include <linux/audit.h>
+> +#include <linux/types.h>
+> +#include <crypto/hash.h>
 > +
-> +static bool evaluate_boot_verified_false(const struct ipe_eval_ctx *const ctx)
-> +{
-> +	return false;
-> +}
-> +#endif /* CONFIG_BLK_DEV_INITRD */
-
-That is a lot of lines of code just to check a single boolean value.
-I understand the layers of abstraction, but this looks a bit excessive
-to me.  Assuming you agree with the other comments in this email
-regarding always including an initramfs flag in @ipe_eval_ctx, I think
-you could reduce all of the above into one single line function as shown
-below, and just negate it as needed in evaluate_property().
-
-static bool evaluate_boot_verified(ctx)
-{
-  return ctx->initramfs;
-}
-
->  /**
->   * evaluate_property - Analyze @ctx against a property.
->   * @ctx: Supplies a pointer to the context to be evaluated.
-> @@ -42,7 +101,14 @@ void build_eval_ctx(struct ipe_eval_ctx *ctx,
->  static bool evaluate_property(const struct ipe_eval_ctx *const ctx,
->  			      struct ipe_prop *p)
->  {
-> -	return false;
-> +	switch (p->type) {
-> +	case IPE_PROP_BOOT_VERIFIED_FALSE:
-> +		return evaluate_boot_verified_false(ctx);
-> +	case IPE_PROP_BOOT_VERIFIED_TRUE:
-> +		return evaluate_boot_verified_true(ctx);
-
-According to my comment above:
-
-  case IPE_PROP_BOOT_VERIFIED_FALSE:
-    return !evaludate_boot_verified(ctx);
-  case IPE_PROP_BOOT_VERIFIED_TRUE:
-    return evaludate_boot_verified(ctx);
-
-> +	default:
-> +		return false;
-> +	}
->  }
->  
->  /**
-> diff --git a/security/ipe/eval.h b/security/ipe/eval.h
-> index cfdf3c8dfe8a..7d79fdb63bbf 100644
-> --- a/security/ipe/eval.h
-> +++ b/security/ipe/eval.h
-> @@ -15,10 +15,19 @@
->  
->  extern struct ipe_policy __rcu *ipe_active_policy;
->  
-> +#ifdef CONFIG_BLK_DEV_INITRD
-> +struct ipe_sb {
-> +	bool is_initramfs;
-> +}
-
-You've already got a function named "ipe_sb()", I would suggest saving
-us all some headaches by renaming the above to "ipe_superblock" or
-something similar.  The point is to not have a struct and a function
-with the same name.
-
-I also think you can shorten the field name to "initramfs", it's
-defined as a boolean flag so I'm not sure the "is_" prefix lends any
-useful hints but does make for longer lines, more typing, etc.
-
-> +#endif /* CONFIG_BLK_DEV_INITRD */
-> +
->  struct ipe_eval_ctx {
->  	enum ipe_op_type op;
->  
->  	const struct file *file;
-> +#ifdef CONFIG_BLK_DEV_INITRD
-> +	bool from_initramfs;
-> +#endif /* CONFIG_BLK_DEV_INITRD */
->  };
-
-I suppose I understand the desire to make the @from_initramfs
-conditional to potentially reduce the size of @ipe_eval_ctx when it is
-not needed, however, I believe in the vast majority of systems we are
-going to see CONFIG_BLK_DEV_INITRD enabled so I believe this adds a lot
-extra code noise for little practical benefit.
-
-Similarly to ipe_sb::is_initramfs, I think you can rename this field to
-"initramfs" and we would all be better for the change.
-
->  void build_eval_ctx(struct ipe_eval_ctx *ctx, const struct file *file, enum ipe_op_type op);
-> diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
-> index 3aec88c074e1..8ee105bf7bad 100644
-> --- a/security/ipe/hooks.c
-> +++ b/security/ipe/hooks.c
-> @@ -4,6 +4,7 @@
->   */
->  
->  #include <linux/fs.h>
-> +#include <linux/fs_struct.h>
->  #include <linux/types.h>
->  #include <linux/binfmts.h>
->  #include <linux/mman.h>
-> @@ -181,3 +182,10 @@ int ipe_kernel_load_data(enum kernel_load_data_id id, bool contents)
->  	build_eval_ctx(&ctx, NULL, op);
->  	return ipe_evaluate_event(&ctx);
->  }
-> +
-> +#ifdef CONFIG_BLK_DEV_INITRD
-> +void ipe_unpack_initramfs(void)
-> +{
-> +	ipe_sb(current->fs->root.mnt->mnt_sb)->is_initramfs = true;
-> +}
-> +#endif /* CONFIG_BLK_DEV_INITRD */
-> diff --git a/security/ipe/hooks.h b/security/ipe/hooks.h
-> index 23205452f758..3b1bb0a6e89c 100644
-> --- a/security/ipe/hooks.h
-> +++ b/security/ipe/hooks.h
-> @@ -22,4 +22,8 @@ int ipe_kernel_read_file(struct file *file, enum kernel_read_file_id id,
->  
->  int ipe_kernel_load_data(enum kernel_load_data_id id, bool contents);
->  
-> +#ifdef CONFIG_BLK_DEV_INITRD
-> +void ipe_unpack_initramfs(void);
-> +#endif /* CONFIG_BLK_DEV_INITRD */
-> +
->  #endif /* _IPE_HOOKS_H */
-> diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-> index 22bd95116087..ed3acf6174d8 100644
-> --- a/security/ipe/ipe.c
-> +++ b/security/ipe/ipe.c
-> @@ -5,9 +5,13 @@
->  #include <uapi/linux/lsm.h>
->  
->  #include "ipe.h"
+> +#include "ipe.h"
 > +#include "eval.h"
->  #include "hooks.h"
->  
->  static struct lsm_blob_sizes ipe_blobs __ro_after_init = {
-> +#ifdef CONFIG_BLK_DEV_INITRD
-> +	.lbs_superblock = sizeof(struct ipe_sb),
-> +#endif /* CONFIG_BLK_DEV_INITRD */
->  };
-
-I would drop the CONFIG_BLK_DEV_INITRD conditional above for reasons
-already mentioned, it's also not like a running system has that many
-superblocks allocated.  The increase in memory usage should be
-trivial.
-
->  static const struct lsm_id ipe_lsmid = {
-> @@ -15,12 +19,22 @@ static const struct lsm_id ipe_lsmid = {
->  	.id = LSM_ID_IPE,
->  };
->  
-> +#ifdef CONFIG_BLK_DEV_INITRD
-> +struct ipe_sb *ipe_sb(const struct super_block *sb)
-> +{
-> +	return sb->s_security + ipe_blobs.lbs_superblock;
-> +}
-> +#endif /* CONFIG_BLK_DEV_INITRD */
-
-If we always have an IPE slot in the superblock's security blob, there
-is not need to make the above conditional.
-
->  static struct security_hook_list ipe_hooks[] __ro_after_init = {
->  	LSM_HOOK_INIT(bprm_check_security, ipe_bprm_check_security),
->  	LSM_HOOK_INIT(mmap_file, ipe_mmap_file),
->  	LSM_HOOK_INIT(file_mprotect, ipe_file_mprotect),
->  	LSM_HOOK_INIT(kernel_read_file, ipe_kernel_read_file),
->  	LSM_HOOK_INIT(kernel_load_data, ipe_kernel_load_data),
-> +#ifdef CONFIG_BLK_DEV_INITRD
-> +	LSM_HOOK_INIT(unpack_initramfs_security, ipe_unpack_initramfs),
-> +#endif /* CONFIG_BLK_DEV_INITRD */
->  };
->  
->  /**
-> diff --git a/security/ipe/ipe.h b/security/ipe/ipe.h
-> index a1c68d0fc2e0..f1e7c3222b6d 100644
-> --- a/security/ipe/ipe.h
-> +++ b/security/ipe/ipe.h
-> @@ -12,5 +12,8 @@
->  #define pr_fmt(fmt) "IPE: " fmt
->  
->  #include <linux/lsm_hooks.h>
-> +#ifdef CONFIG_BLK_DEV_INITRD
-> +struct ipe_sb *ipe_sb(const struct super_block *sb);
-> +#endif /* CONFIG_BLK_DEV_INITRD */
->  
->  #endif /* _IPE_H */
-> diff --git a/security/ipe/policy.h b/security/ipe/policy.h
-> index fb906f41522b..fb48024bb63e 100644
-> --- a/security/ipe/policy.h
-> +++ b/security/ipe/policy.h
-> @@ -30,6 +30,8 @@ enum ipe_action_type {
->  #define IPE_ACTION_INVALID __IPE_ACTION_MAX
->  
->  enum ipe_prop_type {
-> +	IPE_PROP_BOOT_VERIFIED_FALSE,
-> +	IPE_PROP_BOOT_VERIFIED_TRUE,
->  	__IPE_PROP_MAX
->  };
->  
-> diff --git a/security/ipe/policy_parser.c b/security/ipe/policy_parser.c
-> index 612839b405f4..cce15f0eb645 100644
-> --- a/security/ipe/policy_parser.c
-> +++ b/security/ipe/policy_parser.c
-> @@ -265,6 +265,14 @@ static enum ipe_action_type parse_action(char *t)
->  	return match_token(t, action_tokens, args);
->  }
->  
-> +static const match_table_t property_tokens = {
-> +#ifdef CONFIG_BLK_DEV_INITRD
-> +	{IPE_PROP_BOOT_VERIFIED_FALSE,	"boot_verified=FALSE"},
-> +	{IPE_PROP_BOOT_VERIFIED_TRUE,	"boot_verified=TRUE"},
-> +#endif /* CONFIG_BLK_DEV_INITRD */
-
-You want the "boot_verified" field to be part of the IPE policy
-regardless of the state of CONFIG_BLK_DEV_INITRD, yes?  On a system
-without _INITRD the TRUE case would never trigger, only the FALSE
-case, which seems like the Right Thing.
-
-It just seems wrong to me to have the policy grammar change depending
-on what the kernel supports, it seems like IPE should parse and enforce
-the policy regardless of the kernel's config, with the understanding
-that some rules might never be satisfied as it would be impossible
-for a given kernel config, e.g. "boot_verified=TRUE" on a non-initramfs
-system.
-
-I probably should have thought of this sooner, but I believe the same
-applies to the dm-verity and fs-verity policy tokens.
-
-> +	{IPE_PROP_INVALID,		NULL}
+> +#include "hooks.h"
+> +#include "policy.h"
+> +#include "audit.h"
+> +
+> +#define ACTSTR(x) ((x) == IPE_ACTION_ALLOW ? "ALLOW" : "DENY")
+> +
+> +#define IPE_AUDIT_HASH_ALG "sha256"
+> +
+> +#define AUDIT_POLICY_LOAD_FMT "policy_name=\"%s\" policy_version=%hu.%hu.%hu "\
+> +			      "policy_digest=" IPE_AUDIT_HASH_ALG ":"
+> +#define AUDIT_OLD_ACTIVE_POLICY_FMT "old_active_pol_name=\"%s\" "\
+> +				    "old_active_pol_version=%hu.%hu.%hu "\
+> +				    "old_policy_digest=" IPE_AUDIT_HASH_ALG ":"
+> +#define AUDIT_NEW_ACTIVE_POLICY_FMT "new_active_pol_name=\"%s\" "\
+> +				    "new_active_pol_version=%hu.%hu.%hu "\
+> +				    "new_policy_digest=" IPE_AUDIT_HASH_ALG ":"
+> +
+> +static const char *const audit_op_names[__IPE_OP_MAX + 1] = {
+> +	"EXECUTE",
+> +	"FIRMWARE",
+> +	"KMODULE",
+> +	"KEXEC_IMAGE",
+> +	"KEXEC_INITRAMFS",
+> +	"POLICY",
+> +	"X509_CERT",
+> +	"UNKNOWN",
 > +};
 > +
->  /**
->   * parse_property - Parse the property type given a token string.
->   * @t: Supplies the token string to be parsed.
-> @@ -277,7 +285,34 @@ static enum ipe_action_type parse_action(char *t)
->   */
->  static int parse_property(char *t, struct ipe_rule *r)
->  {
-> -	return -EBADMSG;
-> +	substring_t args[MAX_OPT_ARGS];
-> +	struct ipe_prop *p = NULL;
-> +	int rc = 0;
-> +	int token;
+> +static const char *const audit_hook_names[__IPE_HOOK_MAX] = {
+> +	"BPRM_CHECK",
+> +	"MMAP",
+> +	"MPROTECT",
+> +	"KERNEL_READ",
+> +	"KERNEL_LOAD",
+> +};
 > +
-> +	p = kzalloc(sizeof(*p), GFP_KERNEL);
-> +	if (!p)
-> +		return -ENOMEM;
-> +
-> +	token = match_token(t, property_tokens, args);
-> +
-> +	switch (token) {
-> +	case IPE_PROP_BOOT_VERIFIED_FALSE:
-> +	case IPE_PROP_BOOT_VERIFIED_TRUE:
-> +		p->type = token;
-> +		break;
-> +	default:
-> +		rc = -EBADMSG;
-> +		break;
-> +	}
-> +	if (rc)
-> +		goto err;
-> +	list_add_tail(&p->next, &r->props);
-> +
-> +	return rc;
-> +err:
-> +	kfree(p);
-> +	return rc;
->  }
->  
->  /**
-> -- 
-> 2.43.0
+> +static const char *const audit_prop_names[__IPE_PROP_MAX] = {
+> +#ifdef CONFIG_BLK_DEV_INITRD
+> +	"boot_verified=FALSE",
+> +	"boot_verified=TRUE",
+> +#endif /* CONFIG_BLK_DEV_INITRD */
+> +};
+
+I think we can get rid of the preprocessor checks here.
 
 --
 paul-moore.com
