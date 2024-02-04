@@ -1,126 +1,99 @@
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BC01385
-	for <linux-security-module@vger.kernel.org>; Sun,  4 Feb 2024 02:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8820224D2
+	for <linux-security-module@vger.kernel.org>; Sun,  4 Feb 2024 15:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707014151; cv=none; b=cLg1NGBB4JCWE8hCKlhFQiTF+eklENHsCIq+wwh+Wqi9PTn1Hw6vX99iT0XE9vewE9uuxgw5+pOnJIz5U9pckhbT8bpp1JFYTd2NndneUcPj190h07MhJjuPK1/Kr0hqE2YHMDOzO4sroZEy7eDjl3SYpow3zGThjxJLTIcwNKA=
+	t=1707058841; cv=none; b=KZ9W/ufVaFysUSSQjw5AlmVuav+qjMK4aM0a6PRs0Fh92VU6QltZ6CqlPkL9Xi6dD4E/oQwr8o7fiUhTH7SMduj8cYgPFXoGl0fUk+UU5H5w0j+5eCZOH0gtRx3EIQ6gVNOFvdeBS+0wYQRZdkzvxf2HneOr8mappIMOIGSggdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707014151; c=relaxed/simple;
-	bh=eXGrpUkM4UG4cBvAJQ7Qgo/L2pXhU3blLDwhWRms55k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h4K+Ands7rZVgrN//l2M3L3k43XLZi2HAukWnWab5IhLVXXDXDeGvZCLIVaI94hN8BFIdoNqm+nAqabSNRfaF3Cunc4uf7pltEyLyC5gukqvAxgGC6iukfqALr0np9K3F9DbuU7bo3qoG01fQWHDjjJ5a7FyGIiWXrpVWDsk9C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bwlXnTLH; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1707058841; c=relaxed/simple;
+	bh=xdSeQvV05nn5L8vGt2d4VTs22D9fCwHOm1ANUT2yxn0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B1BDI1QaeMYQVLCoRnXiovygHCxO8p7XH35Cj2W1Ff5EJUIOqp0epDiBsnEV1WpL5BCDhMWousoMgrnmPJzcrRMW/YCMM+LDv3w72g2iRNJMDv7oT6Jm7XfdnbAATD5r9vx2Zt6krxLSTzIgcpADxDpDFYCmNk/08EKQ6CcdyHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dUGOJxVv; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bwlXnTLH"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1707014146;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=b7S8ENIwTw6+9bm+IefdHUPbMFwYSdb9IyEZNWuDgq0=;
-	b=bwlXnTLHBbiARtjYG0PC/ic2kQthw/7x4CWl2f9jvhImeSZFCI9NAI7uk8QkKk+ev6OSyB
-	RXp3HsUXJ9EnTkNIMBGAIg1vtq1zlhebAxQ2550ZDmOjNAoAl6X/AkoSUWc4Dqh3kncgPw
-	mptpAmoAGFUTggvx4xNnw8JnyV0Cp8U=
-From: George Guo <dongtai.guo@linux.dev>
-To: Jakub Kicinski <kuba@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: George Guo <guodongtai@kylinos.cn>,
-	netdev@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] netlabel: cleanup struct netlbl_lsm_catmap
-Date: Sun,  4 Feb 2024 10:35:31 +0800
-Message-Id: <20240204023531.2225264-1-dongtai.guo@linux.dev>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dUGOJxVv"
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dc6da01f092so3001456276.0
+        for <linux-security-module@vger.kernel.org>; Sun, 04 Feb 2024 07:00:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1707058839; x=1707663639; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d3lqw9guILXTXW+HHup3WqoC7VU2sfl3wXM0hqsaEkk=;
+        b=dUGOJxVvIFyaOE/esF1lx2c/aJ8UIlpFFzw9Bugjv00/V4xjDrVUKwCxRoEKGliqvy
+         qpAKBABK/CzRE9rMS2V62znJ9uL8vD5BpUOL11NkesMvPY5+PJDCiVSw1ui0Y0Ivr2N1
+         EiMTZzUMUiREpK7xPsbXBuseqsRNybWg9Ch9XbKZjdlNQAvIxV4qITYgjrHBwn49B9rw
+         F7GoWMm+Vb3IQrzVrhcRwxgim35KIPEsS4WybNbSaNitkU/Qd01OV1Q9V1fy0iWx7kJo
+         JIhDGqOuoz3urEvcR7m68E8b0wfCOE8DkIA6tD4fzelxHvF9QSy8tIvM+ZKy34RPHZJQ
+         T6wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707058839; x=1707663639;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d3lqw9guILXTXW+HHup3WqoC7VU2sfl3wXM0hqsaEkk=;
+        b=jUEKQbVAxcQRTrS/aZvGJW/8S40MjSs65Lcp8aTiyeX3kdupHWOVQwpqjBY6xB6NnS
+         CYvtke9uWv51RBdURIcjmvyp3sDryj6SwOrl3qzIA/ReFhslR+7O8TNGHhbfh2OL3JQq
+         J50BSOL/TPVPkDVu/vkMaOpiIGoPfVhgZ2lkEkX0zotpCcLeVcwG5sLoqBTKBU/lwNnU
+         nX8gGMHb52OaxgJp53489upMKBgeJeYH+WgyxvccZUaTWQmA0zdJ1N1GVZehpt5FLouX
+         tZV5eeWXrCd7nKW2XQdbd1FbyedbczPrHTWhouM1uUuZmtxmNqpwquMENHJCVIJu4GSt
+         110A==
+X-Gm-Message-State: AOJu0YyxUwKtWGPD/Cv1lVaeS9o443O2UJ8M2KbP4iU63MV43am0wJ7A
+	tKt7reWao5BasSYcBzb5TnYWVNSdJ2n0CdTvrALLzU9dXMQ8KnrU2jE0/mLnKstfXadE3rmoZ25
+	YaWI5wl0l/jcXTuhai9sNOSwmHg8Dg8PhwIk7
+X-Google-Smtp-Source: AGHT+IHg+0gPpQzlZZ3TALwjYC82frTLQELFYbkrSVOd3QmDViI01eEHMCvlkaUcUAORp4NaJVjUuqgO9iSCHdLFGqw=
+X-Received: by 2002:a25:e08c:0:b0:dc2:46ca:e968 with SMTP id
+ x134-20020a25e08c000000b00dc246cae968mr6398171ybg.4.1707058838640; Sun, 04
+ Feb 2024 07:00:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240204023531.2225264-1-dongtai.guo@linux.dev>
+In-Reply-To: <20240204023531.2225264-1-dongtai.guo@linux.dev>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 4 Feb 2024 10:00:27 -0500
+Message-ID: <CAHC9VhQUkUvpj+c0r3vZvfn7djQ5kuBej9RE2L7TZwfxg-L7UQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] netlabel: cleanup struct netlbl_lsm_catmap
+To: George Guo <dongtai.guo@linux.dev>
+Cc: Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	George Guo <guodongtai@kylinos.cn>, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: George Guo <guodongtai@kylinos.cn>
+On Sat, Feb 3, 2024 at 9:35=E2=80=AFPM George Guo <dongtai.guo@linux.dev> w=
+rote:
+>
+> From: George Guo <guodongtai@kylinos.cn>
+>
+> Simplify the code from macro NETLBL_CATMAP_MAPTYPE to u64, and fix
+> warning "Macros with complex values should be enclosed in parentheses"
+> on "#define NETLBL_CATMAP_BIT (NETLBL_CATMAP_MAPTYPE)0x01", which is
+> modified to "#define NETLBL_CATMAP_BIT ((u64)0x01)".
+>
+> Signed-off-by: George Guo <guodongtai@kylinos.cn>
+> ---
+> V2:
+> Yes, I understand what you are saying.
+> Actually, there is a compile warnings on "#define NETLBL_CATMAP_BIT (NETL=
+BL_CATMAP_MAPTYPE)0x01"
+> which is missing parentheses.
+> ---
+>  include/net/netlabel.h       | 7 +++----
+>  net/netlabel/netlabel_kapi.c | 8 ++++----
+>  2 files changed, 7 insertions(+), 8 deletions(-)
 
-Simplify the code from macro NETLBL_CATMAP_MAPTYPE to u64, and fix
-warning "Macros with complex values should be enclosed in parentheses"
-on "#define NETLBL_CATMAP_BIT (NETLBL_CATMAP_MAPTYPE)0x01", which is
-modified to "#define NETLBL_CATMAP_BIT ((u64)0x01)".
+This is a much better approach, thank you.
 
-Signed-off-by: George Guo <guodongtai@kylinos.cn>
----
-V2:
-Yes, I understand what you are saying.
-Actually, there is a compile warnings on "#define NETLBL_CATMAP_BIT (NETLBL_CATMAP_MAPTYPE)0x01"
-which is missing parentheses.
----
- include/net/netlabel.h       | 7 +++----
- net/netlabel/netlabel_kapi.c | 8 ++++----
- 2 files changed, 7 insertions(+), 8 deletions(-)
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-diff --git a/include/net/netlabel.h b/include/net/netlabel.h
-index d74f21f528de..0d04a8ae3811 100644
---- a/include/net/netlabel.h
-+++ b/include/net/netlabel.h
-@@ -145,15 +145,14 @@ struct netlbl_lsm_cache {
-  * processing.
-  *
-  */
--#define NETLBL_CATMAP_MAPTYPE           u64
- #define NETLBL_CATMAP_MAPCNT            4
--#define NETLBL_CATMAP_MAPSIZE           (sizeof(NETLBL_CATMAP_MAPTYPE) * 8)
-+#define NETLBL_CATMAP_MAPSIZE           (sizeof(u64) * 8)
- #define NETLBL_CATMAP_SIZE              (NETLBL_CATMAP_MAPSIZE * \
- 					 NETLBL_CATMAP_MAPCNT)
--#define NETLBL_CATMAP_BIT               (NETLBL_CATMAP_MAPTYPE)0x01
-+#define NETLBL_CATMAP_BIT               ((u64)0x01)
- struct netlbl_lsm_catmap {
- 	u32 startbit;
--	NETLBL_CATMAP_MAPTYPE bitmap[NETLBL_CATMAP_MAPCNT];
-+	u64 bitmap[NETLBL_CATMAP_MAPCNT];
- 	struct netlbl_lsm_catmap *next;
- };
- 
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index 27511c90a26f..7b844581ebee 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -610,7 +610,7 @@ int netlbl_catmap_walk(struct netlbl_lsm_catmap *catmap, u32 offset)
- 	struct netlbl_lsm_catmap *iter;
- 	u32 idx;
- 	u32 bit;
--	NETLBL_CATMAP_MAPTYPE bitmap;
-+	u64 bitmap;
- 
- 	iter = _netlbl_catmap_getnode(&catmap, offset, _CM_F_WALK, 0);
- 	if (iter == NULL)
-@@ -666,8 +666,8 @@ int netlbl_catmap_walkrng(struct netlbl_lsm_catmap *catmap, u32 offset)
- 	struct netlbl_lsm_catmap *prev = NULL;
- 	u32 idx;
- 	u32 bit;
--	NETLBL_CATMAP_MAPTYPE bitmask;
--	NETLBL_CATMAP_MAPTYPE bitmap;
-+	u64 bitmask;
-+	u64 bitmap;
- 
- 	iter = _netlbl_catmap_getnode(&catmap, offset, _CM_F_WALK, 0);
- 	if (iter == NULL)
-@@ -857,7 +857,7 @@ int netlbl_catmap_setlong(struct netlbl_lsm_catmap **catmap,
- 
- 	offset -= iter->startbit;
- 	idx = offset / NETLBL_CATMAP_MAPSIZE;
--	iter->bitmap[idx] |= (NETLBL_CATMAP_MAPTYPE)bitmap
-+	iter->bitmap[idx] |= (u64)bitmap
- 			     << (offset % NETLBL_CATMAP_MAPSIZE);
- 
- 	return 0;
--- 
-2.34.1
-
+--=20
+paul-moore.com
