@@ -1,202 +1,124 @@
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30425179BD
-	for <linux-security-module@vger.kernel.org>; Sat,  3 Feb 2024 22:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702C310F7;
+	Sun,  4 Feb 2024 01:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706999120; cv=none; b=A4LUg7QnTGw1wMBn3qJGa01787mi82ipX/gXpMZnb5fpurJkjuBcGRCn/bO+Kgs65xufMHUWZY1cmiv+NK8Nef7PpHMe6gcLLTaUjBpSxe3bBnMz39LZGeto3AjOvWUjdZIwzYweIX/0HSg3kgSTQ+KE0bwqOEkbzQCd11yoshU=
+	t=1707011632; cv=none; b=QUmAm+KoLl/CSEdXx1PdxGPJOy35fSUY+ROzUhgtX8RdIRvuzS6E4WBDvYExLkCdrIhIFsSsyYhv9fWv+tg2VHh2reJSbzynOAfa29o9uH6r49Vvsz5lRygIcdmM1kBtKE548sWJLJoFdPMyFBLFQaRNuR1OsxH2cJf+d7Cyayc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706999120; c=relaxed/simple;
-	bh=SfIYK1su40Btbzwh9h/WPttvVQMpLhlqw0vBaWGjdhM=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=OQt6uBJmYfrqv+2uVYZ9Ajk4XRpH+3L/HEh9AvG3sCWF6m8vcqPnw7RotkSMd96J+Gv8p4IBZjSyohPVXhbwgxy81r/U7sXXfwTk0qfwlelUUbhkNK7UOyBcVWoJmxRV2XZAQAp6HldujUfXt1HTQ6XkcacdhqBf/C+UU9yjXro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=J/uH5NKt; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1707011632; c=relaxed/simple;
+	bh=tfGBp5nvVFWf5Zm9OLpbTlKSokt3hxQsAP3obbJSHmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hx8oaX/DqerrgOnrGPVsnn901FUdI7yawXeu+SLLD+rMpct3X62P4KvmCHLUt9+dIUhDPQ7zr0XT2DaIuUD5R4mlI3ohFtt85r3Wg7olyLnev3p0wCocxcPzsT0dUOxg5/uxtRJLuPALl8ryLRuOcmdqvLD9I+EOBieniwAlRIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MSXOCzry; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="J/uH5NKt"
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6869233d472so17813296d6.2
-        for <linux-security-module@vger.kernel.org>; Sat, 03 Feb 2024 14:25:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1706999115; x=1707603915; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eYMBgL8MVRc+c8Obik/r6XMkhyTvtmEMtGv6GQz3E8M=;
-        b=J/uH5NKt6e8BtJe+WzEKhJtKx0JwSMzdUT2qgVJMYAe9ULoNn8HtagAZDriTrETaSk
-         yFhO5z+rdza1UElV6MzsQaM/dVXNBddjPclQHpmeTQYwOv+e/uVF2qV1A7AG/Ns/ncGk
-         YvXNKTvF2Ox08/AmTd4RGR28Qhf7eU6ICQanjTiG+EzzE6eraAgBGMyEDPw5vgWB6z0K
-         IaNqyTFieWPm5GbE6SOj5Eby/eCtfcLNX0XJNL7QLO1uq7VLvAUIj0kj6r+1D5MO07kH
-         yoalB0h+4y3D4E6FwS5w5hw+23nx/uC6LqtJefUiaU2tfD4U8DRhWnSHc6eG7rDQmrsW
-         +1eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706999115; x=1707603915;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eYMBgL8MVRc+c8Obik/r6XMkhyTvtmEMtGv6GQz3E8M=;
-        b=DWnul/adt6h/XPlyI0Riz5CocWIjEcFimL1Xr2kdiql7sIzaY1Xq+BpFYGY86ic/OT
-         Z4MfleZvwQTiX429K4abVDRni2yCrORhRtKd3ChIik3FxuwyBDH/h+Orw2ViJJ4eq/Z3
-         nOoVgTTDBE6cxyr4G/SYy6YjKRDbDNxsWtZvX5hWRkX9Xw6WJx0Fy7NQHvzpoXVr06MP
-         mIbGBVFLkUPyQTOfc24V29HrmGPkCrvhIzb8hXTSCuPzBlIQdw5dWw7dxZnHe1qh+w14
-         JvCGiKGL0D80WWfi2B231NHzCd3FZzaQ9+nMuXX2S8IuTXH+TKHnF0qRjQ1XdSy/bUat
-         yvag==
-X-Gm-Message-State: AOJu0Yxdm5+u3BhSl8l2XHsZ5q4NgbEaxdWcIzrOMw1y4qh4wGKeZT2j
-	qs928hCW0hZgHgAU71zitXRdQtfnXdHepB75cmWrIJbNvMwqEubjTK5lIhzlyg==
-X-Google-Smtp-Source: AGHT+IFonCheK9ok4vSWJlZhijrFa0a0OwwetL207sTElMhHj+g0ohLs2URRe9XQtpkgkwCWh7FbGQ==
-X-Received: by 2002:ad4:4ea1:0:b0:68c:92cb:31d1 with SMTP id ed1-20020ad44ea1000000b0068c92cb31d1mr3563850qvb.22.1706999115350;
-        Sat, 03 Feb 2024 14:25:15 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCVeTtSs7m2zq+X4vVccPH0Lh0uJFawcGHKNxhIksdLH3uIcDXBjnU7CFZiYLkws0aqU9yqs6KO/2dF1WPwe2mbE/wIR2jKgeYsdvQi4Cgh5cFbpr2u0pHh1j58dsGoxmrtS2VKy1TQhsd6MdZr+m0otcAq69IGsJncSYNzGlDj9ZarrbPqTmvGQzB5ttBfL9Ek9JteSJYEzdhm9NHXzIve6Lbu9X3oHaaxVEVMG9utY7OFCe1bBV2NcNtCrM53YTVBPkfW1guTVLmXV+O/Ih1o8LXBK8GWk4ltLYvN2K5aEgItmvB6FAEBYmn8CkIdY1pipwUSx6J3E5DB+NjVK++DJMplUINL2OdXHKM4sK0yZLj/OatW/uGk4ubWqf01+KC2pRcUlLF8uuaILJ2AUB8Cq+ar1NAExM2V2ydZ+XVPaBc1CDcWSv2y0JvX1mZLpReRfzWMx9tgBB+E3ScOyb439LZGVLJSksqIrns9bU1VYIb8MWW8TxRRYgQ0XHoq1bBqW9B+UrEXYzDwM2QV5R+9HQDTxYl8GbPSOj59Ps6o5YUnEpd3OqqVFIh03bXVpcDgihZ3LJSXzj830Oj5popwCoaGM24jW07UMSEaIWKdR4wJLx1gTnt2T
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id pc5-20020a056214488500b0068c968c3b33sm637500qvb.20.2024.02.03.14.25.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Feb 2024 14:25:14 -0800 (PST)
-Date: Sat, 03 Feb 2024 17:25:14 -0500
-Message-ID: <f57cb0772ff39a00ec578e178e1b8c38@paul-moore.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MSXOCzry"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1707011630; x=1738547630;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tfGBp5nvVFWf5Zm9OLpbTlKSokt3hxQsAP3obbJSHmA=;
+  b=MSXOCzryvJMJni/OLrkVx8CTMpacsobJfoMm3F/SemRhvAl3nxtI0mtH
+   QvJ1kc1gAqSEU0JRS3xqROHd9vo2byugVHqJjm/gn8NKqIA/1qBULsNWa
+   e6f2M2yppaBfYs5U5puzI/tbK1kv9i9s941W9QCPgcj+xYg5cPy8UfC0j
+   QKjkcBWpLwQjd5TGl3whonRoQ5OVSDfRIqRRC8BLB63Z7Ki4pP4QA2SEf
+   jNPm0SNbDYDN3VVXk6Lli0dr//i6wVILbDV4lldSocDS9KhSdkv6HT2mN
+   1KQdvuUbF5VzkVQfPnc2mjZranPx5LlriMuODSJloom6MlzeHAA8nf3BV
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10973"; a="263819"
+X-IronPort-AV: E=Sophos;i="6.05,241,1701158400"; 
+   d="scan'208";a="263819"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2024 17:53:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,241,1701158400"; 
+   d="scan'208";a="622509"
+Received: from lkp-server02.sh.intel.com (HELO 59f4f4cd5935) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 03 Feb 2024 17:53:46 -0800
+Received: from kbuild by 59f4f4cd5935 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rWRhR-0005s4-0N;
+	Sun, 04 Feb 2024 01:53:39 +0000
+Date: Sun, 4 Feb 2024 09:53:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <keescook@chromium.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+	linux-security-module <linux-security-module@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] tomoyo: replace current->in_execve flag with
+ security_execve_abort() hook
+Message-ID: <202402040956.6IuNw6B3-lkp@intel.com>
+References: <2a901d27-dba5-4ff4-9e47-373c54965253@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
-Content-Transfer-Encoding: 8bit
-From: Paul Moore <paul@paul-moore.com>
-To: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, eparis@redhat.com
-Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org, Fan Wu <wufan@linux.microsoft.com>, Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH RFC v12 17/20] ipe: enable support for fs-verity as a trust  provider
-References: <1706654228-17180-18-git-send-email-wufan@linux.microsoft.com>
-In-Reply-To: <1706654228-17180-18-git-send-email-wufan@linux.microsoft.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2a901d27-dba5-4ff4-9e47-373c54965253@I-love.SAKURA.ne.jp>
 
-On Jan 30, 2024 Fan Wu <wufan@linux.microsoft.com> wrote:
-> 
-> Enable IPE policy authors to indicate trust for a singular fsverity
-> file, identified by the digest information, through "fsverity_digest"
-> and all files using fsverity's builtin signatures via
-> "fsverity_signature".
-> 
-> This enables file-level integrity claims to be expressed in IPE,
-> allowing individual files to be authorized, giving some flexibility
-> for policy authors. Such file-level claims are important to be expressed
-> for enforcing the integrity of packages, as well as address some of the
-> scalability issues in a sole dm-verity based solution (# of loop back
-> devices, etc).
-> 
-> This solution cannot be done in userspace as the minimum threat that
-> IPE should mitigate is an attacker downloads malicious payload with
-> all required dependencies. These dependencies can lack the userspace
-> check, bypassing the protection entirely. A similar attack succeeds if
-> the userspace component is replaced with a version that does not
-> perform the check. As a result, this can only be done in the common
-> entry point - the kernel.
-> 
-> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-> ---
-> v1-v6:
->   + Not present
-> 
-> v7:
->   Introduced
-> 
-> v8:
->   * Undo squash of 08/12, 10/12 - separating drivers/md/ from security/
->   * Use common-audit function for fsverity_signature.
->   + Change fsverity implementation to use fsverity_get_digest
->   + prevent unnecessary copy of fs-verity signature data, instead
->     just check for presence of signature data.
->   + Remove free_inode_security hook, as the digest is now acquired
->     at runtime instead of via LSM blob.
-> 
-> v9:
->   + Adapt to the new parser
-> 
-> v10:
->   + Update the fsverity get digest call
-> 
-> v11:
->   + No changes
-> 
-> v12:
->   + Fix audit format
->   + Simplify property evaluation
-> ---
->  security/ipe/Kconfig         |  13 +++++
->  security/ipe/audit.c         |  25 ++++++++
->  security/ipe/eval.c          | 108 ++++++++++++++++++++++++++++++++++-
->  security/ipe/eval.h          |  10 ++++
->  security/ipe/hooks.c         |  30 ++++++++++
->  security/ipe/hooks.h         |   7 +++
->  security/ipe/ipe.c           |  13 +++++
->  security/ipe/ipe.h           |   3 +
->  security/ipe/policy.h        |   3 +
->  security/ipe/policy_parser.c |   8 +++
->  10 files changed, 219 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
-> index 7afb1ce0cb99..9dd5c4769d79 100644
-> --- a/security/ipe/Kconfig
-> +++ b/security/ipe/Kconfig
-> @@ -30,6 +30,19 @@ config IPE_PROP_DM_VERITY
->  	  that was mounted with a signed root-hash or the volume's
->  	  root hash matches the supplied value in the policy.
->  
-> +	  If unsure, answer Y.
-> +
-> +config IPE_PROP_FS_VERITY
-> +	bool "Enable property for fs-verity files"
-> +	depends on FS_VERITY && FS_VERITY_BUILTIN_SIGNATURES
-> +	help
-> +	  This option enables the usage of properties "fsverity_signature"
-> +	  and "fsverity_digest". These properties evaluates to TRUE when
-> +	  a file is fsverity enabled and with a signed digest or its
-> +	  diegst matches the supplied value in the policy.
-> +
-> +	  if unsure, answer Y.
-> +
->  endmenu
->  
->  endif
-> diff --git a/security/ipe/audit.c b/security/ipe/audit.c
-> index a4ad8e888df0..7e3372be3214 100644
-> --- a/security/ipe/audit.c
-> +++ b/security/ipe/audit.c
-> @@ -60,6 +60,11 @@ static const char *const audit_prop_names[__IPE_PROP_MAX] = {
->  	"dmverity_signature=FALSE",
->  	"dmverity_signature=TRUE",
->  #endif /* CONFIG_IPE_PROP_DM_VERITY */
-> +#ifdef CONFIG_IPE_PROP_FS_VERITY
-> +	"fsverity_digest=",
-> +	"fsverity_signature=FALSE",
-> +	"fsverity_signature=TRUE",
-> +#endif /* CONFIG_IPE_PROP_FS_VERITY */
->  };
->  
->  #ifdef CONFIG_IPE_PROP_DM_VERITY
-> @@ -79,6 +84,23 @@ static void audit_dmv_roothash(struct audit_buffer *ab, const void *rh)
->  }
->  #endif /* CONFIG_IPE_PROP_DM_VERITY */
->  
-> +#ifdef CONFIG_IPE_PROP_FS_VERITY
-> +/**
-> + * audit_fsv_digest - audit a digest of a fsverity file.
-> + * @ab: Supplies a pointer to the audit_buffer to append to.
-> + * @d: Supplies a pointer to the digest structure.
-> + */
-> +static void audit_fsv_digest(struct audit_buffer *ab, const void *d)
-> +{
-> +	audit_log_format(ab, "%s", audit_prop_names[IPE_PROP_FSV_DIGEST]);
-> +	ipe_digest_audit(ab, d);
-> +}
-> +#else
-> +static void audit_fsv_digest(struct audit_buffer *ab, const void *d)
-> +{
-> +}
-> +#endif /* CONFIG_IPE_PROP_FS_VERITY */
+Hi Tetsuo,
 
-The related dm-verify comments also apply here.
+kernel test robot noticed the following build warnings:
 
---
-paul-moore.com
+[auto build test WARNING on kees/for-next/execve]
+[also build test WARNING on linux/master tip/sched/core linus/master v6.8-rc2 next-20240202]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Tetsuo-Handa/LSM-add-security_execve_abort-hook/20240203-185605
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/execve
+patch link:    https://lore.kernel.org/r/2a901d27-dba5-4ff4-9e47-373c54965253%40I-love.SAKURA.ne.jp
+patch subject: [PATCH v2 2/3] tomoyo: replace current->in_execve flag with security_execve_abort() hook
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240204/202402040956.6IuNw6B3-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240204/202402040956.6IuNw6B3-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202402040956.6IuNw6B3-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> security/tomoyo/tomoyo.c:30: warning: Excess function parameter 'bprm' description in 'tomoyo_execve_abort'
+
+
+vim +30 security/tomoyo/tomoyo.c
+
+ee18d64c1f6320 David Howells   2009-09-02  23  
+0f2a55d5bb2372 Tetsuo Handa    2011-07-14  24  /**
+89cebc094231d4 Tetsuo Handa    2024-02-03  25   * tomoyo_execve_abort - Target for security_execve_abort().
+0f2a55d5bb2372 Tetsuo Handa    2011-07-14  26   *
+89cebc094231d4 Tetsuo Handa    2024-02-03  27   * @bprm: void
+0f2a55d5bb2372 Tetsuo Handa    2011-07-14  28   */
+89cebc094231d4 Tetsuo Handa    2024-02-03  29  static void tomoyo_execve_abort(void)
+f7433243770c77 Kentaro Takeda  2009-02-05 @30  {
+89cebc094231d4 Tetsuo Handa    2024-02-03  31  	/* Restore old_domain_info saved by execve() request. */
+8c6cb983cd52d7 Tetsuo Handa    2019-01-19  32  	struct tomoyo_task *s = tomoyo_task(current);
+43fc460907dc56 Casey Schaufler 2018-09-21  33  
+89cebc094231d4 Tetsuo Handa    2024-02-03  34  	if (s->old_domain_info) {
+8c6cb983cd52d7 Tetsuo Handa    2019-01-19  35  		atomic_dec(&s->domain_info->users);
+8c6cb983cd52d7 Tetsuo Handa    2019-01-19  36  		s->domain_info = s->old_domain_info;
+8c6cb983cd52d7 Tetsuo Handa    2019-01-19  37  		s->old_domain_info = NULL;
+f7433243770c77 Kentaro Takeda  2009-02-05  38  	}
+ec8e6a4e062e2e Tetsuo Handa    2010-02-11  39  }
+ec8e6a4e062e2e Tetsuo Handa    2010-02-11  40  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
