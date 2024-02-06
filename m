@@ -1,239 +1,270 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA60482F6;
-	Mon,  5 Feb 2024 23:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F3E6FB0;
+	Tue,  6 Feb 2024 01:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707175270; cv=none; b=op9hMrcIa7cG7IszkDPJTKR/Tkm6w2LSiAs0y58Z+6DBkbfuecX0nx3crLms3uy4/NlcW2jdKK6Fb3GYKU6hG7O+hmHAvCiAkA7+akUYu8HYLFRz4wgkEViPvQualnqMBI8HNd8+B4BPR2bDdF6FqOowQU4z5dAa3lh7/aa2eNk=
+	t=1707183178; cv=none; b=ksDrI43oR0OqXFQZK7Afl/3qfjHnRGU14Yn7YXPAABacFzPUubqPl/zE8fzvjPAUtMmtMM88wyDEb2jcJvscsqzTzcM42wNBkeM193zJxwkb5CS+gGaujgcsODNuYGLfYXgHN3unz+ZUpRBx6wIDSIjDxtiiPNr6zZ7V7NNEWIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707175270; c=relaxed/simple;
-	bh=zNL2ywjKJssZ5pRTlZYgka+6y+zGk61/qvBAu5YB1YU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ElX/mlT6EWN1wEbMptDhTEZu8L04x/Ic95MsnaupgPAtVi9i7cjJ565LIbX7m08r/KK7lyp18624XE1+6KfhIc0M3SkdU3PoV0ZIb09ljA14ePBwLLLkbHBcfUg/5mL4QdTYMDDXmcoKqaPtYidqKSP3qsDIt6U/+mUhD3NVf7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gI6cjtkm; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1707183178; c=relaxed/simple;
+	bh=SK7BUVmWI8e3vR555Ph71rlM/avdD4/Eeg+aPP6iOt4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kdKKkK7XZCIxJ5WiXQU/eG9TJLmCU+Bnhsxf/3PEHC3xyX8D8kvcRks6ZReDY/6d2MAZQymWmMrtTWMTt0Gu57afApW0qXPIZVpGT878BSHla6iAlBBlVvGAWM4N9v+QzTN4zbJ0DPNRB8H5n00btsgzhDMp6bb+5HfZcx7t2/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GPfzIhge; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gI6cjtkm"
-Received: from [10.137.106.151] (unknown [131.107.8.87])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 7AEC4207D846;
-	Mon,  5 Feb 2024 15:21:08 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7AEC4207D846
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1707175268;
-	bh=Qg5yL0/Namb3YNGXwn7cLAEyy/A44S+ELEwtmFhQ+RU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gI6cjtkm4cibm2DUJ9mtikbVu9hHSNKlrL01rbV0Y8abl/91KTJ8r5LlGcVKm9npe
-	 EPhMJHhHGPNgNk3rT65weiExV4D+LnWH+FHKY7HJV0KPaLDujK5Oaas9kgHlsRJkAo
-	 o4qOBdinDv8keS6+bkjw5zNNXTTm+m7Xl1UsGhi0=
-Message-ID: <695f5fc3-446d-4f18-88cf-a95b3287fe7f@linux.microsoft.com>
-Date: Mon, 5 Feb 2024 15:21:08 -0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPfzIhge"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB1D6C433F1;
+	Tue,  6 Feb 2024 01:32:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707183178;
+	bh=SK7BUVmWI8e3vR555Ph71rlM/avdD4/Eeg+aPP6iOt4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GPfzIhgeaeM7jS/S68VCmgXDwU3b54ge5vhTEAlFasFYm8eaQVjaObBjCke88E9/T
+	 n0+aJAE2WFu1rZ+8oonOY2KVhrpBq8QH24KdncABOastyeHEdqKOxL4C+0dQOUQ0gY
+	 08O4oy6U7ZR2cfsGfoFGbUqHL3DJQj9YBtoA6gdmqO9umgefzEmSEZtdC6HbTlV8PR
+	 wCSbOR6Q0pD+8loCCMB/giVLtjeUO2Of79shn5/teoeD/ddEsK8BxbZtrR6awU4ELx
+	 x87YITXtBrqtwgo3fCeOTTxPDqgFIDK8terX3xgnMLnKCHw+dvw+rGsGW7VmuKaawt
+	 +3CisSAge8E8g==
+From: Eric Biggers <ebiggers@kernel.org>
+To: stable@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Alfred Piccioni <alpic@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: [PATCH 5.4,4.19] lsm: new security_file_ioctl_compat() hook
+Date: Mon,  5 Feb 2024 17:29:53 -0800
+Message-ID: <20240206012953.114308-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v12 8/20] ipe: add userspace interface
-Content-Language: en-US
-To: Paul Moore <paul@paul-moore.com>
-Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
- tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com,
- snitzer@kernel.org, eparis@redhat.com, linux-doc@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
- dm-devel@lists.linux.dev, audit@vger.kernel.org,
- linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>
-References: <1706654228-17180-9-git-send-email-wufan@linux.microsoft.com>
- <737a8ea0323b3db38044813041215bac@paul-moore.com>
- <6e7c707c-28cd-42ec-a617-6f8d2ce9da4f@linux.microsoft.com>
- <CAHC9VhSX4iNHEw89-mpF07cSqgGd1myQ6CUfiQnA9pgg3QS7Tw@mail.gmail.com>
-From: Fan Wu <wufan@linux.microsoft.com>
-In-Reply-To: <CAHC9VhSX4iNHEw89-mpF07cSqgGd1myQ6CUfiQnA9pgg3QS7Tw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+From: Alfred Piccioni <alpic@google.com>
 
+commit f1bb47a31dff6d4b34fb14e99850860ee74bb003 upstream.
+[Please apply to 5.4-stable and 4.19-stable.  The upstream commit failed
+to apply to these kernels.  This patch resolves the conflicts.]
 
-On 2/5/2024 3:10 PM, Paul Moore wrote:
-> On Mon, Feb 5, 2024 at 6:01 PM Fan Wu <wufan@linux.microsoft.com> wrote:
->> On 2/3/2024 2:25 PM, Paul Moore wrote:
->>> On Jan 30, 2024 Fan Wu <wufan@linux.microsoft.com> wrote:
->>>>
->>>> As is typical with LSMs, IPE uses securityfs as its interface with
->>>> userspace. for a complete list of the interfaces and the respective
->>>> inputs/outputs, please see the documentation under
->>>> admin-guide/LSM/ipe.rst
->>>>
->>>> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
->>>> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
->>>> ---
->>>> v2:
->>>>     + Split evaluation loop, access control hooks,
->>>>       and evaluation loop from policy parser and userspace
->>>>       interface to pass mailing list character limit
->>>>
->>>> v3:
->>>>     + Move policy load and activation audit event to 03/12
->>>>     + Fix a potential panic when a policy failed to load.
->>>>     + use pr_warn for a failure to parse instead of an
->>>>       audit record
->>>>     + Remove comments from headers
->>>>     + Add lockdep assertions to ipe_update_active_policy and
->>>>       ipe_activate_policy
->>>>     + Fix up warnings with checkpatch --strict
->>>>     + Use file_ns_capable for CAP_MAC_ADMIN for securityfs
->>>>       nodes.
->>>>     + Use memdup_user instead of kzalloc+simple_write_to_buffer.
->>>>     + Remove strict_parse command line parameter, as it is added
->>>>       by the sysctl command line.
->>>>     + Prefix extern variables with ipe_
->>>>
->>>> v4:
->>>>     + Remove securityfs to reverse-dependency
->>>>     + Add SHA1 reverse dependency.
->>>>     + Add versioning scheme for IPE properties, and associated
->>>>       interface to query the versioning scheme.
->>>>     + Cause a parser to always return an error on unknown syntax.
->>>>     + Remove strict_parse option
->>>>     + Change active_policy interface from sysctl, to securityfs,
->>>>       and change scheme.
->>>>
->>>> v5:
->>>>     + Cause an error if a default action is not defined for each
->>>>       operation.
->>>>     + Minor function renames
->>>>
->>>> v6:
->>>>     + No changes
->>>>
->>>> v7:
->>>>     + Propagating changes to support the new ipe_context structure in the
->>>>       evaluation loop.
->>>>
->>>>     + Further split the parser and userspace interface changes into
->>>>       separate commits.
->>>>
->>>>     + "raw" was renamed to "pkcs7" and made read only
->>>>     + "raw"'s write functionality (update a policy) moved to "update"
->>>>     + introduced "version", "policy_name" nodes.
->>>>     + "content" renamed to "policy"
->>>>     + changes to allow the compiled-in policy to be treated
->>>>       identical to deployed-after-the-fact policies.
->>>>
->>>> v8:
->>>>     + Prevent securityfs initialization if the LSM is disabled
->>>>
->>>> v9:
->>>>     + Switch to securityfs_recursive_remove for policy folder deletion
->>>>
->>>> v10:
->>>>     + Simplify and correct concurrency
->>>>     + Fix typos
->>>>
->>>> v11:
->>>>     + Correct code comments
->>>>
->>>> v12:
->>>>     + Correct locking and remove redundant code
->>>> ---
->>>>    security/ipe/Makefile    |   2 +
->>>>    security/ipe/fs.c        | 101 +++++++++
->>>>    security/ipe/fs.h        |  16 ++
->>>>    security/ipe/ipe.c       |   3 +
->>>>    security/ipe/ipe.h       |   2 +
->>>>    security/ipe/policy.c    | 123 ++++++++++
->>>>    security/ipe/policy.h    |   9 +
->>>>    security/ipe/policy_fs.c | 469 +++++++++++++++++++++++++++++++++++++++
->>>>    8 files changed, 725 insertions(+)
->>>>    create mode 100644 security/ipe/fs.c
->>>>    create mode 100644 security/ipe/fs.h
->>>>    create mode 100644 security/ipe/policy_fs.c
->>>
->>> ...
->>>
->>>> diff --git a/security/ipe/policy.c b/security/ipe/policy.c
->>>> index f22a576a6d68..61fea3e38e11 100644
->>>> --- a/security/ipe/policy.c
->>>> +++ b/security/ipe/policy.c
->>>> @@ -43,6 +71,68 @@ static int set_pkcs7_data(void *ctx, const void *data, size_t len,
->>>>       return 0;
->>>>    }
->>>>
->>>> +/**
->>>> + * ipe_update_policy - parse a new policy and replace old with it.
->>>> + * @root: Supplies a pointer to the securityfs inode saved the policy.
->>>> + * @text: Supplies a pointer to the plain text policy.
->>>> + * @textlen: Supplies the length of @text.
->>>> + * @pkcs7: Supplies a pointer to a buffer containing a pkcs7 message.
->>>> + * @pkcs7len: Supplies the length of @pkcs7len.
->>>> + *
->>>> + * @text/@textlen is mutually exclusive with @pkcs7/@pkcs7len - see
->>>> + * ipe_new_policy.
->>>> + *
->>>> + * Context: Requires root->i_rwsem to be held.
->>>> + * Return:
->>>> + * * !IS_ERR        - The existing policy saved in the inode before update
->>>> + * * -ENOENT        - Policy doesn't exist
->>>> + * * -EINVAL        - New policy is invalid
->>>> + */
->>>> +struct ipe_policy *ipe_update_policy(struct inode *root,
->>>> +                                 const char *text, size_t textlen,
->>>> +                                 const char *pkcs7, size_t pkcs7len)
->>>> +{
->>>> +    int rc = 0;
->>>> +    struct ipe_policy *old, *ap, *new = NULL;
->>>> +
->>>> +    old = (struct ipe_policy *)root->i_private;
->>>> +    if (!old)
->>>> +            return ERR_PTR(-ENOENT);
->>>> +
->>>> +    new = ipe_new_policy(text, textlen, pkcs7, pkcs7len);
->>>> +    if (IS_ERR(new))
->>>> +            return new;
->>>> +
->>>> +    if (strcmp(new->parsed->name, old->parsed->name)) {
->>>> +            rc = -EINVAL;
->>>> +            goto err;
->>>> +    }
->>>> +
->>>> +    if (ver_to_u64(old) > ver_to_u64(new)) {
->>>> +            rc = -EINVAL;
->>>> +            goto err;
->>>> +    }
->>>> +
->>>> +    root->i_private = new;
->>>> +    swap(new->policyfs, old->policyfs);
->>>
->>> Should the swap() take place with @ipe_policy_lock held?
->>>
->> I think we are safe here because root->i_rwsem is held. Other two
->> operations set_active and delete are also depending on the inode lock.
->>>> +    mutex_lock(&ipe_policy_lock);
->>>> +    ap = rcu_dereference_protected(ipe_active_policy,
->>>> +                                   lockdep_is_held(&ipe_policy_lock));
->>>> +    if (old == ap) {
->>>> +            rcu_assign_pointer(ipe_active_policy, new);
->>>> +            mutex_unlock(&ipe_policy_lock);
->>>> +            synchronize_rcu();
->>>
->>> I'm guessing you are forcing a synchronize_rcu() here because you are
->>> free()'ing @old in the caller, yes?  Looking at the code, I only see
->>> one caller, update_policy().  With only one caller, why not free @old
->>> directly in ipe_update_policy()?  Do you see others callers that would
->>> do something different?
->>>
->> The call of synchronize_rcu() is because we are updating the current
->> active policy so we need to set the new policy as active.
-> 
-> Unless I'm mistaken, a syncronize_rcu() call only ensures that the
-> current task will see the updated value by waiting until all current
-> RCU critical sections have finished.  Given the mutex involved here I
-> don't believe this is necessary, but please correct me if I'm wrong.
-> 
-Sorry for the confusion. I think your previous comment was right, the 
-call of synchronize_rcu() is to free the old one. And I should put the 
-free of old just after the synchronize_rcu() call.
+Some ioctl commands do not require ioctl permission, but are routed to
+other permissions such as FILE_GETATTR or FILE_SETATTR. This routing is
+done by comparing the ioctl cmd to a set of 64-bit flags (FS_IOC_*).
 
-Thanks,
-Fan
+However, if a 32-bit process is running on a 64-bit kernel, it emits
+32-bit flags (FS_IOC32_*) for certain ioctl operations. These flags are
+being checked erroneously, which leads to these ioctl operations being
+routed to the ioctl permission, rather than the correct file
+permissions.
+
+This was also noted in a RED-PEN finding from a while back -
+"/* RED-PEN how should LSM module know it's handling 32bit? */".
+
+This patch introduces a new hook, security_file_ioctl_compat(), that is
+called from the compat ioctl syscall. All current LSMs have been changed
+to support this hook.
+
+Reviewing the three places where we are currently using
+security_file_ioctl(), it appears that only SELinux needs a dedicated
+compat change; TOMOYO and SMACK appear to be functional without any
+change.
+
+Cc: stable@vger.kernel.org
+Fixes: 0b24dcb7f2f7 ("Revert "selinux: simplify ioctl checking"")
+Signed-off-by: Alfred Piccioni <alpic@google.com>
+Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+[PM: subject tweak, line length fixes, and alignment corrections]
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/compat_ioctl.c          |  3 +--
+ include/linux/lsm_hooks.h  |  9 +++++++++
+ include/linux/security.h   |  9 +++++++++
+ security/security.c        | 17 +++++++++++++++++
+ security/selinux/hooks.c   | 28 ++++++++++++++++++++++++++++
+ security/smack/smack_lsm.c |  1 +
+ security/tomoyo/tomoyo.c   |  1 +
+ 7 files changed, 66 insertions(+), 2 deletions(-)
+
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index 8fcc53d83af2d..22f7dc6688dee 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -994,8 +994,7 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
+ 	if (!f.file)
+ 		goto out;
+ 
+-	/* RED-PEN how should LSM module know it's handling 32bit? */
+-	error = security_file_ioctl(f.file, cmd, arg);
++	error = security_file_ioctl_compat(f.file, cmd, arg);
+ 	if (error)
+ 		goto out_fput;
+ 
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index a21dc5413653e..0f4897e97c70f 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -498,6 +498,12 @@
+  *	simple integer value.  When @arg represents a user space pointer, it
+  *	should never be used by the security module.
+  *	Return 0 if permission is granted.
++ * @file_ioctl_compat:
++ *	@file contains the file structure.
++ *	@cmd contains the operation to perform.
++ *	@arg contains the operational arguments.
++ *	Check permission for a compat ioctl operation on @file.
++ *	Return 0 if permission is granted.
+  * @mmap_addr :
+  *	Check permissions for a mmap operation at @addr.
+  *	@addr contains virtual address that will be used for the operation.
+@@ -1602,6 +1608,8 @@ union security_list_options {
+ 	void (*file_free_security)(struct file *file);
+ 	int (*file_ioctl)(struct file *file, unsigned int cmd,
+ 				unsigned long arg);
++	int (*file_ioctl_compat)(struct file *file, unsigned int cmd,
++				unsigned long arg);
+ 	int (*mmap_addr)(unsigned long addr);
+ 	int (*mmap_file)(struct file *file, unsigned long reqprot,
+ 				unsigned long prot, unsigned long flags);
+@@ -1907,6 +1915,7 @@ struct security_hook_heads {
+ 	struct hlist_head file_alloc_security;
+ 	struct hlist_head file_free_security;
+ 	struct hlist_head file_ioctl;
++	struct hlist_head file_ioctl_compat;
+ 	struct hlist_head mmap_addr;
+ 	struct hlist_head mmap_file;
+ 	struct hlist_head file_mprotect;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index aa5c7141c8d17..1a99958b850b5 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -362,6 +362,8 @@ int security_file_permission(struct file *file, int mask);
+ int security_file_alloc(struct file *file);
+ void security_file_free(struct file *file);
+ int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
++int security_file_ioctl_compat(struct file *file, unsigned int cmd,
++			       unsigned long arg);
+ int security_mmap_file(struct file *file, unsigned long prot,
+ 			unsigned long flags);
+ int security_mmap_addr(unsigned long addr);
+@@ -907,6 +909,13 @@ static inline int security_file_ioctl(struct file *file, unsigned int cmd,
+ 	return 0;
+ }
+ 
++static inline int security_file_ioctl_compat(struct file *file,
++					     unsigned int cmd,
++					     unsigned long arg)
++{
++	return 0;
++}
++
+ static inline int security_mmap_file(struct file *file, unsigned long prot,
+ 				     unsigned long flags)
+ {
+diff --git a/security/security.c b/security/security.c
+index 460c3826f6401..6c06296548c21 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1422,6 +1422,23 @@ int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	return call_int_hook(file_ioctl, 0, file, cmd, arg);
+ }
+ 
++/**
++ * security_file_ioctl_compat() - Check if an ioctl is allowed in compat mode
++ * @file: associated file
++ * @cmd: ioctl cmd
++ * @arg: ioctl arguments
++ *
++ * Compat version of security_file_ioctl() that correctly handles 32-bit
++ * processes running on 64-bit kernels.
++ *
++ * Return: Returns 0 if permission is granted.
++ */
++int security_file_ioctl_compat(struct file *file, unsigned int cmd,
++			       unsigned long arg)
++{
++	return call_int_hook(file_ioctl_compat, 0, file, cmd, arg);
++}
++
+ static inline unsigned long mmap_prot(struct file *file, unsigned long prot)
+ {
+ 	/*
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index c1bf319b459a9..6fec9fba41a84 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3668,6 +3668,33 @@ static int selinux_file_ioctl(struct file *file, unsigned int cmd,
+ 	return error;
+ }
+ 
++static int selinux_file_ioctl_compat(struct file *file, unsigned int cmd,
++			      unsigned long arg)
++{
++	/*
++	 * If we are in a 64-bit kernel running 32-bit userspace, we need to
++	 * make sure we don't compare 32-bit flags to 64-bit flags.
++	 */
++	switch (cmd) {
++	case FS_IOC32_GETFLAGS:
++		cmd = FS_IOC_GETFLAGS;
++		break;
++	case FS_IOC32_SETFLAGS:
++		cmd = FS_IOC_SETFLAGS;
++		break;
++	case FS_IOC32_GETVERSION:
++		cmd = FS_IOC_GETVERSION;
++		break;
++	case FS_IOC32_SETVERSION:
++		cmd = FS_IOC_SETVERSION;
++		break;
++	default:
++		break;
++	}
++
++	return selinux_file_ioctl(file, cmd, arg);
++}
++
+ static int default_noexec;
+ 
+ static int file_map_prot_check(struct file *file, unsigned long prot, int shared)
+@@ -6933,6 +6960,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(file_permission, selinux_file_permission),
+ 	LSM_HOOK_INIT(file_alloc_security, selinux_file_alloc_security),
+ 	LSM_HOOK_INIT(file_ioctl, selinux_file_ioctl),
++	LSM_HOOK_INIT(file_ioctl_compat, selinux_file_ioctl_compat),
+ 	LSM_HOOK_INIT(mmap_file, selinux_mmap_file),
+ 	LSM_HOOK_INIT(mmap_addr, selinux_mmap_addr),
+ 	LSM_HOOK_INIT(file_mprotect, selinux_file_mprotect),
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 9e48c8b36b678..6f2613f874fa9 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4648,6 +4648,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 
+ 	LSM_HOOK_INIT(file_alloc_security, smack_file_alloc_security),
+ 	LSM_HOOK_INIT(file_ioctl, smack_file_ioctl),
++	LSM_HOOK_INIT(file_ioctl_compat, smack_file_ioctl),
+ 	LSM_HOOK_INIT(file_lock, smack_file_lock),
+ 	LSM_HOOK_INIT(file_fcntl, smack_file_fcntl),
+ 	LSM_HOOK_INIT(mmap_file, smack_mmap_file),
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 716c92ec941ad..0176612bac967 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -554,6 +554,7 @@ static struct security_hook_list tomoyo_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(path_rename, tomoyo_path_rename),
+ 	LSM_HOOK_INIT(inode_getattr, tomoyo_inode_getattr),
+ 	LSM_HOOK_INIT(file_ioctl, tomoyo_file_ioctl),
++	LSM_HOOK_INIT(file_ioctl_compat, tomoyo_file_ioctl),
+ 	LSM_HOOK_INIT(path_chmod, tomoyo_path_chmod),
+ 	LSM_HOOK_INIT(path_chown, tomoyo_path_chown),
+ 	LSM_HOOK_INIT(path_chroot, tomoyo_path_chroot),
+
+base-commit: f0602893f43a54097fcf22bd8c2f7b8e75ca643e
+-- 
+2.43.0
+
