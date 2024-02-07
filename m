@@ -1,199 +1,73 @@
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EE61CD2B
-	for <linux-security-module@vger.kernel.org>; Wed,  7 Feb 2024 00:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC03FBE9
+	for <linux-security-module@vger.kernel.org>; Wed,  7 Feb 2024 00:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707264012; cv=none; b=rcXEdU1noIQQlF5XZYx3ODKzHQCE4nYOArAiRaRG1ryWRtBfRUjVRVtLMi5nUGS51LWJshWCqiPMp7gkQdtT+iyMte9iKzMIUkLMP5ograzQyRRUhiR1xWwIkyHjm8NTOfSvgMwnUWvqzO1Ld1N00c5q8mUFUEpigTEMet9aUUk=
+	t=1707264829; cv=none; b=aU6GVvVCyKvRfai69wD5Amb5onva18BiLLaCP5d9/Idq50ywrrXpZJMEObrMzKuGzx8z4F/ci65LFvHDaKXiy4AjlQA+xG0muuUHgqjH1kGXIDAUVyf2cr6juG4xaI/gSbyuufd24HW04KlLi4Ms/q/bcHOGwfYVEIbpSzSv5wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707264012; c=relaxed/simple;
-	bh=Gst15j5CDQDH1SD6sdDEE5HMNeDd+SN8FMEVVi6YFSU=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=BWMKvfIqYcf4o2Lw/Q0dh1oeI01V2YhgTk984iq6lWYTWzD++nlLQaNuh3j2HalCWOJxgze2YLELS1O0rMhg/ImhVFRYLaEWq55LDKCyoNCipKR94xFGBnzu7V7WW5RzfRiXzFm+bKnPdbgALk0dICh+gDsD9zqPPDWWJBRswUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Pz4eWQpt; arc=none smtp.client-ip=209.85.222.175
+	s=arc-20240116; t=1707264829; c=relaxed/simple;
+	bh=E3CNNYto1V7JNBrmrNOdsJKrixGKninqpVIj/qNxZlU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=oeUGFMfTH1qe5Oc+I4sAxTfQ1u+IzuBMbmDbtSDltl8EpuiBq5UBZDuvdLq+N9mraYgJRGIkEcEy495eHPEsZTkg2JDtiph7uT5MD0mpwgLG2oDExU5cZk/cciSEr9tEkKniEG7lYC3Bkv+yt26I+3Q/yVvvHBd8PUV8fWsWF34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AK7dAWfi; arc=none smtp.client-ip=209.85.219.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Pz4eWQpt"
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-783da8920e5so386102585a.1
-        for <linux-security-module@vger.kernel.org>; Tue, 06 Feb 2024 16:00:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AK7dAWfi"
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dc6d8f31930so85420276.0
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Feb 2024 16:13:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1707264005; x=1707868805; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+        d=paul-moore.com; s=google; t=1707264826; x=1707869626; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=8s9xol0MNG8W9mNzwU0hc714OYrLUcLP8SYPzvvLia8=;
-        b=Pz4eWQptk7RPt6RZL19XmM3tR9Nlni19HDlINLYd66cylEswRKWwfOVxmu9SNGUgL2
-         SbDypeoSWK00hHXbipWZ+RYb+2JCx9rp2SnKmDSonh1ayJ7FCTPyxabfsJiSmIdI7Dua
-         wBHarCR/N/c4Da0orhdtO76EPynYfcY84gk+mGtZIxvHI5IZisc+Yd91oQ/pBiJxifEg
-         u9xjvtljneWGotM5cvW8lp6aPD1BY2kDkP5pW1uVBfT1hIiNV0p+ofdiGGhxHauYy4iA
-         FYU9WDx6fcJzCHOit1O6kkXC1cN8rubYLt7C1kTc6DVcQDqh+BCrXYDlYfbW1ibUNFpQ
-         7MKQ==
+        bh=9R6mJtFtSzpohL/zDF/Cz3F5YRk+F7YeJD2F9QeCyWI=;
+        b=AK7dAWfiXEkKh34GBZZ5B99VZjBX1qeOrYKM+PgrL4GbzMXgNvPkS9mEaVm4tbaetT
+         mOKN8KiXXWvi39e7C1LjvthiMbR7nylwwPCtirN7I6LjNrjp0a8x3Ww4xMwjRMfhL4AX
+         ViKQFqB44wgHCmN9pqmNdxi81v+eaMlVJ1tIbdkOA8rgzLf7c4LVqER8cj5Xpd3TkTYA
+         s0t6zAskoQIllCXYPhck7o/U/urGVHkjILnugRcxY5l1V7f3XY5yCrIhq8+oStGVmZFp
+         9wT1vH38XpO6FgxKPOL9WQTygabbWecK2gOp59SEzkIhVzUhChRyAmHMKbw38VT0ZBPJ
+         4kTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707264005; x=1707868805;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
+        d=1e100.net; s=20230601; t=1707264826; x=1707869626;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=8s9xol0MNG8W9mNzwU0hc714OYrLUcLP8SYPzvvLia8=;
-        b=nSbL0OT4xbEB6/s9BFNThudSOdj76sjgbXBmBToEodOi61pSRrzoyaf2raV8alTGFA
-         NTRGk20Lv2+qg0l/qn7vzrB86IlqnNBD2EmnLIg/TUsmF4MWLcdh/RXLyZbzfnjl3/Ak
-         +UVn65hEZ+LU2CjclUjTB59Rgv+tKlLzyZw3GCi9eKI9TQbG/3+Pdq8SExOfxdyaPg0D
-         IQMI1BbRWf1x3yV7sVSqXs31yMH5Dg0i8TYZACedukguZHzHGXS57pZ3f6Tb2vYowpRR
-         H7J/4a11OiMTcxuTfwgAmk9RkYq0yPwFMMS3O1FBY7mkeCBSyHWaw40A2wEWqD8kG624
-         Jh7A==
-X-Gm-Message-State: AOJu0YwlO1oQtQG8Yzrd68aD5ZZctJNHm1AMWOuvqustOlm83J9gujah
-	kYY6EcvjbDRaAYrdhe2SSKQYQosWhMrFwSVtGNvwm4eNfOsPbmJQgHJt99TYbw==
-X-Google-Smtp-Source: AGHT+IGQqNODr0E1KTBCjb4aCFwJMBR+grZp49ca0nKI6qnXjUNLlQD002WSmznlS/kqwVHeLZSOVg==
-X-Received: by 2002:a05:620a:29d2:b0:784:7b2b:bb88 with SMTP id s18-20020a05620a29d200b007847b2bbb88mr4713869qkp.21.1707264003823;
-        Tue, 06 Feb 2024 16:00:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU23+3HR7kGq9Ry9mjAPimkTmuDFZL6yoC+AueDs6KtmhNpKcn4BEBKOuyvDdygaIGohXbVythFFV0kHz6hSI8o8GcFbLAcB4OIkTjPZ+9NZ5UPZdu8CDKCJVnYHz4bkTRsMWsyNaKAcjxq5Vw=
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id i7-20020a05620a404700b007840843f3b2sm15678qko.18.2024.02.06.16.00.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Feb 2024 16:00:03 -0800 (PST)
-Date: Tue, 06 Feb 2024 19:00:03 -0500
-Message-ID: <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com>
+        bh=9R6mJtFtSzpohL/zDF/Cz3F5YRk+F7YeJD2F9QeCyWI=;
+        b=CyTnCLHdrUPwA+tATatl9YR5GL2xJ7ZRLv2+jTOYKVuxoseuMly+fdLCSjQ8m4SqLR
+         Gf0jLNveVeaUKjIps5CZRAXLu8X4WN/B8RnPytmTotB1IzfLo7A7pNt0AmugyLRckN1x
+         dGpD9G90kh0fyJIFnpDDM59Gapdcz9c1+K4pMC93nu4aBWwkmh/pEXs4tWP+TS+PwAmL
+         PrEscRCUtaeuYqv6EKLyagIa8q2Eua6z83nyub/E5xNOXm7yCciRMiMJuxdpIW8wEop1
+         eU1GbZ4Fzt0nin4v3H+7Iw3caA2a7MpoIwvXSel2EkCGpexHnHoTpuv5r5n/3RF4oCMz
+         w1/A==
+X-Gm-Message-State: AOJu0YyHdJ3XlThYqcoo6c1cRw2YwFFysJfSwENUQwq+lCISBkLBpkA6
+	jBsS6bx7ZGYUJ9cB1E5d8tx6OBXbMPInbZnSUYEI9itIaMqK5E6835bdEalhtMjY8yoltW48jXz
+	CRURPkFZVAFi0OHGpVIdn9zm5FkWTQH+rBKmfP6Anr00+r/I=
+X-Google-Smtp-Source: AGHT+IFigTzofDtgkqWeKa7sdh/muurosYFup6EpdsiZQVGGdRsGdjwVOxMITFHmVgAdPjQtbXbaOo+xR8/WDoHupbQ=
+X-Received: by 2002:a05:6902:1b02:b0:dc6:d1a9:d858 with SMTP id
+ eh2-20020a0569021b0200b00dc6d1a9d858mr2989522ybb.8.1707264826163; Tue, 06 Feb
+ 2024 16:13:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
 From: Paul Moore <paul@paul-moore.com>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
-References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
-In-Reply-To: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
+Date: Tue, 6 Feb 2024 19:13:35 -0500
+Message-ID: <CAHC9VhRKj5K144Frke0o3R+yLkuz7uCfT6UhOn7eoB1gxxa6jA@mail.gmail.com>
+Subject: ANN: moving lsm/dev to v6.8-rc3
+To: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Feb  6, 2024 Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
-> 
-> A regression caused by commit 978ffcbf00d8 ("execve: open the executable
-> file before doing anything else") has been fixed by commit 4759ff71f23e
-> ("exec: Check __FMODE_EXEC instead of in_execve for LSMs") and commit
-> 3eab830189d9 ("uselib: remove use of __FMODE_EXEC"). While fixing this
-> regression, Linus commented that we want to remove current->in_execve flag.
-> 
-> The current->in_execve flag was introduced by commit f9ce1f1cda8b ("Add
-> in_execve flag into task_struct.") when TOMOYO LSM was merged, and the
-> reason was explained in commit f7433243770c ("LSM adapter functions.").
-> 
-> In short, TOMOYO's design is not compatible with COW credential model
-> introduced in Linux 2.6.29, and the current->in_execve flag was added for
-> emulating security_bprm_free() hook which has been removed by introduction
-> of COW credential model.
+A quick announcement to let everyone know that with no commits
+currently in the lsm/dev branch, and LSM relevant changes in Linus'
+tree post v6.8-rc1 that I suspect we may want during this development
+cycle, I've gone ahead and moved the lsm/dev branch forward to
+v6.8-rc3.
 
-If you wanted to mention the relevant commit where security_bprm_free()
-was removed, it was a6f76f23d297 ("CRED: Make execve() take advantage
-of copy-on-write credentials").
+For those of you who have already submitted patches to the mailing
+list, don't worry about the update, I'll take care of any merge
+conflicts that may arise due to this update.
 
-> security_task_alloc()/security_task_free() hooks have been removed by
-> commit f1752eec6145 ("CRED: Detach the credentials from task_struct"),
-> and these hooks have been revived by commit 1a2a4d06e1e9 ("security:
-> create task_free security callback") and commit e4e55b47ed9a ("LSM: Revive
-> security_task_alloc() hook and per "struct task_struct" security blob.").
-> 
-> But security_bprm_free() hook did not revive until now. Now that Linus
-> wants TOMOYO to stop carrying state across two independent execve() calls,
-> and TOMOYO can stop carrying state if a hook for restoring previous state
-> upon failed execve() call were provided, this patch revives the hook.
-> 
-> Since security_bprm_committing_creds() and security_bprm_committed_creds()
-> hooks are called when an execve() request succeeded, we don't need to call
-> security_bprm_free() hook when an execve() request succeeded. Therefore,
-> this patch adds security_execve_abort() hook which is called only when an
-> execve() request failed after successful prepare_bprm_creds() call.
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Acked-by: Serge E. Hallyn <serge@hallyn.com>
-> ---
->  fs/exec.c                     |  1 +
->  include/linux/lsm_hook_defs.h |  1 +
->  include/linux/security.h      |  5 +++++
->  security/security.c           | 11 +++++++++++
->  4 files changed, 18 insertions(+)
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index af4fbb61cd53..d6d35a06fd08 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1521,6 +1521,7 @@ static void free_bprm(struct linux_binprm *bprm)
->  	if (bprm->cred) {
->  		mutex_unlock(&current->signal->cred_guard_mutex);
->  		abort_creds(bprm->cred);
-> +		security_execve_abort();
->  	}
->  	do_close_execat(bprm->file);
->  	if (bprm->executable)
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 76458b6d53da..fd100ab71a33 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -54,6 +54,7 @@ LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, const struct f
->  LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
->  LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, const struct linux_binprm *bprm)
->  LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, const struct linux_binprm *bprm)
-> +LSM_HOOK(void, LSM_RET_VOID, execve_abort, void)
->  LSM_HOOK(int, 0, fs_context_submount, struct fs_context *fc, struct super_block *reference)
->  LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
->  	 struct fs_context *src_sc)
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index d0eb20f90b26..31532b30c4f0 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -299,6 +299,7 @@ int security_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *
->  int security_bprm_check(struct linux_binprm *bprm);
->  void security_bprm_committing_creds(const struct linux_binprm *bprm);
->  void security_bprm_committed_creds(const struct linux_binprm *bprm);
-> +void security_execve_abort(void);
->  int security_fs_context_submount(struct fs_context *fc, struct super_block *reference);
->  int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc);
->  int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
-> @@ -648,6 +649,10 @@ static inline void security_bprm_committed_creds(const struct linux_binprm *bprm
->  {
->  }
->  
-> +static inline void security_execve_abort(void)
-> +{
-> +}
-> +
->  static inline int security_fs_context_submount(struct fs_context *fc,
->  					   struct super_block *reference)
->  {
-> diff --git a/security/security.c b/security/security.c
-> index 3aaad75c9ce8..10adc4d3c5e0 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1223,6 +1223,17 @@ void security_bprm_committed_creds(const struct linux_binprm *bprm)
->  	call_void_hook(bprm_committed_creds, bprm);
->  }
->  
-> +/**
-> + * security_execve_abort() - Notify that exec() has failed
-> + *
-> + * This hook is for undoing changes which cannot be discarded by
-> + * abort_creds().
-> + */
-> +void security_execve_abort(void)
-> +{
-> +	call_void_hook(execve_abort);
-> +}
-
-I don't have a problem with reinstating something like
-security_bprm_free(), but I don't like the name security_execve_abort(),
-especially given that it is being called from alloc_bprm() as well as
-all of the execve code.  At the risk of bikeshedding this, I'd be much
-happier if this hook were renamed to security_bprm_free() and the
-hook's description explained that this hook is called when a linux_bprm
-instance is being destroyed, after the bprm creds have been released,
-and is intended to cleanup any internal LSM state associated with the
-linux_bprm instance.
-
-Are you okay with that?
-
---
+-- 
 paul-moore.com
