@@ -1,97 +1,77 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB0817BD6;
-	Wed,  7 Feb 2024 11:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8C92420B;
+	Wed,  7 Feb 2024 12:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707304266; cv=none; b=A89A3kzTyZM4iRb3rpmMJW3D377NaEnyy+q2XEQ7jCI8mRIECFPhmByhaoF87oTdzc7/9wyNUGMtNHu/WI9diofBCnM6fMPuWIX92YdT1+7U5Y9e6XKdaHlL4I/sLRhXFHhf6JS4Wb/qlA3LOgW3aOePeFN8BKwsJV6L9zeEIaA=
+	t=1707309628; cv=none; b=aLdufxDPg0501n6C9ZaDV9l4zbXva680y84i2aROJ1fS8rj9Rjc92m8yc22mxZwNVoVfFP01WM6/ka/ACSTtzFFflmj7ZICfW3i5pFtavWPkA9IFWEZoS0hSttBqIXIp7JMFWmIWmxR+jSJmRJKZGti6t6p+IJFNReUsn4zE4L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707304266; c=relaxed/simple;
-	bh=bSbwSNh4jw6Hlml5ZP+MdMI2o7ktMWvwYImN2GhPc7w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MBnoZP4YMPXXA3wNmjraMahLd4NuRbh2moOZ/iZiP7c2Mk+5fIHmH7spXcC1iEWW4fsYxwHnjBn3ahlh8J7qqOEa6UnqN1uxv0NXK1YbwBnVgdt7LWIKHVLCO2tGOAHvp6KC11rdaKBvvnTH8w4/Id/yfi/rDQRqwh/h1vtL/ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav412.sakura.ne.jp (fsav412.sakura.ne.jp [133.242.250.111])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 417BAuAe067452;
-	Wed, 7 Feb 2024 20:10:57 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav412.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav412.sakura.ne.jp);
- Wed, 07 Feb 2024 20:10:56 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav412.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 417BAuf0067445
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 7 Feb 2024 20:10:56 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
-Date: Wed, 7 Feb 2024 20:10:55 +0900
+	s=arc-20240116; t=1707309628; c=relaxed/simple;
+	bh=Y53ZLY70rGcAu8m2agoZmy1drZPJGjOEf9BLWWTpYCk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=o+yVhcj6H/NDf6nrXFFQkH/afcPVa9p5NHUgEzzYpVE4q9jOuUTeDqvyQROs1aGDUlbJyJenY5dAhGrQzZBfpgRh15JQLjWQ5YWt++e9b43SEXT3Ny7pkkmJ7odTQZY+zpYdm3I88eIiIfqUUpxtL5eNAzb+TLnJb8HK+N/lyH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlMPdrxn; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlMPdrxn"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CADE7C43390;
+	Wed,  7 Feb 2024 12:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707309627;
+	bh=Y53ZLY70rGcAu8m2agoZmy1drZPJGjOEf9BLWWTpYCk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=WlMPdrxnWrYbvI7GQoJHyt+SdyGXUgLhofDEbtJzQM400SQGaexZx3b1TKPp9MrHd
+	 qsT+/qDXkmjMkphrDXx9vJYJA1yhfTVVwEX1fi2Np+kCse8HOYWLwKm29J1gukH5hT
+	 2RSbMXRiCb5v2SwSVx1sOYFB6QhQ7MGM5DJ3b+t2j9QZGfkD8QlikInnSwonhw+yY1
+	 XbcXigzPgyoz5H7gaOPNfbgdnJ8NWgn86YWXxycyYqMCvoos+0W5yomAf7f5HuS+wt
+	 LL/WyK9FORpBBpA9tAeRwnGA85RhNL3Qo6WocOytbjeuWlst/0ZMy8UCkqDaXxxN1X
+	 z6TQTCxNVzKkw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B33EED8C978;
+	Wed,  7 Feb 2024 12:40:27 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
-Content-Language: en-US
-To: Paul Moore <paul@paul-moore.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
- <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 1/1] netlabel: cleanup struct netlbl_lsm_catmap
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <170730962772.18546.11260947611039945132.git-patchwork-notify@kernel.org>
+Date: Wed, 07 Feb 2024 12:40:27 +0000
+References: <20240204023531.2225264-1-dongtai.guo@linux.dev>
+In-Reply-To: <20240204023531.2225264-1-dongtai.guo@linux.dev>
+To: George Guo <dongtai.guo@linux.dev>
+Cc: kuba@kernel.org, paul@paul-moore.com, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, guodongtai@kylinos.cn,
+ netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On 2024/02/07 9:00, Paul Moore wrote:
->> @@ -1223,6 +1223,17 @@ void security_bprm_committed_creds(const struct linux_binprm *bprm)
->>  	call_void_hook(bprm_committed_creds, bprm);
->>  }
->>  
->> +/**
->> + * security_execve_abort() - Notify that exec() has failed
->> + *
->> + * This hook is for undoing changes which cannot be discarded by
->> + * abort_creds().
->> + */
->> +void security_execve_abort(void)
->> +{
->> +	call_void_hook(execve_abort);
->> +}
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Sun,  4 Feb 2024 10:35:31 +0800 you wrote:
+> From: George Guo <guodongtai@kylinos.cn>
 > 
-> I don't have a problem with reinstating something like
-> security_bprm_free(), but I don't like the name security_execve_abort(),
-> especially given that it is being called from alloc_bprm() as well as
-> all of the execve code.  At the risk of bikeshedding this, I'd be much
-> happier if this hook were renamed to security_bprm_free() and the
-> hook's description explained that this hook is called when a linux_bprm
-> instance is being destroyed, after the bprm creds have been released,
-> and is intended to cleanup any internal LSM state associated with the
-> linux_bprm instance.
+> Simplify the code from macro NETLBL_CATMAP_MAPTYPE to u64, and fix
+> warning "Macros with complex values should be enclosed in parentheses"
+> on "#define NETLBL_CATMAP_BIT (NETLBL_CATMAP_MAPTYPE)0x01", which is
+> modified to "#define NETLBL_CATMAP_BIT ((u64)0x01)".
 > 
-> Are you okay with that?
+> [...]
 
-Hmm, that will bring us back to v1 of this series.
+Here is the summary with links:
+  - [v2,1/1] netlabel: cleanup struct netlbl_lsm_catmap
+    https://git.kernel.org/netdev/net-next/c/23c5ae6d4675
 
-v3 was based on Eric W. Biederman's suggestion
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-  If you aren't going to change your design your new hook should be:
-          security_execve_revert(current);
-  Or maybe:
-          security_execve_abort(current);
-
-  At least then it is based upon the reality that you plan to revert
-  changes to current->security.  Saying anything about creds or bprm when
-  you don't touch them, makes no sense at all.  Causing people to
-  completely misunderstand what is going on, and making it more likely
-  they will change the code in ways that will break TOMOYO.
-
-at https://lkml.kernel.org/r/8734ug9fbt.fsf@email.froward.int.ebiederm.org .
 
