@@ -1,557 +1,325 @@
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2044.outbound.protection.outlook.com [40.107.237.44])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2642912E47;
-	Wed,  7 Feb 2024 04:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707280835; cv=fail; b=AVKyMKfSklrlWc9FrCLVsq2PtJwefA4EVvuMOFNWI+lWsUDHyzDiiBI9oNyDoCnfkmGUBghN+vgBZF1fZ3QEmFiSfs+6+KHUz2yxbBvL3x7KsR0WUIAFLE2GXfoVXkLNcupgkF8ogp+od0+kqlrvUAK/aKjZShp2yE1N5jwL8wo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707280835; c=relaxed/simple;
-	bh=yPyKXBt0CbHbxYY8B1gtJVMU1CDfxU9Bfv87kIEX3g4=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sEXV8APUoX+y43wfpN3ae1aeXBm9lZF+pnvsfTIMXuUer6gAIVppLkCDYWlhyqYMAURTMsuJ25OIkTox4ypxGTlv5bK7u9SfogptUd2ZhRuylnS5VPAA+Y62S1LLWTbXl3wP5AykFUs0zEE0oMN4ZEuGTulFMJ0fhikieOSEc4g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oRpxvJXn; arc=fail smtp.client-ip=40.107.237.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0B3134A8;
+	Wed,  7 Feb 2024 05:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707282346; cv=none; b=nMRLTk3FEsmjhS0AGFjfuAINNEsP1qjCLOg8Px5CRLzI8QgtuGvvWIpfvp69rpSp2O3p0TbBnVwSQS+2NAEw4OiF5OxNjm7HbxjZfQROXLhArbeF88o0SVvUwDBSqJ2bh0jCBe6vcZwA6mbd7aFCxjEw2kzEB18BuG8UPuC4ZPo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707282346; c=relaxed/simple;
+	bh=TNbOIHNIUAkklbSCkVxhZ2LYHAebQaHbRzHIdmiIxOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SAGfcY0FVGojsOSHJ4sYIHLpyQjCewdOplZLuYWpkHpKcW1dZbh2d1DS5lfCrq8rNSf2SvqrPqZgTRjyTx9SuqS79+rYp0bayEO/EzLsDBfY1HWtphGUm91lMVhUSO48Oy6F3DgUtDOQbt8bvF84qQlBb3Stt0HkwF/BhkD179c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i885OU8q; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oRpxvJXn"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Vsprd0pFF2ytMNbVeYbpuk16uUUz96s72QfscxbXyRy2LEqEu64DNiMcGOOSu4fH4+keW6ivau1wXN0+EqWO1kaKHqAeY4faYpEIVwC0JExY1xnXRM6sF9pXkF6FRNKvUK0+clo0WBOfHQAi4hBYZiFTRvJi0hLwPW/91AfRnajidyq6lT7fIriE6N2Uxw6HmBsb1sIBeBaQVDNd1odVcjRIJLOrXl0MwVfxWBebqN5xX/bS3Oz3+98EJQdwF2OJJ2WXWna0Z5r2BgGoZYqwU8yEuPul6ZNbrXpkOvthiVQvmEIZR9xqQMV04V6oqTvVfeKdnHVkNpIe+RiMgvAkmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eHC6hNNH8WnfqSnAS4043h8gn8aMYHkBtU67YaUuLWw=;
- b=AfkL6wXYHbgAIJL6F32Hr6yyEUHoWaBkD/8EOcob0HuNvaOQNg9W5bhz3tnycZM37zPqDawpWahv0FD1gb8ZGx8/pkoXwEdqC5xcTl4ErJFcHHJR7pYJ59G/OchU2q1iZ+60BoppXYdpx9GoE8Shdoaoj6MAENOOj20QTzjo7vI+8eJXqzGP9oQeOUIr5IjWkG+I5yHSm3pdIWlGVoKeijnE0H+JiSZJbN1VabVRzmJDR7WpARdt3fhuirnGGegMOF3VPbPu+jwPzHSj0Nd0aQYRfL7QXFLpQ6bDvEf3hrDusxQX1s1uPVYPMYVk4MxX8L07eF4Je4Ky9Q9jdPZ67A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eHC6hNNH8WnfqSnAS4043h8gn8aMYHkBtU67YaUuLWw=;
- b=oRpxvJXnAvBlmnvLNV8sHjlCa1hLDiLSYZGH0pkPCbP8XBlnEU4mXKP84X6ArjR4ynAQtqu7ZdFCXo4yOJcKqRzVx/wrUFVHc+UaW84HN/5BUVo9Avosr+KaVDJqXxrAZWAaYj+teg5kp8FhZgICXaaNifIz0RLxYyCjqVFtvxk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
- DM4PR12MB6302.namprd12.prod.outlook.com (2603:10b6:8:a4::21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7270.14; Wed, 7 Feb 2024 04:40:26 +0000
-Received: from DS0PR12MB6608.namprd12.prod.outlook.com
- ([fe80::10f5:3862:261c:274f]) by DS0PR12MB6608.namprd12.prod.outlook.com
- ([fe80::10f5:3862:261c:274f%5]) with mapi id 15.20.7270.012; Wed, 7 Feb 2024
- 04:40:26 +0000
-Message-ID: <096178c9-91de-4752-bdc4-6a31bcdcbaf8@amd.com>
-Date: Wed, 7 Feb 2024 10:10:15 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 0/9] Nginx refcount scalability issue with Apparmor enabled
- and potential solutions
-From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-To: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- "Shukla, Santosh" <Santosh.Shukla@amd.com>,
- "Narayan, Ananth" <Ananth.Narayan@amd.com>,
- raghavendra.kodsarathimmappa@amd.com, koverstreet@google.com,
- paulmck@kernel.org, boqun.feng@gmail.com, vinicius.gomes@intel.com,
- mjguzik@gmail.com
-References: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com>
-Content-Language: en-US
-In-Reply-To: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0076.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:9a::11) To DS0PR12MB6608.namprd12.prod.outlook.com
- (2603:10b6:8:d0::10)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i885OU8q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1707282344; x=1738818344;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TNbOIHNIUAkklbSCkVxhZ2LYHAebQaHbRzHIdmiIxOE=;
+  b=i885OU8qPNVRKcXAbdydWWBweKPmNqV8iGCOeMytqUeWr+x3d5wLNPQS
+   W2cFWBAM0ewiVLiv8NlKB4uTPFjUnK4zgrtC+c2GZfaXZ9HLbfx39Lewp
+   qp8+W0LRHM/fz13lKT1m4kyasSJ4vizHbFY2w+wpB3i2OFXIoXTQeQSWH
+   b15ye7Hz1xsB62OZ2EIdsIafwqN9tbk0FH7RsJDz4LL6aGbjIrVQzMpqQ
+   mToUbOPnhcxTao2aCb1Rjk3KJKCS04cEm7e3Mnyl8ldYlIH59Zuk7MusE
+   GcWqOCkTc730dzYqwoKy8ZQ6zITYE8OxEWaY5fspwZY/8wmzNc+De2Cso
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10976"; a="12268896"
+X-IronPort-AV: E=Sophos;i="6.05,250,1701158400"; 
+   d="scan'208";a="12268896"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Feb 2024 21:05:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10976"; a="824400199"
+X-IronPort-AV: E=Sophos;i="6.05,250,1701158400"; 
+   d="scan'208";a="824400199"
+Received: from lkp-server01.sh.intel.com (HELO 01f0647817ea) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 06 Feb 2024 21:05:38 -0800
+Received: from kbuild by 01f0647817ea with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rXa7s-0002E1-0v;
+	Wed, 07 Feb 2024 05:05:36 +0000
+Date: Wed, 7 Feb 2024 13:04:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, paul@paul-moore.com,
+	jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+	roberto.sassu@huawei.com, amir73il@gmail.com, brauner@kernel.org,
+	miklos@szeredi.hu, Stefan Berger <stefanb@linux.ibm.com>
+Subject: Re: [PATCH v2 4/9] ima: Reset EVM status upon detecting changes to
+ the real file
+Message-ID: <202402071226.lXIiGtbl-lkp@intel.com>
+References: <20240205182506.3569743-5-stefanb@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|DM4PR12MB6302:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b3dddd4-f3a4-4dfc-0fcd-08dc2796e78e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	sn+9mIBWEFFNgWX1a+StRthsATZ/J96oCOQxhpB0qaMcM4v67MuCFPlFhTh4WpgYP//rixJkMXRF1t5/Ttg8goj8+q16l3Q+a+4nI4k5uFzh87cH2r+HADyZyAK8L7kPCPWVip6tYNP+SOsijgEuKwCSY+IULhd2zdo20Q8FqUULiTaTga5EvQGN3DgjZnvKk/zEHmITPEjVOt14oXCiiMJjoqXc/dLgWr45Q7wGNFV6odtTrqoG5jjd5j8vCQGKJUFu12W4aCoLAI9sQEvagdENQtz9zmuJqOZ0GtQ5zlUTqWyh55KRG15HrmW3Ar9akpyND7noIydjHe4209LVkzY6o//rSSWJCDvBSx4f2oVNfF7U0Vac6VPfJ3BncGwnIU1QaGGDWhASVaxFYqpbM0CGfu05D0qjVwGezj4tqYPQRVupmbcVlw3k3ndlK3/ChaAKLrg+mXuAno4ihovB/UTLolWfi7zLPXlUXHHQ1OLxMhIS70crKMR+JjKoqCZyRCqgC3aPd+uzv9V3Wue7FlTOlQTaKv99PDb5g74rxISpmLml+aUOHIZkNrHiELhY35epJrizBEjq7/Qu/fBmVPNCRlZGS8KI4rijSEsV4ieV5TmwDZh9FlbJ7WsO7nMOPKiOgBTyKhb3TRERdoPE9g==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(366004)(346002)(376002)(39860400002)(136003)(230922051799003)(64100799003)(451199024)(186009)(1800799012)(6506007)(36756003)(53546011)(6666004)(6512007)(2616005)(86362001)(41300700001)(31696002)(38100700002)(26005)(83380400001)(6486002)(478600001)(66946007)(31686004)(8676002)(30864003)(8936002)(4326008)(66476007)(2906002)(5660300002)(7416002)(54906003)(316002)(66556008)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?K3JiRks3T1BaREZBQVQxc2UzYXVyNE8wMHozS3lVbnZMZ0J1Vk5NN0VhWU1G?=
- =?utf-8?B?b0g0UW5DampWc1dHdSt0cXdvTzBqSUFXQUFtRCs5dU4vNXpZOEZSM0FIVUhy?=
- =?utf-8?B?UlpuR0QrcWhwRGl6UTN6NWJIY09MSEJTM3oxQVYrTGFDb2JjMCtDdzd1L0Vv?=
- =?utf-8?B?RFhwemk5ZiswTHZoRUZNcXV2S1h5bjVGZ0RTNUZwWWMwQUUyWlRUVHBwT1p1?=
- =?utf-8?B?WVZ6cU1jT0NWVHNFTUxFYTd0cUxBeXQ1NW5KbzVjSjIydHlrcXdvV1lUcTY4?=
- =?utf-8?B?R2ROdVphVmhjSjBJU2xSN3NGVzJHVFovMHN0WkQ2d3U4N1B2OUJocjFwZTd6?=
- =?utf-8?B?OEhDYmU5aEE1YzVQbFp5dnVGUGpQbHhYbkJwOXRCUVVZRTdQT1hrV0hhQXZ2?=
- =?utf-8?B?MmJvOWtnNTJJQjIvTGVmczViYTcxSW9sbXFuZm9pN0JmclN6aHlzNDhwb3Fw?=
- =?utf-8?B?VU5tQUJFNjZEMkZsYUp3d0VaMElUUXNaMWlVbENSanVIemVxZmhUZndUcUhz?=
- =?utf-8?B?bWVGQjZnanNEZVY4bkYrcy9yQTkyM2JZejJaRnJaMDVId1V2QXRUZXF5T3lm?=
- =?utf-8?B?Vnl2elhLZCtxOWoveXhkOVM4ZG5PcEdra3VZZUNaeS9sR3dEZXMyT2k2S1ZK?=
- =?utf-8?B?VDlIa01MNU40SExDeFhCdGQ3TEd0SjZsUlpEdWFTTlNOUnU2bDhJb2Z6bmFm?=
- =?utf-8?B?NXdkbUN4Q09LTkdQT1lOUEt2TzY2TTdIUGxjdGpKcmJNajRmcmpmSjBVS3VH?=
- =?utf-8?B?K25SZjRRcTNqdkliS0JiaS9tMW40cjVYMDNJRG1ZMUJrU051YWxZbkkyWEVF?=
- =?utf-8?B?SkhENng5ZWFyWTV2TEFHNzJaTi95UTNVUm9kVFNpazJiVmNGNW1hNTBkTHQy?=
- =?utf-8?B?Tmw3amxNRlhYTXUyVjhKekh6eXZiTmppeWVSQXpYV0YxalovZndOOUIvU01H?=
- =?utf-8?B?Y1FNVkx5N3plRTFKNE1CVUwxKzdXYk8yMUNkb29EM0ZCcTU3RC9NQ0s1Y0ZP?=
- =?utf-8?B?a0d1REF1SmRkMjJHaERDUkJZOUw2NVB0ZUhDVVVNTGlzbkhjbHZEcXRndUcr?=
- =?utf-8?B?Q3FTa0pQT3NUTGJSOVBIbmFSbDJNNzd2a2x6Zk9NVUw5UzFQM1BJdXVaM212?=
- =?utf-8?B?djUvbWV0a1g3cHpndWxVWTFwUG4rM3FhYzhDblZ3WWs5V21hR1NocE1ZdXNX?=
- =?utf-8?B?d2hkdElOVnBKQ1IraFlhQmF5TXJ0ejhSZkFrRXNVQ2RxL2NzZDdnaUZra1g4?=
- =?utf-8?B?aFdYMGlRMG9UYXo4bmx3MUcrYkkzaFJtSkl4alphRWUwNTF5cGZybEVCNFlw?=
- =?utf-8?B?WW8vaWJrY2kvRnBWZjEzNWR5Tm11a3c5MmVOR2QzNkFrSDZkdWNXLytkcDRq?=
- =?utf-8?B?RmtiYnk2djNRL05JMEc5MGRmdXZ1ODhDSlFBclFDS01TejZ6RWUxcmR1UEJU?=
- =?utf-8?B?UzYyd3BIOHVwY08xUXQwVTFqSUQ4eUdWNm9EQXd1MTJxbzZETTh3RlhFZlBW?=
- =?utf-8?B?K29nakxoUDA4Vkh3L05qaEhJSGNYZkh1NWxCdmkxSjIrbm9oYWZrTGVmRkxU?=
- =?utf-8?B?S1pYeVh0WVJOV1Z4ZjFINTZFRXpMNHJ4OHNkRTcwbE43QUY2VGJWTFRzWnBv?=
- =?utf-8?B?aU10QUNsTkU0eGNMWGhhUWVWMldvcWtaWGxCTFA0ZHdhK0I1UFFJeUdCTEdS?=
- =?utf-8?B?dUQzalFQQzNOSFFGaDFJRk9Rb2Z4WXpodHoreTdLL2dmb0dTRmZwTHU4aTYw?=
- =?utf-8?B?TUFhWS9hTEJtZGUyS3Q5NnJoWTQ3dS9PdnQyMFE4cU9ydVBGU0hPN3gzZUkz?=
- =?utf-8?B?em9sKzRhV3NsSEFWR3pTUm9Oc3ozcVpNT3QyMUhPUTVtZnFBNDBnWGRCK0lI?=
- =?utf-8?B?NitxVVJ2NHdlcWN1MTl2MHZJUzhqcmhLaFF4Mmp4TnYrZEtZZ000bHQ1RFUv?=
- =?utf-8?B?UzVTS0JGWm9LOUF6ZnpmVTZnVTlGQVozQ0pwM3o2VVh0ZW9LSVluUk1uMUg0?=
- =?utf-8?B?SmlFTW1Ub3pDZG54QWxMQ0dMMUgxNUxmUUJuWXhMbUovLzdLY1NoS2tYQTla?=
- =?utf-8?B?U0ZhYUthK2xKNmlKN0htNDl1TEM0c3NGVm1ZUW8vOCtQT1haczlhYUhaZStu?=
- =?utf-8?Q?qjnMmSiWxkLslrBeRMFOnsn1a?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b3dddd4-f3a4-4dfc-0fcd-08dc2796e78e
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Feb 2024 04:40:26.5379
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tNrj39q3ltlUJAxQXXnKXuYXnZPhxR7PnnQA6kaVgZUau9Jbi1ivpFFtwy71h1nkji5fH+ALJwLFynPQDfytYQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6302
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240205182506.3569743-5-stefanb@linux.ibm.com>
 
-Gentle ping.
- 
-John,
+Hi Stefan,
 
-Could you please confirm that:
+kernel test robot noticed the following build errors:
 
-a. The AppArmor refcount usage described in the RFC is correct?
-b. Approach taken to fix the scalability issue is valid/correct?
+[auto build test ERROR on zohar-integrity/next-integrity]
+[also build test ERROR on pcmoore-selinux/next linus/master v6.8-rc3 next-20240206]
+[cannot apply to mszeredi-vfs/overlayfs-next mszeredi-vfs/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Stefan-Berger/ima-Rename-backing_inode-to-real_inode/20240206-022848
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+patch link:    https://lore.kernel.org/r/20240205182506.3569743-5-stefanb%40linux.ibm.com
+patch subject: [PATCH v2 4/9] ima: Reset EVM status upon detecting changes to the real file
+config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20240207/202402071226.lXIiGtbl-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240207/202402071226.lXIiGtbl-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202402071226.lXIiGtbl-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> security/integrity/ima/ima_main.c:303:9: error: use of undeclared identifier 'D_REAL_METADATA'
+     303 |                                                          D_REAL_METADATA)))
+         |                                                          ^
+   1 error generated.
 
 
-Thanks
-Neeraj
+vim +/D_REAL_METADATA +303 security/integrity/ima/ima_main.c
 
-On 1/10/2024 4:41 PM, Neeraj Upadhyay wrote:
-> Problem Statement
-> =================
-> 
-> Nginx performance testing with Apparmor enabled (with nginx
-> running in unconfined profile), on kernel versions 6.1 and 6.5
-> show significant drop in throughput scalability, when Nginx
-> workers are scaled to higher number of CPUs across various
-> L3 cache domains.
-> 
-> Below is one sample data on the throughput scalability loss,
-> based on results on AMD Zen4 system with 96 CPUs with SMT
-> core count 2; so, overall, 192 CPUs:
-> 
-> Config      Cache Domains     apparmor=off        apparmor=on
->                              scaling eff (%)      scaling eff (%)
-> 8C16T          1                  100%             100%
-> 16C32T         2                   95%              94%
-> 24C48T         3                   94%              93%
-> 48C96T         6                   92%              88%
-> 96C192T        12                  85%              68%
-> 
-> If we look at above data, there is a significant drop in
-> scaling efficiency, when we move to 96 CPUs/192 SMT threads.
-> 
-> Perf tool shows most of the contention coming from below
-> 6.56%     nginx  [kernel.vmlinux]      [k] apparmor_current_getsecid_subj 
-> 6.22%     nginx  [kernel.vmlinux]      [k] apparmor_file_open
-> 
-> The majority of the CPU cycles is found to be due to memory contention
-> in atomic_fetch_add and atomic_fetch_sub operations from kref_get() and
-> kref_put() operations on label.
-> 
-> Commit 2516fde1fa00 ("apparmor: Optimize retrieving current task secid"),
-> from 6.7 alleviates the issue to an extent, but not completely:
-> 
-> Config      Cache Domains     apparmor=on        apparmor=on (patched)
->                              scaling eff (%)      scaling eff (%)
-> 8C16T          1                  100%             100%
-> 16C32T         2                   97%              93%
-> 24C48T         3                   94%              92%
-> 48C96T         6                   88%              88%
-> 96C192T        12                  65%              79%
-> 
-> This adverse impact gets more pronounced when we move to >192 CPUs.
-> The memory contention and impact increases with high frequency label
-> update operations and labels are marked stale more frequently.
-> 
-> 
-> Label Refcount Management
-> =========================
-> 
-> Apparmor uses label objects (struct aa_label) to manage refcounts for
-> below set of objects:
-> 
-> - Applicable profiles
-> - Namespaces (unconfined profile)
-> - Other non-profile references
-> 
-> These label references are acquired on various apparmor lsm hooks,
-> on operations such as file open, task kill operations, socket bind,
-> and other file, socket, misc operations which use current task's cred,
-> when the label for the current cred, has been marked stale. This is
-> done to check these operations against the set of allowed operations
-> for the task performing them.
-> 
-> Use Percpu refcount for ref management?
-> =======================================
-> 
-> The ref put operations (percpu_ref_put()) in percpu refcount,
-> in active mode, do not check whether ref count has dropped to
-> 0. The users of the percpu_ref need to explicitly invoke
-> a percpu_ref_kill() operation, to drop the initial reference,
-> at shutdown paths. After the percpu_ref_kill() operation, ref
-> switches to atomic mode and any new percpu_ref_put() operation
-> checks for the drop to 0 case and invokes the release operation
-> on that label.
-> 
-> Labels are marked stale is situations like profile removal,
-> profile updates. For a namespace, the unconfined label reference
-> is dropped when the namespace is destroyed. These points
-> are potential shutdown points for labels. However, killing
-> the percpu ref from these points has few issues:
-> 
-> - The label could still be referenced by tasks, which are
->   still holding the reference to the now stale label.
->   Killing the label ref while these operations are in progress
->   will make all subsequent ref-put operations on the stale label
->   to be atomic, which would still result in memory contention.
->   Also, any new reference to the stale label, which is acquired
->   with the elevated refcount will have atomic op contention.
-> 
-> - The label is marked stale using a non-atomic write operation.
->   It is possible that new operations do not observe this flag
->   and still reference it for quite some time.
-> 
-> - Explicitly tracking the shutdown points might not be maintainable
->   at a per label granularity, as there can be various paths where
->   label reference could get dropped, such as, before the label has
->   gone live - object initialization error paths. Also, tracking
->   the shutdown points for labels which reference other labels -
->   subprofiles, merged labels requires careful analysis, and adds
->   heavy burden on ensuring the memory contention is not introduced
->   by these ref kill points.
-> 
-> 
-> Proposed Solution
-> =================
-> 
-> One potential solution to the refcount scalability problem is to
-> convert the label refcount to a percpu refcount, and manage
-> the initial reference from kworker context. The kworker
-> keeps an extra reference to the label and periodically scans
-> labels and release them if their refcount drops to 0.
-> 
-> Below is the sequence of operations, which shows the refcount
-> management with this approach:
-> 
-> 1. During label initialization, the percpu ref is initialized in
->    atomic mode. This is done to ensure that, for cases where the
->    label hasn't gone live (->ns isn't assigned), mostly during
->    initialization error paths.
-> 
-> 2. Labels are switched to percpu mode at various points -
->    when a label is added to labelset tree, when a unconfined profile
->    has been assigned a namespace.
-> 
-> 3. As part of the initial prototype, only the in tree labels
->    are managed by the kworker. These labels are added to a lockless
->    list. The unconfined labels invoke a percpu_ref_kill() operation
->    when the namespace is destroyed.
-> 
-> 4. The kworker does a periodic scan of all the labels in the
->    llist. It does below sequence of operations:
-> 
->    a. Enqueue a dummy node to mark the start of scan. This dummy
->       node is used as start point of scan and ensures that we
->       there is no additional synchronization required with new
->       label node additions to the llist. Any new labels will
->       be processed in next run of the kworker.
-> 
->                       SCAN START PTR
->                           |
->                           v
->       +----------+     +------+    +------+    +------+
->       |          |     |      |    |      |    |      |
->       |   head   ------> dummy|--->|label |--->| label|--->NULL
->       |          |     | node |    |      |    |      |
->       +----------+     +------+    +------+    +------+
-> 
-> 
->       New label addition:
-> 
->                             SCAN START PTR
->                                  |
->                                  v
->       +----------+  +------+  +------+    +------+    +------+
->       |          |  |      |  |      |    |      |    |      |
->       |   head   |--> label|--> dummy|--->|label |--->| label|--->NULL
->       |          |  |      |  | node |    |      |    |      |
->       +----------+  +------+  +------+    +------+    +------+
-> 
->     b. Traverse through the llist, starting from dummy->next.
->        If the node is a dummy node, mark it free.
->        If the node is a label node, do,
-> 
->        i) Switch the label ref to atomic mode. The ref switch wait
->           for the existing percpu_ref_get() and percpu_ref_put()
->           operations to complete, by waiting for a RCU grace period.
-> 
->           Once the switch is complete, from this point onwards, any
->           percpu_ref_get(), percpu_ref_put() operations use
->           atomic operations.
-> 
->       ii) Drop the initial reference, which was taken while adding
->           the label node to the llist.
-> 
->      iii) Use a percpu_ref_tryget() increment operation on the
->           ref, to see if we dropped the last ref count. if we
->           dropped the last count, we remove the node from the llist.
-> 
->           All of these operations are done inside a RCU critical
->           section, to avoid race with the release operations,
->           which can potentially trigger, as soon as we drop
->           the initial ref count.
-> 
->       iv) If we didn't drop the last ref, switch back the counter
->           to percpu mode.
-> 
-> Using this approach, to move the atomic refcount manipulation out of the
-> contended paths, there is a significant scalability improvement seen on
-> nginx test, and scalability efficiency is close to apparmor-off case.
-> 
-> Config      Cache Domains     apparmor=on (percpuref)
->                                scaling eff (%)
-> 8C16T          1                  100%
-> 16C32T         2                   96%
-> 24C48T         3                   94%
-> 48C96T         6                   93%
-> 96C192T        12                  90%
-> 
-> Limitations
-> ===========
-> 
-> 1. Switching to percpu refcount increases memory size overhead, as
->    percpu memory is allocated for all labels.
-> 
-> 2. Deferring labels reclaim could potentially result in memory
->    pressure, when there are high frequency of label update operations.
-> 
-> 3. Percpu refcount uses call_rcu_hurry() to complete switch operations.
->    These can impact energy efficiency, due to back to back hurry
->    callbacks. Using deferrable workqueue partly mitigates this.
->    However, deferring kworker can delay reclaims.
-> 
-> 4. Back to back label switches can delay other percpu users, as
->    there is a single global switch spinlock used by percpu refcount
->    lib.
-> 
-> 5. Long running kworker can delay other use cases like system suspend.
->    This is mitigated using freezable workqueue and litming node
->    scans to a max count.
-> 
-> 6. There is a window where label operates is atomic mode, when its
->    counter is being checked for zero. This can potentially result
->    in high memory contention, during this window which spans RCU
->    grace period (plus callback execution). For example, when
->    scanning label corresponding to unconfined profile, all
->    applications which use unconfined profile would be using
->    atomic ref increment and decrement operations.
-> 
->    There are a few apparoaches which were tried to mitigate this issue:
-> 
->    a. At a lower time interval, check if scanned label's counter
->       has changed since the start of label scan. If there is a change
->       in count, terminate the switch to atomic mode. Below shows the
->       apparoch using rcuwait.
-> 
->       static void aa_label_switch_atomic_confirm(struct percpu_ref *label_ref)
->       {
->          WRITE_ONCE(aa_atomic_switch_complete, true);
->          rcuwait_wake_up(&aa_reclaim_rcuwait);
->       }
-> 
->       rcuwait_init(&aa_reclaim_rcuwait);
->       percpu_ref_switch_to_atomic(&label->count, aa_label_switch_atomic_confirm);
-> 
->       atomic_count = percpu_ref_count_read(&label->count);
->       do {
->         rcuwait_wait_event_timeout(&aa_reclaim_rcuwait,
->                            (switch_complete = READ_ONCE(aa_atomic_switch_complete)),
->                            TASK_IDLE,
->                            msecs_to_jiffies(5));
->         if (percpu_ref_count_read(&label->count) != atomic_count)
->                 break;
->        } while (!READ_ONCE(switch_complete));
-> 
->        However, this approach does not work, as percpu refcount lib does not
->        allow termination of an ongoing switch operation. Also, the counter
->        can return to the original value with set of get() and put() operations
->        before we check the current value.
-> 
->    b. Approaches to notify the reclaim kworker from ref get and put operations
->       can potentially disturb cache line state between the various CPU
->       contexts, which are referncing the label, and can potentially impact
->       scalability again.
-> 
->    c. Swith the label to an immortal percpu ref, while the scan operates
->       on the current counter. 
-> 
->       Below is the sequence of operations to do this:
-> 
->       1. Ensure that both immortal ref and label ref are in percpu mode.
->          Reinit the immortal ref in percpu mode.
-> 
->          Swap percpu and atomic counters of label refcount and immortal ref
-> 	                          percpu-ref
->       	                  +-------------------+                
->       +-------+           |  percpu-ctr-addr1 |                
->       | label | --------->|-------------------|    +----------------+ 
->       +-------+           |   data            |--->| Atomic counter1| 
->                           +-------------------+    +----------------+ 
->       +-------+           +-------------------+                
->       |ImmLbl |---------->|  percpu-ctr-addr2 |    +----------------+
->       +-------+           |-------------------|--->| Atomic counter2|
->                           |    data           |    +----------------+
->                           +-------------------+                
-> 
->           label ->percpu-ctr-addr  = percpu-ctr-addr2
->           ImmLbl ->percpu-ctr-addr = percpu-ctr-addr1
->           label ->data->count      = Atomic counter2
->           ImmLbl ->data->count     = Atomic counter1
->   
->   
->       2. Check the counters collected in immortal label, by switch it
->          to atomic mode.
-> 
->       3. If the count is 0, do,
->          a. Switch immortal counter to percpu again, giving it an
->             initial count of 1.
->          b. Swap the label and immortal counters again. The immortal
->             ref now has the counter values from new percpu ref get
->             and get operations on the label ref, from the point
->             when we did the initial swap operation.
->          c. Transfer the percpu counts in immortal ref to atomic
->             counter of label percpu refcount.
->          d. Kill immortal ref, for reinit on next iteration.
->          e. Switch label percpu ref to atomic mode.
->          f. If the counter is 1, drop the initial ref.
-> 
->        4. If the count is not 0, re-swap the counters.
->           a. Switch immortal counter to percpu again, giving it an
->              initial count of 1.
->           b. Swap the label and immortal counters again. The immortal
->              ref now has the counter values from new percpu ref get
->              and get operations on the label ref, from the point
->              when we did the initial swap operation.
->           c. Transfer the percpu counts in immortal ref to atomic
->              counter of label percpu refcount.
->           d. Kill immortal ref, for reinit on next iteration.
-> 
-> 
->           Using this approach, we ensure that, label ref users do not switch
->           to atomic mode, while there are active references on the label.
->           However, this approach requires multiple percpu ref mode switches
->           and adds high overhead and complexity to the scanning code.
-> 
-> Extended/Future Work
-> ====================
-> 
-> 1. Look for ways to fix the limitations, as described in the "Limitations"
->    section.
-> 
-> 2. Generalize the approach to percpu rcuref, which is used for contexts
->    where release path uses RCU grace period for release operations. Patch
->    7 creates an initial prototype for this.
-> 
-> 3. Explore hazard pointers for scalable refcounting of labels.
-> 
-> Highly appreciate any feedback/suggestions on the design approach.
-> 
-> The patches of this patchset introduce following changes:
-> 
-> 1.      Documentation of Apparmor Refcount management.
-> 
-> 2.      Switch labels to percpu refcount in atomic mode.
-> 
->         Use percpu refcount for apparmor labels. Initial patch to init
->         the percpu ref in atomic mode, to evaluate the potential
->         impact of percpuref on top of kref based implementation.
-> 
-> 3.      Switch unconfined namespaces refcount to percpu mode.
-> 
->         Switch unconfined ns labels to percpu mode, and kill the
->         initial refcount from namespace destroy path.
-> 
-> 4.      Add infrastructure to reclaim percpu labels.
-> 
->         Add a label reclaim infrastructure for labels which are
->         in percpu mode, for managing their inital refcount.
-> 
-> 5.      Switch intree labels to percpu mode.
-> 
->         Use label reclaim infrastruture to manage intree labels.
-> 
-> 6.      Initial prototype for optimizing ref switch.
-> 
->         Prototype for reducing the time window when a label
->         scan switches the label ref to atomic mode.
-> 
-> 7.      percpu-rcuref: Add basic infrastructure.
-> 
->         Prototype for Percpu refcounts for objects, which protect
->         their object reclaims using RCU grace period.
-> 
-> 8.      Switch labels to percpu rcurefcount in unmanaged mode.
-> 
->         Use percpu rcuref for labels. Start with unmanaged/atomic
->         mode.
-> 
-> 9.      Switch unconfined and in tree labels to managed ref mode.
-> 
->         Use percpu mode with manager worker for unconfined and intree
->         labels.
-> 
-> 
-> ------------------------------------------------------------------------
-> 
->  b/Documentation/admin-guide/LSM/ApparmorRefcount.rst |  351 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  b/Documentation/admin-guide/LSM/index.rst            |    1
->  b/Documentation/admin-guide/kernel-parameters.txt    |    8 +
->  b/include/linux/percpu-rcurefcount.h                 |  115 ++++++++++++++++
->  b/include/linux/percpu-refcount.h                    |    2
->  b/lib/Makefile                                       |    2
->  b/lib/percpu-rcurefcount.c                           |  336 +++++++++++++++++++++++++++++++++++++++++++++++
->  b/lib/percpu-refcount.c                              |   93 +++++++++++++
->  b/security/apparmor/include/label.h                  |   16 +-
->  b/security/apparmor/include/policy.h                 |    8 -
->  b/security/apparmor/include/policy_ns.h              |   24 +++
->  b/security/apparmor/label.c                          |   11 +
->  b/security/apparmor/lsm.c                            |  145 ++++++++++++++++++++
->  b/security/apparmor/policy_ns.c                      |    6
->  include/linux/percpu-refcount.h                      |    2
->  lib/percpu-refcount.c                                |   93 -------------
->  security/apparmor/include/label.h                    |   17 +-
->  security/apparmor/include/policy.h                   |   56 +++----
->  security/apparmor/include/policy_ns.h                |   24 ---
->  security/apparmor/label.c                            |   11 -
->  security/apparmor/lsm.c                              |  325 ++++++++++++----------------------------------
->  security/apparmor/policy_ns.c                        |    8 -
->  22 files changed, 1237 insertions(+), 417 deletions(-)
-> 
-> base-commit: ab27740f7665
+   207	
+   208	static int process_measurement(struct file *file, const struct cred *cred,
+   209				       u32 secid, char *buf, loff_t size, int mask,
+   210				       enum ima_hooks func)
+   211	{
+   212		struct inode *real_inode, *inode = file_inode(file);
+   213		struct integrity_iint_cache *iint = NULL;
+   214		struct ima_template_desc *template_desc = NULL;
+   215		char *pathbuf = NULL;
+   216		char filename[NAME_MAX];
+   217		const char *pathname = NULL;
+   218		int rc = 0, action, must_appraise = 0;
+   219		int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
+   220		struct evm_ima_xattr_data *xattr_value = NULL;
+   221		struct modsig *modsig = NULL;
+   222		int xattr_len = 0;
+   223		bool violation_check;
+   224		enum hash_algo hash_algo;
+   225		unsigned int allowed_algos = 0;
+   226	
+   227		if (!ima_policy_flag || !S_ISREG(inode->i_mode))
+   228			return 0;
+   229	
+   230		/* Return an IMA_MEASURE, IMA_APPRAISE, IMA_AUDIT action
+   231		 * bitmask based on the appraise/audit/measurement policy.
+   232		 * Included is the appraise submask.
+   233		 */
+   234		action = ima_get_action(file_mnt_idmap(file), inode, cred, secid,
+   235					mask, func, &pcr, &template_desc, NULL,
+   236					&allowed_algos);
+   237		violation_check = ((func == FILE_CHECK || func == MMAP_CHECK ||
+   238				    func == MMAP_CHECK_REQPROT) &&
+   239				   (ima_policy_flag & IMA_MEASURE));
+   240		if (!action && !violation_check)
+   241			return 0;
+   242	
+   243		must_appraise = action & IMA_APPRAISE;
+   244	
+   245		/*  Is the appraise rule hook specific?  */
+   246		if (action & IMA_FILE_APPRAISE)
+   247			func = FILE_CHECK;
+   248	
+   249		inode_lock(inode);
+   250	
+   251		if (action) {
+   252			iint = integrity_inode_get(inode);
+   253			if (!iint)
+   254				rc = -ENOMEM;
+   255		}
+   256	
+   257		if (!rc && violation_check)
+   258			ima_rdwr_violation_check(file, iint, action & IMA_MEASURE,
+   259						 &pathbuf, &pathname, filename);
+   260	
+   261		inode_unlock(inode);
+   262	
+   263		if (rc)
+   264			goto out;
+   265		if (!action)
+   266			goto out;
+   267	
+   268		mutex_lock(&iint->mutex);
+   269	
+   270		if (test_and_clear_bit(IMA_CHANGE_ATTR, &iint->atomic_flags))
+   271			/* reset appraisal flags if ima_inode_post_setattr was called */
+   272			iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
+   273					 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
+   274					 IMA_NONACTION_FLAGS);
+   275	
+   276		/*
+   277		 * Re-evaulate the file if either the xattr has changed or the
+   278		 * kernel has no way of detecting file change on the filesystem.
+   279		 * (Limited to privileged mounted filesystems.)
+   280		 */
+   281		if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags) ||
+   282		    ((inode->i_sb->s_iflags & SB_I_IMA_UNVERIFIABLE_SIGNATURE) &&
+   283		     !(inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER) &&
+   284		     !(action & IMA_FAIL_UNVERIFIABLE_SIGS))) {
+   285			iint->flags &= ~IMA_DONE_MASK;
+   286			iint->measured_pcrs = 0;
+   287		}
+   288	
+   289		/*
+   290		 * Detect and re-evaluate changes made to the inode holding file data.
+   291		 */
+   292		real_inode = d_real_inode(file_dentry(file));
+   293		if (real_inode != inode &&
+   294		    (action & IMA_DO_MASK) && (iint->flags & IMA_DONE_MASK)) {
+   295			if (!IS_I_VERSION(real_inode) ||
+   296			    real_inode->i_sb->s_dev != iint->real_dev ||
+   297			    real_inode->i_ino != iint->real_ino ||
+   298			    !inode_eq_iversion(real_inode, iint->version)) {
+   299				iint->flags &= ~IMA_DONE_MASK;
+   300				iint->measured_pcrs = 0;
+   301	
+   302				if (real_inode == d_inode(d_real(file_dentry(file),
+ > 303								 D_REAL_METADATA)))
+   304					evm_reset_cache_status(file_dentry(file), iint);
+   305			}
+   306		}
+   307	
+   308		/* Determine if already appraised/measured based on bitmask
+   309		 * (IMA_MEASURE, IMA_MEASURED, IMA_XXXX_APPRAISE, IMA_XXXX_APPRAISED,
+   310		 *  IMA_AUDIT, IMA_AUDITED)
+   311		 */
+   312		iint->flags |= action;
+   313		action &= IMA_DO_MASK;
+   314		action &= ~((iint->flags & (IMA_DONE_MASK ^ IMA_MEASURED)) >> 1);
+   315	
+   316		/* If target pcr is already measured, unset IMA_MEASURE action */
+   317		if ((action & IMA_MEASURE) && (iint->measured_pcrs & (0x1 << pcr)))
+   318			action ^= IMA_MEASURE;
+   319	
+   320		/* HASH sets the digital signature and update flags, nothing else */
+   321		if ((action & IMA_HASH) &&
+   322		    !(test_bit(IMA_DIGSIG, &iint->atomic_flags))) {
+   323			xattr_len = ima_read_xattr(file_dentry(file),
+   324						   &xattr_value, xattr_len);
+   325			if ((xattr_value && xattr_len > 2) &&
+   326			    (xattr_value->type == EVM_IMA_XATTR_DIGSIG))
+   327				set_bit(IMA_DIGSIG, &iint->atomic_flags);
+   328			iint->flags |= IMA_HASHED;
+   329			action ^= IMA_HASH;
+   330			set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
+   331		}
+   332	
+   333		/* Nothing to do, just return existing appraised status */
+   334		if (!action) {
+   335			if (must_appraise) {
+   336				rc = mmap_violation_check(func, file, &pathbuf,
+   337							  &pathname, filename);
+   338				if (!rc)
+   339					rc = ima_get_cache_status(iint, func);
+   340			}
+   341			goto out_locked;
+   342		}
+   343	
+   344		if ((action & IMA_APPRAISE_SUBMASK) ||
+   345		    strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) != 0) {
+   346			/* read 'security.ima' */
+   347			xattr_len = ima_read_xattr(file_dentry(file),
+   348						   &xattr_value, xattr_len);
+   349	
+   350			/*
+   351			 * Read the appended modsig if allowed by the policy, and allow
+   352			 * an additional measurement list entry, if needed, based on the
+   353			 * template format and whether the file was already measured.
+   354			 */
+   355			if (iint->flags & IMA_MODSIG_ALLOWED) {
+   356				rc = ima_read_modsig(func, buf, size, &modsig);
+   357	
+   358				if (!rc && ima_template_has_modsig(template_desc) &&
+   359				    iint->flags & IMA_MEASURED)
+   360					action |= IMA_MEASURE;
+   361			}
+   362		}
+   363	
+   364		hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
+   365	
+   366		rc = ima_collect_measurement(iint, file, buf, size, hash_algo, modsig);
+   367		if (rc != 0 && rc != -EBADF && rc != -EINVAL)
+   368			goto out_locked;
+   369	
+   370		if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
+   371			pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+   372	
+   373		if (action & IMA_MEASURE)
+   374			ima_store_measurement(iint, file, pathname,
+   375					      xattr_value, xattr_len, modsig, pcr,
+   376					      template_desc);
+   377		if (rc == 0 && (action & IMA_APPRAISE_SUBMASK)) {
+   378			rc = ima_check_blacklist(iint, modsig, pcr);
+   379			if (rc != -EPERM) {
+   380				inode_lock(inode);
+   381				rc = ima_appraise_measurement(func, iint, file,
+   382							      pathname, xattr_value,
+   383							      xattr_len, modsig);
+   384				inode_unlock(inode);
+   385			}
+   386			if (!rc)
+   387				rc = mmap_violation_check(func, file, &pathbuf,
+   388							  &pathname, filename);
+   389		}
+   390		if (action & IMA_AUDIT)
+   391			ima_audit_measurement(iint, pathname);
+   392	
+   393		if ((file->f_flags & O_DIRECT) && (iint->flags & IMA_PERMIT_DIRECTIO))
+   394			rc = 0;
+   395	
+   396		/* Ensure the digest was generated using an allowed algorithm */
+   397		if (rc == 0 && must_appraise && allowed_algos != 0 &&
+   398		    (allowed_algos & (1U << hash_algo)) == 0) {
+   399			rc = -EACCES;
+   400	
+   401			integrity_audit_msg(AUDIT_INTEGRITY_DATA, file_inode(file),
+   402					    pathname, "collect_data",
+   403					    "denied-hash-algorithm", rc, 0);
+   404		}
+   405	out_locked:
+   406		if ((mask & MAY_WRITE) && test_bit(IMA_DIGSIG, &iint->atomic_flags) &&
+   407		     !(iint->flags & IMA_NEW_FILE))
+   408			rc = -EACCES;
+   409		mutex_unlock(&iint->mutex);
+   410		kfree(xattr_value);
+   411		ima_free_modsig(modsig);
+   412	out:
+   413		if (pathbuf)
+   414			__putname(pathbuf);
+   415		if (must_appraise) {
+   416			if (rc && (ima_appraise & IMA_APPRAISE_ENFORCE))
+   417				return -EACCES;
+   418			if (file->f_mode & FMODE_WRITE)
+   419				set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
+   420		}
+   421		return 0;
+   422	}
+   423	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
