@@ -1,144 +1,156 @@
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60A180057
-	for <linux-security-module@vger.kernel.org>; Wed,  7 Feb 2024 15:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBFB80050
+	for <linux-security-module@vger.kernel.org>; Wed,  7 Feb 2024 16:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707320636; cv=none; b=Ui+dDF9ViQnuae3lAvs8J76r6/EZWMUL3erPM4cqsMfWy8jNO/E+Zz1uWlBRzjQdDpPKA7z31BdHA2OUoj6/cw6a5GM+xct+lHB99A2Yt70V4GTsi4qPtm/w9HgmFbvLh61Dq1IP6k+6Xy6BFd7k9Zq/nPVQ/BSgP2curc3C8KE=
+	t=1707321678; cv=none; b=Kj9RO8ktfFOpZByURm7qQXKdV0YqYY+DK/rqWIaa0dvXyjYtmrj6kfVb3E8ap1z5OfRVQQmOPu+IEDKf7HmKQHlU27HgHxme9MoCADXKr/OvHSWTq/WQDysmQ1mSRj1SLnc4cIjvqZU8hTKR0ZzGRGrK5hG8rCQ+k9BQEzT+yGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707320636; c=relaxed/simple;
-	bh=0vxjX47B6ZgpdmiW7EVKqCFH/j69PxaUc08wp4q8im8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sMVMRunozFeT6yXW3JSvGGPkvgMTs+BEicRHuTcguu4qA82HC7zm62M/kRER2yJF3IgAhvhu/6MQJmLbqR4Fd1ehD6R26RP3jyuDhR+i7lUSudDokkecg3Da3f3lc1o0T0PXUJo8fp24zkNYjKwJjSy1gSh5ST9Z+RYeCQKwHo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LFw9oKbh; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1707321678; c=relaxed/simple;
+	bh=tRFljhwMB4MgO3yaAsgqXOkez35UfRXvUgw0a7Rtm44=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JkG84uYzk8yKJ4g5aJ5EEY1BwnIEJMq8smz7Ym7JET1p4prdDkC59EEikzgsOQp4j4NZJezESyaf4WsXWgwK86iU8Md2rrSfINvxhixcZH83QwwPzTT2tXkjBA6hQCOhhR6yPSOCkfz0vvhwvSf0y6+RuCYJ7HeV7EtCoay0v70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YeF10JYz; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LFw9oKbh"
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3bba50cd318so633220b6e.0
-        for <linux-security-module@vger.kernel.org>; Wed, 07 Feb 2024 07:43:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YeF10JYz"
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dc6e0fe3195so802744276.0
+        for <linux-security-module@vger.kernel.org>; Wed, 07 Feb 2024 08:01:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1707320634; x=1707925434; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fT7OrhiRuIZhNQcmagLUCZ3268l7RImx+viDE+2dBHY=;
-        b=LFw9oKbh2lMPICDhaQyxT7pKPlavYRiL/Arlh0g7UTbkmB49L4DnCwYdJbT5m+CHle
-         19jOhg/eeC+/hlNcLEpMyGSL8CB1tYivigS0KVsO5Msllav3KxkA2b03joaxYwmto723
-         oFigIKI5waEKkAGVZm8OJizZRptX8YVHaLEII=
+        d=paul-moore.com; s=google; t=1707321675; x=1707926475; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HxtNW82JBl+/qv1Lfklex243MjNUyJXmyfgEwoYAhcA=;
+        b=YeF10JYzzfnJq2ooJA/bx8bvFQbVVM4MFXMpTjUIhZxRdaDxN1XcfX3QXfc1turHFz
+         4OAmaRelm0ulI65ayKuXfYa1vP/Y032a7DvaicaHjZumNNDzmqF5lFBSqhFpVOZKr7xz
+         KspEwrTBJeiY370aIm2OLCdok74xosyrvDqkKE2dKmmy9/+VDT6XHpBAvDpJW3oOBJF9
+         8c2k8Ba5IQZ2gbTmoeac76gFIKf5SNu1IQmDZycobLYzKSwrz9XdeS6T7c6Gq071qXtS
+         A5KcQz4uuLx2f+m3k/PaGvIbijYgIneL0gYHxz87bNQYrJUIiR2bRZgn0zd/kLh+JpDO
+         Pqog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707320634; x=1707925434;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fT7OrhiRuIZhNQcmagLUCZ3268l7RImx+viDE+2dBHY=;
-        b=KhoprIYmObSwdRgDq5UaukJonokSYd3K719WCZqpz/6SsT9bFVtDLsyboGiq5ruR8v
-         zEEFqBcTsw4e+F2uFNs+qJYdchDHWV6hyihB9o6PLNt9oUEdS21+/NWjT6b9WdUJIoO1
-         pV60DLulCWbVNi75CQPeFP2BngwstRfSUMi7MWf5NnxWKGhI9wd9BIBmhunM0XL/NPOr
-         F/dItsbl6etfZw0c3/e7gorDYdyZg9eQjuOSFCJX+VcqpZME7qAvZijEbmLGheY7jU9i
-         nBQzb+wFDT4q905MPq3AuuPqAdKKvPOvGv0EONIhRZoZxoM06jUk1n2EtVyWdRfwC243
-         qa4w==
-X-Gm-Message-State: AOJu0YwrOLPqwpw3FlD+XCdyTReTiuxXD/eGHZGgUyE8jW6NFug3xCfg
-	M1iDLV+u9conJ0xfwWLCtO7tQCNewdXcl5iLcebUacWUlx2XFPnHb4adEnlztg==
-X-Google-Smtp-Source: AGHT+IF396kKk0rdy004VVPYDuPYv9DwxzXoOR6Kvm9ziqiHthI/RUMfDBLMi4vfaoIZ2sbm9RevTQ==
-X-Received: by 2002:a05:6808:f8b:b0:3bf:ede4:9a57 with SMTP id o11-20020a0568080f8b00b003bfede49a57mr1838228oiw.27.1707320633877;
-        Wed, 07 Feb 2024 07:43:53 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU3PuW6ws9JWC7eVxAlbqXnDHKSk0P2YmIzFI97ctOQmNTs+74DKsJKO4wYGBbGfO42/jRaojmBW5kV4n2FT4d0tr8kH7r4aQUxMEmIK9FSpzX0+pIMCA15w2h9wknJ03TotrXxVbFLDDJMb3tAR9UBjBQ1lm3zQBDxElQLAnLBo/q7iMfJqxCY2fmPncMLgWFvGjIAikLYHUGWVzwlMWYm3vHqlpF/gcN/FnIldLYt0SP7xo1Z2wH1mPSDaOXCGzltp29+grXhTvd+rvan/N/uNyiAlByd2IkHMNf8nbgttrAyvF0AHMlcB0xUerECuwe2T0UC7sguw0Id8vwFxFwXiSEbTTEOxQmlnfedeEq8E4MuJEWbwVUt6ROZfmwaV08Ju508ne3sow==
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id o26-20020a629a1a000000b006e0521c2156sm1834465pfe.173.2024.02.07.07.43.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 07:43:53 -0800 (PST)
-Date: Wed, 7 Feb 2024 07:43:52 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module <linux-security-module@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] LSM: add security_execve_abort() hook
-Message-ID: <202402070740.CFE981A4@keescook>
-References: <8fafb8e1-b6be-4d08-945f-b464e3a396c8@I-love.SAKURA.ne.jp>
- <999a4733-c554-43ca-a6e9-998c939fbeb8@I-love.SAKURA.ne.jp>
- <202402070622.D2DCD9C4@keescook>
- <CAHC9VhTJ85d6jBFBMYUoA4CrYgb6i9yHDC_tFce9ACKi7UTa6Q@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1707321675; x=1707926475;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HxtNW82JBl+/qv1Lfklex243MjNUyJXmyfgEwoYAhcA=;
+        b=l8Po2d05KjSHt9Bu4iOOtfZdbzpH3mVcqqTRTFmyNE6rsn5TJP4OnVwvvjPhQHi2af
+         F8jwdup06F9pFOdUvW464CB8tqVK+rZzjlTFvau3nxgQ1+E4GR8TcE61UwueHbpZ2mSt
+         4Ab6z6RZMEZjeX5ndBI32+54rc+z7b8HY21dgHw/eOhdRG34jNRDJuJ15rHoTfJQjukh
+         5xkmpvFcL9Qm95wQs2RQkGnKa7dJWqgPVpp/SDY5ksMbgNdkvL8TpHirNPPhLf2Vr8LJ
+         Z/uqkj2OCve32sr62RAE3wyeXBiDC9kfnyhUzV7+1k0sQHnxcT+az7bwbaQMJBFQlzw6
+         kZ3w==
+X-Gm-Message-State: AOJu0YyRtxpR2aOwk/UA71Jthgr6fy2/vTZPKSHFayxy7bBSgTDz7d1G
+	kCYwzOFwxu/BBfDgeiaHkTKfgW6WQ0LMpytR0cUv81CVjBrvPB9LhjnawjxhmDGLZD62WaQWamH
+	hnX+9moQaJidUVe5Qv2ukIIlf4Wt3Uk60CSy+
+X-Google-Smtp-Source: AGHT+IGLRof03AeG7moUMh3bNmzc2buHmfvITsFlKH2vkSeVCiedBCdAJ9+91kZrNNYraEEDXJYoLrCGtWdtB8t3AEQ=
+X-Received: by 2002:a25:ae93:0:b0:dc6:ff66:87a8 with SMTP id
+ b19-20020a25ae93000000b00dc6ff6687a8mr5182541ybj.51.1707321674769; Wed, 07
+ Feb 2024 08:01:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhTJ85d6jBFBMYUoA4CrYgb6i9yHDC_tFce9ACKi7UTa6Q@mail.gmail.com>
+References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
+ <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com> <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
+ <202402070631.7B39C4E8@keescook>
+In-Reply-To: <202402070631.7B39C4E8@keescook>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 7 Feb 2024 11:01:03 -0500
+Message-ID: <CAHC9VhS1yHyzA-JuDLBQjyyZyh=sG3LxsQxB9T7janZH6sqwqw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
+To: Kees Cook <keescook@chromium.org>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-security-module <linux-security-module@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 07, 2024 at 10:21:07AM -0500, Paul Moore wrote:
-> On Wed, Feb 7, 2024 at 9:24 AM Kees Cook <keescook@chromium.org> wrote:
+On Wed, Feb 7, 2024 at 9:34=E2=80=AFAM Kees Cook <keescook@chromium.org> wr=
+ote:
+> On Wed, Feb 07, 2024 at 08:10:55PM +0900, Tetsuo Handa wrote:
+> > On 2024/02/07 9:00, Paul Moore wrote:
+> > >> @@ -1223,6 +1223,17 @@ void security_bprm_committed_creds(const stru=
+ct linux_binprm *bprm)
+> > >>    call_void_hook(bprm_committed_creds, bprm);
+> > >>  }
+> > >>
+> > >> +/**
+> > >> + * security_execve_abort() - Notify that exec() has failed
+> > >> + *
+> > >> + * This hook is for undoing changes which cannot be discarded by
+> > >> + * abort_creds().
+> > >> + */
+> > >> +void security_execve_abort(void)
+> > >> +{
+> > >> +  call_void_hook(execve_abort);
+> > >> +}
+> > >
+> > > I don't have a problem with reinstating something like
+> > > security_bprm_free(), but I don't like the name security_execve_abort=
+(),
+> > > especially given that it is being called from alloc_bprm() as well as
+> > > all of the execve code.  At the risk of bikeshedding this, I'd be muc=
+h
+> > > happier if this hook were renamed to security_bprm_free() and the
+> > > hook's description explained that this hook is called when a linux_bp=
+rm
+> > > instance is being destroyed, after the bprm creds have been released,
+> > > and is intended to cleanup any internal LSM state associated with the
+> > > linux_bprm instance.
+> > >
+> > > Are you okay with that?
 > >
-> > On Sat, Feb 03, 2024 at 07:52:54PM +0900, Tetsuo Handa wrote:
-> > > A regression caused by commit 978ffcbf00d8 ("execve: open the executable
-> > > file before doing anything else") has been fixed by commit 4759ff71f23e
-> > > ("exec: Check __FMODE_EXEC instead of in_execve for LSMs") and commit
-> > > 3eab830189d9 ("uselib: remove use of __FMODE_EXEC"). While fixing this
-> > > regression, Linus commented that we want to remove current->in_execve flag.
-> > >
-> > > The current->in_execve flag was introduced by commit f9ce1f1cda8b ("Add
-> > > in_execve flag into task_struct.") when TOMOYO LSM was merged, and the
-> > > reason was explained in commit f7433243770c ("LSM adapter functions.").
-> > >
-> > > In short, TOMOYO's design is not compatible with COW credential model
-> > > introduced in Linux 2.6.29, and the current->in_execve flag was added for
-> > > emulating security_bprm_free() hook which has been removed by introduction
-> > > of COW credential model.
-> > >
-> > > security_task_alloc()/security_task_free() hooks have been removed by
-> > > commit f1752eec6145 ("CRED: Detach the credentials from task_struct"),
-> > > and these hooks have been revived by commit 1a2a4d06e1e9 ("security:
-> > > create task_free security callback") and commit e4e55b47ed9a ("LSM: Revive
-> > > security_task_alloc() hook and per "struct task_struct" security blob.").
-> > >
-> > > But security_bprm_free() hook did not revive until now. Now that Linus
-> > > wants TOMOYO to stop carrying state across two independent execve() calls,
-> > > and TOMOYO can stop carrying state if a hook for restoring previous state
-> > > upon failed execve() call were provided, this patch revives the hook.
-> > >
-> > > Since security_bprm_committing_creds() and security_bprm_committed_creds()
-> > > hooks are called when an execve() request succeeded, we don't need to call
-> > > security_bprm_free() hook when an execve() request succeeded. Therefore,
-> > > this patch adds security_execve_abort() hook which is called only when an
-> > > execve() request failed after successful prepare_bprm_creds() call.
-> > >
-> > > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > Hmm, that will bring us back to v1 of this series.
 > >
-> > This looks good to me.
+> > v3 was based on Eric W. Biederman's suggestion
 > >
-> > Given this touches execve and is related to the recent execve changes,
-> > shall I carry this in the execve tree for testing and send a PR to Linus
-> > for it before v6.8 releases?
+> >   If you aren't going to change your design your new hook should be:
+> >           security_execve_revert(current);
+> >   Or maybe:
+> >           security_execve_abort(current);
 > >
-> > There's already an Ack from Serge, so this seems a reasonable way to go
-> > unless Paul would like it done some other way?
-> 
-> Please hold off on this Kees (see my email from yesterday), I'd prefer
-> to take this via the LSM tree and with the immediate regression
-> resolved I'd prefer this go in during the upcoming merge window and
-> not during the -rcX cycle.  Or am I misunderstanding things about the
-> state of Linus' tree currently?
+> >   At least then it is based upon the reality that you plan to revert
+> >   changes to current->security.  Saying anything about creds or bprm wh=
+en
+> >   you don't touch them, makes no sense at all.  Causing people to
+> >   completely misunderstand what is going on, and making it more likely
+> >   they will change the code in ways that will break TOMOYO.
+> >
+> > at https://lkml.kernel.org/r/8734ug9fbt.fsf@email.froward.int.ebiederm.=
+org .
+>
+> Yeah, I'd agree with Eric on this: it's not about bprm freeing, it's
+> catching the execve failure. I think the name is accurate -- it mirrors
+> the abort_creds() call.
 
-My understanding was that TOMOYO is currently broken in Linus's tree. If
-that's true, I'd like to make sure it gets fixed before v6.8 is
-released.
+I'm sorry, but I would still much rather prefer security_bprm_free()
+both to reflect the nature of the caller as well as to abstract away a
+particular use case; this is also why I suggested a different hook
+description for the function header block.
 
-If it's working okay, then sure, that's fine to wait. :)
+If you really want this to be focused on reverting the execvc changes
+(I do agree with Eric about "revert" over "abort") then please move
+this hook out of free_bprm() and into do_execveat_common() and
+kernel_execve().
 
--Kees
+To quickly summarize, there are two paths forward that I believe are
+acceptable from a LSM perspective, pick either one and send me an
+updated patchset.
 
--- 
-Kees Cook
+1. Rename the hook to security_bprm_free() and update the LSM hook
+description as I mentioned earlier in this thread.
+
+2. Rename the hook to security_execve_revert(), move it into the
+execve related functions, and update the LSM hook description to
+reflect that this hook is for reverting execve related changes to the
+current task's internal LSM state beyond what is possible via the
+credential hooks.
+
+--=20
+paul-moore.com
