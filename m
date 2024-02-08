@@ -1,59 +1,60 @@
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF18A38388
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Feb 2024 03:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2AF383AF
+	for <linux-security-module@vger.kernel.org>; Thu,  8 Feb 2024 03:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707362340; cv=none; b=F9xBhb/hSY0HvgNra/DSZFyzCQbBmvrBwKb0aSPoLwhWXUEQv6+CpPrPWRnd6Bkt8lQQQX0fa7b7XsJspQnXQqj0NRAt4Z6GirlaP2b6ZyCEDANZ72nxJ57r4PV19UnkTWknMwzJf8NR76tpOD0/A4a8Aw5iCdNgrReYE1cThsQ=
+	t=1707362341; cv=none; b=ACuKm3yGHamV0tPJv9eAMN6W/cRKPHRxJWQ4G5IvKZMxioX62T1JbwM/uqCxQ7rmhoJ7sRAsgIdmk4nfos1TcmLa/a/bVx68qyI7WB7MmsILNnQgtCfsGSv8TnspMHb2nHW79ozaI//GiJx+2FlUAu2BqlD18zWC+90XuVd7UN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707362340; c=relaxed/simple;
-	bh=GXUPBwjyTapvWjNtvBJBKoFYSFcsWJwH+eGj4SD5Q70=;
+	s=arc-20240116; t=1707362341; c=relaxed/simple;
+	bh=KQUeyHRjjjfkXBsIEL6L0ca2YK2iVKA66TMwHDEgJLc=;
 	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=PiCnG1QaBo9EF1m7tp+lzccJBIBZKcIgYBe2hLn0h1sFjl/l5TJZZnlsX1HvlWOw5skdbOU9Soz4etl0dSpNem2Fh4/tAtroI/c847wXfTzY/pqq9HlKFKp/d+DKZC0q+BP0xBTRxAAu5YNQsIWGZ+kRaYyWu5fWpvo5MGUMYDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=acyS8Z/R; arc=none smtp.client-ip=209.85.160.179
+	 From:To:Cc:Subject:References:In-Reply-To; b=YN8sKbXyydqWWokUmmlCNIQBudhg7eOkV7afPZbZnZOZNFBvh5G21+F6vDrlvr1BTd+KgNqfHV9Im9S2T8gHyizU+5fY/7Sh5TKDgdQw0N9+TE+jNNtotFAG4Fnn4nqwFxjEBRDEoxxBECKV5iF7yJQNSRWGx7IQdZgBfh1q6a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JtHStRyA; arc=none smtp.client-ip=209.85.222.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="acyS8Z/R"
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-42ab03a5aeeso7044781cf.0
-        for <linux-security-module@vger.kernel.org>; Wed, 07 Feb 2024 19:18:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JtHStRyA"
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-785388b3281so59324685a.2
+        for <linux-security-module@vger.kernel.org>; Wed, 07 Feb 2024 19:18:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1707362334; x=1707967134; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1707362335; x=1707967135; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=otFcps0stZB4weUc21xAn/KKbQgQbMJ9m7dxETe93ls=;
-        b=acyS8Z/R0dIZh2wswvf1lWx1CspWtvaaeeEQnLFFQOYo/sptS81IGt/ltXbhMd2YQt
-         Wq0LYq6i0fi3JLbcKsavndaGtsRcXGmRZx8nanIx+GVfARsqkIcyQShyM3cqMWVzm3h9
-         mqAbuD5yYHRnSAOMbCUU6rgDFoqCUmlAw2czFl6mIjP0yrRP7yFYfq9PI/guxg/Nprs3
-         1calN35kgJaeeFt2L8lj/eWXaopf+l4cToJ4gv//KlshW+RN8oNZjY2hC71vfkntzb10
-         VzCew6kVKGJ4WSYW2zonsLMVtxlIjuNDCYSw81eaf84pkYnsrqvdmG15Z3jPILdScTQB
-         GQzA==
+        bh=8HbV6n5Xe+U9VQs15xw8hF94WBGgVQ6IqJUpf4t2Cj8=;
+        b=JtHStRyArAV6qXTZYie2SEnksCji8DH/VPNUvL9PJbBrnCY5PT5dBlpudfwIqKPyU0
+         JSZXEA8+V+Yybsl7AxVJdOxWP/kGIdHaxmxpQRlkL5hDSC290Z2TfN0OkTeIs3MqMm80
+         tjV4sSRK/Jd/XPIqvN8ea/JmbEyE2iDQZ2HbcRA1whA2a09LnmEO3H1RrSPwgzobnJUE
+         L9fu3EMdTdFzgy0DXJrlCk7+AvWsG6psbyQ1ZwPLZxwi6oN5Sgxpj4wZ1qLkm4t1Fs/l
+         SDjNCq7EY+OmtNwJg72N8v+ULxjvZzpXa+dbEGXfasp2+n7zaF6I+qALktENuqaR63AL
+         BrzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707362334; x=1707967134;
+        d=1e100.net; s=20230601; t=1707362335; x=1707967135;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=otFcps0stZB4weUc21xAn/KKbQgQbMJ9m7dxETe93ls=;
-        b=hcmKj7ETaq041aD78BgWAZ0kZ2jpLhMRnp5j3l1TWt6dcJwY5dgNNEXK+Szp1ChYO7
-         5NDgRg58TtrBXdGWdvT9ZDyy3PZPvOq+cnYSE2ZMLr97QrdsKVMZgYJgn9X0UgL0hYwq
-         7G0VglGLWRDpGru35nRF1lGYk1whi6aH9vOl9/92PHf9G2djOG5Xmi8y/goQnp9JFKyZ
-         IZWoIfXxme37s02I6tpNpnrE0r/nH2iPcIKx9gbHyVf4nkTNMFAIRH7EX8n20fuwHatv
-         2F5u1yQIZ4HdyqkbU1E0S+/QvWcEIgxO4gTYFJYHeWzCoqGbKMeuKcscWVQ2x3gsjz7W
-         y3kQ==
-X-Gm-Message-State: AOJu0Yy+ou/lQRNEgHZEQU5f9HgYtR9804ZBAbHg/EH/bk/cxlQSo5xw
-	RrD16Ilfcmw5M2NJI1DpAyxFi4IWmBRN3lQkZVUNfoEMUYt3VG69NbcrZpvqwg==
-X-Google-Smtp-Source: AGHT+IHFFz5/7Z/fdwdSa2FnRPas4NNB4AlHkLHQ9z8CPU0B/CZNZZq3CF3i+9gIvevWdPO2woWrDQ==
-X-Received: by 2002:a05:622a:1792:b0:42c:b22:adc9 with SMTP id s18-20020a05622a179200b0042c0b22adc9mr8878842qtk.17.1707362334418;
-        Wed, 07 Feb 2024 19:18:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX2SgqtyeXiRmraFSrm1+eGdFPAcILDt0E5xylLbpk4Pi8w1VK4WPvznufD108x+ZbDZUBSLiAYLOZ7ApTPH8K4po/ppreHz7WEwVjACdXoMMqO3PseGP/7ykN5TTJnpON+fslpE4zGsLYwOleANje1kGpMswXeREKcLFWgS75g6zxYbJqnUv/bi5JpCMW7IIzyqYHwG2gZNu+mVvjlrXLBog/82+mlPN7PM8KD/GpXhPv30Z/UZiQqMd8+GQTJUa7gd9OVrlr+8WhwM1ft0jOic2h2eT0T1pGZhzw57uy0oMm2n15wjGiBhhtuvkmyojFWSJ+778gaI76IHTlkxvQpGuu4lqGW1GxUwGWvx5VxpvHtSOy3mG7cdiLJ6yNJRzudwuY1LOYKCkyIZwSJC9eEs8uD2T7XYxKMjt68Vg2KYCyUY1+ZmhNd6WsdwayeEmpk2wDZ6vVLk6X6AeTDoiGmC0ToyJMVtPWV8znKT5cbhVddtpRHduAVJUZlAuaTl8wdb/Sl7VDzM0QDaHBQDEYi9sy9WdVRdIprMksHzvEsulbekjXa7Ttt3+jeiNuGZtyvAkK4jNUgF8gdJMSK4s0jtXEC3ezFJWihgleEqrvQ+ryyFaC333diwEVO6FrxH7uRjglu6iYshOeJPlxh0jrsMea+z7nslMo6YkAIFjIoSCbGVqb5Fl57uD9k/SipBrXILQHqQHCm7eQ+nocR6TkanmfRD4Ym+yMPzVVOO8WHqGtvXAqj/eIYT5pM9owBnDlHA//SjiC5nv4byvbO3AbMPXEJcaqNYJ8rr2H8qKyfWMhp37kWzmcSRBQRXS/RhK0sITI5lKrJGoOTE3S7sB3YfRIIKm5dp2YBDAcs+53VQcqmUdpJBPCcVVlIKJE95Id9/KYGLD2TKkZuZblCuTWhf+DuPCOeD62w/NVpXWNLveCMoIZ+
+        bh=8HbV6n5Xe+U9VQs15xw8hF94WBGgVQ6IqJUpf4t2Cj8=;
+        b=IX86gvFdFhHpDIAX31gkbd4JXw/QwEY5Smtsiryo9g9SeK8W46GF6Cfv3gN7g6zO4/
+         o7GAf8yXe1aT80031sPOY3vSu+Z5QfAzNDfK5HHAdcSYq2T035JPMmznVupAxZ3k8vME
+         PMG9FvlcVah+16M9BfxLCkKyVwv6OYeDHqspQnJIvk89nxmmlrhPNO8pRXC/TRfW7GFj
+         p8QfP430sD2dfxYpFlam3c8Zxz/P0MXDnde5QyGlzxi80r44IjpUgKXzYWTun9wYFVq0
+         B0SzxxcPBBSknXGzhjywoN70ykg2hiL1ySeJOFFu9IPjlDn9DcBf6gatszDsCI5YWkMI
+         Z9Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCV4faJIyE7xS4OcynDWm+/vvTYutRAPh989/SEZDCHtN7wfQiKR2F4+QLNUwB/u09L6Wvi6IDYfXCrECMrp7EcCKdEf+hCW1aixOI5NX8w8CZ6Ts8KI
+X-Gm-Message-State: AOJu0YwyCmcslE21HP9IQvWrut1Yy/z9iAsVguoVxCYWL+4nXSTYrBM9
+	K4ONPAr/CPak5Mnz9LBXNsfrLO/HZRgpydtrUCYmCRoIoBJzHnV0uS7Kg8C+FA==
+X-Google-Smtp-Source: AGHT+IFe+/APvbCWtvo7N2W3i0NQXu9Gs9w9JTuWRhznOkmr7yr1wYV203/mfil2cu0WaHv52vgoUQ==
+X-Received: by 2002:ae9:f409:0:b0:785:5f32:740 with SMTP id y9-20020ae9f409000000b007855f320740mr7838921qkl.39.1707362335378;
+        Wed, 07 Feb 2024 19:18:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVtN17sT+I6NFUtc9YVAcwA/4nOIepBd/awHURKOWvyqf2iOPCRYu/xZo61LlW3PhbEnlpAugC7HczUqpDrtk7am8fPE2Qoc5nUQ/6krZlIkRXgGvestiiELaxdSTnxpfY7nBv24MWpdo9LxdvsHoRbn8snPMxGOyo4EzhJs0Ev5wJS8M+DiT8VE351BE0VKs06oc2/yjcqOnsOSLj6KjmoDDeTj8lUpEdr7an/glsFlcSjYyEL/ngVvYhDUNGKR6TUV6IAqV7mw3eDfvEXjHgxYrqHvuKKUAvkJcp/Ojp/bygVXNunH7dJpdbB0YDqnpAMJV/yaOwMtvbJ2bNW4gPy5lOQk9kgFht9tMCzxHQ3t+tzVrUa/25LWHWShk38RB2KhRiH6xgBvVDhiQpBo8fep5YrMciQ7PJpD2xyPvZTVML727aa90umcYe9FqvbFUkT819euC3EJDsTAvLMSol6Y5wbdlHEV71uop/E/lKZ1d0wKYDJWQX7med93AHe46EgaqBdlUjnY+KVJNrXqeCJAvq88LIbQj3Isw2126nGqSvPEizprgpxphO27igaPJIkrb30HQh6o2NpsUjQJkRaC7/0kQ3uWs2iQgvmvO4PU/IcsqmoWquKh5yixMCUMbg5G60hQHVfedFGwQW0T/xAcE5jXAem2FFxcjPydtdiPVMIg3Ej2QZQA8XWwdGCxV/RrgX11tPEtYE9ZvPRl+9o2HzhNz4DqR+aK4ksKhL3uH9B9I8pSDMywMm7ZZDagJnrCwoa5nZaR8rAtjyS6O4FZl7+Ui8h48ysagamh/D4PPjMshNo8+GiKPGTEs3Kws9tsJTyMh1v1rnIy4J8BqmOy1fR6DlauNkcSi7uFhxBZ71752s7HaHMNzB4pm0Xpknb8R0PGYWGzhsbX2KQ44GvfMXWEs6gdD4csl2jHSmhmAc19LlA
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id g3-20020ac84803000000b00429bd898838sm1062943qtq.47.2024.02.07.19.18.53
+        by smtp.gmail.com with ESMTPSA id l5-20020ae9f005000000b00783d75b2335sm1071913qkg.11.2024.02.07.19.18.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 07 Feb 2024 19:18:54 -0800 (PST)
-Date: Wed, 07 Feb 2024 22:18:53 -0500
-Message-ID: <4e96a5f2552a51e386f327689f64dae0@paul-moore.com>
+Date: Wed, 07 Feb 2024 22:18:54 -0500
+Message-ID: <1c6b3d9d21242d63937668e8cbfb3c75@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -66,52 +67,65 @@ Content-Transfer-Encoding: 8bit
 From: Paul Moore <paul@paul-moore.com>
 To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v9 22/25] evm: Move to LSM infrastructure
-References: <20240115181809.885385-23-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20240115181809.885385-23-roberto.sassu@huaweicloud.com>
+Subject: Re: [PATCH v9 23/25] evm: Make it independent from 'integrity' LSM
+References: <20240115181809.885385-24-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20240115181809.885385-24-roberto.sassu@huaweicloud.com>
 
 On Jan 15, 2024 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
 > 
-> As for IMA, move hardcoded EVM function calls from various places in the
-> kernel to the LSM infrastructure, by introducing a new LSM named 'evm'
-> (last and always enabled like 'ima'). The order in the Makefile ensures
-> that 'evm' hooks are executed after 'ima' ones.
-
-Let's add a comment to the Makefile about this so everyone knows not
-to mix up the ordering, otherwise this looks good to me.
-
-At some point I think we may want to introduce the concept of numerical
-priorities to security_add_hooks() to add some additional granularity
-beyond the LSM_ORDER_XXX priority, but that is something we can do
-later.
-
-Acked-by: Paul Moore <paul@paul-moore.com>
-
-> Make EVM functions as static (except for evm_inode_init_security(), which
-> is exported), and register them as hook implementations in init_evm_lsm().
-> Also move the inline functions evm_inode_remove_acl(),
-> evm_inode_post_remove_acl(), and evm_inode_post_set_acl() from the public
-> evm.h header to evm_main.c.
+> Define a new structure for EVM-specific metadata, called evm_iint_cache,
+> and embed it in the inode security blob. Introduce evm_iint_inode() to
+> retrieve metadata, and register evm_inode_alloc_security() for the
+> inode_alloc_security LSM hook, to initialize the structure (before
+> splitting metadata, this task was done by iint_init_always()).
 > 
-> Unlike before (see commit to move IMA to the LSM infrastructure),
-> evm_inode_post_setattr(), evm_inode_post_set_acl(),
-> evm_inode_post_remove_acl(), and evm_inode_post_removexattr() are not
-> executed for private inodes.
+> Keep the non-NULL checks after calling evm_iint_inode() except in
+> evm_inode_alloc_security(), to take into account inodes for which
+> security_inode_alloc() was not called. When using shared metadata,
+> obtaining a NULL pointer from integrity_iint_find() meant that the file
+> wasn't in the IMA policy. Now, because IMA and EVM use disjoint metadata,
+> the EVM status has to be stored for every inode regardless of the IMA
+> policy.
 > 
-> Finally, add the LSM_ID_EVM case in lsm_list_modules_test.c
+> Given that from now on EVM relies on its own metadata, remove the iint
+> parameter from evm_verifyxattr(). Also, directly retrieve the iint in
+> evm_verify_hmac(), called by both evm_verifyxattr() and
+> evm_verify_current_integrity(), since now there is no performance penalty
+> in retrieving EVM metadata (constant time).
+> 
+> Replicate the management of the IMA_NEW_FILE flag, by introducing
+> evm_post_path_mknod() and evm_file_release() to respectively set and clear
+> the newly introduced flag EVM_NEW_FILE, at the same time IMA does. Like for
+> IMA, select CONFIG_SECURITY_PATH when EVM is enabled, to ensure that files
+> are marked as new.
+> 
+> Unlike ima_post_path_mknod(), evm_post_path_mknod() cannot check if a file
+> must be appraised. Thus, it marks all affected files. Also, it does not
+> clear EVM_NEW_FILE depending on i_version, but that is not a problem
+> because IMA_NEW_FILE is always cleared when set in ima_check_last_writer().
+> 
+> Move the EVM-specific flag EVM_IMMUTABLE_DIGSIG to
+> security/integrity/evm/evm.h, since that definition is now unnecessary in
+> the common integrity layer.
+> 
+> Finally, switch to the LSM reservation mechanism for the EVM xattr, and
+> consequently decrement by one the number of xattrs to allocate in
+> security_inode_init_security().
 > 
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->  fs/attr.c                                     |   2 -
->  fs/posix_acl.c                                |   3 -
->  fs/xattr.c                                    |   2 -
->  include/linux/evm.h                           | 113 -----------------
->  include/uapi/linux/lsm.h                      |   1 +
->  security/integrity/evm/evm_main.c             | 118 +++++++++++++++---
->  security/security.c                           |  43 ++-----
->  .../selftests/lsm/lsm_list_modules_test.c     |   3 +
->  8 files changed, 116 insertions(+), 169 deletions(-)
+>  include/linux/evm.h                   |  8 +--
+>  security/integrity/evm/Kconfig        |  1 +
+>  security/integrity/evm/evm.h          | 19 +++++++
+>  security/integrity/evm/evm_crypto.c   |  4 +-
+>  security/integrity/evm/evm_main.c     | 76 ++++++++++++++++++++-------
+>  security/integrity/ima/ima_appraise.c |  2 +-
+>  security/integrity/integrity.h        |  1 -
+>  security/security.c                   |  4 +-
+>  8 files changed, 83 insertions(+), 32 deletions(-)
+
+Acked-by: Paul Moore <paul@paul-moore.com>
 
 --
 paul-moore.com
