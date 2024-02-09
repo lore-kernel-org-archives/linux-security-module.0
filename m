@@ -1,154 +1,105 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AA378B4D
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Feb 2024 14:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5661D664A3;
+	Fri,  9 Feb 2024 09:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707402511; cv=none; b=AUDEwicidGAICQbUw5BzKWHQi5TgtRKvAroWqW76a9qPj7s0oeAOyi5dVrrQQy/m+JKfHhvXHGlH6SOsWxKRiYci9awADhsi/V9hgIaKRKBwhEj3ioF+MUkYjosVDc1nKVrvDh/xQOwmW2J8hnscCYKYVcujbmoefRF8GuJbczs=
+	t=1707471945; cv=none; b=pS5Mvjvmw42xxt76g31zwX9gFTw1lscqNe0sXV0+06U7an3rvG1rrRW7ABxeBQ9Mn39s6SKtf3rVZ3E4TRdQRjO+V0A/XdsI9eMGm3mAvm/1uiFoYV9GnYdIrngPSnH0aBo2063+4GU5D7lgFay1vhPWS4kZmP6VmmChF2q/48E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707402511; c=relaxed/simple;
-	bh=xPJxCtMIHPqfKZM5PHFmK17d0/dTW8HPx+GKoJoBaWM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kvBBMt8sdNDZg6sRkJUSBZRT0zUhMBTgOAYyGUEwDrlI2gIe0R60l/XWZ97E0TGUaRyZKeoVRN532dpiQJjVmUjVGOfA2wggeVWDpAigow7gIwSMdPnquXH/1cZheJojJKhkcbEMywHyPUbjupJtHj94TfXDEypYJFv/k7TgqwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cz02k/Xz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1707471945; c=relaxed/simple;
+	bh=XTXqRfUyPr9yWhoo/YdxJVLsEINDyd7wbqRVK/40Huo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M2t1mSVwSmdoKyzvwIT3dqgLAJ9TNILgFCzEIwYtib8i/z/hpjAVK/nY1TaEUdt327CMlTJfnwodVct1K974ICNcQLm+nZXSlBftt32GVDc5AOL6uuBrTrHYEaFzoJWxLP0FPR93Xi7kB3n1jacTcxrvRvRIgp/TY3TjDOSTR/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gV5hsKuy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cz02k/Xz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1707402508;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=74WiF3KyvUKOTQcEC2aP6vHhzzlhPjVl2ZNugP1o30c=;
-	b=cz02k/Xz1RY7t6l8zAwz+aocGQnG5IC43oE09PTWN6hLo21jm27ELKh/UYSAuWLqn3NuDX
-	f1ErVlR2V3gfwN11S1AAxsgafJxn/H1noMubXbKaXh0kMZOsoU13T/1XF6F78N/EMIlROk
-	aXu1YuEWmcfKAsdPiqd8jq5jw+buN+A=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-103-nVowiZcMO1eRGBHXrslfBg-1; Thu, 08 Feb 2024 09:28:27 -0500
-X-MC-Unique: nVowiZcMO1eRGBHXrslfBg-1
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-5dc148f91faso1888680a12.0
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Feb 2024 06:28:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707402505; x=1708007305;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=74WiF3KyvUKOTQcEC2aP6vHhzzlhPjVl2ZNugP1o30c=;
-        b=MOBCSR0Oubg2QQU1Aa4c2zXzyByhqi7KXgOgluymoP/Sktk4OC5vTC2XI9QxzZo0kY
-         zZmfg9y8kLMbrxek9d6+ugpuewO7oufuvl2KuZ1IseJQm0V0KQQzNW93dsqL2QYswsRb
-         PhYp1PQkcPnTpBs4EZWC+3+aS3cOQmuox7vrTO6vPOpIDFEQJNsoSLCRi45uWGB7v9E4
-         uztDfD/3p8Um1HC05qrm8GcqByBwllNL2+Lv2JNiDLHECOSsrQRY171GcmpNBqApqidg
-         gxWtJoYqlZHKfsR2NeZOgbcqY6SYU0YQYIK1QYrMEE5FSen1sFmTSgGlQSB4MW29q3um
-         Ur4Q==
-X-Gm-Message-State: AOJu0YwP2/j6BvWGKJywcJaPik1z1arssA7csT4LrPuIGRZsoAYo9Hwb
-	Ic37ls4Gin02tfkkkwz4kfLOUI5YnBs65hr+s1aDYO83ath4t2nsBHN3Z7RMXRIajpI2kGqQNJT
-	1xCzB5o3udGTehMPk3+PbP4jR2OnW66FC4gLyrmPEwthgH+0qmfMF4Pt2ipYBm7PMbjfpsiusuh
-	KkTtWUxawDBheq29m1DgKf8xKsn/8qNG/kOy33/us71fGOtbUetBulz2on/rE=
-X-Received: by 2002:a05:6a21:625:b0:19e:aaba:a6a5 with SMTP id ll37-20020a056a21062500b0019eaabaa6a5mr3069363pzb.40.1707402504965;
-        Thu, 08 Feb 2024 06:28:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGF2LGd/KxdCok0kT6RXYLD9byfDnzFAZn3yokoQhEBDz3MkBqU1AXNrEP/sKdKrm7sB8NR/C68BAnornfLA2Q=
-X-Received: by 2002:a05:6a21:625:b0:19e:aaba:a6a5 with SMTP id
- ll37-20020a056a21062500b0019eaabaa6a5mr3069343pzb.40.1707402504572; Thu, 08
- Feb 2024 06:28:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gV5hsKuy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2B33C433F1;
+	Fri,  9 Feb 2024 09:45:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707471944;
+	bh=XTXqRfUyPr9yWhoo/YdxJVLsEINDyd7wbqRVK/40Huo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gV5hsKuy6kT4l1bW8GZQNbBAOcQ5vrq9TCkNC4UkHaVG8K5YdmTb7Rljqylfgd5b+
+	 2s9p+kfOyecmgRJzJG7s/swPntcVrYHyLfgg9BacyhQ5j85Tbc/Srp5jtabGK3h/jv
+	 di2qzjjAy1T5Yy5qimr+TqM+cee7u3/ZVQz46v9ijl/vslb531JM+z/Q6PE1iNRF2D
+	 a13Rt/M+jVUdTAdXGsZTaFn8piYBphLPWfDe53a+UOTDl2CJlzrvKDBinuwO9V9MTc
+	 JG22L/hmv3iJll4DQE3t+L9z9dt0K0IQnQB9gqAFiprn4ZZxO3fVQcPH+FiWTW/IvQ
+	 pFSSNKDpbPo0g==
+Date: Fri, 9 Feb 2024 10:45:35 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: viro@zeniv.linux.org.uk, chuck.lever@oracle.com, jlayton@kernel.org, 
+	neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, 
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org, 
+	stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, shuah@kernel.org, 
+	mic@digikod.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Stefan Berger <stefanb@linux.ibm.com>
+Subject: Re: [PATCH v9 21/25] ima: Move IMA-Appraisal to LSM infrastructure
+Message-ID: <20240209-chancenreich-albatros-4dad750ab5f8@brauner>
+References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
+ <20240115181809.885385-22-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFqZXNu2V-zV2UHk5006mw8mjURdFmD-74edBeo-7ZX5LJNXag@mail.gmail.com>
- <41edca542d56692f4097f54b49a5543a81dea8ae.camel@kernel.org> <CAFqZXNv0e9JTd6EtB4F50WkZzNjY7--Rv6U1185dw0gS_UYf9A@mail.gmail.com>
-In-Reply-To: <CAFqZXNv0e9JTd6EtB4F50WkZzNjY7--Rv6U1185dw0gS_UYf9A@mail.gmail.com>
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Thu, 8 Feb 2024 15:28:13 +0100
-Message-ID: <CAFqZXNs7wG7dwSV=h_1DWBjW5QDCHcK=XPFUoNOR6hbsbAgZ_A@mail.gmail.com>
-Subject: Re: Calls to vfs_setlease() from NFSD code cause unnecessary
- CAP_LEASE security checks
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-nfs <linux-nfs@vger.kernel.org>, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>, 
-	Linux Security Module list <linux-security-module@vger.kernel.org>, 
-	SElinux list <selinux@vger.kernel.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240115181809.885385-22-roberto.sassu@huaweicloud.com>
 
-On Fri, Feb 2, 2024 at 5:31=E2=80=AFPM Ondrej Mosnacek <omosnace@redhat.com=
-> wrote:
->
-> On Fri, Feb 2, 2024 at 5:08=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
-rote:
-> >
-> > On Fri, 2024-02-02 at 16:31 +0100, Ondrej Mosnacek wrote:
-> > > Hello,
-> > >
-> > > In [1] a user reports seeing SELinux denials from NFSD when it writes
-> > > into /proc/fs/nfsd/threads with the following kernel backtrace:
-> > >  =3D> trace_event_raw_event_selinux_audited
-> > >  =3D> avc_audit_post_callback
-> > >  =3D> common_lsm_audit
-> > >  =3D> slow_avc_audit
-> > >  =3D> cred_has_capability.isra.0
-> > >  =3D> security_capable
-> > >  =3D> capable
-> > >  =3D> generic_setlease
-> > >  =3D> destroy_unhashed_deleg
-> > >  =3D> __destroy_client
-> > >  =3D> nfs4_state_shutdown_net
-> > >  =3D> nfsd_shutdown_net
-> > >  =3D> nfsd_last_thread
-> > >  =3D> nfsd_svc
-> > >  =3D> write_threads
-> > >  =3D> nfsctl_transaction_write
-> > >  =3D> vfs_write
-> > >  =3D> ksys_write
-> > >  =3D> do_syscall_64
-> > >  =3D> entry_SYSCALL_64_after_hwframe
-> > >
-> > > It seems to me that the security checks in generic_setlease() should
-> > > be skipped (at least) when called through this codepath, since the
-> > > userspace process merely writes into /proc/fs/nfsd/threads and it's
-> > > just the kernel's internal code that releases the lease as a side
-> > > effect. For example, for vfs_write() there is kernel_write(), which
-> > > provides a no-security-check equivalent. Should there be something
-> > > similar for vfs_setlease() that could be utilized for this purpose?
-> > >
-> > > [1] https://bugzilla.redhat.com/show_bug.cgi?id=3D2248830
-> > >
-> >
-> > Thanks for the bug report!
-> >
-> > Am I correct that we only want to do this check when someone from
-> > userland tries to set a lease via fcntl? The rest of the callers are al=
-l
-> > in-kernel callers and I don't think we need to check for any of them. I=
-t
-> > may be simpler to just push this check into the appropriate callers of
-> > generic_setlease instead.
-> >
-> > Hmm now that I look too...it looks like we aren't checking CAP_LEASE on
-> > filesystems that have their own ->setlease operation. I'll have a look
-> > at that soon too.
->
-> I did briefly check this while analyzing the issue and all of the
-> setlease fops implementations seemed to be either simple_nosetlease()
-> or some wrappers around generic_setlease(), which should both be OK.
-> But it can't hurt to double-check :)
+On Mon, Jan 15, 2024 at 07:18:05PM +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> A few additional IMA hooks are needed to reset the cached appraisal
+> status, causing the file's integrity to be re-evaluated on next access.
+> Register these IMA-appraisal only functions separately from the rest of IMA
+> functions, as appraisal is a separate feature not necessarily enabled in
+> the kernel configuration.
+> 
+> Reuse the same approach as for other IMA functions, move hardcoded calls
+> from various places in the kernel to the LSM infrastructure. Declare the
+> functions as static and register them as hook implementations in
+> init_ima_appraise_lsm(), called by init_ima_lsm().
+> 
+> Also move the inline function ima_inode_remove_acl() from the public ima.h
+> header to ima_appraise.c.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  fs/attr.c                             |  2 -
+>  include/linux/ima.h                   | 55 ---------------------------
+>  security/integrity/ima/ima.h          |  5 +++
+>  security/integrity/ima/ima_appraise.c | 38 +++++++++++++-----
+>  security/integrity/ima/ima_main.c     |  1 +
+>  security/security.c                   | 13 -------
+>  6 files changed, 35 insertions(+), 79 deletions(-)
+> 
+> diff --git a/fs/attr.c b/fs/attr.c
+> index 221d2bb0a906..38841f3ebbcb 100644
+> --- a/fs/attr.c
+> +++ b/fs/attr.c
+> @@ -17,7 +17,6 @@
+>  #include <linux/filelock.h>
+>  #include <linux/security.h>
+>  #include <linux/evm.h>
+> -#include <linux/ima.h>
+>  
+>  #include "internal.h"
+>  
+> @@ -503,7 +502,6 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
+>  	if (!error) {
+>  		fsnotify_change(dentry, ia_valid);
+>  		security_inode_post_setattr(idmap, dentry, ia_valid);
+> -		ima_inode_post_setattr(idmap, dentry, ia_valid);
+>  		evm_inode_post_setattr(idmap, dentry, ia_valid);
+>  	}
 
-To close the loop here - there is now a fix from Jeff in linux-next:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/=
-?id=3D7b8001013d720c232ad9ae7aae0ef0e7c281c6d4
-
-Thank you, Jeff, for taking care of it!
-
---=20
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
-
+Acked-by: Christian Brauner <brauner@kernel.org>
