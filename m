@@ -1,58 +1,59 @@
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716EE364C7
-	for <linux-security-module@vger.kernel.org>; Sat, 10 Feb 2024 11:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E68436AF8
+	for <linux-security-module@vger.kernel.org>; Sat, 10 Feb 2024 11:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707563184; cv=none; b=DBV0jP/cUFZ1fV92HiUXPl1UMkiyKFs0l1BWJC5PlVHYCpt/3aE6iW1GIaRHd4NZKHI6+j+ctqVz5+JeyWcKxFAVrHrLe5ue9nZS+RgI88ujWWrLrsGtHqkphYbiBnplSdZpqXXl5c/+2J90BefezXBdfQGTfKNIdJOLycac21Y=
+	t=1707563892; cv=none; b=sbyluw5EADpDpvGPDCdYJnpCYuNke3LpIBb/Q7X4SkkGjJtqYVIClaoxQ7KyQKP7RFs1eTUCdLo8/W5QBJU9AkWV0xIjuvL0RZ6ixIXchzYNp5eRFbqfafafy040G28EA7npKH6yq9ftj/oX3vTDqdwczsiypTPoQD/h1TwlfwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707563184; c=relaxed/simple;
-	bh=q6R9Dxp9XzRCAe3AIXlnKvr1MTND2zL+bYegg47mQio=;
+	s=arc-20240116; t=1707563892; c=relaxed/simple;
+	bh=hpaogRASeaerEXW2Mr8N5pJ2g4Gmz0Y+obiEU2b1g9s=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=T5yQfuYk6sVL73gMm1q6Gtrt4/2eT98EmLzjL/JTTyQZYqgfE/NI5ld/mjdxIgunJkb4rd2zwFKrT0KilAqnIhubA3toso4O3NSpFB/+yw2/81KUYqP18I5ksVfK85EfOwL5XOXcoQSD2PZMd3r1BpTkbSZjgXPS0UtpKtx5S3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TfNKM3Vk; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=aOojkqXHeI4k0UgquYAiMX4NDIC3xanheZZyZWyOF5P9o9yJSov3o4ZsnxFj5UQxHVHtL31dF6wWkXjWYK67mBRlE1N9L8OUHfRARd5TMMSFCqiCuYagBOyLNgGILQE9EJ3DMwCMMQRCSmHpoYHo02Fo17lr7T2VzAXjDECbkZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WuuvAB+D; arc=none smtp.client-ip=209.85.218.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TfNKM3Vk"
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6047fed0132so28540727b3.1
-        for <linux-security-module@vger.kernel.org>; Sat, 10 Feb 2024 03:06:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WuuvAB+D"
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a2b068401b4so213824466b.1
+        for <linux-security-module@vger.kernel.org>; Sat, 10 Feb 2024 03:18:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1707563182; x=1708167982; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1707563889; x=1708168689; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KInMdzVeBDmgosyWgBjsNcCjnvmlynJbWBwpS6R9HwI=;
-        b=TfNKM3VkYBuVCCk+AEgGeLaC/rQJcJanCrGOTWw+gFADczMIm28BIjdeOaH6CU0JU3
-         Ha1BQdI9arj2xpx4M5D+Qi6gII0eKM6alUWcZPM1A8Thd9R4TkqT2um+UbnzARcmyLsH
-         zuvcFOQgYq8+Tq1wDDQKKX632UFcs+CXE8DZeZxcvZxFtJMWpcj1ucRlWXlyFmhvDRfe
-         bkFF8CkdvJfCzypXhsAfXQiH9SfCjktxOzgipa7kNK/Pup5MokkgnBNJFElN6cV9FbLG
-         UdFJIwdwvsPB7nH7PTGeep4RXaCGIAGLkHpZRonMuQ1Xxn8GJXj/J4Lbf9zBcTrUa6xf
-         WMHA==
+        bh=tBImuqEGB7LJBBmrsv4s/EmFpB3s96Gxvwonty/osts=;
+        b=WuuvAB+DDPESdYeOuN2oDL6jj+8WSPg461XVkqglutog62k5BL2tLLbFesgnN2G2mh
+         y1KIEJImnEKPn8DbaiXUK9x6wOReWE77HTaf1M2lmnn1SagMpPfQ1gOlYFs+a4pVy/c+
+         nsJJCda3PACwUr0Ppaxi9GcIHR5Jmju89jbFd+Tj0aWK9fPn0UB9sGBz+rv69GF2G3n5
+         w2KacI2UdpSsVR/RqbrJItzL4tje3htIZ5ESCLP09xtjZx5ogAPW0azF4XlMcHGz0spL
+         1bLdd26s9J4oOHfezSbOhGnLeZRnZ0w5fpAkHrYuEzvrMiH6k0GND5kA8ABU/Agh2CNo
+         s66A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707563182; x=1708167982;
+        d=1e100.net; s=20230601; t=1707563889; x=1708168689;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=KInMdzVeBDmgosyWgBjsNcCjnvmlynJbWBwpS6R9HwI=;
-        b=AwtsDZuDu6oS0GvkybCwi5Lw+K/AUUtuuwg3CWWJ1Q6iEvc9DahPs/xl2HgdOH+Jqz
-         44PGSO6zdVfUvlngo9jAvrX+s3jmCc8eX7k23M4nlTQxoTzUvEWb7CmfckowCK0Prot7
-         i9xcsiPLPJ8F8jXupIgA4JBlY3hSYopFaQQy2OYPfcuZ7F0zoFbLgiiXahvMmWJyBUj9
-         4ZqKFDIouxNuYlUooEZE5rwgBhOTIKNBI4tUmDFBTNotl7jDKAEQocce4wfJ6JipUHW1
-         yljxT8Ng/3lmYRCRlYKYSJ2HbI2zlqryuyx5U3mj9WnyELvOhK1ogDukSuxF5J6ssZNS
-         qwdQ==
-X-Gm-Message-State: AOJu0YywS83cLrq/baf0fv25oMAtmOQGIgqySny/1w3YP+pyHrv294Pk
-	YuGLHaBKpQGek41Em5dQUd3/BODtAt4AhHRdHfNzHZEVX6JMmf5BP+HRg+b0C11qCMY999+bIUz
-	fsQ==
-X-Google-Smtp-Source: AGHT+IFuOodpxJBLEifNcMokBGsEGZaB6PYGGbO766bXy0w9xeo7yCX85IJAKKx8+Dxhi/AKzVejoYF62Ic=
+        bh=tBImuqEGB7LJBBmrsv4s/EmFpB3s96Gxvwonty/osts=;
+        b=ahQ9Ows/78Jey9BiS5OkeGVCpN7PvCI4OVONDjOtrCwyxSO8euKAnkflIEpK6FYXG2
+         TThiP7wcZnEPVKT9sJEfVDUvV3w2ntWksNr3FWUjx8Ue11lQ8huqMY36F/VmTXaaa0oP
+         9r/Lub2jXMDg3Y0vsinawwzaouMuoHBfLKOVJ6oIoVBv0Sl99zuxF+DKcqpQkAAe+oml
+         9GKHTRRLj0HyJL6xQagn2hqm2L99+x7v50yEAW1NuujdmQxKB5DHBM2poYxbwF0hu2kU
+         ccFL8LrMKDbP6R5f4X9pWd6TZ2L8T3jdXa4SjOJIgQcMScCH/WWamIsY2/tNwmIAiAYJ
+         wn4g==
+X-Gm-Message-State: AOJu0Yy3F/9SJLHSsiRBORq7ub7YQThbvnstQPRBnnV0Vm1ornOUkmAR
+	9GpaGgo5O6HMQp593++fm1GL/EuJZa8ROMLmAaWH2rg2ShnBvj6JfqFn1PE+YW879GZHnO/XzUR
+	y81VRBBbYBbHEN7mxozPMqea+FwmlkcUVSmAbHLdzwvnScasuPZ/zG5H79ys6uQORi2H1ATcPfA
+	zJstUb2n78m6svXh+K8r9iVIkzC/2H8tznn6UlS8s3nYdImpEj9rl0
+X-Google-Smtp-Source: AGHT+IEIu1NEf08aJQbPTZgUIvK8xDlF7ynnpNJc9602vhH3JzWqtj7SVVFOjRSv3ez0dZXExRRG2xmJuF4=
 X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:8d33:f17c:2f0b:c8d9])
- (user=gnoack job=sendgmr) by 2002:a05:6902:1148:b0:dc7:57aa:d8f7 with SMTP id
- p8-20020a056902114800b00dc757aad8f7mr34401ybu.10.1707563182477; Sat, 10 Feb
- 2024 03:06:22 -0800 (PST)
-Date: Sat, 10 Feb 2024 12:06:20 +0100
+ (user=gnoack job=sendgmr) by 2002:a17:907:c289:b0:a3c:4b73:e3cd with SMTP id
+ tk9-20020a170907c28900b00a3c4b73e3cdmr1256ejc.7.1707563888904; Sat, 10 Feb
+ 2024 03:18:08 -0800 (PST)
+Date: Sat, 10 Feb 2024 12:18:06 +0100
 In-Reply-To: <20240209170612.1638517-2-gnoack@google.com>
-Message-Id: <ZcdYrJfhiNEtqIEW@google.com>
+Message-Id: <ZcdbbkjlKFJxU_uF@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -62,88 +63,67 @@ Mime-Version: 1.0
 References: <20240209170612.1638517-1-gnoack@google.com> <20240209170612.1638517-2-gnoack@google.com>
 Subject: Re: [PATCH v9 1/8] landlock: Add IOCTL access right
 From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-security-module@vger.kernel.org, 
-	"=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>, Christian Brauner <brauner@kernel.org>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+To: linux-security-module@vger.kernel.org, 
+	"=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
+Cc: Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
 	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
 	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello Arnd!
-
 On Fri, Feb 09, 2024 at 06:06:05PM +0100, G=C3=BCnther Noack wrote:
-> Introduces the LANDLOCK_ACCESS_FS_IOCTL access right
-> and increments the Landlock ABI version to 5.
->
-> [...]
->
 > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
 > index 73997e63734f..84efea3f7c0f 100644
 > --- a/security/landlock/fs.c
 > +++ b/security/landlock/fs.c
-> +/**
-> + * get_required_ioctl_access(): Determine required IOCTL access rights.
-> + *
-> + * @cmd: The IOCTL command that is supposed to be run.
-> + *
-> + * Any new IOCTL commands that are implemented in fs/ioctl.c's do_vfs_io=
-ctl()
-> + * should be considered for inclusion here.
-> + *
-> + * Returns: The access rights that must be granted on an opened file in =
-order to
-> + * use the given @cmd.
-> + */
-> +static __attribute_const__ access_mask_t
-> +get_required_ioctl_access(const unsigned int cmd)
-> +{
-> +	switch (cmd) {
+> @@ -1333,7 +1520,9 @@ static int hook_file_open(struct file *const file)
+>  {
+>  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {};
+>  	access_mask_t open_access_request, full_access_request, allowed_access;
+> -	const access_mask_t optional_access =3D LANDLOCK_ACCESS_FS_TRUNCATE;
+> +	const access_mask_t optional_access =3D LANDLOCK_ACCESS_FS_TRUNCATE |
+> +					      LANDLOCK_ACCESS_FS_IOCTL |
+> +					      IOCTL_GROUPS;
+>  	const struct landlock_ruleset *const dom =3D get_current_fs_domain();
+> =20
+>  	if (!dom)
+> @@ -1375,6 +1564,16 @@ static int hook_file_open(struct file *const file)
+>  		}
+>  	}
+> =20
+> +	/*
+> +	 * Named pipes should be treated just like anonymous pipes.
+> +	 * Therefore, we permit all IOCTLs on them.
+> +	 */
+> +	if (S_ISFIFO(file_inode(file)->i_mode)) {
+> +		allowed_access |=3D LANDLOCK_ACCESS_FS_IOCTL |
+> +				  LANDLOCK_ACCESS_FS_IOCTL_RW |
+> +				  LANDLOCK_ACCESS_FS_IOCTL_RW_FILE;
+> +	}
+> +
 
-  [...]
+Hello Micka=C3=ABl, this "if" is a change I'd like to draw your attention
+to -- this special case was necessary so that all IOCTLs are permitted
+on named pipes. (There is also a test for it in another commit.)
 
-> +	case FIONREAD:
+Open questions here are:
 
-Hello Arnd!  Christian Brauner suggested at FOSDEM that you would be a
-good person to reach out to regarding this question -- we would
-appreciate if you could have a short look! :)
+ - I'm a bit on the edge whether it's worth it to have these special
+   cases here.  After all, users can very easily just permit all
+   IOCTLs through the ruleset if needed, and it might simplify the
+   mental model that we have to explain in the documentation
 
-Context: This patch set lets processes restrict the use of IOCTLs with
-the Landlock LSM.  To make the use of this feature more practical, we
-are relaxing the rules for some common and harmless IOCTL commands,
-which are directly implemented in fs/ioctl.c.
+ - I've put the special case into the file open hook, under the
+   assumption that it would simplify the Landlock audit support to
+   have the correct rights on the struct file.  The implementation
+   could alternatively also be done in the ioctl hook. Let me know
+   which one makes more sense to you.
 
-The IOCTL command in question is FIONREAD: fs/ioctl.c implements
-FIONREAD directly for S_ISREG files, but it does call the FIONREAD
-implementation in the VFS layer for other file types.
-
-The question we are asking ourselves is:
-
-* Can we let processes safely use FIONREAD for all files which get
-  opened for the purpose of reading, or do we run the risk of
-  accidentally exposing surprising IOCTL implementations which have
-  completely different purposes?
-
-  Is it safe to assume that the VFS layer FIONREAD implementations are
-  actually implementing FIONREAD semantics?
-
-* I know there have been accidental collisions of IOCTL command
-  numbers in the past -- Hypothetically, if this were to happen in one
-  of the VFS implementations of FIONREAD, would that be considered a
-  bug that would need to get fixed in that implementation?
-
-
-> +	case FIOQSIZE:
-> +	case FIGETBSZ:
-> +		/*
-> +		 * FIONREAD returns the number of bytes available for reading.
-> +		 * FIONREAD returns the number of immediately readable bytes for
-> +		 * a file.
-
-(Oops, repetitive doc, probably mis-merged.  Fixing it in next version.)
-
+BTW, named UNIX domain sockets can apparently not be opened with open() and
+therefore they don't hit the LSM file_open hook.  (It is done with the BSD
+socket API instead.)
 
 Thanks!
 =E2=80=94G=C3=BCnther
