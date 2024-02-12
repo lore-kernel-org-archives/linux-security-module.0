@@ -1,105 +1,264 @@
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D46D4DA04
-	for <linux-security-module@vger.kernel.org>; Mon, 12 Feb 2024 21:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66074D584
+	for <linux-security-module@vger.kernel.org>; Mon, 12 Feb 2024 22:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707772633; cv=none; b=odimNl6FS8lZdUPU0DYk9kwiuYg2OOF93A4e8150d1ouNIGPlA5heJT9ZvcgkcpljCD4NVRhG+otPHC6h1g8oEzybAtGStDcLUwfT0y1fkXEJhll7aZbf+ZtuZCOh6RMw+NCoq9604AZdiCmmj5pmjWDQ/awDcRSoztn1NOlvnA=
+	t=1707775865; cv=none; b=GnhYMdUwrZrjsFaIBI//CeH5Tb7+yZ0yA8V/dXLtVjFoKDxxdeY13yu+micd287Je9SRydfsZm7CZ6fuCgRWX2i5zAd/hBHeYRnva0a1Ilbr8HstbDrNQrtHD96IEDmXQu61XbKvJXg6uRVA1/bB56/MnUplAEgFpEfFaOKqeKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707772633; c=relaxed/simple;
-	bh=sKyYv3h5LS/Xc+JkhqC/7H32Ejapjycaf0b1D5xsxdY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kxp71QszmfWYlGneJMsc4cJBEeYdiWIveRswJvETjIUUm45T2ER9sy7xA2r6wv1+BYgsDQefCow7P2ABaDRvh2GcH3AmDygHq6ltEMzK3RWgRYxGaC6zzMDFSyjogkXIQ7iEVuZYCUtOa6oYkYIQR8M3naDrVKp8xNdANeunPsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aXaB4ioj; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1707775865; c=relaxed/simple;
+	bh=9pFi49LPOH4JpcaJE6HqyBblmZ554R3zkdMU3FWm00E=;
+	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
+	 To:Cc:Content-Type; b=a2lp3tlL1YD2rRnQD0yViZ/2rIFfdN4jk/8RprD+noCZpqMZBwlffk6OTytN8x/hu9fZBl/LW0YQC1YHnAi6EL3LWWeR5Qnah4K81HXWofLumzdq/iJ5e6PPswdwigwryFAj2YMFJfsVkEGZaO5xdKyuQX9jPSyH7UpKmCVfoUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eH1R7zfX; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aXaB4ioj"
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6077444cb51so5954667b3.1
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Feb 2024 13:17:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eH1R7zfX"
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5611e1da4c6so2421063a12.1
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Feb 2024 14:11:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1707772630; x=1708377430; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1707775862; x=1708380662; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZsnFwrkSPFxLZoShd+G+bJFEOcLvvtQSuD3i6JLjUWA=;
-        b=aXaB4iojMUi4axEelhZ0stCsfoeKjXkqyvnfbZrFMOcXTy3lf8VtkFY2Ko0RCxA8hK
-         gUOqXp9eCWzlicRERGuZaZIrFN3wWQn1ZdWqtOkFPlaofdV/+HODU8yTjxURHdlFqtLv
-         ZLO7i2Hdcr3WEQAjn7Qo3jo6Dh1fnT7Ju+gGTnMTUEW1Lq3b+GAmGjkBLvTcyNsb7IvX
-         C9X4aDlG/kdcKibBXcjX14+uys8CEASKUh7LIF5o1Eddxy2q+ucLTtVrCoHVOmmNl6pL
-         wO0CWg7c5gxyx8NczGZwqKRgGSDYgUCPFjEjc2NIjT43UEFxYtnTeKv4KEY/kly5y2Il
-         CPqA==
+        bh=xkEZInmn90xNLy467bdVGct4TJlQkx9R/tPBb/Eq5sI=;
+        b=eH1R7zfXO6r1H9YNlXvJOvZ4vJp8OQNY4cqBQRj7QDPpehQj1GrCgWfKIqwpM0WcS3
+         VZFgV1RdsfPQKCzshWda34RJtGcWlxMVtLKXE3moZKXOzROUu3uevFjrT/PmHVb6z8nc
+         eHKv76PRqCOpVxIBBPc6hnfDl/wbnSw/jtPfEmELHzB/FwUZJqW1D7oC50udrtTvcPl4
+         kCCG7TzWOKEnpAh445MQMKUqiK+fJUAJh/blnxwIxjy6c6N0DOuCkNqZKKKiVNq8wFU2
+         dOBRBWnylqD9/ooSLMbqdl4jWoBRTnJIMOHEpKyEyuuC4lsVVEbUtvy9/o29QhM7N06V
+         XtAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707772630; x=1708377430;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZsnFwrkSPFxLZoShd+G+bJFEOcLvvtQSuD3i6JLjUWA=;
-        b=MUE5l9ZCAZo4PwAAzTsWZDZKtWKZnuZ5z8thflJXbeMSXSOftvjYEepTccXGTbuyuB
-         I82E/+D0uguglJAdBngwqc+Uh4JTZVR+Qy+Jlvf69YKCaKlrzmiCVv/HBToaGzW+pUDR
-         /WYl7lXHhfYUluMJZ7HSO4vg7QoolzxnWp3nmGbbR5JbNRkdwIWdy1inxS0Tnn/SXwOa
-         cfVYIFyA5wbWRDbr7giX/15ZNnl+Sjyu42+uRNlygp/3qJr7GHvgaRy5Q0BZbsSOIMPG
-         2Ci0r12cpRZ3blUmAYM0jlTa2HUG3oUs+jGmFFgRFVJMCf+1IxO2q9IfI+O04o97he37
-         ZA2g==
-X-Gm-Message-State: AOJu0YwMesSYELCq9XwkFjtNxecrtpI67JtC4dmYu58nTorv1TulIUyO
-	k9cI5dE9ruN3CRAQ17hwduwwQLlvvj0Th+KspFoP5vXo6n6MtJ1N8ZkI+JtjJmoC2tB6Tj2HXhR
-	8xYNw3EI3nyxljAIJc/7dAdroyK57tVeiGhZQ
-X-Google-Smtp-Source: AGHT+IEOi98MZdQxOtaW3bif3LCitIRo8nxqZzxmxH4vbtrZo7RwV5CIap8rAl9zZwh9y87ZH2fwVGa5f+4Y+dV/RGg=
-X-Received: by 2002:a81:4e10:0:b0:604:541d:9d54 with SMTP id
- c16-20020a814e10000000b00604541d9d54mr598093ywb.21.1707772629971; Mon, 12 Feb
- 2024 13:17:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1707775862; x=1708380662;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xkEZInmn90xNLy467bdVGct4TJlQkx9R/tPBb/Eq5sI=;
+        b=YlbyQ9pF3koGbM3bjGvxzMR5KsrcjR4aAI3KGndhtRoMgVf+dpgB0UIwGmVql5l3ez
+         qypyjjhNDBKECUuVlwX3pxw7eUoYWq2l3UOl/+wmW1CCO5L6aDxOjHmhsyWASShVq93Z
+         1TQfa3jc9VYAC5iwlhVN1HKjjccZod3M7j8c+DmYXsBoqiKBXf0tzNkpe3FTcK1anps6
+         iTY+ma0vyAJT+QlZy+sSMt1ONnO19c0+70qk8f7y/dJT4C8XY9SNL4syqIu9ciopd70e
+         2vzO9MWs9mxRYgmb9v7HEl95NpUVTgUk9i3KiP9SJxl1lsGY79auxNxFusF1y3A/g8HQ
+         0+FA==
+X-Forwarded-Encrypted: i=1; AJvYcCWy1yiOE0DRZriF/aFKeW1ydNWIb+x7jkYU7C64hOkyYn1tY4Yk2gXjgutg8btjXkWpu9X7AGNWKYzoNm+d8EmRYK30LZtr+ImjTIzApkONXdQhq6qw
+X-Gm-Message-State: AOJu0YzzDhp73uNwPDDBPxZ/Y5c57bfBlGgkQzQi0tHWgNPODuHS4LbS
+	mekHOcgxJW/8Te6SjW384lp2xR3sOaEVlJjsvqnh2CQFrjiLDaRLkVFE4wTozEPAToyjSyxIpKQ
+	veA==
+X-Google-Smtp-Source: AGHT+IHNPySZ2/hxsa72eBReB+Xyvc0nb7k499jIOccEnpd371R+PDIzmQejp4QnaFUxuoaB6SBu/T07KQo=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:92bd:ea5e:3b78:5dd3])
+ (user=gnoack job=sendgmr) by 2002:a05:6402:4488:b0:55f:5f2f:706b with SMTP id
+ er8-20020a056402448800b0055f5f2f706bmr29736edb.8.1707775862112; Mon, 12 Feb
+ 2024 14:11:02 -0800 (PST)
+Date: Mon, 12 Feb 2024 23:10:54 +0100
+In-Reply-To: <20240212-gelungen-holzfiguren-3a07655ad780@brauner>
+Message-Id: <ZcqXbuMp9_gogYHj@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
- <20240115181809.885385-13-roberto.sassu@huaweicloud.com> <305cd1291a73d788c497fe8f78b574d771b8ba41.camel@linux.ibm.com>
-In-Reply-To: <305cd1291a73d788c497fe8f78b574d771b8ba41.camel@linux.ibm.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 12 Feb 2024 16:16:59 -0500
-Message-ID: <CAHC9VhQ7DgPJtNTRCYneu_XnpRmuwfPCW+FqVuS=k6U5-F6pJw@mail.gmail.com>
-Subject: Re: [PATCH v9 12/25] security: Introduce file_post_open hook
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
-	kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org, 
-	serge@hallyn.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
-	dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com, 
-	eparis@parisplace.org, casey@schaufler-ca.com, shuah@kernel.org, 
-	mic@digikod.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Stefan Berger <stefanb@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240209170612.1638517-1-gnoack@google.com> <20240209170612.1638517-2-gnoack@google.com>
+ <ZcdYrJfhiNEtqIEW@google.com> <036db535-587a-4e1b-bd44-345af3b51ddf@app.fastmail.com>
+ <20240212-gelungen-holzfiguren-3a07655ad780@brauner>
+Subject: Re: [PATCH v9 1/8] landlock: Add IOCTL access right
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-security-module@vger.kernel.org, 
+	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 12, 2024 at 4:06=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
-ote:
->
-> Hi Roberto,
->
->
-> > diff --git a/security/security.c b/security/security.c
-> > index d9d2636104db..f3d92bffd02f 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -2972,6 +2972,23 @@ int security_file_open(struct file *file)
-> >       return fsnotify_perm(file, MAY_OPEN);  <=3D=3D=3D  Conflict
->
-> Replace with "return fsnotify_open_perm(file);"
->
-> >  }
-> >
->
-> The patch set doesn't apply cleaning to 6.8-rcX without this change.  Unl=
-ess
-> there are other issues, I can make the change.
+Thank you, Arnd and Christian, for the detailed insights!
+This is very helpful!
 
-I take it this means you want to pull this via the IMA/EVM tree?
+On Mon, Feb 12, 2024 at 12:09:47PM +0100, Christian Brauner wrote:
+> On Sat, Feb 10, 2024 at 12:49:23PM +0100, Arnd Bergmann wrote:
+> > On Sat, Feb 10, 2024, at 12:06, G=C3=BCnther Noack wrote:
+> > > On Fri, Feb 09, 2024 at 06:06:05PM +0100, G=C3=BCnther Noack wrote:
+> > >
+> > > The IOCTL command in question is FIONREAD: fs/ioctl.c implements
+> > > FIONREAD directly for S_ISREG files, but it does call the FIONREAD
+> > > implementation in the VFS layer for other file types.
+> > >
+> > > The question we are asking ourselves is:
+> > >
+> > > * Can we let processes safely use FIONREAD for all files which get
+> > >   opened for the purpose of reading, or do we run the risk of
+> > >   accidentally exposing surprising IOCTL implementations which have
+> > >   completely different purposes?
+> > >
+> > >   Is it safe to assume that the VFS layer FIONREAD implementations ar=
+e
+> > >   actually implementing FIONREAD semantics?
+>=20
+> Yes, otherwise this should considered a bug.
 
---=20
-paul-moore.com
+Excellent, thanks :)
+
+
+> > > * I know there have been accidental collisions of IOCTL command
+> > >   numbers in the past -- Hypothetically, if this were to happen in on=
+e
+> > >   of the VFS implementations of FIONREAD, would that be considered a
+> > >   bug that would need to get fixed in that implementation?
+> >=20
+> > Clearly it's impossible to be sure no driver has a conflict
+> > on this particular ioctl, but the risk for one intentionally
+> > overriding it should be fairly low.
+> >=20
+> > There are a couple of possible issues I can think of:
+> >=20
+> > - the numeric value of FIONREAD is different depending
+> >   on the architecture, with at least four different numbers
+> >   aliasing to it. This is probably harmless but makes it
+> >   harder to look for accidental conflicts.
+> >=20
+> > - Aside from FIONREAD, it is sometimes called SIOCINQ
+> >   (for sockets) or TIOCINQ (for tty). These still go
+> >   through the same VFS entry point and as far as I can
+> >   tell always have the same semantics (writing 4 bytes
+> >   of data with the count of the remaining bytes in the
+> >   fd).
+
+Thanks, good pointer!
+
+Grepping for these three names, I found:
+
+* ~10 FIONREAD implementations in various drivers
+* ~10 TIOCINQ implementations (all in net/, mostly in net/*/af_*.c files)
+* ~20 SIOCINQ implementations (all in net/, related to network protocols?)
+
+The implementations seem mostly related to networking, which gives me
+hope that special casing and denying FIONREAD in the common case might
+not make a big difference after all.
+
+(The ioctl filtering in this patch set only applies to files opened
+through open(2), but not to network sockets and other files acquired
+through socket(2), pipe(2), socketpair(2), fanotiy_init(2) and the
+like. -- It just gets messy if such files are opened through
+/proc/*/fd/*)
+
+
+> > - There are probably a couple of drivers that do something
+> >   in their ioctl handler without actually looking at
+> >   the command number.
+
+Thanks you for the pointers!
+
+You are right, it is surprisingly common that ioctl handlers do work
+without first looking at the command number.  I spot checked a few
+ioctl handler implementations and it is easy to dig up examples.
+
+If this is done, the pattern is often this:
+
+   preparation_work();
+  =20
+   switch (cmd) {
+   case A:   /* impl */
+   case B:   /* impl */
+   default:  /* set error */
+   }
+  =20
+   cleanup_work();
+
+Common types of preparation work are the acquisition and release of
+locks, allocation and release of commonly used buffers, copying memory
+to and from userspace, and flushing buffers.
+
+One of the larger examples which I found was video_ioctl2() from
+drivers/media/v412-core/v412-ioctl.c, which is used from multiple
+video drivers.
+
+It also seems to me that ioctl handlers doing work independent of
+command number might be a bigger problem than the hypothetical command
+number collision I originally asked about.  -- If we allow FIONREAD to be c=
+alled on files too liberally, we are not only exposing=20
+
+
+> > If you want to be really sure you get this right, you
+> > could add a new callback to struct file_operations
+> > that handles this for all drivers, something like
+> >=20
+> > static int ioctl_fionread(struct file *filp, int __user *arg)
+> > {
+> >      int n;
+> >=20
+> >      if (S_ISREG(inode->i_mode))
+> >          return put_user(i_size_read(inode) - filp->f_pos, arg);
+> >=20
+> >      if (!file->f_op->fionread)
+> >          return -ENOIOCTLCMD;
+> >=20
+> >      n =3D file->f_op->fionread(filp);
+> >=20
+> >      if (n < 0)
+> >          return n;
+> >=20
+> >      return put_user(n, arg);
+> > }
+> >=20
+> > With this, you can go through any driver implementing
+> > FIONREAD/SIOCINQ/TIOCINQ and move the code from .ioctl
+> > into .fionread. This probably results in cleaner code
+> > overall, especially in drivers that have no other ioctl
+> > commands besides this one.
+> >=20
+> > Since sockets and ttys tend to have both SIOCINQ/TIOCINQ
+> > and SIOCOUTQ/TIOCOUTQ (unlike regular files), it's
+> > probably best to do both at the same time, or maybe
+> > have a single callback pointer with an in/out flag.
+>=20
+> I'm not excited about adding a bunch of methods to struct
+> file_operations for this stuff.
+
+Agreed.  As far as I understand, if we added a special .fionread
+handler to struct file_operations, the pros and cons would be:
+
+ + For files that don't implement FIONREAD, calling ioctl(fd,
+   FIONREAD, ...) could not accidentally execute ioctl handler
+   preparation and cleanup work.
+
+ - It would use a bit more space in struct file_operations.
+
+ - It might not be obvious to driver implementers that they'd need to
+   hook into .fionread.  There is a slight risk that some ioctl
+   implementers would still accidentally implement FIONREAD the "old"
+   way, and then it would not get called.
+
+ - It would set a weird precedent to have a special handler for a
+   single IOCTL command (why is this one command special?); this can't
+   be done for all IOCTL commands like that.
+
+If I weigh this against each other, I am not convinced that it
+wouldn't cause more complications later on.  But it was a good idea
+that I had not considered and it was worth looking into, I think.
+
+
+In summary, I need to digest this a bit longer ;-)
+
+I think these two were the key insights for me from this discussion:
+
+ * There are fewer implementations of FIONREAD than I was afraid we
+   would find.  This gives me some hope that we can maybe special case
+   it after all in Landlock, and solve the 99% of realistic scenarios
+   with it (and the remaining 1% can still ask for the "all IOCTLs"
+   right, if needed).
+
+ * Some IOCTL handlers are messier than I had expected, and it seems
+   less realistic that we can convince ourselves that these are safe.
+   I particularly did not realize before that ioctl handlers that
+   don't even implement FIONREAD might actually still do work when
+   called with FIONREAD... who would have thought! o_O
+
+I'll try to explore the direction of special casing FIONREAD for now,
+and think about it some more.  Thank you for the insightful input,
+I'll loop you in when I have something more concrete.
+
+=E2=80=94G=C3=BCnther
