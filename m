@@ -1,135 +1,199 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595B628387;
-	Mon, 12 Feb 2024 11:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B9D3D56D;
+	Mon, 12 Feb 2024 17:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707736297; cv=none; b=s2lRdRb2L7XDmUqKlneRQUeFDQTnazTG38phC6sHROf+wC6mXpzwGnXI0vzD50hCN3w6fOUPdTdCf4V/87A7Ke+B1b0A/Q7FiXlo43dK4KW5IF2GX5CsHFOZrI8YbB2OLmV0JeupWEFUhus+bKhS8xjWG7eFSYfg1q+Qzf5gap8=
+	t=1707758536; cv=none; b=Qdg1k4vxgY5775S5wpv+wEaumYV0+p2a7IOkb+TpbNHFTz7ihuEA+nG2h5lbsXRHOeqXU+X5b5vU/6wp1twsBa/r2TnJBIg9WC3Gx9IUowCdmgMvvs29VHFtcdSw0UiPjP8MYDMFO6CxeuPyvcA4yxwr1bdP+B2PzRxpEKaf0uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707736297; c=relaxed/simple;
-	bh=fmFXpzMLiXEhfZ2iwoIMSDtmszK/t2dPiZLskOnlv0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kApFAu1Z8bLyEIGpmzPfqNcDSyumqb+4DDU+2PmEM85JL/58NyxAf/Xk1rpTiz6GAQ7+sywRY6+D6MWC0oE3ZQLHcfzcs+624BUTowDdTFTJJ1GHy06m5chGRKoD02torOwjoLRxjCLEHj9s3vXO42VgzLtc+JvmEG9lv8DCw54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Locg0NS6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707758536; c=relaxed/simple;
+	bh=k7LXORf4EzSDIl/lyRla5O6ZlfVqO/jSxTnInSO0e4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n1KdXEWgfFkzybIufuppHMA/nG0kiaifsSFRtN6/zLyIaGl9eWLLep/4usxh/bY/F/lvhdx0l2urku8T6VKgOHHg1coNtqWIm01yI2MAAbAzOaon67X7QMidtbgyPTZAnlzT666nN3rZgLNzwPmX0uy4+bLK/Xyhi8KG9dPi0IM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mEkS2fjk; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Locg0NS6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F707C433F1;
-	Mon, 12 Feb 2024 11:09:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707736296;
-	bh=fmFXpzMLiXEhfZ2iwoIMSDtmszK/t2dPiZLskOnlv0M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Locg0NS67Nd65HnzswOHyuI2e981RMHTJCEIP510Wwi7MgA6rWBOxQ7HnlxFa+xqH
-	 8pee/Qt9be0vDo4pylorsBEjCejMAl32UH2+vCh50JE/0xiGlTJ8qxAcRoH29lncwg
-	 vT4m2Eq3D9LNPaNZnq6bfBdrZcTolSsd2EKAT5OtlUrAIfdwiE/6zSGYoJYLILhu+t
-	 KYCW8Y1UOk/7UV8VsaClH8FmVcQfrNa4aCox7a5VObBxL4ZttFaajd6JWYPNjFQixl
-	 9Px88SujVIFZbt6qmWuKKmBL/u7+Jnn6DaKjct/ALjDKPnD2c3pH0qxZWfP+xNpbhA
-	 5gETYGZqRUlKA==
-Date: Mon, 12 Feb 2024 12:09:47 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
-	Paul Moore <paul@paul-moore.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v9 1/8] landlock: Add IOCTL access right
-Message-ID: <20240212-gelungen-holzfiguren-3a07655ad780@brauner>
-References: <20240209170612.1638517-1-gnoack@google.com>
- <20240209170612.1638517-2-gnoack@google.com>
- <ZcdYrJfhiNEtqIEW@google.com>
- <036db535-587a-4e1b-bd44-345af3b51ddf@app.fastmail.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mEkS2fjk"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41CHG4Ql028987;
+	Mon, 12 Feb 2024 17:21:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=eSdxrm/EgFSXFEX8alLuk+gV1hUzMo+xxS4g34enfxY=;
+ b=mEkS2fjkqCOA6jxngNacB0yRwYRFZw19r0UErGQ4dopxmxCcn/5Ki42z00v8FWhpTp4u
+ DqR0yyaFG5S/C/4YmUKDL3cyCaZ58LgAZn2RUWqQHeq/zK62s8/0o+x0MClB9xL3EBjZ
+ cYX9xBnulkGQ1gOCbWl+VEq5gkHUPSuP/LvzkqfPphKRYweXkWpzem8v673ujELdJZL9
+ wHpsw/YHl7O1KNvcaYihQjBc3/v4PNgu+eFhqrgAsmSvuzdq+Yel5lIN3BOLpWsr2ebv
+ fF83v4LZtJb7S/5feV9Nu9sgZSv5mHeO+AAJcKSTrHWDqXLeuty/DbOcEJ2qo3DC6I2H bA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w7qcggh27-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Feb 2024 17:21:33 +0000
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41CHIXJw008039;
+	Mon, 12 Feb 2024 17:21:32 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w7qcggh0f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Feb 2024 17:21:32 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41CH2LbW016517;
+	Mon, 12 Feb 2024 17:21:30 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3w6mym9t4n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Feb 2024 17:21:30 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41CHLSFF16515820
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 Feb 2024 17:21:30 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2779258060;
+	Mon, 12 Feb 2024 17:21:28 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CE8FF58043;
+	Mon, 12 Feb 2024 17:21:24 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 12 Feb 2024 17:21:24 +0000 (GMT)
+Message-ID: <8d89f67b-fa66-492d-8339-baa586d0ca93@linux.ibm.com>
+Date: Mon, 12 Feb 2024 12:21:23 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <036db535-587a-4e1b-bd44-345af3b51ddf@app.fastmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 13/25] security: Introduce file_release hook
+Content-Language: en-US
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
+ <20240115181809.885385-14-roberto.sassu@huaweicloud.com>
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20240115181809.885385-14-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: uOXCzbmK3_nwpGIe6hrW3GVsbsUdt_V_
+X-Proofpoint-ORIG-GUID: o5EoBELV83dp3OQdJea5KQ3RJesNYIc2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-12_14,2024-02-12_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
+ impostorscore=0 phishscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0
+ spamscore=0 mlxlogscore=999 suspectscore=0 adultscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
+ definitions=main-2402120132
 
-On Sat, Feb 10, 2024 at 12:49:23PM +0100, Arnd Bergmann wrote:
-> On Sat, Feb 10, 2024, at 12:06, Günther Noack wrote:
-> > On Fri, Feb 09, 2024 at 06:06:05PM +0100, Günther Noack wrote:
-> >
-> > The IOCTL command in question is FIONREAD: fs/ioctl.c implements
-> > FIONREAD directly for S_ISREG files, but it does call the FIONREAD
-> > implementation in the VFS layer for other file types.
-> >
-> > The question we are asking ourselves is:
-> >
-> > * Can we let processes safely use FIONREAD for all files which get
-> >   opened for the purpose of reading, or do we run the risk of
-> >   accidentally exposing surprising IOCTL implementations which have
-> >   completely different purposes?
-> >
-> >   Is it safe to assume that the VFS layer FIONREAD implementations are
-> >   actually implementing FIONREAD semantics?
 
-Yes, otherwise this should considered a bug.
 
-> >
-> > * I know there have been accidental collisions of IOCTL command
-> >   numbers in the past -- Hypothetically, if this were to happen in one
-> >   of the VFS implementations of FIONREAD, would that be considered a
-> >   bug that would need to get fixed in that implementation?
+On 1/15/24 13:17, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 > 
-> Clearly it's impossible to be sure no driver has a conflict
-> on this particular ioctl, but the risk for one intentionally
-> overriding it should be fairly low.
+> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+> the file_release hook.
 > 
-> There are a couple of possible issues I can think of:
+> IMA calculates at file close the new digest of the file content and writes
+> it to security.ima, so that appraisal at next file access succeeds.
 > 
-> - the numeric value of FIONREAD is different depending
->   on the architecture, with at least four different numbers
->   aliasing to it. This is probably harmless but makes it
->   harder to look for accidental conflicts.
+> An LSM could implement an exclusive access scheme for files, only allowing
+> access to files that have no references.
 > 
-> - Aside from FIONREAD, it is sometimes called SIOCINQ
->   (for sockets) or TIOCINQ (for tty). These still go
->   through the same VFS entry point and as far as I can
->   tell always have the same semantics (writing 4 bytes
->   of data with the count of the remaining bytes in the
->   fd).
+> The new hook cannot return an error and cannot cause the operation to be
+> reverted.
 > 
-> - There are probably a couple of drivers that do something
->   in their ioctl handler without actually looking at
->   the command number.
-> 
-> If you want to be really sure you get this right, you
-> could add a new callback to struct file_operations
-> that handles this for all drivers, something like
-> 
-> static int ioctl_fionread(struct file *filp, int __user *arg)
-> {
->      int n;
-> 
->      if (S_ISREG(inode->i_mode))
->          return put_user(i_size_read(inode) - filp->f_pos, arg);
-> 
->      if (!file->f_op->fionread)
->          return -ENOIOCTLCMD;
-> 
->      n = file->f_op->fionread(filp);
-> 
->      if (n < 0)
->          return n;
-> 
->      return put_user(n, arg);
-> }
-> 
-> With this, you can go through any driver implementing
-> FIONREAD/SIOCINQ/TIOCINQ and move the code from .ioctl
-> into .fionread. This probably results in cleaner code
-> overall, especially in drivers that have no other ioctl
-> commands besides this one.
-> 
-> Since sockets and ttys tend to have both SIOCINQ/TIOCINQ
-> and SIOCOUTQ/TIOCOUTQ (unlike regular files), it's
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-I'm not excited about adding a bunch of methods to struct
-file_operations for this stuff.
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+
+> ---
+>   fs/file_table.c               |  1 +
+>   include/linux/lsm_hook_defs.h |  1 +
+>   include/linux/security.h      |  4 ++++
+>   security/security.c           | 11 +++++++++++
+>   4 files changed, 17 insertions(+)
+> 
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index de4a2915bfd4..c72dc75f2bd3 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -385,6 +385,7 @@ static void __fput(struct file *file)
+>   	eventpoll_release(file);
+>   	locks_remove_file(file);
+>   
+> +	security_file_release(file);
+>   	ima_file_free(file);
+>   	if (unlikely(file->f_flags & FASYNC)) {
+>   		if (file->f_op->fasync)
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index c3fecc7dcb0b..229f84ce12ae 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -173,6 +173,7 @@ LSM_HOOK(int, 0, kernfs_init_security, struct kernfs_node *kn_dir,
+>   	 struct kernfs_node *kn)
+>   LSM_HOOK(int, 0, file_permission, struct file *file, int mask)
+>   LSM_HOOK(int, 0, file_alloc_security, struct file *file)
+> +LSM_HOOK(void, LSM_RET_VOID, file_release, struct file *file)
+>   LSM_HOOK(void, LSM_RET_VOID, file_free_security, struct file *file)
+>   LSM_HOOK(int, 0, file_ioctl, struct file *file, unsigned int cmd,
+>   	 unsigned long arg)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 97f2212c13b6..2997348afcb7 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -395,6 +395,7 @@ int security_kernfs_init_security(struct kernfs_node *kn_dir,
+>   				  struct kernfs_node *kn);
+>   int security_file_permission(struct file *file, int mask);
+>   int security_file_alloc(struct file *file);
+> +void security_file_release(struct file *file);
+>   void security_file_free(struct file *file);
+>   int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+>   int security_file_ioctl_compat(struct file *file, unsigned int cmd,
+> @@ -1008,6 +1009,9 @@ static inline int security_file_alloc(struct file *file)
+>   	return 0;
+>   }
+>   
+> +static inline void security_file_release(struct file *file)
+> +{ }
+> +
+>   static inline void security_file_free(struct file *file)
+>   { }
+>   
+> diff --git a/security/security.c b/security/security.c
+> index f3d92bffd02f..7d10724872f8 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2724,6 +2724,17 @@ int security_file_alloc(struct file *file)
+>   	return rc;
+>   }
+>   
+> +/**
+> + * security_file_release() - Perform actions before releasing the file ref
+> + * @file: the file
+> + *
+> + * Perform actions before releasing the last reference to a file.
+> + */
+> +void security_file_release(struct file *file)
+> +{
+> +	call_void_hook(file_release, file);
+> +}
+> +
+>   /**
+>    * security_file_free() - Free a file's LSM blob
+>    * @file: the file
