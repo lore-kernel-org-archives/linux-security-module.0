@@ -1,171 +1,140 @@
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC713AC01;
-	Sat, 10 Feb 2024 11:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2068B2F55;
+	Mon, 12 Feb 2024 05:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707565856; cv=none; b=BrHvRAjYbbU91owH2vmYXR1F7uFHn8bSNJuCqbn+BO5vwcP9uMu2YcJpcBapBEUCqK0wXsAo+zD4mb2HYeGWJKd1mm7TjInhuMSu4QJoQYtpeHMpbSOKwJpLxKqWbVSJOW8YJcp28GHMj+xTEpwKrSQpR6e0zwsQVeNtzye5YF0=
+	t=1707714725; cv=none; b=LsouEeBWJhTZv+CAnC2SWXLa1mLTYsyK5pzR5kExViNZhmfQN3Fmnu1DFBigtZiZFoQwv/M7dzzl4tyfF6JdjVwRBsGNpFXXjgfUAxA2P6LA37jZuk9tY2LrVVc1oqdrBmxMrgLCLZr4RqM/mMHhwDKrU6VcLjua0u27+2M+3BM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707565856; c=relaxed/simple;
-	bh=3dET8an5Gz1SS9FXD5hxaVyn7YwxJMF0vmAH6cqPKSo=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=lZGJUSgy0XtNEkfQvFCrBF1i6y02NezZCchPKshgXTEuHVAn13zQm/9jTk2l4TP+Arw42SZOlxe8Yl8Q+CW0lWPln2Cp6iOzV1GmBxbDfxH3qyD87figwed3Hwp0pcCwa33ez40Tsljf687cWMyDWVYz8+epXOO/kc14TMZpP10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=PdXBtEFR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wDYzjXhC; arc=none smtp.client-ip=64.147.123.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1707714725; c=relaxed/simple;
+	bh=Inesfow/+o5xS1pMzhZ/lezVf1fXzsERlilchZkTN6E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=StrILRXzTLXh4fkTSyv3S35Cx+f9SBK+TSq5Hph4ZT8ijt1WD5A0dwp9M+DIxrAN+vCXnwj+V8p7pHZgxXX9IkPvILyDisHY2uCgss6yNiug5l+RMhgXAM+DZWQ7wXIxkisjO/6RboBpVrWC1YYC+6bivmbOuOX0Rv49GOZX/ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bPH8JGEm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="PdXBtEFR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wDYzjXhC"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailout.west.internal (Postfix) with ESMTP id 4EAFA3200AB8;
-	Sat, 10 Feb 2024 06:50:53 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Sat, 10 Feb 2024 06:50:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1707565852;
-	 x=1707652252; bh=GYCupbwc9/Vzg4u4JrBBtaVznNlOVVB07ME4hlvX4ls=; b=
-	PdXBtEFRl2P1LTgI9BVcd+JrhaFei/qqGk3M0suapdGx6DyGmV6OD4mnkvZKn/qT
-	YKfAuyyS0iAo3HVd9isAvkwTFHDsjOHSnPCW++XIpySrL0tq2U90Vd3mfBJiCNat
-	DR3xEgbmsmLk2h/s+7kv0fSQYvY7d4GKhT5O46QKHEczkAzEEKQ/mp9LXWuR6aLA
-	1AuWc3If2JRCl+j3N+o5zelp6p6e5mu7ZpYKMjVy+laOWmXdMNgeYpbXkXxKfwuX
-	97yXdYhzV2ZjVXljrhXbfe+j0jmMXUgclRAml6FJ6jEbE4yBL+xhCiKL4oq3X1+W
-	aSYNzFj42Z14ywTtzvfbEg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1707565852; x=
-	1707652252; bh=GYCupbwc9/Vzg4u4JrBBtaVznNlOVVB07ME4hlvX4ls=; b=w
-	DYzjXhCOORoDpA6WbFTB7ugE94QUIPg1iN0YC5vmVgJ4FBetMEPVN6OAJInu8PFi
-	rBJ1wK3QMoEKrfhGTFDVJUPZt8Tt4E4YcfnvQ9rg0KKAJm1Hq6An/V4SOCPaBl7Q
-	O72S1rYqQz1x4gj+aZSyyrBPwboaXIB604pqp+/Ng1PYJBa78IuHaFy78p28TIU7
-	77/I41+e32RpEeX11QUoeM41tlMLhmjVHOldpE+r3I50fZjTmrGpORNdqU5vMnp0
-	SFyelLNTsUldQqeegqarCb/75NaEvBju86W/gMefzxjinHcxPD6mvC+QiBc9K3a4
-	hQ9WnpQaMBK/5aArxXSGw==
-X-ME-Sender: <xms:G2PHZbxqGMuJaJNg07f5mnNK_5Ruzi4wGfE5knOg8yy3tPYoSx7DJw>
-    <xme:G2PHZTR2kB5JxUP_G_3C8-VgSD3t8iL18Lrf4O4roV90kz-AHRMkHRfh0w0Ofv5HS
-    Nqm5etZzO6_HDzWKes>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrtdelgddtkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
-    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:G2PHZVVkBdWD4syOaBF7K2jURlethordOBytIbUNPWrCQqcaJpwUwQ>
-    <xmx:G2PHZViCrwT0j6AwscCMmHgGo9A8Q9dRLkYe6Hu5VukSBYcW8O8FXA>
-    <xmx:G2PHZdBTOWO8PUeAyeLkAvsY9beRA3EYZ7rC5-1Py0FNCLUPiop9PA>
-    <xmx:HGPHZR563C78BpyRyXOM2fraMP1q2ZL3N7IwajjMXgtT9wsPjTWsWQ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id C537DB6008D; Sat, 10 Feb 2024 06:50:51 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-144-ge5821d614e-fm-20240125.002-ge5821d61
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bPH8JGEm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 232E2C433C7;
+	Mon, 12 Feb 2024 05:11:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707714724;
+	bh=Inesfow/+o5xS1pMzhZ/lezVf1fXzsERlilchZkTN6E=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=bPH8JGEmOQUUJH8kCoM0AXr8VrwJ1nDOlPP3I3GF0e1ANYesf6SzSYI2AgIQLnkaF
+	 KNrv5iI560dWFuyoTiLoeVVlYma+fgFfYY6QHCYej3KUzFPP8UCQe34xeslf2V6DIK
+	 hWmYMfXjsassBvEaZN4Tv0129KMtyRvqanlHpy/tkS7xeNA2JJQIcMiXQ07wBb66W0
+	 g/BnedkJyc40AAog97Wokaqhw+jfw7ukGZmlS6Dqi/EJ2Q8QP01nMHhGEAQiFfMFzd
+	 XFhWDaXNf+ySOK1PEsAivM0Ce6eM84MgzGLNbPM5dROAb7VHNuU7MnJgotURudWXFO
+	 vGo6Jit3yWYKg==
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-Id: <036db535-587a-4e1b-bd44-345af3b51ddf@app.fastmail.com>
-In-Reply-To: <ZcdYrJfhiNEtqIEW@google.com>
-References: <20240209170612.1638517-1-gnoack@google.com>
- <20240209170612.1638517-2-gnoack@google.com> <ZcdYrJfhiNEtqIEW@google.com>
-Date: Sat, 10 Feb 2024 12:49:23 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- "Christian Brauner" <brauner@kernel.org>, "Jeff Xu" <jeffxu@google.com>,
- "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
- "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
- "Paul Moore" <paul@paul-moore.com>,
- "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
- "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v9 1/8] landlock: Add IOCTL access right
-Content-Type: text/plain;charset=utf-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 12 Feb 2024 05:11:57 +0000
+Message-Id: <CZ2UCEZ1VT96.2QZE7X8CS8EJ2@seitikki>
+Cc: "Jiang, Dave" <dave.jiang@intel.com>, "linux-integrity@vger.kernel.org"
+ <linux-integrity@vger.kernel.org>, "linux-cxl@vger.kernel.org"
+ <linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "keyrings@vger.kernel.org"
+ <keyrings@vger.kernel.org>, "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, "nvdimm@lists.linux.dev"
+ <nvdimm@lists.linux.dev>
+Subject: Re: [PATCH] KEYS: encrypted: Add check for strsep
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Mimi Zohar" <zohar@linux.ibm.com>, "Dan Williams"
+ <dan.j.williams@intel.com>, "Verma, Vishal L" <vishal.l.verma@intel.com>,
+ "paul@paul-moore.com" <paul@paul-moore.com>, "dhowells@redhat.com"
+ <dhowells@redhat.com>, "yaelt@google.com" <yaelt@google.com>,
+ "serge@hallyn.com" <serge@hallyn.com>, "nichen@iscas.ac.cn"
+ <nichen@iscas.ac.cn>, "sumit.garg@linaro.org" <sumit.garg@linaro.org>,
+ "jmorris@namei.org" <jmorris@namei.org>
+X-Mailer: aerc 0.15.2
+References: <20231108073627.1063464-1-nichen@iscas.ac.cn>
+ <4d3465b48b9c5a87deb385b15bf5125fc1704019.camel@intel.com>
+ <e3275c0cfe21d75e0d71ea3fc24a31252efc9ad6.camel@linux.ibm.com>
+ <e3b1a5e532ed86e674385abc4812c5a774f851d4.camel@intel.com>
+ <49c48e3e96bf0f5ebef14e7328cc8a6ca6380e08.camel@linux.ibm.com>
+ <50c2fa781e3266ee8151afdef5a8659d63ca952e.camel@intel.com>
+ <CYS7QMYS8XAJ.2QPI3MS5KXK8E@suppilovahvero>
+ <CYS7WMFLXNE1.35OBTKTONKNX3@suppilovahvero>
+ <65b93f2b3099b_5cc6f29453@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+ <CYU2JV57VXA9.3C5QTG4LX50TD@suppilovahvero>
+ <d0ccd2f19ed1adccc8f3dfe677c30bc44feb3d36.camel@linux.ibm.com>
+In-Reply-To: <d0ccd2f19ed1adccc8f3dfe677c30bc44feb3d36.camel@linux.ibm.com>
 
-On Sat, Feb 10, 2024, at 12:06, G=C3=BCnther Noack wrote:
-> On Fri, Feb 09, 2024 at 06:06:05PM +0100, G=C3=BCnther Noack wrote:
+On Fri Feb 2, 2024 at 12:05 AM UTC, Mimi Zohar wrote:
+> On Thu, 2024-02-01 at 23:43 +0200, Jarkko Sakkinen wrote:
+> > On Tue Jan 30, 2024 at 8:25 PM EET, Dan Williams wrote:
+> > > Jarkko Sakkinen wrote:
+> > > > On Tue Jan 30, 2024 at 7:22 PM EET, Jarkko Sakkinen wrote:
+> > > > > On Wed Jan 24, 2024 at 11:10 PM EET, Verma, Vishal L wrote:
+> > > > > > On Wed, 2024-01-24 at 15:40 -0500, Mimi Zohar wrote:
+> > > > > > > On Wed, 2024-01-24 at 20:10 +0000, Verma, Vishal L wrote:
+> > > > > > > > Ah, thanks for confirming! Would you like me to send a
+> > > > > > > > revert patch or
+> > > > > > > > will you do it?
+> > > > > > >=20
+> > > > > > > Revert "KEYS: encrypted: Add check for strsep"
+> > > > > > >    =20
+> > > > > > > This reverts commit
+> > > > > > > b4af096b5df5dd131ab796c79cedc7069d8f4882.
+> > > > > > >    =20
+> > > > > > > New encrypted keys are created either from kernel-generated=
+=20
+> > > > > > > random
+> > > > > > > numbers or user-provided decrypted data.  Revert the change
+> > > > > > > requiring
+> > > > > > > user-provided decrypted data.
+> > > > > > >=20
+> > > > > > >=20
+> > > > > > > Can I add your Reported-by?
+> > > > > >=20
+> > > > > > Yes that works, Thank you.
+> > > > >=20
+> > > > > This went totally wrong IMHO.
+> > > > >=20
+> > > > > Priority should be to locate and fix the bug not revert useful
+> > > > > stuff
+> > > > > when a bug is found that has limited scope.
+> > > >=20
+> > > > By guidelines here the commit is also a bug fix and reverting
+> > > > such commit means seeding a bug to the mainline. Also the klog
+> > > > message alone is a bug fix here. So also by book it really has
+> > > > to come back as it was already commit because we cannot
+> > > > knowingly mount bugs to the mainline, right?
+> > >=20
+> > > No, the commit broke userspace. The rule is do not cause
+> > > regressions
+> > > even if userspace is abusing the ABI in an undesirable way. Even
+> > > the
+> > > new pr_info() is a log spamming behavior change, a pr_debug() might
+> > > be
+> > > suitable, but otherwise a logic change here needs a clear
+> > > description
+> > > about what is broken about the old userspace behavior and why the
+> > > kernel
+> > > can not possibly safely handle it.
+> >=20
+> > The rationale literally gives empirical proof that the log message
+> > is useful by measure. It would be useless if log level is decreased
+> > to debug, as then sysadmin's won't take notice. I don't really know
+> > what is the definition of "spam" here but at least for me actually
+> > useful log message are not in that category.
+> >=20
+> > Issue was legit but git revert is objectively an incorrect way to
+> > address the bug.
 >
-> The IOCTL command in question is FIONREAD: fs/ioctl.c implements
-> FIONREAD directly for S_ISREG files, but it does call the FIONREAD
-> implementation in the VFS layer for other file types.
+> No, I made a mistake in upstreaming the patch in the first place.  It
+> broke the original "encrypted" keys usage.  Reverting it was the
+> correct solution.
 >
-> The question we are asking ourselves is:
->
-> * Can we let processes safely use FIONREAD for all files which get
->   opened for the purpose of reading, or do we run the risk of
->   accidentally exposing surprising IOCTL implementations which have
->   completely different purposes?
->
->   Is it safe to assume that the VFS layer FIONREAD implementations are
->   actually implementing FIONREAD semantics?
->
-> * I know there have been accidental collisions of IOCTL command
->   numbers in the past -- Hypothetically, if this were to happen in one
->   of the VFS implementations of FIONREAD, would that be considered a
->   bug that would need to get fixed in that implementation?
+> Mimi
 
-Clearly it's impossible to be sure no driver has a conflict
-on this particular ioctl, but the risk for one intentionally
-overriding it should be fairly low.
+The way I see it the semantic change caused the bug because it was not
+backwards compatible. That does not make the log message less useful.
 
-There are a couple of possible issues I can think of:
-
-- the numeric value of FIONREAD is different depending
-  on the architecture, with at least four different numbers
-  aliasing to it. This is probably harmless but makes it
-  harder to look for accidental conflicts.
-
-- Aside from FIONREAD, it is sometimes called SIOCINQ
-  (for sockets) or TIOCINQ (for tty). These still go
-  through the same VFS entry point and as far as I can
-  tell always have the same semantics (writing 4 bytes
-  of data with the count of the remaining bytes in the
-  fd).
-
-- There are probably a couple of drivers that do something
-  in their ioctl handler without actually looking at
-  the command number.
-
-If you want to be really sure you get this right, you
-could add a new callback to struct file_operations
-that handles this for all drivers, something like
-
-static int ioctl_fionread(struct file *filp, int __user *arg)
-{
-     int n;
-
-     if (S_ISREG(inode->i_mode))
-         return put_user(i_size_read(inode) - filp->f_pos, arg);
-
-     if (!file->f_op->fionread)
-         return -ENOIOCTLCMD;
-
-     n =3D file->f_op->fionread(filp);
-
-     if (n < 0)
-         return n;
-
-     return put_user(n, arg);
-}
-
-With this, you can go through any driver implementing
-FIONREAD/SIOCINQ/TIOCINQ and move the code from .ioctl
-into .fionread. This probably results in cleaner code
-overall, especially in drivers that have no other ioctl
-commands besides this one.
-
-Since sockets and ttys tend to have both SIOCINQ/TIOCINQ
-and SIOCOUTQ/TIOCOUTQ (unlike regular files), it's
-probably best to do both at the same time, or maybe
-have a single callback pointer with an in/out flag.
-
-       Arnd
+BR, Jarkko
