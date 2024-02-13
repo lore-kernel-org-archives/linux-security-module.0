@@ -1,264 +1,142 @@
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66074D584
-	for <linux-security-module@vger.kernel.org>; Mon, 12 Feb 2024 22:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C36A22611;
+	Tue, 13 Feb 2024 08:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707775865; cv=none; b=GnhYMdUwrZrjsFaIBI//CeH5Tb7+yZ0yA8V/dXLtVjFoKDxxdeY13yu+micd287Je9SRydfsZm7CZ6fuCgRWX2i5zAd/hBHeYRnva0a1Ilbr8HstbDrNQrtHD96IEDmXQu61XbKvJXg6uRVA1/bB56/MnUplAEgFpEfFaOKqeKA=
+	t=1707814657; cv=none; b=Jh/bHSlhgFaivI7wPGYfZIPelqBR+yulIuFKiMecYhaAImGuJbcbbXsHDZcnLk2/t6lvR96vH1TvvctK3v20k6TAAAaIAFvs+18gVzWdc6iHk82hiH4fUgM9gdbH65YV8EIAarIWibAwlsAv5cvfSXUi6qirWXcCouPYp0qwdvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707775865; c=relaxed/simple;
-	bh=9pFi49LPOH4JpcaJE6HqyBblmZ554R3zkdMU3FWm00E=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=a2lp3tlL1YD2rRnQD0yViZ/2rIFfdN4jk/8RprD+noCZpqMZBwlffk6OTytN8x/hu9fZBl/LW0YQC1YHnAi6EL3LWWeR5Qnah4K81HXWofLumzdq/iJ5e6PPswdwigwryFAj2YMFJfsVkEGZaO5xdKyuQX9jPSyH7UpKmCVfoUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eH1R7zfX; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eH1R7zfX"
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5611e1da4c6so2421063a12.1
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Feb 2024 14:11:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1707775862; x=1708380662; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xkEZInmn90xNLy467bdVGct4TJlQkx9R/tPBb/Eq5sI=;
-        b=eH1R7zfXO6r1H9YNlXvJOvZ4vJp8OQNY4cqBQRj7QDPpehQj1GrCgWfKIqwpM0WcS3
-         VZFgV1RdsfPQKCzshWda34RJtGcWlxMVtLKXE3moZKXOzROUu3uevFjrT/PmHVb6z8nc
-         eHKv76PRqCOpVxIBBPc6hnfDl/wbnSw/jtPfEmELHzB/FwUZJqW1D7oC50udrtTvcPl4
-         kCCG7TzWOKEnpAh445MQMKUqiK+fJUAJh/blnxwIxjy6c6N0DOuCkNqZKKKiVNq8wFU2
-         dOBRBWnylqD9/ooSLMbqdl4jWoBRTnJIMOHEpKyEyuuC4lsVVEbUtvy9/o29QhM7N06V
-         XtAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707775862; x=1708380662;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xkEZInmn90xNLy467bdVGct4TJlQkx9R/tPBb/Eq5sI=;
-        b=YlbyQ9pF3koGbM3bjGvxzMR5KsrcjR4aAI3KGndhtRoMgVf+dpgB0UIwGmVql5l3ez
-         qypyjjhNDBKECUuVlwX3pxw7eUoYWq2l3UOl/+wmW1CCO5L6aDxOjHmhsyWASShVq93Z
-         1TQfa3jc9VYAC5iwlhVN1HKjjccZod3M7j8c+DmYXsBoqiKBXf0tzNkpe3FTcK1anps6
-         iTY+ma0vyAJT+QlZy+sSMt1ONnO19c0+70qk8f7y/dJT4C8XY9SNL4syqIu9ciopd70e
-         2vzO9MWs9mxRYgmb9v7HEl95NpUVTgUk9i3KiP9SJxl1lsGY79auxNxFusF1y3A/g8HQ
-         0+FA==
-X-Forwarded-Encrypted: i=1; AJvYcCWy1yiOE0DRZriF/aFKeW1ydNWIb+x7jkYU7C64hOkyYn1tY4Yk2gXjgutg8btjXkWpu9X7AGNWKYzoNm+d8EmRYK30LZtr+ImjTIzApkONXdQhq6qw
-X-Gm-Message-State: AOJu0YzzDhp73uNwPDDBPxZ/Y5c57bfBlGgkQzQi0tHWgNPODuHS4LbS
-	mekHOcgxJW/8Te6SjW384lp2xR3sOaEVlJjsvqnh2CQFrjiLDaRLkVFE4wTozEPAToyjSyxIpKQ
-	veA==
-X-Google-Smtp-Source: AGHT+IHNPySZ2/hxsa72eBReB+Xyvc0nb7k499jIOccEnpd371R+PDIzmQejp4QnaFUxuoaB6SBu/T07KQo=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:92bd:ea5e:3b78:5dd3])
- (user=gnoack job=sendgmr) by 2002:a05:6402:4488:b0:55f:5f2f:706b with SMTP id
- er8-20020a056402448800b0055f5f2f706bmr29736edb.8.1707775862112; Mon, 12 Feb
- 2024 14:11:02 -0800 (PST)
-Date: Mon, 12 Feb 2024 23:10:54 +0100
-In-Reply-To: <20240212-gelungen-holzfiguren-3a07655ad780@brauner>
-Message-Id: <ZcqXbuMp9_gogYHj@google.com>
+	s=arc-20240116; t=1707814657; c=relaxed/simple;
+	bh=0FHVuXSnOE5TFanr4pfTOtnrDKxeRonirC9x/EUdZ3I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MrigbQprRU1wL8QBd+VQc/0B6pNkylymZahq70ChfryBMyZ5T9mwG/yEvlJVSM5Z/rpMjFj99+XnBpAZHajZGxl0j7BcbtjjCXEQb2humF0XMJkqzfVBj2DwauckyNWdi9aRqrM8FboX0egA17dsRrG5I7qHVVpjbEzkBFQUjag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4TYvvq0G2Dz9v7VH;
+	Tue, 13 Feb 2024 16:42:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 1A6BC1405A1;
+	Tue, 13 Feb 2024 16:57:24 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwDHsibjLstlJFJmAg--.44640S2;
+	Tue, 13 Feb 2024 09:57:23 +0100 (CET)
+Message-ID: <b95967cd1aa2a4e751a8be3d23f72b7e1db0e4b6.camel@huaweicloud.com>
+Subject: Re: [PATCH v9 19/25] integrity: Move
+ integrity_kernel_module_request() to IMA
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Stefan Berger <stefanb@linux.ibm.com>, Paul Moore <paul@paul-moore.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, 
+	jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, 
+	tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, 
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, dhowells@redhat.com, 
+	jarkko@kernel.org, stephen.smalley.work@gmail.com, eparis@parisplace.org, 
+	casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, Roberto Sassu
+	 <roberto.sassu@huawei.com>
+Date: Tue, 13 Feb 2024 09:57:03 +0100
+In-Reply-To: <7940b9d0-3133-4b08-b397-ad9ee34e3b34@linux.ibm.com>
+References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
+	 <20240115181809.885385-20-roberto.sassu@huaweicloud.com>
+	 <fd6ddc3d-e5d3-4b9c-b00b-ac2b1f22d653@linux.ibm.com>
+	 <CAHC9VhTY=X7z5SRQZzFe25FGB2E3FBBkuZ_YYA1+ETyr7pv=tA@mail.gmail.com>
+	 <7940b9d0-3133-4b08-b397-ad9ee34e3b34@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240209170612.1638517-1-gnoack@google.com> <20240209170612.1638517-2-gnoack@google.com>
- <ZcdYrJfhiNEtqIEW@google.com> <036db535-587a-4e1b-bd44-345af3b51ddf@app.fastmail.com>
- <20240212-gelungen-holzfiguren-3a07655ad780@brauner>
-Subject: Re: [PATCH v9 1/8] landlock: Add IOCTL access right
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-security-module@vger.kernel.org, 
-	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-CM-TRANSID:GxC2BwDHsibjLstlJFJmAg--.44640S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxur4xJFy3Kr4UWrWDCF1fXrb_yoW5Gr18pF
+	WrKanYyFWDXrn5Cay8Xw17WrWSgayxCrZxGrn5GrWfWrsY9rnFvF42yF4UuFZakrn7Jr1j
+	9397Jw1Ivr98Z37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOlksDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAMBF1jj5ZOIgABsA
 
-Thank you, Arnd and Christian, for the detailed insights!
-This is very helpful!
-
-On Mon, Feb 12, 2024 at 12:09:47PM +0100, Christian Brauner wrote:
-> On Sat, Feb 10, 2024 at 12:49:23PM +0100, Arnd Bergmann wrote:
-> > On Sat, Feb 10, 2024, at 12:06, G=C3=BCnther Noack wrote:
-> > > On Fri, Feb 09, 2024 at 06:06:05PM +0100, G=C3=BCnther Noack wrote:
-> > >
-> > > The IOCTL command in question is FIONREAD: fs/ioctl.c implements
-> > > FIONREAD directly for S_ISREG files, but it does call the FIONREAD
-> > > implementation in the VFS layer for other file types.
-> > >
-> > > The question we are asking ourselves is:
-> > >
-> > > * Can we let processes safely use FIONREAD for all files which get
-> > >   opened for the purpose of reading, or do we run the risk of
-> > >   accidentally exposing surprising IOCTL implementations which have
-> > >   completely different purposes?
-> > >
-> > >   Is it safe to assume that the VFS layer FIONREAD implementations ar=
-e
-> > >   actually implementing FIONREAD semantics?
+On Mon, 2024-02-12 at 15:28 -0500, Stefan Berger wrote:
 >=20
-> Yes, otherwise this should considered a bug.
-
-Excellent, thanks :)
-
-
-> > > * I know there have been accidental collisions of IOCTL command
-> > >   numbers in the past -- Hypothetically, if this were to happen in on=
-e
-> > >   of the VFS implementations of FIONREAD, would that be considered a
-> > >   bug that would need to get fixed in that implementation?
+> On 2/12/24 12:56, Paul Moore wrote:
+> > On Mon, Feb 12, 2024 at 12:48=E2=80=AFPM Stefan Berger <stefanb@linux.i=
+bm.com> wrote:
+> > > On 1/15/24 13:18, Roberto Sassu wrote:
 > >=20
-> > Clearly it's impossible to be sure no driver has a conflict
-> > on this particular ioctl, but the risk for one intentionally
-> > overriding it should be fairly low.
+> > ...
 > >=20
-> > There are a couple of possible issues I can think of:
+> > > > +/**
+> > > > + * ima_kernel_module_request - Prevent crypto-pkcs1pad(rsa,*) requ=
+ests
+> > > > + * @kmod_name: kernel module name
+> > > > + *
+> > > > + * We have situation, when public_key_verify_signature() in case o=
+f RSA > + * algorithm use alg_name to store internal information in order t=
+o
+> > > > + * construct an algorithm on the fly, but crypto_larval_lookup() w=
+ill try
+> > > > + * to use alg_name in order to load kernel module with same name.
+> > > > + * Since we don't have any real "crypto-pkcs1pad(rsa,*)" kernel mo=
+dules,
+> > > > + * we are safe to fail such module request from crypto_larval_look=
+up().
+> > > > + *
+> > > > + * In this way we prevent modprobe execution during digsig verific=
+ation
+> > > > + * and avoid possible deadlock if modprobe and/or it's dependencie=
+s
+> > > > + * also signed with digsig.
+> > >=20
+> > > This text needs to some reformulation at some point..
 > >=20
-> > - the numeric value of FIONREAD is different depending
-> >   on the architecture, with at least four different numbers
-> >   aliasing to it. This is probably harmless but makes it
-> >   harder to look for accidental conflicts.
+> > There is no time like the present.  If you have a suggestion I would
+> > love to hear it and I'm sure Roberto would too.
 > >=20
-> > - Aside from FIONREAD, it is sometimes called SIOCINQ
-> >   (for sockets) or TIOCINQ (for tty). These still go
-> >   through the same VFS entry point and as far as I can
-> >   tell always have the same semantics (writing 4 bytes
-> >   of data with the count of the remaining bytes in the
-> >   fd).
-
-Thanks, good pointer!
-
-Grepping for these three names, I found:
-
-* ~10 FIONREAD implementations in various drivers
-* ~10 TIOCINQ implementations (all in net/, mostly in net/*/af_*.c files)
-* ~20 SIOCINQ implementations (all in net/, related to network protocols?)
-
-The implementations seem mostly related to networking, which gives me
-hope that special casing and denying FIONREAD in the common case might
-not make a big difference after all.
-
-(The ioctl filtering in this patch set only applies to files opened
-through open(2), but not to network sockets and other files acquired
-through socket(2), pipe(2), socketpair(2), fanotiy_init(2) and the
-like. -- It just gets messy if such files are opened through
-/proc/*/fd/*)
-
-
-> > - There are probably a couple of drivers that do something
-> >   in their ioctl handler without actually looking at
-> >   the command number.
-
-Thanks you for the pointers!
-
-You are right, it is surprisingly common that ioctl handlers do work
-without first looking at the command number.  I spot checked a few
-ioctl handler implementations and it is easy to dig up examples.
-
-If this is done, the pattern is often this:
-
-   preparation_work();
-  =20
-   switch (cmd) {
-   case A:   /* impl */
-   case B:   /* impl */
-   default:  /* set error */
-   }
-  =20
-   cleanup_work();
-
-Common types of preparation work are the acquisition and release of
-locks, allocation and release of commonly used buffers, copying memory
-to and from userspace, and flushing buffers.
-
-One of the larger examples which I found was video_ioctl2() from
-drivers/media/v412-core/v412-ioctl.c, which is used from multiple
-video drivers.
-
-It also seems to me that ioctl handlers doing work independent of
-command number might be a bigger problem than the hypothetical command
-number collision I originally asked about.  -- If we allow FIONREAD to be c=
-alled on files too liberally, we are not only exposing=20
-
-
-> > If you want to be really sure you get this right, you
-> > could add a new callback to struct file_operations
-> > that handles this for all drivers, something like
-> >=20
-> > static int ioctl_fionread(struct file *filp, int __user *arg)
-> > {
-> >      int n;
-> >=20
-> >      if (S_ISREG(inode->i_mode))
-> >          return put_user(i_size_read(inode) - filp->f_pos, arg);
-> >=20
-> >      if (!file->f_op->fionread)
-> >          return -ENOIOCTLCMD;
-> >=20
-> >      n =3D file->f_op->fionread(filp);
-> >=20
-> >      if (n < 0)
-> >          return n;
-> >=20
-> >      return put_user(n, arg);
-> > }
-> >=20
-> > With this, you can go through any driver implementing
-> > FIONREAD/SIOCINQ/TIOCINQ and move the code from .ioctl
-> > into .fionread. This probably results in cleaner code
-> > overall, especially in drivers that have no other ioctl
-> > commands besides this one.
-> >=20
-> > Since sockets and ttys tend to have both SIOCINQ/TIOCINQ
-> > and SIOCOUTQ/TIOCOUTQ (unlike regular files), it's
-> > probably best to do both at the same time, or maybe
-> > have a single callback pointer with an in/out flag.
 >=20
-> I'm not excited about adding a bunch of methods to struct
-> file_operations for this stuff.
+> My interpretation of the issue after possibly lossy decoding of the=20
+> above sentences:
+>=20
+> Avoid a deadlock by rejecting a virtual kernel module with the name=20
+> "crypto-pkcs1pad(rsa,*)". This module may be requested by=20
+> crypto_larval_lookup() while trying to verify an RSA signature in=20
+> public_key_verify_signature(). Since the loading of the RSA module may=
+=20
+> itself cause the request for an RSA signature verification it will=20
+> otherwise lead to a deadlock.
 
-Agreed.  As far as I understand, if we added a special .fionread
-handler to struct file_operations, the pros and cons would be:
+I can be even more precise I guess (I actually reproduced it).
 
- + For files that don't implement FIONREAD, calling ioctl(fd,
-   FIONREAD, ...) could not accidentally execute ioctl handler
-   preparation and cleanup work.
+Avoid a verification loop where verifying the signature of the modprobe
+binary requires executing modprobe itself. Since the modprobe iint-
+>mutex is already held when the signature verification is performed, a
+deadlock occurs as soon as modprobe is executed within the critical
+region, since the same lock cannot be taken again.
 
- - It would use a bit more space in struct file_operations.
+This happens when public_key_verify_signature(), in case of RSA
+algorithm, use alg_name to store internal information in order to
+construct an algorithm on the fly, but crypto_larval_lookup() will try
+to use alg_name in order to load a kernel module with same name.
 
- - It might not be obvious to driver implementers that they'd need to
-   hook into .fionread.  There is a slight risk that some ioctl
-   implementers would still accidentally implement FIONREAD the "old"
-   way, and then it would not get called.
+Since we don't have any real "crypto-pkcs1pad(rsa,*)" kernel modules,
+we are safe to fail such module request from crypto_larval_lookup(),
+and avoid the verification loop.
 
- - It would set a weird precedent to have a special handler for a
-   single IOCTL command (why is this one command special?); this can't
-   be done for all IOCTL commands like that.
+Roberto
 
-If I weigh this against each other, I am not convinced that it
-wouldn't cause more complications later on.  But it was a good idea
-that I had not considered and it was worth looking into, I think.
-
-
-In summary, I need to digest this a bit longer ;-)
-
-I think these two were the key insights for me from this discussion:
-
- * There are fewer implementations of FIONREAD than I was afraid we
-   would find.  This gives me some hope that we can maybe special case
-   it after all in Landlock, and solve the 99% of realistic scenarios
-   with it (and the remaining 1% can still ask for the "all IOCTLs"
-   right, if needed).
-
- * Some IOCTL handlers are messier than I had expected, and it seems
-   less realistic that we can convince ourselves that these are safe.
-   I particularly did not realize before that ioctl handlers that
-   don't even implement FIONREAD might actually still do work when
-   called with FIONREAD... who would have thought! o_O
-
-I'll try to explore the direction of special casing FIONREAD for now,
-and think about it some more.  Thank you for the insightful input,
-I'll loop you in when I have something more concrete.
-
-=E2=80=94G=C3=BCnther
