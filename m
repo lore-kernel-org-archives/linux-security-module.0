@@ -1,62 +1,62 @@
-Received: from sonic315-26.consmr.mail.ne1.yahoo.com (sonic315-26.consmr.mail.ne1.yahoo.com [66.163.190.152])
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC65947A6A
-	for <linux-security-module@vger.kernel.org>; Wed, 14 Feb 2024 16:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D951460DE3
+	for <linux-security-module@vger.kernel.org>; Wed, 14 Feb 2024 17:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707929640; cv=none; b=m9HoiNKauM7M0YWg1ojVdR5f7oTi1p1AijM2VqEtO+lD6hxU6M6rHVTFB0o/eRKYqUjAt8Z9jRsVEPDy9HjfVJ67ELGXAadxNcFpm1cPedWA1WCCIhXptcVune95Wng3CLhrPtBx4Q+nGqKOATsewQt03kPAHhj3KyHzW0MEg88=
+	t=1707930657; cv=none; b=Tc3xSTRmBMSeS9LRtvn8gJE5MlddY6oVqiaVN6irK52VIAEhbHIPmBDihRig33SdeDIcq6t7519V36mdempprv19CWDfoyXGUCOGvvU95KvwgFouFtFo1ne5z1hB8HN/oXR6XLpgWvpnwasKIABTMc2kqyfoKmgmezY6hDqqY+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707929640; c=relaxed/simple;
-	bh=S2KZ2enedGMLMJHEQxj2M3r7Wi/81OS673GMiVnIQjU=;
+	s=arc-20240116; t=1707930657; c=relaxed/simple;
+	bh=4RaKoyRsq7SpA3u+pD0pmGxqhYfyg35bzgnliNy/Mwg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HFOE2rsHpaOemvLz6n6GDu6OVZMI6LPpfgc3j7f9qvzYqMgDkD6K9r7OekgSCi5z8JaLnqT02LZMJ8TD4p/uOxLBjGTe9/rArQU37U21i0f1yJ+0iX1r+QJ/XHWjqchv8P4Re4jXMF9ksKysIspgEO/2z/zVH5bGOQG+z269Hg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=SqNdONiI; arc=none smtp.client-ip=66.163.190.152
+	 In-Reply-To:Content-Type; b=BXTEfCOOZoBNQJr5QsQoJKWj1rKYq4InyrN2IRubZE/atT3svCtZDW/9pezcy1R5FF0NwkiBQZi8ZnfN9HR97jtAXOD5xiphEyxlruRnU91hyiNZ+S/IkVT0Fan0g8zjjVy3QP9hNwY6BpmQkEWPEJ8X8J/nwKpjrTPglBtOexc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=ckzcGEkM; arc=none smtp.client-ip=66.163.189.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="SqNdONiI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1707929636; bh=QV6Qmu5RAnBvR3jxVL6PNIGOhMF7Mmkic6h/GwMh+sw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=SqNdONiIoT9m2BYz+2N5a/VRnvoqWQid+tsPM0RBORHXETK6G021fnZQuAcEEV9qMLT7rU895O2DPZzMrB8S/ADEKAMmhSUf5w/Gh3oddZvxLtPQ5vr/iHOUzYgI1a/E5fFGncI1+xHGm3XAeHMeEJMRuZRCcQIHfYdkVXA40TjhuqjCh4se0cGEvm8orRQtEmulFLPTTu5jDJUBhK/C1EV99kb/HmHsUzu3xjwkYn/c4zA5fP2vD5ABbSoLMYyRldQtNO6qMNasDsTZsrhQb45FzLg7MQJ98dkbhY1W8XIn3Jt1VQ2nEk+J4HNJEZ352GpddSBazm9wu0eJ+6paAA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1707929636; bh=o6AzljrIqHspiiSZ11KvN6zZg4BgWAay1RMMPp3WEE4=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ZgPVY0SVVWPjZ8/pDbUi8jzjSRFs3iZKfhyQ6jJnA7mKE5RfcrbbWmqG6NICUdYVkXq+Ur8PA2K9ONgdYJiGdcitrA1MuYK9AdDMniaztk47ehCUvID+mjEGkqmAqepNq0Zv2Hhrh6J8mQdBVdg5kCkQOff0k58ahMMMcBcS9x/YmWmhoE1CSRjH/L8ys1T9YJpwiya82eLiBZJakPxaJ+F7BZ3sePl9DGJ/F2xPzaOcdFYIRloXLPb7AVY8IlsgCG5yBn6CPX9As+1lBa/RBEFPsUBc0VisJLRQITwJLwf7yEjgysKlSwHbxu+B+b3w8fjNjDsRqX5n1HK0nan7Jw==
-X-YMail-OSG: sQxGJlIVM1kWNzzsnRbdEMf2A9A0laGxfrj2Igum5kgeW3zH4SmPHHW4SE7dgaz
- __NENRkG4iJUOtCj8rwzqfD9FWEUwap9Nt8PKeqN5Cq52Xmr2q4VskuVGuNpMRjTwtF_hlCat7JX
- EyHRHIrmAhSbMa5jesY9Zu5S4uwPCzDFNA0zOrWh7dk_.JkYMcodB4gHZXXNbldPkW3_zTQ4uwLR
- rTGG5NAG7p1eb6GQYQL3XQXTzi3f_DoGjAjaMXhjAU6TKHo.LEn4MliNXrsrVKi9alFNy9wMic9i
- pCYrEQdbvJXaSxywVP9nw.5vaHxd4HAJa4USgmHLe6_Tqyg94nso31Y7gJA5jyBuL4tKpCcQo9.z
- LZ8ginzAQ8BA5Z27mpe6AbHLcK1St.bPv6LU1oBeZAUHI_81GTq3mLmL2lo3a6tHyl8e.8Zfxa7g
- ZC4Otfj5X5DVW78vcl_wnwjbtpULQb7JHhdomllOnLXvJhGchFar2MjlsSugHL2Sx1uJ2tixt0Sd
- f37jAxi0GxVpiwfl8XSZZCh2fDDLzHgZNnltEwFrELBFKYfJsV7BAe_TrKcybmtP14gW7u6i3tKA
- 7XqzRhOy60OxOLQrLP9gA.3725ZJR3v_rkcg7n9xfit8z_wWjrk3xRHbZdadQ2leYBBxh8cQyL_R
- iIztfix2OYCBcMcOmihDPQx2Rkg8tmdQoQKXW9nyKgRheyZYpnJwhCq4vk5MbHjXRsCe_ohSwjO7
- 0_eY2cgv4vv5W2wLyVodjBokU_AZ7jbXEqVHuIIkIRVxcS_nvJnabDH9e26361hqXBDywD4OF1mF
- qZB9hyhuybqYNfMm722H9i010yPyHea26WdbK7sYZkGUHv8TwoXw65.WGeHJS_zNI25PpkJjAGYM
- pJvvIGjWAhTYBW00jkRLBplS848zM5FeNmhiQ_v.9F20cwmHGXAmj4NWKtsgcGFSV1h92fHX1HXn
- .u.zOVhv8Sv2djzzPuydAkZeqytuTAkoMGMnKXWpPChRyWTZ5gp0yf6oLC3WMYqztMf_g4sDpWtq
- RR85E16uBzPhtoAr3fHi0mWiA2ScHRDjulK.1kxW1BsgRa4E5SAfU3_o9MZLEmohsErLUooQ3od3
- MewtJSMpGtakKk1CKaesKTLZ12KYzHviSXzHSgHafczaXPlvSA2oRFx6OFGIyvYiq17rZLnrv2Is
- CA1TR_qRTuBHozb7C8116jaD74.fCvtohh_xBJPEzRL3K0gvKQPnuVAOLf7mGL85Gp6Bm4dynYbC
- h6RB_EAnBc6VDp7TMkvmFGj5Ijye6k.8B3311iGU1oeKvIXec2.7NSYSWIA523vY1Kec3x.so_SV
- Lzm7BZXmxZcv2yuht9Ir8aXEblbhDK2lLVU1cBmBEBUji4KEfe03KuMDcx9MCI7rIkuGN0KiFbDU
- YUV4W1AxDGtTSXgv8K.V4cRfoJio7GcWesOCYAZ39CmoSyFGLx042wDmByDUCiysYTXEe7VhZl7L
- BAdPz0ptJTnSgoHKefMUM3aWlhSvHcdLhjfJr0SyhCxO6F5wzGzkfJknulJ5HAcCF7lQir6OUEjT
- HbnUR_UU.rL13HnG_o7geQI1eFQxDVo9JYKWO79VRlFwMaNq0VQ7Z0mtM.TaLRDrbTVdLKPYRn_l
- .eOqA0DjasBG2KcTu7OajjIGPUGwEyhlZZ2WZd7wX1DUMDuMUl8cMm8d4tmcQnDifAhgE0Xf8XBv
- w_pLmkwvvMUgmDA.v2VxygHutcbyzMfz58GSsyQl9sWdGJIPgzpNcRDeGBXrw8WxdqQ80EH1vRmE
- ykVz78CszDfMU8uoSiQiN29tXzxwEh_p.RaGLzkiJGqYgD5GnB.k8wkRAwV1_jt4YsnZhRd9wQOl
- _LfQAUD7rMbvI004ShHHXjuAk7Z8.cWiF.UOibdOlOvAR3LH9Ju27y22ZbDjGbhEThF9J0CrVC3c
- BcDSFU1_gKGD5p9OQH.Dd1u369lNKwwzNG.awU3K4D8XF9Uaq8P4YiSngg4vWcKARRzvUch.aAHC
- VTS9U1wWFn5FnUxBVm8BY8R.fIu7_orVszfiLhbRRvKxvhNHJuiOIN4RiZPdUCdEdv47ysytPM_H
- iM2b6lb4Sht2CH7Isyqc.qz.KNisDPSrOt9H4EZyFyD.wPN_QQ0W2GIAs8G9AG08CAeNWuAcbKQW
- hZNB7vfpZ4jm8Pl5iNCdc2WaEe5zxQ3GhWZAJ3E.C9WP2eGAHxPOhXCcwJjFIhIrJylQicdsd2_g
- 5p5JA2ZwPqsTV2Zi1d_hSfVpW7EjvgV6GDA3VdneD4m8QJYORBnIw_mGeBKzNPRZDyLzlpmqv2yT
- sr2g34TNrNg--
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ckzcGEkM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1707930654; bh=4RaKoyRsq7SpA3u+pD0pmGxqhYfyg35bzgnliNy/Mwg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ckzcGEkMy6EcqKL04TIpLwJeAHzcedy99iCj0hs7hhpyJDYzN5SehfQ53G/Dw8NO/UUDWzTUrzeoQQdsoDCe1Lkcaadefh4oUHLl/3Ushq92D1NNVeCcACaLjc6GlweTfvbYGoSfrVmWaEL1QJQY1T6TGsCqqoTJsUm73FXywDdQwI82txLpU/lBE1jWKTUw6e7UwBZ8qr049gVqiDJQxUO9XFguwjU+my1U1SNSths6ZjLjzDDEZjmqBunh+Sw2WoZQGiJxSuehMdsrpFfj/0DWrtoVyHpq0zXyI8cBeU6Piymj171k0LBSHkRbBoyzjf2dU9+l6wuPFyXbs44X8g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1707930654; bh=MiA3JkSfQFURIilrPMP0mq7fnjPEYYTn5j/wWaoUOtZ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Z3/hrFXLbDYuQbO9a3GbESoBgpSbWKwUTr94WkUsP8b3b73uyUmYM+T55EMQJTMq5r+bl2AGC6CoLu9gbdpk+INEzoUZNMUr1UtW5WjV3x+v9adwA62piEDJYihirm4VMvR8zHSNPHVivde+E9ti4cHzY5Ceax64uHVVuJXAOgXaqd8faFDeWRUZvpDKXm4ds6DdBCOoqcQXqAlYHKXIUiWNrKzfnf9bpEhQ62MgyPEQHR0xjPry628vWYJJPC7E4gaw564G2KtHJGqL2WBa1M1G3FHfvbjiVDnYEqenKFkZL/bP5pU25CRypzYObZsId2ZRqLOnNrD93YuhQHdTVQ==
+X-YMail-OSG: WUOLVJwVM1nC5UBukYsRJ9SA8tugkh_6oiMw64owwEf5XpGRFN8lFnxMFkigLaI
+ lWG8rP7iKdtrDXB6DCjCbOA7nT5yQYc5JanQYyaRDqi.mtDirmF32wwunUrnDap3v38uN8fRiklb
+ dEZPcm6dXKAwIsJxR0J.k6zly4GPOhXcvYkwoU8kj1V8v6OCcWhbwnrrano3lFgCc5x72Gwy54jg
+ sr5T7KcGvgaLASRtyOZCIY5aXp39qgHBFMBJOPzqtflwn2y06Ae9LqtxcO7Eh4o_d16S7LK5jYPi
+ 02uNCPOb_uoCTk9ZGtx1WlDMV8tfql0s.1ns5d9JUZDLgrzHxVLAV2WuPy9drsorF8TFtUcyTs..
+ ZredE0bhmJxn2lHrZm1Bd2Uz9yHYJpKOUkpAR.HtzKP1RQBgr0bFYkAl5oXTnnDyJ85JCU3gXUIz
+ i38EhScgyZQxLteRbZrjOqal9dpmqfnE.sRirQCBUJJXnX.IQ6Z7vN.1XWQdFICtS0ZtqfrEfias
+ wmOKrWFUpVG0HaRn5KH4bdYICxNlvUtAypK91fQGlf0e73i0tBuqDdl9PVNmalIh7ZbFx3htFswd
+ ASBnNHiihxAtQmG2CmSbnLuDkCXH45NnKHzcQ0Xb9ey6rno_exU6j_yovpnkcLFGDGe76sUtDn1x
+ qKOUGQCB_5O0aeGMDf4wd0LYCZ_J18BW7iwDuQsAb2aiP5NR3uRiMptRFTLzX7DtPrImTnq2JPyh
+ sSER0E3H8SygjUSfWW.OXL6snA7jxJdo.frP8efI3AW5i4Ru41mwohSXSdcz6bJys8vfhgtYG7ml
+ y.jtJRl4WfvDrSqOEXlP6e8cCd0fx73iQsl5coopFR2rBon3I49d8djpfYJbzJOyX6ZYyhakBdK8
+ 9crO5uIgO_Pi.oMyf1pgH72ZJ8hjUU3rWFuEvL7n7MjB_I.57VEcaXqUKhylygfDhFZiHdfSG7xI
+ cq9qrhV0E9OMCYd5t0r4RXETmhzGLqg52UC3YhmXejtMupmOpq88SZtPhtfkCrGBKikf7bcCBB3h
+ TTS1CKIsw8a7mvV4PJ5gkubfkDlRSvbTBvdNzMFoLBGIskbzPfyXxG6FaXH.8P2G7D3ZHZGCPT_Y
+ DwjqRpMNO6iqteAr5opxKkMEBK54jz.6wcXEwxKvKjlX_q_YhecZRf6jVE7QWT1I0oYZBcKHt9OG
+ Hpywui94Ptq9BEzn42FcVKvq7YoLsKoBmQ0B7luIJeaxRPJ6hMsxYiFv1XlTI66wZiLAX4uYjXL8
+ UBsDQnIxHe7GJ1wOdhxm.kDWMB8LdHrFaCZPGAjyeb_6vd50bnfrTlmdjz9D8RQZj.BHXXE.iKGx
+ 4yR07A1I2lS0_vjmiF0EZ8_67sMVFpSqE2V6u2q7kQoEjTW9tSUgQCPpZN_HeFQ_LaNSXG2q2HG1
+ o4Q6xyU_.7omUpGx.NyhrAUpTGwYouSi9bjiAIgmPeC.AiEWvawFdWEQPkAobWNWBsxPv8MOKxfM
+ j8aM9XH80zE1o9BwWpUYF2a2pSr_Ua4vLA3e1mi1hvD8M6xjg_IQzaYC2Mw6F_sgrSkxfVTKfrJo
+ EQHHRn4Vo.OcWuar8TtE1jCINKlNKaOkTowK3blI7mjCPzuKkVOwuVwwP.YiBwHdSg6uENxJOA7v
+ oj8kNCEoH64hWo5rNeCtB4U8fGpn84dtlMbx7DGXNNo36.GN9UA5KxqnHvDdKjpSGgf6auP3whQH
+ 8dpyTg2m4l2nQP_l2zxloRds4Qx.neZCRPl6I5S5.3KOtHaKsVyqXbf6gh5ZrtA0rIWUHVDnaRE_
+ RcNdSwUNdkiTr0F50_T2_dd.xC5t5MStEi47ZYNWT20U70Mcbd7jkW_vHTX3lj8V2HNLDO3mYMuS
+ 9_ge_nAGtEGMGpHkIBn6svqK1jr_gBDBKQiBrj1VutfvsxfJpqaLozmWxsM.rXUUl9X04n2.w.O.
+ x4T3RkoGl51l9lp.pCTZRSnN.UYr2xBOR.X5P5cxGIhhLkWqtlUDKT4RoHZX8JCEIWG9bKP1iMgK
+ DS_ksdT0VPAx5lgHsQXwL3nojUQLHqGterRfpfPWwP4MYkwElKu.BNjqZ_YbwPSqRECKJUxqIaYv
+ gHNvmYqS5RbU90VOeQ98UDQJO2yoxAwlZYF254M.V1gykI_o.9y4G5hHqYg9we6IDIj4HmwS0Who
+ gUxAbIIS3dpi0TdSqJbGHbQAI0FU5a2.Mvp41Gy_1s.QsHOpquJeA0twzMkiKJO3u0p6RSux_9mm
+ hiQCXj25l6nQVxli2lgKMWdldYDFs8fqIvTS9TnktYmghQrpadNtZZuwo4egh4F9SpmTVTy_Dhr4
+ ojlw-
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: b2d54cc7-2a1e-4b70-8a78-7d780da9cd88
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Wed, 14 Feb 2024 16:53:56 +0000
-Received: by hermes--production-gq1-5c57879fdf-p26ct (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 52fffae420452d8de6fa8aa4633005de;
-          Wed, 14 Feb 2024 16:53:55 +0000 (UTC)
-Message-ID: <a4a77e0e-8d5e-4c9d-aff4-9fe0d8b89cf0@schaufler-ca.com>
-Date: Wed, 14 Feb 2024 08:53:52 -0800
+X-Sonic-ID: eb282d42-918a-4da4-8559-794adee9a6a0
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Wed, 14 Feb 2024 17:10:54 +0000
+Received: by hermes--production-gq1-5c57879fdf-wt62k (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6ac691ce11c8ee7b15390f4c521fb96c;
+          Wed, 14 Feb 2024 17:10:48 +0000 (UTC)
+Message-ID: <b240a8ad-240a-4bc5-9414-62bd417f0b92@schaufler-ca.com>
+Date: Wed, 14 Feb 2024 09:10:46 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -64,220 +64,53 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] security: fix integer overflow in lsm_set_self_attr()
- syscall
-To: Jann Horn <jannh@google.com>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Kees Cook <keescook@chromium.org>,
- John Johansen <john.johansen@canonical.com>,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240214160538.1086089-1-jannh@google.com>
+Subject: Re: smack: Possible NULL pointer deref in cred_free hook.
 Content-Language: en-US
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <ad9dddfe-0fa1-40f6-9f8c-f2c01c7a0211@I-love.SAKURA.ne.jp>
+ <fa719d6f-1960-491e-89c2-ed2c14d184fc@I-love.SAKURA.ne.jp>
+ <2fa0a73a-1d03-4937-8599-e4560297af3f@schaufler-ca.com>
+ <f15e4a73-02e1-4758-a8e6-0edd27224c0a@I-love.SAKURA.ne.jp>
+ <757dc423-f914-44b7-98bb-fde5cd42d33b@schaufler-ca.com>
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240214160538.1086089-1-jannh@google.com>
+In-Reply-To: <757dc423-f914-44b7-98bb-fde5cd42d33b@schaufler-ca.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.22077 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 2/14/2024 8:05 AM, Jann Horn wrote:
-> security_setselfattr() has an integer overflow bug that leads to
-> out-of-bounds access when userspace provides bogus input:
-> `lctx->ctx_len + sizeof(*lctx)` is checked against `lctx->len` (and,
-> redundantly, also against `size`), but there are no checks on
-> `lctx->ctx_len`.
-> Therefore, userspace can provide an `lsm_ctx` with `->ctx_len` set to a
-> value between `-sizeof(struct lsm_ctx)` and -1, and this bogus `->ctx_len`
-> will then be passed to an LSM module as a buffer length, causing LSM
-> modules to perform out-of-bounds accesses.
->
-> The following reproducer will demonstrate this under ASAN (if AppArmor is
-> loaded as an LSM):
-> ```
-> #define _GNU_SOURCE
-> #include <unistd.h>
-> #include <stdint.h>
-> #include <stdlib.h>
-> #include <sys/syscall.h>
->
-> struct lsm_ctx {
->   uint64_t id;
->   uint64_t flags;
->   uint64_t len;
->   uint64_t ctx_len;
->   char ctx[];
-> };
->
-> int main(void) {
->   size_t size = sizeof(struct lsm_ctx);
->   struct lsm_ctx *ctx = malloc(size);
->   ctx->id = 104/*LSM_ID_APPARMOR*/;
->   ctx->flags = 0;
->   ctx->len = size;
->   ctx->ctx_len = -sizeof(struct lsm_ctx);
->   syscall(
->     460/*__NR_lsm_set_self_attr*/,
->     /*attr=*/  100/*LSM_ATTR_CURRENT*/,
->     /*ctx=*/   ctx,
->     /*size=*/  size,
->     /*flags=*/ 0
->   );
-> }
-> ```
->
-> (I'm including an ASAN splat in the patch notes sent to the list.)
->
-> Fixes: a04a1198088a ("LSM: syscalls for current process attributes")
-> Signed-off-by: Jann Horn <jannh@google.com>
+On 2/7/2024 10:53 AM, Casey Schaufler wrote:
+> On 2/6/2024 6:54 PM, Tetsuo Handa wrote:
+>> On 2024/02/07 10:39, Casey Schaufler wrote:
+>>> On 2/6/2024 6:31 AM, Tetsuo Handa wrote:
+>>>> Hello, Casey.
+>>>>
+>>>> I confirmed using fault injection shown below that smack_cred_free() is not
+>>>> prepared for being called without successful smack_cred_prepare().
+>>> The failure cases for smack_cred_prepare() result from memory allocation
+>>> failures. Since init_task_smack() is called before either of the potential
+>>> memory allocations the state of the cred will be safe for smack_cred_free().
+>>> The fault you've described here removes the init_task_smack(), which will
+>>> always succeed, and which is sufficient to prevent the smack_cred_free()
+>>> failure below. Are you suggesting that there is a case where a cred will
+>>> be freed without ever having been "prepared"?
+>> Yes. If smack_cred_prepare() is not the first entry of the cred_prepare list
+>> and the first entry of the cred_prepare list failed, smack_cred_prepare()
+>> will not be called (and therefore init_task_smack() will not be called).
 
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+Ah, but it turns out that the only LSM that can fail in _cred_prepare()
+is Smack. Even if smack_cred_prepare() fails it will have called
+init_task_smack(), so there isn't *currently* a problem. Should another
+LSM have the possibility of failing in whatever_cred_prepare() this
+could be an issue.
 
-> ---
-> ASAN splat from the reproducer:
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in do_setattr (security/apparmor/lsm.c:860) 
-> Read of size 1 at addr ffff888006163abf by task setselfattr/548
->
-> CPU: 0 PID: 548 Comm: setselfattr Not tainted 6.8.0-rc4-00014-g7e90b5c295ec-dirty #5
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> Call Trace:
-> <TASK>
-> dump_stack_lvl (lib/dump_stack.c:107) 
-> print_report (mm/kasan/report.c:378 mm/kasan/report.c:488) 
-> [...]
-> kasan_report (mm/kasan/report.c:603) 
-> [...]
-> do_setattr (security/apparmor/lsm.c:860) 
-> [...]
-> apparmor_setselfattr (security/apparmor/lsm.c:935) 
-> security_setselfattr (security/security.c:4038) 
-> __x64_sys_lsm_set_self_attr (security/lsm_syscalls.c:55) 
-> do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83) 
-> entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:129) 
-> RIP: 0033:0x7f29a170ff59
-> Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 07 6f 0c 00 f7 d8 64 89 01 48
-> All code
-> ========
->    0:	00 c3                	add    %al,%bl
->    2:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
->    9:	00 00 00 
->    c:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
->   11:	48 89 f8             	mov    %rdi,%rax
->   14:	48 89 f7             	mov    %rsi,%rdi
->   17:	48 89 d6             	mov    %rdx,%rsi
->   1a:	48 89 ca             	mov    %rcx,%rdx
->   1d:	4d 89 c2             	mov    %r8,%r10
->   20:	4d 89 c8             	mov    %r9,%r8
->   23:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
->   28:	0f 05                	syscall
->   2a:*	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax		<-- trapping instruction
->   30:	73 01                	jae    0x33
->   32:	c3                   	ret
->   33:	48 8b 0d 07 6f 0c 00 	mov    0xc6f07(%rip),%rcx        # 0xc6f41
->   3a:	f7 d8                	neg    %eax
->   3c:	64 89 01             	mov    %eax,%fs:(%rcx)
->   3f:	48                   	rex.W
->
-> Code starting with the faulting instruction
-> ===========================================
->    0:	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax
->    6:	73 01                	jae    0x9
->    8:	c3                   	ret
->    9:	48 8b 0d 07 6f 0c 00 	mov    0xc6f07(%rip),%rcx        # 0xc6f17
->   10:	f7 d8                	neg    %eax
->   12:	64 89 01             	mov    %eax,%fs:(%rcx)
->   15:	48                   	rex.W
-> RSP: 002b:00007ffd41c781a8 EFLAGS: 00000202 ORIG_RAX: 00000000000001cc
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f29a170ff59
-> RDX: 0000000000000020 RSI: 000056518c581260 RDI: 0000000000000064
-> RBP: 00007ffd41c781c0 R08: 00000000000a3330 R09: 000056518c581260
-> R10: 0000000000000000 R11: 0000000000000202 R12: 000056518bd95060
-> R13: 00007ffd41c782a0 R14: 0000000000000000 R15: 0000000000000000
-> </TASK>
->
-> Allocated by task 548 on cpu 0 at 61.045304s:
-> kasan_save_stack (mm/kasan/common.c:48) 
-> kasan_save_track (mm/kasan/common.c:68) 
-> __kasan_kmalloc (mm/kasan/common.c:372 mm/kasan/common.c:389) 
-> __kmalloc (./include/linux/kasan.h:211 mm/slub.c:3981 mm/slub.c:3994) 
-> load_elf_binary (./include/linux/slab.h:594 fs/binfmt_elf.c:880) 
-> bprm_execve (fs/exec.c:1783 fs/exec.c:1825 fs/exec.c:1877 fs/exec.c:1853) 
-> do_execveat_common.isra.0 (fs/exec.c:1984) 
-> __x64_sys_execve (fs/exec.c:2129 (discriminator 1)) 
-> do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83) 
-> entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:129) 
->
-> Freed by task 548 on cpu 0 at 61.045380s:
-> kasan_save_stack (mm/kasan/common.c:48) 
-> kasan_save_track (mm/kasan/common.c:68) 
-> kasan_save_free_info (mm/kasan/generic.c:643 (discriminator 1)) 
-> poison_slab_object (mm/kasan/common.c:243) 
-> __kasan_slab_free (mm/kasan/common.c:257 (discriminator 1)) 
-> kfree (mm/slub.c:4299 (discriminator 3) mm/slub.c:4409 (discriminator 3)) 
-> load_elf_binary (fs/binfmt_elf.c:896 (discriminator 1)) 
-> bprm_execve (fs/exec.c:1783 fs/exec.c:1825 fs/exec.c:1877 fs/exec.c:1853) 
-> do_execveat_common.isra.0 (fs/exec.c:1984) 
-> __x64_sys_execve (fs/exec.c:2129 (discriminator 1)) 
-> do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83) 
-> entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:129) 
->
-> The buggy address belongs to the object at ffff888006163a80
-> which belongs to the cache kmalloc-32 of size 32
-> The buggy address is located 31 bytes to the right of
-> allocated 32-byte region [ffff888006163a80, ffff888006163aa0)
->
-> The buggy address belongs to the physical page:
-> page:0000000021a8da3a refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x6163
-> flags: 0x100000000000800(slab|node=0|zone=1)
-> page_type: 0xffffffff()
-> raw: 0100000000000800 ffff888001042500 dead000000000122 0000000000000000
-> raw: 0000000000000000 0000000080400040 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
-> ffff888006163980: fa fb fb fb fc fc fc fc 00 00 00 00 fc fc fc fc
-> ffff888006163a00: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
->> ffff888006163a80: fa fb fb fb fc fc fc fc 00 00 00 00 fc fc fc fc
-> ^
-> ffff888006163b00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff888006163b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ==================================================================
+Your "fault injection" is too aggressive. It should return an error
+from smack_cred_prepare() after the call to init_task_smack() rather
+than commenting out the call entirely.
+
+> I see your point. Thank you for the insight. This is the first real
+> case I've seen where the "bail on fail" approach leads to a problem.
+> Now, on to the fix ...
 >
 >
->  security/security.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/security/security.c b/security/security.c
-> index 3aaad75c9ce8..7035ee35a393 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -29,6 +29,7 @@
->  #include <linux/backing-dev.h>
->  #include <linux/string.h>
->  #include <linux/msg.h>
-> +#include <linux/overflow.h>
->  #include <net/flow.h>
->  
->  /* How many LSMs were built into the kernel? */
-> @@ -4015,6 +4016,7 @@ int security_setselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
->  	struct security_hook_list *hp;
->  	struct lsm_ctx *lctx;
->  	int rc = LSM_RET_DEFAULT(setselfattr);
-> +	u64 required_len;
->  
->  	if (flags)
->  		return -EINVAL;
-> @@ -4027,8 +4029,9 @@ int security_setselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
->  	if (IS_ERR(lctx))
->  		return PTR_ERR(lctx);
->  
-> -	if (size < lctx->len || size < lctx->ctx_len + sizeof(*lctx) ||
-> -	    lctx->len < lctx->ctx_len + sizeof(*lctx)) {
-> +	if (size < lctx->len ||
-> +	    check_add_overflow(sizeof(*lctx), lctx->ctx_len, &required_len) ||
-> +	    lctx->len < required_len) {
->  		rc = -EINVAL;
->  		goto free_out;
->  	}
->
-> base-commit: 7e90b5c295ec1e47c8ad865429f046970c549a66
