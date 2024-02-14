@@ -1,116 +1,130 @@
-Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D951460DE3
-	for <linux-security-module@vger.kernel.org>; Wed, 14 Feb 2024 17:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7065C605
+	for <linux-security-module@vger.kernel.org>; Wed, 14 Feb 2024 18:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707930657; cv=none; b=Tc3xSTRmBMSeS9LRtvn8gJE5MlddY6oVqiaVN6irK52VIAEhbHIPmBDihRig33SdeDIcq6t7519V36mdempprv19CWDfoyXGUCOGvvU95KvwgFouFtFo1ne5z1hB8HN/oXR6XLpgWvpnwasKIABTMc2kqyfoKmgmezY6hDqqY+I=
+	t=1707936798; cv=none; b=tZwOdxD9sdCJt//2B4c0awHh6wZ+2q5WMlIsPKeqUBhRrpc9Zl4R3EW1FUaLKP+kJRV5G3wojYAb/3SUth2PmJTHtu9vOvbRzIqa9JvyLkSFTUPk1oPWpdSScYWRZQ20QcY1t71/LZDFDuHMlU/30GfDdCdNQ/O3tlq3lGHbmd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707930657; c=relaxed/simple;
-	bh=4RaKoyRsq7SpA3u+pD0pmGxqhYfyg35bzgnliNy/Mwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BXTEfCOOZoBNQJr5QsQoJKWj1rKYq4InyrN2IRubZE/atT3svCtZDW/9pezcy1R5FF0NwkiBQZi8ZnfN9HR97jtAXOD5xiphEyxlruRnU91hyiNZ+S/IkVT0Fan0g8zjjVy3QP9hNwY6BpmQkEWPEJ8X8J/nwKpjrTPglBtOexc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=ckzcGEkM; arc=none smtp.client-ip=66.163.189.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1707936798; c=relaxed/simple;
+	bh=YB0WSEf01Y/V+3sTwuD+fxIA+EUO/mOnBcLiacfmF6I=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=VAWCnYBgrJBCCSWZBD4JT9CxTJqujZykfMbcHX/dQlc5azPEEYeYgfH1rrXXjp+Fezaalc2sfICKiv+17H+n2e2GmnMzhvQuj7yA0ij0pSm6g1sSCmId8Jr6hfEPGfkxUIRtAbXPANBOsnOs4PgfF6ir4sAMkls5i6SwH1NLSi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GmqFbF+1; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ckzcGEkM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1707930654; bh=4RaKoyRsq7SpA3u+pD0pmGxqhYfyg35bzgnliNy/Mwg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ckzcGEkMy6EcqKL04TIpLwJeAHzcedy99iCj0hs7hhpyJDYzN5SehfQ53G/Dw8NO/UUDWzTUrzeoQQdsoDCe1Lkcaadefh4oUHLl/3Ushq92D1NNVeCcACaLjc6GlweTfvbYGoSfrVmWaEL1QJQY1T6TGsCqqoTJsUm73FXywDdQwI82txLpU/lBE1jWKTUw6e7UwBZ8qr049gVqiDJQxUO9XFguwjU+my1U1SNSths6ZjLjzDDEZjmqBunh+Sw2WoZQGiJxSuehMdsrpFfj/0DWrtoVyHpq0zXyI8cBeU6Piymj171k0LBSHkRbBoyzjf2dU9+l6wuPFyXbs44X8g==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1707930654; bh=MiA3JkSfQFURIilrPMP0mq7fnjPEYYTn5j/wWaoUOtZ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Z3/hrFXLbDYuQbO9a3GbESoBgpSbWKwUTr94WkUsP8b3b73uyUmYM+T55EMQJTMq5r+bl2AGC6CoLu9gbdpk+INEzoUZNMUr1UtW5WjV3x+v9adwA62piEDJYihirm4VMvR8zHSNPHVivde+E9ti4cHzY5Ceax64uHVVuJXAOgXaqd8faFDeWRUZvpDKXm4ds6DdBCOoqcQXqAlYHKXIUiWNrKzfnf9bpEhQ62MgyPEQHR0xjPry628vWYJJPC7E4gaw564G2KtHJGqL2WBa1M1G3FHfvbjiVDnYEqenKFkZL/bP5pU25CRypzYObZsId2ZRqLOnNrD93YuhQHdTVQ==
-X-YMail-OSG: WUOLVJwVM1nC5UBukYsRJ9SA8tugkh_6oiMw64owwEf5XpGRFN8lFnxMFkigLaI
- lWG8rP7iKdtrDXB6DCjCbOA7nT5yQYc5JanQYyaRDqi.mtDirmF32wwunUrnDap3v38uN8fRiklb
- dEZPcm6dXKAwIsJxR0J.k6zly4GPOhXcvYkwoU8kj1V8v6OCcWhbwnrrano3lFgCc5x72Gwy54jg
- sr5T7KcGvgaLASRtyOZCIY5aXp39qgHBFMBJOPzqtflwn2y06Ae9LqtxcO7Eh4o_d16S7LK5jYPi
- 02uNCPOb_uoCTk9ZGtx1WlDMV8tfql0s.1ns5d9JUZDLgrzHxVLAV2WuPy9drsorF8TFtUcyTs..
- ZredE0bhmJxn2lHrZm1Bd2Uz9yHYJpKOUkpAR.HtzKP1RQBgr0bFYkAl5oXTnnDyJ85JCU3gXUIz
- i38EhScgyZQxLteRbZrjOqal9dpmqfnE.sRirQCBUJJXnX.IQ6Z7vN.1XWQdFICtS0ZtqfrEfias
- wmOKrWFUpVG0HaRn5KH4bdYICxNlvUtAypK91fQGlf0e73i0tBuqDdl9PVNmalIh7ZbFx3htFswd
- ASBnNHiihxAtQmG2CmSbnLuDkCXH45NnKHzcQ0Xb9ey6rno_exU6j_yovpnkcLFGDGe76sUtDn1x
- qKOUGQCB_5O0aeGMDf4wd0LYCZ_J18BW7iwDuQsAb2aiP5NR3uRiMptRFTLzX7DtPrImTnq2JPyh
- sSER0E3H8SygjUSfWW.OXL6snA7jxJdo.frP8efI3AW5i4Ru41mwohSXSdcz6bJys8vfhgtYG7ml
- y.jtJRl4WfvDrSqOEXlP6e8cCd0fx73iQsl5coopFR2rBon3I49d8djpfYJbzJOyX6ZYyhakBdK8
- 9crO5uIgO_Pi.oMyf1pgH72ZJ8hjUU3rWFuEvL7n7MjB_I.57VEcaXqUKhylygfDhFZiHdfSG7xI
- cq9qrhV0E9OMCYd5t0r4RXETmhzGLqg52UC3YhmXejtMupmOpq88SZtPhtfkCrGBKikf7bcCBB3h
- TTS1CKIsw8a7mvV4PJ5gkubfkDlRSvbTBvdNzMFoLBGIskbzPfyXxG6FaXH.8P2G7D3ZHZGCPT_Y
- DwjqRpMNO6iqteAr5opxKkMEBK54jz.6wcXEwxKvKjlX_q_YhecZRf6jVE7QWT1I0oYZBcKHt9OG
- Hpywui94Ptq9BEzn42FcVKvq7YoLsKoBmQ0B7luIJeaxRPJ6hMsxYiFv1XlTI66wZiLAX4uYjXL8
- UBsDQnIxHe7GJ1wOdhxm.kDWMB8LdHrFaCZPGAjyeb_6vd50bnfrTlmdjz9D8RQZj.BHXXE.iKGx
- 4yR07A1I2lS0_vjmiF0EZ8_67sMVFpSqE2V6u2q7kQoEjTW9tSUgQCPpZN_HeFQ_LaNSXG2q2HG1
- o4Q6xyU_.7omUpGx.NyhrAUpTGwYouSi9bjiAIgmPeC.AiEWvawFdWEQPkAobWNWBsxPv8MOKxfM
- j8aM9XH80zE1o9BwWpUYF2a2pSr_Ua4vLA3e1mi1hvD8M6xjg_IQzaYC2Mw6F_sgrSkxfVTKfrJo
- EQHHRn4Vo.OcWuar8TtE1jCINKlNKaOkTowK3blI7mjCPzuKkVOwuVwwP.YiBwHdSg6uENxJOA7v
- oj8kNCEoH64hWo5rNeCtB4U8fGpn84dtlMbx7DGXNNo36.GN9UA5KxqnHvDdKjpSGgf6auP3whQH
- 8dpyTg2m4l2nQP_l2zxloRds4Qx.neZCRPl6I5S5.3KOtHaKsVyqXbf6gh5ZrtA0rIWUHVDnaRE_
- RcNdSwUNdkiTr0F50_T2_dd.xC5t5MStEi47ZYNWT20U70Mcbd7jkW_vHTX3lj8V2HNLDO3mYMuS
- 9_ge_nAGtEGMGpHkIBn6svqK1jr_gBDBKQiBrj1VutfvsxfJpqaLozmWxsM.rXUUl9X04n2.w.O.
- x4T3RkoGl51l9lp.pCTZRSnN.UYr2xBOR.X5P5cxGIhhLkWqtlUDKT4RoHZX8JCEIWG9bKP1iMgK
- DS_ksdT0VPAx5lgHsQXwL3nojUQLHqGterRfpfPWwP4MYkwElKu.BNjqZ_YbwPSqRECKJUxqIaYv
- gHNvmYqS5RbU90VOeQ98UDQJO2yoxAwlZYF254M.V1gykI_o.9y4G5hHqYg9we6IDIj4HmwS0Who
- gUxAbIIS3dpi0TdSqJbGHbQAI0FU5a2.Mvp41Gy_1s.QsHOpquJeA0twzMkiKJO3u0p6RSux_9mm
- hiQCXj25l6nQVxli2lgKMWdldYDFs8fqIvTS9TnktYmghQrpadNtZZuwo4egh4F9SpmTVTy_Dhr4
- ojlw-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: eb282d42-918a-4da4-8559-794adee9a6a0
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Wed, 14 Feb 2024 17:10:54 +0000
-Received: by hermes--production-gq1-5c57879fdf-wt62k (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6ac691ce11c8ee7b15390f4c521fb96c;
-          Wed, 14 Feb 2024 17:10:48 +0000 (UTC)
-Message-ID: <b240a8ad-240a-4bc5-9414-62bd417f0b92@schaufler-ca.com>
-Date: Wed, 14 Feb 2024 09:10:46 -0800
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GmqFbF+1"
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-7d2e1832d4dso2291406241.2
+        for <linux-security-module@vger.kernel.org>; Wed, 14 Feb 2024 10:53:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1707936794; x=1708541594; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=U7EX0BUU8eYmhs0ZPEmIoQh2Kp64rH+uh/MBL1tuL4s=;
+        b=GmqFbF+1eCKxVFuR+Kyrsu977sb38LnrWY4AeZ4YUMCQVyxLwakk4NQ1ZpNhFHr3Uk
+         PGSE5UOMKHj8qLZjPmanF93VmKGWjkiAvWTnhjY3P88Y4+6xb14uPjS8qC/oGWBMCTIC
+         5Cdx6H6vOOhUBJS1BM6dti1loA91Agdp+8fjQVuPCVS5BCyjSl5od08u59k2Se46xi27
+         RU7+P7+NmK/bK0Ffdz1iYP9NGzRzo3bY1+3l5KOKl9Z0TvVMcNM3S6WH3ve2jDPWt2/u
+         2juXNx9h1j5Y7aJfBPEiWMq+wFuZXc4JAdUgk3MlhlndBVNqFbqNKW51pv211e5ia5w0
+         Swmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707936794; x=1708541594;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U7EX0BUU8eYmhs0ZPEmIoQh2Kp64rH+uh/MBL1tuL4s=;
+        b=imaYFdWJg0dFOB67/EDh06xkg7XTlHZ28a40+pl/mZy5O5zv2X3D8vuNgT4ZcHOKBP
+         E1j3g+iIODriJj+A4afvlmIvckw2XaeZrx1Q2PxqxGxnJMeLU9shHi0XBZvmXpNCMhc9
+         WzJF+SAmUj36kbVXARwvIhX+uU/Mks4wClIClYP+L7GVPenQGYeWJ+ebXsfaGw9Lk49G
+         hAFkqagP+hO28WSu5oGC3SV8uITfqUCwCh70hyqsJ9L3QWOUT4+q4DXwQrVcDf4Aiqy+
+         ELg8cTAeZx0zRZCQo3W+rTcdl/Qh2L9Yp2k/1tcTe45uRa6YfoBMAiaVVwJFNolegNfI
+         dUJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUd1KbV365OnKCGSc4YhqE2fHeOLPgK8I4CfVihlOO6gfX+esV9jtaLuf4iFCGd34/Mjb0tgtetu7uHDfxCC/Wa9hMAx6m+/hFZNjQ4CmOBdrCJzicH
+X-Gm-Message-State: AOJu0YyARqjlq8asg1Ba5Wky+HCi+hhMg6io/fL3DCdyg+Cu1Rrg+xSw
+	zsJSLjEbUSlyjkGDPlWQg7DLZ+0IauMYbBbUsBvNz8lbn3lCt0TPrh6ABCyJlQ==
+X-Google-Smtp-Source: AGHT+IFE3dcYT/V2vseHwfI/QKGAhtoiv7lpaXvutbo6pW5L51Jt87o/Rt6W4ld0LKTeyp5DB9cqIQ==
+X-Received: by 2002:a1f:d986:0:b0:4bd:3433:aac with SMTP id q128-20020a1fd986000000b004bd34330aacmr3156328vkg.15.1707936794508;
+        Wed, 14 Feb 2024 10:53:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVXIWXDO78A/kdG+CESi3cvOFauyQKoDlFtG4hFccN+h9utfaGjVgINu6NGQywVXm1XZTduZQuRt4VMbk2TJqUWQRgiusXQJQyNFSgYfyR3xT0nLnJnF4IEv8tRuCMd531L2GhbHjeECt89qI4vouDAXu0V6lQ+gt1DSUpfs6IYE6P66sTfa4pzzrNCKl4DYeKthIeK1RbmNbgcK22Pz+lUyFM6uzKnjHctyUD9C+ZRxNGFufQxHUmre6QrRPOVjE3Df8yVvHrlrIKSEPU=
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id od9-20020a0562142f0900b0068c9d0561d1sm2523643qvb.83.2024.02.14.10.53.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Feb 2024 10:53:14 -0800 (PST)
+Date: Wed, 14 Feb 2024 13:53:13 -0500
+Message-ID: <1e24f1ef83614516c995e1cceccba6ff@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: smack: Possible NULL pointer deref in cred_free hook.
-Content-Language: en-US
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <ad9dddfe-0fa1-40f6-9f8c-f2c01c7a0211@I-love.SAKURA.ne.jp>
- <fa719d6f-1960-491e-89c2-ed2c14d184fc@I-love.SAKURA.ne.jp>
- <2fa0a73a-1d03-4937-8599-e4560297af3f@schaufler-ca.com>
- <f15e4a73-02e1-4758-a8e6-0edd27224c0a@I-love.SAKURA.ne.jp>
- <757dc423-f914-44b7-98bb-fde5cd42d33b@schaufler-ca.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <757dc423-f914-44b7-98bb-fde5cd42d33b@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22077 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
+Content-Transfer-Encoding: 8bit
+From: Paul Moore <paul@paul-moore.com>
+To: Jann Horn <jannh@google.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, Kees Cook <keescook@chromium.org>, John Johansen <john.johansen@canonical.com>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH] security: fix integer overflow in lsm_set_self_attr()  syscall
+References: <20240214160538.1086089-1-jannh@google.com>
+In-Reply-To: <20240214160538.1086089-1-jannh@google.com>
 
-On 2/7/2024 10:53 AM, Casey Schaufler wrote:
-> On 2/6/2024 6:54 PM, Tetsuo Handa wrote:
->> On 2024/02/07 10:39, Casey Schaufler wrote:
->>> On 2/6/2024 6:31 AM, Tetsuo Handa wrote:
->>>> Hello, Casey.
->>>>
->>>> I confirmed using fault injection shown below that smack_cred_free() is not
->>>> prepared for being called without successful smack_cred_prepare().
->>> The failure cases for smack_cred_prepare() result from memory allocation
->>> failures. Since init_task_smack() is called before either of the potential
->>> memory allocations the state of the cred will be safe for smack_cred_free().
->>> The fault you've described here removes the init_task_smack(), which will
->>> always succeed, and which is sufficient to prevent the smack_cred_free()
->>> failure below. Are you suggesting that there is a case where a cred will
->>> be freed without ever having been "prepared"?
->> Yes. If smack_cred_prepare() is not the first entry of the cred_prepare list
->> and the first entry of the cred_prepare list failed, smack_cred_prepare()
->> will not be called (and therefore init_task_smack() will not be called).
+On Feb 14, 2024 Jann Horn <jannh@google.com> wrote:
+> 
+> security_setselfattr() has an integer overflow bug that leads to
+> out-of-bounds access when userspace provides bogus input:
+> `lctx->ctx_len + sizeof(*lctx)` is checked against `lctx->len` (and,
+> redundantly, also against `size`), but there are no checks on
+> `lctx->ctx_len`.
+> Therefore, userspace can provide an `lsm_ctx` with `->ctx_len` set to a
+> value between `-sizeof(struct lsm_ctx)` and -1, and this bogus `->ctx_len`
+> will then be passed to an LSM module as a buffer length, causing LSM
+> modules to perform out-of-bounds accesses.
+> 
+> The following reproducer will demonstrate this under ASAN (if AppArmor is
+> loaded as an LSM):
+> ```
+> #define _GNU_SOURCE
+> #include <unistd.h>
+> #include <stdint.h>
+> #include <stdlib.h>
+> #include <sys/syscall.h>
+> 
+> struct lsm_ctx {
+>   uint64_t id;
+>   uint64_t flags;
+>   uint64_t len;
+>   uint64_t ctx_len;
+>   char ctx[];
+> };
+> 
+> int main(void) {
+>   size_t size = sizeof(struct lsm_ctx);
+>   struct lsm_ctx *ctx = malloc(size);
+>   ctx->id = 104/*LSM_ID_APPARMOR*/;
+>   ctx->flags = 0;
+>   ctx->len = size;
+>   ctx->ctx_len = -sizeof(struct lsm_ctx);
+>   syscall(
+>     460/*__NR_lsm_set_self_attr*/,
+>     /*attr=*/  100/*LSM_ATTR_CURRENT*/,
+>     /*ctx=*/   ctx,
+>     /*size=*/  size,
+>     /*flags=*/ 0
+>   );
+> }
+> ```
+> 
+> (I'm including an ASAN splat in the patch notes sent to the list.)
+> 
+> Fixes: a04a1198088a ("LSM: syscalls for current process attributes")
+> Signed-off-by: Jann Horn <jannh@google.com>
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Ah, but it turns out that the only LSM that can fail in _cred_prepare()
-is Smack. Even if smack_cred_prepare() fails it will have called
-init_task_smack(), so there isn't *currently* a problem. Should another
-LSM have the possibility of failing in whatever_cred_prepare() this
-could be an issue.
+Looks good to me, thanks Jann.  I'm going to merge this into
+lsm/stable-6.8 and send this up to Linus soon (likely tomorrow).
 
-Your "fault injection" is too aggressive. It should return an error
-from smack_cred_prepare() after the call to init_task_smack() rather
-than commenting out the call entirely.
-
-> I see your point. Thank you for the insight. This is the first real
-> case I've seen where the "bail on fail" approach leads to a problem.
-> Now, on to the fix ...
->
->
+--
+paul-moore.com
