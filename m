@@ -1,117 +1,161 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E546486AC5
-	for <linux-security-module@vger.kernel.org>; Wed, 14 Feb 2024 18:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4692613A888;
+	Wed, 14 Feb 2024 20:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707936948; cv=none; b=Z3BBUY+2pGHwn19XckEakkmKKEh6ptR73dYsDjB5KMCx4+6dJEnp3XEX/qI8QEZ00Rf9T8MWN2wRn6mKSFGYjjZiubbc0BdpOLj23+4pvYGkXRfqWBgp0ZUcWqJjEhGOizL8Lf0Y0Z8Y8UE14rCeUCFg1vfkGTjDbVlujOR+knE=
+	t=1707941289; cv=none; b=lK7rO3tuBI7LPpW2KD9dewlV0nI2AnsXyvixk5penrGsX/RpBYFAc4bu79UkwW+5PRZFrze/YmyO5bnWQnPYE3CtsBdsCOrGn10ktliBz2LNvHHo58Ouk3idDKxQtMTm9AAq504tF03BB/W7CbJ/Q+yz9ZJDIDbkuzkEbNc5Oo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707936948; c=relaxed/simple;
-	bh=2o9yW87YDHDJIk+FUhejOTprdZYTL4CxwGrGu5Rk+MM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TDC4PbmTp81QbroGWVBkBsAXLYUJ1EYJhCFNsvgTXZpvSGljDas3csboYOr9SRNKUDpdX0UuzKsXot0aG3ENuLjBHqauVccJP9OgAPHsS0Ih/mBF0m9pR06u7R5loOgYy6rQVGwICmDFbr9FWqTeLb3Kd7GhuuqbVnD5TwgBgWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=R23scEYm; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1707941289; c=relaxed/simple;
+	bh=0c27WM48Hr69yQ4BRbSljfY+8max5aVHrUQMsvmvoT0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=rGXh9vzZ+mmwWZGkm30yg52gEsaQcN2MOdm5gRYvMIdxaKslP0BZQw507K2stJttasCJvxsGAQrGRECj1RgUwRfX+49JAoELWj51pe4/JuYCYQGglmNn9WTR/jZHmIoVCzd9zTBbuep2lySmnAl+6/sf281G10LWA2luIhM2VLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XO4ti+F8; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="R23scEYm"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-607815b5772so1127517b3.0
-        for <linux-security-module@vger.kernel.org>; Wed, 14 Feb 2024 10:55:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1707936946; x=1708541746; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2o9yW87YDHDJIk+FUhejOTprdZYTL4CxwGrGu5Rk+MM=;
-        b=R23scEYmAMs7WILKLCH8DdZ40VNHgpksy8Bg0iao805KMFIlSLn1hqBJMmoNpqYKOm
-         LEwSHeokr0KEYqQigvL5a0C7zPA7/a7gncMFP4iB9R/2RgdmjLXenHE/1lUHm6naW4zB
-         hiFalWGfhDAEiqAziYuDC1uMM7IhSbDKIxMP4jBEqfmvd05JRB4tWgtpKgHOy80bBr3F
-         jYAksXStSwJPhDzSLLHSBgk43hFxzEK87CWPjaMgtag9ARH/QcZ/thCAArTRmqv2alZY
-         mG297YhVa13aY7aEuD7xlaKPqDJDrTGxDOk6m/TK3YOKfjLdyv7L3QlvEYeYibttnRDk
-         lrKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707936946; x=1708541746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2o9yW87YDHDJIk+FUhejOTprdZYTL4CxwGrGu5Rk+MM=;
-        b=CKIC9ToFhcZpCbargTK9DO1iwYmSMI5472N3HGlBlvHTl1Bi/Mk2P1BpbhO0JcWcJh
-         DKFHNJgFCAUxixzS310h0GVsDg2pcQkCkFUyzv3MTv42P4TLIDPdA8RJ+rS9S4xiHhlH
-         uprLtiZfcxjiN9RVLJ7CjouuVAZ5wJqquHU8HT5KUm2UBuHkrhn3VyB7tH25KpAagket
-         ytC6DMtp4ruakNDm5HfeHao1liuLaOD8bSDLYTmw4z3RanFgOgjSxna+MffQjsKOBIfD
-         fA4d9zQT/j6mhunB/ZlukOWHmNQ8T3x4nkjI73X/8lXIY9C7t2w8vpMMnW+3q3s1H9jy
-         xA8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUaCYPQxpOy3qhbD4pA9Dl53OxVbpAeUMl18AhC68AtZZGGAYQxsaaXgC8c0a0gH/JjuAJ48p/CNEhW7I4H6VEN45Hh8Rz9p/kK0rzwdCRraNakD8Z4
-X-Gm-Message-State: AOJu0YxrKU1NwI1oyKR7JZ8eBNxgarssCo0fiJVcvScVHP55RDxBBt4B
-	uaEtUrwX6dcfYLCrMUq9i9eRSxNZbXfxSFti4FVPUyreoNkAufT9bLttF3GLTdplXAckROMDM+D
-	Dm5HJj15NbXepg5Lqfburi8PGbpXwehnYmjWxQlKvXaWfoX0=
-X-Google-Smtp-Source: AGHT+IGUo04AyZemVAkiO7tj93PLXn5mdvRMXMbOKHVilUaBMwDF1mV2je0WKEQl8JX4z+LTKHDTr8pOTPJWXflV+Ss=
-X-Received: by 2002:a05:690c:4506:b0:607:b0d5:97c5 with SMTP id
- gt6-20020a05690c450600b00607b0d597c5mr1406634ywb.21.1707936945737; Wed, 14
- Feb 2024 10:55:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XO4ti+F8"
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41EJvFTF004798;
+	Wed, 14 Feb 2024 20:07:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=mXHxoZ42mf/ESBqj6s5bnVAfG0vN7uRQxTDbGz8SwAo=;
+ b=XO4ti+F8dvznCzwOMommY2wHzUPRF12PQUnYJO8wcMld4+xLiaDZrncmLdNb92rQ7TNe
+ RQ+9rYnPchBKUFw5S9Fl7I38jgR7LO6LKwUUOB0dExBhkPLH6UbwCM16YyMy4XS2iK2r
+ +0gh0WxTiNUirdOxbsuLbSFMGF0eadMRe4+BzFbNOEyWOpeZYWi0E0go6AeH/J1ElsT2
+ sExdubjt5KshLHd61G8KyAJvOgkxAqxFZJV+1qsKFpJwgPGTcHLj9XBxFxl787CNPkXw
+ AuT6Oi0YJiz5OVwSzTfJppPGbBIYD6oTQ2vUShlvwWT49EtCY3XXiM+cGR1oI6+ZznNS ug== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w944jranh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Feb 2024 20:07:32 +0000
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41EJvn2l007248;
+	Wed, 14 Feb 2024 20:07:32 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w944jramk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Feb 2024 20:07:31 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41EIYP1m004329;
+	Wed, 14 Feb 2024 20:07:30 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3w6kv0gd5r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Feb 2024 20:07:30 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41EK7RHI19005960
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 14 Feb 2024 20:07:29 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8504C5805A;
+	Wed, 14 Feb 2024 20:07:27 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EF2835805E;
+	Wed, 14 Feb 2024 20:07:25 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.101.207])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 14 Feb 2024 20:07:25 +0000 (GMT)
+Message-ID: <63afc94126521629bb7656b6e6783d6614ee898a.camel@linux.ibm.com>
+Subject: Re: [PATCH v9 12/25] security: Introduce file_post_open hook
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Paul Moore <paul@paul-moore.com>,
+        Roberto Sassu
+	 <roberto.sassu@huaweicloud.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com,
+        jlayton@kernel.org, neilb@suse.de, kolga@netapp.com,
+        Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org,
+        serge@hallyn.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+        dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com, shuah@kernel.org,
+        mic@digikod.net, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Roberto Sassu
+ <roberto.sassu@huawei.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Date: Wed, 14 Feb 2024 15:07:25 -0500
+In-Reply-To: <CAHC9VhR2M_MWHs34kn-WH3Wr0sgT09WKveecy7onkFhUb1-gEg@mail.gmail.com>
+References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
+	 <20240115181809.885385-13-roberto.sassu@huaweicloud.com>
+	 <305cd1291a73d788c497fe8f78b574d771b8ba41.camel@linux.ibm.com>
+	 <CAHC9VhQ7DgPJtNTRCYneu_XnpRmuwfPCW+FqVuS=k6U5-F6pJw@mail.gmail.com>
+	 <05ad625b0f5a0e6c095abee5507801da255b36cd.camel@huaweicloud.com>
+	 <CAHC9VhR2M_MWHs34kn-WH3Wr0sgT09WKveecy7onkFhUb1-gEg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <ad9dddfe-0fa1-40f6-9f8c-f2c01c7a0211@I-love.SAKURA.ne.jp>
- <fa719d6f-1960-491e-89c2-ed2c14d184fc@I-love.SAKURA.ne.jp>
- <2fa0a73a-1d03-4937-8599-e4560297af3f@schaufler-ca.com> <f15e4a73-02e1-4758-a8e6-0edd27224c0a@I-love.SAKURA.ne.jp>
- <757dc423-f914-44b7-98bb-fde5cd42d33b@schaufler-ca.com> <b240a8ad-240a-4bc5-9414-62bd417f0b92@schaufler-ca.com>
-In-Reply-To: <b240a8ad-240a-4bc5-9414-62bd417f0b92@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 14 Feb 2024 13:55:34 -0500
-Message-ID: <CAHC9VhRdqjWa0Zhw==U=kLNiSeYHDWnQyP8Yb4JNtTA7ki1gqw@mail.gmail.com>
-Subject: Re: smack: Possible NULL pointer deref in cred_free hook.
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 3pmfVPR_ZkYzTv8MNJbgBILvsfAhufy_
+X-Proofpoint-GUID: pUskxnPY1Bl82nL8IEpe0UmPvkoY0NWY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-14_12,2024-02-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 phishscore=0 clxscore=1015 priorityscore=1501
+ spamscore=0 suspectscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402140157
 
-On Wed, Feb 14, 2024 at 12:11=E2=80=AFPM Casey Schaufler <casey@schaufler-c=
-a.com> wrote:
-> On 2/7/2024 10:53 AM, Casey Schaufler wrote:
-> > On 2/6/2024 6:54 PM, Tetsuo Handa wrote:
-> >> On 2024/02/07 10:39, Casey Schaufler wrote:
-> >>> On 2/6/2024 6:31 AM, Tetsuo Handa wrote:
-> >>>> Hello, Casey.
-> >>>>
-> >>>> I confirmed using fault injection shown below that smack_cred_free()=
- is not
-> >>>> prepared for being called without successful smack_cred_prepare().
-> >>> The failure cases for smack_cred_prepare() result from memory allocat=
-ion
-> >>> failures. Since init_task_smack() is called before either of the pote=
-ntial
-> >>> memory allocations the state of the cred will be safe for smack_cred_=
-free().
-> >>> The fault you've described here removes the init_task_smack(), which =
-will
-> >>> always succeed, and which is sufficient to prevent the smack_cred_fre=
-e()
-> >>> failure below. Are you suggesting that there is a case where a cred w=
-ill
-> >>> be freed without ever having been "prepared"?
-> >> Yes. If smack_cred_prepare() is not the first entry of the cred_prepar=
-e list
-> >> and the first entry of the cred_prepare list failed, smack_cred_prepar=
-e()
-> >> will not be called (and therefore init_task_smack() will not be called=
-).
->
-> Ah, but it turns out that the only LSM that can fail in _cred_prepare()
-> is Smack. Even if smack_cred_prepare() fails it will have called
-> init_task_smack(), so there isn't *currently* a problem. Should another
-> LSM have the possibility of failing in whatever_cred_prepare() this
-> could be an issue.
+On Tue, 2024-02-13 at 10:33 -0500, Paul Moore wrote:
+> On Tue, Feb 13, 2024 at 7:59 AM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > On Mon, 2024-02-12 at 16:16 -0500, Paul Moore wrote:
+> > > On Mon, Feb 12, 2024 at 4:06 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > > > Hi Roberto,
+> > > > 
+> > > > 
+> > > > > diff --git a/security/security.c b/security/security.c
+> > > > > index d9d2636104db..f3d92bffd02f 100644
+> > > > > --- a/security/security.c
+> > > > > +++ b/security/security.c
+> > > > > @@ -2972,6 +2972,23 @@ int security_file_open(struct file *file)
+> > > > >       return fsnotify_perm(file, MAY_OPEN);  <===  Conflict
+> > > > 
+> > > > Replace with "return fsnotify_open_perm(file);"
+> > > > 
+> > > > >  }
+> > > > > 
+> > > > 
+> > > > The patch set doesn't apply cleaning to 6.8-rcX without this
+> > > > change.  Unless
+> > > > there are other issues, I can make the change.
+> > > 
+> > > I take it this means you want to pull this via the IMA/EVM tree?
+> > 
+> > Not sure about that, but I have enough changes to do to make a v10.
 
-Let's make sure we fix this, even if it isn't a problem with the
-current code, it is very possible it could become a problem at some
-point in the future and I don't want to see us get surprised by this
-then.
+@Roberto:  please add my "Reviewed-by" to the remaining patches.
 
---=20
-paul-moore.com
+> 
+> Sorry, I should have been more clear, the point I was trying to
+> resolve was who was going to take this patchset (eventually).  There
+> are other patches destined for the LSM tree that touch the LSM hooks
+> in a way which will cause conflicts with this patchset, and if
+> you/Mimi are going to take this via the IMA/EVM tree - which is fine
+> with me - I need to take that into account when merging things in the
+> LSM tree during this cycle.  It's not a big deal either way, it would
+> just be nice to get an answer on that within the next week.
+
+Similarly there are other changes for IMA and EVM.  If you're willing to create
+a topic branch for just the v10 patch set that can be merged into your tree and
+into my tree, I'm fine with your upstreaming v10. (I'll wait to send my pull
+request after yours.)  Roberto will add my Ack's to the integrity, IMA, and EVM
+related patches.  However if you're not willing to create a topic branch, I'll
+upstream the v10 patch set.
+
+thanks,
+
+Mimi
+
