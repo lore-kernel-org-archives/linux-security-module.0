@@ -1,122 +1,146 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED9753362
-	for <linux-security-module@vger.kernel.org>; Thu, 15 Feb 2024 23:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF5414534D
+	for <linux-security-module@vger.kernel.org>; Thu, 15 Feb 2024 23:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708040338; cv=none; b=SrjMrbOb39wic1dyHUdjox4iWB2IdWblmdhArOf6+KfgX8mLrok7ozIVcmNNLmwlraY8gmjMHlkqrrGJhxqircwJPXHyO6s5NJqB/tUwZdn0nI8IP6Ldp4AlHXbaIl4jkod8LX+Kn1oyaXv8FiDVzBXiBKAI03NVm/JEqJCg0Jk=
+	t=1708040875; cv=none; b=r3xzeWlNMi9QUyBbLuqYNnhedtgu2leNoMzr23i6rdVOA0lwaWRR20Fzn5R80O0tPo3kVynjifr8ybqiHPPMp8ICK8qL+cebWi2oVT9dDan8cMG7tg4O+tKNXgYcdaFFyarvVJO9QMFmjmzNVqjPGBjBAG9+9fBlqQjPgbxgNck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708040338; c=relaxed/simple;
-	bh=WLFO4rH2cvjFe/2ca1//lVsE5C9v5Z8KKpX4nigPgQk=;
+	s=arc-20240116; t=1708040875; c=relaxed/simple;
+	bh=i0JkEoazbe7olxPfKu+G8Uy4A1Di4zZuZedbjzHoSNI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uCVrw0NI4HN2rAFFSyITeE3X2HFUYZqjVxnZGCt3qbMiE8Eb8QlpimVcAay1STsiOGQEqIdfYD7mFZ1kqB5/V+BnEhMXpddwDgxU1uPM0CFx8F/NMd1rhz4bRU9qDugNo/87ClfobRWkbrDXwIFHhD0ox12PkhDQ20Zs67+aZ+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=N5IZYBn2; arc=none smtp.client-ip=209.85.219.177
+	 To:Cc:Content-Type; b=d4UuWFDx8175O792hDLeD/o5ENgs/3HaJHB/luhVNoWLqSDqabFuc5bFU4at0y97evtwsDR7jrYYnGmoepg1tSkyq+SXbV/e6E85bDuto2qkGBUKnxivIFbaSfdyVSuMN8WW6pK7EdetBST/QYwAoPps8sT0kHG+McINlaNzg4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aYui0xY1; arc=none smtp.client-ip=209.85.219.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="N5IZYBn2"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dc74435c428so1345018276.2
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Feb 2024 15:38:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aYui0xY1"
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dcc7cdb3a98so1520651276.2
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Feb 2024 15:47:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1708040336; x=1708645136; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1708040873; x=1708645673; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=INjRrFs9Fl6hiUuT3m5y4+rWDShgxGtC1HUlvmpvUDI=;
-        b=N5IZYBn2XjZ3LKKvHjak5L3Og8V/fxsH5Kkrep26raJFmMsftNIRRA3om5nNdwuiwn
-         fdIZEG8EfNiJ70+a0PrIWOinOqwzXsMMWOJl+8I3LvMYQDhD48uoVFwIhk4LKyfmRYAe
-         5UJsUT0/T4kGW90JVfFc+iYLfROSHgE4ovbD+h8PsQBLsaE17QRLG1a74rghR8vSYwQL
-         yBD0BOM/lVIb823YUjOI/cH/DYkzLkOMzqHApjvHOW2+LBNSJ/1qmhNMeiBE+Y2ZHfHp
-         1HauZtmpjfSrjwnCcVvWk5hf5YKG7vupncKXU1t3omp4LYpX03cclG7PUS1VRHCllW32
-         10Sg==
+        bh=TNqNjWyj5Im8N6xWYYajO215Bvq50L/4j9hhElLNjXY=;
+        b=aYui0xY188H+UoJn+hSOIc4QjrEciHSFIhXKUFqjYi0ete6C2JbxdY6QFA6cM/v5a4
+         gMxYJhHM08soJ6YqWCgI9z7aUsQ6A2jhx50dNzjEOFi0ztlp6thiEHMAE7ShGokQe8O3
+         EjiapTGcLiGf0BquSSdEsphdKiOesT7UmLOw+1qUmyi0qUJaIyEIkDTJzZP9+i+F44U4
+         lQV0UsHBoUb8xZNBMzVWmWJXxfnHoLhYCqdT1afaiS8aZND8ToH8KIuEyh/AgmfvMwqL
+         mq2ZCJehDA7PItvedNp1h/vmnu+lnhkO6ae/YqNuofk4RUA7ElpwAT7RBXYgLNmeG+M5
+         atag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708040336; x=1708645136;
+        d=1e100.net; s=20230601; t=1708040873; x=1708645673;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=INjRrFs9Fl6hiUuT3m5y4+rWDShgxGtC1HUlvmpvUDI=;
-        b=eLSnkT49W2WGWYw4BQOqhjrqMIfLiel7qWfcb6IAZy3EOm/naEAnWPPbKeVKy/5h1Z
-         tACspB0wmFoVJ1RYaB3bxrtpcj7oz00CQXt8jnQvWoS7/u+8o7e2n8yyLo7fss9TnjgC
-         TXjXJs1qB0T0GO/OAWGnjf6iv+8AenxFbMe8XB91ctOPzPbA5HuXwEXk6Z/EmMNPbUww
-         P5iQtqWyyrWs1cwa+jNVvoAifHf8DuYe9ynY0Pjuh4U0lO+yE1mxYyXrRt0IuxZmL3xI
-         r1Gx5mKnzDxuUw9HlGE2jfr1XTlxCT7yuLKgcEdWPtc6zvG8hKUE20yTQtjbaWBedVwr
-         A+cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmrk+l/EpIv0PKVuSxTfoYXB1kUD2MF8usLN0bYHvDUbIMr2IVipTA7dROTr/x4VS4VI19FxtkdL9Zh38l4dUHflhydoZHYYksofzBooGvGmcvKwVw
-X-Gm-Message-State: AOJu0Yyr2FgeIjuQ2sTUQTxgCrBOssqddF8YsLXLKWDx5j5rosDONeC+
-	QWxpVHtw2G7xjPov39W+XQQkuheiULg3sm5JqE2t9BB4gWh4iQpLqTS+da7OJqOqPShr+mDpwLN
-	/sPHodC6Sw1eSMjdvhElfxwejM5kscMjXbaZmexsV7pNvi3oO+w==
-X-Google-Smtp-Source: AGHT+IETk9gvfUExiQgN0fr1e1fXmGSl8z8EV4KfC3eYL7d6kNlTL/dCY8gx3LzUU/PG1fqXSQuVUdlv3aLMGuQ+kVk=
-X-Received: by 2002:a25:9d8e:0:b0:dc7:45c6:f8bc with SMTP id
- v14-20020a259d8e000000b00dc745c6f8bcmr3181986ybp.4.1708040335941; Thu, 15 Feb
- 2024 15:38:55 -0800 (PST)
+        bh=TNqNjWyj5Im8N6xWYYajO215Bvq50L/4j9hhElLNjXY=;
+        b=D+fhA9degTFuEcR7Iv7gdx/di3e76+O03vLNS39kBXDgKWqJpk5YB+4c2i5+otSN9N
+         s+4CqEyYKX1a9kOJIPa/1I4/pWxu6QEQZbwhV0qMxrIFvVhPrWU8j8wpIo6j0gavD1Nb
+         i7fIsAPkCPipvjPJvNIxPswEhlFQnhJDc6BCnJO5It+qWl6Py3VigzjWVFJLUjeXNbiV
+         LVXvCBMdnvWBDobE7p6tO94nJrZKGGGR/vduOz26EiZMZ1iYHPye/nqVIdSu20sYchgl
+         eMgpZZxJSzze9rgaZslPLHD7XR1llh9jGK0iNMeVbd8bTg+C8jU5tIlXTlxiiKENdjyi
+         RgWw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/x1Uws+LaLPTC8neQnLOzHxHCIbiVPqvzfx9F0AJpsZthVzO5yfvpvVs+YRw8CfJAUiNRcXgU9dYTYy9KUcYCfiT/wKL56rLXja7qDp0ly/sbH/3e
+X-Gm-Message-State: AOJu0Yz+J82muGVm1LxUnDK9ou8no4W7/GC3ct+8h7AhgGAcoSZVI9Ay
+	e+Y9GkncADaKbBbT+te1b9Vvwct7d94DDb6KRU92HjuNh4sUfi46vyfJ/vymBQGAUxs1AmBBVPX
+	uHCxbuHwRjRLJSuZSO/NjtwU9Bp2xyi+NEtVQ
+X-Google-Smtp-Source: AGHT+IGj4sYe0xwnV8Z27fpJ5XIo46jQrmblbhi+Z75L6k1QenA7Kck+4HBXyW1C8ZgM8RHcSbfHoYCrtsSiiXbyGWQ=
+X-Received: by 2002:a25:69c6:0:b0:dcc:99b6:830b with SMTP id
+ e189-20020a2569c6000000b00dcc99b6830bmr2991821ybc.19.1708040873125; Thu, 15
+ Feb 2024 15:47:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ad9dddfe-0fa1-40f6-9f8c-f2c01c7a0211@I-love.SAKURA.ne.jp>
- <fa719d6f-1960-491e-89c2-ed2c14d184fc@I-love.SAKURA.ne.jp>
- <2fa0a73a-1d03-4937-8599-e4560297af3f@schaufler-ca.com> <f15e4a73-02e1-4758-a8e6-0edd27224c0a@I-love.SAKURA.ne.jp>
- <757dc423-f914-44b7-98bb-fde5cd42d33b@schaufler-ca.com> <b240a8ad-240a-4bc5-9414-62bd417f0b92@schaufler-ca.com>
- <CAHC9VhRdqjWa0Zhw==U=kLNiSeYHDWnQyP8Yb4JNtTA7ki1gqw@mail.gmail.com>
- <8d093ada-995f-4291-9c31-35d9a62525b7@I-love.SAKURA.ne.jp> <6e00373a-a028-4575-b2cf-d4da366c2b6f@schaufler-ca.com>
-In-Reply-To: <6e00373a-a028-4575-b2cf-d4da366c2b6f@schaufler-ca.com>
+References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
+ <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com> <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
+ <202402070631.7B39C4E8@keescook> <CAHC9VhS1yHyzA-JuDLBQjyyZyh=sG3LxsQxB9T7janZH6sqwqw@mail.gmail.com>
+ <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com> <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
+In-Reply-To: <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 15 Feb 2024 18:38:45 -0500
-Message-ID: <CAHC9VhT730AxsUv=1=dEn22ABeHJPZ1JA-xwZv6DN54+DiiKQg@mail.gmail.com>
-Subject: Re: smack: Possible NULL pointer deref in cred_free hook.
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	linux-security-module <linux-security-module@vger.kernel.org>
+Date: Thu, 15 Feb 2024 18:47:42 -0500
+Message-ID: <CAHC9VhTac1ZuAzD5w=NtSYryu8vYxHnCx0NsMP-C4nmqiffA-Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Eric Biederman <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-security-module <linux-security-module@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Serge Hallyn <serge@hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 14, 2024 at 7:13=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
-> On 2/14/2024 2:15 PM, Tetsuo Handa wrote:
-> > On 2024/02/15 3:55, Paul Moore wrote:
-> >>> Ah, but it turns out that the only LSM that can fail in _cred_prepare=
-()
-> >>> is Smack. Even if smack_cred_prepare() fails it will have called
-> >>> init_task_smack(), so there isn't *currently* a problem. Should anoth=
-er
-> >>> LSM have the possibility of failing in whatever_cred_prepare() this
-> >>> could be an issue.
-> >> Let's make sure we fix this, even if it isn't a problem with the
-> >> current code, it is very possible it could become a problem at some
-> >> point in the future and I don't want to see us get surprised by this
-> >> then.
+On Thu, Feb 15, 2024 at 9:33=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2024/02/15 6:46, Paul Moore wrote:
+> >> To quickly summarize, there are two paths forward that I believe are
+> >> acceptable from a LSM perspective, pick either one and send me an
+> >> updated patchset.
 > >>
-> > Anyone can built-in an out-of-tree LSM where whatever_cred_prepare() fa=
-ils.
-> > An in-tree code that fails if an out-of-tree code (possibly BPF based L=
-SM)
-> > is added should be considered as a problem with the current code.
+> >> 1. Rename the hook to security_bprm_free() and update the LSM hook
+> >> description as I mentioned earlier in this thread.
+> >>
+> >> 2. Rename the hook to security_execve_revert(), move it into the
+> >> execve related functions, and update the LSM hook description to
+> >> reflect that this hook is for reverting execve related changes to the
+> >> current task's internal LSM state beyond what is possible via the
+> >> credential hooks.
+> >
+> > Hi Tetsuo, I just wanted to check on this and see if you've been able
+> > to make any progress?
+> >
 >
-> Agreed. By the way, this isn't just a Smack problem.
+> I'm fine with either approach. Just worrying that someone doesn't like
+> overhead of unconditionally calling security_bprm_free() hook.
+> If everyone is fine with below one, I'll post v4 patchset.
 
-I've tried to make this clear on previous issues, but let me say it
-again: I don't care what individual LSMs are affected, a bug is a bug
-and we need to fix it.
+My guess is that based on the previous comments people are going to
+prefer option #2 above, but we'll see what everyone says.  I did have
+one comment, below ...
 
-> You get what looks
-> like the same failure on an SELinux system if security_prepare_creds() fa=
-ils
-> using the suggested "fault injection". It appears that any failure in
-> security_prepare_creds() has the potential to be fatal.
+>  fs/exec.c                     |    1 +
+>  include/linux/lsm_hook_defs.h |    1 +
+>  include/linux/security.h      |    5 +++++
+>  security/security.c           |   12 ++++++++++++
+>  4 files changed, 19 insertions(+)
 
-Perhaps I didn't look at the original problem closely enough, but I
-believe this should only be an issue with LSMs that register a
-cred_free hook that assumes a valid LSM specific credential
-initialization.  While SELinux registers a cred_prepare hook, it does
-not register a cred_free hook.  Or am I missing something?
+...
 
-Looking quickly I suspect this affects Smack and AppArmor.  While
-Landlock registers a cred_free hook, it looks like it should properly
-handle being called without a cred_prepare hook first being executed.
-Of course Micka=C3=ABl is the one who should confirm this.
+> diff --git a/security/security.c b/security/security.c
+> index 3aaad75c9ce8..ba2f480b2bdb 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1223,6 +1223,18 @@ void security_bprm_committed_creds(const struct li=
+nux_binprm *bprm)
+>         call_void_hook(bprm_committed_creds, bprm);
+>  }
+>
+> +/**
+> + * security_bprm_free() - Notify of completion of an exec()
+
+The short summary above doesn't match the summary below.  If we stick
+with the security_bprm_free() approach please change "Notify of
+completion of an exec()" to "Notify LSMs of a bprm free event" or
+similar.
+
+> + * This hook is called when a linux_bprm instance is being destroyed, af=
+ter
+> + * the bprm creds have been released, and is intended to cleanup any int=
+ernal
+> + * LSM state associated with the linux_bprm instance.
+> + */
+> +void security_bprm_free(void)
+> +{
+> +       call_void_hook(bprm_free);
+> +}
+> +
+>  /**
+>   * security_fs_context_submount() - Initialise fc->security
+>   * @fc: new filesystem context
+>
 
 --=20
 paul-moore.com
