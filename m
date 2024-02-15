@@ -1,112 +1,156 @@
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CF612E1C7
-	for <linux-security-module@vger.kernel.org>; Thu, 15 Feb 2024 13:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98785132466;
+	Thu, 15 Feb 2024 14:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708002142; cv=none; b=NB/s1bx9mCSexX+72ZOHwrff1bZCDAwtag44vTc9bo0J3CMVoL1gm6ujYylBf9KUtVKvKQjRGQJqKu5rvkHuWGZTuhcFtlE7pbXb9jFG+ygZFkc6FDwIJWqrpjqG/LIiRynaYmwgIUc2hysIoe/KSiLzb0nW9ZwALDJBklatzLU=
+	t=1708007637; cv=none; b=aKTezvMF3FbS4xkqqJdmWW+7fyvZwN76S8UwyouQXs5g5uxoDRNcm1tf50S5xkxMnjo35SWRzw9bJqYUbOI0kYZ/I+Qmip9hF6bqULrXY93IoxrIrFAx5fqC9xBMkRXxe75pRlQspnFrEIGp1kQmva0WIkuDj98fwnZwivPse5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708002142; c=relaxed/simple;
-	bh=2agPtJl3v9niVpIiQlLbesjxGfDjfBKYPIlmRtWAQQg=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=YnkBLzmOVpegDRl+uQkzFsz4Sft0ESlz/dX3ptgjRwSxo4k26PkJRwt3WZX6A4/cgnWRG2EPF6qnBTJ/sUTEvcVBdB8oWt08+i23LPXkBYNRz9vI4p2L0addZgXo0uJgDLNF5UqnD/l9xvlJNHQYxWavgptBjKVGcelLl3cICBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XRSmcQyy; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XRSmcQyy"
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-785bdb57dfaso156421385a.1
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Feb 2024 05:02:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1708002139; x=1708606939; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2agPtJl3v9niVpIiQlLbesjxGfDjfBKYPIlmRtWAQQg=;
-        b=XRSmcQyyL03rLtS3VvikblzeXgnjVle+cPooHiMTpSqCYxGtdPogrYx4e94aLpG9a3
-         mlPF6S095uzEPFaMh9eFHLt94D2qehvCLO7K5ePpMlXpdwLIHxcIAw/B/6BVUcvvsbs6
-         kDsTaaCyES02fsNI4BdSVAd97sEhNNOzCt9J3QibrU/NAfdPoSri1w3GjLTlhI/tkERt
-         btBHYvk61sr3HPK0IxUbuBMDPBQ+xfUxxG8dvHUgjqPHmRdjwVQAVuxBOE3jePArorqF
-         80mtq8ST85jd5p20eubUPllgeOC/EAWE/Fhps98X8n+YTCaXL5XQN6Ep4GNHVWWR+0N2
-         di4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708002139; x=1708606939;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2agPtJl3v9niVpIiQlLbesjxGfDjfBKYPIlmRtWAQQg=;
-        b=Bazdj6CwGKi2DFXEQ3W3ie520mHMogzGCOPDykhIitNhYSypuaKqZTGWxoBg/55Qy7
-         Re6TUfANB445RuqMgGV5SUy1YJWCjE0SQIO+gK/5hiR01/nUmIuYtp4akNt6Z0r+Ag/R
-         a58ClzWegWqG36/Q6hv+SZ2mBO9vZ3bdPLfvrg/cL5F1FE10Oe4y6of/+4vUOVMoLUp8
-         9y2uP6UrL1gIb0mXwjpHoBOR1woTjciSelsrEI0YHq8SIdrGVKX47eLRqmNjssuFGC53
-         dROAy2GABaIicK7hvSREkhxqkKLCS+T5h6ga/NgPMxPmJFp26+AXB4lhnTA5DrcQJYrw
-         JB+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWhdy21EdNuLX3czKiKIf/qRIuwhqZiyaar+G5/YBy7KDwOiJhHS2D15/U/chgteuDgZc1D5SOoKIEdzRSUL0xsexTIiw3GeH9BmYWYTg5tOQqfVDJ7
-X-Gm-Message-State: AOJu0YxkLfXcijEx7sDuE/7IJJzNUqxsdsI38pVTAsgvP5ykW+dG234l
-	QQtaKFgqi/cxhb3hK2d4/Ha4AvCM1EeC48h6kWvLq3r5w+KjCtUoe6p8IhmsTQ==
-X-Google-Smtp-Source: AGHT+IGXRXkvIjtM2XptNphgmbdrAs5LHYnEl5lJFcxgwonSt9iT8GNqc5kaY+tfx3dBMBTZqxQN6g==
-X-Received: by 2002:a05:620a:1d:b0:787:2529:6073 with SMTP id j29-20020a05620a001d00b0078725296073mr2061569qki.6.1708002139428;
-        Thu, 15 Feb 2024 05:02:19 -0800 (PST)
-Received: from [192.168.7.16] ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id i6-20020a05620a248600b0078723db4da9sm570760qkn.98.2024.02.15.05.02.18
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Feb 2024 05:02:19 -0800 (PST)
-From: Paul Moore <paul@paul-moore.com>
-To: Kees Cook <keescook@chromium.org>, Casey Schaufler <casey@schaufler-ca.com>
-CC: Jann Horn <jannh@google.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, John Johansen <john.johansen@canonical.com>, <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Date: Thu, 15 Feb 2024 08:02:18 -0500
-Message-ID: <18dacdbced8.28a4.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <202402141644.808307E71@keescook>
-References: <20240214160538.1086089-1-jannh@google.com>
- <a4a77e0e-8d5e-4c9d-aff4-9fe0d8b89cf0@schaufler-ca.com>
- <202402141644.808307E71@keescook>
-User-Agent: AquaMail/1.49.2 (build: 104902408)
-Subject: Re: [PATCH] security: fix integer overflow in lsm_set_self_attr() syscall
+	s=arc-20240116; t=1708007637; c=relaxed/simple;
+	bh=JjG8FYokVUNHfzEnKKz3D+XcAp7il/pNBEJYDLFwHK0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DR0bTkNmioWNsQ690tanQdWZsDETZurpjS1unnkrGoEGWrIDq9pAZaCMKJ1rQyRXv/wFuIlFi3Z2Do8Myj8zU2duxiWadQLnD2CaEtStag5zdHEpGvXSupP5inJdIFvO3s2Kbrh3Pfjgcz8+WSGAKh2STiHvxY3WDvWr5GuFkIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 41FEXX5I090129;
+	Thu, 15 Feb 2024 23:33:33 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
+ Thu, 15 Feb 2024 23:33:33 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 41FEXWSX090118
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 15 Feb 2024 23:33:33 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
+Date: Thu, 15 Feb 2024 23:33:32 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
+Content-Language: en-US
+To: Paul Moore <paul@paul-moore.com>, Eric Biederman <ebiederm@xmission.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>, Serge Hallyn <serge@hallyn.com>
+References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
+ <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com>
+ <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
+ <202402070631.7B39C4E8@keescook>
+ <CAHC9VhS1yHyzA-JuDLBQjyyZyh=sG3LxsQxB9T7janZH6sqwqw@mail.gmail.com>
+ <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On February 14, 2024 7:45:43 PM Kees Cook <keescook@chromium.org> wrote:
-> On Wed, Feb 14, 2024 at 08:53:52AM -0800, Casey Schaufler wrote:
->> On 2/14/2024 8:05 AM, Jann Horn wrote:
->>> security_setselfattr() has an integer overflow bug that leads to
->>> out-of-bounds access when userspace provides bogus input:
->>> `lctx->ctx_len + sizeof(*lctx)` is checked against `lctx->len` (and,
->>> redundantly, also against `size`), but there are no checks on
->>> `lctx->ctx_len`.
->>> Therefore, userspace can provide an `lsm_ctx` with `->ctx_len` set to a
->>> value between `-sizeof(struct lsm_ctx)` and -1, and this bogus `->ctx_len`
->>> will then be passed to an LSM module as a buffer length, causing LSM
->>> modules to perform out-of-bounds accesses.
->>>
->>> The following reproducer will demonstrate this under ASAN (if AppArmor is
->>> loaded as an LSM):
->>> ```
->>> #define _GNU_SOURCE
->>> #include <unistd.h>
->>> #include <stdint.h>
->>> #include <stdlib.h>
->>> #include <sys/syscall.h>
->>>
->>> struct lsm_ctx {
->>> uint64_t id;
->>> uint64_t flags;
->>> uint64_t len;
->>> uint64_t ctx_len;
->
-> Do we want to take the opportunity to reduce this to u32 for len and u32
-> for ctx_len? All FS operations are limited to INT_MAX anyway...
+On 2024/02/15 6:46, Paul Moore wrote:
+>> To quickly summarize, there are two paths forward that I believe are
+>> acceptable from a LSM perspective, pick either one and send me an
+>> updated patchset.
+>>
+>> 1. Rename the hook to security_bprm_free() and update the LSM hook
+>> description as I mentioned earlier in this thread.
+>>
+>> 2. Rename the hook to security_execve_revert(), move it into the
+>> execve related functions, and update the LSM hook description to
+>> reflect that this hook is for reverting execve related changes to the
+>> current task's internal LSM state beyond what is possible via the
+>> credential hooks.
+> 
+> Hi Tetsuo, I just wanted to check on this and see if you've been able
+> to make any progress?
+> 
 
-Not at this point, no.
+I'm fine with either approach. Just worrying that someone doesn't like
+overhead of unconditionally calling security_bprm_free() hook.
+If everyone is fine with below one, I'll post v4 patchset.
 
---
-paul-moore.com
+ fs/exec.c                     |    1 +
+ include/linux/lsm_hook_defs.h |    1 +
+ include/linux/security.h      |    5 +++++
+ security/security.c           |   12 ++++++++++++
+ 4 files changed, 19 insertions(+)
 
-
+diff --git a/fs/exec.c b/fs/exec.c
+index af4fbb61cd53..cbee988445c6 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1530,6 +1530,7 @@ static void free_bprm(struct linux_binprm *bprm)
+ 		kfree(bprm->interp);
+ 	kfree(bprm->fdpath);
+ 	kfree(bprm);
++	security_bprm_free();
+ }
+ 
+ static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int flags)
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 76458b6d53da..0ef298231de2 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -54,6 +54,7 @@ LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, const struct f
+ LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
+ LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, const struct linux_binprm *bprm)
+ LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, const struct linux_binprm *bprm)
++LSM_HOOK(void, LSM_RET_VOID, bprm_free, void)
+ LSM_HOOK(int, 0, fs_context_submount, struct fs_context *fc, struct super_block *reference)
+ LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
+ 	 struct fs_context *src_sc)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index d0eb20f90b26..b12d20071a8f 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -299,6 +299,7 @@ int security_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *
+ int security_bprm_check(struct linux_binprm *bprm);
+ void security_bprm_committing_creds(const struct linux_binprm *bprm);
+ void security_bprm_committed_creds(const struct linux_binprm *bprm);
++void security_bprm_free(void);
+ int security_fs_context_submount(struct fs_context *fc, struct super_block *reference);
+ int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc);
+ int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
+@@ -648,6 +649,10 @@ static inline void security_bprm_committed_creds(const struct linux_binprm *bprm
+ {
+ }
+ 
++static inline void security_bprm_free(void)
++{
++}
++
+ static inline int security_fs_context_submount(struct fs_context *fc,
+ 					   struct super_block *reference)
+ {
+diff --git a/security/security.c b/security/security.c
+index 3aaad75c9ce8..ba2f480b2bdb 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1223,6 +1223,18 @@ void security_bprm_committed_creds(const struct linux_binprm *bprm)
+ 	call_void_hook(bprm_committed_creds, bprm);
+ }
+ 
++/**
++ * security_bprm_free() - Notify of completion of an exec()
++ *
++ * This hook is called when a linux_bprm instance is being destroyed, after
++ * the bprm creds have been released, and is intended to cleanup any internal
++ * LSM state associated with the linux_bprm instance.
++ */
++void security_bprm_free(void)
++{
++	call_void_hook(bprm_free);
++}
++
+ /**
+  * security_fs_context_submount() - Initialise fc->security
+  * @fc: new filesystem context
 
