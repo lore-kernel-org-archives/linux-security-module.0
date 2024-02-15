@@ -1,156 +1,142 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98785132466;
-	Thu, 15 Feb 2024 14:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C02131E25
+	for <linux-security-module@vger.kernel.org>; Thu, 15 Feb 2024 15:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708007637; cv=none; b=aKTezvMF3FbS4xkqqJdmWW+7fyvZwN76S8UwyouQXs5g5uxoDRNcm1tf50S5xkxMnjo35SWRzw9bJqYUbOI0kYZ/I+Qmip9hF6bqULrXY93IoxrIrFAx5fqC9xBMkRXxe75pRlQspnFrEIGp1kQmva0WIkuDj98fwnZwivPse5s=
+	t=1708009389; cv=none; b=GgSNqMvbYB2/NZzr0/M85v7HzJqmW/PoFWthG/7gx+6A4FFUMcz+UbdxGAA1N0di/4ahD1NcmPDoBPKMTQcn6WZi3OW0nJ3nycxL3WX5T2XQpBfs1NpUvJo3qfIjLU30aH1MqcmGSNMvAwi7xTWtvhWR2/wqlZy6sxc5Ijiripg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708007637; c=relaxed/simple;
-	bh=JjG8FYokVUNHfzEnKKz3D+XcAp7il/pNBEJYDLFwHK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DR0bTkNmioWNsQ690tanQdWZsDETZurpjS1unnkrGoEGWrIDq9pAZaCMKJ1rQyRXv/wFuIlFi3Z2Do8Myj8zU2duxiWadQLnD2CaEtStag5zdHEpGvXSupP5inJdIFvO3s2Kbrh3Pfjgcz8+WSGAKh2STiHvxY3WDvWr5GuFkIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 41FEXX5I090129;
-	Thu, 15 Feb 2024 23:33:33 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
- Thu, 15 Feb 2024 23:33:33 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 41FEXWSX090118
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 15 Feb 2024 23:33:33 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
-Date: Thu, 15 Feb 2024 23:33:32 +0900
+	s=arc-20240116; t=1708009389; c=relaxed/simple;
+	bh=H/soAYrrSeRXs7NdxjAoiXIbfPiwXFyYm3AeSchaEI4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BSFOBWfJqXjlMHDN/5wUq3UCjkAwMaaKyVj/6sEWaMKRCE4GmJ8XsYj/i6j7oQyvCfXvdQKzxlB4swGI2vPRp5JpxVZAZhvEPrDSUGhjsJ/MwEXkuxXwGAtnAbHf71+FLeA0naZ73Y1sZy1ULOZbYHJ9phPd+/9TeO/p67RDHVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BvCcjRui; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BvCcjRui"
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dc238cb1b17so892012276.0
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Feb 2024 07:03:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1708009387; x=1708614187; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QFQm0M3CmcqPtJRvHCagf6VByOoqALYCn6DYTnpLumI=;
+        b=BvCcjRuitUc+Jbgo0sp3PCdep+zPiLjHHISuCWRbRj5zlagvp1mRDi5h0MkuTvX0//
+         kKFmWQ84wtQUvVFX7M4QQpgxJ8rFy4t+zIfZk3S6KuKig1e9Rv9NFUfX0McHjF0scydJ
+         LL1qIK01pmxD2GLJOi+LuF3xy+NJOI3IQ5LUTpb44+zeKcv8z54CH0STHOGFzUXfBAMS
+         TAq+ZWy6N164kUht9XRqx+J1c3iTspPw5VqXXl2gajHwj538dfYf0cEmYjWTqLRtOehu
+         89KfbYiyM4ZLFNX7XgOMClOoY+pgxGHsk+QeanDljYRohIPxXvnng7wisUlrJlDutl7h
+         W1lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708009387; x=1708614187;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QFQm0M3CmcqPtJRvHCagf6VByOoqALYCn6DYTnpLumI=;
+        b=iRYa4nWSd5tBXZF010SW5oRnJdXjOvwqg1hhdmsCdIWEJSTTrluu6o4TrSn+0JmkCH
+         tuiNro0JRuh5ikQG8TkgN/JHt6LSRWtWnBN1sIcpoA0HyZUhcsBjmQd2cXUTCtUXt0dC
+         XPtbXH4RogMBbwa2CPhTdoN+cROVZG/5CosuCQFB0ifaB4WnC4IZOdugACyZhuyS6+99
+         QkJm+Bx7FfBxvDcEPAwbD/7x2593cm7L3eL4XBTS4n3P8nWiBjUk5W6zGGE/yHZ7Nhww
+         K3wGY1lfpMs0SYtyG3Tew2k0qWCFAo+VxDLzbTW5eg2e/nHHUsTbdvDUEc0N0pGOyWAd
+         y8iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVO6X4x5Oc5xwMuBThxnk8fSr6viSixDhW2tkPJNgmvyPyLk+NbLDwVL+JoshxKATMkwTPm7gL9FhCDUyp4YJAxngtYipD1KvM7AzS5lEU/0rr7frcU
+X-Gm-Message-State: AOJu0YwXgUhcupbxF/9/t7qqPT6Ro3CBvrxcIGHGVdqgBbS43/Ycf1j0
+	s6TBflTOfXVdR7bh2v9UFNDTDDLUFd1imFLqNMiSKcHDt1GMgkfE+jxaynd7hI3YpspIoea2kVv
+	mISPQ+9JItXAEO48csDwaPr90/02OowZJtguj
+X-Google-Smtp-Source: AGHT+IFDJqcQ/zvtSSzS7L8oaKPQoNT7OfyWLmtX0/ZWHRG8kJBAwvm75pg5JW6QaleHBtWyvIXsCWPJtgsfjWAGRcM=
+X-Received: by 2002:a5b:692:0:b0:dc7:4935:a889 with SMTP id
+ j18-20020a5b0692000000b00dc74935a889mr1745565ybq.50.1708009385102; Thu, 15
+ Feb 2024 07:03:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
-Content-Language: en-US
-To: Paul Moore <paul@paul-moore.com>, Eric Biederman <ebiederm@xmission.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>, Serge Hallyn <serge@hallyn.com>
-References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
- <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com>
- <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
- <202402070631.7B39C4E8@keescook>
- <CAHC9VhS1yHyzA-JuDLBQjyyZyh=sG3LxsQxB9T7janZH6sqwqw@mail.gmail.com>
- <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
+ <20240115181809.885385-13-roberto.sassu@huaweicloud.com> <305cd1291a73d788c497fe8f78b574d771b8ba41.camel@linux.ibm.com>
+ <CAHC9VhQ7DgPJtNTRCYneu_XnpRmuwfPCW+FqVuS=k6U5-F6pJw@mail.gmail.com>
+ <05ad625b0f5a0e6c095abee5507801da255b36cd.camel@huaweicloud.com>
+ <CAHC9VhR2M_MWHs34kn-WH3Wr0sgT09WKveecy7onkFhUb1-gEg@mail.gmail.com>
+ <63afc94126521629bb7656b6e6783d6614ee898a.camel@linux.ibm.com>
+ <CAHC9VhQGiSq2LTm7TBvCwDB_NcMe_JjORLbuHVfC4UpJQi_N4g@mail.gmail.com> <6ffcd054ff81d64b92b52baf097ed21f8ea4d870.camel@linux.ibm.com>
+In-Reply-To: <6ffcd054ff81d64b92b52baf097ed21f8ea4d870.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 15 Feb 2024 10:02:53 -0500
+Message-ID: <CAHC9VhSQCAUDV7_LgvWw-=u2sxixr-=yKkvoOM7LGxmSy0HzYw@mail.gmail.com>
+Subject: Re: [PATCH v9 12/25] security: Introduce file_post_open hook
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
+	kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org, 
+	serge@hallyn.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com, 
+	eparis@parisplace.org, casey@schaufler-ca.com, shuah@kernel.org, 
+	mic@digikod.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Stefan Berger <stefanb@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/02/15 6:46, Paul Moore wrote:
->> To quickly summarize, there are two paths forward that I believe are
->> acceptable from a LSM perspective, pick either one and send me an
->> updated patchset.
->>
->> 1. Rename the hook to security_bprm_free() and update the LSM hook
->> description as I mentioned earlier in this thread.
->>
->> 2. Rename the hook to security_execve_revert(), move it into the
->> execve related functions, and update the LSM hook description to
->> reflect that this hook is for reverting execve related changes to the
->> current task's internal LSM state beyond what is possible via the
->> credential hooks.
-> 
-> Hi Tetsuo, I just wanted to check on this and see if you've been able
-> to make any progress?
-> 
+On Thu, Feb 15, 2024 at 3:18=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+> On Wed, 2024-02-14 at 16:21 -0500, Paul Moore wrote:
+> > I'm not a big fan of sharing topic branches across different subsystem
+> > trees, I'd much rather just agree that one tree or another takes the
+> > patchset and the others plan accordingly.
+>
+> Just curious why not?
 
-I'm fine with either approach. Just worrying that someone doesn't like
-overhead of unconditionally calling security_bprm_free() hook.
-If everyone is fine with below one, I'll post v4 patchset.
+I don't like the idea of cross-tree dependencies, I realize the term
+"dependency" isn't a great fit for a shared topic branch - no one
+needs to feel the need to explain how pulls and merges work - but it's
+the conceptual idea of there being a dependency across different trees
+that bothers me.  I also tend to dislike the idea that a new feature
+*absolutely* *must* *be* *in* *a* *certain* *release* to the point
+that we need to subvert our normal processes to make it happen.
 
- fs/exec.c                     |    1 +
- include/linux/lsm_hook_defs.h |    1 +
- include/linux/security.h      |    5 +++++
- security/security.c           |   12 ++++++++++++
- 4 files changed, 19 insertions(+)
+Further, I believe that shared topic branches also discourages
+cooperation and collaboration.  With a topic branch, anyone who wants
+to build on top of it simply merges the topic branch and off they go;
+without a shared topic branch there needs to be a discussion about
+which other patches are affected, which trees are involved, who is
+going to carry the patches, when are they going up to Linus, etc.  As
+someone who feels strongly that we need more collaboration across
+kernel subsystems, I'm always going to pick the option that involves
+developers talking with other developers outside their immediate
+subsystem.
 
-diff --git a/fs/exec.c b/fs/exec.c
-index af4fbb61cd53..cbee988445c6 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1530,6 +1530,7 @@ static void free_bprm(struct linux_binprm *bprm)
- 		kfree(bprm->interp);
- 	kfree(bprm->fdpath);
- 	kfree(bprm);
-+	security_bprm_free();
- }
- 
- static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int flags)
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 76458b6d53da..0ef298231de2 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -54,6 +54,7 @@ LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, const struct f
- LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
- LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, const struct linux_binprm *bprm)
- LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, const struct linux_binprm *bprm)
-+LSM_HOOK(void, LSM_RET_VOID, bprm_free, void)
- LSM_HOOK(int, 0, fs_context_submount, struct fs_context *fc, struct super_block *reference)
- LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
- 	 struct fs_context *src_sc)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index d0eb20f90b26..b12d20071a8f 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -299,6 +299,7 @@ int security_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *
- int security_bprm_check(struct linux_binprm *bprm);
- void security_bprm_committing_creds(const struct linux_binprm *bprm);
- void security_bprm_committed_creds(const struct linux_binprm *bprm);
-+void security_bprm_free(void);
- int security_fs_context_submount(struct fs_context *fc, struct super_block *reference);
- int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc);
- int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
-@@ -648,6 +649,10 @@ static inline void security_bprm_committed_creds(const struct linux_binprm *bprm
- {
- }
- 
-+static inline void security_bprm_free(void)
-+{
-+}
-+
- static inline int security_fs_context_submount(struct fs_context *fc,
- 					   struct super_block *reference)
- {
-diff --git a/security/security.c b/security/security.c
-index 3aaad75c9ce8..ba2f480b2bdb 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1223,6 +1223,18 @@ void security_bprm_committed_creds(const struct linux_binprm *bprm)
- 	call_void_hook(bprm_committed_creds, bprm);
- }
- 
-+/**
-+ * security_bprm_free() - Notify of completion of an exec()
-+ *
-+ * This hook is called when a linux_bprm instance is being destroyed, after
-+ * the bprm creds have been released, and is intended to cleanup any internal
-+ * LSM state associated with the linux_bprm instance.
-+ */
-+void security_bprm_free(void)
-+{
-+	call_void_hook(bprm_free);
-+}
-+
- /**
-  * security_fs_context_submount() - Initialise fc->security
-  * @fc: new filesystem context
+Hopefully that makes sense.
 
+> > Based on our previous
+> > discussions I was under the impression that you wanted me to merge
+> > this patchset into lsm/dev, but it looks like that is no longer the
+> > case - which is okay by me.
+>
+> Paul, I don't recall saying that.  Please go ahead and upstream it.  Robe=
+rto can
+> add my acks accordingly.
+
+I believe it was during an off-list chat when we were discussing an
+earlier revision of the patchset, however, as I said earlier I'm not
+bothered by who merges the patches, as long as they eventually end up
+in Linus' tree I'm happy :)  I *really* want to stress that last bit,
+if you and Roberto have stuff queued for the IMA/EVM tree that depends
+on this patchset, please go ahead and merge it; you've got my ACKs on
+the patches that need them, and I believe I've reviewed most of the
+other patches that don't require my ACK.  While there are a some LSM
+related patches that would sit on top of this patchset, there is
+nothing that is so critical that it must go in now.
+
+If I don't hear anything back from you, I'll go ahead and merge these
+into lsm/dev later tonight (probably in about ~12 hours from this
+email as I have some personal commitments early this evening) just so
+we can get them into linux-next as soon as possible.
+
+--=20
+paul-moore.com
