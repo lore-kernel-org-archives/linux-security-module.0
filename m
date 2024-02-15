@@ -1,107 +1,187 @@
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E27764D
-	for <linux-security-module@vger.kernel.org>; Thu, 15 Feb 2024 00:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE2417984;
+	Thu, 15 Feb 2024 08:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707957945; cv=none; b=G7QKHq9boavMxgOhl4mCYrq1NI95CrekpYCy7y7PvhzQmq+I9pMjX5Yk5C7uAGUGR2hn0kUzAxSEdHd/OnSYMFZF/I32TpBdTiaivm2cSRmEEdqpgGeiTPfIKaZAaWqHh3Qq+O+wudRIBXydKJrW8+uvG5YXASfa0Pa48Ei0Dxo=
+	t=1707985125; cv=none; b=CvXEr9K1rU3pF4Q+pPyhnmOW7ypQrWXBGkg0r4/m83VKtkJK4r13WTCv5zCAf0D+DGC3uUJJd84DyJ2gaZ6Do4ysrqd97R9wON/j7wmyhr658xGCT8gw8fUJ2U3uxdY4/TdoTsq5iOCBu8/8j1YvY2yDQO80Q+HUQ4cHnV3ofsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707957945; c=relaxed/simple;
-	bh=57EG/0ZwmKtwXNJ0IzAUfLW8cf7jcqGxUoA0gdV96WM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iDBQBQQcI6MNlRKvKD2aDn4/AeqZTE8pLddTIwpGJeGroa3OfRB4L+mHd9QlzBj37QLtR84uJXGy3365OtsEXWfePLEuZ+icKKDX5HfSqJJ2AheuCaSWS0ye+CJjP8a2Iz4uHiRHMRYZ45iQv1d8H1iaFtbE8w9LU6gkxAddOKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Cf2UWxre; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1707985125; c=relaxed/simple;
+	bh=tQiuOODpfiSZqbi1fSHEb7a5d1KdNB1lrpcclcbPW5o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=gfSyCp9rQH1XZhtAh4cd8uginJshUZ57gYAIByEOgLmS2XnX+sjxDv+IvoeoIAZJLyGccbMSVpZGEMhrcoZgJzWBCTXz7HzdQ48C96PBGS0Ab2gtVls2F51sftj+3EtfkLtsXaUeDVlwmwaqieJFiwhEpMoGVFuUcn97LpTz1eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZiFcak6n; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Cf2UWxre"
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-363dd27c082so1360045ab.0
-        for <linux-security-module@vger.kernel.org>; Wed, 14 Feb 2024 16:45:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1707957943; x=1708562743; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X0AvVNTj/tsYhJ9uNlkS0NKEX6Ozv7KgymDA8FjoHGs=;
-        b=Cf2UWxrenRDfBmtCzOFoIyBD/dbfvsZTZV37AqgonJ++TKn10wV0wWX2y7OS3UWw31
-         tjdYnic7uth4zgE6+fLjrxec71HnDN3vhXOcb2ndsnCx8Ps+ThPwC1Uk99baMnGUGhv8
-         xSS/nMR35+AgBlH3sZG9s6Z9PSSG8IIgpIHwY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707957943; x=1708562743;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X0AvVNTj/tsYhJ9uNlkS0NKEX6Ozv7KgymDA8FjoHGs=;
-        b=Pfe+kjyy5OaB4t8ivxbUCdW8ZRy+GfG31lAnsEdZw7fp3Wodo7yxo5PjdxnsBHp/qu
-         M+Zi3uHQ+gupBsBsXmNPEhiFuGYPV5se1LmU+j/TrBsLlDw1Fxji+TYBMRMnXC4ZOsms
-         GamW64OPHNIo4SOFJ34zfV0QtCi7uzv8+YOXwqrcwhrOu/3pskGTnmc+DMlO6gyJZr38
-         Yq+4DubjtxOJe673zzLR0j6CMcaqcHLqYtbCm+WmJenpIBptbFocyk7GtE82I6iNJDxR
-         WYf8fPaJ17+GJYxFPpo59tJv4kF/cvjmkWSSX1gxPNR1oQFwAxuMHBSu7IVQR6yo+0/d
-         jICw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSFEsempDVw502XfCeXyo7WVMRQ7JhYhYzTbS6TWNzpgUBZ4l7Yb/5yQVx+iRt8fCYadqeCGZoW0peOJFca5qdfdA80oNXpcuY6MMQuz3M30UVn7qc
-X-Gm-Message-State: AOJu0YyOOmin6xoyfuscLoaxtWWwt2QMTKU3CJP5e3NuMHaOpOWgWGh/
-	Gk/h1tD++jp/LkOrnKmvxuFUI+oqnrxqIUX+jkUhXFAJLhxhqD+zk44ts+MM7A==
-X-Google-Smtp-Source: AGHT+IE/HUYutDFg5/TS4iAeRQ7tRx4NQpQoDygrWbnBHJDS+e/mKySdgMTuUzCTuSI0C5fsiIpamQ==
-X-Received: by 2002:a92:a30e:0:b0:364:21b0:6050 with SMTP id a14-20020a92a30e000000b0036421b06050mr121980ili.6.1707957943570;
-        Wed, 14 Feb 2024 16:45:43 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id s64-20020a635e43000000b005b7dd356f75sm50540pgb.32.2024.02.14.16.45.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Feb 2024 16:45:43 -0800 (PST)
-Date: Wed, 14 Feb 2024 16:45:42 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Jann Horn <jannh@google.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	John Johansen <john.johansen@canonical.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] security: fix integer overflow in lsm_set_self_attr()
- syscall
-Message-ID: <202402141644.808307E71@keescook>
-References: <20240214160538.1086089-1-jannh@google.com>
- <a4a77e0e-8d5e-4c9d-aff4-9fe0d8b89cf0@schaufler-ca.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZiFcak6n"
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41F8BcoY032007;
+	Thu, 15 Feb 2024 08:18:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=xQpf4U6thY0RmYjLTmzPv/P+MlK6sZqho4klRx7+4kg=;
+ b=ZiFcak6n4DVmF+NJkPnhQWWDMSj50pD72AfSoDtFmIEGzwGGSJciJIeUNtZXbr3I5epn
+ i+G+F5ozsRoZE12hA8rz2FndgygnuVElri6hT1lZ9yfqBElugOTWbDHRHLD/oB2cR/OZ
+ FSq2KhqKU9c93+tSH2do2g+Ro3074iav/VYcQC2bk8bzepP7OkPXeaNywF69JQ5OoEH/
+ EQDhBdPUfL7wCSjsXFenIAXe85A2BN3d252Ze259y0tgfuP4bu0YdENz5GfVl65yqQNT
+ zI0N7COFL41YtOH3gEgrcxSvMSGv4FpBAeDGU0WCPs0jXpA6lX72KpUaLuwzQCPtCCnB tA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w9dnd216y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Feb 2024 08:18:09 +0000
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41F8ADxQ028970;
+	Thu, 15 Feb 2024 08:18:08 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w9dnd215u-3
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Feb 2024 08:18:08 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41F7FPjv004339;
+	Thu, 15 Feb 2024 08:16:22 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3w6kv0kmte-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Feb 2024 08:16:22 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41F8GJnj13173444
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 15 Feb 2024 08:16:22 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BE6CB58059;
+	Thu, 15 Feb 2024 08:16:19 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4853558057;
+	Thu, 15 Feb 2024 08:16:18 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.77.242])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 15 Feb 2024 08:16:18 +0000 (GMT)
+Message-ID: <6ffcd054ff81d64b92b52baf097ed21f8ea4d870.camel@linux.ibm.com>
+Subject: Re: [PATCH v9 12/25] security: Introduce file_post_open hook
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        jmorris@namei.org, serge@hallyn.com, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Roberto Sassu
+ <roberto.sassu@huawei.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Date: Thu, 15 Feb 2024 03:16:17 -0500
+In-Reply-To: <CAHC9VhQGiSq2LTm7TBvCwDB_NcMe_JjORLbuHVfC4UpJQi_N4g@mail.gmail.com>
+References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
+	 <20240115181809.885385-13-roberto.sassu@huaweicloud.com>
+	 <305cd1291a73d788c497fe8f78b574d771b8ba41.camel@linux.ibm.com>
+	 <CAHC9VhQ7DgPJtNTRCYneu_XnpRmuwfPCW+FqVuS=k6U5-F6pJw@mail.gmail.com>
+	 <05ad625b0f5a0e6c095abee5507801da255b36cd.camel@huaweicloud.com>
+	 <CAHC9VhR2M_MWHs34kn-WH3Wr0sgT09WKveecy7onkFhUb1-gEg@mail.gmail.com>
+	 <63afc94126521629bb7656b6e6783d6614ee898a.camel@linux.ibm.com>
+	 <CAHC9VhQGiSq2LTm7TBvCwDB_NcMe_JjORLbuHVfC4UpJQi_N4g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a4a77e0e-8d5e-4c9d-aff4-9fe0d8b89cf0@schaufler-ca.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: JPiXEt9OIAZjMDJms0hUwl0uAwRfnvqC
+X-Proofpoint-GUID: tM-IWJ0kHfrSVh4SVeDZK-a2LckzZzzM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-15_08,2024-02-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ suspectscore=0 mlxlogscore=999 impostorscore=0 priorityscore=1501
+ lowpriorityscore=0 clxscore=1015 adultscore=0 malwarescore=0 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402150064
 
-On Wed, Feb 14, 2024 at 08:53:52AM -0800, Casey Schaufler wrote:
-> On 2/14/2024 8:05 AM, Jann Horn wrote:
-> > security_setselfattr() has an integer overflow bug that leads to
-> > out-of-bounds access when userspace provides bogus input:
-> > `lctx->ctx_len + sizeof(*lctx)` is checked against `lctx->len` (and,
-> > redundantly, also against `size`), but there are no checks on
-> > `lctx->ctx_len`.
-> > Therefore, userspace can provide an `lsm_ctx` with `->ctx_len` set to a
-> > value between `-sizeof(struct lsm_ctx)` and -1, and this bogus `->ctx_len`
-> > will then be passed to an LSM module as a buffer length, causing LSM
-> > modules to perform out-of-bounds accesses.
-> >
-> > The following reproducer will demonstrate this under ASAN (if AppArmor is
-> > loaded as an LSM):
-> > ```
-> > #define _GNU_SOURCE
-> > #include <unistd.h>
-> > #include <stdint.h>
-> > #include <stdlib.h>
-> > #include <sys/syscall.h>
-> >
-> > struct lsm_ctx {
-> >   uint64_t id;
-> >   uint64_t flags;
-> >   uint64_t len;
-> >   uint64_t ctx_len;
+On Wed, 2024-02-14 at 16:21 -0500, Paul Moore wrote:
+> On Wed, Feb 14, 2024 at 3:07 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > On Tue, 2024-02-13 at 10:33 -0500, Paul Moore wrote:
+> > > On Tue, Feb 13, 2024 at 7:59 AM Roberto Sassu
+> > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > On Mon, 2024-02-12 at 16:16 -0500, Paul Moore wrote:
+> > > > > On Mon, Feb 12, 2024 at 4:06 PM Mimi Zohar <zohar@linux.ibm.com>
+> > > > > wrote:
+> > > > > > Hi Roberto,
+> > > > > > 
+> > > > > > 
+> > > > > > > diff --git a/security/security.c b/security/security.c
+> > > > > > > index d9d2636104db..f3d92bffd02f 100644
+> > > > > > > --- a/security/security.c
+> > > > > > > +++ b/security/security.c
+> > > > > > > @@ -2972,6 +2972,23 @@ int security_file_open(struct file *file)
+> > > > > > >       return fsnotify_perm(file, MAY_OPEN);  <===  Conflict
+> > > > > > 
+> > > > > > Replace with "return fsnotify_open_perm(file);"
+> > > > > > 
+> > > > > > >  }
+> > > > > > > 
+> > > > > > 
+> > > > > > The patch set doesn't apply cleaning to 6.8-rcX without this
+> > > > > > change.  Unless
+> > > > > > there are other issues, I can make the change.
+> > > > > 
+> > > > > I take it this means you want to pull this via the IMA/EVM tree?
+> > > > 
+> > > > Not sure about that, but I have enough changes to do to make a v10.
+> > 
+> > @Roberto:  please add my "Reviewed-by" to the remaining patches.
+> > 
+> > > Sorry, I should have been more clear, the point I was trying to
+> > > resolve was who was going to take this patchset (eventually).  There
+> > > are other patches destined for the LSM tree that touch the LSM hooks
+> > > in a way which will cause conflicts with this patchset, and if
+> > > you/Mimi are going to take this via the IMA/EVM tree - which is fine
+> > > with me - I need to take that into account when merging things in the
+> > > LSM tree during this cycle.  It's not a big deal either way, it would
+> > > just be nice to get an answer on that within the next week.
+> > 
+> > Similarly there are other changes for IMA and EVM.  If you're willing to
+> > create
+> > a topic branch for just the v10 patch set that can be merged into your tree
+> > and
+> > into my tree, I'm fine with your upstreaming v10. (I'll wait to send my pull
+> > request after yours.)  Roberto will add my Ack's to the integrity, IMA, and
+> > EVM
+> > related patches.  However if you're not willing to create a topic branch,
+> > I'll
+> > upstream the v10 patch set.
+> 
+> I'm not a big fan of sharing topic branches across different subsystem
+> trees, I'd much rather just agree that one tree or another takes the
+> patchset and the others plan accordingly.
 
-Do we want to take the opportunity to reduce this to u32 for len and u32
-for ctx_len? All FS operations are limited to INT_MAX anyway...
+Just curious why not?
 
--Kees
+> Based on our previous
+> discussions I was under the impression that you wanted me to merge
+> this patchset into lsm/dev, but it looks like that is no longer the
+> case - which is okay by me.
 
--- 
-Kees Cook
+Paul, I don't recall saying that.  Please go ahead and upstream it.  Roberto can
+add my acks accordingly.
+
+Mimi
+
+> Assuming Roberto gets a v10 out soon, do you expect to merge the v10
+> patchset and send it up during the upcoming merge window (for v6.9),
+> or are you expecting to wait until after the upcoming merge window
+> closes and target v6.10?  Once again, either is fine, I'm just trying
+> to coordinate this with other patches.
+
+
+
