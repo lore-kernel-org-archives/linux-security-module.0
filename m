@@ -1,153 +1,63 @@
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CAD12FF6D
-	for <linux-security-module@vger.kernel.org>; Fri, 16 Feb 2024 15:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E7C134758;
+	Fri, 16 Feb 2024 17:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708099167; cv=none; b=pWlUlbsL09/75VKG4U+uBJUqd3mR4QWOHUyEhMXeInuQ29ZmsSkCoWvIlyr3fO9PeaHSAufWbtZxfmaCQQoiiRCInqqOYw56Mw4MhG4s277pd2ZWnkv9PIw0sOS2BE6qlg1S48vhcUA18ZFX/xkZdWVIMjmIc/uE2k8hhFeIL6k=
+	t=1708103470; cv=none; b=twgjYDyYa6lukNCIG2oPcomshNQ5vpd1+4FnrEj+a3C+ArywTHj1ONy3WfwZl5BYNTYSh7ANkT8+9iMyoXeIACNGf+/geIa1AyM4EWWZElS2yrZV7VoJsy+3jt1J1k+V5w40QPUm4MrpCnfY+88UHzlhPO7ckZyv47DRcnWOU0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708099167; c=relaxed/simple;
-	bh=WmcuCs3E9zzmdPnmKkHdT47Jolk6hbejMhixwPn9lZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LsGJgPn6kGvJsIEID3HiJ/ZYIrnuZIX6kgCy/UlQbaOHt/RNcQ3JfTQkyHGRp3hLE00rKx19bt2HfFAudMTVfSlnsP2cyZJfUFOFhNXmNEn47bTGHVatr/Sgg3juJpcQ697xBVqWDAz6/OWpT+DE57Bsx4IahI6YcN5dGXY5i4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=oXB4Prd0; arc=none smtp.client-ip=185.125.25.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1708103470; c=relaxed/simple;
+	bh=93vGL+4dxgbN8UwCtpMCNdpZZ/IFZRKMNaHf6EJaXkY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=UEVemtmrXI5kyv4s48nY04XRQsE27deW0dCgh4SnlBZsouepJObdJ/T/Gxr+MgT1WPRB5XMEuxUk3Vb7m/kr09WKwzo6gAiniGsol28fYMEmc/gPePAmtVgpYZ+0j3jpSY1HH+ftaDkvaQL4FyL5fTvpx0SKDV53l031IUaw8ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=unIITWEf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="oXB4Prd0"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TbxJ34w18zWK1;
-	Fri, 16 Feb 2024 16:51:47 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4TbxJ261CSzMpnPg;
-	Fri, 16 Feb 2024 16:51:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1708098707;
-	bh=WmcuCs3E9zzmdPnmKkHdT47Jolk6hbejMhixwPn9lZU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oXB4Prd0xr4DbllDzXpOtEkKWmMatabfsvdhcka48wGoUQ7kj/C6WUiQfkihjhB5U
-	 GBmSNHs7OBAUFWHIGLQLKC9b1wG5+1+cDlHY/SX+lyh+dx0683vVcLdjJbBk2wJKOa
-	 5lcsZi76RhVwt7V4YvwZCuOLtoiU4TOvOUkLMV2I=
-Date: Fri, 16 Feb 2024 16:51:40 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v9 1/8] landlock: Add IOCTL access right
-Message-ID: <20240216.phai5oova1Oa@digikod.net>
-References: <20240209170612.1638517-1-gnoack@google.com>
- <20240209170612.1638517-2-gnoack@google.com>
- <ZcdbbkjlKFJxU_uF@google.com>
- <20240216.geeCh6keengu@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="unIITWEf"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3039CC433C7;
+	Fri, 16 Feb 2024 17:11:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708103470;
+	bh=93vGL+4dxgbN8UwCtpMCNdpZZ/IFZRKMNaHf6EJaXkY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=unIITWEfmZNpqNE67CGuV0kIDW2mIPr2jPMG8j6hc4nFfaGQZHaKQVDIUlPlxNtwv
+	 OprC6n0are2bcJBt7AqoANbYxXurxbAd+7C4k/8gp5uC4zH3EqPzZOju7kHv1c7RpX
+	 nooldNDz9iEMy4qF1trZ2J9NP/93JcDowL8AOlKQCCwenxeuxsnNkH3obwL/YVuT4v
+	 WksurQIuHpwOvgnfcRqKCtncegp13wyh4CECmh7CLQZZTWoRs5O1lYdlYOhFZRW9dy
+	 U3fW+xKRmWb9H4RUFzNSsbVelCCVzF+zS8dbKy/uaciYwb6xCvFNArOO3dhK6s/3PV
+	 emFYwgabxWGhA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1CF68D8C966;
+	Fri, 16 Feb 2024 17:11:10 +0000 (UTC)
+Subject: Re: [GIT PULL] lsm/lsm-pr-20240215
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <6fcbf9b8e83e76678a0f520bfbbd6bcf@paul-moore.com>
+References: <6fcbf9b8e83e76678a0f520bfbbd6bcf@paul-moore.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <6fcbf9b8e83e76678a0f520bfbbd6bcf@paul-moore.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20240215
+X-PR-Tracked-Commit-Id: d8bdd795d383a23e38ac48a40d3d223caf47b290
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b8ef920168141b09927ca840b767fda0f227080a
+Message-Id: <170810347011.29072.14832226644961221930.pr-tracker-bot@kernel.org>
+Date: Fri, 16 Feb 2024 17:11:10 +0000
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240216.geeCh6keengu@digikod.net>
-X-Infomaniak-Routing: alpha
 
-On Fri, Feb 16, 2024 at 03:11:18PM +0100, Mickaël Salaün wrote:
-> On Sat, Feb 10, 2024 at 12:18:06PM +0100, Günther Noack wrote:
-> > On Fri, Feb 09, 2024 at 06:06:05PM +0100, Günther Noack wrote:
-> > > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > > index 73997e63734f..84efea3f7c0f 100644
-> > > --- a/security/landlock/fs.c
-> > > +++ b/security/landlock/fs.c
-> > > @@ -1333,7 +1520,9 @@ static int hook_file_open(struct file *const file)
-> > >  {
-> > >  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
-> > >  	access_mask_t open_access_request, full_access_request, allowed_access;
-> > > -	const access_mask_t optional_access = LANDLOCK_ACCESS_FS_TRUNCATE;
-> > > +	const access_mask_t optional_access = LANDLOCK_ACCESS_FS_TRUNCATE |
-> > > +					      LANDLOCK_ACCESS_FS_IOCTL |
-> > > +					      IOCTL_GROUPS;
-> > >  	const struct landlock_ruleset *const dom = get_current_fs_domain();
-> > >  
-> > >  	if (!dom)
-> > > @@ -1375,6 +1564,16 @@ static int hook_file_open(struct file *const file)
-> > >  		}
-> > >  	}
-> > >  
-> > > +	/*
-> > > +	 * Named pipes should be treated just like anonymous pipes.
-> > > +	 * Therefore, we permit all IOCTLs on them.
-> > > +	 */
-> > > +	if (S_ISFIFO(file_inode(file)->i_mode)) {
-> > > +		allowed_access |= LANDLOCK_ACCESS_FS_IOCTL |
-> > > +				  LANDLOCK_ACCESS_FS_IOCTL_RW |
-> > > +				  LANDLOCK_ACCESS_FS_IOCTL_RW_FILE;
-> 
-> Why not LANDLOCK_ACCESS_FS_IOCTL | IOCTL_GROUPS instead?
-> 
-> > > +	}
-> > > +
-> > 
-> > Hello Mickaël, this "if" is a change I'd like to draw your attention
-> > to -- this special case was necessary so that all IOCTLs are permitted
-> > on named pipes. (There is also a test for it in another commit.)
-> > 
-> > Open questions here are:
-> > 
-> >  - I'm a bit on the edge whether it's worth it to have these special
-> >    cases here.  After all, users can very easily just permit all
-> >    IOCTLs through the ruleset if needed, and it might simplify the
-> >    mental model that we have to explain in the documentation
-> 
-> It might simplify the kernel implementation a bit but it would make the
-> Landlock security policies more complex, and could encourage people to
-> allow all IOCTLs on a directory because this directory might contain
-> (dynamically created) named pipes.
-> 
-> I suggest to extend this check with S_ISFIFO(mode) || S_ISSOCK(mode).
-> A comment should explain that LANDLOCK_ACCESS_FS_* rights are not meant
-> to restrict IPCs.
-> 
-> > 
-> >  - I've put the special case into the file open hook, under the
-> >    assumption that it would simplify the Landlock audit support to
-> >    have the correct rights on the struct file.  The implementation
-> >    could alternatively also be done in the ioctl hook. Let me know
-> >    which one makes more sense to you.
-> 
-> I like your approach, thanks!  Also, in theory this approach should be
-> better for performance reasons, even if it should not be visible in
-> practice. Anyway, keeping a consistent set of access rights is
-> definitely useful for observability.
-> 
-> I'm wondering if we should do the same mode check for
-> LANDLOCK_ACCESS_FS_TRUNCATE too... It would not be visible to user space
-> anyway because the LSM hooks are called after the file mode checks for
-> truncate(2) and ftruncate(2). But because we need this kind of check for
-> IOCTL, it might be a good idea to make it common to all optional_access
-> values, at least to document what is really handled. Adding dedicated
-> truncate and ftruncate tests (before this commit) would guarantee that
-> the returned error codes are unchanged.
-> 
-> Moving this check before the is_access_to_paths_allowed() call would
-> enable to avoid looking for always-allowed access rights by removing
-> them from the full_access_request. This could help improve performance
-> when opening named pipe because no optional_access would be requested.
-> 
-> A new helper similar to get_required_file_open_access() could help.
-> 
-> > 
-> > BTW, named UNIX domain sockets can apparently not be opened with open() and
-> > therefore they don't hit the LSM file_open hook.  (It is done with the BSD
-> > socket API instead.)
-> 
-> What about /proc/*/fd/* ? We can test with open_proc_fd() to make sure
-> our assumptions are correct.
+The pull request you sent on Thu, 15 Feb 2024 17:19:40 -0500:
 
-Actually, these fifo and socket checks (and related optimizations)
-should already be handled with is_nouser_or_private() called by
-is_access_to_paths_allowed(). Some new dedicated tests should help
-though.
+> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20240215
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b8ef920168141b09927ca840b767fda0f227080a
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
