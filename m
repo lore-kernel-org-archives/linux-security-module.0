@@ -1,140 +1,102 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070E6646
-	for <linux-security-module@vger.kernel.org>; Fri, 16 Feb 2024 03:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D813B10A34
+	for <linux-security-module@vger.kernel.org>; Fri, 16 Feb 2024 04:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708054393; cv=none; b=p7EpUXIymaWse1ZfMq6VqGtgz+f9Mu2JWvOPY1sIM9Upn8EK7Yl3ykUNzlmFLKJg3tc4t40665z2hh4Db0Dgtrx1dMvnZakrEx9cxnnxaYRYU1zLC7iIVVJyKAJkBwRUMa+myHAsrKfiXxQLU95S1v1Zxpvch66HpvamhyLcLl4=
+	t=1708058621; cv=none; b=rb4GIasyfLTf4xHWmkBdylSN1uSHUwxm+j7u+eNsjdOp7XX+TGYYIGP+k/XT/PZZak4DAINiYrXnqU1vAhnvDYj4t6E7uheXABvPYIrP5laldRx62G2Vv4BpYOqejaEimdk/Eyv8br9Z8Tjfl9Wni94NmpVY3dUUCXhnp6LS2ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708054393; c=relaxed/simple;
-	bh=3t546fEgz91vAvQkx/7zlRudegOnhfYWFDVQoa1pGtg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RP7AHMK5lVCcWfRZk2t103QkKZy21+GIwzFaW3sYHiMHUlapIRAyy/tVDtBwnwdgs71QR11js2iewl9WM1YJX1gyhDJF0wRzEk/qhmZQT25TBs1Ns/BHjdqtYvP79UMuexZlPl4xrnMmI+3xCtvJRpjBJcyXVn9StPwFSPHMVbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NyI8rIk+; arc=none smtp.client-ip=209.85.219.169
+	s=arc-20240116; t=1708058621; c=relaxed/simple;
+	bh=waeuX8RtjIW86KprZNCOqRp/iiUFgtT5YVoezffu7hk=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=E1/eS+ZUsRPNa6ySBK0LmYCAAsubURrRiyc+M2FltGFB3tZE9h8nt9r8ED/EXw/X2yeezx+uvT8c/QsevbdSbqEUIOmjS6/zj2Jj13pP0V2YrzEtdJnWqaJuYuQHaHD9uDVhTD/naWIErT+7FMRpBQFel0VjTVOPSWQx7z6A7tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QBYbynhN; arc=none smtp.client-ip=209.85.219.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NyI8rIk+"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dccb1421bdeso1540409276.1
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Feb 2024 19:33:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QBYbynhN"
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-68f2a6fdeffso4893416d6.1
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Feb 2024 20:43:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1708054391; x=1708659191; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3rJ1SQR31QFWXS+4mlImwqEULbuDFVCkilDRUDHOOhA=;
-        b=NyI8rIk+gebt7HVU4uwbKc+1Iwf5YOoS4eVyIcpNencC7GpK5S40fYTYfb3rEt3Pef
-         4csRxZL0JG+vSFfKHBUe5osTVDSCpLT9KPlolMAgJHYL40LGEltpDVCe4Bi6Mx2G9j5a
-         YkCE+ncgHIpL4gP3lcxm1s1H6+VGS8uEHMWHAYWs0LPL4/zbLYxpSDHOnvQ54ENFfs2P
-         NeBsfyMojMjl96X8wkTCzbBasBt1iNC/3dopOQy/lZoj29LtqpB0OyZE9oL0Uab5Z5rJ
-         vhcxLTb+OUXvqCx1IrAb3rVZ1GjOOgwkKEhT1DTFnH2aEGkpC51k6Ms7ERNuDpNDo5OO
-         C3/Q==
+        d=paul-moore.com; s=google; t=1708058617; x=1708663417; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hzH2XjdwcrudKK0By8Y9Nwkfc0y204g7SCh9Xtz36uI=;
+        b=QBYbynhNm8tm4vtdLyIvMt4Z2Zw06EGImgeGy0UxZw8I8v3PH1UoZU15fXXsza7pr3
+         0DiSaO4AgoLH864p9y6EK/IUAzWOkbDxO1zpB0L6ZlRLiTFvRe3/ZAGMR4NT3r2KSvUT
+         DuUYIK3JZ6eYl3E6XGDdycU8Mvi8ClRnqREG/QRHmW/PtTw91XI3RmZPnajFuGUcTFlZ
+         /Z9ogEJgRdSq8/YY1IA/W+QhWM890BLLr1IUSou+ADEvV+tq4Cc8fW600rXRkiRlhQv4
+         uDXs6dgWvdheOELMLWtwzXTmzysYMq5aQT9or6Aq/Ap74n22SX8wBxDlI5DpsM8/4Faq
+         b5Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708054391; x=1708659191;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3rJ1SQR31QFWXS+4mlImwqEULbuDFVCkilDRUDHOOhA=;
-        b=FxqetagGZClGSzmWP+ue402JEvbDbs9tJkmTxrQVSAPFV4NXJV89O+VEFsf+4mtcUx
-         t5sFtG/z1tPX3T2juFui56WF3qDEOXa1hfDISWqdzpZWgEsyv9+i/zHTJn/okH7Po0bz
-         6uPcnL4hXra23FpqX2g5yQ+tAoxet5kGTOsQUN0GikA8bDkJrhMuRPNnu/pZ5jikCsM1
-         eKs4gXoSPa4yXJjonyZcA+V0NGV2tpdCdPeJOVs2vViuOgfnzCmikWJGXebjY6ekAyy+
-         iiV+hA0pdXQUStRoReObL+ua4nZ/ybxPf9KgfAcwXvXaH61Ve+1OR2ae6VOKuAZqxIi9
-         8HsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWeuey1Nyqd0+9NqzBFSlDvJKL37B0gKQ58cABVEc0tZMNH2Ogb4oKP64m/H19WDh6ad/BUHLVOjASvHEZ7gHXgbgbH7CxN+2/v8N58X65n9UeFzlo+
-X-Gm-Message-State: AOJu0YwtVhB/mkGeY/x84T4izhfbQxHnFN5Fd9ctyw9hzaddJSetKu/J
-	7ngATWSzZ9uOIL8h1POmElvcGjZ5ROWmXvkWVd2EEcfjN+uLYDUMTaIeI9zwOvO3iTWJEJ2judg
-	PBnmxQxCQjkTdO4HCr+UQojEJ5BaZ5QdRy5wH3AJbnZiGn/A=
-X-Google-Smtp-Source: AGHT+IH76DVP444gDd+wf6uNfWtITB6UJ/TjyhCFk5nsVL1PvzFP0vw/NLgKzMIEoTrpGNc9CaLKhT/IzS1Qxy3kCY0=
-X-Received: by 2002:a05:6902:1b13:b0:dc6:c619:61d8 with SMTP id
- eh19-20020a0569021b1300b00dc6c61961d8mr5175844ybb.35.1708054390849; Thu, 15
- Feb 2024 19:33:10 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708058617; x=1708663417;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hzH2XjdwcrudKK0By8Y9Nwkfc0y204g7SCh9Xtz36uI=;
+        b=PBARmYvnnLQX7KBj8FOQOrAtxMfZj4KwXho+YKW/4qhw3/9GBHLhwrCm8tCIuHQ4gd
+         vf74KX6yTerKWdYGZq1AO7ocSjcdVC6LTOPpCsk3vDP/Ej1HvgHdYGmNk30S/2KEWhcG
+         teb70ig/1r+zr55HA8U9kOU5fgd17ZEbfjyTaq1/CmSmJjugPiLkwDfaXlLZk2MXuK3T
+         DC0P6lBxO+ey4EyFRz0qyXJz2/sydEu4W7KlQBPKlrjxWGMGxZ8uE3Xo+p9R/vjf9Wel
+         NAbY14+g9WvHYLGZS2pXzkc4lST8JSJQF4e2Lf+zaofw4ewYGPgQNbANTaKKGi1m9IZL
+         XzFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUszPmVgUvnQCFqjo8aHlQm4BihDGyzKTwKIoRDc0kwKXGrLtSMJbIBlWNPkEUSLIZJiBHJhUi2rq1iDnuzdttKGzYCeWcLGlLcSbBNZ4PyoRfI8xy6
+X-Gm-Message-State: AOJu0YzYyaW8hGI8dytwLbdNiJL0DGMLOF9r/emxKXnTJNuSD41yLDgb
+	UQIpaECsyKtYoqgnpLxiqVl45HPbdzMwXZ5PtneJ56CrLUegS9eJCHSP3fZY4Q==
+X-Google-Smtp-Source: AGHT+IH4Re2re96Bj4x8lZKg32bzmDSpm8k6SPGJJSdEF1RKaSe7UJnZBT4cDAJ/C8/g+lnnFGrBLg==
+X-Received: by 2002:a05:6214:23ce:b0:68d:129e:f5c1 with SMTP id hr14-20020a05621423ce00b0068d129ef5c1mr4407697qvb.45.1708058617658;
+        Thu, 15 Feb 2024 20:43:37 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id og8-20020a056214428800b0068c4b445991sm1367791qvb.67.2024.02.15.20.43.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Feb 2024 20:43:37 -0800 (PST)
+Date: Thu, 15 Feb 2024 23:43:36 -0500
+Message-ID: <2cdfefc8661d0a82c28250fc22a93a47@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <ad9dddfe-0fa1-40f6-9f8c-f2c01c7a0211@I-love.SAKURA.ne.jp>
- <fa719d6f-1960-491e-89c2-ed2c14d184fc@I-love.SAKURA.ne.jp>
- <2fa0a73a-1d03-4937-8599-e4560297af3f@schaufler-ca.com> <f15e4a73-02e1-4758-a8e6-0edd27224c0a@I-love.SAKURA.ne.jp>
- <757dc423-f914-44b7-98bb-fde5cd42d33b@schaufler-ca.com> <b240a8ad-240a-4bc5-9414-62bd417f0b92@schaufler-ca.com>
- <CAHC9VhRdqjWa0Zhw==U=kLNiSeYHDWnQyP8Yb4JNtTA7ki1gqw@mail.gmail.com>
- <8d093ada-995f-4291-9c31-35d9a62525b7@I-love.SAKURA.ne.jp>
- <6e00373a-a028-4575-b2cf-d4da366c2b6f@schaufler-ca.com> <CAHC9VhT730AxsUv=1=dEn22ABeHJPZ1JA-xwZv6DN54+DiiKQg@mail.gmail.com>
- <9a816f3b-452e-4d3a-8c45-da49f5461317@schaufler-ca.com>
-In-Reply-To: <9a816f3b-452e-4d3a-8c45-da49f5461317@schaufler-ca.com>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
+Content-Transfer-Encoding: 8bit
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 15 Feb 2024 22:32:59 -0500
-Message-ID: <CAHC9VhRK3L12zgzm4-9eyxdhb8Zp-OrAg0UQxFdc3Qdm2yoTKw@mail.gmail.com>
-Subject: Re: smack: Possible NULL pointer deref in cred_free hook.
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com, omosnace@redhat.com, casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v10 0/25] security: Move IMA and EVM to the LSM
+ infrastructure
+References: <20240215103113.2369171-1-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20240215103113.2369171-1-roberto.sassu@huaweicloud.com>
 
-On Thu, Feb 15, 2024 at 7:22=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
-> On 2/15/2024 3:38 PM, Paul Moore wrote:
-> > On Wed, Feb 14, 2024 at 7:13=E2=80=AFPM Casey Schaufler <casey@schaufle=
-r-ca.com> wrote:
-> >> On 2/14/2024 2:15 PM, Tetsuo Handa wrote:
-> >>> On 2024/02/15 3:55, Paul Moore wrote:
-> >>>>> Ah, but it turns out that the only LSM that can fail in _cred_prepa=
-re()
-> >>>>> is Smack. Even if smack_cred_prepare() fails it will have called
-> >>>>> init_task_smack(), so there isn't *currently* a problem. Should ano=
-ther
-> >>>>> LSM have the possibility of failing in whatever_cred_prepare() this
-> >>>>> could be an issue.
-> >>>> Let's make sure we fix this, even if it isn't a problem with the
-> >>>> current code, it is very possible it could become a problem at some
-> >>>> point in the future and I don't want to see us get surprised by this
-> >>>> then.
-> >>>>
-> >>> Anyone can built-in an out-of-tree LSM where whatever_cred_prepare() =
-fails.
-> >>> An in-tree code that fails if an out-of-tree code (possibly BPF based=
- LSM)
-> >>> is added should be considered as a problem with the current code.
-> >> Agreed. By the way, this isn't just a Smack problem.
-> > I've tried to make this clear on previous issues, but let me say it
-> > again: I don't care what individual LSMs are affected, a bug is a bug
-> > and we need to fix it.
->
-> Yes, I understand that.
->
-> >> You get what looks
-> >> like the same failure on an SELinux system if security_prepare_creds()=
- fails
-> >> using the suggested "fault injection". It appears that any failure in
-> >> security_prepare_creds() has the potential to be fatal.
-> > Perhaps I didn't look at the original problem closely enough, but I
-> > believe this should only be an issue with LSMs that register a
-> > cred_free hook that assumes a valid LSM specific credential
-> > initialization.  While SELinux registers a cred_prepare hook, it does
-> > not register a cred_free hook.  Or am I missing something?
->
-> Yes, you're missing something. If security_prepare_creds() fails prepare_=
-creds()
-> will fail, and the system will lurch to a halt because it can't create a =
-new
-> cred. The cred_free hook is a red herring.
+On Feb 15, 2024 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+> 
+> IMA and EVM are not effectively LSMs, especially due to the fact that in
+> the past they could not provide a security blob while there is another LSM
+> active.
+> 
+> That changed in the recent years, the LSM stacking feature now makes it
+> possible to stack together multiple LSMs, and allows them to provide a
+> security blob for most kernel objects. While the LSM stacking feature has
+> some limitations being worked out, it is already suitable to make IMA and
+> EVM as LSMs.
+> 
+> The main purpose of this patch set is to remove IMA and EVM function calls,
+> hardcoded in the LSM infrastructure and other places in the kernel, and to
+> register them as LSM hook implementations, so that those functions are
+> called by the LSM infrastructure like other regular LSMs.
 
-Okay, my apologies, I thought the issue was due to one of the LSMs
-failing their cred_prepare hook and causing security_cred_free() to be
-called for LSMs that hadn't successfully cred_prepare()'d the new
-creds.
+As discussed earlier, I've just merged this into the lsm/dev tree; a big
+thank you to Roberto for working on this and to all helped along the way
+with reviews, testing, etc.  I've wanted to see IMA/EVM integrated as
+proper LSMs for a while and I'm very happy to finally see it happening.
 
-However, if I'm understanding you correctly, the issue is that a
-failed security_prepare_creds() call can cause both prepare_creds()
-and prepare_kernel_cred() to fail, yes?  If that is the case, can
-someone explain to me why this is a problem?  Both prepare_creds() and
-prepare_kernel_cred() can fail in ways unrelated to the LSM and thus
-callers must be prepared to handle a failure in both prepare_cred()
-functions.
+Mimi, Roberto, I'm going to hold off on merging anything into the lsm/dev
+tree for a few days in case you decide you would prefer to take these
+patches yourselves.  If I don't hear anything from the two of you, I'll
+plan to send these to Linus during the next merge window.
 
---=20
+--
 paul-moore.com
