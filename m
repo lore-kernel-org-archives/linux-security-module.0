@@ -1,149 +1,146 @@
-Received: from sonic312-31.consmr.mail.ne1.yahoo.com (sonic312-31.consmr.mail.ne1.yahoo.com [66.163.191.212])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E9CA21
-	for <linux-security-module@vger.kernel.org>; Fri, 16 Feb 2024 00:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2969228E8;
+	Fri, 16 Feb 2024 00:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708042954; cv=none; b=GOyXJRBr4u0V/EcPi0DQ7LHPoGghpTrLC9G5A/UwiTqmeUfZOfCVHSb3IQQVtJIfGt5WwbMz6QQgGembWFEewtgUqDbENNCxbU3MrmVXkk8tapjiXHNIKxckNW2bfb9OwX6d0KD5HKJsijzo+pNjvb4k+/sXcyNo7cfLZQ6tiFk=
+	t=1708043184; cv=none; b=lm/P+F9UDWnCJQLfgC1NqvsIX95A2S+YGv9IVj3P6qsT5PJ8fa+7O7kNgCN1W8gjrVSYE29zxxWGTE/upoin4gVzHRFXPnh/DjPJTzRyuFFtbve9KCGokvZ+59QJQzJq4wo9ZqKW6MQOJEovHTWOrztcI7idOcI7jlRJglV9RDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708042954; c=relaxed/simple;
-	bh=69RYpdVYDTZA8DIigKvYi3SBzDIkw9Xs7dhP6vsUEhI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RZhnZjebqWzql+1dHYchmENdxocRgREoYjaL+q8vtLJz4waenVFXMsXUI2MvIOU3iSzfPWitEZSEG4JjocZbTiAJUfysBrF5/t2SsvmRor9FHBE2T2QxovB/4CG9D3dZUTf83eGG9jKDuCv1nnUNbITh3EkFXdV0PBWAr222PrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=V51BJ4Bb; arc=none smtp.client-ip=66.163.191.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1708043184; c=relaxed/simple;
+	bh=oXtwZtSuO9glftnKm5bDsm0gbH6HrsEW0khA9h2R97U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=DQwaNu4Al00k96r/9VRXvq1JKGdUyXx1+UFYCiKxH6cyqB2RVDy5pdmGgq1XTObDeBXsxtg89SZTfoCY1s8UaXlaiwcGXElV3P1m8ApjwWxexPkU5hQ4lvF/OO12fxf8l/VSyLZjqa2dTd/Yk1XTAeMtK7lTG+5om08RkdpKIF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aHIYNU4s; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="V51BJ4Bb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1708042951; bh=bFeP3L3bN3aSXJISbrH6tvM7Jez+tPsE+Pw9OQXBZ1Y=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=V51BJ4BbIa967cJiOrxePrCMSnT0n4rA67+0NJ9FBfj0pB0LMQd3Afq4j24cpXLDp+je5VRY9sNFdAkdPCcOylbSZ95VlEY5WgxOPXNTmVnbNrHGOG0LD6UHxwO9kmHCQGPFNA9Tz5qpSFHwBFMy++pz1gPKzdV8CjYWWmmBVWTaqknTX9D1oeuA71M+pd2BIo66U9i1Aqmn8nU7vvi8M1A0HYzifp6fzEtgD+fQ1mY186pHJqCqRqhc3iRdD68DEEuMlHGrSnpqoAIClnFajuu8LIYcmPLGpWsqZeM3ATa5EWF2evSJVS3W1W1imbhZ81mXI/MlaGxT4CGzL0O2yw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1708042951; bh=zjQvHdqRNKaw3xV/yJehVLkxRMW5Wd7AjW1VELST9m/=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ItK+xup1FDbMUkJ60XMcD1hmK9vsCiQaNy7Lv0lCzn6/G7Mu4DtTUNqtOB9JFceMaI6wsqGaipcNuIcOB0CLZBqSaXRlYglARMTJ45xb7hTTmGJuwSP4BkD5rxcujiquzscPG3pdWZCIUf8flq26Fe4DHzi0vGfuC4OUU9qmkWOWvm10nwvophV6rZG2UeGV9N7Iiv7n5NcJ04hmpKj8/M7eew5YyzlwH0RSI20csnuXFOZT/GdpNOpKnpKru64h6o9WKLh06Hnv4ZNVouUy1lTiI4z2qhC6+lGGf5IHGSOM+PXt2sJRIFRkzpN3czCT/0aR4cTq2svMv9xVz0+hcw==
-X-YMail-OSG: _ZcCeuEVM1mRsnIRzrZvwFYKLRwXZq9oXipBdGXgl7fh7wfPoMoEdC5DlyrrTts
- khq0x7Yb9JPwA3pSNXEX7KKitxDRKJ.OBCjKPx8uc7QQiYsXBjK_Lpbhylf1.beTo0b4PPqqDdOT
- mHKfNI66QnIpCYu0oezqVwVKlMF5YkIDWYxw9Si0_TFAurLbbjKsnCdhbWHq5D6_5CA1NntJQ7HA
- wET1ShxxjcGZ0AY2x.qjlH.x.zXY5Of0FwiqXM1iDW9jBcG7hckl2OhOHKGHUw1WKHjWihK6RPCM
- qa9YR1GKgcuweD4fnFkufFrpD3BBupeYMouAgn3UQYPhA3x2O1LC9WnYFbGo.bDddoPfOSxYliab
- O9XpeDrAIWWoxUZvi_5vJZ4GQu1hsLAbvfb.qtQXJsK5G7HUMwRenRXvDYxUOcpK.eaXxwAcGTYE
- gM1n50lILzZ1Up8GIQH18r70ICMjPsG8ZeySktV9Y4wj9U.w8OWE3fg7_sbwQ9385bUYl_Cy6lH.
- 1ZbGaY7mf1CwZXIo0xs2W64cA_tquJX51.e.UZPToUPWSod5RR.7hgW8Ey4Oq5DaO35UWga6w6dw
- XP5meG8wFiHn5KBhLZDXkHNRcxb30TjakxzQUJpFlQzPM3L06CuF7Q5bW9WEdd0sIGkKYmQJEac6
- jinai1I.x0WPWReo4L5pf1LO80jgwK5vcWF3eEVBl9JP9ACodRtf4TWMyIdYBAUTQ7KsWjvpel6e
- GaMW2wiQeUtB7XraNGej.xfqfjh97z7lxFc7nen9BUSeQvy3fwuOpMXTXFsPrUklQ.alfA763_Wz
- vJUEMm1nsCmA.hf3XsL9waXTS6xbEO12I9Hz.Q6eyy6QdJU91gh4fgi5n7WpepYGNmaXNp6LMjKK
- 9KPx9P1db5JMQPX_3DjqJx1TrHtgx_ZwpWTcmrQ_9o7Zd1ZsW9OjNGDHxM2sih0xA_NZDko2A9Ir
- 0O2TfoubbEp6dVOhBgHicCce_7vTc7ihmf6FYBP9.kRF1vKlgPbbT_6mQHMLEOaFzXhVT2dKIQ1m
- fUirpZjBk6vbYIHcR0ZnYvljU6QZvz_ZhwrIaMRxWfAq9ZYeOxn4jSO_pCtl.oIq2qGHlRWVTnL5
- CBlLDI_NdOuicPH52FR9Lcp1_sOyvk3aHJLHfqQCoXhuMEJZwUpk774plFE6b0GqKSinXz_eBv0G
- gFahp6NayQlI0yA_bnNuy.j7XxX9qlXQamXvFOWe8X4cASOQcOMTyLPo5FiWCmupLiOubyA4B1ga
- 6mx9bl8jMT1TnFI6K0LIu9aY3pHccMRTwOOVYpglIwvPxFjtMkXnEZsdC7v5uly8g2WZ4T60PVwe
- 8bTtSyVfWXYV4pB.pC2jzAzP9uqdVrrM6Ne5mPk0R17CcwvEAkmntXCx5CQL1dIRLPXAvXKbFzMw
- WVaUE8yT64hYiW36b6aziphgJ87Z1hkJBUr07AVWfMlLMbnuy6YDyXJUGYwF9XdLig1oHl7GzsfE
- CLF7m9aiXoVjIaUmthA1Maw28s1K5A_PrLglbBh5yQQCBdwcOwAA8W4bwRlxhU0IGZ6gRirN1EN_
- yGzb2p2dmqbw3daaJANcTYWmjRDOxvlu6N4.Df8Y1my840emr_SVGuRYKfw_LSBU6IZkPIl6PyqC
- I9h9lTnhuu_KA6fDtliclAikrDcXJAfbI6bj6meVhd3s25Qir9KNd6bx2O1xTmvVKHCsBl1B4dM9
- gd0B6Vzh36C4jckT2yhbBQLRjaOg3t95XS3RYenLCKKw5VByw.NXXEqw6lu0UOe9i1JYW4zj_6TV
- 4dcE.6AGeBDMKeGkjnhOQ74OScUPylqgImVkGkvAm00vA0tLxgC4eltbWe_7GFeouqYgqVYBMjC1
- 0h8MReIMuUqEWouP1KtI7raD9xbuSJPQ0_f7oMrMJ8UYk9ffcQh9FtpFVp_GdGZF7zgrFubgGuLJ
- Hb7ZivCCyYWUJ14RTgKllrke9zJh_gZjb08ycw0TX_FL04p0sSAWqSAR1gYulxP4lbC7GJUbVl_h
- knVObe7Ty1TwlHS8y183oOQSGybmgiH0tyI7cYYw_ehCZk59QK9g_j9t2vEfr3GBd5Vy5DIgW21d
- eh96zuNI3zh_La6qLV38nbKIo7Jt1qxh.N4CGUj_7LhpL7HiNUpbW7GGPoXFP8T9ucrX4ieW2m3G
- TR_u77x5eySkw9alUIBQhU5oDrtu__jxzBo4jKQaIXJHXCLxh0gECkoLj1Xgvd53GjhP7ohasMmX
- 7lKFolGevxVkxXi_COSST
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: a06b1fd6-d818-4a27-b7bb-d05278f1a6e7
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Fri, 16 Feb 2024 00:22:31 +0000
-Received: by hermes--production-gq1-5c57879fdf-6xjwd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0510ecd4e771c0457035cfacb550bed0;
-          Fri, 16 Feb 2024 00:22:29 +0000 (UTC)
-Message-ID: <9a816f3b-452e-4d3a-8c45-da49f5461317@schaufler-ca.com>
-Date: Thu, 15 Feb 2024 16:22:28 -0800
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aHIYNU4s"
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41FMtnth028679;
+	Fri, 16 Feb 2024 00:25:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=Om9oyXgDiFyioTn4kHbDdu9jyc7RJhYiunD0WE9LJcY=;
+ b=aHIYNU4sNfsa6W1Zi2SHNnYp5pAsdwkhgkxJcFYINTcs7hJVzXD1EVzqpEhsQw9vmW54
+ 1AUJMWoYDVuVJx6grRr+rbtVY2w8d2UjRvNHeiATyyb/V4Id7ll/q4t4K9kkWwbF76vf
+ j2Cm+vKS7fWCcn05rSyIYpYOC3RHWwGIQl8vhUK2MQ5fwFRVl/O4wmtSfVPLFc1bI/4z
+ WnInjoiLggCOIG2skURkMzY32fQ4Puohw0GxcsUOQKf4h2y33musZLxiyLV0Uu17uJ/O
+ 5yaUNhukbVWTLYDDZzJxo+gUPF+gWxMjEcxCYbSsCtxF1l3cj+kJNp6WNffJWAkLfWT5 Iw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w9uucsfcr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Feb 2024 00:25:48 +0000
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41G0MkpP026872;
+	Fri, 16 Feb 2024 00:25:47 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w9uucsfc1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Feb 2024 00:25:47 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41FLD05g009728;
+	Fri, 16 Feb 2024 00:25:46 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3w6p637q1k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Feb 2024 00:25:46 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41G0Ph1735258676
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 16 Feb 2024 00:25:45 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A2A2B58061;
+	Fri, 16 Feb 2024 00:25:43 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EF01158058;
+	Fri, 16 Feb 2024 00:25:41 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.113.219])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 16 Feb 2024 00:25:41 +0000 (GMT)
+Message-ID: <6154a26bb0efc2abbfc51df4bf1adc8279854f3c.camel@linux.ibm.com>
+Subject: Re: [PATCH v10 19/25] integrity: Move
+ integrity_kernel_module_request() to IMA
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, jack@suse.cz, chuck.lever@oracle.com,
+        jlayton@kernel.org, neilb@suse.de, kolga@netapp.com,
+        Dai.Ngo@oracle.com, tom@talpey.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, omosnace@redhat.com,
+        casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Roberto Sassu
+	 <roberto.sassu@huawei.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Date: Thu, 15 Feb 2024 19:25:41 -0500
+In-Reply-To: <09d6fa08e2d62720759f57237043a2dd9b5208ca.camel@huaweicloud.com>
+References: <20240215103113.2369171-1-roberto.sassu@huaweicloud.com>
+	 <20240215103113.2369171-20-roberto.sassu@huaweicloud.com>
+	 <09d6fa08e2d62720759f57237043a2dd9b5208ca.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: smack: Possible NULL pointer deref in cred_free hook.
-Content-Language: en-US
-To: Paul Moore <paul@paul-moore.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- linux-security-module <linux-security-module@vger.kernel.org>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <ad9dddfe-0fa1-40f6-9f8c-f2c01c7a0211@I-love.SAKURA.ne.jp>
- <fa719d6f-1960-491e-89c2-ed2c14d184fc@I-love.SAKURA.ne.jp>
- <2fa0a73a-1d03-4937-8599-e4560297af3f@schaufler-ca.com>
- <f15e4a73-02e1-4758-a8e6-0edd27224c0a@I-love.SAKURA.ne.jp>
- <757dc423-f914-44b7-98bb-fde5cd42d33b@schaufler-ca.com>
- <b240a8ad-240a-4bc5-9414-62bd417f0b92@schaufler-ca.com>
- <CAHC9VhRdqjWa0Zhw==U=kLNiSeYHDWnQyP8Yb4JNtTA7ki1gqw@mail.gmail.com>
- <8d093ada-995f-4291-9c31-35d9a62525b7@I-love.SAKURA.ne.jp>
- <6e00373a-a028-4575-b2cf-d4da366c2b6f@schaufler-ca.com>
- <CAHC9VhT730AxsUv=1=dEn22ABeHJPZ1JA-xwZv6DN54+DiiKQg@mail.gmail.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhT730AxsUv=1=dEn22ABeHJPZ1JA-xwZv6DN54+DiiKQg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22077 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: eVp6Z66UPLJF9IDvI4kibR2k_-D2yKlM
+X-Proofpoint-GUID: 8F3OPV3UWb5PHaUQpiMgR3h1AV3Tc70q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-15_23,2024-02-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxlogscore=999
+ suspectscore=0 spamscore=0 malwarescore=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 adultscore=0 impostorscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402160001
 
-On 2/15/2024 3:38 PM, Paul Moore wrote:
-> On Wed, Feb 14, 2024 at 7:13 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 2/14/2024 2:15 PM, Tetsuo Handa wrote:
->>> On 2024/02/15 3:55, Paul Moore wrote:
->>>>> Ah, but it turns out that the only LSM that can fail in _cred_prepare()
->>>>> is Smack. Even if smack_cred_prepare() fails it will have called
->>>>> init_task_smack(), so there isn't *currently* a problem. Should another
->>>>> LSM have the possibility of failing in whatever_cred_prepare() this
->>>>> could be an issue.
->>>> Let's make sure we fix this, even if it isn't a problem with the
->>>> current code, it is very possible it could become a problem at some
->>>> point in the future and I don't want to see us get surprised by this
->>>> then.
->>>>
->>> Anyone can built-in an out-of-tree LSM where whatever_cred_prepare() fails.
->>> An in-tree code that fails if an out-of-tree code (possibly BPF based LSM)
->>> is added should be considered as a problem with the current code.
->> Agreed. By the way, this isn't just a Smack problem.
-> I've tried to make this clear on previous issues, but let me say it
-> again: I don't care what individual LSMs are affected, a bug is a bug
-> and we need to fix it.
+On Thu, 2024-02-15 at 17:09 +0100, Roberto Sassu wrote:
+> On Thu, 2024-02-15 at 11:31 +0100, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > In preparation for removing the 'integrity' LSM, move
+> > integrity_kernel_module_request() to IMA, and rename it to
+> > ima_kernel_module_request(). Rewrite the function documentation, to explain
+> > better what the problem is.
+> > 
+> > Compile it conditionally if CONFIG_INTEGRITY_ASYMMETRIC_KEYS is enabled,
+> > and call it from security.c (removed afterwards with the move of IMA to the
+> > LSM infrastructure).
+> > 
+> > Adding this hook cannot be avoided, since IMA has no control on the flags
+> > passed to crypto_alloc_sig() in public_key_verify_signature(), and thus
+> > cannot pass CRYPTO_NOLOAD, which solved the problem for EVM hashing with
+> > commit e2861fa71641 ("evm: Don't deadlock if a crypto algorithm is
+> > unavailable").
+> > 
+> > EVM alone does not need to implement this hook, first because there is no
+> > mutex to deadlock, and second because even if it had it, there should be a
+> > recursive call. However, since verification from EVM can be initiated only
+> > by setting inode metadata, deadlock would occur if modprobe would do the
+> > same while loading a kernel module (which is unlikely).
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Acked-by: Paul Moore <paul@paul-moore.com>
+> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> > Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+> 
+> I hope the change of the ima_kernel_module_request() documentation is
+> fine for everyone.
+> 
+> If not, let me know.
 
-Yes, I understand that.
+Thanks, Roberto.  The updated kernel-doc looks good.
 
->> You get what looks
->> like the same failure on an SELinux system if security_prepare_creds() fails
->> using the suggested "fault injection". It appears that any failure in
->> security_prepare_creds() has the potential to be fatal.
-> Perhaps I didn't look at the original problem closely enough, but I
-> believe this should only be an issue with LSMs that register a
-> cred_free hook that assumes a valid LSM specific credential
-> initialization.  While SELinux registers a cred_prepare hook, it does
-> not register a cred_free hook.  Or am I missing something?
+Mimi
 
-Yes, you're missing something. If security_prepare_creds() fails prepare_creds()
-will fail, and the system will lurch to a halt because it can't create a new
-cred. The cred_free hook is a red herring.
-
-> Looking quickly I suspect this affects Smack and AppArmor.
-
-That was my original thought as well. But any failure of security_prepare_creds()
-is going to cause the problem. For in-tree LSMs that can only happen with Smack.
-If an out-of-tree LSM fails in a cred_prepare hook, or if a BPF program fails
-in cred_prepare, we'll have the problem. *Without Smack or AppArmor*.
-
-My current thinking, which could easily change with new information, is that
-the cred_prepare hook should be changed to be a void instead of an int hook,
-and an LSM that might have a failure case (Smack's memory allocation, for example)
-will have to handle the problem on its own. Smack would have to radically change
-how it manages supplemental rule lists and label change lists, moving them out
-of the cred.
-
-Also to be considered is that the "fault injection" used causes the system to fail
-immediately. A more subtle fault injection, provided on a system that has reached
-a running state, ought not to have the spectacular behavior seen here. Again, not
-an excuse, just an observation.
-
->   While
-> Landlock registers a cred_free hook, it looks like it should properly
-> handle being called without a cred_prepare hook first being executed.
-> Of course Mickaël is the one who should confirm this.
->
