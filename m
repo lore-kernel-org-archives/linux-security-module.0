@@ -1,114 +1,146 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA731292E5;
-	Fri, 16 Feb 2024 13:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9ED212D779;
+	Fri, 16 Feb 2024 14:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708089043; cv=none; b=sHd6Y/EsmW6H3df+DTZagr1faLVq1T23JFnQw0w2lvtQCyrnPs+ttJzZJl3524U08D/aO9oJpf9TcWeFOoerY2Vq2FUzpxZXBhUx/ikwHWfRqg83qSSCyx6WQXSNM6dG2AAYrJeXfqHq6JRTx73UCXHiZeI2JYz3mrIl8tjfyok=
+	t=1708092698; cv=none; b=rHE6THDje7jLkOJPIRofg47TNeGU8J1V9r6XZ5EqC4j1TeIWEvWQQza4Uwz4Pxgc8pMjlyEn0Nq+fvfhWQuzuEa/jhot688IKtQ7D11Xa2LgWdeJ4rHLtfYlnR6ckVABaRH0u4Hnq7Bj6ONDl2ChzRI6/5MegfQrL1DlwtixBKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708089043; c=relaxed/simple;
-	bh=wDCT/AKq28T1CaqjuwfiesQ85q6iMwOARLD1Lg0gyJs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=LaULF8dm9vKF7meRferL58JrINzv+FIGJ2mjjW+pqlb2UljQV61WkauHTheXE2vmyp3J8PeTTt9yl5mlGL+w/IV3s9Oj71Y9XstYuSOXzuwRzjmn4W2+1vshY0HwuBU8LW7rCZixvov/K9UimlgP9/w1bGlOSsToVWLaynkAPiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RnKEV1pq; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1708092698; c=relaxed/simple;
+	bh=345TuA1rmsuaEelyM265PlGePNbH1mKaeRJ+h2qTGUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bFEZrXFtDwucvCgq4W+GmyGa1Zx3KElfBOeg10hG+aI/0p4zqf3sT21sMivV2W1O/CYpgJ/FbmS7OchCtRDP4F+l82jj1MRQ01FEZL+sf/iwHyHaXG3bpLbHBPeZ0qNQwD6lnHAlfTCUJYvXQMt6lr4YVkebI/d8m3F85spLCTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=TfG58YHR; arc=none smtp.client-ip=83.166.143.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RnKEV1pq"
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41GCbZb4006914;
-	Fri, 16 Feb 2024 13:10:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=y7PGMOhJkJC7HYN/DW1kwfv/QxIiLB0yuOSBedKbfuo=;
- b=RnKEV1pqbqzbJlYMlomrNR3wYtcxOvteJexvaWonBso9lqhdurgDYcnXEHglJToa2ysG
- c3FzSwZDgfQT6ZGyGDBk+uZMZ46vNxZlWzacultsVr9BqeThIylclZ3rtsQsBuajNXyS
- 9aPdKxHwi3CI/k6gocJwZxALDJnBw0LDKo6jWldNv4pFxlnq2ab31EjRDzCada4vxIWf
- vmTNoaRcw+6aOfUC4rZmJoPq9At5TF2vvlbcpVslY1ywl+LBHDBN+zHo8Okk7uJNb56c
- H8rA5qBAwacltCSyw0ctYh4hEfb1E8S/YLfPv3rPuYOC6SDIHuasB3Ls4f4Djk2+7y8L jA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wa7vcrh2g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Feb 2024 13:10:28 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41GD5XG6016325;
-	Fri, 16 Feb 2024 13:10:27 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wa7vcrh1g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Feb 2024 13:10:27 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41GBOIUY009741;
-	Fri, 16 Feb 2024 13:10:26 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3w6p63awpc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Feb 2024 13:10:26 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41GDAOa517957424
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 16 Feb 2024 13:10:26 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 550BE58063;
-	Fri, 16 Feb 2024 13:10:24 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AE9DB58052;
-	Fri, 16 Feb 2024 13:10:23 +0000 (GMT)
-Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.181.243])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 16 Feb 2024 13:10:23 +0000 (GMT)
-Message-ID: <7fe03370dd3d31b6a9b21b0eff93398a8ca07d87.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] integrity: eliminate unnecessary "Problem loading
- X.509 certificate" msg
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
-Cc: itrymybest80@protonmail.com, Eric Snowberg <eric.snowberg@oracle.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"
- <serge@hallyn.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        "open
- list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-        open list
- <linux-kernel@vger.kernel.org>
-Date: Fri, 16 Feb 2024 08:10:23 -0500
-In-Reply-To: <pgwe5qhu7j3t7l37d3tj2nf6wpcjfonxonxjk4ozpinbhl4llr@g5ddvx7cgqsk>
-References: <20231227044156.166009-1-coxu@redhat.com>
-	 <20240109002429.1129950-1-coxu@redhat.com>
-	 <pgwe5qhu7j3t7l37d3tj2nf6wpcjfonxonxjk4ozpinbhl4llr@g5ddvx7cgqsk>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="TfG58YHR"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tbv4D1dsMzfkn;
+	Fri, 16 Feb 2024 15:11:24 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tbv4C0bnZz3h;
+	Fri, 16 Feb 2024 15:11:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1708092684;
+	bh=345TuA1rmsuaEelyM265PlGePNbH1mKaeRJ+h2qTGUk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TfG58YHRrxCDrFfu/lxvD5H3IRm09O9LQHym6USmmUB2r3yhZvREqjHhNma1hQmu+
+	 G0rxccYciGt9rsGyyPdYN46Dx6d4rwEkNTdGMuXU64UddmUrAj5sHEzMFoTe4J5xxN
+	 xlCErgTS/ZIbSkxYxUFaxT087aTieQ6OoBVRZ0uE=
+Date: Fri, 16 Feb 2024 15:11:14 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v9 1/8] landlock: Add IOCTL access right
+Message-ID: <20240216.geeCh6keengu@digikod.net>
+References: <20240209170612.1638517-1-gnoack@google.com>
+ <20240209170612.1638517-2-gnoack@google.com>
+ <ZcdbbkjlKFJxU_uF@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 09bz_3rqmsdfsP9ehpZSebLFyCIh4iBM
-X-Proofpoint-GUID: ty67EL53qs4DfuhG_C5E0oDD1TqMIMQD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-16_11,2024-02-16_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- spamscore=0 mlxlogscore=663 lowpriorityscore=0 priorityscore=1501
- adultscore=0 clxscore=1015 impostorscore=0 mlxscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2402160106
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZcdbbkjlKFJxU_uF@google.com>
+X-Infomaniak-Routing: alpha
 
-On Fri, 2024-02-16 at 19:10 +0800, Coiby Xu wrote:
-> Hi Mimi,
+On Sat, Feb 10, 2024 at 12:18:06PM +0100, Günther Noack wrote:
+> On Fri, Feb 09, 2024 at 06:06:05PM +0100, Günther Noack wrote:
+> > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> > index 73997e63734f..84efea3f7c0f 100644
+> > --- a/security/landlock/fs.c
+> > +++ b/security/landlock/fs.c
+> > @@ -1333,7 +1520,9 @@ static int hook_file_open(struct file *const file)
+> >  {
+> >  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+> >  	access_mask_t open_access_request, full_access_request, allowed_access;
+> > -	const access_mask_t optional_access = LANDLOCK_ACCESS_FS_TRUNCATE;
+> > +	const access_mask_t optional_access = LANDLOCK_ACCESS_FS_TRUNCATE |
+> > +					      LANDLOCK_ACCESS_FS_IOCTL |
+> > +					      IOCTL_GROUPS;
+> >  	const struct landlock_ruleset *const dom = get_current_fs_domain();
+> >  
+> >  	if (!dom)
+> > @@ -1375,6 +1564,16 @@ static int hook_file_open(struct file *const file)
+> >  		}
+> >  	}
+> >  
+> > +	/*
+> > +	 * Named pipes should be treated just like anonymous pipes.
+> > +	 * Therefore, we permit all IOCTLs on them.
+> > +	 */
+> > +	if (S_ISFIFO(file_inode(file)->i_mode)) {
+> > +		allowed_access |= LANDLOCK_ACCESS_FS_IOCTL |
+> > +				  LANDLOCK_ACCESS_FS_IOCTL_RW |
+> > +				  LANDLOCK_ACCESS_FS_IOCTL_RW_FILE;
+
+Why not LANDLOCK_ACCESS_FS_IOCTL | IOCTL_GROUPS instead?
+
+> > +	}
+> > +
 > 
-> Could you take a look at this version of patch? If it escaped your
-> attention because it got buried in the same thread, sorry for that. And
-> I won't send new version as a reply to previous version in the future.
+> Hello Mickaël, this "if" is a change I'd like to draw your attention
+> to -- this special case was necessary so that all IOCTLs are permitted
+> on named pipes. (There is also a test for it in another commit.)
+> 
+> Open questions here are:
+> 
+>  - I'm a bit on the edge whether it's worth it to have these special
+>    cases here.  After all, users can very easily just permit all
+>    IOCTLs through the ruleset if needed, and it might simplify the
+>    mental model that we have to explain in the documentation
 
-Thanks for the reminder.
+It might simplify the kernel implementation a bit but it would make the
+Landlock security policies more complex, and could encourage people to
+allow all IOCTLs on a directory because this directory might contain
+(dynamically created) named pipes.
 
-Mimi
+I suggest to extend this check with S_ISFIFO(mode) || S_ISSOCK(mode).
+A comment should explain that LANDLOCK_ACCESS_FS_* rights are not meant
+to restrict IPCs.
 
+> 
+>  - I've put the special case into the file open hook, under the
+>    assumption that it would simplify the Landlock audit support to
+>    have the correct rights on the struct file.  The implementation
+>    could alternatively also be done in the ioctl hook. Let me know
+>    which one makes more sense to you.
+
+I like your approach, thanks!  Also, in theory this approach should be
+better for performance reasons, even if it should not be visible in
+practice. Anyway, keeping a consistent set of access rights is
+definitely useful for observability.
+
+I'm wondering if we should do the same mode check for
+LANDLOCK_ACCESS_FS_TRUNCATE too... It would not be visible to user space
+anyway because the LSM hooks are called after the file mode checks for
+truncate(2) and ftruncate(2). But because we need this kind of check for
+IOCTL, it might be a good idea to make it common to all optional_access
+values, at least to document what is really handled. Adding dedicated
+truncate and ftruncate tests (before this commit) would guarantee that
+the returned error codes are unchanged.
+
+Moving this check before the is_access_to_paths_allowed() call would
+enable to avoid looking for always-allowed access rights by removing
+them from the full_access_request. This could help improve performance
+when opening named pipe because no optional_access would be requested.
+
+A new helper similar to get_required_file_open_access() could help.
+
+> 
+> BTW, named UNIX domain sockets can apparently not be opened with open() and
+> therefore they don't hit the LSM file_open hook.  (It is done with the BSD
+> socket API instead.)
+
+What about /proc/*/fd/* ? We can test with open_proc_fd() to make sure
+our assumptions are correct.
