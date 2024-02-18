@@ -1,122 +1,125 @@
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8AB3DBBB;
-	Sat, 17 Feb 2024 13:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CEEFC1D;
+	Sun, 18 Feb 2024 08:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708176954; cv=none; b=MlSZrFC9njHlswEQkAFy9msuB/TyBpz+67dio/TEM/uQ+42cs91maW9dDirKPFMNeCKWBYwIGcj4Bnk0WQxgtFSgEClakckfVK2iBPxq70n3JOevu3Pjgw9tJ9ZoKyYzrFo+SHSVtx/2NawR+BRosqao1TNxMsPzT+zalhFAUzo=
+	t=1708245287; cv=none; b=Kp1fNginZSjcUy/EPBoswyRuFL5aeZ1U0l3XaSYf4ny+SA06+hpAysSLGJjt4sz85vGHW7Gk1Pnr5yWYAB0ACsvsHJhAr1DDqD+3f0xKwDaLol7QhbFfDPDluO4f98LMDzTVarP8vFQRcGEz6i0/difNNHnTYpj/CudyQ4H2crE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708176954; c=relaxed/simple;
-	bh=tMZnD9BAREbxBr4MCZ1qYFNYWYWzjxmzqnVxHd8u8/g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VTV8bKf/vM3nLIwJZBddwRE0f0VHzjDxcONBJAy6wrixXHGo5hQxyN7O8cO3lvmV7TbRZFTGm1vMogbHkKJc74hDtqKIW3cMTCpnBKVKegRJr0LiDl8J5tO0fLkGZG7dKUTotipCg6DD3j22TDInP6RuN9bEEKWExZfqC7vnFOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IzDXgvhj; arc=none smtp.client-ip=209.85.166.176
+	s=arc-20240116; t=1708245287; c=relaxed/simple;
+	bh=qc+UCTRb1KR6l5sto2n9TbI/UzZLjuY9XDSXQ5LHKnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I6hpkoQKEqeDbtQMaPKkzayO3rztsi2ythfFxgBBxA1HpnSV+bx1mqZvYQ/B+KIFIe7pOwfDDjThGoUG2FRo0PUWpVqTJ5M/74iSbTMVy9aibYhSpNXLMGQUiey2ps78K+vHNKd4iRd7V0lR1HLVLhPQ1vGMgpy8njJUqdGuB5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PCZ6jDrb; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IzDXgvhj"
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-364f8246c8cso7294115ab.2;
-        Sat, 17 Feb 2024 05:35:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PCZ6jDrb"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-33d32f74833so422840f8f.3;
+        Sun, 18 Feb 2024 00:34:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708176952; x=1708781752; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=E/J9bJiu5lsGMJF4n5pm6X5Bisri8OV7G/jXa46CjfA=;
-        b=IzDXgvhj7EVlND7HMzpiWdIt8xinzQb9YYoPL4+7NZKdX2x74IN4sHVuwAx5NB2h6s
-         yYb0vH9QnODd3Nk/GRnMctoVOFxpbPOjfnH/pMy3wMgY1Qpq8TYwQo8S0pD5JZPafkWy
-         gwQcn6k6AHECaOhZlRoGT1QHrkuy4ZMTMUe2/vesfI56g8vb8bmJXr4JtuEu90K5V4f6
-         lgvpMjwxn+cwMoK6m9L6DO73ZA9mMHtIhYC6Gwo/P1Jo6IClabhcreyB0OQVvNPCKVKu
-         e5HQWrEMfWPyA0OCws/FxCfr3mBF9wtSLVd5/ArbuJZkgbOthDJZkCOaurEuGl6EKfTP
-         UFAg==
+        d=gmail.com; s=20230601; t=1708245284; x=1708850084; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=iqWKji3lDeoxYSsJBuZx5zJrttqSuamWNHrVMpRLY04=;
+        b=PCZ6jDrb4natI1o3DeA7VFEV+eyCUL9aaUbEXDbY6zErIPN9rrWj8Tnwxkuvjt0Lzw
+         aJEvoYVw3oFgH3Zq7zIFGi3t/BGeeZiIwXGCPO05sSHZQhSRqxYByTLq6/tAB1nmwf7s
+         OBU26umaxIUC6xgSKTm8GR8EMo+SCKF8QjpO4oFkITvl4wK7Bcj5WmE4IfYwE5QrD2W6
+         NI4j+twxptROZTn0Cpga/o4lwX8Z/dBzRYIZXFNffzWWoAh/rznQmvCbuWP5IbMqCPgd
+         Dhni4OJCHvHkDb4gxc0QgvOxTny4Var5CMz/tWIUtgz5c5QvQHN85GU7JDm9ur3HI99g
+         8OEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708176952; x=1708781752;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E/J9bJiu5lsGMJF4n5pm6X5Bisri8OV7G/jXa46CjfA=;
-        b=CB9VlG3LO+Sz6C0gp/mdIzBi8tPhycFWgZsAKVIulMB76ie1Q+DR6J8XGgwHDqaGbK
-         EvBe7h8y3SWLSkU2oaNHeQNeBHTmcfS+fEQ/5a1LRED0ESI3XOCWGSiU/gVk8C1HOQGa
-         rTwyGXs0Er83VtpQrJQtIjpGPw/32NdWrdbFFgQ55TwmfMdwHwFI6T+sCBMfBOzBgsSH
-         L/+1KwkxJJMzwOiA+W3UxnsoWlW9ZIBWfBTJHWFsKB2XgmnJJLqv7/LN2uVC07rqVcrj
-         J2NqDzQ1GP3rInJ+WS1G4PyTpxGV//TA+eOzm3Bk+v/0qJWS6YXnjkaW5MycirlSAAcm
-         8YXg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3LsMSItfY1Aj5PReJUhTc368AMHEYVOSo5KnkdPEOxk5yFcMg7nS6T1ObW8HosmRFsA8tjrOQvpS/6ikaP/61ZLMsR0yNC6f0Q0YpAYQ6T19hPN3XdFkt/aeCJ0oLEq3zaYzIZSnasn6xVje+iEISPrGz
-X-Gm-Message-State: AOJu0YyOhikqJvNT6k/CEyoZ/dwc7txQnAUYbrIZ07Ko8o3O9+PhJU6y
-	vAbkgF3cSGKFD6aljKBoR6RvKbThR+LedeFnYfykdruG6rgnTkoA
-X-Google-Smtp-Source: AGHT+IHZXTphS6lUO3v3Cxz6zH3LI4Uyifv9yT0TaokhpM0X+PsXxz1RS8lb2OiQOsyGwEOer3Rsfw==
-X-Received: by 2002:a05:6e02:184e:b0:365:1dc5:9cae with SMTP id b14-20020a056e02184e00b003651dc59caemr1450043ilv.9.1708176951614;
-        Sat, 17 Feb 2024 05:35:51 -0800 (PST)
-Received: from pairface.. ([111.18.146.226])
-        by smtp.gmail.com with ESMTPSA id 32-20020a631260000000b005d3bae243bbsm1583617pgs.4.2024.02.17.05.35.48
+        d=1e100.net; s=20230601; t=1708245284; x=1708850084;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iqWKji3lDeoxYSsJBuZx5zJrttqSuamWNHrVMpRLY04=;
+        b=oAGeoohswDPyFIKx3SSYDXDtqioIuiqsEtY8JGRtGP2kLRvm1jAhx6Oq9/iN16h1r7
+         EXgS1Uuj90eJqsgyyVILsIKWtAi+hvaQr7l7o+23q3RVr3yZnTkUaJH3oDWJ9bxRTUL9
+         sxwOWwV/e49bWbHrdnyy6B9+sK1j+m+qZ7BrzW6ZFX90IYhXW8HKOEuX15g4Vu/lbaFL
+         O/hvJKb7PLAlozCt4YWUiutuoCWcOP0N7GeIqKinyjOnU1aY61dzw0T522jzaKEG4jae
+         erf3QZL0DKE2OsSJqwA8o0uWfo7KnbeOxIOYEWqZk/Ak1tRpynMrYgmuBPPlRXOASCS+
+         /IZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXq5YX8vazi9JWjE6PNoeWCuQz9w8rvLpDhASV/qBV0Ig3Tfj22/sYv9Y6rmf4osFmqT2nAYLsSqUhQpbR6i2Bkmppmvc+BtLprO84ONRuUzN6K5Fn5csFV09hwc2wx2nBFHy8epcpfC/tAzhuWXmwCG+6BTQ==
+X-Gm-Message-State: AOJu0Yw756mtZ4e4no0xTMexrMljd8fUlTbSXgtERLQh82zgIS58O6q6
+	/uM/8KgZnqjXaCSE3Uq7gVeVaBkOcvqPEEX8YKazXCQp6tMzqYmM
+X-Google-Smtp-Source: AGHT+IHCVMjoAp45T7U3Tv/4Nlcw9YXWGfagh2yClHkXSUbyewysaSHeEMIvNCLRM2kk3ZUTOt1TqQ==
+X-Received: by 2002:adf:ea82:0:b0:33d:29d3:1aa2 with SMTP id s2-20020adfea82000000b0033d29d31aa2mr2002036wrm.12.1708245284238;
+        Sun, 18 Feb 2024 00:34:44 -0800 (PST)
+Received: from localhost ([2a02:168:59f0:1:63b6:5e21:e19f:4684])
+        by smtp.gmail.com with ESMTPSA id bs17-20020a056000071100b0033d47c6073esm738533wrb.12.2024.02.18.00.34.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Feb 2024 05:35:51 -0800 (PST)
-From: Pairman Guo <pairmanxlr@gmail.com>
-To: paul@paul-moore.com
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pairman Guo <pairmanxlr@gmail.com>
-Subject: [PATCH] LSM: Fix typos in security/security.c comment headers
-Date: Sat, 17 Feb 2024 21:35:04 +0800
-Message-ID: <20240217133504.4534-1-pairmanxlr@gmail.com>
-X-Mailer: git-send-email 2.43.2
+        Sun, 18 Feb 2024 00:34:43 -0800 (PST)
+Date: Sun, 18 Feb 2024 09:34:39 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Jorge Lucangeli Obes <jorgelo@chromium.org>,
+	Allen Webb <allenwebb@google.com>,
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org,
+	Michael Kerrisk <mtk@man7.org>
+Subject: Re: [PATCH v9 1/8] landlock: Add IOCTL access right
+Message-ID: <20240218.a01103783ca4@gnoack.org>
+References: <20240209170612.1638517-1-gnoack@google.com>
+ <20240209170612.1638517-2-gnoack@google.com>
+ <ZcdbbkjlKFJxU_uF@google.com>
+ <20240216.geeCh6keengu@digikod.net>
+ <20240216.phai5oova1Oa@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240216.phai5oova1Oa@digikod.net>
 
-This commit fixes several typos in comment headers in security/security.c
-where "Check is" should be "Check if".
+On Fri, Feb 16, 2024 at 04:51:40PM +0100, Mickaël Salaün wrote:
+> On Fri, Feb 16, 2024 at 03:11:18PM +0100, Mickaël Salaün wrote:
+> > What about /proc/*/fd/* ? We can test with open_proc_fd() to make sure
+> > our assumptions are correct.
+> 
+> Actually, these fifo and socket checks (and related optimizations)
+> should already be handled with is_nouser_or_private() called by
+> is_access_to_paths_allowed(). Some new dedicated tests should help
+> though.
 
-Signed-off-by: Pairman Guo <pairmanxlr@gmail.com>
----
- security/security.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I am generally a bit confused about how opening /proc/*/fd/* works.
 
-diff --git a/security/security.c b/security/security.c
-index 7035ee35a..0bd3e9df4 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2904,7 +2904,7 @@ int security_file_send_sigiotask(struct task_struct *tsk,
- }
- 
- /**
-- * security_file_receive() - Check is receiving a file via IPC is allowed
-+ * security_file_receive() - Check if receiving a file via IPC is allowed
-  * @file: file being received
-  *
-  * This hook allows security modules to control the ability of a process to
-@@ -3114,7 +3114,7 @@ int security_kernel_create_files_as(struct cred *new, struct inode *inode)
- }
- 
- /**
-- * security_kernel_module_request() - Check is loading a module is allowed
-+ * security_kernel_module_request() - Check if loading a module is allowed
-  * @kmod_name: module name
-  *
-  * Ability to trigger the kernel to automatically upcall to userspace for
-@@ -4114,7 +4114,7 @@ int security_netlink_send(struct sock *sk, struct sk_buff *skb)
- }
- 
- /**
-- * security_ismaclabel() - Check is the named attribute is a MAC label
-+ * security_ismaclabel() - Check if the named attribute is a MAC label
-  * @name: full extended attribute name
-  *
-  * Check if the extended attribute specified by @name represents a MAC label.
-@@ -4487,7 +4487,7 @@ int security_socket_accept(struct socket *sock, struct socket *newsock)
- }
- 
- /**
-- * security_socket_sendmsg() - Check is sending a message is allowed
-+ * security_socket_sendmsg() - Check if sending a message is allowed
-  * @sock: sending socket
-  * @msg: message to send
-  * @size: size of message
--- 
-2.43.2
+Specifically:
 
+* Do we have to worry about the scenario where the file_open hook gets
+  called with the same struct file* twice (overwriting the access
+  rights)?
+
+* I had trouble finding the place in fs/proc/ where the re-opening is
+  implemented.
+
+Do you happen to understand this in more detail?  At what point do the
+re-opened files start sharing the same kernel objects?  Is that at the
+inode level?
+
+The documentation I consulted unfortunately did not explain it either:
+
+* The man page (proc_pid_fd(5), or previously proc(5)) does not
+  discuss the behavior on open() much, apart from using it in some
+  examples.
+
+* Michael Kerrisk's "Linux Programming Interface" book claims that the
+  behaviour of opening /dev/fd/1 is like doing dup(1) (section 5.11)
+  -- that is true on other UNIXes, but on Linux the resulting file
+  descriptors do not share the same struct file* apparently.  This
+  makes a difference for regular files, where the two FDs subsequently
+  use two separate offsets into the file (f_pos).
+
+Thanks,
+–Günther
